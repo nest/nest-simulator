@@ -25,7 +25,11 @@
 /*
     SLI dictionary access
 */
+
+// C++ includes:
 #include <typeinfo>
+
+// Includes from sli:
 #include "interpret.h"
 
 /**************************************

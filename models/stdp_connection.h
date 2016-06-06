@@ -42,7 +42,8 @@
    tau_plus   double - Time constant of STDP window, potentiation in ms
                        (tau_minus defined in post-synaptic neuron)
    lambda     double - Step size
-   alpha      double - Asymmetry parameter (scales depressing increments as alpha*lambda)
+   alpha      double - Asymmetry parameter (scales depressing increments as
+                       alpha*lambda)
    mu_plus    double - Weight dependence exponent, potentiation
    mu_minus   double - Weight dependence exponent, depression
    Wmax       double - Maximum allowed weight
@@ -70,22 +71,25 @@
   SeeAlso: synapsedict, tsodyks_synapse, static_synapse
 */
 
+// C++ includes:
 #include <cmath>
 
+// Includes from nestkernel:
+#include "common_synapse_properties.h"
 #include "connection.h"
+#include "connector_model.h"
+#include "event.h"
 
-//#include "network.h"
-//#include "dictdatum.h"
-//#include "connector_model.h"
-//#include "common_synapse_properties.h"
-//#include "event.h"
+// Includes from sli:
+#include "dictdatum.h"
+#include "dictutils.h"
 
 
 namespace nest
 {
 
-// connections are templates of target identifier type (used for pointer / target index addressing)
-// derived from generic connection template
+// connections are templates of target identifier type (used for pointer /
+// target index addressing) derived from generic connection template
 template < typename targetidentifierT >
 class STDPConnection : public Connection< targetidentifierT >
 {
@@ -107,10 +111,10 @@ public:
    */
   STDPConnection( const STDPConnection& );
 
-  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
-  // This avoids explicit name prefixes in all places these functions are used.
-  // Since ConnectionBase depends on the template parameter, they are not automatically
-  // found in the base class.
+  // Explicitly declare all methods inherited from the dependent base
+  // ConnectionBase. This avoids explicit name prefixes in all places these
+  // functions are used. Since ConnectionBase depends on the template parameter,
+  // they are not automatically found in the base class.
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
   using ConnectionBase::get_rport;
@@ -132,7 +136,10 @@ public:
    * \param t_lastspike Point in time of last spike sent.
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties& cp );
+  void send( Event& e,
+    thread t,
+    double_t t_lastspike,
+    const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -172,16 +179,16 @@ private:
   double_t
   facilitate_( double_t w, double_t kplus )
   {
-    double_t norm_w =
-      ( w / Wmax_ ) + ( lambda_ * std::pow( 1.0 - ( w / Wmax_ ), mu_plus_ ) * kplus );
+    double_t norm_w = ( w / Wmax_ )
+      + ( lambda_ * std::pow( 1.0 - ( w / Wmax_ ), mu_plus_ ) * kplus );
     return norm_w < 1.0 ? norm_w * Wmax_ : Wmax_;
   }
 
   double_t
   depress_( double_t w, double_t kminus )
   {
-    double_t norm_w =
-      ( w / Wmax_ ) - ( alpha_ * lambda_ * std::pow( w / Wmax_, mu_minus_ ) * kminus );
+    double_t norm_w = ( w / Wmax_ )
+      - ( alpha_ * lambda_ * std::pow( w / Wmax_, mu_minus_ ) * kminus );
     return norm_w > 0.0 ? norm_w * Wmax_ : 0.0;
   }
 
@@ -212,11 +219,13 @@ STDPConnection< targetidentifierT >::send( Event& e,
   const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
-  //   if(t_lastspike >0) {std::cout << "last spike " << t_lastspike << std::endl ;}
+  //   if(t_lastspike >0) {std::cout << "last spike " << t_lastspike <<
+  //   std::endl ;}
   double_t t_spike = e.get_stamp().get_ms();
   // t_lastspike_ = 0 initially
 
-  // use accessor functions (inherited from Connection< >) to obtain delay and target
+  // use accessor functions (inherited from Connection< >) to obtain delay and
+  // target
   Node* target = get_target( t );
   double_t dendritic_delay = get_delay();
 
@@ -224,13 +233,16 @@ STDPConnection< targetidentifierT >::send( Event& e,
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
 
-  // For a new synapse, t_lastspike contains the point in time of the last spike.
-  // So we initially read the history(t_last_spike - dendritic_delay, ...,  T_spike-dendritic_delay]
+  // For a new synapse, t_lastspike contains the point in time of the last
+  // spike. So we initially read the
+  // history(t_last_spike - dendritic_delay, ..., T_spike-dendritic_delay]
   // which increases the access counter for these entries.
-  // At registration, all entries' access counters of history[0, ..., t_last_spike -
-  // dendritic_delay] have been
-  // incremented by Archiving_Node::register_stdp_connection(). See bug #218 for details.
-  target->get_history( t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  // At registration, all entries' access counters of
+  // history[0, ..., t_last_spike - dendritic_delay] have been
+  // incremented by Archiving_Node::register_stdp_connection(). See bug #218 for
+  // details.
+  target->get_history(
+    t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   double_t minus_dt;
   while ( start != finish )
@@ -243,11 +255,13 @@ STDPConnection< targetidentifierT >::send( Event& e,
   }
 
   // depression due to new pre-synaptic spike
-  weight_ = depress_( weight_, target->get_K_value( t_spike - dendritic_delay ) );
+  weight_ =
+    depress_( weight_, target->get_K_value( t_spike - dendritic_delay ) );
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
-  // use accessor functions (inherited from Connection< >) to obtain delay in steps and rport
+  // use accessor functions (inherited from Connection< >) to obtain delay in
+  // steps and rport
   e.set_delay( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
@@ -302,7 +316,8 @@ STDPConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
+  ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double_t >( d, names::weight, weight_ );

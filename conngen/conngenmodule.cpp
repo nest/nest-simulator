@@ -20,30 +20,28 @@
  *
  */
 
-#include "config.h"
 #include "conngenmodule.h"
 
-#include "network.h"
-#include "communicator.h"
-#include "modelrange.h"
+// Generated includes:
+#include "config.h"
 
+// Includes from conngen:
 #include "cg_connect.h"
+#include "conngen.h"
 
-#include "stringdatum.h"
+// Includes from sli:
 #include "lockptrdatum_impl.h"
+#include "stringdatum.h"
+#include "tokenutils.h"
 
 template class lockPTRDatum< ConnectionGenerator,
-  &nest::ConnectionGeneratorModule::ConnectionGeneratorType >;
+  &nest::ConnectionGeneratorType >;
 
 namespace nest
 {
-SLIType ConnectionGeneratorModule::ConnectionGeneratorType;
 
-Network* ConnectionGeneratorModule::net_ = 0;
-
-ConnectionGeneratorModule::ConnectionGeneratorModule( Network& net )
+ConnectionGeneratorModule::ConnectionGeneratorModule()
 {
-  net_ = &net;
 }
 
 ConnectionGeneratorModule::~ConnectionGeneratorModule()
@@ -74,7 +72,8 @@ ConnectionGeneratorModule::init( SLIInterpreter* i )
   i->createcommand( "CGConnect_cg_iV_iV_D_l", &cgconnect_cg_iV_iV_D_lfunction );
   i->createcommand( "CGParse", &cgparse_sfunction );
   i->createcommand( "CGParseFile", &cgparsefile_sfunction );
-  i->createcommand( "CGSelectImplementation", &cgselectimplementation_s_sfunction );
+  i->createcommand(
+    "CGSelectImplementation", &cgselectimplementation_s_sfunction );
 
   // Register the low level functions of the connection generator interface
   i->createcommand( "cgsetmask_cg_iV_iV", &cgsetmask_cg_iV_iVfunction );
@@ -109,81 +108,27 @@ ConnectionGeneratorModule::init( SLIInterpreter* i )
 
    Author: Jochen Martin Eppler
    FirstVersion: August 2012
-   SeeAlso: Connect, synapsedict, GetOptions, CGParse, CGParseFile, CGSelectImplementation, cgstart,
+   SeeAlso: Connect, synapsedict, GetOptions, CGParse, CGParseFile,
+   CGSelectImplementation, cgstart,
    cgsetmask, cgnext
 */
 
 // Connect for conn_generator subnet subnet dict synapsetype
 void
-ConnectionGeneratorModule::CGConnect_cg_i_i_D_lFunction::execute( SLIInterpreter* i ) const
+ConnectionGeneratorModule::CGConnect_cg_i_i_D_lFunction::execute(
+  SLIInterpreter* i ) const
 {
   i->assert_stack_load( 5 );
 
-  ConnectionGeneratorDatum cg = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 4 ) );
+  ConnectionGeneratorDatum cg =
+    getValue< ConnectionGeneratorDatum >( i->OStack.pick( 4 ) );
   index source_id = getValue< long >( i->OStack.pick( 3 ) );
   index target_id = getValue< long >( i->OStack.pick( 2 ) );
-  DictionaryDatum params_map = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  DictionaryDatum params_map =
+    getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  Subnet* sources = dynamic_cast< Subnet* >( get_network().get_node( source_id ) );
-  if ( sources == NULL )
-  {
-    i->message( SLIInterpreter::M_ERROR, "CGConnect_cg_i_i_D_l", "sources must be a subnet." );
-    throw SubnetExpected();
-  }
-  if ( !sources->is_homogeneous() )
-  {
-    i->message(
-      SLIInterpreter::M_ERROR, "CGConnect_cg_i_i_D_l", "sources must be a homogeneous subnet." );
-    throw BadProperty();
-  }
-  if ( dynamic_cast< Subnet* >( *sources->local_begin() ) )
-  {
-    i->message( SLIInterpreter::M_ERROR,
-      "CGConnect_cg_i_i_D_l",
-      "Only 1-dim subnets are supported as sources." );
-    throw BadProperty();
-  }
-
-  Subnet* targets = dynamic_cast< Subnet* >( get_network().get_node( target_id ) );
-  if ( targets == NULL )
-  {
-    i->message( SLIInterpreter::M_ERROR, "CGConnect_cg_i_i_D_l", "targets must be a subnet." );
-    throw SubnetExpected();
-  }
-  if ( !targets->is_homogeneous() )
-  {
-    i->message(
-      SLIInterpreter::M_ERROR, "CGConnect_cg_i_i_D_l", "targets must be a homogeneous subnet." );
-    throw BadProperty();
-  }
-  if ( dynamic_cast< Subnet* >( *targets->local_begin() ) )
-  {
-    i->message( SLIInterpreter::M_ERROR,
-      "CGConnect_cg_i_i_D_l",
-      "Only 1-dim subnets are supported as targets." );
-    throw BadProperty();
-  }
-
-  const Token synmodel = get_network().get_synapsedict().lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  const modelrange source_range =
-    get_network().get_contiguous_gid_range( ( *sources->local_begin() )->get_gid() );
-  index source_offset = source_range.get_first_gid();
-  RangeSet source_ranges;
-  source_ranges.push_back( Range( source_range.get_first_gid(), source_range.get_last_gid() ) );
-
-  const modelrange target_range =
-    get_network().get_contiguous_gid_range( ( *targets->local_begin() )->get_gid() );
-  index target_offset = target_range.get_first_gid();
-  RangeSet target_ranges;
-  target_ranges.push_back( Range( target_range.get_first_gid(), target_range.get_last_gid() ) );
-
-  cg_connect(
-    cg, source_ranges, source_offset, target_ranges, target_offset, params_map, synmodel_id );
+  cg_connect( cg, source_id, target_id, params_map, synmodel_name );
 
   i->OStack.pop( 5 );
   i->EStack.pop();
@@ -191,29 +136,20 @@ ConnectionGeneratorModule::CGConnect_cg_i_i_D_lFunction::execute( SLIInterpreter
 
 // Connect for conn_generator array array dict synapsetype
 void
-ConnectionGeneratorModule::CGConnect_cg_iV_iV_D_lFunction::execute( SLIInterpreter* i ) const
+ConnectionGeneratorModule::CGConnect_cg_iV_iV_D_lFunction::execute(
+  SLIInterpreter* i ) const
 {
   i->assert_stack_load( 5 );
 
-  ConnectionGeneratorDatum cg = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 4 ) );
+  ConnectionGeneratorDatum cg =
+    getValue< ConnectionGeneratorDatum >( i->OStack.pick( 4 ) );
   IntVectorDatum sources = getValue< IntVectorDatum >( i->OStack.pick( 3 ) );
   IntVectorDatum targets = getValue< IntVectorDatum >( i->OStack.pick( 2 ) );
-  DictionaryDatum params_map = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  DictionaryDatum params_map =
+    getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
-  const Token synmodel = get_network().get_synapsedict().lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  RangeSet source_ranges;
-  cg_get_ranges( source_ranges, ( *sources ) );
-
-  RangeSet target_ranges;
-  cg_get_ranges( target_ranges, ( *targets ) );
-
-  cg_connect(
-    cg, source_ranges, ( *sources ), target_ranges, ( *targets ), params_map, synmodel_id );
+  cg_connect( cg, sources, targets, params_map, synmodel_name );
 
   i->OStack.pop( 5 );
   i->EStack.pop();
@@ -221,7 +157,8 @@ ConnectionGeneratorModule::CGConnect_cg_iV_iV_D_lFunction::execute( SLIInterpret
 
 
 /* BeginDocumentation
-   Name: CGParse - Call ConnectionGenerator::fromXML() and return a ConnectionGenerator
+   Name: CGParse - Call ConnectionGenerator::fromXML() and return a
+   ConnectionGenerator
 
    Synopsis:
    xml_string CGParse -> cg
@@ -236,7 +173,8 @@ ConnectionGeneratorModule::CGConnect_cg_iV_iV_D_lFunction::execute( SLIInterpret
 
    Author: Jochen Martin Eppler
    FirstVersion: September 2013
-   SeeAlso: CGParseFile, CGConnect, CGSelectImplementation, cgstart, cgsetmask, cgnext
+   SeeAlso: CGParseFile, CGConnect, CGSelectImplementation, cgstart, cgsetmask,
+   cgnext
 */
 void
 ConnectionGeneratorModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
@@ -244,7 +182,7 @@ ConnectionGeneratorModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   StringDatum xml = getValue< StringDatum >( i->OStack.pick( 0 ) );
-  ConnectionGeneratorDatum cgd = ConnectionGenerator::fromXML( xml );
+  ConnectionGeneratorDatum cgd = cg_parse( xml );
 
   i->OStack.pop( 1 );
   i->OStack.push( cgd );
@@ -253,7 +191,8 @@ ConnectionGeneratorModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
 
 
 /* BeginDocumentation
-   Name: CGParseFile - Call ConnectionGenerator::fromXMLFile() and return a ConnectionGenerator
+   Name: CGParseFile - Call ConnectionGenerator::fromXMLFile() and return a
+   ConnectionGenerator
 
    Synopsis:
    xml_filename CGParseFile -> cg
@@ -268,15 +207,17 @@ ConnectionGeneratorModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
 
    Author: Jochen Martin Eppler
    FirstVersion: February 2014
-   SeeAlso: CGParse, CGConnect, CGSelectImplementation, cgstart, cgsetmask, cgnext
+   SeeAlso: CGParse, CGConnect, CGSelectImplementation, cgstart, cgsetmask,
+   cgnext
 */
 void
-ConnectionGeneratorModule::CGParseFile_sFunction::execute( SLIInterpreter* i ) const
+ConnectionGeneratorModule::CGParseFile_sFunction::execute(
+  SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
   StringDatum xml = getValue< StringDatum >( i->OStack.pick( 0 ) );
-  ConnectionGeneratorDatum cgd = ConnectionGenerator::fromXMLFile( xml );
+  ConnectionGeneratorDatum cgd = cg_parse_file( xml );
 
   i->OStack.pop( 1 );
   i->OStack.push( cgd );
@@ -285,7 +226,8 @@ ConnectionGeneratorModule::CGParseFile_sFunction::execute( SLIInterpreter* i ) c
 
 
 /* BeginDocumentation
-   Name: CGSelectImplementation - Call ConnectionGenerator::selectCGImplementation()
+   Name: CGSelectImplementation - Call
+   ConnectionGenerator::selectCGImplementation()
 
    Synopsis:
    tag library CGParse -> -
@@ -303,13 +245,15 @@ ConnectionGeneratorModule::CGParseFile_sFunction::execute( SLIInterpreter* i ) c
    SeeAlso: CGParse, CGParseFile, CGConnect, cgstart, cgsetmask, cgnext
 */
 void
-ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute( SLIInterpreter* i ) const
+ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute(
+  SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
   StringDatum library = getValue< StringDatum >( i->OStack.pick( 0 ) );
   StringDatum tag = getValue< StringDatum >( i->OStack.pick( 1 ) );
-  ConnectionGenerator::selectCGImplementation( tag, library );
+
+  cg_select_implementation( library, tag );
 
   i->OStack.pop( 1 );
   i->EStack.pop();
@@ -339,24 +283,21 @@ ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute( SLIInter
 
    Author: Mikael Djurfeldt
    FirstVersion: March 2011
-   SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation, cgstart, cgnext
+   SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation, cgstart,
+   cgnext
 */
 void
-ConnectionGeneratorModule::CGSetMask_cg_iV_iVFunction::execute( SLIInterpreter* i ) const
+ConnectionGeneratorModule::CGSetMask_cg_iV_iVFunction::execute(
+  SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  ConnectionGeneratorDatum cg = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 2 ) );
+  ConnectionGeneratorDatum cg =
+    getValue< ConnectionGeneratorDatum >( i->OStack.pick( 2 ) );
   IntVectorDatum sources = getValue< IntVectorDatum >( i->OStack.pick( 1 ) );
   IntVectorDatum targets = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
 
-  RangeSet source_ranges;
-  cg_get_ranges( source_ranges, ( *sources ) );
-
-  RangeSet target_ranges;
-  cg_get_ranges( target_ranges, ( *targets ) );
-
-  cg_set_masks( cg, source_ranges, target_ranges );
+  cg_set_masks( cg, sources, targets );
 
   i->OStack.pop( 3 );
   i->EStack.pop();
@@ -383,16 +324,19 @@ ConnectionGeneratorModule::CGSetMask_cg_iV_iVFunction::execute( SLIInterpreter* 
 
    Author: Mikael Djurfeldt
    FirstVersion: March 2011
-   SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation, cgsetmask, cgnext
+   SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation, cgsetmask,
+   cgnext
 */
 void
-ConnectionGeneratorModule::CGStart_cgFunction::execute( SLIInterpreter* i ) const
+ConnectionGeneratorModule::CGStart_cgFunction::execute(
+  SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  ConnectionGeneratorDatum cgd = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
+  ConnectionGeneratorDatum cgd =
+    getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
 
-  cgd->start();
+  cg_start( cgd );
 
   i->OStack.pop( 1 );
   i->EStack.pop();
@@ -423,34 +367,35 @@ ConnectionGeneratorModule::CGStart_cgFunction::execute( SLIInterpreter* i ) cons
 
    Author: Mikael Djurfeldt
    FirstVersion: December 2012
-   SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation, cgstart, cgsetmask
+   SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation, cgstart,
+   cgsetmask
 */
 void
 ConnectionGeneratorModule::CGNext_cgFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  ConnectionGeneratorDatum cgd = getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
-  ConnectionGenerator* generator = cgd.get();
+  ConnectionGeneratorDatum cgd =
+    getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
 
   int j, k;
-  int arity = generator->arity();
-  double* values = new double[ arity ];
+  std::vector< double > values;
   i->OStack.pop( 1 );
   i->EStack.pop();
-  if ( generator->next( j, k, values ) )
+  if ( cg_next( cgd, j, k, values ) )
   {
     i->OStack.push( j );
     i->OStack.push( k );
-    for ( int m = 0; m < arity; ++m )
+    for ( size_t m = 0; m < values.size(); ++m )
+    {
       i->OStack.push( values[ m ] );
-    delete[] values;
+    }
     i->OStack.push( true );
   }
   else
+  {
     i->OStack.push( false );
-
-  cgd.unlock();
+  }
 }
 
 

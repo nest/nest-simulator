@@ -28,12 +28,15 @@
 /*                                      */
 /****************************************/
 
-#include "nest.h"
+// Includes from librandom:
+#include "poisson_randomdev.h"
+
+// Includes from nestkernel:
+#include "connection.h"
 #include "event.h"
+#include "nest_types.h"
 #include "node.h"
 #include "stimulating_device.h"
-#include "connection.h"
-#include "poisson_randomdev.h"
 
 namespace nest
 {
@@ -46,12 +49,13 @@ namespace nest
 /*BeginDocumentation
 Name: mip_generator - create spike trains as described by the MIP model.
 Description:
-  The mip_generator generates correlated spike trains using an Multiple Interaction
-  Process (MIP) as described in [1]. Underlying principle is a Poisson mother process
-  with rate r, the spikes of which are copied into the child processes with a certain
-  probability p. Every node the mip_generator is connected to receives a distinct
-  child process as input, whose rate is p*r. The value of the pairwise correlation
-  coefficient of two child processes created by a MIP process equals p.
+  The mip_generator generates correlated spike trains using an Multiple
+  Interaction Process (MIP) as described in [1]. Underlying principle is a
+  Poisson mother process with rate r, the spikes of which are copied into the
+  child processes with a certain probability p. Every node the mip_generator is
+  connected to receives a distinct child process as input, whose rate is p*r.
+  The value of the pairwise correlation coefficient of two child processes
+  created by a MIP process equals p.
 
 
 Parameters:
@@ -120,7 +124,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::event_hook;
 
@@ -152,8 +157,8 @@ private:
    */
   struct Parameters_
   {
-    double_t rate_;         //!< process rate in Hz
-    double_t p_copy_;       //!< copy probability for each spike in the mother process
+    double_t rate_;   //!< process rate in Hz
+    double_t p_copy_; //!< copy probability for each spike in the mother process
     ulong_t mother_seed_;   //!< seed of the mother process
     librandom::RngPtr rng_; //!< random number generator for mother process
 

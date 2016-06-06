@@ -21,21 +21,29 @@
  */
 
 #include "recording_device.h"
-#include "network.h"
-#include "dictutils.h"
-#include "iostreamdatum.h"
-#include "arraydatum.h"
-#include "config.h"
-#include "exceptions.h"
-#include "sliexceptions.h"
-#include <iostream> // using cerr for error message.
+
+// C++ includes:
 #include <iomanip>
+#include <iostream> // using cerr for error message.
+
+// Generated includes:
+#include "config.h"
+
+// Includes from libnestutil:
+#include "compose.hpp"
+#include "logging.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "vp_manager_impl.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dictutils.h"
 #include "fdstream.h"
-
-// nestmodule provides global access to the network, so we can
-// issue warning messages. This is messy and needs cleaning up.
-#include "nestmodule.h"
-
+#include "iostreamdatum.h"
+#include "sliexceptions.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -82,7 +90,8 @@ nest::RecordingDevice::State_::State_()
  * ---------------------------------------------------------------- */
 
 void
-nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd, DictionaryDatum& d ) const
+nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
+  DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
 
@@ -173,11 +182,14 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   // We must have || rec_change at the end, otherwise short-circuiting may
   // mean that some flags are not read.
   bool rec_change = false;
-  rec_change = updateValue< bool >( d, names::to_screen, to_screen_ ) || rec_change;
-  rec_change = updateValue< bool >( d, names::to_memory, to_memory_ ) || rec_change;
+  rec_change =
+    updateValue< bool >( d, names::to_screen, to_screen_ ) || rec_change;
+  rec_change =
+    updateValue< bool >( d, names::to_memory, to_memory_ ) || rec_change;
   rec_change = updateValue< bool >( d, names::to_file, to_file_ ) || rec_change;
   if ( rd.mode_ == RecordingDevice::MULTIMETER )
-    rec_change = updateValue< bool >( d, names::to_accumulator, to_accumulator_ ) || rec_change;
+    rec_change = updateValue< bool >(
+                   d, names::to_accumulator, to_accumulator_ ) || rec_change;
 
   const bool have_record_to = d->known( names::record_to );
   if ( have_record_to )
@@ -188,11 +200,14 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
     // check for flags present in array, could be far more elegant ...
     ArrayDatum ad = getValue< ArrayDatum >( d, names::record_to );
     for ( Token* t = ad.begin(); t != ad.end(); ++t )
-      if ( *t == LiteralDatum( names::file ) || *t == Token( names::file.toString() ) )
+      if ( *t == LiteralDatum( names::file )
+        || *t == Token( names::file.toString() ) )
         to_file_ = true;
-      else if ( *t == LiteralDatum( names::memory ) || *t == Token( names::memory.toString() ) )
+      else if ( *t == LiteralDatum( names::memory )
+        || *t == Token( names::memory.toString() ) )
         to_memory_ = true;
-      else if ( *t == LiteralDatum( names::screen ) || *t == Token( names::screen.toString() ) )
+      else if ( *t == LiteralDatum( names::screen )
+        || *t == Token( names::screen.toString() ) )
         to_screen_ = true;
       else if ( rd.mode_ == RecordingDevice::MULTIMETER
         && ( *t == LiteralDatum( names::accumulator )
@@ -202,22 +217,25 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
       {
         if ( rd.mode_ == RecordingDevice::MULTIMETER )
           throw BadProperty(
-            "/to_record must be array, allowed entries: /file, /memory, /screen, /accumulator." );
+            "/to_record must be array, allowed entries: /file, /memory, "
+            "/screen, /accumulator." );
         else
           throw BadProperty(
-            "/to_record must be array, allowed entries: /file, /memory, /screen." );
+            "/to_record must be array, allowed entries: /file, /memory, "
+            "/screen." );
       }
   }
 
   if ( ( rec_change || have_record_to ) && to_file_ && to_memory_ )
-    NestModule::get_network().message( SLIInterpreter::M_INFO,
+    LOG( M_INFO,
       "RecordingDevice::set_status",
       "Data will be recorded to file and to memory." );
 
-  if ( to_accumulator_ && ( to_file_ || to_screen_ || to_memory_ || withgid_ || withweight_ ) )
+  if ( to_accumulator_
+    && ( to_file_ || to_screen_ || to_memory_ || withgid_ || withweight_ ) )
   {
     to_file_ = to_screen_ = to_memory_ = withgid_ = withweight_ = false;
-    Node::network()->message( SLIInterpreter::M_WARNING,
+    LOG( M_WARNING,
       "RecordingDevice::set_status()",
       "Accumulator mode selected. All incompatible properties "
       "(to_file, to_screen, to_memory, withgid, withweight) "
@@ -226,11 +244,13 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
 }
 
 void
-nest::RecordingDevice::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::RecordingDevice::State_::get( DictionaryDatum& d,
+  const Parameters_& p ) const
 {
   // if we already have the n_events entry, we add to it, otherwise we create it
   if ( d->known( names::n_events ) )
-    ( *d )[ names::n_events ] = getValue< long >( d, names::n_events ) + events_;
+    ( *d )[ names::n_events ] =
+      getValue< long >( d, names::n_events ) + events_;
   else
     ( *d )[ names::n_events ] = events_;
 
@@ -246,14 +266,16 @@ nest::RecordingDevice::State_::get( DictionaryDatum& d, const Parameters_& p ) c
   {
     assert( not p.to_accumulator_ );
     initialize_property_intvector( dict, names::senders );
-    append_property( dict, names::senders, std::vector< long >( event_senders_ ) );
+    append_property(
+      dict, names::senders, std::vector< long >( event_senders_ ) );
   }
 
   if ( p.withweight_ )
   {
     assert( not p.to_accumulator_ );
     initialize_property_doublevector( dict, names::weights );
-    append_property( dict, names::weights, std::vector< double_t >( event_weights_ ) );
+    append_property(
+      dict, names::weights, std::vector< double_t >( event_weights_ ) );
   }
 
   if ( p.withtime_ )
@@ -261,30 +283,38 @@ nest::RecordingDevice::State_::get( DictionaryDatum& d, const Parameters_& p ) c
     if ( p.time_in_steps_ )
     {
       initialize_property_intvector( dict, names::times );
-      // When not accumulating, we just add time data. When accumulating, we must add
-      // time data only from one thread and ensure that time data from other threads
-      // is either empty of identical to what is present.
+      // When not accumulating, we just add time data. When accumulating, we
+      // must add time data only from one thread and ensure that time data from
+      // other threads is either empty of identical to what is present.
       if ( not p.to_accumulator_ )
-        append_property( dict, names::times, std::vector< long >( event_times_steps_ ) );
+        append_property(
+          dict, names::times, std::vector< long >( event_times_steps_ ) );
       else
-        provide_property( dict, names::times, std::vector< long >( event_times_steps_ ) );
+        provide_property(
+          dict, names::times, std::vector< long >( event_times_steps_ ) );
 
       if ( p.precise_times_ )
       {
         initialize_property_doublevector( dict, names::offsets );
         if ( not p.to_accumulator_ )
-          append_property( dict, names::offsets, std::vector< double_t >( event_times_offsets_ ) );
+          append_property( dict,
+            names::offsets,
+            std::vector< double_t >( event_times_offsets_ ) );
         else
-          provide_property( dict, names::offsets, std::vector< double_t >( event_times_offsets_ ) );
+          provide_property( dict,
+            names::offsets,
+            std::vector< double_t >( event_times_offsets_ ) );
       }
     }
     else
     {
       initialize_property_doublevector( dict, names::times );
       if ( not p.to_accumulator_ )
-        append_property( dict, names::times, std::vector< double_t >( event_times_ms_ ) );
+        append_property(
+          dict, names::times, std::vector< double_t >( event_times_ms_ ) );
       else
-        provide_property( dict, names::times, std::vector< double_t >( event_times_ms_ ) );
+        provide_property(
+          dict, names::times, std::vector< double_t >( event_times_ms_ ) );
     }
   }
 
@@ -322,7 +352,8 @@ nest::RecordingDevice::RecordingDevice( const Node& n,
 {
 }
 
-nest::RecordingDevice::RecordingDevice( const Node& n, const RecordingDevice& d )
+nest::RecordingDevice::RecordingDevice( const Node& n,
+  const RecordingDevice& d )
   : Device( d )
   , node_( n )
   , mode_( d.mode_ )
@@ -385,9 +416,9 @@ nest::RecordingDevice::calibrate()
       std::string newname = build_filename_();
       if ( newname != P_.filename_ )
       {
-        std::string msg =
-          String::compose( "Closing file '%1', opening file '%2'", P_.filename_, newname );
-        Node::network()->message( SLIInterpreter::M_INFO, "RecordingDevice::calibrate()", msg );
+        std::string msg = String::compose(
+          "Closing file '%1', opening file '%2'", P_.filename_, newname );
+        LOG( M_INFO, "RecordingDevice::calibrate()", msg );
 
         B_.fs_.close(); // close old file
         P_.filename_ = newname;
@@ -399,7 +430,7 @@ nest::RecordingDevice::calibrate()
     {
       assert( !B_.fs_.is_open() );
 
-      if ( Node::network()->overwrite_files() )
+      if ( kernel().io_manager.overwrite_files() )
       {
         if ( P_.binary_ )
           B_.fs_.open( P_.filename_.c_str(), std::ios::out | std::ios::binary );
@@ -414,10 +445,10 @@ nest::RecordingDevice::calibrate()
         {
           std::string msg = String::compose(
             "The device file '%1' exists already and will not be overwritten. "
-            "Please change data_path, data_prefix or label, or set /overwrite_files "
-            "to true in the root node.",
+            "Please change data_path, data_prefix or label, or set "
+            "/overwrite_files to true in the root node.",
             P_.filename_ );
-          Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+          LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
           throw IOError();
         }
         else
@@ -436,8 +467,10 @@ nest::RecordingDevice::calibrate()
           B_.fs_.rdbuf()->pubsetbuf( 0, 0 );
         else
         {
-          std::vector< char >* buffer = new std::vector< char >( P_.fbuffer_size_ );
-          B_.fs_.rdbuf()->pubsetbuf( reinterpret_cast< char* >( &buffer[ 0 ] ), P_.fbuffer_size_ );
+          std::vector< char >* buffer =
+            new std::vector< char >( P_.fbuffer_size_ );
+          B_.fs_.rdbuf()->pubsetbuf(
+            reinterpret_cast< char* >( &buffer[ 0 ] ), P_.fbuffer_size_ );
         }
 
         P_.fbuffer_size_old_ = P_.fbuffer_size_;
@@ -451,7 +484,7 @@ nest::RecordingDevice::calibrate()
         "This may be caused by too many open files in networks "
         "with many recording devices and threads.",
         P_.filename_ );
-      Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+      LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
 
       if ( B_.fs_.is_open() )
         B_.fs_.close();
@@ -478,7 +511,7 @@ nest::RecordingDevice::calibrate()
         "openeded with a buffer size of %1. Please close the "
         "file first.",
         P_.fbuffer_size_old_ );
-      Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::calibrate()", msg );
+      LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
       throw IOError();
     }
   }
@@ -500,8 +533,9 @@ nest::RecordingDevice::finalize()
 
     if ( !B_.fs_.good() )
     {
-      std::string msg = String::compose( "I/O error while opening file '%1'", P_.filename_ );
-      Node::network()->message( SLIInterpreter::M_ERROR, "RecordingDevice::finalize()", msg );
+      std::string msg =
+        String::compose( "I/O error while opening file '%1'", P_.filename_ );
+      LOG( M_ERROR, "RecordingDevice::finalize()", msg );
 
       throw IOError();
     }
@@ -588,7 +622,9 @@ nest::RecordingDevice::print_id_( std::ostream& os, index gid )
 }
 
 void
-nest::RecordingDevice::print_time_( std::ostream& os, const Time& t, double offs )
+nest::RecordingDevice::print_time_( std::ostream& os,
+  const Time& t,
+  double offs )
 {
   if ( !P_.withtime_ )
     return;
@@ -614,7 +650,10 @@ nest::RecordingDevice::print_weight_( std::ostream& os, double weight )
 
 
 void
-nest::RecordingDevice::store_data_( index sender, const Time& t, double offs, double weight )
+nest::RecordingDevice::store_data_( index sender,
+  const Time& t,
+  double offs,
+  double weight )
 {
   if ( P_.withgid_ )
     S_.event_senders_.push_back( sender );
@@ -642,16 +681,17 @@ nest::RecordingDevice::build_filename_() const
 {
   // number of digits in number of virtual processes
   const int vpdigits = static_cast< int >(
-    std::floor( std::log10( static_cast< float >( Communicator::get_num_virtual_processes() ) ) )
-    + 1 );
+    std::floor( std::log10( static_cast< float >(
+      kernel().vp_manager.get_num_virtual_processes() ) ) ) + 1 );
   const int gidigits = static_cast< int >(
-    std::floor( std::log10( static_cast< float >( Node::network()->size() ) ) ) + 1 );
+    std::floor( std::log10(
+      static_cast< float >( kernel().node_manager.size() ) ) ) + 1 );
 
   std::ostringstream basename;
-  const std::string& path = Node::network()->get_data_path();
+  const std::string& path = kernel().io_manager.get_data_path();
   if ( !path.empty() )
     basename << path << '/';
-  basename << Node::network()->get_data_prefix();
+  basename << kernel().io_manager.get_data_prefix();
 
 
   if ( !P_.label_.empty() )
@@ -659,8 +699,9 @@ nest::RecordingDevice::build_filename_() const
   else
     basename << node_.get_name();
 
-  basename << "-" << std::setfill( '0' ) << std::setw( gidigits ) << node_.get_gid() << "-"
-           << std::setfill( '0' ) << std::setw( vpdigits ) << node_.get_vp();
+  basename << "-" << std::setfill( '0' ) << std::setw( gidigits )
+           << node_.get_gid() << "-" << std::setfill( '0' )
+           << std::setw( vpdigits ) << node_.get_vp();
   return basename.str() + '.' + P_.file_ext_;
 }
 

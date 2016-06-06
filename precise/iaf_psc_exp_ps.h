@@ -23,18 +23,23 @@
 #ifndef IAF_PSC_EXP_PS_H
 #define IAF_PSC_EXP_PS_H
 
+// C++ includes:
+#include <vector>
+
+// Generated includes:
 #include "config.h"
 
-#include "nest.h"
-#include "event.h"
-#include "node.h"
-#include "ring_buffer.h"
-#include "slice_ring_buffer.h"
+// Includes from nestkernel:
+#include "archiving_node.h"
 #include "connection.h"
-#include "universal_data_logger.h"
+#include "event.h"
+#include "nest_types.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
 
-#include <vector>
+// Includes from precise:
+#include "slice_ring_buffer.h"
 
 /*BeginDocumentation
 Name: iaf_psc_exp_ps - Leaky integrate-and-fire neuron
@@ -118,11 +123,8 @@ namespace nest
  * from this one.
  * @todo Implement current input in consistent way.
  */
-class iaf_psc_exp_ps : public Node
+class iaf_psc_exp_ps : public Archiving_Node
 {
-
-  class Network;
-
 public:
   /** Basic constructor.
       This constructor should only be used by GenericModel to create
@@ -141,7 +143,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -182,8 +185,8 @@ private:
    * advanced from event to event, as retrieved from the spike queue.
    *
    * Return from refractoriness is handled as a special event in the
-   * queue, which is marked by a weight that is GSL_NAN.  This greatly simplifies
-   * the code.
+   * queue, which is marked by a weight that is GSL_NAN.  This greatly
+   * simplifies the code.
    *
    * For steps, during which no events occur, the precomputed propagator matrix
    * is used.  For other steps, the propagator matrix is computed as needed.
@@ -197,8 +200,6 @@ private:
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_psc_exp_ps >;
   friend class UniversalDataLogger< iaf_psc_exp_ps >;
-
-  void set_spiketime( Time const& );
 
   /**
    * Propagate neuron state.
@@ -218,7 +219,10 @@ private:
    * @param t0      Beginning of mini-timestep
    * @param dt      Duration of mini-timestep
    */
-  void emit_spike_( const Time& origin, const long_t lag, const double_t t0, const double_t dt );
+  void emit_spike_( const Time& origin,
+    const long_t lag,
+    const double_t t0,
+    const double_t dt );
 
   /**
    * Instantaneously emit a spike at the precise time defined by
@@ -228,7 +232,9 @@ private:
    * @param lag           Time step within slice
    * @param spike_offset  Time offset for spike
    */
-  void emit_instant_spike_( const Time& origin, const long_t lag, const double_t spike_offset );
+  void emit_instant_spike_( const Time& origin,
+    const long_t lag,
+    const double_t spike_offset );
 
   /**
    * Localize threshold crossing by bisectioning.
@@ -387,7 +393,10 @@ private:
 };
 
 inline port
-nest::iaf_psc_exp_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
+nest::iaf_psc_exp_ps::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -411,7 +420,8 @@ iaf_psc_exp_ps::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -423,6 +433,9 @@ iaf_psc_exp_ps::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
+  Archiving_Node::get_status( d );
+
+  ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void
@@ -432,6 +445,12 @@ iaf_psc_exp_ps::set_status( const DictionaryDatum& d )
   const double delta_EL = ptmp.set( d ); // throws if BadProperty
   State_ stmp = S_;                      // temporary copy in case of errors
   stmp.set( d, ptmp, delta_EL );         // throws if BadProperty
+
+  // We now know that (ptmp, stmp) are consistent. We do not
+  // write them back to (P_, S_) before we are also sure that
+  // the properties to be set in the parent class are internally
+  // consistent.
+  Archiving_Node::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

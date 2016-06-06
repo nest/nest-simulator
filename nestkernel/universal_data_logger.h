@@ -23,18 +23,17 @@
 #ifndef UNIVERSAL_DATA_LOGGER_H
 #define UNIVERSAL_DATA_LOGGER_H
 
-#include "nest.h"
-#include "event.h"
-#include "recordables_map.h"
-#include "nest_time.h"
-
+// C++ includes:
 #include <vector>
+
+// Includes from nestkernel:
+#include "event.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "recordables_map.h"
 
 namespace nest
 {
-
-class Network;
-
 /**
  * Universal data-logging plug-in for neuron models.
  *
@@ -106,7 +105,8 @@ public:
    * @param map of access functions
    * @return rport for future logging requests
    */
-  port connect_logging_device( const DataLoggingRequest&, const RecordablesMap< HostNode >& );
+  port connect_logging_device( const DataLoggingRequest&,
+    const RecordablesMap< HostNode >& );
 
   /**
    * Answer DataLoggingRequest.
@@ -143,9 +143,9 @@ public:
 private:
   /**
    * Single data logger, serving one Multimeter.
-   * For each Multimeter connected to a node, one DataLogger_ instance is created.
-   * The UniversalDataLogger forwards all requests to the correct DataLogger_ based
-   * on the rport of the request.
+   * For each Multimeter connected to a node, one DataLogger_ instance is
+   * created. The UniversalDataLogger forwards all requests to the correct
+   * DataLogger_ based on the rport of the request.
    */
   class DataLogger_
   {
@@ -170,7 +170,8 @@ private:
     long_t next_rec_step_;    //!< next time step at which to record
 
     /** Vector of pointers to member functions for data access. */
-    std::vector< typename RecordablesMap< HostNode >::DataAccessFct > node_access_;
+    std::vector< typename RecordablesMap< HostNode >::DataAccessFct >
+      node_access_;
 
     /**
      * Buffer for data.
@@ -205,10 +206,12 @@ private:
 // which typically is in h-files.
 template < typename HostNode >
 port
-nest::UniversalDataLogger< HostNode >::connect_logging_device( const DataLoggingRequest& req,
+nest::UniversalDataLogger< HostNode >::connect_logging_device(
+  const DataLoggingRequest& req,
   const RecordablesMap< HostNode >& rmap )
 {
-  // rports are assigned consecutively, the caller may not request specific rports.
+  // rports are assigned consecutively, the caller may not request specific
+  // rports.
   if ( req.get_rport() != 0 )
     throw IllegalConnection(
       "UniversalDataLogger::connect_logging_device(): "
@@ -225,7 +228,8 @@ nest::UniversalDataLogger< HostNode >::connect_logging_device( const DataLogging
       "UniversalDataLogger::connect_logging_device(): "
       "Each multimeter can only be connected once to a given node." );
 
-  // we now know that we have no DataLogger_ for the given multimeter, so we create one and push it
+  // we now know that we have no DataLogger_ for the given multimeter, so we
+  // create one and push it
   data_loggers_.push_back( DataLogger_( req, rmap ) );
 
   // rport is index plus one, i.e., size
@@ -233,7 +237,8 @@ nest::UniversalDataLogger< HostNode >::connect_logging_device( const DataLogging
 }
 
 template < typename HostNode >
-nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggingRequest& req,
+nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_(
+  const DataLoggingRequest& req,
   const RecordablesMap< HostNode >& rmap )
   : multimeter_( req.get_sender().get_gid() )
   , num_vars_( 0 )
@@ -248,9 +253,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_( const DataLoggi
   const std::vector< Name >& recvars = req.record_from();
   for ( size_t j = 0; j < recvars.size(); ++j )
   {
+    // .toString() required as work-around for #339, remove when #348 is solved.
     typename RecordablesMap< HostNode >::const_iterator rec =
-      rmap.find( recvars[ j ].toString() ); // .toString() required as work-around for #339,
-                                            // remove when #348 is solved.
+      rmap.find( recvars[ j ].toString() );
 
     if ( rec == rmap.end() )
     {

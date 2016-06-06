@@ -26,8 +26,9 @@
     SLI's stack for tokens
 */
 
-#include "token.h"
+// Includes from sli:
 #include "tarrayobj.h"
+#include "token.h"
 #include "tokenarray.h"
 
 /* This stack implementation assumes that functions are only called,

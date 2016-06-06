@@ -36,9 +36,11 @@
   Example:
   0 << /resolution 1.0 >> SetStatus
 
-  /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create def
+  /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create
+  def
   /n  /iaf_psc_delta_canon Create def
-  /sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create def
+  /sd /spike_detector << /precise_times true /record_to [ /memory ] >> Create
+  def
 
   /cont_delay_synapse << /weight 100. /delay 1.7 >> SetDefaults
   sg n /cont_delay_synapse Connect
@@ -49,23 +51,26 @@
   sd GetStatus /events/times :: ==   %  --> <. 3.7 7.2 .>
 
   Remarks:
-  All delays set by the normal NEST Connect function will be rounded, even when using
-  cont_delay_connection. To set non-grid delays, you must either
+  All delays set by the normal NEST Connect function will be rounded, even when
+  using cont_delay_connection. To set non-grid delays, you must either
 
   1) set the delay as synapse default, as in the example above
-  2) set the delay for each synapse after the connections have been created, e.g.,
+  2) set the delay for each synapse after the connections have been created,
+     e.g.,
 
        sg n 100. 1.0 /cont_delay_synapse Connect
        << /source [ sg ] /synapse_model /cont_delay_synapse >> GetConnections
           { << /delay 1.7 >> SetStatus }
        forall
 
-  Alternative 1) is much more efficient, but all synapses then will have the same delay.
+  Alternative 1) is much more efficient, but all synapses then will have the
+                 same delay.
   Alternative 2) is slower, but allows individual delay values.
 
   Continuous delays cannot be shorter than the simulation resolution.
 
-  Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent, DoubleDataEvent
+  Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
+             DoubleDataEvent
 
   References: none
   FirstVersion: June 2007
@@ -73,9 +78,11 @@
   SeeAlso: synapsedict, static_synapse, iaf_psc_alpha_canon
 */
 
-
-#include "connection.h"
+// C++ includes:
 #include <cmath>
+
+// Includes from nestkernel:
+#include "connection.h"
 
 namespace nest
 {
@@ -107,10 +114,10 @@ public:
   {
   }
 
-  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
-  // This avoids explicit name prefixes in all places these functions are used.
-  // Since ConnectionBase depends on the template parameter, they are not automatically
-  // found in the base class.
+  // Explicitly declare all methods inherited from the dependent base
+  // ConnectionBase. This avoids explicit name prefixes in all places these
+  // functions are used. Since ConnectionBase depends on the template parameter,
+  // they are not automatically found in the base class.
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::set_delay_steps;
   using ConnectionBase::get_rport;
@@ -139,7 +146,10 @@ public:
    * \param t_lastspike Point in time of last spike sent.
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties& cp );
+  void send( Event& e,
+    thread t,
+    double_t t_lastspike,
+    const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -190,7 +200,11 @@ public:
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType& )
+  check_connection( Node& s,
+    Node& t,
+    rport receptor_type,
+    double_t,
+    const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -198,7 +212,8 @@ public:
 
 private:
   double_t weight_;       //!< synaptic weight
-  double_t delay_offset_; //!< fractional delay < h, total delay = delay_ - delay_offset_
+  double_t delay_offset_; //!< fractional delay < h,
+                          //!< total delay = delay_ - delay_offset_
 };
 
 /**

@@ -28,10 +28,16 @@
  */
 
 #include "growth_curve.h"
+
+// C++ includes:
+#include <cmath>
+
+// Includes from nestkernel:
+#include "nest_names.h"
+#include "nest_time.h"
+
+// Includes from sli:
 #include "dictutils.h"
-#include "exceptions.h"
-#include "archiving_node.h"
-#include "network.h"
 
 /* ----------------------------------------------------------------
  * GrowthCurveLinear
@@ -65,8 +71,8 @@ nest::GrowthCurveLinear::update( double_t t,
   double_t growth_rate ) const
 {
   const double_t Ca = Ca_minus * std::exp( ( t_minus - t ) / tau_Ca );
-  const double_t z_value =
-    growth_rate * tau_Ca * ( Ca - Ca_minus ) / eps_ + growth_rate * ( t - t_minus ) + z_minus;
+  const double_t z_value = growth_rate * tau_Ca * ( Ca - Ca_minus ) / eps_
+    + growth_rate * ( t - t_minus ) + z_minus;
 
   return std::max( z_value, 0.0 );
 }
@@ -117,7 +123,8 @@ nest::GrowthCurveGaussian::update( double_t t,
   for ( double_t lag = t_minus; lag < ( t - h / 2.0 ); lag += h )
   {
     Ca = Ca - ( ( Ca / tau_Ca ) * h );
-    const double_t dz = h * growth_rate * ( 2.0 * exp( -pow( ( Ca - xi ) / zeta, 2 ) ) - 1.0 );
+    const double_t dz =
+      h * growth_rate * ( 2.0 * exp( -pow( ( Ca - xi ) / zeta, 2 ) ) - 1.0 );
     z_value = z_value + dz;
   }
 

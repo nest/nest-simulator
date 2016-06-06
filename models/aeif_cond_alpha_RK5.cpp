@@ -20,29 +20,35 @@
  *
  */
 
-
-#include "exceptions.h"
 #include "aeif_cond_alpha_RK5.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include "universal_data_logger_impl.h"
 
-#include <limits>
-
+// C++ includes:
 #include <cmath>
+#include <cstdio>
 #include <iomanip>
 #include <iostream>
-#include <cstdio>
+#include <limits>
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_cond_alpha_RK5 > nest::aeif_cond_alpha_RK5::recordablesMap_;
+nest::RecordablesMap< nest::aeif_cond_alpha_RK5 >
+  nest::aeif_cond_alpha_RK5::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -53,10 +59,14 @@ void
 RecordablesMap< aeif_cond_alpha_RK5 >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m, &aeif_cond_alpha_RK5::get_y_elem_< aeif_cond_alpha_RK5::State_::V_M > );
-  insert_( names::g_ex, &aeif_cond_alpha_RK5::get_y_elem_< aeif_cond_alpha_RK5::State_::G_EXC > );
-  insert_( names::g_in, &aeif_cond_alpha_RK5::get_y_elem_< aeif_cond_alpha_RK5::State_::G_INH > );
-  insert_( names::w, &aeif_cond_alpha_RK5::get_y_elem_< aeif_cond_alpha_RK5::State_::W > );
+  insert_( names::V_m,
+    &aeif_cond_alpha_RK5::get_y_elem_< aeif_cond_alpha_RK5::State_::V_M > );
+  insert_( names::g_ex,
+    &aeif_cond_alpha_RK5::get_y_elem_< aeif_cond_alpha_RK5::State_::G_EXC > );
+  insert_( names::g_in,
+    &aeif_cond_alpha_RK5::get_y_elem_< aeif_cond_alpha_RK5::State_::G_INH > );
+  insert_( names::w,
+    &aeif_cond_alpha_RK5::get_y_elem_< aeif_cond_alpha_RK5::State_::W > );
 }
 }
 
@@ -102,7 +112,8 @@ nest::aeif_cond_alpha_RK5::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::aeif_cond_alpha_RK5::State_& nest::aeif_cond_alpha_RK5::State_::operator=( const State_& s )
+nest::aeif_cond_alpha_RK5::State_& nest::aeif_cond_alpha_RK5::State_::operator=(
+  const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -209,7 +220,8 @@ nest::aeif_cond_alpha_RK5::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_cond_alpha_RK5::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::aeif_cond_alpha_RK5::State_::set( const DictionaryDatum& d,
+  const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::g_ex, y_[ G_EXC ] );
@@ -229,7 +241,8 @@ nest::aeif_cond_alpha_RK5::Buffers_::Buffers_( aeif_cond_alpha_RK5& n )
   // init_buffers_().
 }
 
-nest::aeif_cond_alpha_RK5::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha_RK5& n )
+nest::aeif_cond_alpha_RK5::Buffers_::Buffers_( const Buffers_&,
+  aeif_cond_alpha_RK5& n )
   : logger_( n )
 {
   // Initialization of the remaining members is deferred to
@@ -293,12 +306,14 @@ nest::aeif_cond_alpha_RK5::init_buffers_()
 void
 nest::aeif_cond_alpha_RK5::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  B_.logger_
+    .init(); // ensures initialization in case mm connected after Simulate
 
   V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
   V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.RefractoryCounts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  assert( V_.RefractoryCounts_
+    >= 0 ); // since t_ref_ >= 0, this can only fail in error
 }
 
 /* ----------------------------------------------------------------
@@ -315,7 +330,8 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
   const long_t from,
   const long_t to ) // proceed in time
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -375,21 +391,24 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
 
         // k3 = f(told + 3/10*h, y + 3/40*h*k1 + 9/40*h*k2)
         for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
-          S_.yin[ i ] = S_.y_[ i ] + h * ( 3.0 / 40.0 * S_.k1[ i ] + 9.0 / 40.0 * S_.k2[ i ] );
+          S_.yin[ i ] = S_.y_[ i ]
+            + h * ( 3.0 / 40.0 * S_.k1[ i ] + 9.0 / 40.0 * S_.k2[ i ] );
         aeif_cond_alpha_RK5_dynamics( S_.yin, S_.k3 );
 
         // k4
         for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
           S_.yin[ i ] = S_.y_[ i ]
-            + h * ( 44.0 / 45.0 * S_.k1[ i ] - 56.0 / 15.0 * S_.k2[ i ] + 32.0 / 9.0 * S_.k3[ i ] );
+            + h * ( 44.0 / 45.0 * S_.k1[ i ] - 56.0 / 15.0 * S_.k2[ i ]
+                    + 32.0 / 9.0 * S_.k3[ i ] );
         aeif_cond_alpha_RK5_dynamics( S_.yin, S_.k4 );
 
         // k5
         for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
           S_.yin[ i ] = S_.y_[ i ]
-            + h * ( 19372.0 / 6561.0 * S_.k1[ i ] - 25360.0 / 2187.0 * S_.k2[ i ]
-                    + 64448.0 / 6561.0 * S_.k3[ i ]
-                    - 212.0 / 729.0 * S_.k4[ i ] );
+            + h
+              * ( 19372.0 / 6561.0 * S_.k1[ i ] - 25360.0 / 2187.0 * S_.k2[ i ]
+                  + 64448.0 / 6561.0 * S_.k3[ i ]
+                  - 212.0 / 729.0 * S_.k4[ i ] );
         aeif_cond_alpha_RK5_dynamics( S_.yin, S_.k5 );
 
         // k6
@@ -414,28 +433,32 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
         for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )
         {
           S_.yref[ i ] = S_.y_[ i ]
-            + h * ( 5179.0 / 57600.0 * S_.k1[ i ] + 7571.0 / 16695.0 * S_.k3[ i ]
-                    + 393.0 / 640.0 * S_.k4[ i ]
-                    - 92097.0 / 339200.0 * S_.k5[ i ]
-                    + 187.0 / 2100.0 * S_.k6[ i ]
-                    + 1.0 / 40.0 * S_.k7[ i ] );
+            + h
+              * ( 5179.0 / 57600.0 * S_.k1[ i ] + 7571.0 / 16695.0 * S_.k3[ i ]
+                  + 393.0 / 640.0 * S_.k4[ i ]
+                  - 92097.0 / 339200.0 * S_.k5[ i ]
+                  + 187.0 / 2100.0 * S_.k6[ i ]
+                  + 1.0 / 40.0 * S_.k7[ i ] );
         }
 
-        err = std::fabs( S_.ynew[ 0 ] - S_.yref[ 0 ] ) / MAXERR + 1.0e-200; // error estimate,
-        // based on different orders for stepsize prediction. Small value added to prevent err==0
+        err = std::fabs( S_.ynew[ 0 ] - S_.yref[ 0 ] ) / MAXERR
+          + 1.0e-200; // error estimate,
+        // based on different orders for stepsize prediction. Small value added
+        // to prevent err==0
 
-        // The following flag 'done' is needed to ensure that we accept the result
-        // for h<=HMIN, irrespective of the error. (See below)
+        // The following flag 'done' is needed to ensure that we accept the
+        // result for h<=HMIN, irrespective of the error. (See below)
 
         done = ( h <= HMIN ); // Always exit loop if h was <=HMIN already
 
-        // prediction of next integration stepsize. This step may result in a stepsize below HMIN.
+        // prediction of next integration stepsize. This step may result in a
+        // stepsize below HMIN.
         // If this happens, we must
         //   1. set the stepsize to HMIN
-        //   2. compute the result and accept it irrespective of the error, because we cannot
-        //      decrease the stepsize any further.
-        //  the 'done' flag, computed above ensure that the loop is terminated after the
-        //  result was computed.
+        //   2. compute the result and accept it irrespective of the error,
+        //      because we cannot decrease the stepsize any further.
+        //  the 'done' flag, computed above ensure that the loop is terminated
+        //  after the  result was computed.
 
         h *= 0.98 * std::pow( 1.0 / err, 1.0 / 5.0 );
         h = std::max( h, HMIN );
@@ -448,27 +471,30 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
       t = t_return;
 
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
+      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
+        || S_.y_[ State_::W ] > 1e6 )
         throw NumericalInstability( get_name() );
 
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
-      if ( S_.r_ > 0 )                               // if neuron is still in refractory period
+      if ( S_.r_ > 0 ) // if neuron is still in refractory period
         S_.y_[ State_::V_M ] = P_.V_reset_;          // clamp it to V_reset
       else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ ) // V_m >= V_peak: spike
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b;   // spike-driven adaptation
-        S_.r_ = V_.RefractoryCounts_; // initialize refractory steps with refractory period
+        S_.r_ = V_.RefractoryCounts_; // initialize refractory steps with
+                                      // refractory period
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        network()->send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     } // while
 
 
-    S_.y_[ State_::DG_EXC ] += B_.spike_exc_.get_value( lag ) * V_.g0_ex_; // add incoming spikes
+    S_.y_[ State_::DG_EXC ] +=
+      B_.spike_exc_.get_value( lag ) * V_.g0_ex_; // add incoming spikes
     S_.y_[ State_::DG_INH ] += B_.spike_inh_.get_value( lag ) * V_.g0_in_;
 
     // set new input current
@@ -487,10 +513,12 @@ nest::aeif_cond_alpha_RK5::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() ); // keep conductances positive
 }
 
@@ -503,7 +531,9 @@ nest::aeif_cond_alpha_RK5::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 void

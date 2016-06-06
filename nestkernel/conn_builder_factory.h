@@ -23,17 +23,19 @@
 #ifndef CONN_BUILDER_FACTORY_H
 #define CONN_BUILDER_FACTORY_H
 
+// C++ includes:
 #include <map>
-#include "name.h"
+
+// Includes from nestkernel:
+#include "conn_builder.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 #include "lockptrdatum.h"
-#include "conn_builder.h"
+#include "name.h"
 
 namespace nest
 {
-
-class Network;
-
 /**
  * Generic factory class for ConnBuilder objects.
  *
@@ -47,8 +49,7 @@ public:
   virtual ~GenericConnBuilderFactory()
   {
   }
-  virtual ConnBuilder* create( Network&,
-    const GIDCollection&,
+  virtual ConnBuilder* create( const GIDCollection&,
     const GIDCollection&,
     const DictionaryDatum&,
     const DictionaryDatum& ) const = 0;
@@ -65,13 +66,12 @@ class ConnBuilderFactory : public GenericConnBuilderFactory
 public:
   //! create conn builder
   ConnBuilder*
-  create( Network& net,
-    const GIDCollection& sources,
+  create( const GIDCollection& sources,
     const GIDCollection& targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec ) const
   {
-    return new ConnBuilderType( net, sources, targets, conn_spec, syn_spec );
+    return new ConnBuilderType( sources, targets, conn_spec, syn_spec );
   }
 };
 

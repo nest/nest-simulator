@@ -23,12 +23,13 @@
 #ifndef SPIKE_DILUTOR_H
 #define SPIKE_DILUTOR_H
 
-#include "nest.h"
-#include "event.h"
-#include "node.h"
-#include "stimulating_device.h"
+// Includes from nestkernel:
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "node.h"
 #include "ring_buffer.h"
+#include "stimulating_device.h"
 
 namespace nest
 {
@@ -123,7 +124,10 @@ private:
 };
 
 inline port
-spike_dilutor::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
+spike_dilutor::send_test_event( Node& target,
+  rport receptor_type,
+  synindex syn_id,
+  bool )
 {
 
   device_.enforce_single_syn_type( syn_id );

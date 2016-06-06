@@ -23,34 +23,36 @@
 #ifndef IAF_CHXK_2008_H
 #define IAF_CHXK_2008_H
 
+// Generated includes:
 #include "config.h"
 
 #ifdef HAVE_GSL
 
-#include "nest.h"
-#include "event.h"
-#include "archiving_node.h"
-#include "ring_buffer.h"
-#include "connection.h"
-#include "universal_data_logger.h"
-#include "recordables_map.h"
-
+// C includes:
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
 
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
+
 /* BeginDocumentation
-Name: iaf_chxk_2008 - Conductance based leaky integrate-and-fire neuron model used in
-Casti et al 2008.
+Name: iaf_chxk_2008 - Conductance based leaky integrate-and-fire neuron model
+                      used in Casti et al 2008.
 
 Description:
 iaf_chxk_2008 is an implementation of a spiking neuron using IAF dynamics with
-conductance-based synapses [1]. It is modeled after iaf_cond_alpha with the addition
-of after hyperpolarization current instead of a membrane potential reset.
-Incoming spike events induce a post-synaptic change
-of conductance modeled by an alpha function. The alpha function
-is normalized such that an event of weight 1.0 results in a peak current of 1 nS
-at t = tau_syn.
+conductance-based synapses [1]. It is modeled after iaf_cond_alpha with the
+addition of after hyper-polarization current instead of a membrane potential
+reset. Incoming spike events induce a post-synaptic change of conductance
+modeled by an alpha function. The alpha function is normalized such that an
+event of weight 1.0 results in a peak current of 1 nS at t = tau_syn.
 
 Parameters:
 The following parameters can be set in the status dictionary.
@@ -66,13 +68,14 @@ tau_ex     double - Rise time of the excitatory synaptic alpha function in ms.
 tau_in     double - Rise time of the inhibitory synaptic alpha function in ms.
 I_e        double - Constant input current in pA.
 tau_ahp    double - Afterhyperpolarization (AHP) time constant in ms.
-E_ahp	   double - AHP potential in mV.
-g_ahp	   double - AHP conductance in nS.
-ahp_bug	   bool   - Defaults to false. If true, behaves like original model implementation.
+E_ahp      double - AHP potential in mV.
+g_ahp      double - AHP conductance in nS.
+ahp_bug    bool   - Defaults to false. If true, behaves like original
+                    model implementation.
 
 References:
-[1] Casti A, Hayot F, Xiao Y, and Kaplan E (2008) A simple model of retina-LGN transmission.
-    J Comput Neurosci 24:235-252.
+[1] Casti A, Hayot F, Xiao Y, and Kaplan E (2008) A simple model of retina-LGN
+transmission. J Comput Neurosci 24:235-252.
 
 Sends: SpikeEvent
 
@@ -112,7 +115,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -159,19 +163,20 @@ private:
   //! Model parameters
   struct Parameters_
   {
-    double_t V_th;     //!< Threshold Potential in mV
-    double_t g_L;      //!< Leak Conductance in nS
-    double_t C_m;      //!< Membrane Capacitance in pF
-    double_t E_ex;     //!< Excitatory reversal Potential in mV
-    double_t E_in;     //!< Inhibitory reversal Potential in mV
-    double_t E_L;      //!< Leak reversal Potential (a.k.a. resting potential) in mV
+    double_t V_th; //!< Threshold Potential in mV
+    double_t g_L;  //!< Leak Conductance in nS
+    double_t C_m;  //!< Membrane Capacitance in pF
+    double_t E_ex; //!< Excitatory reversal Potential in mV
+    double_t E_in; //!< Inhibitory reversal Potential in mV
+    double_t E_L;  //!< Leak reversal Potential (a.k.a. resting potential) in mV
     double_t tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
     double_t tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
     double_t I_e;      //!< Constant Current in pA
     double_t tau_ahp;  //!< Afterhyperpolarization (AHP) time constant
     double_t g_ahp;    //!< AHP conductance
     double_t E_ahp;    //!< AHP potential
-    bool ahp_bug;      //!< If true, discard AHP conductance value from previous spikes
+    bool ahp_bug;      //!< If true, discard AHP conductance value from previous
+                       //!< spikes
     Parameters_();     //!< Set default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
@@ -348,7 +353,10 @@ private:
 // Boilerplate inline function definitions ----------------------------------
 
 inline port
-iaf_chxk_2008::send_test_event( Node& target, rport receptor_type, synindex, bool )
+iaf_chxk_2008::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -373,7 +381,8 @@ iaf_chxk_2008::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_chxk_2008::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_chxk_2008::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

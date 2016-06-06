@@ -23,14 +23,18 @@
 #ifndef GID_COLLECTION_H
 #define GID_COLLECTION_H
 
-#include <vector>
+// C++ includes:
 #include <ostream>
-#include <utility>
-#include <stdexcept>
+#include <stdexcept> // out_of_range
+#include <utility>   // pair
+#include <vector>
 
-#include "nest.h"
-#include "tokenarray.h"
+// Includes from nestkernel:
+#include "nest_types.h"
+
+// Includes from sli:
 #include "arraydatum.h"
+#include "tokenarray.h"
 
 namespace nest
 {
@@ -83,7 +87,8 @@ inline index GIDCollection::const_iterator::operator*() const
   return ( *gc_ )[ offset_ ];
 }
 
-inline const GIDCollection::const_iterator& GIDCollection::const_iterator::operator++()
+inline const GIDCollection::const_iterator& GIDCollection::const_iterator::
+operator++()
 {
   ++offset_;
   return *this;

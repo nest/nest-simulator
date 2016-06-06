@@ -31,13 +31,18 @@
 #ifndef ARCHIVING_NODE_H
 #define ARCHIVING_NODE_H
 
-#include "nest.h"
-#include "node.h"
-#include "dictdatum.h"
-#include "nest_time.h"
-#include "histentry.h"
+// C++ includes:
 #include <deque>
+
+// Includes from nestkernel:
+#include "histentry.h"
+#include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
 #include "synaptic_element.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 #define DEBUG_ARCHIVER 1
 
@@ -51,6 +56,7 @@ namespace nest
  */
 class Archiving_Node : public Node
 {
+  using Node::get_synaptic_elements;
 
 public:
   /**
@@ -64,8 +70,8 @@ public:
    * Copy Constructor.
    */
   Archiving_Node( const Archiving_Node& );
-
   /**
+
    * \fn double_t get_Ca_minus()
    * return the current value of Ca_minus
    */
@@ -112,7 +118,7 @@ public:
    * Delete a certain portion of the vacant synaptic elements which are not
    * in use
    */
-  void decay_synaptic_elements_vacant( double_t p );
+  void decay_synaptic_elements_vacant();
 
   /**
    * \fn void connect_synaptic_element()
@@ -142,9 +148,11 @@ public:
   double_t get_triplet_K_value( const std::deque< histentry >::iterator& iter );
 
   /**
-   * \fn void get_history(long_t t1, long_t t2, std::deque<Archiver::histentry>::iterator* start,
+   * \fn void get_history(long_t t1, long_t t2,
+   * std::deque<Archiver::histentry>::iterator* start,
    * std::deque<Archiver::histentry>::iterator* finish)
-   * return the spike times (in steps) of spikes which occurred in the range (t1,t2].
+   * return the spike times (in steps) of spikes which occurred in the range
+   * (t1,t2].
    */
   void get_history( double_t t1,
     double_t t2,
@@ -154,7 +162,8 @@ public:
   /**
    * Register a new incoming STDP connection.
    *
-   * t_first_read: The newly registered synapse will read the history entries with t > t_first_read.
+   * t_first_read: The newly registered synapse will read the history entries
+   * with t > t_first_read.
    */
   void register_stdp_connection( double_t t_first_read );
 
@@ -169,10 +178,10 @@ public:
 
 protected:
   /**
-   * \fn void set_spiketime(Time const & t_sp)
+   * \fn void set_spiketime(Time const & t_sp, double_t offset)
    * record spike history
    */
-  void set_spiketime( Time const& t_sp );
+  void set_spiketime( Time const& t_sp, double_t offset = 0.0 );
 
   /**
    * \fn double_t get_spiketime()
@@ -217,11 +226,12 @@ private:
 
   // Value of the calcium concentration [Ca2+] at Ca_t_. Intracellular calcium
   // concentration has a linear factor to mean electrical activity of 10^2,
-  // this means, for example, that a [Ca2+] of 0.2 is equivalent to a mean activity
-  // of 20Hz.
+  // this means, for example, that a [Ca2+] of 0.2 is equivalent to a mean
+  // activity of 20Hz.
   double_t Ca_minus_;
 
-  // Time constant for exponential decay of the intracellular calcium concentration
+  // Time constant for exponential decay of the intracellular calcium
+  // concentration
   double_t tau_Ca_;
 
   // Increase in calcium concentration [Ca2+] for each spike of the neuron

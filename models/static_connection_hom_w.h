@@ -22,20 +22,21 @@
 
 
 /* BeginDocumentation
-   Name: static_synapse_hom_w - Synapse type for static connections with homogeneous weight.
+   Name: static_synapse_hom_w - Synapse type for static connections with
+   homogeneous weight.
 
    Description:
-     static_synapse_hom_w does not support any kind of plasticity. It simply stores
-     the parameters delay, target, and receiver port for each connection and uses a common
-     weight for all connections.
+     static_synapse_hom_w does not support any kind of plasticity. It simply
+     stores the parameters delay, target, and receiver port for each connection
+     and uses a common weight for all connections.
 
    Remarks:
-     The common weight for all connections of this model must be set by SetDefaults on the model.
-     If you create copies of this model using CopyModel, each derived model can have a different
-     weight.
+     The common weight for all connections of this model must be set by
+     SetDefaults on the model. If you create copies of this model using
+     CopyModel, each derived model can have a different weight.
 
-   Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent, DataLoggingRequest,
-   DoubleDataEvent
+   Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
+   DataLoggingRequest, DoubleDataEvent
 
    Parameters:
      No Parameters
@@ -50,17 +51,17 @@
 #ifndef STATICCONNECTION_HOM_W_H
 #define STATICCONNECTION_HOM_W_H
 
-#include "connection.h"
+// Includes from nestkernel:
 #include "common_properties_hom_w.h"
+#include "connection.h"
 
 namespace nest
 {
 
 /**
- * Class representing a static connection. A static connection has the properties weight, delay and
- * receiver port.
- * A suitable Connector containing these connections can be obtained from the template
- * GenericConnector.
+ * Class representing a static connection. A static connection has the
+ * properties weight, delay and receiver port. A suitable Connector containing
+ * these connections can be obtained from the template GenericConnector.
  */
 template < typename targetidentifierT >
 class StaticConnectionHomW : public Connection< targetidentifierT >
@@ -71,10 +72,10 @@ public:
   typedef CommonPropertiesHomW CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
-  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
-  // This avoids explicit name prefixes in all places these functions are used.
-  // Since ConnectionBase depends on the template parameter, they are not automatically
-  // found in the base class.
+  // Explicitly declare all methods inherited from the dependent base
+  // ConnectionBase. This avoids explicit name prefixes in all places these
+  // functions are used. Since ConnectionBase depends on the template parameter,
+  // they are not automatically found in the base class.
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
   using ConnectionBase::get_delay_steps;
@@ -131,7 +132,11 @@ public:
   void get_status( DictionaryDatum& d ) const;
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType& )
+  check_connection( Node& s,
+    Node& t,
+    rport receptor_type,
+    double_t,
+    const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -156,7 +161,8 @@ public:
   void set_weight( double_t )
   {
     throw BadProperty(
-      "Setting of individual weights is not possible! The common weights can be changed via "
+      "Setting of individual weights is not possible! The common weights can "
+      "be changed via "
       "CopyModel()." );
   }
 };
@@ -164,7 +170,8 @@ public:
 
 template < typename targetidentifierT >
 void
-StaticConnectionHomW< targetidentifierT >::get_status( DictionaryDatum& d ) const
+StaticConnectionHomW< targetidentifierT >::get_status(
+  DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< long_t >( d, names::size_of, sizeof( *this ) );

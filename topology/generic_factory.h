@@ -23,8 +23,13 @@
 #ifndef GENERIC_FACTORY_H
 #define GENERIC_FACTORY_H
 
+// C++ includes:
 #include <map>
-#include "nest.h"
+
+// Includes from nestkernel:
+#include "nest_types.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 
 namespace nest
@@ -83,7 +88,8 @@ private:
 
 template < class BaseT >
 inline BaseT*
-GenericFactory< BaseT >::create( const Name& name, const DictionaryDatum& d ) const
+GenericFactory< BaseT >::create( const Name& name,
+  const DictionaryDatum& d ) const
 {
   typename AssocMap::const_iterator i = associations_.find( name );
   if ( i != associations_.end() )
@@ -103,9 +109,11 @@ GenericFactory< BaseT >::register_subtype( const Name& name )
 
 template < class BaseT >
 inline bool
-GenericFactory< BaseT >::register_subtype( const Name& name, CreatorFunction creator )
+GenericFactory< BaseT >::register_subtype( const Name& name,
+  CreatorFunction creator )
 {
-  return associations_.insert( std::pair< Name, CreatorFunction >( name, creator ) ).second;
+  return associations_.insert( std::pair< Name, CreatorFunction >(
+                                 name, creator ) ).second;
 }
 
 template < class BaseT >

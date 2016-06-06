@@ -23,12 +23,14 @@
 #ifndef STRINGDATUM_H
 #define STRINGDATUM_H
 
-//  #include <typeinfo>
+// C++ includes:
 #include <string>
+//  #include <typeinfo>
 
+// Includes from sli:
 #include "aggregatedatum.h"
-#include "slifunction.h"
 #include "interpret.h"
+#include "slifunction.h"
 
 //  class StringDatum: public AggregateDatum<string,&SLIInterpreter::Stringtype>
 //  {
@@ -69,7 +71,8 @@ sli::pool AggregateDatum< std::string, &SLIInterpreter::Stringtype >::memory;
 
 
 template <>
-void AggregateDatum< std::string, &SLIInterpreter::Stringtype >::pprint( std::ostream& out ) const;
+void AggregateDatum< std::string, &SLIInterpreter::Stringtype >::pprint(
+  std::ostream& out ) const;
 
 
 typedef AggregateDatum< std::string, &SLIInterpreter::Stringtype > StringDatum;

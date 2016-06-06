@@ -23,16 +23,23 @@
 #ifndef POSITION_H
 #define POSITION_H
 
-#include <vector>
-#include <string>
-#include <iostream>
-#include <sstream>
+// C++ includes:
 #include <cassert>
 #include <cmath>
-#include "nest.h"
-#include "token.h"
+#include <iostream>
+#include <sstream>
+#include <string>
+#include <vector>
+
+// Includes from libnestutil:
 #include "compose.hpp"
+
+// Includes from nestkernel:
 #include "exceptions.h"
+#include "nest_types.h"
+
+// Includes from sli:
+#include "token.h"
 
 namespace nest
 {
@@ -204,7 +211,8 @@ public:
 
   /**
    * In-place elementwise subtraction with scalar.
-   * @returns the Position itself after subtracting the scalar from all coordinates.
+   * @returns the Position itself after subtracting the scalar from all
+   * coordinates.
    */
   Position& operator-=( const T& );
 
@@ -275,7 +283,8 @@ public:
   /**
    * Output the Position to an ostream.
    */
-  friend std::ostream& operator<<<>( std::ostream& os, const Position< D, T >& pos );
+  friend std::ostream& operator<<<>( std::ostream& os,
+    const Position< D, T >& pos );
 
 protected:
   T x_[ D ];
@@ -408,7 +417,8 @@ inline Position< D, T >::Position( const std::vector< T >& y )
 {
   if ( y.size() != D )
   {
-    throw BadProperty( String::compose( "Expected a %1-dimensional position.", D ) );
+    throw BadProperty(
+      String::compose( "Expected a %1-dimensional position.", D ) );
   }
   std::copy( y.begin(), y.end(), x_ );
 }
@@ -462,7 +472,8 @@ Position< D, T >::getToken() const
 
 template < int D, class T >
 template < class OT >
-inline Position< D, T > Position< D, T >::operator+( const Position< D, OT >& other ) const
+inline Position< D, T > Position< D, T >::operator+(
+  const Position< D, OT >& other ) const
 {
   Position p = *this;
   p += other;
@@ -471,7 +482,8 @@ inline Position< D, T > Position< D, T >::operator+( const Position< D, OT >& ot
 
 template < int D, class T >
 template < class OT >
-inline Position< D, T > Position< D, T >::operator-( const Position< D, OT >& other ) const
+inline Position< D, T > Position< D, T >::operator-(
+  const Position< D, OT >& other ) const
 {
   Position p = *this;
   p -= other;
@@ -488,7 +500,8 @@ inline Position< D, T > Position< D, T >::operator-() const
 
 template < int D, class T >
 template < class OT >
-inline Position< D, T > Position< D, T >::operator*( const Position< D, OT >& other ) const
+inline Position< D, T > Position< D, T >::operator*(
+  const Position< D, OT >& other ) const
 {
   Position p = *this;
   p *= other;
@@ -497,7 +510,8 @@ inline Position< D, T > Position< D, T >::operator*( const Position< D, OT >& ot
 
 template < int D, class T >
 template < class OT >
-inline Position< D, T > Position< D, T >::operator/( const Position< D, OT >& other ) const
+inline Position< D, T > Position< D, T >::operator/(
+  const Position< D, OT >& other ) const
 {
   Position p = *this;
   p /= other;
@@ -538,7 +552,8 @@ inline Position< D, T > Position< D, T >::operator/( const T& a ) const
 
 template < int D, class T >
 template < class OT >
-inline Position< D, T >& Position< D, T >::operator+=( const Position< D, OT >& other )
+inline Position< D, T >& Position< D, T >::operator+=(
+  const Position< D, OT >& other )
 {
   for ( int i = 0; i < D; ++i )
     x_[ i ] += other.x_[ i ];
@@ -547,7 +562,8 @@ inline Position< D, T >& Position< D, T >::operator+=( const Position< D, OT >& 
 
 template < int D, class T >
 template < class OT >
-inline Position< D, T >& Position< D, T >::operator-=( const Position< D, OT >& other )
+inline Position< D, T >& Position< D, T >::operator-=(
+  const Position< D, OT >& other )
 {
   for ( int i = 0; i < D; ++i )
     x_[ i ] -= other.x_[ i ];
@@ -556,7 +572,8 @@ inline Position< D, T >& Position< D, T >::operator-=( const Position< D, OT >& 
 
 template < int D, class T >
 template < class OT >
-inline Position< D, T >& Position< D, T >::operator*=( const Position< D, OT >& other )
+inline Position< D, T >& Position< D, T >::operator*=(
+  const Position< D, OT >& other )
 {
   for ( int i = 0; i < D; ++i )
     x_[ i ] *= other.x_[ i ];
@@ -565,7 +582,8 @@ inline Position< D, T >& Position< D, T >::operator*=( const Position< D, OT >& 
 
 template < int D, class T >
 template < class OT >
-inline Position< D, T >& Position< D, T >::operator/=( const Position< D, OT >& other )
+inline Position< D, T >& Position< D, T >::operator/=(
+  const Position< D, OT >& other )
 {
   for ( int i = 0; i < D; ++i )
     x_[ i ] /= other.x_[ i ];

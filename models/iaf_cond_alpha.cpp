@@ -25,25 +25,32 @@
 
 #ifdef HAVE_GSL
 
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include "universal_data_logger_impl.h"
-#include <limits>
-
+// C++ includes:
+#include <cstdio>
 #include <iomanip>
 #include <iostream>
-#include <cstdio>
+#include <limits>
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_cond_alpha > nest::iaf_cond_alpha::recordablesMap_;
+nest::RecordablesMap< nest::iaf_cond_alpha >
+  nest::iaf_cond_alpha::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -56,9 +63,12 @@ void
 RecordablesMap< iaf_cond_alpha >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::V_M > );
-  insert_( names::g_ex, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::G_EXC > );
-  insert_( names::g_in, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::G_INH > );
+  insert_(
+    names::V_m, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::V_M > );
+  insert_( names::g_ex,
+    &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::G_EXC > );
+  insert_( names::g_in,
+    &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::G_INH > );
 
   insert_( names::t_ref_remaining, &iaf_cond_alpha::get_r_ );
 }
@@ -69,14 +79,18 @@ RecordablesMap< iaf_cond_alpha >::create()
  * ---------------------------------------------------------------- */
 
 extern "C" inline int
-nest::iaf_cond_alpha_dynamics( double, const double y[], double f[], void* pnode )
+nest::iaf_cond_alpha_dynamics( double,
+  const double y[],
+  double f[],
+  void* pnode )
 {
   // a shorthand
   typedef nest::iaf_cond_alpha::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::iaf_cond_alpha& node = *( reinterpret_cast< nest::iaf_cond_alpha* >( pnode ) );
+  const nest::iaf_cond_alpha& node =
+    *( reinterpret_cast< nest::iaf_cond_alpha* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -88,7 +102,8 @@ nest::iaf_cond_alpha_dynamics( double, const double y[], double f[], void* pnode
   const double_t I_leak = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
 
   // dV_m/dt
-  f[ 0 ] = ( -I_leak - I_syn_exc - I_syn_inh + node.B_.I_stim_ + node.P_.I_e ) / node.P_.C_m;
+  f[ 0 ] = ( -I_leak - I_syn_exc - I_syn_inh + node.B_.I_stim_ + node.P_.I_e )
+    / node.P_.C_m;
 
   // d dg_exc/dt, dg_exc/dt
   f[ 1 ] = -y[ S::DG_EXC ] / node.P_.tau_synE;
@@ -135,7 +150,8 @@ nest::iaf_cond_alpha::State_::State_( const State_& s )
     y[ i ] = s.y[ i ];
 }
 
-nest::iaf_cond_alpha::State_& nest::iaf_cond_alpha::State_::operator=( const State_& s )
+nest::iaf_cond_alpha::State_& nest::iaf_cond_alpha::State_::operator=(
+  const State_& s )
 {
   if ( this == &s ) // avoid assignment to self
     return *this;
@@ -227,7 +243,8 @@ nest::iaf_cond_alpha::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_alpha::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::iaf_cond_alpha::State_::set( const DictionaryDatum& d,
+  const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y[ V_M ] );
 }
@@ -291,7 +308,8 @@ nest::iaf_cond_alpha::init_buffers_()
   B_.IntegrationStep_ = B_.step_;
 
   if ( B_.s_ == 0 )
-    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ =
+      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   else
     gsl_odeiv_step_reset( B_.s_ );
 
@@ -316,13 +334,15 @@ nest::iaf_cond_alpha::init_buffers_()
 void
 nest::iaf_cond_alpha::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
 
   V_.PSConInit_E = 1.0 * numerics::e / P_.tau_synE;
   V_.PSConInit_I = 1.0 * numerics::e / P_.tau_synI;
   V_.RefractoryCounts = Time( Time::ms( P_.t_ref ) ).get_steps();
 
-  assert( V_.RefractoryCounts >= 0 ); // since t_ref >= 0, this can only fail in error
+  // since t_ref >= 0, this can only fail in error
+  assert( V_.RefractoryCounts >= 0 );
 }
 
 /* ----------------------------------------------------------------
@@ -330,10 +350,13 @@ nest::iaf_cond_alpha::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_alpha::update( Time const& origin, const long_t from, const long_t to )
+nest::iaf_cond_alpha::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
 
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -386,7 +409,7 @@ nest::iaf_cond_alpha::update( Time const& origin, const long_t from, const long_
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // add incoming spikes
@@ -407,11 +430,14 @@ nest::iaf_cond_alpha::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
-      -e.get_weight() * e.get_multiplicity() ); // ensure conductance is positive
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
+      -e.get_weight()
+        * e.get_multiplicity() ); // ensure conductance is positive
 }
 
 void
@@ -421,7 +447,8 @@ nest::iaf_cond_alpha::handle( CurrentEvent& e )
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( network()->get_slice_origin() ), e.get_weight() * e.get_current() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    e.get_weight() * e.get_current() );
 }
 
 void

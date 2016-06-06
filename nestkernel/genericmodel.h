@@ -23,8 +23,11 @@
 #ifndef GENERICMODEL_H
 #define GENERICMODEL_H
 
-#include "model.h"
+// C++ includes:
 #include <new>
+
+// Includes from nestkernel:
+#include "model.h"
 
 namespace nest
 {
@@ -74,6 +77,10 @@ public:
    */
   port send_test_event( Node&, rport, synindex, bool );
 
+  void sends_secondary_event( GapJunctionEvent& ge );
+
+  SignalType sends_signal() const;
+
   Node const& get_prototype() const;
 
   void set_model_id( int );
@@ -117,7 +124,8 @@ GenericModel< ElementT >::GenericModel( const char name[] )
 }
 
 template < typename ElementT >
-GenericModel< ElementT >::GenericModel( const GenericModel& oldmod, const std::string& newname )
+GenericModel< ElementT >::GenericModel( const GenericModel& oldmod,
+  const std::string& newname )
   : Model( newname )
   , proto_( oldmod.proto_ )
 {
@@ -186,6 +194,20 @@ GenericModel< ElementT >::send_test_event( Node& target,
 }
 
 template < typename ElementT >
+inline void
+GenericModel< ElementT >::sends_secondary_event( GapJunctionEvent& ge )
+{
+  return proto_.sends_secondary_event( ge );
+}
+
+template < typename ElementT >
+inline nest::SignalType
+GenericModel< ElementT >::sends_signal() const
+{
+  return proto_.sends_signal();
+}
+
+template < typename ElementT >
 void
 GenericModel< ElementT >::set_status_( DictionaryDatum d )
 {
@@ -220,80 +242,6 @@ void
 GenericModel< ElementT >::set_model_id( int i )
 {
   proto_.set_model_id( i );
-}
-
-
-/**
- * Register a model prototype with the network.
- * This function must be called exactly once for each model class to make
- * it known to the network. The natural place for a call to this function
- * is in a *module.cpp file.
- * @param reference to network
- * @param name under which model is to be known in simulator
- * @return Model ID assigned by network
- *
- * @see register_private_prototype_model, register_prototype_connection
- */
-template < class ModelT >
-index
-register_model( Network& net, const std::string& name, bool private_model = false )
-{
-  Model* prototype = new GenericModel< ModelT >( name );
-  assert( prototype != 0 );
-  return net.register_model( *prototype, private_model );
-}
-
-/**
- * Register a pre-configured model prototype with the network.
- * This function must be called exactly once for each model class to make
- * it known to the network. The natural place for a call to this function
- * is in a *module.cpp file.
- *
- * Pre-configured models are models based on the same class, as
- * another model, but have different parameter settings; e.g.,
- * voltmeter is a pre-configured multimeter.
- *
- * @param reference to network
- * @param name under which model is to be known in simulator
- * @param dictionary to use to pre-configure model
- * @param register as private model if true
- * @return Model ID assigned by network
- *
- * @see register_private_prototype_model, register_prototype_connection
- */
-template < class ModelT >
-index
-register_preconf_model( Network& net,
-  const std::string& name,
-  Dictionary& conf,
-  bool private_model = false )
-{
-  Model* prototype = new GenericModel< ModelT >( name );
-  assert( prototype != 0 );
-  conf.clear_access_flags();
-  prototype->set_status( conf );
-  std::string missed;
-  assert( conf.all_accessed( missed ) ); // we only get here from C++ code, no need for exception
-  return net.register_model( *prototype, private_model );
-}
-
-/**
- * Register a private model prototype with the network.
- * Private model prototypes differ from normal ones in that they are not
- * visible in the modeldict. This is important for node types that serve
- * only as in-/output elements of layers, but cannot "live" independently.
- * @param reference to network
- * @param name under which model is to be known in simulator
- * @return Model ID assigned by network
- *
- * @see register_prototype_model, register_prototype_connection,
- *      layerdc_node, layerdc_generator
- */
-template < class ModelT >
-index
-register_private_model( Network& net, const std::string& name )
-{
-  return register_model< ModelT >( net, name, true );
 }
 }
 #endif

@@ -23,19 +23,22 @@
 #ifndef HH_COND_EXP_TRAUB_H
 #define HH_COND_EXP_TRAUB_H
 
+// Generated includes:
 #include "config.h"
 
 #ifdef HAVE_GSL
 
-#include "nest.h"
-#include "event.h"
-#include "archiving_node.h"
-#include "ring_buffer.h"
-#include "connection.h"
-#include "universal_data_logger.h"
-#include "recordables_map.h"
-
+// C includes:
 #include <gsl/gsl_odeiv.h>
+
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
 
 namespace nest
 {
@@ -50,7 +53,8 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
+extern "C" int
+hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
 
 /* BeginDocumentation
 Name: hh_cond_exp_traub - Hodgin Huxley based model, Traub modified.
@@ -59,14 +63,15 @@ Description:
 
  hh_cond_exp_traub is an implementation of a modified Hodkin-Huxley model
 
- (1) Post-syaptic currents
- Incoming spike events induce a post-synaptic change of conductance modelled
- by an exponential function. The exponential function is normalised such that an event of
- weight 1.0 results in a peak current of 1 nS.
+ (1) Post-synaptic currents
+ Incoming spike events induce a post-synaptic change of conductance modeled
+ by an exponential function. The exponential function is normalized such that an
+ event of weight 1.0 results in a peak current of 1 nS.
 
  (2) Spike Detection
- Spike detection is done by a combined threshold-and-local-maximum search: if there
- is a local maximum above a certain threshold of the membrane potential, it is considered a spike.
+ Spike detection is done by a combined threshold-and-local-maximum search: if
+ there is a local maximum above a certain threshold of the membrane potential,
+ it is considered a spike.
 
 Problems/Todo:
 Only the channel variables m,h,n are implemented. The original
@@ -78,12 +83,15 @@ Parameters:
 
  V_m        double - Membrane potential in mV
  V_T        double - Voltage offset that controls dynamics. For default
-                     parameters, V_T = -63mV results in a threshold around -50mV.
+                     parameters, V_T = -63mV results in a threshold around
+                     -50mV.
  E_L        double - Leak reversal potential in mV.
  C_m        double - Capacity of the membrane in pF.
  g_L        double - Leak conductance in nS.
- tau_syn_ex double - Time constant of the excitatory synaptic exponential function in ms.
- tau_syn_in double - Time constant of the inhibitory synaptic exponential function in ms.
+ tau_syn_ex double - Time constant of the excitatory synaptic exponential
+                     function in ms.
+ tau_syn_in double - Time constant of the inhibitory synaptic exponential
+                     function in ms.
  E_ex       double - Excitatory synaptic reversal potential in mV.
  E_in       double - Inhibitory synaptic reversal potential in mV.
  E_Na       double - Sodium reversal potential in mV.
@@ -94,9 +102,8 @@ Parameters:
 
 References:
 
-Traub, R.D. and Miles, R. (1991)
-Neuronal Networks of the Hippocampus. Cambridge University Press,
-Cambridge UK.
+Traub, R.D. and Miles, R. (1991) Neuronal Networks of the Hippocampus.
+Cambridge University Press, Cambridge UK.
 
 Sends: SpikeEvent
 
@@ -117,7 +124,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -147,7 +155,8 @@ private:
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
+  friend int
+  hh_cond_exp_traub_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< hh_cond_exp_traub >;
@@ -170,7 +179,8 @@ private:
     double E_K;  //!< Potassium Reversal Potential in mV
     double E_L;  //!< Leak Reversal Potential in mV
 
-    double V_T; //!< Voltage offset for dynamics (adjusts threshold to around -50 mV)
+    //! Voltage offset for dynamics (adjusts threshold to around -50 mV)
+    double V_T;
 
     double E_ex;     //!< Excitatory reversal Potential in mV
     double E_in;     //!< Inhibitory reversal Potential in mV
@@ -205,8 +215,9 @@ public:
       STATE_VEC_SIZE
     };
 
-    double y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
-    int_t r_;                    //!< number of refractory steps remaining
+    //! neuron state, must be C-array for GSL solver
+    double y_[ STATE_VEC_SIZE ];
+    int_t r_; //!< number of refractory steps remaining
 
     State_( const Parameters_& p );
     State_( const State_& s );
@@ -235,8 +246,9 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( hh_cond_exp_traub& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, hh_cond_exp_traub& ); //!<Sets buffer pointers to 0
+    Buffers_( hh_cond_exp_traub& ); //!<Sets buffer pointers to 0
+    //! Sets buffer pointers to 0
+    Buffers_( const Buffers_&, hh_cond_exp_traub& );
 
     //! Logger for all analog data
     UniversalDataLogger< hh_cond_exp_traub > logger_;
@@ -289,7 +301,10 @@ public:
 };
 
 inline port
-hh_cond_exp_traub::send_test_event( Node& target, rport receptor_type, synindex, bool )
+hh_cond_exp_traub::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -315,7 +330,8 @@ hh_cond_exp_traub::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-hh_cond_exp_traub::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+hh_cond_exp_traub::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

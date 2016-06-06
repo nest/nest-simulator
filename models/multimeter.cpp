@@ -20,8 +20,10 @@
  *
  */
 
-#include "network.h"
 #include "multimeter.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
 
 namespace nest
 {
@@ -85,9 +87,11 @@ nest::Multimeter::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b )
+nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
+  const Buffers_& b )
 {
-  if ( b.has_targets_ && ( d->known( names::interval ) || d->known( names::record_from ) ) )
+  if ( b.has_targets_
+    && ( d->known( names::interval ) || d->known( names::record_from ) ) )
     throw BadProperty(
       "The recording interval and the list of properties to record "
       "cannot be changed after the multimeter has been connected to "
@@ -103,7 +107,8 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b 
 
     // see if we can represent interval as multiple of step
     interval_ = Time::step( Time( Time::ms( v ) ).get_steps() );
-    if ( std::abs( 1 - interval_.get_ms() / v ) > 10 * std::numeric_limits< double >::epsilon() )
+    if ( std::abs( 1 - interval_.get_ms() / v ) > 10
+        * std::numeric_limits< double >::epsilon() )
       throw BadProperty(
         "The sampling interval must be a multiple of "
         "the simulation resolution" );
@@ -152,8 +157,9 @@ void
 Multimeter::update( Time const& origin, const long_t from, const long_t )
 {
   /* There is nothing to request during the first time slice.
-     For each subsequent slice, we collect all data generated during the previous
-     slice if we are called at the beginning of the slice. Otherwise, we do nothing.
+     For each subsequent slice, we collect all data generated during the
+     previous slice if we are called at the beginning of the slice. Otherwise,
+     we do nothing.
    */
   if ( origin.get_steps() == 0 || from != 0 )
     return;
@@ -164,15 +170,16 @@ Multimeter::update( Time const& origin, const long_t from, const long_t )
   // ensures that the event is recorded.
   // handle() has access to request_, so it knows what we asked for.
   //
-  // Provided we are recording anything, V_.new_request_ is set to true. This informs
-  // handle() that the first incoming DataLoggingReply is for a new time slice, so that
-  // the data from that first Reply must be pushed back; all following Reply data is
-  // then added.
+  // Provided we are recording anything, V_.new_request_ is set to true. This
+  // informs handle() that the first incoming DataLoggingReply is for a new time
+  // slice, so that the data from that first Reply must be pushed back; all
+  // following Reply data is then added.
   //
   // Note that not all nodes receiving the request will necessarily answer.
-  V_.new_request_ = B_.has_targets_ && !P_.record_from_.empty(); // no targets, no request
+  V_.new_request_ =
+    B_.has_targets_ && !P_.record_from_.empty(); // no targets, no request
   DataLoggingRequest req;
-  network()->send( *this, req );
+  kernel().event_delivery_manager.send( *this, req );
 }
 
 void
@@ -181,12 +188,13 @@ Multimeter::handle( DataLoggingReply& reply )
   // easy access to relevant information
   DataLoggingReply::Container const& info = reply.get_info();
 
-  // If this is the first Reply arriving, we need to mark the beginning of the data
-  // for this round of replies
+  // If this is the first Reply arriving, we need to mark the beginning of the
+  // data for this round of replies
   if ( V_.new_request_ )
     V_.current_request_data_start_ = S_.data_.size();
 
-  size_t inactive_skipped = 0; // count records that have been skipped during inactivity
+  // count records that have been skipped during inactivity
+  size_t inactive_skipped = 0;
 
   // record all data, time point by time point
   for ( size_t j = 0; j < info.size(); ++j )
@@ -203,7 +211,8 @@ Multimeter::handle( DataLoggingReply& reply )
     // store stamp for current data set in event for logging
     reply.set_stamp( info[ j ].timestamp );
 
-    // record sender and time information; in accumulator mode only for first Reply in slice
+    // record sender and time information; in accumulator mode only for first
+    // Reply in slice
     if ( !device_.to_accumulator() || V_.new_request_ )
       device_.record_event( reply, false ); // false: more data to come
 
@@ -217,23 +226,26 @@ Multimeter::handle( DataLoggingReply& reply )
     }
     else
     {
-      if ( V_.new_request_ ) // first reply in slice, push back to create new time points
+      if ( V_.new_request_ ) // first reply in slice, push back to create new
+                             // time points
         S_.data_.push_back( info[ j ].data );
       else
-      { // add data; offset j from current_request_data_start_, but inactive skipped entries
-        // subtracted
+      { // add data; offset j from current_request_data_start_, but inactive
+        // skipped entries subtracted
         assert( j >= inactive_skipped );
-        assert( V_.current_request_data_start_ + j - inactive_skipped < S_.data_.size() );
-        assert( S_.data_[ V_.current_request_data_start_ + j - inactive_skipped ].size()
-          == info[ j ].data.size() );
+        assert( V_.current_request_data_start_ + j - inactive_skipped
+          < S_.data_.size() );
+        assert( S_.data_[ V_.current_request_data_start_ + j
+                     - inactive_skipped ].size() == info[ j ].data.size() );
         for ( size_t k = 0; k < info[ j ].data.size(); ++k )
-          S_.data_[ V_.current_request_data_start_ + j - inactive_skipped ][ k ] +=
-            info[ j ].data[ k ];
+          S_.data_[ V_.current_request_data_start_ + j
+            - inactive_skipped ][ k ] += info[ j ].data[ k ];
       }
     }
   }
 
-  V_.new_request_ = false; // correct either we are done with the first reply or any later one
+  // correct either we are done with the first reply or any later one
+  V_.new_request_ = false;
 }
 
 void

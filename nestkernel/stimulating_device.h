@@ -23,8 +23,10 @@
 #ifndef STIMULATING_DEVICE_H
 #define STIMULATING_DEVICE_H
 
+// Includes from nestkernel:
 #include "device.h"
 
+// Includes from sli:
 #include "dictutils.h"
 
 class SpikeEvent;
@@ -37,9 +39,9 @@ class DoubleDataEvent;
 
    Stimulating devices inject signals into a network, either as analog signals
    such a currents or as spike trains. Most stimulating devices are implemented
-   so that they are replicated on each virtual process. Many, but not all devices
-   generating noise or stochastic spike trains provide different signals to each
-   of their recipients; see the documentation of the individual device.
+   so that they are replicated on each virtual process. Many, but not all
+   devices generating noise or stochastic spike trains provide different signals
+   to each of their recipients; see the documentation of the individual device.
 
    Stimulating devices share the start, stop, and origin parameters global to
    devices. Start and stop have the following meaning for stimulating devices
@@ -86,8 +88,8 @@ namespace nest
  * at time a, i.e., by the deliver_events() call prior to the update for
  * (a, a+h].
  *
- * Since stimulating devices are connected to their targets with a delay of one time
- * step, this means that analog stimulating devices need to emit the event
+ * Since stimulating devices are connected to their targets with a delay of one
+ * time step, this means that analog stimulating devices need to emit the event
  * during the update step for the interval (a-h, a]. Thus, the device needs
  * to be PRO-ACTIVE.
  *
@@ -98,16 +100,17 @@ namespace nest
  * that the last event should be emitted during the time step for which the
  * global clock has time b-2h.
  *
- * @note Any stimulating devices transmitting analog signals must NOT HAVE PROXIES.
+ * @note Any stimulating devices transmitting analog signals must NOT HAVE
+ * PROXIES.
  *
- * @note The distinction between analog and spike emitting devices is implemented
- *       by making StimulatingDevice a template class with the type of the Event
- *       sent as template parameter. Member is_active() is not implemented in
- *       general and is available only for those cases for which it is explicitly
- *       specialized.
+ * @note The distinction between analog and spike emitting devices is
+ *       implemented by making StimulatingDevice a template class with the type
+ *       of the Event sent as template parameter. Member is_active() is not
+ *       implemented in general and is available only for those cases for which
+ *       it is explicitly specialized.
  *
- * @note StimulatingDevice inherits protected from Device, so that implementations
- *       of is_active() can access t_min and t_max.
+ * @note StimulatingDevice inherits protected from Device, so that
+ *       implementations of is_active() can access t_min and t_max.
  *
  * @todo The timing of analog devices is correct only if they are transmitted
  *       using Network::send_local(), but we cannot enforce this currently.
@@ -154,7 +157,8 @@ StimulatingDevice< EmittedEvent >::StimulatingDevice()
 }
 
 template < typename EmittedEvent >
-StimulatingDevice< EmittedEvent >::StimulatingDevice( StimulatingDevice< EmittedEvent > const& sd )
+StimulatingDevice< EmittedEvent >::StimulatingDevice(
+  StimulatingDevice< EmittedEvent > const& sd )
   : Device( sd )
   , first_syn_id_( invalid_synindex ) // a new instance can have no connections
 {
@@ -203,14 +207,16 @@ StimulatingDevice< EmittedEvent >::get_status( DictionaryDatum& d ) const
 
 template < typename EmittedEvent >
 inline void
-nest::StimulatingDevice< EmittedEvent >::enforce_single_syn_type( synindex syn_id )
+nest::StimulatingDevice< EmittedEvent >::enforce_single_syn_type(
+  synindex syn_id )
 {
   if ( first_syn_id_ == invalid_synindex )
     first_syn_id_ = syn_id;
 
   if ( syn_id != first_syn_id_ )
     throw IllegalConnection(
-      "All outgoing connections from a device must use the same synapse type." );
+      "All outgoing connections from a device must use the same synapse "
+      "type." );
 }
 } // namespace nest
 

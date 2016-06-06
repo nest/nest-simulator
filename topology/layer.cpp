@@ -21,13 +21,19 @@
  */
 
 #include "layer.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dictutils.h"
+#include "integerdatum.h"
+
+// Includes from topology:
 #include "free_layer.h"
 #include "grid_layer.h"
 #include "topology_names.h"
-#include "dictutils.h"
-#include "integerdatum.h"
-#include "exceptions.h"
-#include "network.h"
 
 namespace nest
 {
@@ -58,14 +64,16 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     {
 
       element_name = std::string( *tp );
-      element_model = net_->get_modeldict().lookup( element_name );
+      element_model =
+        kernel().model_manager.get_modeldict()->lookup( element_name );
 
       if ( element_model.empty() )
         throw UnknownModelName( element_name );
 
       // Creates several nodes if the next element in
       // the elements variable is a number.
-      if ( ( tp + 1 != ad->end() ) && dynamic_cast< IntegerDatum* >( ( tp + 1 )->datum() ) )
+      if ( ( tp + 1 != ad->end() )
+        && dynamic_cast< IntegerDatum* >( ( tp + 1 )->datum() ) )
       {
         // Select how many nodes that should be created.
         const long_t number = getValue< long_t >( *( ++tp ) );
@@ -83,7 +91,8 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   {
 
     element_name = getValue< std::string >( layer_dict, names::elements );
-    element_model = net_->get_modeldict().lookup( element_name );
+    element_model =
+      kernel().model_manager.get_modeldict()->lookup( element_name );
 
     if ( element_model.empty() )
       throw UnknownModelName( element_name );
@@ -95,16 +104,19 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   {
     if ( layer_dict->known( names::rows ) or layer_dict->known( names::columns )
       or layer_dict->known( names::layers ) )
-      throw BadProperty( "Can not specify both positions and rows or columns." );
+      throw BadProperty(
+        "Can not specify both positions and rows or columns." );
 
-    TokenArray positions = getValue< TokenArray >( layer_dict, names::positions );
+    TokenArray positions =
+      getValue< TokenArray >( layer_dict, names::positions );
 
     if ( positions.size() == 0 )
     {
       throw BadProperty( "Empty positions array." );
     }
 
-    std::vector< double_t > pos = getValue< std::vector< double_t > >( positions[ 0 ] );
+    std::vector< double_t > pos =
+      getValue< std::vector< double_t > >( positions[ 0 ] );
     if ( pos.size() == 2 )
       layer_model_name = "topology_layer_free";
     else if ( pos.size() == 3 )
@@ -141,26 +153,28 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   }
 
   assert( layer_model_name != 0 );
-  Token layer_model = net_->get_modeldict().lookup( layer_model_name );
+  Token layer_model =
+    kernel().model_manager.get_modeldict()->lookup( layer_model_name );
   if ( layer_model.empty() )
     throw UnknownModelName( layer_model_name );
 
-  index layer_node = net_->add_node( layer_model );
+  index layer_node = kernel().node_manager.add_node( layer_model );
 
   // Remember original subnet
-  const index cwnode = net_->get_cwn()->get_gid();
+  const index cwnode = kernel().node_manager.get_cwn()->get_gid();
 
-  net_->go_to( layer_node );
+  kernel().node_manager.go_to( layer_node );
 
   // Create layer nodes.
   for ( size_t i = 0; i < element_ids.size(); ++i )
-    net_->add_node( element_ids[ i ], length );
+    kernel().node_manager.add_node( element_ids[ i ], length );
 
   // Return to original subnet
-  net_->go_to( cwnode );
+  kernel().node_manager.go_to( cwnode );
 
   // Set layer parameters according to input dictionary.
-  AbstractLayer* layer = dynamic_cast< AbstractLayer* >( net_->get_node( layer_node ) );
+  AbstractLayer* layer = dynamic_cast< AbstractLayer* >(
+    kernel().node_manager.get_node( layer_node ) );
   layer->depth_ = element_ids.size();
   layer->set_status( layer_dict );
 
@@ -189,9 +203,11 @@ AbstractLayer::local_end( int_t depth )
   if ( depth >= depth_ )
     throw BadProperty( "Selected depth out of range" );
   index min_nodes_per_layer = local_size() / depth_;
-  index last_gid_at_depth = gids_[ ( depth + 1 ) * ( global_size() / depth_ ) - 1 ];
+  index last_gid_at_depth =
+    gids_[ ( depth + 1 ) * ( global_size() / depth_ ) - 1 ];
   std::vector< Node* >::iterator iter = local_begin();
-  for ( iter += ( depth + 1 ) * min_nodes_per_layer; iter != local_end(); ++iter )
+  for ( iter += ( depth + 1 ) * min_nodes_per_layer; iter != local_end();
+        ++iter )
   {
     if ( ( *iter )->get_gid() > last_gid_at_depth )
       break;
@@ -221,9 +237,11 @@ AbstractLayer::local_end( int_t depth ) const
   if ( depth >= depth_ )
     throw BadProperty( "Selected depth out of range" );
   index min_nodes_per_layer = local_size() / depth_;
-  index last_gid_at_depth = gids_[ ( depth + 1 ) * ( global_size() / depth_ ) - 1 ];
+  index last_gid_at_depth =
+    gids_[ ( depth + 1 ) * ( global_size() / depth_ ) - 1 ];
   std::vector< Node* >::const_iterator iter = local_begin();
-  for ( iter += ( depth + 1 ) * min_nodes_per_layer; iter != local_end(); ++iter )
+  for ( iter += ( depth + 1 ) * min_nodes_per_layer; iter != local_end();
+        ++iter )
   {
     if ( ( *iter )->get_gid() > last_gid_at_depth )
       break;

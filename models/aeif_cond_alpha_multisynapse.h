@@ -23,16 +23,19 @@
 #ifndef AEIF_COND_ALPHA_MULTISYNAPSE_H
 #define AEIF_COND_ALPHA_MULTISYNAPSE_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 /* BeginDocumentation
- Name: aeif_cond_alpha_multisynapse - Conductance based exponential integrate-and-fire neuron model
- according to Brette and Gerstner (2005) with multiple synaptic time constants.
+ Name: aeif_cond_alpha_multisynapse - Conductance based exponential
+                                      integrate-and-fire neuron model according
+                                      to Brette and Gerstner (2005) with
+                                      multiple synaptic time constants.
 
  Description:
 
@@ -57,13 +60,18 @@
  nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
  nest.SetStatus(neuron, {'taus_syn':[0.2,2.0,20.0,20.0]})
 
- spike = nest.Create('spike_generator', params = {'spike_times': np.array([100.0])})
+ spike = nest.Create('spike_generator', params = {'spike_times':
+                                                             np.array([100.0])})
  voltmeter = nest.Create('voltmeter', 1, {'withgid': True})
 
- nest.CopyModel("static_synapse", "synapse1", {"weight":1.0, "delay":1.0, 'receptor_type': 1})
- nest.CopyModel("static_synapse", "synapse2", {"weight":1.0, "delay":100.0, 'receptor_type': 2})
- nest.CopyModel("static_synapse", "synapse3", {"weight":1.0, "delay":300.0, 'receptor_type': 3})
- nest.CopyModel("static_synapse", "synapse4", {"weight":-1.0, "delay":500.0, 'receptor_type': 4})
+ nest.CopyModel("static_synapse", "synapse1", {"weight":1.0, "delay":1.0,
+   'receptor_type': 1})
+ nest.CopyModel("static_synapse", "synapse2", {"weight":1.0, "delay":100.0,
+   'receptor_type': 2})
+ nest.CopyModel("static_synapse", "synapse3", {"weight":1.0, "delay":300.0,
+   'receptor_type': 3})
+ nest.CopyModel("static_synapse", "synapse4", {"weight":-1.0, "delay":500.0,
+   'receptor_type': 4})
 
  nest.Connect(spike, neuron, model="synapse1")
  nest.Connect(spike, neuron, model="synapse2")
@@ -82,10 +90,9 @@
 
 namespace nest
 {
-class Network;
-
 /**
- * Conductance based exponential integrate-and-fire neuron model according to Brette and Gerstner
+ * Conductance based exponential integrate-and-fire neuron model according to
+ * Brette and Gerstner
  * (2005) with multiple ports.
  */
 class aeif_cond_alpha_multisynapse : public Archiving_Node
@@ -98,7 +105,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -122,7 +130,8 @@ private:
   void calibrate();
   void update( Time const&, const long_t, const long_t );
 
-  inline void aeif_cond_alpha_multisynapse_dynamics( const std::vector< double_t >& y,
+  inline void aeif_cond_alpha_multisynapse_dynamics(
+    const std::vector< double_t >& y,
     std::vector< double_t >& f );
 
   // The next two classes need to be friends to access the State_ class/member
@@ -140,21 +149,22 @@ private:
     double_t V_reset_; //!< Reset Potential in mV
     double_t t_ref_;   //!< Refractory period in ms
 
-    double_t g_L;                     //!< Leak Conductance in nS
-    double_t C_m;                     //!< Membrane Capacitance in pF
-    double_t E_ex;                    //!< Excitatory reversal Potential in mV
-    double_t E_in;                    //!< Inhibitory reversal Potential in mV
-    double_t E_L;                     //!< Leak reversal Potential (aka resting potential) in mV
-    double_t Delta_T;                 //!< Slope faktor in ms.
-    double_t tau_w;                   //!< adaptation time-constant in ms.
-    double_t a;                       //!< Subthreshold adaptation in nS.
-    double_t b;                       //!< Spike-triggered adaptation in pA
-    double_t V_th;                    //!< Spike threshold in mV.
-    double_t t_ref;                   //!< Refractory period in ms.
-    std::vector< double_t > taus_syn; //!< Time constants of synaptic currents in ms..
+    double_t g_L;     //!< Leak Conductance in nS
+    double_t C_m;     //!< Membrane Capacitance in pF
+    double_t E_ex;    //!< Excitatory reversal Potential in mV
+    double_t E_in;    //!< Inhibitory reversal Potential in mV
+    double_t E_L;     //!< Leak reversal Potential (aka resting potential) in mV
+    double_t Delta_T; //!< Slope faktor in ms.
+    double_t tau_w;   //!< adaptation time-constant in ms.
+    double_t a;       //!< Subthreshold adaptation in nS.
+    double_t b;       //!< Spike-triggered adaptation in pA
+    double_t V_th;    //!< Spike threshold in mV.
+    double_t t_ref;   //!< Refractory period in ms.
+    std::vector< double_t > taus_syn; //!< Time constants of synaptic currents
+                                      //!< in ms..
     double_t I_e;                     //!< Intrinsic current in pA.
-    double_t MAXERR;                  //!< Maximal error for adaptive stepsize solver
-    double_t HMIN;                    //!< Smallest permissible stepsize in ms.
+    double_t MAXERR; //!< Maximal error for adaptive stepsize solver
+    double_t HMIN;   //!< Smallest permissible stepsize in ms.
 
     // type is long because other types are not put through in GetStatus
     std::vector< long > receptor_types_;
@@ -197,8 +207,9 @@ private:
       STATE_VECTOR_MIN_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 2;        // V_M, W
-    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 4; // DG_EXC, G_EXC, DG_INH, G_INH
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 2; // V_M, W
+    // DG_EXC, G_EXC, DG_INH, G_INH
+    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 4;
 
     std::vector< double_t > y_;   //!< neuron state
     std::vector< double_t > k1;   //!< Runge-Kutta variable
@@ -245,7 +256,8 @@ private:
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
     double_t step_;          //!< simulation step size in ms
-    double IntegrationStep_; //!< current integration time step, updated by solver
+    double IntegrationStep_; //!< current integration time step,
+                             //!< updated by solver
 
     /**
      * Input current injected by CurrentEvent.
@@ -304,7 +316,10 @@ private:
 };
 
 inline port
-aeif_cond_alpha_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
+aeif_cond_alpha_multisynapse::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -313,7 +328,8 @@ aeif_cond_alpha_multisynapse::send_test_event( Node& target, rport receptor_type
 }
 
 inline port
-aeif_cond_alpha_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
+aeif_cond_alpha_multisynapse::handles_test_event( CurrentEvent&,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -321,7 +337,8 @@ aeif_cond_alpha_multisynapse::handles_test_event( CurrentEvent&, rport receptor_
 }
 
 inline port
-aeif_cond_alpha_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+aeif_cond_alpha_multisynapse::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -370,8 +387,8 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics(
   // a shorthand
   typedef aeif_cond_alpha_multisynapse::State_ S;
 
-  // y[] is the current internal state of the integrator (yin), not the state vector in the node,
-  // node.S_.y[].
+  // y[] is the current internal state of the integrator (yin), not the state
+  // vector in the node, node.S_.y[].
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
@@ -383,7 +400,8 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics(
   double_t I_syn_exc = 0.0;
   double_t I_syn_inh = 0.0;
 
-  for ( size_t i = 0; i < ( P_.num_of_receptors_ * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
+  for ( size_t i = 0; i < ( P_.num_of_receptors_
+                            * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
         i += S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR )
   {
     I_syn_exc += y[ S::G_EXC + i ] * ( V - P_.E_ex );
@@ -397,11 +415,12 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics(
   const double_t MAX_EXP_ARG = 10.;
 
   // If the argument is too large, we clip it.
-  const double_t I_spike = P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
+  const double_t I_spike =
+    P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
 
   // dv/dt
-  f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh - w + P_.I_e
-                  + B_.I_stim_ ) / P_.C_m;
+  f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
+                  - w + P_.I_e + B_.I_stim_ ) / P_.C_m;
 
   // Adaptation current w.
   f[ S::W ] = ( P_.a * ( V - P_.E_L ) - w ) / P_.tau_w;
@@ -411,12 +430,12 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics(
   {
     j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
     f[ S::DG_EXC + j ] = -y[ S::DG_EXC + j ] / P_.taus_syn[ i ];
-    f[ S::G_EXC + j ] =
-      y[ S::DG_EXC + j ] - y[ S::G_EXC + j ] / P_.taus_syn[ i ]; // Synaptic Conductance (nS)
+    f[ S::G_EXC + j ] = y[ S::DG_EXC + j ]
+      - y[ S::G_EXC + j ] / P_.taus_syn[ i ]; // Synaptic Conductance (nS)
 
     f[ S::DG_INH + j ] = -y[ S::DG_INH + j ] / P_.taus_syn[ i ];
-    f[ S::G_INH + j ] =
-      y[ S::DG_INH + j ] - y[ S::G_INH + j ] / P_.taus_syn[ i ]; // Synaptic Conductance (nS)
+    f[ S::G_INH + j ] = y[ S::DG_INH + j ]
+      - y[ S::G_INH + j ] / P_.taus_syn[ i ]; // Synaptic Conductance (nS)
   }
 }
 

@@ -22,23 +22,30 @@
 
 #include "iaf_psc_exp_ps.h"
 
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
-#include "universal_data_logger_impl.h"
 #include "propagator_stability.h"
 
-#include <limits>
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_psc_exp_ps > nest::iaf_psc_exp_ps::recordablesMap_;
+nest::RecordablesMap< nest::iaf_psc_exp_ps >
+  nest::iaf_psc_exp_ps::recordablesMap_;
 
 namespace nest
 {
@@ -114,7 +121,8 @@ nest::iaf_psc_exp_ps::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::iaf_psc_exp_ps::Parameters_::set( const DictionaryDatum& d )
 {
-  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
@@ -145,7 +153,8 @@ nest::iaf_psc_exp_ps::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Reset potential must be smaller than threshold." );
 
   if ( U_reset_ < U_min_ )
-    throw BadProperty( "Reset potential must be greater equal minimum potential." );
+    throw BadProperty(
+      "Reset potential must be greater equal minimum potential." );
 
   if ( c_m_ <= 0 )
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -160,16 +169,17 @@ nest::iaf_psc_exp_ps::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::iaf_psc_exp_ps::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::iaf_psc_exp_ps::State_::get( DictionaryDatum& d,
+  const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y2_ + p.E_L_ ); // Membrane potential
   def< bool >( d, names::is_refractory, is_refractory_ );
-  def< double >( d, names::t_spike, Time( Time::step( last_spike_step_ ) ).get_ms() );
-  def< double >( d, names::offset, last_spike_offset_ );
 }
 
 void
-nest::iaf_psc_exp_ps::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
+nest::iaf_psc_exp_ps::State_::set( const DictionaryDatum& d,
+  const Parameters_& p,
+  double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y2_ ) )
     y2_ -= p.E_L_;
@@ -182,7 +192,7 @@ nest::iaf_psc_exp_ps::State_::set( const DictionaryDatum& d, const Parameters_& 
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_exp_ps::iaf_psc_exp_ps()
-  : Node()
+  : Archiving_Node()
   , P_()
   , S_()
   , B_( *this )
@@ -191,7 +201,7 @@ nest::iaf_psc_exp_ps::iaf_psc_exp_ps()
 }
 
 nest::iaf_psc_exp_ps::iaf_psc_exp_ps( const iaf_psc_exp_ps& n )
-  : Node( n )
+  : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -217,12 +227,15 @@ nest::iaf_psc_exp_ps::init_buffers_()
   B_.events_.clear();
   B_.currents_.clear(); // includes resize
   B_.logger_.reset();
+
+  Archiving_Node::clear_history();
 }
 
 void
 nest::iaf_psc_exp_ps::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
 
   V_.h_ms_ = Time::get_resolution().get_ms();
 
@@ -236,7 +249,8 @@ nest::iaf_psc_exp_ps::calibrate()
   V_.P21_in_ = propagator_32( P_.tau_in_, P_.tau_m_, P_.c_m_, V_.h_ms_ );
 
   V_.refractory_steps_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.refractory_steps_ >= 1 ); // since t_ref_ >= sim step size, this can only fail in error
+  // since t_ref_ >= sim step size, this can only fail in error
+  assert( V_.refractory_steps_ >= 1 );
 }
 
 /* ----------------------------------------------------------------
@@ -244,10 +258,13 @@ nest::iaf_psc_exp_ps::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_exp_ps::update( const Time& origin, const long_t from, const long_t to )
+nest::iaf_psc_exp_ps::update( const Time& origin,
+  const long_t from,
+  const long_t to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from ) < Scheduler::get_min_delay() );
+  assert( static_cast< delay >( from )
+    < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
@@ -259,8 +276,9 @@ nest::iaf_psc_exp_ps::update( const Time& origin, const long_t from, const long_
      the interval.
   */
   if ( S_.y2_ >= P_.U_th_ )
-    emit_instant_spike_(
-      origin, from, V_.h_ms_ * ( 1.0 - std::numeric_limits< double_t >::epsilon() ) );
+    emit_instant_spike_( origin,
+      from,
+      V_.h_ms_ * ( 1.0 - std::numeric_limits< double_t >::epsilon() ) );
 
   for ( long_t lag = from; lag < to; ++lag )
   {
@@ -269,7 +287,8 @@ nest::iaf_psc_exp_ps::update( const Time& origin, const long_t from, const long_
 
     // if neuron returns from refractoriness during this step, place
     // pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_
+      && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
 
     // save state at beginning of interval for spike-time approximation
@@ -292,8 +311,8 @@ nest::iaf_psc_exp_ps::update( const Time& origin, const long_t from, const long_
       // update membrane potential
       if ( !S_.is_refractory_ )
       {
-        S_.y2_ = V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.y1_ex_ + V_.P21_in_ * S_.y1_in_
-          + V_.expm1_tau_m_ * S_.y2_ + S_.y2_;
+        S_.y2_ = V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.y1_ex_
+          + V_.P21_in_ * S_.y1_in_ + V_.expm1_tau_m_ * S_.y2_ + S_.y2_;
 
         // lower bound of membrane potential
         S_.y2_ = ( S_.y2_ < P_.U_min_ ? P_.U_min_ : S_.y2_ );
@@ -350,7 +369,8 @@ nest::iaf_psc_exp_ps::update( const Time& origin, const long_t from, const long_
         V_.y1_in_before_ = S_.y1_in_;
         V_.y2_before_ = S_.y2_;
         last_offset = ev_offset;
-      } while ( B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) );
+      } while (
+        B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) );
 
       // no events remaining, plain update step across remainder
       // of interval
@@ -384,7 +404,9 @@ nest::iaf_psc_exp_ps::handle( SpikeEvent& e )
   */
   const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
 
-  B_.events_.add_spike( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.events_.add_spike(
+    e.get_rel_delivery_steps(
+      nest::kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -399,7 +421,10 @@ nest::iaf_psc_exp_ps::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps(
+      nest::kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 void
@@ -409,12 +434,6 @@ nest::iaf_psc_exp_ps::handle( DataLoggingRequest& e )
 }
 
 // auxiliary functions ---------------------------------------------
-
-inline void
-nest::iaf_psc_exp_ps::set_spiketime( const Time& now )
-{
-  S_.last_spike_step_ = now.get_steps();
-}
 
 void
 nest::iaf_psc_exp_ps::propagate_( const double_t dt )
@@ -427,13 +446,13 @@ nest::iaf_psc_exp_ps::propagate_( const double_t dt )
     const double_t expm1_tau_m = numerics::expm1( -dt / P_.tau_m_ );
 
     const double_t P20 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
-    const double_t P21_ex = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ ) / P_.c_m_
-      * ( expm1_tau_ex - expm1_tau_m );
-    const double_t P21_in = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ ) / P_.c_m_
-      * ( expm1_tau_in - expm1_tau_m );
+    const double_t P21_ex = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ )
+      / P_.c_m_ * ( expm1_tau_ex - expm1_tau_m );
+    const double_t P21_in = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ )
+      / P_.c_m_ * ( expm1_tau_in - expm1_tau_m );
 
-    S_.y2_ = P20 * ( P_.I_e_ + S_.y0_ ) + P21_ex * S_.y1_ex_ + P21_in * S_.y1_in_
-      + expm1_tau_m * S_.y2_ + S_.y2_;
+    S_.y2_ = P20 * ( P_.I_e_ + S_.y0_ ) + P21_ex * S_.y1_ex_
+      + P21_in * S_.y1_in_ + expm1_tau_m * S_.y2_ + S_.y2_;
   }
   S_.y1_ex_ = S_.y1_ex_ * expm1_tau_ex + S_.y1_ex_;
   S_.y1_in_ = S_.y1_in_ * expm1_tau_in + S_.y1_in_;
@@ -448,20 +467,19 @@ nest::iaf_psc_exp_ps::emit_spike_( const Time& origin,
   // we know that the potential is subthreshold at t0, super at t0+dt
 
   // compute spike time relative to beginning of step
-  const double_t spike_offset = V_.h_ms_ - ( t0 + bisectioning_( dt ) );
-
-  set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
-  S_.last_spike_offset_ = spike_offset;
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
+  S_.last_spike_offset_ = V_.h_ms_ - ( t0 + bisectioning_( dt ) );
 
   // reset neuron and make it refractory
   S_.y2_ = P_.U_reset_;
   S_.is_refractory_ = true;
 
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
 
-  se.set_offset( spike_offset );
-  network()->send( *this, se, lag );
+  se.set_offset( S_.last_spike_offset_ );
+  kernel().event_delivery_manager.send( *this, se, lag );
 }
 
 void
@@ -472,7 +490,7 @@ nest::iaf_psc_exp_ps::emit_instant_spike_( const Time& origin,
   assert( S_.y2_ >= P_.U_th_ ); // ensure we are superthreshold
 
   // set stamp and offset for spike
-  set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
   S_.last_spike_offset_ = spike_offs;
 
   // reset neuron and make it refractory
@@ -480,10 +498,11 @@ nest::iaf_psc_exp_ps::emit_instant_spike_( const Time& origin,
   S_.is_refractory_ = true;
 
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
 
   se.set_offset( S_.last_spike_offset_ );
-  network()->send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 }
 
 nest::double_t
@@ -509,10 +528,10 @@ nest::iaf_psc_exp_ps::bisectioning_( const double_t dt ) const
     const double_t expm1_tau_m = numerics::expm1( -root / P_.tau_m_ );
 
     const double_t P20 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
-    const double_t P21_ex = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ ) / P_.c_m_
-      * ( expm1_tau_ex - expm1_tau_m );
-    const double_t P21_in = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ ) / P_.c_m_
-      * ( expm1_tau_in - expm1_tau_m );
+    const double_t P21_ex = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ )
+      / P_.c_m_ * ( expm1_tau_ex - expm1_tau_m );
+    const double_t P21_in = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ )
+      / P_.c_m_ * ( expm1_tau_in - expm1_tau_m );
 
     y2_root = P20 * ( P_.I_e_ + V_.y0_before_ ) + P21_ex * V_.y1_ex_before_
       + P21_in * V_.y1_in_before_ + expm1_tau_m * V_.y2_before_ + V_.y2_before_;

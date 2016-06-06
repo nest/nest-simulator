@@ -23,30 +23,35 @@
 #ifndef IAF_COND_EXP_H
 #define IAF_COND_EXP_H
 
+// Generated includes:
 #include "config.h"
 
 #ifdef HAVE_GSL
 
-#include "nest.h"
-#include "event.h"
-#include "archiving_node.h"
-#include "ring_buffer.h"
-#include "connection.h"
-#include "universal_data_logger.h"
-#include "recordables_map.h"
-
+// External includes:
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
 
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
+
 /* BeginDocumentation
-Name: iaf_cond_exp - Simple conductance based leaky integrate-and-fire neuron model.
+Name: iaf_cond_exp - Simple conductance based leaky integrate-and-fire neuron
+                     model.
 
 Description:
 iaf_cond_exp is an implementation of a spiking neuron using IAF dynamics with
 conductance-based synapses. Incoming spike events induce a post-synaptic change
 of conductance modelled by an exponential function. The exponential function
-is normalised such that an event of weight 1.0 results in a peak conductance of 1 nS.
+is normalised such that an event of weight 1.0 results in a peak conductance of
+1 nS.
 
 Parameters:
 The following parameters can be set in the status dictionary.
@@ -60,8 +65,10 @@ V_reset    double - Reset potential of the membrane in mV.
 E_ex       double - Excitatory reversal potential in mV.
 E_in       double - Inhibitory reversal potential in mV.
 g_L        double - Leak conductance in nS;
-tau_syn_ex double - Time constant of the excitatory synaptic exponential function in ms.
-tau_syn_in double - Time constant of the inhibitory synaptic exponential function in ms.
+tau_syn_ex double - Time constant of the excitatory synaptic exponential
+                    function in ms.
+tau_syn_in double - Time constant of the inhibitory synaptic exponential
+                    function in ms.
 I_e        double - Constant external input current in pA.
 
 Sends: SpikeEvent
@@ -103,7 +110,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -151,7 +159,7 @@ private:
     double_t C_m;      //!< Membrane Capacitance in pF
     double_t E_ex;     //!< Excitatory reversal Potential in mV
     double_t E_in;     //!< Inhibitory reversal Potential in mV
-    double_t E_L;      //!< Leak reversal Potential (aka resting potential) in mV
+    double_t E_L; //!< Leak reversal Potential (aka resting potential) in mV
     double_t tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
     double_t tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
     double_t I_e;      //!< Constant Current in pA
@@ -182,8 +190,9 @@ public:
       STATE_VEC_SIZE
     };
 
-    double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
-    int_t r_;                      //!< number of refractory steps remaining
+    //! neuron state, must be C-array for GSL solver
+    double_t y_[ STATE_VEC_SIZE ];
+    int_t r_; //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -268,7 +277,10 @@ private:
 
 
 inline port
-nest::iaf_cond_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+nest::iaf_cond_exp::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

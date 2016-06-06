@@ -37,11 +37,13 @@
    tau_plus  double - Time constant of STDP window, potentiation in ms
                       (tau_minus defined in post-synaptic neuron)
    lambda    double - Learning rate
-   alpha     double - Asymmetry parameter (scales depressing increments as alpha*lambda)
+   alpha     double - Asymmetry parameter (scales depressing increments as
+                      alpha*lambda)
    mu        double - Weight dependence exponent, potentiation
 
   Remarks:
-   The parameters can only be set by SetDefaults and apply to all synapses of the model.
+   The parameters can only be set by SetDefaults and apply to all synapses of
+   the model.
 
   References:
    [1] Morrison et al. (2007) Spike-timing dependent plasticity in balanced
@@ -54,15 +56,18 @@
   SeeAlso: synapsedict, stdp_synapse, tsodyks_synapse, static_synapse
 */
 
-#include "connection.h"
-
+// C++ includes:
 #include <cmath>
+
+// Includes from nestkernel:
+#include "connection.h"
 
 namespace nest
 {
 
 /**
- * Class containing the common properties for all synapses of type STDPConnectionHom.
+ * Class containing the common properties for all synapses of type
+ * STDPConnectionHom.
  */
 class STDPPLHomCommonProperties : public CommonSynapseProperties
 {
@@ -93,8 +98,8 @@ public:
 
 
 /**
- * Class representing an STDP connection with homogeneous parameters, i.e. parameters are the same
- * for all synapses.
+ * Class representing an STDP connection with homogeneous parameters, i.e.
+ * parameters are the same for all synapses.
  */
 template < typename targetidentifierT >
 class STDPPLConnectionHom : public Connection< targetidentifierT >
@@ -117,10 +122,10 @@ public:
    */
   STDPPLConnectionHom( const STDPPLConnectionHom& );
 
-  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
-  // This avoids explicit name prefixes in all places these functions are used.
-  // Since ConnectionBase depends on the template parameter, they are not automatically
-  // found in the base class.
+  // Explicitly declare all methods inherited from the dependent base
+  // ConnectionBase. This avoids explicit name prefixes in all places these
+  // functions are used. Since ConnectionBase depends on the template parameter,
+  // they are not automatically found in the base class.
   using ConnectionBase::get_delay;
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
@@ -141,7 +146,10 @@ public:
    * \param e The event to send
    * \param t_lastspike Point in time of last spike sent.
    */
-  void send( Event& e, thread t, double_t t_lastspike, const STDPPLHomCommonProperties& );
+  void send( Event& e,
+    thread t,
+    double_t t_lastspike,
+    const STDPPLHomCommonProperties& );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -157,13 +165,13 @@ public:
   };
 
   /*
-   * This function calls check_connection on the sender and checks if the receiver
-   * accepts the event type and receptor type requested by the sender.
+   * This function calls check_connection on the sender and checks if the
+   * receiver accepts the event type and receptor type requested by the sender.
    * Node::check_connection() will either confirm the receiver port by returning
    * true or false if the connection should be ignored.
    * We have to override the base class' implementation, since for STDP
-   * connections we have to call register_stdp_pl_connection on the target neuron
-   * to inform the Archiver to collect spikes for this connection.
+   * connections we have to call register_stdp_pl_connection on the target
+   * neuron to inform the Archiver to collect spikes for this connection.
    *
    * \param s The source node
    * \param r The target node
@@ -239,7 +247,8 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e,
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  target->get_history( t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  target->get_history(
+    t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   double_t minus_dt;
@@ -249,11 +258,13 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e,
     start++;
     if ( minus_dt == 0 )
       continue;
-    weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
+    weight_ =
+      facilitate_( weight_, Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
   }
 
   // depression due to new pre-synaptic spike
-  weight_ = depress_( weight_, target->get_K_value( t_spike - dendritic_delay ), cp );
+  weight_ =
+    depress_( weight_, target->get_K_value( t_spike - dendritic_delay ), cp );
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
@@ -273,7 +284,8 @@ STDPPLConnectionHom< targetidentifierT >::STDPPLConnectionHom()
 }
 
 template < typename targetidentifierT >
-STDPPLConnectionHom< targetidentifierT >::STDPPLConnectionHom( const STDPPLConnectionHom& rhs )
+STDPPLConnectionHom< targetidentifierT >::STDPPLConnectionHom(
+  const STDPPLConnectionHom& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , Kplus_( rhs.Kplus_ )
@@ -296,7 +308,8 @@ STDPPLConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-STDPPLConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+STDPPLConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
+  ConnectorModel& cm )
 {
   // base class properties
   ConnectionBase::set_status( d, cm );

@@ -25,20 +25,28 @@
  * Draw a binomial random number using the BP algoritm
  * Sampling From the Binomial Distribution on a Computer
  * Author(s): George S. Fishman
- * Source: Journal of the American Statistical Association, Vol. 74, No. 366 (Jun., 1979), pp.
- * 418-423
+ * Source: Journal of the American Statistical Association, Vol. 74, No. 366
+ *         (Jun., 1979), pp. 418-423
  * Published by: American Statistical Association
  * Stable URL: http://www.jstor.org/stable/2286346 .
  * ---------------------------------------------------------------- */
 
 
 #include "binomial_randomdev.h"
-#include "dictutils.h"
-#include "compose.hpp"
-#include <limits>
-#include <cmath>
 
-librandom::BinomialRandomDev::BinomialRandomDev( RngPtr r_s, double p_s, unsigned int n_s )
+// C++ includes:
+#include <cmath>
+#include <limits>
+
+// Includes from libnestutil:
+#include "compose.hpp"
+
+// Includes from sli:
+#include "dictutils.h"
+
+librandom::BinomialRandomDev::BinomialRandomDev( RngPtr r_s,
+  double p_s,
+  unsigned int n_s )
   : RandomDev( r_s )
   , poisson_dev_( r_s )
   , exp_dev_( r_s )
@@ -113,7 +121,8 @@ librandom::BinomialRandomDev::ldev( RngPtr rng ) const
     Y = n_ - X;
 
     // 12
-    if ( V < static_cast< double >( m_ - Y ) * phi_ - f_[ m_ + 1 ] + f_[ Y + 1 ] )
+    if ( V < static_cast< double >( m_ - Y ) * phi_ - f_[ m_ + 1 ]
+        + f_[ Y + 1 ] )
     {
       not_finished = 1;
     }
@@ -217,10 +226,11 @@ librandom::BinomialRandomDev::set_status( const DictionaryDatum& d )
   // Binomial numbers are generated from Poisson numbers.
   // To avoid an infinite loop, we limit n to slightly less than
   // the maximum possible value for Poisson numbers
-  const long N_MAX = static_cast< long >( 0.998 * std::numeric_limits< long >::max() );
+  const long N_MAX =
+    static_cast< long >( 0.998 * std::numeric_limits< long >::max() );
   if ( n_new > N_MAX )
-    throw BadParameterValue(
-      String::compose( "Binomial RDV: N < %1 required.", static_cast< double >( N_MAX ) ) );
+    throw BadParameterValue( String::compose(
+      "Binomial RDV: N < %1 required.", static_cast< double >( N_MAX ) ) );
 
   if ( n_updated || p_updated )
     set_p_n( p_new, n_new );
@@ -229,6 +239,7 @@ librandom::BinomialRandomDev::set_status( const DictionaryDatum& d )
 void
 librandom::BinomialRandomDev::get_status( DictionaryDatum& d ) const
 {
+  RandomDev::get_status( d );
   def< double >( d, "p", p_ );
   def< long >( d, "n", n_ );
 }

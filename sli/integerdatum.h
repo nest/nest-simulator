@@ -26,8 +26,9 @@
     class IntegerDatum
 */
 
-#include "numericdatum.h"
+// Includes from sli:
 #include "interpret.h"
+#include "numericdatum.h"
 
 
 /* These are declarations to specialize the static memory pool BEFORE

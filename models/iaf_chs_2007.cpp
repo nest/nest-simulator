@@ -20,17 +20,24 @@
  *
  */
 
-#include "exceptions.h"
 #include "iaf_chs_2007.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-#include <limits>
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -90,7 +97,8 @@ nest::iaf_chs_2007::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_epsp, tau_epsp_ );
   def< double >( d, names::tau_reset, tau_reset_ );
   def< double >( d, names::V_noise, U_noise_ );
-  ( *d )[ names::noise ] = DoubleVectorDatum( new std::vector< double >( noise_ ) );
+  ( *d )[ names::noise ] =
+    DoubleVectorDatum( new std::vector< double >( noise_ ) );
 }
 
 void
@@ -102,22 +110,24 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s )
   updateValue< double >( d, names::tau_reset, tau_reset_ );
   updateValue< double >( d, names::V_noise, U_noise_ );
 
-  const bool updated_noise = updateValue< std::vector< double_t > >( d, names::noise, noise_ );
+  const bool updated_noise =
+    updateValue< std::vector< double_t > >( d, names::noise, noise_ );
   if ( updated_noise )
   {
     s.position_ = 0;
   }
   /*
-  // TODO: How to handle setting U_noise first and noise later and still make sure they are
-  consistent?
+  // TODO: How to handle setting U_noise first and noise later and still make
+           sure they are consistent?
   if ( U_noise_ > 0 && noise_.empty() )
-        throw BadProperty("Noise amplitude larger than zero while noise signal is missing.");
-        */
+        throw BadProperty("Noise amplitude larger than zero while noise signal "
+                          "is missing.");
+  */
   if ( U_epsp_ < 0 )
     throw BadProperty( "EPSP cannot be negative." );
 
-  if ( U_reset_ < 0 )
-    throw BadProperty( "Reset potential cannot be negative." ); // sign switched above
+  if ( U_reset_ < 0 ) // sign switched above
+    throw BadProperty( "Reset potential cannot be negative." );
 
   if ( tau_epsp_ <= 0 || tau_reset_ <= 0 )
     throw BadProperty( "All time constants must be strictly positive." );
@@ -197,11 +207,13 @@ nest::iaf_chs_2007::init_buffers_()
 void
 nest::iaf_chs_2007::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
 
-  // numbering of state vaiables: i_0 = 0, i_syn_ = 1, V_syn_ = 2, V_spike _= 3, V_m_ = 4
+  // numbering of state vaiables: i_0 = 0, i_syn_ = 1, V_syn_ = 2, V_spike _= 3,
+  // V_m_ = 4
 
   // these P are independent
   V_.P11ex_ = std::exp( -h / P_.tau_epsp_ );
@@ -213,15 +225,19 @@ nest::iaf_chs_2007::calibrate()
   // these depend on the above. Please do not change the order.
   // TODO: use expm1 here to improve accuracy for small timesteps
 
-  V_.P21ex_ = P_.U_epsp_ * std::exp( 1.0 ) / ( P_.C_ ) * V_.P11ex_ * h / P_.tau_epsp_;
+  V_.P21ex_ =
+    P_.U_epsp_ * std::exp( 1.0 ) / ( P_.C_ ) * V_.P11ex_ * h / P_.tau_epsp_;
 
   V_.P20_ = P_.tau_epsp_ / P_.C_ * ( 1.0 - V_.P22_ );
 }
 
 void
-nest::iaf_chs_2007::update( const Time& origin, const long_t from, const long_t to )
+nest::iaf_chs_2007::update( const Time& origin,
+  const long_t from,
+  const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
@@ -232,14 +248,16 @@ nest::iaf_chs_2007::update( const Time& origin, const long_t from, const long_t 
     // exponential decaying PSCs
     S_.i_syn_ex_ *= V_.P11ex_;
 
-    // the spikes arriving at T+1 have an immediate effect on the state of the neuron
+    // the spikes arriving at T+1 have an immediate effect on the state of the
+    // neuron
     S_.i_syn_ex_ += B_.spikes_ex_.get_value( lag );
 
     // exponentially decaying ahp
     S_.V_spike_ *= V_.P30_;
 
-    double noise_term =
-      P_.U_noise_ > 0.0 && !P_.noise_.empty() ? P_.U_noise_ * P_.noise_[ S_.position_++ ] : 0.0;
+    double noise_term = P_.U_noise_ > 0.0 && !P_.noise_.empty()
+      ? P_.U_noise_ * P_.noise_[ S_.position_++ ]
+      : 0.0;
 
     S_.V_m_ = S_.V_syn_ + S_.V_spike_ + noise_term;
 
@@ -253,7 +271,7 @@ nest::iaf_chs_2007::update( const Time& origin, const long_t from, const long_t 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // log state data
@@ -267,7 +285,8 @@ nest::iaf_chs_2007::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
-    B_.spikes_ex_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 

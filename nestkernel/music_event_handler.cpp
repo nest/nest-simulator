@@ -19,15 +19,19 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "config.h"
+
+#include "music_event_handler.h"
 
 #ifdef HAVE_MUSIC
 
-#include "music_event_handler.h"
-#include "nest.h"
+// Includes from libnestutil:
+#include "compose.hpp"
+#include "logging.h"
+
+// Includes from nestkernel:
 #include "event.h"
-#include "communicator.h"
-#include "network.h" // needed for event_impl.h to be included
+#include "kernel_manager.h"
+#include "nest_types.h"
 
 namespace nest
 {
@@ -43,15 +47,13 @@ MusicEventHandler::MusicEventHandler()
 
 MusicEventHandler::MusicEventHandler( std::string portname,
   double acceptable_latency,
-  int max_buffered,
-  Network* net )
+  int max_buffered )
   : music_port_( 0 )
   , music_perm_ind_( 0 )
   , published_( false )
   , portname_( portname )
   , acceptable_latency_( acceptable_latency )
   , max_buffered_( max_buffered )
-  , net_( net )
 {
 }
 
@@ -72,7 +74,8 @@ MusicEventHandler::register_channel( int channel, nest::Node* mp )
 {
   if ( channel >= channelmap_.size() )
   {
-    channelmap_.resize( channel + 1, 0 ); // all entries not explicitly set will be 0
+    // all entries not explicitly set will be 0
+    channelmap_.resize( channel + 1, 0 );
     eventqueue_.resize( channel + 1 );
   }
 
@@ -88,7 +91,8 @@ MusicEventHandler::publish_port()
 {
   if ( !published_ )
   {
-    music_port_ = Communicator::get_music_setup()->publishEventInput( portname_ );
+    music_port_ =
+      kernel().music_manager.get_music_setup()->publishEventInput( portname_ );
 
     // MUSIC wants seconds, NEST has miliseconds
     double_t acceptable_latency = acceptable_latency_ / 1000.0;
@@ -104,25 +108,28 @@ MusicEventHandler::publish_port()
     // check, if all mappings are within the valid range of port width
     // the maximum channel mapped - 1 == size of channelmap
     if ( channelmap_.size() > music_port_width )
-      throw MUSICChannelUnknown( "MusicEventHandler", portname_, channelmap_.size() - 1 );
+      throw MUSICChannelUnknown(
+        "MusicEventHandler", portname_, channelmap_.size() - 1 );
 
     // create the permutation index mapping
-    music_perm_ind_ = new MUSIC::PermutationIndex( &indexmap_.front(), indexmap_.size() );
+    music_perm_ind_ =
+      new MUSIC::PermutationIndex( &indexmap_.front(), indexmap_.size() );
     // map the port
     if ( max_buffered_ >= 0 )
-      music_port_->map( music_perm_ind_, this, acceptable_latency, max_buffered_ );
+      music_port_->map(
+        music_perm_ind_, this, acceptable_latency, max_buffered_ );
     else
       music_port_->map( music_perm_ind_, this, acceptable_latency );
 
-    std::string msg =
-      String::compose( "Mapping MUSIC input port '%1' with width=%2 , acceptable latency=%3 ms",
-        portname_,
-        music_port_width,
-        acceptable_latency );
+    std::string msg = String::compose(
+      "Mapping MUSIC input port '%1' with width=%2 , acceptable latency=%3 ms",
+      portname_,
+      music_port_width,
+      acceptable_latency );
     if ( max_buffered_ > 0 )
       msg += String::compose( " and max buffered=%1 ticks", max_buffered_ );
     msg += ".";
-    net_->message( SLIInterpreter::M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
+    LOG( M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
   }
 }
 
@@ -133,7 +140,9 @@ void MusicEventHandler::operator()( double t, MUSIC::GlobalIndex channel )
 }
 
 void
-MusicEventHandler::update( Time const& origin, const long_t from, const long_t to )
+MusicEventHandler::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
   for ( size_t channel = 0; channel < channelmap_.size(); ++channel )
     if ( channelmap_[ channel ] != 0 )
@@ -145,11 +154,13 @@ MusicEventHandler::update( Time const& origin, const long_t from, const long_t t
           && T <= origin + Time::step( from + to ) )
         {
           nest::SpikeEvent se;
-          se.set_offset( Time( Time::step( T.get_steps() ) ).get_ms() - T.get_ms() );
+          se.set_offset(
+            Time( Time::step( T.get_steps() ) ).get_ms() - T.get_ms() );
           se.set_stamp( T );
 
-          channelmap_[ channel ]->handle( se ); // deliver to the proxy for this channel
-          eventqueue_[ channel ].pop();         // remove the sent event from the queue
+          // deliver to the proxy for this channel
+          channelmap_[ channel ]->handle( se );
+          eventqueue_[ channel ].pop(); // remove the sent event from the queue
         }
         else
           break;

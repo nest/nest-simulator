@@ -23,8 +23,12 @@
 #ifndef LAYER_IMPL_H
 #define LAYER_IMPL_H
 
-#include "nest_datums.h"
 #include "layer.h"
+
+// Includes from nestkernel:
+#include "nest_datums.h"
+
+// Includes from topology:
 #include "grid_layer.h"
 #include "grid_mask.h"
 
@@ -35,21 +39,24 @@ template < int D >
 lockPTR< Ntree< D, index > > Layer< D >::cached_ntree_;
 
 template < int D >
-std::vector< std::pair< Position< D >, index > >* Layer< D >::cached_vector_ = 0;
+std::vector< std::pair< Position< D >, index > >* Layer< D >::cached_vector_ =
+  0;
 
 template < int D >
 Selector Layer< D >::cached_selector_;
 
 template < int D >
 Position< D >
-Layer< D >::compute_displacement( const Position< D >& from_pos, const Position< D >& to_pos ) const
+Layer< D >::compute_displacement( const Position< D >& from_pos,
+  const Position< D >& to_pos ) const
 {
   Position< D > displ = to_pos - from_pos;
   for ( int i = 0; i < D; ++i )
   {
     if ( periodic_[ i ] )
     {
-      displ[ i ] = -0.5 * extent_[ i ] + std::fmod( displ[ i ] + 0.5 * extent_[ i ], extent_[ i ] );
+      displ[ i ] = -0.5 * extent_[ i ]
+        + std::fmod( displ[ i ] + 0.5 * extent_[ i ], extent_[ i ] );
       if ( displ[ i ] < -0.5 * extent_[ i ] )
         displ[ i ] += extent_[ i ];
     }
@@ -93,7 +100,8 @@ Layer< D >::get_status( DictionaryDatum& d ) const
 
   ( *topology_dict )[ names::depth ] = depth_;
   ( *topology_dict )[ names::extent ] = std::vector< double_t >( extent_ );
-  ( *topology_dict )[ names::center ] = std::vector< double_t >( lower_left_ + extent_ / 2 );
+  ( *topology_dict )[ names::center ] =
+    std::vector< double_t >( lower_left_ + extent_ / 2 );
 
   if ( periodic_.none() )
     ( *topology_dict )[ names::edge_wrap ] = BoolDatum( false );
@@ -114,7 +122,8 @@ Layer< D >::connect( AbstractLayer& target_layer, ConnectionCreator& connector )
   }
   catch ( std::bad_cast e )
   {
-    throw BadProperty( "Target layer must have same number of dimensions as source layer." );
+    throw BadProperty(
+      "Target layer must have same number of dimensions as source layer." );
   }
 }
 
@@ -122,8 +131,8 @@ template < int D >
 lockPTR< Ntree< D, index > >
 Layer< D >::get_local_positions_ntree( Selector filter )
 {
-  lockPTR< Ntree< D, index > > ntree(
-    new Ntree< D, index >( this->lower_left_, this->extent_, this->periodic_ ) );
+  lockPTR< Ntree< D, index > > ntree( new Ntree< D, index >(
+    this->lower_left_, this->extent_, this->periodic_ ) );
 
   insert_local_positions_ntree_( *ntree, filter );
 
@@ -142,8 +151,8 @@ Layer< D >::get_global_positions_ntree( Selector filter )
 
   clear_ntree_cache_();
 
-  cached_ntree_ = lockPTR< Ntree< D, index > >(
-    new Ntree< D, index >( this->lower_left_, this->extent_, this->periodic_ ) );
+  cached_ntree_ = lockPTR< Ntree< D, index > >( new Ntree< D, index >(
+    this->lower_left_, this->extent_, this->periodic_ ) );
 
   return do_get_global_positions_ntree_( filter );
 }
@@ -168,12 +177,13 @@ Layer< D >::get_global_positions_ntree( Selector filter,
     }
   }
 
-  cached_ntree_ =
-    lockPTR< Ntree< D, index > >( new Ntree< D, index >( this->lower_left_, extent, periodic ) );
+  cached_ntree_ = lockPTR< Ntree< D, index > >(
+    new Ntree< D, index >( this->lower_left_, extent, periodic ) );
 
   do_get_global_positions_ntree_( filter );
 
-  cached_ntree_layer_ = -1; // Do not use cache since the periodic bits and extents were altered.
+  // Do not use cache since the periodic bits and extents were altered.
+  cached_ntree_layer_ = -1;
 
   return cached_ntree_;
 }
@@ -182,17 +192,19 @@ template < int D >
 lockPTR< Ntree< D, index > >
 Layer< D >::do_get_global_positions_ntree_( const Selector& filter )
 {
-  if ( ( cached_vector_layer_ == get_gid() ) and ( cached_selector_ == filter ) )
+  if ( ( cached_vector_layer_ == get_gid() )
+    and ( cached_selector_ == filter ) )
   {
     // Convert from vector to Ntree
 
     typename std::insert_iterator< Ntree< D, index > > to =
       std::inserter( *cached_ntree_, cached_ntree_->end() );
 
-    for ( typename std::vector< std::pair< Position< D >, index > >::iterator from =
-            cached_vector_->begin();
-          from != cached_vector_->end();
-          ++from )
+    for (
+      typename std::vector< std::pair< Position< D >, index > >::iterator from =
+        cached_vector_->begin();
+      from != cached_vector_->end();
+      ++from )
     {
       *to = *from;
     }
@@ -215,7 +227,8 @@ template < int D >
 std::vector< std::pair< Position< D >, index > >*
 Layer< D >::get_global_positions_vector( Selector filter )
 {
-  if ( ( cached_vector_layer_ == get_gid() ) and ( cached_selector_ == filter ) )
+  if ( ( cached_vector_layer_ == get_gid() )
+    and ( cached_selector_ == filter ) )
   {
     assert( cached_vector_ );
     return cached_vector_;
@@ -229,8 +242,8 @@ Layer< D >::get_global_positions_vector( Selector filter )
   {
     // Convert from NTree to vector
 
-    typename std::back_insert_iterator< std::vector< std::pair< Position< D >, index > > > to =
-      std::back_inserter( *cached_vector_ );
+    typename std::back_insert_iterator< std::vector< std::pair< Position< D >,
+      index > > > to = std::back_inserter( *cached_vector_ );
 
     for ( typename Ntree< D, index >::iterator from = cached_ntree_->begin();
           from != cached_ntree_->end();
@@ -263,7 +276,8 @@ Layer< D >::get_global_positions_vector( Selector filter,
   MaskedLayer< D > masked_layer( *this, filter, mask, true, allow_oversized );
   std::vector< std::pair< Position< D >, index > > positions;
 
-  for ( typename Ntree< D, index >::masked_iterator iter = masked_layer.begin( anchor );
+  for ( typename Ntree< D, index >::masked_iterator iter =
+          masked_layer.begin( anchor );
         iter != masked_layer.end();
         ++iter )
   {
@@ -279,9 +293,11 @@ Layer< D >::get_global_nodes( const MaskDatum& mask,
   const std::vector< double_t >& anchor,
   bool allow_oversized )
 {
-  MaskedLayer< D > masked_layer( *this, Selector(), mask, true, allow_oversized );
+  MaskedLayer< D > masked_layer(
+    *this, Selector(), mask, true, allow_oversized );
   std::vector< index > nodes;
-  for ( typename Ntree< D, index >::masked_iterator i = masked_layer.begin( anchor );
+  for ( typename Ntree< D, index >::masked_iterator i =
+          masked_layer.begin( anchor );
         i != masked_layer.end();
         ++i )
   {
@@ -307,7 +323,8 @@ template < int D >
 void
 Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
 {
-  std::vector< std::pair< Position< D >, index > >* src_vec = get_global_positions_vector();
+  std::vector< std::pair< Position< D >, index > >* src_vec =
+    get_global_positions_vector();
 
   // Dictionary with parameters for get_connections()
   DictionaryDatum gcdict( new Dictionary );
@@ -316,10 +333,10 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
   // Avoid setting up new array for each iteration of the loop
   std::vector< index > source_array( 1 );
 
-  for (
-    typename std::vector< std::pair< Position< D >, index > >::iterator src_iter = src_vec->begin();
-    src_iter != src_vec->end();
-    ++src_iter )
+  for ( typename std::vector< std::pair< Position< D >, index > >::iterator
+          src_iter = src_vec->begin();
+        src_iter != src_vec->end();
+        ++src_iter )
   {
 
     const index source_gid = src_iter->second;
@@ -327,28 +344,32 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
 
     source_array[ 0 ] = source_gid;
     def( gcdict, names::source, source_array );
-    ArrayDatum connectome = net_->get_connections( gcdict );
+    ArrayDatum connectome =
+      kernel().connection_manager.get_connections( gcdict );
 
     // Print information about all local connections for current source
     for ( size_t i = 0; i < connectome.size(); ++i )
     {
-      ConnectionDatum con_id = getValue< ConnectionDatum >( connectome.get( i ) );
-      DictionaryDatum result_dict = net_->get_synapse_status( con_id.get_source_gid(),
-        con_id.get_synapse_model_id(),
-        con_id.get_port(),
-        con_id.get_target_thread() );
+      ConnectionDatum con_id =
+        getValue< ConnectionDatum >( connectome.get( i ) );
+      DictionaryDatum result_dict =
+        kernel().connection_manager.get_synapse_status( con_id.get_source_gid(),
+          con_id.get_synapse_model_id(),
+          con_id.get_port(),
+          con_id.get_target_thread() );
 
       long_t target_gid = getValue< long_t >( result_dict, names::target );
       double_t weight = getValue< double_t >( result_dict, names::weight );
       double_t delay = getValue< double_t >( result_dict, names::delay );
 
-      Node const* const target = net_->get_node( target_gid );
+      Node const* const target = kernel().node_manager.get_node( target_gid );
       assert( target );
 
       // Print source, target, weight, delay, rports
       out << source_gid << ' ' << target_gid << ' ' << weight << ' ' << delay;
 
-      Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >( target->get_parent() );
+      Layer< D >* tgt_layer =
+        dynamic_cast< Layer< D >* >( target->get_parent() );
       if ( tgt_layer == 0 )
       {
 
@@ -361,7 +382,8 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
       {
 
         out << ' ';
-        tgt_layer->compute_displacement( source_pos, target->get_subnet_index() ).print( out );
+        tgt_layer->compute_displacement(
+                     source_pos, target->get_subnet_index() ).print( out );
       }
 
       out << '\n';
@@ -380,7 +402,8 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
 
   try // Try to cast to GridMask
   {
-    const GridMask< D >& grid_mask = dynamic_cast< const GridMask< D >& >( *mask_ );
+    const GridMask< D >& grid_mask =
+      dynamic_cast< const GridMask< D >& >( *mask_ );
 
     // If the above cast succeeds, then this is a grid mask
 
@@ -398,16 +421,19 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
       bool oversize = false;
       for ( int i = 0; i < D; ++i )
         oversize |= layer.get_periodic_mask()[ i ]
-          and ( grid_mask.get_lower_right()[ i ] - grid_mask.get_upper_left()[ i ] )
-            > ( int ) dims[ i ];
+          and ( grid_mask.get_lower_right()[ i ]
+                - grid_mask.get_upper_left()[ i ] ) > ( int ) dims[ i ];
 
       if ( oversize )
         throw BadProperty(
-          "Mask size must not exceed layer size; set allow_oversized_mask to override." );
+          "Mask size must not exceed layer size; set allow_oversized_mask to "
+          "override." );
     }
 
-    Position< D > lower_left = ext / dims * grid_mask.get_upper_left() - ext / dims * 0.5;
-    Position< D > upper_right = ext / dims * grid_mask.get_lower_right() - ext / dims * 0.5;
+    Position< D > lower_left =
+      ext / dims * grid_mask.get_upper_left() - ext / dims * 0.5;
+    Position< D > upper_right =
+      ext / dims * grid_mask.get_lower_right() - ext / dims * 0.5;
 
     double_t y = lower_left[ 1 ];
     lower_left[ 1 ] = -upper_right[ 1 ];
@@ -430,11 +456,13 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
         bool oversize = false;
         for ( int i = 0; i < D; ++i )
           oversize |= layer.get_periodic_mask()[ i ]
-            and ( bb.upper_right[ i ] - bb.lower_left[ i ] ) > layer.get_extent()[ i ];
+            and ( bb.upper_right[ i ] - bb.lower_left[ i ] )
+              > layer.get_extent()[ i ];
 
         if ( oversize )
           throw BadProperty(
-            "Mask size must not exceed layer size; set allow_oversized_mask to override." );
+            "Mask size must not exceed layer size; set allow_oversized_mask to "
+            "override." );
       }
     }
     catch ( std::bad_cast& )

@@ -20,17 +20,24 @@
  *
  */
 
-#include "exceptions.h"
 #include "aeif_cond_alpha_multisynapse.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-#include <limits>
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -49,10 +56,12 @@ RecordablesMap< aeif_cond_alpha_multisynapse >::create()
 {
   // use standard names wherever you can for consistency!
   insert_( names::V_m,
-    &aeif_cond_alpha_multisynapse::get_y_elem_< aeif_cond_alpha_multisynapse::State_::V_M > );
+    &aeif_cond_alpha_multisynapse::
+      get_y_elem_< aeif_cond_alpha_multisynapse::State_::V_M > );
 
   insert_( names::w,
-    &aeif_cond_alpha_multisynapse::get_y_elem_< aeif_cond_alpha_multisynapse::State_::W > );
+    &aeif_cond_alpha_multisynapse::
+      get_y_elem_< aeif_cond_alpha_multisynapse::State_::W > );
 }
 
 /* ----------------------------------------------------------------
@@ -76,6 +85,7 @@ aeif_cond_alpha_multisynapse::Parameters_::Parameters_()
   , I_e( 0.0 )        // pA
   , MAXERR( 1.0e-10 ) // mV
   , HMIN( 1.0e-3 )    // ms
+  , num_of_receptors_( 0 )
   , has_connections_( false )
 {
   taus_syn.clear();
@@ -114,8 +124,8 @@ aeif_cond_alpha_multisynapse::State_::State_( const State_& s )
   yref = s.yref;
 }
 
-aeif_cond_alpha_multisynapse::State_& aeif_cond_alpha_multisynapse::State_::operator=(
-  const State_& s )
+aeif_cond_alpha_multisynapse::State_& aeif_cond_alpha_multisynapse::State_::
+operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
   y_ = s.y_;
@@ -186,11 +196,13 @@ aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
       if ( tau_tmp.size() < taus_syn.size() && has_connections_ == true )
       {
         throw BadProperty(
-          "The neuron has connections, therefore the number of ports cannot be reduced." );
+          "The neuron has connections, therefore the number of ports cannot be "
+          "reduced." );
       }
       else if ( tau_tmp[ i ] <= 0 )
       {
-        throw BadProperty( "All synaptic time constants must be strictly positive" );
+        throw BadProperty(
+          "All synaptic time constants must be strictly positive" );
       }
     }
     taus_syn = tau_tmp;
@@ -258,18 +270,19 @@ aeif_cond_alpha_multisynapse::State_::get( DictionaryDatum& d ) const
   std::vector< double_t >* g_inh = new std::vector< double_t >();
   std::vector< double_t >* dg_inh = new std::vector< double_t >();
 
-  for ( size_t i = 0; i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS )
-                            / State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
+  for ( size_t i = 0;
+        i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS )
+              / State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
         ++i )
   {
-    g_exc->push_back(
-      y_[ State_::G_EXC + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] );
-    dg_exc->push_back(
-      y_[ State_::DG_EXC + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] );
-    g_inh->push_back(
-      y_[ State_::G_INH + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] );
-    dg_inh->push_back(
-      y_[ State_::DG_INH + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] );
+    g_exc->push_back( y_[ State_::G_EXC
+      + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] );
+    dg_exc->push_back( y_[ State_::DG_EXC
+      + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] );
+    g_inh->push_back( y_[ State_::G_INH
+      + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] );
+    dg_inh->push_back( y_[ State_::DG_INH
+      + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] );
   }
 
   ( *d )[ names::g_ex ] = DoubleVectorDatum( g_exc );
@@ -285,8 +298,8 @@ aeif_cond_alpha_multisynapse::State_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
 
-  if ( ( d->known( names::g_ex ) ) && ( d->known( names::dg_ex ) ) && ( d->known( names::g_in ) )
-    && ( d->known( names::dg_in ) ) )
+  if ( ( d->known( names::g_ex ) ) && ( d->known( names::dg_ex ) )
+    && ( d->known( names::g_in ) ) && ( d->known( names::dg_in ) ) )
   {
     const std::vector< double_t > g_exc =
       getValue< std::vector< double_t > >( d->lookup( names::g_ex ) );
@@ -305,27 +318,34 @@ aeif_cond_alpha_multisynapse::State_::set( const DictionaryDatum& d )
 
     for ( size_t i = 0; i < g_exc.size(); ++i )
     {
-      if ( ( g_exc[ i ] < 0 ) || ( dg_exc[ i ] < 0 ) || ( g_inh[ i ] < 0 ) || ( dg_inh[ i ] < 0 ) )
+      if ( ( g_exc[ i ] < 0 ) || ( dg_exc[ i ] < 0 ) || ( g_inh[ i ] < 0 )
+        || ( dg_inh[ i ] < 0 ) )
       {
         throw BadProperty( "Conductances must not be negative." );
       }
 
-      y_[ State_::G_EXC + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = g_exc[ i ];
-      y_[ State_::DG_EXC + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = dg_exc[ i ];
-      y_[ State_::G_INH + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = g_inh[ i ];
-      y_[ State_::DG_INH + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = dg_inh[ i ];
+      y_[ State_::G_EXC
+        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = g_exc[ i ];
+      y_[ State_::DG_EXC + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                             * i ) ] = dg_exc[ i ];
+      y_[ State_::G_INH
+        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = g_inh[ i ];
+      y_[ State_::DG_INH + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                             * i ) ] = dg_inh[ i ];
     }
   }
 
   updateValue< double >( d, names::w, y_[ W ] );
 }
 
-aeif_cond_alpha_multisynapse::Buffers_::Buffers_( aeif_cond_alpha_multisynapse& n )
+aeif_cond_alpha_multisynapse::Buffers_::Buffers_(
+  aeif_cond_alpha_multisynapse& n )
   : logger_( n )
 {
 }
 
-aeif_cond_alpha_multisynapse::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha_multisynapse& n )
+aeif_cond_alpha_multisynapse::Buffers_::Buffers_( const Buffers_&,
+  aeif_cond_alpha_multisynapse& n )
   : logger_( n )
 {
 }
@@ -343,7 +363,8 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse()
   recordablesMap_.create();
 }
 
-aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse( const aeif_cond_alpha_multisynapse& n )
+aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse(
+  const aeif_cond_alpha_multisynapse& n )
   : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -362,7 +383,8 @@ aeif_cond_alpha_multisynapse::~aeif_cond_alpha_multisynapse()
 void
 aeif_cond_alpha_multisynapse::init_state_( const Node& proto )
 {
-  const aeif_cond_alpha_multisynapse& pr = downcast< aeif_cond_alpha_multisynapse >( proto );
+  const aeif_cond_alpha_multisynapse& pr =
+    downcast< aeif_cond_alpha_multisynapse >( proto );
   S_ = pr.S_;
 }
 
@@ -387,7 +409,8 @@ aeif_cond_alpha_multisynapse::init_buffers_()
 void
 aeif_cond_alpha_multisynapse::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  B_.logger_
+    .init(); // ensures initialization in case mm connected after Simulate
 
   P_.receptor_types_.resize( P_.num_of_receptors_ );
   for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
@@ -404,38 +427,53 @@ aeif_cond_alpha_multisynapse::calibrate()
     V_.g0_in_[ i ] = 1.0 * numerics::e / P_.taus_syn[ i ];
   }
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.RefractoryCounts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  assert( V_.RefractoryCounts_
+    >= 0 ); // since t_ref_ >= 0, this can only fail in error
 
   B_.spike_exc_.resize( P_.num_of_receptors_ );
   B_.spike_inh_.resize( P_.num_of_receptors_ );
   S_.y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.num_of_receptors_ ) );
+    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                  * P_.num_of_receptors_ ) );
   S_.k1.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.num_of_receptors_ ) );
+    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                  * P_.num_of_receptors_ ) );
   S_.k2.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.num_of_receptors_ ) );
+    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                  * P_.num_of_receptors_ ) );
   S_.k3.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.num_of_receptors_ ) );
+    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                  * P_.num_of_receptors_ ) );
   S_.k4.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.num_of_receptors_ ) );
+    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                  * P_.num_of_receptors_ ) );
   S_.k5.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.num_of_receptors_ ) );
+    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                  * P_.num_of_receptors_ ) );
   S_.k6.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.num_of_receptors_ ) );
+    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                  * P_.num_of_receptors_ ) );
   S_.k7.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.num_of_receptors_ ) );
+    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                  * P_.num_of_receptors_ ) );
   S_.yin.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.num_of_receptors_ ) );
+    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                   * P_.num_of_receptors_ ) );
   S_.ynew.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.num_of_receptors_ ) );
+    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                    * P_.num_of_receptors_ ) );
   S_.yref.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.num_of_receptors_ ) );
+    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                    * P_.num_of_receptors_ ) );
 }
 
 void
-aeif_cond_alpha_multisynapse::update( Time const& origin, const long_t from, const long_t to )
+aeif_cond_alpha_multisynapse::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -495,21 +533,24 @@ aeif_cond_alpha_multisynapse::update( Time const& origin, const long_t from, con
 
         // k3 = f(told + 3/10*h, y + 3/40*h*k1 + 9/40*h*k2)
         for ( size_t i = 0; i < S_.y_.size(); ++i )
-          S_.yin[ i ] = S_.y_[ i ] + h * ( 3.0 / 40.0 * S_.k1[ i ] + 9.0 / 40.0 * S_.k2[ i ] );
+          S_.yin[ i ] = S_.y_[ i ]
+            + h * ( 3.0 / 40.0 * S_.k1[ i ] + 9.0 / 40.0 * S_.k2[ i ] );
         aeif_cond_alpha_multisynapse_dynamics( S_.yin, S_.k3 );
 
         // k4
         for ( size_t i = 0; i < S_.y_.size(); ++i )
           S_.yin[ i ] = S_.y_[ i ]
-            + h * ( 44.0 / 45.0 * S_.k1[ i ] - 56.0 / 15.0 * S_.k2[ i ] + 32.0 / 9.0 * S_.k3[ i ] );
+            + h * ( 44.0 / 45.0 * S_.k1[ i ] - 56.0 / 15.0 * S_.k2[ i ]
+                    + 32.0 / 9.0 * S_.k3[ i ] );
         aeif_cond_alpha_multisynapse_dynamics( S_.yin, S_.k4 );
 
         // k5
         for ( size_t i = 0; i < S_.y_.size(); ++i )
           S_.yin[ i ] = S_.y_[ i ]
-            + h * ( 19372.0 / 6561.0 * S_.k1[ i ] - 25360.0 / 2187.0 * S_.k2[ i ]
-                    + 64448.0 / 6561.0 * S_.k3[ i ]
-                    - 212.0 / 729.0 * S_.k4[ i ] );
+            + h
+              * ( 19372.0 / 6561.0 * S_.k1[ i ] - 25360.0 / 2187.0 * S_.k2[ i ]
+                  + 64448.0 / 6561.0 * S_.k3[ i ]
+                  - 212.0 / 729.0 * S_.k4[ i ] );
         aeif_cond_alpha_multisynapse_dynamics( S_.yin, S_.k5 );
 
         // k6
@@ -534,28 +575,32 @@ aeif_cond_alpha_multisynapse::update( Time const& origin, const long_t from, con
         for ( size_t i = 0; i < S_.y_.size(); ++i )
         {
           S_.yref[ i ] = S_.y_[ i ]
-            + h * ( 5179.0 / 57600.0 * S_.k1[ i ] + 7571.0 / 16695.0 * S_.k3[ i ]
-                    + 393.0 / 640.0 * S_.k4[ i ]
-                    - 92097.0 / 339200.0 * S_.k5[ i ]
-                    + 187.0 / 2100.0 * S_.k6[ i ]
-                    + 1.0 / 40.0 * S_.k7[ i ] );
+            + h
+              * ( 5179.0 / 57600.0 * S_.k1[ i ] + 7571.0 / 16695.0 * S_.k3[ i ]
+                  + 393.0 / 640.0 * S_.k4[ i ]
+                  - 92097.0 / 339200.0 * S_.k5[ i ]
+                  + 187.0 / 2100.0 * S_.k6[ i ]
+                  + 1.0 / 40.0 * S_.k7[ i ] );
         }
 
-        err = std::fabs( S_.ynew[ 0 ] - S_.yref[ 0 ] ) / MAXERR + 1.0e-200; // error estimate,
-        // based on different orders for stepsize prediction. Small value added to prevent err==0
+        err = std::fabs( S_.ynew[ 0 ] - S_.yref[ 0 ] ) / MAXERR
+          + 1.0e-200; // error estimate,
+        // based on different orders for stepsize prediction. Small value added
+        // to prevent err==0
 
-        // The following flag 'done' is needed to ensure that we accept the result
-        // for h<=HMIN, irrespective of the error. (See below)
+        // The following flag 'done' is needed to ensure that we accept the
+        // result for h<=HMIN, irrespective of the error. (See below)
 
         done = ( h <= HMIN ); // Always exit loop if h was <=HMIN already
 
-        // prediction of next integration stepsize. This step may result in a stepsize below HMIN.
+        // prediction of next integration stepsize. This step may result in a
+        // stepsize below HMIN.
         // If this happens, we must
         //   1. set the stepsize to HMIN
-        //   2. compute the result and accept it irrespective of the error, because we cannot
-        //      decrease the stepsize any further.
-        //  the 'done' flag, computed above ensure that the loop is terminated after the
-        //  result was computed.
+        //   2. compute the result and accept it irrespective of the error,
+        //      because we cannot decrease the stepsize any further.
+        //  the 'done' flag, computed above ensure that the loop is terminated
+        //  after the result was computed.
 
         h *= 0.98 * std::pow( 1.0 / err, 1.0 / 5.0 );
         h = std::max( h, HMIN );
@@ -568,30 +613,34 @@ aeif_cond_alpha_multisynapse::update( Time const& origin, const long_t from, con
       t = t_return;
 
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
+      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
+        || S_.y_[ State_::W ] > 1e6 )
         throw NumericalInstability( get_name() );
 
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
-      if ( S_.r_ > 0 )                               // if neuron is still in refractory period
+      if ( S_.r_ > 0 ) // if neuron is still in refractory period
         S_.y_[ State_::V_M ] = P_.V_reset_;          // clamp it to V_reset
       else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ ) // V_m >= V_peak: spike
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b;   // spike-driven adaptation
-        S_.r_ = V_.RefractoryCounts_; // initialize refractory steps with refractory period
+        S_.r_ = V_.RefractoryCounts_; // initialize refractory steps with
+                                      // refractory period
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        network()->send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     } // while
 
     for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
     {
-      S_.y_[ State_::DG_EXC + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] +=
-        B_.spike_exc_[ i ].get_value( lag ) * V_.g0_ex_[ i ]; // add incoming spikes
-      S_.y_[ State_::DG_INH + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] +=
+      S_.y_[ State_::DG_EXC + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                                * i ) ] += B_.spike_exc_[ i ].get_value( lag )
+        * V_.g0_ex_[ i ]; // add incoming spikes
+      S_.y_[ State_::DG_INH
+        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] +=
         B_.spike_inh_[ i ].get_value( lag ) * V_.g0_in_[ i ];
     }
     // set new input current
@@ -604,9 +653,11 @@ aeif_cond_alpha_multisynapse::update( Time const& origin, const long_t from, con
 }
 
 port
-aeif_cond_alpha_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
+aeif_cond_alpha_multisynapse::handles_test_event( SpikeEvent&,
+  rport receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
+  if ( receptor_type <= 0
+    || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
 
   P_.has_connections_ = true;
@@ -617,18 +668,21 @@ void
 aeif_cond_alpha_multisynapse::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
-  assert( ( e.get_rport() > 0 ) && ( ( size_t ) e.get_rport() <= P_.num_of_receptors_ ) );
+  assert( ( e.get_rport() > 0 )
+    && ( ( size_t ) e.get_rport() <= P_.num_of_receptors_ ) );
 
   if ( e.get_weight() > 0.0 )
   {
     B_.spike_exc_[ e.get_rport() - 1 ].add_value(
-      e.get_rel_delivery_steps( network()->get_slice_origin() ),
+      e.get_rel_delivery_steps(
+        kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
     B_.spike_inh_[ e.get_rport() - 1 ].add_value(
-      e.get_rel_delivery_steps( network()->get_slice_origin() ),
+      e.get_rel_delivery_steps(
+        kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() ); // keep conductances positive
   }
 }
@@ -642,7 +696,9 @@ aeif_cond_alpha_multisynapse::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * I );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * I );
 }
 
 void

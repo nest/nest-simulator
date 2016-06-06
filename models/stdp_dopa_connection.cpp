@@ -20,13 +20,16 @@
  *
  */
 
-#include "network.h"
-#include "dictdatum.h"
-#include "connector_model.h"
-#include "common_synapse_properties.h"
 #include "stdp_dopa_connection.h"
+
+// Includes from nestkernel:
+#include "common_synapse_properties.h"
+#include "connector_model.h"
 #include "event.h"
-#include "nestmodule.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {
@@ -69,14 +72,16 @@ STDPDopaCommonProperties::get_status( DictionaryDatum& d ) const
 }
 
 void
-STDPDopaCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+STDPDopaCommonProperties::set_status( const DictionaryDatum& d,
+  ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 
   long_t vtgid;
   if ( updateValue< long_t >( d, "vt", vtgid ) )
   {
-    vt_ = dynamic_cast< volume_transmitter* >( NestModule::get_network().get_node( vtgid ) );
+    vt_ = dynamic_cast< volume_transmitter* >(
+      kernel().node_manager.get_node( vtgid ) );
 
     if ( vt_ == 0 )
       throw BadProperty( "Dopamine source must be volume transmitter" );
@@ -96,7 +101,8 @@ Node*
 STDPDopaCommonProperties::get_node()
 {
   if ( vt_ == 0 )
-    throw BadProperty( "No volume transmitter has been assigned to the dopamine synapse." );
+    throw BadProperty(
+      "No volume transmitter has been assigned to the dopamine synapse." );
   else
     return vt_;
 }

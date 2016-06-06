@@ -54,7 +54,8 @@ Sends: SpikeEvent
 Parameters:
 No parameters to be set in the status dictionary.
 
-Author: David Reichert, Abigail Morrison, Alexander Seeholzer, Hans Ekkehard Plesser
+Author: David Reichert, Abigail Morrison, Alexander Seeholzer, Hans Ekkehard
+Plesser
 FirstVersion: May 2006
 */
 
@@ -70,16 +71,15 @@ FirstVersion: May 2006
 #ifndef PARROT_NEURON_H
 #define PARROT_NEURON_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 
 namespace nest
 {
-class Network;
-
 class parrot_neuron : public Archiving_Node
 {
 
@@ -93,8 +93,12 @@ public:
    */
   using Node::handle;
   using Node::handles_test_event;
+  using Node::sends_signal;
+  using Node::receives_signal;
 
   port send_test_event( Node&, rport, synindex, bool );
+  SignalType sends_signal() const;
+  SignalType receives_signal() const;
 
   void handle( SpikeEvent& );
   port handles_test_event( SpikeEvent&, rport );
@@ -128,7 +132,10 @@ private:
 };
 
 inline port
-parrot_neuron::send_test_event( Node& target, rport receptor_type, synindex, bool )
+parrot_neuron::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -149,6 +156,18 @@ parrot_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
   {
     throw UnknownReceptorType( receptor_type, get_name() );
   }
+}
+
+inline SignalType
+parrot_neuron::sends_signal() const
+{
+  return ALL;
+}
+
+inline SignalType
+parrot_neuron::receives_signal() const
+{
+  return ALL;
 }
 
 } // namespace

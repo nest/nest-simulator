@@ -21,31 +21,37 @@
  */
 
 #include "aeif_cond_exp.h"
-#include "nest_names.h"
 
-#ifdef HAVE_GSL_1_11
+#ifdef HAVE_GSL
 
-#include "universal_data_logger_impl.h"
-
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include <limits>
-
+// C++ includes:
 #include <cmath>
+#include <cstdio>
 #include <iomanip>
 #include <iostream>
-#include <cstdio>
+#include <limits>
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_cond_exp > nest::aeif_cond_exp::recordablesMap_;
+nest::RecordablesMap< nest::aeif_cond_exp >
+  nest::aeif_cond_exp::recordablesMap_;
 
 namespace nest
 {
@@ -60,23 +66,30 @@ void
 RecordablesMap< aeif_cond_exp >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::V_M > );
-  insert_( names::g_ex, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::G_EXC > );
-  insert_( names::g_in, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::G_INH > );
+  insert_(
+    names::V_m, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::V_M > );
+  insert_(
+    names::g_ex, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::G_EXC > );
+  insert_(
+    names::g_in, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::G_INH > );
   insert_( names::w, &aeif_cond_exp::get_y_elem_< aeif_cond_exp::State_::W > );
 }
 }
 
 
 extern "C" int
-nest::aeif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
+nest::aeif_cond_exp_dynamics( double,
+  const double y[],
+  double f[],
+  void* pnode )
 {
   // a shorthand
   typedef nest::aeif_cond_exp::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_cond_exp& node = *( reinterpret_cast< nest::aeif_cond_exp* >( pnode ) );
+  const nest::aeif_cond_exp& node =
+    *( reinterpret_cast< nest::aeif_cond_exp* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -100,11 +113,13 @@ nest::aeif_cond_exp_dynamics( double, const double y[], double f[], void* pnode 
   const double_t MAX_EXP_ARG = 10.;
 
   // If the argument is too large, we clip it.
-  const double_t I_spike = node.P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
+  const double_t I_spike =
+    node.P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
 
   // dv/dt
-  f[ S::V_M ] = ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh - w
-                  + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] =
+    ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
+      - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::G_EXC ] = -g_ex / node.P_.tau_syn_ex; // Synaptic Conductance (nS)
 
@@ -156,7 +171,8 @@ nest::aeif_cond_exp::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::aeif_cond_exp::State_& nest::aeif_cond_exp::State_::operator=( const State_& s )
+nest::aeif_cond_exp::State_& nest::aeif_cond_exp::State_::operator=(
+  const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -337,14 +353,16 @@ nest::aeif_cond_exp::init_buffers_()
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
   if ( B_.s_ == 0 )
-    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ =
+      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   else
     gsl_odeiv_step_reset( B_.s_ );
 
   if ( B_.c_ == 0 )
     B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
   else
-    gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
+    gsl_odeiv_control_init(
+      B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
 
   if ( B_.e_ == 0 )
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
@@ -362,9 +380,11 @@ nest::aeif_cond_exp::init_buffers_()
 void
 nest::aeif_cond_exp::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.RefractoryCounts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  // since t_ref_ >= 0, this can only fail in error
+  assert( V_.RefractoryCounts_ >= 0 );
 }
 
 /* ----------------------------------------------------------------
@@ -372,9 +392,12 @@ nest::aeif_cond_exp::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_exp::update( const Time& origin, const long_t from, const long_t to )
+nest::aeif_cond_exp::update( const Time& origin,
+  const long_t from,
+  const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
@@ -410,7 +433,8 @@ nest::aeif_cond_exp::update( const Time& origin, const long_t from, const long_t
         throw GSLSolverFailure( get_name(), status );
 
       // check for unreasonable values; we allow V_M to explode
-      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6 || S_.y_[ State_::W ] > 1e6 )
+      if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
+        || S_.y_[ State_::W ] > 1e6 )
         throw NumericalInstability( get_name() );
 
       // spikes are handled inside the while-loop
@@ -425,7 +449,7 @@ nest::aeif_cond_exp::update( const Time& origin, const long_t from, const long_t
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
-        network()->send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
     S_.y_[ State_::G_EXC ] += B_.spike_exc_.get_value( lag );
@@ -445,10 +469,12 @@ nest::aeif_cond_exp::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() ); // keep conductances positive
 }
 
@@ -461,7 +487,9 @@ nest::aeif_cond_exp::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 void
@@ -470,4 +498,4 @@ nest::aeif_cond_exp::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-#endif // HAVE_GSL_1_11
+#endif // HAVE_GSL

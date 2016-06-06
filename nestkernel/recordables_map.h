@@ -23,13 +23,18 @@
 #ifndef RECORDABLES_MAP_H
 #define RECORDABLES_MAP_H
 
-#include <map>
-#include <utility>
+// C++ includes:
 #include <cassert>
+#include <map>
 #include <string>
-#include "name.h"
-#include "nest.h"
+#include <utility>
+
+// Includes from nestkernel:
+#include "nest_types.h"
+
+// Includes from sli:
 #include "arraydatum.h"
+#include "name.h"
 
 namespace nest
 {
@@ -86,7 +91,8 @@ public:
   get_list() const
   {
     ArrayDatum recordables;
-    for ( typename Base_::const_iterator it = this->begin(); it != this->end(); ++it )
+    for ( typename Base_::const_iterator it = this->begin(); it != this->end();
+          ++it )
       recordables.push_back( new LiteralDatum( it->first ) );
     return recordables;
 

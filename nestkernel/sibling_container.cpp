@@ -20,13 +20,19 @@
  *
  */
 
-#include "event.h"
+
 #include "sibling_container.h"
-#include "dictdatum.h"
-#include "arraydatum.h"
-#include "dictutils.h"
-#include "network.h"
+
+// C++ includes:
 #include <string>
+
+// Includes from nestkernel:
+#include "event.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dictdatum.h"
+#include "dictutils.h"
 
 #ifdef N_DEBUG
 #undef N_DEBUG
@@ -43,4 +49,16 @@ nest::SiblingContainer::SiblingContainer( const SiblingContainer& c )
   : Node( c )
   , nodes_( c.nodes_ )
 {
+}
+
+nest::Node*
+nest::SiblingContainer::get_thread_sibling_safe_( index i ) const
+{
+  return nodes_.at( i ); // with range check
+}
+
+nest::Node*
+nest::SiblingContainer::get_thread_sibling_( index i ) const
+{
+  return nodes_[ i ]; // without range check
 }

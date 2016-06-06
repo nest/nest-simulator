@@ -25,26 +25,33 @@
 
 #ifdef HAVE_GSL
 
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "numerics.h"
-#include <limits>
-
-#include "universal_data_logger_impl.h"
-
+// C++ includes:
+#include <cstdio>
 #include <iomanip>
 #include <iostream>
-#include <cstdio>
+#include <limits>
 
+// External includes:
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_sf_exp.h>
 
-nest::RecordablesMap< nest::hh_cond_exp_traub > nest::hh_cond_exp_traub::recordablesMap_;
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+
+nest::RecordablesMap< nest::hh_cond_exp_traub >
+  nest::hh_cond_exp_traub::recordablesMap_;
 
 namespace nest
 {
@@ -55,12 +62,18 @@ void
 RecordablesMap< hh_cond_exp_traub >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::V_M > );
-  insert_( names::g_ex, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::G_EXC > );
-  insert_( names::g_in, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::G_INH > );
-  insert_( names::Act_m, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::HH_M > );
-  insert_( names::Act_h, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::HH_H > );
-  insert_( names::Inact_n, &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::HH_N > );
+  insert_( names::V_m,
+    &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::V_M > );
+  insert_( names::g_ex,
+    &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::G_EXC > );
+  insert_( names::g_in,
+    &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::G_INH > );
+  insert_( names::Act_m,
+    &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::HH_M > );
+  insert_( names::Act_h,
+    &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::HH_H > );
+  insert_( names::Inact_n,
+    &hh_cond_exp_traub::get_y_elem_< hh_cond_exp_traub::State_::HH_N > );
 }
 
 extern "C" int
@@ -71,7 +84,8 @@ hh_cond_exp_traub_dynamics( double, const double y[], double f[], void* pnode )
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::hh_cond_exp_traub& node = *( reinterpret_cast< nest::hh_cond_exp_traub* >( pnode ) );
+  const nest::hh_cond_exp_traub& node =
+    *( reinterpret_cast< nest::hh_cond_exp_traub* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -80,26 +94,29 @@ hh_cond_exp_traub_dynamics( double, const double y[], double f[], void* pnode )
   // good compiler will optimize the verbosity away ...
 
   // ionic currents
-  const double I_Na = node.P_.g_Na * y[ S::HH_M ] * y[ S::HH_M ] * y[ S::HH_M ] * y[ S::HH_H ]
-    * ( y[ S::V_M ] - node.P_.E_Na );
-  const double I_K = node.P_.g_K * y[ S::HH_N ] * y[ S::HH_N ] * y[ S::HH_N ] * y[ S::HH_N ]
-    * ( y[ S::V_M ] - node.P_.E_K );
+  const double I_Na = node.P_.g_Na * y[ S::HH_M ] * y[ S::HH_M ] * y[ S::HH_M ]
+    * y[ S::HH_H ] * ( y[ S::V_M ] - node.P_.E_Na );
+  const double I_K = node.P_.g_K * y[ S::HH_N ] * y[ S::HH_N ] * y[ S::HH_N ]
+    * y[ S::HH_N ] * ( y[ S::V_M ] - node.P_.E_K );
   const double I_L = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
 
   const double I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex );
   const double I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in );
 
   // membrane potential
-  f[ S::V_M ] =
-    ( -I_Na - I_K - I_L - I_syn_exc - I_syn_inh + node.B_.I_stim_ + node.P_.I_e ) / node.P_.C_m;
+  f[ S::V_M ] = ( -I_Na - I_K - I_L - I_syn_exc - I_syn_inh + node.B_.I_stim_
+                  + node.P_.I_e ) / node.P_.C_m;
 
   // channel dynamics
   const double V = y[ S::V_M ] - node.P_.V_T;
 
-  const double alpha_n = 0.032 * ( 15. - V ) / ( std::exp( ( 15. - V ) / 5. ) - 1. );
+  const double alpha_n =
+    0.032 * ( 15. - V ) / ( std::exp( ( 15. - V ) / 5. ) - 1. );
   const double beta_n = 0.5 * std::exp( ( 10. - V ) / 40. );
-  const double alpha_m = 0.32 * ( 13. - V ) / ( std::exp( ( 13. - V ) / 4. ) - 1. );
-  const double beta_m = 0.28 * ( V - 40. ) / ( std::exp( ( V - 40. ) / 5. ) - 1. );
+  const double alpha_m =
+    0.32 * ( 13. - V ) / ( std::exp( ( 13. - V ) / 4. ) - 1. );
+  const double beta_m =
+    0.28 * ( V - 40. ) / ( std::exp( ( V - 40. ) / 5. ) - 1. );
   const double alpha_h = 0.128 * std::exp( ( 17. - V ) / 18. );
   const double beta_h = 4. / ( 1. + std::exp( ( 40. - V ) / 5. ) );
 
@@ -144,10 +161,13 @@ nest::hh_cond_exp_traub::State_::State_( const Parameters_& p )
     y_[ i ] = 0.0;
 
   // equilibrium values for (in)activation variables
-  const double alpha_n = 0.032 * ( 15. - y_[ 0 ] ) / ( std::exp( ( 15. - y_[ 0 ] ) / 5. ) - 1. );
+  const double alpha_n =
+    0.032 * ( 15. - y_[ 0 ] ) / ( std::exp( ( 15. - y_[ 0 ] ) / 5. ) - 1. );
   const double beta_n = 0.5 * std::exp( ( 10. - y_[ 0 ] ) / 40. );
-  const double alpha_m = 0.32 * ( 13. - y_[ 0 ] ) / ( std::exp( ( 13. - y_[ 0 ] ) / 4. ) - 1. );
-  const double beta_m = 0.28 * ( y_[ 0 ] - 40. ) / ( std::exp( ( y_[ 0 ] - 40. ) / 5. ) - 1. );
+  const double alpha_m =
+    0.32 * ( 13. - y_[ 0 ] ) / ( std::exp( ( 13. - y_[ 0 ] ) / 4. ) - 1. );
+  const double beta_m =
+    0.28 * ( y_[ 0 ] - 40. ) / ( std::exp( ( y_[ 0 ] - 40. ) / 5. ) - 1. );
   const double alpha_h = 0.128 * std::exp( ( 17. - y_[ 0 ] ) / 18. );
   const double beta_h = 4. / ( 1. + std::exp( ( 40. - y_[ 0 ] ) / 5. ) );
 
@@ -163,7 +183,8 @@ nest::hh_cond_exp_traub::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::hh_cond_exp_traub::State_& nest::hh_cond_exp_traub::State_::operator=( const State_& s )
+nest::hh_cond_exp_traub::State_& nest::hh_cond_exp_traub::State_::operator=(
+  const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -229,7 +250,8 @@ nest::hh_cond_exp_traub::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::hh_cond_exp_traub::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::hh_cond_exp_traub::State_::set( const DictionaryDatum& d,
+  const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::Act_m, y_[ HH_M ] );
@@ -250,7 +272,8 @@ nest::hh_cond_exp_traub::Buffers_::Buffers_( hh_cond_exp_traub& n )
   // init_buffers_().
 }
 
-nest::hh_cond_exp_traub::Buffers_::Buffers_( const Buffers_&, hh_cond_exp_traub& n )
+nest::hh_cond_exp_traub::Buffers_::Buffers_( const Buffers_&,
+  hh_cond_exp_traub& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -319,7 +342,8 @@ nest::hh_cond_exp_traub::init_buffers_()
   B_.I_stim_ = 0.0;
 
   if ( B_.s_ == 0 )
-    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ =
+      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   else
     gsl_odeiv_step_reset( B_.s_ );
 
@@ -342,7 +366,8 @@ nest::hh_cond_exp_traub::init_buffers_()
 void
 nest::hh_cond_exp_traub::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
   V_.RefractoryCounts_ = 20;
   V_.U_old_ = S_.y_[ State_::V_M ];
 }
@@ -351,9 +376,12 @@ nest::hh_cond_exp_traub::calibrate()
  * Update and spike handling functions
  * ---------------------------------------------------------------- */
 void
-nest::hh_cond_exp_traub::update( Time const& origin, const long_t from, const long_t to )
+nest::hh_cond_exp_traub::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -391,14 +419,15 @@ nest::hh_cond_exp_traub::update( Time const& origin, const long_t from, const lo
     else
     {
       // (threshold   &&    maximum    )
-      if ( S_.y_[ State_::V_M ] >= P_.V_T + 30. && V_.U_old_ > S_.y_[ State_::V_M ] )
+      if ( S_.y_[ State_::V_M ] >= P_.V_T + 30.
+        && V_.U_old_ > S_.y_[ State_::V_M ] )
       {
         S_.r_ = V_.RefractoryCounts_;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
         SpikeEvent se;
-        network()->send( *this, se, lag );
+        kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
 
@@ -417,14 +446,16 @@ nest::hh_cond_exp_traub::handle( SpikeEvent& e )
 
   if ( e.get_weight() > 0.0 )
   {
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
     // add with negative weight, ie positive value, since we are changing a
     // conductance
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() );
   }
 }
@@ -438,7 +469,9 @@ nest::hh_cond_exp_traub::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 void

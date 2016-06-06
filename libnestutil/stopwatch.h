@@ -23,9 +23,12 @@
 #ifndef STOPWATCH_H
 #define STOPWATCH_H
 
-#include <iostream>
+// C includes:
 #include <sys/time.h>
+
+// C++ includes:
 #include <cassert>
+#include <iostream>
 
 namespace nest
 {
@@ -131,14 +134,16 @@ public:
   /**
    * This method prints out the currently elapsed time.
    */
-  void
-  print( const char* msg = "", timeunit_t timeunit = SECONDS, std::ostream& os = std::cout ) const;
+  void print( const char* msg = "",
+    timeunit_t timeunit = SECONDS,
+    std::ostream& os = std::cout ) const;
 
   /**
    * Convenient method for writing time in seconds
    * to some ostream.
    */
-  friend std::ostream& operator<<( std::ostream& os, const Stopwatch& stopwatch );
+  friend std::ostream& operator<<( std::ostream& os,
+    const Stopwatch& stopwatch );
 
 private:
 #ifndef DISABLE_TIMING
@@ -156,7 +161,8 @@ private:
 inline bool
 Stopwatch::correct_timeunit( timeunit_t t )
 {
-  return t == MICROSEC || t == MILLISEC || t == SECONDS || t == MINUTES || t == HOURS || t == DAYS;
+  return t == MICROSEC || t == MILLISEC || t == SECONDS || t == MINUTES
+    || t == HOURS || t == DAYS;
 }
 
 inline void
@@ -236,7 +242,9 @@ nest::Stopwatch::reset()
 }
 
 inline void
-nest::Stopwatch::print( const char* msg, timeunit_t timeunit, std::ostream& os ) const
+nest::Stopwatch::print( const char* msg,
+  timeunit_t timeunit,
+  std::ostream& os ) const
 {
 #ifndef DISABLE_TIMING
   assert( correct_timeunit( timeunit ) );
@@ -264,8 +272,9 @@ nest::Stopwatch::print( const char* msg, timeunit_t timeunit, std::ostream& os )
     break;
   }
 #ifdef DEBUG
-  os << " (running: " << ( _running ? "true" : "false" ) << ", begin: " << _beg << ", end: " << _end
-     << ", diff: " << ( _end - _beg ) << ", prev: " << _prev_elapsed << ")";
+  os << " (running: " << ( _running ? "true" : "false" ) << ", begin: " << _beg
+     << ", end: " << _end << ", diff: " << ( _end - _beg )
+     << ", prev: " << _prev_elapsed << ")";
 #endif
   os << std::endl;
 #endif

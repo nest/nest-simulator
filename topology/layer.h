@@ -23,17 +23,25 @@
 #ifndef LAYER_H
 #define LAYER_H
 
+// C++ includes:
+#include <bitset>
 #include <iostream>
 #include <utility>
-#include <bitset>
-#include "nest.h"
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
+#include "nest_types.h"
 #include "subnet.h"
-#include "position.h"
+
+// Includes from sli:
 #include "dictutils.h"
-#include "topology_names.h"
-#include "ntree.h"
+
+// Includes from topology:
 #include "connection_creator.h"
+#include "ntree.h"
+#include "position.h"
 #include "selector.h"
+#include "topology_names.h"
 
 namespace nest
 {
@@ -62,7 +70,8 @@ public:
    * @param sind subnet index of node
    * @returns position of node as std::vector
    */
-  virtual std::vector< double_t > get_position_vector( const index sind ) const = 0;
+  virtual std::vector< double_t > get_position_vector(
+    const index sind ) const = 0;
 
   /**
    * Returns displacement of node from given position. When using periodic
@@ -71,7 +80,8 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns vector pointing from from_pos to node to's position
    */
-  virtual std::vector< double_t > compute_displacement( const std::vector< double_t >& from_pos,
+  virtual std::vector< double_t > compute_displacement(
+    const std::vector< double_t >& from_pos,
     const index to ) const = 0;
 
   /**
@@ -91,7 +101,8 @@ public:
    *                  as this layer.
    * @param connector connection properties
    */
-  virtual void connect( AbstractLayer& target, ConnectionCreator& connector ) = 0;
+  virtual void connect( AbstractLayer& target,
+    ConnectionCreator& connector ) = 0;
 
   /**
    * Factory function for layers. The supplied dictionary contains
@@ -121,13 +132,15 @@ public:
   virtual void dump_nodes( std::ostream& os ) const = 0;
 
   /**
-   * Dumps information about all connections of the given type having their source in
+   * Dumps information about all connections of the given type having their
+   * source in
    * the given layer to the given output stream. For distributed simulations
    * this function will dump the connections with local targets only.
    * @param out output stream
    * @param synapse_id type of connection
    */
-  virtual void dump_connections( std::ostream& out, const Token& syn_model ) = 0;
+  virtual void dump_connections( std::ostream& out,
+    const Token& syn_model ) = 0;
 
   using Subnet::local_begin;
   using Subnet::local_end;
@@ -276,8 +289,8 @@ public:
   std::vector< double_t > get_position_vector( const index sind ) const;
 
   /**
-   * Returns displacement of a position from another position. When using periodic
-   * boundary conditions, will return minimum displacement.
+   * Returns displacement of a position from another position. When using
+   * periodic boundary conditions, will return minimum displacement.
    * @param from_pos  position vector in layer
    * @param to_pos    position to which displacement is to be computed
    * @returns vector pointing from from_pos to to_pos
@@ -292,9 +305,11 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns vector pointing from from_pos to node to's position
    */
-  Position< D > compute_displacement( const Position< D >& from_pos, const index to ) const;
+  Position< D > compute_displacement( const Position< D >& from_pos,
+    const index to ) const;
 
-  std::vector< double_t > compute_displacement( const std::vector< double_t >& from_pos,
+  std::vector< double_t > compute_displacement(
+    const std::vector< double_t >& from_pos,
     const index to ) const;
 
   /**
@@ -304,15 +319,18 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns length of vector pointing from from_pos to node to's position
    */
-  double_t compute_distance( const Position< D >& from_pos, const index to ) const;
+  double_t compute_distance( const Position< D >& from_pos,
+    const index to ) const;
 
-  double_t compute_distance( const std::vector< double_t >& from_pos, const index to ) const;
+  double_t compute_distance( const std::vector< double_t >& from_pos,
+    const index to ) const;
 
 
   /**
    * Get positions for local nodes in layer.
    */
-  lockPTR< Ntree< D, index > > get_local_positions_ntree( Selector filter = Selector() );
+  lockPTR< Ntree< D, index > > get_local_positions_ntree(
+    Selector filter = Selector() );
 
   /**
    * Get positions for all nodes in layer, including nodes on other MPI
@@ -321,7 +339,8 @@ public:
    * user should group together all ConnectLayers calls using the same
    * pool layer.
    */
-  lockPTR< Ntree< D, index > > get_global_positions_ntree( Selector filter = Selector() );
+  lockPTR< Ntree< D, index > > get_global_positions_ntree(
+    Selector filter = Selector() );
 
   /**
    * Get positions globally, overriding the dimensions of the layer and
@@ -337,8 +356,8 @@ public:
   std::vector< std::pair< Position< D >, index > >* get_global_positions_vector(
     Selector filter = Selector() );
 
-  virtual std::vector< std::pair< Position< D >, index > > get_global_positions_vector(
-    Selector filter,
+  virtual std::vector< std::pair< Position< D >, index > >
+  get_global_positions_vector( Selector filter,
     const MaskDatum& mask,
     const Position< D >& anchor,
     bool allow_oversized );
@@ -368,9 +387,10 @@ public:
   void dump_nodes( std::ostream& os ) const;
 
   /**
-   * Dumps information about all connections of the given type having their source in
-   * the given layer to the given output stream. For distributed simulations
-   * this function will dump the connections with local targets only.
+   * Dumps information about all connections of the given type having their
+   * source in the given layer to the given output stream. For distributed
+   * simulations this function will dump the connections with local targets
+   * only.
    * @param out output stream
    * @param synapse_id type of connection
    */
@@ -398,7 +418,8 @@ protected:
    */
   void clear_vector_cache_() const;
 
-  lockPTR< Ntree< D, index > > do_get_global_positions_ntree_( const Selector& filter );
+  lockPTR< Ntree< D, index > > do_get_global_positions_ntree_(
+    const Selector& filter );
 
   /**
    * Insert global position info into ntree.
@@ -409,17 +430,20 @@ protected:
   /**
    * Insert global position info into vector.
    */
-  virtual void insert_global_positions_vector_( std::vector< std::pair< Position< D >, index > >&,
+  virtual void insert_global_positions_vector_(
+    std::vector< std::pair< Position< D >, index > >&,
     const Selector& filter ) = 0;
 
   /**
    * Insert local position info into ntree.
    */
-  virtual void insert_local_positions_ntree_( Ntree< D, index >& tree, const Selector& filter ) = 0;
+  virtual void insert_local_positions_ntree_( Ntree< D, index >& tree,
+    const Selector& filter ) = 0;
 
-  Position< D > lower_left_;  ///< lower left corner (minimum coordinates) of layer
-  Position< D > extent_;      ///< size of layer
-  std::bitset< D > periodic_; ///< periodic b.c.
+  //! lower left corner (minimum coordinates) of layer
+  Position< D > lower_left_;
+  Position< D > extent_;      //!< size of layer
+  std::bitset< D > periodic_; //!< periodic b.c.
 
   /**
    * Global position information for a single layer
@@ -444,8 +468,10 @@ public:
    * @param layer           The layer to mask
    * @param filter          Optionally select subset of neurons
    * @param mask            The mask to apply to the layer
-   * @param include_global  If true, include all nodes, otherwise only local to MPI process
-   * @param allow_oversized If true, allow larges masks than layers when using periodic b.c.
+   * @param include_global  If true, include all nodes, otherwise only local to
+   *                        MPI process
+   * @param allow_oversized If true, allow larges masks than layers when using
+   *                        periodic b.c.
    */
   MaskedLayer( Layer< D >& layer,
     Selector filter,
@@ -461,9 +487,12 @@ public:
    * @param layer           The layer to mask (source layer)
    * @param filter          Optionally select subset of neurons
    * @param mask            The mask to apply to the layer
-   * @param include_global  If true, include all nodes, otherwise only local to MPI process
-   * @param allow_oversized If true, allow larges masks than layers when using periodic b.c.
-   * @param target          The layer which the given mask is defined for (target layer)
+   * @param include_global  If true, include all nodes, otherwise only local to
+   * MPI process
+   * @param allow_oversized If true, allow larges masks than layers when using
+   * periodic b.c.
+   * @param target          The layer which the given mask is defined for
+   * (target layer)
    */
   MaskedLayer( Layer< D >& layer,
     Selector filter,
@@ -477,9 +506,11 @@ public:
   /**
    * Iterate over nodes inside mask
    * @param anchor Position to apply mask to
-   * @returns an iterator for the nodes inside the mask centered on the anchor position
+   * @returns an iterator for the nodes inside the mask centered on the anchor
+   * position
    */
-  typename Ntree< D, index >::masked_iterator begin( const Position< D >& anchor );
+  typename Ntree< D, index >::masked_iterator begin(
+    const Position< D >& anchor );
 
   /**
    * @return end iterator
@@ -529,10 +560,13 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
   : mask_( maskd )
 {
   if ( include_global )
-    ntree_ = layer.get_global_positions_ntree(
-      filter, target.get_periodic_mask(), target.get_lower_left(), target.get_extent() );
+    ntree_ = layer.get_global_positions_ntree( filter,
+      target.get_periodic_mask(),
+      target.get_lower_left(),
+      target.get_extent() );
   // else
-  //  ntree_ = layer.get_local_positions_ntree(filter, target.get_periodic_mask(),
+  //  ntree_ = layer.get_local_positions_ntree(filter,
+  //  target.get_periodic_mask(),
   //  target.get_lower_left(), target.get_extent());
 
   check_mask_( target, allow_oversized );
@@ -550,7 +584,8 @@ MaskedLayer< D >::begin( const Position< D >& anchor )
 {
   try
   {
-    return ntree_->masked_begin( dynamic_cast< const Mask< D >& >( *mask_ ), anchor );
+    return ntree_->masked_begin(
+      dynamic_cast< const Mask< D >& >( *mask_ ), anchor );
   }
   catch ( std::bad_cast e )
   {
@@ -601,28 +636,33 @@ inline Layer< D >::~Layer()
 
 template < int D >
 inline Position< D >
-Layer< D >::compute_displacement( const Position< D >& from_pos, const index to ) const
+Layer< D >::compute_displacement( const Position< D >& from_pos,
+  const index to ) const
 {
   return compute_displacement( from_pos, get_position( to ) );
 }
 
 template < int D >
 inline std::vector< double_t >
-Layer< D >::compute_displacement( const std::vector< double_t >& from_pos, const index to ) const
+Layer< D >::compute_displacement( const std::vector< double_t >& from_pos,
+  const index to ) const
 {
-  return std::vector< double_t >( compute_displacement( Position< D >( from_pos ), to ) );
+  return std::vector< double_t >(
+    compute_displacement( Position< D >( from_pos ), to ) );
 }
 
 template < int D >
 inline double_t
-Layer< D >::compute_distance( const Position< D >& from_pos, const index to ) const
+Layer< D >::compute_distance( const Position< D >& from_pos,
+  const index to ) const
 {
   return compute_displacement( from_pos, to ).length();
 }
 
 template < int D >
 inline double_t
-Layer< D >::compute_distance( const std::vector< double_t >& from_pos, const index to ) const
+Layer< D >::compute_distance( const std::vector< double_t >& from_pos,
+  const index to ) const
 {
   return compute_displacement( Position< D >( from_pos ), to ).length();
 }

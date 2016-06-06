@@ -44,8 +44,9 @@ from . import test_networks
 from . import test_threads
 from . import test_csa
 from . import test_quantal_stp_synapse
-from . import test_msp
+from . import test_sp
 from . import test_parrot_neuron
+from . import test_stdp_triplet_synapse
 
 
 def suite():
@@ -54,7 +55,7 @@ def suite():
 
     suite.addTest(test_errors.suite())
     suite.addTest(test_stack.suite())
-    suite.addTest(test_create.suite())                    
+    suite.addTest(test_create.suite())
     suite.addTest(test_status.suite())
     suite.addTest(test_onetooneconnect.suite())
     suite.addTest(test_convergent_divergent_connect.suite())
@@ -64,16 +65,17 @@ def suite():
     suite.addTest(test_connect_fixed_total_number.suite())
     suite.addTest(test_connect_one_to_one.suite())
     suite.addTest(test_connect_pairwise_bernoulli.suite())
-    suite.addTest(test_findconnections.suite())    
+    suite.addTest(test_findconnections.suite())
     suite.addTest(test_getconnections.suite())
     suite.addTest(test_dataconnect.suite())
     suite.addTest(test_events.suite())
     suite.addTest(test_networks.suite())
-    suite.addTest(test_threads.suite())    
+    suite.addTest(test_threads.suite())
     suite.addTest(test_csa.suite())
     suite.addTest(test_quantal_stp_synapse.suite())
-    suite.addTest(test_msp.suite())
+    suite.addTest(test_sp.suite())
     suite.addTest(test_parrot_neuron.suite())
+    suite.addTest(test_stdp_triplet_synapse.suite())
 
     return suite
 

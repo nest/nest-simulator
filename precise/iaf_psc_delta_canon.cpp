@@ -20,21 +20,27 @@
  *
  */
 
-/* iaf_psc_delta_canon is a neuron where the potential jumps on each spike arrival. */
+// iaf_psc_delta_canon is a neuron where the potential jumps on each spike
+// arrival.
 
-#include "config.h"
-
-#include "exceptions.h"
 #include "iaf_psc_delta_canon.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-#include <limits>
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 namespace nest
 {
@@ -102,7 +108,8 @@ nest::iaf_psc_delta_canon::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::iaf_psc_delta_canon::Parameters_::set( const DictionaryDatum& d )
 {
-  // if E_L_ is changed, we need to adjust all variables defined relative to U0_
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
@@ -131,7 +138,8 @@ nest::iaf_psc_delta_canon::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Reset potential must be smaller than threshold." );
 
   if ( U_reset_ < U_min_ )
-    throw BadProperty( "Reset potential must be greater equal minimum potential." );
+    throw BadProperty(
+      "Reset potential must be greater equal minimum potential." );
 
   if ( c_m_ <= 0 )
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -146,11 +154,10 @@ nest::iaf_psc_delta_canon::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::iaf_psc_delta_canon::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::iaf_psc_delta_canon::State_::get( DictionaryDatum& d,
+  const Parameters_& p ) const
 {
   def< double >( d, names::V_m, U_ + p.E_L_ ); // Membrane potential
-  def< double >( d, names::t_spike, Time( Time::step( last_spike_step_ ) ).get_ms() );
-  def< double >( d, names::offset, last_spike_offset_ );
   def< bool >( d, names::is_refractory, is_refractory_ );
   def< bool >( d, names::refractory_input, with_refr_input_ );
 }
@@ -171,7 +178,8 @@ nest::iaf_psc_delta_canon::Buffers_::Buffers_( iaf_psc_delta_canon& n )
 {
 }
 
-nest::iaf_psc_delta_canon::Buffers_::Buffers_( const Buffers_&, iaf_psc_delta_canon& n )
+nest::iaf_psc_delta_canon::Buffers_::Buffers_( const Buffers_&,
+  iaf_psc_delta_canon& n )
   : logger_( n )
 {
 }
@@ -181,7 +189,7 @@ nest::iaf_psc_delta_canon::Buffers_::Buffers_( const Buffers_&, iaf_psc_delta_ca
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_delta_canon::iaf_psc_delta_canon()
-  : Node()
+  : Archiving_Node()
   , P_()
   , S_()
   , B_( *this )
@@ -190,7 +198,7 @@ nest::iaf_psc_delta_canon::iaf_psc_delta_canon()
 }
 
 nest::iaf_psc_delta_canon::iaf_psc_delta_canon( const iaf_psc_delta_canon& n )
-  : Node( n )
+  : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -215,6 +223,8 @@ nest::iaf_psc_delta_canon::init_buffers_()
   B_.events_.clear();
   B_.currents_.clear();
   B_.logger_.reset();
+
+  Archiving_Node::clear_history();
 }
 
 void
@@ -233,14 +243,18 @@ iaf_psc_delta_canon::calibrate()
   // refractory_steps_ is the duration of the refractory period in whole
   // steps, rounded down
   V_.refractory_steps_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.refractory_steps_ >= 1 ); // since t_ref_ >= sim step size, this can only fail in error
+  // since t_ref_ >= sim step size, this can only fail in error
+  assert( V_.refractory_steps_ >= 1 );
 }
 
 void
-iaf_psc_delta_canon::update( Time const& origin, const long_t from, const long_t to )
+iaf_psc_delta_canon::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from ) < Scheduler::get_min_delay() );
+  assert( static_cast< delay >( from )
+    < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
@@ -268,8 +282,9 @@ iaf_psc_delta_canon::update( Time const& origin, const long_t from, const long_t
 
   // check for super-threshold at beginning
   if ( S_.U_ >= P_.U_th_ )
-    emit_instant_spike_(
-      origin, from, V_.h_ms_ * ( 1 - std::numeric_limits< double_t >::epsilon() ) );
+    emit_instant_spike_( origin,
+      from,
+      V_.h_ms_ * ( 1 - std::numeric_limits< double_t >::epsilon() ) );
 
   for ( long_t lag = from; lag < to; ++lag )
   {
@@ -281,7 +296,8 @@ iaf_psc_delta_canon::update( Time const& origin, const long_t from, const long_t
     double_t t = V_.h_ms_;
 
     // place pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_
+      && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
 
     // get first event
@@ -311,7 +327,8 @@ iaf_psc_delta_canon::update( Time const& origin, const long_t from, const long_t
 
         S_.U_ = V_.I_contrib_ + I_contrib_t + V_.expm1_t_ * S_.U_ + S_.U_;
 
-        S_.U_ = S_.U_ < P_.U_min_ ? P_.U_min_ : S_.U_; // lower bound on potential
+        S_.U_ =
+          S_.U_ < P_.U_min_ ? P_.U_min_ : S_.U_; // lower bound on potential
         if ( S_.U_ >= P_.U_th_ )
           emit_spike_( origin, lag, 0 ); // offset is zero at end of step
 
@@ -343,7 +360,8 @@ iaf_psc_delta_canon::update( Time const& origin, const long_t from, const long_t
             if ( S_.with_refr_input_ )
               V_.refr_spikes_buffer_ += ev_weight
                 * std::exp( -( ( S_.last_spike_step_ - T - 1 ) * V_.h_ms_
-                              - ( S_.last_spike_offset_ - ev_offset ) + P_.t_ref_ ) / P_.tau_m_ );
+                              - ( S_.last_spike_offset_ - ev_offset )
+                              + P_.t_ref_ ) / P_.tau_m_ );
           }
           else
           {
@@ -392,7 +410,8 @@ iaf_psc_delta_canon::update( Time const& origin, const long_t from, const long_t
         if ( S_.U_ >= P_.U_th_ )
           emit_instant_spike_( origin, lag, t );
 
-      } while ( B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) );
+      } while (
+        B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) );
 
       // no events remaining, plain update step across remainder
       // of interval
@@ -435,10 +454,11 @@ nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
 
   // compute time since threhold crossing
   double_t v_inf = V_.v_inf_ + S_.I_ * P_.tau_m_ / P_.c_m_;
-  double_t dt = -P_.tau_m_ * std::log( ( v_inf - S_.U_ ) / ( v_inf - P_.U_th_ ) );
+  double_t dt =
+    -P_.tau_m_ * std::log( ( v_inf - S_.U_ ) / ( v_inf - P_.U_th_ ) );
 
   // set stamp and offset for spike
-  set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
   S_.last_spike_offset_ = offset_U + dt;
 
   // reset neuron and make it refractory
@@ -446,9 +466,10 @@ nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
   S_.is_refractory_ = true;
 
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
-  network()->send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 
   return;
 }
@@ -461,7 +482,7 @@ nest::iaf_psc_delta_canon::emit_instant_spike_( Time const& origin,
   assert( S_.U_ >= P_.U_th_ ); // ensure we are superthreshold
 
   // set stamp and offset for spike
-  set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+  S_.last_spike_step_ = origin.get_steps() + lag + 1;
   S_.last_spike_offset_ = spike_offs;
 
   // reset neuron and make it refractory
@@ -469,9 +490,10 @@ nest::iaf_psc_delta_canon::emit_instant_spike_( Time const& origin,
   S_.is_refractory_ = true;
 
   // send spike
+  set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
-  network()->send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 
   return;
 }
@@ -486,7 +508,8 @@ iaf_psc_delta_canon::handle( SpikeEvent& e )
      in the queue.  The time is computed according to Time Memo, Rule 3.
   */
   const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
-  B_.events_.add_spike( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.events_.add_spike(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -501,7 +524,9 @@ iaf_psc_delta_canon::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add stepwise constant current; MH 2009-10-14
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 
@@ -509,12 +534,6 @@ void
 nest::iaf_psc_delta_canon::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
-}
-
-void
-iaf_psc_delta_canon::set_spiketime( Time const& now )
-{
-  S_.last_spike_step_ = now.get_steps();
 }
 
 } // namespace

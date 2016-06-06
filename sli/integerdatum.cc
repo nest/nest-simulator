@@ -21,6 +21,8 @@
  */
 
 #include "integerdatum.h"
+
+// Includes from sli:
 #include "numericdatum_impl.h"
 
 // explicit template instantiation needed
@@ -32,5 +34,7 @@ template class NumericDatum< long, &SLIInterpreter::Integertype >;
 // initialization of static members requires template<>
 // see Stroustrup C.13.1 --- HEP 2001-08-09
 template <>
-sli::pool
-  NumericDatum< long, &SLIInterpreter::Integertype >::memory( sizeof( IntegerDatum ), 10240, 1 );
+sli::pool NumericDatum< long, &SLIInterpreter::Integertype >::memory(
+  sizeof( IntegerDatum ),
+  10240,
+  1 );

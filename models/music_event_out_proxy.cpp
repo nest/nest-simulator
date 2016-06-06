@@ -20,19 +20,26 @@
  *
  */
 
-#include "config.h"
+#include "music_event_out_proxy.h"
 
 #ifdef HAVE_MUSIC
 
-#include "music_event_out_proxy.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
-#include "arraydatum.h"
-
+// C++ includes:
 #include <numeric>
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+
+// Includes from libnestutil:
+#include "compose.hpp"
+#include "logging.h"
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -65,7 +72,8 @@ nest::music_event_out_proxy::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_event_out_proxy::Parameters_::set( const DictionaryDatum& d, State_& s )
+nest::music_event_out_proxy::Parameters_::set( const DictionaryDatum& d,
+  State_& s )
 {
   // TODO: This is not possible, as P_ does not know about get_name()
   //  if(d->known(names::port_name) && s.published_)
@@ -83,7 +91,8 @@ nest::music_event_out_proxy::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::music_event_out_proxy::State_::set( const DictionaryDatum&, const Parameters_& )
+nest::music_event_out_proxy::State_::set( const DictionaryDatum&,
+  const Parameters_& )
 {
 }
 
@@ -99,7 +108,8 @@ nest::music_event_out_proxy::music_event_out_proxy()
 {
 }
 
-nest::music_event_out_proxy::music_event_out_proxy( const music_event_out_proxy& n )
+nest::music_event_out_proxy::music_event_out_proxy(
+  const music_event_out_proxy& n )
   : Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -118,7 +128,8 @@ nest::music_event_out_proxy::~music_event_out_proxy()
 void
 nest::music_event_out_proxy::init_state_( const Node& /* np */ )
 {
-  // const music_event_out_proxy& sd = dynamic_cast<const music_event_out_proxy&>(np);
+  // const music_event_out_proxy& sd = dynamic_cast<const
+  // music_event_out_proxy&>(np);
 }
 
 void
@@ -132,7 +143,7 @@ nest::music_event_out_proxy::calibrate()
   // only publish the output port once,
   if ( !S_.published_ )
   {
-    MUSIC::Setup* s = nest::Communicator::get_music_setup();
+    MUSIC::Setup* s = kernel().music_manager.get_music_setup();
     if ( s == 0 )
       throw MUSICSimulationHasRun( get_name() );
 
@@ -154,17 +165,19 @@ nest::music_event_out_proxy::calibrate()
         throw UnknownReceptorType( *it, get_name() );
 
     // The permutation index map, contains global_index[local_index]
-    V_.music_perm_ind_ =
-      new MUSIC::PermutationIndex( &V_.index_map_.front(), V_.index_map_.size() );
+    V_.music_perm_ind_ = new MUSIC::PermutationIndex(
+      &V_.index_map_.front(), V_.index_map_.size() );
 
     // we identify channels by global indices within NEST
     V_.MP_->map( V_.music_perm_ind_, MUSIC::Index::GLOBAL );
 
     S_.published_ = true;
 
-    std::string msg = String::compose(
-      "Mapping MUSIC output port '%1' with width=%2.", P_.port_name_, S_.port_width_ );
-    net_->message( SLIInterpreter::M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
+    std::string msg =
+      String::compose( "Mapping MUSIC output port '%1' with width=%2.",
+        P_.port_name_,
+        S_.port_width_ );
+    LOG( M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
   }
 }
 
@@ -177,8 +190,10 @@ nest::music_event_out_proxy::get_status( DictionaryDatum& d ) const
   ( *d )[ names::connection_count ] = V_.index_map_.size();
 
   // make a copy, since MUSIC uses int instead of long int
-  std::vector< long_t >* pInd_map_long = new std::vector< long_t >( V_.index_map_.size() );
-  std::copy< std::vector< MUSIC::GlobalIndex >::const_iterator, std::vector< long_t >::iterator >(
+  std::vector< long_t >* pInd_map_long =
+    new std::vector< long_t >( V_.index_map_.size() );
+  std::copy< std::vector< MUSIC::GlobalIndex >::const_iterator,
+    std::vector< long_t >::iterator >(
     V_.index_map_.begin(), V_.index_map_.end(), pInd_map_long->begin() );
 
   ( *d )[ names::index_map ] = IntVectorDatum( pInd_map_long );

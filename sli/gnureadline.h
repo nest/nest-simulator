@@ -23,11 +23,14 @@
 #ifndef GNUREADLINE_H
 #define GNUREADLINE_H
 
+// Generated includes:
 #include "config.h"
+
 #ifdef HAVE_READLINE
 
-#include "slitype.h"
+// Includes from sli:
 #include "slimodule.h"
+#include "slitype.h"
 
 class GNUReadline : public SLIModule
 {

@@ -23,9 +23,12 @@
 #ifndef MULTIRANGE_H
 #define MULTIRANGE_H
 
-#include <vector>
+// C++ includes:
 #include <utility>
-#include "nest.h"
+#include <vector>
+
+// Includes from nestkernel:
+#include "nest_types.h"
 
 namespace nest
 {
@@ -106,7 +109,8 @@ Multirange::empty() const
   return size_ == 0;
 }
 
-inline Multirange::iterator::iterator( RangeVector::const_iterator iter, index n )
+inline Multirange::iterator::iterator( RangeVector::const_iterator iter,
+  index n )
   : pair_iter_( iter )
   , n_( n )
 {

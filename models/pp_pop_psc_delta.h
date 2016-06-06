@@ -23,12 +23,15 @@
 #ifndef PP_POP_PSC_DELTA_H
 #define PP_POP_PSC_DELTA_H
 
-#include "nest.h"
-#include "event.h"
-#include "archiving_node.h"
-#include "ring_buffer.h"
-#include "connection.h"
+// Includes from librandom:
 #include "binomial_randomdev.h"
+
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 
@@ -36,11 +39,9 @@ namespace nest
 {
 
 
-class Network;
-
 /* BeginDocumentation
-   Name: pp_pop_psc_delta - Population of point process neurons with leaky integration of
-   delta-shaped PSCs.
+   Name: pp_pop_psc_delta - Population of point process neurons with leaky
+                            integration of delta-shaped PSCs.
 
    Description:
 
@@ -63,14 +64,14 @@ class Network;
    sets the scale of the voltages.
 
    To represent a (homogeneous) population of N inhomogeneous renewal process
-   neurons, we can keep track of the numbers of neurons that fired a certain number
-   of time steps in the past. These neurons will have the same value of the
-   hazard function (instantaneous rate), and we draw a binomial random number
-   for each of these groups. This algorithm is thus very similar to
+   neurons, we can keep track of the numbers of neurons that fired a certain
+   number of time steps in the past. These neurons will have the same value of
+   the hazard function (instantaneous rate), and we draw a binomial random
+   number for each of these groups. This algorithm is thus very similar to
    ppd_sup_generator and gamma_sup_generator, see also [2].
 
-   However, the adapting threshold eta(t) of the neurons generally makes the neurons
-   non-renewal processes. We employ the quasi-renewal approximation
+   However, the adapting threshold eta(t) of the neurons generally makes the
+   neurons non-renewal processes. We employ the quasi-renewal approximation
    [1], to be able to use the above algorithm. For the extension of [1] to
    coupled populations see [3].
 
@@ -82,9 +83,9 @@ class Network;
    pp_pop_psc_delta emits spike events like other neuron models, but no more
    than one per time step. If several component neurons spike in the time step,
    the multiplicity of the spike event is set accordingly. Thus, to monitor
-   its output, the mulitplicity of the spike events has to be taken into account.
-   Alternatively, the internal variable n_events gives the number of spikes
-   emitted in a time step, and can be monitored using a multimeter.
+   its output, the multiplicity of the spike events has to be taken into
+   account. Alternatively, the internal variable n_events gives the number of
+   spikes emitted in a time step, and can be monitored using a multimeter.
 
    A journal article that describes the model and algorithm in detail is
    in preparation.
@@ -116,9 +117,12 @@ class Network;
    rho_0             double - Base firing rate in 1/s.
    delta_u           double - Voltage scale parameter in mV.
    I_e               double - Constant input current in pA.
-   taus_eta          list of doubles - time constants of post-spike kernel in ms.
-   vals_eta          list of doubles - amplitudes of exponentials in post-spike-kernel in mV.
-   len_kernel        double - post-spike kernel eta is truncated after max(taus_eta) * len_kernel.
+   taus_eta          list of doubles - time constants of post-spike kernel
+                                       in ms.
+   vals_eta          list of doubles - amplitudes of exponentials in
+                                       post-spike-kernel in mV.
+   len_kernel        double - post-spike kernel eta is truncated after
+                              max(taus_eta) * len_kernel.
 
 
    The parameters correspond to the ones of pp_psc_delta as follows.
@@ -145,11 +149,12 @@ class Network;
 */
 
 /**
- * Population of point process neurons with leaky integration of delta-shaped PSCs.
+ * Population of point process neurons with leaky integration of delta-shaped
+ * PSCs.
  */
 
 
-class pp_pop_psc_delta : public Archiving_Node
+class pp_pop_psc_delta : public Node
 {
 
 public:
@@ -158,7 +163,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -338,7 +344,10 @@ private:
 };
 
 inline port
-pp_pop_psc_delta::send_test_event( Node& target, rport receptor_type, synindex, bool )
+pp_pop_psc_delta::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -363,7 +372,8 @@ pp_pop_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-pp_pop_psc_delta::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+pp_pop_psc_delta::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -375,7 +385,6 @@ pp_pop_psc_delta::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d, P_ );
-  Archiving_Node::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -386,12 +395,6 @@ pp_pop_psc_delta::set_status( const DictionaryDatum& d )
   ptmp.set( d );         // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
   stmp.set( d, ptmp );   // throws if BadProperty
-
-  // We now know that (ptmp, stmp) are consistent. We do not
-  // write them back to (P_, S_) before we are also sure that
-  // the properties to be set in the parent class are internally
-  // consistent.
-  Archiving_Node::set_status( d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

@@ -23,10 +23,13 @@
 #ifndef COMMON_SYNAPSE_PROPERTIES_H
 #define COMMON_SYNAPSE_PROPERTIES_H
 
-#include "nest.h"
-#include "dictdatum.h"
-#include "node.h"
+// Includes from nestkernel:
 #include "connector_model.h"
+#include "nest_types.h"
+#include "node.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {
@@ -37,10 +40,11 @@ class TimeConverter;
 
 /**
  * Class containing the common properties for all connections of a certain type.
- * Everything that needs to be stored commonly for all synapses goes into a CommonProperty
- * class derived by this base class.
+ * Everything that needs to be stored commonly for all synapses goes into a
+ * CommonProperty class derived by this base class.
  * Base class for all CommonProperty classes.
- * If the synapse type does not have any common properties, this class may be used as a placeholder.
+ * If the synapse type does not have any common properties, this class may be
+ * used as a placeholder.
  */
 class CommonSynapseProperties
 {

@@ -24,30 +24,28 @@
 #ifndef MAT2_PSC_EXP_H
 #define MAT2_PSC_EXP_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
-#include "universal_data_logger.h"
+#include "event.h"
+#include "nest_types.h"
 #include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
 
 namespace nest
 {
-
-class Network;
-
 /* BeginDocumentation
    Name: mat2_psc_exp - Non-resetting leaky integrate-and-fire neuron model with
    exponential PSCs and adaptive threshold.
 
    Description:
    mat2_psc_exp is an implementation of a leaky integrate-and-fire model
-   with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic currents
-   have an infinitely short rise time.
+   with exponential shaped postsynaptic currents (PSCs). Thus, postsynaptic
+   currents have an infinitely short rise time.
 
-   The threshold is lifted when the neuron is fired and then decreases in a fixed
-   time scale toward a fixed level [3].
+   The threshold is lifted when the neuron is fired and then decreases in a
+   fixed time scale toward a fixed level [3].
 
    The threshold crossing is followed by a total refractory period
    during which the neuron is not allowed to fire, even if the membrane
@@ -82,7 +80,8 @@ class Network;
    tau_m        double - Membrane time constant in ms
    tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
    tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
-   t_ref        double - Duration of absolute refractory period (no spiking) in ms
+   t_ref        double - Duration of absolute refractory period (no spiking)
+                         in ms
    V_m          double - Membrane potential in mV
    I_e          double - Constant input current in pA
    t_spike      double - Point in time of last spike in ms
@@ -90,8 +89,8 @@ class Network;
    tau_2        double - Long time constant of adaptive threshold in ms
    alpha_1      double - Amplitude of short time threshold adaption in mV [3]
    alpha_2      double - Amplitude of long time threshold adaption in mV [3]
-   omega        double - Resting spike threshold in mV (absolute value, not relative to E_L as in
-   [3])
+   omega        double - Resting spike threshold in mV (absolute value, not
+                         relative to E_L as in [3])
 
    The following state variables can be read out with the multimeter device:
 
@@ -135,7 +134,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -181,7 +181,7 @@ private:
     double_t tau_ref_;
 
     /** Resting potential in mV. */
-    double_t U0_;
+    double_t E_L_;
 
     /** External current in pA */
     double_t I_e_;
@@ -202,7 +202,7 @@ private:
 
     /** Resting threshold in mV
         (relative to resting potential).
-        The real resting threshold is (U0_+omega_).
+        The real resting threshold is (E_L_+omega_).
         Called omega in [3]. */
     double_t omega_;
 
@@ -224,14 +224,16 @@ private:
   struct State_
   {
     // state variables
-    double_t i_0_;      // synaptic dc input current, variable 0
-    double_t i_syn_ex_; // postsynaptic current for exc. inputs, variable 1
-    double_t i_syn_in_; // postsynaptic current for inh. inputs, variable 1
-    double_t V_m_;      // membrane potential, variable 2
-    double_t V_th_1_;   // short time adaptive threshold (related to tau_1_), variable 1
-    double_t V_th_2_;   // long time adaptive threshold (related to tau_2_), variable 2
+    double_t i_0_;      //!< synaptic dc input current, variable 0
+    double_t i_syn_ex_; //!< postsynaptic current for exc. inputs, variable 1
+    double_t i_syn_in_; //!< postsynaptic current for inh. inputs, variable 1
+    double_t V_m_;      //!< membrane potential, variable 2
+    //! short time adaptive threshold (related to tau_1_), variable 1
+    double_t V_th_1_;
+    //! long time adaptive threshold (related to tau_2_), variable 2
+    double_t V_th_2_;
 
-    int_t r_; // total refractory counter (no spikes can be generated)
+    int_t r_; //!< total refractory counter (no spikes can be generated)
 
     State_(); //!< Default initialization
 
@@ -301,12 +303,12 @@ private:
   double_t
   get_V_m_() const
   {
-    return S_.V_m_ + P_.U0_;
+    return S_.V_m_ + P_.E_L_;
   }
   double_t
   get_V_th_() const
   {
-    return P_.U0_ + P_.omega_ + S_.V_th_1_ + S_.V_th_2_;
+    return P_.E_L_ + P_.omega_ + S_.V_th_1_ + S_.V_th_2_;
   }
 
   // ----------------------------------------------------------------
@@ -330,7 +332,10 @@ private:
 
 
 inline port
-mat2_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+mat2_psc_exp::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

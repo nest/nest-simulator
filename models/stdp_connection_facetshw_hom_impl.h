@@ -20,12 +20,18 @@
  *
  */
 
-#include "network.h"
-#include "dictdatum.h"
-#include "connector_model.h"
-#include "common_synapse_properties.h"
+#ifndef STDP_CONNECTION_FACETSHW_HOM_IMPL_H
+#define STDP_CONNECTION_FACETSHW_HOM_IMPL_H
+
 #include "stdp_connection_facetshw_hom.h"
+
+// Includes from nestkernel:
+#include "common_synapse_properties.h"
+#include "connector_model.h"
 #include "event.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {
@@ -34,7 +40,8 @@ namespace nest
 //
 
 template < typename targetidentifierT >
-STDPFACETSHWHomCommonProperties< targetidentifierT >::STDPFACETSHWHomCommonProperties()
+STDPFACETSHWHomCommonProperties< targetidentifierT >::
+  STDPFACETSHWHomCommonProperties()
   : CommonSynapseProperties()
   , tau_plus_( 20.0 )
   , tau_minus_( 20.0 )
@@ -115,17 +122,20 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::STDPFACETSHWHomCommonPrope
 
 template < typename targetidentifierT >
 void
-STDPFACETSHWHomCommonProperties< targetidentifierT >::calc_readout_cycle_duration_()
+STDPFACETSHWHomCommonProperties< targetidentifierT >::
+  calc_readout_cycle_duration_()
 {
-  readout_cycle_duration_ =
-    int( ( no_synapses_ - 1.0 ) / synapses_per_driver_ + 1.0 ) * driver_readout_time_;
-  // std::cout << "stdp_connection_facetshw_hom::debug: readout cycle duration changed to " <<
+  readout_cycle_duration_ = int( ( no_synapses_ - 1.0 ) / synapses_per_driver_
+                              + 1.0 ) * driver_readout_time_;
+  // std::cout << "stdp_connection_facetshw_hom::debug: readout cycle duration
+  // changed to " <<
   // readout_cycle_duration_ << std::endl;
 }
 
 template < typename targetidentifierT >
 void
-STDPFACETSHWHomCommonProperties< targetidentifierT >::get_status( DictionaryDatum& d ) const
+STDPFACETSHWHomCommonProperties< targetidentifierT >::get_status(
+  DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
 
@@ -139,17 +149,24 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::get_status( DictionaryDatu
   def< double_t >( d, "driver_readout_time", driver_readout_time_ );
   def< double_t >( d, "readout_cycle_duration", readout_cycle_duration_ );
 
-  ( *d )[ "lookuptable_0" ] = IntVectorDatum( new std::vector< long_t >( lookuptable_0_ ) );
-  ( *d )[ "lookuptable_1" ] = IntVectorDatum( new std::vector< long_t >( lookuptable_1_ ) );
-  ( *d )[ "lookuptable_2" ] = IntVectorDatum( new std::vector< long_t >( lookuptable_2_ ) );
-  ( *d )[ "configbit_0" ] = IntVectorDatum( new std::vector< long_t >( configbit_0_ ) );
-  ( *d )[ "configbit_1" ] = IntVectorDatum( new std::vector< long_t >( configbit_1_ ) );
-  ( *d )[ "reset_pattern" ] = IntVectorDatum( new std::vector< long_t >( reset_pattern_ ) );
+  ( *d )[ "lookuptable_0" ] =
+    IntVectorDatum( new std::vector< long_t >( lookuptable_0_ ) );
+  ( *d )[ "lookuptable_1" ] =
+    IntVectorDatum( new std::vector< long_t >( lookuptable_1_ ) );
+  ( *d )[ "lookuptable_2" ] =
+    IntVectorDatum( new std::vector< long_t >( lookuptable_2_ ) );
+  ( *d )[ "configbit_0" ] =
+    IntVectorDatum( new std::vector< long_t >( configbit_0_ ) );
+  ( *d )[ "configbit_1" ] =
+    IntVectorDatum( new std::vector< long_t >( configbit_1_ ) );
+  ( *d )[ "reset_pattern" ] =
+    IntVectorDatum( new std::vector< long_t >( reset_pattern_ ) );
 }
 
 template < typename targetidentifierT >
 void
-STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const DictionaryDatum& d,
+STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status(
+  const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
@@ -163,7 +180,8 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const Dictiona
 
   // TP: they should not be allowed to be changed! But needed for CopyModel ...
   updateValue< double_t >( d, "weight_per_lut_entry", weight_per_lut_entry_ );
-  updateValue< double_t >( d, "readout_cycle_duration", readout_cycle_duration_ );
+  updateValue< double_t >(
+    d, "readout_cycle_duration", readout_cycle_duration_ );
   if ( updateValue< long_t >( d, "no_synapses", no_synapses_ ) )
   {
     calc_readout_cycle_duration_();
@@ -173,7 +191,8 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status( const Dictiona
   {
     calc_readout_cycle_duration_();
   }
-  if ( updateValue< double_t >( d, "driver_readout_time", driver_readout_time_ ) )
+  if ( updateValue< double_t >(
+         d, "driver_readout_time", driver_readout_time_ ) )
   {
     calc_readout_cycle_duration_();
   }
@@ -307,7 +326,8 @@ STDPFACETSHWConnectionHom< targetidentifierT >::STDPFACETSHWConnectionHom(
 
 template < typename targetidentifierT >
 void
-STDPFACETSHWConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) const
+STDPFACETSHWConnectionHom< targetidentifierT >::get_status(
+  DictionaryDatum& d ) const
 {
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
@@ -322,14 +342,17 @@ STDPFACETSHWConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d )
   def< bool >( d, "init_flag", init_flag_ );
   def< long_t >( d, "synapse_id", synapse_id_ );
   def< double_t >( d, "next_readout_time", next_readout_time_ );
-  // useful to get conversion before activity, but weight_per_lut_entry_ not known here
-  // def<uint_t>(d, "discrete_weight", entry_to_weight_(weight_to_entry_(weight_,
+  // useful to get conversion before activity, but weight_per_lut_entry_ not
+  // known here
+  // def<uint_t>(d, "discrete_weight",
+  // entry_to_weight_(weight_to_entry_(weight_,
   // weight_per_lut_entry_), weight_per_lut_entry_));
 }
 
 template < typename targetidentifierT >
 void
-STDPFACETSHWConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
+STDPFACETSHWConnectionHom< targetidentifierT >::set_status(
+  const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   // base class properties
@@ -351,3 +374,5 @@ STDPFACETSHWConnectionHom< targetidentifierT >::set_status( const DictionaryDatu
 }
 
 } // of namespace nest
+
+#endif // #ifndef STDP_CONNECTION_FACETSHW_HOM_IMPL_H

@@ -31,8 +31,8 @@
   FirstVersion: October 2005
   Author: Jochen Martin Eppler, Moritz Helias
 
-  Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent, DoubleDataEvent,
-  DataLoggingRequest
+  Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
+  DoubleDataEvent, DataLoggingRequest
 
   Remarks: Refactored for new connection system design, March 2007
 
@@ -42,16 +42,16 @@
 #ifndef STATICCONNECTION_H
 #define STATICCONNECTION_H
 
+// Includes from nestkernel:
 #include "connection.h"
 
 namespace nest
 {
 
 /**
- * Class representing a static connection. A static connection has the properties weight, delay and
- * receiver port.
- * A suitable Connector containing these connections can be obtained from the template
- * GenericConnector.
+ * Class representing a static connection. A static connection has the
+ * properties weight, delay and receiver port. A suitable Connector containing
+ * these connections can be obtained from the template GenericConnector.
  */
 
 
@@ -86,10 +86,10 @@ public:
   {
   }
 
-  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
-  // This avoids explicit name prefixes in all places these functions are used.
-  // Since ConnectionBase depends on the template parameter, they are not automatically
-  // found in the base class.
+  // Explicitly declare all methods inherited from the dependent base
+  // ConnectionBase. This avoids explicit name prefixes in all places these
+  // functions are used. Since ConnectionBase depends on the template parameter,
+  // they are not automatically found in the base class.
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
@@ -144,7 +144,11 @@ public:
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType& )
+  check_connection( Node& s,
+    Node& t,
+    rport receptor_type,
+    double_t,
+    const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -183,7 +187,8 @@ StaticConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-StaticConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+StaticConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
+  ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double_t >( d, names::weight, weight_ );

@@ -23,12 +23,16 @@
 #ifndef TOPOLOGYMODULE_H
 #define TOPOLOGYMODULE_H
 
-#include "slimodule.h"
-#include "network.h"
-#include "position.h"
-#include "ntree.h"
+// Includes from nestkernel:
 #include "exceptions.h"
+
+// Includes from sli:
+#include "slimodule.h"
+
+// Includes from topology:
 #include "generic_factory.h"
+#include "ntree.h"
+#include "position.h"
 
 namespace nest
 {
@@ -42,11 +46,10 @@ class Layer;
 class TopologyModule : public SLIModule
 {
 public:
-  TopologyModule( Network& );
+  TopologyModule();
   ~TopologyModule();
 
   /**
-   * Initialize module by registering models with the network.
    * @param SLIInterpreter* SLI interpreter, must know modeldict
    */
   void init( SLIInterpreter* );
@@ -187,11 +190,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } cvdict_Mfunction;
 
-  /**
-   * Return a reference to the network managed by the topology module.
-   */
-  static Network& get_network();
-
   typedef GenericFactory< AbstractMask > MaskFactory;
   typedef GenericFactory< AbstractMask >::CreatorFunction MaskCreatorFunction;
 
@@ -235,8 +233,8 @@ public:
    *          as value, and optionally an anchor.
    * @returns Either the MaskDatum given as argument, or a new mask.
    */
-  static lockPTRDatum< AbstractMask, &TopologyModule::MaskType > /*MaskDatum*/ create_mask(
-    const Token& t );
+  static lockPTRDatum< AbstractMask,
+    &TopologyModule::MaskType > /*MaskDatum*/ create_mask( const Token& t );
 
   /**
    * Create a new Mask object using the mask factory.
@@ -244,7 +242,8 @@ public:
    * @param d    Dictionary with parameters specific for this mask type.
    * @returns dynamically allocated new Mask object.
    */
-  static AbstractMask* create_mask( const Name& name, const DictionaryDatum& d );
+  static AbstractMask* create_mask( const Name& name,
+    const DictionaryDatum& d );
 
   typedef GenericFactory< Parameter > ParameterFactory;
   typedef GenericFactory< Parameter >::CreatorFunction ParameterCreatorFunction;
@@ -270,7 +269,8 @@ public:
    * @returns true if the new type was successfully registered, or false
    *          if a parameter type with the same name already exists.
    */
-  static bool register_parameter( const Name& name, ParameterCreatorFunction creator );
+  static bool register_parameter( const Name& name,
+    ParameterCreatorFunction creator );
 
   /**
    * Return a Parameter object.
@@ -283,7 +283,8 @@ public:
    *          parameter.
    */
   static lockPTRDatum< Parameter,
-    &TopologyModule::ParameterType > /*ParameterDatum*/ create_parameter( const Token& );
+    &TopologyModule::
+      ParameterType > /*ParameterDatum*/ create_parameter( const Token& );
 
   /**
    * Create a new Parameter object using the parameter factory.
@@ -292,7 +293,8 @@ public:
    *             type.
    * @returns dynamically allocated new Parameter object.
    */
-  static Parameter* create_parameter( const Name& name, const DictionaryDatum& d );
+  static Parameter* create_parameter( const Name& name,
+    const DictionaryDatum& d );
 
 private:
   /**
@@ -304,12 +306,6 @@ private:
    * Return a reference to the parameter factory class.
    */
   static ParameterFactory& parameter_factory_();
-
-  /**
-   * - @c net must be static, so that the execute() members of the
-   *   SliFunction classes in the module can access the network.
-   */
-  static Network* net_;
 };
 
 /**
@@ -330,13 +326,6 @@ public:
 
   std::string message();
 };
-
-inline Network&
-TopologyModule::get_network()
-{
-  assert( net_ != 0 );
-  return *net_;
-}
 
 template < class T >
 inline bool
@@ -372,7 +361,8 @@ TopologyModule::register_parameter( const Name& name )
 }
 
 inline bool
-TopologyModule::register_parameter( const Name& name, ParameterCreatorFunction creator )
+TopologyModule::register_parameter( const Name& name,
+  ParameterCreatorFunction creator )
 {
   return parameter_factory_().register_subtype( name, creator );
 }

@@ -20,7 +20,6 @@
  *
  */
 
-#include "network.h"
 #include "connector_base.h"
 
 namespace nest

@@ -24,6 +24,8 @@
 #define NTREE_IMPL_H
 
 #include "ntree.h"
+
+// Includes from topology:
 #include "mask.h"
 
 namespace nest
@@ -132,9 +134,10 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::masked_iterator(
     {
       if ( ntree_->periodic_[ i ] )
       {
-        anchor_[ i ] =
-          nest::mod( anchor_[ i ] + mask_bb.lower_left[ i ] - ntree_->lower_left_[ i ],
-            ntree_->extent_[ i ] ) - mask_bb.lower_left[ i ] + ntree_->lower_left_[ i ];
+        anchor_[ i ] = nest::mod( anchor_[ i ] + mask_bb.lower_left[ i ]
+                           - ntree_->lower_left_[ i ],
+                         ntree_->extent_[ i ] ) - mask_bb.lower_left[ i ]
+          + ntree_->lower_left_[ i ];
       }
     }
     anchors_.push_back( anchor_ );
@@ -146,8 +149,8 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::masked_iterator(
       if ( ntree_->periodic_[ i ] )
       {
         int n = anchors_.size();
-        if ( ( anchor_[ i ] + mask_bb.upper_right[ i ] - ntree_->lower_left_[ i ] )
-          > ntree_->extent_[ i ] )
+        if ( ( anchor_[ i ] + mask_bb.upper_right[ i ]
+               - ntree_->lower_left_[ i ] ) > ntree_->extent_[ i ] )
         {
           for ( int j = 0; j < n; ++j )
           {
@@ -177,8 +180,8 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::init_()
   allin_top_ = 0;
   ntree_ = top_;
 
-  if ( mask_->outside( Box< D >(
-         ntree_->lower_left_ - anchor_, ntree_->lower_left_ - anchor_ + ntree_->extent_ ) ) )
+  if ( mask_->outside( Box< D >( ntree_->lower_left_ - anchor_,
+         ntree_->lower_left_ - anchor_ + ntree_->extent_ ) ) )
   {
 
     next_anchor_();
@@ -186,8 +189,8 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::init_()
   else
   {
 
-    if ( mask_->inside( Box< D >(
-           ntree_->lower_left_ - anchor_, ntree_->lower_left_ - anchor_ + ntree_->extent_ ) ) )
+    if ( mask_->inside( Box< D >( ntree_->lower_left_ - anchor_,
+           ntree_->lower_left_ - anchor_ + ntree_->extent_ ) ) )
     {
       first_leaf_inside_();
     }
@@ -196,7 +199,8 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::init_()
       first_leaf_();
     }
 
-    if ( ntree_->nodes_.empty() || ( !mask_->inside( ntree_->nodes_[ node_ ].first - anchor_ ) ) )
+    if ( ntree_->nodes_.empty()
+      || ( !mask_->inside( ntree_->nodes_[ node_ ].first - anchor_ ) ) )
     {
       ++( *this );
     }
@@ -243,7 +247,8 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::next_leaf_()
     // state: all in
 
     // If we are on the last subtree, move up
-    while ( ntree_ && ( ntree_ != allin_top_ ) && ( ntree_->my_subquad_ == N - 1 ) )
+    while (
+      ntree_ && ( ntree_ != allin_top_ ) && ( ntree_->my_subquad_ == N - 1 ) )
     {
       ntree_ = ntree_->parent_;
     }
@@ -292,14 +297,14 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::next_leaf_()
     // Move to next sibling
     ntree_ = ntree_->parent_->children_[ ntree_->my_subquad_ + 1 ];
 
-    if ( mask_->inside( Box< D >(
-           ntree_->lower_left_ - anchor_, ntree_->lower_left_ - anchor_ + ntree_->extent_ ) ) )
+    if ( mask_->inside( Box< D >( ntree_->lower_left_ - anchor_,
+           ntree_->lower_left_ - anchor_ + ntree_->extent_ ) ) )
     {
       return first_leaf_inside_();
     }
 
-  } while ( mask_->outside(
-    Box< D >( ntree_->lower_left_ - anchor_, ntree_->lower_left_ - anchor_ + ntree_->extent_ ) ) );
+  } while ( mask_->outside( Box< D >( ntree_->lower_left_ - anchor_,
+    ntree_->lower_left_ - anchor_ + ntree_->extent_ ) ) );
 
   return first_leaf_();
 }
@@ -313,14 +318,14 @@ Ntree< D, T, max_capacity, max_depth >::masked_iterator::first_leaf_()
 
     ntree_ = ntree_->children_[ 0 ];
 
-    if ( mask_->inside( Box< D >(
-           ntree_->lower_left_ - anchor_, ntree_->lower_left_ - anchor_ + ntree_->extent_ ) ) )
+    if ( mask_->inside( Box< D >( ntree_->lower_left_ - anchor_,
+           ntree_->lower_left_ - anchor_ + ntree_->extent_ ) ) )
     {
       return first_leaf_inside_();
     }
 
-    if ( mask_->outside( Box< D >(
-           ntree_->lower_left_ - anchor_, ntree_->lower_left_ - anchor_ + ntree_->extent_ ) ) )
+    if ( mask_->outside( Box< D >( ntree_->lower_left_ - anchor_,
+           ntree_->lower_left_ - anchor_ + ntree_->extent_ ) ) )
     {
       return next_leaf_();
     }
@@ -386,7 +391,8 @@ Ntree< D, T, max_capacity, max_depth >::subquad_( const Position< D >& pos )
 {
   int r = 0;
   for ( int i = 0; i < D; ++i )
-    r += ( 1 << i ) * ( pos[ i ] < lower_left_[ i ] + extent_[ i ] / 2 ? 0 : 1 );
+    r +=
+      ( 1 << i ) * ( pos[ i ] < lower_left_[ i ] + extent_[ i ] / 2 ? 0 : 1 );
 
   return r;
 }
@@ -414,16 +420,19 @@ Ntree< D, T, max_capacity, max_depth >::append_nodes_(
   const Mask< D >& mask,
   const Position< D >& anchor )
 {
-  if ( mask.outside( Box< D >( lower_left_ - anchor, lower_left_ - anchor + extent_ ) ) )
+  if ( mask.outside(
+         Box< D >( lower_left_ - anchor, lower_left_ - anchor + extent_ ) ) )
     return;
 
-  if ( mask.inside( Box< D >( lower_left_ - anchor, lower_left_ - anchor + extent_ ) ) )
+  if ( mask.inside(
+         Box< D >( lower_left_ - anchor, lower_left_ - anchor + extent_ ) ) )
     return append_nodes_( v );
 
   if ( leaf_ )
   {
 
-    for ( typename std::vector< std::pair< Position< D >, T > >::iterator i = nodes_.begin();
+    for ( typename std::vector< std::pair< Position< D >, T > >::iterator i =
+            nodes_.begin();
           i != nodes_.end();
           ++i )
     {
@@ -441,19 +450,21 @@ Ntree< D, T, max_capacity, max_depth >::append_nodes_(
 
 template < int D, class T, int max_capacity, int max_depth >
 typename Ntree< D, T, max_capacity, max_depth >::iterator
-Ntree< D, T, max_capacity, max_depth >::insert( Position< D > pos, const T& node )
+Ntree< D, T, max_capacity, max_depth >::insert( Position< D > pos,
+  const T& node )
 {
   if ( periodic_.any() )
   {
     // Map position into standard range when using periodic b.c.
-    // Only necessary when inserting positions during source driven connect when target
-    // has periodic b.c. May be inefficient.
+    // Only necessary when inserting positions during source driven connect when
+    // target has periodic b.c. May be inefficient.
 
     for ( int i = 0; i < D; ++i )
     {
       if ( periodic_[ i ] )
       {
-        pos[ i ] = lower_left_[ i ] + std::fmod( pos[ i ] - lower_left_[ i ], extent_[ i ] );
+        pos[ i ] = lower_left_[ i ]
+          + std::fmod( pos[ i ] - lower_left_[ i ], extent_[ i ] );
         if ( pos[ i ] < lower_left_[ i ] )
           pos[ i ] += extent_[ i ];
       }
@@ -494,10 +505,12 @@ Ntree< D, T, max_capacity, max_depth >::split_()
         ll[ i ] += extent_[ i ] * 0.5;
     }
 
-    children_[ j ] = new Ntree< D, T, max_capacity, max_depth >( ll, extent_ * 0.5, 0, this, j );
+    children_[ j ] = new Ntree< D, T, max_capacity, max_depth >(
+      ll, extent_ * 0.5, 0, this, j );
   }
 
-  for ( typename std::vector< std::pair< Position< D >, T > >::iterator i = nodes_.begin();
+  for ( typename std::vector< std::pair< Position< D >, T > >::iterator i =
+          nodes_.begin();
         i != nodes_.end();
         ++i )
   {

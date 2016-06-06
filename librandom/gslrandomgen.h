@@ -28,20 +28,28 @@
 #ifndef GSLRANDOMGEN_H
 #define GSLRANDOMGEN_H
 
+// C++ includes:
 #include <cassert>
 #include <list>
 #include <string>
+
+// Generated includes:
 #include "config.h"
-#include "dictdatum.h"
-#include "randomgen.h"
+
+// Includes from librandom:
 #include "random_datums.h"
+#include "randomgen.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 // essential GSL includes or replacements
 // GSL Versions < 1.2 have weak MT seeding
-#ifdef HAVE_GSL_1_2
+#ifdef HAVE_GSL
 
 // "Real" version in presence of GSL
 
+// External includes:
 #include <gsl/gsl_rng.h>
 
 namespace librandom

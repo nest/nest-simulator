@@ -23,9 +23,14 @@
 #ifndef BOOLDATUM_H
 #define BOOLDATUM_H
 
+// C++ includes:
 #include <string>
-#include "genericdatum.h"
+
+// Includes from libnestutil:
 #include "allocator.h"
+
+// Includes from sli:
+#include "genericdatum.h"
 #include "interpret.h"
 
 

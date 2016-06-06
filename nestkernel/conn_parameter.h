@@ -23,13 +23,19 @@
 #ifndef CONN_PARAMETER_H
 #define CONN_PARAMETER_H
 
+// C++ includes:
 #include <limits>
 #include <vector>
 
-#include "randomgen.h"
+// Includes from librandom:
 #include "randomdev.h"
-#include "token.h"
+#include "randomgen.h"
+
+// Includes from nestkernel:
 #include "exceptions.h"
+
+// Includes from sli:
+#include "token.h"
 
 /**
  * Base class for parameters provided to connection routines.
@@ -76,6 +82,13 @@ public:
   }
   virtual bool is_array() const = 0;
 
+  virtual void
+  reset() const
+  {
+    throw NotImplemented(
+      "Symmetric connections require parameters that can be reset." );
+  }
+
   /**
    * Returns number of values available.
    *
@@ -119,13 +132,19 @@ public:
   long_t
   value_int( thread, librandom::RngPtr& ) const
   {
-    throw KernelException( "ConnParameter calls value function with false return type." );
+    throw KernelException(
+      "ConnParameter calls value function with false return type." );
   }
 
   inline bool
   is_array() const
   {
     return false;
+  }
+
+  void
+  reset() const
+  {
   }
 
 private:
@@ -148,7 +167,8 @@ public:
   double
   value_double( thread, librandom::RngPtr& ) const
   {
-    throw KernelException( "ConnParameter calls value function with false return type." );
+    throw KernelException(
+      "ConnParameter calls value function with false return type." );
   }
 
   long_t
@@ -161,6 +181,11 @@ public:
   is_array() const
   {
     return false;
+  }
+
+  void
+  reset() const
+  {
   }
 
 private:
@@ -186,7 +211,8 @@ private:
 class ArrayDoubleParameter : public ConnParameter
 {
 public:
-  ArrayDoubleParameter( const std::vector< double >& values, const size_t nthreads )
+  ArrayDoubleParameter( const std::vector< double >& values,
+    const size_t nthreads )
     : values_( &values )
     , next_( nthreads, values_->begin() )
   {
@@ -219,13 +245,26 @@ public:
   long_t
   value_int( thread, librandom::RngPtr& ) const
   {
-    throw KernelException( "ConnParameter calls value function with false return type." );
+    throw KernelException(
+      "ConnParameter calls value function with false return type." );
   }
 
   inline bool
   is_array() const
   {
     return true;
+  }
+
+  void
+  reset() const
+  {
+    for ( std::vector< std::vector< double >::const_iterator >::iterator it =
+            next_.begin();
+          it != next_.end();
+          ++it )
+    {
+      *it = values_->begin();
+    }
   }
 
 private:
@@ -251,7 +290,8 @@ private:
 class ArrayIntegerParameter : public ConnParameter
 {
 public:
-  ArrayIntegerParameter( const std::vector< long_t >& values, const size_t nthreads )
+  ArrayIntegerParameter( const std::vector< long_t >& values,
+    const size_t nthreads )
     : values_( &values )
     , next_( nthreads, values_->begin() )
   {
@@ -284,13 +324,26 @@ public:
   double
   value_double( thread, librandom::RngPtr& ) const
   {
-    throw KernelException( "ConnParameter calls value function with false return type." );
+    throw KernelException(
+      "ConnParameter calls value function with false return type." );
   }
 
   inline bool
   is_array() const
   {
     return true;
+  }
+
+  void
+  reset() const
+  {
+    for ( std::vector< std::vector< long_t >::const_iterator >::iterator it =
+            next_.begin();
+          it != next_.end();
+          ++it )
+    {
+      *it = values_->begin();
+    }
   }
 
 private:

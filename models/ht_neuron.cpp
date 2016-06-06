@@ -22,11 +22,14 @@
 
 #include "ht_neuron.h"
 
-#ifdef HAVE_GSL_1_11
+#ifdef HAVE_GSL
 
-#include "universal_data_logger_impl.h"
-
+// C++ includes:
 #include <cmath>
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
 
 namespace nest
 {
@@ -42,11 +45,16 @@ void
 RecordablesMap< ht_neuron >::create()
 {
   insert_( names::V_m, &ht_neuron::get_y_elem_< ht_neuron::State_::VM > );
-  insert_( Name( "Theta" ), &ht_neuron::get_y_elem_< ht_neuron::State_::THETA > );
-  insert_( Name( "g_AMPA" ), &ht_neuron::get_y_elem_< ht_neuron::State_::G_AMPA > );
-  insert_( Name( "g_NMDA" ), &ht_neuron::get_y_elem_< ht_neuron::State_::G_NMDA > );
-  insert_( Name( "g_GABAA" ), &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_A > );
-  insert_( Name( "g_GABAB" ), &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_B > );
+  insert_(
+    Name( "Theta" ), &ht_neuron::get_y_elem_< ht_neuron::State_::THETA > );
+  insert_(
+    Name( "g_AMPA" ), &ht_neuron::get_y_elem_< ht_neuron::State_::G_AMPA > );
+  insert_(
+    Name( "g_NMDA" ), &ht_neuron::get_y_elem_< ht_neuron::State_::G_NMDA > );
+  insert_(
+    Name( "g_GABAA" ), &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_A > );
+  insert_(
+    Name( "g_GABAB" ), &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_B > );
   insert_( Name( "r_potassium" ), &ht_neuron::get_r_potassium_ );
   insert_( Name( "g_spike" ), &ht_neuron::get_g_spike_ );
   insert_( Name( "I_NaP" ), &ht_neuron::get_I_NaP_ );
@@ -78,7 +86,8 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   // Calculate sum of all synaptic channels.
   // Sign convention: For each current, write I = - g * ( V - E )
   //    then dV/dt ~ Sum(I)
-  // NMDA has instantaneous de-blocking thru sigmoidal function, see Lumer et al (1997)
+  // NMDA has instantaneous de-blocking thru sigmoidal function, see Lumer et al
+  // (1997)
   I_syn += -y[ S::G_AMPA ] * ( V - node.P_.AMPA_E_rev );
   I_syn += -y[ S::G_NMDA ] * ( V - node.P_.NMDA_E_rev )
     / ( 1 + std::exp( ( node.P_.NMDA_Vact - V ) / node.P_.NMDA_Sact ) );
@@ -86,7 +95,8 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   I_syn += -y[ S::G_GABA_B ] * ( V - node.P_.GABA_B_E_rev );
 
   // The spike current is only activate immediately after a spike.
-  const double_t I_spike = node.S_.g_spike_ ? -( V - node.P_.E_K ) / node.P_.Tau_spike : 0;
+  const double_t I_spike =
+    node.S_.g_spike_ ? -( V - node.P_.E_K ) / node.P_.Tau_spike : 0;
 
   // leak currents
   const double_t I_Na = -node.P_.g_NaL * ( V - node.P_.E_Na );
@@ -96,28 +106,33 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   // I_Na(p), m_inf^3 according to Compte et al, J Neurophysiol 2003 89:2707
   const double_t INaP_thresh = -55.7;
   const double_t INaP_slope = 7.7;
-  const double_t m_inf_NaP = 1.0 / ( 1.0 + std::exp( -( V - INaP_thresh ) / INaP_slope ) );
-  node.S_.I_NaP_ = -node.P_.NaP_g_peak * std::pow( m_inf_NaP, 3.0 ) * ( V - node.P_.NaP_E_rev );
+  const double_t m_inf_NaP =
+    1.0 / ( 1.0 + std::exp( -( V - INaP_thresh ) / INaP_slope ) );
+  node.S_.I_NaP_ = -node.P_.NaP_g_peak * std::pow( m_inf_NaP, 3.0 )
+    * ( V - node.P_.NaP_E_rev );
 
   // I_DK
   const double_t d_half = 0.25;
-  const double_t m_inf_KNa = 1.0 / ( 1.0 + std::pow( d_half / y[ S::IKNa_D ], 3.5 ) );
+  const double_t m_inf_KNa =
+    1.0 / ( 1.0 + std::pow( d_half / y[ S::IKNa_D ], 3.5 ) );
   node.S_.I_KNa_ = -node.P_.KNa_g_peak * m_inf_KNa * ( V - node.P_.KNa_E_rev );
 
   // I_T
   const double_t m_inf_T = 1.0 / ( 1.0 + std::exp( -( V + 59.0 ) / 6.2 ) );
   const double_t h_inf_T = 1.0 / ( 1.0 + std::exp( ( V + 83.0 ) / 4 ) );
-  node.S_.I_T_ =
-    -node.P_.T_g_peak * y[ S::IT_m ] * y[ S::IT_m ] * y[ S::IT_h ] * ( V - node.P_.T_E_rev );
+  node.S_.I_T_ = -node.P_.T_g_peak * y[ S::IT_m ] * y[ S::IT_m ] * y[ S::IT_h ]
+    * ( V - node.P_.T_E_rev );
 
   // I_h
   const double_t I_h_Vthreshold = -75.0;
-  const double_t m_inf_h = 1.0 / ( 1.0 + std::exp( ( V - I_h_Vthreshold ) / 5.5 ) );
+  const double_t m_inf_h =
+    1.0 / ( 1.0 + std::exp( ( V - I_h_Vthreshold ) / 5.5 ) );
   node.S_.I_h_ = -node.P_.h_g_peak * y[ S::Ih_m ] * ( V - node.P_.h_E_rev );
 
   // delta V
-  f[ S::VM ] = ( I_Na + I_K + I_syn + node.S_.I_NaP_ + node.S_.I_KNa_ + node.S_.I_T_ + node.S_.I_h_
-                 + node.B_.I_stim_ ) / node.P_.Tau_m
+  f[ S::VM ] =
+    ( I_Na + I_K + I_syn + node.S_.I_NaP_ + node.S_.I_KNa_ + node.S_.I_T_
+      + node.S_.I_h_ + node.B_.I_stim_ ) / node.P_.Tau_m
     + I_spike;
 
   // delta Theta
@@ -135,28 +150,34 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
 
   // GABA_A
   f[ S::DG_GABA_A ] = -y[ S::DG_GABA_A ] / node.P_.GABA_A_Tau_1;
-  f[ S::G_GABA_A ] = y[ S::DG_GABA_A ] - y[ S::G_GABA_A ] / node.P_.GABA_A_Tau_2;
+  f[ S::G_GABA_A ] =
+    y[ S::DG_GABA_A ] - y[ S::G_GABA_A ] / node.P_.GABA_A_Tau_2;
 
   // GABA_B
   f[ S::DG_GABA_B ] = -y[ S::DG_GABA_B ] / node.P_.GABA_B_Tau_1;
-  f[ S::G_GABA_B ] = y[ S::DG_GABA_B ] - y[ S::G_GABA_B ] / node.P_.GABA_B_Tau_2;
+  f[ S::G_GABA_B ] =
+    y[ S::DG_GABA_B ] - y[ S::G_GABA_B ] / node.P_.GABA_B_Tau_2;
 
   // I_KNa
   const double_t D_influx_peak = 0.025;
   const double_t tau_D = 1250.0; // yes, 1.25s
   const double_t D_thresh = -10.0;
   const double_t D_slope = 5.0;
-  const double_t D_influx = 1.0 / ( 1.0 + std::exp( -( V - D_thresh ) / D_slope ) );
+  const double_t D_influx =
+    1.0 / ( 1.0 + std::exp( -( V - D_thresh ) / D_slope ) );
 
   // equation modified from y[](1-D_eq) to (y[]-D_eq), since we'd not
   // be converging to equilibrium otherwise
-  f[ S::IKNa_D ] = D_influx_peak * D_influx - ( y[ S::IKNa_D ] - KNa_D_EQ ) / tau_D;
+  f[ S::IKNa_D ] =
+    D_influx_peak * D_influx - ( y[ S::IKNa_D ] - KNa_D_EQ ) / tau_D;
 
   // I_T
-  const double_t tau_m_T =
-    0.22 / ( std::exp( -( V + 132.0 ) / 16.7 ) + std::exp( ( V + 16.8 ) / 18.2 ) ) + 0.13;
+  const double_t tau_m_T = 0.22
+      / ( std::exp( -( V + 132.0 ) / 16.7 ) + std::exp( ( V + 16.8 ) / 18.2 ) )
+    + 0.13;
   const double_t tau_h_T = 8.2
-    + ( 56.6 + 0.27 * std::exp( ( V + 115.2 ) / 5.0 ) ) / ( 1.0 + std::exp( ( V + 86.0 ) / 3.2 ) );
+    + ( 56.6 + 0.27 * std::exp( ( V + 115.2 ) / 5.0 ) )
+      / ( 1.0 + std::exp( ( V + 86.0 ) / 3.2 ) );
   f[ S::IT_m ] = ( m_inf_T - y[ S::IT_m ] ) / tau_m_T;
   f[ S::IT_h ] = ( h_inf_T - y[ S::IT_h ] ) / tau_h_T;
 
@@ -461,7 +482,8 @@ nest::ht_neuron::init_buffers_()
   B_.IntegrationStep_ = B_.step_;
 
   if ( B_.s_ == 0 )
-    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ =
+      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   else
     gsl_odeiv_step_reset( B_.s_ );
 
@@ -495,7 +517,8 @@ nest::ht_neuron::get_synapse_constant( nest::double_t Tau_1,
   // section 3.1.2.
   nest::double_t exact_integration_adjustment = ( 1 / Tau_2 ) - ( 1 / Tau_1 );
 
-  nest::double_t t_peak = ( Tau_2 * Tau_1 ) * std::log( Tau_2 / Tau_1 ) / ( Tau_2 - Tau_1 );
+  nest::double_t t_peak =
+    ( Tau_2 * Tau_1 ) * std::log( Tau_2 / Tau_1 ) / ( Tau_2 - Tau_1 );
   nest::double_t normalisation_factor =
     1 / ( std::exp( -t_peak / Tau_1 ) - std::exp( -t_peak / Tau_2 ) );
 
@@ -505,15 +528,18 @@ nest::ht_neuron::get_synapse_constant( nest::double_t Tau_1,
 void
 nest::ht_neuron::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
 
   // NOTE: code below initializes conductance step size for incoming pulses.
   // Variable and function names need to be changed!
   V_.cond_steps_.resize( SUP_SPIKE_RECEPTOR - 1 );
 
-  V_.cond_steps_[ AMPA - 1 ] = get_synapse_constant( P_.AMPA_Tau_1, P_.AMPA_Tau_2, P_.AMPA_g_peak );
+  V_.cond_steps_[ AMPA - 1 ] =
+    get_synapse_constant( P_.AMPA_Tau_1, P_.AMPA_Tau_2, P_.AMPA_g_peak );
 
-  V_.cond_steps_[ NMDA - 1 ] = get_synapse_constant( P_.NMDA_Tau_1, P_.NMDA_Tau_2, P_.NMDA_g_peak );
+  V_.cond_steps_[ NMDA - 1 ] =
+    get_synapse_constant( P_.NMDA_Tau_1, P_.NMDA_Tau_2, P_.NMDA_g_peak );
 
   V_.cond_steps_[ GABA_A - 1 ] =
     get_synapse_constant( P_.GABA_A_Tau_1, P_.GABA_A_Tau_2, P_.GABA_A_g_peak );
@@ -523,7 +549,8 @@ nest::ht_neuron::calibrate()
 
   V_.PotassiumRefractoryCounts_ = Time( Time::ms( P_.t_spike ) ).get_steps();
 
-  assert( V_.PotassiumRefractoryCounts_ >= 0 ); // since t_spike_ >= 0, this can only fail in error
+  // since t_spike_ >= 0, this can only fail in error
+  assert( V_.PotassiumRefractoryCounts_ >= 0 );
 }
 
 void
@@ -570,7 +597,8 @@ nest::ht_neuron::set_status( const DictionaryDatum& d )
 void
 ht_neuron::update( Time const& origin, const long_t from, const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -599,7 +627,8 @@ ht_neuron::update( Time const& origin, const long_t from, const long_t to )
 
     // Add new spikes to node state array
     for ( size_t i = 0; i < B_.spike_inputs_.size(); ++i )
-      S_.y_[ 2 + 2 * i ] += V_.cond_steps_[ i ] * B_.spike_inputs_[ i ].get_value( lag );
+      S_.y_[ 2 + 2 * i ] +=
+        V_.cond_steps_[ i ] * B_.spike_inputs_[ i ].get_value( lag );
 
     // A spike is generated when the membrane potential (V) exceeds
     // the threshold (Theta).
@@ -618,7 +647,7 @@ ht_neuron::update( Time const& origin, const long_t from, const long_t to )
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current
@@ -635,7 +664,7 @@ nest::ht_neuron::handle( SpikeEvent& e )
   assert( e.get_rport() < static_cast< int_t >( B_.spike_inputs_.size() ) );
 
   B_.spike_inputs_[ e.get_rport() ].add_value(
-    e.get_rel_delivery_steps( network()->get_slice_origin() ),
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -648,7 +677,9 @@ nest::ht_neuron::handle( CurrentEvent& e )
   const double_t w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * I );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * I );
 }
 
 void

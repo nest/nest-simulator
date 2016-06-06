@@ -21,7 +21,8 @@
  */
 
 #include "tsodyks_connection_hom.h"
-#include "network.h"
+
+// Includes from nestkernel:
 #include "connector_model.h"
 
 namespace nest
@@ -52,7 +53,8 @@ TsodyksHomCommonProperties::get_status( DictionaryDatum& d ) const
 }
 
 void
-TsodyksHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+TsodyksHomCommonProperties::set_status( const DictionaryDatum& d,
+  ConnectorModel& cm )
 {
   CommonPropertiesHomW::set_status( d, cm );
 

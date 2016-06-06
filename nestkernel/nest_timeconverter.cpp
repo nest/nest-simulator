@@ -19,9 +19,11 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "nest.h"
-#include "nest_time.h"
+
 #include "nest_timeconverter.h"
+
+// Includes from nestkernel:
+#include "nest_time.h"
 
 namespace nest
 {

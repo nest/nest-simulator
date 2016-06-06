@@ -25,7 +25,11 @@
 /*
     The interpreter's basic operators
 */
+
+// C++ includes:
 #include <typeinfo>
+
+// Includes from sli:
 #include "slifunction.h"
 
 /*********************************************************

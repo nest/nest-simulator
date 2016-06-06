@@ -24,10 +24,13 @@
 #define DEVICE_H
 
 
-#include "nest.h"
-#include "node.h"
-#include "dictdatum.h"
+// Includes from nestkernel:
 #include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {
@@ -78,8 +81,8 @@ namespace nest
  *
  * This class provides a common interface for all derived device classes.
  * Each class derived from Node and implementing a device, should have a
- * member derived from class Device. This member will contribute the implementation
- * of device specific properties.
+ * member derived from class Device. This member will contribute the
+ * implementation of device specific properties.
  *
  * This class manages the properties common to all devices, namely
  * origin, start and stop of the time window during which the device
@@ -175,6 +178,10 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum& ); //!< Set values from dictionary
+
+  private:
+    //! Update given Time parameter including error checking
+    static void update_( const DictionaryDatum&, const Name&, Time& );
   };
 
 

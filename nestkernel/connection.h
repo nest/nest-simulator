@@ -23,19 +23,25 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
+// Includes from nestkernel:
+#include "common_synapse_properties.h"
+#include "connection_label.h"
+#include "delay_checker.h"
+#include "event.h"
+#include "kernel_manager.h"
+#include "nest_names.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
-#include "nest.h"
+#include "nest_types.h"
 #include "node.h"
-#include "event.h"
-#include "dict.h"
-#include "dictutils.h"
-#include "arraydatum.h"
-#include "doubledatum.h"
-#include "common_synapse_properties.h"
-#include "nest_names.h"
 #include "spikecounter.h"
 #include "syn_id_delay.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
 
 namespace nest
 {
@@ -112,6 +118,11 @@ class Connection
 {
 
 public:
+  // this typedef may be overwritten in the derived connection classes in order
+  // to attach a specific event type to this connection type, used in secondary
+  // connections not used in primary connectors
+  typedef SecondaryEvent EventType;
+
   Connection()
     : target_()
     , syn_id_delay_( 1.0 )
@@ -133,7 +144,8 @@ public:
   /**
    * Set properties of this connection from the values given in dictionary.
    *
-   * @note Target and Rport cannot be changed after a connection has been created.
+   * @note Target and Rport cannot be changed after a connection has been
+   * created.
    */
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
@@ -196,6 +208,11 @@ public:
     return syn_id_delay_.syn_id;
   }
 
+  long_t
+  get_label() const
+  {
+    return UNLABELED_CONNECTION;
+  }
 
   /**
    * triggers an update of a synaptic weight
@@ -219,24 +236,31 @@ public:
 
 protected:
   /**
-   * This function calls check_connection() on the sender to check if the receiver
+   * This function calls check_connection() on the sender to check if the
+   * receiver
    * accepts the event type and receptor type requested by the sender.
    * \param s The source node
    * \param r The target node
    * \param receptor The ID of the requested receptor type
-   * \param the last spike produced by the presynaptic neuron (for STDP and maturing connections)
+   * \param the last spike produced by the presynaptic neuron (for STDP and
+   * maturing connections)
    */
-  void check_connection_( Node& dummy_target, Node& source, Node& target, rport receptor_type );
+  void check_connection_( Node& dummy_target,
+    Node& source,
+    Node& target,
+    rport receptor_type );
 
   /* the order of the members below is critical
      as it influcences the size of the object. Please leave unchanged
      as
      targetidentifierT target_;
-     SynIdDelay syn_id_delay_;        //!< syn_id (char) and delay (24 bit) in timesteps of this
+     SynIdDelay syn_id_delay_;        //!< syn_id (char) and delay (24 bit) in
+     timesteps of this
      connection
   */
   targetidentifierT target_;
-  SynIdDelay syn_id_delay_; //!< syn_id (char) and delay (24 bit) in timesteps of this connection
+  //! syn_id (char) and delay (24 bit) in timesteps of this connection
+  SynIdDelay syn_id_delay_;
 };
 
 
@@ -252,12 +276,20 @@ Connection< targetidentifierT >::check_connection_( Node& dummy_target,
   // this line might throw an exception
   source.send_test_event( dummy_target, receptor_type, get_syn_id(), true );
 
-  // 2. does the target accept the event type sent by sourc
+  // 2. does the target accept the event type sent by source
   // try to send event from source to target
   // this returns the port of the incoming connection
   // p must be stored in the base class connection
   // this line might throw an exception
-  target_.set_rport( source.send_test_event( target, receptor_type, get_syn_id(), false ) );
+  target_.set_rport(
+    source.send_test_event( target, receptor_type, get_syn_id(), false ) );
+
+  // 3. do the events sent by source mean the same thing as they are
+  // interpreted in target?
+  // note that we here use a bitwise and operation (&), because we interpret
+  // each bit in the signal type as a collection of individual flags
+  if ( !( source.sends_signal() & target.receives_signal() ) )
+    throw IllegalConnection();
 
   target_.set_target( &target );
 }
@@ -272,12 +304,14 @@ Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 inline void
-Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+Connection< targetidentifierT >::set_status( const DictionaryDatum& d,
+  ConnectorModel& )
 {
   double_t delay;
   if ( updateValue< double_t >( d, names::delay, delay ) )
   {
-    cm.assert_valid_delay_ms( delay );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+      delay );
     syn_id_delay_.set_delay_ms( delay );
   }
   // no call to target_.set_status() because target and rport cannot be changed
@@ -303,7 +337,8 @@ Connection< targetidentifierT >::trigger_update_weight( const thread,
 {
   throw IllegalConnection(
     "Connection::trigger_update_weight: "
-    "Connection does not support updates that are triggered by the volume transmitter." );
+    "Connection does not support updates that are triggered by the volume "
+    "transmitter." );
 }
 
 } // namespace nest

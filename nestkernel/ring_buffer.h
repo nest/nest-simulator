@@ -22,11 +22,15 @@
 
 #ifndef RING_BUFFER_H
 #define RING_BUFFER_H
-#include <vector>
+
+// C++ includes:
 #include <list>
-#include "nest.h"
-#include "scheduler.h"
+#include <vector>
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
 #include "nest_time.h"
+#include "nest_types.h"
 
 namespace nest
 {
@@ -101,6 +105,13 @@ public:
   double get_value( const long_t offs );
 
   /**
+   * Read one value from ring buffer without deleting it afterwards.
+   * @param  offs  Offset of element to read within slice.
+   * @returns value
+   */
+  double get_value_wfr_update( const long_t offs );
+
+  /**
    * Initialize the buffer with noughts.
    * Also resizes the buffer if necessary.
    */
@@ -151,7 +162,7 @@ inline double
 RingBuffer::get_value( const long_t offs )
 {
   assert( 0 <= offs && ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < Scheduler::get_min_delay() );
+  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -161,10 +172,23 @@ RingBuffer::get_value( const long_t offs )
   return val;
 }
 
+inline double
+RingBuffer::get_value_wfr_update( const long_t offs )
+{
+  assert( 0 <= offs && ( size_t ) offs < buffer_.size() );
+  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
+
+  // offs == 0 is beginning of slice, but we have to
+  // take modulo into account when indexing
+  long_t idx = get_index_( offs );
+  double_t val = buffer_[ idx ];
+  return val;
+}
+
 inline size_t
 RingBuffer::get_index_( const delay d ) const
 {
-  const long_t idx = Scheduler::get_modulo( d );
+  const long_t idx = kernel().event_delivery_manager.get_modulo( d );
   assert( 0 <= idx );
   assert( ( size_t ) idx < buffer_.size() );
   return idx;
@@ -233,7 +257,7 @@ inline double
 MultRBuffer::get_value( const long_t offs )
 {
   assert( 0 <= offs && ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < Scheduler::get_min_delay() );
+  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -246,7 +270,7 @@ MultRBuffer::get_value( const long_t offs )
 inline size_t
 MultRBuffer::get_index_( const delay d ) const
 {
-  const long_t idx = Scheduler::get_modulo( d );
+  const long_t idx = kernel().event_delivery_manager.get_modulo( d );
   assert( 0 <= idx && ( size_t ) idx < buffer_.size() );
   return idx;
 }
@@ -311,7 +335,7 @@ inline std::list< double_t >&
 ListRingBuffer::get_list( const long_t offs )
 {
   assert( 0 <= offs && ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < Scheduler::get_min_delay() );
+  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
@@ -322,7 +346,7 @@ ListRingBuffer::get_list( const long_t offs )
 inline size_t
 ListRingBuffer::get_index_( const delay d ) const
 {
-  const long_t idx = Scheduler::get_modulo( d );
+  const long_t idx = kernel().event_delivery_manager.get_modulo( d );
   assert( 0 <= idx );
   assert( ( size_t ) idx < buffer_.size() );
   return idx;

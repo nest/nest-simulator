@@ -20,17 +20,25 @@
  *
  */
 
-#include "exceptions.h"
 #include "izhikevich.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
 #include "universal_data_logger_impl.h"
 
-#include <limits>
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -103,12 +111,13 @@ nest::izhikevich::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::b, b_ );
   updateValue< double >( d, names::c, c_ );
   updateValue< double >( d, names::d, d_ );
-  updateValue< bool >( d, names::consistent_integration, consistent_integration_ );
+  updateValue< bool >(
+    d, names::consistent_integration, consistent_integration_ );
   const double_t h = Time::get_resolution().get_ms();
   if ( not consistent_integration_ && h != 1.0 )
   {
-    net_->message(
-      SLIInterpreter::M_INFO, "Parameters_::set", "Use 1.0 ms as resolution for consistency." );
+    LOG(
+      M_INFO, "Parameters_::set", "Use 1.0 ms as resolution for consistency." );
   }
 }
 
@@ -188,9 +197,12 @@ nest::izhikevich::calibrate()
  */
 
 void
-nest::izhikevich::update( Time const& origin, const long_t from, const long_t to )
+nest::izhikevich::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   const double_t h = Time::get_resolution().get_ms();
@@ -204,18 +216,20 @@ nest::izhikevich::update( Time const& origin, const long_t from, const long_t to
     {
       v_old = S_.v_;
       u_old = S_.u_;
-      S_.v_ += h * ( 0.04 * v_old * v_old + 5.0 * v_old + 140.0 - u_old + S_.I_ + P_.I_e_ )
+      S_.v_ += h * ( 0.04 * v_old * v_old + 5.0 * v_old + 140.0 - u_old + S_.I_
+                     + P_.I_e_ )
         + B_.spikes_.get_value( lag );
       S_.u_ += h * P_.a_ * ( P_.b_ * v_old - u_old );
     }
-    // use numerics published in Izhikevich (2003) in this case (not recommended)
+    // use numerics published in Izhikevich (2003) in this case (not
+    // recommended)
     else
     {
       double I_syn = B_.spikes_.get_value( lag );
-      S_.v_ +=
-        h * 0.5 * ( 0.04 * S_.v_ * S_.v_ + 5.0 * S_.v_ + 140.0 - S_.u_ + S_.I_ + P_.I_e_ + I_syn );
-      S_.v_ +=
-        h * 0.5 * ( 0.04 * S_.v_ * S_.v_ + 5.0 * S_.v_ + 140.0 - S_.u_ + S_.I_ + P_.I_e_ + I_syn );
+      S_.v_ += h * 0.5 * ( 0.04 * S_.v_ * S_.v_ + 5.0 * S_.v_ + 140.0 - S_.u_
+                           + S_.I_ + P_.I_e_ + I_syn );
+      S_.v_ += h * 0.5 * ( 0.04 * S_.v_ * S_.v_ + 5.0 * S_.v_ + 140.0 - S_.u_
+                           + S_.I_ + P_.I_e_ + I_syn );
       S_.u_ += h * P_.a_ * ( P_.b_ * S_.v_ - S_.u_ );
     }
 
@@ -232,7 +246,7 @@ nest::izhikevich::update( Time const& origin, const long_t from, const long_t to
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 
       SpikeEvent se;
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current
@@ -247,7 +261,8 @@ void
 nest::izhikevich::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
-  B_.spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  B_.spikes_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 
@@ -258,7 +273,9 @@ nest::izhikevich::handle( CurrentEvent& e )
 
   const double_t c = e.get_current();
   const double_t w = e.get_weight();
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 void

@@ -43,7 +43,6 @@
 /iaf_neuron Create
 1.0 delay Connect
 
-{ /static_synapse GetDefaults /min_delay get delay eq } assert_or_die
 { 0 GetStatus /min_delay get delay eq } assert_or_die
 
 endusing

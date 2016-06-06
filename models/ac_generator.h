@@ -25,10 +25,11 @@
 
 // provides AC input current
 
-#include "nest.h"
-#include "event.h"
-#include "node.h"
+// Includes from nestkernel:
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "node.h"
 #include "stimulating_device.h"
 
 /* BeginDocumentation
@@ -43,7 +44,8 @@
    frequency   double -  Frequency in Hz
    4) The
 
-   The currents are updated every time step by exact integration schemes from [1]
+   The currents are updated every time step by exact integration schemes from
+   [1]
 
    References:
    [1] S. Rotter and M. Diesmann, Exact digital simulation of time-
@@ -59,9 +61,6 @@
 
 namespace nest
 {
-
-class Network;
-
 class ac_generator : public Node
 {
 
@@ -138,7 +137,10 @@ private:
 };
 
 inline port
-ac_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
+ac_generator::send_test_event( Node& target,
+  rport receptor_type,
+  synindex syn_id,
+  bool )
 {
   device_.enforce_single_syn_type( syn_id );
 

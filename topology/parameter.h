@@ -23,16 +23,25 @@
 #ifndef PARAMETER_H
 #define PARAMETER_H
 
+// C++ includes:
 #include <limits>
-#include "nest.h"
+
+// Includes from librandom:
+#include "normal_randomdev.h"
 #include "randomgen.h"
+
+// Includes from nestkernel:
 #include "nest_names.h"
-#include "topology_names.h"
-#include "position.h"
+#include "nest_types.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 #include "dictutils.h"
+
+// Includes from topology:
+#include "position.h"
+#include "topology_names.h"
 #include "topologymodule.h"
-#include "normal_randomdev.h"
 
 namespace nest
 {
@@ -129,7 +138,8 @@ public:
   /**
    * @returns the value of the parameter at the given point.
    */
-  double_t value( const std::vector< double_t >& pt, librandom::RngPtr& rng ) const;
+  double_t value( const std::vector< double_t >& pt,
+    librandom::RngPtr& rng ) const;
 
   /**
    * Clone method.
@@ -162,7 +172,8 @@ private:
   double_t cutoff_;
 };
 
-typedef lockPTRDatum< Parameter, &TopologyModule::ParameterType > ParameterDatum;
+typedef lockPTRDatum< Parameter, &TopologyModule::ParameterType >
+  ParameterDatum;
 
 /**
  * Parameter with constant value.
@@ -363,7 +374,9 @@ public:
   double_t
   raw_value( double_t x ) const
   {
-    return c_ + p_center_ * std::exp( -std::pow( x - mean_, 2 ) / ( 2 * std::pow( sigma_, 2 ) ) );
+    return c_
+      + p_center_
+      * std::exp( -std::pow( x - mean_, 2 ) / ( 2 * std::pow( sigma_, 2 ) ) );
   }
 
   Parameter*
@@ -379,9 +392,10 @@ private:
 
 /**
  * Bivariate Gaussian parameter
- *  p(x,y) = c + p_center*exp( -( (x-mean_x)^2/sigma_x^2 + (y-mean_y)^2/sigma_y^2
- *                                + 2*rho*(x-mean_x)*(y-mean_y)/(sigma_x*sigma_y) ) /
- *                             (2*(1-rho^2)) )
+ *  p(x,y) = c + p_center*exp( -( (x-mean_x)^2/sigma_x^2 +
+ *                                (y-mean_y)^2/sigma_y^2 +
+ *                                2*rho*(x-mean_x)*(y-mean_y)/(sigma_x*sigma_y)
+ *                               ) / (2*(1-rho^2)) )
  */
 class Gaussian2DParameter : public Parameter
 {
@@ -403,10 +417,13 @@ public:
   {
     return c_
       + p_center_
-      * std::exp( -( ( pos[ 0 ] - mean_x_ ) * ( pos[ 0 ] - mean_x_ ) / ( sigma_x_ * sigma_x_ )
-                    + ( pos[ 1 ] - mean_y_ ) * ( pos[ 1 ] - mean_y_ ) / ( sigma_y_ * sigma_y_ )
-                    - 2. * rho_ * ( pos[ 0 ] - mean_x_ ) * ( pos[ 1 ] - mean_y_ )
-                      / ( sigma_x_ * sigma_y_ ) ) / ( 2. * ( 1. - rho_ * rho_ ) ) );
+      * std::exp(
+          -( ( pos[ 0 ] - mean_x_ ) * ( pos[ 0 ] - mean_x_ )
+              / ( sigma_x_ * sigma_x_ )
+            + ( pos[ 1 ] - mean_y_ ) * ( pos[ 1 ] - mean_y_ )
+              / ( sigma_y_ * sigma_y_ )
+            - 2. * rho_ * ( pos[ 0 ] - mean_x_ ) * ( pos[ 1 ] - mean_y_ )
+              / ( sigma_x_ * sigma_y_ ) ) / ( 2. * ( 1. - rho_ * rho_ ) ) );
   }
 
   double_t
@@ -551,8 +568,8 @@ private:
 
 
 /**
- * Random parameter with lognormal distribution, optionally truncated to [min,max).
- * Truncation is implemented by rejection.
+ * Random parameter with lognormal distribution, optionally truncated to
+ * [min,max). Truncation is implemented by rejection.
  */
 class LognormalParameter : public Parameter
 {
@@ -726,7 +743,7 @@ public:
   }
 
 protected:
-  Parameter *parameter1_, *parameter2_;
+  Parameter* parameter1_, *parameter2_;
 };
 
 /**
@@ -783,7 +800,7 @@ public:
   }
 
 protected:
-  Parameter *parameter1_, *parameter2_;
+  Parameter* parameter1_, *parameter2_;
 };
 
 /**
@@ -840,7 +857,7 @@ public:
   }
 
 protected:
-  Parameter *parameter1_, *parameter2_;
+  Parameter* parameter1_, *parameter2_;
 };
 
 /**
@@ -897,7 +914,7 @@ public:
   }
 
 protected:
-  Parameter *parameter1_, *parameter2_;
+  Parameter* parameter1_, *parameter2_;
 };
 
 /**

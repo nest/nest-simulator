@@ -23,23 +23,24 @@
 #ifndef MCCULLOCH_PITTS_NEURON_H
 #define MCCULLOCH_PITTS_NEURON_H
 
+// Includes from models:
 #include "binary_neuron.h"
 #include "binary_neuron_impl.h"
 
 namespace nest
 {
 /* BeginDocumentation
-   Name: mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside activation function.
+   Name: mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside
+                                  activation function.
 
    Description:
    The mcculloch_pitts_neuron is an implementation of a binary
    neuron that is irregularly updated as Poisson time points [1]. At
    each update point the total synaptic input h into the neuron is
-   summed up, passed through a gain function g whose output is
-   interpreted as the probability of the neuron to be in the active
-   (1) state.
-   The gain function g used here is g(h) = H(h-theta), with H the
-   Heaviside function.  The time constant tau_m is defined as the
+   summed up, passed through a Heaviside gain function g(h) = H(h-theta),
+   whose output is either 1 (if input is above) or 0 (if input is below
+   threshold theta).
+   The time constant tau_m is defined as the
    mean inter-update-interval that is drawn from an exponential
    distribution with this parameter. Using this neuron to reprodce
    simulations with asynchronous update [1], the time constant needs
@@ -61,21 +62,29 @@ namespace nest
    only sends a spike if a transition of its state occurs. If the
    state makes an up-transition it sends a spike with multiplicity 2,
    if a down transition occurs, it sends a spike with multiplicity 1.
+   The decoding scheme relies on the feature that spikes with multiplicity
+   larger 1 are delivered consecutively, also in a parallel setting.
+   The creation of double connections between binary neurons will
+   destroy the decoding scheme, as this effectively duplicates
+   every event. Using random connection routines it is therefore
+   advisable to set the property 'multapses' to false.
    The neuron accepts several sources of currents, e.g. from a
    noise_generator.
 
    Parameters:
-   tau_m      double - Membrane time constant (mean inter-update-interval) in ms.
+   tau_m      double - Membrane time constant (mean inter-update-interval)
+                       in ms.
    theta      double - threshold for sigmoidal activation function mV
 
    References:
-   [1] W. McCulloch und W. Pitts (1943). A logical calculus of the ideas immanent in nervous
-   activity. Bulletin of Mathematical Biophysics, 5:115-133.
-   [2] Hertz Krogh, Palmer. Introduction to the theory of neural computation. Westview (1991).
-   [3] Abigail Morrison, Markus Diesmann. Maintaining Causality in Discrete Time Neuronal
-   Simulations.
-   In: Lectures in Supercomputational Neuroscience, p. 267. Peter beim Graben, Changsong Zhou, Marco
-   Thiel, Juergen Kurths (Eds.), Springer 2008.
+   [1] W. McCulloch und W. Pitts (1943). A logical calculus of the ideas
+   immanent in nervous activity. Bulletin of Mathematical Biophysics, 5:115-133.
+   [2] Hertz Krogh, Palmer. Introduction to the theory of neural computation.
+   Westview (1991).
+   [3] Abigail Morrison, Markus Diesmann. Maintaining Causality in Discrete Time
+   Neuronal Simulations.
+   In: Lectures in Supercomputational Neuroscience, p. 267. Peter beim Graben,
+   Changsong Zhou, Marco Thiel, Juergen Kurths (Eds.), Springer 2008.
 
    Sends: SpikeEvent
    Receives: SpikeEvent, PotentialRequest
@@ -103,12 +112,14 @@ public:
   bool operator()( librandom::RngPtr, double_t h );
 };
 
-inline bool gainfunction_mcculloch_pitts::operator()( librandom::RngPtr, double_t h )
+inline bool gainfunction_mcculloch_pitts::operator()( librandom::RngPtr,
+  double_t h )
 {
   return h > theta_;
 }
 
-typedef nest::binary_neuron< nest::gainfunction_mcculloch_pitts > mcculloch_pitts_neuron;
+typedef nest::binary_neuron< nest::gainfunction_mcculloch_pitts >
+  mcculloch_pitts_neuron;
 
 template <>
 void RecordablesMap< mcculloch_pitts_neuron >::create();

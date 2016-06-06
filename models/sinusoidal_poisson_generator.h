@@ -23,35 +23,39 @@
 #ifndef SINUSOIDAL_POISSON_GENERATOR_H
 #define SINUSOIDAL_POISSON_GENERATOR_H
 
-#include "nest.h"
+// Includes from librandom:
+#include "poisson_randomdev.h"
+
+// Includes from nestkernel:
+#include "connection.h"
 #include "event.h"
+#include "nest_types.h"
 #include "node.h"
 #include "stimulating_device.h"
-#include "poisson_randomdev.h"
-#include "connection.h"
 #include "universal_data_logger.h"
 
 namespace nest
 {
-
-class Network;
-
 /* BeginDocumentation
-   Name: sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson spike trains.
+   Name: sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson
+                                        spike trains.
 
    Description:
-   sinusoidal_poisson_generator generates sinusoidally modulated Poisson spike trains. By default,
-   each target of the generator will receive a different spike train.
+   sinusoidal_poisson_generator generates sinusoidally modulated Poisson spike
+   trains. By default, each target of the generator will receive a different
+   spike train.
 
    The instantaneous rate of the process is given by
 
-       f(t) = max(0, rate + amplitude sin ( 2 pi frequency t + phase * pi/180 )) >= 0
+       f(t) = max(0, rate + amplitude sin ( 2 pi frequency t + phase * pi/180 ))
+           >= 0
 
    Parameters:
    The following parameters can be set in the status dictionary:
 
    rate       double - Mean firing rate in spikes/second, default: 0 s^-1
-   amplitude  double - Firing rate modulation amplitude in spikes/second, default: 0 s^-1
+   amplitude  double - Firing rate modulation amplitude in spikes/second,
+                       default: 0 s^-1
    frequency  double - Modulation frequency in Hz, default: 0 Hz
    phase      double - Modulation phase in degree [0-360], default: 0
 
@@ -67,10 +71,10 @@ class Network;
      temporal resolutions.
 
    - Individual spike trains vs single spike train:
-     By default, the generator sends a different spike train to each of its targets.
-     If /individual_spike_trains is set to false using either SetDefaults or CopyModel
-     before a generator node is created, the generator will send the same spike train
-     to all of its targets.
+     By default, the generator sends a different spike train to each of its
+     targets. If /individual_spike_trains is set to false using either
+     SetDefaults or CopyModel before a generator node is created, the generator
+     will send the same spike train to all of its targets.
 
    Receives: DataLoggingRequest
 
@@ -92,7 +96,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -160,16 +165,17 @@ private:
 
   struct State_
   {
-
-    double_t y_0_; //!< Two-component oscillator state vector, see Rotter&Diesmann
+    //! Two-component oscillator state vector, see Rotter&Diesmann
+    double_t y_0_;
     double_t y_1_;
 
     double_t rate_; //!< current rate, kept for recording
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const;                     //!< Store current values in dictionary
-    void set( const DictionaryDatum&, const Parameters_& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    //! Set values from dictionary
+    void set( const DictionaryDatum&, const Parameters_& );
   };
 
   // ------------------------------------------------------------
@@ -243,7 +249,8 @@ sinusoidal_poisson_generator::send_test_event( Node& target,
 }
 
 inline port
-sinusoidal_poisson_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+sinusoidal_poisson_generator::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

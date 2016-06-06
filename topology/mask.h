@@ -23,12 +23,17 @@
 #ifndef MASK_H
 #define MASK_H
 
-#include "nest.h"
-#include "topology_names.h"
-#include "position.h"
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "nest_types.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 #include "dictutils.h"
-#include "exceptions.h"
+
+// Includes from topology:
+#include "position.h"
+#include "topology_names.h"
 #include "topologymodule.h"
 
 namespace nest
@@ -350,7 +355,7 @@ public:
   Mask< D >* clone() const;
 
 protected:
-  Mask< D > *mask1_, *mask2_;
+  Mask< D >* mask1_, *mask2_;
 };
 
 /**
@@ -397,7 +402,7 @@ public:
   Mask< D >* clone() const;
 
 protected:
-  Mask< D > *mask1_, *mask2_;
+  Mask< D >* mask1_, *mask2_;
 };
 
 /**
@@ -444,7 +449,7 @@ public:
   Mask< D >* clone() const;
 
 protected:
-  Mask< D > *mask1_, *mask2_;
+  Mask< D >* mask1_, *mask2_;
 };
 
 
@@ -568,7 +573,8 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
 }
 
 template < int D >
-inline BoxMask< D >::BoxMask( const Position< D >& lower_left, const Position< D >& upper_right )
+inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
+  const Position< D >& upper_right )
   : lower_left_( lower_left )
   , upper_right_( upper_right )
 {

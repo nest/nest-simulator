@@ -239,7 +239,7 @@ nest::ConnBuilder::~ConnBuilder()
     delete it->second;
 }
 
-inline void
+void
 nest::ConnBuilder::register_parameters_requiring_skipping_(
   ConnParameter& param )
 {
@@ -249,7 +249,7 @@ nest::ConnBuilder::register_parameters_requiring_skipping_(
   }
 }
 
-inline void
+void
 nest::ConnBuilder::check_synapse_params_( std::string syn_name,
   const DictionaryDatum& syn_spec )
 {
@@ -453,7 +453,7 @@ nest::ConnBuilder::disconnect()
       throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
 }
 
-inline void
+void
 nest::ConnBuilder::single_connect_( index sgid,
   Node& target,
   thread target_thread,
@@ -577,7 +577,7 @@ nest::ConnBuilder::single_connect_( index sgid,
   }
 }
 
-inline void
+void
 nest::ConnBuilder::skip_conn_parameter_( thread target_thread )
 {
   for ( std::vector< ConnParameter* >::iterator it =
@@ -587,7 +587,7 @@ nest::ConnBuilder::skip_conn_parameter_( thread target_thread )
     ( *it )->skip( target_thread );
 }
 
-inline void
+void
 nest::ConnBuilder::single_disconnect_( index sgid,
   Node& target,
   thread target_thread )

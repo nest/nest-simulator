@@ -41,7 +41,6 @@ protected:
   void connect_();
 
 private:
-
   /**
    * Helper function advancing iterator by step positions.
    *
@@ -52,11 +51,10 @@ private:
    * @param Number of positions to advance
    * @return Iterator after advance
    */
-  static
-  nest::GIDCollection::const_iterator&
-  advance_( nest::GIDCollection::const_iterator&,
-		    const nest::GIDCollection::const_iterator&,
-  		    size_t );
+  static nest::GIDCollection::const_iterator& advance_(
+    nest::GIDCollection::const_iterator&,
+    const nest::GIDCollection::const_iterator&,
+    size_t );
 
   size_t source_step_;
   size_t target_step_;

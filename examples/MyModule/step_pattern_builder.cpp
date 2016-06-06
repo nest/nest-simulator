@@ -39,7 +39,7 @@
 #include "step_pattern_builder.h"
 
 /* BeginDocumentation
-   Name: StepPattern - Rule connecting sources and targets with a step pattern
+   Name: step_pattern - Rule connecting sources and targets with a step pattern
 
    Synopsis:
    source targets << /rule /step_pattern
@@ -53,11 +53,18 @@
    Description:
    This connection rule subsamples the source and target arrays given with
    step sizes source_step and target_step, beginning with the first element
-   in each array, and connects the selected nodes.
+   in each array, and connects the selected nodes. If source_step and
+   target_step both are equal 1, step_pattern is equivalent to all_to_all.
 
    Example:
 
-   REWRITE
+   /n /iaf_psc_alpha 10 Create 1 exch cvgidcollection def
+   n n << /rule /step_pattern /source_step 4 /target_step 3 >> Connect
+   << >> GetConnections ==
+
+     [<1,1,0,0,0> <1,4,0,0,1> <1,7,0,0,2> <1,10,0,0,3>
+      <5,1,0,0,0> <5,4,0,0,1> <5,7,0,0,2> <5,10,0,0,3>
+      <9,1,0,0,0> <9,4,0,0,1> <9,7,0,0,2> <9,10,0,0,3>]
 
    Remark:
    This rule is only provided as an example for how to write your own
@@ -69,7 +76,6 @@
    SeeAlso: Connect
 */
 
-
 mynest::StepPatternBuilder::StepPatternBuilder(
   const nest::GIDCollection& sources,
   const nest::GIDCollection& targets,
@@ -78,22 +84,22 @@ mynest::StepPatternBuilder::StepPatternBuilder(
   : nest::ConnBuilder( sources, targets, conn_spec, syn_spec )
   , source_step_( ( *conn_spec )[ Name( "source_step" ) ] )
   , target_step_( ( *conn_spec )[ Name( "target_step" ) ] )
+{
+  if ( source_step_ < 1 )
   {
-	if ( source_step_ < 1 )
-	{
-	  throw nest::BadParameter("source_step >= 1 required.");
-	}
-	if ( target_step_ < 1 )
-	{
-	  throw nest::BadParameter("target_step >= 1 required.");
-	}
+    throw nest::BadParameter( "source_step >= 1 required." );
   }
+  if ( target_step_ < 1 )
+  {
+    throw nest::BadParameter( "target_step >= 1 required." );
+  }
+}
 
 void
 mynest::StepPatternBuilder::connect_()
 {
-  // This code is based on AllToAllBuilder, except that we step
-  // by source_step_ and target_step_ except for stepping by 1.
+// This code is based on AllToAllBuilder, except that we step
+// by source_step_ and target_step_ except for stepping by 1.
 
 #pragma omp parallel
   {
@@ -126,7 +132,8 @@ mynest::StepPatternBuilder::connect_()
               skip_conn_parameter_( tid );
             continue;
           }
-          nest::Node* const target = nest::kernel().node_manager.get_node( *tgid, tid );
+          nest::Node* const target =
+            nest::kernel().node_manager.get_node( *tgid, tid );
           const nest::thread target_thread = target->get_thread();
           single_connect_( *sgid, *target, target_thread, rng );
         }
@@ -144,15 +151,14 @@ mynest::StepPatternBuilder::connect_()
 
 nest::GIDCollection::const_iterator&
 mynest::StepPatternBuilder::advance_( nest::GIDCollection::const_iterator& it,
-		                              const nest::GIDCollection::const_iterator& end,
-		                              size_t step )
+  const nest::GIDCollection::const_iterator& end,
+  size_t step )
 {
   while ( step > 0 and it != end )
   {
-	--step;
-	++it;
+    --step;
+    ++it;
   }
 
   return it;
 }
-

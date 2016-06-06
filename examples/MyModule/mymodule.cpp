@@ -31,6 +31,7 @@
 #include "step_pattern_builder.h"
 
 // Includes from nestkernel:
+#include "connection_manager_impl.h"
 #include "connector_model_impl.h"
 #include "dynamicloader.h"
 #include "exceptions.h"
@@ -128,8 +129,7 @@ mynest::MyModule::init( SLIInterpreter* i )
         TargetIdentifierPtrRport > >( "drop_odd_synapse" );
 
   // Register connection rule.
-  nest::kernel()
-    .connection_manager.register_conn_builder< StepPatternBuilder >(
+  nest::kernel().connection_manager.register_conn_builder< StepPatternBuilder >(
     "step_pattern" );
 
 } // MyModule::init()

@@ -510,19 +510,35 @@ nest::ht_neuron::get_synapse_constant( nest::double_t Tau_1,
   nest::double_t Tau_2,
   nest::double_t g_peak )
 {
-  // Factor used to account for the missing 1/((1/Tau_2)-(1/Tau_1)) term
-  // in the ht_neuron_dynamics integration of the synapse terms.
-  // See: Exact digital simulation of time-invariant linear systems
-  // with applications to neuronal modeling, Rotter and Diesmann,
-  // section 3.1.2.
-  nest::double_t exact_integration_adjustment = ( 1 / Tau_2 ) - ( 1 / Tau_1 );
+  /* The solution to the beta function ODE obtained by the solver is
+   *
+   *   g(t) = c / ( a - b ) * ( e^(-b t) - e^(-a t) )
+   *
+   * with a = 1/Tau_1, b = 1/Tau_2, a > b. The maximum of this function is at
+   *
+   *   t* = 1/(a-b) ln a/b
+   *
+   * We want to scale the function so that
+   *
+   *   max g == g(t*) == g_peak
+   *
+   * We thus need to set
+   *
+   *   c = g_peak * ( a - b ) / ( e^(-b t*) - e^(-a t*) )
+   *
+   * See Rotter & Diesmann, Biol Cybern 81:381 (1999) and Roth and van Rossum,
+   * Ch 6, in De Schutter, Computational Modeling Methods for Neuroscientists,
+   * MIT Press, 2010.
+   */
 
-  nest::double_t t_peak =
-    ( Tau_2 * Tau_1 ) * std::log( Tau_2 / Tau_1 ) / ( Tau_2 - Tau_1 );
-  nest::double_t normalisation_factor =
-    1 / ( std::exp( -t_peak / Tau_1 ) - std::exp( -t_peak / Tau_2 ) );
+  const double_t t_peak =
+	    ( Tau_2 * Tau_1 ) * std::log( Tau_2 / Tau_1 ) / ( Tau_2 - Tau_1 );
 
-  return g_peak * normalisation_factor * exact_integration_adjustment;
+  const double_t prefactor = ( 1 / Tau_1 ) - ( 1 / Tau_2 );
+
+  const double_t peak_value = ( std::exp( -t_peak / Tau_2 ) - std::exp( -t_peak / Tau_1 ) );
+
+  return g_peak * prefactor / peak_value;
 }
 
 void

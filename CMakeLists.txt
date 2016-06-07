@@ -224,7 +224,7 @@ set( ALL_LIBS
   "${LIBNEUROSIM_LIBRARIES}"
   "${MUSIC_LIBRARIES}"
   "${MPI_CXX_LIBRARIES}"
-  "${SION_LIBS}"
+  "${SIONLIB_LIBS}"
   )
 if ( with-libraries )
   set( ALL_LIBS "${ALL_LIBS};${with-libraries}" )
@@ -245,7 +245,6 @@ set( ALL_INCLUDES_tmp
   "${LIBNEUROSIM_INCLUDE_DIRS}"
   "${MUSIC_INCLUDE_DIRS}"
   "${MPI_CXX_INCLUDE_PATH}"
-  "${SION_INCLUDE}"
   )
 set( ALL_INCLUDES "" )
 foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
@@ -253,6 +252,7 @@ foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
     set( ALL_INCLUDES "${ALL_INCLUDES} -I${INC}" )
   endif ()
 endforeach ()
+set( ALL_INCLUDES "${ALL_INCLUDES} ${SIONLIB_INCLUDE}" )
 
 if ( HAVE_LIBNEUROSIM )
   set( ALL_LIBS "-lconngen ${ALL_LIBS}" )

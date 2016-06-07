@@ -63,32 +63,6 @@ each recorded quantity, a vector of doubles is returned. The vector has the
 same name as the /recordable. If /withtime is set, times are given in the
 /times vector in /events.
 
-<<<<<<< HEAD
-||||||| merged common ancestors
-Accumulator mode:
-Multimeter can operate in accumulator mode. In this case, values for all recorded
-variables are added across all recorded nodes (but kept separate in time). This can
-be useful to record average membrane potential in a population.
-
-To activate accumulator mode, either set /to_accumulator to true, or set
-/record_to [ /accumulator ].  In accumulator mode, you cannot record to file,
-to memory, to screen, with GID or with weight. You must activate accumulator mode
-before simulating. Accumulator data is never written to file. You must extract it
-from the device using GetStatus.
-
-=======
-Accumulator mode:
-Multimeter can operate in accumulator mode. In this case, values for all
-recorded variables are added across all recorded nodes (but kept separate in
-time). This can be useful to record average membrane potential in a population.
-
-To activate accumulator mode, either set /to_accumulator to true, or set
-/record_to [ /accumulator ].  In accumulator mode, you cannot record to file,
-to memory, to screen, with GID or with weight. You must activate accumulator
-mode before simulating. Accumulator data is never written to file. You must
-extract it from the device using GetStatus.
-
->>>>>>> master
 Remarks:
  - The set of variables to record and the recording interval must be set
    BEFORE the multimeter is connected to any node, and cannot be changed
@@ -280,52 +254,6 @@ private:
 
   // ------------------------------------------------------------
 
-<<<<<<< HEAD
-||||||| merged common ancestors
-  struct Variables_
-  {
-    /** Flag active till first DataLoggingReply during an update() call processed.
-     * This flag is set to true by update() before dispatching the DataLoggingRequest
-     * event and is reset to false by handle() as soon as the first DataLoggingReply
-     * has been handled. This is needed when the Multimeter is running in accumulator
-     * mode.
-     */
-    bool new_request_;
-
-    /** Index to first S_.data_ entry for currently processed request.
-     *
-     * This variable is set by the first DataLoggingReply arriving after
-     * a DataLoggingRequest has been sent out. Subsequently arriving
-     * replies use it to find the correct entries for accumulating data.
-     */
-    size_t current_request_data_start_;
-  };
-
-  // ------------------------------------------------------------
-
-=======
-  struct Variables_
-  {
-    /** Flag active till first DataLoggingReply during an update() call
-     * processed. This flag is set to true by update() before dispatching the
-     * DataLoggingRequest event and is reset to false by handle() as soon as the
-     * first DataLoggingReply has been handled. This is needed when the
-     * Multimeter is running in accumulator mode.
-     */
-    bool new_request_;
-
-    /** Index to first S_.data_ entry for currently processed request.
-     *
-     * This variable is set by the first DataLoggingReply arriving after
-     * a DataLoggingRequest has been sent out. Subsequently arriving
-     * replies use it to find the correct entries for accumulating data.
-     */
-    size_t current_request_data_start_;
-  };
-
-  // ------------------------------------------------------------
-
->>>>>>> master
   Parameters_ P_;
   State_ S_;
   Buffers_ B_;

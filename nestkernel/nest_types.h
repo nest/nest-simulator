@@ -28,6 +28,7 @@
 #include <climits>
 #include <cstddef>
 #include <limits>
+#include <stdint.h>
 
 // Generated includes:
 #include "config.h"

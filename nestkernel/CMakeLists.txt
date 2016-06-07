@@ -81,6 +81,9 @@ set( nestkernel_sources
     event_delivery_manager.cpp
     node_manager.h node_manager.cpp
     logging_manager.h logging_manager.cpp
+    screen_logger.h screen_logger.cpp
+    ascii_logger.h ascii_logger.cpp
+    sion_logger.h sion_logger.cpp
     manager_interface.h
     )
 

@@ -241,7 +241,9 @@ nest::ht_neuron::State_::State_()
   , I_h_( 0.0 )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = 0;
+  }
   y_[ IKNa_D ] = KNa_D_EQ;
 }
 
@@ -257,7 +259,9 @@ nest::ht_neuron::State_::State_( const Parameters_& p )
   y_[ THETA ] = p.Theta_eq;
 
   for ( size_t i = 2; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = 0.0;
+  }
 
   y_[ IKNa_D ] = KNa_D_EQ;
 }
@@ -271,7 +275,9 @@ nest::ht_neuron::State_::State_( const State_& s )
   , I_h_( s.I_h_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
 }
 
 nest::ht_neuron::State_& nest::ht_neuron::State_::operator=( const State_& s )
@@ -289,7 +295,9 @@ nest::ht_neuron::State_& nest::ht_neuron::State_::operator=( const State_& s )
   I_h_ = s.I_h_;
 
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
 
   return *this;
 }
@@ -443,11 +451,17 @@ nest::ht_neuron::~ht_neuron()
 {
   // GSL structs may not be initialized, so we need to protect destruction.
   if ( B_.e_ )
+  {
     gsl_odeiv_evolve_free( B_.e_ );
+  }
   if ( B_.c_ )
+  {
     gsl_odeiv_control_free( B_.c_ );
+  }
   if ( B_.s_ )
+  {
     gsl_odeiv_step_free( B_.s_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -482,20 +496,32 @@ nest::ht_neuron::init_buffers_()
   B_.IntegrationStep_ = B_.step_;
 
   if ( B_.s_ == 0 )
+  {
     B_.s_ =
       gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_step_reset( B_.s_ );
+  }
 
   if ( B_.c_ == 0 )
+  {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
+  }
   else
+  {
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
+  }
 
   if ( B_.e_ == 0 )
+  {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_evolve_reset( B_.e_ );
+  }
 
   B_.sys_.function = ht_neuron_dynamics;
   B_.sys_.jacobian = 0;
@@ -635,21 +661,27 @@ ht_neuron::update( Time const& origin, const long_t from, const long_t to )
         S_.y_ );              // neuron state
 
       if ( status != GSL_SUCCESS )
+      {
         throw GSLSolverFailure( get_name(), status );
+      }
     }
 
     // Deactivate potassium current after spike time have expired
     if ( S_.r_potassium_ && --S_.r_potassium_ == 0 )
+    {
       S_.g_spike_ = false; // Deactivate potassium current.
+    }
 
     // Add new spikes to node state array
     for ( size_t i = 0; i < B_.spike_inputs_.size(); ++i )
+    {
       S_.y_[ 2 + 2 * i ] +=
         V_.cond_steps_[ i ] * B_.spike_inputs_[ i ].get_value( lag );
+    }
 
     // A spike is generated when the membrane potential (V) exceeds
     // the threshold (Theta).
-    if ( !S_.g_spike_ && S_.y_[ State_::VM ] >= S_.y_[ State_::THETA ] )
+    if ( S_.g_spike_ && S_.y_[ State_::VM ] >= S_.y_[ State_::THETA ] )
     {
       // Set V and Theta to the sodium reversal potential.
       S_.y_[ State_::VM ] = P_.E_Na;

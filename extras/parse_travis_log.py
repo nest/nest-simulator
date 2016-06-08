@@ -112,7 +112,7 @@ def process_cppcheck(f, filename):
             return res
 
         # Exit condition: after cppcheck, clang-format is executed
-        if line.startswith('+clang-format-'):
+        if line.startswith('+clang-format'):
             return res
 
         if line.startswith('[' + filename):

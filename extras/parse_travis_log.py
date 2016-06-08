@@ -93,6 +93,10 @@ def process_vera(f, filename):
         if line.startswith('+cppcheck '):
             return res
 
+        # Exit condition: all code checks finished, building starts
+        if line.startswith('+cd build'):
+            return res
+
         if line.startswith(filename):
             key = line.split(":")[-1].strip()
             if key not in d:
@@ -113,6 +117,10 @@ def process_cppcheck(f, filename):
 
         # Exit condition: after cppcheck, clang-format is executed
         if line.startswith('+clang-format'):
+            return res
+
+        # Exit condition: all code checks finished, building starts
+        if line.startswith('+cd build'):
             return res
 
         if line.startswith('[' + filename):
@@ -181,6 +189,10 @@ def process_static_analysis(f, line):
         if line.startswith('+rm -rf ./cppcheck'):
             return res
 
+        # Exit condition: all code checks finished, building starts
+        if line.startswith('+cd build'):
+            return res
+
         # analyze vera++
         if line.startswith(' - vera++ for '):
             d.update(process_vera(f, filename))
@@ -217,6 +229,10 @@ def process_pep8(f, line):
 
         # Exit condition: static analysis finished, remove compiled cppcheck
         if line.startswith('+rm -rf ./cppcheck'):
+            return res
+
+        # Exit condition: all code checks finished, building starts
+        if line.startswith('+cd build'):
             return res
 
         # Analysis of filename starts here
@@ -373,16 +389,21 @@ if __name__ == '__main__':
           str(make_installcheck_all) + ")")
     print("Logs uploaded to S3: " + ("Yes" if uploading_results else "No"))
 
-    print("\nStatic analysis:")
-    print_static_analysis(static_analysis)
+    if static_analysis:
+        print("\nStatic analysis:")
+        print_static_analysis(static_analysis)
 
-    print("\n\nWarnings:")
-    for k, v in actual_warnings.iteritems():
-        print(" - {}: {}".format(k, v))
+    if actual_warnings:
+        print("\nWarnings:")
+        for k, v in actual_warnings.iteritems():
+            print(" - {}: {}".format(k, v))
 
-    print("\nPEP8 analysis: (only first occurrence)")
-    print_pep8(pep8_analysis)
-    print("--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
+    # Print PEP8 analysis only if files have been checked and problems found
+    if pep8_analysis and max(len(res) for res in pep8_analysis.values()) > 0:
+        print("\nPEP8 analysis: (only first occurrence)")
+        print_pep8(pep8_analysis)
+
+    print("\n--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
 
     if not (vera_init and
             cppcheck_init and

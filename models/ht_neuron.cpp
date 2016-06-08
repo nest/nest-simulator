@@ -532,11 +532,12 @@ nest::ht_neuron::get_synapse_constant( nest::double_t Tau_1,
    */
 
   const double_t t_peak =
-	    ( Tau_2 * Tau_1 ) * std::log( Tau_2 / Tau_1 ) / ( Tau_2 - Tau_1 );
+    ( Tau_2 * Tau_1 ) * std::log( Tau_2 / Tau_1 ) / ( Tau_2 - Tau_1 );
 
   const double_t prefactor = ( 1 / Tau_1 ) - ( 1 / Tau_2 );
 
-  const double_t peak_value = ( std::exp( -t_peak / Tau_2 ) - std::exp( -t_peak / Tau_1 ) );
+  const double_t peak_value =
+    ( std::exp( -t_peak / Tau_2 ) - std::exp( -t_peak / Tau_1 ) );
 
   return g_peak * prefactor / peak_value;
 }

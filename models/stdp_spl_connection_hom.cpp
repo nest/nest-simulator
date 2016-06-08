@@ -52,6 +52,8 @@ STDPSplHomCommonProperties::STDPSplHomCommonProperties()
   , safe_mode_( true )
   , sleep_mode_( true )
 {
+  // recompute dependent parameters
+  compute_dependent_params();
 }
 
 void
@@ -75,6 +77,32 @@ STDPSplHomCommonProperties::get_status( DictionaryDatum& d ) const
 }
 
 void
+STDPSplHomCommonProperties::compute_dependent_params()
+{
+  // precompute power terms that occur frequently
+  pow_term_1_ = tau_ * tau_;
+  pow_term_2_ = tau_ - 2 * tau_slow_;
+  pow_term_2_ *= pow_term_2_;
+  pow_term_4_ = tau_ * tau_ * tau_;
+  pow_term_6_ = tau_slow_ * tau_slow_;
+
+  // precompute exponential decay values up to an interval of t_cache_ seconds
+  exp_cache_len_ = Time( Time::ms( t_cache_ * 1000. ) ).get_steps();
+  exp_2_.resize( exp_cache_len_ );
+  exp_7_.resize( exp_cache_len_ );
+  exp_8_.resize( exp_cache_len_ );
+  for ( long_t i = 0; i < exp_cache_len_; i++ )
+  {
+    double_t t_i_ = Time( Time::step( i ) ).get_ms() / 1000.;
+    exp_2_[ i ] = std::exp( -t_i_ / tau_slow_ );
+    exp_8_[ i ] = std::exp( -t_i_ / tau_ );
+    exp_7_[ i ] = std::exp( -t_i_ * alpha_ );
+  }
+
+  steps_grace_period_ = Time( Time::ms( t_grace_period_ * 1000. ) ).get_steps();
+}
+
+void
 STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
@@ -91,7 +119,7 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
   updateValue< double_t >( d, "t_cache", t_cache_ );
   updateValue< double_t >( d, "t_grace_period", t_grace_period_ );
   updateValue< bool >( d, "safe_mode", safe_mode_ );
-  updateValue< bool >( d, "sleep_mode", sleep_mode_ );  
+  updateValue< bool >( d, "sleep_mode", sleep_mode_ );
 
   if ( not( tau_slow_ > tau_ ) )
   {
@@ -115,50 +143,31 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
     throw BadProperty( "The grace period must be positive" );
   }
 
-  if (safe_mode_)
+  if ( safe_mode_ )
   {
-    // check that the order of the solution's time constants is correct. 
+    // check that the order of the solution's time constants is correct.
     // this is assumed for the zero-crossing theorem below (check_...)
     // 7, 2, 3, 4, 6, 1, 5
-    std::vector<double_t> rates_;
-    rates_.resize(0);
-    rates_.push_back( - alpha_ );
+    std::vector< double_t > rates_;
+    rates_.resize( 0 );
+    rates_.push_back( -alpha_ );
     rates_.push_back( -1 / tau_slow_ );
-    rates_.push_back( -2 / tau_slow_);
-    rates_.push_back( -4 / tau_slow_);
-    rates_.push_back( -2 / tau_);
-    rates_.push_back( -1 * ( 1/tau_slow_ + 2/tau_));
+    rates_.push_back( -2 / tau_slow_ );
+    rates_.push_back( -4 / tau_slow_ );
+    rates_.push_back( -2 / tau_ );
+    rates_.push_back( -1 * ( 1 / tau_slow_ + 2 / tau_ ) );
     rates_.push_back( -4 / tau_ );
-    for (int_t i=1; i<7; i++)
+    for ( int_t i = 1; i < 7; i++ )
     {
-       if ( not (rates_[i] < rates_[i-1] ))
-       {
-           throw BadProperty( "Safe mode is not supported for the supplied time constants" );
-       }
+      if ( not( rates_[ i ] < rates_[ i - 1 ] ) )
+      {
+        throw BadProperty( "Safe mode is not supported for the supplied time constants" );
+      }
     }
   }
 
-  // precompute power terms that occur frequently
-  pow_term_1_ = tau_ * tau_;
-  pow_term_2_ = tau_ - 2*tau_slow_;
-  pow_term_2_ *= pow_term_2_;
-  pow_term_4_ = tau_ * tau_ * tau_;
-  pow_term_6_ = tau_slow_ * tau_slow_;
-  
-  // precompute exponential decay values up to an interval of t_cache_ seconds
-  exp_cache_len_ = Time( Time::ms( t_cache_ * 1000. )).get_steps();
-  exp_2_.resize( exp_cache_len_ );
-  exp_7_.resize( exp_cache_len_ );
-  exp_8_.resize( exp_cache_len_ );
-  for (long_t i=0; i<exp_cache_len_; i++)
-  {
-      double_t t_i_ = Time( Time::step(i) ).get_ms() / 1000.;
-      exp_2_[i] = std::exp( -t_i_ / tau_slow_ );  
-      exp_8_[i] = std::exp( -t_i_ / tau_ );
-      exp_7_[i] = std::exp( -t_i_* alpha_ );
-  }
-  
-  steps_grace_period_ = Time( Time::ms( t_grace_period_ * 1000. )).get_steps();
+  // recompute dependent parameters
+  compute_dependent_params();
 }
 
 } // of namespace nest

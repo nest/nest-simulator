@@ -98,16 +98,18 @@ if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
 
   cd ..
   
-  wget http://llvm.org/releases/3.6.0/clang+llvm-3.6.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-  tar xvf clang+llvm-3.6.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-  cp -R clang+llvm-3.6.0-x86_64-linux-gnu/* $HOME/.cache
+  wget http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+  tar xvf clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+  cp -R clang+llvm-3.6.2-x86_64-linux-gnu/* $HOME/.cache
   
   # remove directories, otherwise copyright-header check complains
   rm -rf ./cppcheck
-  rm -rf ./clang+llvm-3.6.0-x86_64-linux-gnu
+  rm -rf ./clang+llvm-3.6.2-x86_64-linux-gnu
 fi
 
 export PATH=$PATH:$HOME/.cache/bin
+
+vera++ --version
 cppcheck --version 
 clang-format --version
 

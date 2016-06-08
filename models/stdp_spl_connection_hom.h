@@ -25,7 +25,7 @@
 
 /* BeginDocumentation
 
-Name: stdp_spl_synapse - Synapse type for spike-timing dependent structural 
+Name: stdp_spl_synapse - Synapse type for spike-timing dependent structural
  plasticity using homogeneous parameters.
 
 Description:
@@ -33,41 +33,41 @@ stdp_spl_synapse_hom is a connector to create synapses with spike time
 dependent plasticity as defined in [1]. Each synapse (connection) of this
 model consists of several (n_pot_conns) synaptic contacts. If the weight of
 a contact drops below 0 the contact is deleted. Deleted contacts are re-
-created randomly with a constant rate. 
+created randomly with a constant rate.
 
-Parameters controlling plasticity are identical for all synapses of the 
+Parameters controlling plasticity are identical for all synapses of the
 model, reducing the memory required per synapse considerably.
 Furthermore, stdp_spl_synapse requires several exponential and power terms
-every time it updates its state. These terms are precomputed and are also 
+every time it updates its state. These terms are precomputed and are also
 stored in the "CommonProperties", which allows them to be accessed by all
 synapses of the model without excessively consuming memory.
 
 Parameters:
 Common parameters:
  tau          double - Time constant of fast traces (STDP window) (in s)
- tau_slow     double - Time constant of slow filtering of correlations and 
+ tau_slow     double - Time constant of slow filtering of correlations and
                        postsynaptic rate
- A2_corr      double - Amplitude of second-order correlation term of the STDP 
+ A2_corr      double - Amplitude of second-order correlation term of the STDP
                        rule (in s)
- A4_corr      double - Amplitude of fourth-order correlation term of the STDP 
+ A4_corr      double - Amplitude of fourth-order correlation term of the STDP
                        rule (in s^3)
- A4_post      double - Amplitude of fourth-order postsynaptic term of the STDP 
+ A4_post      double - Amplitude of fourth-order postsynaptic term of the STDP
                        rule (in s^3)
  alpha        double - Weight decay rate (in 1/s)
  lambda       double - Contact creation rate (in 1/s)
  w0           double - Weight of newly created contacts
- p_fail       double - Probability of synaptic transmission failure (at each 
+ p_fail       double - Probability of synaptic transmission failure (at each
                        contact)
- grace_period double - Time interval after creation of contacts for the 
+ t_grace_period double - Time interval after creation of contacts for the
                        duration of which plasticity is inactive (in s).
- t_cache      double - Exponential terms are precomputed for time intervals up 
+ t_cache      double - Exponential terms are precomputed for time intervals up
                        to t_cache (in s)
- safe_mode    bool   - In safe mode zero-crossings of the contact weights within 
-                       the integration interval will always be detected. 
-                       Disabeling safe mode may result in a considerable speed 
-                       increase, at the expense of the risk of missing 
+ safe_mode    bool   - In safe mode zero-crossings of the contact weights within
+                       the integration interval will always be detected.
+                       Disabeling safe mode may result in a considerable speed
+                       increase, at the expense of the risk of missing
                        zero-crossings.
- sleep_mode   bool   - If sleep_mode is true, a synapse that has no active 
+ sleep_mode   bool   - If sleep_mode is true, a synapse that has no active
                        contacts will just count down steps until creation of
                        a new contact. It will not perform any other updates of
                        its activity dependent state variables.
@@ -76,20 +76,20 @@ Individual parameters:
  n_pot_conns  int    - Number of synaptic contacts of this synapse
 
 Remarks:
-The common parameters are common to all synapses of the model and must be 
+The common parameters are common to all synapses of the model and must be
 set using SetDefaults on the synapse model.
-The individual parameters are accessed using SetStatus on connection 
+The individual parameters are accessed using SetStatus on connection
 identifiers, which can be obtained via GetConnections.
-If n_pot_conns is increased via GetStatus, new contacts are initialized to 
-a weight of 1, irrespective of w0. 
-In cases where the total weight is 0, e.g. if all weights of the synapse are 
-zero, or if all contacts have a transmission failure, the spike event is not 
+If n_pot_conns is increased via GetStatus, new contacts are initialized to
+a weight of 1, irrespective of w0.
+In cases where the total weight is 0, e.g. if all weights of the synapse are
+zero, or if all contacts have a transmission failure, the spike event is not
 transmitted to the target.
 
 Transmits: SpikeEvent
 
 References:
-[1] Deger, M. & Gerstner, W. A spike timing dependent model of 
+[1] Deger, M. & Gerstner, W. A spike timing dependent model of
     dendritic spine plasticity and turnover. in preparation.
 
 FirstVersion: Nov 2015
@@ -150,9 +150,9 @@ public:
   // precomputed values
   long_t exp_cache_len_;
   long_t steps_grace_period_;
-  std::vector<double_t> exp_2_;
-  std::vector<double_t> exp_7_;
-  std::vector<double_t> exp_8_;
+  std::vector< double_t > exp_2_;
+  std::vector< double_t > exp_7_;
+  std::vector< double_t > exp_8_;
   double_t pow_term_1_;
   double_t pow_term_2_;
   double_t pow_term_3_;
@@ -160,6 +160,11 @@ public:
   double_t pow_term_5_;
   double_t pow_term_6_;
 
+private:
+  /**
+   * Compute common dependent parameters
+   */
+  void compute_dependent_params();
 };
 
 // connections are templates of target identifier type
@@ -275,169 +280,173 @@ public:
   }
 
 private:
-  
-  void get_exps_( const STDPSplHomCommonProperties& cp, const long_t delta_i )
+  void
+  get_exps_( const STDPSplHomCommonProperties& cp, const long_t delta_i )
   {
-      double_t exp_term_2_;
-      double_t exp_term_8_;
-      double_t exp_term_7_;
-      if ( delta_i < cp.exp_cache_len_ )
-      {
-          // we read the precomputed values from cp
-          exp_term_2_ = cp.exp_2_[delta_i];
-          exp_term_8_ = cp.exp_8_[delta_i];
-          exp_term_7_ = cp.exp_7_[delta_i];
-      }
-      else
-      {
-          // we compute the exponential terms
-          double_t t_i_ = Time( Time::step(delta_i) ).get_ms() / 1000.;
-          exp_term_2_ = std::exp( -t_i_ / cp.tau_slow_ );  
-          exp_term_8_ = std::exp( -t_i_ / cp.tau_ );
-          exp_term_7_ = std::exp( -t_i_* cp.alpha_ );
-      }
-      
-      // the remaining terms are derived from the three basic ones
-      // std::exp( -t_i_*( 2/cp.tau_) ); 
-      double_t exp_term_6_ = exp_term_8_ * exp_term_8_;
-      // std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
-      double_t exp_term_1_ = exp_term_2_ * exp_term_6_;
-      // std::exp( -t_i_*( 2/cp.tau_slow_) ); 
-      double_t exp_term_3_ = exp_term_2_ * exp_term_2_;
-      // std::exp( -t_i_*( 4/cp.tau_slow_) ); 
-      double_t exp_term_4_ = exp_term_2_*exp_term_2_*exp_term_2_*exp_term_2_;
-      // std::exp( -t_i_*( 4/cp.tau_ ));
-      double_t exp_term_5_ = exp_term_6_ * exp_term_6_;
+    double_t exp_term_2_;
+    double_t exp_term_8_;
+    double_t exp_term_7_;
+    if ( delta_i < cp.exp_cache_len_ )
+    {
+      // we read the precomputed values from cp
+      exp_term_2_ = cp.exp_2_[ delta_i ];
+      exp_term_8_ = cp.exp_8_[ delta_i ];
+      exp_term_7_ = cp.exp_7_[ delta_i ];
+    }
+    else
+    {
+      // we compute the exponential terms
+      double_t t_i_ = Time( Time::step( delta_i ) ).get_ms() / 1000.;
+      exp_term_2_ = std::exp( -t_i_ / cp.tau_slow_ );
+      exp_term_8_ = std::exp( -t_i_ / cp.tau_ );
+      exp_term_7_ = std::exp( -t_i_ * cp.alpha_ );
+    }
 
-      // insert the terms into the vector to be returned
-      // this vector is now ordered by exponent magnitude:
-      // exp_term_7_, exp_term_2_, exp_term_3_, exp_term_4_, exp_term_6_, 
-      // exp_term_1_, exp_term_5_
-      // in short: 7, 2, 3, 4, 6, 1, 5
-      exps_[0] = exp_term_7_ ;
-      exps_[1] = exp_term_2_ ;
-      exps_[2] = exp_term_3_ ;
-      exps_[3] = exp_term_4_ ;
-      exps_[4] = exp_term_6_ ;
-      exps_[5] = exp_term_1_ ;
-      exps_[6] = exp_term_5_ ;
-  }
-  
-  
-  void compute_amps_( const STDPSplHomCommonProperties& cp, const long_t i )
-  {
-      // precompute power terms without using std::pow
-      double_t pow_term_1_ = -(c_jk_[ i ]*cp.tau_) + r_jk_[ i ]*r_post_jk_[ i ]*cp.tau_ 
-                                + 2*c_jk_[ i ]*cp.tau_slow_;
-      pow_term_1_ *= pow_term_1_;
-      //std::pow(R_post_,4)
-      double_t pow_term_2_ = R_post_jk_[ i ] * R_post_jk_[ i ] * R_post_jk_[ i ] * R_post_jk_[ i ];
-      //std::pow(r_jk_[ i ],2)
-      double_t pow_term_3_ = r_jk_[ i ] * r_jk_[ i ];
-      //std::pow(r_post_,2)
-      double_t pow_term_4_ = r_post_jk_[ i ] * r_post_jk_[ i ];
-      //std::pow(c_jk_[ i ],2)  
-      double_t pow_term_5_ = c_jk_[ i ] * c_jk_[ i ];
-      
-      // compute amplitudes of exp_terms
-      double_t denom_ = ((-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
-            cp.pow_term_2_*
-             (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
-             (-1 + cp.alpha_*cp.tau_slow_)*
-             (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)));
-      double_t amp_1_ = (2*cp.A4_corr_*r_jk_[ i ]*r_post_jk_[ i ]*cp.pow_term_1_*
-             (-4 + cp.alpha_*cp.tau_)*
-             (-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*(-(c_jk_[ i ]*cp.tau_) + 
-             r_jk_[ i ]*r_post_jk_[ i ]*cp.tau_ + 2*c_jk_[ i ]*cp.tau_slow_)*
-              (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
-              (-1 + cp.alpha_*cp.tau_slow_) ) / denom_;
-      double_t amp_2_ = ( cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*
-             (-2 + cp.alpha_*cp.tau_)*
-          (-(r_jk_[ i ]*r_post_jk_[ i ]*cp.tau_) + c_jk_[ i ]*(cp.tau_ - 
-          2*cp.tau_slow_))*(cp.tau_ - 2*cp.tau_slow_)*cp.tau_slow_*
-          (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
-          (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
-      double_t amp_3_ = -( cp.A4_corr_*(-4 + cp.alpha_*cp.tau_)*
-          (-2 + cp.alpha_*cp.tau_)*cp.tau_slow_*
-          pow_term_1_*(-4 + cp.alpha_*cp.tau_slow_)*
-          (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + 
-          cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
-      double_t amp_4_ = -( cp.A4_post_* pow_term_2_ *(-4 + cp.alpha_*cp.tau_)*
-          (-2 + cp.alpha_*cp.tau_)*cp.pow_term_2_*cp.tau_slow_*
-          (-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
-          (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
-      double_t amp_5_ = -( cp.A4_corr_*pow_term_3_*pow_term_4_*
-          cp.pow_term_4_*(-2 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*
-          (-2 + cp.alpha_*cp.tau_slow_)*(-1 + cp.alpha_*cp.tau_slow_)*
-          (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
-      double_t amp_6_ = ( cp.A2_corr_*r_jk_[ i ]*r_post_jk_[ i ]*cp.pow_term_1_*
-          (-4 + cp.alpha_*cp.tau_)*(cp.tau_ - 2*cp.tau_slow_)*
-          (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
-          (-1 + cp.alpha_*cp.tau_slow_)*
-          (-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*cp.tau_slow_)) )/ denom_;
-      double_t amp_7_ = ( cp.pow_term_2_*
-          (w_jk_[ i ]*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
-          (-4 + cp.alpha_*cp.tau_slow_)*(-2 + cp.alpha_*cp.tau_slow_)*
-             (-1 + cp.alpha_*cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*
-             (-1 + cp.alpha_*cp.tau_slow_)) + 
-            cp.A2_corr_*(-4 + cp.alpha_*cp.tau_)*(-4 + cp.alpha_*cp.tau_slow_)*
-            (-2 + cp.alpha_*cp.tau_slow_)*
-             (r_jk_[ i ]*r_post_jk_[ i ]*cp.tau_ + c_jk_[ i ]*(2 - cp.alpha_*cp.tau_)*
-             cp.tau_slow_)*(-2*cp.tau_slow_ + cp.tau_*(-1 + cp.alpha_*
-             cp.tau_slow_))
-             + (-2 + cp.alpha_*cp.tau_)*(-1 + cp.alpha_*cp.tau_slow_)*
-             (cp.A4_post_*pow_term_2_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_*
-             (-2 + cp.alpha_*cp.tau_slow_)*
-                (-cp.tau_ - 2*cp.tau_slow_ + cp.alpha_*cp.tau_*cp.tau_slow_) + 
-               cp.A4_corr_*(-4 + cp.alpha_*cp.tau_slow_)*
-                (2*pow_term_3_*pow_term_4_*cp.pow_term_1_ - 
-                  c_jk_[ i ]*(c_jk_[ i ] + 2*r_jk_[ i ]*r_post_jk_[ i ])*
-                  cp.tau_*(-4 + cp.alpha_*cp.tau_)*cp.tau_slow_ + 
-                  pow_term_5_*(-4 + cp.alpha_*cp.tau_)*(-2 + cp.alpha_*cp.tau_)*
-                  cp.pow_term_6_))) )/ denom_;  
+    // the remaining terms are derived from the three basic ones
+    // std::exp( -t_i_*( 2/cp.tau_) );
+    double_t exp_term_6_ = exp_term_8_ * exp_term_8_;
+    // std::exp( -t_i_*( 1/cp.tau_slow_ + 2/cp.tau_) );
+    double_t exp_term_1_ = exp_term_2_ * exp_term_6_;
+    // std::exp( -t_i_*( 2/cp.tau_slow_) );
+    double_t exp_term_3_ = exp_term_2_ * exp_term_2_;
+    // std::exp( -t_i_*( 4/cp.tau_slow_) );
+    double_t exp_term_4_ = exp_term_2_ * exp_term_2_ * exp_term_2_ * exp_term_2_;
+    // std::exp( -t_i_*( 4/cp.tau_ ));
+    double_t exp_term_5_ = exp_term_6_ * exp_term_6_;
 
-      // insert the amplitude terms into the vector to be returned
-      // the order is sorted by the exp_terms magnitude: 7, 2, 3, 4, 6, 1, 5
-      amps_[0] = amp_7_ ;
-      amps_[1] = amp_2_ ;
-      amps_[2] = amp_3_ ;
-      amps_[3] = amp_4_ ;
-      amps_[4] = amp_6_ ;
-      amps_[5] = amp_1_ ;
-      amps_[6] = amp_5_ ;
+    // insert the terms into the vector to be returned
+    // this vector is now ordered by exponent magnitude:
+    // exp_term_7_, exp_term_2_, exp_term_3_, exp_term_4_, exp_term_6_,
+    // exp_term_1_, exp_term_5_
+    // in short: 7, 2, 3, 4, 6, 1, 5
+    exps_[ 0 ] = exp_term_7_;
+    exps_[ 1 ] = exp_term_2_;
+    exps_[ 2 ] = exp_term_3_;
+    exps_[ 3 ] = exp_term_4_;
+    exps_[ 4 ] = exp_term_6_;
+    exps_[ 5 ] = exp_term_1_;
+    exps_[ 6 ] = exp_term_5_;
   }
-  
-  
-  inline double_t compose_w_sol_( )
+
+
+  void
+  compute_amps_( const STDPSplHomCommonProperties& cp, const long_t i )
   {
-      // compose weight solution
-      double_t w_ = 0.;
-      for (int_t k=0; k<7; k++)
-      {
-        w_ += amps_[k] * exps_[k];
-      }
-      return w_;
+    // precompute power terms without using std::pow
+    double_t pow_term_1_ = -( c_jk_[ i ] * cp.tau_ ) + r_jk_[ i ] * r_post_jk_[ i ] * cp.tau_
+      + 2 * c_jk_[ i ] * cp.tau_slow_;
+    pow_term_1_ *= pow_term_1_;
+    // std::pow(R_post_,4)
+    double_t pow_term_2_ = R_post_jk_[ i ] * R_post_jk_[ i ] * R_post_jk_[ i ] * R_post_jk_[ i ];
+    // std::pow(r_jk_[ i ],2)
+    double_t pow_term_3_ = r_jk_[ i ] * r_jk_[ i ];
+    // std::pow(r_post_,2)
+    double_t pow_term_4_ = r_post_jk_[ i ] * r_post_jk_[ i ];
+    // std::pow(c_jk_[ i ],2)
+    double_t pow_term_5_ = c_jk_[ i ] * c_jk_[ i ];
+
+    // compute amplitudes of exp_terms
+    double_t denom_ = ( ( -4 + cp.alpha_ * cp.tau_ ) * ( -2 + cp.alpha_ * cp.tau_ ) * cp.pow_term_2_
+      * ( -4 + cp.alpha_ * cp.tau_slow_ ) * ( -2 + cp.alpha_ * cp.tau_slow_ )
+      * ( -1 + cp.alpha_ * cp.tau_slow_ )
+      * ( -2 * cp.tau_slow_ + cp.tau_ * ( -1 + cp.alpha_ * cp.tau_slow_ ) ) );
+    double_t amp_1_ =
+      ( 2 * cp.A4_corr_ * r_jk_[ i ] * r_post_jk_[ i ] * cp.pow_term_1_
+        * ( -4 + cp.alpha_ * cp.tau_ ) * ( -2 + cp.alpha_ * cp.tau_ ) * cp.tau_slow_
+        * ( -( c_jk_[ i ] * cp.tau_ ) + r_jk_[ i ] * r_post_jk_[ i ] * cp.tau_
+            + 2 * c_jk_[ i ] * cp.tau_slow_ ) * ( -4 + cp.alpha_ * cp.tau_slow_ )
+        * ( -2 + cp.alpha_ * cp.tau_slow_ ) * ( -1 + cp.alpha_ * cp.tau_slow_ ) ) / denom_;
+    double_t amp_2_ =
+      ( cp.A2_corr_ * ( -4 + cp.alpha_ * cp.tau_ ) * ( -2 + cp.alpha_ * cp.tau_ )
+        * ( -( r_jk_[ i ] * r_post_jk_[ i ] * cp.tau_ )
+            + c_jk_[ i ] * ( cp.tau_ - 2 * cp.tau_slow_ ) ) * ( cp.tau_ - 2 * cp.tau_slow_ )
+        * cp.tau_slow_ * ( -4 + cp.alpha_ * cp.tau_slow_ ) * ( -2 + cp.alpha_ * cp.tau_slow_ )
+        * ( -2 * cp.tau_slow_ + cp.tau_ * ( -1 + cp.alpha_ * cp.tau_slow_ ) ) ) / denom_;
+    double_t amp_3_ =
+      -( cp.A4_corr_ * ( -4 + cp.alpha_ * cp.tau_ ) * ( -2 + cp.alpha_ * cp.tau_ ) * cp.tau_slow_
+        * pow_term_1_ * ( -4 + cp.alpha_ * cp.tau_slow_ ) * ( -1 + cp.alpha_ * cp.tau_slow_ )
+        * ( -2 * cp.tau_slow_ + cp.tau_ * ( -1 + cp.alpha_ * cp.tau_slow_ ) ) ) / denom_;
+    double_t amp_4_ =
+      -( cp.A4_post_ * pow_term_2_ * ( -4 + cp.alpha_ * cp.tau_ ) * ( -2 + cp.alpha_ * cp.tau_ )
+        * cp.pow_term_2_ * cp.tau_slow_ * ( -2 + cp.alpha_ * cp.tau_slow_ )
+        * ( -1 + cp.alpha_ * cp.tau_slow_ )
+        * ( -2 * cp.tau_slow_ + cp.tau_ * ( -1 + cp.alpha_ * cp.tau_slow_ ) ) ) / denom_;
+    double_t amp_5_ =
+      -( cp.A4_corr_ * pow_term_3_ * pow_term_4_ * cp.pow_term_4_ * ( -2 + cp.alpha_ * cp.tau_ )
+        * ( -4 + cp.alpha_ * cp.tau_slow_ ) * ( -2 + cp.alpha_ * cp.tau_slow_ )
+        * ( -1 + cp.alpha_ * cp.tau_slow_ )
+        * ( -2 * cp.tau_slow_ + cp.tau_ * ( -1 + cp.alpha_ * cp.tau_slow_ ) ) ) / denom_;
+    double_t amp_6_ =
+      ( cp.A2_corr_ * r_jk_[ i ] * r_post_jk_[ i ] * cp.pow_term_1_ * ( -4 + cp.alpha_ * cp.tau_ )
+        * ( cp.tau_ - 2 * cp.tau_slow_ ) * ( -4 + cp.alpha_ * cp.tau_slow_ )
+        * ( -2 + cp.alpha_ * cp.tau_slow_ ) * ( -1 + cp.alpha_ * cp.tau_slow_ )
+        * ( -2 * cp.tau_slow_ + cp.tau_ * ( -1 + cp.alpha_ * cp.tau_slow_ ) ) ) / denom_;
+    double_t amp_7_ =
+      ( cp.pow_term_2_
+        * ( w_jk_[ i ] * ( -4 + cp.alpha_ * cp.tau_ ) * ( -2 + cp.alpha_ * cp.tau_ )
+              * ( -4 + cp.alpha_ * cp.tau_slow_ ) * ( -2 + cp.alpha_ * cp.tau_slow_ )
+              * ( -1 + cp.alpha_ * cp.tau_slow_ )
+              * ( -2 * cp.tau_slow_ + cp.tau_ * ( -1 + cp.alpha_ * cp.tau_slow_ ) )
+            + cp.A2_corr_ * ( -4 + cp.alpha_ * cp.tau_ ) * ( -4 + cp.alpha_ * cp.tau_slow_ )
+              * ( -2 + cp.alpha_ * cp.tau_slow_ )
+              * ( r_jk_[ i ] * r_post_jk_[ i ] * cp.tau_
+                  + c_jk_[ i ] * ( 2 - cp.alpha_ * cp.tau_ ) * cp.tau_slow_ )
+              * ( -2 * cp.tau_slow_ + cp.tau_ * ( -1 + cp.alpha_ * cp.tau_slow_ ) )
+            + ( -2 + cp.alpha_ * cp.tau_ ) * ( -1 + cp.alpha_ * cp.tau_slow_ )
+              * ( cp.A4_post_ * pow_term_2_ * ( -4 + cp.alpha_ * cp.tau_ ) * cp.tau_slow_
+                    * ( -2 + cp.alpha_ * cp.tau_slow_ )
+                    * ( -cp.tau_ - 2 * cp.tau_slow_ + cp.alpha_ * cp.tau_ * cp.tau_slow_ )
+                  + cp.A4_corr_ * ( -4 + cp.alpha_ * cp.tau_slow_ )
+                    * ( 2 * pow_term_3_ * pow_term_4_ * cp.pow_term_1_
+                        - c_jk_[ i ] * ( c_jk_[ i ] + 2 * r_jk_[ i ] * r_post_jk_[ i ] ) * cp.tau_
+                          * ( -4 + cp.alpha_ * cp.tau_ ) * cp.tau_slow_
+                        + pow_term_5_ * ( -4 + cp.alpha_ * cp.tau_ ) * ( -2 + cp.alpha_ * cp.tau_ )
+                          * cp.pow_term_6_ ) ) ) ) / denom_;
+
+    // insert the amplitude terms into the vector to be returned
+    // the order is sorted by the exp_terms magnitude: 7, 2, 3, 4, 6, 1, 5
+    amps_[ 0 ] = amp_7_;
+    amps_[ 1 ] = amp_2_;
+    amps_[ 2 ] = amp_3_;
+    amps_[ 3 ] = amp_4_;
+    amps_[ 4 ] = amp_6_;
+    amps_[ 5 ] = amp_1_;
+    amps_[ 6 ] = amp_5_;
   }
-  
-  
-  inline bool check_crossing_possible_( )
+
+
+  inline double_t
+  compose_w_sol_()
+  {
+    // compose weight solution
+    double_t w_ = 0.;
+    for ( int_t k = 0; k < 7; k++ )
+    {
+      w_ += amps_[ k ] * exps_[ k ];
+    }
+    return w_;
+  }
+
+
+  inline bool
+  check_crossing_possible_()
   {
     // We apply theorem 4.7 in http://www.maths.lancs.ac.uk/~jameson/zeros.pdf
     // G.J.O. Jameson (Math. Gazette 90, no. 518 (2006), 223–234)
-    // Counting zeros of generalized polynomials: Descartes’ rule 
+    // Counting zeros of generalized polynomials: Descartes’ rule
     // of signs and Laguerre’s extensions
-    // Here we assume that the amplitudes (amps_) are ordered with descending 
+    // Here we assume that the amplitudes (amps_) are ordered with descending
     // decay rate (exp_terms). This is checked for in set_status.
-    double_t amps_partial_sum_ = amps_[0];
+    double_t amps_partial_sum_ = amps_[ 0 ];
     bool sign_last_ = std::signbit( amps_partial_sum_ );
-    for (int_t k=1; k<7; k++)
+    for ( int_t k = 1; k < 7; k++ )
     {
-        amps_partial_sum_ += amps_[k];
-        if ( std::signbit( amps_partial_sum_ ) != sign_last_ )
-        {
-            return true;
-        }
-        sign_last_ = std::signbit( amps_partial_sum_ );
+      amps_partial_sum_ += amps_[ k ];
+      if ( std::signbit( amps_partial_sum_ ) != sign_last_ )
+      {
+        return true;
+      }
+      sign_last_ = std::signbit( amps_partial_sum_ );
     }
     // according to the theorem, the number of zeros is not greater than
     // the number of sign changes_..
@@ -447,234 +456,235 @@ private:
   }
 
 
-  void integrate_( const STDPSplHomCommonProperties& cp, const long_t delta )
+  void
+  integrate_( const STDPSplHomCommonProperties& cp, const long_t delta )
   {
 
-    // integrate all state variables the duration t analytically, assuming 
+    // integrate all state variables the duration t analytically, assuming
     // no spikes arrive during the delta.
 
     // propagate all variables
     for ( long_t i = 0; i < n_conns_; i++ )
     {
-      
+
       long_t delta_done = 0;
       while ( delta_done < delta )
       {
-      // how many steps are left to be processed?
-      long_t delta_this = delta - delta_done;
+        // how many steps are left to be processed?
+        long_t delta_this = delta - delta_done;
 
-      // for how long should we integrate w_jk in this round?
-      long_t delta_i;
-      if ( w_create_steps_[ i ] > delta_this )
-      {
-        // if the contact is waiting for creation, decrease creation step timer
-        w_create_steps_[ i ] -= delta_this;
-        // no integration to be done
-        delta_i = 0;
-      }
-      else if ( w_create_steps_[ i ] > 0 )
-      {
-        // the contact is going to be created within this delta.
-        // how many steps will elapse until this happens?
-        delta_this = w_create_steps_[ i ];
-        // no integration to be done
-        delta_i = 0;
-        // set contact weight to creation value
-        w_jk_[ i ] = cp.w0_;
-        // set activity dependent state variables
-        r_jk_[ i ] = 0.;
-        c_jk_[ i ] = 0.;
-        r_post_jk_[ i ] = 0.;
-        R_post_jk_[ i ] = 0.;
-        // clear creation step counter
-        // set to negative grace period steps. Plasticity is paused until 
-        // grace period ends.
-        w_create_steps_[ i ] = -cp.steps_grace_period_;
-        // increment creation counter
-        n_create_ ++;
-      }
-      else if (-w_create_steps_[ i ] > delta_this)
-      {
-        // the contact exists, but is still in its period of grace.
-        // the period is still longer than the delta. So we can do the 
-        // whole delta_this.
-        delta_i = delta_this;
-        // w_create_steps_ will be decremented below
-      }
-      else if ( -w_create_steps_[ i ] > 0)
-      {
-        // the contact exists, but is still in its period of grace.
-        // the period ends during the delta. We integrate until it ends
-        delta_this = -w_create_steps_[ i ];
-        delta_i = delta_this;
-        // w_create_steps_ will be decremented below
-      }
-      else
-      {
-        // the contact exists, so it can be integrated for the remaining delta
-        delta_i = delta_this;
-      }
-      
-      // state variable integration, only for existing contacts
-      if (delta_i>0)
-      {
+        // for how long should we integrate w_jk in this round?
+        long_t delta_i;
+        if ( w_create_steps_[ i ] > delta_this )
+        {
+          // if the contact is waiting for creation, decrease creation step timer
+          w_create_steps_[ i ] -= delta_this;
+          // no integration to be done
+          delta_i = 0;
+        }
+        else if ( w_create_steps_[ i ] > 0 )
+        {
+          // the contact is going to be created within this delta.
+          // how many steps will elapse until this happens?
+          delta_this = w_create_steps_[ i ];
+          // no integration to be done
+          delta_i = 0;
+          // set contact weight to creation value
+          w_jk_[ i ] = cp.w0_;
+          // set activity dependent state variables
+          r_jk_[ i ] = 0.;
+          c_jk_[ i ] = 0.;
+          r_post_jk_[ i ] = 0.;
+          R_post_jk_[ i ] = 0.;
+          // clear creation step counter
+          // set to negative grace period steps. Plasticity is paused until
+          // grace period ends.
+          w_create_steps_[ i ] = -cp.steps_grace_period_;
+          // increment creation counter
+          n_create_++;
+        }
+        else if ( -w_create_steps_[ i ] > delta_this )
+        {
+          // the contact exists, but is still in its period of grace.
+          // the period is still longer than the delta. So we can do the
+          // whole delta_this.
+          delta_i = delta_this;
+          // w_create_steps_ will be decremented below
+        }
+        else if ( -w_create_steps_[ i ] > 0 )
+        {
+          // the contact exists, but is still in its period of grace.
+          // the period ends during the delta. We integrate until it ends
+          delta_this = -w_create_steps_[ i ];
+          delta_i = delta_this;
+          // w_create_steps_ will be decremented below
+        }
+        else
+        {
+          // the contact exists, so it can be integrated for the remaining delta
+          delta_i = delta_this;
+        }
+
+        // state variable integration, only for existing contacts
+        if ( delta_i > 0 )
+        {
           // weight plasticity is only active for exisiting synapses which
           // have passed their period of grace
-          if (w_create_steps_[ i ]==0)
+          if ( w_create_steps_[ i ] == 0 )
           {
-          // these local switches control the flow below
-          bool deletion_trigger;
-          bool stepeval_trigger;
-        
-          if ( w_jk_[ i ] <= 0. )
-          {
+            // these local switches control the flow below
+            bool deletion_trigger;
+            bool stepeval_trigger;
+
+            if ( w_jk_[ i ] <= 0. )
+            {
               // if the contact has weight zero from the start, we just schedule
-              // deletion and are done. This can happen due to inconsistent 
+              // deletion and are done. This can happen due to inconsistent
               // set_status call by user.
               deletion_trigger = true;
               stepeval_trigger = false;
-          }
-          else
-          {
-          // the delta_done in this case may be different from delta_this, in
-          // case the contact is deleted before delta_this is elapsed. If so,
-          // we reenter this while loop from the top.
-          // Therefore we update r_jk and the other variables at every round, to
-          // have initial conditions consistent with delta_done.
-          
-          // compute amplitudes of exponential terms of w_jk solution
-          compute_amps_( cp, i ); //, r_post_i_, R_post_i_, amps_ );
+            }
+            else
+            {
+              // the delta_done in this case may be different from delta_this, in
+              // case the contact is deleted before delta_this is elapsed. If so,
+              // we reenter this while loop from the top.
+              // Therefore we update r_jk and the other variables at every round, to
+              // have initial conditions consistent with delta_done.
 
-          // compute exponentials terms
-          get_exps_( cp, delta_i ); //, exps_ );
+              // compute amplitudes of exponential terms of w_jk solution
+              compute_amps_( cp, i ); //, r_post_i_, R_post_i_, amps_ );
 
-          // compose the solution
-          w_jk_[ i ] = compose_w_sol_( ); //amps_, exps_ );
-          }
-          // delete contacts with negative or zero weights
-          if ( w_jk_[ i ] <= 0. )
-          {
+              // compute exponentials terms
+              get_exps_( cp, delta_i ); //, exps_ );
+
+              // compose the solution
+              w_jk_[ i ] = compose_w_sol_(); // amps_, exps_ );
+            }
+            // delete contacts with negative or zero weights
+            if ( w_jk_[ i ] <= 0. )
+            {
               deletion_trigger = true;
               // in safe mode we compute the exact zero crossing times in case
               // of deletions, to correct the creation step counter.
               stepeval_trigger = cp.safe_mode_;
-          }
-          else 
-          {
+            }
+            else
+            {
               // no deletion has been triggered yet (w_jk is positive).
               // There may have been a zero crossing before, though.
               deletion_trigger = false;
-              if (cp.safe_mode_)
+              if ( cp.safe_mode_ )
               {
-                 // if we cannot exclude zero crossings in the interval, 
-                 // we search numerically if there is a zero crossings,
-                 // on the time grid spanned by the simulation resolution.
-                 stepeval_trigger = check_crossing_possible_( );
+                // if we cannot exclude zero crossings in the interval,
+                // we search numerically if there is a zero crossings,
+                // on the time grid spanned by the simulation resolution.
+                stepeval_trigger = check_crossing_possible_();
               }
               else
               {
-                 stepeval_trigger = false;
+                stepeval_trigger = false;
               }
-          }
-          if (stepeval_trigger)
-          {
+            }
+            if ( stepeval_trigger )
+            {
               long_t d_stepeval_ = 0;
               // we search numerically for a zero crossing
               // on the time grid spanned by the simulation resolution.
-              while (d_stepeval_<delta_i)
+              while ( d_stepeval_ < delta_i )
               {
-                get_exps_( cp, d_stepeval_ ); //, exps_ );
-                double_t w_stepeval_ = compose_w_sol_( ); //amps_, exps_ );
-                if (w_stepeval_<=0.)
+                get_exps_( cp, d_stepeval_ );            //, exps_ );
+                double_t w_stepeval_ = compose_w_sol_(); // amps_, exps_ );
+                if ( w_stepeval_ <= 0. )
                 {
-                    // we stop searching because we have found the first zero
-                    // crossing, upon which the contact is immediately deleted.
-                    //std::cout << "deletion triggered in step-wise check."  << "\n";
-                    deletion_trigger = true;
-                    break;
+                  // we stop searching because we have found the first zero
+                  // crossing, upon which the contact is immediately deleted.
+                  // std::cout << "deletion triggered in step-wise check."  << "\n";
+                  deletion_trigger = true;
+                  break;
                 }
                 d_stepeval_++;
               }
-              // because the deletion may have happened before reaching 
-              // delta_this, the effective interval that was integrated 
+              // because the deletion may have happened before reaching
+              // delta_this, the effective interval that was integrated
               // may have been shorter
               delta_this = d_stepeval_;
-          }
-          else
-          {
-              // if stepeval was not triggered (not in safe mode), 
-              // we assume that the deletion event, if any, happened at the end  
-              // of the integration interval, so that we have integrated the 
+            }
+            else
+            {
+              // if stepeval was not triggered (not in safe mode),
+              // we assume that the deletion event, if any, happened at the end
+              // of the integration interval, so that we have integrated the
               // whole delta_i
               delta_this = delta_i;
-          }
-          
-          if ( deletion_trigger )
-          {
-            // generate an exponentially distributed number.
-            w_create_steps_[ i ] = Time( Time::ms( 
-              exp_dev_( rng_ ) / cp.lambda_ *1e3 ) ).get_steps();
-            // set synapse to equal zero
-            w_jk_[ i ] = 0.;
-            // set activity dependent state variables to NAN to denote that 
-            // they are not defined.
-            r_jk_[ i ] = NAN;
-            c_jk_[ i ] = NAN;
-            r_post_jk_[ i ] = NAN;
-            R_post_jk_[ i ] = NAN;
-            // increment deletion counter
-            n_delete_ ++;
-          }
-          // end of weight plasticity part
+            }
+
+            if ( deletion_trigger )
+            {
+              // generate an exponentially distributed number.
+              w_create_steps_[ i ] =
+                Time( Time::ms( exp_dev_( rng_ ) / cp.lambda_ * 1e3 ) ).get_steps();
+              // set synapse to equal zero
+              w_jk_[ i ] = 0.;
+              // set activity dependent state variables to NAN to denote that
+              // they are not defined.
+              r_jk_[ i ] = NAN;
+              c_jk_[ i ] = NAN;
+              r_post_jk_[ i ] = NAN;
+              R_post_jk_[ i ] = NAN;
+              // increment deletion counter
+              n_delete_++;
+            }
+            // end of weight plasticity part
           }
           else
           {
             // w_create_steps_ has to be negative, otherwise there is a problem
             // above. That means plasticity is paused because of grace period.
             assert( w_create_steps_[ i ] < 0 );
-            w_create_steps_[i] += delta_this;
+            w_create_steps_[ i ] += delta_this;
             // passing period of grace must not cause deletion of the contact.
             assert( w_create_steps_[ i ] <= 0 );
           }
-      
+
           // now we integrate the remaining state variables for delta_this steps
-        
+
           // precompute some exponentials
           if ( delta_this < cp.exp_cache_len_ )
           {
-              // we copy the exp terms from the cache if possible
-              exp_term_8_ = cp.exp_8_[delta_this];
-              exp_term_9_ = cp.exp_2_[delta_this];
+            // we copy the exp terms from the cache if possible
+            exp_term_8_ = cp.exp_8_[ delta_this ];
+            exp_term_9_ = cp.exp_2_[ delta_this ];
           }
           else
           {
-              // otherwise we compute them
-              double_t t_delta_ = Time( Time::step(delta_this) ).get_ms() / 1000.;  
-              exp_term_8_ =  std::exp( -t_delta_/cp.tau_ );
-              exp_term_9_ =  std::exp( -t_delta_/cp.tau_slow_ );
+            // otherwise we compute them
+            double_t t_delta_ = Time( Time::step( delta_this ) ).get_ms() / 1000.;
+            exp_term_8_ = std::exp( -t_delta_ / cp.tau_ );
+            exp_term_9_ = std::exp( -t_delta_ / cp.tau_slow_ );
           }
           // std::exp( t_delta_*(-2/cp.tau_ + 1/cp.tau_slow_) )
           exp_term_10_ = exp_term_8_ * exp_term_8_ / exp_term_9_;
 
           // c_jk update by analytical solution
-          c_jk_[ i ] = ((-1 + exp_term_10_) * r_jk_[ i ]*r_post_jk_[ i ]*cp.tau_ 
-                + c_jk_[ i ]*(cp.tau_ - 2*cp.tau_slow_))/
-                (cp.tau_ - 2*cp.tau_slow_) * exp_term_9_;
-          
+          c_jk_[ i ] = ( ( -1 + exp_term_10_ ) * r_jk_[ i ] * r_post_jk_[ i ] * cp.tau_
+                         + c_jk_[ i ] * ( cp.tau_ - 2 * cp.tau_slow_ ) )
+            / ( cp.tau_ - 2 * cp.tau_slow_ ) * exp_term_9_;
+
           // r_jk update by analytical solution
           r_jk_[ i ] *= exp_term_8_;
 
           // r/R post update by analytical solution
           r_post_jk_[ i ] *= exp_term_8_;
           R_post_jk_[ i ] *= exp_term_9_;
-          }
-      
-      // increment the step counter of the loop over delta
-      delta_done += delta_this;
+        }
+
+        // increment the step counter of the loop over delta
+        delta_done += delta_this;
       }
     }
   }
-  
+
   // declarations of data members of each connection
   long_t n_conns_;
   long_t n_create_;
@@ -691,19 +701,19 @@ private:
   std::vector< double_t > r_jk_;
   std::vector< double_t > R_post_jk_;
   std::vector< double_t > r_post_jk_;
-  
+
   // Random number generator pointer
   librandom::RngPtr rng_;
   // random deviate generator
-  librandom::ExpRandomDev exp_dev_; 
+  librandom::ExpRandomDev exp_dev_;
 
   // we need local copies of these, because intermediate values are
   // required as we go through the contacts.
-  double_t exp_term_8_; 
+  double_t exp_term_8_;
   double_t exp_term_9_;
   double_t exp_term_10_;
-  std::vector<double_t> amps_;
-  std::vector<double_t> exps_;
+  std::vector< double_t > amps_;
+  std::vector< double_t > exps_;
 };
 
 /**
@@ -720,127 +730,125 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
   double_t t_lastspike,
   const STDPSplHomCommonProperties& cp )
 {
-  // once the synapse receives a spike event, it updates its state, from the 
+  // once the synapse receives a spike event, it updates its state, from the
   // last spike to this one.
   double_t t_spike = e.get_stamp().get_ms();
   long_t steps_total = Time( Time::ms( t_spike - t_lastspike ) ).get_steps();
-    
+
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   Node* target = get_target( t );
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
   target->get_history( t_lastspike, t_spike, &start, &finish );
-    
+
   // Before anything else happens, we check if this synapse actually has
-  // any active synaptic contacts (w_create_steps_min_==0), or ones that 
+  // any active synaptic contacts (w_create_steps_min_==0), or ones that
   // will soon be created. Most synapses typically do not have either.
-  if (cp.sleep_mode_ && ( w_create_steps_min_ > steps_total + steps_slept_ ))
+  if ( cp.sleep_mode_ && ( w_create_steps_min_ > steps_total + steps_slept_ ) )
   {
     // There is no active contact. No new contacts will be created
-    // within this interval. Synapse stays in sleep mode, to be cheaper in 
+    // within this interval. Synapse stays in sleep mode, to be cheaper in
     // terms of computational load.
-    
+
     // increment the sleep step counter
     steps_slept_ += steps_total;
-    
+
     // we need to deplete the postsynaptic spike archiver, otherwise it will get
     // slower and slower
     while ( start != finish )
-        {
-        // proceed to the next postsynaptic spike
-        ++start;
-        }
+    {
+      // proceed to the next postsynaptic spike
+      ++start;
+    }
   }
   else
   {
-  // This is the main update block of the synapse model ("awake mode")
-  
-  // If the synapse has slept before, it now wakes up. 
-  // Decrement all creation step counters accordingly.
-  if (steps_slept_>0)
-  {
-    for ( long_t i = 0; i < n_conns_; i++ )
-        {
-        w_create_steps_[ i ] -= steps_slept_;
-        }
-    steps_slept_ = 0;
-  }
+    // This is the main update block of the synapse model ("awake mode")
 
-  // get random number generator of target thread
-  Network* net = Node::network();
-  rng_ = net->get_rng( target->get_vp() ); 
-
-  // integration of synapse state starts from the last spike received
-  double_t t_last_postspike = t_lastspike;
-
-  // integration proceeds from postsynaptic spike to postsyn. spike in range.
-  while ( start != finish )
-  {
-    long_t delta = Time( Time::ms( start->t_ - t_last_postspike ) ).get_steps();
-     
-    // integrate the state variables for this delta
-    // here we use the analytical solution of the ODEs in between spikes
-    // (homogeneous solution)
-    integrate_( cp, delta );
-
-    // increment postsynaptic traces once for each spike
-    for ( long_t i = 0; i < n_conns_; i++ )
+    // If the synapse has slept before, it now wakes up.
+    // Decrement all creation step counters accordingly.
+    if ( steps_slept_ > 0 )
     {
+      for ( long_t i = 0; i < n_conns_; i++ )
+      {
+        w_create_steps_[ i ] -= steps_slept_;
+      }
+      steps_slept_ = 0;
+    }
+
+    // get random number generator of target thread
+    Network* net = Node::network();
+    rng_ = net->get_rng( target->get_vp() );
+
+    // integration of synapse state starts from the last spike received
+    double_t t_last_postspike = t_lastspike;
+
+    // integration proceeds from postsynaptic spike to postsyn. spike in range.
+    while ( start != finish )
+    {
+      long_t delta = Time( Time::ms( start->t_ - t_last_postspike ) ).get_steps();
+
+      // integrate the state variables for this delta
+      // here we use the analytical solution of the ODEs in between spikes
+      // (homogeneous solution)
+      integrate_( cp, delta );
+
+      // increment postsynaptic traces once for each spike
+      for ( long_t i = 0; i < n_conns_; i++ )
+      {
         r_post_jk_[ i ] += 1. / cp.tau_;
         R_post_jk_[ i ] += 1. / cp.tau_slow_;
+      }
+      // proceed to the next postsynaptic spike
+      t_last_postspike = start->t_;
+      ++start;
     }
-    // proceed to the next postsynaptic spike
-    t_last_postspike = start->t_;
-    ++start;
-  }
 
-  // it remains to integrate from the last postsynaptic spike to the time of 
-  // the presynaptic spike received.
-  long_t remaining_delta = 
-    Time( Time::ms( t_spike - t_last_postspike ) ).get_steps();
-  integrate_( cp, remaining_delta );
+    // it remains to integrate from the last postsynaptic spike to the time of
+    // the presynaptic spike received.
+    long_t remaining_delta = Time( Time::ms( t_spike - t_last_postspike ) ).get_steps();
+    integrate_( cp, remaining_delta );
 
-  // Now, after updating the synapse state, we are ready to transmit the spike.
-  // Spike transmission failures occur at each contact with rate p_fail, i.e. 
-  // presynaptic traces only get updated by the spike with probability 1-p_fail.
-  double_t weight_tot = 0.;
-  for ( long_t i = 0; i < n_conns_; i++ )
-  {
-    // go through all synaptic contacts and draw a random number
-    double_t rr = rng_->drand();
-    if ( rr > cp.p_fail_ )
+    // Now, after updating the synapse state, we are ready to transmit the spike.
+    // Spike transmission failures occur at each contact with rate p_fail, i.e.
+    // presynaptic traces only get updated by the spike with probability 1-p_fail.
+    double_t weight_tot = 0.;
+    for ( long_t i = 0; i < n_conns_; i++ )
     {
-      // increment the presynaptic trace of contact i if transmission successful
-      r_jk_[ i ] += 1. / cp.tau_;
-
-      // count only existing synapses to total weight
-      // only transmitted for successful spikes
-      if ( w_jk_[ i ] > 0. )
+      // go through all synaptic contacts and draw a random number
+      double_t rr = rng_->drand();
+      if ( rr > cp.p_fail_ )
       {
-        weight_tot += w_jk_[ i ];
+        // increment the presynaptic trace of contact i if transmission successful
+        r_jk_[ i ] += 1. / cp.tau_;
+
+        // count only existing synapses to total weight
+        // only transmitted for successful spikes
+        if ( w_jk_[ i ] > 0. )
+        {
+          weight_tot += w_jk_[ i ];
+        }
       }
     }
-  }
-  // Only send the spike if it has a nonzero total weight
-  // Sending spikes causes computations in postsynaptic neurons and 
-  // network communication, which is not necessary for zero-weight spikes. 
-  if ( weight_tot > 0. )
+    // Only send the spike if it has a nonzero total weight
+    // Sending spikes causes computations in postsynaptic neurons and
+    // network communication, which is not necessary for zero-weight spikes.
+    if ( weight_tot > 0. )
     {
-    e.set_receiver( *target );
-    e.set_weight( weight_tot );
-    e.set_delay( get_delay_steps() );
-    e.set_rport( get_rport() );
-    e();
+      e.set_receiver( *target );
+      e.set_weight( weight_tot );
+      e.set_delay( get_delay_steps() );
+      e.set_rport( get_rport() );
+      e();
     }
-  
-  // Get the minimum value of the creation step counters. This will be used
-  // to trigger sleep mode when no contacts are active.
-  w_create_steps_min_ = 
-     *std::min_element( w_create_steps_.begin(), w_create_steps_.end() );
-  if (w_create_steps_min_<0)
-  {
-    w_create_steps_min_ = 0;
-  } 
+
+    // Get the minimum value of the creation step counters. This will be used
+    // to trigger sleep mode when no contacts are active.
+    w_create_steps_min_ = *std::min_element( w_create_steps_.begin(), w_create_steps_.end() );
+    if ( w_create_steps_min_ < 0 )
+    {
+      w_create_steps_min_ = 0;
+    }
   }
 }
 
@@ -860,8 +868,8 @@ STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom()
   R_post_jk_.resize( n_conns_, 0. );
   n_create_ = 0;
   n_delete_ = 0;
-  amps_.resize(7);
-  exps_.resize(7);
+  amps_.resize( 7 );
+  exps_.resize( 7 );
 }
 
 template < typename targetidentifierT >
@@ -880,7 +888,7 @@ STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom(
   R_post_jk_ = rhs.R_post_jk_;
   n_create_ = rhs.n_create_;
   n_delete_ = rhs.n_delete_;
-  exp_term_8_ = rhs.exp_term_8_; 
+  exp_term_8_ = rhs.exp_term_8_;
   exp_term_9_ = rhs.exp_term_9_;
   exp_term_10_ = rhs.exp_term_10_;
   amps_ = rhs.amps_;
@@ -928,7 +936,6 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
     c_jk_.resize( n_conns_, 0. );
     r_post_jk_.resize( n_conns_, 0. );
     R_post_jk_.resize( n_conns_, 0. );
-    
   }
 
   if ( not( n_create_ >= 0 ) )
@@ -980,7 +987,7 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
     }
     R_post_jk_ = R_post_jk_tmp;
   }
-  
+
   std::vector< double_t > w_jk_tmp;
   if ( updateValue< std::vector< double > >( d, "w_jk", w_jk_tmp ) )
   {
@@ -992,24 +999,22 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   }
 
   std::vector< long_t > w_create_steps_tmp;
-  if ( updateValue< std::vector< long_t > >( d, "w_create_steps", 
-                                             w_create_steps_tmp ) )
+  if ( updateValue< std::vector< long_t > >( d, "w_create_steps", w_create_steps_tmp ) )
   {
     if ( w_create_steps_tmp.size() != ( unsigned ) n_conns_ )
     {
-    throw BadProperty( "Size of w_create_steps must be equal to n_pot_conns" );
+      throw BadProperty( "Size of w_create_steps must be equal to n_pot_conns" );
     }
     w_create_steps_ = w_create_steps_tmp;
   }
-  
+
   // Refresh minimum of w_create_steps_min_. SetStatus might have ended sleep mode
   // of the synapse by changing w_create_steps_
-  w_create_steps_min_ = 
-     *std::min_element( w_create_steps_.begin(), w_create_steps_.end() );
-  if (w_create_steps_min_<0)
+  w_create_steps_min_ = *std::min_element( w_create_steps_.begin(), w_create_steps_.end() );
+  if ( w_create_steps_min_ < 0 )
   {
     w_create_steps_min_ = 0;
-  } 
+  }
 }
 
 } // of namespace nest

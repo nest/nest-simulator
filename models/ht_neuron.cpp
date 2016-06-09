@@ -681,7 +681,7 @@ ht_neuron::update( Time const& origin, const long_t from, const long_t to )
 
     // A spike is generated when the membrane potential (V) exceeds
     // the threshold (Theta).
-    if ( S_.g_spike_ && S_.y_[ State_::VM ] >= S_.y_[ State_::THETA ] )
+    if ( not S_.g_spike_ && S_.y_[ State_::VM ] >= S_.y_[ State_::THETA ] )
     {
       // Set V and Theta to the sodium reversal potential.
       S_.y_[ State_::VM ] = P_.E_Na;

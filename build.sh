@@ -109,7 +109,8 @@ if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
   rm -rf ./clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04
 fi
 
-export PATH=$PATH:$HOME/.cache/bin
+# Prepend cache to PATH so we find stuff we have installed ourselves first
+export PATH=$HOME/.cache/bin:$PATH
 
 vera++ --version
 cppcheck --version 

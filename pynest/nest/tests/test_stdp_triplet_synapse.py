@@ -81,17 +81,17 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
     def decay(self, time, Kplus, Kplus_triplet, Kminus, Kminus_triplet):
         """Decay variables."""
-        Kplus *= exp(- time / self.syn_spec["tau_plus"])
-        Kplus_triplet *= exp(- time / self.syn_spec["tau_plus_triplet"])
-        Kminus *= exp(- time / self.post_neuron_params["tau_minus"])
-        Kminus_triplet *= exp(- time /
+        Kplus *= exp(-time / self.syn_spec["tau_plus"])
+        Kplus_triplet *= exp(-time / self.syn_spec["tau_plus_triplet"])
+        Kminus *= exp(-time / self.post_neuron_params["tau_minus"])
+        Kminus_triplet *= exp(-time /
                               self.post_neuron_params["tau_minus_triplet"])
         return (Kplus, Kplus_triplet, Kminus, Kminus_triplet)
 
     def facilitate(self, w, Kplus, Kminus_triplet):
         """Facilitate weight."""
         Wmax = self.status("Wmax")
-        return  np.sign(Wmax) * (abs(w) + Kplus * (
+        return np.sign(Wmax) * (abs(w) + Kplus * (
             self.syn_spec["Aplus"] +
             self.syn_spec["Aplus_triplet"] * Kminus_triplet)
         )
@@ -112,6 +112,7 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
 
     def test_badPropertiesSetupsThrowExceptions(self):
         """Check that exceptions are thrown when setting bad parameters."""
+
         def setupProperty(property):
             bad_syn_spec = self.syn_spec.copy()
             bad_syn_spec.update(property)
@@ -206,8 +207,6 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         weight = self.status("weight")
         Wmax = self.status("Wmax")
 
-
-
         (Kplus, Kplus_triplet, Kminus, Kminus_triplet) = self.decay(
             2.0, Kplus, Kplus_triplet, Kminus, Kminus_triplet)
         weight = self.depress(weight, Kminus, Kplus_triplet)
@@ -246,7 +245,6 @@ class STDPTripletConnectionTestCase(unittest.TestCase):
         Kminus_triplet = 0.0
         weight = self.status("weight")
         Wmax = self.status("Wmax")
-
 
         (Kplus, Kplus_triplet, Kminus, Kminus_triplet) = self.decay(
             2.0, Kplus, Kplus_triplet, Kminus, Kminus_triplet)
@@ -310,7 +308,8 @@ class STDPTripletInhTestCase(STDPTripletConnectionTestCase):
         self.syn_spec = {
             "model": self.synapse_model,
             "delay": self.dendritic_delay,
-            "receptor_type": 1,  # set receptor 1 post-synaptically, to not generate extra spikes
+            # set receptor 1 post-synaptically, to not generate extra spikes
+            "receptor_type": 1,
             "weight": -5.0,
             "tau_plus": 16.8,
             "tau_plus_triplet": 101.0,
@@ -329,13 +328,14 @@ class STDPTripletInhTestCase(STDPTripletConnectionTestCase):
 
         # setup basic circuit
         self.pre_neuron = nest.Create("parrot_neuron")
-        self.post_neuron = nest.Create("parrot_neuron", 1, params=self.post_neuron_params)
+        self.post_neuron = nest.Create("parrot_neuron", 1,
+                                       params=self.post_neuron_params)
         nest.Connect(self.pre_neuron, self.post_neuron, syn_spec=self.syn_spec)
 
-    
 
 def suite_inh():
     return unittest.makeSuite(STDPTripletInhTestCase, "test")
+
 
 def suite():
     return unittest.makeSuite(STDPTripletConnectionTestCase, "test")

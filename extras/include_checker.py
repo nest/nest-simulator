@@ -261,3 +261,6 @@ if __name__ == '__main__':
 
     else:
         usage(3)
+
+# These lines are only added to provoke a PEP8 error in Travis to check it is handled properly.
+   # The lines will be removed after the test is complete.

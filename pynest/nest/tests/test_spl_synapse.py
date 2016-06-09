@@ -476,7 +476,49 @@ class SplSynapseTestCase(unittest.TestCase):
         create_steps = 50
         grace_steps = int(grace * 1e3)
 
-        self.setUp_grace()
+        # Set up a parrot network with spikes pre and post,
+        # centered around creation with grace period
+        grace_steps = int(grace * 1e3)
+        dyn_start = 51 + grace_steps + create_steps
+
+        pars = {
+            'p_fail': 0.,
+            'n_pot_conns': 1,
+            't_grace_period': grace,
+            'w_jk': [0.]
+        }
+
+        self.setUp_net(1, params=pars)
+
+        delay = 1.
+
+        # spikes to update synapse. several around
+        # when the dynamics pick up at dyn_start
+        spikes = (np.arange(50, dyn_start - 50 + 1, 50) - delay).tolist() +\
+            (np.arange(dyn_start - 2., dyn_start + 2.) - delay).tolist()
+
+        nest.SetStatus(
+            self.pre_spikes, {"spike_times": spikes})
+
+        # postsynaptic spikes to feed traces
+        nest.SetStatus(
+            self.post_spikes,
+            {"spike_times": (np.arange(50, dyn_start, 10) - delay).tolist()})
+
+        syn_spec = {
+            "model": "testsyn",
+            "receptor_type": 1,
+        }
+
+        conn_spec = {
+            "rule": "all_to_all",
+        }
+
+        nest.Connect(self.pre_parrot, self.post_parrot,
+                     syn_spec=syn_spec, conn_spec=conn_spec)
+        self.syn = nest.GetConnections(
+            source=self.pre_parrot, synapse_model="testsyn")
+
         syn_defaults = nest.GetDefaults('testsyn')
         w0 = syn_defaults['w0']
 
@@ -502,17 +544,17 @@ class SplSynapseTestCase(unittest.TestCase):
             syn_status['w_create_steps'][0],
             -grace_steps,
             "w_create_steps does not decrement correcly."
-            )
+        )
         self.assertEqual(
             syn_status['w_jk'][0],
             w0,
             "weight not initialized properly"
-            )
+        )
         self.assertEqual(
             syn_status['n_create'],
             1,
             "synapse not created"
-            )
+        )
 
         # simulate past next spike
         nest.Simulate(50.)  # t=151
@@ -522,21 +564,21 @@ class SplSynapseTestCase(unittest.TestCase):
         # and the traces should be doing computations
         self.assertEqual(
             syn_status['w_create_steps'][0],
-            -(grace_steps-50),
+            -(grace_steps - 50),
             "w_create_steps does not decrement correcly."
-            )
+        )
         self.assertEqual(
             syn_status['w_jk'][0],
             w0,
             "weight not stable during grace period"
-            )
+        )
         self.assertTrue(
             syn_status['r_post_jk'][0] > 0. and
             syn_status['r_jk'][0] > 0. and
             syn_status['R_post_jk'][0] > 0. and
             syn_status['c_jk'][0] > 0.,
             "traces not integrating during grace"
-            )
+        )
 
         # simulate past next spike
         nest.Simulate(50.)  # t=201
@@ -548,19 +590,19 @@ class SplSynapseTestCase(unittest.TestCase):
             syn_status['w_create_steps'][0],
             0,
             "w_create_steps does not decrement correcly."
-            )
+        )
         self.assertEqual(
             syn_status['w_jk'][0],
             w0,
             "weight not stable during grace period"
-            )
+        )
         self.assertTrue(
             syn_status['r_post_jk'][0] > 0. and
             syn_status['r_jk'][0] > 0. and
             syn_status['R_post_jk'][0] > 0. and
             syn_status['c_jk'][0] > 0.,
             "traces not integrating during grace"
-            )
+        )
 
         # simulate past next spike
         nest.Simulate(1.)  # t=202
@@ -573,47 +615,142 @@ class SplSynapseTestCase(unittest.TestCase):
             syn_status['w_create_steps'][0],
             0,
             "w_create_steps does not decrement correcly."
-            )
+        )
         self.assertNotEqual(
             syn_status['w_jk'][0],
             w0,
             "weight not integrated after grace period"
-            )
+        )
         self.assertTrue(
             syn_status['r_post_jk'][0] > 0. and
             syn_status['r_jk'][0] > 0. and
             syn_status['R_post_jk'][0] > 0. and
             syn_status['c_jk'][0] > 0.,
             "traces not integrating during grace"
-            )
+        )
 
-    # def test_create_during_grace(self):
-    #     """Test for creation event during grace period"""
-    #     grace = .1
-    #     create_steps = 50
-    #     grace_steps = int(grace * 1e3)
+    def test_create_grace_transmit(self):
+        """Test for creation event during grace period and transmission"""
+        grace = .05
+        grace_steps = int(grace * 1e3)
+        create_steps = grace_steps
 
-    #     self.setUp_grace()
-    #     syn_defaults = nest.GetDefaults('testsyn')
-    #     w0 = syn_defaults['w0']
+        params = {
+            "p_fail": 0.,
+            "n_pot_conns": 2,
+            "w_jk": [1., 0.],
+            "t_grace_period": grace,
+        }
 
-    #     msd = 2
-    #     N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
-    #     nest.SetKernelStatus({'grng_seed': msd + N_vp})
-    #     nest.SetKernelStatus(
-    #         {'rng_seeds': range(msd + N_vp + 1, msd + 2 * N_vp + 1)})
+        self.setUp_iafpost(params=params)
 
-    #     # simulate past first presynaptic spike
-    #     nest.Simulate(51.)
+        nest.SetDefaults('testsyn', {"w0": .5})
+        syn_defaults = nest.GetDefaults('testsyn')
+        w0 = syn_defaults['w0']
 
-    #     # create a synapse at time
-    #     nest.SetStatus(self.syn, {'w_create_steps': [create_steps]})
-    #     syn_status = nest.GetStatus(self.syn)[0]
+        msd = 2
+        N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
+        nest.SetKernelStatus({'grng_seed': msd + N_vp})
+        nest.SetKernelStatus(
+            {'rng_seeds': range(msd + N_vp + 1, msd + 2 * N_vp + 1)})
 
-    #     # simulate past next spike
-    #     nest.Simulate(50.)  # t=101
-    #     syn_status = nest.GetStatus(self.syn)[0]
-        
+        spikes = [50., 100., 150., 200.]
+        delay = 1.
+        nest.SetStatus(
+            self.pre_spikes,
+            {"spike_times": (np.array(spikes) - delay).tolist()})
+
+        # simulate past first presynaptic spike
+        nest.Simulate(51.)
+
+        nest.SetStatus(
+            self.syn, {'w_create_steps': [-create_steps, create_steps]})
+        syn_status = nest.GetStatus(self.syn)[0]
+        w_jk_0 = syn_status["w_jk"]
+
+        # simulate past next spike and reset membrane simplify dynamics
+        nest.Simulate(1.)
+        nest.SetStatus(self.post, {'V_m': -70.})
+        nest.Simulate(49.)
+
+        syn_status = nest.GetStatus(self.syn)[0]
+        w_jk_1 = syn_status["w_jk"]
+
+        self.assertEqual(
+            syn_status["w_create_steps"],
+            (0, -grace_steps)
+        )
+
+        # weight 0 stays constant, weight 1 is set to w0
+        self.assertEqual(
+            w_jk_1,
+            (w_jk_0[0], w0)
+        )
+
+        # simulate past next spike and reset membrane simplify dynamics
+        nest.Simulate(1.)
+        nest.SetStatus(self.post, {'V_m': -70.})
+        nest.Simulate(49.)
+
+        syn_status = nest.GetStatus(self.syn)[0]
+        w_jk_2 = syn_status["w_jk"]
+
+        # all create steps have decayed now
+        self.assertEqual(
+            syn_status["w_create_steps"],
+            (0, 0)
+        )
+
+        # weight 0 chages, weight 1 is still set to w0
+        self.assertNotEqual(w_jk_2[0], w_jk_1[0])
+        self.assertEqual(w_jk_2[1], w0)
+
+        # simulate past next spike and reset membrane simplify dynamics
+        nest.Simulate(1.)
+        nest.SetStatus(self.post, {'V_m': -70.})
+        nest.Simulate(49.)
+
+        syn_status = nest.GetStatus(self.syn)[0]
+        w_jk_3 = syn_status["w_jk"]
+        self.assertNotEqual(w_jk_3[0], w_jk_2[0])
+        self.assertNotEqual(w_jk_3[1], w_jk_2[1])
+
+        # simulate past next spike and reset membrane simplify dynamics
+        nest.Simulate(1.)
+        nest.SetStatus(self.post, {'V_m': -70.})
+        nest.Simulate(49.)
+
+        # get events
+        events = nest.GetStatus(self.rec)[0]['events']
+        t = events['times']
+
+        vals = [
+            (events['V_m'][t == s + 1.] - events['V_m'][t == s]).tolist()[0]
+            for s in spikes]
+
+        vals_exp = [
+            sum([w_jk_0[0], 0]),
+            sum([w_jk_0[0], w0]),
+            sum([w_jk_2[0], w0]),
+            sum(w_jk_3)]
+
+        for i in range(len(vals)):
+            self.assertAlmostEqual(
+                vals[i],
+                vals_exp[i],
+                msg="Transmission at spike %i not as expected." % i,
+                places=12)
+
+    @unittest.expectedFailure
+    def test_fail_set_create(self):
+        """Setting w_create_steps after positive weight fails"""
+        self.setUp_decay(params={
+            'p_fail': 0.,
+            'n_pot_conns': 1,
+        })
+
+        nest.SetStatus(
+            self.syn, {'w_jk': (1.), 'w_create_steps': 10.})
 
     def test_w_post_terms(self):
         """Dynamics on w_jk with postsynaptic terms only"""
@@ -697,53 +834,6 @@ class SplSynapseTestCase(unittest.TestCase):
             val_exp_1,
             val_1,
             "Transmitted weights not stochastic/correct, second spike.")
-
-    def setUp_grace(self, params={}):
-        """Set up a parrot network with spikes pre and post,
-        centered around creation with grace period"""
-        grace = .1
-        grace_steps = int(grace * 1e3)
-        create_steps = 50
-        dyn_start = 51 + grace_steps + create_steps
-
-        pars = {
-            'p_fail': 0.,
-            'n_pot_conns': 1,
-            't_grace_period': grace,
-            'w_jk': [0.]
-        }
-        pars.update(params)
-
-        self.setUp_net(1, params=pars)
-
-        delay = 1.
-
-        # spikes to update synapse. several around
-        # when the dynamics pick up at dyn_start
-        spikes = (np.arange(50, dyn_start - 50 + 1, 50)-delay).tolist() +\
-            (np.arange(dyn_start-2., dyn_start+2.)-delay).tolist()
-
-        nest.SetStatus(
-            self.pre_spikes, {"spike_times": spikes})
-
-        # postsynaptic spikes to feed traces
-        nest.SetStatus(
-            self.post_spikes,
-            {"spike_times": (np.arange(50, dyn_start, 10)-delay).tolist()})
-
-        syn_spec = {
-            "model": "testsyn",
-            "receptor_type": 1,
-        }
-
-        conn_spec = {
-            "rule": "all_to_all",
-        }
-
-        nest.Connect(self.pre_parrot, self.post_parrot,
-            syn_spec=syn_spec, conn_spec=conn_spec)
-        self.syn = nest.GetConnections(
-            source=self.pre_parrot, synapse_model="testsyn")
 
     def setUp_decay(self, params={}, n=1):
         """Set up a net with pre and post parrots connected
@@ -834,12 +924,13 @@ class SplSynapseTestCase(unittest.TestCase):
         pre_times = [100. - delay, 200. - delay, 300. - delay]
 
         # create spike_generators with these times
-        pre_spikes = nest.Create("spike_generator", 1, {
-                                 "spike_times": pre_times})
+        self.pre_spikes = nest.Create("spike_generator", 1, {
+            "spike_times": pre_times})
 
         # create parrot neurons and connect spike_generators
         self.pre_parrot = nest.Create("parrot_neuron", 1)
-        nest.Connect(pre_spikes, self.pre_parrot, syn_spec={"delay": delay})
+        nest.Connect(self.pre_spikes, self.pre_parrot,
+                     syn_spec={"delay": delay})
 
         # create a iaf_psc_delta postsynaptic neuron
         self.post = nest.Create("iaf_psc_delta", 1)
@@ -1028,9 +1119,9 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    # run()
 
-    # suite = unittest.TestSuite()
-    # suite.addTest(SplSynapseTestCase("test_grace_period"))
-    # runner = unittest.TextTestRunner(verbosity=2)
-    # runner.run(suite)
+    suite = unittest.TestSuite()
+    suite.addTest(SplSynapseTestCase("test_fail_set_create"))
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite)

@@ -988,6 +988,7 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
     R_post_jk_ = R_post_jk_tmp;
   }
 
+  bool weights_updated = false;
   std::vector< double_t > w_jk_tmp;
   if ( updateValue< std::vector< double > >( d, "w_jk", w_jk_tmp ) )
   {
@@ -996,6 +997,7 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
       throw BadProperty( "Size of w_jk must be equal to n_pot_conns" );
     }
     w_jk_ = w_jk_tmp;
+    weights_updated = true;
   }
 
   std::vector< long_t > w_create_steps_tmp;
@@ -1005,7 +1007,42 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
     {
       throw BadProperty( "Size of w_create_steps must be equal to n_pot_conns" );
     }
-    w_create_steps_ = w_create_steps_tmp;
+
+    // if the user sets w_create_steps > 0 for a contact, then the synapse is
+    // counted as (manually, but still) deleted
+    for ( int_t i = 0; ( unsigned ) i < w_create_steps_.size(); i++ )
+    {
+      if ( w_create_steps_tmp[ i ] > 0 )
+      {
+        // manual deletion with user-set create time is allowed
+        if ( weights_updated && w_jk_tmp[ i ] <= 0. )
+        {
+          // set activity dependent state variables to NAN to denote that
+          // they are not defined.
+          r_jk_[ i ] = NAN;
+          c_jk_[ i ] = NAN;
+          r_post_jk_[ i ] = NAN;
+          R_post_jk_[ i ] = NAN;
+          // increment deletion counter
+          n_delete_++;
+        }
+        // apparently synapse is deleted already, but the user wants to change
+        // the steps only
+        else if ( w_jk_[ i ] <= 0. )
+        {
+          // this is fine
+        }
+        // disallowed: can not set creation timer on existing positive contact
+        else
+        {
+          throw BadProperty(
+            "Can not set a positive value for w_create_steps on "
+            "a contact with positive weight w_jk. Consider setting both "
+            "w_jk=0 and w_create_steps>0." );
+        }
+      }
+      w_create_steps_[ i ] = w_create_steps_tmp[ i ];
+    }
   }
 
   // Refresh minimum of w_create_steps_min_. SetStatus might have ended sleep mode

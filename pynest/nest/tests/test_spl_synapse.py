@@ -23,6 +23,7 @@
 
 import nest
 import numpy as np
+import math
 import unittest
 
 
@@ -835,6 +836,141 @@ class SplSynapseTestCase(unittest.TestCase):
             val_1,
             "Transmitted weights not stochastic/correct, second spike.")
 
+
+    def test_deletion_dynamic(self):
+        """Deletion of synapses with zero crossings"""
+        pars = {
+            'p_fail': 0.,
+            'n_pot_conns': 1,
+            'w_jk': [10.],
+            'w_create_steps': [0]
+        }
+
+        self.setUp_decay(params=pars)
+
+        # set seed to something reproducible
+        msd = 2
+        N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
+        nest.SetKernelStatus({'grng_seed': msd + N_vp})
+        nest.SetKernelStatus(
+            {'rng_seeds': range(msd + N_vp + 1, msd + 2 * N_vp + 1)})
+
+        nest.SetStatus(self.syn, {
+                'w_jk': [10.],
+            })
+
+        delay = 1.
+        nest.SetStatus(self.pre_spikes, {
+                "spike_times": (np.arange(2., 20.1*1e3, 1e3)-delay).tolist()
+            })
+        nest.SetStatus(self.post_spikes, {
+                "spike_times": (np.arange(2., 20.1*1e3, 10)-delay).tolist()
+            })
+
+        nest.Simulate(10000.)
+        stat = nest.GetStatus(self.syn)[0]
+
+        self.assertEqual(stat['w_jk'][0], 0.)
+        self.assertTrue(math.isnan(stat['r_jk'][0]))
+        self.assertTrue(math.isnan(stat['c_jk'][0]))
+        self.assertTrue(math.isnan(stat['r_post_jk'][0]))
+        self.assertTrue(math.isnan(stat['R_post_jk'][0]))
+        self.assertTrue(stat['w_create_steps'][0] > 0)
+
+    def test_deletion_manual(self):
+        """Manual deletion of synapses"""
+        pars = {
+            'p_fail': 0.,
+            'n_pot_conns': 1,
+            'w_jk': [10.],
+            'w_create_steps': [0],
+            'sleep_mode': False  # otherwise deleted syn. sleeps
+                                 # and we can't check updates
+        }
+
+        self.setUp_decay(params=pars)
+
+        # set seed to something reproducible
+        msd = 2
+        N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
+        nest.SetKernelStatus({'grng_seed': msd + N_vp})
+        nest.SetKernelStatus(
+            {'rng_seeds': range(msd + N_vp + 1, msd + 2 * N_vp + 1)})
+
+        nest.SetStatus(self.syn, {
+                'w_jk': [10.],
+            })
+
+        delay = 1.
+        nest.SetStatus(self.pre_spikes, {
+                "spike_times": (np.arange(50., 1001., 50.)-delay).tolist()
+            })
+        nest.SetStatus(self.post_spikes, {
+                "spike_times": [1.]
+            })
+
+        nest.Simulate(51.)
+        nest.SetStatus(self.syn, {
+                'w_jk': [0.],
+            })
+
+        nest.Simulate(50.)
+        stat = nest.GetStatus(self.syn)[0]
+        self.assertEqual(stat['w_jk'][0], 0.)
+        self.assertTrue(stat['w_create_steps'][0] > 0)
+        self.assertTrue(math.isnan(stat['r_jk'][0]))
+        self.assertTrue(math.isnan(stat['c_jk'][0]))
+        self.assertTrue(math.isnan(stat['r_post_jk'][0]))
+        self.assertTrue(math.isnan(stat['R_post_jk'][0]))
+
+    def test_deletion_manual_with_steps(self):
+        """Manual deletion of synapses, setting the steps"""
+        pars = {
+            'p_fail': 0.,
+            'n_pot_conns': 1,
+            'w_jk': [10.],
+            'w_create_steps': [0],
+            'sleep_mode': False  # otherwise deleted syn. sleeps
+                                 # and we can't check updates
+        }
+
+        self.setUp_decay(params=pars)
+
+        # set seed to something reproducible
+        msd = 2
+        N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
+        nest.SetKernelStatus({'grng_seed': msd + N_vp})
+        nest.SetKernelStatus(
+            {'rng_seeds': range(msd + N_vp + 1, msd + 2 * N_vp + 1)})
+
+        nest.SetStatus(self.syn, {
+                'w_jk': [10.],
+            })
+
+        delay = 1.
+        nest.SetStatus(self.pre_spikes, {
+                "spike_times": (np.arange(50., 1001., 50.)-delay).tolist()
+            })
+        nest.SetStatus(self.post_spikes, {
+                "spike_times": [1.]
+            })
+
+        nest.Simulate(51.)
+        nest.SetStatus(self.syn,
+            {
+                'w_jk': [0.],
+                'w_create_steps': [150]
+            })
+
+        nest.Simulate(50.)
+        stat = nest.GetStatus(self.syn)[0]
+        self.assertEqual(stat['w_jk'][0], 0.)
+        self.assertEqual(stat['w_create_steps'][0], 100)
+        self.assertTrue(math.isnan(stat['r_jk'][0]))
+        self.assertTrue(math.isnan(stat['c_jk'][0]))
+        self.assertTrue(math.isnan(stat['r_post_jk'][0]))
+        self.assertTrue(math.isnan(stat['R_post_jk'][0]))
+
     def setUp_decay(self, params={}, n=1):
         """Set up a net with pre and post parrots connected
         by the SPL synapse"""
@@ -1119,9 +1255,8 @@ def run():
 
 
 if __name__ == "__main__":
-    # run()
-
-    suite = unittest.TestSuite()
-    suite.addTest(SplSynapseTestCase("test_fail_set_create"))
-    runner = unittest.TextTestRunner(verbosity=2)
-    runner.run(suite)
+    run()
+    # suite = unittest.TestSuite()
+    # suite.addTest(SplSynapseTestCase("test_deletion_manual"))
+    # runner = unittest.TextTestRunner(verbosity=2)
+    # runner.run(suite)

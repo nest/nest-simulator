@@ -133,16 +133,6 @@ format_error_files=""
 echo "file_names=$file_names"
 echo "======= Extract changed files end ======="
 
-# Ignore those PEP8 rules
-PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
-
-# In example dirs, also ignore incorrectly placed imports
-PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
-
-# regular expression of directory patterns on which to apply
-# PEP8_IGNORES_EXAMPLES
-EXAMPLE_DIRS='examples|user_manual_scripts'
-
 for f in $file_names; do
   if [ ! -f "$f" ]; then
     echo "$f : Is not a file or does not exist anymore."
@@ -187,11 +177,21 @@ for f in $file_names; do
     *.py )
       echo "======= Check PEP8 on file $f ======="
 
-      if [[ $f =~ $EXAMPLE_DIRS ]]; then
-        IGNORES=$PEP8_IGNORES_EXAMPLES
-      else
-        IGNORES=$PEP8_IGNORES
-      fi
+      # Ignore those PEP8 rules
+      PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
+
+      # In example dirs, also ignore incorrectly placed imports
+      PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
+      # regular expression of directory patterns on which to apply
+      # PEP8_IGNORES_EXAMPLES
+      case $f in
+        *examples* | *user_manual_scripts*)
+          IGNORES=$PEP8_IGNORES_EXAMPLES
+          ;;
+        *)
+          IGNORES=$PEP8_IGNORES
+          ;;
+      esac
 
       if ! pep8_result=`pep8 --first --ignore=$PEP8_IGNORES $f` ; then
         echo "$pep8_result"

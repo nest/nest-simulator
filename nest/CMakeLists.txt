@@ -23,6 +23,13 @@ set( nest_sources
     )
 
 add_executable( nest main.cpp ${nest_sources} )
+if ( IS_BLUEGENE AND static-libraries )
+    set_target_properties( nest
+        PROPERTIES
+        LINK_SEARCH_END_STATIC TRUE
+        LINK_SEARCH_START_STATIC TRUE
+        )
+endif ()
 
 add_library( nest_lib ${nest_sources} )
 set_target_properties( nest_lib
@@ -46,6 +53,10 @@ target_include_directories( nest PRIVATE
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${SLI_MODULE_INCLUDE_DIRS}
     )
+
+target_compile_definitions( nest PRIVATE
+    -D_BUILD_NEST_CLI
+)
 
 target_include_directories( nest_lib PRIVATE
     ${PROJECT_BINARY_DIR}/nest

@@ -59,7 +59,7 @@
 #include "slistartup.h"
 #include "specialfunctionsmodule.h"
 
-#ifndef _IS_PYNEST
+#if defined( _BUILD_NEST_CLI ) && defined( HAVE_READLINE )
 #include <gnureadline.h>
 #endif
 
@@ -115,7 +115,7 @@ neststartup( int* argc,
   addmodule< OOSupportModule >( engine );
   addmodule< RandomNumbers >( engine );
 
-#if defined( HAVE_READLINE ) && !defined( _IS_PYNEST )
+#if defined( _BUILD_NEST_CLI ) && defined( HAVE_READLINE )
   addmodule< GNUReadline >( engine );
 #endif
 

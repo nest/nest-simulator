@@ -5,7 +5,7 @@ http://www.nest-simulator.org/installation
 Introduction
 ============
 
-NEST is installed with cmake (at least v2.8.12). In the simplest case, the commands
+NEST is installed with `cmake` (at least v2.8.12). In the simplest case, the commands
 
     cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>
     make
@@ -73,8 +73,9 @@ Set default libraries:
                                                  a specific library, set install path.
                                                  [default=ON]
     -Dwith-ltdl=[OFF|ON|</path/to/ltdl>]         Find a ltdl library. To set a specific
-                                                 ltdl, set install path.
-                                                 [default=ON]
+                                                 ltdl, set install path. NEST uses the
+                                                 ltdl for dynamic loading of external
+                                                 user modules. [default=ON]
     -Dwith-python=[OFF|ON|</path/to/python>]     Build PyNEST. To set a specific Python,
                                                  set install path. [default=ON]
     -Dcythonize-pynest=[OFF|ON]                  Use Cython to cythonize pynestkernel.pyx.
@@ -85,13 +86,13 @@ Set default libraries:
 Change compilation behavior:
 
     -Dstatic-libraries=[OFF|ON]     Build static executable and libraries. [default=OFF]
-    -Dwith-optimize=[OFF|ON|<list;off;flags>] Enable user defined optimizations. Separate
+    -Dwith-optimize=[OFF|ON|<list;of;flags>]  Enable user defined optimizations. Separate
                                               multiple flags by ';'.
                                               [default OFF, when ON, defaults to '-O3']
-    -Dwith-warning=[OFF|ON|<list;off;flags>]  Enable user defined warnings. Separate
+    -Dwith-warning=[OFF|ON|<list;of;flags>]   Enable user defined warnings. Separate
                                               multiple flags by ';'.
                                               [default ON, when ON, defaults to '-Wall']
-    -Dwith-debug=[OFF|ON|<list;off;flags>]    Enable user defined debug flags. Separate
+    -Dwith-debug=[OFF|ON|<list;of;flags>]     Enable user defined debug flags. Separate
                                               multiple flags by ';'.
                                               [default OFF, when ON, defaults to '-g']
     -Dwith-libraries=<list;of;libraries>      Link additional libraries. Give full path.

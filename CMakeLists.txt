@@ -93,7 +93,7 @@ include( GNUInstallDirs )
 
 if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
   # no prefix given?
-  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'? "
+  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'. "
                     "Please set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
 endif ()
 

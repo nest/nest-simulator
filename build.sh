@@ -107,7 +107,7 @@ if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
   rm -rf ./clang+llvm-3.6.0-x86_64-linux-gnu
 fi
 
-export PATH=$HOME/.cache/bin:$PATH
+export PATH=$PATH:$HOME/.cache/bin
 cppcheck --version 
 clang-format --version
 

@@ -133,16 +133,24 @@ Compiling for BlueGene/Q
 NEST provides a cmake tool-chain file for cross compilation for BlueGene/Q. When
 configuring NEST use the following `cmake` line:
 
-    cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_XLC 
-          -DCMAKE_INSTALL_PREFIX:PATH=</install/path>
-          -Dwith-python=OFF
-          -Dstatic-libraries=ON
+    cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_XLC \
+          -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+          -Dwith-python=OFF \
+          -Dstatic-libraries=ON \
           </path/to/NEST/src>
 
-It is recommended to build statically on larger BlueGene/Q systems. If you need
-PyNEST on BlueGene/Q, you have to compile dynamically, i.e. `-Dstatic-libraries=OFF`
-and you have to cythonize the `pynest/pynestkernel.pyx/.pxd`
-on a machine with Cython installed:
+It is recommended to build statically on larger BlueGene/Q systems. If you compile
+dynamically, be aware that the BlueGene/Q system might not provide a `ltdl`
+library. If you want to dynamically load an external user module, you have to
+compile and install a `ltdl` yourself and add `-Dwith-ltdl=<ltdl-install-dir>`
+to the `cmake` line. Otherwise add `-Dwith-ltdl=OFF`.
+
+BlueGene/Q and PyNEST
+---------------------
+
+Building PyNEST on BlueGene/Q requires you to compile dynamically, i.e. 
+`-Dstatic-libraries=OFF`. Further, you have to cythonize the
+`pynest/pynestkernel.pyx/.pxd` on a machine with Cython installed:
 
     cythonize pynestkernel.pyx
 
@@ -158,6 +166,18 @@ if the they are not found, e.g.:
     -DPYTHON_LIBRARY=/bgsys/tools/Python-2.7/lib64/libpython2.7.so.1.0
     -DPYTHON_INCLUDE_DIR=/bgsys/tools/Python-2.7/include/python2.7
 
+A complete `cmake` line for PyNEST could look like this:
+
+    cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_XLC \
+          -DCMAKE_INSTALL_PREFIX=</install/path> \
+          -Dstatic-libraries=OFF \
+          -Dcythonize-pynest=OFF \
+          -Dwith-python=/bgsys/tools/Python-2.7/bin/hostpython \
+          -DPYTHON_LIBRARY=/bgsys/tools/Python-2.7/lib64/libpython2.7.so.1.0 \
+          -DPYTHON_INCLUDE_DIR=/bgsys/tools/Python-2.7/include/python2.7 \
+          -Dwith-ltdl=OFF \
+          <nest-src>
+
 Further, for running PyNEST, make sure all python dependencies are installed and
 environment variables are set properly:
 
@@ -166,10 +186,22 @@ environment variables are set properly:
     # makes HOME and PYTHONPATH available for python
     runjob --exp-env HOME --exp-env PYTHONPATH ... : python script.py
 
+BlueGene/Q and GCC
+------------------
+
 Compiling NEST with GCC (`-DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_GCC`)
 might require you to use a GSL library compiled using GCC, otherwise undefined
-symbols break your build. Changing the compiler should be done in the file
-`<src>/cmake/Platform/BlueGeneQ_GCC.cmake`.
+symbols break your build. After the GSL is build with GCC and installed in
+<gsl-install-dir>, add `-Dwith-gsl=<gsl-install-dir>` to the `cmake` line.
+
+BlueGene/Q and changing the compiler
+------------------------------------
+
+Both toolchain files (`BlueGeneQ_GCC` and `BlueGeneQ_XLC`) have the default 
+compiler hardcoded - look for the two variable assignments after the comment
+`# set the compiler`. If you want to use a different compiler, e.g. a newer
+GCC version, you have to replace the compiler there and not as an argument to
+`cmake`.
 
 Compiling for Fujitsu Sparc64
 =============================

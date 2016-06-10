@@ -181,17 +181,18 @@ cdef class NESTEngine(object):
 
         cdef char* arg0 = "pynest\0"
         cdef char** argv_bytes = <char**> malloc((argc+1) * sizeof(char*))
-
         if argv_bytes is NULL:
             raise NESTError("couldn't allocate argv_bytes")
-
-        argv_bytes[0] = arg0        
-        argv_bytes[argc] = NULL
-
         try:
-            for i in range(1, argc):
-                arg_byte = argv[i].encode()
-                argv_bytes[i] = arg_byte
+            argv_bytes[0] = arg0
+            argv_bytes[argc] = NULL
+
+            # Need to keep a reference to encoded bytes #377
+            arg_bytes = []
+            argv_bytes_args = argv_bytes+1
+            for i, argvi in enumerate(argv[1:]):
+                arg_bytes.append(argvi.encode())
+                argv_bytes_args[i] = arg_bytes[-1]
 
             self.pEngine = new SLIInterpreter()
 
@@ -199,12 +200,13 @@ cdef class NESTEngine(object):
               &argv_bytes,
               deref(self.pEngine),
               modulepath_str)
+            
             # If using MPI, argv might now have changed, so rebuild it
             del argv[:]
-            for i in range(argc):
+            for argvi in argv_bytes[:argc]:
+                argv.append(str(argvi.decode()))
                 # str(...) will convert to ordinary string in Python2,
                 # otherwise Python2 will return a unicode string
-                argv.append(str(argv_bytes[i].decode()))
         finally:
             free(argv_bytes)
 

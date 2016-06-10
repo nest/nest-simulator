@@ -22,6 +22,9 @@
 
 #include "io_manager.h"
 
+// Generated includes:
+#include "config.h"
+
 // C includes:
 #include <dirent.h>
 #include <errno.h>
@@ -38,7 +41,9 @@
 #include "kernel_manager.h"
 #include "screen_logger.h"
 #include "ascii_logger.h"
-#include "sion_logger.h"
+#ifdef HAVE_SIONLIB
+  #include "sion_logger.h"
+#endif
 
 // Includes from sli:
 #include "dictutils.h"
@@ -163,14 +168,14 @@ nest::IOManager::set_logger( Name name )
 
     logger_ = new ASCIILogger();
   }
-#ifdef HAVE_SION
+#ifdef HAVE_SIONLIB
   else if ( name == names::SIONLogger )
   {
     if ( logger_ != 0 )
       delete logger_;
     logger_ = new SIONLogger();
   }
-#endif // HAVE_SION
+#endif // HAVE_SIONLIB
   else
   {
     std::string msg = String::compose( "Logger is not known: '%1'", name );

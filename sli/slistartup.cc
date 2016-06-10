@@ -480,7 +480,7 @@ SLIStartup::init( SLIInterpreter* i )
   statusdict->insert( have_libneurosim_name, Token( new BoolDatum( false ) ) );
 #endif
 
-#ifdef HAVE_SION
+#ifdef HAVE_SIONLIB
   statusdict->insert( have_sionlib_name, Token( new BoolDatum( true ) ) );
 #else
   statusdict->insert( have_sionlib_name, Token( new BoolDatum( false ) ) );

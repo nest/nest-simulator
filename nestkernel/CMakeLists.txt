@@ -83,9 +83,15 @@ set( nestkernel_sources
     logging_manager.h logging_manager.cpp
     screen_logger.h screen_logger.cpp
     ascii_logger.h ascii_logger.cpp
-    sion_logger.h sion_logger.cpp
     manager_interface.h
     )
+
+if ( HAVE_SIONLIB )
+  set( nestkernel_sources
+      ${nestkernel_sources}
+      sion_logger.h sion_logger.cpp
+      )
+endif ()
 
 add_library( nestkernel ${nestkernel_sources} )
 target_link_libraries( nestkernel

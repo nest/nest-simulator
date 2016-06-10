@@ -227,25 +227,25 @@ On the K Computer:
       tar -xzf gsl-2.1.tar.gz
       mkdir gsl-2.1.build gsl-2.1.install
       cd gsl-2.1.build
-      ../gsl-2.1/configure --prefix=$PWD/../gsl-2.1.install/
-                           CC=mpifccpx
-                           CXX=mpiFCCpx
-                           CFLAGS="-Nnoline"
-                           CXXFLAGS="--alternative_tokens -O3 -Kfast,openmp, -Nnoline, -Nquickdbg -NRtrap"
-                           --host=sparc64-unknown-linux-gnu
+      ../gsl-2.1/configure --prefix=$PWD/../gsl-2.1.install/ \
+                           CC=mpifccpx \
+                           CXX=mpiFCCpx \
+                           CFLAGS="-Nnoline" \
+                           CXXFLAGS="--alternative_tokens -O3 -Kfast,openmp, -Nnoline, -Nquickdbg -NRtrap" \
+                           --host=sparc64-unknown-linux-gnu \
                            --build=x86_64-unknown-linux-gnu
       gmake -j4
       gmake install
 
   To install NEST, use the following `cmake` line:
 
-      cmake -DCMAKE_TOOLCHAIN_FILE=Platform/Fujitsu-Sparc64
-            -DCMAKE_INSTALL_PREFIX:PATH=</install/path>
-            -Dwith-gsl=/path/to/gsl-2.1.install/\
-            -Dwith-optimize="-Kfast"
-            -Dwith-defines="-DUSE_PMA"
-            -Dwith-python=OFF
-            -Dwith-warning=OFF
+      cmake -DCMAKE_TOOLCHAIN_FILE=Platform/Fujitsu-Sparc64 \
+            -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+            -Dwith-gsl=/path/to/gsl-2.1.install/ \
+            -Dwith-optimize="-Kfast" \
+            -Dwith-defines="-DUSE_PMA" \
+            -Dwith-python=OFF \
+            -Dwith-warning=OFF \
             </path/to/NEST/src>
       make -j4
       make install

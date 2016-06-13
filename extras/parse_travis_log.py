@@ -43,7 +43,7 @@ def process_from_to(f, start, end):
             result = False
         if result == False and line.strip() == end:
             result = True
-    
+
     return result
 
 def process_installcheck(f):
@@ -177,7 +177,7 @@ def process_clang_format(f):
 
 def process_pep8(f):
     """
-    Process PEP8 output. 
+    Process PEP8 output.
     """
     res = None
     in_pep8 = False
@@ -316,10 +316,10 @@ if __name__ == '__main__':
     print("Cppcheck init:       " + ("Ok" if cppcheck_init else "Error"))
     print("clang-format init:   " + ("Ok" if clang_format_init else "Error"))
     print("Changed files:       " + str(changed_files))
-    format_ok = (clang_format_analysis is None 
+    format_ok = (clang_format_analysis is None
                 or all([i["Ok?"] for i in clang_format_analysis.itervalues()]))
     print("Formatting:          " + ("Ok" if format_ok else "Error"))
-    pep8_ok = (pep8_analysis is None 
+    pep8_ok = (pep8_analysis is None
                or all([len(v) == 0 for v in pep8_analysis.values()]))
     print("PEP8:                " + ("Ok" if pep8_ok else "Error"))
     print("Configure:           " + ("Ok" if configure_ok else "Error"))
@@ -349,12 +349,13 @@ if __name__ == '__main__':
 
     print("\n--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
 
-    if not (vera_init and
-            cppcheck_init and
-            configure_ok and
+    if not ((vera_init is None or vera_init) and
+            (cppcheck_init is None or cppcheck_init) and
+            (configure_ok is None or configure_ok) and
             sum_of_errors == 0 and
-            make_install_ok and
-            make_installcheck_failed == 0 and
+            (make_install_ok is None or make_install_ok) and
+            (make_installcheck_failed is None or
+                make_installcheck_failed == 0) and
             format_ok and
             pep8_ok):
         exit(1)

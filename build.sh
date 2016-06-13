@@ -49,16 +49,18 @@ mkdir "$NEST_VPATH/reports"
 
 NEST_RESULT=$(readlink -f $NEST_RESULT)
 
-# static code analysis
-echo "======= VERA++ init start ======="
-# initialize vera++
-mkdir -p vera_home
+if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
 
-# on ubuntu vera++ is installed to /usr/
-# copy all scripts/rules/ ... into ./vera_home
-cp -r /usr/lib/vera++/* ./vera_home
-# create the nest-profile for vera++
-cat > ./vera_home/profiles/nest <<EOF
+  # static code analysis
+  echo "======= VERA++ init start ======="
+  # initialize vera++
+  mkdir -p vera_home
+
+  # on ubuntu vera++ is installed to /usr/
+  # copy all scripts/rules/ ... into ./vera_home
+  cp -r /usr/lib/vera++/* ./vera_home
+  # create the nest-profile for vera++
+  cat > ./vera_home/profiles/nest <<EOF
 #!/usr/bin/tclsh
 # This profile includes all the rules for checking NEST
 set rules {
@@ -84,129 +86,134 @@ set rules {
   T019
 }
 EOF
-echo "======= VERA++ init end ======="
+  echo "======= VERA++ init end ======="
 
-if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
-  echo "======= CPPCHECK init start ======="
-  # initialize and build cppcheck 1.69
-  git clone https://github.com/danmar/cppcheck.git
-  # go into source directory of cppcheck
-  cd cppcheck
-  # set git to 1.69 version
-  git checkout tags/1.69
-  # build cppcheck => now there is an executable ./cppcheck
-  mkdir -p install
-  make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
-  echo "======= CPPCHECK init end ======="
+  if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
+    echo "======= CPPCHECK init start ======="
+    # initialize and build cppcheck 1.69
+    git clone https://github.com/danmar/cppcheck.git
+    # go into source directory of cppcheck
+    cd cppcheck
+    # set git to 1.69 version
+    git checkout tags/1.69
+    # build cppcheck => now there is an executable ./cppcheck
+    mkdir -p install
+    make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
+    echo "======= CPPCHECK init end ======="
 
-  cd ..
-  echo "======= CLANG-FORMAT init start ======="
-  wget http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-  tar xf clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-  
-  # copy, not move, since .cache may contain other files in subdirs already
-  cp -R clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04/* $HOME/.cache
-  echo "======= CLANG-FORMAT init end ======="
-  # remove directories, otherwise copyright-header check complains
-  rm -rf ./cppcheck
-  rm -rf ./clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04
-  
-fi
+    cd ..
+    echo "======= CLANG-FORMAT init start ======="
+    wget http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+    tar xf clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
 
-# Prepend cache to PATH so we find stuff we have installed ourselves first
-export PATH=$HOME/.cache/bin:$PATH
+    # copy, not move, since .cache may contain other files in subdirs already
+    cp -R clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04/* $HOME/.cache
+    echo "======= CLANG-FORMAT init end ======="
+    # remove directories, otherwise copyright-header check complains
+    rm -rf ./cppcheck
+    rm -rf ./clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04
 
-vera++ --version
-cppcheck --version 
-clang-format --version
-
-# Extracting changed files in PR / push
-echo "======= Extract changed files start ======="
-if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-  file_names=`curl "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`
-else
-  # extract filenames via git => has some problems with history rewrites
-  # see https://github.com/travis-ci/travis-ci/issues/2668
-  file_names=`(git diff --name-only $TRAVIS_COMMIT_RANGE || echo "") | tr '\n' ' '`
-fi
-format_error_files=""
-echo "file_names=$file_names"
-echo "======= Extract changed files end ======="
-
-for f in $file_names; do
-  if [ ! -f "$f" ]; then
-    echo "$f : Is not a file or does not exist anymore."
-    continue
   fi
-  # filter files
-  echo "======= Static analysis on file $f ======="
-  case $f in
-    *.h | *.c | *.cc | *.hpp | *.cpp )
-      f_base=$NEST_VPATH/reports/`basename $f`
-      # Vera++ checks the specified list of rules given in the profile
-      # nest which is placed in the <vera++ root>/lib/vera++/profile
 
-      echo "\n======= - vera++ for $f ======="
-      vera++ --root ./vera_home --profile nest $f > ${f_base}_vera.txt 2>&1
-      cat ${f_base}_vera.txt
-      echo "======= - vera++ end ======="
+  # Prepend cache to PATH so we find stuff we have installed ourselves first
+  export PATH=$HOME/.cache/bin:$PATH
 
-      echo "\n======= - cppcheck for $f ======="
-      cppcheck --enable=all --inconclusive --std=c++03 $f > ${f_base}_cppcheck.txt 2>&1
-      cat ${f_base}_cppcheck.txt
-      echo "======= - cppcheck end ======="
+  vera++ --version
+  cppcheck --version
+  clang-format --version
 
-      echo "\n======= - clang-format for $f ======="
-      # clang format creates tempory formatted file
-      clang-format $f > ${f_base}_formatted_$TRAVIS_COMMIT.txt
-      # compare the committed file and formatted file and
-      # writes the differences to a temp file
-      diff $f ${f_base}_formatted_$TRAVIS_COMMIT.txt | tee ${f_base}_clang_format.txt
-      cat ${f_base}_clang_format.txt
-      echo "======= - clang-format end ======="
+  # Extracting changed files in PR / push
+  echo "======= Extract changed files start ======="
+  if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+    file_names=`curl "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`
+  else
+    # extract filenames via git => has some problems with history rewrites
+    # see https://github.com/travis-ci/travis-ci/issues/2668
+    file_names=`(git diff --name-only $TRAVIS_COMMIT_RANGE || echo "") | tr '\n' ' '`
+  fi
+  format_error_files=""
+  echo "file_names=$file_names"
+  echo "======= Extract changed files end ======="
 
-      # remove temporary files
-      rm ${f_base}_formatted_$TRAVIS_COMMIT.txt
-
-      if [ -s ${f_base}_clang_format.txt ]; then
-        # file exists and has size greater than zero
-        format_error_files="$format_error_files $f"
-      fi
-
-      ;;
-    *.py )
-      echo "======= Check PEP8 on file $f ======="
-
-      # Ignore those PEP8 rules
-      PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
-
-      # In example dirs, also ignore incorrectly placed imports
-      PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
-      # regular expression of directory patterns on which to apply
-      # PEP8_IGNORES_EXAMPLES
-      case $f in
-        *examples* | *user_manual_scripts*)
-          IGNORES=$PEP8_IGNORES_EXAMPLES
-          ;;
-        *)
-          IGNORES=$PEP8_IGNORES
-          ;;
-      esac
-
-      if ! pep8_result=`pep8 --first --ignore=$PEP8_IGNORES $f` ; then
-        echo "$pep8_result"
-
-        format_error_files="$format_error_files $f"
-      fi
-      echo "======= Check PEP8 end ======="
-      ;;
-    *)
-      echo "$f : not a C/CPP/PY file. Do not do static analysis / formatting checking."
+  for f in $file_names; do
+    if [ ! -f "$f" ]; then
+      echo "$f : Is not a file or does not exist anymore."
       continue
-  esac
-  echo "======= Static analysis end ======="
-done
+    fi
+    # filter files
+    echo "======= Static analysis on file $f ======="
+    case $f in
+      *.h | *.c | *.cc | *.hpp | *.cpp )
+        f_base=$NEST_VPATH/reports/`basename $f`
+        # Vera++ checks the specified list of rules given in the profile
+        # nest which is placed in the <vera++ root>/lib/vera++/profile
 
+        echo "\n======= - vera++ for $f ======="
+        vera++ --root ./vera_home --profile nest $f > ${f_base}_vera.txt 2>&1
+        cat ${f_base}_vera.txt
+        echo "======= - vera++ end ======="
+
+        echo "\n======= - cppcheck for $f ======="
+        cppcheck --enable=all --inconclusive --std=c++03 $f > ${f_base}_cppcheck.txt 2>&1
+        cat ${f_base}_cppcheck.txt
+        echo "======= - cppcheck end ======="
+
+        echo "\n======= - clang-format for $f ======="
+        # clang format creates tempory formatted file
+        clang-format $f > ${f_base}_formatted_$TRAVIS_COMMIT.txt
+        # compare the committed file and formatted file and
+        # writes the differences to a temp file
+        diff $f ${f_base}_formatted_$TRAVIS_COMMIT.txt | tee ${f_base}_clang_format.txt
+        cat ${f_base}_clang_format.txt
+        echo "======= - clang-format end ======="
+
+        # remove temporary files
+        rm ${f_base}_formatted_$TRAVIS_COMMIT.txt
+
+        if [ -s ${f_base}_clang_format.txt ]; then
+          # file exists and has size greater than zero
+          format_error_files="$format_error_files $f"
+        fi
+
+        ;;
+      *.py )
+        echo "======= Check PEP8 on file $f ======="
+
+        # Ignore those PEP8 rules
+        PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
+
+        # In example dirs, also ignore incorrectly placed imports
+        PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
+        # regular expression of directory patterns on which to apply
+        # PEP8_IGNORES_EXAMPLES
+        case $f in
+          *examples* | *user_manual_scripts*)
+            IGNORES=$PEP8_IGNORES_EXAMPLES
+            ;;
+          *)
+            IGNORES=$PEP8_IGNORES
+            ;;
+        esac
+
+        if ! pep8_result=`pep8 --first --ignore=$PEP8_IGNORES $f` ; then
+          echo "$pep8_result"
+
+          format_error_files="$format_error_files $f"
+        fi
+        echo "======= Check PEP8 end ======="
+        ;;
+      *)
+        echo "$f : not a C/CPP/PY file. Do not do static analysis / formatting checking."
+        continue
+    esac
+    echo "======= Static analysis end ======="
+  done
+
+  if [ "x$format_error_files" != "x" ]; then
+    echo "There are files with a formatting error: $format_error_files ."
+    exit 42
+  fi
+fi
 
 cd "$NEST_VPATH"
 
@@ -232,11 +239,6 @@ echo "======= Install NEST end ======="
 echo "======= Test NEST start ======="
 make installcheck
 echo "======= Test NEST end ======="
-
-if [ "x$format_error_files" != "x" ]; then
-  echo "There are files with a formatting error: $format_error_files ."
-  exit 42
-fi
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo "WARNING: Not uploading results as this is a pull request" >&2

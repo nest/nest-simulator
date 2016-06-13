@@ -37,9 +37,9 @@ namespace nest
 struct SpikeData
 {
   index lcid : 27; //!< local connection index
+  unsigned int lag : 12; //!< lag in this min-delay interval
   thread tid : 10; //!< thread index
   synindex syn_index : 8; //!< synapse-type index
-  unsigned int lag : 8; //!< lag in this min-delay interval
   unsigned int marker : 2;
   const static unsigned int end_marker; // =1
   const static unsigned int complete_marker; // =2
@@ -60,9 +60,9 @@ struct SpikeData
 inline
 SpikeData::SpikeData()
   : lcid( 0 )
+  , lag( 0 )
   , tid( 0 )
   , syn_index( 0 )
-  , lag( 0 )
   , marker( 0 )
 {
 }
@@ -70,9 +70,9 @@ SpikeData::SpikeData()
 inline
 SpikeData::SpikeData( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag )
   : lcid( lcid )
+  , lag( lag )
   , tid( tid )
   , syn_index( syn_index )
-  , lag( lag )
   , marker( 0 ) // always initialize with default marker
 {
 }
@@ -81,9 +81,9 @@ inline void
 SpikeData::set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag, const double_t )
 {
   (*this).lcid = lcid;
+  (*this).lag = lag;
   (*this).tid = tid;
   (*this).syn_index = syn_index;
-  (*this).lag = lag;
   marker = 0; // always initialize with default marker
 }
 
@@ -150,9 +150,9 @@ OffGridSpikeData::set( const thread tid,
   const double_t offset)
 {
   (*this).lcid = lcid;
+  (*this).lag = lag;
   (*this).tid = tid;
   (*this).syn_index = syn_index;
-  (*this).lag = lag;
   marker = 0; // always initialize with default marker
   (*this).offset = offset;
 }

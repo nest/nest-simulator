@@ -844,10 +844,9 @@ EventDeliveryManager::deliver_events_5g_( const thread tid, const std::vector< S
       if ( spike_data.tid == tid )
       {
         se.set_stamp( prepared_timestamps[ spike_data.lag ] );
-        std::cout<<"in deliver "<<spike_data.get_offset()<<std::endl;
         se.set_offset( spike_data.get_offset() );
         kernel().connection_manager.send_5g( tid, spike_data.syn_index,
-                                             spike_data.lcid, se );
+          spike_data.lcid, se );
       }
 
       // is this the last spike from this rank?

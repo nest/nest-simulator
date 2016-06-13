@@ -35,6 +35,7 @@
 #include "normal_randomdev.h"
 
 // Includes from nestkernel:
+#include "conn_builder_impl.h"
 #include "conn_parameter.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
@@ -237,16 +238,6 @@ nest::ConnBuilder::~ConnBuilder()
         it != synapse_params_.end();
         ++it )
     delete it->second;
-}
-
-void
-nest::ConnBuilder::register_parameters_requiring_skipping_(
-  ConnParameter& param )
-{
-  if ( param.is_array() )
-  {
-    parameters_requiring_skipping_.push_back( &param );
-  }
 }
 
 void
@@ -575,29 +566,6 @@ nest::ConnBuilder::single_connect_( index sgid,
         weight );
     }
   }
-}
-
-void
-nest::ConnBuilder::skip_conn_parameter_( thread target_thread )
-{
-  for ( std::vector< ConnParameter* >::iterator it =
-          parameters_requiring_skipping_.begin();
-        it != parameters_requiring_skipping_.end();
-        ++it )
-    ( *it )->skip( target_thread );
-}
-
-void
-nest::ConnBuilder::single_disconnect_( index sgid,
-  Node& target,
-  thread target_thread )
-{
-  // index tgid = target.get_gid();
-  // This is the most simple case in which only the synapse_model_ has been
-  // defined. TODO: Add functionality to delete synapses with a given weight
-  // or a given delay
-  kernel().sp_manager.disconnect(
-    sgid, &target, target_thread, synapse_model_ );
 }
 
 void

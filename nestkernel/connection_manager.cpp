@@ -301,7 +301,7 @@ nest::ConnectionManager::connect( const GIDCollection& sources,
 
   if ( !connruledict_->known( rule_name ) )
     throw BadProperty(
-      String::compose( "Unknown connectivty rule: %s", rule_name ) );
+      String::compose( "Unknown connectivity rule: %1", rule_name ) );
   const long rule_id = ( *connruledict_ )[ rule_name ];
 
   ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create(

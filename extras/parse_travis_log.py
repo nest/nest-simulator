@@ -41,10 +41,11 @@ def process_from_to(f, start, end):
     for line in open(f, "r"):
         if result is None and line.strip() == start:
             result = False
-        if result == False and line.strip() == end:
+        if result is False and line.strip() == end:
             result = True
 
     return result
+
 
 def process_installcheck(f):
     """
@@ -80,12 +81,12 @@ def process_changed_files(f):
     """
     in_changed_files_section = False
     for line in open(f, "r"):
-        if (not in_changed_files_section
-            and line.strip() == "======= Extract changed files start ======="):
+        if (not in_changed_files_section and
+                line.strip() == "======= Extract changed files start ======="):
             in_changed_files_section = True
         if in_changed_files_section and line.startswith('file_names='):
             return filter(lambda x: x != '',
-                           line.strip().split('=')[1].split(' '))
+                          line.strip().split('=')[1].split(' '))
         if line.strip() == "======= Extract changed files end =======":
             return []
     return []
@@ -107,7 +108,7 @@ def process_vera(f):
             d = {}
             if res is None:
                 res = {}
-            res.update({filename : d})
+            res.update({filename: d})
         elif in_vera and line.startswith(filename):
             key = line.split(":")[-1].strip()
             if key not in d:
@@ -132,7 +133,7 @@ def process_cppcheck(f):
             d = {}
             if res is None:
                 res = {}
-            res.update({filename : d})
+            res.update({filename: d})
         elif in_cppcheck and line.startswith('[' + filename):
             key = line[line.find('('):].strip()
             # ignore 'is never used' items
@@ -168,12 +169,13 @@ def process_clang_format(f):
             d = {'Ok?': False}
             if res is None:
                 res = {}
-            res.update({filename : d})
+            res.update({filename: d})
             diff = ""
 
         elif in_clang_format:
             diff += line
     return res
+
 
 def process_pep8(f):
     """
@@ -191,10 +193,11 @@ def process_pep8(f):
             d = set()
             if res is None:
                 res = {}
-            res.update({filename : d})
+            res.update({filename: d})
         elif in_pep8:
             d.add(line.strip())
     return res
+
 
 def process_s3_upload(f):
     uploading_results = True
@@ -205,6 +208,7 @@ def process_s3_upload(f):
         if 'Skipping a deployment with the s3 provider because' in line:
             uploading_results = False
     return uploading_results
+
 
 def print_static_analysis(clang_format, cppcheck, vera):
     """
@@ -235,12 +239,14 @@ def count_warnings_errors(f):
     """
     Counts compiler warnings and errors. Stops when reading '+make install'.
     """
-    warn = {}
-    error = {}
+    warn = None
+    error = None
     in_make = False
     for line in open(f, "r"):
         if line.strip() == "======= Make NEST start =======":
             in_make = True
+            warn = {}
+            error = {}
 
         if in_make and ': warning:' in line:
             file_name = line.split(':')[0]
@@ -271,6 +277,38 @@ def print_pep8(d):
             print(INDENT + ' | ' + INDENT + v2)
 
 
+def print_test_result(r):
+    if r is None:
+        return "Skipped."
+    elif r is True:
+        return "Ok."
+    elif r is False:
+        return "Failed."
+    else:
+        return str(r)
+
+
+def print_make(actual_warnings, sum_of_errors, sum_of_warnings):
+    if actual_warnings is None:
+        return "Skipped."
+    elif sum_of_errors == 0:
+        res = "Ok"
+    else:
+        res = "Error(" + str(sum_of_errors) + ")"
+    res += " ( " + str(sum_of_warnings) + " warnings )."
+    return res
+
+
+def print_installcheck(make_check_all, make_check_failed):
+    if make_check_all is None and make_check_failed is None:
+        return "Skipped."
+    elif make_check_failed == 0:
+        res = "Ok ("
+    else:
+        res = "Error ("
+    res += str(make_check_failed) + " / " + str(make_check_all) + ")."
+    return res
+
 if __name__ == '__main__':
     from sys import argv, exit
 
@@ -282,9 +320,10 @@ if __name__ == '__main__':
     cppcheck_init = process_from_to(filename,
                                     "======= CPPCHECK init start =======",
                                     "======= CPPCHECK init end =======")
-    clang_format_init = process_from_to(filename,
-                                    "======= CLANG-FORMAT init start =======",
-                                    "======= CLANG-FORMAT init end =======")
+    clang_format_init = process_from_to(
+        filename,
+        "======= CLANG-FORMAT init start =======",
+        "======= CLANG-FORMAT init end =======")
 
     changed_files = process_changed_files(filename)
     pep8_analysis = process_pep8(filename)
@@ -293,49 +332,54 @@ if __name__ == '__main__':
     clang_format_analysis = process_clang_format(filename)
 
     configure_ok = process_from_to(filename,
-                                    "======= CLANG-FORMAT init start =======",
-                                    "======= CLANG-FORMAT init end =======")
+                                   "======= CLANG-FORMAT init start =======",
+                                   "======= CLANG-FORMAT init end =======")
     warnings, errors = count_warnings_errors(filename)
     make_install_ok = process_from_to(filename,
                                       "======= Install NEST start =======",
                                       "======= Install NEST end =======")
-    make_installcheck_all, make_installcheck_failed = process_installcheck(filename)
+    make_check_all, make_check_failed = process_installcheck(filename)
 
     uploading_results = process_s3_upload(filename)
 
     # post process values
-    actual_warnings = {k.split("nest-simulator/")[1]: v
-                       for k, v in warnings.iteritems()
-                       if k.startswith('/home/travis/build')}
-    sum_of_warnings = sum([v for k, v in actual_warnings.iteritems()])
+    if not (warnings is None and errors is None):
+        actual_warnings = {k.split("nest-simulator/")[1]: v
+                           for k, v in warnings.iteritems()
+                           if k.startswith('/home/travis/build')}
+        sum_of_warnings = sum([v for k, v in actual_warnings.iteritems()])
 
-    sum_of_errors = sum([v for k, v in errors.iteritems()])
+        sum_of_errors = sum([v for k, v in errors.iteritems()])
+    else:
+        actual_warnings, sum_of_errors, sum_of_warnings = None, None, None
+
+    format_ok = (None if clang_format_analysis is None
+                 else all([i["Ok?"]
+                          for i in clang_format_analysis.itervalues()]))
+    pep8_ok = (None if pep8_analysis is None
+               else all([len(v) == 0 for v in pep8_analysis.values()]))
 
     print("\n--------<<<<<<<< Summary of TravisCI >>>>>>>>--------")
-    print("Vera init:           " + ("Ok" if vera_init else "Error"))
-    print("Cppcheck init:       " + ("Ok" if cppcheck_init else "Error"))
-    print("clang-format init:   " + ("Ok" if clang_format_init else "Error"))
-    print("Changed files:       " + str(changed_files))
-    format_ok = (clang_format_analysis is None
-                or all([i["Ok?"] for i in clang_format_analysis.itervalues()]))
-    print("Formatting:          " + ("Ok" if format_ok else "Error"))
-    pep8_ok = (pep8_analysis is None
-               or all([len(v) == 0 for v in pep8_analysis.values()]))
-    print("PEP8:                " + ("Ok" if pep8_ok else "Error"))
-    print("Configure:           " + ("Ok" if configure_ok else "Error"))
-    print("Make:                " + ("Ok" if sum_of_errors == 0 else
-                                     "Error(" + str(sum_of_errors) + ")") +
-          " ( " + str(sum_of_warnings) + " warnings ).")
-    print("Make install:        " + ("Ok" if make_install_ok else "Error"))
-    print("Make installcheck:   " + ("Ok (" if make_installcheck_failed == 0
-                                     else "Error (") +
-          str(make_installcheck_failed) + " / " +
-          str(make_installcheck_all) + ")")
+    print("Vera init:           " + print_test_result(vera_init))
+    print("Cppcheck init:       " + print_test_result(cppcheck_init))
+    print("clang-format init:   " + print_test_result(clang_format_init))
+    print("Changed files:       " + print_test_result(str(changed_files)))
+    print("Formatting:          " + print_test_result(format_ok))
+    print("PEP8:                " + print_test_result(pep8_ok))
+    print("Configure:           " + print_test_result(configure_ok))
+    print("Make:                " + print_make(actual_warnings,
+                                               sum_of_errors,
+                                               sum_of_warnings))
+    print("Make install:        " + print_test_result(make_install_ok))
+    print("Make installcheck:   " + print_installcheck(make_check_all,
+                                                       make_check_failed))
     print("Logs uploaded to S3: " + ("Yes" if uploading_results else "No"))
 
     if clang_format_analysis and cppcheck_analysis and vera_analysis:
         print("\nStatic analysis:")
-        print_static_analysis(clang_format_analysis, cppcheck_analysis, vera_analysis)
+        print_static_analysis(clang_format_analysis,
+                              cppcheck_analysis,
+                              vera_analysis)
 
     if actual_warnings:
         print("\nWarnings:")
@@ -352,10 +396,10 @@ if __name__ == '__main__':
     if not ((vera_init is None or vera_init) and
             (cppcheck_init is None or cppcheck_init) and
             (configure_ok is None or configure_ok) and
-            sum_of_errors == 0 and
+            (sum_of_errors is None or sum_of_errors == 0) and
             (make_install_ok is None or make_install_ok) and
-            (make_installcheck_failed is None or
-                make_installcheck_failed == 0) and
-            format_ok and
-            pep8_ok):
+            (make_check_failed is None or
+                make_check_failed == 0) and
+            (format_ok is None or format_ok) and
+            (pep8_ok is None or pep8_ok)):
         exit(1)

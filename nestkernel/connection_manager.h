@@ -59,15 +59,6 @@ class DelayChecker;
 class GrowthCurve;
 struct SpikeData;
 
-// TODO@5g: remove tV etc.
-
-// each thread checks delays themselves
-typedef std::vector< DelayChecker > tVDelayChecker;
-
-typedef std::vector< size_t > tVCounter; // each synapse type has a counter
-// and each threads counts for all its synapses
-typedef std::vector< tVCounter > tVVCounter;
-
 class ConnectionManager : public ManagerInterface
 {
   friend class SimulationManager; // update_delay_extrema_
@@ -536,12 +527,12 @@ private:
 
   TargetTableDevices target_table_devices_;
 
-  tVDelayChecker delay_checkers_;
+  std::vector< DelayChecker > delay_checkers_;
 
   /** A structure to count the number of synapses of a specific
    * type. Arranged in a 2d structure: threads|synapsetypes.
    */
-  tVVCounter vv_num_connections_;
+  std::vector< std::vector< size_t > > vv_num_connections_;
 
   /**
    * BeginDocumentation

@@ -86,10 +86,10 @@ nest::ConnectionManager::initialize()
   target_table_.initialize();
   target_table_devices_.initialize();
 
-  tVDelayChecker tmp2( kernel().vp_manager.get_num_threads() );
+  std::vector< DelayChecker > tmp2( kernel().vp_manager.get_num_threads() );
   delay_checkers_.swap( tmp2 );
 
-  tVVCounter tmp3( kernel().vp_manager.get_num_threads(), tVCounter() );
+  std::vector< std::vector< size_t > > tmp3( kernel().vp_manager.get_num_threads(), std::vector< size_t >() );
   vv_num_connections_.swap( tmp3 );
 
   // The following line is executed by all processes, no need to communicate
@@ -236,7 +236,7 @@ nest::ConnectionManager::get_min_delay_time_() const
 {
   Time min_delay = Time::pos_inf();
 
-  tVDelayChecker::const_iterator it;
+  std::vector< DelayChecker >::const_iterator it;
   for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it )
     min_delay = std::min( min_delay, it->get_min_delay() );
 
@@ -248,7 +248,7 @@ nest::ConnectionManager::get_max_delay_time_() const
 {
   Time max_delay = Time::get_resolution();
 
-  tVDelayChecker::const_iterator it;
+  std::vector< DelayChecker >::const_iterator it;
   for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it )
     max_delay = std::max( max_delay, it->get_max_delay() );
 
@@ -260,7 +260,7 @@ nest::ConnectionManager::get_user_set_delay_extrema() const
 {
   bool user_set_delay_extrema = false;
 
-  tVDelayChecker::const_iterator it;
+  std::vector< DelayChecker >::const_iterator it;
   for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it )
     user_set_delay_extrema |= it->get_user_set_delay_extrema();
 
@@ -1757,7 +1757,7 @@ size_t
 nest::ConnectionManager::get_num_connections() const
 {
   size_t num_connections = 0;
-  tVDelayChecker::const_iterator i;
+  std::vector< DelayChecker >::const_iterator i;
   for ( index t = 0; t < vv_num_connections_.size(); ++t )
     for ( index s = 0; s < vv_num_connections_[ t ].size(); ++s )
       num_connections += vv_num_connections_[ t ][ s ];
@@ -1769,7 +1769,7 @@ size_t
 nest::ConnectionManager::get_num_connections( synindex syn_id ) const
 {
   size_t num_connections = 0;
-  tVDelayChecker::const_iterator i;
+  std::vector< DelayChecker >::const_iterator i;
   for ( index t = 0; t < vv_num_connections_.size(); ++t )
   {
     if ( vv_num_connections_[ t ].size() > syn_id )

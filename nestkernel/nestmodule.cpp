@@ -757,7 +757,8 @@ NestModule::Connect_i_i_lFunction::execute( SLIInterpreter* i ) const
         const thread target_thread = target_node->get_thread();
         if ( target_thread == tid )
         {
-          kernel().connection_manager.connect( source, target_node, target_thread, synmodel_id );
+          kernel().connection_manager.connect(
+            source, target_node, target_thread, synmodel_id );
         }
       }
       catch ( std::exception& err )
@@ -812,8 +813,11 @@ NestModule::Connect_i_i_d_d_lFunction::execute( SLIInterpreter* i ) const
       {
         Node* const target_node = kernel().node_manager.get_node( target, tid );
         const thread target_thread = target_node->get_thread();
-        kernel().connection_manager.connect(
-          source, target_node, target_thread, synmodel_id, delay, weight );
+        if ( target_thread == tid )
+        {
+          kernel().connection_manager.connect(
+            source, target_node, target_thread, synmodel_id, delay, weight );
+        }
       }
       catch ( std::exception& err )
       {
@@ -866,8 +870,11 @@ NestModule::Connect_i_i_D_lFunction::execute( SLIInterpreter* i ) const
       {
         Node* const target_node = kernel().node_manager.get_node( target );
         const thread target_thread = target_node->get_thread();
-        kernel().connection_manager.connect(
-          source, target_node, target_thread, synmodel_id, params );
+        if ( target_thread == tid )
+        {
+          kernel().connection_manager.connect(
+            source, target_node, target_thread, synmodel_id, params );
+        }
       }
       catch ( std::exception& err )
       {

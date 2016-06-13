@@ -371,11 +371,26 @@ public:
 
   void add_target( const thread tid, const TargetData& target_data);
 
+  /**
+   * Sorts connections in the presynaptic infrastructure by increasing
+   * source gid.
+   */
   void sort_connections();
 
+  /**
+   * Returns true if connection information needs to be
+   * communicated. False otherwise.
+   */
   bool have_connections_changed() const;
   void set_have_connections_changed( const bool changed );
 
+  /**
+   * Deletes TargetTable and resets processed flags of
+   * SourceTable. This function must be called if connections are
+   * created after connections have been communicated previously. It
+   * basically restores the connection infrastructure to a state where
+   * all information only exists on the postsynaptic side.
+   */
   void restructure_connection_tables();
 
 private:
@@ -394,7 +409,7 @@ private:
   const Time get_min_delay_time_() const;
 
   /**
-   * This method queries and finds the minimum delay
+   * This method queries and finds the maximum delay
    * of all local connections
    */
   const Time get_max_delay_time_() const;

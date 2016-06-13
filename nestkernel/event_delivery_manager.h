@@ -55,6 +55,10 @@ struct TargetData;
 const size_t mpi_buffer_size_target_data = 30000;
 const size_t mpi_buffer_size_spike_data = 30000;
 
+/**
+ * Struct to simplify keeping track of write position in MPI buffer
+ * while collocating spikes.
+ */
 struct SendBufferPosition
 {
   size_t num_spike_data_written;
@@ -94,6 +98,7 @@ public:
   virtual void set_status( const DictionaryDatum& );
   virtual void get_status( DictionaryDatum& );
 
+  // TODO@5g: check documentation of send functions
   /**
    * Standard routine for sending events. This method decides if
    * the event has to be delivered locally or globally. It exists
@@ -234,8 +239,16 @@ public:
    */
   void gather_events( bool );
 
+  /**
+   * Collocates spikes from register to MPI buffers, communicates via
+   * MPI and delivers events to targets.
+   */
   void gather_spike_data( const thread tid );
 
+  /**
+   * Collocates presynaptic connection information, communicates via
+   * MPI and creates presynaptic connection infrastructure.
+   */
   void gather_target_data();
   
   /**
@@ -262,6 +275,10 @@ private:
    */
   void collocate_buffers_( bool );
 
+  /**
+   * Moves spikes from on grid and off grid spike registers to correct
+   * locations in MPI buffers.
+   */
   template< typename TargetT, typename SpikeDataT >
   bool collocate_spike_data_buffers_( const thread tid,
     const AssignedRanks& assigned_ranks,
@@ -269,34 +286,75 @@ private:
     std::vector< std::vector< std::vector< std::vector< TargetT > > >* >& spike_register,
     std::vector< SpikeDataT >& send_buffer );
 
+  /**
+   * Marks end of valid regions in MPI buffers.
+   */
   template< typename SpikeDataT >
   void set_end_and_invalid_markers_( const thread tid, const AssignedRanks& assigned_ranks, const SendBufferPosition& send_buffer_position, std::vector< SpikeDataT >& send_buffer );
 
+  /**
+   * Sets marker in MPI buffer that signals end of communication
+   * across MPI ranks.
+   */
   template< typename SpikeDataT >
   void set_complete_marker_spike_data_( const thread tid, const AssignedRanks& assigned_ranks, std::vector< SpikeDataT >& send_buffer );
 
+  /**
+   * Reads spikes from MPI buffers and delivers them to ringbuffer of
+   * nodes.
+   */
   template< typename SpikeDataT >
   bool deliver_events_5g_( const thread tid, const std::vector< SpikeDataT >& recv_buffer );
 
+  /**
+   * Deletes all spikes from spike registers and resets spike
+   * counters.
+   */
   void reset_spike_register_5g_( const thread tid );
+
+  /**
+   * Resizes spike registers according minimal delay so it can
+   * accomodate all possible lags.
+   */
   void resize_spike_register_5g_( const thread tid );
 
-  // required static function in clean_spike_register_5g_ by
-  // std::remove_if
+  /**
+   * Returns true if spike has been moved to MPI buffer, such that it
+   * can be removed by clean_spike_register. Required static function
+   * by std::remove_if
+   */
   static bool is_marked_for_removal_( const Target& target );
 
-  void clean_spike_register_5g_( const thread tid );
+  /**
+   * Removes spikes that were successfully moved to MPI buffers from
+   * spike register, such that they are not considered in (potential)
+   * next communication round.
+   */
+  void clean_spike_register_( const thread tid );
 
+  /**
+   * Fills MPI buffer for communication of connection information from
+   * presynaptic to postsynaptic side. Builds TargetData objects from
+   * SourceTable and connections information.
+   */
   bool collocate_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, TargetData* send_buffer );
 
+  /**
+   * Sets marker in MPI buffer that signals end of communication
+   * across MPI ranks.
+   */
   void set_complete_marker_target_data_( const thread tid, const unsigned int num_target_data_per_rank, TargetData* send_buffer );
 
+  /**
+   * Reads TargetData objects from MPI buffers and creates Target
+   * objects on TargetTable (presynaptic part of connection
+   * infrastructure).
+   */
   bool distribute_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, TargetData const* const recv_buffer );
 
   /**
-   * Send event e to all targets of node source on thread t
-   *
-   * Delivers events from devices directly to targets.
+   * Sends event e to all targets of node source. Delivers events from
+   * devices directly to targets.
    */
   template< class EventT >
   void send_local_( Node& source, EventT& e, const long_t lag );
@@ -306,6 +364,10 @@ private:
   bool off_grid_spiking_; //!< indicates whether spikes are not constrained to
                           //!< the grid
 
+  /**
+   * Keeps track of number of on grid and off grid spikes during the
+   * last min delay interval. Used in collocation of spike buffers.
+   */
   std::vector< size_t> num_grid_spikes_;
   std::vector< size_t> num_off_grid_spikes_;
 
@@ -333,20 +395,25 @@ private:
 
   /**
    * Register for gids of neurons that spiked. This is a 4-dim
-   * structure.
-   * - First dim: write threads
-   * - Second dim: read threads
+   * structure. While spikes are written to the buffer they are
+   * immediately sorted by the thread the will move the to the MPI
+   * buffers.
+   * - First dim: write threads (from node to register)
+   * - Second dim: read threads (from register to MPI buffer)
    * - Third dim: lag
-   * - Fourth dim: Target
+   * - Fourth dim: Target (will be converted in SpikeData)
    */
   std::vector< std::vector< std::vector< std::vector< Target > > >* > spike_register_5g_;
 
   /**
-   * Register for off-grid spikes. This is 4-dim structure.
-   * - First dim: write threads
-   * - Second dim: read threads
+   * Register for gids of precise neurons that spiked. This is a 4-dim
+   * structure. While spikes are written to the buffer they are
+   * immediately sorted by the thread the will move the to the MPI
+   * buffers.
+   * - First dim: write threads (from node to register)
+   * - Second dim: read threads (from register to MPI buffer)
    * - Third dim: lag
-   * - Fourth dim: OffGridTarget
+   * - Fourth dim: OffGridTarget (will be converted in OffGridSpikeData)
    */
   std::vector< std::vector< std::vector< std::vector< OffGridTarget > > >* > off_grid_spike_register_5g_;
 
@@ -445,7 +512,7 @@ EventDeliveryManager::is_marked_for_removal_( const Target& target )
 }
 
 inline void
-EventDeliveryManager::clean_spike_register_5g_( const thread tid )
+EventDeliveryManager::clean_spike_register_( const thread tid )
 {
   for ( std::vector< std::vector< std::vector< Target > > >::iterator it = (*spike_register_5g_[ tid ]).begin(); it < (*spike_register_5g_[ tid ]).end(); ++it )
   {

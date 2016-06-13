@@ -651,7 +651,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     }
 
 #pragma omp barrier
-    clean_spike_register_5g_( tid );
+    clean_spike_register_( tid );
 
 #pragma omp atomic
     completed_count += me_completed_tid;

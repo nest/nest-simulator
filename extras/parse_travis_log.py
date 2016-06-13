@@ -200,13 +200,14 @@ def process_pep8(f):
 
 
 def process_s3_upload(f):
+    """
+    Check if log contains information about upload to s3.
+    """
     uploading_results = True
     for line in open(f, "r"):
-        if line.startswith('WARNING: Not uploading results as this is a'):
+        if line.startswith('WARNING: Not uploading results as this'):
             uploading_results = False
 
-        if 'Skipping a deployment with the s3 provider because' in line:
-            uploading_results = False
     return uploading_results
 
 
@@ -278,6 +279,9 @@ def print_pep8(d):
 
 
 def print_test_result(r):
+    """
+    Print result for multiple tests.
+    """
     if r is None:
         return "Skipped."
     elif r is True:
@@ -289,6 +293,9 @@ def print_test_result(r):
 
 
 def print_make(actual_warnings, sum_of_errors, sum_of_warnings):
+    """
+    Print parse results from building NEST.
+    """
     if actual_warnings is None:
         return "Skipped."
     elif sum_of_errors == 0:
@@ -300,6 +307,9 @@ def print_make(actual_warnings, sum_of_errors, sum_of_warnings):
 
 
 def print_installcheck(make_check_all, make_check_failed):
+    """
+    Print parse results from `installcheck`ing NEST.
+    """
     if make_check_all is None and make_check_failed is None:
         return "Skipped."
     elif make_check_failed == 0:

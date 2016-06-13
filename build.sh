@@ -242,5 +242,8 @@ echo "======= Test NEST end ======="
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
   echo "WARNING: Not uploading results as this is a pull request" >&2
-  exit 0
+fi
+
+if [ "$TRAVIS_REPO_SLUG" != "nest/nest-simulator" ] ; then
+  echo "WARNING: Not uploading results as this is from a forked repository" >&2
 fi

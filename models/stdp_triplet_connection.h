@@ -80,6 +80,7 @@
   SeeAlso: stdp_triplet_synapse_hpc, synapsedict, stdp_synapse, static_synapse
 */
 
+// C-header for math.h since copysign() is in C99 but not C++98
 #include <math.h>
 #include "connection.h"
 

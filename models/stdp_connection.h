@@ -73,7 +73,7 @@
 */
 
 // C++ includes:
-#include <math.h>
+#include <cmath>
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"

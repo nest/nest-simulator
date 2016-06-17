@@ -129,9 +129,9 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
       "(time-constant of fast trace)." );
   }
 
-  if ( not( w0_ > 0 ) )
+  if ( not( w0_ >= 0 ) )
   {
-    throw BadProperty( "w0 (creation weight) must be greater than zero." );
+    throw BadProperty( "w0 (creation weight) must be positive." );
   }
 
   if ( not( ( wmax_<0 ) or ( ( wmax_>0 ) and (w0_<=wmax_) ) ) )

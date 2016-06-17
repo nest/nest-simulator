@@ -620,8 +620,8 @@ private:
               // on the time grid spanned by the simulation resolution.
               while ( d_stepeval_ < delta_i )
               {
-                get_exps_( cp, d_stepeval_ );            //, exps_ );
-                double_t w_stepeval_ = compose_w_sol_(); // amps_, exps_ );
+                get_exps_( cp, d_stepeval_ );
+                double_t w_stepeval_ = compose_w_sol_(); 
                 if ( w_stepeval_ <= 0. )
                 {
                   // we stop searching because we have found the first zero

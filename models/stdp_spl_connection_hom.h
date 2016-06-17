@@ -56,6 +56,8 @@ Common parameters:
  alpha        double - Weight decay rate (in 1/s)
  lambda       double - Contact creation rate (in 1/s)
  w0           double - Weight of newly created contacts
+ wmax         double - Upper bound for single contact weights. wmax<0 disables
+                       the upper bound.
  p_fail       double - Probability of synaptic transmission failure (at each
                        contact)
  t_grace_period double - Time interval after creation of contacts for the
@@ -141,6 +143,7 @@ public:
   double_t alpha_;
   double_t lambda_;
   double_t w0_;
+  double_t wmax_;
   double_t p_fail_;
   double_t t_cache_;
   double_t t_grace_period_;
@@ -270,13 +273,27 @@ public:
     t.register_stdp_connection( t_lastspike - get_delay() );
   }
 
+  /**
+   * set_weight is required by nest infrastructure, but not recommended for 
+   * this synapse model. It will set the total weight of the synapse to the
+   * given w by assigning all contacts to w/n_conns_. All of these contacts
+   * are thereby set to be in the active state. All synaptic traces are
+   * reset to 0.
+   */
   void
   set_weight( double_t w )
   {
     for ( long_t i = 0; i < n_conns_; i++ )
     {
-      w_jk_[ i ] = w;
+      w_jk_[ i ] = w / n_conns_;
+      w_create_steps_[ i ] = 0;
+      r_jk_[ i ] = 0;
+      c_jk_[ i ] = 0;
+      r_post_jk_[ i ] = 0;
+      R_post_jk_[ i ] = 0;
     }
+    w_create_steps_min_ = 0;
+    steps_slept_ = 0;
   }
 
 private:
@@ -559,7 +576,17 @@ private:
               get_exps_( cp, delta_i ); //, exps_ );
 
               // compose the solution
-              w_jk_[ i ] = compose_w_sol_(); // amps_, exps_ );
+              double w_jk_tmp_ = compose_w_sol_();
+              
+              // check if wmax applies, otherwise assign w_jk_ to new value
+              if ( (cp.wmax_ > 0.) and ( w_jk_tmp_ > cp.wmax_ ) )
+              {
+                w_jk_[ i ] = cp.wmax_;
+              }
+              else
+              {
+                w_jk_[ i ] = w_jk_tmp_;
+              }
             }
             // delete contacts with negative or zero weights
             if ( w_jk_[ i ] <= 0. )

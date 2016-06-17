@@ -1,6 +1,4 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 #
 # test_fixed_multi_cmpt_neu.py
 #

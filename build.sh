@@ -1,7 +1,19 @@
 #!/bin/sh
 
+# Enables checking of all commands. If a command exits with an error and the
+# caller does not check such error, the script aborts immediately.
 set -e
-#set -x
+
+# uncomment this command, if you debug the build; it outputs subsequent command
+# before they are executed
+# set -x
+
+# This script is used during the continuous integration tests with TravisCI. After
+# its execution the Python script `extras/parse_travis_log.py` parses the output
+# and produces a summary of the static analysis, and of building and testing NEST.
+# Changes to the output might break the parsing. Please fix the script
+# `extras/parse_travis_log.py` in this case as well.
+
 
 mkdir -p $HOME/.matplotlib
 cat > $HOME/.matplotlib/matplotlibrc <<EOF
@@ -213,7 +225,7 @@ EOF
     echo "There are files with a formatting error: $format_error_files ."
     exit 42
   fi
-fi
+fi # if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
 
 cd "$NEST_VPATH"
 

@@ -56,8 +56,8 @@
   SeeAlso: synapsedict
 */
 
-#include <cmath>
-
+// C-header for math.h since copysign() is in C99 but not C++98
+#include <math.h>
 #include "connection.h"
 
 //#include "network.h"
@@ -164,15 +164,15 @@ private:
   double_t
   facilitate_( double_t w, double_t kplus )
   {
-    double_t new_w = w + ( eta_ * kplus );
-    return ( new_w / Wmax_ ) < 1.0 ? new_w : Wmax_;
+    double_t new_w = std::abs( w ) + ( eta_ * kplus );
+    return copysign( new_w < std::abs( Wmax_ ) ? new_w : Wmax_, Wmax_ );
   }
 
   double_t
   depress_( double_t w )
   {
-    double_t new_w = w - ( alpha_ * eta_ );
-    return ( new_w / Wmax_ ) > 0.0 ? new_w : 0.0;
+    double_t new_w = std::abs( w ) - ( alpha_ * eta_ );
+    return copysign( new_w > 0.0 ? new_w : 0.0, Wmax_ );
   }
 
   // data members of each connection
@@ -302,6 +302,13 @@ VogelsSprekelerConnection< targetidentifierT >::set_status(
   updateValue< double_t >( d, "eta", eta_ );
   updateValue< double_t >( d, "Wmax", Wmax_ );
   updateValue< double_t >( d, "Kplus", Kplus_ );
+
+  // check if weight_ and Wmax_ has the same sign
+  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )
+         == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
+  {
+    throw BadProperty( "Weight and Wmax must have same sign." );
+  }
 
   if ( not( Kplus_ >= 0 ) )
   {

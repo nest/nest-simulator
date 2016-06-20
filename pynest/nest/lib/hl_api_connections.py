@@ -82,10 +82,11 @@ def FindConnections(source, target=None, synapse_model=None,
 
     if synapse_model is not None and synapse_type is not None:
         raise kernel.NESTError(
-            "'synapse_type' is alias for 'synapse_model' and cannot be used together with 'synapse_model'.")
+            "'synapse_type' is alias for 'synapse_model' and cannot "
+            "be used together with 'synapse_model'.")
 
     if synapse_type is not None:
-      synapse_model = synapse_type
+        synapse_model = synapse_type
 
     if target is None and synapse_model is None:
         params = [{"source": s} for s in source]

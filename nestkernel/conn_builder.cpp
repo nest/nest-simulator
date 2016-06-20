@@ -67,8 +67,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   // read out rule-related parameters -------------------------
   //  - /rule has been taken care of above
   //  - rule-specific params are handled by subclass c'tor
-  updateValue< bool >(
-conn_spec, names::autapses, autapses_ );
+  updateValue< bool >( conn_spec, names::autapses, autapses_ );
   updateValue< bool >( conn_spec, names::multapses, multapses_ );
   updateValue< bool >( conn_spec, names::symmetric, symmetric_ );
 

@@ -84,7 +84,7 @@ def process_changed_files(f):
         if (not in_changed_files_section and
                 line.strip() == "======= Extract changed files start ======="):
             in_changed_files_section = True
-        if in_changed_files_section and line.startswith('file_names='):
+        if in_changed_files_section and line.strip().startswith('file_names='):
             return filter(lambda x: x != '',
                           line.strip().split('=')[1].split(' '))
         if line.strip() == "======= Extract changed files end =======":
@@ -101,7 +101,7 @@ def process_vera(f):
     for line in open(f, "r"):
         if line.strip() == "======= - vera++ end =======":
             in_vera = False
-        elif line.startswith("======= - vera++"):
+        elif line.strip().startswith("======= - vera++ for"):
             in_vera = True
             # ======= - vera++ for path/to/python/file.py =======
             filename = line.split(' ')[-2].strip()
@@ -109,7 +109,7 @@ def process_vera(f):
             if res is None:
                 res = {}
             res.update({filename: d})
-        elif in_vera and line.startswith(filename):
+        elif in_vera and line.strip().startswith(filename):
             key = line.split(":")[-1].strip()
             if key not in d:
                 d[key] = 0
@@ -126,7 +126,7 @@ def process_cppcheck(f):
     for line in open(f, "r"):
         if line.strip() == "======= - cppcheck end =======":
             in_cppcheck = False
-        elif line.startswith("======= - cppcheck"):
+        elif line.strip().startswith("======= - cppcheck for"):
             in_cppcheck = True
             # ======= - cppcheck path/to/cpp/file.cpp =======
             filename = line.split(' ')[-2].strip()
@@ -134,7 +134,7 @@ def process_cppcheck(f):
             if res is None:
                 res = {}
             res.update({filename: d})
-        elif in_cppcheck and line.startswith('[' + filename):
+        elif in_cppcheck and line.strip().startswith('[' + filename):
             key = line[line.find('('):].strip()
             # ignore 'is never used' items
             if 'is never used' in key:
@@ -162,7 +162,7 @@ def process_clang_format(f):
             else:
                 d['diff'] = ('\n##############################\n' + diff +
                              '##############################')
-        elif line.startswith("======= - clang-format"):
+        elif line.strip().startswith("======= - clang-format for"):
             in_clang_format = True
             # ======= - clang-format for path/to/cpp/file.cpp =======
             filename = line.split(' ')[-2].strip()
@@ -186,7 +186,7 @@ def process_pep8(f):
     for line in open(f, "r"):
         if line.strip() == "======= Check PEP8 end =======":
             in_pep8 = False
-        elif line.startswith("======= Check PEP8"):
+        elif line.strip().startswith("======= Check PEP8 for"):
             in_pep8 = True
             # ======= Check PEP8 on file path/to/python/file.py =======
             filename = line.split(' ')[-2].strip()
@@ -205,7 +205,7 @@ def process_s3_upload(f):
     """
     uploading_results = True
     for line in open(f, "r"):
-        if line.startswith('WARNING: Not uploading results as this'):
+        if line.strip().startswith('WARNING: Not uploading results as this'):
             uploading_results = False
 
     return uploading_results
@@ -356,7 +356,7 @@ if __name__ == '__main__':
     if not (warnings is None and errors is None):
         actual_warnings = {k.split("nest-simulator/")[1]: v
                            for k, v in warnings.iteritems()
-                           if k.startswith('/home/travis/build')}
+                           if k.strip().startswith('/home/travis/build')}
         sum_of_warnings = sum([v for k, v in actual_warnings.iteritems()])
 
         sum_of_errors = sum([v for k, v in errors.iteritems()])

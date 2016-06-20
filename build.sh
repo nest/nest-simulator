@@ -189,7 +189,7 @@ EOF
 
         ;;
       *.py )
-        echo "======= Check PEP8 on file $f ======="
+        echo "======= Check PEP8 for $f ======="
 
         # Ignore those PEP8 rules
         PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
@@ -223,7 +223,6 @@ EOF
 
   if [ "x$format_error_files" != "x" ]; then
     echo "There are files with a formatting error: $format_error_files ."
-    exit 42
   fi
 fi # if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
 

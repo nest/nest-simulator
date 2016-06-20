@@ -112,10 +112,10 @@
 #include "stdp_triplet_connection.h"
 #include "stdp_dopa_connection.h"
 #include "stdp_pl_connection_hom.h"
-#include "vogels_sprekeler_connection.h"
 #include "tsodyks2_connection.h"
 #include "tsodyks_connection.h"
 #include "tsodyks_connection_hom.h"
+#include "vogels_sprekeler_connection.h"
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"

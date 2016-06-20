@@ -60,13 +60,6 @@
 #include <math.h>
 #include "connection.h"
 
-//#include "network.h"
-//#include "dictdatum.h"
-//#include "connector_model.h"
-//#include "common_synapse_properties.h"
-//#include "event.h"
-
-
 namespace nest
 {
 

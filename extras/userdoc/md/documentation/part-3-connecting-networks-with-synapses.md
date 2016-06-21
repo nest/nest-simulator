@@ -1,8 +1,6 @@
-Part 3: Connecting networks with synapses
-=========================================
+# Part 3: Connecting networks with synapses
 
-Introduction
-------------
+## Introduction
 
 In this handout we look at using synapse models to connect neurons. After you
 have worked through this material, you will know how to:
@@ -14,11 +12,10 @@ have worked through this material, you will know how to:
 -   set synapse values during and after connection
 
 For more information on the usage of NEST, please visit:
-[Documentation](../documentation/index.html). To carry out the code snippets in
+[Documentation](documentation.md). To carry out the code snippets in
 this handout, you need to import `nest` and `numpy`.
 
-Parameterising synapse models
------------------------------
+## Parameterising synapse models
 
 NEST provides a variety of different synapse models. You can see the available
 models by using the command `Models(synapses)`, which picks only the synapse
@@ -55,8 +52,7 @@ post-synaptic neuron. It can be set as follows:
 or by using any of the other methods of parameterising neurons demonstrated in
 the first two parts of this introduction.
 
-Connecting with synapse models
-------------------------------
+## Connecting with synapse models
 
 The synapse model as well as parameters associated with the synapse type can be
 set in the synapse specification dictionary accepted by the connection routine.
@@ -68,8 +64,7 @@ set in the synapse specification dictionary accepted by the connection routine.
 If no synapse model is given, connections are made using the model
 `static_synapse`.
 
-Querying the synapses
----------------------
+## Querying the synapses
 
 The function `GetConnections(source=None, target=None, synapse_model=None)`
 returns a list of connection identifiers that match the given specifications.
@@ -128,8 +123,7 @@ The variable `conn_vals` is now a list of lists, containing the `target` and
 To get used to these methods of querying the synapses, it is recommended to try
 them out on a small network where all connections are known.
 
-Distributing synapse parameters
--------------------------------
+## Distributing synapse parameters
 
 The synapse parameters are specified in the synapse dictionary which is passed
 to the Connect-function. If the parameter is set to a scalar all connections
@@ -146,7 +140,7 @@ set (for example `mu`). Here we show an example where the parameters `alpha` and
                 "delay": 1.0 }
     nest.Connect(epop1, neuron, "all_to_all", syn_dict)
 
-Available distributions and associated parameters are described in [Connection_Management](../connection_management/index.html)),
+Available distributions and associated parameters are described in [Connection Management](connection-management.md),
 the most common ones are:
 
 | Distributions | Keys             |
@@ -160,8 +154,7 @@ the most common ones are:
 | `gamma`       | `order`, `scale` |
 | `poisson`     | `lambda`         |
 
-Coding style
-------------
+## Coding style
 
 As your simulations become more complex, it is very helpful to develop a clean
 coding style. This reduces the number of errors in the first place, but also
@@ -294,8 +287,7 @@ the neuronal population itself. In the case of loops, check first whether you
 can avoid it entirely by passing the entire population into the function - you
 usually can.
 
-Command overview\[sec:Command-overview\]
---------------------------------------
+## Command overview
 
 These are the new functions we introduced for the examples in this handout.
 

@@ -184,7 +184,7 @@ the help pages. The browser is set as an option of `helpdesk`. Please see the
 file `~/.nestrc` for an example setting `firefox` as browser. Please note that
 the command `helpdesk` does not work if you have compiled NEST with MPI support,
 but you have to enter the address of the helpdesk
-(`file://$PREFIX/share/doc/nest.md`) manually into the browser.
+(`file://$PREFIX/share/doc/nest/index.html`) manually into the browser.
 Please replace `$PREFIX` with the prefix you chose during the configuration of
 NEST. If you did not explicitly specify one, it is most likely set to `/usr` or
 `/usr/local` depending on what system you are.

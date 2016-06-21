@@ -287,7 +287,7 @@ the neuronal population itself. In the case of loops, check first whether you
 can avoid it entirely by passing the entire population into the function - you
 usually can.
 
-## Command overview\[sec:Command-overview\]
+## Command overview
 
 These are the new functions we introduced for the examples in this handout.
 

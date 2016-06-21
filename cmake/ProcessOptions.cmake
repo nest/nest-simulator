@@ -89,6 +89,18 @@ if ( with-defines )
   endforeach ()
 endif ()
 
+# add colored output from gcc
+if ( CMAKE_C_COMPILER_ID STREQUAL "GNU" )
+  if ( NOT CMAKE_C_COMPILER_VERSION VERSION_LESS "4.9" )
+    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fdiagnostics-color=auto" )
+  endif ()
+endif ()
+if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
+  if ( NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9" )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fdiagnostics-color=auto" )
+  endif ()
+endif ()
+
 # is set in the Fujitsu-Sparc64.cmake file
 if ( k-computer )
   set( IS_K ON )

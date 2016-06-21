@@ -38,7 +38,6 @@ import unittest
 HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 
 
-@unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class mc_neuron_ode:
 
     def fun_u(self, t, y):
@@ -185,6 +184,7 @@ class mc_neuron_ode:
         self.u = self.r.y
 
 
+@unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class KineticsMultiCmptNeuTestCase(unittest.TestCase):
 
     def test_KineticsMultiCmptNeu(self):

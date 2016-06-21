@@ -111,8 +111,14 @@ typedef unsigned long ulong_t; ///< Unsigned long_t.
 const long_t long_t_max = LONG_MAX;
 const long_t long_t_min = LONG_MIN;
 
-#define double_t_max ( DBL_MAX ) // because C++ language designers are apes
-#define double_t_min ( DBL_MIN ) // (only integral consts are compile time)
+/**
+ * Largest and smallest available double value.
+ *
+ * @note Compile-time constant must have integral type,
+ * thus we must define double limits as macros.
+ */
+#define double_t_max ( DBL_MAX )
+#define double_t_min ( DBL_MIN )
 
 /**
  *  Unsigned long type for enumerations.

@@ -181,7 +181,7 @@ M_ERROR setverbosity
   true exch { and } Fold
 
 } 
-%assert_or_die
+assert_or_die
 
 % Test for multicompartmental neurons ------------
 {

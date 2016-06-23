@@ -392,7 +392,7 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
     }
 
     // Update the CG index of the left border of the next range to
-    // be one after the current range.
+    // be one behind the current range.
     cg_idx_left += num_elements + 1;
   }
 }
@@ -488,7 +488,7 @@ cg_get_ranges( RangeSet& ranges, std::vector< long >& gids )
     if ( right == gids.size() - 1 ) // We're at the end of gids and stop
       break;
     else
-      left = right + 1; // The new left border is one after the old right
+      left = right + 1; // The new left border is one behind the old right
   }
 }
 

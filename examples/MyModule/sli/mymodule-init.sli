@@ -26,8 +26,3 @@
  */
 
 M_DEBUG (mymodule.sli) (Initializing SLI support for MyModule.) message
-
-/StepPatternConnect [ /arraytype /integertype /arraytype /integertype /literaltype ]
-{
-  StepPatternConnect_Vi_i_Vi_i_l
-} def

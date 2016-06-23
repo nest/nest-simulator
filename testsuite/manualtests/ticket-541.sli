@@ -90,21 +90,18 @@ M_ERROR setverbosity
   ] Range def
 
   connect_neurons {
-    /cnt 50 def
-    neurons {
-      cnt
-      neurons
-      cnt array 14500. -0.0003 mul add
-      cnt array 2. add
-      RandomDivergentConnect
-    } forall
+    neurons
+    neurons
+    << /rule /fixed_outdegree /outdegree 50 >>
+    << /weight 14500. -0.0003 mul /delay 2. >>
+    Connect
   } if
 
-  background
+  [background]
   neurons
-  [ 5000. 0.00346 mul ]
-  [ 1. ] 
-  DivergentConnect
+  << /rule /all_to_all >>
+  << /weight 5000. 0.00346 mul /delay 1. >>
+  Connect
 
   /meter /spike_detector Create def
   meter <<
@@ -114,7 +111,7 @@ M_ERROR setverbosity
     /to_memory  true
   >> SetStatus
 
-  neurons meter ConvergentConnect
+  neurons [meter] Connect
 
   /run_simulation {
     /label Set

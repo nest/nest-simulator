@@ -84,7 +84,7 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson
 
   /gen /sinusoidal_poisson_generator Create def
 
-  gen parrots DivergentConnect
+  [gen] parrots Connect
   [parrots sdets] { Connect } ScanThread
 
   10. Simulate

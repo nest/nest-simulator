@@ -76,10 +76,12 @@
 
   FirstVersion: Nov 2007
   Author: Abigail Morrison, Eilif Muller, Alexander Seeholzer, Teo Stocco
+  Adapted by: Philipp Weidel
   SeeAlso: stdp_triplet_synapse_hpc, synapsedict, stdp_synapse, static_synapse
 */
 
-#include <cmath>
+// C-header for math.h since copysign() is in C99 but not C++98
+#include <math.h>
 #include "connection.h"
 
 namespace nest
@@ -195,16 +197,16 @@ private:
   inline double_t
   facilitate_( double_t w, double_t kplus, double_t ky )
   {
-    double_t new_w = w + kplus * ( Aplus_ + Aplus_triplet_ * ky );
-    return new_w < Wmax_ ? new_w : Wmax_;
+    double_t new_w = std::abs( w ) + kplus * ( Aplus_ + Aplus_triplet_ * ky );
+    return copysign( new_w < std::abs( Wmax_ ) ? new_w : Wmax_, Wmax_ );
   }
 
   inline double_t
   depress_( double_t w, double_t kminus, double_t Kplus_triplet_ )
   {
     double_t new_w =
-      w - kminus * ( Aminus_ + Aminus_triplet_ * Kplus_triplet_ );
-    return new_w > 0.0 ? new_w : 0.0;
+      std::abs( w ) - kminus * ( Aminus_ + Aminus_triplet_ * Kplus_triplet_ );
+    return copysign( new_w > 0.0 ? new_w : 0.0, Wmax_ );
   }
 
   // data members of each connection
@@ -354,6 +356,13 @@ STDPTripletConnection< targetidentifierT >::set_status(
   updateValue< double_t >( d, "Kplus", Kplus_ );
   updateValue< double_t >( d, "Kplus_triplet", Kplus_triplet_ );
   updateValue< double_t >( d, "Wmax", Wmax_ );
+
+  // check if weight_ and Wmax_ has the same sign
+  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )
+         == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
+  {
+    throw BadProperty( "Weight and Wmax must have same sign." );
+  }
 
   if ( not( Kplus_ >= 0 ) )
   {

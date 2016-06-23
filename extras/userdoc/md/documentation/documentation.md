@@ -1,30 +1,25 @@
-Documentation
-=============
+# Documentation
 
-[Installing NEST](installation.md "Installation")
------------------------------------------------------------------------------
+## [Installing NEST](installation.md)
 
-[Introduction to PyNEST](introduction-to-pynest.md "Introduction to PyNEST")
---------------------------------------------------------------------------------------------------------
+## [Introduction to PyNEST](introduction-to-pynest.md)
 
-NEST User Manual
----------------------------------------------------------------------------
+## NEST User Manual
 
--   [Frequently Asked Questions](frequently_asked_questions.md "Frequently Asked Questions")
--   [Analog recording with multimeter](analog_recording_with_multimeter.md "Analog recording with multimeter")
--   [Connection Management](connection_management.md "Connection Management")
--   [Topological Connections](wp-content/uploads/2015/04/Topology_UserManual.pdf "Topological Connections")
--   [Random numbers in NEST](random_numbers.md "Random numbers in NEST")
--   [Parallel Computing](parallel_computing.md "Parallel Computing")
+-   [Frequently Asked Questions](frequently-asked-questions.md)
+-   [Analog recording with multimeter](analog-recording-with-multimeter.md)
+-   [Connection Management](connection-management.md)
+-   [Topological Connections](http://www.nest-simulator.org/wp-content/uploads/2015/04/Topology_UserManual.pdf)
+-   [Random numbers in NEST](random-numbers.md)
+-   [Parallel Computing](parallel-computing.md)
 -   [Scheduling and simulation flow](scheduling-and-simulation-flow.md)
 -   [Simulations with precise spike times](simulations-with-precise-spike-times.md)
--   [Using NEST with MUSIC](using_nest_with_music.md "Using NEST with MUSIC")
--   [Using NEST with the SLI interpreter](an_introduction_to_sli.md "An Introduction to SLI")
+-   [Using NEST with MUSIC](using-nest-with-music.md)
+-   [Using NEST with the SLI interpreter](an-introduction-to-sli.md)
 -   [NEST/SLI Quick Reference](quickref.md)
 -   [NEST Command Index](helpindex.md)
 
-Example Networks
-----------------
+## Example Networks
 
 -   [brunel_alpha_nest](py_samples/brunel_alpha_nest.md)
 -   [precise_spiking](py_samples/precise_spiking.md)
@@ -62,15 +57,13 @@ Example Networks
 -   [if_curve](py_samples/if_curve.md)
 -   [sinusoidal_gamma_generator](py_samples/sinusoidal_gamma_generator.md)
 
-Further Reading
----------------
+## Further Reading
 
 -   [NEST by Example](wp-content/uploads/2015/02/NEST_by_Example.pdf)
--   Read and improve the [NEST article on  Scholarpedia.org](cholarpedia.org/article/NEST_\(NEural_Simulation_Tool))
--   Read and improve the [NEST article on Wikipedia](http://en.wikipedia.org/wiki/NEST_\(software))
+-   Read and improve the [NEST article on  Scholarpedia.org](http://scholarpedia.org/article/NEST_\(NEural_Simulation_Tool\))
+-   Read and improve the [NEST article on Wikipedia](http://en.wikipedia.org/wiki/NEST_\(software\))
 
-NEST Developer Manual
----------------------
+## NEST Developer Manual
 
 For information about modifying and extending NEST and contributing your code
 to the official version, please head over to the [NEST Developer Space](http://nest.github.io/nest-simulator.html).

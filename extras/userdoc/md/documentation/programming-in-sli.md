@@ -1,8 +1,6 @@
-Programming in SLI
-==================
+# Programming in SLI
 
-Overview
---------
+## Overview
 
 A procedure is a sequence of SLI objects whose execution is delayed until the
 procedure is executed. Because procedures are objects, they can be:
@@ -19,8 +17,7 @@ A program is a sequence of SLI objects and procedures which are
 This chapter covers the basic programming concepts of the SLI
  language features.
 
-Entering and executing programs
--------------------------------
+## Entering and executing programs
 
 A program is a sequence of SLI objects and procedures which are defined in a
 file. Program files are ordinary ASCII text files, which can be created and
@@ -57,8 +54,7 @@ Write the program `hello_world.sli` according to the
 Note that the procedure is not immediately executed by `run`. Rather, all
 objects which are contained in the file are read and executed.
 
-Using local variables
----------------------
+## Using local variables
 
 Usually, all names you define are globally accessible. But, if you use a lot of
 procedures that define their own variables, there is an increasing danger that
@@ -81,8 +77,7 @@ Compute the alpha-function of *t* according to *a(t)=t\*Exp(-t/tau)*
       end             % close local name space
     } def
 
-Conditionals
-------------
+## Conditionals
 
 Conditional expressions allow a program to ask questions and make decisions:
 
@@ -124,8 +119,7 @@ This example also shows how procedures can be called *recursively*. It is,
 however, important to supply a *termination condition* for the recursion like in
 this example.
 
-Comparison functions
---------------------
+## Comparison functions
 
 Comparison functions are used to compare objects. The result of comparison
 functions are of type `/booltype` and can be used for logical functions and
@@ -148,8 +142,7 @@ Test whether the object at level 1 is less than or equal to the object at level
 Test whether the object at level 1 is greater than or equal to the object at
 level 0.
 
-Logical functions
------------------
+## Logical functions
 
 Command
 Description
@@ -163,8 +156,7 @@ Returns true if at least one of the arguments is true.
 Returns true if and only if one of the arguments is true.
  
 
-The *if-ifelse* structure
--------------------------
+## The *if-ifelse* structure
 
 Command
 Description
@@ -180,8 +172,7 @@ Executes `proc_1` if the boolean is true and `proc_2` otherwise.
     SLI ] 2 2 eq {(Equal!) = } { (Not equal !) =} ifelse
     Equal!
 
-The *case-switch* structure
----------------------------
+## The *case-switch* structure
 
 While the commands `if` and `ifelse` test only one condition, the *case-switch*
 structure can be used to test a number of different conditions.
@@ -213,8 +204,7 @@ The *case-switchdefault* structure has the general form
 
 Here, `procdefault` is executed if none of the booleans was true.
 
-Loops
------
+## Loops
 
 Loops and control structures are commands that take procedure objects as
  arguments.

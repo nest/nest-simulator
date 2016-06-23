@@ -89,6 +89,18 @@ if ( with-defines )
   endforeach ()
 endif ()
 
+# add colored output from gcc
+if ( CMAKE_C_COMPILER_ID STREQUAL "GNU" )
+  if ( NOT CMAKE_C_COMPILER_VERSION VERSION_LESS "4.9" )
+    set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fdiagnostics-color=auto" )
+  endif ()
+endif ()
+if ( CMAKE_CXX_COMPILER_ID STREQUAL "GNU" )
+  if ( NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.9" )
+    set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fdiagnostics-color=auto" )
+  endif ()
+endif ()
+
 # is set in the Fujitsu-Sparc64.cmake file
 if ( k-computer )
   set( IS_K ON )
@@ -139,10 +151,23 @@ else ()
   set( CMAKE_BUILD_WITH_INSTALL_RPATH FALSE )
 
   # set the rpath only when installed
-  set( CMAKE_INSTALL_RPATH
-      "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}"
-      "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/nest"
-      )
+  if ( APPLE )
+    set( CMAKE_INSTALL_RPATH
+        "@loader_path/../${CMAKE_INSTALL_LIBDIR}"
+        "@loader_path/../${CMAKE_INSTALL_LIBDIR}/nest"
+        # for pynestkernel: @loader_path at <prefix>/lib/python2.7/site-packages/nest
+        "@loader_path/../../.."
+        "@loader_path/../../../nest"
+       )
+  else ()
+    set( CMAKE_INSTALL_RPATH
+        "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}"
+        "\$ORIGIN/../${CMAKE_INSTALL_LIBDIR}/nest"
+        # for pynestkernel: origin at <prefix>/lib/python2.7/site-packages/nest
+        "\$ORIGIN/../../.."
+        "\$ORIGIN/../../../nest"
+        )
+  endif ()
 
   # add the automatically determined parts of the RPATH
   # which point to directories outside the build tree to the install RPATH
@@ -167,7 +192,7 @@ endforeach ()
 
 if ( external-modules )
   # headers from external modules will be installed here
-  include_directories( "${CMAKE_INSTALL_PREFIX}/${INSTALL_INC_DIR}" )
+  include_directories( "${CMAKE_INSTALL_FULL_INCLUDEDIR}" )
 
   # put all external libs into this variable
   set( EXTERNAL_MODULE_LIBRARIES )
@@ -177,18 +202,18 @@ if ( external-modules )
     # find module header
     find_file( ${mod}_EXT_MOD_INCLUDE
         NAMES ${mod}module.h
-        HINTS "${CMAKE_INSTALL_PREFIX}/${INSTALL_INC_DIR}"
+        HINTS "${CMAKE_INSTALL_FULL_INCLUDEDIR}"
         )
     if ( ${mod}_EXT_MOD_INCLUDE STREQUAL "${mod}_EXT_MOD_INCLUDE-NOTFOUND" )
       message( FATAL_ERROR "Cannot find header for external module '${mod}'. "
-        "Should be '${CMAKE_INSTALL_PREFIX}/${INSTALL_INC_DIR}/${mod}module.h' ." )
+        "Should be '${CMAKE_INSTALL_FULL_INCLUDEDIR}/${mod}module.h' ." )
     endif ()
     list( APPEND EXTERNAL_MODULE_INCLUDES ${${mod}_EXT_MOD_INCLUDE} )
 
     # find module library
     find_library( ${mod}_EXT_MOD_LIBRARY
         NAMES ${mod}module
-        HINTS ${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/nest
+        HINTS "${CMAKE_INSTALL_FULL_LIBDIR}/nest"
         )
     if ( ${mod}_EXT_MOD_LIBRARY STREQUAL "${mod}_EXT_MOD_LIBRARY-NOTFOUND" )
       message( FATAL_ERROR "Cannot find library for external module '${mod}'." )

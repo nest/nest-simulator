@@ -82,6 +82,13 @@ public:
   }
   virtual bool is_array() const = 0;
 
+  virtual void
+  reset() const
+  {
+    throw NotImplemented(
+      "Symmetric connections require parameters that can be reset." );
+  }
+
   /**
    * Returns number of values available.
    *
@@ -135,6 +142,11 @@ public:
     return false;
   }
 
+  void
+  reset() const
+  {
+  }
+
 private:
   double value_;
 };
@@ -169,6 +181,11 @@ public:
   is_array() const
   {
     return false;
+  }
+
+  void
+  reset() const
+  {
   }
 
 private:
@@ -238,6 +255,18 @@ public:
     return true;
   }
 
+  void
+  reset() const
+  {
+    for ( std::vector< std::vector< double >::const_iterator >::iterator it =
+            next_.begin();
+          it != next_.end();
+          ++it )
+    {
+      *it = values_->begin();
+    }
+  }
+
 private:
   const std::vector< double >* values_;
   mutable std::vector< std::vector< double >::const_iterator > next_;
@@ -303,6 +332,18 @@ public:
   is_array() const
   {
     return true;
+  }
+
+  void
+  reset() const
+  {
+    for ( std::vector< std::vector< long_t >::const_iterator >::iterator it =
+            next_.begin();
+          it != next_.end();
+          ++it )
+    {
+      *it = values_->begin();
+    }
   }
 
 private:

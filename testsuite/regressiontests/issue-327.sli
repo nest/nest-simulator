@@ -1,0 +1,85 @@
+/*
+ *  issue-327.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::issue-327 Ensure that spike_generator handles large precise times
+
+Synopsis: (issue-327) run -> NEST exits if test fails
+
+Description:
+This test ensures that NEST handles round-off correctly also for large,
+precise spike times.
+
+Author: Hans E Plesser, 2016-05-03
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+{
+  ResetKernel
+  0 << /resolution 0.1 >> SetStatus
+
+  /sg
+  /spike_generator 
+    << 
+       % PyNN uses precise spike times
+       /precise_times true
+       
+       % PyNN adjusts for use of parrot_neuron by subtracting
+       % min_delay. Only this computation provokes the error.
+       /spike_times [ 353538.4 0.1 sub ] 
+    >>
+  Create
+  def
+  
+  /pn /parrot_neuron_ps Create def
+  
+  /sd /spike_detector 
+    << /precise_times true
+       /time_in_steps true
+    >>
+  Create
+  def
+  
+  sg pn Connect
+  pn sd Connect
+  
+  360000 Simulate
+  
+  sd /events get
+  dup /times get /steps Set
+  /offsets get /offs Set
+  
+  % check correct step, account for delay 1 ms
+  steps 0 get dup == 3535393 eq
+  
+  % check for correct offset, precision limited by
+  % spike time * eps
+  offs 0 get dup == abs 1e9 mul 1. lt
+  and
+} assert_or_die
+  
+  

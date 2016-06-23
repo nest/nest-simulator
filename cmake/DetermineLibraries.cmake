@@ -102,7 +102,7 @@ if ( with-python )
         endif ()
       endif ()
 
-      set( PYEXECDIR "${CMAKE_INSTALL_PREFIX}/${INSTALL_LIB_DIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages" )
+      set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages" )
     endif ()
   endif ()
 endif ()

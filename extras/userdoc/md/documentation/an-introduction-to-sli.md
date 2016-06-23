@@ -1,8 +1,6 @@
-An Introduction to SLI
-======================
+# An Introduction to SLI
 
-Introduction
-------------
+## Introduction
 
 NEST can be started by typing
 
@@ -25,8 +23,7 @@ at the command prompt. You should then see something like this:
     Type 'help' to get more information.
     Type 'quit' or CTRL-D to quit NEST.
 
-Command line switches
----------------------
+## Command line switches
 
 Type
 
@@ -74,13 +71,12 @@ to an integer. Using `mark` and `>>`, the content of the userargs array is added
 to a dictionary, which is stored under the name `args`. The second line just
 prints the content of the lamda variable.
 
-SLI user manual
----------------
+## SLI user manual
 
 This manual gives a brief overview of the SLI programming language.
 
-1.  [First Steps](first_steps.md "First Steps")
-2.  [Objects and data types](objects_and_data_types.md "Objects and data types")
-3.  [Programming in SLI](programming_in_sli.md "Programming in SLI")
-4.  [Using files and keyboard input](using_files_and_keyboard_input.md "Using files and keyboard input")
-5.  [Neural simulations](neural_simulations.md "Neural simulations")
+1.  [First Steps](first-steps.md)
+2.  [Objects and data types](objects-and-data-types.md)
+3.  [Programming in SLI](programming-in-sli.md)
+4.  [Using files and keyboard input](using-files-and-keyboard-input.md)
+5.  [Neural simulations](neural-simulations.md)

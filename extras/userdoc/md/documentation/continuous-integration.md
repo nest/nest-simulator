@@ -1,8 +1,6 @@
-Continuous Integration
-======================
+# Continuous Integration
 
-Introduction
-------------
+## Introduction
 
 [**Continuous Integration**](http://en.wikipedia.org/wiki/Continuous_integration) (CI)
 is a software development practice where quality control is continuously
@@ -29,8 +27,7 @@ getting into the tree and timely reporting of identified problems. This
 way, issues will be discovered earlier and the amount of efforts to fix
 them will be significantly decreased (hopefully).
 
-Continuous Integration at NEST Initiative
---------------------------------------------------------------------------------------------------------------------------
+## Continuous Integration at NEST Initiative
 
 The current CI implementation is now available at the following URL:
 
@@ -115,8 +112,7 @@ to the build system:
 
 -   Yury V. Zaytsev
 
-Further reading
----------------
+## Further reading
 
 -   [Martin Fowler's paper on Continuous
     Integration](http://martinfowler.com/articles/continuousIntegration.html)

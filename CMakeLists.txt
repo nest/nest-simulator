@@ -80,18 +80,12 @@ option( k-computer "Enable K computer." OFF )
 ##################      Project Directory variables           ##################
 ################################################################################
 
-# install prefix is set with -DCMAKE_INSTALL_PREFIX:PATH=...
-set( INSTALL_BIN_DIR bin )
-set( INSTALL_LIB_DIR lib )
-set( INSTALL_INC_DIR include )
-set( INSTALL_DATA_DIR share/nest )
-set( INSTALL_DOC_DIR share/doc/nest )
+# In general use the CMAKE_INSTALL_<dir> and CMAKE_INSTALL_FULL_<dir> vars from
+# GNUInstallDirs, but the CMAKE_INSTALL_DATADIR is usually just CMAKE_INSTALL_DATAROOTDIR
+# and we want it to be CMAKE_INSTALL_DATAROOTDIR/PROJECT_NAME
+set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative directory, where NEST installs its data (share/nest)" )
 
-set( PKGSRCDIR ${PROJECT_SOURCE_DIR} )
-set( PKGBUILDDIR ${PROJECT_BINARY_DIR} )
-set( PKGDATADIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR} )
-set( PKGDOCDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DOC_DIR} )
-set( TESTSUITE_BASEDIR ${PKGDOCDIR} )
+include( GNUInstallDirs )
 
 ################################################################################
 #################        Do not install into /usr/local        #################
@@ -115,6 +109,10 @@ find_program( SED NAMES sed gsed )
 ##################   CPack, checks, ... in external modules   ##################
 ################################################################################
 
+include( GetTriple )
+get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
+get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TARGET_OS )
+
 include( CPackVariables )
 include( CheckIncludesSymbols )
 include( ProcessOptions )
@@ -132,19 +130,18 @@ file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
 if ( HAVE_PYTHON )
   add_custom_target( installcheck
       #COMMAND ${CMAKE_MAKE_PROGRAM} install
-      COMMAND export PATH="${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}:$ENV{PATH}" &&
+      COMMAND export PATH="${CMAKE_INSTALL_FULL_BINDIR}:$ENV{PATH}" &&
       export PYTHON="${PYTHON}" &&
-      export PYTHONPATH="${PYEXECDIR}:$ENV{PYTHONPATH}" &&
-      export exec_prefix="${CMAKE_INSTALL_PREFIX}" &&
-      ${PKGDATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
+      export PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}:$ENV{PYTHONPATH}" &&
+      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
       WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
       COMMENT "Execute NEST's testsuite...."
       )
 else ()
   add_custom_target( installcheck
       #COMMAND ${CMAKE_MAKE_PROGRAM} install
-      COMMAND export PATH="${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}:$ENV{PATH}" &&
-      ${PKGDATADIR}/extras/do_tests.sh --source-dir="${PROJECT_SOURCE_DIR}"
+      COMMAND export PATH="${CMAKE_INSTALL_FULL_BINDIR}:$ENV{PATH}" &&
+      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --source-dir="${PROJECT_SOURCE_DIR}"
       WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
       COMMENT "Execute NEST's testsuite...."
       )
@@ -213,14 +210,38 @@ if ( with-defines )
 endif ()
 
 # all libraries
-set( ALL_LIBS "${OpenMP_CXX_FLAGS};${LTDL_LIBRARIES};${READLINE_LIBRARIES};${GSL_LIBRARIES};${LIBNEUROSIM_LIBRARIES};${MUSIC_LIBRARIES};${MPI_CXX_LIBRARIES}" )
+set( ALL_LIBS
+  "-lnestutil"
+  "-lnest"
+  "-lrandom"
+  "-lsli"
+  "-lnestkernel"
+  "${OpenMP_CXX_FLAGS}"
+  "${LTDL_LIBRARIES}"
+  "${READLINE_LIBRARIES}"
+  "${GSL_LIBRARIES}"
+  "${LIBNEUROSIM_LIBRARIES}"
+  "${MUSIC_LIBRARIES}"
+  "${MPI_CXX_LIBRARIES}" )
 if ( with-libraries )
   set( ALL_LIBS "${ALL_LIBS};${with-libraries}" )
 endif ()
 string( REPLACE ";" " " ALL_LIBS "${ALL_LIBS}" )
 
 # all includes
-set( ALL_INCLUDES_tmp "${LTDL_INCLUDE_DIRS};${READLINE_INCLUDE_DIRS};${GSL_INCLUDE_DIRS};${LIBNEUROSIM_INCLUDE_DIRS};${MUSIC_INCLUDE_DIRS};${MPI_CXX_INCLUDE_PATH}" )
+set( ALL_INCLUDES_tmp
+  "${PROJECT_SOURCE_DIR}/libnestutil"
+  "${PROJECT_BINARY_DIR}/libnestutil"
+  "${PROJECT_SOURCE_DIR}/librandom"
+  "${PROJECT_SOURCE_DIR}/sli"
+  "${PROJECT_SOURCE_DIR}/nestkernel"
+  "${PROJECT_SOURCE_DIR}/nest"
+  "${LTDL_INCLUDE_DIRS}"
+  "${READLINE_INCLUDE_DIRS}"
+  "${GSL_INCLUDE_DIRS}"
+  "${LIBNEUROSIM_INCLUDE_DIRS}"
+  "${MUSIC_INCLUDE_DIRS}"
+  "${MPI_CXX_INCLUDE_PATH}" )
 set( ALL_INCLUDES "" )
 foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
   if ( INC AND NOT INC STREQUAL "" )
@@ -287,7 +308,7 @@ configure_file(
 ################################################################################
 
 install( FILES LICENSE README.md NEWS
-    DESTINATION ${INSTALL_DOC_DIR}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
 
 include( ConfigureSummary )

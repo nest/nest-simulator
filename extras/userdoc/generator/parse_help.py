@@ -46,11 +46,11 @@ cc_command_list = []
 index_dic_list = []
 
 
-keywords = ["Name:", "Synopsis:", "Parameters:", "Description:",
-            "Options:", "Examples:", "Variants:", "Bugs:",
-            "Diagnostics:", "Author:", "FirstVersion:", "Remarks:",
-            "Availability:", "References:", "SeeAlso:", "Source:",
-            "Sends:", "Receives:", "Transmits:", "Requires:", "Require:"]
+keywords = ["Name:", "Synopsis:", "Examples:", "Description:", "Parameters:",
+            "Options:", "Requires:", "Require:", "Receives:", "Transmits:",
+            "Sends:", "Variants:", "Bugs:", "Diagnostics:", "Remarks:",
+            "Availability:", "References:", "SeeAlso:", "Author:",
+            "FirstVersion:", "Source:"]
 
 # TODO combine the following 2 loops to make faster (and shorter)
 

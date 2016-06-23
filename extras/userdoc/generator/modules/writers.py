@@ -46,7 +46,7 @@ else:
     os.mkdir('../cmds/cc')
 
 
-def write_help_html(doc_dic, file, sli_command_list):
+def write_help_html(doc_dic, file, sli_command_list, keywords):
     """
     Write html.
 
@@ -121,13 +121,14 @@ def write_help_html(doc_dic, file, sli_command_list):
     htmllist = [header_ref]
     hlplist = []
     fullname = ""
+    hlpfullname = ""
     # namelist = []
+
     for key, value in doc_dic.iteritems():
         if key == "Name":
             name = value.strip()
-            htmllist.append('<title>NEST Command Index: %s</title></head>'
-                            % name)
-            htmllist.append(header_style + '<body>')
+            htmllist.append('<title>NEST Command Index: %s</title>%s</head>'
+                            % (name, header_style) + '<body>')
             htmllist.append('<h1>Command: %s</h1>' % name)
             htmllist.append(linkline + '<div class="wrap">')
     for key, value in doc_dic.iteritems():
@@ -135,21 +136,29 @@ def write_help_html(doc_dic, file, sli_command_list):
             fullname = value.strip("###### ###### ~~")
             fullname = re.sub("(######)", " <br/> ", fullname)
             fullname = re.sub("(\~\~)", '  ', fullname)
-            htmllist.append('<b>Name:</b><pre>%s</pre>' % fullname)
-            hlplist.append('Name: %s - %s\n' % (name, fullname))
-    for key, value in doc_dic.iteritems():
-        if (key != "Name" and key != "SeeAlso" and key != "Id" and
-                key != "File" and key != "FullName"):
-            value = re.sub("(######)", " <br/> ", value)
-            value = re.sub("(\~\~)", '  ', value)
-            htmllist.append('<b>%s: </b>' % key)
-            htmllist.append('<pre>%s</pre>' % value)
-            value = value.strip('<br/>').strip()
-            value = value.strip('<br/>').strip()
-            value = value.strip('<br/>').strip()
-            value = re.sub('<br/>', '\n', value)
-            hlplist.append('%s:' % key)
-            hlplist.append('%s\n' % value)
+            htmllist.append('<b>Name:</b><pre>%s - %s</pre>' % (name, fullname))
+            hlpfullname = re.sub(' <br\/> ', '\n', fullname).strip()
+            hlplist.append('Name: %s - %s\n' % (name, hlpfullname))
+
+    # print keywords
+
+    for word in keywords:
+        word = word.strip(':')
+        for key, value in doc_dic.iteritems():
+            if key == word:
+                if (key != "Name" and key != "FullName" and key != "SeeAlso"
+                   and key != "File"):
+                    value = re.sub("(######)", " <br/> ", value)
+                    value = re.sub("(\~\~)", '  ', value)
+                    htmllist.append('<b>%s: </b>' % key)
+                    htmllist.append('<pre>%s</pre>' % value)
+                    hlpvalue = re.sub(' <br\/> ', '\n', value).rstrip()
+                    hlpvalue = re.sub('\n ', '\n', hlpvalue).rstrip()
+                    hlpvalue = hlpvalue.lstrip('\n')
+                    hlpvalue = re.sub('\n[\s?]*\n', '\n', hlpvalue).rstrip()
+                    hlpcontent = ('%s:\n%s\n' % (key, hlpvalue))
+                    hlplist.append(hlpcontent)
+
     for key, value in doc_dic.iteritems():
         if key == "SeeAlso":
             htmllist.append('<b>%s: </b>' % key)
@@ -162,20 +171,23 @@ def write_help_html(doc_dic, file, sli_command_list):
                     if see in sli_command_list:
                         htmllist.append('    <li><a href="../sli/' + see +
                                         '.html">' + see + '</a></li>')
-                        hlplist.append('%s' % value)
+                        hlplist.append('%s' % see)
                     else:
                         htmllist.append('    <li><a href="../cc/' + see +
                                         '.html">' + see + '</a></li>')
-                        hlplist.append('%s' % value)
+                        hlplist.append('%s' % see)
+            hlplist.append('')
             htmllist.append('</ul>')
+
     for key, value in doc_dic.iteritems():
         if key == "File":
             value = value.strip("###### ###### $$")
             htmllist.append('<b>Source:</b><pre>%s</pre>' % value)
-            hlplist.append('Source: %s' % value)
+            hlplist.append('Source:\n%s' % value)
     htmllist.append('</div>' + linkline)
     htmllist.append(copyright)
     htmllist.append(footer)
+
     if name:  # only, if there is a name
         if file.endswith('.sli'):
             f_file_name = open(('../cmds/sli/%s.html' % name), 'w')
@@ -326,7 +338,8 @@ def write_helpindex(index_dic_list):
         for x in alpha:
             html_list.append('<td><a href="#%s">%s</a></td>' % (x[0], x[0]))
         html_list.append('</tr></table></center>')
-        html_list.append('<center><table class="commands" id="%s">' % doubles[0])
+        html_list.append('<center><table class="commands" id="%s">'
+                         % doubles[0])
         for item in index_dic_list:
             if item['name'].startswith(doubles):
                 html_list.append('<tr><td class="left">')
@@ -386,7 +399,7 @@ def coll_data(keywords, documentation, num, file, sli_command_list):
                     doc_dic.update({name: text})
 
     # all_list.append(doc_dic)
-    write_help_html(doc_dic, file, sli_command_list)
+    write_help_html(doc_dic, file, sli_command_list, keywords)
     # return(write_help_md(doc_dic))
 
 

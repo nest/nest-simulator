@@ -308,17 +308,17 @@ ms.
     SLI ] n1 n3 Connect
 
 To inspect the parameters of a connection, one first needs to obtain a handle
-to the connection. This is done using the command `FindConnections`. It takes a
+to the connection. This is done using the command `GetConnections`. It takes a
 dictionary that at least contains the id of the source node and will return a
 list of handles for all outgoing connections. The search can be restricted by
 using the optional parameters *target* and *synapse\_type*.
 
 ### Example 2
 
-    SLI ] << /source n1 >> FindConnections /c1 Set
+    SLI ] << /source n1 >> GetConnections /c1 Set
     SLI ] c1 length ==
     2
-    SLI ] << /source n1 /target n2 >> FindConnections /c2 Set
+    SLI ] << /source n1 /target n2 >> GetConnections /c2 Set
     SLI ] c2 length ==
     1
 

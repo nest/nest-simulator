@@ -304,7 +304,7 @@ executing the command.
 
 ### Investigating connectivity
 
-[FindConnections](../helpindex/cmds/FindConnections.md) Find connections
+[GetConnections](../helpindex/cmds/GetConnections.md) Return connections
 that fulfil the given criteria.
 [SetStatus](../helpindex/cmds/SetStatus.md)
 Modify status of an element.

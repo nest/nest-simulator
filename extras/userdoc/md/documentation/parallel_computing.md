@@ -194,11 +194,11 @@ files.
     pg = Create("poisson_generator", params={"rate": 50000.0})
     n = Create("iaf_neuron", 4)
     sd = Create("spike_detector", params={"to_file": True})
-    Connect(pg, [n[0]], 1000.0, 1.0)
-    Connect([n[0]], [n[1]], 1000.0, 1.0)
-    Connect([n[1]], [n[2]], 1000.0, 1.0)
-    Connect([n[2]], [n[3]], 1000.0, 1.0)
-    ConvergentConnect(n, sd)
+    Connect(pg, [n[0]], syn_spec={'weight': 1000.0, 'delay': 1.0})
+    Connect([n[0]], [n[1]], syn_spec={'weight': 1000.0, 'delay': 1.0})
+    Connect([n[1]], [n[2]], syn_spec={'weight': 1000.0, 'delay': 1.0})
+    Connect([n[2]], [n[3]], syn_spec={'weight': 1000.0, 'delay': 1.0})
+    Connect(n, sd)
     Simulate(100.0)
 
 The script is run three times using different numbers of MPI processes, but 4

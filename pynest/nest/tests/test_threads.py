@@ -52,7 +52,6 @@ class ThreadTestCase(unittest.TestCase):
         st.sort()
         self.assertEqual(st, [0, 1, 2, 3, 4, 5, 6, 7])
 
-
     def test_ThreadsGetConnections(self):
         """GetConnections with threads"""
 
@@ -98,8 +97,8 @@ class ThreadTestCase(unittest.TestCase):
             sd = nest.Create('spike_detector')
             vm = nest.Create('voltmeter')
 
-            nest.Connect(n,sd)
-            nest.Connect(vm,n)
+            nest.Connect(n, sd)
+            nest.Connect(vm, n)
 
             nest.Simulate(Simtime)
 

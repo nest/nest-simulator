@@ -85,9 +85,9 @@ for key in synapseDict.keys():
     assert (all(np.atleast_1d(synapseDictGet[key] == synapseDict[key])))
 
 nest.Connect(stim, neuronA)
-nest.Connect(neuronA, neuronB, syn_spec = {
-  'weight': float(startWeight) / 15.0 * Wmax,
-  'delay': delay, 'model': modelName})
+nest.Connect(neuronA, neuronB, syn_spec={
+    'weight': float(startWeight) / 15.0 * Wmax,
+    'delay': delay, 'model': modelName})
 # nest.Connect(neuronA, recorder)
 # nest.Connect(neuronB, recorder)
 

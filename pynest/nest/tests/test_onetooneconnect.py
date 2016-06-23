@@ -25,13 +25,11 @@ UnitTests for the PyNEST connect API.
 
 import unittest
 import nest
-import sys
 
 
 @nest.check_stack
 class OneToOneConnectTestCase(unittest.TestCase):
     """Tests of Connect with OneToOne pattern"""
-
 
     def test_ConnectPrePost(self):
         """Connect pre to post"""
@@ -52,7 +50,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         nest.ResetKernel()
         pre = nest.Create("iaf_neuron", 2)
         post = nest.Create("iaf_neuron", 2)
-        nest.Connect(pre, post, "one_to_one", syn_spec={"weight" : 2.0})
+        nest.Connect(pre, post, "one_to_one", syn_spec={"weight": 2.0})
         connections = nest.GetConnections(pre)
         weights = nest.GetStatus(connections, "weight")
         self.assertEqual(weights, (2.0, 2.0))
@@ -61,7 +59,8 @@ class OneToOneConnectTestCase(unittest.TestCase):
         nest.ResetKernel()
         pre = nest.Create("iaf_neuron", 2)
         post = nest.Create("iaf_neuron", 2)
-        nest.Connect(pre, post, conn_spec={"rule": "one_to_one"}, syn_spec={"weight" : [2.0, 3.0]})
+        nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
+                     syn_spec={"weight": [2.0, 3.0]})
         connections = nest.GetConnections(pre)
         weights = nest.GetStatus(connections, "weight")
         self.assertEqual(weights, (2.0, 3.0))
@@ -73,7 +72,8 @@ class OneToOneConnectTestCase(unittest.TestCase):
         nest.ResetKernel()
         pre = nest.Create("iaf_neuron", 2)
         post = nest.Create("iaf_neuron", 2)
-        nest.Connect(pre, post, conn_spec={"rule": "one_to_one"}, syn_spec={"weight": 2.0, "delay": 2.0})
+        nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
+                     syn_spec={"weight": 2.0, "delay": 2.0})
         connections = nest.GetConnections(pre)
         weights = nest.GetStatus(connections, "weight")
         delays = nest.GetStatus(connections, "delay")
@@ -84,7 +84,8 @@ class OneToOneConnectTestCase(unittest.TestCase):
         nest.ResetKernel()
         pre = nest.Create("iaf_neuron", 2)
         post = nest.Create("iaf_neuron", 2)
-        nest.Connect(pre, post, conn_spec={"rule": "one_to_one"}, syn_spec={"weight": [2.0, 3.0], "delay": [2.0, 3.0]})
+        nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
+                     syn_spec={"weight": [2.0, 3.0], "delay": [2.0, 3.0]})
         connections = nest.GetConnections(pre)
         weights = nest.GetStatus(connections, "weight")
         delays = nest.GetStatus(connections, "delay")

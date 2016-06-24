@@ -24,15 +24,7 @@
 
 #ifdef HAVE_MUSIC
 
-// Includes from sli:
-#include "dict.h"
-#include "dictutils.h"
-#include "doubledatum.h"
-#include "integerdatum.h"
 
-// Includes from libnestutil:
-#include "compose.hpp"
-#include "logging.h"
 
 // Includes from C++:
 #include <numeric>
@@ -42,6 +34,16 @@
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
 #include "sibling_container.h"
+
+// Includes from libnestutil:
+#include "compose.hpp"
+#include "logging.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state

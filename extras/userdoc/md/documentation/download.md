@@ -1,19 +1,17 @@
-Download & Releases
-===================
+# Download & Releases
 
-NEST is available under the [GNU General Public License 2 or later](license/index.html "License").
+NEST is available under the [GNU General Public License 2 or later](license.md).
 This means that you can
 
 -   use NEST for your research,
 -   modify and improve NEST according to your needs,
 -   distribute NEST to others under the same license.
 
-To find out more about NEST, see the [list of features](features.md "Features")
-and the [user documentation](documentation.md "Documentation").
-For details about how to contribute to the development of NEST, see the [developer space](http://nest.github.io/nest-simulator "Development").
+To find out more about NEST, see the [list of features](features.md)
+and the [user documentation](documentation.md).
+For details about how to contribute to the development of NEST, see the [developer space](http://nest.github.io/nest-simulator).
 
-Citing NEST
------------
+## Citing NEST
 
 Please cite NEST in any of your work which is based on NEST.
 
@@ -23,7 +21,7 @@ The full citation is available in different formats on
 [Zenodo](http://dx.doi.org/10.5281/zenodo.44222).
 
 For all other versions below NEST v2.8.0 use: Gewaltig M-O & Diesmann M (2007)
-[NEST (Neural Simulation Tool)](http://www.scholarpedia.org/article/NEST_(Neural_Simulation_Tool) "")
+[NEST (Neural Simulation Tool)](http://www.scholarpedia.org/article/NEST_(Neural_Simulation_Tool))
 *Scholarpedia* 2(4):1430.
 
 Here is a suitable BibTeX entry:
@@ -41,8 +39,7 @@ Here is a suitable BibTeX entry:
 If you tell us about your publications that used NEST, we will add it to our
 publication list, thus making it visible to potential readers.
 
-Ubuntu 15.10 Live Media with NEST 2.8.0
----------------------------------------
+## Ubuntu 15.10 Live Media with NEST 2.8.0
 
 **[Download](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-15.10_nest-2.8.0.ova)** (OVA, ~2.3G)          **[Checksum](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-15.10_nest-2.8.0.ova.sha512sum)** (sha512sum)
 

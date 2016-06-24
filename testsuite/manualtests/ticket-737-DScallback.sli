@@ -56,10 +56,11 @@ M_ERROR setverbosity
  
   /static_synapse /A CopyModel
   /static_synapse /B CopyModel
-  /gen gentype Create def
+  /gen1 gentype Create def
+  /gen2 gentype Create def
   /nrns [ 6 ] { ; /iaf_neuron Create } Table def
-  gen nrns  3 Take /A DivergentConnect
-  gen nrns -3 Take /B DivergentConnect
+  [gen1] nrns  3 Take << /rule /all_to_all >> << /model /A >> Connect
+  [gen2] nrns -3 Take << /rule /all_to_all >> << /model /B >> Connect
 
   gentype ==
   { 1 Simulate } fail_or_die

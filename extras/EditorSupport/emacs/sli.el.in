@@ -1,4 +1,8 @@
-(setq load-path (cons "@PKGDATADIR@/extras/emacs" load-path))
+(defconst sli-docdir "@CMAKE_INSTALL_FULL_DOCDIR@")
+(defconst sli-datadir "@CMAKE_INSTALL_FULL_DATADIR@")
+(defconst sli-sourcedir "@PROJECT_SOURCE_DIR@")
+
+(setq load-path (cons (concat sli-datadir "/extras/emacs") load-path))
 
 (defvar running-xemacs (string-match "XEmacs\\|Lucid" emacs-version))
 
@@ -90,7 +94,7 @@
 
 (defvar sli-mode-developer-menu-def
  '("NEST Trac"
-   ["SVN status @PKGSRCDIR@" sli-svn-status t]
+   [(concat "SVN status " sli-sourcedir) sli-svn-status t]
    "-"
    ["Browse wiki" svn-trac-browse-wiki t]
    ["Browse timeline" svn-trac-browse-timeline t]
@@ -235,7 +239,7 @@ If no SLI shell process is running, a SLI new shell is started."
 (defun sli-insert-doc-header ()
   "Insert the SLI documentation header template."
   (interactive)
-  (insert-file "@PKGDOCDIR@/doc_header.txt")
+  (insert-file (concat sli-docdir "/doc_header.txt"))
 )
 
 (defun sli-edit-nestrc ()
@@ -247,7 +251,7 @@ If no SLI shell process is running, a SLI new shell is started."
 (defun sli-svn-status ()
   (interactive)
   (require 'psvn)
-  (svn-status "@PKGSRCDIR@")
+  (svn-status sli-sourcedir)
   )
 
 
@@ -369,23 +373,23 @@ unless the optional second argument NOINDENT is non-nil."
 
 (defun sli-helpindex-text ()
   (interactive)
-  (view-file-other-window "@PKGDOCDIR@/help/helpindex.hlp")
+  (view-file-other-window (concat sli-docdir "/help/helpindex.hlp"))
   )
 (defun sli-helpindex-default ()
   (interactive)
-  (browse-url "file:@PKGDOCDIR@/help/helpindex.html")
+  (browse-url (concat "file:" sli-docdir "/help/helpindex.html"))
   )
 (defun sli-helpindex-firefox ()
   (interactive)
-  (browse-url-firefox "file:@PKGDOCDIR@/help/helpindex.html")
+  (browse-url-firefox (concat "file:" sli-docdir "/help/helpindex.html"))
   )
 (defun sli-helpindex-kde ()
   (interactive)
-  (browse-url-kde "file:@PKGDOCDIR@/help/helpindex.html")
+  (browse-url-kde (concat "file:" sli-docdir "/help/helpindex.html"))
   )
 (defun sli-helpindex-w3 ()
   (interactive)
-  (browse-url-w3 "file:@PKGDOCDIR@/help/helpindex.html")
+  (browse-url-w3 (concat "file:" sli-docdir "/help/helpindex.html"))
   )
 
 (defun sli-help-command (command)
@@ -393,8 +397,8 @@ unless the optional second argument NOINDENT is non-nil."
 
   ;; the help file might be in the cc or the sli subdirectory. We will check both.
   (let (
-        (cc-filename  (concat "@PKGDOCDIR@/help/cc/" command ".hlp"))
-        (sli-filename (concat "@PKGDOCDIR@/help/sli/" command ".hlp"))
+        (cc-filename  (concat sli-docdir "/help/cc/" command ".hlp"))
+        (sli-filename (concat sli-docdir "/help/sli/" command ".hlp"))
         )
 
     (message cc-filename)
@@ -415,19 +419,19 @@ unless the optional second argument NOINDENT is non-nil."
 
 (defun sli-helpdesk-default ()
   (interactive)
-  (browse-url "file:@PKGDOCDIR@/index.html")
+  (browse-url (concat "file:" sli-docdir "/index.html"))
   )
 (defun sli-helpdesk-firefox ()
   (interactive)
-  (browse-url-firefox "file:@PKGDOCDIR@/index.html")
+  (browse-url-firefox (concat "file:" sli-docdir "/index.html"))
   )
 (defun sli-helpdesk-kde ()
   (interactive)
-  (browse-url-kde "file:@PKGDOCDIR@/index.html")
+  (browse-url-kde (concat "file:" sli-docdir "/index.html"))
   )
 (defun sli-helpdesk-w3 ()
   (interactive)
-  (browse-url-w3 "file:@PKGDOCDIR@/index.html")
+  (browse-url-w3 (concat "file:" sli-docdir "/index.html"))
   )
 
 (defun sli-nestinitiative-default ()

@@ -79,7 +79,7 @@ is_threaded not { exit_test_gracefully } if
   /pnet [ nodes ] { ; /parrot_neuron Create } Table def
 
   [ gens pnet ] { Connect } ScanThread
-  pnet sd ConvergentConnect
+  pnet [sd] Connect
   
   10. Simulate
 

@@ -71,14 +71,17 @@ SLIStartup::checkpath( std::string const& path, std::string& result ) const
   const std::string fullname = fullpath + "/" + startupfilename;
 
   std::ifstream in( fullname.c_str() );
-  if ( in )
+
+  if ( in.good() )
   {
     result = fullname;
+    return true;
   }
   else
+  {
     result.erase();
-
-  return ( in );
+    return false;
+  }
 }
 
 
@@ -102,9 +105,9 @@ true
 SLI ] (NONEXISTING) getenv =
 false
 
-SLI ] (SLIDATADIR) getenv
+SLI ] (NEST_DATA_DIR) getenv
 SLI [2] { (Using root path: )  =only = }
-SLI [3] { (Warning: $SLIDATADIR undefined) =}
+SLI [3] { (Warning: $NEST_DATA_DIR undefined) =}
 SLI [4] ifelse
 Using root path: /home/gewaltig/nest/release/release
 
@@ -206,11 +209,11 @@ SLIStartup::checkenvpath( std::string const& envvar,
 SLIStartup::SLIStartup( int argc, char** argv )
   : startupfilename( "sli-init.sli" )
   , slilibpath( "/sli" )
-  , slihomepath( PKGDATADIR )
-  , slidocdir( PKGDOCDIR )
-  , verbosity_( SLIInterpreter::M_INFO )
-  , // default verbosity level
-  debug_( false )
+  , slihomepath( NEST_PREFIX "/" NEST_DATADIR )
+  , slidocdir( NEST_PREFIX "/" NEST_DOCDIR )
+  , sliprefix( NEST_PREFIX )
+  , verbosity_( SLIInterpreter::M_INFO ) // default verbosity level
+  , debug_( false )
   , argv_name( "argv" )
   , prgname_name( "prgname" )
   , exitcode_name( "exitcode" )
@@ -219,8 +222,6 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , prgpatch_name( "prgpatch" )
   , prgbuilt_name( "built" )
   , prefix_name( "prefix" )
-  , prgsourcedir_name( "prgsourcedir" )
-  , prgbuilddir_name( "prgbuilddir" )
   , prgdatadir_name( "prgdatadir" )
   , prgdocdir_name( "prgdocdir" )
   , host_name( "host" )
@@ -327,24 +328,34 @@ SLIStartup::init( SLIInterpreter* i )
   i->createcommand( getenv_name, &getenvfunction );
   std::string fname;
 
-  // Check for supplied SLIDATADIR
-  std::string slihomepath_env = checkenvpath( "SLIDATADIR", i, slihomepath );
+  // Check for supplied NEST_DATA_DIR
+  std::string slihomepath_env = checkenvpath( "NEST_DATA_DIR", i, slihomepath );
   if ( slihomepath_env != "" )
   {
     slihomepath = slihomepath_env; // absolute path & directory exists
-    i->message( SLIInterpreter::M_INFO,
+    i->message( SLIInterpreter::M_DEBUG,
       "SLIStartup",
-      String::compose( "Using SLIDATADIR=%1", slihomepath ).c_str() );
+      String::compose( "Using NEST_DATA_DIR=%1", slihomepath ).c_str() );
   }
 
-  // check for supplied SLIDOCDIR
-  std::string slidocdir_env = checkenvpath( "SLIDOCDIR", i, slidocdir );
+  // check for supplied NEST_DOC_DIR
+  std::string slidocdir_env = checkenvpath( "NEST_DOC_DIR", i, slidocdir );
   if ( slidocdir_env != "" )
   {
     slidocdir = slidocdir_env; // absolute path & directory exists
-    i->message( SLIInterpreter::M_INFO,
+    i->message( SLIInterpreter::M_DEBUG,
       "SLIStartup",
-      String::compose( "Using SLIDOCDIR=%1", slidocdir ).c_str() );
+      String::compose( "Using NEST_DOC_DIR=%1", slidocdir ).c_str() );
+  }
+
+  // check for supplied NEST_INSTALL_DIR
+  std::string sliprefix_env = checkenvpath( "NEST_INSTALL_DIR", i, sliprefix );
+  if ( sliprefix_env != "" )
+  {
+    sliprefix = sliprefix_env; // absolute path & directory exists
+    i->message( SLIInterpreter::M_DEBUG,
+      "SLIStartup",
+      String::compose( "Using NEST_INSTALL_DIR=%1", sliprefix ).c_str() );
   }
 
   if ( !checkpath( slihomepath, fname ) )
@@ -399,14 +410,10 @@ SLIStartup::init( SLIInterpreter* i )
   statusdict->insert( prgbuilt_name,
     Token( new StringDatum(
       String::compose( "%1 %2", __DATE__, __TIME__ ) ) ) );
-  statusdict->insert( prefix_name, Token( new StringDatum( NEST_PREFIX ) ) );
-  statusdict->insert(
-    prgsourcedir_name, Token( new StringDatum( PKGSOURCEDIR ) ) );
-  statusdict->insert(
-    prgbuilddir_name, Token( new StringDatum( NEST_BUILDDIR ) ) );
   statusdict->insert(
     prgdatadir_name, Token( new StringDatum( slihomepath ) ) );
   statusdict->insert( prgdocdir_name, Token( new StringDatum( slidocdir ) ) );
+  statusdict->insert( prefix_name, Token( new StringDatum( sliprefix ) ) );
   statusdict->insert( host_name, Token( new StringDatum( NEST_HOST ) ) );
   statusdict->insert( hostos_name, Token( new StringDatum( NEST_HOSTOS ) ) );
   statusdict->insert(

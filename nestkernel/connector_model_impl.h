@@ -189,6 +189,17 @@ GenericConnectorModel< ConnectionT >::used_default_delay()
         kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
           default_connection_.get_delay() );
       }
+      // Let connections without delay contribute to the delay extrema with
+      // wfr_comm_interval. For those connections the min_delay is important
+      // as it determines the length of the global communication interval.
+      // The call to assert_valid_delay_ms needs to happen only once
+      // (either here or in add_connection()) when the first connection
+      // without delay is created.
+      else
+      {
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+          kernel().simulation_manager.get_wfr_comm_interval() );
+      }
     }
     catch ( BadDelay& e )
     {
@@ -213,10 +224,11 @@ GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
 }
 
 /**
- * delay and weight have the default value NAN.
- * NAN is a special value in cmath, which describes double values that
+ * delay and weight have the default value numerics::nan.
+ * numerics::nan is a special value, which describes double values that
  * are not a number. If delay or weight is omitted in an add_connection call,
- * NAN indicates this and weight/delay are set only, if they are valid.
+ * numerics::nan indicates this and weight/delay are set only, if they are
+ * valid.
  */
 template < typename ConnectionT >
 ConnectorBase*
@@ -228,8 +240,10 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   double_t weight )
 {
   if ( not numerics::is_nan( delay ) && has_delay_ )
+  {
     kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
       delay );
+  }
 
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
@@ -251,10 +265,11 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 }
 
 /**
- * delay and weight have the default value NAN.
- * NAN is a special value in cmath, which describes double values that
+ * delay and weight have the default value numerics::nan.
+ * numerics::nan is a special value, which describes double values that
  * are not a number. If delay or weight is omitted in an add_connection call,
- * NAN indicates this and weight/delay are set only, if they are valid.
+ * numerics::nan indicates this and weight/delay are set only, if they are
+ * valid.
  */
 template < typename ConnectionT >
 ConnectorBase*
@@ -300,18 +315,21 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
-  if ( !p->empty() )
-    c.set_status( p, *this ); // reference to connector model needed here to
-                              // check delay (maybe this
-                              // could be done one level above?)
+
   if ( not numerics::is_nan( weight ) )
   {
     c.set_weight( weight );
   }
+
   if ( not numerics::is_nan( delay ) )
   {
     c.set_delay( delay );
   }
+
+  if ( !p->empty() )
+    c.set_status( p, *this ); // reference to connector model needed here to
+                              // check delay (maybe this
+                              // could be done one level above?)
 
   // We must use a local variable here to hold the actual value of the
   // receptor type. We must not change the receptor_type_ data member, because
@@ -338,6 +356,19 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   ConnectionT& c,
   rport receptor_type )
 {
+  // Let connections without delay contribute to the delay extrema with
+  // wfr_comm_interval. For those connections the min_delay is important
+  // as it determines the length of the global communication interval.
+  // The call to assert_valid_delay_ms needs to happen only once
+  // (either here or in used_default_delay()) when the first connection
+  // without delay is created.
+  if ( default_delay_needs_check_ && not has_delay_ )
+  {
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+      kernel().simulation_manager.get_wfr_comm_interval() );
+    default_delay_needs_check_ = false;
+  }
+
   // here we need to distinguish several cases:
   // - neuron src has no target on this machine yet (case 0)
   // - neuron src has n targets on this machine, all of same type

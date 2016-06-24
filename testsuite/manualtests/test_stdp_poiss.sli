@@ -46,13 +46,12 @@ userdict begin
 
  0.1 /h Set	     % simulation timestep [ms]
 
- [0]
+ 0
     <<
-        /resolution h
-        /total_num_virtual_procs  1
-	/overwrite_files true
-      >>
-      SetStatus
+       /resolution h
+       /total_num_virtual_procs  1
+       /overwrite_files true
+    >> SetStatus
 
 
 /delay 1.0 def	     % dendritic delay [ms]
@@ -156,7 +155,7 @@ neuron2 GetStatus /local get
  neuron2 GetStatus /local get
  {
      % we are on the machine where neuron2 resides
-     << /source neuron1 /synapse_model /stdp_synapse >> FindConnections
+     << /source neuron1 /synapse_model /stdp_synapse >> GetConnections
      0 get GetStatus /weight get
      /w Set  %we know that there is only a single synapse
 

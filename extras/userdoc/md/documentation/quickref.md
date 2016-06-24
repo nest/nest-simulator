@@ -1,16 +1,14 @@
-NEST/SLI Quick Reference
-========================
+# NEST/SLI Quick Reference
 
-Table of Contents
------------------
+## Table of Contents
 
 -   [Introduction](#introduction)
--   [The online-help system](#the-online-help-system)
+-   [The online-help system](#the-on-line-help-system)
 -   [Simulation kernel](#simulation-kernel)
--   [Models and nodes](#models-and-nodes)
--   [Connections](#connection)
--   [Network access](#network-access)
--   [Stack Commands](#stack-commands)
+-   [Models and nodes](#models-and-network-nodes)
+-   [Connections](#connection-nodes)
+-   [Network access](#looking-at-node-networks-and-connectivity)
+-   [Stack Commands](#stacks)
 -   [Arithmetic functions](#arithmetic-functions)
 -   [Boolean functions](#boolean-functions)
 -   [Special mathematical functions](#special-mathematical-functions)
@@ -21,24 +19,23 @@ Table of Contents
 <!-- -->
 
 -   [Strings](#strings)
--   [Dictionaries and Namespaces](#dictionaries-and-Namespaces)
+-   [Dictionaries and Namespaces](#dictionaries)
 -   [Names, functions, and variables](#names-functions-and-variables)
--   [Loop structures](#loop-structures)
+-   [Loop structures](#loops)
 -   [Control structures](#control-structures)
 -   [Functions and procedures](#functions-and-procedures)
 -   [Error handling and debugging](#error-handling-and-debugging])
 -   [Files and streams](#files-and-streams)
 -   [Executing SLI programs](#executing-sli-programs)
--   [Interfacing the host's file-system](#interfacing-the-host-s-file-system)
+-   [Interfacing the host's file-system](#interfacing-the-hosts-file-system)
 -   [Process control](#process-control)
 -   [SLI Interpreter Control](#sli-interpreter-control)
 -   [Parallel computing](#parallel-computing)
 
 
--   [Alphabetical command index](../helpindex/cmd_index.html)
+-   [Alphabetical command index](../helpindex/cmd_index.md)
 
-Introduction
-------------
+## Introduction
 
 SLI is the simulation language of the NEST simulation system. SLI is a stack
 oriented language, i.e. each command expects to find its arguments on the stack.
@@ -49,8 +46,7 @@ This document presents a directory of the most important SLI operators, grouped
 into sections. Since this document is not automatically generated from the help
 pages, it might not contain the latest additions to SLI.
 
-The on-line help system
------------------------
+## The on-line help system
 
 ### Layout of help pages
 
@@ -124,8 +120,7 @@ commands.
 [apropos](../helpindex/cmds/apropos.md) Search the command index for a regular
 expression.
 
-Simulation kernel
------------------
+## Simulation kernel
 
 ### Controlling the simulation
 
@@ -161,8 +156,7 @@ usage.
 [memory\_thisjob](../helpindex/cmds/memory_thisjob.md) Report
 virtual memory size for current NEST process.
 
-Models and network nodes
-------------------------
+## Models and network nodes
 
 All nodes in NEST (i.e. neurons, devices, and subnetworks.md) are
 derived from a common base class. Therefore they share some general properties.
@@ -247,23 +241,14 @@ Device to observe membrane potentials.
 [conductancemeter](../helpindex/cmds/conductancemeter.md)
 Device to observe synaptic conductances.
 
-Connecting nodes
-----------------
+## Connecting nodes
 
 [synapsedict](../helpindex/cmds/synapsedict.md) Dictionary containing
 all synapse models.
 [Connect](../helpindex/cmds/Connect.md) Connect two
 network nodes.
-[ConvergentConnect](../helpindex/cmds/ConvergentConnect.md)
-Connect many source nodes to one target node.
-[DivergentConnect](../helpindex/cmds/DivergentConnect.md)
-Connect one source node to many target nodes.
-[RandomConvergentConnect](../helpindex/cmds/RandomConvergentConnect.md)
-Randomly connect one source node to many target nodes.
-[RandomDivergentConnect](../helpindex/cmds/RandomDivergentConnect.md)
-Randomly connect one source node to many target nodes.
-[BinomialConvergentConnect](../helpindex/cmds/BinomialConvergentConnect.md)
-Connect a target to a binomial number of sources.
+[DataConnect](../helpindex/cmds/DataConnect.md)
+Build connections from explicit specifications.
 
 ### Topological connections
 
@@ -282,8 +267,7 @@ Prints layer node positions to file.
 [topology::PrintLayerConnections](../helpindex/cmds/topology::PrintLayerConnections.md)
 Prints a list of the connections of the nodes in the layer to file.
 
-Looking at node, networks, and connectivity
--------------------------------------------
+## Looking at node, networks, and connectivity
 
 ### Navigating the network
 
@@ -312,7 +296,7 @@ executing the command.
 
 ### Investigating connectivity
 
-[FindConnections](../helpindex/cmds/FindConnections.md) Find connections
+[GetConnections](../helpindex/cmds/GetConnections.md) Return connections
 that fulfil the given criteria.
 [SetStatus](../helpindex/cmds/SetStatus.md)
 Modify status of an element.
@@ -335,8 +319,7 @@ Reset the dynamic state of the network.
 [reset](../helpindex/cmds/reset.md)
 Reset dictionary stack and clear the userdict.
 
-Stacks
-------
+## Stacks
 
 ### Operand stack
 
@@ -403,8 +386,7 @@ execution stack as array.
 [restoreestack](../helpindex/cmds/restoreestack.md)
 Restore the execution stack from an array.
 
-Arithmetic functions
---------------------
+## Arithmetic functions
 
 [abs](../helpindex/cmds/abs.md) Absolute value of a number.
 [add](../helpindex/cmds/add.md)
@@ -453,8 +435,7 @@ Return the greater of two values.
 [min](../helpindex/cmds/min.md) Return
 the smaller of two values.
 
-Boolean functions
------------------
+## Boolean functions
 
 ### Comparison functions
 
@@ -483,8 +464,7 @@ Logical or operator.
 operator.
 [xor](../helpindex/cmds/xor.md) Logical xor operator.
 
-Special mathematical functions
-------------------------------
+## Special mathematical functions
 
 [Erf](../helpindex/cmds/Erf.md) Error function.
 [Erfc](../helpindex/cmds/Erfc.md)
@@ -510,8 +490,7 @@ Simple iteration implementing the Lambert-W function.
 [Pi](../helpindex/cmds/Pi.md)
 Pi constant.
 
-Random number generation
-------------------------
+## Random number generation
 
 [seed](../helpindex/cmds/seed.md) Set the seed of a random number
 generator.
@@ -559,8 +538,7 @@ Poisson random deviate generator.
 [uniform\_int](../helpindex/cmds/rdevdict::uniformint.md)
 Uniform integer random deviate generator.
 
-Statistics
-----------
+## Statistics
 
 [Min](../helpindex/cmds/Min.md) Returns the smallest element of an
 array.
@@ -575,8 +553,7 @@ Returns the unbiased variance of the elements of an array.
 [StandardDeviation](../helpindex/cmds/StandardDeviation.md)
 Returns the standard deviation of the element of an array.
 
-Arrays, vectors, and matrices
------------------------------
+## Arrays, vectors, and matrices
 
 ### Construction
 
@@ -790,8 +767,7 @@ Change the internal size of an array.
 [shrink](../helpindex/cmds/shrink.md)
 Reduce the capacity of an array to its minimum.
 
-Strings
--------
+## Strings
 
 ### Construction
 
@@ -911,8 +887,7 @@ Replace all occurences of a regex.
 [regexec](../helpindex/cmds/regexec.md)
 Compare string and regular expression.
 
-Dictionaries
-------------
+## Dictionaries
 
 ### Construction
 
@@ -1026,8 +1001,7 @@ dictionary.
 dictionary, see above).
 [::](../helpindex/cmds/::.md.md) Execute a symbol from a nested namespace.
 
-Names, functions, and variabes
-------------------------------
+## Names, functions, and variabes
 
 ### Defining variables and functions
 
@@ -1059,8 +1033,7 @@ a key in each dictionay on the dictionary stack.
 [load](../helpindex/cmds/load.md)
 Search for a key in each dictionay on the dictionary stack.
 
-Loops
------
+## Loops
 
 ### Infinite loops
 
@@ -1098,8 +1071,7 @@ Repeatedly apply a function with two parameters.
 [exit](../helpindex/cmds/exit.md)
 Exit a loop construct.
 
-Control structures
-------------------
+## Control structures
 
 [if](../helpindex/cmds/if.md) Conditionaly execute a procedure.
 [ifelse](../helpindex/cmds/ifelse.md)
@@ -1115,8 +1087,7 @@ Raise a stop signal.
 [stopped](../helpindex/cmds/stopped.md) Returns true if
 execution was stopped by stop.
 
-Functions and procedures
-------------------------
+## Functions and procedures
 
 ### Object oriented techniques
 
@@ -1194,8 +1165,7 @@ Dictionary for global options.
 [bind](../helpindex/cmds/bind.md) Recursively replaces executable operator names
 by their values.
 
-Error handling and debugging
-----------------------------
+## Error handling and debugging
 
 If an error occurs, execution is usually interrupted and a diagnostic message is
 printed. In most cases, the stack is restored to the state where it was
@@ -1228,8 +1198,7 @@ Returns the most recently resolved name.
 [debug.sli](../helpindex/cmds/debug.sli.md)
 Debugging support for SLI.
 
-Files and Streams
------------------
+## Files and Streams
 
 ### Standard input and output
 
@@ -1368,8 +1337,7 @@ format.
 
 [edit](../helpindex/cmds/edit.md) .Edit a file.
 
-Executing SLI programs
-----------------------
+## Executing SLI programs
 
 [run](../helpindex/cmds/run.md) Execute a .sli file.
 [spoon](../helpindex/cmds/spoon.md) Execute a parallel SLI-process.
@@ -1377,8 +1345,7 @@ Executing SLI programs
 [addpath](../helpindex/cmds/addpath.md) Append a path to SLISearchPath.
 [path](../helpindex/cmds/path.md) Return current search path as array.
 
-Interfacing the hosts file-system
----------------------------------
+## Interfacing the hosts file-system
 
 [Directory](../helpindex/cmds/Directory.md) Return current working directory.
 [cd](../helpindex/cmds/cd.md) Change working directory.
@@ -1398,8 +1365,7 @@ pathnames of given file in given.
 [CompareFiles](../helpindex/cmds/CompareFiles.md) Compare two files for
 equality.
 
-Process control
----------------
+## Process control
 
 ### Executing UNIX commands and external programs
 
@@ -1450,8 +1416,7 @@ SI units.
 [mV](../helpindex/cmds/mV.md) Specification in mV (for readability).
 [spikes](../helpindex/cmds/spikes.md) Specification in spikes (for readability).
 
-SLI Interpreter control
------------------------
+## SLI Interpreter control
 
 ### Startup and initialization
 
@@ -1516,8 +1481,7 @@ system time.
 second.
 [ptimes](../helpindex/cmds/ptimes.md) Returns real, user, and system time.
 
-Parallel computing
-------------------
+## Parallel computing
 
 [Rank](../helpindex/cmds/Rank.md) Return the MPI rank (MPI\_Comm\_rank.md) of
 the process.

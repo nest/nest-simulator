@@ -21,6 +21,7 @@
 
 import os
 import sys
+import re
 
 EXIT_SUCCESS = 0
 EXIT_BAD_HEADER = 20
@@ -29,7 +30,8 @@ EXIT_NO_SOURCE = 126
 try:
     source_dir = os.environ['NEST_SOURCE']
 except KeyError:
-    print("Please make NEST_SOURCE environment variable to point to the source tree you want to check!")
+    print("Please make NEST_SOURCE environment variable to point to " +
+          "the source tree you want to check!")
     sys.exit(EXIT_NO_SOURCE)
 
 exclude_dirs = [
@@ -37,6 +39,11 @@ exclude_dirs = [
     '.git',
     'CMakeFiles',
 ]
+
+# match all file names against these regular expressions. if a match
+# is found the file is excluded from the check
+exclude_file_patterns = ['\.#.*', '#.*', '.*~', '.*.bak']
+exclude_file_regex = [re.compile(pattern) for pattern in exclude_file_patterns]
 
 exclude_files = [
     'doc/copyright_header.cpp',
@@ -65,8 +72,15 @@ templates = {
 
 template_contents = {}
 
+# skip, if NEST_SOURCE="SKIP"
+if source_dir == "SKIP":
+    print("Skipping, as no sources are available.")
+    sys.exit(EXIT_SUCCESS)
+
 for extensions, template_ext in templates.items():
-    with open("{0}/doc/copyright_header.{1}".format(source_dir, template_ext)) as template_file:
+    template_name = "{0}/doc/copyright_header.{1}".format(source_dir,
+                                                          template_ext)
+    with open(template_name) as template_file:
         template = template_file.readlines()
         for ext in extensions:
             template_contents[ext] = template
@@ -79,6 +93,8 @@ for dirpath, _, fnames in os.walk(source_dir):
         continue
 
     for fname in fnames:
+        if any([regex.search(fname) for regex in exclude_file_regex]):
+            continue
 
         extension = os.path.splitext(fname)[1][1:]
         if not (extension and extension in template_contents.keys()):
@@ -86,7 +102,8 @@ for dirpath, _, fnames in os.walk(source_dir):
 
         tested_file = os.path.join(dirpath, fname)
 
-        if any([exclude_file in tested_file for exclude_file in exclude_files]):
+        if any([exclude_file in tested_file
+                for exclude_file in exclude_files]):
             continue
 
         with open(tested_file) as source_file:
@@ -95,19 +112,22 @@ for dirpath, _, fnames in os.walk(source_dir):
                 try:
                     line_src = source_file.readline()
                 except UnicodeDecodeError as err:
-                    print("Unable to decode bytes in '{0}': {1}".format(tested_file, err))
+                    print("Unable to decode bytes in '{0}': {1}".format(tested_file, err))  # noqa
                     total_errors += 1
                     break
-                if extension == 'py' and line_src.strip() == '#!/usr/bin/env python':
+                if (extension == 'py' and
+                        line_src.strip() == '#!/usr/bin/env python'):
                     line_src = source_file.readline()
                 line_exp = template_line.replace('{{file_name}}', fname)
                 if line_src != line_exp:
-                    print("Incorrect copyright header in '{0}':".format(tested_file))
-                    print("    expected -> '{0}', actual -> '{1}'\n".format(line_exp.strip(), line_src.strip()))
+                    print("Incorrect copyright header in '{0}':".format(tested_file))           # noqa
+                    print("    expected -> '{0}', actual -> '{1}'\n".format(line_exp.strip(),   # noqa
+                                                                            line_src.strip()))  # noqa
                     total_errors += 1
                     break
 
-print("Files with errors '{0}' out of '{1}'!".format(total_errors, total_files))
+print("Files with errors '{0}' out of '{1}'!".format(total_errors,
+                                                     total_files))
 
 if total_errors > 0:
     sys.exit(EXIT_BAD_HEADER)

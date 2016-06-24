@@ -46,6 +46,7 @@ class SLIStartup : public SLIModule
   const std::string slilibpath;
   std::string slihomepath;
   std::string slidocdir;
+  std::string sliprefix;
 
   std::string locateSLIInstallationPath( void );
   bool checkpath( std::string const&, std::string& ) const;
@@ -66,8 +67,6 @@ public:
   Name prgpatch_name;
   Name prgbuilt_name;
   Name prefix_name;
-  Name prgsourcedir_name;
-  Name prgbuilddir_name;
   Name prgdatadir_name;
   Name prgdocdir_name;
 

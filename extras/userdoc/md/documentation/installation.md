@@ -1,18 +1,16 @@
-Installation
-============
+# Installation
 
-Introduction
-------------
+## Introduction
 
 NEST compiles and runs on most Unix-like operating systems including Linux and
-Mac OS X. For using NEST on Microsoft Windows, see [below](installation.md#Windows).
+Mac OS X. For using NEST on Microsoft Windows, see [below](installation.md#windows).
 The installation instructions here should work on all recent versions of Debian
 or Ubuntu. For more generic installation instructions, see the files README and
 INSTALL in the top source directory.
 
 Following are the basic steps to compile and install NEST from source code:
 
-1.  [Download NEST](download.md "Download")
+1.  [Download NEST](download.md)
 
 2.  Unpack the tarball: `tar -xzvf nest-x.y.z.tar.gz`
 
@@ -27,15 +25,14 @@ Following are the basic steps to compile and install NEST from source code:
 
 7.  Install by running `make install`
 
-8.  See the [Getting started](getting_started.md "Getting started") pages to
+8.  See the [Getting started](getting-started.md) pages to
     find out how to get going with NEST
 
-Please see the sections on [minimal](installation.md#Minimal_configuration) and
-[standard configuration](installation.md#Standard_configuration "Installation")
+Please see the sections on [minimal](installation.md#minimal-configuration) and
+[standard configuration](installation.md#standard-configuration)
 below for details.
 
-What gets installed where
---------------------------
+## What gets installed where
 
 By default, everything will be installed to the subdirectories
 `$PREFIX/{bin,lib,share}`, where `$PREFIX=$HOME/opt/nest`:
@@ -71,13 +68,12 @@ search paths. For example, if you are using bash:
     export PATH=$PATH:$PREFIX/bin
     export PYTHONPATH=$PREFIX/lib/pythonX.Y/site-packages:$PYTHONPATH
 
-Dependencies
-------------
+## Dependencies
 
 NEST needs a few third party tools and libraries to work. On many operating
 systems, these can be installed using a *package manager* like `apt`, `port` or
 `fink`
-(see [Standard configuration](installation.md#Standard_configuration "Software:Installation")).
+(see [Standard configuration](installation.md#standard-configuration)).
 
 If you are building NEST from the SVN sources, you need the GNU autotools
 installed on your system to bootstrap the build system. These consist of
@@ -116,8 +112,7 @@ wonder why NEST is difficult to compile on Windows, it is because of these:
 -   libpthread, for threading support
 -   libregexp, for regular expressions.
 
-Minimal configuration
----------------------
+## Minimal configuration
 
 NEST can be compiled without any external packages; such configuration may be
 useful e.g. for initial porting to a new supercomputer. However, this implies
@@ -140,8 +135,7 @@ configure it:
         --without-readline
         --without-pthread
 
-Standard configuration
-----------------------
+## Standard configuration
 
 To install the packages required for the standard installation use the following
 command line:
@@ -154,8 +148,7 @@ Then configure NEST using:
 
     ../nest-x.y.z/configure --prefix=$HOME/opt/nest
 
-Choice of compiler
-------------------
+## Choice of compiler
 
 **Caveat:** you should compile NEST with the same compiler and version as your
 Python. Strange crashes have been observed on importing NEST when compiling
@@ -177,10 +170,9 @@ common compilers.
 When compiling with the Portland compiler, use the -Kieee flag to ensure that
 computations obey the IEEE754 standard for floating point numerics.
 
-Configuration options
----------------------
+## Configuration options
 
-If you need special features, like e.g. support for [distributed computing](Parallel_Computing "Parallel Computing"),
+If you need special features, like e.g. support for [distributed computing](parallel-computing.md),
 you can add command line switches to the call to configure. `./configure --help`
 will show you all available options. For more information on the installation of
 NEST, please see the file INSTALL that is included in the distribution archive.
@@ -204,8 +196,28 @@ to tell it how your`mpirun`/`mpiexec` command works by defining the function
 mpirun in your `~/.nestrc` file. This file already contains an example
 implementation that should work with [OpenMPI](http://www.openmpi.org/) library.
 
-Mac OS X
---------
+## Mac OS X
+
+The easiest way to install NEST on a Mac is to install it via the Homebrew
+package manager:
+
+1.  To install homebrew, follow the instructions here: <http://brew.sh/>
+
+2.  Then, in a terminal
+
+    1.  Add the homebrew/science tap: execute 'brew tap homebrew/science'
+
+    2.  For information on what options NEST has and what will be installed,
+        execute 'brew info nest'
+
+    3.  To install nest, execute 'brew install nest'
+
+Options have to be appended, e.g. to install NEST with PyNEST execute
+'brew install nest --with-python'.
+
+#Sorry, the following instructions are a little bit outdated!#
+A more detailed up-to-date instruction for installation on OSX will
+follow soon.
 
 ### Installation on OSX 10.9 Mavericks
 
@@ -291,6 +303,8 @@ need to trick MacPorts into installing OpenMPI 1.6.4. Proceed as follows:
         make installcheck
 
 ### Installation for Older OSX Versions
+
+#Outdated#
 
 Before you can build NEST under Mac OS X, you need to install Xcode from the
 Apple Developer tools installation DVD that came with your Mac (the packages are
@@ -437,8 +451,7 @@ please try making NEST as follows:
 
 Thanks to Harold Gutch for this hint.
 
-Windows
--------
+## Windows
 
 Windows and Linux differ considerably. This is the reason why it is difficult
 to compile NEST natively under Windows. However, it is still possible to use
@@ -450,14 +463,14 @@ This is the easiest way to use NEST without having to install anything on your
 computer. The LiveCD can be used in almost any computer and boots directly into
 a complete Ubuntu system, which already has NEST, Python, and some analysis
 tools installed.
-The CD image is available on the [download page](download.md "Download").
+The CD image is available on the [download page](download.md).
 
 ### Virtual Machines
 
 A virtual machine is a software that lets you use Linux in parallel to Windows.
 We recommend to use VirtualBox, which is free software and can be downloaded
 from <http://www.virtualbox.org/>. Another popular virtual machine software is <http://www.vmware.com/>.
-The easiest way to get started is to download the NEST LiveCD from the [download page](download.md "Download")
+The easiest way to get started is to download the NEST LiveCD from the [download page](download.md)
 and either just boot the CD image directly or install it into a virtual hard
 disk.
 

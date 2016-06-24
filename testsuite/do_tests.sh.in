@@ -35,7 +35,9 @@ Options:
     --help              Print program options and exit
     --test-pynest       Test the PyNEST installation and APIs
     --output-dir=/path  Output directory (default: ./reports)
-    --source-dir=/path  Toplevel NEST source code directory
+    --source-dir=/path  Toplevel NEST source code directory. Only used for
+                        checking the copyright headers of the sources. Set to
+                        'SKIP', if you want it to be skipped.
 EOF
 
     exit $1
@@ -335,7 +337,7 @@ INFO_OS="$(uname -s)"
 INFO_USER="$(whoami)"
 INFO_VER="$(uname -r)"
 
-TEST_BASEDIR="@TESTSUITE_BASEDIR@"
+TEST_BASEDIR=${NEST_DOC_DIR:-"@CMAKE_INSTALL_FULL_DOCDIR@"}
 TEST_OUTDIR=${TEST_OUTDIR:-"$( pwd )/reports"}
 TEST_LOGFILE="${TEST_OUTDIR}/installcheck.log"
 TEST_OUTFILE="${TEST_OUTDIR}/output.log"
@@ -349,7 +351,7 @@ fi
 mkdir "${TEST_OUTDIR}"
 
 PYTHON="${PYTHON:-python}"
-PYTHON_HARNESS="@CMAKE_INSTALL_PREFIX@/@INSTALL_DATA_DIR@/extras/do_tests.py"
+PYTHON_HARNESS="${NEST_DATA_DIR:-@CMAKE_INSTALL_FULL_DATADIR@}/extras/do_tests.py"
 
 TMPDIR=${TMPDIR:-${TEST_OUTDIR}}
 TEST_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/nest.XXXXX")"
@@ -544,13 +546,26 @@ fi
 
 if test "x${TEST_PYNEST}" = xtrue ; then
 
-    if command -v nosetests >/dev/null 2>&1 && nosetests --with-xunit --xunit-file=/dev/null >/dev/null 2>&1; then
+    echo
+    echo "Phase 6: Running PyNEST tests."
+    echo "------------------------------"
+    
+    # If possible, we run using nosetests. To find out if nosetests work, 
+    # we proceed in two steps:
+    # 1. Check if nosetests is available
+    # 2. Check that nosetests supports --with-xunit by running nosetests.
+    #    We need to run nosetests on a directory without any Python test
+    #    files, because if they failed that would be interpreted as lack
+    #    of support for nosetests. We use the TEST_OUTDIR as Python-free
+    #    dummy directory to search for tests.
 
-	echo
-	echo "Phase 6: Running PyNEST tests."
-	echo "------------------------------"
+    if command -v nosetests >/dev/null 2>&1 && nosetests --with-xunit --xunit-file=/dev/null --where=${TEST_OUTDIR} >/dev/null 2>&1; then
 
-        nosetests -v --with-xunit --xunit-file=${TEST_OUTDIR}/pynest_tests.xml @PYEXECDIR@/nest/tests 2>&1 \
+        echo
+        echo "  Using nosetests."
+        echo
+
+        nosetests -v --with-xunit --xunit-file=${TEST_OUTDIR}/pynest_tests.xml ${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests 2>&1 \
             | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
 
         PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"
@@ -574,6 +589,11 @@ if test "x${TEST_PYNEST}" = xtrue ; then
         PYNEST_TEST_PASSED=$(($PYNEST_TEST_TOTAL - $PYNEST_TEST_FAILED))
 
     else
+
+        echo
+        echo "  Nosetests unavailable. Using fallback test harness."
+        echo "  Fewer tests will be excuted."
+        echo
 
         "${PYTHON}" "${PYTHON_HARNESS}" >> "${TEST_LOGFILE}"
     

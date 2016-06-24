@@ -18,10 +18,11 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-__author__ = 'naveau'
 
 import nest
 import unittest
+
+__author__ = 'naveau'
 
 
 class TestSPBuilder(unittest.TestCase):
@@ -31,7 +32,8 @@ class TestSPBuilder(unittest.TestCase):
 
     def test_synapse_initialisation_one_to_one(self):
         syn_model = 'static_synapse'
-        syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1', 'post_synaptic_element': 'SE2'}
+        syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1',
+                    'post_synaptic_element': 'SE2'}
         neurons = nest.Create('iaf_neuron', 2, {
             'synaptic_elements': {
                 'SE1': {'z': 0.0, 'growth_rate': 0.0},
@@ -46,7 +48,8 @@ class TestSPBuilder(unittest.TestCase):
 
     def test_synapse_initialisation_all_to_all(self):
         syn_model = 'static_synapse'
-        syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1', 'post_synaptic_element': 'SE2'}
+        syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1',
+                    'post_synaptic_element': 'SE2'}
         neurons = nest.Create('iaf_neuron', 2, {
             'synaptic_elements': {
                 'SE1': {'z': 0.0, 'growth_rate': 0.0},
@@ -61,7 +64,8 @@ class TestSPBuilder(unittest.TestCase):
 
     def test_not_implemented_rules(self):
         syn_model = 'static_synapse'
-        syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1', 'post_synaptic_element': 'SE2'}
+        syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1',
+                    'post_synaptic_element': 'SE2'}
         neurons = nest.Create('iaf_neuron', 2, {
             'synaptic_elements': {
                 'SE1': {'z': 0.0, 'growth_rate': 0.0},
@@ -77,7 +81,10 @@ class TestSPBuilder(unittest.TestCase):
             try:
                 nest.Connect(neurons, neurons, conn_dict, syn_dict)
             except nest.NESTError as e:
-                self.assertRegexpMatches(str(e), 'This connection rule is not implemented for structural plasticity')
+                self.assertRegexpMatches(
+                    str(e), 'This connection rule is not implemented ' +
+                    'for structural plasticity'
+                )
 
 
 def suite():

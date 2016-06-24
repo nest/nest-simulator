@@ -31,13 +31,11 @@ import nest
 class ThreadTestCase(unittest.TestCase):
     """Tests for multi-threading"""
 
-
     def nest_multithreaded(self):
         """Return True, if we have a thread-enabled NEST, False otherwise"""
 
         nest.sr("statusdict/threading :: (no) eq not")
         return nest.spp()
-        
 
     def test_Threads(self):
         """Multiple threads"""
@@ -46,36 +44,34 @@ class ThreadTestCase(unittest.TestCase):
             self.skipTest("NEST was compiled without multi-threading")
 
         nest.ResetKernel()
-        self.assertEqual(nest.GetKernelStatus()['local_num_threads'],1)
+        self.assertEqual(nest.GetKernelStatus()['local_num_threads'], 1)
 
-        nest.SetKernelStatus({'local_num_threads':8})
-        n=nest.Create('iaf_neuron',8)
-        st = list(nest.GetStatus(n,'vp'))
-        st.sort()        
-        self.assertEqual(st,[0, 1, 2, 3, 4, 5, 6, 7])
+        nest.SetKernelStatus({'local_num_threads': 8})
+        n = nest.Create('iaf_neuron', 8)
+        st = list(nest.GetStatus(n, 'vp'))
+        st.sort()
+        self.assertEqual(st, [0, 1, 2, 3, 4, 5, 6, 7])
 
-
-    def test_ThreadsFindConnections(self):
-        """FindConnections with threads"""
+    def test_ThreadsGetConnections(self):
+        """GetConnections with threads"""
 
         if not self.nest_multithreaded():
             self.skipTest("NEST was compiled without multi-threading")
 
         nest.ResetKernel()
-        nest.SetKernelStatus({'local_num_threads':8})
+        nest.SetKernelStatus({'local_num_threads': 8})
         pre = nest.Create("iaf_neuron")
         post = nest.Create("iaf_neuron", 6)
 
-        nest.DivergentConnect(pre, post)
+        nest.Connect(pre, post)
 
-        conn = nest.FindConnections(pre)
+        conn = nest.GetConnections(pre)
         # Because of threading, targets may be in a different order than
         # in post, so we sort the vector.
         targets = list(nest.GetStatus(conn, "target"))
         targets.sort()
-        
-        self.assertEqual(targets, list(post))
 
+        self.assertEqual(targets, list(post))
 
     def test_ThreadsGetEvents(self):
         """ Gathering events across threads """
@@ -83,12 +79,12 @@ class ThreadTestCase(unittest.TestCase):
         if not self.nest_multithreaded():
             self.skipTest("NEST was compiled without multi-threading")
 
-        threads = (1,2,4,8)
+        threads = (1, 2, 4, 8)
 
         n_events_sd = []
         n_events_vm = []
 
-        N       = 128
+        N = 128
         Simtime = 1000.
 
         for t in threads:
@@ -96,31 +92,33 @@ class ThreadTestCase(unittest.TestCase):
             nest.ResetKernel()
             nest.SetKernelStatus({'local_num_threads': t})
 
-            n  = nest.Create('iaf_psc_alpha', N, {'I_e':2000.}) # force a lot of spike events
+            # force a lot of spike events
+            n = nest.Create('iaf_psc_alpha', N, {'I_e': 2000.})
             sd = nest.Create('spike_detector')
             vm = nest.Create('voltmeter')
 
-            nest.ConvergentConnect(n,sd)
-            nest.DivergentConnect(vm,n)
+            nest.Connect(n, sd)
+            nest.Connect(vm, n)
 
             nest.Simulate(Simtime)
 
             n_events_sd.append(nest.GetStatus(sd, 'n_events')[0])
             n_events_vm.append(nest.GetStatus(vm, 'n_events')[0])
 
-        ref_vm = N*(Simtime-1)
+        ref_vm = N * (Simtime - 1)
         ref_sd = n_events_sd[0]
 
         # could be done more elegantly with any(), ravel(),
         # but we dont want to be dependent on numpy et al
-        [ self.assertEqual(x,ref_vm) for x in n_events_vm]
-        [ self.assertEqual(x,ref_sd) for x in n_events_sd]
+        [self.assertEqual(x, ref_vm) for x in n_events_vm]
+        [self.assertEqual(x, ref_sd) for x in n_events_sd]
 
 
 def suite():
 
-    suite = unittest.makeSuite(ThreadTestCase,'test')
+    suite = unittest.makeSuite(ThreadTestCase, 'test')
     return suite
+
 
 def run():
     runner = unittest.TextTestRunner(verbosity=2)

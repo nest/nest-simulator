@@ -23,11 +23,23 @@ set( nest_sources
     )
 
 add_executable( nest main.cpp ${nest_sources} )
+if ( IS_BLUEGENE AND static-libraries )
+    set_target_properties( nest
+        PROPERTIES
+        LINK_SEARCH_END_STATIC TRUE
+        LINK_SEARCH_START_STATIC TRUE
+        )
+endif ()
 
 add_library( nest_lib ${nest_sources} )
+set_target_properties( nest_lib
+    PROPERTIES
+    OUTPUT_NAME nest
+    )
 
 target_link_libraries( nest
-    nestutil nestkernel random sli_lib ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} )
+    nestutil nestkernel random sli_lib sli_readline
+    ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} )
 
 target_link_libraries( nest_lib
     nestutil nestkernel random sli_lib ${SLI_MODULES} ${EXTERNAL_MODULE_LIBRARIES} )
@@ -41,6 +53,10 @@ target_include_directories( nest PRIVATE
     ${PROJECT_SOURCE_DIR}/nestkernel
     ${SLI_MODULE_INCLUDE_DIRS}
     )
+
+target_compile_definitions( nest PRIVATE
+    -D_BUILD_NEST_CLI
+)
 
 target_include_directories( nest_lib PRIVATE
     ${PROJECT_BINARY_DIR}/nest
@@ -60,10 +76,10 @@ if ( HAVE_PYTHON )
 endif ()
 
 install( TARGETS nest nest_lib
-    LIBRARY DESTINATION ${INSTALL_LIB_DIR}
-    ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
-    RUNTIME DESTINATION ${INSTALL_BIN_DIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
 install( FILES sli/models-init.sli
-    DESTINATION ${INSTALL_DATA_DIR}/sli )
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/sli )

@@ -25,7 +25,6 @@
 #ifdef HAVE_MUSIC
 
 
-
 // Includes from C++:
 #include <numeric>
 #include <string>

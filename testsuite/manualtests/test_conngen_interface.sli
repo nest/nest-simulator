@@ -1,0 +1,84 @@
+/*
+ *  test_conngen_interface.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+   Name: testsuite::test_conngen_interface - Test runability of all CGConnect variants
+
+   Synopsis: (test_conngen_interface) run
+
+   Description:
+
+   Tests if all variants of CGConnect can be run. This test only checks the
+   SLI part of the ConnectionGenerator interface. The PyNEST interface is
+   tested in pynest/nest/tests/test_csa.py.
+
+   FirstVersion: June 2016
+   Author: Jochen Martin Eppler
+   SeeAlso: CGConnect
+ */
+
+M_ERROR setverbosity
+
+(unittest) run
+/unittest using
+
+% Only run the test if NEST was compiled with support for libneurosim
+statusdict/have_libneurosim :: not { exit_test_gracefully } if 
+
+% Tell the ConnectionGenerator interface, which implementation to use
+(CSA) (/home/jochen/work/src/libcsa.build/install/lib/libcsa.so) CGSelectImplementation
+
+% Obtain a connectiongeneratortype object by parsing a XML definition
+(<?xml version='1.0' encoding='UTF-8'?><CSA xmlns="http://software.incf.org/software/csa/1.0"><apply><randomMask/><cn>0.3</cn></apply></CSA>) CGParse /cg Set
+
+
+/iaf_psc_alpha 10 Create ;
+
+/first [1 5] def
+/last [6 10] def
+
+% Test if the array variant works
+cg first last CGConnect
+cg first last << >> CGConnect
+cg first last /static_synapse CGConnect
+cg first last << >> /static_synapse CGConnect
+
+
+/first first cv_iv def
+/last last cv_iv def
+
+% Test if the intvector variant works
+cg first last CGConnect
+cg first last << >> CGConnect
+cg first last /static_synapse CGConnect
+cg first last << >> /static_synapse CGConnect
+
+
+/first first cvgidcollection def
+/last last cvgidcollection def
+
+% Test if the gidcollection variant works
+cg first last CGConnect
+cg first last << >> CGConnect
+cg first last /static_synapse CGConnect
+cg first last << >> /static_synapse CGConnect

@@ -67,15 +67,13 @@ ConnectionGeneratorModule::init( SLIInterpreter* i )
   ConnectionGeneratorType.setdefaultaction( SLIInterpreter::datatypefunction );
 
   // Register the user functions of the connection generator interface
-  i->createcommand( "CGConnect_cg_i_i_D_l", &cgconnect_cg_i_i_D_lfunction );
-  i->createcommand( "CGConnect_cg_iV_iV_D_l", &cgconnect_cg_iV_iV_D_lfunction );
+  i->createcommand( "CGConnect_cg_g_g_D_l", &cgconnect_cg_g_g_D_lfunction );
   i->createcommand( "CGParse", &cgparse_sfunction );
   i->createcommand( "CGParseFile", &cgparsefile_sfunction );
-  i->createcommand(
-    "CGSelectImplementation", &cgselectimplementation_s_sfunction );
+  i->createcommand( "CGSelectImplementation", &cgselectimplementation_s_sfunction );
 
   // Register the low level functions of the connection generator interface
-  i->createcommand( "cgsetmask_cg_iV_iV", &cgsetmask_cg_iV_iVfunction );
+  i->createcommand( "cgsetmask", &cgsetmask_cg_g_gfunction );
   i->createcommand( "cgstart", &cgstart_cgfunction );
   i->createcommand( "cgnext", &cgnext_cgfunction );
 }
@@ -90,12 +88,12 @@ ConnectionGeneratorModule::init( SLIInterpreter* i )
    cg sources targets params syn_model ->  -
 
    Parameters:
-   cg        - ConnectionGenerator
-   sources   - The sources. Either a subnet or a list of nodes
-   targets   - The targets. Either a subnet or a list of nodes
-   params    - A dict specifying the index of /weight and /delay
-               in the value set of the connection generator
-   syn_model - A literal specifying te synapse model to be used
+   cg         connectiongenerator            - ConnectionGenerator
+   sources    gidcollection/array/intvector  - the GIDs of the sources
+   targets    gidcollection/array/intvector  - the GIDs of the targets
+   params     dict (optional)    - A map that translates the names /weight and
+                                   /delay to indices in the value set
+   syn_model  literal (optional) - A literal specifying te synapse model to be used
 
    Description:
    CGConnect connects a source and a target population according to
@@ -112,41 +110,23 @@ ConnectionGeneratorModule::init( SLIInterpreter* i )
    cgsetmask, cgnext
 */
 
-// Connect for conn_generator subnet subnet dict synapsetype
+// CGConnect for conngen gidcollection gidcollection dict literal
 void
-ConnectionGeneratorModule::CGConnect_cg_i_i_D_lFunction::execute(
+ConnectionGeneratorModule::CGConnect_cg_g_g_D_lFunction::execute(
   SLIInterpreter* i ) const
 {
   i->assert_stack_load( 5 );
 
   ConnectionGeneratorDatum cg =
     getValue< ConnectionGeneratorDatum >( i->OStack.pick( 4 ) );
-  index source_id = getValue< long >( i->OStack.pick( 3 ) );
-  index target_id = getValue< long >( i->OStack.pick( 2 ) );
+  GIDCollectionDatum sources =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 3 ) );
+  GIDCollectionDatum targets =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
   DictionaryDatum params_map =
     getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-
-  cg_connect( cg, source_id, target_id, params_map, synmodel_name );
-
-  i->OStack.pop( 5 );
-  i->EStack.pop();
-}
-
-// Connect for conn_generator array array dict synapsetype
-void
-ConnectionGeneratorModule::CGConnect_cg_iV_iV_D_lFunction::execute(
-  SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 5 );
-
-  ConnectionGeneratorDatum cg =
-    getValue< ConnectionGeneratorDatum >( i->OStack.pick( 4 ) );
-  IntVectorDatum sources = getValue< IntVectorDatum >( i->OStack.pick( 3 ) );
-  IntVectorDatum targets = getValue< IntVectorDatum >( i->OStack.pick( 2 ) );
-  DictionaryDatum params_map =
-    getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
+  const Name synmodel_name =
+    getValue< Name >( i->OStack.pick( 0 ) );
 
   cg_connect( cg, sources, targets, params_map, synmodel_name );
 
@@ -286,21 +266,21 @@ ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute(
    cgnext
 */
 void
-ConnectionGeneratorModule::CGSetMask_cg_iV_iVFunction::execute(
+ConnectionGeneratorModule::CGSetMask_cg_g_gFunction::execute(
   SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
   ConnectionGeneratorDatum cg =
     getValue< ConnectionGeneratorDatum >( i->OStack.pick( 2 ) );
-  IntVectorDatum sources = getValue< IntVectorDatum >( i->OStack.pick( 1 ) );
-  IntVectorDatum targets = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionDatum sources = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  GIDCollectionDatum targets = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
   RangeSet source_ranges;
-  cg_get_ranges( source_ranges, *sources );
+  cg_get_ranges( source_ranges, sources );
 
   RangeSet target_ranges;
-  cg_get_ranges( target_ranges, *targets );
+  cg_get_ranges( target_ranges, targets );
 
   cg_set_masks( cg, source_ranges, target_ranges );
 

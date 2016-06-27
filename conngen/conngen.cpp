@@ -39,90 +39,8 @@ namespace nest
 
 void
 cg_connect( ConnectionGeneratorDatum& cg,
-  const index source_id,
-  const index target_id,
-  const DictionaryDatum& params_map,
-  const Name& synmodel_name )
-{
-  Subnet* sources =
-    dynamic_cast< Subnet* >( kernel().node_manager.get_node( source_id ) );
-  if ( sources == NULL )
-  {
-    LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "sources must be a subnet." );
-    throw SubnetExpected();
-  }
-  if ( !sources->is_homogeneous() )
-  {
-    LOG( M_ERROR,
-      "CGConnect_cg_i_i_D_l",
-      "sources must be a homogeneous subnet." );
-    throw BadProperty();
-  }
-  if ( dynamic_cast< Subnet* >( *sources->local_begin() ) )
-  {
-    LOG( M_ERROR,
-      "CGConnect_cg_i_i_D_l",
-      "Only 1-dim subnets are supported as sources." );
-    throw BadProperty();
-  }
-
-  Subnet* targets =
-    dynamic_cast< Subnet* >( kernel().node_manager.get_node( target_id ) );
-  if ( targets == NULL )
-  {
-    LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "targets must be a subnet." );
-    throw SubnetExpected();
-  }
-  if ( !targets->is_homogeneous() )
-  {
-    LOG( M_ERROR,
-      "CGConnect_cg_i_i_D_l",
-      "targets must be a homogeneous subnet." );
-    throw BadProperty();
-  }
-  if ( dynamic_cast< Subnet* >( *targets->local_begin() ) )
-  {
-    LOG( M_ERROR,
-      "CGConnect_cg_i_i_D_l",
-      "Only 1-dim subnets are supported as targets." );
-    throw BadProperty();
-  }
-
-  const Token synmodel =
-    kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  const modelrange source_range =
-    kernel().modelrange_manager.get_contiguous_gid_range(
-      ( *sources->local_begin() )->get_gid() );
-  index source_offset = source_range.get_first_gid();
-  RangeSet source_ranges;
-  source_ranges.push_back(
-    Range( source_range.get_first_gid(), source_range.get_last_gid() ) );
-
-  const modelrange target_range =
-    kernel().modelrange_manager.get_contiguous_gid_range(
-      ( *targets->local_begin() )->get_gid() );
-  index target_offset = target_range.get_first_gid();
-  RangeSet target_ranges;
-  target_ranges.push_back(
-    Range( target_range.get_first_gid(), target_range.get_last_gid() ) );
-
-  cg_connect( cg,
-    source_ranges,
-    source_offset,
-    target_ranges,
-    target_offset,
-    params_map,
-    synmodel_id );
-}
-
-void
-cg_connect( ConnectionGeneratorDatum& cg,
-  IntVectorDatum& sources,
-  IntVectorDatum& targets,
+  GIDCollection& source_gids,
+  GIDCollection& target_gids,
   const DictionaryDatum& params_map,
   const Name& synmodel_name )
 {
@@ -132,31 +50,12 @@ cg_connect( ConnectionGeneratorDatum& cg,
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  RangeSet source_ranges;
-  cg_get_ranges( source_ranges, ( *sources ) );
+  RangeSet source_ranges, target_ranges;
 
-  RangeSet target_ranges;
-  cg_get_ranges( target_ranges, ( *targets ) );
+  cg_get_ranges( source_ranges, source_gids );
+  cg_get_ranges( target_ranges, target_gids );
+  cg_set_masks( cg, source_ranges, target_ranges );
 
-  cg_connect( cg,
-    source_ranges,
-    ( *sources ),
-    target_ranges,
-    ( *targets ),
-    params_map,
-    synmodel_id );
-}
-
-void
-cg_connect( ConnectionGeneratorDatum& cg,
-  RangeSet& sources,
-  index source_offset,
-  RangeSet& targets,
-  index target_offset,
-  DictionaryDatum params_map,
-  index syn )
-{
-  cg_set_masks( cg, sources, targets );
   cg->start();
 
   int source, target, num_parameters = cg->arity();
@@ -165,13 +64,13 @@ cg_connect( ConnectionGeneratorDatum& cg,
     // connect source to target
     while ( cg->next( source, target, NULL ) )
     {
-      if ( kernel().node_manager.is_local_gid( target + target_offset ) )
+      if ( kernel().node_manager.is_local_gid( target_gids[ target ] ) )
       {
         Node* const target_node =
-          kernel().node_manager.get_node( target + target_offset );
+          kernel().node_manager.get_node( target_gids[ target ] );
         const thread target_thread = target_node->get_thread();
         kernel().connection_manager.connect(
-          source + source_offset, target_node, target_thread, syn );
+          source_gids[ source ], target_node, target_thread, synmodel_id );
       }
     }
   }
@@ -189,90 +88,22 @@ cg_connect( ConnectionGeneratorDatum& cg,
     // connect source to target with weight and delay
     while ( cg->next( source, target, &params[ 0 ] ) )
     {
-      if ( kernel().node_manager.is_local_gid( target + target_offset ) )
+      if ( kernel().node_manager.is_local_gid( target_gids[ target ] ) )
       {
         Node* const target_node =
-          kernel().node_manager.get_node( target + target_offset );
-        const thread target_thread = target_node->get_thread();
-        kernel().connection_manager.connect( source + source_offset,
-          target_node,
-          target_thread,
-          syn,
-          params[ d_idx ],
-          params[ w_idx ] );
-      }
-    }
-  }
-  else
-  {
-    LOG( M_ERROR,
-      "Connect",
-      "Either two or no parameters in the Connection Set expected." );
-    throw DimensionMismatch();
-  }
-}
-
-void
-cg_connect( ConnectionGeneratorDatum& cg,
-  RangeSet& sources,
-  std::vector< long >& source_gids,
-  RangeSet& targets,
-  std::vector< long >& target_gids,
-  DictionaryDatum params_map,
-  index syn )
-{
-  cg_set_masks( cg, sources, targets );
-  cg->start();
-
-  int source, target, num_parameters = cg->arity();
-  if ( num_parameters == 0 )
-  {
-    // connect source to target
-    while ( cg->next( source, target, NULL ) )
-    {
-      if ( kernel().node_manager.is_local_gid( target_gids.at( target ) ) )
-      {
-        Node* const target_node =
-          kernel().node_manager.get_node( target_gids.at( target ) );
+          kernel().node_manager.get_node( target_gids[ target ] );
         const thread target_thread = target_node->get_thread();
         kernel().connection_manager.connect(
-          source_gids.at( source ), target_node, target_thread, syn );
-      }
-    }
-  }
-  else if ( num_parameters == 2 )
-  {
-    if ( !params_map->known( names::weight )
-      || !params_map->known( names::delay ) )
-      throw BadProperty(
-        "The parameter map has to contain the indices of weight and delay." );
-
-    long w_idx = ( *params_map )[ names::weight ];
-    long d_idx = ( *params_map )[ names::delay ];
-    std::vector< double > params( 2 );
-
-    // connect source to target with weight and delay
-    while ( cg->next( source, target, &params[ 0 ] ) )
-    {
-      if ( kernel().node_manager.is_local_gid( target_gids.at( target ) ) )
-      {
-        Node* const target_node =
-          kernel().node_manager.get_node( target_gids.at( target ) );
-        const thread target_thread = target_node->get_thread();
-        kernel().connection_manager.connect( source_gids.at( source ),
-          target_node,
-          target_thread,
-          syn,
-          params[ d_idx ],
-          params[ w_idx ] );
+	  source_gids[ source ], target_node, target_thread, synmodel_id,
+          params[ d_idx ], params[ w_idx ] );
       }
     }
   }
   else
   {
     LOG( M_ERROR,
-      "Connect",
-      "Either two or no parameters in the Connection Set expected." );
+      "CGConnect",
+      "Either two or no parameters in the ConnectionSet expected." );
     throw DimensionMismatch();
   }
 }
@@ -407,7 +238,7 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
  * \param gids The std::vector<long> of gids to search in
  */
 index
-cg_get_right_border( index left, size_t step, std::vector< long >& gids )
+cg_get_right_border( index left, size_t step, GIDCollection& gids )
 {
   // Check if left is already the index of the last element in
   // gids. If yes, return left as the right border
@@ -430,7 +261,7 @@ cg_get_right_border( index left, size_t step, std::vector< long >& gids )
     // (i.e. we're back at an already visited index), we found the
     // right border of the contiguous range (last_i) and return it.
     if ( ( i == static_cast< long >( gids.size() ) - 1
-           && gids[ i ] - gids[ left ] == i - static_cast< long >( left ) )
+           && gids[ i ] - gids[ left ] == i - static_cast< index >( left ) )
       || i == leftmost_r )
       return last_i;
 
@@ -442,7 +273,7 @@ cg_get_right_border( index left, size_t step, std::vector< long >& gids )
     // set i to the right by step steps, else update the variable
     // for leftmost_r to the current i (i.e. the known leftmost
     // position) and set i to the left by step steps.
-    if ( gids[ i ] - gids[ left ] == i - static_cast< long >( left ) )
+    if ( gids[ i ] - gids[ left ] == i - static_cast< index >( left ) )
       i += step;
     else
     {
@@ -475,7 +306,7 @@ cg_get_right_border( index left, size_t step, std::vector< long >& gids )
  * RangeSet. Index translation is done in cg_create_masks().
  */
 void
-cg_get_ranges( RangeSet& ranges, std::vector< long >& gids )
+cg_get_ranges( RangeSet& ranges, GIDCollection& gids )
 {
   index right, left = 0;
   while ( true )

@@ -17,14 +17,18 @@ set -e
 
 mkdir -p $HOME/.matplotlib
 cat > $HOME/.matplotlib/matplotlibrc <<EOF
-    # ZYV
     backend : svg
 EOF
+
+if [ "$xTHREADING" = "1" ] ; then
+    CONFIGURE_THREADING="-Dwith-openmp=ON"
+else
+    CONFIGURE_THREADING="-Dwith-openmp=OFF"
+fi
 
 if [ "$xMPI" = "1" ] ; then
 
 cat > $HOME/.nestrc <<EOF
-    % ZYV: NEST MPI configuration
     /mpirun
     [/integertype /stringtype]
     [/numproc     /slifile]
@@ -233,6 +237,7 @@ cmake \
   -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
   -Dwith-optimize=ON \
   -Dwith-warning=ON \
+  $CONFIGURE_THREADING \
   $CONFIGURE_MPI \
   $CONFIGURE_PYTHON \
   $CONFIGURE_GSL \

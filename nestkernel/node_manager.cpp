@@ -299,10 +299,17 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
       }
     }
 
+    size_t gid = next_local_gid_( min_gid - 1 );
+    size_t next_lid = current_.gids_.size() + gid - min_gid;
+    // The next loop will not visit every node, if more than one rank is present.
+    // Since we already know what range of gids will be created, we can tell the
+    // current subnet the range and subsequent calls to `current_->add_remote_node()`
+    // become irrelevant.
+    current_->add_gid_range( min_gid, max_gid - 1 );
+
     // min_gid is first valid gid i should create, hence ask for the first local
     // gid after min_gid-1
-    for ( size_t gid = next_local_gid_( min_gid - 1 ); gid < max_gid;
-          gid = next_local_gid_( gid ) )
+    while ( gid < max_gid )
     {
       const thread vp = kernel().vp_manager.suggest_vp( gid );
       const thread t = kernel().vp_manager.vp_to_thread( vp );
@@ -317,6 +324,10 @@ index NodeManager::add_node( index mod, long_t n ) // no_p
 
         local_nodes_.add_local_node( *newnode ); // put into local nodes list
         current_->add_node( newnode ); // and into current subnet, thread 0.
+
+        newnode->set_lid( next_lid );
+        gid = next_local_gid_( gid )
+        next_lid = current_.gids_.size() + next_local_gid_( gid ) - gid;
       }
     }
     // if last gid is not on this process, we need to add it as a remote node

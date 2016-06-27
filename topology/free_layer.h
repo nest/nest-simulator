@@ -144,7 +144,8 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 
       Position< D > point = getValue< std::vector< double_t > >(
         pos[ ( *i )->get_lid() % nodes_per_depth ] );
-
+      std::cout << "Position: " << point << std::endl;
+      std::cout << "LID: " << ( *i )->get_lid() << " nodes_per_depth: " << nodes_per_depth << std::endl;
       if ( not( ( point >= this->lower_left_ )
              and ( point < this->lower_left_ + this->extent_ ) ) )
         throw BadProperty( "Node position outside of layer" );

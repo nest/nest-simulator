@@ -164,7 +164,7 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
     for key, value in doc_dic.iteritems():
         if key == "SeeAlso":
             htmllist.append('<b>%s: </b>' % key)
-            hlplist.append('%s:' % key)
+            hlplist.append('%s:\n' % key)
             htmllist.append('<ul>')
             for i in value:
                 see = i.strip("###### ###### $$")
@@ -185,7 +185,7 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
         if key == "File":
             value = value.strip("###### ###### $$")
             htmllist.append('<b>Source:</b><pre>%s</pre>' % value)
-            hlplist.append('Source:\n%s' % value)
+            hlplist.append('Source:\n\n%s' % value)
     htmllist.append('</div>' + linkline)
     htmllist.append(copyright)
     htmllist.append(footer)

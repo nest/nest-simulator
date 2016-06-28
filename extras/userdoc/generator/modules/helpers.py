@@ -31,3 +31,23 @@ def cut_it(trenner, text):
         return re.split(trenner, text)
     else:
         return text
+
+
+def check_ifdef(item, filetext, docstring):
+        """
+        Check the ifdef context.
+
+        If there is an ifdef requirement write it to the data.
+        """
+        import re
+        ifdefstring = r'(\#ifdef((.*?)\n(.*?)\n*))\#endif'
+        require_reg = re.compile('HAVE\_((.*?)*)\n')
+        # every doc in an #ifdef
+        ifdefs = re.findall(ifdefstring, filetext, re.DOTALL)
+        for ifitem in ifdefs:
+            for str_ifdef in ifitem:
+                initems = re.findall(docstring, str_ifdef, re.DOTALL)
+                for initem in initems:
+                    if item == initem:
+                        features = require_reg.search(str_ifdef)
+                        return features.group()

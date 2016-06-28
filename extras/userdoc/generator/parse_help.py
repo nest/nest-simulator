@@ -31,8 +31,8 @@ import re
 import sys
 import shutil
 
-from modules.writers import coll_data, check_ifdef, write_helpindex
-# from modules.helpers import cut_it
+from modules.writers import coll_data, write_helpindex
+from modules.helpers import check_ifdef
 
 path = '../../../'
 path = os.path.abspath(path)

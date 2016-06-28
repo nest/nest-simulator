@@ -28,9 +28,9 @@ Collect all the data and write help files.
 
 import os
 import re
+import textwrap as tw
 from helpers import cut_it
 
-# from modules.writers import coll_data, check_ifdef
 
 if os.path.isdir('../cmds'):
     pass
@@ -136,12 +136,13 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
             fullname = value.strip("###### ###### ~~")
             fullname = re.sub("(######)", " <br/> ", fullname)
             fullname = re.sub("(\~\~)", '  ', fullname)
-            htmllist.append('<b>Name:</b><pre>%s - %s</pre>' % (name, fullname))
+            htmllist.append('<b>Name:</b><pre>%s - %s</pre>' %
+                            (name, fullname))
             hlpfullname = re.sub(' <br\/> ', '\n', fullname).strip()
             hlplist.append('Name: %s - %s\n' % (name, hlpfullname))
 
     # print keywords
-
+    # sorting linke keywords
     for word in keywords:
         word = word.strip(':')
         for key, value in doc_dic.iteritems():
@@ -156,7 +157,8 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
                     hlpvalue = re.sub('\n ', '\n', hlpvalue).rstrip()
                     hlpvalue = hlpvalue.lstrip('\n')
                     hlpvalue = re.sub('\n[\s?]*\n', '\n', hlpvalue).rstrip()
-                    hlpcontent = ('%s:\n%s\n' % (key, hlpvalue))
+                    dedented_text = tw.dedent(hlpvalue)
+                    hlpcontent = ('%s:\n\n%s\n\n' % (key, dedented_text))
                     hlplist.append(hlpcontent)
 
     for key, value in doc_dic.iteritems():
@@ -364,7 +366,6 @@ def coll_data(keywords, documentation, num, file, sli_command_list):
 
     Prepare the data for writing the help.
     """
-    # from helpers import cut_it
     iname = ""
     see = ""
     ifullname = ""
@@ -401,23 +402,3 @@ def coll_data(keywords, documentation, num, file, sli_command_list):
     # all_list.append(doc_dic)
     write_help_html(doc_dic, file, sli_command_list, keywords)
     # return(write_help_md(doc_dic))
-
-
-def check_ifdef(item, filetext, docstring):
-        """
-        Check the ifdef context.
-
-        If there is an ifdef requirement write it to the data.
-        """
-        import re
-        ifdefstring = r'(\#ifdef((.*?)\n(.*?)\n*))\#endif'
-        require_reg = re.compile('HAVE\_((.*?)*)\n')
-        # every doc in an #ifdef
-        ifdefs = re.findall(ifdefstring, filetext, re.DOTALL)
-        for ifitem in ifdefs:
-            for str_ifdef in ifitem:
-                initems = re.findall(docstring, str_ifdef, re.DOTALL)
-                for initem in initems:
-                    if item == initem:
-                        features = require_reg.search(str_ifdef)
-                        return features.group()

@@ -157,6 +157,7 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
                     hlpvalue = re.sub('\n ', '\n', hlpvalue).rstrip()
                     hlpvalue = hlpvalue.lstrip('\n')
                     hlpvalue = re.sub('\n[\s?]*\n', '\n', hlpvalue).rstrip()
+                    hlpvalue = re.sub(r'[ ]{3,}', r'\t', hlpvalue)
                     dedented_text = tw.dedent(hlpvalue)
                     hlpcontent = ('%s:\n\n%s\n\n' % (key, dedented_text))
                     hlplist.append(hlpcontent)

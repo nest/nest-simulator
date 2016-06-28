@@ -24,9 +24,9 @@
 #define EVENT_H
 
 // C++ includes:
-#include <algorithm>
 #include <cassert>
 #include <cstring>
+#include <algorithm>
 #include <vector>
 
 // Includes from libnestutil:

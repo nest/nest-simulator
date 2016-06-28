@@ -32,10 +32,10 @@
 #ifndef UTIL_GTL_LIBC_ALLOCATOR_WITH_REALLOC_H_
 #define UTIL_GTL_LIBC_ALLOCATOR_WITH_REALLOC_H_
 
-#include <new> // for placement new
 #include <sparseconfig.h>
-#include <stddef.h> // for ptrdiff_t
 #include <stdlib.h> // for malloc/realloc/free
+#include <stddef.h> // for ptrdiff_t
+#include <new>      // for placement new
 
 _START_GOOGLE_NAMESPACE_
 

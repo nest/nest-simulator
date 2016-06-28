@@ -40,12 +40,12 @@
 #ifndef UTIL_GTL_HASHTABLE_COMMON_H_
 #define UTIL_GTL_HASHTABLE_COMMON_H_
 
-#include <assert.h>
-#include <iosfwd>
 #include <sparseconfig.h>
-#include <stddef.h>  // for size_t
-#include <stdexcept> // For length_error
+#include <assert.h>
 #include <stdio.h>
+#include <stddef.h> // for size_t
+#include <iosfwd>
+#include <stdexcept> // For length_error
 
 /* If we're not using GNU C, elide __attribute__ */
 #ifndef __GNUC__

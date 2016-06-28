@@ -225,8 +225,8 @@
 #define UTIL_GTL_SPARSETABLE_H_
 
 #include <sparseconfig.h>
-#include <stdio.h>  // to read/write tables
 #include <stdlib.h> // for malloc/free
+#include <stdio.h>  // to read/write tables
 #include <string.h> // for memcpy
 #ifdef HAVE_STDINT_H
 #include <stdint.h> // the normal place uint16_t is defined
@@ -237,14 +237,14 @@
 #ifdef HAVE_INTTYPES_H
 #include <inttypes.h> // a third place for uint16_t or u_int16_t
 #endif
-#include <algorithm> // equal, lexicographical_compare, swap,...
 #include <assert.h>  // for bounds checking
-#include <hashtable-common.h>
-#include <iterator> // to define reverse_iterator for me
-#include <libc_allocator_with_realloc.h>
-#include <memory> // uninitialized_copy, uninitialized_fill
+#include <iterator>  // to define reverse_iterator for me
+#include <algorithm> // equal, lexicographical_compare, swap,...
+#include <memory>    // uninitialized_copy, uninitialized_fill
+#include <vector>    // a sparsetable is a vector of groups
 #include <type_traits.h>
-#include <vector> // a sparsetable is a vector of groups
+#include <hashtable-common.h>
+#include <libc_allocator_with_realloc.h>
 
 // A lot of work to get a type that's guaranteed to be 16 bits...
 #ifndef HAVE_U_INT16_T

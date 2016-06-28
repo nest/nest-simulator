@@ -41,8 +41,8 @@
 
 // Neuron models
 #include "aeif_cond_alpha.h"
-#include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_alpha_multisynapse.h"
+#include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_exp.h"
 #include "amat2_psc_exp.h"
 #include "ginzburg_neuron.h"
@@ -109,9 +109,9 @@
 #include "stdp_connection_facetshw_hom.h"
 #include "stdp_connection_facetshw_hom_impl.h"
 #include "stdp_connection_hom.h"
+#include "stdp_triplet_connection.h"
 #include "stdp_dopa_connection.h"
 #include "stdp_pl_connection_hom.h"
-#include "stdp_triplet_connection.h"
 #include "tsodyks2_connection.h"
 #include "tsodyks_connection.h"
 #include "tsodyks_connection_hom.h"
@@ -126,10 +126,9 @@
 #include "target_identifier.h"
 
 #ifdef HAVE_MUSIC
-#include "music_cont_in_proxy.h"
-#include "music_cont_out_proxy.h"
 #include "music_event_in_proxy.h"
 #include "music_event_out_proxy.h"
+#include "music_cont_in_proxy.h"
 #include "music_message_in_proxy.h"
 #endif
 
@@ -341,8 +340,6 @@ ModelsModule::init( SLIInterpreter* )
     "music_event_in_proxy" );
   kernel().model_manager.register_node_model< music_event_out_proxy >(
     "music_event_out_proxy" );
-  kernel().model_manager.register_node_model< music_cont_out_proxy >(
-    "music_cont_out_proxy" );
   kernel().model_manager.register_node_model< music_cont_in_proxy >(
     "music_cont_in_proxy" );
   kernel().model_manager.register_node_model< music_message_in_proxy >(

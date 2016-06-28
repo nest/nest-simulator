@@ -116,7 +116,7 @@ nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d ) const
     std::vector< long_t >::iterator >(
     target_gids_.begin(), target_gids_.end(), pInd_map_long->begin() );
 
-  ( *d )[ names::target_gids ] = IntVectorDatum( pInd_map_long );
+  ( *d )[ names::targets ] = IntVectorDatum( pInd_map_long );
 }
 
 void
@@ -172,7 +172,7 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
     }
   }
 
-  if ( d->known( names::target_gids ) )
+  if ( d->known( names::targets ) )
   {
     if ( record_from_.empty() )
     {
@@ -182,7 +182,7 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
 
     if ( states.published_ == false )
     {
-      ArrayDatum mca = getValue< ArrayDatum >( d, names::target_gids );
+      ArrayDatum mca = getValue< ArrayDatum >( d, names::targets );
       for ( Token* t = mca.begin(); t != mca.end(); ++t )
       {
         target_gids_.push_back( getValue< long_t >( *t ) );

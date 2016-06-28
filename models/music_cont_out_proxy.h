@@ -58,7 +58,7 @@ has to specify the recordable values to observe (e.g. ["V_m"]) via the
 record_from parameter.
 The target neurons are specified by a list of global neuron ids which must be
 passed via
-the "target_gids" parameter. The music_cont_out_proxy will be connected
+the "targets" parameter. The music_cont_out_proxy will be connected
 automatically to the
 specified target neurons. It is not possible to change the list of target
 neurons or observed
@@ -80,7 +80,7 @@ Parameters:
 The following properties are available in the status dictionary:
 
 interval     double   - Recording interval in milliseconds
-target_gids  array    - Global id list of neurons to be observed
+targets 	 array    - Global id list of neurons to be observed
 port_name    string   - The name of the MUSIC output port to send to (default:
                         cont_out)
 port_width   integer  - The width of the MUSIC input port

@@ -57,6 +57,20 @@ else
     CONFIGURE_GSL="-Dwith-gsl=OFF"
 fi
 
+if [ "$xLTDL" = "1" ] ; then
+    CONFIGURE_LTDL="-Dwith-ltdl=ON"
+else
+    CONFIGURE_LTDL="-Dwith-ltdl=OFF"
+fi
+
+if [ "$xREADLINE" = "1" ] ; then
+    CONFIGURE_READLINE="-Dwith-readline=ON"
+else
+    CONFIGURE_READLINE="-Dwith-readline=OFF"
+fi
+
+
+
 NEST_VPATH=build
 NEST_RESULT=result
 

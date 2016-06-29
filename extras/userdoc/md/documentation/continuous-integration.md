@@ -25,7 +25,7 @@ getting into the tree and timely reporting of identified
 problems. This way, issues will be discovered earlier and the amount
 of efforts to fix them will be significantly decreased.
 
-### Build jobs
+## Build jobs
 
 The CI system is set up to run upon commits to branches that are
 related to a pull request, or for commits that are in a fork, for

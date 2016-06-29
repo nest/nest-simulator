@@ -240,18 +240,21 @@ private:
    */
   struct State_
   {
-    double_t y0_;  //!< This is piecewise constant external current
-    double_t y3_;  //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double_t y0_; //!< This is piecewise constant external current
+    double_t
+      y3_; //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
     double_t q_;   //!< This is the change of the 'threshold' due to adaptation.
     double_t stc_; // Spike triggered current.
 
     std::vector< double_t > q_sfa_elems_; // Vector of adaptation parameters.
-    std::vector< double_t > q_stc_elems_; // Vector of spike triggered parameters.
+    std::vector< double_t >
+      q_stc_elems_; // Vector of spike triggered parameters.
 
     double_t i_syn_ex_; // postsynaptic current for exc.
     double_t i_syn_in_; // postsynaptic current for inh.
 
-    int_t r_ref_; // absolute refractory counter (no membrane potential propagation)
+    int_t
+      r_ref_; // absolute refractory counter (no membrane potential propagation)
 
     bool initialized_; // it is true if the vectors are initialized
     bool add_stc_sfa_; // in case of true, the stc and sfa ampplitudes should be
@@ -303,7 +306,7 @@ private:
 
     double_t h_; //!< simulation time step in ms
 
-    librandom::RngPtr rng_;                   // random number generator of my own thread
+    librandom::RngPtr rng_; // random number generator of my own thread
     librandom::PoissonRandomDev poisson_dev_; // random deviate generator
     librandom::GammaRandomDev gamma_dev_;     // random deviate generator
 
@@ -359,7 +362,10 @@ private:
 };
 
 inline port
-gif_psc_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+gif_psc_exp::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

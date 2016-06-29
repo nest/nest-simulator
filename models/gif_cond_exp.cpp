@@ -66,10 +66,13 @@ void
 RecordablesMap< gif_cond_exp >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::V_M > );
+  insert_(
+    names::V_m, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::V_M > );
   insert_( names::E_sfa, &gif_cond_exp::get_E_sfa_ );
-  insert_( names::g_ex, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::G_EXC > );
-  insert_( names::g_in, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::G_INH > );
+  insert_(
+    names::g_ex, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::G_EXC > );
+  insert_(
+    names::g_in, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::G_INH > );
   // insert_( "stc"      , &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::STC
   // > );
 }
@@ -83,7 +86,8 @@ nest::gif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::gif_cond_exp& node = *( reinterpret_cast< nest::gif_cond_exp* >( pnode ) );
+  const nest::gif_cond_exp& node =
+    *( reinterpret_cast< nest::gif_cond_exp* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -97,7 +101,8 @@ nest::gif_cond_exp_dynamics( double, const double y[], double f[], void* pnode )
   const double stc = node.S_.stc_;
 
   // V dot
-  f[ 0 ] = ( -I_L + node.S_.y0_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc ) / node.P_.c_m_;
+  f[ 0 ] = ( -I_L + node.S_.y0_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc )
+    / node.P_.c_m_;
 
   f[ 1 ] = -y[ S::G_EXC ] / node.P_.tau_synE_;
   f[ 2 ] = -y[ S::G_INH ] / node.P_.tau_synI_;
@@ -164,7 +169,8 @@ nest::gif_cond_exp::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::gif_cond_exp::State_& nest::gif_cond_exp::State_::operator=( const State_& s )
+nest::gif_cond_exp::State_& nest::gif_cond_exp::State_::operator=(
+  const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -282,18 +288,21 @@ nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::gif_cond_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::gif_cond_exp::State_::get( DictionaryDatum& d,
+  const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] ); // Membrane potential
   def< double >( d, names::E_sfa, q_ );      // Adaptive threshold potential
 }
 
 void
-nest::gif_cond_exp::State_::set( const DictionaryDatum& d, const Parameters_& p )
+nest::gif_cond_exp::State_::set( const DictionaryDatum& d,
+  const Parameters_& p )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::E_sfa, q_ );
-  initialized_ = false; // vectors of the state should be initialized with new parameter set.
+  initialized_ =
+    false; // vectors of the state should be initialized with new parameter set.
 }
 
 nest::gif_cond_exp::Buffers_::Buffers_( gif_cond_exp& n )
@@ -372,7 +381,8 @@ nest::gif_cond_exp::init_buffers_()
   B_.IntegrationStep_ = B_.step_;
 
   if ( B_.s_ == 0 )
-    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ =
+      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   else
     gsl_odeiv_step_reset( B_.s_ );
 
@@ -403,7 +413,8 @@ nest::gif_cond_exp::calibrate()
   V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.RefractoryCounts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  assert( V_.RefractoryCounts_
+    >= 0 ); // since t_ref_ >= 0, this can only fail in error
 
   // initializing internal state
   if ( !S_.initialized_ )
@@ -429,10 +440,13 @@ nest::gif_cond_exp::calibrate()
  */
 
 void
-nest::gif_cond_exp::update( Time const& origin, const long_t from, const long_t to )
+nest::gif_cond_exp::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   double_t q_temp_;
@@ -531,13 +545,15 @@ nest::gif_cond_exp::update( Time const& origin, const long_t from, const long_t 
         S_.q_ += q_temp_;
       }
 
-      double_t lambda = P_.lambda0_ * std::exp( ( S_.y_[ State_::V_M ] - S_.q_ ) / P_.delta_u_ );
+      double_t lambda = P_.lambda0_
+        * std::exp( ( S_.y_[ State_::V_M ] - S_.q_ ) / P_.delta_u_ );
 
       if ( lambda > 0.0 )
       {
 
         // Draw random number and compare to prob to have a spike
-        if ( V_.rng_->drand() <= -numerics::expm1( -lambda * ( V_.h_ / 1000.0 ) ) )
+        if ( V_.rng_->drand()
+          <= -numerics::expm1( -lambda * ( V_.h_ / 1000.0 ) ) )
         {
           n_spikes = 1;
         }
@@ -583,12 +599,12 @@ nest::gif_cond_exp::handle( SpikeEvent& e )
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
   if ( e.get_weight() >= 0.0 )
-    B_.spike_exc_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
-    B_.spike_inh_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
 }
 
@@ -602,7 +618,8 @@ nest::gif_cond_exp::handle( CurrentEvent& e )
 
   // Add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 void

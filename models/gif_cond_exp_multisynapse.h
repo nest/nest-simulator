@@ -158,7 +158,8 @@
 namespace nest
 {
 
-extern "C" int gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
+extern "C" int
+gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
 
 class gif_cond_exp_multisynapse : public Archiving_Node
 {
@@ -198,7 +199,8 @@ private:
   void update( Time const&, const long_t, const long_t );
 
   // make dynamics function quasi-member
-  friend int gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
+  friend int
+  gif_cond_exp_multisynapse_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< gif_cond_exp_multisynapse >;
@@ -287,9 +289,11 @@ private:
     double_t stc_; // Spike triggered current.
 
     std::vector< double_t > q_sfa_elems_; // Vector of adaptation parameters.
-    std::vector< double_t > q_stc_elems_; // Vector of spike triggered parameters.
+    std::vector< double_t >
+      q_stc_elems_; // Vector of spike triggered parameters.
 
-    int_t r_ref_; // absolute refractory counter (no membrane potential propagation)
+    int_t
+      r_ref_; // absolute refractory counter (no membrane potential propagation)
 
     bool initialized_; // it is true if the vectors are initialized
     bool add_stc_sfa_; // in case of true, the stc and sfa ampplitudes should be
@@ -348,7 +352,7 @@ private:
 
     double_t h_; //!< simulation time step in ms
 
-    librandom::RngPtr rng_;                   // random number generator of my own thread
+    librandom::RngPtr rng_; // random number generator of my own thread
     librandom::PoissonRandomDev poisson_dev_; // random deviate generator
     librandom::GammaRandomDev gamma_dev_;     // random deviate generator
 
@@ -393,9 +397,11 @@ private:
 };
 
 inline port
-gif_cond_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
+gif_cond_exp_multisynapse::handles_test_event( SpikeEvent&,
+  rport receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
+  if ( receptor_type <= 0
+    || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
 
   P_.has_connections_ = true;
@@ -403,7 +409,10 @@ gif_cond_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type 
 }
 
 inline port
-gif_cond_exp_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
+gif_cond_exp_multisynapse::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -412,7 +421,8 @@ gif_cond_exp_multisynapse::send_test_event( Node& target, rport receptor_type, s
 }
 
 inline port
-gif_cond_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
+gif_cond_exp_multisynapse::handles_test_event( CurrentEvent&,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -420,7 +430,8 @@ gif_cond_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_typ
 }
 
 inline port
-gif_cond_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+gif_cond_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

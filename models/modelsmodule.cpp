@@ -188,7 +188,6 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
   kernel().model_manager.register_node_model< pp_pop_psc_delta >(
     "pp_pop_psc_delta" );
-  kernel().model_manager.register_node_model< pp_pop_psc_delta >( "pp_pop_psc_delta" );
   kernel().model_manager.register_node_model< gif_psc_exp >( "gif_psc_exp" );
   kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >(
     "gif_psc_exp_multisynapse" );

@@ -52,7 +52,8 @@ namespace nest
  * Recordables map
  * ---------------------------------------------------------------- */
 
-RecordablesMap< gif_cond_exp_multisynapse > gif_cond_exp_multisynapse::recordablesMap_;
+RecordablesMap< gif_cond_exp_multisynapse >
+  gif_cond_exp_multisynapse::recordablesMap_;
 
 
 // Override the create() method with one call to RecordablesMap::insert_()
@@ -62,15 +63,19 @@ void
 RecordablesMap< gif_cond_exp_multisynapse >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_(
-    names::V_m, &gif_cond_exp_multisynapse::get_y_elem_< gif_cond_exp_multisynapse::State_::V_M > );
+  insert_( names::V_m,
+    &gif_cond_exp_multisynapse::
+      get_y_elem_< gif_cond_exp_multisynapse::State_::V_M > );
   insert_( names::E_sfa, &gif_cond_exp_multisynapse::get_E_sfa_ );
 }
 
 } // namespace
 
 extern "C" inline int
-nest::gif_cond_exp_multisynapse_dynamics( double, const double* y, double* f, void* pnode )
+nest::gif_cond_exp_multisynapse_dynamics( double,
+  const double* y,
+  double* f,
+  void* pnode )
 {
   // a shorthand
   typedef nest::gif_cond_exp_multisynapse::State_ S;
@@ -92,13 +97,16 @@ nest::gif_cond_exp_multisynapse_dynamics( double, const double* y, double* f, vo
 
   for ( size_t i = 0; i < node.P_.num_of_receptors_; i++ )
   {
-    I_syn_exc += y[ S::G_EXC + ( S::STATE_VEC_SIZE - 1 ) * i ] * ( V - node.P_.E_ex_ );
-    I_syn_inh += y[ S::G_INH + ( S::STATE_VEC_SIZE - 1 ) * i ] * ( V - node.P_.E_in_ );
+    I_syn_exc +=
+      y[ S::G_EXC + ( S::STATE_VEC_SIZE - 1 ) * i ] * ( V - node.P_.E_ex_ );
+    I_syn_inh +=
+      y[ S::G_INH + ( S::STATE_VEC_SIZE - 1 ) * i ] * ( V - node.P_.E_in_ );
   }
 
 
   // output: dv/dt
-  f[ 0 ] = ( -I_L + node.S_.y0_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc ) / node.P_.c_m_;
+  f[ 0 ] = ( -I_L + node.S_.y0_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc )
+    / node.P_.c_m_;
 
   // outputs: dg/dt
   for ( size_t i = 0; i < node.P_.num_of_receptors_; i++ )
@@ -170,8 +178,9 @@ nest::gif_cond_exp_multisynapse::State_::State_( const State_& s )
   y_ = s.y_;
 }
 
-nest::gif_cond_exp_multisynapse::State_& nest::gif_cond_exp_multisynapse::State_::operator=(
-  const State_& s )
+nest::gif_cond_exp_multisynapse::State_&
+  nest::gif_cond_exp_multisynapse::State_::
+  operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -258,7 +267,8 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
           "reduced." );
 
       if ( tau_tmp[ i ] <= 0 )
-        throw BadProperty( "All synaptic time constants must be strictly positive" );
+        throw BadProperty(
+          "All synaptic time constants must be strictly positive" );
 
       if ( tau_tmp[ i ] == ( c_m_ / g_L_ ) )
         throw BadProperty(
@@ -306,21 +316,25 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::gif_cond_exp_multisynapse::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::gif_cond_exp_multisynapse::State_::get( DictionaryDatum& d,
+  const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] ); // Membrane potential
   def< double >( d, names::E_sfa, q_ );      // Adaptive threshold potential
 }
 
 void
-nest::gif_cond_exp_multisynapse::State_::set( const DictionaryDatum& d, const Parameters_& p )
+nest::gif_cond_exp_multisynapse::State_::set( const DictionaryDatum& d,
+  const Parameters_& p )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::E_sfa, q_ );
-  initialized_ = false; // vectors of the state should be initialized with new parameter set.
+  initialized_ =
+    false; // vectors of the state should be initialized with new parameter set.
 }
 
-nest::gif_cond_exp_multisynapse::Buffers_::Buffers_( gif_cond_exp_multisynapse& n )
+nest::gif_cond_exp_multisynapse::Buffers_::Buffers_(
+  gif_cond_exp_multisynapse& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -330,7 +344,8 @@ nest::gif_cond_exp_multisynapse::Buffers_::Buffers_( gif_cond_exp_multisynapse& 
   // init_buffers_().
 }
 
-nest::gif_cond_exp_multisynapse::Buffers_::Buffers_( const Buffers_&, gif_cond_exp_multisynapse& n )
+nest::gif_cond_exp_multisynapse::Buffers_::Buffers_( const Buffers_&,
+  gif_cond_exp_multisynapse& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -353,7 +368,8 @@ nest::gif_cond_exp_multisynapse::gif_cond_exp_multisynapse()
   recordablesMap_.create();
 }
 
-nest::gif_cond_exp_multisynapse::gif_cond_exp_multisynapse( const gif_cond_exp_multisynapse& n )
+nest::gif_cond_exp_multisynapse::gif_cond_exp_multisynapse(
+  const gif_cond_exp_multisynapse& n )
   : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -379,7 +395,8 @@ nest::gif_cond_exp_multisynapse::~gif_cond_exp_multisynapse()
 void
 nest::gif_cond_exp_multisynapse::init_state_( const Node& proto )
 {
-  const gif_cond_exp_multisynapse& pr = downcast< gif_cond_exp_multisynapse >( proto );
+  const gif_cond_exp_multisynapse& pr =
+    downcast< gif_cond_exp_multisynapse >( proto );
   S_ = pr.S_;
 }
 
@@ -443,7 +460,8 @@ nest::gif_cond_exp_multisynapse::calibrate()
   V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.RefractoryCounts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  assert( V_.RefractoryCounts_
+    >= 0 ); // since t_ref_ >= 0, this can only fail in error
 
   // initializing internal state
   if ( !S_.initialized_ )
@@ -469,10 +487,13 @@ nest::gif_cond_exp_multisynapse::calibrate()
  */
 
 void
-nest::gif_cond_exp_multisynapse::update( Time const& origin, const long_t from, const long_t to )
+nest::gif_cond_exp_multisynapse::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   double_t q_temp_;
@@ -580,13 +601,15 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin, const long_t from, 
         S_.q_ += q_temp_;
       }
 
-      double_t lambda = P_.lambda0_ * std::exp( ( S_.y_[ State_::V_M ] - S_.q_ ) / P_.delta_u_ );
+      double_t lambda = P_.lambda0_
+        * std::exp( ( S_.y_[ State_::V_M ] - S_.q_ ) / P_.delta_u_ );
 
       if ( lambda > 0.0 )
       {
 
         // Draw random number and compare to prob to have a spike
-        if ( V_.rng_->drand() <= -numerics::expm1( -lambda * ( V_.h_ / 1000.0 ) ) )
+        if ( V_.rng_->drand()
+          <= -numerics::expm1( -lambda * ( V_.h_ / 1000.0 ) ) )
         {
           n_spikes = 1;
         }
@@ -626,18 +649,21 @@ void
 nest::gif_cond_exp_multisynapse::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
-  assert( ( e.get_rport() > 0 ) && ( ( size_t ) e.get_rport() <= P_.num_of_receptors_ ) );
+  assert( ( e.get_rport() > 0 )
+    && ( ( size_t ) e.get_rport() <= P_.num_of_receptors_ ) );
 
   if ( e.get_weight() > 0.0 )
   {
     B_.spike_exc_[ e.get_rport() - 1 ].add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+      e.get_rel_delivery_steps(
+        kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   }
   else
   {
     B_.spike_inh_[ e.get_rport() - 1 ].add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+      e.get_rel_delivery_steps(
+        kernel().simulation_manager.get_slice_origin() ),
       -e.get_weight() * e.get_multiplicity() ); // keep conductances positive
   }
 }
@@ -651,7 +677,8 @@ nest::gif_cond_exp_multisynapse::handle( CurrentEvent& e )
 
   // Add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 void

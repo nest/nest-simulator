@@ -48,7 +48,8 @@ namespace nest
  * Recordables map
  * ---------------------------------------------------------------- */
 
-RecordablesMap< gif_psc_exp_multisynapse > gif_psc_exp_multisynapse::recordablesMap_;
+RecordablesMap< gif_psc_exp_multisynapse >
+  gif_psc_exp_multisynapse::recordablesMap_;
 
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
@@ -214,26 +215,31 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::gif_psc_exp_multisynapse::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::gif_psc_exp_multisynapse::State_::get( DictionaryDatum& d,
+  const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y3_ );  // Membrane potential
   def< double >( d, names::E_sfa, q_ ); // Adaptive threshold potential
 }
 
 void
-nest::gif_psc_exp_multisynapse::State_::set( const DictionaryDatum& d, const Parameters_& p )
+nest::gif_psc_exp_multisynapse::State_::set( const DictionaryDatum& d,
+  const Parameters_& p )
 {
   updateValue< double >( d, names::V_m, y3_ );
   updateValue< double >( d, names::E_sfa, q_ );
-  initialized_ = false; // vectors of the state should be initialized with new parameter set.
+  initialized_ =
+    false; // vectors of the state should be initialized with new parameter set.
 }
 
-nest::gif_psc_exp_multisynapse::Buffers_::Buffers_( gif_psc_exp_multisynapse& n )
+nest::gif_psc_exp_multisynapse::Buffers_::Buffers_(
+  gif_psc_exp_multisynapse& n )
   : logger_( n )
 {
 }
 
-nest::gif_psc_exp_multisynapse::Buffers_::Buffers_( const Buffers_&, gif_psc_exp_multisynapse& n )
+nest::gif_psc_exp_multisynapse::Buffers_::Buffers_( const Buffers_&,
+  gif_psc_exp_multisynapse& n )
   : logger_( n )
 {
 }
@@ -251,7 +257,8 @@ nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse()
   recordablesMap_.create();
 }
 
-nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse( const gif_psc_exp_multisynapse& n )
+nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse(
+  const gif_psc_exp_multisynapse& n )
   : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -266,7 +273,8 @@ nest::gif_psc_exp_multisynapse::gif_psc_exp_multisynapse( const gif_psc_exp_mult
 void
 nest::gif_psc_exp_multisynapse::init_state_( const Node& proto )
 {
-  const gif_psc_exp_multisynapse& pr = downcast< gif_psc_exp_multisynapse >( proto );
+  const gif_psc_exp_multisynapse& pr =
+    downcast< gif_psc_exp_multisynapse >( proto );
   S_ = pr.S_;
   // S_.r_ref_ = Time(Time::ms(P_.t_ref_remaining_)).get_steps();
 }
@@ -296,7 +304,8 @@ nest::gif_psc_exp_multisynapse::calibrate()
   V_.P31_ = ( 1 - V_.P33_ );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.RefractoryCounts_ >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  assert( V_.RefractoryCounts_
+    >= 0 ); // since t_ref_ >= 0, this can only fail in error
 
   // initializing internal state
   if ( !S_.initialized_ )
@@ -344,10 +353,13 @@ nest::gif_psc_exp_multisynapse::calibrate()
  */
 
 void
-nest::gif_psc_exp_multisynapse::update( Time const& origin, const long_t from, const long_t to )
+nest::gif_psc_exp_multisynapse::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   double_t q_temp_;
@@ -360,7 +372,8 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin, const long_t from, c
     {
       q_temp_ += S_.q_stc_elems_[ i ];
 
-      S_.q_stc_elems_[ i ] = V_.Q44_[ i ] * S_.q_stc_elems_[ i ]; // exponential decaying stc kernel
+      S_.q_stc_elems_[ i ] =
+        V_.Q44_[ i ] * S_.q_stc_elems_[ i ]; // exponential decaying stc kernel
     }
 
     S_.stc_ = q_temp_;
@@ -371,7 +384,8 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin, const long_t from, c
 
       q_temp_ += S_.q_sfa_elems_[ i ];
 
-      S_.q_sfa_elems_[ i ] = V_.Q33_[ i ] * S_.q_sfa_elems_[ i ]; // exponential decaying sfa kernel
+      S_.q_sfa_elems_[ i ] =
+        V_.Q33_[ i ] * S_.q_sfa_elems_[ i ]; // exponential decaying sfa kernel
     }
 
     S_.q_ = q_temp_ + P_.v_t_star_;
@@ -385,7 +399,8 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin, const long_t from, c
                                                         // synaptic currents on
                                                         // membrane potential
 
-      S_.i_syn_[ i ] = V_.P11_syn_[ i ] * S_.i_syn_[ i ]; // exponential decaying PSCs
+      S_.i_syn_[ i ] =
+        V_.P11_syn_[ i ] * S_.i_syn_[ i ]; // exponential decaying PSCs
 
       S_.i_syn_[ i ] += B_.spikes_[ i ].get_value( lag ); // collecting spikes
     }
@@ -427,17 +442,19 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin, const long_t from, c
       }
 
 
-      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.y3_ + V_.P31_ * P_.E_L_
-        + sum_syn_pot; // effect of synaptic currents
-                       // (sum_syn_pot) is added here
+      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.y3_
+        + V_.P31_ * P_.E_L_ + sum_syn_pot; // effect of synaptic currents
+                                           // (sum_syn_pot) is added here
 
-      double_t lambda = P_.lambda0_ * std::exp( ( S_.y3_ - S_.q_ ) / P_.delta_u_ );
+      double_t lambda =
+        P_.lambda0_ * std::exp( ( S_.y3_ - S_.q_ ) / P_.delta_u_ );
 
       if ( lambda > 0.0 )
       {
 
         // Draw random number and compare to prob to have a spike
-        if ( V_.rng_->drand() <= -numerics::expm1( -lambda * ( V_.h_ / 1000.0 ) ) )
+        if ( V_.rng_->drand()
+          <= -numerics::expm1( -lambda * ( V_.h_ / 1000.0 ) ) )
           n_spikes = 1;
       }
     }
@@ -476,7 +493,8 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin, const long_t from, c
 port
 gif_psc_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type <= 0 || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
+  if ( receptor_type <= 0
+    || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
 
   P_.has_connections_ = true;
@@ -494,7 +512,8 @@ gif_psc_exp_multisynapse::handle( SpikeEvent& e )
     if ( P_.receptor_types_[ i ] == e.get_rport() )
     {
       B_.spikes_[ i ].add_value(
-        e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+        e.get_rel_delivery_steps(
+          kernel().simulation_manager.get_slice_origin() ),
         e.get_weight() * e.get_multiplicity() );
     }
   }
@@ -510,7 +529,8 @@ nest::gif_psc_exp_multisynapse::handle( CurrentEvent& e )
 
   // Add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 void

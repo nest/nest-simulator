@@ -115,7 +115,7 @@ EOF
 
     cd ..
     echo "======= CLANG-FORMAT init start ======="
-    wget http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
+    wget --no-verbose http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
     tar xf clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
 
     # copy, not move, since .cache may contain other files in subdirs already

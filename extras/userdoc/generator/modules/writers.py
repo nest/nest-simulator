@@ -28,7 +28,7 @@ Collect all the data and write help files.
 
 import os
 import re
-import textwrap as tw
+import textwrap
 from helpers import cut_it
 
 
@@ -157,8 +157,13 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
                     hlpvalue = re.sub('\n ', '\n', hlpvalue).rstrip()
                     hlpvalue = hlpvalue.lstrip('\n')
                     hlpvalue = re.sub('\n[\s?]*\n', '\n', hlpvalue).rstrip()
-                    hlpvalue = re.sub(r'[ ]{3,}', r'\t', hlpvalue)
-                    dedented_text = tw.dedent(hlpvalue)
+                    # Better looking .hlp files
+                    dedented_text = textwrap.dedent(hlpvalue).strip()
+                    dedented_text = re.sub(r'[ ]{9,}', r'\t\t',
+                                           dedented_text)
+                    dedented_text = re.sub(r'[ ]{5,8}', r'\t\t', dedented_text)
+                    dedented_text = re.sub(r'[ ]{3,4}', r'\t', dedented_text)
+
                     hlpcontent = ('%s:\n\n%s\n\n' % (key, dedented_text))
                     hlplist.append(hlpcontent)
 
@@ -349,7 +354,23 @@ def write_helpindex(index_dic_list):
                 html_list.append('<a href="%s/%s.html">%s</a></td>' %
                                  (item['ext'], item['name'], item['name']))
                 html_list.append('<td>%s</td></tr>' % item['fullname'])
-                hlp_list.append("%s    %s" % (item['name'], item['fullname']))
+                # Better Format for the index.hlp
+                c = len(item['name'])
+                if (c < 8):
+                    hlp_list.append("%s\t\t\t\t%s" % (item['name'],
+                                                      item['fullname']))
+                elif (c < 16):
+                    hlp_list.append("%s\t\t\t%s" % (item['name'],
+                                                    item['fullname']))
+                elif(c < 24):
+                    hlp_list.append("%s\t\t%s" % (item['name'],
+                                                  item['fullname']))
+                elif(c < 32):
+                    hlp_list.append("%s\t%s" % (item['name'],
+                                                item['fullname']))
+                else:
+                    hlp_list.append("%s %s" % (item['name'],
+                                               item['fullname']))
         html_list.append('</table></center>')
         html_list.append('</table></center>')
     html_list.append(footer)

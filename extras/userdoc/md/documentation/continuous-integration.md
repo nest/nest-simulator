@@ -28,12 +28,12 @@ of efforts to fix them will be significantly decreased.
 ### Build jobs
 
 The CI system is set up to run upon commits to branches that are
-related to a pull request, or for commits that are in a fork, for
+related to a pull request, or for commits that are in a fork for
 which CI is enabled. Whenever changes are detected, the latest source
 code is downloaded to an executor machine and the following actions
 are performed:
 
-- Install optional and mandatory packages that NEST can use
+- Install optional and mandatory packages that NEST may use
 - Perform static source code analysis using
   [Vera++](https://bitbucket.org/verateam/vera/wiki/Home)
 - Perform static source code analysis using

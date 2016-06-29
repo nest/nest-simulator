@@ -7,14 +7,13 @@ dist: trusty
 
 env:
   matrix:
-    - xGSL=0 xMPI=0 xPYTHON=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB
-    - xGSL=0 xMPI=0 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB
-    - xGSL=0 xMPI=1 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB
-    - xGSL=0 xMPI=1 xPYTHON=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB
-    - xGSL=1 xMPI=0 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB
-    - xGSL=1 xMPI=0 xPYTHON=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB
-    - xGSL=1 xMPI=1 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB
-    - xGSL=1 xMPI=1 xPYTHON=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB
+    # We don't have to run a full matrix here, because most of the options are
+    # independent. This means that we can test them together in the full build.
+    # See also https://docs.travis-ci.com/user/caching/#Caches-and-build-matrices
+    - xTHREADING=0 xMPI=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
+    - xTHREADING=0 xMPI=1 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
+    - xTHREADING=1 xMPI=0 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
+    - xTHREADING=1 xMPI=1 xGSL=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full
 matrix:
   # do notify immediately about it when a job of a build fails.
   fast_finish: true

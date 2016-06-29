@@ -37,6 +37,8 @@ SeeAlso:
 (unittest) run
 /unittest using
 
+is_threaded not { exit_test_gracefully } if
+
 M_ERROR setverbosity
 
 ResetKernel

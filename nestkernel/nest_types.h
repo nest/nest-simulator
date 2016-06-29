@@ -60,9 +60,6 @@
  * (C) Copyright 1995-2006 The NEST Initiative.
  */
 
-// Generated includes:
-#include "config.h"
-
 /**
  * Namespace for the NEST simulation kernel.
  */

@@ -1,8 +1,6 @@
-First Steps
-===========
+# First Steps
 
-Overview
---------
+## Overview
 
 SLI is the simulation language interface of NEST. It is a stack language where
 each command expects to find its arguments on the stack.
@@ -31,8 +29,7 @@ Each command expects to find its arguments on the stack. When a
 -   Any results which are produced by the command are returned to the stack, so
     you can use them in other operations.
 
-Commands with one argument
---------------------------
+## Commands with one argument
 
 Commands which need one argument take their argument from the top
  of the stack. If the command produces a result, it is placed on
@@ -47,8 +44,7 @@ Commands which need one argument take their argument from the top
 Here, the command `log` is used to compute the decadic logarithm of 10. Then,
 the command `=` is used to display the result of this computation.
 
-Commands with more arguments
-----------------------------
+## Commands with more arguments
 
 Commands which need more than one argument, take their arguments from level 0,
 1, 2, and so forth and return their result to level 0, the top of the stack.
@@ -73,8 +69,7 @@ stack without changing it.
     3
     SLI [1]
 
-Using previous results
-----------------------
+## Using previous results
 
 Chain calculations are calculations which involve more than one operation. A
 stack is particularly useful for chaining operations,because it retains
@@ -93,8 +88,7 @@ This example shows, how the stack can be used for chain calculations. Calculate
 Notice that the results of the fist two operations remain on the stack, until
 they are used in the multiplication.
 
-Exchanging the first two stack levels
--------------------------------------
+## Exchanging the first two stack levels
 
 The command `exch` exchanges the contents of the levels 0 and 1. This is useful,
 if the order of objects on the stack does not match the order required by the
@@ -110,8 +104,7 @@ Calculate 1/ln(2).
     SLI [1] =
     1.4427
 
-Removing stack elements
------------------------
+## Removing stack elements
 
 The command `pop` removes the top object (level 0) of the stack. The remaining
 items move up on the stack, so that the object which was at level 1 is now at
@@ -119,8 +112,7 @@ level 0.
 
 The command `clear` clears the entire stack.
 
-Duplicating the top element
----------------------------
+## Duplicating the top element
 
 The command `dup` duplicates the contents of the object at
 level 0 and pushes the other element down one level.
@@ -138,8 +130,7 @@ Calculate (1+4/2) + exp(1+4/2)
     SLI [1] =
     23.0855
 
-Important stack commands
-------------------------
+## Important stack commands
 
 Command
 Description

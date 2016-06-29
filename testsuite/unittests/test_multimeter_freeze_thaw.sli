@@ -182,22 +182,21 @@ def
 
         /nnet /subnet Create def
         nnet ChangeSubnet
-	/iaf_psc_alpha N Create ;
+  /iaf_psc_alpha N Create ;
         0 ChangeSubnet
         /nrns nnet GetGlobalLeaves def
 
         /multimeter << /record_from recvars /withgid false /withtime true 
                        /interval 0.7 /start 4.8 /stop 233.1 /time_in_steps true >> SetDefaults
-        /mm /multimeter Create def	
-        /ac /multimeter << /to_memory false /to_accumulator true >> Create def	
-        mm nrns DivergentConnect
-        ac nrns DivergentConnect
+        /mm /multimeter Create def  
+        /ac /multimeter << /to_memory false /to_accumulator true >> Create def  
+        [mm] nrns Connect
+        [ac] nrns Connect
 
         /pg /poisson_generator << /rate 1000. >> Create def
-        /static_synapse /exc << /weight  1.0 >> CopyModel 
-        /static_synapse /inh << /weight -1.0 >> CopyModel  
-        pg nrns /exc DivergentConnect
-        pg nrns /inh DivergentConnect
+
+        [pg] nrns << /rule /all_to_all >> << /model /static_synapse /weight 1.0 >> Connect
+        [pg] nrns << /rule /all_to_all >> << /model /static_synapse /weight -1.0 >> Connect
 
         nrns { << /frozen true >> SetStatus } forall
         20. Simulate
@@ -210,14 +209,14 @@ def
 
         /detevs mm /events get def
         /dettimes detevs /times get cva def          
-        /accevs ac /events get def	
+        /accevs ac /events get def  
         /acctimes accevs /times get cva def          
         
         recvars 
         { 
           /var Set
           % get data from individual recordings
-	  detevs var get cva
+    detevs var get cva
           % compute mean for error estimate
           dup Mean /varmean Set
           % sum results for equal times
@@ -226,9 +225,9 @@ def
           % data from accumulated recording
           accevs var get cva
 
-          % test difference relative to mean	  
+          % test difference relative to mean    
           sub true exch { varmean div abs 1e-15 lt and } Fold 
-	} Map 
+  } Map 
 
         true exch { and } Fold 
 

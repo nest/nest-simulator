@@ -1,8 +1,6 @@
-Community
-=========
+# Community
 
-Getting support
----------------
+## Getting support
 
 The NEST User Mailing list is intended to be a forum for questions on the usage
 of NEST, the exchange of code and general discussions about NEST.
@@ -18,8 +16,7 @@ Subscription
 Archive (only subscribed users)  
 <http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user>
 
-Contributing
-------------
+## Contributing
 
 NEST draws its strength from the many people that use and improve it. We are
 happy to consider your contributions (e.g. own models, bug or documentation
@@ -29,8 +26,7 @@ Please see the [NEST developer space](http://nest.github.io/nest-simulator) for
 information about the development workflow of NEST and for how to create a fork
 of our Git repository and pull requests against it.
 
-Reporting bugs
---------------
+## Reporting bugs
 
 The primary place to go to if you find an error is the [GitHub issue tracker
 for NEST](https://github.com/nest/nest-simulator/issues). Please take the time

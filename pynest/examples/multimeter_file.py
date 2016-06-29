@@ -61,8 +61,8 @@ events induce a post-synaptic change of conductance modelled by an alpha
 function.
 '''
 
-print("iaf_cond_alpha recordables: {0}".format( \
-       nest.GetDefaults("iaf_cond_alpha")["recordables"]))
+print("iaf_cond_alpha recordables: {0}".format(
+      nest.GetDefaults("iaf_cond_alpha")["recordables"]))
 
 '''
 A neuron, a multimeter as recording device and two spike generators for
@@ -91,28 +91,29 @@ dictionary of parameters to overwrite the default values of the model.
 '''
 
 n = nest.Create("iaf_cond_alpha",
-                params = {"tau_syn_ex": 1.0, "V_reset": -70.0})
+                params={"tau_syn_ex": 1.0, "V_reset": -70.0})
 
 m = nest.Create("multimeter",
-                params = {"interval": 0.1,
-                          "record_from": ["V_m", "g_ex", "g_in"],
-                          "withgid": True,
-                          "to_file": True,
-                          "label": "my_multimeter"})
+                params={"interval": 0.1,
+                        "record_from": ["V_m", "g_ex", "g_in"],
+                        "withgid": True,
+                        "to_file": True,
+                        "label": "my_multimeter"})
 
 s_ex = nest.Create("spike_generator",
-                  params = {"spike_times": numpy.array([10.0, 20.0, 50.0])})
+                   params={"spike_times": numpy.array([10.0, 20.0, 50.0])})
 s_in = nest.Create("spike_generator",
-                  params = {"spike_times": numpy.array([15.0, 25.0, 55.0])})
+                   params={"spike_times": numpy.array([15.0, 25.0, 55.0])})
 
 '''
 Next, the spike generators are connected to the neuron with `Connect`. Synapse
 specifications can be provided in a dictionary. In this example of a
-conductance-based neuron, the synaptic weight `weight` is given in nS. Note that
-it is positive for excitatory and negative for inhibitory connections.
+conductance-based neuron, the synaptic weight `weight` is given in nS.
+Note that it is positive for excitatory and negative for inhibitory
+connections.
 '''
 
-nest.Connect(s_ex, n, syn_spec={"weight":  40.0})
+nest.Connect(s_ex, n, syn_spec={"weight": 40.0})
 nest.Connect(s_in, n, syn_spec={"weight": -20.0})
 nest.Connect(m, n)
 
@@ -124,13 +125,14 @@ nest.Simulate(100.)
 
 '''
 After the simulation, the recordings are obtained from the multimeter via the
-key `events` of the status dictionary accessed by `GetStatus`. `times` indicates
-the recording times stored for each data point. They are recorded if the
-parameter `withtime` of the multimeter is set to True which is the default case.
+key `events` of the status dictionary accessed by `GetStatus`. `times`
+indicates the recording times stored for each data point. They are recorded
+if the parameter `withtime` of the multimeter is set to True which is the
+default case.
 '''
 
 events = nest.GetStatus(m)[0]["events"]
-t = events["times"];
+t = events["times"]
 
 '''
 Finally, the time courses of the membrane voltage and the synaptic

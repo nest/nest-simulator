@@ -117,7 +117,7 @@ def
   /tauMem 20.0 def    % neuron membrane time constant [ms]
   /tauSyn  0.5 def    % synaptic time constant [ms]
   /tauRef  2.0 def    % refractory time [ms]
-  /U0      0.0 def    % resting potential [mV]
+  /E_L     0.0 def    % resting potential [mV]
   /theta  20.0 def    % threshold
 
   % synaptic weights, scaled for our alpha functions, such that
@@ -154,13 +154,13 @@ def
    /tau_m       tauMem def
    /tau_syn     tauSyn def
    /t_ref       tauRef def
-   /E_L         U0 def
+   /E_L         E_L def
    /V_th        theta def
    /C_m         1.0  def % Yes, capacitance is 1 in the Brunel model
    /t_spike      -1.0 def
-   /V_m           U0 def
-   /V_reset       U0 def
-   /V_th         U0 theta add def
+   /V_m           E_L def
+   /V_reset       E_L def
+   /V_th         E_L theta add def
    /theta        theta def
    /currents      0.0 def
 
@@ -296,42 +296,29 @@ end
 
 
       % Connect Poisson generator to neurons
-      expoisson E_neurons /syn_ex DivergentConnect
+      [expoisson] E_neurons /all_to_all /syn_ex Connect
 
-      E_neurons
-      {
+      % E -> E connections
+      % the following is a single call to fixed_indegree connect
+      E_neurons   % source population [we pick from this]
+      E_neurons   % target neurons
+      << /rule /fixed_indegree /indegree CE >> % number of source neurons to pick
+      << /model /syn_ex >>    % the synapse model
+      Connect
 
-        % E -> E connections
-        % the following is a single call to RandomConvergentConnect
-        E_neurons   % source population [we pick from this]
-        exch        % target neuron
-        CE          % number of source neurons to pick
-        /syn_ex     % the synapse model
-        RandomConvergentConnect
-      }  % bind improves efficiency
-      forall
-
-      E_neurons
-      {
-        I_neurons exch CI /syn_in RandomConvergentConnect
-
-      }  forall
+      
+      
+      I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
 
       (Connecting inhibitory population.) =
 
       % ... as above, just written more compact
 
-      inpoisson I_neurons /syn_ex DivergentConnect
+      [inpoisson] I_neurons /all_to_all /syn_ex Connect
 
-      I_neurons
-      {
-        E_neurons exch CE /syn_ex RandomConvergentConnect
-      }  forall
+      E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
 
-      I_neurons
-      {
-        I_neurons exch CI /syn_in RandomConvergentConnect
-      }  forall
+      I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
 
       % Spike detectors are connected to the first Nrec neurons in each
       % population.  Since neurons are equal and connectivity is homogeneously
@@ -339,10 +326,10 @@ end
       % from each population
       (Connecting spike detectors.) =
 
-      E_neurons Nrec Take exsd ConvergentConnect  % pick the first 500 neurons
-      I_neurons Nrec Take insd ConvergentConnect
+      E_neurons Nrec Take [exsd] Connect  % pick the first 500 neurons
+      I_neurons Nrec Take [insd] Connect
 
-    toc /BuildCPUTime Set
+      toc /BuildCPUTime Set
       (Building time     : ) =only BuildCPUTime =only ( s) =
 
      /syn_ex GetDefaults /num_connections get /n_ex_syn Set
@@ -351,8 +338,8 @@ end
 %%% SIMULATION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   % run, measure computer time with tic-toc
+  (Starting simulation.) =
   tic
-
   simtime Simulate
   toc /SimCPUTime Set
 

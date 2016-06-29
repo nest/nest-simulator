@@ -149,7 +149,7 @@ def
 /CMem    1.0 def    % membrane capacity [pF]
 /tauSyn  0.5 def    % synaptic time constant [ms]
 /tauRef  2.0 def    % refractory time [ms]
-/U0      0.0 def    % resting potential [mV]
+/E_L     0.0 def    % resting potential [mV]
 /theta  20.0 def    % threshold
 
 /u0_min  -0.5 theta mul def    % Initial membrane potential
@@ -226,8 +226,8 @@ statusdict/userargs :: size 1 geq
           /tau_syn_ex  tauSyn
           /tau_syn_in  tauSyn
           /t_ref       tauRef
-          /E_L     U0
-          /V_m     U0
+          /E_L     E_L
+          /V_m     E_L
           /V_th    theta
           /V_reset    10.0 % according to Brunel (2000) p 185
           /C_m     1.0     % Yes, capacitance is 1 in the Brunel model
@@ -323,8 +323,8 @@ statusdict/userargs :: size 1 geq
       % from each population
       (Connecting spike detectors.) =
 
-      E_neurons Nrec Take exsd 1 arraystore Connect  % pick the first 500 neurons
-      I_neurons Nrec Take insd 1 arraystore Connect
+      E_neurons Nrec Take [exsd] Connect  % pick the first 500 neurons
+      I_neurons Nrec Take [insd] Connect
 
       toc /BuildCPUTime Set
 
@@ -334,6 +334,7 @@ statusdict/userargs :: size 1 geq
 %%% SIMULATION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   % run, measure computer time with tic-toc
+  (Starting simulation.) =
   tic
   simtime Simulate
   toc /SimCPUTime Set

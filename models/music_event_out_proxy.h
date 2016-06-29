@@ -42,7 +42,8 @@
 
 /* BeginDocumentation
 
-Name: music_event_out_proxy - Device to forward spikes to remote applications using MUSIC.
+Name: music_event_out_proxy - Device to forward spikes to remote applications
+                              using MUSIC.
 
 Description:
 A music_event_out_proxy is used to send spikes to a remote application that
@@ -105,7 +106,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -138,7 +140,7 @@ private:
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
 
-    void get( DictionaryDatum& ) const;          //!< Store current values in dictionary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum&, State_& ); //!< Set values from dicitonary
   };
 
@@ -146,13 +148,15 @@ private:
 
   struct State_
   {
-    bool published_; //!< indicates whether this node has been published already with MUSIC
+    bool published_; //!< indicates whether this node has been published already
+                     //!< with MUSIC
     int port_width_; //!< the width of the MUSIC port
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const;                     //!< Store current values in dictionary
-    void set( const DictionaryDatum&, const Parameters_& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    //!< Set values from dictionary
+    void set( const DictionaryDatum&, const Parameters_& );
   };
 
   // ------------------------------------------------------------
@@ -161,8 +165,8 @@ private:
   {
     MUSIC::EventOutputPort* MP_; //!< The MUSIC event port for output of spikes
     std::vector< MUSIC::GlobalIndex > index_map_;
-    MUSIC::PermutationIndex*
-      music_perm_ind_; //!< The permutation index needed to map the ports of MUSIC.
+    MUSIC::PermutationIndex* music_perm_ind_; //!< The permutation index needed
+                                              //!< to map the ports of MUSIC.
   };
 
   // ------------------------------------------------------------

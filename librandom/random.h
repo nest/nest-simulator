@@ -29,13 +29,16 @@
 // Includes from sli:
 #include "arraydatum.h"
 #include "dictdatum.h"
+#include "token.h"
 
 namespace librandom
 {
 
-librandom::RngDatum create_rng( const long seed, const RngFactoryDatum& factory );
+librandom::RngDatum create_rng( const long seed,
+  const RngFactoryDatum& factory );
 
-librandom::RdvDatum create_rdv( const RdvFactoryDatum& factory, const RngDatum& rng );
+librandom::RdvDatum create_rdv( const RdvFactoryDatum& factory,
+  const RngDatum& rng );
 
 void set_status( const DictionaryDatum& dict, RdvDatum& rdv );
 DictionaryDatum get_status( const RdvDatum& rdv );
@@ -45,7 +48,7 @@ unsigned long irand( const long N, RngDatum& rng );
 double drand( RngDatum& rng );
 
 ArrayDatum random_array( RdvDatum& rdv, const size_t n );
-long random( RdvDatum& rdv );
+Token random( RdvDatum& rdv );
 }
 
 #endif /* RANDOM_H */

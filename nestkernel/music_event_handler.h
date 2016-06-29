@@ -47,7 +47,9 @@ class MusicEventHandler : public MUSIC::EventHandlerGlobalIndex
 {
 public:
   MusicEventHandler();
-  MusicEventHandler( std::string portname, double acceptable_latency, int max_buffered );
+  MusicEventHandler( std::string portname,
+    double acceptable_latency,
+    int max_buffered );
 
   virtual ~MusicEventHandler();
 
@@ -81,9 +83,11 @@ private:
   MUSIC::PermutationIndex* music_perm_ind_;
   bool published_;
   std::string portname_;
-  std::vector< nest::Node* > channelmap_;      //!< Maps channel number to music_event_in_proxy
-  std::vector< MUSIC::GlobalIndex > indexmap_; //!< Maps local index to global MUSIC index (channel)
-  double acceptable_latency_;                  //!< The acceptable latency of the port in ms
+  //! Maps channel number to music_event_in_proxy
+  std::vector< nest::Node* > channelmap_;
+  //! Maps local index to global MUSIC index (channel)
+  std::vector< MUSIC::GlobalIndex > indexmap_;
+  double acceptable_latency_; //!< The acceptable latency of the port in ms
   int max_buffered_;
 
   /**
@@ -91,8 +95,9 @@ private:
    * one entry per channel. The priority queues used within the vector
    * implement min-heaps stored in vectors.
    */
-  std::vector< std::priority_queue< double, std::vector< double >, std::greater< double > > >
-    eventqueue_;
+  std::vector< std::priority_queue< double,
+    std::vector< double >,
+    std::greater< double > > > eventqueue_;
 };
 
 } // namespace nest

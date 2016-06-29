@@ -18,20 +18,26 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-__author__ = 'naveau'
 
 import nest
 import unittest
 
+__author__ = 'naveau'
+
 
 class TestDisconnect(unittest.TestCase):
+
     def setUp(self):
         nest.ResetKernel()
         nest.set_verbosity('M_ERROR')
-        self.exclude_synapse_model = ['stdp_dopamine_synapse', 'stdp_dopamine_synapse_lbl', 
-                                      'stdp_dopamine_synapse_hpc', 'stdp_dopamine_synapse_hpc_lbl', 
-                                      'gap_junction', 'gap_junction_lbl']
-
+        self.exclude_synapse_model = [
+            'stdp_dopamine_synapse',
+            'stdp_dopamine_synapse_lbl',
+            'stdp_dopamine_synapse_hpc',
+            'stdp_dopamine_synapse_hpc_lbl',
+            'gap_junction',
+            'gap_junction_lbl'
+        ]
 
     def test_multiple_synapse_deletion_all_to_all(self):
         for syn_model in nest.Models('synapses'):
@@ -39,8 +45,16 @@ class TestDisconnect(unittest.TestCase):
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')
                 nest.SetDefaults(syn_model, {'delay': 0.5})
-                syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1', 'post_synaptic_element': 'SE2'}
-                nest.SetKernelStatus({'min_delay': 0.1, 'max_delay': 1.0, 'structural_plasticity_synapses': {'syn1': syn_dict}})
+                syn_dict = {
+                    'model': syn_model,
+                    'pre_synaptic_element': 'SE1',
+                    'post_synaptic_element': 'SE2'
+                }
+                nest.SetKernelStatus({
+                    'min_delay': 0.1,
+                    'max_delay': 1.0,
+                    'structural_plasticity_synapses': {'syn1': syn_dict}
+                })
                 neurons = nest.Create('iaf_neuron', 10, {
                     'synaptic_elements': {
                         'SE1': {'z': 0.0, 'growth_rate': 0.0},
@@ -50,21 +64,27 @@ class TestDisconnect(unittest.TestCase):
 
                 nest.Connect(neurons, neurons, "all_to_all", syn_dict)
 
-                # Test if the connected synaptic elements before the simulation are correct
+                # Test if the connected synaptic elements before the simulation
+                # are correct
                 status = nest.GetStatus(neurons, 'synaptic_elements')
                 for st_neuron in status:
                     self.assertEqual(10, st_neuron['SE1']['z_connected'])
                     self.assertEqual(10, st_neuron['SE2']['z_connected'])
 
-                srcId = range(0,5)
-                targId = range(5,10)
+                srcId = range(0, 5)
+                targId = range(5, 10)
 
-                conns = nest.GetConnections(srcId,targId,syn_model)
+                conns = nest.GetConnections(srcId, targId, syn_model)
                 assert conns
 
                 conndictionary = {'rule': 'all_to_all'}
                 syndictionary = {'model': syn_model}
-                nest.Disconnect([neurons[i] for i in srcId], [neurons[i] for i in targId], conndictionary, syndictionary)
+                nest.Disconnect(
+                    [neurons[i] for i in srcId],
+                    [neurons[i] for i in targId],
+                    conndictionary,
+                    syndictionary
+                )
                 status = nest.GetStatus(neurons, 'synaptic_elements')
                 for st_neuron in status[0:5]:
                     self.assertEqual(5, st_neuron['SE1']['z_connected'])
@@ -79,8 +99,16 @@ class TestDisconnect(unittest.TestCase):
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')
                 nest.SetDefaults(syn_model, {'delay': 0.5})
-                syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1', 'post_synaptic_element': 'SE2'}
-                nest.SetKernelStatus({'min_delay': 0.1, 'max_delay': 1.0, 'structural_plasticity_synapses': {'syn1': syn_dict}})
+                syn_dict = {
+                    'model': syn_model,
+                    'pre_synaptic_element': 'SE1',
+                    'post_synaptic_element': 'SE2'
+                }
+                nest.SetKernelStatus({
+                    'min_delay': 0.1,
+                    'max_delay': 1.0,
+                    'structural_plasticity_synapses': {'syn1': syn_dict}
+                })
                 neurons = nest.Create('iaf_neuron', 10, {
                     'synaptic_elements': {
                         'SE1': {'z': 0.0, 'growth_rate': 0.0},
@@ -90,21 +118,27 @@ class TestDisconnect(unittest.TestCase):
 
                 nest.Connect(neurons, neurons, "all_to_all", syn_dict)
 
-                # Test if the connected synaptic elements before the simulation are correct
+                # Test if the connected synaptic elements before the simulation
+                # are correct
                 status = nest.GetStatus(neurons, 'synaptic_elements')
                 for st_neuron in status:
                     self.assertEqual(10, st_neuron['SE1']['z_connected'])
                     self.assertEqual(10, st_neuron['SE2']['z_connected'])
 
-                srcId = range(0,5)
-                targId = range(5,10)
+                srcId = range(0, 5)
+                targId = range(5, 10)
 
-                conns = nest.GetConnections(srcId,targId,syn_model)
+                conns = nest.GetConnections(srcId, targId, syn_model)
                 assert conns
 
                 conndictionary = {'rule': 'one_to_one'}
                 syndictionary = {'model': syn_model}
-                nest.Disconnect([neurons[i] for i in srcId], [neurons[i] for i in targId], conndictionary, syndictionary)
+                nest.Disconnect(
+                    [neurons[i] for i in srcId],
+                    [neurons[i] for i in targId],
+                    conndictionary,
+                    syndictionary
+                )
                 status = nest.GetStatus(neurons, 'synaptic_elements')
                 for st_neuron in status[0:5]:
                     self.assertEqual(9, st_neuron['SE1']['z_connected'])
@@ -122,18 +156,22 @@ class TestDisconnect(unittest.TestCase):
                 syn_dict = {'model': syn_model}
                 nest.Connect(neurons, neurons, "all_to_all", syn_dict)
 
+                srcId = range(0, 5)
+                targId = range(5, 10)
 
-                srcId = range(0,5)
-                targId = range(5,10)
-
-                conns = nest.GetConnections(srcId,targId,syn_model)
+                conns = nest.GetConnections(srcId, targId, syn_model)
                 assert len(conns) == 20
 
                 conndictionary = {'rule': 'one_to_one'}
                 syndictionary = {'model': syn_model}
-                nest.Disconnect([neurons[i] for i in srcId], [neurons[i] for i in targId], conndictionary, syndictionary)
+                nest.Disconnect(
+                    [neurons[i] for i in srcId],
+                    [neurons[i] for i in targId],
+                    conndictionary,
+                    syndictionary
+                )
 
-                conns = nest.GetConnections(srcId,targId,syn_model)
+                conns = nest.GetConnections(srcId, targId, syn_model)
                 assert len(conns) == 16
 
     def test_single_synapse_deletion_sp(self):
@@ -141,8 +179,14 @@ class TestDisconnect(unittest.TestCase):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')
-                syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1', 'post_synaptic_element': 'SE2'}
-                #nest.SetKernelStatus({'structural_plasticity_synapses': {'syn1': syn_dict}})
+                syn_dict = {
+                    'model': syn_model,
+                    'pre_synaptic_element': 'SE1',
+                    'post_synaptic_element': 'SE2'
+                }
+                # nest.SetKernelStatus(
+                #   {'structural_plasticity_synapses': {'syn1': syn_dict}}
+                # )
                 neurons = nest.Create('iaf_neuron', 2, {
                     'synaptic_elements': {
                         'SE1': {'z': 0.0, 'growth_rate': 0.0},
@@ -150,9 +194,11 @@ class TestDisconnect(unittest.TestCase):
                     }
                 })
                 nest.Connect(neurons, neurons, "all_to_all", syn_dict)
-                nest.Connect(neurons, neurons, "all_to_all", {'model': 'my_static_synapse'})
+                nest.Connect(neurons, neurons, "all_to_all",
+                             {'model': 'my_static_synapse'})
 
-                # Test if the connected synaptic elements before the simulation are correct
+                # Test if the connected synaptic elements before the simulation
+                # are correct
                 status = nest.GetStatus(neurons, 'synaptic_elements')
                 for st_neuron in status:
                     self.assertEqual(2, st_neuron['SE1']['z_connected'])
@@ -161,17 +207,21 @@ class TestDisconnect(unittest.TestCase):
                 srcId = 0
                 targId = 1
 
-                conns = nest.GetConnections([neurons[srcId]],[neurons[targId]],syn_model)
+                conns = nest.GetConnections(
+                    [neurons[srcId]], [neurons[targId]], syn_model)
                 assert conns
-                nest.DisconnectOneToOne(neurons[srcId],neurons[targId], syn_dict)
+                nest.DisconnectOneToOne(
+                    neurons[srcId], neurons[targId], syn_dict)
                 status = nest.GetStatus(neurons, 'synaptic_elements')
                 self.assertEqual(1, status[srcId]['SE1']['z_connected'])
                 self.assertEqual(2, status[srcId]['SE2']['z_connected'])
                 self.assertEqual(2, status[targId]['SE1']['z_connected'])
                 self.assertEqual(1, status[targId]['SE2']['z_connected'])
 
-                conns = nest.GetConnections([neurons[srcId]],[neurons[targId]], syn_model)
+                conns = nest.GetConnections(
+                    [neurons[srcId]], [neurons[targId]], syn_model)
                 assert not conns
+
 
 def suite():
     test_suite = unittest.makeSuite(TestDisconnect, 'test')

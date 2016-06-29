@@ -17,6 +17,18 @@ information header in the source files.
 Emacs users may use the SLI mode, which provides syntax highlighting
 for SLI. To install it, add the following lines to your `.emacs` file:
 ```
-  (load-library "${prefix}/share/nest/extras/emacs/postscript-sli")
-  (load-library "${prefix}/share/nest/extras/emacs/sli")
+  (load-library "${prefix}/share/nest/extras/EditorSupport/emacs/postscript-sli")
+  (load-library "${prefix}/share/nest/extras/EditorSupport/emacs/sli")
+```
+
+A simple syntax file for VIM users has been provided. Copy it to your vim
+configuration folder to make it available to VIM:
+```
+    $ cp ${prefix}/share/nest/extras/EditorSupport/vim/syntax/sli.vim ~/.vim/syntax/sli.vim
+```
+Then add the following lines to your `~/.vimrc` file to use it:
+```
+    " sli
+    au BufRead,BufNewFile *.sli set filetype=sli
+    au FileType sli setl foldenable foldmethod=syntax
 ```

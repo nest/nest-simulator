@@ -1,0 +1,193 @@
+/*
+ *  config.h
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef CONFIG_H
+#define CONFIG_H
+/* 
+    Configuration header.
+    config.h is automatically generated from config.h.in
+    during the configuration process. 
+
+    Please make all changes in config.h.in.
+*/
+
+#define NEST_VERSION_PRGNAME "@NEST_VERSION_PRGNAME@"
+
+#define NEST_VERSION_MAJOR_REVISION @NEST_VERSION_MAJOR@
+#define NEST_VERSION_MINOR_REVISION @NEST_VERSION_MINOR@
+#define NEST_VERSION_PATCHLEVEL "@NEST_VERSION_PATCHLEVEL@"
+
+// TODO NEST_HOST and NEST_HOSTVENDOR not available with cmake
+#define NEST_HOST "@NEST_TARGET_TRIPLE@"
+#define NEST_HOSTOS "@NEST_TARGET_OS@"
+#define NEST_HOSTCPU "@NEST_TARGET_ARCH@"
+#define NEST_HOSTVENDOR "@NEST_TARGET_VENDOR@"
+
+#define NEST_PREFIX  "@CMAKE_INSTALL_PREFIX@"
+#define NEST_DATADIR "@CMAKE_INSTALL_DATADIR@"
+#define NEST_DOCDIR  "@CMAKE_INSTALL_DOCDIR@"
+
+#define NEST_EXITCODE_ABORT @NEST_EXITCODE_ABORT@
+#define NEST_EXITCODE_SEGFAULT @NEST_EXITCODE_SEGFAULT@
+
+/* Name of package */
+#define PACKAGE @PROJECT_NAME@
+
+/* tics per ms in simulation */
+#define CONFIG_TICS_PER_MS @tics_per_ms@
+
+/* tics per step in simulation */
+#define CONFIG_TICS_PER_STEP @tics_per_step@
+
+/* define if the compiler does not include *.h headers ISO conformant */
+#cmakedefine HAVE_ALPHA_CXX_STD_BUG 1
+
+/* define if the compiler ignores cmath makros */
+#cmakedefine HAVE_CMATH_MAKROS_IGNORED 1
+
+/* "Define if expm1() is available" */
+#cmakedefine HAVE_EXPM1 1
+
+/* Is the GNU Science Library available (ver. >= 1.0)? */
+#cmakedefine HAVE_GSL 1
+
+/* Define to 1 if you have the <inttypes.h> header file.
+ * Used in sparseconfig.h.
+ */
+#cmakedefine HAVE_INTTYPES_H 1
+
+/* "Define if isnan() is available" */
+#cmakedefine HAVE_ISNAN 1
+
+/* "Define if std::isnan() is available" */
+#cmakedefine HAVE_STD_ISNAN 1
+
+/* define for istream */
+#cmakedefine HAVE_ISTREAM 1
+
+/* Havel libltdl, can load dynamic modules */
+#cmakedefine HAVE_LIBLTDL 1
+
+/* libneurosim support enabled? */
+#cmakedefine HAVE_LIBNEUROSIM 1
+
+/* define if we have usable long long type.
+ * Used in sparseconfig.h.
+ */
+#cmakedefine HAVE_LONG_LONG 1
+
+/* Define to 1 if you have the <mach/mach.h> header file. */
+#cmakedefine HAVE_MACH_MACH_H 1
+
+/* Define to 1 if you have the <mach-o/dyld.h> header file. */
+#cmakedefine HAVE_MACH_O_DYLD_H 1
+
+/* Define to 1 if you have the <memory.h> header file. */
+#cmakedefine HAVE_MEMORY_H 1
+
+/* MPI is available. */
+#cmakedefine HAVE_MPI 1
+
+/* MUSIC support enabled? */
+#cmakedefine HAVE_MUSIC 1
+
+/* define if M_E is defined */
+#cmakedefine HAVE_M_E 1
+
+/* define if M_PI is defined */
+#cmakedefine HAVE_M_PI 1
+
+/* "Define if NAN is available" */
+#cmakedefine HAVE_NAN 1
+
+/* "Define if std::nan(NULL) is available" */
+#cmakedefine HAVE_STD_NAN 1
+
+/* define for ostream */
+#cmakedefine HAVE_OSTREAM 1
+
+/* Use GNU libreadline */
+#cmakedefine HAVE_READLINE 1
+
+/* define if the compiler ignores symbolic signal names in signal.h */
+#cmakedefine HAVE_SIGUSR_IGNORED 1
+
+/* define for sstream */
+#cmakedefine HAVE_SSTREAM 1
+
+/* define if the compiler fails on static template member declaration */
+#cmakedefine HAVE_STATIC_TEMPLATE_DECLARATION_FAIL 1
+
+/* Define to 1 if you have the <stdint.h> header file.
+ * Used in sparseconfig.h.
+ */
+#cmakedefine HAVE_STDINT_H 1
+
+/* define for STL vector capacity base unity */
+#cmakedefine HAVE_STL_VECTOR_CAPACITY_BASE_UNITY 1
+
+/* define for STL vector capacity doubling strategy */
+#cmakedefine HAVE_STL_VECTOR_CAPACITY_DOUBLING 1
+
+/* Define to 1 if you have the <sys/types.h> header file.
+ * Used in sparseconfig.h.
+ */
+#cmakedefine HAVE_SYS_TYPES_H 1
+
+/* Define if the system has the type `uint16_t'.
+ * Used in sparseconfig.h.
+ */
+#cmakedefine HAVE_UINT16_T 1
+
+/* Define if the system has the type `u_int16_t'.
+ * Used in sparseconfig.h.
+ */
+#cmakedefine HAVE_U_INT16_T 1
+
+/* Tics per millisecond specified? */
+#cmakedefine HAVE_TICS_PER_MS 1
+
+/* Tics per step specified? */
+#cmakedefine HAVE_TICS_PER_STEP 1
+
+/* define if the compiler fails with ICE */
+#cmakedefine HAVE_XLC_ICE_ON_USING 1
+
+/* Configuring for Blue Gene */
+#cmakedefine IS_BLUEGENE 1
+
+/* Configuring for Blue Gene/L */
+#cmakedefine IS_BLUEGENE_L 1
+
+/* Configuring for Blue Gene/P */
+#cmakedefine IS_BLUEGENE_P 1
+
+/* Configuring for Blue Gene/Q */
+#cmakedefine IS_BLUEGENE_Q 1
+
+/* Configuring for K */
+#cmakedefine IS_K 1
+
+/* Use PS array construction semantics */
+#cmakedefine PS_ARRAYS 1
+
+#endif // #ifndef CONFIG_H

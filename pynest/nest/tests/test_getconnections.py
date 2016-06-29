@@ -31,34 +31,34 @@ import nest
 class GetConnectionsTestCase(unittest.TestCase):
     """Find connections and test if values can be set."""
 
-
     def test_GetConnections(self):
         """GetConnections"""
 
         nest.ResetKernel()
-        
-        a=nest.Create("iaf_neuron", 3)
-        nest.DivergentConnect(a,a)
-        c1=nest.GetConnections(a)
-        c2=nest.GetConnections(a, synapse_model="static_synapse")
-        self.assertEqual(c1, c2)
-        
-        weights = (2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0)
-        d1=tuple({"weight": w} for w in weights)
 
-        c3=nest.GetConnections(a, a)
+        a = nest.Create("iaf_neuron", 3)
+        nest.Connect(a, a)
+        c1 = nest.GetConnections(a)
+        c2 = nest.GetConnections(a, synapse_model="static_synapse")
+        self.assertEqual(c1, c2)
+
+        weights = (2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0)
+        d1 = tuple({"weight": w} for w in weights)
+
+        c3 = nest.GetConnections(a, a)
         nest.SetStatus(c3, d1)
-        s1=nest.GetStatus(c3, "weight")
+        s1 = nest.GetStatus(c3, "weight")
         self.assertEqual(s1, weights)
-        
-        c4=nest.GetConnections()
-        self.assertEqual(c1,c4)
+
+        c4 = nest.GetConnections()
+        self.assertEqual(c1, c4)
 
 
 def suite():
 
-    suite = unittest.makeSuite(GetConnectionsTestCase,'test')
+    suite = unittest.makeSuite(GetConnectionsTestCase, 'test')
     return suite
+
 
 def run():
     runner = unittest.TextTestRunner(verbosity=2)

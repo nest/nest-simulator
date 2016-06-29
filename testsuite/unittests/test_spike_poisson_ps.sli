@@ -62,19 +62,22 @@ Author: Plesser, Diesmann
 
 M_ERROR setverbosity
 
+
 /Transmission
 {
 /h Set
 
-% end of stimulation period
+% End of stimulation period
 /stimtime 30.0 def
 
-% make simulation time long enough so that
-% at least one full min-delay passes after
-% end of stimulation even if resolution does 
-% not divide 1.0ms. Otherwise, not all spikes
-% will reach the spike_detector.
-/simtime stimtime 2.0 add def 
+% We need to ensure that all spikes arrive at the spike detector.
+% Thus, the simulation time needs to exceed the end of stimulation
+% by at least two multiples of the delay, which is 1 ms by default.
+% We also need to ensure that the simulation time is a multiple of 
+% the resolution.
+% To be on the safe side, we add 3 ms and then round up to the
+% nearest multiple of the resolution. 
+/simtime stimtime 3.0 add h div ceil h mul def
 
 ResetKernel
 

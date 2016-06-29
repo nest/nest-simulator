@@ -146,7 +146,7 @@ transfer.compute_transfer()
 After the simulation is finished we store the data into a file for
 later analysis.
 '''
-dat = shelve.open(model+'_transfer.dat')
+dat = shelve.open(model + '_transfer.dat')
 dat['I_mean'] = transfer.i_range
 dat['I_std'] = transfer.std_range
 dat['rate'] = transfer.rate

@@ -132,7 +132,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -181,14 +182,14 @@ private:
     double_t TauR_;
 
     /** Resting potential in mV. */
-    double_t U0_;
+    double_t E_L_;
 
     /** Reset value of the membrane potential, in mV.
-        @note Value is relative to resting potential U0_. */
+        @note Value is relative to resting potential E_L_. */
     double_t V_reset_;
 
     /** Threshold in mV.
-        @note Value is relative to resting potential U0_. */
+        @note Value is relative to resting potential E_L_. */
     double_t Theta_;
 
     /** External current in pA */
@@ -214,7 +215,8 @@ private:
     double_t y0_; //!< Constant current
     double_t y1_;
     double_t y2_;
-    double_t y3_; //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double_t y3_;
 
     int_t r_; //!< number of refractory steps remaining
 
@@ -277,7 +279,7 @@ private:
   double_t
   get_V_m_() const
   {
-    return S_.y3_ + P_.U0_;
+    return S_.y3_ + P_.E_L_;
   }
 
   // ----------------------------------------------------------------

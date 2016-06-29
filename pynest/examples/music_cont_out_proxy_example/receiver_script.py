@@ -33,7 +33,7 @@ comm = setup.comm
 rank = comm.Get_rank()
 
 pin = setup.publishContInput("in")
-data = numpy.array([0.0, 0.0, 0.0], dtype=numpy.double)
+data = numpy.array([0.0, 0.0], dtype=numpy.double)
 pin.map(data, interpolate=False)
 
 runtime = setup.runtime(timestep)

@@ -182,13 +182,11 @@ if ( with-sionlib )
   endif()
 
   if ( NOT HAVE_MPI )
-    message( FATAL_ERROR "Sionlib requires -Dwith-mpi=ON." )
+    message( FATAL_ERROR "SIONlib requires -Dwith-mpi=ON." )
   endif ()
   
-  find_package( Sionlib )
-  #include_directories( ${SIONLIB_INCLUDE} )
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SIONLIB_INCLUDE}")
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${SIONLIB_LIBS}")
+  find_package( SIONlib )
+  include_directories( ${SIONLIB_INCLUDE} )
 
   # is linked in nestkernel/CMakeLists.txt
   if ( SIONLIB_FOUND )

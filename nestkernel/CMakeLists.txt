@@ -96,7 +96,7 @@ endif ()
 add_library( nestkernel ${nestkernel_sources} )
 target_link_libraries( nestkernel
     nestutil random sli_lib
-    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES}
+    ${LTDL_LIBRARIES} ${MPI_CXX_LIBRARIES} ${MUSIC_LIBRARIES} ${SIONLIB_LIBRARIES}
     )
 
 target_include_directories( nestkernel PRIVATE

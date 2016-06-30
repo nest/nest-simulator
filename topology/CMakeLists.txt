@@ -39,8 +39,8 @@ set( topo_sources
     ntree_impl.h
     vose.h
     vose.cpp
-    parameter.h
-    parameter.cpp
+    topology_parameter.h
+    topology_parameter.cpp
     selector.h
     selector.cpp
     topology.h topology.cpp

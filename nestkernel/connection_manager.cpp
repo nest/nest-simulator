@@ -301,7 +301,7 @@ nest::ConnectionManager::connect( const GIDCollection& sources,
 
   if ( !connruledict_->known( rule_name ) )
     throw BadProperty(
-      String::compose( "Unknown connectivty rule: %s", rule_name ) );
+      String::compose( "Unknown connectivity rule: %1", rule_name ) );
   const long rule_id = ( *connruledict_ )[ rule_name ];
 
   ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create(
@@ -360,39 +360,54 @@ nest::ConnectionManager::connect( index sgid,
   double_t d,
   double_t w )
 {
-  Node* const source = kernel().node_manager.get_node( sgid, target_thread );
+  const thread tid = kernel().vp_manager.get_thread_id();
+  Node* source = kernel().node_manager.get_node( sgid, target_thread );
 
-  // normal nodes and devices with proxies
+  // target is a normal node or device with proxies
   if ( target->has_proxies() )
   {
     connect_( *source, *target, sgid, target_thread, syn, d, w );
   }
-  else if ( target->local_receiver() ) // normal devices
+  else if ( target->local_receiver() ) // target is a normal device
   {
+    // make sure source is on this MPI rank
     if ( source->is_proxy() )
+    {
       return;
+    }
 
+    // make sure connections are only created on the thread of the device
     if ( ( source->get_thread() != target_thread )
       && ( source->has_proxies() ) )
     {
-      target_thread = source->get_thread();
-      target =
-        kernel().node_manager.get_node( target->get_gid(), target_thread );
+      return;
     }
 
-    connect_( *source, *target, sgid, target_thread, syn, d, w );
+    if ( source->has_proxies() ) // normal neuron->device connection
+    {
+      connect_( *source, *target, sgid, target_thread, syn, d, w );
+    }
+    else // create device->device connections on suggested thread of target
+    {
+      target_thread = kernel().vp_manager.vp_to_thread(
+        kernel().vp_manager.suggest_vp( target->get_gid() ) );
+      if ( target_thread == tid )
+      {
+        source = kernel().node_manager.get_node( sgid, target_thread );
+        target =
+          kernel().node_manager.get_node( target->get_gid(), target_thread );
+        connect_( *source, *target, sgid, target_thread, syn, d, w );
+      }
+    }
   }
-  else // globally receiving devices iterate over all target threads
+  else // globally receiving devices, e.g., volume transmitter
   {
     // we do not allow to connect a device to a global receiver at the moment
-    if ( !source->has_proxies() )
-      return;
-    const thread n_threads = kernel().vp_manager.get_num_threads();
-    for ( thread t = 0; t < n_threads; t++ )
+    if ( not source->has_proxies() )
     {
-      target = kernel().node_manager.get_node( target->get_gid(), t );
-      connect_( *source, *target, sgid, t, syn, d, w );
+      return;
     }
+    connect_( *source, *target, sgid, tid, syn, d, w );
   }
 }
 
@@ -406,92 +421,122 @@ nest::ConnectionManager::connect( index sgid,
   double_t d,
   double_t w )
 {
-  Node* const source = kernel().node_manager.get_node( sgid, target_thread );
+  const thread tid = kernel().vp_manager.get_thread_id();
+  Node* source = kernel().node_manager.get_node( sgid, target_thread );
 
-  // normal nodes and devices with proxies
+  // target is a normal node or device with proxies
   if ( target->has_proxies() )
   {
     connect_( *source, *target, sgid, target_thread, syn, params, d, w );
   }
-  else if ( target->local_receiver() ) // normal devices
+  else if ( target->local_receiver() ) // target is a normal device
   {
+    // make sure source is on this MPI rank
     if ( source->is_proxy() )
+    {
       return;
+    }
 
+    // make sure connections are only created on the thread of the device
     if ( ( source->get_thread() != target_thread )
       && ( source->has_proxies() ) )
     {
-      target_thread = source->get_thread();
-      target =
-        kernel().node_manager.get_node( target->get_gid(), target_thread );
+      return;
     }
 
-    connect_( *source, *target, sgid, target_thread, syn, params, d, w );
+    if ( source->has_proxies() ) // normal neuron->device connection
+    {
+      connect_( *source, *target, sgid, target_thread, syn, d, w );
+    }
+    else // create device->device connections on suggested thread of target
+    {
+      target_thread = kernel().vp_manager.vp_to_thread(
+        kernel().vp_manager.suggest_vp( target->get_gid() ) );
+      if ( target_thread == tid )
+      {
+        source = kernel().node_manager.get_node( sgid, target_thread );
+        target =
+          kernel().node_manager.get_node( target->get_gid(), target_thread );
+        connect_( *source, *target, sgid, target_thread, syn, d, w );
+      }
+    }
   }
-  else // globally receiving devices iterate over all target threads
+  else // globally receiving devices, e.g., volume transmitter
   {
     // we do not allow to connect a device to a global receiver at the moment
-    if ( !source->has_proxies() )
-      return;
-    const thread n_threads = kernel().vp_manager.get_num_threads();
-    for ( thread t = 0; t < n_threads; t++ )
+    if ( not source->has_proxies() )
     {
-      target = kernel().node_manager.get_node( target->get_gid(), t );
-      connect_( *source, *target, sgid, t, syn, params, d, w );
+      return;
     }
+    connect_( *source, *target, sgid, tid, syn, params, d, w );
   }
 }
 
 // gid gid dict
 bool
-nest::ConnectionManager::connect( index source_id,
-  index target_id,
+nest::ConnectionManager::connect( index sgid,
+  index tgid,
   DictionaryDatum& params,
   index syn )
 {
+  const thread tid = kernel().vp_manager.get_thread_id();
 
-  if ( !kernel().node_manager.is_local_gid( target_id ) )
+  // make sure target is on this MPI rank
+  if ( !kernel().node_manager.is_local_gid( tgid ) )
+  {
     return false;
-
-  Node* target_ptr = kernel().node_manager.get_node( target_id );
-
-  // target_thread defaults to 0 for devices
-  thread target_thread = target_ptr->get_thread();
-
-  Node* source_ptr = kernel().node_manager.get_node( source_id, target_thread );
-
-  // normal nodes and devices with proxies
-  if ( target_ptr->has_proxies() )
-  {
-    connect_( *source_ptr, *target_ptr, source_id, target_thread, syn, params );
   }
-  else if ( target_ptr->local_receiver() ) // normal devices
-  {
-    if ( source_ptr->is_proxy() )
-      return false;
 
-    if ( ( source_ptr->get_thread() != target_thread )
-      && ( source_ptr->has_proxies() ) )
+  Node* target = kernel().node_manager.get_node( tgid, tid );
+  thread target_thread = target->get_thread();
+  Node* source = kernel().node_manager.get_node( sgid, target_thread );
+
+  // target is a normal node or device with proxies
+  if ( target->has_proxies() )
+  {
+    connect_( *source, *target, sgid, target_thread, syn, params );
+  }
+  else if ( target->local_receiver() ) // target is a normal device
+  {
+    // make sure source is on this MPI rank
+    if ( source->is_proxy() )
     {
-      target_thread = source_ptr->get_thread();
-      target_ptr = kernel().node_manager.get_node( target_id, target_thread );
+      return false;
     }
 
-    connect_( *source_ptr, *target_ptr, source_id, target_thread, syn, params );
+    // make sure connections are only created on the thread of the device
+    if ( ( source->get_thread() != target_thread )
+      && ( source->has_proxies() ) )
+    {
+      return false;
+    }
+
+    if ( source->has_proxies() ) // normal neuron->device connection
+    {
+      connect_( *source, *target, sgid, target_thread, syn, params );
+    }
+    else // create device->device connections on suggested thread of target
+    {
+      target_thread = kernel().vp_manager.vp_to_thread(
+        kernel().vp_manager.suggest_vp( target->get_gid() ) );
+      if ( target_thread == tid )
+      {
+        source = kernel().node_manager.get_node( sgid, target_thread );
+        target =
+          kernel().node_manager.get_node( target->get_gid(), target_thread );
+        connect_( *source, *target, sgid, target_thread, syn, params );
+      }
+    }
   }
-  else // globally receiving devices iterate over all target threads
+  else // globally receiving devices, e.g., volume transmitter
   {
     // we do not allow to connect a device to a global receiver at the moment
-    if ( !source_ptr->has_proxies() )
-      return false;
-    const thread n_threads = kernel().vp_manager.get_num_threads();
-    for ( thread t = 0; t < n_threads; t++ )
+    if ( not source->has_proxies() )
     {
-      target_ptr = kernel().node_manager.get_node( target_id, t );
-      connect_( *source_ptr, *target_ptr, source_id, t, syn, params );
+      return false;
     }
+    connect_( *source, *target, sgid, tid, syn, params );
   }
-
   // We did not exit prematurely due to proxies, so we have connected.
   return true;
 }
@@ -518,10 +563,10 @@ nest::ConnectionManager::connect( index source_id,
  creating a new entry.
 
 
- The parameters delay and weight have the default value NAN.
- NAN is a special value in cmath, which describes double values that
+ The parameters delay and weight have the default value numerics::nan.
+ numerics::nan is a special value, which describes double values that
  are not a number. If delay or weight is omitted in an connect call,
- NAN indicates this and weight/delay are set only, if they are valid.
+ numerics::nan indicates this and weight/delay are set only, if they are valid.
  */
 
 void
@@ -608,140 +653,11 @@ nest::ConnectionManager::disconnect( Node& target,
 
 // -----------------------------------------------------------------------------
 
-void
-nest::ConnectionManager::divergent_connect( index source_id,
-  const TokenArray& target_ids,
-  const TokenArray& weights,
-  const TokenArray& delays,
-  index syn )
-{
-  bool complete_wd_lists =
-    ( target_ids.size() == weights.size() && weights.size() != 0
-      && weights.size() == delays.size() );
-  bool short_wd_lists =
-    ( target_ids.size() != weights.size() && weights.size() == 1
-      && delays.size() == 1 );
-  bool no_wd_lists = ( weights.size() == 0 && delays.size() == 0 );
-
-  // check if we have consistent lists for weights and delays
-  if ( !( complete_wd_lists || short_wd_lists || no_wd_lists ) )
-  {
-    LOG( M_ERROR,
-      "DivergentConnect",
-      "If explicitly specified, weights and delays must be either doubles or "
-      "lists of equal size. If given as lists, their size must be 1 or the "
-      "same size as targets." );
-    throw DimensionMismatch();
-  }
-
-  Node* source = kernel().node_manager.get_node( source_id );
-
-  Subnet* source_comp = dynamic_cast< Subnet* >( source );
-  if ( source_comp != 0 )
-  {
-    LOG(
-      M_INFO, "DivergentConnect", "Source ID is a subnet; I will iterate it." );
-
-    // collect all leaves in source subnet, then divergent-connect each leaf
-    LocalLeafList local_sources( *source_comp );
-    std::vector< MPIManager::NodeAddressingData > global_sources;
-    kernel().mpi_manager.communicate( local_sources, global_sources );
-    for ( std::vector< MPIManager::NodeAddressingData >::iterator src =
-            global_sources.begin();
-          src != global_sources.end();
-          ++src )
-      divergent_connect( src->get_gid(), target_ids, weights, delays, syn );
-
-    return;
-  }
-
-  // We retrieve pointers for all targets, this implicitly checks if they
-  // exist and throws UnknownNode if not.
-  std::vector< Node* > targets;
-  targets.reserve( target_ids.size() );
-
-  // only bother with local targets - is_local_gid is cheaper than get_node()
-  for ( index i = 0; i < target_ids.size(); ++i )
-  {
-    index gid = getValue< long >( target_ids[ i ] );
-    if ( kernel().node_manager.is_local_gid( gid ) )
-      targets.push_back( kernel().node_manager.get_node( gid ) );
-  }
-
-  for ( index i = 0; i < targets.size(); ++i )
-  {
-    thread target_thread = targets[ i ]->get_thread();
-
-    if ( source->get_thread() != target_thread )
-      source = kernel().node_manager.get_node( source_id, target_thread );
-
-    if ( !targets[ i ]->has_proxies() && source->is_proxy() )
-      continue;
-
-    try
-    {
-      if ( complete_wd_lists )
-        connect_( *source,
-          *targets[ i ],
-          source_id,
-          target_thread,
-          syn,
-          delays.get( i ),
-          weights.get( i ) );
-      else if ( short_wd_lists )
-        connect_( *source,
-          *targets[ i ],
-          source_id,
-          target_thread,
-          syn,
-          delays.get( 0 ),
-          weights.get( 0 ) );
-      else
-        connect_( *source, *targets[ i ], source_id, target_thread, syn );
-    }
-    catch ( IllegalConnection& e )
-    {
-      std::string msg = String::compose(
-        "Target with ID %1 does not support the connection. "
-        "The connection will be ignored.",
-        targets[ i ]->get_gid() );
-      if ( !e.message().empty() )
-        msg += "\nDetails: " + e.message();
-      LOG( M_WARNING, "DivergentConnect", msg.c_str() );
-      continue;
-    }
-    catch ( UnknownReceptorType& e )
-    {
-      std::string msg = String::compose(
-        "In Connection from global source ID %1 to target ID %2: "
-        "Target does not support requested receptor type. "
-        "The connection will be ignored",
-        source->get_gid(),
-        targets[ i ]->get_gid() );
-      if ( !e.message().empty() )
-        msg += "\nDetails: " + e.message();
-      LOG( M_WARNING, "DivergentConnect", msg.c_str() );
-      continue;
-    }
-    catch ( TypeMismatch& e )
-    {
-      std::string msg = String::compose(
-        "In Connection from global source ID %1 to target ID %2: "
-        "Expect source and weights of type double. "
-        "The connection will be ignored",
-        source->get_gid(),
-        targets[ i ]->get_gid() );
-      if ( !e.message().empty() )
-        msg += "\nDetails: " + e.message();
-      LOG( M_WARNING, "DivergentConnect", msg.c_str() );
-      continue;
-    }
-  }
-}
-
-// -----------------------------------------------------------------------------
-
-
+/**
+ * Divergent connection routine for use by DataConnect.
+ *
+ * @note This method is used only by DataConnect.
+ */
 void
 nest::ConnectionManager::divergent_connect( index source_id,
   DictionaryDatum pars,
@@ -751,20 +667,23 @@ nest::ConnectionManager::divergent_connect( index source_id,
   // for DoubleVectorDatum
   // copies the data into an array, from which the data must then be copied once
   // more.
-  DictionaryDatum par_i( new Dictionary() );
   Dictionary::iterator di_s, di_t;
 
   // To save time, we first create the parameter dictionary for connect(), then
-  // we copy all keys from the original dictionary into the parameter
-  // dictionary. We can the later use iterators to change the values inside the
-  // parameter dictionary, rather than using the lookup operator.
+  // we copy
+  // all keys from the original dictionary into the parameter dictionary.
+  // We can the later use iterators to change the values inside the parameter
+  // dictionary,
+  // rather than using the lookup operator.
   // We also do the parameter checking here so that we can later use unsafe
   // operations.
   for ( di_s = ( *pars ).begin(); di_s != ( *pars ).end(); ++di_s )
   {
-    par_i->insert( di_s->first, Token( new DoubleDatum() ) );
     DoubleVectorDatum const* tmp =
       dynamic_cast< DoubleVectorDatum* >( di_s->second.datum() );
+    IntVectorDatum const* tmpint =
+      dynamic_cast< IntVectorDatum* >( di_s->second.datum() );
+    ArrayDatum* ad = dynamic_cast< ArrayDatum* >( di_s->second.datum() );
     if ( tmp == 0 )
     {
 
@@ -776,18 +695,14 @@ nest::ConnectionManager::divergent_connect( index source_id,
         "DivergentConnect",
         "Trying to convert, but this takes time." );
 
-      IntVectorDatum const* tmpint =
-        dynamic_cast< IntVectorDatum* >( di_s->second.datum() );
       if ( tmpint )
       {
         std::vector< double >* data =
           new std::vector< double >( ( *tmpint )->begin(), ( *tmpint )->end() );
         DoubleVectorDatum* dvd = new DoubleVectorDatum( data );
         di_s->second = dvd;
-        continue;
       }
-      ArrayDatum* ad = dynamic_cast< ArrayDatum* >( di_s->second.datum() );
-      if ( ad )
+      else if ( ad )
       {
         std::vector< double >* data = new std::vector< double >;
         ad->toVector( *data );
@@ -795,9 +710,11 @@ nest::ConnectionManager::divergent_connect( index source_id,
         di_s->second = dvd;
       }
       else
+      {
         throw TypeMismatch( DoubleVectorDatum().gettypename().toString()
             + " or " + ArrayDatum().gettypename().toString(),
           di_s->second.datum()->gettypename().toString() );
+      }
     }
   }
 
@@ -806,25 +723,24 @@ nest::ConnectionManager::divergent_connect( index source_id,
     static_cast< DoubleVectorDatum* >( target_t.datum() );
   const std::vector< double >& target_ids( **ptarget_ids );
 
+  // Only to check consistent
   const Token weight_t = pars->lookup2( names::weight );
   DoubleVectorDatum const* pweights =
     static_cast< DoubleVectorDatum* >( weight_t.datum() );
-  const std::vector< double >& weights( **pweights );
 
   const Token delay_t = pars->lookup2( names::delay );
   DoubleVectorDatum const* pdelays =
     static_cast< DoubleVectorDatum* >( delay_t.datum() );
-  const std::vector< double >& delays( **pdelays );
 
 
-  bool complete_wd_lists =
-    ( target_ids.size() == weights.size() && weights.size() == delays.size() );
+  bool complete_wd_lists = ( ( *ptarget_ids )->size() == ( *pweights )->size()
+    && ( *pweights )->size() == ( *pdelays )->size() );
   // check if we have consistent lists for weights and delays
   if ( !complete_wd_lists )
   {
     LOG( M_ERROR,
       "DivergentConnect",
-      "All lists in the paramter dictionary must be of equal size." );
+      "All lists in the parameter dictionary must be of equal size." );
     throw DimensionMismatch();
   }
 
@@ -849,220 +765,132 @@ nest::ConnectionManager::divergent_connect( index source_id,
     return;
   }
 
-  size_t n_targets = target_ids.size();
-  for ( index i = 0; i < n_targets; ++i )
+#pragma omp parallel private( di_s )
   {
-    try
-    {
-      kernel().node_manager.get_node( target_ids[ i ] );
-    }
-    catch ( UnknownNode& e )
-    {
-      std::string msg = String::compose(
-        "Target with ID %1 does not exist. "
-        "The connection will be ignored.",
-        target_ids[ i ] );
-      if ( !e.message().empty() )
-        msg += "\nDetails: " + e.message();
-      LOG( M_WARNING, "DivergentConnect", msg.c_str() );
-      continue;
-    }
+    thread tid = kernel().vp_manager.get_thread_id();
+    DictionaryDatum par_i( new Dictionary() );
 
-    // here we fill a parameter dictionary with the values of the current loop
-    // index.
-    for ( di_s = ( *pars ).begin(), di_t = par_i->begin();
-          di_s != ( *pars ).end();
-          ++di_s, ++di_t )
+    size_t n_targets = target_ids.size();
+    for ( index i = 0; i < n_targets; ++i )
     {
-      DoubleVectorDatum const* tmp =
-        static_cast< DoubleVectorDatum* >( di_s->second.datum() );
-      const std::vector< double >& tmpvec = **tmp;
-      DoubleDatum* dd = static_cast< DoubleDatum* >( di_t->second.datum() );
-      // We assign the double directly into the double datum.
-      ( *dd ) = tmpvec[ i ];
-    }
+      Node* target = 0;
+      try
+      {
+        target = kernel().node_manager.get_node( target_ids[ i ], tid );
+      }
+      catch ( UnknownNode& e )
+      {
+        std::string msg = String::compose(
+          "Target with ID %1 does not exist. "
+          "The connection will be ignored.",
+          target_ids[ i ] );
+        if ( !e.message().empty() )
+          msg += "\nDetails: " + e.message();
+        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        continue;
+      }
 
-    try
-    {
-      connect( source_id, target_ids[ i ], par_i, syn );
-    }
-    catch ( UnexpectedEvent& e )
-    {
-      std::string msg = String::compose(
-        "Target with ID %1 does not support the connection. "
-        "The connection will be ignored.",
-        target_ids[ i ] );
-      if ( !e.message().empty() )
-        msg += "\nDetails: " + e.message();
-      LOG( M_WARNING, "DivergentConnect", msg.c_str() );
-      continue;
-    }
-    catch ( IllegalConnection& e )
-    {
-      std::string msg = String::compose(
-        "Target with ID %1 does not support the connection. "
-        "The connection will be ignored.",
-        target_ids[ i ] );
-      if ( !e.message().empty() )
-        msg += "\nDetails: " + e.message();
-      LOG( M_WARNING, "DivergentConnect", msg.c_str() );
-      continue;
-    }
-    catch ( UnknownReceptorType& e )
-    {
-      std::string msg = String::compose(
-        "In Connection from global source ID %1 to target ID %2: "
-        "Target does not support requested receptor type. "
-        "The connection will be ignored",
-        source_id,
-        target_ids[ i ] );
-      if ( !e.message().empty() )
-        msg += "\nDetails: " + e.message();
-      LOG( M_WARNING, "DivergentConnect", msg.c_str() );
-      continue;
+      if ( target->get_thread() != tid )
+      {
+        continue;
+      }
+
+      // here we fill a parameter dictionary with the values of the current loop
+      // index.
+      par_i->clear();
+      for ( di_s = ( *pars ).begin(); di_s != ( *pars ).end(); ++di_s )
+      {
+        DoubleVectorDatum const* tmp =
+          static_cast< DoubleVectorDatum* >( di_s->second.datum() );
+        const std::vector< double >& tmpvec = **tmp;
+        par_i->insert( di_s->first, Token( new DoubleDatum( tmpvec[ i ] ) ) );
+      }
+
+      try
+      {
+        connect( source_id, target_ids[ i ], par_i, syn );
+      }
+      catch ( UnexpectedEvent& e )
+      {
+        std::string msg = String::compose(
+          "Target with ID %1 does not support the connection. "
+          "The connection will be ignored.",
+          target_ids[ i ] );
+        if ( !e.message().empty() )
+          msg += "\nDetails: " + e.message();
+        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        continue;
+      }
+      catch ( IllegalConnection& e )
+      {
+        std::string msg = String::compose(
+          "Target with ID %1 does not support the connection. "
+          "The connection will be ignored.",
+          target_ids[ i ] );
+        if ( !e.message().empty() )
+          msg += "\nDetails: " + e.message();
+        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        continue;
+      }
+      catch ( UnknownReceptorType& e )
+      {
+        std::string msg = String::compose(
+          "In Connection from global source ID %1 to target ID %2: "
+          "Target does not support requested receptor type. "
+          "The connection will be ignored",
+          source_id,
+          target_ids[ i ] );
+        if ( !e.message().empty() )
+          msg += "\nDetails: " + e.message();
+        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        continue;
+      }
     }
   }
-}
-
-
-void
-nest::ConnectionManager::random_divergent_connect( index source_id,
-  const TokenArray& target_ids,
-  index n,
-  const TokenArray& weights,
-  const TokenArray& delays,
-  bool allow_multapses,
-  bool allow_autapses,
-  index syn )
-{
-  Node* source = kernel().node_manager.get_node( source_id );
-
-  // check if we have consistent lists for weights and delays
-  if ( !( weights.size() == n || weights.size() == 0 )
-    && ( weights.size() == delays.size() ) )
-  {
-    LOG( M_ERROR,
-      "RandomDivergentConnect",
-      "weights and delays must be lists of size n." );
-    throw DimensionMismatch();
-  }
-
-  Subnet* source_comp = dynamic_cast< Subnet* >( source );
-  if ( source_comp != 0 )
-  {
-    LOG( M_INFO,
-      "RandomDivergentConnect",
-      "Source ID is a subnet; I will iterate it." );
-
-    // collect all leaves in source subnet, then divergent-connect each leaf
-    LocalLeafList local_sources( *source_comp );
-    std::vector< MPIManager::NodeAddressingData > global_sources;
-    kernel().mpi_manager.communicate( local_sources, global_sources );
-
-    for ( std::vector< MPIManager::NodeAddressingData >::iterator src =
-            global_sources.begin();
-          src != global_sources.end();
-          ++src )
-      random_divergent_connect( src->get_gid(),
-        target_ids,
-        n,
-        weights,
-        delays,
-        allow_multapses,
-        allow_autapses,
-        syn );
-
-    return;
-  }
-
-  librandom::RngPtr rng = kernel().rng_manager.get_grng();
-
-  TokenArray chosen_targets;
-
-  std::set< long > ch_ids; // ch_ids used for multapses identification
-
-  long n_rnd = target_ids.size();
-
-  for ( size_t j = 0; j < n; ++j )
-  {
-    long t_id;
-
-    do
-    {
-      t_id = rng->ulrand( n_rnd );
-    } while (
-      ( !allow_autapses && ( ( index ) target_ids.get( t_id ) ) == source_id )
-      || ( !allow_multapses && ch_ids.find( t_id ) != ch_ids.end() ) );
-
-    if ( !allow_multapses )
-      ch_ids.insert( t_id );
-
-    chosen_targets.push_back( target_ids.get( t_id ) );
-  }
-
-  divergent_connect( source_id, chosen_targets, weights, delays, syn );
 }
 
 /**
  * Connect, using a dictionary with arrays.
- * This variant of connect combines the functionalities of
- * - connect
- * - divergent_connect
- * - convergent_connect
- * The decision is based on the details of the dictionary entries source and
- * target. If source and target are both either a GID or a list of GIDs with
- * equal size, then source and target are connected one-to-one.
- * If source is a gid and target is a list of GIDs then divergent_connect is
- * used. If source is a list of GIDs and target is a GID, then
- * convergent_connect is used.
- * At this stage, the task of connect is to separate the dictionary into one for
- * each thread and then to forward the connect call to the connectors who can
- * then deal with the details of the connection.
+ * The connection rule is based on the details of the dictionary entries source
+ * and target.
+ * If source and target are both either a GID or a list of GIDs with equal size,
+ * then source and target are connected one-to-one.
+ * If source is a gid and target is a list of GIDs then the sources is
+ * connected to all targets.
+ * If source is a list of GIDs and target is a GID, then all sources are
+ * connected to the target.
+ * At this stage, the task of connect is to separate the dictionary into one
+ * for each thread and then to forward the connect call to the connectors who
+ * can then deal with the details of the connection.
+ *
+ * @note This method is used only by DataConnect.
  */
 bool
 nest::ConnectionManager::connect( ArrayDatum& conns )
 {
-  // #ifdef _OPENMP
-  //     LOG(M_INFO, "ConnectionManager::Connect", msg);
-  // #endif
-
-  // #ifdef _OPENMP
-  // #pragma omp parallel shared
-
-  // #endif
+  for ( Token* ct = conns.begin(); ct != conns.end(); ++ct )
   {
-    for ( Token* ct = conns.begin(); ct != conns.end(); ++ct )
+    DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
+    index target_gid = static_cast< size_t >( ( *cd )[ names::target ] );
+    Node* target_node = kernel().node_manager.get_node( target_gid );
+    size_t thr = target_node->get_thread();
+
+    size_t syn_id = 0;
+    index source_gid = ( *cd )[ names::source ];
+
+    Token synmodel = cd->lookup( names::synapse_model );
+    if ( !synmodel.empty() )
     {
-      DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
-      index target_gid = static_cast< size_t >( ( *cd )[ names::target ] );
-      Node* target_node = kernel().node_manager.get_node( target_gid );
-      size_t thr = target_node->get_thread();
-
-      // #ifdef _OPENMP
-      // 	    size_t my_thr=omp_get_thread_num();
-      // 	    if(my_thr == thr)
-      // #endif
-      {
-
-        size_t syn_id = 0;
-        index source_gid = ( *cd )[ names::source ];
-
-        Token synmodel = cd->lookup( names::synapse_model );
-        if ( !synmodel.empty() )
-        {
-          std::string synmodel_name = getValue< std::string >( synmodel );
-          synmodel =
-            kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-          if ( !synmodel.empty() )
-            syn_id = static_cast< size_t >( synmodel );
-          else
-            throw UnknownModelName( synmodel_name );
-        }
-        Node* source_node = kernel().node_manager.get_node( source_gid );
-        //#pragma omp critical
-        connect_( *source_node, *target_node, source_gid, thr, syn_id, cd );
-      }
+      std::string synmodel_name = getValue< std::string >( synmodel );
+      synmodel =
+        kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
+      if ( !synmodel.empty() )
+        syn_id = static_cast< size_t >( synmodel );
+      else
+        throw UnknownModelName( synmodel_name );
     }
+    Node* source_node = kernel().node_manager.get_node( source_gid );
+    connect_( *source_node, *target_node, source_gid, thr, syn_id, cd );
   }
   return true;
 }
@@ -1087,469 +915,6 @@ nest::ConnectionManager::validate_source_entry_( thread tid,
 }
 
 // -----------------------------------------------------------------------------
-
-void
-nest::ConnectionManager::convergent_connect( const TokenArray& source_ids,
-  index target_id,
-  const TokenArray& weights,
-  const TokenArray& delays,
-  index syn )
-{
-  bool complete_wd_lists =
-    ( source_ids.size() == weights.size() && weights.size() != 0
-      && weights.size() == delays.size() );
-  bool short_wd_lists =
-    ( source_ids.size() != weights.size() && weights.size() == 1
-      && delays.size() == 1 );
-  bool no_wd_lists = ( weights.size() == 0 && delays.size() == 0 );
-
-  // check if we have consistent lists for weights and delays
-  if ( !( complete_wd_lists || short_wd_lists || no_wd_lists ) )
-  {
-    LOG( M_ERROR,
-      "ConvergentConnect",
-      "weights and delays must be either doubles or lists of equal size. "
-      "If given as lists, their size must be 1 or the same size as sources." );
-    throw DimensionMismatch();
-  }
-
-  if ( !kernel().node_manager.is_local_gid( target_id ) )
-    return;
-
-  Node* target = kernel().node_manager.get_node( target_id );
-
-  Subnet* target_comp = dynamic_cast< Subnet* >( target );
-  if ( target_comp != 0 )
-  {
-    LOG( M_INFO,
-      "ConvergentConnect",
-      "Target node is a subnet; I will iterate it." );
-
-    // we only iterate over local leaves, as remote targets are ignored anyways
-    LocalLeafList target_nodes( *target_comp );
-    for ( LocalLeafList::iterator tgt = target_nodes.begin();
-          tgt != target_nodes.end();
-          ++tgt )
-      convergent_connect(
-        source_ids, ( *tgt )->get_gid(), weights, delays, syn );
-
-    return;
-  }
-
-  for ( index i = 0; i < source_ids.size(); ++i )
-  {
-    index source_id = source_ids.get( i );
-    Node* source =
-      kernel().node_manager.get_node( getValue< long >( source_id ) );
-
-    thread target_thread = target->get_thread();
-
-    if ( !target->has_proxies() )
-    {
-      // target_thread = sources[i]->get_thread();
-      target_thread = source->get_thread();
-
-      // If target is on the wrong thread, we need to get the right one now.
-      if ( target->get_thread() != target_thread )
-        target = kernel().node_manager.get_node( target_id, target_thread );
-
-      if ( source->is_proxy() )
-        continue;
-    }
-
-    // The source node may still be on a wrong thread, so we need to get the
-    // right one now. As get_node() is quite expensive, so we only call it if
-    // we need to
-    // if (source->get_thread() != target_thread)
-    //  source = get_node(sid, target_thread);
-
-    try
-    {
-      if ( complete_wd_lists )
-        connect_( *source,
-          *target,
-          source_id,
-          target_thread,
-          syn,
-          delays.get( i ),
-          weights.get( i ) );
-      else if ( short_wd_lists )
-        connect_( *source,
-          *target,
-          source_id,
-          target_thread,
-          syn,
-          delays.get( 0 ),
-          weights.get( 0 ) );
-      else
-        connect_( *source, *target, source_id, target_thread, syn );
-    }
-    catch ( IllegalConnection& e )
-    {
-      std::string msg = String::compose(
-        "Target with ID %1 does not support the connection. "
-        "The connection will be ignored.",
-        target->get_gid() );
-      if ( !e.message().empty() )
-        msg += "\nDetails: " + e.message();
-      LOG( M_WARNING, "ConvergentConnect", msg.c_str() );
-      continue;
-    }
-    catch ( UnknownReceptorType& e )
-    {
-      std::string msg = String::compose(
-        "In Connection from global source ID %1 to target ID %2: "
-        "Target does not support requested receptor type. "
-        "The connection will be ignored",
-        source->get_gid(),
-        target->get_gid() );
-      if ( !e.message().empty() )
-        msg += "\nDetails: " + e.message();
-      LOG( M_WARNING, "ConvergentConnect", msg.c_str() );
-      continue;
-    }
-    catch ( TypeMismatch& e )
-    {
-      std::string msg = String::compose(
-        "In Connection from global source ID %1 to target ID %2: "
-        "Expect source and weights of type double. "
-        "The connection will be ignored",
-        source->get_gid(),
-        target->get_gid() );
-      if ( !e.message().empty() )
-        msg += "\nDetails: " + e.message();
-      LOG( M_WARNING, "ConvergentConnect", msg.c_str() );
-      continue;
-    }
-  }
-}
-
-
-/**
- * New and specialized variant of the convergent_connect()
- * function, which takes a vector<Node*> for sources and relies
- * on the fact that target is guaranteed to be on this thread.
- */
-void
-nest::ConnectionManager::convergent_connect(
-  const std::vector< index >& source_ids,
-  index target_id,
-  const TokenArray& weights,
-  const TokenArray& delays,
-  index syn )
-{
-  bool complete_wd_lists =
-    ( source_ids.size() == weights.size() && weights.size() != 0
-      && weights.size() == delays.size() );
-  bool short_wd_lists =
-    ( source_ids.size() != weights.size() && weights.size() == 1
-      && delays.size() == 1 );
-
-  // Check if we have consistent lists for weights and delays
-  // already checked in previous RCC call
-
-  Node* target = kernel().node_manager.get_node( target_id );
-  for ( index i = 0; i < source_ids.size(); ++i )
-  {
-    Node* source = kernel().node_manager.get_node( source_ids[ i ] );
-    thread target_thread = target->get_thread();
-
-    if ( !target->has_proxies() )
-    {
-      target_thread = source->get_thread();
-
-      // If target is on the wrong thread, we need to get the right one now.
-      if ( target->get_thread() != target_thread )
-        target = kernel().node_manager.get_node( target_id, target_thread );
-
-      if ( source->is_proxy() )
-        continue;
-    }
-
-    try
-    {
-      if ( complete_wd_lists )
-        connect_( *source,
-          *target,
-          source_ids[ i ],
-          target_thread,
-          syn,
-          delays.get( i ),
-          weights.get( i ) );
-      else if ( short_wd_lists )
-        connect_( *source,
-          *target,
-          source_ids[ i ],
-          target_thread,
-          syn,
-          delays.get( 0 ),
-          weights.get( 0 ) );
-      else
-        connect_( *source, *target, source_ids[ i ], target_thread, syn );
-    }
-    catch ( IllegalConnection& e )
-    {
-      std::string msg = String::compose(
-        "Target with ID %1 does not support the connection. "
-        "The connection will be ignored.",
-        target->get_gid() );
-      if ( !e.message().empty() )
-        msg += "\nDetails: " + e.message();
-      LOG( M_WARNING, "ConvergentConnect", msg.c_str() );
-      continue;
-    }
-    catch ( UnknownReceptorType& e )
-    {
-      std::string msg = String::compose(
-        "In Connection from global source ID %1 to target ID %2: "
-        "Target does not support requested receptor type. "
-        "The connection will be ignored",
-        source->get_gid(),
-        target->get_gid() );
-      if ( !e.message().empty() )
-        msg += "\nDetails: " + e.message();
-      LOG( M_WARNING, "ConvergentConnect", msg.c_str() );
-      continue;
-    }
-    catch ( TypeMismatch& e )
-    {
-      std::string msg = String::compose(
-        "In Connection from global source ID %1 to target ID %2: "
-        "Expect source and weights of type double. "
-        "The connection will be ignored",
-        source->get_gid(),
-        target->get_gid() );
-      if ( !e.message().empty() )
-        msg += "\nDetails: " + e.message();
-      LOG( M_WARNING, "ConvergentConnect", msg.c_str() );
-      continue;
-    }
-  }
-}
-
-
-void
-nest::ConnectionManager::random_convergent_connect(
-  const TokenArray& source_ids,
-  index target_id,
-  index n,
-  const TokenArray& weights,
-  const TokenArray& delays,
-  bool allow_multapses,
-  bool allow_autapses,
-  index syn )
-{
-  if ( !kernel().node_manager.is_local_gid( target_id ) )
-    return;
-
-  Node* target = kernel().node_manager.get_node( target_id );
-
-  // check if we have consistent lists for weights and delays
-  if ( !( weights.size() == n || weights.size() == 0 )
-    && ( weights.size() == delays.size() ) )
-  {
-    LOG( M_ERROR,
-      "ConvergentConnect",
-      "weights and delays must be lists of size n." );
-    throw DimensionMismatch();
-  }
-
-  Subnet* target_comp = dynamic_cast< Subnet* >( target );
-  if ( target_comp != 0 )
-  {
-    LOG( M_INFO,
-      "RandomConvergentConnect",
-      "Target ID is a subnet; I will iterate it." );
-
-    // we only consider local leaves as targets,
-    LocalLeafList target_nodes( *target_comp );
-    for ( LocalLeafList::iterator tgt = target_nodes.begin();
-          tgt != target_nodes.end();
-          ++tgt )
-      random_convergent_connect( source_ids,
-        ( *tgt )->get_gid(),
-        n,
-        weights,
-        delays,
-        allow_multapses,
-        allow_autapses,
-        syn );
-
-    return;
-  }
-
-  librandom::RngPtr rng = kernel().rng_manager.get_rng( target->get_thread() );
-  TokenArray chosen_sources;
-
-  std::set< long > ch_ids;
-
-  long n_rnd = source_ids.size();
-
-  for ( size_t j = 0; j < n; ++j )
-  {
-    long s_id;
-
-    do
-    {
-      s_id = rng->ulrand( n_rnd );
-    } while (
-      ( !allow_autapses && ( ( index ) source_ids[ s_id ] ) == target_id )
-      || ( !allow_multapses && ch_ids.find( s_id ) != ch_ids.end() ) );
-
-    if ( !allow_multapses )
-      ch_ids.insert( s_id );
-
-    chosen_sources.push_back( source_ids[ s_id ] );
-  }
-
-  convergent_connect( chosen_sources, target_id, weights, delays, syn );
-}
-
-// This function loops over all targets, with every thread taking
-// care only of its own target nodes
-void
-nest::ConnectionManager::random_convergent_connect( TokenArray& source_ids,
-  TokenArray& target_ids,
-  TokenArray& ns,
-  TokenArray& weights,
-  TokenArray& delays,
-  bool allow_multapses,
-  bool allow_autapses,
-  index syn )
-{
-#ifndef _OPENMP
-  // It only makes sense to call this function if we have openmp
-  LOG( M_ERROR,
-    "ConvergentConnect",
-    "This function can only be called using OpenMP threading." );
-  throw KernelException();
-#else
-
-  // Collect all nodes on this process and convert the TokenArray with
-  // the sources to a std::vector<Node*>. This is needed, because
-  // 1. We don't want to call get_node() within the loop for many
-  //    neurons several times
-  // 2. The function token_array::operator[]() is not thread-safe, so
-  //    the threads will possibly access the same element at the same
-  //    time, causing segfaults
-
-  std::vector< index > vsource_ids( source_ids.size() );
-  for ( index i = 0; i < source_ids.size(); ++i )
-  {
-    index sid = getValue< long >( source_ids.get( i ) );
-    vsource_ids[ i ] = sid;
-  }
-
-  // Check if we have consistent lists for weights and delays
-  if ( !( weights.size() == ns.size() || weights.size() == 0 )
-    && ( weights.size() == delays.size() ) )
-  {
-    LOG( M_ERROR,
-      "ConvergentConnect",
-      "weights, delays and ns must be same size." );
-    throw DimensionMismatch();
-  }
-
-  for ( size_t i = 0; i < ns.size(); ++i )
-  {
-    size_t n;
-    // This throws std::bad_cast if the dynamic_cast goes
-    // wrong. Throwing in a parallel section is not allowed. This
-    // could be solved by only accepting IntVectorDatums for the ns.
-    try
-    {
-      const IntegerDatum& nid =
-        dynamic_cast< const IntegerDatum& >( *ns.get( i ) );
-      n = nid.get();
-    }
-    catch ( const std::bad_cast& e )
-    {
-      LOG( M_ERROR, "ConvergentConnect", "ns must consist of integers only." );
-      throw KernelException();
-    }
-
-    // Check if we have consistent lists for weights and delays part two.
-    // The inner lists have to be equal to n or be zero.
-    if ( weights.size() > 0 )
-    {
-      TokenArray ws = getValue< TokenArray >( weights.get( i ) );
-      TokenArray ds = getValue< TokenArray >( delays.get( i ) );
-
-      if ( !( ws.size() == n || ws.size() == 0 ) && ( ws.size() == ds.size() ) )
-      {
-        LOG( M_ERROR,
-          "ConvergentConnect",
-          "weights and delays must be lists of size n." );
-        throw DimensionMismatch();
-      }
-    }
-  }
-
-#pragma omp parallel
-  {
-    int nrn_counter = 0;
-    int tid = kernel().vp_manager.get_thread_id();
-
-    librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
-
-    for ( size_t i = 0; i < target_ids.size(); i++ )
-    {
-      index target_id = target_ids.get( i );
-
-      // This is true for neurons on remote processes
-      if ( !kernel().node_manager.is_local_gid( target_id ) )
-        continue;
-
-      Node* target = kernel().node_manager.get_node( target_id, tid );
-
-      // Check, if target is on our thread
-      if ( target->get_thread() != tid )
-        continue;
-
-      nrn_counter++;
-
-      // extract number of connections for target i
-      const IntegerDatum& nid =
-        dynamic_cast< const IntegerDatum& >( *ns.get( i ) );
-      const size_t n = nid.get();
-
-      // extract weights and delays for all connections to target i
-      TokenArray ws;
-      TokenArray ds;
-      if ( weights.size() > 0 )
-      {
-        ws = getValue< TokenArray >( weights.get( i ) );
-        ds = getValue< TokenArray >( delays.get( i ) );
-      }
-
-      std::vector< index > chosen_source_ids( n );
-      std::set< long > ch_ids;
-
-      long n_rnd = vsource_ids.size();
-
-      for ( size_t j = 0; j < n; ++j )
-      {
-        long s_id;
-
-        do
-        {
-          s_id = rng->ulrand( n_rnd );
-        } while (
-          ( !allow_autapses && ( ( index ) vsource_ids[ s_id ] ) == target_id )
-          || ( !allow_multapses && ch_ids.find( s_id ) != ch_ids.end() ) );
-
-        if ( !allow_multapses )
-          ch_ids.insert( s_id );
-
-        chosen_source_ids[ j ] = vsource_ids[ s_id ];
-      }
-
-      convergent_connect( chosen_source_ids, target_id, ws, ds, syn );
-
-    } // of for all targets
-  }   // of omp parallel
-#endif
-}
 
 void
 nest::ConnectionManager::trigger_update_weight( const long_t vt_id,

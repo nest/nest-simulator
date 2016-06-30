@@ -1,8 +1,6 @@
-Neural simulations
-==================
+# Neural simulations
 
-Overview
----------
+## Overview
 
 A simulation of a network is like an experiment with the difference that it
 takes place inside the computer's memory rather than in the physical world.
@@ -17,8 +15,7 @@ simple simulation. The following sections will then give a step-by-step
 introduction to the main concepts of NEST simulations. Finally, we will discuss
 a complex example.
 
-A simple simulation
---------------------
+## A simple simulation
 
 The simplest simulation in NEST is that of a network which contains just one
 neuron:
@@ -164,8 +161,7 @@ value for 2 ms, the refractory period of the neuron. After the refractory
 period, the membrane continues to depolarize due to the continuing input
 current.
 
-Nodes and Models
------------------
+## Nodes and Models
 
 In NEST, the neural system is a collection of nodes and their interactions.
 Nodes correspond to things like neurons, synapses, and devices, and are
@@ -218,8 +214,7 @@ purpose. The following line of code create 10 integrate and fire neurons:
     SLI ] /iaf_neuron 10 Create ==
     11
 
-Status information
--------------------
+## Status information
 
 Nodes have a state which can be extracted and modified. In the follwing example,
 we display the status information of one the neurons in the layer we have
@@ -285,8 +280,7 @@ complain if the new value does not match in the expected type:
 In order to find out, which properties of a given model can be changed an which
 not, you have to refer to the model's documentation.
 
-Connections
-------------
+## Connections
 
 Connections between nodes define possible channels for interactions between
 them. A connection between two nodes is established, using the command
@@ -308,17 +302,17 @@ ms.
     SLI ] n1 n3 Connect
 
 To inspect the parameters of a connection, one first needs to obtain a handle
-to the connection. This is done using the command `FindConnections`. It takes a
+to the connection. This is done using the command `GetConnections`. It takes a
 dictionary that at least contains the id of the source node and will return a
 list of handles for all outgoing connections. The search can be restricted by
 using the optional parameters *target* and *synapse\_type*.
 
 ### Example 2
 
-    SLI ] << /source n1 >> FindConnections /c1 Set
+    SLI ] << /source n1 >> GetConnections /c1 Set
     SLI ] c1 length ==
     2
-    SLI ] << /source n1 /target n2 >> FindConnections /c2 Set
+    SLI ] << /source n1 /target n2 >> GetConnections /c2 Set
     SLI ] c2 length ==
     1
 
@@ -350,8 +344,7 @@ for nodes.
     SLI ] c1 0 get GetStatus /weight get ==
     2.000000e+00
 
-Devices
---------
+## Devices
 
 Devices are network nodes which provide input to the network or record its
 output. They encapsulate the stimulation and measurement process. If you want
@@ -455,8 +448,7 @@ Please note that the connection direction for analog recorders (all except
     SLI ] vm n Connect
     SLI ] n sd Connect
 
-Simulation
------------
+## Simulation
 
 NEST simulations are time driven. The simulation time proceeds in discrete steps
 of size `dt`, set using the property `resolution` of the root node. In each time

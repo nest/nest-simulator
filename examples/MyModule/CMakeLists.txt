@@ -33,14 +33,18 @@ cmake_minimum_required( VERSION 2.8.12 )
 
 # 1) Name your module here, i.e. add later with -Dexternal-modules=my:
 set( SHORT_NAME my )
+
 #    the complete module name is here:
 set( MODULE_NAME ${SHORT_NAME}module )
+
 # 2) Add all your sources here
 set( MODULE_SOURCES
     mymodule.h mymodule.cpp
     pif_psc_alpha.cpp pif_psc_alpha.h
     drop_odd_spike_connection.h
+    step_pattern_builder.h step_pattern_builder.cpp
     )
+
 # 3) We require a header name like this:
 set( MODULE_HEADER ${MODULE_NAME}.h )
 # containing the class description of the class extending the SLIModule
@@ -81,6 +85,7 @@ execute_process(
     OUTPUT_VARIABLE NEST_COMPILER
     OUTPUT_STRIP_TRAILING_WHITESPACE
 )
+
 # One check on first execution, if `nest-config` is working.
 if ( NOT RES_VAR EQUAL 0 )
   message( FATAL_ERROR "Cannot run `${NEST_CONFIG}`. Please specify correct `nest-config` via -Dwith-nest=... " )

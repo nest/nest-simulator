@@ -182,7 +182,7 @@ modeldict begin
   neurons {
     /ii Set
     (\n\nneuron ) = ii = (connects to) =
-    << /source ii /synapse_model /static_synapse >> FindConnections
+    << /source ii /synapse_model /static_synapse >> GetConnections
     { GetStatus /target get } Map ==
   } forall
   */

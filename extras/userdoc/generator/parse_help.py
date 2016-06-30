@@ -30,6 +30,7 @@ import os
 import re
 import sys
 import shutil
+import textwrap
 
 from modules.writers import coll_data, write_helpindex
 from modules.helpers import check_ifdef
@@ -126,9 +127,11 @@ for file in allfiles:
                     name_line_0 = name_line[0][0].strip()
                     name_line_1 = name_line[0][1].strip()
                     line = name_line_0 + ' ' + name_line_1
-                line = re.sub(r"(\s){4}", '~~ ', line)
-                line = re.sub(r"(\s){3}", ' ', line)
-                line = re.sub(r"(\s){2}", ' ', line)
+                line = textwrap.dedent(line).strip()
+                # Tricks for the blanks
+                line = re.sub(r"(\s){5,}", '~~~ ', line)
+                line = re.sub(r"(\s){3,4}", '~~ ', line)
+                line = re.sub(r"(\s){2}", '~ ', line)
                 alllines.append(line)
             item = s.join(alllines)
             num = num + 1

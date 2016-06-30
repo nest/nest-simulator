@@ -133,9 +133,13 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
             htmllist.append(linkline + '<div class="wrap">')
     for key, value in doc_dic.iteritems():
         if key == "FullName":
-            fullname = value.strip("###### ###### ~~")
+            fullname = value.strip("###### ######")
             fullname = re.sub("(######)", " <br/> ", fullname)
-            fullname = re.sub("(\~\~)", '  ', fullname)
+            #fullname = re.sub("(\~\~)", '  ', fullname)
+            fullname = re.sub("(\~\~\~)", '\t\t', fullname)
+            fullname = re.sub("(\~\~)", '\t', fullname)
+            fullname = re.sub("(\~)", ' ', fullname)
+
             htmllist.append('<b>Name:</b><pre>%s - %s</pre>' %
                             (name, fullname))
             hlpfullname = re.sub(' <br\/> ', '\n', fullname).strip()
@@ -150,7 +154,12 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
                 if (key != "Name" and key != "FullName" and key != "SeeAlso"
                    and key != "File"):
                     value = re.sub("(######)", " <br/> ", value)
+                    # value = re.sub("(\~\~)", '  ', value)
+                    value = re.sub("(\~\~\~)", '\t', value)
                     value = re.sub("(\~\~)", '  ', value)
+                    value = re.sub("(\~)", ' ', value)
+                    value = re.sub(' - ', '\t- ', value)
+
                     htmllist.append('<b>%s: </b>' % key)
                     htmllist.append('<pre>%s</pre>' % value)
                     hlpvalue = re.sub(' <br\/> ', '\n', value).rstrip()
@@ -159,10 +168,10 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
                     hlpvalue = re.sub('\n[\s?]*\n', '\n', hlpvalue).rstrip()
                     # Better looking .hlp files
                     dedented_text = textwrap.dedent(hlpvalue).strip()
-                    dedented_text = re.sub(r'[ ]{9,}', r'\t\t',
-                                           dedented_text)
-                    dedented_text = re.sub(r'[ ]{5,8}', r'\t\t', dedented_text)
-                    dedented_text = re.sub(r'[ ]{3,4}', r'\t', dedented_text)
+                    # dedented_text = re.sub(r'[ ]{9,}', r'\t\t',
+                    #                        dedented_text)
+                    # dedented_text = re.sub(r'[ ]{5,8}', r'\t\t', dedented_text)
+                    # dedented_text = re.sub(r'[ ]{3,4}', r'\t', dedented_text)
 
                     hlpcontent = ('%s:\n\n%s\n\n' % (key, dedented_text))
                     hlplist.append(hlpcontent)

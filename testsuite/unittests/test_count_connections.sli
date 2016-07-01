@@ -28,7 +28,7 @@ number of connections and specific types of connections.
 Synopsis: (test_count_connections) run -> NEST exits if test fails
 
 Description: 
-This test uses RandomConvergentConnect to connect a net of 100 neurons
+This test uses fixed-indegree Connect to connect a net of 100 neurons
 to itself, with 100 connections per neuron, a total of 10000 connections.
 It is checked whether the total number of connections and the number of
 static connections equals 10000. Then additional 10000 connections of type
@@ -58,12 +58,12 @@ ResetKernel
 /nodes net GetGlobalNodes def
 /local_nodes net GetLocalNodes def
 
-nodes local_nodes C RandomConvergentConnect
+nodes local_nodes << /rule /fixed_indegree /indegree C >> Connect
 
 { 0 /num_connections get ConnExpected eq } assert_or_die
 { /static_synapse GetDefaults /num_connections get ConnExpected eq } assert_or_die
 
-nodes local_nodes C /stdp_synapse RandomConvergentConnect
+nodes local_nodes << /rule /fixed_indegree /indegree C >> << /model /stdp_synapse >> Connect
 
 { 0 /num_connections get ConnExpected 2 mul eq } assert_or_die
 { /stdp_synapse GetDefaults /num_connections get ConnExpected eq } assert_or_die

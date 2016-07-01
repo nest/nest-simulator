@@ -1,5 +1,5 @@
 /*
- *  test_stdp_synapse.sli
+ *  test_inh_stdp_synapse.sli
  *
  *  This file is part of NEST.
  *
@@ -22,9 +22,9 @@
 
 
 /* BeginDocumentation
-Name: testsuite::test_stdp_synapse - basic test of stdp_synapse
+Name: testsuite::test_inh_stdp_synapse - basic test of stdp_synapse
 
-Synopsis: (test_stdp_synapse) run
+Synopsis: (test_inh_stdp_synapse) run
 
 Description:
   A parrot_neuron that repeats the spikes from a poisson generator is
@@ -34,15 +34,16 @@ Description:
   results. The final weight obtained after simulation is compared to the final
   weight obtained from the test.
 
-Author: Kunkel, Nov 2010
+Author: Weidel Mar 2016
+Based on: Kunkel, Nov 2010
 */
 
 
 (unittest) run
 /unittest using
- 
+
 ResetKernel
- 
+
 /resolution 0.1 def %1.0 def %2.0 -4 pow def  % simulation step size
 0 << /resolution resolution >> SetStatus %/tics_per_ms 10000.0 >> SetStatus
 
@@ -54,6 +55,7 @@ ResetKernel
 /nu              10.0 def  % equil. firing rate
 /nu_x             1.7 def  % external rate
 /w_exc           45.0 def  % strength of exc. connections
+/w_neuron       -45.0 def  % strength of connections between neuron and parrot
 /w_inh w_exc -5.0 mul def  % strength of inh. connections
 /delay            1.0 def  % synaptic transmission delay
 
@@ -69,7 +71,7 @@ ResetKernel
 /tau_minus         30.0  def
 /mu_plus            1.0  def  % multiplicative
 /mu_minus           1.0  def  % multiplicative
-/w_max     w_exc 2.0 mul def
+/w_max  w_neuron 2.0 mul def
 
 
 %%% create poisson generators, neurons and spike detector %%%
@@ -92,8 +94,9 @@ ResetKernel
 
 %%% connect %%%
 
-/stdp_synapse << /alpha    alpha
-                 /lambda   lambda
+/stdp_synapse << /weight w_neuron
+     /alpha    alpha
+     /lambda   lambda
 		 /tau_plus tau_plus
 		 /mu_plus  mu_plus
 		 /mu_minus mu_minus
@@ -104,11 +107,10 @@ pg_exc neuron w_exc delay Connect
 pg_inh neuron w_inh delay Connect
 pg_pre parrot w_exc delay Connect
 
-parrot neuron w_exc delay /stdp_synapse Connect
+parrot neuron w_neuron delay /stdp_synapse Connect
 
 parrot sd_pre  Connect
 neuron sd_post Connect
-
 
 %%% simulate and get data %%%
 
@@ -117,10 +119,11 @@ neuron sd_post Connect
 /pre_spikes  sd_pre  GetStatus /events get /times get cva { axonal_delay add } Map def
 /post_spikes sd_post GetStatus /events get /times get cva { backpr_delay add } Map def
 
+
 /final_weight << /source [parrot] /target [neuron] >> GetConnections 0 get /weight get def
 
-
 %%% check final weight %%%
+
 
 cout 15 setprecision
 
@@ -133,7 +136,7 @@ cout 15 setprecision
 
 /post_spike post_spikes i get def
 /pre_spike  pre_spikes  j get def
-/w          w_exc w_max div   def
+/w          w_neuron w_max div   def
 
 /update_K_plus
 {
@@ -151,7 +154,7 @@ def
 {
   j 1 add /j Set
   pre_spike /last_pre Set
-  pre_spikes j get /pre_spike Set  
+  pre_spikes j get /pre_spike Set
 }
 def
 
@@ -194,12 +197,12 @@ def
         i 1 add post_spikes length lt
         {
           update_K_minus
-  	next_post_spike
+        	next_post_spike
         }
         if
       }
       {
-        exit  
+        exit
       }
       ifelse
     }

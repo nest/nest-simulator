@@ -71,14 +71,17 @@ SLIStartup::checkpath( std::string const& path, std::string& result ) const
   const std::string fullname = fullpath + "/" + startupfilename;
 
   std::ifstream in( fullname.c_str() );
-  if ( in )
+
+  if ( in.good() )
   {
     result = fullname;
+    return true;
   }
   else
+  {
     result.erase();
-
-  return ( in );
+    return false;
+  }
 }
 
 

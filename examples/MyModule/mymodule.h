@@ -68,28 +68,6 @@ public:
    * module, in particular, set up type tries for functions you have defined.
    */
   const std::string commandstring( void ) const;
-
-public:
-  // Classes implementing your functions -----------------------------
-
-  /**
-   * Implement a function for a step-pattern-based connection.
-   * @note What this function does is described in the SLI documentation
-   *       in the cpp file.
-   * @note The mangled name indicates this function expects the following
-   *       arguments on the stack (bottom first): vector of int, int,
-   *       vector of int, int.
-   * @note You must define a member object in your module class
-   *       of the function class. execute() is later invoked on this
-   *       member.
-   */
-  class StepPatternConnect_Vi_i_Vi_i_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  };
-
-  StepPatternConnect_Vi_i_Vi_i_lFunction stepPatternConnect_Vi_i_Vi_i_lFunction;
 };
 } // namespace mynest
 

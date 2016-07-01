@@ -78,8 +78,8 @@ SeeAlso: testsuite::test_iaf_i0, testsuite::test_getrng_neuron
 
  /parrot_neuron Create /pn Set
 
- neurons pn ConvergentConnect 
- pn sd Connect
+ neurons [pn] Connect
+ [pn] [sd] Connect
 
  simtime Simulate
 

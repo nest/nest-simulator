@@ -1,5 +1,4 @@
-Analog recording with multimeter
-================================
+# Analog recording with multimeter
 
 As of r89xx, NEST replaces a range of analog recording devices, such as
 voltmeter, conductancemeter and aeif\_w\_meter with a universal *multimeter*,
@@ -32,8 +31,7 @@ Multimeter works essentially as the old-style voltmeter, but with a few changes:
 
 -   Any node can only be recorded from by one multimeter.
 
-Adapting scripts using voltmeter
---------------------------------
+## Adapting scripts using voltmeter
 
 Many NEST users have scripts that use voltmeter to record membrane potential.
 To ease the transition to the new-style analog recording, NEST still provides a
@@ -48,8 +46,7 @@ events/V\_m instead of from events/potentials, e.g.
     array([-70.        , -70.        , -70.        , -70.        ,
            -70.        , -70.        , -70.        , -70.        ,
 
-An example
-----------
+## An example
 
 As an example, here is the multimeter.py example from the PyNEST examples set:
 

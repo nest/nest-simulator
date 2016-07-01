@@ -224,10 +224,11 @@ GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
 }
 
 /**
- * delay and weight have the default value NAN.
- * NAN is a special value in cmath, which describes double values that
+ * delay and weight have the default value numerics::nan.
+ * numerics::nan is a special value, which describes double values that
  * are not a number. If delay or weight is omitted in an add_connection call,
- * NAN indicates this and weight/delay are set only, if they are valid.
+ * numerics::nan indicates this and weight/delay are set only, if they are
+ * valid.
  */
 template < typename ConnectionT >
 ConnectorBase*
@@ -264,10 +265,11 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 }
 
 /**
- * delay and weight have the default value NAN.
- * NAN is a special value in cmath, which describes double values that
+ * delay and weight have the default value numerics::nan.
+ * numerics::nan is a special value, which describes double values that
  * are not a number. If delay or weight is omitted in an add_connection call,
- * NAN indicates this and weight/delay are set only, if they are valid.
+ * numerics::nan indicates this and weight/delay are set only, if they are
+ * valid.
  */
 template < typename ConnectionT >
 ConnectorBase*

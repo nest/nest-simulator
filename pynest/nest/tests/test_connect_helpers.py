@@ -379,7 +379,7 @@ def two_level_check(n_runs, degrees, expected, verbose=True):
 
 def adaptive_check(stat_dict, degrees, expected):
     '''
-    Create a single network using Random{Con/Di}vergentConnect
+    Create a single network using fixed in/outdegrees
     and run a chi-squared GOF test on the connection distribution.
     If the result is extreme (high or low), run a two-level test.
 

@@ -267,59 +267,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } disconnect_g_g_D_Dfunction;
 
-  class Connect_i_i_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } connect_i_i_lfunction;
-
-  class Connect_i_i_d_d_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } connect_i_i_d_d_lfunction;
-
-  class Connect_i_i_D_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } connect_i_i_D_lfunction;
-
   class Connect_g_g_D_DFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
   } connect_g_g_D_Dfunction;
-
-  class DivergentConnect_i_ia_a_a_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } divergentconnect_i_ia_a_a_lfunction;
-
-  class RDivergentConnect_i_i_ia_da_da_b_b_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } rdivergentconnect_i_i_ia_da_da_b_b_lfunction;
-
-  class ConvergentConnect_ia_i_a_a_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } convergentconnect_ia_i_a_a_lfunction;
-
-  class RConvergentConnect_ia_i_i_da_da_b_b_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } rconvergentconnect_ia_i_i_da_da_b_b_lfunction;
-
-  class RConvergentConnect_ia_ia_ia_daa_daa_b_b_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } rconvergentconnect_ia_ia_ia_daa_daa_b_b_lfunction;
 
   class ResetKernelFunction : public SLIFunction
   {

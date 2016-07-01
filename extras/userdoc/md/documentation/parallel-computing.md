@@ -1,8 +1,6 @@
-Parallel Computing
-==================
+# Parallel Computing
 
-Introduction
-------------
+## Introduction
 
 Parallelization is a means to run simulations faster and use the capabilities of
 computer clusters and supercomputers to run large-scale simulations.
@@ -22,10 +20,9 @@ describe the facilities for parallel and distributed computing in detail.
 
 See [Plesser et al (2007)](http://dx.doi.org/10.1007/978-3-540-74466-5_71) for
 more information on NEST parallelization and be sure to check the documentation
-on [Random numbers in NEST](../random_numbers/index.html "Random numbers in NEST").
+on [Random numbers in NEST](random-numbers.md).
 
-Concepts and definitions
-------------------------
+## Concepts and definitions
 
 In order to ease the handling of neuron and synapse distribution with both
 thread and process based parallelization, we use the concept of local and remote
@@ -84,8 +81,7 @@ spike files and `dat` for analog recordings from the `multimeter`.
 The `label` and `file_extension` of a recording device can be set like any other
 parameter of a node using `SetStatus`.
 
-Using multiple threads
-----------------------
+## Using multiple threads
 
 Thread-parallelism is compiled into NEST by default and should work on all MacOS
 and Linux machines without additional requirements. In order to keep results
@@ -103,17 +99,20 @@ machine. In some situations, oversubscribing can yield 20-30% improvement in
 simulation speed. Finding the optimal thread number for a specific situation
 might require a bit of experimenting.
 
-Using distributed computing
----------------------------
+## Using distributed computing
 
 ### Build requirements
 
 To compile NEST for distributed computing, you need a library implementation of
 MPI on your system. If you are on a cluster, you most likely have this already.
 Note, that in the case of a pre-packaged MPI library you will need both, the
-library and the development packages. Please see the [Installation instructions](../installation/index.html "Installation")
+library and the development packages. Please see the [Installation instructions](installation.md)
 for general information on installing NEST.
-Please be advised that NEST should currently only be run in a homogeneous MPI environment. Running in a heterogenenous environment can lead to unexpected results or even crashes. Please contact the [NEST community](http://www.nest-simulator.org/community/) if you require support for exotic setups.
+Please be advised that NEST should currently only be run in a homogeneous MPI
+environment. Running in a heterogenenous environment can lead to unexpected
+results or even crashes.
+Please contact the [NEST community](community.md) if
+you require support for exotic setups.
 
 ### Compilation
 
@@ -132,7 +131,7 @@ In some cases it might be necessary to specify MPI compiler wrappers explicitly:
 
     $NEST_SOURCE_DIR/configure CC=mpicc CXX=mpicxx --with-mpi
 
-Additional information concerning MPI on OSX can be found [here](../installation/index.html "Installation").
+Additional information concerning MPI on OSX can be found [here](installation.md).
 
 ### Running distributed simulations
 
@@ -169,15 +168,14 @@ The rank of the MPI process. The result differs on each process.
 `SyncProcesses`  
 Synchronize all MPI processes.
 
-Reproducibility
----------------
+## Reproducibility
 
 To achieve the same simulation results even when using different parallelization
 strategies, the number of virtual processes has to be kept constant. A
 simulation with a specific number of virtual processes will always yield the
 same results, no matter how they are distributed over threads and processes,
 given that the seeds for the random number generators of the different virtual
-processes are the same (see [Random numbers in NEST](../random_numbers/index.html "Random numbers in NEST")).
+processes are the same (see [Random numbers in NEST](random-numbers.md)).
 
 In order to achieve a constant number of virtual processes, NEST provides the
 property *total\_num\_virtual\_procs* to adapt the number of local threads
@@ -194,11 +192,11 @@ files.
     pg = Create("poisson_generator", params={"rate": 50000.0})
     n = Create("iaf_neuron", 4)
     sd = Create("spike_detector", params={"to_file": True})
-    Connect(pg, [n[0]], 1000.0, 1.0)
-    Connect([n[0]], [n[1]], 1000.0, 1.0)
-    Connect([n[1]], [n[2]], 1000.0, 1.0)
-    Connect([n[2]], [n[3]], 1000.0, 1.0)
-    ConvergentConnect(n, sd)
+    Connect(pg, [n[0]], syn_spec={'weight': 1000.0, 'delay': 1.0})
+    Connect([n[0]], [n[1]], syn_spec={'weight': 1000.0, 'delay': 1.0})
+    Connect([n[1]], [n[2]], syn_spec={'weight': 1000.0, 'delay': 1.0})
+    Connect([n[2]], [n[3]], syn_spec={'weight': 1000.0, 'delay': 1.0})
+    Connect(n, sd)
     Simulate(100.0)
 
 The script is run three times using different numbers of MPI processes, but 4

@@ -1,8 +1,6 @@
-Using NEST with MUSIC
-=====================
+# Using NEST with MUSIC
 
- Introduction
--------------
+## Introduction
 
 NEST supports the [MUSIC interface](http://software.incf.org/software/music), a
 standard by the INCF, which allows the transmission of data between applications
@@ -24,15 +22,14 @@ Jeanette Hellgren Kotaleski, and Örjan Ekeberg. Run-time interoperability
 between neuronal simulators based on the MUSIC framework.
 Neuroinformatics, 8, 2010. doi:10.1007/s12021-010-9064-z* and available from [here](http://www.springerlink.com/content/r6j425027lmv1251/).
 
-Sending and receiving spike events
------------------------------------
+## Sending and receiving spike events
 
 A minimal example for the exchange of spikes between two independent instances
 of NEST is given in the example `examples/nest/music/minimalmusicsetup.music`.
-It uses one [SLI script](../an_introduction_to_sli/index.html "An Introduction
-to SLI"), which sends spikes using a `music_event_out_proxy` and one SLI script,
-which receives the spikes using a `music_event_in_proxy`. The configuration file
-is shown in the following listing:
+It uses one [SLI script](an-introduction-to-sli.md), which sends spikes using a
+`music_event_out_proxy` and one SLI script, which receives the spikes using a
+`music_event_in_proxy`. The configuration file is shown in the following
+listing:
 
     [from]
       binary=nest
@@ -112,8 +109,7 @@ same membrane potential trace.
     -65.2054    
     -62.1583
 
-Receiving string messages
----------------------------
+## Receiving string messages
 
 Currently, NEST is only able to receive, but not to send string messages. We
 thus use MUSIC's `messagesource` program for the generation of messages in the
@@ -139,7 +135,7 @@ which contains the messages and the corresponding time stamps. The data file
     0.7     !
 
 Please note that MUSIC uses a default unit of seconds for the specification of
-times, while NEST uses miliseconds. The example uses the [PyNEST](../introduction-to-pynest/index.html "PyNEST")
+times, while NEST uses miliseconds. The example uses the [PyNEST](introduction-to-pynest.md)
 syntax instead of SLI for the NEST part. The script that sets up the receiving
 side (`msgtest.py`) of the exampe is shown in the following listing:
 
@@ -157,7 +153,6 @@ side (`msgtest.py`) of the exampe is shown in the following listing:
         data = nest.GetStatus(mmip, 'data')
         print data
         time += 10
-
 
 We first import the `nest` in line 2 and create an instance of the
 `music_message_in_proxy` in line 3. In line 4, we set the name of the port it
@@ -214,8 +209,7 @@ following output:
         Simulation finished.
     [{'messages': ['Hello', '!'], 'message_times': array([ 300.,  700.])}]
 
-Receiving continuous data
---------------------------
+## Receiving continuous data
 
 As in the case of string message, NEST currently only supports receiving
 continuous data, but not sending. This means that we have to use another of
@@ -234,7 +228,7 @@ the following listing:
 
     from.contdata -> to.contdata [10]
 
-The receiving side is again implemented using a [PyNEST](/introduction-to-pynest/index.html "PyNEST")
+The receiving side is again implemented using a [PyNEST](introduction-to-pynest.md)
 script (`conttest.py`):
 
     #!/usr/bin/python

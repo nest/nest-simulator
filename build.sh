@@ -255,6 +255,8 @@ cmake \
   $CONFIGURE_MPI \
   $CONFIGURE_PYTHON \
   $CONFIGURE_GSL \
+  $CONFIGURE_LTDL \
+  $CONFIGURE_READLINE \
   ..
 echo "======= Configure NEST end ======="
 

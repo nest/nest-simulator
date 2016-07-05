@@ -115,6 +115,7 @@
 #include "tsodyks2_connection.h"
 #include "tsodyks_connection.h"
 #include "tsodyks_connection_hom.h"
+#include "vogels_sprekeler_connection.h"
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
@@ -571,6 +572,21 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< STDPDopaConnection< TargetIdentifierIndex > >(
       "stdp_dopamine_synapse_hpc" );
+
+  /* BeginDocumentation
+     Name: vogels_sprekeler_synapse_hpc - Variant of vogels_sprekeler_synapse
+     with low memory
+     consumption.
+     SeeAlso: synapsedict, vogels_sprekeler_synapse
+  */
+  kernel()
+    .model_manager
+    .register_connection_model< VogelsSprekelerConnection< TargetIdentifierPtrRport > >(
+      "vogels_sprekeler_synapse" );
+  kernel()
+    .model_manager
+    .register_connection_model< VogelsSprekelerConnection< TargetIdentifierIndex > >(
+      "vogels_sprekeler_synapse_hpc" );
 }
 
 } // namespace nest

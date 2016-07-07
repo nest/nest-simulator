@@ -48,44 +48,44 @@
 #include "arraydatum.h"
 #include "dictutils.h"
 
-#ifdef USE_PMA
+// #ifdef USE_PMA
 
-#ifdef IS_K
+// #ifdef IS_K
 
-extern PaddedPMA poormansallocpool[];
+// extern PaddedPMA poormansallocpool[];
 
-#else
+// #else
 
-extern PoorMansAllocator poormansallocpool;
+// extern PoorMansAllocator poormansallocpool;
 
-#ifdef _OPENMP
-#pragma omp threadprivate( poormansallocpool )
-#endif
+// #ifdef _OPENMP
+// #pragma omp threadprivate( poormansallocpool )
+// #endif
 
-#endif
+// #endif
 
-#endif
+// #endif
 
-template < typename Tnew, typename Told, typename C >
-inline Tnew*
-suicide_and_resurrect( Told* connector, C connection )
-{
-#if defined _OPENMP && defined USE_PMA
-#ifdef IS_K
-  Tnew* p =
-    new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc(
-      sizeof( Tnew ) ) ) Tnew( *connector, connection );
-#else
-  Tnew* p = new ( poormansallocpool.alloc( sizeof( Tnew ) ) )
-    Tnew( *connector, connection );
-#endif
-  connector->~Told();
-#else
-  Tnew* p = new Tnew( *connector, connection );
-  delete connector; // suicide
-#endif
-  return p;
-}
+// template < typename Tnew, typename Told, typename C >
+// inline Tnew*
+// suicide_and_resurrect( Told* connector, C connection )
+// {
+// #if defined _OPENMP && defined USE_PMA
+// #ifdef IS_K
+//   Tnew* p =
+//     new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc(
+//       sizeof( Tnew ) ) ) Tnew( *connector, connection );
+// #else
+//   Tnew* p = new ( poormansallocpool.alloc( sizeof( Tnew ) ) )
+//     Tnew( *connector, connection );
+// #endif
+//   connector->~Told();
+// #else
+//   Tnew* p = new Tnew( *connector, connection );
+//   delete connector; // suicide
+// #endif
+//   return p;
+// }
 
 
 namespace nest

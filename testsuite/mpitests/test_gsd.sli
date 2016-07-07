@@ -62,8 +62,8 @@ FirstVersion: February 2014
    	/rate 200.0
     >> SetStatus
 
-    pg [1 2] DivergentConnect
-    [1 2] sd ConvergentConnect
+    [pg] [1 2] Connect
+    [1 2] [sd] Connect
 
     100. Simulate
     sd GetStatus /local get %%% Necessary because a spike detector does not have an events entry in its status dict if it is not local

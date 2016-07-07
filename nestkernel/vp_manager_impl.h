@@ -28,24 +28,29 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "mpi_manager.h"
+#include "mpi_manager_impl.h"
 
-inline nest::thread
-nest::VPManager::get_vp() const
+namespace nest
+{
+
+inline thread
+VPManager::get_vp() const
 {
   return kernel().mpi_manager.get_rank() + get_thread_id() * kernel().mpi_manager.get_num_sim_processes();
 }
 
-inline nest::thread
-nest::VPManager::suggest_vp( nest::index gid ) const
+inline thread
+VPManager::suggest_vp( index gid ) const
 {
-  return gid % ( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() );
+  return gid
+    % ( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() );
 }
 
-inline nest::thread
-nest::VPManager::vp_to_thread( nest::thread vp ) const
+inline thread
+VPManager::vp_to_thread( thread vp ) const
 {
-  if ( vp
-    >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() ) )
+  if ( vp >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes()
+                                    * get_num_threads() ) )
   {
     return ( vp + kernel().mpi_manager.get_num_sim_processes() * ( 1 - get_num_threads() )
              - kernel().mpi_manager.get_rank() ) / kernel().mpi_manager.get_num_rec_processes();
@@ -56,44 +61,80 @@ nest::VPManager::vp_to_thread( nest::thread vp ) const
   }
 }
 
-inline nest::thread
-nest::VPManager::get_num_virtual_processes() const
+inline thread
+VPManager::get_num_virtual_processes() const
 {
   return get_num_threads() * kernel().mpi_manager.get_num_processes();
 }
 
 inline bool
-nest::VPManager::is_vp_local( const index gid ) const
+VPManager::is_local_vp( thread vp ) const
+{
+  return kernel().mpi_manager.get_process_id( vp )
+    == kernel().mpi_manager.get_rank();
+}
+
+
+inline thread
+VPManager::suggest_rec_vp( index gid ) const
+{
+  return gid
+    % ( kernel().mpi_manager.get_num_rec_processes() * get_num_threads() )
+    + kernel().mpi_manager.get_num_sim_processes() * get_num_threads();
+}
+
+inline thread
+VPManager::thread_to_vp( thread t ) const
+{
+  if ( kernel().mpi_manager.get_rank()
+    >= static_cast< int >( kernel().mpi_manager.get_num_sim_processes() ) )
+  {
+    // Rank is a recording process
+    return t * kernel().mpi_manager.get_num_rec_processes()
+      + kernel().mpi_manager.get_rank()
+      - kernel().mpi_manager.get_num_sim_processes()
+      + kernel().mpi_manager.get_num_sim_processes() * get_num_threads();
+  }
+  else
+  {
+    // Rank is a simulating process
+    return t * kernel().mpi_manager.get_num_sim_processes()
+      + kernel().mpi_manager.get_rank();
+  }
+}
+
+inline bool
+VPManager::is_vp_local( const index gid ) const
 {
   return ( static_cast< long >( gid ) % ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() ) == get_vp() );
 }
 
-inline nest::index
-nest::VPManager::gid_to_lid( const index gid ) const
+inline index
+VPManager::gid_to_lid( const index gid ) const
 {
   return gid / ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() );
 }
 
-inline nest::index
-nest::VPManager::lid_to_gid( const index lid ) const
+inline index
+VPManager::lid_to_gid( const index lid ) const
 {
   return lid * ( get_num_virtual_processes() ) + get_vp();
 }
 
-inline nest::thread
-nest::VPManager::get_num_assigned_ranks_per_thread() const
+inline thread
+VPManager::get_num_assigned_ranks_per_thread() const
 {
   return ceil( float( kernel().mpi_manager.get_num_processes() ) / n_threads_ );
 }
 
-inline nest::thread
-nest::VPManager::get_start_rank_per_thread( const thread tid ) const
+inline thread
+VPManager::get_start_rank_per_thread( const thread tid ) const
 {
   return tid * get_num_assigned_ranks_per_thread();
 }
 
-inline nest::thread
-nest::VPManager::get_end_rank_per_thread( const thread tid,
+inline thread
+VPManager::get_end_rank_per_thread( const thread tid,
   const thread rank_start,
   const thread num_assigned_ranks_per_thread ) const
 {
@@ -116,8 +157,8 @@ nest::VPManager::get_end_rank_per_thread( const thread tid,
   return rank_end;
 }
 
-inline nest::AssignedRanks
-nest::VPManager::get_assigned_ranks( const thread tid )
+inline AssignedRanks
+VPManager::get_assigned_ranks( const thread tid )
 {
   AssignedRanks assigned_ranks;
   assigned_ranks.begin = get_start_rank_per_thread( tid );
@@ -126,5 +167,7 @@ nest::VPManager::get_assigned_ranks( const thread tid )
   assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
   return assigned_ranks;
 }
+
+} // namespace nest
 
 #endif /* VP_MANAGER_IMPL_H */

@@ -99,10 +99,11 @@ public:
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.
    *
-   * The parameters delay and weight have the default value NAN.
-   * NAN is a special value in cmath, which describes double values that
+   * The parameters delay and weight have the default value numerics::nan.
+   * numerics::nan is a special value, which describes double values that
    * are not a number. If delay or weight is omitted in a connect call,
-   * NAN indicates this and weight/delay are set only, if they are valid.
+   * numerics::nan indicates this and weight/delay are set only, if they are
+   *valid.
    *
    * \param s GID of the sending Node.
    * \param target Pointer to target Node.
@@ -115,18 +116,19 @@ public:
     Node* target,
     thread target_thread,
     index syn,
-    double_t d = NAN,
-    double_t w = NAN );
+    double_t d = numerics::nan,
+    double_t w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.
    *
-   * The parameters delay and weight have the default value NAN.
-   * NAN is a special value in cmath, which describes double values that
+   * The parameters delay and weight have the default value numerics::nan.
+   * numerics::nan is a special value, which describes double values that
    * are not a number. If delay or weight is omitted in an connect call,
-   * NAN indicates this and weight/delay are set only, if they are valid.
+   * numerics::nan indicates this and weight/delay are set only, if they are
+   *valid.
    *
    * \param s GID of the sending Node.
    * \param target Pointer to target Node.
@@ -141,8 +143,8 @@ public:
     thread target_thread,
     index syn,
     DictionaryDatum& params,
-    double_t d = NAN,
-    double_t w = NAN );
+    double_t d = numerics::nan,
+    double_t w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -167,64 +169,12 @@ public:
    */
   bool connect( ArrayDatum& connectome );
 
-  void divergent_connect( index s,
-    const TokenArray& r,
-    const TokenArray& weights,
-    const TokenArray& delays,
-    index syn );
   /**
    * Connect one source node with many targets.
    * The dictionary d contains arrays for all the connections of type syn.
+   * AKA DataConnect
    */
-
   void divergent_connect( index s, DictionaryDatum d, index syn );
-
-  void random_divergent_connect( index s,
-    const TokenArray& r,
-    index n,
-    const TokenArray& w,
-    const TokenArray& d,
-    bool,
-    bool,
-    index syn );
-
-  void convergent_connect( const TokenArray& s,
-    index r,
-    const TokenArray& weights,
-    const TokenArray& delays,
-    index syn );
-
-  /**
-   * Specialized version of convegent_connect
-   * called by random_convergent_connect threaded
-   */
-  void convergent_connect( const std::vector< index >& s_id,
-    index r,
-    const TokenArray& weight,
-    const TokenArray& delays,
-    index syn );
-
-  void random_convergent_connect( const TokenArray& s,
-    index t,
-    index n,
-    const TokenArray& w,
-    const TokenArray& d,
-    bool,
-    bool,
-    index syn );
-
-  /**
-   * Use openmp threaded parallelization to speed up connection.
-   * Parallelize over target list.
-   */
-  void random_convergent_connect( TokenArray& s,
-    TokenArray& t,
-    TokenArray& n,
-    TokenArray& w,
-    TokenArray& d,
-    bool,
-    bool,
-    index syn );
 
   // aka conndatum GetStatus
   DictionaryDatum
@@ -423,10 +373,11 @@ private:
    * connect_ is used to establish a connection between a sender and
    * receiving node which both have proxies.
    *
-   * The parameters delay and weight have the default value NAN.
-   * NAN is a special value in cmath, which describes double values that
+   * The parameters delay and weight have the default value numerics::nan.
+   * numerics::nan is a special value, which describes double values that
    * are not a number. If delay or weight is omitted in an connect call,
-   * NAN indicates this and weight/delay are set only, if they are valid.
+   * numerics::nan indicates this and weight/delay are set only, if they are
+   *valid.
    *
    * \param s A reference to the sending Node.
    * \param r A reference to the receiving Node.
@@ -442,16 +393,16 @@ private:
     index s_gid,
     thread tid,
     index syn,
-    double_t d = NAN,
-    double_t w = NAN );
+    double_t d = numerics::nan,
+    double_t w = numerics::nan );
   void connect_( Node& s,
     Node& r,
     index s_gid,
     thread tid,
     index syn,
     DictionaryDatum& p,
-    double_t d = NAN,
-    double_t w = NAN );
+    double_t d = numerics::nan,
+    double_t w = numerics::nan );
 
   /**
    * connect_to_device_ is used to establish a connection between a sender and

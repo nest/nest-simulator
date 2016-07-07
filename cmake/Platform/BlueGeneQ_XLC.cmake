@@ -35,6 +35,8 @@ set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g -qarch=qp -qtune=qp -DNDEBUG" CACHE 
 set( OpenMP_C_FLAGS "-qsmp=omp" CACHE STRING "Compiler flag for OpenMP parallelization" FORCE )
 set( OpenMP_CXX_FLAGS "-qsmp=omp" CACHE STRING "Compiler flag for OpenMP parallelization" FORCE )
 
+set( with-warning "-qinfo=all" CACHE STRING "Enable user defined warnings. [default ON, when ON, defaults to '-Wall']" FORCE )
+
 if ( static-libraries )
   __bluegeneq_setup_static( XL CXX )
   __bluegeneq_setup_static( XL C )

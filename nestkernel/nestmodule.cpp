@@ -356,6 +356,9 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
 
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
 
+  long gid = conn.get_source_gid();
+  kernel().node_manager.get_node( gid ); // Just to check if the node exists
+
   DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status(
     conn.get_source_gid(),
     conn.get_target_gid(),
@@ -726,178 +729,6 @@ NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
-
-// Connect for gid gid syn_model
-// See lib/sli/nest-init.sli for details
-void
-NestModule::Connect_i_i_lFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 3 );
-
-  index source = getValue< long >( i->OStack.pick( 2 ) );
-  index target = getValue< long >( i->OStack.pick( 1 ) );
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-
-  const Token synmodel =
-    kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  // check whether the target is on this process
-  if ( kernel().node_manager.is_local_gid( target ) )
-  {
-    std::vector< lockPTR< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
-#pragma omp parallel
-    {
-      const int tid = kernel().vp_manager.get_thread_id();
-      try
-      {
-        Node* const target_node = kernel().node_manager.get_node( target, tid );
-        const thread target_thread = target_node->get_thread();
-        if ( target_thread == tid )
-        {
-          kernel().connection_manager.connect(
-            source, target_node, target_thread, synmodel_id );
-        }
-      }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised.at( tid ) =
-          lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
-    } // of omp parallel
-    // check if any exceptions have been raised
-    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-    {
-      if ( exceptions_raised.at( tid ).valid() )
-      {
-        throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
-      }
-    }
-  }
-
-  i->OStack.pop( 3 );
-  i->EStack.pop();
-}
-
-// Connect for gid gid weight delay syn_model
-// See lib/sli/nest-init.sli for details
-void
-NestModule::Connect_i_i_d_d_lFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 5 );
-
-  index source = getValue< long >( i->OStack.pick( 4 ) );
-  index target = getValue< long >( i->OStack.pick( 3 ) );
-  double_t weight = getValue< double_t >( i->OStack.pick( 2 ) );
-  double_t delay = getValue< double_t >( i->OStack.pick( 1 ) );
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-
-  const Token synmodel =
-    kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  // check whether the target is on this process
-  if ( kernel().node_manager.is_local_gid( target ) )
-  {
-    std::vector< lockPTR< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
-#pragma omp parallel
-    {
-      const int tid = kernel().vp_manager.get_thread_id();
-      try
-      {
-        Node* const target_node = kernel().node_manager.get_node( target, tid );
-        const thread target_thread = target_node->get_thread();
-        if ( target_thread == tid )
-        {
-          kernel().connection_manager.connect(
-            source, target_node, target_thread, synmodel_id, delay, weight );
-        }
-      }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised.at( tid ) =
-          lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
-    } // of omp parallel
-    // check if any exceptions have been raised
-    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-    {
-      if ( exceptions_raised.at( tid ).valid() )
-      {
-        throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
-      }
-    }
-  }
-
-  i->OStack.pop( 5 );
-  i->EStack.pop();
-}
-
-// Connect for gid gid params syn_model
-// See lib/sli/nest-init.sli for details
-void
-NestModule::Connect_i_i_D_lFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 4 );
-
-  index source = getValue< long >( i->OStack.pick( 3 ) );
-  index target = getValue< long >( i->OStack.pick( 2 ) );
-  DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-
-  const Token synmodel =
-    kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  // check whether the target is on this process
-  if ( kernel().node_manager.is_local_gid( target ) )
-  {
-    std::vector< lockPTR< WrappedThreadException > > exceptions_raised( kernel().vp_manager.get_num_threads() );
-#pragma omp parallel
-    {
-      const int tid = kernel().vp_manager.get_thread_id();
-      try
-      {
-        Node* const target_node = kernel().node_manager.get_node( target );
-        const thread target_thread = target_node->get_thread();
-        if ( target_thread == tid )
-        {
-          kernel().connection_manager.connect(
-            source, target_node, target_thread, synmodel_id, params );
-        }
-      }
-      catch ( std::exception& err )
-      {
-        // We must create a new exception here, err's lifetime ends at
-        // the end of the catch block.
-        exceptions_raised.at( tid ) =
-          lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
-      }
-    } // of omp parallel
-    // check if any exceptions have been raised
-    for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-    {
-      if ( exceptions_raised.at( tid ).valid() )
-      {
-        throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
-      }
-    }
-  }
-
-  i->OStack.pop( 4 );
-  i->EStack.pop();
-}
-
 // Connect for gidcollection gidcollection conn_spec syn_spec
 // See lib/sli/nest-init.sli for details
 void
@@ -952,7 +783,7 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
    SeeAlso: DataConnect_a, DataConnect
    Author: Marc-Oliver Gewaltig
    FirstVersion: August 2011
-   SeeAlso: Connect, DivergentConnect
+   SeeAlso: Connect
 */
 void
 NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
@@ -1020,232 +851,6 @@ NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
   i->EStack.pop();
 }
-
-/* BeginDocumentation
-   Name: DivergentConnect - Connect node to a population of nodes.
-
-   Synopsis:
-   source [targets]                              DivergentConnect -> -
-   source [targets]                    /synmodel DivergentConnect -> -
-   source [targets] [weights] [delays]           DivergentConnect -> -
-   source [targets] [weights] [delays] /synmodel DivergentConnect -> -
-
-   Parameters:
-   source    - GID of source node
-   [targets] - array of (global IDs of) potential target nodes
-   [weights] - weights for the connections. List of the same size as targets or
-               1.
-   [delays]  - delays for the connections. List of the same size as targets or
-               1.
-   /synmodel - The synapse model for the connection (see Options below)
-
-   Options:
-   If not given, the synapse model is taken from the Options dictionary
-   of the Connect command.
-
-   Description:
-   Connect a neuron with a set of target neurons.
-
-   Author:
-   Marc-Oliver Gewaltig
-   modified Ruediger Kupper, 20.3.2003
-   modified Jochen Eppler, 04.11.2005
-   SeeAlso: RandomDivergentConnect, ConvergentConnect
-*/
-
-void
-NestModule::DivergentConnect_i_ia_a_a_lFunction::execute(
-  SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 5 );
-
-  long source_adr = getValue< long >( i->OStack.pick( 4 ) );
-  TokenArray target_adr = getValue< TokenArray >( i->OStack.pick( 3 ) );
-
-  TokenArray weights = getValue< TokenArray >( i->OStack.pick( 2 ) );
-  TokenArray delays = getValue< TokenArray >( i->OStack.pick( 1 ) );
-
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel =
-    kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  kernel().connection_manager.divergent_connect(
-    source_adr, target_adr, weights, delays, synmodel_id );
-
-  i->OStack.pop( 5 );
-  i->EStack.pop();
-}
-
-// Documentation can be found in lib/sli/nest-init.sli near definition
-// of the trie for RandomConvergentConnect.
-void
-NestModule::RDivergentConnect_i_i_ia_da_da_b_b_lFunction::execute(
-  SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 8 );
-
-  long source_adr = getValue< long >( i->OStack.pick( 7 ) );
-  size_t n = getValue< long >( i->OStack.pick( 6 ) );
-  TokenArray target_adr = getValue< TokenArray >( i->OStack.pick( 5 ) );
-  TokenArray weights = getValue< TokenArray >( i->OStack.pick( 4 ) );
-  TokenArray delays = getValue< TokenArray >( i->OStack.pick( 3 ) );
-  bool allow_multapses = getValue< bool >( i->OStack.pick( 2 ) );
-  bool allow_autapses = getValue< bool >( i->OStack.pick( 1 ) );
-
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel =
-    kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  kernel().connection_manager.random_divergent_connect( source_adr,
-    target_adr,
-    n,
-    weights,
-    delays,
-    allow_multapses,
-    allow_autapses,
-    synmodel_id );
-
-  i->OStack.pop( 8 );
-  i->EStack.pop();
-}
-
-
-/* BeginDocumentation
-   Name: ConvergentConnect - Connect population of nodes to a single node.
-
-   Synopsis:
-   [sources] target                    /synmodel ConvergentConnect -> -
-   [sources] target                    /synmodel ConvergentConnect -> -
-   [sources] target [weights] [delays] /synmodel ConvergentConnect -> -
-
-   Parameters:
-   [source]  - GID of source nodes
-   target    - array of (global IDs of) potential target nodes
-   [weights] - weights for the connections. List of the same size as sources or
-               1.
-   [delays]  - delays for the connections. List of the same size as sources or
-               1.
-   /synmodel - The synapse model for the connection (see Options below)
-
-   Options:
-   If not given, the synapse model is taken from the Options dictionary
-   of the Connect command.
-
-   Description:
-   Connect a set of source neurons to a single neuron.
-
-   Author:
-   Ruediger Kupper, via copy-paste-and-modify from Oliver's DivergentConnect.
-   Modified Ruediger Kupper, 20.03.2003
-   Modified Jochen Martin Eppler, 03.03.2009
-   SeeAlso: RandomConvergentConnect, DivergentConnect
-*/
-
-void
-NestModule::ConvergentConnect_ia_i_a_a_lFunction::execute(
-  SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 5 );
-
-  TokenArray source_adr = getValue< TokenArray >( i->OStack.pick( 4 ) );
-  long target_adr = getValue< long >( i->OStack.pick( 3 ) );
-
-  TokenArray weights = getValue< TokenArray >( i->OStack.pick( 2 ) );
-  TokenArray delays = getValue< TokenArray >( i->OStack.pick( 1 ) );
-
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel =
-    kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  kernel().connection_manager.convergent_connect(
-    source_adr, target_adr, weights, delays, synmodel_id );
-
-  i->OStack.pop( 5 );
-  i->EStack.pop();
-}
-
-
-// Documentation can be found in lib/sli/nest-init.sli near definition
-// of the trie for RandomConvergentConnect.
-void
-NestModule::RConvergentConnect_ia_i_i_da_da_b_b_lFunction::execute(
-  SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 8 );
-
-  TokenArray source_adr = getValue< TokenArray >( i->OStack.pick( 7 ) );
-  long target_adr = getValue< long >( i->OStack.pick( 6 ) );
-  size_t n = getValue< long >( i->OStack.pick( 5 ) );
-  TokenArray weights = getValue< TokenArray >( i->OStack.pick( 4 ) );
-  TokenArray delays = getValue< TokenArray >( i->OStack.pick( 3 ) );
-  bool allow_multapses = getValue< bool >( i->OStack.pick( 2 ) );
-  bool allow_autapses = getValue< bool >( i->OStack.pick( 1 ) );
-
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel =
-    kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  kernel().connection_manager.random_convergent_connect( source_adr,
-    target_adr,
-    n,
-    weights,
-    delays,
-    allow_multapses,
-    allow_autapses,
-    synmodel_id );
-
-  i->OStack.pop( 8 );
-  i->EStack.pop();
-}
-
-// Documentation can be found in lib/sli/nest-init.sli near definition
-// of the trie for RandomConvergentConnect.
-void
-NestModule::RConvergentConnect_ia_ia_ia_daa_daa_b_b_lFunction::execute(
-  SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 8 );
-
-  TokenArray source_adr = getValue< TokenArray >( i->OStack.pick( 7 ) );
-  TokenArray target_adr = getValue< TokenArray >( i->OStack.pick( 6 ) );
-  TokenArray n = getValue< TokenArray >( i->OStack.pick( 5 ) );
-  TokenArray weights = getValue< TokenArray >( i->OStack.pick( 4 ) );
-  TokenArray delays = getValue< TokenArray >( i->OStack.pick( 3 ) );
-  bool allow_multapses = getValue< bool >( i->OStack.pick( 2 ) );
-  bool allow_autapses = getValue< bool >( i->OStack.pick( 1 ) );
-
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-  const Token synmodel =
-    kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  kernel().connection_manager.random_convergent_connect( source_adr,
-    target_adr,
-    n,
-    weights,
-    delays,
-    allow_multapses,
-    allow_autapses,
-    synmodel_id );
-
-  i->OStack.pop( 8 );
-  i->EStack.pop();
-}
-
 
 /* BeginDocumentation
    Name: MemoryInfo - Report current memory usage.
@@ -1737,16 +1342,15 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
    gid  - global id of the node
    Description:
    This function is helpful in the implementation of parallelized wiring
-   routines that create idential random structures independent of the
+   routines that create identical random structures independent of the
    number of machines and threads participating in the simulation. The
-   function is used in SLI libraries, e.g. in the implementation of
-   RandomConvergentConnect. There is probably no need to directly use
-   GetVpRNG in scripts describing a particular simulation.
+   function is used in SLI libraries. There is probably no need to
+   directly use GetVpRNG in scripts describing a particular simulation.
 
    In NEST each node (e.g. neuron) is assigned to a virtual process and
    each virtual process maintains its own random number generator. In a
    simulation run the virtual processes are equally distributed over the
-   participating machines and threads as speciefied by the user. In NEST
+   participating machines and threads as specified by the user. In NEST
    2.0 virtual processes are identified with threads.  Thus, with the
    option /total_num_virtual_procs of [0] set to n, there are in total
    always n threads (virtual processes) independent of the number of
@@ -1761,14 +1365,6 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
    An ArgumentTypeError is raised if GetVpRNG is called for a
    non-local gid.
 
-   Examples:
-   In the implementation of RandomConvergentConnect the Connect
-   operations are only carried out on the machine the target neuron lives
-   on. Whether the neuron is located on a specific machine is tested
-   using the /local property of the neuron.  The random selection of
-   source neurons is made using the random number generator of the thread
-   the target neuron is assigned to.
-
    References:
    [1] Morrison A, Mehring C, Geisel T, Aertsen A, and Diesmann M (2005)
        Advancing the boundaries of high connectivity network simulation
@@ -1776,7 +1372,7 @@ NestModule::MPIAbort_iFunction::execute( SLIInterpreter* i ) const
        The article is available at www.nest-simulator.org
 
    Author: Tobias Potjans, Moritz Helias, Diesmann
-   SeeAlso: GetGlobalRNG, RandomConvergentConnect
+   SeeAlso: GetGlobalRNG
 */
 void
 NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
@@ -1807,10 +1403,6 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
    only a simple test upon each call to Simulate to check if the
    global RNGs on all MPI processes are still in sync.
 
-   Examples:
-   The RandomDivergentConnect function makes use of numbers
-   from the global RNG.
-
    References:
    [1] Morrison A, Mehring C, Geisel T, Aertsen A, and Diesmann M (2005)
        Advancing the boundaries of high connectivity network simulation
@@ -1818,7 +1410,7 @@ NestModule::GetVpRngFunction::execute( SLIInterpreter* i ) const
        The article is available at www.nest-simulator.org
 
    Author: Tobias Potjans, Moritz Helias, Diesmann
-   SeeAlso: GetVpRNG, RandomDivergentConnect
+   SeeAlso: GetVpRNG
 */
 void
 NestModule::GetGlobalRngFunction::execute( SLIInterpreter* i ) const
@@ -1944,13 +1536,15 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
 #endif
 
 /* BeginDocumentation
-   Name: EnableStructuralPlasticity - Enable structural plasticity functionality
-   in the network.
+   Name: SetStructuralPlasticityStatus - Set up parameters for structural
+   plasticity.
 
    Synopsis:
-   Allows the user to treat the nodes as neurons with synaptic elements,
-   allowing new synapses to be created and existing synapses to be deleted
-   during the simulation according to a set of growth and homeostatic rules.
+   Structural plasticity allows the user to treat the nodes as neurons with
+   synaptic elements, allowing new synapses to be created and existing synapses
+   to be deleted during the simulation according to a set of growth and
+   homeostatic rules. This function allows the user to set up various
+   parameters for structural plasticity.
 
    Parameters:
    structural_plasticity_dictionary - is a dictionary which states the settings
@@ -2051,26 +1645,10 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "Create_l_i", &create_l_ifunction );
 
-  i->createcommand( "Connect_i_i_l", &connect_i_i_lfunction );
-  i->createcommand( "Connect_i_i_d_d_l", &connect_i_i_d_d_lfunction );
-  i->createcommand( "Connect_i_i_D_l", &connect_i_i_D_lfunction );
-
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
 
   i->createcommand( "DataConnect_i_D_s", &dataconnect_i_D_sfunction );
   i->createcommand( "DataConnect_a", &dataconnect_afunction );
-
-  i->createcommand(
-    "DivergentConnect_i_ia_a_a_l", &divergentconnect_i_ia_a_a_lfunction );
-  i->createcommand( "RandomDivergentConnect_i_i_ia_da_da_b_b_l",
-    &rdivergentconnect_i_i_ia_da_da_b_b_lfunction );
-
-  i->createcommand(
-    "ConvergentConnect_ia_i_a_a_l", &convergentconnect_ia_i_a_a_lfunction );
-  i->createcommand( "RandomConvergentConnect_ia_i_i_da_da_b_b_l",
-    &rconvergentconnect_ia_i_i_da_da_b_b_lfunction );
-  i->createcommand( "RandomConvergentConnect_ia_ia_ia_daa_daa_b_b_l",
-    &rconvergentconnect_ia_ia_ia_daa_daa_b_b_lfunction );
 
   i->createcommand( "ResetNetwork", &resetnetworkfunction );
   i->createcommand( "ResetKernel", &resetkernelfunction );

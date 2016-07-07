@@ -38,7 +38,7 @@
 
 // Includes from topology:
 #include "mask.h"
-#include "parameter.h"
+#include "topology_parameter.h"
 
 
 namespace nest

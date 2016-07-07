@@ -109,9 +109,9 @@ Connect alternative current and noise generators as well as `spike_detector`s.
 to neurons
 '''
 
-nest.DivergentConnect(drive, neurons)
-nest.DivergentConnect(noise, neurons)
-nest.ConvergentConnect(neurons, sd)
+nest.Connect(drive, neurons)
+nest.Connect(noise, neurons)
+nest.Connect(neurons, sd)
 
 '''
 Simulate the network for time T.

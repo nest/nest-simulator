@@ -1,8 +1,6 @@
-License
-=======
+# License
 
-GNU GENERAL PUBLIC LICENSE
---------------------------
+## GNU GENERAL PUBLIC LICENSE
 
 Version 2, June 1991
 
@@ -12,8 +10,7 @@ Street, Fifth Floor, Boston, MA 02110-1301 USA
 Everyone is permitted to copy and distribute verbatim copies of this
 license document, but changing it is not allowed.
 
-Preamble
---------
+## Preamble
 
 The licenses for most software are designed to take away your freedom to
 share and change it. By contrast, the GNU General Public License is
@@ -61,8 +58,7 @@ be licensed for everyone's free use or not licensed at all.
 The precise terms and conditions for copying, distribution and
 modification follow.
 
-GNU GENERAL PUBLIC LICENSE
---------------------------
+## GNU GENERAL PUBLIC LICENSE
 
 ### TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 

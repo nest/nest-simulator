@@ -86,21 +86,23 @@ private:
   private:
 	// TODO: add underscores
     char* buffer;
-    int ptr;
-    int max_size;
+    size_t ptr;
+    size_t max_size;
 
   public:
     SIONBuffer();
-    SIONBuffer( int size );
+    SIONBuffer( size_t size );
     ~SIONBuffer();
-    void reserve( int size );
-    void ensure_space( int size );
-    void write( const char* v, long unsigned int n );
-    int get_capacity();
-    int get_size();
-    int get_free();
-    void clear();
-    char* read();
+    
+    void reserve( size_t size );
+    void ensure_space( size_t size );
+    void write( const char* v, size_t n );
+    
+    size_t get_capacity() {return max_size;};
+    size_t get_size() {return ptr;};
+    size_t get_free() {return max_size - ptr;};
+    void clear() {ptr = 0;};
+    char* read() {return buffer;};
     template < typename T >
     SIONBuffer& operator<<( const T data );
   };
@@ -132,19 +134,10 @@ private:
     DeviceInfo info;
   };
 
-  struct FileInfo
-  {
-    sion_int64 body_blk, info_blk;
-    sion_int64 body_pos, info_pos;
-
-    double t_start, t_end, resolution;
-  };
-
   struct FileEntry
   {
     int sid;
     SIONBuffer buffer;
-    FileInfo info;
   };
 
   typedef std::map< thread, std::map< index, DeviceEntry > > device_map;
@@ -153,13 +146,15 @@ private:
   typedef std::map< thread, FileEntry > file_map;
   file_map files_;
 
+  double t_start_; // simulation start time for storing
+
   struct Parameters_
   {
     std::string file_ext_;      //!< the file name extension to use, without .
-    long buffer_size_;          //!< the size of the internal buffer .
-    long sion_chunksize_;       //!< the size of SIONlib's buffer .
-    bool sion_collective_;      //!< use SIONlib's collective mode .
     bool close_after_simulate_; //!< if true, finalize() shall close the stream
+    bool sion_collective_;      //!< use SIONlib's collective mode .
+    long sion_chunksize_;       //!< the size of SIONlib's buffer .
+    long buffer_size_;          //!< the size of the internal buffer .
 
     Parameters_();
 

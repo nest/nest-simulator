@@ -94,6 +94,9 @@ nest::SIONLogger::initialize()
   {
     const thread t = kernel().vp_manager.get_thread_id();
     const thread task = kernel().vp_manager.thread_to_vp( t );
+    if (! task) {
+      t_start_ = kernel().simulation_manager.get_time().get_ms();
+    }
 
     try
     {
@@ -107,7 +110,6 @@ nest::SIONLogger::initialize()
 #pragma omp barrier
 
       FileEntry& file = files_[ task ];
-      FileInfo& info = file.info;
 
       std::string filename = build_filename_();
       char* filename_c = strdup( filename.c_str() );
@@ -147,17 +149,6 @@ nest::SIONLogger::initialize()
         &rank,
         NULL,
         NULL );
-
-      int mc;
-      sion_int64* cs;
-      int body_blk;
-      sion_get_current_location( file.sid, &body_blk, &( info.body_pos ), &mc, &cs );
-
-      // upcast of body_blk necessary due to inconsistency in SIONlib interface
-      info.body_blk = static_cast< sion_int64 >( body_blk );
-
-      info.t_start = kernel().simulation_manager.get_time().get_ms();
-      info.resolution = Time::get_resolution().get_ms();
 
       file.buffer.reserve( P_.buffer_size_ );
       file.buffer.clear();
@@ -206,7 +197,6 @@ nest::SIONLogger::close_files_()
       && "initialize() was not called before calling finalize()" );
 
     FileEntry& file = files_[ task ];
-    FileInfo& info = file.info;
     SIONBuffer& buffer = file.buffer;
 
     if ( buffer.get_size() > 0 )
@@ -240,15 +230,23 @@ nest::SIONLogger::close_files_()
 
     if ( task == 0 )
     {
-      info.t_end = kernel().simulation_manager.get_time().get_ms();
-
       int mc;
       sion_int64* cs;
-      int info_blk;
-      sion_get_current_location( file.sid, &info_blk, &( info.info_pos ), &mc, &cs );
+      int info_blk; // here int, other place sion_int64 due to sion api
+      sion_int64 info_pos;
+      
+      sion_get_current_location( file.sid, &info_blk, &info_pos, &mc, &cs );
+      struct {
+	sion_int64 info_blk;
+	sion_int64 info_pos;
+      } data_end = {info_blk, info_pos};
+      
+      double t_end = kernel().simulation_manager.get_time().get_ms();
+      double resolution = Time::get_resolution().get_ms();
 
-      // upcast of info_blk necessary due to inconsistency in SIONlib interface
-      info.info_blk = info_blk;
+      sion_fwrite( &t_start_, sizeof( double ), 1, file.sid );
+      sion_fwrite( &t_end, sizeof( double ), 1, file.sid );
+      sion_fwrite( &resolution, sizeof( double ), 1, file.sid );
 
       // write device info
       const sion_uint64 n_dev = static_cast< sion_uint64 >( devices_[ task ].size() );
@@ -297,16 +295,9 @@ nest::SIONLogger::close_files_()
         }
       }
 
-      // write tail
-      sion_fwrite( &( info.body_blk ), sizeof( sion_int64 ), 1, file.sid );
-      sion_fwrite( &( info.body_pos ), sizeof( sion_int64 ), 1, file.sid );
-
-      sion_fwrite( &( info.info_blk ), sizeof( sion_int64 ), 1, file.sid );
-      sion_fwrite( &( info.info_pos ), sizeof( sion_int64 ), 1, file.sid );
-
-      sion_fwrite( &( info.t_start ), sizeof( double ), 1, file.sid );
-      sion_fwrite( &( info.t_end ), sizeof( double ), 1, file.sid );
-      sion_fwrite( &( info.resolution ), sizeof( double ), 1, file.sid );
+      // write tail to find beginning of meta data for task 0
+      // write it as a single buffer to guarantee that it goes in one chunk
+      sion_fwrite( &data_end, sizeof( data_end ), 1, file.sid );
     }
 
     sion_parclose_ompi( file.sid );
@@ -483,7 +474,7 @@ nest::SIONLogger::SIONBuffer::SIONBuffer()
 {
 }
 
-nest::SIONLogger::SIONBuffer::SIONBuffer( int size )
+nest::SIONLogger::SIONBuffer::SIONBuffer( size_t size )
   : buffer( NULL )
   , ptr( 0 )
   , max_size( 0 )
@@ -498,7 +489,7 @@ nest::SIONLogger::SIONBuffer::~SIONBuffer()
 }
 
 void
-nest::SIONLogger::SIONBuffer::reserve( int size )
+nest::SIONLogger::SIONBuffer::reserve( size_t size )
 {
   char* new_buffer = new char[ size ];
 
@@ -513,7 +504,7 @@ nest::SIONLogger::SIONBuffer::reserve( int size )
 }
 
 void
-nest::SIONLogger::SIONBuffer::ensure_space( int size )
+nest::SIONLogger::SIONBuffer::ensure_space( size_t size )
 {
   if ( get_free() < size )
   {
@@ -522,7 +513,7 @@ nest::SIONLogger::SIONBuffer::ensure_space( int size )
 }
 
 void
-nest::SIONLogger::SIONBuffer::write( const char* v, long unsigned int n )
+nest::SIONLogger::SIONBuffer::write( const char* v, size_t n )
 {
   // TODO: replace by get_free()
   if ( ptr + n <= max_size )
@@ -536,36 +527,6 @@ nest::SIONLogger::SIONBuffer::write( const char* v, long unsigned int n )
     std::cerr << "SIONBuffer: buffer overflow: ptr=" << ptr << " n=" << n
               << " max_size=" << max_size << std::endl;
   }
-}
-
-int
-nest::SIONLogger::SIONBuffer::get_size()
-{
-  return ptr;
-}
-
-int
-nest::SIONLogger::SIONBuffer::get_capacity()
-{
-  return max_size;
-}
-
-int
-nest::SIONLogger::SIONBuffer::get_free()
-{
-  return ( max_size - ptr );
-}
-
-void
-nest::SIONLogger::SIONBuffer::clear()
-{
-  ptr = 0;
-}
-
-char*
-nest::SIONLogger::SIONBuffer::read()
-{
-  return buffer;
 }
 
 template < typename T >

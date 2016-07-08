@@ -231,7 +231,7 @@ nest::SIONLogger::close_files_()
     if ( task == 0 )
     {
       int mc;
-      sion_int64* cs;
+      sion_int64* cs = NULL;
       int info_blk; // here int, other place sion_int64 due to sion api
       sion_int64 info_pos;
       

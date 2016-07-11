@@ -860,11 +860,14 @@ void
 nest::SimulationManager::finalize_simulation_()
 {
   if ( not simulated_ )
+  {
     return;
+  }
 
   // Check for synchronicity of global rngs over processes
   // TODO: This seems double up, there is such a test at end of simulate()
   if ( kernel().mpi_manager.get_num_processes() > 1 )
+  {
     if ( !kernel().mpi_manager.grng_synchrony(
            kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
@@ -874,7 +877,7 @@ nest::SimulationManager::finalize_simulation_()
         "simulation." );
       throw KernelException();
     }
-
+  }
   kernel().node_manager.finalize_nodes();
 }
 

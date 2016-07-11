@@ -677,7 +677,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
         send_buffer_position,
         off_grid_spike_register_5g_,
         send_buffer_spike_data_ );
-      set_end_and_invalid_markers_( tid, assigned_ranks, send_buffer_position, send_buffer_spike_data_ );
+      set_end_and_invalid_markers_( assigned_ranks, send_buffer_position, send_buffer_spike_data_ );
     }
     else
     {
@@ -691,7 +691,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
         send_buffer_position,
         off_grid_spike_register_5g_,
         send_buffer_off_grid_spike_data_ );
-      set_end_and_invalid_markers_( tid, assigned_ranks, send_buffer_position, send_buffer_off_grid_spike_data_ );
+      set_end_and_invalid_markers_( assigned_ranks, send_buffer_position, send_buffer_off_grid_spike_data_ );
     }
 
 #pragma omp barrier
@@ -705,11 +705,11 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     {
       if ( not off_grid_spiking_ )
       {
-        set_complete_marker_spike_data_( tid, assigned_ranks, send_buffer_spike_data_ );
+        set_complete_marker_spike_data_( assigned_ranks, send_buffer_spike_data_ );
       }
       else
       {
-        set_complete_marker_spike_data_( tid, assigned_ranks, send_buffer_off_grid_spike_data_ );
+        set_complete_marker_spike_data_( assigned_ranks, send_buffer_off_grid_spike_data_ );
       }
 #pragma omp barrier
     }
@@ -822,7 +822,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
 
 template< typename SpikeDataT >
 void
-EventDeliveryManager::set_end_and_invalid_markers_( const thread tid, const AssignedRanks& assigned_ranks, const SendBufferPosition& send_buffer_position, std::vector< SpikeDataT >& send_buffer )
+EventDeliveryManager::set_end_and_invalid_markers_( const AssignedRanks& assigned_ranks, const SendBufferPosition& send_buffer_position, std::vector< SpikeDataT >& send_buffer )
 {
   for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
   {
@@ -844,7 +844,7 @@ EventDeliveryManager::set_end_and_invalid_markers_( const thread tid, const Assi
 
 template< typename SpikeDataT >
 void
-EventDeliveryManager::set_complete_marker_spike_data_( const thread tid, const AssignedRanks& assigned_ranks, std::vector< SpikeDataT >& send_buffer )
+EventDeliveryManager::set_complete_marker_spike_data_( const AssignedRanks& assigned_ranks, std::vector< SpikeDataT >& send_buffer )
 {
   for ( thread target_rank = assigned_ranks.begin; target_rank < assigned_ranks.end; ++target_rank )
   {
@@ -930,8 +930,8 @@ EventDeliveryManager::gather_target_data()
   // detect all remote ranks are done, we are allowed to stop
   // communication.
   unsigned int completed_count;
-  unsigned int half_completed_count = kernel().vp_manager.get_num_threads();
-  unsigned int max_completed_count = 2 * half_completed_count;
+  const unsigned int half_completed_count = kernel().vp_manager.get_num_threads();
+  const unsigned int max_completed_count = 2 * half_completed_count;
 
   unsigned int send_recv_count_target_data_per_rank = floor( kernel().mpi_manager.get_buffer_size_target_data() / kernel().mpi_manager.get_num_processes() );
   unsigned int send_recv_count_target_data_in_int_per_rank = sizeof( TargetData ) / sizeof( unsigned int ) * send_recv_count_target_data_per_rank;

@@ -412,6 +412,8 @@ nest::ConnectionManager::connect( index sgid,
     {
       return;
     }
+    // TODO@5g: implement
+    assert( false );
     // globally receiving devices iterate over all target threads
     const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread tid = 0; tid < n_threads; ++tid )
@@ -486,6 +488,8 @@ nest::ConnectionManager::connect( index sgid,
     {
       return;
     }
+    // TODO@5g: implement
+    assert( false );
     // globally receiving devices iterate over all target threads
     const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread tid = 0; tid < n_threads; ++tid )
@@ -565,6 +569,8 @@ nest::ConnectionManager::connect( index sgid,
     {
       return false;
     }
+    // TODO@5g: implement
+    assert( false );
     // globally receiving devices iterate over all target threads
     const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread tid = 0; tid < n_threads; ++tid )

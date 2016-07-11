@@ -47,7 +47,7 @@ struct Source
   unsigned int target_count : 18; //!< number of local targets
   bool processed;
   Source();
-  Source( index );
+  Source( index gid );
 };
 
 inline

@@ -291,14 +291,14 @@ private:
    * Marks end of valid regions in MPI buffers.
    */
   template< typename SpikeDataT >
-  void set_end_and_invalid_markers_( const thread tid, const AssignedRanks& assigned_ranks, const SendBufferPosition& send_buffer_position, std::vector< SpikeDataT >& send_buffer );
+  void set_end_and_invalid_markers_( const AssignedRanks& assigned_ranks, const SendBufferPosition& send_buffer_position, std::vector< SpikeDataT >& send_buffer );
 
   /**
    * Sets marker in MPI buffer that signals end of communication
    * across MPI ranks.
    */
   template< typename SpikeDataT >
-  void set_complete_marker_spike_data_( const thread tid, const AssignedRanks& assigned_ranks, std::vector< SpikeDataT >& send_buffer );
+  void set_complete_marker_spike_data_( const AssignedRanks& assigned_ranks, std::vector< SpikeDataT >& send_buffer );
 
   /**
    * Reads spikes from MPI buffers and delivers them to ringbuffer of

@@ -190,6 +190,8 @@ public:
   int get_send_buffer_size();
   int get_recv_buffer_size();
   bool is_mpi_used();
+  size_t get_buffer_size_target_data() const;
+  size_t get_buffer_size_spike_data() const;
 
   void communicate_Alltoall( unsigned int* send_buffer, unsigned int* recv_buffer, const unsigned int send_recv_count );
 
@@ -213,6 +215,8 @@ public:
   double_t time_communicate_alltoallv( int num_bytes, int samples = 1000 );
 
   void set_buffer_sizes( int send_buffer_size, int recv_buffer_size );
+  void set_buffer_size_target_data( size_t buffer_size );
+  void set_buffer_size_spike_data( size_t buffer_size );
 
 private:
   int num_processes_;    //!< number of MPI processes
@@ -222,6 +226,8 @@ private:
   int send_buffer_size_; //!< expected size of send buffer
   int recv_buffer_size_; //!< size of receive buffer
   bool use_mpi_;         //!< whether MPI is used
+  size_t buffer_size_target_data_; //!< total size of MPI buffer used for communication of connections
+  size_t buffer_size_spike_data_; //!< total size of MPI buffer used for communication of spikes
 
 #ifdef HAVE_MPI
   //! array containing communication partner for each step.
@@ -420,12 +426,35 @@ MPIManager::is_mpi_used()
   return use_mpi_;
 }
 
+inline size_t
+MPIManager::get_buffer_size_target_data() const
+{
+  return buffer_size_target_data_;
+}
+
+inline size_t
+MPIManager::get_buffer_size_spike_data() const
+{
+  return buffer_size_spike_data_;
+}
 
 inline void
 MPIManager::set_buffer_sizes( int send_buffer_size, int recv_buffer_size )
 {
   send_buffer_size_ = send_buffer_size;
   recv_buffer_size_ = recv_buffer_size;
+}
+
+inline void
+MPIManager::set_buffer_size_target_data( size_t buffer_size )
+{
+  buffer_size_target_data_ = buffer_size;
+}
+
+inline void
+MPIManager::set_buffer_size_spike_data( size_t buffer_size )
+{
+  buffer_size_spike_data_ = buffer_size;
 }
 
 #ifndef HAVE_MPI

@@ -140,10 +140,10 @@ EventDeliveryManager::configure_spike_buffers()
     resize_spike_register_5g_( tid );
   }
 
-  send_buffer_spike_data_.resize( mpi_buffer_size_spike_data );
-  recv_buffer_spike_data_.resize( mpi_buffer_size_spike_data );
-  send_buffer_off_grid_spike_data_.resize( mpi_buffer_size_spike_data );
-  recv_buffer_off_grid_spike_data_.resize( mpi_buffer_size_spike_data );
+  send_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
+  recv_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
+  send_buffer_off_grid_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
+  recv_buffer_off_grid_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
 
   send_recv_count_spike_data_per_rank_ = floor( send_buffer_spike_data_.size() / kernel().mpi_manager.get_num_processes() );
   send_recv_count_spike_data_in_int_per_rank_ = sizeof( SpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_ ;
@@ -868,8 +868,8 @@ EventDeliveryManager::gather_target_data()
   assert( not kernel().connection_manager.is_source_table_cleared() );
 
   // use calloc to zero initialize all entries
-  TargetData* send_buffer_target_data = static_cast< TargetData* >( calloc( mpi_buffer_size_target_data, sizeof( TargetData) ) );
-  TargetData* recv_buffer_target_data = static_cast< TargetData* >( calloc( mpi_buffer_size_target_data, sizeof( TargetData) ) );
+  TargetData* send_buffer_target_data = static_cast< TargetData* >( calloc( kernel().mpi_manager.get_buffer_size_target_data(), sizeof( TargetData) ) );
+  TargetData* recv_buffer_target_data = static_cast< TargetData* >( calloc( kernel().mpi_manager.get_buffer_size_target_data(), sizeof( TargetData) ) );
 
   // when a thread does not have any more spike to collocate and when
   // it detects a remote MPI rank is finished this count is increased
@@ -880,7 +880,7 @@ EventDeliveryManager::gather_target_data()
   unsigned int half_completed_count = kernel().vp_manager.get_num_threads();
   unsigned int max_completed_count = 2 * half_completed_count;
 
-  const unsigned int send_recv_count_target_data_per_rank = floor( mpi_buffer_size_target_data / kernel().mpi_manager.get_num_processes() );
+  const unsigned int send_recv_count_target_data_per_rank = floor( kernel().mpi_manager.get_buffer_size_target_data() / kernel().mpi_manager.get_num_processes() );
   const unsigned int send_recv_count_target_data_in_int_per_rank = sizeof( TargetData ) / sizeof( unsigned int ) * send_recv_count_target_data_per_rank;
 
 #pragma omp parallel shared(completed_count)

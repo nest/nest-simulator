@@ -51,10 +51,6 @@ typedef MPIManager::OffGridSpike OffGridSpike;
 
 struct TargetData;
 
-// TODO@5g: move this to communicator.h and implement getter
-const size_t mpi_buffer_size_target_data = 30000;
-const size_t mpi_buffer_size_spike_data = 30000;
-
 /**
  * Struct to simplify keeping track of write position in MPI buffer
  * while collocating spikes.

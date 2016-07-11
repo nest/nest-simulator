@@ -61,11 +61,11 @@ struct SendBufferPosition
   std::vector< unsigned int > idx;
   std::vector< unsigned int > begin;
   std::vector< unsigned int > end;
-  SendBufferPosition( const AssignedRanks assigned_ranks, const unsigned int send_recv_count_per_rank );
+  SendBufferPosition( const AssignedRanks& assigned_ranks, const unsigned int send_recv_count_per_rank );
 };
   
 inline
-SendBufferPosition::SendBufferPosition( const AssignedRanks assigned_ranks, const unsigned int send_recv_count_per_rank )
+SendBufferPosition::SendBufferPosition( const AssignedRanks& assigned_ranks, const unsigned int send_recv_count_per_rank )
   : num_spike_data_written( 0 )
 {
   idx.resize( assigned_ranks.size );

@@ -583,6 +583,7 @@ nest::SimulationManager::prepare_simulation_()
     sw_reset_connections.print( "0] ResetConnections time: " );
     sw_sort.print( "0] SortConnections time: " );
     sw_gather_target_data.print( "0] GatherTargetData time: " );
+    std::cout<<"0] CommSteps(Rounds)TargetData: "<<kernel().event_delivery_manager.comm_steps_target_data<<"("<<kernel().event_delivery_manager.comm_rounds_target_data<<")"<<std::endl;
   }
 
   return num_active_nodes;
@@ -840,10 +841,11 @@ nest::SimulationManager::update_()
     {
       sw_update.print( "0] Update time: " );
       sw_gather_spike_data.print( "0] GatherSpikeData time: " );
-      // kernel().event_delivery_manager.sw_collocate.print("--collocate: ");
-      // kernel().event_delivery_manager.sw_communicate.print("--communicate: ");
-      // kernel().event_delivery_manager.sw_deliver.print("--deliver: ");
+      kernel().event_delivery_manager.sw_collocate.print("--collocate: ");
+      kernel().event_delivery_manager.sw_communicate.print("--communicate: ");
+      kernel().event_delivery_manager.sw_deliver.print("--deliver: ");
       sw_total.print( "0] Total time: " );
+      std::cout<<"0] CommSteps(Rounds)SpikeData: "<<kernel().event_delivery_manager.comm_steps_spike_data<<"("<<kernel().event_delivery_manager.comm_rounds_spike_data<<")"<<std::endl;
     }
 
   } // end of #pragma parallel omp

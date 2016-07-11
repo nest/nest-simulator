@@ -59,6 +59,10 @@ EventDeliveryManager::EventDeliveryManager()
   , buffer_size_spike_data_changed_( false )
   , adaptive_buffer_size_target_data_( true )
   , adaptive_buffer_size_spike_data_( true )
+  , comm_steps_target_data( 0 )
+  , comm_rounds_target_data( 0 )
+  , comm_steps_spike_data( 0 )
+  , comm_rounds_spike_data( 0 )
 {
 }
 
@@ -624,6 +628,11 @@ EventDeliveryManager::gather_events( bool done )
 void
 EventDeliveryManager::gather_spike_data( const thread tid )
 {
+#pragma omp single
+  {
+    ++comm_steps_spike_data;
+  }
+
   static unsigned int completed_count;
   const unsigned int half_completed_count = 2 * kernel().vp_manager.get_num_threads();
   const unsigned int max_completed_count = half_completed_count + kernel().vp_manager.get_num_threads();
@@ -640,6 +649,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
 #pragma omp single
     {
       completed_count = 0;
+      ++comm_rounds_spike_data;
       if ( buffer_size_spike_data_changed_ )
         {
           send_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
@@ -705,7 +715,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     }
     sw_collocate.stop();
 
-   sw_communicate.start();
+    sw_communicate.start();
 #pragma omp single
     {
       if ( not off_grid_spiking_ )
@@ -908,6 +918,8 @@ EventDeliveryManager::gather_target_data()
 {
   assert( not kernel().connection_manager.is_source_table_cleared() );
 
+  ++comm_steps_target_data;
+
   // use calloc to zero initialize all entries
   TargetData* send_buffer_target_data = static_cast< TargetData* >( calloc( kernel().mpi_manager.get_buffer_size_target_data(), sizeof( TargetData) ) );
   TargetData* recv_buffer_target_data = static_cast< TargetData* >( calloc( kernel().mpi_manager.get_buffer_size_target_data(), sizeof( TargetData) ) );
@@ -939,6 +951,7 @@ EventDeliveryManager::gather_target_data()
 #pragma omp single
       {
         completed_count = 0;
+        ++comm_rounds_target_data;
         if ( buffer_size_target_data_changed_ )
         {
           free( send_buffer_target_data );

@@ -263,6 +263,11 @@ public:
   Stopwatch sw_communicate;
   Stopwatch sw_deliver;
 
+  unsigned int comm_steps_target_data;
+  unsigned int comm_rounds_target_data;
+  unsigned int comm_steps_spike_data;
+  unsigned int comm_rounds_spike_data;
+
 private:
   /**
    * Rearrange the spike_register into a 2-dim structure. This is

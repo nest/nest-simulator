@@ -218,6 +218,9 @@ public:
   void set_buffer_size_target_data( size_t buffer_size );
   void set_buffer_size_spike_data( size_t buffer_size );
 
+  void increase_buffer_size_target_data();
+  void increase_buffer_size_spike_data();
+
 private:
   int num_processes_;    //!< number of MPI processes
   int rank_;             //!< rank of the MPI process
@@ -455,6 +458,18 @@ inline void
 MPIManager::set_buffer_size_spike_data( size_t buffer_size )
 {
   buffer_size_spike_data_ = buffer_size;
+}
+
+inline void
+MPIManager::increase_buffer_size_target_data()
+{
+  buffer_size_target_data_ *= 2;
+}
+
+inline void
+MPIManager::increase_buffer_size_spike_data()
+{
+  buffer_size_spike_data_ *= 2;
 }
 
 #ifndef HAVE_MPI

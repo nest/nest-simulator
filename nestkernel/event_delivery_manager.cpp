@@ -55,6 +55,10 @@ EventDeliveryManager::EventDeliveryManager()
   , global_offgrid_spikes_()
   , displacements_()
   , comm_marker_( 0 )
+  , buffer_size_target_data_changed_( false )
+  , buffer_size_spike_data_changed_( false )
+  , adaptive_buffer_size_target_data_( true )
+  , adaptive_buffer_size_spike_data_( true )
 {
 }
 
@@ -87,6 +91,26 @@ EventDeliveryManager::initialize()
 
   num_grid_spikes_.resize( num_threads, 0 );
   num_off_grid_spikes_.resize( num_threads, 0 );
+
+  // use default values for buffer sizes or at least 2 * number of
+  // processes (need at least two entries per process, to use flag of
+  // last entry reliably to communicate end of communication)
+  if ( not adaptive_buffer_size_target_data_ )
+  {
+    kernel().mpi_manager.set_buffer_size_target_data( 30000 );
+  }
+  else
+  {
+    kernel().mpi_manager.set_buffer_size_target_data( 2 * kernel().mpi_manager.get_num_processes() );
+  }
+  if ( not adaptive_buffer_size_spike_data_ )
+  {
+    kernel().mpi_manager.set_buffer_size_spike_data( 3000 );
+  }
+  else
+  {
+    kernel().mpi_manager.set_buffer_size_spike_data( 2 * kernel().mpi_manager.get_num_processes() );
+  }
 }
 
 void
@@ -616,6 +640,15 @@ EventDeliveryManager::gather_spike_data( const thread tid )
 #pragma omp single
     {
       completed_count = 0;
+      if ( buffer_size_spike_data_changed_ )
+        {
+          send_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
+          recv_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
+          send_recv_count_spike_data_per_rank_ = floor( send_buffer_spike_data_.size() / kernel().mpi_manager.get_num_processes() );
+          send_recv_count_spike_data_in_int_per_rank_ = sizeof( SpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_ ;
+          send_recv_count_off_grid_spike_data_in_int_per_rank_ = sizeof( OffGridSpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_ ;
+          buffer_size_spike_data_changed_ = false;
+        }
     } // of omp single; implicit barrier
     sw_collocate.start();
 
@@ -705,6 +738,14 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     if ( completed_count == max_completed_count )
     {
       done = true;
+    }
+    else
+    {
+#pragma omp single
+      {
+        buffer_size_spike_data_changed_ = true;
+        kernel().mpi_manager.increase_buffer_size_spike_data();
+      }
     }
 #pragma omp barrier
     sw_deliver.stop();
@@ -880,8 +921,8 @@ EventDeliveryManager::gather_target_data()
   unsigned int half_completed_count = kernel().vp_manager.get_num_threads();
   unsigned int max_completed_count = 2 * half_completed_count;
 
-  const unsigned int send_recv_count_target_data_per_rank = floor( kernel().mpi_manager.get_buffer_size_target_data() / kernel().mpi_manager.get_num_processes() );
-  const unsigned int send_recv_count_target_data_in_int_per_rank = sizeof( TargetData ) / sizeof( unsigned int ) * send_recv_count_target_data_per_rank;
+  unsigned int send_recv_count_target_data_per_rank = floor( kernel().mpi_manager.get_buffer_size_target_data() / kernel().mpi_manager.get_num_processes() );
+  unsigned int send_recv_count_target_data_in_int_per_rank = sizeof( TargetData ) / sizeof( unsigned int ) * send_recv_count_target_data_per_rank;
 
 #pragma omp parallel shared(completed_count)
   {
@@ -898,6 +939,15 @@ EventDeliveryManager::gather_target_data()
 #pragma omp single
       {
         completed_count = 0;
+        if ( buffer_size_target_data_changed_ )
+        {
+          free( send_buffer_target_data );
+          free( recv_buffer_target_data );
+          send_buffer_target_data = static_cast< TargetData* >( calloc( kernel().mpi_manager.get_buffer_size_target_data(), sizeof( TargetData) ) );
+          recv_buffer_target_data = static_cast< TargetData* >( calloc( kernel().mpi_manager.get_buffer_size_target_data(), sizeof( TargetData) ) );
+          send_recv_count_target_data_per_rank = floor( kernel().mpi_manager.get_buffer_size_target_data() / kernel().mpi_manager.get_num_processes() );
+          send_recv_count_target_data_in_int_per_rank = sizeof( TargetData ) / sizeof( unsigned int ) * send_recv_count_target_data_per_rank;
+        }
       } // of omp single; implicit barrier
       kernel().connection_manager.restore_source_table_entry_point( tid );
 
@@ -935,6 +985,14 @@ EventDeliveryManager::gather_target_data()
       if ( completed_count == max_completed_count )
       {
         done = true;
+      }
+      else
+      {
+#pragma omp single
+        {
+          buffer_size_target_data_changed_ = true;
+          kernel().mpi_manager.increase_buffer_size_target_data();
+        }
       }
 #pragma omp barrier
     } // of while(true)

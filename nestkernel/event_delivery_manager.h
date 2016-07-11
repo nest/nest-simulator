@@ -477,6 +477,11 @@ private:
   unsigned int send_recv_count_spike_data_per_rank_;
   unsigned int send_recv_count_spike_data_in_int_per_rank_;
   unsigned int send_recv_count_off_grid_spike_data_in_int_per_rank_;
+
+  bool buffer_size_target_data_changed_;
+  bool buffer_size_spike_data_changed_;
+  const bool adaptive_buffer_size_target_data_;
+  const bool adaptive_buffer_size_spike_data_;
 };
 
 inline void

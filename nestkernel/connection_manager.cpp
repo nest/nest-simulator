@@ -115,6 +115,7 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
   {
     delay_checkers_[ i ].set_status( d );
   }
+  updateValue< bool >( d, "keep_source_table", keep_source_table_ );
 }
 
 nest::DelayChecker&
@@ -132,6 +133,7 @@ nest::ConnectionManager::get_status( DictionaryDatum& d )
 
   size_t n = get_num_connections();
   def< long >( d, "num_connections", n );
+  def< bool >( d, "keep_source_table", keep_source_table_ );
 }
 
 DictionaryDatum

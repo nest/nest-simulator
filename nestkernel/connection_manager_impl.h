@@ -60,10 +60,18 @@ ConnectionManager::get_target_gid( const thread tid, const synindex syn_index, c
 inline void
 ConnectionManager::send_5g( const thread tid, const synindex syn_index, const index lcid, Event& e )
 {
-  const unsigned int target_count = source_table_.get_target_count( tid, syn_index, lcid );
-  for ( index tmp_lcid = lcid; tmp_lcid < lcid + target_count; ++tmp_lcid )
+  // only if we keep the source table, we can look up number of targets
+  if ( keep_source_table_ )
   {
-    connections_5g_[ tid ]->send( tid, syn_index, tmp_lcid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+    const unsigned int target_count = source_table_.get_target_count( tid, syn_index, lcid );
+    for ( index tmp_lcid = lcid; tmp_lcid < lcid + target_count; ++tmp_lcid )
+    {
+      connections_5g_[ tid ]->send( tid, syn_index, tmp_lcid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+    }
+  }
+  else
+  {
+    connections_5g_[ tid ]->send( tid, syn_index, lcid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
   }
 }
 
@@ -88,12 +96,13 @@ ConnectionManager::add_target( const thread tid, const TargetData& target_data)
 inline bool
 ConnectionManager::get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, thread& target_rank, TargetData& next_target_data )
 {
-  return source_table_.get_next_target_data( tid, rank_start, rank_end, target_rank, next_target_data );
+  return source_table_.get_next_target_data( tid, rank_start, rank_end, keep_source_table_, target_rank, next_target_data );
 }
 
 inline void
 ConnectionManager::restructure_connection_tables()
 {
+  assert( not source_table_.is_cleared() );
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();

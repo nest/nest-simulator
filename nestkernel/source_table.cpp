@@ -110,3 +110,14 @@ nest::SourceTable::get_thread_local_sources( const thread tid )
 {
   return *sources_[ tid ];
 }
+
+void
+nest::SourceTable::clean( const thread tid )
+{
+  for ( std::vector< std::vector< Source > >::iterator it = (*sources_[ tid ]).begin();
+        it != (*sources_[ tid ]).end(); ++it )
+  {
+    std::vector< Source >::iterator new_end = std::remove_if( it->begin(), it->end(), is_marked_for_removal_ );
+    it->erase( new_end, it->end() );
+  }
+}

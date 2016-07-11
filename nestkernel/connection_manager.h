@@ -299,6 +299,16 @@ public:
    */
   DelayChecker& get_delay_checker();
 
+  //! Returns true if source table is kept after connection setup is complete
+  bool keep_source_table() const;
+
+  //! Removes provessed entries from source table
+  void clean_source_table( const thread tid );
+
+  //! Clears all entries in source table
+  void clear_source_table( const thread tid );
+
+  //! Returns true if source table was cleared
   bool is_source_table_cleared() const;
 
   void prepare_target_table( const thread tid );
@@ -543,6 +553,26 @@ ConnectionManager::get_max_delay() const
 }
 
 inline bool
+ConnectionManager::keep_source_table() const
+{
+  return keep_source_table_;
+}
+
+inline void
+ConnectionManager::clean_source_table( const thread tid )
+{
+  assert( not keep_source_table_ );
+  source_table_.clean( tid );
+}
+
+inline void
+ConnectionManager::clear_source_table( const thread tid )
+{
+  assert( not keep_source_table_ );
+  source_table_.clear( tid );
+}
+
+inline bool
 ConnectionManager::is_source_table_cleared() const
 {
   return source_table_.is_cleared();
@@ -558,6 +588,12 @@ inline void
 ConnectionManager::reject_last_target_data( const thread tid )
 {
   source_table_.reject_last_target_data( tid );
+   // only store entry point if source table is not cleaned. otherwise
+   // indices will become invalid
+  if ( keep_source_table_ )
+  {
+    source_table_.save_entry_point( tid );
+  }
 }
 
 inline void

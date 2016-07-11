@@ -121,6 +121,9 @@ SourceTablePosition::reset()
 class SourceTable
 {
 private:
+  //! Returns true if entry was processed. Required static function by std::remove_if.
+  static bool is_marked_for_removal_( const Source& source );
+
   //! 3d structure storing gids of presynaptic neurons
   std::vector< std::vector< std::vector< Source > >* > sources_;
   //! mapping from synapse ids (according to NEST) to indices in
@@ -157,7 +160,7 @@ public:
   //! returns true if the sources table has been cleared
   bool is_cleared() const;
   //! returns the next target data, according to the current_* positions
-  bool get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, thread& target_rank, TargetData& next_target_data );
+  bool get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, const bool keep_source_table, thread& target_rank, TargetData& next_target_data );
   //! rejects the last target data, and resets the current_* positions accordingly
   void reject_last_target_data( const thread tid );
   //! stores the current_* positions
@@ -174,6 +177,8 @@ public:
   //! resets all processed flags. needed for restructuring connection
   //! tables.
   void reset_processed_flags( const thread tid );
+  //! Removes all entries marked as processed
+  void clean( const thread tid );
 };
 
 inline
@@ -287,6 +292,12 @@ SourceTable::reset_processed_flags( const thread tid )
       iit->processed = false;
     }
   }
+}
+
+inline bool
+SourceTable::is_marked_for_removal_( const nest::Source &source )
+{
+  return source.processed;
 }
 
 } // namespace nest

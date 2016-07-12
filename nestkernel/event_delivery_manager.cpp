@@ -90,6 +90,10 @@ EventDeliveryManager::initialize()
       delete( spike_register_5g_[ tid ] ); // TODO@5g: does this make sense or should we try to resize?
     }
     spike_register_5g_[ tid ] = new std::vector< std::vector< std::vector< Target > > >( num_threads, std::vector< std::vector< Target > >( kernel().connection_manager.get_min_delay(), std::vector< Target >( 0 ) ) );
+    if ( off_grid_spike_register_5g_[ tid ] != 0 )
+    {
+      delete( off_grid_spike_register_5g_[ tid ] ); // TODO@5g: does this make sense or should we try to resize?
+    }
     off_grid_spike_register_5g_[ tid ] = new std::vector< std::vector< std::vector< OffGridTarget > > >( num_threads, std::vector< std::vector< OffGridTarget > >( kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >( 0 ) ) );
   }
 
@@ -650,10 +654,14 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     {
       completed_count = 0;
       ++comm_rounds_spike_data;
-      if ( buffer_size_spike_data_changed_ )
+      if ( adaptive_buffer_size_spike_data_ && buffer_size_spike_data_changed_ )
         {
+          // resize buffer
           send_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
           recv_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
+          send_buffer_off_grid_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
+          recv_buffer_off_grid_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
+          // calculate new send counts
           send_recv_count_spike_data_per_rank_ = floor( send_buffer_spike_data_.size() / kernel().mpi_manager.get_num_processes() );
           send_recv_count_spike_data_in_int_per_rank_ = sizeof( SpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_ ;
           send_recv_count_off_grid_spike_data_in_int_per_rank_ = sizeof( OffGridSpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_ ;
@@ -749,7 +757,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     {
       done = true;
     }
-    else
+    else if ( adaptive_buffer_size_spike_data_ )
     {
 #pragma omp single
       {

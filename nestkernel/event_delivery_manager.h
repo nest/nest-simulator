@@ -528,6 +528,14 @@ EventDeliveryManager::clean_spike_register_( const thread tid )
       (*iit).erase( new_end, (*iit).end() );
     }
   }
+  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = (*off_grid_spike_register_5g_[ tid ]).begin(); it < (*off_grid_spike_register_5g_[ tid ]).end(); ++it )
+  {
+    for ( std::vector< std::vector< OffGridTarget > >::iterator iit = (*it).begin(); iit < (*it).end(); ++iit )
+    {
+      std::vector< OffGridTarget >::iterator new_end = std::remove_if( (*iit).begin(), (*iit).end(), is_marked_for_removal_ );
+      (*iit).erase( new_end, (*iit).end() );
+    }
+  }
 }
 
 inline void

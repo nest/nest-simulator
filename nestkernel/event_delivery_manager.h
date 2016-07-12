@@ -366,13 +366,6 @@ private:
                           //!< the grid
 
   /**
-   * Keeps track of number of on grid and off grid spikes during the
-   * last min delay interval. Used in collocation of spike buffers.
-   */
-  std::vector< size_t> num_grid_spikes_;
-  std::vector< size_t> num_off_grid_spikes_;
-
-  /**
    * Table of pre-computed modulos.
    * This table is used to map time steps, given as offset from now,
    * to ring-buffer bins.  There are min_delay+max_delay bins in a ring buffer,
@@ -499,7 +492,6 @@ EventDeliveryManager::reset_spike_register_5g_( const thread tid )
       (*iit).clear();
     }
   }
-  num_grid_spikes_[ tid ] = 0;
 
   for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = (*off_grid_spike_register_5g_[ tid ]).begin(); it < (*off_grid_spike_register_5g_[ tid ]).end(); ++it )
   {
@@ -508,7 +500,6 @@ EventDeliveryManager::reset_spike_register_5g_( const thread tid )
       (*iit).clear();
     }
   }
-  num_off_grid_spikes_[ tid ] = 0;
 }
 
 inline bool

@@ -97,9 +97,6 @@ EventDeliveryManager::initialize()
     off_grid_spike_register_5g_[ tid ] = new std::vector< std::vector< std::vector< OffGridTarget > > >( num_threads, std::vector< std::vector< OffGridTarget > >( kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >( 0 ) ) );
   }
 
-  num_grid_spikes_.resize( num_threads, 0 );
-  num_off_grid_spikes_.resize( num_threads, 0 );
-
   // use default values for buffer sizes or at least 2 * number of
   // processes (need at least two entries per process, to use flag of
   // last entry reliably to communicate end of communication)

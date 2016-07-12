@@ -221,6 +221,9 @@ public:
   void increase_buffer_size_target_data();
   void increase_buffer_size_spike_data();
 
+  bool adaptive_target_buffers() const;
+  bool adaptive_spike_buffers() const;
+
 private:
   int num_processes_;    //!< number of MPI processes
   int rank_;             //!< rank of the MPI process
@@ -231,6 +234,8 @@ private:
   bool use_mpi_;         //!< whether MPI is used
   size_t buffer_size_target_data_; //!< total size of MPI buffer used for communication of connections
   size_t buffer_size_spike_data_; //!< total size of MPI buffer used for communication of spikes
+  bool adaptive_target_buffers_; //!< whether MPI buffers for communication of connections resize on the fly
+  bool adaptive_spike_buffers_; //!< whether MPI buffers for communication of spikes resize on the fly
 
 #ifdef HAVE_MPI
   //! array containing communication partner for each step.
@@ -463,13 +468,27 @@ MPIManager::set_buffer_size_spike_data( size_t buffer_size )
 inline void
 MPIManager::increase_buffer_size_target_data()
 {
+  assert( adaptive_target_buffers_ );
   buffer_size_target_data_ *= 2;
 }
 
 inline void
 MPIManager::increase_buffer_size_spike_data()
 {
+  assert( adaptive_spike_buffers_ );
   buffer_size_spike_data_ *= 2;
+}
+
+inline bool
+MPIManager::adaptive_target_buffers() const
+{
+  return adaptive_target_buffers_;
+}
+
+inline bool
+MPIManager::adaptive_spike_buffers() const
+{
+  return adaptive_spike_buffers_;
 }
 
 #ifndef HAVE_MPI

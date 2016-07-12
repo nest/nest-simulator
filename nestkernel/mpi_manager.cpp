@@ -65,6 +65,8 @@ nest::MPIManager::MPIManager()
   , use_mpi_( false )
   , buffer_size_target_data_( 1 )
   , buffer_size_spike_data_( 1 )
+  , adaptive_target_buffers_( true )
+  , adaptive_spike_buffers_( true )
 #ifdef HAVE_MPI
   , comm_step_( std::vector< int >() )
   , COMM_OVERFLOW_ERROR( std::numeric_limits< unsigned int >::max() )
@@ -141,16 +143,38 @@ nest::MPIManager::finalize()
 }
 
 void
-nest::MPIManager::set_status( const DictionaryDatum& )
+nest::MPIManager::set_status( const DictionaryDatum& dict )
 {
+  updateValue< bool >( dict, "adaptive_target_buffers", adaptive_target_buffers_ );
+  updateValue< bool >( dict, "adaptive_spike_buffers", adaptive_spike_buffers_ );
+
+  const long old_buffer_size_target_data = buffer_size_target_data_;
+  long new_buffer_size_target_data = old_buffer_size_target_data;
+  updateValue< long >( dict, "buffer_size_target_data", new_buffer_size_target_data );
+  if ( old_buffer_size_target_data != new_buffer_size_target_data )
+  {
+    set_buffer_size_target_data( new_buffer_size_target_data );
+  }
+
+  const long old_buffer_size_spike_data = buffer_size_spike_data_;
+  long new_buffer_size_spike_data = old_buffer_size_spike_data;
+  updateValue< long >( dict, "buffer_size_spike_data", new_buffer_size_spike_data );
+  if ( old_buffer_size_spike_data != new_buffer_size_spike_data )
+  {
+    set_buffer_size_spike_data( new_buffer_size_spike_data );
+  }
 }
 
 void
-nest::MPIManager::get_status( DictionaryDatum& d )
+nest::MPIManager::get_status( DictionaryDatum& dict )
 {
-  def< long >( d, "num_processes", num_processes_ );
-  def< long >( d, "send_buffer_size", send_buffer_size_ );
-  def< long >( d, "receive_buffer_size", recv_buffer_size_ );
+  def< long >( dict, "num_processes", num_processes_ );
+  def< long >( dict, "send_buffer_size", send_buffer_size_ );
+  def< long >( dict, "receive_buffer_size", recv_buffer_size_ );
+  def< bool >( dict, "adaptive_target_buffers", adaptive_target_buffers_ );
+  def< bool >( dict, "adaptive_spike_buffers", adaptive_spike_buffers_ );
+  def< size_t >( dict, "buffer_size_target_data", buffer_size_target_data_ );
+  def< size_t >( dict, "buffer_size_spike_data", buffer_size_spike_data_ );
 }
 
 void

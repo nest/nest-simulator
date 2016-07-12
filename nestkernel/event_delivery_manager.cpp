@@ -45,18 +45,16 @@
 namespace nest
 {
 EventDeliveryManager::EventDeliveryManager()
-  : off_grid_spiking_( false )
-  , moduli_()
-  , slice_moduli_()
-  , comm_marker_( 0 )
-  , buffer_size_target_data_changed_( false )
-  , buffer_size_spike_data_changed_( false )
-  , adaptive_buffer_size_target_data_( true )
-  , adaptive_buffer_size_spike_data_( true )
-  , comm_steps_target_data( 0 )
+  : comm_steps_target_data( 0 )
   , comm_rounds_target_data( 0 )
   , comm_steps_spike_data( 0 )
   , comm_rounds_spike_data( 0 )
+  , off_grid_spiking_( false )
+  , moduli_()
+  , slice_moduli_()
+  , comm_marker_( 0 )
+  , buffer_size_target_data_has_changed_( false )
+  , buffer_size_spike_data_has_changed_( false )
 {
 }
 
@@ -86,25 +84,11 @@ EventDeliveryManager::initialize()
     off_grid_spike_register_5g_[ tid ] = new std::vector< std::vector< std::vector< OffGridTarget > > >( num_threads, std::vector< std::vector< OffGridTarget > >( kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >( 0 ) ) );
   }
 
-  // use default values for buffer sizes or at least 2 * number of
-  // processes (need at least two entries per process, to use flag of
-  // last entry reliably to communicate end of communication)
-  if ( not adaptive_buffer_size_target_data_ )
-  {
-    kernel().mpi_manager.set_buffer_size_target_data( 30000 );
-  }
-  else
-  {
-    kernel().mpi_manager.set_buffer_size_target_data( 2 * kernel().mpi_manager.get_num_processes() );
-  }
-  if ( not adaptive_buffer_size_spike_data_ )
-  {
-    kernel().mpi_manager.set_buffer_size_spike_data( 3000 );
-  }
-  else
-  {
-    kernel().mpi_manager.set_buffer_size_spike_data( 2 * kernel().mpi_manager.get_num_processes() );
-  }
+  // use at least 2 * number of processes entries (need at least two
+  // entries per process to use flag of first entry as validity and
+  // last entry to communicate end of communication)
+  kernel().mpi_manager.set_buffer_size_target_data( 2 * kernel().mpi_manager.get_num_processes() );
+  kernel().mpi_manager.set_buffer_size_spike_data( 2 * kernel().mpi_manager.get_num_processes() );
 }
 
 void
@@ -596,7 +580,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     {
       completed_count = 0;
       ++comm_rounds_spike_data;
-      if ( adaptive_buffer_size_spike_data_ && buffer_size_spike_data_changed_ )
+      if ( kernel().mpi_manager.adaptive_spike_buffers() && buffer_size_spike_data_has_changed_ )
         {
           // resize buffer
           send_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
@@ -607,9 +591,10 @@ EventDeliveryManager::gather_spike_data( const thread tid )
           send_recv_count_spike_data_per_rank_ = floor( send_buffer_spike_data_.size() / kernel().mpi_manager.get_num_processes() );
           send_recv_count_spike_data_in_int_per_rank_ = sizeof( SpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_ ;
           send_recv_count_off_grid_spike_data_in_int_per_rank_ = sizeof( OffGridSpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_ ;
-          buffer_size_spike_data_changed_ = false;
+          buffer_size_spike_data_has_changed_ = false;
 
-          assert( send_buffer_spike_data_.size()<<send_recv_count_spike_data_per_rank_ * kernel().mpi_manager.get_num_processes() );
+          assert( send_buffer_spike_data_.size() <= send_recv_count_spike_data_per_rank_ * kernel().mpi_manager.get_num_processes() );
+          assert( send_buffer_off_grid_spike_data_.size() <= send_recv_count_spike_data_per_rank_ * kernel().mpi_manager.get_num_processes() );
         }
     } // of omp single; implicit barrier
     sw_collocate.start();
@@ -701,11 +686,11 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     {
       done = true;
     }
-    else if ( adaptive_buffer_size_spike_data_ )
+    else if ( kernel().mpi_manager.adaptive_spike_buffers() )
     {
 #pragma omp single
       {
-        buffer_size_spike_data_changed_ = true;
+        buffer_size_spike_data_has_changed_ = true;
         kernel().mpi_manager.increase_buffer_size_spike_data();
       }
     }
@@ -904,7 +889,7 @@ EventDeliveryManager::gather_target_data()
       {
         completed_count = 0;
         ++comm_rounds_target_data;
-        if ( buffer_size_target_data_changed_ )
+        if ( kernel().mpi_manager.adaptive_target_buffers() && buffer_size_target_data_has_changed_ )
         {
           free( send_buffer_target_data );
           free( recv_buffer_target_data );
@@ -951,11 +936,11 @@ EventDeliveryManager::gather_target_data()
       {
         done = true;
       }
-      else
+      else if ( kernel().mpi_manager.adaptive_target_buffers() )
       {
 #pragma omp single
         {
-          buffer_size_target_data_changed_ = true;
+          buffer_size_target_data_has_changed_ = true;
           kernel().mpi_manager.increase_buffer_size_target_data();
         }
       }

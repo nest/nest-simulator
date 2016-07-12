@@ -78,7 +78,7 @@ void
 nest::ConnectionManager::initialize()
 {
   thread num_threads = kernel().vp_manager.get_num_threads();
-  connections_5g_.resize( num_threads );
+  connections_5g_.resize( num_threads, 0 );
   for( thread tid = 0; tid < num_threads; ++tid)
   {
     connections_5g_[ tid ] = new HetConnector();
@@ -1422,6 +1422,7 @@ nest::ConnectionManager::get_targets( std::vector< index > sources,
 void
 nest::ConnectionManager::sort_connections()
 {
+  assert( not source_table_.is_cleared() );
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();

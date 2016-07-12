@@ -663,6 +663,8 @@ EventDeliveryManager::gather_spike_data( const thread tid )
           send_recv_count_spike_data_in_int_per_rank_ = sizeof( SpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_ ;
           send_recv_count_off_grid_spike_data_in_int_per_rank_ = sizeof( OffGridSpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_ ;
           buffer_size_spike_data_changed_ = false;
+
+          assert( send_buffer_spike_data_.size()<<send_recv_count_spike_data_per_rank_ * kernel().mpi_manager.get_num_processes() );
         }
     } // of omp single; implicit barrier
     sw_collocate.start();

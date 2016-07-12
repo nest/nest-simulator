@@ -22,7 +22,7 @@ cache:
     - $HOME/.cache
 
 before_install:
-  - export $BASEDIR=$PWD
+  - export BASEDIR=$PWD
   - echo $PATH
 
   # update package repository status (-qq is more quiet)

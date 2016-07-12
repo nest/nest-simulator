@@ -412,54 +412,10 @@ private:
   std::vector< std::vector< std::vector< std::vector< OffGridTarget > > >* > off_grid_spike_register_5g_;
 
   /**
-   * Register for off-grid spikes.
-   * This is a 3-dim structure.
-   * - First dim: Each thread has its own vector to write to.
-   * - Second dim: A vector for each slice of the min_delay interval
-   * - Third dim: Struct containing GID and offset.
-   */
-  std::vector< std::vector< std::vector< OffGridSpike > > >
-    offgrid_spike_register_;
-
-  /**
    * Buffer to collect the secondary events
    * after serialization.
    */
   std::vector< std::vector< uint_t > > secondary_events_buffer_;
-
-  /**
-   * Buffer containing the gids of local neurons that spiked in the
-   * last min_delay_ interval. The single slices are separated by a
-   * marker value.
-   */
-  std::vector< uint_t > local_grid_spikes_;
-
-  /**
-   * Buffer containing the gids of all neurons that spiked in the
-   * last min_delay_ interval. The single slices are separated by a
-   * marker value
-   */
-  std::vector< uint_t > global_grid_spikes_;
-
-  /**
-   * Buffer containing the gids and offsets for local neurons that
-   * fired off-grid spikes in the last min_delay_ interval. The
-   * single slices are separated by a marker value.
-   */
-  std::vector< OffGridSpike > local_offgrid_spikes_;
-
-  /**
-   * Buffer containing the gids and offsets for all neurons that
-   * fired off-grid spikes in the last min_delay_ interval. The
-   * single slices are separated by a marker value.
-   */
-  std::vector< OffGridSpike > global_offgrid_spikes_;
-
-  /**
-   * Buffer containing the starting positions for the spikes from
-   * each process within the global_(off)grid_spikes_ buffer.
-   */
-  std::vector< int > displacements_;
 
   /**
    * Marker Value to be put between the data fields from different time

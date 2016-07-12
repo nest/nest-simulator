@@ -48,12 +48,6 @@ EventDeliveryManager::EventDeliveryManager()
   : off_grid_spiking_( false )
   , moduli_()
   , slice_moduli_()
-  , offgrid_spike_register_()
-  , local_grid_spikes_()
-  , global_grid_spikes_()
-  , local_offgrid_spikes_()
-  , global_offgrid_spikes_()
-  , displacements_()
   , comm_marker_( 0 )
   , buffer_size_target_data_changed_( false )
   , buffer_size_spike_data_changed_( false )
@@ -68,11 +62,6 @@ EventDeliveryManager::EventDeliveryManager()
 
 EventDeliveryManager::~EventDeliveryManager()
 {
-  // clear the buffers
-  local_grid_spikes_.clear();
-  global_grid_spikes_.clear();
-  local_offgrid_spikes_.clear();
-  global_offgrid_spikes_.clear();
 }
 
 void
@@ -121,12 +110,7 @@ EventDeliveryManager::initialize()
 void
 EventDeliveryManager::finalize()
 {
-  // clear the buffers
-  local_grid_spikes_.clear();
-  global_grid_spikes_.clear();
-  local_offgrid_spikes_.clear();
-  global_offgrid_spikes_.clear();
-
+  // clear the spike buffers
   for( std::vector< std::vector< std::vector< std::vector< Target > > >* >::iterator it = spike_register_5g_.begin(); it != spike_register_5g_.end(); ++it )
   {
     delete (*it);
@@ -178,17 +162,6 @@ EventDeliveryManager::configure_spike_buffers()
   send_recv_count_spike_data_in_int_per_rank_ = sizeof( SpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_ ;
   send_recv_count_off_grid_spike_data_in_int_per_rank_ = sizeof( OffGridSpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_ ;
 
-  offgrid_spike_register_.clear();
-  // the following line does not compile with gcc <= 3.3.5
-  offgrid_spike_register_.resize(
-    kernel().vp_manager.get_num_threads(),
-    std::vector< std::vector< OffGridSpike > >(
-      kernel().connection_manager.get_min_delay() ) );
-  for ( size_t j = 0; j < offgrid_spike_register_.size(); ++j )
-    for ( size_t k = 0; k < offgrid_spike_register_[ j ].size(); ++k )
-      offgrid_spike_register_[ j ][ k ].clear();
-
-
   // this should also clear all contained elements
   // so no loop required
   secondary_events_buffer_.clear();
@@ -211,34 +184,6 @@ EventDeliveryManager::configure_spike_buffers()
   int recv_buffer_size =
     send_buffer_size * kernel().mpi_manager.get_num_processes();
   kernel().mpi_manager.set_buffer_sizes( send_buffer_size, recv_buffer_size );
-
-  // DEC cxx required 0U literal, HEP 2007-03-26
-  local_grid_spikes_.clear();
-  local_grid_spikes_.resize( send_buffer_size, 0U );
-  local_offgrid_spikes_.clear();
-  local_offgrid_spikes_.resize( send_buffer_size, OffGridSpike( 0, 0.0 ) );
-
-  global_grid_spikes_.clear();
-  global_grid_spikes_.resize( recv_buffer_size, 0U );
-
-  // insert the end marker for payload event (==invalid_synindex)
-  // and insert the done flag (==true)
-  // after min_delay 0's (== comm_marker)
-  // use the template functions defined in event.h
-  // this only needs to be done for one process, because displacements is set to
-  // 0 so all processes initially read out the same positions in the global
-  // spike buffer
-  std::vector< uint_t >::iterator pos = global_grid_spikes_.begin()
-    + kernel().vp_manager.get_num_threads()
-      * kernel().connection_manager.get_min_delay();
-  write_to_comm_buffer( invalid_synindex, pos );
-  write_to_comm_buffer( true, pos );
-
-  global_offgrid_spikes_.clear();
-  global_offgrid_spikes_.resize( recv_buffer_size, OffGridSpike( 0, 0.0 ) );
-
-  displacements_.clear();
-  displacements_.resize( kernel().mpi_manager.get_num_processes(), 0 );
 }
 
 void

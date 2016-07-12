@@ -69,6 +69,12 @@ else
     CONFIGURE_READLINE="-Dwith-readline=OFF"
 fi
 
+if [ "$xSIONLIB" = "1" ] ; then
+    CONFIGURE_SIONLIB="-Dwith-sionlib=$HOME/.cache/sionlib.install"
+else
+    CONFIGURE_SIONLIB="-Dwith-sionlib=OFF"
+fi
+
 
 
 NEST_VPATH=build
@@ -257,6 +263,7 @@ cmake \
   $CONFIGURE_GSL \
   $CONFIGURE_LTDL \
   $CONFIGURE_READLINE \
+  $CONFIGURE_SIONLIB \
   ..
 echo "======= Configure NEST end ======="
 

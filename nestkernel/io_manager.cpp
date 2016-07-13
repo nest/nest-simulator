@@ -39,10 +39,10 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "screen_logger.h"
-#include "ascii_logger.h"
+#include "io_backend_screen.h"
+#include "io_backend_ascii.h"
 #ifdef HAVE_SIONLIB
-  #include "sion_logger.h"
+  #include "io_backend_sion.h"
 #endif
 
 // Includes from sli:
@@ -50,9 +50,9 @@
 
 nest::IOManager::IOManager()
   : overwrite_files_( false )
-  , logger_( NULL )
+  , io_backend_( NULL )
 {
-  set_logger( names::ScreenLogger );
+  set_io_backend( names::IOBackendScreen );
 }
 
 void
@@ -131,15 +131,15 @@ nest::IOManager::set_status( const DictionaryDatum& d )
   set_data_path_prefix_( d );
   updateValue< bool >( d, "overwrite_files", overwrite_files_ );
 
-  // Setup logger and its options
+  // Setup IO backend and its options
   DictionaryDatum dd;
   if ( updateValue< DictionaryDatum >( d, "recording", dd ) )
   {
-    std::string logger;
-    if ( updateValue< std::string >( dd, names::logger, logger ) )
-      set_logger( logger );
+    std::string io_backend;
+    if ( updateValue< std::string >( dd, names::io_backend, io_backend ) )
+      set_io_backend( io_backend );
 
-    logger_->set_status( dd );
+    io_backend_->set_status( dd );
   }
 }
 
@@ -152,33 +152,37 @@ nest::IOManager::get_status( DictionaryDatum& d )
 }
 
 bool
-nest::IOManager::set_logger( Name name )
+nest::IOManager::set_io_backend( Name name )
 {
-  if ( name == names::ScreenLogger )
+  if ( name == names::IOBackendScreen )
   {
-    if ( logger_ != 0 )
-      delete logger_;
-
-    logger_ = new ScreenLogger();
+    if ( io_backend_ != 0 )
+    {
+      delete io_backend_;
+    }
+    io_backend_ = new IOBackendScreen();
   }
-  else if ( name == names::ASCIILogger )
+  else if ( name == names::IOBackendASCII )
   {
-    if ( logger_ != 0 )
-      delete logger_;
-
-    logger_ = new ASCIILogger();
+    if ( io_backend_ != 0 )
+    {
+      delete io_backend_;
+    }
+    io_backend_ = new IOBackendASCII();
   }
 #ifdef HAVE_SIONLIB
-  else if ( name == names::SIONLogger )
+  else if ( name == names::IOBackendSION )
   {
-    if ( logger_ != 0 )
-      delete logger_;
-    logger_ = new SIONLogger();
+    if ( io_backend_ != 0 )
+    {
+      delete io_backend_;
+    }
+    io_backend_ = new IOBackendSION();
   }
 #endif // HAVE_SIONLIB
   else
   {
-    std::string msg = String::compose( "Logger is not known: '%1'", name );
+    std::string msg = String::compose( "IO backend is not known: '%1'", name );
     LOG( M_WARNING, "IOManager::set_status", msg.c_str() );
     return false;
   }

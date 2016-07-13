@@ -1,5 +1,5 @@
 /*
- *  sion_logger.cpp
+ *  io_backend_sion.cpp
  *
  *  This file is part of NEST.
  *
@@ -39,18 +39,18 @@
 #include "vp_manager_impl.h"
 
 
-#include "sion_logger.h"
+#include "io_backend_sion.h"
 
 
 void
-nest::SIONLogger::enroll( RecordingDevice& device )
+nest::IOBackendSION::enroll( RecordingDevice& device )
 {
   std::vector< Name > value_names;
-  nest::SIONLogger::enroll( device, value_names );
+  nest::IOBackendSION::enroll( device, value_names );
 }
 
 void
-nest::SIONLogger::enroll( RecordingDevice& device, const std::vector< Name >& value_names )
+nest::IOBackendSION::enroll( RecordingDevice& device, const std::vector< Name >& value_names )
 {
   const thread task = device.get_vp();
   const thread gid = device.get_gid();
@@ -86,7 +86,7 @@ nest::SIONLogger::enroll( RecordingDevice& device, const std::vector< Name >& va
 }
 
 void
-nest::SIONLogger::initialize()
+nest::IOBackendSION::initialize()
 {
   int rank = kernel().mpi_manager.get_rank();
 
@@ -196,14 +196,14 @@ nest::SIONLogger::initialize()
 }
 
 void
-nest::SIONLogger::finalize()
+nest::IOBackendSION::finalize()
 {
   if ( P_.close_after_simulate_ )
     close_files_();
 }
 
 void
-nest::SIONLogger::close_files_()
+nest::IOBackendSION::close_files_()
 {
 #pragma omp parallel
   {
@@ -322,7 +322,7 @@ nest::SIONLogger::close_files_()
 }
 
 void
-nest::SIONLogger::synchronize()
+nest::IOBackendSION::synchronize()
 {
   if ( !P_.sion_collective_ )
     return;
@@ -338,7 +338,7 @@ nest::SIONLogger::synchronize()
 }
 
 void
-nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
+nest::IOBackendSION::write( const RecordingDevice& device, const Event& event )
 {
   const thread task = device.get_vp();
   const index device_gid = device.get_gid();
@@ -397,7 +397,7 @@ nest::SIONLogger::write( const RecordingDevice& device, const Event& event )
 }
 
 void
-nest::SIONLogger::write( const RecordingDevice& device,
+nest::IOBackendSION::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double_t >& values )
 {
@@ -467,7 +467,7 @@ nest::SIONLogger::write( const RecordingDevice& device,
 }
 
 const std::string
-nest::SIONLogger::build_filename_() const
+nest::IOBackendSION::build_filename_() const
 {
   std::ostringstream basename;
   const std::string& path = kernel().io_manager.get_data_path();
@@ -484,14 +484,14 @@ nest::SIONLogger::build_filename_() const
  * Buffer
  * ---------------------------------------------------------------- */
 
-nest::SIONLogger::SIONBuffer::SIONBuffer()
+nest::IOBackendSION::SIONBuffer::SIONBuffer()
   : buffer( NULL )
   , ptr( 0 )
   , max_size( 0 )
 {
 }
 
-nest::SIONLogger::SIONBuffer::SIONBuffer( int size )
+nest::IOBackendSION::SIONBuffer::SIONBuffer( int size )
   : buffer( NULL )
   , ptr( 0 )
   , max_size( 0 )
@@ -499,14 +499,14 @@ nest::SIONLogger::SIONBuffer::SIONBuffer( int size )
   reserve( size );
 }
 
-nest::SIONLogger::SIONBuffer::~SIONBuffer()
+nest::IOBackendSION::SIONBuffer::~SIONBuffer()
 {
   if ( buffer != NULL )
     delete[] buffer;
 }
 
 void
-nest::SIONLogger::SIONBuffer::reserve( int size )
+nest::IOBackendSION::SIONBuffer::reserve( int size )
 {
   char* new_buffer = new char[ size ];
 
@@ -521,7 +521,7 @@ nest::SIONLogger::SIONBuffer::reserve( int size )
 }
 
 void
-nest::SIONLogger::SIONBuffer::ensure_space( int size )
+nest::IOBackendSION::SIONBuffer::ensure_space( int size )
 {
   if ( get_free() < size )
   {
@@ -530,7 +530,7 @@ nest::SIONLogger::SIONBuffer::ensure_space( int size )
 }
 
 void
-nest::SIONLogger::SIONBuffer::write( const char* v, long unsigned int n )
+nest::IOBackendSION::SIONBuffer::write( const char* v, long unsigned int n )
 {
   // TODO: replace by get_free()
   if ( ptr + n <= max_size )
@@ -547,38 +547,38 @@ nest::SIONLogger::SIONBuffer::write( const char* v, long unsigned int n )
 }
 
 int
-nest::SIONLogger::SIONBuffer::get_size()
+nest::IOBackendSION::SIONBuffer::get_size()
 {
   return ptr;
 }
 
 int
-nest::SIONLogger::SIONBuffer::get_capacity()
+nest::IOBackendSION::SIONBuffer::get_capacity()
 {
   return max_size;
 }
 
 int
-nest::SIONLogger::SIONBuffer::get_free()
+nest::IOBackendSION::SIONBuffer::get_free()
 {
   return ( max_size - ptr );
 }
 
 void
-nest::SIONLogger::SIONBuffer::clear()
+nest::IOBackendSION::SIONBuffer::clear()
 {
   ptr = 0;
 }
 
 char*
-nest::SIONLogger::SIONBuffer::read()
+nest::IOBackendSION::SIONBuffer::read()
 {
   return buffer;
 }
 
 template < typename T >
-nest::SIONLogger::SIONBuffer&
-nest::SIONLogger::SIONBuffer::operator<<( const T data )
+nest::IOBackendSION::SIONBuffer&
+nest::IOBackendSION::SIONBuffer::operator<<( const T data )
 {
   write( ( const char* ) &data, sizeof( T ) );
   return *this;
@@ -588,7 +588,7 @@ nest::SIONLogger::SIONBuffer::operator<<( const T data )
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */
 
-nest::SIONLogger::Parameters_::Parameters_()
+nest::IOBackendSION::Parameters_::Parameters_()
   : file_ext_( "sion" )
   , close_after_simulate_( true )
   , sion_collective_( false )
@@ -598,7 +598,7 @@ nest::SIONLogger::Parameters_::Parameters_()
 }
 
 void
-nest::SIONLogger::Parameters_::get( const SIONLogger& al, DictionaryDatum& d ) const
+nest::IOBackendSION::Parameters_::get( const IOBackendSION& al, DictionaryDatum& d ) const
 {
   ( *d )[ names::file_extension ] = file_ext_;
   ( *d )[ names::buffer_size ] = buffer_size_;
@@ -608,7 +608,7 @@ nest::SIONLogger::Parameters_::get( const SIONLogger& al, DictionaryDatum& d ) c
 }
 
 void
-nest::SIONLogger::Parameters_::set( const SIONLogger& al, const DictionaryDatum& d )
+nest::IOBackendSION::Parameters_::set( const IOBackendSION& al, const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::file_extension, file_ext_ );
   updateValue< long >( d, names::buffer_size, buffer_size_ );
@@ -618,7 +618,7 @@ nest::SIONLogger::Parameters_::set( const SIONLogger& al, const DictionaryDatum&
 }
 
 void
-nest::SIONLogger::set_status( const DictionaryDatum& d )
+nest::IOBackendSION::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( *this, d );  // throws if BadProperty

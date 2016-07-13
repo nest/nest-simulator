@@ -1,5 +1,5 @@
 /*
- *  screen_logger.h
+ *  io_backend_screen.h
  *
  *  This file is part of NEST.
  *
@@ -20,40 +20,40 @@
  *
  */
 
-#ifndef SCREEN_LOGGER_H
-#define SCREEN_LOGGER_H
+#ifndef IO_BACKEND_SCREEN_H
+#define IO_BACKEND_SCREEN_H
 
-#include "logger.h"
+#include "io_backend.h"
 
 namespace nest
 {
 
 /**
- * A simple logger implementation that prints all recorded data to screen.
+ * A simple IO backend implementation that prints all recorded data to screen.
  */
-class ScreenLogger : public Logger
+class IOBackendScreen : public IOBackend
 {
 public:
   /**
-   * ScreenLogger constructor
-   * The actual initialization is happening in Logger::initialize()
+   * IOBackendScreen constructor
+   * The actual initialization is happening in IOBackend::initialize()
    */
-  ScreenLogger()
+  IOBackendScreen()
   {
   }
 
   /**
-   * ScreenLogger destructor
-   * The actual finalization is happening in Logger::finalize()
+   * IOBackendScreen destructor
+   * The actual finalization is happening in IOBackend::finalize()
    */
-  ~ScreenLogger() throw()
+  ~IOBackendScreen() throw()
   {
   }
 
   /**
    * Functions called by all instantiated recording devices to register themselves with their
    * metadata.
-   * Both functions are implemented trivially, since the ScreenLogger does not handle metadata.
+   * Both functions are implemented trivially, since the IOBackendScreen does not handle metadata.
    */
   void enroll( RecordingDevice& device );
   void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
@@ -64,12 +64,12 @@ public:
    */
   void initialize();
   /**
-   * Finalization function. Nothing has to be finalized in case of the ScreenLogger.
+   * Finalization function. Nothing has to be finalized in case of the IOBackendScreen.
    */
   void finalize();
   /**
    * Synchronization function called at the end of each time step.
-   * Again, the ScreenLogger is not doing anything in this function.
+   * Again, the IOBackendScreen is not doing anything in this function.
    */
   void synchronize();
 
@@ -89,19 +89,19 @@ private:
 
     Parameters_();
 
-    void get( const ScreenLogger&, DictionaryDatum& ) const;
-    void set( const ScreenLogger&, const DictionaryDatum& );
+    void get( const IOBackendScreen&, DictionaryDatum& ) const;
+    void set( const IOBackendScreen&, const DictionaryDatum& );
   };
 
   Parameters_ P_;
 };
 
 inline void
-ScreenLogger::get_status( DictionaryDatum& d ) const
+IOBackendScreen::get_status( DictionaryDatum& d ) const
 {
   P_.get( *this, d );
 }
 
 } // namespace
 
-#endif // SCREEN_LOGGER_H
+#endif // IO_BACKEND_SCREEN_H

@@ -1,5 +1,5 @@
 /*
- *  screen_logger.cpp
+ *  io_backend_screen.cpp
  *
  *  This file is part of NEST.
  *
@@ -24,37 +24,37 @@
 #include <iomanip>
 
 #include "recording_device.h"
-#include "screen_logger.h"
+#include "io_backend_screen.h"
 
 void
-nest::ScreenLogger::enroll( RecordingDevice& )
+nest::IOBackendScreen::enroll( RecordingDevice& )
 {
 }
 
 void
-nest::ScreenLogger::enroll( RecordingDevice&, const std::vector< Name >& )
+nest::IOBackendScreen::enroll( RecordingDevice&, const std::vector< Name >& )
 {
 }
 
 void
-nest::ScreenLogger::initialize()
+nest::IOBackendScreen::initialize()
 {
   std::cout << std::fixed;
   std::cout << std::setprecision( P_.precision_ );
 }
 
 void
-nest::ScreenLogger::finalize()
+nest::IOBackendScreen::finalize()
 {
 }
 
 void
-nest::ScreenLogger::synchronize()
+nest::IOBackendScreen::synchronize()
 {
 }
 
 void
-nest::ScreenLogger::write( const RecordingDevice& , const Event& event )
+nest::IOBackendScreen::write( const RecordingDevice& , const Event& event )
 {
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
@@ -65,7 +65,7 @@ nest::ScreenLogger::write( const RecordingDevice& , const Event& event )
 }
 
 void
-nest::ScreenLogger::write( const RecordingDevice&,
+nest::IOBackendScreen::write( const RecordingDevice&,
   const Event& event,
   const std::vector< double_t >& values )
 {
@@ -90,19 +90,19 @@ nest::ScreenLogger::write( const RecordingDevice&,
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */
 
-nest::ScreenLogger::Parameters_::Parameters_()
+nest::IOBackendScreen::Parameters_::Parameters_()
   : precision_( 3 )
 {
 }
 
 void
-nest::ScreenLogger::Parameters_::get( const ScreenLogger& , DictionaryDatum& d ) const
+nest::IOBackendScreen::Parameters_::get( const IOBackendScreen& , DictionaryDatum& d ) const
 {
   ( *d )[ names::precision ] = precision_;
 }
 
 void
-nest::ScreenLogger::Parameters_::set( const ScreenLogger& , const DictionaryDatum& d )
+nest::IOBackendScreen::Parameters_::set( const IOBackendScreen& , const DictionaryDatum& d )
 {
   if ( updateValue< long >( d, names::precision, precision_ ) )
   {
@@ -112,7 +112,7 @@ nest::ScreenLogger::Parameters_::set( const ScreenLogger& , const DictionaryDatu
 }
 
 void
-nest::ScreenLogger::set_status( const DictionaryDatum& d )
+nest::IOBackendScreen::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( *this, d );  // throws if BadProperty

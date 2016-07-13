@@ -33,7 +33,7 @@
 // Includes from nestkernel:
 #include "node.h"
 #include "device.h"
-#include "logger.h"
+#include "io_backend.h"
 #include "nest_types.h"
 
 // Includes from sli:

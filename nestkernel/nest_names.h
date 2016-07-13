@@ -97,6 +97,7 @@ extern const Name delay;             //!< Connection parameters
 extern const Name delays;            //!< Connection parameters
 extern const Name Delta_T;           //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name delta_tau;         //!< Specific to correlation_and correlomatrix detector
+extern const Name Delta_V;           //!< Specific to gif models
 extern const Name delta_u;           //!< Specific to population point process model
                                      //!< (pp_pop_psc_delta)
 extern const Name dg_ex;             //!< Derivative of the excitatory conductance
@@ -255,12 +256,12 @@ extern const Name PSC_adapt_step;        //!< PSC increment (current homeostasis
 extern const Name PSC_Unit_amplitude;    //!< Scaling of PSC (current homeostasis)
 extern const Name published;             //!< Parameters for MUSIC devices
 
-extern const Name q_rr;  //!< Other adaptation
-extern const Name q_sfa; //!< Other adaptation
-extern const Name q_stc; // Specific to gif models
-
-extern const Name v_t_star; // Specific to gif models
-
+extern const Name q_rr;                  //!< Other adaptation
+extern const Name q_sfa;                 //!< Other adaptation
+extern const Name q_stc;                 //!< Specific to gif models
+extern const Name stc;                   //!< Specific to gif models
+extern const Name V_T_star;              //!< Specific to gif models
+extern const Name lambda_0;              //!< Specific to gif models
 
 extern const Name rate;                 //!< Specific to ppd_sup_generator and gamma_sup_generator
 extern const Name receptor_type;        //!< Connection parameters

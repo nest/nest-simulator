@@ -81,6 +81,7 @@ const Name delay( "delay" );
 const Name delays( "delays" );
 const Name Delta_T( "Delta_T" );
 const Name delta_tau( "delta_tau" );
+const Name Delta_V( "Delta_V" );
 const Name delta_u( "delta_u" );
 const Name dg_ex( "dg_ex" );
 const Name dg_in( "dg_in" );
@@ -235,8 +236,9 @@ const Name published( "published" );
 const Name q_rr( "q_rr" );
 const Name q_sfa( "q_sfa" );
 const Name q_stc( "q_stc" );
-
-const Name v_t_star( "v_t_star" );
+const Name stc( "stc" );
+const Name V_T_star( "V_T_star" );
+const Name lambda_0( "lambda_0" );	
 
 const Name rate( "rate" );
 const Name receptor_type( "receptor_type" );

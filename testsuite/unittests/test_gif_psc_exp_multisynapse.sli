@@ -28,7 +28,7 @@ Synopsis: (test_gif_psc_exp_multisynapse) run
 
 Description:
 
- This testscript checks the correctness of gif_psc_exp_multisynapse neuron model. It injects external DC current and also three spikes to the neuron model and measures neuron's spike times. The spike times should match the expected values.
+ This testscript checks the correctness of gif_psc_exp neuron model. It injects external DC current and also three spikes to two neurons and measures their spike times. The spike times should match the expected values.
 
 Author:  March 2016, Setareh
 SeeAlso: gif_psc_exp_multisynapse, testsuite::test_gif_psc_exp
@@ -43,16 +43,27 @@ SeeAlso: gif_psc_exp_multisynapse, testsuite::test_gif_psc_exp
 */
 
 statusdict/have_gsl :: not 
-{ %The neuron should fire spikes at 22.9, 53.1 and 168.5 ms in case of not having gsl
-  229  /t1  Set 
-  531  /t2  Set
-  1685 /t3  Set
+{ % neuron1 should fire spikes at 46.5, 85.7 and 124.8 ms in case of not having gsl
+  465  /t1_neuron1  Set 
+  857  /t2_neuron1  Set
+  1248 /t3_neuron1  Set
 } 
-{ %The neuron should fire spikes at 22.9, 55.6 and 204.6 ms in case of having gsl
-  229  /t1  Set 
-  556  /t2  Set
-  2046 /t3  Set
+{ % neuron1 should fire spikes at 43.2, 84.5 and 122.7 ms in case of having gsl
+  432  /t1_neuron1  Set 
+  845  /t2_neuron1  Set
+  1227 /t3_neuron1  Set
+}
+ifelse
+
+statusdict/have_gsl :: not 
+{ % neuron2 should fire spikes at 20.8 and 79.7 ms in case of not having gsl
+  208  /t1_neuron2  Set 
+  797  /t2_neuron2  Set
 } 
+{ % neuron2 should fire spikes at 21.0 and 83.2 ms in case of having gsl
+  210  /t1_neuron2  Set 
+  832  /t2_neuron2  Set
+}
 ifelse
 
 0.1 /h Set
@@ -66,34 +77,55 @@ ResetKernel
       /rng_seeds [0]
     >> SetStatus
 
+/gif_psc_exp_multisynapse Create /neuron1 Set % neuron1 has default parameters
+neuron1 << /taus_syn [8.0] >> SetStatus
 
-/gif_psc_exp_multisynapse Create /neuron Set
-neuron << /taus_syn[30.0] /tau_sfa [120.0] /q_sfa [20.0] /tau_stc [10.0] /q_stc [20.0] >> SetStatus
+
+/gif_psc_exp_multisynapse Create /neuron2 Set
+neuron2 << /C_m 40.0 /Delta_V 0.2 /taus_syn [8.0] /tau_sfa [120.0 10.0] /q_sfa [10.0 25.0] /tau_stc [10.0] /q_stc [20.0] >> SetStatus
+
 
 /spike_generator Create /sg Set
 sg << /spike_times [10.0 20.0 30.0]>> SetStatus
 
 /dc_generator Create /dc_gen Set
-dc_gen <<  /amplitude 150. >> SetStatus
+dc_gen <<  /amplitude 170. >> SetStatus
 
-/spike_detector Create /sd Set
-sd << /withtime true /to_memory true /time_in_steps true >> SetStatus
+/spike_detector Create /sd1 Set
+/spike_detector Create /sd2 Set
+sd1 << /withtime true /to_memory true /time_in_steps true >> SetStatus
+sd2 << /withtime true /to_memory true /time_in_steps true >> SetStatus
 
-dc_gen neuron 1.0 h Connect
-neuron sd Connect
+dc_gen neuron1 Connect
+dc_gen neuron2 Connect
 
-sg neuron << /weight 50.0 /receptor_type 1 >> Connect
+neuron1 sd1 Connect
+neuron2 sd2 Connect
 
-250.0 Simulate
+sg neuron1 << /weight 1.0 /receptor_type 1 >> Connect
+sg neuron2 << /weight 1.0 /receptor_type 1 >> Connect
+
+150.0 Simulate
 
 
-sd GetStatus /events get /times get /spikes Set
+sd1 GetStatus /events get /times get /spikes1 Set
+sd2 GetStatus /events get /times get /spikes2 Set
 
-spikes size 3 eq assert_or_die
+spikes1 size 3 eq assert_or_die
 
 {} forall
-t3 eq rot
-t2 eq rot
-t1 eq and and
+
+t3_neuron1 eq rot
+t2_neuron1 eq rot
+t1_neuron1 eq and and
+
+assert_or_die
+
+spikes2 size 2 eq assert_or_die
+
+{ } forall
+
+t2_neuron2 eq rot
+t1_neuron2 eq and
 
 assert_or_die

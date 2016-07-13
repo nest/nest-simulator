@@ -1,8 +1,6 @@
-Frequently Asked Questions
-==========================
+# Frequently Asked Questions
 
-Installation
-------------
+## Installation
 
 1.  **If I compile NEST with MPI support, I get errors about `SEEK_SET`,
     `SEEK_CUR` and `SEEK_END` being defined** This is a known issue in some MPI
@@ -43,8 +41,7 @@ Installation
      problem is to import SciPy before PyNEST. See <https://github.com/numpy/numpy/issues/2521>
      for the official bug report in NumPy.
 
-Neuron models
--------------
+## Neuron models
 
 1.  **I cannot see any of the conductance based models. Where are they?**
     Some neuron model need the GNU Scientific Library (GSL) to work. The
@@ -53,8 +50,7 @@ Neuron models
     installed. To solve this problem, install the GSL and its development
     headers. Then reconfigure and recompile NEST.
 
-Connections
------------
+## Connections
 
 1.  **How can I create connections to multicompartment neurons?**
     You need to create a synapse type with the proper receptor\_type as in this
@@ -66,8 +62,7 @@ Connections
         nest.Connect(n, n[:1], sync_spec={'model'='exc_dist_syn'})
         nest.Simulate(10)
 
-Physical units in nest
-----------------------
+## Physical units in nest
 
 -   time - ms
 -   voltage - mV

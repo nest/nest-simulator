@@ -28,7 +28,7 @@
 
     Description:
     Ensure that NEST throws an exception if one tries to create illegal gap-junction connections. 
-    Furthermore it is checked that the delay can not be set for gap-junction connections.
+    Furthermore it is checked that the delay cannot be set for gap-junction connections.
 
     Author: Jan Hahne, October 2015
     SeeAlso: testsuite::test_hh_psc_alpha_gap, hh_psc_alpha_gap, gap_junction
@@ -47,70 +47,132 @@ if
 
 M_ERROR setverbosity
 
-ResetKernel
-
-2.0 /wfr_comm Set
-0 << /wfr_comm_interval wfr_comm >> SetStatus
-
-/iaf_neuron Create /neuron_no_gap Set
-/hh_psc_alpha_gap Create /neuron_gap Set
-
-% Check if accurate gap-junction connections can be created
+/setup
 {
+  ResetKernel
+
+  2.0 /wfr_comm Set
+  0 << /wfr_comm_interval wfr_comm >> SetStatus
+
+  /iaf_neuron Create /neuron_no_gap Set
+  /hh_psc_alpha_gap Create /neuron_gap Set
+} def
+
+% Check that accurate gap-junction connections can be created
+{
+  setup
+  neuron_gap neuron_gap /gap_junction Connect
+} pass_or_die
+
+{
+  setup
   neuron_gap neuron_gap << /weight 2.0 >> /gap_junction Connect
 } pass_or_die
 
-% Gap junctions have no delay - therefore it is not allowed to set the /delay
 {
+  setup
+  [neuron_gap] [neuron_gap] << /rule /all_to_all >> << /weight 2.0 >> Connect
+} pass_or_die
+
+% Check that delay cannot be set for gap-junction connections
+{
+  setup
+  neuron_gap neuron_gap 2.0 2.0 /gap_junction Connect
+} fail_or_die
+
+{
+  setup
   neuron_gap neuron_gap << /delay 2.0 >> /gap_junction Connect
 } fail_or_die
 
-% Connections without delay contribute to the min_delay and max_delay with wfr_comm_interval
-% This is needed to control the length of the iteration interval
-
-ResetKernel
-
-2.0 /wfr_comm Set
-0 << /wfr_comm_interval wfr_comm >> SetStatus
-
-/iaf_neuron Create /neuron_no_gap Set
-/hh_psc_alpha_gap Create /neuron_gap Set
-
-% Create one connection to change min_delay, max_delay 
-neuron_no_gap neuron_no_gap Connect
-
-0 /max_delay get /old_max Set
-0 /min_delay get /old_min Set
-
-neuron_gap neuron_gap 4.0 4.0 /gap_junction Connect
-
-0 /max_delay get /new_max Set
-0 /min_delay get /new_min Set
-
-old_min wfr_comm leq 
-{ 
-  { old_min new_min eq }assert_or_die 
-}
 {
-  { wfr_comm new_min eq }assert_or_die   
-} ifelse
+  setup
+  [neuron_gap] [neuron_gap] << /rule /all_to_all >> << /delay 2.0 >> /gap_junction Connect
+} fail_or_die
 
-old_max wfr_comm geq 
-{ 
-  { old_max new_max eq }assert_or_die 
-}
+% Check that illegal gap-junction connections cannot be created
 {
-  { wfr_comm new_max eq }assert_or_die   
-} ifelse
-
-% Check if illegal gap-junction connections can be created
-{
+  setup
   neuron_no_gap neuron_no_gap << /weight 2.0 >> /gap_junction Connect
 } fail_or_die
 
-% Check if illegal gap-junction connections can be created
 {
+  setup
   neuron_no_gap neuron_gap << /weight 2.0 >> /gap_junction Connect
 } fail_or_die
 
+{
+  setup
+  neuron_gap neuron_no_gap << /weight 2.0 >> /gap_junction Connect
+} fail_or_die
+
+% Check that gap-junction connections contribute to the min_delay with wfr_comm_interval
+{
+  setup
+
+  % First create one connection to change min_delay, max_delay... 
+  neuron_no_gap neuron_no_gap 3.0 3.0 Connect
+
+  0 /max_delay get /old_max Set
+  0 /min_delay get /old_min Set
+
+  % ... then create a gap-junction connection
+  neuron_gap neuron_gap /gap_junction Connect
+
+  0 /max_delay get /new_max Set
+  0 /min_delay get /new_min Set
+
+  % now check for correct min_delay and max_delay
+  old_min wfr_comm leq 
+  { 
+    old_min new_min eq
+  }
+  {
+    wfr_comm new_min eq  
+  } ifelse
+  old_max wfr_comm geq 
+  { 
+    old_max new_max eq 
+  }
+  {
+    wfr_comm new_max eq   
+  } ifelse
+  and
+} assert_or_die
+
+% Check that gap-junction connections contribute to the max_delay with wfr_comm_interval
+{
+  setup
+
+  % First create one connection to change min_delay, max_delay... 
+  neuron_no_gap neuron_no_gap 1.0 1.0 Connect
+
+  0 /max_delay get /old_max Set
+  0 /min_delay get /old_min Set
+
+  % ... then create a gap-junction connection
+  neuron_gap neuron_gap /gap_junction Connect
+
+  0 /max_delay get /new_max Set
+  0 /min_delay get /new_min Set
+
+  % now check for correct min_delay and max_delay
+  old_min wfr_comm leq 
+  { 
+    old_min new_min eq
+  }
+  {
+    wfr_comm new_min eq  
+  } ifelse
+  old_max wfr_comm geq 
+  { 
+    old_max new_max eq 
+  }
+  {
+    wfr_comm new_max eq   
+  } ifelse
+  and
+} assert_or_die
+
 endusing
+

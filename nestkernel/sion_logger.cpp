@@ -20,19 +20,27 @@
  *
  */
 
-#include <sstream>
-#include <map>
-
+// C includes:
 #include <mpi.h>
-
 #ifdef BG_MULTIFILE
 #include <mpix.h>
 #endif // BG_MULTIFILE
 
+// C++ includes:
+#include <map>
+#include <sstream>
+
+// Includes from libnestutil:
+#include "compose.hpp"
+
+// Includes from nestkernel:
 #include "kernel_manager.h"
 #include "recording_device.h"
+#include "vp_manager_impl.h"
+
+
 #include "sion_logger.h"
-#include "compose.hpp"
+
 
 void
 nest::SIONLogger::enroll( RecordingDevice& device )

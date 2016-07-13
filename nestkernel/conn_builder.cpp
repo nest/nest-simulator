@@ -35,6 +35,7 @@
 #include "normal_randomdev.h"
 
 // Includes from nestkernel:
+#include "conn_builder_impl.h"
 #include "conn_parameter.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
@@ -239,17 +240,7 @@ nest::ConnBuilder::~ConnBuilder()
     delete it->second;
 }
 
-inline void
-nest::ConnBuilder::register_parameters_requiring_skipping_(
-  ConnParameter& param )
-{
-  if ( param.is_array() )
-  {
-    parameters_requiring_skipping_.push_back( &param );
-  }
-}
-
-inline void
+void
 nest::ConnBuilder::check_synapse_params_( std::string syn_name,
   const DictionaryDatum& syn_spec )
 {
@@ -353,7 +344,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
   // check whether the source is on this mpi machine
   if ( kernel().node_manager.is_local_gid( sgid ) )
   {
-    Node* const source = kernel().node_manager.get_node( sgid );
+    Node* const source = kernel().node_manager.get_node( sgid, tid );
     const thread source_thread = source->get_thread();
 
     // check whether the source is on our thread
@@ -371,7 +362,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
   }
   else
   {
-    Node* const target = kernel().node_manager.get_node( tgid );
+    Node* const target = kernel().node_manager.get_node( tgid, tid );
     const thread target_thread = target->get_thread();
     // check whether the target is on our thread
     if ( tid != target_thread )
@@ -453,7 +444,7 @@ nest::ConnBuilder::disconnect()
       throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
 }
 
-inline void
+void
 nest::ConnBuilder::single_connect_( index sgid,
   Node& target,
   thread target_thread,
@@ -462,14 +453,27 @@ nest::ConnBuilder::single_connect_( index sgid,
   if ( param_dicts_.empty() ) // indicates we have no synapse params
   {
     if ( default_weight_and_delay_ )
+    {
       kernel().connection_manager.connect(
         sgid, &target, target_thread, synapse_model_ );
+    }
     else if ( default_weight_ )
+    {
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
         synapse_model_,
         delay_->value_double( target_thread, rng ) );
+    }
+    else if ( default_delay_ )
+    {
+      kernel().connection_manager.connect( sgid,
+        &target,
+        target_thread,
+        synapse_model_,
+        numerics::nan,
+        weight_->value_double( target_thread, rng ) );
+    }
     else
     {
       double delay = delay_->value_double( target_thread, rng );
@@ -523,18 +527,32 @@ nest::ConnBuilder::single_connect_( index sgid,
     }
 
     if ( default_weight_and_delay_ )
+    {
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
         synapse_model_,
         param_dicts_[ target_thread ] );
+    }
     else if ( default_weight_ )
+    {
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
         synapse_model_,
         param_dicts_[ target_thread ],
         delay_->value_double( target_thread, rng ) );
+    }
+    else if ( default_delay_ )
+    {
+      kernel().connection_manager.connect( sgid,
+        &target,
+        target_thread,
+        synapse_model_,
+        param_dicts_[ target_thread ],
+        numerics::nan,
+        weight_->value_double( target_thread, rng ) );
+    }
     else
     {
       double delay = delay_->value_double( target_thread, rng );
@@ -548,29 +566,6 @@ nest::ConnBuilder::single_connect_( index sgid,
         weight );
     }
   }
-}
-
-inline void
-nest::ConnBuilder::skip_conn_parameter_( thread target_thread )
-{
-  for ( std::vector< ConnParameter* >::iterator it =
-          parameters_requiring_skipping_.begin();
-        it != parameters_requiring_skipping_.end();
-        ++it )
-    ( *it )->skip( target_thread );
-}
-
-inline void
-nest::ConnBuilder::single_disconnect_( index sgid,
-  Node& target,
-  thread target_thread )
-{
-  // index tgid = target.get_gid();
-  // This is the most simple case in which only the synapse_model_ has been
-  // defined. TODO: Add functionality to delete synapses with a given weight
-  // or a given delay
-  kernel().sp_manager.disconnect(
-    sgid, &target, target_thread, synapse_model_ );
 }
 
 void
@@ -624,7 +619,7 @@ nest::OneToOneBuilder::connect_()
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -686,7 +681,7 @@ nest::OneToOneBuilder::disconnect_()
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -751,7 +746,7 @@ nest::OneToOneBuilder::sp_connect_()
           skip_conn_parameter_( tid );
           continue;
         }
-        Node* const target = kernel().node_manager.get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
         single_connect_( *sgid, *target, target_thread, rng );
@@ -801,7 +796,7 @@ nest::OneToOneBuilder::sp_disconnect_()
 
         if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           continue;
-        Node* const target = kernel().node_manager.get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
         single_disconnect_( *sgid, *target, target_thread );
@@ -845,7 +840,7 @@ nest::AllToAllBuilder::connect_()
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -922,7 +917,7 @@ nest::AllToAllBuilder::sp_connect_()
               skip_conn_parameter_( tid );
             continue;
           }
-          Node* const target = kernel().node_manager.get_node( *tgid );
+          Node* const target = kernel().node_manager.get_node( *tgid, tid );
           const thread target_thread = target->get_thread();
           single_connect_( *sgid, *target, target_thread, rng );
         }
@@ -967,7 +962,7 @@ nest::AllToAllBuilder::disconnect_()
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -1030,7 +1025,7 @@ nest::AllToAllBuilder::sp_disconnect_()
               skip_conn_parameter_( tid );
             continue;
           }
-          Node* const target = kernel().node_manager.get_node( *tgid );
+          Node* const target = kernel().node_manager.get_node( *tgid, tid );
           const thread target_thread = target->get_thread();
           single_disconnect_( *sgid, *target, target_thread );
         }
@@ -1054,14 +1049,37 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( const GIDCollection& sources,
   , indegree_( ( *conn_spec )[ Name( "indegree" ) ] )
 {
   // check for potential errors
-
+  long n_sources = static_cast< long >( sources_->size() );
+  if ( n_sources == 0 )
+  {
+    throw BadProperty( "Source array must not be empty." );
+  }
   // verify that indegree is not larger than source population if multapses are
   // disabled
   if ( not multapses_ )
   {
-    if ( ( indegree_ > static_cast< long >( sources_->size() ) ) )
+    if ( indegree_ > n_sources )
+    {
       throw BadProperty( "Indegree cannot be larger than population size." );
-  }
+    }
+    else if ( indegree_ == n_sources and not autapses_ )
+    {
+      LOG( M_WARNING,
+        "FixedInDegreeBuilder::connect",
+        "Multapses and autapses prohibited. When the sources and the targets "
+        "have a non-empty "
+        "intersection, the connect algorithm will enter an infinite loop." );
+      return;
+    }
+
+    if ( indegree_ > 0.9 * n_sources )
+    {
+      LOG( M_WARNING,
+        "FixedInDegreeBuilder::connect",
+        "Multapses are prohibited and you request more than 90% connectivity. "
+        "Expect long connecting times!" );
+    }
+  } // if (not multapses_ )
 }
 
 void
@@ -1085,7 +1103,7 @@ nest::FixedInDegreeBuilder::connect_()
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
           continue;
 
-        Node* const target = kernel().node_manager.get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -1133,13 +1151,37 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder(
   , outdegree_( ( *conn_spec )[ Name( "outdegree" ) ] )
 {
   // check for potential errors
+  long n_targets = static_cast< long >( targets_->size() );
+  if ( n_targets == 0 )
+  {
+    throw BadProperty( "Target array must not be empty." );
+  }
 
   // verify that outdegree is not larger than target population if multapses are
   // disabled
   if ( not multapses_ )
   {
-    if ( ( outdegree_ > static_cast< long >( targets_->size() ) ) )
+    if ( outdegree_ > n_targets )
+    {
       throw BadProperty( "Outdegree cannot be larger than population size." );
+    }
+    else if ( outdegree_ == n_targets and not autapses_ )
+    {
+      LOG( M_WARNING,
+        "FixedOutDegreeBuilder::connect",
+        "Multapses and autapses prohibited. When the sources and the targets "
+        "have a non-empty "
+        "intersection, the connect algorithm will enter an infinite loop." );
+      return;
+    }
+
+    if ( outdegree_ > 0.9 * n_targets )
+    {
+      LOG( M_WARNING,
+        "FixedOutDegreeBuilder::connect",
+        "Multapses are prohibited and you request more than 90% connectivity. "
+        "Expect long connecting times!" );
+    }
   }
 }
 
@@ -1192,7 +1234,7 @@ nest::FixedOutDegreeBuilder::connect_()
           if ( not kernel().node_manager.is_local_gid( *tgid ) )
             continue;
 
-          Node* const target = kernel().node_manager.get_node( *tgid );
+          Node* const target = kernel().node_manager.get_node( *tgid, tid );
           const thread target_thread = target->get_thread();
 
           // check whether the target is on our thread
@@ -1340,7 +1382,7 @@ nest::FixedTotalNumberBuilder::connect_()
           // targets_on_vp vector
           const long_t tgid = targets_on_vp[ vp_id ][ t_index ];
 
-          Node* const target = kernel().node_manager.get_node( tgid );
+          Node* const target = kernel().node_manager.get_node( tgid, tid );
           const thread target_thread = target->get_thread();
 
           if ( autapses_ or sgid != tgid )
@@ -1393,7 +1435,7 @@ nest::BernoulliBuilder::connect_()
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
           continue;
 
-        Node* const target = kernel().node_manager.get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -1524,7 +1566,7 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
           skip_conn_parameter_( tid );
           continue;
         }
-        Node* const target = kernel().node_manager.get_node( *tgid );
+        Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
         single_connect_( *sgid, *target, target_thread, rng );

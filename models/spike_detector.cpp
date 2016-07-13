@@ -89,8 +89,7 @@ nest::spike_detector::calibrate()
 
   RecordingDevice::calibrate();
 
-  IOBackend* io_backend = kernel().io_manager.get_io_backend();
-  io_backend->enroll( *this );
+  kernel().io_manager.get_backend()->enroll( *this );
 }
 
 void
@@ -104,8 +103,7 @@ nest::spike_detector::update( Time const&, const long_t, const long_t )
     assert( *e != 0 );
 
     // ++S_.events_;
-    IOBackend* io_backend = kernel().io_manager.get_io_backend();
-    io_backend->write( *this, **e );
+    kernel().io_manager.get_backend()->write( *this, **e );
     delete *e;
   }
 

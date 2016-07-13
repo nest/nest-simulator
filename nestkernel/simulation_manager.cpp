@@ -549,7 +549,7 @@ nest::SimulationManager::prepare_simulation_()
   kernel().model_manager.create_secondary_events_prototypes();
  
   // initialize abstract IO backend
-  kernel().io_manager.get_io_backend()->initialize();
+  kernel().io_manager.get_backend()->initialize();
 
   // we have to do enter_runtime after prepre_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
@@ -573,8 +573,6 @@ nest::SimulationManager::wfr_update_( Node* n )
 void
 nest::SimulationManager::update_()
 {
-  IOBackend* io_backend = kernel().io_manager.get_io_backend();
-
   // to store done values of the different threads
   std::vector< bool > done;
   bool done_all = true;
@@ -783,7 +781,9 @@ nest::SimulationManager::update_()
           print_progress_();
         }
       }
-      io_backend->synchronize();
+
+      kernel().io_manager.get_backend()->synchronize();
+
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
 
@@ -826,7 +826,7 @@ nest::SimulationManager::finalize_simulation_()
       throw KernelException();
     }
 
-  kernel().io_manager.get_io_backend()->finalize();
+  kernel().io_manager.get_backend()->finalize();
 
   kernel().node_manager.finalize_nodes();
 }

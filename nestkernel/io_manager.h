@@ -77,14 +77,14 @@ public:
    */
   bool overwrite_files() const;
 
-  bool set_io_backend( Name name );
-  IOBackend* get_io_backend();
+  bool set_backend( Name name );
+  IOBackend* get_backend();
 
 private:
   std::string data_path_;   //!< Path for all files written by devices
   std::string data_prefix_; //!< Prefix for all files written by devices
   bool overwrite_files_;    //!< If true, overwrite existing data files.
-  IOBackend* io_backend_;
+  IOBackend* backend_;
 };
 }
 
@@ -108,9 +108,9 @@ nest::IOManager::overwrite_files() const
 }
 
 inline nest::IOBackend*
-nest::IOManager::get_io_backend()
+nest::IOManager::get_backend()
 {
-  return io_backend_;
+  return backend_;
 }
 
 #endif /* IO_MANAGER_H */

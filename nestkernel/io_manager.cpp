@@ -50,9 +50,9 @@
 
 nest::IOManager::IOManager()
   : overwrite_files_( false )
-  , io_backend_( NULL )
+  , backend_( NULL )
 {
-  set_io_backend( names::IOBackendScreen );
+  set_backend( names::IOBackendScreen );
 }
 
 void
@@ -137,9 +137,9 @@ nest::IOManager::set_status( const DictionaryDatum& d )
   {
     std::string io_backend;
     if ( updateValue< std::string >( dd, names::io_backend, io_backend ) )
-      set_io_backend( io_backend );
+      set_backend( io_backend );
 
-    io_backend_->set_status( dd );
+    backend_->set_status( dd );
   }
 }
 
@@ -152,32 +152,32 @@ nest::IOManager::get_status( DictionaryDatum& d )
 }
 
 bool
-nest::IOManager::set_io_backend( Name name )
+nest::IOManager::set_backend( Name name )
 {
   if ( name == names::IOBackendScreen )
   {
-    if ( io_backend_ != 0 )
+    if ( backend_ != 0 )
     {
-      delete io_backend_;
+      delete backend_;
     }
-    io_backend_ = new IOBackendScreen();
+    backend_ = new IOBackendScreen();
   }
   else if ( name == names::IOBackendASCII )
   {
-    if ( io_backend_ != 0 )
+    if ( backend_ != 0 )
     {
-      delete io_backend_;
+      delete backend_;
     }
-    io_backend_ = new IOBackendASCII();
+    backend_ = new IOBackendASCII();
   }
 #ifdef HAVE_SIONLIB
   else if ( name == names::IOBackendSION )
   {
-    if ( io_backend_ != 0 )
+    if ( backend_ != 0 )
     {
-      delete io_backend_;
+      delete backend_;
     }
-    io_backend_ = new IOBackendSION();
+    backend_ = new IOBackendSION();
   }
 #endif // HAVE_SIONLIB
   else

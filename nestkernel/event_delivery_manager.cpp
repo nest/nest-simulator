@@ -31,6 +31,7 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
+#include "vp_manager.h"
 #include "vp_manager_impl.h"
 
 // Includes from sli:

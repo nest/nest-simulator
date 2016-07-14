@@ -145,10 +145,10 @@ sections document the suggested Git workflow.
 
 In short:
 
-1. Start a *new branch* for each for each set of changes that you intend to make.
+1. Start a *new branch* for each set of changes that you intend to make.
     See the section on [making a new feature branch](#making-a-new-feature-branch) below.
 2. Hack away! See the section that documents the [editing workflow](#editing-workflow).
-3. When you are satisfied with your edits, push these changes to own GitHub
+3. When you are satisfied with your edits, push these changes to your own GitHub
     fork, and open a pull request to notify the development team that you'd like
     to make these changes available at the `upstream` repository.
     The steps for this are documented in the section on [creating a pull

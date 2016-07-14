@@ -54,7 +54,8 @@ Sends: SpikeEvent
 Parameters:
 No parameters to be set in the status dictionary.
 
-Author: David Reichert, Abigail Morrison, Alexander Seeholzer, Hans Ekkehard Plesser
+Author: David Reichert, Abigail Morrison, Alexander Seeholzer, Hans Ekkehard
+Plesser
 FirstVersion: May 2006
 */
 
@@ -131,7 +132,10 @@ private:
 };
 
 inline port
-parrot_neuron::send_test_event( Node& target, rport receptor_type, synindex, bool )
+parrot_neuron::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

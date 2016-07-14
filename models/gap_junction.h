@@ -96,23 +96,28 @@ public:
   }
 
 
-  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
-  // This avoids explicit name prefixes in all places these functions are used.
-  // Since ConnectionBase depends on the template parameter, they are not automatically
-  // found in the base class.
+  // Explicitly declare all methods inherited from the dependent base
+  // ConnectionBase. This avoids explicit name prefixes in all places these
+  // functions are used. Since ConnectionBase depends on the template parameter,
+  // they are not automatically found in the base class.
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType& )
+  check_connection( Node& s,
+    Node& t,
+    rport receptor_type,
+    double_t,
+    const CommonPropertiesType& )
   {
     EventType ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
-    Connection< targetidentifierT >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
+    Connection< targetidentifierT >::target_.set_rport(
+      t.handles_test_event( ge, receptor_type ) );
     Connection< targetidentifierT >::target_.set_target( &t );
   }
 
@@ -126,7 +131,6 @@ public:
   send( Event& e, thread t, double_t, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
-    e.set_delay( get_delay_steps() );
     e.set_receiver( *get_target( t ) );
     e.set_rport( get_rport() );
     e();
@@ -140,6 +144,11 @@ public:
   set_weight( double_t w )
   {
     weight_ = w;
+  }
+
+  void set_delay( double_t )
+  {
+    throw BadProperty( "gap_junction connection has no delay" );
   }
 };
 
@@ -157,7 +166,8 @@ GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d,
+  ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )

@@ -60,7 +60,6 @@
  * (C) Copyright 1995-2006 The NEST Initiative.
  */
 
-
 /**
  * Namespace for the NEST simulation kernel.
  */
@@ -109,28 +108,38 @@ typedef unsigned long ulong_t; ///< Unsigned long_t.
 const long_t long_t_max = LONG_MAX;
 const long_t long_t_min = LONG_MIN;
 
-#define double_t_max ( DBL_MAX ) // because C++ language designers are apes
-#define double_t_min ( DBL_MIN ) // (only integral consts are compile time)
+/**
+ * Largest and smallest available double value.
+ *
+ * @note Compile-time constant must have integral type,
+ * thus we must define double limits as macros.
+ */
+#define double_t_max ( DBL_MAX )
+#define double_t_min ( DBL_MIN )
 
 /**
  *  Unsigned long type for enumerations.
  */
 typedef size_t index;
-const index invalid_index = std::numeric_limits< index >::max();
+#ifndef SIZE_MAX
+#define SIZE_MAX ( ( size_t ) -1 )
+#endif
+const index invalid_index = SIZE_MAX;
 
 /**
  *  Unsigned char type for enumerations of synapse types.
  */
 typedef unsigned char synindex;
-const synindex invalid_synindex = std::numeric_limits< synindex >::max();
+const synindex invalid_synindex = UCHAR_MAX;
 
 /**
  * Unsigned short type for compact target representation.
  *
  * See Kunkel et al, Front Neuroinform 8:78 (2014).
  */
-typedef unsigned short targetindex; ///< target index into thread local node vector
-const targetindex invalid_targetindex = std::numeric_limits< targetindex >::max();
+//! target index into thread local node vector
+typedef unsigned short targetindex;
+const targetindex invalid_targetindex = USHRT_MAX;
 const index max_targetindex = invalid_targetindex - 1;
 
 /**
@@ -195,8 +204,8 @@ const long_t delay_min = long_t_min;
  * neuron are intepreted the same way by receiving neuron.
  *
  * Each possible signal that may be represented (currently SPIKE and BINARY)
- * is interpreted as a separate bit flag. This way, upon connection, we determine
- * by a bitwise AND operation if sender and receiver are compatible.
+ * is interpreted as a separate bit flag. This way, upon connection, we
+ * determine by a bitwise AND operation if sender and receiver are compatible.
  * The check takes place in connection::check_connection().
  *
  * A device, such as the spike-generator or spike_detector,

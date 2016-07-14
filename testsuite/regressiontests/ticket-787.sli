@@ -62,13 +62,11 @@ statusdict/is_mpi :: {statusdict/exitcodes/success :: quit_i} if
 /private_skip [
 	/CompareFiles_s_s /ConnectLayers_i_i_D /Connect_g_g_D_D
 	/Connect_i_i_D_l /Connect_i_i_d_d_l /Connect_i_i_l
-	/ConvergentConnect_ia_i_a_a_l /ConvergentConnect_ia_i_l
-	/ConvergentConnect_main /CopyModel_l_l /CopyModel_l_l_D /CreateLayer_D
+        /CopyModel_l_l /CopyModel_l_l_D /CreateLayer_D
 	/CreateMask_D /CreateParameter_D /CreateRDV_g_vf /CreateRNG_gt_i
 	/Create_l /Create_l_D /Create_l_i /Create_l_i_D /CyclicValue_d_a
 	/CyclicValue_d_d_d /DataConnect_a /DataConnect_i_D_s /Displacement_a_i
-	/Distance_a_i /DivergentConnect_i_ia_a_a_l /DivergentConnect_i_ia_l
-	/DivergentConnect_main /DumpLayerConnections_os_i_l
+	/Distance_a_i /DumpLayerConnections_os_i_l
 	/DumpLayerNodes_os_i /FileNames_r /FileNames_s /FixedPoint__p
 	/FixedPoint__p_i /Flatten_a /Flatten_a_i /GetChildren_i_D_b
 	/GetConnections_D /GetDefaults_l /GetElement_i_ia
@@ -79,19 +77,6 @@ statusdict/is_mpi :: {statusdict/exitcodes/success :: quit_i} if
 	/LayoutNetwork_l_a_dict /MapIndexed_a /MapIndexed_s /MapThread_a
 	/Map_iter /Map_s /MathematicaToSliIndex_a /MathematicaToSliIndex_i
 	/Part_a /Partition_a_i_i /RandomArray_v_i
-	/RandomConvergentConnect_ia_i_i_b_b_l
-	/RandomConvergentConnect_ia_i_i_d_l
-	/RandomConvergentConnect_ia_i_i_da_da_b_b_l
-	/RandomConvergentConnect_ia_i_i_da_da_b_b_l_wrapper
-	/RandomConvergentConnect_ia_i_i_da_da_l
-	/RandomConvergentConnect_ia_i_i_l /RandomConvergentConnect_ia_ia_i_l
-	/RandomConvergentConnect_ia_ia_ia_daa_daa_b_b_l
-	/RandomConvergentConnect_ia_ia_ia_daa_daa_l
-	/RandomConvergentConnect_main /RandomDivergentConnect_i_i_ia_b_b_l
-	/RandomDivergentConnect_i_i_ia_da_da_b_b_l
-	/RandomDivergentConnect_i_i_ia_da_da_b_b_l_wrapper
-	/RandomDivergentConnect_i_i_ia_da_da_l
-	/RandomDivergentConnect_i_i_ia_l /RandomDivergentConnect_main
 	/Random_i /RangeIterator_a /RestoreNodes_a /SetDefaults_l_D
 	/SetStatus_CD /SetStatus_aa /SetStatus_dict /SetStatus_id /SetStatus_v
 	/Simulate_d /Take_a_a /Take_a_i /TimeCommunicationAlltoall_i_i

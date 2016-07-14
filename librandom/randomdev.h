@@ -205,7 +205,7 @@ public:
    * of a SLI dictionary.  This function is meant only to
    * provide access from the SLI interface.
    */
-  virtual void get_status( DictionaryDatum& ) const = 0;
+  virtual void get_status( DictionaryDatum& ) const;
 
 protected:
   RngPtr rng_; //!< store underlying RNG

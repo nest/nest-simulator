@@ -49,7 +49,7 @@ Node::Node()
   , vp_( invalid_thread_ )
   , frozen_( false )
   , buffers_initialized_( false )
-  , needs_prelim_up_( false )
+  , node_uses_wfr_( false )
 {
 }
 
@@ -62,8 +62,9 @@ Node::Node( const Node& n )
   , thread_( n.thread_ )
   , vp_( n.vp_ )
   , frozen_( n.frozen_ )
-  , buffers_initialized_( false ) // copy must always initialized its own buffers
-  , needs_prelim_up_( n.needs_prelim_up_ )
+  // copy must always initialized its own buffers
+  , buffers_initialized_( false )
+  , node_uses_wfr_( n.node_uses_wfr_ )
 {
 }
 
@@ -136,7 +137,7 @@ Node::get_status_base()
   {
     ( *dict )[ names::global_id ] = get_gid();
     ( *dict )[ names::frozen ] = is_frozen();
-    ( *dict )[ names::needs_prelim_update ] = needs_prelim_update();
+    ( *dict )[ names::node_uses_wfr ] = node_uses_wfr();
     ( *dict )[ names::thread ] = get_thread();
     ( *dict )[ names::vp ] = get_vp();
     if ( parent_ )
@@ -174,21 +175,24 @@ Node::set_status_base( const DictionaryDatum& dict )
   }
   catch ( BadProperty& e )
   {
-    throw BadProperty( String::compose(
-      "Setting status of a '%1' with GID %2: %3", get_name(), get_gid(), e.message() ) );
+    throw BadProperty(
+      String::compose( "Setting status of a '%1' with GID %2: %3",
+        get_name(),
+        get_gid(),
+        e.message() ) );
   }
 
   updateValue< bool >( dict, names::frozen, frozen_ );
 
-  updateValue< bool >( dict, names::needs_prelim_update, needs_prelim_up_ );
+  updateValue< bool >( dict, names::node_uses_wfr, node_uses_wfr_ );
 }
 
 /**
- * Default implementation of prelim_update just
+ * Default implementation of wfr_update just
  * throws UnexpectedEvent
  */
 bool
-Node::prelim_update( Time const&, const long_t, const long_t )
+Node::wfr_update( Time const&, const long_t, const long_t )
 {
   throw UnexpectedEvent();
 }
@@ -263,7 +267,8 @@ port
 Node::handles_test_event( DataLoggingRequest&, rport )
 {
   throw IllegalConnection(
-    "Possible cause: only static synapse types may be used to connect devices." );
+    "Possible cause: only static synapse types may be used to connect "
+    "devices." );
 }
 
 void
@@ -300,14 +305,16 @@ port
 Node::handles_test_event( DSSpikeEvent&, rport )
 {
   throw IllegalConnection(
-    "Possible cause: only static synapse types may be used to connect devices." );
+    "Possible cause: only static synapse types may be used to connect "
+    "devices." );
 }
 
 port
 Node::handles_test_event( DSCurrentEvent&, rport )
 {
   throw IllegalConnection(
-    "Possible cause: only static synapse types may be used to connect devices." );
+    "Possible cause: only static synapse types may be used to connect "
+    "devices." );
 }
 
 void

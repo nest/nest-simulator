@@ -37,7 +37,7 @@ namespace nest
 {
 class Model;
 
-class ModelRangeManager : ManagerInterface
+class ModelRangeManager : public ManagerInterface
 {
 public:
   ModelRangeManager();

@@ -204,7 +204,8 @@ CopyFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
     i->OStack.pop();
     for ( size_t p = 0; p < n; ++p )
-      i->OStack.index( n - 1 ); //  Since the stack is growing, the argument to index is constant.
+      i->OStack.index( n - 1 ); //  Since the stack is growing, the argument to
+                                //  index is constant.
   }
   else
     i->raiseerror( i->StackUnderflowError );
@@ -241,7 +242,8 @@ RollFunction::execute( SLIInterpreter* i ) const
   if ( load < 2 )
     throw StackUnderflow( 2, load );
 
-  IntegerDatum* idn = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* idn =
+    dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   if ( idn == NULL )
     throw ArgumentType( 1 );
 

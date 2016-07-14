@@ -55,7 +55,8 @@ namespace librandom
 
 /*BeginDocumentation
 Name: rdevdict::uniform - uniform random deviate generator
-Description: Generates uniformly distributed numbers in the interval [low, high).
+Description: Generates uniformly distributed numbers in the interval
+             [low, high).
 
 Parameters:
   low  - lower interval boundary, included

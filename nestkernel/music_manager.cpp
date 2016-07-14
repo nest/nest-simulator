@@ -87,7 +87,8 @@ MUSICManager::init_music( int* argc, char** argv[] )
 {
 #ifdef HAVE_MUSIC
   int provided_thread_level;
-  music_setup = new MUSIC::Setup( *argc, *argv, MPI_THREAD_FUNNELED, &provided_thread_level );
+  music_setup = new MUSIC::Setup(
+    *argc, *argv, MPI_THREAD_FUNNELED, &provided_thread_level );
 #endif
 }
 
@@ -96,7 +97,8 @@ MUSICManager::enter_runtime( double_t h_min_delay )
 {
 #ifdef HAVE_MUSIC
   publish_music_in_ports_();
-  std::string msg = String::compose( "Entering MUSIC runtime with tick = %1 ms", h_min_delay );
+  std::string msg =
+    String::compose( "Entering MUSIC runtime with tick = %1 ms", h_min_delay );
   LOG( M_INFO, "MUSICManager::enter_runtime", msg );
 
   // MUSIC needs the step size in seconds
@@ -183,7 +185,9 @@ MUSICManager::unregister_music_in_port( std::string portname )
 }
 
 void
-MUSICManager::register_music_event_in_proxy( std::string portname, int channel, nest::Node* mp )
+MUSICManager::register_music_event_in_proxy( std::string portname,
+  int channel,
+  nest::Node* mp )
 {
   std::map< std::string, MusicEventHandler >::iterator it;
   it = music_in_portmap_.find( portname );
@@ -200,7 +204,8 @@ MUSICManager::register_music_event_in_proxy( std::string portname, int channel, 
 }
 
 void
-MUSICManager::set_music_in_port_acceptable_latency( std::string portname, double latency )
+MUSICManager::set_music_in_port_acceptable_latency( std::string portname,
+  double latency )
 {
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
@@ -211,7 +216,8 @@ MUSICManager::set_music_in_port_acceptable_latency( std::string portname, double
 }
 
 void
-MUSICManager::set_music_in_port_max_buffered( std::string portname, int_t maxbuffered )
+MUSICManager::set_music_in_port_max_buffered( std::string portname,
+  int_t maxbuffered )
 {
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
@@ -230,7 +236,9 @@ MUSICManager::publish_music_in_ports_()
 }
 
 void
-MUSICManager::update_music_event_handlers( Time const& origin, const long_t from, const long_t to )
+MUSICManager::update_music_event_handlers( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
   std::map< std::string, MusicEventHandler >::iterator it;
   for ( it = music_in_portmap_.begin(); it != music_in_portmap_.end(); ++it )

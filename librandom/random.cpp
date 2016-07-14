@@ -106,15 +106,17 @@ librandom::random_array( RdvDatum& rdv, const size_t n )
   return ArrayDatum( result );
 }
 
-long
+Token
 librandom::random( RdvDatum& rdv )
 {
   if ( rdv->has_ldev() )
   {
-    return rdv->ldev();
+    // returns long
+    return Token( rdv->ldev() );
   }
   else
   {
-    return ( *rdv )();
+    // returns double
+    return Token( ( *rdv )() );
   }
 }

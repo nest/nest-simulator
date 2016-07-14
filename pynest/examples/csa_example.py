@@ -52,9 +52,10 @@ try:
     import csa
     haveCSA = True
 except ImportError:
-    print("This example requires CSA to be installed in order to run.\n"
-          + "Please make sure you compiled NEST using --with-libneurosim=PATH\n"
-          + "and CSA and libneurosim are available from PYTHONPATH.")
+    print("This example requires CSA to be installed in order to run.\n" +
+          "Please make sure you compiled NEST using\n" +
+          "  -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]\n" +
+          "and CSA and libneurosim are available from PYTHONPATH.")
     import sys
     sys.exit()
 

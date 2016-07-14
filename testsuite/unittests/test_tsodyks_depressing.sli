@@ -55,7 +55,7 @@ userdict begin
 
       /Tau 40.0 def	     % membrane time constant
       /Theta 15.0 def	     % threshold
-      /U0 0.0 def	     % reset potential of Vm
+      /E_L 0.0 def	     % reset potential of Vm
       /R 1.0 def
       /C Tau R div def         % Tau [ms] / 1.0 GOhm in NEST units
       /TauR 2.0 def	     % refractory time
@@ -101,10 +101,10 @@ userdict begin
 		 /tau_syn_ex Tau_psc
 		 /tau_syn_in Tau_psc
 		 /C_m C
-		 /V_reset U0
-		 /E_L U0
+		 /V_reset E_L
+		 /E_L E_L
 		 /V_th Theta
-                 /V_m U0  
+		 /V_m E_L
               >> SetStatus
       % neuron1 GetStatus info
       
@@ -116,10 +116,10 @@ userdict begin
 		 /tau_syn_ex Tau_psc
 		 /tau_syn_in Tau_psc
 		 /C_m C
-		 /V_reset U0
-		 /E_L U0
+		 /V_reset E_L
+		 /E_L E_L
 		 /V_th Theta
-                 /V_m U0
+		 /V_m E_L
               >> SetStatus
     % neuron2 GetStatus info
 	      

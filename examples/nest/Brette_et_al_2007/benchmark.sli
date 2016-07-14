@@ -56,15 +56,15 @@
      4 | cuba_ps.sli  | i&f  | current      | delta       | off-grid
 
    Usage:
-     This file (run_benchmark.sli) must be used in conjunction with
+     This file (benchmark.sli) must be used in conjunction with
      one of the parameter files above, e.g
 
-     nest coba.sli run_benchmark.sli
+     nest coba.sli benchmark.sli
 
    If the number of threads is set to greater than one, the benchmarks can
    be run in a distributed fashion using mpirun, e.g.
 
-     mpirun -np 2 nest coba.sli run_benchmark.sli
+     mpirun -np 2 nest coba.sli benchmark.sli
 
    In addition to the four official benchmarks of the FACETS review, a fifth
    benchmark has been defined to demonstrate the capabilities of NEST in
@@ -182,43 +182,34 @@ def
 
   (Connecting excitatory population.) =
 
-  E_neurons
-  {
-    /target Set
+  % E -> E connections
+  E_neurons   % source population [we pick from this]
+  E_neurons   % target neurons [for each we pick CE sources]
+  << /rule  /fixed_indegree /indegree CE >> % number of source neurons to pick
+  /syn_ex     % synapse model
+  Connect
 
-    % E -> E connections
-    % the following is a single call to RandomConvergentConnect
-    E_neurons   % source population [we pick from this]
-    target      % target neuron
-    CE          % number of source neurons to pick
-    /syn_ex     % synapse model
-    RandomConvergentConnect
-
-    % I -> E connections
-    % as above, but on a single line
-    I_neurons target CI /syn_in RandomConvergentConnect
-
-  }  bind forall % bind improves efficiency
+  % I -> E connections
+  % as above, but on a single line
+  I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> /syn_in Connect
 
 
   (Connecting inhibitory population.) =
 
   % ... as above, just written more compactly
-
-  I_neurons
-  {
-    /target Set
-    E_neurons target CE /syn_ex RandomConvergentConnect
-    I_neurons target CI /syn_in RandomConvergentConnect
-  } bind forall
+  % E -> I
+  E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> /syn_ex Connect
+  % I -> I
+  I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> /syn_in Connect
 
   %Add external stimulus
 
   (Connecting Poisson stimulus.) =
-  E_stimulus
+  [E_stimulus]
   E_neurons Nstim Take     % pick the first Nstim neurons
+  /all_to_all
   /syn_ex
-  DivergentConnect
+  Connect
 
 
   % Spike detectors are connected to the first Nrec neurons in each
@@ -229,10 +220,10 @@ def
   (Connecting spike detectors.) =
 
   E_neurons Nrec Take     % pick the first Nrec neurons
-  E_detector ConvergentConnect
+  [E_detector] Connect
 
   I_neurons Nrec Take     % pick the first Nrec neurons
-  I_detector ConvergentConnect
+  [I_detector] Connect
 
   % read out time used for building
 

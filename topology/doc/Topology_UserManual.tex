@@ -61,9 +61,7 @@
   backgroundcolor=\color{lstcolor},
   morekeywords={Create,SetStatus,GetStatus,Connect,
      GetNodes,GetLeaves,
-     ConvergentConnect,DivergentConnect,
-     Simulate,RandomConvergentConnect,
-     RandomDivergentConnect,CopyModel,
+     Simulate,CopyModel,
      SetKernelStatus,PrintNetwork,SetDefaults,
    voltage_trace,raster_plot,ResetKernel,GetConnections,
    CreateLayer,ConnectLayers,GetPosition,GetLayer,
@@ -1244,7 +1242,7 @@ cd mmb
   \lstinline!nest-config! is not in your path, you need to provided it
   explicitly like this
 \begin{lstlisting}[language=bash]
-../MyModule/configure --with-nest=${NEST_INSTALL_DIR}/bin/nest-config
+cmake -DWITH_NEST=${NEST_INSTALL_DIR}/bin/nest-config ../MyModule
 \end{lstlisting}
 \item MyModule will then be installed to \lstinline!${NEST_INSTALL_DIR}!. This
   ensures that NEST will be able to find initializing SLI files for the

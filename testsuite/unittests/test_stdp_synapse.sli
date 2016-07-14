@@ -117,7 +117,7 @@ neuron sd_post Connect
 /pre_spikes  sd_pre  GetStatus /events get /times get cva { axonal_delay add } Map def
 /post_spikes sd_post GetStatus /events get /times get cva { backpr_delay add } Map def
 
-/final_weight << /source parrot /target neuron >> FindConnections 0 get /weight get def
+/final_weight << /source [parrot] /target [neuron] >> GetConnections 0 get /weight get def
 
 
 %%% check final weight %%%
@@ -179,65 +179,66 @@ def
 }
 def
 
+
 {
-  pre_spike post_spike eq
-  { % pre- and post-syn. spike at the same time
-    last_post post_spike neq { facilitate } if
-    last_pre pre_spike neq { depress } if
-    %(pre == post) =only (\t) =only pre_spike =only (\t) =only post_spike =only (\t) =only w w_max mul =
-    j 1 add pre_spikes length lt
-    {
-      update_K_plus
-      next_pre_spike
-      i 1 add post_spikes length lt
-      {
-        update_K_minus
-	next_post_spike
-      }
-      if
-    }
-    {
-      exit  
-    }
-    ifelse
-  }
   {
-    pre_spike post_spike lt
-    { % next spike is a pre-syn. spike
-      depress
-      update_K_plus
+    pre_spike post_spike eq
+    { % pre- and post-syn. spike at the same time
+      last_post post_spike neq { facilitate } if
+      last_pre pre_spike neq { depress } if
+      %(pre == post) =only (\t) =only pre_spike =only (\t) =only post_spike =only (\t) =only w w_max mul =
       j 1 add pre_spikes length lt
       {
+        update_K_plus
         next_pre_spike
+        i 1 add post_spikes length lt
+        {
+          update_K_minus
+  	next_post_spike
+        }
+        if
       }
       {
-        %(last presyn spike) =
-        % we don't consider the post-syn. spikes after the last pre-syn. spike
-        exit
+        exit  
       }
       ifelse
     }
-    { % next spike is a post-syn. spike
-      facilitate
-      update_K_minus
-      i 1 add post_spikes length lt
-      {
-        next_post_spike
+    {
+      pre_spike post_spike lt
+      { % next spike is a pre-syn. spike
+        depress
+        update_K_plus
+        j 1 add pre_spikes length lt
+        {
+          next_pre_spike
+        }
+        {
+          %(last presyn spike) =
+          % we don't consider the post-syn. spikes after the last pre-syn. spike
+          exit
+        }
+        ifelse
       }
-      {
-        %(last postsyn spike) =
-        % we DO consider the pre-syn. spikes after the last post-syn. spike
-        post_spike /last_post Set
-        pre_spikes dup length 1 sub get resolution add /post_spike Set  % to make sure we don't come here again
+      { % next spike is a post-syn. spike
+        facilitate
+        update_K_minus
+        i 1 add post_spikes length lt
+        {
+          next_post_spike
+        }
+        {
+          %(last postsyn spike) =
+          % we DO consider the pre-syn. spikes after the last post-syn. spike
+          post_spike /last_post Set
+          pre_spikes dup length 1 sub get resolution add /post_spike Set  % to make sure we don't come here again
+        }
+        ifelse
       }
       ifelse
     }
     ifelse
   }
-  ifelse
-}
-loop
-
-%final_weight w w_max mul sub abs dup = 1e-13 leq =
-
-final_weight w w_max mul sub abs 1e-13 leq assert_or_die
+  loop
+  
+  w w_max mul 13 ToUnitTestPrecision final_weight 13 ToUnitTestPrecision eq
+} assert_or_die

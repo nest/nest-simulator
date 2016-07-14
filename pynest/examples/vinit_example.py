@@ -76,8 +76,8 @@ for vinit in numpy.arange(-100, -50, 10, float):
 
     nest.Simulate(75.0)
 
-    t = nest.GetStatus(voltmeter,"events")[0]["times"]
-    v = nest.GetStatus(voltmeter,"events")[0]["V_m"]
+    t = nest.GetStatus(voltmeter, "events")[0]["times"]
+    v = nest.GetStatus(voltmeter, "events")[0]["V_m"]
 
     pylab.plot(t, v, label="initial V_m = %.2f mV" % vinit)
 

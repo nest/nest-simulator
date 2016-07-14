@@ -114,17 +114,22 @@ class Mask(object):
         """Masks must be created using the CreateMask command."""
         if not isinstance(datum, nest.SLIDatum) or datum.dtype != "masktype":
             raise TypeError("expected mask Datum")
-        self._datum=datum
+        self._datum = datum
 
     # Generic binary operation
-    def _binop(self,op,other):
-        if not isinstance(other,Mask):
+    def _binop(self, op, other):
+        if not isinstance(other, Mask):
             return NotImplemented
-        return Mask(topology_func(op,self._datum,other._datum))
+        return Mask(topology_func(op, self._datum, other._datum))
 
-    def __or__(self,other): return self._binop("or",other)
-    def __and__(self,other): return self._binop("and",other)
-    def __sub__(self,other): return self._binop("sub",other)
+    def __or__(self, other):
+        return self._binop("or", other)
+
+    def __and__(self, other):
+        return self._binop("and", other)
+
+    def __sub__(self, other):
+        return self._binop("sub", other)
 
     def Inside(self, point):
         """
@@ -267,9 +272,10 @@ def CreateMask(masktype, specs, anchor=None):
     """
 
     if anchor is None:
-        return Mask(topology_func('CreateMask',{masktype:specs}))
+        return Mask(topology_func('CreateMask', {masktype: specs}))
     else:
-        return Mask(topology_func('CreateMask',{masktype:specs,'anchor':anchor}))
+        return Mask(
+            topology_func('CreateMask', {masktype: specs, 'anchor': anchor}))
 
 
 class Parameter(object):
@@ -288,21 +294,31 @@ class Parameter(object):
     # The constructor should not be called by the user
     def __init__(self, datum):
         """Parameters must be created using the CreateParameter command."""
-        if not isinstance(datum, nest.SLIDatum) or datum.dtype != "parametertype":
+        if not isinstance(datum,
+                          nest.SLIDatum) or datum.dtype != "parametertype":
             raise TypeError("expected parameter datum")
-        self._datum=datum
+        self._datum = datum
 
     # Generic binary operation
-    def _binop(self,op,other):
-        if not isinstance(other,Parameter):
+    def _binop(self, op, other):
+        if not isinstance(other, Parameter):
             return NotImplemented
-        return Parameter(topology_func(op,self._datum,other._datum))
+        return Parameter(topology_func(op, self._datum, other._datum))
 
-    def __add__(self,other): return self._binop("add",other)
-    def __sub__(self,other): return self._binop("sub",other)
-    def __mul__(self,other): return self._binop("mul",other)
-    def __div__(self,other): return self._binop("div",other)
-    def __truediv__(self,other): return self._binop("div",other)
+    def __add__(self, other):
+        return self._binop("add", other)
+
+    def __sub__(self, other):
+        return self._binop("sub", other)
+
+    def __mul__(self, other):
+        return self._binop("mul", other)
+
+    def __div__(self, other):
+        return self._binop("div", other)
+
+    def __truediv__(self, other):
+        return self._binop("div", other)
 
     def GetValue(self, point):
         """
@@ -324,24 +340,24 @@ class Parameter(object):
         See also
         --------
         CreateParameter : create parameter for e.g., distance dependency
-        
-        
+
+
         Notes
         -----
         -
-        
-        
+
+
         **Example**
             ::
-                
+
                 import nest.topology as tp
-                
+
                 #linear dependent parameter
                 P = tp.CreateParameter('linear', {'a' : 2., 'c' : 0.})
-                
+
                 #get out value
                 P.GetValue(point=[3., 4.])
-        
+
         """
         return topology_func("GetValue", point, self._datum)
 
@@ -389,22 +405,22 @@ def CreateParameter(parametertype, specs):
     Notes
     -----
     -
-    
-    
+
+
     **Parameter types**
-    
+
     Available parameter types (`parametertype` parameter), their function and
     acceptable keys for their corresponding specification dictionaries
 
     * Constant
         ::
-        
+
             'constant' :
                 {'value' : float} # constant value
-                
+
     * With dependence on the distance `d`
         ::
-            
+
             # p(d) = c + a * d
             'linear' :
                 {'a' : float, # slope, default: 1.0
@@ -418,19 +434,19 @@ def CreateParameter(parametertype, specs):
             # or
             # p(d) = c + p_center*exp(-(d-mean)^2/(2*sigma^2))
             'gaussian' :
-                {'p_center' : float, # value at center of Gaussian, default: 1.0
+                {'p_center' : float, # value at center, default: 1.0
                  'mean'     : float, # distance to center, default: 0.0
                  'sigma'    : float, # width of Gaussian, default: 1.0
                  'c'        : float} # constant offset, default: 0.0
 
     * Bivariate Gaussian parameter:
         ::
-        
+
             # p(x,y) = c + p_center *
             #          exp( -( (x-mean_x)^2/sigma_x^2 + (y-mean_y)^2/sigma_y^2
             #          + 2*rho*(x-mean_x)*(y-mean_y)/(sigma_x*sigma_y) ) /
             #          (2*(1-rho^2)) )
-            'gaussian2D' : 
+            'gaussian2D' :
                 {'p_center' : float, # value at center, default: 1.0
                  'mean_x'   : float, # x-coordinate of center, default: 0.0
                  'mean_y'   : float, # y-coordinate of center, default: 0.0
@@ -441,26 +457,26 @@ def CreateParameter(parametertype, specs):
 
     * Without distance dependency, for randomization
         ::
-            
+
             # random parameter with uniform distribution in [min,max)
-            'uniform' : 
+            'uniform' :
                 {'min' : float, # minimum value, default: 0.0
                  'max' : float} # maximum value, default: 1.0
             # or
             # random parameter with normal distribution, optionally truncated
             # to [min,max)
-            'normal': 
+            'normal':
                 {'mean' : float, # mean value, default: 0.0
                  'sigma': float, # standard deviation, default: 1.0
                  'min'  : float, # minimum value, default: -inf
 
                  'max'  : float} # maximum value, default: +inf
             # or
-            # random parameter with lognormal distribution, optionally truncated
-            # to [min,max)
+            # random parameter with lognormal distribution,
+            # optionally truncated to [min,max)
             'lognormal' :
                 {'mu'   : float, # mean value of logarithm, default: 0.0
-                 'sigma': float, # standard deviation of logarithm, default: 1.0
+                 'sigma': float, # standard deviation of log, default: 1.0
                  'min'  : float, # minimum value, default: -inf
                  'max'  : float} # maximum value, default: +inf
 
@@ -486,7 +502,7 @@ def CreateParameter(parametertype, specs):
             tp.ConnectLayers(l, l, conndict)
 
     """
-    return Parameter(topology_func('CreateParameter', {parametertype:specs}))
+    return Parameter(topology_func('CreateParameter', {parametertype: specs}))
 
 
 def CreateLayer(specs):
@@ -561,7 +577,7 @@ def CreateLayer(specs):
     rows : int, obligatory for grid-based layers
         Number of rows.
         Needs `'columns'`; mutually exclusive with `'positions'`.
-        
+
 
     Notes
     -----
@@ -618,9 +634,9 @@ def ConnectLayers(pre, post, projections):
     """
     Pairwise connect of pre- and postsynaptic (lists of) layers.
 
-    `pre` and `post` must be a tuple/list of GIDs of equal length. The GIDs must
-    refer to layers created with ``CreateLayers``. Layers in the `pre` and
-    `post` lists are connected pairwise.
+    `pre` and `post` must be a tuple/list of GIDs of equal length. The GIDs
+    must refer to layers created with ``CreateLayers``. Layers in the `pre`
+    and `post` lists are connected pairwise.
 
     * If `projections` is a single dictionary, it applies to all pre-post
       pairs.
@@ -775,21 +791,23 @@ def ConnectLayers(pre, post, projections):
         raise nest.NESTError("pre and post must have the same length.")
 
     # ensure projections is list of full length
-    projections = nest.broadcast(projections, len(pre), (dict,), "projections")
+    projections = nest.broadcast(projections, len(pre), (dict, ),
+                                 "projections")
 
     # Replace python classes with SLI datums
     def fixdict(d):
         d = d.copy()
-        for k,v in d.items():
+        for k, v in d.items():
             if isinstance(v, dict):
                 d[k] = fixdict(v)
-            elif isinstance(v,Mask) or isinstance(v,Parameter):
+            elif isinstance(v, Mask) or isinstance(v, Parameter):
                 d[k] = v._datum
         return d
 
     projections = [fixdict(p) for p in projections]
 
-    topology_func('3 arraystore { ConnectLayers } ScanThread', pre, post, projections)
+    topology_func('3 arraystore { ConnectLayers } ScanThread', pre, post,
+                  projections)
 
 
 def GetPosition(nodes):
@@ -876,7 +894,7 @@ def GetLayer(nodes):
 
     **Example**
         ::
-        
+
             import nest.topology as tp
 
             # create a layer
@@ -892,7 +910,6 @@ def GetLayer(nodes):
         raise TypeError("nodes must be a sequence of GIDs")
 
     return topology_func('{ GetLayer } Map', nodes)
-
 
 
 def GetElement(layers, locations):
@@ -964,14 +981,17 @@ def GetElement(layers, locations):
         raise nest.NESTError("layers cannot be empty")
 
     if not (nest.is_iterable(locations) and len(locations) > 0):
-        raise nest.NESTError("locations must be coordinate array or list of coordinate arrays")
+        raise nest.NESTError(
+            "locations must be coordinate array or list of coordinate arrays")
 
     # ensure that all layers are grid-based, otherwise one ends up with an
     # incomprehensible error message
     try:
-        topology_func('{ [ /topology [ /rows /columns ] ] get ; } forall', layers)
+        topology_func('{ [ /topology [ /rows /columns ] ] get ; } forall',
+                      layers)
     except:
-        raise nest.NESTError("layers must contain only grid-based topology layers")
+        raise nest.NESTError(
+            "layers must contain only grid-based topology layers")
 
     # SLI GetElement returns either single GID or list
     def make_tuple(x):
@@ -983,21 +1003,25 @@ def GetElement(layers, locations):
     if nest.is_iterable(locations[0]):
 
         # layers and locations are now lists
-        nodes = topology_func('/locs Set { /lyr Set locs { lyr exch GetElement } Map } Map',
-                              layers, locations)
+        nodes = topology_func(
+            '/locs Set { /lyr Set locs { lyr exch GetElement } Map } Map',
+            layers, locations)
 
-        node_list = tuple(tuple(make_tuple(nodes_at_loc) for nodes_at_loc in nodes_in_lyr)
-                     for nodes_in_lyr in nodes)
+        node_list = tuple(
+            tuple(make_tuple(nodes_at_loc) for nodes_at_loc in nodes_in_lyr)
+            for nodes_in_lyr in nodes)
 
     else:
 
         # layers is list, locations is a single location
-        nodes = topology_func('/loc Set { loc GetElement } Map', layers, locations)
+        nodes = topology_func('/loc Set { loc GetElement } Map', layers,
+                              locations)
 
         node_list = tuple(make_tuple(nodes_in_lyr) for nodes_in_lyr in nodes)
 
     # If only a single layer is given, un-nest list
-    if len(layers)==1: node_list=node_list[0]
+    if len(layers) == 1:
+        node_list = node_list[0]
 
     return node_list
 
@@ -1007,7 +1031,7 @@ def FindNearestElement(layers, locations, find_all=False):
     Return the node(s) closest to the location(s) in the given layer(s).
 
     This function works for fixed grid layers only.
-    
+
     * If layers contains a single GID and locations is a single 2-element
       array giving a grid location, return a list of GIDs of layer elements
       at the given location.
@@ -1076,7 +1100,8 @@ def FindNearestElement(layers, locations, find_all=False):
         raise nest.NESTError("layers cannot be empty")
 
     if not nest.is_iterable(locations):
-        raise TypeError("locations must be coordinate array or list of coordinate arrays")
+        raise TypeError(
+            "locations must be coordinate array or list of coordinate arrays")
 
     # ensure locations is sequence, keeps code below simpler
     if not nest.is_iterable(locations[0]):
@@ -1093,11 +1118,11 @@ def FindNearestElement(layers, locations, find_all=False):
             d = Distance(numpy.array(loc), els)
 
             if not find_all:
-                dx = numpy.argmin(d)   # finds location of one minimum
+                dx = numpy.argmin(d)  # finds location of one minimum
                 lyr_result.append(els[dx])
             else:
                 mingids = list(els[:1])
-                minval  = d[0]
+                minval = d[0]
                 for idx in range(1, len(els)):
                     if d[idx] < minval:
                         mingids = [els[idx]]
@@ -1107,14 +1132,15 @@ def FindNearestElement(layers, locations, find_all=False):
                 lyr_result.append(tuple(mingids))
         result.append(tuple(lyr_result))
 
-    # If both layers and locations are multi-element lists, result shall remain a nested list
-    # Otherwise, either the top or the second level is a single element list and we flatten
-    assert(len(result) > 0)
+    # If both layers and locations are multi-element lists, result shall remain
+    # a nested list. Otherwise, either the top or the second level is a single
+    # element list and we flatten.
+    assert (len(result) > 0)
     if len(result) == 1:
-        assert(len(layers) == 1)
+        assert (len(layers) == 1)
         return result[0]
     elif len(result[0]) == 1:
-        assert(len(locations) == 1)
+        assert (len(locations) == 1)
         return tuple(el[0] for el in result)
     else:
         return tuple(result)
@@ -1131,21 +1157,26 @@ def _check_displacement_args(from_arg, to_arg, caller):
     if isinstance(from_arg, numpy.ndarray):
         from_arg = (from_arg, )
     elif not (nest.is_iterable(from_arg) and len(from_arg) > 0):
-        raise nest.NESTError("%s: from_arg must be lists of GIDs or positions" % caller)
+        raise nest.NESTError(
+            "%s: from_arg must be lists of GIDs or positions" % caller)
     # invariant: from_arg is list
 
     if not nest.is_sequence_of_gids(to_arg):
         raise nest.NESTError("%s: to_arg must be lists of GIDs" % caller)
     # invariant: from_arg and to_arg are sequences
 
-    if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(to_arg):
-        raise nest.NESTError("%s: If to_arg and from_arg are lists, they must have equal length." % caller)
-    # invariant: from_arg and to_arg have equal length, or (at least) one has length 1
+    if len(from_arg) > 1 and len(to_arg) > 1 and not len(from_arg) == len(
+            to_arg):
+        raise nest.NESTError(
+            "%s: If to_arg and from_arg are lists, they must have same length."
+            % caller)
+    # invariant: from_arg and to_arg have equal length,
+    # or (at least) one has length 1
 
     if len(from_arg) == 1:
-        from_arg = from_arg*len(to_arg)  # this is a no-op if len(to_arg)==1
+        from_arg = from_arg * len(to_arg)  # this is a no-op if len(to_arg)==1
     if len(to_arg) == 1:
-        to_arg   = to_arg*len(from_arg)  # this is a no-op if len(from_arg)==1
+        to_arg = to_arg * len(from_arg)  # this is a no-op if len(from_arg)==1
     # invariant: from_arg and to_arg have equal length
 
     return from_arg, to_arg
@@ -1216,7 +1247,8 @@ def Displacement(from_arg, to_arg):
             print tp.Displacement([(0.0, 0.0)], [2])
     """
 
-    from_arg, to_arg = _check_displacement_args(from_arg, to_arg, 'Displacement')
+    from_arg, to_arg = _check_displacement_args(from_arg, to_arg,
+                                                'Displacement')
     return topology_func('{ Displacement } MapThread', [from_arg, to_arg])
 
 
@@ -1237,7 +1269,8 @@ def Distance(from_arg, to_arg):
     * If one of `from_arg` or `to_arg` has length 1, and the other is longer,
       the displacement from/to the single item to all other items is given.
     * If `from_arg` and `to_arg` both have more than two elements, they have
-      to be lists of the same length and the distance for each pair is returned.
+      to be lists of the same length and the distance for each pair is
+      returned.
 
 
     Parameters
@@ -1297,7 +1330,7 @@ def _rank_specific_filename(basename):
         return basename
     else:
         np = nest.NumProcesses()
-        np_digs = len(str(np-1))  # for pretty formatting
+        np_digs = len(str(np - 1))  # for pretty formatting
         rk = nest.Rank()
         dot = basename.find('.')
         if dot < 0:
@@ -1360,7 +1393,7 @@ def DumpLayerNodes(layers, outname):
 
             # write layer node positions to file
             tp.DumpLayerNodes(l, 'positions.txt')
-            
+
     """
     topology_func("""
                   (w) file exch { DumpLayerNodes } forall close
@@ -1438,7 +1471,8 @@ def DumpLayerConnections(layers, synapse_model, outname):
                   /oname  Set
                   cvlit /synmod Set
                   /lyrs   Set
-                  oname (w) file lyrs { synmod DumpLayerConnections } forall close
+                  oname (w) file lyrs
+                  { synmod DumpLayerConnections } forall close
                   """,
                   layers, synapse_model, _rank_specific_filename(outname))
 
@@ -1493,9 +1527,11 @@ def FindCenterElement(layers):
     if not nest.is_sequence_of_gids(layers):
         raise TypeError("layers must be a sequence of GIDs")
 
-    # we need to do each layer on its own since FindNearestElement does not thread
-    return tuple(FindNearestElement((lyr, ), nest.GetStatus((lyr, ), 'topology')[0]['center'])[0]
-            for lyr in layers)
+    # Do each layer on its own since FindNearestElement does not thread
+    return tuple(FindNearestElement((lyr, ),
+                                    nest.GetStatus((lyr, ), 'topology')[0][
+                                        'center'])[0]
+                 for lyr in layers)
 
 
 def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
@@ -1521,8 +1557,8 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
         List of GIDs of target neurons fulfilling the given criteria.
         It is a list of lists, one list per source.
 
-        For each neuron in `sources`, this function finds all target elements in
-        `tgt_layer`. If `tgt_model` is not given (default), all targets are
+        For each neuron in `sources`, this function finds all target elements
+        in `tgt_layer`. If `tgt_model` is not given (default), all targets are
         returned, otherwise only targets of specific type, and similarly for
         syn_model.
 
@@ -1576,8 +1612,9 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
 
     # obtain local nodes in target layer, to pass to GetConnections
     tgt_nodes = nest.GetLeaves(tgt_layer,
-                               properties = {'model': tgt_model} if tgt_model else None,
-                               local_only = True)[0]
+                               properties={
+                                   'model': tgt_model} if tgt_model else None,
+                               local_only=True)[0]
 
     conns = nest.GetConnections(sources, tgt_nodes, synapse_model=syn_model)
 
@@ -1585,11 +1622,10 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     # Re-organize into one list per source, containing only target GIDs.
     src_tgt_map = dict((sgid, []) for sgid in sources)
     for conn in conns:
-       src_tgt_map[conn[0]].append(conn[1])
+        src_tgt_map[conn[0]].append(conn[1])
 
     # convert dict to nested list in same order as sources
     return tuple(src_tgt_map[sgid] for sgid in sources)
-
 
 
 def GetTargetPositions(sources, tgt_layer, tgt_model=None, syn_model=None):
@@ -1615,8 +1651,8 @@ def GetTargetPositions(sources, tgt_layer, tgt_model=None, syn_model=None):
         Positions of target neurons fulfilling the given criteria as a nested
         list, containing one list of positions per node in sources.
 
-        For each neuron in `sources`, this function finds all target elements in
-        `tgt_layer`. If `tgt_model` is not given (default), all targets are
+        For each neuron in `sources`, this function finds all target elements
+        in `tgt_layer`. If `tgt_model` is not given (default), all targets are
         returned, otherwise only targets of specific type, and similarly for
         syn_model.
 
@@ -1658,7 +1694,7 @@ def GetTargetPositions(sources, tgt_layer, tgt_model=None, syn_model=None):
     """
 
     return tuple(GetPosition(nodes) for nodes
-            in GetTargetNodes(sources, tgt_layer, tgt_model, syn_model))
+                 in GetTargetNodes(sources, tgt_layer, tgt_model, syn_model))
 
 
 def _draw_extent(ax, xctr, yctr, xext, yext):
@@ -1667,14 +1703,16 @@ def _draw_extent(ax, xctr, yctr, xext, yext):
     import matplotlib.pyplot as plt
 
     # thin gray line indicating extent
-    llx, lly = xctr - xext/2.0, yctr - yext/2.0
+    llx, lly = xctr - xext / 2.0, yctr - yext / 2.0
     urx, ury = llx + xext, lly + yext
-    ax.add_patch(plt.Rectangle((llx, lly), xext, yext, fc='none', ec='0.5', lw=1, zorder=1))
+    ax.add_patch(
+        plt.Rectangle((llx, lly), xext, yext, fc='none', ec='0.5', lw=1,
+                      zorder=1))
 
     # set limits slightly outside extent
     ax.set(aspect='equal',
-           xlim=(llx - 0.05*xext, urx + 0.05*xext),
-           ylim=(lly - 0.05*yext, ury + 0.05*yext),
+           xlim=(llx - 0.05 * xext, urx + 0.05 * xext),
+           ylim=(lly - 0.05 * yext, ury + 0.05 * yext),
            xticks=tuple(), yticks=tuple())
 
 
@@ -1741,7 +1779,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
     # get layer extent
     ext = nest.GetStatus(layer, 'topology')[0]['extent']
 
-    if len(ext)==2:
+    if len(ext) == 2:
         # 2D layer
 
         # get layer extent and center, x and y
@@ -1757,10 +1795,11 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         else:
             ax = fig.gca()
 
-        ax.scatter(xpos, ypos, s=nodesize, facecolor=nodecolor, edgecolor='none')
+        ax.scatter(xpos, ypos, s=nodesize, facecolor=nodecolor,
+                   edgecolor='none')
         _draw_extent(ax, xctr, yctr, xext, yext)
 
-    elif len(ext)==3:
+    elif len(ext) == 3:
         # 3D layer
         from mpl_toolkits.mplot3d import Axes3D
 
@@ -1875,7 +1914,7 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
     # get layer extent and center, x and y
     ext = nest.GetStatus(tgt_layer, 'topology')[0]['extent']
 
-    if len(ext)==2:
+    if len(ext) == 2:
         # 2D layer
 
         # get layer extent and center, x and y
@@ -1892,10 +1931,12 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
         tgtpos = GetTargetPositions(src_nrn, tgt_layer, tgt_model, syn_type)
         if tgtpos:
             xpos, ypos = zip(*tgtpos[0])
-            ax.scatter(xpos, ypos, s=tgt_size, facecolor=tgt_color, edgecolor='none')
+            ax.scatter(xpos, ypos, s=tgt_size, facecolor=tgt_color,
+                       edgecolor='none')
 
-        ax.scatter(srcpos[:1], srcpos[1:], s=src_size, facecolor=src_color, edgecolor='none',
-                   alpha = 0.4, zorder = -10)
+        ax.scatter(srcpos[:1], srcpos[1:], s=src_size, facecolor=src_color,
+                   edgecolor='none',
+                   alpha=0.4, zorder=-10)
 
         _draw_extent(ax, xctr, yctr, xext, yext)
 
@@ -1916,17 +1957,20 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
         tgtpos = GetTargetPositions(src_nrn, tgt_layer, tgt_model, syn_type)
         if tgtpos:
             xpos, ypos, zpos = zip(*tgtpos[0])
-            ax.scatter3D(xpos, ypos, zpos, s=tgt_size, facecolor=tgt_color, edgecolor='none')
+            ax.scatter3D(xpos, ypos, zpos, s=tgt_size, facecolor=tgt_color,
+                         edgecolor='none')
 
-        ax.scatter3D(srcpos[:1], srcpos[1:2], srcpos[2:], s=src_size, facecolor=src_color, edgecolor='none',
-                   alpha = 0.4, zorder = -10)
+        ax.scatter3D(srcpos[:1], srcpos[1:2], srcpos[2:], s=src_size,
+                     facecolor=src_color, edgecolor='none',
+                     alpha=0.4, zorder=-10)
 
     plt.draw_if_interactive()
 
     return fig
 
 
-def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red', kernel_color='red'):
+def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
+               kernel_color='red'):
     """
     Add indication of mask and kernel to axes.
 
@@ -1974,7 +2018,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red', kernel_color='red
 
     **Example**
         ::
-            
+
             import nest.topology as tp
             import matplotlib.pyplot as plt
 
@@ -2023,35 +2067,39 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red', kernel_color='red
     if 'anchor' in mask:
         offs = np.array(mask['anchor'])
     else:
-        offs = np.array([0.,0.])
+        offs = np.array([0., 0.])
 
     if 'circular' in mask:
         r = mask['circular']['radius']
-        ax.add_patch(plt.Circle(srcpos+offs, radius=r, zorder = -1000,
-                                fc = 'none', ec = mask_color, lw=3))
+        ax.add_patch(plt.Circle(srcpos + offs, radius=r, zorder=-1000,
+                                fc='none', ec=mask_color, lw=3))
     elif 'doughnut' in mask:
-        r_in  = mask['doughnut']['inner_radius']
+        r_in = mask['doughnut']['inner_radius']
         r_out = mask['doughnut']['outer_radius']
-        ax.add_patch(plt.Circle(srcpos+offs, radius=r_in, zorder = -1000,
-                                fc = 'none', ec = mask_color, lw=3))
-        ax.add_patch(plt.Circle(srcpos+offs, radius=r_out, zorder = -1000,
-                                fc = 'none', ec = mask_color, lw=3))
+        ax.add_patch(plt.Circle(srcpos + offs, radius=r_in, zorder=-1000,
+                                fc='none', ec=mask_color, lw=3))
+        ax.add_patch(plt.Circle(srcpos + offs, radius=r_out, zorder=-1000,
+                                fc='none', ec=mask_color, lw=3))
     elif 'rectangular' in mask:
         ll = mask['rectangular']['lower_left']
         ur = mask['rectangular']['upper_right']
-        ax.add_patch(plt.Rectangle(srcpos+ll+offs, ur[0]-ll[0], ur[1]-ll[1],
-                                   zorder=-1000, fc= 'none', ec=mask_color, lw=3))
+        ax.add_patch(
+            plt.Rectangle(srcpos + ll + offs, ur[0] - ll[0], ur[1] - ll[1],
+                          zorder=-1000, fc='none', ec=mask_color, lw=3))
     else:
-        raise ValueError('Mask type cannot be plotted with this version of PyTopology.')
+        raise ValueError(
+            'Mask type cannot be plotted with this version of PyTopology.')
 
     if kern is not None and isinstance(kern, dict):
         if 'gaussian' in kern:
             sigma = kern['gaussian']['sigma']
             for r in range(3):
-                ax.add_patch(plt.Circle(srcpos+offs, radius=(r+1)*sigma, zorder=-1000,
-                                        fc='none', ec=kernel_color, lw=3, ls='dashed'))
+                ax.add_patch(plt.Circle(srcpos + offs, radius=(r + 1) * sigma,
+                                        zorder=-1000,
+                                        fc='none', ec=kernel_color, lw=3,
+                                        ls='dashed'))
         else:
-            raise ValueError('Kernel type cannot be plotted with this version of PyTopology')
+            raise ValueError('Kernel type cannot be plotted with this ' +
+                             'version of PyTopology')
 
     plt.draw()
-

@@ -1,6 +1,9 @@
 ---
 layout: index
 ---
+
+[« Back to the index](index)
+
 [GitHub]: <http://github.com/> "GitHub"
 [NEST]: <http://www.nest-simulator.org/> "NEST"
 [NEST GitHub Organization]: <https://github.com/nest>

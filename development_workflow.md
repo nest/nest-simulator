@@ -544,7 +544,7 @@ If you want to work on some stuff with other people, where you are all
 committing into the same repository, or even the same branch, then just
 share it via [GitHub].
 
-* First fork [NEST] into your account, as from
+* First fork [NEST] into your account, as explained
   [above](#making-your-own-copy-(fork)-of-nest)
 * Then, go to your forked repository GitHub page, say
   `http://github.com/your-user-name/nest-simulator`

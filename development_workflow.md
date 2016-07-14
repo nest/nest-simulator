@@ -535,7 +535,7 @@ git branch -D my-unwanted-branch
 git push origin :my-unwanted-branch
 ```
 
-(Note the colon `:` before `test-branch`.  See also
+(Note the colon `:` before `my-unwanted-branch`.  See also
 [here](http://github.com/guides/remove-a-remote-branch).
 
 ## Several people sharing a single repository

@@ -93,7 +93,7 @@ extern const Name D_lower;
 extern const Name D_mean;
 extern const Name D_std;
 extern const Name D_upper;
-<<<<<<< HEAD
+
 extern const Name dc;                //!< Specific to sinusoidally modulated generators
 extern const Name dead_time;         //!< Specific to ppd_sup_generator and gamma_sup_generator
 extern const Name dead_time_random;  //!< Random dead time or fixed dead time
@@ -110,7 +110,7 @@ extern const Name delta_u;           //!< Specific to population point process m
 extern const Name dg_ex;             //!< Derivative of the excitatory conductance
 extern const Name dg_in;             //!< Derivative of the inhibitory conductance
 extern const Name dhaene_det_spikes; //!< used for iaflossless_count_exp
-=======
+
 extern const Name dc;        //!< Specific to sinusoidally modulated generators
 extern const Name dead_time; //!< Specific to ppd_sup_generator and
                              //!< gamma_sup_generator
@@ -129,7 +129,7 @@ extern const Name delta_u;   //!< Specific to population point process model
 extern const Name dg_ex;     //!< Derivative of the excitatory conductance
 extern const Name dg_in;     //!< Derivative of the inhibitory conductance
 extern const Name dhaene_det_spikes;   //!< used for iaflossless_count_exp
->>>>>>> heplesser-HesamSetareh_master_261
+
 extern const Name dhaene_max_geq_V_th; //!< used for iaflossless_count_exp
 extern const Name dhaene_quick1;       //!< used for iaflossless_count_exp
 extern const Name dhaene_quick2;       //!< used for iaflossless_count_exp

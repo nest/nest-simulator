@@ -239,7 +239,7 @@ git push origin my-new-feature
 no changes added to commit (use "git add" and/or "git commit -a")
 ```
 
-* Compare the changes with the previous version using with `git diff`.
+* Compare the changes with the previous version using `git diff`.
     This brings up a simple text browser interface that highlights the difference
     between your files and the previous version like this:
 

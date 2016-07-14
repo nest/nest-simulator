@@ -39,7 +39,7 @@ git config --global user.name "Your Name Comes Here"
 
 The [NEST] source code is hosted in a public repository on
 [GitHub](https://en.wikipedia.org/wiki/GitHub). If you don’t have a GitHub
-account already, please create one at [GitHub page][GitHub].
+account already, please [create one][GitHub].
 
 You then need to configure your account to allow write access - please see the
 [article on generating SSH keys](http://help.github.com/articles/generating-ssh-keys/)
@@ -213,15 +213,13 @@ git push origin my-new-feature
 
 * Make some changes. When you feel that you've made a complete, working set of
   related changes, move on to the next steps.
-* [Format your code, and ensure that you have followed the coding
-  guidelines](coding_guidelines_c++#tooling).
+* Please ensure that you have followed the coding guidelines for
+  [C++](coding_guidelines_c++) and [SLI](coding_guidelines_sli).
 * Then test your changes by building the source code and running the tests.
   (Usually `cmake ...; make; make install; make installcheck`. Please see the
   [INSTALL](https://github.com/nest/nest-simulator/blob/master/INSTALL) file for
   details.)
 * Check which files have changed with `git status`. You'll see a listing like this one
-
-[//]: # TODO: Add link to build documentation when it's updated to use cmake.
 
 ```
 # On branch my-new-feature
@@ -281,10 +279,10 @@ index f05f0cd..e581f00 100644
   that you have made. (Please read [this article on writing commit
   messages](http://chris.beams.io/posts/git-commit/)).
   If a commit fixes an open issue on the [GitHub issue
-  tracker](https://github.com/nest/nest-simulator/issues), include `Fixes
-  #issue_number` in the commit message. GitHub finds such keywords and closes
-  the issue automatically when the pull request is merged. For a list of all
-  keywords you can use, refer to [this GitHub help
+  tracker](https://github.com/nest/nest-simulator/issues), include 
+  `Fixes #issue_number` in the commit message. GitHub finds such keywords and
+  closes the issue automatically when the pull request is merged. For a list of
+  all keywords you can use, refer to [this GitHub help
   page](https://help.github.com/articles/closing-issues-via-commit-messages/).
   After saving your message and closing the editor, your commit will be saved.
 
@@ -323,7 +321,8 @@ Next, we see how to create a pull request.
 When you feel your work is finished, you can create a pull request (PR). GitHub
 has a nice help page that outlines the process for
 [submitting pull requests](https://help.github.com/articles/using-pull-requests/#initiating-the-pull-request).
-Your pull request will usually be reviewed by other [NEST] developers.
+Your pull request will usually be reviewed by other [NEST] developers using the
+[code review guidelines](code_review_guidelines).
 
 ----------------------------------------------------------------------------
 

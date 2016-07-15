@@ -200,7 +200,7 @@ private:
     /** Membrane capacitance in pF. */
     double_t c_m_;
 
-    /** We use stc and sfa, respectively instead of eta and gamma 
+    /** We use stc and sfa, respectively instead of eta and gamma
     (mentioned in the references). */
 
     /** List of spike triggered current time constant in ms. */
@@ -242,21 +242,26 @@ private:
    */
   struct State_
   {
-    double_t y0_;  //!< This is piecewise constant external current
-    double_t y3_;  //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double_t y0_; //!< This is piecewise constant external current
+    double_t
+      y3_; //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
     double_t sfa_; //!< This is the change of the 'threshold' due to adaptation.
     double_t stc_; //!< Spike triggered current.
 
     std::vector< double_t > sfa_elems_; //!< Vector of adaptation parameters.
-    std::vector< double_t > stc_elems_; //!< Vector of spike triggered parameters.
+    std::vector< double_t >
+      stc_elems_; //!< Vector of spike triggered parameters.
 
-    std::vector< double_t > i_syn_; //!< instantaneous currents of different synapses.
+    std::vector< double_t >
+      i_syn_; //!< instantaneous currents of different synapses.
 
 
-    int_t r_ref_; //!< absolute refractory counter (no membrane potential propagation)
+    int_t r_ref_; //!< absolute refractory counter (no membrane potential
+                  //propagation)
 
     bool sfa_stc_initialized_; //!< it is true if the vectors are initialized
-    bool add_stc_sfa_; //!< in case of true, the stc and sfa amplitudes should be added
+    bool add_stc_sfa_; //!< in case of true, the stc and sfa amplitudes should
+                       //be added
 
     State_(); //!< Default initialization
 
@@ -298,7 +303,8 @@ private:
 
     unsigned int receptor_types_size_;
 
-    std::vector< double_t > P11_syn_; // for updating instantaneous currents of different synapses
+    std::vector< double_t >
+      P11_syn_; // for updating instantaneous currents of different synapses
     std::vector< double_t > P21_syn_;
 
     librandom::RngPtr rng_; // random number generator of my own thread
@@ -349,7 +355,10 @@ private:
 };
 
 inline port
-gif_psc_exp_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
+gif_psc_exp_multisynapse::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -359,7 +368,8 @@ gif_psc_exp_multisynapse::send_test_event( Node& target, rport receptor_type, sy
 
 
 inline port
-gif_psc_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
+gif_psc_exp_multisynapse::handles_test_event( CurrentEvent&,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -367,7 +377,8 @@ gif_psc_exp_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type
 }
 
 inline port
-gif_psc_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+gif_psc_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

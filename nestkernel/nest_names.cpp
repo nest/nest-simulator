@@ -201,8 +201,8 @@ const Name N( "N" );
 const Name N_channels( "N_channels" );
 const Name n_events( "n_events" );
 const Name n_proc( "n_proc" );
+const Name needs_prelim_update( "needs_prelim_update" );
 const Name neuron( "neuron" );
-const Name node_uses_wfr( "node_uses_wfr" );
 const Name noise( "noise" );
 const Name ns( "ns" );
 
@@ -238,7 +238,7 @@ const Name q_sfa( "q_sfa" );
 const Name q_stc( "q_stc" );
 const Name stc( "stc" );
 const Name V_T_star( "V_T_star" );
-const Name lambda_0( "lambda_0" );	
+const Name lambda_0( "lambda_0" );
 
 const Name rate( "rate" );
 const Name receptor_type( "receptor_type" );
@@ -276,7 +276,6 @@ const Name structural_plasticity_update_interval(
   "structural_plasticity_update_interval" );
 const Name structure( "structure" );
 const Name success( "success" );
-const Name symmetric( "symmetric" );
 const Name synapse( "synapse" );
 const Name synapse_label( "synapse_label" );
 const Name synapse_model( "synapse_model" );

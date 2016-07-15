@@ -708,6 +708,36 @@ GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
   (*hetconn)[ syn_index ] = conn;
 }
 
+template < typename ConnectionT >
+void
+GenericConnectorModel< ConnectionT >::reserve_connections(
+  HetConnector* hetconn,
+  const synindex syn_id,
+  const size_t count )
+{
+  std::cout<<"reserving space for "<<count<<" connections."<<std::endl;
+  synindex syn_index = hetconn->find_synapse_index( syn_id );
+  ConnectorBase* conn = 0;
+
+  if ( syn_index == invalid_synindex )
+  {
+    // synapse type does not exists yet, so create a homogeneous
+    // container for this connection type
+    conn = allocate< Connector< ConnectionT > >( syn_id );
+    syn_index = hetconn->size();
+    hetconn->resize( syn_index + 1);
+  }
+  else
+  {
+    conn = (*hetconn)[ syn_index ];
+  }
+  assert( conn != 0 );
+
+  conn->reserve( count );
+
+  (*hetconn)[ syn_index ] = conn;
+}
+
 } // namespace nest
 
 #endif

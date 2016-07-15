@@ -152,7 +152,7 @@ public:
   void finalize();
   //! reserve memory to avoid expensive copying of vectors during
   //! connection creation
-  // void reserve( thread, synindex, index );
+  void reserve( const thread tid, const synindex syn_id, const size_t count );
   //! adds a source to the sources table
   void add_source( const thread tid, const synindex syn_id, const index gid );
   //! clears the sources table

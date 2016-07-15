@@ -153,6 +153,10 @@ public:
     double_t delay = NAN,
     double_t weight = NAN ) = 0;
 
+  virtual void reserve_connections( HetConnector* hetconn,
+    const synindex syn_id,
+    const size_t count) = 0;
+
   virtual ConnectorModel* clone( std::string ) const = 0;
 
   virtual void calibrate( const TimeConverter& tc ) = 0;
@@ -305,6 +309,10 @@ public:
     std::vector< SecondaryEvent* > prototype_events;
     return prototype_events;
   }
+
+  void reserve_connections( HetConnector* hetconn,
+    const synindex syn_id,
+    const size_t count);
 
 private:
   void used_default_delay();

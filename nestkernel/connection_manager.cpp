@@ -1429,3 +1429,10 @@ nest::ConnectionManager::sort_connections()
     (*connections_5g_[ tid ]).sort_connections( source_table_.get_thread_local_sources( tid ) );
   } // of omp parallel
 }
+
+void
+nest::ConnectionManager::reserve_connections( const thread tid, const synindex syn_id, const size_t count )
+{
+  kernel().model_manager.get_synapse_prototype( syn_id, tid ).reserve_connections( connections_5g_[ tid ], syn_id, count );
+  source_table_.reserve( tid, syn_id, count );
+}

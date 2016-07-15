@@ -172,6 +172,8 @@ public:
   sort_connections( std::vector< Source >& sources ){ assert( false ); };
   virtual void
   sort_connections( std::vector< std::vector< Source > >& sources ){ assert( false ); };
+
+  virtual void reserve( const size_t ){ assert( false ); };
 };
 
 // homogeneous connector
@@ -441,6 +443,12 @@ public:
   sort_connections( std::vector< Source >& sources )
   {
     sort::sort( sources, C_, 0, C_.size() - 1 );
+  }
+
+  void
+  reserve( const size_t count )
+  {
+    C_.reserve( count );
   }
 };
 

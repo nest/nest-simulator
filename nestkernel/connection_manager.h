@@ -353,6 +353,13 @@ public:
    */
   void restructure_connection_tables();
 
+  /**
+   * Reserves memory in connections and source table. Should be called
+   * directly from the respective Connect functions when the number of
+   * synapses could be estimated.
+   */
+  void reserve_connections( const thread tid, const synindex syn_id, const size_t count );
+
 private:
   /**
    * Update delay extrema to current values.

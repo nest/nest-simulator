@@ -121,3 +121,26 @@ nest::SourceTable::clean( const thread tid )
     it->erase( new_end, it->end() );
   }
 }
+
+void
+nest::SourceTable::reserve( const thread tid,
+  const synindex syn_id,
+  const size_t count )
+{
+  std::cout<<"reserving space for "<<count<<" source."<<std::endl;
+  std::map< synindex, synindex >::iterator it = synapse_ids_[ tid ]->find( syn_id );
+  // if this synapse type is not known yet, create entry for new synapse vector
+  if (it == synapse_ids_[ tid ]->end())
+  {
+    const index prev_n_synapse_types = synapse_ids_[ tid ]->size();
+    (*synapse_ids_[ tid ])[ syn_id ] = prev_n_synapse_types;
+    sources_[ tid ]->resize( prev_n_synapse_types + 1);
+    (*sources_[ tid ])[ prev_n_synapse_types ].reserve( count );
+  }
+  // otherwise we can directly reserve
+  else
+  {
+    (*sources_[ tid ])[ it->second ].reserve( count );
+  }
+
+}

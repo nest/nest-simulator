@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef gif_psc_exp_multisynapse_H
-#define gif_psc_exp_multisynapse_H
+#ifndef GIF_PSC_EXP_MULTISYNAPSE_H
+#define GIF_PSC_EXP_MULTISYNAPSE_H
 
 // Includes from nestkernel:
 #include "archiving_node.h"
@@ -31,8 +31,6 @@
 #include "universal_data_logger.h"
 
 #include "nest.h"
-#include "poisson_randomdev.h"
-#include "gamma_randomdev.h"
 
 /* BeginDocumentation
   Name: gif_psc_exp_multisynapse - Current based generalized integrate-and-fire
@@ -66,7 +64,7 @@
   Neuron produces spikes STOCHASTICALLY according to a point process with the
   firing intensity:
 
-  lambda(t) = lambda0 * exp[(V(t)-V_T(t)/delta_u)]
+  lambda(t) = lambda_0 * exp[(V(t)-V_T(t)/Delta_V)]
 
   where V_T(t) is a time-dependent firing threshold:
 
@@ -83,29 +81,12 @@
 
   gamma_i = gamma_i + q_gamma_i  (in case of spike emission).
 
-  In the source code and parameter names we use stc and sfa, respectively
-  instead of eta and gamma.
-
   On the postsynapic side, there can be arbitrarily many synaptic time constants
   (gif_psc_exp has exactly
   two: tau_syn_ex and tau_syn_in). This can be reached by specifying separate
   receptor ports, each for a
   different time constant. The port number has to match the respective
   "receptor_type" in the connectors.
-
-  References:
-
-  [1] Mensi, S., Naud, R., Pozzorini, C., Avermann, M., Petersen, C. C., &
-  Gerstner, W. (2012). Parameter
-  extraction and classification of three cortical neuron types reveals two
-  distinct adaptation mechanisms.
-  Journal of Neurophysiology, 107(6), 1756-1775.
-
-  [2] Pozzorini, C., Mensi, S., Hagens, O., Naud, R., Koch, C., & Gerstner, W.
-  (2015). Automated
-  High-Throughput Characterization of Single Neurons by Means of Simplified
-  Spiking Models. PLoS
-  Comput Biol, 11(6), e1004275.
 
 
   Parameters:
@@ -126,13 +107,25 @@
     q_sfa      vector of double - Values added to spike-frequency adaptation
   (sfa) after each spike emission in mV.
     tau_sfa    vector of double - Time constants of sfa variables in ms.
-    delta_u    double - Stochasticity level in mV.
-    lambda0    double - Stochastic intensity at firing threshold V_T in Hz.
-    v_t_star   double - Minimum threshold in mV
+    Delta_V    double - Stochasticity level in mV.
+    lambda_0   double - Stochastic intensity at firing threshold V_T in 1/s.
+    V_T_star   double - Minimum threshold in mV
 
   Synaptic parameters
     taus_syn  vector of double - Time constants of the synaptic currents in ms
   (exp function).
+
+
+  References:
+
+  [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
+  Parameter extraction and classification of three cortical neuron types
+  reveals two distinct adaptation mechanisms. J. Neurophysiol., 107(6),
+  1756-1775.
+
+  [2] Pozzorini C, Mensi S, Hagens O, Naud R, Koch C, Gerstner W (2015)
+  Automated High-Throughput Characterization of Single Neurons by Means of
+  Simplified Spiking Models. PLoS Comput. Biol., 11(6), e1004275.
 
 
   Sends: SpikeEvent
@@ -196,9 +189,9 @@ private:
     double_t g_L_;
     double_t E_L_;
     double_t V_reset_;
-    double_t delta_u_;
-    double_t v_t_star_;
-    double_t lambda0_;
+    double_t Delta_V_;
+    double_t V_T_star_;
+    double_t lambda_0_; /** 1/ms */
 
 
     /** Refractory period in ms. */
@@ -207,6 +200,8 @@ private:
     /** Membrane capacitance in pF. */
     double_t c_m_;
 
+    /** We use stc and sfa, respectively instead of eta and gamma 
+    (mentioned in the references). */
 
     /** List of spike triggered current time constant in ms. */
     std::vector< double_t > tau_stc_;
@@ -249,20 +244,19 @@ private:
   {
     double_t y0_;  //!< This is piecewise constant external current
     double_t y3_;  //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
-    double_t q_;   //!< This is the change of the 'threshold' due to adaptation.
-    double_t stc_; // Spike triggered current.
+    double_t sfa_; //!< This is the change of the 'threshold' due to adaptation.
+    double_t stc_; //!< Spike triggered current.
 
-    std::vector< double_t > q_sfa_elems_; // Vector of adaptation parameters.
-    std::vector< double_t > q_stc_elems_; // Vector of spike triggered parameters.
+    std::vector< double_t > sfa_elems_; //!< Vector of adaptation parameters.
+    std::vector< double_t > stc_elems_; //!< Vector of spike triggered parameters.
 
-    std::vector< double_t > i_syn_; // instantaneous currents of different synapses.
+    std::vector< double_t > i_syn_; //!< instantaneous currents of different synapses.
 
 
-    int_t r_ref_; // absolute refractory counter (no membrane potential propagation)
+    int_t r_ref_; //!< absolute refractory counter (no membrane potential propagation)
 
-    bool initialized_; // it is true if the vectors are initialized
-    bool add_stc_sfa_; // in case of true, the stc and sfa ampplitudes should be
-                       // added
+    bool sfa_stc_initialized_; //!< it is true if the vectors are initialized
+    bool add_stc_sfa_; //!< in case of true, the stc and sfa amplitudes should be added
 
     State_(); //!< Default initialization
 
@@ -295,26 +289,19 @@ private:
    */
   struct Variables_
   {
-
     double_t P30_;
     double_t P33_;
     double_t P31_;
 
-    std::vector< double_t > Q33_; // for sfa
-    std::vector< double_t > Q44_; // for stc
-
-
-    double_t h_; //!< simulation time step in ms
+    std::vector< double_t > P_sfa_;
+    std::vector< double_t > P_stc_;
 
     unsigned int receptor_types_size_;
 
     std::vector< double_t > P11_syn_; // for updating instantaneous currents of different synapses
     std::vector< double_t > P21_syn_;
 
-    librandom::RngPtr rng_;                   // random number generator of my own thread
-    librandom::PoissonRandomDev poisson_dev_; // random deviate generator
-    librandom::GammaRandomDev gamma_dev_;     // random deviate generator
-
+    librandom::RngPtr rng_; // random number generator of my own thread
 
     int_t RefractoryCounts_;
   };
@@ -332,7 +319,14 @@ private:
   double_t
   get_E_sfa_() const
   {
-    return S_.q_;
+    return S_.sfa_;
+  }
+
+  //! Read out the spike triggered current
+  double_t
+  get_stc_() const
+  {
+    return S_.stc_;
   }
 
   // ----------------------------------------------------------------
@@ -410,4 +404,4 @@ gif_psc_exp_multisynapse::set_status( const DictionaryDatum& d )
 
 } // namespace
 
-#endif /* #ifndef gif_psc_exp_multisynapse_H */
+#endif /* #ifndef GIF_PSC_EXP_MULTISYNAPSE_H */

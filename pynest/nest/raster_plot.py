@@ -111,8 +111,45 @@ def from_file(fname, **kwargs):
     kwargs:
         Parameters passed to _make_plot
     """
+    try:
+        global pandas
+        pandas = __import__('pandas')
+        from_file_pandas(fname, **kwargs)
+    except ImportError:
+        from_file_numpy(fname, **kwargs)
 
-    if nest.is_iterable(fname):
+
+def from_file_pandas(fname, **kwargs):
+    """Use pandas."""
+    if isinstance(fname, (list, tuple)):
+        data = None
+        for f in fname:
+            if data is None:
+                dataFrame = pandas.read_csv(
+                    f, sep='\s+', lineterminator='\n',
+                    header=None, index_col=None,
+                    skipinitialspace=True)
+                data = dataFrame.values
+            else:
+                dataFrame = pandas.read_csv(
+                    f, sep='\s+', lineterminator='\n',
+                    header=None, index_col=None,
+                    skipinitialspace=True)
+                newdata = dataFrame.values
+                data = numpy.concatenate((data, newdata))
+    else:
+        dataFrame = pandas.read_csv(
+            fname, sep='\s+', lineterminator='\n',
+            header=None, index_col=None,
+            skipinitialspace=True)
+        data = dataFrame.values
+
+    return from_data(data, **kwargs)
+
+
+def from_file_numpy(fname, **kwargs):
+    """Use numpy."""
+    if isinstance(fname, (list, tuple)):
         data = None
         for f in fname:
             if data is None:

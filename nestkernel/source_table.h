@@ -45,7 +45,7 @@ struct Source
 {
   index gid : 45; //!< gid of source
   unsigned int target_count : 18; //!< number of local targets
-  bool processed;
+  unsigned int processed : 1; //!< whether this target has already been moved to the MPI buffer
   Source();
   Source( index gid );
 };

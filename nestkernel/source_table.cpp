@@ -36,6 +36,7 @@ nest::SourceTable::~SourceTable()
 void
 nest::SourceTable::initialize()
 {
+  assert( sizeof(Source) == 8 );
   const thread num_threads = kernel().vp_manager.get_num_threads();
   synapse_ids_.resize( num_threads );
   sources_.resize( num_threads );

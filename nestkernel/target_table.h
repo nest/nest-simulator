@@ -44,11 +44,11 @@ struct SpikeData;
  */
 struct Target
 {
-  index lcid : 27; //!< local connection index
-  thread rank : 20; //!< rank of target neuron
-  thread tid : 10; //!< thread index
-  synindex syn_index : 6; //!< synapse-type index
-  bool processed;
+  unsigned int lcid : 27; //!< local connection index
+  unsigned int  rank : 20; //!< rank of target neuron
+  short tid : 10; //!< thread index
+  char syn_index : 6; //!< synapse-type index
+  bool processed : 1;
   Target();
   Target( const Target& target );
   Target( const thread tid, const thread rank, const synindex syn_index, const index lcid);

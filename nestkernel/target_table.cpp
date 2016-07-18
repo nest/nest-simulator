@@ -31,6 +31,7 @@ const unsigned int nest::TargetData::invalid_marker = 3;
 
 nest::TargetTable::TargetTable()
 {
+  assert( sizeof(Target) == 12 );
 }
 
 nest::TargetTable::~TargetTable()

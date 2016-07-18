@@ -98,10 +98,10 @@ extern const Name
 extern const Name dead_time_random; //!< Random dead time or fixed dead time
                                     //!< (stochastic neuron pp_psc_delta)
 extern const Name dead_time_shape;  //!< Shape parameter of the dead time
-                                    //distribution (stochastic
-                                    //!< neuron pp_psc_delta)
-extern const Name delay;            //!< Connection parameters
-extern const Name delays;           //!< Connection parameters
+// distribution (stochastic
+//!< neuron pp_psc_delta)
+extern const Name delay;   //!< Connection parameters
+extern const Name delays;  //!< Connection parameters
 extern const Name Delta_T; //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name
   delta_tau; //!< Specific to correlation_and correlomatrix detector
@@ -247,6 +247,7 @@ extern const Name
   n_proc; //!< Number of component processes of ppd_sup_/gamma_sup_generator
 extern const Name needs_prelim_update; //!< Node parameter
 extern const Name neuron;              //!< Node type
+extern const Name node_uses_wfr;       //!< Node parameter
 extern const Name noise;               //!< Specific to iaf_chs_2008 neuron
 extern const Name ns; //!< Number of release sites (property arrays)
 
@@ -303,11 +304,11 @@ extern const Name rho_0; //!< Specific to population point process model
                          //!< (pp_pop_psc_delta)
 extern const Name rms;   //!< Root mean square
 extern const Name root_finding_epsilon; //!< Accuracy of the root of the
-                                        //polynomial (precise timing
-                                        //!< neurons (Brette 2007))
-extern const Name rport;                //!< Connection parameters
-extern const Name rports;               //!< Connection parameters
-extern const Name rule;                 //!< Connectivity-related
+// polynomial (precise timing
+//!< neurons (Brette 2007))
+extern const Name rport;  //!< Connection parameters
+extern const Name rports; //!< Connection parameters
+extern const Name rule;   //!< Connectivity-related
 
 extern const Name S; //!< Binary state (output) of neuron (Ginzburg neuron)
 extern const Name scientific; //!< Recorder parameter
@@ -325,12 +326,13 @@ extern const Name std_mod;                        //!< Miscellaneous parameters
 extern const Name stimulator;                     //!< Node type
 extern const Name stop;                           //!< Device parameters
 extern const Name structural_plasticity_synapses; //!< Synapses defined for
-                                                  //structural plasticity
+// structural plasticity
 extern const Name structural_plasticity_update_interval; //!< Update interval
-                                                         //for structural
-                                                         //plasticity
-extern const Name structure;                             //!< Node type
+// for structural
+// plasticity
+extern const Name structure; //!< Node type
 extern const Name success;
+extern const Name symmetric;       //!< Connectivity-related
 extern const Name synapse;         //!< Node type
 extern const Name synapse_label;   //!< Label id of synapses with labels
 extern const Name synapse_model;   //!< Connection parameters

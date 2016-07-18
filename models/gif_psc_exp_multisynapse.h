@@ -257,11 +257,11 @@ private:
 
 
     int_t r_ref_; //!< absolute refractory counter (no membrane potential
-                  //propagation)
+    // propagation)
 
     bool sfa_stc_initialized_; //!< it is true if the vectors are initialized
     bool add_stc_sfa_; //!< in case of true, the stc and sfa amplitudes should
-                       //be added
+    // be added
 
     State_(); //!< Default initialization
 

@@ -1089,6 +1089,8 @@ nest::FixedInDegreeBuilder::connect_()
   {
     // get thread id
     const thread tid = kernel().vp_manager.get_thread_id();
+    const size_t expected_targets = std::ceil( float(targets_->size()) / kernel().vp_manager.get_num_virtual_processes() );
+    kernel().connection_manager.reserve_connections( tid, get_synapse_model(), expected_targets * indegree_ );
 
     try
     {

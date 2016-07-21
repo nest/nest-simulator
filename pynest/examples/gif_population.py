@@ -23,15 +23,15 @@
 Population of GIF neuron model with oscillatory behavior
 --------------------------------------------------------
 
-This script simulates a population of generalized integrate-and-fire
-(GIF) neuron model receives noise from a group of Poisson neurons.
+This script simulates a population of generalized integrate-and-fire (GIF)
+neuron model receives noise from a group of Poisson neurons.
 
-Due to spike-frequency adaptation, the GIF neurons tend to show 
-oscillatory behavior on the time scale comparable with the time 
-constant of adaptation elements (stc and sfa).
+Due to spike-frequency adaptation, the GIF neurons tend to show oscillatory
+behavior on the time scale comparable with the time constant of adaptation
+elements (stc and sfa).
 
-Using spike detector, population dynamics (raster plot and average 
-firing rate) are shown.
+Using spike detector, population dynamics (raster plot and average firing rate)
+are shown.
 '''
 
 '''
@@ -50,14 +50,14 @@ dt = 0.1
 simtime = 2000.0
 
 '''
-Definition of neural parameters for the GIF model. These parameters
-are extracted by fitting the model to experimental data:
-Mensi, S., Naud, R., Pozzorini, C., Avermann, M., Petersen, C.C. 
-and Gerstner, W., 2012. Parameter extraction and classification 
-of three cortical neuron types reveals two distinct adaptation 
-mechanisms. Journal of neurophysiology, 107(6), pp.1756-1775.
+Definition of neural parameters for the GIF model. These parameters are
+extracted by fitting the model to experimental data: Mensi, S., Naud, R.,
+Pozzorini, C., Avermann, M., Petersen, C.C. and Gerstner, W., 2012. Parameter
+extraction and classification of three cortical neuron types reveals two
+distinct adaptation mechanisms. Journal of neurophysiology, 107(6),
+pp.1756-1775.
 '''
-                      
+
 neuron_params = {"C_m": 83.1,
                  "g_L": 3.7,
                  "E_L": -67.0,
@@ -82,8 +82,8 @@ p_ex = 0.3
 w_ex = 30.0  # pA
 
 '''
-Definition of the parameters for the Poisson group and its connection 
-with GIF neurons population.
+Definition of the parameters for the Poisson group and its connection with GIF
+neurons population.
 '''
 
 N_noise = 50
@@ -91,8 +91,8 @@ rate_noise = 10.0  # Hz
 w_noise = 20.0  # pA
 
 '''
-Configuration of the simulation kernel with the previously defined 
-time resolution.
+Configuration of the simulation kernel with the previously defined time
+resolution.
 '''
 
 nest.SetKernelStatus({"resolution": dt})
@@ -110,13 +110,13 @@ spikes_det = nest.Create("spike_detector")
 
 
 '''
-Building connections inside the population of GIF neurons population,
-between Poisson group and the population, and also connecting spike 
-detector to the population.
+Building connections inside the population of GIF neurons population, between
+Poisson group and the population, and also connecting spike detector to the
+population.
 '''
 
 nest.Connect(
-    population, population, {'rule': 'pairwise_bernoulli', 'p': p_ex}, 
+    population, population, {'rule': 'pairwise_bernoulli', 'p': p_ex},
     syn_spec={"weight": w_ex}
     )
 
@@ -131,8 +131,8 @@ Simulation of the network.
 nest.Simulate(simtime)
 
 '''
-Plotting the results of simulation including raster plot and histogram 
-of population activity. 
+Plotting the results of simulation including raster plot and histogram of
+population activity.
 '''
 
 nest.raster_plot.from_device(spikes_det, hist=True)

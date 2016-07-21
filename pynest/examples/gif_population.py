@@ -58,8 +58,8 @@ of three cortical neuron types reveals two distinct adaptation
 mechanisms. Journal of neurophysiology, 107(6), pp.1756-1775.
 '''
                       
-neuron_params = {"C_m": 83.1 ,
-                 "g_L": 3.7  ,
+neuron_params = {"C_m": 83.1,
+                 "g_L": 3.7,
                  "E_L": -67.0,
                  "Delta_V": 1.4,
                  "V_T_star": -39.6,
@@ -69,7 +69,7 @@ neuron_params = {"C_m": 83.1 ,
                  "q_stc": [56.7, -6.9],
                  "tau_stc": [57.8, 218.2],
                  "q_sfa": [11.7, 1.8],
-                 "tau_sfa":[53.8, 640.0],
+                 "tau_sfa": [53.8, 640.0],
                  "tau_syn_ex": 10.0,
                  }
 
@@ -79,7 +79,7 @@ Definition of the parameters for the population of GIF neurons.
 
 N_ex = 100
 p_ex = 0.3
-w_ex = 30.0 # pA
+w_ex = 30.0  # pA
 
 '''
 Definition of the parameters for the Poisson group and its connection 
@@ -87,8 +87,8 @@ with GIF neurons population.
 '''
 
 N_noise = 50
-rate_noise = 10.0 #Hz
-w_noise = 20.0 #pA
+rate_noise = 10.0  # Hz
+w_noise = 20.0  # pA
 
 '''
 Configuration of the simulation kernel with the previously defined 
@@ -102,13 +102,11 @@ Building a population of GIF neurons, a group of Poisson neurons and a
 spike detector device for capturing spike times of the population.
 '''
 
-population = nest.Create("gif_psc_exp", N_ex, 
-                         params = neuron_params)
+population = nest.Create("gif_psc_exp", N_ex, params=neuron_params)
 
-noise = nest.Create("poisson_generator", N_noise, 
-                        params={'rate': rate_noise})
+noise = nest.Create("poisson_generator", N_noise, params={'rate': rate_noise})
 
-spikes_det  = nest.Create("spike_detector")
+spikes_det = nest.Create("spike_detector")
 
 
 '''
@@ -117,11 +115,12 @@ between Poisson group and the population, and also connecting spike
 detector to the population.
 '''
 
-nest.Connect(population, population, {'rule': 'pairwise_bernoulli', 'p': p_ex}, 
-             syn_spec = { "weight": w_ex })
+nest.Connect(
+    population, population, {'rule': 'pairwise_bernoulli', 'p': p_ex}, 
+    syn_spec={"weight": w_ex}
+    )
 
-nest.Connect(noise, population, 'all_to_all', 
-             syn_spec = { "weight": w_noise })
+nest.Connect(noise, population, 'all_to_all', syn_spec={"weight": w_noise})
 
 nest.Connect(population, spikes_det)
 

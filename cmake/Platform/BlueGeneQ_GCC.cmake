@@ -22,8 +22,8 @@ include( Platform/BlueGeneQ_Base )
 set( ENV{PATH} "/bgsys/drivers/ppcfloor/gnu-linux/bin:$ENV{PATH}" )
 
 # set the compiler
-set( CMAKE_C_COMPILER powerpc64-bgq-linux-gcc )
-set( CMAKE_CXX_COMPILER powerpc64-bgq-linux-g++ )
+set( CMAKE_C_COMPILER powerpc64-bgq-linux-gcc CACHE FILEPATH "cmake is so awesomely misdesigned")
+set( CMAKE_CXX_COMPILER powerpc64-bgq-linux-g++ CACHE FILEPATH "cmake is so awesomely misdesigned")
 
 if ( static-libraries )
   __bluegeneq_setup_static( GNU CXX )

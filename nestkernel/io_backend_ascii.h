@@ -1,5 +1,5 @@
 /*
- *  ascii_logger.h
+ *  io_backend_ascii.h
  *
  *  This file is part of NEST.
  *
@@ -20,13 +20,13 @@
  *
  */
 
-#ifndef ASCII_LOGGER_H
-#define ASCII_LOGGER_H
+#ifndef IO_BACKEND_ASCII_H
+#define IO_BACKEND_ASCII_H
 
 #include <map>
 #include <fstream>
 
-#include "logger.h"
+#include "io_backend.h"
 
 namespace nest
 {
@@ -36,27 +36,27 @@ namespace nest
  * Recorded data is written to plain text files on a per-device-per-thread basis.
  * Some formatting options are available to allow some compatibility to legacy NEST output files.
  *
- * ASCIILogger maintains a data structure mapping one file stream to every recording device instance
+ * IOBackendASCII maintains a data structure mapping one file stream to every recording device instance
  * on every thread. Files are opened and inserted into the map during the initialize() call and
  * closed in finalize().
  */
-class ASCIILogger : public Logger
+class IOBackendASCII : public IOBackend
 {
 public:
   /**
-   * ASCIILogger constructor.
+   * IOBackendASCII constructor.
    * The actual setup is done in initialize().
    */
-  ASCIILogger()
+  IOBackendASCII()
     : files_()
   {
   }
 
   /**
-   * ASCIILogger descructor.
+   * IOBackendASCII descructor.
    * File handling is done in finalize().
    */
-  ~ASCIILogger() throw()
+  ~IOBackendASCII() throw()
   {
     // remaining files are not closed here but should be handled gracefully on NEST shutdown.
   }
@@ -69,19 +69,19 @@ public:
   void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
 
   /**
-   * Initialize the ASCIILogger during simulation preparation. Here, files are opened for all
+   * Initialize the IOBackendASCII during simulation preparation. Here, files are opened for all
    * previously enrolled devices.
    */
   void initialize();
 
   /**
-   * Finalize the ASCIILogger after the simulation has finished. Files are flushed and/or closed
+   * Finalize the IOBackendASCII after the simulation has finished. Files are flushed and/or closed
    * according to `close_after_simulate` and `flush_after_simulate` parameters.
    */
   void finalize();
 
   /**
-   * Trivial synchronization function. The ASCIILogger does not need explicit synchronization after
+   * Trivial synchronization function. The IOBackendASCII does not need explicit synchronization after
    * each time step.
    */
   void synchronize();
@@ -116,8 +116,8 @@ private:
 
     Parameters_();
 
-    void get( const ASCIILogger&, DictionaryDatum& ) const;
-    void set( const ASCIILogger&, const DictionaryDatum& );
+    void get( const IOBackendASCII&, DictionaryDatum& ) const;
+    void set( const IOBackendASCII&, const DictionaryDatum& );
   };
 
   Parameters_ P_;
@@ -130,11 +130,11 @@ private:
 };
 
 inline void
-ASCIILogger::get_status( DictionaryDatum& d ) const
+IOBackendASCII::get_status( DictionaryDatum& d ) const
 {
   P_.get( *this, d );
 }
 
 } // namespace
 
-#endif // ASCII_LOGGER_H
+#endif // IO_BACKEND_ASCII_H

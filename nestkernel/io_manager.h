@@ -32,7 +32,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
-#include "logger.h"
+#include "io_backend.h"
 
 namespace nest
 {
@@ -77,14 +77,14 @@ public:
    */
   bool overwrite_files() const;
 
-  bool set_logger( Name name );
-  Logger* get_logger();
+  bool set_backend( Name name );
+  IOBackend* get_backend();
 
 private:
   std::string data_path_;   //!< Path for all files written by devices
   std::string data_prefix_; //!< Prefix for all files written by devices
   bool overwrite_files_;    //!< If true, overwrite existing data files.
-  Logger* logger_;
+  IOBackend* backend_;
 };
 }
 
@@ -107,10 +107,10 @@ nest::IOManager::overwrite_files() const
   return overwrite_files_;
 }
 
-inline nest::Logger*
-nest::IOManager::get_logger()
+inline nest::IOBackend*
+nest::IOManager::get_backend()
 {
-  return logger_;
+  return backend_;
 }
 
 #endif /* IO_MANAGER_H */

@@ -1,5 +1,5 @@
 /*
- *  sion_logger.h
+ *  io_backend_sion.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SION_LOGGER_H
-#define SION_LOGGER_H
+#ifndef IO_BACKEND_SION_H
+#define IO_BACKEND_SION_H
 
 #include <string.h>
 #include <iostream>
@@ -29,23 +29,23 @@
 #include <algorithm>
 #include <map>
 
-#include "logger.h"
+#include "io_backend.h"
 
 #include "mpi.h"
 #include "sion.h"
 
 namespace nest
 {
-class SIONLogger : public Logger
+class IOBackendSION : public IOBackend
 {
 public:
-  SIONLogger()
+  IOBackendSION()
     : files_()
     , initialized_( false )
   {
   }
   
-  SIONLogger( std::string file_ext,
+  IOBackendSION( std::string file_ext,
     long buffer_size,
     long sion_chunksize,
     bool sion_collective,
@@ -60,7 +60,7 @@ public:
     P_.close_after_simulate_ = close_after_simulate;
   }
 
-  ~SIONLogger() throw()
+  ~IOBackendSION() throw()
   {
   }
 
@@ -158,8 +158,8 @@ private:
 
     Parameters_();
 
-    void get( const SIONLogger&, DictionaryDatum& ) const;
-    void set( const SIONLogger&, const DictionaryDatum& );
+    void get( const IOBackendSION&, DictionaryDatum& ) const;
+    void set( const IOBackendSION&, const DictionaryDatum& );
   };
 
   Parameters_ P_;
@@ -168,11 +168,11 @@ private:
 };
 
 inline void
-SIONLogger::get_status( DictionaryDatum& d ) const
+IOBackendSION::get_status( DictionaryDatum& d ) const
 {
   P_.get( *this, d );
 }
 
 } // namespace
 
-#endif // SION_LOGGER_H
+#endif // IO_BACKEND_SION_H

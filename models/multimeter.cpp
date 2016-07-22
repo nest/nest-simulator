@@ -135,8 +135,7 @@ Multimeter::init_buffers_()
 void
 Multimeter::calibrate()
 {
-  Logger* logger = kernel().io_manager.get_logger();
-  logger->enroll( *this, P_.record_from_ );
+  kernel().io_manager.get_backend()->enroll( *this, P_.record_from_ );
   RecordingDevice::calibrate();
 }
 
@@ -196,8 +195,7 @@ Multimeter::handle( DataLoggingReply& reply )
     //const Time stamp = reply.get_stamp();
     //const double offset = reply.get_offset();
 
-    Logger* logger = kernel().io_manager.get_logger();
-    logger->write( *this, reply, info[ j ].data );
+    kernel().io_manager.get_backend()->write( *this, reply, info[ j ].data );
 
     S_.data_.push_back( info[ j ].data );
   }

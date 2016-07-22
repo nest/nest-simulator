@@ -61,7 +61,7 @@ extern const Name beta;    //!< Specific to amat2_*
 extern const Name beta_Ca; //!< Increment in calcuim concentration
                            //!< with each spike
 extern const Name binary;  //!< Recorder parameter
-extern const Name buffer_size; //!< SIONLogger parameter
+extern const Name buffer_size; //!< IOBackendSION parameter
 
 extern const Name c;         //!< Specific to Izhikevich 2003
 extern const Name c_1;       //!< Specific to stochastic neuron pp_psc_delta
@@ -308,8 +308,8 @@ extern const Name S; //!< Binary state (output) of neuron (Ginzburg neuron)
 extern const Name scientific;  //!< Recorder parameter
 extern const Name screen;      //!< Recorder parameter
 extern const Name senders;     //!< Recorder parameter
-extern const Name sion_chunksize;  //!< SIONLogger parameters
-extern const Name sion_collective; //!< SIONLogger parameters
+extern const Name sion_chunksize;  //!< IOBackendSION parameters
+extern const Name sion_collective; //!< IOBackendSION parameters
 extern const Name size_of;     //!< Connection parameters
 extern const Name source;      //!< Connection parameters
 extern const Name spike;       //!< true if the neuron spikes and false if not.
@@ -444,10 +444,10 @@ extern const Name z_connected; //!< Number of connected synaptic elements
                                //!< per node
 
 extern const Name recording;
-extern const Name logger;
-extern const Name ScreenLogger;
-extern const Name ASCIILogger;
-extern const Name SIONLogger;
+extern const Name io_backend;
+extern const Name IOBackendScreen;
+extern const Name IOBackendASCII;
+extern const Name IOBackendSION;
 }
 }
 

@@ -96,6 +96,64 @@ you received with the NEST sources.
 - For those looking to extend NEST a [developer
   manual](http://nest.github.io/nest-simulator/) is available.
 
+## Citing NEST
+
+Please cite NEST if you use it in your work.  If you use this version of NEST,
+please cite it as `Bos, Hannah et al. (2015).  NEST 2.10.0. Zenodo.
+10.5281/zenodo.44222`.  The full citation is available in different formats on
+[Zenodo](http://dx.doi.org/10.5281/zenodo.44222).
+
+Here is a suitable BibTeX entry:
+
+```latex
+@misc{bos_2015_44222,
+  author       = {Bos, Hannah and
+                  Morrison, Abigail and
+                  Peyser, Alexander and
+                  Hahne, Jan and
+                  Helias, Moritz and
+                  Kunkel, Susanne and
+                  Ippen, Tammo and
+                  Eppler, Jochen Martin and
+                  Schmidt, Maximilian and
+                  Seeholzer, Alex and
+                  Djurfeldt, Mikael and
+                  Diaz, Sandra and
+                  Morén, Janne and
+                  Deepu, Rajalekshmi and
+                  Stocco, Teo and
+                  Deger, Moritz and
+                  Michler, Frank and
+                  Plesser, Hans Ekkehard},
+  title        = {NEST 2.10.0},
+  month        = dec,
+  year         = 2015,
+  doi          = {10.5281/zenodo.44222},
+  url          = {http://dx.doi.org/10.5281/zenodo.44222}
+}
+```
+
+For all other versions below NEST v2.8.0 please use: [Gewaltig M-O & Diesmann M
+(2007) NEST (Neural Simulation Tool) Scholarpedia
+2(4):1430](http://www.scholarpedia.org/article/NEST_(Neural_Simulation_Tool)).
+
+Here is a suitable BibTeX entry:
+
+```latex
+@ARTICLE{Gewaltig:NEST,
+  author = {Marc-Oliver Gewaltig and Markus Diesmann},
+  title = {NEST (NEural Simulation Tool)},
+  journal = {Scholarpedia},
+  year = {2007},
+  volume = {2},
+  pages = {1430},
+  number = {4}
+}
+```
+
+Please get in touch with us about your publications that used NEST, we will add
+it to our publication list, thus making it visible to potential readers.
+
 ## Editor support
 
 Emacs users may use the SLI mode, which provides syntax highlighting

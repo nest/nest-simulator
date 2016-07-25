@@ -84,13 +84,16 @@ summary](http://nest-simulator.org/features/).
 
 ## Installing NEST
 
-Generic installation instructions can be found in the file INSTALL that
-you received with the NEST sources.
+Generic installation instructions can be found in the
+[INSTALL](https://github.com/nest/nest-simulator/blob/master/INSTALL) file that
+you received in the NEST sources.
 
 ## Getting help
 
 - You can run the `help` command in the NEST interpreter to find documentation
-  and learn more about available commands. 
+  and learn more about available commands.
+- For queries regarding NEST usage, please use the [nest-users mailing
+  list](http://mail.nest-initiative.org/cgi-bin/mailman/listinfo/nest_user).
 - Information on the Python bindings to NEST can be found in
   `${prefix}/share/doc/nest/README.md`.
 - For those looking to extend NEST a [developer

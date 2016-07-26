@@ -106,71 +106,49 @@ def from_file(fname, **kwargs):
     kwargs:
         Parameters passed to _make_plot
     """
-    try:
-        global pandas
-        pandas = __import__('pandas')
-        from_file_pandas(fname, **kwargs)
-    except ImportError:
-        from_file_numpy(fname, **kwargs)
+    if isinstance(fname, str):
+        fname = [fname]
+
+    if isinstance(fname, (list, tuple)):
+        try:
+            global pandas
+            pandas = __import__('pandas')
+            from_file_pandas(fname, **kwargs)
+        except ImportError:
+            from_file_numpy(fname, **kwargs)
+    else:
+        print >> sys.stderr, 'fname should be of str/list(str)/tuple(str).'
+        return None
 
 
 def from_file_pandas(fname, **kwargs):
     """Use pandas."""
-    if isinstance(fname, str):
-        fname = fname
+    data = None
+    for f in fname:
         dataFrame = pandas.read_csv(
-            fname, sep='\s+', lineterminator='\n',
+            f, sep='\s+', lineterminator='\n',
             header=None, index_col=None,
             skipinitialspace=True)
-        data = dataFrame.values
+        newdata = dataFrame.values
 
-    elif isinstance(fname, (list, tuple)):
-        data = None
-        for f in fname:
-            if not isinstance(f, str):
-                print >> sys.stderr, 'List entry is not a python2 string'
-                return None
-
-            if data is None:
-                dataFrame = pandas.read_csv(
-                    f, sep='\s+', lineterminator='\n',
-                    header=None, index_col=None,
-                    skipinitialspace=True)
-                data = dataFrame.values
-            else:
-                dataFrame = pandas.read_csv(
-                    f, sep='\s+', lineterminator='\n',
-                    header=None, index_col=None,
-                    skipinitialspace=True)
-                newdata = dataFrame.values
-                data = numpy.concatenate((data, newdata))
-
-    else:
-        print >> sys.stderr, 'fname should be of str/list(str)/tuple(str).'
-        return None
+        if data is None:
+            data = newdata
+        else:
+            data = numpy.concatenate((data, newdata))
 
     return from_data(data, **kwargs)
 
 
 def from_file_numpy(fname, **kwargs):
     """Use numpy."""
-    if isinstance(fname, str):
-        data = numpy.loadtxt(fname)
+    data = None
+    for f in fname:
+        newdata = numpy.loadtxt(f)
 
-    elif isinstance(fname, (list, tuple)):
-        data = None
-        for f in fname:
-            if not isinstance(f, str):
-                print >> sys.stderr, 'List entry is not a python2 string'
-                return None
-
-            if data is None:
-                data = numpy.loadtxt(f)
-            else:
-                data = numpy.concatenate((data, numpy.loadtxt(f)))
-    else:
-        print >> sys.stderr, 'fname should be of str/list(str)/tuple(str).'
-        return None
+        if data is None:
+            data = newdata
+        else:
+            data = numpy.concatenate((data, newdata))
 
     return from_data(data, **kwargs)
 

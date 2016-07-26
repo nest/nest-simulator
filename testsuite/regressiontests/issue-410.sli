@@ -40,7 +40,7 @@ M_ERROR setverbosity
 
 is_threaded_with_openmp not { exit_test_gracefully } if
 
-/sim_dope_concentration
+/sim_dopa_concentration
 {
 
 dup /threads Set
@@ -79,23 +79,35 @@ dopa [vt] cvgidcollection Connect
 2000.0 Simulate
 
 %push return value
-<< /source [neuron1] /target [neuron2] >> GetConnections 0 get GetStatus /weight get
+<< /source [neuron1] /target [neuron2] >> GetConnections /conns Set
+conns size 0 gt {
+  0 get GetStatus /weight get
+}
+{
+  0.0
+} ifelse
 } def
 
 {
-  1 sim_dope_concentration /t1 Set 
-  2 sim_dope_concentration /t2 Set
-  4 sim_dope_concentration /t3 Set
-  8 sim_dope_concentration /t4 Set
+  1 sim_dopa_concentration /t1 Set 
+  2 sim_dopa_concentration /t2 Set
+  4 sim_dopa_concentration /t3 Set
+  8 sim_dopa_concentration /t4 Set
+  16 sim_dopa_concentration /t5 Set
+  32 sim_dopa_concentration /t6 Set
   
   (1 thread weight=) t1 cvs join =
   (2 threads weight=) t2 cvs join =
-  (4 threads weight=) t2 cvs join =
-  (8 threads weight=) t2 cvs join =
+  (4 threads weight=) t3 cvs join =
+  (8 threads weight=) t4 cvs join =
+  (16 threads weight=) t5 cvs join =
+  (32 threads weight=) t6 cvs join =
 
   t1 t2 sub abs 0.0001 lt
-  t2 t3 sub abs 0.0001 lt and
-  t3 t4 sub abs 0.0001 lt and
+  t1 t3 sub abs 0.0001 lt and
+  t1 t4 sub abs 0.0001 lt and
+  t1 t5 sub abs 0.0001 lt and
+  t1 t6 sub abs 0.0001 lt and  
 } assert_or_die
 
 endusing

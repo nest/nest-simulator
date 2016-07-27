@@ -45,7 +45,7 @@ nest::spike_detector::spike_detector()
   : Node()
   // record time and gid
   , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true )
-  , user_set_precise_times_( false )
+  , has_user_set_precise_times_( false )
   , has_proxies_( false )
   , local_receiver_( true )
 {
@@ -54,7 +54,7 @@ nest::spike_detector::spike_detector()
 nest::spike_detector::spike_detector( const spike_detector& n )
   : Node( n )
   , device_( *this, n.device_ )
-  , user_set_precise_times_( n.user_set_precise_times_ )
+  , has_user_set_precise_times_( n.has_user_set_precise_times_ )
   , has_proxies_( false )
   , local_receiver_( true )
 {
@@ -80,7 +80,7 @@ nest::spike_detector::init_buffers_()
 void
 nest::spike_detector::calibrate()
 {
-  if ( !user_set_precise_times_
+  if ( !has_user_set_precise_times_
     && kernel().event_delivery_manager.get_off_grid_communication() )
   {
     device_.set_precise( true, 15 );
@@ -139,7 +139,10 @@ void
 nest::spike_detector::set_status( const DictionaryDatum& d )
 {
   if ( d->known( names::precise_times ) )
-    user_set_precise_times_ = true;
+    has_user_set_precise_times_ = true;
+
+  if ( d->known( names::precision ) )
+    has_user_set_precise_times_ = true;
 
   device_.set_status( d );
 }

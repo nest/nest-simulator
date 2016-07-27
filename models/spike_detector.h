@@ -182,7 +182,7 @@ private:
   RecordingDevice device_;
   Buffers_ B_;
 
-  bool user_set_precise_times_;
+  bool has_user_set_precise_times_;
   bool has_proxies_;
   bool local_receiver_;
 };

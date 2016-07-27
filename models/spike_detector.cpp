@@ -42,21 +42,21 @@
 #include "integerdatum.h"
 
 nest::spike_detector::spike_detector()
-        : Node()
-        // record time and gid
-        , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true )
-        , has_user_set_precise_times_( false )
-        , has_proxies_( false )
-        , local_receiver_( true )
+  : Node()
+  // record time and gid
+  , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true )
+  , has_user_set_precise_times_( false )
+  , has_proxies_( false )
+  , local_receiver_( true )
 {
 }
 
 nest::spike_detector::spike_detector( const spike_detector& n )
-        : Node( n )
-        , device_( *this, n.device_ )
-        , has_user_set_precise_times_( n.has_user_set_precise_times_ )
-        , has_proxies_( false )
-        , local_receiver_( true )
+  : Node( n )
+  , device_( *this, n.device_ )
+  , has_user_set_precise_times_( n.has_user_set_precise_times_ )
+  , has_proxies_( false )
+  , local_receiver_( true )
 {
 }
 
@@ -81,18 +81,18 @@ void
 nest::spike_detector::calibrate()
 {
   if ( !has_user_set_precise_times_
-       && kernel().event_delivery_manager.get_off_grid_communication() )
+    && kernel().event_delivery_manager.get_off_grid_communication() )
   {
     device_.set_precise( true, 15 );
 
     LOG( M_INFO,
-         "spike_detector::calibrate",
-         String::compose(
-                 "Precise neuron models exist: the property precise_times "
-                         "of the %1 with gid %2 has been set to true, precision has "
-                         "been set to 15.",
-                 get_name(),
-                 get_gid() ) );
+      "spike_detector::calibrate",
+      String::compose(
+           "Precise neuron models exist: the property precise_times "
+           "of the %1 with gid %2 has been set to true, precision has "
+           "been set to 15.",
+           get_name(),
+           get_gid() ) );
   }
 
   device_.calibrate();
@@ -127,7 +127,7 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
   if ( local_receiver_ && get_thread() == 0 )
   {
     const SiblingContainer* siblings =
-            kernel().node_manager.get_thread_siblings( get_gid() );
+      kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
     for ( sibling = siblings->begin() + 1; sibling != siblings->end();
           ++sibling )
@@ -142,12 +142,12 @@ nest::spike_detector::set_status( const DictionaryDatum& d )
     has_user_set_precise_times_ = true;
 
   // By setting precision value, precise_times is implicitly set.
-  if ( d->known(names::precision ) )
+  if ( d->known( names::precision ) )
   {
 
     if ( d->known( names::precise_times ) )
     {
-      if (getValue<bool>( d, names::precise_times ) )
+      if ( getValue< bool >( d, names::precise_times ) )
         device_.set_precise( true, getValue< long >( d, names::precision ) );
     }
 
@@ -171,8 +171,8 @@ nest::spike_detector::handle( SpikeEvent& e )
 
     long_t dest_buffer;
     if ( kernel()
-            .modelrange_manager.get_model_of_gid( e.get_sender_gid() )
-            ->has_proxies() )
+           .modelrange_manager.get_model_of_gid( e.get_sender_gid() )
+           ->has_proxies() )
       // events from central queue
       dest_buffer = kernel().event_delivery_manager.read_toggle();
     else
@@ -187,3 +187,4 @@ nest::spike_detector::handle( SpikeEvent& e )
     }
   }
 }
+

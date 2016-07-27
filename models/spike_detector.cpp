@@ -139,7 +139,9 @@ void
 nest::spike_detector::set_status( const DictionaryDatum& d )
 {
   if ( d->known( names::precise_times ) )
+  {
     has_user_set_precise_times_ = true;
+  }
 
   // By setting precision value, precise_times is implicitly set.
   if ( d->known( names::precision ) )
@@ -148,7 +150,9 @@ nest::spike_detector::set_status( const DictionaryDatum& d )
     if ( d->known( names::precise_times ) )
     {
       if ( getValue< bool >( d, names::precise_times ) )
+      {
         device_.set_precise( true, getValue< long >( d, names::precision ) );
+      }
     }
 
     else
@@ -187,4 +191,3 @@ nest::spike_detector::handle( SpikeEvent& e )
     }
   }
 }
-

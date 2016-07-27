@@ -51,6 +51,8 @@ EventDeliveryManager::EventDeliveryManager()
   , global_offgrid_spikes_()
   , displacements_()
   , comm_marker_( 0 )
+  , time_collocate_( 0.0 )
+  , time_communicate_( 0.0 )
 {
 }
 
@@ -67,6 +69,7 @@ void
 EventDeliveryManager::initialize()
 {
   init_moduli();
+  reset_timers();
 }
 
 void
@@ -89,6 +92,8 @@ void
 EventDeliveryManager::get_status( DictionaryDatum& dict )
 {
   def< bool >( dict, "off_grid_spiking", off_grid_spiking_ );
+  def< double >( dict, "time_collocate", time_collocate_ );
+  def< double >( dict, "time_communicate", time_communicate_ );
 }
 
 void
@@ -244,6 +249,13 @@ EventDeliveryManager::update_moduli()
     slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps()
                              + d ) / min_delay ) % nbuff;
   }
+}
+
+void
+EventDeliveryManager::reset_timers()
+{
+  time_collocate_ = 0.0;
+  time_communicate_ = 0.0;
 }
 
 void
@@ -577,12 +589,25 @@ EventDeliveryManager::deliver_events( thread t )
 void
 EventDeliveryManager::gather_events( bool done )
 {
-  collocate_buffers_( done );
-  if ( off_grid_spiking_ )
-    kernel().mpi_manager.communicate(
-      local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
-  else
-    kernel().mpi_manager.communicate(
-      local_grid_spikes_, global_grid_spikes_, displacements_ );
+#pragma omp master
+  {
+    stw_collocate_.reset();
+    stw_collocate_.start();
+    collocate_buffers_( done );
+    stw_collocate_.stop();
+    time_collocate_ += stw_collocate_.elapsed();
+    stw_communicate_.reset();
+    stw_communicate_.start();
+    if ( off_grid_spiking_ )
+    {
+      kernel().mpi_manager.communicate( local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
+    }
+    else
+    {
+      kernel().mpi_manager.communicate( local_grid_spikes_, global_grid_spikes_, displacements_ );
+    }
+    stw_communicate_.stop();
+    time_communicate_ += stw_communicate_.elapsed();
+  } // omp master
 }
 }

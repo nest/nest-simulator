@@ -62,7 +62,7 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   , withgid_( withgid )
   , withtime_( withtime )
   , withweight_( withweight )
-  , precision_( 3 )
+  , precision_( 15 )
   , scientific_( false )
   , binary_( false )
   , fbuffer_size_( BUFSIZ ) // default buffer size as defined in <cstdio>

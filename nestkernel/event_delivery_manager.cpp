@@ -589,7 +589,7 @@ EventDeliveryManager::deliver_events( thread t )
 void
 EventDeliveryManager::gather_events( bool done )
 {
-#pragma omp master
+//#pragma omp master
   {
     stw_collocate_.reset();
     stw_collocate_.start();

@@ -364,9 +364,6 @@ nest::SimulationManager::simulate( Time const& t )
   t_slice_begin_ = timeval();
   t_slice_end_ = timeval();
 
-  // TODO: Put into prepare_simulation_
-  kernel().event_delivery_manager.reset_timers();
-
   if ( t == Time::ms( 0.0 ) )
     return;
 
@@ -520,6 +517,9 @@ size_t
 nest::SimulationManager::prepare_simulation_()
 {
   assert( to_do_ != 0 ); // This is checked in simulate()
+
+  // Reset profiling timers within event_delivery_manager
+  kernel().event_delivery_manager.reset_timers();
 
   // find shortest and longest delay across all MPI processes
   // this call sets the member variables

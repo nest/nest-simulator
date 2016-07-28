@@ -452,16 +452,14 @@ nest::SimulationManager::resume_( size_t num_active_nodes )
   os << std::endl
      << "Number of OpenMP threads: " << kernel().vp_manager.get_num_threads();
 #else
-  os << std::endl
-     << "Not using OpenMP";
+  os << std::endl << "Not using OpenMP";
 #endif
 
 #ifdef HAVE_MPI
   os << std::endl
      << "Number of MPI processes: " << kernel().mpi_manager.get_num_processes();
 #else
-  os << std::endl
-     << "Not using MPI";
+  os << std::endl << "Not using MPI";
 #endif
 
   LOG( M_INFO, "SimulationManager::resume", os.str() );
@@ -733,10 +731,10 @@ nest::SimulationManager::update_()
 
       const std::vector< Node* >& thread_local_nodes =
         kernel().node_manager.get_nodes_on_thread( thrd );
-      for (
-        std::vector< Node* >::const_iterator node = thread_local_nodes.begin();
-        node != thread_local_nodes.end();
-        ++node )
+      for ( std::vector< Node* >::const_iterator node =
+              thread_local_nodes.begin();
+            node != thread_local_nodes.end();
+            ++node )
       {
         // We update in a parallel region. Therefore, we need to catch
         // exceptions here and then handle them after the parallel region.

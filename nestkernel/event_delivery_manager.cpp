@@ -212,8 +212,10 @@ EventDeliveryManager::init_moduli()
   slice_moduli_.resize( min_delay + max_delay );
   for ( delay d = 0; d < min_delay + max_delay; ++d )
   {
-    slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps()
-                             + d ) / min_delay ) % nbuff;
+    slice_moduli_[ d ] =
+      ( ( kernel().simulation_manager.get_clock().get_steps() + d )
+        / min_delay )
+      % nbuff;
   }
 }
 
@@ -248,8 +250,10 @@ EventDeliveryManager::update_moduli()
     std::ceil( static_cast< double >( min_delay + max_delay ) / min_delay ) );
   for ( delay d = 0; d < min_delay + max_delay; ++d )
   {
-    slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps()
-                             + d ) / min_delay ) % nbuff;
+    slice_moduli_[ d ] =
+      ( ( kernel().simulation_manager.get_clock().get_steps() + d )
+        / min_delay )
+      % nbuff;
   }
 }
 
@@ -303,7 +307,7 @@ EventDeliveryManager::collocate_buffers_( bool done )
   // +1 for bool-value done
   num_spikes =
     num_grid_spikes + num_offgrid_spikes + uintsize_secondary_events + 2;
-    
+
   if ( !off_grid_spiking_ ) // on grid spiking
   {
     // make sure buffers are correctly sized
@@ -607,13 +611,13 @@ EventDeliveryManager::gather_events( bool done )
   stw_communicate_.start();
   if ( off_grid_spiking_ )
   {
-    kernel().mpi_manager.communicate( local_offgrid_spikes_,
-                                      global_offgrid_spikes_, displacements_ );
+    kernel().mpi_manager.communicate(
+      local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
   }
   else
   {
-    kernel().mpi_manager.communicate( local_grid_spikes_,
-                                      global_grid_spikes_, displacements_ );
+    kernel().mpi_manager.communicate(
+      local_grid_spikes_, global_grid_spikes_, displacements_ );
   }
   stw_communicate_.stop();
   time_communicate_ += stw_communicate_.elapsed();

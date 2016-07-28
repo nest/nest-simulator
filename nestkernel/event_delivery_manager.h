@@ -216,9 +216,9 @@ public:
 
   /**
    * Set cumulative time measurements for collocating buffers
-   * and for communication to zero
+   * and for communication to zero; set local spike counter to zero.
    */
-  virtual void reset_timers();
+  virtual void reset_timers_counters();
 
 private:
   /**
@@ -331,14 +331,19 @@ private:
   Stopwatch stw_communicate_;
 
   /**
-   * Time that was spent on collocation of MPI buffers in the last mindelay interval.
+   * Time that was spent on collocation of MPI buffers during the last call to simulate.
    */
   double_t time_collocate_;
 
   /**
-   * Time that was spent on communication of events in the last mindelay interval.
+   * Time that was spent on communication of events during the last call to simulate.
    */
   double_t time_communicate_;
+
+  /**
+   * Number of generated spike events (both off- and on-grid) during the last call to simulate.
+   */
+  ulong_t local_spike_counter_;
 };
 
 

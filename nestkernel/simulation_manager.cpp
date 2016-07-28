@@ -898,7 +898,6 @@ nest::SimulationManager::print_progress_()
   std::flush( std::cout );
 }
 
-// inline
 nest::Time const
 nest::SimulationManager::get_previous_slice_origin() const
 {

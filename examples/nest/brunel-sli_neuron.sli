@@ -296,42 +296,29 @@ end
 
 
       % Connect Poisson generator to neurons
-      expoisson E_neurons /syn_ex DivergentConnect
+      [expoisson] E_neurons /all_to_all /syn_ex Connect
 
-      E_neurons
-      {
+      % E -> E connections
+      % the following is a single call to fixed_indegree connect
+      E_neurons   % source population [we pick from this]
+      E_neurons   % target neurons
+      << /rule /fixed_indegree /indegree CE >> % number of source neurons to pick
+      << /model /syn_ex >>    % the synapse model
+      Connect
 
-        % E -> E connections
-        % the following is a single call to RandomConvergentConnect
-        E_neurons   % source population [we pick from this]
-        exch        % target neuron
-        CE          % number of source neurons to pick
-        /syn_ex     % the synapse model
-        RandomConvergentConnect
-      }  % bind improves efficiency
-      forall
-
-      E_neurons
-      {
-        I_neurons exch CI /syn_in RandomConvergentConnect
-
-      }  forall
+      
+      
+      I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
 
       (Connecting inhibitory population.) =
 
       % ... as above, just written more compact
 
-      inpoisson I_neurons /syn_ex DivergentConnect
+      [inpoisson] I_neurons /all_to_all /syn_ex Connect
 
-      I_neurons
-      {
-        E_neurons exch CE /syn_ex RandomConvergentConnect
-      }  forall
+      E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
 
-      I_neurons
-      {
-        I_neurons exch CI /syn_in RandomConvergentConnect
-      }  forall
+      I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
 
       % Spike detectors are connected to the first Nrec neurons in each
       % population.  Since neurons are equal and connectivity is homogeneously
@@ -339,10 +326,10 @@ end
       % from each population
       (Connecting spike detectors.) =
 
-      E_neurons Nrec Take exsd ConvergentConnect  % pick the first 500 neurons
-      I_neurons Nrec Take insd ConvergentConnect
+      E_neurons Nrec Take [exsd] Connect  % pick the first 500 neurons
+      I_neurons Nrec Take [insd] Connect
 
-    toc /BuildCPUTime Set
+      toc /BuildCPUTime Set
       (Building time     : ) =only BuildCPUTime =only ( s) =
 
      /syn_ex GetDefaults /num_connections get /n_ex_syn Set
@@ -351,8 +338,8 @@ end
 %%% SIMULATION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
   % run, measure computer time with tic-toc
+  (Starting simulation.) =
   tic
-
   simtime Simulate
   toc /SimCPUTime Set
 

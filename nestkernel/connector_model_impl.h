@@ -224,10 +224,11 @@ GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
 }
 
 /**
- * delay and weight have the default value NAN.
- * NAN is a special value in cmath, which describes double values that
+ * delay and weight have the default value numerics::nan.
+ * numerics::nan is a special value, which describes double values that
  * are not a number. If delay or weight is omitted in an add_connection call,
- * NAN indicates this and weight/delay are set only, if they are valid.
+ * numerics::nan indicates this and weight/delay are set only, if they are
+ * valid.
  */
 template < typename ConnectionT >
 ConnectorBase*
@@ -264,10 +265,11 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 }
 
 /**
- * delay and weight have the default value NAN.
- * NAN is a special value in cmath, which describes double values that
+ * delay and weight have the default value numerics::nan.
+ * numerics::nan is a special value, which describes double values that
  * are not a number. If delay or weight is omitted in an add_connection call,
- * NAN indicates this and weight/delay are set only, if they are valid.
+ * numerics::nan indicates this and weight/delay are set only, if they are
+ * valid.
  */
 template < typename ConnectionT >
 ConnectorBase*
@@ -313,18 +315,21 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
-  if ( !p->empty() )
-    c.set_status( p, *this ); // reference to connector model needed here to
-                              // check delay (maybe this
-                              // could be done one level above?)
+
   if ( not numerics::is_nan( weight ) )
   {
     c.set_weight( weight );
   }
+
   if ( not numerics::is_nan( delay ) )
   {
     c.set_delay( delay );
   }
+
+  if ( !p->empty() )
+    c.set_status( p, *this ); // reference to connector model needed here to
+                              // check delay (maybe this
+                              // could be done one level above?)
 
   // We must use a local variable here to hold the actual value of the
   // receptor type. We must not change the receptor_type_ data member, because

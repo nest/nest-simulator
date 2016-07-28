@@ -50,7 +50,7 @@ if ( NOT MUSIC_EXECUTABLE STREQUAL "MUSIC_EXECUTABLE-NOTFOUND" )
       OUTPUT_STRIP_TRAILING_WHITESPACE
   )
   if ( RESULT EQUAL 0 )
-    string( REGEX REPLACE "^MUSIC ([0-9]\\.[0-9]\\.[0-9]).*" "\\1"
+    string( REGEX REPLACE "^MUSIC ([0-9]+\\.[0-9]+\\.[0-9]+).*" "\\1"
                           MUSIC_VERSION ${MUSIC_VAR_OUTPUT} )
   endif ()
 endif ()

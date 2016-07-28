@@ -104,9 +104,10 @@ public:
   }
 
   /**
-   * NAN is a special value in cmath, which describes double values that
+   * numerics::nan is a special value, which describes double values that
    * are not a number. If delay or weight is omitted in an add_connection call,
-   * NAN indicates this and weight/delay are set only, if they are valid.
+   * numerics:nan indicates this and weight/delay are set only, if they are
+   * valid.
    */
   virtual ConnectorBase* add_connection( Node& src,
     Node& tgt,

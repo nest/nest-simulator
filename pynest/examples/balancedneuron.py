@@ -97,9 +97,9 @@ Fifth, the `iaf_neuron` is connected to the `spike_detector` and the
 `voltmeter`, as are the two Poisson generators to the neuron. The
 command `Connect` has different variants. Plain `Connect` just takes
 the handles of pre- and post-synaptic nodes and uses the default
-values for weight and delay. `ConvergentConnect` takes four arguments:
-lists of pre- and post-synaptic nodes and lists of weights and
-delays. Note that the connection direction for the `voltmeter` is
+values for weight and delay. It can also be called with a list of
+weights, as in the connection of the noise below.
+Note that the connection direction for the `voltmeter` is
 reversed compared to the `spike_detector`, because it observes the
 neuron instead of receiving events from it. Thus, `Connect` reflects
 the direction of signal flow in the simulation kernel rather than the
@@ -109,7 +109,7 @@ semantics is presently not available in NEST.
 
 nest.Connect(neuron, spikedetector)
 nest.Connect(voltmeter, neuron)
-nest.ConvergentConnect(noise, neuron, [epsc, ipsc], 1.0)
+nest.Connect(noise, neuron, syn_spec={'weight': [[epsc, ipsc]], 'delay': 1.0})
 
 '''
 To determine the optimal rate of the neurons in the inhibitory

@@ -1,5 +1,4 @@
-The Neural Simulation Tool
-==========================
+# The Neural Simulation Tool
 
 -   *Download NEST*
 
@@ -7,7 +6,7 @@ The Neural Simulation Tool
 
     Use NEST for your research, modify and improve it
 
-    Current Release [NEST 2.10.0 (Dec 31 2015)](download.md#h1-17987)
+    Current Release [NEST 2.10.0 (Dec 31 2015)](download.md)
 
 -   *Tools for modern computational neuroscience*
 
@@ -27,8 +26,7 @@ The Neural Simulation Tool
 
     Regular open source releases under the terms of the GPL
 
-What is NEST
--------------
+## What is NEST
 
 NEST is a simulator for spiking neural network models that focuses on the
 dynamics, size and structure of neural systems rather than on the exact
@@ -50,8 +48,7 @@ Learn more about NEST:
 **\>\> NEST:: documented movie ** **[(short version](http://www.youtube.com/watch?v=K7KXmIv6ROY),**
 **[long version)](http://www.youtube.com/watch?v=v0YEiren7D0)\>\> NEST information brochure** **[PDF](http://www.nest-simulator.org/wp-content/uploads/2015/04/JARA_NEST_final.pdf)**
 
-How do I use NEST
-------------------
+## How do I use NEST
 
 You can use NEST either as a for the interpreted programming language Python
 (PyNEST) or as a stand alone application (`nest`).
@@ -82,12 +79,11 @@ memory or to file.
 NEST is extensible and new models for neurons, synapses, and devices can be
 added.
 
-To get started with NEST, please see the [Documentation Page for Tutorials](documentation.md "Documentation").
+To get started with NEST, please see the [Documentation Page for Tutorials](documentation.md).
 
-Why should I use NEST
-----------------------
+## Why should I use NEST
 
-To learn more about the capabilities of NEST, see the [Feature summary](features.md "Features").
+To learn more about the capabilities of NEST, see the [Feature summary](features.md).
 
 1.  NEST provides over 50 neuron models many of which have been published.
     Choose from simple integrate-and-fire neurons with current or conductance
@@ -117,7 +113,7 @@ To learn more about the capabilities of NEST, see the [Feature summary](features
 8.  NEST has minimal dependencies. All it really needs is a C++ compiler.
     Everything else is optional.
 
-9.  NEST developers are using agile [continuous integration](continuous_integration.md "Continuous Integration")-based
+9.  NEST developers are using agile [continuous integration](continuous-integration.md)-based
     workflows in order to maintain high code quality standards for correct and
     reproducible simulations.
 
@@ -127,8 +123,7 @@ To learn more about the capabilities of NEST, see the [Feature summary](features
 
 11. NEST is open source software and is licensed under the [GNU General Public License v2 or later](http://www.gnu.org/licenses/).
 
-Please cite NEST and tell us about your work
---------------------------------------------
+## Please cite NEST and tell us about your work
 
 If you have used NEST for your work either directly or via PyNN, please cite it
 in your publications as:
@@ -148,22 +143,20 @@ Here is suitable BibTeX entry:
       number = {4}
     }
 
-If you tell us about your publications that used [NEST](download.md "Download"),
-we will add it to our [publication list](publications.md "Publications"),
+If you tell us about your publications that used [NEST](download.md),
+we will add it to our [publication list](publications.md),
 thus making it visible to potential readers. Send us your reference or even a
-reprint, using the mail address given on the [contact page](impressum.md "Impressum").
+reprint, using the mail address given on the [contact page](impressum.md).
 
-NEST logo for your poster or presentation
------------------------------------------
+## NEST logo for your poster or presentation
 
 If you like NEST, why not show it on your poster or on your slides?
 
 <https://github.com/nest/nest-simulator/tree/master/extras/logos>
 
-![](../../../logos/nest-simulated.png)
+<img src="../../../logos/nest-simulated.png" width="480">
 
-Nest Models on [Open Source Brain](http://www.opensourcebrain.org/)
--------------------------------------------------------------------
+## Nest Models on [Open Source Brain](http://www.opensourcebrain.org/)
 
 -   [Connection Set Algebra Showcase](http://www.opensourcebrain.org/projects/44)
 -   [Network models of V1](http://www.opensourcebrain.org/projects/111)

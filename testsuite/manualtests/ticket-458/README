@@ -2,6 +2,10 @@
 This directory contains test scripts related to ticket 458
 (lack of scaling for precise neurons).
 
+This test is currently not working as it has not been kept ajour with NEST.
+Github issue #302 will address this.
+
+
 Benchmarking tests
 ------------------
 These tests check scaling by simulating the CUBA network running at 4Hz for 10s.

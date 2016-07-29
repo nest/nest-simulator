@@ -65,24 +65,25 @@ nest::IOBackendSION::enroll( RecordingDevice& device, const std::vector< Name >&
 #pragma omp barrier
 
   // guarantee that the device has not been enrolled previously
-  assert( devices_[ task ].find( gid ) == devices_[ task ].end() );
-
-  DeviceEntry entry( device );
-  DeviceInfo& info = entry.info;
-
-  info.gid = gid;
-  info.type = static_cast< unsigned int >( device.get_type() );
-  info.name = device.get_name();
-  info.label = device.get_label();
-
-  info.value_names.reserve( value_names.size() );
-  for ( std::vector< Name >::const_iterator it = value_names.begin(); it != value_names.end();
-        ++it )
+  if ( devices_[ task ].find( gid ) == devices_[ task ].end() )
   {
-    info.value_names.push_back( it->toString() );
-  }
+    DeviceEntry entry( device );
+    DeviceInfo& info = entry.info;
 
-  devices_[ task ].insert( std::make_pair( gid, entry ) );
+    info.gid = gid;
+    info.type = static_cast< unsigned int >( device.get_type() );
+    info.name = device.get_name();
+    info.label = device.get_label();
+
+    info.value_names.reserve( value_names.size() );
+    for ( std::vector< Name >::const_iterator it = value_names.begin(); it != value_names.end();
+          ++it )
+    {
+      info.value_names.push_back( it->toString() );
+    }
+
+    devices_[ task ].insert( std::make_pair( gid, entry ) );
+  }
 }
 
 void

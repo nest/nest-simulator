@@ -59,8 +59,11 @@ nest::IOBackendASCII::enroll( RecordingDevice& device, const std::vector< Name >
 
   // Insert the device with a newly created file stream into the thread-local map.
   // Devices can not be enrolled more than once.
-  assert( files_[ task ].find( gid ) == files_[ task ].end() );
-  files_[ task ].insert( std::make_pair( gid, std::make_pair( &device, new std::ofstream() ) ) );
+  //assert( files_[ task ].find( gid ) == files_[ task ].end() );
+  if ( files_[ task ].find( gid ) == files_[ task ].end() )
+  {
+    files_[ task ].insert( std::make_pair( gid, std::make_pair( &device, new std::ofstream() ) ) );
+  }
 }
 
 void

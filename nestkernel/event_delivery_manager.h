@@ -29,6 +29,7 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
 #include "mpi_manager.h" // OffGridSpike
@@ -213,6 +214,12 @@ public:
    */
   void init_moduli();
 
+  /**
+   * Set cumulative time measurements for collocating buffers
+   * and for communication to zero
+   */
+  virtual void reset_timers();
+
 private:
   /**
    * Rearrange the spike_register into a 2-dim structure. This is
@@ -312,6 +319,26 @@ private:
    * steps during communication.
    */
   const uint_t comm_marker_;
+
+  /**
+   * Stop watch to time collocation of events in MPI buffers.
+   */
+  Stopwatch stw_collocate_;
+
+  /**
+   * Stop watch to time communication of events.
+  */
+  Stopwatch stw_communicate_;
+
+  /**
+   * Time that was spent on collocation of MPI buffers during last call to simulate.
+   */
+  double_t time_collocate_;
+
+  /**
+   * Time that was spent on communication of events during last call to simulate.
+   */
+  double_t time_communicate_;
 };
 
 

@@ -331,12 +331,12 @@ private:
   Stopwatch stw_communicate_;
 
   /**
-   * Time that was spent on collocation of MPI buffers in the last mindelay interval.
+   * Time that was spent on collocation of MPI buffers during last call to simulate.
    */
   double_t time_collocate_;
 
   /**
-   * Time that was spent on communication of events in the last mindelay interval.
+   * Time that was spent on communication of events during last call to simulate.
    */
   double_t time_communicate_;
 };

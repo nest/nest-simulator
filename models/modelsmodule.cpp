@@ -42,6 +42,7 @@
 // Neuron models
 #include "aeif_cond_alpha.h"
 #include "aeif_cond_alpha_multisynapse.h"
+#include "aeif_cond_2exp_multisynapse.h"
 #include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_exp.h"
 #include "amat2_psc_exp.h"
@@ -334,6 +335,8 @@ ModelsModule::init( SLIInterpreter* )
     "aeif_cond_alpha_RK5" );
   kernel().model_manager.register_node_model< aeif_cond_alpha_multisynapse >(
     "aeif_cond_alpha_multisynapse" );
+  kernel().model_manager.register_node_model< aeif_cond_2exp_multisynapse >(
+    "aeif_cond_2exp_multisynapse" );
 
 #ifdef HAVE_MUSIC
   //// proxies for inter-application communication using MUSIC

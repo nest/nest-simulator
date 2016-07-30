@@ -44,7 +44,9 @@
  aeif_cond_2exp_multisynapse is an extension of
  aeif_cond_alpha_multisynapse.  It allows an arbitrary number of synaptic
  rise time and decay time constant. Synaptic conductance is modeled by a
- double exponential function.
+ double exponential function, as described by A. Roth and M.C.W. van Rossum
+ in Computational Modeling Methods for Neuroscientists, MIT Press 2013,
+ Chapter 6
 
  The time constants are supplied by two arrays taus_rise and taus_decay for
  the synaptic rise time and decay time, respectively.  Port numbers
@@ -54,32 +56,40 @@
  During connection, the ports are selected with the property "receptor_type".
 
  Examples:
- % PyNEST example, of how to assign a synaptic time constant to a receptor type.
+ % PyNEST example, of how to assign synaptic rise time and decay time
+ % to a receptor type.
 
  nest.SetDefaults('aeif_cond_2exp_multisynapse', {'HMIN':0.001})
  nest.SetDefaults('aeif_cond_2exp_multisynapse', {'MAXERR':1e-10})
 
  neuron = nest.Create('aeif_cond_2exp_multisynapse')
  nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
- nest.SetStatus(neuron, {'taus_decay':[100.0,70.0,50.0,50.0],
-                         'taus_rise':[20.0,20.0,10.0,10.0]})
- spike = nest.Create('spike_generator', params = {'spike_times':
-                                                             np.array([100.0])})
+ nest.SetStatus(neuron, {'taus_decay':[50.0,20.0,20.0,20.0],
+                         'taus_rise':[10.0,10.0,1.0,1.0]})
+ spike1 = nest.Create('spike_generator', params = {'spike_times':
+                                                  np.array([10.0])})
+ spike2 = nest.Create('spike_generator', params = {'spike_times':
+                                                  np.array([10.0])})
+ spike3 = nest.Create('spike_generator', params = {'spike_times':
+                                                  np.array([10.0])})
+ spike4 = nest.Create('spike_generator', params = {'spike_times':
+                                                  np.array([10.0])})
+
  voltmeter = nest.Create('voltmeter', 1, {'withgid': True})
 
- nest.CopyModel("static_synapse", "synapse1", {"weight":1.0, "delay":1.0,
-   'receptor_type': 1})
- nest.CopyModel("static_synapse", "synapse2", {"weight":1.0, "delay":100.0,
-   'receptor_type': 2})
- nest.CopyModel("static_synapse", "synapse3", {"weight":1.0, "delay":300.0,
-   'receptor_type': 3})
- nest.CopyModel("static_synapse", "synapse4", {"weight":-1.0, "delay":500.0,
-   'receptor_type': 4})
+ nest.CopyModel("static_synapse", "synapse1", {"weight":0.1, "delay":1.0,
+                                               'receptor_type': 1})
+ nest.CopyModel("static_synapse", "synapse2", {"weight":0.1, "delay":300.0,
+                                               'receptor_type': 2})
+ nest.CopyModel("static_synapse", "synapse3", {"weight":0.1, "delay":500.0,
+                                               'receptor_type': 3})
+ nest.CopyModel("static_synapse", "synapse4", {"weight":-0.1, "delay":700.0,
+                                               'receptor_type': 4})
 
- nest.Connect(spike, neuron, model="synapse1")
- nest.Connect(spike, neuron, model="synapse2")
- nest.Connect(spike, neuron, model="synapse3")
- nest.Connect(spike, neuron, model="synapse4")
+ nest.Connect(spike1, neuron, model="synapse1")
+ nest.Connect(spike2, neuron, model="synapse2")
+ nest.Connect(spike3, neuron, model="synapse3")
+ nest.Connect(spike4, neuron, model="synapse4")
 
  nest.Connect(voltmeter, neuron)
 

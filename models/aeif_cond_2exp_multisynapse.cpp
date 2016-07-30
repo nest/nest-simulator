@@ -85,11 +85,13 @@ aeif_cond_2exp_multisynapse::Parameters_::Parameters_()
   , I_e( 0.0 )        // pA
   , MAXERR( 1.0e-10 ) // mV
   , HMIN( 1.0e-3 )    // ms
-  , num_of_receptors_( 0 )
+  , num_of_receptors_( 1 )
   , has_connections_( false )
 {
   taus_rise.clear();
   taus_decay.clear();
+  taus_decay.push_back(20.0);
+  taus_rise.push_back(2.0);
 }
 
 aeif_cond_2exp_multisynapse::State_::State_( const Parameters_& p )
@@ -215,8 +217,8 @@ aeif_cond_2exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
     {
       for ( size_t i = 0; i < taus_decay.size(); ++i )
       {
-	taus_rise.push_back(taus_decay[i]/100.); // if taus_rise is not defined
-	// explicitly, it will be set to taus_decay/100
+	taus_rise.push_back(taus_decay[i]/10.); // if taus_rise is not defined
+	// explicitly, it will be set to taus_decay/10
       }
     }
   }

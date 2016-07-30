@@ -162,6 +162,10 @@ extern const Name g;             //!< Conductance
 extern const Name g_ahp;         //!< Specific to iaf_chxk_2008 neuron
 extern const Name g_ex;          //!< Excitatory conductance
 extern const Name g_in;          //!< inhibitory conductance
+extern const Name g_ex_rise;     //!< Excitatory conductance rising component
+extern const Name g_ex_decay;    //!< Excitatory conductance decaying component
+extern const Name g_in_rise;     //!< inhibitory conductance rising component
+extern const Name g_in_decay;    //!< inhibitory conductance decaying component
 extern const Name g_K;           //!< Potassium conductance
 extern const Name g_Kv1;         //!< Kv1 Potassium conductance
 extern const Name g_Kv3;         //!< Kv3 Potassium conductance
@@ -376,6 +380,8 @@ extern const Name tau_w; //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name taus_eta; //!< Specific to population point process model
                             //!< (pp_pop_psc_delta)
 extern const Name taus_syn; //!< Synapse time constants (array)
+extern const Name taus_rise; //!< Synapse rise constants (array)
+extern const Name taus_decay; //!< Synapse decay constants (array)
 extern const Name theta;    //!< Did not compile without (theta neuron problem)
 extern const Name thread;   //!< Node parameter
 extern const Name thread_local_id; //!< Thead-local ID of node,

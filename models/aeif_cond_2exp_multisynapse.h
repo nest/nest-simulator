@@ -36,8 +36,8 @@
                                       integrate-and-fire neuron model according
                                       to Brette and Gerstner (2005) with
                                       multiple synaptic rise time and decay
-				      time constants, and synaptic conductance
-				      modeled by a double exponential.
+                                      time constants, and synaptic conductance
+                                      modeled by a double exponential.
 
  Description:
 
@@ -173,13 +173,14 @@ private:
     double_t b;       //!< Spike-triggered adaptation in pA
     double_t V_th;    //!< Spike threshold in mV.
     double_t t_ref;   //!< Refractory period in ms.
-    std::vector< double_t > taus_rise; //!< Rise time of synaptic conductance
-                                       //!< in ms..
+    std::vector< double_t > taus_rise;  //!< Rise time of synaptic conductance
+                                        //!< in ms..
     std::vector< double_t > taus_decay; //!< Decay time of synaptic conductance
                                         //!< in ms..
-    double_t I_e;    //!< Intrinsic current in pA.
-    double_t MAXERR; //!< Maximal error for adaptive stepsize solver
-    double_t HMIN;   //!< Smallest permissible stepsize in ms.
+
+    double_t I_e;     //!< Intrinsic current in pA.
+    double_t MAXERR;  //!< Maximal error for adaptive stepsize solver
+    double_t HMIN;    //!< Smallest permissible stepsize in ms.
 
     // type is long because other types are not put through in GetStatus
     std::vector< long > receptor_types_;
@@ -215,11 +216,11 @@ private:
     enum StateVecElems
     {
       V_M = 0,
-      W,      // 1
-      G_EXC_RISE, // 2
-      G_EXC_DECAY,  // 3
-      G_INH_RISE, // 4
-      G_INH_DECAY,  // 5
+      W,           // 1
+      G_EXC_RISE,  // 2
+      G_EXC_DECAY, // 3
+      G_INH_RISE,  // 4
+      G_INH_DECAY, // 5
       STATE_VECTOR_MIN_SIZE
     };
 
@@ -348,7 +349,9 @@ aeif_cond_2exp_multisynapse::handles_test_event( CurrentEvent&,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -357,7 +360,9 @@ aeif_cond_2exp_multisynapse::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
@@ -420,10 +425,10 @@ aeif_cond_2exp_multisynapse::aeif_cond_2exp_multisynapse_dynamics(
                             * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
         i += S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR )
   {
-    I_syn_exc += (y[ S::G_EXC_DECAY + i ] - y[ S::G_EXC_RISE + i ])
-      * ( V - P_.E_ex );
-    I_syn_inh += (y[ S::G_INH_DECAY + i ] - y[ S::G_INH_RISE + i ])
-      * ( V - P_.E_in );
+    I_syn_exc +=
+      (y[ S::G_EXC_DECAY + i ] - y[ S::G_EXC_RISE + i ]) * ( V - P_.E_ex );
+    I_syn_inh +=
+      (y[ S::G_INH_DECAY + i ] - y[ S::G_INH_RISE + i ]) * ( V - P_.E_in );
   }
 
   // We pre-compute the argument of the exponential
@@ -447,11 +452,11 @@ aeif_cond_2exp_multisynapse::aeif_cond_2exp_multisynapse_dynamics(
   for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
   {
     j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-    // Synaptic conductance derivative dG/dt (nS) for excitatory connections 
+    // Synaptic conductance derivative dG/dt (nS) for excitatory connections
     f[ S::G_EXC_RISE + j ] = -y[ S::G_EXC_RISE + j ] / P_.taus_rise[ i ];
     f[ S::G_EXC_DECAY + j ] = -y[ S::G_EXC_DECAY + j ] / P_.taus_decay[ i ];
 
-    // Synaptic conductance derivative dG/dt (nS) for inhibitory connections 
+    // Synaptic conductance derivative dG/dt (nS) for inhibitory connections
     f[ S::G_INH_RISE + j ] = -y[ S::G_INH_RISE + j ] / P_.taus_rise[ i ];
     f[ S::G_INH_DECAY + j ] = -y[ S::G_INH_DECAY + j ] / P_.taus_decay[ i ];
 

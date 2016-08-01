@@ -217,8 +217,9 @@ aeif_cond_2exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
     {
       for ( size_t i = 0; i < taus_decay.size(); ++i )
       {
-	taus_rise.push_back(taus_decay[i]/10.); // if taus_rise is not defined
-	// explicitly, it will be set to taus_decay/10
+        taus_rise.push_back( taus_decay[ i ] / 10. );
+        // if taus_rise is not defined
+        // explicitly, it will be set to taus_decay/10
       }
     }
   }
@@ -228,13 +229,13 @@ aeif_cond_2exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
     if ( taus_decay.size() == 0 )
     {
       throw BadProperty(
-	"Synaptic decay times must be defined before rise times." );
+            "Synaptic decay times must be defined before rise times." );
     }
     if ( tau_tmp.size() != taus_decay.size() )
     {
       throw BadProperty(
-	"The number of ports for synaptic rise times must be the same "
-	"as that of decay times." );
+            "The number of ports for synaptic rise times must be the same "
+            "as that of decay times." );
     }
 
     for ( size_t i = 0; i < tau_tmp.size(); ++i )
@@ -363,23 +364,23 @@ aeif_cond_2exp_multisynapse::State_::set( const DictionaryDatum& d )
     for ( size_t i = 0; i < g_exc_rise.size(); ++i )
     {
       if ( ( g_exc_rise[ i ] < 0 ) || ( g_exc_decay[ i ] < 0 ) ||
-	   ( g_inh_rise[ i ] < 0 ) || ( g_inh_decay[ i ] < 0 ) )
+           ( g_inh_rise[ i ] < 0 ) || ( g_inh_decay[ i ] < 0 ) )
       {
         throw BadProperty( "Conductances must not be negative." );
       }
 
       y_[ State_::G_EXC_RISE
         + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ]
-	= g_exc_rise[ i ];
+        = g_exc_rise[ i ];
       y_[ State_::G_EXC_DECAY
-	+ ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ]
-	= g_exc_decay[ i ];
+          + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ]
+        = g_exc_decay[ i ];
       y_[ State_::G_INH_RISE
         + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ]
-	= g_inh_rise[ i ];
+        = g_inh_rise[ i ];
       y_[ State_::G_INH_DECAY
-	+ ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ]
-	= g_inh_decay[ i ];
+        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ]
+        = g_inh_decay[ i ];
     }
   }
 
@@ -471,11 +472,12 @@ aeif_cond_2exp_multisynapse::calibrate()
 
   for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
   {
-    double t_p = P_.taus_decay[i]*P_.taus_rise[i]
-      / (P_.taus_decay[i] - P_.taus_rise[i])
-      * std::log(P_.taus_decay[i]/P_.taus_rise[i]); // peak time
+    double t_p = P_.taus_decay[ i ] * P_.taus_rise[ i ]
+      / ( P_.taus_decay[ i ] - P_.taus_rise[ i ] )
+      * std::log( P_.taus_decay[ i ] / P_.taus_rise[ i ] ); // peak time
     V_.g0_ex_[ i ] = V_.g0_in_[ i ] // normalization factors for conductance
-      = 1./(std::exp(-t_p/P_.taus_decay[i])-std::exp(-t_p/P_.taus_rise[i]));
+      = 1. / ( std::exp( -t_p / P_.taus_decay[ i ])
+               - std::exp( -t_p / P_.taus_rise[ i ] ) );
   }
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   assert( V_.RefractoryCounts_
@@ -533,7 +535,9 @@ aeif_cond_2exp_multisynapse::update( Time const& origin,
     double t = 0.0; // internal time of the integration period
 
     if ( S_.r_ > 0 ) // decrease remaining refractory steps if non-zero
+    { 
       --S_.r_;
+    }
 
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
@@ -570,7 +574,7 @@ aeif_cond_2exp_multisynapse::update( Time const& origin,
       {
 
         if ( tend - t < h ) // stop integration at end of simulation step
-          h = tend - t;
+          { h = tend - t; }
 
         t_return = t + h; // update t
 
@@ -579,47 +583,60 @@ aeif_cond_2exp_multisynapse::update( Time const& origin,
 
         // k2 = f(told + h/5, y + h*k1 / 5)
         for ( size_t i = 0; i < S_.y_.size(); ++i )
+        {
           S_.yin[ i ] = S_.y_[ i ] + h * S_.k1[ i ] / 5.0;
+        }
         aeif_cond_2exp_multisynapse_dynamics( S_.yin, S_.k2 );
 
         // k3 = f(told + 3/10*h, y + 3/40*h*k1 + 9/40*h*k2)
         for ( size_t i = 0; i < S_.y_.size(); ++i )
+        {
           S_.yin[ i ] = S_.y_[ i ]
             + h * ( 3.0 / 40.0 * S_.k1[ i ] + 9.0 / 40.0 * S_.k2[ i ] );
+        }
         aeif_cond_2exp_multisynapse_dynamics( S_.yin, S_.k3 );
+          
 
         // k4
         for ( size_t i = 0; i < S_.y_.size(); ++i )
+        {  
           S_.yin[ i ] = S_.y_[ i ]
             + h * ( 44.0 / 45.0 * S_.k1[ i ] - 56.0 / 15.0 * S_.k2[ i ]
                     + 32.0 / 9.0 * S_.k3[ i ] );
+        }
         aeif_cond_2exp_multisynapse_dynamics( S_.yin, S_.k4 );
 
         // k5
         for ( size_t i = 0; i < S_.y_.size(); ++i )
+        {
           S_.yin[ i ] = S_.y_[ i ]
             + h
               * ( 19372.0 / 6561.0 * S_.k1[ i ] - 25360.0 / 2187.0 * S_.k2[ i ]
                   + 64448.0 / 6561.0 * S_.k3[ i ]
                   - 212.0 / 729.0 * S_.k4[ i ] );
+        }
         aeif_cond_2exp_multisynapse_dynamics( S_.yin, S_.k5 );
 
         // k6
         for ( size_t i = 0; i < S_.y_.size(); ++i )
+        {
           S_.yin[ i ] = S_.y_[ i ]
             + h * ( 9017.0 / 3168.0 * S_.k1[ i ] - 355.0 / 33.0 * S_.k2[ i ]
                     + 46732.0 / 5247.0 * S_.k3[ i ]
                     + 49.0 / 176.0 * S_.k4[ i ]
                     - 5103.0 / 18656.0 * S_.k5[ i ] );
+        }
         aeif_cond_2exp_multisynapse_dynamics( S_.yin, S_.k6 );
 
         // 5th order
         for ( size_t i = 0; i < S_.y_.size(); ++i )
+        {
           S_.ynew[ i ] = S_.y_[ i ]
             + h * ( 35.0 / 384.0 * S_.k1[ i ] + 500.0 / 1113.0 * S_.k3[ i ]
                     + 125.0 / 192.0 * S_.k4[ i ]
                     - 2187.0 / 6784.0 * S_.k5[ i ]
                     + 11.0 / 84.0 * S_.k6[ i ] );
+        }
         aeif_cond_2exp_multisynapse_dynamics( S_.yin, S_.k7 );
 
         // 4th order
@@ -659,19 +676,24 @@ aeif_cond_2exp_multisynapse::update( Time const& origin,
       } while ( ( err > 1.0 ) and ( not done ) ); // reject step if err > 1
 
       for ( size_t i = 0; i < S_.y_.size(); ++i )
+      {
         S_.y_[ i ] = S_.ynew[ i ]; // pass updated values
-
+      }
       t = t_return;
 
       // check for unreasonable values; we allow V_M to explode
       if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
         || S_.y_[ State_::W ] > 1e6 )
+      {
         throw NumericalInstability( get_name() );
+      }
 
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
       if ( S_.r_ > 0 ) // if neuron is still in refractory period
+      {
         S_.y_[ State_::V_M ] = P_.V_reset_;          // clamp it to V_reset
+      }
       else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ ) // V_m >= V_peak: spike
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
@@ -690,18 +712,18 @@ aeif_cond_2exp_multisynapse::update( Time const& origin,
       // add incoming spikes
       double spike_exc =B_.spike_exc_[ i ].get_value( lag ) * V_.g0_ex_[ i ];
       S_.y_[ State_::G_EXC_RISE + 
-	( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ]
-	+= spike_exc;
+        ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ]
+        += spike_exc;
       S_.y_[ State_::G_EXC_DECAY + 
-	( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ]
-	+= spike_exc;
+        ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ]
+        += spike_exc;
       double spike_inh=B_.spike_inh_[ i ].get_value( lag ) * V_.g0_in_[ i ];
       S_.y_[ State_::G_INH_RISE +
-	( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ]
-	+= spike_inh;
+        ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ]
+        += spike_inh;
       S_.y_[ State_::G_INH_DECAY +
-	( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ]
-	+= spike_inh;
+        ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ]
+        += spike_inh;
     }
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );
@@ -718,8 +740,9 @@ aeif_cond_2exp_multisynapse::handles_test_event( SpikeEvent&,
 {
   if ( receptor_type <= 0
     || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
+  {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
-
+  }
   P_.has_connections_ = true;
   return receptor_type;
 }

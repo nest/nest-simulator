@@ -419,7 +419,7 @@ aeif_cond_2exp_multisynapse::aeif_cond_2exp_multisynapse_dynamics(
   for ( size_t i = 0; i < ( P_.num_of_receptors_
                             * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
         i += S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR )
-    { /////////////////////////// CONTROLLARE!!!!!!!!!!!!!!!!!!!!!
+  {
     I_syn_exc += (y[ S::G_EXC_DECAY + i ] - y[ S::G_EXC_RISE + i ])
       * ( V - P_.E_ex );
     I_syn_inh += (y[ S::G_INH_DECAY + i ] - y[ S::G_INH_RISE + i ])

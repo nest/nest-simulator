@@ -1,0 +1,155 @@
+/*
+ *  test_aeif_cond_2exp_multisynapse.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+ 
+ /* BeginDocumentation
+   Name: testsuite::test_aeif_cond_2exp_multisynapse - sli script for the aeif multisynapse model with synaptic conductance modeled by a double exponential function
+
+   Synopsis: (test_aeif_cond_2exp_multisynapse) run
+
+   Description:
+   This test creates a multisynapse neuron with three receptor ports with
+   different synaptic rise times and decay times, and connect it to
+   two excitatory and one inhibitory signals. If the rise times and decay
+   times are much greater than the membrane time constant, the difference
+   between the membrane potential and the rest potential V(t) will be
+   approximately proportional to the synaptic conductance g(t), which can
+   be computed analitically. At the end, the script compares the simulated
+   values of V(t) with the approximate theoretical prediction.
+   
+   SeeAlso:
+
+   FirstVersion: August 2016
+   Author: Bruno Golosio
+ */
+ 
+(unittest) run
+/unittest using
+
+0
+<< 
+    /overwrite_files true
+>> SetStatus
+
+/tolerance   	5e-2 def %mV
+/simulation_t	2500 def %ms
+/V_peak			0. def
+/a 				4. def
+/b 				80.5 def
+/taus_decay		[400.0 200.0 200.0] def % synaptic decay times  
+/taus_rise		[200.0 100.0 100.0] def % synaptic rise times  
+/weights		[0.1 0.1 -0.1] def % synaptic weights
+/delays     	[1. 1000. 1500.] def % ms - synaptic delays
+/spike_time 	10. def
+/dt         	0.1 def % time step
+/Vrest -70.6 def % resting potential
+/g_L 30.0 def
+/E_in -85.0 def
+
+/spike_generator Create /sg Set
+sg << /spike_times [spike_time] >> SetStatus % generates a single peak
+
+
+% Creates a voltmeter
+/voltmeter Create /vm Set
+vm << /withtime true /time_in_steps true /interval dt /to_file true /precision 5 >> SetStatus
+
+% Creates one aeif_conf_2exp_multisynapse neuron
+/aeif_cond_2exp_multisynapse Create /multisynapse_neuron Set
+multisynapse_neuron << /taus_decay taus_decay >> SetStatus
+multisynapse_neuron << /taus_rise taus_rise >> SetStatus
+multisynapse_neuron << /V_peak V_peak >> SetStatus
+multisynapse_neuron << /a a >> SetStatus
+multisynapse_neuron << /b b >> SetStatus
+multisynapse_neuron << /E_L Vrest >> SetStatus
+multisynapse_neuron << /g_L g_L >> SetStatus
+multisynapse_neuron << /E_in E_in >> SetStatus
+
+multisynapse_neuron ShowStatus
+
+% creates an array of synaptic indexes 
+delays length 1 arraystore Range /synapses_idx exch def
+
+[delays weights synapses_idx] % loop on synaptic receptor ports
+{
+	/syn_id exch def
+	/W exch def
+	/delay exch def
+	% connect spike generator to each port
+	[sg] [multisynapse_neuron] /one_to_one << /model /static_synapse /delay delay /weight W /receptor_type syn_id >> Connect
+	
+} ScanThread
+
+% connects voltmeter
+vm multisynapse_neuron 1. 8. /static_synapse Connect
+
+simulation_t ms Simulate % run simulation
+
+% Gets the membrane voltage of the multisynapse neuron
+/d vm GetStatus /events get def
+d /V_m get cva /Vms Set
+d /times get cva /ts Set % get times
+
+% loop on time steps
+[ts Vms]
+{
+	Vrest sub /V_cur exch def % subtracts resting potential from V 
+	dt mul /t_cur exch def % current time in ms
+	[taus_rise taus_decay weights delays] % loop on connections
+	{
+		/delay exch def % synaptic delay
+		/W exch def % synaptic weight
+		/td exch def % synaptic decay time
+		/tr exch def % synaptic rise time
+
+		spike_time delay add /t0 exch def % peak starting time
+		% checks if connection is excitatory or inhibitory
+		% and evaluates the driving force		
+		W 0. gt {Vrest neg} {Vrest E_in sub} ifelse
+		/Vforce exch def
+		% coefficient for approximate linear relationship
+		% between V(t) and g(t)
+		%coeff=W*Vforce/g_L
+		/coeff W Vforce mul g_L div def
+
+		%t_p = td*tr / (td - tr) * np.log(td/tr) # peak time
+		/t_p td tr mul td tr sub div td tr div ln mul def
+		% normalization coefficient for synaptic conductance
+		%g0 = coeff/(np.exp(-t_p/taud)-np.exp(-t_p/taur))
+		/g0 coeff t_p td div neg exp t_p tr div neg exp sub div def
+
+		/t_rel t_cur t0 sub def % time relative to peak starting time
+		t_rel 0. lt {0.}
+		{ 
+		  % approximate analytical calculation of V(t)
+		  % (contribution from each connection)
+	  	  %y=g0*(np.exp(-(t-t0)/taud)-np.exp(-(t-t0)/taur))
+	  	  g0 t_rel td div neg exp t_rel tr div neg exp sub mul
+		}
+		ifelse
+	}  ScanThread
+	add add /Vtheor exch def % approximate analytical calculation of V(t)
+	% V_cur cvs ( ) join Vtheor cvs join = % display V simul. and theor.
+	V_cur Vtheor sub abs /Vdiff exch def % absolute value of the difference
+	Vdiff tolerance lt true eq assert_or_die % compare with tolerance
+} ScanThread
+
+endusing

@@ -61,7 +61,8 @@ std::vector< Name > nest::iaf_cond_alpha_mc_kinetics::comp_names_( NCOMP );
  * ---------------------------------------------------------------- */
 
 // leads to seg fault on exit, see #328
-// DictionaryDatum nest::iaf_cond_alpha_mc_kinetics::receptor_dict_ = new Dictionary();
+// DictionaryDatum nest::iaf_cond_alpha_mc_kinetics::receptor_dict_ = new
+// Dictionary();
 
 /* ----------------------------------------------------------------
  * Recordables map
@@ -79,50 +80,59 @@ void
 RecordablesMap< iaf_cond_alpha_mc_kinetics >::create()
 {
   insert_( Name( "V_m.s" ),
-    &iaf_cond_alpha_mc_kinetics::get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::V_M,
-      iaf_cond_alpha_mc_kinetics::SOMA > );
+    &iaf_cond_alpha_mc_kinetics::
+      get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::V_M,
+        iaf_cond_alpha_mc_kinetics::SOMA > );
   insert_( Name( "g_ex.s" ),
-    &iaf_cond_alpha_mc_kinetics::get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::G_EXC,
-      iaf_cond_alpha_mc_kinetics::SOMA > );
+    &iaf_cond_alpha_mc_kinetics::
+      get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::G_EXC,
+        iaf_cond_alpha_mc_kinetics::SOMA > );
   insert_( Name( "g_in.s" ),
-    &iaf_cond_alpha_mc_kinetics::get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::G_INH,
-      iaf_cond_alpha_mc_kinetics::SOMA > );
+    &iaf_cond_alpha_mc_kinetics::
+      get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::G_INH,
+        iaf_cond_alpha_mc_kinetics::SOMA > );
   insert_( Name( "i_ap.s" ),
-    &iaf_cond_alpha_mc_kinetics::get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::I_AP,
-      iaf_cond_alpha_mc_kinetics::SOMA > );
+    &iaf_cond_alpha_mc_kinetics::
+      get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::I_AP,
+        iaf_cond_alpha_mc_kinetics::SOMA > );
 
   insert_( Name( "V_m.p" ),
-    &iaf_cond_alpha_mc_kinetics::get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::V_M,
-      iaf_cond_alpha_mc_kinetics::PROX > );
+    &iaf_cond_alpha_mc_kinetics::
+      get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::V_M,
+        iaf_cond_alpha_mc_kinetics::PROX > );
   insert_( Name( "g_ex.p" ),
-    &iaf_cond_alpha_mc_kinetics::get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::G_EXC,
-      iaf_cond_alpha_mc_kinetics::PROX > );
+    &iaf_cond_alpha_mc_kinetics::
+      get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::G_EXC,
+        iaf_cond_alpha_mc_kinetics::PROX > );
   insert_( Name( "g_in.p" ),
-    &iaf_cond_alpha_mc_kinetics::get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::G_INH,
-      iaf_cond_alpha_mc_kinetics::PROX > );
+    &iaf_cond_alpha_mc_kinetics::
+      get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::G_INH,
+        iaf_cond_alpha_mc_kinetics::PROX > );
   insert_( Name( "i_ap.p" ),
-    &iaf_cond_alpha_mc_kinetics::get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::I_AP,
-      iaf_cond_alpha_mc_kinetics::PROX > );
+    &iaf_cond_alpha_mc_kinetics::
+      get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::I_AP,
+        iaf_cond_alpha_mc_kinetics::PROX > );
 
   insert_( Name( "V_m.d" ),
-    &iaf_cond_alpha_mc_kinetics::get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::V_M,
-      iaf_cond_alpha_mc_kinetics::DIST > );
+    &iaf_cond_alpha_mc_kinetics::
+      get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::V_M,
+        iaf_cond_alpha_mc_kinetics::DIST > );
   insert_( Name( "g_ex.d" ),
-    &iaf_cond_alpha_mc_kinetics::get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::G_EXC,
-      iaf_cond_alpha_mc_kinetics::DIST > );
+    &iaf_cond_alpha_mc_kinetics::
+      get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::G_EXC,
+        iaf_cond_alpha_mc_kinetics::DIST > );
   insert_( Name( "g_in.d" ),
-    &iaf_cond_alpha_mc_kinetics::get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::G_INH,
-      iaf_cond_alpha_mc_kinetics::DIST > );
+    &iaf_cond_alpha_mc_kinetics::
+      get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::G_INH,
+        iaf_cond_alpha_mc_kinetics::DIST > );
   insert_( Name( "i_ap.d" ),
-    &iaf_cond_alpha_mc_kinetics::get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::I_AP,
-      iaf_cond_alpha_mc_kinetics::DIST > );
+    &iaf_cond_alpha_mc_kinetics::
+      get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::I_AP,
+        iaf_cond_alpha_mc_kinetics::DIST > );
 
-  
   insert_( names::t_ref_remaining, &iaf_cond_alpha_mc_kinetics::get_r_ );
   insert_( names::threshold, &iaf_cond_alpha_mc_kinetics::get_th_ );
   insert_( names::ca_current, &iaf_cond_alpha_mc_kinetics::get_ica_ );
-  
- 
 }
 }
 
@@ -131,7 +141,10 @@ RecordablesMap< iaf_cond_alpha_mc_kinetics >::create()
  * ---------------------------------------------------------------- */
 
 extern "C" int
-nest::iaf_cond_alpha_mc_kinetics_dynamics( double, const double y[], double f[], void* pnode )
+nest::iaf_cond_alpha_mc_kinetics_dynamics( double,
+  const double y[],
+  double f[],
+  void* pnode )
 {
   // some shorthands
   typedef nest::iaf_cond_alpha_mc_kinetics N;
@@ -151,73 +164,79 @@ nest::iaf_cond_alpha_mc_kinetics_dynamics( double, const double y[], double f[],
     const double V = y[ S::idx( n, S::V_M ) ];
 
     // excitatory synaptic current
-    const double I_syn_exc = ( y[ S::idx( n, S::G_EXC ) ] ) * ( V - node.P_.E_ex[ n ] );
+    const double I_syn_exc =
+      ( y[ S::idx( n, S::G_EXC ) ] ) * ( V - node.P_.E_ex[ n ] );
     // inhibitory synaptic current
-    const double I_syn_inh = ( y[ S::idx( n, S::G_INH ) ] ) * ( V - node.P_.E_in[ n ] );
+    const double I_syn_inh =
+      ( y[ S::idx( n, S::G_INH ) ] ) * ( V - node.P_.E_in[ n ] );
 
     // leak current
-    const double I_L = node.P_.g_L[ n ] * ( V - node.P_.E_L[ n ] );
+    const double I_L = ( y[ S::idx( n, S::G_L ) ] ) * ( V - node.P_.E_L[ n ] );
 
     double minf = 0.0;
     double hinf = 0.0;
-    if ( n == N::DIST )
+    if ( n == N::DIST && node.P_.Ca_active )
     {
-      if ( node.P_.Ca_active )
-      {
-        minf =
-          1.0 / ( 1.0 + std::exp( ( node.P_.half_m - V ) * node.P_.slope_m ) );
-        hinf =
-          1.0 / ( 1.0 + std::exp( ( node.P_.half_h - V ) * node.P_.slope_h ) );
-      }
+      minf =
+        1.0 / ( 1.0 + std::exp( ( node.P_.half_m - V ) * node.P_.slope_m ) );
+      hinf =
+        1.0 / ( 1.0 + std::exp( ( node.P_.half_h - V ) * node.P_.slope_h ) );
     }
 
 
-    const double ica =
-      y[ S::idx( n, S::M_CA ) ] * y[ S::idx( n, S::H_CA ) ] * node.P_.G_Ca * ( node.P_.E_Ca - V );
+    const double ica = y[ S::idx( n, S::M_CA ) ] * y[ S::idx( n, S::H_CA ) ]
+      * node.P_.G_Ca * ( node.P_.E_Ca - V );
 
     // coupling currents
     const double I_conn =
       ( n > N::SOMA
           ? node.P_.g_conn[ n - 1 ]
-            * ( ( V - node.P_.E_L[ n ] ) - ( y[ S::idx( n - 1, S::V_M ) ] - node.P_.E_L[ n - 1 ] ) )
+            * ( ( V - node.P_.E_L[ n ] )
+                - ( y[ S::idx( n - 1, S::V_M ) ] - node.P_.E_L[ n - 1 ] ) )
           : 0 )
       + ( n < N::NCOMP - 1
-            ? node.P_.g_conn[ n ] * ( ( V - node.P_.E_L[ n ] )
-                                      - ( y[ S::idx( n + 1, S::V_M ) ] - node.P_.E_L[ n + 1 ] ) )
+            ? node.P_.g_conn[ n ]
+              * ( ( V - node.P_.E_L[ n ] )
+                  - ( y[ S::idx( n + 1, S::V_M ) ] - node.P_.E_L[ n + 1 ] ) )
             : 0 );
 
     // derivatives
     // membrane potential
     f[ S::idx( n, S::V_M ) ] =
-      ( -I_L - I_syn_exc - I_syn_inh - I_conn + node.B_.I_stim_[ n ] + node.P_.I_e[ n ] + ica
-        + y[ S::idx( n, S::I_AP ) ] ) / node.P_.C_m[ n ];
+      ( -I_L - I_syn_exc - I_syn_inh - I_conn + node.B_.I_stim_[ n ]
+        + node.P_.I_e[ n ] + ica + y[ S::idx( n, S::I_AP ) ] )
+      / node.P_.C_m[ n ];
 
     // excitatory conductance
-    f[ S::idx( n, S::DG_EXC ) ] = -y[ S::idx( n, S::DG_EXC ) ] / node.P_.tau_synE[ n ];
-    f[ S::idx( n, S::G_EXC ) ] =
-      y[ S::idx( n, S::DG_EXC ) ] - y[ S::idx( n, S::G_EXC ) ] / node.P_.tau_synE[ n ];
+    f[ S::idx( n, S::DG_EXC ) ] =
+      -y[ S::idx( n, S::DG_EXC ) ] / node.P_.tau_synE[ n ];
+    f[ S::idx( n, S::G_EXC ) ] = y[ S::idx( n, S::DG_EXC ) ]
+      - y[ S::idx( n, S::G_EXC ) ] / node.P_.tau_synE[ n ];
 
     // inhibitory conductance
-    f[ S::idx( n, S::DG_INH ) ] = -y[ S::idx( n, S::DG_INH ) ] / node.P_.tau_synI[ n ];
-    f[ S::idx( n, S::G_INH ) ] =
-      y[ S::idx( n, S::DG_INH ) ] - y[ S::idx( n, S::G_INH ) ] / node.P_.tau_synI[ n ];
+    f[ S::idx( n, S::DG_INH ) ] =
+      -y[ S::idx( n, S::DG_INH ) ] / node.P_.tau_synI[ n ];
+    f[ S::idx( n, S::G_INH ) ] = y[ S::idx( n, S::DG_INH ) ]
+      - y[ S::idx( n, S::G_INH ) ] / node.P_.tau_synI[ n ];
 
     // active current during AP
-    f[ S::idx( n, S::DI_AP ) ] = -y[ S::idx( n, S::DI_AP ) ] / node.P_.tau_currAP[ n ];
-    f[ S::idx( n, S::I_AP ) ] =
-      y[ S::idx( n, S::DI_AP ) ] - y[ S::idx( n, S::I_AP ) ] / node.P_.tau_currAP[ n ];
+    f[ S::idx( n, S::DI_AP ) ] =
+      -y[ S::idx( n, S::DI_AP ) ] / node.P_.tau_currAP[ n ];
+    f[ S::idx( n, S::I_AP ) ] = y[ S::idx( n, S::DI_AP ) ]
+      - y[ S::idx( n, S::I_AP ) ] / node.P_.tau_currAP[ n ];
 
     if ( ( n == N::DIST ) && ( node.P_.Ca_active ) )
     {
-      f[ S::idx( n, S::M_CA ) ] = ( minf - y[ S::idx( n, S::M_CA ) ] ) / node.P_.tau_m;
-      f[ S::idx( n, S::H_CA ) ] = ( hinf - y[ S::idx( n, S::H_CA ) ] ) / node.P_.tau_h;
+      f[ S::idx( n, S::M_CA ) ] =
+        ( minf - y[ S::idx( n, S::M_CA ) ] ) / node.P_.tau_m;
+      f[ S::idx( n, S::H_CA ) ] =
+        ( hinf - y[ S::idx( n, S::H_CA ) ] ) / node.P_.tau_h;
     }
     else
     {
       f[ S::idx( n, S::M_CA ) ] = 0.0;
       f[ S::idx( n, S::H_CA ) ] = 0.0;
-    }	
-
+    }
   }
 
   return GSL_SUCCESS;
@@ -230,18 +249,18 @@ nest::iaf_cond_alpha_mc_kinetics_dynamics( double, const double y[], double f[],
 nest::iaf_cond_alpha_mc_kinetics::Parameters_::Parameters_()
   : V_th( -55.0 )    // mV
   , V_reset( -60.0 ) // mV
-  , t_ref( 2.0 ) // ms
-  , V_max( 30.0 ) // mV
-  , E_Ca( 50.0 ) // mV
-  , G_Ca( 70.0 ) // nS
-  , tau_m( 15.0 ) // ms
-  , tau_h( 80.0 ) // ms
-  , half_m( -9.0 ) // mV
-  , half_h( -21.0 ) // mV
-  , slope_m( 0.5 ) // mV-1
-  , slope_h( -0.5 ) // mV-1
-  , jump_Th( 25.0 ) // mV
-  , tau_Th( 7.0 ) // ms
+  , t_ref( 2.0 )     // ms
+  , V_max( 30.0 )    // mV
+  , E_Ca( 50.0 )     // mV
+  , G_Ca( 70.0 )     // nS
+  , tau_m( 15.0 )    // ms
+  , tau_h( 80.0 )    // ms
+  , half_m( -9.0 )   // mV
+  , half_h( -21.0 )  // mV
+  , slope_m( 0.5 )   // mV-1
+  , slope_h( -0.5 )  // mV-1
+  , jump_Th( 25.0 )  // mV
+  , tau_Th( 7.0 )    // ms
   , Ca_active( true )
   , reset_on_spike( true )
 
@@ -251,49 +270,47 @@ nest::iaf_cond_alpha_mc_kinetics::Parameters_::Parameters_()
   g_conn[ PROX ] = 1.0; // nS, proximal-distal
 
   // soma parameters
-  t_L[ SOMA ] = 500.0;    // nS
-  nt_L[ SOMA ] = 15.0;    // nS
-  g_L[ SOMA ] = 10.0;     // nS
-  C_m[ SOMA ] = 150.0;    // pF
-  E_ex[ SOMA ] = 0.0;     // mV
-  E_in[ SOMA ] = -85.0;   // mV
-  E_L[ SOMA ] = -70.0;    // mV
-  tau_synE[ SOMA ] = 0.5; // ms
-  tau_synI[ SOMA ] = 2.0; // ms
-  I_e[ SOMA ] = 0.0;      // pA
+  t_L[ SOMA ] = 500.0;      // nS
+  nt_L[ SOMA ] = 10.0;      // nS
+  C_m[ SOMA ] = 150.0;      // pF
+  E_ex[ SOMA ] = 0.0;       // mV
+  E_in[ SOMA ] = -85.0;     // mV
+  E_L[ SOMA ] = -70.0;      // mV
+  tau_synE[ SOMA ] = 0.5;   // ms
+  tau_synI[ SOMA ] = 2.0;   // ms
+  I_e[ SOMA ] = 0.0;        // pA
   tau_currAP[ SOMA ] = 1.0; // ms
   amp_currAP[ SOMA ] = 0.0; // pA
 
   // proximal parameters
-  t_L[ PROX ] = 5.0;      // nS
-  nt_L[ PROX ] = 10.0;    // nS
-  g_L[ PROX ] = 5.0;      // nS
-  C_m[ PROX ] = 75.0;     // pF
-  E_ex[ PROX ] = 0.0;     // mV
-  E_in[ PROX ] = -85.0;   // mV
-  E_L[ PROX ] = -70.0;    // mV
-  tau_synE[ PROX ] = 0.5; // ms
-  tau_synI[ PROX ] = 2.0; // ms
-  I_e[ PROX ] = 0.0;      // pA
+  t_L[ PROX ] = 5.0;        // nS
+  nt_L[ PROX ] = 5.0;       // nS
+  C_m[ PROX ] = 75.0;       // pF
+  E_ex[ PROX ] = 0.0;       // mV
+  E_in[ PROX ] = -85.0;     // mV
+  E_L[ PROX ] = -70.0;      // mV
+  tau_synE[ PROX ] = 0.5;   // ms
+  tau_synI[ PROX ] = 2.0;   // ms
+  I_e[ PROX ] = 0.0;        // pA
   tau_currAP[ PROX ] = 1.0; // ms
   amp_currAP[ PROX ] = 0.0; // pA
 
   // distal parameters
-  t_L[ DIST ] = 5.0;      // nS
-  nt_L[ DIST ] = 15.0;    // nS
-  g_L[ DIST ] = 10.0;     // nS
-  C_m[ DIST ] = 150.0;    // pF
-  E_ex[ DIST ] = 0.0;     // mV
-  E_in[ DIST ] = -85.0;   // mV
-  E_L[ DIST ] = -70.0;    // mV
-  tau_synE[ DIST ] = 0.5; // ms
-  tau_synI[ DIST ] = 2.0; // ms
-  I_e[ DIST ] = 0.0;      // pA
+  t_L[ DIST ] = 5.0;        // nS
+  nt_L[ DIST ] = 10.0;      // nS
+  C_m[ DIST ] = 150.0;      // pF
+  E_ex[ DIST ] = 0.0;       // mV
+  E_in[ DIST ] = -85.0;     // mV
+  E_L[ DIST ] = -70.0;      // mV
+  tau_synE[ DIST ] = 0.5;   // ms
+  tau_synI[ DIST ] = 2.0;   // ms
+  I_e[ DIST ] = 0.0;        // pA
   tau_currAP[ DIST ] = 1.0; // ms
   amp_currAP[ DIST ] = 0.0; // pA
 }
 
-nest::iaf_cond_alpha_mc_kinetics::Parameters_::Parameters_( const Parameters_& p )
+nest::iaf_cond_alpha_mc_kinetics::Parameters_::Parameters_(
+  const Parameters_& p )
   : V_th( p.V_th )
   , V_reset( p.V_reset )
   , t_ref( p.t_ref )
@@ -320,7 +337,6 @@ nest::iaf_cond_alpha_mc_kinetics::Parameters_::Parameters_( const Parameters_& p
   {
     t_L[ n ] = p.t_L[ n ];
     nt_L[ n ] = p.nt_L[ n ];
-    g_L[ n ] = p.g_L[ n ];
     C_m[ n ] = p.C_m[ n ];
     E_ex[ n ] = p.E_ex[ n ];
     E_in[ n ] = p.E_in[ n ];
@@ -333,8 +349,9 @@ nest::iaf_cond_alpha_mc_kinetics::Parameters_::Parameters_( const Parameters_& p
   }
 }
 
-nest::iaf_cond_alpha_mc_kinetics::Parameters_& nest::iaf_cond_alpha_mc_kinetics::Parameters_::
-operator=( const Parameters_& p )
+nest::iaf_cond_alpha_mc_kinetics::Parameters_&
+  nest::iaf_cond_alpha_mc_kinetics::Parameters_::
+  operator=( const Parameters_& p )
 {
   assert( this != &p ); // would be bad logical error in program
 
@@ -363,7 +380,6 @@ operator=( const Parameters_& p )
   {
     t_L[ n ] = p.t_L[ n ];
     nt_L[ n ] = p.nt_L[ n ];
-    g_L[ n ] = p.g_L[ n ];
     C_m[ n ] = p.C_m[ n ];
     E_ex[ n ] = p.E_ex[ n ];
     E_in[ n ] = p.E_in[ n ];
@@ -392,15 +408,19 @@ nest::iaf_cond_alpha_mc_kinetics::State_::State_( const Parameters_& p )
   y_[ idx( SOMA, V_M ) ] = -70.;
   y_[ idx( PROX, V_M ) ] = -65.;
   y_[ idx( DIST, V_M ) ] = -60.;
+  y_[ idx( SOMA, G_L ) ] = p.nt_L[ SOMA ];
+  y_[ idx( PROX, G_L ) ] = p.nt_L[ PROX ];
+  y_[ idx( DIST, G_L ) ] = p.nt_L[ DIST ];
 
-  const double_t minf =
-    1.0 / ( 1.0 + std::exp( ( p.half_m - y_[ idx( DIST, V_M ) ] ) * p.slope_m ) );
+  const double_t minf = 1.0
+    / ( 1.0 + std::exp( ( p.half_m - y_[ idx( DIST, V_M ) ] ) * p.slope_m ) );
 
-  const double_t hinf =
-    1.0 / ( 1.0 + std::exp( ( p.half_h - y_[ idx( DIST, V_M ) ] ) * p.slope_h ) );
+  const double_t hinf = 1.0
+    / ( 1.0 + std::exp( ( p.half_h - y_[ idx( DIST, V_M ) ] ) * p.slope_h ) );
   y_[ idx( DIST, M_CA ) ] = minf;
   y_[ idx( DIST, H_CA ) ] = hinf;
-  ICa_ = y_[ idx( DIST, M_CA ) ] * y_[ idx( DIST, H_CA ) ] * p.G_Ca * ( p.E_Ca - y_[ idx( DIST, V_M ) ] );
+  ICa_ = y_[ idx( DIST, M_CA ) ] * y_[ idx( DIST, H_CA ) ] * p.G_Ca
+    * ( p.E_Ca - y_[ idx( DIST, V_M ) ] );
 }
 
 nest::iaf_cond_alpha_mc_kinetics::State_::State_( const State_& s )
@@ -412,8 +432,9 @@ nest::iaf_cond_alpha_mc_kinetics::State_::State_( const State_& s )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::iaf_cond_alpha_mc_kinetics::State_& nest::iaf_cond_alpha_mc_kinetics::State_::operator=(
-  const State_& s )
+nest::iaf_cond_alpha_mc_kinetics::State_&
+  nest::iaf_cond_alpha_mc_kinetics::State_::
+  operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
 
@@ -425,7 +446,8 @@ nest::iaf_cond_alpha_mc_kinetics::State_& nest::iaf_cond_alpha_mc_kinetics::Stat
   return *this;
 }
 
-nest::iaf_cond_alpha_mc_kinetics::Buffers_::Buffers_( iaf_cond_alpha_mc_kinetics& n )
+nest::iaf_cond_alpha_mc_kinetics::Buffers_::Buffers_(
+  iaf_cond_alpha_mc_kinetics& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -478,7 +500,6 @@ nest::iaf_cond_alpha_mc_kinetics::Parameters_::get( DictionaryDatum& d ) const
     DictionaryDatum dd = new Dictionary();
     def< double >( dd, names::t_L, t_L[ n ] );
     def< double >( dd, names::nt_L, nt_L[ n ] );
-    def< double >( dd, names::g_L, g_L[ n ] );
     def< double >( dd, names::E_L, E_L[ n ] );
     def< double >( dd, names::E_ex, E_ex[ n ] );
     def< double >( dd, names::E_in, E_in[ n ] );
@@ -527,7 +548,6 @@ nest::iaf_cond_alpha_mc_kinetics::Parameters_::set( const DictionaryDatum& d )
       updateValue< double >( dd, names::E_ex, E_ex[ n ] );
       updateValue< double >( dd, names::E_in, E_in[ n ] );
       updateValue< double >( dd, names::C_m, C_m[ n ] );
-      updateValue< double >( dd, names::g_L, g_L[ n ] );
       updateValue< double >( dd, names::tau_syn_ex, tau_synE[ n ] );
       updateValue< double >( dd, names::tau_syn_in, tau_synI[ n ] );
       updateValue< double >( dd, names::I_e, I_e[ n ] );
@@ -548,19 +568,20 @@ nest::iaf_cond_alpha_mc_kinetics::Parameters_::set( const DictionaryDatum& d )
   for ( size_t n = 0; n < NCOMP; ++n )
   {
     if ( C_m[ n ] <= 0 )
-      throw BadProperty(
-        "Capacitance (" + comp_names_[ n ].toString() + ") must be strictly positive." );
+      throw BadProperty( "Capacitance (" + comp_names_[ n ].toString()
+        + ") must be strictly positive." );
 
     if ( tau_synE[ n ] <= 0 || tau_synI[ n ] <= 0 || tau_currAP[ n ] <= 0 )
-      throw BadProperty(
-        "All time constants (" + comp_names_[ n ].toString() + ") must be strictly positive." );
+      throw BadProperty( "All time constants (" + comp_names_[ n ].toString()
+        + ") must be strictly positive." );
   }
 }
 
 void
 nest::iaf_cond_alpha_mc_kinetics::State_::get( DictionaryDatum& d ) const
 {
-  // we assume here that State_::get() always is called after Parameters_::get(),
+  // we assume here that State_::get() always is called after
+  // Parameters_::get(),
   // so that the per-compartment dictionaries exist
   for ( size_t n = 0; n < NCOMP; ++n )
   {
@@ -572,7 +593,8 @@ nest::iaf_cond_alpha_mc_kinetics::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_alpha_mc_kinetics::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::iaf_cond_alpha_mc_kinetics::State_::set( const DictionaryDatum& d,
+  const Parameters_& )
 {
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
@@ -603,7 +625,8 @@ nest::iaf_cond_alpha_mc_kinetics::iaf_cond_alpha_mc_kinetics()
   comp_names_[ DIST ] = Name( "distal" );
 }
 
-nest::iaf_cond_alpha_mc_kinetics::iaf_cond_alpha_mc_kinetics( const iaf_cond_alpha_mc_kinetics& n )
+nest::iaf_cond_alpha_mc_kinetics::iaf_cond_alpha_mc_kinetics(
+  const iaf_cond_alpha_mc_kinetics& n )
   : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -629,7 +652,8 @@ nest::iaf_cond_alpha_mc_kinetics::~iaf_cond_alpha_mc_kinetics()
 void
 nest::iaf_cond_alpha_mc_kinetics::init_state_( const Node& proto )
 {
-  const iaf_cond_alpha_mc_kinetics& pr = downcast< iaf_cond_alpha_mc_kinetics >( proto );
+  const iaf_cond_alpha_mc_kinetics& pr =
+    downcast< iaf_cond_alpha_mc_kinetics >( proto );
   S_ = pr.S_;
 }
 
@@ -651,7 +675,8 @@ nest::iaf_cond_alpha_mc_kinetics::init_buffers_()
   B_.IntegrationStep_ = B_.step_;
 
   if ( B_.s_ == 0 )
-    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+    B_.s_ =
+      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   else
     gsl_odeiv_step_reset( B_.s_ );
 
@@ -677,7 +702,8 @@ nest::iaf_cond_alpha_mc_kinetics::init_buffers_()
 void
 nest::iaf_cond_alpha_mc_kinetics::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  B_.logger_
+    .init(); // ensures initialization in case mm connected after Simulate
 
   for ( size_t n = 0; n < NCOMP; ++n )
   {
@@ -688,9 +714,11 @@ nest::iaf_cond_alpha_mc_kinetics::calibrate()
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref ) ).get_steps();
 
-  assert( V_.RefractoryCounts_ >= 0 ); // since t_ref >= 0, this can only fail in error
+  assert( V_.RefractoryCounts_
+    >= 0 ); // since t_ref >= 0, this can only fail in error
 
-  V_.AdaptThStep_ = numerics::expm1( -Time::get_resolution().get_ms() / P_.tau_Th );
+  V_.AdaptThStep_ =
+    numerics::expm1( -Time::get_resolution().get_ms() / P_.tau_Th );
 }
 
 
@@ -699,10 +727,13 @@ nest::iaf_cond_alpha_mc_kinetics::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_alpha_mc_kinetics::update( Time const& origin, const long_t from, const long_t to )
+nest::iaf_cond_alpha_mc_kinetics::update( Time const& origin,
+  const long_t from,
+  const long_t to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -754,12 +785,13 @@ nest::iaf_cond_alpha_mc_kinetics::update( Time const& origin, const long_t from,
         B_.spikes_[ 2 * n + 1 ].get_value( lag ) * V_.PSConInit_I_[ n ];
     }
 
-
     // spike handling
     if ( S_.r_ )
     { // neuron is absolute refractory
       --S_.r_;
-      if ( S_.r_ == int(0.5*V_.RefractoryCounts_) )
+      // Active current triggerd after a spike to be added first at
+      // proximal, then distal compartment during refractory period
+      if ( S_.r_ == int( 0.5 * V_.RefractoryCounts_ ) )
       {
         S_.y_[ PROX * State_::STATE_VEC_COMPS + State_::DI_AP ] +=
           P_.amp_currAP[ PROX ] * V_.PSConInit_AP_[ PROX ];
@@ -777,20 +809,19 @@ nest::iaf_cond_alpha_mc_kinetics::update( Time const& origin, const long_t from,
       S_.r_ = V_.RefractoryCounts_;
       S_.y_[ State_::V_M ] = P_.V_max;
       S_.th_ += P_.jump_Th;
-      P_.g_L[ SOMA ] = P_.t_L[ SOMA ];
-      P_.g_L[ PROX ] = P_.t_L[ PROX ];
-      P_.g_L[ DIST ] = P_.t_L[ DIST ];
+      S_.G_L[ SOMA ] = P_.t_L[ SOMA ];
+      S_.G_L[ PROX ] = P_.t_L[ PROX ];
+      S_.G_L[ DIST ] = P_.t_L[ DIST ];
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );
     }
     else
     {
-      P_.g_L[ SOMA ] = P_.nt_L[ SOMA ];
-      P_.g_L[ PROX ] = P_.nt_L[ PROX ];
-      P_.g_L[ DIST ] = P_.nt_L[ DIST ];
+      S_.G_L[ SOMA ] = P_.nt_L[ SOMA ];
+      S_.G_L[ PROX ] = P_.nt_L[ PROX ];
+      S_.G_L[ DIST ] = P_.nt_L[ DIST ];
     }
-
 
     // set new input currents
     for ( size_t n = 0; n < NCOMP; ++n )
@@ -816,7 +847,8 @@ void
 nest::iaf_cond_alpha_mc_kinetics::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
-  assert( 0 <= e.get_rport() && e.get_rport() < NCOMP ); // not 100% clean, should look at MIN, SUP
+  assert( 0 <= e.get_rport()
+    && e.get_rport() < NCOMP ); // not 100% clean, should look at MIN, SUP
 
   // add weighted current; HEP 2002-10-04
   B_.currents_[ e.get_rport() ].add_value(

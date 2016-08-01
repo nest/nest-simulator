@@ -46,6 +46,7 @@ add_test(regressiontests/ticket-157.sli "/home/yansong/programs/justforgit/nest-
 add_test(regressiontests/issue-105.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/regressiontests/issue-105.sli")
 add_test(regressiontests/ticket-528.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/regressiontests/ticket-528.sli")
 add_test(regressiontests/ticket-478.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/regressiontests/ticket-478.sli")
+add_test(regressiontests/issue-211.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/regressiontests/issue-211.sli")
 add_test(regressiontests/ticket-716.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/regressiontests/ticket-716.sli")
 add_test(regressiontests/ticket-949.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/regressiontests/ticket-949.sli")
 add_test(regressiontests/ticket-921.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/regressiontests/ticket-921.sli")

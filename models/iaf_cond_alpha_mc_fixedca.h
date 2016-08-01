@@ -50,14 +50,14 @@
 #include "name.h"
 
 /* BeginDocumentation
-Name: iaf_cond_alpha_mc_fixedca - PROTOTYPE Multi-compartment conductance-based leaky
+Name: iaf_cond_alpha_mc_fixedca - PROTOTYPE Multi-compartment conductance-based
+leaky
 integrate-and-fire neuron model with fixed waveform calcium spike.
 
 iaf_cond_alpha_mc_fixedca is an implementation of a multi-compartment spiking
-neuron using IAF dynamics with conductance-based synapses. It serves
-mainly to illustrate the implementation of multicompartment models in
-NEST. It has also a calcium spike at the distal compartment, details of which 
-are described in [3].
+neuron using IAF dynamics with conductance-based synapses. It is the reference
+implementation of the model described in [3], with a calcium spike at the
+distal compartment, modeled using a threshold triggered fixed waveform.
 
 The model has three compartments: soma, proximal and distal dendrite,
 labeled as s, p, and d, respectively. Compartments are connected through
@@ -75,7 +75,8 @@ a maximum potential, V_m.s == V_max, and somatic leak set to a larger leak value
 for the refractory period. Depending on value of the reset flag, the somatic
 membrane potential maybe reset to reset value at end of refractory period.
 To emulate backpropagating action potential, an alpha shaped current is
-introduced 1ms and 2ms after spike at proximal and distal compartment respectively.
+introduced 1ms and 2ms after spike at proximal and distal compartment
+respectively.
 Dendritic membrane potentials are not manipulated after a spike.
 The spike threshold is adaptive, whereby it jumps by a jump value upon crossing,
 and then decays exponentially back to baseline value.
@@ -88,15 +89,20 @@ current input from a current generator, and an external (rheobase)
 current can be set for each compartment.
 
 Synapses, including those for injection external currents, are addressed through
-the receptor types given in the receptor_types entry of the state dictionary. Note
+the receptor types given in the receptor_types entry of the state dictionary.
+Note
 that in contrast to the single-compartment iaf_cond_alpha model, all synaptic
 weights must be positive numbers!
 
 When active flag is true, calcium spike is triggered upon threshold crossing,
-V_m.d >= V_thCa, provided it is not during the calcium refractory period. The spike is 
+V_m.d >= V_thCa, provided it is not during the calcium refractory period. The
+spike is
 modeled using a fixed waveform, a current array with fixed length.
 The duration of the calcium spike is of same length as its refractory period,
 hence no new calcium spike is triggered while a calcium spike is still active.
+The time resolution of the calcium waveform is 0.1ms, hence simulation
+resolution
+has to be set as such for the model to work.
 
 Parameters:
 The following parameters can be set in the status dictionary. Parameters
@@ -109,24 +115,27 @@ E_L*         double - Leak reversal potential in mV.
 C_m*         double - Capacity of the membrane in pF
 E_ex*        double - Excitatory reversal potential in mV.
 E_in*        double - Inhibitory reversal potential in mV.
-g_L*         double - Leak conductance in nS;
 tau_syn_ex*  double - Rise time of the excitatory synaptic alpha function in ms.
 tau_syn_in*  double - Rise time of the inhibitory synaptic alpha function in ms.
 I_e*         double - Constant input current in pA.
 t_L*         double - Leak during refractory period in nS
 nt_L*        double - Leak at other times in ns
-tau_currAP*   double - Time constant of active current at each compartment after action potential in
+tau_currAP*   double - Time constant of active current at each compartment after
+action potential in
 pA
-amp_currAP*   double - Amplitude of active current at each compartment after action potential in pA
+amp_currAP*   double - Amplitude of active current at each compartment after
+action potential in pA
 
 
 g_sp         double - Conductance connecting soma and proximal dendrite, in nS.
-g_pd         double - Conductance connecting proximal and distal dendrite, in nS.
+g_pd         double - Conductance connecting proximal and distal dendrite, in
+nS.
 t_ref        double - Duration of refractory period in ms.
 V_th         double - Spike threshold in mV.
 V_reset      double - Reset potential of the membrane in mV.
 V_max        double - Peak voltage at spike in mV
-reset_on_spike   bool   - flag to set somatic membrane potential to reset value at end of refractory
+reset_on_spike   bool   - flag to set somatic membrane potential to reset value
+at end of refractory
 period
 jump_Th      double - Jump in adaptive threshold upon spike in mV
 tau_Th       double - Time constant for adaptive threshold in ms
@@ -156,11 +165,13 @@ single pyramidal cells.  Proc. Natl. Acad. Sci. USA, 88(24),
 
 [3] Chua, Y., Morrison, A., & Helias, M. (2015).
 Modeling the calcium spike as a threshold triggered fixed waveform for
-synchronous inputs in the fluctuation regime. Frontiers in Computational Neuroscience.,
+synchronous inputs in the fluctuation regime. Frontiers in Computational
+Neuroscience.,
 9(00091).
 
 
-Author: Plesser (multicompartment neuron), Yansong Chua (calcium spike added in neuron)
+Author: Plesser (multicompartment neuron), Yansong Chua (calcium spike added in
+neuron)
 
 SeeAlso: iaf_cond_alpha, iaf_cond_alpha_mc
 */
@@ -174,7 +185,8 @@ namespace nest
  * @note No point in declaring it inline, since it is called
  *       through a function pointer.
  */
-extern "C" int iaf_cond_alpha_mc_fixedca_dynamics( double, const double*, double*, void* );
+extern "C" int
+iaf_cond_alpha_mc_fixedca_dynamics( double, const double*, double*, void* );
 
 /**
  * @note All parameters that occur for both compartments
@@ -192,7 +204,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -248,7 +261,8 @@ private:
     SUP_SPIKE_RECEPTOR
   };
 
-  static const size_t NUM_SPIKE_RECEPTORS = SUP_SPIKE_RECEPTOR - MIN_SPIKE_RECEPTOR;
+  static const size_t NUM_SPIKE_RECEPTORS =
+    SUP_SPIKE_RECEPTOR - MIN_SPIKE_RECEPTOR;
 
   /**
    * Minimal current receptor type.
@@ -268,13 +282,19 @@ private:
     SUP_CURR_RECEPTOR
   };
 
-  static const size_t NUM_CURR_RECEPTORS = SUP_CURR_RECEPTOR - MIN_CURR_RECEPTOR;
+  static const size_t NUM_CURR_RECEPTORS =
+    SUP_CURR_RECEPTOR - MIN_CURR_RECEPTOR;
 
-  static const size_t CA_SIZE = 1000;
+  /**
+   * Array size of calcium waveform to reproduce calcium kinetics model.
+   * Calcium waveform reproduces results shown in Fig.8 of [3].
+   */
+  static const size_t CA_SIZE = 1122;
 
   // Friends --------------------------------------------------------
 
-  friend int iaf_cond_alpha_mc_fixedca_dynamics( double, const double*, double*, void* );
+  friend int
+  iaf_cond_alpha_mc_fixedca_dynamics( double, const double*, double*, void* );
 
   friend class RecordablesMap< iaf_cond_alpha_mc_fixedca >;
   friend class UniversalDataLogger< iaf_cond_alpha_mc_fixedca >;
@@ -302,34 +322,40 @@ private:
    */
   struct Parameters_
   {
-    double_t V_th;    //!< Threshold Potential in mV
-    double_t V_reset; //!< Reset Potential in mV
-    double_t t_ref;   //!< Refractory period in ms
-    double_t V_max;             //!< Peak voltage at spike in mV
-    double_t V_thCa;            //!< Threshold for calcium spike in mV
-    double_t Ca_amplitude;      //!< Amplitude factor for calcium spike current in pA
-    double_t jump_Th;           //!< Jump in adaptive threshold upon spike in mV
-    double_t tau_Th;            //!< Time constant for adaptive threshold in ms
-    bool    Ca_active;          //!< Calcium spikes are active if true
-    bool    reset_on_spike;        //!< flag to set somatic membrane potential to reset value at end of refractory period
+    double_t V_th;         //!< Threshold Potential in mV
+    double_t V_reset;      //!< Reset Potential in mV
+    double_t t_ref;        //!< Refractory period in ms
+    double_t V_max;        //!< Peak voltage at spike in mV
+    double_t V_thCa;       //!< Threshold for calcium spike in mV
+    double_t Ca_amplitude; //!< Amplitude factor for calcium spike current in pA
+    double_t jump_Th;      //!< Jump in adaptive threshold upon spike in mV
+    double_t tau_Th;       //!< Time constant for adaptive threshold in ms
+    bool Ca_active;        //!< Calcium spikes are active if true
+    bool reset_on_spike;   //!< flag to set somatic membrane potential to reset
+    // value at end of refractory period
 
-    double_t g_conn[ NCOMP - 1 ]; //!< Conductances connecting compartments, in nS
-    double_t t_L[ NCOMP ];        //!< Leak during refractory period in nS
-    double_t nt_L[ NCOMP ];       //!< Leak at other times in ns
+    double_t
+      g_conn[ NCOMP - 1 ];  //!< Conductances connecting compartments, in nS
+    double_t t_L[ NCOMP ];  //!< Leak during refractory period in nS
+    double_t nt_L[ NCOMP ]; //!< Leak at other times in ns
 
-    double_t g_L[ NCOMP ];      //!< Leak Conductance in nS
-    double_t C_m[ NCOMP ];      //!< Membrane Capacitance in pF
-    double_t E_ex[ NCOMP ];     //!< Excitatory reversal Potential in mV
-    double_t E_in[ NCOMP ];     //!< Inhibitory reversal Potential in mV
-    double_t E_L[ NCOMP ];      //!< Leak reversal Potential (aka resting potential) in mV
-    double_t tau_synE[ NCOMP ]; //!< Synaptic Time Constant Excitatory Synapse in ms
-    double_t tau_synI[ NCOMP ]; //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double_t I_e[ NCOMP ];      //!< Constant Current in pA
-    double_t tau_currAP[ NCOMP ]; //!< Time constant of active current at each compartment after AP in pA
-    double_t amp_currAP[ NCOMP ]; //!< Amplitude of active current at each compartment after AP in pA
+    double_t C_m[ NCOMP ];  //!< Membrane Capacitance in pF
+    double_t E_ex[ NCOMP ]; //!< Excitatory reversal Potential in mV
+    double_t E_in[ NCOMP ]; //!< Inhibitory reversal Potential in mV
+    double_t
+      E_L[ NCOMP ]; //!< Leak reversal Potential (aka resting potential) in mV
+    double_t
+      tau_synE[ NCOMP ]; //!< Synaptic Time Constant Excitatory Synapse in ms
+    double_t tau_synI[ NCOMP ]; //!< Synaptic Time Constant for Inhibitory
+    // Synapse in ms
+    double_t I_e[ NCOMP ];        //!< Constant Current in pA
+    double_t tau_currAP[ NCOMP ]; //!< Time constant of active current at each
+    // compartment after AP in pA
+    double_t amp_currAP[ NCOMP ]; //!< Amplitude of active current at each
+    // compartment after AP in pA
 
-    Parameters_();                                //!< Sets default parameter values
-    Parameters_( const Parameters_& );            //!< needed to copy C-arrays
+    Parameters_();                     //!< Sets default parameter values
+    Parameters_( const Parameters_& ); //!< needed to copy C-arrays
     Parameters_& operator=( const Parameters_& ); //!< needed to copy C-arrays
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
@@ -363,6 +389,7 @@ public:
       G_INH,
       DI_AP,
       I_AP,
+      G_L,
       STATE_VEC_COMPS
     };
 
@@ -371,10 +398,10 @@ public:
 
     //! neuron state, must be C-array for GSL solver
     double_t y_[ STATE_VEC_SIZE ];
-    int_t r_; //!< number of refractory steps remaining
-    int_t rCa_;   //!< number of refractory steps remaining for calcium spike
-    int_t numCa_; //!< num of calcium spikes
-    double_t th_; //!< adaptive spike threshold
+    int_t r_;      //!< number of refractory steps remaining
+    int_t rCa_;    //!< number of refractory steps remaining for calcium spike
+    int_t numCa_;  //!< num of calcium spikes
+    double_t th_;  //!< adaptive spike threshold
     double_t ICa_; //!< calcium spike waveform
 
     State_( const Parameters_& ); //!< Default initialization
@@ -406,8 +433,9 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( iaf_cond_alpha_mc_fixedca& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, iaf_cond_alpha_mc_fixedca& ); //!<Sets buffer pointers to 0
+    Buffers_( iaf_cond_alpha_mc_fixedca& ); //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&,
+      iaf_cond_alpha_mc_fixedca& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
     UniversalDataLogger< iaf_cond_alpha_mc_fixedca > logger_;
@@ -464,9 +492,10 @@ private:
 
     int_t RefractoryCountsCa_;
 
-    std::vector <double_t> Ca_waveform_; //!< Waveform for calcium spike current
+    std::vector< double_t >
+      Ca_waveform_; //!< Waveform for calcium spike current
 
-    double_t AdaptThStep_;	
+    double_t AdaptThStep_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -489,7 +518,8 @@ private:
     return Time::get_resolution().get_ms() * S_.r_;
   }
 
-  //! Read out number of refractory steps for calcium spikes, used by UniversalDataLogger
+  //! Read out number of refractory steps for calcium spikes, used by
+  // UniversalDataLogger
   double_t
   get_rCa_() const
   {
@@ -545,7 +575,10 @@ private:
 };
 
 inline port
-iaf_cond_alpha_mc_fixedca::send_test_event( Node& target, rport receptor_type, synindex, bool )
+iaf_cond_alpha_mc_fixedca::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -553,9 +586,11 @@ iaf_cond_alpha_mc_fixedca::send_test_event( Node& target, rport receptor_type, s
 }
 
 inline port
-iaf_cond_alpha_mc_fixedca::handles_test_event( SpikeEvent&, rport receptor_type )
+iaf_cond_alpha_mc_fixedca::handles_test_event( SpikeEvent&,
+  rport receptor_type )
 {
-  if ( receptor_type < MIN_SPIKE_RECEPTOR || receptor_type >= SUP_SPIKE_RECEPTOR )
+  if ( receptor_type < MIN_SPIKE_RECEPTOR
+    || receptor_type >= SUP_SPIKE_RECEPTOR )
   {
     if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
       throw UnknownReceptorType( receptor_type, get_name() );
@@ -566,12 +601,14 @@ iaf_cond_alpha_mc_fixedca::handles_test_event( SpikeEvent&, rport receptor_type 
 }
 
 inline port
-iaf_cond_alpha_mc_fixedca::handles_test_event( CurrentEvent&, rport receptor_type )
+iaf_cond_alpha_mc_fixedca::handles_test_event( CurrentEvent&,
+  rport receptor_type )
 {
   if ( receptor_type < MIN_CURR_RECEPTOR || receptor_type >= SUP_CURR_RECEPTOR )
   {
     if ( receptor_type >= 0 && receptor_type < MIN_CURR_RECEPTOR )
-      throw IncompatibleReceptorType( receptor_type, get_name(), "CurrentEvent" );
+      throw IncompatibleReceptorType(
+        receptor_type, get_name(), "CurrentEvent" );
     else
       throw UnknownReceptorType( receptor_type, get_name() );
   }
@@ -579,14 +616,16 @@ iaf_cond_alpha_mc_fixedca::handles_test_event( CurrentEvent&, rport receptor_typ
 }
 
 inline port
-iaf_cond_alpha_mc_fixedca::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_cond_alpha_mc_fixedca::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
   {
     if ( receptor_type < 0 || receptor_type >= SUP_CURR_RECEPTOR )
       throw UnknownReceptorType( receptor_type, get_name() );
     else
-      throw IncompatibleReceptorType( receptor_type, get_name(), "DataLoggingRequest" );
+      throw IncompatibleReceptorType(
+        receptor_type, get_name(), "DataLoggingRequest" );
   }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }

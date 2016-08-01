@@ -468,7 +468,6 @@ extern const Name reset_on_spike;
 
 // Specific to iaf conductance mc fixedca
 extern const Name Ca_amplitude;
-
 }
 }
 

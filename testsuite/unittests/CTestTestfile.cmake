@@ -4,7 +4,6 @@
 # 
 # This file includes the relevant testing commands required for 
 # testing this directory and lists subdirectories to be tested as well.
-add_test(unittests/test_convergent_connect.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_convergent_connect.sli")
 add_test(unittests/test_rdv_param_setting.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_rdv_param_setting.sli")
 add_test(unittests/test_spike_poisson_ps_base2.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_spike_poisson_ps_base2.sli")
 add_test(unittests/test_voltmeter_reset.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_voltmeter_reset.sli")
@@ -30,7 +29,6 @@ add_test(unittests/test_spike_generator.sli "/home/yansong/programs/justforgit/n
 add_test(unittests/test_spike_det_reset.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_spike_det_reset.sli")
 add_test(unittests/test_iaf_i0.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_iaf_i0.sli")
 add_test(unittests/test_set_start_stop_origin.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_set_start_stop_origin.sli")
-add_test(unittests/test_random_divergent_connect.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_random_divergent_connect.sli")
 add_test(unittests/test_pulsepacket_generator.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_pulsepacket_generator.sli")
 add_test(unittests/test_dcgen_versus_I_e.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_dcgen_versus_I_e.sli")
 add_test(unittests/test_sinusoidal_poisson_generator.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_sinusoidal_poisson_generator.sli")
@@ -51,7 +49,6 @@ add_test(unittests/test_poisson_generator_campbell_alpha.sli "/home/yansong/prog
 add_test(unittests/test_iaf_1to2_ex.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_iaf_1to2_ex.sli")
 add_test(unittests/test_two_devices.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_two_devices.sli")
 add_test(unittests/test_iaf.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_iaf.sli")
-add_test(unittests/test_random_convergent_connect.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_random_convergent_connect.sli")
 add_test(unittests/test_spike_dilutor.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_spike_dilutor.sli")
 add_test(unittests/test_multimeter_accu.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_multimeter_accu.sli")
 add_test(unittests/test_poisson_ps_min_interval.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_poisson_ps_min_interval.sli")
@@ -126,7 +123,7 @@ add_test(unittests/test_iaf_fudge.sli "/home/yansong/programs/justforgit/nest-gi
 add_test(unittests/test_min_delay_tics_reset.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_min_delay_tics_reset.sli")
 add_test(unittests/test_multithreading_devices.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_multithreading_devices.sli")
 add_test(unittests/test_symmetric_connections.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_symmetric_connections.sli")
-add_test(unittests/test_divergent_connect.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_divergent_connect.sli")
 add_test(unittests/test_iaf_dc_aligned_delay.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_iaf_dc_aligned_delay.sli")
+add_test(unittests/test_inh_stdp_synapse.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_inh_stdp_synapse.sli")
 add_test(unittests/test_delay_check.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_delay_check.sli")
 add_test(unittests/test_spike_detector.sli "/home/yansong/programs/justforgit/nest-git/bin/nest" "/home/yansong/programs/justforgit/nest-git/share/doc/nest/unittests/test_spike_detector.sli")

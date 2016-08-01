@@ -395,6 +395,5 @@ const Name reset_on_spike( "reset_on_spike" );
 
 // Specific to iaf conductance mc fixedca
 const Name Ca_amplitude( "Ca_amplitude" );
-
 }
 }

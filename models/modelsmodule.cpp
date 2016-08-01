@@ -88,6 +88,7 @@
 #include "correlation_detector.h"
 #include "correlomatrix_detector.h"
 #include "correlospinmatrix_detector.h"
+#include "lowpassfilter_spike_detector.h"
 #include "multimeter.h"
 #include "spike_detector.h"
 #include "spin_detector.h"
@@ -214,6 +215,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< spike_dilutor >(
     "spike_dilutor" );
 
+  kernel().model_manager.register_node_model< lowpassfilter_spike_detector >(
+    "lowpassfilter_spike_detector" );
   kernel().model_manager.register_node_model< spike_detector >(
     "spike_detector" );
   kernel().model_manager.register_node_model< spin_detector >(

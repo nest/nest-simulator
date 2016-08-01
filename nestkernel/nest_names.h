@@ -148,15 +148,20 @@ extern const Name F_lower;
 extern const Name F_mean;
 extern const Name F_std;
 extern const Name F_upper;
-extern const Name fbuffer_size;         //!< Recorder parameter
-extern const Name file;                 //!< Recorder parameter
-extern const Name file_extension;       //!< Recorder parameter
-extern const Name filename;             //!< Recorder parameter
-extern const Name filenames;            //!< Recorder parameter
-extern const Name flush_after_simulate; //!< Recorder parameter
-extern const Name flush_records;        //!< Recorder parameter
-extern const Name frequency;            //!< Signal modulation frequency
-extern const Name frozen;               //!< Node parameter
+extern const Name fbuffer_size;   //!< Recorder parameter
+extern const Name file;           //!< Recorder parameter
+extern const Name file_extension; //!< Recorder parameter
+extern const Name filename;       //!< Recorder parameter
+extern const Name filenames;      //!< Recorder parameter
+extern const Name filter_events;  //!< Filter events for filtering device
+extern const Name filter_values;  //!< Interval for filtering device
+extern const Name filter_report_interval; //!< Interval for filtering device
+extern const Name filter_start_times;     //!< Start times for filtering device
+extern const Name filter_stop_times;      //!< Stop times for filtering device
+extern const Name flush_after_simulate;   //!< Recorder parameter
+extern const Name flush_records;          //!< Recorder parameter
+extern const Name frequency;              //!< Signal modulation frequency
+extern const Name frozen;                 //!< Node parameter
 
 extern const Name g;             //!< Conductance
 extern const Name g_ahp;         //!< Specific to iaf_chxk_2008 neuron
@@ -283,6 +288,7 @@ extern const Name rate;               //!< Specific to ppd_sup_generator and
 extern const Name receptor_type;      //!< Connection parameters
 extern const Name receptor_types;     //!< Connection parameters
 extern const Name record_from;        //!< Recorder parameter
+extern const Name record_spikes;      //!< Recorder parameter
 extern const Name record_to;          //!< Recorder parameter
 extern const Name recordables;        //!< List of recordable state data
                                       //!< (Device parameters)
@@ -344,21 +350,22 @@ extern const Name t_spike;         //!< Time of last spike
 extern const Name target;          //!< Connection parameters
 extern const Name target_thread;   //!< Connection parameters
 extern const Name targets;         //!< Connection parameters
-extern const Name tau_1;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
-extern const Name tau_2;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
-extern const Name tau_ahp;   //!< Specific to iaf_chxk_2008 neuron
-extern const Name tau_Ca;    //!< Rate of loss of calcuim concentration
-extern const Name tau_epsp;  //!< Specific to iaf_chs_2008 neuron
-extern const Name tau_fac;   //!< facilitation time constant (ms)
-                             //!< (Tsodyks2_connection)
-extern const Name tau_facs;  //!< facilitation time constant (ms)
-                             //!< (property arrays)
-extern const Name tau_lcm;   //!< Least common multiple of tau_m, tau_ex and
-                             //!< tau_in (precise timing neurons (Brette 2007))
-extern const Name tau_m;     //!< Membrane time constant
-extern const Name tau_max;   //!< Specific to correlation and
-                             //!< correlomatrix detector
-extern const Name tau_minus; //!< used for ArchivingNode
+extern const Name tau_1;      //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
+extern const Name tau_2;      //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
+extern const Name tau_ahp;    //!< Specific to iaf_chxk_2008 neuron
+extern const Name tau_Ca;     //!< Rate of loss of calcuim concentration
+extern const Name tau_epsp;   //!< Specific to iaf_chs_2008 neuron
+extern const Name tau_fac;    //!< facilitation time constant (ms)
+                              //!< (Tsodyks2_connection)
+extern const Name tau_facs;   //!< facilitation time constant (ms)
+                              //!< (property arrays)
+extern const Name tau_filter; //!< filtering time constant (ms)
+extern const Name tau_lcm;    //!< Least common multiple of tau_m, tau_ex and
+                              //!< tau_in (precise timing neurons (Brette 2007))
+extern const Name tau_m;      //!< Membrane time constant
+extern const Name tau_max;    //!< Specific to correlation and
+                              //!< correlomatrix detector
+extern const Name tau_minus;  //!< used for ArchivingNode
 extern const Name tau_minus_triplet; //!< used for ArchivingNode
 extern const Name tau_rec;           //!< time constant for recovery (ms)
                                      //!< (Tsodyks2_connection)

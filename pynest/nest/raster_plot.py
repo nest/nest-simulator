@@ -103,9 +103,10 @@ def from_file(fname, **kwargs):
     ----------
     fname : str or tuple(str) or list(str)
         File name or list of file names
-        If a list of files is given, the data from them is concatenated as if it
-        had been stored in a single file - useful when MPI is enabled and data
-        is logged separately for each MPI rank, for example.
+
+        If a list of files is given, the data from them is concatenated as if
+        it had been stored in a single file - useful when MPI is enabled and
+        data is logged separately for each MPI rank, for example.
     kwargs:
         Parameters passed to _make_plot
     """

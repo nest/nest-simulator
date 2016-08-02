@@ -458,7 +458,6 @@ aeif_cond_2exp_multisynapse::aeif_cond_2exp_multisynapse_dynamics(
     // Synaptic conductance derivative dG/dt (nS) for inhibitory connections
     f[ S::G_INH_RISE + j ] = -y[ S::G_INH_RISE + j ] / P_.taus_rise[ i ];
     f[ S::G_INH_DECAY + j ] = -y[ S::G_INH_DECAY + j ] / P_.taus_decay[ i ];
-
   }
 }
 

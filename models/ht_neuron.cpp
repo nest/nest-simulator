@@ -540,7 +540,7 @@ nest::ht_neuron::get_synapse_constant( nest::double_t Tau_1,
    *
    *   g(t) = c / ( a - b ) * ( e^(-b t) - e^(-a t) )
    *
-   * with a = 1/Tau_1, b = 1/Tau_2, a > b. The maximum of this function is at
+   * with a = 1/Tau_1, b = 1/Tau_2, a != b. The maximum of this function is at
    *
    *   t* = 1/(a-b) ln a/b
    *
@@ -574,8 +574,7 @@ nest::ht_neuron::calibrate()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  // NOTE: code below initializes conductance step size for incoming pulses.
-  // Variable and function names need to be changed!
+  // The code below initializes conductance step size for incoming pulses.
   V_.cond_steps_.resize( SUP_SPIKE_RECEPTOR - 1 );
 
   V_.cond_steps_[ AMPA - 1 ] =
@@ -672,7 +671,11 @@ ht_neuron::update( Time const& origin, const long_t from, const long_t to )
       S_.g_spike_ = false; // Deactivate potassium current.
     }
 
-    // Add new spikes to node state array
+    /* Add new spikes to node state array.
+     *
+     * The input variable for the synapse type with buffer index i is
+     * at position 2 + 2*i in the state variable vector.
+     */
     for ( size_t i = 0; i < B_.spike_inputs_.size(); ++i )
     {
       S_.y_[ 2 + 2 * i ] +=

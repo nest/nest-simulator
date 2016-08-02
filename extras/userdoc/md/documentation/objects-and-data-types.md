@@ -1,8 +1,6 @@
-Objects and data types
-======================
+# Objects and data types
 
-Overview
---------
+## Overview
 
 Anything that can be put on the stack is called object. There are several
 different types of objects, which can store different types of data. For a
@@ -12,8 +10,7 @@ objects are the majority and are simply pushed on the stack when they are
 entered. By contrast, executable objects perform some operation when they are
 entered and cannot easily be pushed on the stack.
 
-Numbers
--------
+## Numbers
 
 SLI distinguishes between real and integer numbers. Real numbers
 correspond to the type `double` in C/C++. Integer numbers
@@ -25,14 +22,14 @@ Real numers are: `1.4`, `.5`, `1.`, `1e-2`
 
 Integer numers are `1`, `2`, `3000`
 
-Arrays
-------
+## Arrays
 
 Arrays are sequential containers which can hold any SLI object. The elements of
 an array are indexed, starting with zero (0) as the first index.
 
 SLI arrays are heterogeneous. Objects of different type may be mixed within one
-array. Arrays may also be nested to define matrices or tensors of arbitrary rank.
+array. Arrays may also be nested to define matrices or tensors of arbitrary
+rank.
 
 Arrays are delimited by square brackets. The different elements of an array are
 separated by white-spaces.
@@ -43,15 +40,14 @@ separated by white-spaces.
     [1 a b]   % a mixed array
     [[1 2 3] [4 5 6]] % a 2x3 Matrix defined by nested array
 
-Calculate the dot product of the vectors \\([1 2 3]cdot[4 5 6]\\)
+Calculate the dot product of the vectors \\(\[1 2 3\]cdot\[4 5 6\]\\)
 
     SLI ] [1 2 3]
     SLI [1] [4 5 6]
     SLI [2] Dot =
     32                                                                              
 
-Names
------
+## Names
 
 Names are used to create variables and to identify specific SLI objects.
 If a name is entered, it is immediately executed.
@@ -91,8 +87,7 @@ Define the variables *a* and *b* with values 1 and 2 and calculate *a+b*
     --------------------------------------------------
     Total number of dictionary entries: 3
 
-Strings
--------
+## Strings
 
 Strings are sequences of characters, delimited by parenthesis. In SLI,
 characters are represented by interger numbers, e.g. 97 represents the letter
@@ -107,8 +102,7 @@ Matched pairs of parentheses may be used inside strings.
     SLI ] (Hello World!) =
     Hello World!                                                                    
 
-Procedures
-----------
+## Procedures
 
 Procedures are a sequence of SLI commands, enclosed by the delimiters
 `{` and `}`. The delimiters prevent the objects from being executed as you enter
@@ -126,8 +120,7 @@ Print the string *Hello World!*.
       (Hello World !) =
     } def
 
-Dictionaries
-------------
+## Dictionaries
 
 A dictionary is an associative array. It stores pairs of names and objects,
 where the name acts as a key to access the object inside the dictionary.
@@ -159,8 +152,7 @@ The command `info` can be used to examine the contents of a dictionary.
     --------------------------------------------------
     Total number of dictionary entries: 3
 
-Object types
-------------
+## Object types
 
 There are a number of different object types in SLI. Each type is represented by
 a literal name (i.e. a name with a prepended slash). Here is a list of the most

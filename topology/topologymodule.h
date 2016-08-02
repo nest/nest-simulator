@@ -36,7 +36,7 @@
 
 namespace nest
 {
-class Parameter;
+class TopologyParameter;
 class AbstractMask;
 class AbstractLayer;
 
@@ -245,8 +245,9 @@ public:
   static AbstractMask* create_mask( const Name& name,
     const DictionaryDatum& d );
 
-  typedef GenericFactory< Parameter > ParameterFactory;
-  typedef GenericFactory< Parameter >::CreatorFunction ParameterCreatorFunction;
+  typedef GenericFactory< TopologyParameter > ParameterFactory;
+  typedef GenericFactory< TopologyParameter >::CreatorFunction
+    ParameterCreatorFunction;
 
   /**
    * Register an Parameter subclass as a new parameter type with the
@@ -282,7 +283,7 @@ public:
    * @returns Either the ParameterDatum given as argument, or a new
    *          parameter.
    */
-  static lockPTRDatum< Parameter,
+  static lockPTRDatum< TopologyParameter,
     &TopologyModule::
       ParameterType > /*ParameterDatum*/ create_parameter( const Token& );
 
@@ -293,7 +294,7 @@ public:
    *             type.
    * @returns dynamically allocated new Parameter object.
    */
-  static Parameter* create_parameter( const Name& name,
+  static TopologyParameter* create_parameter( const Name& name,
     const DictionaryDatum& d );
 
 private:

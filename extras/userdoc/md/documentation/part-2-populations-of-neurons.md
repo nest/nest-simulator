@@ -1,8 +1,6 @@
-Part 2: Populations of neurons
-==============================
+# Part 2: Populations of neurons
 
-Introduction
-------------
+## Introduction
 
 In this handout we look at creating and parameterising batches of `neurons`, and
 connecting them. When you have worked through this material, you will know how
@@ -17,11 +15,10 @@ to:
 -   reset simulations
 
 For more information on the usage of NEST, please visit:
-[Documentation](../documentation/index.html). To carry out the code snippets in
+[Documentation](documentation.md). To carry out the code snippets in
 this handout, you need to import `nest` and `numpy`.
 
-Creating parameterised populations of nodes
--------------------------------------------
+## Creating parameterised populations of nodes
 
 In the previous handout, we introduced the function
 `Create(model, n=1, params=None)`. Its mandatory argument is the model name,
@@ -86,8 +83,7 @@ Once you have set up your populations of neurons, the function `PrintNetwork()`
 gives you a simple text output of the network that can help you to check whether
 you have done what you intended to.
 
-Setting parameters for populations of neurons
----------------------------------------------
+## Setting parameters for populations of neurons
 
 It is not always possible to set all parameters for a neuron model at or before
 creation. A classic example of this is when some parameter should be drawn from
@@ -119,8 +115,7 @@ Note that we are being rather lax with random numbers here. Really we have to
 take more care with them, especially if we are using multiple threads or
 distributing over multiple machines. We will worry about this later.
 
-Connecting populations with random connections
-----------------------------------------------
+## Connecting populations with random connections
 
 In the previous handout we looked at the connectivity patterns `one_to_one` and
 `all_to_all`. However, we often want to look at networks with a sparser
@@ -174,10 +169,9 @@ In addition to the rule specific parameters `indegree`, `outdegree`, `N` and
 Note that for all connectivity rules, it is perfectly legitimate to have the
 same population simultaneously in the role of `pre` and `post`. For more
 information on connecting neurons, please read the documentation of the
-`Connect` function and consult the guide at <http://www.nest-initiative.org/Connection_Management>.
+`Connect` function and consult the guide at [Connection Management](connection-management.md).
 
-Specifying the behaviour of devices
------------------------------------
+## Specifying the behaviour of devices
 
 All devices implement a basic timing capacity; the parameter `start`
 (default $$0$$) determines the beginning of the device’s activity and the
@@ -211,8 +205,7 @@ process and/or thread. For more information on how to customise the behaviour
 and output format of recording devices, please read the documentation for
 `RecordingDevice`.
 
-Resetting simulations
----------------------
+## Resetting simulations
 
 It often occurs that we need to reset a simulation. For example, if you are
 developing a script, then you may need to run it from the `ipython` console
@@ -231,8 +224,7 @@ is often helpful to call the function `ResetNetwork()` within each loop
 iteration. It resets all nodes to their default configuration and wipes the data
 from recording devices.
 
-Command overview\[sec:Command-overview\]
---------------------------------------
+## Command overview
 
 These are the new functions we introduced for the examples in this handout.
 

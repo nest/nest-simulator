@@ -167,8 +167,7 @@ public:
   double
   value_double( thread, librandom::RngPtr& ) const
   {
-    throw KernelException(
-      "ConnParameter calls value function with false return type." );
+    return static_cast< double >( value_ );
   }
 
   long_t
@@ -322,10 +321,12 @@ public:
   }
 
   double
-  value_double( thread, librandom::RngPtr& ) const
+  value_double( thread tid, librandom::RngPtr& ) const
   {
-    throw KernelException(
-      "ConnParameter calls value function with false return type." );
+    if ( next_[ tid ] != values_->end() )
+      return static_cast< double >( *next_[ tid ]++ );
+    else
+      throw KernelException( "Parameter values exhausted." );
   }
 
   inline bool

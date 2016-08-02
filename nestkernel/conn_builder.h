@@ -42,6 +42,7 @@
 #include "gslrandomgen.h"
 
 // Includes from nestkernel:
+#include "conn_parameter.h"
 #include "gid_collection.h"
 #include "nest_time.h"
 
@@ -339,6 +340,25 @@ protected:
   void connect_();
   void connect_( GIDCollection sources, GIDCollection targets );
 };
+
+inline void
+ConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
+{
+  if ( param.is_array() )
+  {
+    parameters_requiring_skipping_.push_back( &param );
+  }
+}
+
+inline void
+ConnBuilder::skip_conn_parameter_( thread target_thread )
+{
+  for ( std::vector< ConnParameter* >::iterator it =
+          parameters_requiring_skipping_.begin();
+        it != parameters_requiring_skipping_.end();
+        ++it )
+    ( *it )->skip( target_thread );
+}
 
 } // namespace nest
 

@@ -17,7 +17,7 @@ In contrast to the update of nodes, an event-driven approach is used for the
 synapses, meaning that they are only updated when an event is transmitted
 through them ([Morrison et al. 2005](http://dx.doi.org/10.1162/0899766054026648)).
 To speed up the simulation and allow the efficient use of computer clusters,
-NEST uses a [hybrid parallelization strategy](../parallel_computing/index.html).
+NEST uses a [hybrid parallelization strategy](parallel-computing.md).
 The following figure shows the basic loop that is run upon a call to `Simulate`:
 
 ![Simulation Loop](../../img/simulation_loop-241x300.png)
@@ -55,7 +55,7 @@ NEST will figure out the correct value of *d<sub>min</sub>* and
 *d<sub>max</sub>* based on the actual delays used during connection setup.
 Their actual values can be retrieved using `GetKernelStatus`:
 
-    GetKernelStatus("min_delay")   # (A corresponding entry exists for max_delay)
+    GetKernelStatus("min_delay")   # (A corresponding entry exists for max_delay)
 
 ### Setting *d<sub>min</sub>* and *d<sub>max</sub>* manually
 
@@ -92,7 +92,7 @@ membrane potential recording will never show values above the threshold. The tim
 the spike is always the time at *the end of the interval* during which the threshold was
 crossed.
 
-NEST also has a some models that determine the precise time of the threshold crossing
-during the interval. Please see the documentation on [precise spike time neurons](simulations-with-precise-spike-times/)
-for details about neuron update in continuous time and the [documentation on connection management](connection_management/)
+NEST also has a some models that determine the precise time of the threshold
+crossing during the interval. Please see the documentation on [precise spike time neurons](simulations-with-precise-spike-times.md)
+for details about neuron update in continuous time and the [documentation on connection management](connection-management.md)
 for how to set the delay when creating synapses.

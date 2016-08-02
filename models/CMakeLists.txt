@@ -88,6 +88,7 @@ set( models_sources
     tsodyks_connection.h
     tsodyks_connection_hom.h tsodyks_connection_hom.cpp
     volume_transmitter.h volume_transmitter.cpp
+    vogels_sprekeler_connection.h
     spike_dilutor.h spike_dilutor.cpp
     )
 

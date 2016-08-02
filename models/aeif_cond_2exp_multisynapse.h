@@ -178,9 +178,9 @@ private:
     std::vector< double_t > taus_decay; //!< Decay time of synaptic conductance
                                         //!< in ms..
 
-    double_t I_e;     //!< Intrinsic current in pA.
-    double_t MAXERR;  //!< Maximal error for adaptive stepsize solver
-    double_t HMIN;    //!< Smallest permissible stepsize in ms.
+    double_t I_e;    //!< Intrinsic current in pA.
+    double_t MAXERR; //!< Maximal error for adaptive stepsize solver
+    double_t HMIN;   //!< Smallest permissible stepsize in ms.
 
     // type is long because other types are not put through in GetStatus
     std::vector< long > receptor_types_;
@@ -426,9 +426,9 @@ aeif_cond_2exp_multisynapse::aeif_cond_2exp_multisynapse_dynamics(
         i += S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR )
   {
     I_syn_exc +=
-      (y[ S::G_EXC_DECAY + i ] - y[ S::G_EXC_RISE + i ]) * ( V - P_.E_ex );
+      ( y[ S::G_EXC_DECAY + i ] - y[ S::G_EXC_RISE + i ] ) * ( V - P_.E_ex );
     I_syn_inh +=
-      (y[ S::G_INH_DECAY + i ] - y[ S::G_INH_RISE + i ]) * ( V - P_.E_in );
+      ( y[ S::G_INH_DECAY + i ] - y[ S::G_INH_RISE + i ] ) * ( V - P_.E_in );
   }
 
   // We pre-compute the argument of the exponential
@@ -448,10 +448,9 @@ aeif_cond_2exp_multisynapse::aeif_cond_2exp_multisynapse_dynamics(
   // Adaptation current w.
   f[ S::W ] = ( P_.a * ( V - P_.E_L ) - w ) / P_.tau_w;
 
-  size_t j = 0;
   for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
   {
-    j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
     // Synaptic conductance derivative dG/dt (nS) for excitatory connections
     f[ S::G_EXC_RISE + j ] = -y[ S::G_EXC_RISE + j ] / P_.taus_rise[ i ];
     f[ S::G_EXC_DECAY + j ] = -y[ S::G_EXC_DECAY + j ] / P_.taus_decay[ i ];

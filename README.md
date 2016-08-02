@@ -79,8 +79,12 @@ summary](http://nest-simulator.org/features/).
 - NEST has one of the largest and most experienced developer communities of all
   neural simulators. NEST was first released in 1994 under the name SYNOD and
   has been extended and improved ever since.
-- NEST is open source software and is licensed under the GNU General Public
-  License v2 or later.
+
+## License
+
+NEST is open source software and is licensed under the [GNU General Public
+License v2](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html) or
+later.
 
 ## Installing NEST
 

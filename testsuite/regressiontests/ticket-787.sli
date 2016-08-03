@@ -56,7 +56,14 @@ statusdict/is_mpi :: {statusdict/exitcodes/success :: quit_i} if
 % entries to skip
 
 % functions that confuse the test setup
-/special_skip [/abort /license /helpindex /helpdesk] def
+/special_skip [/abort /license /helpindex /helpdesk /help /help_any] def
+
+% functions that depend on readline and should not be checked if
+% NEST was compiled without support for the GNU readline library
+/readline_skip [] def
+systemdict /GNUReadline known not {
+  /readline_skip [/executive /mathexecutive /GNUreadline /break] def
+} if
 
 % private functions not expected to implement full error checking
 /private_skip [
@@ -135,6 +142,7 @@ statusdict/is_mpi :: {statusdict/exitcodes/success :: quit_i} if
     k cvs -1 Take (_) neq and
     private_skip k MemberQ not and
     special_skip k MemberQ not and
+    readline_skip k MemberQ not and
   } Select
 def
 

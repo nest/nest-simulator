@@ -1,19 +1,6 @@
 # git ignore patterns
 
-autom4te.cache/
 libltdl/
-
-Makefile.in
-
-aclocal.m4
-compile
-config.guess
-config.sub
-configure
-depcomp
-install-sh
-ltmain.sh
-missing
 
 pynest/pynestkernel.cpp
 
@@ -22,7 +9,6 @@ pynest/pynestkernel.cpp
 *.la
 .*
 *.log
-config.status
 Makefile
 build/
 
@@ -30,7 +16,6 @@ build/
 /extras/nest-config
 /extras/create_release.sh
 /libnestutil/config.h
-/libnestutil/stamp-h1
 /librandom/randomtest
 /libtool
 /nest/nest

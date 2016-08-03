@@ -121,7 +121,7 @@ def from_file(fname, **kwargs):
         except ImportError:
             from_file_numpy(fname, **kwargs)
     else:
-        print('fname should be of str/list(str)/tuple(str).')
+        print('fname should be one of str/list(str)/tuple(str).')
 
 
 def from_file_pandas(fname, **kwargs):

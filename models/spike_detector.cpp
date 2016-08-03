@@ -46,6 +46,7 @@ nest::spike_detector::spike_detector()
   // record time and gid
   , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true )
   , user_set_precise_times_( false )
+  , user_set_precision_value( -1 )
   , has_proxies_( false )
   , local_receiver_( true )
 {
@@ -55,6 +56,7 @@ nest::spike_detector::spike_detector( const spike_detector& n )
   : Node( n )
   , device_( *this, n.device_ )
   , user_set_precise_times_( n.user_set_precise_times_ )
+  , user_set_precision_value( n.user_set_precision_value )
   , has_proxies_( false )
   , local_receiver_( true )
 {
@@ -80,19 +82,37 @@ nest::spike_detector::init_buffers_()
 void
 nest::spike_detector::calibrate()
 {
-  if ( !user_set_precise_times_
-    && kernel().event_delivery_manager.get_off_grid_communication() )
+  if ( kernel().event_delivery_manager.get_off_grid_communication() )
   {
-    device_.set_precise( true, 15 );
+    // If precise models exist, it is necessary to ensure that precise_times
+    // property
+    // is set to true and the precision should increase from the default value
+    // of 3.
 
-    LOG( M_INFO,
-      "spike_detector::calibrate",
-      String::compose(
-           "Precise neuron models exist: the property precise_times "
-           "of the %1 with gid %2 has been set to true, precision has "
-           "been set to 15.",
-           get_name(),
-           get_gid() ) );
+    // Default precision value for simulations involving precise models.
+    long precision = 15;
+
+    if ( user_set_precision_value != -1 )
+    {
+      // If precision is set to a value by the user, it must be used instead of
+      // the default.
+      precision = user_set_precision_value;
+    }
+
+    device_.set_precise( true, precision );
+
+    if ( user_set_precise_times_ != true )
+    {
+      LOG( M_INFO,
+        "spike_detector::calibrate",
+        String::compose(
+             "Precise neuron models exist: the property precise_times "
+             "of the %1 with gid %2 has been set to true, precision has "
+             "been set to %3",
+             get_name(),
+             get_gid(),
+             precision ) );
+    }
   }
 
   device_.calibrate();
@@ -140,6 +160,9 @@ nest::spike_detector::set_status( const DictionaryDatum& d )
 {
   if ( d->known( names::precise_times ) )
     user_set_precise_times_ = true;
+
+  if ( d->known( names::precision ) )
+    user_set_precision_value = getValue< long >( d, names::precision );
 
   device_.set_status( d );
 }

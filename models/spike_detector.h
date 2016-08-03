@@ -183,6 +183,7 @@ private:
   Buffers_ B_;
 
   bool user_set_precise_times_;
+  long user_set_precision_value;
   bool has_proxies_;
   bool local_receiver_;
 };

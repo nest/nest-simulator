@@ -101,6 +101,7 @@ void
 parrot_neuron_ps::get_status( DictionaryDatum& d ) const
 {
   Archiving_Node::get_status( d );
+  def< bool >(d, names::is_precise_neuron, true);
 }
 
 void

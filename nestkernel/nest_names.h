@@ -215,6 +215,8 @@ extern const Name Interpol_Order;          //!< Interpolation order (precise
                                            //!< timing neurons)
 extern const Name interval;                //!< Recorder parameter
 extern const Name is_refractory; //!< Neuron is in refractory period (debugging)
+extern const Name is_precise_neuron; //!< true iff. the corresponding neuron supports
+                                     //!< precise off grid integration
 
 extern const Name label;      //!< Miscellaneous parameters
 extern const Name len_kernel; //!< Specific to population point process model

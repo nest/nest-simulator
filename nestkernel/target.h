@@ -35,48 +35,58 @@ namespace nest
  * identify a target neuron on a (remote) machine. Used in TargetTable
  * for presynaptic part of connection infrastructure.
  */
-struct Target
+class Target
 {
-  unsigned int lcid : 27; //!< local connection index
-  unsigned int  rank : 20; //!< rank of target neuron
-  short tid : 10; //!< thread index
-  char syn_index : 6; //!< synapse-type index
-  bool processed : 1;
+private:
+  unsigned int lcid_ : 27; //!< local connection index
+  unsigned int  rank_ : 20; //!< rank of target neuron
+  short tid_ : 10; //!< thread index
+  char syn_index_ : 6; //!< synapse-type index
+  bool processed_ : 1;
+public:
   Target();
   Target( const Target& target );
   Target( const thread tid, const thread rank, const synindex syn_index, const index lcid);
-  void set_processed();
+  void set_lcid( const size_t lcid );
+  size_t get_lcid() const;
+  void set_rank( const unsigned int rank );
+  unsigned int get_rank() const;
+  void set_tid( const unsigned int tid );
+  unsigned int get_tid() const;
+  void set_syn_index( const unsigned char syn_index );
+  unsigned char get_syn_index() const;
+  void set_processed( const bool processed );
   bool is_processed() const;
   double_t get_offset() const;
 };
 
 inline
 Target::Target()
-  : lcid( 0 )
-  , rank( 0 )
-  , tid( 0 )
-  , syn_index( 0 )
-  , processed( false )
+  : lcid_( 0 )
+  , rank_( 0 )
+  , tid_( 0 )
+  , syn_index_( 0 )
+  , processed_( false )
 {
 }
 
 inline
 Target::Target( const Target& target )
-  : lcid( target.lcid )
-  , rank( target.rank )
-  , tid( target.tid )
-  , syn_index( target.syn_index )
-  , processed( false ) // always initialize as non-processed
+  : lcid_( target.lcid_ )
+  , rank_( target.rank_ )
+  , tid_( target.tid_ )
+  , syn_index_( target.syn_index_ )
+  , processed_( false ) // always initialize as non-processed
 {
 }
 
 inline
 Target::Target( const thread tid, const thread rank, const synindex syn_index, const index lcid)
-  : lcid( lcid )
-  , rank( rank )
-  , tid( tid )
-  , syn_index( syn_index )
-  , processed( false ) // always initialize as non-processed
+  : lcid_( lcid )
+  , rank_( rank )
+  , tid_( tid )
+  , syn_index_( syn_index )
+  , processed_( false ) // always initialize as non-processed
 {
   assert( lcid < 134217728 );
   assert( rank < 1048576 );
@@ -85,15 +95,63 @@ Target::Target( const thread tid, const thread rank, const synindex syn_index, c
 }
 
 inline void
-Target::set_processed()
+Target::set_lcid( const size_t lcid )
 {
-  processed = true;
+  lcid_ = lcid;
+}
+
+inline size_t
+Target::get_lcid() const
+{
+  return lcid_;
+}
+
+inline void
+Target::set_rank( const unsigned int rank )
+{
+  rank_ = rank;
+}
+
+inline unsigned int
+Target::get_rank() const
+{
+  return rank_;
+}
+
+inline void
+Target::set_tid( const unsigned int tid )
+{
+  tid_ = tid;
+}
+
+inline unsigned int
+Target::get_tid() const
+{
+  return tid_;
+}
+
+inline void
+Target::set_syn_index( const unsigned char syn_index )
+{
+  syn_index_ = syn_index;
+}
+
+inline unsigned char
+Target::get_syn_index() const
+{
+  return syn_index_;
+}
+
+inline void
+Target::set_processed( const bool processed)
+{
+  processed_ = processed;
 }
 
 inline bool
 Target::is_processed() const
 {
-  return processed;
+  return processed_;
 }
 
 inline double_t
@@ -102,9 +160,11 @@ Target::get_offset() const
   return 0;
 }
 
-struct OffGridTarget : Target
+class OffGridTarget : public Target
 {
+private:
   double_t offset;
+public:
   OffGridTarget();
   OffGridTarget( const Target& target, const double_t offset );
   double_t get_offset() const;
@@ -117,7 +177,7 @@ OffGridTarget::OffGridTarget()
 }
 
 inline
-OffGridTarget::OffGridTarget(const Target& target, const double_t offset )
+OffGridTarget::OffGridTarget( const Target& target, const double_t offset )
   : Target( target )
   , offset( offset )
 {

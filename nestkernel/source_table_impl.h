@@ -96,11 +96,11 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
     next_target_data.lid = kernel().vp_manager.gid_to_lid( current_source.gid );
     next_target_data.tid = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( current_source.gid ) );
     // we store the thread index of the sources table, not our own tid
-    next_target_data.target.tid = current_position.tid;
-    next_target_data.target.rank = kernel().mpi_manager.get_rank();
-    next_target_data.target.processed = false;
-    next_target_data.target.syn_index = current_position.syn_index;
-    next_target_data.target.lcid = current_position.lcid;
+    next_target_data.target.set_tid( current_position.tid );
+    next_target_data.target.set_rank( kernel().mpi_manager.get_rank() );
+    next_target_data.target.set_processed( false );
+    next_target_data.target.set_syn_index( current_position.syn_index );
+    next_target_data.target.set_lcid( current_position.lcid );
     ++current_position.lcid;
     return true; // found a valid entry
   }

@@ -728,7 +728,7 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
 	assert ( not iiit->is_processed() );
 
 	// thread-local index of (global) rank of target
-	const thread lr_idx = iiit->rank % assigned_ranks.max_size;
+	const thread lr_idx = iiit->get_rank() % assigned_ranks.max_size;
 	assert( lr_idx < assigned_ranks.size );
 
 	if ( send_buffer_position.idx[ lr_idx ] == send_buffer_position.end[ lr_idx ] )
@@ -745,8 +745,8 @@ EventDeliveryManager::collocate_spike_data_buffers_( const thread tid,
 	}
 	else
 	{
-	  send_buffer[ send_buffer_position.idx[ lr_idx ] ].set( (*iiit).tid, (*iiit).syn_index, (*iiit).lcid, lag, (*iiit).get_offset() );
-	  (*iiit).set_processed(); // mark entry for removal
+	  send_buffer[ send_buffer_position.idx[ lr_idx ] ].set( (*iiit).get_tid(), (*iiit).get_syn_index(), (*iiit).get_lcid(), lag, (*iiit).get_offset() );
+	  (*iiit).set_processed( true ); // mark entry for removal
 	  ++send_buffer_position.idx[ lr_idx ];
 	  ++send_buffer_position.num_spike_data_written;
 	}

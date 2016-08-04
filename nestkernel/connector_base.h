@@ -169,9 +169,9 @@ public:
   virtual synindex get_syn_id() const = 0;
 
   virtual void
-  sort_connections( std::vector< Source >& sources ){ assert( false ); };
+  sort_connections( std::vector< Source >& ){ assert( false ); };
   virtual void
-  sort_connections( std::vector< std::vector< Source > >& sources ){ assert( false ); };
+  sort_connections( std::vector< std::vector< Source > >& ){ assert( false ); };
 
   virtual void reserve( const size_t ){ assert( false ); };
 };
@@ -186,7 +186,7 @@ private:
   synindex syn_id_;
 
 public:
-  Connector( synindex syn_id )
+  explicit Connector( synindex syn_id )
     : syn_id_ ( syn_id )
   {
   }
@@ -400,7 +400,7 @@ public:
 
   void
   send( thread tid,
-    synindex syn_index,
+    synindex,
     unsigned int lcid,
     Event& e,
     const std::vector< ConnectorModel* >& cm )

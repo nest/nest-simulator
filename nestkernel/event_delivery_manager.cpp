@@ -599,7 +599,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     } // of omp single; implicit barrier
     sw_collocate.start();
 
-    AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
+    const AssignedRanks assigned_ranks = kernel().vp_manager.get_assigned_ranks( tid );
     SendBufferPosition send_buffer_position( assigned_ranks, send_recv_count_spike_data_per_rank_ );
 
     if ( not off_grid_spiking_ )

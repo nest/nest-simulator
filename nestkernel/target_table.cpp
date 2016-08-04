@@ -28,6 +28,7 @@
 nest::TargetTable::TargetTable()
 {
   assert( sizeof(Target) == 12 );
+  assert( sizeof(TargetData) == 16 );
 }
 
 nest::TargetTable::~TargetTable()
@@ -63,10 +64,3 @@ nest::TargetTable::prepare( const thread tid )
   targets_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes(),
     std::vector< Target >( 0, Target() ) );
 }
-
-// TODO@5g: benchmark with and without reserving memory for synapses
-// TODO@5g: if we use reserve, we need to make sure the synapse type is known
-// void
-// nest::TargetTable::reserve( thread tid, synindex syn_id, index n_targets )
-// {
-// }

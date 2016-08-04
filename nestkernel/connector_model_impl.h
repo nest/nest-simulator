@@ -715,7 +715,6 @@ GenericConnectorModel< ConnectionT >::reserve_connections(
   const synindex syn_id,
   const size_t count )
 {
-  std::cout<<"reserving space for "<<count<<" connections."<<std::endl;
   synindex syn_index = hetconn->find_synapse_index( syn_id );
   ConnectorBase* conn = 0;
 

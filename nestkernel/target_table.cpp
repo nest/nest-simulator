@@ -27,7 +27,7 @@
 
 nest::TargetTable::TargetTable()
 {
-  assert( sizeof(Target) == 12 );
+  assert( sizeof(Target) == 8 );
   assert( sizeof(TargetData) == 16 );
 }
 

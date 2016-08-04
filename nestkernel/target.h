@@ -24,6 +24,9 @@
 #ifndef TARGET_H
 #define TARGET_H
 
+// C++ includes:
+#include <cassert>
+
 // Includes from nestkernel:
 #include "nest_types.h"
 
@@ -38,11 +41,19 @@ namespace nest
 class Target
 {
 private:
-  unsigned int lcid_ : 27; //!< local connection index
-  unsigned int  rank_ : 20; //!< rank of target neuron
-  short tid_ : 10; //!< thread index
-  char syn_index_ : 6; //!< synapse-type index
-  bool processed_ : 1;
+  unsigned long data_;
+  // define masks to select correct bits in data_
+  static const unsigned long lcid_mask =      0x0000000007FFFFFF;
+  static const unsigned long rank_mask =      0x00007FFFF8000000;
+  static const unsigned long tid_mask =       0x01FF800000000000;
+  static const unsigned long syn_index_mask = 0x7E00000000000000;
+  static const unsigned long processed_mask = 0x8000000000000000;
+  // define shifts to arrive at correct bits
+  static const size_t lcid_shift = 0;
+  static const size_t rank_shift = 27;
+  static const size_t tid_shift = 47;
+  static const size_t syn_index_shift = 57;
+  static const size_t processed_shift = 63;
 public:
   Target();
   Target( const Target& target );
@@ -62,96 +73,94 @@ public:
 
 inline
 Target::Target()
-  : lcid_( 0 )
-  , rank_( 0 )
-  , tid_( 0 )
-  , syn_index_( 0 )
-  , processed_( false )
+  : data_( 0 )
 {
 }
 
 inline
 Target::Target( const Target& target )
-  : lcid_( target.lcid_ )
-  , rank_( target.rank_ )
-  , tid_( target.tid_ )
-  , syn_index_( target.syn_index_ )
-  , processed_( false ) // always initialize as non-processed
+  : data_( target.data_ )
 {
+  set_processed( false ); // always initialize as non-processed
 }
 
 inline
 Target::Target( const thread tid, const thread rank, const synindex syn_index, const index lcid)
-  : lcid_( lcid )
-  , rank_( rank )
-  , tid_( tid )
-  , syn_index_( syn_index )
-  , processed_( false ) // always initialize as non-processed
+  : data_( 0 )
 {
-  assert( lcid < 134217728 );
-  assert( rank < 1048576 );
-  assert( tid < 1024 );
-  assert( syn_index < 64 );
+  set_lcid( lcid );
+  set_rank( rank );
+  set_tid( tid );
+  set_syn_index( syn_index );
+  set_processed( false ); // always initialize as non-processed
+
 }
 
 inline void
 Target::set_lcid( const size_t lcid )
 {
-  lcid_ = lcid;
+  assert( lcid < 134217728 );
+  // reset corresponding bits using complement of mask and write new
+  // bits by shifting input appropiately. need to cast to long first,
+  // to avoid overflow of input by left shifts.
+  data_ = ( data_ & ( ~lcid_mask ) ) | ( static_cast<unsigned long>( lcid ) << lcid_shift );
 }
 
 inline size_t
 Target::get_lcid() const
 {
-  return lcid_;
+  return ( data_ & lcid_mask ) >> lcid_shift;
 }
 
 inline void
 Target::set_rank( const unsigned int rank )
 {
-  rank_ = rank;
+  assert( rank < 1048576 );
+  data_ = ( data_ & ( ~rank_mask ) ) | ( static_cast<unsigned long>( rank ) << rank_shift );
 }
 
 inline unsigned int
 Target::get_rank() const
 {
-  return rank_;
+  return ( data_ & rank_mask ) >> rank_shift;
 }
 
 inline void
 Target::set_tid( const unsigned int tid )
 {
-  tid_ = tid;
+  assert( tid < 1024 );
+  data_ = ( data_ & ( ~tid_mask ) ) | ( static_cast<unsigned long>( tid ) << tid_shift );
 }
 
 inline unsigned int
 Target::get_tid() const
 {
-  return tid_;
+  return ( data_ & tid_mask ) >> tid_shift;
 }
 
 inline void
 Target::set_syn_index( const unsigned char syn_index )
 {
-  syn_index_ = syn_index;
+  assert( syn_index < 64 );
+  data_ = ( data_ & ( ~syn_index_mask ) ) | ( static_cast<unsigned long>( syn_index ) << syn_index_shift );
 }
 
 inline unsigned char
 Target::get_syn_index() const
 {
-  return syn_index_;
+  return ( data_ & syn_index_mask ) >> syn_index_shift;
 }
 
 inline void
-Target::set_processed( const bool processed)
+Target::set_processed( const bool processed )
 {
-  processed_ = processed;
+  data_ = ( data_ & ( ~processed_mask ) ) | ( static_cast<unsigned long>( processed ) << processed_shift );
 }
 
 inline bool
 Target::is_processed() const
 {
-  return processed_;
+  return ( data_ & processed_mask ) >> processed_shift;
 }
 
 inline double_t
@@ -173,6 +182,7 @@ public:
 inline
 OffGridTarget::OffGridTarget()
   : Target()
+  , offset( 0 )
 {
 }
 

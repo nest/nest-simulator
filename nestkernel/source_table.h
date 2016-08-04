@@ -30,53 +30,12 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
+#include "source.h"
 
 namespace nest
 {
 
 struct TargetData;
-
-/**
- * A data structure that stores the global id of a presynaptic neuron
- * and the number of local targets, along with a flag, whether this
- * entry has been processed yet. Used in SourceTable.
- */
-struct Source
-{
-  index gid : 45; //!< gid of source
-  unsigned int target_count : 18; //!< number of local targets
-  unsigned int processed : 1; //!< whether this target has already been moved to the MPI buffer
-  Source();
-  Source( index gid );
-};
-
-inline
-Source::Source()
-  : gid( 0 )
-  , target_count( 0 )
-  , processed( false )
-{
-}
-
-inline
-Source::Source( index gid )
-  : gid( gid )
-  , target_count( 0 )
-  , processed( false )
-{
-}
-
-inline bool
-operator<( const Source& lhs, const Source& rhs )
-{
-  return ( lhs.gid < rhs.gid );
-}
-
-inline bool
-operator>( const Source& lhs, const Source& rhs )
-{
-  return operator<( rhs, lhs );
-}
 
 /**
  * Tuple to store position in 3d vector of sources.

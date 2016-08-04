@@ -25,10 +25,6 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 
-const unsigned int nest::TargetData::complete_marker = 1;
-const unsigned int nest::TargetData::end_marker = 2;
-const unsigned int nest::TargetData::invalid_marker = 3;
-
 nest::TargetTable::TargetTable()
 {
   assert( sizeof(Target) == 12 );

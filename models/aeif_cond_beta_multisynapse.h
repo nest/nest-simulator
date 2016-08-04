@@ -97,7 +97,7 @@
 
  Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
- Adapted from aeif_cond_alpha_multisynapse by Bruno Golosio
+ Adapted by Bruno Golosio from aeif_cond_alpha_multisynapse
  SeeAlso: aeif_cond_alpha_multisynapse
  */
 

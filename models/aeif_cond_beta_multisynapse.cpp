@@ -364,17 +364,17 @@ aeif_cond_beta_multisynapse::State_::set( const DictionaryDatum& d )
     for ( size_t i = 0; i < dg_exc.size(); ++i )
     {
       if ( ( dg_exc[ i ] < 0 ) || ( g_exc[ i ] < 0 ) || ( dg_inh[ i ] < 0 )
-          || ( g_inh[ i ] < 0 ) )
+        || ( g_inh[ i ] < 0 ) )
       {
         throw BadProperty( "Conductances must not be negative." );
       }
 
       y_[ State_::DG_EXC + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                              * i ) ] = dg_exc[ i ];
+                             * i ) ] = dg_exc[ i ];
       y_[ State_::G_EXC
         + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = g_exc[ i ];
       y_[ State_::DG_INH + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                              * i ) ] = dg_inh[ i ];
+                             * i ) ] = dg_inh[ i ];
       y_[ State_::G_INH
         + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = g_inh[ i ];
     }

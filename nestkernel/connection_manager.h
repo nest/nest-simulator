@@ -645,6 +645,19 @@ ConnectionManager::set_have_connections_changed( const bool changed )
   have_connections_changed_ = changed;
 }
 
+inline void
+ConnectionManager::add_target( const thread tid, const TargetData& target_data)
+{
+  target_table_.add_target( tid, target_data );
+}
+
+inline bool
+ConnectionManager::get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, thread& target_rank, TargetData& next_target_data )
+{
+  return source_table_.get_next_target_data( tid, rank_start, rank_end, keep_source_table_, target_rank, next_target_data );
+}
+
+
 } // namespace nest
 
 #endif /* CONNECTION_MANAGER_H */

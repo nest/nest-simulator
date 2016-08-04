@@ -451,13 +451,13 @@ aeif_cond_beta_multisynapse::aeif_cond_beta_multisynapse_dynamics(
     size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
     // Synaptic conductance derivative dG/dt for excitatory connections
     f[ S::DG_EXC + j ] = -y[ S::DG_EXC + j ] / P_.taus_rise[ i ];
-    f[ S::G_EXC + j ] = y[ S::DG_EXC + j ]
-      - y[ S::G_EXC + j ] / P_.taus_decay[ i ];
+    f[ S::G_EXC + j ] =
+      y[ S::DG_EXC + j ] - y[ S::G_EXC + j ] / P_.taus_decay[ i ];
 
     // Synaptic conductance derivative dG/dt for inhibitory connections
     f[ S::DG_INH + j ] = -y[ S::DG_INH + j ] / P_.taus_rise[ i ];
-    f[ S::G_INH + j ] = y[ S::DG_INH + j ]
-      - y[ S::G_INH + j ] / P_.taus_decay[ i ];
+    f[ S::G_INH + j ] =
+      y[ S::DG_INH + j ] - y[ S::G_INH + j ] / P_.taus_decay[ i ];
   }
 }
 

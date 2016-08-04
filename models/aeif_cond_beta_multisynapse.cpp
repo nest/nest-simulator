@@ -355,8 +355,7 @@ aeif_cond_beta_multisynapse::State_::set( const DictionaryDatum& d )
     const std::vector< double_t > g_inh =
       getValue< std::vector< double_t > >( d->lookup( names::g_in ) );
 
-    if ( ( dg_exc.size() != g_exc.size() )
-      || ( dg_exc.size() != dg_inh.size() )
+    if ( ( dg_exc.size() != g_exc.size() ) || ( dg_exc.size() != dg_inh.size() )
       || ( dg_exc.size() != g_inh.size() ) )
     {
       throw BadProperty( "Conductances must have the same sizes." );
@@ -364,20 +363,20 @@ aeif_cond_beta_multisynapse::State_::set( const DictionaryDatum& d )
 
     for ( size_t i = 0; i < dg_exc.size(); ++i )
     {
-      if ( ( dg_exc[ i ] < 0 ) || ( g_exc[ i ] < 0 )
-        || ( dg_inh[ i ] < 0 ) || ( g_inh[ i ] < 0 ) )
+      if ( ( dg_exc[ i ] < 0 ) || ( g_exc[ i ] < 0 ) || ( dg_inh[ i ] < 0 )
+          || ( g_inh[ i ] < 0 ) )
       {
         throw BadProperty( "Conductances must not be negative." );
       }
 
       y_[ State_::DG_EXC + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                                 * i ) ] = dg_exc[ i ];
-      y_[ State_::G_EXC + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                                  * i ) ] = g_exc[ i ];
+                              * i ) ] = dg_exc[ i ];
+      y_[ State_::G_EXC
+        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = g_exc[ i ];
       y_[ State_::DG_INH + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                                 * i ) ] = dg_inh[ i ];
-      y_[ State_::G_INH + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                                  * i ) ] = g_inh[ i ];
+                              * i ) ] = dg_inh[ i ];
+      y_[ State_::G_INH
+        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = g_inh[ i ];
     }
   }
 
@@ -709,8 +708,7 @@ aeif_cond_beta_multisynapse::update( Time const& origin,
 
     for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
     {
-      S_.y_[ State_::DG_EXC
-             + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+      S_.y_[ State_::DG_EXC + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
                                 * i ) ] += B_.spike_exc_[ i ].get_value( lag )
         * V_.g0_ex_[ i ]; // add incoming excitatory spike
       S_.y_[ State_::DG_INH + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR

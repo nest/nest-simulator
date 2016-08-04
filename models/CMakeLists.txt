@@ -22,7 +22,6 @@ set( models_sources
     aeif_cond_alpha.h aeif_cond_alpha.cpp
     aeif_cond_alpha_RK5.h aeif_cond_alpha_RK5.cpp
     aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp
-    aeif_cond_2exp_multisynapse.h aeif_cond_2exp_multisynapse.cpp
     aeif_cond_beta_multisynapse.h aeif_cond_beta_multisynapse.cpp
     aeif_cond_exp.h aeif_cond_exp.cpp
     amat2_psc_exp.h amat2_psc_exp.cpp

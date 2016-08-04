@@ -162,10 +162,6 @@ extern const Name g;             //!< Conductance
 extern const Name g_ahp;         //!< Specific to iaf_chxk_2008 neuron
 extern const Name g_ex;          //!< Excitatory conductance
 extern const Name g_in;          //!< inhibitory conductance
-extern const Name g_ex_rise;     //!< Excitatory conductance rising component
-extern const Name g_ex_decay;    //!< Excitatory conductance decaying component
-extern const Name g_in_rise;     //!< inhibitory conductance rising component
-extern const Name g_in_decay;    //!< inhibitory conductance decaying component
 extern const Name g_K;           //!< Potassium conductance
 extern const Name g_Kv1;         //!< Kv1 Potassium conductance
 extern const Name g_Kv3;         //!< Kv3 Potassium conductance

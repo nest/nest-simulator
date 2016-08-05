@@ -48,6 +48,7 @@
 #include "node.h"
 #include "nodelist.h"
 #include "subnet.h"
+#include "vp_manager_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -446,7 +447,7 @@ nest::ConnectionManager::connect( index sgid,
 
     if ( source->has_proxies() ) // normal neuron->device connection
     {
-      connect_( *source, *target, sgid, target_thread, syn, d, w );
+      connect_( *source, *target, sgid, target_thread, syn, params, d, w );
     }
     else // create device->device connections on suggested thread of target
     {
@@ -457,7 +458,7 @@ nest::ConnectionManager::connect( index sgid,
         source = kernel().node_manager.get_node( sgid, target_thread );
         target =
           kernel().node_manager.get_node( target->get_gid(), target_thread );
-        connect_( *source, *target, sgid, target_thread, syn, d, w );
+        connect_( *source, *target, sgid, target_thread, syn, params, d, w );
       }
     }
   }

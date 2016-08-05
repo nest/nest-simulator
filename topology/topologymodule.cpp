@@ -49,8 +49,8 @@
 #include "layer_impl.h"
 #include "mask.h"
 #include "mask_impl.h"
-#include "parameter.h"
 #include "topology.h"
+#include "topology_parameter.h"
 
 namespace nest
 {
@@ -88,10 +88,10 @@ TopologyModule::mask_factory_( void )
   return factory;
 }
 
-GenericFactory< Parameter >&
+GenericFactory< TopologyParameter >&
 TopologyModule::parameter_factory_( void )
 {
-  static GenericFactory< Parameter > factory;
+  static GenericFactory< TopologyParameter > factory;
   return factory;
 }
 
@@ -265,12 +265,12 @@ TopologyModule::create_parameter( const Token& t )
   }
 }
 
-Parameter*
+TopologyParameter*
 TopologyModule::create_parameter( const Name& name, const DictionaryDatum& d )
 {
   // The parameter factory will create the parameter without regard for
   // the anchor
-  Parameter* param = parameter_factory_().create( name, d );
+  TopologyParameter* param = parameter_factory_().create( name, d );
 
   // Wrap the parameter object created above in an AnchoredParameter if
   // the dictionary contains an anchor
@@ -278,7 +278,7 @@ TopologyModule::create_parameter( const Name& name, const DictionaryDatum& d )
   {
     std::vector< double_t > anchor =
       getValue< std::vector< double_t > >( d, names::anchor );
-    Parameter* aparam;
+    TopologyParameter* aparam;
     switch ( anchor.size() )
     {
     case 2:

@@ -21,6 +21,14 @@ PyNEST to `$(pyexecdir)`, which is often expanded as follows:
 
     $(prefix)/lib{,64}/pythonX.Y/site-packages/nest
 
+
+To force to usage of Python3 pass
+
+    -Dwith-python3=ON
+
+as an argument to `cmake`.
+
+
 To make the PyNEST module available to the Python interpreter, add the
 PyNEST installation path (without the final '/nest') to the PYTHONPATH
 environment variable.

@@ -338,21 +338,29 @@ endfunction()
 function( NEST_PROCESS_WITH_PYTHON )
   # Find Python
   set( HAVE_PYTHON OFF PARENT_SCOPE )
+
   if ( with-python )
+    # The "with-python"-option can be used to set the path to the 
+    # Python executable, e.g. cmake -Dwith-python=/usr/bin/python3 ...  
     if ( NOT ${with-python} STREQUAL "ON" )
-      # a path is set
       set( PYTHON_EXECUTABLE ${with-python} )
     endif ()
 
-    find_package( PythonInterp )
+    # Find the Python interpreter
+    if ( ${with-python3} STREQUAL "ON" )
+      find_package( PythonInterp 3 REQUIRED )
+    else ()
+      find_package( PythonInterp 2 REQUIRED )
+    endif ()
     if ( PYTHONINTERP_FOUND )
       set( PYTHONINTERP_FOUND "${PYTHONINTERP_FOUND}" PARENT_SCOPE )
       set( PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE} PARENT_SCOPE )
       set( PYTHON ${PYTHON_EXECUTABLE} PARENT_SCOPE )
       set( PYTHON_VERSION ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR} PARENT_SCOPE )
 
-      # need python lib and header...
-      find_package( PythonLibs )
+      # Find Python lib/header files and ensure that their version matches 
+      # the Python interpreter version !
+      find_package( PythonLibs ${PYTHON_VERSION_STRING} EXACT )
       if ( PYTHONLIBS_FOUND )
         set( HAVE_PYTHON ON PARENT_SCOPE )
         # export found variables to parent scope

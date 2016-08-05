@@ -58,19 +58,21 @@ class Network:
             self.stim_dict = stim_dict
         print 'Data will be written to %s' % self.sim_dict['data_path']
 
-    # feed NEST-kernel parameter
+    # hand parameters to NEST-kernel
     def setup(self):
         nest.ResetKernel()
         master_seed = self.sim_dict['master_seed']
         print 'master_seed ', master_seed
-        nest.SetKernelStatus({'local_num_threads': self.sim_dict['local_num_threads']})
-        N_tp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]  # number of total processes
+        nest.SetKernelStatus({
+            'local_num_threads': self.sim_dict['local_num_threads']})
+        N_tp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
         print 'number of total processes',  N_tp
         rng_seeds = range(master_seed + 1 + N_tp, master_seed + 1 + (2 * N_tp))
         grng_seed = master_seed + N_tp
         print 'rng_seeds', rng_seeds
         print 'grng_seed', grng_seed
-        self.pyrngs = [np.random.RandomState(s) for s in range(master_seed, master_seed + N_tp)]
+        self.pyrngs = [np.random.RandomState(s) for s in range(
+            master_seed, master_seed + N_tp)]
         kernel_dict = {'resolution': self.sim_dict['sim_resolution'],
                        'grng_seed': grng_seed,
                        'rng_seeds': rng_seeds,
@@ -84,24 +86,27 @@ class Network:
         self.synapses_scaled = self.synapses * net_dict['K_scaling']
         self.nr_neurons = net_dict['N_full'] * net_dict['N_scaling']
         self.K_ext = self.net_dict['K_ext'] * net_dict['K_scaling']
-        self.w_from_PSP = get_weight(self.net_dict['PSP_e']) # new
+        self.w_from_PSP = get_weight(self.net_dict['PSP_e'])
         self.weight_mat_mean = get_weight(self.net_dict['PSP_mean_matrix'])
         self.weight_mat_std = self.net_dict['PSP_std_matrix']
         self.w_ext = self.w_from_PSP
         self.DC_amp_extra = np.zeros(len(self.net_dict['populations']))
         if self.net_dict['N_scaling'] != 1:
-            print 'The Number of neurons is scaled by a factor of:', self.net_dict['N_scaling']
+            print 'The Number of neurons is scaled by a factor of:'
+            print self.net_dict['N_scaling']
 
         # Scaling of the synapses
         if self.net_dict['K_scaling'] != 1:
-            synapses_indegree = self.synapses/(self.net_dict['N_full'].reshape(len(self.net_dict['N_full']), 1)
-                                               * self.net_dict['N_scaling'])
+            synapses_indegree = self.synapses / (
+                self.net_dict['N_full'].reshape(len(self.net_dict['N_full']), 1)
+                * self.net_dict['N_scaling'])
             self.weight_mat_mean, self.w_ext, self.DC_amp_extra = adjust_w_and_ext_to_K_new(
                 synapses_indegree,
                 self.net_dict['K_scaling'],
                 self.weight_mat_mean, self.w_from_PSP,
                 self.DC_amp_extra)
-            print 'The number of synapses is scalled by a factor of:', self.net_dict['K_scaling']
+            print 'The number of synapses is scalled by a factor of:'
+            print self.net_dict['K_scaling']
         else:
             self.w_ext = self.w_from_PSP
 
@@ -123,8 +128,14 @@ class Network:
             node_info = nest.GetStatus(population)
             local_nodes = [(ni['global_id'], ni['vp']) for ni in node_info if ni['local']]
             for gid, vp in local_nodes:
-                nest.SetStatus([gid], {'V_m': self.pyrngs[vp].uniform(self.net_dict['neuron_params']['V_th'],
-                                                                      self.net_dict['neuron_params']['V_reset'])})
+                nest.SetStatus(
+                    [gid],
+                    {
+                        'V_m': self.pyrngs[vp].uniform(
+                            self.net_dict['neuron_params']['V_th'],
+                            self.net_dict['neuron_params']['V_reset'])
+                    }
+                )
             self.pops.append(population)
             pop_file.write('%d  %d \n' % (population[0], population[-1]))
         pop_file.close()
@@ -173,7 +184,8 @@ class Network:
             nest.Connect(self.poisson_th, self.thalamic_population)
             self.nr_synapses_th = synapses_th_matrix()
             if self.net_dict['K_scaling'] != 1:
-                self.thalamic_weight = self.thalamic_weight/(self.net_dict['K_scaling']**0.5)
+                self.thalamic_weight = self.thalamic_weight/(
+                                           self.net_dict['K_scaling']**0.5)
                 self.nr_synapses_th = self.nr_synapses_th * self.net_dict['K_scaling']
         else:
             print 'thalamic input not provided'
@@ -204,10 +216,11 @@ class Network:
                 self.dc.append(dc)
             print 'DC generator created'
 
-    # the connections between the neuronal populations are created in this function
+    # connections between neuronal populations are created in this function
     def create_connections(self):
         mean_delays = self.net_dict['mean_delay_matrix']
         std_delays = self.net_dict['std_delay_matrix']
+        sim_resolution = self.sim_dict['sim_resolution']
         for i, target_pop in enumerate(self.pops):
             for j, source_pop in enumerate(self.pops):
                 synapse_nr = int(self.synapses_scaled[i][j])
@@ -221,7 +234,7 @@ class Network:
                                         {'distribution': 'normal_clipped',
                                                          'mu': 1.5,
                                                          'sigma': 0.75,
-                                                         'low': self.sim_dict['sim_resolution']}}
+                                                         'low': sim_resolution}}
                     conn_dict_recurrent = {'rule': 'fixed_total_number',
                                            'N': synapse_nr}
                     syn_dict_recurrent_ex = {'model': 'static_synapse',
@@ -233,7 +246,7 @@ class Network:
                                                        'normal_clipped',
                                                        'mu': mean_delays[i][j],
                                                        'sigma': std_delays[i][j],
-                                                       'low': self.sim_dict['sim_resolution']}}
+                                                       'low': sim_resolution}}
                     syn_dict_recurrent_in = {'model': 'static_synapse',
                                              'weight': {'distribution': 'normal_clipped',
                                                         'mu': weight,
@@ -242,7 +255,7 @@ class Network:
                                              'delay': {'distribution': 'normal_clipped',
                                                        'mu': mean_delays[i][j],
                                                        'sigma': std_delays[i][j],
-                                                       'low': self.sim_dict['sim_resolution']}}
+                                                       'low': sim_resolution}}
                     if j % 2:
                         syn_dict_recurrent = syn_dict_recurrent_in
                     else:
@@ -252,7 +265,7 @@ class Network:
                                  syn_spec=syn_dict_recurrent)
         print 'Recurrent connections established'
 
-    # the poisson generators are connected to the different populations
+    # this function connects the poisson generators to the different populations
     def connect_poisson(self):
         for i, target_pop in enumerate(self.pops):
                 conn_dict_poisson = {'rule': 'all_to_all'}
@@ -298,9 +311,10 @@ class Network:
                 nest.Connect(target_pop, self.spikedetector[i])
         print '%s of 2 Devices connected' % (len(self.net_dict['recording_dev']))
 
-    # this function executes many subfunctions, needed to create populations,
-    # devices and inputs and the connect functions which connects everything
     def connect(self):
+        """ Execute subfunctions of the network.
+        Create populations, devices and inputs, connect the nodes, etc.
+        """
         self.setup()
         self.create_populations()
         self.create_devices()

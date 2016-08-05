@@ -17,7 +17,7 @@ instructions can be found below.
 Choice of CMake Version
 =======================
 
-We recommend the usage of `cmake` v3.4, even though installing NEST with
+We recommend to use `cmake` v3.4, even though installing NEST with
 `cmake` v2.8.12 will in most cases work properly.
 For more detailed information please see below: `Python3 Binding (PyNEST)`
 

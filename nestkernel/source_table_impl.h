@@ -51,7 +51,7 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
     {
       current_position.lcid = 0;
       ++current_position.syn_index;
-      current_first_source_[ tid ] = 0; // need to reset current source since syn_index changes
+      last_source_[ tid ] = 0;
       continue;
     }
 
@@ -82,16 +82,14 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
     // continue (this effectively compresses the amount of data needed
     // to communicate a spike, but only works if full source table is
     // stored.)
-    if ( keep_source_table && current_first_source_[ tid ] != 0 && (*current_first_source_[ tid ]).gid == current_source.gid )
+    if ( last_source_[ tid ] != 0 && (*last_source_[ tid ]).gid == current_source.gid )
     {
-      ++(*current_first_source_[ tid ]).target_count;
+      kernel().connection_manager.set_has_source_subsequent_targets( current_position.tid, current_position.syn_index, current_position.lcid - 1, true );
+      last_source_[ tid ] = &current_source;
       ++current_position.lcid;
       continue;
     }
 
-    // update current_first_source
-    current_first_source_[ tid ] = &current_source;
-    ++(*current_first_source_[ tid ]).target_count;
     // set values of next_target_data
     next_target_data.lid = kernel().vp_manager.gid_to_lid( current_source.gid );
     next_target_data.tid = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( current_source.gid ) );
@@ -101,6 +99,7 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
     next_target_data.target.set_processed( false );
     next_target_data.target.set_syn_index( current_position.syn_index );
     next_target_data.target.set_lcid( current_position.lcid );
+    last_source_[ tid ] = &current_source;
     ++current_position.lcid;
     return true; // found a valid entry
   }

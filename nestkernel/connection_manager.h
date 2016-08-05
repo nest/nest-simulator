@@ -360,6 +360,7 @@ public:
    */
   void reserve_connections( const thread tid, const synindex syn_id, const size_t count );
 
+  void set_has_source_subsequent_targets( const thread tid, const synindex syn_index, const index lcid, const bool subsequent_targets );
 private:
   /**
    * Update delay extrema to current values.

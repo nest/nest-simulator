@@ -44,7 +44,7 @@ nest::SourceTable::initialize()
   saved_entry_point_.resize( num_threads, false );
   current_positions_.resize( num_threads );
   saved_positions_.resize( num_threads );
-  current_first_source_.resize( num_threads, 0 );
+  last_source_.resize( num_threads, 0 );
 
   for( thread tid = 0; tid < num_threads; ++tid)
   {

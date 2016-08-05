@@ -36,8 +36,7 @@ namespace nest
  */
 struct Source
 {
-  unsigned long gid : 45; //!< gid of source
-  unsigned int target_count : 18; //!< number of local targets
+  unsigned long gid : 63; //!< gid of source
   bool processed : 1; //!< whether this target has already been moved to the MPI buffer
   Source();
   explicit Source( index gid );
@@ -46,7 +45,6 @@ struct Source
 inline
 Source::Source()
   : gid( 0 )
-  , target_count( 0 )
   , processed( false )
 {
 }
@@ -54,10 +52,8 @@ Source::Source()
 inline
 Source::Source( index gid )
   : gid( gid )
-  , target_count( 0 )
   , processed( false )
 {
-  assert( gid < 35184372088832 );
 }
 
 inline bool

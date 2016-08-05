@@ -95,7 +95,7 @@ private:
   //! member of the sources table (see below).
   std::vector< SourceTablePosition* > current_positions_;
   std::vector< SourceTablePosition* > saved_positions_;
-  std::vector< Source* > current_first_source_;
+  std::vector< Source* > last_source_;
   //! if we detect an overflow in one of the MPI buffers, we save our
   //! current position in the sources table (see above) and continue
   //! at that point in the next communication round, while filling up
@@ -130,7 +130,6 @@ public:
   void reset_entry_point( const thread tid );
   //! returns the global id of the source at tid|syn_id|lcid
   index get_gid( const thread tid, const synindex syn_id, const index lcid ) const;
-  unsigned int get_target_count( const thread tid, const synindex syn_index, const index lcid ) const;
   //! returns a reference to all sources local on thread tid (used for sorting)
   std::vector< std::vector< Source > >& get_thread_local_sources( const thread tid );
   //! resets all processed flags. needed for restructuring connection
@@ -183,8 +182,6 @@ SourceTable::reject_last_target_data( const thread tid )
   // source_table_impl.h)
   assert( current_position.lcid > 0 );
   ( *sources_[ current_position.tid ] )[ current_position.syn_index ][ current_position.lcid - 1 ].processed = false;
-  // need to decrease target count as well
-  --(*current_first_source_[ tid ]).target_count;
 }
 
 inline
@@ -215,7 +212,7 @@ SourceTable::restore_entry_point( const thread tid )
 {
   *current_positions_[ tid ] = *saved_positions_[ tid ];
   saved_entry_point_[ tid ] = false;
-  current_first_source_[ tid ] = 0;
+  last_source_[ tid ] = 0;
 }
 
 inline
@@ -224,7 +221,7 @@ SourceTable::reset_entry_point( const thread tid )
 {
   saved_positions_[ tid ]->reset();
   current_positions_[ tid ]->reset();
-  current_first_source_[ tid ] = 0;
+  last_source_[ tid ] = 0;
 }
 
 inline index
@@ -232,12 +229,6 @@ SourceTable::get_gid( const thread tid, const synindex syn_id, const index lcid 
 {
   std::map< synindex, synindex >::iterator it = synapse_ids_[ tid ]->find( syn_id );
   return (*sources_[ tid ])[ it->second ][ lcid ].gid;
-}
-
-inline unsigned int
-SourceTable::get_target_count( const thread tid, const synindex syn_index, const index lcid ) const
-{
-  return (*sources_[ tid ])[ syn_index ][ lcid ].target_count;
 }
 
 inline void

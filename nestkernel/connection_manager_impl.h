@@ -60,18 +60,10 @@ ConnectionManager::get_target_gid( const thread tid, const synindex syn_index, c
 inline void
 ConnectionManager::send_5g( const thread tid, const synindex syn_index, const index lcid, Event& e )
 {
-  // only if we keep the source table, we can look up number of targets
-  if ( keep_source_table_ )
+  index lcid_offset = 0;
+  while ( connections_5g_[ tid ]->send( tid, syn_index, lcid + lcid_offset, e, kernel().model_manager.get_synapse_prototypes( tid ) ) )
   {
-    const unsigned int target_count = source_table_.get_target_count( tid, syn_index, lcid );
-    for ( index tmp_lcid = lcid; tmp_lcid < lcid + target_count; ++tmp_lcid )
-    {
-      connections_5g_[ tid ]->send( tid, syn_index, tmp_lcid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
-    }
-  }
-  else
-  {
-    connections_5g_[ tid ]->send( tid, syn_index, lcid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+    ++lcid_offset;
   }
 }
 
@@ -97,6 +89,12 @@ ConnectionManager::restructure_connection_tables()
     target_table_.clear( tid );
     source_table_.reset_processed_flags( tid );
   }
+}
+
+inline void
+ConnectionManager::set_has_source_subsequent_targets( const thread tid, const synindex syn_index, const index lcid, const bool subsequent_targets )
+{
+  connections_5g_[ tid ]->set_has_source_subsequent_targets( syn_index, lcid, subsequent_targets );
 }
 
 } // namespace nest

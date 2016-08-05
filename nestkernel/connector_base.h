@@ -148,7 +148,7 @@ public:
 
   virtual void send_to_all( Event& e, thread tid, const std::vector< ConnectorModel* >& cm ) = 0;
 
-  virtual void
+  virtual bool
   send( thread tid,
     synindex syn_index,
     unsigned int lcid,
@@ -174,6 +174,16 @@ public:
   sort_connections( std::vector< std::vector< Source > >& ){ assert( false ); };
 
   virtual void reserve( const size_t ){ assert( false ); };
+
+  virtual void
+  set_has_source_subsequent_targets( const synindex syn_index, const index lcid, const bool subsequent_targets ){ assert( false ); };
+  virtual void
+  set_has_source_subsequent_targets( const index lcid, const bool subsequent_targets ){ assert( false ); };
+
+  virtual bool
+  has_source_subsequent_targets( const synindex syn_index, const index lcid ) const { assert( false ); };
+  virtual bool
+  has_source_subsequent_targets( const index lcid ) const { assert( false ); };
 };
 
 // homogeneous connector
@@ -398,7 +408,7 @@ public:
 
   }
 
-  void
+  bool
   send( thread tid,
     synindex,
     unsigned int lcid,
@@ -407,6 +417,7 @@ public:
   {
     e.set_port( lcid ); // TODO@5g: does this make sense?
     C_[ lcid ].send( e, tid, static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties() );
+    return C_[ lcid ].has_source_subsequent_targets();
   }
 
   void
@@ -449,6 +460,18 @@ public:
   reserve( const size_t count )
   {
     C_.reserve( count );
+  }
+
+  void
+  set_has_source_subsequent_targets( const index lcid, const bool subsequent_targets )
+  {
+    C_[ lcid ].set_has_source_subsequent_targets( subsequent_targets );
+  }
+
+  bool
+  has_source_subsequent_targets( const index lcid ) const
+  {
+    return C_[ lcid ].has_source_subsequent_targets();
   }
 };
 
@@ -597,10 +620,10 @@ public:
     return at( syn_index )->get_target_gid( tid, syn_index, lcid );
   }
 
-  void
+  bool
   send( thread tid, synindex syn_index, unsigned int lcid, Event& e, const std::vector< ConnectorModel* >& cm )
   {
-    at( syn_index )->send( tid, syn_index, lcid, e, cm );
+    return at( syn_index )->send( tid, syn_index, lcid, e, cm );
   }
 
   void
@@ -686,6 +709,16 @@ public:
     {
       at( i )->sort_connections( sources[ i ] );
     }
+  }
+
+  void set_has_source_subsequent_targets( const synindex syn_index, const index lcid, const bool subsequent_targets )
+  {
+    at( syn_index )->set_has_source_subsequent_targets( lcid, subsequent_targets );
+  }
+
+  bool has_source_subsequent_targets( const synindex syn_index, const index lcid ) const
+  {
+    return at( syn_index )->has_source_subsequent_targets( lcid );
   }
 };
 

@@ -346,7 +346,7 @@ function( NEST_PROCESS_WITH_PYTHON )
       set( PYTHON_EXECUTABLE ${with-python} )
     endif ()
 
-    # Find the Python interpreter
+    # Localize the Python interpreter
     if ( ${with-python3} STREQUAL "ON" )
       find_package( PythonInterp 3 REQUIRED )
     else ()
@@ -358,7 +358,7 @@ function( NEST_PROCESS_WITH_PYTHON )
       set( PYTHON ${PYTHON_EXECUTABLE} PARENT_SCOPE )
       set( PYTHON_VERSION ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR} PARENT_SCOPE )
 
-      # Find Python lib/header files and ensure that their version matches 
+      # Localize Python lib/header files and make sure that their version matches 
       # the Python interpreter version !
       find_package( PythonLibs ${PYTHON_VERSION_STRING} EXACT )
       if ( PYTHONLIBS_FOUND )

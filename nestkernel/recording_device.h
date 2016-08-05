@@ -379,6 +379,15 @@ public:
 
   inline void set_precise( bool use_precise, long precision );
 
+  inline bool records_precise_times( ) const;
+
+  inline bool is_precision_user_set() const;
+
+  inline bool is_precise_times_user_set() const;
+
+  inline long get_precision( ) const;
+
+
 private:
   /**
    * Print the time-stamp according to the recorder's flags.
@@ -449,6 +458,9 @@ private:
     long precision_;  //!< precision of doubles written to file
     bool scientific_; //!< use scientific format if true, else fixed
 
+    bool user_set_precise_times_; //!< true if user set precise_times
+    bool user_set_precision_;     //!< true if user set precision
+
     bool binary_; //!< true if to write files in binary mode instead of ASCII
     long fbuffer_size_;     //!< the buffer size to use when writing to file
     long fbuffer_size_old_; //!< the buffer size to use when writing
@@ -506,6 +518,29 @@ private:
   Buffers_ V_;
 };
 
+inline bool
+RecordingDevice::is_precision_user_set() const
+{
+  return P_.user_set_precision_;
+}
+
+inline bool
+RecordingDevice::is_precise_times_user_set() const
+{
+  return P_.user_set_precise_times_;
+}
+
+inline bool
+RecordingDevice::records_precise_times( ) const
+{
+  return P_.precise_times_;
+}
+
+inline long
+RecordingDevice::get_precision( ) const
+{
+  return P_.precision_;
+}
 
 inline bool
 RecordingDevice::is_active( Time const& T ) const

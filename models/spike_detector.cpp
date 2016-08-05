@@ -45,8 +45,6 @@ nest::spike_detector::spike_detector()
   : Node()
   // record time and gid
   , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true )
-  , user_set_precise_times_( false )
-  , user_set_precision_value( -1 )
   , has_proxies_( false )
   , local_receiver_( true )
 {
@@ -55,8 +53,6 @@ nest::spike_detector::spike_detector()
 nest::spike_detector::spike_detector( const spike_detector& n )
   : Node( n )
   , device_( *this, n.device_ )
-  , user_set_precise_times_( n.user_set_precise_times_ )
-  , user_set_precision_value( n.user_set_precision_value )
   , has_proxies_( false )
   , local_receiver_( true )
 {
@@ -82,37 +78,56 @@ nest::spike_detector::init_buffers_()
 void
 nest::spike_detector::calibrate()
 {
+
   if ( kernel().event_delivery_manager.get_off_grid_communication() )
   {
-    // If precise models exist, it is necessary to ensure that precise_times
-    // property
-    // is set to true and the precision should increase from the default value
-    // of 3.
 
-    // Default precision value for simulations involving precise models.
-    long precision = 15;
-
-    if ( user_set_precision_value != -1 )
+    if ( !device_.is_precise_times_user_set() )
     {
-      // If precision is set to a value by the user, it must be used instead of
-      // the default.
-      precision = user_set_precision_value;
+
+      if ( !device_.is_precision_user_set() )
+      {
+        // it makes sense to increase the precision if precise models are used.
+        device_.set_precise(true, 15);
+        LOG( M_INFO,
+             "spike_detector::calibrate",
+             String::compose(
+                     "Precise neuron models exist: the property precise_times "
+                             "of the %1 with gid %2 has been set to true, precision has "
+                             "been set to 15.",
+                     get_name(),
+                     get_gid() ) );
+      }
+
+      else
+      {
+        device_.set_precise(true, device_.get_precision());
+        LOG( M_INFO,
+             "spike_detector::calibrate",
+             String::compose(
+                     "Precise neuron models exist: the property precise_times "
+                             "of the %1 with gid %2 has been set to true.",
+                     get_name(),
+                     get_gid() ) );
+      }
     }
 
-    device_.set_precise( true, precision );
 
-    if ( user_set_precise_times_ != true )
+    // If precise models exist but the user forgot to set the precision,
+    // it is increased to 15 as it is usually what is wanted.
+    else if ( !device_.is_precision_user_set() )
     {
+      device_.set_precise(device_.records_precise_times(), 15);
       LOG( M_INFO,
-        "spike_detector::calibrate",
-        String::compose(
-             "Precise neuron models exist: the property precise_times "
-             "of the %1 with gid %2 has been set to true, precision has "
-             "been set to %3",
-             get_name(),
-             get_gid(),
-             precision ) );
+           "spike_detector::calibrate",
+           String::compose(
+                   "Precise neuron models exist but precision was not set, "
+                           "the precision property of the %1 with gid %2"
+                           "has been increased to 15.",
+                   get_name(),
+                   get_gid() ) );
     }
+
   }
 
   device_.calibrate();
@@ -158,12 +173,6 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
 void
 nest::spike_detector::set_status( const DictionaryDatum& d )
 {
-  if ( d->known( names::precise_times ) )
-    user_set_precise_times_ = true;
-
-  if ( d->known( names::precision ) )
-    user_set_precision_value = getValue< long >( d, names::precision );
-
   device_.set_status( d );
 }
 

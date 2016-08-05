@@ -62,6 +62,8 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   , withgid_( withgid )
   , withtime_( withtime )
   , withweight_( withweight )
+  , user_set_precise_times_( false )
+  , user_set_precision_( false )
   , precision_( 3 )
   , scientific_( false )
   , binary_( false )
@@ -153,9 +155,19 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   updateValue< bool >( d, names::withweight, withweight_ );
   updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
   if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR )
-    updateValue< bool >( d, names::precise_times, precise_times_ );
+  {
+    if ( d->known( names::precise_times ) )
+    {
+      user_set_precise_times_ = true;
+      updateValue<bool>(d, names::precise_times, precise_times_);
+    }
+  }
   updateValue< std::string >( d, names::file_extension, file_ext_ );
-  updateValue< long >( d, names::precision, precision_ );
+  if ( d->known( names::precision ) )
+  {
+    user_set_precision_ = true;
+    updateValue< long >( d, names::precision, precision_ );
+  }
   updateValue< bool >( d, names::scientific, scientific_ );
 
   updateValue< bool >( d, names::binary, binary_ );

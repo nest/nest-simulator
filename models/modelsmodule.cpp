@@ -329,14 +329,15 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< aeif_cond_exp >(
     "aeif_cond_exp" );
   kernel().model_manager.register_node_model< ht_neuron >( "ht_neuron" );
+  kernel().model_manager.register_node_model< aeif_cond_beta_multisynapse >(
+    "aeif_cond_beta_multisynapse" );
+
 #endif
   // This version of the AdEx model does not depend on GSL.
   kernel().model_manager.register_node_model< aeif_cond_alpha_RK5 >(
     "aeif_cond_alpha_RK5" );
   kernel().model_manager.register_node_model< aeif_cond_alpha_multisynapse >(
     "aeif_cond_alpha_multisynapse" );
-  kernel().model_manager.register_node_model< aeif_cond_beta_multisynapse >(
-    "aeif_cond_beta_multisynapse" );
 
 #ifdef HAVE_MUSIC
   //// proxies for inter-application communication using MUSIC

@@ -43,10 +43,10 @@ def get_weight(PSP_val):
     Returns: weight value
 
     """
-    C_m = net_dict['neuron_params']['C_m']
-    tau_m = net_dict['neuron_params']['tau_m']
-    tau_ex = net_dict['neuron_params']['tau_syn_ex']
-    tau_in = net_dict['neuron_params']['tau_syn_in']
+    C_m = net_dict['n_params']['C_m']
+    tau_m = net_dict['n_params']['tau_m']
+    tau_ex = net_dict['n_params']['tau_ex']
+    tau_in = net_dict['n_params']['tau_in']
 
     PSC_e_over_PSP_e = (((C_m)**(-1) * tau_m * tau_ex / (tau_ex - tau_m) * (
         (tau_m / tau_ex)**(- tau_m / (tau_m-tau_ex)) - (
@@ -99,7 +99,7 @@ def synapses_th_matrix():
     return K
 
 
-def adjust_w_and_ext_to_K_new(K_full, K_scaling, w, w_from_PSP, DC):
+def adj_w_ext_to_K(K_full, K_scaling, w, w_from_PSP, DC):
     """With this funtion the recurrent and external weights are adjusted
     to the scaling of the indegrees. Extra DC input is added to
     compensate the scaling and preserve the mean and variance of the input.
@@ -116,7 +116,7 @@ def adjust_w_and_ext_to_K_new(K_full, K_scaling, w, w_from_PSP, DC):
 
     Returns: Weight matrix, weight for external input, extra DC input.
     """
-    tau_syn_E = net_dict['neuron_params']['tau_syn_E']
+    tau_syn_E = net_dict['n_params']['tau_syn_E']
     full_mean_rates = net_dict['full_mean_rates']
     w_mean = w_from_PSP
     K_ext = net_dict['K_ext']

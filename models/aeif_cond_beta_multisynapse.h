@@ -23,6 +23,16 @@
 #ifndef AEIF_COND_BETA_MULTISYNAPSE_H
 #define AEIF_COND_BETA_MULTISYNAPSE_H
 
+// Generated includes:
+#include "config.h"
+
+#ifdef HAVE_GSL
+
+// External includes:
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_odeiv.h>
+
 // Includes from nestkernel:
 #include "archiving_node.h"
 #include "connection.h"
@@ -104,6 +114,19 @@
 namespace nest
 {
 /**
+ * Function computing right-hand side of ODE for GSL solver.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int
+aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
+
+/**
  * Conductance based exponential integrate-and-fire neuron model according to
  * Brette and Gerstner
  * (2005) with multiple ports.
@@ -115,6 +138,8 @@ public:
   aeif_cond_beta_multisynapse();
   aeif_cond_beta_multisynapse( const aeif_cond_beta_multisynapse& );
   virtual ~aeif_cond_beta_multisynapse();
+  friend int
+  aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 
   /**
    * Import sets of overloaded virtual functions.
@@ -142,10 +167,6 @@ private:
   void init_buffers_();
   void calibrate();
   void update( Time const&, const long_t, const long_t );
-
-  inline void aeif_cond_beta_multisynapse_dynamics(
-    const std::vector< double_t >& y,
-    std::vector< double_t >& f );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< aeif_cond_beta_multisynapse >;
@@ -178,9 +199,9 @@ private:
     std::vector< double_t > taus_decay; //!< Decay time of synaptic conductance
                                         //!< in ms..
 
-    double_t I_e;    //!< Intrinsic current in pA.
-    double_t MAXERR; //!< Maximal error for adaptive stepsize solver
-    double_t HMIN;   //!< Smallest permissible stepsize in ms.
+    double_t I_e; //!< Intrinsic current in pA.
+
+    double_t gsl_error_tol; //!< error bound for GSL integrator
 
     // type is long because other types are not put through in GetStatus
     std::vector< long > receptor_types_;
@@ -228,18 +249,8 @@ private:
     // DG_EXC, G_EXC, DG_INH, G_INH
     static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 4;
 
-    std::vector< double_t > y_;   //!< neuron state
-    std::vector< double_t > k1;   //!< Runge-Kutta variable
-    std::vector< double_t > k2;   //!< Runge-Kutta variable
-    std::vector< double_t > k3;   //!< Runge-Kutta variable
-    std::vector< double_t > k4;   //!< Runge-Kutta variable
-    std::vector< double_t > k5;   //!< Runge-Kutta variable
-    std::vector< double_t > k6;   //!< Runge-Kutta variable
-    std::vector< double_t > k7;   //!< Runge-Kutta variable
-    std::vector< double_t > yin;  //!< Runge-Kutta variable
-    std::vector< double_t > ynew; //!< 5th order update
-    std::vector< double_t > yref; //!< 4th order update
-    int_t r_;                     //!< number of refractory steps remaining
+    std::vector< double_t > y_; //!< neuron state
+    int_t r_;                   //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -267,6 +278,12 @@ private:
     std::vector< RingBuffer > spike_exc_;
     std::vector< RingBuffer > spike_inh_;
     RingBuffer currents_;
+
+    /** GSL ODE stuff */
+    gsl_odeiv_step* s_;    //!< stepping function
+    gsl_odeiv_control* c_; //!< adaptive stepsize control function
+    gsl_odeiv_evolve* e_;  //!< evolution function
+    gsl_odeiv_system sys_; //!< struct describing system
 
     // IntergrationStep_ should be reset with the neuron on ResetNetwork,
     // but remain unchanged during calibration. Since it is initialized with
@@ -395,72 +412,7 @@ aeif_cond_beta_multisynapse::set_status( const DictionaryDatum& d )
   S_ = stmp;
 }
 
-/**
- * Function computing right-hand side of ODE for the ODE solver.
- * @param y State vector (input).
- * @param f Derivatives (output).
- */
-inline void
-aeif_cond_beta_multisynapse::aeif_cond_beta_multisynapse_dynamics(
-  const std::vector< double_t >& y,
-  std::vector< double_t >& f )
-{
-  // a shorthand
-  typedef aeif_cond_beta_multisynapse::State_ S;
-
-  // y[] is the current internal state of the integrator (yin), not the state
-  // vector in the node, node.S_.y[].
-
-  // The following code is verbose for the sake of clarity. We assume that a
-  // good compiler will optimize the verbosity away ...
-
-  // shorthand for state variables
-  const double_t& V = y[ S::V_M ];
-  const double_t& w = y[ S::W ];
-
-  double_t I_syn_exc = 0.0;
-  double_t I_syn_inh = 0.0;
-
-  for ( size_t i = 0; i < ( P_.num_of_receptors_
-                            * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
-        i += S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR )
-  {
-    I_syn_exc += y[ S::G_EXC + i ] * ( V - P_.E_ex );
-    I_syn_inh += y[ S::G_INH + i ] * ( V - P_.E_in );
-  }
-
-  // We pre-compute the argument of the exponential
-  const double_t exp_arg = ( V - P_.V_th ) / P_.Delta_T;
-
-  // Upper bound for exponential argument to avoid numerical instabilities
-  const double_t MAX_EXP_ARG = 10.;
-
-  // If the argument is too large, we clip it.
-  const double_t I_spike =
-    P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
-
-  // dv/dt
-  f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
-                  - w + P_.I_e + B_.I_stim_ ) / P_.C_m;
-
-  // Adaptation current w.
-  f[ S::W ] = ( P_.a * ( V - P_.E_L ) - w ) / P_.tau_w;
-
-  for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
-  {
-    size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-    // Synaptic conductance derivative dG/dt for excitatory connections
-    f[ S::DG_EXC + j ] = -y[ S::DG_EXC + j ] / P_.taus_rise[ i ];
-    f[ S::G_EXC + j ] =
-      y[ S::DG_EXC + j ] - y[ S::G_EXC + j ] / P_.taus_decay[ i ];
-
-    // Synaptic conductance derivative dG/dt for inhibitory connections
-    f[ S::DG_INH + j ] = -y[ S::DG_INH + j ] / P_.taus_rise[ i ];
-    f[ S::G_INH + j ] =
-      y[ S::DG_INH + j ] - y[ S::G_INH + j ] / P_.taus_decay[ i ];
-  }
-}
-
 } // namespace
 
-#endif /* #ifndef AEIF_COND_BETA_MULTISYNAPSE_H */
+#endif // HAVE_GSL
+#endif // AEIF_COND_BETA_MULTISYNAPSE_H //

@@ -22,6 +22,8 @@
 
 #include "aeif_cond_beta_multisynapse.h"
 
+#ifdef HAVE_GSL
+
 // C++ includes:
 #include <limits>
 
@@ -46,7 +48,7 @@
 nest::RecordablesMap< nest::aeif_cond_beta_multisynapse >
   nest::aeif_cond_beta_multisynapse::recordablesMap_;
 
-namespace nest
+namespace nest // template specialization must be placed in namespace
 {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
@@ -83,8 +85,9 @@ aeif_cond_beta_multisynapse::Parameters_::Parameters_()
   , b( 80.5 )         // pA
   , V_th( -50.4 )     // mV
   , I_e( 0.0 )        // pA
-  , MAXERR( 1.0e-10 ) // mV
-  , HMIN( 1.0e-3 )    // ms
+  //  , MAXERR( 1.0e-10 ) // mV
+  //  , HMIN( 1.0e-3 )    // ms
+  , gsl_error_tol( 1e-6 )
   , num_of_receptors_( 1 )
   , has_connections_( false )
 {
@@ -96,16 +99,6 @@ aeif_cond_beta_multisynapse::Parameters_::Parameters_()
 
 aeif_cond_beta_multisynapse::State_::State_( const Parameters_& p )
   : y_( STATE_VECTOR_MIN_SIZE, 0.0 )
-  , k1( STATE_VECTOR_MIN_SIZE, 0.0 )
-  , k2( STATE_VECTOR_MIN_SIZE, 0.0 )
-  , k3( STATE_VECTOR_MIN_SIZE, 0.0 )
-  , k4( STATE_VECTOR_MIN_SIZE, 0.0 )
-  , k5( STATE_VECTOR_MIN_SIZE, 0.0 )
-  , k6( STATE_VECTOR_MIN_SIZE, 0.0 )
-  , k7( STATE_VECTOR_MIN_SIZE, 0.0 )
-  , yin( STATE_VECTOR_MIN_SIZE, 0.0 )
-  , ynew( STATE_VECTOR_MIN_SIZE, 0.0 )
-  , yref( STATE_VECTOR_MIN_SIZE, 0.0 )
   , r_( 0 )
 {
   y_[ 0 ] = p.E_L;
@@ -115,33 +108,14 @@ aeif_cond_beta_multisynapse::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   y_ = s.y_;
-  k1 = s.k1;
-  k2 = s.k2;
-  k3 = s.k3;
-  k4 = s.k4;
-  k5 = s.k5;
-  k6 = s.k6;
-  k7 = s.k7;
-  yin = s.yin;
-  ynew = s.ynew;
-  yref = s.yref;
 }
 
 aeif_cond_beta_multisynapse::State_& aeif_cond_beta_multisynapse::State_::
 operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
+
   y_ = s.y_;
-  k1 = s.k1;
-  k2 = s.k2;
-  k3 = s.k3;
-  k4 = s.k4;
-  k5 = s.k5;
-  k6 = s.k6;
-  k7 = s.k7;
-  yin = s.yin;
-  ynew = s.ynew;
-  yref = s.yref;
   r_ = s.r_;
   return *this;
 }
@@ -171,8 +145,7 @@ aeif_cond_beta_multisynapse::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_w, tau_w );
   def< double >( d, names::I_e, I_e );
   def< double >( d, names::V_peak, V_peak_ );
-  def< double >( d, names::MAXERR, MAXERR );
-  def< double >( d, names::HMIN, HMIN );
+  def< double >( d, names::gsl_error_tol, gsl_error_tol );
   def< int >( d, "n_synapses", num_of_receptors_ );
   def< bool >( d, names::has_connections, has_connections_ );
 }
@@ -180,7 +153,6 @@ aeif_cond_beta_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 void
 aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
 {
-  double tmp = 0.0;
 
   updateValue< double >( d, names::V_th, V_th );
   updateValue< double >( d, names::V_peak, V_peak_ );
@@ -213,13 +185,13 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
     taus_decay = tau_tmp;
     num_of_receptors_ = taus_decay.size();
     tau_tmp.clear();
-    if ( taus_rise.size() == 0 )
+    if ( taus_rise.size() < taus_decay.size() )
     {
       for ( size_t i = 0; i < taus_decay.size(); ++i )
       {
         taus_rise.push_back( taus_decay[ i ] / 10. );
-        // if taus_rise is not defined
-        // explicitly, it will be set to taus_decay/10
+        // if taus_rise is not defined explicitly or if it has less elements
+        // than taus_decay, it will be set to taus_decay/10
       }
     }
   }
@@ -261,23 +233,7 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double >( d, names::I_e, I_e );
 
-  if ( updateValue< double >( d, names::MAXERR, tmp ) )
-  {
-    if ( not( tmp > 0.0 ) )
-    {
-      throw BadProperty( "MAXERR must be positive." );
-    }
-    MAXERR = tmp;
-  }
-
-  if ( updateValue< double >( d, names::HMIN, tmp ) )
-  {
-    if ( not( tmp > 0.0 ) )
-    {
-      throw BadProperty( "HMIN must be positive." );
-    }
-    HMIN = tmp;
-  }
+  updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
 
   if ( V_peak_ <= V_th )
   {
@@ -302,6 +258,11 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
   if ( tau_w <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
+
+  if ( gsl_error_tol <= 0. )
+  {
+    throw BadProperty( "The gsl_error_tol must be strictly positive." );
   }
 }
 
@@ -386,12 +347,20 @@ aeif_cond_beta_multisynapse::State_::set( const DictionaryDatum& d )
 aeif_cond_beta_multisynapse::Buffers_::Buffers_(
   aeif_cond_beta_multisynapse& n )
   : logger_( n )
+  , s_( 0 )
+  , c_( 0 )
+  , e_( 0 )
 {
+  // Initialization of the remaining members is deferred to
+  // init_buffers_().
 }
 
 aeif_cond_beta_multisynapse::Buffers_::Buffers_( const Buffers_&,
   aeif_cond_beta_multisynapse& n )
   : logger_( n )
+  , s_( 0 )
+  , c_( 0 )
+  , e_( 0 )
 {
 }
 
@@ -419,6 +388,19 @@ aeif_cond_beta_multisynapse::aeif_cond_beta_multisynapse(
 
 aeif_cond_beta_multisynapse::~aeif_cond_beta_multisynapse()
 {
+  // GSL structs may not have been allocated, so we need to protect destruction
+  if ( B_.s_ )
+  {
+    gsl_odeiv_step_free( B_.s_ );
+  }
+  if ( B_.c_ )
+  {
+    gsl_odeiv_control_free( B_.c_ );
+  }
+  if ( B_.e_ )
+  {
+    gsl_odeiv_evolve_free( B_.e_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -448,14 +430,30 @@ aeif_cond_beta_multisynapse::init_buffers_()
   // We must integrate this model with high-precision to obtain decent results
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
+  if ( B_.c_ == 0 )
+  {
+    B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
+  }
+  else
+  {
+    gsl_odeiv_control_init(
+      B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
+  }
+
+  // Stepping function and evolution function are allocated in calibrate()
+
+  B_.sys_.function = aeif_cond_beta_multisynapse_dynamics;
+  B_.sys_.jacobian = NULL;
+  B_.sys_.params = reinterpret_cast< void* >( this );
+  // B_.sys_.dimension is assigned in calibrate()
   B_.I_stim_ = 0.0;
 }
 
 void
 aeif_cond_beta_multisynapse::calibrate()
 {
-  B_.logger_
-    .init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
 
   P_.receptor_types_.resize( P_.num_of_receptors_ );
   for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
@@ -485,38 +483,27 @@ aeif_cond_beta_multisynapse::calibrate()
   S_.y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
     + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
                   * P_.num_of_receptors_ ) );
-  S_.k1.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                  * P_.num_of_receptors_ ) );
-  S_.k2.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                  * P_.num_of_receptors_ ) );
-  S_.k3.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                  * P_.num_of_receptors_ ) );
-  S_.k4.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                  * P_.num_of_receptors_ ) );
-  S_.k5.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                  * P_.num_of_receptors_ ) );
-  S_.k6.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                  * P_.num_of_receptors_ ) );
-  S_.k7.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                  * P_.num_of_receptors_ ) );
-  S_.yin.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                   * P_.num_of_receptors_ ) );
-  S_.ynew.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                    * P_.num_of_receptors_ ) );
-  S_.yref.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                    * P_.num_of_receptors_ ) );
+
+  // reallocate instance of stepping function for ODE GSL solver
+  if ( B_.s_ != 0 )
+  {
+    gsl_odeiv_step_free( B_.s_ );
+  }
+  B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, S_.y_.size() );
+
+  // reallocate instance of evolution function for ODE GSL solver
+  if ( B_.e_ != 0 )
+  {
+    gsl_odeiv_evolve_free( B_.e_ );
+  }
+  B_.e_ = gsl_odeiv_evolve_alloc( S_.y_.size() );
+
+  B_.sys_.dimension = S_.y_.size();
 }
 
+/* ----------------------------------------------------------------
+ * Update and spike handling functions
+ * ---------------------------------------------------------------- */
 void
 aeif_cond_beta_multisynapse::update( Time const& origin,
   const long_t from,
@@ -536,149 +523,35 @@ aeif_cond_beta_multisynapse::update( Time const& origin,
       --S_.r_;
     }
 
+    B_.sys_.dimension = S_.y_.size();
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
-    // The numerical integration of the model equations is performed by
-    // a Dormand-Prince method (5th order Runge-Kutta method with
-    // adaptive stepsize control) as desribed in William H. Press et
-    // al., “Adaptive Stepsize Control for Runge-Kutta”, Chapter 17.2
-    // in Numerical Recipes (3rd edition, 2007), 910-914.  The solver
-    // itself performs only a single NUMERICAL integration step,
-    // starting from t and of size B_.IntegrationStep_ (bounded by
-    // step); the while-loop ensures integration over the whole
-    // SIMULATION step (0, step] of size B_.step_ if more than one
-    // integration step is needed due to a small integration stepsize;
+    // gsl_odeiv_evolve_apply performs only a single numerical
+    // integration step, starting from t and bounded by step;
+    // the while-loop ensures integration over the whole simulation
+    // step (0, step] if more than one integration step is needed due
+    // to a small integration step size;
     // note that (t+IntegrationStep > step) leads to integration over
     // (t, step] and afterwards setting t to step, but it does not
     // enforce setting IntegrationStep to step-t; this is of advantage
     // for a consistent and efficient integration across subsequent
-    // simulation intervals.
+    // simulation intervals
 
-    double_t& h = B_.IntegrationStep_; // numerical integration step
-    double_t& tend = B_.step_;         // end of simulation step
-
-    const double_t& MAXERR = P_.MAXERR; // maximum error
-    const double_t& HMIN = P_.HMIN;     // minimal integration step
-
-    double_t err;
-    double_t t_return = 0.0;
-
-    while ( t < B_.step_ ) // while not yet reached end of simulation step
+    while ( t < B_.step_ )
     {
-      bool done = false;
+      const int status = gsl_odeiv_evolve_apply( B_.e_,
+        B_.c_,
+        B_.s_,
+        &B_.sys_,             // system of ODE
+        &t,                   // from t
+        B_.step_,             // to t <= step
+        &B_.IntegrationStep_, // integration step size
+        &S_.y_[ 0 ] );        // neuronal state converted to double[]
 
-      do
+      if ( status != GSL_SUCCESS )
       {
-
-        if ( tend - t < h ) // stop integration at end of simulation step
-        {
-          h = tend - t;
-        }
-
-        t_return = t + h; // update t
-
-        // k1 = f(told, y)
-        aeif_cond_beta_multisynapse_dynamics( S_.y_, S_.k1 );
-
-        // k2 = f(told + h/5, y + h*k1 / 5)
-        for ( size_t i = 0; i < S_.y_.size(); ++i )
-        {
-          S_.yin[ i ] = S_.y_[ i ] + h * S_.k1[ i ] / 5.0;
-        }
-        aeif_cond_beta_multisynapse_dynamics( S_.yin, S_.k2 );
-
-        // k3 = f(told + 3/10*h, y + 3/40*h*k1 + 9/40*h*k2)
-        for ( size_t i = 0; i < S_.y_.size(); ++i )
-        {
-          S_.yin[ i ] = S_.y_[ i ]
-            + h * ( 3.0 / 40.0 * S_.k1[ i ] + 9.0 / 40.0 * S_.k2[ i ] );
-        }
-        aeif_cond_beta_multisynapse_dynamics( S_.yin, S_.k3 );
-
-
-        // k4
-        for ( size_t i = 0; i < S_.y_.size(); ++i )
-        {
-          S_.yin[ i ] = S_.y_[ i ]
-            + h * ( 44.0 / 45.0 * S_.k1[ i ] - 56.0 / 15.0 * S_.k2[ i ]
-                    + 32.0 / 9.0 * S_.k3[ i ] );
-        }
-        aeif_cond_beta_multisynapse_dynamics( S_.yin, S_.k4 );
-
-        // k5
-        for ( size_t i = 0; i < S_.y_.size(); ++i )
-        {
-          S_.yin[ i ] = S_.y_[ i ]
-            + h
-              * ( 19372.0 / 6561.0 * S_.k1[ i ] - 25360.0 / 2187.0 * S_.k2[ i ]
-                  + 64448.0 / 6561.0 * S_.k3[ i ]
-                  - 212.0 / 729.0 * S_.k4[ i ] );
-        }
-        aeif_cond_beta_multisynapse_dynamics( S_.yin, S_.k5 );
-
-        // k6
-        for ( size_t i = 0; i < S_.y_.size(); ++i )
-        {
-          S_.yin[ i ] = S_.y_[ i ]
-            + h * ( 9017.0 / 3168.0 * S_.k1[ i ] - 355.0 / 33.0 * S_.k2[ i ]
-                    + 46732.0 / 5247.0 * S_.k3[ i ]
-                    + 49.0 / 176.0 * S_.k4[ i ]
-                    - 5103.0 / 18656.0 * S_.k5[ i ] );
-        }
-        aeif_cond_beta_multisynapse_dynamics( S_.yin, S_.k6 );
-
-        // 5th order
-        for ( size_t i = 0; i < S_.y_.size(); ++i )
-        {
-          S_.ynew[ i ] = S_.y_[ i ]
-            + h * ( 35.0 / 384.0 * S_.k1[ i ] + 500.0 / 1113.0 * S_.k3[ i ]
-                    + 125.0 / 192.0 * S_.k4[ i ]
-                    - 2187.0 / 6784.0 * S_.k5[ i ]
-                    + 11.0 / 84.0 * S_.k6[ i ] );
-        }
-        aeif_cond_beta_multisynapse_dynamics( S_.yin, S_.k7 );
-
-        // 4th order
-        for ( size_t i = 0; i < S_.y_.size(); ++i )
-        {
-          S_.yref[ i ] = S_.y_[ i ]
-            + h
-              * ( 5179.0 / 57600.0 * S_.k1[ i ] + 7571.0 / 16695.0 * S_.k3[ i ]
-                  + 393.0 / 640.0 * S_.k4[ i ]
-                  - 92097.0 / 339200.0 * S_.k5[ i ]
-                  + 187.0 / 2100.0 * S_.k6[ i ]
-                  + 1.0 / 40.0 * S_.k7[ i ] );
-        }
-
-        err = std::fabs( S_.ynew[ 0 ] - S_.yref[ 0 ] ) / MAXERR
-          + 1.0e-200; // error estimate,
-        // based on different orders for stepsize prediction. Small value added
-        // to prevent err==0
-
-        // The following flag 'done' is needed to ensure that we accept the
-        // result for h<=HMIN, irrespective of the error. (See below)
-
-        done = ( h <= HMIN ); // Always exit loop if h was <=HMIN already
-
-        // prediction of next integration stepsize. This step may result in a
-        // stepsize below HMIN.
-        // If this happens, we must
-        //   1. set the stepsize to HMIN
-        //   2. compute the result and accept it irrespective of the error,
-        //      because we cannot decrease the stepsize any further.
-        //  the 'done' flag, computed above ensure that the loop is terminated
-        //  after the result was computed.
-
-        h *= 0.98 * std::pow( 1.0 / err, 1.0 / 5.0 );
-        h = std::max( h, HMIN );
-
-      } while ( ( err > 1.0 ) and ( not done ) ); // reject step if err > 1
-
-      for ( size_t i = 0; i < S_.y_.size(); ++i )
-      {
-        S_.y_[ i ] = S_.ynew[ i ]; // pass updated values
+        throw GSLSolverFailure( get_name(), status );
       }
-      t = t_return;
 
       // check for unreasonable values; we allow V_M to explode
       if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
@@ -686,25 +559,23 @@ aeif_cond_beta_multisynapse::update( Time const& origin,
       {
         throw NumericalInstability( get_name() );
       }
-
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
-      if ( S_.r_ > 0 ) // if neuron is still in refractory period
-      {
-        S_.y_[ State_::V_M ] = P_.V_reset_; // clamp it to V_reset
-      }
-      else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ ) // V_m >= V_peak: spike
+      if ( S_.r_ > 0 )
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
-        S_.y_[ State_::W ] += P_.b;   // spike-driven adaptation
-        S_.r_ = V_.RefractoryCounts_; // initialize refractory steps with
-                                      // refractory period
+      }
+      else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ )
+      {
+        S_.y_[ State_::V_M ] = P_.V_reset_;
+        S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
+        S_.r_ = V_.RefractoryCounts_;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
         kernel().event_delivery_manager.send( *this, se, lag );
       }
-    } // while
+    }
 
     for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
     {
@@ -780,4 +651,80 @@ aeif_cond_beta_multisynapse::handle( DataLoggingRequest& e )
   B_.logger_.handle( e );
 }
 
-} // namespace
+extern "C" int
+aeif_cond_beta_multisynapse_dynamics( double,
+  const double y[],
+  double f[],
+  void* pnode )
+{
+  // a shorthand
+  typedef nest::aeif_cond_beta_multisynapse::State_ S;
+
+  // get access to node so we can almost work as in a member function
+  assert( pnode );
+  const nest::aeif_cond_beta_multisynapse& node =
+    *( reinterpret_cast< nest::aeif_cond_beta_multisynapse* >( pnode ) );
+
+  // y[] here is---and must be---the state vector supplied by the integrator,
+  // not the state vector in the node, node.S_.y[].
+
+  // The following code is verbose for the sake of clarity. We assume that a
+  // good compiler will optimize the verbosity away ...
+
+  // shorthand for state variables
+  const double_t& V = y[ S::V_M ];
+  // const double_t& dg_ex = y[ S::DG_EXC ];
+  // const double_t& g_ex = y[ S::G_EXC ];
+  // const double_t& dg_in = y[ S::DG_INH ];
+  // const double_t& g_in = y[ S::G_INH ];
+  const double_t& w = y[ S::W ];
+
+  double_t I_syn_exc = 0.0;
+  double_t I_syn_inh = 0.0;
+
+  for ( size_t i = 0; i < ( node.P_.num_of_receptors_
+                            * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
+        i += S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR )
+  {
+    I_syn_exc += y[ S::G_EXC + i ] * ( V - node.P_.E_ex );
+    I_syn_inh += y[ S::G_INH + i ] * ( V - node.P_.E_in );
+  }
+
+  // We pre-compute the argument of the exponential
+  const double_t exp_arg = ( V - node.P_.V_th ) / node.P_.Delta_T;
+
+  // Upper bound for exponential argument to avoid numerical instabilities
+  const double_t MAX_EXP_ARG = 10.;
+
+  // If the argument is too large, we clip it.
+  const double_t I_spike =
+    node.P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
+
+  // dv/dt
+  f[ S::V_M ] =
+    ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
+      - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+
+  // Adaptation current w.
+  f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
+
+  for ( size_t i = 0; i < node.P_.num_of_receptors_; ++i )
+  {
+    size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    // Synaptic conductance derivative dG/dt for excitatory connections
+    f[ S::DG_EXC + j ] = -y[ S::DG_EXC + j ] / node.P_.taus_rise[ i ];
+    f[ S::G_EXC + j ] =
+      y[ S::DG_EXC + j ] - y[ S::G_EXC + j ] / node.P_.taus_decay[ i ];
+
+    // Synaptic conductance derivative dG/dt for inhibitory connections
+    f[ S::DG_INH + j ] = -y[ S::DG_INH + j ] / node.P_.taus_rise[ i ];
+    f[ S::G_INH + j ] =
+      y[ S::DG_INH + j ] - y[ S::G_INH + j ] / node.P_.taus_decay[ i ];
+  }
+
+  return GSL_SUCCESS;
+}
+
+} // namespace nest
+
+#endif // HAVE_GSL

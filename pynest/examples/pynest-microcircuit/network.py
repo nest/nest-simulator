@@ -236,11 +236,10 @@ class Network:
                     conn_dict_poisson = {'rule': 'all_to_all'}
                     syn_dict_poisson = {'model': 'static_synapse',
                                         'weight': self.w_ext,
-                                        'delay':
-                                            {'distribution': norm_clp,
-                                             'mu': 1.5,
-                                             'sigma': 0.75,
-                                             'low': self.sim_resolution}}
+                                        'delay': {'distribution': norm_clp,
+                                                  'mu': 1.5,
+                                                  'sigma': 0.75,
+                                                  'low': self.sim_resolution}}
                     conn_dict_rec = {'rule': 'fixed_total_number',
                                      'N': synapse_nr}
                     syn_dict_rec_ex = {'model': 'static_synapse',

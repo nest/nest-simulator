@@ -56,7 +56,9 @@ def get_weight(PSP_val):
 
 
 def get_total_number_of_synapses():
-    """This function returns the total number of synapses between all populations.
+    """This function returns the total number of synapses between
+    all populations.
+
     The first index (rows) of the matrix is the target population
     and the second (columns) the source population.
     This function depends on the following parameters specified in net_dict:

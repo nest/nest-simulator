@@ -49,6 +49,13 @@
     /overwrite_files true
 >> SetStatus
 
+% This test should only run if we have GSL
+statusdict/have_gsl :: not
+{
+  exit_test_gracefully
+}
+if
+
 /tolerance   	5e-2 def %mV
 /simulation_t	2500 def %ms
 /V_peak			0. def

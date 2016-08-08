@@ -31,39 +31,12 @@
 // Includes from nestkernel:
 #include "nest_types.h"
 #include "source.h"
+#include "source_table_position.h"
 
 namespace nest
 {
 
 struct TargetData;
-
-/**
- * Tuple to store position in 3d vector of sources.
- **/
-struct SourceTablePosition
-{
-  thread tid; //!< thread index
-  synindex syn_index; //!< synapse-type index
-  index lcid; //!< local connection index
-  SourceTablePosition();
-  void reset();
-};
-
-inline
-SourceTablePosition::SourceTablePosition()
-  : tid( 0 )
-  , syn_index( 0 )
-  , lcid( 0 )
-{
-}
-
-inline void
-SourceTablePosition::reset()
-{
-  tid = 0;
-  syn_index = 0;
-  lcid = 0;
-}
 
 /** This data structure that stores the global ids of presynaptic
  * neuron during postsynaptic connection creation, before the

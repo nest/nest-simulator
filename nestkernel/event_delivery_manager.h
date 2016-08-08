@@ -67,7 +67,7 @@ public:
    * \see send_local()
    */
   template < class EventT >
-  void send( Node& source, EventT& e, const long_t lag = 0 );
+  void send( Node& source, EventT& e, const long lag = 0 );
 
   /**
    * Send a secondary event remote.
@@ -96,7 +96,7 @@ public:
    * in a synchronised (single threaded) state.
    * @see send_to_targets()
    */
-  void send_remote( thread p, SpikeEvent&, const long_t lag = 0 );
+  void send_remote( thread p, SpikeEvent&, const long lag = 0 );
 
   void send_remote( thread t, SecondaryEvent& e );
 
@@ -118,7 +118,7 @@ public:
    * in a synchronised (single threaded) state.
    * @see send_to_targets()
    */
-  void send_offgrid_remote( thread p, SpikeEvent&, const long_t lag = 0 );
+  void send_offgrid_remote( thread p, SpikeEvent&, const long lag = 0 );
 
   /**
    * Send event e directly to its target node. This should be
@@ -255,7 +255,7 @@ private:
    * - Second dim: A vector for each slice of the min_delay interval
    * - Third dim: The gids.
    */
-  std::vector< std::vector< std::vector< uint_t > > > spike_register_;
+  std::vector< std::vector< std::vector< unsigned int > > > spike_register_;
 
   /**
    * Register for off-grid spikes.
@@ -271,21 +271,21 @@ private:
    * Buffer to collect the secondary events
    * after serialization.
    */
-  std::vector< std::vector< uint_t > > secondary_events_buffer_;
+  std::vector< std::vector< unsigned int > > secondary_events_buffer_;
 
   /**
    * Buffer containing the gids of local neurons that spiked in the
    * last min_delay_ interval. The single slices are separated by a
    * marker value.
    */
-  std::vector< uint_t > local_grid_spikes_;
+  std::vector< unsigned int > local_grid_spikes_;
 
   /**
    * Buffer containing the gids of all neurons that spiked in the
    * last min_delay_ interval. The single slices are separated by a
    * marker value
    */
-  std::vector< uint_t > global_grid_spikes_;
+  std::vector< unsigned int > global_grid_spikes_;
 
   /**
    * Buffer containing the gids and offsets for local neurons that
@@ -311,7 +311,7 @@ private:
    * Marker Value to be put between the data fields from different time
    * steps during communication.
    */
-  const uint_t comm_marker_;
+  const unsigned int comm_marker_;
 };
 
 
@@ -322,21 +322,21 @@ EventDeliveryManager::send_to_node( Event& e )
 }
 
 inline void
-EventDeliveryManager::send_remote( thread t, SpikeEvent& e, const long_t lag )
+EventDeliveryManager::send_remote( thread t, SpikeEvent& e, const long lag )
 {
   // Put the spike in a buffer for the remote machines
-  for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+  for ( int i = 0; i < e.get_multiplicity(); ++i )
     spike_register_[ t ][ lag ].push_back( e.get_sender().get_gid() );
 }
 
 inline void
 EventDeliveryManager::send_offgrid_remote( thread t,
   SpikeEvent& e,
-  const long_t lag )
+  const long lag )
 {
   // Put the spike in a buffer for the remote machines
   OffGridSpike ogs( e.get_sender().get_gid(), e.get_offset() );
-  for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+  for ( int i = 0; i < e.get_multiplicity(); ++i )
     offgrid_spike_register_[ t ][ lag ].push_back( ogs );
 }
 
@@ -389,7 +389,7 @@ EventDeliveryManager::send_remote( thread t, SecondaryEvent& e )
   size_t old_size = secondary_events_buffer_[ t ].size();
 
   secondary_events_buffer_[ t ].resize( old_size + e.size() );
-  std::vector< uint_t >::iterator it =
+  std::vector< unsigned int >::iterator it =
     secondary_events_buffer_[ t ].begin() + old_size;
   e >> it;
 }

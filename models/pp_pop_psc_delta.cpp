@@ -147,7 +147,7 @@ nest::pp_pop_psc_delta::Parameters_::set( const DictionaryDatum& d )
   if ( tau_m_ <= 0 )
     throw BadProperty( "The time constants must be strictly positive." );
 
-  for ( uint_t i = 0; i < taus_eta_.size(); i++ )
+  for ( unsigned int i = 0; i < taus_eta_.size(); i++ )
   {
     if ( taus_eta_[ i ] <= 0 )
       throw BadProperty( "All time constants must be strictly positive." );
@@ -249,11 +249,11 @@ nest::pp_pop_psc_delta::calibrate()
 
   V_.h_ = Time::get_resolution().get_ms();
   V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
-  V_.min_double_ = std::numeric_limits< double_t >::min();
+  V_.min_double_ = std::numeric_limits< double >::min();
 
-  double_t tau_eta_max = -1; // finding max of taus_eta_
+  double tau_eta_max = -1; // finding max of taus_eta_
 
-  for ( uint_t j = 0; j < P_.taus_eta_.size(); j++ )
+  for ( unsigned int j = 0; j < P_.taus_eta_.size(); j++ )
     if ( P_.taus_eta_.at( j ) > tau_eta_max )
       tau_eta_max = P_.taus_eta_.at( j );
 
@@ -268,19 +268,19 @@ nest::pp_pop_psc_delta::calibrate()
 
     V_.len_eta_ = tau_eta_max * ( P_.len_kernel_ / V_.h_ );
 
-    for ( int_t j = 0; j < V_.len_eta_; j++ )
+    for ( int j = 0; j < V_.len_eta_; j++ )
       S_.n_spikes_past_.push_back( 0 );
 
     std::vector< double > ts;
     ts.clear();
-    for ( int_t j = 0; j < V_.len_eta_; j++ )
+    for ( int j = 0; j < V_.len_eta_; j++ )
       ts.push_back( j * V_.h_ );
 
-    double_t temp = 0;
+    double temp = 0;
 
-    for ( int_t j = 0; j < V_.len_eta_; j++ )
+    for ( int j = 0; j < V_.len_eta_; j++ )
     {
-      for ( uint_t i = 0; i < P_.taus_eta_.size(); i++ )
+      for ( unsigned int i = 0; i < P_.taus_eta_.size(); i++ )
         temp += std::exp( -ts[ j ] / P_.taus_eta_.at( i ) )
           * ( -P_.vals_eta_.at( i ) );
 
@@ -289,7 +289,7 @@ nest::pp_pop_psc_delta::calibrate()
       temp = 0;
     }
 
-    for ( int_t j = 0; j < V_.len_eta_; j++ )
+    for ( int j = 0; j < V_.len_eta_; j++ )
     {
       S_.age_occupations_.push_back( 0 );
       S_.thetas_ages_.push_back( 0 );
@@ -311,14 +311,14 @@ nest::pp_pop_psc_delta::calibrate()
 
 void
 nest::pp_pop_psc_delta::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
 
@@ -327,12 +327,12 @@ nest::pp_pop_psc_delta::update( Time const& origin,
 
 
     // get_thetas_ages
-    std::vector< double_t > tmp_vector;
-    double_t integral = 0;
+    std::vector< double > tmp_vector;
+    double integral = 0;
     tmp_vector.clear();
 
 
-    for ( uint_t i = 0; i < V_.eta_kernel_.size(); i++ )
+    for ( unsigned int i = 0; i < V_.eta_kernel_.size(); i++ )
     {
       tmp_vector.push_back( V_.eta_kernel_[ i ]
         * S_.n_spikes_past_[ ( S_.p_n_spikes_past_ + i )
@@ -343,17 +343,17 @@ nest::pp_pop_psc_delta::update( Time const& origin,
     S_.thetas_ages_.clear();
     S_.thetas_ages_.push_back( integral );
 
-    for ( uint_t i = 1; i < V_.eta_kernel_.size(); i++ )
+    for ( unsigned int i = 1; i < V_.eta_kernel_.size(); i++ )
       S_.thetas_ages_.push_back(
         S_.thetas_ages_[ i - 1 ] - tmp_vector[ i - 1 ] );
 
-    for ( uint_t i = 0; i < V_.eta_kernel_.size(); i++ )
+    for ( unsigned int i = 0; i < V_.eta_kernel_.size(); i++ )
       S_.thetas_ages_[ i ] += V_.theta_kernel_[ i ];
 
     S_.thetas_ages_.push_back( 0 );
 
     // get_escape_rate
-    for ( uint_t i = 0; i < S_.rhos_ages_.size(); i++ )
+    for ( unsigned int i = 0; i < S_.rhos_ages_.size(); i++ )
       S_.rhos_ages_[ i ] =
         P_.rho_0_ * std::exp( ( S_.h_ + S_.thetas_ages_[ i ] ) / P_.delta_u_ );
 
@@ -361,7 +361,7 @@ nest::pp_pop_psc_delta::update( Time const& origin,
     double p_argument;
 
     // generate_spikes
-    for ( uint_t i = 0; i < S_.age_occupations_.size(); i++ )
+    for ( unsigned int i = 0; i < S_.age_occupations_.size(); i++ )
     {
 
       if ( S_.age_occupations_[ ( S_.p_age_occupations_ + i )
@@ -391,19 +391,20 @@ nest::pp_pop_psc_delta::update( Time const& origin,
     S_.p_n_spikes_past_ = ( S_.p_n_spikes_past_ - 1 + S_.n_spikes_past_.size() )
       % S_.n_spikes_past_.size(); // shift to the right
 
-    int_t temp_sum = 0;
-    for ( uint_t i = 0; i < S_.n_spikes_ages_.size(); i++ ) // cumulative sum
+    int temp_sum = 0;
+    for ( unsigned int i = 0; i < S_.n_spikes_ages_.size();
+          i++ ) // cumulative sum
       temp_sum += S_.n_spikes_ages_[ i ];
 
     S_.n_spikes_past_[ S_.p_n_spikes_past_ ] = temp_sum;
 
 
     // update_age_occupations
-    for ( uint_t i = 0; i < S_.age_occupations_.size(); i++ )
+    for ( unsigned int i = 0; i < S_.age_occupations_.size(); i++ )
       S_.age_occupations_[ ( S_.p_age_occupations_ + i )
         % S_.age_occupations_.size() ] -= S_.n_spikes_ages_[ i ];
 
-    int_t last_element_value =
+    int last_element_value =
       S_.age_occupations_[ ( S_.p_age_occupations_ - 1
                              + S_.age_occupations_.size() )
         % S_.age_occupations_.size() ]; // save the last element
@@ -455,8 +456,8 @@ nest::pp_pop_psc_delta::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
   B_.currents_.add_value(

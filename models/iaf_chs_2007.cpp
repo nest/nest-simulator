@@ -111,7 +111,7 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s )
   updateValue< double >( d, names::V_noise, U_noise_ );
 
   const bool updated_noise =
-    updateValue< std::vector< double_t > >( d, names::noise, noise_ );
+    updateValue< std::vector< double > >( d, names::noise, noise_ );
   if ( updated_noise )
   {
     s.position_ = 0;
@@ -232,16 +232,14 @@ nest::iaf_chs_2007::calibrate()
 }
 
 void
-nest::iaf_chs_2007::update( const Time& origin,
-  const long_t from,
-  const long_t to )
+nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     S_.V_syn_ = S_.V_syn_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_;
 

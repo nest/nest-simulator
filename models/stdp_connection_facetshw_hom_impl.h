@@ -139,28 +139,28 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::get_status(
 {
   CommonSynapseProperties::get_status( d );
 
-  def< double_t >( d, "tau_plus", tau_plus_ );
-  def< double_t >( d, "tau_minus_stdp", tau_minus_ );
-  def< double_t >( d, "Wmax", Wmax_ );
-  def< double_t >( d, "weight_per_lut_entry", weight_per_lut_entry_ );
+  def< double >( d, "tau_plus", tau_plus_ );
+  def< double >( d, "tau_minus_stdp", tau_minus_ );
+  def< double >( d, "Wmax", Wmax_ );
+  def< double >( d, "weight_per_lut_entry", weight_per_lut_entry_ );
 
-  def< long_t >( d, "no_synapses", no_synapses_ );
-  def< long_t >( d, "synapses_per_driver", synapses_per_driver_ );
-  def< double_t >( d, "driver_readout_time", driver_readout_time_ );
-  def< double_t >( d, "readout_cycle_duration", readout_cycle_duration_ );
+  def< long >( d, "no_synapses", no_synapses_ );
+  def< long >( d, "synapses_per_driver", synapses_per_driver_ );
+  def< double >( d, "driver_readout_time", driver_readout_time_ );
+  def< double >( d, "readout_cycle_duration", readout_cycle_duration_ );
 
   ( *d )[ "lookuptable_0" ] =
-    IntVectorDatum( new std::vector< long_t >( lookuptable_0_ ) );
+    IntVectorDatum( new std::vector< long >( lookuptable_0_ ) );
   ( *d )[ "lookuptable_1" ] =
-    IntVectorDatum( new std::vector< long_t >( lookuptable_1_ ) );
+    IntVectorDatum( new std::vector< long >( lookuptable_1_ ) );
   ( *d )[ "lookuptable_2" ] =
-    IntVectorDatum( new std::vector< long_t >( lookuptable_2_ ) );
+    IntVectorDatum( new std::vector< long >( lookuptable_2_ ) );
   ( *d )[ "configbit_0" ] =
-    IntVectorDatum( new std::vector< long_t >( configbit_0_ ) );
+    IntVectorDatum( new std::vector< long >( configbit_0_ ) );
   ( *d )[ "configbit_1" ] =
-    IntVectorDatum( new std::vector< long_t >( configbit_1_ ) );
+    IntVectorDatum( new std::vector< long >( configbit_1_ ) );
   ( *d )[ "reset_pattern" ] =
-    IntVectorDatum( new std::vector< long_t >( reset_pattern_ ) );
+    IntVectorDatum( new std::vector< long >( reset_pattern_ ) );
 }
 
 template < typename targetidentifierT >
@@ -171,35 +171,33 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status(
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  updateValue< double_t >( d, "tau_plus", tau_plus_ );
-  updateValue< double_t >( d, "tau_minus_stdp", tau_minus_ );
-  if ( updateValue< double_t >( d, "Wmax", Wmax_ ) )
+  updateValue< double >( d, "tau_plus", tau_plus_ );
+  updateValue< double >( d, "tau_minus_stdp", tau_minus_ );
+  if ( updateValue< double >( d, "Wmax", Wmax_ ) )
   {
     weight_per_lut_entry_ = Wmax_ / ( lookuptable_0_.size() - 1 );
   }
 
   // TP: they should not be allowed to be changed! But needed for CopyModel ...
-  updateValue< double_t >( d, "weight_per_lut_entry", weight_per_lut_entry_ );
-  updateValue< double_t >(
-    d, "readout_cycle_duration", readout_cycle_duration_ );
-  if ( updateValue< long_t >( d, "no_synapses", no_synapses_ ) )
+  updateValue< double >( d, "weight_per_lut_entry", weight_per_lut_entry_ );
+  updateValue< double >( d, "readout_cycle_duration", readout_cycle_duration_ );
+  if ( updateValue< long >( d, "no_synapses", no_synapses_ ) )
   {
     calc_readout_cycle_duration_();
   }
 
-  if ( updateValue< long_t >( d, "synapses_per_driver", synapses_per_driver_ ) )
+  if ( updateValue< long >( d, "synapses_per_driver", synapses_per_driver_ ) )
   {
     calc_readout_cycle_duration_();
   }
-  if ( updateValue< double_t >(
-         d, "driver_readout_time", driver_readout_time_ ) )
+  if ( updateValue< double >( d, "driver_readout_time", driver_readout_time_ ) )
   {
     calc_readout_cycle_duration_();
   }
 
   if ( d->known( "lookuptable_0" ) )
   {
-    updateValue< std::vector< long_t > >( d, "lookuptable_0", lookuptable_0_ );
+    updateValue< std::vector< long > >( d, "lookuptable_0", lookuptable_0_ );
 
     // right size?
     if ( lookuptable_0_.size() != lookuptable_1_.size() )
@@ -218,7 +216,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status(
   }
   if ( d->known( "lookuptable_1" ) )
   {
-    updateValue< std::vector< long_t > >( d, "lookuptable_1", lookuptable_1_ );
+    updateValue< std::vector< long > >( d, "lookuptable_1", lookuptable_1_ );
 
     // right size?
     if ( lookuptable_1_.size() != lookuptable_0_.size() )
@@ -237,7 +235,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status(
   }
   if ( d->known( "lookuptable_2" ) )
   {
-    updateValue< std::vector< long_t > >( d, "lookuptable_2", lookuptable_2_ );
+    updateValue< std::vector< long > >( d, "lookuptable_2", lookuptable_2_ );
 
     // right size?
     if ( lookuptable_2_.size() != lookuptable_0_.size() )
@@ -257,7 +255,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status(
 
   if ( d->known( "configbit_0" ) )
   {
-    updateValue< std::vector< long_t > >( d, "configbit_0", configbit_0_ );
+    updateValue< std::vector< long > >( d, "configbit_0", configbit_0_ );
 
     // right size?
     if ( configbit_0_.size() != 4 )
@@ -267,7 +265,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status(
   }
   if ( d->known( "configbit_1" ) )
   {
-    updateValue< std::vector< long_t > >( d, "configbit_1", configbit_1_ );
+    updateValue< std::vector< long > >( d, "configbit_1", configbit_1_ );
 
     // right size?
     if ( configbit_1_.size() != 4 )
@@ -277,7 +275,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status(
   }
   if ( d->known( "reset_pattern" ) )
   {
-    updateValue< std::vector< long_t > >( d, "reset_pattern", reset_pattern_ );
+    updateValue< std::vector< long > >( d, "reset_pattern", reset_pattern_ );
 
     // right size?
     if ( reset_pattern_.size() != 6 )
@@ -331,20 +329,20 @@ STDPFACETSHWConnectionHom< targetidentifierT >::get_status(
 {
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
+  def< double >( d, names::weight, weight_ );
 
   // own properties, different for individual synapse
-  def< double_t >( d, "a_causal", a_causal_ );
-  def< double_t >( d, "a_acausal", a_acausal_ );
-  def< double_t >( d, "a_thresh_th", a_thresh_th_ );
-  def< double_t >( d, "a_thresh_tl", a_thresh_tl_ );
+  def< double >( d, "a_causal", a_causal_ );
+  def< double >( d, "a_acausal", a_acausal_ );
+  def< double >( d, "a_thresh_th", a_thresh_th_ );
+  def< double >( d, "a_thresh_tl", a_thresh_tl_ );
 
   def< bool >( d, "init_flag", init_flag_ );
-  def< long_t >( d, "synapse_id", synapse_id_ );
-  def< double_t >( d, "next_readout_time", next_readout_time_ );
+  def< long >( d, "synapse_id", synapse_id_ );
+  def< double >( d, "next_readout_time", next_readout_time_ );
   // useful to get conversion before activity, but weight_per_lut_entry_ not
   // known here
-  // def<uint_t>(d, "discrete_weight",
+  // def<unsigned int>(d, "discrete_weight",
   // entry_to_weight_(weight_to_entry_(weight_,
   // weight_per_lut_entry_), weight_per_lut_entry_));
 }
@@ -357,18 +355,18 @@ STDPFACETSHWConnectionHom< targetidentifierT >::set_status(
 {
   // base class properties
   ConnectionBase::set_status( d, cm );
-  updateValue< double_t >( d, names::weight, weight_ );
+  updateValue< double >( d, names::weight, weight_ );
 
-  updateValue< double_t >( d, "a_causal", a_causal_ );
-  updateValue< double_t >( d, "a_acausal", a_acausal_ );
-  updateValue< double_t >( d, "a_thresh_th", a_thresh_th_ );
-  updateValue< double_t >( d, "a_thresh_tl", a_thresh_tl_ );
+  updateValue< double >( d, "a_causal", a_causal_ );
+  updateValue< double >( d, "a_acausal", a_acausal_ );
+  updateValue< double >( d, "a_thresh_th", a_thresh_th_ );
+  updateValue< double >( d, "a_thresh_tl", a_thresh_tl_ );
 
-  updateValue< long_t >( d, "synapse_id", synapse_id_ );
+  updateValue< long >( d, "synapse_id", synapse_id_ );
 
   // TP: they should not be allowed to be changed! But needed for CopyModel ...
   updateValue< bool >( d, "init_flag", init_flag_ );
-  updateValue< double_t >( d, "next_readout_time", next_readout_time_ );
+  updateValue< double >( d, "next_readout_time", next_readout_time_ );
 
   // setting discrete_weight_ does not make sense, is temporary variable
 }

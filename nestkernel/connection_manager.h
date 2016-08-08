@@ -299,9 +299,6 @@ public:
    */
   DelayChecker& get_delay_checker();
 
-  //! Returns true if source table is kept after connection setup is complete
-  bool keep_source_table() const;
-
   //! Removes provessed entries from source table
   void clean_source_table( const thread tid );
 
@@ -560,24 +557,22 @@ ConnectionManager::get_max_delay() const
   return max_delay_;
 }
 
-inline bool
-ConnectionManager::keep_source_table() const
-{
-  return keep_source_table_;
-}
-
 inline void
 ConnectionManager::clean_source_table( const thread tid )
 {
-  assert( not keep_source_table_ );
-  source_table_.clean( tid );
+  if ( not keep_source_table_ )
+  {
+    source_table_.clean( tid );
+  }
 }
 
 inline void
 ConnectionManager::clear_source_table( const thread tid )
 {
-  assert( not keep_source_table_ );
-  source_table_.clear( tid );
+  if ( not keep_source_table_ )
+  {
+    source_table_.clear( tid );
+  }
 }
 
 inline bool
@@ -607,7 +602,14 @@ ConnectionManager::reject_last_target_data( const thread tid )
 inline void
 ConnectionManager::save_source_table_entry_point( const thread tid )
 {
-  source_table_.save_entry_point( tid );
+  // only store entry point if source table is not cleaned. otherwise
+  // indices will become invalid. we can just always start at the
+  // beginning since processed entries are removec by
+  // clean_source_table.
+  if ( keep_source_table_ )
+  {
+    source_table_.save_entry_point( tid );
+  }
 }
 
 inline void
@@ -655,7 +657,7 @@ ConnectionManager::add_target( const thread tid, const TargetData& target_data)
 inline bool
 ConnectionManager::get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, thread& target_rank, TargetData& next_target_data )
 {
-  return source_table_.get_next_target_data( tid, rank_start, rank_end, keep_source_table_, target_rank, next_target_data );
+  return source_table_.get_next_target_data( tid, rank_start, rank_end, target_rank, next_target_data );
 }
 
 

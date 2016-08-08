@@ -34,7 +34,7 @@ namespace nest
 {
 
 inline bool
-SourceTable::get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, const bool keep_source_table, thread& target_rank, TargetData& next_target_data )
+SourceTable::get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, thread& target_rank, TargetData& next_target_data )
 {
   SourceTablePosition& current_position = *current_positions_[ tid ];
   // we stay in this loop either until we can return a valid
@@ -77,11 +77,6 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
 
     // we have found a valid entry, so mark it as processed
     current_source.processed = true;
-    // if we keep source table and if current_first_source points to
-    // source with same gid, we only increase target count, and
-    // continue (this effectively compresses the amount of data needed
-    // to communicate a spike, but only works if full source table is
-    // stored.)
     if ( last_source_[ tid ] != 0 && (*last_source_[ tid ]).gid == current_source.gid )
     {
       kernel().connection_manager.set_has_source_subsequent_targets( current_position.tid, current_position.syn_index, current_position.lcid - 1, true );

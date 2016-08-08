@@ -119,7 +119,7 @@ public:
   //! returns true if the sources table has been cleared
   bool is_cleared() const;
   //! returns the next target data, according to the current_* positions
-  bool get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, const bool keep_source_table, thread& target_rank, TargetData& next_target_data );
+  bool get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, thread& target_rank, TargetData& next_target_data );
   //! rejects the last target data, and resets the current_* positions accordingly
   void reject_last_target_data( const thread tid );
   //! stores the current_* positions
@@ -175,13 +175,12 @@ inline
 void
 SourceTable::reject_last_target_data( const thread tid )
 {
-  SourceTablePosition& current_position = *current_positions_[ tid ];
   // adding the last target data returned by get_next_target_data
   // could not be inserted into MPI buffer due to overflow. we hence
   // need to correct the processed flag of the last entry (see
   // source_table_impl.h)
-  assert( current_position.lcid > 0 );
-  ( *sources_[ current_position.tid ] )[ current_position.syn_index ][ current_position.lcid - 1 ].processed = false;
+  assert( ( *current_positions_[ tid ] ).lcid > 0 );
+  ( *sources_[ ( *current_positions_[ tid ] ).tid ] )[ ( *current_positions_[ tid ] ).syn_index ][ ( *current_positions_[ tid ] ).lcid - 1 ].processed = false;
 }
 
 inline
@@ -190,17 +189,15 @@ SourceTable::save_entry_point( const thread tid )
 {
   if ( not saved_entry_point_[ tid ] )
   {
-    SourceTablePosition& current_position = *current_positions_[ tid ];
-    SourceTablePosition& saved_position = *saved_positions_[ tid ];
-    saved_position.tid = current_position.tid;
-    saved_position.syn_index = current_position.syn_index;
-    if ( current_position.lcid > 0 )
+    ( *saved_positions_[ tid ] ).tid = ( *current_positions_[ tid ] ).tid;
+    ( *saved_positions_[ tid ] ).syn_index = ( *current_positions_[ tid ] ).syn_index;
+    if ( ( *current_positions_[ tid ] ).lcid > 0 )
     {
-      saved_position.lcid = current_position.lcid - 1;
+      ( *saved_positions_[ tid ] ).lcid = ( *current_positions_[ tid ] ).lcid - 1;
     }
     else
     {
-      saved_position.lcid = 0;
+      ( *saved_positions_[ tid ] ).lcid = 0;
     }
     saved_entry_point_[ tid ] = true;
   }

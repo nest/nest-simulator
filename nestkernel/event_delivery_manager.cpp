@@ -910,16 +910,8 @@ EventDeliveryManager::gather_target_data()
         set_complete_marker_target_data_( tid, send_recv_count_target_data_per_rank, send_buffer_target_data );
 #pragma omp barrier
       }
-      // only store entry point if source table is not cleaned. otherwise
-      // indices will become invalid
-      if ( kernel().connection_manager.keep_source_table() )
-      {
         kernel().connection_manager.save_source_table_entry_point( tid );
-      }
-      else
-      {
-        kernel().connection_manager.clean_source_table( tid );
-      }
+      kernel().connection_manager.clean_source_table( tid );
 #pragma omp single
       {
         unsigned int* send_buffer_int = reinterpret_cast< unsigned int* >( &send_buffer_target_data[0] );
@@ -946,10 +938,7 @@ EventDeliveryManager::gather_target_data()
       }
 #pragma omp barrier
     } // of while(true)
-    if ( not kernel().connection_manager.keep_source_table() )
-    {
-      kernel().connection_manager.clear_source_table( tid );
-    }
+    kernel().connection_manager.clear_source_table( tid );
   } // of omp parallel
 
   free( send_buffer_target_data );

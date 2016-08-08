@@ -83,17 +83,6 @@ nest::SourceTable::finalize()
   saved_positions_.clear();
 }
 
-// TODO@5g: benchmark with and without reserving memory for synapses
-// TODO@5g: if we use reserve, we need to make sure the synapse type is known
-// void
-// nest::SourceTable::reserve( thread tid, synindex syn_id, index n_sources )
-// {
-//   std::map< synindex, synindex >::iterator it = synapse_ids_[ tid ]->find( syn_id );
-//   synindex syn_index = it->second;
-//   index prev_n_sources = (*sources_[ tid ])[ syn_index ].size();
-//   (*sources_[ tid ])[ syn_index ].reserve( prev_n_sources + n_sources );
-// }
-
 bool
 nest::SourceTable::is_cleared() const
 {

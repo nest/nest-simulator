@@ -85,8 +85,6 @@ aeif_cond_beta_multisynapse::Parameters_::Parameters_()
   , b( 80.5 )         // pA
   , V_th( -50.4 )     // mV
   , I_e( 0.0 )        // pA
-  //  , MAXERR( 1.0e-10 ) // mV
-  //  , HMIN( 1.0e-3 )    // ms
   , gsl_error_tol( 1e-6 )
   , num_of_receptors_( 1 )
   , has_connections_( false )

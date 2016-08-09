@@ -28,13 +28,30 @@
    Description:
    This test creates a multisynapse neuron with three receptor ports with
    different synaptic rise times and decay times, and connect it to
-   two excitatory and one inhibitory signals. If the rise times and decay
-   times are much greater than the membrane time constant, the difference
-   between the membrane potential and the rest potential V(t) will be
-   approximately proportional to the synaptic conductance g(t), which can
-   be computed analitically. At the end, the script compares the simulated
-   values of V(t) with the approximate theoretical prediction.
-   
+   two excitatory and one inhibitory signals. At the end, the script compares
+   the simulated values of V(t) with an approximate analytical formula, which
+   can be derived as follows:
+   For small excitatory inputs the synaptic current can be approximated as
+   I(t)=g(t)[Vrest-Eex]
+   where g(t) is the synaptic conductance, Vrest is the resting potential and
+   Eex is the excitatory reverse potential (see Roth and van Rossum, p. 144).
+   Using the LIF model, the differential equation for the membrane potential
+   can be written as
+   tau_m dv/dt = -v + G
+   where tau_m = Cm/gL, v = Vm - Vrest, and G=g(t)(Eex-Vrest)/gL
+   Using a first-order Taylor expansion of v around a generic time t0:
+   v(t0+tau_m)=v(t0)+tau_m dv/dt + O(tau_m^2)
+   and substituting t=t0+tau_m we get
+   v(t)=G(t-tau_m)
+   This approximation is valid for small excitatory inputs if tau_m is small
+   compared to the time scale of variation of G(t). Basically, this happens
+   when the synaptic rise time and decay time are much greater than tau_m.
+   An analogous approximation can be derived for small inhibitory inputs.
+
+   References
+   A. Roth and M.C.W. van Rossum, Modeling synapses, in Computational
+   Modeling Methods for Neuroscientists, MIT Press 2013, Chapter 6, pp. 139-159
+
    SeeAlso:
 
    FirstVersion: August 2016
@@ -77,7 +94,11 @@ sg << /spike_times [spike_time] >> SetStatus % generates a single peak
 
 % Creates a voltmeter
 /voltmeter Create /vm Set
-vm << /withtime true /time_in_steps true /interval dt /to_file true /precision 5 >> SetStatus
+vm << /withtime true
+/time_in_steps true
+/interval dt
+/to_file true
+/precision 5 >> SetStatus
 
 % Creates one aeif_conf_beta_multisynapse neuron
 /aeif_cond_beta_multisynapse Create /multisynapse_neuron Set
@@ -90,8 +111,6 @@ multisynapse_neuron << /E_L Vrest >> SetStatus
 multisynapse_neuron << /g_L g_L >> SetStatus
 multisynapse_neuron << /E_in E_in >> SetStatus
 
-multisynapse_neuron ShowStatus
-
 % creates an array of synaptic indexes 
 delays length 1 arraystore Range /synapses_idx exch def
 
@@ -101,7 +120,11 @@ delays length 1 arraystore Range /synapses_idx exch def
 	/W exch def
 	/delay exch def
 	% connect spike generator to each port
-	[sg] [multisynapse_neuron] /one_to_one << /model /static_synapse /delay delay /weight W /receptor_type syn_id >> Connect
+	[sg] [multisynapse_neuron] /one_to_one <<
+	/model /static_synapse
+	/delay delay
+	/weight W
+	/receptor_type syn_id >> Connect
 	
 } ScanThread
 

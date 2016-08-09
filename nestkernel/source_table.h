@@ -72,6 +72,9 @@ private:
   //! at that point in the next communication round, while filling up
   //! (possible) remaining parts of the MPI buffer.
   std::vector< bool > saved_entry_point_;
+  //! minimal number of elements that need to be deleted before
+  //! reallocation happens
+  static const size_t min_deleted_elements_ = 10000000;
 
 public:
   SourceTable();

@@ -48,8 +48,7 @@ nest::SourceTable::initialize()
   for( thread tid = 0; tid < num_threads; ++tid)
   {
     synapse_ids_[ tid ] = new std::map< synindex, synindex >();
-    sources_[ tid ] = new std::vector< std::vector< Source > >(
-      0, std::vector< Source >( 0, Source() ) );
+    sources_[ tid ] = new std::vector< std::vector< Source >* >( 0 );
     current_positions_[ tid ] = new SourceTablePosition();
     saved_positions_[ tid ] = new SourceTablePosition();
   }
@@ -64,7 +63,14 @@ nest::SourceTable::finalize()
     delete *it;
   }
   synapse_ids_.clear();
-  for( std::vector< std::vector< std::vector< Source > >* >::iterator it =
+  if ( not is_cleared() )
+  {
+    for ( size_t tid = 0; tid < sources_.size(); ++tid )
+    {
+      clear( tid );
+    }
+  }
+  for( std::vector< std::vector< std::vector< Source >* >* >::iterator it =
          sources_.begin(); it != sources_.end(); ++it )
   {
     delete *it;
@@ -94,7 +100,7 @@ nest::SourceTable::is_cleared() const
   return all_cleared;
 }
 
-std::vector< std::vector< nest::Source > >&
+std::vector< std::vector< nest::Source >* >&
 nest::SourceTable::get_thread_local_sources( const thread tid )
 {
   return *sources_[ tid ];
@@ -131,7 +137,7 @@ nest::SourceTable::clean( const thread tid )
   {
     for ( synindex syn_index = max_position.syn_index; syn_index < ( *sources_[ tid ] ).size(); ++syn_index )
     {
-      std::vector< Source >& sources = ( *sources_[ tid ] )[ syn_index ];
+      std::vector< Source >& sources = *( *sources_[ tid ] )[ syn_index ];
       if ( max_position.syn_index == syn_index )
       {
         // we need to add 1 to max_position.lcid since
@@ -152,7 +158,7 @@ nest::SourceTable::clean( const thread tid )
   {
     for ( synindex syn_index = 0; syn_index < ( *sources_[ tid ] ).size(); ++syn_index )
     {
-      std::vector< Source >& sources = ( *sources_[ tid ] )[ syn_index ];
+      std::vector< Source >& sources = *( *sources_[ tid ] )[ syn_index ];
       sources.erase( sources.begin(), sources.end() );
     }
   }
@@ -170,12 +176,13 @@ nest::SourceTable::reserve( const thread tid,
     const index prev_n_synapse_types = synapse_ids_[ tid ]->size();
     (*synapse_ids_[ tid ])[ syn_id ] = prev_n_synapse_types;
     sources_[ tid ]->resize( prev_n_synapse_types + 1);
-    (*sources_[ tid ])[ prev_n_synapse_types ].reserve( count );
+    (*sources_[ tid ])[ prev_n_synapse_types ] = new std::vector< Source >( 0 );
+    (*sources_[ tid ])[ prev_n_synapse_types ]->reserve( count );
   }
   // otherwise we can directly reserve
   else
   {
-    (*sources_[ tid ])[ it->second ].reserve( count );
+    (*sources_[ tid ])[ it->second ]->reserve( count );
   }
 
 }

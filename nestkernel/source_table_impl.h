@@ -47,7 +47,7 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
       --current_position.syn_index;
       if ( current_position.syn_index >= 0 )
       {
-        current_position.lcid = (* sources_[ current_position.tid ] )[ current_position.syn_index ].size() - 1;
+        current_position.lcid = (* sources_[ current_position.tid ] )[ current_position.syn_index ]->size() - 1;
         continue;
       }
       else
@@ -56,7 +56,7 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
         if ( current_position.tid >= 0 )
         {
           current_position.syn_index = ( *sources_[ current_position.tid ] ).size() - 1;
-          current_position.lcid = (* sources_[ current_position.tid ] )[ current_position.syn_index ].size() - 1;
+          current_position.lcid = (* sources_[ current_position.tid ] )[ current_position.syn_index ]->size() - 1;
           continue;
         }
         else
@@ -70,7 +70,7 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
     }
 
     // the current position contains an entry, so we retrieve it
-    Source& current_source = ( *sources_[ current_position.tid ] )[ current_position.syn_index ][ current_position.lcid ];
+    Source& current_source = ( *( *sources_[ current_position.tid ] )[ current_position.syn_index ])[ current_position.lcid ];
     if ( current_source.processed )
     {
       // looks like we've processed this already, let's
@@ -94,8 +94,8 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
 
     // we need to set the marker whether the entry following this
     // entry, if existent, has the same source
-    if ( ( current_position.lcid + 1 < static_cast< long >( ( *sources_[ current_position.tid ] )[ current_position.syn_index  ].size() )
-           && ( *sources_[ current_position.tid ] )[ current_position.syn_index ][ current_position.lcid + 1 ].gid == current_source.gid ) )
+    if ( ( current_position.lcid + 1 < static_cast< long >( ( *sources_[ current_position.tid ] )[ current_position.syn_index  ]->size() )
+           && ( *( *sources_[ current_position.tid ] )[ current_position.syn_index ])[ current_position.lcid + 1 ].gid == current_source.gid ) )
     {
       kernel().connection_manager.set_has_source_subsequent_targets( current_position.tid, current_position.syn_index, current_position.lcid, true );
     }
@@ -103,7 +103,7 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
     // we decrease the counter without returning a TargetData if the
     // entry preceeding this entry has the same source
     if ( ( current_position.lcid - 1 > -1
-           && ( *sources_[ current_position.tid ] )[ current_position.syn_index  ][ current_position.lcid - 1 ].gid == current_source.gid ) )
+           && (*( *sources_[ current_position.tid ] )[ current_position.syn_index  ])[ current_position.lcid - 1 ].gid == current_source.gid ) )
     {
       --current_position.lcid;
       continue;

@@ -171,7 +171,7 @@ public:
   virtual void
   sort_connections( std::vector< Source >& ){ assert( false ); };
   virtual void
-  sort_connections( std::vector< std::vector< Source > >& ){ assert( false ); };
+  sort_connections( std::vector< std::vector< Source >* >& ){ assert( false ); };
 
   virtual void reserve( const size_t ){ assert( false ); };
 
@@ -703,11 +703,11 @@ public:
       return invalid_synindex;
     }
 
-  void sort_connections( std::vector< std::vector< Source > >& sources )
+  void sort_connections( std::vector< std::vector< Source >* >& sources )
   {
     for ( unsigned int i = 0; i < size(); ++i )
     {
-      at( i )->sort_connections( sources[ i ] );
+      at( i )->sort_connections( *sources[ i ] );
     }
   }
 

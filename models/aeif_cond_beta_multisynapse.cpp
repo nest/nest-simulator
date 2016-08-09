@@ -215,10 +215,10 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
         throw BadProperty(
           "All synaptic time constants must be strictly positive" );
       }
-      if ( tau_tmp[ i ] >= taus_decay[ i ] )
+      if ( tau_tmp[ i ] > taus_decay[ i ] )
       {
         throw BadProperty(
-          "Synaptic rise time must be smaller than decay time." );
+          "Synaptic rise time must be smaller than or equal to decay time." );
       }
     }
     taus_rise = tau_tmp;
@@ -464,13 +464,20 @@ aeif_cond_beta_multisynapse::calibrate()
 
   for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
   {
-    double t_p = P_.taus_decay[ i ] * P_.taus_rise[ i ]
-      / ( P_.taus_decay[ i ] - P_.taus_rise[ i ] )
-      * std::log( P_.taus_decay[ i ] / P_.taus_rise[ i ] ); // peak time
-    V_.g0_ex_[ i ] = V_.g0_in_[ i ] // normalization factors for conductance
-      = ( 1. / P_.taus_rise[ i ] - 1. / P_.taus_decay[ i ] )
-      / ( std::exp( -t_p / P_.taus_decay[ i ] )
-          - std::exp( -t_p / P_.taus_rise[ i ] ) );
+    if ( P_.taus_decay[ i ] == P_.taus_rise[ i ] ) // alpha function limit
+    { // use normalization for alpha function in this case
+      V_.g0_ex_[ i ] = V_.g0_in_[ i ] = 1.0 * numerics::e / P_.taus_decay[ i ];
+    }
+    else
+    {
+      double t_p = P_.taus_decay[ i ] * P_.taus_rise[ i ]
+        / ( P_.taus_decay[ i ] - P_.taus_rise[ i ] )
+        * std::log( P_.taus_decay[ i ] / P_.taus_rise[ i ] ); // peak time
+      V_.g0_ex_[ i ] = V_.g0_in_[ i ] // normalization factors for conductance
+        = ( 1. / P_.taus_rise[ i ] - 1. / P_.taus_decay[ i ] )
+        / ( std::exp( -t_p / P_.taus_decay[ i ] )
+            - std::exp( -t_p / P_.taus_rise[ i ] ) );
+    }
   }
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   assert( V_.RefractoryCounts_

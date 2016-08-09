@@ -358,6 +358,9 @@ public:
   void reserve_connections( const thread tid, const synindex syn_id, const size_t count );
 
   void set_has_source_subsequent_targets( const thread tid, const synindex syn_index, const index lcid, const bool subsequent_targets );
+
+  //! See source_table.h
+  void no_targets_to_process( const thread tid );
 private:
   /**
    * Update delay extrema to current values.
@@ -591,25 +594,18 @@ inline void
 ConnectionManager::reject_last_target_data( const thread tid )
 {
   source_table_.reject_last_target_data( tid );
-   // only store entry point if source table is not cleaned. otherwise
-   // indices will become invalid
-  if ( keep_source_table_ )
-  {
-    source_table_.save_entry_point( tid );
-  }
 }
 
 inline void
 ConnectionManager::save_source_table_entry_point( const thread tid )
 {
-  // only store entry point if source table is not cleaned. otherwise
-  // indices will become invalid. we can just always start at the
-  // beginning since processed entries are removec by
-  // clean_source_table.
-  if ( keep_source_table_ )
-  {
-    source_table_.save_entry_point( tid );
-  }
+  source_table_.save_entry_point( tid );
+}
+
+inline void
+ConnectionManager::no_targets_to_process( const thread tid )
+{
+  source_table_.no_targets_to_process( tid );
 }
 
 inline void

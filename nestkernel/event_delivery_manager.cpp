@@ -910,7 +910,8 @@ EventDeliveryManager::gather_target_data()
         set_complete_marker_target_data_( tid, send_recv_count_target_data_per_rank, send_buffer_target_data );
 #pragma omp barrier
       }
-        kernel().connection_manager.save_source_table_entry_point( tid );
+      kernel().connection_manager.save_source_table_entry_point( tid );
+#pragma omp barrier
       kernel().connection_manager.clean_source_table( tid );
 #pragma omp single
       {
@@ -959,6 +960,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid, const un
   // no ranks to process for this thread
   if ( assigned_ranks.begin == assigned_ranks.end )
   {
+    kernel().connection_manager.no_targets_to_process( tid );
     return is_source_table_read;
   }
 
@@ -985,7 +987,15 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid, const un
       const unsigned int lr_idx = target_rank % assigned_ranks.max_size;
       if ( send_buffer_idx[ lr_idx ] == send_buffer_end[ lr_idx ] )
       {
+        // entry does not fit in this part of the MPI buffer any more,
+        // so we need to reject it
         kernel().connection_manager.reject_last_target_data( tid );
+        // after rejecting the last target, we need to save the
+        // position to start at this point again next communication
+        // round
+        kernel().connection_manager.save_source_table_entry_point( tid );
+        // we have just rejected an entry, so source table can not be
+        // fully read
         is_source_table_read = false;
         if ( num_target_data_written == ( num_target_data_per_rank * assigned_ranks.size ) ) // buffer is full
         {

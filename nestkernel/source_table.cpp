@@ -44,7 +44,6 @@ nest::SourceTable::initialize()
   saved_entry_point_.resize( num_threads, false );
   current_positions_.resize( num_threads );
   saved_positions_.resize( num_threads );
-  last_source_.resize( num_threads, 0 );
 
   for( thread tid = 0; tid < num_threads; ++tid)
   {
@@ -101,14 +100,61 @@ nest::SourceTable::get_thread_local_sources( const thread tid )
   return *sources_[ tid ];
 }
 
+nest::SourceTablePosition
+nest::SourceTable::find_maximal_position() const
+{
+  // max_position is initialized with zeros, so its values are always
+  // positive.
+  SourceTablePosition max_position( 0, 0, 0 );
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    if ( max_position < ( *saved_positions_[ tid ] ) )
+    {
+      max_position = ( *saved_positions_[ tid ]);
+    }
+  }
+  return max_position;
+}
+
 void
 nest::SourceTable::clean( const thread tid )
 {
-  for ( std::vector< std::vector< Source > >::iterator it = (*sources_[ tid ]).begin();
-        it != (*sources_[ tid ]).end(); ++it )
+  // find maximal position in source table among threads to make sure
+  // unprocessed entries are not removed. given this maximal position,
+  // we can savely delete all larger entries since they will not be
+  // touched any more.
+  const SourceTablePosition max_position = find_maximal_position();
+  // we need to distinguish whether we are in the vector corresponding
+  // to max position or above. we can delete all entries above the
+  // maximal position, otherwise we need to respect to indices.
+  if ( max_position.tid == tid )
   {
-    std::vector< Source >::iterator new_end = std::remove_if( it->begin(), it->end(), is_marked_for_removal_ );
-    it->erase( new_end, it->end() );
+    for ( synindex syn_index = max_position.syn_index; syn_index < ( *sources_[ tid ] ).size(); ++syn_index )
+    {
+      std::vector< Source >& sources = ( *sources_[ tid ] )[ syn_index ];
+      if ( max_position.syn_index == syn_index )
+      {
+        // we need to add 1 to max_position.lcid since
+        // max_position.lcid can contain a valid entry which we do not
+        // want to delete.
+        if ( max_position.lcid + 1 < static_cast< long >( sources.size() ) )
+        {
+          sources.erase( sources.begin() + max_position.lcid + 1, sources.end() );
+        }
+      }
+      else
+      {
+        sources.erase( sources.begin(), sources.end() );
+      }
+    }
+  }
+  else if ( max_position.tid < tid )
+  {
+    for ( synindex syn_index = 0; syn_index < ( *sources_[ tid ] ).size(); ++syn_index )
+    {
+      std::vector< Source >& sources = ( *sources_[ tid ] )[ syn_index ];
+      sources.erase( sources.begin(), sources.end() );
+    }
   }
 }
 

@@ -31,11 +31,12 @@ namespace nest
  **/
 struct SourceTablePosition
 {
-  int tid; //!< thread index
-  int syn_index; //!< synapse-type index
-  int lcid; //!< local connection index
+  long tid; //!< thread index
+  long syn_index; //!< synapse-type index
+  long lcid; //!< local connection index
   SourceTablePosition();
-  void reset();
+  SourceTablePosition( const long tid, const long syn_index, const long lcid );
+  SourceTablePosition( const SourceTablePosition& rhs );
 };
 
 inline
@@ -46,12 +47,20 @@ SourceTablePosition::SourceTablePosition()
 {
 }
 
-inline void
-SourceTablePosition::reset()
+inline
+SourceTablePosition::SourceTablePosition( const long tid, const long syn_index, const long lcid )
+  : tid( tid )
+  , syn_index( syn_index )
+  , lcid( lcid )
 {
-  tid = 0;
-  syn_index = 0;
-  lcid = 0;
+}
+
+inline
+SourceTablePosition::SourceTablePosition( const SourceTablePosition& rhs )
+  : tid( rhs.tid )
+  , syn_index( rhs.syn_index )
+  , lcid( rhs.lcid )
+{
 }
 
 inline bool

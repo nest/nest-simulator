@@ -24,9 +24,11 @@
 #define SOURCE_TABLE_H
 
 // C++ includes:
-#include <vector>
-#include <map>
+#include <algorithm>
 #include <cassert>
+#include <iostream>
+#include <map>
+#include <vector>
 
 // Includes from nestkernel:
 #include "nest_types.h"
@@ -53,9 +55,6 @@ struct TargetData;
 class SourceTable
 {
 private:
-  //! Returns true if entry was processed. Required static function by std::remove_if.
-  static bool is_marked_for_removal_( const Source& source );
-
   //! 3d structure storing gids of presynaptic neurons
   std::vector< std::vector< std::vector< Source > >* > sources_;
   //! mapping from synapse ids (according to NEST) to indices in
@@ -68,7 +67,6 @@ private:
   //! member of the sources table (see below).
   std::vector< SourceTablePosition* > current_positions_;
   std::vector< SourceTablePosition* > saved_positions_;
-  std::vector< Source* > last_source_;
   //! if we detect an overflow in one of the MPI buffers, we save our
   //! current position in the sources table (see above) and continue
   //! at that point in the next communication round, while filling up
@@ -105,11 +103,17 @@ public:
   index get_gid( const thread tid, const synindex syn_id, const index lcid ) const;
   //! returns a reference to all sources local on thread tid (used for sorting)
   std::vector< std::vector< Source > >& get_thread_local_sources( const thread tid );
+  //! Determines maximal saved position after which it is save to
+  //! delete sources.
+  SourceTablePosition find_maximal_position() const;
   //! resets all processed flags. needed for restructuring connection
   //! tables.
   void reset_processed_flags( const thread tid );
-  //! Removes all entries marked as processed
+  //! Removes all entries marked as processed.
   void clean( const thread tid );
+  //! Sets saved_positions for this thread to minimal values so that
+  //! these are not considered in find_maximal_position.
+  void no_targets_to_process( const thread tid );
 };
 
 inline
@@ -152,8 +156,8 @@ SourceTable::reject_last_target_data( const thread tid )
   // could not be inserted into MPI buffer due to overflow. we hence
   // need to correct the processed flag of the last entry (see
   // source_table_impl.h)
-  assert( ( *current_positions_[ tid ] ).lcid > 0 );
-  ( *sources_[ ( *current_positions_[ tid ] ).tid ] )[ ( *current_positions_[ tid ] ).syn_index ][ ( *current_positions_[ tid ] ).lcid - 1 ].processed = false;
+  assert( ( *current_positions_[ tid ] ).lcid + 1 < static_cast< long >( ( *sources_[ ( *current_positions_[ tid ]).tid ] )[ ( *current_positions_[ tid ] ).syn_index ].size() ) );
+  ( *sources_[ ( *current_positions_[ tid ] ).tid ] )[ ( *current_positions_[ tid ] ).syn_index ][ ( *current_positions_[ tid ] ).lcid + 1 ].processed = false;
 }
 
 inline
@@ -164,13 +168,16 @@ SourceTable::save_entry_point( const thread tid )
   {
     ( *saved_positions_[ tid ] ).tid = ( *current_positions_[ tid ] ).tid;
     ( *saved_positions_[ tid ] ).syn_index = ( *current_positions_[ tid ] ).syn_index;
-    if ( ( *current_positions_[ tid ] ).lcid > 0 )
+    // if tid and syn_index are valid entries, also store valid entry for lcid
+    if ( ( *current_positions_[ tid ] ).tid > -1 && ( *current_positions_[ tid ] ).syn_index > -1 )
     {
-      ( *saved_positions_[ tid ] ).lcid = ( *current_positions_[ tid ] ).lcid - 1;
+      // either store current_position.lcid + 1, since this can
+      // contain non-processed entry or store maximal value for lcid.
+      ( *saved_positions_[ tid ] ).lcid = std::min( ( *current_positions_[ tid ] ).lcid + 1, static_cast< long >( ( *sources_[ ( *current_positions_[ tid ]).tid ] )[ ( *current_positions_[ tid ] ).syn_index ].size() - 1 ) );
     }
     else
     {
-      ( *saved_positions_[ tid ] ).lcid = 0;
+      ( *saved_positions_[ tid ] ).lcid = -1;
     }
     saved_entry_point_[ tid ] = true;
   }
@@ -182,16 +189,19 @@ SourceTable::restore_entry_point( const thread tid )
 {
   *current_positions_[ tid ] = *saved_positions_[ tid ];
   saved_entry_point_[ tid ] = false;
-  last_source_[ tid ] = 0;
 }
 
 inline
 void
 SourceTable::reset_entry_point( const thread tid )
 {
-  saved_positions_[ tid ]->reset();
-  current_positions_[ tid ]->reset();
-  last_source_[ tid ] = 0;
+  // since we read the source table backwards, we need to set saved
+  // values to the biggest possible value. these will be used to
+  // initialize current_positions_ correctly upon calling
+  // restore_entry_point.
+  ( *saved_positions_[ tid ] ).tid = sources_.size() - 1;
+  ( *saved_positions_[ tid ] ).syn_index = ( *sources_[ ( *saved_positions_[ tid ]).tid ] ).size() - 1;
+  ( *saved_positions_[ tid ] ).lcid = ( *sources_[ ( *saved_positions_[ tid ]).tid ] )[ ( *saved_positions_[ tid ] ).syn_index ].size() - 1;
 }
 
 inline index
@@ -214,10 +224,12 @@ SourceTable::reset_processed_flags( const thread tid )
   }
 }
 
-inline bool
-SourceTable::is_marked_for_removal_( const nest::Source &source )
+inline void
+SourceTable::no_targets_to_process( const thread tid )
 {
-  return source.processed;
+  ( *current_positions_[ tid ] ).tid = -1;
+  ( *current_positions_[ tid ] ).syn_index = -1;
+  ( *current_positions_[ tid ] ).lcid = -1;
 }
 
 } // namespace nest

@@ -271,7 +271,7 @@ private:
    * Localize threshold crossing.
    * Driver function to invoke the correct interpolation function
    * for the chosen interpolation order.
-   * @param   double_t length of interval since previous event
+   * @param   double length of interval since previous event
    * @returns time from previous event to threshold crossing
    */
   double thresh_find_( double const ) const;

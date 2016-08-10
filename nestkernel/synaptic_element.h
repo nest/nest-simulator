@@ -164,7 +164,7 @@ public:
   void update( double t, double t_minus, double Ca_minus, double tau_Ca );
 
   /**
-  * \fn double_t get_z_value(Archiving_Node const *a, double_t t) const
+  * \fn double get_z_value(Archiving_Node const *a, double t) const
   * Get the number of synaptic_element at the time t (in ms)
   * @param a node of this synaptic_element
   * @param t Current time (in ms)

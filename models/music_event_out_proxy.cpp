@@ -219,7 +219,7 @@ nest::music_event_out_proxy::handle( SpikeEvent& e )
   assert( e.get_multiplicity() > 0 );
 
   // propagate the spikes to MUSIC port
-  double_t time = e.get_stamp().get_ms() * 1e-3; // event time in seconds
+  double time = e.get_stamp().get_ms() * 1e-3; // event time in seconds
   long receiver_port = e.get_rport();
 
 #ifdef _OPENMP

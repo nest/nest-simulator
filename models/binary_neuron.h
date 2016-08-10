@@ -89,7 +89,7 @@ private:
   void calibrate();
 
   // gain function functor
-  // must have an double_t operator(double_t) defined
+  // must have an double operator(double) defined
   TGainfunction gain_;
 
   void update( Time const&, const long, const long );

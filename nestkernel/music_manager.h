@@ -56,7 +56,7 @@ void register_music_in_port( std::string portname );
 void unregister_music_in_port( std::string portname );
 void register_music_event_in_proxy( std::string portname, int channel,
 nest::Node* mp );
-void set_music_in_port_acceptable_latency( std::string portname, double_t
+void set_music_in_port_acceptable_latency( std::string portname, double
 latency );
 void set_music_in_port_max_buffered( std::string portname, int maxbuffered );
 void publish_music_in_ports_();

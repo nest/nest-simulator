@@ -86,14 +86,14 @@ public:
   /**
    * Add a value to the ring buffer.
    * @param  offs     Arrival time relative to beginning of slice.
-   * @param  double_t Value to add.
+   * @param  double Value to add.
    */
   void add_value( const long offs, const double );
 
   /**
    * Set a ring buffer entry to a given value.
    * @param  offs     Arrival time relative to beginning of slice.
-   * @param  double_t Value to set.
+   * @param  double Value to set.
    */
   void set_value( const long offs, const double );
 
@@ -203,7 +203,7 @@ public:
   /**
    * Add a value to the ring buffer.
    * @param  offs     Arrival time relative to beginning of slice.
-   * @param  double_t Value to add.
+   * @param  double Value to add.
    */
   void add_value( const long offs, const double );
 
@@ -284,7 +284,7 @@ public:
   /**
    * Append a value to the ring buffer list.
    * @param  offs     Arrival time relative to beginning of slice.
-   * @param  double_t Value to append.
+   * @param  double Value to append.
    */
   void append_value( const long offs, const double );
 

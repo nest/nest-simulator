@@ -262,7 +262,7 @@ public:
   /**
    * Combined storage of GID and offset information for off-grid spikes.
    *
-   * @note This class actually stores the GID as @c double_t internally.
+   * @note This class actually stores the GID as @c double internally.
    *       This is done so that the user-defined MPI type MPI_OFFGRID_SPIKE,
    *       which we use to communicate off-grid spikes, is homogeneous.
    *       Otherwise, OpenMPI spends extreme amounts of time on packing

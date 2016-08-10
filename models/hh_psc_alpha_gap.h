@@ -187,7 +187,7 @@ potentials_.connect_logging_device();
    * This function is thread-safe and should be used in threaded
    * contexts to change the current membrane potential value.
    * @param Time     the current network time
-   * @param double_t new value of the mebrane potential
+   * @param double new value of the mebrane potential
    *
    */
   void set_potential( Time const&, double );

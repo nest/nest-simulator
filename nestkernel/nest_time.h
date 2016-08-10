@@ -145,7 +145,7 @@ class Time
 {
   // tic_t: tics in  a step, signed long or long long
   // delay: steps, signed long
-  // double_t: milliseconds (double!)
+  // double: milliseconds (double!)
 
   /////////////////////////////////////////////////////////////
   // Range: Limits & conversion factors for different types

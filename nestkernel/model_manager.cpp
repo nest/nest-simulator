@@ -349,10 +349,17 @@ ModelManager::set_synapse_defaults_( index model_id,
   params->clear_access_flags();
   assert_valid_syn_id( model_id );
 
-  for ( thread t = 0;
-        t < static_cast< thread >( kernel().vp_manager.get_num_threads() );
-        ++t )
+  //for ( thread t = 0;
+  //      t < static_cast< thread >( kernel().vp_manager.get_num_threads() );
+  //      ++t )
+  #ifdef _OPENMP
+#pragma omp parallel
   {
+    index t = kernel().vp_manager.get_thread_id();
+#else // clang-format off
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
+#endif // clang-format on
     try
     {
       prototypes_[ t ][ model_id ]->set_status( params );

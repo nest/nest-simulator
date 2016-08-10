@@ -166,7 +166,7 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< aeif_cond_beta_multisynapse >;
@@ -179,29 +179,29 @@ private:
    */
   struct Parameters_
   {
-    double_t V_peak_;  //!< Spike detection threshold in mV
-    double_t V_reset_; //!< Reset Potential in mV
-    double_t t_ref_;   //!< Refractory period in ms
+    double V_peak_;  //!< Spike detection threshold in mV
+    double V_reset_; //!< Reset Potential in mV
+    double t_ref_;   //!< Refractory period in ms
 
-    double_t g_L;     //!< Leak Conductance in nS
-    double_t C_m;     //!< Membrane Capacitance in pF
-    double_t E_ex;    //!< Excitatory reversal Potential in mV
-    double_t E_in;    //!< Inhibitory reversal Potential in mV
-    double_t E_L;     //!< Leak reversal Potential (aka resting potential) in mV
-    double_t Delta_T; //!< Slope faktor in ms.
-    double_t tau_w;   //!< adaptation time-constant in ms.
-    double_t a;       //!< Subthreshold adaptation in nS.
-    double_t b;       //!< Spike-triggered adaptation in pA
-    double_t V_th;    //!< Spike threshold in mV.
-    double_t t_ref;   //!< Refractory period in ms.
-    std::vector< double_t > taus_rise;  //!< Rise time of synaptic conductance
+    double g_L;     //!< Leak Conductance in nS
+    double C_m;     //!< Membrane Capacitance in pF
+    double E_ex;    //!< Excitatory reversal Potential in mV
+    double E_in;    //!< Inhibitory reversal Potential in mV
+    double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
+    double Delta_T; //!< Slope faktor in ms.
+    double tau_w;   //!< adaptation time-constant in ms.
+    double a;       //!< Subthreshold adaptation in nS.
+    double b;       //!< Spike-triggered adaptation in pA
+    double V_th;    //!< Spike threshold in mV.
+    double t_ref;   //!< Refractory period in ms.
+    std::vector< double > taus_rise;  //!< Rise time of synaptic conductance
                                         //!< in ms..
-    std::vector< double_t > taus_decay; //!< Decay time of synaptic conductance
+    std::vector< double > taus_decay; //!< Decay time of synaptic conductance
                                         //!< in ms..
 
-    double_t I_e; //!< Intrinsic current in pA.
+    double I_e; //!< Intrinsic current in pA.
 
-    double_t gsl_error_tol; //!< error bound for GSL integrator
+    double gsl_error_tol; //!< error bound for GSL integrator
 
     // type is long because other types are not put through in GetStatus
     std::vector< long > receptor_types_;
@@ -249,7 +249,7 @@ private:
     // DG_EXC, G_EXC, DG_INH, G_INH
     static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 4;
 
-    std::vector< double_t > y_; //!< neuron state
+    std::vector< double > y_; //!< neuron state
     int_t r_;                   //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
@@ -289,7 +289,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double_t step_;          //!< simulation step size in ms
+    double step_;          //!< simulation step size in ms
     double IntegrationStep_; //!< current integration time step,
                              //!< updated by solver
 
@@ -300,7 +300,7 @@ private:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double_t I_stim_;
+    double I_stim_;
   };
 
   // ----------------------------------------------------------------
@@ -312,10 +312,10 @@ private:
   {
 
     /** initial value to normalise excitatory synaptic conductance */
-    std::vector< double_t > g0_ex_;
+    std::vector< double > g0_ex_;
 
     /** initial value to normalise inhibitory synaptic conductance */
-    std::vector< double_t > g0_in_;
+    std::vector< double > g0_in_;
 
     int_t RefractoryCounts_;
   };
@@ -324,7 +324,7 @@ private:
 
   //! Read out state vector elements, used by UniversalDataLogger
   template < State_::StateVecElems elem >
-  double_t
+  double
   get_y_elem_() const
   {
     return S_.y_[ elem ];

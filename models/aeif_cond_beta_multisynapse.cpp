@@ -269,10 +269,10 @@ aeif_cond_beta_multisynapse::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] );
 
-  std::vector< double_t >* dg_exc = new std::vector< double_t >();
-  std::vector< double_t >* g_exc = new std::vector< double_t >();
-  std::vector< double_t >* dg_inh = new std::vector< double_t >();
-  std::vector< double_t >* g_inh = new std::vector< double_t >();
+  std::vector< double >* dg_exc = new std::vector< double >();
+  std::vector< double >* g_exc = new std::vector< double >();
+  std::vector< double >* dg_inh = new std::vector< double >();
+  std::vector< double >* g_inh = new std::vector< double >();
 
   for ( size_t i = 0;
         i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS )
@@ -305,14 +305,14 @@ aeif_cond_beta_multisynapse::State_::set( const DictionaryDatum& d )
   if ( ( d->known( names::dg_ex ) ) && ( d->known( names::g_ex ) )
     && ( d->known( names::dg_in ) ) && ( d->known( names::g_in ) ) )
   {
-    const std::vector< double_t > dg_exc =
-      getValue< std::vector< double_t > >( d->lookup( names::dg_ex ) );
-    const std::vector< double_t > g_exc =
-      getValue< std::vector< double_t > >( d->lookup( names::g_ex ) );
-    const std::vector< double_t > dg_inh =
-      getValue< std::vector< double_t > >( d->lookup( names::dg_in ) );
-    const std::vector< double_t > g_inh =
-      getValue< std::vector< double_t > >( d->lookup( names::g_in ) );
+    const std::vector< double > dg_exc =
+      getValue< std::vector< double > >( d->lookup( names::dg_ex ) );
+    const std::vector< double > g_exc =
+      getValue< std::vector< double > >( d->lookup( names::g_ex ) );
+    const std::vector< double > dg_inh =
+      getValue< std::vector< double > >( d->lookup( names::dg_in ) );
+    const std::vector< double > g_inh =
+      getValue< std::vector< double > >( d->lookup( names::g_in ) );
 
     if ( ( dg_exc.size() != g_exc.size() ) || ( dg_exc.size() != dg_inh.size() )
       || ( dg_exc.size() != g_inh.size() ) )
@@ -511,15 +511,15 @@ aeif_cond_beta_multisynapse::calibrate()
  * ---------------------------------------------------------------- */
 void
 aeif_cond_beta_multisynapse::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
-  for ( long_t lag = from; lag < to; ++lag ) // proceed by stepsize B_.step_
+  for ( long lag = from; lag < to; ++lag ) // proceed by stepsize B_.step_
   {
     double t = 0.0; // internal time of the integration period
 
@@ -641,8 +641,8 @@ aeif_cond_beta_multisynapse::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t I = e.get_current();
-  const double_t w = e.get_weight();
+  const double I = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
@@ -677,15 +677,11 @@ aeif_cond_beta_multisynapse_dynamics( double,
   // good compiler will optimize the verbosity away ...
 
   // shorthand for state variables
-  const double_t& V = y[ S::V_M ];
-  // const double_t& dg_ex = y[ S::DG_EXC ];
-  // const double_t& g_ex = y[ S::G_EXC ];
-  // const double_t& dg_in = y[ S::DG_INH ];
-  // const double_t& g_in = y[ S::G_INH ];
-  const double_t& w = y[ S::W ];
+  const double& V = y[ S::V_M ];
+  const double& w = y[ S::W ];
 
-  double_t I_syn_exc = 0.0;
-  double_t I_syn_inh = 0.0;
+  double I_syn_exc = 0.0;
+  double I_syn_inh = 0.0;
 
   for ( size_t i = 0; i < ( node.P_.num_of_receptors_
                             * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
@@ -696,13 +692,13 @@ aeif_cond_beta_multisynapse_dynamics( double,
   }
 
   // We pre-compute the argument of the exponential
-  const double_t exp_arg = ( V - node.P_.V_th ) / node.P_.Delta_T;
+  const double exp_arg = ( V - node.P_.V_th ) / node.P_.Delta_T;
 
   // Upper bound for exponential argument to avoid numerical instabilities
-  const double_t MAX_EXP_ARG = 10.;
+  const double MAX_EXP_ARG = 10.;
 
   // If the argument is too large, we clip it.
-  const double_t I_spike =
+  const double I_spike =
     node.P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
 
   // dv/dt

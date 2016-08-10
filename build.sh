@@ -69,6 +69,12 @@ else
     CONFIGURE_READLINE="-Dwith-readline=OFF"
 fi
 
+if [ "$xLIBNEUROSIM" = "1" ] ; then
+    CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=$HOME/.cache/libneurosim.install"
+else
+    CONFIGURE_LIBNEUROSIM="-Dwith-libneurosim=OFF"
+fi
+
 
 
 NEST_VPATH=build
@@ -257,6 +263,7 @@ cmake \
   $CONFIGURE_GSL \
   $CONFIGURE_LTDL \
   $CONFIGURE_READLINE \
+  $CONFIGURE_LIBNEUROSIM \
   ..
 echo "======= Configure NEST end ======="
 
@@ -269,6 +276,7 @@ make install
 echo "======= Install NEST end ======="
 
 echo "======= Test NEST start ======="
+export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7:$PYTHONPATH
 make installcheck
 echo "======= Test NEST end ======="
 

@@ -10,10 +10,10 @@ env:
     # We don't have to run a full matrix here, because most of the options are
     # independent. This means that we can test them together in the full build.
     # See also https://docs.travis-ci.com/user/caching/#Caches-and-build-matrices
-    - xTHREADING=0 xMPI=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
-    - xTHREADING=0 xMPI=1 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
-    - xTHREADING=1 xMPI=0 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
-    - xTHREADING=1 xMPI=1 xGSL=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full
+    - xTHREADING=0 xMPI=0 xGSL=0 xLTDL=0 xREADLINE=0 xLIBNEUROSIM=0 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
+    - xTHREADING=0 xMPI=1 xGSL=0 xLTDL=1 xREADLINE=1 xLIBNEUROSIM=0 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
+    - xTHREADING=1 xMPI=0 xGSL=0 xLTDL=1 xREADLINE=1 xLIBNEUROSIM=0 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
+    - xTHREADING=1 xMPI=1 xGSL=1 xLTDL=1 xREADLINE=1 xLIBNEUROSIM=1 xPYTHON=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full
 matrix:
   # do notify immediately about it when a job of a build fails.
   fast_finish: true
@@ -22,6 +22,7 @@ cache:
     - $HOME/.cache
 
 before_install:
+  - export BASEDIR=$PWD
   - echo $PATH
 
   # update package repository status (-qq is more quiet)
@@ -55,6 +56,25 @@ before_install:
 
   # process json output from github api
   - sudo apt-get install -y jq
+
+  # Install libneurosim
+  - echo "store-plaintext-passwords = yes" >> $HOME/.subversion/servers
+  - svn co --username Anonymous --password Anonymous http://svn.incf.org/svn/libneurosim/trunk libneurosim
+  - cd libneurosim
+  - ./autogen.sh
+  - ./configure --prefix=$HOME/.cache/libneurosim.install --with-mpi
+  - make
+  - make install
+  - cd $BASEDIR
+
+  # Install csa
+  - svn co --username Anonymous --password Anonymous http://svn.incf.org/svn/csa/trunk csa
+  - cd csa
+  - ./autogen.sh
+  - ./configure --with-libneurosim=$HOME/.cache/libneurosim.install --prefix=$HOME/.cache/csa.install
+  - make
+  - make install
+  - cd $BASEDIR
 
 install:
   - which cython

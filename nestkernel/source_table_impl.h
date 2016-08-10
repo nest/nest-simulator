@@ -56,7 +56,10 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
         if ( current_position.tid >= 0 )
         {
           current_position.syn_index = ( *sources_[ current_position.tid ] ).size() - 1;
-          current_position.lcid = (* sources_[ current_position.tid ] )[ current_position.syn_index ]->size() - 1;
+          if ( current_position.syn_index >= 0 )
+          {
+            current_position.lcid = (* sources_[ current_position.tid ] )[ current_position.syn_index ]->size() - 1;
+          }
           continue;
         }
         else

@@ -134,6 +134,7 @@ SourceTable::add_source( const thread tid, const synindex syn_id, const index gi
     const index prev_n_synapse_types = synapse_ids_[ tid ]->size();
     (*synapse_ids_[ tid ])[ syn_id ] = prev_n_synapse_types;
     sources_[ tid ]->resize( prev_n_synapse_types + 1);
+    (*sources_[ tid ])[ prev_n_synapse_types ] = new std::vector< Source >( 0 );
     (*sources_[ tid ])[ prev_n_synapse_types ]->push_back( src );
   }
   // otherwise we can directly add the new source
@@ -181,7 +182,8 @@ SourceTable::save_entry_point( const thread tid )
     if ( ( *current_positions_[ tid ] ).tid > -1 && ( *current_positions_[ tid ] ).syn_index > -1 )
     {
       // either store current_position.lcid + 1, since this can
-      // contain non-processed entry or store maximal value for lcid.
+      // contain non-processed entry (see reject_last_target_data()) or
+      // store maximal value for lcid.
       ( *saved_positions_[ tid ] ).lcid = std::min( ( *current_positions_[ tid ] ).lcid + 1, static_cast< long >( ( *sources_[ ( *current_positions_[ tid ]).tid ] )[ ( *current_positions_[ tid ] ).syn_index ]->size() - 1 ) );
     }
     else
@@ -207,10 +209,25 @@ SourceTable::reset_entry_point( const thread tid )
   // since we read the source table backwards, we need to set saved
   // values to the biggest possible value. these will be used to
   // initialize current_positions_ correctly upon calling
-  // restore_entry_point.
+  // restore_entry_point. however, this can only be done if other
+  // values have valid values.
   ( *saved_positions_[ tid ] ).tid = sources_.size() - 1;
-  ( *saved_positions_[ tid ] ).syn_index = ( *sources_[ ( *saved_positions_[ tid ]).tid ] ).size() - 1;
-  ( *saved_positions_[ tid ] ).lcid = ( *sources_[ ( *saved_positions_[ tid ]).tid ] )[ ( *saved_positions_[ tid ] ).syn_index ]->size() - 1;
+  if ( (*saved_positions_[ tid ] ).tid > -1 )
+  {
+    ( *saved_positions_[ tid ] ).syn_index = ( *sources_[ ( *saved_positions_[ tid ]).tid ] ).size() - 1;
+  }
+  else
+  {
+    ( *saved_positions_[ tid ] ).syn_index = -1;
+  }
+  if ( (*saved_positions_[ tid ] ).syn_index > -1 )
+  {
+    ( *saved_positions_[ tid ] ).lcid = ( *sources_[ ( *saved_positions_[ tid ]).tid ] )[ ( *saved_positions_[ tid ] ).syn_index ]->size() - 1;
+  }
+  else
+  {
+    ( *saved_positions_[ tid ] ).lcid = -1;
+  }
 }
 
 inline index

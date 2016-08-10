@@ -41,9 +41,9 @@ struct SourceTablePosition
 
 inline
 SourceTablePosition::SourceTablePosition()
-  : tid( 0 )
-  , syn_index( 0 )
-  , lcid( 0 )
+  : tid( -1 )
+  , syn_index( -1 )
+  , lcid( -1 )
 {
 }
 

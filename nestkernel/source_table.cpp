@@ -40,8 +40,8 @@ nest::SourceTable::initialize()
   const thread num_threads = kernel().vp_manager.get_num_threads();
   synapse_ids_.resize( num_threads );
   sources_.resize( num_threads );
-  is_cleared_.resize( num_threads, false );
-  saved_entry_point_.resize( num_threads, false );
+  is_cleared_.resize( num_threads );
+  saved_entry_point_.resize( num_threads );
   current_positions_.resize( num_threads );
   saved_positions_.resize( num_threads );
 
@@ -51,6 +51,8 @@ nest::SourceTable::initialize()
     sources_[ tid ] = new std::vector< std::vector< Source >* >( 0 );
     current_positions_[ tid ] = new SourceTablePosition();
     saved_positions_[ tid ] = new SourceTablePosition();
+    is_cleared_[ tid ] = false;
+    saved_entry_point_[ tid ] = false;
   }
 }
 
@@ -109,9 +111,7 @@ nest::SourceTable::get_thread_local_sources( const thread tid )
 nest::SourceTablePosition
 nest::SourceTable::find_maximal_position() const
 {
-  // max_position is initialized with zeros, so its values are always
-  // positive.
-  SourceTablePosition max_position( 0, 0, 0 );
+  SourceTablePosition max_position( -1, -1, -1 );
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     if ( max_position < ( *saved_positions_[ tid ] ) )

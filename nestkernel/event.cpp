@@ -21,14 +21,10 @@
  */
 
 /**
- *  @file event_impl.h
+ *  @file event.cpp
  *  Implementation of Event::operator() for all event types.
  *  @note Must be isolated here, since it requires full access to
  *  classes Node and Scheduler.
- *  @note Cannot be cpp-file because of templates for AnalogDataRequest.
- *  @note All functions in this file must be inline, to avoid duplicate
- *        objects.
- *  @note Presently included in network.h and connection.h
  */
 
 #include "event.h"

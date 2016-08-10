@@ -247,16 +247,8 @@ Device to observe synaptic conductances.
 all synapse models.
 [Connect](../helpindex/cmds/Connect.md) Connect two
 network nodes.
-[ConvergentConnect](../helpindex/cmds/ConvergentConnect.md)
-Connect many source nodes to one target node.
-[DivergentConnect](../helpindex/cmds/DivergentConnect.md)
-Connect one source node to many target nodes.
-[RandomConvergentConnect](../helpindex/cmds/RandomConvergentConnect.md)
-Randomly connect one source node to many target nodes.
-[RandomDivergentConnect](../helpindex/cmds/RandomDivergentConnect.md)
-Randomly connect one source node to many target nodes.
-[BinomialConvergentConnect](../helpindex/cmds/BinomialConvergentConnect.md)
-Connect a target to a binomial number of sources.
+[DataConnect](../helpindex/cmds/DataConnect.md)
+Build connections from explicit specifications.
 
 ### Topological connections
 
@@ -304,7 +296,7 @@ executing the command.
 
 ### Investigating connectivity
 
-[FindConnections](../helpindex/cmds/FindConnections.md) Find connections
+[GetConnections](../helpindex/cmds/GetConnections.md) Return connections
 that fulfil the given criteria.
 [SetStatus](../helpindex/cmds/SetStatus.md)
 Modify status of an element.

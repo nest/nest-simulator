@@ -65,9 +65,7 @@ nest.SetStatus(voltmeter, [{"withgid": True}])
 # Fourth, the neuron is connected to the voltmeter. The command
 # `Connect()` has different variants. Plain `Connect()` just takes the
 # handles of pre- and post-synaptic nodes and uses the default values
-# for weight and delay. `ConvergentConnect()` takes four arguments:
-# lists of pre- and post-synaptic nodes and lists of weights and
-# delays. Note that the connection direction for the voltmeter is
+# for weight and delay. Note that the connection direction for the voltmeter is
 # reversed compared to the spike detector, because it observes the
 # neuron instead of receiving events from it. Thus, `Connect()`
 # reflects the direction of signal flow in the simulation kernel

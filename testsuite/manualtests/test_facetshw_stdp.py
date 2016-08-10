@@ -85,8 +85,9 @@ for key in synapseDict.keys():
     assert (all(np.atleast_1d(synapseDictGet[key] == synapseDict[key])))
 
 nest.Connect(stim, neuronA)
-nest.Connect(neuronA, neuronB, float(startWeight) / 15.0 * Wmax, delay,
-             model=modelName)
+nest.Connect(neuronA, neuronB, syn_spec={
+    'weight': float(startWeight) / 15.0 * Wmax,
+    'delay': delay, 'model': modelName})
 # nest.Connect(neuronA, recorder)
 # nest.Connect(neuronB, recorder)
 
@@ -95,7 +96,7 @@ weightTrace = []
 for run in range(len(spikesIn)):
     nest.Simulate(timeBetweenPairs)
 
-    connections = nest.FindConnections(neuronA)
+    connections = nest.GetConnections(neuronA)
     for i in range(len(connections)):
         if nest.GetStatus([connections[i]])[0]['synapse_model'] == modelName:
             weightTrace.append(

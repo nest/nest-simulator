@@ -19,8 +19,8 @@
 
 include( Platform/BlueGeneQ_Base )
 # set the compiler
-set( CMAKE_C_COMPILER bgxlc_r )
-set( CMAKE_CXX_COMPILER bgxlc++_r )
+set( CMAKE_C_COMPILER bgxlc_r CACHE FILEPATH "override C compiler" )
+set( CMAKE_CXX_COMPILER bgxlc++_r CACHE FILEPATH "override C++ compiler" )
 
 #
 # Compile flags for different build types

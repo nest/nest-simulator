@@ -1,5 +1,5 @@
 /*
- *  parameter.cpp
+ *  topology_parameter.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,13 +20,13 @@
  *
  */
 
-#include "parameter.h"
+#include "topology_parameter.h"
 
 namespace nest
 {
 
 double_t
-Parameter::value( const std::vector< double_t >& pt,
+TopologyParameter::value( const std::vector< double_t >& pt,
   librandom::RngPtr& rng ) const
 {
   switch ( pt.size() )

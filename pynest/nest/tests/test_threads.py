@@ -52,8 +52,8 @@ class ThreadTestCase(unittest.TestCase):
         st.sort()
         self.assertEqual(st, [0, 1, 2, 3, 4, 5, 6, 7])
 
-    def test_ThreadsFindConnections(self):
-        """FindConnections with threads"""
+    def test_ThreadsGetConnections(self):
+        """GetConnections with threads"""
 
         if not self.nest_multithreaded():
             self.skipTest("NEST was compiled without multi-threading")
@@ -63,9 +63,9 @@ class ThreadTestCase(unittest.TestCase):
         pre = nest.Create("iaf_neuron")
         post = nest.Create("iaf_neuron", 6)
 
-        nest.DivergentConnect(pre, post)
+        nest.Connect(pre, post)
 
-        conn = nest.FindConnections(pre)
+        conn = nest.GetConnections(pre)
         # Because of threading, targets may be in a different order than
         # in post, so we sort the vector.
         targets = list(nest.GetStatus(conn, "target"))
@@ -97,8 +97,8 @@ class ThreadTestCase(unittest.TestCase):
             sd = nest.Create('spike_detector')
             vm = nest.Create('voltmeter')
 
-            nest.ConvergentConnect(n, sd)
-            nest.DivergentConnect(vm, n)
+            nest.Connect(n, sd)
+            nest.Connect(vm, n)
 
             nest.Simulate(Simtime)
 

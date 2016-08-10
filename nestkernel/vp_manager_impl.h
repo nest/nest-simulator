@@ -27,11 +27,78 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
+#include "mpi_manager.h"
+#include "mpi_manager_impl.h"
 
-inline nest::thread
-nest::VPManager::get_num_virtual_processes() const
+namespace nest
+{
+
+inline thread
+VPManager::get_num_virtual_processes() const
 {
   return get_num_threads() * kernel().mpi_manager.get_num_processes();
 }
+
+inline bool
+VPManager::is_local_vp( thread vp ) const
+{
+  return kernel().mpi_manager.get_process_id( vp )
+    == kernel().mpi_manager.get_rank();
+}
+
+inline thread
+VPManager::suggest_vp( index gid ) const
+{
+  return gid
+    % ( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() );
+}
+
+inline thread
+VPManager::suggest_rec_vp( index gid ) const
+{
+  return gid
+    % ( kernel().mpi_manager.get_num_rec_processes() * get_num_threads() )
+    + kernel().mpi_manager.get_num_sim_processes() * get_num_threads();
+}
+
+inline thread
+VPManager::vp_to_thread( thread vp ) const
+{
+  if ( vp >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes()
+               * get_num_threads() ) )
+  {
+    return ( vp
+             + kernel().mpi_manager.get_num_sim_processes()
+               * ( 1 - get_num_threads() )
+             - kernel().mpi_manager.get_rank() )
+      / kernel().mpi_manager.get_num_rec_processes();
+  }
+  else
+  {
+    return vp / kernel().mpi_manager.get_num_sim_processes();
+  }
+}
+
+inline thread
+VPManager::thread_to_vp( thread t ) const
+{
+  if ( kernel().mpi_manager.get_rank()
+    >= static_cast< int >( kernel().mpi_manager.get_num_sim_processes() ) )
+  {
+    // Rank is a recording process
+    return t * kernel().mpi_manager.get_num_rec_processes()
+      + kernel().mpi_manager.get_rank()
+      - kernel().mpi_manager.get_num_sim_processes()
+      + kernel().mpi_manager.get_num_sim_processes() * get_num_threads();
+  }
+  else
+  {
+    // Rank is a simulating process
+    return t * kernel().mpi_manager.get_num_sim_processes()
+      + kernel().mpi_manager.get_rank();
+  }
+}
+
+} // namespace nest
 
 #endif /* VP_MANAGER_IMPL_H */

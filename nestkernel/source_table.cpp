@@ -149,7 +149,7 @@ nest::SourceTable::clean( const thread tid )
           sources.erase( sources.begin() + max_position.lcid + 1, sources.end() );
           if ( deleted_elements > min_deleted_elements_ )
           {
-            std::vector< Source >( sources ).swap( sources );
+            std::vector< Source >( sources.begin(), sources.end() ).swap( sources );
           }
         }
       }
@@ -159,7 +159,7 @@ nest::SourceTable::clean( const thread tid )
         sources.erase( sources.begin(), sources.end() );
         if ( deleted_elements > min_deleted_elements_ )
         {
-          std::vector< Source >( sources ).swap( sources );
+          std::vector< Source >( sources.begin(), sources.end() ).swap( sources );
         }
       }
     }
@@ -173,7 +173,7 @@ nest::SourceTable::clean( const thread tid )
       sources.erase( sources.begin(), sources.end() );
       if ( deleted_elements > min_deleted_elements_ )
       {
-        std::vector< Source >( sources ).swap( sources );
+        std::vector< Source >( sources.begin(), sources.end() ).swap( sources );
       }
     }
   }

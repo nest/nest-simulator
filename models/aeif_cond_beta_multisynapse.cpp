@@ -459,24 +459,31 @@ aeif_cond_beta_multisynapse::calibrate()
     P_.receptor_types_[ i ] = i + 1;
   }
 
-  V_.g0_ex_.resize( P_.num_of_receptors_ );
-  V_.g0_in_.resize( P_.num_of_receptors_ );
+  V_.g0_.resize( P_.num_of_receptors_ );
 
   for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
   {
-    if ( P_.taus_decay[ i ] == P_.taus_rise[ i ] ) // alpha function limit
-    { // use normalization for alpha function in this case
-      V_.g0_ex_[ i ] = V_.g0_in_[ i ] = 1.0 * numerics::e / P_.taus_decay[ i ];
-    }
-    else
+    // denominator is computed here to check that it is != 0
+    double denom1 = P_.taus_decay[ i ] - P_.taus_rise[ i ];
+    double denom2 = 0;
+    if ( denom1 != 0 )
     {
-      double t_p = P_.taus_decay[ i ] * P_.taus_rise[ i ]
-        / ( P_.taus_decay[ i ] - P_.taus_rise[ i ] )
-        * std::log( P_.taus_decay[ i ] / P_.taus_rise[ i ] ); // peak time
-      V_.g0_ex_[ i ] = V_.g0_in_[ i ] // normalization factors for conductance
-        = ( 1. / P_.taus_rise[ i ] - 1. / P_.taus_decay[ i ] )
-        / ( std::exp( -t_p / P_.taus_decay[ i ] )
-            - std::exp( -t_p / P_.taus_rise[ i ] ) );
+      // peak time
+      const double t_p = P_.taus_decay[ i ] * P_.taus_rise[ i ]
+        * std::log( P_.taus_decay[ i ] / P_.taus_rise[ i ] ) / denom1;
+      // another denominator is computed here to check that it is != 0
+      denom2 = std::exp( -t_p / P_.taus_decay[ i ] )
+        - std::exp( -t_p / P_.taus_rise[ i ] );
+      // if rise time != decay time use beta function
+      if ( denom2 != 0 )
+      {
+        V_.g0_[ i ] // normalization factor for conductance
+          = ( 1. / P_.taus_rise[ i ] - 1. / P_.taus_decay[ i ] ) / denom2;
+      }
+    }
+    if ( denom2 == 0 ) // if rise time == decay time use alpha function
+    {                  // use normalization for alpha function in this case
+      V_.g0_[ i ] = 1.0 * numerics::e / P_.taus_decay[ i ];
     }
   }
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
@@ -586,10 +593,10 @@ aeif_cond_beta_multisynapse::update( Time const& origin,
     {
       S_.y_[ State_::DG_EXC + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
                                 * i ) ] += B_.spike_exc_[ i ].get_value( lag )
-        * V_.g0_ex_[ i ]; // add incoming excitatory spike
+        * V_.g0_[ i ]; // add incoming excitatory spike
       S_.y_[ State_::DG_INH + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
                                 * i ) ] += B_.spike_inh_[ i ].get_value( lag )
-        * V_.g0_in_[ i ]; // add incoming inhibitory spike
+        * V_.g0_[ i ]; // add incoming inhibitory spike
     }
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );

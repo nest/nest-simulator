@@ -69,9 +69,6 @@
  % PyNEST example, of how to assign synaptic rise time and decay time
  % to a receptor type.
 
- nest.SetDefaults('aeif_cond_beta_multisynapse', {'HMIN':0.001})
- nest.SetDefaults('aeif_cond_beta_multisynapse', {'MAXERR':1e-10})
-
  neuron = nest.Create('aeif_cond_beta_multisynapse')
  nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
  nest.SetStatus(neuron, {'taus_decay':[50.0,20.0,20.0,20.0],
@@ -195,9 +192,9 @@ private:
     double V_th;    //!< Spike threshold in mV.
     double t_ref;   //!< Refractory period in ms.
     std::vector< double > taus_rise;  //!< Rise time of synaptic conductance
-                                        //!< in ms..
+                                      //!< in ms..
     std::vector< double > taus_decay; //!< Decay time of synaptic conductance
-                                        //!< in ms..
+                                      //!< in ms..
 
     double I_e; //!< Intrinsic current in pA.
 
@@ -250,7 +247,7 @@ private:
     static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 4;
 
     std::vector< double > y_; //!< neuron state
-    int_t r_;                   //!< number of refractory steps remaining
+    int_t r_;                 //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -289,7 +286,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_;          //!< simulation step size in ms
+    double step_;            //!< simulation step size in ms
     double IntegrationStep_; //!< current integration time step,
                              //!< updated by solver
 
@@ -311,11 +308,8 @@ private:
   struct Variables_
   {
 
-    /** initial value to normalise excitatory synaptic conductance */
-    std::vector< double > g0_ex_;
-
-    /** initial value to normalise inhibitory synaptic conductance */
-    std::vector< double > g0_in_;
+    /** initial value to normalise synaptic conductance */
+    std::vector< double > g0_;
 
     int_t RefractoryCounts_;
   };

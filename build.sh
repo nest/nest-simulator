@@ -276,7 +276,7 @@ make install
 echo "======= Install NEST end ======="
 
 echo "======= Test NEST start ======="
-export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7:$PYTHONPATH
+export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
 make installcheck
 echo "======= Test NEST end ======="
 

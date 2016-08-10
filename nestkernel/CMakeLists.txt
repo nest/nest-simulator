@@ -88,7 +88,7 @@ set( nestkernel_sources
     source_table.h source_table.cpp source_table_impl.h
     source.h
     source_table_position.h
-    spike_data.h spike_data.cpp
+    spike_data.h
     )
 
 add_library( nestkernel ${nestkernel_sources} )

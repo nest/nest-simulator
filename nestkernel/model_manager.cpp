@@ -348,11 +348,9 @@ ModelManager::set_synapse_defaults_( index model_id,
 {
   params->clear_access_flags();
   assert_valid_syn_id( model_id );
-
-  //for ( thread t = 0;
-  //      t < static_cast< thread >( kernel().vp_manager.get_num_threads() );
-  //      ++t )
-  #ifdef _OPENMP
+  
+  KernelException* tmp_exception = NULL;
+#ifdef _OPENMP
 #pragma omp parallel
   {
     index t = kernel().vp_manager.get_thread_id();
@@ -366,11 +364,24 @@ ModelManager::set_synapse_defaults_( index model_id,
     }
     catch ( BadProperty& e )
     {
-      throw BadProperty(
-        String::compose( "Setting status of prototype '%1': %2",
-          prototypes_[ t ][ model_id ]->get_name(),
-          e.message() ) );
+#pragma omp critical 
+      {
+	if ( tmp_exception == NULL )
+	{
+	  tmp_exception = new BadProperty(
+	  String::compose( "Setting status of prototype '%1': %2",
+	    prototypes_[ t ][ model_id ]->get_name(),
+	    e.message() ) );
+	}
+      }
     }
+  }
+  
+  if ( tmp_exception != NULL )
+  {
+    BadProperty e = *static_cast<BadProperty*>(tmp_exception);
+    delete tmp_exception;
+    throw e;
   }
 
   ALL_ENTRIES_ACCESSED( *params,

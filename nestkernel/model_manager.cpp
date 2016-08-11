@@ -360,6 +360,7 @@ ModelManager::set_synapse_defaults_( index model_id,
 #endif // clang-format on
     try
     {
+#pragma omp critical 
       prototypes_[ t ][ model_id ]->set_status( params );
     }
     catch ( BadProperty& e )

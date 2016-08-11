@@ -79,56 +79,32 @@ void
 nest::spike_detector::calibrate()
 {
 
-  if ( kernel().event_delivery_manager.get_off_grid_communication() )
+  if ( kernel().event_delivery_manager.get_off_grid_communication()
+    and not device_.is_precise_times_user_set() )
   {
+    device_.set_precise_times( true );
+    std::string msg = String::compose(
+      "Precise neuron models exist: the property precise_times "
+      "of the %1 with gid %2 has been set to true",
+      get_name(),
+      get_gid() );
 
-    if ( !device_.is_precise_times_user_set() )
+    if ( device_.is_precision_user_set() )
     {
-
-      if ( !device_.is_precision_user_set() )
-      {
-        // it makes sense to increase the precision if precise models are used.
-        device_.set_precise(true, 15);
-        LOG( M_INFO,
-             "spike_detector::calibrate",
-             String::compose(
-                     "Precise neuron models exist: the property precise_times "
-                             "of the %1 with gid %2 has been set to true, precision has "
-                             "been set to 15.",
-                     get_name(),
-                     get_gid() ) );
-      }
-
-      else
-      {
-        device_.set_precise(true, device_.get_precision());
-        LOG( M_INFO,
-             "spike_detector::calibrate",
-             String::compose(
-                     "Precise neuron models exist: the property precise_times "
-                             "of the %1 with gid %2 has been set to true.",
-                     get_name(),
-                     get_gid() ) );
-      }
+      // if user explicitly set the precision, there is no need to do anything.
+      msg += ".";
     }
 
-
-    // If precise models exist but the user forgot to set the precision,
-    // it is increased to 15 as it is usually what is wanted.
-    else if ( !device_.is_precision_user_set() )
+    else
     {
-      device_.set_precise(device_.records_precise_times(), 15);
-      LOG( M_INFO,
-           "spike_detector::calibrate",
-           String::compose(
-                   "Precise neuron models exist but precision was not set, "
-                           "the precision property of the %1 with gid %2"
-                           "has been increased to 15.",
-                   get_name(),
-                   get_gid() ) );
+      // it makes sense to increase the precision if precise models are used.
+      device_.set_precision( 15 );
+      msg += String::compose( ", precision has been set to 15." );
     }
 
+    LOG( M_INFO, "spike_detector::calibrate", msg );
   }
+
 
   device_.calibrate();
 }

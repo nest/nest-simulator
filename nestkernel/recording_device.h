@@ -377,15 +377,15 @@ public:
     return P_.to_accumulator_;
   }
 
-  inline void set_precise( bool use_precise, long precision );
+  inline void set_precise_times( bool precise_times );
 
-  inline bool records_precise_times( ) const;
+  inline void set_precision( long precision );
+
+  inline bool records_precise_times() const;
 
   inline bool is_precision_user_set() const;
 
   inline bool is_precise_times_user_set() const;
-
-  inline long get_precision( ) const;
 
 
 private:
@@ -531,15 +531,9 @@ RecordingDevice::is_precise_times_user_set() const
 }
 
 inline bool
-RecordingDevice::records_precise_times( ) const
+RecordingDevice::records_precise_times() const
 {
   return P_.precise_times_;
-}
-
-inline long
-RecordingDevice::get_precision( ) const
-{
-  return P_.precision_;
 }
 
 inline bool
@@ -561,9 +555,14 @@ RecordingDevice::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-RecordingDevice::set_precise( bool use_precise, long precision )
+RecordingDevice::set_precise_times( bool use_precise )
 {
   P_.precise_times_ = use_precise;
+}
+
+inline void
+RecordingDevice::set_precision( long precision )
+{
   P_.precision_ = precision;
 }
 

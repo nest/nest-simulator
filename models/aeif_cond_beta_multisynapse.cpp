@@ -474,16 +474,15 @@ aeif_cond_beta_multisynapse::calibrate()
       // another denominator is computed here to check that it is != 0
       denom2 = std::exp( -t_p / P_.taus_decay[ i ] )
         - std::exp( -t_p / P_.taus_rise[ i ] );
-      // if rise time != decay time use beta function
-      if ( denom2 != 0 )
-      {
-        V_.g0_[ i ] // normalization factor for conductance
-          = ( 1. / P_.taus_rise[ i ] - 1. / P_.taus_decay[ i ] ) / denom2;
-      }
     }
     if ( denom2 == 0 ) // if rise time == decay time use alpha function
     {                  // use normalization for alpha function in this case
       V_.g0_[ i ] = 1.0 * numerics::e / P_.taus_decay[ i ];
+    }
+    else // if rise time != decay time use beta function
+    {
+      V_.g0_[ i ] // normalization factor for conductance
+        = ( 1. / P_.taus_rise[ i ] - 1. / P_.taus_decay[ i ] ) / denom2;
     }
   }
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();

@@ -73,30 +73,28 @@
  nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
  nest.SetStatus(neuron, {'taus_decay':[50.0,20.0,20.0,20.0],
                          'taus_rise':[10.0,10.0,1.0,1.0]})
- spike1 = nest.Create('spike_generator', params = {'spike_times':
-                                                  np.array([10.0])})
- spike2 = nest.Create('spike_generator', params = {'spike_times':
-                                                  np.array([10.0])})
- spike3 = nest.Create('spike_generator', params = {'spike_times':
-                                                  np.array([10.0])})
- spike4 = nest.Create('spike_generator', params = {'spike_times':
+
+ spike = nest.Create('spike_generator', params = {'spike_times':
                                                   np.array([10.0])})
 
  voltmeter = nest.Create('voltmeter', 1, {'withgid': True})
 
- nest.CopyModel("static_synapse", "synapse1", {"weight":0.1, "delay":1.0,
-                                               'receptor_type': 1})
- nest.CopyModel("static_synapse", "synapse2", {"weight":0.1, "delay":300.0,
-                                               'receptor_type': 2})
- nest.CopyModel("static_synapse", "synapse3", {"weight":0.1, "delay":500.0,
-                                               'receptor_type': 3})
- nest.CopyModel("static_synapse", "synapse4", {"weight":-0.1, "delay":700.0,
-                                               'receptor_type': 4})
-
- nest.Connect(spike1, neuron, model="synapse1")
- nest.Connect(spike2, neuron, model="synapse2")
- nest.Connect(spike3, neuron, model="synapse3")
- nest.Connect(spike4, neuron, model="synapse4")
+ nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
+                                       'weight': 1.0,
+                                       'delay': 1.0,
+                                       'receptor_type': 1})
+ nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
+                                       'weight': 1.0,
+                                       'delay': 300.0,
+                                       'receptor_type': 2})
+ nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
+                                       'weight': 1.0,
+                                       'delay': 500.0,
+                                       'receptor_type': 3})
+ nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
+                                       'weight': -1.0,
+                                       'delay': 700.0,
+                                       'receptor_type': 4})
 
  nest.Connect(voltmeter, neuron)
 

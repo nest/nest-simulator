@@ -159,7 +159,7 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
     if ( d->known( names::precise_times ) )
     {
       user_set_precise_times_ = true;
-      updateValue<bool>(d, names::precise_times, precise_times_);
+      updateValue< bool >( d, names::precise_times, precise_times_ );
     }
   }
   updateValue< std::string >( d, names::file_extension, file_ext_ );

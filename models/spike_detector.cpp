@@ -99,7 +99,7 @@ nest::spike_detector::calibrate()
     {
       // it makes sense to increase the precision if precise models are used.
       device_.set_precision( 15 );
-      msg += String::compose( ", precision has been set to 15." );
+      msg += ", precision has been set to 15.";
     }
 
     LOG( M_INFO, "spike_detector::calibrate", msg );

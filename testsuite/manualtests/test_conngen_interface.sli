@@ -46,39 +46,49 @@ M_ERROR setverbosity
 statusdict/have_libneurosim :: not { exit_test_gracefully } if 
 
 % Tell the ConnectionGenerator interface, which implementation to use
-(CSA) (/home/jochen/work/src/libcsa.build/install/lib/libcsa.so) CGSelectImplementation
+(CSA) (libcsa.so) CGSelectImplementation
 
-% Obtain a connectiongeneratortype object by parsing a XML definition
-(<?xml version='1.0' encoding='UTF-8'?><CSA xmlns="http://software.incf.org/software/csa/1.0"><apply><randomMask/><cn>0.3</cn></apply></CSA>) CGParse /cg Set
+% Obtain a connectiongeneratortype object by parsing an XML definition
 
-
-/iaf_psc_alpha 10 Create ;
-
-/first [1 5] def
-/last [6 10] def
+(<?xml version='1.0' encoding='UTF-8'?><CSA xmlns="http://software.incf.org/software/csa/1.0"><oneToOne/></CSA>) CGParse /cg Set
 
 % Test if the array variant works
-cg first last CGConnect
-cg first last << >> CGConnect
-cg first last /static_synapse CGConnect
-cg first last << >> /static_synapse CGConnect
+ResetKernel
+/iaf_psc_alpha 16 Create ;
+cg [ 1  2] [ 3  4]                       CGConnect
+cg [ 5  6] [ 7  8] << >>                 CGConnect
+cg [ 9 10] [11 12]       /static_synapse CGConnect
+cg [13 14] [15 16] << >> /static_synapse CGConnect
 
+<< /source [ 1  2] >> GetConnections { GetStatus /target get } Map ==
+<< /source [ 5  6] >> GetConnections { GetStatus /target get } Map ==
+<< /source [ 9 10] >> GetConnections { GetStatus /target get } Map ==
+<< /source [13 14] >> GetConnections { GetStatus /target get } Map ==
 
-/first first cv_iv def
-/last last cv_iv def
 
 % Test if the intvector variant works
-cg first last CGConnect
-cg first last << >> CGConnect
-cg first last /static_synapse CGConnect
-cg first last << >> /static_synapse CGConnect
+ResetKernel
+/iaf_psc_alpha 16 Create ;
+cg [ 1  2] cv_iv [ 3  4] cv_iv                       CGConnect
+cg [ 5  6] cv_iv [ 7  8] cv_iv << >>                 CGConnect
+cg [ 9 10] cv_iv [11 12] cv_iv       /static_synapse CGConnect
+cg [13 14] cv_iv [15 16] cv_iv << >> /static_synapse CGConnect
 
+<< /source [ 1  2] >> GetConnections { GetStatus /target get } Map ==
+<< /source [ 5  6] >> GetConnections { GetStatus /target get } Map ==
+<< /source [ 9 10] >> GetConnections { GetStatus /target get } Map ==
+<< /source [13 14] >> GetConnections { GetStatus /target get } Map ==
 
-/first first cvgidcollection def
-/last last cvgidcollection def
 
 % Test if the gidcollection variant works
-cg first last CGConnect
-cg first last << >> CGConnect
-cg first last /static_synapse CGConnect
-cg first last << >> /static_synapse CGConnect
+ResetKernel
+/iaf_psc_alpha 16 Create ;
+cg [ 1  2] cvgidcollection [ 3  4] cvgidcollection                       CGConnect
+cg [ 5  6] cvgidcollection [ 7  8] cvgidcollection << >>                 CGConnect
+cg [ 9 10] cvgidcollection [11 12] cvgidcollection       /static_synapse CGConnect
+cg [13 14] cvgidcollection [15 16] cvgidcollection << >> /static_synapse CGConnect
+
+<< /source [ 1  2] >> GetConnections { GetStatus /target get } Map ==
+<< /source [ 5  6] >> GetConnections { GetStatus /target get } Map ==
+<< /source [ 9 10] >> GetConnections { GetStatus /target get } Map ==
+<< /source [13 14] >> GetConnections { GetStatus /target get } Map ==

@@ -55,16 +55,9 @@ leaky
 integrate-and-fire neuron model with fixed waveform calcium spike.
 
 iaf_cond_alpha_mc_fixedca is an implementation of a multi-compartment spiking
-<<<<<<< HEAD
 neuron using IAF dynamics with conductance-based synapses. It is the reference
 implementation of the model described in [3], with a calcium spike at the
 distal compartment, modeled using a threshold triggered fixed waveform.
-=======
-neuron using IAF dynamics with conductance-based synapses. It serves
-mainly to illustrate the implementation of multicompartment models in
-NEST. It has also a calcium spike at the distal compartment, details of which
-are described in [3].
->>>>>>> 78a21ddcb22b0e25dbce5d58d6e1c9451fb42755
 
 The model has three compartments: soma, proximal and distal dendrite,
 labeled as s, p, and d, respectively. Compartments are connected through
@@ -346,10 +339,6 @@ private:
     double_t t_L[ NCOMP ];  //!< Leak during refractory period in nS
     double_t nt_L[ NCOMP ]; //!< Leak at other times in ns
 
-<<<<<<< HEAD
-=======
-    double_t g_L[ NCOMP ];  //!< Leak Conductance in nS
->>>>>>> 78a21ddcb22b0e25dbce5d58d6e1c9451fb42755
     double_t C_m[ NCOMP ];  //!< Membrane Capacitance in pF
     double_t E_ex[ NCOMP ]; //!< Excitatory reversal Potential in mV
     double_t E_in[ NCOMP ]; //!< Inhibitory reversal Potential in mV

@@ -37,11 +37,7 @@ from scipy import *
 from scipy.integrate import ode
 import unittest
 
-<<<<<<< HEAD
 HAVE_GSL = nest.sli_func('statusdict/have_gsl::')
-=======
-HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
->>>>>>> 78a21ddcb22b0e25dbce5d58d6e1c9451fb42755
 
 
 class mc_neuron_ode:
@@ -69,14 +65,9 @@ class mc_neuron_ode:
                                    self.E_ex[2, 0]) - y[6] * (y[2] -
                                    self.E_in[2, 0]) - self.G_conn[1] *
                                    (y[2] - self.E_l[2, 0] - (y[1] -
-<<<<<<< HEAD
                                     self.E_l[1, 0])) + self.I_curr[2,
                                                                    0]
                                    + y[15] * y[16] * self.gca *
-=======
-                                    self.E_l[1, 0])) + self.I_curr[2, 0] +
-                                   y[15] * y[16] * self.gca *
->>>>>>> 78a21ddcb22b0e25dbce5d58d6e1c9451fb42755
                                    (self.eca - y[2])),
             -y[3] / self.Tau_synE[2, 0],
             y[3] - y[4] / self.Tau_synE[2, 0],
@@ -196,10 +187,7 @@ class mc_neuron_ode:
         self.u = self.r.y
 
 
-<<<<<<< HEAD
-=======
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
->>>>>>> 78a21ddcb22b0e25dbce5d58d6e1c9451fb42755
 class KineticsMultiCmptNeuTestCase(unittest.TestCase):
 
     def test_KineticsMultiCmptNeu(self):
@@ -329,10 +317,6 @@ class KineticsMultiCmptNeuTestCase(unittest.TestCase):
                 'E_L': eld,
                 'tau_syn_ex': 1.,
                 'tau_syn_in': 2.0,
-<<<<<<< HEAD
-=======
-                'g_L': gld,
->>>>>>> 78a21ddcb22b0e25dbce5d58d6e1c9451fb42755
                 'C_m': c_d,
                 'amp_curr_AP': 0.,
                 'tau_curr_AP': 1.,
@@ -343,10 +327,6 @@ class KineticsMultiCmptNeuTestCase(unittest.TestCase):
                 'E_L': elp,
                 'tau_syn_ex': 1.,
                 'tau_syn_in': 2.0,
-<<<<<<< HEAD
-=======
-                'g_L': glp,
->>>>>>> 78a21ddcb22b0e25dbce5d58d6e1c9451fb42755
                 'C_m': c_p,
                 'amp_curr_AP': 0.,
                 'tau_curr_AP': 1.,
@@ -357,10 +337,6 @@ class KineticsMultiCmptNeuTestCase(unittest.TestCase):
                 'E_L': els,
                 'tau_syn_ex': 1.,
                 'tau_syn_in': 2.0,
-<<<<<<< HEAD
-=======
-                'g_L': gls,
->>>>>>> 78a21ddcb22b0e25dbce5d58d6e1c9451fb42755
                 'C_m': c_s,
                 'amp_curr_AP': 0.,
                 'tau_curr_AP': 1.,

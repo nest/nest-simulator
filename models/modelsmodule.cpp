@@ -190,6 +190,7 @@ ModelsModule::init( SLIInterpreter* )
 
   kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
   kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
+
   kernel().model_manager.register_node_model< spike_generator >(
     "spike_generator" );
   kernel().model_manager.register_node_model< poisson_generator >(
@@ -212,6 +213,7 @@ ModelsModule::init( SLIInterpreter* )
     "ginzburg_neuron" );
   kernel().model_manager.register_node_model< mcculloch_pitts_neuron >(
     "mcculloch_pitts_neuron" );
+
   kernel().model_manager.register_node_model< izhikevich >( "izhikevich" );
   kernel().model_manager.register_node_model< spike_dilutor >(
     "spike_dilutor" );
@@ -311,6 +313,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< iaf_cond_alpha >(
     "iaf_cond_alpha" );
   kernel().model_manager.register_node_model< iaf_cond_exp >( "iaf_cond_exp" );
+
   kernel().model_manager.register_node_model< iaf_cond_exp_sfa_rr >(
     "iaf_cond_exp_sfa_rr" );
   kernel().model_manager.register_node_model< iaf_cond_alpha_mc >(
@@ -319,6 +322,7 @@ ModelsModule::init( SLIInterpreter* )
     "iaf_cond_alpha_mc_fixedca" );
   kernel().model_manager.register_node_model< iaf_cond_alpha_mc_kinetics >(
     "iaf_cond_alpha_mc_kinetics" );
+
   kernel().model_manager.register_node_model< hh_psc_alpha >( "hh_psc_alpha" );
   kernel().model_manager.register_node_model< hh_psc_alpha_gap >(
     "hh_psc_alpha_gap" );
@@ -399,7 +403,6 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
       "gap_junction", false );
-
 
   /* BeginDocumentation
      Name: stdp_synapse_hpc - Variant of stdp_synapse with low memory

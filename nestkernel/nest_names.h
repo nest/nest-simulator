@@ -468,6 +468,43 @@ extern const Name reset_on_spike;
 
 // Specific to iaf conductance mc fixedca
 extern const Name Ca_amplitude;
+<<<<<<< HEAD
+=======
+
+
+extern const Name z; //!< Number of available synaptic elements per node
+extern const Name
+  z_connected; //!< Number of connected synaptic elements per node
+
+// Specific to iaf conductance mc kinetics
+extern const Name V_max;
+extern const Name t_L;
+extern const Name nt_L;
+extern const Name V_thCa;
+extern const Name Ca_amp;
+extern const Name jump_Th;
+extern const Name tau_Th;
+extern const Name Ca_active;
+extern const Name threshold;
+extern const Name ca_spike_count;
+extern const Name t_refCa_remaining;
+extern const Name ca_current;
+extern const Name tau_curr_AP;
+extern const Name amp_curr_AP;
+extern const Name E_Ca;
+extern const Name G_Ca;
+extern const Name tau_h;
+extern const Name half_m;
+extern const Name half_h;
+extern const Name slope_m;
+extern const Name slope_h;
+extern const Name m_inf;
+extern const Name h_inf;
+extern const Name reset_on_spike;
+
+// Specific to iaf conductance mc fixedca
+extern const Name Ca_amplitude;
+>>>>>>> 78a21ddcb22b0e25dbce5d58d6e1c9451fb42755
 }
 }
 

@@ -129,6 +129,10 @@ RecordablesMap< iaf_cond_alpha_mc_kinetics >::create()
     &iaf_cond_alpha_mc_kinetics::
       get_y_elem_< iaf_cond_alpha_mc_kinetics::State_::I_AP,
         iaf_cond_alpha_mc_kinetics::DIST > );
+<<<<<<< HEAD
+=======
+
+>>>>>>> 78a21ddcb22b0e25dbce5d58d6e1c9451fb42755
 
   insert_( names::t_ref_remaining, &iaf_cond_alpha_mc_kinetics::get_r_ );
   insert_( names::threshold, &iaf_cond_alpha_mc_kinetics::get_th_ );
@@ -271,7 +275,12 @@ nest::iaf_cond_alpha_mc_kinetics::Parameters_::Parameters_()
 
   // soma parameters
   t_L[ SOMA ] = 500.0;      // nS
+<<<<<<< HEAD
   nt_L[ SOMA ] = 10.0;      // nS
+=======
+  nt_L[ SOMA ] = 15.0;      // nS
+  g_L[ SOMA ] = 10.0;       // nS
+>>>>>>> 78a21ddcb22b0e25dbce5d58d6e1c9451fb42755
   C_m[ SOMA ] = 150.0;      // pF
   E_ex[ SOMA ] = 0.0;       // mV
   E_in[ SOMA ] = -85.0;     // mV
@@ -284,7 +293,12 @@ nest::iaf_cond_alpha_mc_kinetics::Parameters_::Parameters_()
 
   // proximal parameters
   t_L[ PROX ] = 5.0;        // nS
+<<<<<<< HEAD
   nt_L[ PROX ] = 5.0;       // nS
+=======
+  nt_L[ PROX ] = 10.0;      // nS
+  g_L[ PROX ] = 5.0;        // nS
+>>>>>>> 78a21ddcb22b0e25dbce5d58d6e1c9451fb42755
   C_m[ PROX ] = 75.0;       // pF
   E_ex[ PROX ] = 0.0;       // mV
   E_in[ PROX ] = -85.0;     // mV
@@ -297,7 +311,12 @@ nest::iaf_cond_alpha_mc_kinetics::Parameters_::Parameters_()
 
   // distal parameters
   t_L[ DIST ] = 5.0;        // nS
+<<<<<<< HEAD
   nt_L[ DIST ] = 10.0;      // nS
+=======
+  nt_L[ DIST ] = 15.0;      // nS
+  g_L[ DIST ] = 10.0;       // nS
+>>>>>>> 78a21ddcb22b0e25dbce5d58d6e1c9451fb42755
   C_m[ DIST ] = 150.0;      // pF
   E_ex[ DIST ] = 0.0;       // mV
   E_in[ DIST ] = -85.0;     // mV
@@ -732,8 +751,15 @@ nest::iaf_cond_alpha_mc_kinetics::update( Time const& origin,
   const long_t to )
 {
 
+<<<<<<< HEAD
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+=======
+
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+
+>>>>>>> 78a21ddcb22b0e25dbce5d58d6e1c9451fb42755
   assert( from < to );
 
   for ( long_t lag = from; lag < to; ++lag )
@@ -789,8 +815,11 @@ nest::iaf_cond_alpha_mc_kinetics::update( Time const& origin,
     if ( S_.r_ )
     { // neuron is absolute refractory
       --S_.r_;
+<<<<<<< HEAD
       // Active current triggerd after a spike to be added first at
       // proximal, then distal compartment during refractory period
+=======
+>>>>>>> 78a21ddcb22b0e25dbce5d58d6e1c9451fb42755
       if ( S_.r_ == int( 0.5 * V_.RefractoryCounts_ ) )
       {
         S_.y_[ PROX * State_::STATE_VEC_COMPS + State_::DI_AP ] +=

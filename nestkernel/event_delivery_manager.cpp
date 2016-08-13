@@ -598,13 +598,17 @@ EventDeliveryManager::gather_events( bool done )
 {
   // IMPORTANT: Ensure that gather_events(..) is called from a single thread and
   //            NOT from a parallel OpenMP region!!!
-  stw_collocate_.reset();
-  stw_collocate_.start();
+
+  // Stop watch for time measurements within this function
+  static Stopwatch stw_local;
+  
+  stw_local.reset();
+  stw_local.start();
   collocate_buffers_( done );
-  stw_collocate_.stop();
-  time_collocate_ += stw_collocate_.elapsed();
-  stw_communicate_.reset();
-  stw_communicate_.start();
+  stw_local.stop();
+  time_collocate_ += stw_local.elapsed();
+  stw_local.reset();
+  stw_local.start();
   if ( off_grid_spiking_ )
   {
     kernel().mpi_manager.communicate(
@@ -615,7 +619,7 @@ EventDeliveryManager::gather_events( bool done )
     kernel().mpi_manager.communicate(
       local_grid_spikes_, global_grid_spikes_, displacements_ );
   }
-  stw_communicate_.stop();
-  time_communicate_ += stw_communicate_.elapsed();
+  stw_local.stop();
+  time_communicate_ += stw_local.elapsed();
 }
 }

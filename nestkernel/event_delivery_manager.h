@@ -321,16 +321,6 @@ private:
   const uint_t comm_marker_;
 
   /**
-   * Stop watch to time collocation of events in MPI buffers.
-   */
-  Stopwatch stw_collocate_;
-
-  /**
-   * Stop watch to time communication of events.
-   */
-  Stopwatch stw_communicate_;
-
-  /**
    * Time that was spent on collocation of MPI buffers during the last call to
    * simulate.
    */

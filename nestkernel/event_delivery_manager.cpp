@@ -601,7 +601,7 @@ EventDeliveryManager::gather_events( bool done )
 
   // Stop watch for time measurements within this function
   static Stopwatch stw_local;
-  
+
   stw_local.reset();
   stw_local.start();
   collocate_buffers_( done );

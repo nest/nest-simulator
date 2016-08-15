@@ -90,7 +90,6 @@ nest::music_cont_out_proxy::Buffers_::Buffers_( const Buffers_& b )
 {
 }
 
-
 /* ----------------------------------------------------------------
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */
@@ -109,30 +108,24 @@ nest::music_cont_out_proxy::Parameters_::get( DictionaryDatum& d ) const
   }
 
   ( *d )[ names::record_from ] = ad_record_from;
-  std::vector< long_t >* pInd_map_long =
-    new std::vector< long_t >( target_gids_.size() );
-
-  std::copy< std::vector< long_t >::const_iterator,
-    std::vector< long_t >::iterator >(
-    target_gids_.begin(), target_gids_.end(), pInd_map_long->begin() );
-
-  ( *d )[ names::targets ] = IntVectorDatum( pInd_map_long );
+  ( *d )[ names::targets ] = target_gids_;
 }
 
 void
 nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
   const Node& self,
-  const State_& states,
-  const Buffers_& buffs )
+  const State_& state,
+  const Buffers_& buffers )
 {
 
-  if ( states.published_ == false )
+  if ( state.published_ == false )
   {
     updateValue< string >( d, names::port_name, port_name_ );
   }
 
-  if ( buffs.has_targets_
-    && ( d->known( names::interval ) || d->known( names::record_from ) ) )
+  if ( buffers.has_targets_
+    && ( d->known( names::interval ) 
+        || d->known( names::record_from ) ) )
   {
     throw BadProperty(
       "The recording interval and the list of properties to record "
@@ -180,33 +173,12 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
         "The property record_from must be set before passing target_gids." );
     }
 
-    if ( states.published_ == false )
+    if ( state.published_ == false )
     {
       ArrayDatum mca = getValue< ArrayDatum >( d, names::targets );
       for ( Token* t = mca.begin(); t != mca.end(); ++t )
       {
         target_gids_.push_back( getValue< long_t >( *t ) );
-      }
-      const Token synmodel =
-        kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
-      if ( synmodel.empty() )
-      {
-        throw UnknownSynapseType( "static_synapse" );
-      }
-      const index synmodel_id = static_cast< index >( synmodel );
-      std::vector< long_t >::const_iterator t;
-      //
-      for ( t = target_gids_.begin(); t != target_gids_.end(); ++t )
-      {
-        // check whether the target is on this process
-        if ( kernel().node_manager.is_local_gid( *t ) )
-        {
-          Node* const target_node = kernel().node_manager.get_node( *t );
-          kernel().connection_manager.connect( self.get_gid(),
-            target_node,
-            target_node->get_thread(),
-            synmodel_id );
-        }
       }
     }
     else
@@ -249,8 +221,6 @@ nest::music_cont_out_proxy::music_cont_out_proxy(
 void
 nest::music_cont_out_proxy::init_state_( const Node& /* np */ )
 {
-  // const Multimeter& asd = dynamic_cast< const Multimeter& >( np );
-  // device_.init_state( asd.device_ );
 }
 
 void
@@ -288,6 +258,25 @@ nest::music_cont_out_proxy::calibrate()
   // only publish the output port once,
   if ( S_.published_ == false )
   {
+      const Token synmodel =
+        kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
+      assert(!synmodel.empty() && "synapse 'static_synapse' not available");
+
+      const index synmodel_id = static_cast< index >( synmodel );
+      std::vector< long_t >::const_iterator t;
+
+      for ( t = P_.target_gids_.begin(); t != P_.target_gids_.end(); ++t )
+      {
+        // check whether the target is on this process
+        if ( kernel().node_manager.is_local_gid( *t ) )
+        {
+          Node* const target_node = kernel().node_manager.get_node( *t );
+          kernel().connection_manager.connect( get_gid(),
+            target_node,
+            target_node->get_thread(),
+            synmodel_id );
+        }
+      }
     std::vector< MUSIC::GlobalIndex > music_index_map;
     for ( size_t i = 0; i < P_.target_gids_.size(); i++ )
     {

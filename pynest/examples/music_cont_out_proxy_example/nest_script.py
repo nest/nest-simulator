@@ -24,7 +24,6 @@ import nest
 import music
 import numpy
 
-setup = music.Setup()
 proxy = nest.Create('music_cont_out_proxy', 1)
 nest.SetStatus(proxy, {'port_name': 'out'})
 nest.SetStatus(proxy, {'record_from': ["V_m"], 'interval': 0.1})

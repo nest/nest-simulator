@@ -131,16 +131,10 @@ nest::IOManager::set_status( const DictionaryDatum& d )
   set_data_path_prefix_( d );
   updateValue< bool >( d, "overwrite_files", overwrite_files_ );
 
-  // Setup recording backend and its options
-  DictionaryDatum dd;
-  if ( updateValue< DictionaryDatum >( d, "recording", dd ) )
-  {
-    std::string recording_backend;
-    if ( updateValue< std::string >( dd, names::recording_backend, recording_backend ) )
-      set_backend( recording_backend );
+  Name recording_backend;
+  if ( updateValue< Name >( d, names::recording_backend, recording_backend ) )
+    set_backend( recording_backend );
 
-    backend_->set_status( dd );
-  }
 }
 
 void

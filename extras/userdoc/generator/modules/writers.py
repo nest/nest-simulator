@@ -31,7 +31,6 @@ import re
 import textwrap
 from helpers import cut_it
 
-
 if os.path.isdir('../cmds'):
     pass
 else:
@@ -120,9 +119,6 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
     '''
     htmllist = [header_ref]
     hlplist = []
-    fullname = ""
-    hlpfullname = ""
-    # namelist = []
 
     for key, value in doc_dic.iteritems():
         if key == "Name":
@@ -135,7 +131,6 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
         if key == "FullName":
             fullname = value.strip("###### ######")
             fullname = re.sub("(######)", " <br/> ", fullname)
-            #fullname = re.sub("(\~\~)", '  ', fullname)
             fullname = re.sub("(\~\~\~)", '\t\t', fullname)
             fullname = re.sub("(\~\~)", '\t', fullname)
             fullname = re.sub("(\~)", ' ', fullname)
@@ -146,7 +141,7 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
             hlplist.append('Name: %s - %s\n' % (name, hlpfullname))
 
     # print keywords
-    # sorting linke keywords
+    # sorting linked keywords
     for word in keywords:
         word = word.strip(':')
         for key, value in doc_dic.iteritems():
@@ -168,11 +163,6 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
                     hlpvalue = re.sub('\n[\s?]*\n', '\n', hlpvalue).rstrip()
                     # Better looking .hlp files
                     dedented_text = textwrap.dedent(hlpvalue).strip()
-                    # dedented_text = re.sub(r'[ ]{9,}', r'\t\t',
-                    #                        dedented_text)
-                    # dedented_text = re.sub(r'[ ]{5,8}', r'\t\t', dedented_text)
-                    # dedented_text = re.sub(r'[ ]{3,4}', r'\t', dedented_text)
-
                     hlpcontent = ('%s:\n\n%s\n\n' % (key, dedented_text))
                     hlplist.append(hlpcontent)
 
@@ -350,7 +340,6 @@ def write_helpindex(index_dic_list):
     index_dic_list = sorted(index_dic_list, key=itemgetter('name'))
     for doubles in alpha:
         html_list.append('<center><table class="alpha">')
-        # html_list.append('<a name="%s">' % doubles[0])
         html_list.append('<table class="letteridx"><tr>')
         for x in alpha:
             html_list.append('<td><a href="#%s">%s</a></td>' % (x[0], x[0]))
@@ -397,9 +386,7 @@ def coll_data(keywords, documentation, num, file, sli_command_list):
 
     Prepare the data for writing the help.
     """
-    iname = ""
     see = ""
-    ifullname = ""
     relfile = file.strip()
     doc_dic = {"Id": str(num), "File": relfile}
     for k in keywords:
@@ -429,7 +416,5 @@ def coll_data(keywords, documentation, num, file, sli_command_list):
                     text = text + i.strip() + " \n" + ""
                 if text:
                     doc_dic.update({name: text})
-
-    # all_list.append(doc_dic)
     write_help_html(doc_dic, file, sli_command_list, keywords)
     # return(write_help_md(doc_dic))

@@ -46,16 +46,16 @@ sli_command_list = []
 cc_command_list = []
 index_dic_list = []
 
-
 keywords = ["Name:", "Synopsis:", "Examples:", "Description:", "Parameters:",
             "Options:", "Requires:", "Require:", "Receives:", "Transmits:",
             "Sends:", "Variants:", "Bugs:", "Diagnostics:", "Remarks:",
             "Availability:", "References:", "SeeAlso:", "Author:",
             "FirstVersion:", "Source:"]
 
-# TODO combine the following 2 loops to make faster (and shorter)
+# TODO combine the following 2 loops to make it faster (and shorter)
 
 # Now begin to collect the data for the helpindex.html
+
 for file in allfiles:
     if not file.endswith('.py'):
         docstring = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
@@ -65,22 +65,14 @@ for file in allfiles:
         items = re.findall(docstring, filetext, re.DOTALL)
         # List of all .sli files. Needed for the SeeAlso part.
         # if file.endswith('.sli'):
+        index_dic = {}
+        fullname = ""
         for item in items:
-            # namestring = r'([ *]?Name[ *]?\:[ *]?)(.*?)([ *]?\-)'
             namestring = r'([\s*]?Name[\s*]?\:[\s*]?)(.*?)([\s*]?\n)'
-            # fullnamestring = r'([ *]?Name[ *]?\:[ *]?)((.*?))\n'
             docnames = re.findall(namestring, item, re.DOTALL)
-            # fulldocnames = re.findall(fullnamestring, item, re.DOTALL)
             for docname in docnames:
-                # iname = documentation[k].split()[0].rstrip("-")
-                # ifullname = documentation[k].strip(" ######").strip()
-                # ifullname = ifullname.lstrip(iname).strip()
-                # ifullname = ifullname.lstrip("- ")
-
                 if docname[1].strip():
                     fullname = docname[1].strip()
-
-                    # docname = cut_it(' - ', docname[1].strip())[0].strip()
                     docname = fullname.split()[0].rstrip("-")
                     fullname = fullname.lstrip(docname).strip()
                     fullname = fullname.lstrip("-").strip()
@@ -97,7 +89,6 @@ for file in allfiles:
                 else:
                     fullname_dic = {'fullname': ''}
                     index_dic.update(fullname_dic)
-                    # index_dic.update(filename_dic)
                 index_dic.update(filename_dic)
             index_dic_list.append(index_dic)
 write_helpindex(index_dic_list)
@@ -106,7 +97,6 @@ write_helpindex(index_dic_list)
 for file in allfiles:
     # .py is for future use
     if not file.endswith('.py'):
-        # docstring = r'\/\*[\s*\n]?BeginDocumentation[\s?]*\n(.*?)\n*?\*\/'
         docstring = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
         f = open(('%s' % (file,)), 'r')
         filetext = f.read()
@@ -134,7 +124,7 @@ for file in allfiles:
                 line = re.sub(r"(\s){2}", '~ ', line)
                 alllines.append(line)
             item = s.join(alllines)
-            num = num + 1
+            num += 1
             documentation = {}
             keyword_curr = ""
             for token in item.split():

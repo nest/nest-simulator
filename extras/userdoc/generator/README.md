@@ -10,7 +10,7 @@ This is a replacement for the old help generation mechanism in NEST.
 
     python parse_help.py
 
-## The parser solve issue 363
+## In addition the parser solve issue 363
 
     'ISSUE 363
     Currently, the help extractor reads all source files and extracts the

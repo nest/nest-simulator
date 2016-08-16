@@ -143,6 +143,7 @@ nest::IOManager::get_status( DictionaryDatum& d )
   ( *d )[ "data_path" ] = data_path_;
   ( *d )[ "data_prefix" ] = data_prefix_;
   ( *d )[ "overwrite_files" ] = overwrite_files_;
+  ( *d )[ names::recording_backend ] = LiteralDatum( backend_name_ );
 }
 
 bool
@@ -180,5 +181,7 @@ nest::IOManager::set_backend( Name name )
     LOG( M_WARNING, "IOManager::set_status", msg.c_str() );
     return false;
   }
+
+  backend_name_ = name;
   return true;
 }

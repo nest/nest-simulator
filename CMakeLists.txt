@@ -59,7 +59,6 @@ set( with-gsl ON CACHE STRING "Find a gsl library. To set a specific gsl install
 set( with-readline ON CACHE STRING "Find a readline library. To set a specific readline, set install path. [default=ON]" )
 set( with-ltdl ON CACHE STRING "Find a ltdl library. To set a specific ltdl, set install path. [default=ON]" )
 set( with-python ON CACHE STRING "Build PyNEST. To set a specific Python, set install path. [default=ON]" )
-set( with-python3 OFF CACHE STRING "Build PyNEST with Python3. [default=OFF]" )
 option( cythonize-pynest "Use Cython to cythonize pynestkernel.pyx. If OFF, PyNEST has to be build from a pre-cythonized pynestkernel.pyx. [default=ON]" ON )
 
 # Whether to build a 'mostly' static executable and static libraries.

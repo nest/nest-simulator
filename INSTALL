@@ -81,8 +81,8 @@ Set default libraries:
     -Dwith-ltdl=[OFF|ON|</path/to/ltdl>]         Find a ltdl library. To set a specific
                                                  ltdl, set install path.
                                                  [default=ON]
-    -Dwith-python=[OFF|ON|</path/to/python>]     Build PyNEST. To set a specific Python,
-                                                 set install path. [default=ON]
+    -Dwith-python=[OFF|ON|2|3]                   Build PyNEST. To set a specific Python
+                                                 version, set 2 or 3. [default=ON]
     -Dcythonize-pynest=[OFF|ON]                  Use Cython to cythonize pynestkernel.pyx.
                                                  If OFF, PyNEST has to be build from
                                                  a pre-cythonized pynestkernel.pyx.
@@ -136,7 +136,7 @@ Python3 Binding (PyNEST)
 
 To force a Python3-binding in a mixed Python2/3 environment pass
 
-    -Dwith-python3=ON
+    -Dwith-python=3
 
 as an argument to `cmake`.
 

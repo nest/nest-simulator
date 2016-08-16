@@ -22,9 +22,9 @@ PyNEST to `$(pyexecdir)`, which is often expanded as follows:
     $(prefix)/lib{,64}/pythonX.Y/site-packages/nest
 
 
-To force to usage of Python3 pass
+To force to usage of a specific Python version pass
 
-    -Dwith-python3=ON
+    -Dwith-python=2  or  -Dwith-python=3
 
 as an argument to `cmake`.
 

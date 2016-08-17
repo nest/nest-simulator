@@ -241,7 +241,9 @@ nest::ht_neuron::State_::State_()
   , I_h_( 0.0 )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = 0;
+  }
   y_[ IKNa_D ] = KNa_D_EQ;
 }
 
@@ -257,7 +259,9 @@ nest::ht_neuron::State_::State_( const Parameters_& p )
   y_[ THETA ] = p.Theta_eq;
 
   for ( size_t i = 2; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = 0.0;
+  }
 
   y_[ IKNa_D ] = KNa_D_EQ;
 }
@@ -271,7 +275,9 @@ nest::ht_neuron::State_::State_( const State_& s )
   , I_h_( s.I_h_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
 }
 
 nest::ht_neuron::State_& nest::ht_neuron::State_::operator=( const State_& s )
@@ -289,7 +295,9 @@ nest::ht_neuron::State_& nest::ht_neuron::State_::operator=( const State_& s )
   I_h_ = s.I_h_;
 
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
 
   return *this;
 }
@@ -443,11 +451,17 @@ nest::ht_neuron::~ht_neuron()
 {
   // GSL structs may not be initialized, so we need to protect destruction.
   if ( B_.e_ )
+  {
     gsl_odeiv_evolve_free( B_.e_ );
+  }
   if ( B_.c_ )
+  {
     gsl_odeiv_control_free( B_.c_ );
+  }
   if ( B_.s_ )
+  {
     gsl_odeiv_step_free( B_.s_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -482,20 +496,32 @@ nest::ht_neuron::init_buffers_()
   B_.IntegrationStep_ = B_.step_;
 
   if ( B_.s_ == 0 )
+  {
     B_.s_ =
       gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_step_reset( B_.s_ );
+  }
 
   if ( B_.c_ == 0 )
+  {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
+  }
   else
+  {
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
+  }
 
   if ( B_.e_ == 0 )
+  {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_evolve_reset( B_.e_ );
+  }
 
   B_.sys_.function = ht_neuron_dynamics;
   B_.sys_.jacobian = 0;
@@ -510,19 +536,36 @@ nest::ht_neuron::get_synapse_constant( nest::double_t Tau_1,
   nest::double_t Tau_2,
   nest::double_t g_peak )
 {
-  // Factor used to account for the missing 1/((1/Tau_2)-(1/Tau_1)) term
-  // in the ht_neuron_dynamics integration of the synapse terms.
-  // See: Exact digital simulation of time-invariant linear systems
-  // with applications to neuronal modeling, Rotter and Diesmann,
-  // section 3.1.2.
-  nest::double_t exact_integration_adjustment = ( 1 / Tau_2 ) - ( 1 / Tau_1 );
+  /* The solution to the beta function ODE obtained by the solver is
+   *
+   *   g(t) = c / ( a - b ) * ( e^(-b t) - e^(-a t) )
+   *
+   * with a = 1/Tau_1, b = 1/Tau_2, a != b. The maximum of this function is at
+   *
+   *   t* = 1/(a-b) ln a/b
+   *
+   * We want to scale the function so that
+   *
+   *   max g == g(t*) == g_peak
+   *
+   * We thus need to set
+   *
+   *   c = g_peak * ( a - b ) / ( e^(-b t*) - e^(-a t*) )
+   *
+   * See Rotter & Diesmann, Biol Cybern 81:381 (1999) and Roth and van Rossum,
+   * Ch 6, in De Schutter, Computational Modeling Methods for Neuroscientists,
+   * MIT Press, 2010.
+   */
 
-  nest::double_t t_peak =
+  const double_t t_peak =
     ( Tau_2 * Tau_1 ) * std::log( Tau_2 / Tau_1 ) / ( Tau_2 - Tau_1 );
-  nest::double_t normalisation_factor =
-    1 / ( std::exp( -t_peak / Tau_1 ) - std::exp( -t_peak / Tau_2 ) );
 
-  return g_peak * normalisation_factor * exact_integration_adjustment;
+  const double_t prefactor = ( 1 / Tau_1 ) - ( 1 / Tau_2 );
+
+  const double_t peak_value =
+    ( std::exp( -t_peak / Tau_2 ) - std::exp( -t_peak / Tau_1 ) );
+
+  return g_peak * prefactor / peak_value;
 }
 
 void
@@ -531,8 +574,7 @@ nest::ht_neuron::calibrate()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  // NOTE: code below initializes conductance step size for incoming pulses.
-  // Variable and function names need to be changed!
+  // The code below initializes conductance step size for incoming pulses.
   V_.cond_steps_.resize( SUP_SPIKE_RECEPTOR - 1 );
 
   V_.cond_steps_[ AMPA - 1 ] =
@@ -618,21 +660,31 @@ ht_neuron::update( Time const& origin, const long_t from, const long_t to )
         S_.y_ );              // neuron state
 
       if ( status != GSL_SUCCESS )
+      {
         throw GSLSolverFailure( get_name(), status );
+      }
     }
 
     // Deactivate potassium current after spike time have expired
     if ( S_.r_potassium_ && --S_.r_potassium_ == 0 )
+    {
       S_.g_spike_ = false; // Deactivate potassium current.
+    }
 
-    // Add new spikes to node state array
+    /* Add new spikes to node state array.
+     *
+     * The input variable for the synapse type with buffer index i is
+     * at position 2 + 2*i in the state variable vector.
+     */
     for ( size_t i = 0; i < B_.spike_inputs_.size(); ++i )
+    {
       S_.y_[ 2 + 2 * i ] +=
         V_.cond_steps_[ i ] * B_.spike_inputs_[ i ].get_value( lag );
+    }
 
     // A spike is generated when the membrane potential (V) exceeds
     // the threshold (Theta).
-    if ( !S_.g_spike_ && S_.y_[ State_::VM ] >= S_.y_[ State_::THETA ] )
+    if ( not S_.g_spike_ && S_.y_[ State_::VM ] >= S_.y_[ State_::THETA ] )
     {
       // Set V and Theta to the sodium reversal potential.
       S_.y_[ State_::VM ] = P_.E_Na;

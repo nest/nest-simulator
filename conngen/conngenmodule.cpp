@@ -103,6 +103,7 @@ ConnectionGeneratorModule::init( SLIInterpreter* i )
    If not specified, the synapse model is taken from the Options of
    the Connect command.
 
+   Availability: Only if compiled with libneurosim support
    Author: Jochen Martin Eppler
    FirstVersion: August 2012
    SeeAlso: Connect, synapsedict, GetOptions, CGParse, CGParseFile,
@@ -150,6 +151,7 @@ ConnectionGeneratorModule::CGConnect_cg_g_g_D_lFunction::execute(
    XML string. The library to parse the XML string can be selected using
    CGSelectImplementation
 
+   Availability: Only if compiled with libneurosim support
    Author: Jochen Martin Eppler
    FirstVersion: September 2013
    SeeAlso: CGParseFile, CGConnect, CGSelectImplementation, cgstart, cgsetmask,
@@ -184,6 +186,7 @@ ConnectionGeneratorModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
    XML file. The library to parse the XML file can be selected using
    CGSelectImplementation
 
+   Availability: Only if compiled with libneurosim support
    Author: Jochen Martin Eppler
    FirstVersion: February 2014
    SeeAlso: CGParse, CGConnect, CGSelectImplementation, cgstart, cgsetmask,
@@ -219,6 +222,7 @@ ConnectionGeneratorModule::CGParseFile_sFunction::execute(
    Select a library to provide a parser for XML files and associate
    an XML tag with the library.
 
+   Availability: Only if compiled with libneurosim support
    Author: Jochen Martin Eppler
    FirstVersion: September 2013
    SeeAlso: CGParse, CGParseFile, CGConnect, cgstart, cgsetmask, cgnext
@@ -260,6 +264,7 @@ ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute(
    purposes. Usually, connections are created from a
    ConnectionGenerator using CGConnect.
 
+   Availability: Only if compiled with libneurosim support
    Author: Mikael Djurfeldt
    FirstVersion: March 2011
    SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation, cgstart,
@@ -307,6 +312,7 @@ ConnectionGeneratorModule::CGSetMask_cg_g_gFunction::execute(
    purposes. Usually, connections are created from a
    ConnectionGenerator using CGConnect.
 
+   Availability: Only if compiled with libneurosim support
    Author: Mikael Djurfeldt
    FirstVersion: March 2011
    SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation, cgsetmask,
@@ -350,6 +356,7 @@ ConnectionGeneratorModule::CGStart_cgFunction::execute(
    purposes. Usually, connections are created from a
    ConnectionGenerator using CGConnect.
 
+   Availability: Only if compiled with libneurosim support
    Author: Mikael Djurfeldt, Jochen Martin Eppler
    FirstVersion: December 2012
    SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation, cgstart,

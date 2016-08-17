@@ -132,8 +132,8 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
   }
 
 
-  double_t v;
-  if ( updateValue< double_t >( d, names::interval, v ) )
+  double v;
+  if ( updateValue< double >( d, names::interval, v ) )
   {
     if ( Time( Time::ms( v ) ) < Time::get_resolution() )
     {
@@ -177,7 +177,7 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
       ArrayDatum mca = getValue< ArrayDatum >( d, names::targets );
       for ( Token* t = mca.begin(); t != mca.end(); ++t )
       {
-        target_gids_.push_back( getValue< long_t >( *t ) );
+        target_gids_.push_back( getValue< long >( *t ) );
       }
     }
     else
@@ -263,7 +263,7 @@ nest::music_cont_out_proxy::calibrate()
       synmodel.empty() == false && "synapse 'static_synapse' not available" );
 
     const index synmodel_id = static_cast< index >( synmodel );
-    std::vector< long_t >::const_iterator t;
+    std::vector< long >::const_iterator t;
 
     for ( t = P_.target_gids_.begin(); t != P_.target_gids_.end(); ++t )
     {
@@ -369,8 +369,8 @@ nest::music_cont_out_proxy::set_status( const DictionaryDatum& d )
 
 void
 nest::music_cont_out_proxy::update( Time const& origin,
-  const long_t from,
-  const long_t )
+  const long from,
+  const long )
 {
   /* There is nothing to request during the first time slice.
      For each subsequent slice, we collect all data generated during the

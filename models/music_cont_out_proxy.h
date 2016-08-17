@@ -147,7 +147,7 @@ protected:
    * that information. The sampled nodes must provide data from
    * the previous time slice.
    */
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
 private:
   struct State_; //!< Forward declarations
@@ -164,7 +164,7 @@ private:
     Time interval_;                   //!< sampling interval, in ms
     std::string port_name_;           //!< the name of MUSIC port to connect to
     std::vector< Name > record_from_; //!< recordables to record from
-    std::vector< long_t > target_gids_; //!< Neuron GIDs to be observed
+    std::vector< long > target_gids_; //!< Neuron GIDs to be observed
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum&,

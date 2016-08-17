@@ -14,6 +14,12 @@ NEST is installed with `cmake` (at least v2.8.12). In the simplest case, the com
 should build and install NEST to <install-path>. Detailed installation 
 instructions can be found below.
 
+Choice of CMake Version
+=======================
+
+We recommend to use `cmake` v3.4, even though installing NEST with
+`cmake` v2.8.12 will in most cases work properly.
+For more detailed information please see below: `Python3 Binding (PyNEST)`
 
 Choice of compiler
 ==================
@@ -76,8 +82,8 @@ Set default libraries:
                                                  ltdl, set install path. NEST uses the
                                                  ltdl for dynamic loading of external
                                                  user modules. [default=ON]
-    -Dwith-python=[OFF|ON|</path/to/python>]     Build PyNEST. To set a specific Python,
-                                                 set install path. [default=ON]
+    -Dwith-python=[OFF|ON|2|3]                   Build PyNEST. To set a specific Python
+                                                 version, set 2 or 3. [default=ON]
     -Dcythonize-pynest=[OFF|ON]                  Use Cython to cythonize pynestkernel.pyx.
                                                  If OFF, PyNEST has to be build from
                                                  a pre-cythonized pynestkernel.pyx.
@@ -116,17 +122,42 @@ Configuring NEST for Distributed Simulation with MPI
      -DMPI_C_COMPILER=myC_CompilerWrapper -Dwith-mpi=ON
   4. Sorry, you need to fix your MPI installation. 
 
-
 Disabling the Python Bindings (PyNEST)
 ======================================
 
 Please see also the file pynest/README.md in the documentation directory. If you
 are impatient, use 
 
-    --Dwith-python=OFF
+    -Dwith-python=OFF
 
 as an argument to `cmake`.
 
+Python3 Binding (PyNEST)
+=========================
+
+To force a Python3-binding in a mixed Python2/3 environment pass
+
+    -Dwith-python=3
+
+as an argument to `cmake`.
+
+`cmake` usually autodetects your Python installation.
+In some cases `cmake` might not be able to localize the Python interpreter
+and its corresponding libraries correctly. To circumvent such a problem following
+`cmake` built-in variables can be set manually and passed to `cmake`:
+
+  PYTHON_EXECUTABLE ..... path to the Python interpreter
+  PYTHON_LIBRARY ........ path to libpython
+  PYTHON_INCLUDE_DIR .... two include ...
+  PYTHON_INCLUDE_DIR2 ... directories
+
+  e.g.: Please note `-Dwith-python=ON` is the default.
+  cmake -DCMAKE_INSTALL_PREFIX=</install/path> \
+        -DPYTHON_EXECUTABLE=/usr/bin/python3 \
+        -DPYTHON_LIBRARY=/usr/lib/x86_64-linux-gnu/libpython3.4m.so \
+        -DPYTHON_INCLUDE_DIR=/usr/include/python3.4 \
+        -DPYTHON_INCLUDE_DIR2=/usr/include/x86_64-linux-gnu/python3.4m \
+        </path/to/NEST/src>
 
 Compiling for BlueGene/Q
 ========================

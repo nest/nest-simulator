@@ -141,7 +141,7 @@ To force a Python3-binding in a mixed Python2/3 environment pass
 as an argument to `cmake`.
 
 `cmake` usually autodetects your Python installation.
-In some cases `cmake` v2.8.12 might not be able to localize the Python interpreter
+In some cases `cmake` might not be able to localize the Python interpreter
 and its corresponding libraries correctly. To circumvent such a problem following
 `cmake` built-in variables can be set manually and passed to `cmake`:
 

@@ -33,28 +33,26 @@
 #include "nest.h"
 
 /* BeginDocumentation
-  Name: gif_psc_exp - Current based generalized integrate-and-fire neuron model
-  according to Mensi et al. (2012)
-  and Pozzorini et al. (2015)
+  Name: gif_psc_exp - Current based generalized integrate-and-fire neuron
+  model according to Mensi et al. (2012) and Pozzorini et al. (2015).
 
   Description:
 
-  gif_psc_exp is the generalized integrate-and-fire neuron according to Mensi et
-  al. (2012)
-  and Pozzorini et al. (2015), with exponential shaped postsynaptic currents.
+  gif_psc_exp is the generalized integrate-and-fire neuron according to
+  Mensi et al. (2012) and Pozzorini et al. (2015), with exponential shaped
+  postsynaptic currents.
 
   This model features both an adaptation current and a dynamic threshold for
-  spike-frequency
-  adaptation. The membrane potential (V) is described by the differential
-  equation:
+  spike-frequency adaptation. The membrane potential (V) is described by the
+  differential equation:
 
   C*dV(t)/dt = -g_L*(V(t)-E_L) - eta_1(t) - eta_2(t) - ... - eta_n(t) + I(t)
 
-  where each eta_i is a spike triggered current (stc), and the neuron model can
+  where each eta_i is a spike-triggered current (stc), and the neuron model can
   have arbitrary number of them.
   Dynamic of each eta_i is described by:
 
-  Tau_eta_i*d{eta_i}/dt = -eta_i
+  tau_eta_i*d{eta_i}/dt = -eta_i
 
   and in case of spike emission, its value increased by a constant (which can be
   positive or negative):
@@ -74,13 +72,14 @@
   model can have arbitrary number of them.
   Dynamic of each gamma_i is described by:
 
-  Tau_gamma_i*d{gamma_i}/dt = -gamma_i
+  tau_gamma_i*d{gamma_i}/dt = -gamma_i
 
   and in case of spike emission, its value increased by a constant (which can be
   positive or negative):
 
   gamma_i = gamma_i + q_gamma_i  (in case of spike emission).
 
+  The shape of post synaptic current is exponential.
 
   Parameters:
   The following parameters can be set in the status dictionary.
@@ -95,20 +94,18 @@
 
   Spike adaptation and firing intensity parameters:
     q_stc      vector of double - Values added to spike triggered currents (stc)
-  after each spike emission in nA.
+                                  after each spike emission in nA.
     tau_stc    vector of double - Time constants of stc variables in ms.
     q_sfa      vector of double - Values added to spike-frequency adaptation
-  (sfa) after each spike emission in mV.
+                                  (sfa) after each spike emission in mV.
     tau_sfa    vector of double - Time constants of sfa variables in ms.
     Delta_V    double - Stochasticity level in mV.
     lambda_0   double - Stochastic intensity at firing threshold V_T in 1/s.
     V_T_star   double - Minimum threshold in mV
 
   Synaptic parameters
-    tau_syn_ex double - Time constant of the excitatory synaptic current in ms
-  (exp function).
-    tau_syn_in double - Time constant of the inhibitory synaptic current in ms
-  (exp function).
+    tau_syn_ex double - Time constant of the excitatory synaptic current in ms.
+    tau_syn_in double - Time constant of the inhibitory synaptic current in ms.
 
 
   References:
@@ -183,7 +180,6 @@ private:
    */
   struct Parameters_
   {
-
     double_t g_L_;
     double_t E_L_;
     double_t V_reset_;
@@ -217,7 +213,6 @@ private:
 
     /** Time constant of inhibitory synaptic current in ms. */
     double_t tau_in_;
-
 
     /** External DC current. */
     double_t I_e_;

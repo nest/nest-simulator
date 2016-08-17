@@ -90,9 +90,11 @@ modeldict keys{
 	300 Simulate
 
 	% compare final membrane potentials
-	n1 GetStatus /V_m get n2 GetStatus /V_m get eq dup {(pass) =}{ (failed: unequal voltages) =  executive } ifelse 
+	n1 GetStatus /V_m get n2 GetStatus /V_m get eq dup 
+	  {(pass) =}
+	  { (failed: unequal voltages) =  executive } 
+	ifelse 
 	res exch append /res Set
-
 	} stopped {  clear (DC not allowed) = errordict /newerror false put  } if % skip models that don't support current event
     }
     if   % model GetDefaults /I_e known record_VM and

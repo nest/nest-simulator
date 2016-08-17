@@ -281,6 +281,7 @@ extern const Name published;          //!< Parameters for MUSIC devices
 extern const Name q_rr;     //!< Other adaptation
 extern const Name q_sfa;    //!< Other adaptation
 extern const Name q_stc;    //!< Specific to gif models
+extern const Name I_stc;      //!< Specific to gif models
 extern const Name stc;      //!< Specific to gif models
 extern const Name V_T_star; //!< Specific to gif models
 extern const Name lambda_0; //!< Specific to gif models

@@ -237,7 +237,8 @@ const Name published( "published" );
 const Name q_rr( "q_rr" );
 const Name q_sfa( "q_sfa" );
 const Name q_stc( "q_stc" );
-const Name stc( "stc" );
+const Name I_stc( "I_stc" );
+const Name stc( "I_stc" );
 const Name V_T_star( "V_T_star" );
 const Name lambda_0( "lambda_0" );
 

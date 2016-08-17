@@ -24,18 +24,17 @@ Population of GIF neuron model with oscillatory behavior
 --------------------------------------------------------
 
 This script simulates a population of generalized integrate-and-fire (GIF)
-neuron model receives noise from a group of Poisson neurons.
+model neurons driven by noise from a group of Poisson generators.
 
 Due to spike-frequency adaptation, the GIF neurons tend to show oscillatory
 behavior on the time scale comparable with the time constant of adaptation
 elements (stc and sfa).
 
-Using spike detector, population dynamics (raster plot and average firing rate)
-are shown.
+Population dynamics are visualized by raster plot and as average firing rate.
 '''
 
 '''
-Import all necessary modules for simulation and plotting .
+Import all necessary modules for simulation and plotting.
 '''
 
 import nest
@@ -54,7 +53,7 @@ Definition of neural parameters for the GIF model. These parameters are
 extracted by fitting the model to experimental data: Mensi, S., Naud, R.,
 Pozzorini, C., Avermann, M., Petersen, C.C. and Gerstner, W., 2012. Parameter
 extraction and classification of three cortical neuron types reveals two
-distinct adaptation mechanisms. Journal of neurophysiology, 107(6),
+distinct adaptation mechanisms. Journal of Neurophysiology, 107(6),
 pp.1756-1775.
 '''
 
@@ -106,11 +105,11 @@ population = nest.Create("gif_psc_exp", N_ex, params=neuron_params)
 
 noise = nest.Create("poisson_generator", N_noise, params={'rate': rate_noise})
 
-spikes_det = nest.Create("spike_detector")
+spike_det = nest.Create("spike_detector")
 
 
 '''
-Building connections inside the population of GIF neurons population, between
+Build connections inside the population of GIF neurons population, between
 Poisson group and the population, and also connecting spike detector to the
 population.
 '''
@@ -122,7 +121,7 @@ nest.Connect(
 
 nest.Connect(noise, population, 'all_to_all', syn_spec={"weight": w_noise})
 
-nest.Connect(population, spikes_det)
+nest.Connect(population, spike_det)
 
 '''
 Simulation of the network.
@@ -135,6 +134,5 @@ Plotting the results of simulation including raster plot and histogram of
 population activity.
 '''
 
-nest.raster_plot.from_device(spikes_det, hist=True)
+nest.raster_plot.from_device(spike_det, hist=True)
 plt.title('Population dynamics')
-plt.show()

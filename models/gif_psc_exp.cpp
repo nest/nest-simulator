@@ -54,7 +54,7 @@ template <>
 void
 RecordablesMap< gif_psc_exp >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &gif_psc_exp::get_V_m_ );
   insert_( names::E_sfa, &gif_psc_exp::get_E_sfa_ );
   insert_( names::stc, &gif_psc_exp::get_stc_ );
@@ -69,19 +69,19 @@ RecordablesMap< gif_psc_exp >::create()
 nest::gif_psc_exp::Parameters_::Parameters_()
   : g_L_( 4.0 )        // nS
   , E_L_( -70.0 )      // mV
-  , c_m_( 80.0 )       // pF
   , V_reset_( -55.0 )  // mV
   , Delta_V_( 0.5 )    // mV
   , V_T_star_( -35 )   // mV
   , lambda_0_( 0.001 ) // 1/ms
-  , I_e_( 0.0 )        // pA
   , t_ref_( 4.0 )      // ms
-  , tau_ex_( 2.0 )     // ms
-  , tau_in_( 2.0 )     // ms
-  , tau_sfa_()         // ms
-  , q_sfa_()           // mV
+  , c_m_( 80.0 )       // pF
   , tau_stc_()         // ms
   , q_stc_()           // nA
+  , tau_sfa_()         // ms
+  , q_sfa_()           // mV
+  , tau_ex_( 2.0 )     // ms
+  , tau_in_( 2.0 )     // ms
+  , I_e_( 0.0 )        // pA
 {
 }
 
@@ -90,13 +90,14 @@ nest::gif_psc_exp::State_::State_()
   : y0_( 0.0 )
   , y3_( -70.0 )
   , sfa_( 0.0 )
-  , r_ref_( 0 )
-  , i_syn_ex_( 0.0 )
-  , i_syn_in_( 0.0 )
-  , sfa_stc_initialized_( false )
-  , add_stc_sfa_( false )
+  , stc_( 0.0 )
   , sfa_elems_()
   , stc_elems_()
+  , i_syn_ex_( 0.0 )
+  , i_syn_in_( 0.0 )
+  , r_ref_( 0 )
+  , sfa_stc_initialized_( false )
+  , add_stc_sfa_( false )
 {
 }
 
@@ -195,7 +196,6 @@ nest::gif_psc_exp::Parameters_::set( const DictionaryDatum& d )
     if ( tau_stc_[ i ] <= 0 )
       throw BadProperty( "All time constants must be strictly positive." );
 
-
   if ( tau_ex_ <= 0 || tau_in_ <= 0 )
     throw BadProperty( "Synapse time constants must be strictly positive." );
 }
@@ -274,46 +274,43 @@ nest::gif_psc_exp::calibrate()
 
   B_.logger_.init();
 
-  double_t h = Time::get_resolution().get_ms();
+  const double_t h = Time::get_resolution().get_ms();
   V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 
   V_.P11ex_ = std::exp( -h / P_.tau_ex_ );
   V_.P11in_ = std::exp( -h / P_.tau_in_ );
 
-  double_t tau_m = P_.c_m_ / P_.g_L_;
+  const double_t tau_m = P_.c_m_ / P_.g_L_;
 
   // these are determined according to a numeric stability criterion
   V_.P21ex_ = propagator_32( P_.tau_ex_, tau_m, P_.c_m_, h );
   V_.P21in_ = propagator_32( P_.tau_in_, tau_m, P_.c_m_, h );
-
 
   V_.P33_ = std::exp( -h / tau_m );
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * tau_m;
   V_.P31_ = ( 1 - V_.P33_ );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.RefractoryCounts_
-    >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  // since t_ref_ >= 0, this can only fail in error
+  assert( V_.RefractoryCounts_ >= 0 );
 
   // initializing internal state
   if ( !S_.sfa_stc_initialized_ )
   {
     V_.P_sfa_.clear();
     V_.P_stc_.clear();
-    S_.sfa_elems_.clear();
-    S_.stc_elems_.clear();
 
     for ( size_t i = 0; i < P_.tau_sfa_.size(); i++ )
     {
       V_.P_sfa_.push_back( std::exp( -h / P_.tau_sfa_[ i ] ) );
-      S_.sfa_elems_.push_back( 0.0 );
     }
+    S_.sfa_elems_.resize( P_.tau_sfa_.size(), 0.0 );
 
     for ( size_t i = 0; i < P_.tau_stc_.size(); i++ )
     {
       V_.P_stc_.push_back( std::exp( -h / P_.tau_stc_[ i ] ) );
-      S_.stc_elems_.push_back( 0.0 );
     }
+    S_.stc_elems_.resize( P_.tau_stc_.size(), 0.0 );
 
     S_.sfa_stc_initialized_ = true;
   }
@@ -333,33 +330,29 @@ nest::gif_psc_exp::update( Time const& origin,
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  double_t q_temp_;
+  double_t q_temp;
 
   for ( long_t lag = from; lag < to; ++lag )
   {
 
     // exponential decaying stc and sfa elements
-    q_temp_ = 0;
+    q_temp = 0;
     for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
     {
-
-      q_temp_ += S_.stc_elems_[ i ];
-
+      q_temp += S_.stc_elems_[ i ];
       S_.stc_elems_[ i ] = V_.P_stc_[ i ] * S_.stc_elems_[ i ];
     }
 
-    S_.stc_ = q_temp_;
+    S_.stc_ = q_temp;
 
-    q_temp_ = 0;
+    q_temp = 0;
     for ( size_t i = 0; i < S_.sfa_elems_.size(); i++ )
     {
-
-      q_temp_ += S_.sfa_elems_[ i ];
-
+      q_temp += S_.sfa_elems_[ i ];
       S_.sfa_elems_[ i ] = V_.P_sfa_[ i ] * S_.sfa_elems_[ i ];
     }
 
-    S_.sfa_ = q_temp_ + P_.V_T_star_;
+    S_.sfa_ = q_temp + P_.V_T_star_;
 
     // exponential decaying PSCs
     S_.i_syn_ex_ *= V_.P11ex_;
@@ -370,43 +363,35 @@ nest::gif_psc_exp::update( Time const& origin,
 
     if ( S_.r_ref_ == 0 ) // neuron not refractory, so evolve V
     {
-
       if ( S_.add_stc_sfa_ )
       {
-
         S_.add_stc_sfa_ = false;
-
-
-        q_temp_ = 0;
+        q_temp = 0;
 
         for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
         {
           S_.stc_elems_[ i ] += P_.q_stc_[ i ];
-
-          q_temp_ += P_.q_stc_[ i ];
+          q_temp += P_.q_stc_[ i ];
         }
 
-        S_.stc_ += q_temp_;
+        S_.stc_ += q_temp;
 
-
-        q_temp_ = 0;
+        q_temp = 0;
 
         for ( size_t i = 0; i < S_.sfa_elems_.size(); i++ )
         {
-
           S_.sfa_elems_[ i ] += P_.q_sfa_[ i ];
-
-          q_temp_ += P_.q_sfa_[ i ];
+          q_temp += P_.q_sfa_[ i ];
         }
 
-        S_.sfa_ += q_temp_;
+        S_.sfa_ += q_temp;
       }
 
       S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.y3_
         + V_.P31_ * P_.E_L_ + S_.i_syn_ex_ * V_.P21ex_
         + S_.i_syn_in_ * V_.P21in_;
 
-      double_t lambda =
+      const double_t lambda =
         P_.lambda_0_ * std::exp( ( S_.y3_ - S_.sfa_ ) / P_.Delta_V_ );
 
 

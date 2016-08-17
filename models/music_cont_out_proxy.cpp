@@ -259,7 +259,8 @@ nest::music_cont_out_proxy::calibrate()
   {
     const Token synmodel =
       kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
-    assert( synmodel.empty() == false && "synapse 'static_synapse' not available" );
+    assert(
+      synmodel.empty() == false && "synapse 'static_synapse' not available" );
 
     const index synmodel_id = static_cast< index >( synmodel );
     std::vector< long_t >::const_iterator t;

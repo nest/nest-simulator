@@ -73,7 +73,7 @@ Parameters:
   The following properties are available in the status dictionary:
 
   interval     double   - Recording interval in milliseconds
-  targets 	   array    - Global id list of neurons to be observed
+  targets      array    - Global id list of neurons to be observed
   port_name    string   - The name of the MUSIC output port to send to
                           (default: cont_out)
   port_width   integer  - The width of the MUSIC input port

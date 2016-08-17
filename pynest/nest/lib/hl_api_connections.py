@@ -300,6 +300,30 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                                     "a scalar or a dictionary.")
                             else:
                                 syn_spec[key] = value.flatten()
+                        elif rule == 'fixed_indegree':
+                            indegree = conn_spec['indegree']
+                            if value.shape[0] != len(post) or \
+                                    value.shape[1] != indegree:
+                                raise kernel.NESTError(
+                                    "'" + key + "' has to be an array of "
+                                    "dimension " + str(len(post)) + "x" +
+                                    str(indegree) +
+                                    " (n_target x indegree), " +
+                                    "a scalar or a dictionary.")
+                            else:
+                                syn_spec[key] = value.flatten()
+                        elif rule == 'fixed_outdegree':
+                            outdegree = conn_spec['outdegree']
+                            if value.shape[0] != len(pre) or \
+                                    value.shape[1] != outdegree:
+                                raise kernel.NESTError(
+                                    "'" + key + "' has to be an array of "
+                                    "dimension " + str(len(pre)) + "x" +
+                                    str(outdegree) +
+                                    " (n_sources x outdegree), " +
+                                    "a scalar or a dictionary.")
+                            else:
+                                syn_spec[key] = value.flatten()
                         else:
                             raise kernel.NESTError(
                                 "'" + key + "' has the wrong type. "

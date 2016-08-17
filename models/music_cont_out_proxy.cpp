@@ -124,8 +124,7 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
   }
 
   if ( buffers.has_targets_
-    && ( d->known( names::interval ) 
-        || d->known( names::record_from ) ) )
+    && ( d->known( names::interval ) || d->known( names::record_from ) ) )
   {
     throw BadProperty(
       "The recording interval and the list of properties to record "
@@ -258,25 +257,23 @@ nest::music_cont_out_proxy::calibrate()
   // only publish the output port once,
   if ( S_.published_ == false )
   {
-      const Token synmodel =
-        kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
-      assert(!synmodel.empty() && "synapse 'static_synapse' not available");
+    const Token synmodel =
+      kernel().model_manager.get_synapsedict()->lookup( "static_synapse" );
+    assert( !synmodel.empty() && "synapse 'static_synapse' not available" );
 
-      const index synmodel_id = static_cast< index >( synmodel );
-      std::vector< long_t >::const_iterator t;
+    const index synmodel_id = static_cast< index >( synmodel );
+    std::vector< long_t >::const_iterator t;
 
-      for ( t = P_.target_gids_.begin(); t != P_.target_gids_.end(); ++t )
+    for ( t = P_.target_gids_.begin(); t != P_.target_gids_.end(); ++t )
+    {
+      // check whether the target is on this process
+      if ( kernel().node_manager.is_local_gid( *t ) )
       {
-        // check whether the target is on this process
-        if ( kernel().node_manager.is_local_gid( *t ) )
-        {
-          Node* const target_node = kernel().node_manager.get_node( *t );
-          kernel().connection_manager.connect( get_gid(),
-            target_node,
-            target_node->get_thread(),
-            synmodel_id );
-        }
+        Node* const target_node = kernel().node_manager.get_node( *t );
+        kernel().connection_manager.connect(
+          get_gid(), target_node, target_node->get_thread(), synmodel_id );
       }
+    }
     std::vector< MUSIC::GlobalIndex > music_index_map;
     for ( size_t i = 0; i < P_.target_gids_.size(); i++ )
     {

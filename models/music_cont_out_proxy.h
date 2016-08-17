@@ -56,16 +56,16 @@ the multimeter model. The user has to specify the recordable values to observe
 (e.g. ["V_m"]) via the record_from parameter. The target neurons are specified
 by a list of global neuron ids which must be passed via the "targets"
 parameter. The music_cont_out_proxy will be connected automatically to the
-specified target neurons. It is not possible to apply further changes to the 
-list of target neurons or observed quantities once the simulation has been 
+specified target neurons. It is not possible to apply further changes to the
+list of target neurons or observed quantities once the simulation has been
 started for the first time.
 
-In case of multiple recordables the data can be read out (PyNEST only) of the 
+In case of multiple recordables the data can be read out (PyNEST only) of the
 receiving buffer via the following access pattern:
 
 buffer[ target_gid_index ][ recordable_index] = buffer[ target_gid_index *
-record_from.size() + recordable_index ] 
-For example:  target_gids = [ 2, 5, 4 ], record_from = ["V_m"] and 
+record_from.size() + recordable_index ]
+For example:  target_gids = [ 2, 5, 4 ], record_from = ["V_m"] and
 we want to get "V_m" for neuron with GID 5: buffer[ 1*1 + 0 ]
 
 
@@ -74,11 +74,11 @@ Parameters:
 
   interval     double   - Recording interval in milliseconds
   targets 	   array    - Global id list of neurons to be observed
-  port_name    string   - The name of the MUSIC output port to send to 
+  port_name    string   - The name of the MUSIC output port to send to
                           (default: cont_out)
   port_width   integer  - The width of the MUSIC input port
-  published    bool     - A bool indicating if the port has been already 
-                          published with MUSIC. Read only property. 
+  published    bool     - A bool indicating if the port has been already
+                          published with MUSIC. Read only property.
   record_from  array    - Array containing the names of variables to record
                           from, obtained from the /recordables entry of the
                           model from which one wants to record
@@ -179,9 +179,9 @@ private:
   {
     State_();                //!< Sets default state value
     State_( const State_& ); //!< Copy constructor for state values
-    bool published_; //!< indicates whether this node has been published 
-                     //!< already with MUSIC
-    size_t port_width_; //!< the width of the MUSIC port
+    bool published_;         //!< indicates whether this node has been published
+                             //!< already with MUSIC
+    size_t port_width_;      //!< the width of the MUSIC port
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   };
 

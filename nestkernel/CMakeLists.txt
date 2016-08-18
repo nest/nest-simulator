@@ -81,15 +81,15 @@ set( nestkernel_sources
     event_delivery_manager.cpp
     node_manager.h node_manager.cpp
     logging_manager.h logging_manager.cpp
-    io_backend_screen.h io_backend_screen.cpp
-    io_backend_ascii.h io_backend_ascii.cpp
+    recording_backend_ascii.h recording_backend_ascii.cpp
+    recording_backend_screen.h recording_backend_screen.cpp
     manager_interface.h
     )
 
 if ( HAVE_SIONLIB )
   set( nestkernel_sources
       ${nestkernel_sources}
-      io_backend_sion.h io_backend_sion.cpp
+      recording_backend_sion.h recording_backend_sion.cpp
       )
 endif ()
 

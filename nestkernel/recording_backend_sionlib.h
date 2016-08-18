@@ -1,5 +1,5 @@
 /*
- *  io_backend_sion.h
+ *  recording_backend_sionlib.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef IO_BACKEND_SION_H
-#define IO_BACKEND_SION_H
+#ifndef RECORDING_BACKEND_SIONLIB_H
+#define RECORDING_BACKEND_SIONLIB_H
 
 #include <string.h>
 #include <iostream>
@@ -29,23 +29,23 @@
 #include <algorithm>
 #include <map>
 
-#include "io_backend.h"
+#include "recording_backend.h"
 
 #include "mpi.h"
 #include "sion.h"
 
 namespace nest
 {
-class IOBackendSION : public IOBackend
+class RecordingBackendSIONlib : public IOBackend
 {
 public:
-  IOBackendSION()
+  RecordingBackendSIONlib()
     : files_()
     , initialized_( false )
   {
   }
   
-  IOBackendSION( std::string file_ext,
+  RecordingBackendSIONlib( std::string file_ext,
     long buffer_size,
     long sion_chunksize,
     bool sion_collective,
@@ -60,7 +60,7 @@ public:
     P_.close_after_simulate_ = close_after_simulate;
   }
 
-  ~IOBackendSION() throw()
+  ~RecordingBackendSIONlib() throw()
   {
   }
 
@@ -158,8 +158,8 @@ private:
 
     Parameters_();
 
-    void get( const IOBackendSION&, DictionaryDatum& ) const;
-    void set( const IOBackendSION&, const DictionaryDatum& );
+    void get( const RecordingBackendSIONlib&, DictionaryDatum& ) const;
+    void set( const RecordingBackendSIONlib&, const DictionaryDatum& );
   };
 
   Parameters_ P_;
@@ -168,11 +168,11 @@ private:
 };
 
 inline void
-IOBackendSION::get_status( DictionaryDatum& d ) const
+RecordingBackendSIONlib::get_status( DictionaryDatum& d ) const
 {
   P_.get( *this, d );
 }
 
 } // namespace
 
-#endif // IO_BACKEND_SION_H
+#endif // RECORDING_BACKEND_SIONLIB_H

@@ -1,5 +1,5 @@
-#ifndef IO_BACKEND_H
-#define IO_BACKEND_H
+#ifndef RECORDING_BACKEND_H
+#define RECORDING_BACKEND_H
 
 #include <vector>
 
@@ -10,14 +10,14 @@ namespace nest
 
 class RecordingDevice;
 
-class IOBackend
+class RecordingBackend
 {
 public:
-  IOBackend()
+  RecordingBackend()
   {
   }
 
-  virtual ~IOBackend() throw(){};
+  virtual ~RecordingBackend() throw(){};
 
   virtual void enroll( RecordingDevice& device ) = 0;
   virtual void enroll( RecordingDevice& device, const std::vector< Name >& value_names ) = 0;
@@ -36,4 +36,4 @@ public:
 
 } // namespace
 
-#endif // IO_BACKEND_H
+#endif // RECORDING_BACKEND_H

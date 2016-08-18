@@ -113,7 +113,7 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
 
     copyright = '''
     <p style="text-align:center">
-        &copy; 2016 <a href="http://www.nest-initiative.org">
+        &copy; 2004 <a href="http://www.nest-initiative.org">
         The NEST Initiative</a>
     </p>
     '''
@@ -320,7 +320,7 @@ def write_helpindex(index_dic_list):
     </table>
 
     <p style="text-align:center">
-    &copy; 2016 <a href="http://www.nest-initiative.org">The NEST Initiative
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative
     </a>
     </p>
     </body>

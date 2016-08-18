@@ -27,20 +27,7 @@ else
 fi
 
 if [ "$xMPI" = "1" ] ; then
-
-cat > $HOME/.nestrc <<EOF
-    /mpirun
-    [/integertype /stringtype]
-    [/numproc     /slifile]
-    {
-     () [
-      (mpirun -np ) numproc cvs ( ) statusdict/prefix :: (/bin/nest )  slifile
-     ] {join} Fold
-    } Function def
-EOF
-
     CONFIGURE_MPI="-Dwith-mpi=ON"
-
 else
     CONFIGURE_MPI="-Dwith-mpi=OFF"
 fi

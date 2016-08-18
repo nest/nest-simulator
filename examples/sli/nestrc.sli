@@ -3,21 +3,22 @@
 % NEST has created this file for you from the template in
 % <prefix>/share/doc/nest/examples/nestrc.sli.
 % Type '/nestrc help' at the NEST prompt to learn more.
-%
 
-% The command mpirun tells NEST how to assemble a string which represents a
-% valid command for calling NEST if compiled with MPI support.
-% The details of this string depend on your MPI library and the desired
-% communication interface. Please modify the command according to your needs.
-%
-%/mpirun
-%[/integertype /stringtype]
-%[/numproc     /slifile]
-%{
-% () [
-%  (mpirun -np ) numproc cvs ( ) statusdict/prefix :: (/bin/nest )  slifile
-% ] {join} Fold
-%} Function def
+
+% The command mpirun tells NEST how to assemble a string, which
+% represents a valid command for calling a MPI-enabled executable in a
+% distributed fashion The details of this string depend on your MPI
+% library and the desired communication interface. Please modify the
+% command according to your needs.
+
+/mpirun
+[/integertype /stringtype /stringtype]
+[/numproc     /executable /scriptfile]
+{
+ () [
+  (mpirun -np ) numproc cvs ( ) executable ( ) scriptfile
+ ] {join} Fold
+} Function def
 
 % These are some suggestions for choosing a pager.
 % Type '/page help' at the NEST prompt to learn more.

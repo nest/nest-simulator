@@ -3,7 +3,7 @@
 Processing more in less time with less code.
 
 The parser go through all sli and cc files to find documentation and 
-convert it into .html .hlp files.
+convert it into .html and .hlp files.
 This is a replacement for the old help generation mechanism in NEST.
 
 CMAKE integration is also available.

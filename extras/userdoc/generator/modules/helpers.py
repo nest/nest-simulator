@@ -20,15 +20,15 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 
-def cut_it(trenner, text):
+def cut_it(separator, text):
     """
     Cut it.
 
     cut text by trenner
     """
     import re
-    if trenner:
-        return re.split(trenner, text)
+    if separator:
+        return re.split(separator, text)
     else:
         return text
 

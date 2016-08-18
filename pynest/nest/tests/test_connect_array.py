@@ -26,6 +26,7 @@ and parameter arrays in syn_spec
 
 import unittest
 import nest
+import numpy as np
 
 @nest.check_stack
 class ConnectArrayTestCase(unittest.TestCase):
@@ -35,15 +36,16 @@ class ConnectArrayTestCase(unittest.TestCase):
         """Tests of connections with parameter arrays"""
         nest.ResetKernel()
 
+        eps=1e-8
         N = 10
         K = 3
         neuron1 = nest.Create('iaf_neuron', N)
         neuron2 = nest.Create('iaf_neuron', N)
 
         Warr = [[y*10+x for x in range(K)] for y in range(N)]
-        Darr = Warr/10.0
+        Darr = [[1.0*y+0.1*x +1.0 for x in range(K)] for y in range(N)]
 
-        syn_dict = {'model': 'static_synapse', 'weight': Warr}
+        syn_dict = {'model': 'static_synapse', 'weight': Warr, 'delay': Darr}
         conn_dict = {'rule': 'fixed_indegree', 'indegree':K}
 
         nest.Connect(neuron1, neuron2, conn_spec=conn_dict, syn_spec=syn_dict)
@@ -56,7 +58,8 @@ class ConnectArrayTestCase(unittest.TestCase):
                 c=conns[j:j+1]
                 w[j] = nest.GetStatus(c,'weight')[0]
                 d[j] = nest.GetStatus(c,'delay')[0]
-                self.assertTrue(d[j]==w[j]/10.0)
+                val = d[j]-1.0-w[j]/10.0
+                self.assertTrue(val<eps and val>-eps)
                 w1=w[j]-10.0*i
                 self.assertTrue(w1==0.0 or w1==1.0 or w1==2.0)
 
@@ -69,7 +72,7 @@ class ConnectArrayTestCase(unittest.TestCase):
         neuron2 = nest.Create('iaf_neuron', N)
 
         Warr = [[y*10+x for x in range(K)] for y in range(N)]
-        Darr = Warr/10.0
+        Darr = [[1.0*y+0.1*x +1.0 for x in range(K)] for y in range(N)]
 
         syn_dict = {'model': 'static_synapse', 'weight': Warr, 'delay': Darr}
         conn_dict = {'rule': 'fixed_outdegree', 'outdegree':K}
@@ -84,7 +87,8 @@ class ConnectArrayTestCase(unittest.TestCase):
                 c=conns[j:j+1]
                 w[j] = nest.GetStatus(c,'weight')[0]
                 d[j] = nest.GetStatus(c,'delay')[0]
-                self.assertTrue(d[j]==w[j]/10.0)
+                val = d[j]-1.0-w[j]/10.0
+                self.assertTrue(val<eps and val>-eps)
                 w1=w[j]-10.0*i
                 self.assertTrue(w1==0.0 or w1==1.0 or w1==2.0)
 

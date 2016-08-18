@@ -40,7 +40,6 @@ path = os.path.abspath(path)
 allfiles = []
 for dirpath, dirnames, files in os.walk(path):
     if not re.findall(r'[.?]*MyModule[.?]*', dirpath):
-        print dirpath
         for f in files:
             if f.endswith((".sli", ".cpp", ".cc", ".h", ".py")):
                 allfiles.append(os.path.join(dirpath, f))
@@ -62,13 +61,13 @@ keywords = ["Name:", "Synopsis:", "Examples:", "Description:", "Parameters:",
 
 # Now begin to collect the data for the helpindex.html
 
+dcs = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
 for file in allfiles:
     if not file.endswith('.py'):
-        docstring = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
         f = open(('%s' % (file,)), 'r')
         filetext = f.read()
         f.close()
-        items = re.findall(docstring, filetext, re.DOTALL)
+        items = re.findall(dcs, filetext, re.DOTALL)
         # List of all .sli files. Needed for the SeeAlso part.
         # if file.endswith('.sli'):
         index_dic = {}
@@ -100,18 +99,18 @@ for file in allfiles:
 write_helpindex(index_dic_list)
 
 # Now begin to collect the data for the help files and start generating.
+dcs = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
 for file in allfiles:
     # .py is for future use
     if not file.endswith('.py'):
-        docstring = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
         f = open(('%s' % (file,)), 'r')
         filetext = f.read()
         f.close()
         # Multiline matiching to find codeblock
-        items = re.findall(docstring, filetext, re.DOTALL)
+        items = re.findall(dcs, filetext, re.DOTALL)
         for item in items:
             # Check the ifdef in code
-            require = check_ifdef(item, filetext, docstring)
+            require = check_ifdef(item, filetext, dcs)
             if require:
                 item = '\n\nRequire: ' + require + item
             alllines = []

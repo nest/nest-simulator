@@ -26,7 +26,8 @@ and parameter arrays in syn_spec
 
 import unittest
 import nest
-import numpy as np
+import numpy
+
 
 @nest.check_stack
 class ConnectArrayTestCase(unittest.TestCase):
@@ -36,7 +37,7 @@ class ConnectArrayTestCase(unittest.TestCase):
         """Tests of connections with parameter arrays"""
         nest.ResetKernel()
 
-        eps=1e-8
+        eps = 1.0e-8
         N = 10
         K = 3
         neuron1 = nest.Create('iaf_neuron', N)
@@ -46,7 +47,7 @@ class ConnectArrayTestCase(unittest.TestCase):
         Darr = [[1.0*y+0.1*x +1.0 for x in range(K)] for y in range(N)]
 
         syn_dict = {'model': 'static_synapse', 'weight': Warr, 'delay': Darr}
-        conn_dict = {'rule': 'fixed_indegree', 'indegree':K}
+        conn_dict = {'rule': 'fixed_indegree', 'indegree': K}
 
         nest.Connect(neuron1, neuron2, conn_spec=conn_dict, syn_spec=syn_dict)
 

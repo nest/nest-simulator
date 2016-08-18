@@ -36,7 +36,7 @@
 
 namespace nest
 {
-class RecordingBackendSIONlib : public IOBackend
+class RecordingBackendSIONlib : public RecordingBackend
 {
 public:
   RecordingBackendSIONlib()

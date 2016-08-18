@@ -44,27 +44,27 @@ class ConnectArrayTestCase(unittest.TestCase):
         neuron2 = nest.Create('iaf_neuron', N)
 
         Warr = [[y*10+x for x in range(K)] for y in range(N)]
-        Darr = [[1.0*y+0.1*x +1.0 for x in range(K)] for y in range(N)]
+        Darr = [[1.0*y+0.1*x+1.0 for x in range(K)] for y in range(N)]
 
         syn_dict = {'model': 'static_synapse', 'weight': Warr, 'delay': Darr}
         conn_dict = {'rule': 'fixed_indegree', 'indegree': K}
 
         nest.Connect(neuron1, neuron2, conn_spec=conn_dict, syn_spec=syn_dict)
 
-        w=[0.0, 0.0, 0.0]
-        d=[0.0, 0.0, 0.0]
+        w = [0.0, 0.0, 0.0]
+        d = [0.0, 0.0, 0.0]
         for i in range(N):
-            conns=nest.GetConnections(target=neuron2[i:i+1])
+            conns = nest.GetConnections(target=neuron2[i:i+1])
             for j in range(len(conns)):
-                c=conns[j:j+1]
-                w[j] = nest.GetStatus(c,'weight')[0]
-                d[j] = nest.GetStatus(c,'delay')[0]
+                c = conns[j:j+1]
+                w[j] = nest.GetStatus(c, 'weight')[0]
+                d[j] = nest.GetStatus(c, 'delay')[0]
                 val = d[j]-1.0-w[j]/10.0
-                self.assertTrue(val<eps and val>-eps)
-                w1=w[j]-10.0*i
-                self.assertTrue(w1==0.0 or w1==1.0 or w1==2.0)
+                self.assertTrue(val < eps and val > -eps)
+                w1 = w[j]-10.0*i
+                self.assertTrue(w1 == 0.0 or w1 == 1.0 or w1 == 2.0)
 
-            self.assertTrue(w[0]!=w[1] and w[0]!=w[2] and w[1]!=w[2])
+            self.assertTrue(w[0] != w[1] and w[0] != w[2] and w[1] != w[2])
 
         nest.ResetKernel()
         N = 10
@@ -73,27 +73,28 @@ class ConnectArrayTestCase(unittest.TestCase):
         neuron2 = nest.Create('iaf_neuron', N)
 
         Warr = [[y*10+x for x in range(K)] for y in range(N)]
-        Darr = [[1.0*y+0.1*x +1.0 for x in range(K)] for y in range(N)]
+        Darr = [[1.0*y+0.1*x+1.0 for x in range(K)] for y in range(N)]
 
         syn_dict = {'model': 'static_synapse', 'weight': Warr, 'delay': Darr}
-        conn_dict = {'rule': 'fixed_outdegree', 'outdegree':K}
+        conn_dict = {'rule': 'fixed_outdegree', 'outdegree': K}
 
         nest.Connect(neuron1, neuron2, conn_spec=conn_dict, syn_spec=syn_dict)
 
-        w=[0.0, 0.0, 0.0]
-        d=[0.0, 0.0, 0.0]
+        w = [0.0, 0.0, 0.0]
+        d = [0.0, 0.0, 0.0]
         for i in range(N):
-            conns=nest.GetConnections(source=neuron1[i:i+1])
+            conns = nest.GetConnections(source=neuron1[i:i+1])
             for j in range(len(conns)):
-                c=conns[j:j+1]
-                w[j] = nest.GetStatus(c,'weight')[0]
-                d[j] = nest.GetStatus(c,'delay')[0]
+                c = conns[j:j+1]
+                w[j] = nest.GetStatus(c, 'weight')[0]
+                d[j] = nest.GetStatus(c, 'delay')[0]
                 val = d[j]-1.0-w[j]/10.0
-                self.assertTrue(val<eps and val>-eps)
-                w1=w[j]-10.0*i
-                self.assertTrue(w1==0.0 or w1==1.0 or w1==2.0)
+                self.assertTrue(val < eps and val > -eps)
+                w1 = w[j]-10.0*i
+                self.assertTrue(w1 == 0.0 or w1 == 1.0 or w1 == 2.0)
 
-            self.assertTrue(w[0]!=w[1] and w[0]!=w[2] and w[1]!=w[2])
+            self.assertTrue(w[0] != w[1] and w[0] != w[2] and w[1] != w[2])
+
 
 def suite():
 

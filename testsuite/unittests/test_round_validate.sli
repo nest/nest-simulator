@@ -44,7 +44,4 @@ SeeAlso: floor, cvi
 
 M_ERROR setverbosity
 
-
-/- /--> def - 1. 1. eq exch pop assert_or_die
-
 /round validate  assert_or_die

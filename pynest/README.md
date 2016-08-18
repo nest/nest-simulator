@@ -21,6 +21,14 @@ PyNEST to `$(pyexecdir)`, which is often expanded as follows:
 
     $(prefix)/lib{,64}/pythonX.Y/site-packages/nest
 
+
+To force the usage of a specific Python version pass
+
+    -Dwith-python=2  or  -Dwith-python=3
+
+as an argument to `cmake`.
+
+
 To make the PyNEST module available to the Python interpreter, add the
 PyNEST installation path (without the final '/nest') to the PYTHONPATH
 environment variable.

@@ -37,9 +37,15 @@ from modules.helpers import check_ifdef
 
 path = '../../../'
 path = os.path.abspath(path)
-allfiles = [os.path.join(dirpath, f) for dirpath, dirnames, files in
-            os.walk(path) for f in files if
-            f.endswith((".sli", ".cpp", ".cc", ".h", ".py"))]
+allfiles = []
+for dirpath, dirnames, files in os.walk(path):
+    if not re.findall(r'[.?]*MyModule[.?]*', dirpath):
+        print dirpath
+        for f in files:
+            if f.endswith((".sli", ".cpp", ".cc", ".h", ".py")):
+                allfiles.append(os.path.join(dirpath, f))
+
+
 num = 0
 full_list = []
 sli_command_list = []

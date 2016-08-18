@@ -42,7 +42,7 @@
 #include "recording_backend_screen.h"
 #include "recording_backend_ascii.h"
 #ifdef HAVE_SIONLIB
-  #include "recording_backend_sion.h"
+  #include "recording_backend_sionlib.h"
 #endif
 
 // Includes from sli:

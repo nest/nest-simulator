@@ -89,7 +89,7 @@ set( nestkernel_sources
 if ( HAVE_SIONLIB )
   set( nestkernel_sources
       ${nestkernel_sources}
-      recording_backend_sion.h recording_backend_sion.cpp
+      recording_backend_sionlib.h recording_backend_sionlib.cpp
       )
 endif ()
 

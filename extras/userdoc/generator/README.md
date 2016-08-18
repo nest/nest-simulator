@@ -12,7 +12,7 @@ CMAKE integration is also available.
 
     python parse_help.py
 
-## In addition the parser solve issue \#363
+## In addition the parser solves issue \#363
 
     'ISSUE 363
     Currently, the help extractor reads all source files and extracts 

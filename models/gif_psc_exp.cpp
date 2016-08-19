@@ -381,7 +381,7 @@ nest::gif_psc_exp::update( Time const& origin,
           {
             S_.sfa_elems_[ i ] += P_.q_sfa_[ i ];
           }
-          
+
           S_.r_ref_ = V_.RefractoryCounts_;
 
           // And send the spike event

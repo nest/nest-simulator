@@ -96,8 +96,6 @@ nest::gif_psc_exp::State_::State_()
   , i_syn_ex_( 0.0 )
   , i_syn_in_( 0.0 )
   , r_ref_( 0 )
-  , sfa_stc_initialized_( false )
-  , add_stc_sfa_( false )
 {
 }
 
@@ -212,8 +210,6 @@ void
 nest::gif_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p )
 {
   updateValue< double >( d, names::V_m, y3_ );
-  sfa_stc_initialized_ =
-    false; // vectors of the state should be initialized with new parameter set.
 }
 
 nest::gif_psc_exp::Buffers_::Buffers_( gif_psc_exp& n )
@@ -294,26 +290,21 @@ nest::gif_psc_exp::calibrate()
   // since t_ref_ >= 0, this can only fail in error
   assert( V_.RefractoryCounts_ >= 0 );
 
-  // initializing internal state
-  if ( !S_.sfa_stc_initialized_ )
+  // initializing adaptation (stc/sfa) variables
+  V_.P_sfa_.clear();
+  V_.P_stc_.clear();
+
+  for ( size_t i = 0; i < P_.tau_sfa_.size(); i++ )
   {
-    V_.P_sfa_.clear();
-    V_.P_stc_.clear();
-
-    for ( size_t i = 0; i < P_.tau_sfa_.size(); i++ )
-    {
-      V_.P_sfa_.push_back( std::exp( -h / P_.tau_sfa_[ i ] ) );
-    }
-    S_.sfa_elems_.resize( P_.tau_sfa_.size(), 0.0 );
-
-    for ( size_t i = 0; i < P_.tau_stc_.size(); i++ )
-    {
-      V_.P_stc_.push_back( std::exp( -h / P_.tau_stc_[ i ] ) );
-    }
-    S_.stc_elems_.resize( P_.tau_stc_.size(), 0.0 );
-
-    S_.sfa_stc_initialized_ = true;
+    V_.P_sfa_.push_back( std::exp( -h / P_.tau_sfa_[ i ] ) );
   }
+  S_.sfa_elems_.resize( P_.tau_sfa_.size(), 0.0 );
+
+  for ( size_t i = 0; i < P_.tau_stc_.size(); i++ )
+  {
+    V_.P_stc_.push_back( std::exp( -h / P_.tau_stc_[ i ] ) );
+  }
+  S_.stc_elems_.resize( P_.tau_stc_.size(), 0.0 );
 }
 
 /* ----------------------------------------------------------------
@@ -363,29 +354,6 @@ nest::gif_psc_exp::update( Time const& origin,
 
     if ( S_.r_ref_ == 0 ) // neuron not refractory, so evolve V
     {
-      if ( S_.add_stc_sfa_ )
-      {
-        S_.add_stc_sfa_ = false;
-        q_temp = 0;
-
-        for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
-        {
-          S_.stc_elems_[ i ] += P_.q_stc_[ i ];
-          q_temp += P_.q_stc_[ i ];
-        }
-
-        S_.stc_ += q_temp;
-
-        q_temp = 0;
-
-        for ( size_t i = 0; i < S_.sfa_elems_.size(); i++ )
-        {
-          S_.sfa_elems_[ i ] += P_.q_sfa_[ i ];
-          q_temp += P_.q_sfa_[ i ];
-        }
-
-        S_.sfa_ += q_temp;
-      }
 
       S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.y3_
         + V_.P31_ * P_.E_L_ + S_.i_syn_ex_ * V_.P21ex_
@@ -403,8 +371,17 @@ nest::gif_psc_exp::update( Time const& origin,
         if ( V_.rng_->drand()
           < -numerics::expm1( -lambda * Time::get_resolution().get_ms() ) )
         {
-          S_.add_stc_sfa_ = true;
 
+          for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
+          {
+            S_.stc_elems_[ i ] += P_.q_stc_[ i ];
+          }
+
+          for ( size_t i = 0; i < S_.sfa_elems_.size(); i++ )
+          {
+            S_.sfa_elems_[ i ] += P_.q_sfa_[ i ];
+          }
+          
           S_.r_ref_ = V_.RefractoryCounts_;
 
           // And send the spike event

@@ -29,11 +29,13 @@ Synopsis: (test_gif_psc_exp) run
 
 Description:
 
- This testscript checks the correctness of gif_psc_exp neuron model. It
- injects external DC current and also three spikes to neuron and measures
- its spike times. The spike times should match the expected values. The
- expected spike times are determined by the Python code used for the
- publication: http://wiki.epfl.ch/giftoolbox
+ This testscript checks the correctness of gif_psc_exp neuron model. It injects
+ external DC current and also three spikes to neuron and measures its spike
+ times. The spike times should match the expected values. The expected spike
+ times are computed by the Python code used for the publication (Code/GIF.py in
+ http://wiki.epfl.ch/giftoolbox/documents/GIF_Toolbox.zip).
+ In order to use the Python code, the adaptation parameters (q_stc/sfa) should
+ be converted using the formula described in the model documentation.
 
 Author:  March 2016, Setareh
 SeeAlso: gif_psc_exp, testsuite::test_gif_psc_exp_multisynapse

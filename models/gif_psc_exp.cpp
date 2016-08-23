@@ -252,6 +252,7 @@ nest::gif_psc_exp::init_state_( const Node& proto )
 {
   const gif_psc_exp& pr = downcast< gif_psc_exp >( proto );
   S_ = pr.S_;
+  // sfa_elems_ and stc_elems_ are initialized in calibrate()
 }
 
 void
@@ -283,26 +284,26 @@ nest::gif_psc_exp::calibrate()
   V_.P21in_ = propagator_32( P_.tau_in_, tau_m, P_.c_m_, h );
 
   V_.P33_ = std::exp( -h / tau_m );
-  V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * tau_m;
-  V_.P31_ = ( 1 - V_.P33_ );
+  V_.P30_ = -1 / P_.c_m_ * numerics::expm1( -h / tau_m ) * tau_m;
+  V_.P31_ = -numerics::expm1( -h / tau_m );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   // since t_ref_ >= 0, this can only fail in error
   assert( V_.RefractoryCounts_ >= 0 );
 
   // initializing adaptation (stc/sfa) variables
-  V_.P_sfa_.clear();
-  V_.P_stc_.clear();
+  V_.P_sfa_.resize( P_.tau_sfa_.size(), 0.0 );
+  V_.P_stc_.resize( P_.tau_stc_.size(), 0.0 );
 
   for ( size_t i = 0; i < P_.tau_sfa_.size(); i++ )
   {
-    V_.P_sfa_.push_back( std::exp( -h / P_.tau_sfa_[ i ] ) );
+    V_.P_sfa_[ i ] = std::exp( -h / P_.tau_sfa_[ i ] );
   }
   S_.sfa_elems_.resize( P_.tau_sfa_.size(), 0.0 );
 
   for ( size_t i = 0; i < P_.tau_stc_.size(); i++ )
   {
-    V_.P_stc_.push_back( std::exp( -h / P_.tau_stc_[ i ] ) );
+    V_.P_stc_[ i ] = std::exp( -h / P_.tau_stc_[ i ] );
   }
   S_.stc_elems_.resize( P_.tau_stc_.size(), 0.0 );
 }
@@ -321,29 +322,23 @@ nest::gif_psc_exp::update( Time const& origin,
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  double_t q_temp;
-
   for ( long_t lag = from; lag < to; ++lag )
   {
 
     // exponential decaying stc and sfa elements
-    q_temp = 0;
+    S_.stc_ = 0.0;
     for ( size_t i = 0; i < S_.stc_elems_.size(); i++ )
     {
-      q_temp += S_.stc_elems_[ i ];
+      S_.stc_ += S_.stc_elems_[ i ];
       S_.stc_elems_[ i ] = V_.P_stc_[ i ] * S_.stc_elems_[ i ];
     }
 
-    S_.stc_ = q_temp;
-
-    q_temp = 0;
+    S_.sfa_ = P_.V_T_star_;
     for ( size_t i = 0; i < S_.sfa_elems_.size(); i++ )
     {
-      q_temp += S_.sfa_elems_[ i ];
+      S_.sfa_ += S_.sfa_elems_[ i ];
       S_.sfa_elems_[ i ] = V_.P_sfa_[ i ] * S_.sfa_elems_[ i ];
     }
-
-    S_.sfa_ = q_temp + P_.V_T_star_;
 
     // exponential decaying PSCs
     S_.i_syn_ex_ *= V_.P11ex_;

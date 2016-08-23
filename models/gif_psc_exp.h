@@ -79,6 +79,15 @@
 
   gamma_i = gamma_i + q_gamma_i  (in case of spike emission).
 
+  Note that in the current implementation of the model (as described in [1] and
+  [2]) the values of eta_i and gamma_i are affected immediately after spike
+  emission. However, GIF toolbox (http://wiki.epfl.ch/giftoolbox) which fits
+  the model using experimental data, returns a different set of eta_i and
+  gamma_i. It applies the jump of eta_i and gamma_i after the refractory period.
+  One can easily convert between q_eta/gamma of these two approaches:
+  q_eta_giftoolbox = q_eta_NEST * (1 - exp( -tau_ref / tau_eta ))
+  The same formula applies for q_gamma.
+
   The shape of post synaptic current is exponential.
 
   Parameters:

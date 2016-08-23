@@ -1,5 +1,5 @@
 /*
- *  io_backend_screen.h
+ *  recording_backend_screen.h
  *
  *  This file is part of NEST.
  *
@@ -20,40 +20,40 @@
  *
  */
 
-#ifndef IO_BACKEND_SCREEN_H
-#define IO_BACKEND_SCREEN_H
+#ifndef RECORDING_BACKEND_SCREEN_H
+#define RECORDING_BACKEND_SCREEN_H
 
-#include "io_backend.h"
+#include "recording_backend.h"
 
 namespace nest
 {
 
 /**
- * A simple IO backend implementation that prints all recorded data to screen.
+ * A simple recording backend implementation that prints all recorded data to screen.
  */
-class IOBackendScreen : public IOBackend
+class RecordingBackendScreen : public RecordingBackend
 {
 public:
   /**
-   * IOBackendScreen constructor
-   * The actual initialization is happening in IOBackend::initialize()
+   * RecordingBackendScreen constructor
+   * The actual initialization is happening in RecordingBackend::initialize()
    */
-  IOBackendScreen()
+  RecordingBackendScreen()
   {
   }
 
   /**
-   * IOBackendScreen destructor
-   * The actual finalization is happening in IOBackend::finalize()
+   * RecordingBackendScreen destructor
+   * The actual finalization is happening in RecordingBackend::finalize()
    */
-  ~IOBackendScreen() throw()
+  ~RecordingBackendScreen() throw()
   {
   }
 
   /**
    * Functions called by all instantiated recording devices to register themselves with their
    * metadata.
-   * Both functions are implemented trivially, since the IOBackendScreen does not handle metadata.
+   * Both functions are implemented trivially, since the RecordingBackendScreen does not handle metadata.
    */
   void enroll( RecordingDevice& device );
   void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
@@ -64,12 +64,12 @@ public:
    */
   void initialize();
   /**
-   * Finalization function. Nothing has to be finalized in case of the IOBackendScreen.
+   * Finalization function. Nothing has to be finalized in case of the RecordingBackendScreen.
    */
   void finalize();
   /**
    * Synchronization function called at the end of each time step.
-   * Again, the IOBackendScreen is not doing anything in this function.
+   * Again, the RecordingBackendScreen is not doing anything in this function.
    */
   void synchronize();
 
@@ -89,19 +89,19 @@ private:
 
     Parameters_();
 
-    void get( const IOBackendScreen&, DictionaryDatum& ) const;
-    void set( const IOBackendScreen&, const DictionaryDatum& );
+    void get( const RecordingBackendScreen&, DictionaryDatum& ) const;
+    void set( const RecordingBackendScreen&, const DictionaryDatum& );
   };
 
   Parameters_ P_;
 };
 
 inline void
-IOBackendScreen::get_status( DictionaryDatum& d ) const
+RecordingBackendScreen::get_status( DictionaryDatum& d ) const
 {
   P_.get( *this, d );
 }
 
 } // namespace
 
-#endif // IO_BACKEND_SCREEN_H
+#endif // RECORDING_BACKEND_SCREEN_H

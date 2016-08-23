@@ -1,5 +1,5 @@
 /*
- *  io_backend_ascii.h
+ *  recording_backend_ascii.h
  *
  *  This file is part of NEST.
  *
@@ -20,43 +20,43 @@
  *
  */
 
-#ifndef IO_BACKEND_ASCII_H
-#define IO_BACKEND_ASCII_H
+#ifndef RECORDING_BACKEND_ASCII_H
+#define RECORDING_BACKEND_ASCII_H
 
 #include <map>
 #include <fstream>
 
-#include "io_backend.h"
+#include "recording_backend.h"
 
 namespace nest
 {
 
 /**
- * ASCII specialization of the Logger interface.
+ * ASCII specialization of the RecordingBackend interface.
  * Recorded data is written to plain text files on a per-device-per-thread basis.
  * Some formatting options are available to allow some compatibility to legacy NEST output files.
  *
- * IOBackendASCII maintains a data structure mapping one file stream to every recording device instance
+ * RecordingBackendASCII maintains a data structure mapping one file stream to every recording device instance
  * on every thread. Files are opened and inserted into the map during the initialize() call and
  * closed in finalize().
  */
-class IOBackendASCII : public IOBackend
+class RecordingBackendASCII : public RecordingBackend
 {
 public:
   /**
-   * IOBackendASCII constructor.
+   * RecordingBackendASCII constructor.
    * The actual setup is done in initialize().
    */
-  IOBackendASCII()
+  RecordingBackendASCII()
     : files_()
   {
   }
 
   /**
-   * IOBackendASCII descructor.
+   * RecordingBackendASCII descructor.
    * File handling is done in finalize().
    */
-  ~IOBackendASCII() throw()
+  ~RecordingBackendASCII() throw()
   {
     // remaining files are not closed here but should be handled gracefully on NEST shutdown.
   }
@@ -69,19 +69,19 @@ public:
   void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
 
   /**
-   * Initialize the IOBackendASCII during simulation preparation. Here, files are opened for all
+   * Initialize the RecordingBackendASCII during simulation preparation. Here, files are opened for all
    * previously enrolled devices.
    */
   void initialize();
 
   /**
-   * Finalize the IOBackendASCII after the simulation has finished. Files are flushed and/or closed
+   * Finalize the RecordingBackendASCII after the simulation has finished. Files are flushed and/or closed
    * according to `close_after_simulate` and `flush_after_simulate` parameters.
    */
   void finalize();
 
   /**
-   * Trivial synchronization function. The IOBackendASCII does not need explicit synchronization after
+   * Trivial synchronization function. The RecordingBackendASCII does not need explicit synchronization after
    * each time step.
    */
   void synchronize();
@@ -116,8 +116,8 @@ private:
 
     Parameters_();
 
-    void get( const IOBackendASCII&, DictionaryDatum& ) const;
-    void set( const IOBackendASCII&, const DictionaryDatum& );
+    void get( const RecordingBackendASCII&, DictionaryDatum& ) const;
+    void set( const RecordingBackendASCII&, const DictionaryDatum& );
   };
 
   Parameters_ P_;
@@ -130,11 +130,11 @@ private:
 };
 
 inline void
-IOBackendASCII::get_status( DictionaryDatum& d ) const
+RecordingBackendASCII::get_status( DictionaryDatum& d ) const
 {
   P_.get( *this, d );
 }
 
 } // namespace
 
-#endif // IO_BACKEND_ASCII_H
+#endif // RECORDING_BACKEND_ASCII_H

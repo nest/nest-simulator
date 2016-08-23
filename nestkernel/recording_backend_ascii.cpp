@@ -1,5 +1,5 @@
 /*
- *  io_backend_ascii.cpp
+ *  recording_backend_ascii.cpp
  *
  *  This file is part of NEST.
  *
@@ -28,21 +28,21 @@
 
 #include "kernel_manager.h"
 #include "recording_device.h"
-#include "io_backend_ascii.h"
+#include "recording_backend_ascii.h"
 #include "vp_manager_impl.h"
 #include "compose.hpp"
 
 #include "dictutils.h"
 
 void
-nest::IOBackendASCII::enroll( RecordingDevice& device )
+nest::RecordingBackendASCII::enroll( RecordingDevice& device )
 {
   std::vector< Name > value_names;
   enroll( device, value_names );
 }
 
 void
-nest::IOBackendASCII::enroll( RecordingDevice& device, const std::vector< Name >&  )
+nest::RecordingBackendASCII::enroll( RecordingDevice& device, const std::vector< Name >&  )
 {
   const int task = device.get_vp();
   const int gid = device.get_gid();
@@ -67,7 +67,7 @@ nest::IOBackendASCII::enroll( RecordingDevice& device, const std::vector< Name >
 }
 
 void
-nest::IOBackendASCII::initialize()
+nest::RecordingBackendASCII::initialize()
 {
   // we need to delay the throwing of exceptions to the end of the parallel section
   WrappedThreadException* we = NULL;
@@ -228,7 +228,7 @@ nest::IOBackendASCII::initialize()
 }
 
 void
-nest::IOBackendASCII::finalize()
+nest::RecordingBackendASCII::finalize()
 {
   // we need to delay the throwing of exceptions to the end of the parallel section
   WrappedThreadException* we = NULL;
@@ -297,12 +297,12 @@ nest::IOBackendASCII::finalize()
 }
 
 void
-nest::IOBackendASCII::synchronize()
+nest::RecordingBackendASCII::synchronize()
 {
 }
 
 void
-nest::IOBackendASCII::write( const RecordingDevice& device, const Event& event )
+nest::RecordingBackendASCII::write( const RecordingDevice& device, const Event& event )
 {
   int vp = device.get_vp();
   int id = device.get_gid();
@@ -316,7 +316,7 @@ nest::IOBackendASCII::write( const RecordingDevice& device, const Event& event )
 }
 
 void
-nest::IOBackendASCII::write( const RecordingDevice& device,
+nest::RecordingBackendASCII::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double_t >& values )
 {
@@ -339,7 +339,7 @@ nest::IOBackendASCII::write( const RecordingDevice& device,
 }
 
 const std::string
-nest::IOBackendASCII::build_filename_( const RecordingDevice& device ) const
+nest::RecordingBackendASCII::build_filename_( const RecordingDevice& device ) const
 {
   // number of digits in number of virtual processes
   const int vpdigits = static_cast< int >( std::floor( std::log10( static_cast< float >(
@@ -373,7 +373,7 @@ nest::IOBackendASCII::build_filename_( const RecordingDevice& device ) const
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */
 
-nest::IOBackendASCII::Parameters_::Parameters_()
+nest::RecordingBackendASCII::Parameters_::Parameters_()
   : precision_( 3 )
   , file_ext_( "dat" )
   , fbuffer_size_( BUFSIZ ) // default buffer size as defined in <cstdio>
@@ -383,7 +383,7 @@ nest::IOBackendASCII::Parameters_::Parameters_()
 }
 
 void
-nest::IOBackendASCII::Parameters_::get( const IOBackendASCII& , DictionaryDatum& d ) const
+nest::RecordingBackendASCII::Parameters_::get( const RecordingBackendASCII& , DictionaryDatum& d ) const
 {
   ( *d )[ names::precision ] = precision_;
   ( *d )[ names::file_extension ] = file_ext_;
@@ -393,7 +393,7 @@ nest::IOBackendASCII::Parameters_::get( const IOBackendASCII& , DictionaryDatum&
 }
 
 void
-nest::IOBackendASCII::Parameters_::set( const IOBackendASCII& , const DictionaryDatum& d )
+nest::RecordingBackendASCII::Parameters_::set( const RecordingBackendASCII& , const DictionaryDatum& d )
 {
   updateValue< long >( d, names::precision, precision_ );
   updateValue< std::string >( d, names::file_extension, file_ext_ );
@@ -414,7 +414,7 @@ nest::IOBackendASCII::Parameters_::set( const IOBackendASCII& , const Dictionary
 }
 
 void
-nest::IOBackendASCII::set_status( const DictionaryDatum& d )
+nest::RecordingBackendASCII::set_status( const DictionaryDatum& d )
 {
   d->info(std::cout);
   

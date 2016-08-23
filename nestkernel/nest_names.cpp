@@ -371,9 +371,9 @@ const Name z( "z" );
 const Name z_connected( "z_connected" );
 
 const Name recording( "recording" );
-const Name io_backend( "io_backend" );
-const Name IOBackendScreen( "IOBackendScreen" );
-const Name IOBackendASCII( "IOBackendASCII" );
-const Name IOBackendSION( "IOBackendSION" );
+const Name recording_backend( "recording_backend" );
+const Name RecordingBackendScreen( "RecordingBackendScreen" );
+const Name RecordingBackendASCII( "RecordingBackendASCII" );
+const Name RecordingBackendSIONlib( "RecordingBackendSIONlib" );
 }
 }

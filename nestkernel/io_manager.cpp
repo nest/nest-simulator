@@ -39,10 +39,10 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "io_backend_screen.h"
-#include "io_backend_ascii.h"
+#include "recording_backend_screen.h"
+#include "recording_backend_ascii.h"
 #ifdef HAVE_SIONLIB
-  #include "io_backend_sion.h"
+  #include "recording_backend_sionlib.h"
 #endif
 
 // Includes from sli:
@@ -52,7 +52,7 @@ nest::IOManager::IOManager()
   : overwrite_files_( false )
   , backend_( NULL )
 {
-  set_backend( names::IOBackendScreen );
+  set_backend( names::RecordingBackendScreen );
 }
 
 void
@@ -131,13 +131,13 @@ nest::IOManager::set_status( const DictionaryDatum& d )
   set_data_path_prefix_( d );
   updateValue< bool >( d, "overwrite_files", overwrite_files_ );
 
-  // Setup IO backend and its options
+  // Setup recording backend and its options
   DictionaryDatum dd;
   if ( updateValue< DictionaryDatum >( d, "recording", dd ) )
   {
-    std::string io_backend;
-    if ( updateValue< std::string >( dd, names::io_backend, io_backend ) )
-      set_backend( io_backend );
+    std::string recording_backend;
+    if ( updateValue< std::string >( dd, names::recording_backend, recording_backend ) )
+      set_backend( recording_backend );
 
     backend_->set_status( dd );
   }
@@ -154,35 +154,35 @@ nest::IOManager::get_status( DictionaryDatum& d )
 bool
 nest::IOManager::set_backend( Name name )
 {
-  if ( name == names::IOBackendScreen )
+  if ( name == names::RecordingBackendScreen )
   {
     if ( backend_ != 0 )
     {
       delete backend_;
     }
-    backend_ = new IOBackendScreen();
+    backend_ = new RecordingBackendScreen();
   }
-  else if ( name == names::IOBackendASCII )
+  else if ( name == names::RecordingBackendASCII )
   {
     if ( backend_ != 0 )
     {
       delete backend_;
     }
-    backend_ = new IOBackendASCII();
+    backend_ = new RecordingBackendASCII();
   }
 #ifdef HAVE_SIONLIB
-  else if ( name == names::IOBackendSION )
+  else if ( name == names::RecordingBackendSIONlib )
   {
     if ( backend_ != 0 )
     {
       delete backend_;
     }
-    backend_ = new IOBackendSION();
+    backend_ = new RecordingBackendSIONlib();
   }
 #endif // HAVE_SIONLIB
   else
   {
-    std::string msg = String::compose( "IO backend is not known: '%1'", name );
+    std::string msg = String::compose( "Recording backend is not known: '%1'", name );
     LOG( M_WARNING, "IOManager::set_status", msg.c_str() );
     return false;
   }

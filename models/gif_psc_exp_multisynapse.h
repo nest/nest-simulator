@@ -34,27 +34,25 @@
 
 /* BeginDocumentation
   Name: gif_psc_exp_multisynapse - Current based generalized integrate-and-fire
-  neuron model according to Mensi et al. (2012)
-  and Pozzorini et al. (2015)
+  neuron model according to Mensi et al. (2012) and Pozzorini et al. (2015).
 
   Description:
 
   gif_psc_exp_multisynapse is the generalized integrate-and-fire neuron
-  according to Mensi et al. (2012)
-  and Pozzorini et al. (2015), with exponential shaped postsynaptic currents.
+  according to Mensi et al. (2012) and Pozzorini et al. (2015), with
+  exponential shaped postsynaptic currents.
 
   This model features both an adaptation current and a dynamic threshold for
-  spike-frequency
-  adaptation. The membrane potential (V) is described by the differential
-  equation:
+  spike-frequency adaptation. The membrane potential (V) is described by the
+  differential equation:
 
   C*dV(t)/dt = -g_L*(V(t)-E_L) - eta_1(t) - eta_2(t) - ... - eta_n(t) + I(t)
 
-  where each eta_i is a spike triggered current (stc), and the neuron model can
+  where each eta_i is a spike-triggered current (stc), and the neuron model can
   have arbitrary number of them.
   Dynamic of each eta_i is described by:
 
-  Tau_eta_i*d{eta_i}/dt = -eta_i
+  tau_eta_i*d{eta_i}/dt = -eta_i
 
   and in case of spike emission, its value increased by a constant (which can be
   positive or negative):
@@ -74,20 +72,37 @@
   model can have arbitrary number of them.
   Dynamic of each gamma_i is described by:
 
-  Tau_gamma_i*d{gamma_i}/dt = -gamma_i
+  tau_gamma_i*d{gamma_i}/dt = -gamma_i
 
   and in case of spike emission, its value increased by a constant (which can be
   positive or negative):
 
   gamma_i = gamma_i + q_gamma_i  (in case of spike emission).
 
-  On the postsynapic side, there can be arbitrarily many synaptic time constants
-  (gif_psc_exp has exactly
-  two: tau_syn_ex and tau_syn_in). This can be reached by specifying separate
-  receptor ports, each for a
-  different time constant. The port number has to match the respective
-  "receptor_type" in the connectors.
+  Note that in the current implementation of the model (as described in [1] and
+  [2]) the values of eta_i and gamma_i are affected immediately after spike
+  emission. However, GIF toolbox (http://wiki.epfl.ch/giftoolbox) which fits
+  the model using experimental data, requires a different set of eta_i and
+  gamma_i. It applies the jump of eta_i and gamma_i after the refractory period.
+  One can easily convert between q_eta/gamma of these two approaches:
+  q_eta_giftoolbox = q_eta_NEST * (1 - exp( -tau_ref / tau_eta ))
+  The same formula applies for q_gamma.
 
+  On the postsynapic side, there can be arbitrarily many synaptic time constants
+  (gif_psc_exp has exactly two: tau_syn_ex and tau_syn_in). This can be reached
+  by specifying separate receptor ports, each for a different time constant. The
+  port number has to match the respective "receptor_type" in the connectors.
+
+  The shape of post synaptic current is exponential.
+
+  Note that in the current implementation of the model (as described in [1] and
+  [2]) the values of eta_i and gamma_i are affected immediately after spike
+  emission. However, GIF toolbox (http://wiki.epfl.ch/giftoolbox) which fits
+  the model using experimental data, requires a different set of eta_i and
+  gamma_i. It applies the jump of eta_i and gamma_i after the refractory period.
+  One can easily convert between q_eta/gamma of these two approaches:
+  q_eta_giftoolbox = q_eta_NEST * (1 - exp( -tau_ref / tau_eta ))
+  The same formula applies for q_gamma.
 
   Parameters:
   The following parameters can be set in the status dictionary.
@@ -101,20 +116,18 @@
     I_e        double - Constant external input current in pA.
 
   Spike adaptation and firing intensity parameters:
-    q_stc      vector of double - Values added to spike triggered currents (stc)
-  after each spike emission in nA.
+    q_stc      vector of double - Values added to spike-triggered currents (stc)
+                                  after each spike emission in nA.
     tau_stc    vector of double - Time constants of stc variables in ms.
     q_sfa      vector of double - Values added to spike-frequency adaptation
-  (sfa) after each spike emission in mV.
+                                  (sfa) after each spike emission in mV.
     tau_sfa    vector of double - Time constants of sfa variables in ms.
     Delta_V    double - Stochasticity level in mV.
     lambda_0   double - Stochastic intensity at firing threshold V_T in 1/s.
     V_T_star   double - Minimum threshold in mV
 
   Synaptic parameters
-    taus_syn  vector of double - Time constants of the synaptic currents in ms
-  (exp function).
-
+    taus_syn  vector of double - Time constants of the synaptic currents in ms.
 
   References:
 
@@ -163,7 +176,6 @@ public:
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
 
-
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
@@ -185,7 +197,6 @@ private:
    */
   struct Parameters_
   {
-
     double_t g_L_;
     double_t E_L_;
     double_t V_reset_;
@@ -225,7 +236,6 @@ private:
     /** boolean flag which indicates whether the neuron has connections */
     bool has_connections_;
 
-
     /** External DC current. */
     double_t I_e_;
 
@@ -258,10 +268,6 @@ private:
 
     int_t r_ref_; //!< absolute refractory counter (no membrane potential
     // propagation)
-
-    bool sfa_stc_initialized_; //!< it is true if the vectors are initialized
-    bool add_stc_sfa_; //!< in case of true, the stc and sfa amplitudes should
-    // be added
 
     State_(); //!< Default initialization
 
@@ -297,7 +303,6 @@ private:
     double_t P30_;
     double_t P33_;
     double_t P31_;
-
     std::vector< double_t > P_sfa_;
     std::vector< double_t > P_stc_;
 
@@ -330,7 +335,7 @@ private:
 
   //! Read out the spike triggered current
   double_t
-  get_stc_() const
+  get_I_stc_() const
   {
     return S_.stc_;
   }
@@ -365,7 +370,6 @@ gif_psc_exp_multisynapse::send_test_event( Node& target,
 
   return target.handles_test_event( e, receptor_type );
 }
-
 
 inline port
 gif_psc_exp_multisynapse::handles_test_event( CurrentEvent&,

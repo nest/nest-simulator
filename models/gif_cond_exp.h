@@ -44,28 +44,25 @@
 
 /* BeginDocumentation
   Name: gif_cond_exp - Conductance based generalized integrate-and-fire neuron
-  model according to Mensi et al. (2012)
-  and Pozzorini et al. (2015)
+  model according to Mensi et al. (2012) and Pozzorini et al. (2015).
 
   Description:
 
-  gif_psc_exp is the generalized integrate-and-fire neuron according to Mensi et
-  al. (2012)
-  and Pozzorini et al. (2015), with post-synaptic conductances in the form of
-  truncated exponentials.
+  gif_psc_exp is the generalized integrate-and-fire neuron according to
+  Mensi et al. (2012) and Pozzorini et al. (2015), with post-synaptic
+  conductances in the form of truncated exponentials.
 
   This model features both an adaptation current and a dynamic threshold for
-  spike-frequency
-  adaptation. The membrane potential (V) is described by the differential
-  equation:
+  spike-frequency adaptation. The membrane potential (V) is described by the
+  differential equation:
 
   C*dV(t)/dt = -g_L*(V(t)-E_L) - eta_1(t) - eta_2(t) - ... - eta_n(t) + I(t)
 
-  where each eta_i is a spike triggered current (stc), and the neuron model can
+  where each eta_i is a spike-triggered current (stc), and the neuron model can
   have arbitrary number of them.
   Dynamic of each eta_i is described by:
 
-  Tau_eta_i*d{eta_i}/dt = -eta_i
+  tau_eta_i*d{eta_i}/dt = -eta_i
 
   and in case of spike emission, its value increased by a constant (which can be
   positive or negative):
@@ -85,13 +82,23 @@
   model can have arbitrary number of them.
   Dynamic of each gamma_i is described by:
 
-  Tau_gamma_i*d{gamma_i}/dt = -gamma_i
+  tau_gamma_i*d{gamma_i}/dt = -gamma_i
 
   and in case of spike emission, its value increased by a constant (which can be
   positive or negative):
 
   gamma_i = gamma_i + q_gamma_i  (in case of spike emission).
 
+  Note that in the current implementation of the model (as described in [1] and
+  [2]) the values of eta_i and gamma_i are affected immediately after spike
+  emission. However, GIF toolbox (http://wiki.epfl.ch/giftoolbox) which fits
+  the model using experimental data, requires a different set of eta_i and
+  gamma_i. It applies the jump of eta_i and gamma_i after the refractory period.
+  One can easily convert between q_eta/gamma of these two approaches:
+  q_eta_giftoolbox = q_eta_NEST * (1 - exp( -tau_ref / tau_eta ))
+  The same formula applies for q_gamma.
+
+  The shape of synaptic conductance is exponential.
 
   Parameters:
   The following parameters can be set in the status dictionary.
@@ -105,11 +112,11 @@
     I_e        double - Constant external input current in pA.
 
   Spike adaptation and firing intensity parameters:
-    q_stc      vector of double - Values added to spike triggered currents (stc)
-  after each spike emission in nA.
+    q_stc      vector of double - Values added to spike-triggered currents (stc)
+                                  after each spike emission in nA.
     tau_stc    vector of double - Time constants of stc variables in ms.
     q_sfa      vector of double - Values added to spike-frequency adaptation
-  (sfa) after each spike emission in mV.
+                                  (sfa) after each spike emission in mV.
     tau_sfa    vector of double - Time constants of sfa variables in ms.
     Delta_V    double - Stochasticity level in mV.
     lambda_0   double - Stochastic intensity at firing threshold V_T in 1/s.
@@ -117,12 +124,9 @@
 
   Synaptic parameters
     E_ex       double - Excitatory reversal potential in mV.
-    tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (exp
-  function).
+    tau_syn_ex double - Rise time of excitatory synaptic conductance in ms.
     E_in       double - Inhibitory reversal potential in mV.
-    tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms
-  (exp function).
-
+    tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms.
 
   References:
 
@@ -134,7 +138,6 @@
   [2] Pozzorini C, Mensi S, Hagens O, Naud R, Koch C, Gerstner W (2015)
   Automated High-Throughput Characterization of Single Neurons by Means of
   Simplified Spiking Models. PLoS Comput. Biol., 11(6), e1004275.
-
 
   Sends: SpikeEvent
 
@@ -202,7 +205,6 @@ private:
    */
   struct Parameters_
   {
-
     double_t g_L_;
     double_t E_L_;
     double_t V_reset_;
@@ -210,12 +212,12 @@ private:
     double_t V_T_star_;
     double_t lambda_0_; /** 1/ms */
 
-    double_t E_ex_;     /** Excitatory reversal Potential in mV */
-    double_t E_in_;     /** Inhibitory reversal Potential in mV  */
-    double_t tau_synE_; /** Synaptic Time Constant Excitatory Synapse in ms  */
+    double_t E_ex_; /** Excitatory reversal Potential in mV */
+    double_t E_in_; /** Inhibitory reversal Potential in mV  */
+    double_t
+      tau_synE_; /** Synaptic Time Constant for Excitatory Synapse in ms */
     double_t
       tau_synI_; /** Synaptic Time Constant for Inhibitory Synapse in ms */
-
 
     /** Refractory period in ms. */
     double_t t_ref_;
@@ -226,10 +228,10 @@ private:
     /** We use stc and sfa, respectively instead of eta and gamma
     (mentioned in the references). */
 
-    /** List of spike triggered current time constant in ms. */
+    /** List of spike-triggered current time constant in ms. */
     std::vector< double_t > tau_stc_;
 
-    /** List of spike triggered current jumps in nA. */
+    /** List of spike-triggered current jumps in nA. */
     std::vector< double_t > q_stc_;
 
     /** List of adaptive threshold time constant in ms. */
@@ -254,7 +256,6 @@ private:
    */
   struct State_
   {
-
     //! Symbolic indices to the elements of the state vector y
     enum StateVecElems
     {
@@ -269,21 +270,17 @@ private:
 
     double_t y0_;  //!< This is piecewise constant external current
     double_t sfa_; //!< This is the change of the 'threshold' due to adaptation.
-    double_t stc_; //!< Spike triggered current.
+    double_t stc_; //!< Spike-triggered current.
 
     std::vector< double_t > sfa_elems_; //!< Vector of adaptation parameters.
     std::vector< double_t >
-      stc_elems_; //!< Vector of spike triggered parameters.
+      stc_elems_; //!< Vector of spike-triggered parameters.
 
     double_t i_syn_ex_; //!< postsynaptic current for exc.
     double_t i_syn_in_; //!< postsynaptic current for inh.
 
     int_t r_ref_; //!< absolute refractory counter (no membrane potential
     // propagation)
-
-    bool sfa_stc_initialized_; //!< it is true if the vectors are initialized
-    bool add_stc_sfa_; //!< in case of true, the stc and sfa amplitudes should
-    // be added
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -342,7 +339,6 @@ private:
 
   // Access functions for UniversalDataLogger -----------------------
 
-
   //! Read out state vector elements, used by UniversalDataLogger
   template < State_::StateVecElems elem >
   double_t
@@ -358,9 +354,9 @@ private:
     return S_.sfa_;
   }
 
-  //! Read out the spike triggered current
+  //! Read out the spike-triggered current
   double_t
-  get_stc_() const
+  get_I_stc_() const
   {
     return S_.stc_;
   }

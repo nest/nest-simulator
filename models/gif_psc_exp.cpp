@@ -57,7 +57,7 @@ RecordablesMap< gif_psc_exp >::create()
   // use standard names wherever you can for consistency!
   insert_( names::V_m, &gif_psc_exp::get_V_m_ );
   insert_( names::E_sfa, &gif_psc_exp::get_E_sfa_ );
-  insert_( names::stc, &gif_psc_exp::get_stc_ );
+  insert_( names::I_stc, &gif_psc_exp::get_I_stc_ );
   insert_( names::input_currents_ex, &gif_psc_exp::get_input_currents_ex_ );
   insert_( names::input_currents_in, &gif_psc_exp::get_input_currents_in_ );
 }
@@ -203,7 +203,7 @@ nest::gif_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y3_ );    // Membrane potential
   def< double >( d, names::E_sfa, sfa_ ); // Adaptive threshold potential
-  def< double >( d, names::stc, stc_ );   // Spike triggered current
+  def< double >( d, names::stc, stc_ );   // Spike-triggered current
 }
 
 void
@@ -268,7 +268,6 @@ nest::gif_psc_exp::init_buffers_()
 void
 nest::gif_psc_exp::calibrate()
 {
-
   B_.logger_.init();
 
   const double_t h = Time::get_resolution().get_ms();
@@ -357,10 +356,8 @@ nest::gif_psc_exp::update( Time const& origin,
       const double_t lambda =
         P_.lambda_0_ * std::exp( ( S_.y3_ - S_.sfa_ ) / P_.Delta_V_ );
 
-
       if ( lambda > 0.0 )
       {
-
         // Draw random number and compare to prob to have a spike
         // hazard function is computed by 1 - exp(- lambda * dt)
         if ( V_.rng_->drand()

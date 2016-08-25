@@ -82,7 +82,7 @@
   Note that in the current implementation of the model (as described in [1] and
   [2]) the values of eta_i and gamma_i are affected immediately after spike
   emission. However, GIF toolbox (http://wiki.epfl.ch/giftoolbox) which fits
-  the model using experimental data, returns a different set of eta_i and
+  the model using experimental data, requires a different set of eta_i and
   gamma_i. It applies the jump of eta_i and gamma_i after the refractory period.
   One can easily convert between q_eta/gamma of these two approaches:
   q_eta_giftoolbox = q_eta_NEST * (1 - exp( -tau_ref / tau_eta ))
@@ -102,7 +102,7 @@
     I_e        double - Constant external input current in pA.
 
   Spike adaptation and firing intensity parameters:
-    q_stc      vector of double - Values added to spike triggered currents (stc)
+    q_stc      vector of double - Values added to spike-triggered currents (stc)
                                   after each spike emission in nA.
     tau_stc    vector of double - Time constants of stc variables in ms.
     q_sfa      vector of double - Values added to spike-frequency adaptation
@@ -116,7 +116,6 @@
     tau_syn_ex double - Time constant of the excitatory synaptic current in ms.
     tau_syn_in double - Time constant of the inhibitory synaptic current in ms.
 
-
   References:
 
   [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)
@@ -127,7 +126,6 @@
   [2] Pozzorini C, Mensi S, Hagens O, Naud R, Koch C, Gerstner W (2015)
   Automated High-Throughput Characterization of Single Neurons by Means of
   Simplified Spiking Models. PLoS Comput. Biol., 11(6), e1004275.
-
 
   Sends: SpikeEvent
 
@@ -166,7 +164,6 @@ public:
   port handles_test_event( SpikeEvent&, rport );
   port handles_test_event( CurrentEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
-
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -320,7 +317,7 @@ private:
 
   //! Read out the spike triggered current
   double_t
-  get_stc_() const
+  get_I_stc_() const
   {
     return S_.stc_;
   }

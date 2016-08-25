@@ -247,6 +247,7 @@ class LowpassFilterSpikeDetector(unittest.TestCase):
                                              10 * np.finfo(float).eps)['ktrace_values']
         self.assertAlmostEquals(device_trace, python_trace)
 
+
 def suite():
 
     # makeSuite is sort of obsolete http://bugs.python.org/issue2721

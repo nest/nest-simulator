@@ -130,22 +130,22 @@ nest::lowpassfilter_spike_detector::init_buffers_()
   spikes_device_.init_buffers();
   filtered_device_.init_buffers();
 
-  std::vector< double_t > tmp_filter_times( 0 );
+  std::vector< double > tmp_filter_times( 0 );
   S_.filter_times_.swap( tmp_filter_times );
 
-  std::vector< std::vector< double_t > > tmp_node_traces(
-    S_.node_gids_.size(), std::vector< double_t >() );
+  std::vector< std::vector< double > > tmp_node_traces(
+    S_.node_gids_.size(), std::vector< double >() );
   S_.node_traces_.swap( tmp_node_traces );
 
   // Size is known.
-  std::vector< double_t > tmp_trace_times( S_.node_gids_.size(), 0.0 );
+  std::vector< double > tmp_trace_times( S_.node_gids_.size(), 0.0 );
   B_.trace_times_.swap( tmp_trace_times );
 
   // Size is known.
-  std::vector< double_t > tmp_traces( S_.node_gids_.size(), 0.0 );
+  std::vector< double > tmp_traces( S_.node_gids_.size(), 0.0 );
   B_.traces_.swap( tmp_traces );
 
-  std::vector< long_t > tmp_steps_to_filter( 0 );
+  std::vector< long > tmp_steps_to_filter( 0 );
   B_.steps_to_filter_.swap( tmp_steps_to_filter );
 
   std::vector< std::vector< std::vector< Event* > > > tmp_node_spikes(
@@ -202,25 +202,25 @@ nest::lowpassfilter_spike_detector::calibrate()
 
 void
 nest::lowpassfilter_spike_detector::print_value( long sender,
-  double_t time,
-  double_t value )
+  double time,
+  double value )
 {
   filtered_device_.print_value( sender, false );
   filtered_device_.print_value( time, false );
   filtered_device_.print_value( value, true );
 }
 
-nest::long_t
-nest::lowpassfilter_spike_detector::filter_step_( long_t update_start )
+long
+nest::lowpassfilter_spike_detector::filter_step_( long update_start )
 {
   // This method returns the first step to report based on the current filter
   // block.
 
-  long_t interval_step = P_.filter_report_interval_.get_steps();
-  long_t filterblock_start_step =
+  long interval_step = P_.filter_report_interval_.get_steps();
+  long filterblock_start_step =
     Time( Time::ms( P_.filter_start_times_[ V_.filter_block_index_ ] ) )
       .get_steps();
-  long_t filter_step;
+  long filter_step;
 
   if ( filterblock_start_step + interval_step > update_start )
   {
@@ -230,7 +230,7 @@ nest::lowpassfilter_spike_detector::filter_step_( long_t update_start )
   else
   {
     filter_step = filterblock_start_step + interval_step
-      + std::ceil( ( ( double_t )( ( update_start + 1 )
+      + std::ceil( ( ( double )( ( update_start + 1 )
                        - ( filterblock_start_step + interval_step ) )
           / interval_step ) ) * interval_step;
 
@@ -245,16 +245,16 @@ nest::lowpassfilter_spike_detector::filter_step_( long_t update_start )
   return filter_step;
 }
 
-double_t
+double
 nest::lowpassfilter_spike_detector::add_impulse_( long node )
 {
   B_.traces_[ node ] += 1.0 / P_.tau_;
   return B_.traces_[ node ];
 }
 
-double_t
+double
 nest::lowpassfilter_spike_detector::calculate_decay_( long node,
-  double_t to_time )
+  double to_time )
 {
   B_.traces_[ node ] =
     exp( ( B_.trace_times_[ node ] - to_time ) / P_.tau_ ) * B_.traces_[ node ];
@@ -264,8 +264,8 @@ nest::lowpassfilter_spike_detector::calculate_decay_( long node,
 
 void
 nest::lowpassfilter_spike_detector::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
 
   /**
@@ -303,7 +303,7 @@ nest::lowpassfilter_spike_detector::update( Time const& origin,
          == 0 ) )
   {
 
-    long_t filter_step;
+    long filter_step;
     bool filter_steps_exist = false;
 
     // If the statement below is true,
@@ -489,7 +489,7 @@ nest::lowpassfilter_spike_detector::update( Time const& origin,
 
         else
         {
-          std::vector< long_t >::iterator begin_it =
+          std::vector< long >::iterator begin_it =
             std::upper_bound( B_.steps_to_filter_.begin(),
               B_.steps_to_filter_.end(),
               Time( Time::ms( B_.trace_times_[ node_idx ] ) ).get_steps() );
@@ -551,7 +551,7 @@ nest::lowpassfilter_spike_detector::update( Time const& origin,
     {
       // Adding all the filter step times within this update window to the
       // array.
-      for ( std::vector< long_t >::iterator filter_step_iter =
+      for ( std::vector< long >::iterator filter_step_iter =
               B_.steps_to_filter_.begin();
             filter_step_iter != B_.steps_to_filter_.end();
             ++filter_step_iter )
@@ -604,8 +604,8 @@ nest::lowpassfilter_spike_detector::get_status( DictionaryDatum& d ) const
   initialize_property_intvector( filter_events, names::senders );
 
   size_t nr = S_.filter_times_.size() * S_.node_traces_.size();
-  std::vector< double_t > filter_values( nr );
-  std::vector< double_t > filter_times( nr );
+  std::vector< double > filter_values( nr );
+  std::vector< double > filter_times( nr );
   std::vector< long > senders( nr );
 
   // To maintain consistency with how recording to file/screen is done.
@@ -657,8 +657,8 @@ nest::lowpassfilter_spike_detector::set_status( const DictionaryDatum& d )
 
   if ( d->known( names::filter_report_interval ) )
   {
-    double_t v;
-    if ( updateValue< double_t >( d, names::filter_report_interval, v ) )
+    double v;
+    if ( updateValue< double >( d, names::filter_report_interval, v ) )
     {
       if ( Time( Time::ms( v ) ) < Time::get_resolution() )
       {
@@ -684,9 +684,9 @@ nest::lowpassfilter_spike_detector::set_status( const DictionaryDatum& d )
     && d->known( names::filter_stop_times ) )
   {
     P_.filter_start_times_ =
-      getValue< std::vector< double_t > >( d, names::filter_start_times );
+      getValue< std::vector< double > >( d, names::filter_start_times );
     P_.filter_stop_times_ =
-      getValue< std::vector< double_t > >( d, names::filter_stop_times );
+      getValue< std::vector< double > >( d, names::filter_stop_times );
   }
 
   // Checking to see if filter start and stop time sizes match.
@@ -759,11 +759,11 @@ nest::lowpassfilter_spike_detector::set_status( const DictionaryDatum& d )
 
   for ( size_t i = 0; i < indices_to_remove.size(); i++ )
   {
-    std::vector< double_t >::iterator start_it =
+    std::vector< double >::iterator start_it =
       P_.filter_start_times_.begin() + indices_to_remove[ i ] - i;
     P_.filter_start_times_.erase( start_it );
 
-    std::vector< double_t >::iterator stop_it =
+    std::vector< double >::iterator stop_it =
       P_.filter_stop_times_.begin() + indices_to_remove[ i ] - i;
     P_.filter_stop_times_.erase( stop_it );
   }
@@ -820,8 +820,8 @@ nest::lowpassfilter_spike_detector::set_status( const DictionaryDatum& d )
   filtered_device_.set_status( f_d );
 
   // If n_filter_events is set to 0, all data on memory should be cleared.
-  long_t ne = 0;
-  if ( updateValue< long_t >( d, names::n_events, ne ) )
+  long ne = 0;
+  if ( updateValue< long >( d, names::n_events, ne ) )
   {
     if ( ne == 0 )
     {
@@ -849,7 +849,7 @@ nest::lowpassfilter_spike_detector::handle( SpikeEvent& e )
   {
     assert( e.get_multiplicity() > 0 );
 
-    long_t dest_buffer;
+    long dest_buffer;
     if ( kernel()
            .modelrange_manager.get_model_of_gid( e.get_sender_gid() )
            ->has_proxies() )
@@ -863,7 +863,7 @@ nest::lowpassfilter_spike_detector::handle( SpikeEvent& e )
       dest_buffer = kernel().event_delivery_manager.write_toggle();
     }
 
-    for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+    for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
       // We store the complete events
       Event* event = e.clone();

@@ -189,14 +189,14 @@ private:
   void init_buffers_();
   void calibrate();
   void finalize();
-  void print_value( long sender, double_t time, double_t value );
-  nest::long_t filter_step_( long_t update_start ); // Returns the first step to
-                                                    // report based on the
-                                                    // current filter block.
-  double_t add_impulse_(
+  void print_value( long sender, double time, double value );
+  long filter_step_( long update_start ); // Returns the first step to
+                                          // report based on the
+                                          // current filter block.
+  double add_impulse_(
     long node ); // Adds to and returns the current trace value for the node.
-  double_t calculate_decay_( long node,
-    double_t
+  double calculate_decay_( long node,
+    double
       to_time ); // calculates and returns the decayed trace value for the node.
 
   /**
@@ -208,7 +208,7 @@ private:
    *
    * @see RecordingDevice
    */
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /**
    * Buffer for incoming spikes.
@@ -237,10 +237,10 @@ private:
     // behavior of the low-pass filter.
     // Default value is false.
     bool record_spikes_;
-    double_t tau_;
+    double tau_;
 
-    std::vector< double_t > filter_start_times_;
-    std::vector< double_t > filter_stop_times_;
+    std::vector< double > filter_start_times_;
+    std::vector< double > filter_stop_times_;
     Time filter_report_interval_;
 
 
@@ -255,9 +255,9 @@ private:
     // stores the gids of the nodes connected to this device.
     std::vector< long > node_gids_;
     // stores traces for each node if to_memory == true.
-    std::vector< std::vector< double_t > > node_traces_;
+    std::vector< std::vector< double > > node_traces_;
     // stores the times for trace calculations for each node.
-    std::vector< double_t > filter_times_;
+    std::vector< double > filter_times_;
 
     State_();
   };
@@ -273,11 +273,11 @@ private:
   struct Buffers_
   {
     // Stores the trace (only the last value) for each node.
-    std::vector< double_t > traces_;
+    std::vector< double > traces_;
     // Stores the last simulation time trace was calculated for each node.
-    std::vector< double_t > trace_times_;
+    std::vector< double > trace_times_;
     // The steps to report in each min_delay interval.
-    std::vector< long_t > steps_to_filter_;
+    std::vector< long > steps_to_filter_;
     // stores the spike events for each node.
     std::vector< std::vector< std::vector< Event* > > > node_spikes_;
   };

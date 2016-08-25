@@ -216,7 +216,7 @@ nest::Archiving_Node::get_status( DictionaryDatum& d ) const
   def< double >( d, names::tau_minus_triplet, tau_minus_triplet_ );
   // By default, the neuron does't support the precise integration scheme.
   // This property can be only set by the neuron implementation and not from outside.
-  def< bool >(d, names::is_precise_neuron, false);
+  def< bool >(d, names::is_precise_neuron, this->is_off_grid());
 #ifdef DEBUG_ARCHIVER
   def< int >( d, names::archiver_length, history_.size() );
 #endif

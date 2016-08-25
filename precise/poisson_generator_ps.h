@@ -224,6 +224,7 @@ poisson_generator_ps::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   device_.get_status( d );
+  def< bool >(d, names::is_precise_neuron, false);
 }
 
 inline void

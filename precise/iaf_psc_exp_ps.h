@@ -434,7 +434,7 @@ iaf_psc_exp_ps::get_status( DictionaryDatum& d ) const
   P_.get( d );
   S_.get( d, P_ );
   Archiving_Node::get_status( d );
-  def< bool >(d, names::is_precise_neuron, true);
+
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 

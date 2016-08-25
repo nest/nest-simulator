@@ -29,3 +29,5 @@ grid_neuron GetStatus /is_precise_neuron get false eq assert_or_die
 /iaf_psc_alpha_presc Create /precise_neuron Set
 precise_neuron GetStatus /is_precise_neuron get true eq assert_or_die
 
+/poisson_generator_ps Create /precise_neuron Set
+precise_neuron GetStatus /is_precise_neuron get false eq assert_or_die

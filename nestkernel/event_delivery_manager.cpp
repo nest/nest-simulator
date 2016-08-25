@@ -51,6 +51,9 @@ EventDeliveryManager::EventDeliveryManager()
   , global_offgrid_spikes_()
   , displacements_()
   , comm_marker_( 0 )
+  , time_collocate_( 0.0 )
+  , time_communicate_( 0.0 )
+  , local_spike_counter_( 0U )
 {
 }
 
@@ -67,6 +70,7 @@ void
 EventDeliveryManager::initialize()
 {
   init_moduli();
+  reset_timers_counters();
 }
 
 void
@@ -89,6 +93,9 @@ void
 EventDeliveryManager::get_status( DictionaryDatum& dict )
 {
   def< bool >( dict, "off_grid_spiking", off_grid_spiking_ );
+  def< double >( dict, "time_collocate", time_collocate_ );
+  def< double >( dict, "time_communicate", time_communicate_ );
+  def< unsigned long >( dict, "local_spike_counter", local_spike_counter_ );
 }
 
 void
@@ -247,6 +254,14 @@ EventDeliveryManager::update_moduli()
 }
 
 void
+EventDeliveryManager::reset_timers_counters()
+{
+  time_collocate_ = 0.0;
+  time_communicate_ = 0.0;
+  local_spike_counter_ = 0U;
+}
+
+void
 EventDeliveryManager::collocate_buffers_( bool done )
 {
   // count number of spikes in registers
@@ -269,6 +284,9 @@ EventDeliveryManager::collocate_buffers_( bool done )
     for ( jt = it->begin(); jt != it->end(); ++jt )
       num_offgrid_spikes += jt->size();
 
+  // accumulate number of generated spikes in the local spike counter
+  local_spike_counter_ += num_grid_spikes + num_offgrid_spikes;
+
   // here we need to count the secondary events and take them
   // into account in the size of the buffers
   // assume that we already serialized all secondary
@@ -285,6 +303,7 @@ EventDeliveryManager::collocate_buffers_( bool done )
   // +1 for bool-value done
   num_spikes =
     num_grid_spikes + num_offgrid_spikes + uintsize_secondary_events + 2;
+
   if ( !off_grid_spiking_ ) // on grid spiking
   {
     // make sure buffers are correctly sized
@@ -583,12 +602,30 @@ EventDeliveryManager::deliver_events( thread t )
 void
 EventDeliveryManager::gather_events( bool done )
 {
+  // IMPORTANT: Ensure that gather_events(..) is called from a single thread and
+  //            NOT from a parallel OpenMP region!!!
+
+  // Stop watch for time measurements within this function
+  static Stopwatch stw_local;
+
+  stw_local.reset();
+  stw_local.start();
   collocate_buffers_( done );
+  stw_local.stop();
+  time_collocate_ += stw_local.elapsed();
+  stw_local.reset();
+  stw_local.start();
   if ( off_grid_spiking_ )
+  {
     kernel().mpi_manager.communicate(
       local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
+  }
   else
+  {
     kernel().mpi_manager.communicate(
       local_grid_spikes_, global_grid_spikes_, displacements_ );
+  }
+  stw_local.stop();
+  time_communicate_ += stw_local.elapsed();
 }
 }

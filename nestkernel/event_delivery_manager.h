@@ -29,10 +29,11 @@
 
 // Includes from libnestutil:
 #include "manager_interface.h"
+#include "stopwatch.h"
 
 // Includes from nestkernel:
-#include "mpi_manager.h" // OffGridSpike
 #include "event.h"
+#include "mpi_manager.h" // OffGridSpike
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
@@ -213,6 +214,12 @@ public:
    */
   void init_moduli();
 
+  /**
+   * Set cumulative time measurements for collocating buffers
+   * and for communication to zero; set local spike counter to zero.
+   */
+  virtual void reset_timers_counters();
+
 private:
   /**
    * Rearrange the spike_register into a 2-dim structure. This is
@@ -312,6 +319,24 @@ private:
    * steps during communication.
    */
   const unsigned int comm_marker_;
+
+  /**
+   * Time that was spent on collocation of MPI buffers during the last call to
+   * simulate.
+   */
+  double time_collocate_;
+
+  /**
+   * Time that was spent on communication of events during the last call to
+   * simulate.
+   */
+  double time_communicate_;
+
+  /**
+   * Number of generated spike events (both off- and on-grid) during the last
+   * call to simulate.
+   */
+  unsigned long local_spike_counter_;
 };
 
 

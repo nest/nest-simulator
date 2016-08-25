@@ -109,7 +109,7 @@ find_program( SED NAMES sed gsed )
 ##################   CPack, checks, ... in external modules   ##################
 ################################################################################
 include(GenerateHelp)
-g
+
 # This include checks the symbols, etc.
 include( CheckIncludesSymbols )
 

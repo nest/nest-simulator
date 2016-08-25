@@ -28,10 +28,11 @@
 import math
 import numpy as np
 import unittest
+import sys
 import nest
 
 
-def lowpass_filter_python(senders, spike_times, sampling_times, tau, comparison_threshold):
+def lowpass_filter_python(senders, spike_times, sampling_times, tau):
     # Here the trace is calculated for each sample_time by calculating it forward from each spike time to sample time
     uniq_senders = (np.array)(np.unique(senders))
     total_spikes = np.size(spike_times)
@@ -62,7 +63,7 @@ def lowpass_filter_python(senders, spike_times, sampling_times, tau, comparison_
             if (spktimes_.size == gid_idx):  # if last element; N.B: size here is never 0
                 idx += 1
             else:
-                if (abs(st - spktimes_[gid_idx]) >= comparison_threshold):  # 10 * np.finfo(float).eps)
+                if (abs(spike_times[idx] - st) > max(1e-9 * max(abs(spike_times[idx]), abs(st)), 0.0)):  # if greater
                     idx += 1
 
     # Here the trace is calculated for each sample_time by calculating it forward from each spike time to sample time
@@ -89,7 +90,7 @@ def lowpass_filter_python(senders, spike_times, sampling_times, tau, comparison_
                 sample_trace = math.exp((spike_times[idx - 1] - st) / tau) * node_traces[idx - 1]['traces']
 
             if spike_times.size > idx:
-                if spike_times[idx] - st < comparison_threshold:  # 10 * np.finfo(float).eps: #if they are the same
+                if abs(spike_times[idx] - st) <= max(1e-9 * max(abs(spike_times[idx]), abs(st)), 0.0): # if they are the same
                     sample_trace = node_traces[idx]['traces']
 
             ktrace_values[trace_idx] = sample_trace
@@ -179,7 +180,6 @@ class LowpassFilterSpikeDetector(unittest.TestCase):
         traces = nest.GetStatus(lpfsd, 'filter_events')[0]['filter_values']
         # One can calculate the result numerically and the result at time 54ms is 0.04959474
         # This line checks against result calculated on pen and paper
-        #assert(abs(np.round(traces[len(traces)-1], 8) - np.round(0.04959474, 8)) < 10 * np.finfo(float).eps)
         device_trace = traces[len(traces) - 1]
         calcul_trace = 0.04959474
         self.assertAlmostEquals(device_trace, calcul_trace)
@@ -190,8 +190,7 @@ class LowpassFilterSpikeDetector(unittest.TestCase):
         python_trace = lowpass_filter_python(senders,
                                              spike_times,
                                              sampling_times,
-                                             30.0,
-                                             10 * np.finfo(float).eps)['ktrace_values']
+                                             30.0)['ktrace_values']
         self.assertAlmostEquals(device_trace, python_trace)
 
     def test_SegmentedSimulation(self):
@@ -243,8 +242,7 @@ class LowpassFilterSpikeDetector(unittest.TestCase):
         python_trace = lowpass_filter_python(senders,
                                              spike_times,
                                              sampling_times,
-                                             30.0,
-                                             10 * np.finfo(float).eps)['ktrace_values']
+                                             30.0)['ktrace_values']
         self.assertAlmostEquals(device_trace, python_trace)
 
 

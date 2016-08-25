@@ -518,6 +518,9 @@ nest::SimulationManager::prepare_simulation_()
 {
   assert( to_do_ != 0 ); // This is checked in simulate()
 
+  // Reset profiling timers and counters within event_delivery_manager
+  kernel().event_delivery_manager.reset_timers_counters();
+
   // find shortest and longest delay across all MPI processes
   // this call sets the member variables
   kernel().connection_manager.update_delay_extrema_();

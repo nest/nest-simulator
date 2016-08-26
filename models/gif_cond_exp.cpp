@@ -63,7 +63,7 @@ template <>
 void
 RecordablesMap< gif_cond_exp >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_(
     names::V_m, &gif_cond_exp::get_y_elem_< gif_cond_exp::State_::V_M > );
   insert_( names::E_sfa, &gif_cond_exp::get_E_sfa_ );

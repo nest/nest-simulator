@@ -64,7 +64,7 @@ template <>
 void
 RecordablesMap< gif_cond_exp_multisynapse >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m,
     &gif_cond_exp_multisynapse::
       get_y_elem_< gif_cond_exp_multisynapse::State_::V_M > );

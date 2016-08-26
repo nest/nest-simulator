@@ -64,7 +64,7 @@ public:
    *
    * @note Not const, since it may update delay extrema as a side-effect.
    */
-  void assert_valid_delay_ms( double_t );
+  void assert_valid_delay_ms( double );
 
   /**
    * Raise exception if either of the two delays in steps is invalid.

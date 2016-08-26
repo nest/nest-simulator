@@ -114,9 +114,7 @@ nest::poisson_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator::update( Time const& T,
-  const long_t from,
-  const long_t to )
+nest::poisson_generator::update( Time const& T, const long from, const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
@@ -125,7 +123,7 @@ nest::poisson_generator::update( Time const& T,
   if ( P_.rate_ <= 0 )
     return;
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     if ( !device_.is_active( T + Time::step( lag ) ) )
       continue; // no spike at this lag
@@ -139,7 +137,7 @@ void
 nest::poisson_generator::event_hook( DSSpikeEvent& e )
 {
   librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
-  long_t n_spikes = V_.poisson_dev_.ldev( rng );
+  long n_spikes = V_.poisson_dev_.ldev( rng );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

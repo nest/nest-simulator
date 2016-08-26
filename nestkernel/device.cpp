@@ -86,8 +86,8 @@ nest::Device::Parameters_::update_( const DictionaryDatum& d,
          or be infinite. Infinite values are handled gracefully.
   */
 
-  double_t val;
-  if ( updateValue< double_t >( d, name, val ) )
+  double val;
+  if ( updateValue< double >( d, name, val ) )
   {
     const Time t = Time::ms( val );
     if ( t.is_finite() && not t.is_grid_time() )

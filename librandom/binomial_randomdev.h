@@ -146,9 +146,9 @@ private:
   double p_;                     //!<probability p of binomial distribution
   double phi_;
   long m_;
-  unsigned int n_;            //!<parameter n in binomial distribution
-  std::vector< double_t > f_; //!< precomputed table of f
-  unsigned int n_tablemax_;   //!< current maximal n with precomputed values
+  unsigned int n_;          //!<parameter n in binomial distribution
+  std::vector< double > f_; //!< precomputed table of f
+  unsigned int n_tablemax_; //!< current maximal n with precomputed values
 
   void init_();                   //!< check and initialize internal parameters
   void PrecomputeTable( size_t ); //!< compute the internal lookup table

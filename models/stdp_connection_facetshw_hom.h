@@ -175,25 +175,25 @@ private:
 
 
   // data members common to all connections
-  double_t tau_plus_;
-  double_t tau_minus_;
-  double_t Wmax_;
-  double_t weight_per_lut_entry_;
+  double tau_plus_;
+  double tau_minus_;
+  double Wmax_;
+  double weight_per_lut_entry_;
 
   // STDP controller parameters
-  long_t no_synapses_;
-  long_t synapses_per_driver_;
-  double_t driver_readout_time_;
-  double_t readout_cycle_duration_;
+  long no_synapses_;
+  long synapses_per_driver_;
+  double driver_readout_time_;
+  double readout_cycle_duration_;
   // TODO: TP: size in memory could be reduced
-  std::vector< long_t > lookuptable_0_;
-  std::vector< long_t > lookuptable_1_;
-  std::vector< long_t > lookuptable_2_; // TODO: TP: to save memory one could
-                                        // introduce vector<bool> &
-                                        // BoolVectorDatum
-  std::vector< long_t > configbit_0_;
-  std::vector< long_t > configbit_1_;
-  std::vector< long_t > reset_pattern_;
+  std::vector< long > lookuptable_0_;
+  std::vector< long > lookuptable_1_;
+  std::vector< long > lookuptable_2_; // TODO: TP: to save memory one could
+                                      // introduce vector<bool> &
+                                      // BoolVectorDatum
+  std::vector< long > configbit_0_;
+  std::vector< long > configbit_1_;
+  std::vector< long > reset_pattern_;
 };
 
 
@@ -248,7 +248,7 @@ public:
    */
   void send( Event& e,
     thread t,
-    double_t t_lastspike,
+    double t_lastspike,
     const STDPFACETSHWHomCommonProperties< targetidentifierT >& );
 
 
@@ -284,7 +284,7 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t t_lastspike,
+    double t_lastspike,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -295,48 +295,49 @@ public:
   }
 
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
 
 private:
-  bool eval_function_( double_t a_causal,
-    double_t a_acausal,
-    double_t a_thresh_th,
-    double_t a_thresh_tl,
-    std::vector< long_t > configbit );
+  bool eval_function_( double a_causal,
+    double a_acausal,
+    double a_thresh_th,
+    double a_thresh_tl,
+    std::vector< long > configbit );
 
   // transformation biological weight <-> discrete weight (represented in index
   // of look-up table)
-  uint_t weight_to_entry_( double_t weight, double_t weight_per_lut_entry );
-  double_t entry_to_weight_( uint_t discrete_weight,
-    double_t weight_per_lut_entry );
+  unsigned int weight_to_entry_( double weight, double weight_per_lut_entry );
+  double entry_to_weight_( unsigned int discrete_weight,
+    double weight_per_lut_entry );
 
-  uint_t lookup_( uint_t discrete_weight_, std::vector< long_t > table );
+  unsigned int lookup_( unsigned int discrete_weight_,
+    std::vector< long > table );
 
   // data members of each connection
-  double_t weight_;
-  double_t a_causal_;
-  double_t a_acausal_;
-  double_t a_thresh_th_;
-  double_t a_thresh_tl_;
+  double weight_;
+  double a_causal_;
+  double a_acausal_;
+  double a_thresh_th_;
+  double a_thresh_tl_;
 
   bool init_flag_;
-  long_t synapse_id_;
-  double_t next_readout_time_;
-  uint_t discrete_weight_; // TODO: TP: only needed in send, move to common
-                           // properties or "static"?
+  long synapse_id_;
+  double next_readout_time_;
+  unsigned int
+    discrete_weight_; // TODO: TP: only needed in send, move to common
+                      // properties or "static"?
 };
 
 template < typename targetidentifierT >
 inline bool
-STDPFACETSHWConnectionHom< targetidentifierT >::eval_function_(
-  double_t a_causal,
-  double_t a_acausal,
-  double_t a_thresh_th,
-  double_t a_thresh_tl,
-  std::vector< long_t > configbit )
+STDPFACETSHWConnectionHom< targetidentifierT >::eval_function_( double a_causal,
+  double a_acausal,
+  double a_thresh_th,
+  double a_thresh_tl,
+  std::vector< long > configbit )
 {
   // compare charge on capacitors with thresholds and return evaluation bit
   return ( a_thresh_tl + configbit[ 2 ] * a_causal
@@ -347,30 +348,29 @@ STDPFACETSHWConnectionHom< targetidentifierT >::eval_function_(
 }
 
 template < typename targetidentifierT >
-inline uint_t
-STDPFACETSHWConnectionHom< targetidentifierT >::weight_to_entry_(
-  double_t weight,
-  double_t weight_per_lut_entry )
+inline unsigned int
+STDPFACETSHWConnectionHom< targetidentifierT >::weight_to_entry_( double weight,
+  double weight_per_lut_entry )
 {
   // returns the discrete weight in terms of the look-up table index
   return round( weight / weight_per_lut_entry );
 }
 
 template < typename targetidentifierT >
-inline double_t
+inline double
 STDPFACETSHWConnectionHom< targetidentifierT >::entry_to_weight_(
-  uint_t discrete_weight,
-  double_t weight_per_lut_entry )
+  unsigned int discrete_weight,
+  double weight_per_lut_entry )
 {
   // returns the continuous weight
   return discrete_weight * weight_per_lut_entry;
 }
 
 template < typename targetidentifierT >
-inline uint_t
+inline unsigned int
 STDPFACETSHWConnectionHom< targetidentifierT >::lookup_(
-  uint_t discrete_weight_,
-  std::vector< long_t > table )
+  unsigned int discrete_weight_,
+  std::vector< long > table )
 {
   // look-up in table
   return table[ discrete_weight_ ];
@@ -387,12 +387,12 @@ template < typename targetidentifierT >
 inline void
 STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
+  double t_lastspike,
   const STDPFACETSHWHomCommonProperties< targetidentifierT >& cp )
 {
   // synapse STDP dynamics
 
-  double_t t_spike = e.get_stamp().get_ms();
+  double t_spike = e.get_stamp().get_ms();
 
   // remove const-ness of common properties
   // this is not a nice solution, but only a workaround
@@ -470,7 +470,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
 
   // t_lastspike_ = 0 initially
 
-  double_t dendritic_delay = Time( Time::step( get_delay_steps() ) ).get_ms();
+  double dendritic_delay = Time( Time::step( get_delay_steps() ) ).get_ms();
 
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
@@ -478,8 +478,8 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
   get_target( t )->get_history(
     t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
-  double_t minus_dt = 0;
-  double_t plus_dt = 0;
+  double minus_dt = 0;
+  double plus_dt = 0;
 
   if ( start != finish ) // take only first postspike after last prespike
   {

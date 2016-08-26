@@ -66,7 +66,7 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     else if ( dit->first == names::number_of_connections )
     {
 
-      number_of_connections_ = getValue< long_t >( dit->second );
+      number_of_connections_ = getValue< long >( dit->second );
     }
     else if ( dit->first == names::mask )
     {

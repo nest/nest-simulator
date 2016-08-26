@@ -139,7 +139,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /**
    * @todo Should use binomial distribution
@@ -157,10 +157,10 @@ private:
    */
   struct Parameters_
   {
-    double_t rate_;   //!< process rate in Hz
-    double_t p_copy_; //!< copy probability for each spike in the mother process
-    ulong_t mother_seed_;   //!< seed of the mother process
-    librandom::RngPtr rng_; //!< random number generator for mother process
+    double rate_;   //!< process rate in Hz
+    double p_copy_; //!< copy probability for each spike in the mother process
+    unsigned long mother_seed_; //!< seed of the mother process
+    librandom::RngPtr rng_;     //!< random number generator for mother process
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );

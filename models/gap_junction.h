@@ -76,7 +76,7 @@ template < typename targetidentifierT >
 class GapJunction : public Connection< targetidentifierT >
 {
 
-  double_t weight_;
+  double weight_;
 
 public:
   // this line determines which common properties to use
@@ -109,7 +109,7 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t,
+    double,
     const CommonPropertiesType& )
   {
     EventType ge;
@@ -128,7 +128,7 @@ public:
    * \param t_lastspike Time point of last spike emitted
    */
   void
-  send( Event& e, thread t, double_t, const CommonSynapseProperties& )
+  send( Event& e, thread t, double, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_receiver( *get_target( t ) );
@@ -141,12 +141,13 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
 
-  void set_delay( double_t )
+  void
+  set_delay( double )
   {
     throw BadProperty( "gap_junction connection has no delay" );
   }
@@ -160,8 +161,8 @@ GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
   // errors due to internal calls of
   // this function in SLI/pyNEST
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  def< double >( d, names::weight, weight_ );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
@@ -174,7 +175,7 @@ GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d,
     throw BadProperty( "gap_junction connection has no delay" );
 
   ConnectionBase::set_status( d, cm );
-  updateValue< double_t >( d, names::weight, weight_ );
+  updateValue< double >( d, names::weight, weight_ );
 }
 
 } // namespace

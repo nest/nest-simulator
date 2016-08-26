@@ -28,7 +28,7 @@
 
 namespace nest
 {
-Vose::Vose( std::vector< double_t > dist )
+Vose::Vose( std::vector< double > dist )
 {
   assert( !dist.empty() );
 
@@ -37,8 +37,8 @@ Vose::Vose( std::vector< double_t > dist )
   dist_.resize( n );
 
   // We accept distributions that do not sum to 1.
-  double_t sum = 0.0;
-  for ( std::vector< double_t >::iterator it = dist.begin(); it != dist.end();
+  double sum = 0.0;
+  for ( std::vector< double >::iterator it = dist.begin(); it != dist.end();
         ++it )
     sum += *it;
 
@@ -48,7 +48,7 @@ Vose::Vose( std::vector< double_t > dist )
 
   index i = 0;
 
-  for ( std::vector< double_t >::iterator it = dist.begin(); it != dist.end();
+  for ( std::vector< double >::iterator it = dist.begin(); it != dist.end();
         ++it )
   {
     if ( *it <= sum / n )
@@ -86,7 +86,7 @@ index
 Vose::get_random_id( librandom::RngPtr rng ) const
 {
   // Choose random number between 0 and n
-  double_t r = rng->drand() * dist_.size();
+  double r = rng->drand() * dist_.size();
 
   // Use integer part to select bin
   index i = static_cast< index >( r );

@@ -135,7 +135,7 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t,
+    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -149,7 +149,7 @@ public:
    * \param t_lastspike Time point of last spike emitted
    */
   void
-  send( Event& e, thread t, double_t, const CommonPropertiesHomW& cp )
+  send( Event& e, thread t, double, const CommonPropertiesHomW& cp )
   {
     e.set_weight( cp.get_weight() );
     e.set_delay( get_delay_steps() );
@@ -158,7 +158,8 @@ public:
     e();
   }
 
-  void set_weight( double_t )
+  void
+  set_weight( double )
   {
     throw BadProperty(
       "Setting of individual weights is not possible! The common weights can "
@@ -174,7 +175,7 @@ StaticConnectionHomW< targetidentifierT >::get_status(
   DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 } // namespace

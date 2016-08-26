@@ -50,9 +50,9 @@ void
 nest::step_current_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ "amplitude_times" ] =
-    DoubleVectorDatum( new std::vector< double_t >( amp_times_ ) );
+    DoubleVectorDatum( new std::vector< double >( amp_times_ ) );
   ( *d )[ "amplitude_values" ] =
-    DoubleVectorDatum( new std::vector< double_t >( amp_values_ ) );
+    DoubleVectorDatum( new std::vector< double >( amp_values_ ) );
 }
 
 void
@@ -60,9 +60,9 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d,
   Buffers_& b )
 {
   const bool ut =
-    updateValue< std::vector< double_t > >( d, "amplitude_times", amp_times_ );
-  const bool uv = updateValue< std::vector< double_t > >(
-    d, "amplitude_values", amp_values_ );
+    updateValue< std::vector< double > >( d, "amplitude_times", amp_times_ );
+  const bool uv =
+    updateValue< std::vector< double > >( d, "amplitude_values", amp_values_ );
 
   if ( ut xor uv )
     throw BadProperty( "Amplitude times and values must be reset together." );
@@ -73,8 +73,8 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d,
   // ensure amp times are strictly monotonically increasing
   if ( !amp_times_.empty() )
   {
-    std::vector< double_t >::const_iterator prev = amp_times_.begin();
-    for ( std::vector< double_t >::const_iterator next = prev + 1;
+    std::vector< double >::const_iterator prev = amp_times_.begin();
+    for ( std::vector< double >::const_iterator next = prev + 1;
           next != amp_times_.end();
           ++next, ++prev )
       if ( *prev >= *next )
@@ -141,23 +141,23 @@ nest::step_current_generator::calibrate()
 
 void
 nest::step_current_generator::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   assert( P_.amp_times_.size() == P_.amp_values_.size() );
 
-  const long_t t0 = origin.get_steps();
+  const long t0 = origin.get_steps();
 
   // Skip any times in the past. Since we must send events proactively,
   // idx_ must point to times in the future.
-  const long_t first = t0 + from;
+  const long first = t0 + from;
   while ( B_.idx_ < P_.amp_times_.size()
     && Time( Time::ms( P_.amp_times_[ B_.idx_ ] ) ).get_steps() <= first )
     ++B_.idx_;
 
-  for ( long_t offs = from; offs < to; ++offs )
+  for ( long offs = from; offs < to; ++offs )
   {
-    const long_t curr_time = t0 + offs;
+    const long curr_time = t0 + offs;
 
     // Keep the amplitude up-to-date at all times.
     // We need to change the amplitude one step ahead of time, see comment

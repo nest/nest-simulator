@@ -88,8 +88,8 @@ class ConnectArrayTestCase(unittest.TestCase):
         ############################################
         nest.ResetKernel()
 
-        net1 = nest.Create('iaf_neuron', N) # creates source subnet
-        net2 = nest.Create('iaf_neuron', N) # creates target subnet
+        net1 = nest.Create('iaf_neuron', N)  # creates source subnet
+        net2 = nest.Create('iaf_neuron', N)  # creates target subnet
 
         Warr = [[y*K+x for x in range(K)] for y in range(N)]  # weight array
         Darr = [[y*K+x + 1 for x in range(K)] for y in range(N)]  # delay array

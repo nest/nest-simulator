@@ -47,7 +47,7 @@ class ConnectArrayTestCase(unittest.TestCase):
         net1 = nest.Create('iaf_neuron', N)  # creates source subnet
         net2 = nest.Create('iaf_neuron', N)  # creates target subnet
 
-        Warr = [[y*K+x for x in range(K)] for y in range(N)]      # weight array
+        Warr = [[y*K+x for x in range(K)] for y in range(N)]  # weight array
         Darr = [[y*K+x + 1 for x in range(K)] for y in range(N)]  # delay array
 
         # synapses and connection dictionaries
@@ -81,7 +81,8 @@ class ConnectArrayTestCase(unittest.TestCase):
             Warr1 += Warr2                    # joins Warr1 to Warr2
 
         for i in range(N*K):
-            self.assertTrue(Warr1[i] == i) # checks the elements of Warr1
+            self.assertTrue(Warr1[i] == i)  # checks the elements of Warr1
+
         ############################################
         # test with connection rule fixed_outdegree
         ############################################
@@ -90,7 +91,7 @@ class ConnectArrayTestCase(unittest.TestCase):
         net1 = nest.Create('iaf_neuron', N) # creates source subnet
         net2 = nest.Create('iaf_neuron', N) # creates target subnet
 
-        Warr = [[y*K+x for x in range(K)] for y in range(N)]      # weight array
+        Warr = [[y*K+x for x in range(K)] for y in range(N)]  # weight array
         Darr = [[y*K+x + 1 for x in range(K)] for y in range(N)]  # delay array
 
         # synapses and connection dictionaries
@@ -125,7 +126,7 @@ class ConnectArrayTestCase(unittest.TestCase):
 
         for i in range(N*K):
             self.assertTrue(Warr1[i] == i)  # checks the elements of Warr
-        
+
 
 def suite():
 

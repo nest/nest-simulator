@@ -44,11 +44,11 @@ class ConnectArrayTestCase(unittest.TestCase):
         ############################################
         nest.ResetKernel()
 
-        net1 = nest.Create('iaf_neuron', N) # creates source subnet
-        net2 = nest.Create('iaf_neuron', N) # creates target subnet
+        net1 = nest.Create('iaf_neuron', N)  # creates source subnet
+        net2 = nest.Create('iaf_neuron', N)  # creates target subnet
 
-        Warr = [[y*K+x for x in range(K)] for y in range(N)]     # weight array
-        Darr = [[y*K+x + 1 for x in range(K)] for y in range(N)] # delay array
+        Warr = [[y*K+x for x in range(K)] for y in range(N)]      # weight array
+        Darr = [[y*K+x + 1 for x in range(K)] for y in range(N)]  # delay array
 
         # synapses and connection dictionaries
         syn_dict = {'model': 'static_synapse', 'weight': Warr, 'delay': Darr}
@@ -71,14 +71,14 @@ class ConnectArrayTestCase(unittest.TestCase):
                 c = conns[j:j+1]
                 w = nest.GetStatus(c, 'weight')[0]  # gets synaptic weight
                 d = nest.GetStatus(c, 'delay')[0]   # gets synaptic delay
-                
-                self.assertTrue(d - w == 1) # checks that delay = weight + 1
 
-                Warr2.append(w) # appends w to Warr2
+                self.assertTrue(d - w == 1)  # checks that delay = weight + 1
 
-            self.assertTrue(len(Warr2) == K) # checks the size of Warr2
-            Warr2.sort()                     # sorts the elements of Warr2
-            Warr1 += Warr2                   # joins Warr1 to Warr2
+                Warr2.append(w)  # appends w to Warr2
+
+            self.assertTrue(len(Warr2) == K)  # checks the size of Warr2
+            Warr2.sort()                      # sorts the elements of Warr2
+            Warr1 += Warr2                    # joins Warr1 to Warr2
 
         for i in range(N*K):
             self.assertTrue(Warr1[i] == i) # checks the elements of Warr1
@@ -90,8 +90,8 @@ class ConnectArrayTestCase(unittest.TestCase):
         net1 = nest.Create('iaf_neuron', N) # creates source subnet
         net2 = nest.Create('iaf_neuron', N) # creates target subnet
 
-        Warr = [[y*K+x for x in range(K)] for y in range(N)]     # weight array
-        Darr = [[y*K+x + 1 for x in range(K)] for y in range(N)] # delay array
+        Warr = [[y*K+x for x in range(K)] for y in range(N)]      # weight array
+        Darr = [[y*K+x + 1 for x in range(K)] for y in range(N)]  # delay array
 
         # synapses and connection dictionaries
         syn_dict = {'model': 'static_synapse', 'weight': Warr, 'delay': Darr}
@@ -114,17 +114,17 @@ class ConnectArrayTestCase(unittest.TestCase):
                 c = conns[j:j+1]
                 w = nest.GetStatus(c, 'weight')[0]  # gets synaptic weight
                 d = nest.GetStatus(c, 'delay')[0]   # gets synaptic delay
-                
-                self.assertTrue(d - w == 1) # checks that delay = weight + 1
+
+                self.assertTrue(d - w == 1)  # checks that delay = weight + 1
 
                 Warr2.append(w) # appends w to Warr2
 
-            self.assertTrue(len(Warr2) == K) # checks the size of Warr2
-            Warr2.sort()                     # sorts the elements of Warr2
-            Warr1 += Warr2                   # joins Warr1 to Warr2
+            self.assertTrue(len(Warr2) == K)  # checks the size of Warr2
+            Warr2.sort()                      # sorts the elements of Warr2
+            Warr1 += Warr2                    # joins Warr1 to Warr2
 
         for i in range(N*K):
-            self.assertTrue(Warr1[i] == i) # checks the elements of Warr
+            self.assertTrue(Warr1[i] == i)  # checks the elements of Warr
         
 
 def suite():

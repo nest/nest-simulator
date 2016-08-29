@@ -118,7 +118,7 @@ class ConnectArrayTestCase(unittest.TestCase):
 
                 self.assertTrue(d - w == 1)  # checks that delay = weight + 1
 
-                Warr2.append(w) # appends w to Warr2
+                Warr2.append(w)  # appends w to Warr2
 
             self.assertTrue(len(Warr2) == K)  # checks the size of Warr2
             Warr2.sort()                      # sorts the elements of Warr2

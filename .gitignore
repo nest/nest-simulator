@@ -9,11 +9,7 @@ pynest/pynestkernel.cpp
 *.la
 .*
 *.log
-<<<<<<< HEAD
 *.pyc
-config.status
-=======
->>>>>>> master
 Makefile
 build/
 

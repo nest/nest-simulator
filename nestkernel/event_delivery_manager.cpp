@@ -83,12 +83,6 @@ EventDeliveryManager::initialize()
     }
     off_grid_spike_register_5g_[ tid ] = new std::vector< std::vector< std::vector< OffGridTarget > > >( num_threads, std::vector< std::vector< OffGridTarget > >( kernel().connection_manager.get_min_delay(), std::vector< OffGridTarget >( 0 ) ) );
   }
-
-  // use at least 2 * number of processes entries (need at least two
-  // entries per process to use flag of first entry as validity and
-  // last entry to communicate end of communication)
-  kernel().mpi_manager.set_buffer_size_target_data( 2 * kernel().mpi_manager.get_num_processes() );
-  kernel().mpi_manager.set_buffer_size_spike_data( 2 * kernel().mpi_manager.get_num_processes() );
 }
 
 void
@@ -690,8 +684,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     {
 #pragma omp single
       {
-        buffer_size_spike_data_has_changed_ = true;
-        kernel().mpi_manager.increase_buffer_size_spike_data();
+        buffer_size_spike_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_spike_data();
       }
     }
 #pragma omp barrier
@@ -933,8 +926,7 @@ EventDeliveryManager::gather_target_data()
       {
 #pragma omp single
         {
-          buffer_size_target_data_has_changed_ = true;
-          kernel().mpi_manager.increase_buffer_size_target_data();
+          buffer_size_target_data_has_changed_ = kernel().mpi_manager.increase_buffer_size_target_data();
         }
       }
 #pragma omp barrier

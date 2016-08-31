@@ -218,8 +218,8 @@ public:
   void set_buffer_size_target_data( size_t buffer_size );
   void set_buffer_size_spike_data( size_t buffer_size );
 
-  void increase_buffer_size_target_data();
-  void increase_buffer_size_spike_data();
+  bool increase_buffer_size_target_data();
+  bool increase_buffer_size_spike_data();
 
   bool adaptive_target_buffers() const;
   bool adaptive_spike_buffers() const;
@@ -232,8 +232,10 @@ private:
   int send_buffer_size_; //!< expected size of send buffer
   int recv_buffer_size_; //!< size of receive buffer
   bool use_mpi_;         //!< whether MPI is used
-  size_t buffer_size_target_data_; //!< total size of MPI buffer used for communication of connections
-  size_t buffer_size_spike_data_; //!< total size of MPI buffer used for communication of spikes
+  size_t buffer_size_target_data_; //!< total size of MPI buffer for communication of connections
+  size_t buffer_size_spike_data_; //!< total size of MPI buffer for communication of spikes
+  size_t max_buffer_size_target_data_; //!< maximal size of MPI buffer for communication of connections
+  size_t max_buffer_size_spike_data_; //!< maximal size of MPI buffer for communication of spikes
   bool adaptive_target_buffers_; //!< whether MPI buffers for communication of connections resize on the fly
   bool adaptive_spike_buffers_; //!< whether MPI buffers for communication of spikes resize on the fly
 
@@ -465,18 +467,34 @@ MPIManager::set_buffer_size_spike_data( size_t buffer_size )
   buffer_size_spike_data_ = buffer_size;
 }
 
-inline void
+inline bool
 MPIManager::increase_buffer_size_target_data()
 {
   assert( adaptive_target_buffers_ );
-  buffer_size_target_data_ *= 2;
+  if ( buffer_size_target_data_ < max_buffer_size_target_data_ )
+  {
+    buffer_size_target_data_ *= 2;
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
-inline void
+inline bool
 MPIManager::increase_buffer_size_spike_data()
 {
   assert( adaptive_spike_buffers_ );
-  buffer_size_spike_data_ *= 2;
+  if ( buffer_size_spike_data_ < max_buffer_size_spike_data_ )
+  {
+    buffer_size_spike_data_ *= 2;
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 inline bool

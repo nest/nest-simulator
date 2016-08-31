@@ -65,6 +65,8 @@ nest::MPIManager::MPIManager()
   , use_mpi_( false )
   , buffer_size_target_data_( 1 )
   , buffer_size_spike_data_( 1 )
+  , max_buffer_size_target_data_( 4194304 )
+  , max_buffer_size_spike_data_( 4194304 )
   , adaptive_target_buffers_( true )
   , adaptive_spike_buffers_( true )
 #ifdef HAVE_MPI
@@ -100,6 +102,11 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   MPI_Comm_rank( comm, &rank_ );
 
   recv_buffer_size_ = send_buffer_size_ * get_num_processes();
+  // use at least 2 * number of processes entries (need at least two
+  // entries per process to use flag of first entry as validity and
+  // last entry to communicate end of communication)
+  kernel().mpi_manager.set_buffer_size_target_data( 2 * kernel().mpi_manager.get_num_processes() );
+  kernel().mpi_manager.set_buffer_size_spike_data( 2 * kernel().mpi_manager.get_num_processes() );
 
   // create off-grid-spike type for MPI communication
   // creating derived datatype
@@ -148,21 +155,24 @@ nest::MPIManager::set_status( const DictionaryDatum& dict )
   updateValue< bool >( dict, "adaptive_target_buffers", adaptive_target_buffers_ );
   updateValue< bool >( dict, "adaptive_spike_buffers", adaptive_spike_buffers_ );
 
-  const long old_buffer_size_target_data = buffer_size_target_data_;
-  long new_buffer_size_target_data = old_buffer_size_target_data;
+  long new_buffer_size_target_data = buffer_size_target_data_;
   updateValue< long >( dict, "buffer_size_target_data", new_buffer_size_target_data );
-  if ( old_buffer_size_target_data != new_buffer_size_target_data )
+  if ( new_buffer_size_target_data != static_cast< long >( buffer_size_target_data_ )
+       and new_buffer_size_target_data < static_cast< long >( max_buffer_size_target_data_ ) )
   {
     set_buffer_size_target_data( new_buffer_size_target_data );
   }
 
-  const long old_buffer_size_spike_data = buffer_size_spike_data_;
-  long new_buffer_size_spike_data = old_buffer_size_spike_data;
+  long new_buffer_size_spike_data = buffer_size_spike_data_;
   updateValue< long >( dict, "buffer_size_spike_data", new_buffer_size_spike_data );
-  if ( old_buffer_size_spike_data != new_buffer_size_spike_data )
+  if ( new_buffer_size_spike_data != static_cast< long >( buffer_size_spike_data_ )
+       and new_buffer_size_spike_data < static_cast< long >( max_buffer_size_spike_data_ ) )
   {
     set_buffer_size_spike_data( new_buffer_size_spike_data );
   }
+
+  updateValue< long >( dict, "max_buffer_size_target_data", max_buffer_size_target_data_ );
+  updateValue< long >( dict, "max_buffer_size_spike_data", max_buffer_size_spike_data_ );
 }
 
 void
@@ -175,6 +185,8 @@ nest::MPIManager::get_status( DictionaryDatum& dict )
   def< bool >( dict, "adaptive_spike_buffers", adaptive_spike_buffers_ );
   def< size_t >( dict, "buffer_size_target_data", buffer_size_target_data_ );
   def< size_t >( dict, "buffer_size_spike_data", buffer_size_spike_data_ );
+  def< size_t >( dict, "max_buffer_size_target_data", max_buffer_size_target_data_ );
+  def< size_t >( dict, "max_buffer_size_spike_data", max_buffer_size_spike_data_ );
 }
 
 void

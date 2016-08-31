@@ -101,7 +101,8 @@ nest::MPIManager::init_mpi( int* argc, char** argv[] )
   MPI_Comm_size( comm, &num_processes_ );
   MPI_Comm_rank( comm, &rank_ );
 
-  recv_buffer_size_ = send_buffer_size_ * get_num_processes();
+  // recv_buffer_size_ = send_buffer_size_ * get_num_processes();
+
   // use at least 2 * number of processes entries (need at least two
   // entries per process to use flag of first entry as validity and
   // last entry to communicate end of communication)

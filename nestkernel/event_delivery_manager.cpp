@@ -151,17 +151,17 @@ EventDeliveryManager::configure_spike_buffers()
   // + 1 for the final markers of each thread (invalid_synindex) of secondary
   // events
   // + 1 for the done flag (true) of each process
-  int send_buffer_size = kernel().vp_manager.get_num_threads()
-          * kernel().connection_manager.get_min_delay()
-        + 2
-      > 4
-    ? kernel().vp_manager.get_num_threads()
-        * kernel().connection_manager.get_min_delay()
-      + 2
-    : 4;
-  int recv_buffer_size =
-    send_buffer_size * kernel().mpi_manager.get_num_processes();
-  kernel().mpi_manager.set_buffer_sizes( send_buffer_size, recv_buffer_size );
+  // int send_buffer_size = kernel().vp_manager.get_num_threads()
+  //         * kernel().connection_manager.get_min_delay()
+  //       + 2
+  //     > 4
+  //   ? kernel().vp_manager.get_num_threads()
+  //       * kernel().connection_manager.get_min_delay()
+  //     + 2
+  //   : 4;
+  // int recv_buffer_size =
+  //   send_buffer_size * kernel().mpi_manager.get_num_processes();
+  // kernel().mpi_manager.set_buffer_sizes( send_buffer_size, recv_buffer_size );
 }
 
 void

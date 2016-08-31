@@ -127,6 +127,7 @@ class ConnectArrayTestCase(unittest.TestCase):
             for k in range(K):
                 self.assertTrue(Warr1[k]-Warr2[k] == 0.0)
 
+
 def suite():
 
     suite = unittest.makeSuite(ConnectArrayTestCase, 'test')

@@ -59,6 +59,7 @@ before_install:
   - sudo apt-get install -y jq
 
   # Install MUSIC
+  - sudo apt-get install -y python-mpi4py
   - git clone https://github.com/INCF/MUSIC.git music
   - cd music
   - ./autogen.sh

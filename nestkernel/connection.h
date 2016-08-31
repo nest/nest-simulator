@@ -74,7 +74,7 @@ class ConnTestDummyNodeBase : public Node
   {
   }
   void
-  update( const nest::Time&, nest::long_t, nest::long_t )
+  update( const nest::Time&, long, long )
   {
   }
   void
@@ -157,7 +157,7 @@ public:
   /**
    * Return the delay of the connection in ms
    */
-  double_t
+  double
   get_delay() const
   {
     return syn_id_delay_.get_delay_ms();
@@ -166,7 +166,7 @@ public:
   /**
    * Return the delay of the connection in steps
    */
-  long_t
+  long
   get_delay_steps() const
   {
     return syn_id_delay_.delay;
@@ -176,7 +176,7 @@ public:
    * Set the delay of the connection
    */
   void
-  set_delay( const double_t delay )
+  set_delay( const double delay )
   {
     syn_id_delay_.set_delay_ms( delay );
   }
@@ -185,7 +185,7 @@ public:
    * Set the delay of the connection in steps
    */
   void
-  set_delay_steps( const long_t delay )
+  set_delay_steps( const long delay )
   {
     syn_id_delay_.delay = delay;
   }
@@ -208,7 +208,7 @@ public:
     return syn_id_delay_.syn_id;
   }
 
-  long_t
+  long
   get_label() const
   {
     return UNLABELED_CONNECTION;
@@ -220,7 +220,7 @@ public:
    */
   void trigger_update_weight( const thread,
     const std::vector< spikecounter >&,
-    const double_t,
+    const double,
     const CommonSynapseProperties& );
 
   Node*
@@ -298,7 +298,7 @@ template < typename targetidentifierT >
 inline void
 Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
-  def< double_t >( d, names::delay, syn_id_delay_.get_delay_ms() );
+  def< double >( d, names::delay, syn_id_delay_.get_delay_ms() );
   target_.get_status( d );
 }
 
@@ -307,8 +307,8 @@ inline void
 Connection< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectorModel& )
 {
-  double_t delay;
-  if ( updateValue< double_t >( d, names::delay, delay ) )
+  double delay;
+  if ( updateValue< double >( d, names::delay, delay ) )
   {
     kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
       delay );
@@ -332,7 +332,7 @@ template < typename targetidentifierT >
 inline void
 Connection< targetidentifierT >::trigger_update_weight( const thread,
   const std::vector< spikecounter >&,
-  const double_t,
+  const double,
   const CommonSynapseProperties& )
 {
   throw IllegalConnection(

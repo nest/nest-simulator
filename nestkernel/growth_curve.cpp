@@ -53,25 +53,25 @@ void
 nest::GrowthCurveLinear::get( DictionaryDatum& d ) const
 {
   def< std::string >( d, names::growth_curve, name_.toString() );
-  def< double_t >( d, names::eps, eps_ );
+  def< double >( d, names::eps, eps_ );
 }
 
 void
 nest::GrowthCurveLinear::set( const DictionaryDatum& d )
 {
-  updateValue< double_t >( d, names::eps, eps_ );
+  updateValue< double >( d, names::eps, eps_ );
 }
 
-nest::double_t
-nest::GrowthCurveLinear::update( double_t t,
-  double_t t_minus,
-  double_t Ca_minus,
-  double_t z_minus,
-  double_t tau_Ca,
-  double_t growth_rate ) const
+double
+nest::GrowthCurveLinear::update( double t,
+  double t_minus,
+  double Ca_minus,
+  double z_minus,
+  double tau_Ca,
+  double growth_rate ) const
 {
-  const double_t Ca = Ca_minus * std::exp( ( t_minus - t ) / tau_Ca );
-  const double_t z_value = growth_rate * tau_Ca * ( Ca - Ca_minus ) / eps_
+  const double Ca = Ca_minus * std::exp( ( t_minus - t ) / tau_Ca );
+  const double z_value = growth_rate * tau_Ca * ( Ca - Ca_minus ) / eps_
     + growth_rate * ( t - t_minus ) + z_minus;
 
   return std::max( z_value, 0.0 );
@@ -92,38 +92,38 @@ void
 nest::GrowthCurveGaussian::get( DictionaryDatum& d ) const
 {
   def< std::string >( d, names::growth_curve, name_.toString() );
-  def< double_t >( d, names::eps, eps_ );
-  def< double_t >( d, names::eta, eta_ );
+  def< double >( d, names::eps, eps_ );
+  def< double >( d, names::eta, eta_ );
 }
 
 void
 nest::GrowthCurveGaussian::set( const DictionaryDatum& d )
 {
-  updateValue< double_t >( d, names::eps, eps_ );
-  updateValue< double_t >( d, names::eta, eta_ );
+  updateValue< double >( d, names::eps, eps_ );
+  updateValue< double >( d, names::eta, eta_ );
 }
 
-nest::double_t
-nest::GrowthCurveGaussian::update( double_t t,
-  double_t t_minus,
-  double_t Ca_minus,
-  double_t z_minus,
-  double_t tau_Ca,
-  double_t growth_rate ) const
+double
+nest::GrowthCurveGaussian::update( double t,
+  double t_minus,
+  double Ca_minus,
+  double z_minus,
+  double tau_Ca,
+  double growth_rate ) const
 {
   // Numerical integration from t_minus to t
   // use standard forward Euler numerics
-  const double_t h = Time::get_resolution().get_ms();
-  const double_t zeta = ( eta_ - eps_ ) / ( 2.0 * sqrt( log( 2.0 ) ) );
-  const double_t xi = ( eta_ + eps_ ) / 2.0;
+  const double h = Time::get_resolution().get_ms();
+  const double zeta = ( eta_ - eps_ ) / ( 2.0 * sqrt( log( 2.0 ) ) );
+  const double xi = ( eta_ + eps_ ) / 2.0;
 
-  double_t z_value = z_minus;
-  double_t Ca = Ca_minus;
+  double z_value = z_minus;
+  double Ca = Ca_minus;
 
-  for ( double_t lag = t_minus; lag < ( t - h / 2.0 ); lag += h )
+  for ( double lag = t_minus; lag < ( t - h / 2.0 ); lag += h )
   {
     Ca = Ca - ( ( Ca / tau_Ca ) * h );
-    const double_t dz =
+    const double dz =
       h * growth_rate * ( 2.0 * exp( -pow( ( Ca - xi ) / zeta, 2 ) ) - 1.0 );
     z_value = z_value + dz;
   }

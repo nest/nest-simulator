@@ -134,7 +134,7 @@ public:
    */
   void send( Event& e,
     thread t,
-    double_t t_lastspike,
+    double t_lastspike,
     const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -154,7 +154,7 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t,
+    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -162,19 +162,19 @@ public:
   }
 
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
 
 private:
-  double_t weight_;  //!< synaptic weight
-  double_t U_;       //!< unit increment of a facilitating synapse (U)
-  double_t u_;       //!< dynamic value of probability of release
-  double_t tau_rec_; //!< [ms] time constant for recovery from depression (D)
-  double_t tau_fac_; //!< [ms] time constant for facilitation (F)
-  int n_;            //!< Number of release sites
-  int a_;            //!< Number of available release sites
+  double weight_;  //!< synaptic weight
+  double U_;       //!< unit increment of a facilitating synapse (U)
+  double u_;       //!< dynamic value of probability of release
+  double tau_rec_; //!< [ms] time constant for recovery from depression (D)
+  double tau_fac_; //!< [ms] time constant for facilitation (F)
+  int n_;          //!< Number of release sites
+  int a_;          //!< Number of available release sites
 };
 
 
@@ -189,16 +189,16 @@ template < typename targetidentifierT >
 inline void
 Quantal_StpConnection< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
+  double t_lastspike,
   const CommonSynapseProperties& )
 {
   const int vp = get_target( t )->get_vp();
 
-  const double_t h = e.get_stamp().get_ms() - t_lastspike;
+  const double h = e.get_stamp().get_ms() - t_lastspike;
 
   // Compute the decay factors, based on the time since the last spike.
-  const double_t p_decay = std::exp( -h / tau_rec_ );
-  const double_t u_decay =
+  const double p_decay = std::exp( -h / tau_rec_ );
+  const double u_decay =
     ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
   // Compute release probability

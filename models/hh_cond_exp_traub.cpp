@@ -201,37 +201,37 @@ nest::hh_cond_exp_traub::State_& nest::hh_cond_exp_traub::State_::operator=(
 void
 nest::hh_cond_exp_traub::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< double_t >( d, names::g_Na, g_Na );
-  def< double_t >( d, names::g_K, g_K );
-  def< double_t >( d, names::g_L, g_L );
-  def< double_t >( d, names::C_m, C_m );
-  def< double_t >( d, names::E_Na, E_Na );
-  def< double_t >( d, names::E_K, E_K );
-  def< double_t >( d, names::E_L, E_L );
-  def< double_t >( d, "V_T", V_T );
-  def< double_t >( d, names::E_ex, E_ex );
-  def< double_t >( d, names::E_in, E_in );
-  def< double_t >( d, names::tau_syn_ex, tau_synE );
-  def< double_t >( d, names::tau_syn_in, tau_synI );
-  def< double_t >( d, names::I_e, I_e );
+  def< double >( d, names::g_Na, g_Na );
+  def< double >( d, names::g_K, g_K );
+  def< double >( d, names::g_L, g_L );
+  def< double >( d, names::C_m, C_m );
+  def< double >( d, names::E_Na, E_Na );
+  def< double >( d, names::E_K, E_K );
+  def< double >( d, names::E_L, E_L );
+  def< double >( d, "V_T", V_T );
+  def< double >( d, names::E_ex, E_ex );
+  def< double >( d, names::E_in, E_in );
+  def< double >( d, names::tau_syn_ex, tau_synE );
+  def< double >( d, names::tau_syn_in, tau_synI );
+  def< double >( d, names::I_e, I_e );
 }
 
 void
 nest::hh_cond_exp_traub::Parameters_::set( const DictionaryDatum& d )
 {
-  updateValue< double_t >( d, names::g_Na, g_Na );
-  updateValue< double_t >( d, names::g_K, g_K );
-  updateValue< double_t >( d, names::g_L, g_L );
-  updateValue< double_t >( d, names::C_m, C_m );
-  updateValue< double_t >( d, names::E_Na, E_Na );
-  updateValue< double_t >( d, names::E_K, E_K );
-  updateValue< double_t >( d, names::E_L, E_L );
-  updateValue< double_t >( d, "V_T", V_T );
-  updateValue< double_t >( d, names::E_ex, E_ex );
-  updateValue< double_t >( d, names::E_in, E_in );
-  updateValue< double_t >( d, names::tau_syn_ex, tau_synE );
-  updateValue< double_t >( d, names::tau_syn_in, tau_synI );
-  updateValue< double_t >( d, names::I_e, I_e );
+  updateValue< double >( d, names::g_Na, g_Na );
+  updateValue< double >( d, names::g_K, g_K );
+  updateValue< double >( d, names::g_L, g_L );
+  updateValue< double >( d, names::C_m, C_m );
+  updateValue< double >( d, names::E_Na, E_Na );
+  updateValue< double >( d, names::E_K, E_K );
+  updateValue< double >( d, names::E_L, E_L );
+  updateValue< double >( d, "V_T", V_T );
+  updateValue< double >( d, names::E_ex, E_ex );
+  updateValue< double >( d, names::E_in, E_in );
+  updateValue< double >( d, names::tau_syn_ex, tau_synE );
+  updateValue< double >( d, names::tau_syn_in, tau_synI );
+  updateValue< double >( d, names::I_e, I_e );
 
   if ( C_m <= 0 )
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -377,14 +377,14 @@ nest::hh_cond_exp_traub::calibrate()
  * ---------------------------------------------------------------- */
 void
 nest::hh_cond_exp_traub::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
     double tt = 0.0; // it's all relative!
@@ -465,8 +465,8 @@ nest::hh_cond_exp_traub::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(

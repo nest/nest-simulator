@@ -100,10 +100,10 @@ nest::iaf_chxk_2008_dynamics( double,
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
-  const double_t I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex );
-  const double_t I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in );
-  const double_t I_ahp = y[ S::G_AHP ] * ( y[ S::V_M ] - node.P_.E_ahp );
-  const double_t I_leak = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
+  const double I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex );
+  const double I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in );
+  const double I_ahp = y[ S::G_AHP ] * ( y[ S::V_M ] - node.P_.E_ahp );
+  const double I_leak = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
 
   // dV_m/dt
   f[ S::V_M ] = ( -I_leak - I_syn_exc - I_syn_inh - I_ahp + node.B_.I_stim_
@@ -353,15 +353,15 @@ nest::iaf_chxk_2008::calibrate()
 
 void
 nest::iaf_chxk_2008::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
 
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
     double t = 0.0;
@@ -403,13 +403,13 @@ nest::iaf_chxk_2008::update( Time const& origin,
       // neuron is not absolute refractory
 
       // Find precise spike time using linear interpolation
-      double_t sigma = ( S_.y[ State_::V_M ] - P_.V_th ) * B_.step_
+      double sigma = ( S_.y[ State_::V_M ] - P_.V_th ) * B_.step_
         / ( S_.y[ State_::V_M ] - vm_prev );
 
-      double_t alpha = exp( -sigma / P_.tau_ahp );
+      double alpha = exp( -sigma / P_.tau_ahp );
 
-      double_t delta_g_ahp = V_.PSConInit_AHP * sigma * alpha;
-      double_t delta_dg_ahp = V_.PSConInit_AHP * alpha;
+      double delta_g_ahp = V_.PSConInit_AHP * sigma * alpha;
+      double delta_dg_ahp = V_.PSConInit_AHP * alpha;
 
       if ( P_.ahp_bug == true )
       {

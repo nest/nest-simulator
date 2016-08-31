@@ -119,7 +119,7 @@ private:
    * information.
    * @see event_hook, DSSpikeEvent
    */
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /**
    * Send out spikes.
@@ -135,9 +135,9 @@ private:
    */
   struct Parameters_
   {
-    double_t rate_;       //!< rate of component gamma process [Hz]
-    ulong_t gamma_shape_; //!< gamma shape parameter [1]
-    ulong_t n_proc_;      //!< number of component processes
+    double rate_;               //!< rate of component gamma process [Hz]
+    unsigned long gamma_shape_; //!< gamma shape parameter [1]
+    unsigned long n_proc_;      //!< number of component processes
 
     /**
      * Number of targets.
@@ -160,13 +160,14 @@ private:
 
     librandom::BinomialRandomDev bino_dev_;   //!< random deviate generator
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    std::vector< ulong_t > occ_; //!< occupation numbers of internal states
+    std::vector< unsigned long >
+      occ_; //!< occupation numbers of internal states
 
   public:
     Internal_states_( size_t num_bins,
-      ulong_t ini_occ_ref,
-      ulong_t ini_occ_act ); //!< initialize occupation numbers
-    ulong_t update( double_t transition_prob,
+      unsigned long ini_occ_ref,
+      unsigned long ini_occ_act ); //!< initialize occupation numbers
+    unsigned long update( double transition_prob,
       librandom::RngPtr rng ); //!< update age dist and generate spikes
   };
 
@@ -184,8 +185,8 @@ private:
 
   struct Variables_
   {
-    double_t transition_prob_; //!< transition probabililty to go to next
-                               //!< internal state
+    double transition_prob_; //!< transition probabililty to go to next
+                             //!< internal state
 
     /**
      * @name update-hook communication.
@@ -197,8 +198,8 @@ private:
      *   t_min_active_ < t <= t_max_active_
      */
     //@{
-    double_t t_min_active_; //!< start of generator activity in slice
-    double_t t_max_active_; //!< end of generator activity in slice
+    double t_min_active_; //!< start of generator activity in slice
+    double t_max_active_; //!< end of generator activity in slice
     //@}
   };
 

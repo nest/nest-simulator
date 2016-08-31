@@ -102,8 +102,8 @@ Ntree< D, T, max_capacity, max_depth >::iterator::next_leaf_()
 }
 
 // Proper mod which returns non-negative numbers
-static inline double_t
-mod( double_t x, double_t p )
+static inline double
+mod( double x, double p )
 {
   x = std::fmod( x, p );
   if ( x < 0 )

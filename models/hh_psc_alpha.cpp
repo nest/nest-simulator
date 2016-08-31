@@ -90,27 +90,27 @@ hh_psc_alpha_dynamics( double, const double y[], double f[], void* pnode )
   // good compiler will optimize the verbosity away ...
 
   // shorthand for state variables
-  const double_t& V = y[ S::V_M ];
-  const double_t& m = y[ S::HH_M ];
-  const double_t& h = y[ S::HH_H ];
-  const double_t& n = y[ S::HH_N ];
-  const double_t& dI_ex = y[ S::DI_EXC ];
-  const double_t& I_ex = y[ S::I_EXC ];
-  const double_t& dI_in = y[ S::DI_INH ];
-  const double_t& I_in = y[ S::I_INH ];
+  const double& V = y[ S::V_M ];
+  const double& m = y[ S::HH_M ];
+  const double& h = y[ S::HH_H ];
+  const double& n = y[ S::HH_N ];
+  const double& dI_ex = y[ S::DI_EXC ];
+  const double& I_ex = y[ S::I_EXC ];
+  const double& dI_in = y[ S::DI_INH ];
+  const double& I_in = y[ S::I_INH ];
 
-  const double_t alpha_n =
+  const double alpha_n =
     ( 0.01 * ( V + 55. ) ) / ( 1. - std::exp( -( V + 55. ) / 10. ) );
-  const double_t beta_n = 0.125 * std::exp( -( V + 65. ) / 80. );
-  const double_t alpha_m =
+  const double beta_n = 0.125 * std::exp( -( V + 65. ) / 80. );
+  const double alpha_m =
     ( 0.1 * ( V + 40. ) ) / ( 1. - std::exp( -( V + 40. ) / 10. ) );
-  const double_t beta_m = 4. * std::exp( -( V + 65. ) / 18. );
-  const double_t alpha_h = 0.07 * std::exp( -( V + 65. ) / 20. );
-  const double_t beta_h = 1. / ( 1. + std::exp( -( V + 35. ) / 10. ) );
+  const double beta_m = 4. * std::exp( -( V + 65. ) / 18. );
+  const double alpha_h = 0.07 * std::exp( -( V + 65. ) / 20. );
+  const double beta_h = 1. / ( 1. + std::exp( -( V + 35. ) / 10. ) );
 
-  const double_t I_Na = node.P_.g_Na * m * m * m * h * ( V - node.P_.E_Na );
-  const double_t I_K = node.P_.g_K * n * n * n * n * ( V - node.P_.E_K );
-  const double_t I_L = node.P_.g_L * ( V - node.P_.E_L );
+  const double I_Na = node.P_.g_Na * m * m * m * h * ( V - node.P_.E_Na );
+  const double I_K = node.P_.g_K * n * n * n * n * ( V - node.P_.E_K );
+  const double I_L = node.P_.g_L * ( V - node.P_.E_L );
 
   // V dot -- synaptic input are currents, inhib current is negative
   f[ S::V_M ] = ( -( I_Na + I_K + I_L ) + node.B_.I_stim_ + node.P_.I_e + I_ex
@@ -161,14 +161,14 @@ nest::hh_psc_alpha::State_::State_( const Parameters_& )
     y_[ i ] = 0;
 
   // equilibrium values for (in)activation variables
-  const double_t alpha_n = ( 0.01 * ( y_[ 0 ] + 55. ) )
+  const double alpha_n = ( 0.01 * ( y_[ 0 ] + 55. ) )
     / ( 1. - std::exp( -( y_[ 0 ] + 55. ) / 10. ) );
-  const double_t beta_n = 0.125 * std::exp( -( y_[ 0 ] + 65. ) / 80. );
-  const double_t alpha_m =
+  const double beta_n = 0.125 * std::exp( -( y_[ 0 ] + 65. ) / 80. );
+  const double alpha_m =
     ( 0.1 * ( y_[ 0 ] + 40. ) ) / ( 1. - std::exp( -( y_[ 0 ] + 40. ) / 10. ) );
-  const double_t beta_m = 4. * std::exp( -( y_[ 0 ] + 65. ) / 18. );
-  const double_t alpha_h = 0.07 * std::exp( -( y_[ 0 ] + 65. ) / 20. );
-  const double_t beta_h = 1. / ( 1. + std::exp( -( y_[ 0 ] + 35. ) / 10. ) );
+  const double beta_m = 4. * std::exp( -( y_[ 0 ] + 65. ) / 18. );
+  const double alpha_h = 0.07 * std::exp( -( y_[ 0 ] + 65. ) / 20. );
+  const double beta_h = 1. / ( 1. + std::exp( -( y_[ 0 ] + 35. ) / 10. ) );
 
   y_[ HH_H ] = alpha_h / ( alpha_h + beta_h );
   y_[ HH_N ] = alpha_n / ( alpha_n + beta_n );
@@ -382,20 +382,18 @@ nest::hh_psc_alpha::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_psc_alpha::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
 {
 
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
-    double_t t = 0.0;
-    const double_t U_old = S_.y_[ State_::V_M ];
+    double t = 0.0;
+    const double U_old = S_.y_[ State_::V_M ];
 
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
@@ -474,8 +472,8 @@ nest::hh_psc_alpha::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(

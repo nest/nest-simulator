@@ -145,7 +145,7 @@ public:
    */
   void send( Event& e,
     thread t,
-    double_t t_lastspike,
+    double t_lastspike,
     const CommonSynapseProperties& cp );
 
 
@@ -167,7 +167,7 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t,
+    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -175,19 +175,19 @@ public:
   }
 
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
 
 
 private:
-  double_t weight_;
-  double_t U_;       //!< unit increment of a facilitating synapse
-  double_t u_;       //!< dynamic value of probability of release
-  double_t x_;       //!< current fraction of the synaptic weight
-  double_t tau_rec_; //!< [ms] time constant for recovery
-  double_t tau_fac_; //!< [ms] time constant for facilitation
+  double weight_;
+  double U_;       //!< unit increment of a facilitating synapse
+  double u_;       //!< dynamic value of probability of release
+  double x_;       //!< current fraction of the synaptic weight
+  double tau_rec_; //!< [ms] time constant for recovery
+  double tau_fac_; //!< [ms] time constant for facilitation
 };
 
 
@@ -201,14 +201,14 @@ template < typename targetidentifierT >
 inline void
 Tsodyks2Connection< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
+  double t_lastspike,
   const CommonSynapseProperties& )
 {
   Node* target = get_target( t );
 
-  double_t h = e.get_stamp().get_ms() - t_lastspike;
-  double_t x_decay = std::exp( -h / tau_rec_ );
-  double_t u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
+  double h = e.get_stamp().get_ms() - t_lastspike;
+  double x_decay = std::exp( -h / tau_rec_ );
+  double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
   // now we compute spike number n+1
   x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay; // Eq. 5 from reference [3]
@@ -254,14 +254,14 @@ void
 Tsodyks2Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
+  def< double >( d, names::weight, weight_ );
 
-  def< double_t >( d, names::dU, U_ );
-  def< double_t >( d, names::u, u_ );
-  def< double_t >( d, names::tau_rec, tau_rec_ );
-  def< double_t >( d, names::tau_fac, tau_fac_ );
-  def< double_t >( d, names::x, x_ );
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  def< double >( d, names::dU, U_ );
+  def< double >( d, names::u, u_ );
+  def< double >( d, names::tau_rec, tau_rec_ );
+  def< double >( d, names::tau_fac, tau_fac_ );
+  def< double >( d, names::x, x_ );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
@@ -270,25 +270,25 @@ Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double_t >( d, names::weight, weight_ );
+  updateValue< double >( d, names::weight, weight_ );
 
-  updateValue< double_t >( d, names::dU, U_ );
+  updateValue< double >( d, names::dU, U_ );
   if ( U_ > 1.0 || U_ < 0.0 )
     throw BadProperty( "U must be in [0,1]." );
 
-  updateValue< double_t >( d, names::u, u_ );
+  updateValue< double >( d, names::u, u_ );
   if ( u_ > 1.0 || u_ < 0.0 )
     throw BadProperty( "u must be in [0,1]." );
 
-  updateValue< double_t >( d, names::tau_rec, tau_rec_ );
+  updateValue< double >( d, names::tau_rec, tau_rec_ );
   if ( tau_rec_ <= 0.0 )
     throw BadProperty( "tau_rec must be > 0." );
 
-  updateValue< double_t >( d, names::tau_fac, tau_fac_ );
+  updateValue< double >( d, names::tau_fac, tau_fac_ );
   if ( tau_fac_ < 0.0 )
     throw BadProperty( "tau_fac must be >= 0." );
 
-  updateValue< double_t >( d, names::x, x_ );
+  updateValue< double >( d, names::x, x_ );
 }
 
 } // namespace

@@ -176,7 +176,7 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access private members
   friend class RecordablesMap< amat2_psc_exp >;
@@ -191,45 +191,45 @@ private:
   {
 
     /** Membrane time constant in ms. */
-    double_t Tau_;
+    double Tau_;
 
     /** Membrane capacitance in pF. */
-    double_t C_;
+    double C_;
 
     /** Refractory period in ms. */
-    double_t tau_ref_;
+    double tau_ref_;
 
     /** Resting potential in mV. */
-    double_t E_L_;
+    double E_L_;
 
     /** External current in pA */
-    double_t I_e_;
+    double I_e_;
 
     /** Time constant of excitatory synaptic current in ms. */
-    double_t tau_ex_;
+    double tau_ex_;
 
     /** Time constant of inhibitory synaptic current in ms. */
-    double_t tau_in_;
+    double tau_in_;
 
     /** Short and long time constant of adaptive threshold in ms. */
-    double_t tau_1_;
-    double_t tau_2_;
+    double tau_1_;
+    double tau_2_;
 
     /** Amplitudes of threshold adaption in mV. */
-    double_t alpha_1_;
-    double_t alpha_2_;
+    double alpha_1_;
+    double alpha_2_;
 
     //! Scaling coefficient for voltage-dependent threshold component in 1/ms.
-    double_t beta_;
+    double beta_;
 
     /** Time-constant for voltage-dependent threshold component in ms. */
-    double_t tau_v_;
+    double tau_v_;
 
     /** Resting threshold in mV
         (relative to resting potential).
         The real resting threshold is (E_L_+omega_).
         Called omega in [3]. */
-    double_t omega_;
+    double omega_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -249,19 +249,19 @@ private:
   struct State_
   {
     // state variables
-    double_t i_0_;      //!< synaptic dc input current, variable 0
-    double_t i_syn_ex_; //!< postsynaptic current for exc. inputs, variable 1
-    double_t i_syn_in_; //!< postsynaptic current for inh. inputs, variable 2
-    double_t V_m_;      //!< membrane potential, variable 3
-    double_t V_th_1_;   //!< short time adaptive threshold (related to tau_1_),
-                        //!< variable 4
-    double_t V_th_2_;   //!< long time adaptive threshold (related to tau_2_),
-                        //!< variable 5
-    double_t V_th_dv_;  //!< derivative of voltage dependent threshold,
-                        //!< variable 6
-    double_t V_th_v_;   //!< voltage dependent threshold, variable 7
+    double i_0_;      //!< synaptic dc input current, variable 0
+    double i_syn_ex_; //!< postsynaptic current for exc. inputs, variable 1
+    double i_syn_in_; //!< postsynaptic current for inh. inputs, variable 2
+    double V_m_;      //!< membrane potential, variable 3
+    double V_th_1_;   //!< short time adaptive threshold (related to tau_1_),
+                      //!< variable 4
+    double V_th_2_;   //!< long time adaptive threshold (related to tau_2_),
+                      //!< variable 5
+    double V_th_dv_;  //!< derivative of voltage dependent threshold,
+                      //!< variable 6
+    double V_th_v_;   //!< voltage dependent threshold, variable 7
 
-    int_t r_; //!< total refractory counter (no spikes can be generated)
+    int r_; //!< total refractory counter (no spikes can be generated)
 
     State_(); //!< Default initialization
 
@@ -307,45 +307,45 @@ private:
     weight one has an amplitude of 1 mV.
     @note mog - I assume this, not checked.
     */
-    //    double_t PSCInitialValue_;
+    //    double PSCInitialValue_;
 
-    double_t P00_; // constant currents
-    double_t P11_;
-    double_t P22_;
-    double_t P30_;
-    double_t P31_;
-    double_t P32_;
-    double_t P33_;
-    double_t P44_;
-    double_t P55_;
-    double_t P60_;
-    double_t P61_;
-    double_t P62_;
-    double_t P63_;
-    double_t P66_;
-    double_t P70_;
-    double_t P71_;
-    double_t P72_;
-    double_t P73_;
-    double_t P76_;
-    double_t P77_;
+    double P00_; // constant currents
+    double P11_;
+    double P22_;
+    double P30_;
+    double P31_;
+    double P32_;
+    double P33_;
+    double P44_;
+    double P55_;
+    double P60_;
+    double P61_;
+    double P62_;
+    double P63_;
+    double P66_;
+    double P70_;
+    double P71_;
+    double P72_;
+    double P73_;
+    double P76_;
+    double P77_;
 
-    int_t RefractoryCountsTot_;
+    int RefractoryCountsTot_;
   };
   // ----------------------------------------------------------------
 
   //! Read out state variables, used by UniversalDataLogger
-  double_t
+  double
   get_V_m_() const
   {
     return S_.V_m_ + P_.E_L_;
   }
-  double_t
+  double
   get_V_th_() const
   {
     return P_.E_L_ + P_.omega_ + S_.V_th_1_ + S_.V_th_2_ + S_.V_th_v_;
   }
-  double_t
+  double
   get_V_th_v_() const
   {
     return S_.V_th_v_;

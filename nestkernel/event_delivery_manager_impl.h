@@ -33,7 +33,7 @@ namespace nest
 
 template < class EventT >
 inline void
-EventDeliveryManager::send( Node& source, EventT& e, const long_t lag )
+EventDeliveryManager::send( Node& source, EventT& e, const long lag )
 {
   e.set_stamp(
     kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
@@ -49,7 +49,7 @@ template <>
 inline void
 EventDeliveryManager::send< SpikeEvent >( Node& source,
   SpikeEvent& e,
-  const long_t lag )
+  const long lag )
 {
   e.set_stamp(
     kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
@@ -71,7 +71,7 @@ template <>
 inline void
 EventDeliveryManager::send< DSSpikeEvent >( Node& source,
   DSSpikeEvent& e,
-  const long_t lag )
+  const long lag )
 {
   e.set_stamp(
     kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );

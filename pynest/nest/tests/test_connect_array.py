@@ -36,8 +36,8 @@ class ConnectArrayTestCase(unittest.TestCase):
     def test_Connect_Array(self):
         """Tests of connections with parameter arrays"""
 
-        N = 10  # number of neurons in each subnet
-        K = 3   # number of connections per neuron
+        N = 20  # number of neurons in each subnet
+        K = 5   # number of connections per neuron
 
         ############################################
         # test with connection rule fixed_indegree
@@ -57,14 +57,12 @@ class ConnectArrayTestCase(unittest.TestCase):
         # connects source to target subnet
         nest.Connect(net1, net2, conn_spec=conn_dict, syn_spec=syn_dict)
 
-        Warr1 = []  # creates empty weight array
-
         for i in range(N):  # loop on all neurons of target subnet
 
             # gets all connections to the target neuron
             conns = nest.GetConnections(target=net2[i:i+1])
 
-            Warr2 = []  # creates empty weight array
+            Warr1 = []  # creates empty weight array
 
             # loop on synapses that connect to target neuron
             for j in range(len(conns)):
@@ -74,14 +72,16 @@ class ConnectArrayTestCase(unittest.TestCase):
 
                 self.assertTrue(d - w == 1)  # checks that delay = weight + 1
 
-                Warr2.append(w)  # appends w to Warr2
+                Warr1.append(w)  # appends w to Warr1
 
-            self.assertTrue(len(Warr2) == K)  # checks the size of Warr2
-            Warr2.sort()                      # sorts the elements of Warr2
-            Warr1 += Warr2                    # joins Warr1 to Warr2
+            self.assertTrue(len(Warr1) == K)  # checks the size of Warr1
+            Warr1.sort()                      # sorts the elements of Warr1
 
-        for i in range(N*K):
-            self.assertTrue(Warr1[i] == i)  # checks the elements of Warr1
+            # get row of original weight array, sort it
+            # and compare it with Warr1
+            Warr2 = sorted(Warr[i])
+            for k in range(K):
+                self.assertTrue(Warr1[k]-Warr2[k] == 0.0)
 
         ############################################
         # test with connection rule fixed_outdegree
@@ -101,14 +101,12 @@ class ConnectArrayTestCase(unittest.TestCase):
         # connects source to target subnet
         nest.Connect(net1, net2, conn_spec=conn_dict, syn_spec=syn_dict)
 
-        Warr1 = []  # creates empty weight array
-
         for i in range(N):  # loop on all neurons of source subnet
 
             # gets all connections from the source neuron
             conns = nest.GetConnections(source=net1[i:i+1])
 
-            Warr2 = []  # creates empty weight array
+            Warr1 = []  # creates empty weight array
 
             # loop on synapses that connect from source neuron
             for j in range(len(conns)):
@@ -118,15 +116,16 @@ class ConnectArrayTestCase(unittest.TestCase):
 
                 self.assertTrue(d - w == 1)  # checks that delay = weight + 1
 
-                Warr2.append(w)  # appends w to Warr2
+                Warr1.append(w)  # appends w to Warr1
 
-            self.assertTrue(len(Warr2) == K)  # checks the size of Warr2
-            Warr2.sort()                      # sorts the elements of Warr2
-            Warr1 += Warr2                    # joins Warr1 to Warr2
+            self.assertTrue(len(Warr1) == K)  # checks the size of Warr1
+            Warr1.sort()                      # sorts the elements of Warr1
 
-        for i in range(N*K):
-            self.assertTrue(Warr1[i] == i)  # checks the elements of Warr
-
+            # get row of original weight array, sort it
+            # and compare it with Warr1
+            Warr2 = sorted(Warr[i])
+            for k in range(K):
+                self.assertTrue(Warr1[k]-Warr2[k] == 0.0)
 
 def suite():
 

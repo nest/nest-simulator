@@ -1,5 +1,5 @@
 /*
- *  minimalmusicsetup_receivenest.sli
+ *  test_event_proxies_receiver.sli
  *
  *  This file is part of NEST.
  *
@@ -32,7 +32,7 @@ meip << /port_name (spikes_in) /music_channel 0 >> SetStatus
 meip n << /weight 750.0 >> Connect
 
 /voltmeter Create /vm Set
-vm << /label (receivenest) /record_to [ /file ] >> SetStatus
+vm << /label (receiver) /record_to [ /file ] >> SetStatus
 
 vm n Connect
 

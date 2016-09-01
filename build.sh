@@ -239,6 +239,8 @@ fi # if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
 
 cd "$NEST_VPATH"
 
+cp ../examples/sli/nestrc.sli ~/.nestrc
+
 echo "======= Configure NEST start ======="
 cmake \
   -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \

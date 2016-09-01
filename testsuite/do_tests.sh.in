@@ -558,7 +558,7 @@ if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then
     junit_close
 else
   echo "  Not running MPI tests because NEST was compiled without support"
-  echo "  for distributed computing. See the file README for details."
+  echo "  for distributed computing. See the file README.md for details."
 fi
 
 echo
@@ -646,7 +646,7 @@ if test "x$(sli -c 'statusdict/have_music :: =')" = xtrue ; then
     junit_close
 else
   echo "  Not running MUSIC tests because NEST was compiled without support"
-  echo "  for it. See the file README for details."
+  echo "  for it. See the file README.md for details."
 fi
 
 
@@ -726,7 +726,7 @@ else
     echo "Phase 6: Running PyNEST tests"
     echo "-----------------------------"
     echo "  Not running PyNEST tests because NEST was compiled without support"
-    echo "  for Python. See the file README for details."
+    echo "  for Python. See the file README.md for details."
 fi
 
 echo

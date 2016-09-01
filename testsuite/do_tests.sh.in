@@ -723,7 +723,7 @@ if test "x${TEST_PYNEST}" = xtrue ; then
     TEST_FAILED=$(( $TEST_FAILED + $PYNEST_TEST_FAILED ))
 else
     echo
-    echo "Phase 6: Running PyNEST tests"
+    echo "Phase 7: Running PyNEST tests"
     echo "-----------------------------"
     echo "  Not running PyNEST tests because NEST was compiled without support"
     echo "  for Python. See the file README.md for details."

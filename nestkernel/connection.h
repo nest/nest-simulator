@@ -224,9 +224,9 @@ public:
     const CommonSynapseProperties& );
 
   Node*
-  get_target( thread t ) const
+  get_target( const thread tid ) const
   {
-    return target_.get_target_ptr( t );
+    return target_.get_target_ptr( tid );
   }
   rport
   get_rport() const

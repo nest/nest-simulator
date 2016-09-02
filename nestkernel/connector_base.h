@@ -149,9 +149,9 @@ public:
   virtual void send_to_all( Event& e, thread tid, const std::vector< ConnectorModel* >& cm ) = 0;
 
   virtual bool
-  send( thread tid,
-    synindex syn_index,
-    unsigned int lcid,
+  send( const thread tid,
+    const synindex syn_index,
+    const unsigned int lcid,
     Event& e,
     const std::vector< ConnectorModel* >& cm ) = 0;
 
@@ -409,9 +409,9 @@ public:
   }
 
   bool
-  send( thread tid,
-    synindex,
-    unsigned int lcid,
+  send( const thread tid,
+    const synindex,
+    const unsigned int lcid,
     Event& e,
     const std::vector< ConnectorModel* >& cm )
   {
@@ -621,7 +621,7 @@ public:
   }
 
   bool
-  send( thread tid, synindex syn_index, unsigned int lcid, Event& e, const std::vector< ConnectorModel* >& cm )
+  send( const thread tid, const synindex syn_index, const unsigned int lcid, Event& e, const std::vector< ConnectorModel* >& cm )
   {
     return at( syn_index )->send( tid, syn_index, lcid, e, cm );
   }

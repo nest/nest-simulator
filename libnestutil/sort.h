@@ -26,29 +26,71 @@
 #include <vector>
 #include <cstddef>
 
-/* Quicksort with 3-way partitioning, adapted from Sedgewick & Wayne
- * (2011), Algorithms 4th edition, p296ff */
+#define INSERTION_SORT_CUTOFF 10 // use insertion sort for smaller arrays
 
 namespace sort
 {
-  template < typename T >
-  inline void exchange_( std::vector< T >& vec, int i, int j )
+  /* exchanges elements i and j in vector vec */
+  template< typename T >
+  inline void exchange_( std::vector< T >& vec, const int i, const int j )
   {
-    T tmp = vec[ i ];
+    const T tmp = vec[ i ];
     vec[ i ] = vec[ j ];
     vec[ j ] = tmp;
   }
 
+  /* calculates the median of three elements */
+  /* http://algs4.cs.princeton.edu/23quicksort/QuickX.java.html */
+  template< typename T >
+  inline int median3_( const std::vector< T >& vec, const int i, const int j, const int k )
+  {
+    return ( ( vec[ i ] < vec[ j ] ) ?
+             ( ( vec[ j ] < vec[ k ] ) ? j : ( vec[ i ] < vec[ k ] ) ? k : i ) :
+             ( ( vec[ k ] < vec[ j ] ) ? j : ( vec[ k ] < vec[ i ] ) ? k : i ));
+  }
+
+  /* Insertion sort, adapted from Sedgewick & Wayne
+   * (2011), Algorithms 4th edition, p251ff */
+  /* sorts the two vectors vec_sort and vec_perm, by sorting the
+   * entries in vec_sort and applying the same exchanges to
+   * vec_perm */
+  template< typename T1, typename T2 >
+  void insertion_sort( std::vector< T1 >& vec_sort, std::vector< T2 >& vec_perm, const int lo, const int hi )
+  {
+    for ( int i = lo + 1; i < hi; ++i )
+    {
+      for ( int j = i; (j > lo) and ( vec_sort[ j ] < vec_sort[ j - 1 ] ); --j )
+      {
+        exchange_( vec_sort, j, j - 1 );
+        exchange_( vec_perm, j, j - 1 );
+      }
+    }
+  }
+
+  /* Quicksort with 3-way partitioning, adapted from Sedgewick & Wayne
+   * (2011), Algorithms 4th edition, p296ff */
+  /* http://algs4.cs.princeton.edu/23quicksort/QuickX.java.html */
   /* recursively sorts the two vectors vec_sort and vec_perm, by
    * sorting the entries in vec_sort and applying the same exchanges
    * to vec_perm */
   template < typename T1, typename T2 >
-  void sort( std::vector< T1 >& vec_sort, std::vector< T2 >& vec_perm, int lo, int hi )
+  void sort( std::vector< T1 >& vec_sort, std::vector< T2 >& vec_perm, const int lo, const int hi )
   {
-    if ( hi <= lo )
+    const int n = hi - lo + 1;
+
+    // switch to insertion sort for small arrays
+    if ( n <= INSERTION_SORT_CUTOFF )
     {
+      insertion_sort( vec_sort, vec_perm, lo, hi );
       return;
     }
+
+    // use median-of-3 as partitioning element
+    const int m = median3_( vec_sort, lo, lo + n/2, hi );
+    exchange_( vec_sort, m, lo );
+    exchange_( vec_perm, m, lo );
+
+    // Dijkstra's three-way-sort
     int lt = lo;
     int i = lo + 1;
     int gt = hi;

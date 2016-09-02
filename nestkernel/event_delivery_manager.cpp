@@ -827,8 +827,10 @@ EventDeliveryManager::deliver_events_5g_( const thread tid, const std::vector< S
       {
         se.set_stamp( prepared_timestamps[ spike_data.lag ] );
         se.set_offset( spike_data.get_offset() );
+        sw_send.start();
         kernel().connection_manager.send_5g( tid, spike_data.syn_index,
           spike_data.lcid, se );
+        sw_send.stop();
       }
 
       // is this the last spike from this rank?
@@ -894,10 +896,12 @@ EventDeliveryManager::gather_target_data()
       } // of omp single; implicit barrier
       kernel().connection_manager.restore_source_table_entry_point( tid );
 
+      sw_collocate_target_data.start();
       me_completed_tid = collocate_target_data_buffers_( tid, send_recv_count_target_data_per_rank, send_buffer_target_data );
 #pragma omp atomic
       completed_count += me_completed_tid;
 #pragma omp barrier
+      sw_collocate_target_data.stop();
       if ( completed_count == half_completed_count )
       {
         set_complete_marker_target_data_( tid, send_recv_count_target_data_per_rank, send_buffer_target_data );
@@ -908,12 +912,16 @@ EventDeliveryManager::gather_target_data()
       kernel().connection_manager.clean_source_table( tid );
 #pragma omp single
       {
+        sw_communicate_target_data.start();
         unsigned int* send_buffer_int = reinterpret_cast< unsigned int* >( &send_buffer_target_data[0] );
         unsigned int* recv_buffer_int = reinterpret_cast< unsigned int* >( &recv_buffer_target_data[0] );
         kernel().mpi_manager.communicate_Alltoall( send_buffer_int, recv_buffer_int, send_recv_count_target_data_in_int_per_rank );
+        sw_communicate_target_data.stop();
       } // of omp single
 
+      sw_deliver_target_data.start();
       others_completed_tid = distribute_target_data_buffers_( tid, send_recv_count_target_data_per_rank, recv_buffer_target_data );
+      sw_deliver_target_data.stop();
 
 #pragma omp atomic
       completed_count += others_completed_tid;

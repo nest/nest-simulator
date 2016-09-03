@@ -453,7 +453,7 @@ public:
   void
   sort_connections( std::vector< Source >& sources )
   {
-    sort::sort( sources, C_, 0, C_.size() - 1 );
+    sort::sort( sources, C_ );
   }
 
   void

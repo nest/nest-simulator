@@ -74,7 +74,7 @@ namespace sort
    * sorting the entries in vec_sort and applying the same exchanges
    * to vec_perm */
   template < typename T1, typename T2 >
-  void sort( std::vector< T1 >& vec_sort, std::vector< T2 >& vec_perm, const int lo, const int hi )
+  void quicksort3way( std::vector< T1 >& vec_sort, std::vector< T2 >& vec_perm, const int lo, const int hi )
   {
     const int n = hi - lo + 1;
 
@@ -116,8 +116,16 @@ namespace sort
         i++;
       }
     }
-    sort( vec_sort, vec_perm, lo, lt - 1 );
-    sort( vec_sort, vec_perm, gt + 1, hi );
+    quicksort3way( vec_sort, vec_perm, lo, lt - 1 );
+    quicksort3way( vec_sort, vec_perm, gt + 1, hi );
+  }
+
+  /* sorts two vectors according to elements in
+   * first vector. convenience function. */
+  template < typename T1, typename T2 >
+  void sort( std::vector< T1 >& vec_sort, std::vector< T2 >& vec_perm )
+  {
+    quicksort3way( vec_sort, vec_perm, 0, vec_sort.size() - 1 );
   }
 
 } // namespace sort

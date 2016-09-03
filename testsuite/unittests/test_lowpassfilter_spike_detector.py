@@ -32,45 +32,55 @@ import sys
 import nest
 
 
-def lowpass_filter_python(senders, spike_times, sampling_times, tau):
-    # Here the trace is calculated for each sample_time by calculating it forward from each spike time to sample time
+def lowpass_filter_python(senders, spike_times, reporting_times, tau=30.0):
+
     uniq_senders = (np.array)(np.unique(senders))
     total_spikes = np.size(spike_times)
     traces = np.zeros(total_spikes, dtype=[('traces', float), ('times', float), ('senders', int)])
 
-    # Here at each spike time, trace is calculated
-    idx = 0
-    gid_idx = 0
+    # Here the trace is calculated at each spike time for each node
+
+    # index in the traces array, each idx corresponds to one spike time for a node.
+    trace_idx = 0
     for gid in uniq_senders:
 
-        spktimes_ = spike_times[np.where(senders == gid)]
-        gid_idx = 0
+        # getting the spikes that are for this node
+        spktimes_ = spike_times[ np.where( senders == gid ) ]
         time = 0.
         trace = 0.
 
+        # If the node did not spike, then the trace should always be 0
         if spktimes_.size == 0:
             traces[idx] = (trace, time, gid)
-            idx += 1
+            trace_idx += 1
 
-        for st in spktimes_:
+        for i, st in enumerate(spktimes_):
+
+            # if the spike time was not the same as the previous spike time for this node, it is necessary to increment the idx.
+            if ( np.isclose(time, st) == False and np.isclose(time, 0.0) == False ):
+                trace_idx += 1
+
+            # Calculating decay
             trace = math.exp((time - st) / tau) * trace
+            # Adding impulse
             trace += 1 / tau
+            # Setting the time to the last spike time
             time = st
 
-            traces[idx] = (trace, time, gid)
+            # Adding the trace to the record array
+            traces[trace_idx] = (trace, time, gid)
 
-            gid_idx += 1
-            if (spktimes_.size == gid_idx):  # if last element; N.B: size here is never 0
-                idx += 1
-            else:
-                if (abs(spike_times[idx] - st) > max(1e-9 * max(abs(spike_times[idx]), abs(st)), 0.0)):  # if greater
-                    idx += 1
+            # if this is the last spike for this node, it is necessary to increment the idx
+            if (i == len(spktimes_)-1): 
+                trace_idx += 1
 
-    # Here the trace is calculated for each sample_time by calculating it forward from each spike time to sample time
 
-    ktrace_values = np.zeros(uniq_senders.size * sampling_times.size)
-    ktrace_times = np.zeros(uniq_senders.size * sampling_times.size)
-    ktrace_gids = np.zeros(uniq_senders.size * sampling_times.size, dtype=np.int64)
+
+    # Here the trace is calculated for each report time by calculating it forward from each spike time to reporting time
+
+    ktrace_values = np.zeros(uniq_senders.size * reporting_times.size)
+    ktrace_times = np.zeros(uniq_senders.size * reporting_times.size)
+    ktrace_gids = np.zeros(uniq_senders.size * reporting_times.size, dtype=np.int64)
 
     trace_idx = 0
     for gid in uniq_senders:
@@ -80,7 +90,7 @@ def lowpass_filter_python(senders, spike_times, sampling_times, tau):
 
         # idx stores the index of the time greater than the sample time. idx - 1 gives back the index of time smaller
         # than the current time.
-        for st in sampling_times:
+        for st in reporting_times:
             idx = np.searchsorted(spike_times, st)
 
             if idx == 0:  # this means no suitable index
@@ -90,7 +100,7 @@ def lowpass_filter_python(senders, spike_times, sampling_times, tau):
                 sample_trace = math.exp((spike_times[idx - 1] - st) / tau) * node_traces[idx - 1]['traces']
 
             if spike_times.size > idx:
-                if abs(spike_times[idx] - st) <= max(1e-9 * max(abs(spike_times[idx]), abs(st)), 0.0): # if they are the same
+                if ( np.isclose(spike_times[idx], st) ): # if they are the same
                     sample_trace = node_traces[idx]['traces']
 
             ktrace_values[trace_idx] = sample_trace
@@ -162,8 +172,8 @@ class LowpassFilterSpikeDetector(unittest.TestCase):
 
     def test_LastTrace(self):
         """ 4) Checking to see if the device calculates the trace correctly. """
-        start_times = [0., 9., 25., 30.]
-        stop_times = [9., 13., 27., 54.0]
+        start_times = [53.0]
+        stop_times = [54.0]
         spike_times = np.array([5., 5.9, 6.0, 7., 9., 9.5, 10.0])
 
         nest.ResetKernel()
@@ -171,7 +181,7 @@ class LowpassFilterSpikeDetector(unittest.TestCase):
         lpfsd = nest.Create('lowpassfilter_spike_detector', 1,
                             params={'filter_start_times': start_times,
                                     'filter_stop_times': stop_times,
-                                    'filter_report_interval': 2.})
+                                    'filter_report_interval': 1.})
 
         spikeGen = nest.Create( 'spike_generator', 1, params={'spike_times':spike_times} )
         nest.Connect(spikeGen, lpfsd, syn_spec={'delay':1.5})
@@ -184,66 +194,123 @@ class LowpassFilterSpikeDetector(unittest.TestCase):
         calcul_trace = 0.04959474
         self.assertAlmostEquals(device_trace, calcul_trace)
 
-        sampling_times = np.array([54.])
+        reporting_times = np.array([54.])
         senders = np.ones_like(spike_times).tolist()
         # This checks against result calculated using a python script
         python_trace = lowpass_filter_python(senders,
                                              spike_times,
-                                             sampling_times,
-                                             30.0)['ktrace_values']
+                                             reporting_times)['ktrace_values']
         self.assertAlmostEquals(device_trace, python_trace)
 
     def test_SegmentedSimulation(self):
         """ 5) Checking to see if the result is correct if simulation is stopped and is continued many times."""
 
-        start_times = [0., 9., 25., 30.]
-        stop_times = [9., 13., 27., 54.0]
-        spike_times = np.array([5., 5.9, 6.0, 7., 9., 9.5, 10.0])
-        nest.ResetKernel()
-        nest.SetKernelStatus( {'local_num_threads': 1, 'resolution':0.1} )
-        lpfsd = nest.Create('lowpassfilter_spike_detector', 1,
-                            params={'filter_start_times': start_times,
-                                    'filter_stop_times': stop_times,
-                                    'filter_report_interval': 2.})
+        # checking it with multiple intervals
+        for report_interval in range(1, 6, 1):
+            # checking each interval with multiple min_delay values
+            for min_delay in range(1, 52, 1):
+                start_times = [0.0]
+                stop_times = [54.0]
+                spike_times = np.array([5., 5.9, 6.0, 7., 9., 9.5, 10.0])
+                nest.ResetKernel()
+                nest.SetKernelStatus( {'local_num_threads': 1, 'resolution':0.1} )
+                lpfsd = nest.Create('lowpassfilter_spike_detector', 1,
+                                    params={'filter_start_times': start_times,
+                                            'filter_stop_times': stop_times,
+                                            'filter_report_interval': report_interval*1.0})
 
-        spikeGen = nest.Create( 'spike_generator', 1, params={'spike_times':spike_times} )
-        nest.Connect(spikeGen, lpfsd, syn_spec={'delay':1.5})
-        nest.Simulate(0.6)
-        nest.Simulate(0.3)
-        nest.Simulate(1.2)
-        nest.Simulate(1.6)
-        nest.Simulate(1.5)
-        nest.Simulate(3.6)
-        nest.Simulate(0.8)
-        nest.Simulate(0.6)
-        nest.Simulate(1.3)
-        nest.Simulate(7.6)
-        nest.Simulate(4.5)
-        nest.Simulate(0.2)
-        nest.Simulate(1.3)
-        nest.Simulate(5.6)
-        nest.Simulate(3.9)
-        nest.Simulate(1.5)
-        nest.Simulate(0.2)
-        nest.Simulate(1.3)
-        nest.Simulate(3.6)
-        nest.Simulate(0.8)
-        nest.Simulate(0.6)
-        nest.Simulate(0.2)
-        nest.Simulate(1.3)
-        nest.Simulate(9.6)
-        nest.Simulate(3.9)
+                spikeGen = nest.Create( 'spike_generator', 1, params={'spike_times':spike_times} )
+                nest.Connect(spikeGen, lpfsd, syn_spec={'delay':min_delay*0.1})
+                nest.Simulate(0.6)
+                nest.Simulate(0.3)
+                nest.Simulate(1.2)
+                nest.Simulate(1.6)
+                nest.Simulate(1.5)
+                nest.Simulate(3.6)
+                nest.Simulate(0.8)
+                nest.Simulate(0.6)
+                nest.Simulate(1.3)
+                nest.Simulate(7.6)
+                nest.Simulate(4.5)
+                nest.Simulate(0.2)
+                nest.Simulate(1.3)
+                nest.Simulate(5.6)
+                nest.Simulate(3.9)
+                nest.Simulate(1.5)
+                nest.Simulate(0.2)
+                nest.Simulate(1.3)
+                nest.Simulate(3.6)
+                nest.Simulate(0.8)
+                nest.Simulate(0.6)
+                nest.Simulate(0.2)
+                nest.Simulate(1.3)
+                nest.Simulate(9.6)
+                nest.Simulate(3.9)
 
-        traces = nest.GetStatus(lpfsd, 'filter_events')[0]['filter_values']
-        device_trace = traces[len(traces) - 1]
-        sampling_times = np.array([54.])
-        senders = np.ones_like(spike_times).tolist()
-        # This checks against result calculated using a python script
-        python_trace = lowpass_filter_python(senders,
-                                             spike_times,
-                                             sampling_times,
-                                             30.0)['ktrace_values']
-        self.assertAlmostEquals(device_trace, python_trace)
+                device_traces = nest.GetStatus(lpfsd, 'filter_events')[0]['filter_values']
+                reporting_times = np.arange(report_interval, 54.0 + report_interval, report_interval)
+                senders = np.ones_like(spike_times).tolist()
+                # This checks against result calculated using a python script
+                python_traces = lowpass_filter_python(senders,
+                                                     spike_times,
+                                                      reporting_times)['ktrace_values']
+                for i in range(len(device_traces)):
+                    self.assertAlmostEquals(device_traces[i], python_traces[i])
+
+
+    def test_WithLocalAndGlobalNodes(self):
+        """ 6) Checking to see if the result is correct if simulation includes both local and global nodes, and multiple threads. """
+
+
+        start_times = [53.0]
+        stop_times = [54.0]
+        report_interval = 1.0
+
+        for threads in range(1, 3, 1):
+            spike_times = np.array([5., 5.9, 6.0, 7., 9., 9.5, 10.0])
+            nest.ResetKernel()
+            nest.SetKernelStatus({'local_num_threads': threads, 'resolution': 0.1})
+            lpfsd = nest.Create('lowpassfilter_spike_detector', 1,
+                                params={'filter_start_times': start_times,
+                                        'filter_stop_times': stop_times,
+                                        'filter_report_interval': report_interval,
+                                        'record_spikes':True})
+
+            spikeGen = nest.Create('spike_generator', 1, params={'spike_times': spike_times})
+            nest.Connect(spikeGen, lpfsd, syn_spec={'delay': 1.5})
+
+            neuron = nest.Create('iaf_psc_exp', params={'I_e':1000.0})
+            nest.Connect(neuron, lpfsd, syn_spec={'delay': 1.5})
+
+            nest.Simulate(55.6)
+
+            filter_events = nest.GetStatus(lpfsd, 'filter_events')[0]
+            device_traces = filter_events['filter_values']
+            device_senders = filter_events['senders']
+
+            # Checking the trace value for the spike generator
+            spikeGen_id = nest.GetStatus(spikeGen)[0]['global_id']
+            device_spikegen_trace = device_traces[np.where(device_senders == spikeGen_id)]
+            reporting_times = np.array([54.])
+            senders = np.ones_like(spike_times).tolist()
+            # This checks against result calculated using a python script
+            python_trace = lowpass_filter_python(senders,
+                                                 spike_times,
+                                                 reporting_times)['ktrace_values']
+            self.assertAlmostEquals(device_spikegen_trace, python_trace)
+
+            # Checking the trace value for the neuron
+            neuron_id = nest.GetStatus(neuron)[0]['global_id']
+            device_neuron_trace = device_traces[np.where(device_senders == neuron_id)]
+            reporting_times = np.array([54.])
+            events = nest.GetStatus(lpfsd, 'events')[0]
+            spike_times = events['times'][np.where(events['senders'] == neuron_id)]
+            senders = np.ones_like(spike_times).tolist()
+            # This checks against result calculated using a python script
+            python_trace = lowpass_filter_python(senders,
+                                                 spike_times,
+                                                 reporting_times)['ktrace_values']
+            self.assertAlmostEquals(device_neuron_trace, python_trace)
 
 
 def suite():

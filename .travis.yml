@@ -20,6 +20,11 @@ matrix:
 cache:
   directory:
     - $HOME/.cache
+    
+# safelist
+branches:
+  only:
+  - help-build
 
 before_install:
   - echo $PATH

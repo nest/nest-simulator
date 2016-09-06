@@ -72,8 +72,8 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
   // is that the min delay is exactly at a step, in which case one would get
   // a min delay that is one step too small. We can detect this by an
   // additional test.
-  double_t delay_tmp = 0.0;
-  bool min_delay_updated = updateValue< double_t >( d, "min_delay", delay_tmp );
+  double delay_tmp = 0.0;
+  bool min_delay_updated = updateValue< double >( d, "min_delay", delay_tmp );
   Time new_min_delay;
   if ( min_delay_updated )
   {
@@ -86,7 +86,7 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
   }
 
   // For the maximum delay, we always round up, using ms_stamp
-  bool max_delay_updated = updateValue< double_t >( d, "max_delay", delay_tmp );
+  bool max_delay_updated = updateValue< double >( d, "max_delay", delay_tmp );
   Time new_max_delay = Time( Time::ms_stamp( delay_tmp ) );
 
   if ( min_delay_updated xor max_delay_updated )
@@ -121,7 +121,7 @@ nest::DelayChecker::set_status( const DictionaryDatum& d )
 }
 
 void
-nest::DelayChecker::assert_valid_delay_ms( double_t requested_new_delay )
+nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
 {
   const delay new_delay = Time::delay_ms_to_steps( requested_new_delay );
   const double new_delay_ms = Time::delay_steps_to_ms( new_delay );

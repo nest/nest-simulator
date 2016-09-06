@@ -101,11 +101,11 @@ void
 nest::SynapticElement::get( DictionaryDatum& d ) const
 {
   // Store current values in the dictionary
-  def< double_t >( d, names::growth_rate, growth_rate_ );
-  def< double_t >( d, names::tau_vacant, tau_vacant_ );
+  def< double >( d, names::growth_rate, growth_rate_ );
+  def< double >( d, names::tau_vacant, tau_vacant_ );
   def< bool >( d, names::continuous, continuous_ );
-  def< double_t >( d, names::z, z_ );
-  def< int_t >( d, names::z_connected, z_connected_ );
+  def< double >( d, names::z, z_ );
+  def< int >( d, names::z_connected, z_connected_ );
 
   // Store growth curve
   growth_curve_->get( d );
@@ -117,13 +117,13 @@ nest::SynapticElement::get( DictionaryDatum& d ) const
 void
 nest::SynapticElement::set( const DictionaryDatum& d )
 {
-  double_t new_tau_vacant = tau_vacant_;
+  double new_tau_vacant = tau_vacant_;
 
   // Store values
-  updateValue< double_t >( d, names::growth_rate, growth_rate_ );
-  updateValue< double_t >( d, names::tau_vacant, new_tau_vacant );
+  updateValue< double >( d, names::growth_rate, growth_rate_ );
+  updateValue< double >( d, names::tau_vacant, new_tau_vacant );
   updateValue< bool >( d, names::continuous, continuous_ );
-  updateValue< double_t >( d, names::z, z_ );
+  updateValue< double >( d, names::z, z_ );
 
   if ( d->known( names::growth_curve ) )
   {
@@ -147,10 +147,10 @@ nest::SynapticElement::set( const DictionaryDatum& d )
 * Update the number of element at the time t (in ms)
 * ---------------------------------------------------------------- */
 void
-nest::SynapticElement::update( double_t t,
-  double_t t_minus,
-  double_t Ca_minus,
-  double_t tau_Ca )
+nest::SynapticElement::update( double t,
+  double t_minus,
+  double Ca_minus,
+  double tau_Ca )
 {
   if ( z_t_ != t_minus )
   {

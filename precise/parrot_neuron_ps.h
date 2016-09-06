@@ -113,7 +113,7 @@ private:
   {
   } // no variables
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /** Queue for incoming events. */
   struct Buffers_

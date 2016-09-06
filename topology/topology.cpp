@@ -60,7 +60,7 @@ create_layer( const DictionaryDatum& layer_dict )
   return layernode;
 }
 
-std::vector< double_t >
+std::vector< double >
 get_position( const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
@@ -77,8 +77,8 @@ get_position( const index node_gid )
   return layer->get_position_vector( node->get_subnet_index() );
 }
 
-std::vector< double_t >
-displacement( const std::vector< double_t >& point, const index node_gid )
+std::vector< double >
+displacement( const std::vector< double >& point, const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
     throw KernelException(
@@ -94,8 +94,8 @@ displacement( const std::vector< double_t >& point, const index node_gid )
   return layer->compute_displacement( point, node->get_lid() );
 }
 
-double_t
-distance( const std::vector< double_t >& point, const index node_gid )
+double
+distance( const std::vector< double >& point, const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
     throw KernelException(
@@ -125,7 +125,7 @@ create_mask( const DictionaryDatum& mask_dict )
 }
 
 BoolDatum
-inside( const std::vector< double_t >& point, const MaskDatum& mask )
+inside( const std::vector< double >& point, const MaskDatum& mask )
 {
   return mask->inside( point );
 }
@@ -175,7 +175,7 @@ subtract_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
 ArrayDatum
 get_global_children( const index gid,
   const MaskDatum& maskd,
-  const std::vector< double_t >& anchor )
+  const std::vector< double >& anchor )
 {
   AbstractLayer* layer =
     dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( gid ) );
@@ -229,8 +229,8 @@ create_parameter( const DictionaryDatum& param_dict )
   return datum;
 }
 
-double_t
-get_value( const std::vector< double_t >& point, const ParameterDatum& param )
+double
+get_value( const std::vector< double >& point, const ParameterDatum& param )
 {
   librandom::RngPtr rng = get_global_rng();
   return param->value( point, rng );
@@ -277,8 +277,8 @@ get_element( const index layer_gid, const TokenArray array )
       throw TypeMismatch( "grid layer node", "something else" );
     }
 
-    node_gids = layer->get_nodes(
-      Position< 2, int_t >( static_cast< index >( array[ 0 ] ),
+    node_gids =
+      layer->get_nodes( Position< 2, int >( static_cast< index >( array[ 0 ] ),
         static_cast< index >( array[ 1 ] ) ) );
   }
   break;
@@ -292,8 +292,8 @@ get_element( const index layer_gid, const TokenArray array )
       throw TypeMismatch( "grid layer node", "something else" );
     }
 
-    node_gids = layer->get_nodes(
-      Position< 3, int_t >( static_cast< index >( array[ 0 ] ),
+    node_gids =
+      layer->get_nodes( Position< 3, int >( static_cast< index >( array[ 0 ] ),
         static_cast< index >( array[ 1 ] ),
         static_cast< index >( array[ 2 ] ) ) );
   }

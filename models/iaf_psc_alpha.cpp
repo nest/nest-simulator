@@ -74,7 +74,7 @@ iaf_psc_alpha::Parameters_::Parameters_()
   , I_e_( 0.0 )              // pA
   , V_reset_( -70.0 - E_L_ ) // mV, rel to E_L_
   , Theta_( -55.0 - E_L_ )   // mV, rel to E_L_
-  , LowerBound_( -std::numeric_limits< double_t >::infinity() )
+  , LowerBound_( -std::numeric_limits< double >::infinity() )
   , tau_ex_( 2.0 ) // ms
   , tau_in_( 2.0 ) // ms
 {
@@ -262,7 +262,7 @@ iaf_psc_alpha::calibrate()
   V_.IPSCInitialValue_ = 1.0 * numerics::e / P_.tau_in_;
 
   // TauR specifies the length of the absolute refractory period as
-  // a double_t in ms. The grid based iaf_psc_alpha can only handle refractory
+  // a double in ms. The grid based iaf_psc_alpha can only handle refractory
   // periods that are integer multiples of the computation step size (h).
   // To ensure consistency with the overall simulation scheme such conversion
   // should be carried out via objects of class nest::Time. The conversion
@@ -291,13 +291,13 @@ iaf_psc_alpha::calibrate()
  */
 
 void
-iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
+iaf_psc_alpha::update( Time const& origin, const long from, const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     if ( S_.r_ == 0 )
     {
@@ -358,7 +358,7 @@ iaf_psc_alpha::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t s = e.get_weight() * e.get_multiplicity();
+  const double s = e.get_weight() * e.get_multiplicity();
 
   if ( e.get_weight() > 0.0 )
     B_.ex_spikes_.add_value( e.get_rel_delivery_steps(
@@ -375,8 +375,8 @@ iaf_psc_alpha::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t I = e.get_current();
-  const double_t w = e.get_weight();
+  const double I = e.get_current();
+  const double w = e.get_weight();
 
   B_.currents_.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),

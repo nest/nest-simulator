@@ -60,11 +60,11 @@ ContDelayConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
 
-  def< double_t >( d, names::weight, weight_ );
-  def< double_t >( d,
+  def< double >( d, names::weight, weight_ );
+  def< double >( d,
     names::delay,
     Time( Time::step( get_delay_steps() ) ).get_ms() - delay_offset_ );
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
@@ -74,18 +74,18 @@ ContDelayConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
 {
   ConnectionBase::set_status( d, cm );
 
-  updateValue< double_t >( d, names::weight, weight_ );
+  updateValue< double >( d, names::weight, weight_ );
 
   // set delay if mentioned
-  double_t delay;
+  double delay;
 
-  if ( updateValue< double_t >( d, names::delay, delay ) )
+  if ( updateValue< double >( d, names::delay, delay ) )
   {
 
-    const double_t h = Time::get_resolution().get_ms();
+    const double h = Time::get_resolution().get_ms();
 
-    double_t int_delay;
-    const double_t frac_delay = std::modf( delay / h, &int_delay );
+    double int_delay;
+    const double frac_delay = std::modf( delay / h, &int_delay );
 
     if ( frac_delay == 0 )
     {
@@ -96,7 +96,7 @@ ContDelayConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
     }
     else
     {
-      const long_t lowerbound = static_cast< long_t >( int_delay );
+      const long lowerbound = static_cast< long >( int_delay );
       kernel()
         .connection_manager.get_delay_checker()
         .assert_two_valid_delays_steps( lowerbound, lowerbound + 1 );

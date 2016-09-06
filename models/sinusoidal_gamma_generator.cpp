@@ -168,13 +168,13 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
       num_trains_ = 1; // fixed
   }
 
-  if ( updateValue< double_t >( d, names::frequency, om_ ) )
+  if ( updateValue< double >( d, names::frequency, om_ ) )
     om_ *= 2.0 * numerics::pi / 1000.0;
 
-  if ( updateValue< double_t >( d, names::phase, phi_ ) )
+  if ( updateValue< double >( d, names::phase, phi_ ) )
     phi_ *= numerics::pi / 180.0;
 
-  if ( updateValue< double_t >( d, names::order, order_ ) )
+  if ( updateValue< double >( d, names::order, order_ ) )
   {
     if ( order_ < 1.0 )
       throw BadProperty( "The gamma order must be at least 1." );
@@ -184,11 +184,11 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
      floating-point comparison issues under 32-bit Linux.
   */
   double dc_unscaled = 1e3 * rate_;
-  if ( updateValue< double_t >( d, names::rate, dc_unscaled ) )
+  if ( updateValue< double >( d, names::rate, dc_unscaled ) )
     rate_ = 1e-3 * dc_unscaled; // scale to 1/ms
 
   double ac_unscaled = 1e3 * amplitude_;
-  if ( updateValue< double_t >( d, names::amplitude, ac_unscaled ) )
+  if ( updateValue< double >( d, names::amplitude, ac_unscaled ) )
     amplitude_ = 1e-3 * ac_unscaled; // scale to 1/ms
 
   if ( not( 0.0 <= ac_unscaled and ac_unscaled <= dc_unscaled ) )
@@ -248,15 +248,15 @@ nest::sinusoidal_gamma_generator::init_buffers_()
 
 // ----------------------------------------------------
 
-inline nest::double_t
+inline double
 nest::sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p,
-  double_t t_a,
-  double_t t_b ) const
+  double t_a,
+  double t_b ) const
 {
   if ( t_a == t_b )
     return 0.0;
 
-  double_t deltaLambda = p.order_ * p.rate_ * ( t_b - t_a );
+  double deltaLambda = p.order_ * p.rate_ * ( t_b - t_a );
   if ( std::abs( p.amplitude_ ) > 0 && std::abs( p.om_ ) > 0 )
     deltaLambda += -p.order_ * p.amplitude_ / p.om_
       * ( std::cos( p.om_ * t_b + p.phi_ ) - std::cos( p.om_ * t_a + p.phi_ ) );
@@ -297,7 +297,7 @@ nest::sinusoidal_gamma_generator::hazard_( port tgt_idx ) const
 {
   // Note: We compute Lambda for the entire interval since the last spike/
   //       parameter change each time for better accuracy.
-  const double_t Lambda = B_.Lambda_t0_[ tgt_idx ]
+  const double Lambda = B_.Lambda_t0_[ tgt_idx ]
     + deltaLambda_( P_, B_.t0_ms_[ tgt_idx ], V_.t_ms_ );
   return V_.h_ * P_.order_ * S_.rate_ * std::pow( Lambda, P_.order_ - 1 )
     * std::exp( -Lambda ) / gsl_sf_gamma_inc( P_.order_, Lambda );
@@ -305,14 +305,14 @@ nest::sinusoidal_gamma_generator::hazard_( port tgt_idx ) const
 
 void
 nest::sinusoidal_gamma_generator::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     const Time t = Time( Time::step( origin.get_steps() + lag + 1 ) );
     V_.t_ms_ = t.get_ms();

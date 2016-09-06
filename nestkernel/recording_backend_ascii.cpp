@@ -318,7 +318,7 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device, const Event& 
 void
 nest::RecordingBackendASCII::write( const RecordingDevice& device,
   const Event& event,
-  const std::vector< double_t >& values )
+  const std::vector< double >& values )
 {
   int vp = device.get_vp();
   int id = device.get_gid();
@@ -330,7 +330,7 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
   std::ofstream& file = *( files_[ vp ][ id ].second );
   file << sender << "\t" << stamp.get_ms() - offset;
 
-  for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
+  for ( std::vector< double >::const_iterator val = values.begin(); val != values.end(); ++val )
   {
     file << "\t" << *val;
   }

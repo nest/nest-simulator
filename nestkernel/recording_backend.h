@@ -28,7 +28,7 @@ public:
 
   virtual void write( const RecordingDevice& device, const Event& event ) = 0;
   virtual void
-  write( const RecordingDevice& device, const Event& event, const std::vector< double_t >& ) = 0;
+  write( const RecordingDevice& device, const Event& event, const std::vector< double >& ) = 0;
 
   virtual void set_status( const DictionaryDatum& ) = 0;
   virtual void get_status( DictionaryDatum& ) const = 0;

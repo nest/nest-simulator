@@ -67,7 +67,7 @@ nest::RecordingBackendScreen::write( const RecordingDevice& , const Event& event
 void
 nest::RecordingBackendScreen::write( const RecordingDevice&,
   const Event& event,
-  const std::vector< double_t >& values )
+  const std::vector< double >& values )
 {
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
@@ -77,7 +77,7 @@ nest::RecordingBackendScreen::write( const RecordingDevice&,
   {
     std::cout << sender << "\t" << stamp.get_ms() - offset;
 
-    for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
+    for ( std::vector< double >::const_iterator val = values.begin(); val != values.end(); ++val )
     {
       std::cout << "\t" << *val;
     }

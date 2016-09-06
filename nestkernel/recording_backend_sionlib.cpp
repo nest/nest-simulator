@@ -391,7 +391,7 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device, const Event
 void
 nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
   const Event& event,
-  const std::vector< double_t >& values )
+  const std::vector< double >& values )
 {
   const thread task = device.get_vp();
   const sion_uint64 device_gid = static_cast< sion_uint64 >( device.get_gid() );
@@ -415,7 +415,7 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
   {
     buffer.ensure_space( required_space );
     buffer << device_gid << sender_gid << step << offset << n_values;
-    for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
+    for ( std::vector< double >::const_iterator val = values.begin(); val != values.end(); ++val )
     {
       buffer << *val;
     }
@@ -431,7 +431,7 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
     }
 
     buffer << device_gid << sender_gid << step << offset << n_values;
-    for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
+    for ( std::vector< double >::const_iterator val = values.begin(); val != values.end(); ++val )
     {
       buffer << *val;
     }
@@ -450,7 +450,7 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
     sion_fwrite( &offset, sizeof( double ), 1, file.sid );
     sion_fwrite( &n_values, sizeof( sion_uint32 ), 1, file.sid );
 
-    for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
+    for ( std::vector< double >::const_iterator val = values.begin(); val != values.end(); ++val )
     {
       double value = *val;
       sion_fwrite( &value, sizeof( double ), 1, file.sid );

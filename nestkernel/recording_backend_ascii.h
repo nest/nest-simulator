@@ -90,7 +90,7 @@ public:
    * Functions to write data to file.
    */
   void write( const RecordingDevice& device, const Event& event );
-  void write( const RecordingDevice& device, const Event& event, const std::vector< double_t >& );
+  void write( const RecordingDevice& device, const Event& event, const std::vector< double >& );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;

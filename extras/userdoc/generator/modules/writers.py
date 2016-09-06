@@ -30,6 +30,7 @@ import os
 import re
 import textwrap
 from helpers import cut_it
+from string import Template
 
 if os.path.isdir('../cmds'):
     pass
@@ -51,82 +52,33 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
 
     Write html for integration in NEST Help-System
     """
-    name = ""
-    header_ref = '''<!DOCTYPE html>
-    <html>
-        <head>
-    '''
-    header_style = '''
-    <style type="text/css">
-      body {
-        padding: 0;
-        margin: 0;
-      }
-      a {
-        color: #339;
-        text-decoration: none;
-      }
-      a:visited {
-        color: #339;
-        text-decoration: none;
-      }
-      a:hover {
-        text-decoration: underline;
-      }
-      h1 {
-        padding: 15px 0 0 15px;
-      }
-      p {
-        padding-left: 15px;
-      }
-      table.headerfooter {
-        margin: 20px 0 20px 0;
-        background-color: #eee;
-        width: 100%;
-        height: 30px;
-        border-top: 2px solid #ccc;
-        border-bottom: 2px solid #ccc;
-        text-align: center;
-      }
-      div.wrap {
-        padding-left: 15px;
-      }
-    </style>
-    '''
 
-    footer = '''
-        </body>
-    </html>'''
+    # Loading Template for commands
+    ftemplate = open('template/cmd.tpl.html', 'r')
+    templ = ftemplate.read()
+    ftemplate.close()
+    # Loading Template for CSS
+    cssf = open('template/nest.tpl.css', 'r')
+    csstempl = cssf.read()
+    cssf.close()
+    # Loading Template for footer
+    footerf = open('template/footer.tpl.html', 'r')
+    footertempl = footerf.read()
+    footerf.close()
 
-    linkline = '''
-    <table class="headerfooter">
-      <tbody><tr>
-        <td width="30%" align="center"><a href="../../index.html">
-            NEST HelpDesk</a></td>
-        <td width="30%" align="center"><a href="../helpindex.html">
-            Command Index</a></td>
-        <td width="30%" align="center"><a href="../../quickref.html">
-            NEST Quick Reference</a></td>
-      </tr>
-    </tbody></table>
-    '''
+    s = Template(templ)
 
-    copyright = '''
-    <p style="text-align:center">
-        &copy; 2004 <a href="http://www.nest-initiative.org">
-        The NEST Initiative</a>
-    </p>
-    '''
-    htmllist = [header_ref]
+    htmllist = []
     hlplist = []
+    name = ''
 
     for key, value in doc_dic.iteritems():
         if key == "Name":
             name = value.strip()
-            htmllist.append('<title>NEST Command Index: %s</title>%s</head>'
-                            % (name, header_style) + '<body>')
-            htmllist.append('<h1>Command: %s</h1>' % name)
-            htmllist.append(linkline + '<div class="wrap">')
+            # htmllist.append('<title>NEST Command Index: %s</title>%s</head>'
+            #                 % (name, header_style) + '<body>')
+            # htmllist.append('<h1>Command: %s</h1>' % name)
+            # htmllist.append('<div class="wrap">')
     for key, value in doc_dic.iteritems():
         if key == "FullName":
             fullname = value.strip("###### ######")
@@ -191,22 +143,29 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
             value = value.strip("###### ###### $$")
             htmllist.append('<b>Source:</b><pre>%s</pre>' % value)
             hlplist.append('Source:\n\n%s' % value)
-    htmllist.append('</div>' + linkline)
-    htmllist.append(copyright)
-    htmllist.append(footer)
+    htmllist.append('</div>')
+
+
+    htmlstring = ('\n'.join(htmllist))
+    cmdindexstring = s.substitute(indexbody=htmlstring, css=csstempl,
+                                  title=name, footer=footertempl)
 
     if name:  # only, if there is a name
         if file.endswith('.sli'):
             f_file_name = open(('../cmds/sli/%s.html' % name), 'w')
-            f_file_name.write('\n'.join(htmllist))
+            f_file_name.write(cmdindexstring)
             f_file_name.close()
+
+
             f_file_name_hlp = open(('../cmds/sli/%s.hlp' % name), 'w')
-            f_file_name_hlp.write('\n'.join(hlplist))
+            f_file_name_hlp.write(cmdindexstring)
             f_file_name_hlp.close()
         else:
             f_file_name = open(('../cmds/cc/%s.html' % name), 'w')
-            f_file_name.write('\n'.join(htmllist))
+            f_file_name.write(cmdindexstring)
             f_file_name.close()
+
+
             f_file_name_hlp = open(('../cmds/cc/%s.hlp' % name), 'w')
             f_file_name_hlp.write('\n'.join(hlplist))
             f_file_name_hlp.close()
@@ -219,113 +178,7 @@ def write_helpindex(index_dic_list):
 
     Collect the long list of dicts and transform it toa sorted html file.
     """
-    head = '''
-    <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-    <html>
-    <head>
-      <title>NEST Command Index</title>
-      <style type="text/css">
-        body {
-          padding: 0;
-          margin: 0;
-        }
-        h1 {
-          padding: 15px 0 0 15px;
-        }
-        p {
-          padding-left: 15px;
-        }
-        a {
-          color: #339;
-          text-decoration: none;
-        }
-        a:visited {
-          color: #339;
-          text-decoration: none;
-        }
-        a:hover {
-          text-decoration: underline;
-        }
-        h1 a {
-          color: #000;
-          text-decoration: none;
-        }
-        table.headerfooter {
-          margin: 20px 0 20px 0;
-          background-color: #eee;
-          width: 100%;
-          height: 30px;
-          border-top: 2px solid #ccc;
-          border-bottom: 2px solid #ccc;
-          text-align: center;
-        }
-        table.commands {
-          margin: 15px 0 15px 0;
-          background-color: #eee;
-          width: 90%;
-          border: 2px solid #ccc;
-          border-spacing: 0px;
-          border-collapse: collapse;
-        }
-        table.commands td {
-          border-bottom: 1px solid #ccc;
-          border-right: 1px dotted #ccc;
-          padding: 5px 0 5px 10px;
-          text-align: left;
-        }
-        table.letteridx {
-          margin: 0;
-          background-color: #eee;
-          width: 90%;
-          border: 2px solid #ccc;
-          border-spacing: 0px;
-          border-collapse: collapse;
-        }
-        table.letteridx td {
-          border-right: 1px solid #ccc;
-          padding: 5px;
-          text-align: center;
-        }
-        table.letteridx a {
-          display: block;
-          height: 100%;
-          width: 100%;
-        }
-        td.left{
-            width:30%;
-        }
-      </style>
-    </head>
-    <body bgcolor="white" fgcolor="black">
-    <h1><a name="top">NEST Command Index</a></h1>
-    <table class="headerfooter">
-      <tr>
-        <td width="50%" align=center>
-        <a href="../index.html">NEST HelpDesk</a></td>
-        <td width="50%" align=center>
-        <a href="../quickref.html">NEST Quick Reference</a></td>
-      </tr>
-    </table>
-    '''
 
-    footer = '''
-    <table class="headerfooter">
-        <tr>
-        <td width="30%" align=center>
-        <a href="../index.html">NEST HelpDesk</a></td>
-        <td width="30%" align=center><a href="#top">Top</a></td>
-        <td width="30%" align=center>
-        <a href="../quickref.html">NEST Quick Reference</a></td>
-        </tr>
-    </table>
-
-    <p style="text-align:center">
-    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative
-    </a>
-    </p>
-    </body>
-    </html>
-    '''
     alpha = [('A', 'a'), ('B', 'b'), ('C', 'c'), ('D', 'd'), ('E', 'e'),
              ('F', 'f'), ('G', 'g'), ('H', 'h'), ('I', 'i'), ('J' 'j'),
              ('K', 'k'), ('L', 'l'), ('M', 'm'), ('N', 'n'), ('O', 'o'),
@@ -333,8 +186,23 @@ def write_helpindex(index_dic_list):
              ('U', 'u'), ('V', 'v'), ('W', 'w'), ('X', 'x'), ('Z', 'z'), '-',
              ':', '<', '=']
 
-    html_list = [head]
+    html_list = []
     hlp_list = []
+
+    # Loading Template for helpindex.html
+    ftemplate = open('template/helpindex.tpl.html', 'r')
+    templ = ftemplate.read()
+    ftemplate.close()
+    # Loading Template for CSS
+    cssf = open('template/nest.tpl.css', 'r')
+    csstempl = cssf.read()
+    cssf.close()
+    # Loading Template for footer
+    footerf = open('template/footer.tpl.html', 'r')
+    footertempl = footerf.read()
+    footerf.close()
+
+    s = Template(templ)
 
     from operator import itemgetter
     index_dic_list = sorted(index_dic_list, key=itemgetter('name'))
@@ -371,10 +239,16 @@ def write_helpindex(index_dic_list):
                                                item['fullname']))
         html_list.append('</table></center>')
         html_list.append('</table></center>')
-    html_list.append(footer)
+    #html_list.append(footer)
+    htmlstring = ('\n'.join(html_list))
+    indexstring = s.substitute(indexbody=htmlstring, css=csstempl,
+                               footer=footertempl)
+
     f_helpindex = open('../cmds/helpindex.html', 'w')
-    f_helpindex.write('\n'.join(html_list))
+    f_helpindex.write(indexstring)
     f_helpindex.close()
+
+    # Todo: using string template for .hlp
     f_helphlpindex = open('../cmds/helpindex.hlp', 'w')
     f_helphlpindex.write('\n'.join(hlp_list))
     f_helphlpindex.close()

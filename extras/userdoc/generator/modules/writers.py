@@ -52,7 +52,6 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
 
     Write html for integration in NEST Help-System
     """
-
     # Loading Template for commands
     ftemplate = open('template/cmd.tpl.html', 'r')
     templ = ftemplate.read()
@@ -144,8 +143,6 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
             htmllist.append('<b>Source:</b><pre>%s</pre>' % value)
             hlplist.append('Source:\n\n%s' % value)
     htmllist.append('</div>')
-
-
     htmlstring = ('\n'.join(htmllist))
     cmdindexstring = s.substitute(indexbody=htmlstring, css=csstempl,
                                   title=name, footer=footertempl)
@@ -156,7 +153,6 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
             f_file_name.write(cmdindexstring)
             f_file_name.close()
 
-
             f_file_name_hlp = open(('../cmds/sli/%s.hlp' % name), 'w')
             f_file_name_hlp.write(cmdindexstring)
             f_file_name_hlp.close()
@@ -164,7 +160,6 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
             f_file_name = open(('../cmds/cc/%s.html' % name), 'w')
             f_file_name.write(cmdindexstring)
             f_file_name.close()
-
 
             f_file_name_hlp = open(('../cmds/cc/%s.hlp' % name), 'w')
             f_file_name_hlp.write('\n'.join(hlplist))

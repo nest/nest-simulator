@@ -38,10 +38,11 @@ directly from the Examples section.
 Author:  130531, Diesmann
 SeeAlso: floor, cvi
 */
-
+/*
 (unittest) run
 /unittest using
 
 M_ERROR setverbosity
 
 /round validate  assert_or_die
+*/

@@ -1,3 +1,36 @@
+
+Skip to content
+This repository
+
+    Pull requests
+    Issues
+    Gist
+
+    @steffengraber
+
+1
+0
+
+    84
+
+steffengraber/nest-simulator forked from nest/nest-simulator
+Code
+Pull requests 0
+Wiki
+Pulse
+Graphs
+Settings
+nest-simulator/.travis.yml
+38c820f 5 minutes ago
+@steffengraber steffengraber # safelist in .travis.yml
+@lekshmideepu
+@tammoippen
+@jougs
+@weidel-p
+@steffengraber
+@heplesser
+@apeyser
+106 lines (85 sloc) 2.99 KB
 language: generic
 
 
@@ -20,6 +53,11 @@ matrix:
 cache:
   directory:
     - $HOME/.cache
+    
+# safelist
+branches:
+  only:
+  - help-build
 
 before_install:
   - echo $PATH
@@ -83,18 +121,23 @@ before_deploy:
 
 #S3 deployment
 
-deploy:
-  provider: s3
-  access_key_id:
-    secure: $ARTIFACTS_KEY
-  secret_access_key:
-    secure: $ARTIFACTS_SECRET
-  bucket: "nest-travis-artefacts"
-  region: eu-central-1
-  skip_cleanup: true
-  on:
-    repo: nest/nest-simulator
-    branch: master
-  local-dir: "$TRAVIS_BUILD_DIR/build/artefacts_upload"
-  upload-dir: "$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER"
-  acl: bucket_owner_full_control
+#deploy:
+#  provider: s3
+#  access_key_id:
+#    secure: $ARTIFACTS_KEY
+#  secret_access_key:
+#    secure: $ARTIFACTS_SECRET
+#  bucket: "nest-travis-artefacts"
+#  region: eu-central-1
+#  skip_cleanup: true
+#  on:
+#    repo: nest/nest-simulator
+ #   branch: master
+#  local-dir: "$TRAVIS_BUILD_DIR/build/artefacts_upload"
+#  upload-dir: "$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER"
+#  acl: bucket_owner_full_control
+
+    Contact GitHub API Training Shop Blog About 
+
+    © 2016 GitHub, Inc. Terms Privacy Security Status Help 
+

@@ -24,21 +24,19 @@
 #ifndef IAF_TUM_2000_H
 #define IAF_TUM_2000_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
-
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest
 {
-
-class Network;
-
 /* BeginDocumentation
-   Name: iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential PSCs.
+   Name: iaf_tum_2000 - Leaky integrate-and-fire neuron model with exponential
+                        PSCs.
 
    Description:
 
@@ -93,7 +91,8 @@ class Network;
    tau_m        double - Membrane time constant in ms.
    tau_syn_ex   double - Time constant of postsynaptic excitatory currents in ms
    tau_syn_in   double - Time constant of postsynaptic inhibitory currents in ms
-   t_ref_abs    double - Duration of absolute refractory period (V_m = V_reset) in ms.
+   t_ref_abs    double - Duration of absolute refractory period (V_m = V_reset)
+                         in ms.
    t_ref_tot    double - Duration of total refractory period (no spiking) in ms.
    V_m          double - Membrane potential in mV
    V_th         double - Spike threshold in mV.
@@ -109,9 +108,9 @@ class Network;
    the NEST source code (docs/model_details).
 
    References:
-   [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation in Recurrent
-   Networks with Frequency-Dependent Synapses, The Journal of Neuroscience, 2000, Vol. 20 RC50 p.
-   1-5
+   [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation
+   in Recurrent Networks with Frequency-Dependent Synapses, The Journal of
+   Neuroscience, 2000, Vol. 20 RC50 p. 1-5
    [2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
    systems with applications to neuronal modeling. Biologial Cybernetics
    81:381-402.
@@ -139,7 +138,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -162,7 +162,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_tum_2000 >;
@@ -177,33 +177,33 @@ private:
   {
 
     /** Membrane time constant in ms. */
-    double_t Tau_;
+    double Tau_;
 
     /** Membrane capacitance in pF. */
-    double_t C_;
+    double C_;
 
     /** Refractory period in ms. */
-    double_t tau_ref_tot_;
-    double_t tau_ref_abs_;
+    double tau_ref_tot_;
+    double tau_ref_abs_;
 
     /** Resting potential in mV. */
-    double_t U0_;
+    double E_L_;
 
     /** External current in pA */
-    double_t I_e_;
+    double I_e_;
 
     /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
-        I.e. the real threshold is (U0_+Theta_). */
-    double_t Theta_;
+        I.e. the real threshold is (E_L_+Theta_). */
+    double Theta_;
 
     /** reset value of the membrane potential */
-    double_t V_reset_;
+    double V_reset_;
 
     /** Time constant of excitatory synaptic current in ms. */
-    double_t tau_ex_;
+    double tau_ex_;
 
     /** Time constant of inhibitory synaptic current in ms. */
-    double_t tau_in_;
+    double tau_in_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -223,13 +223,14 @@ private:
   struct State_
   {
     // state variables
-    double_t i_0_;      // synaptic dc input current, variable 0
-    double_t i_syn_ex_; // postsynaptic current for exc. inputs, variable 1
-    double_t i_syn_in_; // postsynaptic current for inh. inputs, variable 1
-    double_t V_m_;      // membrane potential, variable 2
+    double i_0_;      //!< synaptic dc input current, variable 0
+    double i_syn_ex_; //!< postsynaptic current for exc. inputs, variable 1
+    double i_syn_in_; //!< postsynaptic current for inh. inputs, variable 1
+    double V_m_;      //!< membrane potential, variable 2
 
-    int_t r_abs_; // absolute refractory counter (no membrane potential propagation)
-    int_t r_tot_; // total refractory counter (no spikes can be generated)
+    //! absolute refractory counter (no membrane potential propagation)
+    int r_abs_;
+    int r_tot_; //!< total refractory counter (no spikes can be generated)
 
     State_(); //!< Default initialization
 
@@ -274,34 +275,34 @@ private:
         weight one has an amplitude of 1 mV.
         @note mog - I assume this, not checked.
     */
-    //    double_t PSCInitialValue_;
+    //    double PSCInitialValue_;
 
     // time evolution operator
-    double_t P20_;
-    double_t P11ex_;
-    double_t P11in_;
-    double_t P21ex_;
-    double_t P21in_;
-    double_t P22_;
+    double P20_;
+    double P11ex_;
+    double P11in_;
+    double P21ex_;
+    double P21in_;
+    double P22_;
 
-    int_t RefractoryCountsAbs_;
-    int_t RefractoryCountsTot_;
+    int RefractoryCountsAbs_;
+    int RefractoryCountsTot_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the real membrane potential
-  double_t
+  double
   get_V_m_() const
   {
     return S_.V_m_;
   }
-  double_t
+  double
   get_I_syn_ex_() const
   {
     return S_.i_syn_ex_;
   }
-  double_t
+  double
   get_I_syn_in_() const
   {
     return S_.i_syn_in_;
@@ -328,7 +329,10 @@ private:
 
 
 inline port
-iaf_tum_2000::send_test_event( Node& target, rport receptor_type, synindex, bool )
+iaf_tum_2000::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

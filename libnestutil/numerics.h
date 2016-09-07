@@ -23,11 +23,13 @@
 #ifndef NUMERICS_H
 #define NUMERICS_H
 
+// Generated includes:
 #include "config.h"
 
+// C++ includes:
 #include <cassert>
-#include <limits>
 #include <cmath>
+#include <limits>
 
 #if HAVE_EXPM1
 #include <math.h>
@@ -67,7 +69,8 @@ expm1( double x )
     double term = x * x / 2;
     long n = 2;
 
-    while ( std::abs( term ) > std::abs( sum ) * std::numeric_limits< double >::epsilon() )
+    while ( std::abs( term ) > std::abs( sum )
+        * std::numeric_limits< double >::epsilon() )
     {
       sum += term;
       ++n;

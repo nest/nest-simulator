@@ -20,8 +20,12 @@
  *
  */
 
-#include <iomanip>
 #include "doubledatum.h"
+
+// C++ includes:
+#include <iomanip>
+
+// Includes from sli:
 #include "numericdatum_impl.h"
 
 // explicit template instantiation needed
@@ -34,12 +38,15 @@ template class NumericDatum< double, &SLIInterpreter::Doubletype >;
 // initialization of static members requires template<>
 // see Stroustrup C.13.1 --- HEP 2001-08-09
 template <>
-sli::pool
-  NumericDatum< double, &SLIInterpreter::Doubletype >::memory( sizeof( DoubleDatum ), 1024, 1 );
+sli::pool NumericDatum< double, &SLIInterpreter::Doubletype >::memory(
+  sizeof( DoubleDatum ),
+  1024,
+  1 );
 
 template <>
 void
-NumericDatum< double, &SLIInterpreter::Doubletype >::input_form( std::ostream& o ) const
+NumericDatum< double, &SLIInterpreter::Doubletype >::input_form(
+  std::ostream& o ) const
 {
   o.setf( std::ios::scientific );
   o << this->d;
@@ -48,7 +55,8 @@ NumericDatum< double, &SLIInterpreter::Doubletype >::input_form( std::ostream& o
 
 template <>
 void
-NumericDatum< double, &SLIInterpreter::Doubletype >::pprint( std::ostream& o ) const
+NumericDatum< double, &SLIInterpreter::Doubletype >::pprint(
+  std::ostream& o ) const
 {
   o.setf( std::ios::scientific );
   o << this->d;

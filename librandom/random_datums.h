@@ -28,11 +28,14 @@
 #ifndef RANDOM_DATUMS_H
 #define RANDOM_DATUMS_H
 
-#include "lockptrdatum.h"
-
+// Includes from librandom:
 #include "random_numbers.h"
-#include "randomgen.h"
 #include "randomdev.h"
+#include "randomgen.h"
+
+// Includes from sli:
+#include "lockptrdatum.h"
+#include "lockptrdatum_impl.h"
 
 namespace librandom
 {
@@ -45,8 +48,8 @@ typedef lockPTRDatum< librandom::RandomGen, &RandomNumbers::RngType > RngDatum;
 /** Encapsulates random number generator factories in SLI.
  *  @ingroup RandomNumberGenerators
  */
-typedef lockPTRDatum< librandom::GenericRNGFactory, &RandomNumbers::RngFactoryType >
-  RngFactoryDatum;
+typedef lockPTRDatum< librandom::GenericRNGFactory,
+  &RandomNumbers::RngFactoryType > RngFactoryDatum;
 
 /** Encapsulates random deviate generators in SLI.
  *  @ingroup RandomNumberGenerators
@@ -56,8 +59,8 @@ typedef lockPTRDatum< librandom::RandomDev, &RandomNumbers::RdvType > RdvDatum;
 /** Encapsulates random deviate generator factories in SLI.
  *  @ingroup RandomNumberGenerators
  */
-typedef lockPTRDatum< librandom::GenericRandomDevFactory, &RandomNumbers::RdvFactoryType >
-  RdvFactoryDatum;
+typedef lockPTRDatum< librandom::GenericRandomDevFactory,
+  &RandomNumbers::RdvFactoryType > RdvFactoryDatum;
 }
 
 #endif

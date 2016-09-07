@@ -21,12 +21,18 @@
  */
 
 #include "conn_parameter.h"
+
+// Includes from librandom:
+#include "random_datums.h"
+#include "random_numbers.h"
+
+// Includes from nestkernel:
+#include "nest_names.h"
+
+// Includes from sli:
 #include "arraydatum.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
-#include "random_numbers.h"
-#include "random_datums.h"
-#include "nest_names.h"
 #include "tokenutils.h"
 
 nest::ConnParameter*
@@ -64,18 +70,20 @@ nest::ConnParameter::create( const Token& t, const size_t nthreads )
     + t.datum()->gettypename().toString() );
 }
 
-nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec, const size_t )
+nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec,
+  const size_t )
   : rdv_( 0 )
 {
   if ( !rdv_spec->known( names::distribution ) )
-    throw BadProperty( "Random distribution spec must contain distribution name." );
+    throw BadProperty(
+      "Random distribution spec must contain distribution name." );
 
   const std::string rdv_name = ( *rdv_spec )[ names::distribution ];
   if ( !RandomNumbers::get_rdvdict().known( rdv_name ) )
     throw BadProperty( "Unknown random deviate: " + rdv_name );
 
-  librandom::RdvFactoryDatum factory =
-    getValue< librandom::RdvFactoryDatum >( RandomNumbers::get_rdvdict()[ rdv_name ] );
+  librandom::RdvFactoryDatum factory = getValue< librandom::RdvFactoryDatum >(
+    RandomNumbers::get_rdvdict()[ rdv_name ] );
 
   rdv_ = factory->create();
   rdv_->set_status( rdv_spec );

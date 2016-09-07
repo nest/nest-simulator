@@ -20,13 +20,21 @@
  *
  */
 
-#include <string>
 #include "nest_time.h"
-#include "token.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
+
+// C++ includes:
+#include <string>
+
+// Generated includes:
 #include "config.h"
+
+// Includes from libnestutil:
 #include "numerics.h"
+
+// Includes from sli:
+#include "doubledatum.h"
+#include "integerdatum.h"
+#include "token.h"
 
 using namespace nest;
 
@@ -34,26 +42,25 @@ using namespace nest;
    variables or use defaults.
 */
 
-#ifndef HAVE_TICS_PER_MS
+#ifndef CONFIG_TICS_PER_MS
 #define CONFIG_TICS_PER_MS 1000.0
 #endif
 
-#ifndef HAVE_TICS_PER_STEP
+#ifndef CONFIG_TICS_PER_STEP
 #define CONFIG_TICS_PER_STEP 100
 #endif
 
-const nest::double_t Time::Range::TICS_PER_MS_DEFAULT = CONFIG_TICS_PER_MS;
+const double Time::Range::TICS_PER_MS_DEFAULT = CONFIG_TICS_PER_MS;
 const tic_t Time::Range::TICS_PER_STEP_DEFAULT = CONFIG_TICS_PER_STEP;
 
-tic_t Time::Range::OLD_TICS_PER_STEP = Time::Range::TICS_PER_STEP_DEFAULT;
 tic_t Time::Range::TICS_PER_STEP = Time::Range::TICS_PER_STEP_DEFAULT;
 tic_t Time::Range::TICS_PER_STEP_RND = Time::Range::TICS_PER_STEP - 1;
 
-nest::double_t Time::Range::TICS_PER_MS = Time::Range::TICS_PER_MS_DEFAULT;
-nest::double_t Time::Range::MS_PER_TIC = 1 / Time::Range::TICS_PER_MS;
+double Time::Range::TICS_PER_MS = Time::Range::TICS_PER_MS_DEFAULT;
+double Time::Range::MS_PER_TIC = 1 / Time::Range::TICS_PER_MS;
 
-nest::double_t Time::Range::MS_PER_STEP = TICS_PER_STEP / TICS_PER_MS;
-nest::double_t Time::Range::STEPS_PER_MS = 1 / Time::Range::MS_PER_STEP;
+double Time::Range::MS_PER_STEP = TICS_PER_STEP / TICS_PER_MS;
+double Time::Range::STEPS_PER_MS = 1 / Time::Range::MS_PER_STEP;
 
 // define for unit -- const'ness is in the header
 // should only be necessary when not folded away
@@ -66,7 +73,7 @@ const delay Time::LimitNegInf::steps;
 tic_t
 Time::compute_max()
 {
-  const long_t lmax = std::numeric_limits< long_t >::max();
+  const long lmax = std::numeric_limits< long >::max();
   const tic_t tmax = std::numeric_limits< tic_t >::max();
 
   tic_t tics;
@@ -90,12 +97,12 @@ Time::Limit Time::LIM_MAX( +Time::compute_max() );
 Time::Limit Time::LIM_MIN( -Time::compute_max() );
 
 void
-Time::set_resolution( double_t ms_per_step )
+Time::set_resolution( double ms_per_step )
 {
   assert( ms_per_step > 0 );
 
-  Range::OLD_TICS_PER_STEP = Range::TICS_PER_STEP;
-  Range::TICS_PER_STEP = static_cast< tic_t >( dround( Range::TICS_PER_MS * ms_per_step ) );
+  Range::TICS_PER_STEP =
+    static_cast< tic_t >( dround( Range::TICS_PER_MS * ms_per_step ) );
   Range::TICS_PER_STEP_RND = Range::TICS_PER_STEP - 1;
 
   // Recalculate ms_per_step to be consistent with rounding above
@@ -108,7 +115,7 @@ Time::set_resolution( double_t ms_per_step )
 }
 
 void
-Time::set_resolution( double_t tics_per_ms, double_t ms_per_step )
+Time::set_resolution( double tics_per_ms, double ms_per_step )
 {
   Range::TICS_PER_MS = tics_per_ms;
   Range::MS_PER_TIC = 1 / tics_per_ms;
@@ -118,10 +125,6 @@ Time::set_resolution( double_t tics_per_ms, double_t ms_per_step )
 void
 Time::reset_resolution()
 {
-  // When resetting the kernel, we have to reset OLD_TICS as well,
-  // otherwise we get into trouble with regenerated synapse prototypes,
-  // see ticket #164.
-  Range::OLD_TICS_PER_STEP = Range::TICS_PER_STEP_DEFAULT;
   Range::TICS_PER_STEP = Range::TICS_PER_STEP_DEFAULT;
   Range::TICS_PER_STEP_RND = Range::TICS_PER_STEP - 1;
 
@@ -130,19 +133,19 @@ Time::reset_resolution()
   LIM_MIN = -max;
 }
 
-nest::double_t
+double
 Time::ms::fromtoken( const Token& t )
 {
   IntegerDatum* idat = dynamic_cast< IntegerDatum* >( t.datum() );
   if ( idat )
-    return static_cast< double_t >( idat->get() );
+    return static_cast< double >( idat->get() );
 
   DoubleDatum* ddat = dynamic_cast< DoubleDatum* >( t.datum() );
   if ( ddat )
     return ddat->get();
 
-  throw TypeMismatch(
-    IntegerDatum().gettypename().toString() + " or " + DoubleDatum().gettypename().toString(),
+  throw TypeMismatch( IntegerDatum().gettypename().toString() + " or "
+      + DoubleDatum().gettypename().toString(),
     t.datum()->gettypename().toString() );
 }
 
@@ -159,7 +162,7 @@ Time::fromstamp( Time::ms_stamp t )
   // intended ones.
   tic_t n = static_cast< tic_t >( t.t * Range::TICS_PER_MS );
   n -= ( n % Range::TICS_PER_STEP );
-  long_t s = n / Range::TICS_PER_STEP;
+  long s = n / Range::TICS_PER_STEP;
   double ms = s * Range::MS_PER_STEP;
   if ( ms < t.t )
     n += Range::TICS_PER_STEP;
@@ -189,7 +192,8 @@ std::ostream& operator<<( std::ostream& strm, const Time& t )
   else if ( t.tics == Time::LIM_POS_INF.tics )
     strm << "+INF";
   else
-    strm << t.get_ms() << " ms (= " << t.get_tics() << " tics = " << t.get_steps()
+    strm << t.get_ms() << " ms (= " << t.get_tics()
+         << " tics = " << t.get_steps()
          << ( t.get_steps() != 1 ? " steps)" : " step)" );
 
   return strm;

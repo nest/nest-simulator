@@ -20,18 +20,26 @@
  *
  */
 
+// Generated includes:
 #include "config.h"
 
 #ifndef BINOMIAL_RANDOMDEV_H
 #define BINOMIAL_RANDOMDEV_H
 
+// C++ includes:
 #include <cmath>
 #include <vector>
-#include "randomgen.h"
-#include "randomdev.h"
-#include "poisson_randomdev.h"
-#include "exp_randomdev.h"
+
+// Includes from libnestutil:
 #include "lockptr.h"
+
+// Includes from librandom:
+#include "exp_randomdev.h"
+#include "poisson_randomdev.h"
+#include "randomdev.h"
+#include "randomgen.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 
 
@@ -68,8 +76,9 @@ namespace librandom
   - parameter p (optional, default = 0.5)
   - parameter n (optional, default = 1)
 
- @see Fishman, Sampling From the Binomial Distribution on a Computer, Journal of the American
- Statistical Association, Vol. 74, No. 366 (Jun., 1979), pp. 418-423
+ @see Fishman, Sampling From the Binomial Distribution on a Computer, Journal of
+ the American Statistical Association, Vol. 74, No. 366 (Jun., 1979),
+ pp. 418-423
  @ingroup RandomDeviateGenerators
 */
 
@@ -77,7 +86,8 @@ namespace librandom
  * Draw a binomial random number using the BP algoritm
  * Sampling From the Binomial Distribution on a Computer
  * Author(s): George S. Fishman
- * Source: Journal of the American Statistical Association, Vol. 74, No. 366 (Jun., 1979), pp.
+ * Source: Journal of the American Statistical Association, Vol. 74, No. 366
+ * (Jun., 1979), pp.
  * 418-423
  * Published by: American Statistical Association
  * Stable URL: http://www.jstor.org/stable/2286346 .
@@ -136,9 +146,9 @@ private:
   double p_;                     //!<probability p of binomial distribution
   double phi_;
   long m_;
-  unsigned int n_;            //!<parameter n in binomial distribution
-  std::vector< double_t > f_; //!< precomputed table of f
-  unsigned int n_tablemax_;   //!< current maximal n with precomputed values
+  unsigned int n_;          //!<parameter n in binomial distribution
+  std::vector< double > f_; //!< precomputed table of f
+  unsigned int n_tablemax_; //!< current maximal n with precomputed values
 
   void init_();                   //!< check and initialize internal parameters
   void PrecomputeTable( size_t ); //!< compute the internal lookup table

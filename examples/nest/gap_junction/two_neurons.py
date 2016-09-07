@@ -32,11 +32,22 @@ import numpy
 
 nest.ResetKernel()
 
-nest.SetKernelStatus({'resolution': 0.05})  
-nest.SetKernelStatus({'max_num_prelim_iterations': 15, 'prelim_interpolation_order': 3, 'prelim_tol': 0.0001})
+nest.SetKernelStatus({'resolution': 0.05,
+                      # Settings for waveform relaxation
+                      # 'use_wfr': False uses communication in every step
+                      # instead of an iterative solution
+                      'use_wfr': True,
+                      'wfr_comm_interval': 1.0,
+                      'wfr_tol': 0.0001,
+                      'wfr_max_iterations': 15,
+                      'wfr_interpolation_order': 3})
 
-neuron = nest.Create('hh_psc_alpha_gap',2)
-vm = nest.Create('voltmeter', params={ "to_file": False, 'withgid': True, 'withtime': True, 'interval': 0.1})
+neuron = nest.Create('hh_psc_alpha_gap', 2)
+
+vm = nest.Create('voltmeter', params={'to_file': False,
+                                      'withgid': True,
+                                      'withtime': True,
+                                      'interval': 0.1})
 
 nest.SetStatus(neuron, {'I_e': 100.})
 nest.SetStatus([neuron[0]], {'V_m': -10.})
@@ -46,28 +57,26 @@ nest.Connect(vm, neuron, 'all_to_all')
 """
 Use 'all_to_all' to connect neurons.
 This is equivalent to:
-nest.Connect([neuron[0]],[neuron[1]], 'one_to_one', syn_spec={'model': 'gap_junction', 'weight': 0.5})
-nest.Connect([neuron[1]],[neuron[0]], 'one_to_one', syn_spec={'model': 'gap_junction', 'weight': 0.5})
+nest.Connect([neuron[0]],[neuron[1]],
+             {'rule': 'one_to_one', 'symmetric': True},
+             {'model': 'gap_junction', 'weight': 0.5})
 """
-nest.Connect(neuron,neuron, 'all_to_all', syn_spec={'model': 'gap_junction', 'weight': 0.5})
+
+nest.Connect(neuron, neuron,
+             {'rule': 'all_to_all', 'autapses': False},
+             {'model': 'gap_junction', 'weight': 0.5})
 
 nest.Simulate(351.)
 
-senders_vm = nest.GetStatus(vm, 'events')[0]['senders']
-times_vm = nest.GetStatus(vm, 'events')[0]['times']
-V_vm = nest.GetStatus(vm, 'events')[0]['V_m']
-
-V = [[] for i in range(2)]
-times = [[] for i in range(2)]
-for i in range(len(senders_vm)):
-  V[senders_vm[i]-1].append(V_vm[i])
-  times[senders_vm[i]-1].append(times_vm[i])
-V = numpy.array(V)
-times = numpy.array(times)
+senders = nest.GetStatus(vm, 'events')[0]['senders']
+times = nest.GetStatus(vm, 'events')[0]['times']
+V = nest.GetStatus(vm, 'events')[0]['V_m']
 
 pylab.figure(1)
-pylab.plot(times[0,:],V[0,:],'r-')
-pylab.plot(times[0,:],V[1,:],'g-')
+pylab.plot(times[numpy.where(senders == 1)],
+           V[numpy.where(senders == 1)], 'r-')
+pylab.plot(times[numpy.where(senders == 2)],
+           V[numpy.where(senders == 2)], 'g-')
 pylab.xlabel('time (ms)')
 pylab.ylabel('membrane potential (mV)')
 pylab.show()

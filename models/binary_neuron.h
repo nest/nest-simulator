@@ -23,25 +23,28 @@
 #ifndef BINARY_NEURON_H
 #define BINARY_NEURON_H
 
-#include "nest.h"
-#include "event.h"
-#include "archiving_node.h"
-#include "ring_buffer.h"
-#include "connection.h"
-#include "universal_data_logger.h"
-#include "recordables_map.h"
-#include "exp_randomdev.h"
+// C++ includes:
 #include <cmath>
+
+// Includes from librandom:
+#include "exp_randomdev.h"
+
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
 
 namespace nest
 {
-
-class Network;
-
 /**
  * Binary stochastic neuron with linear or sigmoidal gain function.
  *
- * This class is a base class that needs to be instantiated with a gain function.
+ * This class is a base class that needs to be instantiated with a gain
+ * function.
  *
  * @see ginzburg_neuron, mccullogh_pitts_neuron
  */
@@ -55,7 +58,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -85,10 +89,10 @@ private:
   void calibrate();
 
   // gain function functor
-  // must have an double_t operator(double_t) defined
+  // must have an double operator(double) defined
   TGainfunction gain_;
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< binary_neuron< TGainfunction > >;
@@ -101,8 +105,8 @@ private:
    */
   struct Parameters_
   {
-    /** mean inter-update interval in ms (acts like a membrane time constant). */
-    double_t tau_m_;
+    //! mean inter-update interval in ms (acts like a membrane time constant).
+    double tau_m_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -155,21 +159,21 @@ private:
    */
   struct Variables_
   {
-    librandom::RngPtr rng_;           // random number generator of my own thread
-    librandom::ExpRandomDev exp_dev_; // random deviate generator
+    librandom::RngPtr rng_; //!< random number generator of my own thread
+    librandom::ExpRandomDev exp_dev_; //!< random deviate generator
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the binary_neuron state of the neuron
-  double_t
+  double
   get_output_state__() const
   {
     return S_.y_;
   }
 
   //! Read out the summed input of the neuron (= membrane potential)
-  double_t
+  double
   get_input__() const
   {
     return S_.h_;
@@ -197,7 +201,10 @@ private:
 
 template < class TGainfunction >
 inline port
-binary_neuron< TGainfunction >::send_test_event( Node& target, rport receptor_type, synindex, bool )
+binary_neuron< TGainfunction >::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -207,7 +214,8 @@ binary_neuron< TGainfunction >::send_test_event( Node& target, rport receptor_ty
 
 template < class TGainfunction >
 inline port
-binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&, rport receptor_type )
+binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -216,7 +224,8 @@ binary_neuron< TGainfunction >::handles_test_event( SpikeEvent&, rport receptor_
 
 template < class TGainfunction >
 inline port
-binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&, rport receptor_type )
+binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -225,7 +234,8 @@ binary_neuron< TGainfunction >::handles_test_event( CurrentEvent&, rport recepto
 
 template < class TGainfunction >
 inline port
-binary_neuron< TGainfunction >::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+binary_neuron< TGainfunction >::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

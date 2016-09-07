@@ -23,12 +23,17 @@
 #ifndef MASK_H
 #define MASK_H
 
-#include "nest.h"
-#include "topology_names.h"
-#include "position.h"
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "nest_types.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 #include "dictutils.h"
-#include "exceptions.h"
+
+// Includes from topology:
+#include "position.h"
+#include "topology_names.h"
 #include "topologymodule.h"
 
 namespace nest
@@ -51,7 +56,7 @@ public:
   /**
    * @returns true if point is inside mask.
    */
-  virtual bool inside( const std::vector< double_t >& ) const = 0;
+  virtual bool inside( const std::vector< double >& ) const = 0;
 
   /**
    * @returns a dictionary with the definition for this mask.
@@ -105,7 +110,7 @@ public:
   /**
    * @returns true if point is inside mask.
    */
-  bool inside( const std::vector< double_t >& pt ) const;
+  bool inside( const std::vector< double >& pt ) const;
 
   /**
    * @returns true if the whole box is inside the mask.
@@ -256,7 +261,7 @@ public:
    * @param center Center of sphere
    * @param radius Radius of sphere
    */
-  BallMask( Position< D > center, double_t radius )
+  BallMask( Position< D > center, double radius )
     : center_( center )
     , radius_( radius )
   {
@@ -303,7 +308,7 @@ public:
 
 protected:
   Position< D > center_;
-  double_t radius_;
+  double radius_;
 };
 
 /**
@@ -559,8 +564,8 @@ BoxMask< 3 >::get_name()
 template < int D >
 BoxMask< D >::BoxMask( const DictionaryDatum& d )
 {
-  lower_left_ = getValue< std::vector< double_t > >( d, names::lower_left );
-  upper_right_ = getValue< std::vector< double_t > >( d, names::upper_right );
+  lower_left_ = getValue< std::vector< double > >( d, names::lower_left );
+  upper_right_ = getValue< std::vector< double > >( d, names::upper_right );
   if ( not( lower_left_ < upper_right_ ) )
     throw BadProperty(
       "topology::BoxMask<D>: "
@@ -568,7 +573,8 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
 }
 
 template < int D >
-inline BoxMask< D >::BoxMask( const Position< D >& lower_left, const Position< D >& upper_right )
+inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
+  const Position< D >& upper_right )
   : lower_left_( lower_left )
   , upper_right_( upper_right )
 {
@@ -591,7 +597,7 @@ BallMask< 3 >::get_name()
 template < int D >
 BallMask< D >::BallMask( const DictionaryDatum& d )
 {
-  radius_ = getValue< double_t >( d, names::radius );
+  radius_ = getValue< double >( d, names::radius );
   if ( radius_ <= 0 )
     throw BadProperty(
       "topology::BallMask<D>: "
@@ -599,7 +605,7 @@ BallMask< D >::BallMask( const DictionaryDatum& d )
 
   if ( d->known( names::anchor ) )
   {
-    center_ = getValue< std::vector< double_t > >( d, names::anchor );
+    center_ = getValue< std::vector< double > >( d, names::anchor );
   }
 }
 

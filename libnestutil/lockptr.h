@@ -27,6 +27,7 @@
 #define LOCK_PTR_NDEBUG
 #endif
 
+// C++ includes:
 #include <cassert>
 #include <cstddef>
 
@@ -296,14 +297,14 @@ public:
 
 
   /* operator==, !=
-     Identity operator. These are inherited by derived types, so they should only be called
-       by the equals method of the derived class which checks for type identity
-       or when both classes are known to be bare lockPTR<D>.
+     Identity operator. These are inherited by derived types, so they should
+       only be called by the equals method of the derived class which checks for
+       type identity or when both classes are known to be bare lockPTR<D>.
 
      These follow identity semantics rather than equality semantics.
      The underlying object should only ever be owned by a single PointerObject
-     that are shared by lockPTR<D>s, so this is equivalent to comparing the address
-     of the D objects.
+     that are shared by lockPTR<D>s, so this is equivalent to comparing the
+     address of the D objects.
   */
   bool operator==( const lockPTR< D >& p ) const
   {

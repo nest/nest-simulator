@@ -23,12 +23,17 @@
 /*
     parser.cc
 */
-#include "scanner.h"
+
 #include "parser.h"
-#include "arraydatum.h"
-#include "symboldatum.h"
-#include "namedatum.h"
+
+// Generated includes:
 #include "config.h"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "namedatum.h"
+#include "scanner.h"
+#include "symboldatum.h"
 
 /*****************************************************************/
 /* parse                                                         */
@@ -168,7 +173,8 @@ bool Parser::operator()( Token& t )
           }
           else // now it must be a procedure
           {
-            LitprocedureDatum* pp = dynamic_cast< LitprocedureDatum* >( pt.datum() );
+            LitprocedureDatum* pp =
+              dynamic_cast< LitprocedureDatum* >( pt.datum() );
             assert( pp != NULL );
             pp->set_executable();
             pp->push_back( t );
@@ -181,7 +187,8 @@ bool Parser::operator()( Token& t )
       }
 
     } // if(ok)
-      //      else std::cerr << "<Scanner> : unable to scan input, Result:" << ok << '\n';
+    //      else std::cerr << "<Scanner> : unable to scan input, Result:" << ok
+    //      << '\n';
   } while ( ( result == tokencontinue ) || ( result == scancontinue ) );
 
   if ( result != tokencompleted )

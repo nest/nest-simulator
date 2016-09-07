@@ -22,7 +22,8 @@
 
 #include "gid_collection.h"
 
-#include <algorithm>
+// C++ includes:
+#include <algorithm> // copy
 
 namespace nest
 {
@@ -56,7 +57,8 @@ GIDCollection::print_me( std::ostream& out ) const
   if ( is_range_ )
     out << "(" << gid_range_.first << ".." << gid_range_.second << ")";
   else
-    out << "(" << gid_array_[ 0 ] << ".." << gid_array_[ gid_array_.size() - 1 ] << ")";
+    out << "(" << gid_array_[ 0 ] << ".." << gid_array_[ gid_array_.size() - 1 ]
+        << ")";
   out << "]]";
 }
 

@@ -25,12 +25,15 @@
 /*
     SLI's array access functions
 */
-#include "slimodule.h"
-#include "slifunction.h"
-#include "lockptrdatum.h"
 
-#include <sys/types.h>
+// C includes:
 #include <regex.h>
+#include <sys/types.h>
+
+// Includes from sli:
+#include "lockptrdatum.h"
+#include "slifunction.h"
+#include "slimodule.h"
 
 class Regex
 {

@@ -22,23 +22,30 @@
 
 #include "iaf_psc_alpha_canon.h"
 
-#include "exceptions.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
-#include "universal_data_logger_impl.h"
 #include "propagator_stability.h"
 
-#include <limits>
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_psc_alpha_canon > nest::iaf_psc_alpha_canon::recordablesMap_;
+nest::RecordablesMap< nest::iaf_psc_alpha_canon >
+  nest::iaf_psc_alpha_canon::recordablesMap_;
 
 namespace nest
 {
@@ -60,15 +67,15 @@ RecordablesMap< iaf_psc_alpha_canon >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_alpha_canon::Parameters_::Parameters_()
-  : tau_m_( 10.0 )                                         // ms
-  , tau_syn_( 2.0 )                                        // ms
-  , c_m_( 250.0 )                                          // pF
-  , t_ref_( 2.0 )                                          // ms
-  , E_L_( -70.0 )                                          // mV
-  , I_e_( 0.0 )                                            // pA
-  , U_th_( -55.0 - E_L_ )                                  // mV, rel to E_L_
-  , U_min_( -std::numeric_limits< double_t >::infinity() ) // mV
-  , U_reset_( -70.0 - E_L_ )                               // mV, rel to E_L_
+  : tau_m_( 10.0 )                                       // ms
+  , tau_syn_( 2.0 )                                      // ms
+  , c_m_( 250.0 )                                        // pF
+  , t_ref_( 2.0 )                                        // ms
+  , E_L_( -70.0 )                                        // mV
+  , I_e_( 0.0 )                                          // pA
+  , U_th_( -55.0 - E_L_ )                                // mV, rel to E_L_
+  , U_min_( -std::numeric_limits< double >::infinity() ) // mV
+  , U_reset_( -70.0 - E_L_ )                             // mV, rel to E_L_
   , Interpol_( iaf_psc_alpha_canon::LINEAR )
 {
 }
@@ -106,7 +113,8 @@ nest::iaf_psc_alpha_canon::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::iaf_psc_alpha_canon::Parameters_::set( const DictionaryDatum& d )
 {
-  // if U0_ is changed, we need to adjust all variables defined relative to U0_
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
@@ -132,8 +140,8 @@ nest::iaf_psc_alpha_canon::Parameters_::set( const DictionaryDatum& d )
   else
     U_reset_ -= delta_EL;
 
-  long_t tmp;
-  if ( updateValue< long_t >( d, names::Interpol_Order, tmp ) )
+  long tmp;
+  if ( updateValue< long >( d, names::Interpol_Order, tmp ) )
   {
     if ( NO_INTERPOL <= tmp && tmp < END_INTERP_ORDER )
       Interpol_ = static_cast< interpOrder >( tmp );
@@ -147,7 +155,8 @@ nest::iaf_psc_alpha_canon::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Reset potential must be smaller than threshold." );
 
   if ( U_reset_ < U_min_ )
-    throw BadProperty( "Reset potential must be greater equal minimum potential." );
+    throw BadProperty(
+      "Reset potential must be greater equal minimum potential." );
 
   if ( c_m_ <= 0 )
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -162,7 +171,8 @@ nest::iaf_psc_alpha_canon::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::iaf_psc_alpha_canon::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::iaf_psc_alpha_canon::State_::get( DictionaryDatum& d,
+  const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y3_ + p.E_L_ ); // Membrane potential
   def< double >( d, "y1", y1_ );                // y1 state
@@ -189,7 +199,8 @@ nest::iaf_psc_alpha_canon::Buffers_::Buffers_( iaf_psc_alpha_canon& n )
 {
 }
 
-nest::iaf_psc_alpha_canon::Buffers_::Buffers_( const Buffers_&, iaf_psc_alpha_canon& n )
+nest::iaf_psc_alpha_canon::Buffers_::Buffers_( const Buffers_&,
+  iaf_psc_alpha_canon& n )
   : logger_( n )
 {
 }
@@ -248,8 +259,8 @@ nest::iaf_psc_alpha_canon::calibrate()
   V_.PSCInitialValue_ = 1.0 * numerics::e / P_.tau_syn_;
 
   V_.gamma_ = 1 / P_.c_m_ / ( 1 / P_.tau_syn_ - 1 / P_.tau_m_ );
-  V_.gamma_sq_ =
-    1 / P_.c_m_ / ( ( 1 / P_.tau_syn_ - 1 / P_.tau_m_ ) * ( 1 / P_.tau_syn_ - 1 / P_.tau_m_ ) );
+  V_.gamma_sq_ = 1 / P_.c_m_ / ( ( 1 / P_.tau_syn_ - 1 / P_.tau_m_ )
+                                 * ( 1 / P_.tau_syn_ - 1 / P_.tau_m_ ) );
 
   // pre-compute matrix for full time step
   V_.expm1_tau_m_ = numerics::expm1( -V_.h_ms_ / P_.tau_m_ );
@@ -263,7 +274,8 @@ nest::iaf_psc_alpha_canon::calibrate()
   // refractory_steps_ is the duration of the refractory period in whole
   // steps, rounded down
   V_.refractory_steps_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.refractory_steps_ >= 1 ); // since t_ref_ >= sim step size, this can only fail in error
+  // since t_ref_ >= sim step size, this can only fail in error
+  assert( V_.refractory_steps_ >= 1 );
 }
 
 /* ----------------------------------------------------------------
@@ -271,10 +283,13 @@ nest::iaf_psc_alpha_canon::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_psc_alpha_canon::update( Time const& origin, const long_t from, const long_t to )
+nest::iaf_psc_alpha_canon::update( Time const& origin,
+  const long from,
+  const long to )
 {
   assert( to >= 0 );
-  assert( static_cast< delay >( from ) < Scheduler::get_min_delay() );
+  assert( static_cast< delay >( from )
+    < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
@@ -286,16 +301,18 @@ nest::iaf_psc_alpha_canon::update( Time const& origin, const long_t from, const 
      the interval.
   */
   if ( S_.y3_ >= P_.U_th_ )
-    emit_instant_spike_(
-      origin, from, V_.h_ms_ * ( 1 - std::numeric_limits< double_t >::epsilon() ) );
+    emit_instant_spike_( origin,
+      from,
+      V_.h_ms_ * ( 1 - std::numeric_limits< double >::epsilon() ) );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     // time at start of update step
-    const long_t T = origin.get_steps() + lag;
+    const long T = origin.get_steps() + lag;
     // if neuron returns from refractoriness during this step, place
     // pseudo-event in queue to mark end of refractory period
-    if ( S_.is_refractory_ && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    if ( S_.is_refractory_
+      && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
 
     // save state at beginning of interval for spike-time interpolation
@@ -304,8 +321,8 @@ nest::iaf_psc_alpha_canon::update( Time const& origin, const long_t from, const 
     V_.y3_before_ = S_.y3_;
 
     // get first event
-    double_t ev_offset;
-    double_t ev_weight;
+    double ev_offset;
+    double ev_weight;
     bool end_of_refract;
 
     if ( !B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) )
@@ -316,16 +333,16 @@ nest::iaf_psc_alpha_canon::update( Time const& origin, const long_t from, const 
       // update membrane potential
       if ( !S_.is_refractory_ )
       {
-        S_.y3_ = V_.P30_ * ( P_.I_e_ + S_.y0_ ) + V_.P31_ * S_.y1_ + V_.P32_ * S_.y2_
-          + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
+        S_.y3_ = V_.P30_ * ( P_.I_e_ + S_.y0_ ) + V_.P31_ * S_.y1_
+          + V_.P32_ * S_.y2_ + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
 
         // lower bound of membrane potential
         S_.y3_ = ( S_.y3_ < P_.U_min_ ? P_.U_min_ : S_.y3_ );
       }
 
       // update synaptic currents
-      S_.y2_ = V_.expm1_tau_syn_ * V_.h_ms_ * S_.y1_ + V_.expm1_tau_syn_ * S_.y2_
-        + V_.h_ms_ * S_.y1_ + S_.y2_;
+      S_.y2_ = V_.expm1_tau_syn_ * V_.h_ms_ * S_.y1_
+        + V_.expm1_tau_syn_ * S_.y2_ + V_.h_ms_ * S_.y1_ + S_.y2_;
       S_.y1_ = V_.expm1_tau_syn_ * S_.y1_ + S_.y1_;
 
       /* The following must not be moved before the y1_, y2_ update,
@@ -344,12 +361,12 @@ nest::iaf_psc_alpha_canon::update( Time const& origin, const long_t from, const 
 
       // Time within step is measured by offsets, which are h at the beginning
       // and 0 at the end of the step.
-      double_t last_offset = V_.h_ms_; // start of step
+      double last_offset = V_.h_ms_; // start of step
 
       do
       {
         // time is measured backward: inverse order in difference
-        const double_t ministep = last_offset - ev_offset;
+        const double ministep = last_offset - ev_offset;
 
         propagate_( ministep );
 
@@ -370,7 +387,8 @@ nest::iaf_psc_alpha_canon::update( Time const& origin, const long_t from, const 
         V_.y3_before_ = S_.y3_;
         last_offset = ev_offset;
 
-      } while ( B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) );
+      } while (
+        B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) );
 
       // no events remaining, plain update step across remainder
       // of interval
@@ -404,8 +422,10 @@ nest::iaf_psc_alpha_canon::handle( SpikeEvent& e )
      of the spike, since spikes might spend longer than min_delay_
      in the queue.  The time is computed according to Time Memo, Rule 3.
   */
-  const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
-  B_.events_.add_spike( e.get_rel_delivery_steps( network()->get_slice_origin() ),
+  const long Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
+  B_.events_.add_spike(
+    e.get_rel_delivery_steps(
+      nest::kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
     e.get_offset(),
     e.get_weight() * e.get_multiplicity() );
@@ -416,11 +436,14 @@ nest::iaf_psc_alpha_canon::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
-  B_.currents_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ), w * c );
+  B_.currents_.add_value(
+    e.get_rel_delivery_steps(
+      nest::kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 void
@@ -432,27 +455,29 @@ nest::iaf_psc_alpha_canon::handle( DataLoggingRequest& e )
 // auxiliary functions ---------------------------------------------
 
 void
-nest::iaf_psc_alpha_canon::propagate_( const double_t dt )
+nest::iaf_psc_alpha_canon::propagate_( const double dt )
 {
-  const double_t ps_e_TauSyn = numerics::expm1( -dt / P_.tau_syn_ ); // needed in any case
+  // needed in any case
+  const double ps_e_TauSyn = numerics::expm1( -dt / P_.tau_syn_ );
 
   // y3_ remains unchanged at 0.0 while neuron is refractory
   if ( !S_.is_refractory_ )
   {
-    const double_t ps_e_Tau = numerics::expm1( -dt / P_.tau_m_ );
-    const double_t ps_P30 = -P_.tau_m_ / P_.c_m_ * ps_e_Tau;
-    const double_t ps_P31 = V_.gamma_sq_ * ps_e_Tau - V_.gamma_sq_ * ps_e_TauSyn
+    const double ps_e_Tau = numerics::expm1( -dt / P_.tau_m_ );
+    const double ps_P30 = -P_.tau_m_ / P_.c_m_ * ps_e_Tau;
+    const double ps_P31 = V_.gamma_sq_ * ps_e_Tau - V_.gamma_sq_ * ps_e_TauSyn
       - dt * V_.gamma_ * ps_e_TauSyn - dt * V_.gamma_;
-    const double_t ps_P32 = V_.gamma_ * ps_e_Tau - V_.gamma_ * ps_e_TauSyn;
-    S_.y3_ = ps_P30 * ( P_.I_e_ + S_.y0_ ) + ps_P31 * S_.y1_ + ps_P32 * S_.y2_ + ps_e_Tau * S_.y3_
-      + S_.y3_;
+    const double ps_P32 = V_.gamma_ * ps_e_Tau - V_.gamma_ * ps_e_TauSyn;
+    S_.y3_ = ps_P30 * ( P_.I_e_ + S_.y0_ ) + ps_P31 * S_.y1_ + ps_P32 * S_.y2_
+      + ps_e_Tau * S_.y3_ + S_.y3_;
 
     // lower bound of membrane potential
     S_.y3_ = ( S_.y3_ < P_.U_min_ ? P_.U_min_ : S_.y3_ );
   }
 
   // now the synaptic components
-  S_.y2_ = ps_e_TauSyn * dt * S_.y1_ + ps_e_TauSyn * S_.y2_ + dt * S_.y1_ + S_.y2_;
+  S_.y2_ =
+    ps_e_TauSyn * dt * S_.y1_ + ps_e_TauSyn * S_.y2_ + dt * S_.y1_ + S_.y2_;
   S_.y1_ = ps_e_TauSyn * S_.y1_ + S_.y1_;
 
   return;
@@ -460,9 +485,9 @@ nest::iaf_psc_alpha_canon::propagate_( const double_t dt )
 
 void
 nest::iaf_psc_alpha_canon::emit_spike_( Time const& origin,
-  const long_t lag,
-  const double_t t0,
-  const double_t dt )
+  const long lag,
+  const double t0,
+  const double dt )
 {
   // we know that the potential is subthreshold at t0, super at t0+dt
 
@@ -478,15 +503,15 @@ nest::iaf_psc_alpha_canon::emit_spike_( Time const& origin,
   set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
-  network()->send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 
   return;
 }
 
 void
 nest::iaf_psc_alpha_canon::emit_instant_spike_( Time const& origin,
-  const long_t lag,
-  const double_t spike_offs )
+  const long lag,
+  const double spike_offs )
 {
   assert( S_.y3_ >= P_.U_th_ ); // ensure we are superthreshold
 
@@ -502,14 +527,14 @@ nest::iaf_psc_alpha_canon::emit_instant_spike_( Time const& origin,
   set_spiketime( Time::step( S_.last_spike_step_ ), S_.last_spike_offset_ );
   SpikeEvent se;
   se.set_offset( S_.last_spike_offset_ );
-  network()->send( *this, se, lag );
+  kernel().event_delivery_manager.send( *this, se, lag );
 
   return;
 }
 
 // finds threshpassing
-inline nest::double_t
-nest::iaf_psc_alpha_canon::thresh_find_( double_t const dt ) const
+inline double
+nest::iaf_psc_alpha_canon::thresh_find_( double const dt ) const
 {
   switch ( P_.Interpol_ )
   {
@@ -528,28 +553,29 @@ nest::iaf_psc_alpha_canon::thresh_find_( double_t const dt ) const
 }
 
 // finds threshpassing via linear interpolation
-nest::double_t
-nest::iaf_psc_alpha_canon::thresh_find1_( double_t const dt ) const
+double
+nest::iaf_psc_alpha_canon::thresh_find1_( double const dt ) const
 {
-  double_t tau = ( P_.U_th_ - V_.y3_before_ ) * dt / ( S_.y3_ - V_.y3_before_ );
+  double tau = ( P_.U_th_ - V_.y3_before_ ) * dt / ( S_.y3_ - V_.y3_before_ );
   return tau;
 }
 
 // finds threshpassing via quadratic interpolation
-nest::double_t
-nest::iaf_psc_alpha_canon::thresh_find2_( double_t const dt ) const
+double
+nest::iaf_psc_alpha_canon::thresh_find2_( double const dt ) const
 {
-  const double_t h_sq = dt * dt;
-  const double_t derivative =
-    -V_.y3_before_ / P_.tau_m_ + ( P_.I_e_ + V_.y0_before_ + V_.y2_before_ ) / P_.c_m_;
+  const double h_sq = dt * dt;
+  const double derivative = -V_.y3_before_ / P_.tau_m_
+    + ( P_.I_e_ + V_.y0_before_ + V_.y2_before_ ) / P_.c_m_;
 
-  const double_t a = ( -V_.y3_before_ / h_sq ) + ( S_.y3_ / h_sq ) - ( derivative / dt );
-  const double_t b = derivative;
-  const double_t c = V_.y3_before_;
+  const double a =
+    ( -V_.y3_before_ / h_sq ) + ( S_.y3_ / h_sq ) - ( derivative / dt );
+  const double b = derivative;
+  const double c = V_.y3_before_;
 
-  const double_t sqr_ = std::sqrt( b * b - 4 * a * c + 4 * a * P_.U_th_ );
-  const double_t tau1 = ( -b + sqr_ ) / ( 2 * a );
-  const double_t tau2 = ( -b - sqr_ ) / ( 2 * a );
+  const double sqr_ = std::sqrt( b * b - 4 * a * c + 4 * a * P_.U_th_ );
+  const double tau1 = ( -b + sqr_ ) / ( 2 * a );
+  const double tau2 = ( -b - sqr_ ) / ( 2 * a );
 
   if ( tau1 >= 0 )
     return tau1;
@@ -559,55 +585,57 @@ nest::iaf_psc_alpha_canon::thresh_find2_( double_t const dt ) const
     return thresh_find1_( dt );
 }
 
-nest::double_t
-nest::iaf_psc_alpha_canon::thresh_find3_( double_t const dt ) const
+double
+nest::iaf_psc_alpha_canon::thresh_find3_( double const dt ) const
 {
-  const double_t h_ms = dt;
-  const double_t h_sq = h_ms * h_ms;
-  const double_t h_cb = h_sq * h_ms;
+  const double h_ms = dt;
+  const double h_sq = h_ms * h_ms;
+  const double h_cb = h_sq * h_ms;
 
-  const double_t deriv_t1 =
-    -V_.y3_before_ / P_.tau_m_ + ( P_.I_e_ + V_.y0_before_ + V_.y2_before_ ) / P_.c_m_;
-  const double_t deriv_t2 = -S_.y3_ / P_.tau_m_ + ( P_.I_e_ + S_.y0_ + S_.y2_ ) / P_.c_m_;
+  const double deriv_t1 = -V_.y3_before_ / P_.tau_m_
+    + ( P_.I_e_ + V_.y0_before_ + V_.y2_before_ ) / P_.c_m_;
+  const double deriv_t2 =
+    -S_.y3_ / P_.tau_m_ + ( P_.I_e_ + S_.y0_ + S_.y2_ ) / P_.c_m_;
 
-  const double_t w3_ = ( 2 * V_.y3_before_ / h_cb ) - ( 2 * S_.y3_ / h_cb ) + ( deriv_t1 / h_sq )
-    + ( deriv_t2 / h_sq );
-  const double_t w2_ = -( 3 * V_.y3_before_ / h_sq ) + ( 3 * S_.y3_ / h_sq )
+  const double w3_ = ( 2 * V_.y3_before_ / h_cb ) - ( 2 * S_.y3_ / h_cb )
+    + ( deriv_t1 / h_sq ) + ( deriv_t2 / h_sq );
+  const double w2_ = -( 3 * V_.y3_before_ / h_sq ) + ( 3 * S_.y3_ / h_sq )
     - ( 2 * deriv_t1 / h_ms ) - ( deriv_t2 / h_ms );
-  const double_t w1_ = deriv_t1;
-  const double_t w0_ = V_.y3_before_;
+  const double w1_ = deriv_t1;
+  const double w0_ = V_.y3_before_;
 
   // normal form :    x^3 + r*x^2 + s*x + t with coefficients : r, s, t
-  const double_t r = w2_ / w3_;
-  const double_t s = w1_ / w3_;
-  const double_t t = ( w0_ - P_.U_th_ ) / w3_;
-  const double_t r_sq = r * r;
+  const double r = w2_ / w3_;
+  const double s = w1_ / w3_;
+  const double t = ( w0_ - P_.U_th_ ) / w3_;
+  const double r_sq = r * r;
 
   // substitution y = x + r/3 :  y^3 + p*y + q == 0
-  const double_t p = -r_sq / 3 + s;
-  const double_t q = 2 * ( r_sq * r ) / 27 - r * s / 3 + t;
+  const double p = -r_sq / 3 + s;
+  const double q = 2 * ( r_sq * r ) / 27 - r * s / 3 + t;
 
   // discriminante
-  const double_t D = std::pow( ( p / 3 ), 3 ) + std::pow( ( q / 2 ), 2 );
+  const double D = std::pow( ( p / 3 ), 3 ) + std::pow( ( q / 2 ), 2 );
 
-  double_t tau1;
-  double_t tau2;
-  double_t tau3;
+  double tau1;
+  double tau2;
+  double tau3;
 
   if ( D < 0 )
   {
-    const double_t roh = std::sqrt( -( p * p * p ) / 27 );
-    const double_t phi = std::acos( -q / ( 2 * roh ) );
-    const double_t a = 2 * std::pow( roh, ( 1.0 / 3.0 ) );
+    const double roh = std::sqrt( -( p * p * p ) / 27 );
+    const double phi = std::acos( -q / ( 2 * roh ) );
+    const double a = 2 * std::pow( roh, ( 1.0 / 3.0 ) );
     tau1 = ( a * std::cos( phi / 3 ) ) - r / 3;
     tau2 = ( a * std::cos( phi / 3 + 2 * numerics::pi / 3 ) ) - r / 3;
     tau3 = ( a * std::cos( phi / 3 + 4 * numerics::pi / 3 ) ) - r / 3;
   }
   else
   {
-    const double_t sgnq = ( q >= 0 ? 1 : -1 );
-    const double_t u = -sgnq * std::pow( std::fabs( q ) / 2.0 + std::sqrt( D ), 1.0 / 3.0 );
-    const double_t v = -p / ( 3 * u );
+    const double sgnq = ( q >= 0 ? 1 : -1 );
+    const double u =
+      -sgnq * std::pow( std::fabs( q ) / 2.0 + std::sqrt( D ), 1.0 / 3.0 );
+    const double v = -p / ( 3 * u );
     tau1 = ( u + v ) - r / 3;
     if ( tau1 >= 0 )
     {

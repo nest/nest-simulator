@@ -25,8 +25,10 @@
 /*
     SLI's array access functions
 */
-#include "slimodule.h"
+
+// Includes from sli:
 #include "slifunction.h"
+#include "slimodule.h"
 
 class OOSupportModule : public SLIModule
 {

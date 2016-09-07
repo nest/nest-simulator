@@ -32,7 +32,8 @@
  Parameters:
      The following parameters can be set in the status dictionary:
      amplitude_times   list of doubles - Times at which current changes in ms
-     amplitude_values  list of doubles - Amplitudes of step current current in pA
+     amplitude_values  list of doubles - Amplitudes of step current current in
+                                         pA
 
   Examples:
     The current can be altered in the following way:
@@ -46,18 +47,22 @@
 
   Author: Jochen Martin Eppler, Jens Kremkow
 
-  SeeAlso: ac_generator, dc_generator, step_current_generator, Device, StimulatingDevice
+  SeeAlso: ac_generator, dc_generator, step_current_generator, Device,
+  StimulatingDevice
 */
 
 #ifndef STEP_CURRENT_GENERATOR_H
 #define STEP_CURRENT_GENERATOR_H
 
+// C++ includes:
 #include <vector>
-#include "nest.h"
+
+// Includes from nestkernel:
+#include "connection.h"
 #include "event.h"
+#include "nest_types.h"
 #include "node.h"
 #include "ring_buffer.h"
-#include "connection.h"
 #include "stimulating_device.h"
 
 namespace nest
@@ -85,7 +90,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   struct Buffers_;
 
@@ -94,22 +99,23 @@ private:
    */
   struct Parameters_
   {
-    std::vector< double_t > amp_times_;
-    std::vector< double_t > amp_values_;
+    std::vector< double > amp_times_;
+    std::vector< double > amp_values_;
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_&, Buffers_& );
 
-    void get( DictionaryDatum& ) const;            //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Buffers_& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    //! Set values from dictionary
+    void set( const DictionaryDatum&, Buffers_& );
   };
 
   // ------------------------------------------------------------
 
   struct Buffers_
   {
-    size_t idx_;   //!< index of current amplitude
-    double_t amp_; //!< current amplitude
+    size_t idx_; //!< index of current amplitude
+    double amp_; //!< current amplitude
   };
 
   // ------------------------------------------------------------
@@ -120,7 +126,10 @@ private:
 };
 
 inline port
-step_current_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
+step_current_generator::send_test_event( Node& target,
+  rport receptor_type,
+  synindex syn_id,
+  bool )
 {
   device_.enforce_single_syn_type( syn_id );
 

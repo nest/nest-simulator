@@ -31,11 +31,12 @@ Hans Ekkehard Plesser, UMB
 import nest
 import pylab
 import nest.topology as topo
+
 pylab.ion()
 
 nest.ResetKernel()
 
-l1 = topo.CreateLayer({'columns': 4, 'rows': 3, 
+l1 = topo.CreateLayer({'columns': 4, 'rows': 3,
                        'extent': [2.0, 1.5],
                        'elements': 'iaf_neuron'})
 
@@ -55,4 +56,3 @@ pylab.xlabel('4 Columns, Extent: 1.5')
 pylab.ylabel('2 Rows, Extent: 1.0')
 
 # pylab.savefig('grid_iaf.png')
-

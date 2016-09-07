@@ -175,7 +175,7 @@ def
     % multimeter for accumulated recording
     /ac /multimeter << /record_from [ /V_m ] /withgid false 
                        /to_memory false /to_accumulator true >> Create def	
-    ac nrns DivergentConnect
+    [ac] nrns Connect
 
     250. Simulate
 

@@ -21,12 +21,19 @@
  */
 
 #include "spike_dilutor.h"
-#include "network.h"
-#include "dict.h"
-#include "random_datums.h"
-#include "dictutils.h"
-#include "exceptions.h"
+
+// Includes from librandom:
 #include "gslrandomgen.h"
+#include "random_datums.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -55,7 +62,7 @@ nest::spike_dilutor::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d )
 {
-  updateValue< double_t >( d, names::p_copy, p_copy_ );
+  updateValue< double >( d, names::p_copy, p_copy_ );
 
   if ( p_copy_ < 0 || p_copy_ > 1 )
     throw BadProperty( "Copy probability must be in [0, 1]." );
@@ -109,25 +116,27 @@ nest::spike_dilutor::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_dilutor::update( Time const& T, const long_t from, const long_t to )
+nest::spike_dilutor::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     if ( !device_.is_active( T ) )
       return; // no spikes to be repeated
 
     // generate spikes of mother process for each time slice
-    ulong_t n_mother_spikes = static_cast< ulong_t >( B_.n_spikes_.get_value( lag ) );
+    unsigned long n_mother_spikes =
+      static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );
 
     if ( n_mother_spikes )
     {
       DSSpikeEvent se;
 
       se.set_multiplicity( n_mother_spikes );
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
   }
 }
@@ -142,14 +151,15 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
   // once for every receiver. when calling handle() of the receiver
   // above, we need to change the multiplicty to the number of copied
   // child process spikes, so afterwards it needs to be reset to correctly
-  // store the number of mother spikes again during the next call of event_hook().
+  // store the number of mother spikes again during the next call of
+  // event_hook().
   // reichert
 
-  librandom::RngPtr rng = net_->get_rng( get_thread() );
-  ulong_t n_mother_spikes = e.get_multiplicity();
-  ulong_t n_spikes = 0;
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
+  unsigned long n_mother_spikes = e.get_multiplicity();
+  unsigned long n_spikes = 0;
 
-  for ( ulong_t n = 0; n < n_mother_spikes; n++ )
+  for ( unsigned long n = 0; n < n_mother_spikes; n++ )
   {
     if ( rng->drand() < P_.p_copy_ )
       n_spikes++;
@@ -167,6 +177,7 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
 void
 nest::spike_dilutor::handle( SpikeEvent& e )
 {
-  B_.n_spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
-    static_cast< double_t >( e.get_multiplicity() ) );
+  B_.n_spikes_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    static_cast< double >( e.get_multiplicity() ) );
 }

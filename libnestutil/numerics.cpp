@@ -22,7 +22,6 @@
 
 #include "numerics.h"
 
-
 #ifndef HAVE_M_E
 
 #ifdef HAVE_CMATH_MAKROS_IGNORED
@@ -59,7 +58,7 @@
 //
 //   e
 //
-#ifdef HAVE_GSL_1_2
+#ifdef HAVE_GSL
 
 #include <gsl/gsl_math.h>
 const double numerics::e = M_E;
@@ -82,7 +81,7 @@ const double numerics::pi = 3.14159265358979323846264338328;
 #endif
 
 #if defined( HAVE_STD_NAN )
-const double numerics::nan = std::nan( NULL );
+const double numerics::nan = ::nan( "" );
 #elif defined( HAVE_NAN )
 const double numerics::nan = NAN;
 #else

@@ -23,13 +23,15 @@
 #ifndef GINZBURG_NEURON_H
 #define GINZBURG_NEURON_H
 
+// Includes from models:
 #include "binary_neuron.h"
 #include "binary_neuron_impl.h"
 
 namespace nest
 {
 /* BeginDocumentation
-   Name: ginzburg_neuron - Binary stochastic neuron with sigmoidal activation function.
+   Name: ginzburg_neuron - Binary stochastic neuron with sigmoidal activation
+                           function.
 
    Description:
    The ginzburg_neuron is an implementation of a binary neuron that
@@ -79,20 +81,23 @@ namespace nest
 
 
    Parameters:
-   tau_m      double - Membrane time constant (mean inter-update-interval) in ms.
+   tau_m      double - Membrane time constant (mean inter-update-interval)
+                       in ms.
    theta      double - threshold for sigmoidal activation function mV
    c1         double - linear gain factor (probability/mV)
    c2         double - prefactor of sigmoidal gain (probability)
    c3         double - slope factor of sigmoidal gain (1/mV)
 
    References:
-   [1] Iris Ginzburg, Haim Sompolinsky. Theory of correlations in stochastic neural networks (1994).
-   PRE 50(4) p. 3171
-   [2] Hertz Krogh, Palmer. Introduction to the theory of neural computation. Westview (1991).
-   [3] Abigail Morrison, Markus Diesmann. Maintaining Causality in Discrete Time Neuronal
+   [1] Iris Ginzburg, Haim Sompolinsky. Theory of correlations in stochastic
+   neural networks (1994). PRE 50(4) p. 3171
+   [2] Hertz Krogh, Palmer. Introduction to the theory of neural computation.
+   Westview (1991).
+   [3] Abigail Morrison, Markus Diesmann. Maintaining Causality in Discrete Time
+   Neuronal
    Simulations.
-   In: Lectures in Supercomputational Neuroscience, p. 267. Peter beim Graben, Changsong Zhou, Marco
-   Thiel, Juergen Kurths (Eds.), Springer 2008.
+   In: Lectures in Supercomputational Neuroscience, p. 267. Peter beim Graben,
+   Changsong Zhou, Marco Thiel, Juergen Kurths (Eds.), Springer 2008.
 
    Sends: SpikeEvent
    Receives: SpikeEvent, PotentialRequest
@@ -105,16 +110,16 @@ class gainfunction_ginzburg
 {
 private:
   /** threshold of sigmoidal activation function */
-  double_t theta_;
+  double theta_;
 
   /** linear gain factor of gain function */
-  double_t c1_;
+  double c1_;
 
   /** prefactor of sigmoidal gain function */
-  double_t c2_;
+  double c2_;
 
   /** gain factor of sigmoidal gain function */
-  double_t c3_;
+  double c3_;
 
 public:
   /** sets default parameters */
@@ -133,12 +138,13 @@ public:
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
-  bool operator()( librandom::RngPtr rng, double_t h );
+  bool operator()( librandom::RngPtr rng, double h );
 };
 
-inline bool gainfunction_ginzburg::operator()( librandom::RngPtr rng, double_t h )
+inline bool gainfunction_ginzburg::operator()( librandom::RngPtr rng, double h )
 {
-  return rng->drand() < c1_ * h + c2_ * 0.5 * ( 1.0 + tanh( c3_ * ( h - theta_ ) ) );
+  return rng->drand() < c1_ * h
+    + c2_ * 0.5 * ( 1.0 + tanh( c3_ * ( h - theta_ ) ) );
 }
 
 typedef binary_neuron< nest::gainfunction_ginzburg > ginzburg_neuron;

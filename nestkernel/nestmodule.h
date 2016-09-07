@@ -23,15 +23,15 @@
 #ifndef NESTMODULE_H
 #define NESTMODULE_H
 
-#include "slimodule.h"
-#include "slitype.h"
-#include "slifunction.h"
-#include "dict.h"
-
-#include "network.h"
-#include "scheduler.h"
+// Includes from nestkernel:
 #include "event.h"
 #include "exceptions.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "slifunction.h"
+#include "slimodule.h"
+#include "slitype.h"
 
 namespace nest
 {
@@ -52,43 +52,10 @@ public:
   NestModule();
   ~NestModule();
 
-  /**
-   * Set pointer to network.
-   * This function sets the pointer to the network which NestModule
-   * shall manage. It must be called once, and before NestModule is
-   * constructed.
-   * @param Network&  Th network to manage
-   * @note One should find a cleaner solution, more in keeping with
-   *       the initialization of dynamic modules. HEP
-   */
-  static void register_network( Network& );
-
   void init( SLIInterpreter* );
 
   const std::string commandstring( void ) const;
   const std::string name( void ) const;
-
-  /**
-   * @defgroup NestSliHelpers Helper functions for nestmodule.
-   */
-
-  //@{
-
-  /**
-   * Return a reference to the network managed by nestmodule.
-   */
-  static Network& get_network();
-
-  /**
-   * Get number of threads.
-   * @todo This functions is a hack, to make the number of
-   *       threads globally available. It should obviously
-   *       be part of Scheduler or Network, but implementing
-   *       it there would require a major re-design of the class.
-   */
-  static index get_num_threads();
-
-  //@}
 
   /**
    * @defgroup NestSliInterface SLI Interface functions of the NEST kernel.
@@ -264,12 +231,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } simulatefunction;
 
-  class ResumeSimulationFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } resumesimulationfunction;
-
   class Create_l_iFunction : public SLIFunction
   {
   public:
@@ -306,59 +267,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } disconnect_g_g_D_Dfunction;
 
-  class Connect_i_i_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } connect_i_i_lfunction;
-
-  class Connect_i_i_d_d_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } connect_i_i_d_d_lfunction;
-
-  class Connect_i_i_D_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } connect_i_i_D_lfunction;
-
   class Connect_g_g_D_DFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
   } connect_g_g_D_Dfunction;
-
-  class DivergentConnect_i_ia_a_a_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } divergentconnect_i_ia_a_a_lfunction;
-
-  class RDivergentConnect_i_i_ia_da_da_b_b_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } rdivergentconnect_i_i_ia_da_da_b_b_lfunction;
-
-  class ConvergentConnect_ia_i_a_a_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } convergentconnect_ia_i_a_a_lfunction;
-
-  class RConvergentConnect_ia_i_i_da_da_b_b_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } rconvergentconnect_ia_i_i_da_da_b_b_lfunction;
-
-  class RConvergentConnect_ia_ia_ia_daa_daa_b_b_lFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } rconvergentconnect_ia_ia_ia_daa_daa_b_b_lfunction;
 
   class ResetKernelFunction : public SLIFunction
   {
@@ -511,37 +424,7 @@ public:
   } disablestructuralplasticity_function;
 
   //@}
-
-private:
-  /**
-   * Pointer to network.
-   * @note - @c net must be initialized before NestModule is
-   *     constructed.
-   * - @c net must be static, so that the execute() members of the
-   *   SliFunction classes in the module can access the network.
-   * - @c net is, however, dynamic in order to avoid the
-   *   static-initialization problem, i.e., the undefined
-   *   initialization order of static variables across compilation
-   *   units.
-   */
-  static Network* net_;
 };
-
-inline Network&
-NestModule::get_network()
-{
-  assert( net_ != 0 );
-  return *net_;
-}
-
-inline index
-NestModule::get_num_threads()
-{
-  if ( net_ == 0 )
-    return 1; // module not initialized, thus certainly single thread
-  else
-    return net_->get_num_threads();
-}
 
 } // namespace
 

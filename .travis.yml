@@ -7,29 +7,22 @@ dist: trusty
 
 env:
   matrix:
-    - xGSL=0 xMPI=0 xPYTHON=0
-    - xGSL=0 xMPI=0 xPYTHON=1
-    - xGSL=0 xMPI=1 xPYTHON=0
-    - xGSL=0 xMPI=1 xPYTHON=1
-    - xGSL=1 xMPI=0 xPYTHON=0
-    - xGSL=1 xMPI=0 xPYTHON=1
-    - xGSL=1 xMPI=1 xPYTHON=0
-    - xGSL=1 xMPI=1 xPYTHON=1
+    # We don't have to run a full matrix here, because most of the options are
+    # independent. This means that we can test them together in the full build.
+    # See also https://docs.travis-ci.com/user/caching/#Caches-and-build-matrices
+    - xTHREADING=0 xMPI=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
+    - xTHREADING=0 xMPI=1 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
+    - xTHREADING=1 xMPI=0 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
+    - xTHREADING=1 xMPI=1 xGSL=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full
 matrix:
   # do notify immediately about it when a job of a build fails.
   fast_finish: true
 cache:
-  apt: true 
-  ccache: true
-  pip: true
+  directory:
+    - $HOME/.cache
 
 before_install:
   - echo $PATH
-
-  # get repository for clang-3.6 stuff (including clang-format-3.6)
-  - sudo sh -c 'echo -n "deb http://llvm.org/apt/trusty/ llvm-toolchain-trusty-3.6 main" >> /etc/apt/sources.list'
-  # add key from ^ repository
-  - wget -O - http://llvm.org/apt/llvm-snapshot.gpg.key | sudo apt-key add -
 
   # update package repository status (-qq is more quiet)
   - sudo rm -rf /var/lib/apt/lists/*
@@ -40,10 +33,10 @@ before_install:
   - sudo apt-get autoremove
 
   # from installation webpage http://www.nest-simulator.org/installation-2/#Standard_configuration
-  - sudo apt-get install -y build-essential autoconf automake libtool libltdl7-dev libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy python-matplotlib ipython
+  - sudo apt-get install -y build-essential cmake libltdl7-dev libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy python-matplotlib ipython
 
   # Install pip and cython
-  - wget https://raw.github.com/pypa/pip/master/contrib/get-pip.py
+  - wget https://bootstrap.pypa.io/get-pip.py
   - sudo python get-pip.py
   - sudo pip install -U setuptools
   - pip install --user cython==0.23.4
@@ -55,7 +48,7 @@ before_install:
   - sudo apt-get install -y python-nose
 
   # static code analysis
-  - sudo apt-get install -y libllvm3.6 clang-format-3.6 vera++
+  - sudo apt-get install -y vera++ pep8
 
   # used for building cppcheck-1.69
   - sudo apt-get install -y libpcre3 libpcre3-dev
@@ -63,15 +56,17 @@ before_install:
   # process json output from github api
   - sudo apt-get install -y jq
 
-install: 
+install:
   - which cython
   - cython --version
   - which python
   - python --version
   - which pip
+  - which cmake
+  - cmake --version
 
 before_script:
-  - chmod +x build.sh 
+  - chmod +x build.sh
 
 script:
   - set -o pipefail
@@ -81,12 +76,12 @@ script:
 before_deploy:
   - cd $TRAVIS_BUILD_DIR/build
   - tar -zcvf logfiles.tar.gz ./*.log
-  - tar -zcvf reports.tar.gz ./reports 
+  - tar -zcvf reports.tar.gz ./reports
   - mkdir -p $TRAVIS_BUILD_DIR/build/artefacts_upload
   - mv logfiles.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
   - mv reports.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
 
-#S3 deployment    
+#S3 deployment
 
 deploy:
   provider: s3
@@ -103,4 +98,3 @@ deploy:
   local-dir: "$TRAVIS_BUILD_DIR/build/artefacts_upload"
   upload-dir: "$TRAVIS_REPO_SLUG/$TRAVIS_BUILD_NUMBER/$TRAVIS_JOB_NUMBER"
   acl: bucket_owner_full_control
-

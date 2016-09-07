@@ -53,16 +53,16 @@ pattern = ConnectionPattern(layerList, connList)
 # A single sender may have excitatory and inhibitory connections.
 # When computing totals, excit/inhib connections are
 # weighted with +-1.
-pattern = ConnectionPattern(layerList, connList, 
+pattern = ConnectionPattern(layerList, connList,
                             synTypes=(((SynType('exc',  1.0, 'b'),
                                         SynType('inh', -1.0, 'r')),)))
 
 # Case C: Synapse models are "AMPA", "NMDA", "GABA_A", "GABA_B".
-# 
+#
 # Connections are plotted by synapse model, with AMPA and NMDA
 # on the top row, GABA_A and GABA_B in the bottom row when
-# combining by layer. Senders must either have AMPA and NMDA or 
-# GABA_A and GABA_B synapses, but not both. When computing totals, 
+# combining by layer. Senders must either have AMPA and NMDA or
+# GABA_A and GABA_B synapses, but not both. When computing totals,
 # AMPA and NMDA connections are weighted with +1, GABA_A and GABA_B
 # with -1.
 pattern = ConnectionPattern(layerList, connList)
@@ -73,21 +73,21 @@ pattern = ConnectionPattern(layerList, connList)
 # other weighting factors when computing totals, or you want different
 # colormaps, you must specify synapse type information explicitly for
 # ALL synase models in your network. For each synapse model, you create
-# a 
+# a
 #
 #        SynType(name, tweight, cmap)
 #
 # object, where "name" is the synapse model name, "tweight" the weight
-# to be given to the type when computing totals (usually >0 for excit, 
+# to be given to the type when computing totals (usually >0 for excit,
 # <0 for inhib synapses), and "cmap" the "colormap": if may be a
 # matplotlib.colors.Colormap instance or any valid matplotlib color
-# specification; in the latter case, as colormap will be generated 
-# ranging from white to the given color. 
+# specification; in the latter case, as colormap will be generated
+# ranging from white to the given color.
 # Synapse types are passed as a tuple of tuples. Synapses in a tuple form
 # a group. ConnPlotter assumes that a sender may make synapses with all
 # types in a single group, but never synapses with types from different
 # groups (If you group by transmitter, this simply reflects Dale's law).
-# When connections are aggregated by layer, each group is printed on one 
+# When connections are aggregated by layer, each group is printed on one
 # row.
 pattern = ConnectionPattern(layerList, connList, synTypes = \
     ((SynType('Asyn',  1.0, 'orange'),
@@ -104,7 +104,7 @@ pattern.plot()
 
 # combine synapses of all types for each sender-target pair
 # always used red-blue (inhib-excit) color scale
-pattern.plot(aggrSyns=True)   
+pattern.plot(aggrSyns=True)
 
 # for each pair of sender-target layer pair, show sums for each synapse type
 pattern.plot(aggrGroups=True)
@@ -118,18 +118,18 @@ pattern.plot(mode=('AMPA',))
 pattern.plot(mode=('AMPA', 'GABA_A'))
 
 # use same color scales for all patches
-pattern.plot(globalColors=True)  
+pattern.plot(globalColors=True)
 
 # manually specify limits for global color scale
-pattern.plot(globalColors=True, colorLimits=[0, 2.5])  
+pattern.plot(globalColors=True, colorLimits=[0, 2.5])
 
 # save to file(s)
 # NB: do not write to PDF directly, this seems to cause artifacts
-pattern.plot(file='net.png')  
-pattern.plot(file=('net.eps','net.png'))  
+pattern.plot(file='net.png')
+pattern.plot(file=('net.eps','net.png'))
 
 # You can adjust some properties of the figure by changing the
-# default values in plotParams. 
+# default values in plotParams.
 
 # Experimentally, you can dump the connection pattern into a LaTeX table
 pattern.toLaTeX('pattern.tex', standalone=True)
@@ -147,9 +147,14 @@ pattern.toLaTeX('pattern.tex', standalone=True)
 #   - makes no sense to aggregate any longer
 """
 
-#__version__ = '$Revision: 546 $'
-#__date__    = '$Date: 2010-06-30 16:36:33 +0200 (Wed, 30 Jun 2010) $'
-__author__  = 'Hans Ekkehard Plesser'
+# ----------------------------------------------------------------------------
+
+from . import colormaps as cm
+
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+import numpy as np
+import warnings
 
 __all__ = ['ConnectionPattern', 'SynType', 'plotParams', 'PlotParams']
 
@@ -157,7 +162,7 @@ __all__ = ['ConnectionPattern', 'SynType', 'plotParams', 'PlotParams']
 
 # To do:
 # - proper testsuite
-# - layers of different sizes not handled properly 
+# - layers of different sizes not handled properly
 #   (find biggest layer extent in each direction, then center;
 #    may run into problems with population label placement)
 # - clean up main
@@ -168,19 +173,11 @@ __all__ = ['ConnectionPattern', 'SynType', 'plotParams', 'PlotParams']
 
 # ----------------------------------------------------------------------------
 
-from . import colormaps as cm
-
-import matplotlib.pyplot as plt
-import matplotlib as mpl
-import numpy as np
-import warnings
-
-# ----------------------------------------------------------------------------
 
 class SynType(object):
     """
     Provide information about how synapse types should be rendered.
-    
+
     A singly nested list of SynType objects can be passed to the
     ConnectionPattern constructor to specify layout and rendering info.
     """
@@ -205,6 +202,7 @@ class SynType(object):
         else:
             self.cmap = cm.make_colormap(cmap)
 
+
 # ----------------------------------------------------------------------------
 
 class PlotParams(object):
@@ -215,78 +213,89 @@ class PlotParams(object):
 
     class Margins(object):
         """Width of outer margins, in mm."""
+
         def __init__(self):
             """Set default values."""
-            self._left  = 15.0
+            self._left = 15.0
             self._right = 10.0
-            self._top   = 10.0
-            self._bottom= 10.0
-            self._colbar= 10.0
+            self._top = 10.0
+            self._bottom = 10.0
+            self._colbar = 10.0
 
         @property
-        def left(self): return self._left
-    
+        def left(self):
+            return self._left
+
         @left.setter
-        def left(self, l): self._left = float(l)
+        def left(self, l):
+            self._left = float(l)
 
         @property
-        def right(self): return self._right
-    
+        def right(self):
+            return self._right
+
         @right.setter
-        def right(self, r): self._right = float(r)
+        def right(self, r):
+            self._right = float(r)
 
         @property
-        def top(self): return self._top
-    
+        def top(self):
+            return self._top
+
         @top.setter
-        def top(self, t): self._top = float(t)
+        def top(self, t):
+            self._top = float(t)
 
         @property
-        def bottom(self): return self._bottom
-    
+        def bottom(self):
+            return self._bottom
+
         @bottom.setter
-        def bottom(self, b): self._bottom = float(b)
+        def bottom(self, b):
+            self._bottom = float(b)
 
         @property
-        def colbar(self): return self._colbar
-    
+        def colbar(self):
+            return self._colbar
+
         @colbar.setter
-        def colbar(self, b): self._colbar = float(b)
+        def colbar(self, b):
+            self._colbar = float(b)
 
     def __init__(self):
         """Set default values"""
-        self._n_kern       = 100
-        self._patch_size   = 20.0  # 20 mm
-        self._layer_bg     = {'super': '0.9', 'diag': '0.8', 'sub': '0.9'}
-        self._layer_font   = mpl.font_manager.FontProperties(size='large')
+        self._n_kern = 100
+        self._patch_size = 20.0  # 20 mm
+        self._layer_bg = {'super': '0.9', 'diag': '0.8', 'sub': '0.9'}
+        self._layer_font = mpl.font_manager.FontProperties(size='large')
         self._layer_orient = {'sender': 'horizontal', 'target': 'horizontal'}
-        self._pop_font     = mpl.font_manager.FontProperties(size='small')
-        self._pop_orient   = {'sender': 'horizontal', 'target': 'horizontal'}
-        self._lgd_tick_font= mpl.font_manager.FontProperties(size='x-small')
-        self._lgd_title_font=mpl.font_manager.FontProperties(size='xx-small')
-        self._lgd_ticks    = None
+        self._pop_font = mpl.font_manager.FontProperties(size='small')
+        self._pop_orient = {'sender': 'horizontal', 'target': 'horizontal'}
+        self._lgd_tick_font = mpl.font_manager.FontProperties(size='x-small')
+        self._lgd_title_font = mpl.font_manager.FontProperties(size='xx-small')
+        self._lgd_ticks = None
         self._lgd_tick_fmt = None
         self._lgd_location = None
-        self._cbwidth      = None
-        self._cbspace      = None
-        self._cbheight     = None
-        self._cboffset     = None
-        self._z_layer      =  25
-        self._z_pop        =  50
-        self._z_conn       = 100
-        self.margins       = self.Margins()
+        self._cbwidth = None
+        self._cbspace = None
+        self._cbheight = None
+        self._cboffset = None
+        self._z_layer = 25
+        self._z_pop = 50
+        self._z_conn = 100
+        self.margins = self.Margins()
 
     def reset(self):
         """
         Reset to default values.
         """
         self.__init__()
-        
+
     @property
     def n_kern(self):
-        """Sample long kernel dimension at N_kernel points."""        
+        """Sample long kernel dimension at N_kernel points."""
         return self._n_kern
-    
+
     @n_kern.setter
     def n_kern(self, n):
         if n <= 0:
@@ -295,9 +304,9 @@ class PlotParams(object):
 
     @property
     def patch_size(self):
-        """Length of the longest edge of the largest patch, in mm."""        
+        """Length of the longest edge of the largest patch, in mm."""
         return self._patch_size
-    
+
     @patch_size.setter
     def patch_size(self, sz):
         if sz <= 0:
@@ -307,7 +316,7 @@ class PlotParams(object):
     @property
     def layer_bg(self):
         """
-        Dictionary of colors for layer background. 
+        Dictionary of colors for layer background.
         Entries "super", "diag", "sub". Each entry
         can be set to any valid color specification.
         If just a color is given, create dict by
@@ -318,20 +327,23 @@ class PlotParams(object):
     @layer_bg.setter
     def layer_bg(self, bg):
         if isinstance(bg, dict):
-            if set(bg.keys()) != set(('super','diag','sub')):
-                raise ValueError('Background dict must have keys "super", "diag", "sub"')
+            if set(bg.keys()) != set(('super', 'diag', 'sub')):
+                raise ValueError(
+                    'Background dict must have keys "super", "diag", "sub"')
             for bgc in bg.values():
                 if not mpl.colors.is_color_like(bgc):
-                    raise ValueError('Entries in background dict must be valid color specifications.')
+                    raise ValueError('Entries in background dict must be ' +
+                                     'valid color specifications.')
             self._layer_bg = bg
         elif not mpl.colors.is_color_like(bg):
-            raise ValueError('layer_bg must be dict or valid color specification.')
-        else: # is color like
+            raise ValueError(
+                'layer_bg must be dict or valid color specification.')
+        else:  # is color like
             rgb = mpl.colors.colorConverter.to_rgb(bg)
             self._layer_bg = {'super': [1.1 * c for c in rgb],
-                              'diag' : rgb,
-                              'sub'  : [0.9 * c for c in rgb]}
-        
+                              'diag': rgb,
+                              'sub': [0.9 * c for c in rgb]}
+
     @property
     def layer_font(self):
         """
@@ -343,15 +355,16 @@ class PlotParams(object):
     @layer_font.setter
     def layer_font(self, font):
         if not isinstance(font, mpl.font_manager.FontProperties):
-            raise ValueError('layer_font must be a matplotlib.font_manager.FontProperties instance.')
+            raise ValueError('layer_font must be a ' +
+                             'matplotlib.font_manager.FontProperties instance')
         self._layer_font = font
-        
+
     @property
     def layer_orientation(self):
         """
         Orientation of layer labels.
         Dictionary with orientation of sender and target labels. Orientation
-        is either 'horizontal', 'vertial', or a value in degrees.  When set 
+        is either 'horizontal', 'vertial', or a value in degrees.  When set
         to a single string or number, this value is used for both sender and
         target labels.
         """
@@ -359,20 +372,22 @@ class PlotParams(object):
 
     @layer_orientation.setter
     def layer_orientation(self, orient):
-        
-        if isinstance(orient, (str,float,int)):
+
+        if isinstance(orient, (str, float, int)):
             tmp = {'sender': orient, 'target': orient}
         elif isinstance(orient, dict):
             tmp = self._layer_orient
             tmp.update(orient)
         else:
-            raise ValueError('Orientation ust be set to dict, string or number.')
-        
+            raise ValueError(
+                'Orientation ust be set to dict, string or number.')
+
         if len(tmp) > 2:
-            raise ValueError('Orientation dictionary can only contain keys "sender" and "target".')
- 
+            raise ValueError('Orientation dictionary can only contain keys ' +
+                             '"sender" and "target".')
+
         self._layer_orient = tmp
-            
+
     @property
     def pop_font(self):
         """
@@ -380,11 +395,12 @@ class PlotParams(object):
         Can be set to a matplotlib.font_manager.FontProperties instance.
         """
         return self._pop_font
-    
+
     @pop_font.setter
     def pop_font(self, font):
         if not isinstance(font, mpl.font_manager.FontProperties):
-            raise ValueError('pop_font must be a matplotlib.font_manager.FontProperties instance.')
+            raise ValueError('pop_font must be a ' +
+                             'matplotlib.font_manager.FontProperties instance')
         self._pop_font = font
 
     @property
@@ -392,7 +408,7 @@ class PlotParams(object):
         """
         Orientation of population labels.
         Dictionary with orientation of sender and target labels. Orientation
-        is either 'horizontal', 'vertial', or a value in degrees.  When set 
+        is either 'horizontal', 'vertial', or a value in degrees.  When set
         to a single string or number, this value is used for both sender and
         target labels.
         """
@@ -400,18 +416,20 @@ class PlotParams(object):
 
     @pop_orientation.setter
     def pop_orientation(self, orient):
-        
-        if isinstance(orient, (str,float,int)):
+
+        if isinstance(orient, (str, float, int)):
             tmp = {'sender': orient, 'target': orient}
         elif isinstance(orient, dict):
             tmp = self._pop_orient
             tmp.update(orient)
         else:
-            raise ValueError('Orientation ust be set to dict, string or number.')
-        
+            raise ValueError(
+                'Orientation ust be set to dict, string or number.')
+
         if len(tmp) > 2:
-            raise ValueError('Orientation dictionary can only contain keys "sender" and "target".')
- 
+            raise ValueError('Orientation dictionary can only contain keys ' +
+                             '"sender" and "target".')
+
         self._pop_orient = tmp
 
     @property
@@ -424,7 +442,8 @@ class PlotParams(object):
     @legend_tick_font.setter
     def legend_tick_font(self, font):
         if not isinstance(font, mpl.font_manager.FontProperties):
-            raise ValueError('legend_tick_font must be a matplotlib.font_manager.FontProperties instance.')
+            raise ValueError('legend_tick_font must be a ' +
+                             'matplotlib.font_manager.FontProperties instance')
         self._lgd_tick_font = font
 
     @property
@@ -437,7 +456,8 @@ class PlotParams(object):
     @legend_title_font.setter
     def legend_title_font(self, font):
         if not isinstance(font, mpl.font_manager.FontProperties):
-            raise ValueError('legend_title_font must be a matplotlib.font_manager.FontProperties instance.')
+            raise ValueError('legend_title_font must be a ' +
+                             'matplotlib.font_manager.FontProperties instance')
         self._lgd_title_font = font
 
     @property
@@ -522,22 +542,24 @@ class PlotParams(object):
     def z_layer(self):
         """Z-value for layer label axes."""
         return self._z_layer
-    
+
     @property
     def z_pop(self):
         """Z-value for population label axes."""
         return self._z_pop
-    
+
     @property
     def z_conn(self):
         """Z-value for connection kernel axes."""
         return self._z_conn
-    
+
+
 # ----------------------------------------------------------------------------
 
 # plotting settings, default values
 plotParams = PlotParams()
-        
+
+
 # ----------------------------------------------------------------------------
 
 class ConnectionPattern(object):
@@ -561,13 +583,13 @@ class ConnectionPattern(object):
 
     The following keyword arguments can also be given:
 
-    poporder :  Population order. A dictionary mapping population names 
-                to numbers; populations will be sorted in diagram in order 
-                of increasing numbers. Otherwise, they are sorted 
+    poporder :  Population order. A dictionary mapping population names
+                to numbers; populations will be sorted in diagram in order
+                of increasing numbers. Otherwise, they are sorted
                 alphabetically.
 
     intensity:  'wp'  -  use weight * probability (default)
-                'p'   -  use probability alone 
+                'p'   -  use probability alone
                 'tcd' -  use total charge deposited * probability
                          requires mList and Vmem; per v 0.7 only supported
                          for ht_neuron.
@@ -577,37 +599,39 @@ class ConnectionPattern(object):
     """
 
     # ------------------------------------------------------------------------
-    
+
     class _LayerProps(object):
         """
         Information about layer.
         """
+
         def __init__(self, name, extent):
             """
             name  : name of layer
             extent: spatial extent of the layer
             """
             self.name = name
-            self.ext  = extent
+            self.ext = extent
             self.singular = extent[0] == 0.0 and extent[1] == 0.0
 
     # ------------------------------------------------------------------------
-    
+
     class _SynProps(object):
         """
         Information on how to plot patches for a synapse type.
         """
+
         def __init__(self, row, col, tweight, cmap, idx):
             """
-            row, col: Position of synapse in grid of synapse patches, begins at 0,0    
-            tweight : weight to apply when adding kernels for different synapses
-            cmap    : colormap for synapse type (matplotlib.colors.Colormap instance)
+            row, col: Position of synapse in grid of synapse patches, from 0,0
+            tweight : weight used when adding kernels for different synapses
+            cmap    : colormap for synapse type (matplotlib.colors.Colormap)
             idx     : linear index, used to order colorbars in figure
             """
             self.r, self.c = row, col
-            self.tw        = tweight
-            self.cmap      = cmap
-            self.index     = idx
+            self.tw = tweight
+            self.cmap = cmap
+            self.index = idx
 
     # --------------------------------------------------------------------
 
@@ -626,21 +650,22 @@ class ConnectionPattern(object):
             kern: kernel values (numpy masked array)
             All arguments but kern are strings.
             """
-            self.sl   = sl
-            self.sn   = sn
-            self.tl   = tl
-            self.tn   = tn
-            self.syn  = syn
+            self.sl = sl
+            self.sn = sn
+            self.tl = tl
+            self.tn = tn
+            self.syn = syn
             self.kern = kern
-            
+
     # ------------------------------------------------------------------------
 
     class _Connection(object):
-        
+
         def __init__(self, conninfo, layers, synapses, intensity, tcd, Vmem):
             """
             Arguments:
-            conninfo: list of connection info entries: (sender, target, conn_dict)
+            conninfo: list of connection info entries:
+                      (sender,target,conn_dict)
             layers  : list of _LayerProps objects
             synapses: list of _SynProps objects
             intensity: 'wp', 'p', 'tcd'
@@ -651,15 +676,16 @@ class ConnectionPattern(object):
             self._intensity = intensity
 
             # get source and target layer
-            self.slayer, self.tlayer = conninfo[:2]  
+            self.slayer, self.tlayer = conninfo[:2]
             lnames = [l.name for l in layers]
 
-            if not self.slayer in lnames:
+            if self.slayer not in lnames:
                 raise Exception('Unknown source layer "%s".' % self.slayer)
-            if not self.tlayer in lnames:
+            if self.tlayer not in lnames:
                 raise Exception('Unknown target layer "%s".' % self.tlayer)
 
-            # if target layer is singular (extent==(0,0)) we do not create a full object
+            # if target layer is singular (extent==(0,0)),
+            # we do not create a full object
             self.singular = False
             for l in layers:
                 if l.name == self.tlayer and l.singular:
@@ -670,18 +696,20 @@ class ConnectionPattern(object):
             cdict = conninfo[2]
 
             if 'sources' in cdict:
-                if tuple(cdict['sources'].keys()) == ('model', ):
+                if tuple(cdict['sources'].keys()) == ('model',):
                     self.snrn = cdict['sources']['model']
                 else:
-                    raise ValueError('Can only handle sources in form {"model": ...}')
+                    raise ValueError(
+                        'Can only handle sources in form {"model": ...}')
             else:
                 self.snrn = None
 
-            if 'targets' in cdict: 
-                if tuple(cdict['targets'].keys()) == ('model', ):
+            if 'targets' in cdict:
+                if tuple(cdict['targets'].keys()) == ('model',):
                     self.tnrn = cdict['targets']['model']
                 else:
-                    raise ValueError('Can only handle targets in form {"model": ...}')
+                    raise ValueError(
+                        'Can only handle targets in form {"model": ...}')
             else:
                 self.tnrn = None
 
@@ -703,8 +731,8 @@ class ConnectionPattern(object):
             else:
                 try:
                     self.synmodel = cdict['synapse_model']
-                    if not self.synmodel in synapses:
-                        raise Exception('Unknown synapse model "%s".' 
+                    if self.synmodel not in synapses:
+                        raise Exception('Unknown synapse model "%s".'
                                         % self.synmodel)
                 except:
                     raise Exception('Explicit synapse model info required.')
@@ -715,8 +743,8 @@ class ConnectionPattern(object):
                 self._kern = cdict['kernel']
                 self._wght = cdict['weights']
                 # next line presumes only one layer name will match
-                self._textent = [tl.ext for tl in layers 
-                                 if tl.name==self.tlayer][0]
+                self._textent = [tl.ext for tl in layers
+                                 if tl.name == self.tlayer][0]
                 if intensity == 'tcd':
                     self._tcd = tcd(self.synmodel, self.tnrn, Vmem)
                 else:
@@ -738,36 +766,38 @@ class ConnectionPattern(object):
             if self.singular:
                 return (None, self)
             else:
-                return ((self.slayer,self.snrn,self.tlayer,self.tnrn,self.synmodel), 
+                return ((self.slayer, self.snrn, self.tlayer,
+                         self.tnrn, self.synmodel),
                         self)
 
         # --------------------------------------------------------------------
-        
+
         @property
         def kernval(self):
             """Kernel value, as masked array."""
             if self._kernel is None:
-                self._kernel = _evalkernel(self._mask, self._kern, self._mean_wght,
-                                           self._textent, self._intensity, 
+                self._kernel = _evalkernel(self._mask, self._kern,
+                                           self._mean_wght,
+                                           self._textent, self._intensity,
                                            self._tcd)
             return self._kernel
 
         # --------------------------------------------------------------------
-        
+
         @property
         def mask(self):
             """Dictionary describing the mask."""
             return self._mask
 
         # --------------------------------------------------------------------
-        
+
         @property
         def kernel(self):
             """Dictionary describing the kernel."""
             return self._kern
 
         # --------------------------------------------------------------------
-        
+
         @property
         def weight(self):
             """Dictionary describing weight distribution."""
@@ -786,13 +816,13 @@ class ConnectionPattern(object):
             syn: synapse type
             """
 
-            return  (sl  is None or sl  == self.slayer) \
-                and (sn  is None or sn  == self.snrn) \
-                and (tl  is None or tl  == self.tlayer) \
-                and (tn  is None or tn  == self.tnrn) \
-                and (syn is None or syn == self.synmodel) 
+            return ((sl is None or sl == self.slayer) and
+                    (sn is None or sn == self.snrn) and
+                    (tl is None or tl == self.tlayer) and
+                    (tn is None or tn == self.tnrn) and
+                    (syn is None or syn == self.synmodel))
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
     class _Patch(object):
         """
@@ -808,7 +838,7 @@ class ConnectionPattern(object):
 
         # --------------------------------------------------------------------
 
-        def __init__(self, left, top, row, col, width, height, 
+        def __init__(self, left, top, row, col, width, height,
                      slabel=None, tlabel=None, parent=None):
             """
             Arguments:
@@ -818,7 +848,8 @@ class ConnectionPattern(object):
             slabel, tlabel: Values for sender/target label
             parent        : _Block to which _Patch/_Block belongs
             """
-            self.l, self.t, self.r, self.c, self.w, self.h = left, top, row, col, width, height
+            self.l, self.t, self.r, self.c = left, top, row, col
+            self.w, self.h = width, height
             self.slbl, self.tlbl = slabel, tlabel
             self.ax = None
             self._parent = parent
@@ -826,28 +857,30 @@ class ConnectionPattern(object):
         # --------------------------------------------------------------------
 
         def _update_size(self, new_lr):
-            """Update patch size by inspecting all children.""" 
-            if new_lr[0] < self.l: 
-                raise ValueError("new_lr[0] = %f < l = %f" % (new_lr[0], self.l))
-            if new_lr[1] < self.t: 
-                raise ValueError("new_lr[1] = %f < t = %f" % (new_lr[1], self.t))
-            self.w, self.h = new_lr[0]-self.l, new_lr[1]-self.t
+            """Update patch size by inspecting all children."""
+            if new_lr[0] < self.l:
+                raise ValueError(
+                    "new_lr[0] = %f < l = %f" % (new_lr[0], self.l))
+            if new_lr[1] < self.t:
+                raise ValueError(
+                    "new_lr[1] = %f < t = %f" % (new_lr[1], self.t))
+            self.w, self.h = new_lr[0] - self.l, new_lr[1] - self.t
             if self._parent:
                 self._parent._update_size(new_lr)
 
         # --------------------------------------------------------------------
 
         @property
-        def tl(self): 
+        def tl(self):
             """Top left corner of the patch."""
             return (self.l, self.t)
 
         # --------------------------------------------------------------------
 
         @property
-        def lr(self): 
+        def lr(self):
             """Lower right corner of the patch."""
-            return (self.l+self.w, self.t+self.h)
+            return (self.l + self.w, self.t + self.h)
 
         # --------------------------------------------------------------------
 
@@ -901,11 +934,11 @@ class ConnectionPattern(object):
             else:
                 return 'sub'
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
     class _Block(_Patch):
         """
-        Represents a block of patches. 
+        Represents a block of patches.
 
         A block is initialized with its top left corner and is then built
         row-wise downward and column-wise to the right. Rows are added by
@@ -918,23 +951,25 @@ class ConnectionPattern(object):
         el = block.newElement(1.0, 0.6, 's', 't')
         el = block.newElement(1.0, 0.6, 's', 't', size=[2.0, 3.0])
 
-        The first example adds a new _Block to the row. 1.0 is the space between
-        blocks, 0.6 the space before the first block in a row. 's' and 't' are
+        The first example adds a new _Block to the row. 1.0 is space between
+        blocks, 0.6 space before the first block in a row. 's' and 't' are
         stored as slbl and tlbl (optional). If size is given, a _Patch with
         the given size is created. _Patch is atomic. newElement() returns the
         _Block or _Patch created.
         """
 
-        # ------------------------------------------------------------------------
+        # --------------------------------------------------------------------
 
-        def __init__(self, left, top, row, col, slabel=None, tlabel=None, parent=None):
-            ConnectionPattern._Patch.__init__(self, left, top, row, col, 0, 0, slabel, tlabel, parent)
+        def __init__(self, left, top, row, col, slabel=None, tlabel=None,
+                     parent=None):
+            ConnectionPattern._Patch.__init__(self, left, top, row, col, 0, 0,
+                                              slabel, tlabel, parent)
             self.elements = []
             self._row_top = None  # top of current row
             self._row = 0
             self._col = 0
 
-        # ------------------------------------------------------------------------
+        # --------------------------------------------------------------------
 
         def newRow(self, dy=0.0, dynew=0.0):
             """
@@ -954,13 +989,13 @@ class ConnectionPattern(object):
             self._col = 0
 
             self.elements.append([])
-            
-        # ------------------------------------------------------------------------
 
-        def newElement(self, dx=0.0, dxnew=0.0, slabel=None, tlabel=None, 
+        # --------------------------------------------------------------------
+
+        def newElement(self, dx=0.0, dxnew=0.0, slabel=None, tlabel=None,
                        size=None):
             """
-            Append new element to last row. 
+            Append new element to last row.
             Creates _Block instance if size is not given, otherwise _Patch.
 
             Arguments:
@@ -974,7 +1009,7 @@ class ConnectionPattern(object):
             Created _Block or _Patch.
             """
 
-            assert(self.elements)
+            assert (self.elements)
 
             if self.elements[-1]:
                 # left edge is right edge of block so far + dx
@@ -984,54 +1019,60 @@ class ConnectionPattern(object):
                 col_left = self.tl[0] + dxnew
 
             self._col += 1
-            
-            if not size is None:
-                elem = ConnectionPattern._Patch(col_left, self._row_top, self._row, self._col,
-                                                size[0], size[1], slabel, tlabel, self)
+
+            if size is not None:
+                elem = ConnectionPattern._Patch(col_left, self._row_top,
+                                                self._row, self._col,
+                                                size[0], size[1], slabel,
+                                                tlabel, self)
             else:
-                elem = ConnectionPattern._Block(col_left, self._row_top, self._row, self._col,
+                elem = ConnectionPattern._Block(col_left, self._row_top,
+                                                self._row, self._col,
                                                 slabel, tlabel, self)
-            
+
             self.elements[-1].append(elem)
             self._update_size(elem.lr)
 
             return elem
 
-        # ------------------------------------------------------------------------
+        # --------------------------------------------------------------------
 
         def addMargin(self, rmarg=0.0, bmarg=0.0):
             """Extend block by margin to right and bottom."""
-            if rmarg < 0.0: raise ValueError('rmarg must not be negative!')
-            if bmarg < 0.0: raise ValueError('bmarg must not be negative!')
+            if rmarg < 0.0:
+                raise ValueError('rmarg must not be negative!')
+            if bmarg < 0.0:
+                raise ValueError('bmarg must not be negative!')
 
             lr = self.lr
-            self._update_size((lr[0]+rmarg, lr[1]+bmarg))
+            self._update_size((lr[0] + rmarg, lr[1] + bmarg))
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
     def _prepareAxes(self, mode, showLegend):
         """
-        Prepare information for all axes, but do not create the actual axes yet.
+        Prepare information for all axes, but do not create the actual axes
+        yet.
         mode: one of 'detailed', 'by layer', 'totals'
         """
 
         # parameters for figure, all quantities are in mm
-        patchmax = plotParams.patch_size # length of largest patch patch dimension
+        patchmax = plotParams.patch_size  # length of largest patch dimension
 
         # actual parameters scaled from default patchmax = 20mm
         lmargin = plotParams.margins.left
         tmargin = plotParams.margins.top
         rmargin = plotParams.margins.right
         bmargin = plotParams.margins.bottom
-        cbmargin= plotParams.margins.colbar
-        
-        blksep  =  3./20. * patchmax  # distance between blocks
-        popsep  =  2./20. * patchmax  # distance between populations
-        synsep  =  0.5/20.* patchmax  # distance between synapse types
+        cbmargin = plotParams.margins.colbar
+
+        blksep = 3. / 20. * patchmax  # distance between blocks
+        popsep = 2. / 20. * patchmax  # distance between populations
+        synsep = 0.5 / 20. * patchmax  # distance between synapse types
 
         # find maximal extents of individual patches, horizontal and vertical
         maxext = max(_flattened([l.ext for l in self._layers]))
-        
+
         patchscale = patchmax / float(maxext)  # determines patch size
 
         # obtain number of synaptic patches per population pair
@@ -1073,77 +1114,88 @@ class ConnectionPattern(object):
 
                 if mode == 'totals':
                     # single patch
-                    block.newRow(popsep, popsep/2.)
-                    p = block.newElement(popsep, popsep/2., size=patchsize)
+                    block.newRow(popsep, popsep / 2.)
+                    p = block.newElement(popsep, popsep / 2., size=patchsize)
                     self._patchTable[(sl.name, None, tl.name, None, None)] = p
 
                 elif mode == 'layer':
-                    # We loop over all rows and columns in the synapse patch grid.
-                    # For each (r,c), we find the pertaining synapse name by reverse
-                    # lookup in the _synAttr dictionary. This is inefficient, but
-                    # should not be too costly overall. But we must create the
-                    # patches in the order they are placed.
-                    # NB: We must create also those block.newElement() that are not
-                    #     registered later, since block would otherwise not skip 
-                    #     over the unused location.
+                    # We loop over all rows and columns in the synapse patch
+                    # grid. For each (r,c), we find the pertaining synapse name
+                    # by reverse lookup in the _synAttr dictionary. This is
+                    # inefficient, but should not be too costly overall. But we
+                    # must create the patches in the order they are placed.
+                    # NB: We must create also those block.newElement() that are
+                    #     not registered later, since block would otherwise not
+                    #     skip over the unused location.
                     for r in range(nsynrows):
-                        block.newRow(synsep, popsep/2.)
+                        block.newRow(synsep, popsep / 2.)
                         for c in range(nsyncols):
-                            p = block.newElement(synsep, popsep/2., size=patchsize)
-                            smod = [k for k,s in self._synAttr.items()
+                            p = block.newElement(synsep, popsep / 2.,
+                                                 size=patchsize)
+                            smod = [k for k, s in self._synAttr.items()
                                     if s.r == r and s.c == c]
                             if smod:
-                                assert(len(smod)==1)
-                                self._patchTable[(sl.name,None,tl.name,None,smod[0])] = p
+                                assert (len(smod) == 1)
+                                self._patchTable[(sl.name, None, tl.name,
+                                                  None, smod[0])] = p
 
                 elif mode == 'population':
                     # one patch per population pair
                     for sp in spops:
-                        block.newRow(popsep, popsep/2.)
+                        block.newRow(popsep, popsep / 2.)
                         for tp in tpops:
-                            pblk = block.newElement(popsep, popsep/2., sp, tp)
-                            pblk.newRow(synsep, synsep/2.)
-                            self._patchTable[(sl.name,sp,tl.name,tp,None)] = \
-                                pblk.newElement(synsep, blksep/2., size=patchsize)
+                            pblk = block.newElement(popsep, popsep / 2.,
+                                                    sp, tp)
+                            pblk.newRow(synsep, synsep / 2.)
+                            self._patchTable[(sl.name, sp,
+                                              tl.name, tp, None)] = \
+                                pblk.newElement(synsep, blksep / 2.,
+                                                size=patchsize)
 
                 else:
                     # detailed presentation of all pops
                     for sp in spops:
-                        block.newRow(popsep, popsep/2.)
+                        block.newRow(popsep, popsep / 2.)
                         for tp in tpops:
-                            pblk = block.newElement(popsep, popsep/2., sp, tp)
-                            pblk.newRow(synsep, synsep/2.)
+                            pblk = block.newElement(popsep, popsep / 2.,
+                                                    sp, tp)
+                            pblk.newRow(synsep, synsep / 2.)
 
                             # Find all connections with matching properties
                             # all information we need here is synapse model.
                             # We store this in a dictionary mapping synapse
                             # patch column to synapse model, for use below.
-                            syns = dict([(self._synAttr[c.synmodel].c, c.synmodel)
-                                         for c in _flattened(self._cTable.values())
-                                         if c.matches(sl.name, sp, tl.name, tp)])
-                        
+                            syns = dict(
+                                [(self._synAttr[c.synmodel].c, c.synmodel)
+                                 for c in _flattened(self._cTable.values())
+                                 if c.matches(sl.name, sp, tl.name, tp)])
+
                             # create all synapse patches
                             for n in range(nsyncols):
 
                                 # Do not duplicate existing axes.
-                                if (sl.name,sp,tl.name,tp,n) in axset:
-                                    continue  
+                                if (sl.name, sp, tl.name, tp, n) in axset:
+                                    continue
 
-                                # Create patch. We must create also such patches
-                                # that do not have synapses, since spacing would
-                                # go wrong otherwise.
-                                p = pblk.newElement(synsep, 0.0, size=patchsize)
+                                # Create patch. We must create also such
+                                # patches that do not have synapses, since
+                                # spacing would go wrong otherwise.
+                                p = pblk.newElement(synsep, 0.0,
+                                                    size=patchsize)
 
-                                # if patch represents existing synapse, register
+                                # if patch represents existing synapse,
+                                # register
                                 if n in syns:
-                                    self._patchTable[(sl.name,sp,tl.name,tp,syns[n])] = p
+                                    self._patchTable[(sl.name, sp, tl.name,
+                                                      tp, syns[n])] = p
 
-                block.addMargin(popsep/2., popsep/2.)
+                block.addMargin(popsep / 2., popsep / 2.)
 
         self._axes.addMargin(rmargin, bmargin)
         if showLegend:
             self._axes.addMargin(0, cbmargin)  # add color bar at bottom
-            figwidth = self._axes.lr[0] - self._axes.tl[0] - rmargin # keep right marg out of calc
+            figwidth = self._axes.lr[0] - self._axes.tl[
+                0] - rmargin  # keep right marg out of calc
 
             if mode == 'totals' or mode == 'population':
 
@@ -1152,9 +1204,10 @@ class ConnectionPattern(object):
                     lwidth = plotParams.cbwidth * figwidth
                 else:
                     lwidth = 0.2 * figwidth
-                    if lwidth > 100.0:   # colorbar should not be wider than 10cm
+                    if lwidth > 100.0:  # colorbar shouldn't be wider than 10cm
                         lwidth = 100.0
-                lheight = plotParams.cbheight*cbmargin if plotParams.cbheight else 0.3*cbmargin
+                lheight = (plotParams.cbheight * cbmargin
+                           if plotParams.cbheight else 0.3 * cbmargin)
 
                 if plotParams.legend_location is None:
                     cblift = 0.9 * cbmargin
@@ -1162,20 +1215,20 @@ class ConnectionPattern(object):
                     cblift = 0.7 * cbmargin
 
                 self._cbPatches = self._Patch(self._axes.tl[0],
-                                              self._axes.lr[1]- cblift,
-                                              None, None, 
+                                              self._axes.lr[1] - cblift,
+                                              None, None,
                                               lwidth,
                                               lheight)
             else:
                 # one patch per synapse type, 20% of figure or less
-
-                # we need to get the synapse names in ascending order of synapse indices
-                snames = [s[0] for s in 
-                          sorted([(k,v) for k,v in self._synAttr.items()],
+                # we need to get the synapse names in ascending order
+                # of synapse indices
+                snames = [s[0] for s in
+                          sorted([(k, v) for k, v in self._synAttr.items()],
                                  key=lambda kv: kv[1].index)
                           ]
                 snum = len(snames)
-                
+
                 if plotParams.cbwidth:
                     lwidth = plotParams.cbwidth * figwidth
                     if plotParams.cbspace:
@@ -1185,20 +1238,21 @@ class ConnectionPattern(object):
                 else:
                     if snum < 5:
                         lwidth = 0.15 * figwidth
-                        lstep  = 0.1  * figwidth
+                        lstep = 0.1 * figwidth
                     else:
                         lwidth = figwidth / (snum + 1.0)
-                        lstep = (figwidth - snum*lwidth) / (snum - 1.0)
-                    if lwidth > 100.0:   # colorbar should not be wider than 10cm
+                        lstep = (figwidth - snum * lwidth) / (snum - 1.0)
+                    if lwidth > 100.0:  # colorbar shouldn't be wider than 10cm
                         lwidth = 100.0
                         lstep = 30.0
-                lheight = plotParams.cbheight*cbmargin if plotParams.cbheight else 0.3*cbmargin
+                lheight = (plotParams.cbheight * cbmargin
+                           if plotParams.cbheight else 0.3 * cbmargin)
 
                 if plotParams.cboffset is not None:
                     offset = plotParams.cboffset
                 else:
                     offset = lstep
-                    
+
                 if plotParams.legend_location is None:
                     cblift = 0.9 * cbmargin
                 else:
@@ -1207,33 +1261,36 @@ class ConnectionPattern(object):
                 self._cbPatches = {}
                 for j in range(snum):
                     self._cbPatches[snames[j]] = \
-                        self._Patch(self._axes.tl[0] + offset + j * (lstep + lwidth),
-                                    self._axes.lr[1] - cblift,
-                                    None, None,
-                                    lwidth,
-                                    lheight)
+                        self._Patch(
+                            self._axes.tl[0] + offset + j * (lstep + lwidth),
+                            self._axes.lr[1] - cblift,
+                            None, None,
+                            lwidth,
+                            lheight)
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
     def _scaledBox(self, p):
         """Scaled axes rectangle for patch, reverses y-direction."""
         xsc, ysc = self._axes.lr
-        return self._figscale * np.array([p.l/xsc, 1-(p.t+p.h)/ysc, p.w/xsc, p.h/ysc])
+        return self._figscale * np.array(
+            [p.l / xsc, 1 - (p.t + p.h) / ysc, p.w / xsc, p.h / ysc])
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
     def _scaledBoxNR(self, p):
         """Scaled axes rectangle for patch, does not reverse y-direction."""
         xsc, ysc = self._axes.lr
-        return self._figscale * np.array([p.l/xsc, p.t/ysc, p.w/xsc, p.h/ysc])
+        return self._figscale * np.array(
+            [p.l / xsc, p.t / ysc, p.w / xsc, p.h / ysc])
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
     def _configSynapses(self, cList, synTypes):
         """Configure synapse information based on connections and user info."""
 
         # compile information on synapse types and weights
-        synnames   = set(c[2]['synapse_model'] for c in cList)
+        synnames = set(c[2]['synapse_model'] for c in cList)
         synweights = set(_weighteval(c[2]['weights']) for c in cList)
 
         # set up synTypes for all pre-defined cases
@@ -1241,53 +1298,57 @@ class ConnectionPattern(object):
             # check if there is info for all synapse types
             stnames = _flattened([[s.name for s in r] for r in synTypes])
             if len(stnames) != len(set(stnames)):
-                raise ValueError('Names of synapse types in synTypes must be unique!')
+                raise ValueError(
+                    'Names of synapse types in synTypes must be unique!')
             if len(synnames) > 1 and not synnames.issubset(set(stnames)):
-                raise ValueError('synTypes must provide information about all synapse types.')
+                raise ValueError('synTypes must provide information about' +
+                                 'all synapse types.')
 
         elif len(synnames) == 1:
             # only one synapse type used
             if min(synweights) >= 0:
                 # all weights positive
-                synTypes = ((SynType('exc',  1.0, 'red'),),)
+                synTypes = ((SynType('exc', 1.0, 'red'),),)
             elif max(synweights) <= 0:
                 # all weights negative
                 synTypes = ((SynType('inh', -1.0, 'blue'),),)
             else:
                 # positive and negative weights, assume Dale holds
-                synTypes = ((SynType('exc',  1.0, 'red'),),
-                            (SynType('inh', -1.0, 'blue' ),))
+                synTypes = ((SynType('exc', 1.0, 'red'),),
+                            (SynType('inh', -1.0, 'blue'),))
 
         elif synnames == set(['AMPA', 'GABA_A']):
-                # only AMPA and GABA_A
-                synTypes = ((SynType('AMPA'  ,  1.0, 'red'),),
-                            (SynType('GABA_A', -1.0, 'blue' ),))
+            # only AMPA and GABA_A
+            synTypes = ((SynType('AMPA', 1.0, 'red'),),
+                        (SynType('GABA_A', -1.0, 'blue'),))
 
-        elif synnames.issubset(set(['AMPA','NMDA','GABA_A','GABA_B'])):
-            synTypes = ((SynType('AMPA'  ,  1.0, 'red'     ),
-                         SynType('NMDA'  ,  1.0, 'orange'  ),),
-                        (SynType('GABA_A', -1.0, 'blue'    ),
-                         SynType('GABA_B', -1.0, 'purple'  ),))
+        elif synnames.issubset(set(['AMPA', 'NMDA', 'GABA_A', 'GABA_B'])):
+            synTypes = ((SynType('AMPA', 1.0, 'red'),
+                         SynType('NMDA', 1.0, 'orange'),),
+                        (SynType('GABA_A', -1.0, 'blue'),
+                         SynType('GABA_B', -1.0, 'purple'),))
 
         else:
-            raise ValueError('Connection list contains unknown synapse models; synTypes required.')
+            raise ValueError('Connection list contains unknown synapse ' +
+                             'models; synTypes required.')
 
         # now build _synAttr by assigning blocks to rows
         self._synAttr = {}
         row = 0
-        ctr = 0 
+        ctr = 0
         for sgroup in synTypes:
             col = 0
             for stype in sgroup:
-                self._synAttr[stype.name] = self._SynProps(row, col, stype.relweight, 
+                self._synAttr[stype.name] = self._SynProps(row, col,
+                                                           stype.relweight,
                                                            stype.cmap, ctr)
                 col += 1
                 ctr += 1
             row += 1
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
-    def __init__(self, lList, cList, synTypes=None, intensity='wp', 
+    def __init__(self, lList, cList, synTypes=None, intensity='wp',
                  mList=None, Vmem=None, poporder=None):
         """
         lList    : layer list
@@ -1297,14 +1358,15 @@ class ConnectionPattern(object):
                    'p'   - probability
                    'tcd' - |total charge deposited| * probability
                            requires mList; currently only for ht_model
-                           proper results only if Vmem within reversal potentials
+                           proper results only if Vmem within reversal
+                           potentials
         mList    : model list; only needed with 'tcd'
         Vmem     : reference membrane potential for 'tcd'
         poporder : dictionary mapping population names to numbers; populations
                    will be sorted in diagram in order of increasing numbers.
         """
         # extract layers to dict mapping name to extent
-        self._layers = [self._LayerProps(l[0], l[1]['extent']) for l in lList] 
+        self._layers = [self._LayerProps(l[0], l[1]['extent']) for l in lList]
 
         # ensure layer names are unique
         lnames = [l.name for l in self._layers]
@@ -1318,14 +1380,14 @@ class ConnectionPattern(object):
         if intensity != 'tcd':
             tcd = None
         else:
-            assert(mList)
+            assert (mList)
             from . import tcd_nest
             tcd = tcd_nest.TCD(mList)
 
         # Build internal representation of connections.
-        # This representation contains one entry for each sender pop, target pop,
-        # synapse type tuple. Creating the connection object implies computation
-        # of the kernel. 
+        # This representation contains one entry for each sender pop,
+        # target pop, synapse type tuple. Creating the connection object
+        # implies computation of the kernel.
         # Several connection may agree in all properties, these need to be
         # added here. Therefore, we need to build iteratively and store
         # everything in a dictionary, so we can find early instances.
@@ -1343,15 +1405,17 @@ class ConnectionPattern(object):
         self._nlyr = len(self._layers)
 
         # compile list of populations, list(set()) makes list unique
-        self._pops = list(set(_flattened([[(c.slayer, c.snrn), (c.tlayer, c.tnrn)] \
-                                             for c in _flattened(self._cTable.values())])))
+        self._pops = list(
+            set(_flattened([[(c.slayer, c.snrn), (c.tlayer, c.tnrn)]
+                            for c in _flattened(self._cTable.values())])))
         self._npop = len(self._pops)
 
         # store population ordering; if not given, use alphabetical ordering
         # also add any missing populations alphabetically at end
         # layers are ignored
         # create alphabetically sorted list of unique population names
-        popnames = sorted(list(set([p[1] for p in self._pops])), key=lambda x: x if x is not None else "")
+        popnames = sorted(list(set([p[1] for p in self._pops])),
+                          key=lambda x: x if x is not None else "")
         if poporder:
             self._poporder = poporder
             next = max(self._poporder.values()) + 1  # next free sorting index
@@ -1364,9 +1428,10 @@ class ConnectionPattern(object):
                 next += 1
 
         # compile list of synapse types
-        self._synTypes = list(set([c.synmodel for c in _flattened(self._cTable.values())]))
+        self._synTypes = list(
+            set([c.synmodel for c in _flattened(self._cTable.values())]))
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
     def plot(self, aggrGroups=False, aggrSyns=False, globalColors=False,
              colorLimits=None, showLegend=True,
@@ -1381,28 +1446,32 @@ class ConnectionPattern(object):
         aggrGroups  If True, aggregate projections with the same synapse type
                     and the same source and target groups (default: False)
 
-        aggrSyns    If True, aggregate projections with the same synapse model (default: False)
+        aggrSyns    If True, aggregate projections with the same synapse model
+                    (default: False)
 
-        globalColors  If True, use global color scale, otherwise local (default: False)
+        globalColors  If True, use global color scale, otherwise local
+                      (default: False)
 
-        colorLimits   If given, must be two element vector for lower and upper limits of
-                      color scale. Implies globalColors (default: None)
+        colorLimits   If given, must be two element vector for lower and
+                      upper limits of color scale. Implies globalColors
+                      (default: None)
 
         showLegend   If True, show legend below CPT (default: True).
 
-        selectSyns    If tuple of synapse models, show only connections of the 
+        selectSyns    If tuple of synapse models, show only connections of the
                       give types. Cannot be combined with aggregation.
 
-        file     If given, save plot to given file name; file may also be a tuple of 
-                 file names, the figure will then be saved to all files. This may be 
-                 useful if you want to save the same figure in several formats.
-                 You should not save to PDF directly, this may lead to artefacts; 
-                 rather save to PS or EPS, then convert. 
+        file     If given, save plot to given file name; file may also be a
+                 tuple of file names, the figure will then be saved to all
+                 files. This may be useful if you want to save the same figure
+                 in several formats.
 
-        fixedWidth Figure will be scaled to this width in mm by changing patch size.
+        fixedWidth Figure will be scaled to this width in mm by changing
+                   patch size.
 
         Returns:
-        kern_min, kern_max   Minimal and maximal values of kernels, with kern_min <=0, kern_max>=0.
+        kern_min, kern_max   Minimal and maximal values of kernels,
+                             with kern_min <= 0, kern_max >= 0.
 
         Output:
         figure created
@@ -1415,7 +1484,8 @@ class ConnectionPattern(object):
 
         if selectSyns:
             if aggrPops or aggrSyns:
-                raise ValueError('selectSyns cannot be combined with aggregation.')
+                raise ValueError(
+                    'selectSyns cannot be combined with aggregation.')
             selected = selectSyns
             mode = 'select'
         elif aggrGroups and aggrSyns:
@@ -1434,60 +1504,79 @@ class ConnectionPattern(object):
             for slayer in self._layers:
                 for tlayer in self._layers:
                     for synmodel in self._synTypes:
-                        kerns = [c.kernval for c in _flattened(self._cTable.values())
-                                 if c.matches(sl=slayer.name, tl=tlayer.name, syn=synmodel)]
+                        kerns = [c.kernval for c in
+                                 _flattened(self._cTable.values())
+                                 if c.matches(sl=slayer.name, tl=tlayer.name,
+                                              syn=synmodel)]
                         if len(kerns) > 0:
-                            plotKerns.append(self._PlotKern(slayer.name, None, tlayer.name, None, synmodel, 
-                                                            _addKernels(kerns)))
+                            plotKerns.append(
+                                self._PlotKern(slayer.name, None, tlayer.name,
+                                               None, synmodel,
+                                               _addKernels(kerns)))
         elif mode == 'population':
             # reduce to dimensions sender layer, target layer
             # all all kernels, weighting according to synapse type
             plotKerns = []
             for spop in self._pops:
                 for tpop in self._pops:
-                    kerns = [self._synAttr[c.synmodel].tw * c.kernval for c in _flattened(self._cTable.values())
-                             if c.matches(sl=spop[0], sn=spop[1], tl=tpop[0], tn=tpop[1])]
+                    kerns = [self._synAttr[c.synmodel].tw * c.kernval for c in
+                             _flattened(self._cTable.values())
+                             if c.matches(sl=spop[0], sn=spop[1], tl=tpop[0],
+                                          tn=tpop[1])]
                     if len(kerns) > 0:
-                        plotKerns.append(self._PlotKern(spop[0], spop[1], tpop[0], tpop[1], None, 
-                                                        _addKernels(kerns)))
+                        plotKerns.append(
+                            self._PlotKern(spop[0], spop[1], tpop[0], tpop[1],
+                                           None,
+                                           _addKernels(kerns)))
         elif mode == 'totals':
             # reduce to dimensions sender layer, target layer
             # all all kernels, weighting according to synapse type
             plotKerns = []
             for slayer in self._layers:
                 for tlayer in self._layers:
-                    kerns = [self._synAttr[c.synmodel].tw * c.kernval for c in _flattened(self._cTable.values())
+                    kerns = [self._synAttr[c.synmodel].tw * c.kernval for c in
+                             _flattened(self._cTable.values())
                              if c.matches(sl=slayer.name, tl=tlayer.name)]
                     if len(kerns) > 0:
-                        plotKerns.append(self._PlotKern(slayer.name, None, tlayer.name, None, None, 
-                                                        _addKernels(kerns)))
+                        plotKerns.append(
+                            self._PlotKern(slayer.name, None, tlayer.name,
+                                           None, None, _addKernels(kerns)))
         elif mode == 'select':
             # copy only those kernels that have the requested synapse type,
             # no dimension reduction
-            # nb: we need to sum all kernels in the list for a set of attributes
-            plotKerns = [self._PlotKern(clist[0].slayer, clist[0].snrn, clist[0].tlayer, clist[0].tnrn, 
-                                        clist[0].synmodel, _addKernels([c.kernval for c in clist]))
-                         for clist in self._cTable.values() if clist[0].synmodel in selected]
+            # We need to sum all kernels in the list for a set of attributes
+            plotKerns = [
+                self._PlotKern(clist[0].slayer, clist[0].snrn, clist[0].tlayer,
+                               clist[0].tnrn,
+                               clist[0].synmodel,
+                               _addKernels([c.kernval for c in clist]))
+                for clist in self._cTable.values() if
+                clist[0].synmodel in selected]
         else:
             # copy all
-            # nb: we need to sum all kernels in the list for a set of attributes
-            plotKerns = [self._PlotKern(clist[0].slayer, clist[0].snrn, clist[0].tlayer, clist[0].tnrn, 
-                                        clist[0].synmodel, _addKernels([c.kernval for c in clist]))
-                         for clist in self._cTable.values()]
-            
+            # We need to sum all kernels in the list for a set of attributes
+            plotKerns = [
+                self._PlotKern(clist[0].slayer, clist[0].snrn, clist[0].tlayer,
+                               clist[0].tnrn,
+                               clist[0].synmodel,
+                               _addKernels([c.kernval for c in clist]))
+                for clist in self._cTable.values()]
+
         self._prepareAxes(mode, showLegend)
         if fixedWidth:
 
             margs = plotParams.margins.left + plotParams.margins.right
 
             if fixedWidth <= margs:
-                raise ValueError('Requested width must be less than width of margins (%g mm)' % margs)
+                raise ValueError('Requested width must be less than ' +
+                                 'width of margins (%g mm)' % margs)
 
             currWidth = self._axes.lr[0]
-            currPatchMax = plotParams.patch_size # store
-            
+            currPatchMax = plotParams.patch_size  # store
+
             # compute required patch size
-            plotParams.patch_size = (fixedWidth - margs) / (currWidth - margs) * currPatchMax
+            plotParams.patch_size = ((fixedWidth - margs) /
+                                     (currWidth - margs) * currPatchMax)
 
             # build new axes
             del self._axes
@@ -1497,15 +1586,15 @@ class ConnectionPattern(object):
             plotParams.patch_size = currPatchMax
 
         # create figure with desired size
-        fsize = np.array(self._axes.lr) / 25.4 # convert mm to inches
+        fsize = np.array(self._axes.lr) / 25.4  # convert mm to inches
         f = plt.figure(figsize=fsize, facecolor='w')
 
-        # size will be rounded according to DPI setting, adjust fsize 
+        # size will be rounded according to DPI setting, adjust fsize
         dpi = f.get_dpi()
-        fsize = np.floor(fsize*dpi) / dpi
+        fsize = np.floor(fsize * dpi) / dpi
 
         # check that we got the correct size
-        actsize =np.array([f.get_figwidth(), f.get_figheight()], dtype=float)
+        actsize = np.array([f.get_figwidth(), f.get_figheight()], dtype=float)
         if all(actsize == fsize):
             self._figscale = 1.0  # no scaling
         else:
@@ -1518,63 +1607,69 @@ class ConnectionPattern(object):
                   backend is: %s
                   """ % mpl.get_backend())
             plt.close(f)
-            
+
             # determine scale: most shrunk dimension
             self._figscale = np.min(actsize / fsize)
-            
+
             # create shrunk on-screen figure
-            f = plt.figure(figsize=self._figscale*fsize, facecolor='w') 
+            f = plt.figure(figsize=self._figscale * fsize, facecolor='w')
 
             # just ensure all is well now
-            actsize =np.array([f.get_figwidth(), f.get_figheight()], dtype=float)
-
+            actsize = np.array([f.get_figwidth(), f.get_figheight()],
+                               dtype=float)
 
         # add decoration
         for block in _flattened(self._axes.elements):
 
             ax = f.add_axes(self._scaledBox(block),
-                            axisbg = plotParams.layer_bg[block.location], xticks=[], yticks=[],
-                            zorder = plotParams.z_layer)
+                            axisbg=plotParams.layer_bg[block.location],
+                            xticks=[], yticks=[],
+                            zorder=plotParams.z_layer)
             if hasattr(ax, 'frame'):
                 ax.frame.set_visible(False)
             else:
                 for sp in ax.spines.values():
-                    sp.set_color('none')  # turn off axis lines, make room for frame edge
+                    # turn off axis lines, make room for frame edge
+                    sp.set_color('none')
             if block.l <= self._axes.l_patches and block.slbl:
-                ax.set_ylabel(block.slbl, 
-                              rotation = plotParams.layer_orientation['sender'],
-                              fontproperties = plotParams.layer_font)
+                ax.set_ylabel(block.slbl,
+                              rotation=plotParams.layer_orientation['sender'],
+                              fontproperties=plotParams.layer_font)
             if block.t <= self._axes.t_patches and block.tlbl:
-                ax.set_xlabel(block.tlbl, 
-                              rotation = plotParams.layer_orientation['target'],
-                              fontproperties = plotParams.layer_font)
+                ax.set_xlabel(block.tlbl,
+                              rotation=plotParams.layer_orientation['target'],
+                              fontproperties=plotParams.layer_font)
                 ax.xaxis.set_label_position('top')
 
             # inner blocks for population labels
-            if not mode in ('totals', 'layer'):
+            if mode not in ('totals', 'layer'):
                 for pb in _flattened(block.elements):
                     if not isinstance(pb, self._Block):
-                        continue # should not happen
+                        continue  # should not happen
 
                     ax = f.add_axes(self._scaledBox(pb),
-                                    axisbg = 'none', xticks=[], yticks=[], 
-                                    zorder = plotParams.z_pop)
+                                    axisbg='none', xticks=[], yticks=[],
+                                    zorder=plotParams.z_pop)
                     if hasattr(ax, 'frame'):
                         ax.frame.set_visible(False)
                     else:
                         for sp in ax.spines.values():
-                            sp.set_color('none')  # turn off axis lines, make room for frame edge
-                    if pb.l+pb.w >= self._axes.r_patches and pb.slbl:
-                        ax.set_ylabel(pb.slbl, 
-                                      rotation=plotParams.pop_orientation['sender'],
+                            # turn off axis lines, make room for frame edge
+                            sp.set_color('none')
+                    if pb.l + pb.w >= self._axes.r_patches and pb.slbl:
+                        ax.set_ylabel(pb.slbl,
+                                      rotation=plotParams.pop_orientation[
+                                          'sender'],
                                       fontproperties=plotParams.pop_font)
                         ax.yaxis.set_label_position('right')
-                    if pb.t+pb.h >= self._axes.b_patches and pb.tlbl:
-                        ax.set_xlabel(pb.tlbl, 
-                                      rotation=plotParams.pop_orientation['target'],
+                    if pb.t + pb.h >= self._axes.b_patches and pb.tlbl:
+                        ax.set_xlabel(pb.tlbl,
+                                      rotation=plotParams.pop_orientation[
+                                          'target'],
                                       fontproperties=plotParams.pop_font)
 
-        # determine minimum and maximum values across all kernels, but set min <= 0, max >= 0
+        # determine minimum and maximum values across all kernels,
+        # but set min <= 0, max >= 0
         kern_max = max(0.0, max([np.max(kern.kern) for kern in plotKerns]))
         kern_min = min(0.0, min([np.min(kern.kern) for kern in plotKerns]))
 
@@ -1584,10 +1679,11 @@ class ConnectionPattern(object):
 
         else:
             # default values for color limits
-            # always 0 as lower limit so anything > 0 is non-white, except when totals or populations
-            c_min = None if mode in ('totals','population') else 0.0
-            c_max = None   # use patch maximum as upper limit
-            
+            # always 0 as lower limit so anything > 0 is non-white,
+            # except when totals or populations
+            c_min = None if mode in ('totals', 'population') else 0.0
+            c_max = None  # use patch maximum as upper limit
+
             if normalize:
                 # use overall maximum, at least 0
                 c_max = kern_max
@@ -1601,49 +1697,52 @@ class ConnectionPattern(object):
                         c_min = -c_max
 
         # Initialize dict storing sample patches for each synapse type for use
-        # in creating color bars. We will store the last patch of any given 
-        # synapse type for reference. When aggrSyns, we have only one patch type
-        # and store that.
+        # in creating color bars. We will store the last patch of any given
+        # synapse type for reference. When aggrSyns, we have only one patch
+        #  type and store that.
         if not aggrSyns:
-            samplePatches = dict([(sname, None) for sname in self._synAttr.keys()])
+            samplePatches = dict(
+                [(sname, None) for sname in self._synAttr.keys()])
         else:
             # only single type of patches
             samplePatches = None
 
         for kern in plotKerns:
-            p = self._patchTable[(kern.sl,kern.sn,kern.tl,kern.tn,kern.syn)]
-            
-            p.ax = f.add_axes(self._scaledBox(p), aspect='equal', 
+            p = self._patchTable[(kern.sl, kern.sn, kern.tl,
+                                  kern.tn, kern.syn)]
+
+            p.ax = f.add_axes(self._scaledBox(p), aspect='equal',
                               xticks=[], yticks=[], zorder=plotParams.z_conn)
             p.ax.patch.set_edgecolor('none')
             if hasattr(p.ax, 'frame'):
                 p.ax.frame.set_visible(False)
             else:
                 for sp in p.ax.spines.values():
-                    sp.set_color('none')  # turn off axis lines, make room for frame edge
+                    # turn off axis lines, make room for frame edge
+                    sp.set_color('none')
 
             if not aggrSyns:
                 # we have synapse information -> not totals, a vals positive
-                assert(kern.syn)
-                assert(np.min(kern.kern) >= 0.0)
+                assert (kern.syn)
+                assert (np.min(kern.kern) >= 0.0)
 
-                # we may overwrite here, but this does not matter, we only need 
+                # we may overwrite here, but this does not matter, we only need
                 # some reference patch
-                samplePatches[kern.syn] = p.ax.imshow(kern.kern, 
-                                                      vmin = c_min, vmax = c_max,
-                                                      cmap = self._synAttr[kern.syn].cmap)#,
-                                  # interpolation='nearest')
+                samplePatches[kern.syn] = p.ax.imshow(kern.kern,
+                                                      vmin=c_min, vmax=c_max,
+                                                      cmap=self._synAttr[
+                                                          kern.syn].cmap)  # ,
+                # interpolation='nearest')
 
             else:
                 # we have totals, special color table and normalization
-
-                # we may overwrite here, but this does not matter, we only need 
+                # we may overwrite here, but this does not matter, we only need
                 # some reference patch
-                samplePatches = p.ax.imshow(kern.kern, 
-                                  vmin = c_min, vmax = c_max,
-                                  cmap = cm.bluered,
-                                  norm = cm.ZeroCenterNorm()) #, # must be instance
-                                  # interpolation='nearest')
+                samplePatches = p.ax.imshow(kern.kern,
+                                            vmin=c_min, vmax=c_max,
+                                            cmap=cm.bluered,
+                                            norm=cm.ZeroCenterNorm())
+                # interpolation='nearest')
 
         # Create colorbars at bottom of figure
         if showLegend:
@@ -1675,22 +1774,26 @@ class ConnectionPattern(object):
 
                 if normalize:
                     # colorbar with freely settable ticks
-                    cb = f.colorbar(samplePatches, cax = cbax,
-                                    orientation = 'horizontal',
-                                    ticks = tcks,
-                                    format = plotParams.legend_tick_format, extend=extmode)
+                    cb = f.colorbar(samplePatches, cax=cbax,
+                                    orientation='horizontal',
+                                    ticks=tcks,
+                                    format=plotParams.legend_tick_format,
+                                    extend=extmode)
                 else:
                     # colorbar with tick labels 'Exc', 'Inh'
-                    # we add the color bare here explicitly, so we get no problems
-                    # if the sample patch includes only pos or only neg values
-                    cb = mpl.colorbar.ColorbarBase(cbax, cmap=cm.bluered, orientation='horizontal')
+                    # we add the color bare here explicitly, so we get no
+                    # problems if the sample patch includes only pos or
+                    # only neg values
+                    cb = mpl.colorbar.ColorbarBase(cbax, cmap=cm.bluered,
+                                                   orientation='horizontal')
                     cbax.set_xticks([0, 1])
                     cbax.set_xticklabels(['Inh', 'Exc'])
 
                 cb.outline.set_linewidth(0.5)  # narrower line around colorbar
 
                 # fix font for ticks
-                plt.setp(cbax.get_xticklabels(), fontproperties=plotParams.legend_tick_font)
+                plt.setp(cbax.get_xticklabels(),
+                         fontproperties=plotParams.legend_tick_font)
 
                 # no title in this case
 
@@ -1699,12 +1802,16 @@ class ConnectionPattern(object):
                 for syn in self._synAttr.keys():
                     cbax = f.add_axes(self._scaledBox(self._cbPatches[syn]))
                     if plotParams.legend_location is None:
-                        cbax.set_ylabel(syn, fontproperties=plotParams.legend_title_font,
-                                        rotation='horizontal')
+                        cbax.set_ylabel(
+                            syn,
+                            fontproperties=plotParams.legend_title_font,
+                            rotation='horizontal')
                     else:
-                        cbax.set_title(syn, fontproperties=plotParams.legend_title_font,
-                                       rotation='horizontal')
-                    
+                        cbax.set_title(
+                            syn,
+                            fontproperties=plotParams.legend_title_font,
+                            rotation='horizontal')
+
                     if normalize:
 
                         # by default, use 4 ticks to avoid clogging
@@ -1716,15 +1823,16 @@ class ConnectionPattern(object):
                             tcks = mpl.ticker.MaxNLocator(nbins=4)
 
                         # proper colorbar
-                        cb = f.colorbar(samplePatches[syn], cax = cbax,                               
-                                        orientation = 'horizontal',
-                                        ticks = tcks,
-                                        format = plotParams.legend_tick_format,
-                                        extend = extmode)
-                        cb.outline.set_linewidth(0.5)  # narrower line around colorbar
+                        cb = f.colorbar(samplePatches[syn], cax=cbax,
+                                        orientation='horizontal',
+                                        ticks=tcks,
+                                        format=plotParams.legend_tick_format,
+                                        extend=extmode)
+                        cb.outline.set_linewidth(
+                            0.5)  # narrower line around colorbar
 
                         # fix font for ticks
-                        plt.setp(cbax.get_xticklabels(), 
+                        plt.setp(cbax.get_xticklabels(),
                                  fontproperties=plotParams.legend_tick_font)
 
                     else:
@@ -1744,7 +1852,7 @@ class ConnectionPattern(object):
 
         # save to file(s), use full size
         f.set_size_inches(fsize)
-        if isinstance(file, (list,tuple)):
+        if isinstance(file, (list, tuple)):
             for fn in file:
                 f.savefig(fn)
         elif isinstance(file, str):
@@ -1753,9 +1861,9 @@ class ConnectionPattern(object):
 
         return kern_min, kern_max
 
-    # ----------------------------------------------------------------------------
+    # ------------------------------------------------------------------------
 
-    def toLaTeX(self, file, standalone = False, enumerate = False, legend = True):
+    def toLaTeX(self, file, standalone=False, enumerate=False, legend=True):
         """
         Write connection table to file.
 
@@ -1771,49 +1879,51 @@ class ConnectionPattern(object):
             raise Exception('Could not open file "%s"' % file)
 
         if standalone:
-            lfile.write(\
-r"""
-\documentclass[a4paper,american]{article}
-\usepackage[pdftex,margin=1in,centering,noheadfoot,a4paper]{geometry}
-\usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
-	
-\usepackage{color}
-\usepackage{calc}
-\usepackage{tabularx}  % automatically adjusts column width in tables
-\usepackage{multirow}  % allows entries spanning several rows  
-\usepackage{colortbl}  % allows coloring tables
-\usepackage[fleqn]{amsmath}
-\setlength{\mathindent}{0em}
+            lfile.write(
+                r"""
+                \documentclass[a4paper,american]{article}
+                \usepackage[pdftex,margin=1in,centering,
+                            noheadfoot,a4paper]{geometry}
+                \usepackage[T1]{fontenc}
+                \usepackage[utf8]{inputenc}
 
-\usepackage{mathpazo}
-\usepackage[scaled=.95]{helvet}
-\renewcommand\familydefault{\sfdefault}
+                \usepackage{color}
+                \usepackage{calc}
+                \usepackage{tabularx}  % autom. adjusts column width in tables
+                \usepackage{multirow}  % allows entries spanning several rows
+                \usepackage{colortbl}  % allows coloring tables
+                \usepackage[fleqn]{amsmath}
+                \setlength{\mathindent}{0em}
 
-\renewcommand\arraystretch{1.2}
-\pagestyle{empty}
+                \usepackage{mathpazo}
+                \usepackage[scaled=.95]{helvet}
+                \renewcommand\familydefault{\sfdefault}
 
-% \hdr{ncols}{label}{title}
-%
-% Typeset header bar across table with ncols columns 
-% with label at left margin and centered title
-%
-\newcommand{\hdr}[3]{%
-  \multicolumn{#1}{|l|}{%
-    \color{white}\cellcolor[gray]{0.0}%
-    \textbf{\makebox[0pt]{#2}\hspace{0.5\linewidth}\makebox[0pt][c]{#3}}%
-  }%
-}
+                \renewcommand\arraystretch{1.2}
+                \pagestyle{empty}
 
-\begin{document}
-""")
-        lfile.write(\
-r"""
-\noindent\begin{tabularx}{\linewidth}{%s|l|l|l|c|c|X|}\hline
-\hdr{%d}{}{Connectivity}\\\hline
-%s \textbf{Src} & \textbf{Tgt} & \textbf{Syn} &
-\textbf{Wght} & \textbf{Mask} & \textbf{Kernel} \\\hline
-""" % (('|r',7,'&') if enumerate else ('',6,'')))
+                % \hdr{ncols}{label}{title}
+                %
+                % Typeset header bar across table with ncols columns
+                % with label at left margin and centered title
+                %
+                \newcommand{\hdr}[3]{%
+                  \multicolumn{#1}{|l|}{%
+                    \color{white}\cellcolor[gray]{0.0}%
+                    \textbf{\makebox[0pt]{#2}\hspace{0.5\linewidth}%
+                            \makebox[0pt][c]{#3}}%
+                  }%
+                }
+
+                \begin{document}
+                """)
+        lfile.write(
+            r"""
+            \noindent\begin{tabularx}{\linewidth}{%s|l|l|l|c|c|X|}\hline
+            \hdr{%d}{}{Connectivity}\\\hline
+            %s \textbf{Src} & \textbf{Tgt} & \textbf{Syn} &
+            \textbf{Wght} & \textbf{Mask} & \textbf{Kernel} \\\hline
+            """ % (('|r', 7, '&') if enumerate else ('', 6, '')))
         # ensure sorting according to keys, gives some alphabetic sorting
         haveU, haveG = False, False
 
@@ -1822,46 +1932,52 @@ r"""
             for conn in self._cTable[ckey]:
 
                 cctr += 1
-                if enumerate: lfile.write('%d &' % cctr)
+                if enumerate:
+                    lfile.write('%d &' % cctr)
 
                 # take care to escape _ in names such as GABA_A
                 # also remove any pending '/None'
-                lfile.write((r'%s/%s & %s/%s & %s' % \
-                                 (conn.slayer, conn.snrn, conn.tlayer, conn.tnrn,
-                                  conn.synmodel)).replace('_', r'\_').replace('/None',''))
+                lfile.write((r'%s/%s & %s/%s & %s' %
+                             (conn.slayer, conn.snrn, conn.tlayer, conn.tnrn,
+                              conn.synmodel)).replace('_', r'\_').replace(
+                    '/None', ''))
                 lfile.write(' & \n')
 
-                if isinstance(conn.weight, (int,float)):
+                if isinstance(conn.weight, (int, float)):
                     lfile.write(r'%g' % conn.weight)
                 elif 'uniform' in conn.weight:
                     cw = conn.weight['uniform']
-                    lfile.write(r'$\mathcal{U}[%g, %g)$' % (cw['min'], cw['max']))
+                    lfile.write(
+                        r'$\mathcal{U}[%g, %g)$' % (cw['min'], cw['max']))
                     haveU = True
                 else:
-                    raise ValueError('Unkown weight type "%s"' % conn.weight.__str__)
+                    raise ValueError(
+                        'Unkown weight type "%s"' % conn.weight.__str__)
                 lfile.write(' & \n')
 
                 if 'circular' in conn.mask:
                     lfile.write(r'$\leq %g$' % conn.mask['circular']['radius'])
                 elif 'rectangular' in conn.mask:
                     cmr = conn.mask['rectangular']
-                    lfile.write(\
-                        r"""$[(%+g, %+g), (%+g, %+g)]$""" \
-                            % (cmr['lower_left'][0], cmr['lower_left'][1],
-                               cmr['upper_right'][0], cmr['upper_right'][1]))
+                    lfile.write(
+                        r"""$[(%+g, %+g), (%+g, %+g)]$"""
+                        % (cmr['lower_left'][0], cmr['lower_left'][1],
+                           cmr['upper_right'][0], cmr['upper_right'][1]))
                 else:
-                    raise ValueError('Unknown mask type "%s"' % conn.mask.__str__)
+                    raise ValueError(
+                        'Unknown mask type "%s"' % conn.mask.__str__)
                 lfile.write(' & \n')
 
                 if isinstance(conn.kernel, (int, float)):
                     lfile.write(r'$%g$' % conn.kernel)
                 elif 'gaussian' in conn.kernel:
                     ckg = conn.kernel['gaussian']
-                    lfile.write(r'$\mathcal{G}(p_0 = %g, \sigma = %g)$' % \
-                                    (ckg['p_center'], ckg['sigma']))
+                    lfile.write(r'$\mathcal{G}(p_0 = %g, \sigma = %g)$' %
+                                (ckg['p_center'], ckg['sigma']))
                     haveG = True
                 else:
-                    raise ValueError('Unkown kernel type "%s"' % conn.kernel.__str__)
+                    raise ValueError(
+                        'Unkown kernel type "%s"' % conn.kernel.__str__)
                 lfile.write('\n')
 
                 lfile.write(r'\\\hline' '\n')
@@ -1869,13 +1985,16 @@ r"""
         if legend and (haveU or haveG):
             # add bottom line with legend
             lfile.write(r'\hline' '\n')
-            lfile.write(r'\multicolumn{%d}{|l|}{\footnotesize ' % (7 if enumerate else 6))
+            lfile.write(r'\multicolumn{%d}{|l|}{\footnotesize ' %
+                        (7 if enumerate else 6))
             if haveG:
-                lfile.write(r'$\mathcal{G}(p_0, \sigma)$: $p(\mathbf{x})=p_0 e^{-\mathbf{x}^2/2\sigma^2}$')
+                lfile.write(r'$\mathcal{G}(p_0, \sigma)$: ' +
+                            r'$p(\mathbf{x})=p_0 e^{-\mathbf{x}^2/2\sigma^2}$')
             if haveG and haveU:
                 lfile.write(r', ')
             if haveU:
-                lfile.write(r'$\mathcal{U}[a, b)$: uniform distribution on $[a, b)$')
+                lfile.write(
+                    r'$\mathcal{U}[a, b)$: uniform distribution on $[a, b)$')
             lfile.write(r'}\\\hline' '\n')
 
         lfile.write(r'\end{tabularx}' '\n\n')
@@ -1884,62 +2003,65 @@ r"""
             lfile.write(r'\end{document}''\n')
 
         lfile.close()
-        
+
+
 # ----------------------------------------------------------------------------
 
 def _evalkernel(mask, kernel, weight, extent, intensity, tcd):
     """
-    Plot kernel within extent. 
-    
-    Kernel values are multiplied with abs(weight). If weight is a 
+    Plot kernel within extent.
+
+    Kernel values are multiplied with abs(weight). If weight is a
     distribution, the mean value is used.
-    
-    Result is a masked array, in which the values outside the mask are 
+
+    Result is a masked array, in which the values outside the mask are
     masked.
     """
-    
+
     # determine resolution, number of data points
     dx = max(extent) / plotParams.n_kern
     nx = np.ceil(extent[0] / dx)
     ny = np.ceil(extent[1] / dx)
-    
-    x = np.linspace(-0.5*extent[0], 0.5*extent[0], nx)
-    y = np.linspace(-0.5*extent[1], 0.5*extent[1], ny)
+
+    x = np.linspace(-0.5 * extent[0], 0.5 * extent[0], nx)
+    y = np.linspace(-0.5 * extent[1], 0.5 * extent[1], ny)
     X, Y = np.meshgrid(x, y)
-    
+
     if intensity == 'wp':
-        return np.ma.masked_array(abs(weight) * _kerneval(X, Y, kernel), 
+        return np.ma.masked_array(abs(weight) * _kerneval(X, Y, kernel),
                                   np.logical_not(_maskeval(X, Y, mask)))
     elif intensity == 'p':
-        return np.ma.masked_array(_kerneval(X, Y, kernel), 
+        return np.ma.masked_array(_kerneval(X, Y, kernel),
                                   np.logical_not(_maskeval(X, Y, mask)))
     elif intensity == 'tcd':
-        return np.ma.masked_array(abs(tcd) * abs(weight) * _kerneval(X, Y, kernel), 
-                                  np.logical_not(_maskeval(X, Y, mask)))
+        return np.ma.masked_array(
+            abs(tcd) * abs(weight) * _kerneval(X, Y, kernel),
+            np.logical_not(_maskeval(X, Y, mask)))
 
 
 # ----------------------------------------------------------------------------
 
 def _weighteval(weight):
     """Returns weight, or mean of distribution, signed."""
-            
+
     w = None
     if isinstance(weight, (float, int)):
         w = weight
     elif isinstance(weight, dict):
-        assert(len(weight) == 1)
+        assert (len(weight) == 1)
         if 'uniform' in weight:
-            w = 0.5 * (weight['uniform']['min'] 
-                       + weight['uniform']['max'])
+            w = 0.5 * (weight['uniform']['min'] + weight['uniform']['max'])
         elif 'gaussian' in weight:
             w = weight['gaussian']['mean']
         else:
-            raise Exception('Unknown weight type "%s"' % tuple(weight.keys())[0])
-        
+            raise Exception(
+                'Unknown weight type "%s"' % tuple(weight.keys())[0])
+
     if not w:
         raise Exception('Cannot handle weight.')
-        
+
     return float(w)
+
 
 # ----------------------------------------------------------------------------
 
@@ -1949,24 +2071,25 @@ def _maskeval(x, y, mask):
     (x,y). Assume x,y are 2d numpy matrices.
     """
 
-    assert(len(mask)==1)
+    assert (len(mask) == 1)
     if 'circular' in mask:
         r = mask['circular']['radius']
-        m = x**2+y**2 <= r**2
+        m = x ** 2 + y ** 2 <= r ** 2
     elif 'doughnut' in mask:
         ri = mask['doughnut']['inner_radius']
         ro = mask['doughnut']['outer_radius']
-        d = x**2 + y**2
+        d = x ** 2 + y ** 2
         m = np.logical_and(ri <= d, d <= ro)
     elif 'rectangular' in mask:
-        ll = mask['rectangular']['lower_left']        
+        ll = mask['rectangular']['lower_left']
         ur = mask['rectangular']['upper_right']
         m = np.logical_and(np.logical_and(ll[0] <= x, x <= ur[0]),
                            np.logical_and(ll[1] <= y, y <= ur[1]))
     else:
         raise Exception('Unknown mask type "%s"' % tuple(mask.keys())[0])
-    
+
     return m
+
 
 # ----------------------------------------------------------------------------
 
@@ -1975,59 +2098,62 @@ def _kerneval(x, y, fun):
     Evaluate function given as topology style dict at
     (x,y). Assume x,y are 2d numpy matrices
     """
-    
+
     if isinstance(fun, (float, int)):
         return float(fun) * np.ones(np.shape(x))
     elif isinstance(fun, dict):
-        assert(len(fun) == 1)
-        
+        assert (len(fun) == 1)
+
     if 'gaussian' in fun:
         g = fun['gaussian']
         p0 = g['p_center']
         sig = g['sigma']
-        return p0 * np.exp(-0.5*(x**2+y**2)/sig**2)
+        return p0 * np.exp(-0.5 * (x ** 2 + y ** 2) / sig ** 2)
     else:
         raise Exception('Unknown kernel "%s"', tuple(fun.keys())[0])
 
     # something very wrong
     raise Exception('Cannot handle kernel.')
 
+
 # ----------------------------------------------------------------------------
 
 def _addKernels(kList):
     """
     Add a list of kernels.
-    
+
     Arguments:
     kList:  List of masked arrays of equal size.
-    
+
     Returns:
     Masked array of same size as input. All values are added,
-    setting masked values to 0. The mask for the sum is the 
+    setting masked values to 0. The mask for the sum is the
     logical AND of all individual masks, so that only such
     values are masked that are masked in all kernels.
     _addKernels always returns a new array object, even if
     kList has only a single element.
     """
 
-    assert(len(kList) > 0)
+    assert (len(kList) > 0)
 
     if len(kList) < 2:
         return kList[0].copy()
-    
-    d = np.ma.filled(kList[0], fill_value = 0).copy()
+
+    d = np.ma.filled(kList[0], fill_value=0).copy()
     m = kList[0].mask.copy()
     for k in kList[1:]:
-        d += np.ma.filled(k, fill_value = 0)
-        m  = np.logical_and(m, k.mask)
-        
+        d += np.ma.filled(k, fill_value=0)
+        m = np.logical_and(m, k.mask)
+
     return np.ma.masked_array(d, m)
-    
+
+
 # ----------------------------------------------------------------------------
 
 def _flattened(lst):
     """Returned list flattend at first level."""
     return sum(lst, [])
+
 
 # ----------------------------------------------------------------------------
 
@@ -2051,14 +2177,12 @@ if __name__ == "__main__":
             SynType('FOO', 1.0, 'aqua'),
             SynType('AMPA', 3.0, 'g')))
     cp3s = ConnectionPattern(simple2.layerList, simple2.connectList,
-                             synTypes=st3)       
-
+                             synTypes=st3)
 
     import simple3
     reload(simple3)
     cp3 = ConnectionPattern(simple3.layerList, simple3.connectList)
 
-    
 #    cp._prepareAxes('by layer')
 #    cp2._prepareAxes('by layer')
 #    cp3._prepareAxes('detailed')

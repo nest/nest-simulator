@@ -21,12 +21,19 @@
  */
 
 #include "mip_generator.h"
-#include "network.h"
-#include "dict.h"
-#include "random_datums.h"
-#include "dictutils.h"
-#include "exceptions.h"
+
+// Includes from librandom:
 #include "gslrandomgen.h"
+#include "random_datums.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -45,7 +52,8 @@ nest::mip_generator::Parameters_::Parameters_( const Parameters_& p )
   , p_copy_( p.p_copy_ )
   , mother_seed_( p.mother_seed_ )
 {
-  rng_ = p.rng_->clone( p.mother_seed_ ); // deep copy of random number generator
+  // deep copy of random number generator
+  rng_ = p.rng_->clone( p.mother_seed_ );
 }
 
 /* ----------------------------------------------------------------
@@ -63,8 +71,8 @@ nest::mip_generator::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::mip_generator::Parameters_::set( const DictionaryDatum& d )
 {
-  updateValue< double_t >( d, names::rate, rate_ );
-  updateValue< double_t >( d, names::p_copy, p_copy_ );
+  updateValue< double >( d, names::rate, rate_ );
+  updateValue< double >( d, names::p_copy, p_copy_ );
 
   if ( rate_ < 0 )
     throw BadProperty( "Rate must be non-negative." );
@@ -72,10 +80,12 @@ nest::mip_generator::Parameters_::set( const DictionaryDatum& d )
   if ( p_copy_ < 0 || p_copy_ > 1 )
     throw BadProperty( "Copy probability must be in [0, 1]." );
 
-  bool reset_rng = updateValue< librandom::RngPtr >( d, names::mother_rng, rng_ );
+  bool reset_rng =
+    updateValue< librandom::RngPtr >( d, names::mother_rng, rng_ );
 
   // order important to avoid short-circuitung
-  reset_rng = updateValue< long_t >( d, names::mother_seed, mother_seed_ ) || reset_rng;
+  reset_rng =
+    updateValue< long >( d, names::mother_seed, mother_seed_ ) || reset_rng;
 
   if ( reset_rng )
     rng_->seed( mother_seed_ );
@@ -124,7 +134,8 @@ nest::mip_generator::calibrate()
   device_.calibrate();
 
   // rate_ is in Hz, dt in ms, so we have to convert from s to ms
-  V_.poisson_dev_.set_lambda( Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
+  V_.poisson_dev_.set_lambda(
+    Time::get_resolution().get_ms() * P_.rate_ * 1e-3 );
 }
 
 
@@ -133,25 +144,26 @@ nest::mip_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::mip_generator::update( Time const& T, const long_t from, const long_t to )
+nest::mip_generator::update( Time const& T, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     if ( !device_.is_active( T ) || P_.rate_ <= 0 )
       return; // no spikes to be generated
 
     // generate spikes of mother process for each time slice
-    long_t n_mother_spikes = V_.poisson_dev_.ldev( P_.rng_ );
+    long n_mother_spikes = V_.poisson_dev_.ldev( P_.rng_ );
 
     if ( n_mother_spikes )
     {
       DSSpikeEvent se;
 
       se.set_multiplicity( n_mother_spikes );
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
   }
 }
@@ -166,14 +178,15 @@ nest::mip_generator::event_hook( DSSpikeEvent& e )
   // once for every receiver. when calling handle() of the receiver
   // above, we need to change the multiplicty to the number of copied
   // child process spikes, so afterwards it needs to be reset to correctly
-  // store the number of mother spikes again during the next call of event_hook().
+  // store the number of mother spikes again during the next call of
+  // event_hook().
   // reichert
 
-  librandom::RngPtr rng = net_->get_rng( get_thread() );
-  ulong_t n_mother_spikes = e.get_multiplicity();
-  ulong_t n_spikes = 0;
+  librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
+  unsigned long n_mother_spikes = e.get_multiplicity();
+  unsigned long n_spikes = 0;
 
-  for ( ulong_t n = 0; n < n_mother_spikes; n++ )
+  for ( unsigned long n = 0; n < n_mother_spikes; n++ )
   {
     if ( rng->drand() < P_.p_copy_ )
       n_spikes++;

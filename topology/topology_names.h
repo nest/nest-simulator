@@ -29,6 +29,7 @@
 
 */
 
+// Includes from sli:
 #include "name.h"
 
 namespace nest

@@ -20,11 +20,17 @@
  *
  */
 
-#include <cmath>
-#include "config.h"
 #include "normal_randomdev.h"
-#include "sliexceptions.h"
+
+// C++ includes:
+#include <cmath>
+
+// Generated includes:
+#include "config.h"
+
+// Includes from sli:
 #include "dictutils.h"
+#include "sliexceptions.h"
 
 // by default, init as exponential density with mean 1
 librandom::NormalRandomDev::NormalRandomDev( RngPtr r_source )
@@ -61,6 +67,8 @@ librandom::NormalRandomDev::set_status( const DictionaryDatum& d )
 void
 librandom::NormalRandomDev::get_status( DictionaryDatum& d ) const
 {
+  RandomDev::get_status( d );
+
   def< double >( d, "mu", mu_ );
   def< double >( d, "sigma", sigma_ );
 }

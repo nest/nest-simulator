@@ -30,9 +30,11 @@
 #ifndef NEST_TIME_CONVERTER_H
 #define NEST_TIME_CONVERTER_H
 
+#include "nest_types.h"
+
 namespace nest
 {
-
+class Time;
 /**
  * Class to convert times from one representation to another.
  * Createing an object of TimeCOnverter at a current time representation
@@ -46,8 +48,8 @@ class TimeConverter
 {
 
 private:
-  double_t OLD_TICS_PER_MS;
-  double_t OLD_TICS_PER_STEP;
+  double OLD_TICS_PER_MS;
+  double OLD_TICS_PER_STEP;
 
 public:
   /**
@@ -60,8 +62,12 @@ public:
   /**
    * Converts a given number of steps with respect to old representation
    * into a time object in current representation.
+   *
+   * Be careful not to call Time::get_steps() from an old Time object, as
+   * it will use the new TICS_PER_STEP constant. Use
+   * TimeConverter::from_old_tics instead.
    */
-  Time from_old_steps( long_t s_old ) const;
+  Time from_old_steps( long s_old ) const;
 
   /**
    * Converts a given number of tics with respect to old representation

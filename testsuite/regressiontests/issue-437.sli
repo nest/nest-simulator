@@ -1,0 +1,86 @@
+/*
+ *  issue-437.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+
+Name: testsuite::issue-437 Ensure parameter passed in Connect are set
+
+Synopsis: (issue-437) run -> NEST exits if test fails
+
+Description:
+This test makes sure that if parameter dictionaries are passed to
+Connect, the values are actually set. To avoid conflicts with synapse
+compatibility, we use labeled synapses and try setting the label.
+
+Author: Jakob Jordan, 2016-08-01
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+/my_synapse_label 49 def
+
+% test neuron-neuron connection
+{
+  ResetKernel
+  /iaf_psc_delta 2 Create
+  [1] [2] << /rule /all_to_all >> << /model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
+  << >> GetConnections 0 get GetStatus /synapse_label get my_synapse_label eq
+} assert_or_die
+
+% test neuron-device connection
+{
+  ResetKernel
+  /iaf_psc_delta 1 Create /n Set
+  /spike_detector 1 Create /d Set
+  [n] [d] << /rule /all_to_all >> << /model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
+  << >> GetConnections 0 get GetStatus /synapse_label get my_synapse_label eq
+} assert_or_die
+
+% test device-device connection
+{
+  ResetKernel
+  /spike_generator 1 Create /g Set
+  /spike_detector 1 Create /d Set
+  [g] [d] << /rule /all_to_all >> << /model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
+  << >> GetConnections 0 get GetStatus /synapse_label get my_synapse_label eq
+} assert_or_die
+
+% test device-neuron connection
+{
+  ResetKernel
+  /spike_generator 1 Create /g Set
+  /iaf_psc_delta 1 Create /n Set
+  [g] [n] << /rule /all_to_all >> << /model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
+  << >> GetConnections 0 get GetStatus /synapse_label get my_synapse_label eq
+} assert_or_die
+
+% test neuron-global device connection
+{
+  ResetKernel
+  /iaf_psc_delta 1 Create /n Set
+  /volume_transmitter 1 Create /v Set
+  [n] [v] << /rule /all_to_all >> << /model /static_synapse_lbl /synapse_label my_synapse_label >> Connect
+  << >> GetConnections 0 get GetStatus /synapse_label get my_synapse_label eq
+} assert_or_die

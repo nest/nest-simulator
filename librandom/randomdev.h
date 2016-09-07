@@ -23,10 +23,15 @@
 #ifndef RANDOMDEV_H
 #define RANDOMDEV_H
 
+// C++ includes:
 #include <cassert>
-#include "randomgen.h"
-#include "dictdatum.h"
+
+// Includes from librandom:
 #include "librandom_exceptions.h"
+#include "randomgen.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 /**
  * @defgroup RandomDeviateGenerators Random Deviate Generators.
@@ -83,7 +88,7 @@
  *   poisson_dev_(0.0),
  *  ...
  * {
- *   calibrate(network()->get_resolution());
+ *   calibrate(Time::get_resolution());
  * }
  * void nest::poisson_generator::calibrate(Time const & dt)
  * {
@@ -93,9 +98,9 @@
  * void nest::poisson_generator::update(thread thrd, Time const & T)
  * {
  *   ...
- *   librandom::RngPtr rng=Node::network()->get_rng(thrd);
+ *   librandom::RngPtr rng=kernel().rng_manager.get_rng(thrd);
  *   ...
- *     long_t n_spikes = poisson_dev_.ldev(rng);
+ *     long n_spikes = poisson_dev_.ldev(rng);
  *   ...
  * }
  * @endcode
@@ -200,7 +205,7 @@ public:
    * of a SLI dictionary.  This function is meant only to
    * provide access from the SLI interface.
    */
-  virtual void get_status( DictionaryDatum& ) const = 0;
+  virtual void get_status( DictionaryDatum& ) const;
 
 protected:
   RngPtr rng_; //!< store underlying RNG

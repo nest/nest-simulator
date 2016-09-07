@@ -26,13 +26,16 @@
     SLI's lexical analyzer
 
 */
-#include <typeinfo>
+
+// C++ includes:
 #include <iostream>
 #include <string>
+#include <typeinfo>
 
-#include "token.h"
-#include "symboldatum.h"
+// Includes from sli:
 #include "charcode.h"
+#include "symboldatum.h"
+#include "token.h"
 
 
 class Scanner

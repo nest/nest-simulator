@@ -23,23 +23,33 @@
 #ifndef MUSIC_MESSAGE_IN_PROXY_H
 #define MUSIC_MESSAGE_IN_PROXY_H
 
+// Generated includes:
 #include "config.h"
+
 #ifdef HAVE_MUSIC
 
-#include <vector>
+// C includes:
+#include <mpi.h>
+
+// C++ includes:
 #include <string>
-#include "nest.h"
+#include <vector>
+
+// External includes:
+#include <music.hh>
+
+// Includes from nestkernel:
+#include "nest_types.h"
 #include "node.h"
-#include "communicator.h"
+
+// Includes from sli:
 #include "arraydatum.h"
 #include "dictutils.h"
 
-#include "mpi.h"
-#include "music.hh"
-
 /*BeginDocumentation
 
-Name: music_message_in_proxy - A device which receives message strings from MUSIC.
+Name: music_message_in_proxy - A device which receives message strings from
+                              MUSIC.
 
 Description:
 A music_message_in_proxy can be used to receive message strings from
@@ -100,7 +110,8 @@ public:
   {
     DictionaryDatum dict( new Dictionary );
     ( *dict )[ "messages" ] = messages;
-    ( *dict )[ "message_times" ] = DoubleVectorDatum( new std::vector< double >( message_times ) );
+    ( *dict )[ "message_times" ] =
+      DoubleVectorDatum( new std::vector< double >( message_times ) );
     ( *d )[ "n_messages" ] = messages.size();
     ( *d )[ "data" ] = dict;
   }
@@ -145,7 +156,7 @@ private:
   void calibrate();
 
   void
-  update( Time const&, const long_t, const long_t )
+  update( Time const&, const long, const long )
   {
   }
 
@@ -172,13 +183,15 @@ private:
 
   struct State_
   {
-    bool published_; //!< indicates whether this node has been published already with MUSIC
+    bool published_; //!< indicates whether this node has been published already
+                     //!< with MUSIC
     int port_width_; //!< the width of the MUSIC port
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const;                     //!< Store current values in dictionary
-    void set( const DictionaryDatum&, const Parameters_& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    //! Set values from dictionary
+    void set( const DictionaryDatum&, const Parameters_& );
   };
 
   // ------------------------------------------------------------
@@ -221,8 +234,8 @@ music_message_in_proxy::set_status( const DictionaryDatum& d )
   State_ stmp = S_;
   stmp.set( d, P_ ); // throws if BadProperty
 
-  long_t nm = 0;
-  if ( updateValue< long_t >( d, "n_messages", nm ) )
+  long nm = 0;
+  if ( updateValue< long >( d, "n_messages", nm ) )
   {
     if ( nm == 0 )
       B_.message_handler_.clear();

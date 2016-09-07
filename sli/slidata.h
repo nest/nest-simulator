@@ -25,7 +25,10 @@
 /*
     SLI's array access functions
 */
+
+// Includes from sli:
 #include "slifunction.h"
+
 /*
  Operators will be implemented as described in the PS Reference Manual
  for the types
@@ -477,7 +480,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-//--------------------------------------------------------------------------------- <- end of line
+//---------------------------------------------------------------------------------
 //(C84) is maximum width for LaTeX-include1
 /* BeginDocumentation
 
@@ -513,7 +516,7 @@ public:
   void execute( SLIInterpreter* ) const;
 };
 
-//--------------------------------------------------------------------------------- <- end of line
+//---------------------------------------------------------------------------------
 //(C84) is maximum width for LaTeX-include1
 /* BeginDocumentation
 

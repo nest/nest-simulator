@@ -27,15 +27,20 @@
 */
 
 // Include all headers, needed to use token and datum objects
-#include <typeinfo>
-#include <iostream>
 
-#include "lockptrdatum.h"
+// C++ includes:
+#include <iostream>
+#include <typeinfo>
+
+// Includes from sli:
 #include "interpret.h"
+#include "lockptrdatum.h"
 
 typedef lockPTRDatum< std::istream, &SLIInterpreter::Istreamtype > IstreamDatum;
-typedef lockPTRDatum< std::istream, &SLIInterpreter::XIstreamtype > XIstreamDatum;
+typedef lockPTRDatum< std::istream, &SLIInterpreter::XIstreamtype >
+  XIstreamDatum;
 typedef lockPTRDatum< std::ostream, &SLIInterpreter::Ostreamtype > OstreamDatum;
-// typedef lockPTRDatum<std::iostream,&SLIInterpreter::IOstreamtype>  IOstreamDatum;
+// typedef lockPTRDatum<std::iostream,&SLIInterpreter::IOstreamtype>
+// IOstreamDatum;
 
 #endif

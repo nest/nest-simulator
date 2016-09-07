@@ -256,7 +256,7 @@ def
   (Configuring neuron parameters.) message
   allNeurons
   {
-   << /V_m  normal_dv Random >> SetStatus
+   << /V_m  normal_dv Random cvd >> SetStatus
   } forall
 
   % Create custom synapse types with appropriate values for
@@ -274,82 +274,28 @@ def
     /synapse_model /syn_ex def
   } ifelse
 
-  % create a dictionary containing the initialization function
-  % InitSynapse, which will be called by RandomConvergentConnect
-  % before each connection to be established.
-  /init_dict
-  <<
-     % call: i InitSynapse
-     /InitSynapse
-     {
-       /i Set
-
-       synapse_model
-       <<
-         /weight weights i get  % weights will be added to the dict later
-       >> SetDefaults
-     }
-  >> def
-
   M_INFO (BuildNetwork)
   (Connecting stimulus generators.) message
 
   % Connect Poisson generator to neuron
-  E_stimulus E_neurons /syn_ex DivergentConnect
-  I_stimulus I_neurons /syn_ex DivergentConnect
+  [E_stimulus] E_neurons << /rule /all_to_all >> << /model /syn_ex >> Connect
+  [I_stimulus] I_neurons << /rule /all_to_all >> << /model /syn_ex >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting excitatory -> excitatory population.) message
-  E_neurons
-  {
-    /target Set
-
-     % create an array of CE elements and store it in 'rnd_weights';
-     % each element is chosen from a normal distribution with mean
-     % value JE and standard deviation sigma_w, add to init dictionary
-     CE array { ; normal_dv Random sigma_w mul JE add } Map
-     /rnd_weights Set
-    init_dict cvo << /weights rnd_weights >> SetStatus
-
-    % E -> E connections
-    E_neurons   % source population [we pick from this]
-    target      % target neuron
-    CE          % number of source neurons to pick
-    init_dict   % initialization dictionary
-    synapse_model
-    RandomConvergentConnect
-
-  } bind forall
+  E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /model synapse_model /weight << /distribution /normal /mu JE /sigma sigma_w >> >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting excitatory -> inhibitory population.) message
-
-  I_neurons
-  {
-    /target Set
-        E_neurons target CE /syn_ex RandomConvergentConnect
-  } bind forall
+  E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting inhibitory -> excitatory population.) message
-
-  E_neurons
-  {
-    /target Set
-
-        % I -> E connections
-        % as above, but on a single line
-        I_neurons target CI /syn_in RandomConvergentConnect
-  } bind forall
+  I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting inhibitory -> inhibitory population.) message
-
-  I_neurons
-  {
-    /target Set
-        I_neurons target CI /syn_in RandomConvergentConnect
-  } bind forall
+  I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
 
   % Spike detectors are connected to the first Nrec neurons in each
   % population.  Since neurons are equal and connectivity is homogeneously
@@ -358,8 +304,8 @@ def
   M_INFO (BuildNetwork)
   (Connecting spike detectors.) message
 
-  E_neurons Nrec Take E_detector ConvergentConnect
-  I_neurons Nrec Take I_detector ConvergentConnect
+  E_neurons Nrec Take [E_detector] Connect
+  I_neurons Nrec Take [I_detector] Connect
 
   % read out time used for building
   toc /BuildCPUTime Set

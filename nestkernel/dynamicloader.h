@@ -23,16 +23,19 @@
 #ifndef DYNAMICLOADER_H
 #define DYNAMICLOADER_H
 
+// Generated includes:
 #include "config.h"
 
 // DynamicLoaderModule defined only if libltdl is available
 
 #ifdef HAVE_LIBLTDL
 
-#include "slimodule.h"
-#include "slifunction.h"
-
+// C++ includes:
 #include <vector>
+
+// Includes from sli:
+#include "slifunction.h"
+#include "slimodule.h"
 
 namespace nest
 {
@@ -44,8 +47,6 @@ typedef std::vector< sDynModule > vecDynModules;
 
 typedef std::vector< SLIModule* > vecLinkedModules;
 
-class Network;
-
 
 /**
  * SLI interface of the Ddynamic module loader.
@@ -56,7 +57,7 @@ class Network;
 class DynamicLoaderModule : public SLIModule
 {
 public:
-  DynamicLoaderModule( Network* pNet, SLIInterpreter& interpreter );
+  DynamicLoaderModule( SLIInterpreter& interpreter );
   ~DynamicLoaderModule();
 
   void init( SLIInterpreter* );
@@ -66,12 +67,12 @@ public:
 
 
   /**
-   * This static member is called by the constructor of a loadable module that was linked at compile
-   * time
-   * into the application to circumvent dynamic loading problems. Typically, the constructor of the
-   * global
+   * This static member is called by the constructor of a loadable module that
+   * was linked at compile time into the application to circumvent dynamic
+   * loading problems. Typically, the constructor of the global
    * instance of the module calls this method to register itself.
-   * Later, DynamicLoader will go through all registered modules and initialize them.
+   * Later, DynamicLoader will go through all registered modules and initialize
+   * them.
    */
   static int registerLinkedModule( SLIModule* pModule );
 
@@ -81,13 +82,12 @@ public:
   class LoadModuleFunction : public SLIFunction
   {
   public:
-    LoadModuleFunction( Network* pNet, vecDynModules& dyn_modules );
+    LoadModuleFunction( vecDynModules& dyn_modules );
 
   private:
     void execute( SLIInterpreter* ) const;
 
   private:
-    Network* pNet_;
     vecDynModules& dyn_modules_;
   };
 
@@ -107,8 +107,8 @@ private:
   // vector to store handles and pointers to dynamic modules
   vecDynModules dyn_modules;
 
-  Network* pNet_;
-  static Dictionary* moduledict_; //!< Dictionary for dynamically loaded modules.
+  //! Dictionary for dynamically loaded modules.
+  static Dictionary* moduledict_;
 };
 
 } // namespace

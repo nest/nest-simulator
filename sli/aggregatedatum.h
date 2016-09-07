@@ -22,9 +22,15 @@
 
 #ifndef AGGREGATEDATUM_H
 #define AGGREGATEDATUM_H
-#include "datum.h"
-#include "allocator.h"
+
+// Generated includes:
 #include "config.h"
+
+// Includes from libnestutil:
+#include "allocator.h"
+
+// Includes from sli:
+#include "datum.h"
 
 /*
     Datum template for aggregate data types.
@@ -150,7 +156,9 @@ AggregateDatum< C, slt >::pprint( std::ostream& out ) const
 
 template < class C, SLIType* slt >
 void
-AggregateDatum< C, slt >::list( std::ostream& out, std::string prefix, int l ) const
+AggregateDatum< C, slt >::list( std::ostream& out,
+  std::string prefix,
+  int l ) const
 {
   if ( l == 0 )
     prefix = "-->" + prefix;

@@ -24,24 +24,35 @@
 
 #ifdef HAVE_GSL
 
-#include "dictutils.h"
-#include "sliexceptions.h"
-#include "librandom_exceptions.h"
-#include "compose.hpp"
+// C++ includes:
 #include <limits>
 
-librandom::GSL_BinomialRandomDev::GSL_BinomialRandomDev( RngPtr r_s, double p_s, unsigned int n_s )
+// Includes from libnestutil:
+#include "compose.hpp"
+
+// Includes from librandom:
+#include "librandom_exceptions.h"
+
+// Includes from sli:
+#include "dictutils.h"
+#include "sliexceptions.h"
+
+librandom::GSL_BinomialRandomDev::GSL_BinomialRandomDev( RngPtr r_s,
+  double p_s,
+  unsigned int n_s )
   : RandomDev( r_s )
   , p_( p_s )
   , n_( n_s )
 {
   GslRandomGen* gsr_rng = dynamic_cast< GslRandomGen* >( &( *r_s ) );
   if ( !gsr_rng )
-    throw UnsuitableRNG( "The gsl_binomial RDV can only be used with GSL RNGs." );
+    throw UnsuitableRNG(
+      "The gsl_binomial RDV can only be used with GSL RNGs." );
   rng_ = gsr_rng->rng_;
 }
 
-librandom::GSL_BinomialRandomDev::GSL_BinomialRandomDev( double p_s, unsigned int n_s )
+librandom::GSL_BinomialRandomDev::GSL_BinomialRandomDev( double p_s,
+  unsigned int n_s )
   : RandomDev()
   , p_( p_s )
   , n_( n_s )
@@ -59,7 +70,8 @@ librandom::GSL_BinomialRandomDev::ldev( RngPtr rng ) const
 {
   GslRandomGen* gsr_rng = dynamic_cast< GslRandomGen* >( &( *rng ) );
   if ( !gsr_rng )
-    throw UnsuitableRNG( "The gsl_binomial RDV can only be used with GSL RNGs." );
+    throw UnsuitableRNG(
+      "The gsl_binomial RDV can only be used with GSL RNGs." );
   return gsl_ran_binomial( gsr_rng->rng_, p_, n_ );
 }
 
@@ -100,10 +112,11 @@ librandom::GSL_BinomialRandomDev::set_status( const DictionaryDatum& d )
 
   // gsl_ran_binomial() returns unsigned int. To be on the safe side,
   // we limit here to within ints.
-  const long N_MAX = static_cast< long >( 0.9 * std::numeric_limits< int >::max() );
+  const long N_MAX =
+    static_cast< long >( 0.9 * std::numeric_limits< int >::max() );
   if ( n_new > N_MAX )
-    throw BadParameterValue(
-      String::compose( "Gsl_binomial RDV: N < %1 required.", static_cast< double >( N_MAX ) ) );
+    throw BadParameterValue( String::compose(
+      "Gsl_binomial RDV: N < %1 required.", static_cast< double >( N_MAX ) ) );
 
   if ( n_updated || p_updated )
     set_p_n( p_new, n_new );
@@ -112,6 +125,8 @@ librandom::GSL_BinomialRandomDev::set_status( const DictionaryDatum& d )
 void
 librandom::GSL_BinomialRandomDev::get_status( DictionaryDatum& d ) const
 {
+  RandomDev::get_status( d );
+
   def< double >( d, "p", p_ );
   def< long >( d, "n", n_ );
 }

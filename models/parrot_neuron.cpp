@@ -20,16 +20,26 @@
  *
  */
 
-#include "exceptions.h"
+
 #include "parrot_neuron.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// C++ includes:
+#include <limits>
+
+// Includes from libnestutil:
 #include "numerics.h"
 
-#include <limits>
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "exceptions.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+
 namespace nest
 {
 
@@ -46,23 +56,25 @@ parrot_neuron::init_buffers_()
 }
 
 void
-parrot_neuron::update( Time const& origin, const long_t from, const long_t to )
+parrot_neuron::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < Scheduler::get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
-    const ulong_t current_spikes_n = static_cast< ulong_t >( B_.n_spikes_.get_value( lag ) );
+    const unsigned long current_spikes_n =
+      static_cast< unsigned long >( B_.n_spikes_.get_value( lag ) );
     if ( current_spikes_n > 0 )
     {
       // create a new SpikeEvent, set its multiplicity and send it
       SpikeEvent se;
       se.set_multiplicity( current_spikes_n );
-      network()->send( *this, se, lag );
+      kernel().event_delivery_manager.send( *this, se, lag );
 
       // set the spike times, respecting the multiplicity
-      for ( ulong_t i = 0; i < current_spikes_n; i++ )
+      for ( unsigned long i = 0; i < current_spikes_n; i++ )
       {
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       }
@@ -89,8 +101,9 @@ parrot_neuron::handle( SpikeEvent& e )
   // Repeat only spikes incoming on port 0, port 1 will be ignored
   if ( 0 == e.get_rport() )
   {
-    B_.n_spikes_.add_value( e.get_rel_delivery_steps( network()->get_slice_origin() ),
-      static_cast< double_t >( e.get_multiplicity() ) );
+    B_.n_spikes_.add_value( e.get_rel_delivery_steps(
+                              kernel().simulation_manager.get_slice_origin() ),
+      static_cast< double >( e.get_multiplicity() ) );
   }
 }
 

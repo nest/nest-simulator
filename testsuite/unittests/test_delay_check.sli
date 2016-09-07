@@ -42,7 +42,7 @@
     /e_max_d Set
     /e_min_d Set
 
-    /static_synapse GetDefaults begin
+    0 GetStatus begin
     { min_delay e_min_d eq max_delay e_max_d eq and } assert_or_die
     end
 
@@ -78,7 +78,7 @@ n2 n3 << /delay 0.5 >> Connect
 0.5 6.0 check_min_max_delay
 
 % test 6: check if SetStatus sets min_delay
-<< /source n1 /synapse_model /static_synapse >> FindConnections 0 get
+<< /source [n1] /synapse_model /static_synapse >> GetConnections 0 get
 << /delay 0.1 >> SetStatus
 0.1 6.0 check_min_max_delay
 

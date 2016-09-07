@@ -23,18 +23,17 @@
 #ifndef SLIPGM_H
 #define SLIPGM_H
 
+// C++ includes:
 #include <iostream>
 #include <string>
 #include <vector>
-#include "stringdatum.h"
+
+// Includes from sli:
 #include "fdstream.h"
-#include "slimodule.h"
-#include "slifunction.h"
 #include "interpret.h"
-
-
-using std::vector;
-using std::string;
+#include "slifunction.h"
+#include "slimodule.h"
+#include "stringdatum.h"
 
 class SLIgraphics : public SLIModule
 {
@@ -45,9 +44,16 @@ class SLIgraphics : public SLIModule
     std::istream* openPGMFile( StringDatum* ) const; //!< opens the file
     void readMagicNumber( std::istream*,
       char[ 2 ] ) const; //!< reads the magic number into string magic
-    void initRead( std::istream*, int&, int&, int& ) const; //!< reads width, height, maxval
-    void readImage( std::istream*, char[ 2 ], vector< long >&, int, int, int )
-      const; //!< reads the image
+    void initRead( std::istream*,
+      int&,
+      int&,
+      int& ) const; //!< reads width, height, maxval
+    void readImage( std::istream*,
+      char[ 2 ],
+      std::vector< long >&,
+      int,
+      int,
+      int ) const; //!< reads the image
 
   public:
     virtual void execute( SLIInterpreter* ) const;
@@ -68,8 +74,8 @@ public:
   }
 
   void init( SLIInterpreter* );
-  const string name( void ) const;
-  const string commandstring( void ) const;
+  const std::string name( void ) const;
+  const std::string commandstring( void ) const;
 };
 
 

@@ -20,9 +20,7 @@
  *
  */
 
-#include <iostream>
 #include "iteratordatum.h"
-
 
 sli::pool IteratorDatum::memory( sizeof( IteratorDatum ), 10240, 1 );
 

@@ -23,15 +23,20 @@
 /*
     scanner.cc
 */
+
 #include "scanner.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "namedatum.h"
-#include "symboldatum.h"
-#include "stringdatum.h"
+
+// C++ includes:
 #include <cmath>
-#include <sstream>
 #include <limits>
+#include <sstream>
+
+// Includes from sli:
+#include "doubledatum.h"
+#include "integerdatum.h"
+#include "namedatum.h"
+#include "stringdatum.h"
+#include "symboldatum.h"
 
 /*************************************************************************/
 /** Scanner   (implemented as a DFA)                                     */
@@ -271,7 +276,8 @@ Scanner::Scanner( std::istream* is )
   trans[ intdgtst ][ closebracket ] = aheadintst;
   trans[ intdgtst ][ percent ] = aheadintst;
   trans[ intdgtst ][ slash ] = aheadintst;
-  trans[ intdgtst ][ alpha ] = aheadintst; // this is a bit questionable, but still unique
+  // this is a bit questionable, but still unique
+  trans[ intdgtst ][ alpha ] = aheadintst;
   trans[ intdgtst ][ newline ] = aheadintst;
   trans[ intdgtst ][ tabulator ] = aheadintst;
   trans[ intdgtst ][ backslash ] = aheadintst;
@@ -289,7 +295,8 @@ Scanner::Scanner( std::istream* is )
   trans[ nullst ][ percent ] = aheadintst;
   trans[ nullst ][ slash ] = aheadintst;
   trans[ nullst ][ openparenth ] = aheadintst;
-  trans[ nullst ][ alpha ] = aheadintst; // this is a bit questionable, but still unique
+  // this is a bit questionable, but still unique
+  trans[ nullst ][ alpha ] = aheadintst;
   trans[ nullst ][ tabulator ] = aheadintst;
   trans[ nullst ][ newline ] = aheadintst;
   trans[ nullst ][ backslash ] = aheadintst;
@@ -314,7 +321,8 @@ Scanner::Scanner( std::istream* is )
   trans[ decpointst ][ percent ] = aheadfracst;
   trans[ decpointst ][ slash ] = aheadfracst;
   trans[ decpointst ][ openparenth ] = aheadfracst;
-  trans[ decpointst ][ alpha ] = aheadfracst; // this is a bit questionable, but still unique
+  // this is a bit questionable, but still unique
+  trans[ decpointst ][ alpha ] = aheadfracst;
   trans[ decpointst ][ tabulator ] = aheadfracst;
   trans[ decpointst ][ newline ] = aheadfracst;
   trans[ decpointst ][ backslash ] = aheadfracst;
@@ -333,7 +341,8 @@ Scanner::Scanner( std::istream* is )
   trans[ fracdgtst ][ percent ] = aheadfracst;
   trans[ fracdgtst ][ slash ] = aheadfracst;
   trans[ fracdgtst ][ openparenth ] = aheadfracst;
-  trans[ fracdgtst ][ alpha ] = aheadfracst; // this is a bit questionable, but still unique
+  // this is a bit questionable, but still unique
+  trans[ fracdgtst ][ alpha ] = aheadfracst;
   trans[ fracdgtst ][ tabulator ] = aheadfracst;
   trans[ fracdgtst ][ newline ] = aheadfracst;
   trans[ fracdgtst ][ backslash ] = aheadfracst;
@@ -361,7 +370,8 @@ Scanner::Scanner( std::istream* is )
   trans[ expdigst ][ percent ] = aheadfracst;
   trans[ expdigst ][ slash ] = aheadfracst;
   trans[ expdigst ][ openparenth ] = aheadfracst;
-  trans[ expdigst ][ alpha ] = aheadfracst; // this is a bit questionable, but still unique
+  // this is a bit questionable, but still unique
+  trans[ expdigst ][ alpha ] = aheadfracst;
   trans[ expdigst ][ newline ] = aheadfracst;
   trans[ expdigst ][ tabulator ] = aheadfracst;
   trans[ expdigst ][ backslash ] = aheadfracst;
@@ -494,7 +504,8 @@ Scanner::Scanner( std::istream* is )
   trans[ asteriskst ][ tabulator ] = ccommentst;
   trans[ asteriskst ][ expntl ] = ccommentst;
   trans[ asteriskst ][ percent ] = ccommentst;
-  trans[ asteriskst ][ asterisk ] = asteriskst; // changed from ccommentst, 25.8.1995
+  // changed from ccommentst, 25.8.1995
+  trans[ asteriskst ][ asterisk ] = asteriskst;
 }
 
 void
@@ -796,6 +807,7 @@ Scanner::print_error( const char* msg )
 {
   std::cout << "% parser: At line " << line << " position " << col << ".\n"
             << "% parser: Syntax Error: " << msg << "\n";
-  std::cout << "% parser: Context preceding the error follows:\n" << old_context << std::endl
+  std::cout << "% parser: Context preceding the error follows:\n" << old_context
+            << std::endl
             << context << std::endl;
 }

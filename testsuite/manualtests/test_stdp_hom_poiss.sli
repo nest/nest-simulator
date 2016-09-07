@@ -44,12 +44,11 @@ userdict begin
 
  0.1 /h Set	     % simulation timestep [ms]
 
- [0]
+ 0
     <<
-        /resolution h
-        /total_num_virtual_procs  2
-      >>
-      SetStatus
+       /resolution h
+       /total_num_virtual_procs  2
+    >> SetStatus
 
 
 /delay h def	     % dendritic delay [ms]
@@ -149,7 +148,7 @@ neuron2 GetStatus /local get
 
  neuron2 GetStatus /local get
  {
-  << /source neuron1 /synapse_model /stdp_synapse_hom >> FindConnections 0 get
+  << /source neuron1 /synapse_model /stdp_synapse_hom >> GetConnections 0 get
   GetStatus /weight get /w Set
   
   w ==

@@ -76,7 +76,7 @@ template < typename targetidentifierT >
 class GapJunction : public Connection< targetidentifierT >
 {
 
-  double_t weight_;
+  double weight_;
 
 public:
   // this line determines which common properties to use
@@ -96,23 +96,28 @@ public:
   }
 
 
-  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
-  // This avoids explicit name prefixes in all places these functions are used.
-  // Since ConnectionBase depends on the template parameter, they are not automatically
-  // found in the base class.
+  // Explicitly declare all methods inherited from the dependent base
+  // ConnectionBase. This avoids explicit name prefixes in all places these
+  // functions are used. Since ConnectionBase depends on the template parameter,
+  // they are not automatically found in the base class.
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
 
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType& )
+  check_connection( Node& s,
+    Node& t,
+    rport receptor_type,
+    double,
+    const CommonPropertiesType& )
   {
     EventType ge;
 
     s.sends_secondary_event( ge );
     ge.set_sender( s );
-    Connection< targetidentifierT >::target_.set_rport( t.handles_test_event( ge, receptor_type ) );
+    Connection< targetidentifierT >::target_.set_rport(
+      t.handles_test_event( ge, receptor_type ) );
     Connection< targetidentifierT >::target_.set_target( &t );
   }
 
@@ -123,10 +128,9 @@ public:
    * \param t_lastspike Time point of last spike emitted
    */
   void
-  send( Event& e, thread t, double_t, const CommonSynapseProperties& )
+  send( Event& e, thread t, double, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
-    e.set_delay( get_delay_steps() );
     e.set_receiver( *get_target( t ) );
     e.set_rport( get_rport() );
     e();
@@ -137,9 +141,15 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
+  }
+
+  void
+  set_delay( double )
+  {
+    throw BadProperty( "gap_junction connection has no delay" );
   }
 };
 
@@ -151,20 +161,21 @@ GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
   // errors due to internal calls of
   // this function in SLI/pyNEST
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  def< double >( d, names::weight, weight_ );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d,
+  ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
     throw BadProperty( "gap_junction connection has no delay" );
 
   ConnectionBase::set_status( d, cm );
-  updateValue< double_t >( d, names::weight, weight_ );
+  updateValue< double >( d, names::weight, weight_ );
 }
 
 } // namespace

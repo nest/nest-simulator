@@ -21,12 +21,20 @@
  */
 
 #include "noise_generator.h"
-#include "network.h"
-#include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "dictutils.h"
+
+// Includes from libnestutil:
+#include "logging.h"
 #include "numerics.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -87,15 +95,16 @@ nest::noise_generator::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_generator& n )
+nest::noise_generator::Parameters_::set( const DictionaryDatum& d,
+  const noise_generator& n )
 {
-  updateValue< double_t >( d, names::mean, mean_ );
-  updateValue< double_t >( d, names::std, std_ );
-  updateValue< double_t >( d, names::std_mod, std_mod_ );
-  updateValue< double_t >( d, names::frequency, freq_ );
-  updateValue< double_t >( d, names::phase, phi_deg_ );
-  double_t dt;
-  if ( updateValue< double_t >( d, names::dt, dt ) )
+  updateValue< double >( d, names::mean, mean_ );
+  updateValue< double >( d, names::std, std_ );
+  updateValue< double >( d, names::std_mod, std_mod_ );
+  updateValue< double >( d, names::frequency, freq_ );
+  updateValue< double >( d, names::phase, phi_deg_ );
+  double dt;
+  if ( updateValue< double >( d, names::dt, dt ) )
     dt_ = Time::ms( dt );
 
   if ( std_ < 0 )
@@ -106,7 +115,8 @@ nest::noise_generator::Parameters_::set( const DictionaryDatum& d, const noise_g
 
   if ( std_mod_ > std_ )
     throw BadProperty(
-      "The modulation apmlitude must be smaller or equal to the baseline amplitude." );
+      "The modulation apmlitude must be smaller or equal to the baseline "
+      "amplitude." );
 
   if ( !dt_.is_step() )
     throw StepMultipleRequired( n.get_name(), names::dt, dt_ );
@@ -164,7 +174,7 @@ nest::noise_generator::calibrate()
   device_.calibrate();
   if ( P_.num_targets_ != B_.amps_.size() )
   {
-    network()->message( SLIInterpreter::M_INFO,
+    LOG( M_INFO,
       "noise_generator::calibrate()",
       "The number of targets has changed, drawing new amplitudes." );
     init_buffers_();
@@ -172,12 +182,12 @@ nest::noise_generator::calibrate()
 
   V_.dt_steps_ = P_.dt_.get_steps();
 
-  const double_t h = Time::get_resolution().get_ms();
-  const double_t t = network()->get_time().get_ms();
+  const double h = Time::get_resolution().get_ms();
+  const double t = kernel().simulation_manager.get_time().get_ms();
 
   // scale Hz to ms
-  const double_t omega = 2.0 * numerics::pi * P_.freq_ / 1000.0;
-  const double_t phi_rad = P_.phi_deg_ * 2.0 * numerics::pi / 360.0;
+  const double omega = 2.0 * numerics::pi * P_.freq_ / 1000.0;
+  const double phi_rad = P_.phi_deg_ * 2.0 * numerics::pi / 360.0;
 
   // initial state
   S_.y_0_ = std::cos( omega * t + phi_rad );
@@ -224,20 +234,22 @@ nest::noise_generator::send_test_event( Node& target,
 // Time Evolution Operator
 //
 void
-nest::noise_generator::update( Time const& origin, const long_t from, const long_t to )
+nest::noise_generator::update( Time const& origin,
+  const long from,
+  const long to )
 {
-  const long_t start = origin.get_steps();
+  const long start = origin.get_steps();
 
-  for ( long_t offs = from; offs < to; ++offs )
+  for ( long offs = from; offs < to; ++offs )
   {
-    const long_t now = start + offs;
+    const long now = start + offs;
 
     if ( !device_.is_active( Time::step( now ) ) )
       continue;
 
     if ( P_.std_mod_ != 0. )
     {
-      const double_t y_0 = S_.y_0_;
+      const double y_0 = S_.y_0_;
       S_.y_0_ = V_.A_00_ * y_0 + V_.A_01_ * S_.y_1_;
       S_.y_1_ = V_.A_10_ * y_0 + V_.A_11_ * S_.y_1_;
     }
@@ -246,11 +258,12 @@ nest::noise_generator::update( Time const& origin, const long_t from, const long
     if ( now >= B_.next_step_ )
     {
       // compute new currents
-      for ( AmpVec_::iterator it = B_.amps_.begin(); it != B_.amps_.end(); ++it )
+      for ( AmpVec_::iterator it = B_.amps_.begin(); it != B_.amps_.end();
+            ++it )
       {
         *it = P_.mean_
           + std::sqrt( P_.std_ * P_.std_ + S_.y_1_ * P_.std_mod_ * P_.std_mod_ )
-            * V_.normal_dev_( net_->get_rng( get_thread() ) );
+            * V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
       }
 
       // use now as reference, in case we woke up from inactive period
@@ -258,7 +271,7 @@ nest::noise_generator::update( Time const& origin, const long_t from, const long
     }
 
     DSCurrentEvent ce;
-    network()->send( *this, ce, offs );
+    kernel().event_delivery_manager.send( *this, ce, offs );
   }
 }
 

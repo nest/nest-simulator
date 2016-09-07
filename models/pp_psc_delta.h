@@ -23,23 +23,24 @@
 #ifndef PP_PSC_DELTA_H
 #define PP_PSC_DELTA_H
 
-#include "nest.h"
-#include "event.h"
-#include "archiving_node.h"
-#include "ring_buffer.h"
-#include "connection.h"
-#include "poisson_randomdev.h"
+// Includes from librandom:
 #include "gamma_randomdev.h"
+#include "poisson_randomdev.h"
+
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 
 namespace nest
 {
 
-
-class Network;
-
 /* BeginDocumentation
-   Name: pp_psc_delta - Point process neuron with leaky integration of delta-shaped PSCs.
+   Name: pp_psc_delta - Point process neuron with leaky integration of
+                        delta-shaped PSCs.
 
    Description:
 
@@ -149,14 +150,19 @@ class Network;
    q_sfa             double - Adaptive threshold jump in mV.
    tau_sfa           double - Adaptive threshold time constant in ms.
    dead_time         double - Duration of the dead time in ms.
-   dead_time_random  bool   - Should a random dead time be drawn after each spike?
+   dead_time_random  bool   - Should a random dead time be drawn after each
+                              spike?
    dead_time_shape   int    - Shape parameter of dead time gamma distribution.
-   t_ref_remaining   double   Remaining dead time at simulation start.
-   with_reset        bool     Should the membrane potential be reset after a spike?
+   t_ref_remaining   double - Remaining dead time at simulation start.
+   with_reset        bool   - Should the membrane potential be reset after a
+                              spike?
    I_e               double - Constant input current in pA.
-   c_1               double - Slope of linear part of transfer function in Hz/mV.
-   c_2               double - Prefactor of exponential part of transfer function in Hz.
-   c_3               double - Coefficient of exponential non-linearity of transfer function in 1/mV.
+   c_1               double - Slope of linear part of transfer function in
+                              Hz/mV.
+   c_2               double - Prefactor of exponential part of transfer function
+                              in Hz.
+   c_3               double - Coefficient of exponential non-linearity of
+                              transfer function in 1/mV.
 
 
    Sends: SpikeEvent
@@ -164,8 +170,8 @@ class Network;
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
    Author:  July 2009, Deger, Helias; January 2011, Zaytsev; May 2014, Setareh
-   SeeAlso: pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp, iaf_neuron,
-   iaf_psc_delta_canon
+   SeeAlso: pp_pop_psc_delta, iaf_psc_delta, iaf_psc_alpha, iaf_psc_exp,
+   iaf_neuron, iaf_psc_delta_canon
 */
 
 /**
@@ -180,7 +186,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -204,7 +211,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< pp_psc_delta >;
@@ -219,46 +226,47 @@ private:
   {
 
     /** Membrane time constant in ms. */
-    double_t tau_m_;
+    double tau_m_;
 
     /** Membrane capacitance in pF. */
-    double_t c_m_;
+    double c_m_;
 
     /** Dead time in ms. */
-    double_t dead_time_;
+    double dead_time_;
 
     /** Do we use random dead time? */
     bool dead_time_random_;
 
     /** Shape parameter of random dead time gamma distribution. */
-    ulong_t dead_time_shape_;
+    unsigned long dead_time_shape_;
 
     /** Do we reset the membrane potential after each spike? */
     bool with_reset_;
 
-    /** List of adaptive threshold time constant in ms (for multi adaptation version). */
-    std::vector< double_t > tau_sfa_;
+    /** List of adaptive threshold time constant in ms (for multi adaptation
+     * version). */
+    std::vector< double > tau_sfa_;
 
     /** Adaptive threshold jump in mV (for multi adaptation version). */
-    std::vector< double_t > q_sfa_;
+    std::vector< double > q_sfa_;
 
     /** indicates multi parameter adaptation model **/
     bool multi_param_;
 
     /** Slope of the linear part of transfer function. */
-    double_t c_1_;
+    double c_1_;
 
     /** Prefactor of exponential part of transfer function. */
-    double_t c_2_;
+    double c_2_;
 
     /** Coefficient of exponential non-linearity of transfer function. */
-    double_t c_3_;
+    double c_3_;
 
     /** External DC current. */
-    double_t I_e_;
+    double I_e_;
 
     /** Dead time from simulation start. */
-    double_t t_ref_remaining_;
+    double t_ref_remaining_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -273,15 +281,17 @@ private:
    */
   struct State_
   {
-    double_t y0_; //!< This is piecewise constant external current
-    double_t y3_; //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
-    double_t q_;  //!< This is the change of the 'threshold' due to adaptation.
+    double y0_; //!< This is piecewise constant external current
+    //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double y3_;
+    double q_; //!< This is the change of the 'threshold' due to adaptation.
 
-    std::vector< double_t > q_elems_; // Vector of adaptation parameters. by Hesam
+    //! Vector of adaptation parameters. by Hesam
+    std::vector< double > q_elems_;
 
-    int_t r_; //!< Number of refractory steps remaining
+    int r_; //!< Number of refractory steps remaining
 
-    bool initialized_; // it is true if the vectors are initialized
+    bool initialized_; //!< it is true if the vectors are initialized
 
     State_(); //!< Default initialization
 
@@ -315,32 +325,32 @@ private:
   struct Variables_
   {
 
-    double_t P30_;
-    double_t P33_;
+    double P30_;
+    double P33_;
 
-    std::vector< double_t > Q33_;
+    std::vector< double > Q33_;
 
-    double_t h_;       //!< simulation time step in ms
-    double_t dt_rate_; //!< rate parameter of dead time distribution
+    double h_;       //!< simulation time step in ms
+    double dt_rate_; //!< rate parameter of dead time distribution
 
-    librandom::RngPtr rng_;                   // random number generator of my own thread
-    librandom::PoissonRandomDev poisson_dev_; // random deviate generator
-    librandom::GammaRandomDev gamma_dev_;     // random deviate generator
+    librandom::RngPtr rng_; //!< random number generator of my own thread
+    librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
+    librandom::GammaRandomDev gamma_dev_;     //!< random deviate generator
 
-    int_t DeadTimeCounts_;
+    int DeadTimeCounts_;
   };
 
   // Access functions for UniversalDataLogger -----------------------
 
   //! Read out the real membrane potential
-  double_t
+  double
   get_V_m_() const
   {
     return S_.y3_;
   }
 
   //! Read out the adaptive threshold potential
-  double_t
+  double
   get_E_sfa_() const
   {
     return S_.q_;
@@ -366,7 +376,10 @@ private:
 };
 
 inline port
-pp_psc_delta::send_test_event( Node& target, rport receptor_type, synindex, bool )
+pp_psc_delta::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

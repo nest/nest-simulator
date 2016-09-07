@@ -20,28 +20,35 @@
  *
  */
 
-#include <iostream>
-#include <iomanip>
+// C++ includes:
 #include <cmath>
-#include <ctime>
 #include <cstring>
-#include "randomgen.h"
+#include <ctime>
+#include <iomanip>
+#include <iostream>
+
+// Generated includes:
+#include "config.h"
+
+// Includes from librandom:
+#include "binomial_randomdev.h"
+#include "binomial_randomdev.h"
+#include "exp_randomdev.h"
+#include "gamma_randomdev.h"
+#include "gslrandomgen.h"
 #include "knuthlfg.h"
 #include "mt19937.h"
-#include "gslrandomgen.h"
-#include "randomdev.h"
-#include "poisson_randomdev.h"
-#include "binomial_randomdev.h"
-#include "gamma_randomdev.h"
 #include "normal_randomdev.h"
-#include "exp_randomdev.h"
-#include "binomial_randomdev.h"
-#include "config.h"
-#include "dictdatum.h"
-#include "dict.h"
-#include "tokenutils.h"
-#include "token.h"
+#include "poisson_randomdev.h"
 #include "random_datums.h"
+#include "randomdev.h"
+#include "randomgen.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictdatum.h"
+#include "token.h"
+#include "tokenutils.h"
 
 /* Run all available random generators and deviates
    Mean and std dev are computed as a simple test   */
@@ -55,11 +62,13 @@ void
 printres( double mean, double sdev, double dt )
 {
   std::cout << std::setprecision( 4 ) << std::fixed;
-  std::cout << "<X> = " << std::setw( 6 ) << std::showpos << mean << std::noshowpos
-            << std::setw( 4 ) << " +- " << std::setw( 6 ) << sdev;
+  std::cout << "<X> = " << std::setw( 6 ) << std::showpos << mean
+            << std::noshowpos << std::setw( 4 ) << " +- " << std::setw( 6 )
+            << sdev;
   if ( dt >= 0 )
   {
-    std::cout << ", dt = " << std::setw( 4 ) << std::setprecision( 0 ) << dt << " ms";
+    std::cout << ", dt = " << std::setw( 4 ) << std::setprecision( 0 ) << dt
+              << " ms";
   }
 
   std::cout << std::endl;
@@ -118,8 +127,8 @@ template < typename NumberGenerator >
 void
 register_rng( const std::string& name, DictionaryDatum& dict )
 {
-  Token rngfactory =
-    new librandom::RngFactoryDatum( new librandom::BuiltinRNGFactory< NumberGenerator > );
+  Token rngfactory = new librandom::RngFactoryDatum(
+    new librandom::BuiltinRNGFactory< NumberGenerator > );
   dict->insert_move( Name( name ), rngfactory );
 }
 
@@ -140,16 +149,21 @@ main( void )
 
   // run all available RNG
   std::cout << std::endl
-            << "===========================================================" << std::endl
+            << "==========================================================="
+            << std::endl
             << std::endl;
-  std::cout << "Available random generators---Generating " << Ngen << " numbers" << std::endl;
-  std::cout << "-----------------------------------------------------------" << std::endl;
+  std::cout << "Available random generators---Generating " << Ngen << " numbers"
+            << std::endl;
+  std::cout << "-----------------------------------------------------------"
+            << std::endl;
   // check all implementations
-  for ( Dictionary::const_iterator it = rngdict.begin(); it != rngdict.end(); ++it )
+  for ( Dictionary::const_iterator it = rngdict.begin(); it != rngdict.end();
+        ++it )
   {
     std::cout << std::left << std::setw( 25 ) << it->first << ": ";
 
-    librandom::RngFactoryDatum fd = getValue< librandom::RngFactoryDatum >( it->second );
+    librandom::RngFactoryDatum fd =
+      getValue< librandom::RngFactoryDatum >( it->second );
     librandom::RngPtr rp = fd->create( librandom::RandomGen::DefaultSeed );
     rungen( rp, Ngen );
   }
@@ -158,12 +172,15 @@ main( void )
             << ": ";
   printres( 0.5, 1.0 / std::sqrt( 12.0 ), -1 );
   std::cout << std::endl
-            << "===========================================================" << std::endl;
+            << "==========================================================="
+            << std::endl;
 
   // random deviates
   std::cout << std::endl
-            << "Available random deviates---Generating " << Ndev << " numbers" << std::endl
-            << "-----------------------------------------------------------" << std::endl
+            << "Available random deviates---Generating " << Ndev << " numbers"
+            << std::endl
+            << "-----------------------------------------------------------"
+            << std::endl
             << std::endl;
 
 
@@ -171,7 +188,8 @@ main( void )
   librandom::RngFactoryDatum rngfact =
     getValue< librandom::RngFactoryDatum >( rngdict.begin()->second );
 
-  librandom::RngPtr lockrng = rngfact->create( librandom::RandomGen::DefaultSeed );
+  librandom::RngPtr lockrng =
+    rngfact->create( librandom::RandomGen::DefaultSeed );
 
   librandom::RandomDev* rnd;
 
@@ -241,7 +259,8 @@ main( void )
   }
 
   std::cout << std::endl
-            << "===========================================================" << std::endl;
+            << "==========================================================="
+            << std::endl;
 
   return 0;
 }

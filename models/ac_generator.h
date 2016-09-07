@@ -25,10 +25,11 @@
 
 // provides AC input current
 
-#include "nest.h"
-#include "event.h"
-#include "node.h"
+// Includes from nestkernel:
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "node.h"
 #include "stimulating_device.h"
 
 /* BeginDocumentation
@@ -43,7 +44,8 @@
    frequency   double -  Frequency in Hz
    4) The
 
-   The currents are updated every time step by exact integration schemes from [1]
+   The currents are updated every time step by exact integration schemes from
+   [1]
 
    References:
    [1] S. Rotter and M. Diesmann, Exact digital simulation of time-
@@ -59,9 +61,6 @@
 
 namespace nest
 {
-
-class Network;
-
 class ac_generator : public Node
 {
 
@@ -85,17 +84,17 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
 
   // ------------------------------------------------------------
 
   struct Parameters_
   {
-    double_t amp_;     //!< Amplitude of sine-current
-    double_t offset_;  //!< Offset of sine-current
-    double_t freq_;    //!< Standard frequency in Hz
-    double_t phi_deg_; //!< Phase of sine current (0-360 deg)
+    double amp_;     //!< Amplitude of sine-current
+    double offset_;  //!< Offset of sine-current
+    double freq_;    //!< Standard frequency in Hz
+    double phi_deg_; //!< Phase of sine current (0-360 deg)
 
     Parameters_(); //!< Sets default parameter values
 
@@ -107,8 +106,8 @@ private:
 
   struct State_
   {
-    double_t y_0_;
-    double_t y_1_;
+    double y_0_;
+    double y_1_;
 
     State_(); //!< Sets default parameter values
 
@@ -119,14 +118,14 @@ private:
 
   struct Variables_
   {
-    double_t omega_;   //!< Angelfrequency i rad/s
-    double_t phi_rad_; //!< Phase of sine current (0-2Pi rad)
+    double omega_;   //!< Angelfrequency i rad/s
+    double phi_rad_; //!< Phase of sine current (0-2Pi rad)
 
     // The exact integration matrix
-    double_t A_00_;
-    double_t A_01_;
-    double_t A_10_;
-    double_t A_11_;
+    double A_00_;
+    double A_01_;
+    double A_10_;
+    double A_11_;
   };
 
   // ------------------------------------------------------------
@@ -138,7 +137,10 @@ private:
 };
 
 inline port
-ac_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
+ac_generator::send_test_event( Node& target,
+  rport receptor_type,
+  synindex syn_id,
+  bool )
 {
   device_.enforce_single_syn_type( syn_id );
 

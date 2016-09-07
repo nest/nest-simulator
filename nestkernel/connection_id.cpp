@@ -21,8 +21,13 @@
  */
 
 #include "connection_id.h"
+
+// Includes from nestkernel:
 #include "nest_names.h"
+
+// Includes from sli:
 #include "integerdatum.h"
+
 namespace nest
 {
 
@@ -39,7 +44,10 @@ ConnectionID::ConnectionID( long source_gid,
 {
 }
 
-ConnectionID::ConnectionID( long source_gid, long target_thread, long synapse_modelid, long port )
+ConnectionID::ConnectionID( long source_gid,
+  long target_thread,
+  long synapse_modelid,
+  long port )
   : source_gid_( source_gid )
   , target_thread_( target_thread )
   , synapse_modelid_( synapse_modelid )
@@ -52,13 +60,16 @@ ConnectionID::get_dict() const
 {
   DictionaryDatum dict( new Dictionary );
 
-  def< long >( dict, nest::names::source, source_gid_ ); // The gid of the presynaptic node
-  def< long >( dict, nest::names::target, target_gid_ ); // The gid of the postsynaptic node
-  def< long >(
-    dict, nest::names::synapse_modelid, synapse_modelid_ ); // The id of the synapse model
-  def< long >(
-    dict, nest::names::target_thread, target_thread_ ); // The thread of the postsynaptic node
-  def< long >( dict, nest::names::port, port_ );        // The index in the list
+  // The gid of the presynaptic node
+  def< long >( dict, nest::names::source, source_gid_ );
+  // The gid of the postsynaptic node
+  def< long >( dict, nest::names::target, target_gid_ );
+  // The id of the synapse model
+  def< long >( dict, nest::names::synapse_modelid, synapse_modelid_ );
+  // The thread of the postsynaptic node
+  def< long >( dict, nest::names::target_thread, target_thread_ );
+  // The index in the list
+  def< long >( dict, nest::names::port, port_ );
 
   return dict;
 }
@@ -85,8 +96,8 @@ bool ConnectionID::operator==( const ConnectionID& c ) const
 void
 ConnectionID::print_me( std::ostream& out ) const
 {
-  out << "<" << source_gid_ << "," << target_gid_ << "," << target_thread_ << ","
-      << synapse_modelid_ << "," << port_ << ">";
+  out << "<" << source_gid_ << "," << target_gid_ << "," << target_thread_
+      << "," << synapse_modelid_ << "," << port_ << ">";
 }
 
 } // namespace

@@ -23,13 +23,15 @@
 #ifndef MCCULLOCH_PITTS_NEURON_H
 #define MCCULLOCH_PITTS_NEURON_H
 
+// Includes from models:
 #include "binary_neuron.h"
 #include "binary_neuron_impl.h"
 
 namespace nest
 {
 /* BeginDocumentation
-   Name: mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside activation function.
+   Name: mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside
+                                  activation function.
 
    Description:
    The mcculloch_pitts_neuron is an implementation of a binary
@@ -70,17 +72,19 @@ namespace nest
    noise_generator.
 
    Parameters:
-   tau_m      double - Membrane time constant (mean inter-update-interval) in ms.
+   tau_m      double - Membrane time constant (mean inter-update-interval)
+                       in ms.
    theta      double - threshold for sigmoidal activation function mV
 
    References:
-   [1] W. McCulloch und W. Pitts (1943). A logical calculus of the ideas immanent in nervous
-   activity. Bulletin of Mathematical Biophysics, 5:115-133.
-   [2] Hertz Krogh, Palmer. Introduction to the theory of neural computation. Westview (1991).
-   [3] Abigail Morrison, Markus Diesmann. Maintaining Causality in Discrete Time Neuronal
-   Simulations.
-   In: Lectures in Supercomputational Neuroscience, p. 267. Peter beim Graben, Changsong Zhou, Marco
-   Thiel, Juergen Kurths (Eds.), Springer 2008.
+   [1] W. McCulloch und W. Pitts (1943). A logical calculus of the ideas
+   immanent in nervous activity. Bulletin of Mathematical Biophysics, 5:115-133.
+   [2] Hertz Krogh, Palmer. Introduction to the theory of neural computation.
+   Westview (1991).
+   [3] Abigail Morrison, Markus Diesmann. Maintaining Causality in Discrete Time
+   Neuronal Simulations.
+   In: Lectures in Supercomputational Neuroscience, p. 267. Peter beim Graben,
+   Changsong Zhou, Marco Thiel, Juergen Kurths (Eds.), Springer 2008.
 
    Sends: SpikeEvent
    Receives: SpikeEvent, PotentialRequest
@@ -93,7 +97,7 @@ class gainfunction_mcculloch_pitts
 {
 private:
   /** threshold of sigmoidal activation function */
-  double_t theta_;
+  double theta_;
 
 public:
   /** sets default parameters */
@@ -105,15 +109,17 @@ public:
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
-  bool operator()( librandom::RngPtr, double_t h );
+  bool operator()( librandom::RngPtr, double h );
 };
 
-inline bool gainfunction_mcculloch_pitts::operator()( librandom::RngPtr, double_t h )
+inline bool gainfunction_mcculloch_pitts::operator()( librandom::RngPtr,
+  double h )
 {
   return h > theta_;
 }
 
-typedef nest::binary_neuron< nest::gainfunction_mcculloch_pitts > mcculloch_pitts_neuron;
+typedef nest::binary_neuron< nest::gainfunction_mcculloch_pitts >
+  mcculloch_pitts_neuron;
 
 template <>
 void RecordablesMap< mcculloch_pitts_neuron >::create();

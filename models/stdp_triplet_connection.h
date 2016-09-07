@@ -24,7 +24,8 @@
 #define STDP_TRIPLET_CONNECTION_H
 
 /* BeginDocumentation
-  Name: stdp_triplet_synapse - Synapse type with spike-timing dependent plasticity (triplets).
+  Name: stdp_triplet_synapse - Synapse type with spike-timing dependent
+                               plasticity (triplets).
 
   Description:
     stdp_triplet_synapse is a connection with spike time dependent
@@ -35,13 +36,19 @@
     triplet      Aplus_triplet = Aminus_triplet = 1.0
 
   Parameters:
-    tau_plus           double: time constant of short presynaptic trace (tau_plus of [1])
-    tau_plus_triplet   double: time constant of long presynaptic trace (tau_x of [1])
-    Aplus              double: weight of pair potentiation rule (A_plus_2 of [1])
-    Aplus_triplet      double: weight of triplet potentiation rule (A_plus_3 of [1])
-    Aminus             double: weight of pair depression rule (A_minus_2 of [1])
-    Aminus_triplet     double: weight of triplet depression rule (A_minus_3 of [1])
-    Wmax               double: maximum allowed weight
+    tau_plus           double - time constant of short presynaptic trace
+                              - (tau_plus of [1])
+    tau_plus_triplet   double - time constant of long presynaptic trace
+                              - (tau_x of [1])
+    Aplus              double - weight of pair potentiation rule
+                              - (A_plus_2 of [1])
+    Aplus_triplet      double - weight of triplet potentiation rule
+                              - (A_plus_3 of [1])
+    Aminus             double - weight of pair depression rule
+                                (A_minus_2 of [1])
+    Aminus_triplet     double - weight of triplet depression rule
+                              - (A_minus_3 of [1])
+    Wmax               double - maximum allowed weight
 
   States:
     Kplus              double: pre-synaptic trace (r_1 of [1])
@@ -60,18 +67,21 @@
       tau_plus_triplet, respectively.
     - Postsynaptic traces o_1 and o_2 of [1] are acquired from the post-synaptic
       neuron states Kminus_ and triplet_Kminus_ which decay on time-constants
-      tau_minus and tau_minus_triplet, respectively. These two time-constants can
+      tau_minus and tau_minus_triplet, respectively. These two time-constants
       can be set as properties of the postsynaptic neuron.
-    - This version implements the 'all-to-all' spike interaction of [1]. The 'nearest-spike'
-      interaction of [1] can currently not be implemented without changing the postsynaptic
-      archiving-node (clip the traces to a maximum of 1).
+    - This version implements the 'all-to-all' spike interaction of [1]. The
+      'nearest-spike' interaction of [1] can currently not be implemented
+      without changing the postsynaptic archiving-node (clip the traces to a
+      maximum of 1).
 
   FirstVersion: Nov 2007
   Author: Abigail Morrison, Eilif Muller, Alexander Seeholzer, Teo Stocco
+  Adapted by: Philipp Weidel
   SeeAlso: stdp_triplet_synapse_hpc, synapsedict, stdp_synapse, static_synapse
 */
 
-#include <cmath>
+// C-header for math.h since copysign() is in C99 but not C++98
+#include <math.h>
 #include "connection.h"
 
 namespace nest
@@ -131,7 +141,10 @@ public:
    * \param t_lastspike Point in time of last spike sent.
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties& cp );
+  void send( Event& e,
+    thread t,
+    double t_lastspike,
+    const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -147,8 +160,8 @@ public:
   };
 
   /*
-   * This function calls check_connection on the sender and checks if the receiver
-   * accepts the event type and receptor type requested by the sender.
+   * This function calls check_connection on the sender and checks if the
+   * receiver accepts the event type and receptor type requested by the sender.
    * Node::check_connection() will either confirm the receiver port by returning
    * true or false if the connection should be ignored.
    * We have to override the base class' implementation, since for STDP
@@ -164,7 +177,7 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t t_lastspike,
+    double t_lastspike,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -175,37 +188,38 @@ public:
   }
 
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
 
 private:
-  inline double_t
-  facilitate_( double_t w, double_t kplus, double_t ky )
+  inline double
+  facilitate_( double w, double kplus, double ky )
   {
-    double_t new_w = w + kplus * ( Aplus_ + Aplus_triplet_ * ky );
-    return new_w < Wmax_ ? new_w : Wmax_;
+    double new_w = std::abs( w ) + kplus * ( Aplus_ + Aplus_triplet_ * ky );
+    return copysign( new_w < std::abs( Wmax_ ) ? new_w : Wmax_, Wmax_ );
   }
 
-  inline double_t
-  depress_( double_t w, double_t kminus, double_t Kplus_triplet_ )
+  inline double
+  depress_( double w, double kminus, double Kplus_triplet_ )
   {
-    double_t new_w = w - kminus * ( Aminus_ + Aminus_triplet_ * Kplus_triplet_ );
-    return new_w > 0.0 ? new_w : 0.0;
+    double new_w =
+      std::abs( w ) - kminus * ( Aminus_ + Aminus_triplet_ * Kplus_triplet_ );
+    return copysign( new_w > 0.0 ? new_w : 0.0, Wmax_ );
   }
 
   // data members of each connection
-  double_t weight_;
-  double_t tau_plus_;
-  double_t tau_plus_triplet_;
-  double_t Aplus_;
-  double_t Aminus_;
-  double_t Aplus_triplet_;
-  double_t Aminus_triplet_;
-  double_t Kplus_;
-  double_t Kplus_triplet_;
-  double_t Wmax_;
+  double weight_;
+  double tau_plus_;
+  double tau_plus_triplet_;
+  double Aplus_;
+  double Aminus_;
+  double Aplus_triplet_;
+  double Aminus_triplet_;
+  double Kplus_;
+  double Kplus_triplet_;
+  double Wmax_;
 };
 
 /**
@@ -219,37 +233,39 @@ template < typename targetidentifierT >
 inline void
 STDPTripletConnection< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
+  double t_lastspike,
   const CommonSynapseProperties& )
 {
 
-  double_t t_spike = e.get_stamp().get_ms();
-  double_t dendritic_delay = get_delay();
+  double t_spike = e.get_stamp().get_ms();
+  double dendritic_delay = get_delay();
   Node* target = get_target( t );
 
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  target->get_history( t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  target->get_history(
+    t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
 
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   while ( start != finish )
   {
     // post-synaptic spike is delayed by dendritic_delay so that
     // it is effectively late by that much at the synapse.
-    double_t minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
+    double minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
 
     // subtract 1.0 yields the triplet_Kminus value just prior to
     // the post synaptic spike, implementing the t-epsilon in
     // Pfister et al, 2006
-    double_t ky = start->triplet_Kminus_ - 1.0;
+    double ky = start->triplet_Kminus_ - 1.0;
     ++start;
     if ( minus_dt == 0 )
     {
       continue;
     }
 
-    weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ), ky );
+    weight_ =
+      facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ), ky );
   }
 
   // depression due to new pre-synaptic spike
@@ -258,7 +274,8 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
   // dendritic delay means we must look back in time by that amount
   // for determining the K value, because the K value must propagate
   // out to the synapse
-  weight_ = depress_( weight_, target->get_K_value( t_spike - dendritic_delay ), Kplus_triplet_ );
+  weight_ = depress_(
+    weight_, target->get_K_value( t_spike - dendritic_delay ), Kplus_triplet_ );
 
   Kplus_triplet_ += 1.0;
   Kplus_ = Kplus_ * std::exp( ( t_lastspike - t_spike ) / tau_plus_ ) + 1.0;
@@ -306,37 +323,46 @@ STDPTripletConnection< targetidentifierT >::STDPTripletConnection(
 
 template < typename targetidentifierT >
 void
-STDPTripletConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+STDPTripletConnection< targetidentifierT >::get_status(
+  DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
-  def< double_t >( d, "tau_plus", tau_plus_ );
-  def< double_t >( d, "tau_plus_triplet", tau_plus_triplet_ );
-  def< double_t >( d, "Aplus", Aplus_ );
-  def< double_t >( d, "Aminus", Aminus_ );
-  def< double_t >( d, "Aplus_triplet", Aplus_triplet_ );
-  def< double_t >( d, "Aminus_triplet", Aminus_triplet_ );
-  def< double_t >( d, "Kplus", Kplus_ );
-  def< double_t >( d, "Kplus_triplet", Kplus_triplet_ );
-  def< double_t >( d, "Wmax", Wmax_ );
+  def< double >( d, names::weight, weight_ );
+  def< double >( d, "tau_plus", tau_plus_ );
+  def< double >( d, "tau_plus_triplet", tau_plus_triplet_ );
+  def< double >( d, "Aplus", Aplus_ );
+  def< double >( d, "Aminus", Aminus_ );
+  def< double >( d, "Aplus_triplet", Aplus_triplet_ );
+  def< double >( d, "Aminus_triplet", Aminus_triplet_ );
+  def< double >( d, "Kplus", Kplus_ );
+  def< double >( d, "Kplus_triplet", Kplus_triplet_ );
+  def< double >( d, "Wmax", Wmax_ );
 }
 
 template < typename targetidentifierT >
 void
-STDPTripletConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
+STDPTripletConnection< targetidentifierT >::set_status(
+  const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double_t >( d, names::weight, weight_ );
-  updateValue< double_t >( d, "tau_plus", tau_plus_ );
-  updateValue< double_t >( d, "tau_plus_triplet", tau_plus_triplet_ );
-  updateValue< double_t >( d, "Aplus", Aplus_ );
-  updateValue< double_t >( d, "Aminus", Aminus_ );
-  updateValue< double_t >( d, "Aplus_triplet", Aplus_triplet_ );
-  updateValue< double_t >( d, "Aminus_triplet", Aminus_triplet_ );
-  updateValue< double_t >( d, "Kplus", Kplus_ );
-  updateValue< double_t >( d, "Kplus_triplet", Kplus_triplet_ );
-  updateValue< double_t >( d, "Wmax", Wmax_ );
+  updateValue< double >( d, names::weight, weight_ );
+  updateValue< double >( d, "tau_plus", tau_plus_ );
+  updateValue< double >( d, "tau_plus_triplet", tau_plus_triplet_ );
+  updateValue< double >( d, "Aplus", Aplus_ );
+  updateValue< double >( d, "Aminus", Aminus_ );
+  updateValue< double >( d, "Aplus_triplet", Aplus_triplet_ );
+  updateValue< double >( d, "Aminus_triplet", Aminus_triplet_ );
+  updateValue< double >( d, "Kplus", Kplus_ );
+  updateValue< double >( d, "Kplus_triplet", Kplus_triplet_ );
+  updateValue< double >( d, "Wmax", Wmax_ );
+
+  // check if weight_ and Wmax_ has the same sign
+  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )
+         == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
+  {
+    throw BadProperty( "Weight and Wmax must have same sign." );
+  }
 
   if ( not( Kplus_ >= 0 ) )
   {

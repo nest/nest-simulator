@@ -21,21 +21,28 @@
  */
 
 #include "arraydatum.h"
-#include "lockptrdatum_impl.h"
+
+// C++ includes:
 #include <iterator>
+
+// Includes from sli:
+#include "lockptrdatum_impl.h"
 
 // explicit instantiations
 template class AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >;
 template class AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >;
 template class AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >;
-template class lockPTRDatum< std::vector< long >, &SLIInterpreter::IntVectortype >;
-template class lockPTRDatum< std::vector< double >, &SLIInterpreter::DoubleVectortype >;
+template class lockPTRDatum< std::vector< long >,
+  &SLIInterpreter::IntVectortype >;
+template class lockPTRDatum< std::vector< double >,
+  &SLIInterpreter::DoubleVectortype >;
 
 
 // initialization of static members requires template<>
 // see Stroustrup C.13.1 --- HEP 2001-08-09
 template <>
-sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::memory( sizeof( ArrayDatum ),
+sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::memory(
+  sizeof( ArrayDatum ),
   10240,
   1 );
 template <>
@@ -44,15 +51,17 @@ sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::memory(
   10240,
   1 );
 template <>
-sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::memory(
-  sizeof( AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype > ),
-  10240,
-  1 );
+sli::pool
+  AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::memory(
+    sizeof( AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype > ),
+    10240,
+    1 );
 
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::pprint( std::ostream& out ) const
+AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::pprint(
+  std::ostream& out ) const
 {
   out << '[';
   Token* i = this->begin();
@@ -68,14 +77,16 @@ AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::pprint( std::ostream& 
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::print( std::ostream& out ) const
+AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::print(
+  std::ostream& out ) const
 {
   out << '<' << this->gettypename() << '>';
 }
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::pprint( std::ostream& out ) const
+AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::pprint(
+  std::ostream& out ) const
 {
   out << '{';
   Token* i = this->begin();
@@ -91,7 +102,8 @@ AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::pprint( std::ostre
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::list( std::ostream& out,
+AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::list(
+  std::ostream& out,
   std::string prefix,
   int line ) const
 {
@@ -118,14 +130,16 @@ AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::list( std::ostream
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::print( std::ostream& out ) const
+AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::print(
+  std::ostream& out ) const
 {
   out << '<' << this->gettypename() << '>';
 }
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::pprint( std::ostream& out ) const
+AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::pprint(
+  std::ostream& out ) const
 {
   out << "/{";
   Token* i = this->begin();
@@ -141,7 +155,8 @@ AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::pprint( std::os
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::list( std::ostream& out,
+AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::list(
+  std::ostream& out,
   std::string prefix,
   int line ) const
 {
@@ -165,7 +180,8 @@ AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::list( std::ostr
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::print( std::ostream& out ) const
+AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::print(
+  std::ostream& out ) const
 {
   out << '<' << this->gettypename() << '>';
 }
@@ -195,8 +211,8 @@ lockPTRDatum< std::vector< long >, &SLIInterpreter::IntVectortype >::pprint(
 
 template <>
 void
-lockPTRDatum< std::vector< double >, &SLIInterpreter::DoubleVectortype >::pprint(
-  std::ostream& out ) const
+lockPTRDatum< std::vector< double >,
+  &SLIInterpreter::DoubleVectortype >::pprint( std::ostream& out ) const
 {
   std::vector< double >* v = this->get();
   out << "<. ";

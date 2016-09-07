@@ -21,10 +21,13 @@
  */
 
 #include "stringdatum.h"
-#include "tokenutils.h"
 
+// C++ includes:
 #include <algorithm>
 #include <cctype>
+
+// Includes from sli:
+#include "tokenutils.h"
 
 // initialization of static members requires template<>
 // see Stroustrup C.13.1 --- HEP 2001-08-09
@@ -36,7 +39,8 @@ sli::pool AggregateDatum< std::string, &SLIInterpreter::Stringtype >::memory(
 
 template <>
 void
-AggregateDatum< std::string, &SLIInterpreter::Stringtype >::pprint( std::ostream& out ) const
+AggregateDatum< std::string, &SLIInterpreter::Stringtype >::pprint(
+  std::ostream& out ) const
 {
   out << '(';
   print( out );

@@ -21,14 +21,16 @@
  */
 
 #include "correlation_detector.h"
-#include "network.h"
+
+// C++ includes:
+#include <cmath>      // for less
+#include <functional> // for bind2nd
+#include <numeric>
+
+// Includes from sli:
+#include "arraydatum.h"
 #include "dict.h"
 #include "dictutils.h"
-#include "arraydatum.h"
-
-#include <numeric>
-#include <functional> // for bind2nd
-#include <cmath>      // for less
 
 
 /* ----------------------------------------------------------------
@@ -87,12 +89,14 @@ nest::correlation_detector::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::correlation_detector::State_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ names::n_events ] = IntVectorDatum( new std::vector< long_t >( n_events_ ) );
-  ( *d )[ names::histogram ] = DoubleVectorDatum( new std::vector< double_t >( histogram_ ) );
+  ( *d )[ names::n_events ] =
+    IntVectorDatum( new std::vector< long >( n_events_ ) );
+  ( *d )[ names::histogram ] =
+    DoubleVectorDatum( new std::vector< double >( histogram_ ) );
   ( *d )[ names::histogram_correction ] =
-    DoubleVectorDatum( new std::vector< double_t >( histogram_correction_ ) );
+    DoubleVectorDatum( new std::vector< double >( histogram_correction_ ) );
   ( *d )[ names::count_histogram ] =
-    IntVectorDatum( new std::vector< long_t >( count_histogram_ ) );
+    IntVectorDatum( new std::vector< long >( count_histogram_ ) );
 }
 
 bool
@@ -100,26 +104,26 @@ nest::correlation_detector::Parameters_::set( const DictionaryDatum& d,
   const correlation_detector& n )
 {
   bool reset = false;
-  double_t t;
-  if ( updateValue< double_t >( d, names::delta_tau, t ) )
+  double t;
+  if ( updateValue< double >( d, names::delta_tau, t ) )
   {
     delta_tau_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double_t >( d, names::tau_max, t ) )
+  if ( updateValue< double >( d, names::tau_max, t ) )
   {
     tau_max_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double_t >( d, names::Tstart, t ) )
+  if ( updateValue< double >( d, names::Tstart, t ) )
   {
     Tstart_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double_t >( d, names::Tstop, t ) )
+  if ( updateValue< double >( d, names::Tstop, t ) )
   {
     Tstop_ = Time::ms( t );
     reset = true;
@@ -140,8 +144,8 @@ nest::correlation_detector::State_::set( const DictionaryDatum& d,
   const Parameters_& p,
   bool reset_required )
 {
-  std::vector< long_t > nev;
-  if ( updateValue< std::vector< long_t > >( d, names::n_events, nev ) )
+  std::vector< long > nev;
+  if ( updateValue< std::vector< long > >( d, names::n_events, nev ) )
   {
     if ( nev.size() == 2 && nev[ 0 ] == 0 && nev[ 1 ] == 0 )
       reset_required = true;
@@ -164,13 +168,16 @@ nest::correlation_detector::State_::reset( const Parameters_& p )
 
   assert( p.tau_max_.is_multiple_of( p.delta_tau_ ) );
   histogram_.clear();
-  histogram_.resize( 1 + 2 * p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
+  histogram_.resize(
+    1 + 2 * p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
 
   histogram_correction_.clear();
-  histogram_correction_.resize( 1 + 2 * p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
+  histogram_correction_.resize(
+    1 + 2 * p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
 
   count_histogram_.clear();
-  count_histogram_.resize( 1 + 2 * p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
+  count_histogram_.resize(
+    1 + 2 * p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
 }
 
 /* ----------------------------------------------------------------
@@ -184,10 +191,12 @@ nest::correlation_detector::correlation_detector()
   , S_()
 {
   if ( !P_.delta_tau_.is_step() )
-    throw InvalidDefaultResolution( get_name(), names::delta_tau, P_.delta_tau_ );
+    throw InvalidDefaultResolution(
+      get_name(), names::delta_tau, P_.delta_tau_ );
 }
 
-nest::correlation_detector::correlation_detector( const correlation_detector& n )
+nest::correlation_detector::correlation_detector(
+  const correlation_detector& n )
   : Node( n )
   , device_( n.device_ )
   , P_( n.P_ )
@@ -231,7 +240,7 @@ nest::correlation_detector::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::correlation_detector::update( Time const&, const long_t, const long_t )
+nest::correlation_detector::update( Time const&, const long, const long )
 {
 }
 
@@ -252,10 +261,11 @@ nest::correlation_detector::handle( SpikeEvent& e )
   if ( device_.is_active( stamp ) )
   {
 
-    const long_t spike_i = stamp.get_steps();
+    const long spike_i = stamp.get_steps();
     const port other = 1 - sender; // port of the neuron not sending
     SpikelistType& otherSpikes = S_.incoming_[ other ];
-    const double_t tau_edge = P_.tau_max_.get_steps() + 0.5 * P_.delta_tau_.get_steps();
+    const double tau_edge =
+      P_.tau_max_.get_steps() + 0.5 * P_.delta_tau_.get_steps();
 
     // throw away all spikes of the other neuron which are too old to
     // enter the correlation window
@@ -263,34 +273,38 @@ nest::correlation_detector::handle( SpikeEvent& e )
     while ( !otherSpikes.empty()
       && ( spike_i - otherSpikes.front().timestep_ ) - 0.5 * other >= tau_edge )
       otherSpikes.pop_front();
-    // all remaining spike times in the queue are >= spike_i - tau_edge, if sender = 0
-    // all remaining spike times in the queue are > spike_i - tau_edge, if sender = 1
+    // all remaining spike times in the queue are
+    //     >= spike_i - tau_edge, if sender = 0
+    // all remaining spike times in the queue are
+    //     > spike_i - tau_edge, if sender = 1
 
     // temporary variables for kahan summation algorithm
-    double_t y, t;
+    double y, t;
 
-    // only count events in histogram, if the current event is within the time window [Tstart,
-    // Tstop]
+    // only count events in histogram, if the current event is within the time
+    // window [Tstart, Tstop]
     // this is needed in order to prevent boundary effects
     if ( P_.Tstart_ <= stamp && stamp <= P_.Tstop_ )
     {
       // calculate the effect of this spike immediately with respect to all
       // spikes in the past of the respectively other source
       // if source 1 and source 2 produce a spike at the same time
-      // it will not be counted twice, since handle() will be called subsequently for both
-      // spikes, such that the first spike arriving here will not yet be aware
-      // of the spike arriving as second (which is not yet in the deque)
+      // it will not be counted twice, since handle() will be called
+      // subsequently for both spikes, such that the first spike arriving here
+      // will not yet be aware of the spike arriving as second
+      // (which is not yet in the deque)
       S_.n_events_[ sender ]++; // count this spike
 
-      const long_t sign =
-        2 * sender - 1; // takes into account relative timing of spike from source 1 and source 2
+      const long sign = 2 * sender - 1; // takes into account relative timing
+                                        // of spike from source 1 and source 2
 
       for ( SpikelistType::const_iterator spike_j = otherSpikes.begin();
             spike_j != otherSpikes.end();
             ++spike_j )
       {
-        const size_t bin = static_cast< size_t >( std::floor(
-          ( tau_edge + sign * ( spike_i - spike_j->timestep_ ) ) / P_.delta_tau_.get_steps() ) );
+        const size_t bin = static_cast< size_t >(
+          std::floor( ( tau_edge + sign * ( spike_i - spike_j->timestep_ ) )
+            / P_.delta_tau_.get_steps() ) );
         assert( bin < S_.histogram_.size() );
         assert( bin < S_.histogram_correction_.size() );
         // weighted histogram with kahan summation algorithm
@@ -312,16 +326,14 @@ nest::correlation_detector::handle( SpikeEvent& e )
 
     // find first appearence of element which is greater than spike_i
     const Spike_ sp_i( spike_i, e.get_multiplicity() * e.get_weight() );
-    SpikelistType::iterator insert_pos = std::find_if( S_.incoming_[ sender ].begin(),
-      S_.incoming_[ sender ].end(),
-      std::bind2nd( std::greater< Spike_ >(), sp_i ) );
+    SpikelistType::iterator insert_pos =
+      std::find_if( S_.incoming_[ sender ].begin(),
+        S_.incoming_[ sender ].end(),
+        std::bind2nd( std::greater< Spike_ >(), sp_i ) );
 
     // insert before the position we have found
-    // if no element greater found, insert_pos == end(), so append at the end of the deque
+    // if no element greater found, insert_pos == end(), so append at the end of
+    // the deque
     S_.incoming_[ sender ].insert( insert_pos, sp_i );
-
-    // std::cout << "length of incoming queue0 = " << S_.incoming_[0].size() << '\n';
-    // std::cout << "length of incoming queue1 = " << S_.incoming_[1].size() << '\n';
-
   } // device active
 }

@@ -23,11 +23,14 @@
 #ifndef PARROT_NEURON_PS_H
 #define PARROT_NEURON_PS_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "slice_ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+
+// Includes from precise:
+#include "slice_ring_buffer.h"
 
 /* BeginDocumentation
 Name: parrot_neuron_ps - Neuron that repeats incoming spikes handling
@@ -72,14 +75,13 @@ namespace nest
 {
 class parrot_neuron_ps : public Archiving_Node
 {
-  class Network;
-
 public:
   parrot_neuron_ps();
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -111,7 +113,7 @@ private:
   {
   } // no variables
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /** Queue for incoming events. */
   struct Buffers_
@@ -123,7 +125,10 @@ private:
 };
 
 inline port
-parrot_neuron_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
+parrot_neuron_ps::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

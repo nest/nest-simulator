@@ -24,20 +24,22 @@
 #define SPIKE_GENERATOR_H
 
 
+// C++ includes:
 #include <vector>
-#include "nest.h"
-#include "event.h"
-#include "node.h"
-#include "scheduler.h"
-#include "stimulating_device.h"
+
+// Includes from nestkernel:
 #include "connection.h"
+#include "event.h"
 #include "nest_time.h"
-#include "network.h"
+#include "nest_types.h"
+#include "node.h"
+#include "stimulating_device.h"
 
 namespace nest
 {
 /*BeginDocumentation
-  Name: spike_generator - A device which generates spikes from an array with spike-times.
+  Name: spike_generator - A device which generates spikes from an array with
+                          spike-times.
 
   Synopsis: spike_generator Create -> gid
 
@@ -127,13 +129,17 @@ namespace nest
   /spike_generator << /spike_times [10.0001] /precise_times true >> Create
   ---> spike at step 101, offset -0.0999 is in the future
 
-  /spike_generator << /spike_times [10.0001 11.0001] /shift_now_spikes true >> Create
+  /spike_generator
+    << /spike_times [10.0001 11.0001] /shift_now_spikes true >>
+  Create
   ---> spike at step 101, spike shifted into the future, and spike at step 110,
        not shifted, since it is in the future anyways
 
 
   Example:
-  spikegenerator << /spike_times [1.0 2.0] /spike_weights [5.0 -8.0] >> SetStatus
+  spikegenerator
+    << /spike_times [1.0 2.0] /spike_weights [5.0 -8.0] >>
+  SetStatus
 
   Instructs the spike generator to generate an event with weight 5.0
   at 1.0 ms, and an event with weight -8.0 at 2.0 ms, relative to
@@ -147,12 +153,17 @@ namespace nest
   Parameters:
   The following properties can be set in the status dictionary.
 
-       origin         double - Time origin for device timer in ms
-       start          double - earliest possible time stamp of a spike to be emitted in ms
-       stop           double - earliest time stamp of a potential spike event that is not emitted in
-  ms
-       spike_times    double array - spike-times in ms
-       spike_weights  double array - corrsponding spike-weights, the unit depends on the receiver
+       origin               double - Time origin for device timer in ms
+       start                double - earliest possible time stamp of a spike to
+                                     be emitted in ms
+       stop                 double - earliest time stamp of a potential spike
+                                     event that is not emitted in ms
+       spike_times          double array - spike-times in ms
+       spike_weights        double array - corresponding spike-weights, the unit
+                                           depends on the receiver
+       spike_multiplicities int array - multiplicities of spikes, same length
+                                        as spike_times; mostly for debugging
+
        precise_times        bool - see above
        allow_offgrid_spikes bool - see above
        shift_now_spikes     bool - see above
@@ -190,7 +201,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::event_hook;
   using Node::sends_signal;
@@ -209,7 +221,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // ------------------------------------------------------------
 
@@ -224,11 +236,15 @@ private:
 
   struct Parameters_
   {
+    //! Spike time stamp as Time, rel to origin_
+    std::vector< Time > spike_stamps_;
 
-    std::vector< Time > spike_stamps_;    //!< Spike time stamp as Time, rel to origin_
-    std::vector< double > spike_offsets_; //!< Spike time offset, if using precise_times_
+    //! Spike time offset, if using precise_times_
+    std::vector< double > spike_offsets_;
 
     std::vector< double > spike_weights_; //!< Spike weights as double
+
+    std::vector< long > spike_multiplicities_; //!< Spike multiplicity
 
     //! Interpret spike times as precise, i.e. send as step and offset
     bool precise_times_;
@@ -259,7 +275,8 @@ private:
      * @param origin
      * @param current simulation time
      */
-    void assert_valid_spike_time_and_insert_( double, const Time&, const Time& );
+    void
+    assert_valid_spike_time_and_insert_( double, const Time&, const Time& );
   };
 
   // ------------------------------------------------------------
@@ -298,31 +315,6 @@ spike_generator::get_status( DictionaryDatum& d ) const
   P_.get( d );
   device_.get_status( d );
 }
-
-inline void
-spike_generator::set_status( const DictionaryDatum& d )
-{
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-
-  // To detect "now" spikes and shift them, we need the origin. In case
-  // it is set in this call, we need to extract it explicitly here.
-  Time origin;
-  double_t v;
-  if ( updateValue< double_t >( d, names::origin, v ) )
-    origin = Time::ms( v );
-  else
-    origin = device_.get_origin();
-  ptmp.set( d, S_, origin, network()->get_time() ); // throws if BadProperty
-
-  // We now know that ptmp is consistent. We do not write it back
-  // to P_ before we are also sure that the properties to be set
-  // in the parent class are internally consistent.
-  device_.set_status( d );
-
-  // if we get here, temporary contains consistent set of properties
-  P_ = ptmp;
-}
-
 
 } // namespace
 

@@ -20,13 +20,15 @@
  *
  */
 
+#include "vose.h"
+
+// C++ includes:
 #include <algorithm>
 #include <cassert>
-#include "vose.h"
 
 namespace nest
 {
-Vose::Vose( std::vector< double_t > dist )
+Vose::Vose( std::vector< double > dist )
 {
   assert( !dist.empty() );
 
@@ -35,8 +37,9 @@ Vose::Vose( std::vector< double_t > dist )
   dist_.resize( n );
 
   // We accept distributions that do not sum to 1.
-  double_t sum = 0.0;
-  for ( std::vector< double_t >::iterator it = dist.begin(); it != dist.end(); ++it )
+  double sum = 0.0;
+  for ( std::vector< double >::iterator it = dist.begin(); it != dist.end();
+        ++it )
     sum += *it;
 
   // Partition distribution into small (<=1/n) and large (>1/n) probabilities
@@ -45,7 +48,8 @@ Vose::Vose( std::vector< double_t > dist )
 
   index i = 0;
 
-  for ( std::vector< double_t >::iterator it = dist.begin(); it != dist.end(); ++it )
+  for ( std::vector< double >::iterator it = dist.begin(); it != dist.end();
+        ++it )
   {
     if ( *it <= sum / n )
       *small++ = BiasedCoin( i++, 0, ( *it ) * n / sum );
@@ -54,7 +58,8 @@ Vose::Vose( std::vector< double_t > dist )
   }
 
   // Generate aliases
-  for ( small = dist_.begin(); ( small != large ) && ( large != dist_.end() ); ++small )
+  for ( small = dist_.begin(); ( small != large ) && ( large != dist_.end() );
+        ++small )
   {
 
     small->tails = large->heads; // 'tails' is the alias
@@ -81,7 +86,7 @@ index
 Vose::get_random_id( librandom::RngPtr rng ) const
 {
   // Choose random number between 0 and n
-  double_t r = rng->drand() * dist_.size();
+  double r = rng->drand() * dist_.size();
 
   // Use integer part to select bin
   index i = static_cast< index >( r );

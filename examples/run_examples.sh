@@ -54,7 +54,7 @@ if test -n "$SKIP_LIST"; then
 fi
 
 basedir=$PWD
-
+START=$SECONDS
 for i in $EXAMPLES ; do
 
     cd $(dirname $i)
@@ -88,8 +88,10 @@ for i in $EXAMPLES ; do
     cd $basedir
 
 done
+ELAPSED_TIME=$(($SECONDS - $START))
 
 echo ">>> RESULTS: $FAILURES /" $(echo $EXAMPLES | wc -w) "(failed / total)"
+echo ">>> TIME: $(($ELAPSED_TIME/60)) min $(($ELAPSED_TIME%60)) sec."
 
 if [ "x$OUTPUT" != "x" ] ; then
     echo ">>> Failed examples:"

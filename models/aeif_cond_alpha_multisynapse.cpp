@@ -417,9 +417,11 @@ aeif_cond_alpha_multisynapse::calibrate()
   
   // set the right function for the dynamics
   if ( Delta_T != 0. )
-    V_.model_dynamics = aeif_cond_alpha_multisynapse_dynamics;
+    V_.model_dynamics =
+      &aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics;
   else
-    V_.model_dynamics = aeif_cond_alpha_multisynapse_dynamics_DT0;
+    V_.model_dynamics =
+      &aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics_DT0;
   
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   assert( V_.refractory_counts_
@@ -519,25 +521,25 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
         t_return = t + h; // update t
 
         // k1 = f(told, y)
-        V_.model_dynamics( S_.y_, S_.k1 );
+        *(V_.model_dynamics)( S_.y_, S_.k1 );
 
         // k2 = f(told + h/5, y + h*k1 / 5)
         for ( size_t i = 0; i < S_.y_.size(); ++i )
           S_.yin[ i ] = S_.y_[ i ] + h * S_.k1[ i ] / 5.0;
-        V_.model_dynamics( S_.yin, S_.k2 );
+        *(V_.model_dynamics)( S_.yin, S_.k2 );
 
         // k3 = f(told + 3/10*h, y + 3/40*h*k1 + 9/40*h*k2)
         for ( size_t i = 0; i < S_.y_.size(); ++i )
           S_.yin[ i ] = S_.y_[ i ]
             + h * ( 3.0 / 40.0 * S_.k1[ i ] + 9.0 / 40.0 * S_.k2[ i ] );
-        V_.model_dynamics( S_.yin, S_.k3 );
+        *(V_.model_dynamics)( S_.yin, S_.k3 );
 
         // k4
         for ( size_t i = 0; i < S_.y_.size(); ++i )
           S_.yin[ i ] = S_.y_[ i ]
             + h * ( 44.0 / 45.0 * S_.k1[ i ] - 56.0 / 15.0 * S_.k2[ i ]
                     + 32.0 / 9.0 * S_.k3[ i ] );
-        V_.model_dynamics( S_.yin, S_.k4 );
+        *(V_.model_dynamics)( S_.yin, S_.k4 );
 
         // k5
         for ( size_t i = 0; i < S_.y_.size(); ++i )
@@ -546,7 +548,7 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
               * ( 19372.0 / 6561.0 * S_.k1[ i ] - 25360.0 / 2187.0 * S_.k2[ i ]
                   + 64448.0 / 6561.0 * S_.k3[ i ]
                   - 212.0 / 729.0 * S_.k4[ i ] );
-        V_.model_dynamics( S_.yin, S_.k5 );
+        *(V_.model_dynamics)( S_.yin, S_.k5 );
 
         // k6
         for ( size_t i = 0; i < S_.y_.size(); ++i )
@@ -555,7 +557,7 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
                     + 46732.0 / 5247.0 * S_.k3[ i ]
                     + 49.0 / 176.0 * S_.k4[ i ]
                     - 5103.0 / 18656.0 * S_.k5[ i ] );
-        V_.model_dynamics( S_.yin, S_.k6 );
+        *(V_.model_dynamics)( S_.yin, S_.k6 );
 
         // 5th order
         for ( size_t i = 0; i < S_.y_.size(); ++i )
@@ -564,7 +566,7 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
                     + 125.0 / 192.0 * S_.k4[ i ]
                     - 2187.0 / 6784.0 * S_.k5[ i ]
                     + 11.0 / 84.0 * S_.k6[ i ] );
-        V_.model_dynamics( S_.yin, S_.k7 );
+        *(V_.model_dynamics)( S_.yin, S_.k7 );
 
         // 4th order
         for ( size_t i = 0; i < S_.y_.size(); ++i )

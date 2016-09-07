@@ -89,9 +89,7 @@
  */
 
 namespace nest
-{
-typedef void (*func_ptr)(const std::vector<double>&, std::vector<double>&);
-  
+{  
 /**
  * Conductance based exponential integrate-and-fire neuron model according to
  * Brette and Gerstner
@@ -101,6 +99,8 @@ class aeif_cond_alpha_multisynapse : public Archiving_Node
 {
 
 public:
+  typedef inline void (aeif_cond_alpha_multisynapse::*func_ptr)(
+    const std::vector<double>&, std::vector<double>&);
   aeif_cond_alpha_multisynapse();
   aeif_cond_alpha_multisynapse( const aeif_cond_alpha_multisynapse& );
   virtual ~aeif_cond_alpha_multisynapse();

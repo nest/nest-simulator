@@ -130,11 +130,11 @@ nodes_in = nest.Create(neuron_model, NI)
 allnodes = nodes_ex+nodes_in
 
 nest.Connect(nodes_ex, allnodes,\
-             conn_spec={'rule': 'fixed_indegree', 'indegree':KE},\
-             syn_spec={'weight':J, 'delay':dt})
+             conn_spec={'rule': 'fixed_indegree', 'indegree': KE},
+             syn_spec={'weight': J, 'delay': dt})
 nest.Connect(nodes_in, allnodes,\
-             conn_spec={'rule': 'fixed_indegree', 'indegree':KI},\
-             syn_spec={'weight':-g*J, 'delay':dt})
+             conn_spec={'rule': 'fixed_indegree', 'indegree': KI},
+             syn_spec={'weight': -g*J, 'delay': dt})
 '''
 Afterwards we create a Poisson generator that provides spikes (the
 external input) to the neurons until time 'T' is reached.
@@ -146,12 +146,12 @@ times the simulation resolution.
 '''
 
 ext = nest.Create("poisson_generator",\
-                  params={'rate':rate_ext, 'stop': T})
+                  params={'rate': rate_ext, 'stop': T})
 nest.Connect(ext, allnodes,\
-                  syn_spec={'weight':Jext, 'delay':dt})
+                  syn_spec={'weight': Jext, 'delay': dt})
 
 suppr = nest.Create("dc_generator",\
-                  params={'amplitude':-1e16, 'start': T, 'stop':T+fade_out})
+                  params={'amplitude': -1e16, 'start': T, 'stop': T+fade_out})
 nest.Connect(suppr, allnodes)
 
 spikedetector = nest.Create("spike_detector")
@@ -180,7 +180,7 @@ for trial in [0, 1]:
     nest.ResetNetwork()
     nest.SetStatus([0], [{"rng_seeds": [seed_NEST]}])
     nest.SetStatus([0], {'time': 0.0})
-    nest.SetStatus(spikedetector, {'n_events':0})
+    nest.SetStatus(spikedetector, {'n_events': 0})
 
     '''
     We assign random initial membrane potentials to all neurons (uniform
@@ -192,20 +192,20 @@ for trial in [0, 1]:
     nest.SetStatus(allnodes, "V_m", Vms)
 
     '''
-    In the second trial we add an extra input spike at time t_stim to the neuron
-    that fires first after perturbation time t_stim. Thus, we make sure that the
-    perturbation is transmitted to the network before it fades away in the
-    perturbed neuron. (Single IAF-neurons are not chaotic.)
+    In the second trial we add an extra input spike at time t_stim to the
+    neuron that fires first after perturbation time t_stim. Thus, we make
+    sure that the perturbation is transmitted to the network before it fades
+    away in the perturbed neuron. (Single IAF-neurons are not chaotic.)
     '''
 
     if trial == 1:
         id_stim = [senders[0][spiketimes[0] > t_stim][0]]
         nest.Connect(stimulus, list(id_stim),\
-                     syn_spec={'weight':Jstim, 'delay':dt})
-        nest.SetStatus(stimulus, {'spike_times':[t_stim]})
+                     syn_spec={'weight': Jstim, 'delay': dt})
+        nest.SetStatus(stimulus, {'spike_times': [t_stim]})
 
     '''
-    Now we simulate the network and add a fade out period to get rid of the 
+    Now we simulate the network and add a fade out period to get rid of the
     remaining spikes in the current NEST memory (see introduction).
     '''
 
@@ -220,7 +220,8 @@ for trial in [0, 1]:
     spiketimes += [nest.GetStatus(spikedetector, 'events')[0]['times']]
 
 '''
-Plotting the spiking activity of the network (first trial in red, second trial in black).
+Plotting the spiking activity of the network (first trial in red, 
+second trial in black).
 '''
 
 pylab.figure(1)

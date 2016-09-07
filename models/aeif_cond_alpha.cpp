@@ -94,7 +94,7 @@ nest::aeif_cond_alpha_dynamics( double,
   // good compiler will optimize the verbosity away ...
 
   // shorthand for state variables
-  const double& V = y[ S::V_M ];
+  const double& V = std::min( y[ S::V_M ], node.P_.V_peak_ ); // bound V
   const double& dg_ex = y[ S::DG_EXC ];
   const double& g_ex = y[ S::G_EXC ];
   const double& dg_in = y[ S::DG_INH ];
@@ -103,16 +103,8 @@ nest::aeif_cond_alpha_dynamics( double,
 
   const double I_syn_exc = g_ex * ( V - node.P_.E_ex );
   const double I_syn_inh = g_in * ( V - node.P_.E_in );
-
-  // We pre-compute the argument of the exponential
-  const double exp_arg = ( V - node.P_.V_th ) / node.P_.Delta_T;
-
-  // Upper bound for exponential argument to avoid numerical instabilities
-  const double MAX_EXP_ARG = 10.;
-
-  // If the argument is too large, we clip it.
   const double I_spike =
-    node.P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
+    node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
 
   // dv/dt
   f[ S::V_M ] =
@@ -132,6 +124,58 @@ nest::aeif_cond_alpha_dynamics( double,
 
   return GSL_SUCCESS;
 }
+
+extern "C" int
+nest::aeif_cond_alpha_gp_dynamics_DT0( double,
+  const double y[],
+  double f[],
+  void* pnode )
+{
+  // a shorthand
+  typedef nest::aeif_cond_alpha_gp::State_ S;
+
+  // get access to node so we can almost work as in a member function
+  assert( pnode );
+  const nest::aeif_cond_alpha_gp& node =
+    *( reinterpret_cast< nest::aeif_cond_alpha_gp* >( pnode ) );
+
+  // y[] here is---and must be---the state vector supplied by the integrator,
+  // not the state vector in the node, node.S_.y[].
+
+  // The following code is verbose for the sake of clarity. We assume that a
+  // good compiler will optimize the verbosity away ...
+
+  // shorthand for state variables
+  const double& V = y[ S::V_M ];
+  const double& dg_ex = y[ S::DG_EXC ];
+  const double& g_ex = y[ S::G_EXC ];
+  const double& dg_in = y[ S::DG_INH ];
+  const double& g_in = y[ S::G_INH ];
+  const double& w = y[ S::W ];
+
+  const double I_syn_exc = g_ex * ( V - node.P_.E_ex );
+  const double I_syn_inh = g_in * ( V - node.P_.E_in );
+
+  // dv/dt
+  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) - I_syn_exc - I_syn_inh - w
+                  + node.P_.I_e
+                  + node.B_.I_stim_ )
+    / node.P_.C_m;
+
+  f[ S::DG_EXC ] = -dg_ex / node.P_.tau_syn_ex;
+  // Synaptic Conductance (nS)
+  f[ S::G_EXC ] = dg_ex - g_ex / node.P_.tau_syn_ex;
+
+  f[ S::DG_INH ] = -dg_in / node.P_.tau_syn_in;
+  // Synaptic Conductance (nS)
+  f[ S::G_INH ] = dg_in - g_in / node.P_.tau_syn_in;
+
+  // Adaptation current w.
+  f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
+
+  return GSL_SUCCESS;
+}
+
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
@@ -236,8 +280,10 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
 
-  if ( V_peak_ <= V_th )
+  if ( Delta_T != 0. && V_peak_ <= V_th )
     throw BadProperty( "V_peak must be larger than threshold." );
+  else if ( Delta_T == 0. )
+    updateValue< double >( d, names::V_peak, V_th ); // expected behaviour
 
   if ( V_reset_ >= V_peak_ )
     throw BadProperty( "Ensure that: V_reset < V_peak ." );
@@ -378,11 +424,6 @@ nest::aeif_cond_alpha::init_buffers_()
   else
     gsl_odeiv_evolve_reset( B_.e_ );
 
-  B_.sys_.function = aeif_cond_alpha_dynamics;
-  B_.sys_.jacobian = NULL;
-  B_.sys_.dimension = State_::STATE_VEC_SIZE;
-  B_.sys_.params = reinterpret_cast< void* >( this );
-
   B_.I_stim_ = 0.0;
 }
 
@@ -391,11 +432,20 @@ nest::aeif_cond_alpha::calibrate()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
+  
+  V_.sys_.jacobian = NULL;
+  V_.sys_.dimension = State_::STATE_VEC_SIZE;
+  V_.sys_.params = reinterpret_cast< void* >( this );
+  // set the right GSL function depending on Delta_T
+  if ( P_.Delta_T == 0. )
+    V_.sys_.function = aeif_cond_alpha_gp_dynamics_DT0;
+  else
+    V_.sys_.function = aeif_cond_alpha_gp_dynamics;
 
   V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
   V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
-  V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.RefractoryCounts_
+  V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
+  assert( V_.refractory_counts_
     >= 0 ); // since t_ref_ >= 0, this can only fail in error
 }
 
@@ -438,7 +488,7 @@ nest::aeif_cond_alpha::update( Time const& origin,
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
+        &V_.sys_,             // system of ODE
         &t,                   // from t
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
@@ -460,7 +510,7 @@ nest::aeif_cond_alpha::update( Time const& origin,
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
-        S_.r_ = V_.RefractoryCounts_;
+        S_.r_ = V_.refractory_counts_;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;

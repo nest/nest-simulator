@@ -90,6 +90,8 @@
 
 namespace nest
 {
+typedef void (*func_ptr)(const std::vector<double>&, std::vector<double>&);
+  
 /**
  * Conductance based exponential integrate-and-fire neuron model according to
  * Brette and Gerstner
@@ -222,7 +224,7 @@ private:
     std::vector< double > yin;  //!< Runge-Kutta variable
     std::vector< double > ynew; //!< 5th order update
     std::vector< double > yref; //!< 4th order update
-    int r_;                     //!< number of refractory steps remaining
+    unsigned int r_;            //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -282,8 +284,11 @@ private:
 
     /** initial value to normalise inhibitory synaptic conductance */
     std::vector< double > g0_in_;
+    
+    /** pointer to the rhs function giving the dynamics to the ODE solver **/
+    func_ptr model_dynamics;
 
-    int RefractoryCounts_;
+    unsigned int refractory_counts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -375,12 +380,70 @@ aeif_cond_alpha_multisynapse::set_status( const DictionaryDatum& d )
 }
 
 /**
- * Function computing right-hand side of ODE for the ODE solver.
+ * Function computing right-hand side of ODE for the ODE solver if Delta_T != 0.
  * @param y State vector (input).
  * @param f Derivatives (output).
  */
 inline void
 aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics(
+  const std::vector< double >& y,
+  std::vector< double >& f )
+{
+  // a shorthand
+  typedef aeif_cond_alpha_multisynapse::State_ S;
+
+  // y[] is the current internal state of the integrator (yin), not the state
+  // vector in the node, node.S_.y[].
+
+  // The following code is verbose for the sake of clarity. We assume that a
+  // good compiler will optimize the verbosity away ...
+
+  // shorthand for state variables
+  const double& V = std::min( y[ S::V_M ], P_.V_peak_ );
+  const double& w = y[ S::W ];
+
+  double I_syn_exc = 0.0;
+  double I_syn_inh = 0.0;
+
+  for ( size_t i = 0; i < ( P_.num_of_receptors_
+                            * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
+        i += S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR )
+  {
+    I_syn_exc += y[ S::G_EXC + i ] * ( V - P_.E_ex );
+    I_syn_inh += y[ S::G_INH + i ] * ( V - P_.E_in );
+  }
+  
+  const double I_spike =
+    P_.Delta_T * std::exp( ( V - P_.V_th ) / P_.Delta_T );
+
+  // dv/dt
+  f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
+                  - w + P_.I_e + B_.I_stim_ ) / P_.C_m;
+
+  // Adaptation current w.
+  f[ S::W ] = ( P_.a * ( V - P_.E_L ) - w ) / P_.tau_w;
+
+  size_t j = 0;
+  for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
+  {
+    j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    f[ S::DG_EXC + j ] = -y[ S::DG_EXC + j ] / P_.taus_syn[ i ];
+    f[ S::G_EXC + j ] = y[ S::DG_EXC + j ]
+      - y[ S::G_EXC + j ] / P_.taus_syn[ i ]; // Synaptic Conductance (nS)
+
+    f[ S::DG_INH + j ] = -y[ S::DG_INH + j ] / P_.taus_syn[ i ];
+    f[ S::G_INH + j ] = y[ S::DG_INH + j ]
+      - y[ S::G_INH + j ] / P_.taus_syn[ i ]; // Synaptic Conductance (nS)
+  }
+}
+
+/**
+ * Function computing right-hand side of ODE for the ODE solver if Delta_T == 0.
+ * @param y State vector (input).
+ * @param f Derivatives (output).
+ */
+inline void
+aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics_DT0(
   const std::vector< double >& y,
   std::vector< double >& f )
 {
@@ -408,18 +471,8 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics(
     I_syn_inh += y[ S::G_INH + i ] * ( V - P_.E_in );
   }
 
-  // We pre-compute the argument of the exponential
-  const double exp_arg = ( V - P_.V_th ) / P_.Delta_T;
-
-  // Upper bound for exponential argument to avoid numerical instabilities
-  const double MAX_EXP_ARG = 10.;
-
-  // If the argument is too large, we clip it.
-  const double I_spike =
-    P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
-
   // dv/dt
-  f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
+  f[ S::V_M ] = ( -P_.g_L * ( V - P_.E_L ) - I_syn_exc - I_syn_inh
                   - w + P_.I_e + B_.I_stim_ ) / P_.C_m;
 
   // Adaptation current w.

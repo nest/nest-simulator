@@ -151,7 +151,8 @@ nest.Connect(ext, allnodes,
              syn_spec={'weight': Jext, 'delay': dt})
 
 suppr = nest.Create("dc_generator",
-                    params={'amplitude': -1e16, 'start': T, 'stop': T+fade_out})
+                    params={'amplitude': -1e16, 'start': T,
+                    'stop': T+fade_out})
 nest.Connect(suppr, allnodes)
 
 spikedetector = nest.Create("spike_detector")

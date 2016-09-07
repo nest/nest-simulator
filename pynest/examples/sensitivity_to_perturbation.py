@@ -129,10 +129,10 @@ nodes_ex = nest.Create(neuron_model, NE)
 nodes_in = nest.Create(neuron_model, NI)
 allnodes = nodes_ex+nodes_in
 
-nest.Connect(nodes_ex, allnodes,\
+nest.Connect(nodes_ex, allnodes,
              conn_spec={'rule': 'fixed_indegree', 'indegree': KE},
              syn_spec={'weight': J, 'delay': dt})
-nest.Connect(nodes_in, allnodes,\
+nest.Connect(nodes_in, allnodes,
              conn_spec={'rule': 'fixed_indegree', 'indegree': KI},
              syn_spec={'weight': -g*J, 'delay': dt})
 '''
@@ -145,13 +145,13 @@ simulation successfully the fade out period has to last at least two
 times the simulation resolution.
 '''
 
-ext = nest.Create("poisson_generator",\
+ext = nest.Create("poisson_generator",
                   params={'rate': rate_ext, 'stop': T})
-nest.Connect(ext, allnodes,\
-                  syn_spec={'weight': Jext, 'delay': dt})
+nest.Connect(ext, allnodes,
+             syn_spec={'weight': Jext, 'delay': dt})
 
-suppr = nest.Create("dc_generator",\
-                  params={'amplitude': -1e16, 'start': T, 'stop': T+fade_out})
+suppr = nest.Create("dc_generator",
+                    params={'amplitude': -1e16, 'start': T, 'stop': T+fade_out})
 nest.Connect(suppr, allnodes)
 
 spikedetector = nest.Create("spike_detector")
@@ -200,7 +200,7 @@ for trial in [0, 1]:
 
     if trial == 1:
         id_stim = [senders[0][spiketimes[0] > t_stim][0]]
-        nest.Connect(stimulus, list(id_stim),\
+        nest.Connect(stimulus, list(id_stim),
                      syn_spec={'weight': Jstim, 'delay': dt})
         nest.SetStatus(stimulus, {'spike_times': [t_stim]})
 
@@ -220,7 +220,7 @@ for trial in [0, 1]:
     spiketimes += [nest.GetStatus(spikedetector, 'events')[0]['times']]
 
 '''
-Plotting the spiking activity of the network (first trial in red, 
+Plotting the spiking activity of the network (first trial in red,
 second trial in black).
 '''
 

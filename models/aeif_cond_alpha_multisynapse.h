@@ -89,7 +89,7 @@
  */
 
 namespace nest
-{  
+{
 /**
  * Conductance based exponential integrate-and-fire neuron model according to
  * Brette and Gerstner
@@ -99,8 +99,9 @@ class aeif_cond_alpha_multisynapse : public Archiving_Node
 {
 
 public:
-  typedef inline void (aeif_cond_alpha_multisynapse::*func_ptr)(
-    const std::vector<double>&, std::vector<double>&);
+  typedef void ( aeif_cond_alpha_multisynapse::*func_ptr )(
+    const std::vector< double >&,
+    std::vector< double >& );
   aeif_cond_alpha_multisynapse();
   aeif_cond_alpha_multisynapse( const aeif_cond_alpha_multisynapse& );
   virtual ~aeif_cond_alpha_multisynapse();
@@ -133,6 +134,9 @@ private:
   void update( Time const&, const long, const long );
 
   inline void aeif_cond_alpha_multisynapse_dynamics(
+    const std::vector< double >& y,
+    std::vector< double >& f );
+  inline void aeif_cond_alpha_multisynapse_dynamics_DT0(
     const std::vector< double >& y,
     std::vector< double >& f );
 
@@ -284,7 +288,7 @@ private:
 
     /** initial value to normalise inhibitory synaptic conductance */
     std::vector< double > g0_in_;
-    
+
     /** pointer to the rhs function giving the dynamics to the ODE solver **/
     func_ptr model_dynamics;
 
@@ -412,9 +416,8 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics(
     I_syn_exc += y[ S::G_EXC + i ] * ( V - P_.E_ex );
     I_syn_inh += y[ S::G_INH + i ] * ( V - P_.E_in );
   }
-  
-  const double I_spike =
-    P_.Delta_T * std::exp( ( V - P_.V_th ) / P_.Delta_T );
+
+  const double I_spike = P_.Delta_T * std::exp( ( V - P_.V_th ) / P_.Delta_T );
 
   // dv/dt
   f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
@@ -472,8 +475,8 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics_DT0(
   }
 
   // dv/dt
-  f[ S::V_M ] = ( -P_.g_L * ( V - P_.E_L ) - I_syn_exc - I_syn_inh
-                  - w + P_.I_e + B_.I_stim_ ) / P_.C_m;
+  f[ S::V_M ] = ( -P_.g_L * ( V - P_.E_L ) - I_syn_exc - I_syn_inh - w + P_.I_e
+                  + B_.I_stim_ ) / P_.C_m;
 
   // Adaptation current w.
   f[ S::W ] = ( P_.a * ( V - P_.E_L ) - w ) / P_.tau_w;

@@ -126,18 +126,18 @@ nest::aeif_cond_alpha_dynamics( double,
 }
 
 extern "C" int
-nest::aeif_cond_alpha_gp_dynamics_DT0( double,
+nest::aeif_cond_alpha_dynamics_DT0( double,
   const double y[],
   double f[],
   void* pnode )
 {
   // a shorthand
-  typedef nest::aeif_cond_alpha_gp::State_ S;
+  typedef nest::aeif_cond_alpha::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_cond_alpha_gp& node =
-    *( reinterpret_cast< nest::aeif_cond_alpha_gp* >( pnode ) );
+  const nest::aeif_cond_alpha& node =
+    *( reinterpret_cast< nest::aeif_cond_alpha* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -158,9 +158,7 @@ nest::aeif_cond_alpha_gp_dynamics_DT0( double,
 
   // dv/dt
   f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) - I_syn_exc - I_syn_inh - w
-                  + node.P_.I_e
-                  + node.B_.I_stim_ )
-    / node.P_.C_m;
+                  + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::DG_EXC ] = -dg_ex / node.P_.tau_syn_ex;
   // Synaptic Conductance (nS)
@@ -432,15 +430,15 @@ nest::aeif_cond_alpha::calibrate()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
-  
+
   V_.sys_.jacobian = NULL;
   V_.sys_.dimension = State_::STATE_VEC_SIZE;
   V_.sys_.params = reinterpret_cast< void* >( this );
   // set the right GSL function depending on Delta_T
   if ( P_.Delta_T == 0. )
-    V_.sys_.function = aeif_cond_alpha_gp_dynamics_DT0;
+    V_.sys_.function = aeif_cond_alpha_dynamics_DT0;
   else
-    V_.sys_.function = aeif_cond_alpha_gp_dynamics;
+    V_.sys_.function = aeif_cond_alpha_dynamics;
 
   V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
   V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;

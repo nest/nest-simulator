@@ -251,7 +251,7 @@ public:
 
     double y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for
                                  //!< GSL solver
-    unsigned int r_;                      //!< number of refractory steps remaining
+    unsigned int r_;             //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -313,7 +313,7 @@ public:
 
     /** initial value to normalise inhibitory synaptic conductance */
     double g0_in_;
-    
+
     gsl_odeiv_system sys_; //!< struct describing the GSL system
 
     unsigned int refractory_counts_;

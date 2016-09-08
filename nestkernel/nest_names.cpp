@@ -177,7 +177,7 @@ const Name input_currents_in( "input_currents_in" );
 const Name Interpol_Order( "Interpol_Order" );
 const Name interval( "interval" );
 const Name is_refractory( "is_refractory" );
-const Name is_precise_neuron( "is_precise_neuron" );
+const Name supports_precise_spikes( "supports_precise_spikes" );
 
 const Name label( "label" );
 const Name len_kernel( "len_kernel" );

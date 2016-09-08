@@ -23,11 +23,5 @@
 (unittest) run
 /unittest using
 
-/hh_psc_alpha Create /grid_neuron Set
-grid_neuron GetStatus /is_precise_neuron get false eq assert_or_die
-
-/iaf_psc_alpha_presc Create /precise_neuron Set
-precise_neuron GetStatus /is_precise_neuron get true eq assert_or_die
-
-/poisson_generator_ps Create /precise_neuron Set
-precise_neuron GetStatus /is_precise_neuron get false eq assert_or_die
+{ /hh_psc_alpha GetDefaults /supports_precise_spikes get not } assert_or_die
+{ /parrot_neuron_ps GetDefaults /supports_precise_spikes get } assert_or_die

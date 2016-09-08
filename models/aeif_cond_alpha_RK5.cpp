@@ -313,14 +313,12 @@ nest::aeif_cond_alpha_RK5::calibrate()
 
   V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
   V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
-  
+
   if ( P_.Delta_T != 0. )
-    V_.model_dynamics =
-      &aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics;
+    V_.model_dynamics = &aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics;
   else
-    V_.model_dynamics =
-      &aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics_DT0;
-  
+    V_.model_dynamics = &aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics_DT0;
+
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   assert( V_.refractory_counts_
     >= 0 ); // since t_ref_ >= 0, this can only fail in error
@@ -492,9 +490,9 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
       else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ ) // V_m >= V_peak: spike
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
-        S_.y_[ State_::W ] += P_.b;   // spike-driven adaptation
+        S_.y_[ State_::W ] += P_.b;    // spike-driven adaptation
         S_.r_ = V_.refractory_counts_; // initialize refractory steps with
-                                      // refractory period
+                                       // refractory period
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;

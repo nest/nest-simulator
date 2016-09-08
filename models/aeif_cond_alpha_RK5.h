@@ -289,7 +289,7 @@ public:
 
     /** initial value to normalise inhibitory synaptic conductance */
     double g0_in_;
-    
+
     /** pointer to the rhs function giving the dynamics to the ODE solver **/
     func_ptr model_dynamics;
 
@@ -419,8 +419,7 @@ aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics( const double y[],
   //~ const double MAX_EXP_ARG = 10.;
 
   // If the argument is too large, we clip it.
-  const double I_spike =
-    P_.Delta_T * std::exp( ( V - P_.V_th ) / P_.Delta_T );
+  const double I_spike = P_.Delta_T * std::exp( ( V - P_.V_th ) / P_.Delta_T );
 
   // dv/dt
   f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh

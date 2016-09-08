@@ -153,9 +153,8 @@ nest::aeif_cond_exp_dynamics_DT0( double,
   const double I_syn_inh = g_in * ( V - node.P_.E_in );
 
   // dv/dt
-  f[ S::V_M ] =
-    ( -node.P_.g_L * ( V - node.P_.E_L ) - I_syn_exc - I_syn_inh
-      - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) - I_syn_exc - I_syn_inh - w
+                  + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::G_EXC ] = -g_ex / node.P_.tau_syn_ex; // Synaptic Conductance (nS)
 
@@ -424,7 +423,7 @@ nest::aeif_cond_exp::calibrate()
     V_.sys_.function = aeif_cond_exp_dynamics_DT0;
   else
     V_.sys_.function = aeif_cond_exp_dynamics;
-  
+
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   // since t_ref_ >= 0, this can only fail in error
   assert( V_.refractory_counts_ >= 0 );

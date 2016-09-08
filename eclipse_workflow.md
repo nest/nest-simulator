@@ -133,7 +133,7 @@ $NEST_ROOT/bld_master_nompi/install     # install directory
 ```
 
 You should configure, build and install NEST manually once (note that
-I want to build NEST with gcc 5.1 from Homebrew, therefore the
+I want to build NEST with gcc 6.x from Homebrew, therefore the
 `-DCMAKE_C_COMPILER=gcc-6 -DCMAKE_CXX_COMPILER=g++-6` arguments to `cmake`;
 NB: Make sure that you have checked out the master branch in the `src` directory):
 

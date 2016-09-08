@@ -815,7 +815,7 @@ SpacesInSquareBrackets: true
 Standard: Cpp03
 
 UseTab: false
-``
+```
 
 ## Vera++ profile nest
 

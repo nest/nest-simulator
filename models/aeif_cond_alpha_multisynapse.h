@@ -417,7 +417,10 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics(
     I_syn_inh += y[ S::G_INH + i ] * ( V - P_.E_in );
   }
 
-  const double I_spike = P_.Delta_T * std::exp( ( V - P_.V_th ) / P_.Delta_T );
+  // for this function the exponential must still be bounded
+  // otherwise issue77.sli fails because of numerical instability.
+  const double exp_arg = std::min( ( V - P_.V_th ) / P_.Delta_T, 10. );
+  const double I_spike = P_.Delta_T * std::exp( exp_arg );
 
   // dv/dt
   f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh

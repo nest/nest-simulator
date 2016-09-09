@@ -23,5 +23,4 @@
 (unittest) run
 /unittest using
 
-{ /hh_psc_alpha GetDefaults /supports_precise_spikes get not } assert_or_die
-{ /parrot_neuron_ps GetDefaults /supports_precise_spikes get } assert_or_die
+

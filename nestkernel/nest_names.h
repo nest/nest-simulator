@@ -325,7 +325,7 @@ extern const Name structural_plasticity_update_interval; //!< Update interval
                                                          //!< plasticity
 extern const Name structure;                             //!< Node type
 extern const Name success;
-extern const Name supports_precise_spikes; //!< true iff. suports precise
+extern const Name supports_precise_spikes; //!< true if model supports precise
                                            //!< spikes
 extern const Name symmetric;               //!< Connectivity-related
 extern const Name synapse;                 //!< Node type

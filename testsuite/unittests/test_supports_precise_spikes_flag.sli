@@ -20,7 +20,7 @@
  *
  */
  
- /* BeginDocumentation
+/* BeginDocumentation
 
 Name: testsuite::test_supports_precise_spikes_flag - Checks that the 
 supports_precise_flag is a) available b) is set correctly by the precise and
@@ -31,3 +31,5 @@ Author: Dimitri Plotnikov, 2016-09-09
 
 (unittest) run
 /unittest using
+
+{ /hh_psc_alpha GetDefaults /supports_precise_spikes get not } assert_or_die

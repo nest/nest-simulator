@@ -158,6 +158,9 @@ Node::get_status_base()
   // in other special node classes
   ( *dict )[ names::element_type ] = LiteralDatum( names::neuron );
 
+  // By default, the neuron does't support the precise integration scheme.
+  // This property can be only set by the neuron implementation and not from outside.
+  ( *dict )[ names::supports_precise_spikes] = is_off_grid();
   // now call the child class' hook
   get_status( dict );
 

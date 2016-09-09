@@ -214,6 +214,7 @@ nest::Archiving_Node::get_status( DictionaryDatum& d ) const
   def< double >( d, names::tau_Ca, tau_Ca_ );
   def< double >( d, names::beta_Ca, beta_Ca_ );
   def< double >( d, names::tau_minus_triplet, tau_minus_triplet_ );
+
 #ifdef DEBUG_ARCHIVER
   def< int >( d, names::archiver_length, history_.size() );
 #endif

@@ -233,7 +233,7 @@ private:
     static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2; // DG, G
 
     std::vector< double > y_; //!< neuron state
-    int_t r_;                 //!< number of refractory steps remaining
+    int r_;                   //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -296,7 +296,7 @@ private:
     /** initial value to normalise synaptic conductance */
     std::vector< double > g0_;
 
-    int_t RefractoryCounts_;
+    int RefractoryCounts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------

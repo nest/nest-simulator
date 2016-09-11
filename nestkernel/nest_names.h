@@ -108,6 +108,7 @@ extern const Name delta_tau; //!< Specific to correlation_and correlomatrix
                              //!< detector
 extern const Name delta_u;   //!< Specific to population point process model
                              //!< (pp_pop_psc_delta)
+extern const Name dg;        //!< Derivative of the conductance
 extern const Name dg_ex;     //!< Derivative of the excitatory conductance
 extern const Name dg_in;     //!< Derivative of the inhibitory conductance
 extern const Name dhaene_det_spikes;   //!< used for iaflossless_count_exp

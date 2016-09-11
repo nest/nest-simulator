@@ -215,25 +215,22 @@ private:
     /**
      * Enumeration identifying elements in state vector State_::y_.
      * This enum identifies the elements of the vector. It must be public to be
-     * accessible from the iteration function. The last four elements of this
-     * enum (DG_EXC, G_EXC, DG_INH, G_INH) will be repeated
+     * accessible from the iteration function. The last two elements of this
+     * enum (DG, G) will be repeated
      * n times at the end of the state vector State_::y with n being the number
      * of synapses.
      */
     enum StateVecElems
     {
       V_M = 0,
-      W,      // 1
-      DG_EXC, // 2
-      G_EXC,  // 3
-      DG_INH, // 4
-      G_INH,  // 5
+      W,  // 1
+      DG, // 2
+      G,  // 3
       STATE_VECTOR_MIN_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 2; // V_M, W
-    // DG_EXC, G_EXC, DG_INH, G_INH
-    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 4;
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 2;        // V_M, W
+    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 2; // DG, G
 
     std::vector< double > y_; //!< neuron state
     int_t r_;                 //!< number of refractory steps remaining
@@ -261,8 +258,7 @@ private:
     UniversalDataLogger< aeif_cond_beta_multisynapse > logger_;
 
     /** buffers and sums up incoming spikes/currents */
-    std::vector< RingBuffer > spike_exc_;
-    std::vector< RingBuffer > spike_inh_;
+    std::vector< RingBuffer > spikes_;
     RingBuffer currents_;
 
     /** GSL ODE stuff */

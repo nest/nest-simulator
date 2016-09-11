@@ -269,30 +269,22 @@ aeif_cond_beta_multisynapse::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] );
 
-  std::vector< double >* dg_exc = new std::vector< double >();
-  std::vector< double >* g_exc = new std::vector< double >();
-  std::vector< double >* dg_inh = new std::vector< double >();
-  std::vector< double >* g_inh = new std::vector< double >();
+  std::vector< double >* dg = new std::vector< double >();
+  std::vector< double >* g = new std::vector< double >();
 
   for ( size_t i = 0;
         i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS )
               / State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
         ++i )
   {
-    dg_exc->push_back( y_[ State_::DG_EXC
+    dg->push_back( y_[ State_::DG
       + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] );
-    g_exc->push_back( y_[ State_::G_EXC
-      + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] );
-    dg_inh->push_back( y_[ State_::DG_INH
-      + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] );
-    g_inh->push_back( y_[ State_::G_INH
+    g->push_back( y_[ State_::G
       + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] );
   }
 
-  ( *d )[ names::dg_ex ] = DoubleVectorDatum( dg_exc );
-  ( *d )[ names::g_ex ] = DoubleVectorDatum( g_exc );
-  ( *d )[ names::dg_in ] = DoubleVectorDatum( dg_inh );
-  ( *d )[ names::g_in ] = DoubleVectorDatum( g_inh );
+  ( *d )[ names::dg ] = DoubleVectorDatum( dg );
+  ( *d )[ names::g ] = DoubleVectorDatum( g );
 
   def< double >( d, names::w, y_[ W ] );
 }
@@ -302,40 +294,29 @@ aeif_cond_beta_multisynapse::State_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
 
-  if ( ( d->known( names::dg_ex ) ) && ( d->known( names::g_ex ) )
-    && ( d->known( names::dg_in ) ) && ( d->known( names::g_in ) ) )
+  if ( ( d->known( names::dg ) ) && ( d->known( names::g ) ) )
   {
-    const std::vector< double > dg_exc =
-      getValue< std::vector< double > >( d->lookup( names::dg_ex ) );
-    const std::vector< double > g_exc =
-      getValue< std::vector< double > >( d->lookup( names::g_ex ) );
-    const std::vector< double > dg_inh =
-      getValue< std::vector< double > >( d->lookup( names::dg_in ) );
-    const std::vector< double > g_inh =
-      getValue< std::vector< double > >( d->lookup( names::g_in ) );
+    const std::vector< double > dg =
+      getValue< std::vector< double > >( d->lookup( names::dg ) );
+    const std::vector< double > g =
+      getValue< std::vector< double > >( d->lookup( names::g ) );
 
-    if ( ( dg_exc.size() != g_exc.size() ) || ( dg_exc.size() != dg_inh.size() )
-      || ( dg_exc.size() != g_inh.size() ) )
+    if ( ( dg.size() != g.size() ) )
     {
       throw BadProperty( "Conductances must have the same sizes." );
     }
 
-    for ( size_t i = 0; i < dg_exc.size(); ++i )
+    for ( size_t i = 0; i < dg.size(); ++i )
     {
-      if ( ( dg_exc[ i ] < 0 ) || ( g_exc[ i ] < 0 ) || ( dg_inh[ i ] < 0 )
-        || ( g_inh[ i ] < 0 ) )
+      if ( ( dg[ i ] < 0 ) || ( g[ i ] < 0 ) )
       {
         throw BadProperty( "Conductances must not be negative." );
       }
 
-      y_[ State_::DG_EXC + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                             * i ) ] = dg_exc[ i ];
-      y_[ State_::G_EXC
-        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = g_exc[ i ];
-      y_[ State_::DG_INH + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                             * i ) ] = dg_inh[ i ];
-      y_[ State_::G_INH
-        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = g_inh[ i ];
+      y_[ State_::DG + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                             * i ) ] = dg[ i ];
+      y_[ State_::G
+        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = g[ i ];
     }
   }
 
@@ -416,8 +397,7 @@ aeif_cond_beta_multisynapse::init_state_( const Node& proto )
 void
 aeif_cond_beta_multisynapse::init_buffers_()
 {
-  B_.spike_exc_.clear(); // includes resize
-  B_.spike_inh_.clear(); // includes resize
+  B_.spikes_.clear(); // includes resize
   B_.currents_.clear();  // includes resize
   Archiving_Node::clear_history();
 
@@ -489,8 +469,7 @@ aeif_cond_beta_multisynapse::calibrate()
   assert( V_.RefractoryCounts_
     >= 0 ); // since t_ref_ >= 0, this can only fail in error
 
-  B_.spike_exc_.resize( P_.num_of_receptors_ );
-  B_.spike_inh_.resize( P_.num_of_receptors_ );
+  B_.spikes_.resize( P_.num_of_receptors_ );
   S_.y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
     + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
                   * P_.num_of_receptors_ ) );
@@ -590,12 +569,9 @@ aeif_cond_beta_multisynapse::update( Time const& origin,
 
     for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
     {
-      S_.y_[ State_::DG_EXC + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                                * i ) ] += B_.spike_exc_[ i ].get_value( lag )
-        * V_.g0_[ i ]; // add incoming excitatory spike
-      S_.y_[ State_::DG_INH + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                                * i ) ] += B_.spike_inh_[ i ].get_value( lag )
-        * V_.g0_[ i ]; // add incoming inhibitory spike
+      S_.y_[ State_::DG + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                                * i ) ] += B_.spikes_[ i ].get_value( lag )
+        * V_.g0_[ i ]; // add incoming spike
     }
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );
@@ -626,20 +602,10 @@ aeif_cond_beta_multisynapse::handle( SpikeEvent& e )
   assert( ( e.get_rport() > 0 )
     && ( ( size_t ) e.get_rport() <= P_.num_of_receptors_ ) );
 
-  if ( e.get_weight() > 0.0 )
-  {
-    B_.spike_exc_[ e.get_rport() - 1 ].add_value(
-      e.get_rel_delivery_steps(
-        kernel().simulation_manager.get_slice_origin() ),
-      e.get_weight() * e.get_multiplicity() );
-  }
-  else
-  {
-    B_.spike_inh_[ e.get_rport() - 1 ].add_value(
-      e.get_rel_delivery_steps(
-        kernel().simulation_manager.get_slice_origin() ),
-      -e.get_weight() * e.get_multiplicity() ); // keep conductances positive
-  }
+  B_.spikes_[ e.get_rport() - 1 ].add_value(
+    e.get_rel_delivery_steps(
+      kernel().simulation_manager.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -686,15 +652,21 @@ aeif_cond_beta_multisynapse_dynamics( double,
   const double& V = y[ S::V_M ];
   const double& w = y[ S::W ];
 
-  double I_syn_exc = 0.0;
-  double I_syn_inh = 0.0;
+  double I_syn = 0.0;
 
   for ( size_t i = 0; i < ( node.P_.num_of_receptors_
                             * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
         i += S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR )
   {
-    I_syn_exc += y[ S::G_EXC + i ] * ( V - node.P_.E_ex );
-    I_syn_inh += y[ S::G_INH + i ] * ( V - node.P_.E_in );
+    double g = y[ S::G + i ];
+    if ( g > 0 )
+    {
+      I_syn += g * ( node.P_.E_ex - V );  // g>0, E_ex>V => I_syn increases
+    }
+    else
+    {
+      I_syn += g * ( V - node.P_.E_in );  // g<0, V>E_in => I_syn decreases
+    }
   }
 
   // We pre-compute the argument of the exponential
@@ -709,8 +681,8 @@ aeif_cond_beta_multisynapse_dynamics( double,
 
   // dv/dt
   f[ S::V_M ] =
-    ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
-      - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+    ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) + I_syn - w
+      + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
@@ -718,15 +690,10 @@ aeif_cond_beta_multisynapse_dynamics( double,
   for ( size_t i = 0; i < node.P_.num_of_receptors_; ++i )
   {
     size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-    // Synaptic conductance derivative dG/dt for excitatory connections
-    f[ S::DG_EXC + j ] = -y[ S::DG_EXC + j ] / node.P_.taus_rise[ i ];
-    f[ S::G_EXC + j ] =
-      y[ S::DG_EXC + j ] - y[ S::G_EXC + j ] / node.P_.taus_decay[ i ];
-
-    // Synaptic conductance derivative dG/dt for inhibitory connections
-    f[ S::DG_INH + j ] = -y[ S::DG_INH + j ] / node.P_.taus_rise[ i ];
-    f[ S::G_INH + j ] =
-      y[ S::DG_INH + j ] - y[ S::G_INH + j ] / node.P_.taus_decay[ i ];
+    // Synaptic conductance derivative dG/dt
+    f[ S::DG + j ] = -y[ S::DG + j ] / node.P_.taus_rise[ i ];
+    f[ S::G + j ] =
+      y[ S::DG + j ] - y[ S::G + j ] / node.P_.taus_decay[ i ];
   }
 
   return GSL_SUCCESS;

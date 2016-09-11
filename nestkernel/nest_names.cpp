@@ -82,6 +82,7 @@ const Name delays( "delays" );
 const Name Delta_T( "Delta_T" );
 const Name delta_tau( "delta_tau" );
 const Name delta_u( "delta_u" );
+const Name dg( "dg" );
 const Name dg_ex( "dg_ex" );
 const Name dg_in( "dg_in" );
 const Name dhaene_det_spikes( "dhaene_det_spikes" );

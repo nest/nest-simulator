@@ -84,17 +84,17 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
 
   // ------------------------------------------------------------
 
   struct Parameters_
   {
-    double_t amp_;     //!< Amplitude of sine-current
-    double_t offset_;  //!< Offset of sine-current
-    double_t freq_;    //!< Standard frequency in Hz
-    double_t phi_deg_; //!< Phase of sine current (0-360 deg)
+    double amp_;     //!< Amplitude of sine-current
+    double offset_;  //!< Offset of sine-current
+    double freq_;    //!< Standard frequency in Hz
+    double phi_deg_; //!< Phase of sine current (0-360 deg)
 
     Parameters_(); //!< Sets default parameter values
 
@@ -106,8 +106,8 @@ private:
 
   struct State_
   {
-    double_t y_0_;
-    double_t y_1_;
+    double y_0_;
+    double y_1_;
 
     State_(); //!< Sets default parameter values
 
@@ -118,14 +118,14 @@ private:
 
   struct Variables_
   {
-    double_t omega_;   //!< Angelfrequency i rad/s
-    double_t phi_rad_; //!< Phase of sine current (0-2Pi rad)
+    double omega_;   //!< Angelfrequency i rad/s
+    double phi_rad_; //!< Phase of sine current (0-2Pi rad)
 
     // The exact integration matrix
-    double_t A_00_;
-    double_t A_01_;
-    double_t A_10_;
-    double_t A_11_;
+    double A_00_;
+    double A_01_;
+    double A_10_;
+    double A_11_;
   };
 
   // ------------------------------------------------------------

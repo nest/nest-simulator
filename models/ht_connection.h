@@ -121,7 +121,7 @@ public:
    */
   void send( Event& e,
     thread t,
-    double_t t_lastspike,
+    double t_lastspike,
     const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -141,7 +141,7 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t,
+    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -150,18 +150,18 @@ public:
 
   //! allows efficient initialization from ConnectorModel::add_connection()
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
 
 private:
-  double_t weight_; //!< synpatic weight
+  double weight_; //!< synpatic weight
 
-  double_t tau_P_;   //!< [ms] time constant for recovery
-  double_t delta_P_; //!< fractional decrease in pool size per spike
+  double tau_P_;   //!< [ms] time constant for recovery
+  double delta_P_; //!< fractional decrease in pool size per spike
 
-  double_t p_; //!< current pool size
+  double p_; //!< current pool size
 };
 
 
@@ -175,10 +175,10 @@ template < typename targetidentifierT >
 inline void
 HTConnection< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
+  double t_lastspike,
   const CommonSynapseProperties& )
 {
-  double_t h = e.get_stamp().get_ms() - t_lastspike;
+  double h = e.get_stamp().get_ms() - t_lastspike;
   Node* target = get_target( t );
   // t_lastspike_ = 0 initially
 
@@ -221,11 +221,11 @@ void
 HTConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
-  def< double_t >( d, "tau_P", tau_P_ );
-  def< double_t >( d, "delta_P", delta_P_ );
-  def< double_t >( d, "P", p_ );
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  def< double >( d, names::weight, weight_ );
+  def< double >( d, "tau_P", tau_P_ );
+  def< double >( d, "delta_P", delta_P_ );
+  def< double >( d, "P", p_ );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
@@ -235,10 +235,10 @@ HTConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
 {
   ConnectionBase::set_status( d, cm );
 
-  updateValue< double_t >( d, names::weight, weight_ );
-  updateValue< double_t >( d, "tau_P", tau_P_ );
-  updateValue< double_t >( d, "delta_P", delta_P_ );
-  updateValue< double_t >( d, "P", p_ );
+  updateValue< double >( d, names::weight, weight_ );
+  updateValue< double >( d, "tau_P", tau_P_ );
+  updateValue< double >( d, "delta_P", delta_P_ );
+  updateValue< double >( d, "P", p_ );
 
   if ( tau_P_ <= 0.0 )
     throw BadProperty( "tau_P >= 0 required." );

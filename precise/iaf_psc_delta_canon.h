@@ -209,7 +209,7 @@ private:
   void init_buffers_();
 
   void calibrate();
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /**
    * Calculate the precise spike time, emit the spike and reset the
@@ -220,8 +220,7 @@ private:
    * @param offset_U  Time offset for U value, i.e. for time when threshold
    *                  crossing was detected
    */
-  void
-  emit_spike_( Time const& origin, const long_t lag, const double_t offset_U );
+  void emit_spike_( Time const& origin, const long lag, const double offset_U );
 
   /**
    * Instantaneously emit a spike at the precise time defined by
@@ -232,15 +231,15 @@ private:
    * @param spike_offset  Time offset for spike
    */
   void emit_instant_spike_( Time const& origin,
-    const long_t lag,
-    const double_t spike_offset );
+    const long lag,
+    const double spike_offset );
 
   /**
    * Propagate neuron state.
    * Propagate the neuron's state by dt.
    * @param dt Interval over which to propagate
    */
-  void propagate_( const double_t dt );
+  void propagate_( const double dt );
 
   // ----------------------------------------------------------------
 
@@ -251,33 +250,33 @@ private:
   {
 
     /** Membrane time constant in ms. */
-    double_t tau_m_;
+    double tau_m_;
 
     /** Membrane capacitance in pF. */
-    double_t c_m_;
+    double c_m_;
 
     /** Refractory period in ms. */
-    double_t t_ref_;
+    double t_ref_;
 
     /** Resting potential in mV. */
-    double_t E_L_;
+    double E_L_;
 
     /** External DC current [pA] */
-    double_t I_e_;
+    double I_e_;
 
     /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
         I.e. the real threshold is U_th_ + E_L_. */
-    double_t U_th_;
+    double U_th_;
 
     /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).
         I.e. the real lower bound is U_min_+E_L_. */
-    double_t U_min_;
+    double U_min_;
 
     /** Reset potential.
         At threshold crossing, the membrane potential is reset to this value.
         Relative to resting potential.
     */
-    double_t U_reset_;
+    double U_reset_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -302,13 +301,13 @@ private:
   struct State_
   {
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
-    double_t U_;
-    double_t I_; //!< This is the current to be applied during this time step
+    double U_;
+    double I_; //!< This is the current to be applied during this time step
 
     //! step of last spike, for reporting in status dict
-    long_t last_spike_step_;
-    double_t last_spike_offset_; //!< offset of last spike, for reporting in
-                                 //!< status dict
+    long last_spike_step_;
+    double last_spike_offset_; //!< offset of last spike, for reporting in
+                               //!< status dict
 
     bool is_refractory_;   //!< flag for refractoriness
     bool with_refr_input_; //!< spikes arriving during refractory period are
@@ -359,25 +358,25 @@ private:
    */
   struct Variables_
   {
-    double_t exp_t_;     //!< @$ e^{-t/\tau_m} @$
-    double_t expm1_t_;   //!< @$ e^{-t/\tau_m} - 1 @$
-    double_t v_inf_;     //!< @$ \frac{I_e\tau_m}{c_m} @$
-    double_t I_contrib_; //!< @$ \frac{I_e\tau_m}{c_m} (1-e^{-t/\tau_m})@$
+    double exp_t_;     //!< @$ e^{-t/\tau_m} @$
+    double expm1_t_;   //!< @$ e^{-t/\tau_m} - 1 @$
+    double v_inf_;     //!< @$ \frac{I_e\tau_m}{c_m} @$
+    double I_contrib_; //!< @$ \frac{I_e\tau_m}{c_m} (1-e^{-t/\tau_m})@$
 
-    double_t h_ms_; //!< duration of time step [ms]
+    double h_ms_; //!< duration of time step [ms]
 
-    long_t refractory_steps_; //!< refractory time in steps
+    long refractory_steps_; //!< refractory time in steps
 
     /** Accumulate spikes arriving during refractory period, discounted for
         decay until end of refractory period.
     */
-    double_t refr_spikes_buffer_;
+    double refr_spikes_buffer_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the real membrane potential
-  double_t
+  double
   get_V_m_() const
   {
     return S_.U_ + P_.E_L_;

@@ -358,8 +358,8 @@ nest::ConnectionManager::connect( index sgid,
   Node* target,
   thread target_thread,
   index syn,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   const thread tid = kernel().vp_manager.get_thread_id();
   Node* source = kernel().node_manager.get_node( sgid, target_thread );
@@ -419,8 +419,8 @@ nest::ConnectionManager::connect( index sgid,
   thread target_thread,
   index syn,
   DictionaryDatum& params,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   const thread tid = kernel().vp_manager.get_thread_id();
   Node* source = kernel().node_manager.get_node( sgid, target_thread );
@@ -576,8 +576,8 @@ nest::ConnectionManager::connect_( Node& s,
   index s_gid,
   thread tid,
   index syn,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   // see comment above for explanation
   ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
@@ -600,8 +600,8 @@ nest::ConnectionManager::connect_( Node& s,
   thread tid,
   index syn,
   DictionaryDatum& p,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   // see comment above for explanation
   ConnectorBase* conn = validate_source_entry_( tid, s_gid, syn );
@@ -918,9 +918,9 @@ nest::ConnectionManager::validate_source_entry_( thread tid,
 // -----------------------------------------------------------------------------
 
 void
-nest::ConnectionManager::trigger_update_weight( const long_t vt_id,
+nest::ConnectionManager::trigger_update_weight( const long vt_id,
   const std::vector< spikecounter >& dopa_spikes,
-  const double_t t_trig )
+  const double t_trig )
 {
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     for ( tSConnector::const_nonempty_iterator it =
@@ -1025,8 +1025,8 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
   const Token& syn_model_t = params->lookup( names::synapse_model );
   const TokenArray* source_a = 0;
   const TokenArray* target_a = 0;
-  long_t synapse_label = UNLABELED_CONNECTION;
-  updateValue< long_t >( params, names::synapse_label, synapse_label );
+  long synapse_label = UNLABELED_CONNECTION;
+  updateValue< long >( params, names::synapse_label, synapse_label );
 
   if ( not source_t.empty() )
     source_a = dynamic_cast< TokenArray const* >( source_t.datum() );
@@ -1077,7 +1077,7 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
   TokenArray const* source,
   TokenArray const* target,
   size_t syn_id,
-  long_t synapse_label ) const
+  long synapse_label ) const
 {
   size_t num_connections = get_num_connections( syn_id );
 

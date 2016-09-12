@@ -99,12 +99,12 @@ public:
 
   protected:
     const GridLayer< D >& layer_;
-    int_t layer_size_;
+    int layer_size_;
     const Mask< D >* mask_;
     Position< D > anchor_;
     Selector filter_;
     MultiIndex< D > node_;
-    int_t depth_;
+    int depth_;
   };
 
   GridLayer()
@@ -132,9 +132,9 @@ public:
    */
   Position< D > lid_to_position( index lid ) const;
 
-  index gridpos_to_lid( Position< D, int_t > pos ) const;
+  index gridpos_to_lid( Position< D, int > pos ) const;
 
-  Position< D > gridpos_to_position( Position< D, int_t > gridpos ) const;
+  Position< D > gridpos_to_position( Position< D, int > gridpos ) const;
 
   /**
    * Returns nodes at a given discrete layerspace position.
@@ -142,7 +142,7 @@ public:
    * @returns vector of gids at the depth column covering
    *          the input position.
    */
-  std::vector< index > get_nodes( Position< D, int_t > pos );
+  std::vector< index > get_nodes( Position< D, int > pos );
 
   using Layer< D >::get_global_positions_vector;
 
@@ -188,11 +188,11 @@ void
 GridLayer< D >::set_status( const DictionaryDatum& d )
 {
   Position< D, index > new_dims = dims_;
-  updateValue< long_t >( d, names::columns, new_dims[ 0 ] );
+  updateValue< long >( d, names::columns, new_dims[ 0 ] );
   if ( D >= 2 )
-    updateValue< long_t >( d, names::rows, new_dims[ 1 ] );
+    updateValue< long >( d, names::rows, new_dims[ 1 ] );
   if ( D >= 3 )
-    updateValue< long_t >( d, names::layers, new_dims[ 2 ] );
+    updateValue< long >( d, names::layers, new_dims[ 2 ] );
 
   index new_size = this->depth_;
   for ( int i = 0; i < D; ++i )
@@ -231,7 +231,7 @@ Position< D >
 GridLayer< D >::lid_to_position( index lid ) const
 {
   lid %= this->global_size() / this->depth_;
-  Position< D, int_t > gridpos;
+  Position< D, int > gridpos;
   for ( int i = D - 1; i > 0; --i )
   {
     gridpos[ i ] = lid % dims_[ i ];
@@ -244,7 +244,7 @@ GridLayer< D >::lid_to_position( index lid ) const
 
 template < int D >
 Position< D >
-GridLayer< D >::gridpos_to_position( Position< D, int_t > gridpos ) const
+GridLayer< D >::gridpos_to_position( Position< D, int > gridpos ) const
 {
   // grid layer uses "matrix convention", i.e. reversed y axis
   Position< D > ext = this->extent_;
@@ -266,7 +266,7 @@ GridLayer< D >::get_position( index sind ) const
 
 template < int D >
 index
-GridLayer< D >::gridpos_to_lid( Position< D, int_t > pos ) const
+GridLayer< D >::gridpos_to_lid( Position< D, int > pos ) const
 {
   index lid = 0;
 
@@ -292,7 +292,7 @@ GridLayer< D >::gridpos_to_lid( Position< D, int_t > pos ) const
 
 template < int D >
 std::vector< index >
-GridLayer< D >::get_nodes( Position< D, int_t > pos )
+GridLayer< D >::get_nodes( Position< D, int > pos )
 {
   std::vector< index > gids;
   index lid = gridpos_to_lid( pos );

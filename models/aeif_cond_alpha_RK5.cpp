@@ -327,15 +327,15 @@ nest::aeif_cond_alpha_RK5::calibrate()
  * @param to
  */
 void nest::aeif_cond_alpha_RK5::update( Time const& origin,
-  const long_t from,
-  const long_t to ) // proceed in time
+  const long from,
+  const long to ) // proceed in time
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
-  for ( long_t lag = from; lag < to; ++lag ) // proceed by stepsize B_.step_
+  for ( long lag = from; lag < to; ++lag ) // proceed by stepsize B_.step_
   {
     double t = 0.0; // internal time of the integration period
 
@@ -360,14 +360,14 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
     // for a consistent and efficient integration across subsequent
     // simulation intervals.
 
-    double_t& h = B_.IntegrationStep_; // numerical integration step
-    double_t& tend = B_.step_;         // end of simulation step
+    double& h = B_.IntegrationStep_; // numerical integration step
+    double& tend = B_.step_;         // end of simulation step
 
-    const double_t& MAXERR = P_.MAXERR; // maximum error
-    const double_t& HMIN = P_.HMIN;     // minimal integration step
+    const double& MAXERR = P_.MAXERR; // maximum error
+    const double& HMIN = P_.HMIN;     // minimal integration step
 
-    double_t err;
-    double_t t_return = 0.0;
+    double err;
+    double t_return = 0.0;
 
     while ( t < B_.step_ ) // while not yet reached end of simulation step
     {
@@ -527,8 +527,8 @@ nest::aeif_cond_alpha_RK5::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(

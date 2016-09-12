@@ -46,8 +46,8 @@
 
 nest::ppd_sup_generator::Age_distribution_::Age_distribution_(
   size_t num_age_bins,
-  ulong_t ini_occ_ref,
-  ulong_t ini_occ_act )
+  unsigned long ini_occ_ref,
+  unsigned long ini_occ_act )
 {
   occ_active_ = ini_occ_act;
   occ_refractory_.resize( num_age_bins, ini_occ_ref );
@@ -58,11 +58,11 @@ nest::ppd_sup_generator::Age_distribution_::Age_distribution_(
  * Propagate age distribution one time step and generate spikes
  * ---------------------------------------------------------------- */
 
-nest::ulong_t
-nest::ppd_sup_generator::Age_distribution_::update( double_t hazard_step,
+unsigned long
+nest::ppd_sup_generator::Age_distribution_::update( double hazard_step,
   librandom::RngPtr rng )
 {
-  ulong_t n_spikes; // only set from poisson_dev, bino_dev or 0, thus >= 0
+  unsigned long n_spikes; // only set from poisson_dev, bino_dev or 0, thus >= 0
   if ( occ_active_ > 0 )
   {
     /*The binomial distribution converges towards the Poisson distribution as
@@ -136,26 +136,26 @@ void
 nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d )
 {
 
-  updateValue< double_t >( d, names::dead_time, dead_time_ );
+  updateValue< double >( d, names::dead_time, dead_time_ );
   if ( dead_time_ < 0 )
     throw BadProperty( "The dead time cannot be negative." );
 
-  updateValue< double_t >( d, names::rate, rate_ );
+  updateValue< double >( d, names::rate, rate_ );
   if ( 1000.0 / rate_ <= dead_time_ )
     throw BadProperty(
       "The inverse rate has to be larger than the dead time." );
 
   long n_proc_l = n_proc_;
-  updateValue< long_t >( d, names::n_proc, n_proc_l );
+  updateValue< long >( d, names::n_proc, n_proc_l );
   if ( n_proc_l < 1 )
     throw BadProperty(
       "The number of component processes cannot be smaller than one" );
   else
-    n_proc_ = static_cast< ulong_t >( n_proc_l );
+    n_proc_ = static_cast< unsigned long >( n_proc_l );
 
-  updateValue< double_t >( d, names::frequency, frequency_ );
+  updateValue< double >( d, names::frequency, frequency_ );
 
-  updateValue< double_t >( d, names::relative_amplitude, amplitude_ );
+  updateValue< double >( d, names::relative_amplitude, amplitude_ );
   if ( amplitude_ > 1.0 or amplitude_ < 0.0 )
     throw BadProperty(
       "The relative amplitude of the rate modulation must be in [0,1]." );
@@ -204,10 +204,11 @@ nest::ppd_sup_generator::calibrate()
 {
   device_.calibrate();
 
-  double_t h = Time::get_resolution().get_ms();
+  double h = Time::get_resolution().get_ms();
 
   // compute number of age bins that need to be kept track of
-  ulong_t num_age_bins = static_cast< ulong_t >( P_.dead_time_ / h );
+  unsigned long num_age_bins =
+    static_cast< unsigned long >( P_.dead_time_ / h );
 
   // compute omega to evaluate modulation with, units [rad/ms]
   V_.omega_ = 2.0 * numerics::pi * P_.frequency_ / 1000.0;
@@ -216,8 +217,8 @@ nest::ppd_sup_generator::calibrate()
   V_.hazard_step_ = 1.0 / ( 1000.0 / P_.rate_ - P_.dead_time_ ) * h;
 
   // equilibrium occupation of dead time bins (in case of constant rate)
-  ulong_t ini_occ_0 =
-    static_cast< ulong_t >( P_.rate_ / 1000.0 * P_.n_proc_ * h );
+  unsigned long ini_occ_0 =
+    static_cast< unsigned long >( P_.rate_ / 1000.0 * P_.n_proc_ * h );
 
   // If new targets have been added during a simulation break, we
   // initialize the new elements in age_distributions with the initial dist. The
@@ -233,9 +234,7 @@ nest::ppd_sup_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::ppd_sup_generator::update( Time const& T,
-  const long_t from,
-  const long_t to )
+nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
@@ -244,7 +243,7 @@ nest::ppd_sup_generator::update( Time const& T,
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
     return;
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     Time t = T + Time::step( lag );
 
@@ -254,7 +253,7 @@ nest::ppd_sup_generator::update( Time const& T,
     // get current (time-dependent) hazard rate and store it.
     if ( P_.amplitude_ > 0.0 && ( P_.frequency_ > 0.0 || P_.frequency_ < 0.0 ) )
     {
-      double_t t_ms = t.get_ms();
+      double t_ms = t.get_ms();
       V_.hazard_step_t_ = V_.hazard_step_
         * ( 1.0 + P_.amplitude_ * std::sin( V_.omega_ * t_ms ) );
     }
@@ -279,7 +278,7 @@ nest::ppd_sup_generator::event_hook( DSSpikeEvent& e )
 
   // age_distribution object propagates one time step and returns number of
   // spikes
-  ulong_t n_spikes = B_.age_distributions_[ prt ].update(
+  unsigned long n_spikes = B_.age_distributions_[ prt ].update(
     V_.hazard_step_t_, kernel().rng_manager.get_rng( get_thread() ) );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0

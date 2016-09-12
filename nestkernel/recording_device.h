@@ -480,13 +480,13 @@ private:
 
   struct State_
   {
-    size_t events_;                          //!< Event counter
-    std::vector< long > event_senders_;      //!< List of event sender ids
-    std::vector< double_t > event_times_ms_; //!< List of event times in ms
-    std::vector< long > event_times_steps_;  //!< List of event times in steps
+    size_t events_;                         //!< Event counter
+    std::vector< long > event_senders_;     //!< List of event sender ids
+    std::vector< double > event_times_ms_;  //!< List of event times in ms
+    std::vector< long > event_times_steps_; //!< List of event times in steps
     //! List of event time offsets
-    std::vector< double_t > event_times_offsets_;
-    std::vector< double_t > event_weights_; //!< List of event weights
+    std::vector< double > event_times_offsets_;
+    std::vector< double > event_weights_; //!< List of event weights
 
     State_(); //!< Sets default parameter values
 
@@ -510,7 +510,7 @@ private:
 inline bool
 RecordingDevice::is_active( Time const& T ) const
 {
-  const long_t stamp = T.get_steps();
+  const long stamp = T.get_steps();
 
   return get_t_min_() < stamp && stamp <= get_t_max_();
 }

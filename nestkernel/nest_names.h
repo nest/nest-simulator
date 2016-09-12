@@ -165,25 +165,25 @@ extern const Name flush_records;        //!< Recorder parameter
 extern const Name frequency;            //!< Signal modulation frequency
 extern const Name frozen;               //!< Node parameter
 
-extern const Name g;     //!< Conductance
-extern const Name g_ahp; //!< Specific to iaf_chxk_2008 neuron
-extern const Name g_ex;  //!< Excitatory conductance
-extern const Name g_in;  //!< inhibitory conductance
-extern const Name g_K;   //!< Potassium conductance
-extern const Name g_Kv1; //!< Kv1 Potassium conductance
-extern const Name g_Kv3; //!< Kv3 Potassium conductance
-extern const Name g_L;   //!< Leak conductance
-extern const Name g_Na;  //!< Sodium conductance
-extern const Name g_rr;  //!< Other adaptation
-extern const Name g_sfa; //!< Other adaptation
-extern const Name gamma; //!< Specific to mirollo_strogatz_ps
-extern const Name
-  gamma_shape; //!< Specific to ppd_sup_generator and gamma_sup_generator
-extern const Name gaussian;     //!< Parameter for MSP growth curves
-extern const Name global_id;    //!< Node parameter
-extern const Name growth_curve; //!< Growth curve for MSP dynamics
-extern const Name
-  growth_rate; //!< Parameter of the growth curve for MSP dynamics
+extern const Name g;             //!< Conductance
+extern const Name g_ahp;         //!< Specific to iaf_chxk_2008 neuron
+extern const Name g_ex;          //!< Excitatory conductance
+extern const Name g_in;          //!< inhibitory conductance
+extern const Name g_K;           //!< Potassium conductance
+extern const Name g_Kv1;         //!< Kv1 Potassium conductance
+extern const Name g_Kv3;         //!< Kv3 Potassium conductance
+extern const Name g_L;           //!< Leak conductance
+extern const Name g_Na;          //!< Sodium conductance
+extern const Name g_rr;          //!< Other adaptation
+extern const Name g_sfa;         //!< Other adaptation
+extern const Name gamma;         //!< Specific to mirollo_strogatz_ps
+extern const Name gamma_shape;   //!< Specific to ppd_sup_generator and
+                                 //!< gamma_sup_generator
+extern const Name gaussian;      //!< Gaussian MSP growth curve
+extern const Name global_id;     //!< Node parameter
+extern const Name growth_curve;  //!< Growth curve for MSP dynamics
+extern const Name growth_rate;   //!< Parameter of the growth curve for MSP
+                                 //!< dynamics
 extern const Name gsl_error_tol; //!< GSL integrator tolerance
 
 extern const Name h; //!< Summed input to a neuron (Ginzburg neuron)
@@ -328,33 +328,34 @@ extern const Name rho_0; //!< Specific to population point process model
                          //!< (pp_pop_psc_delta)
 extern const Name rms;   //!< Root mean square
 extern const Name root_finding_epsilon; //!< Accuracy of the root of the
-// polynomial (precise timing
-//!< neurons (Brette 2007))
-extern const Name rport;  //!< Connection parameters
-extern const Name rports; //!< Connection parameters
-extern const Name rule;   //!< Connectivity-related
+                                        //!< polynomial (precise timing
+                                        //!< neurons (Brette 2007))
+extern const Name rport;                //!< Connection parameters
+extern const Name rports;               //!< Connection parameters
+extern const Name rule;                 //!< Connectivity-related
 
 extern const Name S; //!< Binary state (output) of neuron (Ginzburg neuron)
-extern const Name scientific; //!< Recorder parameter
-extern const Name screen;     //!< Recorder parameter
-extern const Name senders;    //!< Recorder parameter
-extern const Name size_of;    //!< Connection parameters
-extern const Name source;     //!< Connection parameters
-extern const Name
-  spike; //!< true if the neuron spikes and false if not. (sli_neuron)
-extern const Name spike_times;                    //!< Recorder parameter
-extern const Name start;                          //!< Device parameters
-extern const Name state;                          //!< Node parameter
-extern const Name std;                            //!< Miscellaneous parameters
-extern const Name std_mod;                        //!< Miscellaneous parameters
-extern const Name stimulator;                     //!< Node type
-extern const Name stop;                           //!< Device parameters
+extern const Name scientific;  //!< Recorder parameter
+extern const Name screen;      //!< Recorder parameter
+extern const Name senders;     //!< Recorder parameter
+extern const Name sigmoid;     //!< Sigmoid MSP growth curve
+extern const Name size_of;     //!< Connection parameters
+extern const Name source;      //!< Connection parameters
+extern const Name spike;       //!< true if the neuron spikes and false if not.
+                               //!< (sli_neuron)
+extern const Name spike_times; //!< Recorder parameter
+extern const Name start;       //!< Device parameters
+extern const Name state;       //!< Node parameter
+extern const Name std;         //!< Miscellaneous parameters
+extern const Name std_mod;     //!< Miscellaneous parameters
+extern const Name stimulator;  //!< Node type
+extern const Name stop;        //!< Device parameters
 extern const Name structural_plasticity_synapses; //!< Synapses defined for
-// structural plasticity
+                                                  //!< structural plasticity
 extern const Name structural_plasticity_update_interval; //!< Update interval
-// for structural
-// plasticity
-extern const Name structure; //!< Node type
+                                                         //!< for structural
+                                                         //! plasticity
+extern const Name structure;                             //!< Node type
 extern const Name success;
 extern const Name supports_precise_spikes; //!< true if model supports precise
                                            //!< spikes

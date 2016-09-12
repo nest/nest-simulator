@@ -265,6 +265,7 @@ const Name S( "S" );
 const Name scientific( "scientific" );
 const Name screen( "screen" );
 const Name senders( "senders" );
+const Name sigmoid( "sigmoid" );
 const Name size_of( "sizeof" );
 const Name source( "source" );
 const Name spike( "spike" );

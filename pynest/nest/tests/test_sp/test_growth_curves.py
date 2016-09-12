@@ -216,6 +216,49 @@ class GaussianNumericSEI(SynapticElementIntegrator):
         )
 
 
+class SigmoidNumericSEI(SynapticElementIntegrator):
+
+    """
+    Compute the number of synaptic element corresponding to a
+    linear growth curve
+    dse/dCa = nu * ((2.0 / exp( (Ca - eps)/0.1)) - 1.0)
+
+    Use numerical integration (see scipy.integrate.quad)
+    """
+
+    def __init__(self, eps=0.7, growth_rate=1.0, *args, **kwargs):
+        """
+        Constructor
+
+        :param eps: low fix point
+        :param growth_rate: scaling of the growth curve
+
+        .. seealso:: SynapticElementIntegrator()
+        """
+        super(SigmoidNumericSEI, self).__init__(*args, **kwargs)
+        self.eps = eps
+        self.growth_rate = growth_rate
+
+    def get_se(self, t):
+        """
+        :param t (float): current time
+        :return: Number of synaptic element
+        """
+        assert t >= self.t_minus
+        se = self.se_minus + quad(self.growth_curve, self.t_minus, t)[0]
+        if se > 0:
+            return se
+        else:
+            return 0
+
+    def growth_curve(self, t):
+        return self.growth_rate * (
+            (2.0 / (1.0 + math.exp(
+                (self.get_ca(t) - self.eps) / 0.1
+            ))) - 1.0
+        )
+
+
 class TestGrowthCurve(unittest.TestCase):
     """
     Unittest class to test the GrowthCurve used with nest
@@ -225,6 +268,7 @@ class TestGrowthCurve(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus({"total_num_virtual_procs": 4})
         nest.ResetNetwork()
+        nest.set_verbosity('M_DEBUG')
 
         self.sim_time = 10000
         self.sim_step = 100
@@ -381,6 +425,45 @@ class TestGrowthCurve(unittest.TestCase):
         expected = numpy.array([
             0.10044035, 0.10062526, 0.1003149, 0.10046311, 0.1005713,
             0.10031755, 0.10032216, 0.10040191, 0.10058179, 0.10068598
+        ])
+
+        for n in self.pop:
+            if n in self.local_nodes:
+                testing.assert_almost_equal(
+                    self.se_nest[self.local_nodes.index(n), 30], expected[
+                        self.pop.index(n)],
+                    decimal=5)
+
+    def test_sigmoid_growth_curve(self):
+        beta_ca = 0.0001
+        tau_ca = 10000.0
+        growth_rate = 0.0001
+        eps = 0.10
+        nest.SetStatus(
+            self.local_nodes,
+            {
+                'beta_Ca': beta_ca,
+                'tau_Ca': tau_ca,
+                'synaptic_elements': {
+                    'se': {
+                        'growth_curve': 'sigmoid',
+                        'growth_rate': growth_rate,
+                        'eps': eps, 'z': 0.0
+                    }
+                }
+            }
+        )
+        self.se_integrator.append(
+            SigmoidNumericSEI(tau_ca=tau_ca, beta_ca=beta_ca,
+                              eps=eps, growth_rate=growth_rate))
+        self.simulate()
+
+        # check that we got the same values from one run to another
+        # expected = self.se_nest[:, 30]
+        # print self.se_nest[:, 30].__repr__()
+        expected = numpy.array([
+            0.07801164,  0.07796841,  0.07807825,  0.07797382,  0.07802574,
+            0.07805961,  0.07808139,  0.07794451,  0.07799474,  0.07794458
         ])
 
         for n in self.pop:

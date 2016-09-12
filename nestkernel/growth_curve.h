@@ -256,6 +256,85 @@ private:
   double eps_;
 };
 
+/* BeginDocumentation
+  Name: growth_curve_sigmoid - Sigmoid version of a growth curve
+
+  Description:
+   This class represents a Sigmoid growth rule for the number of synaptic
+  elements
+   inside a neuron. The creation and deletion of synaptic elements when
+  structural
+   plasticity is enabled, allows the dynamic rewiring of the network during the
+   simulation.
+   This type of growth curve  uses a forward Euler integration method to update
+   the number of synaptic elements:
+   dz/dt = nu ((2 / (1 + e^((Ca(t) - eps)/0.1))) - 1)
+   eps is the target mean calcium concentration in the
+   neuron and nu is the growth rate in elements/ms. The growth rate nu is
+   defined in the SynapticElement class.
+
+  Parameters:
+   eps          double -  The target calcium concentration that
+                          the neuron should look to achieve by creating or
+  deleting
+                          synaptic elements. It should always be a positive
+  value.
+                          It is important to note that the calcium concentration
+                          is linearly proportional to the firing rate. This is
+                          because dCa/dt = - Ca(t)/tau_Ca + beta_Ca if the
+  neuron
+                          fires and dCa/dt = - Ca(t)/tau_Ca otherwise, where
+  tau_Ca
+                          is the calcium concentration decay constant and
+  beta_Ca
+                          is the calcium intake constant (see SynapticElement
+  class).
+                          This means that eps can also be
+                          seen as the desired firing rate that the neuron should
+                          achieve.
+                          For example, an eps = 0.05 [Ca2+] with tau_Ca =
+  10000.0
+                          and beta_Ca = 0.001 for a synaptic element means a
+  desired
+                          firing rate of 5Hz.
+   nu           double -  Growth rate in elements/ms. The growth rate nu is
+                          defined in the SynapticElement class. Can be negative.
+
+  References:
+   [1] Butz, Markus, Steenbuck, Ines D., and Arjen van Ooyen.
+   "Homeostatic structural plasticity increases the efficiency of small-world
+   networks." Frontiers in Synaptic Neuroscience 6 (2014): 7.
+
+  FirstVersion: September 2016
+  Author: Ankur Sinha
+  SeeAlso: SynapticElement, SPManager, SPBuilder, GrowthCurveLinear,
+           GrowthCurveSigmoid
+*/
+/**
+ * \class GrowthCurveSigmoid
+ * Uses a forward Euler integration method to update the number of synaptic
+ * elements:
+ * dz/dt = nu ((2 / (1 + e^((Ca(t) - eps)/0.1))) - 1)
+ * eps is the target mean calcium concentration in the
+ * neuron and nu is the growth rate.
+ */
+class GrowthCurveSigmoid : public GrowthCurve
+{
+public:
+  GrowthCurveSigmoid();
+  void get( DictionaryDatum& d ) const;
+  void set( const DictionaryDatum& d );
+  double update( double t,
+    double t_minus,
+    double Ca_minus,
+    double z,
+    double tau_Ca,
+    double growth_rate ) const;
+
+private:
+  double eps_;
+};
+
 } // of namespace
 
 #endif

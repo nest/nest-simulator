@@ -275,7 +275,7 @@ private:
         weight one has an amplitude of 1 mV.
         @note mog - I assume this, not checked.
     */
-    //    double_t PSCInitialValue_;
+    //    double PSCInitialValue_;
 
     // time evolution operator
     double P20_;

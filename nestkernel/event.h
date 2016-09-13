@@ -577,7 +577,7 @@ public:
 
   /** Data item with pertaining time stamp.
    * Items are initialized with time stamp -inf to mark them as invalid.
-   * Data is initialized to <double_t>::max() as a highly implausible value.
+   * Data is initialized to <double>::max() as a highly implausible value.
    * Ideally, we should initialized to a NaN, but since the C++-standard does
    * not require NaN, that would result in unportable code. max() should draw
    * the users att

@@ -97,26 +97,12 @@ const tic_t tic_t_max = LONG_MAX;
 const tic_t tic_t_min = LONG_MIN;
 #endif
 
-using std::size_t;
-
-const long long_t_max = LONG_MAX;
-const long long_t_min = LONG_MIN;
-
-/**
- * Largest and smallest available double value.
- *
- * @note Compile-time constant must have integral type,
- * thus we must define double limits as macros.
- */
-#define double_t_max ( DBL_MAX )
-#define double_t_min ( DBL_MIN )
-
 /**
  *  Unsigned long type for enumerations.
  */
 typedef size_t index;
 #ifndef SIZE_MAX
-#define SIZE_MAX ( ( size_t ) -1 )
+#define SIZE_MAX ( static_cast< std::size_t >( -1 ) )
 #endif
 __attribute__ ((__unused__))
 const index invalid_index = SIZE_MAX;
@@ -190,14 +176,13 @@ typedef double weight;
  * Delays must be equal or larger than one.
  */
 typedef long delay;
-const long delay_max = long_t_max;
-const long delay_min = long_t_min;
-
+const long delay_min = LONG_MIN;
+const long delay_max = LONG_MAX;
 
 /**
  * enum type of signal conveyed by spike events of a node.
  * These types are used upon connect to check if spikes sent by one
- * neuron are intepreted the same way by receiving neuron.
+ * neuron are interpreted the same way by receiving neuron.
  *
  * Each possible signal that may be represented (currently SPIKE and BINARY)
  * is interpreted as a separate bit flag. This way, upon connection, we

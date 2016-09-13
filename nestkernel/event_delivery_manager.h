@@ -32,8 +32,8 @@
 #include "stopwatch.h"
 
 // Includes from nestkernel:
-#include "mpi_manager.h" // OffGridSpike
 #include "event.h"
+#include "mpi_manager.h" // OffGridSpike
 #include "nest_time.h"
 #include "nest_types.h"
 #include "node.h"
@@ -216,9 +216,9 @@ public:
 
   /**
    * Set cumulative time measurements for collocating buffers
-   * and for communication to zero
+   * and for communication to zero; set local spike counter to zero.
    */
-  virtual void reset_timers();
+  virtual void reset_timers_counters();
 
 private:
   /**
@@ -321,24 +321,22 @@ private:
   const unsigned int comm_marker_;
 
   /**
-   * Stop watch to time collocation of events in MPI buffers.
-   */
-  Stopwatch stw_collocate_;
-
-  /**
-   * Stop watch to time communication of events.
-  */
-  Stopwatch stw_communicate_;
-
-  /**
-   * Time that was spent on collocation of MPI buffers during last call to simulate.
+   * Time that was spent on collocation of MPI buffers during the last call to
+   * simulate.
    */
   double time_collocate_;
 
   /**
-   * Time that was spent on communication of events during last call to simulate.
+   * Time that was spent on communication of events during the last call to
+   * simulate.
    */
   double time_communicate_;
+
+  /**
+   * Number of generated spike events (both off- and on-grid) during the last
+   * call to simulate.
+   */
+  unsigned long local_spike_counter_;
 };
 
 

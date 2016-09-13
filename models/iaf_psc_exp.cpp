@@ -254,7 +254,7 @@ nest::iaf_psc_exp::calibrate()
   // P20_ = h/C_;
 
   // TauR specifies the length of the absolute refractory period as
-  // a double_t in ms. The grid based iaf_psc_exp can only handle refractory
+  // a double in ms. The grid based iaf_psc_exp can only handle refractory
   // periods that are integer multiples of the computation step size (h).
   // To ensure consistency with the overall simulation scheme such conversion
   // should be carried out via objects of class nest::Time. The conversion

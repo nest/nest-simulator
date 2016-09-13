@@ -72,13 +72,13 @@ public:
   Archiving_Node( const Archiving_Node& );
   /**
 
-   * \fn double_t get_Ca_minus()
+   * \fn double get_Ca_minus()
    * return the current value of Ca_minus
    */
   double get_Ca_minus() const;
 
   /**
-   * \fn double_t get_synaptic_elements(Name n)
+   * \fn double get_synaptic_elements(Name n)
    * get the number of synaptic element for the current Node
    * the number of synaptic elements is a double value but the number of
    * actual vacant and connected elements is an integer truncated from this
@@ -101,7 +101,7 @@ public:
   int get_synaptic_elements_connected( Name n ) const;
 
   /**
-   * \fn std::map<Name, double_t> get_synaptic_elements()
+   * \fn std::map<Name, double> get_synaptic_elements()
    * get the number of all synaptic elements for the current Node
    */
   std::map< Name, double > get_synaptic_elements() const;
@@ -127,7 +127,7 @@ public:
   void connect_synaptic_element( Name name, int n );
 
   /**
-   * \fn double_t get_K_value(long t)
+   * \fn double get_K_value(long t)
    * return the Kminus value at t (in ms).
    */
   double get_K_value( double t );
@@ -141,7 +141,7 @@ public:
   void get_K_values( double t, double& Kminus, double& triplet_Kminus );
 
   /**
-   * \fn double_t get_triplet_K_value(std::deque<histentry>::iterator &iter)
+   * \fn double get_triplet_K_value(std::deque<histentry>::iterator &iter)
    * return the triplet Kminus value for the associated iterator.
    */
 
@@ -178,13 +178,13 @@ public:
 
 protected:
   /**
-   * \fn void set_spiketime(Time const & t_sp, double_t offset)
+   * \fn void set_spiketime(Time const & t_sp, double offset)
    * record spike history
    */
   void set_spiketime( Time const& t_sp, double offset = 0.0 );
 
   /**
-   * \fn double_t get_spiketime()
+   * \fn double get_spiketime()
    * return most recent spike time in ms
    */
   inline double get_spiketime_ms() const;

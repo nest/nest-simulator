@@ -587,7 +587,7 @@ public:
    * Triggers the update of all SynapticElements
    * stored in the synaptic_element_map_. It also updates the calcium
    * concentration.
-   * @param t double_t time when the update is being performed
+   * @param t double time when the update is being performed
    * @ingroup SP_functions
    */
   virtual void update_synaptic_elements( double ){};

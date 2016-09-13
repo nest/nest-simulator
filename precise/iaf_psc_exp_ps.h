@@ -238,7 +238,7 @@ private:
 
   /**
    * Localize threshold crossing by bisectioning.
-   * @param   double_t length of interval since previous event
+   * @param   double length of interval since previous event
    * @returns time from previous event to threshold crossing
    */
   double bisectioning_( const double dt ) const;

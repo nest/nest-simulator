@@ -25,6 +25,7 @@
 
 // C++ includes:
 #include <cassert>
+#include <cfloat>
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
@@ -100,10 +101,6 @@ namespace nest
    - One may later consider to introduce per-tread simulation time variables.
 
    @NOTE
-   Is this entire setup still compatible with different step
-   lengths in different subnets, or have we abandoned that idea?
-
-   @NOTE
    Delays must be added to current time, and moduloed each time a
    spike is inserted into a ring buffer.  That operation must be
    very fast, and there is no time for conversions.  Thus, delays
@@ -145,7 +142,7 @@ class Time
 {
   // tic_t: tics in  a step, signed long or long long
   // delay: steps, signed long
-  // double_t: milliseconds (double!)
+  // double: milliseconds (double!)
 
   /////////////////////////////////////////////////////////////
   // Range: Limits & conversion factors for different types
@@ -228,14 +225,14 @@ protected:
   {
     static const tic_t tics = tic_t_max / Range::INF_MARGIN + 1;
     static const delay steps = delay_max;
-#define LIM_POS_INF_ms double_t_max // because C++ bites
+#define LIM_POS_INF_ms DBL_MAX // because C++ bites
   } LIM_POS_INF;
 
   static struct LimitNegInf
   {
     static const tic_t tics = -tic_t_max / Range::INF_MARGIN - 1;
     static const delay steps = -delay_max;
-#define LIM_NEG_INF_ms ( -double_t_max ) // c++ bites
+#define LIM_NEG_INF_ms ( -DBL_MAX ) // c++ bites
   } LIM_NEG_INF;
 
   /////////////////////////////////////////////////////////////

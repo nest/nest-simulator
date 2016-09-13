@@ -96,33 +96,12 @@ const tic_t tic_t_max = LONG_MAX;
 const tic_t tic_t_min = LONG_MIN;
 #endif
 
-using std::size_t;
-
-typedef double double_t;       ///< Double precision floating point numbers.
-typedef float float_t;         ///< Single precision floating point numbers.
-typedef int int_t;             ///< Integer number with at least 16 bit.
-typedef long long_t;           ///< Integer number with at least 32 bit.
-typedef unsigned int uint_t;   ///< Unsigned int_t.
-typedef unsigned long ulong_t; ///< Unsigned long_t.
-
-const long_t long_t_max = LONG_MAX;
-const long_t long_t_min = LONG_MIN;
-
-/**
- * Largest and smallest available double value.
- *
- * @note Compile-time constant must have integral type,
- * thus we must define double limits as macros.
- */
-#define double_t_max ( DBL_MAX )
-#define double_t_min ( DBL_MIN )
-
 /**
  *  Unsigned long type for enumerations.
  */
 typedef size_t index;
 #ifndef SIZE_MAX
-#define SIZE_MAX ( ( size_t ) -1 )
+#define SIZE_MAX ( static_cast< std::size_t >( -1 ) )
 #endif
 const index invalid_index = SIZE_MAX;
 
@@ -148,7 +127,7 @@ const index max_targetindex = invalid_targetindex - 1;
  * identification.
  * For invalid or undefined threads, the value -1 is used.
  */
-typedef int_t thread;
+typedef int thread;
 
 /**
  * Value for invalid connection port number.
@@ -162,7 +141,7 @@ const thread invalid_thread_ = -1;
  * Valid port numbers start at zero (0).
  * The value -1 is used for invalid or unassigned ports.
  */
-typedef long_t rport;
+typedef long rport;
 
 /**
  * Connection port number to distinguis outgoing connections.
@@ -170,7 +149,7 @@ typedef long_t rport;
  * Valid port numbers start at zero (0).
  * The value -1 is used for invalid or unassigned ports.
  */
-typedef long_t port;
+typedef long port;
 
 /**
  * Value for invalid connection port number.
@@ -185,7 +164,7 @@ const rport invalid_port_ = -1;
  * as a non-existing connection. Otherwise, there is no default range for
  * connection weights.
  */
-typedef double_t weight;
+typedef double weight;
 
 /**
  * Delay of a connection.
@@ -193,15 +172,14 @@ typedef double_t weight;
  * before an Event arrives at the receiving Node.
  * Delays must be equal or larger than one.
  */
-typedef long_t delay;
-const long_t delay_max = long_t_max;
-const long_t delay_min = long_t_min;
-
+typedef long delay;
+const long delay_min = LONG_MIN;
+const long delay_max = LONG_MAX;
 
 /**
  * enum type of signal conveyed by spike events of a node.
  * These types are used upon connect to check if spikes sent by one
- * neuron are intepreted the same way by receiving neuron.
+ * neuron are interpreted the same way by receiving neuron.
  *
  * Each possible signal that may be represented (currently SPIKE and BINARY)
  * is interpreted as a separate bit flag. This way, upon connection, we

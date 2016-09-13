@@ -49,8 +49,8 @@
 #include "layer_impl.h"
 #include "mask.h"
 #include "mask_impl.h"
-#include "parameter.h"
 #include "topology.h"
+#include "topology_parameter.h"
 
 namespace nest
 {
@@ -88,10 +88,10 @@ TopologyModule::mask_factory_( void )
   return factory;
 }
 
-GenericFactory< Parameter >&
+GenericFactory< TopologyParameter >&
 TopologyModule::parameter_factory_( void )
 {
-  static GenericFactory< Parameter > factory;
+  static GenericFactory< TopologyParameter > factory;
   return factory;
 }
 
@@ -155,8 +155,8 @@ TopologyModule::create_mask( const Token& t )
       try
       {
 
-        std::vector< double_t > anchor =
-          getValue< std::vector< double_t > >( anchor_token );
+        std::vector< double > anchor =
+          getValue< std::vector< double > >( anchor_token );
         AbstractMask* amask;
 
         switch ( anchor.size() )
@@ -181,10 +181,10 @@ TopologyModule::create_mask( const Token& t )
 
         DictionaryDatum ad = getValue< DictionaryDatum >( anchor_token );
 
-        int_t dim = 2;
-        int_t column = getValue< long >( ad, names::column );
-        int_t row = getValue< long >( ad, names::row );
-        int_t layer;
+        int dim = 2;
+        int column = getValue< long >( ad, names::column );
+        int row = getValue< long >( ad, names::row );
+        int layer;
         if ( ad->known( names::layer ) )
         {
           layer = getValue< long >( ad, names::layer );
@@ -197,7 +197,7 @@ TopologyModule::create_mask( const Token& t )
           {
             GridMask< 2 >& grid_mask_2d =
               dynamic_cast< GridMask< 2 >& >( *mask );
-            grid_mask_2d.set_anchor( Position< 2, int_t >( column, row ) );
+            grid_mask_2d.set_anchor( Position< 2, int >( column, row ) );
           }
           catch ( std::bad_cast e )
           {
@@ -209,8 +209,7 @@ TopologyModule::create_mask( const Token& t )
           {
             GridMask< 3 >& grid_mask_3d =
               dynamic_cast< GridMask< 3 >& >( *mask );
-            grid_mask_3d.set_anchor(
-              Position< 3, int_t >( column, row, layer ) );
+            grid_mask_3d.set_anchor( Position< 3, int >( column, row, layer ) );
           }
           catch ( std::bad_cast e )
           {
@@ -265,20 +264,20 @@ TopologyModule::create_parameter( const Token& t )
   }
 }
 
-Parameter*
+TopologyParameter*
 TopologyModule::create_parameter( const Name& name, const DictionaryDatum& d )
 {
   // The parameter factory will create the parameter without regard for
   // the anchor
-  Parameter* param = parameter_factory_().create( name, d );
+  TopologyParameter* param = parameter_factory_().create( name, d );
 
   // Wrap the parameter object created above in an AnchoredParameter if
   // the dictionary contains an anchor
   if ( d->known( names::anchor ) )
   {
-    std::vector< double_t > anchor =
-      getValue< std::vector< double_t > >( d, names::anchor );
-    Parameter* aparam;
+    std::vector< double > anchor =
+      getValue< std::vector< double > >( d, names::anchor );
+    TopologyParameter* aparam;
     switch ( anchor.size() )
     {
     case 2:
@@ -305,10 +304,10 @@ create_doughnut( const DictionaryDatum& d )
   // The doughnut (actually an annulus) is created using a DifferenceMask
   Position< 2 > center( 0, 0 );
   if ( d->known( names::anchor ) )
-    center = getValue< std::vector< double_t > >( d, names::anchor );
+    center = getValue< std::vector< double > >( d, names::anchor );
 
-  const double outer = getValue< double_t >( d, names::outer_radius );
-  const double inner = getValue< double_t >( d, names::inner_radius );
+  const double outer = getValue< double >( d, names::outer_radius );
+  const double inner = getValue< double >( d, names::inner_radius );
   if ( inner >= outer )
     throw BadProperty(
       "topology::create_doughnut: "
@@ -470,7 +469,7 @@ TopologyModule::GetPosition_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  index node_gid = getValue< long_t >( i->OStack.pick( 0 ) );
+  index node_gid = getValue< long >( i->OStack.pick( 0 ) );
 
   Token result = get_position( node_gid );
 
@@ -527,10 +526,10 @@ TopologyModule::Displacement_a_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  std::vector< double_t > point =
-    getValue< std::vector< double_t > >( i->OStack.pick( 1 ) );
+  std::vector< double > point =
+    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
 
-  index node_gid = getValue< long_t >( i->OStack.pick( 0 ) );
+  index node_gid = getValue< long >( i->OStack.pick( 0 ) );
 
   Token result = displacement( point, node_gid );
 
@@ -587,10 +586,10 @@ TopologyModule::Distance_a_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  std::vector< double_t > point =
-    getValue< std::vector< double_t > >( i->OStack.pick( 1 ) );
+  std::vector< double > point =
+    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
 
-  index node_gid = getValue< long_t >( i->OStack.pick( 0 ) );
+  index node_gid = getValue< long >( i->OStack.pick( 0 ) );
 
   Token result = distance( point, node_gid );
 
@@ -652,8 +651,8 @@ TopologyModule::Inside_a_MFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  std::vector< double_t > point =
-    getValue< std::vector< double_t > >( i->OStack.pick( 1 ) );
+  std::vector< double > point =
+    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
   MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 0 ) );
 
   bool ret = inside( point, mask );
@@ -775,10 +774,10 @@ TopologyModule::GetGlobalChildren_i_M_aFunction::execute(
 {
   i->assert_stack_load( 3 );
 
-  index gid = getValue< long_t >( i->OStack.pick( 2 ) );
+  index gid = getValue< long >( i->OStack.pick( 2 ) );
   MaskDatum maskd = getValue< MaskDatum >( i->OStack.pick( 1 ) );
-  std::vector< double_t > anchor =
-    getValue< std::vector< double_t > >( i->OStack.pick( 0 ) );
+  std::vector< double > anchor =
+    getValue< std::vector< double > >( i->OStack.pick( 0 ) );
 
   ArrayDatum result = get_global_children( gid, maskd, anchor );
 
@@ -975,8 +974,8 @@ TopologyModule::ConnectLayers_i_i_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  index source_gid = getValue< long_t >( i->OStack.pick( 2 ) );
-  index target_gid = getValue< long_t >( i->OStack.pick( 1 ) );
+  index source_gid = getValue< long >( i->OStack.pick( 2 ) );
+  index target_gid = getValue< long >( i->OStack.pick( 1 ) );
   const DictionaryDatum connection_dict =
     getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
@@ -1043,11 +1042,11 @@ TopologyModule::GetValue_a_PFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  std::vector< double_t > point =
-    getValue< std::vector< double_t > >( i->OStack.pick( 1 ) );
+  std::vector< double > point =
+    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
   ParameterDatum param = getValue< ParameterDatum >( i->OStack.pick( 0 ) );
 
-  double_t value = get_value( point, param );
+  double value = get_value( point, param );
 
   i->OStack.pop( 2 );
   i->OStack.push( value );
@@ -1099,7 +1098,7 @@ TopologyModule::DumpLayerNodes_os_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const index layer_gid = getValue< long_t >( i->OStack.pick( 0 ) );
+  const index layer_gid = getValue< long >( i->OStack.pick( 0 ) );
   OstreamDatum out = getValue< OstreamDatum >( i->OStack.pick( 1 ) );
 
   dump_layer_nodes( layer_gid, out );
@@ -1158,7 +1157,7 @@ TopologyModule::DumpLayerConnections_os_i_lFunction::execute(
 
   OstreamDatum out_file = getValue< OstreamDatum >( i->OStack.pick( 2 ) );
 
-  const index layer_gid = getValue< long_t >( i->OStack.pick( 1 ) );
+  const index layer_gid = getValue< long >( i->OStack.pick( 1 ) );
 
   const Token syn_model = i->OStack.pick( 0 );
 
@@ -1206,7 +1205,7 @@ TopologyModule::GetElement_i_iaFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const index layer_gid = getValue< long_t >( i->OStack.pick( 1 ) );
+  const index layer_gid = getValue< long >( i->OStack.pick( 1 ) );
   TokenArray array = getValue< TokenArray >( i->OStack.pick( 0 ) );
 
   std::vector< index > node_gids = get_element( layer_gid, array );

@@ -1,5 +1,5 @@
 /*
- *  parameter.h
+ *  topology_parameter.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef PARAMETER_H
-#define PARAMETER_H
+#ifndef TOPOLOGY_PARAMETER_H
+#define TOPOLOGY_PARAMETER_H
 
 // C++ includes:
 #include <limits>
@@ -50,13 +50,13 @@ class TopologyModule;
 /**
  * Abstract base class for parameters
  */
-class Parameter
+class TopologyParameter
 {
 public:
   /**
    * Default constructor
    */
-  Parameter()
+  TopologyParameter()
     : cutoff_( -std::numeric_limits< double >::infinity() )
   {
   }
@@ -65,7 +65,7 @@ public:
    * Constructor
    * @param cutoff Values less than the cutoff are set to zero.
    */
-  Parameter( double_t cutoff )
+  TopologyParameter( double cutoff )
     : cutoff_( cutoff )
   {
   }
@@ -76,26 +76,26 @@ public:
    *  cutoff - Values less than the cutoff are set to zero.
    * @param d dictionary with parameter values
    */
-  Parameter( const DictionaryDatum& d )
+  TopologyParameter( const DictionaryDatum& d )
     : cutoff_( -std::numeric_limits< double >::infinity() )
   {
-    updateValue< double_t >( d, names::cutoff, cutoff_ );
+    updateValue< double >( d, names::cutoff, cutoff_ );
   }
 
   /**
    * Virtual destructor
    */
-  virtual ~Parameter()
+  virtual ~TopologyParameter()
   {
   }
 
   /**
    * @returns the value of the parameter at the given point.
    */
-  double_t
+  double
   value( const Position< 2 >& p, librandom::RngPtr& rng ) const
   {
-    double_t val = raw_value( p, rng );
+    double val = raw_value( p, rng );
     if ( val < cutoff_ )
       return 0.0;
     else
@@ -105,10 +105,10 @@ public:
   /**
    * @returns the value of the parameter at the given point.
    */
-  double_t
+  double
   value( const Position< 3 >& p, librandom::RngPtr& rng ) const
   {
-    double_t val = raw_value( p, rng );
+    double val = raw_value( p, rng );
     if ( val < cutoff_ )
       return 0.0;
     else
@@ -119,7 +119,7 @@ public:
    * Raw value disregarding cutoff.
    * @returns the value of the parameter at the given point.
    */
-  virtual double_t
+  virtual double
   raw_value( const Position< 2 >&, librandom::RngPtr& ) const
   {
     throw KernelException( "Parameter not valid for 2D layer" );
@@ -129,7 +129,7 @@ public:
    * Raw value disregarding cutoff.
    * @returns the value of the parameter at the given point.
    */
-  virtual double_t
+  virtual double
   raw_value( const Position< 3 >&, librandom::RngPtr& ) const
   {
     throw KernelException( "Parameter not valid for 3D layer" );
@@ -138,51 +138,54 @@ public:
   /**
    * @returns the value of the parameter at the given point.
    */
-  double_t value( const std::vector< double_t >& pt,
-    librandom::RngPtr& rng ) const;
+  double value( const std::vector< double >& pt, librandom::RngPtr& rng ) const;
 
   /**
    * Clone method.
    * @returns dynamically allocated copy of parameter object
    */
-  virtual Parameter* clone() const = 0;
+  virtual TopologyParameter* clone() const = 0;
 
   /**
    * Create the product of this parameter with another.
    * @returns a new dynamically allocated parameter.
    */
-  virtual Parameter* multiply_parameter( const Parameter& other ) const;
+  virtual TopologyParameter* multiply_parameter(
+    const TopologyParameter& other ) const;
   /**
    * Create the quotient of this parameter with another.
    * @returns a new dynamically allocated parameter.
    */
-  virtual Parameter* divide_parameter( const Parameter& other ) const;
+  virtual TopologyParameter* divide_parameter(
+    const TopologyParameter& other ) const;
   /**
    * Create the sum of this parameter with another.
    * @returns a new dynamically allocated parameter.
    */
-  virtual Parameter* add_parameter( const Parameter& other ) const;
+  virtual TopologyParameter* add_parameter(
+    const TopologyParameter& other ) const;
   /**
    * Create the difference of this parameter with another.
    * @returns a new dynamically allocated parameter.
    */
-  virtual Parameter* subtract_parameter( const Parameter& other ) const;
+  virtual TopologyParameter* subtract_parameter(
+    const TopologyParameter& other ) const;
 
 private:
-  double_t cutoff_;
+  double cutoff_;
 };
 
-typedef lockPTRDatum< Parameter, &TopologyModule::ParameterType >
+typedef lockPTRDatum< TopologyParameter, &TopologyModule::ParameterType >
   ParameterDatum;
 
 /**
  * Parameter with constant value.
  */
-class ConstantParameter : public Parameter
+class ConstantParameter : public TopologyParameter
 {
 public:
-  ConstantParameter( double_t value )
-    : Parameter()
+  ConstantParameter( double value )
+    : TopologyParameter()
     , value_( value )
   {
   }
@@ -192,9 +195,9 @@ public:
    * value - constant value of this parameter
    */
   ConstantParameter( const DictionaryDatum& d )
-    : Parameter( d )
+    : TopologyParameter( d )
   {
-    value_ = getValue< double_t >( d, "value" );
+    value_ = getValue< double >( d, "value" );
   }
 
   ~ConstantParameter()
@@ -204,56 +207,56 @@ public:
   /**
    * @returns the constant value of this parameter.
    */
-  double_t
+  double
   raw_value( const Position< 2 >&, librandom::RngPtr& ) const
   {
     return value_;
   }
-  double_t
+  double
   raw_value( const Position< 3 >&, librandom::RngPtr& ) const
   {
     return value_;
   }
 
-  Parameter*
+  TopologyParameter*
   clone() const
   {
     return new ConstantParameter( value_ );
   }
 
 private:
-  double_t value_;
+  double value_;
 };
 
 /**
  * Abstract base class for parameters only depending on distance.
  */
-class RadialParameter : public Parameter
+class RadialParameter : public TopologyParameter
 {
 public:
   RadialParameter()
-    : Parameter()
+    : TopologyParameter()
   {
   }
 
-  RadialParameter( double_t cutoff )
-    : Parameter( cutoff )
+  RadialParameter( double cutoff )
+    : TopologyParameter( cutoff )
   {
   }
 
   RadialParameter( const DictionaryDatum& d )
-    : Parameter( d )
+    : TopologyParameter( d )
   {
   }
 
-  virtual double_t raw_value( double_t ) const = 0;
+  virtual double raw_value( double ) const = 0;
 
-  double_t
+  double
   raw_value( const Position< 2 >& p, librandom::RngPtr& ) const
   {
     return raw_value( p.length() );
   }
-  double_t
+  double
   raw_value( const Position< 3 >& p, librandom::RngPtr& ) const
   {
     return raw_value( p.length() );
@@ -276,24 +279,24 @@ public:
     , a_( 1.0 )
     , c_( 0.0 )
   {
-    updateValue< double_t >( d, names::a, a_ );
-    updateValue< double_t >( d, names::c, c_ );
+    updateValue< double >( d, names::a, a_ );
+    updateValue< double >( d, names::c, c_ );
   }
 
-  double_t
-  raw_value( double_t x ) const
+  double
+  raw_value( double x ) const
   {
     return a_ * x + c_;
   }
 
-  Parameter*
+  TopologyParameter*
   clone() const
   {
     return new LinearParameter( *this );
   }
 
 private:
-  double_t a_, c_;
+  double a_, c_;
 };
 
 
@@ -315,29 +318,29 @@ public:
     , c_( 0.0 )
     , tau_( 1.0 )
   {
-    updateValue< double_t >( d, names::a, a_ );
-    updateValue< double_t >( d, names::c, c_ );
-    updateValue< double_t >( d, names::tau, tau_ );
+    updateValue< double >( d, names::a, a_ );
+    updateValue< double >( d, names::c, c_ );
+    updateValue< double >( d, names::tau, tau_ );
     if ( tau_ <= 0 )
       throw BadProperty(
         "topology::ExponentialParameter: "
         "tau > 0 required." );
   }
 
-  double_t
-  raw_value( double_t x ) const
+  double
+  raw_value( double x ) const
   {
     return c_ + a_ * std::exp( -x / tau_ );
   }
 
-  Parameter*
+  TopologyParameter*
   clone() const
   {
     return new ExponentialParameter( *this );
   }
 
 private:
-  double_t a_, c_, tau_;
+  double a_, c_, tau_;
 };
 
 
@@ -361,32 +364,32 @@ public:
     , mean_( 0.0 )
     , sigma_( 1.0 )
   {
-    updateValue< double_t >( d, names::c, c_ );
-    updateValue< double_t >( d, names::p_center, p_center_ );
-    updateValue< double_t >( d, names::mean, mean_ );
-    updateValue< double_t >( d, names::sigma, sigma_ );
+    updateValue< double >( d, names::c, c_ );
+    updateValue< double >( d, names::p_center, p_center_ );
+    updateValue< double >( d, names::mean, mean_ );
+    updateValue< double >( d, names::sigma, sigma_ );
     if ( sigma_ <= 0 )
       throw BadProperty(
         "topology::GaussianParameter: "
         "sigma > 0 required." );
   }
 
-  double_t
-  raw_value( double_t x ) const
+  double
+  raw_value( double x ) const
   {
     return c_
       + p_center_
       * std::exp( -std::pow( x - mean_, 2 ) / ( 2 * std::pow( sigma_, 2 ) ) );
   }
 
-  Parameter*
+  TopologyParameter*
   clone() const
   {
     return new GaussianParameter( *this );
   }
 
 private:
-  double_t c_, p_center_, mean_, sigma_;
+  double c_, p_center_, mean_, sigma_;
 };
 
 
@@ -397,7 +400,7 @@ private:
  *                                2*rho*(x-mean_x)*(y-mean_y)/(sigma_x*sigma_y)
  *                               ) / (2*(1-rho^2)) )
  */
-class Gaussian2DParameter : public Parameter
+class Gaussian2DParameter : public TopologyParameter
 {
 public:
   /**
@@ -412,7 +415,7 @@ public:
    */
   Gaussian2DParameter( const DictionaryDatum& d );
 
-  double_t
+  double
   raw_value( const Position< 2 >& pos, librandom::RngPtr& ) const
   {
     return c_
@@ -426,27 +429,27 @@ public:
               / ( sigma_x_ * sigma_y_ ) ) / ( 2. * ( 1. - rho_ * rho_ ) ) );
   }
 
-  double_t
+  double
   raw_value( const Position< 3 >& pos, librandom::RngPtr& rng ) const
   {
     return raw_value( Position< 2 >( pos[ 0 ], pos[ 1 ] ), rng );
   }
 
-  Parameter*
+  TopologyParameter*
   clone() const
   {
     return new Gaussian2DParameter( *this );
   }
 
 private:
-  double_t c_, p_center_, mean_x_, sigma_x_, mean_y_, sigma_y_, rho_;
+  double c_, p_center_, mean_x_, sigma_x_, mean_y_, sigma_y_, rho_;
 };
 
 
 /**
  * Random parameter with uniform distribution in [min,max)
  */
-class UniformParameter : public Parameter
+class UniformParameter : public TopologyParameter
 {
 public:
 public:
@@ -456,12 +459,12 @@ public:
    * max - maximum value
    */
   UniformParameter( const DictionaryDatum& d )
-    : Parameter( d )
+    : TopologyParameter( d )
     , lower_( 0.0 )
     , range_( 1.0 )
   {
-    updateValue< double_t >( d, names::min, lower_ );
-    updateValue< double_t >( d, names::max, range_ );
+    updateValue< double >( d, names::min, lower_ );
+    updateValue< double >( d, names::max, range_ );
 
     if ( lower_ >= range_ )
       throw BadProperty(
@@ -471,26 +474,26 @@ public:
     range_ -= lower_;
   }
 
-  double_t
+  double
   raw_value( const Position< 2 >&, librandom::RngPtr& rng ) const
   {
     return lower_ + rng->drand() * range_;
   }
 
-  double_t
+  double
   raw_value( const Position< 3 >&, librandom::RngPtr& rng ) const
   {
     return lower_ + rng->drand() * range_;
   }
 
-  Parameter*
+  TopologyParameter*
   clone() const
   {
     return new UniformParameter( *this );
   }
 
 private:
-  double_t lower_, range_;
+  double lower_, range_;
 };
 
 
@@ -498,7 +501,7 @@ private:
  * Random parameter with normal distribution, optionally truncated to [min,max).
  * Truncation is implemented by rejection.
  */
-class NormalParameter : public Parameter
+class NormalParameter : public TopologyParameter
 {
 public:
 public:
@@ -510,17 +513,17 @@ public:
    * max   - maximum value
    */
   NormalParameter( const DictionaryDatum& d )
-    : Parameter( d )
+    : TopologyParameter( d )
     , mean_( 0.0 )
     , sigma_( 1.0 )
     , min_( -std::numeric_limits< double >::infinity() )
     , max_( std::numeric_limits< double >::infinity() )
     , rdev()
   {
-    updateValue< double_t >( d, names::mean, mean_ );
-    updateValue< double_t >( d, names::sigma, sigma_ );
-    updateValue< double_t >( d, names::min, min_ );
-    updateValue< double_t >( d, names::max, max_ );
+    updateValue< double >( d, names::mean, mean_ );
+    updateValue< double >( d, names::sigma, sigma_ );
+    updateValue< double >( d, names::min, min_ );
+    updateValue< double >( d, names::max, max_ );
 
     if ( sigma_ <= 0 )
       throw BadProperty(
@@ -532,10 +535,10 @@ public:
         "min < max required." );
   }
 
-  double_t
+  double
   raw_value( librandom::RngPtr& rng ) const
   {
-    double_t val;
+    double val;
     do
     {
       val = mean_ + rdev( rng ) * sigma_;
@@ -543,26 +546,26 @@ public:
     return val;
   }
 
-  double_t
+  double
   raw_value( const Position< 2 >&, librandom::RngPtr& rng ) const
   {
     return raw_value( rng );
   }
 
-  double_t
+  double
   raw_value( const Position< 3 >&, librandom::RngPtr& rng ) const
   {
     return raw_value( rng );
   }
 
-  Parameter*
+  TopologyParameter*
   clone() const
   {
     return new NormalParameter( *this );
   }
 
 private:
-  double_t mean_, sigma_, min_, max_;
+  double mean_, sigma_, min_, max_;
   librandom::NormalRandomDev rdev;
 };
 
@@ -571,7 +574,7 @@ private:
  * Random parameter with lognormal distribution, optionally truncated to
  * [min,max). Truncation is implemented by rejection.
  */
-class LognormalParameter : public Parameter
+class LognormalParameter : public TopologyParameter
 {
 public:
 public:
@@ -583,17 +586,17 @@ public:
    * max   - maximum value
    */
   LognormalParameter( const DictionaryDatum& d )
-    : Parameter( d )
+    : TopologyParameter( d )
     , mu_( 0.0 )
     , sigma_( 1.0 )
     , min_( -std::numeric_limits< double >::infinity() )
     , max_( std::numeric_limits< double >::infinity() )
     , rdev()
   {
-    updateValue< double_t >( d, names::mu, mu_ );
-    updateValue< double_t >( d, names::sigma, sigma_ );
-    updateValue< double_t >( d, names::min, min_ );
-    updateValue< double_t >( d, names::max, max_ );
+    updateValue< double >( d, names::mu, mu_ );
+    updateValue< double >( d, names::sigma, sigma_ );
+    updateValue< double >( d, names::min, min_ );
+    updateValue< double >( d, names::max, max_ );
 
     if ( sigma_ <= 0 )
       throw BadProperty(
@@ -605,10 +608,10 @@ public:
         "min < max required." );
   }
 
-  double_t
+  double
   raw_value( librandom::RngPtr& rng ) const
   {
-    double_t val;
+    double val;
     do
     {
       val = std::exp( mu_ + rdev( rng ) * sigma_ );
@@ -616,26 +619,26 @@ public:
     return val;
   }
 
-  double_t
+  double
   raw_value( const Position< 2 >&, librandom::RngPtr& rng ) const
   {
     return raw_value( rng );
   }
 
-  double_t
+  double
   raw_value( const Position< 3 >&, librandom::RngPtr& rng ) const
   {
     return raw_value( rng );
   }
 
-  Parameter*
+  TopologyParameter*
   clone() const
   {
     return new LognormalParameter( *this );
   }
 
 private:
-  double_t mu_, sigma_, min_, max_;
+  double mu_, sigma_, min_, max_;
   librandom::NormalRandomDev rdev;
 };
 
@@ -644,18 +647,18 @@ private:
  * Parameter class representing a parameter centered at an anchor position.
  */
 template < int D >
-class AnchoredParameter : public Parameter
+class AnchoredParameter : public TopologyParameter
 {
 public:
-  AnchoredParameter( const Parameter& p, const Position< D >& anchor )
-    : Parameter( p )
+  AnchoredParameter( const TopologyParameter& p, const Position< D >& anchor )
+    : TopologyParameter( p )
     , p_( p.clone() )
     , anchor_( anchor )
   {
   }
 
   AnchoredParameter( const AnchoredParameter& p )
-    : Parameter( p )
+    : TopologyParameter( p )
     , p_( p.p_->clone() )
     , anchor_( p.anchor_ )
   {
@@ -666,41 +669,41 @@ public:
     delete p_;
   }
 
-  double_t
+  double
   raw_value( const Position< D xor 1 >&, librandom::RngPtr& ) const
   {
     throw BadProperty( "Incorrect dimension." );
   }
 
-  double_t
+  double
   raw_value( const Position< D >& p, librandom::RngPtr& rng ) const
   {
     return p_->raw_value( p - anchor_, rng );
   }
 
-  Parameter*
+  TopologyParameter*
   clone() const
   {
     return new AnchoredParameter( *this );
   }
 
 private:
-  Parameter* p_;
+  TopologyParameter* p_;
   Position< D > anchor_;
 };
 
 /**
  * Parameter class representing the product of two parameters
  */
-class ProductParameter : public Parameter
+class ProductParameter : public TopologyParameter
 {
 public:
   /**
    * Construct the product of the two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
-  ProductParameter( const Parameter& m1, const Parameter& m2 )
-    : Parameter()
+  ProductParameter( const TopologyParameter& m1, const TopologyParameter& m2 )
+    : TopologyParameter()
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
   {
@@ -710,7 +713,7 @@ public:
    * Copy constructor.
    */
   ProductParameter( const ProductParameter& p )
-    : Parameter( p )
+    : TopologyParameter( p )
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
@@ -725,39 +728,39 @@ public:
   /**
    * @returns the value of the product.
    */
-  double_t
+  double
   raw_value( const Position< 2 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) * parameter2_->value( p, rng );
   }
-  double_t
+  double
   raw_value( const Position< 3 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) * parameter2_->value( p, rng );
   }
 
-  Parameter*
+  TopologyParameter*
   clone() const
   {
     return new ProductParameter( *this );
   }
 
 protected:
-  Parameter* parameter1_, *parameter2_;
+  TopologyParameter* parameter1_, *parameter2_;
 };
 
 /**
  * Parameter class representing the quotient of two parameters
  */
-class QuotientParameter : public Parameter
+class QuotientParameter : public TopologyParameter
 {
 public:
   /**
    * Construct the quotient of the two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
-  QuotientParameter( const Parameter& m1, const Parameter& m2 )
-    : Parameter()
+  QuotientParameter( const TopologyParameter& m1, const TopologyParameter& m2 )
+    : TopologyParameter()
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
   {
@@ -767,7 +770,7 @@ public:
    * Copy constructor.
    */
   QuotientParameter( const QuotientParameter& p )
-    : Parameter( p )
+    : TopologyParameter( p )
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
@@ -782,39 +785,39 @@ public:
   /**
    * @returns the value of the product.
    */
-  double_t
+  double
   raw_value( const Position< 2 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) / parameter2_->value( p, rng );
   }
-  double_t
+  double
   raw_value( const Position< 3 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) / parameter2_->value( p, rng );
   }
 
-  Parameter*
+  TopologyParameter*
   clone() const
   {
     return new QuotientParameter( *this );
   }
 
 protected:
-  Parameter* parameter1_, *parameter2_;
+  TopologyParameter* parameter1_, *parameter2_;
 };
 
 /**
  * Parameter class representing the sum of two parameters
  */
-class SumParameter : public Parameter
+class SumParameter : public TopologyParameter
 {
 public:
   /**
    * Construct the sum of the two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
-  SumParameter( const Parameter& m1, const Parameter& m2 )
-    : Parameter()
+  SumParameter( const TopologyParameter& m1, const TopologyParameter& m2 )
+    : TopologyParameter()
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
   {
@@ -824,7 +827,7 @@ public:
    * Copy constructor.
    */
   SumParameter( const SumParameter& p )
-    : Parameter( p )
+    : TopologyParameter( p )
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
@@ -839,39 +842,40 @@ public:
   /**
    * @returns the value of the sum.
    */
-  double_t
+  double
   raw_value( const Position< 2 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) + parameter2_->value( p, rng );
   }
-  double_t
+  double
   raw_value( const Position< 3 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) + parameter2_->value( p, rng );
   }
 
-  Parameter*
+  TopologyParameter*
   clone() const
   {
     return new SumParameter( *this );
   }
 
 protected:
-  Parameter* parameter1_, *parameter2_;
+  TopologyParameter* parameter1_, *parameter2_;
 };
 
 /**
  * Parameter class representing the difference of two parameters
  */
-class DifferenceParameter : public Parameter
+class DifferenceParameter : public TopologyParameter
 {
 public:
   /**
    * Construct the difference of the two given parameters. Copies are made
    * of the supplied Parameter objects.
    */
-  DifferenceParameter( const Parameter& m1, const Parameter& m2 )
-    : Parameter()
+  DifferenceParameter( const TopologyParameter& m1,
+    const TopologyParameter& m2 )
+    : TopologyParameter()
     , parameter1_( m1.clone() )
     , parameter2_( m2.clone() )
   {
@@ -881,7 +885,7 @@ public:
    * Copy constructor.
    */
   DifferenceParameter( const DifferenceParameter& p )
-    : Parameter( p )
+    : TopologyParameter( p )
     , parameter1_( p.parameter1_->clone() )
     , parameter2_( p.parameter2_->clone() )
   {
@@ -896,39 +900,39 @@ public:
   /**
    * @returns the value of the difference.
    */
-  double_t
+  double
   raw_value( const Position< 2 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) - parameter2_->value( p, rng );
   }
-  double_t
+  double
   raw_value( const Position< 3 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) - parameter2_->value( p, rng );
   }
 
-  Parameter*
+  TopologyParameter*
   clone() const
   {
     return new DifferenceParameter( *this );
   }
 
 protected:
-  Parameter* parameter1_, *parameter2_;
+  TopologyParameter* parameter1_, *parameter2_;
 };
 
 /**
  * Parameter class for a parameter oriented in the opposite direction.
  */
-class ConverseParameter : public Parameter
+class ConverseParameter : public TopologyParameter
 {
 public:
   /**
    * Construct the converse of the given parameter. A copy is made of the
    * supplied Parameter object.
    */
-  ConverseParameter( const Parameter& p )
-    : Parameter( p )
+  ConverseParameter( const TopologyParameter& p )
+    : TopologyParameter( p )
     , p_( p.clone() )
   {
   }
@@ -937,7 +941,7 @@ public:
    * Copy constructor.
    */
   ConverseParameter( const ConverseParameter& p )
-    : Parameter( p )
+    : TopologyParameter( p )
     , p_( p.p_->clone() )
   {
   }
@@ -950,47 +954,47 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double_t
+  double
   raw_value( const Position< 2 >& p, librandom::RngPtr& rng ) const
   {
     return p_->raw_value( -p, rng );
   }
-  double_t
+  double
   raw_value( const Position< 3 >& p, librandom::RngPtr& rng ) const
   {
     return p_->raw_value( -p, rng );
   }
 
-  Parameter*
+  TopologyParameter*
   clone() const
   {
     return new ConverseParameter( *this );
   }
 
 protected:
-  Parameter* p_;
+  TopologyParameter* p_;
 };
 
-inline Parameter*
-Parameter::multiply_parameter( const Parameter& other ) const
+inline TopologyParameter*
+TopologyParameter::multiply_parameter( const TopologyParameter& other ) const
 {
   return new ProductParameter( *this, other );
 }
 
-inline Parameter*
-Parameter::divide_parameter( const Parameter& other ) const
+inline TopologyParameter*
+TopologyParameter::divide_parameter( const TopologyParameter& other ) const
 {
   return new QuotientParameter( *this, other );
 }
 
-inline Parameter*
-Parameter::add_parameter( const Parameter& other ) const
+inline TopologyParameter*
+TopologyParameter::add_parameter( const TopologyParameter& other ) const
 {
   return new SumParameter( *this, other );
 }
 
-inline Parameter*
-Parameter::subtract_parameter( const Parameter& other ) const
+inline TopologyParameter*
+TopologyParameter::subtract_parameter( const TopologyParameter& other ) const
 {
   return new DifferenceParameter( *this, other );
 }

@@ -1174,7 +1174,7 @@ NestModule::TimeCommunication_i_i_bFunction::execute( SLIInterpreter* i ) const
   long num_bytes = getValue< long >( i->OStack.pick( 1 ) );
   bool offgrid = getValue< bool >( i->OStack.pick( 0 ) );
 
-  double_t time = 0.0;
+  double time = 0.0;
   if ( offgrid )
     time = kernel().mpi_manager.time_communicate_offgrid( num_bytes, samples );
   else
@@ -1205,7 +1205,7 @@ NestModule::TimeCommunicationv_i_iFunction::execute( SLIInterpreter* i ) const
   long num_bytes = getValue< long >( i->OStack.pick( 0 ) );
 
 
-  double_t time = 0.0;
+  double time = 0.0;
 
   time = kernel().mpi_manager.time_communicatev( num_bytes, samples );
 
@@ -1236,7 +1236,7 @@ NestModule::TimeCommunicationAlltoall_i_iFunction::execute(
   long num_bytes = getValue< long >( i->OStack.pick( 0 ) );
 
 
-  double_t time = 0.0;
+  double time = 0.0;
 
   time = kernel().mpi_manager.time_communicate_alltoall( num_bytes, samples );
 
@@ -1268,7 +1268,7 @@ NestModule::TimeCommunicationAlltoallv_i_iFunction::execute(
   long num_bytes = getValue< long >( i->OStack.pick( 0 ) );
 
 
-  double_t time = 0.0;
+  double time = 0.0;
 
   time = kernel().mpi_manager.time_communicate_alltoallv( num_bytes, samples );
 
@@ -1436,8 +1436,8 @@ NestModule::Cvgidcollection_i_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const long_t first = getValue< long_t >( i->OStack.pick( 1 ) );
-  const long_t last = getValue< long_t >( i->OStack.pick( 0 ) );
+  const long first = getValue< long >( i->OStack.pick( 1 ) );
+  const long last = getValue< long >( i->OStack.pick( 0 ) );
   GIDCollectionDatum gidcoll = GIDCollection( first, last );
 
   i->OStack.pop( 2 );
@@ -1531,13 +1531,15 @@ NestModule::SetMaxBufferedFunction::execute( SLIInterpreter* i ) const
 #endif
 
 /* BeginDocumentation
-   Name: EnableStructuralPlasticity - Enable structural plasticity functionality
-   in the network.
+   Name: SetStructuralPlasticityStatus - Set up parameters for structural
+   plasticity.
 
    Synopsis:
-   Allows the user to treat the nodes as neurons with synaptic elements,
-   allowing new synapses to be created and existing synapses to be deleted
-   during the simulation according to a set of growth and homeostatic rules.
+   Structural plasticity allows the user to treat the nodes as neurons with
+   synaptic elements, allowing new synapses to be created and existing synapses
+   to be deleted during the simulation according to a set of growth and
+   homeostatic rules. This function allows the user to set up various
+   parameters for structural plasticity.
 
    Parameters:
    structural_plasticity_dictionary - is a dictionary which states the settings

@@ -31,11 +31,11 @@
 
 // Includes from topology:
 #include "mask.h"
-#include "parameter.h"
 #include "position.h"
 #include "selector.h"
 #include "topology_names.h"
 #include "topologymodule.h"
+#include "topology_parameter.h"
 #include "vose.h"
 
 namespace nest
@@ -161,8 +161,8 @@ private:
   void connect_( index s,
     Node* target,
     thread target_thread,
-    double_t w,
-    double_t d,
+    double w,
+    double d,
     index syn );
 
   /**
@@ -184,18 +184,18 @@ private:
   Selector target_filter_;
   index number_of_connections_;
   lockPTR< AbstractMask > mask_;
-  lockPTR< Parameter > kernel_;
+  lockPTR< TopologyParameter > kernel_;
   index synapse_model_;
-  lockPTR< Parameter > weight_;
-  lockPTR< Parameter > delay_;
+  lockPTR< TopologyParameter > weight_;
+  lockPTR< TopologyParameter > delay_;
 };
 
 inline void
 ConnectionCreator::connect_( index s,
   Node* target,
   thread target_thread,
-  double_t w,
-  double_t d,
+  double w,
+  double d,
   index syn )
 {
   // check whether the target is on this process

@@ -80,10 +80,10 @@ nest::ac_generator::State_::get( DictionaryDatum& d ) const
 void
 nest::ac_generator::Parameters_::set( const DictionaryDatum& d )
 {
-  updateValue< double_t >( d, names::amplitude, amp_ );
-  updateValue< double_t >( d, names::offset, offset_ );
-  updateValue< double_t >( d, names::frequency, freq_ );
-  updateValue< double_t >( d, names::phase, phi_deg_ );
+  updateValue< double >( d, names::amplitude, amp_ );
+  updateValue< double >( d, names::offset, offset_ );
+  updateValue< double >( d, names::frequency, freq_ );
+  updateValue< double >( d, names::phase, phi_deg_ );
 }
 
 
@@ -132,12 +132,12 @@ nest::ac_generator::calibrate()
 {
   device_.calibrate();
 
-  const double_t h = Time::get_resolution().get_ms();
-  const double_t t = kernel().simulation_manager.get_time().get_ms();
+  const double h = Time::get_resolution().get_ms();
+  const double t = kernel().simulation_manager.get_time().get_ms();
 
   // scale Hz to ms
-  const double_t omega = 2.0 * numerics::pi * P_.freq_ / 1000.0;
-  const double_t phi_rad = P_.phi_deg_ * 2.0 * numerics::pi / 360.0;
+  const double omega = 2.0 * numerics::pi * P_.freq_ / 1000.0;
+  const double phi_rad = P_.phi_deg_ * 2.0 * numerics::pi / 360.0;
 
   // initial state
   S_.y_0_ = P_.amp_ * std::cos( omega * t + phi_rad );
@@ -151,17 +151,15 @@ nest::ac_generator::calibrate()
 }
 
 void
-nest::ac_generator::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+nest::ac_generator::update( Time const& origin, const long from, const long to )
 {
-  long_t start = origin.get_steps();
+  long start = origin.get_steps();
 
   CurrentEvent ce;
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
     if ( device_.is_active( Time::step( start + lag ) ) )
     {
-      const double_t y_0 = S_.y_0_;
+      const double y_0 = S_.y_0_;
       S_.y_0_ = V_.A_00_ * y_0 + V_.A_01_ * S_.y_1_;
       S_.y_1_ = V_.A_10_ * y_0 + V_.A_11_ * S_.y_1_;
       ce.set_current( S_.y_1_ + P_.offset_ );

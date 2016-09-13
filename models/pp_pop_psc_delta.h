@@ -187,7 +187,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< pp_pop_psc_delta >;
@@ -202,31 +202,31 @@ private:
   {
 
     /** Number of neurons in the population. */
-    int_t N_; // by Hesam
+    int N_; // by Hesam
 
     /** Membrane time constant in ms. */
-    double_t tau_m_;
+    double tau_m_;
 
     /** Membrane capacitance in pF. */
-    double_t c_m_;
+    double c_m_;
 
     /** ------------ */
-    double_t rho_0_;
+    double rho_0_;
 
     /** ------------ */
-    double_t delta_u_;
+    double delta_u_;
 
     /** Length of kernel */
-    int_t len_kernel_;
+    int len_kernel_;
 
     /** External DC current. */
-    double_t I_e_;
+    double I_e_;
 
     /** Array of time constants */
-    std::vector< double_t > taus_eta_;
+    std::vector< double > taus_eta_;
 
     /** -------------- */
-    std::vector< double_t > vals_eta_;
+    std::vector< double > vals_eta_;
 
     Parameters_();                      //!< Sets default parameter values
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
@@ -241,18 +241,18 @@ private:
   struct State_
   {
 
-    double_t y0_;
-    double_t h_;
+    double y0_;
+    double h_;
 
-    std::vector< int_t > age_occupations_;
-    std::vector< double_t > thetas_ages_;
-    std::vector< int_t > n_spikes_past_;
-    std::vector< int_t > n_spikes_ages_;
-    std::vector< double_t > rhos_ages_;
+    std::vector< int > age_occupations_;
+    std::vector< double > thetas_ages_;
+    std::vector< int > n_spikes_past_;
+    std::vector< int > n_spikes_ages_;
+    std::vector< double > rhos_ages_;
 
     // ring array pointers
-    int_t p_age_occupations_;
-    int_t p_n_spikes_past_;
+    int p_age_occupations_;
+    int p_n_spikes_past_;
 
     bool initialized_; // it is true if the vectors are initialized
 
@@ -289,15 +289,15 @@ private:
   {
 
 
-    double_t P30_;
-    double_t P33_;
+    double P30_;
+    double P33_;
 
-    int_t len_eta_;
-    std::vector< double_t > theta_kernel_;
-    std::vector< double_t > eta_kernel_;
+    int len_eta_;
+    std::vector< double > theta_kernel_;
+    std::vector< double > eta_kernel_;
 
-    double_t h_; //!< simulation time step in ms
-    double_t min_double_;
+    double h_; //!< simulation time step in ms
+    double min_double_;
 
 
     librandom::RngPtr rng_; // random number generator of my own thread
@@ -305,20 +305,20 @@ private:
     librandom::BinomialRandomDev binom_dev_; // binomial random generator
 
 
-    int_t DeadTimeCounts_;
+    int DeadTimeCounts_;
   };
 
   // Access functions for UniversalDataLogger -----------------------
 
   //! Read out the real membrane potential
-  double_t
+  double
   get_V_m_() const
   {
     return S_.h_;
   } // filtered input
 
   //! Read out the adaptive threshold potential
-  double_t
+  double
   get_n_events_() const
   {
     return S_.n_spikes_past_[ S_.p_n_spikes_past_ ];

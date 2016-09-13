@@ -35,12 +35,12 @@
 #include "normal_randomdev.h"
 
 // Includes from nestkernel:
+#include "conn_builder_impl.h"
 #include "conn_parameter.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "nest_names.h"
 #include "node.h"
-#include "sparse_node_array.h"
 #include "vp_manager_impl.h"
 
 // Includes from sli:
@@ -238,16 +238,6 @@ nest::ConnBuilder::~ConnBuilder()
         it != synapse_params_.end();
         ++it )
     delete it->second;
-}
-
-void
-nest::ConnBuilder::register_parameters_requiring_skipping_(
-  ConnParameter& param )
-{
-  if ( param.is_array() )
-  {
-    parameters_requiring_skipping_.push_back( &param );
-  }
 }
 
 void
@@ -584,29 +574,6 @@ nest::ConnBuilder::get_local_nodes()
   return kernel().node_manager.get_local_nodes_();
 }
 
-
-void
-nest::ConnBuilder::skip_conn_parameter_( thread target_thread )
-{
-  for ( std::vector< ConnParameter* >::iterator it =
-          parameters_requiring_skipping_.begin();
-        it != parameters_requiring_skipping_.end();
-        ++it )
-    ( *it )->skip( target_thread );
-}
-
-void
-nest::ConnBuilder::single_disconnect_( index sgid,
-  Node& target,
-  thread target_thread )
-{
-  // index tgid = target.get_gid();
-  // This is the most simple case in which only the synapse_model_ has been
-  // defined. TODO: Add functionality to delete synapses with a given weight
-  // or a given delay
-  kernel().sp_manager.disconnect(
-    sgid, &target, target_thread, synapse_model_ );
-}
 
 void
 nest::ConnBuilder::set_pre_synaptic_element_name( std::string name )
@@ -1453,9 +1420,9 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder(
 void
 nest::FixedTotalNumberBuilder::connect_()
 {
-  const int_t M = kernel().vp_manager.get_num_virtual_processes();
-  const long_t size_sources = sources_->size();
-  const long_t size_targets = targets_->size();
+  const int M = kernel().vp_manager.get_num_virtual_processes();
+  const long size_sources = sources_->size();
+  const long size_targets = targets_->size();
 
   // drawing connection ids
 
@@ -1487,7 +1454,7 @@ nest::FixedTotalNumberBuilder::connect_()
   // K from gsl is equivalent to M = n_vps
   // N is already taken from stack
   // p[] is targets_on_vp
-  std::vector< long_t > num_conns_on_vp( M, 0 ); // corresponds to n[]
+  std::vector< long > num_conns_on_vp( M, 0 ); // corresponds to n[]
 
   // calculate exact multinomial distribution
   // get global rng that is tested for synchronization for all threads
@@ -1496,9 +1463,9 @@ nest::FixedTotalNumberBuilder::connect_()
   // HEP: instead of counting upwards, we might count remaining_targets and
   // remaining_partitions down. why?
   // begin code adapted from gsl 1.8 //
-  double_t sum_dist = 0.0; // corresponds to sum_p
+  double sum_dist = 0.0; // corresponds to sum_p
   // norm is equivalent to size_targets
-  uint_t sum_partitions = 0; // corresponds to sum_n
+  unsigned int sum_partitions = 0; // corresponds to sum_n
 // substituting gsl_ran call
 #ifdef HAVE_GSL
   librandom::GSL_BinomialRandomDev bino( grng, 0, 0 );
@@ -1510,16 +1477,16 @@ nest::FixedTotalNumberBuilder::connect_()
   {
     if ( number_of_targets_on_vp[ k ] > 0 )
     {
-      double_t num_local_targets =
-        static_cast< double_t >( number_of_targets_on_vp[ k ] );
-      double_t p_local = num_local_targets / ( size_targets - sum_dist );
+      double num_local_targets =
+        static_cast< double >( number_of_targets_on_vp[ k ] );
+      double p_local = num_local_targets / ( size_targets - sum_dist );
       bino.set_p( p_local );
       bino.set_n( N_ - sum_partitions );
       num_conns_on_vp[ k ] = bino.ldev();
     }
 
-    sum_dist += static_cast< double_t >( number_of_targets_on_vp[ k ] );
-    sum_partitions += static_cast< uint_t >( num_conns_on_vp[ k ] );
+    sum_dist += static_cast< double >( number_of_targets_on_vp[ k ] );
+    sum_partitions += static_cast< uint >( num_conns_on_vp[ k ] );
   }
 
 // end code adapted from gsl 1.8
@@ -1532,7 +1499,7 @@ nest::FixedTotalNumberBuilder::connect_()
     try
     {
       // allocate pointer to thread specific random generator
-      const int_t vp_id = kernel().vp_manager.thread_to_vp( tid );
+      const int vp_id = kernel().vp_manager.thread_to_vp( tid );
 
       if ( kernel().vp_manager.is_local_vp( vp_id ) )
       {
@@ -1555,16 +1522,16 @@ nest::FixedTotalNumberBuilder::connect_()
         {
 
           // draw random numbers for source node from all source neurons
-          const long_t s_index = rng->ulrand( size_sources );
+          const long s_index = rng->ulrand( size_sources );
           // draw random numbers for target node from
           // targets_on_vp on this virtual process
-          const long_t t_index = rng->ulrand( thread_local_targets.size() );
+          const long t_index = rng->ulrand( thread_local_targets.size() );
           // map random number of source node to gid corresponding to
           // the source_adr vector
-          const long_t sgid = ( *sources_ )[ s_index ];
+          const long sgid = ( *sources_ )[ s_index ];
           // map random number of target node to gid using the
           // targets_on_vp vector
-          const long_t tgid = thread_local_targets[ t_index ];
+          const long tgid = thread_local_targets[ t_index ];
 
           Node* const target = kernel().node_manager.get_node( tgid, tid );
           const thread target_thread = target->get_thread();
@@ -1719,7 +1686,7 @@ nest::SPBuilder::update_delay( delay& d ) const
   {
     DictionaryDatum syn_defaults =
       kernel().model_manager.get_connector_defaults( get_synapse_model() );
-    d = Time( Time::ms( getValue< double_t >( syn_defaults, "delay" ) ) )
+    d = Time( Time::ms( getValue< double >( syn_defaults, "delay" ) ) )
           .get_steps();
   }
 }

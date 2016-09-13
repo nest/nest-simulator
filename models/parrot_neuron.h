@@ -117,7 +117,7 @@ private:
   {
   } // no variables
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /**
      Buffers and accumulates the number of incoming spikes per time step;

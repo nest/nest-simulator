@@ -94,8 +94,8 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   // MH 08-04-14
   TimeConverter time_converter;
 
-  double_t time;
-  if ( updateValue< double_t >( d, "time", time ) )
+  double time;
+  if ( updateValue< double >( d, "time", time ) )
   {
     if ( time != 0.0 )
       throw BadProperty( "The simulation time can only be set to 0.0." );
@@ -123,11 +123,11 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   // tics_per_ms and resolution must come after local_num_thread /
   // total_num_threads because they might reset the network and the time
   // representation
-  nest::double_t tics_per_ms = 0.0;
+  double tics_per_ms = 0.0;
   bool tics_per_ms_updated =
-    updateValue< nest::double_t >( d, "tics_per_ms", tics_per_ms );
-  double_t resd = 0.0;
-  bool res_updated = updateValue< double_t >( d, "resolution", resd );
+    updateValue< double >( d, "tics_per_ms", tics_per_ms );
+  double resd = 0.0;
+  bool res_updated = updateValue< double >( d, "resolution", resd );
 
   if ( tics_per_ms_updated || res_updated )
   {
@@ -259,8 +259,8 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   // wfr_comm_interval_ can only be changed if use_wfr_ is true and before
   // connections are created. If use_wfr_ is false wfr_comm_interval_ is set to
   // the resolution whenever the resolution changes.
-  double_t wfr_interval;
-  if ( updateValue< double_t >( d, "wfr_comm_interval", wfr_interval ) )
+  double wfr_interval;
+  if ( updateValue< double >( d, "wfr_comm_interval", wfr_interval ) )
   {
     if ( not use_wfr_ )
     {
@@ -296,8 +296,8 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   }
 
   // set the convergence tolerance for the waveform relaxation method
-  double_t tol;
-  if ( updateValue< double_t >( d, "wfr_tol", tol ) )
+  double tol;
+  if ( updateValue< double >( d, "wfr_tol", tol ) )
   {
     if ( tol < 0.0 )
       LOG( M_ERROR,
@@ -344,7 +344,7 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
   def< double >( d, "T_min", Time::min().get_ms() );
   def< double >( d, "T_max", Time::max().get_ms() );
 
-  def< double_t >( d, "time", get_time().get_ms() );
+  def< double >( d, "time", get_time().get_ms() );
   def< long >( d, "to_do", to_do_ );
   def< bool >( d, "print_time", print_time_ );
 
@@ -443,7 +443,7 @@ nest::SimulationManager::resume_( size_t num_active_nodes )
   assert( kernel().is_initialized() );
 
   std::ostringstream os;
-  double_t t_sim = to_do_ * Time::get_resolution().get_ms();
+  double t_sim = to_do_ * Time::get_resolution().get_ms();
 
   os << "Number of local nodes: " << num_active_nodes << std::endl;
   os << "Simulaton time (ms): " << t_sim;
@@ -517,6 +517,9 @@ size_t
 nest::SimulationManager::prepare_simulation_()
 {
   assert( to_do_ != 0 ); // This is checked in simulate()
+
+  // Reset profiling timers and counters within event_delivery_manager
+  kernel().event_delivery_manager.reset_timers_counters();
 
   // find shortest and longest delay across all MPI processes
   // this call sets the member variables
@@ -666,7 +669,7 @@ nest::SimulationManager::update_()
         bool max_iterations_reached = true;
         const std::vector< Node* >& thread_local_wfr_nodes =
           kernel().node_manager.get_wfr_nodes_on_thread( thrd );
-        for ( long_t n = 0; n < wfr_max_iterations_; ++n )
+        for ( long n = 0; n < wfr_max_iterations_; ++n )
         {
           bool done_p = true;
 
@@ -858,7 +861,7 @@ nest::SimulationManager::advance_time_()
   else
     from_step_ = to_step_;
 
-  long_t end_sim = from_step_ + to_do_;
+  long end_sim = from_step_ + to_do_;
 
   if ( kernel().connection_manager.get_min_delay() < ( delay ) end_sim )
     // update to end of time slice
@@ -867,13 +870,13 @@ nest::SimulationManager::advance_time_()
     to_step_ = end_sim; // update to end of simulation time
 
   assert( to_step_ - from_step_
-    <= ( long_t ) kernel().connection_manager.get_min_delay() );
+    <= ( long ) kernel().connection_manager.get_min_delay() );
 }
 
 void
 nest::SimulationManager::print_progress_()
 {
-  double_t rt_factor = 0.0;
+  double rt_factor = 0.0;
 
   if ( t_slice_end_.tv_sec != 0 )
   {
@@ -882,13 +885,13 @@ nest::SimulationManager::print_progress_()
     // usec
     t_real_ += t_real_s + ( t_slice_end_.tv_usec - t_slice_begin_.tv_usec );
     // ms
-    double_t t_real_acc = ( t_real_ ) / 1000.;
-    double_t t_sim_acc =
+    double t_real_acc = ( t_real_ ) / 1000.;
+    double t_sim_acc =
       ( to_do_total_ - to_do_ ) * Time::get_resolution().get_ms();
     rt_factor = t_sim_acc / t_real_acc;
   }
 
-  int_t percentage = ( 100 - int( float( to_do_ ) / to_do_total_ * 100 ) );
+  int percentage = ( 100 - int( float( to_do_ ) / to_do_total_ * 100 ) );
 
   std::cout << "\r" << std::setw( 3 ) << std::right << percentage << " %: "
             << "network time: " << std::fixed << std::setprecision( 1 )
@@ -898,7 +901,6 @@ nest::SimulationManager::print_progress_()
   std::flush( std::cout );
 }
 
-// inline
 nest::Time const
 nest::SimulationManager::get_previous_slice_origin() const
 {

@@ -19,14 +19,15 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+import re
+
 
 def cut_it(separator, text):
     """
     Cut it.
 
-    cut text by trenner
+    cut text by separator
     """
-    import re
     if separator:
         return re.split(separator, text)
     else:
@@ -39,7 +40,6 @@ def check_ifdef(item, filetext, docstring):
 
         If there is an ifdef requirement write it to the data.
         """
-        import re
         ifdefstring = r'(\#ifdef((.*?)\n(.*?)\n*))\#endif'
         require_reg = re.compile('HAVE\_((.*?)*)\n')
         # every doc in an #ifdef

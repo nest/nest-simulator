@@ -342,6 +342,10 @@ index NodeManager::add_node( index mod, long n ) // no_p
         next_lid += next_gid - gid;
         gid = next_gid;
       }
+      else
+      {
+    	++gid;  // brutal fix, next_lid has been set in if-branch
+      }
     }
     // if last gid is not on this process, we need to add it as a remote node
     if ( not kernel().vp_manager.is_local_vp(

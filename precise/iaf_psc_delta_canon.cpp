@@ -67,14 +67,14 @@ RecordablesMap< iaf_psc_delta_canon >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_delta_canon::Parameters_::Parameters_()
-  : tau_m_( 10.0 )                                    // ms
-  , c_m_( 250.0 )                                     // pF
-  , t_ref_( 2.0 )                                     // ms
-  , E_L_( -70.0 )                                     // mV
-  , I_e_( 0.0 )                                       // pA
-  , U_th_( -55.0 - E_L_ )                             // mV, rel to E_L_
-  , U_min_( -std::numeric_limits< double_t >::max() ) // mV
-  , U_reset_( -70.0 - E_L_ )                          // mV, rel to E_L_
+  : tau_m_( 10.0 )                                  // ms
+  , c_m_( 250.0 )                                   // pF
+  , t_ref_( 2.0 )                                   // ms
+  , E_L_( -70.0 )                                   // mV
+  , I_e_( 0.0 )                                     // pA
+  , U_th_( -55.0 - E_L_ )                           // mV, rel to E_L_
+  , U_min_( -std::numeric_limits< double >::max() ) // mV
+  , U_reset_( -70.0 - E_L_ )                        // mV, rel to E_L_
 {
 }
 
@@ -249,8 +249,8 @@ iaf_psc_delta_canon::calibrate()
 
 void
 iaf_psc_delta_canon::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   assert( to >= 0 );
   assert( static_cast< delay >( from )
@@ -284,16 +284,16 @@ iaf_psc_delta_canon::update( Time const& origin,
   if ( S_.U_ >= P_.U_th_ )
     emit_instant_spike_( origin,
       from,
-      V_.h_ms_ * ( 1 - std::numeric_limits< double_t >::epsilon() ) );
+      V_.h_ms_ * ( 1 - std::numeric_limits< double >::epsilon() ) );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     // time at start of update step
-    const long_t T = origin.get_steps() + lag;
+    const long T = origin.get_steps() + lag;
 
     // Time within step is measured by offsets, which are h at the beginning
     // and 0 at the end of the step.
-    double_t t = V_.h_ms_;
+    double t = V_.h_ms_;
 
     // place pseudo-event in queue to mark end of refractory period
     if ( S_.is_refractory_
@@ -301,8 +301,8 @@ iaf_psc_delta_canon::update( Time const& origin,
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
 
     // get first event
-    double_t ev_offset;
-    double_t ev_weight;
+    double ev_offset;
+    double ev_weight;
     bool end_of_refract;
 
     if ( !B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) )
@@ -323,7 +323,7 @@ iaf_psc_delta_canon::update( Time const& origin,
 
 
         // contribution of the stepwise constant current
-        double_t I_contrib_t = -S_.I_ * P_.tau_m_ / P_.c_m_ * V_.expm1_t_;
+        double I_contrib_t = -S_.I_ * P_.tau_m_ / P_.c_m_ * V_.expm1_t_;
 
         S_.U_ = V_.I_contrib_ + I_contrib_t + V_.expm1_t_ * S_.U_ + S_.U_;
 
@@ -432,14 +432,14 @@ iaf_psc_delta_canon::update( Time const& origin,
 }
 
 void
-nest::iaf_psc_delta_canon::propagate_( const double_t dt )
+nest::iaf_psc_delta_canon::propagate_( const double dt )
 {
   assert( !S_.is_refractory_ ); // should not be called if neuron is
                                 // refractory
 
   // see comment on regular update above
   const double expm1_dt = numerics::expm1( -dt / P_.tau_m_ );
-  const double_t v_inf = V_.v_inf_ + S_.I_ * P_.tau_m_ / P_.c_m_;
+  const double v_inf = V_.v_inf_ + S_.I_ * P_.tau_m_ / P_.c_m_;
   S_.U_ = -v_inf * expm1_dt + S_.U_ * expm1_dt + S_.U_;
 
   return;
@@ -447,15 +447,14 @@ nest::iaf_psc_delta_canon::propagate_( const double_t dt )
 
 void
 nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
-  const long_t lag,
-  const double_t offset_U )
+  const long lag,
+  const double offset_U )
 {
   assert( S_.U_ >= P_.U_th_ ); // ensure we are superthreshold
 
   // compute time since threhold crossing
-  double_t v_inf = V_.v_inf_ + S_.I_ * P_.tau_m_ / P_.c_m_;
-  double_t dt =
-    -P_.tau_m_ * std::log( ( v_inf - S_.U_ ) / ( v_inf - P_.U_th_ ) );
+  double v_inf = V_.v_inf_ + S_.I_ * P_.tau_m_ / P_.c_m_;
+  double dt = -P_.tau_m_ * std::log( ( v_inf - S_.U_ ) / ( v_inf - P_.U_th_ ) );
 
   // set stamp and offset for spike
   S_.last_spike_step_ = origin.get_steps() + lag + 1;
@@ -476,8 +475,8 @@ nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
 
 void
 nest::iaf_psc_delta_canon::emit_instant_spike_( Time const& origin,
-  const long_t lag,
-  const double_t spike_offs )
+  const long lag,
+  const double spike_offs )
 {
   assert( S_.U_ >= P_.U_th_ ); // ensure we are superthreshold
 
@@ -507,7 +506,7 @@ iaf_psc_delta_canon::handle( SpikeEvent& e )
      of the spike, since spikes might spend longer than min_delay_
      in the queue.  The time is computed according to Time Memo, Rule 3.
   */
-  const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
+  const long Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
   B_.events_.add_spike(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     Tdeliver,
@@ -520,8 +519,8 @@ iaf_psc_delta_canon::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // add stepwise constant current; MH 2009-10-14
   B_.currents_.add_value(

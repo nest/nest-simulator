@@ -130,21 +130,21 @@ private:
   void calibrate();
   void event_hook( DSSpikeEvent& );
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   struct Parameters_
   {
     /** Temporal frequency in radian/ms */
-    double_t om_;
+    double om_;
 
     /** Phase in radian */
-    double_t phi_;
+    double phi_;
 
     /** Mean firing rate in spikes/ms */
-    double_t rate_;
+    double rate_;
 
     /** Firing rate modulation amplitude in spikes/ms */
-    double_t amplitude_;
+    double amplitude_;
 
     /** Emit individual spike trains for each target, or same for all? */
     bool individual_spike_trains_;
@@ -166,10 +166,10 @@ private:
   struct State_
   {
     //! Two-component oscillator state vector, see Rotter&Diesmann
-    double_t y_0_;
-    double_t y_1_;
+    double y_0_;
+    double y_1_;
 
-    double_t rate_; //!< current rate, kept for recording
+    double rate_; //!< current rate, kept for recording
 
     State_(); //!< Sets default state value
 
@@ -202,12 +202,12 @@ private:
   {
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
 
-    double_t h_;   //! time resolution (ms)
-    double_t sin_; //!< sin(h om) in propagator
-    double_t cos_; //!< cos(h om) in propagator
+    double h_;   //! time resolution (ms)
+    double sin_; //!< sin(h om) in propagator
+    double cos_; //!< cos(h om) in propagator
   };
 
-  double_t
+  double
   get_rate_() const
   {
     return 1000.0 * S_.rate_;

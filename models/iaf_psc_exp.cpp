@@ -276,16 +276,14 @@ nest::iaf_psc_exp::calibrate()
 }
 
 void
-nest::iaf_psc_exp::update( const Time& origin,
-  const long_t from,
-  const long_t to )
+nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     if ( S_.r_ref_ == 0 ) // neuron not refractory, so evolve V
       S_.V_m_ = S_.V_m_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_
@@ -349,8 +347,8 @@ nest::iaf_psc_exp::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
   if ( 0 == e.get_rport() )

@@ -133,7 +133,7 @@ private:
    * information.
    * @see event_hook, DSSpikeEvent
    */
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /**
    * Send out spikes.
@@ -149,11 +149,11 @@ private:
    */
   struct Parameters_
   {
-    double_t rate_;      //!< process rate [Hz]
-    double_t dead_time_; //!< dead time [ms]
-    ulong_t n_proc_;     //!< number of component processes
-    double_t frequency_; //!< rate modulation frequency [Hz]
-    double_t amplitude_; //!< rate modulation amplitude [Hz]
+    double rate_;          //!< process rate [Hz]
+    double dead_time_;     //!< dead time [ms]
+    unsigned long n_proc_; //!< number of component processes
+    double frequency_;     //!< rate modulation frequency [Hz]
+    double amplitude_;     //!< rate modulation amplitude [Hz]
 
     /**
      * Number of targets.
@@ -178,18 +178,19 @@ private:
     librandom::BinomialRandomDev bino_dev_;   //!< random deviate generator
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
     //! occupation numbers of ages below dead time
-    std::vector< ulong_t > occ_refractory_;
-    ulong_t occ_active_; //!< summed occupation number of ages above dead time
-    size_t activate_;    //!< rotating pointer
+    std::vector< unsigned long > occ_refractory_;
+    unsigned long
+      occ_active_;    //!< summed occupation number of ages above dead time
+    size_t activate_; //!< rotating pointer
 
   public:
     //! initialize age dist
     Age_distribution_( size_t num_age_bins,
-      ulong_t ini_occ_ref,
-      ulong_t ini_occ_act );
+      unsigned long ini_occ_ref,
+      unsigned long ini_occ_act );
 
     //! update age dist and generate spikes
-    ulong_t update( double_t hazard_rate, librandom::RngPtr rng );
+    unsigned long update( double hazard_rate, librandom::RngPtr rng );
   };
 
 
@@ -207,9 +208,9 @@ private:
 
   struct Variables_
   {
-    double_t hazard_step_;   //!< base hazard rate in units of time step
-    double_t hazard_step_t_; //!< hazard rate at time t in units of time step
-    double_t omega_;         //!< angular velocity of rate modulation [rad/ms]
+    double hazard_step_;   //!< base hazard rate in units of time step
+    double hazard_step_t_; //!< hazard rate at time t in units of time step
+    double omega_;         //!< angular velocity of rate modulation [rad/ms]
 
     /**
      * @name update-hook communication.
@@ -221,8 +222,8 @@ private:
      *   t_min_active_ < t <= t_max_active_
      */
     //@{
-    double_t t_min_active_; //!< start of generator activity in slice
-    double_t t_max_active_; //!< end of generator activity in slice
+    double t_min_active_; //!< start of generator activity in slice
+    double t_max_active_; //!< end of generator activity in slice
     //@}
   };
 

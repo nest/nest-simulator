@@ -1289,9 +1289,9 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder(
 void
 nest::FixedTotalNumberBuilder::connect_()
 {
-  const int_t M = kernel().vp_manager.get_num_virtual_processes();
-  const long_t size_sources = sources_->size();
-  const long_t size_targets = targets_->size();
+  const int M = kernel().vp_manager.get_num_virtual_processes();
+  const long size_sources = sources_->size();
+  const long size_targets = targets_->size();
 
   // drawing connection ids
 
@@ -1316,7 +1316,7 @@ nest::FixedTotalNumberBuilder::connect_()
   // K from gsl is equivalent to M = n_vps
   // N is already taken from stack
   // p[] is targets_on_vp
-  std::vector< long_t > num_conns_on_vp( M, 0 ); // corresponds to n[]
+  std::vector< long > num_conns_on_vp( M, 0 ); // corresponds to n[]
 
   // calculate exact multinomial distribution
   // get global rng that is tested for synchronization for all threads
@@ -1325,9 +1325,9 @@ nest::FixedTotalNumberBuilder::connect_()
   // HEP: instead of counting upwards, we might count remaining_targets and
   // remaining_partitions down. why?
   // begin code adapted from gsl 1.8 //
-  double_t sum_dist = 0.0; // corresponds to sum_p
+  double sum_dist = 0.0; // corresponds to sum_p
   // norm is equivalent to size_targets
-  uint_t sum_partitions = 0; // corresponds to sum_n
+  unsigned int sum_partitions = 0; // corresponds to sum_n
 // substituting gsl_ran call
 #ifdef HAVE_GSL
   librandom::GSL_BinomialRandomDev bino( grng, 0, 0 );
@@ -1339,16 +1339,16 @@ nest::FixedTotalNumberBuilder::connect_()
   {
     if ( targets_on_vp[ k ].size() > 0 )
     {
-      double_t num_local_targets =
-        static_cast< double_t >( targets_on_vp[ k ].size() );
-      double_t p_local = num_local_targets / ( size_targets - sum_dist );
+      double num_local_targets =
+        static_cast< double >( targets_on_vp[ k ].size() );
+      double p_local = num_local_targets / ( size_targets - sum_dist );
       bino.set_p( p_local );
       bino.set_n( N_ - sum_partitions );
       num_conns_on_vp[ k ] = bino.ldev();
     }
 
-    sum_dist += static_cast< double_t >( targets_on_vp[ k ].size() );
-    sum_partitions += static_cast< uint_t >( num_conns_on_vp[ k ] );
+    sum_dist += static_cast< double >( targets_on_vp[ k ].size() );
+    sum_partitions += static_cast< unsigned int >( num_conns_on_vp[ k ] );
   }
 
 // end code adapted from gsl 1.8
@@ -1361,7 +1361,7 @@ nest::FixedTotalNumberBuilder::connect_()
     try
     {
       // allocate pointer to thread specific random generator
-      const int_t vp_id = kernel().vp_manager.thread_to_vp( tid );
+      const int vp_id = kernel().vp_manager.thread_to_vp( tid );
 
       if ( kernel().vp_manager.is_local_vp( vp_id ) )
       {
@@ -1371,16 +1371,16 @@ nest::FixedTotalNumberBuilder::connect_()
         {
 
           // draw random numbers for source node from all source neurons
-          const long_t s_index = rng->ulrand( size_sources );
+          const long s_index = rng->ulrand( size_sources );
           // draw random numbers for target node from
           // targets_on_vp on this virtual process
-          const long_t t_index = rng->ulrand( targets_on_vp[ vp_id ].size() );
+          const long t_index = rng->ulrand( targets_on_vp[ vp_id ].size() );
           // map random number of source node to gid corresponding to
           // the source_adr vector
-          const long_t sgid = ( *sources_ )[ s_index ];
+          const long sgid = ( *sources_ )[ s_index ];
           // map random number of target node to gid using the
           // targets_on_vp vector
-          const long_t tgid = targets_on_vp[ vp_id ][ t_index ];
+          const long tgid = targets_on_vp[ vp_id ][ t_index ];
 
           Node* const target = kernel().node_manager.get_node( tgid, tid );
           const thread target_thread = target->get_thread();
@@ -1499,7 +1499,7 @@ nest::SPBuilder::update_delay( delay& d ) const
   {
     DictionaryDatum syn_defaults =
       kernel().model_manager.get_connector_defaults( get_synapse_model() );
-    d = Time( Time::ms( getValue< double_t >( syn_defaults, "delay" ) ) )
+    d = Time( Time::ms( getValue< double >( syn_defaults, "delay" ) ) )
           .get_steps();
   }
 }

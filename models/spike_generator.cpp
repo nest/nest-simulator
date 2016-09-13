@@ -82,7 +82,7 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
     || ( !precise_times_ && n_offsets == 0 ) );
 
 
-  std::vector< double_t >* times_ms = new std::vector< double_t >();
+  std::vector< double >* times_ms = new std::vector< double >();
   times_ms->reserve( n_spikes );
   for ( size_t n = 0; n < n_spikes; ++n )
   {
@@ -92,7 +92,7 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
   }
   ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
   ( *d )[ "spike_weights" ] =
-    DoubleVectorDatum( new std::vector< double_t >( spike_weights_ ) );
+    DoubleVectorDatum( new std::vector< double >( spike_weights_ ) );
   ( *d )[ "spike_multiplicities" ] =
     IntVectorDatum( new std::vector< long >( spike_multiplicities_ ) );
   ( *d )[ names::precise_times ] = BoolDatum( precise_times_ );
@@ -150,7 +150,7 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_(
     // resolution step, so the offset has to be greater or equal to t by
     // construction. Since subtraction of close-by floating point values is
     // not stable, we have to compare with a delta.
-    double_t offset = t_spike.get_ms() - t;
+    double offset = t_spike.get_ms() - t;
 
     // The second part of the test handles subnormal values of offset.
     if ( ( std::fabs( offset ) < std::numeric_limits< double >::epsilon()
@@ -188,7 +188,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
 
   if ( updated_spike_times )
   {
-    const std::vector< double_t > d_times =
+    const std::vector< double > d_times =
       getValue< std::vector< double > >( d->lookup( names::spike_times ) );
     const size_t n_spikes = d_times.size();
     spike_stamps_.clear();
@@ -201,11 +201,11 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
     if ( !d_times.empty() )
     {
       // handle first spike time, no predecessor to compare with
-      std::vector< double_t >::const_iterator prev = d_times.begin();
+      std::vector< double >::const_iterator prev = d_times.begin();
       assert_valid_spike_time_and_insert_( *prev, origin, now );
 
       // handle all remaining spike times, compare to predecessor
-      for ( std::vector< double_t >::const_iterator next = prev + 1;
+      for ( std::vector< double >::const_iterator next = prev + 1;
             next != d_times.end();
             ++next, ++prev )
         if ( *prev > *next )
@@ -318,8 +318,8 @@ nest::spike_generator::calibrate()
 
 void
 nest::spike_generator::update( Time const& sliceT0,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   if ( P_.spike_stamps_.empty() )
     return;
@@ -369,7 +369,7 @@ nest::spike_generator::update( Time const& sliceT0,
         se->set_multiplicity( P_.spike_multiplicities_[ S_.position_ ] );
 
       // we need to subtract one from stamp which is added again in send()
-      long_t lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
+      long lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
 
       // all spikes are sent locally, so offset information is always preserved
       kernel().event_delivery_manager.send( *this, *se, lag );
@@ -396,8 +396,8 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   // To detect "now" spikes and shift them, we need the origin. In case
   // it is set in this call, we need to extract it explicitly here.
   Time origin;
-  double_t v;
-  if ( updateValue< double_t >( d, names::origin, v ) )
+  double v;
+  if ( updateValue< double >( d, names::origin, v ) )
     origin = Time::ms( v );
   else
     origin = device_.get_origin();

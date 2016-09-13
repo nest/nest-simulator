@@ -162,7 +162,7 @@ public:
    */
   void send( Event& e,
     thread t,
-    double_t t_lastspike,
+    double t_lastspike,
     const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -182,7 +182,7 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t,
+    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -190,20 +190,20 @@ public:
   }
 
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
 
 private:
-  double_t weight_;
-  double_t tau_psc_; //!< [ms] time constant of postsyn current
-  double_t tau_fac_; //!< [ms] time constant for fascilitation
-  double_t tau_rec_; //!< [ms] time constant for recovery
-  double_t U_;       //!< asymptotic value of probability of release
-  double_t x_;       //!< amount of resources in recovered state
-  double_t y_;       //!< amount of resources in active state
-  double_t u_;       //!< actual probability of release
+  double weight_;
+  double tau_psc_; //!< [ms] time constant of postsyn current
+  double tau_fac_; //!< [ms] time constant for fascilitation
+  double tau_rec_; //!< [ms] time constant for recovery
+  double U_;       //!< asymptotic value of probability of release
+  double x_;       //!< amount of resources in recovered state
+  double y_;       //!< amount of resources in active state
+  double u_;       //!< actual probability of release
 };
 
 
@@ -217,10 +217,10 @@ template < typename targetidentifierT >
 inline void
 TsodyksConnection< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
+  double t_lastspike,
   const CommonSynapseProperties& )
 {
-  double_t h = e.get_stamp().get_ms() - t_lastspike;
+  double h = e.get_stamp().get_ms() - t_lastspike;
 
 
   Node* target = get_target( t );
@@ -232,15 +232,15 @@ TsodyksConnection< targetidentifierT >::send( Event& e,
 
   // propagator
   // TODO: use expm1 here instead, where applicable
-  double_t Puu = ( tau_fac_ == 0.0 ) ? 0.0 : std::exp( -h / tau_fac_ );
-  double_t Pyy = std::exp( -h / tau_psc_ );
-  double_t Pzz = std::exp( -h / tau_rec_ );
+  double Puu = ( tau_fac_ == 0.0 ) ? 0.0 : std::exp( -h / tau_fac_ );
+  double Pyy = std::exp( -h / tau_psc_ );
+  double Pzz = std::exp( -h / tau_rec_ );
 
-  double_t Pxy = ( ( Pzz - 1.0 ) * tau_rec_ - ( Pyy - 1.0 ) * tau_psc_ )
+  double Pxy = ( ( Pzz - 1.0 ) * tau_rec_ - ( Pyy - 1.0 ) * tau_psc_ )
     / ( tau_psc_ - tau_rec_ );
-  double_t Pxz = 1.0 - Pzz;
+  double Pxz = 1.0 - Pzz;
 
-  double_t z = 1.0 - x_ - y_;
+  double z = 1.0 - x_ - y_;
 
   // propagation t_lastspike -> t_spike
   // don't change the order !
@@ -253,7 +253,7 @@ TsodyksConnection< targetidentifierT >::send( Event& e,
   u_ += U_ * ( 1.0 - u_ );
 
   // postsynaptic current step caused by incoming spike
-  double_t delta_y_tsp = u_ * x_;
+  double delta_y_tsp = u_ * x_;
 
   // delta function x, y
   x_ -= delta_y_tsp;
@@ -301,16 +301,16 @@ void
 TsodyksConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
+  def< double >( d, names::weight, weight_ );
 
-  def< double_t >( d, "U", U_ );
-  def< double_t >( d, "tau_psc", tau_psc_ );
-  def< double_t >( d, "tau_rec", tau_rec_ );
-  def< double_t >( d, "tau_fac", tau_fac_ );
-  def< double_t >( d, "x", x_ );
-  def< double_t >( d, "y", y_ );
-  def< double_t >( d, "u", u_ );
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  def< double >( d, "U", U_ );
+  def< double >( d, "tau_psc", tau_psc_ );
+  def< double >( d, "tau_rec", tau_rec_ );
+  def< double >( d, "tau_fac", tau_fac_ );
+  def< double >( d, "x", x_ );
+  def< double >( d, "y", y_ );
+  def< double >( d, "u", u_ );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
@@ -321,10 +321,10 @@ TsodyksConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   // Handle parameters that may throw an exception first, so we can leave the
   // synapse untouched
   // in case of invalid parameter values
-  double_t x = x_;
-  double_t y = y_;
-  updateValue< double_t >( d, "x", x );
-  updateValue< double_t >( d, "y", y );
+  double x = x_;
+  double y = y_;
+  updateValue< double >( d, "x", x );
+  updateValue< double >( d, "y", y );
 
   if ( x + y > 1.0 )
     throw BadProperty( "x + y must be <= 1.0." );
@@ -333,25 +333,25 @@ TsodyksConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   y_ = y;
 
   ConnectionBase::set_status( d, cm );
-  updateValue< double_t >( d, names::weight, weight_ );
+  updateValue< double >( d, names::weight, weight_ );
 
-  updateValue< double_t >( d, "U", U_ );
+  updateValue< double >( d, "U", U_ );
   if ( U_ > 1.0 || U_ < 0.0 )
     throw BadProperty( "U must be in [0,1]." );
 
-  updateValue< double_t >( d, "tau_psc", tau_psc_ );
+  updateValue< double >( d, "tau_psc", tau_psc_ );
   if ( tau_psc_ <= 0.0 )
     throw BadProperty( "tau_psc must be > 0." );
 
-  updateValue< double_t >( d, "tau_rec", tau_rec_ );
+  updateValue< double >( d, "tau_rec", tau_rec_ );
   if ( tau_rec_ <= 0.0 )
     throw BadProperty( "tau_rec must be > 0." );
 
-  updateValue< double_t >( d, "tau_fac", tau_fac_ );
+  updateValue< double >( d, "tau_fac", tau_fac_ );
   if ( tau_fac_ < 0.0 )
     throw BadProperty( "tau_fac must be >= 0." );
 
-  updateValue< double_t >( d, "u", u_ );
+  updateValue< double >( d, "u", u_ );
 }
 
 } // namespace

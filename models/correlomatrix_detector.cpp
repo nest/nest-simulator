@@ -71,9 +71,9 @@ nest::correlomatrix_detector::State_::State_()
   : n_events_( 1, 0 )
   , incoming_()
   , covariance_( 1,
-      std::vector< std::vector< double_t > >( 1, std::vector< double_t >() ) )
+      std::vector< std::vector< double > >( 1, std::vector< double >() ) )
   , count_covariance_( 1,
-      std::vector< std::vector< long_t > >( 1, std::vector< long_t >() ) )
+      std::vector< std::vector< long > >( 1, std::vector< long >() ) )
 {
 }
 
@@ -96,7 +96,7 @@ void
 nest::correlomatrix_detector::State_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::n_events ] =
-    IntVectorDatum( new std::vector< long_t >( n_events_ ) );
+    IntVectorDatum( new std::vector< long >( n_events_ ) );
 
   ArrayDatum* C = new ArrayDatum;
   ArrayDatum* CountC = new ArrayDatum;
@@ -107,9 +107,9 @@ nest::correlomatrix_detector::State_::get( DictionaryDatum& d ) const
     for ( size_t j = 0; j < covariance_[ i ].size(); ++j )
     {
       C_i->push_back( new DoubleVectorDatum(
-        new std::vector< double_t >( covariance_[ i ][ j ] ) ) );
+        new std::vector< double >( covariance_[ i ][ j ] ) ) );
       CountC_i->push_back( new IntVectorDatum(
-        new std::vector< long_t >( count_covariance_[ i ][ j ] ) ) );
+        new std::vector< long >( count_covariance_[ i ][ j ] ) ) );
     }
     C->push_back( *C_i );
     CountC->push_back( *CountC_i );
@@ -123,10 +123,10 @@ nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d,
   const correlomatrix_detector& n )
 {
   bool reset = false;
-  double_t t;
-  long_t N;
+  double t;
+  long N;
 
-  if ( updateValue< long_t >( d, names::N_channels, N ) )
+  if ( updateValue< long >( d, names::N_channels, N ) )
   {
     if ( N < 1 )
     {
@@ -139,25 +139,25 @@ nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d,
     }
   }
 
-  if ( updateValue< double_t >( d, names::delta_tau, t ) )
+  if ( updateValue< double >( d, names::delta_tau, t ) )
   {
     delta_tau_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double_t >( d, names::tau_max, t ) )
+  if ( updateValue< double >( d, names::tau_max, t ) )
   {
     tau_max_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double_t >( d, names::Tstart, t ) )
+  if ( updateValue< double >( d, names::Tstart, t ) )
   {
     Tstart_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double_t >( d, names::Tstop, t ) )
+  if ( updateValue< double >( d, names::Tstop, t ) )
   {
     Tstop_ = Time::ms( t );
     reset = true;
@@ -199,11 +199,11 @@ nest::correlomatrix_detector::State_::reset( const Parameters_& p )
   count_covariance_.clear();
   count_covariance_.resize( p.N_channels_ );
 
-  for ( long_t i = 0; i < p.N_channels_; ++i )
+  for ( long i = 0; i < p.N_channels_; ++i )
   {
     covariance_[ i ].resize( p.N_channels_ );
     count_covariance_[ i ].resize( p.N_channels_ );
-    for ( long_t j = 0; j < p.N_channels_; ++j )
+    for ( long j = 0; j < p.N_channels_; ++j )
     {
       covariance_[ i ][ j ].resize(
         1 + p.tau_max_.get_steps() / p.delta_tau_.get_steps(), 0 );
@@ -274,7 +274,7 @@ nest::correlomatrix_detector::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::correlomatrix_detector::update( Time const&, const long_t, const long_t )
+nest::correlomatrix_detector::update( Time const&, const long, const long )
 {
 }
 
@@ -294,7 +294,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
 
   if ( device_.is_active( stamp ) )
   {
-    const long_t spike_i = stamp.get_steps();
+    const long spike_i = stamp.get_steps();
 
     // find first appearence of element which is greater than spike_i
     const Spike_ sp_i( spike_i, e.get_multiplicity() * e.get_weight(), sender );
@@ -308,7 +308,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
     S_.incoming_.insert( insert_pos, sp_i );
 
     SpikelistType& otherSpikes = S_.incoming_;
-    const double_t tau_edge =
+    const double tau_edge =
       P_.tau_max_.get_steps() + 0.5 * P_.delta_tau_.get_steps();
 
     // throw away all spikes which are too old to
@@ -336,8 +336,8 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
             ++spike_j )
       {
         size_t bin;
-        long_t other = spike_j->receptor_channel_;
-        long_t sender_ind, other_ind;
+        long other = spike_j->receptor_channel_;
+        long sender_ind, other_ind;
 
         if ( spike_i < spike_j->timestep_ )
         {

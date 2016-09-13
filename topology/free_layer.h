@@ -94,8 +94,8 @@ protected:
     }
 
   private:
-    double_t gid_;
-    double_t pos_[ D ];
+    double gid_;
+    double pos_[ D ];
   };
 };
 
@@ -142,7 +142,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
         break;
       }
 
-      Position< D > point = getValue< std::vector< double_t > >(
+      Position< D > point = getValue< std::vector< double > >(
         pos[ ( *i )->get_lid() % nodes_per_depth ] );
 
       if ( not( ( point >= this->lower_left_ )
@@ -191,7 +191,7 @@ FreeLayer< D >::communicate_positions_( Ins iter, const Selector& filter )
   assert( this->nodes_.size() >= positions_.size() );
 
   // This array will be filled with GID,pos_x,pos_y[,pos_z] for local nodes:
-  std::vector< double_t > local_gid_pos;
+  std::vector< double > local_gid_pos;
   std::vector< Node* >::const_iterator nodes_begin;
   std::vector< Node* >::const_iterator nodes_end;
 
@@ -229,7 +229,7 @@ FreeLayer< D >::communicate_positions_( Ins iter, const Selector& filter )
   }
 
   // This array will be filled with GID,pos_x,pos_y[,pos_z] for global nodes:
-  std::vector< double_t > global_gid_pos;
+  std::vector< double > global_gid_pos;
   std::vector< int > displacements;
   kernel().mpi_manager.communicate(
     local_gid_pos, global_gid_pos, displacements );

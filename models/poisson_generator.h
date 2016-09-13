@@ -134,7 +134,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
   void event_hook( DSSpikeEvent& );
 
   // ------------------------------------------------------------
@@ -144,7 +144,7 @@ private:
    */
   struct Parameters_
   {
-    double_t rate_; //!< process rate in Hz
+    double rate_; //!< process rate in Hz
 
     Parameters_(); //!< Sets default parameter values
 

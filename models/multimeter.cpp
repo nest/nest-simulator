@@ -203,9 +203,6 @@ Multimeter::handle( DataLoggingReply& reply )
 
 RecordingDevice::Type
 Multimeter::get_type() const
-||||||| merged common ancestors
-void
-Multimeter::print_value_( const std::vector< double >& values )
 {
   return RecordingDevice::MULTIMETER;
 }

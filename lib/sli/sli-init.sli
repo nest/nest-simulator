@@ -2347,3 +2347,8 @@ mark
     { statusdict /rcsinfo () put }
   ifelse
 ] ;
+
+
+% Add directories in environment variable SLI_PATH to the search path
+% for SLI files. Directories have to be separated by colon.
+(SLI_PATH) getenv { (:) breakup { addpath } forall } if

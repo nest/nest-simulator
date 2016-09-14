@@ -364,9 +364,6 @@ nest::SimulationManager::simulate( Time const& t )
   t_slice_begin_ = timeval();
   t_slice_end_ = timeval();
 
-  // TODO: Put into prepare_simulation_
-  kernel().event_delivery_manager.reset_timers_counters();
-
   if ( t == Time::ms( 0.0 ) )
     return;
 

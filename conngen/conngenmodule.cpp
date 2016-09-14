@@ -70,7 +70,8 @@ ConnectionGeneratorModule::init( SLIInterpreter* i )
   i->createcommand( "CGConnect_cg_g_g_D_l", &cgconnect_cg_g_g_D_lfunction );
   i->createcommand( "CGParse", &cgparse_sfunction );
   i->createcommand( "CGParseFile", &cgparsefile_sfunction );
-  i->createcommand( "CGSelectImplementation", &cgselectimplementation_s_sfunction );
+  i->createcommand(
+    "CGSelectImplementation", &cgselectimplementation_s_sfunction );
 
   // Register the low level functions of the connection generator interface
   i->createcommand( "cgsetmask", &cgsetmask_cg_g_gfunction );
@@ -93,7 +94,7 @@ ConnectionGeneratorModule::init( SLIInterpreter* i )
    targets    gidcollection/array/intvector  - the GIDs of the targets
    params     dict (optional)    - A map that translates the names /weight and
                                    /delay to indices in the value set
-   syn_model  literal (optional) - A literal specifying te synapse model to be used
+   syn_model  literal (optional) - A literal specifying the synapse model
 
    Description:
    CGConnect connects a source and a target population according to
@@ -126,8 +127,7 @@ ConnectionGeneratorModule::CGConnect_cg_g_g_D_lFunction::execute(
     getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
   DictionaryDatum params_map =
     getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  const Name synmodel_name =
-    getValue< Name >( i->OStack.pick( 0 ) );
+  const Name synmodel_name = getValue< Name >( i->OStack.pick( 0 ) );
 
   cg_connect( cg, sources, targets, params_map, synmodel_name );
 
@@ -278,8 +278,10 @@ ConnectionGeneratorModule::CGSetMask_cg_g_gFunction::execute(
 
   ConnectionGeneratorDatum cg =
     getValue< ConnectionGeneratorDatum >( i->OStack.pick( 2 ) );
-  GIDCollectionDatum sources = getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
-  GIDCollectionDatum targets = getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  GIDCollectionDatum sources =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  GIDCollectionDatum targets =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
   RangeSet source_ranges;
   cg_get_ranges( source_ranges, sources );

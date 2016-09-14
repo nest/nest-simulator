@@ -59,7 +59,6 @@ void cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
 index cg_get_right_border( index left, size_t step, GIDCollection& gids );
 
 void cg_get_ranges( RangeSet& ranges, GIDCollection& gids );
-
 }
 
 #endif /* CONNGEN_H */

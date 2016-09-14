@@ -45,7 +45,7 @@ M_ERROR setverbosity
 
 is_threaded_with_openmp not { exit_test_gracefully } if
 
-/sim_dopa_concentration
+/sim_weight_in_dopa_syn
 {
 
 dup /threads Set
@@ -94,12 +94,12 @@ conns size 0 gt {
 } def
 
 {
-  1 sim_dopa_concentration /t1 Set 
-  2 sim_dopa_concentration /t2 Set
-  4 sim_dopa_concentration /t3 Set
-  8 sim_dopa_concentration /t4 Set
-  16 sim_dopa_concentration /t5 Set
-  32 sim_dopa_concentration /t6 Set
+  1 sim_weight_in_dopa_syn /t1 Set 
+  2 sim_weight_in_dopa_syn /t2 Set
+  4 sim_weight_in_dopa_syn /t3 Set
+  8 sim_weight_in_dopa_syn /t4 Set
+  16 sim_weight_in_dopa_syn /t5 Set
+  32 sim_weight_in_dopa_syn /t6 Set
   
   (1 thread weight=) t1 cvs join =
   (2 threads weight=) t2 cvs join =
@@ -107,12 +107,12 @@ conns size 0 gt {
   (8 threads weight=) t4 cvs join =
   (16 threads weight=) t5 cvs join =
   (32 threads weight=) t6 cvs join =
-
-  t1 t2 sub abs 0.0001 lt
-  t1 t3 sub abs 0.0001 lt and
-  t1 t4 sub abs 0.0001 lt and
-  t1 t5 sub abs 0.0001 lt and
-  t1 t6 sub abs 0.0001 lt and  
+  
+  t1 6 ToUnitTestPrecision t2 6 ToUnitTestPrecision eq 
+  t1 6 ToUnitTestPrecision t3 6 ToUnitTestPrecision eq and
+  t1 6 ToUnitTestPrecision t4 6 ToUnitTestPrecision eq and
+  t1 6 ToUnitTestPrecision t5 6 ToUnitTestPrecision eq and
+  t1 6 ToUnitTestPrecision t6 6 ToUnitTestPrecision eq and 
 } assert_or_die
 
 endusing

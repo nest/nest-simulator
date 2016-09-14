@@ -33,14 +33,14 @@ runs.
     installations or to accomodate different machine setups.
 
 `SLI_PATH`
-  : A colon separated list of paths, in which NEST searches for SLI
+  : A colon separated list of paths in which NEST searches for SLI
     files. These are added to the search path.
 
 In addition to the NEST specific environment variables above, NEST
 also respects the following standard POSIX shell variables:
 
 `COLUMNS`
-  : A number of columns, to which NEST adapt the width of its textual
+  : A number of columns to which NEST adapt the width of its textual
     output (errors, warnings, etc.).
 
 `EDITOR`

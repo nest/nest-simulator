@@ -81,10 +81,10 @@ public:
    */
   Node* get_node();
 
-  long_t get_vt_gid() const;
+  long get_vt_gid() const;
 };
 
-inline long_t
+inline long
 CommonSynapseProperties::get_vt_gid() const
 {
   return -1;

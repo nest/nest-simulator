@@ -19,9 +19,7 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Functions for raster plotting.
-"""
+""" Functions for raster plotting."""
 
 import nest
 import numpy
@@ -29,8 +27,7 @@ import pylab
 
 
 def extract_events(data, time=None, sel=None):
-    """Extracts all events within a given time interval or are from a
-    given set of neurons.
+    """Extract all events within a given time interval.
 
     Both time and sel may be used at the same time such that all
     events are extracted for which both conditions are true.
@@ -55,7 +52,6 @@ def extract_events(data, time=None, sel=None):
     numpy.array
         List of events as (gid, t) tuples
     """
-
     val = []
 
     if time:
@@ -92,7 +88,6 @@ def from_data(data, sel=None, **kwargs):
     kwargs:
         Parameters passed to _make_plot
     """
-
     ts = data[:, 1]
     d = extract_events(data, sel=sel)
     ts1 = d[:, 1]
@@ -106,21 +101,57 @@ def from_file(fname, **kwargs):
 
     Parameters
     ----------
-    fname : str
-        Name of file
+    fname : str or tuple(str) or list(str)
+        File name or list of file names
+
+        If a list of files is given, the data from them is concatenated as if
+        it had been stored in a single file - useful when MPI is enabled and
+        data is logged separately for each MPI rank, for example.
     kwargs:
         Parameters passed to _make_plot
     """
+    if isinstance(fname, str):
+        fname = [fname]
 
-    if nest.is_iterable(fname):
-        data = None
-        for f in fname:
-            if data is None:
-                data = numpy.loadtxt(f)
-            else:
-                data = numpy.concatenate((data, numpy.loadtxt(f)))
+    if isinstance(fname, (list, tuple)):
+        try:
+            global pandas
+            pandas = __import__('pandas')
+            from_file_pandas(fname, **kwargs)
+        except ImportError:
+            from_file_numpy(fname, **kwargs)
     else:
-        data = numpy.loadtxt(fname)
+        print('fname should be one of str/list(str)/tuple(str).')
+
+
+def from_file_pandas(fname, **kwargs):
+    """Use pandas."""
+    data = None
+    for f in fname:
+        dataFrame = pandas.read_csv(
+            f, sep='\s+', lineterminator='\n',
+            header=None, index_col=None,
+            skipinitialspace=True)
+        newdata = dataFrame.values
+
+        if data is None:
+            data = newdata
+        else:
+            data = numpy.concatenate((data, newdata))
+
+    return from_data(data, **kwargs)
+
+
+def from_file_numpy(fname, **kwargs):
+    """Use numpy."""
+    data = None
+    for f in fname:
+        newdata = numpy.loadtxt(f)
+
+        if data is None:
+            data = newdata
+        else:
+            data = numpy.concatenate((data, newdata))
 
     return from_data(data, **kwargs)
 
@@ -142,7 +173,6 @@ def from_device(detec, plot_lid=False, **kwargs):
     ------
     nest.NESTError
     """
-
     if not nest.GetStatus(detec)[0]["model"] == "spike_detector":
         raise nest.NESTError("Please provide a spike_detector.")
 
@@ -182,8 +212,10 @@ def _from_memory(detec):
 
 def _make_plot(ts, ts1, gids, neurons, hist=True, hist_binwidth=5.0,
                grayscale=False, title=None, xlabel=None):
-    """Generic plotting routine that constructs a raster plot along with
-    an optional histogram (common part in all routines above).
+    """Generic plotting routine.
+
+    Constructs a raster plot along with an optional histogram (common part in
+    all routines above).
 
     Parameters
     ----------
@@ -206,7 +238,6 @@ def _make_plot(ts, ts1, gids, neurons, hist=True, hist_binwidth=5.0,
     xlabel : str, optional
         Label for x-axis
     """
-
     pylab.figure()
 
     if grayscale:
@@ -265,7 +296,7 @@ def _make_plot(ts, ts1, gids, neurons, hist=True, hist_binwidth=5.0,
 
 
 def _histogram(a, bins=10, bin_range=None, normed=False):
-    """Calculates histogram for data.
+    """Calculate histogram for data.
 
     Parameters
     ----------
@@ -320,11 +351,12 @@ def _histogram(a, bins=10, bin_range=None, normed=False):
 
 def show():
     """
+    Show figures.
+
     Call pylab.show() to show all figures and enter the GUI main loop.
     Python will block until all figure windows are closed again.
     You should call this function only once at the end of a script.
 
     See also: http://matplotlib.sourceforge.net/faq/howto_faq.html#use-show
     """
-
     pylab.show()

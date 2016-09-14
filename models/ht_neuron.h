@@ -184,9 +184,9 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
-  double_t get_synapse_constant( double_t, double_t, double_t );
+  double get_synapse_constant( double, double, double );
 
   // END Boilerplate function declarations ----------------------------
 
@@ -203,19 +203,19 @@ private:
   struct Parameters_
   {
     // Leaks
-    double_t E_Na;  // 30 mV
-    double_t E_K;   // -90 mV
-    double_t g_NaL; // 0.2
-    double_t g_KL;  // 1.0 - 1.85
-    double_t Tau_m; // ms
+    double E_Na;  // 30 mV
+    double E_K;   // -90 mV
+    double g_NaL; // 0.2
+    double g_KL;  // 1.0 - 1.85
+    double Tau_m; // ms
 
     // Dynamic threshold
-    double_t Theta_eq;  // mV
-    double_t Tau_theta; // ms
+    double Theta_eq;  // mV
+    double Tau_theta; // ms
 
     // Spike potassium current
-    double_t Tau_spike; // ms
-    double_t t_spike;   // ms
+    double Tau_spike; // ms
+    double t_spike;   // ms
 
     Parameters_();
 
@@ -223,40 +223,40 @@ private:
     void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
     // Parameters for synapse of type AMPA, GABA_A, GABA_B and NMDA
-    double_t AMPA_g_peak;
-    double_t AMPA_Tau_1; // ms
-    double_t AMPA_Tau_2; // ms
-    double_t AMPA_E_rev; // mV
+    double AMPA_g_peak;
+    double AMPA_Tau_1; // ms
+    double AMPA_Tau_2; // ms
+    double AMPA_E_rev; // mV
 
-    double_t NMDA_g_peak;
-    double_t NMDA_Tau_1; // ms
-    double_t NMDA_Tau_2; // ms
-    double_t NMDA_E_rev; // mV
-    double_t NMDA_Vact;  //!< mV, inactive for V << Vact, inflection of sigmoid
-    double_t NMDA_Sact;  //!< mV, scale of inactivation
+    double NMDA_g_peak;
+    double NMDA_Tau_1; // ms
+    double NMDA_Tau_2; // ms
+    double NMDA_E_rev; // mV
+    double NMDA_Vact;  //!< mV, inactive for V << Vact, inflection of sigmoid
+    double NMDA_Sact;  //!< mV, scale of inactivation
 
-    double_t GABA_A_g_peak;
-    double_t GABA_A_Tau_1; // ms
-    double_t GABA_A_Tau_2; // ms
-    double_t GABA_A_E_rev; // mV
+    double GABA_A_g_peak;
+    double GABA_A_Tau_1; // ms
+    double GABA_A_Tau_2; // ms
+    double GABA_A_E_rev; // mV
 
-    double_t GABA_B_g_peak;
-    double_t GABA_B_Tau_1; // ms
-    double_t GABA_B_Tau_2; // ms
-    double_t GABA_B_E_rev; // mV
+    double GABA_B_g_peak;
+    double GABA_B_Tau_1; // ms
+    double GABA_B_Tau_2; // ms
+    double GABA_B_E_rev; // mV
 
     // parameters for intrinsic currents
-    double_t NaP_g_peak;
-    double_t NaP_E_rev; // mV
+    double NaP_g_peak;
+    double NaP_E_rev; // mV
 
-    double_t KNa_g_peak;
-    double_t KNa_E_rev; // mV
+    double KNa_g_peak;
+    double KNa_E_rev; // mV
 
-    double_t T_g_peak;
-    double_t T_E_rev; // mV
+    double T_g_peak;
+    double T_E_rev; // mV
 
-    double_t h_g_peak;
-    double_t h_E_rev; // mV
+    double h_g_peak;
+    double h_E_rev; // mV
   };
 
   // ----------------------------------------------------------------
@@ -289,17 +289,17 @@ public:
     };
 
     //! neuron state, must be C-array for GSL solver
-    double_t y_[ STATE_VEC_SIZE ];
+    double y_[ STATE_VEC_SIZE ];
 
     //! Timer (counter) for potassium current.
-    int_t r_potassium_;
+    int r_potassium_;
 
     bool g_spike_; //!< active / not active
 
-    double_t I_NaP_; //!< Persistent Na current; member only to allow recording
-    double_t I_KNa_; //!< Depol act. K current; member only to allow recording
-    double_t I_T_;   //!< Low-thresh Ca current; member only to allow recording
-    double_t I_h_;   //!< Pacemaker current; member only to allow recording
+    double I_NaP_; //!< Persistent Na current; member only to allow recording
+    double I_KNa_; //!< Depol act. K current; member only to allow recording
+    double I_T_;   //!< Low-thresh Ca current; member only to allow recording
+    double I_h_;   //!< Pacemaker current; member only to allow recording
 
     State_();
     State_( const Parameters_& p );
@@ -344,7 +344,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double_t step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**
@@ -354,7 +354,7 @@ private:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double_t I_stim_;
+    double I_stim_;
   };
 
   // ----------------------------------------------------------------
@@ -365,46 +365,46 @@ private:
   struct Variables_
   {
     //! size of conductance steps for arriving spikes
-    std::vector< double_t > cond_steps_;
+    std::vector< double > cond_steps_;
 
     //! Duration of potassium current.
-    int_t PotassiumRefractoryCounts_;
+    int PotassiumRefractoryCounts_;
   };
 
 
   // readout functions, can use template for vector elements
   template < State_::StateVecElems_ elem >
-  double_t
+  double
   get_y_elem_() const
   {
     return S_.y_[ elem ];
   }
-  double_t
+  double
   get_r_potassium_() const
   {
     return S_.r_potassium_;
   }
-  double_t
+  double
   get_g_spike_() const
   {
     return S_.g_spike_;
   }
-  double_t
+  double
   get_I_NaP_() const
   {
     return S_.I_NaP_;
   }
-  double_t
+  double
   get_I_KNa_() const
   {
     return S_.I_KNa_;
   }
-  double_t
+  double
   get_I_T_() const
   {
     return S_.I_T_;
   }
-  double_t
+  double
   get_I_h_() const
   {
     return S_.I_h_;

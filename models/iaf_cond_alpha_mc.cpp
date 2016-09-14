@@ -548,15 +548,15 @@ nest::iaf_cond_alpha_mc::calibrate()
 
 void
 nest::iaf_cond_alpha_mc::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
 
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
     double t = 0.0;

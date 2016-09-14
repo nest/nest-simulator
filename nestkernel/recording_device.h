@@ -141,7 +141,7 @@ RecordingDevice::get_status( DictionaryDatum& d ) const
 inline bool
 RecordingDevice::is_active( Time const& T ) const
 {
-  const long_t stamp = T.get_steps();
+  const long stamp = T.get_steps();
 
   return get_t_min_() < stamp && stamp <= get_t_max_();
 }

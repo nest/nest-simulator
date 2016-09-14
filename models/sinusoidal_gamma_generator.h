@@ -173,24 +173,24 @@ private:
   void calibrate();
   void event_hook( DSSpikeEvent& );
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   struct Parameters_
   {
     /** Frequency in radian/ms */
-    double_t om_;
+    double om_;
 
     /** Phase in radian */
-    double_t phi_;
+    double phi_;
 
     /** gamma order */
-    double_t order_;
+    double order_;
 
     /** Mean firing rate in spikes/ms */
-    double_t rate_;
+    double rate_;
 
     /** Firing rate modulation amplitude in spikes/ms */
-    double_t amplitude_;
+    double amplitude_;
 
     /** Emit individual spike trains for each target, or same for all? */
     bool individual_spike_trains_;
@@ -223,7 +223,7 @@ private:
   struct State_
   {
 
-    double_t rate_; //!< current rate, kept for recording
+    double rate_; //!< current rate, kept for recording
 
     State_(); //!< Sets default state value
 
@@ -272,24 +272,24 @@ private:
 
   struct Variables_
   {
-    double_t h_;    //!< time resolution (ms)
-    double_t t_ms_; //!< current time in ms, for communication with event_hook()
+    double h_;    //!< time resolution (ms)
+    double t_ms_; //!< current time in ms, for communication with event_hook()
     //! current time in steps, for communication with event_hook()
-    long_t t_steps_;
+    long t_steps_;
     librandom::RngPtr rng_; //!< thread-specific random generator
   };
 
-  double_t
+  double
   get_rate_() const
   {
     return 1000.0 * S_.rate_;
   }
 
   //! compute deltaLambda for given parameters from ta to tb
-  double_t deltaLambda_( const Parameters_&, double_t, double_t ) const;
+  double deltaLambda_( const Parameters_&, double, double ) const;
 
   //! compute hazard for given target index, including time-step factor
-  double_t hazard_( port ) const;
+  double hazard_( port ) const;
 
   StimulatingDevice< SpikeEvent > device_;
   static RecordablesMap< sinusoidal_gamma_generator > recordablesMap_;

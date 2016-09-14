@@ -115,7 +115,7 @@ private:
    * information.
    * @see event_hook, DSSpikeEvent
    */
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /**
    * Send out spikes.
@@ -131,8 +131,8 @@ private:
    */
   struct Parameters_
   {
-    double_t rate_;      //!< process rate [Hz]
-    double_t dead_time_; //!< dead time [ms]
+    double rate_;      //!< process rate [Hz]
+    double dead_time_; //!< dead time [ms]
 
     /**
      * Number of targets.
@@ -152,7 +152,7 @@ private:
 
   struct Buffers_
   {
-    typedef std::pair< Time, double_t > SpikeTime;
+    typedef std::pair< Time, double > SpikeTime;
 
     /**
      * Time of next spike represented as time stamp and offset, for each target.
@@ -168,7 +168,7 @@ private:
 
   struct Variables_
   {
-    double_t inv_rate_ms_;            //!< 1000.0 / Parameters_.rate_
+    double inv_rate_ms_;              //!< 1000.0 / Parameters_.rate_
     librandom::ExpRandomDev exp_dev_; //!< random deviate generator
 
     /**

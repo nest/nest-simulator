@@ -76,7 +76,7 @@ public:
    * This function is called by the scheduler and delivers the queued
    * events to the target music_in_proxies.
    */
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
 private:
   MUSIC::EventInputPort* music_port_;

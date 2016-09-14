@@ -89,11 +89,11 @@ private:
 
   //! The seeds of the local RNGs. These do not necessarily describe the
   //! state of the RNGs.
-  std::vector< long_t > rng_seeds_;
+  std::vector< long > rng_seeds_;
 
   //! The seed of the global RNG, not necessarily describing the
   //! state of the GRNG.
-  long_t grng_seed_;
+  long grng_seed_;
 
 }; // class RNGManager
 } // namespace nest

@@ -81,11 +81,11 @@ struct Selector
   /**
    * The model to select, or -1 if all models are allowed.
    */
-  long_t model;
+  long model;
   /**
    * The depth to select, or -1 if all depths are allowed.
    */
-  long_t depth;
+  long depth;
 };
 
 } // namespace nest

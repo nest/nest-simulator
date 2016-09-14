@@ -187,7 +187,7 @@ protected:
    * that information. The sampled nodes must provide data from
    * the previous time slice.
    */
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
 private:
   /**
@@ -197,7 +197,7 @@ private:
    *       RecordingDevice::print_value() can handle. Otherwise, specialization
    *       is required.
    */
-  void print_value_( const std::vector< double_t >& );
+  void print_value_( const std::vector< double >& );
 
   /**
    * Add recorded data to dictionary.
@@ -236,7 +236,7 @@ private:
      *       In accumulating mode, only one data point is stored per time step
      *          and values are added across nodes.
      */
-    std::vector< std::vector< double_t > > data_; //!< Recorded data
+    std::vector< std::vector< double > > data_; //!< Recorded data
   };
 
   // ------------------------------------------------------------

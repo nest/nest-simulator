@@ -71,8 +71,8 @@ nest::mip_generator::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::mip_generator::Parameters_::set( const DictionaryDatum& d )
 {
-  updateValue< double_t >( d, names::rate, rate_ );
-  updateValue< double_t >( d, names::p_copy, p_copy_ );
+  updateValue< double >( d, names::rate, rate_ );
+  updateValue< double >( d, names::p_copy, p_copy_ );
 
   if ( rate_ < 0 )
     throw BadProperty( "Rate must be non-negative." );
@@ -85,7 +85,7 @@ nest::mip_generator::Parameters_::set( const DictionaryDatum& d )
 
   // order important to avoid short-circuitung
   reset_rng =
-    updateValue< long_t >( d, names::mother_seed, mother_seed_ ) || reset_rng;
+    updateValue< long >( d, names::mother_seed, mother_seed_ ) || reset_rng;
 
   if ( reset_rng )
     rng_->seed( mother_seed_ );
@@ -144,19 +144,19 @@ nest::mip_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::mip_generator::update( Time const& T, const long_t from, const long_t to )
+nest::mip_generator::update( Time const& T, const long from, const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     if ( !device_.is_active( T ) || P_.rate_ <= 0 )
       return; // no spikes to be generated
 
     // generate spikes of mother process for each time slice
-    long_t n_mother_spikes = V_.poisson_dev_.ldev( P_.rng_ );
+    long n_mother_spikes = V_.poisson_dev_.ldev( P_.rng_ );
 
     if ( n_mother_spikes )
     {
@@ -183,10 +183,10 @@ nest::mip_generator::event_hook( DSSpikeEvent& e )
   // reichert
 
   librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
-  ulong_t n_mother_spikes = e.get_multiplicity();
-  ulong_t n_spikes = 0;
+  unsigned long n_mother_spikes = e.get_multiplicity();
+  unsigned long n_spikes = 0;
 
-  for ( ulong_t n = 0; n < n_mother_spikes; n++ )
+  for ( unsigned long n = 0; n < n_mother_spikes; n++ )
   {
     if ( rng->drand() < P_.p_copy_ )
       n_spikes++;

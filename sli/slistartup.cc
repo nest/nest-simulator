@@ -233,10 +233,10 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , start_name( "start" )
   , intsize_name( "int" )
   , longsize_name( "long" )
-  , havelonglong_name( "have long long" )
-  , longlongsize_name( "long long" )
+  , havelonglong_name( "have_long_long" )
+  , longlongsize_name( "long_long" )
   , doublesize_name( "double" )
-  , pointersize_name( "void *" )
+  , pointersize_name( "void_ptr" )
   , architecturedict_name( "architecture" )
   , platform_name( "platform" )
   , threading_name( "threading" )
@@ -554,16 +554,13 @@ SLIStartup::init( SLIInterpreter* i )
   statusdict->insert( environment_name, environment );
 
 #ifdef HAVE_LONG_LONG
-  typedef long long longlong_t;
   architecturedict->insert( havelonglong_name, Token( new BoolDatum( true ) ) );
+  architecturedict->insert(
+    longlongsize_name, Token( new IntegerDatum( sizeof( long long ) ) ) );
 #else
-  typedef long longlong_t;
   architecturedict->insert(
     havelonglong_name, Token( new BoolDatum( false ) ) );
 #endif
-
-  architecturedict->insert(
-    longlongsize_name, Token( new IntegerDatum( sizeof( longlong_t ) ) ) );
 
   i->def( statusdict_name, statusdict );
 

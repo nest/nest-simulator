@@ -156,7 +156,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_psc_delta >;
@@ -170,30 +170,30 @@ private:
   struct Parameters_
   {
     /** Membrane time constant in ms. */
-    double_t tau_m_;
+    double tau_m_;
 
     /** Membrane capacitance in pF. */
-    double_t c_m_;
+    double c_m_;
 
     /** Refractory period in ms. */
-    double_t t_ref_;
+    double t_ref_;
 
     /** Resting potential in mV. */
-    double_t E_L_;
+    double E_L_;
 
     /** External DC current */
-    double_t I_e_;
+    double I_e_;
 
     /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
         I.e. the real threshold is (E_L_+V_th_). */
-    double_t V_th_;
+    double V_th_;
 
     /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).
         I.e. the real lower bound is (V_min_+V_th_). */
-    double_t V_min_;
+    double V_min_;
 
     /** reset value of the membrane potential */
-    double_t V_reset_;
+    double V_reset_;
 
     bool with_refr_input_; //!< spikes arriving during refractory period are
                            //!< counted
@@ -215,16 +215,16 @@ private:
    */
   struct State_
   {
-    double_t y0_;
+    double y0_;
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
-    double_t y3_;
+    double y3_;
 
-    int_t r_; //!< Number of refractory steps remaining
+    int r_; //!< Number of refractory steps remaining
 
     /** Accumulate spikes arriving during refractory period, discounted for
         decay until end of refractory period.
     */
-    double_t refr_spikes_buffer_;
+    double refr_spikes_buffer_;
 
     State_(); //!< Default initialization
 
@@ -264,16 +264,16 @@ private:
   struct Variables_
   {
 
-    double_t P30_;
-    double_t P33_;
+    double P30_;
+    double P33_;
 
-    int_t RefractoryCounts_;
+    int RefractoryCounts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the real membrane potential
-  double_t
+  double
   get_V_m_() const
   {
     return S_.y3_ + P_.E_L_;

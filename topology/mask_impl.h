@@ -66,7 +66,7 @@ Mask< D >::minus_mask( const AbstractMask& other ) const
 
 template < int D >
 bool
-Mask< D >::inside( const std::vector< double_t >& pt ) const
+Mask< D >::inside( const std::vector< double >& pt ) const
 {
   return inside( Position< D >( pt ) );
 }
@@ -133,8 +133,8 @@ BoxMask< D >::get_dict() const
   DictionaryDatum d( new Dictionary );
   DictionaryDatum maskd( new Dictionary );
   def< DictionaryDatum >( d, get_name(), maskd );
-  def< std::vector< double_t > >( maskd, names::lower_left, lower_left_ );
-  def< std::vector< double_t > >( maskd, names::upper_right, upper_right_ );
+  def< std::vector< double > >( maskd, names::lower_left, lower_left_ );
+  def< std::vector< double > >( maskd, names::upper_right, upper_right_ );
   return d;
 }
 
@@ -245,8 +245,8 @@ BallMask< D >::get_dict() const
   DictionaryDatum d( new Dictionary );
   DictionaryDatum maskd( new Dictionary );
   def< DictionaryDatum >( d, get_name(), maskd );
-  def< double_t >( maskd, names::radius, radius_ );
-  def< std::vector< double_t > >( maskd, names::anchor, center_ );
+  def< double >( maskd, names::radius, radius_ );
+  def< std::vector< double > >( maskd, names::anchor, center_ );
   return d;
 }
 
@@ -452,7 +452,7 @@ DictionaryDatum
 AnchoredMask< D >::get_dict() const
 {
   DictionaryDatum d = m_->get_dict();
-  def< std::vector< double_t > >( d, names::anchor, anchor_ );
+  def< std::vector< double > >( d, names::anchor, anchor_ );
   return d;
 }
 

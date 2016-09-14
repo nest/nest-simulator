@@ -125,11 +125,11 @@ public:
    * This function should be called once per time step at the end of the
    * time step to record data from the node to the logger.
    *
-   * @param long_t    Time in steps at the BEGINNING of the update step, i.e.,
+   * @param long    Time in steps at the BEGINNING of the update step, i.e.,
    *                  origin+lag, but the data is logged with time stamp
    *                  origin+lag+1, since this is the proper time of the data.
    */
-  void record_data( long_t );
+  void record_data( long );
 
   //! Erase all existing data
   void reset();
@@ -157,7 +157,7 @@ private:
       return multimeter_;
     }
     void handle( HostNode&, const DataLoggingRequest& );
-    void record_data( const HostNode&, long_t );
+    void record_data( const HostNode&, long );
     void reset();
     void init();
 
@@ -166,8 +166,8 @@ private:
     size_t num_vars_;  //!< number of variables recorded
 
     Time recording_interval_; //!< interval between two recordings
-    long_t rec_int_steps_;    //!< interval in steps
-    long_t next_rec_step_;    //!< next time step at which to record
+    long rec_int_steps_;      //!< interval in steps
+    long next_rec_step_;      //!< next time step at which to record
 
     /** Vector of pointers to member functions for data access. */
     std::vector< typename RecordablesMap< HostNode >::DataAccessFct >

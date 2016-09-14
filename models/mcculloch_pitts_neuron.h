@@ -97,7 +97,7 @@ class gainfunction_mcculloch_pitts
 {
 private:
   /** threshold of sigmoidal activation function */
-  double_t theta_;
+  double theta_;
 
 public:
   /** sets default parameters */
@@ -109,11 +109,11 @@ public:
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
-  bool operator()( librandom::RngPtr, double_t h );
+  bool operator()( librandom::RngPtr, double h );
 };
 
 inline bool gainfunction_mcculloch_pitts::operator()( librandom::RngPtr,
-  double_t h )
+  double h )
 {
   return h > theta_;
 }

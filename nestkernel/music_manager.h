@@ -56,11 +56,11 @@ void register_music_in_port( std::string portname );
 void unregister_music_in_port( std::string portname );
 void register_music_event_in_proxy( std::string portname, int channel,
 nest::Node* mp );
-void set_music_in_port_acceptable_latency( std::string portname, double_t
+void set_music_in_port_acceptable_latency( std::string portname, double
 latency );
-void set_music_in_port_max_buffered( std::string portname, int_t maxbuffered );
+void set_music_in_port_max_buffered( std::string portname, int maxbuffered );
 void publish_music_in_ports_();
-void update_music_event_handlers_( Time const&, const long_t, const long_t );
+void update_music_event_handlers_( Time const&, const long, const long );
 
 Linked Data Structures:
 
@@ -91,7 +91,7 @@ public:
    * \param h_min_delay is the length of a time slice, after which
    * communication should take place.
    */
-  void enter_runtime( double_t h_min_delay );
+  void enter_runtime( double h_min_delay );
 
   /**
    * Advance the time of music by 1 simulation step.
@@ -142,15 +142,14 @@ public:
    * Set the acceptable latency (latency) for a music input port (portname).
    */
   void set_music_in_port_acceptable_latency( std::string portname,
-    double_t latency );
-  void set_music_in_port_max_buffered( std::string portname,
-    int_t maxbuffered );
+    double latency );
+  void set_music_in_port_max_buffered( std::string portname, int maxbuffered );
   /**
    * Data structure to hold variables and parameters associated with a port.
    */
   struct MusicPortData
   {
-    MusicPortData( size_t n, double_t latency, int_t m )
+    MusicPortData( size_t n, double latency, int m )
       : n_input_proxies( n )
       , acceptable_latency( latency )
       , max_buffered( m )
@@ -161,8 +160,8 @@ public:
     }
     size_t n_input_proxies; // Counter for number of music_input proxies
                             // connected to this port
-    double_t acceptable_latency;
-    int_t max_buffered;
+    double acceptable_latency;
+    int max_buffered;
   };
 
   /**
@@ -199,7 +198,7 @@ public:
    * Call update() for each of the registered MUSIC event handlers
    * to deliver all queued events to the target music_in_proxies.
    */
-  void update_music_event_handlers( Time const&, const long_t, const long_t );
+  void update_music_event_handlers( Time const&, const long, const long );
 #endif
 
 private:

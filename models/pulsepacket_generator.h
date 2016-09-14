@@ -99,7 +99,7 @@ private:
   void calibrate();
 
   void create_pulse();
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   struct Buffers_;
 
@@ -108,11 +108,11 @@ private:
   struct Parameters_
   {
 
-    std::vector< double_t > pulse_times_; //!< times of pulses
-    long_t a_;                            //!< number of pulses in a packet
-    double_t sdev_;                       //!< standard deviation of the packet
+    std::vector< double > pulse_times_; //!< times of pulses
+    long a_;                            //!< number of pulses in a packet
+    double sdev_;                       //!< standard deviation of the packet
 
-    double_t sdev_tolerance_;
+    double sdev_tolerance_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -130,7 +130,7 @@ private:
 
   struct Buffers_
   {
-    std::deque< long_t > spiketimes_;
+    std::deque< long > spiketimes_;
   };
 
   // ------------------------------------------------------------
@@ -150,7 +150,7 @@ private:
      */
     size_t start_center_idx_;
     size_t stop_center_idx_;
-    double_t tolerance;
+    double tolerance;
 
     Variables_();
   };

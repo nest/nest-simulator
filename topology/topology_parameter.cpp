@@ -25,8 +25,8 @@
 namespace nest
 {
 
-double_t
-TopologyParameter::value( const std::vector< double_t >& pt,
+double
+TopologyParameter::value( const std::vector< double >& pt,
   librandom::RngPtr& rng ) const
 {
   switch ( pt.size() )
@@ -49,13 +49,13 @@ Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
   , sigma_y_( 1.0 )
   , rho_( 0.0 )
 {
-  updateValue< double_t >( d, names::c, c_ );
-  updateValue< double_t >( d, names::p_center, p_center_ );
-  updateValue< double_t >( d, names::mean_x, mean_x_ );
-  updateValue< double_t >( d, names::sigma_x, sigma_x_ );
-  updateValue< double_t >( d, names::mean_y, mean_y_ );
-  updateValue< double_t >( d, names::sigma_y, sigma_y_ );
-  updateValue< double_t >( d, names::rho, rho_ );
+  updateValue< double >( d, names::c, c_ );
+  updateValue< double >( d, names::p_center, p_center_ );
+  updateValue< double >( d, names::mean_x, mean_x_ );
+  updateValue< double >( d, names::sigma_x, sigma_x_ );
+  updateValue< double >( d, names::mean_y, mean_y_ );
+  updateValue< double >( d, names::sigma_y, sigma_y_ );
+  updateValue< double >( d, names::rho, rho_ );
 
   if ( rho_ >= 1 || rho_ <= -1 )
     throw BadProperty(

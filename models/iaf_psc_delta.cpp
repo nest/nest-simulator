@@ -65,14 +65,14 @@ RecordablesMap< iaf_psc_delta >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_delta::Parameters_::Parameters_()
-  : tau_m_( 10.0 )                                    // ms
-  , c_m_( 250.0 )                                     // pF
-  , t_ref_( 2.0 )                                     // ms
-  , E_L_( -70.0 )                                     // mV
-  , I_e_( 0.0 )                                       // pA
-  , V_th_( -55.0 - E_L_ )                             // mV, rel to E_L_
-  , V_min_( -std::numeric_limits< double_t >::max() ) // relative E_L_-55.0-E_L_
-  , V_reset_( -70.0 - E_L_ )                          // mV, rel to E_L_
+  : tau_m_( 10.0 )                                  // ms
+  , c_m_( 250.0 )                                   // pF
+  , t_ref_( 2.0 )                                   // ms
+  , E_L_( -70.0 )                                   // mV
+  , I_e_( 0.0 )                                     // pA
+  , V_th_( -55.0 - E_L_ )                           // mV, rel to E_L_
+  , V_min_( -std::numeric_limits< double >::max() ) // relative E_L_-55.0-E_L_
+  , V_reset_( -70.0 - E_L_ )                        // mV, rel to E_L_
   , with_refr_input_( false )
 {
 }
@@ -231,7 +231,7 @@ nest::iaf_psc_delta::calibrate()
 
 
   // TauR specifies the length of the absolute refractory period as
-  // a double_t in ms. The grid based iaf_psp_delta can only handle refractory
+  // a double in ms. The grid based iaf_psp_delta can only handle refractory
   // periods that are integer multiples of the computation step size (h).
   // To ensure consistency with the overall simulation scheme such conversion
   // should be carried out via objects of class nest::Time. The conversion
@@ -261,15 +261,15 @@ nest::iaf_psc_delta::calibrate()
 
 void
 nest::iaf_psc_delta::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  const double_t h = Time::get_resolution().get_ms();
-  for ( long_t lag = from; lag < to; ++lag )
+  const double h = Time::get_resolution().get_ms();
+  for ( long lag = from; lag < to; ++lag )
   {
     if ( S_.r_ == 0 )
     {
@@ -341,8 +341,8 @@ nest::iaf_psc_delta::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(

@@ -175,7 +175,7 @@ StimulatingDevice< nest::CurrentEvent >::is_active( const Time& T ) const
      This is equivalent to checking
         t_min_ <= T.get_steps() + 1 < t_max_
    */
-  const long_t step = T.get_steps() + 1;
+  const long step = T.get_steps() + 1;
   return get_t_min_() <= step && step < get_t_max_();
 }
 
@@ -184,7 +184,7 @@ inline bool
 StimulatingDevice< nest::DoubleDataEvent >::is_active( const Time& T ) const
 {
   // same as for the CurrentEvent
-  const long_t step = T.get_steps() + 1;
+  const long step = T.get_steps() + 1;
   return get_t_min_() <= step && step < get_t_max_();
 }
 
@@ -193,7 +193,7 @@ inline bool
 StimulatingDevice< nest::SpikeEvent >::is_active( const Time& T ) const
 {
   /* Input is the time stamp of the spike to be emitted. */
-  const long_t stamp = T.get_steps();
+  const long stamp = T.get_steps();
   return get_t_min_() < stamp && stamp <= get_t_max_();
 }
 

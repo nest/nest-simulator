@@ -14,7 +14,7 @@ MUSIC tests are run using the `mpirun` function defined in `~/.nestrc`
 and with the total number of processes that is requested in the MUSIC
 configuration file.
 
-The test is expected to exit with an exit code of 0 if it
+Each test is expected to exit with an exit code of 0 if it
 succeeds. All other exit codes indicate an error.
 
 If the name of the test contains the word "failure", the test is

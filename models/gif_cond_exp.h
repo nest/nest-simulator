@@ -27,6 +27,11 @@
 
 #ifdef HAVE_GSL
 
+// Includes from gnu gsl:
+#include <gsl/gsl_errno.h>
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_odeiv.h>
+
 // Includes from nestkernel:
 #include "event.h"
 #include "archiving_node.h"
@@ -35,15 +40,10 @@
 
 #include "universal_data_logger.h"
 
-// Includes from gnu gsl:
-#include <gsl/gsl_errno.h>
-#include <gsl/gsl_matrix.h>
-#include <gsl/gsl_odeiv.h>
-
 #include "nest.h"
 
 /* BeginDocumentation
-  Name: gif_cond_exp - Conductance based generalized integrate-and-fire neuron
+  Name: gif_cond_exp - Conductance-based generalized integrate-and-fire neuron
   model according to Mensi et al. (2012) and Pozzorini et al. (2015).
 
   Description:
@@ -72,7 +72,7 @@
   Neuron produces spikes STOCHASTICALLY according to a point process with the
   firing intensity:
 
-  lambda(t) = lambda_0 * exp[(V(t)-V_T(t)/Delta_V)]
+  lambda(t) = lambda_0 * exp[ (V(t)-V_T(t)) / Delta_V ]
 
   where V_T(t) is a time-dependent firing threshold:
 
@@ -120,13 +120,18 @@
     tau_sfa    vector of double - Time constants of sfa variables in ms.
     Delta_V    double - Stochasticity level in mV.
     lambda_0   double - Stochastic intensity at firing threshold V_T in 1/s.
-    V_T_star   double - Minimum threshold in mV
+    V_T_star   double - Base threshold in mV
 
   Synaptic parameters
     E_ex       double - Excitatory reversal potential in mV.
-    tau_syn_ex double - Rise time of excitatory synaptic conductance in ms.
+    tau_syn_ex double - Decay time of excitatory synaptic conductance in ms.
     E_in       double - Inhibitory reversal potential in mV.
-    tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms.
+    tau_syn_in double - Decay time of the inhibitory synaptic conductance in ms.
+
+  Integration parameters
+    gsl_error_tol  double - This parameter controls the admissible error of the
+                            GSL integrator. Reduce it if NEST complains about
+                            numerical instabilities.
 
   References:
 
@@ -189,7 +194,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // make dynamics function quasi-member
   friend int gif_cond_exp_dynamics( double, const double*, double*, void* );
@@ -205,43 +210,43 @@ private:
    */
   struct Parameters_
   {
-    double_t g_L_;
-    double_t E_L_;
-    double_t V_reset_;
-    double_t Delta_V_;
-    double_t V_T_star_;
-    double_t lambda_0_; /** 1/ms */
+    double g_L_;
+    double E_L_;
+    double V_reset_;
+    double Delta_V_;
+    double V_T_star_;
+    double lambda_0_; /** 1/ms */
 
-    double_t E_ex_; /** Excitatory reversal Potential in mV */
-    double_t E_in_; /** Inhibitory reversal Potential in mV  */
-    double_t
-      tau_synE_; /** Synaptic Time Constant for Excitatory Synapse in ms */
-    double_t
-      tau_synI_; /** Synaptic Time Constant for Inhibitory Synapse in ms */
+    double E_ex_;     /** Excitatory reversal Potential in mV */
+    double E_in_;     /** Inhibitory reversal Potential in mV  */
+    double tau_synE_; /** Synaptic Time Constant for Excitatory Synapse in ms */
+    double tau_synI_; /** Synaptic Time Constant for Inhibitory Synapse in ms */
 
     /** Refractory period in ms. */
-    double_t t_ref_;
+    double t_ref_;
 
     /** Membrane capacitance in pF. */
-    double_t c_m_;
+    double c_m_;
 
     /** We use stc and sfa, respectively instead of eta and gamma
     (mentioned in the references). */
 
     /** List of spike-triggered current time constant in ms. */
-    std::vector< double_t > tau_stc_;
+    std::vector< double > tau_stc_;
 
     /** List of spike-triggered current jumps in nA. */
-    std::vector< double_t > q_stc_;
+    std::vector< double > q_stc_;
 
     /** List of adaptive threshold time constant in ms. */
-    std::vector< double_t > tau_sfa_;
+    std::vector< double > tau_sfa_;
 
     /** List of adaptive threshold jumps in mV. */
-    std::vector< double_t > q_sfa_;
+    std::vector< double > q_sfa_;
 
     /** External DC current. */
-    double_t I_e_;
+    double I_e_;
+
+    double gsl_error_tol; //!< error bound for GSL integrator
 
     Parameters_(); //!< Sets default parameter values
 
@@ -265,22 +270,18 @@ private:
       STATE_VEC_SIZE
     };
 
-    double_t
-      y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
+    double neuron_state_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array
+                                            //for GSL solver
 
-    double_t y0_;  //!< This is piecewise constant external current
-    double_t sfa_; //!< This is the change of the 'threshold' due to adaptation.
-    double_t stc_; //!< Spike-triggered current.
+    double I_stim_; //!< This is piecewise constant external current
+    double sfa_; //!< This is the change of the 'threshold' due to adaptation.
+    double stc_; //!< Spike-triggered current.
 
-    std::vector< double_t > sfa_elems_; //!< Vector of adaptation parameters.
-    std::vector< double_t >
-      stc_elems_; //!< Vector of spike-triggered parameters.
+    std::vector< double > sfa_elems_; //!< Vector of adaptation parameters.
+    std::vector< double > stc_elems_; //!< Vector of spike-triggered parameters.
 
-    double_t i_syn_ex_; //!< postsynaptic current for exc.
-    double_t i_syn_in_; //!< postsynaptic current for inh.
-
-    int_t r_ref_; //!< absolute refractory counter (no membrane potential
-    // propagation)
+    unsigned int r_ref_; //!< absolute refractory counter (no membrane potential
+                         //propagation)
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -318,7 +319,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double_t step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
   };
 
@@ -329,33 +330,34 @@ private:
    */
   struct Variables_
   {
-    std::vector< double_t > P_sfa_;
-    std::vector< double_t > P_stc_;
+    std::vector< double >
+      P_sfa_; // decay terms of spike-triggered current elements
+    std::vector< double > P_stc_; // decay terms of adaptive threshold elements
 
     librandom::RngPtr rng_; // random number generator of my own thread
 
-    int_t RefractoryCounts_;
+    unsigned int RefractoryCounts_;
   };
 
   // Access functions for UniversalDataLogger -----------------------
 
   //! Read out state vector elements, used by UniversalDataLogger
   template < State_::StateVecElems elem >
-  double_t
+  double
   get_y_elem_() const
   {
-    return S_.y_[ elem ];
+    return S_.neuron_state_[ elem ];
   }
 
   //! Read out the adaptive threshold potential
-  double_t
+  double
   get_E_sfa_() const
   {
     return S_.sfa_;
   }
 
   //! Read out the spike-triggered current
-  double_t
+  double
   get_I_stc_() const
   {
     return S_.stc_;

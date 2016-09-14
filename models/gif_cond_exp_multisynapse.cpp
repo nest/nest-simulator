@@ -93,8 +93,8 @@ nest::gif_cond_exp_multisynapse_dynamics( double,
   const double stc = node.S_.stc_;
   const double V = y[ S::V_M ];
 
-  double_t I_syn_exc = 0.0;
-  double_t I_syn_inh = 0.0;
+  double I_syn_exc = 0.0;
+  double I_syn_inh = 0.0;
 
   for ( size_t i = 0; i < node.P_.num_of_receptors_; i++ )
   {
@@ -105,8 +105,8 @@ nest::gif_cond_exp_multisynapse_dynamics( double,
   }
 
   // output: dv/dt
-  f[ 0 ] = ( -I_L + node.S_.y0_ + node.P_.I_e_ - I_syn_exc - I_syn_inh - stc )
-    / node.P_.c_m_;
+  f[ 0 ] = ( -I_L + node.S_.I_stim_ + node.P_.I_e_ - I_syn_exc - I_syn_inh
+             - stc ) / node.P_.c_m_;
 
   // outputs: dg/dt
   for ( size_t i = 0; i < node.P_.num_of_receptors_; i++ )
@@ -140,28 +140,31 @@ nest::gif_cond_exp_multisynapse::Parameters_::Parameters_()
   , q_sfa_()           // mV
   , tau_syn_()         // ms
   , I_e_( 0.0 )        // pA
-  , receptor_types_()
   , num_of_receptors_( 0 )
   , E_ex_( 0.0 )   // mV
   , E_in_( -85.0 ) // mV
   , has_connections_( false )
+  , gsl_error_tol( 1e-3 )
 {
 }
 
 nest::gif_cond_exp_multisynapse::State_::State_( const Parameters_& p )
-  : y_( NUMBER_OF_FIXED_STATES_ELEMENTS, 0.0 )
-  , y0_( 0.0 )
+  : y_( NULL )
+  , size_neuron_state_( 0 )
+  , I_stim_( 0.0 )
   , sfa_( 0.0 )
   , stc_( 0.0 )
   , sfa_elems_()
   , stc_elems_()
   , r_ref_( 0 )
 {
+  y_ = ( double* ) malloc( NUMBER_OF_FIXED_STATES_ELEMENTS * sizeof( double ) );
+  size_neuron_state_ = NUMBER_OF_FIXED_STATES_ELEMENTS;
   y_[ V_M ] = p.E_L_;
 }
 
 nest::gif_cond_exp_multisynapse::State_::State_( const State_& s )
-  : y0_( s.y0_ )
+  : I_stim_( s.I_stim_ )
   , sfa_( s.sfa_ )
   , stc_( s.stc_ )
   , r_ref_( s.r_ref_ )
@@ -174,7 +177,10 @@ nest::gif_cond_exp_multisynapse::State_::State_( const State_& s )
   for ( size_t i = 0; i < stc_elems_.size(); ++i )
     stc_elems_[ i ] = s.stc_elems_[ i ];
 
-  y_ = s.y_;
+  size_neuron_state_ = s.size_neuron_state_;
+  y_ = ( double* ) malloc( size_neuron_state_ * sizeof( double ) );
+  for ( size_t i = 0; i < size_neuron_state_; ++i )
+    y_[ i ] = s.y_[ i ];
 }
 
 nest::gif_cond_exp_multisynapse::State_&
@@ -182,8 +188,6 @@ nest::gif_cond_exp_multisynapse::State_&
   operator=( const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
-
-  y_ = s.y_;
 
   sfa_elems_.resize( s.sfa_elems_.size(), 0.0 );
   for ( size_t i = 0; i < sfa_elems_.size(); ++i )
@@ -193,7 +197,12 @@ nest::gif_cond_exp_multisynapse::State_&
   for ( size_t i = 0; i < stc_elems_.size(); ++i )
     stc_elems_[ i ] = s.stc_elems_[ i ];
 
-  y0_ = s.y0_;
+  size_neuron_state_ = s.size_neuron_state_;
+  y_ = ( double* ) malloc( size_neuron_state_ * sizeof( double ) );
+  for ( size_t i = 0; i < size_neuron_state_; ++i )
+    y_[ i ] = s.y_[ i ];
+
+  I_stim_ = s.I_stim_;
   sfa_ = s.sfa_;
   r_ref_ = s.r_ref_;
   stc_ = s.stc_;
@@ -221,6 +230,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::E_in, E_in_ );
   def< int >( d, "n_synapses", num_of_receptors_ );
   def< bool >( d, names::has_connections, has_connections_ );
+  def< double >( d, names::gsl_error_tol, gsl_error_tol );
 
   ArrayDatum tau_syn_ad( tau_syn_ );
   def< ArrayDatum >( d, names::taus_syn, tau_syn_ad );
@@ -257,6 +267,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::t_ref, t_ref_ );
   updateValue< double >( d, names::E_ex, E_ex_ );
   updateValue< double >( d, names::E_in, E_in_ );
+  updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
 
   updateValue< std::vector< double > >( d, names::tau_sfa, tau_sfa_ );
   updateValue< std::vector< double > >( d, names::q_sfa, q_sfa_ );
@@ -266,21 +277,16 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
   std::vector< double > tau_tmp;
   if ( updateValue< std::vector< double > >( d, names::taus_syn, tau_tmp ) )
   {
+    if ( has_connections_ && tau_tmp.size() < tau_syn_.size() )
+      throw BadProperty(
+        "The neuron has connections, "
+        "therefore the number of ports cannot be reduced." );
+
     for ( size_t i = 0; i < tau_tmp.size(); ++i )
     {
-      if ( tau_tmp.size() < tau_syn_.size() && has_connections_ == true )
-        throw BadProperty(
-          "The neuron has connections, therefore the number of ports cannot be "
-          "reduced." );
-
       if ( tau_tmp[ i ] <= 0 )
         throw BadProperty(
           "All synaptic time constants must be strictly positive" );
-
-      if ( tau_tmp[ i ] == ( c_m_ / g_L_ ) )
-        throw BadProperty(
-          "Membrane and synapse time constant(s) must differ. See note in "
-          "documentation." );
     }
     tau_syn_ = tau_tmp;
     num_of_receptors_ = tau_syn_.size();
@@ -393,6 +399,9 @@ nest::gif_cond_exp_multisynapse::~gif_cond_exp_multisynapse()
     gsl_odeiv_control_free( B_.c_ );
   if ( B_.e_ )
     gsl_odeiv_evolve_free( B_.e_ );
+
+  if ( S_.size_neuron_state_ > 0 )
+    free( S_.y_ );
 }
 
 /* ----------------------------------------------------------------
@@ -427,9 +436,9 @@ nest::gif_cond_exp_multisynapse::init_buffers_()
     gsl_odeiv_step_reset( B_.s_ );
 
   if ( B_.c_ == 0 )
-    B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
+    B_.c_ = gsl_odeiv_control_y_new( P_.gsl_error_tol, 0.0 );
   else
-    gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
+    gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, 0.0, 1.0, 0.0 );
 
 
   if ( B_.e_ == 0 )
@@ -447,23 +456,27 @@ void
 nest::gif_cond_exp_multisynapse::calibrate()
 {
 
-  P_.receptor_types_.resize( P_.num_of_receptors_ );
-  for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
-  {
-    P_.receptor_types_[ i ] = i + 1;
-  }
-
   int state_size = 1 + ( State_::STATE_VEC_SIZE - 1 ) * P_.num_of_receptors_;
 
   B_.spike_exc_.resize( P_.num_of_receptors_ );
   B_.spike_inh_.resize( P_.num_of_receptors_ );
-  S_.y_.resize( state_size );
+
+  if ( S_.size_neuron_state_ == 0 )
+    S_.y_ = ( double* ) malloc( state_size * sizeof( double ) );
+  else
+    S_.y_ = ( double* ) realloc( S_.y_, state_size * sizeof( double ) );
+
+  for ( size_t i = S_.size_neuron_state_; i < ( unsigned int ) state_size; i++ )
+  {
+    S_.y_[ i ] = 0.0;
+  }
+  S_.size_neuron_state_ = state_size;
 
   B_.sys_.dimension = state_size;
 
   B_.logger_.init();
 
-  const double_t h = Time::get_resolution().get_ms();
+  const double h = Time::get_resolution().get_ms();
   V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
@@ -493,15 +506,15 @@ nest::gif_cond_exp_multisynapse::calibrate()
 
 void
 nest::gif_cond_exp_multisynapse::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
 
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
     // exponential decaying stc and sfa elements
@@ -534,8 +547,6 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin,
 
     double t = 0.0;
 
-    double_t* state_y_ = &S_.y_[ 0 ];
-
     while ( t < B_.step_ )
     {
       const int status = gsl_odeiv_evolve_apply( B_.e_,
@@ -545,7 +556,7 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin,
         &t,                   // from t
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
-        state_y_ );           // neuronal state
+        S_.y_ );              // neuronal state
 
       if ( status != GSL_SUCCESS )
         throw GSLSolverFailure( get_name(), status );
@@ -559,10 +570,10 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin,
         B_.spike_inh_[ i ].get_value( lag );
     }
 
-    if ( S_.r_ref_ == 0 ) // neuron not refractory, so evolve V
+    if ( S_.r_ref_ == 0 ) // neuron is not in refractory period
     {
 
-      const double_t lambda = P_.lambda_0_
+      const double lambda = P_.lambda_0_
         * std::exp( ( S_.y_[ State_::V_M ] - S_.sfa_ ) / P_.Delta_V_ );
 
       if ( lambda > 0.0 )
@@ -601,7 +612,7 @@ nest::gif_cond_exp_multisynapse::update( Time const& origin,
 
 
     // Set new input current
-    S_.y0_ = B_.currents_.get_value( lag );
+    S_.I_stim_ = B_.currents_.get_value( lag );
 
     // Voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );
@@ -636,8 +647,8 @@ nest::gif_cond_exp_multisynapse::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
   B_.currents_.add_value(

@@ -87,8 +87,8 @@ nest::gif_psc_exp::Parameters_::Parameters_()
 
 
 nest::gif_psc_exp::State_::State_()
-  : y0_( 0.0 )
-  , y3_( -70.0 )
+  : I_stim_( 0.0 )
+  , V_( -70.0 )
   , sfa_( 0.0 )
   , stc_( 0.0 )
   , sfa_elems_()
@@ -201,7 +201,7 @@ nest::gif_psc_exp::Parameters_::set( const DictionaryDatum& d )
 void
 nest::gif_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, y3_ );    // Membrane potential
+  def< double >( d, names::V_m, V_ );     // Membrane potential
   def< double >( d, names::E_sfa, sfa_ ); // Adaptive threshold potential
   def< double >( d, names::stc, stc_ );   // Spike-triggered current
 }
@@ -209,7 +209,7 @@ nest::gif_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 void
 nest::gif_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p )
 {
-  updateValue< double >( d, names::V_m, y3_ );
+  updateValue< double >( d, names::V_m, V_ );
 }
 
 nest::gif_psc_exp::Buffers_::Buffers_( gif_psc_exp& n )
@@ -270,13 +270,13 @@ nest::gif_psc_exp::calibrate()
 {
   B_.logger_.init();
 
-  const double_t h = Time::get_resolution().get_ms();
+  const double h = Time::get_resolution().get_ms();
   V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 
   V_.P11ex_ = std::exp( -h / P_.tau_ex_ );
   V_.P11in_ = std::exp( -h / P_.tau_in_ );
 
-  const double_t tau_m = P_.c_m_ / P_.g_L_;
+  const double tau_m = P_.c_m_ / P_.g_L_;
 
   // these are determined according to a numeric stability criterion
   V_.P21ex_ = propagator_32( P_.tau_ex_, tau_m, P_.c_m_, h );
@@ -312,16 +312,14 @@ nest::gif_psc_exp::calibrate()
  */
 
 void
-nest::gif_psc_exp::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
 {
 
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
     // exponential decaying stc and sfa elements
@@ -346,15 +344,15 @@ nest::gif_psc_exp::update( Time const& origin,
     S_.i_syn_ex_ += B_.spikes_ex_.get_value( lag );
     S_.i_syn_in_ += B_.spikes_in_.get_value( lag );
 
-    if ( S_.r_ref_ == 0 ) // neuron not refractory, so evolve V
+    if ( S_.r_ref_ == 0 ) // neuron is not in refractory period
     {
 
-      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.y3_
+      S_.V_ = V_.P30_ * ( S_.I_stim_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.V_
         + V_.P31_ * P_.E_L_ + S_.i_syn_ex_ * V_.P21ex_
         + S_.i_syn_in_ * V_.P21in_;
 
-      const double_t lambda =
-        P_.lambda_0_ * std::exp( ( S_.y3_ - S_.sfa_ ) / P_.Delta_V_ );
+      const double lambda =
+        P_.lambda_0_ * std::exp( ( S_.V_ - S_.sfa_ ) / P_.Delta_V_ );
 
       if ( lambda > 0.0 )
       {
@@ -385,13 +383,13 @@ nest::gif_psc_exp::update( Time const& origin,
     }
     else
     {
-      --S_.r_ref_;          // neuron is absolute refractory
-      S_.y3_ = P_.V_reset_; // reset the membrane potential
+      --S_.r_ref_;         // neuron is absolute refractory
+      S_.V_ = P_.V_reset_; // reset the membrane potential
     }
 
 
     // Set new input current
-    S_.y0_ = B_.currents_.get_value( lag );
+    S_.I_stim_ = B_.currents_.get_value( lag );
 
     // Voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );
@@ -422,8 +420,8 @@ nest::gif_psc_exp::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
   B_.currents_.add_value(

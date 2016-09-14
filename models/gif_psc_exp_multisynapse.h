@@ -33,8 +33,9 @@
 #include "nest.h"
 
 /* BeginDocumentation
-  Name: gif_psc_exp_multisynapse - Current based generalized integrate-and-fire
-  neuron model according to Mensi et al. (2012) and Pozzorini et al. (2015).
+  Name: gif_psc_exp_multisynapse - Current-based generalized
+  integrate-and-fire neuron model with multiple synaptic time
+  constants according to Mensi et al. (2012) and Pozzorini et al. (2015).
 
   Description:
 
@@ -62,7 +63,7 @@
   Neuron produces spikes STOCHASTICALLY according to a point process with the
   firing intensity:
 
-  lambda(t) = lambda_0 * exp[(V(t)-V_T(t)/Delta_V)]
+  lambda(t) = lambda_0 * exp[ (V(t)-V_T(t)) / Delta_V ]
 
   where V_T(t) is a time-dependent firing threshold:
 
@@ -95,15 +96,6 @@
 
   The shape of post synaptic current is exponential.
 
-  Note that in the current implementation of the model (as described in [1] and
-  [2]) the values of eta_i and gamma_i are affected immediately after spike
-  emission. However, GIF toolbox (http://wiki.epfl.ch/giftoolbox) which fits
-  the model using experimental data, requires a different set of eta_i and
-  gamma_i. It applies the jump of eta_i and gamma_i after the refractory period.
-  One can easily convert between q_eta/gamma of these two approaches:
-  q_eta_giftoolbox = q_eta_NEST * (1 - exp( -tau_ref / tau_eta ))
-  The same formula applies for q_gamma.
-
   Parameters:
   The following parameters can be set in the status dictionary.
 
@@ -124,7 +116,7 @@
     tau_sfa    vector of double - Time constants of sfa variables in ms.
     Delta_V    double - Stochasticity level in mV.
     lambda_0   double - Stochastic intensity at firing threshold V_T in 1/s.
-    V_T_star   double - Minimum threshold in mV
+    V_T_star   double - Base threshold in mV
 
   Synaptic parameters
     taus_syn  vector of double - Time constants of the synaptic currents in ms.
@@ -146,7 +138,8 @@
   Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
   Author: March 2016, Setareh
-  SeeAlso: pp_psc_delta, gif_psc_exp, gif_cond_exp, gif_cond_exp_multisynapse */
+  SeeAlso: pp_psc_delta, gif_psc_exp, gif_cond_exp, gif_cond_exp_multisynapse
+*/
 
 namespace nest
 {
@@ -184,7 +177,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< gif_psc_exp_multisynapse >;
@@ -197,47 +190,45 @@ private:
    */
   struct Parameters_
   {
-    double_t g_L_;
-    double_t E_L_;
-    double_t V_reset_;
-    double_t Delta_V_;
-    double_t V_T_star_;
-    double_t lambda_0_; /** 1/ms */
+    double g_L_;
+    double E_L_;
+    double V_reset_;
+    double Delta_V_;
+    double V_T_star_;
+    double lambda_0_; /** 1/ms */
 
 
     /** Refractory period in ms. */
-    double_t t_ref_;
+    double t_ref_;
 
     /** Membrane capacitance in pF. */
-    double_t c_m_;
+    double c_m_;
 
     /** We use stc and sfa, respectively instead of eta and gamma
     (mentioned in the references). */
 
     /** List of spike triggered current time constant in ms. */
-    std::vector< double_t > tau_stc_;
+    std::vector< double > tau_stc_;
 
     /** List of spike triggered current jumps in nA. */
-    std::vector< double_t > q_stc_;
+    std::vector< double > q_stc_;
 
     /** List of adaptive threshold time constant in ms. */
-    std::vector< double_t > tau_sfa_;
+    std::vector< double > tau_sfa_;
 
     /** List of adaptive threshold jumps in mV. */
-    std::vector< double_t > q_sfa_;
+    std::vector< double > q_sfa_;
 
     /** Time constants of synaptic currents in ms */
-    std::vector< double_t > tau_syn_;
+    std::vector< double > tau_syn_;
 
-    /** type is long because other types are not put through in GetStatus */
-    std::vector< long > receptor_types_;
     size_t num_of_receptors_;
 
     /** boolean flag which indicates whether the neuron has connections */
     bool has_connections_;
 
     /** External DC current. */
-    double_t I_e_;
+    double I_e_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -252,22 +243,20 @@ private:
    */
   struct State_
   {
-    double_t y0_; //!< This is piecewise constant external current
-    double_t
-      y3_; //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
-    double_t sfa_; //!< This is the change of the 'threshold' due to adaptation.
-    double_t stc_; //!< Spike triggered current.
+    double I_stim_; //!< This is piecewise constant external current
+    double V_;      //!< This is the membrane potential
+    double sfa_; //!< This is the change of the 'threshold' due to adaptation.
+    double stc_; //!< Spike triggered current.
 
-    std::vector< double_t > sfa_elems_; //!< Vector of adaptation parameters.
-    std::vector< double_t >
-      stc_elems_; //!< Vector of spike triggered parameters.
+    std::vector< double > sfa_elems_; //!< Vector of adaptation parameters.
+    std::vector< double > stc_elems_; //!< Vector of spike triggered parameters.
 
-    std::vector< double_t >
+    std::vector< double >
       i_syn_; //!< instantaneous currents of different synapses.
 
 
-    int_t r_ref_; //!< absolute refractory counter (no membrane potential
-    // propagation)
+    unsigned int r_ref_; //!< absolute refractory counter (no membrane potential
+                         //propagation)
 
     State_(); //!< Default initialization
 
@@ -300,41 +289,41 @@ private:
    */
   struct Variables_
   {
-    double_t P30_;
-    double_t P33_;
-    double_t P31_;
-    std::vector< double_t > P_sfa_;
-    std::vector< double_t > P_stc_;
+    double P30_; // coefficient for solving membrane potential equation
+    double P33_; // decay term of membrane potential
+    double P31_; // coefficient for solving membrane potential equation
 
-    unsigned int receptor_types_size_;
+    std::vector< double >
+      P_sfa_; // decay terms of spike-triggered current elements
+    std::vector< double > P_stc_; // decay terms of adaptive threshold elements
 
-    std::vector< double_t >
-      P11_syn_; // for updating instantaneous currents of different synapses
-    std::vector< double_t > P21_syn_;
+    std::vector< double > P11_syn_; // decay terms of synaptic currents
+    std::vector< double >
+      P21_syn_; // coefficients for solving membrane potential equation
 
     librandom::RngPtr rng_; // random number generator of my own thread
 
-    int_t RefractoryCounts_;
+    unsigned int RefractoryCounts_;
   };
 
   // Access functions for UniversalDataLogger -----------------------
 
   //! Read out the real membrane potential
-  double_t
+  double
   get_V_m_() const
   {
-    return S_.y3_;
+    return S_.V_;
   }
 
   //! Read out the adaptive threshold potential
-  double_t
+  double
   get_E_sfa_() const
   {
     return S_.sfa_;
   }
 
   //! Read out the spike triggered current
-  double_t
+  double
   get_I_stc_() const
   {
     return S_.stc_;
@@ -369,6 +358,17 @@ gif_psc_exp_multisynapse::send_test_event( Node& target,
   e.set_sender( *this );
 
   return target.handles_test_event( e, receptor_type );
+}
+
+inline port
+gif_psc_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
+{
+  if ( receptor_type <= 0
+    || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
+    throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
+
+  P_.has_connections_ = true;
+  return receptor_type;
 }
 
 inline port

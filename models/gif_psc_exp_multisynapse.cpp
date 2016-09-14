@@ -81,7 +81,6 @@ nest::gif_psc_exp_multisynapse::Parameters_::Parameters_()
   , tau_sfa_()         // ms
   , q_sfa_()           // mV
   , tau_syn_()         // ms
-  , receptor_types_()
   , num_of_receptors_( 0 )
   , has_connections_( false )
   , I_e_( 0.0 ) // pA
@@ -90,8 +89,8 @@ nest::gif_psc_exp_multisynapse::Parameters_::Parameters_()
 
 
 nest::gif_psc_exp_multisynapse::State_::State_()
-  : y0_( 0.0 )
-  , y3_( -70.0 )
+  : I_stim_( 0.0 )
+  , V_( -70.0 )
   , sfa_( 0.0 )
   , stc_( 0.0 )
   , sfa_elems_()
@@ -200,18 +199,15 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
   std::vector< double > tau_tmp;
   if ( updateValue< std::vector< double > >( d, names::taus_syn, tau_tmp ) )
   {
+    if ( has_connections_ && tau_tmp.size() < tau_syn_.size() )
+      throw BadProperty(
+        "The neuron has connections, "
+        "therefore the number of ports cannot be reduced." );
+
     for ( size_t i = 0; i < tau_tmp.size(); ++i )
     {
-      if ( tau_tmp.size() < tau_syn_.size() && has_connections_ == true )
-        throw BadProperty(
-          "The neuron has connections, therefore the number of ports cannot be "
-          "reduced." );
       if ( tau_tmp[ i ] <= 0 )
         throw BadProperty( "All synaptic time constants must be > 0." );
-      if ( tau_tmp[ i ] == ( c_m_ / g_L_ ) )
-        throw BadProperty(
-          "Membrane and synapse time constant(s) must differ. See note in "
-          "documentation." );
     }
 
     tau_syn_ = tau_tmp;
@@ -223,7 +219,7 @@ void
 nest::gif_psc_exp_multisynapse::State_::get( DictionaryDatum& d,
   const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, y3_ );    // Membrane potential
+  def< double >( d, names::V_m, V_ );     // Membrane potential
   def< double >( d, names::E_sfa, sfa_ ); // Adaptive threshold potential
   def< double >( d, names::stc, stc_ );   // Spike-triggered current
 }
@@ -232,7 +228,7 @@ void
 nest::gif_psc_exp_multisynapse::State_::set( const DictionaryDatum& d,
   const Parameters_& p )
 {
-  updateValue< double >( d, names::V_m, y3_ );
+  updateValue< double >( d, names::V_m, V_ );
 }
 
 nest::gif_psc_exp_multisynapse::Buffers_::Buffers_(
@@ -295,10 +291,10 @@ nest::gif_psc_exp_multisynapse::calibrate()
 {
   B_.logger_.init();
 
-  const double_t h = Time::get_resolution().get_ms();
+  const double h = Time::get_resolution().get_ms();
   V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
 
-  const double_t tau_m = P_.c_m_ / P_.g_L_;
+  const double tau_m = P_.c_m_ / P_.g_L_;
 
   V_.P33_ = std::exp( -h / tau_m );
   V_.P30_ = -1 / P_.c_m_ * numerics::expm1( -h / tau_m ) * tau_m;
@@ -325,14 +321,6 @@ nest::gif_psc_exp_multisynapse::calibrate()
   }
   S_.stc_elems_.resize( P_.tau_stc_.size(), 0.0 );
 
-  // initializing receptors
-  P_.receptor_types_.resize( P_.num_of_receptors_ );
-
-  for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
-  {
-    P_.receptor_types_[ i ] = i + 1;
-  }
-
   V_.P11_syn_.resize( P_.num_of_receptors_ );
   V_.P21_syn_.resize( P_.num_of_receptors_ );
 
@@ -355,15 +343,15 @@ nest::gif_psc_exp_multisynapse::calibrate()
 
 void
 nest::gif_psc_exp_multisynapse::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
 
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
     // exponential decaying stc and sfa elements
@@ -381,7 +369,7 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin,
       S_.sfa_elems_[ i ] = V_.P_sfa_[ i ] * S_.sfa_elems_[ i ];
     }
 
-    double_t sum_syn_pot = 0.0;
+    double sum_syn_pot = 0.0;
     for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
     {
       // computing effect of synaptic currents on membrane potential
@@ -391,14 +379,14 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin,
       S_.i_syn_[ i ] += B_.spikes_[ i ].get_value( lag ); // collecting spikes
     }
 
-    if ( S_.r_ref_ == 0 ) // neuron not refractory, so evolve V
+    if ( S_.r_ref_ == 0 ) // neuron is not in refractory period
     {
       // effect of synaptic currents (sum_syn_pot) is added here
-      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.y3_
+      S_.V_ = V_.P30_ * ( S_.I_stim_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.V_
         + V_.P31_ * P_.E_L_ + sum_syn_pot;
 
-      const double_t lambda =
-        P_.lambda_0_ * std::exp( ( S_.y3_ - S_.sfa_ ) / P_.Delta_V_ );
+      const double lambda =
+        P_.lambda_0_ * std::exp( ( S_.V_ - S_.sfa_ ) / P_.Delta_V_ );
 
       if ( lambda > 0.0 )
       {
@@ -429,44 +417,29 @@ nest::gif_psc_exp_multisynapse::update( Time const& origin,
     }
     else
     {
-      --S_.r_ref_;          // neuron is absolute refractory
-      S_.y3_ = P_.V_reset_; // reset the membrane potential
+      --S_.r_ref_;         // neuron is absolute refractory
+      S_.V_ = P_.V_reset_; // reset the membrane potential
     }
 
     // Set new input current
-    S_.y0_ = B_.currents_.get_value( lag );
+    S_.I_stim_ = B_.currents_.get_value( lag );
 
     // Voltage logging
     B_.logger_.record_data( origin.get_steps() + lag );
   }
 }
 
-port
-gif_psc_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
-{
-  if ( receptor_type <= 0
-    || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
-    throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
-
-  P_.has_connections_ = true;
-  return receptor_type;
-}
 
 void
 gif_psc_exp_multisynapse::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
+  assert( ( e.get_rport() > 0 )
+    && ( ( size_t ) e.get_rport() <= P_.num_of_receptors_ ) );
 
-  for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
-  {
-    if ( P_.receptor_types_[ i ] == e.get_rport() )
-    {
-      B_.spikes_[ i ].add_value(
-        e.get_rel_delivery_steps(
-          kernel().simulation_manager.get_slice_origin() ),
-        e.get_weight() * e.get_multiplicity() );
-    }
-  }
+  B_.spikes_[ e.get_rport() - 1 ].add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
@@ -474,8 +447,8 @@ nest::gif_psc_exp_multisynapse::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
   B_.currents_.add_value(

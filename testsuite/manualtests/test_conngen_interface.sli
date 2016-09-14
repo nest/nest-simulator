@@ -49,46 +49,63 @@ statusdict/have_libneurosim :: not { exit_test_gracefully } if
 (CSA) (libcsa.so) CGSelectImplementation
 
 % Obtain a connectiongeneratortype object by parsing an XML definition
+(<?xml version='1.0' encoding='UTF-8'?>\n)
+(<CSA xmlns="http://software.incf.org/software/csa/1.0">) join
+(<oneToOne/>) join
+(</CSA>) join
+CGParse /cg Set
 
-(<?xml version='1.0' encoding='UTF-8'?><CSA xmlns="http://software.incf.org/software/csa/1.0"><oneToOne/></CSA>) CGParse /cg Set
 
 % Test if the array variant works
 ResetKernel
 /iaf_psc_alpha 16 Create ;
-cg [ 1  2] [ 3  4]                       CGConnect
-cg [ 5  6] [ 7  8] << >>                 CGConnect
-cg [ 9 10] [11 12]       /static_synapse CGConnect
-cg [13 14] [15 16] << >> /static_synapse CGConnect
+cg [  1  2 ] [  3  4 ]                       CGConnect
+cg [  5  6 ] [  7  8 ] << >>                 CGConnect
+cg [  9 10 ] [ 11 12 ]       /static_synapse CGConnect
+cg [ 13 14 ] [ 15 16 ] << >> /static_synapse CGConnect
 
-<< /source [ 1  2] >> GetConnections { GetStatus /target get } Map ==
-<< /source [ 5  6] >> GetConnections { GetStatus /target get } Map ==
-<< /source [ 9 10] >> GetConnections { GetStatus /target get } Map ==
-<< /source [13 14] >> GetConnections { GetStatus /target get } Map ==
+<< /source [  1  2 ] >> GetConnections
+  { GetStatus /target get } Map [  3  4 ] eq assert_or_die
+<< /source [  5  6 ] >> GetConnections
+  { GetStatus /target get } Map [  7  8 ] eq assert_or_die
+<< /source [  9 10 ] >> GetConnections
+  { GetStatus /target get } Map [ 11 12 ] eq assert_or_die
+<< /source [ 13 14 ] >> GetConnections
+  { GetStatus /target get } Map [ 15 16 ] eq assert_or_die
 
 
 % Test if the intvector variant works
 ResetKernel
 /iaf_psc_alpha 16 Create ;
-cg [ 1  2] cv_iv [ 3  4] cv_iv                       CGConnect
-cg [ 5  6] cv_iv [ 7  8] cv_iv << >>                 CGConnect
-cg [ 9 10] cv_iv [11 12] cv_iv       /static_synapse CGConnect
-cg [13 14] cv_iv [15 16] cv_iv << >> /static_synapse CGConnect
+cg [  1  2 ] cv_iv [  3  4 ] cv_iv                       CGConnect
+cg [  5  6 ] cv_iv [  7  8 ] cv_iv << >>                 CGConnect
+cg [  9 10 ] cv_iv [ 11 12 ] cv_iv       /static_synapse CGConnect
+cg [ 13 14 ] cv_iv [ 15 16 ] cv_iv << >> /static_synapse CGConnect
 
-<< /source [ 1  2] >> GetConnections { GetStatus /target get } Map ==
-<< /source [ 5  6] >> GetConnections { GetStatus /target get } Map ==
-<< /source [ 9 10] >> GetConnections { GetStatus /target get } Map ==
-<< /source [13 14] >> GetConnections { GetStatus /target get } Map ==
+<< /source [  1  2 ] >> GetConnections
+  { GetStatus /target get } Map [  3  4 ] eq assert_or_die
+<< /source [  5  6 ] >> GetConnections
+  { GetStatus /target get } Map [  7  8 ] eq assert_or_die
+<< /source [  9 10 ] >> GetConnections
+  { GetStatus /target get } Map [ 11 12 ] eq assert_or_die
+<< /source [ 13 14 ] >> GetConnections
+  { GetStatus /target get } Map [ 15 16 ] eq assert_or_die
 
 
 % Test if the gidcollection variant works
+/cvgc /cvgidcollection load def
 ResetKernel
 /iaf_psc_alpha 16 Create ;
-cg [ 1  2] cvgidcollection [ 3  4] cvgidcollection                       CGConnect
-cg [ 5  6] cvgidcollection [ 7  8] cvgidcollection << >>                 CGConnect
-cg [ 9 10] cvgidcollection [11 12] cvgidcollection       /static_synapse CGConnect
-cg [13 14] cvgidcollection [15 16] cvgidcollection << >> /static_synapse CGConnect
+cg [  1  2 ] cvgc [  3  4 ] cvgc                       CGConnect
+cg [  5  6 ] cvgc [  7  8 ] cvgc << >>                 CGConnect
+cg [  9 10 ] cvgc [ 11 12 ] cvgc       /static_synapse CGConnect
+cg [ 13 14 ] cvgc [ 15 16 ] cvgc << >> /static_synapse CGConnect
 
-<< /source [ 1  2] >> GetConnections { GetStatus /target get } Map ==
-<< /source [ 5  6] >> GetConnections { GetStatus /target get } Map ==
-<< /source [ 9 10] >> GetConnections { GetStatus /target get } Map ==
-<< /source [13 14] >> GetConnections { GetStatus /target get } Map ==
+<< /source [  1  2 ] >> GetConnections
+  { GetStatus /target get } Map [  3  4 ] eq assert_or_die
+<< /source [  5  6 ] >> GetConnections
+  { GetStatus /target get } Map [  7  8 ] eq assert_or_die
+<< /source [  9 10 ] >> GetConnections
+  { GetStatus /target get } Map [ 11 12 ] eq assert_or_die
+<< /source [ 13 14 ] >> GetConnections
+  { GetStatus /target get } Map [ 15 16 ] eq assert_or_die

@@ -950,31 +950,6 @@ begin
 end
 
 
-
-/*
- * SLIHOME is obsolete. It may disappear anytime.
- * DO NOT USE !!!
- */
-systemdict begin
-  /SLIHOME 
-  {
-    M_WARNING (sli-init.sli) (The variable 'systemdict::SLIHOME' is obsolete. It may disappear anytime.) message    
-    M_WARNING (sli-init.sli) (  Go and fix your SLI code. It WILL break in the future.) message  
-    M_WARNING (sli-init.sli) (  Replacements:) message  
-    M_WARNING (sli-init.sli) (    (1) If you want to locate a file in the NEST distribution, use 'SLISearchPath <filename> LocateFileNames'.) message  
-    M_WARNING (sli-init.sli) (        For more information, type '/LocateFileNames help'.) message
-    M_WARNING (sli-init.sli) (        If you think a file is missing from the distribution, ask a developer to add it to the installation list.) message  
-    M_WARNING (sli-init.sli) (    (2) If you want to locate a file in a custom searchpath, use '[<searchpath>] <filename> LocateFileNames'.) message  
-    M_WARNING (sli-init.sli) (    (3) If you need the path to NEST's installation directory, use 'statusdict::prgdatadir'.) message
-    M_WARNING (sli-init.sli) (        For more information, type '/statusdict help'.) message  
-    M_WARNING (sli-init.sli) (    WARNING: NEVER try to locate a file in NEST's source directory, it may not exist any longer!) message  
-
-    % As a temporary workaround, this is where SLIHOME used to point to:
-    statusdict /slihomepath get_d
-  } def
-end  
-
-
 /SLISearchPath
   [ statusdict /prgdatadir get_d (/sli) join_s ]
 def
@@ -2372,3 +2347,8 @@ mark
     { statusdict /rcsinfo () put }
   ifelse
 ] ;
+
+
+% Add directories in environment variable SLI_PATH to the search path
+% for SLI files. Directories have to be separated by colon.
+(SLI_PATH) getenv { (:) breakup { addpath } forall } if

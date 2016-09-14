@@ -358,6 +358,32 @@ TEST_TMPDIR="$(mktemp -d "${TMPDIR:-/tmp}/nest.XXXXX")"
 NEST_DATA_PATH="${TEST_TMPDIR}"
 export NEST_DATA_PATH
 
+
+# Check for old version of the /mpirun command, which had the NEST executable hardcoded
+if test "x$(sli -c '/mpirun load cva_t Flatten length 3 eq =')" = xtrue ; then
+    echo "  Unable to run tests because you compiled with MPI and ~/.nestrc contains"
+    echo "  an old definition of /mpirun. If you were using the standard definition,"
+    echo "  please replace it by"
+    echo
+    echo "  /mpirun"
+    echo "  [/integertype /stringtype /stringtype]"
+    echo "  [/numproc     /executable /scriptfile]"
+    echo "  {"
+    echo "   () ["
+    echo "    (mpirun -np ) numproc cvs ( ) executable ( ) scriptfile"
+    echo "   ] {join} Fold"
+    echo "  } Function def"
+    echo
+    echo "  If you used a custom definition, please adapt it so that the signature"
+    echo "  of your version matches the one above (i.e. taking number of processes,"
+    echo "  executable and scriptfile as arguments; the old one just took number of"
+    echo "  processes and slifile, the executable \"nest\" was hard-coded)."
+    echo
+    echo
+    exit 1
+fi
+
+
 # Remember: single line exports are unportable!
 
 NEST_BINARY=nest_serial
@@ -516,24 +542,6 @@ echo "Phase 5: Running MPI tests"
 echo "--------------------------"
 if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then
     junit_open 'core.phase_5'
-
-    # Check for old version of the /mpirun command, which had the NEST executable hardcoded
-    if test "x$(sli -c '/mpirun load cva_t Flatten length 3 eq =')" = xtrue ; then
-	echo "  Unable to run MPI tests because ~/.nestrc contains an old definition of"
-	echo "  /mpirun. If you are using the standard definition, please replace it by"
-	echo
-	echo "  /mpirun"
-	echo "  [/integertype /stringtype /stringtype]"
-	echo "  [/numproc     /executable /scriptfile]"
-	echo "  {"
-	echo "   () ["
-	echo "    (mpirun -np ) numproc cvs ( ) executable ( ) scriptfile"
-	echo "   ] {join} Fold"
-	echo "  } Function def"
-	echo
-        echo
-	exit 1
-    fi
 
     NEST_BINARY=nest_indirect
     for test_name in $(ls "${TEST_BASEDIR}/mpi_selftests/pass" | grep '.*\.sli$') ; do

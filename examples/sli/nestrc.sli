@@ -6,8 +6,8 @@
 
 
 % The command mpirun tells NEST how to assemble a string, which
-% represents a valid command for calling a MPI-enabled executable in a
-% distributed fashion The details of this string depend on your MPI
+% represents a valid command for calling an MPI-enabled executable in
+% a distributed fashion The details of this string depend on your MPI
 % library and the desired communication interface. Please modify the
 % command according to your needs.
 

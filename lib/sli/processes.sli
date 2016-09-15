@@ -1133,19 +1133,13 @@ SeeAlso: taskset, Rank, NumProcesses
 
 
 /* BeginDocumentation
-Name: memory_thisjob - reports used memory for current NEST process
+Name: memory_thisjob - report virtual memory size for current NEST process
 Synopsis:
- memory_thisjob -> vmrss
+ memory_thisjob -> vmsize
 
 Description:
-On Linux and Apple this function returns the resident set size (VmRSS) for the current NEST
-process by checking the /proc filesystem. VmRSS is the portion of memory occupied by a 
-process that is held in main memory (RAM) - not counting swapped memory. The VmRSS is
-reported in kB.
-
-On BG/P or BG/Q this function returns a dictionary with the entries:
-'heap'  -> allocated memory on the heap in Byte
-'stack' -> allocated memory on the stack in Byte
+This function returns the virtual memory size (VmSize) for the current NEST
+process by checking the /proc filesystem. VmSize is reported in kB. 
 */
 
 % check, if the platform is a bluegene p/q and use corresponding function
@@ -1180,7 +1174,7 @@ ifelse
  }
  if
 
- { eof {exit} {getline {dup (VmRSS:) searchif {exch exit} {pop} ifelse } if} ifelse } loop
+ { eof {exit} {getline {dup (VmSize:) searchif {exch exit} {pop} ifelse } if} ifelse } loop
 
 
  closeistream %close connection

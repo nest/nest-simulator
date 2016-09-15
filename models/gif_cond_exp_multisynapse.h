@@ -297,8 +297,8 @@ private:
     std::vector< double > sfa_elems_; //!< Vector of adaptation parameters.
     std::vector< double > stc_elems_; //!< Vector of spike-triggered parameters.
 
-    unsigned int r_ref_; //!< absolute refractory counter (no membrane potential
-                         //propagation)
+    //!< absolute refractory counter (no membrane potential propagation)
+    unsigned int r_ref_;
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );

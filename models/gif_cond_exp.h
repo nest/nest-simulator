@@ -270,8 +270,8 @@ private:
       STATE_VEC_SIZE
     };
 
-    double neuron_state_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array
-                                            //for GSL solver
+    //!< neuron state, must be C-array for GSL solver
+    double neuron_state_[ STATE_VEC_SIZE ];
 
     double I_stim_; //!< This is piecewise constant external current
     double sfa_; //!< This is the change of the 'threshold' due to adaptation.
@@ -280,8 +280,8 @@ private:
     std::vector< double > sfa_elems_; //!< Vector of adaptation parameters.
     std::vector< double > stc_elems_; //!< Vector of spike-triggered parameters.
 
-    unsigned int r_ref_; //!< absolute refractory counter (no membrane potential
-                         //propagation)
+    //!< absolute refractory counter (no membrane potential propagation)
+    unsigned int r_ref_;
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );

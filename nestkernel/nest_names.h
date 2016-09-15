@@ -58,7 +58,7 @@ extern const Name autapses; //!< Connectivity-related
 extern const Name b;    //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name beta; //!< Specific to amat2_*
 extern const Name
-  beta_Ca; //!< Increment in calcuim concentration with each spike
+  beta_Ca; //!< Increment in calcium concentration with each spike
 extern const Name binary; //!< Recorder parameter
 
 extern const Name c;         //!< Specific to Izhikevich 2003
@@ -355,7 +355,7 @@ extern const Name targets;       //!< Connection parameters
 extern const Name tau_1;    //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name tau_2;    //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name tau_ahp;  //!< Specific to iaf_chxk_2008 neuron
-extern const Name tau_Ca;   //!< Rate of loss of calcuim concentration
+extern const Name tau_Ca;   //!< Rate of loss of calcium concentration
 extern const Name tau_epsp; //!< Specific to iaf_chs_2008 neuron
 extern const Name
   tau_fac; //!< facilitation time constant (ms) (Tsodyks2_connection)

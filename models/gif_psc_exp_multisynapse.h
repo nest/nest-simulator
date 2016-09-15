@@ -254,9 +254,8 @@ private:
     std::vector< double >
       i_syn_; //!< instantaneous currents of different synapses.
 
-
-    unsigned int r_ref_; //!< absolute refractory counter (no membrane potential
-                         //propagation)
+    //!< absolute refractory counter (no membrane potential propagation)
+    unsigned int r_ref_;
 
     State_(); //!< Default initialization
 

@@ -247,8 +247,8 @@ private:
     double i_syn_ex_; //!< postsynaptic current for exc.
     double i_syn_in_; //!< postsynaptic current for inh.
 
-    unsigned int r_ref_; //!< absolute refractory counter (no membrane potential
-                         //propagation)
+    //!< absolute refractory counter (no membrane potential propagation)
+    unsigned int r_ref_;
 
     State_(); //!< Default initialization
 

@@ -160,7 +160,7 @@ class CSATestCase(unittest.TestCase):
                                nest.CGConnect, nonnodes, nonnodes, cs)
 
         n_neurons = 4
-        
+
         sources = nest.Create("iaf_psc_alpha", n_neurons)
         targets = nest.Create("iaf_psc_alpha", n_neurons)
 

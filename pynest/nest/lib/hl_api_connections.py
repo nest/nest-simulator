@@ -399,7 +399,6 @@ def DataConnect(pre, params=None, model="static_synapse"):
         SetKernelStatus({'dict_miss_is_error': dict_miss})
 
 
-
 @check_stack
 def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
     """

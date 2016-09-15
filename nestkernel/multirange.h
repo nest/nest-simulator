@@ -107,9 +107,9 @@ Multirange::add_range( index start, index end )
 inline bool
 Multirange::contains( index x )
 {
-  for (size_t i = 0; i < ranges_.size(); i++)
+  for ( size_t i = 0; i < ranges_.size(); i++ )
   {
-    if ( ranges_[i].first <= x && x <= ranges_[i].second )
+    if ( ranges_[ i ].first <= x && x <= ranges_[ i ].second )
     {
       return true;
     }

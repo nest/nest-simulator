@@ -81,11 +81,25 @@ public:
    */
   Node* get_node();
 
+  /**
+   * get gid of volume transmitter
+   */
   long get_vt_gid() const;
+
+  /**
+   * get gid of weight recorder
+   */
+  long get_wr_gid() const;
 };
 
 inline long
 CommonSynapseProperties::get_vt_gid() const
+{
+  return -1;
+}
+
+inline long
+CommonSynapseProperties::get_wr_gid() const
 {
   return -1;
 }

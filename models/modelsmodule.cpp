@@ -90,6 +90,7 @@
 #include "correlospinmatrix_detector.h"
 #include "multimeter.h"
 #include "spike_detector.h"
+#include "weight_recorder.h"
 #include "spin_detector.h"
 
 #include "volume_transmitter.h"
@@ -216,6 +217,8 @@ ModelsModule::init( SLIInterpreter* )
 
   kernel().model_manager.register_node_model< spike_detector >(
     "spike_detector" );
+  kernel().model_manager.register_node_model< weight_recorder >(
+    "weight_recorder" );
   kernel().model_manager.register_node_model< spin_detector >(
     "spin_detector" );
   kernel().model_manager.register_node_model< Multimeter >( "multimeter" );

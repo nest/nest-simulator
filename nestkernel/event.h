@@ -135,6 +135,17 @@ public:
   void set_sender_gid( index );
 
   /**
+   * Return GID of receiving Node.
+   */
+  index get_receiver_gid() const;
+
+  /**
+   * Change GID of receiving Node.
+   */
+
+  void set_receiver_gid( index );
+
+  /**
    * Return time stamp of the event.
    * The stamp denotes the time when the event was created.
    * The resolution of Stamp is limited by the time base of the
@@ -142,6 +153,7 @@ public:
    * If this resolution is not fine enough, the creation time
    * can be corrected by using the time attribute.
    */
+
   Time const& get_stamp() const;
 
   /**
@@ -254,16 +266,17 @@ public:
   void set_stamp( Time const& );
 
 protected:
-  index sender_gid_; //!< GID of sender or -1.
-                     /*
-                      * The original formulation used references to Nodes as
-                      * members, however, in order to avoid the reference of reference
-                      * problem, we store sender and receiver as pointers and use
-                      * references in the interface.
-                      * Thus, we can still ensure that the pointers are never NULL.
-                      */
-  Node* sender_;     //!< Pointer to sender or NULL.
-  Node* receiver_;   //!< Pointer to receiver or NULL.
+  index sender_gid_;   //!< GID of sender or -1.
+  index receiver_gid_; //!< GID of sender or -1.
+                       /*
+                        * The original formulation used references to Nodes as
+                        * members, however, in order to avoid the reference of reference
+                        * problem, we store sender and receiver as pointers and use
+                        * references in the interface.
+                        * Thus, we can still ensure that the pointers are never NULL.
+                        */
+  Node* sender_;       //!< Pointer to sender or NULL.
+  Node* receiver_;     //!< Pointer to receiver or NULL.
 
 
   /**
@@ -333,6 +346,7 @@ public:
 
   void set_multiplicity( int );
   int get_multiplicity() const;
+
 
 protected:
   int multiplicity_;
@@ -1021,6 +1035,12 @@ Event::set_sender_gid( index gid )
   sender_gid_ = gid;
 }
 
+inline void
+Event::set_receiver_gid( index gid )
+{
+  receiver_gid_ = gid;
+}
+
 inline Node&
 Event::get_receiver( void ) const
 {
@@ -1038,6 +1058,12 @@ Event::get_sender_gid( void ) const
 {
   assert( sender_gid_ > 0 );
   return sender_gid_;
+}
+
+inline index
+Event::get_receiver_gid( void ) const
+{
+  return receiver_gid_;
 }
 
 inline weight

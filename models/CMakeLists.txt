@@ -76,7 +76,7 @@ set( models_sources
     spin_detector.h spin_detector.cpp
     static_connection.h
     static_connection_hom_w.h
-    stdp_connection.h
+    stdp_connection.h stdp_connection.cpp
     stdp_connection_facetshw_hom.h stdp_connection_facetshw_hom_impl.h
     stdp_connection_hom.h stdp_connection_hom.cpp
     stdp_dopa_connection.h stdp_dopa_connection.cpp
@@ -89,6 +89,7 @@ set( models_sources
     tsodyks_connection_hom.h tsodyks_connection_hom.cpp
     volume_transmitter.h volume_transmitter.cpp
     vogels_sprekeler_connection.h
+    weight_recorder.h weight_recorder.cpp
     spike_dilutor.h spike_dilutor.cpp
     )
 

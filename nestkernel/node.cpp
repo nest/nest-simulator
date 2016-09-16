@@ -228,6 +228,7 @@ Node::handle( SpikeEvent& )
   throw UnexpectedEvent();
 }
 
+
 port
 Node::handles_test_event( SpikeEvent&, rport )
 {

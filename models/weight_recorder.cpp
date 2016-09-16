@@ -43,14 +43,8 @@
 
 nest::weight_recorder::weight_recorder()
   : Node()
-  // record time and gid
-  , device_( *this,
-      RecordingDevice::SPIKE_DETECTOR,
-      "gdf",
-      true,
-      true,
-      true,
-      true )
+  // record time, gid and weight
+  , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true, true, true )
   , user_set_precise_times_( false )
   , has_proxies_( false )
   , local_receiver_( true )
@@ -69,8 +63,8 @@ nest::weight_recorder::weight_recorder( const weight_recorder& n )
 void
 nest::weight_recorder::init_state_( const Node& np )
 {
-  const weight_recorder& sd = dynamic_cast< const weight_recorder& >( np );
-  device_.init_state( sd.device_ );
+  const weight_recorder& wr = dynamic_cast< const weight_recorder& >( np );
+  device_.init_state( wr.device_ );
   init_buffers_();
 }
 
@@ -78,9 +72,7 @@ void
 nest::weight_recorder::init_buffers_()
 {
   device_.init_buffers();
-
-  std::vector< std::vector< Event* > > tmp( 2, std::vector< Event* >() );
-  B_.spikes_.swap( tmp );
+  B_.events_ = std::vector< WeightRecorderEvent >();
 }
 
 void
@@ -105,21 +97,20 @@ nest::weight_recorder::calibrate()
 }
 
 void
-nest::weight_recorder::update( Time const&, const long, const long )
+nest::weight_recorder::update( Time const&, const long from, const long to)
 {
-  for ( std::vector< Event* >::iterator e =
-          B_.spikes_[ kernel().event_delivery_manager.read_toggle() ].begin();
-        e != B_.spikes_[ kernel().event_delivery_manager.read_toggle() ].end();
+
+  for ( std::vector< WeightRecorderEvent >::iterator e =
+          B_.events_.begin();
+        e != B_.events_.end();
         ++e )
   {
-    assert( *e != 0 );
-    device_.record_event( **e );
-    delete *e;
+    device_.record_event( *e );
   }
 
   // do not use swap here to clear, since we want to keep the reserved()
   // memory for the next round
-  B_.spikes_[ kernel().event_delivery_manager.read_toggle() ].clear();
+  B_.events_.clear();
 }
 
 void
@@ -151,29 +142,13 @@ nest::weight_recorder::set_status( const DictionaryDatum& d )
 }
 
 void
-nest::weight_recorder::handle( SpikeEvent& e )
+nest::weight_recorder::handle( WeightRecorderEvent& e )
 {
   // accept spikes only if detector was active when spike was
   // emitted
   if ( device_.is_active( e.get_stamp() ) )
   {
-    assert( e.get_multiplicity() > 0 );
-
-    long dest_buffer;
-    if ( kernel()
-           .modelrange_manager.get_model_of_gid( e.get_sender_gid() )
-           ->has_proxies() )
-      // events from central queue
-      dest_buffer = kernel().event_delivery_manager.read_toggle();
-    else
-      // locally delivered events
-      dest_buffer = kernel().event_delivery_manager.write_toggle();
-
-    for ( int i = 0; i < e.get_multiplicity(); ++i )
-    {
-      // We store the complete events
-      Event* event = e.clone();
-      B_.spikes_[ dest_buffer ].push_back( event );
-    }
+    WeightRecorderEvent* event = e.clone();
+    B_.events_.push_back( *event );
   }
 }

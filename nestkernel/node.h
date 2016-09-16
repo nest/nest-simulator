@@ -425,6 +425,7 @@ public:
    * @throws IllegalConnection
    */
   virtual port handles_test_event( SpikeEvent&, rport receptor_type );
+  virtual port handles_test_event( WeightRecorderEvent&, rport receptor_type );
   virtual port handles_test_event( RateEvent&, rport receptor_type );
   virtual port handles_test_event( DataLoggingRequest&, rport receptor_type );
   virtual port handles_test_event( CurrentEvent&, rport receptor_type );
@@ -462,6 +463,18 @@ public:
    * @ingroup event_interface
    */
   virtual void handle( SpikeEvent& e );
+
+  /**
+   * Handle incoming weight recording events.
+   * @param thrd Id of the calling thread.
+   * @param e Event object.
+   *
+   * This handler has to be implemented if a Node should
+   * accept weight recording events.
+   * @see class WeightRecordingEvent
+   * @ingroup event_interface
+   */
+  virtual void handle( WeightRecorderEvent& e );
 
   /**
    * Handler for rate events.

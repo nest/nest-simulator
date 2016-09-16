@@ -42,6 +42,7 @@
 #include "nest_names.h"
 #include "node.h"
 #include "spikecounter.h"
+#include "common_synapse_properties.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -195,9 +196,30 @@ public:
     t_lastspike_ = t_lastspike;
   }
 
+  void send_weight_event(const CommonSynapseProperties& cp, const Event& e, const thread t);
+
 private:
   double t_lastspike_;
+
 };
+
+inline void
+ConnectorBase::send_weight_event(const CommonSynapseProperties& cp, const Event& e, const thread t)
+{
+    if ( cp.weight_recorders_.size() != 0 )
+   {
+     // Create new event to record the weight and copy relevant content.
+     WeightRecorderEvent wr_e;
+     wr_e.set_stamp( e.get_stamp() );
+     wr_e.set_sender( e.get_sender() );
+     wr_e.set_sender_gid( e.get_sender_gid() );
+     wr_e.set_weight( e.get_weight() );
+     wr_e.set_delay( e.get_delay() );
+     wr_e.set_receiver( *cp.weight_recorders_[t] ); // receiver is the weight recorder
+     wr_e.set_receiver_gid( e.get_receiver().get_gid() ); // the gid of the postsynapic neuron is to be recorded
+     wr_e();
+   }
+}
 
 // vector with 1 vtable overhead
 // vector like base class to abstract away the template argument K
@@ -434,14 +456,15 @@ public:
   send( Event& e, thread t, const std::vector< ConnectorModel* >& cm )
   {
     synindex syn_id = C_[ 0 ].get_syn_id();
+    typename ConnectionT::CommonPropertiesType const& cp = static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )->get_common_properties();
     for ( size_t i = 0; i < K; i++ )
     {
       e.set_port( i );
       C_[ i ].send( e,
         t,
         ConnectorBase::get_t_lastspike(),
-        static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-          ->get_common_properties() );
+        cp );
+      ConnectorBase::send_weight_event(cp, e, t);
     }
     ConnectorBase::set_t_lastspike( e.get_stamp().get_ms() );
   }
@@ -662,13 +685,15 @@ public:
   void
   send( Event& e, thread t, const std::vector< ConnectorModel* >& cm )
   {
+    typename ConnectionT::CommonPropertiesType const& cp = static_cast< GenericConnectorModel< ConnectionT >* >( cm[ C_[ 0 ].get_syn_id() ] )->get_common_properties();
     e.set_port( 0 );
     C_[ 0 ].send( e,
       t,
       ConnectorBase::get_t_lastspike(),
-      static_cast< GenericConnectorModel< ConnectionT >* >(
-        cm[ C_[ 0 ].get_syn_id() ] )->get_common_properties() );
+      cp);
     ConnectorBase::set_t_lastspike( e.get_stamp().get_ms() );
+
+    ConnectorBase::send_weight_event(cp, e, t);
   }
 
   void
@@ -898,16 +923,16 @@ public:
   send( Event& e, thread t, const std::vector< ConnectorModel* >& cm )
   {
     synindex syn_id = C_[ 0 ].get_syn_id();
+    typename ConnectionT::CommonPropertiesType const& cp = static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )->get_common_properties();
 
     for ( size_t i = 0; i < C_.size(); i++ )
     {
-
       e.set_port( i );
       C_[ i ].send( e,
         t,
         ConnectorBase::get_t_lastspike(),
-        static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-          ->get_common_properties() );
+        cp );
+      ConnectorBase::send_weight_event(cp, e, t);
     }
 
     ConnectorBase::set_t_lastspike( e.get_stamp().get_ms() );

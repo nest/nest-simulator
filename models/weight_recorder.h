@@ -26,6 +26,7 @@
 
 // C++ includes:
 #include <vector>
+#include <omp.h>
 
 // Includes from nestkernel:
 #include "event.h"
@@ -33,6 +34,7 @@
 #include "nest_types.h"
 #include "node.h"
 #include "recording_device.h"
+#include "kernel_manager.h"
 
 /* BeginDocumentation
 
@@ -40,56 +42,44 @@ Name: weight_recorder - Device for detecting single spikes.
 
 Description:
 The weight_recorder device is a recording device. It is used to record
-spikes from a single neuron, or from multiple neurons at once. Data
+weights from spikes of a single neuron, or from multiple neurons at once. Data
 is recorded in memory or to file as for all RecordingDevices.
-By default, GID and time of each spike is recorded.
+By default, source GID, target GID, time and weight of each spike is recorded.
 
-The spike detector can also record spike times with full precision
+The weight detector can also record weights with full precision
 from neurons emitting precisely timed spikes. Set /precise_times to
 achieve this.
 
-Any node from which spikes are to be recorded, must be connected to
-the spike detector using a normal connect command. Any connection weight
-and delay will be ignored for that connection.
+Data is not necessarily written to file in chronological order.
 
-Simulations progress in cycles defined by the minimum delay. During each
-cycle, the spike detector records (stores in memory or writes to screen/file)
-the spikes generated during the previous cycle. As a consequence, any
-spikes generated during the cycle immediately preceding the end of the
-simulation time will not be recorded. Setting the /stop parameter to at the
-latest one min_delay period before the end of the simulation time ensures that
-all spikes desired to be recorded, are recorded.
+Receives: WeightRecordingEvent
 
-Spike are not necessarily written to file in chronological order.
-
-Receives: SpikeEvent
-
-SeeAlso: weight_recorder, Device, RecordingDevice
+SeeAlso: weight_recorder, spike_detector, Device, RecordingDevice
 */
 
 
 namespace nest
 {
 /**
- * Spike detector class.
+ * Weight recorder class.
  *
- * This class manages spike recording for normal and precise spikes. It
- * receives spikes via its handle(SpikeEvent&) method, buffers them, and
+ * This class manages weight recording for normal and precise spikes. It
+ * receives events via its handle(WeightRecordingEvent&) method, buffers them, and
  * stores them via its RecordingDevice in the update() method.
  *
- * Spikes are buffered in a two-segment buffer. We need to distinguish between
+ * Events are buffered in a two-segment buffer. We need to distinguish between
  * two types of spikes: those delivered from the global event queue (almost all
- * spikes) and spikes delivered locally from devices that are replicated on VPs
+ * events) and events delivered locally from devices that are replicated on VPs
  * (has_proxies() == false).
- * - Spikes from the global queue are delivered by deliver_events() at the
+ * - Events from the global queue are delivered by deliver_events() at the
  *   beginning of each update cycle and are stored only until update() is called
  *   during the same update cycle. Global queue spikes are thus written to the
  *   read_toggle() segment of the buffer, from which update() reads.
- * - Spikes delivered locally may be delivered before or after
- *   weight_recorder::update() is executed. These spikes are therefore buffered
+ * - Events delivered locally may be delivered before or after
+ *   weight_recorder::update() is executed. These events are therefore buffered
  *   in the write_toggle() segment of the buffer and output during the next
  *   cycle.
- * - After all spikes are recorded, update() clears the read_toggle() segment
+ * - After all events are recorded, update() clears the read_toggle() segment
  *   of the buffer.
  *
  * @ingroup Devices
@@ -110,7 +100,7 @@ public:
   bool
   potential_global_receiver() const
   {
-    return true;
+    return false;
   }
   void set_local_receiver( const bool lr );
   bool
@@ -128,9 +118,9 @@ public:
   using Node::handles_test_event;
   using Node::receives_signal;
 
-  void handle( SpikeEvent& );
+  void handle( WeightRecorderEvent& );
 
-  port handles_test_event( SpikeEvent&, rport );
+  port handles_test_event( WeightRecorderEvent&, rport );
 
   SignalType receives_signal() const;
 
@@ -144,7 +134,7 @@ private:
   void finalize();
 
   /**
-   * Update detector by recording spikes.
+   * Update detector by recording weights.
    *
    * All spikes in the read_toggle() half of the spike buffer are
    * recorded by passing them to the RecordingDevice, which then
@@ -155,9 +145,9 @@ private:
   void update( Time const&, const long, const long );
 
   /**
-   * Buffer for incoming spikes.
+   * Buffer for incoming events.
    *
-   * This data structure buffers all incoming spikes until they are
+   * This data structure buffers all incoming events until they are
    * passed to the RecordingDevice for storage or output during update().
    * update() always reads from spikes_[Network::get_network().read_toggle()]
    * and deletes all events that have been read.
@@ -176,7 +166,7 @@ private:
    */
   struct Buffers_
   {
-    std::vector< std::vector< Event* > > spikes_;
+      std::vector< WeightRecorderEvent > events_;
   };
 
   RecordingDevice device_;
@@ -185,6 +175,7 @@ private:
   bool user_set_precise_times_;
   bool has_proxies_;
   bool local_receiver_;
+  omp_lock_t writelock;
 };
 
 inline void
@@ -200,7 +191,7 @@ weight_recorder::set_local_receiver( const bool lr )
 }
 
 inline port
-weight_recorder::handles_test_event( SpikeEvent&, rport receptor_type )
+weight_recorder::handles_test_event( WeightRecorderEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

@@ -88,35 +88,6 @@
 
 namespace nest
 {
-/**
- * Class containing the common properties for all synapses of type dopamine
- * connection.
- */
-class STDPCommonProperties : public CommonSynapseProperties
-{
-public:
-  /**
-   * Default constructor.
-   * Sets all property values to defaults.
-   */
-  STDPCommonProperties();
-
-  /**
-   * Get all properties and put them into a dictionary.
-   */
-  void get_status( DictionaryDatum& d ) const;
-
-  /**
-   * Set properties from the values given in dictionary.
-   */
-  void set_status( const DictionaryDatum& d, ConnectorModel& cm );
-
-
-  long get_wr_gid() const;
-
-  Node* wr_;
-};
-
 
 // connections are templates of target identifier type (used for pointer /
 // target index addressing) derived from generic connection template
@@ -125,7 +96,7 @@ class STDPConnection : public Connection< targetidentifierT >
 {
 
 public:
-  typedef STDPCommonProperties CommonPropertiesType;
+  typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
   /**
@@ -169,7 +140,7 @@ public:
   void send( Event& e,
     thread t,
     double t_lastspike,
-    const STDPCommonProperties& cp );
+    const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -246,7 +217,7 @@ inline void
 STDPConnection< targetidentifierT >::send( Event& e,
   thread t,
   double t_lastspike,
-  const STDPCommonProperties& cp )
+  const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
   //   if(t_lastspike >0) {std::cout << "last spike " << t_lastspike <<
@@ -295,12 +266,6 @@ STDPConnection< targetidentifierT >::send( Event& e,
   e.set_delay( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
-  if ( cp.wr_ != 0 )
-  {
-    e.set_receiver( *cp.wr_ );
-    e.set_receiver_gid( target->get_gid() );
-    e();
-  }
 
   Kplus_ = Kplus_ * std::exp( ( t_lastspike - t_spike ) / tau_plus_ ) + 1.0;
 }

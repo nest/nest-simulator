@@ -358,10 +358,10 @@ const Name weights( "weights" );
 const Name with_noise( "with_noise" );
 const Name with_reset( "with_reset" );
 const Name withgid( "withgid" );
-const Name withreceivergid( "withreceivergid" );
 const Name withpath( "withpath" );
 const Name withtime( "withtime" );
 const Name withweight( "withweight" );
+const Name withreceivergid( "withreceivergid" );
 
 const Name x( "x" );
 const Name xs( "xs" );

@@ -31,6 +31,7 @@
 // Includes from sli:
 #include "dictdatum.h"
 
+
 namespace nest
 {
 
@@ -87,9 +88,10 @@ public:
   long get_vt_gid() const;
 
   /**
-   * get gid of weight recorder
+   * weight recorder
    */
-  long get_wr_gid() const;
+  std::vector< Node* > weight_recorders_;
+
 };
 
 inline long
@@ -98,11 +100,6 @@ CommonSynapseProperties::get_vt_gid() const
   return -1;
 }
 
-inline long
-CommonSynapseProperties::get_wr_gid() const
-{
-  return -1;
-}
 
 } // of namespace nest
 

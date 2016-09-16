@@ -20,6 +20,10 @@
 set( models_sources
     ac_generator.h ac_generator.cpp
     aeif_cond_alpha.h aeif_cond_alpha.cpp
+    aeif_cond_alpha_gp.h aeif_cond_alpha_gp.cpp
+    aeif_cond_exp_gp.h aeif_cond_exp_gp.cpp
+    aeif_psc_alpha_gp.h aeif_psc_alpha_gp.cpp
+    aeif_psc_exp_gp.h aeif_psc_exp_gp.cpp
     aeif_cond_alpha_RK5.h aeif_cond_alpha_RK5.cpp
     aeif_cond_alpha_multisynapse.h aeif_cond_alpha_multisynapse.cpp
     aeif_cond_exp.h aeif_cond_exp.cpp

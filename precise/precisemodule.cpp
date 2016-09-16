@@ -47,8 +47,13 @@
 #include "model_manager_impl.h"
 
 // Includes from precise:
+#include "aeif_cond_alpha_ps.h"
+#include "aeif_cond_exp_ps.h"
+#include "aeif_psc_alpha_ps.h"
+#include "aeif_psc_exp_ps.h"
 #include "iaf_psc_alpha_canon.h"
 #include "iaf_psc_alpha_presc.h"
+#include "iaf_psc_alpha_ps.h"
 #include "iaf_psc_delta_canon.h"
 #include "iaf_psc_exp_ps.h"
 #include "parrot_neuron_ps.h"
@@ -101,6 +106,18 @@ PreciseModule::init( SLIInterpreter* )
     "poisson_generator_ps" );
   kernel().model_manager.register_node_model< parrot_neuron_ps >(
     "parrot_neuron_ps" );
+#ifdef HAVE_GSL
+  kernel().model_manager.register_node_model< aeif_cond_alpha_ps >(
+    "aeif_cond_alpha_ps" );
+  kernel().model_manager.register_node_model< aeif_cond_exp_ps >(
+    "aeif_cond_exp_ps" );
+  kernel().model_manager.register_node_model< aeif_psc_alpha_ps >(
+    "aeif_psc_alpha_ps" );
+  kernel().model_manager.register_node_model< aeif_psc_exp_ps >(
+    "aeif_psc_exp_ps" );
+  kernel().model_manager.register_node_model< iaf_psc_alpha_ps >(
+    "iaf_psc_alpha_ps" );
+#endif
 } // PreciseModule::init()
 
 

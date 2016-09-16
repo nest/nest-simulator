@@ -41,9 +41,13 @@
 
 // Neuron models
 #include "aeif_cond_alpha.h"
+#include "aeif_cond_alpha_gp.h"
 #include "aeif_cond_alpha_multisynapse.h"
 #include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_exp.h"
+#include "aeif_cond_exp_gp.h"
+#include "aeif_psc_alpha_gp.h"
+#include "aeif_psc_exp_gp.h"
 #include "amat2_psc_exp.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
@@ -325,8 +329,16 @@ ModelsModule::init( SLIInterpreter* )
 #ifdef HAVE_GSL
   kernel().model_manager.register_node_model< aeif_cond_alpha >(
     "aeif_cond_alpha" );
+  kernel().model_manager.register_node_model< aeif_cond_alpha_gp >(
+    "aeif_cond_alpha_gp" );
   kernel().model_manager.register_node_model< aeif_cond_exp >(
     "aeif_cond_exp" );
+  kernel().model_manager.register_node_model< aeif_cond_exp_gp >(
+    "aeif_cond_exp_gp" );
+  kernel().model_manager.register_node_model< aeif_psc_alpha_gp >(
+    "aeif_psc_alpha_gp" );
+  kernel().model_manager.register_node_model< aeif_psc_exp_gp >(
+    "aeif_psc_exp_gp" );
   kernel().model_manager.register_node_model< ht_neuron >( "ht_neuron" );
 #endif
   // This version of the AdEx model does not depend on GSL.

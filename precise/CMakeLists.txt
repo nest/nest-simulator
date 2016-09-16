@@ -19,6 +19,12 @@
 
 set( precise_sources
     slice_ring_buffer.cpp slice_ring_buffer.h
+    slice_ring_buffer_new.cpp slice_ring_buffer_new.h
+    aeif_cond_alpha_ps.cpp aeif_cond_alpha_ps.h
+    aeif_psc_alpha_ps.cpp aeif_psc_alpha_ps.h
+    aeif_cond_exp_ps.cpp aeif_cond_exp_ps.h
+    aeif_psc_exp_ps.cpp aeif_psc_exp_ps.h
+    iaf_psc_alpha_ps.cpp iaf_psc_alpha_ps.h
     iaf_psc_delta_canon.cpp iaf_psc_delta_canon.h
     iaf_psc_alpha_canon.cpp iaf_psc_alpha_canon.h
     iaf_psc_alpha_presc.cpp iaf_psc_alpha_presc.h

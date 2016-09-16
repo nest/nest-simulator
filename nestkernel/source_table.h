@@ -87,7 +87,7 @@ public:
   //! connection creation
   void reserve( const thread tid, const synindex syn_id, const size_t count );
   //! adds a source to the sources table
-  void add_source( const thread tid, const synindex syn_id, const index gid );
+  void add_source( const thread tid, const synindex syn_id, const index gid, const bool is_primary );
   //! clears the sources table
   void clear( const thread tid );
   //! returns true if the sources table has been cleared
@@ -121,13 +121,13 @@ public:
 
 inline
 void
-SourceTable::add_source( const thread tid, const synindex syn_id, const index gid)
+SourceTable::add_source( const thread tid, const synindex syn_id, const index gid, const bool is_primary )
 {
   // the sources table is not ordered by synapse ids, to avoid wasting
   // memory, hence we need to determine for each source we are adding
   // the correct synapse index according to its synapse id
   std::map< synindex, synindex >::iterator it = synapse_ids_[ tid ]->find( syn_id );
-  const Source src( gid );
+  const Source src( gid, is_primary );
   // if this synapse type is not known yet, create entry for new synapse vector
   if (it == synapse_ids_[ tid ]->end())
   {

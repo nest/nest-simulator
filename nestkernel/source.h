@@ -36,23 +36,26 @@ namespace nest
  */
 struct Source
 {
-  unsigned long gid : 63; //!< gid of source
+  unsigned long gid : 62; //!< gid of source
   bool processed : 1; //!< whether this target has already been moved to the MPI buffer
+  bool is_primary : 1;
   Source();
-  explicit Source( index gid );
+  explicit Source( const index gid, const bool is_primary );
 };
 
 inline
 Source::Source()
   : gid( 0 )
   , processed( false )
+  , is_primary( true )
 {
 }
 
 inline
-Source::Source( index gid )
+Source::Source( const index gid, const bool is_primary )
   : gid( gid )
   , processed( false )
+  , is_primary( is_primary )
 {
 }
 

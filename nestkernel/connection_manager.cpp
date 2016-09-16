@@ -604,7 +604,7 @@ nest::ConnectionManager::connect_( Node& s,
 
   kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection_5g(
     s, r, connections_5g_[ tid ], syn, d, w );
-  source_table_.add_source( tid, syn, s_gid );
+  source_table_.add_source( tid, syn, s_gid, kernel().model_manager.get_synapse_prototype( syn, tid ).is_primary() );
 
   // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
@@ -628,7 +628,7 @@ nest::ConnectionManager::connect_( Node& s,
 
   kernel().model_manager.get_synapse_prototype( syn, tid ).add_connection_5g(
     s, r, connections_5g_[ tid ], syn, p, d, w );
-  source_table_.add_source( tid, syn, s_gid );
+  source_table_.add_source( tid, syn, s_gid, kernel().model_manager.get_synapse_prototype( syn, tid ).is_primary() );
 
   // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )

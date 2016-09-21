@@ -1069,10 +1069,10 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
   ArrayDatum result;
   result.reserve( connectome.size() );
 
-  for (std::deque<ConnectionID>::const_iterator it = connectome.begin();
-      it != connectome.end(); ++it)
+  while ( !connectome.empty() )
   {
-    result.push_back( ConnectionDatum (*it) );
+    result.push_back( ConnectionDatum ( connectome.front() ) );
+    connectome.pop_front();
   }
 
   return result;

@@ -1113,7 +1113,13 @@ nest::ConnectionManager::get_connections( std::deque<ConnectionID>& connectome,
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        connectome.insert(connectome.end(), conns_in_thread.begin(), conns_in_thread.end());
+        {
+          while ( !conns_in_thread.empty() )
+          {
+            connectome.push_back(conns_in_thread.front());
+            conns_in_thread.pop_front();
+          }
+        }
       }
     }
 
@@ -1154,7 +1160,13 @@ nest::ConnectionManager::get_connections( std::deque<ConnectionID>& connectome,
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        connectome.insert(connectome.end(), conns_in_thread.begin(), conns_in_thread.end());
+        {
+          while ( !conns_in_thread.empty() )
+          {
+            connectome.push_back(conns_in_thread.front());
+            conns_in_thread.pop_front();
+          }
+        }
       }
     }
     return;
@@ -1205,7 +1217,13 @@ nest::ConnectionManager::get_connections( std::deque<ConnectionID>& connectome,
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        connectome.insert(connectome.end(), conns_in_thread.begin(), conns_in_thread.end());
+        {
+          while ( !conns_in_thread.empty() )
+          {
+            connectome.push_back(conns_in_thread.front());
+            conns_in_thread.pop_front();
+          }
+        }
       }
     }
     return;

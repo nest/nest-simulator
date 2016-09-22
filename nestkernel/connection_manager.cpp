@@ -1018,7 +1018,7 @@ nest::ConnectionManager::get_num_connections( synindex syn_id ) const
 ArrayDatum
 nest::ConnectionManager::get_connections( DictionaryDatum params ) const
 {
-  std::deque<ConnectionID> connectome;
+  std::deque< ConnectionID > connectome;
 
   const Token& source_t = params->lookup( names::source );
   const Token& target_t = params->lookup( names::target );
@@ -1071,7 +1071,7 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
 
   while ( !connectome.empty() )
   {
-    result.push_back( ConnectionDatum ( connectome.front() ) );
+    result.push_back( ConnectionDatum( connectome.front() ) );
     connectome.pop_front();
   }
 
@@ -1079,14 +1079,17 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
 }
 
 void
-nest::ConnectionManager::get_connections( std::deque<ConnectionID>& connectome,
+nest::ConnectionManager::get_connections(
+  std::deque< ConnectionID >& connectome,
   TokenArray const* source,
   TokenArray const* target,
   size_t syn_id,
   long synapse_label ) const
 {
-  if ( get_num_connections( syn_id ) == 0)
+  if ( get_num_connections( syn_id ) == 0 )
+  {
     return;
+  }
 
   if ( source == 0 and target == 0 )
   {
@@ -1098,7 +1101,7 @@ nest::ConnectionManager::get_connections( std::deque<ConnectionID>& connectome,
     for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     {
 #endif
-      std::deque<ConnectionID> conns_in_thread;
+      std::deque< ConnectionID > conns_in_thread;
 
       for ( index source_id = 1; source_id < connections_[ t ].size();
             ++source_id )
@@ -1116,7 +1119,7 @@ nest::ConnectionManager::get_connections( std::deque<ConnectionID>& connectome,
         {
           while ( !conns_in_thread.empty() )
           {
-            connectome.push_back(conns_in_thread.front());
+            connectome.push_back( conns_in_thread.front() );
             conns_in_thread.pop_front();
           }
         }
@@ -1135,7 +1138,7 @@ nest::ConnectionManager::get_connections( std::deque<ConnectionID>& connectome,
     for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     {
 #endif
-      std::deque<ConnectionID> conns_in_thread;
+      std::deque< ConnectionID > conns_in_thread;
 
       for ( index source_id = 1; source_id < connections_[ t ].size();
             ++source_id )
@@ -1163,7 +1166,7 @@ nest::ConnectionManager::get_connections( std::deque<ConnectionID>& connectome,
         {
           while ( !conns_in_thread.empty() )
           {
-            connectome.push_back(conns_in_thread.front());
+            connectome.push_back( conns_in_thread.front() );
             conns_in_thread.pop_front();
           }
         }
@@ -1181,7 +1184,7 @@ nest::ConnectionManager::get_connections( std::deque<ConnectionID>& connectome,
     for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     {
 #endif
-      std::deque<ConnectionID> conns_in_thread;
+      std::deque< ConnectionID > conns_in_thread;
 
       for ( index s = 0; s < source->size(); ++s )
       {
@@ -1220,7 +1223,7 @@ nest::ConnectionManager::get_connections( std::deque<ConnectionID>& connectome,
         {
           while ( !conns_in_thread.empty() )
           {
-            connectome.push_back(conns_in_thread.front());
+            connectome.push_back( conns_in_thread.front() );
             conns_in_thread.pop_front();
           }
         }

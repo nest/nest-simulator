@@ -211,7 +211,7 @@ public:
    */
   ArrayDatum get_connections( DictionaryDatum dict ) const;
 
-  void get_connections( std::deque<ConnectionID>& connectome,
+  void get_connections( std::deque< ConnectionID >& connectome,
     TokenArray const* source,
     TokenArray const* target,
     size_t syn_id,

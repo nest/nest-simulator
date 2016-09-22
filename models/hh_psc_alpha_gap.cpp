@@ -95,37 +95,36 @@ hh_psc_alpha_gap_dynamics( double time,
   // good compiler will optimize the verbosity away ...
 
   // shorthand for state variables
-  const double_t& V = y[ S::V_M ];
-  const double_t& m = y[ S::HH_M ];
-  const double_t& h = y[ S::HH_H ];
-  const double_t& n = y[ S::HH_N ];
-  const double_t& p = y[ S::HH_P ];
-  const double_t& dI_ex = y[ S::DI_EXC ];
-  const double_t& I_ex = y[ S::I_EXC ];
-  const double_t& dI_in = y[ S::DI_INH ];
-  const double_t& I_in = y[ S::I_INH ];
+  const double& V = y[ S::V_M ];
+  const double& m = y[ S::HH_M ];
+  const double& h = y[ S::HH_H ];
+  const double& n = y[ S::HH_N ];
+  const double& p = y[ S::HH_P ];
+  const double& dI_ex = y[ S::DI_EXC ];
+  const double& I_ex = y[ S::I_EXC ];
+  const double& dI_in = y[ S::DI_INH ];
+  const double& I_in = y[ S::I_INH ];
 
-  const double_t alpha_m =
+  const double alpha_m =
     40. * ( V - 75.5 ) / ( 1. - std::exp( -( V - 75.5 ) / 13.5 ) );
-  const double_t beta_m = 1.2262 / std::exp( V / 42.248 );
-  const double_t alpha_h = 0.0035 / std::exp( V / 24.186 );
-  const double_t beta_h =
+  const double beta_m = 1.2262 / std::exp( V / 42.248 );
+  const double alpha_h = 0.0035 / std::exp( V / 24.186 );
+  const double beta_h =
     0.017 * ( 51.25 + V ) / ( 1. - std::exp( -( 51.25 + V ) / 5.2 ) );
-  const double_t alpha_p =
-    ( V - 95. ) / ( 1. - std::exp( -( V - 95. ) / 11.8 ) );
-  const double_t beta_p = 0.025 / std::exp( V / 22.222 );
-  const double_t alpha_n =
+  const double alpha_p = ( V - 95. ) / ( 1. - std::exp( -( V - 95. ) / 11.8 ) );
+  const double beta_p = 0.025 / std::exp( V / 22.222 );
+  const double alpha_n =
     0.014 * ( V + 44. ) / ( 1. - std::exp( -( V + 44. ) / 2.3 ) );
-  const double_t beta_n = 0.0043 / std::exp( ( V + 44. ) / 34. );
-  const double_t I_Na = node.P_.g_Na * m * m * m * h * ( V - node.P_.E_Na );
-  const double_t I_K = ( node.P_.g_Kv1 * n * n * n * n + node.P_.g_Kv3 * p * p )
+  const double beta_n = 0.0043 / std::exp( ( V + 44. ) / 34. );
+  const double I_Na = node.P_.g_Na * m * m * m * h * ( V - node.P_.E_Na );
+  const double I_K = ( node.P_.g_Kv1 * n * n * n * n + node.P_.g_Kv3 * p * p )
     * ( V - node.P_.E_K );
-  const double_t I_L = node.P_.g_L * ( V - node.P_.E_L );
+  const double I_L = node.P_.g_L * ( V - node.P_.E_L );
 
   // set I_gap depending on interpolation order
-  double_t gap = 0.0;
+  double gap = 0.0;
 
-  const double_t t = time / node.B_.step_;
+  const double t = time / node.B_.step_;
 
   switch ( kernel().simulation_manager.get_wfr_interpolation_order() )
   {
@@ -152,7 +151,7 @@ hh_psc_alpha_gap_dynamics( double time,
     throw BadProperty( "Interpolation order must be 0, 1, or 3." );
   }
 
-  const double_t I_gap = gap;
+  const double I_gap = gap;
 
   // V dot -- synaptic input are currents, inhib current is negative
   f[ S::V_M ] = ( -( I_Na + I_K + I_L ) + node.B_.I_stim_ + node.P_.I_e + I_ex
@@ -209,18 +208,18 @@ nest::hh_psc_alpha_gap::State_::State_( const Parameters_& )
     y_[ i ] = 0;
 
   // equilibrium values for (in)activation variables
-  const double_t alpha_m =
+  const double alpha_m =
     40. * ( y_[ 0 ] - 75.5 ) / ( 1. - std::exp( -( y_[ 0 ] - 75.5 ) / 13.5 ) );
-  const double_t beta_m = 1.2262 / std::exp( y_[ 0 ] / 42.248 );
-  const double_t alpha_h = 0.0035 / std::exp( y_[ 0 ] / 24.186 );
-  const double_t beta_h = 0.017 * ( 51.25 + y_[ 0 ] )
+  const double beta_m = 1.2262 / std::exp( y_[ 0 ] / 42.248 );
+  const double alpha_h = 0.0035 / std::exp( y_[ 0 ] / 24.186 );
+  const double beta_h = 0.017 * ( 51.25 + y_[ 0 ] )
     / ( 1. - std::exp( -( 51.25 + y_[ 0 ] ) / 5.2 ) );
-  const double_t alpha_p =
+  const double alpha_p =
     ( y_[ 0 ] - 95. ) / ( 1. - std::exp( -( y_[ 0 ] - 95. ) / 11.8 ) );
-  const double_t beta_p = 0.025 / std::exp( y_[ 0 ] / 22.222 );
-  const double_t alpha_n =
+  const double beta_p = 0.025 / std::exp( y_[ 0 ] / 22.222 );
+  const double alpha_n =
     0.014 * ( y_[ 0 ] + 44. ) / ( 1. - std::exp( -( y_[ 0 ] + 44. ) / 2.3 ) );
-  const double_t beta_n = 0.0043 / std::exp( ( y_[ 0 ] + 44. ) / 34. );
+  const double beta_n = 0.0043 / std::exp( ( y_[ 0 ] + 44. ) / 34. );
 
   y_[ HH_H ] = alpha_h / ( alpha_h + beta_h );
   y_[ HH_N ] = alpha_n / ( alpha_n + beta_n );
@@ -463,8 +462,8 @@ nest::hh_psc_alpha_gap::calibrate()
 
 bool
 nest::hh_psc_alpha_gap::update_( Time const& origin,
-  const long_t from,
-  const long_t to,
+  const long from,
+  const long to,
   const bool wfr_update )
 {
 
@@ -475,19 +474,19 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
   bool done = true;
   const size_t interpolation_order =
     kernel().simulation_manager.get_wfr_interpolation_order();
-  const double_t wfr_tol = kernel().simulation_manager.get_wfr_tol();
+  const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
 
   // allocate memory to store the new interpolation coefficients
   // to be sent by gap event
   const size_t quantity =
     kernel().connection_manager.get_min_delay() * ( interpolation_order + 1 );
-  std::vector< double_t > new_coefficients( quantity, 0.0 );
+  std::vector< double > new_coefficients( quantity, 0.0 );
 
   // parameters needed for piecewise interpolation
-  double_t y_i = 0.0, y_ip1 = 0.0, hf_i = 0.0, hf_ip1 = 0.0;
-  double_t f_temp[ State_::STATE_VEC_SIZE ];
+  double y_i = 0.0, y_ip1 = 0.0, hf_i = 0.0, hf_ip1 = 0.0;
+  double f_temp[ State_::STATE_VEC_SIZE ];
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
     // B_.lag is needed by hh_psc_alpha_gap_dynamics to
@@ -505,8 +504,8 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
       }
     }
 
-    double_t t = 0.0;
-    const double_t U_old = S_.y_[ State_::V_M ];
+    double t = 0.0;
+    const double U_old = S_.y_[ State_::V_M ];
 
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
@@ -615,7 +614,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
   // if !wfr_update perform constant extrapolation and reset last_y_values
   if ( not wfr_update )
   {
-    for ( long_t temp = from; temp < to; ++temp )
+    for ( long temp = from; temp < to; ++temp )
       new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] =
         S_.y_[ State_::V_M ];
 
@@ -657,8 +656,8 @@ nest::hh_psc_alpha_gap::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
@@ -679,7 +678,7 @@ nest::hh_psc_alpha_gap::handle( GapJunctionEvent& e )
   B_.sumj_g_ij_ += e.get_weight();
 
   size_t i = 0;
-  std::vector< uint_t >::iterator it = e.begin();
+  std::vector< unsigned int >::iterator it = e.begin();
   // The call to get_coeffvalue( it ) in this loop also advances the iterator it
   while ( it != e.end() )
   {

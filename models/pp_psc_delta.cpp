@@ -169,8 +169,8 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
   catch ( TypeMismatch e )
   {
     multi_param_ = 0;
-    double_t tau_sfa_temp_;
-    double_t q_sfa_temp_;
+    double tau_sfa_temp_;
+    double q_sfa_temp_;
     updateValue< double >( d, names::tau_sfa, tau_sfa_temp_ );
     updateValue< double >( d, names::q_sfa, q_sfa_temp_ );
     tau_sfa_.push_back( tau_sfa_temp_ );
@@ -208,7 +208,7 @@ nest::pp_psc_delta::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "All time constants must be strictly positive." );
   }
 
-  for ( uint_t i = 0; i < tau_sfa_.size(); i++ )
+  for ( unsigned int i = 0; i < tau_sfa_.size(); i++ )
   {
     if ( tau_sfa_[ i ] <= 0 )
     {
@@ -315,7 +315,7 @@ nest::pp_psc_delta::calibrate()
   // initializing internal state
   if ( not S_.initialized_ )
   {
-    for ( uint_t i = 0; i < P_.tau_sfa_.size(); i++ )
+    for ( unsigned int i = 0; i < P_.tau_sfa_.size(); i++ )
     {
       V_.Q33_.push_back( std::exp( -V_.h_ / P_.tau_sfa_[ i ] ) );
       S_.q_elems_.push_back( 0.0 );
@@ -326,7 +326,7 @@ nest::pp_psc_delta::calibrate()
 
 
   // TauR specifies the length of the absolute refractory period as
-  // a double_t in ms. The grid based iaf_psp_delta can only handle refractory
+  // a double in ms. The grid based iaf_psp_delta can only handle refractory
   // periods that are integer multiples of the computation step size (h).
   // To ensure consistency with the overall simulation scheme such conversion
   // should be carried out via objects of class nest::Time. The conversion
@@ -366,23 +366,21 @@ nest::pp_psc_delta::calibrate()
  */
 
 void
-nest::pp_psc_delta::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 {
 
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
     S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_
       + B_.spikes_.get_value( lag );
 
-    double_t q_temp_ = 0;
-    for ( uint_t i = 0; i < S_.q_elems_.size(); i++ )
+    double q_temp_ = 0;
+    for ( unsigned int i = 0; i < S_.q_elems_.size(); i++ )
     {
 
       S_.q_elems_[ i ] = V_.Q33_[ i ] * S_.q_elems_[ i ];
@@ -400,16 +398,15 @@ nest::pp_psc_delta::update( Time const& origin,
       //     rate = c1 * y3' + c2 * exp(c3 * y3')
       // Adaptive threshold leads to effective potential V_eff instead of y3
 
-      double_t V_eff;
+      double V_eff;
 
       V_eff = S_.y3_ - S_.q_;
 
-      double_t rate =
-        ( P_.c_1_ * V_eff + P_.c_2_ * std::exp( P_.c_3_ * V_eff ) );
+      double rate = ( P_.c_1_ * V_eff + P_.c_2_ * std::exp( P_.c_3_ * V_eff ) );
 
       if ( rate > 0.0 )
       {
-        ulong_t n_spikes = 0;
+        unsigned long n_spikes = 0;
 
         if ( P_.dead_time_ > 0.0 )
         {
@@ -438,7 +435,7 @@ nest::pp_psc_delta::update( Time const& origin,
             S_.r_ = V_.DeadTimeCounts_;
 
 
-          for ( uint_t i = 0; i < S_.q_elems_.size(); i++ )
+          for ( unsigned int i = 0; i < S_.q_elems_.size(); i++ )
           {
             S_.q_elems_[ i ] += P_.q_sfa_[ i ] * n_spikes;
           }
@@ -451,7 +448,7 @@ nest::pp_psc_delta::update( Time const& origin,
 
           // set spike time for STDP to work,
           // see https://github.com/nest/nest-simulator/issues/77
-          for ( uint_t i = 0; i < n_spikes; i++ )
+          for ( unsigned int i = 0; i < n_spikes; i++ )
           {
             set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
           }
@@ -496,8 +493,8 @@ nest::pp_psc_delta::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // Add weighted current; HEP 2002-10-04
   B_.currents_.add_value(

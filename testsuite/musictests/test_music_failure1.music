@@ -1,0 +1,5 @@
+[from]
+  binary=nest
+  np=1
+  args=empty.sli
+  from.spikes_out -> to.spikes_in [1]

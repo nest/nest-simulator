@@ -125,7 +125,7 @@ public:
 
   //! Used by ConnectorModel::add_connection() for fast initialization
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
@@ -148,7 +148,7 @@ public:
    */
   void send( Event& e,
     thread t,
-    double_t t_lastspike,
+    double t_lastspike,
     const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -203,7 +203,7 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t,
+    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -211,9 +211,9 @@ public:
   }
 
 private:
-  double_t weight_;       //!< synaptic weight
-  double_t delay_offset_; //!< fractional delay < h,
-                          //!< total delay = delay_ - delay_offset_
+  double weight_;       //!< synaptic weight
+  double delay_offset_; //!< fractional delay < h,
+                        //!< total delay = delay_ - delay_offset_
 };
 
 /**
@@ -226,7 +226,7 @@ template < typename targetidentifierT >
 inline void
 ContDelayConnection< targetidentifierT >::send( Event& e,
   thread t,
-  double_t,
+  double,
   const CommonSynapseProperties& )
 {
   e.set_receiver( *get_target( t ) );

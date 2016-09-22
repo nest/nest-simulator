@@ -338,21 +338,26 @@ endfunction()
 function( NEST_PROCESS_WITH_PYTHON )
   # Find Python
   set( HAVE_PYTHON OFF PARENT_SCOPE )
-  if ( with-python )
-    if ( NOT ${with-python} STREQUAL "ON" )
-      # a path is set
-      set( PYTHON_EXECUTABLE ${with-python} )
+  if ( ${with-python} STREQUAL "ON" OR  ${with-python} STREQUAL "2" OR  ${with-python} STREQUAL "3" )
+
+    # Localize the Python interpreter
+    if ( ${with-python} STREQUAL "ON" )
+      find_package( PythonInterp )
+    elseif ( ${with-python} STREQUAL "2" )  
+      find_package( PythonInterp 2 REQUIRED )
+    elseif ( ${with-python} STREQUAL "3" )
+      find_package( PythonInterp 3 REQUIRED )
     endif ()
 
-    find_package( PythonInterp )
     if ( PYTHONINTERP_FOUND )
       set( PYTHONINTERP_FOUND "${PYTHONINTERP_FOUND}" PARENT_SCOPE )
       set( PYTHON_EXECUTABLE ${PYTHON_EXECUTABLE} PARENT_SCOPE )
       set( PYTHON ${PYTHON_EXECUTABLE} PARENT_SCOPE )
       set( PYTHON_VERSION ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR} PARENT_SCOPE )
 
-      # need python lib and header...
-      find_package( PythonLibs )
+      # Localize Python lib/header files and make sure that their version matches 
+      # the Python interpreter version !
+      find_package( PythonLibs ${PYTHON_VERSION_STRING} EXACT )
       if ( PYTHONLIBS_FOUND )
         set( HAVE_PYTHON ON PARENT_SCOPE )
         # export found variables to parent scope
@@ -377,10 +382,12 @@ function( NEST_PROCESS_WITH_PYTHON )
             set( CYTHON_VERSION "${CYTHON_VERSION}" PARENT_SCOPE )
           endif ()
         endif ()
-
         set( PYEXECDIR "${CMAKE_INSTALL_LIBDIR}/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/site-packages" PARENT_SCOPE )
       endif ()
     endif ()
+  elseif ( ${with-python} STREQUAL "OFF" )
+  else ()
+    message( FATAL_ERROR "Invalid option: -Dwith-python=" ${with-python} )
   endif ()
 endfunction()
 

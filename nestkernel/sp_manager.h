@@ -146,7 +146,7 @@ public:
 
   bool is_structural_plasticity_enabled() const;
 
-  long_t get_structural_plasticity_update_interval() const;
+  long get_structural_plasticity_update_interval() const;
 
   /**
    * Returns the minimum delay of all SP builders.
@@ -168,19 +168,19 @@ public:
 
   // Creation of synapses
   void create_synapses( std::vector< index >& pre_vacant_id,
-    std::vector< int_t >& pre_vacant_n,
+    std::vector< int >& pre_vacant_n,
     std::vector< index >& post_vacant_id,
-    std::vector< int_t >& post_vacant_n,
+    std::vector< int >& post_vacant_n,
     SPBuilder* sp_conn_builder );
   // Deletion of synapses on the pre synaptic side
   void delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
-    std::vector< int_t >& pre_deleted_n,
+    std::vector< int >& pre_deleted_n,
     index synapse_model,
     std::string se_pre_name,
     std::string se_post_name );
   // Deletion of synapses on the post synaptic side
   void delete_synapses_from_post( std::vector< index >& post_deleted_id,
-    std::vector< int_t >& post_deleted_n,
+    std::vector< int >& post_deleted_n,
     index synapse_model,
     std::string se_pre_name,
     std::string se_post_name );
@@ -193,12 +193,12 @@ public:
 
   void get_synaptic_elements( std::string se_name,
     std::vector< index >& se_vacant_id,
-    std::vector< int_t >& se_vacant_n,
+    std::vector< int >& se_vacant_n,
     std::vector< index >& se_deleted_id,
-    std::vector< int_t >& se_deleted_n );
+    std::vector< int >& se_deleted_n );
 
   void serialize_id( std::vector< index >& id,
-    std::vector< int_t >& n,
+    std::vector< int >& n,
     std::vector< index >& res );
   void global_shuffle( std::vector< index >& v );
   void global_shuffle( std::vector< index >& v, size_t n );
@@ -208,7 +208,7 @@ private:
    * Time interval for structural plasticity update (creation/deletion of
    * synapses).
    */
-  long_t structural_plasticity_update_interval_;
+  long structural_plasticity_update_interval_;
 
   /**
    * Indicates whether the Structrual Plasticity functionality is On (True) of
@@ -249,7 +249,7 @@ SPManager::is_structural_plasticity_enabled() const
   return structural_plasticity_enabled_;
 }
 
-inline long_t
+inline long
 SPManager::get_structural_plasticity_update_interval() const
 {
   return structural_plasticity_update_interval_;

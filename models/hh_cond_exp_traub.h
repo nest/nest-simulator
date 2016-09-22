@@ -148,7 +148,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // END Boilerplate function declarations ----------------------------
 
@@ -217,7 +217,7 @@ public:
 
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];
-    int_t r_; //!< number of refractory steps remaining
+    int r_; //!< number of refractory steps remaining
 
     State_( const Parameters_& p );
     State_( const State_& s );
@@ -235,7 +235,7 @@ public:
    */
   struct Variables_
   {
-    int_t RefractoryCounts_;
+    int RefractoryCounts_;
     double U_old_; // for spike-detection
   };
 
@@ -268,7 +268,7 @@ public:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double_t step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**
@@ -278,14 +278,14 @@ public:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double_t I_stim_;
+    double I_stim_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out state vector elements, used by UniversalDataLogger
   template < State_::StateVecElems elem >
-  double_t
+  double
   get_y_elem_() const
   {
     return S_.y_[ elem ];
@@ -347,7 +347,7 @@ hh_cond_exp_traub::get_status( DictionaryDatum& d ) const
 
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 
-  def< double_t >( d, names::t_spike, get_spiketime_ms() );
+  def< double >( d, names::t_spike, get_spiketime_ms() );
 }
 
 inline void

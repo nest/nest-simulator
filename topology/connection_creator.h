@@ -161,8 +161,8 @@ private:
   void connect_( index s,
     Node* target,
     thread target_thread,
-    double_t w,
-    double_t d,
+    double w,
+    double d,
     index syn );
 
   /**
@@ -194,8 +194,8 @@ inline void
 ConnectionCreator::connect_( index s,
   Node* target,
   thread target_thread,
-  double_t w,
-  double_t d,
+  double w,
+  double d,
   index syn )
 {
   // check whether the target is on this process

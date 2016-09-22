@@ -32,9 +32,9 @@
 
 // member functions of histentry
 
-nest::histentry::histentry( double_t t,
-  double_t Kminus,
-  double_t triplet_Kminus,
+nest::histentry::histentry( double t,
+  double Kminus,
+  double triplet_Kminus,
   size_t access_counter )
   : t_( t )
   , Kminus_( Kminus )

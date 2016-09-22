@@ -233,7 +233,7 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // Enumerations and constants specifying structure and properties ----
 
@@ -322,41 +322,41 @@ private:
    */
   struct Parameters_
   {
-    double_t V_th;       //!< Threshold Potential in mV
-    double_t V_reset;    //!< Reset Potential in mV
-    double_t t_ref;      //!< Refractory period in ms
-    double_t V_max;      //!< Peak voltage at spike in mV
-    double_t E_Ca;       //!< Reversal potential for calcium spike in mV
-    double_t G_Ca;       //!< Maximal conductance for calcium spike in nS
-    double_t tau_m;      //!< Time constant for activation M in ms
-    double_t tau_h;      //!< Time constant for inactivation H in ms
-    double_t half_m;     //!< Voltage for half activation of M-inf in mV
-    double_t half_h;     //!< Voltage for half activation of H-inf in mV
-    double_t slope_m;    //!< Slope of M-inf in mV-1
-    double_t slope_h;    //!< Slope of H-inf in mV-1
-    double_t jump_Th;    //!< Jump in adaptive threshold upon spike in mV
-    double_t tau_Th;     //!< Time constant for adaptive threshold in ms
+    double V_th;       //!< Threshold Potential in mV
+    double V_reset;    //!< Reset Potential in mV
+    double t_ref;      //!< Refractory period in ms
+    double V_max;      //!< Peak voltage at spike in mV
+    double E_Ca;       //!< Reversal potential for calcium spike in mV
+    double G_Ca;       //!< Maximal conductance for calcium spike in nS
+    double tau_m;      //!< Time constant for activation M in ms
+    double tau_h;      //!< Time constant for inactivation H in ms
+    double half_m;     //!< Voltage for half activation of M-inf in mV
+    double half_h;     //!< Voltage for half activation of H-inf in mV
+    double slope_m;    //!< Slope of M-inf in mV-1
+    double slope_h;    //!< Slope of H-inf in mV-1
+    double jump_Th;    //!< Jump in adaptive threshold upon spike in mV
+    double tau_Th;     //!< Time constant for adaptive threshold in ms
     bool Ca_active;      //!< Calcium spikes are active if true
     bool reset_on_spike; //!< flag to turn on calcium spikes
 
-    double_t
+    double
       g_conn[ NCOMP - 1 ];  //!< Conductances connecting compartments, in nS
-    double_t t_L[ NCOMP ];  //!< Leak during refractory period in nS
-    double_t nt_L[ NCOMP ]; //!< Leak at other times in ns
+    double t_L[ NCOMP ];  //!< Leak during refractory period in nS
+    double nt_L[ NCOMP ]; //!< Leak at other times in ns
 
-    double_t C_m[ NCOMP ];  //!< Membrane Capacitance in pF
-    double_t E_ex[ NCOMP ]; //!< Excitatory reversal Potential in mV
-    double_t E_in[ NCOMP ]; //!< Inhibitory reversal Potential in mV
-    double_t
+    double C_m[ NCOMP ];  //!< Membrane Capacitance in pF
+    double E_ex[ NCOMP ]; //!< Excitatory reversal Potential in mV
+    double E_in[ NCOMP ]; //!< Inhibitory reversal Potential in mV
+    double
       E_L[ NCOMP ]; //!< Leak reversal Potential (aka resting potential) in mV
-    double_t
+    double
       tau_synE[ NCOMP ]; //!< Synaptic Time Constant Excitatory Synapse in ms
-    double_t tau_synI[ NCOMP ]; //!< Synaptic Time Constant for Inhibitory
+    double tau_synI[ NCOMP ]; //!< Synaptic Time Constant for Inhibitory
     // Synapse in ms
-    double_t I_e[ NCOMP ];        //!< Constant Current in pA
-    double_t tau_currAP[ NCOMP ]; //!< Time constant of active current at each
+    double I_e[ NCOMP ];        //!< Constant Current in pA
+    double tau_currAP[ NCOMP ]; //!< Time constant of active current at each
     // compartment after AP in pA
-    double_t amp_currAP[ NCOMP ]; //!< Amplitude of active current at each
+    double amp_currAP[ NCOMP ]; //!< Amplitude of active current at each
     // compartment after AP in pA
 
     Parameters_();                     //!< Sets default parameter values
@@ -404,10 +404,10 @@ public:
     static const size_t STATE_VEC_SIZE = STATE_VEC_COMPS * NCOMP;
 
     //! neuron state, must be C-array for GSL solver
-    double_t y_[ STATE_VEC_SIZE ];
-    int_t r_;      //!< number of refractory steps remaining
-    double_t th_;  //!< adaptive spike threshold
-    double_t ICa_; //!< calcium current
+    double y_[ STATE_VEC_SIZE ];
+    int r_;      //!< number of refractory steps remaining
+    double th_;  //!< adaptive spike threshold
+    double ICa_; //!< calcium current
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -461,7 +461,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double_t step_;          //!< step size in ms
+    double step_;          //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**
@@ -471,7 +471,7 @@ private:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double_t I_stim_[ NCOMP ]; //!< External Stimulus in pA
+    double I_stim_[ NCOMP ]; //!< External Stimulus in pA
   };
 
   // Internal variables ---------------------------------------------
@@ -482,22 +482,22 @@ private:
   struct Variables_
   {
     /** initial value to normalise excitatory synaptic conductance */
-    double_t PSConInit_E_[ NCOMP ];
+    double PSConInit_E_[ NCOMP ];
 
     /** initial value to normalise inhibitory synaptic conductance */
-    double_t PSConInit_I_[ NCOMP ];
+    double PSConInit_I_[ NCOMP ];
 
     /** initial value to normalise current after AP */
-    double_t PSConInit_AP_[ NCOMP ];
+    double PSConInit_AP_[ NCOMP ];
 
-    int_t RefractoryCounts_;
+    int RefractoryCounts_;
 
     /** initial value to normalise calcium spike */
-    double_t PSConInit_Ca_;
+    double PSConInit_Ca_;
 
-    int_t RefractoryCountsCa_;
+    int RefractoryCountsCa_;
 
-    double_t AdaptThStep_;
+    double AdaptThStep_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
@@ -507,27 +507,27 @@ private:
    * First template argument is component "name", second compartment "name".
    */
   template < State_::StateVecElems_ elem, Compartments_ comp >
-  double_t
+  double
   get_y_elem_() const
   {
     return S_.y_[ S_.idx( comp, elem ) ];
   }
 
   //! Read out number of refractory steps, used by UniversalDataLogger
-  double_t
+  double
   get_r_() const
   {
     return Time::get_resolution().get_ms() * S_.r_;
   }
 
   //! Read out number of threshold, used by UniversalDataLogger
-  double_t
+  double
   get_th_() const
   {
     return S_.th_;
   }
 
-  double_t
+  double
   get_ica_() const
   {
     return S_.ICa_;

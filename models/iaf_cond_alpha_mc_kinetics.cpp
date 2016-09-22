@@ -412,10 +412,10 @@ nest::iaf_cond_alpha_mc_kinetics::State_::State_( const Parameters_& p )
   y_[ idx( PROX, G_L ) ] = p.nt_L[ PROX ];
   y_[ idx( DIST, G_L ) ] = p.nt_L[ DIST ];
 
-  const double_t minf = 1.0
+  const double minf = 1.0
     / ( 1.0 + std::exp( ( p.half_m - y_[ idx( DIST, V_M ) ] ) * p.slope_m ) );
 
-  const double_t hinf = 1.0
+  const double hinf = 1.0
     / ( 1.0 + std::exp( ( p.half_h - y_[ idx( DIST, V_M ) ] ) * p.slope_h ) );
   y_[ idx( DIST, M_CA ) ] = minf;
   y_[ idx( DIST, H_CA ) ] = hinf;
@@ -728,15 +728,15 @@ nest::iaf_cond_alpha_mc_kinetics::calibrate()
 
 void
 nest::iaf_cond_alpha_mc_kinetics::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
 
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
     double t = 0.0;

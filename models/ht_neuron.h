@@ -59,29 +59,47 @@
    - No hard reset, but repolarizing potassium current.
    - AMPA, NMDA, GABA_A, and GABA_B conductance-based synapses with
      beta-function (difference of two exponentials) time course.
+   - Voltage-dependent NMDA with instantaneous blocking and two-stage
+     unblocking as described in [1].
    - Intrinsic currents I_h (pacemaker), I_T (low-threshold calcium),
      I_Na(p) (persistent sodium), and I_KNa (depolarization-activated
      potassium).
-
-   In comparison to the model described in the paper, the following
-   modifications were mare:
-
-   - NMDA conductance is given by g(t) = g_peak * m(V), where
-
-       m(V) = 1 / ( 1 + exp( - ( V - NMDA_Vact ) / NMDA_Sact ) )
-
-     This is an approximation to the NMDA model used in [2].
-
    - Several apparent typographical errors in the descriptions of
      the intrinsic currents were fixed, hopefully in a meaningful
      way.
 
-   I'd like to thank Sean Hill for giving me access to his
+   NMDA conductances is modeled as follows
+
+     g_NMDA(t, V) = m(V, t) g(t)
+
+   where g(t) is a beta function (difference of exponentials).
+
+     m(V, t) = a(V) m_fast*(V, t) + ( 1 - a(V) ) m_slow*(V, t)
+     a(V)    = 0.51 - 0.0028 V
+
+   represents the voltage-dependence with components for fast and slow
+   unblocking. For a given V, the steady-state value is given by a
+   sigmoidal function
+
+      m_ss(V) = 1 / ( 1 + exp( -NMDA_Sact ( V - NMDA_Vact ) ) )
+
+   Instantaneous blocking means that
+
+      m_X*(V, t) = min(m_ss(V), m_X(V, t))  for X: slow, fast
+
+   while unblocking occurs at two different speeds according to
+
+      dm_X / dt = ( m_ss(V) - m_X ) / NMDA_tau_Mg_X  for X: slow, fast
+
+
+   I am grateful to thank Sean Hill for giving me access to his Synthesis
    simulator source code.
 
-   See examples/hilltononi for usage examples.
+   Examples:
+   - pynest/examples/intrinsic_currents_spiking.py
+   - pynest/examples/intrinsic_currents_subthreshold.py
 
-   Warning:
+   Note:
    THIS MODEL NEURON HAS NOT BEEN TESTED EXTENSIVELY!
 
    Parameters:
@@ -92,15 +110,16 @@
    Tau_spike      - membrane time constant applying to repolarizing K-current
    Theta, Theta_eq, Tau_theta - Threshold, equilibrium value, time constant
    g_KL, E_K, g_NaL, E_Na     - conductances and reversal potentials for K and
-   Na
-                                leak currents
-
+                                Na leak currents
    {AMPA,NMDA,GABA_A,GABA_B}_{E_rev,g_peak,Tau_1,Tau_2}
                                 - reversal potentials, peak conductances and
                                   time constants for synapses (Tau_1: rise time,
                                   Tau_2: decay time, Tau_1 < Tau_2)
-   NMDA_Sact, NMDA_Vact         - Parameters for voltage dependence of NMDA-
-                                  synapse, see eq. above
+   NMDA_Sact, NMDA_Vact, NMDA_tau_Mg_{fast, slow}
+                                - Parameters for voltage dependence of NMDA-
+                                  conductance, see above
+        - Time constants for NMDA Mg unblocking,
+                                  see [1, p 1678]
    {h,T,NaP,KNa}_{E_rev,g_peak} - reversal potential and peak conductance for
                                   intrinsic currents
    receptor_types               - dictionary mapping synapse names to ports on
@@ -113,11 +132,10 @@
 
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-   FirstVersion: October 2009
+   FirstVersion: October 2009; full NMDA model September 2016
 
    References:
    [1] S Hill and G Tononi (2005). J Neurophysiol 93:1671-1698.
-   [2] ED Lumer, GM Edelman, and G Tononi (1997). Cereb Cortex 7:207-227.
 
    SeeAlso: ht_synapse
 */

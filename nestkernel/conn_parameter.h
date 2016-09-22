@@ -76,11 +76,18 @@ public:
    * will be ignored except for random parameters.
    */
   virtual double value_double( thread, librandom::RngPtr& ) const = 0;
-  virtual long_t value_int( thread, librandom::RngPtr& ) const = 0;
+  virtual long value_int( thread, librandom::RngPtr& ) const = 0;
   virtual void skip( thread ) const
   {
   }
   virtual bool is_array() const = 0;
+
+  virtual void
+  reset() const
+  {
+    throw NotImplemented(
+      "Symmetric connections require parameters that can be reset." );
+  }
 
   /**
    * Returns number of values available.
@@ -122,7 +129,7 @@ public:
     return value_;
   }
 
-  long_t
+  long
   value_int( thread, librandom::RngPtr& ) const
   {
     throw KernelException(
@@ -133,6 +140,11 @@ public:
   is_array() const
   {
     return false;
+  }
+
+  void
+  reset() const
+  {
   }
 
 private:
@@ -147,7 +159,7 @@ private:
 class ScalarIntegerParameter : public ConnParameter
 {
 public:
-  ScalarIntegerParameter( long_t value, const size_t )
+  ScalarIntegerParameter( long value, const size_t )
     : value_( value )
   {
   }
@@ -155,11 +167,10 @@ public:
   double
   value_double( thread, librandom::RngPtr& ) const
   {
-    throw KernelException(
-      "ConnParameter calls value function with false return type." );
+    return static_cast< double >( value_ );
   }
 
-  long_t
+  long
   value_int( thread, librandom::RngPtr& ) const
   {
     return value_;
@@ -171,8 +182,13 @@ public:
     return false;
   }
 
+  void
+  reset() const
+  {
+  }
+
 private:
-  long_t value_;
+  long value_;
 };
 
 
@@ -225,7 +241,7 @@ public:
       throw KernelException( "Parameter values exhausted." );
   }
 
-  long_t
+  long
   value_int( thread, librandom::RngPtr& ) const
   {
     throw KernelException(
@@ -236,6 +252,18 @@ public:
   is_array() const
   {
     return true;
+  }
+
+  void
+  reset() const
+  {
+    for ( std::vector< std::vector< double >::const_iterator >::iterator it =
+            next_.begin();
+          it != next_.end();
+          ++it )
+    {
+      *it = values_->begin();
+    }
   }
 
 private:
@@ -261,7 +289,7 @@ private:
 class ArrayIntegerParameter : public ConnParameter
 {
 public:
-  ArrayIntegerParameter( const std::vector< long_t >& values,
+  ArrayIntegerParameter( const std::vector< long >& values,
     const size_t nthreads )
     : values_( &values )
     , next_( nthreads, values_->begin() )
@@ -283,7 +311,7 @@ public:
     return values_->size();
   }
 
-  long_t
+  long
   value_int( thread tid, librandom::RngPtr& ) const
   {
     if ( next_[ tid ] != values_->end() )
@@ -293,10 +321,12 @@ public:
   }
 
   double
-  value_double( thread, librandom::RngPtr& ) const
+  value_double( thread tid, librandom::RngPtr& ) const
   {
-    throw KernelException(
-      "ConnParameter calls value function with false return type." );
+    if ( next_[ tid ] != values_->end() )
+      return static_cast< double >( *next_[ tid ]++ );
+    else
+      throw KernelException( "Parameter values exhausted." );
   }
 
   inline bool
@@ -305,9 +335,21 @@ public:
     return true;
   }
 
+  void
+  reset() const
+  {
+    for ( std::vector< std::vector< long >::const_iterator >::iterator it =
+            next_.begin();
+          it != next_.end();
+          ++it )
+    {
+      *it = values_->begin();
+    }
+  }
+
 private:
-  const std::vector< long_t >* values_;
-  mutable std::vector< std::vector< long_t >::const_iterator > next_;
+  const std::vector< long >* values_;
+  mutable std::vector< std::vector< long >::const_iterator > next_;
 };
 
 /**
@@ -326,7 +368,7 @@ public:
     return ( *rdv_ )( rng );
   }
 
-  long_t
+  long
   value_int( thread, librandom::RngPtr& rng ) const
   {
     return ( *rdv_ )( rng );

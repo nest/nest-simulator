@@ -73,7 +73,7 @@ iaf_psc_alpha_multisynapse::Parameters_::Parameters_()
   , I_e_( 0.0 )              // pA
   , V_reset_( -70.0 - E_L_ ) // mV, rel to E_L_
   , Theta_( -55.0 - E_L_ )   // mV, rel to E_L_
-  , LowerBound_( -std::numeric_limits< double_t >::infinity() )
+  , LowerBound_( -std::numeric_limits< double >::infinity() )
   , num_of_receptors_( 0 )
   , has_connections_( false )
 {
@@ -300,14 +300,14 @@ iaf_psc_alpha_multisynapse::calibrate()
 
 void
 iaf_psc_alpha_multisynapse::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     if ( S_.r_ == 0 )
     {
@@ -396,8 +396,8 @@ iaf_psc_alpha_multisynapse::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t I = e.get_current();
-  const double_t w = e.get_weight();
+  const double I = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(

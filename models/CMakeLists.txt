@@ -88,6 +88,7 @@ set( models_sources
     tsodyks_connection.h
     tsodyks_connection_hom.h tsodyks_connection_hom.cpp
     volume_transmitter.h volume_transmitter.cpp
+    vogels_sprekeler_connection.h
     spike_dilutor.h spike_dilutor.cpp
     )
 
@@ -103,7 +104,7 @@ target_include_directories( models PRIVATE
     )
 
 install( TARGETS models
-    LIBRARY DESTINATION ${INSTALL_LIB_DIR}
-    ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
-    RUNTIME DESTINATION ${INSTALL_BIN_DIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )

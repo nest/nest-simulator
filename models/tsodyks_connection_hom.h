@@ -139,10 +139,10 @@ public:
    */
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
-  double_t tau_psc_; //!< [ms] time constant of postsyn current
-  double_t tau_fac_; //!< [ms] time constant for fascilitation
-  double_t tau_rec_; //!< [ms] time constant for recovery
-  double_t U_;       //!< asymptotic value of probability of release
+  double tau_psc_; //!< [ms] time constant of postsyn current
+  double tau_fac_; //!< [ms] time constant for fascilitation
+  double tau_rec_; //!< [ms] time constant for recovery
+  double U_;       //!< asymptotic value of probability of release
 };
 
 
@@ -198,7 +198,7 @@ public:
    */
   void send( Event& e,
     thread t,
-    double_t t_lastspike,
+    double t_lastspike,
     const TsodyksHomCommonProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -218,14 +218,15 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t,
+    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
   }
 
-  void set_weight( double_t )
+  void
+  set_weight( double )
   {
     throw BadProperty(
       "Setting of individual weights is not possible! The common weights can "
@@ -234,9 +235,9 @@ public:
   }
 
 private:
-  double_t x_; //!< amount of resources in recovered state
-  double_t y_; //!< amount of resources in active state
-  double_t u_; //!< actual probability of release
+  double x_; //!< amount of resources in recovered state
+  double y_; //!< amount of resources in active state
+  double u_; //!< actual probability of release
 };
 
 
@@ -250,10 +251,10 @@ template < typename targetidentifierT >
 inline void
 TsodyksConnectionHom< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
+  double t_lastspike,
   const TsodyksHomCommonProperties& cp )
 {
-  double_t h = e.get_stamp().get_ms() - t_lastspike;
+  double h = e.get_stamp().get_ms() - t_lastspike;
 
   // t_lastspike_ = 0 initially
   // this has no influence on the dynamics, IF y = z = 0 initially
@@ -261,15 +262,15 @@ TsodyksConnectionHom< targetidentifierT >::send( Event& e,
 
   // propagator
   // TODO: use expm1 here instead, where applicable
-  double_t Puu = ( cp.tau_fac_ == 0.0 ) ? 0.0 : std::exp( -h / cp.tau_fac_ );
-  double_t Pyy = std::exp( -h / cp.tau_psc_ );
-  double_t Pzz = std::exp( -h / cp.tau_rec_ );
+  double Puu = ( cp.tau_fac_ == 0.0 ) ? 0.0 : std::exp( -h / cp.tau_fac_ );
+  double Pyy = std::exp( -h / cp.tau_psc_ );
+  double Pzz = std::exp( -h / cp.tau_rec_ );
 
-  double_t Pxy = ( ( Pzz - 1.0 ) * cp.tau_rec_ - ( Pyy - 1.0 ) * cp.tau_psc_ )
+  double Pxy = ( ( Pzz - 1.0 ) * cp.tau_rec_ - ( Pyy - 1.0 ) * cp.tau_psc_ )
     / ( cp.tau_psc_ - cp.tau_rec_ );
-  double_t Pxz = 1.0 - Pzz;
+  double Pxz = 1.0 - Pzz;
 
-  double_t z = 1.0 - x_ - y_;
+  double z = 1.0 - x_ - y_;
 
   // propagation t_lastspike -> t_spike
   // don't change the order !
@@ -282,7 +283,7 @@ TsodyksConnectionHom< targetidentifierT >::send( Event& e,
   u_ += cp.U_ * ( 1.0 - u_ );
 
   // postsynaptic current step caused by incoming spike
-  double_t delta_y_tsp = u_ * x_;
+  double delta_y_tsp = u_ * x_;
 
   // delta function x, y
   x_ -= delta_y_tsp;
@@ -322,9 +323,9 @@ TsodyksConnectionHom< targetidentifierT >::get_status(
 {
   ConnectionBase::get_status( d );
 
-  def< double_t >( d, "x", x_ );
-  def< double_t >( d, "y", y_ );
-  def< double_t >( d, "u", u_ );
+  def< double >( d, "x", x_ );
+  def< double >( d, "y", y_ );
+  def< double >( d, "u", u_ );
 }
 
 template < typename targetidentifierT >
@@ -334,10 +335,10 @@ TsodyksConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
 {
   // Handle parameters that may throw an exception first, so we can leave the
   // synapse untouched in case of invalid parameter values
-  double_t x = x_;
-  double_t y = y_;
-  updateValue< double_t >( d, "x", x );
-  updateValue< double_t >( d, "y", y );
+  double x = x_;
+  double y = y_;
+  updateValue< double >( d, "x", x );
+  updateValue< double >( d, "y", y );
 
   if ( x + y > 1.0 )
     throw BadProperty( "x + y must be <= 1.0." );
@@ -347,7 +348,7 @@ TsodyksConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
 
   ConnectionBase::set_status( d, cm );
 
-  updateValue< double_t >( d, "u", u_ );
+  updateValue< double >( d, "u", u_ );
 }
 
 } // namespace

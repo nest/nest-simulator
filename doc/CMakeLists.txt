@@ -18,10 +18,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 install( DIRECTORY conngen model_details
-    DESTINATION ${INSTALL_DOC_DIR} )
+    DESTINATION ${CMAKE_INSTALL_DOCDIR} )
 
 install( FILES index.html quickref.html doc_header.txt
-    DESTINATION ${INSTALL_DOC_DIR} )
+    DESTINATION ${CMAKE_INSTALL_DOCDIR} )
 
 if ( DOXYGEN_FOUND )
   configure_file(

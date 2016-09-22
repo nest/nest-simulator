@@ -133,38 +133,38 @@ public:
   void mpi_abort( int exitcode );
 
 
-  void communicate( std::vector< uint_t >& send_buffer,
-    std::vector< uint_t >& recv_buffer,
+  void communicate( std::vector< unsigned int >& send_buffer,
+    std::vector< unsigned int >& recv_buffer,
     std::vector< int >& displacements );
 
   void communicate( std::vector< OffGridSpike >& send_buffer,
     std::vector< OffGridSpike >& recv_buffer,
     std::vector< int >& displacements );
 
-  void communicate( std::vector< double_t >& send_buffer,
-    std::vector< double_t >& recv_buffer,
+  void communicate( std::vector< double >& send_buffer,
+    std::vector< double >& recv_buffer,
     std::vector< int >& displacements );
 
-  void communicate( std::vector< ulong_t >& send_buffer,
-    std::vector< ulong_t >& recv_buffer,
+  void communicate( std::vector< unsigned long >& send_buffer,
+    std::vector< unsigned long >& recv_buffer,
     std::vector< int >& displacements );
 
-  void communicate( std::vector< int_t >& send_buffer,
-    std::vector< int_t >& recv_buffer,
+  void communicate( std::vector< int >& send_buffer,
+    std::vector< int >& recv_buffer,
     std::vector< int >& displacements );
 
-  void communicate( double_t, std::vector< double_t >& );
-  void communicate( std::vector< int_t >& );
-  void communicate( std::vector< long_t >& );
+  void communicate( double, std::vector< double >& );
+  void communicate( std::vector< int >& );
+  void communicate( std::vector< long >& );
 
   /*
    * Sum across all rank
    */
-  void communicate_Allreduce_sum_in_place( double_t buffer );
-  void communicate_Allreduce_sum_in_place( std::vector< double_t >& buffer );
-  void communicate_Allreduce_sum_in_place( std::vector< int_t >& buffer );
-  void communicate_Allreduce_sum( std::vector< double_t >& send_buffer,
-    std::vector< double_t >& recv_buffer );
+  void communicate_Allreduce_sum_in_place( double buffer );
+  void communicate_Allreduce_sum_in_place( std::vector< double >& buffer );
+  void communicate_Allreduce_sum_in_place( std::vector< int >& buffer );
+  void communicate_Allreduce_sum( std::vector< double >& send_buffer,
+    std::vector< double >& recv_buffer );
 
   /**
    * Collect GIDs for all nodes in a given node list across processes.
@@ -204,11 +204,11 @@ public:
    *  The methods `time_communicate*` can be used to benchmark the timing
    *  of different MPI communication methods.
    */
-  double_t time_communicate( int num_bytes, int samples = 1000 );
-  double_t time_communicatev( int num_bytes, int samples = 1000 );
-  double_t time_communicate_offgrid( int num_bytes, int samples = 1000 );
-  double_t time_communicate_alltoall( int num_bytes, int samples = 1000 );
-  double_t time_communicate_alltoallv( int num_bytes, int samples = 1000 );
+  double time_communicate( int num_bytes, int samples = 1000 );
+  double time_communicatev( int num_bytes, int samples = 1000 );
+  double time_communicate_offgrid( int num_bytes, int samples = 1000 );
+  double time_communicate_alltoall( int num_bytes, int samples = 1000 );
+  double time_communicate_alltoallv( int num_bytes, int samples = 1000 );
 
   void set_buffer_sizes( int send_buffer_size, int recv_buffer_size );
 
@@ -224,7 +224,7 @@ private:
 #ifdef HAVE_MPI
   //! array containing communication partner for each step.
   std::vector< int > comm_step_;
-  uint_t COMM_OVERFLOW_ERROR;
+  unsigned int COMM_OVERFLOW_ERROR;
 
 //! Variable to hold the MPI communicator to use (the datatype matters).
 #ifdef HAVE_MUSIC
@@ -234,16 +234,16 @@ private:
 #endif /* #ifdef HAVE_MUSIC */
   MPI_Datatype MPI_OFFGRID_SPIKE;
 
-  void communicate_Allgather( std::vector< uint_t >& send_buffer,
-    std::vector< uint_t >& recv_buffer,
+  void communicate_Allgather( std::vector< unsigned int >& send_buffer,
+    std::vector< unsigned int >& recv_buffer,
     std::vector< int >& displacements );
 
   void communicate_Allgather( std::vector< OffGridSpike >& send_buffer,
     std::vector< OffGridSpike >& recv_buffer,
     std::vector< int >& displacements );
 
-  void communicate_Allgather( std::vector< int_t >& );
-  void communicate_Allgather( std::vector< long_t >& );
+  void communicate_Allgather( std::vector< int >& );
+  void communicate_Allgather( std::vector< long >& );
 
   template < typename T >
   void communicate_Allgatherv( std::vector< T >& send_buffer,
@@ -262,7 +262,7 @@ public:
   /**
    * Combined storage of GID and offset information for off-grid spikes.
    *
-   * @note This class actually stores the GID as @c double_t internally.
+   * @note This class actually stores the GID as @c double internally.
    *       This is done so that the user-defined MPI type MPI_OFFGRID_SPIKE,
    *       which we use to communicate off-grid spikes, is homogeneous.
    *       Otherwise, OpenMPI spends extreme amounts of time on packing
@@ -275,20 +275,20 @@ public:
   public:
     //! We defined this type explicitly, so that the assert function below
     //! always tests the correct type.
-    typedef uint_t gid_external_type;
+    typedef unsigned int gid_external_type;
 
     OffGridSpike()
       : gid_( 0 )
       , offset_( 0.0 )
     {
     }
-    OffGridSpike( gid_external_type gidv, double_t offsetv )
+    OffGridSpike( gid_external_type gidv, double offsetv )
       : gid_( gidv )
       , offset_( offsetv )
     {
     }
 
-    uint_t
+    unsigned int
     get_gid() const
     {
       return static_cast< gid_external_type >( gid_ );
@@ -296,23 +296,23 @@ public:
     void
     set_gid( gid_external_type gid )
     {
-      gid_ = static_cast< double_t >( gid );
+      gid_ = static_cast< double >( gid );
     }
-    double_t
+    double
     get_offset() const
     {
       return offset_;
     }
 
   private:
-    double_t gid_;    //!< GID of neuron that spiked
-    double_t offset_; //!< offset of spike from grid
+    double gid_;    //!< GID of neuron that spiked
+    double offset_; //!< offset of spike from grid
 
     //! This function asserts that doubles can hold GIDs without loss
     static void
     assert_datatype_compatibility_()
     {
-      assert( std::numeric_limits< double_t >::digits
+      assert( std::numeric_limits< double >::digits
         > std::numeric_limits< gid_external_type >::digits );
 
       // the next one is doubling up, better be safe than sorry
@@ -332,24 +332,26 @@ public:
       , vp_( 0 )
     {
     }
-    NodeAddressingData( uint_t gid, uint_t parent_gid, uint_t vp )
+    NodeAddressingData( unsigned int gid,
+      unsigned int parent_gid,
+      unsigned int vp )
       : gid_( gid )
       , parent_gid_( parent_gid )
       , vp_( vp )
     {
     }
 
-    uint_t
+    unsigned int
     get_gid() const
     {
       return gid_;
     }
-    uint_t
+    unsigned int
     get_parent_gid() const
     {
       return parent_gid_;
     }
-    uint_t
+    unsigned int
     get_vp() const
     {
       return vp_;
@@ -364,9 +366,9 @@ public:
     }
 
   private:
-    uint_t gid_;        //!< GID of neuron
-    uint_t parent_gid_; //!< GID of neuron's parent
-    uint_t vp_;         //!< virtual process of neuron
+    unsigned int gid_;        //!< GID of neuron
+    unsigned int parent_gid_; //!< GID of neuron's parent
+    unsigned int vp_;         //!< virtual process of neuron
   };
 };
 
@@ -442,12 +444,12 @@ MPIManager::mpi_abort( int )
 }
 
 inline void
-MPIManager::communicate( std::vector< int_t >& )
+MPIManager::communicate( std::vector< int >& )
 {
 }
 
 inline void
-MPIManager::communicate( std::vector< long_t >& )
+MPIManager::communicate( std::vector< long >& )
 {
 }
 
@@ -481,31 +483,31 @@ MPIManager::grng_synchrony( unsigned long )
   return true;
 }
 
-inline double_t
+inline double
 MPIManager::time_communicate( int, int )
 {
   return 0.0;
 }
 
-inline double_t
+inline double
 MPIManager::time_communicatev( int, int )
 {
   return 0.0;
 }
 
-inline double_t
+inline double
 MPIManager::time_communicate_offgrid( int, int )
 {
   return 0.0;
 }
 
-inline double_t
+inline double
 MPIManager::time_communicate_alltoall( int, int )
 {
   return 0.0;
 }
 
-inline double_t
+inline double
 MPIManager::time_communicate_alltoallv( int, int )
 {
   return 0.0;

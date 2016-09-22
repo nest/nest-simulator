@@ -31,6 +31,57 @@
 #ifndef SYNAPTIC_ELEMENT_H
 #define SYNAPTIC_ELEMENT_H
 
+/* BeginDocumentation
+  Name: synaptic_element - Contact point element for the dynamic creation
+   and deletion of synapses.
+
+  Description:
+   This class represents synaptic element of a node (like Axonl boutons or
+   dendritic spines) used for structural plasticity.
+   The synaptic elements represent connection points between two neurons. They
+   grow according to a homeostatic growth rule. The dynamics of the
+   number of synaptic elements is driven by the average electrical activity of
+   the neuron (indirectly measured through the Calcium concentration of the
+   node). The probability of two neurons creating a new synapse between them,
+   depends on the number of available synaptic elements of each neuron.
+
+  Parameters:
+   z                double  - Current number of synaptic elements. Stored as a
+                              double variable but the actual usable number of
+                              synaptic elements is an integer truncated from
+  this
+                              double value. An standard value for the growth of
+  a
+                              synaptic element is around 0.0001 elements/ms.
+   continuous       boolean - Defines if the number of synaptic elements should
+                              be treated as a continuous double number or as an
+                              integer value. Default is false.
+   growth_rate      double  - The maximum amount by which the synaptic elements
+  will
+                              change between time steps. In elements/ms.
+   tau_vacant       double  - Rate at which vacant synaptic elements will decay.
+                              Typical is 0.1 which represents a
+                              loss of 10% of the vacant synaptic elements each
+  time
+                              the structural_plasticity_update_interval is
+                              reached by the simulation time.
+   growth_curve     GrowthCurve* - Rule which defines the dynamics of this
+  synaptic element.
+
+  References:
+   [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.
+   "Activity-dependent structural plasticity." Brain research reviews 60.2
+   (2009): 287-305.
+
+   [2] Butz, Markus, and Arjen van Ooyen. "A simple rule for dendritic spine
+   and axonal bouton formation can account for cortical reorganization after
+   focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.
+
+  FirstVersion: July 2013
+  Author: Mikael Naveau, Sandra Diaz
+  SeeAlso: GrowthCurve, SPManager, SPBuilder, Node, ArchivingNode.
+*/
+
 // C++ includes:
 #include <cmath>
 
@@ -45,8 +96,8 @@ namespace nest
 
 /**
  * \class SynapticElement
- * Synaptic element of a node (like Axon or dendrite) for the purposes
- * of synaptic plasticity.
+ * Synaptic element of a node (axonal bouton or dendritic spine) for the
+ * purposes of structural plasticity.
  * The synaptic elements represent connection points between two neurons that
  * grow according to a homeostatic growth rule. Basically, the dynamics of the
  * number of synaptic elements is driven by the average electrical activity of
@@ -110,16 +161,15 @@ public:
    * @param Ca_minus Calcium concentration at time t_minus
    * @param tau_Ca change in the calcium concentration on each spike
    */
-  void
-  update( double_t t, double_t t_minus, double_t Ca_minus, double_t tau_Ca );
+  void update( double t, double t_minus, double Ca_minus, double tau_Ca );
 
   /**
-  * \fn double_t get_z_value(Archiving_Node const *a, double_t t) const
+  * \fn double get_z_value(Archiving_Node const *a, double t) const
   * Get the number of synaptic_element at the time t (in ms)
   * @param a node of this synaptic_element
   * @param t Current time (in ms)
   */
-  int_t
+  int
   get_z_vacant() const
   {
     return std::floor( z_ ) - z_connected_;
@@ -127,7 +177,7 @@ public:
   /*
    * Retrieves the current number of synaptic elements bound to a synapse
    */
-  int_t
+  int
   get_z_connected() const
   {
     return z_connected_;
@@ -135,7 +185,7 @@ public:
   /*
    * Retrieves the value of tau_vacant
    */
-  double_t
+  double
   get_tau_vacant() const
   {
     return tau_vacant_;
@@ -145,7 +195,7 @@ public:
    * @param n number of new connections. Can be negative.
    */
   void
-  connect( int_t n )
+  connect( int n )
   {
     z_connected_ += n;
     if ( z_connected_ > floor( z_ ) )
@@ -166,20 +216,20 @@ public:
   }
 
   /*
-   * Retrieves the current value of the growth rate, this is
+   * Retrieves the current value of the growth rate
    */
-  double_t
+  double
   get_growth_rate() const
   {
     return growth_rate_;
   }
 
   void
-  set_z( const double_t z_new )
+  set_z( const double z_new )
   {
     z_ = z_new;
   }
-  double_t
+  double
   get_z() const
   {
     return z_;
@@ -202,19 +252,19 @@ public:
 
 private:
   // The current number of synaptic elements at t = z_t_
-  double_t z_;
+  double z_;
   // Last time stamp when the number of synaptic elements was updated
-  double_t z_t_;
+  double z_t_;
   // Number of synaptic elements bound to a synapse
-  int_t z_connected_;
+  int z_connected_;
   // Variable which defines if the number of synaptic elements should be treated
   // as a continous double number or as an integer value
   bool continuous_;
   // The maximum amount by which the synaptic elements will change between time
   // steps.
-  double_t growth_rate_;
+  double growth_rate_;
   // Rate at which vacant synaptic elements will decay
-  double_t tau_vacant_;
+  double tau_vacant_;
   // Growth curve which defines the dynamics of this synaptic element.
   GrowthCurve* growth_curve_;
 };

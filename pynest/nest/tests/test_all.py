@@ -29,14 +29,12 @@ from . import test_stack
 from . import test_create
 from . import test_status
 from . import test_onetooneconnect
-from . import test_convergent_divergent_connect
 from . import test_connect_all_to_all
 from . import test_connect_fixed_indegree
 from . import test_connect_fixed_outdegree
 from . import test_connect_fixed_total_number
 from . import test_connect_one_to_one
 from . import test_connect_pairwise_bernoulli
-from . import test_findconnections
 from . import test_getconnections
 from . import test_dataconnect
 from . import test_events
@@ -58,14 +56,12 @@ def suite():
     suite.addTest(test_create.suite())
     suite.addTest(test_status.suite())
     suite.addTest(test_onetooneconnect.suite())
-    suite.addTest(test_convergent_divergent_connect.suite())
     suite.addTest(test_connect_all_to_all.suite())
     suite.addTest(test_connect_fixed_indegree.suite())
     suite.addTest(test_connect_fixed_outdegree.suite())
     suite.addTest(test_connect_fixed_total_number.suite())
     suite.addTest(test_connect_one_to_one.suite())
     suite.addTest(test_connect_pairwise_bernoulli.suite())
-    suite.addTest(test_findconnections.suite())
     suite.addTest(test_getconnections.suite())
     suite.addTest(test_dataconnect.suite())
     suite.addTest(test_events.suite())

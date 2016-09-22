@@ -97,8 +97,8 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
       "cannot be changed after the multimeter has been connected to "
       "nodes." );
 
-  double_t v;
-  if ( updateValue< double_t >( d, names::interval, v ) )
+  double v;
+  if ( updateValue< double >( d, names::interval, v ) )
   {
     if ( Time( Time::ms( v ) ) < Time::get_resolution() )
       throw BadProperty(
@@ -154,7 +154,7 @@ Multimeter::finalize()
 }
 
 void
-Multimeter::update( Time const& origin, const long_t from, const long_t )
+Multimeter::update( Time const& origin, const long from, const long )
 {
   /* There is nothing to request during the first time slice.
      For each subsequent slice, we collect all data generated during the
@@ -249,7 +249,7 @@ Multimeter::handle( DataLoggingReply& reply )
 }
 
 void
-Multimeter::print_value_( const std::vector< double_t >& values )
+Multimeter::print_value_( const std::vector< double >& values )
 {
   if ( values.size() < 1 )
     return;
@@ -267,7 +267,7 @@ Multimeter::add_data_( DictionaryDatum& d ) const
   // re-organize data into one vector per recorded variable
   for ( size_t v = 0; v < P_.record_from_.size(); ++v )
   {
-    std::vector< double_t > dv( S_.data_.size() );
+    std::vector< double > dv( S_.data_.size() );
     for ( size_t t = 0; t < S_.data_.size(); ++t )
     {
       assert( v < S_.data_[ t ].size() );
@@ -284,7 +284,7 @@ Multimeter::add_data_( DictionaryDatum& d ) const
 bool
 Multimeter::is_active( Time const& T ) const
 {
-  const long_t stamp = T.get_steps();
+  const long stamp = T.get_steps();
 
   return device_.get_t_min_() < stamp && stamp <= device_.get_t_max_();
 }

@@ -20,6 +20,7 @@
 # the name of the target operating system
 set( CMAKE_SYSTEM_NAME Linux CACHE STRING "Cross-compiling for Fujitsu Sparc64, with MPI" )
 set( CMAKE_SYSTEM_PROCESSOR "s64fx" )
+set( TRIPLET_VENDOR fujitsu )
 
 #
 # Set k-computer for main CMakeList.txt

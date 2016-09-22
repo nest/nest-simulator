@@ -48,6 +48,17 @@ class TestOneToOne(TestParams):
         M = hf.get_connectivity_matrix(self.pop2, self.pop1)
         hf.mpi_assert(M, np.zeros((self.N, self.N)), self)
 
+    def testSymmetricFlag(self):
+        conn_dict_symmetric = self.conn_dict.copy()
+        conn_dict_symmetric['symmetric'] = True
+        self.setUpNetwork(conn_dict_symmetric)
+        M1 = hf.get_connectivity_matrix(self.pop1, self.pop2)
+        M2 = hf.get_connectivity_matrix(self.pop2, self.pop1)
+        # test that connections were created in both directions
+        hf.mpi_assert(M1, np.transpose(M2), self)
+        # test that no other connections were created
+        hf.mpi_assert(M1-np.identity(self.N), np.zeros_like(M1), self)
+
     def testInputArray(self):
         syn_params = {}
         for label in ['weight', 'delay']:

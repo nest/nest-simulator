@@ -18,13 +18,13 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 execute_process(
-  COMMAND @PKGSRCDIR@/extras/create_rcsinfo.sh @PKGSRCDIR@ /tmp
+  COMMAND @PROJECT_SOURCE_DIR@/extras/create_rcsinfo.sh @PROJECT_SOURCE_DIR@ /tmp
   OUTPUT_VARIABLE RCSINFO
   OUTPUT_STRIP_TRAILING_WHITESPACE
 )
 
 
 execute_process(
-  COMMAND @SED@ -i "" -e "/^PROJECT_NUMBER/ s/=.*/= @NEST_VERSION_VERSION@, ${RCSINFO} /" @PKGBUILDDIR@/doc/normaldoc.conf
-  COMMAND @SED@ -i "" -e "/^PROJECT_NUMBER/ s/=.*/= @NEST_VERSION_VERSION@, ${RCSINFO} /" @PKGBUILDDIR@/doc/fulldoc.conf
+  COMMAND @SED@ -i "" -e "/^PROJECT_NUMBER/ s/=.*/= @NEST_VERSION_VERSION@, ${RCSINFO} /" @PROJECT_BINARY_DIR@/doc/normaldoc.conf
+  COMMAND @SED@ -i "" -e "/^PROJECT_NUMBER/ s/=.*/= @NEST_VERSION_VERSION@, ${RCSINFO} /" @PROJECT_BINARY_DIR@/doc/fulldoc.conf
 )

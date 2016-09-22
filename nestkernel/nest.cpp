@@ -233,7 +233,7 @@ get_connections( const DictionaryDatum& dict )
 }
 
 void
-simulate( const double_t& time )
+simulate( const double& time )
 {
   const Time t_sim = Time::ms( time );
 

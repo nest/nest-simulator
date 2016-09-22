@@ -50,7 +50,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 {
   index length = 0;
   const char* layer_model_name = 0;
-  std::vector< long_t > element_ids;
+  std::vector< long > element_ids;
   std::string element_name;
   Token element_model;
 
@@ -76,9 +76,9 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
         && dynamic_cast< IntegerDatum* >( ( tp + 1 )->datum() ) )
       {
         // Select how many nodes that should be created.
-        const long_t number = getValue< long_t >( *( ++tp ) );
+        const long number = getValue< long >( *( ++tp ) );
 
-        for ( long_t i = 0; i < number; ++i )
+        for ( long i = 0; i < number; ++i )
           element_ids.push_back( static_cast< long >( element_model ) );
       }
       else
@@ -115,8 +115,8 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
       throw BadProperty( "Empty positions array." );
     }
 
-    std::vector< double_t > pos =
-      getValue< std::vector< double_t > >( positions[ 0 ] );
+    std::vector< double > pos =
+      getValue< std::vector< double > >( positions[ 0 ] );
     if ( pos.size() == 2 )
       layer_model_name = "topology_layer_free";
     else if ( pos.size() == 3 )
@@ -134,13 +134,13 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
       throw BadProperty( "Both columns and rows must be given." );
     }
 
-    length = getValue< long_t >( layer_dict, names::columns )
-      * getValue< long_t >( layer_dict, names::rows );
+    length = getValue< long >( layer_dict, names::columns )
+      * getValue< long >( layer_dict, names::rows );
 
     if ( layer_dict->known( names::layers ) )
     {
       layer_model_name = "topology_layer_grid_3d";
-      length *= getValue< long_t >( layer_dict, names::layers );
+      length *= getValue< long >( layer_dict, names::layers );
     }
     else
     {
@@ -182,7 +182,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 }
 
 std::vector< Node* >::iterator
-AbstractLayer::local_begin( int_t depth )
+AbstractLayer::local_begin( int depth )
 {
   if ( depth >= depth_ )
     throw BadProperty( "Selected depth out of range" );
@@ -198,7 +198,7 @@ AbstractLayer::local_begin( int_t depth )
 }
 
 std::vector< Node* >::iterator
-AbstractLayer::local_end( int_t depth )
+AbstractLayer::local_end( int depth )
 {
   if ( depth >= depth_ )
     throw BadProperty( "Selected depth out of range" );
@@ -216,7 +216,7 @@ AbstractLayer::local_end( int_t depth )
 }
 
 std::vector< Node* >::const_iterator
-AbstractLayer::local_begin( int_t depth ) const
+AbstractLayer::local_begin( int depth ) const
 {
   if ( depth >= depth_ )
     throw BadProperty( "Selected depth out of range" );
@@ -232,7 +232,7 @@ AbstractLayer::local_begin( int_t depth ) const
 }
 
 std::vector< Node* >::const_iterator
-AbstractLayer::local_end( int_t depth ) const
+AbstractLayer::local_end( int depth ) const
 {
   if ( depth >= depth_ )
     throw BadProperty( "Selected depth out of range" );

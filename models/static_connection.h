@@ -58,7 +58,7 @@ namespace nest
 template < typename targetidentifierT >
 class StaticConnection : public Connection< targetidentifierT >
 {
-  double_t weight_;
+  double weight_;
 
 public:
   // this line determines which common properties to use
@@ -147,7 +147,7 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t,
+    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -155,7 +155,7 @@ public:
   }
 
   void
-  send( Event& e, thread t, double_t, const CommonSynapseProperties& )
+  send( Event& e, thread t, double, const CommonSynapseProperties& )
   {
     e.set_weight( weight_ );
     e.set_delay( get_delay_steps() );
@@ -169,7 +169,7 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
@@ -181,8 +181,8 @@ StaticConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
 
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  def< double >( d, names::weight, weight_ );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
@@ -191,7 +191,7 @@ StaticConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double_t >( d, names::weight, weight_ );
+  updateValue< double >( d, names::weight, weight_ );
 }
 
 } // namespace

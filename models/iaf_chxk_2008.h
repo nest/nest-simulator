@@ -144,7 +144,7 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // END Boilerplate function declarations ----------------------------
 
@@ -163,21 +163,21 @@ private:
   //! Model parameters
   struct Parameters_
   {
-    double_t V_th; //!< Threshold Potential in mV
-    double_t g_L;  //!< Leak Conductance in nS
-    double_t C_m;  //!< Membrane Capacitance in pF
-    double_t E_ex; //!< Excitatory reversal Potential in mV
-    double_t E_in; //!< Inhibitory reversal Potential in mV
-    double_t E_L;  //!< Leak reversal Potential (a.k.a. resting potential) in mV
-    double_t tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
-    double_t tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double_t I_e;      //!< Constant Current in pA
-    double_t tau_ahp;  //!< Afterhyperpolarization (AHP) time constant
-    double_t g_ahp;    //!< AHP conductance
-    double_t E_ahp;    //!< AHP potential
-    bool ahp_bug;      //!< If true, discard AHP conductance value from previous
-                       //!< spikes
-    Parameters_();     //!< Set default parameter values
+    double V_th; //!< Threshold Potential in mV
+    double g_L;  //!< Leak Conductance in nS
+    double C_m;  //!< Membrane Capacitance in pF
+    double E_ex; //!< Excitatory reversal Potential in mV
+    double E_in; //!< Inhibitory reversal Potential in mV
+    double E_L;  //!< Leak reversal Potential (a.k.a. resting potential) in mV
+    double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
+    double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
+    double I_e;      //!< Constant Current in pA
+    double tau_ahp;  //!< Afterhyperpolarization (AHP) time constant
+    double g_ahp;    //!< AHP conductance
+    double E_ahp;    //!< AHP potential
+    bool ahp_bug;    //!< If true, discard AHP conductance value from previous
+                     //!< spikes
+    Parameters_();   //!< Set default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum& ); //!< Set values from dictionary
@@ -213,10 +213,10 @@ public:
     };
 
     //! state vector, must be C-array for GSL solver
-    double_t y[ STATE_VEC_SIZE ];
+    double y[ STATE_VEC_SIZE ];
 
     //!< number of refractory steps remaining
-    int_t r;
+    int r;
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -263,7 +263,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double_t step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**
@@ -273,7 +273,7 @@ private:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double_t I_stim_;
+    double I_stim_;
   };
 
   // Variables class -------------------------------------------------------
@@ -288,49 +288,49 @@ private:
      * Impulse to add to DG_EXC on spike arrival to evoke unit-amplitude
      * conductance excursion.
      */
-    double_t PSConInit_E;
+    double PSConInit_E;
 
     /**
      * Impulse to add to DG_INH on spike arrival to evoke unit-amplitude
      * conductance excursion.
      */
-    double_t PSConInit_I;
+    double PSConInit_I;
 
     /**
      * Impulse to add to DG_AHP on spike generation to evoke unit-amplitude
      * conductance excursion.
      */
-    double_t PSConInit_AHP;
+    double PSConInit_AHP;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out state vector elements, used by UniversalDataLogger
   template < State_::StateVecElems elem >
-  double_t
+  double
   get_y_elem_() const
   {
     return S_.y[ elem ];
   }
 
   //! Read out remaining refractory time, used by UniversalDataLogger
-  double_t
+  double
   get_r_() const
   {
     return Time::get_resolution().get_ms() * S_.r;
   }
 
-  double_t
+  double
   get_I_syn_exc_() const
   {
     return S_.y[ State_::G_EXC ] * ( S_.y[ State_::V_M ] - P_.E_ex );
   }
-  double_t
+  double
   get_I_syn_inh_() const
   {
     return S_.y[ State_::G_INH ] * ( S_.y[ State_::V_M ] - P_.E_in );
   }
-  double_t
+  double
   get_I_ahp_() const
   {
     return S_.y[ State_::G_AHP ] * ( S_.y[ State_::V_M ] - P_.E_ahp );

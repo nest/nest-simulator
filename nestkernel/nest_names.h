@@ -325,6 +325,7 @@ extern const Name structural_plasticity_update_interval; //!< Update interval
                                                          //!< plasticity
 extern const Name structure;                             //!< Node type
 extern const Name success;
+extern const Name symmetric;         //!< Connectivity-related
 extern const Name synapse;           //!< Node type
 extern const Name synapse_label;     //!< Label id of synapses with labels
 extern const Name synapse_model;     //!< Connection parameters

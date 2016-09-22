@@ -36,7 +36,6 @@ set( sli_sources
     functiondatum.cc functiondatum.h
     genericdatum.h
     get_mem.c
-    gnureadline.cc gnureadline.h
     integerdatum.cc integerdatum.h
     interpret.cc interpret.h
     iostreamdatum.cc iostreamdatum.h
@@ -85,11 +84,19 @@ set( sli_sources
     )
 
 add_library( sli_lib ${sli_sources} )
-target_link_libraries( sli_lib nestutil ${READLINE_LIBRARIES} )
+target_link_libraries( sli_lib nestutil )
+
+# Make a separate target for linking against readline, so that
+# pynestkernel does not need to link against readline and make
+# loading different readlines a problem for Python. See this
+# pull request for more information:
+# https://github.com/nest/nest-simulator/pull/323
+add_library( sli_readline gnureadline.cc gnureadline.h )
+target_link_libraries( sli_readline sli_lib nestutil ${READLINE_LIBRARIES} )
 
 # add the executable
 add_executable( sli puresli.cc )
-target_link_libraries( sli sli_lib )
+target_link_libraries( sli sli_lib sli_readline )
 
 target_include_directories( sli PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
@@ -100,17 +107,20 @@ target_include_directories( sli_lib PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
     ${PROJECT_BINARY_DIR}/libnestutil
     )
-
-target_compile_definitions( sli_lib PRIVATE
-    -DPKGDATADIR=\"${PKGDATADIR}\"
-    -DPKGDOCDIR=\"${PKGDOCDIR}\"
-    -DPKGSOURCEDIR=\"${PROJECT_SOURCE_DIR}\"
+set_target_properties( sli_lib
+    PROPERTIES
+    OUTPUT_NAME sli
     )
 
-install( TARGETS sli_lib sli
-    LIBRARY DESTINATION ${INSTALL_LIB_DIR}
-    ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
-    RUNTIME DESTINATION ${INSTALL_BIN_DIR}
+target_include_directories( sli_readline PRIVATE
+    ${PROJECT_SOURCE_DIR}/libnestutil
+    ${PROJECT_BINARY_DIR}/libnestutil
+    )
+
+install( TARGETS sli_readline sli_lib sli
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
 # DIRS for help
@@ -146,15 +156,15 @@ if ( NOT CMAKE_CROSSCOMPILING )
   # install help (depends on sli and lib/sli/* installed)
   install( CODE
       "execute_process(
-        COMMAND ${CMAKE_COMMAND} -E remove_directory ${PKGDOCDIR}/help/sli
-        COMMAND ${CMAKE_COMMAND} -E remove_directory ${PKGDOCDIR}/help/cc
-        COMMAND ${CMAKE_COMMAND} -E remove ${PKGDOCDIR}/help/helpindex.html
-        COMMAND ${CMAKE_COMMAND} -E remove ${PKGDOCDIR}/help/helpindex.hlp
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_INSTALL_FULL_DOCDIR}/help/sli
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_INSTALL_FULL_DOCDIR}/help/cc
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_FULL_DOCDIR}/help/helpindex.html
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_FULL_DOCDIR}/help/helpindex.hlp
 
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${PKGDOCDIR}/help
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_FULL_DOCDIR}/help
         COMMAND ${CMAKE_COMMAND}
-            -DDOC_DIR='${PKGDOCDIR}'
-            -DDATA_DIR='${PKGDATADIR}'
+            -DDOC_DIR='${CMAKE_INSTALL_FULL_DOCDIR}'
+            -DDATA_DIR='${CMAKE_INSTALL_FULL_DATADIR}'
             -DHELPDIRS='${HELPDIRS}'
             -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
             -P ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
@@ -164,5 +174,5 @@ if ( NOT CMAKE_CROSSCOMPILING )
 endif ()
 
 install( FILES ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
-    DESTINATION ${INSTALL_DOC_DIR}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )

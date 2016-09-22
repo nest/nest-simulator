@@ -90,7 +90,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   struct Buffers_;
 
@@ -99,8 +99,8 @@ private:
    */
   struct Parameters_
   {
-    std::vector< double_t > amp_times_;
-    std::vector< double_t > amp_values_;
+    std::vector< double > amp_times_;
+    std::vector< double > amp_values_;
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_&, Buffers_& );
@@ -114,8 +114,8 @@ private:
 
   struct Buffers_
   {
-    size_t idx_;   //!< index of current amplitude
-    double_t amp_; //!< current amplitude
+    size_t idx_; //!< index of current amplitude
+    double amp_; //!< current amplitude
   };
 
   // ------------------------------------------------------------

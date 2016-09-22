@@ -38,6 +38,8 @@
 #include "node.h"
 #include "sibling_container.h"
 #include "subnet.h"
+#include "vp_manager.h"
+#include "vp_manager_impl.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -179,7 +181,7 @@ NodeManager::get_status( index idx )
   return d;
 }
 
-index NodeManager::add_node( index mod, long_t n ) // no_p
+index NodeManager::add_node( index mod, long n ) // no_p
 {
   assert( current_ != 0 );
   assert( root_ != 0 );
@@ -666,6 +668,15 @@ NodeManager::set_status_single_node_( Node& target,
   }
 }
 
+void
+NodeManager::prepare_node_( Node* n )
+{
+  // Frozen nodes are initialized and calibrated, so that they
+  // have ring buffers and can accept incoming spikes.
+  n->init_buffers();
+  n->calibrate();
+}
+
 size_t
 NodeManager::prepare_nodes()
 {
@@ -769,15 +780,6 @@ NodeManager::finalize_nodes()
       }
     }
   }
-}
-
-inline void
-NodeManager::prepare_node_( Node* n )
-{
-  // Frozen nodes are initialized and calibrated, so that they
-  // have ring buffers and can accept incoming spikes.
-  n->init_buffers();
-  n->calibrate();
 }
 
 void

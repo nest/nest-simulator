@@ -17,14 +17,14 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 install( FILES run_examples.sh
-    DESTINATION ${INSTALL_DOC_DIR}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
 
 install( FILES sli/nestrc.sli
-    DESTINATION ${INSTALL_DOC_DIR}/examples
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
     )
 
 install( DIRECTORY nest/
-    DESTINATION ${INSTALL_DOC_DIR}/examples
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples
     USE_SOURCE_PERMISSIONS
     )

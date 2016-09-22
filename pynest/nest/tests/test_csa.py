@@ -71,12 +71,12 @@ class CSATestCase(unittest.TestCase):
         targets = nest.GetLeaves(pop1)[0]
         for i in range(n):
             conns = nest.GetStatus(
-                nest.FindConnections([sources[i]]), 'target')
+                nest.GetConnections([sources[i]]), 'target')
             self.assertEqual(len(conns), 1)
             self.assertEqual(conns[0], targets[i])
 
             conns = nest.GetStatus(
-                nest.FindConnections([targets[i]]), 'target')
+                nest.GetConnections([targets[i]]), 'target')
             self.assertEqual(len(conns), 0)
 
     def test_CSA_OneToOne_subnet_nd(self):
@@ -110,12 +110,12 @@ class CSATestCase(unittest.TestCase):
 
         for i in range(n):
             conns = nest.GetStatus(
-                nest.FindConnections([sources[i]]), 'target')
+                nest.GetConnections([sources[i]]), 'target')
             self.assertEqual(len(conns), 1)
             self.assertEqual(conns[0], targets[i])
 
             conns = nest.GetStatus(
-                nest.FindConnections([targets[i]]), 'target')
+                nest.GetConnections([targets[i]]), 'target')
             self.assertEqual(len(conns), 0)
 
     def test_CSA_OneToOne_params(self):
@@ -136,12 +136,12 @@ class CSATestCase(unittest.TestCase):
         targets = nest.GetLeaves(pop1)[0]
         for i in range(n):
             conns = nest.GetStatus(
-                nest.FindConnections([sources[i]]), 'target')
+                nest.GetConnections([sources[i]]), 'target')
             self.assertEqual(len(conns), 1)
             self.assertEqual(conns[0], targets[i])
 
             conns = nest.GetStatus(
-                nest.FindConnections([targets[i]]), 'target')
+                nest.GetConnections([targets[i]]), 'target')
             self.assertEqual(len(conns), 0)
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')

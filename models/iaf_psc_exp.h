@@ -164,7 +164,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( const Time&, const long_t, const long_t );
+  void update( const Time&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_psc_exp >;
@@ -179,32 +179,32 @@ private:
   {
 
     /** Membrane time constant in ms. */
-    double_t Tau_;
+    double Tau_;
 
     /** Membrane capacitance in pF. */
-    double_t C_;
+    double C_;
 
     /** Refractory period in ms. */
-    double_t t_ref_;
+    double t_ref_;
 
     /** Resting potential in mV. */
-    double_t E_L_;
+    double E_L_;
 
     /** External current in pA */
-    double_t I_e_;
+    double I_e_;
 
     /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
         I.e. the real threshold is (E_L_+Theta_). */
-    double_t Theta_;
+    double Theta_;
 
     /** reset value of the membrane potential */
-    double_t V_reset_;
+    double V_reset_;
 
     /** Time constant of excitatory synaptic current in ms. */
-    double_t tau_ex_;
+    double tau_ex_;
 
     /** Time constant of inhibitory synaptic current in ms. */
-    double_t tau_in_;
+    double tau_in_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -225,14 +225,14 @@ private:
   {
     // state variables
     //! synaptic stepwise constant input current, variable 0
-    double_t i_0_;
-    double_t i_1_;      //!< presynaptic stepwise constant input current
-    double_t i_syn_ex_; //!< postsynaptic current for exc. inputs, variable 1
-    double_t i_syn_in_; //!< postsynaptic current for inh. inputs, variable 1
-    double_t V_m_;      //!< membrane potential, variable 2
+    double i_0_;
+    double i_1_;      //!< presynaptic stepwise constant input current
+    double i_syn_ex_; //!< postsynaptic current for exc. inputs, variable 1
+    double i_syn_in_; //!< postsynaptic current for inh. inputs, variable 1
+    double V_m_;      //!< membrane potential, variable 2
 
     //! absolute refractory counter (no membrane potential propagation)
-    int_t r_ref_;
+    int r_ref_;
 
     State_(); //!< Default initialization
 
@@ -277,47 +277,47 @@ private:
         weight one has an amplitude of 1 mV.
         @note mog - I assume this, not checked.
     */
-    //    double_t PSCInitialValue_;
+    //    double PSCInitialValue_;
 
     // time evolution operator
-    double_t P20_;
-    double_t P11ex_;
-    double_t P11in_;
-    double_t P21ex_;
-    double_t P21in_;
-    double_t P22_;
+    double P20_;
+    double P11ex_;
+    double P11in_;
+    double P21ex_;
+    double P21in_;
+    double P22_;
 
-    double_t weighted_spikes_ex_;
-    double_t weighted_spikes_in_;
+    double weighted_spikes_ex_;
+    double weighted_spikes_in_;
 
-    int_t RefractoryCounts_;
+    int RefractoryCounts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the real membrane potential
-  double_t
+  double
   get_V_m_() const
   {
     return S_.V_m_ + P_.E_L_;
   }
 
-  double_t
+  double
   get_weighted_spikes_ex_() const
   {
     return V_.weighted_spikes_ex_;
   }
-  double_t
+  double
   get_weighted_spikes_in_() const
   {
     return V_.weighted_spikes_in_;
   }
-  double_t
+  double
   get_input_currents_ex_() const
   {
     return S_.i_syn_ex_;
   }
-  double_t
+  double
   get_input_currents_in_() const
   {
     return S_.i_syn_in_;

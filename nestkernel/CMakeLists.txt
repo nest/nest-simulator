@@ -60,7 +60,7 @@ set( nestkernel_sources
     target_identifier.h
     sparse_node_array.h sparse_node_array.cpp
     conn_parameter.h conn_parameter.cpp
-    conn_builder.h conn_builder.cpp
+    conn_builder.h conn_builder_impl.h conn_builder.cpp
     conn_builder_factory.h
     music_event_handler.h music_event_handler.cpp
     music_manager.cpp music_manager.h
@@ -98,7 +98,7 @@ target_include_directories( nestkernel PRIVATE
     )
 
 install( TARGETS nestkernel
-    LIBRARY DESTINATION ${INSTALL_LIB_DIR}
-    ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
-    RUNTIME DESTINATION ${INSTALL_BIN_DIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )

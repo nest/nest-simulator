@@ -99,7 +99,7 @@ nest::spike_detector::calibrate()
 }
 
 void
-nest::spike_detector::update( Time const&, const long_t, const long_t )
+nest::spike_detector::update( Time const&, const long, const long )
 {
   for ( std::vector< Event* >::iterator e =
           B_.spikes_[ kernel().event_delivery_manager.read_toggle() ].begin();
@@ -153,7 +153,7 @@ nest::spike_detector::handle( SpikeEvent& e )
   {
     assert( e.get_multiplicity() > 0 );
 
-    long_t dest_buffer;
+    long dest_buffer;
     if ( kernel()
            .modelrange_manager.get_model_of_gid( e.get_sender_gid() )
            ->has_proxies() )
@@ -163,7 +163,7 @@ nest::spike_detector::handle( SpikeEvent& e )
       // locally delivered events
       dest_buffer = kernel().event_delivery_manager.write_toggle();
 
-    for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+    for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
       // We store the complete events
       Event* event = e.clone();

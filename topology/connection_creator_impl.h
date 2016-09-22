@@ -490,7 +490,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
       if ( kernel_.valid() )
       {
 
-        std::vector< double_t > probabilities;
+        std::vector< double > probabilities;
 
         // Collect probabilities for the sources
         for (
@@ -636,7 +636,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
       if ( kernel_.valid() )
       {
 
-        std::vector< double_t > probabilities;
+        std::vector< double > probabilities;
 
         // Collect probabilities for the sources
         for (
@@ -751,7 +751,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
     index source_id = src_it->second;
     std::vector< index > targets;
     std::vector< Position< D > > displacements;
-    std::vector< double_t > probabilities;
+    std::vector< double > probabilities;
 
     // Find potential targets and probabilities
 
@@ -795,7 +795,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
     std::vector< bool > is_selected( targets.size() );
 
     // Draw `number_of_connections_` targets
-    for ( long_t i = 0; i < ( long_t ) number_of_connections_; ++i )
+    for ( long i = 0; i < ( long ) number_of_connections_; ++i )
     {
       index random_id = lottery.get_random_id( get_global_rng() );
       if ( ( not allow_multapses_ ) and ( is_selected[ random_id ] ) )
@@ -803,14 +803,24 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
         --i;
         continue;
       }
+      is_selected[ random_id ] = true;
       Position< D > target_displ = displacements[ random_id ];
       index target_id = targets[ random_id ];
-      Node* target_ptr = kernel().node_manager.get_node( target_id );
+
       double w, d;
       get_parameters_( target_displ, get_global_rng(), w, d );
+
+      // We bail out for non-local neurons only now after all possible
+      // random numbers haven been drawn. Bailing out any earlier may lead
+      // to desynchronized global rngs.
+      if ( not kernel().node_manager.is_local_gid( target_id ) )
+      {
+        continue;
+      }
+
+      Node* target_ptr = kernel().node_manager.get_node( target_id );
       kernel().connection_manager.connect(
         source_id, target_ptr, target_ptr->get_thread(), synapse_model_, d, w );
-      is_selected[ random_id ] = true;
     }
   }
 }

@@ -74,12 +74,12 @@ public:
   /**
    * Get the desired communication interval for the waveform relaxation
    */
-  double_t get_wfr_comm_interval() const;
+  double get_wfr_comm_interval() const;
 
   /**
    * Get the convergence tolerance of the waveform relaxation method
    */
-  double_t get_wfr_tol() const;
+  double get_wfr_tol() const;
 
   /**
    * Get the interpolation order of the waveform relaxation method
@@ -158,9 +158,9 @@ private:
   bool print_time_; //!< Indicates whether time should be printed during
                     //!< simulations (or not)
   bool use_wfr_;    //!< Indicates wheter waveform relaxation is used
-  double_t wfr_comm_interval_; //!< Desired waveform relaxation communication
-                               //!< interval (in ms)
-  double_t wfr_tol_; //!< Convergence tolerance of waveform relaxation method
+  double wfr_comm_interval_; //!< Desired waveform relaxation communication
+                             //!< interval (in ms)
+  double wfr_tol_; //!< Convergence tolerance of waveform relaxation method
   long wfr_max_iterations_; //!< maximal number of iterations used for waveform
                             //!< relaxation
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
@@ -222,13 +222,13 @@ SimulationManager::use_wfr() const
   return use_wfr_;
 }
 
-inline double_t
+inline double
 SimulationManager::get_wfr_comm_interval() const
 {
   return wfr_comm_interval_;
 }
 
-inline double_t
+inline double
 SimulationManager::get_wfr_tol() const
 {
   return wfr_tol_;

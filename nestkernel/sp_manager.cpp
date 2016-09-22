@@ -105,7 +105,7 @@ SPManager::get_status( DictionaryDatum& d )
     def< DictionaryDatum >( sp_synapses, syn_name.str(), sp_synapse );
   }
 
-  def< long_t >( d,
+  def< long >( d,
     names::structural_plasticity_update_interval,
     structural_plasticity_update_interval_ );
 }
@@ -119,7 +119,7 @@ void
 SPManager::set_status( const DictionaryDatum& d )
 {
   if ( d->known( names::structural_plasticity_update_interval ) )
-    updateValue< long_t >( d,
+    updateValue< long >( d,
       names::structural_plasticity_update_interval,
       structural_plasticity_update_interval_ );
   if ( !d->known( names::structural_plasticity_synapses ) )
@@ -368,18 +368,18 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
   // Index of neurons having a vacant synaptic element
   std::vector< index > pre_vacant_id;  // pre synaptic elements (e.g Axon)
   std::vector< index > post_vacant_id; // post synaptic element (e.g Den)
-  std::vector< int_t > pre_vacant_n;   // number of synaptic elements
-  std::vector< int_t > post_vacant_n;  // number of synaptic elements
+  std::vector< int > pre_vacant_n;     // number of synaptic elements
+  std::vector< int > post_vacant_n;    // number of synaptic elements
 
   // Index of neuron deleting a synaptic element
   std::vector< index > pre_deleted_id, post_deleted_id;
-  std::vector< int_t > pre_deleted_n, post_deleted_n;
+  std::vector< int > pre_deleted_n, post_deleted_n;
 
   // Global vector for vacant and deleted synaptic element
   std::vector< index > pre_vacant_id_global, post_vacant_id_global;
-  std::vector< int_t > pre_vacant_n_global, post_vacant_n_global;
+  std::vector< int > pre_vacant_n_global, post_vacant_n_global;
   std::vector< index > pre_deleted_id_global, post_deleted_id_global;
-  std::vector< int_t > pre_deleted_n_global, post_deleted_n_global;
+  std::vector< int > pre_deleted_n_global, post_deleted_n_global;
 
   // Vector of displacements for communication
   std::vector< int > displacements;
@@ -477,9 +477,9 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
  */
 void
 SPManager::create_synapses( std::vector< index >& pre_id,
-  std::vector< int_t >& pre_n,
+  std::vector< int >& pre_n,
   std::vector< index >& post_id,
-  std::vector< int_t >& post_n,
+  std::vector< int >& post_n,
   SPBuilder* sp_conn_builder )
 {
   std::vector< index > pre_id_rnd;
@@ -524,7 +524,7 @@ SPManager::create_synapses( std::vector< index >& pre_id,
  */
 void
 SPManager::delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
-  std::vector< int_t >& pre_deleted_n,
+  std::vector< int >& pre_deleted_n,
   index synapse_model,
   std::string se_pre_name,
   std::string se_post_name )
@@ -542,7 +542,7 @@ SPManager::delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
   // iterators
   std::vector< std::vector< index > >::iterator connectivity_it;
   std::vector< index >::iterator id_it;
-  std::vector< int_t >::iterator n_it;
+  std::vector< int >::iterator n_it;
 
   kernel().connection_manager.get_targets(
     pre_deleted_id, connectivity, synapse_model );
@@ -558,7 +558,7 @@ SPManager::delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
       *connectivity_it, global_targets, displacements );
     // shuffle only the first n items, n is the number of deleted synaptic
     // elements
-    if ( -( *n_it ) > static_cast< int_t >( global_targets.size() ) )
+    if ( -( *n_it ) > static_cast< int >( global_targets.size() ) )
       *n_it = -global_targets.size();
     global_shuffle( global_targets, -( *n_it ) );
 
@@ -626,7 +626,7 @@ SPManager::delete_synapse( index sgid,
  */
 void
 SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
-  std::vector< int_t >& post_deleted_n,
+  std::vector< int >& post_deleted_n,
   index synapse_model,
   std::string se_pre_name,
   std::string se_post_name )
@@ -645,7 +645,7 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
   // iterators
   std::vector< std::vector< index > >::iterator connectivity_it;
   std::vector< index >::iterator id_it;
-  std::vector< int_t >::iterator n_it;
+  std::vector< int >::iterator n_it;
 
   // Retrieve the connected sources
   kernel().connection_manager.get_sources(
@@ -663,7 +663,7 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
       *connectivity_it, global_sources, displacements );
     // shuffle only the first n items, n is the number of deleted synaptic
     // elements
-    if ( -( *n_it ) > static_cast< int_t >( global_sources.size() ) )
+    if ( -( *n_it ) > static_cast< int >( global_sources.size() ) )
       *n_it = -global_sources.size();
     global_shuffle( global_sources, -( *n_it ) );
 
@@ -678,15 +678,15 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
 void
 nest::SPManager::get_synaptic_elements( std::string se_name,
   std::vector< index >& se_vacant_id,
-  std::vector< int_t >& se_vacant_n,
+  std::vector< int >& se_vacant_n,
   std::vector< index >& se_deleted_id,
-  std::vector< int_t >& se_deleted_n )
+  std::vector< int >& se_deleted_n )
 {
   // local nodes
   index n_vacant_id = 0;
   index n_deleted_id = 0;
   index gid;
-  int_t n;
+  int n;
   size_t n_nodes = kernel().node_manager.size();
   se_vacant_id.clear();
   se_vacant_n.clear();
@@ -699,9 +699,9 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
   se_deleted_n.resize( n_nodes );
 
   std::vector< index >::iterator vacant_id_it = se_vacant_id.begin();
-  std::vector< int_t >::iterator vacant_n_it = se_vacant_n.begin();
+  std::vector< int >::iterator vacant_n_it = se_vacant_n.begin();
   std::vector< index >::iterator deleted_id_it = se_deleted_id.begin();
-  std::vector< int_t >::iterator deleted_n_it = se_deleted_n.begin();
+  std::vector< int >::iterator deleted_n_it = se_deleted_n.begin();
   std::vector< Node* >::const_iterator node_it;
 
   for ( size_t thrd = 0; thrd < kernel().vp_manager.get_num_threads(); ++thrd )
@@ -738,14 +738,14 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
 
 void
 nest::SPManager::serialize_id( std::vector< index >& id,
-  std::vector< int_t >& n,
+  std::vector< int >& n,
   std::vector< index >& res )
 {
   // populate res with indexes of nodes corresponding to the number of elements
   res.clear();
   std::vector< index >::iterator id_it;
-  std::vector< int_t >::iterator n_it;
-  int_t j;
+  std::vector< int >::iterator n_it;
+  int j;
   id_it = id.begin();
   n_it = n.begin();
   for ( ; id_it != id.end() && n_it != n.end(); id_it++, n_it++ )

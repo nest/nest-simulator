@@ -702,9 +702,7 @@ public:
    *             names of copied models are reported correctly.
    * @param model     name of model causing problem
    */
-  InvalidSimulationResolution( const std::string& model,
-    const Name& property,
-    const Time& value )
+  InvalidSimulationResolution( const std::string& model )
     : KernelException( "InvalidSimulationResolution" )
     , model_( model )
   {

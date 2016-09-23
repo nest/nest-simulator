@@ -322,27 +322,26 @@ private:
    */
   struct Parameters_
   {
-    double V_th;       //!< Threshold Potential in mV
-    double V_reset;    //!< Reset Potential in mV
-    double t_ref;      //!< Refractory period in ms
-    double V_max;      //!< Peak voltage at spike in mV
-    double E_Ca;       //!< Reversal potential for calcium spike in mV
-    double G_Ca;       //!< Maximal conductance for calcium spike in nS
-    double tau_m;      //!< Time constant for activation M in ms
-    double tau_h;      //!< Time constant for inactivation H in ms
-    double half_m;     //!< Voltage for half activation of M-inf in mV
-    double half_h;     //!< Voltage for half activation of H-inf in mV
-    double slope_m;    //!< Slope of M-inf in mV-1
-    double slope_h;    //!< Slope of H-inf in mV-1
-    double jump_Th;    //!< Jump in adaptive threshold upon spike in mV
-    double tau_Th;     //!< Time constant for adaptive threshold in ms
+    double V_th;         //!< Threshold Potential in mV
+    double V_reset;      //!< Reset Potential in mV
+    double t_ref;        //!< Refractory period in ms
+    double V_max;        //!< Peak voltage at spike in mV
+    double E_Ca;         //!< Reversal potential for calcium spike in mV
+    double G_Ca;         //!< Maximal conductance for calcium spike in nS
+    double tau_m;        //!< Time constant for activation M in ms
+    double tau_h;        //!< Time constant for inactivation H in ms
+    double half_m;       //!< Voltage for half activation of M-inf in mV
+    double half_h;       //!< Voltage for half activation of H-inf in mV
+    double slope_m;      //!< Slope of M-inf in mV-1
+    double slope_h;      //!< Slope of H-inf in mV-1
+    double jump_Th;      //!< Jump in adaptive threshold upon spike in mV
+    double tau_Th;       //!< Time constant for adaptive threshold in ms
     bool Ca_active;      //!< Calcium spikes are active if true
     bool reset_on_spike; //!< flag to turn on calcium spikes
 
-    double
-      g_conn[ NCOMP - 1 ];  //!< Conductances connecting compartments, in nS
-    double t_L[ NCOMP ];  //!< Leak during refractory period in nS
-    double nt_L[ NCOMP ]; //!< Leak at other times in ns
+    double g_conn[ NCOMP - 1 ]; //!< Conductances connecting compartments, in nS
+    double t_L[ NCOMP ];        //!< Leak during refractory period in nS
+    double nt_L[ NCOMP ];       //!< Leak at other times in ns
 
     double C_m[ NCOMP ];  //!< Membrane Capacitance in pF
     double E_ex[ NCOMP ]; //!< Excitatory reversal Potential in mV
@@ -461,7 +460,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**

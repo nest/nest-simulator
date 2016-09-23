@@ -330,14 +330,13 @@ private:
     double Ca_amplitude; //!< Amplitude factor for calcium spike current in pA
     double jump_Th;      //!< Jump in adaptive threshold upon spike in mV
     double tau_Th;       //!< Time constant for adaptive threshold in ms
-    bool Ca_active;        //!< Calcium spikes are active if true
-    bool reset_on_spike;   //!< flag to set somatic membrane potential to reset
+    bool Ca_active;      //!< Calcium spikes are active if true
+    bool reset_on_spike; //!< flag to set somatic membrane potential to reset
     // value at end of refractory period
 
-    double
-      g_conn[ NCOMP - 1 ];  //!< Conductances connecting compartments, in nS
-    double t_L[ NCOMP ];  //!< Leak during refractory period in nS
-    double nt_L[ NCOMP ]; //!< Leak at other times in ns
+    double g_conn[ NCOMP - 1 ]; //!< Conductances connecting compartments, in nS
+    double t_L[ NCOMP ];        //!< Leak during refractory period in nS
+    double nt_L[ NCOMP ];       //!< Leak at other times in ns
 
     double C_m[ NCOMP ];  //!< Membrane Capacitance in pF
     double E_ex[ NCOMP ]; //!< Excitatory reversal Potential in mV
@@ -456,7 +455,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**
@@ -492,8 +491,7 @@ private:
 
     int RefractoryCountsCa_;
 
-    std::vector< double >
-      Ca_waveform_; //!< Waveform for calcium spike current
+    std::vector< double > Ca_waveform_; //!< Waveform for calcium spike current
 
     double AdaptThStep_;
   };

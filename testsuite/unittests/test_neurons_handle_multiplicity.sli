@@ -52,14 +52,10 @@ M_ERROR setverbosity
              /mcculloch_pitts_neuron      % binary neuron
              /parrot_neuron
              /parrot_neuron_ps
-             /iaf_cond_alpha_mc    % cannot readout V_m directly
-             /music_event_in_proxy        % music device
-             /music_event_out_proxy       % music device
-             /music_cont_in_proxy         % music device
-             /music_cont_out_proxy        % music device
-             /music_message_in_proxy      % music device
-             /music_message_out_proxy     % music device
-           ] def    
+           ] 
+           def
+/skip_list skip_list mc_neurons join def  
+
 
 % The following models require connections to rport 1:
 /extra_params <<
@@ -182,13 +178,14 @@ M_ERROR setverbosity
   Map
 
   % see if all entries are true
-  true exch { and } Fold
-
-} 
-assert_or_die
-
-% Test for multicompartmental neurons ------------
-{
+   true exch { and } Fold
+ 
+ } 
+-%assert_or_die
++assert_or_die
+ 
+ % Test for multicompartmental neurons ------------
+ {
   % apply to all multicompartmental neurons
   mc_neurons 
   {

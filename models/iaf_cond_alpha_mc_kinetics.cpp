@@ -809,18 +809,18 @@ nest::iaf_cond_alpha_mc_kinetics::update( Time const& origin,
       S_.r_ = V_.RefractoryCounts_;
       S_.y_[ State_::V_M ] = P_.V_max;
       S_.th_ += P_.jump_Th;
-      S_.G_L[ SOMA ] = P_.t_L[ SOMA ];
-      S_.G_L[ PROX ] = P_.t_L[ PROX ];
-      S_.G_L[ DIST ] = P_.t_L[ DIST ];
+      S_.y_[ SOMA * State_::STATE_VEC_COMPS + State_::G_L ] = P_.t_L[ SOMA ];
+      S_.y_[ PROX * State_::STATE_VEC_COMPS + State_::G_L ] = P_.t_L[ PROX ];
+      S_.y_[ DIST * State_::STATE_VEC_COMPS + State_::G_L ] = P_.t_L[ DIST ];
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
       kernel().event_delivery_manager.send( *this, se, lag );
     }
     else
     {
-      S_.G_L[ SOMA ] = P_.nt_L[ SOMA ];
-      S_.G_L[ PROX ] = P_.nt_L[ PROX ];
-      S_.G_L[ DIST ] = P_.nt_L[ DIST ];
+      S_.y_[ SOMA * State_::STATE_VEC_COMPS + State_::G_L ] = P_.nt_L[ SOMA ];
+      S_.y_[ PROX * State_::STATE_VEC_COMPS + State_::G_L ] = P_.nt_L[ PROX ];
+      S_.y_[ DIST * State_::STATE_VEC_COMPS + State_::G_L ] = P_.nt_L[ DIST ];
     }
 
     // set new input currents

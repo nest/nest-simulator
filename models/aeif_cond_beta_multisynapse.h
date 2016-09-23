@@ -69,6 +69,9 @@
  % PyNEST example, of how to assign synaptic rise time and decay time
  % to a receptor type.
 
+ import nest 
+ import numpy as np
+
  neuron = nest.Create('aeif_cond_beta_multisynapse')
  nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
  nest.SetStatus(neuron, {'taus_decay':[50.0,20.0,20.0,20.0],
@@ -86,8 +89,16 @@
                                            'weight': w[syn],
                                            'delay': delays[syn],
                                            'receptor_type': 1 + syn})
-
  nest.Connect(voltmeter, neuron)
+
+ nest.Simulate(1000.0)
+ dmm = nest.GetStatus(voltmeter)[0]
+ Vms = dmm["events"]["V_m"]
+ ts = dmm["events"]["times"]
+ import pylab
+ pylab.figure(1)
+ pylab.plot(ts, Vms)
+ pylab.show()
 
  Sends: SpikeEvent
 

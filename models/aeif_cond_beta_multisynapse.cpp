@@ -443,7 +443,15 @@ aeif_cond_beta_multisynapse::calibrate()
 
   for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
   {
-    // denominator is computed here to check that it is != 0
+    // the denominator (denom1) that appears in the expression of the peak time
+    // is computed here to check that it is != 0
+    // another denominator denom2 appears in the expression of the
+    // normalization factor g0
+    // Both denom1 and denom2 are null if taus_decay = taus_rise, but they
+    // can also be null if taus_decay and taus_rise are not equal but very
+    // close to each other, due to the numerical precision limits.
+    // In such case the beta function reduces to the alpha function,
+    // and the normalization factor for the alpha function should be used. 
     double denom1 = P_.taus_decay[ i ] - P_.taus_rise[ i ];
     double denom2 = 0;
     if ( denom1 != 0 )

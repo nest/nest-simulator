@@ -69,7 +69,7 @@
  % PyNEST example, of how to assign synaptic rise time and decay time
  % to a receptor type.
 
- import nest 
+ import nest
  import numpy as np
 
  neuron = nest.Create('aeif_cond_beta_multisynapse')

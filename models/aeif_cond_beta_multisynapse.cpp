@@ -451,7 +451,7 @@ aeif_cond_beta_multisynapse::calibrate()
     // can also be null if taus_decay and taus_rise are not equal but very
     // close to each other, due to the numerical precision limits.
     // In such case the beta function reduces to the alpha function,
-    // and the normalization factor for the alpha function should be used. 
+    // and the normalization factor for the alpha function should be used.
     double denom1 = P_.taus_decay[ i ] - P_.taus_rise[ i ];
     double denom2 = 0;
     if ( denom1 != 0 )

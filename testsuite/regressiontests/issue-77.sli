@@ -1,5 +1,5 @@
 /*
- *  issue-77.sli
+ *  ticket-77.sli
  *
  *  This file is part of NEST.
  *
@@ -58,6 +58,7 @@ M_ERROR setverbosity
 /skip_list [ 
              /ginzburg_neuron             % binary neuron
              /mcculloch_pitts_neuron      % binary neuron
+             /erfc_neuron                 % binary neuron
              /pp_pop_psc_delta            % population model, not suitable for STDP
              /music_event_out_proxy       % MUSIC port
              /music_event_in_proxy        % MUSIC port

@@ -38,7 +38,7 @@
 
 
 % assumes model name on stack
-[/ginzburg_neuron /mcculloch_pitts_neuron]
+[/ginzburg_neuron /mcculloch_pitts_neuron /erfc_neuron]
 {
 
     0.1 /h Set

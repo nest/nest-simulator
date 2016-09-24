@@ -190,12 +190,13 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     - For 'fixed_indegree' the array has to be a two-dimensional NumPy array
       with shape (len(post), indegree), where indegree is the number of
       incoming connections per target neuron, therefore the rows describe the
-      target and the columns the source neurons.
+      target and the columns the connections converging to the target neuron,
+      regardless of the identity of the source neurons.
     - For 'fixed_outdegree' the array has to be a two-dimensional NumPy array
       with shape (len(pre), outdegree), where outdegree is the number of
       outgoing connections per source neuron, therefore the rows describe the
-      source and the columns the target neurons.
-
+      source and the columns the connections starting from the source neuron
+      regardless of the identity of the target neuron.
 
     Any distributed parameter must be initialised with a further dictionary
     specifying the distribution type ('distribution', e.g. 'normal') and

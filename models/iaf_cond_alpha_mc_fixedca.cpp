@@ -564,10 +564,12 @@ nest::iaf_cond_alpha_mc_fixedca::iaf_cond_alpha_mc_fixedca()
   , S_( P_ )
   , B_( *this )
 {
+  /*
   if ( B_.step_ != 0.1 )
   {
     throw InvalidSimulationResolution( get_name() );
   }
+  */
   recordablesMap_.create();
 
   // set up table of compartment names
@@ -584,10 +586,12 @@ nest::iaf_cond_alpha_mc_fixedca::iaf_cond_alpha_mc_fixedca(
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
+  /*
   if ( B_.step_ != 0.1 )
   {
     throw InvalidSimulationResolution( get_name() );
   }
+  */
 }
 
 nest::iaf_cond_alpha_mc_fixedca::~iaf_cond_alpha_mc_fixedca()

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# mc_neuron.py
+# mc_neuron_calcium.py
 #
 # This file is part of NEST.
 #

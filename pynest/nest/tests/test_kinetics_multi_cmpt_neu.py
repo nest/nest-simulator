@@ -1,6 +1,4 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
-
 #
 # test_kinetics_multi_cmpt_neu.py
 #

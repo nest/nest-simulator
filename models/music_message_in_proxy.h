@@ -156,7 +156,7 @@ private:
   void calibrate();
 
   void
-  update( Time const&, const long_t, const long_t )
+  update( Time const&, const long, const long )
   {
   }
 
@@ -234,8 +234,8 @@ music_message_in_proxy::set_status( const DictionaryDatum& d )
   State_ stmp = S_;
   stmp.set( d, P_ ); // throws if BadProperty
 
-  long_t nm = 0;
-  if ( updateValue< long_t >( d, "n_messages", nm ) )
+  long nm = 0;
+  if ( updateValue< long >( d, "n_messages", nm ) )
   {
     if ( nm == 0 )
       B_.message_handler_.clear();

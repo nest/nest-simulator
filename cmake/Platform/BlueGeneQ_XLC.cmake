@@ -19,8 +19,8 @@
 
 include( Platform/BlueGeneQ_Base )
 # set the compiler
-set( CMAKE_C_COMPILER bgxlc_r )
-set( CMAKE_CXX_COMPILER bgxlc++_r )
+set( CMAKE_C_COMPILER bgxlc_r CACHE FILEPATH "override C compiler" )
+set( CMAKE_CXX_COMPILER bgxlc++_r CACHE FILEPATH "override C++ compiler" )
 
 #
 # Compile flags for different build types
@@ -35,7 +35,7 @@ set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g -qarch=qp -qtune=qp -DNDEBUG" CACHE 
 set( OpenMP_C_FLAGS "-qsmp=omp" CACHE STRING "Compiler flag for OpenMP parallelization" FORCE )
 set( OpenMP_CXX_FLAGS "-qsmp=omp" CACHE STRING "Compiler flag for OpenMP parallelization" FORCE )
 
-set( with-warning "-qinfo=all" CACHE STRING "Enable user defined warnings. [default ON, when ON, defaults to '-Wall']" FORCE )
+set( with-warning "-qinfo=all" CACHE STRING "Enable user defined warnings. [default ON, when ON, defaults to '-Wall']" )
 
 if ( static-libraries )
   __bluegeneq_setup_static( XL CXX )

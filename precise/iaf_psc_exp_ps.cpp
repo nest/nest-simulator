@@ -65,16 +65,16 @@ RecordablesMap< iaf_psc_exp_ps >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_exp_ps::Parameters_::Parameters_()
-  : tau_m_( 10.0 )                                         // ms
-  , tau_ex_( 2.0 )                                         // ms
-  , tau_in_( 2.0 )                                         // ms
-  , c_m_( 250.0 )                                          // pF
-  , t_ref_( 2.0 )                                          // ms
-  , E_L_( -70.0 )                                          // mV
-  , I_e_( 0.0 )                                            // pA
-  , U_th_( -55.0 - E_L_ )                                  // mV, rel to E_L_
-  , U_min_( -std::numeric_limits< double_t >::infinity() ) // mV
-  , U_reset_( -70.0 - E_L_ )                               // mV, rel to E_L_
+  : tau_m_( 10.0 )                                       // ms
+  , tau_ex_( 2.0 )                                       // ms
+  , tau_in_( 2.0 )                                       // ms
+  , c_m_( 250.0 )                                        // pF
+  , t_ref_( 2.0 )                                        // ms
+  , E_L_( -70.0 )                                        // mV
+  , I_e_( 0.0 )                                          // pA
+  , U_th_( -55.0 - E_L_ )                                // mV, rel to E_L_
+  , U_min_( -std::numeric_limits< double >::infinity() ) // mV
+  , U_reset_( -70.0 - E_L_ )                             // mV, rel to E_L_
 {
 }
 
@@ -259,8 +259,8 @@ nest::iaf_psc_exp_ps::calibrate()
 
 void
 nest::iaf_psc_exp_ps::update( const Time& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   assert( to >= 0 );
   assert( static_cast< delay >( from )
@@ -278,12 +278,12 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
   if ( S_.y2_ >= P_.U_th_ )
     emit_instant_spike_( origin,
       from,
-      V_.h_ms_ * ( 1.0 - std::numeric_limits< double_t >::epsilon() ) );
+      V_.h_ms_ * ( 1.0 - std::numeric_limits< double >::epsilon() ) );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     // time at start of update step
-    const long_t T = origin.get_steps() + lag;
+    const long T = origin.get_steps() + lag;
 
     // if neuron returns from refractoriness during this step, place
     // pseudo-event in queue to mark end of refractory period
@@ -298,8 +298,8 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
     V_.y2_before_ = S_.y2_;
 
     // get first event
-    double_t ev_offset;
-    double_t ev_weight;
+    double ev_offset;
+    double ev_weight;
     bool end_of_refract;
 
     if ( !B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) )
@@ -338,12 +338,12 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
 
       // Time within step is measured by offsets, which are h at the beginning
       // and 0 at the end of the step.
-      double_t last_offset = V_.h_ms_; // start of step
+      double last_offset = V_.h_ms_; // start of step
 
       do
       {
         // time is measured backward: inverse order in difference
-        const double_t ministep = last_offset - ev_offset;
+        const double ministep = last_offset - ev_offset;
 
         propagate_( ministep );
 
@@ -402,7 +402,7 @@ nest::iaf_psc_exp_ps::handle( SpikeEvent& e )
      of the spike, since spikes might spend longer than min_delay_
      in the queue.  The time is computed according to Time Memo, Rule 3.
   */
-  const long_t Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
+  const long Tdeliver = e.get_stamp().get_steps() + e.get_delay() - 1;
 
   B_.events_.add_spike(
     e.get_rel_delivery_steps(
@@ -417,8 +417,8 @@ nest::iaf_psc_exp_ps::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
@@ -436,19 +436,19 @@ nest::iaf_psc_exp_ps::handle( DataLoggingRequest& e )
 // auxiliary functions ---------------------------------------------
 
 void
-nest::iaf_psc_exp_ps::propagate_( const double_t dt )
+nest::iaf_psc_exp_ps::propagate_( const double dt )
 {
-  const double_t expm1_tau_ex = numerics::expm1( -dt / P_.tau_ex_ );
-  const double_t expm1_tau_in = numerics::expm1( -dt / P_.tau_in_ );
+  const double expm1_tau_ex = numerics::expm1( -dt / P_.tau_ex_ );
+  const double expm1_tau_in = numerics::expm1( -dt / P_.tau_in_ );
 
   if ( !S_.is_refractory_ )
   {
-    const double_t expm1_tau_m = numerics::expm1( -dt / P_.tau_m_ );
+    const double expm1_tau_m = numerics::expm1( -dt / P_.tau_m_ );
 
-    const double_t P20 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
-    const double_t P21_ex = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ )
+    const double P20 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
+    const double P21_ex = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ )
       / P_.c_m_ * ( expm1_tau_ex - expm1_tau_m );
-    const double_t P21_in = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ )
+    const double P21_in = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ )
       / P_.c_m_ * ( expm1_tau_in - expm1_tau_m );
 
     S_.y2_ = P20 * ( P_.I_e_ + S_.y0_ ) + P21_ex * S_.y1_ex_
@@ -460,9 +460,9 @@ nest::iaf_psc_exp_ps::propagate_( const double_t dt )
 
 void
 nest::iaf_psc_exp_ps::emit_spike_( const Time& origin,
-  const long_t lag,
-  const double_t t0,
-  const double_t dt )
+  const long lag,
+  const double t0,
+  const double dt )
 {
   // we know that the potential is subthreshold at t0, super at t0+dt
 
@@ -484,8 +484,8 @@ nest::iaf_psc_exp_ps::emit_spike_( const Time& origin,
 
 void
 nest::iaf_psc_exp_ps::emit_instant_spike_( const Time& origin,
-  const long_t lag,
-  const double_t spike_offs )
+  const long lag,
+  const double spike_offs )
 {
   assert( S_.y2_ >= P_.U_th_ ); // ensure we are superthreshold
 
@@ -505,14 +505,14 @@ nest::iaf_psc_exp_ps::emit_instant_spike_( const Time& origin,
   kernel().event_delivery_manager.send( *this, se, lag );
 }
 
-nest::double_t
-nest::iaf_psc_exp_ps::bisectioning_( const double_t dt ) const
+double
+nest::iaf_psc_exp_ps::bisectioning_( const double dt ) const
 {
-  double_t root = 0.0;
+  double root = 0.0;
 
-  double_t y2_root = V_.y2_before_;
+  double y2_root = V_.y2_before_;
 
-  double_t div = 2.0;
+  double div = 2.0;
 
   while ( fabs( P_.U_th_ - y2_root ) > 1e-14 )
   {
@@ -523,14 +523,14 @@ nest::iaf_psc_exp_ps::bisectioning_( const double_t dt ) const
 
     div *= 2.0;
 
-    const double_t expm1_tau_ex = numerics::expm1( -root / P_.tau_ex_ );
-    const double_t expm1_tau_in = numerics::expm1( -root / P_.tau_in_ );
-    const double_t expm1_tau_m = numerics::expm1( -root / P_.tau_m_ );
+    const double expm1_tau_ex = numerics::expm1( -root / P_.tau_ex_ );
+    const double expm1_tau_in = numerics::expm1( -root / P_.tau_in_ );
+    const double expm1_tau_m = numerics::expm1( -root / P_.tau_m_ );
 
-    const double_t P20 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
-    const double_t P21_ex = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ )
+    const double P20 = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
+    const double P21_ex = -P_.tau_m_ * P_.tau_ex_ / ( P_.tau_m_ - P_.tau_ex_ )
       / P_.c_m_ * ( expm1_tau_ex - expm1_tau_m );
-    const double_t P21_in = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ )
+    const double P21_in = -P_.tau_m_ * P_.tau_in_ / ( P_.tau_m_ - P_.tau_in_ )
       / P_.c_m_ * ( expm1_tau_in - expm1_tau_m );
 
     y2_root = P20 * ( P_.I_e_ + V_.y0_before_ ) + P21_ex * V_.y1_ex_before_

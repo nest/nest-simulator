@@ -52,12 +52,12 @@ public:
   }
   virtual void get( DictionaryDatum& d ) const = 0;
   virtual void set( const DictionaryDatum& d ) = 0;
-  virtual double_t update( double_t t,
-    double_t t_minus,
-    double_t Ca_minus,
-    double_t z,
-    double_t tau_Ca,
-    double_t growth_rate ) const = 0;
+  virtual double update( double t,
+    double t_minus,
+    double Ca_minus,
+    double z,
+    double tau_Ca,
+    double growth_rate ) const = 0;
   virtual bool
   is( Name n )
   {
@@ -144,15 +144,15 @@ public:
   GrowthCurveLinear();
   void get( DictionaryDatum& d ) const;
   void set( const DictionaryDatum& d );
-  double_t update( double_t t,
-    double_t t_minus,
-    double_t Ca_minus,
-    double_t z,
-    double_t tau_Ca,
-    double_t growth_rate ) const;
+  double update( double t,
+    double t_minus,
+    double Ca_minus,
+    double z,
+    double tau_Ca,
+    double growth_rate ) const;
 
 private:
-  double_t eps_;
+  double eps_;
 };
 
 /* BeginDocumentation
@@ -244,16 +244,16 @@ public:
   GrowthCurveGaussian();
   void get( DictionaryDatum& d ) const;
   void set( const DictionaryDatum& d );
-  double_t update( double_t t,
-    double_t t_minus,
-    double_t Ca_minus,
-    double_t z,
-    double_t tau_Ca,
-    double_t growth_rate ) const;
+  double update( double t,
+    double t_minus,
+    double Ca_minus,
+    double z,
+    double tau_Ca,
+    double growth_rate ) const;
 
 private:
-  double_t eta_;
-  double_t eps_;
+  double eta_;
+  double eps_;
 };
 
 } // of namespace

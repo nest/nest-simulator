@@ -256,7 +256,7 @@ nest::iaf_tum_2000::calibrate()
   // P20_ = h/C_;
 
   // TauR specifies the length of the absolute refractory period as
-  // a double_t in ms. The grid based iaf_tum_2000 can only handle refractory
+  // a double in ms. The grid based iaf_tum_2000 can only handle refractory
   // periods that are integer multiples of the computation step size (h).
   // To ensure consistency with the overall simulation scheme such conversion
   // should be carried out via objects of class nest::Time. The conversion
@@ -287,16 +287,14 @@ nest::iaf_tum_2000::calibrate()
 }
 
 void
-nest::iaf_tum_2000::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+nest::iaf_tum_2000::update( Time const& origin, const long from, const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
     if ( S_.r_abs_ == 0 ) // neuron not refractory, so evolve V
@@ -359,8 +357,8 @@ nest::iaf_tum_2000::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(

@@ -57,18 +57,18 @@ STDPDopaCommonProperties::get_status( DictionaryDatum& d ) const
   CommonSynapseProperties::get_status( d );
 
   if ( vt_ != 0 )
-    def< long_t >( d, "vt", vt_->get_gid() );
+    def< long >( d, "vt", vt_->get_gid() );
   else
-    def< long_t >( d, "vt", -1 );
+    def< long >( d, "vt", -1 );
 
-  def< double_t >( d, "A_plus", A_plus_ );
-  def< double_t >( d, "A_minus", A_minus_ );
-  def< double_t >( d, "tau_plus", tau_plus_ );
-  def< double_t >( d, "tau_c", tau_c_ );
-  def< double_t >( d, "tau_n", tau_n_ );
-  def< double_t >( d, "b", b_ );
-  def< double_t >( d, "Wmin", Wmin_ );
-  def< double_t >( d, "Wmax", Wmax_ );
+  def< double >( d, "A_plus", A_plus_ );
+  def< double >( d, "A_minus", A_minus_ );
+  def< double >( d, "tau_plus", tau_plus_ );
+  def< double >( d, "tau_c", tau_c_ );
+  def< double >( d, "tau_n", tau_n_ );
+  def< double >( d, "b", b_ );
+  def< double >( d, "Wmin", Wmin_ );
+  def< double >( d, "Wmax", Wmax_ );
 }
 
 void
@@ -77,8 +77,8 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d,
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  long_t vtgid;
-  if ( updateValue< long_t >( d, "vt", vtgid ) )
+  long vtgid;
+  if ( updateValue< long >( d, "vt", vtgid ) )
   {
     vt_ = dynamic_cast< volume_transmitter* >(
       kernel().node_manager.get_node( vtgid ) );
@@ -87,14 +87,14 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d,
       throw BadProperty( "Dopamine source must be volume transmitter" );
   }
 
-  updateValue< double_t >( d, "A_plus", A_plus_ );
-  updateValue< double_t >( d, "A_minus", A_minus_ );
-  updateValue< double_t >( d, "tau_plus", tau_plus_ );
-  updateValue< double_t >( d, "tau_c", tau_c_ );
-  updateValue< double_t >( d, "tau_n", tau_n_ );
-  updateValue< double_t >( d, "b", b_ );
-  updateValue< double_t >( d, "Wmin", Wmin_ );
-  updateValue< double_t >( d, "Wmax", Wmax_ );
+  updateValue< double >( d, "A_plus", A_plus_ );
+  updateValue< double >( d, "A_minus", A_minus_ );
+  updateValue< double >( d, "tau_plus", tau_plus_ );
+  updateValue< double >( d, "tau_c", tau_c_ );
+  updateValue< double >( d, "tau_n", tau_n_ );
+  updateValue< double >( d, "b", b_ );
+  updateValue< double >( d, "Wmin", Wmin_ );
+  updateValue< double >( d, "Wmax", Wmax_ );
 }
 
 Node*

@@ -180,12 +180,12 @@ M_ERROR setverbosity
   % see if all entries are true
    true exch { and } Fold
  
- } 
+} 
 -%assert_or_die
 +assert_or_die
- 
- % Test for multicompartmental neurons ------------
- {
+
+% Test for multicompartmental neurons ------------
+{
   % apply to all multicompartmental neurons
   mc_neurons 
   {

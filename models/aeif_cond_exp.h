@@ -166,7 +166,7 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-  void update( const Time&, const long_t, const long_t );
+  void update( const Time&, const long, const long );
 
   // END Boilerplate function declarations ----------------------------
 
@@ -185,26 +185,26 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double_t V_peak_;  //!< Spike detection threshold in mV
-    double_t V_reset_; //!< Reset Potential in mV
-    double_t t_ref_;   //!< Refractory period in ms
+    double V_peak_;  //!< Spike detection threshold in mV
+    double V_reset_; //!< Reset Potential in mV
+    double t_ref_;   //!< Refractory period in ms
 
-    double_t g_L;     //!< Leak Conductance in nS
-    double_t C_m;     //!< Membrane Capacitance in pF
-    double_t E_ex;    //!< Excitatory reversal Potential in mV
-    double_t E_in;    //!< Inhibitory reversal Potential in mV
-    double_t E_L;     //!< Leak reversal Potential (aka resting potential) in mV
-    double_t Delta_T; //!< Slope faktor in ms.
-    double_t tau_w;   //!< adaptation time-constant in ms.
-    double_t a;       //!< Subthreshold adaptation in nS.
-    double_t b;       //!< Spike-triggered adaptation in pA
-    double_t V_th;    //!< Spike threshold in mV.
-    double_t t_ref;   //!< Refractory period in ms.
-    double_t tau_syn_ex; //!< Excitatory synaptic rise time.
-    double_t tau_syn_in; //!< Excitatory synaptic rise time.
-    double_t I_e;        //!< Intrinsic current in pA.
+    double g_L;     //!< Leak Conductance in nS
+    double C_m;     //!< Membrane Capacitance in pF
+    double E_ex;    //!< Excitatory reversal Potential in mV
+    double E_in;    //!< Inhibitory reversal Potential in mV
+    double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
+    double Delta_T; //!< Slope faktor in ms.
+    double tau_w;   //!< adaptation time-constant in ms.
+    double a;       //!< Subthreshold adaptation in nS.
+    double b;       //!< Spike-triggered adaptation in pA
+    double V_th;    //!< Spike threshold in mV.
+    double t_ref;   //!< Refractory period in ms.
+    double tau_syn_ex; //!< Excitatory synaptic rise time.
+    double tau_syn_in; //!< Excitatory synaptic rise time.
+    double I_e;        //!< Intrinsic current in pA.
 
-    double_t gsl_error_tol; //!< error bound for GSL integrator
+    double gsl_error_tol; //!< error bound for GSL integrator
 
     Parameters_(); //!< Sets default parameter values
 
@@ -238,8 +238,8 @@ public:
     };
 
     //! neuron state, must be C-array for GSL solver
-    double_t y_[ STATE_VEC_SIZE ];
-    int_t r_; //!< number of refractory steps remaining
+    double y_[ STATE_VEC_SIZE ];
+    int r_; //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -277,7 +277,7 @@ public:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double_t step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**
@@ -287,7 +287,7 @@ public:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double_t I_stim_;
+    double I_stim_;
   };
 
   // ----------------------------------------------------------------
@@ -297,14 +297,14 @@ public:
    */
   struct Variables_
   {
-    int_t RefractoryCounts_;
+    int RefractoryCounts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out state vector elements, used by UniversalDataLogger
   template < State_::StateVecElems elem >
-  double_t
+  double
   get_y_elem_() const
   {
     return S_.y_[ elem ];

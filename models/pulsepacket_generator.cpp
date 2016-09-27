@@ -70,7 +70,7 @@ void
 nest::pulsepacket_generator::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ "pulse_times" ] =
-    DoubleVectorDatum( new std::vector< double_t >( pulse_times_ ) );
+    DoubleVectorDatum( new std::vector< double >( pulse_times_ ) );
   ( *d )[ "activity" ] = a_;
   ( *d )[ "sdev" ] = sdev_;
 }
@@ -92,7 +92,7 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d,
     throw BadProperty( "The standard deviation cannot be negative." );
 
 
-  if ( updateValue< std::vector< double_t > >( d, "pulse_times", pulse_times_ )
+  if ( updateValue< std::vector< double > >( d, "pulse_times", pulse_times_ )
     || neednewpulse )
   {
     std::sort( pulse_times_.begin(), pulse_times_.end() );
@@ -148,7 +148,7 @@ nest::pulsepacket_generator::calibrate()
   else
     V_.tolerance = 1.0;
 
-  const double_t now = ( kernel().simulation_manager.get_time() ).get_ms();
+  const double now = ( kernel().simulation_manager.get_time() ).get_ms();
 
   V_.start_center_idx_ = 0;
   V_.stop_center_idx_ = 0;
@@ -169,8 +169,8 @@ nest::pulsepacket_generator::calibrate()
 
 void
 nest::pulsepacket_generator::update( Time const& T,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   assert( to >= from );
   assert( ( to - from ) <= kernel().connection_manager.get_min_delay() );
@@ -201,7 +201,7 @@ nest::pulsepacket_generator::update( Time const& T,
     {
       for ( int i = 0; i < P_.a_; i++ )
       {
-        double_t x = P_.sdev_ * V_.norm_dev_( rng )
+        double x = P_.sdev_ * V_.norm_dev_( rng )
           + P_.pulse_times_.at( V_.start_center_idx_ );
         if ( Time( Time::ms( x ) ) >= T )
           B_.spiketimes_.push_back( Time( Time::ms( x ) ).get_steps() );
@@ -214,7 +214,7 @@ nest::pulsepacket_generator::update( Time const& T,
       std::sort( B_.spiketimes_.begin(), B_.spiketimes_.end() );
   }
 
-  int_t n_spikes = 0;
+  int n_spikes = 0;
 
   // Since we have an ordered list of spiketimes,
   // we can compute the histogram on the fly.
@@ -222,7 +222,7 @@ nest::pulsepacket_generator::update( Time const& T,
     !B_.spiketimes_.empty() && B_.spiketimes_.front() < ( T.get_steps() + to ) )
   {
     n_spikes++;
-    long_t prev_spike = B_.spiketimes_.front();
+    long prev_spike = B_.spiketimes_.front();
     B_.spiketimes_.pop_front();
 
     if ( n_spikes > 0 && prev_spike != B_.spiketimes_.front() )

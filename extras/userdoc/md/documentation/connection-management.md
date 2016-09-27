@@ -291,7 +291,7 @@ needs to be defined in two steps:
     n = 10
     A = Create("iaf_neuron", n)
     B = Create("iaf_neuron", n)
-    CopyModel('static_synapse','excitatory',{'weight':2.5})
+    CopyModel('stdp_synapse','excitatory',{'weight':2.5})
     syn_dict = {'model': 'excitatory',
                 'weight': 2.5,
                 'delay': {'distribution': 'uniform', 'low': 0.8, 'high': 2.5},

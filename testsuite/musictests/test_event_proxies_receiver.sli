@@ -1,5 +1,5 @@
 /*
- *  minimalmusicsetup_receivenest.sli
+ *  test_event_proxies_receiver.sli
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,10 @@
  *
  */
 
-statusdict/have_music :: not {statusdict/exitcodes/success :: quit_i} if
+(unittest) run
+/unittest using
+
+statusdict/have_music :: not { exit_test_gracefully } if
 
 M_ERROR setverbosity
 
@@ -32,7 +35,7 @@ meip << /port_name (spikes_in) /music_channel 0 >> SetStatus
 meip n << /weight 750.0 >> Connect
 
 /voltmeter Create /vm Set
-vm << /to_memory false /to_screen true >> SetStatus
+vm << /label (receiver) /record_to [ /file ] >> SetStatus
 
 vm n Connect
 

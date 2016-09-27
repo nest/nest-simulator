@@ -113,16 +113,16 @@ public:
     Node& tgt,
     ConnectorBase* conn,
     synindex syn_id,
-    double_t delay = numerics::nan,
-    double_t weight = numerics::nan ) = 0;
+    double delay = numerics::nan,
+    double weight = numerics::nan ) = 0;
 
   virtual ConnectorBase* add_connection( Node& src,
     Node& tgt,
     ConnectorBase* conn,
     synindex syn_id,
     DictionaryDatum& d,
-    double_t delay = numerics::nan,
-    double_t weight = numerics::nan ) = 0;
+    double delay = numerics::nan,
+    double weight = numerics::nan ) = 0;
 
   /**
    * Delete a connection of a given type directed to a defined target Node
@@ -216,15 +216,15 @@ public:
     Node& tgt,
     ConnectorBase* conn,
     synindex syn_id,
-    double_t weight,
-    double_t delay );
+    double weight,
+    double delay );
   ConnectorBase* add_connection( Node& src,
     Node& tgt,
     ConnectorBase* conn,
     synindex syn_id,
     DictionaryDatum& d,
-    double_t weight,
-    double_t delay );
+    double weight,
+    double delay );
 
   ConnectorBase* delete_connection( Node& tgt,
     size_t target_thread,

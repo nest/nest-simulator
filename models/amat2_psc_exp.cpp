@@ -274,22 +274,22 @@ nest::amat2_psc_exp::calibrate()
   // membrane potential
   // --------------------
 
-  const double_t c = P_.C_;
-  const double_t beta = P_.beta_;
+  const double c = P_.C_;
+  const double beta = P_.beta_;
 
-  const double_t taum = P_.Tau_;
-  const double_t tauE = P_.tau_ex_;
-  const double_t tauI = P_.tau_in_;
-  const double_t tauV = P_.tau_v_;
+  const double taum = P_.Tau_;
+  const double tauE = P_.tau_ex_;
+  const double tauI = P_.tau_in_;
+  const double tauV = P_.tau_v_;
 
 
   // these P are independent
-  const double_t eE = std::exp( -h / P_.tau_ex_ );
-  const double_t eI = std::exp( -h / P_.tau_in_ );
-  const double_t em = std::exp( -h / P_.Tau_ );
-  const double_t e1 = std::exp( -h / P_.tau_1_ );
-  const double_t e2 = std::exp( -h / P_.tau_2_ );
-  const double_t eV = std::exp( -h / P_.tau_v_ );
+  const double eE = std::exp( -h / P_.tau_ex_ );
+  const double eI = std::exp( -h / P_.tau_in_ );
+  const double em = std::exp( -h / P_.Tau_ );
+  const double e1 = std::exp( -h / P_.tau_1_ );
+  const double e2 = std::exp( -h / P_.tau_2_ );
+  const double eV = std::exp( -h / P_.tau_v_ );
 
   // V_.P00 = 1;
   V_.P11_ = eE;
@@ -348,7 +348,7 @@ nest::amat2_psc_exp::calibrate()
 
 
   // tau_ref_ specifies the length of the total refractory period as
-  // a double_t in ms. The grid based amat2_psc_exp can only handle refractory
+  // a double in ms. The grid based amat2_psc_exp can only handle refractory
   // periods that are integer multiples of the computation step size (h).
   // To ensure consistency with the overall simulation scheme such conversion
   // should be carried out via objects of class nest::Time. The conversion
@@ -378,15 +378,15 @@ nest::amat2_psc_exp::calibrate()
 
 void
 nest::amat2_psc_exp::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
     // evolve voltage dependency (6,7)
@@ -465,8 +465,8 @@ nest::amat2_psc_exp::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(

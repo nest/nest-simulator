@@ -230,8 +230,8 @@ mynest::pif_psc_alpha::calibrate()
 
 void
 mynest::pif_psc_alpha::update( Time const& slice_origin,
-  const nest::long_t from_step,
-  const nest::long_t to_step )
+  const long from_step,
+  const long to_step )
 {
   for ( long lag = from_step; lag < to_step; ++lag )
   {

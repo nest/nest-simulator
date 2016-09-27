@@ -265,10 +265,10 @@ aeif_cond_alpha_multisynapse::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] );
 
-  std::vector< double_t >* g_exc = new std::vector< double_t >();
-  std::vector< double_t >* dg_exc = new std::vector< double_t >();
-  std::vector< double_t >* g_inh = new std::vector< double_t >();
-  std::vector< double_t >* dg_inh = new std::vector< double_t >();
+  std::vector< double >* g_exc = new std::vector< double >();
+  std::vector< double >* dg_exc = new std::vector< double >();
+  std::vector< double >* g_inh = new std::vector< double >();
+  std::vector< double >* dg_inh = new std::vector< double >();
 
   for ( size_t i = 0;
         i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS )
@@ -301,14 +301,14 @@ aeif_cond_alpha_multisynapse::State_::set( const DictionaryDatum& d )
   if ( ( d->known( names::g_ex ) ) && ( d->known( names::dg_ex ) )
     && ( d->known( names::g_in ) ) && ( d->known( names::dg_in ) ) )
   {
-    const std::vector< double_t > g_exc =
-      getValue< std::vector< double_t > >( d->lookup( names::g_ex ) );
-    const std::vector< double_t > dg_exc =
-      getValue< std::vector< double_t > >( d->lookup( names::dg_ex ) );
-    const std::vector< double_t > g_inh =
-      getValue< std::vector< double_t > >( d->lookup( names::g_in ) );
-    const std::vector< double_t > dg_inh =
-      getValue< std::vector< double_t > >( d->lookup( names::dg_in ) );
+    const std::vector< double > g_exc =
+      getValue< std::vector< double > >( d->lookup( names::g_ex ) );
+    const std::vector< double > dg_exc =
+      getValue< std::vector< double > >( d->lookup( names::dg_ex ) );
+    const std::vector< double > g_inh =
+      getValue< std::vector< double > >( d->lookup( names::g_in ) );
+    const std::vector< double > dg_inh =
+      getValue< std::vector< double > >( d->lookup( names::dg_in ) );
 
     if ( ( g_exc.size() != dg_exc.size() ) || ( g_exc.size() != g_inh.size() )
       || ( g_exc.size() != dg_inh.size() ) )
@@ -469,15 +469,15 @@ aeif_cond_alpha_multisynapse::calibrate()
 
 void
 aeif_cond_alpha_multisynapse::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
 
-  for ( long_t lag = from; lag < to; ++lag ) // proceed by stepsize B_.step_
+  for ( long lag = from; lag < to; ++lag ) // proceed by stepsize B_.step_
   {
     double t = 0.0; // internal time of the integration period
 
@@ -502,14 +502,14 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
     // for a consistent and efficient integration across subsequent
     // simulation intervals.
 
-    double_t& h = B_.IntegrationStep_; // numerical integration step
-    double_t& tend = B_.step_;         // end of simulation step
+    double& h = B_.IntegrationStep_; // numerical integration step
+    double& tend = B_.step_;         // end of simulation step
 
-    const double_t& MAXERR = P_.MAXERR; // maximum error
-    const double_t& HMIN = P_.HMIN;     // minimal integration step
+    const double& MAXERR = P_.MAXERR; // maximum error
+    const double& HMIN = P_.HMIN;     // minimal integration step
 
-    double_t err;
-    double_t t_return = 0.0;
+    double err;
+    double t_return = 0.0;
 
     while ( t < B_.step_ ) // while not yet reached end of simulation step
     {
@@ -692,8 +692,8 @@ aeif_cond_alpha_multisynapse::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t I = e.get_current();
-  const double_t w = e.get_weight();
+  const double I = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(

@@ -128,7 +128,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     }
 
     // check if seeds are unique
-    std::set< ulong_t > seedset;
+    std::set< unsigned long > seedset;
     for ( index i = 0; i < ad->size(); ++i )
     {
       long s = ( *ad )[ i ]; // SLI has no ulong tokens
@@ -174,7 +174,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
 
     // check if grng seed is unique with respect to rng seeds
     // if grng_seed and rng_seeds given in one SetStatus call
-    std::set< ulong_t > seedset;
+    std::set< unsigned long > seedset;
     seedset.insert( gseed );
     if ( d->known( "rng_seeds" ) )
     {

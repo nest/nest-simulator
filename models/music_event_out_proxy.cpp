@@ -190,10 +190,10 @@ nest::music_event_out_proxy::get_status( DictionaryDatum& d ) const
   ( *d )[ names::connection_count ] = V_.index_map_.size();
 
   // make a copy, since MUSIC uses int instead of long int
-  std::vector< long_t >* pInd_map_long =
-    new std::vector< long_t >( V_.index_map_.size() );
+  std::vector< long >* pInd_map_long =
+    new std::vector< long >( V_.index_map_.size() );
   std::copy< std::vector< MUSIC::GlobalIndex >::const_iterator,
-    std::vector< long_t >::iterator >(
+    std::vector< long >::iterator >(
     V_.index_map_.begin(), V_.index_map_.end(), pInd_map_long->begin() );
 
   ( *d )[ names::index_map ] = IntVectorDatum( pInd_map_long );
@@ -219,14 +219,14 @@ nest::music_event_out_proxy::handle( SpikeEvent& e )
   assert( e.get_multiplicity() > 0 );
 
   // propagate the spikes to MUSIC port
-  double_t time = e.get_stamp().get_ms() * 1e-3; // event time in seconds
-  long_t receiver_port = e.get_rport();
+  double time = e.get_stamp().get_ms() * 1e-3; // event time in seconds
+  long receiver_port = e.get_rport();
 
 #ifdef _OPENMP
 #pragma omp critical( insertevent )
   {
 #endif
-    for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+    for ( int i = 0; i < e.get_multiplicity(); ++i )
       V_.MP_->insertEvent( time, MUSIC::GlobalIndex( receiver_port ) );
 #ifdef _OPENMP
   }

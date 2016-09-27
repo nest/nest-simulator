@@ -287,7 +287,7 @@ nest::RecordingDevice::State_::get( DictionaryDatum& d,
     assert( not p.to_accumulator_ );
     initialize_property_doublevector( dict, names::weights );
     append_property(
-      dict, names::weights, std::vector< double_t >( event_weights_ ) );
+      dict, names::weights, std::vector< double >( event_weights_ ) );
   }
 
   if ( p.withtime_ )
@@ -311,11 +311,11 @@ nest::RecordingDevice::State_::get( DictionaryDatum& d,
         if ( not p.to_accumulator_ )
           append_property( dict,
             names::offsets,
-            std::vector< double_t >( event_times_offsets_ ) );
+            std::vector< double >( event_times_offsets_ ) );
         else
           provide_property( dict,
             names::offsets,
-            std::vector< double_t >( event_times_offsets_ ) );
+            std::vector< double >( event_times_offsets_ ) );
       }
     }
     else
@@ -323,10 +323,10 @@ nest::RecordingDevice::State_::get( DictionaryDatum& d,
       initialize_property_doublevector( dict, names::times );
       if ( not p.to_accumulator_ )
         append_property(
-          dict, names::times, std::vector< double_t >( event_times_ms_ ) );
+          dict, names::times, std::vector< double >( event_times_ms_ ) );
       else
         provide_property(
-          dict, names::times, std::vector< double_t >( event_times_ms_ ) );
+          dict, names::times, std::vector< double >( event_times_ms_ ) );
     }
   }
 
@@ -336,8 +336,8 @@ nest::RecordingDevice::State_::get( DictionaryDatum& d,
 void
 nest::RecordingDevice::State_::set( const DictionaryDatum& d )
 {
-  long_t ne = 0;
-  if ( updateValue< long_t >( d, names::n_events, ne ) )
+  long ne = 0;
+  if ( updateValue< long >( d, names::n_events, ne ) )
   {
     if ( ne == 0 )
       events_ = 0;

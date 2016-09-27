@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_grid_precise_iaf_aeif.py
+# test_aeif_lsodar.py
 #
 # This file is part of NEST.
 #

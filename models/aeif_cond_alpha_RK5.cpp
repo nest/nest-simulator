@@ -102,14 +102,18 @@ nest::aeif_cond_alpha_RK5::State_::State_( const Parameters_& p )
 {
   y_[ 0 ] = p.E_L;
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = 0.0;
+  }
 }
 
 nest::aeif_cond_alpha_RK5::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
 }
 
 nest::aeif_cond_alpha_RK5::State_& nest::aeif_cond_alpha_RK5::State_::operator=(
@@ -118,7 +122,9 @@ nest::aeif_cond_alpha_RK5::State_& nest::aeif_cond_alpha_RK5::State_::operator=(
   assert( this != &s ); // would be bad logical error in program
 
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
   r_ = s.r_;
   return *this;
 }
@@ -179,24 +185,34 @@ nest::aeif_cond_alpha_RK5::Parameters_::set( const DictionaryDatum& d )
   if ( updateValue< double >( d, names::MAXERR, tmp ) )
   {
     if ( not( tmp > 0.0 ) )
+    {
       throw BadProperty( "MAXERR must be positive." );
+    }
     MAXERR = tmp;
   }
 
   if ( updateValue< double >( d, names::HMIN, tmp ) )
   {
     if ( not( tmp > 0.0 ) )
+    {
       throw BadProperty( "HMIN must be positive." );
+    }
     HMIN = tmp;
   }
 
   if ( Delta_T != 0. && V_peak_ <= V_th )
+  {
     throw BadProperty( "V_peak must be larger than threshold." );
+  }
   else if ( Delta_T == 0. )
+  {
     updateValue< double >( d, names::V_peak, V_th ); // expected behaviour
+  }
 
   if ( V_reset_ >= V_peak_ )
+  {
     throw BadProperty( "Ensure that: V_reset < V_peak ." );
+  }
 
   if ( C_m <= 0 )
   {
@@ -204,10 +220,14 @@ nest::aeif_cond_alpha_RK5::Parameters_::set( const DictionaryDatum& d )
   }
 
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time cannot be negative." );
+  }
 
   if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 }
 
 void

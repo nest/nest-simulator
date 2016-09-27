@@ -219,33 +219,49 @@ aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
   if ( updateValue< double >( d, names::MAXERR, tmp ) )
   {
     if ( not( tmp > 0.0 ) )
+    {
       throw BadProperty( "MAXERR must be positive." );
+    }
     MAXERR = tmp;
   }
 
   if ( updateValue< double >( d, names::HMIN, tmp ) )
   {
     if ( not( tmp > 0.0 ) )
+    {
       throw BadProperty( "HMIN must be positive." );
+    }
     HMIN = tmp;
   }
 
   if ( Delta_T != 0. && V_peak_ <= V_th )
+  {
     throw BadProperty( "V_peak must be larger than threshold." );
+  }
   else if ( Delta_T == 0. )
+  {
     updateValue< double >( d, names::V_peak, V_th ); // expected behaviour
+  }
 
   if ( V_reset_ >= V_peak_ )
+  {
     throw BadProperty( "Ensure that: V_reset < V_peak ." );
+  }
 
   if ( C_m <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
+  }
 
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time cannot be negative." );
+  }
 
   if ( tau_w <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 }
 
 void
@@ -417,11 +433,15 @@ aeif_cond_alpha_multisynapse::calibrate()
 
   // set the right function for the dynamics
   if ( P_.Delta_T != 0. )
+  {
     V_.model_dynamics =
       &aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics;
+  }
   else
+  {
     V_.model_dynamics =
       &aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics_DT0;
+  }
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   assert( V_.refractory_counts_

@@ -280,6 +280,17 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
 
   if ( Delta_T != 0. && V_peak_ <= V_th )
     throw BadProperty( "V_peak must be larger than threshold." );
+  else if ( Delta_T != 0. )
+  {
+    // check for possible numerical overflow with the exponential divergence at
+    // spike time
+    double max_exp_arg = std::log( std::numeric_limits< double >::max() );
+    if ( ( V_peak_ - V_th ) / Delta_T >= max_exp_arg )
+      throw BadProperty(
+        "The current combination of V_peak, V_th and Delta_T \
+will lead to numerical overflow at spike time; try for instance to increase \
+Delta_T or to reduce V_peak to avoid this problem." );
+  }
   else if ( Delta_T == 0. )
     updateValue< double >( d, names::V_peak, V_th ); // expected behaviour
 

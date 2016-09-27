@@ -455,7 +455,7 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
                     + 125.0 / 192.0 * S_.k4[ i ]
                     - 2187.0 / 6784.0 * S_.k5[ i ]
                     + 11.0 / 84.0 * S_.k6[ i ] );
-        ( this->*( V_.model_dynamics ) )( S_.yin, S_.k7 );
+        ( this->*( V_.model_dynamics ) )( S_.ynew, S_.k7 );
 
         // 4th order
         for ( int i = 0; i < S_.STATE_VEC_SIZE; ++i )

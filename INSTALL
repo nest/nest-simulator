@@ -269,7 +269,7 @@ To use NEST with non-standard allocators on BlueGene/Q (e.g., tcmalloc), you
 should compile NEST and the allocator with the same compiler, usually GCC.
 Since static linking is recommended on BlueGene/Q, the allocator also needs
 to be linked statically. This requires specifying linker flags and the
-allocator library in the following example:
+allocator library as shown in the following example:
 ```
 cmake -DCMAKE_TOOLCHAIN_FILE=Platform/BlueGeneQ_GCC \
       -DCMAKE_INSTALL_PREFIX:PATH=$PWD/install \

@@ -44,24 +44,27 @@ Details:
 
 HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 
-#-----------------------------------------------------------------------------#
-# Tolerances
-#-------------------------
+
+# --------------------------------------------------------------------------- #
+#  Tolerances
+# -------------------------
 #
 
 # for the state variables (compare LSODAR and NEST implementations)
 tol_compare_V = 2e-3  # higher for V because of the divergence at spike time
 tol_compare_w = 5e-5  # better for w
-#-----------------------------------------------------------------------------#
-# Individual dynamics
-#-------------------------
+
+
+# --------------------------------------------------------------------------- #
+#  Individual dynamics
+# -------------------------
 #
 
 models = [
   "aeif_cond_alpha",
-  #"aeif_cond_alpha_RK5",
+  # "aeif_cond_alpha_RK5",
   "aeif_cond_exp",
-  #"aeif_cond_alpha_multisynapse"
+  # "aeif_cond_alpha_multisynapse"
 ]
 
 num_models = len(models)
@@ -83,9 +86,10 @@ aeif_param = {
     'w': 5.
 }
 
-#-----------------------------------------------------------------------------#
-# Comparison function
-#-------------------------
+
+# --------------------------------------------------------------------------- #
+#  Comparison function
+# -------------------------
 #
 
 def _find_idx_nearest(array, values):
@@ -109,16 +113,16 @@ def _find_idx_nearest(array, values):
         if idx == len(array):
             return idx - 1
         else:
-            return idx - (np.abs(values - array[idx - 1])
-                          < np.abs(values - array[idx]))
+            return idx - (np.abs(values - array[idx - 1]) <
+                          np.abs(values - array[idx]))
     else:
         # find where it is idx_max+1
         overflow = (idx == len(array))
         idx[overflow] -= 1
         # for the others, find the nearest
         tmp = idx[~overflow]
-        idx[~overflow] = tmp - (np.abs(values[~overflow] - array[tmp - 1])
-                                < np.abs(values[~overflow] - array[tmp]))
+        idx[~overflow] = tmp - (np.abs(values[~overflow] - array[tmp - 1]) <
+                                np.abs(values[~overflow] - array[tmp]))
         return idx
 
 
@@ -166,10 +170,10 @@ def _interpolate_lsodar(nest_times, lsodar):
             else:
                 Dt = lsodar_t[closest] - lsodar_t[closest - 1]
                 dt = lsodar_t[closest] - t_int
-                V_int = Vs[closest - 1] +\
-                        dt * (Vs[closest] - Vs[closest - 1]) / Dt
-                w_int = ws[closest - 1] +\
-                        dt * (ws[closest] - ws[closest - 1]) / Dt
+                V_int = (Vs[closest - 1] +
+                         dt * (Vs[closest] - Vs[closest - 1]) / Dt)
+                w_int = (ws[closest - 1] +
+                         dt * (ws[closest] - ws[closest - 1]) / Dt)
         else:
             t_int = nest_times[indices[idx]]
             if lsodar_t[idx] < t_int and idx + 1 < len(lsodar_t):
@@ -220,17 +224,18 @@ def compare_nest_lsodar():
     rds = []
     for i, mm in enumerate(multimeters):
         Vs = nest.GetStatus(mm, "events")[0]["V_m"][nest_indices]
-        rds.append(np.average(np.sqrt(np.square((Vs - lsodar_V)))
-                                                / np.abs(Vs)))
+        rds.append(np.average(np.sqrt(
+          np.square((Vs - lsodar_V))) / np.abs(Vs)))
         ws = nest.GetStatus(mm, "events")[0]["w"][nest_indices]
         rds.append(np.average(np.sqrt(np.square((ws - lsodar_w))) / ws))
     for rel_diff_V, rel_diff_w in zip(rds[::2], rds[1::2]):
         assert(rel_diff_V < tol_compare_V)
         assert(rel_diff_w < tol_compare_w)
 
-#-----------------------------------------------------------------------------#
-# Run the comparisons
-#-------------------------
+
+# --------------------------------------------------------------------------- #
+#  Run the comparisons
+# ------------------------
 #
 
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')

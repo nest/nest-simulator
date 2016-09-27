@@ -108,6 +108,7 @@ extern const Name delta_tau; //!< Specific to correlation_and correlomatrix
                              //!< detector
 extern const Name delta_u;   //!< Specific to population point process model
                              //!< (pp_pop_psc_delta)
+extern const Name dg;        //!< Derivative of the conductance
 extern const Name dg_ex;     //!< Derivative of the excitatory conductance
 extern const Name dg_in;     //!< Derivative of the inhibitory conductance
 extern const Name dhaene_det_spikes;   //!< used for iaflossless_count_exp
@@ -375,11 +376,13 @@ extern const Name tau_syn_in;        //!< Inhibitory synaptic time constant
 extern const Name tau_v;             //!< Specific to amat2_*
 extern const Name tau_vacant;        //!< Parameter for MSP dynamics
 extern const Name tau_w; //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
-extern const Name taus_eta; //!< Specific to population point process model
-                            //!< (pp_pop_psc_delta)
-extern const Name taus_syn; //!< Synapse time constants (array)
-extern const Name theta;    //!< Did not compile without (theta neuron problem)
-extern const Name thread;   //!< Node parameter
+extern const Name taus_eta;   //!< Specific to population point process model
+                              //!< (pp_pop_psc_delta)
+extern const Name taus_syn;   //!< Synapse time constants (array)
+extern const Name taus_rise;  //!< Synapse rise constants (array)
+extern const Name taus_decay; //!< Synapse decay constants (array)
+extern const Name theta;  //!< Did not compile without (theta neuron problem)
+extern const Name thread; //!< Node parameter
 extern const Name thread_local_id; //!< Thead-local ID of node,
                                    //!< see Kunkel et al 2014, Sec 3.3.2
 extern const Name time_in_steps;   //!< Recorder parameter

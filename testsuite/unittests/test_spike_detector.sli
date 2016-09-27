@@ -97,12 +97,12 @@ assert_or_die
   /spike_detector Create /sd Set
 
   % can the precision be correctly set?
-  sd << /precision 17 >> SetStatus 
-  sd GetStatus /precision get 17 eq assert_or_die
+  sd << /precision 15 >> SetStatus 
+  sd GetStatus /precision get 15 eq assert_or_die
 
   % is the precision the same after simulating?
   100 Simulate
-  sd GetStatus /precision get 17 eq assert_or_die
+  sd GetStatus /precision get 15 eq assert_or_die
 
 % test the behavior of the /precise_times flag
 % 3. if the user does not set it
@@ -153,10 +153,10 @@ assert_or_die
 
   % checking to see if precision gets set correctly.
   /iaf_psc_exp_ps Create ;
-  sd << /precision 17 >> SetStatus 
-  sd GetStatus /precision get 17 eq assert_or_die
+  sd << /precision 15 >> SetStatus 
+  sd GetStatus /precision get 15 eq assert_or_die
 
   % does it remain the same after simulation?
   100 Simulate
-  sd GetStatus /precision get 17 eq assert_or_die
+  sd GetStatus /precision get 15 eq assert_or_die
 

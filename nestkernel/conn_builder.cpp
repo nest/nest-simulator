@@ -643,7 +643,8 @@ nest::OneToOneBuilder::connect_()
       }
       else
       {
-        for ( SparseNodeArray::const_iterator it = kernel().node_manager.local_nodes_begin();
+        for ( SparseNodeArray::const_iterator it =
+                kernel().node_manager.local_nodes_begin();
               it != kernel().node_manager.local_nodes_end();
               ++it )
         {
@@ -900,9 +901,10 @@ nest::AllToAllBuilder::connect_()
       }
       else
       {
-        for ( SparseNodeArray::const_iterator it = kernel().node_manager.local_nodes_begin();
-                it != kernel().node_manager.local_nodes_end();
-                ++it )
+        for ( SparseNodeArray::const_iterator it =
+                kernel().node_manager.local_nodes_begin();
+              it != kernel().node_manager.local_nodes_end();
+              ++it )
         {
           Node* const target = ( *it ).get_node();
           const index tgid = ( *it ).get_gid();
@@ -1207,9 +1209,10 @@ nest::FixedInDegreeBuilder::connect_()
       }
       else
       {
-        for ( SparseNodeArray::const_iterator it = kernel().node_manager.local_nodes_begin();
-                it != kernel().node_manager.local_nodes_end();
-                ++it )
+        for ( SparseNodeArray::const_iterator it =
+                kernel().node_manager.local_nodes_begin();
+              it != kernel().node_manager.local_nodes_end();
+              ++it )
         {
           Node* const target = ( *it ).get_node();
           const index tgid = ( *it ).get_gid();
@@ -1595,9 +1598,10 @@ nest::BernoulliBuilder::connect_()
 
       else
       {
-        for (  SparseNodeArray::const_iterator it = kernel().node_manager.local_nodes_begin();
-                it != kernel().node_manager.local_nodes_end();
-               ++it )
+        for ( SparseNodeArray::const_iterator it =
+                kernel().node_manager.local_nodes_begin();
+              it != kernel().node_manager.local_nodes_end();
+              ++it )
         {
           Node* const target = ( *it ).get_node();
           const index tgid = ( *it ).get_gid();

@@ -568,13 +568,6 @@ nest::ConnBuilder::single_connect_( index sgid,
   }
 }
 
-const nest::SparseNodeArray&
-nest::ConnBuilder::get_local_nodes()
-{
-  return kernel().node_manager.get_local_nodes_();
-}
-
-
 void
 nest::ConnBuilder::set_pre_synaptic_element_name( std::string name )
 {
@@ -614,7 +607,7 @@ nest::OneToOneBuilder::connect_()
       // local nodes is smaller than the targets_-range, we will iterate over
       // the local nodes instead and check, whether the node is in the
       // targets_-range.
-      if ( targets_->size() < get_local_nodes().size()
+      if ( targets_->size() < kernel().node_manager.local_nodes_size()
         || not targets_->is_range()
         || parameters_requiring_skipping_.size() > 0 )
       {
@@ -650,13 +643,13 @@ nest::OneToOneBuilder::connect_()
       }
       else
       {
-        for ( SparseNodeArray::const_iterator it = get_local_nodes().begin();
-              it != get_local_nodes().end();
+        for ( SparseNodeArray::const_iterator it = kernel().node_manager.local_nodes_begin();
+              it != kernel().node_manager.local_nodes_end();
               ++it )
         {
-          Node* const target = ( *it ).node_;
+          Node* const target = ( *it ).get_node();
           const thread target_thread = target->get_thread();
-          const index tgid = ( *it ).gid_;
+          const index tgid = ( *it ).get_gid();
 
           int idx;
           // Is local node in target list?
@@ -882,7 +875,7 @@ nest::AllToAllBuilder::connect_()
       // local nodes is smaller than the targets_-range, we will iterate over
       // the local nodes instead and check, whether the node is in the
       // targets_-range.
-      if ( targets_->size() < get_local_nodes().size()
+      if ( targets_->size() < kernel().node_manager.local_nodes_size()
         || not targets_->is_range()
         || parameters_requiring_skipping_.size() > 0 )
       {
@@ -907,12 +900,12 @@ nest::AllToAllBuilder::connect_()
       }
       else
       {
-        for ( SparseNodeArray::const_iterator it = get_local_nodes().begin();
-              it != get_local_nodes().end();
-              ++it )
+        for ( SparseNodeArray::const_iterator it = kernel().node_manager.local_nodes_begin();
+                it != kernel().node_manager.local_nodes_end();
+                ++it )
         {
-          Node* const target = ( *it ).node_;
-          const index tgid = ( *it ).gid_;
+          Node* const target = ( *it ).get_node();
+          const index tgid = ( *it ).get_gid();
 
           // Is the local node in the targets list?
           if ( targets_->find( tgid ) < 0 )
@@ -1196,7 +1189,7 @@ nest::FixedInDegreeBuilder::connect_()
       // local nodes is smaller than the targets_-range, we will iterate over
       // the local nodes instead and check, whether the node is in the
       // targets_-range.
-      if ( targets_->size() < get_local_nodes().size()
+      if ( targets_->size() < kernel().node_manager.local_nodes_size()
         || not targets_->is_range() )
       {
         for ( GIDCollection::const_iterator tgid = targets_->begin();
@@ -1214,12 +1207,12 @@ nest::FixedInDegreeBuilder::connect_()
       }
       else
       {
-        for ( SparseNodeArray::const_iterator it = get_local_nodes().begin();
-              it != get_local_nodes().end();
-              ++it )
+        for ( SparseNodeArray::const_iterator it = kernel().node_manager.local_nodes_begin();
+                it != kernel().node_manager.local_nodes_end();
+                ++it )
         {
-          Node* const target = ( *it ).node_;
-          const index tgid = ( *it ).gid_;
+          Node* const target = ( *it ).get_node();
+          const index tgid = ( *it ).get_gid();
 
           // Is the local node in the targets list?
           if ( targets_->find( tgid ) < 0 )
@@ -1486,7 +1479,7 @@ nest::FixedTotalNumberBuilder::connect_()
     }
 
     sum_dist += static_cast< double >( number_of_targets_on_vp[ k ] );
-    sum_partitions += static_cast< uint >( num_conns_on_vp[ k ] );
+    sum_partitions += static_cast< unsigned int >( num_conns_on_vp[ k ] );
   }
 
 // end code adapted from gsl 1.8
@@ -1583,7 +1576,7 @@ nest::BernoulliBuilder::connect_()
       // local nodes is smaller than the targets_-range, we will iterate over
       // the local nodes instead and check, whether the node is in the
       // targets_-range.
-      if ( targets_->size() < get_local_nodes().size()
+      if ( targets_->size() < kernel().node_manager.local_nodes_size()
         || not targets_->is_range() )
       {
         for ( GIDCollection::const_iterator tgid = targets_->begin();
@@ -1602,12 +1595,12 @@ nest::BernoulliBuilder::connect_()
 
       else
       {
-        for ( SparseNodeArray::const_iterator it = get_local_nodes().begin();
-              it != get_local_nodes().end();
-              ++it )
+        for (  SparseNodeArray::const_iterator it = kernel().node_manager.local_nodes_begin();
+                it != kernel().node_manager.local_nodes_end();
+               ++it )
         {
-          Node* const target = ( *it ).node_;
-          const index tgid = ( *it ).gid_;
+          Node* const target = ( *it ).get_node();
+          const index tgid = ( *it ).get_gid();
 
           // Is the local node in the targets list?
           if ( targets_->find( tgid ) < 0 )

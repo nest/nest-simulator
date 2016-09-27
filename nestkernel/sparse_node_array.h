@@ -58,6 +58,14 @@ public:
   struct NodeEntry
   {
     NodeEntry( Node&, index );
+
+    // Accessor functions here are mostly in place to make things "look nice".
+    // Since SparseNodeArray only exposes access to const_interator, iterators
+    // could anyways not be used to change entry contents.
+    // TODO: But we may want to re-think this.
+    Node* get_node() const;
+    index get_gid() const;
+
     Node* node_;
     index gid_; //!< store gid locally for faster searching
   };
@@ -197,6 +205,18 @@ inline std::map< long, size_t >
 nest::SparseNodeArray::get_step_ctr() const
 {
   return step_ctr_;
+}
+
+inline nest::Node*
+nest::SparseNodeArray::NodeEntry::get_node() const
+{
+  return node_;
+}
+
+inline nest::index
+nest::SparseNodeArray::NodeEntry::get_gid() const
+{
+  return gid_;
 }
 
 #endif /* SPARSE_NODE_ARRAY_H */

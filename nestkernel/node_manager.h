@@ -48,8 +48,6 @@ class Model;
 
 class NodeManager : public ManagerInterface
 {
-  friend const SparseNodeArray& ConnBuilder::get_local_nodes();
-
 public:
   NodeManager();
   ~NodeManager();
@@ -86,7 +84,6 @@ public:
    * @throws nest::UnknownModelID
    */
   index add_node( index m, long n = 1 );
-
 
   /**
    * Restore nodes from an array of status dictionaries.
@@ -212,6 +209,21 @@ public:
    */
   bool any_node_uses_wfr() const;
 
+  /**
+   * Iterator pointing to beginning of process-local nodes.
+   */
+  SparseNodeArray::const_iterator local_nodes_begin() const;
+
+  /**
+   * Iterator pointing to end of process-local nodes.
+   */
+  SparseNodeArray::const_iterator local_nodes_end() const;
+
+  /**
+   * Number of process-local nodes.
+   */
+  size_t local_nodes_size() const;
+
 private:
   /**
    * Initialize the network data structures.
@@ -238,8 +250,6 @@ private:
    * @see prepare_nodes_()
    */
   void prepare_node_( Node* );
-
-  const SparseNodeArray& get_local_nodes_() const;
 
   /**
    * Returns the next local gid after curr_gid (in round robin fashion).
@@ -339,10 +349,22 @@ NodeManager::any_node_uses_wfr() const
   return any_node_uses_wfr_;
 }
 
-inline const SparseNodeArray&
-NodeManager::get_local_nodes_() const
+inline SparseNodeArray::const_iterator
+NodeManager::local_nodes_begin() const
 {
-  return local_nodes_;
+  return local_nodes_.begin();
+}
+
+inline SparseNodeArray::const_iterator
+NodeManager::local_nodes_end() const
+{
+  return local_nodes_.begin();
+}
+
+inline size_t
+NodeManager::local_nodes_size() const
+{
+  return local_nodes_.size();
 }
 
 } // namespace

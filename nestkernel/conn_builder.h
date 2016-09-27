@@ -111,11 +111,6 @@ public:
     return false;
   }
 
-  /**
-   * This function gets the local nodes from the node manager for more efficient
-   */
-  const SparseNodeArray& get_local_nodes();
-
 protected:
   //! Implements the actual connection algorithm
   virtual void connect_() = 0;

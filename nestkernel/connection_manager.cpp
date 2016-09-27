@@ -84,7 +84,6 @@ nest::ConnectionManager::~ConnectionManager()
   // back to the system anyway. Hence, why bother cleaning up our highly
   // scattered connection infrastructure? They do not have any open files, which
   // need to be closed or similar.
-  // delete_connections_();
 }
 
 void

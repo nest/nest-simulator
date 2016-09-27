@@ -23,7 +23,6 @@ import numpy as np
 import unittest
 import nest
 
-
 """
 Comparing the new implementations the aeif models to the reference solution
 obrained using the LSODAR solver (see
@@ -43,9 +42,7 @@ Details:
   given tolerance.
 """
 
-
 HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
-
 
 #-----------------------------------------------------------------------------#
 # Tolerances
@@ -55,8 +52,6 @@ HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 # for the state variables (compare LSODAR and NEST implementations)
 tol_compare_V = 2e-3  # higher for V because of the divergence at spike time
 tol_compare_w = 5e-5  # better for w
-
-
 #-----------------------------------------------------------------------------#
 # Individual dynamics
 #-------------------------
@@ -88,7 +83,6 @@ aeif_param = {
     'w': 5.
 }
 
-
 #-----------------------------------------------------------------------------#
 # Comparison function
 #-------------------------
@@ -113,17 +107,18 @@ def _find_idx_nearest(array, values):
     # return the index of the closest
     if isinstance(values, float) or isinstance(values, int):
         if idx == len(array):
-            return idx-1
+            return idx - 1
         else:
-            return idx-(np.abs(values-array[idx-1])<np.abs(values-array[idx]))
+            return idx - (np.abs(values - array[idx - 1])
+                          < np.abs(values - array[idx]))
     else:
         # find where it is idx_max+1
         overflow = (idx == len(array))
         idx[overflow] -= 1
         # for the others, find the nearest
         tmp = idx[~overflow]
-        idx[~overflow] = tmp - (np.abs(values[~overflow]-array[tmp-1])
-                                < np.abs(values[~overflow]-array[tmp]))
+        idx[~overflow] = tmp - (np.abs(values[~overflow] - array[tmp - 1])
+                                < np.abs(values[~overflow] - array[tmp]))
         return idx
 
 
@@ -153,41 +148,44 @@ def _interpolate_lsodar(nest_times, lsodar):
     indices = _find_idx_nearest(nest_times, lsodar_t)
     # step of lsodar can be too small, keep only the closest to the nest_times
     # when same value over a whole range in indices
-    idx_change = np.nonzero(np.diff(indices))[0]+1
+    idx_change = np.nonzero(np.diff(indices))[0] + 1
     lsodar_V, lsodar_w, nest_indices = [], [], []
     idx_tmp = 0
     for idx in idx_change:
         # interpolate the value at the exact nest_time from closest lsodar_t
         t_int, V_int, w_int = 0., 0., 0.
-        if idx-idx_tmp > 1:
+        if idx - idx_tmp > 1:
             t_int = nest_times[indices[idx]]
-            closest = idx_tmp + np.argmin(np.abs(t_int-lsodar_t[idx_tmp:idx]))
+            closest = idx_tmp + np.argmin(np.abs(t_int -
+                                                 lsodar_t[idx_tmp:idx]))
             if lsodar_t[closest] < t_int:
-                Dt = lsodar_t[closest+1] - lsodar_t[closest]
+                Dt = lsodar_t[closest + 1] - lsodar_t[closest]
                 dt = t_int - lsodar_t[closest]
-                V_int = Vs[closest] + dt*(Vs[closest+1]-Vs[closest])/Dt
-                w_int = ws[closest] + dt*(ws[closest+1]-ws[closest])/Dt
+                V_int = Vs[closest] + dt * (Vs[closest + 1] - Vs[closest]) / Dt
+                w_int = ws[closest] + dt * (ws[closest + 1] - ws[closest]) / Dt
             else:
-                Dt = lsodar_t[closest] - lsodar_t[closest-1]
+                Dt = lsodar_t[closest] - lsodar_t[closest - 1]
                 dt = lsodar_t[closest] - t_int
-                V_int = Vs[closest-1] + dt*(Vs[closest]-Vs[closest-1])/Dt
-                w_int = ws[closest-1] + dt*(ws[closest]-ws[closest-1])/Dt
+                V_int = Vs[closest - 1] +\
+                        dt * (Vs[closest] - Vs[closest - 1]) / Dt
+                w_int = ws[closest - 1] +\
+                        dt * (ws[closest] - ws[closest - 1]) / Dt
         else:
             t_int = nest_times[indices[idx]]
-            if lsodar_t[idx] < t_int and idx+1 < len(lsodar_t):
-                Dt = lsodar_t[idx+1] - lsodar_t[idx]
+            if lsodar_t[idx] < t_int and idx + 1 < len(lsodar_t):
+                Dt = lsodar_t[idx + 1] - lsodar_t[idx]
                 dt = t_int - lsodar_t[idx]
-                V_int = Vs[idx] + dt*(Vs[idx+1]-Vs[idx])/Dt
-                w_int = ws[idx] + dt*(ws[idx+1]-ws[idx])/Dt
+                V_int = Vs[idx] + dt * (Vs[idx + 1] - Vs[idx]) / Dt
+                w_int = ws[idx] + dt * (ws[idx + 1] - ws[idx]) / Dt
             elif idx < len(lsodar_t):
-                Dt = lsodar_t[idx] - lsodar_t[idx-1]
-                dt = t_int - lsodar_t[idx-1]
-                V_int = Vs[idx-1] + dt*(Vs[idx]-Vs[idx-1])/Dt
-                w_int = ws[idx-1] + dt*(ws[idx]-ws[idx-1])/Dt
+                Dt = lsodar_t[idx] - lsodar_t[idx - 1]
+                dt = t_int - lsodar_t[idx - 1]
+                V_int = Vs[idx - 1] + dt * (Vs[idx] - Vs[idx - 1]) / Dt
+                w_int = ws[idx - 1] + dt * (ws[idx] - ws[idx - 1]) / Dt
             else:
                 break
         # ignore the values of V at spike times
-        if V_int < (aeif_param["V_th"]-aeif_param["V_peak"])/2.:
+        if V_int < (aeif_param["V_th"] - aeif_param["V_peak"]) / 2.:
             lsodar_V.append(V_int)
             lsodar_w.append(w_int)
             nest_indices.append(indices[idx])
@@ -208,8 +206,8 @@ def compare_nest_lsodar():
     lsodar = np.loadtxt('test_aeif_data_lsodar.dat').T
 
     # create the neurons and devices
-    lst_neurons = [ nest.Create(model, params=aeif_param) for model in models ]
-    multimeters = [ nest.Create("multimeter") for _ in range(num_models) ]
+    lst_neurons = [nest.Create(model, params=aeif_param) for model in models]
+    multimeters = [nest.Create("multimeter") for _ in range(num_models)]
     # connect them and simulate
     for i, mm in enumerate(multimeters):
         nest.SetStatus(mm, {"interval": resol, "record_from": ["V_m", "w"]})
@@ -222,13 +220,13 @@ def compare_nest_lsodar():
     rds = []
     for i, mm in enumerate(multimeters):
         Vs = nest.GetStatus(mm, "events")[0]["V_m"][nest_indices]
-        rds.append(np.average(np.sqrt(np.square((Vs-lsodar_V)))/np.abs(Vs)))
+        rds.append(np.average(np.sqrt(np.square((Vs - lsodar_V)))
+                                                / np.abs(Vs)))
         ws = nest.GetStatus(mm, "events")[0]["w"][nest_indices]
-        rds.append(np.average(np.sqrt(np.square((ws-lsodar_w)))/ws))
+        rds.append(np.average(np.sqrt(np.square((ws - lsodar_w))) / ws))
     for rel_diff_V, rel_diff_w in zip(rds[::2], rds[1::2]):
         assert(rel_diff_V < tol_compare_V)
         assert(rel_diff_w < tol_compare_w)
-
 
 #-----------------------------------------------------------------------------#
 # Run the comparisons

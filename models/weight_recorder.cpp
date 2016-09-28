@@ -44,7 +44,13 @@
 nest::weight_recorder::weight_recorder()
   : Node()
   // record time, gid and weight
-  , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true, true, true )
+  , device_( *this,
+      RecordingDevice::SPIKE_DETECTOR,
+      "gdf",
+      true,
+      true,
+      true,
+      true )
   , user_set_precise_times_( false )
   , has_proxies_( false )
   , local_receiver_( true )
@@ -78,30 +84,40 @@ nest::weight_recorder::init_buffers_()
 void
 nest::weight_recorder::calibrate()
 {
-  if ( !user_set_precise_times_
-    && kernel().event_delivery_manager.get_off_grid_communication() )
+  if ( kernel().event_delivery_manager.get_off_grid_communication()
+    and not device_.is_precise_times_user_set() )
   {
-    device_.set_precise( true, 15 );
+    device_.set_precise_times( true );
+    std::string msg = String::compose(
+      "Precise neuron models exist: the property precise_times "
+      "of the %1 with gid %2 has been set to true",
+      get_name(),
+      get_gid() );
 
-    LOG( M_INFO,
-      "weight_recorder::calibrate",
-      String::compose(
-           "Precise neuron models exist: the property precise_times "
-           "of the %1 with gid %2 has been set to true, precision has "
-           "been set to 15.",
-           get_name(),
-           get_gid() ) );
+    if ( device_.is_precision_user_set() )
+    {
+      // if user explicitly set the precision, there is no need to do anything.
+      msg += ".";
+    }
+
+    else
+    {
+      // it makes sense to increase the precision if precise models are used.
+      device_.set_precision( 15 );
+      msg += ", precision has been set to 15.";
+    }
+
+    LOG( M_INFO, "spike_detector::calibrate", msg );
   }
 
   device_.calibrate();
 }
 
 void
-nest::weight_recorder::update( Time const&, const long from, const long to)
+nest::weight_recorder::update( Time const&, const long from, const long to )
 {
 
-  for ( std::vector< WeightRecorderEvent >::iterator e =
-          B_.events_.begin();
+  for ( std::vector< WeightRecorderEvent >::iterator e = B_.events_.begin();
         e != B_.events_.end();
         ++e )
   {

@@ -91,7 +91,6 @@ public:
    * weight recorder
    */
   std::vector< Node* > weight_recorders_;
-
 };
 
 inline long

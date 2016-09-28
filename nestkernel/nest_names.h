@@ -108,6 +108,7 @@ extern const Name delta_tau; //!< Specific to correlation_and correlomatrix
                              //!< detector
 extern const Name delta_u;   //!< Specific to population point process model
                              //!< (pp_pop_psc_delta)
+extern const Name dg;        //!< Derivative of the conductance
 extern const Name dg_ex;     //!< Derivative of the excitatory conductance
 extern const Name dg_in;     //!< Derivative of the inhibitory conductance
 extern const Name dhaene_det_spikes;   //!< used for iaflossless_count_exp
@@ -307,7 +308,7 @@ extern const Name S; //!< Binary state (output) of neuron (Ginzburg neuron)
 extern const Name scientific;  //!< Recorder parameter
 extern const Name screen;      //!< Recorder parameter
 extern const Name senders;     //!< Recorder parameter
-extern const Name receivers;     //!< Recorder parameter
+extern const Name receivers;   //!< Recorder parameter
 extern const Name size_of;     //!< Connection parameters
 extern const Name source;      //!< Connection parameters
 extern const Name spike;       //!< true if the neuron spikes and false if not.
@@ -326,11 +327,13 @@ extern const Name structural_plasticity_update_interval; //!< Update interval
                                                          //!< plasticity
 extern const Name structure;                             //!< Node type
 extern const Name success;
-extern const Name symmetric;         //!< Connectivity-related
-extern const Name synapse;           //!< Node type
-extern const Name synapse_label;     //!< Label id of synapses with labels
-extern const Name synapse_model;     //!< Connection parameters
-extern const Name synapse_modelid;   //!< Connection parameters
+extern const Name supports_precise_spikes; //!< true if model supports precise
+                                           //!< spikes
+extern const Name symmetric;               //!< Connectivity-related
+extern const Name synapse;                 //!< Node type
+extern const Name synapse_label;           //!< Label id of synapses with labels
+extern const Name synapse_model;           //!< Connection parameters
+extern const Name synapse_modelid;         //!< Connection parameters
 extern const Name synaptic_elements; //!< Synaptic elements used in structural
                                      //!< plasticity
 
@@ -374,11 +377,13 @@ extern const Name tau_syn_in;        //!< Inhibitory synaptic time constant
 extern const Name tau_v;             //!< Specific to amat2_*
 extern const Name tau_vacant;        //!< Parameter for MSP dynamics
 extern const Name tau_w; //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
-extern const Name taus_eta; //!< Specific to population point process model
-                            //!< (pp_pop_psc_delta)
-extern const Name taus_syn; //!< Synapse time constants (array)
-extern const Name theta;    //!< Did not compile without (theta neuron problem)
-extern const Name thread;   //!< Node parameter
+extern const Name taus_eta;   //!< Specific to population point process model
+                              //!< (pp_pop_psc_delta)
+extern const Name taus_syn;   //!< Synapse time constants (array)
+extern const Name taus_rise;  //!< Synapse rise constants (array)
+extern const Name taus_decay; //!< Synapse decay constants (array)
+extern const Name theta;  //!< Did not compile without (theta neuron problem)
+extern const Name thread; //!< Node parameter
 extern const Name thread_local_id; //!< Thead-local ID of node,
                                    //!< see Kunkel et al 2014, Sec 3.3.2
 extern const Name time_in_steps;   //!< Recorder parameter
@@ -428,10 +433,10 @@ extern const Name with_noise;
 extern const Name with_reset; //!< Shall the pp_neuron reset after each spike?
                               //!< (stochastic neuron pp_psc_delta)
 extern const Name withgid;    //!< Recorder parameter
-extern const Name withpath;        //!< Recorder parameter
-extern const Name withtime;        //!< Recorder parameter
-extern const Name withweight;      //!< Recorder parameter
-extern const Name withreceivergid;      //!< Recorder parameter
+extern const Name withpath;   //!< Recorder parameter
+extern const Name withtime;   //!< Recorder parameter
+extern const Name withweight; //!< Recorder parameter
+extern const Name withreceivergid; //!< Recorder parameter
 
 extern const Name x;  //!< current scaling factor of the synaptic weight [0...1]
                       //!< (Tsodyks2_connection)

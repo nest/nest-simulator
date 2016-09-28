@@ -320,7 +320,6 @@ protected:
 
 
 // Built-in event types
-//
 /**
  * Event for spike information.
  * Used to send a spike from one node to the next.
@@ -366,7 +365,6 @@ SpikeEvent::get_multiplicity() const
 
 /**
  * Event for recording the weight of a spike.
- * Used to send a spike from one node to the next.
  */
 class WeightRecorderEvent : public Event
 {

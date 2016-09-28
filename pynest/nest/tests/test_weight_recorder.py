@@ -37,53 +37,56 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         nest.ResetKernel()
         nest.SetKernelStatus({"local_num_threads": 2})
-        
+
         wr = nest.Create('weight_recorder')
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec", {"weight_recorder": wr[0], "weight": 1.})
-        
-        sg = nest.Create("spike_generator", params={"spike_times": [10., 15., 55., 70.]})
+        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
+                       {"weight_recorder": wr[0], "weight": 1.})
+
+        sg = nest.Create("spike_generator",
+                         params={"spike_times": [10., 15., 55., 70.]})
         pre = nest.Create("parrot_neuron", 2)
         post = nest.Create("parrot_neuron", 2)
-        
+
         nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
         nest.Connect(sg, pre)
-        
+
         connections = nest.GetConnections(pre, post)
-        
+
         weights = [1.]
         for i in range(100):
             nest.Simulate(1)
             weights.append(nest.GetStatus(connections, "weight")[0])
-        
+
         weights = np.round(weights, 6)
         wr_weights = np.round(nest.GetStatus(wr, "events")[0]["weights"], 6)
 
         self.assertTrue(all([w in weights for w in wr_weights]))
-
 
     def testMultipleThreads(self):
         """Weight Recorder Multi Threaded"""
 
         nest.ResetKernel()
         nest.SetKernelStatus({"local_num_threads": 2})
-        
+
         wr = nest.Create('weight_recorder')
-        nest.CopyModel("stdp_synapse", "stdp_synapse_rec", {"weight_recorder": wr[0], "weight": 1.})
-        
-        sg = nest.Create("spike_generator", params={"spike_times": [10., 15., 55., 70.]})
+        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
+                       {"weight_recorder": wr[0], "weight": 1.})
+
+        sg = nest.Create("spike_generator",
+                         params={"spike_times": [10., 15., 55., 70.]})
         pre = nest.Create("parrot_neuron", 2)
         post = nest.Create("parrot_neuron", 2)
-        
+
         nest.Connect(pre, post, syn_spec="stdp_synapse_rec")
         nest.Connect(sg, pre)
-        
+
         connections = nest.GetConnections(pre, post)
-        
+
         weights = [1.]
         for i in range(100):
             nest.Simulate(1)
             weights.append(nest.GetStatus(connections, "weight")[0])
-        
+
         weights = np.round(weights, 6)
         wr_weights = np.round(nest.GetStatus(wr, "events")[0]["weights"], 6)
 

@@ -379,7 +379,16 @@ public:
     return P_.to_accumulator_;
   }
 
-  inline void set_precise( bool use_precise, long precision );
+  inline void set_precise_times( bool precise_times );
+
+  inline void set_precision( long precision );
+
+  inline bool records_precise_times() const;
+
+  inline bool is_precision_user_set() const;
+
+  inline bool is_precise_times_user_set() const;
+
 
 private:
   /**
@@ -404,7 +413,7 @@ private:
   void print_weight_( std::ostream&, double );
 
   /**
-   * Print the weight of an event.
+   * Print the receiver gid of an event.
    */
   void print_receiver_( std::ostream&, index );
 
@@ -445,17 +454,20 @@ private:
     bool to_file_;   //!< true if recorder writes its output to a file
     bool to_screen_; //!< true if recorder writes its output to stdout
     bool to_memory_; //!< true if data should be recorded in memory, default
-    bool to_accumulator_; //!< true if data is to be accumulated; exclusive to
-                          //!< all other to_*
-    bool time_in_steps_;  //!< true if time is printed in steps, not ms.
-    bool precise_times_;  //!< true if time is computed including offset
-    bool withgid_;        //!< true if element GID is to be printed, default
-    bool withtime_;       //!< true if time of event is to be printed, default
-    bool withweight_;     //!< true if weight of event is to be printed
-    bool withreceivergid_;        //!< true if receiver GID is to be printed, default
+    bool to_accumulator_;  //!< true if data is to be accumulated; exclusive to
+                           //!< all other to_*
+    bool time_in_steps_;   //!< true if time is printed in steps, not ms.
+    bool precise_times_;   //!< true if time is computed including offset
+    bool withgid_;         //!< true if element GID is to be printed, default
+    bool withtime_;        //!< true if time of event is to be printed, default
+    bool withweight_;      //!< true if weight of event is to be printed
+    bool withreceivergid_; //!< true if receiver GID is to be printed, default
 
     long precision_;  //!< precision of doubles written to file
     bool scientific_; //!< use scientific format if true, else fixed
+
+    bool user_set_precise_times_; //!< true if user set precise_times
+    bool user_set_precision_;     //!< true if user set precision
 
     bool binary_; //!< true if to write files in binary mode instead of ASCII
     long fbuffer_size_;     //!< the buffer size to use when writing to file
@@ -492,7 +504,7 @@ private:
   {
     size_t events_;                         //!< Event counter
     std::vector< long > event_senders_;     //!< List of event sender ids
-    std::vector< long > event_receivers_;     //!< List of event sender ids
+    std::vector< long > event_receivers_;   //!< List of event sender ids
     std::vector< double > event_times_ms_;  //!< List of event times in ms
     std::vector< long > event_times_steps_; //!< List of event times in steps
     //! List of event time offsets
@@ -517,6 +529,23 @@ private:
   Buffers_ V_;
 };
 
+inline bool
+RecordingDevice::is_precision_user_set() const
+{
+  return P_.user_set_precision_;
+}
+
+inline bool
+RecordingDevice::is_precise_times_user_set() const
+{
+  return P_.user_set_precise_times_;
+}
+
+inline bool
+RecordingDevice::records_precise_times() const
+{
+  return P_.precise_times_;
+}
 
 inline bool
 RecordingDevice::is_active( Time const& T ) const
@@ -537,9 +566,14 @@ RecordingDevice::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-RecordingDevice::set_precise( bool use_precise, long precision )
+RecordingDevice::set_precise_times( bool use_precise )
 {
   P_.precise_times_ = use_precise;
+}
+
+inline void
+RecordingDevice::set_precision( long precision )
+{
   P_.precision_ = precision;
 }
 

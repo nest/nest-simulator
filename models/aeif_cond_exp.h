@@ -309,7 +309,14 @@ public:
    */
   struct Variables_
   {
+    /**
+     * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
+     * P.V_th if Delta_T == 0.
+     */
+    double V_peak;
+
     gsl_odeiv_system sys_; //!< struct describing the GSL system
+
     unsigned int refractory_counts_;
   };
 

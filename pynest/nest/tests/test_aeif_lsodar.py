@@ -19,15 +19,21 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import numpy as np
+import os
+import sys
 import unittest
-import nest
 
+import numpy as np
+from scipy.interpolate import interp1d
+
+import nest
 
 """
 Comparing the new implementations the aeif models to the reference solution
 obrained using the LSODAR solver (see
-``doc/model_details/aeif_models_implementation.ipynb``).
+``doc/model_details/aeif_models_implementation.ipynb``). Also asserting that
+the ``Delta_T == 0.`` solution works by comparing the non-adaptive aeif to the
+iaf model.
 
 The reference solution is stored in ``test_aeif_psc_lsodar.dat`` and was
 generated using the same dictionary of parameters, the data is then downsampled
@@ -35,38 +41,53 @@ to keep one value every 0.01 ms and compare with the NEST simulation.
 
 The new implementation binds V_m to be smaller than 0.
 
-Rationale of the test: all models should be close to the reference LSODAR when
-submitted to the same excitatory current.
+Rationale of the test:
+  - all models should be close to the reference LSODAR when
+    submitted to the same excitatory current.
+  - for ``Delta_T = 0.``, ``a = 0.`` and ``b = 0.``, starting from ``w = 0.``,
+    models should behave as the associated iaf model.
 
 Details:
-  The models are compared and we assess that the difference is smaller than a
-  given tolerance.
+  The models are compared and we assess that the difference between the
+  recorded variables and the reference is smaller than a given tolerance.
 """
 
-
 HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
+path = os.path.abspath(os.path.dirname(__file__))
+if not path.endswith("/"):
+    path += "/"
 
 
-#-----------------------------------------------------------------------------#
-# Tolerances
-#-------------------------
+# --------------------------------------------------------------------------- #
+#  Tolerances to compare LSODAR and NEST implementations
+# -------------------------
 #
 
-# for the state variables (compare LSODAR and NEST implementations)
-tol_compare_V = 2e-3  # higher for V because of the divergence at spike time
-tol_compare_w = 5e-5  # better for w
+# higher for the potential because of the divergence at spike times
+di_tolerances_lsodar = {
+    "aeif_cond_alpha": {"V_m": 5e-4, "w": 1e-4},
+    "aeif_cond_exp": {"V_m": 5e-4, "w": 1e-4},
+    "aeif_cond_alpha_multisynapse": {"V_m": 5e-2, "w": 2e-3},
+    "aeif_cond_alpha_RK5": {"V_m": 5e-3, "w": 2e-3}
+}
+
+di_tolerances_iaf = {
+    "aeif_cond_alpha": {"V_m": 2e-3, "g_ex": 1e-6},
+    "aeif_cond_exp": {"V_m": 5e-4, "g_ex": 1e-6},
+    "aeif_cond_alpha_RK5": {"V_m": 2e-3, "g_ex": 1e-6}
+}
 
 
-#-----------------------------------------------------------------------------#
-# Individual dynamics
-#-------------------------
+# --------------------------------------------------------------------------- #
+#  Individual dynamics
+# -------------------------
 #
 
 models = [
-  "aeif_cond_alpha",
-  #"aeif_cond_alpha_RK5",
-  "aeif_cond_exp",
-  #"aeif_cond_alpha_multisynapse"
+    "aeif_cond_alpha",
+    "aeif_cond_exp",
+    "aeif_cond_alpha_multisynapse",
+    "aeif_cond_alpha_RK5"
 ]
 
 num_models = len(models)
@@ -88,156 +109,214 @@ aeif_param = {
     'w': 5.
 }
 
+# parameters to compare with iaf_cond_*
+aeif_DT0 = {
+    'V_reset': -60.,
+    'V_peak': 0.0,
+    'V_th': -55.,
+    'I_e': 200.,
+    'g_L': 16.7,
+    'E_L': -70.,
+    'Delta_T': 0.,
+    'a': 0.,
+    'b': 0.,
+    'C_m': 250.,
+    'V_m': -70.,
+    'w': 0.,
+    't_ref': 2.,
+    'tau_syn_ex': 0.2
+}
 
-#-----------------------------------------------------------------------------#
-# Comparison function
-#-------------------------
+iaf_param = {
+    'V_reset': -60.,
+    'V_th': -55.,
+    'I_e': 200.,
+    'g_L': 16.7,
+    'E_L': -70.,
+    'C_m': 250.,
+    'V_m': -70.,
+    't_ref': 2.,
+    'tau_syn_ex': 0.2,
+}
+
+
+# --------------------------------------------------------------------------- #
+#  Synaptic types
+# -------------------------
 #
 
-def _find_idx_nearest(array, values):
-    '''
-    Find the indices of the nearest elements of `values` in `array`.
-    Both ``array`` and ``values`` should be ``numpy.array``s and `array` MUST
-    be sorted in increasing order.
-
-    Parameters
-    ----------
-    array : reference list or np.ndarray
-    values : double, list or array of values to find in `array`
-
-    Returns
-    -------
-    idx : int or array representing the index of the closest value in `array`
-    '''
-    idx = np.searchsorted(array, values, side="left")  # get the interval
-    # return the index of the closest
-    if isinstance(values, float) or isinstance(values, int):
-        if idx == len(array):
-            return idx-1
-        else:
-            return idx-(np.abs(values-array[idx-1])<np.abs(values-array[idx]))
-    else:
-        # find where it is idx_max+1
-        overflow = (idx == len(array))
-        idx[overflow] -= 1
-        # for the others, find the nearest
-        tmp = idx[~overflow]
-        idx[~overflow] = tmp - (np.abs(values[~overflow]-array[tmp-1])
-                                < np.abs(values[~overflow]-array[tmp]))
-        return idx
+di_syn_types = {
+    "aeif_cond_alpha": "cond_alpha",
+    "aeif_cond_exp": "cond_exp",
+    "aeif_cond_alpha_RK5": "cond_alpha"
+}
 
 
-def _interpolate_lsodar(nest_times, lsodar):
-    '''
-    Interpolate the LSODAR data to get the value at the times computed by NEST.
+# --------------------------------------------------------------------------- #
+#  Test class
+# -------------------------
+#
 
-    Parameters
-    ----------
-    nest_times : array of doubles
-        Times on NEST grid, at which the state vaiables were measured.
-    lsodar : array of doubles
-        Loaded LSODAR data.
+class AEIFTestCase(unittest.TestCase):
+    """
+    Check the coherence between reference solution and NEST implementation.
+    """
 
-    Returns
-    -------
-    nest_indices : array of ints
-        Indices of the NEST data to compare with the LSODAR data.
-    lsodar_V : array of doubles
-        Interpolated data for the potential.
-    lsodar_w : array of doubles
-        Interpolated data for the adaptation variable.
-    '''
-    lsodar_t = lsodar[0, :]  # times
-    Vs = lsodar[1, :]  # V_m
-    ws = lsodar[2, :]  # w
-    indices = _find_idx_nearest(nest_times, lsodar_t)
-    # step of lsodar can be too small, keep only the closest to the nest_times
-    # when same value over a whole range in indices
-    idx_change = np.nonzero(np.diff(indices))[0]+1
-    lsodar_V, lsodar_w, nest_indices = [], [], []
-    idx_tmp = 0
-    for idx in idx_change:
-        # interpolate the value at the exact nest_time from closest lsodar_t
-        t_int, V_int, w_int = 0., 0., 0.
-        if idx-idx_tmp > 1:
-            t_int = nest_times[indices[idx]]
-            closest = idx_tmp + np.argmin(np.abs(t_int-lsodar_t[idx_tmp:idx]))
-            if lsodar_t[closest] < t_int:
-                Dt = lsodar_t[closest+1] - lsodar_t[closest]
-                dt = t_int - lsodar_t[closest]
-                V_int = Vs[closest] + dt*(Vs[closest+1]-Vs[closest])/Dt
-                w_int = ws[closest] + dt*(ws[closest+1]-ws[closest])/Dt
-            else:
-                Dt = lsodar_t[closest] - lsodar_t[closest-1]
-                dt = lsodar_t[closest] - t_int
-                V_int = Vs[closest-1] + dt*(Vs[closest]-Vs[closest-1])/Dt
-                w_int = ws[closest-1] + dt*(ws[closest]-ws[closest-1])/Dt
-        else:
-            t_int = nest_times[indices[idx]]
-            if lsodar_t[idx] < t_int and idx+1 < len(lsodar_t):
-                Dt = lsodar_t[idx+1] - lsodar_t[idx]
-                dt = t_int - lsodar_t[idx]
-                V_int = Vs[idx] + dt*(Vs[idx+1]-Vs[idx])/Dt
-                w_int = ws[idx] + dt*(ws[idx+1]-ws[idx])/Dt
-            elif idx < len(lsodar_t):
-                Dt = lsodar_t[idx] - lsodar_t[idx-1]
-                dt = t_int - lsodar_t[idx-1]
-                V_int = Vs[idx-1] + dt*(Vs[idx]-Vs[idx-1])/Dt
-                w_int = ws[idx-1] + dt*(ws[idx]-ws[idx-1])/Dt
-            else:
-                break
-        # ignore the values of V at spike times
-        if V_int < (aeif_param["V_th"]-aeif_param["V_peak"])/2.:
-            lsodar_V.append(V_int)
-            lsodar_w.append(w_int)
-            nest_indices.append(indices[idx])
-        idx_tmp = idx
-    return nest_indices, lsodar_V, lsodar_w
+    def setUp(self):
+        '''
+        Clean up and initialize NEST before each test.
+        '''
+        msd = 123456
+        self.resol = 0.01
+        nest.ResetKernel()
+        N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
+        pyrngs = [np.random.RandomState(s) for s in range(msd, msd + N_vp)]
+        nest.SetKernelStatus({
+            'resolution': self.resol, 'grng_seed': msd + N_vp,
+            'rng_seeds': range(msd + N_vp + 1, msd + 2 * N_vp + 1)})
+
+    def compute_difference(self, multimeters, params, reference, recordables):
+        '''
+        Compute the relative differences between the values recorded by the
+        multimeter and those of the reference (recorded at same times).
+
+        Parameters
+        ----------
+        multimeters : dict of tuples
+            Dictionary containing the model name as key and the GID of the
+            associated multimeter as value.
+        params : dict
+            Parameters used for the models.
+        reference : dict
+            Reference arrays (one per entry in `recordables`).
+        recordables : list of strings
+            List of recordables that will be compared.
+
+        Returns
+        -------
+        rel_diff : dict of dict of doubles
+            Relative differences between recorded data and reference (one dict
+            per model, containing one value per entry in `recordables`).
+        '''
+        rel_diff = {model: {} for model in multimeters.keys()}
+        V_lim = (params["V_th"] + params["V_peak"]) / 2.
+
+        for model, mm in iter(multimeters.items()):
+            dmm = nest.GetStatus(mm, "events")[0]
+            for record in recordables:
+                # ignore places where a divide by zero would occur
+                rds = np.abs(reference[record] - dmm[record])
+                nonzero = np.where(~np.isclose(reference[record], 0.))[0]
+                if np.any(nonzero):
+                    rds = rds[nonzero] / np.abs(reference[record][nonzero])
+                # ignore events around spike times for V if it diverges
+                if record == "V_m" and params["Delta_T"] > 0.:
+                    spiking = (dmm[record] > V_lim)
+                    rds = rds[~spiking]
+                rel_diff[model][record] = np.average(rds)
+        return rel_diff
+
+    def assert_pass_tolerance(self, rel_diff, di_tol):
+        '''
+        Test that relative differences are indeed smaller than the tolerance.
+        '''
+        for model, di_rel_diff in iter(rel_diff.items()):
+            for var, diff in iter(di_rel_diff.items()):
+                self.assertTrue(diff < di_tol[model][var])
+
+    def test_closeness_nest_lsodar(self):
+        '''
+        Compare models to the LSODAR implementation.
+        '''
+        simtime = 100.
+
+        # get lsodar reference
+        path = ''
+        lsodar = np.loadtxt(path + 'test_aeif_data_lsodar.dat').T
+        V_interp = interp1d(lsodar[0, :], lsodar[1, :])
+        w_interp = interp1d(lsodar[0, :], lsodar[2, :])
+
+        # create the neurons and devices
+        neurons = {model: nest.Create(model, params=aeif_param)
+                   for model in models}
+        multimeters = {model: nest.Create("multimeter") for model in models}
+        # connect them and simulate
+        for model, mm in iter(multimeters.items()):
+            nest.SetStatus(mm, {"interval": self.resol,
+                                "record_from": ["V_m", "w"]})
+            nest.Connect(mm, neurons[model])
+        nest.Simulate(simtime)
+
+        # relative differences: interpolate LSODAR to match NEST times
+        mm0 = next(iter(multimeters.values()))
+        nest_times = nest.GetStatus(mm0, "events")[0]["times"]
+        reference = {'V_m': V_interp(nest_times), 'w': w_interp(nest_times)}
+
+        rel_diff = self.compute_difference(multimeters, aeif_param, reference,
+                                           ['V_m', 'w'])
+        self.assert_pass_tolerance(rel_diff, di_tolerances_lsodar)
+
+    def test_iaf_behaviour(self):
+        '''
+        The models should behave as iaf_cond_* if a == 0., b == 0. and
+        Delta_T == 0.
+        '''
+        simtime = 200.
+        # create the neurons and devices
+        refs = {
+            "cond_alpha": nest.Create("iaf_cond_alpha", params=iaf_param),
+            "cond_exp": nest.Create("iaf_cond_exp", params=iaf_param)
+        }
+        ref_mm = {syn_type: nest.Create("multimeter") for syn_type in refs}
+        neurons = {model: nest.Create(model, params=aeif_DT0)
+                   for model in models if "multisynapse" not in model}
+        multimeters = {model: nest.Create("multimeter") for model in neurons}
+        pg = nest.Create("poisson_generator", params={"rate": 10000.})
+        pn = nest.Create("parrot_neuron")
+
+        # connect them and simulate
+        recordables = {
+            "cond_alpha": ["V_m", "g_ex"],
+            "cond_exp": ["V_m", "g_ex"]
+        }
+        nest.Connect(pg, pn)
+        for model, mm in iter(multimeters.items()):
+            syn_type = di_syn_types[model]
+            nest.SetStatus(mm, {"interval": self.resol,
+                                "record_from": recordables[syn_type]})
+            nest.Connect(mm, neurons[model])
+            nest.Connect(pn, neurons[model])
+        for syn_type, mm in iter(ref_mm.items()):
+            nest.SetStatus(mm, {"interval": self.resol,
+                                "record_from": recordables[syn_type]})
+            nest.Connect(mm, refs[syn_type])
+            nest.Connect(pn, refs[syn_type])
+        nest.Simulate(simtime)
+
+        # compute the relative differences and assert tolerance
+        for model in neurons:
+            syn_type = di_syn_types[model]
+            ref_data = nest.GetStatus(ref_mm[syn_type], "events")[0]
+            rel_diff = self.compute_difference(
+                {model: multimeters[model]}, aeif_DT0, ref_data,
+                recordables[syn_type])
+            self.assert_pass_tolerance(rel_diff, di_tolerances_iaf)
 
 
-def compare_nest_lsodar():
-    '''
-    Compare models to the LSODAR implementation.
-    '''
-    simtime = 100.1
-    resol = 0.01
-    nest.ResetKernel()
-    nest.SetKernelStatus({"resolution": resol})
-
-    # get lsodar reference
-    lsodar = np.loadtxt('test_aeif_data_lsodar.dat').T
-
-    # create the neurons and devices
-    lst_neurons = [ nest.Create(model, params=aeif_param) for model in models ]
-    multimeters = [ nest.Create("multimeter") for _ in range(num_models) ]
-    # connect them and simulate
-    for i, mm in enumerate(multimeters):
-        nest.SetStatus(mm, {"interval": resol, "record_from": ["V_m", "w"]})
-        nest.Connect(mm, lst_neurons[i])
-    nest.Simulate(simtime)
-
-    # compute the relative differences: interpolate LSODAR to match NEST times
-    nest_times = nest.GetStatus(multimeters[0], "events")[0]["times"]
-    nest_indices, lsodar_V, lsodar_w = _interpolate_lsodar(nest_times, lsodar)
-    rds = []
-    for i, mm in enumerate(multimeters):
-        Vs = nest.GetStatus(mm, "events")[0]["V_m"][nest_indices]
-        rds.append(np.average(np.sqrt(np.square((Vs-lsodar_V)))/np.abs(Vs)))
-        ws = nest.GetStatus(mm, "events")[0]["w"][nest_indices]
-        rds.append(np.average(np.sqrt(np.square((ws-lsodar_w)))/ws))
-    for rel_diff_V, rel_diff_w in zip(rds[::2], rds[1::2]):
-        assert(rel_diff_V < tol_compare_V)
-        assert(rel_diff_w < tol_compare_w)
-
-
-#-----------------------------------------------------------------------------#
-# Run the comparisons
-#-------------------------
+# --------------------------------------------------------------------------- #
+#  Run the comparisons
+# ------------------------
 #
 
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
-def run_tests():
-    compare_nest_lsodar()
+def suite():
+    return unittest.makeSuite(AEIFTestCase, "test")
+
+
+def run():
+    runner = unittest.TextTestRunner(verbosity=2)
+    runner.run(suite())
+
 
 if __name__ == '__main__':
-    run_tests()
+    run()

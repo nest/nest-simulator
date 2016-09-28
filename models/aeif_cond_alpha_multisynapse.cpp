@@ -234,18 +234,29 @@ aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
     HMIN = tmp;
   }
 
-  if ( Delta_T != 0. && V_peak_ <= V_th )
+  if ( V_peak_ <= V_th )
   {
     throw BadProperty( "V_peak must be larger than threshold." );
   }
-  else if ( Delta_T == 0. )
-  {
-    updateValue< double >( d, names::V_peak, V_th ); // expected behaviour
-  }
 
-  if ( V_reset_ >= V_peak_ )
+  if ( Delta_T < 0. )
   {
-    throw BadProperty( "Ensure that: V_reset < V_peak ." );
+    throw BadProperty( "Delta_T must be positive." );
+  }
+  else if ( Delta_T > 0. )
+  {
+    // check for possible numerical overflow with the exponential divergence at
+    // spike time, keep a 1e20 margin for the subsequent calculations
+    const double max_exp_arg =
+      std::log( std::numeric_limits< double >::max() ) - 20.;
+    if ( ( V_peak_ - V_th ) / Delta_T >= max_exp_arg )
+    {
+      throw BadProperty(
+        "The current combination of V_peak, V_th and Delta_T"
+        "will lead to numerical overflow at spike time; try"
+        "for instance to increase Delta_T or to reduce V_peak"
+        "to avoid this problem." );
+    }
   }
 
   if ( C_m <= 0 )
@@ -432,13 +443,15 @@ aeif_cond_alpha_multisynapse::calibrate()
   }
 
   // set the right function for the dynamics
-  if ( P_.Delta_T != 0. )
+  if ( P_.Delta_T > 0. )
   {
+    V_.V_peak = P_.V_peak_;
     V_.model_dynamics =
       &aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics;
   }
   else
   {
+    V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
     V_.model_dynamics =
       &aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics_DT0;
   }
@@ -637,8 +650,8 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
       if ( S_.r_ > 0 ) // if neuron is still in refractory period
-        S_.y_[ State_::V_M ] = P_.V_reset_;          // clamp it to V_reset
-      else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ ) // V_m >= V_peak: spike
+        S_.y_[ State_::V_M ] = P_.V_reset_;         // clamp it to V_reset
+      else if ( S_.y_[ State_::V_M ] >= V_.V_peak ) // V_m >= V_peak: spike
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b;    // spike-driven adaptation

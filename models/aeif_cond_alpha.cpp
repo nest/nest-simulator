@@ -291,8 +291,6 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
 will lead to numerical overflow at spike time; try for instance to increase \
 Delta_T or to reduce V_peak to avoid this problem." );
   }
-  else if ( Delta_T == 0. )
-    updateValue< double >( d, names::V_peak, V_th ); // expected behaviour
 
   if ( V_reset_ >= V_peak_ )
     throw BadProperty( "Ensure that: V_reset < V_peak ." );
@@ -445,11 +443,18 @@ nest::aeif_cond_alpha::calibrate()
   V_.sys_.jacobian = NULL;
   V_.sys_.dimension = State_::STATE_VEC_SIZE;
   V_.sys_.params = reinterpret_cast< void* >( this );
-  // set the right GSL function depending on Delta_T
-  if ( P_.Delta_T == 0. )
-    V_.sys_.function = aeif_cond_alpha_dynamics_DT0;
-  else
+
+  // set the right threshold and GSL function depending on Delta_T
+  if ( P_.Delta_T > 0. )
+  {
+    V_.V_peak = P_.V_peak_;
     V_.sys_.function = aeif_cond_alpha_dynamics;
+  }
+  else
+  {
+    V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
+    V_.sys_.function = aeif_cond_alpha_dynamics_DT0;
+  }
 
   V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
   V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
@@ -515,7 +520,7 @@ nest::aeif_cond_alpha::update( Time const& origin,
       // due to spike-driven adaptation
       if ( S_.r_ > 0 )
         S_.y_[ State_::V_M ] = P_.V_reset_;
-      else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ )
+      else if ( S_.y_[ State_::V_M ] >= V_.V_peak )
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation

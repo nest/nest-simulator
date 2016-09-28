@@ -269,26 +269,29 @@ nest::aeif_cond_exp::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
 
-  if ( Delta_T != 0. && V_peak_ <= V_th )
+  if ( V_peak_ <= V_th )
   {
     throw BadProperty( "V_peak must be larger than threshold." );
   }
-  else if ( Delta_T != 0. )
+
+  if ( Delta_T < 0. )
+  {
+    throw BadProperty( "Delta_T must be positive." );
+  }
+  else if ( Delta_T > 0. )
   {
     // check for possible numerical overflow with the exponential divergence at
-    // spike time
-    double max_exp_arg = std::log( std::numeric_limits< double >::max() );
+    // spike time, keep a 1e20 margin for the subsequent calculations
+    const double max_exp_arg =
+      std::log( std::numeric_limits< double >::max() ) - 20.;
     if ( ( V_peak_ - V_th ) / Delta_T >= max_exp_arg )
     {
       throw BadProperty(
-        "The current combination of V_peak, V_th and Delta_T \
-will lead to numerical overflow at spike time; try for instance to increase \
-Delta_T or to reduce V_peak to avoid this problem." );
+        "The current combination of V_peak, V_th and Delta_T"
+        "will lead to numerical overflow at spike time; try"
+        "for instance to increase Delta_T or to reduce V_peak"
+        "to avoid this problem." );
     }
-  }
-  else if ( Delta_T == 0. )
-  {
-    updateValue< double >( d, names::V_peak, V_th ); // expected behaviour
   }
 
   if ( V_reset_ >= V_peak_ )
@@ -435,11 +438,17 @@ nest::aeif_cond_exp::calibrate()
   V_.sys_.jacobian = NULL;
   V_.sys_.dimension = State_::STATE_VEC_SIZE;
   V_.sys_.params = reinterpret_cast< void* >( this );
-  // set the right GSL function depending on Delta_T
-  if ( P_.Delta_T == 0. )
-    V_.sys_.function = aeif_cond_exp_dynamics_DT0;
-  else
+  // set the right threshold and GSL function depending on Delta_T
+  if ( P_.Delta_T > 0. )
+  {
+    V_.V_peak = P_.V_peak_;
     V_.sys_.function = aeif_cond_exp_dynamics;
+  }
+  else
+  {
+    V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
+    V_.sys_.function = aeif_cond_exp_dynamics_DT0;
+  }
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   // since t_ref_ >= 0, this can only fail in error
@@ -500,7 +509,7 @@ nest::aeif_cond_exp::update( const Time& origin,
       // due to spike-driven adaptation
       if ( S_.r_ > 0 )
         S_.y_[ State_::V_M ] = P_.V_reset_;
-      else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ )
+      else if ( S_.y_[ State_::V_M ] >= V_.V_peak )
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation

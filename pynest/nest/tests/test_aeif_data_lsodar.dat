@@ -1,4 +1,15 @@
-# Times V_m w
+#
+# test_aeif_data_lsodar.dat
+#
+# This file is part of NEST.
+#
+# This .dat file contains the recordings of the potential and of the adaptation
+# variable of an aeif neuron, simulated using the LSODAR solver, with the
+# implementation detailed in
+# ``doc/model_details/aeif_models_implementation.ipynb``.
+# This data is used as reference for the aeif tests in ``test_aeif_lsodar.py``.
+#
+#        Times                      V_m                       w
 0.000000000000000000e+00 -7.000000000000000000e+01 5.000000000000000000e+00
 1.830484884553645539e-02 -6.996205551939702616e+01 4.999701883048302875e+00
 3.660969769107291077e-02 -6.992414917320978418e+01 4.999410722561481002e+00

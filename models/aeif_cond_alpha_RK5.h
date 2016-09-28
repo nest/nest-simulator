@@ -290,6 +290,12 @@ public:
     /** initial value to normalise inhibitory synaptic conductance */
     double g0_in_;
 
+    /**
+     * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
+     * P.V_th if Delta_T == 0.
+     */
+    double V_peak;
+
     /** pointer to the rhs function giving the dynamics to the ODE solver **/
     func_ptr model_dynamics;
 
@@ -412,15 +418,11 @@ aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics( const double y[],
   const double I_syn_exc = g_ex * ( V - P_.E_ex );
   const double I_syn_inh = g_in * ( V - P_.E_in );
 
-  // We pre-compute the argument of the exponential
-  const double exp_arg = ( V - P_.V_th ) / P_.Delta_T;
-
-  // Upper bound for exponential argument to avoid numerical instabilities
-  const double MAX_EXP_ARG = 10.;
-
-  // If the argument is too large, we clip it.
-  const double I_spike =
-    P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
+  // for this function the exponential must still be bounded
+  // otherwise issue77.sli fails because of numerical instability or
+  // the value of w undergoes jumps because of V's divergence.
+  const double exp_arg = std::min( ( V - P_.V_th ) / P_.Delta_T, 10. );
+  const double I_spike = P_.Delta_T * std::exp( exp_arg );
 
   // dv/dt
   f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh

@@ -289,6 +289,12 @@ private:
     /** initial value to normalise inhibitory synaptic conductance */
     std::vector< double > g0_in_;
 
+    /**
+     * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
+     * P.V_th if Delta_T == 0.
+     */
+    double V_peak;
+
     /** pointer to the rhs function giving the dynamics to the ODE solver **/
     func_ptr model_dynamics;
 
@@ -418,7 +424,8 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics(
   }
 
   // for this function the exponential must still be bounded
-  // otherwise issue77.sli fails because of numerical instability.
+  // otherwise either issue77.sli fails because of numerical instability or
+  // the value of w undergoes jumps because of V's divergence.
   const double exp_arg = std::min( ( V - P_.V_th ) / P_.Delta_T, 10. );
   const double I_spike = P_.Delta_T * std::exp( exp_arg );
 

@@ -55,7 +55,7 @@ template < typename targetidentifierT >
 class DropOddSpikeConnection : public nest::Connection< targetidentifierT >
 {
 private:
-  nest::double_t weight_; //!< Synaptic weight
+  double weight_; //!< Synaptic weight
 
 public:
   //! Type to use for representing common synapse properties
@@ -132,7 +132,7 @@ public:
   check_connection( nest::Node& s,
     nest::Node& t,
     nest::rport receptor_type,
-    nest::double_t,
+    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -148,7 +148,7 @@ public:
    */
   void send( nest::Event& e,
     nest::thread t,
-    nest::double_t t_lastspike,
+    double t_lastspike,
     const CommonPropertiesType& cp );
 
   // The following methods contain mostly fixed code to forward the
@@ -168,7 +168,7 @@ public:
 
   //! Allows efficient initialization on contstruction
   void
-  set_weight( nest::double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
@@ -179,7 +179,7 @@ template < typename targetidentifierT >
 inline void
 DropOddSpikeConnection< targetidentifierT >::send( nest::Event& e,
   nest::thread t,
-  nest::double_t last,
+  double last,
   const CommonPropertiesType& props )
 {
   if ( e.get_stamp().get_steps() % 2 ) // stamp is odd, drop it
@@ -200,8 +200,8 @@ DropOddSpikeConnection< targetidentifierT >::get_status(
   DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< nest::double_t >( d, nest::names::weight, weight_ );
-  def< nest::long_t >( d, nest::names::size_of, sizeof( *this ) );
+  def< double >( d, nest::names::weight, weight_ );
+  def< long >( d, nest::names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
@@ -211,7 +211,7 @@ DropOddSpikeConnection< targetidentifierT >::set_status(
   nest::ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< nest::double_t >( d, nest::names::weight, weight_ );
+  updateValue< double >( d, nest::names::weight, weight_ );
 }
 
 } // namespace

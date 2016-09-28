@@ -95,7 +95,7 @@ MusicEventHandler::publish_port()
       kernel().music_manager.get_music_setup()->publishEventInput( portname_ );
 
     // MUSIC wants seconds, NEST has miliseconds
-    double_t acceptable_latency = acceptable_latency_ / 1000.0;
+    double acceptable_latency = acceptable_latency_ / 1000.0;
 
     if ( !music_port_->isConnected() )
       throw MUSICPortUnconnected( "MusicEventHandler", portname_ );
@@ -140,9 +140,7 @@ void MusicEventHandler::operator()( double t, MUSIC::GlobalIndex channel )
 }
 
 void
-MusicEventHandler::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+MusicEventHandler::update( Time const& origin, const long from, const long to )
 {
   for ( size_t channel = 0; channel < channelmap_.size(); ++channel )
     if ( channelmap_[ channel ] != 0 )

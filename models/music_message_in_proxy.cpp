@@ -158,7 +158,7 @@ nest::music_message_in_proxy::calibrate()
     S_.port_width_ = V_.MP_->width();
 
     // MUSIC wants seconds, NEST has miliseconds
-    double_t acceptable_latency = P_.acceptable_latency_ / 1000.0;
+    double acceptable_latency = P_.acceptable_latency_ / 1000.0;
 
     V_.MP_->map( &B_.message_handler_, acceptable_latency );
     S_.published_ = true;

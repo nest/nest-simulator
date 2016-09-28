@@ -47,6 +47,12 @@ M_ERROR setverbosity
              /parrot_neuron
              /parrot_neuron_ps
              /iaf_cond_alpha_mc    % cannot readout V_m directly
+             /music_event_in_proxy        % music device
+             /music_event_out_proxy       % music device
+             /music_cont_in_proxy         % music device
+             /music_cont_out_proxy        % music device
+             /music_message_in_proxy      % music device
+             /music_message_out_proxy     % music device
            ] def    
 
 % The following models require connections to rport 1:
@@ -56,6 +62,8 @@ M_ERROR setverbosity
    /iaf_psc_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
    /aeif_cond_alpha_multisynapse << /params << /taus_syn [ 1.0 ] >>
+                                  /receptor_type 1 >>
+   /aeif_cond_beta_multisynapse << /params << /taus_decay [ 1.0 ] >>
                                   /receptor_type 1 >>
    /iaf_cond_alpha_mc << /receptor_type 1 >>
    /ht_neuron << /receptor_type 1 >>

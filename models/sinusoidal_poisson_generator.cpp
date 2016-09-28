@@ -149,16 +149,16 @@ nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
   updateValue< bool >(
     d, names::individual_spike_trains, individual_spike_trains_ );
 
-  if ( updateValue< double_t >( d, names::rate, rate_ ) )
+  if ( updateValue< double >( d, names::rate, rate_ ) )
     rate_ /= 1000.0; // scale to ms^-1
 
-  if ( updateValue< double_t >( d, names::frequency, om_ ) )
+  if ( updateValue< double >( d, names::frequency, om_ ) )
     om_ *= 2.0 * numerics::pi / 1000.0;
 
-  if ( updateValue< double_t >( d, names::phase, phi_ ) )
+  if ( updateValue< double >( d, names::phase, phi_ ) )
     phi_ *= numerics::pi / 180.0;
 
-  if ( updateValue< double_t >( d, names::amplitude, amplitude_ ) )
+  if ( updateValue< double >( d, names::amplitude, amplitude_ ) )
     amplitude_ /= 1000.0;
 }
 
@@ -217,7 +217,7 @@ nest::sinusoidal_poisson_generator::calibrate()
 
   // time resolution
   V_.h_ = Time::get_resolution().get_ms();
-  const double_t t = kernel().simulation_manager.get_time().get_ms();
+  const double t = kernel().simulation_manager.get_time().get_ms();
 
   // initial state
   S_.y_0_ = P_.amplitude_ * std::cos( P_.om_ * t + P_.phi_ );
@@ -231,14 +231,14 @@ nest::sinusoidal_poisson_generator::calibrate()
 
 void
 nest::sinusoidal_poisson_generator::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  const long_t start = origin.get_steps();
+  const long start = origin.get_steps();
 
   // random number generator
   librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
@@ -249,13 +249,13 @@ nest::sinusoidal_poisson_generator::update( Time const& origin,
   // time-consuming, so it should be done only if the device is
   // on most of the time.
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     // update oscillator blocks, accumulate rate as sum of DC and N_osc_ AC
     // elements rate is instantaneous sum of state
     S_.rate_ = P_.rate_;
 
-    const double_t new_y_0 = V_.cos_ * S_.y_0_ - V_.sin_ * S_.y_1_;
+    const double new_y_0 = V_.cos_ * S_.y_0_ - V_.sin_ * S_.y_1_;
 
     S_.y_1_ = V_.sin_ * S_.y_0_ + V_.cos_ * S_.y_1_;
     S_.y_0_ = new_y_0;
@@ -278,7 +278,7 @@ nest::sinusoidal_poisson_generator::update( Time const& origin,
       else
       {
         V_.poisson_dev_.set_lambda( S_.rate_ * V_.h_ );
-        long_t n_spikes = V_.poisson_dev_.ldev( rng );
+        long n_spikes = V_.poisson_dev_.ldev( rng );
         SpikeEvent se;
         se.set_multiplicity( n_spikes );
         kernel().event_delivery_manager.send( *this, se, lag );
@@ -292,7 +292,7 @@ nest::sinusoidal_poisson_generator::event_hook( DSSpikeEvent& e )
 {
   librandom::RngPtr rng = kernel().rng_manager.get_rng( get_thread() );
   V_.poisson_dev_.set_lambda( S_.rate_ * V_.h_ );
-  long_t n_spikes = V_.poisson_dev_.ldev( rng );
+  long n_spikes = V_.poisson_dev_.ldev( rng );
 
   if ( n_spikes > 0 ) // we must not send events with multiplicity 0
   {

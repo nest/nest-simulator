@@ -87,7 +87,8 @@ nest::spin_detector::calibrate()
   if ( !user_set_precise_times_
     && kernel().event_delivery_manager.get_off_grid_communication() )
   {
-    device_.set_precise( true, 15 );
+    device_.set_precise_times( true );
+    device_.set_precision( 15 );
 
     LOG( M_INFO,
       "spin_detector::calibrate",
@@ -103,7 +104,7 @@ nest::spin_detector::calibrate()
 }
 
 void
-nest::spin_detector::update( Time const&, const long_t, const long_t )
+nest::spin_detector::update( Time const&, const long, const long )
 {
   for ( std::vector< Event* >::iterator e =
           B_.spikes_[ kernel().event_delivery_manager.read_toggle() ].begin();
@@ -159,7 +160,7 @@ nest::spin_detector::handle( SpikeEvent& e )
   {
     assert( e.get_multiplicity() > 0 );
 
-    long_t dest_buffer;
+    long dest_buffer;
     if ( kernel()
            .modelrange_manager.get_model_of_gid( e.get_sender_gid() )
            ->has_proxies() )
@@ -179,7 +180,7 @@ nest::spin_detector::handle( SpikeEvent& e )
     // same time step are received consecutively or are conveyed by setting the
     // multiplicity accordingly.
 
-    long_t m = e.get_multiplicity();
+    long m = e.get_multiplicity();
     index gid = e.get_sender_gid();
     const Time& t_spike = e.get_stamp();
 

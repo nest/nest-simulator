@@ -231,7 +231,6 @@ class AEIFTestCase(unittest.TestCase):
         simtime = 100.
 
         # get lsodar reference
-        path = ''
         lsodar = np.loadtxt(path + 'test_aeif_data_lsodar.dat').T
         V_interp = interp1d(lsodar[0, :], lsodar[1, :])
         w_interp = interp1d(lsodar[0, :], lsodar[2, :])

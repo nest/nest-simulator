@@ -158,42 +158,32 @@ nest::lowpassfilter_spike_detector::init_buffers_()
 void
 nest::lowpassfilter_spike_detector::calibrate()
 {
-  if ( !user_set_precise_times_
-    && kernel().event_delivery_manager.get_off_grid_communication() )
+  if ( kernel().event_delivery_manager.get_off_grid_communication()
+       and not spikes_device_.is_precise_times_user_set() )
   {
-    spikes_device_.set_precise( true, 15 );
+    spikes_device_.set_precise_times( true );
+    filtered_device_.set_precise_times( true );
+    std::string msg = String::compose(
+            "Precise neuron models exist: the property precise_times "
+                    "of the %1 with gid %2 has been set to true",
+            get_name(),
+            get_gid() );
 
-    LOG( M_INFO,
-      "lowpassfilter_spike_detector:calibrate",
-      String::compose(
-           "Precise neuron models exist: the property precise_times "
-           "of the %1 with gid %2 has been set to true, precision has "
-           "been set to 15.",
-           get_name(),
-           get_gid() ) );
-  }
+    if ( spikes_device_.is_precision_user_set() )
+    {
+      // if user explicitly set the precision, there is no need to do anything.
+      msg += ".";
+    }
 
-  if ( !user_set_precise_times_
-    && kernel().event_delivery_manager.get_off_grid_communication() )
-  {
-    LOG( M_INFO,
-      "lowpassfilter_spike_detector::calibrate",
-      String::compose(
-           "Precise neuron models exist: this version is not made to calculate"
-           "traces for precise models.",
-           get_name(),
-           get_gid() ) );
-  }
+    else
+    {
+      // it makes sense to increase the precision if precise models are used.
+      spikes_device_.set_precision( 15 );
+      filtered_device_.set_precision( 15 );
+      msg += ", precision has been set to 15.";
+    }
 
-  if ( P_.filter_start_times_.size() == 0 )
-  {
-    LOG(
-      M_INFO,
-      "lowpassfilter_spike_detector::calibrate",
-      String::compose(
-        "Properties filter_start_times and filter_stop_times not specified. ",
-        get_name(),
-        get_gid() ) );
+    LOG( M_INFO, "spike_detector::calibrate", msg );
   }
 
   spikes_device_.calibrate();

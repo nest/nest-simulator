@@ -10,14 +10,10 @@ env:
     # independent. This means we only need a minimal and maximal configuration
     # and some additional jobs for interdependent options.
     # See also https://docs.travis-ci.com/user/caching/#Caches-and-build-matrices
-    - xLTDL=0 xREADLINE=0 xTHREADING=0 xMPI=0 xPYTHON=0 xGSL=0 xLIBNEUROSIM=0
-      xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB                               # minimal
-    - xLTDL=1 xREADLINE=1 xTHREADING=0 xMPI=1 xPYTHON=0 xGSL=0 xLIBNEUROSIM=0
-      xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB                               # only MPI
-    - xLTDL=1 xREADLINE=1 xTHREADING=1 xMPI=0 xPYTHON=0 xGSL=0 xLIBNEUROSIM=0
-      xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB                               # only threading
-    - xLTDL=1 xREADLINE=1 xTHREADING=1 xMPI=1 xPYTHON=1 xGSL=1 xLIBNEUROSIM=1
-      xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB                               # full
+    - xLTDL=0 xREADLINE=0 xTHREADING=0 xMPI=0 xPYTHON=0 xGSL=0 xLIBNEUROSIM=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB  # minimal
+    - xLTDL=1 xREADLINE=1 xTHREADING=0 xMPI=1 xPYTHON=0 xGSL=0 xLIBNEUROSIM=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB  # only MPI
+    - xLTDL=1 xREADLINE=1 xTHREADING=1 xMPI=0 xPYTHON=0 xGSL=0 xLIBNEUROSIM=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB  # only threading
+    - xLTDL=1 xREADLINE=1 xTHREADING=1 xMPI=1 xPYTHON=1 xGSL=1 xLIBNEUROSIM=1 xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB  # full
 matrix:
   # do notify immediately about it when a job of a build fails.
   fast_finish: true
@@ -63,7 +59,6 @@ before_install:
   # process json output from github api
   - sudo apt-get install -y jq
 
-<<<<<<< HEAD
   # Install libneurosim
   - echo "store-plaintext-passwords = yes" >> $HOME/.subversion/servers
   - svn co --username Anonymous --password Anonymous http://svn.incf.org/svn/libneurosim/trunk libneurosim
@@ -79,14 +74,14 @@ before_install:
   - cd csa
   - ./autogen.sh
   - ./configure --with-libneurosim=$HOME/.cache/libneurosim.install --prefix=$HOME/.cache/csa.install
-=======
+  - cd $HOME/build
+
   # Install MUSIC
   - sudo apt-get install -y python-mpi4py
   - git clone https://github.com/INCF/MUSIC.git music
   - cd music
   - ./autogen.sh
   - ./configure --prefix=$HOME/.cache/music.install
->>>>>>> 4b0f360b34e5c62d53d020cf82dcf1017cf76b77
   - make
   - make install
   - cd $HOME/build

@@ -25,11 +25,9 @@
 # author: Sepehr Mahmoudian
 # date: August 2016
 
-import math
-import sys
-import unittest
-
 import nest
+import math
+import unittest
 import numpy as np
 
 

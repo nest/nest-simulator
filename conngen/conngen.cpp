@@ -64,14 +64,13 @@ cg_connect( ConnectionGeneratorDatum& cg,
     // connect source to target
     while ( cg->next( source, target, NULL ) )
     {
-      if ( kernel().node_manager.is_local_gid( target_gids[ target ] ) )
-      {
-        Node* const target_node =
-          kernel().node_manager.get_node( target_gids[ target ] );
-        const thread target_thread = target_node->get_thread();
-        kernel().connection_manager.connect(
-          source_gids[ source ], target_node, target_thread, synmodel_id );
-      }
+      // No need to check for locality of the target node, as the mask
+      // created by cg_set_masks() only contain local nodes.
+      Node* const target_node =
+	kernel().node_manager.get_node( target_gids[ target ] );
+      const thread target_thread = target_node->get_thread();
+      kernel().connection_manager.connect(
+        source_gids[ source ], target_node, target_thread, synmodel_id );
     }
   }
   else if ( num_parameters == 2 )
@@ -88,18 +87,17 @@ cg_connect( ConnectionGeneratorDatum& cg,
     // connect source to target with weight and delay
     while ( cg->next( source, target, &params[ 0 ] ) )
     {
-      if ( kernel().node_manager.is_local_gid( target_gids[ target ] ) )
-      {
-        Node* const target_node =
-          kernel().node_manager.get_node( target_gids[ target ] );
-        const thread target_thread = target_node->get_thread();
-        kernel().connection_manager.connect( source_gids[ source ],
-          target_node,
-          target_thread,
-          synmodel_id,
-          params[ d_idx ],
-          params[ w_idx ] );
-      }
+      // No need to check for locality of the target node, as the mask
+      // created by cg_set_masks() only contain local nodes.
+      Node* const target_node =
+	kernel().node_manager.get_node( target_gids[ target ] );
+      const thread target_thread = target_node->get_thread();
+      kernel().connection_manager.connect( source_gids[ source ],
+        target_node,
+        target_thread,
+        synmodel_id,
+        params[ d_idx ],
+        params[ w_idx ] );
     }
   }
   else

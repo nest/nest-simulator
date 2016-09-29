@@ -427,7 +427,7 @@ nest::aeif_psc_exp::calibrate()
   V_.sys_.jacobian = NULL;
   V_.sys_.dimension = State_::STATE_VEC_SIZE;
   V_.sys_.params = reinterpret_cast< void* >( this );
-  
+
   // set the right threshold and GSL function depending on Delta_T
   if ( P_.Delta_T > 0. )
   {

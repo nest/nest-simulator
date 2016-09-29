@@ -312,12 +312,12 @@ private:
   double
   get_input_currents_ex_() const
   {
-    return S_.y1_ex_;
+    return S_.y2_ex_;
   }
   double
   get_input_currents_in_() const
   {
-    return S_.y1_in_;
+    return S_.y2_in_;
   }
 
   // Data members -----------------------------------------------------------

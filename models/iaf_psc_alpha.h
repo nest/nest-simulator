@@ -221,10 +221,10 @@ private:
   {
 
     double y0_; //!< Constant current
-    double y1_ex_;
-    double y2_ex_;
-    double y1_in_;
-    double y2_in_;
+    double dI_ex_;
+    double I_ex_;
+    double dI_in_;
+    double I_in_;
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
     double y3_;
 
@@ -312,12 +312,12 @@ private:
   double
   get_input_currents_ex_() const
   {
-    return S_.y1_ex_;
+    return S_.I_ex_;
   }
   double
   get_input_currents_in_() const
   {
-    return S_.y1_in_;
+    return S_.I_in_;
   }
 
   // Data members -----------------------------------------------------------

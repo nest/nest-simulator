@@ -34,9 +34,7 @@ instructions, see
 
 From [the Eclipse downloads page](http://www.eclipse.org/downloads/),
 download either the *Eclipse IDE for C/C++ Developers* or the *Eclipse
-Installer* and use it to install the C/C++ IDE (until the official
-release of Eclipse Mars on 24 June 2015, this option is available
-under "Developer Builds").
+Installer* and use it to install the C/C++ IDE.
 
 Under OSX, always download the 64-bit version. Under Windows or Linux,
 download the version that fits your operating system.
@@ -68,7 +66,14 @@ You need to repeat this step for each new workspace you enter.
 *CppStyle* is a source-code formatter based on `clang-format`. You can install it from the
 Eclipse Marketplace in the same way as *PyDev*; remember to restart Eclipse.
 
-Then, open Eclipse preferences, go to `CppStyle` and enter the path to your `clang-format` executable.
+Then, open Eclipse preferences, go to `CppStyle` and enter the path to
+your `clang-format` executable; remember that NEST code formatting
+uses `clang-format` version 3.6, so you should link to an executable
+for that version.
+
+You also need to create a symbolic link from your Eclipse workspace
+directory to `$NEST_ROOT/src/.clang-format` for `clang-format` to find
+the file with the code formatting rules.
 
 
 ### General settings in Eclipse
@@ -77,7 +82,7 @@ Then, open Eclipse preferences, go to `CppStyle` and enter the path to your `cla
 1. Set the following
     - `Displayed tab width` to 2
     - `Insert spaces for tabs` checked
-	- `Show print margin` checked and colum set to 100
+	- `Show print margin` checked and colum set to 79
 
 ## Directory Structure for NEST
 
@@ -128,8 +133,8 @@ $NEST_ROOT/bld_master_nompi/install     # install directory
 ```
 
 You should configure, build and install NEST manually once (note that
-I want to build NEST with gcc 5.1 from Homebrew, therefore the
-`-DCMAKE_C_COMPILER=gcc-5 -DCMAKE_CXX_COMPILER=g++-5` arguments to `cmake`;
+I want to build NEST with gcc 6.x from Homebrew, therefore the
+`-DCMAKE_C_COMPILER=gcc-6 -DCMAKE_CXX_COMPILER=g++-6` arguments to `cmake`;
 NB: Make sure that you have checked out the master branch in the `src` directory):
 
 ```sh

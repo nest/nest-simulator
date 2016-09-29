@@ -45,7 +45,6 @@ nest::spike_detector::spike_detector()
   : Node()
   // record time and gid
   , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true )
-  , user_set_precise_times_( false )
   , has_proxies_( false )
   , local_receiver_( true )
 {
@@ -54,7 +53,6 @@ nest::spike_detector::spike_detector()
 nest::spike_detector::spike_detector( const spike_detector& n )
   : Node( n )
   , device_( *this, n.device_ )
-  , user_set_precise_times_( n.user_set_precise_times_ )
   , has_proxies_( false )
   , local_receiver_( true )
 {
@@ -80,20 +78,33 @@ nest::spike_detector::init_buffers_()
 void
 nest::spike_detector::calibrate()
 {
-  if ( !user_set_precise_times_
-    && kernel().event_delivery_manager.get_off_grid_communication() )
-  {
-    device_.set_precise( true, 15 );
 
-    LOG( M_INFO,
-      "spike_detector::calibrate",
-      String::compose(
-           "Precise neuron models exist: the property precise_times "
-           "of the %1 with gid %2 has been set to true, precision has "
-           "been set to 15.",
-           get_name(),
-           get_gid() ) );
+  if ( kernel().event_delivery_manager.get_off_grid_communication()
+    and not device_.is_precise_times_user_set() )
+  {
+    device_.set_precise_times( true );
+    std::string msg = String::compose(
+      "Precise neuron models exist: the property precise_times "
+      "of the %1 with gid %2 has been set to true",
+      get_name(),
+      get_gid() );
+
+    if ( device_.is_precision_user_set() )
+    {
+      // if user explicitly set the precision, there is no need to do anything.
+      msg += ".";
+    }
+
+    else
+    {
+      // it makes sense to increase the precision if precise models are used.
+      device_.set_precision( 15 );
+      msg += ", precision has been set to 15.";
+    }
+
+    LOG( M_INFO, "spike_detector::calibrate", msg );
   }
+
 
   device_.calibrate();
 }
@@ -138,9 +149,6 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
 void
 nest::spike_detector::set_status( const DictionaryDatum& d )
 {
-  if ( d->known( names::precise_times ) )
-    user_set_precise_times_ = true;
-
   device_.set_status( d );
 }
 

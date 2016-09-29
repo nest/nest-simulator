@@ -27,20 +27,7 @@ else
 fi
 
 if [ "$xMPI" = "1" ] ; then
-
-cat > $HOME/.nestrc <<EOF
-    /mpirun
-    [/integertype /stringtype]
-    [/numproc     /slifile]
-    {
-     () [
-      (mpirun -np ) numproc cvs ( ) statusdict/prefix :: (/bin/nest )  slifile
-     ] {join} Fold
-    } Function def
-EOF
-
     CONFIGURE_MPI="-Dwith-mpi=ON"
-
 else
     CONFIGURE_MPI="-Dwith-mpi=OFF"
 fi
@@ -49,6 +36,12 @@ if [ "$xPYTHON" = "1" ] ; then
     CONFIGURE_PYTHON="-Dwith-python=ON"
 else
     CONFIGURE_PYTHON="-Dwith-python=OFF"
+fi
+
+if [ "$xMUSIC" = "1" ] ; then
+    CONFIGURE_MUSIC="-Dwith-music=$HOME/.cache/music.install"
+else
+    CONFIGURE_MUSIC="-Dwith-music=OFF"
 fi
 
 if [ "$xGSL" = "1" ] ; then
@@ -246,6 +239,8 @@ fi # if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
 
 cd "$NEST_VPATH"
 
+cp ../examples/sli/nestrc.sli ~/.nestrc
+
 echo "======= Configure NEST start ======="
 cmake \
   -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
@@ -254,6 +249,7 @@ cmake \
   $CONFIGURE_THREADING \
   $CONFIGURE_MPI \
   $CONFIGURE_PYTHON \
+  $CONFIGURE_MUSIC \
   $CONFIGURE_GSL \
   $CONFIGURE_LTDL \
   $CONFIGURE_READLINE \

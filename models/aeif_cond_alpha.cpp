@@ -278,22 +278,30 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
 
-  if ( Delta_T != 0. && V_peak_ <= V_th )
-    throw BadProperty( "V_peak must be larger than threshold." );
-  else if ( Delta_T != 0. )
+  if ( V_reset_ >= V_peak_ )
   {
-    // check for possible numerical overflow with the exponential divergence at
-    // spike time
-    double max_exp_arg = std::log( std::numeric_limits< double >::max() );
-    if ( ( V_peak_ - V_th ) / Delta_T >= max_exp_arg )
-      throw BadProperty(
-        "The current combination of V_peak, V_th and Delta_T \
-will lead to numerical overflow at spike time; try for instance to increase \
-Delta_T or to reduce V_peak to avoid this problem." );
+    throw BadProperty( "Ensure that: V_reset < V_peak ." );
   }
 
-  if ( V_reset_ >= V_peak_ )
-    throw BadProperty( "Ensure that: V_reset < V_peak ." );
+  if ( Delta_T < 0. )
+  {
+    throw BadProperty( "Delta_T must be positive." );
+  }
+  else if ( Delta_T > 0. )
+  {
+    // check for possible numerical overflow with the exponential divergence at
+    // spike time, keep a 1e20 margin for the subsequent calculations
+    const double max_exp_arg =
+      std::log( std::numeric_limits< double >::max() ) - 20.;
+    if ( ( V_peak_ - V_th ) / Delta_T >= max_exp_arg )
+    {
+      throw BadProperty(
+        "The current combination of V_peak, V_th and Delta_T"
+        "will lead to numerical overflow at spike time; try"
+        "for instance to increase Delta_T or to reduce V_peak"
+        "to avoid this problem." );
+    }
+  }
 
   if ( C_m <= 0 )
   {
@@ -301,13 +309,19 @@ Delta_T or to reduce V_peak to avoid this problem." );
   }
 
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time cannot be negative." );
+  }
 
   if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 
   if ( gsl_error_tol <= 0. )
+  {
     throw BadProperty( "The gsl_error_tol must be strictly positive." );
+  }
 }
 
 void

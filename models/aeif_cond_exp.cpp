@@ -295,19 +295,29 @@ nest::aeif_cond_exp::Parameters_::set( const DictionaryDatum& d )
   }
 
   if ( V_reset_ >= V_peak_ )
+  {
     throw BadProperty( "Ensure that: V_reset < V_peak ." );
+  }
 
   if ( C_m <= 0 )
+  {
     throw BadProperty( "Ensure that C_m >0" );
+  }
 
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Ensure that t_ref >= 0" );
+  }
 
   if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 
   if ( gsl_error_tol <= 0. )
+  {
     throw BadProperty( "The gsl_error_tol must be strictly positive." );
+  }
 }
 
 void

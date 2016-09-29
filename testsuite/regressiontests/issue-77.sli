@@ -116,7 +116,20 @@ M_ERROR setverbosity
 
       /initial_weight 10.0 def
       /syn_spec << /model /stdp_synapse
-                   /weight initial_weight
+                   /weight
+                     extra_params model known
+                     {
+                        extra_params model get /initial_weight known
+                        {
+                           extra_params model get /initial_weight get
+                        }
+                        {
+                           initial_weight
+                        } ifelse
+                     }
+                     {
+                        initial_weight
+                     } ifelse
                    /receptor_type 
                      extra_params model known
                      {

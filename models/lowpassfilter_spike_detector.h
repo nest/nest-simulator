@@ -282,7 +282,6 @@ private:
     std::vector< std::vector< std::vector< Event* > > > node_spikes_;
   };
 
-  bool user_set_precise_times_;
   bool has_proxies_;
   bool local_receiver_;
 

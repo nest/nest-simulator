@@ -43,7 +43,6 @@
 
 nest::lowpassfilter_spike_detector::lowpassfilter_spike_detector()
   : Node()
-  , user_set_precise_times_( false )
   , has_proxies_( false )
   , local_receiver_( true )
   , spikes_device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true )
@@ -62,7 +61,6 @@ nest::lowpassfilter_spike_detector::lowpassfilter_spike_detector()
 nest::lowpassfilter_spike_detector::lowpassfilter_spike_detector(
   const lowpassfilter_spike_detector& n )
   : Node( n )
-  , user_set_precise_times_( n.user_set_precise_times_ )
   , has_proxies_( false )
   , local_receiver_( true )
   , spikes_device_( *this, n.spikes_device_ )
@@ -637,11 +635,6 @@ nest::lowpassfilter_spike_detector::get_status( DictionaryDatum& d ) const
 void
 nest::lowpassfilter_spike_detector::set_status( const DictionaryDatum& d )
 {
-
-  if ( d->known( names::precise_times ) )
-  {
-    user_set_precise_times_ = true;
-  }
 
   updateValue< bool >( d, names::record_spikes, P_.record_spikes_ );
 

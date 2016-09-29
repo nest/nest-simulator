@@ -65,13 +65,17 @@ M_ERROR setverbosity
              /music_cont_in_proxy         % MUSIC port
            ] def    
 
-% The following models require connections to rport 1:
+% The following models require connections to rport 1 or other specific parameters:
 /extra_params <<
+   /aeif_psc_alpha << /initial_weight 80.0 >>
+   /aeif_psc_exp << /initial_weight 80.0 >>
    /iaf_psc_alpha_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
    /iaf_psc_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
    /aeif_cond_alpha_multisynapse << /params << /taus_syn [ 1.0 ] >>
+                                  /receptor_type 1 >>
+   /aeif_cond_beta_multisynapse << /params << /taus_decay [ 1.0 ] >>
                                   /receptor_type 1 >>
    /iaf_cond_alpha_mc << /receptor_type 1 >>
    /ht_neuron << /receptor_type 1 >>

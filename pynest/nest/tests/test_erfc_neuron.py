@@ -28,6 +28,7 @@ import nest
 import numpy as np
 from scipy.special import erfc
 
+
 def get_mean_activity(detector, T):
     """
     returns the mean activity of a single binary neuron connected to a spin
@@ -58,18 +59,19 @@ def get_mean_activity(detector, T):
         return activity
     else:
         return 0.
-        
+
+
 def activation_function_theory(sigma, theta):
     """
     returns the probability for a binary neuron to be in the up state, given
     the parameters sigma and theta.
     """
-    return 0.5 * erfc( theta / (np.sqrt(2.) * sigma) )
-        
+    return 0.5 * erfc(theta / (np.sqrt(2.) * sigma))
+
 
 class ErfcNeuronTheoryTestCase(unittest.TestCase):
     """Compare results to theoretical predictions"""
-    
+
     def setUp(self):
         """defines parameters of simulation"""
         self.sigma = np.logspace(-1, 1.1, 4)
@@ -77,12 +79,12 @@ class ErfcNeuronTheoryTestCase(unittest.TestCase):
         self.neuron = None
         self.detector = None
         self.T = 30000.
-        
+
     def build_and_connect_nodes(self, sigma, theta):
         """ sets up an erfc neuron and spin detector. """
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
-        
+
         self.neuron = nest.Create('erfc_neuron', 1,
                                   {'sigma': sigma, 'theta': theta})
         self.detector = nest.Create('spin_detector', 1)
@@ -103,8 +105,9 @@ class ErfcNeuronTheoryTestCase(unittest.TestCase):
                     activation_function_theory(sigma, theta), 5)
                 self.assertAlmostEqual(mean_activity, mean_activity_theory,
                     delta=np.max([
-                        2e-1 * mean_activity_theory * (1. - mean_activity_theory),
-                        1e-2]))
+                    2e-1 * mean_activity_theory * (1. - mean_activity_theory),
+                    1e-2]))
+
 
 def suite():
     suite1 = unittest.TestLoader().loadTestsFromTestCase(
@@ -119,4 +122,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-

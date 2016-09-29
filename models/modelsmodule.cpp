@@ -207,8 +207,7 @@ ModelsModule::init( SLIInterpreter* )
     "ppd_sup_generator" );
   kernel().model_manager.register_node_model< gamma_sup_generator >(
     "gamma_sup_generator" );
-  kernel().model_manager.register_node_model< erfc_neuron >(
-    "erfc_neuron" );
+  kernel().model_manager.register_node_model< erfc_neuron >( "erfc_neuron" );
   kernel().model_manager.register_node_model< ginzburg_neuron >(
     "ginzburg_neuron" );
   kernel().model_manager.register_node_model< mcculloch_pitts_neuron >(

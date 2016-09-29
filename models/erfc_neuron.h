@@ -30,7 +30,7 @@
 namespace nest
 {
 /* BeginDocumentation
-   Name: erfc_neuron - Binary stochastic neuron with complementary error 
+   Name: erfc_neuron - Binary stochastic neuron with complementary error
    function as activation function.
 
    Description:
@@ -40,14 +40,14 @@ namespace nest
    passed through a gain function g whose output is interpreted as
    the probability of the neuron to be in the active (1) state.
 
-   The gain function g used here is 
+   The gain function g used here is
    g(h) = 0.5 * erfc (( h - theta_ ) / ( sqrt( 2. ) * sigma)).
    This corresponds to a McCulloch-Pitts neuron receiving additional
    Gaussian noise with mean 0 and standard deviation sigma
    The time constant tau_m is defined as the mean
    inter-update-interval that is drawn from an exponential
    distribution with this parameter. Using this neuron to reproduce
-   simulations with asynchronous update (similar to [1,2]), the time 
+   simulations with asynchronous update (similar to [1,2]), the time
    constant needs to be chosen as tau_m = dt*N, where dt is the simulation time
    step and N the number of neurons in the original simulation with
    asynchronous update. This ensures that a neuron is updated on
@@ -80,15 +80,19 @@ namespace nest
    tau_m      double - Membrane time constant (mean inter-update-interval) (ms)
    theta      double - threshold for sigmoidal activation function (mV)
    sigma      double - 1/sqrt(2pi) x inverse of maximal slope (mV)
-   
+
    References:
-   [1] Iris Ginzburg, Haim Sompolinsky. Theory of correlations in stochastic neural networks (1994).
+   [1] Iris Ginzburg, Haim Sompolinsky. Theory of correlations in stochastic
+   neural networks (1994).
    PRE 50(4) p. 3171
-   [2] W. McCulloch und W. Pitts (1943). A logical calculus of the ideas immanent in nervous
+   [2] W. McCulloch und W. Pitts (1943). A logical calculus of the ideas
+   immanent in nervous
    activity. Bulletin of Mathematical Biophysics, 5:115-133.
-   [3] Abigail Morrison, Markus Diesmann. Maintaining Causality in Discrete Time Neuronal
+   [3] Abigail Morrison, Markus Diesmann. Maintaining Causality in Discrete Time
+   Neuronal
    Simulations.
-   In: Lectures in Supercomputational Neuroscience, p. 267. Peter beim Graben, Changsong Zhou, Marco
+   In: Lectures in Supercomputational Neuroscience, p. 267. Peter beim Graben,
+   Changsong Zhou, Marco
    Thiel, Juergen Kurths (Eds.), Springer 2008.
 
    Sends: SpikeEvent
@@ -124,7 +128,7 @@ public:
 
 inline bool gainfunction_erfc::operator()( librandom::RngPtr rng, double_t h )
 {
-  return rng->drand() < 0.5 * erfc ( - ( h - theta_ ) / ( sqrt( 2. ) * sigma_ ) );
+  return rng->drand() < 0.5 * erfc( -( h - theta_ ) / ( sqrt( 2. ) * sigma_ ) );
 }
 
 typedef binary_neuron< nest::gainfunction_erfc > erfc_neuron;

@@ -1069,7 +1069,7 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
   ArrayDatum result;
   result.reserve( connectome.size() );
 
-  while ( !connectome.empty() )
+  while ( not connectome.empty() )
   {
     result.push_back( ConnectionDatum( connectome.front() ) );
     connectome.pop_front();
@@ -1116,13 +1116,7 @@ nest::ConnectionManager::get_connections(
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        {
-          while ( !conns_in_thread.empty() )
-          {
-            connectome.push_back( conns_in_thread.front() );
-            conns_in_thread.pop_front();
-          }
-        }
+        append_move_connections_( conns_in_thread, connectome );
       }
     }
 
@@ -1163,13 +1157,7 @@ nest::ConnectionManager::get_connections(
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        {
-          while ( !conns_in_thread.empty() )
-          {
-            connectome.push_back( conns_in_thread.front() );
-            conns_in_thread.pop_front();
-          }
-        }
+        append_move_connections_( conns_in_thread, connectome );
       }
     }
     return;
@@ -1220,13 +1208,7 @@ nest::ConnectionManager::get_connections(
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        {
-          while ( !conns_in_thread.empty() )
-          {
-            connectome.push_back( conns_in_thread.front() );
-            conns_in_thread.pop_front();
-          }
-        }
+        append_move_connections_( conns_in_thread, connectome );
       }
     }
     return;

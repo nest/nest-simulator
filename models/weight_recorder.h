@@ -26,7 +26,6 @@
 
 // C++ includes:
 #include <vector>
-#include <omp.h>
 
 // Includes from nestkernel:
 #include "event.h"
@@ -131,7 +130,19 @@ private:
   bool user_set_precise_times_;
   bool has_proxies_;
   bool local_receiver_;
-  omp_lock_t writelock;
+
+  struct Parameters_
+  {
+    std::vector< long > sources_;
+    std::vector< long > targets_;
+
+    Parameters_();
+    Parameters_( const Parameters_& );
+    void get( DictionaryDatum& ) const;
+    void set( const DictionaryDatum& );
+  };
+
+  Parameters_ P_;
 };
 
 inline void

@@ -146,6 +146,8 @@ nest::weight_recorder::get_status( DictionaryDatum& d ) const
           ++sibling )
       ( *sibling )->get_status( d );
   }
+
+  P_.get( d );
 }
 
 void
@@ -155,7 +157,10 @@ nest::weight_recorder::set_status( const DictionaryDatum& d )
     user_set_precise_times_ = true;
 
   device_.set_status( d );
+
+  P_.set( d );
 }
+
 
 void
 nest::weight_recorder::handle( WeightRecorderEvent& e )
@@ -164,7 +169,58 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
   // emitted
   if ( device_.is_active( e.get_stamp() ) )
   {
+
+    // P_sources_ is defined and sender is not in it
+    // or P_targets_ is defined and receiver is not in it
+    if ( ( not P_.sources_.empty()
+           and not std::binary_search(
+                 P_.sources_.begin(), P_.sources_.end(), e.get_sender_gid() ) )
+      or ( not P_.targets_.empty()
+           and not std::binary_search( P_.targets_.begin(),
+                 P_.targets_.end(),
+                 e.get_receiver_gid() ) ) )
+      return;
+
+
     WeightRecorderEvent* event = e.clone();
     B_.events_.push_back( *event );
+  }
+}
+
+nest::weight_recorder::Parameters_::Parameters_()
+  : sources_()
+  , targets_()
+{
+}
+
+nest::weight_recorder::Parameters_::Parameters_( const Parameters_& p )
+  : sources_( p.sources_ )
+  , targets_( p.targets_ )
+{
+}
+
+void
+nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
+{
+  ( *d )[ nest::names::source ] = sources_;
+  ( *d )[ nest::names::target ] = targets_;
+}
+
+
+void
+nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
+{
+
+  if ( d->known( nest::names::source ) )
+  {
+    sources_ =
+      getValue< std::vector< long > >( d->lookup( nest::names::source ) );
+    std::sort( sources_.begin(), sources_.end() );
+  }
+  if ( d->known( nest::names::target ) )
+  {
+    targets_ =
+      getValue< std::vector< long > >( d->lookup( nest::names::target ) );
+    std::sort( targets_.begin(), targets_.end() );
   }
 }

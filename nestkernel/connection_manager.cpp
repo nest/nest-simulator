@@ -1078,6 +1078,21 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
   return result;
 }
 
+// Helper method, implemented as operator<<(), that removes ConnectionIDs from
+// input deque and appends them to output deque.
+static inline std::deque< nest::ConnectionID >& operator<<(
+  std::deque< nest::ConnectionID >& out,
+  std::deque< nest::ConnectionID >& in )
+{
+  while ( not in.empty() )
+  {
+    out.push_back( in.front() );
+    in.pop_front();
+  }
+
+  return out;
+}
+
 void
 nest::ConnectionManager::get_connections(
   std::deque< ConnectionID >& connectome,
@@ -1116,7 +1131,7 @@ nest::ConnectionManager::get_connections(
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        append_move_connections_( conns_in_thread, connectome );
+        connectome << conns_in_thread;
       }
     }
 
@@ -1157,7 +1172,7 @@ nest::ConnectionManager::get_connections(
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        append_move_connections_( conns_in_thread, connectome );
+        connectome << conns_in_thread;
       }
     }
     return;
@@ -1208,7 +1223,7 @@ nest::ConnectionManager::get_connections(
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        append_move_connections_( conns_in_thread, connectome );
+        connectome << conns_in_thread;
       }
     }
     return;

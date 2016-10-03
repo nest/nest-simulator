@@ -307,13 +307,6 @@ private:
    */
   void delete_connections_();
 
-  /**
-   * Helper method removes ConnectionIDs from input deque and
-   * appends them to output deque.
-   */
-  static void append_move_connections_( std::deque< ConnectionID >& input,
-    std::deque< ConnectionID >& output );
-
   ConnectorBase*
   validate_source_entry_( thread tid, index s_gid, synindex syn_id );
 
@@ -398,17 +391,6 @@ inline delay
 ConnectionManager::get_max_delay() const
 {
   return max_delay_;
-}
-
-inline void
-ConnectionManager::append_move_connections_( std::deque< ConnectionID >& input,
-  std::deque< ConnectionID >& output )
-{
-  while ( not input.empty() )
-  {
-    output.push_back( input.front() );
-    input.pop_front();
-  }
 }
 
 } // namespace nest

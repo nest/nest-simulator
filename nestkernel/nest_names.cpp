@@ -176,6 +176,7 @@ const Name inh_conductance( "inh_conductance" );
 const Name input_currents_ex( "input_currents_ex" );
 const Name input_currents_in( "input_currents_in" );
 const Name Interpol_Order( "Interpol_Order" );
+const Name duration( "duration" );
 const Name interval( "interval" );
 const Name is_refractory( "is_refractory" );
 
@@ -220,6 +221,7 @@ const Name phase( "phase" );
 const Name phi( "phi" );
 const Name phi_th( "phi_th" );
 const Name port( "port" );
+const Name ports( "ports" );
 const Name port_name( "port_name" );
 const Name port_width( "port_width" );
 const Name post_synaptic_element( "post_synaptic_element" );
@@ -366,6 +368,8 @@ const Name withpath( "withpath" );
 const Name withtime( "withtime" );
 const Name withweight( "withweight" );
 const Name withreceivergid( "withreceivergid" );
+const Name withport( "withport" );
+const Name withrport( "withrport" );
 
 const Name x( "x" );
 const Name xs( "xs" );

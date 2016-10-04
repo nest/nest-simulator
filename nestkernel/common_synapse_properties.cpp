@@ -52,9 +52,13 @@ void
 CommonSynapseProperties::get_status( DictionaryDatum& d ) const
 {
   if ( weight_recorders_.size() != 0 )
+  {
     def< long >( d, "weight_recorder", weight_recorders_[ 0 ]->get_gid() );
+  }
   else
+  {
     def< long >( d, "weight_recorder", -1 );
+  }
 }
 
 void

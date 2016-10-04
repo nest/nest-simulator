@@ -43,10 +43,10 @@
 
 nest::weight_recorder::weight_recorder()
   : Node()
-  // record time, gid and weight
+  // record time, gid, weight and receiver gid
   , device_( *this,
       RecordingDevice::SPIKE_DETECTOR,
-      "gdf",
+      "csv",
       true,
       true,
       true,
@@ -54,6 +54,7 @@ nest::weight_recorder::weight_recorder()
   , user_set_precise_times_( false )
   , has_proxies_( false )
   , local_receiver_( true )
+  , P_()
 {
 }
 
@@ -63,13 +64,14 @@ nest::weight_recorder::weight_recorder( const weight_recorder& n )
   , user_set_precise_times_( n.user_set_precise_times_ )
   , has_proxies_( false )
   , local_receiver_( true )
+  , P_( n.P_ )
 {
 }
 
 void
 nest::weight_recorder::init_state_( const Node& np )
 {
-  const weight_recorder& wr = dynamic_cast< const weight_recorder& >( np );
+  const weight_recorder& wr = static_cast< const weight_recorder& >( np );
   device_.init_state( wr.device_ );
   init_buffers_();
 }
@@ -169,6 +171,9 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
   // emitted
   if ( device_.is_active( e.get_stamp() ) )
   {
+    // if timestap of event is not in the recording interval
+    if ( std::fmod( e.get_stamp().get_ms(), P_.interval_ ) > P_.duration_ )
+      return;
 
     // P_sources_ is defined and sender is not in it
     // or P_targets_ is defined and receiver is not in it
@@ -181,7 +186,6 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
                  e.get_receiver_gid() ) ) )
       return;
 
-
     WeightRecorderEvent* event = e.clone();
     B_.events_.push_back( *event );
   }
@@ -190,20 +194,26 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
 nest::weight_recorder::Parameters_::Parameters_()
   : sources_()
   , targets_()
+  , duration_()
+  , interval_()
 {
 }
 
 nest::weight_recorder::Parameters_::Parameters_( const Parameters_& p )
   : sources_( p.sources_ )
   , targets_( p.targets_ )
+  , duration_( p.duration_ )
+  , interval_( p.interval_ )
 {
 }
 
 void
 nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ nest::names::source ] = sources_;
-  ( *d )[ nest::names::target ] = targets_;
+  ( *d )[ names::source ] = sources_;
+  ( *d )[ names::target ] = targets_;
+  ( *d )[ names::duration ] = duration_;
+  ( *d )[ names::interval ] = interval_;
 }
 
 
@@ -211,16 +221,18 @@ void
 nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
 {
 
-  if ( d->known( nest::names::source ) )
+  if ( d->known( names::source ) )
   {
-    sources_ =
-      getValue< std::vector< long > >( d->lookup( nest::names::source ) );
+    sources_ = getValue< std::vector< long > >( d->lookup( names::source ) );
     std::sort( sources_.begin(), sources_.end() );
   }
-  if ( d->known( nest::names::target ) )
+
+  if ( d->known( names::target ) )
   {
-    targets_ =
-      getValue< std::vector< long > >( d->lookup( nest::names::target ) );
+    targets_ = getValue< std::vector< long > >( d->lookup( names::target ) );
     std::sort( targets_.begin(), targets_.end() );
   }
+
+  updateValue< double >( d, names::interval, interval_ );
+  updateValue< double >( d, names::duration, duration_ );
 }

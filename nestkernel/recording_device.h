@@ -259,12 +259,16 @@ public:
    * @param Default value for withgid property
    * @param Default value for withweight property
    * @param Default value for withreceivergid property
+   * @param Default value for withport property
+   * @param Default value for withrport property
    */
   RecordingDevice( const Node&,
     Mode,
     const std::string&,
     bool,
     bool,
+    bool = false,
+    bool = false,
     bool = false,
     bool = false );
 
@@ -418,9 +422,19 @@ private:
   void print_receiver_( std::ostream&, index );
 
   /**
+   * Print the receiver gid of an event.
+   */
+  void print_port_( std::ostream&, long );
+
+  /**
+   * Print the receiver gid of an event.
+   */
+  void print_rport_( std::ostream&, long );
+
+  /**
    * Store data in internal structure.
    */
-  void store_data_( index, const Time&, double, double, index );
+  void store_data_( index, const Time&, double, double, index, long, long );
 
   /**
    * Clear data in internal structure, and call clear_data_hook().
@@ -462,6 +476,8 @@ private:
     bool withtime_;        //!< true if time of event is to be printed, default
     bool withweight_;      //!< true if weight of event is to be printed
     bool withreceivergid_; //!< true if receiver GID is to be printed, default
+    bool withport_;        //!< true if receiver GID is to be printed, default
+    bool withrport_;       //!< true if receiver GID is to be printed, default
 
     long precision_;  //!< precision of doubles written to file
     bool scientific_; //!< use scientific format if true, else fixed
@@ -489,8 +505,10 @@ private:
      * @param Default value for withgid property
      * @param Default value for withweight property
      * @param Default value for withreceivergid property
+     * @param Default value for withport property
+     * @param Default value for withrport property
      */
-    Parameters_( const std::string&, bool, bool, bool, bool );
+    Parameters_( const std::string&, bool, bool, bool, bool, bool, bool );
 
     //! Store current values in dictionary
     void get( const RecordingDevice&, DictionaryDatum& ) const;
@@ -504,7 +522,9 @@ private:
   {
     size_t events_;                         //!< Event counter
     std::vector< long > event_senders_;     //!< List of event sender ids
-    std::vector< long > event_receivers_;   //!< List of event sender ids
+    std::vector< long > event_receivers_;   //!< List of event receivers ids
+    std::vector< long > event_ports_;       //!< List of event ports
+    std::vector< long > event_rports_;      //!< List of event rports
     std::vector< double > event_times_ms_;  //!< List of event times in ms
     std::vector< long > event_times_steps_; //!< List of event times in steps
     //! List of event time offsets

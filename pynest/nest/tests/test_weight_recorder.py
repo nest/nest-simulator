@@ -173,6 +173,45 @@ class WeightRecorderTestCase(unittest.TestCase):
         self.addTypeEqualityFunc(type(wr_targets), self.is_subset)
         self.assertEqual(wr_targets, targets)
 
+    def testMultipses(self):
+        """Weight Recorder Multapses"""
+
+        nest.ResetKernel()
+        nest.SetKernelStatus({"local_num_threads": 2})
+
+        wr = nest.Create('weight_recorder', params={"withport": True})
+        nest.CopyModel("stdp_synapse", "stdp_synapse_rec",
+                       {"weight_recorder": wr[0], "weight": 1.})
+
+        sg = nest.Create("spike_generator",
+                         params={"spike_times": [10., 15., 55., 70.]})
+        pre = nest.Create("parrot_neuron", 5)
+        post = nest.Create("parrot_neuron", 5)
+
+        nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec")
+        nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec")
+        nest.Connect(sg, pre)
+
+        connections = nest.GetConnections(pre, post)
+
+        nest.Simulate(100)
+
+        wr_events = nest.GetStatus(wr, "events")[0]
+        senders = wr_events["senders"]
+        receivers = wr_events["receivers"]
+        ports = wr_events["ports"]
+        ids = zip(senders, receivers, ports)
+
+        # create an array of object dtype to use np.unique to get
+        # unique ids
+        unique_ids = np.empty(len(ids), dtype=object)
+        for i, v in enumerate(ids):
+            unique_ids[i] = v
+        unique_ids = np.unique(unique_ids)
+
+        # should be 10 connections
+        self.assertEqual(len(unique_ids), 10)
+
 
 def suite():
 

@@ -213,6 +213,8 @@ ConnectorBase::send_weight_event( const CommonSynapseProperties& cp,
   {
     // Create new event to record the weight and copy relevant content.
     WeightRecorderEvent wr_e;
+    wr_e.set_port( e.get_port() );
+    wr_e.set_rport( e.get_rport() );
     wr_e.set_stamp( e.get_stamp() );
     wr_e.set_sender( e.get_sender() );
     wr_e.set_sender_gid( e.get_sender_gid() );

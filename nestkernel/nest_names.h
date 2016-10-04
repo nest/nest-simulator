@@ -214,6 +214,7 @@ extern const Name input_currents_ex;       //!< Incoming excitatory currents
 extern const Name input_currents_in;       //!< Incoming inhibitory currents
 extern const Name Interpol_Order;          //!< Interpolation order (precise
                                            //!< timing neurons)
+extern const Name duration;                //!< Recorder parameter
 extern const Name interval;                //!< Recorder parameter
 extern const Name is_refractory; //!< Neuron is in refractory period (debugging)
 
@@ -263,6 +264,7 @@ extern const Name phase;                 //!< Signal phase in degrees
 extern const Name phi;                   //!< Specific to mirollo_strogatz_ps
 extern const Name phi_th;                //!< Specific to mirollo_strogatz_ps
 extern const Name port;                  //!< Connection parameters
+extern const Name ports;                 //!< Connection parameters
 extern const Name port_name;             //!< Parameters for MUSIC devices
 extern const Name port_width;            //!< Parameters for MUSIC devices
 extern const Name post_synaptic_element; //!< Post synaptic elements
@@ -437,6 +439,8 @@ extern const Name withpath;   //!< Recorder parameter
 extern const Name withtime;   //!< Recorder parameter
 extern const Name withweight; //!< Recorder parameter
 extern const Name withreceivergid; //!< Recorder parameter
+extern const Name withport;        //!< Recorder parameter
+extern const Name withrport;       //!< Recorder parameter
 
 extern const Name x;  //!< current scaling factor of the synaptic weight [0...1]
                       //!< (Tsodyks2_connection)

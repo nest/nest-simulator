@@ -115,6 +115,11 @@ public:
   Node& get_receiver() const;
 
   /**
+   * Return GID of receiving Node.
+   */
+  index get_receiver_gid() const;
+
+  /**
    * Return reference to sending Node.
    */
   Node& get_sender() const;

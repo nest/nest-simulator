@@ -335,27 +335,31 @@ private:
   // ----------------------------------------------------------------
 
   //! Read out state variables, used by UniversalDataLogger
-  double
+  inline double
   get_V_m_() const
   {
     return S_.V_m_ + P_.E_L_;
   }
-  double
+
+  inline double
   get_V_th_() const
   {
     return P_.E_L_ + P_.omega_ + S_.V_th_1_ + S_.V_th_2_ + S_.V_th_v_;
   }
-  double
+
+  inline double
   get_V_th_v_() const
   {
     return S_.V_th_v_;
   }
-  double
+
+  inline double
   get_I_syn_ex_() const
   {
     return S_.I_syn_ex_;
   }
-  double
+
+  inline double
   get_I_syn_in_() const
   {
     return S_.I_syn_in_;

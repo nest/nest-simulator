@@ -293,28 +293,31 @@ private:
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the real membrane potential
-  double
+  inline double
   get_V_m_() const
   {
     return S_.y3_ + P_.E_L_;
   }
 
-  double
+  inline double
   get_weighted_spikes_ex_() const
   {
     return V_.weighted_spikes_ex_;
   }
-  double
+
+  inline double
   get_weighted_spikes_in_() const
   {
     return V_.weighted_spikes_in_;
   }
-  double
+
+  inline double
   get_I_syn_ex_() const
   {
     return S_.y1_ex_;
   }
-  double
+
+  inline double
   get_I_syn_in_() const
   {
     return S_.y1_in_;

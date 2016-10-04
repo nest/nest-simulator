@@ -8,8 +8,12 @@ When writing tests, please adhere to the following guidelines:
 
 * The tests in `unittests` and `regressiontests` may be written in either
   Python or SLI. They are executed by the corresponding executable according
-  to their filename extension. Tests that are written in Python are run after
-  SLI tests.
+  to their filename extension. Tests written in Python are run after the SLI
+  tests and can perform general checks, but no environment for PyNEST is set
+  at this point.
+
+* PyNEST tests must not be put here. They should use the Python `unittest`
+  framework and reside in the `pynest/nest/tests/` sub-directory.
 
 * Tests that need models which depend on the GSL need to be protected by a check
   like this, which should be above all actual code in the test script:

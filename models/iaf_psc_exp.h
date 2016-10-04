@@ -313,12 +313,12 @@ private:
     return V_.weighted_spikes_in_;
   }
   double
-  get_input_currents_ex_() const
+  get_I_syn_ex_() const
   {
     return S_.i_syn_ex_;
   }
   double
-  get_input_currents_in_() const
+  get_I_syn_in_() const
   {
     return S_.i_syn_in_;
   }

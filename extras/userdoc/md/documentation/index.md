@@ -128,6 +128,15 @@ To learn more about the capabilities of NEST, see the [Feature summary](features
 If you have used NEST for your work either directly or via PyNN, please cite it
 in your publications as:
 
+For NEST v2.10.0, please cite it as `Bos, Hannah et al. (2015).  NEST 2.10.0.
+Zenodo. 10.5281/zenodo.44222`.  The full citation is available in different
+formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.44222).
+
+If you use  NEST v2.8.0, please cite it as `Eppler, Jochen Martin et al. (2015).
+NEST 2.8.0. Zenodo. 10.5281/zenodo.32969`. The full citation is available in
+different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.32969).
+
+For all other versions below NEST v2.8.0 please use:
 Gewaltig M-O & Diesmann M (2007) [NEST (Neural Simulation Tool)](http://www.scholarpedia.org/article/NEST_(Neural_Simulation_Tool))
 *Scholarpedia* 2(4):1430.
 

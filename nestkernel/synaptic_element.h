@@ -161,16 +161,15 @@ public:
    * @param Ca_minus Calcium concentration at time t_minus
    * @param tau_Ca change in the calcium concentration on each spike
    */
-  void
-  update( double_t t, double_t t_minus, double_t Ca_minus, double_t tau_Ca );
+  void update( double t, double t_minus, double Ca_minus, double tau_Ca );
 
   /**
-  * \fn double_t get_z_value(Archiving_Node const *a, double_t t) const
+  * \fn double get_z_value(Archiving_Node const *a, double t) const
   * Get the number of synaptic_element at the time t (in ms)
   * @param a node of this synaptic_element
   * @param t Current time (in ms)
   */
-  int_t
+  int
   get_z_vacant() const
   {
     return std::floor( z_ ) - z_connected_;
@@ -178,7 +177,7 @@ public:
   /*
    * Retrieves the current number of synaptic elements bound to a synapse
    */
-  int_t
+  int
   get_z_connected() const
   {
     return z_connected_;
@@ -186,7 +185,7 @@ public:
   /*
    * Retrieves the value of tau_vacant
    */
-  double_t
+  double
   get_tau_vacant() const
   {
     return tau_vacant_;
@@ -196,7 +195,7 @@ public:
    * @param n number of new connections. Can be negative.
    */
   void
-  connect( int_t n )
+  connect( int n )
   {
     z_connected_ += n;
     if ( z_connected_ > floor( z_ ) )
@@ -219,18 +218,18 @@ public:
   /*
    * Retrieves the current value of the growth rate
    */
-  double_t
+  double
   get_growth_rate() const
   {
     return growth_rate_;
   }
 
   void
-  set_z( const double_t z_new )
+  set_z( const double z_new )
   {
     z_ = z_new;
   }
-  double_t
+  double
   get_z() const
   {
     return z_;
@@ -253,19 +252,19 @@ public:
 
 private:
   // The current number of synaptic elements at t = z_t_
-  double_t z_;
+  double z_;
   // Last time stamp when the number of synaptic elements was updated
-  double_t z_t_;
+  double z_t_;
   // Number of synaptic elements bound to a synapse
-  int_t z_connected_;
+  int z_connected_;
   // Variable which defines if the number of synaptic elements should be treated
   // as a continous double number or as an integer value
   bool continuous_;
   // The maximum amount by which the synaptic elements will change between time
   // steps.
-  double_t growth_rate_;
+  double growth_rate_;
   // Rate at which vacant synaptic elements will decay
-  double_t tau_vacant_;
+  double tau_vacant_;
   // Growth curve which defines the dynamics of this synaptic element.
   GrowthCurve* growth_curve_;
 };

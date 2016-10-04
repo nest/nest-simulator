@@ -98,13 +98,13 @@ void
 nest::noise_generator::Parameters_::set( const DictionaryDatum& d,
   const noise_generator& n )
 {
-  updateValue< double_t >( d, names::mean, mean_ );
-  updateValue< double_t >( d, names::std, std_ );
-  updateValue< double_t >( d, names::std_mod, std_mod_ );
-  updateValue< double_t >( d, names::frequency, freq_ );
-  updateValue< double_t >( d, names::phase, phi_deg_ );
-  double_t dt;
-  if ( updateValue< double_t >( d, names::dt, dt ) )
+  updateValue< double >( d, names::mean, mean_ );
+  updateValue< double >( d, names::std, std_ );
+  updateValue< double >( d, names::std_mod, std_mod_ );
+  updateValue< double >( d, names::frequency, freq_ );
+  updateValue< double >( d, names::phase, phi_deg_ );
+  double dt;
+  if ( updateValue< double >( d, names::dt, dt ) )
     dt_ = Time::ms( dt );
 
   if ( std_ < 0 )
@@ -182,12 +182,12 @@ nest::noise_generator::calibrate()
 
   V_.dt_steps_ = P_.dt_.get_steps();
 
-  const double_t h = Time::get_resolution().get_ms();
-  const double_t t = kernel().simulation_manager.get_time().get_ms();
+  const double h = Time::get_resolution().get_ms();
+  const double t = kernel().simulation_manager.get_time().get_ms();
 
   // scale Hz to ms
-  const double_t omega = 2.0 * numerics::pi * P_.freq_ / 1000.0;
-  const double_t phi_rad = P_.phi_deg_ * 2.0 * numerics::pi / 360.0;
+  const double omega = 2.0 * numerics::pi * P_.freq_ / 1000.0;
+  const double phi_rad = P_.phi_deg_ * 2.0 * numerics::pi / 360.0;
 
   // initial state
   S_.y_0_ = std::cos( omega * t + phi_rad );
@@ -235,21 +235,21 @@ nest::noise_generator::send_test_event( Node& target,
 //
 void
 nest::noise_generator::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
-  const long_t start = origin.get_steps();
+  const long start = origin.get_steps();
 
-  for ( long_t offs = from; offs < to; ++offs )
+  for ( long offs = from; offs < to; ++offs )
   {
-    const long_t now = start + offs;
+    const long now = start + offs;
 
     if ( !device_.is_active( Time::step( now ) ) )
       continue;
 
     if ( P_.std_mod_ != 0. )
     {
-      const double_t y_0 = S_.y_0_;
+      const double y_0 = S_.y_0_;
       S_.y_0_ = V_.A_00_ * y_0 + V_.A_01_ * S_.y_1_;
       S_.y_1_ = V_.A_10_ * y_0 + V_.A_11_ * S_.y_1_;
     }

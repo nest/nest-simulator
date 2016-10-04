@@ -89,10 +89,10 @@ private:
   void calibrate();
 
   // gain function functor
-  // must have an double_t operator(double_t) defined
+  // must have an double operator(double) defined
   TGainfunction gain_;
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< binary_neuron< TGainfunction > >;
@@ -106,7 +106,7 @@ private:
   struct Parameters_
   {
     //! mean inter-update interval in ms (acts like a membrane time constant).
-    double_t tau_m_;
+    double tau_m_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -166,14 +166,14 @@ private:
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the binary_neuron state of the neuron
-  double_t
+  double
   get_output_state__() const
   {
     return S_.y_;
   }
 
   //! Read out the summed input of the neuron (= membrane potential)
-  double_t
+  double
   get_input__() const
   {
     return S_.h_;

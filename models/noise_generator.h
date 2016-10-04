@@ -145,24 +145,24 @@ private:
    */
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
   void event_hook( DSCurrentEvent& );
 
   // ------------------------------------------------------------
 
-  typedef std::vector< double_t > AmpVec_;
+  typedef std::vector< double > AmpVec_;
 
   /**
    * Store independent parameters of the model.
    */
   struct Parameters_
   {
-    double_t mean_;    //!< mean current, in pA
-    double_t std_;     //!< standard deviation of current, in pA
-    double_t std_mod_; //!< standard deviation of current modulation, in pA
-    double_t freq_;    //!< Standard frequency in Hz
-    double_t phi_deg_; //!< Phase of sinusodial noise modulation (0-360 deg)
-    Time dt_;          //!< time interval between updates
+    double mean_;    //!< mean current, in pA
+    double std_;     //!< standard deviation of current, in pA
+    double std_mod_; //!< standard deviation of current modulation, in pA
+    double freq_;    //!< Standard frequency in Hz
+    double phi_deg_; //!< Phase of sinusodial noise modulation (0-360 deg)
+    Time dt_;        //!< time interval between updates
 
     /**
      * Number of targets.
@@ -184,8 +184,8 @@ private:
 
   struct State_
   {
-    double_t y_0_;
-    double_t y_1_;
+    double y_0_;
+    double y_1_;
 
     State_(); //!< Sets default parameter values
 
@@ -196,24 +196,24 @@ private:
 
   struct Buffers_
   {
-    long_t next_step_; //!< time step of next change in current
-    AmpVec_ amps_;     //!< amplitudes, one per target
+    long next_step_; //!< time step of next change in current
+    AmpVec_ amps_;   //!< amplitudes, one per target
   };
 
   // ------------------------------------------------------------
 
   struct Variables_
   {
-    long_t dt_steps_;                       //!< update interval in steps
+    long dt_steps_;                         //!< update interval in steps
     librandom::NormalRandomDev normal_dev_; //!< random deviate generator
-    double_t omega_;                        //!< Angelfrequency i rad/s
-    double_t phi_rad_; //!< Phase of sine current (0-2Pi rad)
+    double omega_;                          //!< Angelfrequency i rad/s
+    double phi_rad_; //!< Phase of sine current (0-2Pi rad)
 
     // The exact integration matrix
-    double_t A_00_;
-    double_t A_01_;
-    double_t A_10_;
-    double_t A_11_;
+    double A_00_;
+    double A_01_;
+    double A_10_;
+    double A_11_;
   };
 
   // ------------------------------------------------------------

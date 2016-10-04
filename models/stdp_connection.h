@@ -139,7 +139,7 @@ public:
    */
   void send( Event& e,
     thread t,
-    double_t t_lastspike,
+    double t_lastspike,
     const CommonSynapseProperties& cp );
 
 
@@ -160,7 +160,7 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t t_lastspike,
+    double t_lastspike,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -171,37 +171,37 @@ public:
   }
 
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
 
 private:
-  double_t
-  facilitate_( double_t w, double_t kplus )
+  double
+  facilitate_( double w, double kplus )
   {
-    double_t norm_w = ( w / Wmax_ )
+    double norm_w = ( w / Wmax_ )
       + ( lambda_ * std::pow( 1.0 - ( w / Wmax_ ), mu_plus_ ) * kplus );
     return norm_w < 1.0 ? norm_w * Wmax_ : Wmax_;
   }
 
-  double_t
-  depress_( double_t w, double_t kminus )
+  double
+  depress_( double w, double kminus )
   {
-    double_t norm_w = ( w / Wmax_ )
+    double norm_w = ( w / Wmax_ )
       - ( alpha_ * lambda_ * std::pow( w / Wmax_, mu_minus_ ) * kminus );
     return norm_w > 0.0 ? norm_w * Wmax_ : 0.0;
   }
 
   // data members of each connection
-  double_t weight_;
-  double_t tau_plus_;
-  double_t lambda_;
-  double_t alpha_;
-  double_t mu_plus_;
-  double_t mu_minus_;
-  double_t Wmax_;
-  double_t Kplus_;
+  double weight_;
+  double tau_plus_;
+  double lambda_;
+  double alpha_;
+  double mu_plus_;
+  double mu_minus_;
+  double Wmax_;
+  double Kplus_;
 };
 
 
@@ -216,19 +216,19 @@ template < typename targetidentifierT >
 inline void
 STDPConnection< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
+  double t_lastspike,
   const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
   //   if(t_lastspike >0) {std::cout << "last spike " << t_lastspike <<
   //   std::endl ;}
-  double_t t_spike = e.get_stamp().get_ms();
+  double t_spike = e.get_stamp().get_ms();
   // t_lastspike_ = 0 initially
 
   // use accessor functions (inherited from Connection< >) to obtain delay and
   // target
   Node* target = get_target( t );
-  double_t dendritic_delay = get_delay();
+  double dendritic_delay = get_delay();
 
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
@@ -245,7 +245,7 @@ STDPConnection< targetidentifierT >::send( Event& e,
   target->get_history(
     t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
-  double_t minus_dt;
+  double minus_dt;
   while ( start != finish )
   {
     minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
@@ -305,14 +305,14 @@ void
 STDPConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
-  def< double_t >( d, "tau_plus", tau_plus_ );
-  def< double_t >( d, "lambda", lambda_ );
-  def< double_t >( d, "alpha", alpha_ );
-  def< double_t >( d, "mu_plus", mu_plus_ );
-  def< double_t >( d, "mu_minus", mu_minus_ );
-  def< double_t >( d, "Wmax", Wmax_ );
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  def< double >( d, names::weight, weight_ );
+  def< double >( d, "tau_plus", tau_plus_ );
+  def< double >( d, "lambda", lambda_ );
+  def< double >( d, "alpha", alpha_ );
+  def< double >( d, "mu_plus", mu_plus_ );
+  def< double >( d, "mu_minus", mu_minus_ );
+  def< double >( d, "Wmax", Wmax_ );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
@@ -321,13 +321,13 @@ STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double_t >( d, names::weight, weight_ );
-  updateValue< double_t >( d, "tau_plus", tau_plus_ );
-  updateValue< double_t >( d, "lambda", lambda_ );
-  updateValue< double_t >( d, "alpha", alpha_ );
-  updateValue< double_t >( d, "mu_plus", mu_plus_ );
-  updateValue< double_t >( d, "mu_minus", mu_minus_ );
-  updateValue< double_t >( d, "Wmax", Wmax_ );
+  updateValue< double >( d, names::weight, weight_ );
+  updateValue< double >( d, "tau_plus", tau_plus_ );
+  updateValue< double >( d, "lambda", lambda_ );
+  updateValue< double >( d, "alpha", alpha_ );
+  updateValue< double >( d, "mu_plus", mu_plus_ );
+  updateValue< double >( d, "mu_minus", mu_minus_ );
+  updateValue< double >( d, "Wmax", Wmax_ );
 
   // check if weight_ and Wmax_ has the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )

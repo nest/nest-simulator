@@ -377,7 +377,16 @@ public:
     return P_.to_accumulator_;
   }
 
-  inline void set_precise( bool use_precise, long precision );
+  inline void set_precise_times( bool precise_times );
+
+  inline void set_precision( long precision );
+
+  inline bool records_precise_times() const;
+
+  inline bool is_precision_user_set() const;
+
+  inline bool is_precise_times_user_set() const;
+
 
 private:
   /**
@@ -449,6 +458,9 @@ private:
     long precision_;  //!< precision of doubles written to file
     bool scientific_; //!< use scientific format if true, else fixed
 
+    bool user_set_precise_times_; //!< true if user set precise_times
+    bool user_set_precision_;     //!< true if user set precision
+
     bool binary_; //!< true if to write files in binary mode instead of ASCII
     long fbuffer_size_;     //!< the buffer size to use when writing to file
     long fbuffer_size_old_; //!< the buffer size to use when writing
@@ -480,13 +492,13 @@ private:
 
   struct State_
   {
-    size_t events_;                          //!< Event counter
-    std::vector< long > event_senders_;      //!< List of event sender ids
-    std::vector< double_t > event_times_ms_; //!< List of event times in ms
-    std::vector< long > event_times_steps_;  //!< List of event times in steps
+    size_t events_;                         //!< Event counter
+    std::vector< long > event_senders_;     //!< List of event sender ids
+    std::vector< double > event_times_ms_;  //!< List of event times in ms
+    std::vector< long > event_times_steps_; //!< List of event times in steps
     //! List of event time offsets
-    std::vector< double_t > event_times_offsets_;
-    std::vector< double_t > event_weights_; //!< List of event weights
+    std::vector< double > event_times_offsets_;
+    std::vector< double > event_weights_; //!< List of event weights
 
     State_(); //!< Sets default parameter values
 
@@ -506,11 +518,28 @@ private:
   Buffers_ V_;
 };
 
+inline bool
+RecordingDevice::is_precision_user_set() const
+{
+  return P_.user_set_precision_;
+}
+
+inline bool
+RecordingDevice::is_precise_times_user_set() const
+{
+  return P_.user_set_precise_times_;
+}
+
+inline bool
+RecordingDevice::records_precise_times() const
+{
+  return P_.precise_times_;
+}
 
 inline bool
 RecordingDevice::is_active( Time const& T ) const
 {
-  const long_t stamp = T.get_steps();
+  const long stamp = T.get_steps();
 
   return get_t_min_() < stamp && stamp <= get_t_max_();
 }
@@ -526,9 +555,14 @@ RecordingDevice::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-RecordingDevice::set_precise( bool use_precise, long precision )
+RecordingDevice::set_precise_times( bool use_precise )
 {
   P_.precise_times_ = use_precise;
+}
+
+inline void
+RecordingDevice::set_precision( long precision )
+{
   P_.precision_ = precision;
 }
 

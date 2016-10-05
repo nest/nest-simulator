@@ -3,21 +3,22 @@
 % NEST has created this file for you from the template in
 % <prefix>/share/doc/nest/examples/nestrc.sli.
 % Type '/nestrc help' at the NEST prompt to learn more.
-%
 
-% The command mpirun tells NEST how to assemble a string which represents a
-% valid command for calling NEST if compiled with MPI support.
-% The details of this string depend on your MPI library and the desired
-% communication interface. Please modify the command according to your needs.
-%
-%/mpirun
-%[/integertype /stringtype]
-%[/numproc     /slifile]
-%{
-% () [
-%  (mpirun -np ) numproc cvs ( ) statusdict/prefix :: (/bin/nest )  slifile
-% ] {join} Fold
-%} Function def
+
+% The command mpirun tells NEST how to assemble a string, which
+% represents a valid command for calling an MPI-enabled executable in
+% a distributed fashion The details of this string depend on your MPI
+% library and the desired communication interface. Please modify the
+% command according to your needs.
+
+/mpirun
+[/integertype /stringtype /stringtype]
+[/numproc     /executable /scriptfile]
+{
+ () [
+  (mpirun -np ) numproc cvs ( ) executable ( ) scriptfile
+ ] {join} Fold
+} Function def
 
 % These are some suggestions for choosing a pager.
 % Type '/page help' at the NEST prompt to learn more.
@@ -28,8 +29,9 @@
 %          /wait    true >> SetOptions
 %
 % Use less as a pager:
- /page << /command (less -S)
-          /wait    true >> SetOptions
+
+/page << /command (less -S)
+         /wait    true >> SetOptions
 
 % Run less in a separate xterm window:
 % /page << /command (xterm -e less -S)
@@ -46,16 +48,15 @@
 % Use built-in "poor man's pager" (this is the default):
 % /page << /command false >> SetOptions
 
-
 % By default, NEST displays a lot of informative messages.
 % Type '/setverbosity help' at the NEST prompt to learn more.
 %
 % Uncomment the next line to have only errors and warnings shown:
 % M_WARNING setverbosity
 
-
 % Set the browser for displaying the helpdesk
- /helpdesk << /command (firefox) >> SetOptions
+
+/helpdesk << /command (firefox) >> SetOptions
 
 % Use Chromium browser
 % /helpdesk << /command (chromium-browser) >> SetOptions

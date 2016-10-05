@@ -136,9 +136,6 @@ private:
     std::vector< long > sources_;
     std::vector< long > targets_;
 
-    double duration_;
-    double interval_;
-
     Parameters_();
     Parameters_( const Parameters_& );
     void get( DictionaryDatum& ) const;

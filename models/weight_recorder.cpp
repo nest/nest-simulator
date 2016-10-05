@@ -171,10 +171,6 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
   // emitted
   if ( device_.is_active( e.get_stamp() ) )
   {
-    // if timestap of event is not in the recording interval
-    if ( std::fmod( e.get_stamp().get_ms(), P_.interval_ ) > P_.duration_ )
-      return;
-
     // P_sources_ is defined and sender is not in it
     // or P_targets_ is defined and receiver is not in it
     if ( ( not P_.sources_.empty()
@@ -194,16 +190,12 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
 nest::weight_recorder::Parameters_::Parameters_()
   : sources_()
   , targets_()
-  , duration_()
-  , interval_()
 {
 }
 
 nest::weight_recorder::Parameters_::Parameters_( const Parameters_& p )
   : sources_( p.sources_ )
   , targets_( p.targets_ )
-  , duration_( p.duration_ )
-  , interval_( p.interval_ )
 {
 }
 
@@ -212,15 +204,11 @@ nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::source ] = sources_;
   ( *d )[ names::target ] = targets_;
-  ( *d )[ names::duration ] = duration_;
-  ( *d )[ names::interval ] = interval_;
 }
-
 
 void
 nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
 {
-
   if ( d->known( names::source ) )
   {
     sources_ = getValue< std::vector< long > >( d->lookup( names::source ) );
@@ -232,7 +220,4 @@ nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
     targets_ = getValue< std::vector< long > >( d->lookup( names::target ) );
     std::sort( targets_.begin(), targets_.end() );
   }
-
-  updateValue< double >( d, names::interval, interval_ );
-  updateValue< double >( d, names::duration, duration_ );
 }

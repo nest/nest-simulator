@@ -214,7 +214,7 @@ nest::aeif_cond_alpha_RK5::Parameters_::set( const DictionaryDatum& d )
     // check for possible numerical overflow with the exponential divergence at
     // spike time, keep a 1e20 margin for the subsequent calculations
     const double max_exp_arg =
-      std::log( std::numeric_limits< double >::max() ) - 20.;
+      std::log( std::numeric_limits< double >::max() / 1e20);
     if ( ( V_peak_ - V_th ) / Delta_T >= max_exp_arg )
     {
       throw BadProperty(

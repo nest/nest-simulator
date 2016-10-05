@@ -306,6 +306,9 @@ private:
 
     void get( DictionaryDatum&, const Parameters_& ) const;
     void set( const DictionaryDatum&, const Parameters_& );
+
+  private:
+    void neuron_state_memory_allocate( int new_size );
   };
 
   // ----------------------------------------------------------------

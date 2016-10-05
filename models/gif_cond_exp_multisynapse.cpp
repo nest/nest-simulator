@@ -149,7 +149,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::Parameters_()
 }
 
 nest::gif_cond_exp_multisynapse::State_::State_( const Parameters_& p )
-  : y_( NULL )
+  : y_( 0 )
   , size_neuron_state_( 0 )
   , I_stim_( 0.0 )
   , sfa_( 0.0 )
@@ -158,8 +158,7 @@ nest::gif_cond_exp_multisynapse::State_::State_( const Parameters_& p )
   , stc_elems_()
   , r_ref_( 0 )
 {
-  y_ = ( double* ) malloc( NUMBER_OF_FIXED_STATES_ELEMENTS * sizeof( double ) );
-  size_neuron_state_ = NUMBER_OF_FIXED_STATES_ELEMENTS;
+  neuron_state_memory_allocate( NUMBER_OF_FIXED_STATES_ELEMENTS );
   y_[ V_M ] = p.E_L_;
 }
 
@@ -177,8 +176,8 @@ nest::gif_cond_exp_multisynapse::State_::State_( const State_& s )
   for ( size_t i = 0; i < stc_elems_.size(); ++i )
     stc_elems_[ i ] = s.stc_elems_[ i ];
 
-  size_neuron_state_ = s.size_neuron_state_;
-  y_ = ( double* ) malloc( size_neuron_state_ * sizeof( double ) );
+  y_ = 0; // otherwise the method tries to free a random pointer
+  neuron_state_memory_allocate( s.size_neuron_state_ );
   for ( size_t i = 0; i < size_neuron_state_; ++i )
     y_[ i ] = s.y_[ i ];
 }
@@ -197,8 +196,7 @@ nest::gif_cond_exp_multisynapse::State_&
   for ( size_t i = 0; i < stc_elems_.size(); ++i )
     stc_elems_[ i ] = s.stc_elems_[ i ];
 
-  size_neuron_state_ = s.size_neuron_state_;
-  y_ = ( double* ) malloc( size_neuron_state_ * sizeof( double ) );
+  neuron_state_memory_allocate( s.size_neuron_state_ );
   for ( size_t i = 0; i < size_neuron_state_; ++i )
     y_[ i ] = s.y_[ i ];
 
@@ -209,6 +207,18 @@ nest::gif_cond_exp_multisynapse::State_&
 
   return *this;
 }
+
+void
+nest::gif_cond_exp_multisynapse::State_::neuron_state_memory_allocate(
+  int new_size )
+{
+  if ( y_ != 0 )
+    free( y_ );
+
+  y_ = reinterpret_cast< double* >( malloc( new_size * sizeof( double ) ) );
+  size_neuron_state_ = new_size;
+}
+
 
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
@@ -400,7 +410,7 @@ nest::gif_cond_exp_multisynapse::~gif_cond_exp_multisynapse()
   if ( B_.e_ )
     gsl_odeiv_evolve_free( B_.e_ );
 
-  if ( S_.size_neuron_state_ > 0 )
+  if ( S_.y_ != 0 )
     free( S_.y_ );
 }
 

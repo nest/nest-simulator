@@ -239,9 +239,24 @@ aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "V_peak must be larger than threshold." );
   }
 
-  if ( V_reset_ >= V_peak_ )
+  if ( Delta_T < 0. )
   {
-    throw BadProperty( "Ensure that: V_reset < V_peak ." );
+    throw BadProperty( "Delta_T must be positive." );
+  }
+  else if ( Delta_T > 0. )
+  {
+    // check for possible numerical overflow with the exponential divergence at
+    // spike time, keep a 1e20 margin for the subsequent calculations
+    const double max_exp_arg =
+      std::log( std::numeric_limits< double >::max() / 1e20 );
+    if ( ( V_peak_ - V_th ) / Delta_T >= max_exp_arg )
+    {
+      throw BadProperty(
+        "The current combination of V_peak, V_th and Delta_T"
+        "will lead to numerical overflow at spike time; try"
+        "for instance to increase Delta_T or to reduce V_peak"
+        "to avoid this problem." );
+    }
   }
 
   if ( C_m <= 0 )
@@ -426,8 +441,23 @@ aeif_cond_alpha_multisynapse::calibrate()
     V_.g0_ex_[ i ] = 1.0 * numerics::e / P_.taus_syn[ i ];
     V_.g0_in_[ i ] = 1.0 * numerics::e / P_.taus_syn[ i ];
   }
-  V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.RefractoryCounts_
+
+  // set the right function for the dynamics
+  if ( P_.Delta_T > 0. )
+  {
+    V_.V_peak = P_.V_peak_;
+    V_.model_dynamics =
+      &aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics;
+  }
+  else
+  {
+    V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
+    V_.model_dynamics =
+      &aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics_DT0;
+  }
+
+  V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
+  assert( V_.refractory_counts_
     >= 0 ); // since t_ref_ >= 0, this can only fail in error
 
   B_.spike_exc_.resize( P_.num_of_receptors_ );
@@ -524,25 +554,25 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
         t_return = t + h; // update t
 
         // k1 = f(told, y)
-        aeif_cond_alpha_multisynapse_dynamics( S_.y_, S_.k1 );
+        ( this->*( V_.model_dynamics ) )( S_.y_, S_.k1 );
 
         // k2 = f(told + h/5, y + h*k1 / 5)
         for ( size_t i = 0; i < S_.y_.size(); ++i )
           S_.yin[ i ] = S_.y_[ i ] + h * S_.k1[ i ] / 5.0;
-        aeif_cond_alpha_multisynapse_dynamics( S_.yin, S_.k2 );
+        ( this->*( V_.model_dynamics ) )( S_.yin, S_.k2 );
 
         // k3 = f(told + 3/10*h, y + 3/40*h*k1 + 9/40*h*k2)
         for ( size_t i = 0; i < S_.y_.size(); ++i )
           S_.yin[ i ] = S_.y_[ i ]
             + h * ( 3.0 / 40.0 * S_.k1[ i ] + 9.0 / 40.0 * S_.k2[ i ] );
-        aeif_cond_alpha_multisynapse_dynamics( S_.yin, S_.k3 );
+        ( this->*( V_.model_dynamics ) )( S_.yin, S_.k3 );
 
         // k4
         for ( size_t i = 0; i < S_.y_.size(); ++i )
           S_.yin[ i ] = S_.y_[ i ]
             + h * ( 44.0 / 45.0 * S_.k1[ i ] - 56.0 / 15.0 * S_.k2[ i ]
                     + 32.0 / 9.0 * S_.k3[ i ] );
-        aeif_cond_alpha_multisynapse_dynamics( S_.yin, S_.k4 );
+        ( this->*( V_.model_dynamics ) )( S_.yin, S_.k4 );
 
         // k5
         for ( size_t i = 0; i < S_.y_.size(); ++i )
@@ -551,7 +581,7 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
               * ( 19372.0 / 6561.0 * S_.k1[ i ] - 25360.0 / 2187.0 * S_.k2[ i ]
                   + 64448.0 / 6561.0 * S_.k3[ i ]
                   - 212.0 / 729.0 * S_.k4[ i ] );
-        aeif_cond_alpha_multisynapse_dynamics( S_.yin, S_.k5 );
+        ( this->*( V_.model_dynamics ) )( S_.yin, S_.k5 );
 
         // k6
         for ( size_t i = 0; i < S_.y_.size(); ++i )
@@ -560,7 +590,7 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
                     + 46732.0 / 5247.0 * S_.k3[ i ]
                     + 49.0 / 176.0 * S_.k4[ i ]
                     - 5103.0 / 18656.0 * S_.k5[ i ] );
-        aeif_cond_alpha_multisynapse_dynamics( S_.yin, S_.k6 );
+        ( this->*( V_.model_dynamics ) )( S_.yin, S_.k6 );
 
         // 5th order
         for ( size_t i = 0; i < S_.y_.size(); ++i )
@@ -569,7 +599,7 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
                     + 125.0 / 192.0 * S_.k4[ i ]
                     - 2187.0 / 6784.0 * S_.k5[ i ]
                     + 11.0 / 84.0 * S_.k6[ i ] );
-        aeif_cond_alpha_multisynapse_dynamics( S_.yin, S_.k7 );
+        ( this->*( V_.model_dynamics ) )( S_.yin, S_.k7 );
 
         // 4th order
         for ( size_t i = 0; i < S_.y_.size(); ++i )
@@ -620,13 +650,13 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
       if ( S_.r_ > 0 ) // if neuron is still in refractory period
-        S_.y_[ State_::V_M ] = P_.V_reset_;          // clamp it to V_reset
-      else if ( S_.y_[ State_::V_M ] >= P_.V_peak_ ) // V_m >= V_peak: spike
+        S_.y_[ State_::V_M ] = P_.V_reset_;         // clamp it to V_reset
+      else if ( S_.y_[ State_::V_M ] >= V_.V_peak ) // V_m >= V_peak: spike
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
-        S_.y_[ State_::W ] += P_.b;   // spike-driven adaptation
-        S_.r_ = V_.RefractoryCounts_; // initialize refractory steps with
-                                      // refractory period
+        S_.y_[ State_::W ] += P_.b;    // spike-driven adaptation
+        S_.r_ = V_.refractory_counts_; // initialize refractory steps with
+                                       // refractory period
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;

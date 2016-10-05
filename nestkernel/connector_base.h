@@ -29,6 +29,7 @@
 // C++ includes:
 #include <cstdlib>
 #include <vector>
+#include <deque>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -150,14 +151,14 @@ public:
     size_t thrd,
     synindex synapse_id,
     long synapse_label,
-    ArrayDatum& conns ) const = 0;
+    std::deque< ConnectionID >& conns ) const = 0;
 
   virtual void get_connections( size_t source_gid,
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
     long synapse_label,
-    ArrayDatum& conns ) const = 0;
+    std::deque< ConnectionID >& conns ) const = 0;
 
   virtual void get_target_gids( std::vector< size_t >& target_gids,
     size_t thrd,
@@ -409,17 +410,17 @@ public:
     size_t thrd,
     synindex synapse_id,
     long synapse_label,
-    ArrayDatum& conns ) const
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < K; i++ )
       if ( get_syn_id() == synapse_id )
         if ( synapse_label == UNLABELED_CONNECTION
           || C_[ i ].get_label() == synapse_label )
-          conns.push_back( ConnectionDatum( ConnectionID( source_gid,
+          conns.push_back( ConnectionID( source_gid,
             C_[ i ].get_target( thrd )->get_gid(),
             thrd,
             synapse_id,
-            i ) ) );
+            i ) );
   }
 
   void
@@ -428,15 +429,15 @@ public:
     size_t thrd,
     size_t synapse_id,
     long synapse_label,
-    ArrayDatum& conns ) const
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < K; i++ )
       if ( get_syn_id() == synapse_id )
         if ( synapse_label == UNLABELED_CONNECTION
           || C_[ i ].get_label() == synapse_label )
           if ( C_[ i ].get_target( thrd )->get_gid() == target_gid )
-            conns.push_back( ConnectionDatum(
-              ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) ) );
+            conns.push_back(
+              ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) );
   }
 
   /**
@@ -642,18 +643,18 @@ public:
     size_t thrd,
     synindex synapse_id,
     long synapse_label,
-    ArrayDatum& conns ) const
+    std::deque< ConnectionID >& conns ) const
   {
     if ( get_syn_id() == synapse_id )
     {
       if ( synapse_label == UNLABELED_CONNECTION
         || C_[ 0 ].get_label() == synapse_label )
       {
-        conns.push_back( ConnectionDatum( ConnectionID( source_gid,
+        conns.push_back( ConnectionID( source_gid,
           C_[ 0 ].get_target( thrd )->get_gid(),
           thrd,
           synapse_id,
-          0 ) ) );
+          0 ) );
       }
     }
   }
@@ -664,7 +665,7 @@ public:
     size_t thrd,
     size_t synapse_id,
     long synapse_label,
-    ArrayDatum& conns ) const
+    std::deque< ConnectionID >& conns ) const
   {
     if ( get_syn_id() == synapse_id )
     {
@@ -672,8 +673,8 @@ public:
         || C_[ 0 ].get_label() == synapse_label )
       {
         if ( C_[ 0 ].get_target( thrd )->get_gid() == target_gid )
-          conns.push_back( ConnectionDatum(
-            ConnectionID( source_gid, target_gid, thrd, synapse_id, 0 ) ) );
+          conns.push_back(
+            ConnectionID( source_gid, target_gid, thrd, synapse_id, 0 ) );
       }
     }
   }
@@ -880,17 +881,17 @@ public:
     size_t thrd,
     synindex synapse_id,
     long synapse_label,
-    ArrayDatum& conns ) const
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < C_.size(); i++ )
       if ( get_syn_id() == synapse_id )
         if ( synapse_label == UNLABELED_CONNECTION
           || C_[ i ].get_label() == synapse_label )
-          conns.push_back( ConnectionDatum( ConnectionID( source_gid,
+          conns.push_back( ConnectionID( source_gid,
             C_[ i ].get_target( thrd )->get_gid(),
             thrd,
             synapse_id,
-            i ) ) );
+            i ) );
   }
 
   void
@@ -899,15 +900,15 @@ public:
     size_t thrd,
     size_t synapse_id,
     long synapse_label,
-    ArrayDatum& conns ) const
+    std::deque< ConnectionID >& conns ) const
   {
     if ( get_syn_id() == synapse_id )
       for ( size_t i = 0; i < C_.size(); i++ )
         if ( synapse_label == UNLABELED_CONNECTION
           || C_[ i ].get_label() == synapse_label )
           if ( C_[ i ].get_target( thrd )->get_gid() == target_gid )
-            conns.push_back( ConnectionDatum(
-              ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) ) );
+            conns.push_back(
+              ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) );
   }
 
   void
@@ -1058,7 +1059,7 @@ public:
     size_t thrd,
     synindex synapse_id,
     long synapse_label,
-    ArrayDatum& conns ) const
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < size(); i++ )
       at( i )->get_connections(
@@ -1071,7 +1072,7 @@ public:
     size_t thrd,
     size_t synapse_id,
     long synapse_label,
-    ArrayDatum& conns ) const
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < size(); i++ )
       at( i )->get_connections(

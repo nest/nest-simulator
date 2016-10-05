@@ -18,7 +18,7 @@ When writing tests, please adhere to the following guidelines:
   can be used, e.g., for source code inspection. They are run after the SLI
   tests in the same directories.
 
-* New regression tests should be calle `issues-XXX.sli`, where `XXX` is the 
+* New regression tests should be called `issues-XXX.sli`, where `XXX` is the 
   number of the Github issue which the test covers. 
 
 * Tests requiring PyNEST (NEST kernel accessible from Python) must be placed 

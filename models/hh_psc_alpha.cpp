@@ -60,10 +60,10 @@ RecordablesMap< hh_psc_alpha >::create()
   // use standard names whereever you can for consistency!
   insert_(
     names::V_m, &hh_psc_alpha::get_y_elem_< hh_psc_alpha::State_::V_M > );
-  insert_(
-    names::I_ex, &hh_psc_alpha::get_y_elem_< hh_psc_alpha::State_::I_EXC > );
-  insert_(
-    names::I_in, &hh_psc_alpha::get_y_elem_< hh_psc_alpha::State_::I_INH > );
+  insert_( names::I_syn_ex,
+    &hh_psc_alpha::get_y_elem_< hh_psc_alpha::State_::I_EXC > );
+  insert_( names::I_syn_in,
+    &hh_psc_alpha::get_y_elem_< hh_psc_alpha::State_::I_INH > );
   insert_(
     names::Act_m, &hh_psc_alpha::get_y_elem_< hh_psc_alpha::State_::HH_M > );
   insert_(

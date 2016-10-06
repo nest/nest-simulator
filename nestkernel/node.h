@@ -765,6 +765,35 @@ public:
     buffers_initialized_ = initialized;
   }
 
+  /**
+   * Return the number of thread siblings in SiblingContainer.
+   *
+   * This method is meaningful only for SiblingContainer, for which it
+   * returns the number of siblings in the container.
+   * For all other models (including Subnet), it returns 0, which is not
+   * wrong. By defining the method in this way, we avoid many dynamic casts.
+   */
+  virtual size_t
+  num_thread_siblings() const
+  {
+    return 0;
+  }
+
+  /**
+   * Return the specified member of a SiblingContainer.
+   *
+   * This method is meaningful only for SiblingContainer, for which it
+   * returns the pointer to the indexed node in the container.
+   * For all other models (including Subnet), it returns a null pointer
+   * and throws and assertion.By defining the method in this way, we avoid
+   * many dynamic casts.
+   */
+  virtual Node* get_thread_sibling( index ) const
+  {
+    assert( false );
+    return 0;
+  }
+
 private:
   void set_lid_( index );      //!< Set local id, relative to the parent subnet
   void set_parent_( Subnet* ); //!< Set pointer to parent subnet.
@@ -781,44 +810,6 @@ private:
   virtual DictionaryDatum get_status_dict_();
 
 protected:
-  /**
-   * Return the number of thread siblings in SiblingContainer.
-   *
-   * This method is meaningful only for SiblingContainer, for which it
-   * returns the number of siblings in the container.
-   * For all other models (including Subnet), it returns 0, which is not
-   * wrong. By defining the method in this way, we avoid many dynamic casts.
-   */
-  virtual size_t
-  num_thread_siblings_() const
-  {
-    return 0;
-  }
-
-  /**
-   * Return the specified member of a SiblingContainer.
-   *
-   * This method is meaningful only for SiblingContainer, for which it
-   * returns the pointer to the indexed node in the container.
-   * For all other models (including Subnet), it returns a null pointer
-   * and throws and assertion.By defining the method in this way, we avoid
-   * many dynamic casts.
-   */
-  virtual Node* get_thread_sibling_( index ) const
-  {
-    assert( false );
-    return 0;
-  }
-
-  /**
-   * Return specified member of a SiblingContainer, with access control.
-   */
-  virtual Node* get_thread_sibling_safe_( index ) const
-  {
-    assert( false );
-    return 0;
-  }
-
   /**
    * Private function to initialize the state of a node to model defaults.
    * This function, which must be overloaded by all derived classes, provides

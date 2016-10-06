@@ -78,8 +78,8 @@ di_tolerances_lsodar = {
 di_tolerances_iaf = {
     "aeif_cond_alpha": {"V_m": 2e-3, "g_ex": 1e-6},
     "aeif_cond_exp": {"V_m": 5e-4, "g_ex": 1e-6},
-    "aeif_psc_alpha": {"V_m": 5e-3, "I_ex": 1e-6},
-    "aeif_psc_exp": {"V_m": 5e-3, "I_ex": 1e-6},
+    "aeif_psc_alpha": {"V_m": 5e-3, "I_syn_ex": 1e-6},
+    "aeif_psc_exp": {"V_m": 5e-3, "I_syn_ex": 1e-6},
     "aeif_cond_alpha_RK5": {"V_m": 2e-3, "g_ex": 1e-6}
 }
 
@@ -245,7 +245,6 @@ class AEIFTestCase(unittest.TestCase):
         '''
         for model, di_rel_diff in iter(rel_diff.items()):
             for var, diff in iter(di_rel_diff.items()):
-                print(model, var, diff, di_tol[model][var])
                 self.assertTrue(diff < di_tol[model][var])
 
     def test_closeness_nest_lsodar(self):
@@ -296,22 +295,20 @@ class AEIFTestCase(unittest.TestCase):
         pn = nest.Create("parrot_neuron")
 
         # connect them and simulate
-        rec_models = {"cond": ["V_m", "g_ex"], "psc": ["V_m", "I_ex"]}
-        rec_ref = {"cond": ["V_m", "g_ex"],
-                   "psc": ["V_m", "input_currents_ex"]}
+        recordables = {"cond": ["V_m", "g_ex"], "psc": ["V_m", "I_syn_ex"]}
         nest.Connect(pg, pn)
         for model, mm in iter(multimeters.items()):
             syn_type = di_syn_types[model]
             key = syn_type[:syn_type.index('_')]
             nest.SetStatus(mm, {"interval": self.resol,
-                                "record_from": rec_models[key]})
+                                "record_from": recordables[key]})
             nest.Connect(mm, neurons[model])
             weight = 80. if key == "psc" else 1.
             nest.Connect(pn, neurons[model], syn_spec={'weight': weight})
         for syn_type, mm in iter(ref_mm.items()):
             key = syn_type[:syn_type.index('_')]
             nest.SetStatus(mm, {"interval": self.resol,
-                                "record_from": rec_ref[key]})
+                                "record_from": recordables[key]})
             nest.Connect(mm, refs[syn_type])
             weight = 80. if key == "psc" else 1.
             nest.Connect(pn, refs[syn_type], syn_spec={'weight': weight})
@@ -322,14 +319,11 @@ class AEIFTestCase(unittest.TestCase):
             syn_type = di_syn_types[model]
             ref_data = nest.GetStatus(ref_mm[syn_type], "events")[0]
             key = syn_type[:syn_type.index('_')]
-            if key == "psc":
-                # iaf_psc_* do not use the standard I_ex name
-                ref_data["I_ex"] = ref_data["input_currents_ex"]
             rel_diff = self.compute_difference(
                 {model: multimeters[model]},
                 aeif_DT0,
                 ref_data,
-                rec_models[key])
+                recordables[key])
             self.assert_pass_tolerance(rel_diff, di_tolerances_iaf)
 
 

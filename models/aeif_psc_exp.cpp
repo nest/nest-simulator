@@ -67,10 +67,10 @@ RecordablesMap< aeif_psc_exp >::create()
   // use standard names whereever you can for consistency!
   insert_(
     names::V_m, &aeif_psc_exp::get_y_elem_< aeif_psc_exp::State_::V_M > );
-  insert_(
-    names::I_ex, &aeif_psc_exp::get_y_elem_< aeif_psc_exp::State_::I_EXC > );
-  insert_(
-    names::I_in, &aeif_psc_exp::get_y_elem_< aeif_psc_exp::State_::I_INH > );
+  insert_( names::I_syn_ex,
+    &aeif_psc_exp::get_y_elem_< aeif_psc_exp::State_::I_EXC > );
+  insert_( names::I_syn_in,
+    &aeif_psc_exp::get_y_elem_< aeif_psc_exp::State_::I_INH > );
   insert_( names::w, &aeif_psc_exp::get_y_elem_< aeif_psc_exp::State_::W > );
 }
 }
@@ -95,20 +95,20 @@ nest::aeif_psc_exp_dynamics( double, const double y[], double f[], void* pnode )
 
   // shorthand for state variables
   const double& V = std::min( y[ S::V_M ], node.P_.V_peak_ );
-  const double& I_ex = y[ S::I_EXC ];
-  const double& I_in = y[ S::I_INH ];
+  const double& I_syn_ex = y[ S::I_EXC ];
+  const double& I_syn_in = y[ S::I_INH ];
   const double& w = y[ S::W ];
 
   const double I_spike =
     node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
 
   // dv/dt
-  f[ S::V_M ] = ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) + I_ex + I_in
+  f[ S::V_M ] = ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) + I_syn_ex + I_syn_in
                   - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
-  f[ S::I_EXC ] = -I_ex / node.P_.tau_syn_ex; // Exc. synaptic current (pA)
+  f[ S::I_EXC ] = -I_syn_ex / node.P_.tau_syn_ex; // Exc. synaptic current (pA)
 
-  f[ S::I_INH ] = -I_in / node.P_.tau_syn_in; // Inh. synaptic current (pA)
+  f[ S::I_INH ] = -I_syn_in / node.P_.tau_syn_in; // Inh. synaptic current (pA)
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
@@ -138,17 +138,17 @@ nest::aeif_psc_exp_dynamics_DT0( double,
 
   // shorthand for state variables
   const double& V = y[ S::V_M ];
-  const double& I_ex = y[ S::I_EXC ];
-  const double& I_in = y[ S::I_INH ];
+  const double& I_syn_ex = y[ S::I_EXC ];
+  const double& I_syn_in = y[ S::I_INH ];
   const double& w = y[ S::W ];
 
   // dv/dt
-  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) + I_ex + I_in - w
+  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) + I_syn_ex + I_syn_in - w
                   + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
-  f[ S::I_EXC ] = -I_ex / node.P_.tau_syn_ex; // Exc. synaptic current (pA)
+  f[ S::I_EXC ] = -I_syn_ex / node.P_.tau_syn_ex; // Exc. synaptic current (pA)
 
-  f[ S::I_INH ] = -I_in / node.P_.tau_syn_in; // Inh. synaptic current (pA)
+  f[ S::I_INH ] = -I_syn_in / node.P_.tau_syn_in; // Inh. synaptic current (pA)
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
@@ -267,7 +267,7 @@ nest::aeif_psc_exp::Parameters_::set( const DictionaryDatum& d )
     // check for possible numerical overflow with the exponential divergence at
     // spike time, keep a 1e20 margin for the subsequent calculations
     const double max_exp_arg =
-      std::log( std::numeric_limits< double >::max() ) - 20.;
+      std::log( std::numeric_limits< double >::max() / 1e20 );
     if ( ( V_peak_ - V_th ) / Delta_T >= max_exp_arg )
     {
       throw BadProperty(
@@ -303,8 +303,8 @@ void
 nest::aeif_psc_exp::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] );
-  def< double >( d, names::I_ex, y_[ I_EXC ] );
-  def< double >( d, names::I_in, y_[ I_INH ] );
+  def< double >( d, names::I_syn_ex, y_[ I_EXC ] );
+  def< double >( d, names::I_syn_in, y_[ I_INH ] );
   def< double >( d, names::w, y_[ W ] );
 }
 
@@ -312,8 +312,8 @@ void
 nest::aeif_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
-  updateValue< double >( d, names::I_ex, y_[ I_EXC ] );
-  updateValue< double >( d, names::I_in, y_[ I_INH ] );
+  updateValue< double >( d, names::I_syn_ex, y_[ I_EXC ] );
+  updateValue< double >( d, names::I_syn_in, y_[ I_INH ] );
   updateValue< double >( d, names::w, y_[ W ] );
 
   if ( y_[ I_EXC ] < 0 || y_[ I_INH ] < 0 )

@@ -116,8 +116,8 @@ extern const Name dhaene_max_geq_V_th; //!< used for iaflossless_count_exp
 extern const Name dhaene_quick1;       //!< used for iaflossless_count_exp
 extern const Name dhaene_quick2;       //!< used for iaflossless_count_exp
 extern const Name dhaene_tmax_lt_t1;   //!< used for iaflossless_count_exp
-extern const Name dI_ex; //!< Derivative of the excitatory synaptic current
-extern const Name dI_in; //!< Derivative of the inhibitory synaptic current
+extern const Name dI_syn_ex; //!< Derivative of the excitatory synaptic current
+extern const Name dI_syn_in; //!< Derivative of the inhibitory synaptic current
 extern const Name distribution; //!< Connectivity-related
 extern const Name dt;           //!< Miscellaneous parameters
 extern const Name dU;  //!< Unit increment of the utilization for a facilitating

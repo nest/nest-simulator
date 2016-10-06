@@ -192,8 +192,6 @@ extern const Name I;         //!< Specific to mirollo_strogatz_ps
 extern const Name I_adapt;   //!< Goal of current homeostasis
                              //!< (current homeostasis)
 extern const Name I_e;       //!< Input current
-extern const Name I_ex;      //!< Excitatory synaptic input current
-extern const Name I_in;      //!< Inhibitory synaptic input current
 extern const Name I_L;       //!< Leak current
 extern const Name I_std;     //!< Standard deviation of current distribution
                              //!< (current homeostasis)
@@ -210,8 +208,6 @@ extern const Name Inact_p;   //!< Specific to Hodgkin Huxley models with gap
 extern const Name index_map; //!< Parameters for MUSIC devices
 extern const Name individual_spike_trains; //!< Generator parameters
 extern const Name inh_conductance;         //!< Recorder parameter
-extern const Name input_currents_ex;       //!< Incoming excitatory currents
-extern const Name input_currents_in;       //!< Incoming inhibitory currents
 extern const Name Interpol_Order;          //!< Interpolation order (precise
                                            //!< timing neurons)
 extern const Name interval;                //!< Recorder parameter

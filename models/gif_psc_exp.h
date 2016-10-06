@@ -244,8 +244,8 @@ private:
     std::vector< double > sfa_elems_; //!< Vector of adaptation parameters.
     std::vector< double > stc_elems_; //!< Vector of spike triggered parameters.
 
-    double i_syn_ex_; //!< postsynaptic current for exc.
-    double i_syn_in_; //!< postsynaptic current for inh.
+    double I_syn_ex_; //!< postsynaptic current for exc.
+    double I_syn_in_; //!< postsynaptic current for inh.
 
     //!< absolute refractory counter (no membrane potential propagation)
     unsigned int r_ref_;
@@ -323,15 +323,15 @@ private:
   }
 
   double
-  get_input_currents_ex_() const
+  get_I_syn_ex_() const
   {
-    return S_.i_syn_ex_;
+    return S_.I_syn_ex_;
   }
 
   double
-  get_input_currents_in_() const
+  get_I_syn_in_() const
   {
-    return S_.i_syn_in_;
+    return S_.I_syn_in_;
   }
 
   // ----------------------------------------------------------------

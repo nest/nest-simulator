@@ -58,8 +58,8 @@ RecordablesMap< gif_psc_exp >::create()
   insert_( names::V_m, &gif_psc_exp::get_V_m_ );
   insert_( names::E_sfa, &gif_psc_exp::get_E_sfa_ );
   insert_( names::I_stc, &gif_psc_exp::get_I_stc_ );
-  insert_( names::I_syn_ex, &gif_psc_exp::get_input_currents_ex_ );
-  insert_( names::I_syn_in, &gif_psc_exp::get_input_currents_in_ );
+  insert_( names::I_syn_ex, &gif_psc_exp::get_I_syn_ex_ );
+  insert_( names::I_syn_in, &gif_psc_exp::get_I_syn_in_ );
 }
 
 /* ----------------------------------------------------------------
@@ -93,8 +93,8 @@ nest::gif_psc_exp::State_::State_()
   , stc_( 0.0 )
   , sfa_elems_()
   , stc_elems_()
-  , i_syn_ex_( 0.0 )
-  , i_syn_in_( 0.0 )
+  , I_syn_ex_( 0.0 )
+  , I_syn_in_( 0.0 )
   , r_ref_( 0 )
 {
 }
@@ -338,18 +338,18 @@ nest::gif_psc_exp::update( Time const& origin, const long from, const long to )
     }
 
     // exponential decaying PSCs
-    S_.i_syn_ex_ *= V_.P11ex_;
-    S_.i_syn_in_ *= V_.P11in_;
+    S_.I_syn_ex_ *= V_.P11ex_;
+    S_.I_syn_in_ *= V_.P11in_;
 
-    S_.i_syn_ex_ += B_.spikes_ex_.get_value( lag );
-    S_.i_syn_in_ += B_.spikes_in_.get_value( lag );
+    S_.I_syn_ex_ += B_.spikes_ex_.get_value( lag );
+    S_.I_syn_in_ += B_.spikes_in_.get_value( lag );
 
     if ( S_.r_ref_ == 0 ) // neuron is not in refractory period
     {
 
       S_.V_ = V_.P30_ * ( S_.I_stim_ + P_.I_e_ - S_.stc_ ) + V_.P33_ * S_.V_
-        + V_.P31_ * P_.E_L_ + S_.i_syn_ex_ * V_.P21ex_
-        + S_.i_syn_in_ * V_.P21in_;
+        + V_.P31_ * P_.E_L_ + S_.I_syn_ex_ * V_.P21ex_
+        + S_.I_syn_in_ * V_.P21in_;
 
       const double lambda =
         P_.lambda_0_ * std::exp( ( S_.V_ - S_.sfa_ ) / P_.Delta_V_ );

@@ -103,8 +103,9 @@ nest::aeif_psc_exp_dynamics( double, const double y[], double f[], void* pnode )
     node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
 
   // dv/dt
-  f[ S::V_M ] = ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) + I_syn_ex + I_syn_in
-                  - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] =
+    ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) + I_syn_ex + I_syn_in - w
+      + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::I_EXC ] = -I_syn_ex / node.P_.tau_syn_ex; // Exc. synaptic current (pA)
 

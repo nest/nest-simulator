@@ -58,8 +58,8 @@ RecordablesMap< gif_psc_exp >::create()
   insert_( names::V_m, &gif_psc_exp::get_V_m_ );
   insert_( names::E_sfa, &gif_psc_exp::get_E_sfa_ );
   insert_( names::I_stc, &gif_psc_exp::get_I_stc_ );
-  insert_( names::input_currents_ex, &gif_psc_exp::get_input_currents_ex_ );
-  insert_( names::input_currents_in, &gif_psc_exp::get_input_currents_in_ );
+  insert_( names::I_syn_ex, &gif_psc_exp::get_input_currents_ex_ );
+  insert_( names::I_syn_in, &gif_psc_exp::get_input_currents_in_ );
 }
 
 /* ----------------------------------------------------------------

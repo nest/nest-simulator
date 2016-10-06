@@ -32,6 +32,7 @@
 #include "sparsetable.h"
 
 // Includes from nestkernel:
+#include "connection_id.h"
 #include "conn_builder.h"
 #include "gid_collection.h"
 #include "nest_time.h"
@@ -210,7 +211,7 @@ public:
    */
   ArrayDatum get_connections( DictionaryDatum dict ) const;
 
-  void get_connections( ArrayDatum& connectome,
+  void get_connections( std::deque< ConnectionID >& connectome,
     TokenArray const* source,
     TokenArray const* target,
     size_t syn_id,

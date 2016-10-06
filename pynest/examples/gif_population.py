@@ -76,18 +76,18 @@ neuron_params = {"C_m": 83.1,
 Definition of the parameters for the population of GIF neurons.
 '''
 
-N_ex = 100
-p_ex = 0.3
-w_ex = 30.0  # pA
+N_ex = 100  # size of the population
+p_ex = 0.3  # connection probability inside the population
+w_ex = 30.0  # synaptic weights inside the population (pA)
 
 '''
 Definition of the parameters for the Poisson group and its connection with GIF
 neurons population.
 '''
 
-N_noise = 50
-rate_noise = 10.0  # Hz
-w_noise = 20.0  # pA
+N_noise = 50  # size of Poisson group
+rate_noise = 10.0  # firing rate of Poisson neurons (Hz)
+w_noise = 20.0  # synaptic weights from Poisson to population neurons (pA)
 
 '''
 Configuration of the simulation kernel with the previously defined time

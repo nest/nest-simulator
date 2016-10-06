@@ -122,7 +122,7 @@ SeeAlso: iaf_cond_exp, aeif_cond_alpha
 namespace nest
 {
 /**
- * Function computing right-hand side of ODE for GSL solver.
+ * Function computing right-hand side of ODE for GSL solver if Delta_T != 0.
  * @note Must be declared here so we can befriend it in class.
  * @note Must have C-linkage for passing to GSL. Internally, it is
  *       a first-class C++ function, but cannot be a member function
@@ -132,6 +132,19 @@ namespace nest
  * @param void* Pointer to model neuron instance.
  */
 extern "C" int aeif_cond_exp_dynamics( double, const double*, double*, void* );
+
+/**
+ * Function computing right-hand side of ODE for GSL solver if Delta_T == 0.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int
+aeif_cond_exp_dynamics_DT0( double, const double*, double*, void* );
 
 class aeif_cond_exp : public Archiving_Node
 {
@@ -239,7 +252,7 @@ public:
 
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];
-    int r_; //!< number of refractory steps remaining
+    unsigned int r_; //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -271,7 +284,6 @@ public:
     gsl_odeiv_step* s_;    //!< stepping function
     gsl_odeiv_control* c_; //!< adaptive stepsize control function
     gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
 
     // IntergrationStep_ should be reset with the neuron on ResetNetwork,
     // but remain unchanged during calibration. Since it is initialized with
@@ -297,7 +309,15 @@ public:
    */
   struct Variables_
   {
-    int RefractoryCounts_;
+    /**
+     * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
+     * P.V_th if Delta_T == 0.
+     */
+    double V_peak;
+
+    gsl_odeiv_system sys_; //!< struct describing the GSL system
+
+    unsigned int refractory_counts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------

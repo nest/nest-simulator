@@ -205,6 +205,19 @@ extern const Name
 extern const Name
   I_syn_in;                //!< Total inhibitory synaptic current (iaf_tum_2000)
 extern const Name I_total; //!< Total current (current homeostasis)
+extern const Name I;       //!< Specific to mirollo_strogatz_ps
+extern const Name I_adapt; //!< Goal of current homeostasis
+                           //!< (current homeostasis)
+extern const Name I_e;     //!< Input current
+extern const Name I_L;     //!< Leak current
+extern const Name I_std;   //!< Standard deviation of current distribution
+                           //!< (current homeostasis)
+extern const Name I_syn;   //!< used for iaflossless_count_exp
+extern const Name I_syn_ex;  //!< Total excitatory synaptic current
+                             //!< (iaf_tum_2000)
+extern const Name I_syn_in;  //!< Total inhibitory synaptic current
+                             //!< (iaf_tum_2000)
+extern const Name I_total;   //!< Total current (current homeostasis)
 extern const Name in_spikes; //!< Number of arriving inhibitory spikes
 extern const Name Inact_n;   //!< Specific to Hodgkin Huxley models
 extern const Name
@@ -217,6 +230,9 @@ extern const Name input_currents_in;       //!< Incoming inhibitory currents
 extern const Name
   Interpol_Order;           //!< Interpolation order (precise timing neurons)
 extern const Name interval; //!< Recorder parameter
+extern const Name Interpol_Order; //!< Interpolation order (precise
+                                  //!< timing neurons)
+extern const Name interval;       //!< Recorder parameter
 extern const Name is_refractory; //!< Neuron is in refractory period (debugging)
 
 extern const Name label;      //!< Miscellaneous parameters

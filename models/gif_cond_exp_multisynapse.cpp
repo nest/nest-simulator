@@ -158,7 +158,7 @@ nest::gif_cond_exp_multisynapse::State_::State_( const Parameters_& p )
   , stc_elems_()
   , r_ref_( 0 )
 {
-  neuron_state_memory_allocate( NUMBER_OF_FIXED_STATES_ELEMENTS );
+  neuron_state_memory_allocate_( NUMBER_OF_FIXED_STATES_ELEMENTS );
   y_[ V_M ] = p.E_L_;
 }
 
@@ -177,7 +177,7 @@ nest::gif_cond_exp_multisynapse::State_::State_( const State_& s )
     stc_elems_[ i ] = s.stc_elems_[ i ];
 
   y_ = 0; // otherwise the method tries to free a random pointer
-  neuron_state_memory_allocate( s.size_neuron_state_ );
+  neuron_state_memory_allocate_( s.size_neuron_state_ );
   for ( size_t i = 0; i < size_neuron_state_; ++i )
     y_[ i ] = s.y_[ i ];
 }
@@ -196,7 +196,7 @@ nest::gif_cond_exp_multisynapse::State_&
   for ( size_t i = 0; i < stc_elems_.size(); ++i )
     stc_elems_[ i ] = s.stc_elems_[ i ];
 
-  neuron_state_memory_allocate( s.size_neuron_state_ );
+  neuron_state_memory_allocate_( s.size_neuron_state_ );
   for ( size_t i = 0; i < size_neuron_state_; ++i )
     y_[ i ] = s.y_[ i ];
 
@@ -209,7 +209,7 @@ nest::gif_cond_exp_multisynapse::State_&
 }
 
 void
-nest::gif_cond_exp_multisynapse::State_::neuron_state_memory_allocate(
+nest::gif_cond_exp_multisynapse::State_::neuron_state_memory_allocate_(
   int new_size )
 {
   if ( y_ != 0 )

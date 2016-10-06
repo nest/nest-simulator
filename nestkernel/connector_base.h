@@ -861,9 +861,9 @@ public:
   push_back( const ConnectionT& c )
   {
     // Replace default vector grow strategy that is quite bad for our case.
-    // Use vector grow strategy 1.5 then size >= K_SLOW_GROWING.
-    // Call vector::reserve() manually then size() == capacity().
-    const size_t sz( C_.size() );
+    // Use vector grow strategy 1.5 when size >= K_SLOW_GROWING.
+    // Call vector::reserve() manually if size() == capacity().
+    const size_t sz = C_.size();
 
     if ( sz == C_.capacity() and sz >= K_SLOW_GROWING )
     {

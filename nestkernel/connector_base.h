@@ -122,6 +122,9 @@ suicide( Told* connector )
 // when to truncate the recursive instantiation
 #define K_CUTOFF 3
 
+// when to use 1.5x grow strategy for connection vector
+#define K_SLOW_GROWING 6
+
 namespace nest
 {
 
@@ -857,6 +860,16 @@ public:
   ConnectorBase&
   push_back( const ConnectionT& c )
   {
+    // Replace default vector grow strategy that is quite bad for our case.
+    // Use vector grow strategy 1.5 then size >= K_SLOW_GROWING.
+    // Call vector::reserve() manually then size() == capacity().
+    const size_t sz( C_.size() );
+
+    if ( sz == C_.capacity() and sz >= K_SLOW_GROWING )
+    {
+      C_.reserve( ( sz * 3 + 1 ) / 2 );
+    }
+
     C_.push_back( c );
     return *this;
   }

@@ -408,7 +408,7 @@ extern const Name taus_syn;   //!< Synapse time constants (array)
 extern const Name taus_rise;  //!< Synapse rise constants (array)
 extern const Name taus_decay; //!< Synapse decay constants (array)
 extern const Name E_rev;      //!< Reversal potential (array)
-extern const Name num_of_receptors;  //!< number of receptor ports
+extern const Name num_of_receptors; //!< number of receptor ports
 extern const Name theta;  //!< Did not compile without (theta neuron problem)
 extern const Name thread; //!< Node parameter
 extern const Name thread_local_id; //!< Thead-local ID of node,

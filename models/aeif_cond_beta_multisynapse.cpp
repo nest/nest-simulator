@@ -83,13 +83,13 @@ aeif_cond_beta_multisynapse::Parameters_::Parameters_()
   , b( 80.5 )         // pA
   , V_th( -50.4 )     // mV
   , num_of_receptors( 1 )
-  , I_e( 0.0 )        // pA
+  , I_e( 0.0 ) // pA
   , gsl_error_tol( 1e-6 )
   , has_connections_( false )
 {
-  static const double E_rev_def = 0.0;        // E_rev default value
-  static const double taus_rise_def = 2.0;    // taus_rise default value
-  static const double taus_decay_def = 20.0;  // taus_decay default value
+  static const double E_rev_def = 0.0;       // E_rev default value
+  static const double taus_rise_def = 2.0;   // taus_rise default value
+  static const double taus_decay_def = 20.0; // taus_decay default value
   receptor_types.clear();
   E_rev.clear();
   taus_rise.clear();
@@ -98,7 +98,6 @@ aeif_cond_beta_multisynapse::Parameters_::Parameters_()
   E_rev.push_back( E_rev_def );
   taus_rise.push_back( taus_rise_def );
   taus_decay.push_back( taus_decay_def );
-
 }
 
 aeif_cond_beta_multisynapse::State_::State_( const Parameters_& p )
@@ -160,7 +159,7 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
   static const double E_rev_def = 0.0;
   static const double taus_rise_def = 2.0;
   static const double taus_decay_def = 20.0;
-  
+
   updateValue< double >( d, names::V_th, V_th );
   updateValue< double >( d, names::V_peak, V_peak_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
@@ -181,8 +180,7 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
     }
     else if ( tmp_num <= 0 )
     {
-      throw BadProperty(
-        "The neuron must have at least one port." );
+      throw BadProperty( "The neuron must have at least one port." );
     }
 
     E_rev.resize( tmp_num, E_rev_def );
@@ -190,13 +188,13 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
     taus_decay.resize( tmp_num, taus_decay_def );
     receptor_types.resize( tmp_num );
     for ( size_t i = num_of_receptors; i < tmp_num; i++ )
-    { 
-      receptor_types[i] = i + 1 ;
+    {
+      receptor_types[ i ] = i + 1;
     }
     num_of_receptors = tmp_num;
   }
 
-  std::vector< double > E_rev_tmp;    
+  std::vector< double > E_rev_tmp;
   if ( updateValue< std::vector< double > >( d, names::E_rev, E_rev_tmp ) )
   {
     if ( E_rev_tmp.size() != num_of_receptors )
@@ -208,7 +206,7 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
     E_rev = E_rev_tmp;
   }
 
-  std::vector< double > tau_tmp;    
+  std::vector< double > tau_tmp;
   if ( updateValue< std::vector< double > >( d, names::taus_decay, tau_tmp ) )
   {
     if ( tau_tmp.size() != num_of_receptors )
@@ -228,7 +226,7 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
     taus_decay = tau_tmp;
   }
   tau_tmp.clear();
-    
+
   if ( updateValue< std::vector< double > >( d, names::taus_rise, tau_tmp ) )
   {
     if ( tau_tmp.size() != num_of_receptors )
@@ -454,7 +452,7 @@ aeif_cond_beta_multisynapse::init_buffers_()
 void
 aeif_cond_beta_multisynapse::calibrate()
 {
-  //for ( size_t i = 0; i < P_.num_of_receptors; i++ )
+  // for ( size_t i = 0; i < P_.num_of_receptors; i++ )
   //{
   //  if ( P_.taus_decay[ i ] < P_.taus_rise[ i ] ) {
   //    throw BadProperty(

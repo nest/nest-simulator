@@ -76,23 +76,29 @@ aeif_cond_beta_multisynapse::Parameters_::Parameters_()
   , t_ref_( 0.0 )     // ms
   , g_L( 30.0 )       // nS
   , C_m( 281.0 )      // pF
-  , E_ex( 0.0 )       // mV
-  , E_in( -85.0 )     // mV
   , E_L( -70.6 )      // mV
   , Delta_T( 2.0 )    // mV
   , tau_w( 144.0 )    // ms
   , a( 4.0 )          // nS
   , b( 80.5 )         // pA
   , V_th( -50.4 )     // mV
+  , num_of_receptors( 1 )
   , I_e( 0.0 )        // pA
   , gsl_error_tol( 1e-6 )
-  , num_of_receptors_( 1 )
   , has_connections_( false )
 {
+  static const double E_rev_def = 0.0;        // E_rev default value
+  static const double taus_rise_def = 2.0;    // taus_rise default value
+  static const double taus_decay_def = 20.0;  // taus_decay default value
+  receptor_types.clear();
+  E_rev.clear();
   taus_rise.clear();
   taus_decay.clear();
-  taus_decay.push_back( 20.0 );
-  taus_rise.push_back( 2.0 );
+  receptor_types.push_back( 1 );
+  E_rev.push_back( E_rev_def );
+  taus_rise.push_back( taus_rise_def );
+  taus_decay.push_back( taus_decay_def );
+
 }
 
 aeif_cond_beta_multisynapse::State_::State_( const Parameters_& p )
@@ -131,10 +137,11 @@ aeif_cond_beta_multisynapse::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::g_L, g_L );
   def< double >( d, names::E_L, E_L );
   def< double >( d, names::V_reset, V_reset_ );
-  def< double >( d, names::E_ex, E_ex );
-  def< double >( d, names::E_in, E_in );
+  def< size_t >( d, names::num_of_receptors, num_of_receptors );
+  ArrayDatum E_rev_ad( E_rev );
   ArrayDatum taus_rise_ad( taus_rise );
   ArrayDatum taus_decay_ad( taus_decay );
+  def< ArrayDatum >( d, names::E_rev, E_rev_ad );
   def< ArrayDatum >( d, names::taus_rise, taus_rise_ad );
   def< ArrayDatum >( d, names::taus_decay, taus_decay_ad );
   def< double >( d, names::a, a );
@@ -144,34 +151,72 @@ aeif_cond_beta_multisynapse::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::I_e, I_e );
   def< double >( d, names::V_peak, V_peak_ );
   def< double >( d, names::gsl_error_tol, gsl_error_tol );
-  def< int >( d, "n_synapses", num_of_receptors_ );
   def< bool >( d, names::has_connections, has_connections_ );
 }
 
 void
 aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
 {
-
+  static const double E_rev_def = 0.0;
+  static const double taus_rise_def = 2.0;
+  static const double taus_decay_def = 20.0;
+  
   updateValue< double >( d, names::V_th, V_th );
   updateValue< double >( d, names::V_peak, V_peak_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
   updateValue< double >( d, names::E_L, E_L );
   updateValue< double >( d, names::V_reset, V_reset_ );
-  updateValue< double >( d, names::E_ex, E_ex );
-  updateValue< double >( d, names::E_in, E_in );
 
   updateValue< double >( d, names::C_m, C_m );
   updateValue< double >( d, names::g_L, g_L );
 
-  std::vector< double > tau_tmp;
-  if ( updateValue< std::vector< double > >( d, names::taus_decay, tau_tmp ) )
+  size_t tmp_num;
+  if ( updateValue< long >( d, names::num_of_receptors, tmp_num ) )
   {
-    if ( tau_tmp.size() < taus_decay.size() && has_connections_ == true )
+    if ( tmp_num < num_of_receptors && has_connections_ == true )
     {
       throw BadProperty(
         "The neuron has connections, therefore the number of ports cannot be "
         "reduced." );
     }
+    else if ( tmp_num <= 0 )
+    {
+      throw BadProperty(
+        "The neuron must have at least one port." );
+    }
+
+    E_rev.resize( tmp_num, E_rev_def );
+    taus_rise.resize( tmp_num, taus_rise_def );
+    taus_decay.resize( tmp_num, taus_decay_def );
+    receptor_types.resize( tmp_num );
+    for ( size_t i = num_of_receptors; i < tmp_num; i++ )
+    { 
+      receptor_types[i] = i + 1 ;
+    }
+    num_of_receptors = tmp_num;
+  }
+
+  std::vector< double > E_rev_tmp;    
+  if ( updateValue< std::vector< double > >( d, names::E_rev, E_rev_tmp ) )
+  {
+    if ( E_rev_tmp.size() != num_of_receptors )
+    {
+      throw BadProperty(
+        "The reversal potential array size must match the number of ports." );
+    }
+
+    E_rev = E_rev_tmp;
+  }
+
+  std::vector< double > tau_tmp;    
+  if ( updateValue< std::vector< double > >( d, names::taus_decay, tau_tmp ) )
+  {
+    if ( tau_tmp.size() != num_of_receptors )
+    {
+      throw BadProperty(
+        "The synaptic decay time array size must match the number of ports." );
+    }
+
     for ( size_t i = 0; i < tau_tmp.size(); ++i )
     {
       if ( tau_tmp[ i ] <= 0 )
@@ -181,31 +226,15 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
       }
     }
     taus_decay = tau_tmp;
-    num_of_receptors_ = taus_decay.size();
-    tau_tmp.clear();
-    if ( taus_rise.size() < taus_decay.size() )
-    {
-      for ( size_t i = 0; i < taus_decay.size(); ++i )
-      {
-        taus_rise.push_back( taus_decay[ i ] / 10. );
-        // if taus_rise is not defined explicitly or if it has less elements
-        // than taus_decay, it will be set to taus_decay/10
-      }
-    }
   }
-
+  tau_tmp.clear();
+    
   if ( updateValue< std::vector< double > >( d, names::taus_rise, tau_tmp ) )
   {
-    if ( taus_decay.size() == 0 )
+    if ( tau_tmp.size() != num_of_receptors )
     {
       throw BadProperty(
-        "Synaptic decay times must be defined before rise times." );
-    }
-    if ( tau_tmp.size() != taus_decay.size() )
-    {
-      throw BadProperty(
-        "The number of ports for synaptic rise times must be the same "
-        "as that of decay times." );
+        "The synaptic rise time array size must match the number of ports." );
     }
 
     for ( size_t i = 0; i < tau_tmp.size(); ++i )
@@ -214,11 +243,6 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
       {
         throw BadProperty(
           "All synaptic time constants must be strictly positive" );
-      }
-      if ( tau_tmp[ i ] > taus_decay[ i ] )
-      {
-        throw BadProperty(
-          "Synaptic rise time must be smaller than or equal to decay time." );
       }
     }
     taus_rise = tau_tmp;
@@ -430,18 +454,25 @@ aeif_cond_beta_multisynapse::init_buffers_()
 void
 aeif_cond_beta_multisynapse::calibrate()
 {
+  //for ( size_t i = 0; i < P_.num_of_receptors; i++ )
+  //{
+  //  if ( P_.taus_decay[ i ] < P_.taus_rise[ i ] ) {
+  //    throw BadProperty(
+  //	"Synaptic rise time must be smaller than or equal to decay time." );
+  //  }
+  //}
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  P_.receptor_types_.resize( P_.num_of_receptors_ );
-  for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
+  P_.receptor_types.resize( P_.num_of_receptors );
+  for ( size_t i = 0; i < P_.num_of_receptors; i++ )
   {
-    P_.receptor_types_[ i ] = i + 1;
+    P_.receptor_types[ i ] = i + 1;
   }
 
-  V_.g0_.resize( P_.num_of_receptors_ );
+  V_.g0_.resize( P_.num_of_receptors );
 
-  for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
+  for ( size_t i = 0; i < P_.num_of_receptors; ++i )
   {
     // the denominator (denom1) that appears in the expression of the peak time
     // is computed here to check that it is != 0
@@ -477,10 +508,10 @@ aeif_cond_beta_multisynapse::calibrate()
   assert( V_.RefractoryCounts_
     >= 0 ); // since t_ref_ >= 0, this can only fail in error
 
-  B_.spikes_.resize( P_.num_of_receptors_ );
+  B_.spikes_.resize( P_.num_of_receptors );
   S_.y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
     + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-                  * P_.num_of_receptors_ ) );
+                  * P_.num_of_receptors ) );
 
   // reallocate instance of stepping function for ODE GSL solver
   if ( B_.s_ != 0 )
@@ -575,7 +606,7 @@ aeif_cond_beta_multisynapse::update( Time const& origin,
       }
     }
 
-    for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
+    for ( size_t i = 0; i < P_.num_of_receptors; ++i )
     {
       S_.y_[ State_::DG
         + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] +=
@@ -595,7 +626,7 @@ aeif_cond_beta_multisynapse::handles_test_event( SpikeEvent&,
   rport receptor_type )
 {
   if ( receptor_type <= 0
-    || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
+    || receptor_type > static_cast< port >( P_.num_of_receptors ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }
@@ -608,7 +639,7 @@ aeif_cond_beta_multisynapse::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
   assert( ( e.get_rport() > 0 )
-    && ( ( size_t ) e.get_rport() <= P_.num_of_receptors_ ) );
+    && ( ( size_t ) e.get_rport() <= P_.num_of_receptors ) );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
@@ -661,19 +692,11 @@ aeif_cond_beta_multisynapse_dynamics( double,
 
   double I_syn = 0.0;
 
-  for ( size_t i = 0; i < ( node.P_.num_of_receptors_
-                            * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
-        i += S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR )
+  for ( size_t i = 0; i < node.P_.num_of_receptors; ++i )
   {
-    double g = y[ S::G + i ];
-    if ( g > 0 )
-    {
-      I_syn += g * ( node.P_.E_ex - V ); // g>0, E_ex>V => I_syn increases
-    }
-    else
-    {
-      I_syn += g * ( V - node.P_.E_in ); // g<0, V>E_in => I_syn decreases
-    }
+    size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    // I_syn = I_syn + g*(E_rev - V)
+    I_syn += y[ S::G + j ] * ( node.P_.E_rev[ i ] - V );
   }
 
   // We pre-compute the argument of the exponential
@@ -693,7 +716,7 @@ aeif_cond_beta_multisynapse_dynamics( double,
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
 
-  for ( size_t i = 0; i < node.P_.num_of_receptors_; ++i )
+  for ( size_t i = 0; i < node.P_.num_of_receptors; ++i )
   {
     size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
     // Synaptic conductance derivative dG/dt

@@ -42,7 +42,7 @@
 #include "universal_data_logger.h"
 
 /* BeginDocumentation
- Name: aeif_cond_beta_multisynapse - Conductance based exponential
+ Name: aeif_cond_beta_multisynapse - Conductance based adaptive exponential
                                       integrate-and-fire neuron model according
                                       to Brette and Gerstner (2005) with
                                       multiple synaptic rise time and decay
@@ -51,39 +51,41 @@
 
  Description:
 
- aeif_cond_beta_multisynapse is an extension of
- aeif_cond_alpha_multisynapse.  It allows an arbitrary number of synaptic
- rise time and decay time constant. Synaptic conductance is modeled by a
+ aeif_cond_beta_multisynapse is a conductance based adaptive exponential
+ integrate-and-fire neuron model. It allows an arbitrary number of synaptic
+ rise time and decay time constants. Synaptic conductance is modeled by a
  beta function, as described by A. Roth and M.C.W. van Rossum
  in Computational Modeling Methods for Neuroscientists, MIT Press 2013,
  Chapter 6
 
- The time constants are supplied by two arrays taus_rise and taus_decay for
- the synaptic rise time and decay time, respectively.  Port numbers
- are then automatically assigned and there range is from 1 to n.  (n
- being the index of the last element of the tau_ex and tau_in
- arrays).
+ The number of receptor ports is supplied by the variable "num_of_receptors".
+ The time constants are supplied by two arrays, "taus_rise" and "taus_decay" for
+ the synaptic rise time and decay time, respectively. The synaptic
+ reversal potentials are supplied by the array "E_rev". The port numbers
+ are automatically assigned in the range from 1 to num_of_receptors. 
  During connection, the ports are selected with the property "receptor_type".
 
  Examples:
  % PyNEST example, of how to assign synaptic rise time and decay time
  % to a receptor type.
 
- import nest
+ import nest 
  import numpy as np
 
  neuron = nest.Create('aeif_cond_beta_multisynapse')
  nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
- nest.SetStatus(neuron, {'taus_decay':[50.0,20.0,20.0,20.0],
+ nest.SetStatus(neuron, {'num_of_receptors':4,
+                         'E_rev':[0.0,0.0,0.0,-85.0],
+                         'taus_decay':[50.0,20.0,20.0,20.0],
                          'taus_rise':[10.0,10.0,1.0,1.0]})
 
  spike = nest.Create('spike_generator', params = {'spike_times':
-                                                  np.array([10.0])})
+                                                 np.array([10.0])})
 
  voltmeter = nest.Create('voltmeter', 1, {'withgid': True})
 
  delays=[1.0, 300.0, 500.0, 700.0]
- w=[1.0, 1.0, 1.0, -1.0]
+ w=[1.0, 1.0, 1.0, 1.0]
  for syn in range(4):
      nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
                                            'weight': w[syn],
@@ -96,7 +98,7 @@
  Vms = dmm["events"]["V_m"]
  ts = dmm["events"]["times"]
  import pylab
- pylab.figure(1)
+ pylab.figure(2)
  pylab.plot(ts, Vms)
  pylab.show()
 
@@ -104,7 +106,7 @@
 
  Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
- Adapted by Bruno Golosio from aeif_cond_alpha_multisynapse
+ author: Bruno Golosio 07/10/2016
  SeeAlso: aeif_cond_alpha_multisynapse
  */
 
@@ -182,8 +184,6 @@ private:
 
     double g_L;     //!< Leak Conductance in nS
     double C_m;     //!< Membrane Capacitance in pF
-    double E_ex;    //!< Excitatory reversal Potential in mV
-    double E_in;    //!< Inhibitory reversal Potential in mV
     double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
     double Delta_T; //!< Slope faktor in ms.
     double tau_w;   //!< adaptation time-constant in ms.
@@ -191,18 +191,19 @@ private:
     double b;       //!< Spike-triggered adaptation in pA
     double V_th;    //!< Spike threshold in mV.
     double t_ref;   //!< Refractory period in ms.
+    size_t num_of_receptors;
     std::vector< double > taus_rise;  //!< Rise time of synaptic conductance
                                       //!< in ms..
     std::vector< double > taus_decay; //!< Decay time of synaptic conductance
                                       //!< in ms..
+    std::vector< double > E_rev; //!< reversal potentials in mV
 
     double I_e; //!< Intrinsic current in pA.
 
     double gsl_error_tol; //!< error bound for GSL integrator
 
     // type is long because other types are not put through in GetStatus
-    std::vector< long > receptor_types_;
-    size_t num_of_receptors_;
+    std::vector< long > receptor_types;
 
     // boolean flag which indicates whether the neuron has connections
     bool has_connections_;

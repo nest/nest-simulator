@@ -321,6 +321,8 @@ const Name taus_eta( "taus_eta" );
 const Name taus_syn( "taus_syn" );
 const Name taus_rise( "taus_rise" );
 const Name taus_decay( "taus_decay" );
+const Name E_rev( "E_rev" );
+const Name num_of_receptors( "num_of_receptors" );
 const Name theta( "theta" );
 const Name thread( "thread" );
 const Name thread_local_id( "thread_local_id" );

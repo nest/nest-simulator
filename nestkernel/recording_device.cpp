@@ -53,7 +53,7 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   bool withtime,
   bool withgid,
   bool withweight,
-  bool withreceivergid,
+  bool withtargetgid,
   bool withport,
   bool withrport )
   : to_file_( false )
@@ -65,7 +65,7 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   , withgid_( withgid )
   , withtime_( withtime )
   , withweight_( withweight )
-  , withreceivergid_( withreceivergid )
+  , withtargetgid_( withtargetgid )
   , withport_( withport )
   , withrport_( withrport )
   , precision_( 3 )
@@ -87,7 +87,7 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
 nest::RecordingDevice::State_::State_()
   : events_( 0 )
   , event_senders_()
-  , event_receivers_()
+  , event_targets_()
   , event_ports_()
   , event_rports_()
   , event_times_ms_()
@@ -109,12 +109,15 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
   ( *d )[ names::withtime ] = withtime_;
   ( *d )[ names::withgid ] = withgid_;
   ( *d )[ names::withweight ] = withweight_;
-  ( *d )[ names::withreceivergid ] = withreceivergid_;
+  ( *d )[ names::withtargetgid ] = withtargetgid_;
   ( *d )[ names::withport ] = withport_;
   ( *d )[ names::withrport ] = withrport_;
 
   ( *d )[ names::time_in_steps ] = time_in_steps_;
   if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR )
+    ( *d )[ names::precise_times ] = precise_times_;
+
+  if ( rd.mode_ == RecordingDevice::WEIGHT_RECORDER )
     ( *d )[ names::precise_times ] = precise_times_;
 
   // We must maintain /to_file, /to_screen, and /to_memory, because
@@ -165,11 +168,12 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   updateValue< bool >( d, names::withgid, withgid_ );
   updateValue< bool >( d, names::withtime, withtime_ );
   updateValue< bool >( d, names::withweight, withweight_ );
-  updateValue< bool >( d, names::withreceivergid, withreceivergid_ );
+  updateValue< bool >( d, names::withtargetgid, withtargetgid_ );
   updateValue< bool >( d, names::withport, withport_ );
   updateValue< bool >( d, names::withrport, withrport_ );
   updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
-  if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR )
+  if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR
+    or rd.mode_ == RecordingDevice::WEIGHT_RECORDER )
   {
     if ( d->known( names::precise_times ) )
     {
@@ -305,12 +309,12 @@ nest::RecordingDevice::State_::get( DictionaryDatum& d,
       dict, names::weights, std::vector< double >( event_weights_ ) );
   }
 
-  if ( p.withreceivergid_ )
+  if ( p.withtargetgid_ )
   {
     assert( not p.to_accumulator_ );
-    initialize_property_intvector( dict, names::receivers );
+    initialize_property_intvector( dict, names::targets );
     append_property(
-      dict, names::receivers, std::vector< long >( event_receivers_ ) );
+      dict, names::targets, std::vector< long >( event_targets_ ) );
   }
 
   if ( p.withport_ )
@@ -394,7 +398,7 @@ nest::RecordingDevice::RecordingDevice( const Node& n,
   bool withtime,
   bool withgid,
   bool withweight,
-  bool withreceivergid,
+  bool withtargetgid,
   bool withport,
   bool withrport )
   : Device()
@@ -404,7 +408,7 @@ nest::RecordingDevice::RecordingDevice( const Node& n,
       withtime,
       withgid,
       withweight,
-      withreceivergid,
+      withtargetgid,
       withport,
       withrport )
   , S_()
@@ -645,25 +649,25 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
   const long port = event.get_port();
   const long rport = event.get_rport();
 
-  index receiver = -1;
-  if ( P_.withreceivergid_ )
+  index target = -1;
+  if ( P_.withtargetgid_ )
   {
     const WeightRecorderEvent* wr_e =
       dynamic_cast< const WeightRecorderEvent* >( &event );
     if ( wr_e != 0 )
     {
-      receiver = wr_e->get_receiver_gid();
+      target = wr_e->get_receiver_gid();
     }
     else
     {
-      receiver = event.get_receiver_gid();
+      target = event.get_receiver_gid();
     }
   }
 
   if ( P_.to_screen_ )
   {
     print_id_( std::cout, sender );
-    print_receiver_( std::cout, receiver );
+    print_target_( std::cout, target );
     print_port_( std::cout, port );
     print_rport_( std::cout, rport );
     print_time_( std::cout, stamp, offset );
@@ -675,7 +679,7 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
   if ( P_.to_file_ )
   {
     print_id_( B_.fs_, sender );
-    print_receiver_( B_.fs_, receiver );
+    print_target_( B_.fs_, target );
     print_port_( B_.fs_, port );
     print_rport_( B_.fs_, rport );
     print_time_( B_.fs_, stamp, offset );
@@ -691,7 +695,7 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
   // storing data when recording to accumulator relies on the fact
   // that multimeter will call us only once per accumulation step
   if ( P_.to_memory_ || P_.to_accumulator_ )
-    store_data_( sender, stamp, offset, weight, receiver, port, rport );
+    store_data_( sender, stamp, offset, weight, target, port, rport );
 }
 
 void
@@ -729,9 +733,9 @@ nest::RecordingDevice::print_weight_( std::ostream& os, double weight )
 }
 
 void
-nest::RecordingDevice::print_receiver_( std::ostream& os, index gid )
+nest::RecordingDevice::print_target_( std::ostream& os, index gid )
 {
-  if ( P_.withreceivergid_ )
+  if ( P_.withtargetgid_ )
     os << gid << '\t';
 }
 
@@ -754,7 +758,7 @@ nest::RecordingDevice::store_data_( index sender,
   const Time& t,
   double offs,
   double weight,
-  index receiver,
+  index target,
   long port,
   long rport )
 {
@@ -778,8 +782,8 @@ nest::RecordingDevice::store_data_( index sender,
   if ( P_.withweight_ )
     S_.event_weights_.push_back( weight );
 
-  if ( P_.withreceivergid_ )
-    S_.event_receivers_.push_back( receiver );
+  if ( P_.withtargetgid_ )
+    S_.event_targets_.push_back( target );
 
   if ( P_.withport_ )
     S_.event_ports_.push_back( port );
@@ -827,7 +831,7 @@ nest::RecordingDevice::State_::clear_events()
   event_times_steps_.clear();
   event_times_offsets_.clear();
   event_weights_.clear();
-  event_receivers_.clear();
+  event_targets_.clear();
   event_ports_.clear();
   event_rports_.clear();
 }

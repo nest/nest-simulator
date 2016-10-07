@@ -35,6 +35,7 @@
 #include "compose.hpp"
 
 // Includes from nestkernel:
+#include "common_synapse_properties.h"
 #include "connection_label.h"
 #include "connector_model.h"
 #include "event.h"
@@ -43,7 +44,6 @@
 #include "nest_names.h"
 #include "node.h"
 #include "spikecounter.h"
-#include "common_synapse_properties.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -167,6 +167,10 @@ public:
   virtual void
   send( Event& e, thread t, const std::vector< ConnectorModel* >& cm ) = 0;
 
+  void send_weight_event( const CommonSynapseProperties& cp,
+    const Event& e,
+    const thread t );
+
   virtual void trigger_update_weight( long vt_gid,
     thread t,
     const std::vector< spikecounter >& dopa_spikes,
@@ -197,9 +201,6 @@ public:
     t_lastspike_ = t_lastspike;
   }
 
-  void send_weight_event( const CommonSynapseProperties& cp,
-    const Event& e,
-    const thread t );
 
 private:
   double t_lastspike_;
@@ -210,7 +211,7 @@ ConnectorBase::send_weight_event( const CommonSynapseProperties& cp,
   const Event& e,
   const thread t )
 {
-  if ( cp.weight_recorders_.size() != 0 )
+  if ( cp.get_weight_recorder() )
   {
     // Create new event to record the weight and copy relevant content.
     WeightRecorderEvent wr_e;
@@ -221,11 +222,10 @@ ConnectorBase::send_weight_event( const CommonSynapseProperties& cp,
     wr_e.set_sender_gid( e.get_sender_gid() );
     wr_e.set_weight( e.get_weight() );
     wr_e.set_delay( e.get_delay() );
-    wr_e.set_receiver(
-      *cp.weight_recorders_[ t ] ); // receiver is the weight recorder
-    wr_e.set_receiver_gid(
-      e.get_receiver()
-        .get_gid() ); // the gid of the postsynapic neuron is to be recorded
+    // set weight_recorder as receiver
+    wr_e.set_receiver( *cp.get_weight_recorder()->get_thread_sibling( t ) );
+    // but the gid of the postsynaptic node as receiver gid
+    wr_e.set_receiver_gid( e.get_receiver().get_gid() );
     wr_e();
   }
 }

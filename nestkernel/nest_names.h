@@ -214,7 +214,6 @@ extern const Name input_currents_ex;       //!< Incoming excitatory currents
 extern const Name input_currents_in;       //!< Incoming inhibitory currents
 extern const Name Interpol_Order;          //!< Interpolation order (precise
                                            //!< timing neurons)
-extern const Name duration;                //!< Recorder parameter
 extern const Name interval;                //!< Recorder parameter
 extern const Name is_refractory; //!< Neuron is in refractory period (debugging)
 
@@ -310,7 +309,6 @@ extern const Name S; //!< Binary state (output) of neuron (Ginzburg neuron)
 extern const Name scientific;  //!< Recorder parameter
 extern const Name screen;      //!< Recorder parameter
 extern const Name senders;     //!< Recorder parameter
-extern const Name receivers;   //!< Recorder parameter
 extern const Name size_of;     //!< Connection parameters
 extern const Name source;      //!< Connection parameters
 extern const Name spike;       //!< true if the neuron spikes and false if not.
@@ -431,16 +429,17 @@ extern const Name weight_std; //!< Standard deviation/mean of noisy synapse.
 extern const Name weighted_spikes_ex; //!< Weighted incoming excitatory spikes
 extern const Name weighted_spikes_in; //!< Weighted incoming inhibitory spikes
 extern const Name weights;            //!< Connection parameters
+extern const Name weight_recorder;    //!< Device name
 extern const Name with_noise;
 extern const Name with_reset; //!< Shall the pp_neuron reset after each spike?
                               //!< (stochastic neuron pp_psc_delta)
 extern const Name withgid;    //!< Recorder parameter
 extern const Name withpath;   //!< Recorder parameter
-extern const Name withtime;   //!< Recorder parameter
-extern const Name withweight; //!< Recorder parameter
-extern const Name withreceivergid; //!< Recorder parameter
-extern const Name withport;        //!< Recorder parameter
-extern const Name withrport;       //!< Recorder parameter
+extern const Name withport;   //!< Recorder parameter
+extern const Name withrport;  //!< Recorder parameter
+extern const Name withtargetgid; //!< Recorder parameter
+extern const Name withtime;      //!< Recorder parameter
+extern const Name withweight;    //!< Recorder parameter
 
 extern const Name x;  //!< current scaling factor of the synaptic weight [0...1]
                       //!< (Tsodyks2_connection)

@@ -91,8 +91,8 @@
 #include "correlospinmatrix_detector.h"
 #include "multimeter.h"
 #include "spike_detector.h"
-#include "weight_recorder.h"
 #include "spin_detector.h"
+#include "weight_recorder.h"
 
 #include "volume_transmitter.h"
 

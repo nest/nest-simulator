@@ -45,7 +45,12 @@ weights from synapses. Data is recorded in memory or to file as for all
 RecordingDevices.
 By default, source GID, target GID, time and weight of each spike is recorded.
 
-The weight detector can also record weights with full precision
+In order to record only from a subset of connected synapses, the
+weight_recorder accepts the parameters 'senders' and 'targets', with which the
+recorded data is limited to the synapses with the correspondig source or target
+gid.
+
+The weight recorder can also record weights with full precision
 from neurons emitting precisely timed spikes. Set /precise_times to
 achieve this.
 
@@ -133,7 +138,7 @@ private:
 
   struct Parameters_
   {
-    std::vector< long > sources_;
+    std::vector< long > senders_;
     std::vector< long > targets_;
 
     Parameters_();

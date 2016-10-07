@@ -247,7 +247,8 @@ public:
   {
     SPIKE_DETECTOR,
     MULTIMETER,
-    SPIN_DETECTOR
+    SPIN_DETECTOR,
+    WEIGHT_RECORDER
   };
 
   /**
@@ -258,7 +259,7 @@ public:
    * @param Default value for withtime property
    * @param Default value for withgid property
    * @param Default value for withweight property
-   * @param Default value for withreceivergid property
+   * @param Default value for withtargetgid property
    * @param Default value for withport property
    * @param Default value for withrport property
    */
@@ -417,22 +418,29 @@ private:
   void print_weight_( std::ostream&, double );
 
   /**
-   * Print the receiver gid of an event.
+   * Print the target gid of an event.
    */
-  void print_receiver_( std::ostream&, index );
+  void print_target_( std::ostream&, index );
 
   /**
-   * Print the receiver gid of an event.
+   * Print the port of an event.
    */
   void print_port_( std::ostream&, long );
 
   /**
-   * Print the receiver gid of an event.
+   * Print the rport of an event.
    */
   void print_rport_( std::ostream&, long );
 
   /**
    * Store data in internal structure.
+   * @param store sender gid of event
+   * @param store timestamp of event
+   * @param store offset of event
+   * @param store weight of event
+   * @param store target gid of event
+   * @param store port of event
+   * @param store rport of event
    */
   void store_data_( index, const Time&, double, double, index, long, long );
 
@@ -468,16 +476,16 @@ private:
     bool to_file_;   //!< true if recorder writes its output to a file
     bool to_screen_; //!< true if recorder writes its output to stdout
     bool to_memory_; //!< true if data should be recorded in memory, default
-    bool to_accumulator_;  //!< true if data is to be accumulated; exclusive to
-                           //!< all other to_*
-    bool time_in_steps_;   //!< true if time is printed in steps, not ms.
-    bool precise_times_;   //!< true if time is computed including offset
-    bool withgid_;         //!< true if element GID is to be printed, default
-    bool withtime_;        //!< true if time of event is to be printed, default
-    bool withweight_;      //!< true if weight of event is to be printed
-    bool withreceivergid_; //!< true if receiver GID is to be printed, default
-    bool withport_;        //!< true if receiver GID is to be printed, default
-    bool withrport_;       //!< true if receiver GID is to be printed, default
+    bool to_accumulator_; //!< true if data is to be accumulated; exclusive to
+                          //!< all other to_*
+    bool time_in_steps_;  //!< true if time is printed in steps, not ms.
+    bool precise_times_;  //!< true if time is computed including offset
+    bool withgid_;        //!< true if element GID is to be printed, default
+    bool withtime_;       //!< true if time of event is to be printed, default
+    bool withweight_;     //!< true if weight of event is to be printed
+    bool withtargetgid_;  //!< true if target GID is to be printed, default
+    bool withport_;       //!< true if port is to be printed, default
+    bool withrport_;      //!< true if rport is to be printed, default
 
     long precision_;  //!< precision of doubles written to file
     bool scientific_; //!< use scientific format if true, else fixed
@@ -504,7 +512,7 @@ private:
      * @param Default value for withtime property
      * @param Default value for withgid property
      * @param Default value for withweight property
-     * @param Default value for withreceivergid property
+     * @param Default value for withtargetgid property
      * @param Default value for withport property
      * @param Default value for withrport property
      */
@@ -522,7 +530,7 @@ private:
   {
     size_t events_;                         //!< Event counter
     std::vector< long > event_senders_;     //!< List of event sender ids
-    std::vector< long > event_receivers_;   //!< List of event receivers ids
+    std::vector< long > event_targets_;     //!< List of event targets ids
     std::vector< long > event_ports_;       //!< List of event ports
     std::vector< long > event_rports_;      //!< List of event rports
     std::vector< double > event_times_ms_;  //!< List of event times in ms

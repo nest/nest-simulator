@@ -154,7 +154,7 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
             f_file_name.close()
 
             f_file_name_hlp = open(('../cmds/sli/%s.hlp' % name), 'w')
-            f_file_name_hlp.write(cmdindexstring)
+            f_file_name_hlp.write('\n'.join(hlplist))
             f_file_name_hlp.close()
         else:
             f_file_name = open(('../cmds/cc/%s.html' % name), 'w')

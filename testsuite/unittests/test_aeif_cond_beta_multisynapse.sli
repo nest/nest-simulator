@@ -104,15 +104,14 @@ vm << /withtime true
 
 % Creates one aeif_conf_beta_multisynapse neuron
 /aeif_cond_beta_multisynapse Create /multisynapse_neuron Set
-multisynapse_neuron << /num_of_receptors num_of_receptors >> SetStatus
-multisynapse_neuron << /E_rev E_rev >> SetStatus
-multisynapse_neuron << /taus_decay taus_decay >> SetStatus
-multisynapse_neuron << /taus_rise taus_rise >> SetStatus
-multisynapse_neuron << /V_peak V_peak >> SetStatus
-multisynapse_neuron << /a a >> SetStatus
-multisynapse_neuron << /b b >> SetStatus
-multisynapse_neuron << /E_L Vrest >> SetStatus
-multisynapse_neuron << /g_L g_L >> SetStatus
+multisynapse_neuron << /E_rev E_rev
+                       /taus_decay taus_decay
+                       /taus_rise taus_rise
+                       /V_peak V_peak
+                       /a a
+                       /b b
+                       /E_L Vrest
+                       /g_L g_L >> SetStatus
 
 % creates an array of synaptic indexes 
 delays length 1 arraystore Range /synapses_idx exch def

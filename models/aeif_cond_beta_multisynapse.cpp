@@ -20,6 +20,8 @@
  *
  */
 
+#include <stdio.h>
+
 #include "aeif_cond_beta_multisynapse.h"
 
 #ifdef HAVE_GSL
@@ -41,6 +43,7 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
+using namespace std;
 /* ----------------------------------------------------------------
  * Recordables map
  * ---------------------------------------------------------------- */
@@ -156,10 +159,6 @@ aeif_cond_beta_multisynapse::Parameters_::get( DictionaryDatum& d ) const
 void
 aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
 {
-  static const double E_rev_def = 0.0;
-  static const double taus_rise_def = 2.0;
-  static const double taus_decay_def = 20.0;
-
   updateValue< double >( d, names::V_th, V_th );
   updateValue< double >( d, names::V_peak, V_peak_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
@@ -169,81 +168,60 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::C_m, C_m );
   updateValue< double >( d, names::g_L, g_L );
 
-  size_t tmp_num;
-  if ( updateValue< long >( d, names::num_of_receptors, tmp_num ) )
-  {
-    if ( tmp_num < num_of_receptors && has_connections_ == true )
+  std::vector< double > Erev_tmp, taur_tmp, taud_tmp;
+  bool Erev_flag =
+    updateValue< std::vector< double > >( d, names::E_rev, Erev_tmp );
+  bool taur_flag =
+    updateValue< std::vector< double > >( d, names::taus_rise, taur_tmp );
+  bool taud_flag =
+    updateValue< std::vector< double > >( d, names::taus_decay, taud_tmp );
+  if ( Erev_flag || taur_flag || taud_flag )
+  { // receptor arrays have been modified
+    if ( !Erev_flag || !taur_flag || !taud_flag )
+    {
+      throw BadProperty(
+        "The reversal potential, synaptic rise time and synaptic decay time "
+        "arrays must be modified altogether." );
+    }
+    if ( ( Erev_tmp.size() != taur_tmp.size() )
+      || ( Erev_tmp.size() != taud_tmp.size() ) )
+    {
+      throw BadProperty(
+        "The reversal potential, synaptic rise time and synaptic decay time "
+        "arrays must have the same size." );
+    }
+    if ( taur_tmp.size() == 0 )
+    {
+      throw BadProperty( "The neuron must have at least one port." );
+    }
+    if ( taur_tmp.size() < num_of_receptors && has_connections_ == true )
     {
       throw BadProperty(
         "The neuron has connections, therefore the number of ports cannot be "
         "reduced." );
     }
-    else if ( tmp_num <= 0 )
+    for ( size_t i = 0; i < taur_tmp.size(); ++i )
     {
-      throw BadProperty( "The neuron must have at least one port." );
+      if ( taur_tmp[ i ] <= 0 || taud_tmp[ i ] <= 0 )
+      {
+        throw BadProperty(
+          "All synaptic time constants must be strictly positive" );
+      }
+      if ( taud_tmp[ i ] < taur_tmp[ i ] )
+      {
+        throw BadProperty(
+          "Synaptic rise time must be smaller than or equal to decay time." );
+      }
     }
-
-    E_rev.resize( tmp_num, E_rev_def );
-    taus_rise.resize( tmp_num, taus_rise_def );
-    taus_decay.resize( tmp_num, taus_decay_def );
-    receptor_types.resize( tmp_num );
-    for ( size_t i = num_of_receptors; i < tmp_num; i++ )
+    E_rev = Erev_tmp;
+    taus_rise = taur_tmp;
+    taus_decay = taud_tmp;
+    num_of_receptors = taur_tmp.size();
+    receptor_types.resize( num_of_receptors );
+    for ( size_t i = 0; i < num_of_receptors; i++ )
     {
       receptor_types[ i ] = i + 1;
     }
-    num_of_receptors = tmp_num;
-  }
-
-  std::vector< double > E_rev_tmp;
-  if ( updateValue< std::vector< double > >( d, names::E_rev, E_rev_tmp ) )
-  {
-    if ( E_rev_tmp.size() != num_of_receptors )
-    {
-      throw BadProperty(
-        "The reversal potential array size must match the number of ports." );
-    }
-
-    E_rev = E_rev_tmp;
-  }
-
-  std::vector< double > tau_tmp;
-  if ( updateValue< std::vector< double > >( d, names::taus_decay, tau_tmp ) )
-  {
-    if ( tau_tmp.size() != num_of_receptors )
-    {
-      throw BadProperty(
-        "The synaptic decay time array size must match the number of ports." );
-    }
-
-    for ( size_t i = 0; i < tau_tmp.size(); ++i )
-    {
-      if ( tau_tmp[ i ] <= 0 )
-      {
-        throw BadProperty(
-          "All synaptic time constants must be strictly positive" );
-      }
-    }
-    taus_decay = tau_tmp;
-  }
-  tau_tmp.clear();
-
-  if ( updateValue< std::vector< double > >( d, names::taus_rise, tau_tmp ) )
-  {
-    if ( tau_tmp.size() != num_of_receptors )
-    {
-      throw BadProperty(
-        "The synaptic rise time array size must match the number of ports." );
-    }
-
-    for ( size_t i = 0; i < tau_tmp.size(); ++i )
-    {
-      if ( tau_tmp[ i ] <= 0 )
-      {
-        throw BadProperty(
-          "All synaptic time constants must be strictly positive" );
-      }
-    }
-    taus_rise = tau_tmp;
   }
 
   updateValue< double >( d, names::a, a );
@@ -476,13 +454,6 @@ aeif_cond_beta_multisynapse::init_buffers_()
 void
 aeif_cond_beta_multisynapse::calibrate()
 {
-  // for ( size_t i = 0; i < P_.num_of_receptors; i++ )
-  //{
-  //  if ( P_.taus_decay[ i ] < P_.taus_rise[ i ] ) {
-  //    throw BadProperty(
-  //	"Synaptic rise time must be smaller than or equal to decay time." );
-  //  }
-  //}
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 

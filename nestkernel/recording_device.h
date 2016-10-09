@@ -377,7 +377,16 @@ public:
     return P_.to_accumulator_;
   }
 
-  inline void set_precise( bool use_precise, long precision );
+  inline void set_precise_times( bool precise_times );
+
+  inline void set_precision( long precision );
+
+  inline bool records_precise_times() const;
+
+  inline bool is_precision_user_set() const;
+
+  inline bool is_precise_times_user_set() const;
+
 
 private:
   /**
@@ -449,6 +458,9 @@ private:
     long precision_;  //!< precision of doubles written to file
     bool scientific_; //!< use scientific format if true, else fixed
 
+    bool user_set_precise_times_; //!< true if user set precise_times
+    bool user_set_precision_;     //!< true if user set precision
+
     bool binary_; //!< true if to write files in binary mode instead of ASCII
     long fbuffer_size_;     //!< the buffer size to use when writing to file
     long fbuffer_size_old_; //!< the buffer size to use when writing
@@ -506,6 +518,23 @@ private:
   Buffers_ V_;
 };
 
+inline bool
+RecordingDevice::is_precision_user_set() const
+{
+  return P_.user_set_precision_;
+}
+
+inline bool
+RecordingDevice::is_precise_times_user_set() const
+{
+  return P_.user_set_precise_times_;
+}
+
+inline bool
+RecordingDevice::records_precise_times() const
+{
+  return P_.precise_times_;
+}
 
 inline bool
 RecordingDevice::is_active( Time const& T ) const
@@ -526,9 +555,14 @@ RecordingDevice::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-RecordingDevice::set_precise( bool use_precise, long precision )
+RecordingDevice::set_precise_times( bool use_precise )
 {
   P_.precise_times_ = use_precise;
+}
+
+inline void
+RecordingDevice::set_precision( long precision )
+{
   P_.precision_ = precision;
 }
 

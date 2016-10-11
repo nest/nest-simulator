@@ -32,6 +32,7 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
+#include "exceptions.h"
 
 // Includes from sli:
 #include "dictdatum.h"

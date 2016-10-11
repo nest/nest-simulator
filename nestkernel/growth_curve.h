@@ -245,10 +245,10 @@ private:
    network during the simulation.
    This type of growth curve  uses a forward Euler integration method to update
    the number of synaptic elements:
-   dz/dt = nu ((2 / (1 + e^((Ca(t) - eps)/0.1))) - 1)
+   dz/dt = nu ((2 / (1 + e^((Ca(t) - eps)/w))) - 1)
    eps is the target mean calcium concentration in the
-   neuron and nu is the growth rate in elements/ms. The growth rate nu is
-   defined in the SynapticElement class.
+   neuron, w controls the width of the sigmoid and nu is the growth rate in
+   elements/ms. The growth rate nu is defined in the SynapticElement class.
 
   Parameters:
    eps          double -  The target calcium concentration that
@@ -270,6 +270,9 @@ private:
    nu           double -  Growth rate in elements/ms. The growth rate nu is
                           defined in the SynapticElement class. Can be negative.
 
+   w            double -  Parameter that controls the width of the curve.
+                          Must be greater than 0
+
   References:
    [1] Butz, Markus, Steenbuck, Ines D., and Arjen van Ooyen.
    "Homeostatic structural plasticity increases the efficiency of small-world
@@ -284,9 +287,10 @@ private:
  * \class GrowthCurveSigmoid
  * Uses a forward Euler integration method to update the number of synaptic
  * elements:
- * dz/dt = nu ((2 / (1 + e^((Ca(t) - eps)/0.1))) - 1)
+ * dz/dt = nu ((2 / (1 + e^((Ca(t) - eps)/w))) - 1)
  * eps is the target mean calcium concentration in the
- * neuron and nu is the growth rate.
+ * neuron, w controls the width of the sigmoid
+ * and nu is the growth rate.
  */
 class GrowthCurveSigmoid : public GrowthCurve
 {
@@ -303,6 +307,7 @@ public:
 
 private:
   double eps_;
+  double w_;
 };
 
 } // of namespace

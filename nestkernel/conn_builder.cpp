@@ -1102,11 +1102,8 @@ nest::FixedInDegreeBuilder::connect_()
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
         {
-          for ( long j = 0; j < indegree_; ++j )
-          {
-            // skip array parameters handled in other virtual processes
-            skip_conn_parameter_( tid );
-          }
+          // skip array parameters handled in other virtual processes
+          skip_conn_parameter_( tid, indegree_ );
           continue;
         }
 
@@ -1116,11 +1113,8 @@ nest::FixedInDegreeBuilder::connect_()
         // check whether the target is on our thread
         if ( tid != target_thread )
         {
-          for ( long j = 0; j < indegree_; ++j )
-          {
-            // skip array parameters handled in other virtual processes
-            skip_conn_parameter_( tid );
-          }
+          // skip array parameters handled in other virtual processes
+          skip_conn_parameter_( tid, indegree_ );
           continue;
         }
 

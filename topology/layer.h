@@ -70,7 +70,7 @@ public:
    * @param sind subnet index of node
    * @returns position of node as std::vector
    */
-  virtual std::vector< double_t > get_position_vector(
+  virtual std::vector< double > get_position_vector(
     const index sind ) const = 0;
 
   /**
@@ -80,8 +80,8 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns vector pointing from from_pos to node to's position
    */
-  virtual std::vector< double_t > compute_displacement(
-    const std::vector< double_t >& from_pos,
+  virtual std::vector< double > compute_displacement(
+    const std::vector< double >& from_pos,
     const index to ) const = 0;
 
   /**
@@ -91,7 +91,7 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns length of vector pointing from from_pos to node to's position
    */
-  virtual double_t compute_distance( const std::vector< double_t >& from_pos,
+  virtual double compute_distance( const std::vector< double >& from_pos,
     const index to ) const = 0;
 
   /**
@@ -120,7 +120,7 @@ public:
    * @returns nodes in layer inside mask.
    */
   virtual std::vector< index > get_global_nodes( const MaskDatum& mask,
-    const std::vector< double_t >& anchor,
+    const std::vector< double >& anchor,
     bool allow_oversized ) = 0;
 
   /**
@@ -150,28 +150,28 @@ public:
    * @param depth layer depth
    * @returns iterator for local nodes pointing to first node at given depth
    */
-  std::vector< Node* >::iterator local_begin( int_t depth );
+  std::vector< Node* >::iterator local_begin( int depth );
 
   /**
    * End of local children at given depth.
    * @param depth layer depth
    * @returns iterator for local nodes pointing to the end of the given depth
    */
-  std::vector< Node* >::iterator local_end( int_t depth );
+  std::vector< Node* >::iterator local_end( int depth );
 
   /**
    * Start of local children at given depth.
    * @param depth layer depth
    * @returns iterator for local nodes pointing to first node at given depth
    */
-  std::vector< Node* >::const_iterator local_begin( int_t depth ) const;
+  std::vector< Node* >::const_iterator local_begin( int depth ) const;
 
   /**
    * End of local children at given depth.
    * @param depth layer depth
    * @returns iterator for local nodes pointing to the end of the given depth
    */
-  std::vector< Node* >::const_iterator local_end( int_t depth ) const;
+  std::vector< Node* >::const_iterator local_end( int depth ) const;
 
 protected:
   /**
@@ -182,7 +182,7 @@ protected:
   /**
    * number of neurons at each position
    */
-  int_t depth_;
+  int depth_;
 
   /**
    * GID for the single layer for which we cache global position information
@@ -286,7 +286,7 @@ public:
    * @param sind local subnet index of node
    * @returns position of node as std::vector
    */
-  std::vector< double_t > get_position_vector( const index sind ) const;
+  std::vector< double > get_position_vector( const index sind ) const;
 
   /**
    * Returns displacement of a position from another position. When using
@@ -308,8 +308,8 @@ public:
   Position< D > compute_displacement( const Position< D >& from_pos,
     const index to ) const;
 
-  std::vector< double_t > compute_displacement(
-    const std::vector< double_t >& from_pos,
+  std::vector< double > compute_displacement(
+    const std::vector< double >& from_pos,
     const index to ) const;
 
   /**
@@ -319,10 +319,10 @@ public:
    * @param to        node in layer to which displacement is to be computed
    * @returns length of vector pointing from from_pos to node to's position
    */
-  double_t compute_distance( const Position< D >& from_pos,
+  double compute_distance( const Position< D >& from_pos,
     const index to ) const;
 
-  double_t compute_distance( const std::vector< double_t >& from_pos,
+  double compute_distance( const std::vector< double >& from_pos,
     const index to ) const;
 
 
@@ -366,7 +366,7 @@ public:
    * Return a vector with the GIDs of the nodes inside the mask.
    */
   std::vector< index > get_global_nodes( const MaskDatum& mask,
-    const std::vector< double_t >& anchor,
+    const std::vector< double >& anchor,
     bool allow_oversized );
 
   /**
@@ -643,16 +643,16 @@ Layer< D >::compute_displacement( const Position< D >& from_pos,
 }
 
 template < int D >
-inline std::vector< double_t >
-Layer< D >::compute_displacement( const std::vector< double_t >& from_pos,
+inline std::vector< double >
+Layer< D >::compute_displacement( const std::vector< double >& from_pos,
   const index to ) const
 {
-  return std::vector< double_t >(
+  return std::vector< double >(
     compute_displacement( Position< D >( from_pos ), to ) );
 }
 
 template < int D >
-inline double_t
+inline double
 Layer< D >::compute_distance( const Position< D >& from_pos,
   const index to ) const
 {
@@ -660,18 +660,18 @@ Layer< D >::compute_distance( const Position< D >& from_pos,
 }
 
 template < int D >
-inline double_t
-Layer< D >::compute_distance( const std::vector< double_t >& from_pos,
+inline double
+Layer< D >::compute_distance( const std::vector< double >& from_pos,
   const index to ) const
 {
   return compute_displacement( Position< D >( from_pos ), to ).length();
 }
 
 template < int D >
-inline std::vector< double_t >
+inline std::vector< double >
 Layer< D >::get_position_vector( const index sind ) const
 {
-  return std::vector< double_t >( get_position( sind ) );
+  return std::vector< double >( get_position( sind ) );
 }
 
 template < int D >

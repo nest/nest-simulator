@@ -80,7 +80,7 @@ void connect( const GIDCollection& sources,
 
 ArrayDatum get_connections( const DictionaryDatum& dict );
 
-void simulate( const double_t& t );
+void simulate( const double& t );
 void resume_simulation();
 
 void copy_model( const Name& oldmodname,

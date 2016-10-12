@@ -152,6 +152,7 @@ Node::get_status_base()
   }
 
   ( *dict )[ names::thread_local_id ] = get_thread_lid();
+  ( *dict )[ names::supports_precise_spikes ] = is_off_grid();
 
   // This is overwritten with a corresponding value in the
   // base classes for stimulating and recording devices, and
@@ -192,7 +193,7 @@ Node::set_status_base( const DictionaryDatum& dict )
  * throws UnexpectedEvent
  */
 bool
-Node::wfr_update( Time const&, const long_t, const long_t )
+Node::wfr_update( Time const&, const long, const long )
 {
   throw UnexpectedEvent();
 }
@@ -210,7 +211,8 @@ Node::send_test_event( Node&, rport, synindex, bool )
  * Default implementation of register_stdp_connection() just
  * throws IllegalConnection
  */
-void Node::register_stdp_connection( double_t )
+void
+Node::register_stdp_connection( double )
 {
   throw IllegalConnection();
 }
@@ -337,21 +339,22 @@ Node::sends_secondary_event( GapJunctionEvent& )
 }
 
 
-double_t Node::get_K_value( double_t )
+double
+Node::get_K_value( double )
 {
   throw UnexpectedEvent();
 }
 
 
 void
-Node::get_K_values( double_t, double_t&, double_t& )
+Node::get_K_values( double, double&, double& )
 {
   throw UnexpectedEvent();
 }
 
 void
-nest::Node::get_history( double_t,
-  double_t,
+nest::Node::get_history( double,
+  double,
   std::deque< histentry >::iterator*,
   std::deque< histentry >::iterator* )
 {

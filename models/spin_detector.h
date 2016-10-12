@@ -144,7 +144,7 @@ private:
    *
    * @see RecordingDevice
    */
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /**
    * Buffer for incoming spikes.

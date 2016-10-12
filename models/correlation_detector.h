@@ -181,7 +181,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // ------------------------------------------------------------
 
@@ -191,10 +191,10 @@ private:
    */
   struct Spike_
   {
-    long_t timestep_;
-    double_t weight_;
+    long timestep_;
+    double weight_;
 
-    Spike_( long_t timestep, double_t weight )
+    Spike_( long timestep, double weight )
       : timestep_( timestep )
       , weight_( weight )
     {
@@ -249,19 +249,19 @@ private:
    */
   struct State_
   {
-    std::vector< long_t > n_events_;        //!< spike counters
+    std::vector< long > n_events_;          //!< spike counters
     std::vector< SpikelistType > incoming_; //!< incoming spikes, sorted
 
     /** Weighted histogram.
      * @note Data type is double to accommodate weights.
      */
-    std::vector< double_t > histogram_;
+    std::vector< double > histogram_;
 
     //! used for Kahan summation algorithm
-    std::vector< double_t > histogram_correction_;
+    std::vector< double > histogram_correction_;
 
     //! Unweighted histogram.
-    std::vector< long_t > count_histogram_;
+    std::vector< long > count_histogram_;
 
     State_(); //!< initialize default state
 

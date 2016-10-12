@@ -62,8 +62,13 @@ modeldict keys{
 	ResetKernel
 
 	% special case for Poisson Neuron
+
+	model /gif_psc_exp eq { model << /lambda_0 0.0 >> SetDefaults} if 
+	model /gif_cond_exp eq { model << /lambda_0 0.0 >> SetDefaults} if 
+	model /gif_psc_exp_multisynapse eq { model << /lambda_0 0.0 >> SetDefaults} if 
+	model /gif_cond_exp_multisynapse eq { model << /lambda_0 0.0 >> SetDefaults} if
 	model /pp_psc_delta eq { model << /c_2 0.0 >> SetDefaults} if 
-	
+
 	model =only (\t: ) =only
 
 	%executive
@@ -85,8 +90,11 @@ modeldict keys{
 	300 Simulate
 
 	% compare final membrane potentials
-	n1 GetStatus /V_m get n2 GetStatus /V_m get eq dup {(pass) =}{ (failed: unequal voltages) =  executive } ifelse res exch append /res Set
-
+	n1 GetStatus /V_m get n2 GetStatus /V_m get eq dup 
+	  {(pass) =}
+	  { (failed: unequal voltages) =  executive } 
+	ifelse 
+	res exch append /res Set
 	} stopped {  clear (DC not allowed) = errordict /newerror false put  } if % skip models that don't support current event
     }
     if   % model GetDefaults /I_e known record_VM and

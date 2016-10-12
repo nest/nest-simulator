@@ -110,16 +110,16 @@ class gainfunction_ginzburg
 {
 private:
   /** threshold of sigmoidal activation function */
-  double_t theta_;
+  double theta_;
 
   /** linear gain factor of gain function */
-  double_t c1_;
+  double c1_;
 
   /** prefactor of sigmoidal gain function */
-  double_t c2_;
+  double c2_;
 
   /** gain factor of sigmoidal gain function */
-  double_t c3_;
+  double c3_;
 
 public:
   /** sets default parameters */
@@ -138,11 +138,10 @@ public:
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
-  bool operator()( librandom::RngPtr rng, double_t h );
+  bool operator()( librandom::RngPtr rng, double h );
 };
 
-inline bool gainfunction_ginzburg::operator()( librandom::RngPtr rng,
-  double_t h )
+inline bool gainfunction_ginzburg::operator()( librandom::RngPtr rng, double h )
 {
   return rng->drand() < c1_ * h
     + c2_ * 0.5 * ( 1.0 + tanh( c3_ * ( h - theta_ ) ) );

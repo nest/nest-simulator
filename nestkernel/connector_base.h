@@ -29,6 +29,7 @@
 // C++ includes:
 #include <cstdlib>
 #include <vector>
+#include <deque>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -148,15 +149,15 @@ public:
   virtual void get_connections( size_t source_gid,
     size_t thrd,
     synindex synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const = 0;
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const = 0;
 
   virtual void get_connections( size_t source_gid,
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const = 0;
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const = 0;
 
   virtual void get_target_gids( std::vector< size_t >& target_gids,
     size_t thrd,
@@ -165,10 +166,10 @@ public:
   virtual void
   send( Event& e, thread t, const std::vector< ConnectorModel* >& cm ) = 0;
 
-  virtual void trigger_update_weight( long_t vt_gid,
+  virtual void trigger_update_weight( long vt_gid,
     thread t,
     const std::vector< spikecounter >& dopa_spikes,
-    double_t t_trig,
+    double t_trig,
     const std::vector< ConnectorModel* >& cm ) = 0;
 
   virtual void send_secondary( SecondaryEvent& e,
@@ -184,19 +185,19 @@ public:
   // destructor needed to delete connections
   virtual ~ConnectorBase(){};
 
-  double_t
+  double
   get_t_lastspike() const
   {
     return t_lastspike_;
   }
   void
-  set_t_lastspike( const double_t t_lastspike )
+  set_t_lastspike( const double t_lastspike )
   {
     t_lastspike_ = t_lastspike;
   }
 
 private:
-  double_t t_lastspike_;
+  double t_lastspike_;
 };
 
 // vector with 1 vtable overhead
@@ -378,18 +379,18 @@ public:
   get_connections( size_t source_gid,
     size_t thrd,
     synindex synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < K; i++ )
       if ( get_syn_id() == synapse_id )
         if ( synapse_label == UNLABELED_CONNECTION
           || C_[ i ].get_label() == synapse_label )
-          conns.push_back( ConnectionDatum( ConnectionID( source_gid,
+          conns.push_back( ConnectionID( source_gid,
             C_[ i ].get_target( thrd )->get_gid(),
             thrd,
             synapse_id,
-            i ) ) );
+            i ) );
   }
 
   void
@@ -397,16 +398,16 @@ public:
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < K; i++ )
       if ( get_syn_id() == synapse_id )
         if ( synapse_label == UNLABELED_CONNECTION
           || C_[ i ].get_label() == synapse_label )
           if ( C_[ i ].get_target( thrd )->get_gid() == target_gid )
-            conns.push_back( ConnectionDatum(
-              ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) ) );
+            conns.push_back(
+              ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) );
   }
 
   /**
@@ -447,10 +448,10 @@ public:
   }
 
   void
-  trigger_update_weight( long_t vt_gid,
+  trigger_update_weight( long vt_gid,
     thread t,
     const std::vector< spikecounter >& dopa_spikes,
-    double_t t_trig,
+    double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
     synindex syn_id = C_[ 0 ].get_syn_id();
@@ -611,19 +612,19 @@ public:
   get_connections( size_t source_gid,
     size_t thrd,
     synindex synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
     if ( get_syn_id() == synapse_id )
     {
       if ( synapse_label == UNLABELED_CONNECTION
         || C_[ 0 ].get_label() == synapse_label )
       {
-        conns.push_back( ConnectionDatum( ConnectionID( source_gid,
+        conns.push_back( ConnectionID( source_gid,
           C_[ 0 ].get_target( thrd )->get_gid(),
           thrd,
           synapse_id,
-          0 ) ) );
+          0 ) );
       }
     }
   }
@@ -633,8 +634,8 @@ public:
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
     if ( get_syn_id() == synapse_id )
     {
@@ -642,8 +643,8 @@ public:
         || C_[ 0 ].get_label() == synapse_label )
       {
         if ( C_[ 0 ].get_target( thrd )->get_gid() == target_gid )
-          conns.push_back( ConnectionDatum(
-            ConnectionID( source_gid, target_gid, thrd, synapse_id, 0 ) ) );
+          conns.push_back(
+            ConnectionID( source_gid, target_gid, thrd, synapse_id, 0 ) );
       }
     }
   }
@@ -672,10 +673,10 @@ public:
   }
 
   void
-  trigger_update_weight( long_t vt_gid,
+  trigger_update_weight( long vt_gid,
     thread t,
     const std::vector< spikecounter >& dopa_spikes,
-    double_t t_trig,
+    double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
     synindex syn_id = C_[ 0 ].get_syn_id();
@@ -848,18 +849,18 @@ public:
   get_connections( size_t source_gid,
     size_t thrd,
     synindex synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < C_.size(); i++ )
       if ( get_syn_id() == synapse_id )
         if ( synapse_label == UNLABELED_CONNECTION
           || C_[ i ].get_label() == synapse_label )
-          conns.push_back( ConnectionDatum( ConnectionID( source_gid,
+          conns.push_back( ConnectionID( source_gid,
             C_[ i ].get_target( thrd )->get_gid(),
             thrd,
             synapse_id,
-            i ) ) );
+            i ) );
   }
 
   void
@@ -867,16 +868,16 @@ public:
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
     if ( get_syn_id() == synapse_id )
       for ( size_t i = 0; i < C_.size(); i++ )
         if ( synapse_label == UNLABELED_CONNECTION
           || C_[ i ].get_label() == synapse_label )
           if ( C_[ i ].get_target( thrd )->get_gid() == target_gid )
-            conns.push_back( ConnectionDatum(
-              ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) ) );
+            conns.push_back(
+              ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) );
   }
 
   void
@@ -914,10 +915,10 @@ public:
   }
 
   void
-  trigger_update_weight( long_t vt_gid,
+  trigger_update_weight( long vt_gid,
     thread t,
     const std::vector< spikecounter >& dopa_spikes,
-    double_t t_trig,
+    double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
     synindex syn_id = C_[ 0 ].get_syn_id();
@@ -1027,8 +1028,8 @@ public:
   get_connections( size_t source_gid,
     size_t thrd,
     synindex synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < size(); i++ )
       at( i )->get_connections(
@@ -1040,8 +1041,8 @@ public:
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < size(); i++ )
       at( i )->get_connections(
@@ -1071,10 +1072,10 @@ public:
   }
 
   void
-  trigger_update_weight( long_t vt_gid,
+  trigger_update_weight( long vt_gid,
     thread t,
     const std::vector< spikecounter >& dopa_spikes,
-    double_t t_trig,
+    double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
     for ( size_t i = 0; i < size(); i++ )

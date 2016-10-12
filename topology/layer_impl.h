@@ -71,12 +71,12 @@ Layer< D >::set_status( const DictionaryDatum& d )
   if ( d->known( names::extent ) )
   {
     Position< D > center = get_center();
-    extent_ = getValue< std::vector< double_t > >( d, names::extent );
+    extent_ = getValue< std::vector< double > >( d, names::extent );
     lower_left_ = center - extent_ / 2;
   }
   if ( d->known( names::center ) )
   {
-    lower_left_ = getValue< std::vector< double_t > >( d, names::center );
+    lower_left_ = getValue< std::vector< double > >( d, names::center );
     lower_left_ -= extent_ / 2;
   }
   if ( d->known( names::edge_wrap ) )
@@ -99,9 +99,9 @@ Layer< D >::get_status( DictionaryDatum& d ) const
   DictionaryDatum topology_dict( new Dictionary );
 
   ( *topology_dict )[ names::depth ] = depth_;
-  ( *topology_dict )[ names::extent ] = std::vector< double_t >( extent_ );
+  ( *topology_dict )[ names::extent ] = std::vector< double >( extent_ );
   ( *topology_dict )[ names::center ] =
-    std::vector< double_t >( lower_left_ + extent_ / 2 );
+    std::vector< double >( lower_left_ + extent_ / 2 );
 
   if ( periodic_.none() )
     ( *topology_dict )[ names::edge_wrap ] = BoolDatum( false );
@@ -290,7 +290,7 @@ Layer< D >::get_global_positions_vector( Selector filter,
 template < int D >
 std::vector< index >
 Layer< D >::get_global_nodes( const MaskDatum& mask,
-  const std::vector< double_t >& anchor,
+  const std::vector< double >& anchor,
   bool allow_oversized )
 {
   MaskedLayer< D > masked_layer(
@@ -358,9 +358,9 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
           con_id.get_port(),
           con_id.get_target_thread() );
 
-      long_t target_gid = getValue< long_t >( result_dict, names::target );
-      double_t weight = getValue< double_t >( result_dict, names::weight );
-      double_t delay = getValue< double_t >( result_dict, names::delay );
+      long target_gid = getValue< long >( result_dict, names::target );
+      double weight = getValue< double >( result_dict, names::weight );
+      double delay = getValue< double >( result_dict, names::delay );
 
       Node const* const target = kernel().node_manager.get_node( target_gid );
       assert( target );
@@ -435,7 +435,7 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
     Position< D > upper_right =
       ext / dims * grid_mask.get_lower_right() - ext / dims * 0.5;
 
-    double_t y = lower_left[ 1 ];
+    double y = lower_left[ 1 ];
     lower_left[ 1 ] = -upper_right[ 1 ];
     upper_right[ 1 ] = -y;
 

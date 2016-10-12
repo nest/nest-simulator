@@ -101,11 +101,11 @@ Quantal_StpConnection< targetidentifierT >::get_status(
   DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
-  def< double_t >( d, names::dU, U_ );
-  def< double_t >( d, names::u, u_ );
-  def< double_t >( d, names::tau_rec, tau_rec_ );
-  def< double_t >( d, names::tau_fac, tau_fac_ );
+  def< double >( d, names::weight, weight_ );
+  def< double >( d, names::dU, U_ );
+  def< double >( d, names::u, u_ );
+  def< double >( d, names::tau_rec, tau_rec_ );
+  def< double >( d, names::tau_fac, tau_fac_ );
   def< int >( d, names::n, n_ );
   def< int >( d, names::a, a_ );
 }
@@ -118,12 +118,12 @@ Quantal_StpConnection< targetidentifierT >::set_status(
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double_t >( d, names::weight, weight_ );
+  updateValue< double >( d, names::weight, weight_ );
 
-  updateValue< double_t >( d, names::dU, U_ );
-  updateValue< double_t >( d, names::u, u_ );
-  updateValue< double_t >( d, names::tau_rec, tau_rec_ );
-  updateValue< double_t >( d, names::tau_fac, tau_fac_ );
+  updateValue< double >( d, names::dU, U_ );
+  updateValue< double >( d, names::u, u_ );
+  updateValue< double >( d, names::tau_rec, tau_rec_ );
+  updateValue< double >( d, names::tau_fac, tau_fac_ );
   update_value_int( d, names::n, n_ );
   update_value_int( d, names::a, a_ );
 }

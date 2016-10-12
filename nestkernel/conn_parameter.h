@@ -77,7 +77,7 @@ public:
    */
   virtual double value_double( thread, librandom::RngPtr& ) const = 0;
   virtual long_t value_int( thread, librandom::RngPtr& ) const = 0;
-  virtual void skip( thread ) const
+  virtual void skip( thread, int skip_num ) const
   {
   }
   virtual bool is_array() const = 0;
@@ -218,10 +218,10 @@ public:
   }
 
   void
-  skip( thread tid ) const
+  skip( thread tid, int skip_num ) const
   {
-    if ( next_[ tid ] != values_->end() )
-      *next_[ tid ]++;
+    if ( next_[ tid ] < values_->end() )
+      next_[ tid ] += skip_num;
     else
       throw KernelException( "Parameter values exhausted." );
   }
@@ -297,10 +297,10 @@ public:
   }
 
   void
-  skip( thread tid ) const
+    skip( thread tid, int skip_num ) const
   {
-    if ( next_[ tid ] != values_->end() )
-      *next_[ tid ]++;
+    if ( next_[ tid ] < values_->end() )
+      next_[ tid ] += skip_num;
     else
       throw KernelException( "Parameter values exhausted." );
   }

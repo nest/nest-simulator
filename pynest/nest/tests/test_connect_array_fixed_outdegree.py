@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_connect_array.py
+# test_connect_array_fixed_outdegree.py
 #
 # This file is part of NEST.
 #
@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Tests of connection with rules fixed_indegree or fixed_outdegree
+Tests of connection with rule fixed_outdegree
 and parameter arrays in syn_spec
 """
 
@@ -30,58 +30,14 @@ import numpy
 
 
 @nest.check_stack
-class ConnectArrayTestCase(unittest.TestCase):
-    """Tests of connections with parameter arrays"""
+class ConnectArrayFixedOutdegreeTestCase(unittest.TestCase):
+    """Tests of connections with fixed outdegree and parameter arrays"""
 
-    def test_Connect_Array(self):
-        """Tests of connections with parameter arrays"""
+    def test_Connect_Array_Fixed_Outdegree(self):
+        """Tests of connections with fixed outdegree and parameter arrays"""
 
         N = 20  # number of neurons in each subnet
         K = 5   # number of connections per neuron
-
-        ############################################
-        # test with connection rule fixed_indegree
-        ############################################
-        nest.ResetKernel()
-
-        net1 = nest.Create('iaf_neuron', N)  # creates source subnet
-        net2 = nest.Create('iaf_neuron', N)  # creates target subnet
-
-        Warr = [[y*K+x for x in range(K)] for y in range(N)]  # weight array
-        Darr = [[y*K+x + 1 for x in range(K)] for y in range(N)]  # delay array
-
-        # synapses and connection dictionaries
-        syn_dict = {'model': 'static_synapse', 'weight': Warr, 'delay': Darr}
-        conn_dict = {'rule': 'fixed_indegree', 'indegree': K}
-
-        # connects source to target subnet
-        nest.Connect(net1, net2, conn_spec=conn_dict, syn_spec=syn_dict)
-
-        for i in range(N):  # loop on all neurons of target subnet
-
-            # gets all connections to the target neuron
-            conns = nest.GetConnections(target=net2[i:i+1])
-
-            Warr1 = []  # creates empty weight array
-
-            # loop on synapses that connect to target neuron
-            for j in range(len(conns)):
-                c = conns[j:j+1]
-                w = nest.GetStatus(c, 'weight')[0]  # gets synaptic weight
-                d = nest.GetStatus(c, 'delay')[0]   # gets synaptic delay
-
-                self.assertTrue(d - w == 1)  # checks that delay = weight + 1
-
-                Warr1.append(w)  # appends w to Warr1
-
-            self.assertTrue(len(Warr1) == K)  # checks the size of Warr1
-            Warr1.sort()                      # sorts the elements of Warr1
-
-            # get row of original weight array, sort it
-            # and compare it with Warr1
-            Warr2 = sorted(Warr[i])
-            for k in range(K):
-                self.assertTrue(Warr1[k]-Warr2[k] == 0.0)
 
         ############################################
         # test with connection rule fixed_outdegree
@@ -130,7 +86,7 @@ class ConnectArrayTestCase(unittest.TestCase):
 
 def suite():
 
-    suite = unittest.makeSuite(ConnectArrayTestCase, 'test')
+    suite = unittest.makeSuite(ConnectArrayFixedOutdegreeTestCase, 'test')
     return suite
 
 

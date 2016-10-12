@@ -95,6 +95,7 @@ write_file{
 
 net1 net2 conn_dict syn_dict Connect % connects source to target subnet
 
+/pass true def % error control flag
 net1 % loop on all neurons of source subnet
 {
         /neuron1 exch def
@@ -116,7 +117,8 @@ net1 % loop on all neurons of source subnet
                 /w sdict /weight get def  % gets synaptic weight
                 /d sdict /delay get def   % gets synaptic delay
                 /diff d w sub def         % diff = delay - weight 
-                diff 1.0 eq assert_or_die   % checks that d = w + 1
+                diff 1.0 eq               % checks that d = w + 1
+		pass and /pass exch def   % updates control flag
 
                 /Warr1 Warr1 w append def  % appends w to Warr1
         } forall
@@ -138,7 +140,9 @@ net1 % loop on all neurons of source subnet
         Warr1 {
                 /w exch def
                 % check that all elements of Warr are in Wrow
-                Wrow w MemberQ assert_or_die
+                Wrow w MemberQ
+		pass and /pass exch def   % updates control flag
+
         } forall
 
 } forall
@@ -147,5 +151,5 @@ write_file {
            fp close
 } if
 
-true
+pass
 } distributed_collect_assert_or_die

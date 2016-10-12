@@ -76,6 +76,7 @@ NumProcesses /num_mpi_procs Set  % gets number of MPI processes
 
 net1 net2 conn_dict syn_dict Connect % connects source to target subnet
 
+/pass true def % error control flag
 /n_loc 0 def  % used to check n. of neurons belonging to this MPI process
 net2 % loop on all neurons of target subnet
 {
@@ -97,12 +98,15 @@ net2 % loop on all neurons of target subnet
                         /w sdict /weight get def  % gets synaptic weight
                         /d sdict /delay get def   % gets synaptic delay
                         /diff d w sub def         % diff = delay - weight 
-                        diff 1.0 eq assert_or_die   % checks that d = w + 1
+                        diff 1.0 eq               % checks that d = w + 1
+			pass and /pass exch def   % updates control flag
 
                         /Warr1 Warr1 w append def  % appends w to Warr1
                 } forall
 
-                Warr1 length K eq assert_or_die % checks the size of Warr1
+                Warr1 length K eq         % checks the size of Warr1
+		pass and /pass exch def   % updates control flag
+
                 /Warr1 Warr1 Sort def       % sorts the elements of Warr1
                 /i1 neuron2 gid1 sub K mul def  % first index = (n2 - gid1) * K
 
@@ -110,8 +114,10 @@ net2 % loop on all neurons of target subnet
                 % and compare it with Warr1
                 /Wdiff Warr cva i1 K getinterval Sort Warr1 sub def
                 % check that all elements of the difference are zero
-                Wdiff 0.0 HasDifferentMemberQ not assert_or_die
+                Wdiff 0.0 HasDifferentMemberQ not
+		pass and /pass exch def   % updates control flag
+
         } if
 } forall
-n_loc 0 gt
+pass n_loc 0 gt and
 } distributed_collect_assert_or_die

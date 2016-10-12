@@ -319,6 +319,8 @@ const Name tau_vacant( "tau_vacant" );
 const Name tau_w( "tau_w" );
 const Name taus_eta( "taus_eta" );
 const Name taus_syn( "taus_syn" );
+const Name taus_rise( "taus_rise" );
+const Name taus_decay( "taus_decay" );
 const Name theta( "theta" );
 const Name thread( "thread" );
 const Name thread_local_id( "thread_local_id" );

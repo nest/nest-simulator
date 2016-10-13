@@ -60,14 +60,12 @@ is_threaded not { exit_test_gracefully } if
 
 /N 20 def          % number of neurons in each subnet
 /K 5 def           % number of connections per neuron
-/VP_per_MPI 2 def  % number of virtual processes per MPI process
 
 ResetKernel
-NumProcesses /num_mpi_procs Set  % gets number of MPI processes
 
 0 <<
-     /total_num_virtual_procs num_mpi_procs VP_per_MPI mul
->> SetStatus  % sets number of virtual processes
+  /local_num_threads 2
+>> SetStatus
 
 write_file{
         /filename (proc_) Rank cvs join (.tmp) join def

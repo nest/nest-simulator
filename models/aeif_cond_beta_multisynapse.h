@@ -58,11 +58,11 @@
  in Computational Modeling Methods for Neuroscientists, MIT Press 2013,
  Chapter 6
 
- The number of receptor ports is supplied by the variable "num_of_receptors".
+ The number of receptor ports is supplied by the function "n_receptors".
  The time constants are supplied by two arrays, "taus_rise" and "taus_decay" for
  the synaptic rise time and decay time, respectively. The synaptic
  reversal potentials are supplied by the array "E_rev". The port numbers
- are automatically assigned in the range from 1 to num_of_receptors.
+ are automatically assigned in the range from 1 to n_receptors.
  During connection, the ports are selected with the property "receptor_type".
 
  Examples:
@@ -74,8 +74,7 @@
 
  neuron = nest.Create('aeif_cond_beta_multisynapse')
  nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
- nest.SetStatus(neuron, {'num_of_receptors':4,
-                         'E_rev':[0.0,0.0,0.0,-85.0],
+ nest.SetStatus(neuron, {'E_rev':[0.0,0.0,0.0,-85.0],
                          'taus_decay':[50.0,20.0,20.0,20.0],
                          'taus_rise':[10.0,10.0,1.0,1.0]})
 
@@ -88,9 +87,10 @@
  w=[1.0, 1.0, 1.0, 1.0]
  for syn in range(4):
      nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
+                                           'receptor_type': 1 + syn,
                                            'weight': w[syn],
-                                           'delay': delays[syn],
-                                           'receptor_type': 1 + syn})
+                                           'delay': delays[syn]})
+
  nest.Connect(voltmeter, neuron)
 
  nest.Simulate(1000.0)
@@ -190,8 +190,7 @@ private:
     double a;       //!< Subthreshold adaptation in nS.
     double b;       //!< Spike-triggered adaptation in pA
     double V_th;    //!< Spike threshold in mV.
-    double t_ref;   //!< Refractory period in ms.
-    size_t num_of_receptors;
+
     std::vector< double > taus_rise;  //!< Rise time of synaptic conductance
                                       //!< in ms..
     std::vector< double > taus_decay; //!< Decay time of synaptic conductance
@@ -202,9 +201,6 @@ private:
 
     double gsl_error_tol; //!< error bound for GSL integrator
 
-    // type is long because other types are not put through in GetStatus
-    std::vector< long > receptor_types;
-
     // boolean flag which indicates whether the neuron has connections
     bool has_connections_;
 
@@ -212,6 +208,7 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum& ); //!< Set values from dictionary
+    inline size_t n_receptors() const { return E_rev.size(); }
   };
 
   // ----------------------------------------------------------------

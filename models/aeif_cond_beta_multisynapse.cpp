@@ -165,11 +165,13 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
     updateValue< std::vector< double > >( d, names::taus_decay, taus_decay );
   if ( Erev_flag || taur_flag || taud_flag )
   { // receptor arrays have been modified
-    if ( !Erev_flag || !taur_flag || !taud_flag )
+    if ( ( E_rev.size() != old_n_receptors || taus_rise.size() !=
+           old_n_receptors || taus_decay.size() != old_n_receptors ) &&
+         ( !Erev_flag || !taur_flag || !taud_flag ) )
     {
       throw BadProperty(
-        "The reversal potential, synaptic rise time and synaptic decay time "
-        "arrays must be modified altogether." );
+        "If the number of receptor ports is changed, all three arrays "
+        "E_rev, taus_rise and taus_decay must be provided.");
     }
     if ( ( E_rev.size() != taus_rise.size() )
       || ( E_rev.size() != taus_decay.size() ) )

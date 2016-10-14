@@ -208,7 +208,11 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum& ); //!< Set values from dictionary
-    inline size_t n_receptors() const { return E_rev.size(); }
+    inline size_t
+    n_receptors() const
+    {
+      return E_rev.size();
+    }
   };
 
   // ----------------------------------------------------------------

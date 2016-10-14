@@ -71,21 +71,21 @@ RecordablesMap< aeif_cond_beta_multisynapse >::create()
  * ---------------------------------------------------------------- */
 
 aeif_cond_beta_multisynapse::Parameters_::Parameters_()
-  : V_peak_( 0.0 )    // mV, should not be larger that V_th+10
-  , V_reset_( -60.0 ) // mV
-  , t_ref_( 0.0 )     // ms
-  , g_L( 30.0 )       // nS
-  , C_m( 281.0 )      // pF
-  , E_L( -70.6 )      // mV
-  , Delta_T( 2.0 )    // mV
-  , tau_w( 144.0 )    // ms
-  , a( 4.0 )          // nS
-  , b( 80.5 )         // pA
-  , V_th( -50.4 )     // mV    
+  : V_peak_( 0.0 )        // mV, should not be larger that V_th+10
+  , V_reset_( -60.0 )     // mV
+  , t_ref_( 0.0 )         // ms
+  , g_L( 30.0 )           // nS
+  , C_m( 281.0 )          // pF
+  , E_L( -70.6 )          // mV
+  , Delta_T( 2.0 )        // mV
+  , tau_w( 144.0 )        // ms
+  , a( 4.0 )              // nS
+  , b( 80.5 )             // pA
+  , V_th( -50.4 )         // mV
   , taus_rise( 1, 2.0 )   // ms
   , taus_decay( 1, 20.0 ) // ms
   , E_rev( 1, 0.0 )       // mV
-  , I_e( 0.0 ) // pA
+  , I_e( 0.0 )            // pA
   , gsl_error_tol( 1e-6 )
   , has_connections_( false )
 {
@@ -476,8 +476,7 @@ aeif_cond_beta_multisynapse::calibrate()
 
   B_.spikes_.resize( P_.n_receptors() );
   S_.y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
-	          * P_.n_receptors() ) );
+    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.n_receptors() ) );
 
   // reallocate instance of stepping function for ODE GSL solver
   if ( B_.s_ != 0 )
@@ -610,8 +609,8 @@ aeif_cond_beta_multisynapse::handle( SpikeEvent& e )
       "must be positive." );
   }
   assert( e.get_delay() > 0 );
-  assert( ( e.get_rport() > 0 )
-    && ( ( size_t ) e.get_rport() <= P_.n_receptors() ) );
+  assert(
+    ( e.get_rport() > 0 ) && ( ( size_t ) e.get_rport() <= P_.n_receptors() ) );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),

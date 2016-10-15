@@ -208,6 +208,8 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum& ); //!< Set values from dictionary
+
+    //! Return the number of receptor ports
     inline size_t
     n_receptors() const
     {

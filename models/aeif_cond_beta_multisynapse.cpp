@@ -156,7 +156,7 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::C_m, C_m );
   updateValue< double >( d, names::g_L, g_L );
 
-  size_t old_n_receptors = n_receptors();
+  const size_t old_n_receptors = n_receptors();
   bool Erev_flag =
     updateValue< std::vector< double > >( d, names::E_rev, E_rev );
   bool taur_flag =
@@ -185,7 +185,7 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
     {
       throw BadProperty( "The neuron must have at least one port." );
     }
-    if ( taus_rise.size() < old_n_receptors && has_connections_ == true )
+    if ( taus_rise.size() < old_n_receptors && has_connections_ )
     {
       throw BadProperty(
         "The neuron has connections, therefore the number of ports cannot be "
@@ -440,6 +440,7 @@ aeif_cond_beta_multisynapse::calibrate()
   B_.logger_.init();
 
   V_.g0_.resize( P_.n_receptors() );
+  // g0_ will be initialized in the loop below.
 
   for ( size_t i = 0; i < P_.n_receptors(); ++i )
   {

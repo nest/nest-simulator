@@ -673,17 +673,9 @@ aeif_cond_beta_multisynapse_dynamics( double,
     I_syn += y[ S::G + j ] * ( node.P_.E_rev[ i ] - V );
   }
 
-  double I_spike;
-  if ( node.P_.Delta_T > 0. )
-  {
-    I_spike =
-      node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
-  }
-  else
-  {
-    I_spike = 0;
-  }
-
+  const double I_spike = node.P_.Delta_T == 0. ? 0
+    : node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
+  
   // dv/dt
   f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L - I_spike ) + I_syn - w
                   + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;

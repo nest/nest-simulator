@@ -33,11 +33,33 @@ import os
 import sys
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
-from network_params import net_dict
-from stimulus_params import stim_dict
+#from network_params import net_dict
+#from stimulus_params import stim_dict
 
 
-def get_weight(PSP_val):
+def compute_DC(net_dict, w_ext):
+    """ Computes DC input if no Poisson input is provided to the microcircuit.
+
+    Parameters
+    ----------
+    net_dict
+        Parameters of the microcircuit.
+    w_ext
+        Weight of external connections.
+
+    Returns
+    -------
+    DC
+        DC input, which compensates lacking Poisson input.
+    """
+    DC = (
+        net_dict['bg_rate'] * net_dict['K_ext'] *
+        w_ext * net_dict['neuron_params']['tau_syn_E'] * 0.001
+        )
+    return DC
+
+
+def get_weight(PSP_val, net_dict):
     """ Function computes weight to elicit a change in the membrane potential.
 
     This function computes the weight which elicits a change in the membrane
@@ -49,6 +71,8 @@ def get_weight(PSP_val):
     ----------
     PSP_val
         Evoked postsynaptic potential.
+    net_dict
+        Dictionary containing parameters of the microcircuit.
 
     Returns
     -------
@@ -68,7 +92,7 @@ def get_weight(PSP_val):
     return PSC_e
 
 
-def get_total_number_of_synapses():
+def get_total_number_of_synapses(net_dict):
     """ Function returns the total number of synapses between all populations.
 
     The first index (rows) of the output matrix is the target population
@@ -78,7 +102,8 @@ def get_total_number_of_synapses():
 
     Parameters
     ----------
-
+    net_dict
+        Dictionary containing parameters of the microcircuit.
     N_full
         Number of neurons in all populations.
     number_N
@@ -111,7 +136,7 @@ def get_total_number_of_synapses():
     return K
 
 
-def synapses_th_matrix():
+def synapses_th_matrix(net_dict, stim_dict):
     """ Computes number of synapses between thalamus and microcircuit.
 
     This function ignores the variable, which scales the number of synapses.
@@ -119,6 +144,10 @@ def synapses_th_matrix():
 
     Parameters
     ----------
+    net_dict
+        Dictionary containing parameters of the microcircuit.
+    stim_dict
+        Dictionary containing parameters of stimulation settings.
     N_full
         Number of neurons in the eight populations.
     number_N
@@ -147,7 +176,7 @@ def synapses_th_matrix():
     return K
 
 
-def adj_w_ext_to_K(K_full, K_scaling, w, w_from_PSP, DC):
+def adj_w_ext_to_K(K_full, K_scaling, w, w_from_PSP, DC, net_dict, stim_dict):
     """ Adjustment of weights to scaling is dine in this function.
 
     With this funtion the recurrent and external weights are adjusted
@@ -166,6 +195,10 @@ def adj_w_ext_to_K(K_full, K_scaling, w, w_from_PSP, DC):
         Weight of the external connections.
     DC
         DC input to the eight populations.
+    net_dict
+        Dictionary containing parameters of the microcircuit.
+    stim_dict
+        Dictionary containing stimulation parameters.
     tau_syn_E
         Time constant of the external postsynaptic excitatory current.
     full_mean_rates
@@ -200,9 +233,8 @@ def adj_w_ext_to_K(K_full, K_scaling, w, w_from_PSP, DC):
         I_ext = 0.001 * tau_syn_E * (
             (1. - np.sqrt(K_scaling)) * x1_sum + (
                 1. - np.sqrt(K_scaling)) * x1_ext) + DC
-    elif net_dict['poisson_input'] is not True and stim_dict['dc_input']:
-        print('dc input provided')
-        w_ext_new = np.nan
+    else:
+        w_ext_new = w_from_PSP / np.sqrt(K_scaling)
         I_ext = 0.001 * tau_syn_E * (
             (1. - np.sqrt(K_scaling)) * x1_sum) + DC
     return w_new, w_ext_new, I_ext
@@ -350,7 +382,7 @@ def fire_rate(path, name, begin, end):
     print('std of rates: %r Hz' % rates_std_all)
 
 
-def box_plot(path):
+def box_plot(path, net_dict):
     """ Function creates a boxblot of the firing rates.
 
     Creates a boxplot of the firing rates of populations of the

@@ -40,6 +40,7 @@ from helpers import get_weight
 from helpers import plot_raster
 from helpers import fire_rate
 from helpers import box_plot
+from helpers import compute_DC
 
 
 class Network:
@@ -72,34 +73,6 @@ class Network:
             self.stim_dict = None
         self.data_path = sim_dict['data_path']
         print('Data will be written to %s' % self.data_path)
-        if (self.net_dict['poisson_input'] is not True and
-                self.stim_dict is None):
-            print(
-                '''
-                !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                No Poissonian input provided
-                Simulation is exiting
-                !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                '''
-                )
-            sys.exit()
-        elif (self.net_dict['poisson_input'] is not True and
-                self.stim_dict['dc_input'] is not True):
-            print(
-                '''
-                !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                Neither Poissonian nor DC input provided
-                Simulation is exiting
-                !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                '''
-                )
-            sys.exit()
-        else:
-            print(
-                '''
-                Input provided.
-                '''
-                )
 
     def setup_nest(self):
         """ Hands parameters to the NEST-kernel.
@@ -156,15 +129,27 @@ class Network:
         self.N_full = self.net_dict['N_full']
         self.N_scaling = self.net_dict['N_scaling']
         self.K_scaling = self.net_dict['K_scaling']
-        self.synapses = get_total_number_of_synapses()
+        self.synapses = get_total_number_of_synapses(self.net_dict)
         self.synapses_scaled = self.synapses * self.K_scaling
         self.nr_neurons = self.N_full * self.N_scaling
         self.K_ext = self.net_dict['K_ext'] * self.K_scaling
-        self.w_from_PSP = get_weight(self.net_dict['PSP_e'])
-        self.weight_mat = get_weight(self.net_dict['PSP_mean_matrix'])
+        self.w_from_PSP = get_weight(self.net_dict['PSP_e'], self.net_dict)
+        self.weight_mat = get_weight(
+            self.net_dict['PSP_mean_matrix'], self.net_dict
+            )
         self.weight_mat_std = self.net_dict['PSP_std_matrix']
         self.w_ext = self.w_from_PSP
-        self.DC_amp_e = np.zeros(len(self.net_dict['populations']))
+        if self.net_dict['poisson_input']:
+            self.DC_amp_e = np.zeros(len(self.net_dict['populations']))
+        else:
+            print(
+                '''
+                no poisson input provided
+                calculating dc input to compensate
+                '''
+                )
+            self.DC_amp_e = compute_DC(self.net_dict, self.w_ext)
+
         print(
             'The Number of neurons is scaled by a factor of: %.2f'
             % self.N_scaling
@@ -180,7 +165,7 @@ class Network:
                 self.N_full.reshape(len(self.N_full), 1) * self.N_scaling)
             self.weight_mat, self.w_ext, self.DC_amp_e = adj_w_ext_to_K(
                 synapses_indegree, self.K_scaling, self.weight_mat,
-                self.w_from_PSP, self.DC_amp_e
+                self.w_from_PSP, self.DC_amp_e, self.net_dict, self.stim_dict
                 )
 
         # Create cortical populations
@@ -211,7 +196,7 @@ class Network:
             )
         local_nodes = nest.sli_pop()
         mpi_rank = nest.Rank()
-        print('mpi', mpi_rank)
+        print('mpi rank: %i' % mpi_rank)
         nest.SetStatus(
             local_nodes, 'V_m', self.pyrngs[mpi_rank].normal(
                 self.net_dict['neuron_params']['V0_mean'],
@@ -265,7 +250,9 @@ class Network:
             self.thalamic_population = nest.Create(
                 'parrot_neuron', self.stim_dict['n_thal']
                 )
-            self.thalamic_weight = get_weight(self.stim_dict['PSP_th'])
+            self.thalamic_weight = get_weight(
+                self.stim_dict['PSP_th'], self.net_dict
+                )
             self.stop_th = (
                 self.stim_dict['th_start'] + self.stim_dict['th_duration']
                 )
@@ -471,4 +458,4 @@ class Network:
             self.data_path, 'spike_detector',
             fire_rate_time_idx[0], fire_rate_time_idx[1]
             )
-        box_plot(self.data_path)
+        box_plot(self.data_path, self.net_dict)

@@ -6,7 +6,8 @@ May 2016
 ## Description ##
 This is a PyNEST implementation of the microcircuit model by Potjans and Diesmann (2014): The cell-type specific
 cortical microcircuit: relating structure and activity in a full-scale spiking
-network model. Cerebral Cortex: doi:10.1093/cercor/bhs358
+network model. Cerebral Cortex: doi:10.1093/cercor/bhs358  
+The original sli version can be found [here](https://github.com/nest/nest-simulator/tree/master/examples/nest/Potjans_2014).
 
 * Files:
 	* `network.py`  
@@ -28,4 +29,4 @@ The code can be parallelized using OpenMP and MPI, if NEST has been built with t
 The default version of the simulation uses Poissonian input, which is defined in the file `network_params.py` to excite neuronal populations of the microcircuit. If no Poissonian input is provided, DC input is calculated which should approximately compensate the Poissonian input. It is also possible to add thalamic stimulation to the microcircuit or drive it with constant DC input. This can be defined in the file `stimulus_params.py`.
 
 Tested configuration:
-This version has been tested with NEST 2.10.0, Python 2.7.12, NumPy 1.11.1
+This version has been tested with NEST 2.10.0, Python 2.7.12 and 3.5.2, NumPy 1.11.2

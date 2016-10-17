@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-pynest microcicuit simulation parameters
-----------------------------------------------
+microcicuit simulation parameters
+---------------------------------
 
 Simulation Parameters for the microcircuit.
 
@@ -29,23 +29,20 @@ Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 '''
 
 import os
-current_dir = os.getcwd()
-full_path = current_dir + '/data/'
 sim_dict = {
     # Simulation time (in ms)
     't_sim': 1000.0,
-    # sim_resolution = Resolution of the simulation (in ms)
+    # Resolution of the simulation (in ms)
     'sim_resolution': 0.1,
-    # current working directory
-    'path': current_dir + '/',
-    # data_path = Path to save the output data
-    'data_path': full_path,
+    # Path to save the output data
+    'data_path': os.path.join(os.getcwd(), 'data/'),
     # Masterseed for NEST and NumPy
     'master_seed': 55,
-    # Number of threads run by NEST
+    # Number of threads per MPI process
     'local_num_threads': 1,
-    # Recording intervall of the membrane potential (in ms)
+    # Recording interval of the membrane potential (in ms)
     'rec_V_int': 1.0,
-    # If True data will be overwritten, if False it won't
+    # If True data will be overwritten,
+    # if False a NESTError is raised if the files already exist
     'overwrite_files': True
     }

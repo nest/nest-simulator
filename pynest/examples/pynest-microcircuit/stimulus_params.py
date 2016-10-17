@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-pynest microcicuit stimulus parameters
-----------------------------------------------
+microcicuit stimulus parameters
+-------------------------------
 
 Stimulus parameters for the microcircuit.
 
@@ -39,21 +39,23 @@ stim_dict = {
     'n_thal': 902,
     # Amplitude of the thalamic postsynaptic potential (in mV)
     'PSP_th': 0.15,
+    # Standard deviation of the postsynaptic potential (in relative units)
+    'PSP_sd': 0.1,
     # Start of the thalamic input (in ms)
-    'th_start': 450.0,
+    'th_start': 700.0,
     # Duration of the thalamic input (in ms)
     'th_duration': 10.0,
-    # Rate of the thalamic input
-    'th_rate': 80.0,
+    # Rate of the thalamic input (in Hz)
+    'th_rate': 120.0,
     # Connection probabilities of the thalamus
     # to the different populations. Order as in 'populations'
     # in 'network_params.py'
     'conn_probs_th':
         np.array([0.0, 0.0, 0.0983, 0.0619, 0.0, 0.0, 0.0512, 0.0196]),
     # Delay of the thalamic input (in ms)
-    'delay_th': np.asarray([1.5 for i in range(8)]),
-    # Standard deviation of the thalamic delay
-    'delay_th_sd': np.asarray([0.75 for i in range(8)]),
+    'delay_th': np.asarray([1.5 for i in list(range(8))]),
+    # Standard deviation of the thalamic delay (in ms)
+    'delay_th_sd': np.asarray([0.75 for i in list(range(8))]),
     # Amplitude of the DC generator (in pA)
     'dc_amp': 0.3,
     # Start of the DC generator (in ms)

@@ -144,7 +144,7 @@ protected:
    * node is not located on the current thread or MPI-process and read of an
    * array.
    */
-  void skip_conn_parameter_( thread );
+  void skip_conn_parameter_( thread, size_t n_skip = 1 );
 
   GIDCollection const* sources_;
   GIDCollection const* targets_;
@@ -351,13 +351,13 @@ ConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
 }
 
 inline void
-ConnBuilder::skip_conn_parameter_( thread target_thread )
+ConnBuilder::skip_conn_parameter_( thread target_thread, size_t n_skip )
 {
   for ( std::vector< ConnParameter* >::iterator it =
           parameters_requiring_skipping_.begin();
         it != parameters_requiring_skipping_.end();
         ++it )
-    ( *it )->skip( target_thread );
+    ( *it )->skip( target_thread, n_skip );
 }
 
 } // namespace nest

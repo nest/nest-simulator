@@ -44,5 +44,8 @@ sim_dict = {
     'rec_V_int': 1.0,
     # If True data will be overwritten,
     # if False a NESTError is raised if the files already exist
-    'overwrite_files': True
+    'overwrite_files': True,
+    # Print the time progress, this should only be used when the simulation
+    # is run on a local machine.
+    'print_time': True
     }

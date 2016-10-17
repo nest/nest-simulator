@@ -138,6 +138,7 @@ class Network:
             'grng_seed': grng_seed,
             'rng_seeds': rng_seeds,
             'overwrite_files': self.sim_dict['overwrite_files'],
+            'print_time': self.sim_dict['print_time'],
             }
         nest.SetKernelStatus(kernel_dict)
 

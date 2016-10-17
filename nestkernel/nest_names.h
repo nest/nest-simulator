@@ -282,6 +282,7 @@ extern const Name phase;                 //!< Signal phase in degrees
 extern const Name phi;                   //!< Specific to mirollo_strogatz_ps
 extern const Name phi_th;                //!< Specific to mirollo_strogatz_ps
 extern const Name port;                  //!< Connection parameters
+extern const Name ports;                 //!< Connection parameters
 extern const Name port_name;             //!< Parameters for MUSIC devices
 extern const Name port_width;            //!< Parameters for MUSIC devices
 extern const Name post_synaptic_element; //!< Post synaptic elements
@@ -454,13 +455,17 @@ extern const Name weight_std; //!< Standard deviation/mean of noisy synapse.
 extern const Name weighted_spikes_ex; //!< Weighted incoming excitatory spikes
 extern const Name weighted_spikes_in; //!< Weighted incoming inhibitory spikes
 extern const Name weights;            //!< Connection parameters
+extern const Name weight_recorder;    //!< Device name
 extern const Name with_noise;
 extern const Name with_reset; //!< Shall the pp_neuron reset after each spike?
                               //!< (stochastic neuron pp_psc_delta)
 extern const Name withgid;    //!< Recorder parameter
 extern const Name withpath;   //!< Recorder parameter
-extern const Name withtime;   //!< Recorder parameter
-extern const Name withweight; //!< Recorder parameter
+extern const Name withport;   //!< Recorder parameter
+extern const Name withrport;  //!< Recorder parameter
+extern const Name withtargetgid; //!< Recorder parameter
+extern const Name withtime;      //!< Recorder parameter
+extern const Name withweight;    //!< Recorder parameter
 
 extern const Name x;  //!< current scaling factor of the synaptic weight [0...1]
                       //!< (Tsodyks2_connection)

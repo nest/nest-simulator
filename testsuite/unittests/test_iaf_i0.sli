@@ -50,6 +50,8 @@ SeeAlso: iaf_neuron
 (unittest) run
 /unittest using
 
+thiswillfail
+
 0.1 /h Set
 
 ResetKernel

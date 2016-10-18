@@ -26,6 +26,7 @@ set( models_sources
     aeif_cond_exp.h aeif_cond_exp.cpp
     aeif_psc_alpha.h aeif_psc_alpha.cpp
     aeif_psc_exp.h aeif_psc_exp.cpp
+    aeif_psc_delta.h aeif_psc_delta.cpp
     amat2_psc_exp.h amat2_psc_exp.cpp
     binary_neuron.h binary_neuron_impl.h
     cont_delay_connection.h cont_delay_connection_impl.h

@@ -215,6 +215,11 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
 
+  if ( V_peak_ <= V_th )
+  {
+    throw BadProperty( "V_peak must be larger than threshold." );
+  }
+
   if ( V_reset_ >= V_peak_ )
   {
     throw BadProperty( "Ensure that: V_reset < V_peak ." );
@@ -563,7 +568,7 @@ aeif_cond_beta_multisynapse::update( Time const& origin,
       // due to spike-driven adaptation
       if ( S_.r_ > 0 ) // if neuron is still in refractory period
       {
-        S_.y_[ State_::V_M ] = P_.V_reset_;         // clamp it to V_reset
+        S_.y_[ State_::V_M ] = P_.V_reset_; // clamp it to V_reset
       }
       else if ( S_.y_[ State_::V_M ] >= V_.V_peak ) // V_m >= V_peak: spike
       {

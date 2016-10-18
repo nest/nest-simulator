@@ -422,15 +422,6 @@ aeif_cond_beta_multisynapse::init_buffers_()
   B_.sys_.params = reinterpret_cast< void* >( this );
   // B_.sys_.dimension is assigned in calibrate()
   B_.I_stim_ = 0.0;
-  // set the right threshold depending on Delta_T
-  if ( P_.Delta_T > 0. )
-  {
-    B_.V_peak = P_.V_peak_;
-  }
-  else
-  {
-    B_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
-  }
 }
 
 void
@@ -474,6 +465,17 @@ aeif_cond_beta_multisynapse::calibrate()
         = ( 1. / P_.taus_rise[ i ] - 1. / P_.taus_decay[ i ] ) / denom2;
     }
   }
+
+  // set the right threshold depending on Delta_T
+  if ( P_.Delta_T > 0. )
+  {
+    V_.V_peak = P_.V_peak_;
+  }
+  else
+  {
+    V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
+  }
+
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   assert( V_.RefractoryCounts_
     >= 0 ); // since t_ref_ >= 0, this can only fail in error
@@ -559,15 +561,16 @@ aeif_cond_beta_multisynapse::update( Time const& origin,
       }
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
-      if ( S_.r_ > 0 )
+      if ( S_.r_ > 0 ) // if neuron is still in refractory period
       {
-        S_.y_[ State_::V_M ] = P_.V_reset_;
+        S_.y_[ State_::V_M ] = P_.V_reset_;         // clamp it to V_reset
       }
-      else if ( S_.y_[ State_::V_M ] >= B_.V_peak )
+      else if ( S_.y_[ State_::V_M ] >= V_.V_peak ) // V_m >= V_peak: spike
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
-        S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
-        S_.r_ = V_.RefractoryCounts_;
+        S_.y_[ State_::W ] += P_.b;   // spike-driven adaptation
+        S_.r_ = V_.RefractoryCounts_; // initialize refractory steps with
+                                      // refractory period
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
@@ -662,6 +665,7 @@ aeif_cond_beta_multisynapse_dynamics( double,
   // good compiler will optimize the verbosity away ...
 
   // shorthand for state variables
+  // we indeed want to use P_.V_peak_ and not V_.V_peak here
   const double& V = std::min( y[ S::V_M ], node.P_.V_peak_ ); // bound V
   const double& w = y[ S::W ];
 
@@ -674,10 +678,10 @@ aeif_cond_beta_multisynapse_dynamics( double,
   }
 
   const double I_spike = node.P_.Delta_T == 0. ? 0 : node.P_.Delta_T
-      * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
+      * node.P_.g_L * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
 
   // dv/dt
-  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L - I_spike ) + I_syn - w
+  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn - w
                   + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   // Adaptation current w.

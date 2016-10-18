@@ -64,6 +64,48 @@
  reversal potentials are supplied by the array "E_rev". The port numbers
  are automatically assigned in the range from 1 to n_receptors.
  During connection, the ports are selected with the property "receptor_type".
+The membrane potential is given by the following differential equation:
+C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e)
+                                                     -g_i(t)(V-E_i)-w +I_e
+
+and
+
+tau_w * dw/dt= a(V-E_L) -W
+
+Parameters:
+The following parameters can be set in the status dictionary.
+
+Dynamic state variables:
+  V_m        double - Membrane potential in mV
+  w          double - Spike-adaptation current in pA.
+
+Membrane Parameters:
+  C_m        double - Capacity of the membrane in pF
+  t_ref      double - Duration of refractory period in ms.
+  V_reset    double - Reset value for V_m after a spike. In mV.
+  E_L        double - Leak reversal potential in mV.
+  g_L        double - Leak conductance in nS.
+  I_e        double - Constant external input current in pA.
+
+Spike adaptation parameters:
+  a          double - Subthreshold adaptation in nS.
+  b          double - Spike-triggered adaptation in pA.
+  Delta_T    double - Slope factor in mV
+  tau_w      double - Adaptation time constant in ms
+  V_th       double - Spike initiation threshold in mV
+  V_peak     double - Spike detection threshold in mV.
+
+Synaptic parameters
+  E_rev      double vector - Reversal potential in mV.
+  taus_rise  double vector - Rise time of synaptic conductance in ms (beta
+                      function).
+  taus_decay double vector - Decay time of synaptic conductance in ms (beta
+                      function).
+
+Integration parameters
+  gsl_error_tol  double - This parameter controls the admissible error of the
+                          GSL integrator. Reduce it if NEST complains about
+                          numerical instabilities.
 
  Examples:
  % PyNEST example, of how to assign synaptic rise time and decay time
@@ -298,7 +340,6 @@ private:
      * the first simulation, but not modified before later Simulate calls.
      */
     double I_stim_;
-    double V_peak;
   };
 
   // ----------------------------------------------------------------
@@ -312,7 +353,13 @@ private:
     /** initial value to normalise synaptic conductance */
     std::vector< double > g0_;
 
-    int RefractoryCounts_;
+    /**
+     * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
+     * P.V_th if Delta_T == 0.
+     */
+    double V_peak;
+
+    unsigned int RefractoryCounts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------

@@ -35,6 +35,10 @@ set( models_sources
     dc_generator.h dc_generator.cpp
     gamma_sup_generator.h gamma_sup_generator.cpp
     gap_junction.h
+    gif_psc_exp.h gif_psc_exp.cpp
+    gif_psc_exp_multisynapse.h gif_psc_exp_multisynapse.cpp
+    gif_cond_exp.h gif_cond_exp.cpp
+    gif_cond_exp_multisynapse.h gif_cond_exp_multisynapse.cpp
     ginzburg_neuron.h ginzburg_neuron.cpp
     hh_cond_exp_traub.h hh_cond_exp_traub.cpp
     hh_psc_alpha.h hh_psc_alpha.cpp
@@ -92,6 +96,7 @@ set( models_sources
     tsodyks_connection_hom.h tsodyks_connection_hom.cpp
     volume_transmitter.h volume_transmitter.cpp
     vogels_sprekeler_connection.h
+    weight_recorder.h weight_recorder.cpp
     spike_dilutor.h spike_dilutor.cpp
     )
 

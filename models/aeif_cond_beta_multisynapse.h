@@ -64,13 +64,17 @@
  reversal potentials are supplied by the array "E_rev". The port numbers
  are automatically assigned in the range from 1 to n_receptors.
  During connection, the ports are selected with the property "receptor_type".
-The membrane potential is given by the following differential equation:
-C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e)
-                                                     -g_i(t)(V-E_i)-w +I_e
 
-and
+ The membrane potential is given by the following differential equation:
+ C dV/dt = -g_L(V-E_L) + g_L*Delta_T*exp((V-V_T)/Delta_T) + I_syn_tot(V, t)
+           - w + I_e
 
-tau_w * dw/dt= a(V-E_L) -W
+ where:
+ I_syn_tot(V,t) = \sum_i g_i(t) (V - E_{rev,i})
+
+ and the synapse i is excitatory or inhibitory depending on the value of
+ E_{rev,i}.
+
 
 Parameters:
 The following parameters can be set in the status dictionary.

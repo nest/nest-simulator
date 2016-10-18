@@ -32,11 +32,11 @@ else
     CONFIGURE_MPI="-Dwith-mpi=OFF"
 fi
 
-#if [ "$xPYTHON" = "1" ] ; then
+if [ "$xPYTHON" = "1" ] ; then
     CONFIGURE_PYTHON="-Dwith-python=ON"
-#else
-#    CONFIGURE_PYTHON="-Dwith-python=OFF"
-#fi
+else
+    CONFIGURE_PYTHON="-Dwith-python=OFF"
+fi
 
 if [ "$xMUSIC" = "1" ] ; then
     CONFIGURE_MUSIC="-Dwith-music=$HOME/.cache/music.install"
@@ -44,11 +44,11 @@ else
     CONFIGURE_MUSIC="-Dwith-music=OFF"
 fi
 
-#if [ "$xGSL" = "1" ] ; then
+if [ "$xGSL" = "1" ] ; then
     CONFIGURE_GSL="-Dwith-gsl=ON"
-#else
-#    CONFIGURE_GSL="-Dwith-gsl=OFF"
-#fi
+else
+    CONFIGURE_GSL="-Dwith-gsl=OFF"
+fi
 
 if [ "$xLTDL" = "1" ] ; then
     CONFIGURE_LTDL="-Dwith-ltdl=ON"

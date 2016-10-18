@@ -180,11 +180,11 @@ public:
    * @return an ID for the synapse prototype.
    */
   template < class ConnectionT >
-  void register_connection_model( const std::string& name );
+  void register_connection_model( const std::string& name, bool requires_symmetric = false );
 
   template < class ConnectionT >
   void register_secondary_connection_model( const std::string& name,
-    bool has_delay = true );
+    bool has_delay = true, bool requires_symmetric = false );
 
   /**
    * @return The model id of a given model name
@@ -197,6 +197,12 @@ public:
   Model* get_model( index ) const;
 
   DictionaryDatum get_connector_defaults( synindex syn_id ) const;
+  
+  /**
+   * Checks, whether synapse type requires symmetric connections
+   */
+  bool connector_requires_symmetric( synindex syn_id ) const; 
+  
   void set_connector_defaults( synindex syn_id, const DictionaryDatum& d );
 
   /**
@@ -205,7 +211,7 @@ public:
    * @return True, if model is instantiated at least once.
    */
   bool is_model_in_use( index i );
-
+  
   /**
    * Checks, whether connections of the given type were created
    */

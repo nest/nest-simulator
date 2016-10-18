@@ -71,7 +71,7 @@ M_ERROR setverbosity
 
 {
   setup
-  [neuron_gap] [neuron_gap] << /rule /all_to_all >> << /weight 2.0 >> Connect
+  [neuron_gap] [neuron_gap] << /rule /all_to_all >> << /model /gap_junction /weight 2.0 >> Connect
 } pass_or_die
 
 % Check that delay cannot be set for gap-junction connections

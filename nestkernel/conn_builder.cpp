@@ -85,6 +85,14 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
     check_synapse_params_( syn_name, syn_spec );
 
   synapse_model_ = kernel().model_manager.get_synapsedict()->lookup( syn_name );
+  
+  if ( kernel().model_manager.connector_requires_symmetric( synapse_model_ ) && not symmetric_ )
+  {
+    LOG( M_WARNING,
+        "Connect",
+        "This synapse model requires symmetric connections." );
+    //throw BadProperty( "This synapse model requires symmetric connections" );
+  }
 
   DictionaryDatum syn_defaults =
     kernel().model_manager.get_connector_defaults( synapse_model_ );

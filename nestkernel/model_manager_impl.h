@@ -80,16 +80,16 @@ ModelManager::register_preconf_node_model( const Name& name,
 
 template < class ConnectionT >
 void
-ModelManager::register_connection_model( const std::string& name )
+ModelManager::register_connection_model( const std::string& name, bool requires_symmetric )
 {
   ConnectorModel* cf = new GenericConnectorModel< ConnectionT >(
-    name, /*is_primary=*/true, /*has_delay=*/true );
+    name, /*is_primary=*/true, /*has_delay=*/true, requires_symmetric );
   register_connection_model_( cf );
 
   if ( not ends_with( name, "_hpc" ) )
   {
     cf = new GenericConnectorModel< ConnectionLabel< ConnectionT > >(
-      name + "_lbl", /*is_primary=*/true, /*has_delay=*/true );
+      name + "_lbl", /*is_primary=*/true, /*has_delay=*/true, requires_symmetric );
     register_connection_model_( cf );
   }
 }
@@ -100,10 +100,10 @@ ModelManager::register_connection_model( const std::string& name )
 template < class ConnectionT >
 void
 ModelManager::register_secondary_connection_model( const std::string& name,
-  bool has_delay )
+  bool has_delay, bool requires_symmetric )
 {
   ConnectorModel* cm =
-    new GenericSecondaryConnectorModel< ConnectionT >( name, has_delay );
+    new GenericSecondaryConnectorModel< ConnectionT >( name, has_delay, requires_symmetric );
 
   synindex synid = register_connection_model_( cm );
 
@@ -119,7 +119,7 @@ ModelManager::register_secondary_connection_model( const std::string& name,
 
   // create labeled secondary event connection model
   cm = new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT > >(
-    name + "_lbl", has_delay );
+    name + "_lbl", has_delay, requires_symmetric );
 
   synid = register_connection_model_( cm );
 

@@ -922,16 +922,16 @@ nest::ConnectionManager::trigger_update_weight( const long vt_id,
   const std::vector< spikecounter >& dopa_spikes,
   const double t_trig )
 {
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    for ( tSConnector::const_nonempty_iterator it =
-            connections_[ t ].nonempty_begin();
-          it != connections_[ t ].nonempty_end();
-          ++it )
-      validate_pointer( *it )->trigger_update_weight( vt_id,
-        t,
-        dopa_spikes,
-        t_trig,
-        kernel().model_manager.get_synapse_prototypes( t ) );
+  const index t = kernel().vp_manager.get_thread_id();
+  for ( tSConnector::const_nonempty_iterator it =
+          connections_[ t ].nonempty_begin();
+        it != connections_[ t ].nonempty_end();
+        ++it )
+    validate_pointer( *it )->trigger_update_weight( vt_id,
+      t,
+      dopa_spikes,
+      t_trig,
+      kernel().model_manager.get_synapse_prototypes( t ) );
 }
 
 void

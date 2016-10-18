@@ -94,58 +94,19 @@ nest::aeif_psc_exp_dynamics( double, const double y[], double f[], void* pnode )
   // good compiler will optimize the verbosity away ...
 
   // shorthand for state variables
-  const double& V = std::min( y[ S::V_M ], node.P_.V_peak_ );
+  const double& V = std::min( y[ S::V_M ], node.P_.V_peak_ ); // bind V to the
+  // USER DEFINED V_peak_ value in Parameters.
   const double& I_syn_ex = y[ S::I_EXC ];
   const double& I_syn_in = y[ S::I_INH ];
   const double& w = y[ S::W ];
 
-  const double I_spike =
-    node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
+  const double I_spike = node.P_.Delta_T == 0. ? 0. : node.P_.g_L
+      * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
 
   // dv/dt
   f[ S::V_M ] =
-    ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) + I_syn_ex + I_syn_in - w
+    ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn_ex + I_syn_in - w
       + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
-
-  f[ S::I_EXC ] = -I_syn_ex / node.P_.tau_syn_ex; // Exc. synaptic current (pA)
-
-  f[ S::I_INH ] = -I_syn_in / node.P_.tau_syn_in; // Inh. synaptic current (pA)
-
-  // Adaptation current w.
-  f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
-
-  return GSL_SUCCESS;
-}
-
-extern "C" int
-nest::aeif_psc_exp_dynamics_DT0( double,
-  const double y[],
-  double f[],
-  void* pnode )
-{
-  // a shorthand
-  typedef nest::aeif_psc_exp::State_ S;
-
-  // get access to node so we can almost work as in a member function
-  assert( pnode );
-  const nest::aeif_psc_exp& node =
-    *( reinterpret_cast< nest::aeif_psc_exp* >( pnode ) );
-
-  // y[] here is---and must be---the state vector supplied by the integrator,
-  // not the state vector in the node, node.S_.y[].
-
-  // The following code is verbose for the sake of clarity. We assume that a
-  // good compiler will optimize the verbosity away ...
-
-  // shorthand for state variables
-  const double& V = y[ S::V_M ];
-  const double& I_syn_ex = y[ S::I_EXC ];
-  const double& I_syn_in = y[ S::I_INH ];
-  const double& w = y[ S::W ];
-
-  // dv/dt
-  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) + I_syn_ex + I_syn_in - w
-                  + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::I_EXC ] = -I_syn_ex / node.P_.tau_syn_ex; // Exc. synaptic current (pA)
 
@@ -416,6 +377,11 @@ nest::aeif_psc_exp::init_buffers_()
   else
     gsl_odeiv_evolve_reset( B_.e_ );
 
+  B_.sys_.jacobian = NULL;
+  B_.sys_.dimension = State_::STATE_VEC_SIZE;
+  B_.sys_.params = reinterpret_cast< void* >( this );
+  B_.sys_.function = aeif_psc_exp_dynamics;
+
   B_.I_stim_ = 0.0;
 }
 
@@ -425,20 +391,14 @@ nest::aeif_psc_exp::calibrate()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  V_.sys_.jacobian = NULL;
-  V_.sys_.dimension = State_::STATE_VEC_SIZE;
-  V_.sys_.params = reinterpret_cast< void* >( this );
-
   // set the right threshold and GSL function depending on Delta_T
   if ( P_.Delta_T > 0. )
   {
     V_.V_peak = P_.V_peak_;
-    V_.sys_.function = aeif_psc_exp_dynamics;
   }
   else
   {
     V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
-    V_.sys_.function = aeif_psc_exp_dynamics_DT0;
   }
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
@@ -480,7 +440,7 @@ nest::aeif_psc_exp::update( const Time& origin, const long from, const long to )
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &V_.sys_,             // system of ODE
+        &B_.sys_,             // system of ODE
         &t,                   // from t
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size

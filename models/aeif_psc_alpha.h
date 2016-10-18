@@ -115,7 +115,7 @@ SeeAlso: iaf_psc_alpha, aeif_cond_exp
 namespace nest
 {
 /**
- * Function computing right-hand side of ODE for GSL solver if Delta_T != 0.
+ * Function computing right-hand side of ODE for GSL solver.
  * @note Must be declared here so we can befriend it in class.
  * @note Must have C-linkage for passing to GSL. Internally, it is
  *       a first-class C++ function, but cannot be a member function
@@ -125,19 +125,6 @@ namespace nest
  * @param void* Pointer to model neuron instance.
  */
 extern "C" int aeif_psc_alpha_dynamics( double, const double*, double*, void* );
-
-/**
- * Function computing right-hand side of ODE for GSL solver if Delta_T == 0.
- * @note Must be declared here so we can befriend it in class.
- * @note Must have C-linkage for passing to GSL. Internally, it is
- *       a first-class C++ function, but cannot be a member function
- *       because of the C-linkage.
- * @note No point in declaring it inline, since it is called
- *       through a function pointer.
- * @param void* Pointer to model neuron instance.
- */
-extern "C" int
-aeif_psc_alpha_dynamics_DT0( double, const double*, double*, void* );
 
 class aeif_psc_alpha : public Archiving_Node
 {
@@ -277,6 +264,7 @@ public:
     gsl_odeiv_step* s_;    //!< stepping function
     gsl_odeiv_control* c_; //!< adaptive stepsize control function
     gsl_odeiv_evolve* e_;  //!< evolution function
+    gsl_odeiv_system sys_; //!< struct describing the GSL system
 
     // IntergrationStep_ should be reset with the neuron on ResetNetwork,
     // but remain unchanged during calibration. Since it is initialized with
@@ -313,8 +301,6 @@ public:
      * P.V_th if Delta_T == 0.
      */
     double V_peak;
-
-    gsl_odeiv_system sys_; //!< struct describing the GSL system
 
     unsigned int refractory_counts_;
   };

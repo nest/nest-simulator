@@ -406,7 +406,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel()
     .model_manager
     .register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
-      "gap_junction", /*has_delay*/false, /*requires_symmetric*/true );
+      "gap_junction", /*has_delay=*/false, /*requires_symmetric=*/true );
 
 
   /* BeginDocumentation

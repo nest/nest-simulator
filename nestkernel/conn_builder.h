@@ -109,6 +109,12 @@ public:
   {
     return false;
   }
+  
+  virtual bool
+  is_symmetric() const
+  {
+    return false;
+  }
 
 protected:
   //! Implements the actual connection algorithm
@@ -238,6 +244,12 @@ public:
     const DictionaryDatum& syn_spec )
     : ConnBuilder( sources, targets, conn_spec, syn_spec )
   {
+  }
+  
+  bool
+  is_symmetric() const
+  {
+    return true;
   }
 
 protected:

@@ -211,7 +211,7 @@ public:
    * @return True, if model is instantiated at least once.
    */
   bool is_model_in_use( index i );
-  
+
   /**
    * Checks, whether connections of the given type were created
    */

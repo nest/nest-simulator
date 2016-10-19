@@ -382,12 +382,13 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
 void
 nest::ConnBuilder::connect()
 {
-  if ( kernel().model_manager.connector_requires_symmetric( synapse_model_ ) && not symmetric_ && not is_symmetric() )
+  if ( kernel().model_manager.connector_requires_symmetric( synapse_model_ )
+    && not symmetric_ && not is_symmetric() )
   {
     throw BadProperty(
       "This synapse model requires symmetric (or all-to-all) connections" );
   }
-  
+
   if ( symmetric_ && not supports_symmetric() )
   {
     throw NotImplemented(

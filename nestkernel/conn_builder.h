@@ -109,7 +109,7 @@ public:
   {
     return false;
   }
-  
+
   virtual bool
   is_symmetric() const
   {
@@ -245,7 +245,7 @@ public:
     : ConnBuilder( sources, targets, conn_spec, syn_spec )
   {
   }
-  
+
   bool
   is_symmetric() const
   {

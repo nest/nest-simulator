@@ -80,7 +80,8 @@ ModelManager::register_preconf_node_model( const Name& name,
 
 template < class ConnectionT >
 void
-ModelManager::register_connection_model( const std::string& name, bool requires_symmetric )
+ModelManager::register_connection_model( const std::string& name,
+  bool requires_symmetric )
 {
   ConnectorModel* cf = new GenericConnectorModel< ConnectionT >(
     name, /*is_primary=*/true, /*has_delay=*/true, requires_symmetric );
@@ -89,7 +90,10 @@ ModelManager::register_connection_model( const std::string& name, bool requires_
   if ( not ends_with( name, "_hpc" ) )
   {
     cf = new GenericConnectorModel< ConnectionLabel< ConnectionT > >(
-      name + "_lbl", /*is_primary=*/true, /*has_delay=*/true, requires_symmetric );
+      name + "_lbl",
+      /*is_primary=*/true,
+      /*has_delay=*/true,
+      requires_symmetric );
     register_connection_model_( cf );
   }
 }
@@ -100,10 +104,11 @@ ModelManager::register_connection_model( const std::string& name, bool requires_
 template < class ConnectionT >
 void
 ModelManager::register_secondary_connection_model( const std::string& name,
-  bool has_delay, bool requires_symmetric )
+  bool has_delay,
+  bool requires_symmetric )
 {
-  ConnectorModel* cm =
-    new GenericSecondaryConnectorModel< ConnectionT >( name, has_delay, requires_symmetric );
+  ConnectorModel* cm = new GenericSecondaryConnectorModel< ConnectionT >(
+    name, has_delay, requires_symmetric );
 
   synindex synid = register_connection_model_( cm );
 

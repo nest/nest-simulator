@@ -97,7 +97,10 @@ class ConnectorModel
 {
 
 public:
-  ConnectorModel( const std::string, bool is_primary, bool has_delay, bool requires_symmetric );
+  ConnectorModel( const std::string,
+    bool is_primary,
+    bool has_delay,
+    bool requires_symmetric );
   ConnectorModel( const ConnectorModel&, const std::string );
   virtual ~ConnectorModel()
   {
@@ -170,7 +173,7 @@ public:
   {
     return has_delay_;
   }
-  
+
   bool
   requires_symmetric() const
   {
@@ -184,7 +187,7 @@ protected:
   //! indicates, whether this ConnectorModel belongs to a primary connection
   bool is_primary_;
   bool has_delay_; //!< indicates, that ConnectorModel has a delay
-  bool requires_symmetric_; 
+  bool requires_symmetric_;
   //!< indicates, that ConnectorModel requires symmetric connections
 
 }; // ConnectorModel
@@ -298,11 +301,13 @@ private:
   typename ConnectionT::EventType* pev_;
 
 public:
-  GenericSecondaryConnectorModel( const std::string name, bool has_delay, bool requires_symmetric )
+  GenericSecondaryConnectorModel( const std::string name,
+    bool has_delay,
+    bool requires_symmetric )
     : GenericConnectorModel< ConnectionT >( name,
         /*is _primary=*/false,
         has_delay,
-	requires_symmetric )
+        requires_symmetric )
     , pev_( 0 )
   {
     pev_ = new typename ConnectionT::EventType();

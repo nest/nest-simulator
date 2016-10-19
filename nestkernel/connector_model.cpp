@@ -28,7 +28,7 @@ namespace nest
 ConnectorModel::ConnectorModel( const std::string name,
   bool is_primary,
   bool has_delay,
-  bool requires_symmetric)
+  bool requires_symmetric )
   : name_( name )
   , default_delay_needs_check_( true )
   , is_primary_( is_primary )

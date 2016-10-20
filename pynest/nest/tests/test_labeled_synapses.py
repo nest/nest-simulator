@@ -57,7 +57,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')
-            
+
             # set a label during connection
             nest.Connect(a, a, {"rule": "one_to_one", "symmetric": symm},
                          {"model": syn, "synapse_label": 123})
@@ -81,7 +81,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             symm = nest.GetDefaults(syn, 'requires_symmetric')
 
             # set no label during connection
-            nest.Connect(a, a, {"rule": "one_to_one", "symmetric": symm}, 
+            nest.Connect(a, a, {"rule": "one_to_one", "symmetric": symm},
                          {"model": syn})
             c = nest.GetConnections(a, a)
             # still unlabeled
@@ -139,7 +139,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             nest.Connect(a, a, {"rule": "one_to_one"},
                          {"model": "static_synapse"})
             # set a label during connection
-            nest.Connect(a, a, {"rule": "one_to_one", "symmetric": symm}, 
+            nest.Connect(a, a, {"rule": "one_to_one", "symmetric": symm},
                          {"model": syn, "synapse_label": 123})
             c = nest.GetConnections(a, a, synapse_label=123)
             self.assertTrue(
@@ -155,7 +155,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             mtype='synapses') if not s.endswith("_lbl")]
         for syn in labeled_synapse_models:
             a = self.default_network()
-            
+
             # see if symmetric connections are required
             symm = nest.GetDefaults(syn, 'requires_symmetric')
 
@@ -165,7 +165,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
             # try set on connect
             with self.assertRaises(nest.NESTError):
-                nest.Connect(a, a, {"rule": "one_to_one", "symmetric": symm}, 
+                nest.Connect(a, a, {"rule": "one_to_one", "symmetric": symm},
                              {"model": syn, "synapse_label": 123})
 
             # plain connection

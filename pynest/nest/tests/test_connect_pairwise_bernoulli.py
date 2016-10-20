@@ -85,6 +85,13 @@ class TestPairwiseBernoulli(TestParams):
         # make sure all connections do exist
         M = hf.get_connectivity_matrix(pop, pop)
         hf.mpi_assert(np.diag(M), np.zeros(N), self)
+        
+    def testValidProbability(self):
+        nest.ResetKernel()
+        n = nest.Create('iaf_psc_alpha', 10)
+        self.assertRaises(nest.NESTError, nest.Connect,
+                          conn_spec={'rule': 'pairwise_bernoulli',
+                                     'p': -0.5})
 
 
 def suite():

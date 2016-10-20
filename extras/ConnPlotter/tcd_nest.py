@@ -129,8 +129,8 @@ class TCD(object):
             syn is name of synapse type.
             props is property dictionary of ht_neuron.
             """
-            td = props[syn + '_Tau_2']  # decay time
-            tr = props[syn + '_Tau_1']  # rise time
+            td = props[syn + '_tau_2']  # decay time
+            tr = props[syn + '_tau_1']  # rise time
             # integral over g(t)
             self._int_g = (props[syn + '_g_peak'] * (td - tr) /
                            ((tr / td) ** (tr / (td - tr)) -
@@ -157,8 +157,8 @@ class TCD(object):
             """
             props is property dictionary of ht_neuron.
             """
-            td = props['NMDA_Tau_2']  # decay time
-            tr = props['NMDA_Tau_1']  # rise time
+            td = props['NMDA_tau_2']  # decay time
+            tr = props['NMDA_tau_1']  # rise time
             # integral over g(t)
             self._int_g = (props['NMDA_g_peak'] * (td - tr) /
                            ((tr / td) ** (tr / (td - tr)) -

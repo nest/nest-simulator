@@ -219,9 +219,9 @@ HTConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
-  def< double >( d, "tau_P", tau_P_ );
-  def< double >( d, "delta_P", delta_P_ );
-  def< double >( d, "P", p_ );
+  def< double >( d, names::tau_P, tau_P_ );
+  def< double >( d, names::delta_P, delta_P_ );
+  def< double >( d, names::P, p_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 }
 
@@ -233,9 +233,9 @@ HTConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectionBase::set_status( d, cm );
 
   updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, "tau_P", tau_P_ );
-  updateValue< double >( d, "delta_P", delta_P_ );
-  updateValue< double >( d, "P", p_ );
+  updateValue< double >( d, names::tau_P, tau_P_ );
+  updateValue< double >( d, names::delta_P, delta_P_ );
+  updateValue< double >( d, names::P, p_ );
 
   if ( tau_P_ <= 0.0 )
     throw BadProperty( "tau_P >= 0 required." );

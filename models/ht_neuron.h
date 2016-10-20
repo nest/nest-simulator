@@ -105,16 +105,16 @@
    Parameters:
    V_m            -  membrane potential
    spike_duration - duration of re-polarizing potassium current
-   Tau_m          - membrane time constant applying to all currents but
+   tau_m          - membrane time constant applying to all currents but
                     repolarizing K-current (see [1, p 1677])
-   Tau_spike      - membrane time constant applying to repolarizing K-current
-   Theta, Theta_eq, Tau_theta - Threshold, equilibrium value, time constant
+   tau_spike      - membrane time constant applying to repolarizing K-current
+   theta, theta_eq, tau_theta - Threshold, equilibrium value, time constant
    g_KL, E_K, g_NaL, E_Na     - conductances and reversal potentials for K and
                                 Na leak currents
-   {AMPA,NMDA,GABA_A,GABA_B}_{E_rev,g_peak,Tau_1,Tau_2}
+   {AMPA,NMDA,GABA_A,GABA_B}_{E_rev,g_peak,tau_1,tau_2}
                                 - reversal potentials, peak conductances and
-                                  time constants for synapses (Tau_1: rise time,
-                                  Tau_2: decay time, Tau_1 < Tau_2)
+                                  time constants for synapses (tau_1: rise time,
+                                  tau_2: decay time, tau_1 < tau_2)
    NMDA_Sact, NMDA_Vact, NMDA_tau_Mg_{fast, slow}
                                 - Parameters for voltage dependence of NMDA-
                                   conductance, see above
@@ -225,14 +225,14 @@ private:
     double E_K;   // -90 mV
     double g_NaL; // 0.2
     double g_KL;  // 1.0 - 1.85
-    double Tau_m; // ms
+    double tau_m; // ms
 
     // Dynamic threshold
-    double Theta_eq;  // mV
-    double Tau_theta; // ms
+    double theta_eq;  // mV
+    double tau_theta; // ms
 
     // Spike potassium current
-    double Tau_spike; // ms
+    double tau_spike; // ms
     double t_spike;   // ms
 
     Parameters_();
@@ -242,13 +242,13 @@ private:
 
     // Parameters for synapse of type AMPA, GABA_A, GABA_B and NMDA
     double AMPA_g_peak;
-    double AMPA_Tau_1; // ms
-    double AMPA_Tau_2; // ms
+    double AMPA_tau_1; // ms
+    double AMPA_tau_2; // ms
     double AMPA_E_rev; // mV
 
     double NMDA_g_peak;
-    double NMDA_Tau_1; // ms
-    double NMDA_Tau_2; // ms
+    double NMDA_tau_1; // ms
+    double NMDA_tau_2; // ms
     double NMDA_E_rev; // mV
     double NMDA_Vact;  //!< mV, inactive for V << Vact, inflection of sigmoid
     double NMDA_Sact;  //!< mV, scale of inactivation
@@ -256,13 +256,13 @@ private:
     double NMDA_tau_Mg_fast; // ms
 
     double GABA_A_g_peak;
-    double GABA_A_Tau_1; // ms
-    double GABA_A_Tau_2; // ms
+    double GABA_A_tau_1; // ms
+    double GABA_A_tau_2; // ms
     double GABA_A_E_rev; // mV
 
     double GABA_B_g_peak;
-    double GABA_B_Tau_1; // ms
-    double GABA_B_Tau_2; // ms
+    double GABA_B_tau_1; // ms
+    double GABA_B_tau_2; // ms
     double GABA_B_E_rev; // mV
 
     // parameters for intrinsic currents
@@ -288,15 +288,15 @@ public:
   struct State_
   {
 
-    // y_ = [V, Theta, Synapses]
+    // y_ = [V, theta, Synapses]
     enum StateVecElems_
     {
       VM = 0,
       THETA,
       DG_AMPA,
       G_AMPA,
-      DG_NMDA,
-      G_NMDA,
+      DG_NMDA_TIMECOURSE,
+      G_NMDA_TIMECOURSE,
       DG_GABA_A,
       G_GABA_A,
       DG_GABA_B,
@@ -314,8 +314,8 @@ public:
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];
 
-    //! Timer (counter) for potassium current.
-    int r_potassium_;
+    //! Timer (counter) for spike-activated repolarizing potassium current.
+    int r_spike_;
 
     bool g_spike_; //!< active / not active
 
@@ -367,8 +367,8 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_;            //!< step size in ms
-    double IntegrationStep_; //!< current integration time step, updated by GSL
+    double step_;             //!< step size in ms
+    double integration_step_; //!< current integration time step, updated by GSL
 
     /**
      * Input current injected by CurrentEvent.
@@ -403,9 +403,9 @@ private:
     return S_.y_[ elem ];
   }
   double
-  get_r_potassium_() const
+  get_r_spike_() const
   {
-    return S_.r_potassium_;
+    return S_.r_spike_;
   }
   double
   get_g_spike_() const
@@ -432,12 +432,13 @@ private:
   {
     return S_.I_h_;
   }
-  double_t
+
+  double
   get_g_NMDA_() const
   {
-    const double_t A1 = 0.51 - 0.0028 * S_.y_[ State_::VM ];
-    const double_t A2 = 1 - A1;
-    return S_.y_[ State_::G_NMDA ]
+    const double A1 = 0.51 - 0.0028 * S_.y_[ State_::VM ];
+    const double A2 = 1 - A1;
+    return S_.y_[ State_::G_NMDA_TIMECOURSE ]
       * ( A1 * S_.y_[ State_::Mg_fast ] + A2 * S_.y_[ State_::Mg_slow ] );
   }
 
@@ -447,8 +448,8 @@ private:
    * Receives V_m as argument since it is called from ht_neuron_dyamics
    * with temporary state values.
    */
-  double_t
-  Mg_steady_state_( double_t V ) const
+  double
+  Mg_steady_state_( double V ) const
   {
     return 1.0 / ( 1.0 + std::exp( -P_.NMDA_Sact * ( V - P_.NMDA_Vact ) ) );
   }

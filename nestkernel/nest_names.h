@@ -50,6 +50,10 @@ extern const Name Act_m;       //!< Specific to Hodgkin Huxley models
 extern const Name address;     //!< Node parameter
 extern const Name alpha_1;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name alpha_2;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
+extern const Name AMPA_E_rev;  //!< specific to Hill & Tononi 2005
+extern const Name AMPA_g_peak; //!< specific to Hill & Tononi 2005
+extern const Name AMPA_tau_1;  //!< specific to Hill & Tononi 2005
+extern const Name AMPA_tau_2;  //!< specific to Hill & Tononi 2005
 extern const Name amplitude;   //!< Signal modulation amplitude
 extern const Name archiver_length; //!< used for ArchivingNode
 extern const Name as;              //!< Number of available release sites
@@ -103,6 +107,7 @@ extern const Name dead_time_shape;  //!< Shape parameter of the dead time
                                     //!< pp_psc_delta)
 extern const Name delay;            //!< Connection parameters
 extern const Name delays;           //!< Connection parameters
+extern const Name delta_P;   //!< specific to Hill & Tononi 2005
 extern const Name Delta_T; //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name delta_tau; //!< Specific to correlation_and correlomatrix
                              //!< detector
@@ -159,16 +164,31 @@ extern const Name frequency;            //!< Signal modulation frequency
 extern const Name frozen;               //!< Node parameter
 
 extern const Name g;             //!< Conductance
+extern const Name g_AMPA;        //!< specific to Hill & Tononi 2005
 extern const Name g_ahp;         //!< Specific to iaf_chxk_2008 neuron
 extern const Name g_ex;          //!< Excitatory conductance
+extern const Name g_GABAA;       //!< specific to Hill & Tononi 2005
+extern const Name g_GABAB;       //!< specific to Hill & Tononi 2005
 extern const Name g_in;          //!< inhibitory conductance
 extern const Name g_K;           //!< Potassium conductance
+extern const Name g_KL;          //!< specific to Hill & Tononi 2005
 extern const Name g_Kv1;         //!< Kv1 Potassium conductance
 extern const Name g_Kv3;         //!< Kv3 Potassium conductance
 extern const Name g_L;           //!< Leak conductance
 extern const Name g_Na;          //!< Sodium conductance
+extern const Name g_NaL;         //!< specific to Hill & Tononi 2005
+extern const Name g_NMDA;        //!< specific to Hill & Tononi 2005
 extern const Name g_rr;          //!< Other adaptation
 extern const Name g_sfa;         //!< Other adaptation
+extern const Name g_spike;       //!< specific to Hill & Tononi 2005
+extern const Name GABA_A_E_rev;   //!< specific to Hill & Tononi 2005
+extern const Name GABA_A_g_peak;   //!< specific to Hill & Tononi 2005
+extern const Name GABA_A_tau_1;   //!< specific to Hill & Tononi 2005
+extern const Name GABA_A_tau_2;   //!< specific to Hill & Tononi 2005
+extern const Name GABA_B_E_rev;   //!< specific to Hill & Tononi 2005
+extern const Name GABA_B_g_peak;   //!< specific to Hill & Tononi 2005
+extern const Name GABA_B_tau_1;   //!< specific to Hill & Tononi 2005
+extern const Name GABA_B_tau_2;   //!< specific to Hill & Tononi 2005
 extern const Name gamma;         //!< Specific to mirollo_strogatz_ps
 extern const Name gamma_shape;   //!< Specific to ppd_sup_generator and
                                  //!< gamma_sup_generator
@@ -180,6 +200,8 @@ extern const Name growth_rate;   //!< Parameter of the growth curve for MSP
 extern const Name gsl_error_tol; //!< GSL integrator tolerance
 
 extern const Name h; //!< Summed input to a neuron (Ginzburg neuron)
+extern const Name h_E_rev;       //!< specific to Hill & Tononi 2005
+extern const Name h_g_peak;      //!< specific to Hill & Tononi 2005
 extern const Name has_connections; //!< Specific to iaf_psc_exp_multisynapse and
                                    //!< iaf_psc_alpha_multisynapse
 extern const Name histogram;       //!< Specific to correlation_detector
@@ -192,7 +214,10 @@ extern const Name I_adapt;   //!< Goal of current homeostasis
                              //!< (current homeostasis)
 extern const Name I_e;       //!< Input current
 extern const Name I_ex;      //!< Excitatory synaptic input current
+extern const Name I_h;       //!< specific to Hill & Tononi 2005
 extern const Name I_in;      //!< Inhibitory synaptic input current
+extern const Name I_KNa;     //!< specific to Hill & Tononi 2005
+extern const Name I_NaP;     //!< specific to Hill & Tononi 2005
 extern const Name I_L;       //!< Leak current
 extern const Name I_std;     //!< Standard deviation of current distribution
                              //!< (current homeostasis)
@@ -201,6 +226,7 @@ extern const Name I_syn_ex;  //!< Total excitatory synaptic current
                              //!< (iaf_tum_2000)
 extern const Name I_syn_in;  //!< Total inhibitory synaptic current
                              //!< (iaf_tum_2000)
+extern const Name I_T;       //!< specific to Hill & Tononi 2005
 extern const Name I_total;   //!< Total current (current homeostasis)
 extern const Name in_spikes; //!< Number of arriving inhibitory spikes
 extern const Name Inact_n;   //!< Specific to Hodgkin Huxley models
@@ -215,6 +241,9 @@ extern const Name Interpol_Order;          //!< Interpolation order (precise
                                            //!< timing neurons)
 extern const Name interval;                //!< Recorder parameter
 extern const Name is_refractory; //!< Neuron is in refractory period (debugging)
+
+extern const Name KNa_E_rev;    //!< specific to Hill & Tononi 2005
+extern const Name KNa_g_peak;   //!< specific to Hill & Tononi 2005
 
 extern const Name label;      //!< Miscellaneous parameters
 extern const Name len_kernel; //!< Specific to population point process model
@@ -243,7 +272,17 @@ extern const Name N_channels;    //!< Specific to correlomatrix_detector
 extern const Name n_events;      //!< Recorder parameter
 extern const Name n_proc;        //!< Number of component processes of ppd_sup_/
                                  //!< gamma_sup_generator
+extern const Name NaP_E_rev;     //!< specific to Hill & Tononi 2005
+extern const Name NaP_g_peak;    //!< specific to Hill & Tononi 2005
 extern const Name neuron;        //!< Node type
+extern const Name NMDA_E_rev;        //!< specific to Hill & Tononi 2005
+extern const Name NMDA_Sact;         //!< specific to Hill & Tononi 2005
+extern const Name NMDA_Vact;         //!< specific to Hill & Tononi 2005
+extern const Name NMDA_g_peak;       //!< specific to Hill & Tononi 2005
+extern const Name NMDA_tau_1;        //!< specific to Hill & Tononi 2005
+extern const Name NMDA_tau_2;        //!< specific to Hill & Tononi 2005
+extern const Name NMDA_tau_Mg_fast;  //!< specific to Hill & Tononi 2005
+extern const Name NMDA_tau_Mg_slow;  //!< specific to Hill & Tononi 2005
 extern const Name node_uses_wfr; //!< Node parameter
 extern const Name noise;         //!< Specific to iaf_chs_2008 neuron
 extern const Name ns;            //!< Number of release sites (property arrays)
@@ -255,6 +294,7 @@ extern const Name order;   //!< Specific to sinusoidally modulated generators
 extern const Name origin;  //!< Device parameters
 extern const Name other;   //!< Node type
 
+extern const Name P; //!< specific to Hill & Tononi 2005
 extern const Name p; //!< current release probability  (Tsodyks2_connection)
 extern const Name p_copy;                //!< Specific to mip_generator
 extern const Name parent;                //!< Node parameter
@@ -278,6 +318,7 @@ extern const Name published;          //!< Parameters for MUSIC devices
 extern const Name q_rr;  //!< Other adaptation
 extern const Name q_sfa; //!< Other adaptation
 
+extern const Name r_spike;            //!< specific to Hill & Tononi 2005
 extern const Name rate;               //!< Specific to ppd_sup_generator and
                                       //!< gamma_sup_generator
 extern const Name receptor_type;      //!< Connection parameters
@@ -311,6 +352,7 @@ extern const Name size_of;     //!< Connection parameters
 extern const Name source;      //!< Connection parameters
 extern const Name spike;       //!< true if the neuron spikes and false if not.
                                //!< (sli_neuron)
+extern const Name spike_duration;   //!< specific to Hill & Tononi 2005
 extern const Name spike_times; //!< Recorder parameter
 extern const Name start;       //!< Device parameters
 extern const Name state;       //!< Node parameter
@@ -333,6 +375,8 @@ extern const Name synapse_modelid;   //!< Connection parameters
 extern const Name synaptic_elements; //!< Synaptic elements used in structural
                                      //!< plasticity
 
+extern const Name T_E_rev;         //!< specific to Hill & Tononi 2005
+extern const Name T_g_peak;        //!< specific to Hill & Tononi 2005
 extern const Name t_lag;           //!< Lag within a time slice
 extern const Name t_origin;        //!< Origin of a time-slice
 extern const Name t_ref;           //!< Refractory period
@@ -344,7 +388,7 @@ extern const Name t_spike;         //!< Time of last spike
 extern const Name target;          //!< Connection parameters
 extern const Name target_thread;   //!< Connection parameters
 extern const Name targets;         //!< Connection parameters
-extern const Name tau_1;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
+ extern const Name tau_1;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name tau_2;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name tau_ahp;   //!< Specific to iaf_chxk_2008 neuron
 extern const Name tau_Ca;    //!< Rate of loss of calcuim concentration
@@ -360,6 +404,7 @@ extern const Name tau_max;   //!< Specific to correlation and
                              //!< correlomatrix detector
 extern const Name tau_minus; //!< used for ArchivingNode
 extern const Name tau_minus_triplet; //!< used for ArchivingNode
+extern const Name tau_P;             //!< specific to Hill & Tononi 2005
 extern const Name tau_rec;           //!< time constant for recovery (ms)
                                      //!< (Tsodyks2_connection)
 extern const Name tau_recs;          //!< time constant for recovery (ms)
@@ -367,6 +412,9 @@ extern const Name tau_recs;          //!< time constant for recovery (ms)
 extern const Name tau_reset;         //!< Specific to iaf_chs_2008 neuron
 extern const Name tau_rr;            //!< Other adaptation
 extern const Name tau_sfa;           //!< Other adaptation
+extern const Name tau_spike;         //!< specific to Hill & Tononi 2005
+extern const Name tau_theta;         //!< specific to Hill & Tononi 2005
+
 extern const Name tau_syn;           //!< Synapse time constant
 extern const Name tau_syn_ex;        //!< Excitatory synaptic time constant
 extern const Name tau_syn_in;        //!< Inhibitory synaptic time constant
@@ -377,6 +425,7 @@ extern const Name taus_eta; //!< Specific to population point process model
                             //!< (pp_pop_psc_delta)
 extern const Name taus_syn; //!< Synapse time constants (array)
 extern const Name theta;    //!< Did not compile without (theta neuron problem)
+extern const Name theta_eq;   //!< specific to Hill & Tononi 2005
 extern const Name thread;   //!< Node parameter
 extern const Name thread_local_id; //!< Thead-local ID of node,
                                    //!< see Kunkel et al 2014, Sec 3.3.2

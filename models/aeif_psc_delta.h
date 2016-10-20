@@ -43,10 +43,8 @@
 #include "universal_data_logger.h"
 
 /* BeginDocumentation
-Name: aeif_psc_delta - Current-based adaptive exponential integrate-and-fire
-neuron
-                      model according to Brette and Gerstner (2005) with delta
-synapse.
+Name: aeif_psc_delta - Current-based adaptive exponential integrate-and-fire neuron
+                      model according to Brette and Gerstner (2005) with delta synapse.
 
 Description:
 
@@ -66,8 +64,11 @@ tau_w * dw/dt= a(V-E_L) -W
 
 I_x(t) = J_x Sum_k delta(t - t^x_k),
 
-where x = (ex, in), delta is the dirac delta function and k indexes incoming
-spikes.
+where x = (ex, in), delta is the dirac delta function and k indexes incoming spikes.
+
+Note that the spike detection threshold V_peak is automatically set to
+V_th+10 mV to avoid numerical instabilites that may result from
+setting V_peak too high.
 
 Parameters:
 The following parameters can be set in the status dictionary.

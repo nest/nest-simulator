@@ -43,14 +43,14 @@
 #include "universal_data_logger.h"
 
 /* BeginDocumentation
-Name: aeif_psc_delta - Current-based exponential integrate-and-fire neuron
-                      model according to Brette and Gerstner (2005).
+Name: aeif_psc_delta - Current-based adaptive exponential integrate-and-fire neuron
+                      model according to Brette and Gerstner (2005) with delta synapse.
 
 Description:
 
 aeif_psc_delta is the adaptive exponential integrate and fire neuron
 according to Brette and Gerstner (2005), with post-synaptic currents
-in the form of truncated exponentials.
+in the form of delta spikes.
 
 This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
 solver with adaptive stepsize to integrate the differential equation.
@@ -62,6 +62,9 @@ and
 
 tau_w * dw/dt= a(V-E_L) -W
 
+I_x(t) = J_x Sum_k delta(t - t^x_k),
+
+where x = (ex, in), delta is the dirac delta function and k indexes incoming spikes.
 
 Note that the spike detection threshold V_peak is automatically set to
 V_th+10 mV to avoid numerical instabilites that may result from
@@ -72,8 +75,6 @@ The following parameters can be set in the status dictionary.
 
 Dynamic state variables:
   V_m        double - Membrane potential in mV
-  I_ex       double - Excitatory synaptic conductance in nS.
-  I_in       double - Inhibitory synaptic conductance in nS.
   w          double - Spike-adaptation current in pA.
 
 Membrane Parameters:
@@ -97,7 +98,7 @@ Integration parameters
                           GSL integrator. Reduce it if NEST complains about
                           numerical instabilities.
 
-Author: adapted from aeif_cond_exp by Tanguy Fardet
+Author: Mikkel Elle Lepperød adapted from aeif_psc_exp and iaf_psc_delta
 
 Sends: SpikeEvent
 
@@ -178,6 +179,9 @@ private:
   {
     double V_peak_;  //!< Spike detection threshold in mV
     double V_reset_; //!< Reset Potential in mV
+    bool with_refr_input_; //!< spikes arriving during refractory period are
+                           //!< counted
+
     double t_ref_;   //!< Refractory period in ms
 
     double g_L;     //!< Leak Conductance in nS
@@ -209,6 +213,10 @@ public:
    */
   struct State_
   {
+      /** Accumulate spikes arriving during refractory period, discounted for
+          decay until end of refractory period.
+      */
+      double refr_spikes_buffer_;
     /**
      * Enumeration identifying elements in state array State_::y_.
      * The state vector must be passed to GSL as a C array. This enum
@@ -218,9 +226,7 @@ public:
     enum StateVecElems
     {
       V_M = 0,
-      I_EXC, // 1
-      I_INH, // 2
-      W,     // 3
+      W,
       STATE_VEC_SIZE
     };
 
@@ -250,8 +256,7 @@ public:
     UniversalDataLogger< aeif_psc_delta > logger_;
 
     /** buffers and sums up incoming spikes/currents */
-    RingBuffer spike_exc_;
-    RingBuffer spike_inh_;
+    RingBuffer spikes_;
     RingBuffer currents_;
 
     /** GSL ODE stuff */
@@ -289,7 +294,8 @@ public:
      * P.V_th if Delta_T == 0.
      */
     double V_peak;
-
+    double P30_;
+    double P33_;
     unsigned int refractory_counts_;
   };
 

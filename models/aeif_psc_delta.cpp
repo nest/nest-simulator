@@ -67,10 +67,6 @@ RecordablesMap< aeif_psc_delta >::create()
   // use standard names whereever you can for consistency!
   insert_(
     names::V_m, &aeif_psc_delta::get_y_elem_< aeif_psc_delta::State_::V_M > );
-  insert_( names::I_syn_ex,
-    &aeif_psc_delta::get_y_elem_< aeif_psc_delta::State_::I_EXC > );
-  insert_( names::I_syn_in,
-    &aeif_psc_delta::get_y_elem_< aeif_psc_delta::State_::I_INH > );
   insert_( names::w, &aeif_psc_delta::get_y_elem_< aeif_psc_delta::State_::W > );
 }
 }
@@ -96,8 +92,6 @@ nest::aeif_psc_delta_dynamics( double, const double y[], double f[], void* pnode
   // shorthand for state variables
   const double& V = std::min( y[ S::V_M ], node.P_.V_peak_ ); // bind V to the
   // USER DEFINED V_peak_ value in Parameters.
-  const double& I_syn_ex = y[ S::I_EXC ];
-  const double& I_syn_in = y[ S::I_INH ];
   const double& w = y[ S::W ];
 
   const double I_spike = node.P_.Delta_T == 0. ? 0. : node.P_.g_L
@@ -105,12 +99,8 @@ nest::aeif_psc_delta_dynamics( double, const double y[], double f[], void* pnode
 
   // dv/dt
   f[ S::V_M ] =
-    ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn_ex + I_syn_in - w
+    ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w
       + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
-
-  f[ S::I_EXC ] = -I_syn_ex; // Exc. synaptic current (pA)
-
-  f[ S::I_INH ] = -I_syn_in; // Inh. synaptic current (pA)
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
@@ -258,8 +248,6 @@ void
 nest::aeif_psc_delta::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] );
-  def< double >( d, names::I_syn_ex, y_[ I_EXC ] );
-  def< double >( d, names::I_syn_in, y_[ I_INH ] );
   def< double >( d, names::w, y_[ W ] );
 }
 
@@ -267,12 +255,7 @@ void
 nest::aeif_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
-  updateValue< double >( d, names::I_syn_ex, y_[ I_EXC ] );
-  updateValue< double >( d, names::I_syn_in, y_[ I_INH ] );
   updateValue< double >( d, names::w, y_[ W ] );
-
-  if ( y_[ I_EXC ] < 0 || y_[ I_INH ] < 0 )
-    throw BadProperty( "Conductances must not be negative." );
 }
 
 nest::aeif_psc_delta::Buffers_::Buffers_( aeif_psc_delta& n )
@@ -341,8 +324,7 @@ nest::aeif_psc_delta::init_state_( const Node& proto )
 void
 nest::aeif_psc_delta::init_buffers_()
 {
-  B_.spike_exc_.clear(); // includes resize
-  B_.spike_inh_.clear(); // includes resize
+  B_.spikes_.clear(); // includes resize
   B_.currents_.clear();  // includes resize
   Archiving_Node::clear_history();
 
@@ -384,6 +366,12 @@ nest::aeif_psc_delta::calibrate()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
+  const double h = Time::get_resolution().get_ms();
+  const double tau_m_ = P_.C_m/P_.g_L;
+
+  V_.P33_ = std::exp( -h / tau_m_ );
+  V_.P30_ = 1 / P_.C_m * ( 1 - V_.P33_ ) * tau_m_;
+
   // set the right threshold and GSL function depending on Delta_T
   if ( P_.Delta_T > 0. )
   {
@@ -410,7 +398,8 @@ nest::aeif_psc_delta::update( const Time& origin, const long from, const long to
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
-
+  const double h = Time::get_resolution().get_ms();
+  const double tau_m_ = P_.C_m/P_.g_L;
   for ( long lag = from; lag < to; ++lag )
   {
     double t = 0.0;
@@ -449,6 +438,33 @@ nest::aeif_psc_delta::update( const Time& origin, const long from, const long to
 
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
+      if ( S_.r_ == 0 )
+      {
+        // neuron not refractory
+        S_.y_[ State_::V_M ] = V_.P30_ * ( S_.y_[ State_::V_M ] - P_.E_L + P_.I_e ) + V_.P33_
+                * S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
+
+        // if we have accumulated spikes from refractory period,
+        // add and reset accumulator
+        if ( P_.with_refr_input_ && S_.refr_spikes_buffer_ != 0.0 )
+        {
+          S_.y_[ State_::V_M ] += S_.refr_spikes_buffer_;
+          S_.refr_spikes_buffer_ = 0.0;
+        }
+      }
+      else // neuron is absolute refractory
+      {
+        // read spikes from buffer and accumulate them, discounting
+        // for decay until end of refractory period
+        if ( P_.with_refr_input_ )
+          S_.refr_spikes_buffer_ +=
+            B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / tau_m_ );
+        else
+          B_.spikes_.get_value( lag ); // clear buffer entry, ignore spike
+
+        --S_.r_;
+      }
+
       if ( S_.r_ > 0 )
         S_.y_[ State_::V_M ] = P_.V_reset_;
       else if ( S_.y_[ State_::V_M ] >= V_.V_peak )
@@ -462,12 +478,9 @@ nest::aeif_psc_delta::update( const Time& origin, const long from, const long to
         kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
-    S_.y_[ State_::I_EXC ] += B_.spike_exc_.get_value( lag );
-    S_.y_[ State_::I_INH ] += B_.spike_inh_.get_value( lag );
 
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );
-
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
   }
@@ -478,14 +491,10 @@ nest::aeif_psc_delta::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  if ( e.get_weight() > 0.0 )
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
-      e.get_weight() * e.get_multiplicity() );
-  else
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
-      -e.get_weight() * e.get_multiplicity() ); // keep conductances positive
+  B_.spikes_.add_value( e.get_rel_delivery_steps(
+                             kernel().simulation_manager.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
+
 }
 
 void

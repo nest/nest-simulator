@@ -382,9 +382,11 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
 void
 nest::ConnBuilder::connect()
 {
-  if ( symmetric_ && not supports_symmetric() )
+  if ( symmetric_ and not supports_symmetric() )
+  {
     throw NotImplemented(
       "This connection rule does not support symmetric connections." );
+  }
 
   if ( pre_synaptic_element_name != "" && post_synaptic_element_name != "" )
   {
@@ -1277,7 +1279,7 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder(
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
-  , N_( ( *conn_spec )[ Name( "N" ) ] )
+  , N_( ( *conn_spec )[ names::N ] )
 {
 
   // check for potential errors
@@ -1425,7 +1427,7 @@ nest::BernoulliBuilder::BernoulliBuilder( const GIDCollection& sources,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
-  , p_( ( *conn_spec )[ Name( "p" ) ] )
+  , p_( ( *conn_spec )[ names::p ] )
 {
 }
 

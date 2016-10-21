@@ -441,7 +441,7 @@ nest::aeif_psc_delta::update( const Time& origin, const long from, const long to
       if ( S_.r_ == 0 )
       {
         // neuron not refractory
-        S_.y_[ State_::V_M ] = V_.P30_ * ( S_.y_[ State_::V_M ] - P_.E_L + P_.I_e ) + V_.P33_
+        S_.y_[ State_::V_M ] = V_.P30_ * ( B_.I_stim_ + P_.I_e ) + V_.P33_
                 * S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
 
         // if we have accumulated spikes from refractory period,

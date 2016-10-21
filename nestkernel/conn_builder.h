@@ -211,10 +211,7 @@ public:
   OneToOneBuilder( const GIDCollection& sources,
     const GIDCollection& targets,
     const DictionaryDatum& conn_spec,
-    const DictionaryDatum& syn_spec )
-    : ConnBuilder( sources, targets, conn_spec, syn_spec )
-  {
-  }
+    const DictionaryDatum& syn_spec );
 
   bool
   supports_symmetric() const

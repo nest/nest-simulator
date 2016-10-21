@@ -73,16 +73,22 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   updateValue< bool >( conn_spec, names::symmetric, symmetric_ );
 
   // read out synapse-related parameters ----------------------
-  if ( !syn_spec->known( names::model ) )
+  if ( not syn_spec->known( names::model ) )
+  {
     throw BadProperty( "Synapse spec must contain synapse model." );
+  }
   const std::string syn_name = ( *syn_spec )[ names::model ];
   if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
+  {
     throw UnknownSynapseType( syn_name );
+  }
 
   // if another synapse than static_synapse is defined we need to make
   // sure that Connect can process all parameter specified
   if ( syn_name != "static_synapse" )
+  {
     check_synapse_params_( syn_name, syn_spec );
+  }
 
   synapse_model_ = kernel().model_manager.get_synapsedict()->lookup( syn_name );
 
@@ -175,7 +181,9 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   {
     const Name param_name = default_it->first;
     if ( skip_set.find( param_name ) != skip_set.end() )
+    {
       continue; // weight, delay or not-settable parameter
+    }
 
     if ( syn_spec->known( param_name ) )
     {
@@ -366,7 +374,9 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
     const thread target_thread = target->get_thread();
     // check whether the target is on our thread
     if ( tid != target_thread )
+    {
       local = 0;
+    }
     else
     {
       // update the number of connected synaptic elements
@@ -382,6 +392,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
 void
 nest::ConnBuilder::connect()
 {
+  // We test here, and not in the ConnBuilder constructor, so the derived classes are fully constructed when the test is executed
   if ( symmetric_ and not supports_symmetric() )
   {
     throw NotImplemented(
@@ -582,17 +593,25 @@ nest::ConnBuilder::set_post_synaptic_element_name( std::string name )
   post_synaptic_element_name = name;
 }
 
-void
-nest::OneToOneBuilder::connect_()
+nest::OneToOneBuilder::OneToOneBuilder( const GIDCollection& sources,
+  const GIDCollection& targets,
+  const DictionaryDatum& conn_spec,
+  const DictionaryDatum& syn_spec )
+  : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   // make sure that target and source population have the same size
   if ( sources_->size() != targets_->size() )
   {
     LOG( M_ERROR,
-      "Connect",
+      "Connect/Disconnect",
       "Source and Target population must be of the same size." );
     throw DimensionMismatch();
   }
+}
+
+void
+nest::OneToOneBuilder::connect_()
+{
 
 #pragma omp parallel
   {
@@ -612,7 +631,9 @@ nest::OneToOneBuilder::connect_()
         assert( sgid != sources_->end() );
 
         if ( *sgid == *tgid and not autapses_ )
+        {
           continue;
+        }
 
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
@@ -652,14 +673,6 @@ nest::OneToOneBuilder::connect_()
 void
 nest::OneToOneBuilder::disconnect_()
 {
-  // make sure that target and source population have the same size
-  if ( sources_->size() != targets_->size() )
-  {
-    LOG( M_ERROR,
-      "Disconnect",
-      "Source and Target population must be of the same size." );
-    throw DimensionMismatch();
-  }
 
 #pragma omp parallel
   {
@@ -714,14 +727,6 @@ nest::OneToOneBuilder::disconnect_()
 void
 nest::OneToOneBuilder::sp_connect_()
 {
-  // make sure that target and source population have the same size
-  if ( sources_->size() != targets_->size() )
-  {
-    LOG( M_ERROR,
-      "Connect",
-      "Source and Target population must be of the same size." );
-    throw DimensionMismatch();
-  }
 
 #pragma omp parallel
   {
@@ -741,9 +746,11 @@ nest::OneToOneBuilder::sp_connect_()
         assert( sgid != sources_->end() );
 
         if ( *sgid == *tgid and not autapses_ )
+        {
           continue;
+        }
 
-        if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
+        if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
         {
           skip_conn_parameter_( tid );
           continue;
@@ -773,14 +780,6 @@ nest::OneToOneBuilder::sp_connect_()
 void
 nest::OneToOneBuilder::sp_disconnect_()
 {
-  // make sure that target and source population have the same size
-  if ( sources_->size() != targets_->size() )
-  {
-    LOG( M_ERROR,
-      "Disconnect",
-      "Source and Target population must be of the same size." );
-    throw DimensionMismatch();
-  }
 
 #pragma omp parallel
   {
@@ -796,7 +795,7 @@ nest::OneToOneBuilder::sp_disconnect_()
       {
         assert( sgid != sources_->end() );
 
-        if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
+        if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           continue;
         Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
@@ -911,7 +910,7 @@ nest::AllToAllBuilder::sp_connect_()
             skip_conn_parameter_( tid );
             continue;
           }
-          if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
+          if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
           {
             for ( GIDCollection::const_iterator sgid = sources_->begin();
                   sgid != sources_->end();
@@ -1019,7 +1018,7 @@ nest::AllToAllBuilder::sp_disconnect_()
               sgid != sources_->end();
               ++sgid )
         {
-          if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
+          if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           {
             for ( GIDCollection::const_iterator sgid = sources_->begin();
                   sgid != sources_->end();
@@ -1082,6 +1081,11 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( const GIDCollection& sources,
         "Expect long connecting times!" );
     }
   } // if (not multapses_ )
+ 
+  if ( indegree_ < static_cast< long >( 0 ) )
+  {
+    throw BadProperty( "Indegree cannot be less than zero." );
+  }
 }
 
 void
@@ -1133,7 +1137,7 @@ nest::FixedInDegreeBuilder::connect_()
             s_id = rng->ulrand( n_rnd );
             sgid = ( *sources_ )[ s_id ];
           } while ( ( not autapses_ and sgid == *tgid )
-            || ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
+            or ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
 
           if ( not multapses_ )
             ch_ids.insert( s_id );
@@ -1192,6 +1196,11 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder(
         "Multapses are prohibited and you request more than 90% connectivity. "
         "Expect long connecting times!" );
     }
+  }
+
+  if ( outdegree_ < 0 )
+  {
+    throw BadProperty( "Outdegree cannot be less than zero." );
   }
 }
 
@@ -1292,6 +1301,11 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder(
       throw BadProperty(
         "Total number of connections cannot exceed product "
         "of source and targer population sizes." );
+  }
+
+  if ( N_ < 0 )
+  {
+    throw BadProperty( "Total number of connections cannot be negative." );
   }
 
   // for now multapses cannot be forbidden
@@ -1470,10 +1484,10 @@ nest::BernoulliBuilder::connect_()
           if ( not autapses_ and *sgid == *tgid )
             continue;
 
-          if ( not( rng->drand() < p_ ) )
-            continue;
-
-          single_connect_( *sgid, *target, target_thread, rng );
+          if ( rng->drand() < p_  )
+          {
+            single_connect_( *sgid, *target, target_thread, rng );
+          }
         }
       }
     }
@@ -1579,7 +1593,7 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
         if ( *sgid == *tgid and not autapses_ )
           continue;
 
-        if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
+        if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
         {
           skip_conn_parameter_( tid );
           continue;

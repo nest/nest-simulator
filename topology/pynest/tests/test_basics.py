@@ -266,7 +266,7 @@ class BasicsTestCase(unittest.TestCase):
 
     def test_GetTargetNodesPositions(self):
         """Interface check for finding targets."""
-        ldict = {'elements': ['iaf_psc_alpha', 'iaf_psc_alpha'], 'rows': 3,
+        ldict = {'elements': ['iaf_psc_alpha', 'iaf_psc_delta'], 'rows': 3,
                  'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         cdict = {'connection_type': 'divergent',
@@ -276,7 +276,7 @@ class BasicsTestCase(unittest.TestCase):
         ian = [gid for gid in nest.GetLeaves(l)[0]
                if nest.GetStatus([gid], 'model')[0] == 'iaf_psc_alpha']
         ipa = [gid for gid in nest.GetLeaves(l)[0]
-               if nest.GetStatus([gid], 'model')[0] == 'iaf_psc_alpha']
+               if nest.GetStatus([gid], 'model')[0] == 'iaf_psc_delta']
 
         # connect ian -> all using static_synapse
         cdict.update({'sources': {'model': 'iaf_psc_alpha'},
@@ -286,8 +286,8 @@ class BasicsTestCase(unittest.TestCase):
             cdict.pop(k)
 
         # connect ipa -> ipa using stdp_synapse
-        cdict.update({'sources': {'model': 'iaf_psc_alpha'},
-                      'targets': {'model': 'iaf_psc_alpha'},
+        cdict.update({'sources': {'model': 'iaf_psc_delta'},
+                      'targets': {'model': 'iaf_psc_delta'},
                       'synapse_model': 'stdp_synapse'})
         topo.ConnectLayers(l, l, cdict)
         for k in ['sources', 'targets', 'synapse_model']:
@@ -313,7 +313,7 @@ class BasicsTestCase(unittest.TestCase):
         self.assertTrue(
             all([len(g) == 4 for g in t]))  # 2x2 mask  -> four targets
 
-        t = topo.GetTargetNodes(ian, l, tgt_model='iaf_psc_alpha')
+        t = topo.GetTargetNodes(ian, l, tgt_model='iaf_psc_delta')
         self.assertEqual(len(t), len(ian))
         self.assertTrue(
             all([len(g) == 4 for g in t]))  # 2x2 mask  -> four targets

@@ -60,8 +60,8 @@ class libcsaTestCase(unittest.TestCase):
 
         n = 4  # number of neurons
 
-        pop0 = nest.LayoutNetwork("iaf_neuron", [n])
-        pop1 = nest.LayoutNetwork("iaf_neuron", [n])
+        pop0 = nest.LayoutNetwork("iaf_psc_alpha", [n])
+        pop1 = nest.LayoutNetwork("iaf_psc_alpha", [n])
 
         cg = libcsa.oneToOne
 
@@ -86,8 +86,8 @@ class libcsaTestCase(unittest.TestCase):
 
         n = 2  # number of neurons per dimension
 
-        pop0 = nest.LayoutNetwork("iaf_neuron", [n, n])
-        pop1 = nest.LayoutNetwork("iaf_neuron", [n, n])
+        pop0 = nest.LayoutNetwork("iaf_psc_alpha", [n, n])
+        pop1 = nest.LayoutNetwork("iaf_psc_alpha", [n, n])
 
         cg = libcsa.oneToOne
 
@@ -101,8 +101,8 @@ class libcsaTestCase(unittest.TestCase):
 
         n = 4  # number of neurons
 
-        sources = nest.Create("iaf_neuron", n)
-        targets = nest.Create("iaf_neuron", n)
+        sources = nest.Create("iaf_psc_alpha", n)
+        targets = nest.Create("iaf_psc_alpha", n)
 
         cg = libcsa.oneToOne
 
@@ -125,8 +125,8 @@ class libcsaTestCase(unittest.TestCase):
 
         n = 4  # number of neurons
 
-        pop0 = nest.LayoutNetwork("iaf_neuron", [n])
-        pop1 = nest.LayoutNetwork("iaf_neuron", [n])
+        pop0 = nest.LayoutNetwork("iaf_psc_alpha", [n])
+        pop1 = nest.LayoutNetwork("iaf_psc_alpha", [n])
 
         cs = libcsa.cset(libcsa.oneToOne, 10000.0, 1.0)
 

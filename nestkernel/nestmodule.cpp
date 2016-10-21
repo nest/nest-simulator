@@ -883,7 +883,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
 
    +-[0] Subnet Dim=[1]
    |
-   +- iaf_neuron [1]
+   +- iaf_psc_alpha [1]
 
    - Consecutive Nodes of the same model are summarised in a list.
    The list shows the model name, the global id of the first node in the
@@ -892,7 +892,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
 
    +-[0] Subnet Dim=[1]
    |
-   +- iaf_neuron [1]..(2)..[2]
+   +- iaf_psc_alpha [1]..(2)..[2]
 
    - If a node is a subnet, its global id is printed first, followed by the
    model name or its label (if it is defined). Next, the dimension is shown.
@@ -904,19 +904,19 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    subnet is continued.
 
    Example:
-   SLI ] /iaf_neuron Create
+   SLI ] /iaf_psc_alpha Create
    SLI [1] /iaf_cond_alpha 10 Create
    SLI [2] /dc_generator [2 5 6] LayoutNetwork
    SLI [3] [0] 1 PrintNetwork
    +-[0] Subnet Dim=[12]
       |
-      +- iaf_neuron [1]
+      +- iaf_psc_alpha [1]
       +- lifb_cond_neuron [2]..(10)..[11]
       +-[12] Subnet Dim=[2 5 6]
    SLI [3] [0] 2 PrintNetwork
    +-[0] Subnet Dim=[12]
       |
-      +- iaf_neuron [1]
+      +- iaf_psc_alpha [1]
       +- lifb_cond_neuron [2]..(10)..[11]
       +-[12] Subnet Dim=[2 5 6]
           |
@@ -925,7 +925,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    SLI [3] [0] 3 PrintNetwork
    +-[0] Subnet Dim=[12]
       |
-      +- iaf_neuron [1]
+      +- iaf_psc_alpha [1]
       +- lifb_cond_neuron [2]..(10)..[11]
       +-[12] Subnet Dim=[2 5 6]
           |
@@ -946,7 +946,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    SLI [3] [0] 4 PrintNetwork
    +-[0] Subnet Dim=[12]
       |
-      +- iaf_neuron [1]
+      +- iaf_psc_alpha [1]
       +- lifb_cond_neuron [2]..(10)..[11]
       +-[12] Subnet Dim=[2 5 6]
           |
@@ -1077,7 +1077,7 @@ NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
              ResetNetwork
 
              %%% Build network
-             /iaf_neuron 100 Create
+             /iaf_psc_alpha 100 Create
              [1 100] Range /n Set
 
              << /source n /target n >> Connect

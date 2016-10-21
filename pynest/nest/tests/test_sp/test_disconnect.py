@@ -44,7 +44,7 @@ class TestDisconnectSingle(unittest.TestCase):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.CopyModel('static_synapse', 'my_static_synapse')
-                neurons = nest.Create('iaf_neuron', 2)
+                neurons = nest.Create('iaf_psc_alpha', 2)
                 syn_dict = {'model': syn_model}
                 nest.Connect(neurons, neurons, "all_to_all", syn_dict)
 

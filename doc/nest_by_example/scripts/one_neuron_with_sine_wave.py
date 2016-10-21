@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 
 nest.ResetKernel()
 
-neuron = nest.Create('iaf_neuron')
+neuron = nest.Create('iaf_psc_alpha')
 
 sine = nest.Create('ac_generator', 1,
                    {'amplitude': 100.0,

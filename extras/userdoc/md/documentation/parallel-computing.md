@@ -59,7 +59,7 @@ minimize their interaction. Devices thus do not have proxies on remote virtual
 processes.
 
 The node distribution for a small network consisting of `spike_generator`, four
-`iaf_neuron`s, and a `spike_detector` in a scenario with two processes with two
+`iaf_psc_alpha`s, and a `spike_detector` in a scenario with two processes with two
 threads each is shown in the following figure:
 
 ![Node\_distribution](../../img/Node_distribution.png)
@@ -190,7 +190,7 @@ files.
     from nest import *
     SetKernelStatus({"total_num_virtual_procs": 4})
     pg = Create("poisson_generator", params={"rate": 50000.0})
-    n = Create("iaf_neuron", 4)
+    n = Create("iaf_psc_alpha", 4)
     sd = Create("spike_detector", params={"to_file": True})
     Connect(pg, [n[0]], syn_spec={'weight': 1000.0, 'delay': 1.0})
     Connect([n[0]], [n[1]], syn_spec={'weight': 1000.0, 'delay': 1.0})

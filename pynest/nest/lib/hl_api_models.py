@@ -153,8 +153,8 @@ def GetDefaults(model, keys=None):
 
     Examples
     --------
-    GetDefaults('iaf_neuron','V_m') -> -70.0
-    GetDefaults('iaf_neuron',['V_m', 'model') -> [-70.0, 'iaf_neuron']
+    GetDefaults('iaf_psc_alpha','V_m') -> -70.0
+    GetDefaults('iaf_psc_alpha',['V_m', 'model') -> [-70.0, 'iaf_psc_alpha']
     """
 
     if keys is None:

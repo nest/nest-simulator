@@ -47,7 +47,7 @@ class PlottingTestCase(unittest.TestCase):
 
     def test_DumpNodes(self):
         """Test dumping nodes."""
-        ldict = {'elements': 'iaf_neuron', 'rows': 3, 'columns': 3,
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
@@ -57,7 +57,7 @@ class PlottingTestCase(unittest.TestCase):
 
     def test_DumpNodes2(self):
         """Test dumping nodes, two layers."""
-        ldict = {'elements': 'iaf_neuron', 'rows': 3, 'columns': 3,
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
@@ -67,7 +67,7 @@ class PlottingTestCase(unittest.TestCase):
 
     def test_DumpConns(self):
         """Test dumping connections."""
-        ldict = {'elements': 'iaf_neuron', 'rows': 3, 'columns': 3,
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         cdict = {'connection_type': 'divergent',
                  'mask': {'circular': {'radius': 1.}}}
@@ -82,7 +82,7 @@ class PlottingTestCase(unittest.TestCase):
 
     def test_DumpConns2(self):
         """Test dumping connections, 2 layers."""
-        ldict = {'elements': 'iaf_neuron', 'rows': 3, 'columns': 3,
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         cdict = {'connection_type': 'divergent',
                  'mask': {'circular': {'radius': 1.}}}

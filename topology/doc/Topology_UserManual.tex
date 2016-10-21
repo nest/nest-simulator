@@ -208,7 +208,7 @@ properties:
 \item The \lstinline!'elements'! entry of the dictionary passed to
   \lstinline!CreateLayer! determines the
   \emph{elements}\index{element} of the layer. In this case, the layer
-  contains \lstinline!iaf_neuron!s.
+  contains \lstinline!iaf_psc_alpha!s.
 \item The \emph{center}\index{center} of the layer is at the origin of
   the coordinate system, $(0,0)$. 
 \item The \emph{extent}\index{extent} or size of the layer is $1\times
@@ -311,7 +311,7 @@ the circle the center of the layer.}
 \emph{Free layers}\index{free layer} do not restrict node positions to
 a grid, but allow free placement within the extent. To this end, the
 user needs to specify the positions of all nodes explicitly. The
-following code creates a layer of 50 \lstinline!iaf_neurons! uniformly
+following code creates a layer of 50 \lstinline!iaf_psc_alphas! uniformly
 distributed in a layer with extent $1\times 1$, i.e., spanning the
 square $[-0.5,0.5]\times[-0.5,0.5]$:
 %
@@ -432,7 +432,7 @@ The \lstinline!'topology'! entry is read-only.
 \lstinputlisting[linerange=layer1p.log-end.log]{user_manual_scripts/layers.log}
 %
 The $5\times 5$ layer created above appears here as a
-\lstinline!topology_layer_grid! subnet of 25 \lstinline!iaf_neuron!s.
+\lstinline!topology_layer_grid! subnet of 25 \lstinline!iaf_psc_alpha!s.
 Only Topology connection and visualization functions heed the spatial
 structure of the layer.
 \end{itemize}
@@ -500,8 +500,8 @@ spanning $0.5^\circ\times 0.5^\circ$ of visual space. Neurons within each
 microcolumn are organized into L2/3, L4, and L56
 subpopulations. Each subpopulation consists of three pyramidal cells
 and one interneuron. All pyramidal cells are modeled as NEST
-\lstinline!iaf_neuron!s with default parameter values, while
-interneurons are \lstinline!iaf_neuron!s with threshold voltage
+\lstinline!iaf_psc_alpha!s with default parameter values, while
+interneurons are \lstinline!iaf_psc_alpha!s with threshold voltage
 $V_{\text{th}}=-52$mV. 
 \end{quote}
 How should you implement such a network using the Topology module?
@@ -1337,7 +1337,7 @@ available to be used in connections, e.g.
 \begin{lstlisting}
 nest.Install('mymodule')
 l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [1.,1.],
-                        'elements': 'iaf_neuron'})
+                        'elements': 'iaf_psc_alpha'})
 tp.ConnectLayers(l,l,{'connection_type': 'convergent',
             'mask': {'circular': {'radius': 0.5}},
             'kernel': {'affine2d': {'a': 1.0, 'b': 2.0, 'c': 0.5}}})
@@ -1422,7 +1422,7 @@ in connections, e.g.
 \begin{lstlisting}
 nest.Install('mymodule')
 l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [1.,1.],
-                        'elements': 'iaf_neuron'})
+                        'elements': 'iaf_psc_alpha'})
 tp.ConnectLayers(l,l,{'connection_type': 'convergent',
             'mask': {'elliptic': {'r_x': 0.5, 'r_y': 0.25}}})
 \end{lstlisting}

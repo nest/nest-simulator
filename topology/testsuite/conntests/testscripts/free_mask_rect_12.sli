@@ -60,7 +60,7 @@
           /extent [1.0 1.0]  % must be 1x1 so we get nodes on boundary
           /center [0. 0.]
           /edge_wrap true
-          /elements /iaf_neuron
+          /elements /iaf_psc_alpha
         >> def
 
 /src_layer layer def

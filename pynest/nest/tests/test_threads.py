@@ -47,7 +47,7 @@ class ThreadTestCase(unittest.TestCase):
         self.assertEqual(nest.GetKernelStatus()['local_num_threads'], 1)
 
         nest.SetKernelStatus({'local_num_threads': 8})
-        n = nest.Create('iaf_neuron', 8)
+        n = nest.Create('iaf_psc_alpha', 8)
         st = list(nest.GetStatus(n, 'vp'))
         st.sort()
         self.assertEqual(st, [0, 1, 2, 3, 4, 5, 6, 7])
@@ -60,8 +60,8 @@ class ThreadTestCase(unittest.TestCase):
 
         nest.ResetKernel()
         nest.SetKernelStatus({'local_num_threads': 8})
-        pre = nest.Create("iaf_neuron")
-        post = nest.Create("iaf_neuron", 6)
+        pre = nest.Create("iaf_psc_alpha")
+        post = nest.Create("iaf_psc_alpha", 6)
 
         nest.Connect(pre, post)
 

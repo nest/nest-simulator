@@ -71,7 +71,7 @@ import nest.topology as tp
 
 l = tp.CreateLayer({'rows': 5,
                     'columns': 5,
-                    'elements': 'iaf_neuron'})
+                    'elements': 'iaf_psc_alpha'})
 # { end #}
 
 fig = tp.PlotLayer(l, nodesize=50)
@@ -111,7 +111,7 @@ nest.ResetKernel()
 l = tp.CreateLayer({'rows': 5,
                     'columns': 5,
                     'extent': [2.0, 0.5],
-                    'elements': 'iaf_neuron'})
+                    'elements': 'iaf_psc_alpha'})
 # { end #}
 
 fig = tp.PlotLayer(l, nodesize=50)
@@ -136,10 +136,10 @@ plt.savefig('../user_manual_figures/layer2.png', bbox_inches='tight',
 nest.ResetKernel()
 
 # { layer3 #}
-l1 = tp.CreateLayer({'rows': 5, 'columns': 5, 'elements': 'iaf_neuron'})
-l2 = tp.CreateLayer({'rows': 5, 'columns': 5, 'elements': 'iaf_neuron',
+l1 = tp.CreateLayer({'rows': 5, 'columns': 5, 'elements': 'iaf_psc_alpha'})
+l2 = tp.CreateLayer({'rows': 5, 'columns': 5, 'elements': 'iaf_psc_alpha',
                      'center': [-1., 1.]})
-l3 = tp.CreateLayer({'rows': 5, 'columns': 5, 'elements': 'iaf_neuron',
+l3 = tp.CreateLayer({'rows': 5, 'columns': 5, 'elements': 'iaf_psc_alpha',
                      'center': [1.5, 0.5]})
 # { end #}
 
@@ -160,7 +160,7 @@ nest.ResetKernel()
 # { layer3a #}
 nc, nr = 5, 3
 d = 0.1
-l = tp.CreateLayer({'columns': nc, 'rows': nr, 'elements': 'iaf_neuron',
+l = tp.CreateLayer({'columns': nc, 'rows': nr, 'elements': 'iaf_psc_alpha',
                     'extent': [nc * d, nr * d], 'center': [nc * d / 2., 0.]})
 
 # { end #}
@@ -186,7 +186,7 @@ import numpy as np
 pos = [[np.random.uniform(-0.5, 0.5), np.random.uniform(-0.5, 0.5)]
        for j in range(50)]
 l = tp.CreateLayer({'positions': pos,
-                    'elements': 'iaf_neuron'})
+                    'elements': 'iaf_psc_alpha'})
 # { end #}
 
 fig = tp.PlotLayer(l, nodesize=50)
@@ -206,7 +206,7 @@ import numpy as np
 pos = [[np.random.uniform(-0.5, 0.5), np.random.uniform(-0.5, 0.5),
         np.random.uniform(-0.5, 0.5)] for j in range(200)]
 l = tp.CreateLayer({'positions': pos,
-                    'elements': 'iaf_neuron'})
+                    'elements': 'iaf_psc_alpha'})
 # { end #}
 
 fig = tp.PlotLayer(l, nodesize=50)
@@ -219,7 +219,7 @@ nest.ResetKernel()
 
 # { player #}
 lp = tp.CreateLayer({'rows': 1, 'columns': 5, 'extent': [5., 1.],
-                     'elements': 'iaf_neuron',
+                     'elements': 'iaf_psc_alpha',
                      'edge_wrap': True})
 # { end #}
 
@@ -303,8 +303,8 @@ nest.ResetKernel()
 
 # { layer10 #}
 for lyr in ['L23', 'L4', 'L56']:
-    nest.CopyModel('iaf_neuron', lyr + 'pyr')
-    nest.CopyModel('iaf_neuron', lyr + 'in', {'V_th': -52.})
+    nest.CopyModel('iaf_psc_alpha', lyr + 'pyr')
+    nest.CopyModel('iaf_psc_alpha', lyr + 'in', {'V_th': -52.})
 l = tp.CreateLayer({'rows': 20, 'columns': 20, 'extent': [0.5, 0.5],
                     'elements': ['L23pyr', 3, 'L23in',
                                  'L4pyr', 3, 'L4in',
@@ -317,7 +317,7 @@ nest.ResetKernel()
 
 # { vislayer #}
 l = tp.CreateLayer({'rows': 21, 'columns': 21,
-                    'elements': 'iaf_neuron'})
+                    'elements': 'iaf_psc_alpha'})
 conndict = {'connection_type': 'divergent',
             'mask': {'circular': {'radius': 0.4}},
             'kernel': {'gaussian': {'p_center': 1.0, 'sigma': 0.15}}}

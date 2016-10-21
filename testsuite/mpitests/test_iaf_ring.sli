@@ -22,7 +22,7 @@
 
 
 /* BeginDocumentation
-Name: testsuite::test_iaf_ring - sli script for test of iaf_neuron spike interaction
+Name: testsuite::test_iaf_ring - sli script for test of iaf_psc_alpha spike interaction
 across multiple machines.
 
 Synopsis: nest_indirect test_iaf_ring  --> success
@@ -68,7 +68,7 @@ SeeAlso: testsuite::test_iaf_i0, testsuite::test_getrng_neuron
 
  0 << /resolution h  >> SetStatus
 
- /iaf_neuron n Create ;
+ /iaf_psc_alpha n Create ;
  1 << /I_e 1450.0 >>  SetStatus
 
  neurons 2 1 Partition

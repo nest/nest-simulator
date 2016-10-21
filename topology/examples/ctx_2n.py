@@ -38,8 +38,8 @@ pylab.ion()
 
 nest.ResetKernel()
 
-nest.CopyModel('iaf_neuron', 'pyr')
-nest.CopyModel('iaf_neuron', 'in')
+nest.CopyModel('iaf_psc_alpha', 'pyr')
+nest.CopyModel('iaf_psc_alpha', 'in')
 ctx = topo.CreateLayer({'columns': 4, 'rows': 3,
                         'extent': [2.0, 1.5],
                         'elements': ['pyr', 'in']})

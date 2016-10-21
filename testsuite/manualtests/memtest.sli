@@ -27,7 +27,7 @@
 
 /BuildNetwork
 {
-  /iaf_neuron N Create pop
+  /iaf_psc_alpha N Create pop
   1 1 N
   {
     /pre Set

@@ -215,7 +215,7 @@ The Python code for this small model is shown below.
 \begin{lstlisting}
 import nest
 import nest.voltage_trace
-neuron = nest.Create('iaf_neuron') !\label{nest:ln:Create1}!
+neuron = nest.Create('iaf_psc_alpha') !\label{nest:ln:Create1}!
 sine = nest.Create('ac_generator', 1, !\label{nest:ln:Create2}!
                    {'amplitude': 100.0,
                     'frequency': 2.0})
@@ -246,10 +246,10 @@ the \emph{namespace} \lstinline!nest!\index{NEST!namespace}. Consequently, all c
 be prefixed with the name of this namespace.
  
 In line \ref{nest:ln:Create1}, we use the command \lstinline!Create!
-to produce one node of the type \lstinline!iaf_neuron!. As you see in
+to produce one node of the type \lstinline!iaf_psc_alpha!. As you see in
 lines \ref{nest:ln:Create2}, \ref{nest:ln:Create3}, and
 \ref{nest:ln:Create4}, \lstinline!Create! is used for all node types.
-The first argument, \lstinline!'iaf_neuron'!, is a string, denoting
+The first argument, \lstinline!'iaf_psc_alpha'!, is a string, denoting
 the type of node that you want to create.
 The second parameter of \lstinline!Create! is an integer representing
 the number of nodes you want to create. Thus, whether you want one neuron
@@ -321,7 +321,7 @@ it using the command \lstinline!PrintNetwork()!:
 >>>nest.PrintNetwork()
 +-[0] root dim=[5]
    |
-   +-[1] iaf_neuron
+   +-[1] iaf_psc_alpha
    +-[2] ac_generator
    +-[3]...[4] poisson_generator
    +-[5] voltmeter

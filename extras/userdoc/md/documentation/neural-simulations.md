@@ -20,11 +20,11 @@ a complex example.
 The simplest simulation in NEST is that of a network which contains just one
 neuron:
 
-    SLI ] /iaf_neuron Create /neuron Set
+    SLI ] /iaf_psc_alpha Create /neuron Set
 
 We are going to simulate a standard integrate and fire model with resting
 potential at -70 mV and spike threshold at -55 mV. In this line, we use the
-model `iaf_neuron` to create a neuron. The command `Create` returns a handle to
+model `iaf_psc_alpha` to create a neuron. The command `Create` returns a handle to
 the created neuron, which we store in the variable `neuron`.
 
 Next, we would like to add a stimulation and a recording device to the neuron,
@@ -173,7 +173,7 @@ dictionary `modeldict`. The most important neuron models are:
 
 Model name
 Description
-`iaf_neuron`
+`iaf_psc_alpha`
 Simple integrate-and-fire neuron with alpha-function PSCs.
 `iaf_psc_delta`
 Integrate-and-fire neuron with delta-function PSCs.
@@ -197,11 +197,11 @@ have created before.
 
 Nodes are created from a model, using the command `Create`.
 
-    SLI ] /iaf_neuron Create ==
+    SLI ] /iaf_psc_alpha Create ==
     1
 
 In the fist line, we create one integrate and fire neuron from the model
-`iaf_neuron`.
+`iaf_psc_alpha`.
 
 The return value of `Create` is an integer that identifies the last node that
 was created in the network (note that this can be different from 1 if you have
@@ -211,7 +211,7 @@ user-created nodes start with `1`). Often, it is neccessary to have a large
 number of nodes of the same type. The command Create can also be used for this
 purpose. The following line of code create 10 integrate and fire neurons:
 
-    SLI ] /iaf_neuron 10 Create ==
+    SLI ] /iaf_psc_alpha 10 Create ==
     11
 
 ## Status information
@@ -232,7 +232,7 @@ created above:
     I_e                      doubletype          0
     local                    booltype            true
     local_id                 integertype         1
-    model                    literaltype         iaf_neuron
+    model                    literaltype         iaf_psc_alpha
     node_type                literaltype         neuron
     parent                   integertype         0
     recordables              arraytype           <arraytype>
@@ -240,7 +240,8 @@ created above:
     tau_m                    doubletype          10
     tau_minus                doubletype          20
     tau_minus_triplet        doubletype          110
-    tau_syn                  doubletype          2
+    tau_syn_ex               doubletype          2
+    tau_syn_in               doubletype          2
     thread                   integertype         0
     t_ref                    doubletype          2
     t_spike                  doubletype          -1
@@ -294,9 +295,9 @@ ms.
 
 ### Example 1
 
-    SLI ] /iaf_neuron Create /n1 Set
-    SLI ] /iaf_neuron Create /n2 Set
-    SLI ] /iaf_neuron Create /n3 Set
+    SLI ] /iaf_psc_alpha Create /n1 Set
+    SLI ] /iaf_psc_alpha Create /n2 Set
+    SLI ] /iaf_psc_alpha Create /n3 Set
     SLI ]
     SLI ] n1 n2 Connect
     SLI ] n1 n3 Connect
@@ -410,7 +411,7 @@ Device to generate a step current with different amplitudes at different times.
 
 #### Example 5
 
-    SLI ] /iaf_neuron Create /n Set
+    SLI ] /iaf_psc_alpha Create /n Set
     SLI ] /poisson_generator Create /pg Set
     SLI ] pg << /rate 220.0 Hz >> SetStatus
     SLI ] pg n Connect
@@ -442,7 +443,7 @@ Please note that the connection direction for analog recorders (all except
 
 #### Example 6
 
-    SLI ] /iaf_neuron Create /n Set
+    SLI ] /iaf_psc_alpha Create /n Set
     SLI ] /voltmeter Create /vm Set
     SLI ] /spike_detector Create /sd Set
     SLI ] vm n Connect

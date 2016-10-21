@@ -108,7 +108,7 @@ public:
    * -# Functions which expect a model or synapse type as argument,
    *    must be given this argument as a literal, e.g.,
         @verbatim
-        /iaf_neuron 6 Create
+        /iaf_psc_alpha 6 Create
         @endverbatim
    *    Literals will be looked up in the corresponding dictionaries
    *    (modeldict, synapsedict).

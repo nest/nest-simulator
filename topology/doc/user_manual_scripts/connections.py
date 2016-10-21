@@ -96,7 +96,7 @@ def conn_figure(fig, layer, connd, targets=None, showmask=True, showkern=False,
 
 # { conn1 #}
 l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
-                    'elements': 'iaf_neuron'})
+                    'elements': 'iaf_psc_alpha'})
 conndict = {'connection_type': 'divergent',
             'mask': {'rectangular': {'lower_left': [-2., -1.],
                                      'upper_right': [2., 1.]}}}
@@ -111,7 +111,7 @@ conn_figure(fig, l, conndict,
 
 # same another time, with periodic bcs
 lpbc = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
-                       'elements': 'iaf_neuron', 'edge_wrap': True})
+                       'elements': 'iaf_psc_alpha', 'edge_wrap': True})
 tp.ConnectLayers(lpbc, lpbc, conndict)
 fig.add_subplot(122)
 conn_figure(fig, lpbc, conndict, showmask=False,
@@ -128,7 +128,7 @@ plt.savefig('../user_manual_figures/conn1.png', bbox_inches='tight')
 def free_mask_fig(fig, loc, cdict):
     nest.ResetKernel()
     l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
-                        'elements': 'iaf_neuron'})
+                        'elements': 'iaf_psc_alpha'})
     tp.ConnectLayers(l, l, cdict)
 
     fig.add_subplot(loc)
@@ -217,7 +217,7 @@ def free_mask_3d_fig(fig, loc, cdict):
     nest.ResetKernel()
     l = tp.CreateLayer(
         {'rows': 11, 'columns': 11, 'layers': 11, 'extent': [11., 11., 11.],
-         'elements': 'iaf_neuron'})
+         'elements': 'iaf_psc_alpha'})
     tp.ConnectLayers(l, l, cdict)
 
     fig.add_subplot(loc, projection='3d')
@@ -250,7 +250,7 @@ plt.savefig('../user_manual_figures/conn_3d.png', bbox_inches='tight')
 def grid_mask_fig(fig, loc, cdict):
     nest.ResetKernel()
     l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
-                        'elements': 'iaf_neuron'})
+                        'elements': 'iaf_psc_alpha'})
     tp.ConnectLayers(l, l, cdict)
 
     fig.add_subplot(loc)
@@ -290,7 +290,7 @@ plt.savefig('../user_manual_figures/conn3.png', bbox_inches='tight')
 def kernel_fig(fig, loc, cdict, showkern=True):
     nest.ResetKernel()
     l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [11., 11.],
-                        'elements': 'iaf_neuron'})
+                        'elements': 'iaf_psc_alpha'})
     tp.ConnectLayers(l, l, cdict)
 
     fig.add_subplot(loc)
@@ -376,7 +376,7 @@ fig = plt.figure()
 # { conn5lin #}
 ldict = {'rows': 1, 'columns': 51,
          'extent': [51., 1.], 'center': [25., 0.],
-         'elements': 'iaf_neuron'}
+         'elements': 'iaf_psc_alpha'}
 cdict = {'connection_type': 'divergent',
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
                                   'upper_right': [25.5, 0.5]}},
@@ -388,7 +388,7 @@ wd_fig(fig, 311, ldict, cdict, 'delay', label='Delay', clr='red')
 fig.gca().legend()
 
 lpdict = {'rows': 1, 'columns': 51, 'extent': [51., 1.], 'center': [25., 0.],
-          'elements': 'iaf_neuron', 'edge_wrap': True}
+          'elements': 'iaf_psc_alpha', 'edge_wrap': True}
 # { conn5linpbc #}
 cdict = {'connection_type': 'divergent',
          'mask': {'rectangular': {'lower_left': [-25.5, -0.5],
@@ -478,7 +478,7 @@ fig = plt.figure()
 pos = [[np.random.uniform(-1., 1.), np.random.uniform(-1., 1.)]
        for j in range(1000)]
 ldict = {'positions': pos, 'extent': [2., 2.],
-         'elements': 'iaf_neuron', 'edge_wrap': True}
+         'elements': 'iaf_psc_alpha', 'edge_wrap': True}
 cdict = {'connection_type': 'divergent',
          'mask': {'circular': {'radius': 1.0}},
          'kernel': {'linear': {'c': 1., 'a': -2., 'cutoff': 0.0}},
@@ -493,8 +493,8 @@ plt.savefig('../user_manual_figures/conn6.png', bbox_inches='tight')
 
 # { conn7 #}
 nest.ResetKernel()
-nest.CopyModel('iaf_neuron', 'pyr')
-nest.CopyModel('iaf_neuron', 'in')
+nest.CopyModel('iaf_psc_alpha', 'pyr')
+nest.CopyModel('iaf_psc_alpha', 'in')
 ldict = {'rows': 10, 'columns': 10, 'elements': ['pyr', 'in']}
 cdict_p2i = {'connection_type': 'divergent',
              'mask': {'circular': {'radius': 0.5}},
@@ -516,8 +516,8 @@ tp.ConnectLayers(l, l, cdict_i2p)
 
 # { conn8 #}
 nest.ResetKernel()
-nest.CopyModel('iaf_neuron', 'pyr')
-nest.CopyModel('iaf_neuron', 'in')
+nest.CopyModel('iaf_psc_alpha', 'pyr')
+nest.CopyModel('iaf_psc_alpha', 'in')
 nest.CopyModel('static_synapse', 'exc', {'weight': 2.0})
 nest.CopyModel('static_synapse', 'inh', {'weight': -8.0})
 ldict = {'rows': 10, 'columns': 10, 'elements': ['pyr', 'in']}
@@ -544,7 +544,7 @@ tp.ConnectLayers(l, l, cdict_i2p)
 # { conn9 #}
 nrns = tp.CreateLayer({'rows': 20,
                        'columns': 20,
-                       'elements': 'iaf_neuron'})
+                       'elements': 'iaf_psc_alpha'})
 
 stim = tp.CreateLayer({'rows': 1,
                        'columns': 1,

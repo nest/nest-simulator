@@ -80,12 +80,12 @@ def geometryFunction(topologyLayer):
     return geometry_function
 
 """
-We create two layers that have 20x20 neurons of type `iaf_neuron`.
+We create two layers that have 20x20 neurons of type `iaf_psc_alpha`.
 """
 
-pop1 = topo.CreateLayer({'elements': 'iaf_neuron',
+pop1 = topo.CreateLayer({'elements': 'iaf_psc_alpha',
                          'rows': 20, 'columns': 20})
-pop2 = topo.CreateLayer({'elements': 'iaf_neuron',
+pop2 = topo.CreateLayer({'elements': 'iaf_psc_alpha',
                          'rows': 20, 'columns': 20})
 
 """

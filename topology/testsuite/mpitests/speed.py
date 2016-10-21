@@ -45,12 +45,12 @@ nest.SetKernelStatus({'total_num_virtual_procs': 4})
 
 l1 = topo.CreateLayer({'rows': 50,
                        'columns': 40,
-                       'elements': ['iaf_neuron', 2],
+                       'elements': ['iaf_psc_alpha', 2],
                        'edge_wrap': True})
 
 l2 = topo.CreateLayer({'rows': 50,
                        'columns': 40,
-                       'elements': ['iaf_neuron', 2],
+                       'elements': ['iaf_psc_alpha', 2],
                        'edge_wrap': True})
 
 topo.ConnectLayers(l1, l2, {'connection_type': 'convergent',

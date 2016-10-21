@@ -50,7 +50,7 @@
           /extent [1.25 1.25]
           /center [0. 0.]
           /edge_wrap false
-          /elements /iaf_neuron
+          /elements /iaf_psc_alpha
         >> def
 
 /src_layer layer def

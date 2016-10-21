@@ -49,7 +49,7 @@ l1 = topo.CreateLayer(
     {'extent': [1.5, 1.5, 1.5],  # must specify 3d extent AND center
      'center': [0., 0., 0.],
      'positions': pos,
-     'elements': 'iaf_neuron'})
+     'elements': 'iaf_psc_alpha'})
 
 # visualize
 # xext, yext = nest.GetStatus(l1, 'topology')[0]['extent']

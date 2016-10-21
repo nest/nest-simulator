@@ -55,7 +55,7 @@ ResetKernel
 
 % Check that use_wfr cannot be set after nodes are created
 {
-  /iaf_neuron Create
+  /iaf_psc_alpha Create
   0 << /use_wfr true >> SetStatus
 } fail_or_die
 

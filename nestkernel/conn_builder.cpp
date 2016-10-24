@@ -580,6 +580,13 @@ nest::ConnBuilder::set_post_synaptic_element_name( std::string name )
   post_synaptic_element_name = name;
 }
 
+bool
+nest::ConnBuilder::loop_over_targets_() const
+{
+  return targets_->size() < kernel().node_manager.local_nodes_size()
+    or not targets_->is_range() or parameters_requiring_skipping_.size() > 0;
+}
+
 void
 nest::OneToOneBuilder::connect_()
 {
@@ -602,14 +609,7 @@ nest::OneToOneBuilder::connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      // With large-scale simulations (vp >> indegree), most of the nodes in the
-      // targets_-range are not on this machine. Therefore, if the number of
-      // local nodes is smaller than the targets_-range, we will iterate over
-      // the local nodes instead and check, whether the node is in the
-      // targets_-range.
-      if ( targets_->size() < kernel().node_manager.local_nodes_size()
-        || not targets_->is_range()
-        || parameters_requiring_skipping_.size() > 0 )
+      if ( loop_over_targets_() )
       {
         for ( GIDCollection::const_iterator tgid = targets_->begin(),
                                             sgid = sources_->begin();
@@ -650,14 +650,6 @@ nest::OneToOneBuilder::connect_()
         {
           Node* const target = ( *it ).get_node();
           const thread target_thread = target->get_thread();
-          const index tgid = ( *it ).get_gid();
-
-          int idx;
-          // Is local node in target list?
-          if ( ( idx = targets_->find( tgid ) ) < 0 )
-            continue;
-
-          const index sgid = ( *sources_ )[ idx ];
 
           if ( tid != target_thread )
           {
@@ -666,6 +658,13 @@ nest::OneToOneBuilder::connect_()
             continue;
           }
 
+          const index tgid = ( *it ).get_gid();
+          const int idx = targets_->find( tgid );
+          if ( idx < 0 )  // Is local node in target list?
+            continue;
+
+          // one-to-one, thus we can use target idx for source as well
+          const index sgid = ( *sources_ )[ idx ];
           if ( not autapses_ and sgid == tgid )
           {
             // no skipping required / possible,
@@ -871,14 +870,7 @@ nest::AllToAllBuilder::connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      // With large-scale simulations (vp >> indegree), most of the nodes in the
-      // targets_-range are not on this machine. Therefore, if the number of
-      // local nodes is smaller than the targets_-range, we will iterate over
-      // the local nodes instead and check, whether the node is in the
-      // targets_-range.
-      if ( targets_->size() < kernel().node_manager.local_nodes_size()
-        || not targets_->is_range()
-        || parameters_requiring_skipping_.size() > 0 )
+      if ( loop_over_targets_() )
       {
         for ( GIDCollection::const_iterator tgid = targets_->begin();
               tgid != targets_->end();
@@ -1186,13 +1178,7 @@ nest::FixedInDegreeBuilder::connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      // With large-scale simulations (vp >> indegree), most of the nodes in the
-      // targets_-range are not on this machine. Therefore, if the number of
-      // local nodes is smaller than the targets_-range, we will iterate over
-      // the local nodes instead and check, whether the node is in the
-      // targets_-range.
-      if ( targets_->size() < kernel().node_manager.local_nodes_size()
-        || not targets_->is_range() )
+      if ( loop_over_targets_() )
       {
         for ( GIDCollection::const_iterator tgid = targets_->begin();
               tgid != targets_->end();
@@ -1574,13 +1560,7 @@ nest::BernoulliBuilder::connect_()
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      // With large-scale simulations (vp >> indegree), most of the nodes in the
-      // targets_-range are not on this machine. Therefore, if the number of
-      // local nodes is smaller than the targets_-range, we will iterate over
-      // the local nodes instead and check, whether the node is in the
-      // targets_-range.
-      if ( targets_->size() < kernel().node_manager.local_nodes_size()
-        || not targets_->is_range() )
+      if ( loop_over_targets_() )
       {
         for ( GIDCollection::const_iterator tgid = targets_->begin();
               tgid != targets_->end();

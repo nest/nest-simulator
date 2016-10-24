@@ -147,6 +147,22 @@ protected:
    */
   void skip_conn_parameter_( thread );
 
+  /**
+   * Returns true if conventional looping over targets is indicated.
+   *
+   * Conventional looping over targets must be used if
+   * - any connection parameter requires skipping
+   * - targets are not given as a simple range (lookup otherwise too slow)
+   *
+   * Conventional looping should be used if
+   * - the number of targets is smaller than the number of local nodes
+   *
+   * For background, see Ippen et al (2017).
+   *
+   * @return true if conventional looping is to be used
+   */
+  bool loop_over_targets_() const;
+
   GIDCollection const* sources_;
   GIDCollection const* targets_;
 

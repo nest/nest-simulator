@@ -660,7 +660,7 @@ nest::OneToOneBuilder::connect_()
 
           const index tgid = ( *it ).get_gid();
           const int idx = targets_->find( tgid );
-          if ( idx < 0 )  // Is local node in target list?
+          if ( idx < 0 ) // Is local node in target list?
             continue;
 
           // one-to-one, thus we can use target idx for source as well

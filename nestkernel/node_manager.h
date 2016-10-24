@@ -358,7 +358,7 @@ NodeManager::local_nodes_begin() const
 inline SparseNodeArray::const_iterator
 NodeManager::local_nodes_end() const
 {
-  return local_nodes_.begin();
+  return local_nodes_.end();
 }
 
 inline size_t

@@ -20,25 +20,14 @@
  *
  */
 
- /* BeginDocumentation
-Name: tsodyks_facilitating - sli script for facilitation test of tsodyks_synapse
-
-Synopsis: (tsodyks_facilitating) run -> compare cout with comments in file
-
-
-Description:
-Script to test Tsodyks short term plasticity depressing synapses according to
-'Neural Networks with Dynamic Synapses'
-Misha Tsodyks, Klaus Pawelzik, Henry Markram
-Neural computation 10, 821--853 (1998)
-
-reproduces figure 1 B,(C)
-
-
-author:  Markus Diesmann, Moritz Helias
-date:    March 2006
-
-*/
+% Script to test Tsodyks short term plasticity depressing synapses
+% according to 'Neural Networks with Dynamic Synapses' Misha Tsodyks,
+% Klaus Pawelzik, Henry Markram Neural computation 10, 821--853 (1998)
+% 
+% Reproduces figure 1 B,(C)
+% 
+% Author: Markus Diesmann, Moritz Helias
+% Date: March 2006
 
 
 ResetKernel      % clear all existing network elements

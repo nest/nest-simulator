@@ -67,11 +67,17 @@ M_ERROR setverbosity
 
 % The following models require connections to rport 1:
 /extra_params <<
+   /gif_psc_exp_multisynapse << /params << /taus_syn [ 1.0 ] >>
+                                  /receptor_type 1 >>
+   /gif_cond_exp_multisynapse << /params << /taus_syn [ 1.0 ] >>
+                                  /receptor_type 1 >>
    /iaf_psc_alpha_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
    /iaf_psc_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
                                   /receptor_type 1 >>
    /aeif_cond_alpha_multisynapse << /params << /taus_syn [ 1.0 ] >>
+                                  /receptor_type 1 >>
+   /aeif_cond_beta_multisynapse << /params << /taus_decay [ 1.0 ] >>
                                   /receptor_type 1 >>
    /iaf_cond_alpha_mc << /receptor_type 1 >>
    /ht_neuron << /receptor_type 1 >>

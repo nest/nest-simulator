@@ -27,7 +27,7 @@
 
    Description:
 
-   This test generates 10 iaf_psc_alpha, 1 iaf_psc_delta and 10
+   This test generates 10 iaf_psc_alpha, 10 iaf_psc_delta and 10
    iaf_psc_exp neurons. It then uses GetGlobalNodes to retrieve these
    different sets of neurons from the network.
 

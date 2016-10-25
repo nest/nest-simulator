@@ -71,7 +71,7 @@ RecordablesMap< aeif_cond_beta_multisynapse >::create()
  * ---------------------------------------------------------------- */
 
 aeif_cond_beta_multisynapse::Parameters_::Parameters_()
-  : V_peak_( 0.0 )        // mV, should not be larger that V_th+10
+  : V_peak_( 0.0 )        // mV
   , V_reset_( -60.0 )     // mV
   , t_ref_( 0.0 )         // ms
   , g_L( 30.0 )           // nS
@@ -127,7 +127,7 @@ aeif_cond_beta_multisynapse::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::g_L, g_L );
   def< double >( d, names::E_L, E_L );
   def< double >( d, names::V_reset, V_reset_ );
-  def< size_t >( d, names::num_of_receptors, n_receptors() );
+  def< size_t >( d, names::n_receptors, n_receptors() );
   ArrayDatum E_rev_ad( E_rev );
   ArrayDatum taus_rise_ad( taus_rise );
   ArrayDatum taus_decay_ad( taus_decay );
@@ -481,13 +481,14 @@ aeif_cond_beta_multisynapse::calibrate()
     V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
   }
 
-  V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.RefractoryCounts_
+  V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
+  assert( V_.refractory_counts_
     >= 0 ); // since t_ref_ >= 0, this can only fail in error
 
   B_.spikes_.resize( P_.n_receptors() );
   S_.y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.n_receptors() ) );
+    + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.n_receptors() )
+    , 0.0 );
 
   // reallocate instance of stepping function for ODE GSL solver
   if ( B_.s_ != 0 )
@@ -574,7 +575,7 @@ aeif_cond_beta_multisynapse::update( Time const& origin,
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b;   // spike-driven adaptation
-        S_.r_ = V_.RefractoryCounts_; // initialize refractory steps with
+        S_.r_ = V_.refractory_counts_; // initialize refractory steps with
                                       // refractory period
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
@@ -682,8 +683,8 @@ aeif_cond_beta_multisynapse_dynamics( double,
     I_syn += y[ S::G + j ] * ( node.P_.E_rev[ i ] - V );
   }
 
-  const double I_spike = node.P_.Delta_T == 0. ? 0 : node.P_.Delta_T
-      * node.P_.g_L * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
+  const double I_spike = node.P_.Delta_T == 0. ? 0 : ( node.P_.Delta_T
+      * node.P_.g_L * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
   f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn - w

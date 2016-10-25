@@ -363,7 +363,7 @@ private:
      */
     double V_peak;
 
-    unsigned int RefractoryCounts_;
+    unsigned int refractory_counts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------

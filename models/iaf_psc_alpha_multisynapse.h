@@ -160,15 +160,15 @@ private:
    */
   struct State_
   {
-    double y0_; //!< Constant current
+    double constant_current_; //!< Constant current
     std::vector< double > y1_syn_;
     std::vector< double > y2_syn_;
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
-    double y3_;
+    double membrane_potential_;
     double current_; //! This is the current in a time step. This is only here
                      //! to allow logging
 
-    int r_; //!< Number of refractory steps remaining
+    int remaining_refractory_steps_; //!< Number of refractory steps remaining
 
     State_(); //!< Default initialization
 
@@ -229,7 +229,7 @@ private:
   double
   get_V_m_() const
   {
-    return S_.y3_ + P_.E_L_;
+    return S_.membrane_potential_ + P_.E_L_;
   }
   double
   get_current_() const

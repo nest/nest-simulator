@@ -81,9 +81,9 @@ iaf_psc_alpha_multisynapse::Parameters_::Parameters_()
 }
 
 iaf_psc_alpha_multisynapse::State_::State_()
-  : y0_( 0.0 )
-  , y3_( 0.0 )
-  , r_( 0 )
+  : constant_current_( 0.0 )
+  , membrane_potential_( 0.0 )
+  , remaining_refractory_steps_( 0 )
 {
   y1_syn_.clear();
   y2_syn_.clear();
@@ -122,42 +122,58 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
   const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  {
     V_reset_ -= E_L_;
+  }
   else
+  {
     V_reset_ -= delta_EL;
-
+  }
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
+  {
     Theta_ -= E_L_;
+  }
   else
+  {
     Theta_ -= delta_EL;
-
+  }
   if ( updateValue< double >( d, names::V_min, LowerBound_ ) )
+  {
     LowerBound_ -= E_L_;
+  }
   else
+  {
     LowerBound_ -= delta_EL;
-
+  }
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, C_ );
   updateValue< double >( d, names::tau_m, Tau_ );
   updateValue< double >( d, names::t_ref, TauR_ );
 
   if ( C_ <= 0 )
-    throw BadProperty( "Capacitance must be > 0." );
-
+  {
+    throw BadProperty( "Capacitance must be strictly positive." );
+  }
   if ( Tau_ <= 0. )
-    throw BadProperty( "Membrane time constant must be > 0." );
-
+  {
+    throw BadProperty( "Membrane time constant must be strictly positive." );
+  }
   std::vector< double > tau_tmp;
   if ( updateValue< std::vector< double > >( d, "tau_syn", tau_tmp ) )
   {
     for ( size_t i = 0; i < tau_tmp.size(); ++i )
     {
       if ( tau_tmp.size() < tau_syn_.size() && has_connections_ == true )
+      {  
         throw BadProperty(
           "The neuron has connections, therefore the number of ports cannot be "
           "reduced." );
+      }
       if ( tau_tmp[ i ] <= 0 )
-        throw BadProperty( "All synaptic time constants must be > 0." );
+      {
+        throw BadProperty( "All synaptic time constants must be strictly \
+                           positive." );
+      }
     }
 
     tau_syn_ = tau_tmp;
@@ -165,10 +181,14 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
   }
 
   if ( TauR_ < 0. )
-    throw BadProperty( "The refractory time t_ref can't be negative." );
+  {
+    throw BadProperty( "Refractory time must not be negative." );
+  }
 
   if ( V_reset_ >= Theta_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
+  }
 
   return delta_EL;
 }
@@ -177,7 +197,8 @@ void
 iaf_psc_alpha_multisynapse::State_::get( DictionaryDatum& d,
   const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, y3_ + p.E_L_ ); // Membrane potential
+  def< double >( d, names::V_m, 
+                 membrane_potential_ + p.E_L_ ); // Membrane potential
 }
 
 void
@@ -185,10 +206,14 @@ iaf_psc_alpha_multisynapse::State_::set( const DictionaryDatum& d,
   const Parameters_& p,
   const double delta_EL )
 {
-  if ( updateValue< double >( d, names::V_m, y3_ ) )
-    y3_ -= p.E_L_;
+  if ( updateValue< double >( d, names::V_m, membrane_potential_ ) )
+  {
+    membrane_potential_ -= p.E_L_;
+  }
   else
-    y3_ -= delta_EL;
+  {
+    membrane_potential_ -= delta_EL;
+  }
 }
 
 iaf_psc_alpha_multisynapse::Buffers_::Buffers_( iaf_psc_alpha_multisynapse& n )
@@ -290,12 +315,7 @@ iaf_psc_alpha_multisynapse::calibrate()
     B_.spikes_[ i ].resize();
   }
 
-  Time r = Time::ms( P_.TauR_ );
-  V_.RefractoryCounts_ = r.get_steps();
-
-  if ( V_.RefractoryCounts_ < 1 )
-    throw BadProperty(
-      "Absolute refractory time must be at least one time step." );
+  V_.RefractoryCounts_ = Time( Time::ms( P_.TauR_ ) ).get_steps();
 }
 
 void
@@ -309,24 +329,26 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
 
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( S_.r_ == 0 )
+    if ( S_.remaining_refractory_steps_ == 0 )
     {
       // neuron not refractory
-      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P33_ * S_.y3_;
+      S_.membrane_potential_ = V_.P30_ * ( S_.constant_current_ + P_.I_e_ ) 
+                             + V_.P33_ * S_.membrane_potential_;
 
       S_.current_ = 0.0;
       for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
       {
-        S_.y3_ += V_.P31_syn_[ i ] * S_.y1_syn_[ i ]
+        S_.membrane_potential_ += V_.P31_syn_[ i ] * S_.y1_syn_[ i ]
           + V_.P32_syn_[ i ] * S_.y2_syn_[ i ];
         S_.current_ += S_.y2_syn_[ i ];
       }
 
       // lower bound of membrane potential
-      S_.y3_ = ( S_.y3_ < P_.LowerBound_ ? P_.LowerBound_ : S_.y3_ );
+      S_.membrane_potential_ = ( S_.membrane_potential_ < P_.LowerBound_ 
+                                 ? P_.LowerBound_ : S_.membrane_potential_ );
     }
     else // neuron is absolute refractory
-      --S_.r_;
+      --S_.remaining_refractory_steps_;
 
     for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
     {
@@ -340,10 +362,10 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
         V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
     }
 
-    if ( S_.y3_ >= P_.Theta_ ) // threshold crossing
+    if ( S_.membrane_potential_ >= P_.Theta_ ) // threshold crossing
     {
-      S_.r_ = V_.RefractoryCounts_;
-      S_.y3_ = P_.V_reset_;
+      S_.remaining_refractory_steps_ = V_.RefractoryCounts_;
+      S_.membrane_potential_ = P_.V_reset_;
       // A supra-threshold membrane potential should never be observable.
       // The reset at the time of threshold crossing enables accurate
       // integration independent of the computation step size, see [2,3] for
@@ -355,7 +377,7 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
     }
 
     // set new input current
-    S_.y0_ = B_.currents_.get_value( lag );
+    S_.constant_current_ = B_.currents_.get_value( lag );
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
@@ -368,7 +390,9 @@ iaf_psc_alpha_multisynapse::handles_test_event( SpikeEvent&,
 {
   if ( receptor_type <= 0
     || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
+  {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
+  }
 
   P_.has_connections_ = true;
   return receptor_type;
@@ -378,17 +402,11 @@ void
 iaf_psc_alpha_multisynapse::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
-
-  for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
-  {
-    if ( P_.receptor_types_[ i ] == e.get_rport() )
-    {
-      B_.spikes_[ i ].add_value(
+  
+  B_.spikes_[ e.get_rport() - 1 ].add_value(
         e.get_rel_delivery_steps(
           kernel().simulation_manager.get_slice_origin() ),
         e.get_weight() * e.get_multiplicity() );
-    }
-  }
 }
 
 void

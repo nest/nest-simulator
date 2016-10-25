@@ -117,41 +117,56 @@ iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
   const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  {
     V_reset_ -= E_L_;
+  }
   else
+  {
     V_reset_ -= delta_EL;
-
+  }
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
+  {
     Theta_ -= E_L_;
+  }
   else
+  {
     Theta_ -= delta_EL;
-
+  }
+  
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, C_ );
   updateValue< double >( d, names::tau_m, Tau_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
 
   if ( C_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be > 0." );
-
+  }
   if ( Tau_ <= 0. )
-    throw BadProperty( "Membrane time constant must be > 0." );
-
+  {
+    throw BadProperty( "Membrane time constant must be strictly positive." );
+  }
   std::vector< double > tau_tmp;
   if ( updateValue< std::vector< double > >( d, "tau_syn", tau_tmp ) )
   {
     for ( size_t i = 0; i < tau_tmp.size(); ++i )
     {
       if ( tau_tmp.size() < tau_syn_.size() && has_connections_ == true )
+      {
         throw BadProperty(
           "The neuron has connections, therefore the number of ports cannot be "
           "reduced." );
+      }
       if ( tau_tmp[ i ] <= 0 )
-        throw BadProperty( "All synaptic time constants must be > 0." );
+      {
+        throw BadProperty( "All synaptic time constants must be strictly positive." );
+      }
       if ( tau_tmp[ i ] == Tau_ )
+      {
         throw BadProperty(
           "Membrane and synapse time constant(s) must differ. See note in "
           "documentation." );
+      }
     }
 
     tau_syn_ = tau_tmp;
@@ -159,11 +174,13 @@ iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
   }
 
   if ( t_ref_ < 0. )
-    throw BadProperty( "The refractory time t_ref can't be negative." );
-
+  {
+    throw BadProperty( "Refractory time must not be negative." );
+  }
   if ( V_reset_ >= Theta_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
-
+  }
   return delta_EL;
 }
 
@@ -180,9 +197,13 @@ iaf_psc_exp_multisynapse::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
+  {
     V_m_ -= p.E_L_;
+  }
   else
+  {
     V_m_ -= delta_EL;
+  }
 }
 
 iaf_psc_exp_multisynapse::Buffers_::Buffers_( iaf_psc_exp_multisynapse& n )
@@ -275,10 +296,6 @@ nest::iaf_psc_exp_multisynapse::calibrate()
   }
 
   V_.RefractoryCounts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-
-  if ( V_.RefractoryCounts_ < 1 )
-    throw BadProperty(
-      "Absolute refractory time must be at least one time step." );
 }
 
 void
@@ -306,8 +323,9 @@ iaf_psc_exp_multisynapse::update( const Time& origin,
       }
     }
     else
+    {
       --S_.r_ref_; // neuron is absolute refractory
-
+    }
     for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
     {
       // exponential decaying PSCs
@@ -340,8 +358,10 @@ iaf_psc_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type <= 0
     || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
+  {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
-
+  }
+  
   P_.has_connections_ = true;
   return receptor_type;
 }
@@ -351,16 +371,10 @@ iaf_psc_exp_multisynapse::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
-  {
-    if ( P_.receptor_types_[ i ] == e.get_rport() )
-    {
-      B_.spikes_[ i ].add_value(
-        e.get_rel_delivery_steps(
-          kernel().simulation_manager.get_slice_origin() ),
-        e.get_weight() * e.get_multiplicity() );
-    }
-  }
+  B_.spikes_[ e.get_rport() - 1 ].add_value(
+  e.get_rel_delivery_steps(
+    kernel().simulation_manager.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void

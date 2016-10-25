@@ -152,14 +152,14 @@ private:
    */
   struct State_
   {
-    double i_0_; //!< synaptic dc input current, variable 0
+    double input_current_; //!< synaptic dc input current, variable 0
     std::vector< double > i_syn_;
-    double V_m_;     //!< membrane potential, variable 2
+    double membrane_potential_;     //!< membrane potential, variable 2
     double current_; //!< This is the current in a time step. This is only
                      //!< here to allow logging
 
     //! absolute refractory counter (no membrane potential propagation)
-    int r_ref_;
+    int refractory_steps_;
 
     State_(); //!< Default initialization
 
@@ -221,9 +221,9 @@ private:
 
   //! Read out the real membrane potential
   double
-  get_V_m_() const
+  get_membrane_potential_() const
   {
-    return S_.V_m_ + P_.E_L_;
+    return S_.membrane_potential_ + P_.E_L_;
   }
 
   /**

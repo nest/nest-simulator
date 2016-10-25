@@ -83,7 +83,7 @@ iaf_psc_alpha_multisynapse::Parameters_::Parameters_()
 iaf_psc_alpha_multisynapse::State_::State_()
   : constant_current_( 0.0 )
   , membrane_potential_( 0.0 )
-  , remaining_refractory_steps_( 0 )
+  , refractory_steps_( 0 )
 {
   y1_syn_.clear();
   y2_syn_.clear();
@@ -171,8 +171,8 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
       }
       if ( tau_tmp[ i ] <= 0 )
       {
-        throw BadProperty( "All synaptic time constants must be strictly \
-                           positive." );
+        throw BadProperty( 
+                     "All synaptic time constants must be strictly positive." );
       }
     }
 
@@ -329,7 +329,7 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
 
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( S_.remaining_refractory_steps_ == 0 )
+    if ( S_.refractory_steps_ == 0 )
     {
       // neuron not refractory
       S_.membrane_potential_ = V_.P30_ * ( S_.constant_current_ + P_.I_e_ ) 
@@ -348,7 +348,7 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
                                  ? P_.LowerBound_ : S_.membrane_potential_ );
     }
     else // neuron is absolute refractory
-      --S_.remaining_refractory_steps_;
+      --S_.refractory_steps_;
 
     for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
     {
@@ -364,7 +364,7 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
 
     if ( S_.membrane_potential_ >= P_.Theta_ ) // threshold crossing
     {
-      S_.remaining_refractory_steps_ = V_.RefractoryCounts_;
+      S_.refractory_steps_ = V_.RefractoryCounts_;
       S_.membrane_potential_ = P_.V_reset_;
       // A supra-threshold membrane potential should never be observable.
       // The reset at the time of threshold crossing enables accurate

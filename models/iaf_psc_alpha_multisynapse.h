@@ -168,7 +168,7 @@ private:
     double current_; //! This is the current in a time step. This is only here
                      //! to allow logging
 
-    int remaining_refractory_steps_; //!< Number of refractory steps remaining
+    int refractory_steps_; //!< Number of refractory steps remaining
 
     State_(); //!< Default initialization
 

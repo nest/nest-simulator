@@ -72,7 +72,12 @@
 
      g_NMDA(t, V) = m(V, t) g(t)
 
-   where g(t) is a beta function (difference of exponentials).
+   where
+
+     g(t) = g_peak ( e^(-t/tau_1) - e^(-t/tau_2) )
+               / ( e^(-t_peak/tau_1) - e^(-t_peak/tau_2) )
+
+     t_peak = tau_2 tau_1 / ( tau_2 - tau_1 ) ln( tau_2 / tau_1 )
 
      m(V, t) = a(V) m_fast*(V, t) + ( 1 - a(V) ) m_slow*(V, t)
      a(V)    = 0.51 - 0.0028 V

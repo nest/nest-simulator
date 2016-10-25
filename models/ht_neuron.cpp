@@ -83,11 +83,11 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
    *
    * We need to take care to handle instantaneous blocking correctly.
    * If the unblock-variables Mg_{fast,slow} are greater than the steady-state
-   * value M_ss for the present membrane potential, we cannot change those
-   * values in State_[], since the ODE Solver may call this function multiple
-   * times and in arbitrary temporal order. We thus need to use local variables
-   * for the values at the current time, and check the state variables once
-   * the ODE solver has completed the time step.
+   * value M_ss for the present membrane potential, we cannot change
+   * Mg_{fast,slow} values in State_[], since the ODE Solver may call this
+   * function multiple times and in arbitrary temporal order. We thus need to
+   * use local variables for the values at the current time, and check the
+   * state variables once the ODE solver has completed the time step.
    */
   const double Mg_ss = node.Mg_steady_state_( y[ S::VM ] );
   const double Mg_s = std::min( Mg_ss, y[ S::Mg_slow ] );

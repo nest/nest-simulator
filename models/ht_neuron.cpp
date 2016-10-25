@@ -46,10 +46,13 @@ RecordablesMap< ht_neuron >::create()
 {
   insert_( names::V_m, &ht_neuron::get_y_elem_< ht_neuron::State_::VM > );
   insert_( names::theta, &ht_neuron::get_y_elem_< ht_neuron::State_::THETA > );
-  insert_( names::g_AMPA, &ht_neuron::get_y_elem_< ht_neuron::State_::G_AMPA > );
+  insert_(
+    names::g_AMPA, &ht_neuron::get_y_elem_< ht_neuron::State_::G_AMPA > );
   insert_( names::g_NMDA, &ht_neuron::get_g_NMDA_ );
-  insert_( names::g_GABAA, &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_A > );
-  insert_( names::g_GABAB, &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_B > );
+  insert_(
+    names::g_GABAA, &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_A > );
+  insert_(
+    names::g_GABAB, &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_B > );
   insert_( names::r_spike, &ht_neuron::get_r_spike_ );
   insert_( names::g_spike, &ht_neuron::get_g_spike_ );
   insert_( names::I_NaP, &ht_neuron::get_I_NaP_ );
@@ -99,8 +102,8 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   // Sign convention: For each current, write I = - g * ( V - E )
   //    then dV/dt ~ Sum(I)
   I_syn += -y[ S::G_AMPA ] * ( V - node.P_.AMPA_E_rev );
-  I_syn +=
-    -y[ S::G_NMDA_TIMECOURSE ] * ( A1 * Mg_f + A2 * Mg_s ) * ( V - node.P_.NMDA_E_rev );
+  I_syn += -y[ S::G_NMDA_TIMECOURSE ] * ( A1 * Mg_f + A2 * Mg_s )
+    * ( V - node.P_.NMDA_E_rev );
   I_syn += -y[ S::G_GABA_A ] * ( V - node.P_.GABA_A_E_rev );
   I_syn += -y[ S::G_GABA_B ] * ( V - node.P_.GABA_B_E_rev );
 
@@ -156,7 +159,8 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
 
   // NMDA
   f[ S::DG_NMDA_TIMECOURSE ] = -y[ S::DG_NMDA_TIMECOURSE ] / node.P_.NMDA_tau_1;
-  f[ S::G_NMDA_TIMECOURSE ] = y[ S::DG_NMDA_TIMECOURSE ] - y[ S::G_NMDA_TIMECOURSE ] / node.P_.NMDA_tau_2;
+  f[ S::G_NMDA_TIMECOURSE ] =
+    y[ S::DG_NMDA_TIMECOURSE ] - y[ S::G_NMDA_TIMECOURSE ] / node.P_.NMDA_tau_2;
   f[ S::Mg_slow ] = ( Mg_ss - Mg_s ) / node.P_.NMDA_tau_Mg_slow;
   f[ S::Mg_fast ] = ( Mg_ss - Mg_f ) / node.P_.NMDA_tau_Mg_fast;
 
@@ -374,161 +378,161 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::g_NaL, g_NaL );
   updateValue< double >( d, names::g_KL, g_KL );
   updateValue< double >( d, names::tau_m, tau_m );
-	updateValue< double >( d, names::theta_eq, theta_eq );
-	updateValue< double >( d, names::tau_theta, tau_theta );
-	updateValue< double >( d, names::tau_spike, tau_spike );
-	updateValue< double >( d, names::spike_duration, t_spike );
-	updateValue< double >( d, names::AMPA_g_peak, AMPA_g_peak );
-	updateValue< double >( d, names::AMPA_tau_1, AMPA_tau_1 );
-	updateValue< double >( d, names::AMPA_tau_2, AMPA_tau_2 );
-	updateValue< double >( d, names::AMPA_E_rev, AMPA_E_rev );
-	updateValue< double >( d, names::NMDA_g_peak, NMDA_g_peak );
-	updateValue< double >( d, names::NMDA_tau_1, NMDA_tau_1 );
-	updateValue< double >( d, names::NMDA_tau_2, NMDA_tau_2 );
-	updateValue< double >( d, names::NMDA_E_rev, NMDA_E_rev );
-	updateValue< double >( d, names::NMDA_Vact, NMDA_Vact );
-	updateValue< double >( d, names::NMDA_Sact, NMDA_Sact );
-	updateValue< double >( d, names::NMDA_tau_Mg_slow, NMDA_tau_Mg_slow );
-	updateValue< double >( d, names::NMDA_tau_Mg_fast, NMDA_tau_Mg_fast );
-	updateValue< double >( d, names::GABA_A_g_peak, GABA_A_g_peak );
-	updateValue< double >( d, names::GABA_A_tau_1, GABA_A_tau_1 );
-	updateValue< double >( d, names::GABA_A_tau_2, GABA_A_tau_2 );
-	updateValue< double >( d, names::GABA_A_E_rev, GABA_A_E_rev );
-	updateValue< double >( d, names::GABA_B_g_peak, GABA_B_g_peak );
-	updateValue< double >( d, names::GABA_B_tau_1, GABA_B_tau_1 );
-	updateValue< double >( d, names::GABA_B_tau_2, GABA_B_tau_2 );
-	updateValue< double >( d, names::GABA_B_E_rev, GABA_B_E_rev );
-	updateValue< double >( d, names::NaP_g_peak, NaP_g_peak );
-	updateValue< double >( d, names::NaP_E_rev, NaP_E_rev );
-	updateValue< double >( d, names::KNa_g_peak, KNa_g_peak );
-	updateValue< double >( d, names::KNa_E_rev, KNa_E_rev );
-	updateValue< double >( d, names::T_g_peak, T_g_peak );
-	updateValue< double >( d, names::T_E_rev, T_E_rev );
-	updateValue< double >( d, names::h_g_peak, h_g_peak );
-	updateValue< double >( d, names::h_E_rev, h_E_rev );
+  updateValue< double >( d, names::theta_eq, theta_eq );
+  updateValue< double >( d, names::tau_theta, tau_theta );
+  updateValue< double >( d, names::tau_spike, tau_spike );
+  updateValue< double >( d, names::spike_duration, t_spike );
+  updateValue< double >( d, names::AMPA_g_peak, AMPA_g_peak );
+  updateValue< double >( d, names::AMPA_tau_1, AMPA_tau_1 );
+  updateValue< double >( d, names::AMPA_tau_2, AMPA_tau_2 );
+  updateValue< double >( d, names::AMPA_E_rev, AMPA_E_rev );
+  updateValue< double >( d, names::NMDA_g_peak, NMDA_g_peak );
+  updateValue< double >( d, names::NMDA_tau_1, NMDA_tau_1 );
+  updateValue< double >( d, names::NMDA_tau_2, NMDA_tau_2 );
+  updateValue< double >( d, names::NMDA_E_rev, NMDA_E_rev );
+  updateValue< double >( d, names::NMDA_Vact, NMDA_Vact );
+  updateValue< double >( d, names::NMDA_Sact, NMDA_Sact );
+  updateValue< double >( d, names::NMDA_tau_Mg_slow, NMDA_tau_Mg_slow );
+  updateValue< double >( d, names::NMDA_tau_Mg_fast, NMDA_tau_Mg_fast );
+  updateValue< double >( d, names::GABA_A_g_peak, GABA_A_g_peak );
+  updateValue< double >( d, names::GABA_A_tau_1, GABA_A_tau_1 );
+  updateValue< double >( d, names::GABA_A_tau_2, GABA_A_tau_2 );
+  updateValue< double >( d, names::GABA_A_E_rev, GABA_A_E_rev );
+  updateValue< double >( d, names::GABA_B_g_peak, GABA_B_g_peak );
+  updateValue< double >( d, names::GABA_B_tau_1, GABA_B_tau_1 );
+  updateValue< double >( d, names::GABA_B_tau_2, GABA_B_tau_2 );
+  updateValue< double >( d, names::GABA_B_E_rev, GABA_B_E_rev );
+  updateValue< double >( d, names::NaP_g_peak, NaP_g_peak );
+  updateValue< double >( d, names::NaP_E_rev, NaP_E_rev );
+  updateValue< double >( d, names::KNa_g_peak, KNa_g_peak );
+  updateValue< double >( d, names::KNa_E_rev, KNa_E_rev );
+  updateValue< double >( d, names::T_g_peak, T_g_peak );
+  updateValue< double >( d, names::T_E_rev, T_E_rev );
+  updateValue< double >( d, names::h_g_peak, h_g_peak );
+  updateValue< double >( d, names::h_E_rev, h_E_rev );
 
-	  if ( AMPA_g_peak < 0 )
-	  {
-	     throw BadParameter("AMPA_g_peak >= 0 required.");
-	  }
-	  if ( GABA_A_g_peak < 0 )
-	  {
-	     throw BadParameter("GABA_A_g_peak >= 0 required.");
-	  }
-	  if ( GABA_B_g_peak < 0 )
-	  {
-	     throw BadParameter("GABA_B_g_peak >= 0 required.");
-	  }
-	  if ( KNa_g_peak < 0 )
-	  {
-	     throw BadParameter("KNa_g_peak >= 0 required.");
-	  }
-	  if ( NMDA_Sact < 0 )
-	  {
-	     throw BadParameter("NMDA_Sact >= 0 required.");
-	  }
-	  if ( NMDA_g_peak < 0 )
-	  {
-	     throw BadParameter("NMDA_g_peak >= 0 required.");
-	  }
-	  if ( T_g_peak < 0 )
-	  {
-	     throw BadParameter("T_g_peak >= 0 required.");
-	  }
-	  if ( h_g_peak < 0 )
-	  {
-	     throw BadParameter("h_g_peak >= 0 required.");
-	  }
-	  if ( t_spike < 0 )
-	  {
-	     throw BadParameter("t_spike >= 0 required.");
-	  }
-	  if ( NaP_g_peak < 0 )
-	  {
-	     throw BadParameter("NaP_g_peak >= 0 required.");
-	  }
-	  if ( g_KL < 0 )
-	  {
-	     throw BadParameter("g_KL >= 0 required.");
-	  }
-	  if ( g_NaL < 0 )
-	  {
-	     throw BadParameter("g_NaL >= 0 required.");
-	  }
+  if ( AMPA_g_peak < 0 )
+  {
+    throw BadParameter( "AMPA_g_peak >= 0 required." );
+  }
+  if ( GABA_A_g_peak < 0 )
+  {
+    throw BadParameter( "GABA_A_g_peak >= 0 required." );
+  }
+  if ( GABA_B_g_peak < 0 )
+  {
+    throw BadParameter( "GABA_B_g_peak >= 0 required." );
+  }
+  if ( KNa_g_peak < 0 )
+  {
+    throw BadParameter( "KNa_g_peak >= 0 required." );
+  }
+  if ( NMDA_Sact < 0 )
+  {
+    throw BadParameter( "NMDA_Sact >= 0 required." );
+  }
+  if ( NMDA_g_peak < 0 )
+  {
+    throw BadParameter( "NMDA_g_peak >= 0 required." );
+  }
+  if ( T_g_peak < 0 )
+  {
+    throw BadParameter( "T_g_peak >= 0 required." );
+  }
+  if ( h_g_peak < 0 )
+  {
+    throw BadParameter( "h_g_peak >= 0 required." );
+  }
+  if ( t_spike < 0 )
+  {
+    throw BadParameter( "t_spike >= 0 required." );
+  }
+  if ( NaP_g_peak < 0 )
+  {
+    throw BadParameter( "NaP_g_peak >= 0 required." );
+  }
+  if ( g_KL < 0 )
+  {
+    throw BadParameter( "g_KL >= 0 required." );
+  }
+  if ( g_NaL < 0 )
+  {
+    throw BadParameter( "g_NaL >= 0 required." );
+  }
 
-	  if ( AMPA_tau_1 <= 0 )
-	  {
-	     throw BadParameter("AMPA_tau_1 > 0 required.");
-	  }
-	  if ( AMPA_tau_2 <= 0 )
-	  {
-	     throw BadParameter("AMPA_tau_2 > 0 required.");
-	  }
-	  if ( GABA_A_tau_1 <= 0 )
-	  {
-	     throw BadParameter("GABA_A_tau_1 > 0 required.");
-	  }
-	  if ( GABA_A_tau_2 <= 0 )
-	  {
-	     throw BadParameter("GABA_A_tau_2 > 0 required.");
-	  }
-	  if ( GABA_B_tau_1 <= 0 )
-	  {
-	     throw BadParameter("GABA_B_tau_1 > 0 required.");
-	  }
-	  if ( GABA_B_tau_2 <= 0 )
-	  {
-	     throw BadParameter("GABA_B_tau_2 > 0 required.");
-	  }
-	  if ( NMDA_tau_1 <= 0 )
-	  {
-	     throw BadParameter("NMDA_tau_1 > 0 required.");
-	  }
-	  if ( NMDA_tau_2 <= 0 )
-	  {
-	     throw BadParameter("NMDA_tau_2 > 0 required.");
-	  }
-	  if ( NMDA_tau_Mg_fast <= 0 )
-	  {
-	     throw BadParameter("NMDA_tau_Mg_fast > 0 required.");
-	  }
-	  if ( NMDA_tau_Mg_slow <= 0 )
-	  {
-	     throw BadParameter("NMDA_tau_Mg_slow > 0 required.");
-	  }
-	  if ( tau_spike <= 0 )
-	  {
-	     throw BadParameter("tau_spike > 0 required.");
-	  }
-	  if ( tau_theta <= 0 )
-	  {
-	     throw BadParameter("tau_theta > 0 required.");
-	  }
-	  if ( tau_m <= 0 )
-	  {
-	     throw BadParameter("tau_m > 0 required.");
-	  }
+  if ( AMPA_tau_1 <= 0 )
+  {
+    throw BadParameter( "AMPA_tau_1 > 0 required." );
+  }
+  if ( AMPA_tau_2 <= 0 )
+  {
+    throw BadParameter( "AMPA_tau_2 > 0 required." );
+  }
+  if ( GABA_A_tau_1 <= 0 )
+  {
+    throw BadParameter( "GABA_A_tau_1 > 0 required." );
+  }
+  if ( GABA_A_tau_2 <= 0 )
+  {
+    throw BadParameter( "GABA_A_tau_2 > 0 required." );
+  }
+  if ( GABA_B_tau_1 <= 0 )
+  {
+    throw BadParameter( "GABA_B_tau_1 > 0 required." );
+  }
+  if ( GABA_B_tau_2 <= 0 )
+  {
+    throw BadParameter( "GABA_B_tau_2 > 0 required." );
+  }
+  if ( NMDA_tau_1 <= 0 )
+  {
+    throw BadParameter( "NMDA_tau_1 > 0 required." );
+  }
+  if ( NMDA_tau_2 <= 0 )
+  {
+    throw BadParameter( "NMDA_tau_2 > 0 required." );
+  }
+  if ( NMDA_tau_Mg_fast <= 0 )
+  {
+    throw BadParameter( "NMDA_tau_Mg_fast > 0 required." );
+  }
+  if ( NMDA_tau_Mg_slow <= 0 )
+  {
+    throw BadParameter( "NMDA_tau_Mg_slow > 0 required." );
+  }
+  if ( tau_spike <= 0 )
+  {
+    throw BadParameter( "tau_spike > 0 required." );
+  }
+  if ( tau_theta <= 0 )
+  {
+    throw BadParameter( "tau_theta > 0 required." );
+  }
+  if ( tau_m <= 0 )
+  {
+    throw BadParameter( "tau_m > 0 required." );
+  }
 
-	  if ( AMPA_tau_1 >= AMPA_tau_2 )
-	  {
-	     throw BadParameter("AMPA_tau_1 < AMPA_tau_2 required.");
-	  }
-	  if ( GABA_A_tau_1 >= GABA_A_tau_2 )
-	  {
-	     throw BadParameter("GABA_A_tau_1 < GABA_A_tau_2 required.");
-	  }
-	  if ( GABA_B_tau_1 >= GABA_B_tau_2 )
-	  {
-	     throw BadParameter("GABA_B_tau_1 < GABA_B_tau_2 required.");
-	  }
-	  if ( NMDA_tau_1 >= NMDA_tau_2 )
-	  {
-	     throw BadParameter("NMDA_tau_1 < NMDA_tau_2 required.");
-	  }
-	  if ( NMDA_tau_Mg_fast >= NMDA_tau_Mg_slow )
-	  {
-	     throw BadParameter("NMDA_tau_Mg_fast < NMDA_tau_Mg_slow required.");
-	  }
+  if ( AMPA_tau_1 >= AMPA_tau_2 )
+  {
+    throw BadParameter( "AMPA_tau_1 < AMPA_tau_2 required." );
+  }
+  if ( GABA_A_tau_1 >= GABA_A_tau_2 )
+  {
+    throw BadParameter( "GABA_A_tau_1 < GABA_A_tau_2 required." );
+  }
+  if ( GABA_B_tau_1 >= GABA_B_tau_2 )
+  {
+    throw BadParameter( "GABA_B_tau_1 < GABA_B_tau_2 required." );
+  }
+  if ( NMDA_tau_1 >= NMDA_tau_2 )
+  {
+    throw BadParameter( "NMDA_tau_1 < NMDA_tau_2 required." );
+  }
+  if ( NMDA_tau_Mg_fast >= NMDA_tau_Mg_slow )
+  {
+    throw BadParameter( "NMDA_tau_Mg_fast < NMDA_tau_Mg_slow required." );
+  }
 }
 
 void
@@ -796,11 +800,11 @@ ht_neuron::update( Time const& origin, const long from, const long to )
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &B_.sys_,             // system of ODE
-        &tt,                  // from t...
-        B_.step_,             // ...to t=t+h
+        &B_.sys_,              // system of ODE
+        &tt,                   // from t...
+        B_.step_,              // ...to t=t+h
         &B_.integration_step_, // integration window (written on!)
-        S_.y_ );              // neuron state
+        S_.y_ );               // neuron state
 
       if ( status != GSL_SUCCESS )
       {

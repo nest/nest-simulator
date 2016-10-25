@@ -406,6 +406,129 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
 	updateValue< double >( d, names::T_E_rev, T_E_rev );
 	updateValue< double >( d, names::h_g_peak, h_g_peak );
 	updateValue< double >( d, names::h_E_rev, h_E_rev );
+
+	  if ( AMPA_g_peak < 0 )
+	  {
+	     throw BadParameter("AMPA_g_peak >= 0 required.");
+	  }
+	  if ( GABA_A_g_peak < 0 )
+	  {
+	     throw BadParameter("GABA_A_g_peak >= 0 required.");
+	  }
+	  if ( GABA_B_g_peak < 0 )
+	  {
+	     throw BadParameter("GABA_B_g_peak >= 0 required.");
+	  }
+	  if ( KNa_g_peak < 0 )
+	  {
+	     throw BadParameter("KNa_g_peak >= 0 required.");
+	  }
+	  if ( NMDA_Sact < 0 )
+	  {
+	     throw BadParameter("NMDA_Sact >= 0 required.");
+	  }
+	  if ( NMDA_g_peak < 0 )
+	  {
+	     throw BadParameter("NMDA_g_peak >= 0 required.");
+	  }
+	  if ( T_g_peak < 0 )
+	  {
+	     throw BadParameter("T_g_peak >= 0 required.");
+	  }
+	  if ( h_g_peak < 0 )
+	  {
+	     throw BadParameter("h_g_peak >= 0 required.");
+	  }
+	  if ( t_spike < 0 )
+	  {
+	     throw BadParameter("t_spike >= 0 required.");
+	  }
+	  if ( NaP_g_peak < 0 )
+	  {
+	     throw BadParameter("NaP_g_peak >= 0 required.");
+	  }
+	  if ( g_KL < 0 )
+	  {
+	     throw BadParameter("g_KL >= 0 required.");
+	  }
+	  if ( g_NaL < 0 )
+	  {
+	     throw BadParameter("g_NaL >= 0 required.");
+	  }
+
+	  if ( AMPA_tau_1 <= 0 )
+	  {
+	     throw BadParameter("AMPA_tau_1 > 0 required.");
+	  }
+	  if ( AMPA_tau_2 <= 0 )
+	  {
+	     throw BadParameter("AMPA_tau_2 > 0 required.");
+	  }
+	  if ( GABA_A_tau_1 <= 0 )
+	  {
+	     throw BadParameter("GABA_A_tau_1 > 0 required.");
+	  }
+	  if ( GABA_A_tau_2 <= 0 )
+	  {
+	     throw BadParameter("GABA_A_tau_2 > 0 required.");
+	  }
+	  if ( GABA_B_tau_1 <= 0 )
+	  {
+	     throw BadParameter("GABA_B_tau_1 > 0 required.");
+	  }
+	  if ( GABA_B_tau_2 <= 0 )
+	  {
+	     throw BadParameter("GABA_B_tau_2 > 0 required.");
+	  }
+	  if ( NMDA_tau_1 <= 0 )
+	  {
+	     throw BadParameter("NMDA_tau_1 > 0 required.");
+	  }
+	  if ( NMDA_tau_2 <= 0 )
+	  {
+	     throw BadParameter("NMDA_tau_2 > 0 required.");
+	  }
+	  if ( NMDA_tau_Mg_fast <= 0 )
+	  {
+	     throw BadParameter("NMDA_tau_Mg_fast > 0 required.");
+	  }
+	  if ( NMDA_tau_Mg_slow <= 0 )
+	  {
+	     throw BadParameter("NMDA_tau_Mg_slow > 0 required.");
+	  }
+	  if ( tau_spike <= 0 )
+	  {
+	     throw BadParameter("tau_spike > 0 required.");
+	  }
+	  if ( tau_theta <= 0 )
+	  {
+	     throw BadParameter("tau_theta > 0 required.");
+	  }
+	  if ( tau_m <= 0 )
+	  {
+	     throw BadParameter("tau_m > 0 required.");
+	  }
+
+	  if ( AMPA_tau_1 >= AMPA_tau_2 )
+	  {
+	     throw BadParameter("AMPA_tau_1 < AMPA_tau_2 required.");
+	  }
+	  if ( GABA_A_tau_1 >= GABA_A_tau_2 )
+	  {
+	     throw BadParameter("GABA_A_tau_1 < GABA_A_tau_2 required.");
+	  }
+	  if ( GABA_B_tau_1 >= GABA_B_tau_2 )
+	  {
+	     throw BadParameter("GABA_B_tau_1 < GABA_B_tau_2 required.");
+	  }
+	  if ( NMDA_tau_1 >= NMDA_tau_2 )
+	  {
+	     throw BadParameter("NMDA_tau_1 < NMDA_tau_2 required.");
+	  }
+	  if ( NMDA_tau_Mg_fast >= NMDA_tau_Mg_slow )
+	  {
+	     throw BadParameter("NMDA_tau_Mg_fast < NMDA_tau_Mg_slow required.");
+	  }
 }
 
 void

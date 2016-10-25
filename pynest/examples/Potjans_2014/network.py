@@ -30,7 +30,6 @@ Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 
 import nest
 import numpy as np
-import matplotlib.pyplot as plt
 import os
 import sys
 from helpers import adj_w_ext_to_K
@@ -39,7 +38,7 @@ from helpers import get_total_number_of_synapses
 from helpers import get_weight
 from helpers import plot_raster
 from helpers import fire_rate
-from helpers import box_plot
+from helpers import boxplot
 from helpers import compute_DC
 
 
@@ -72,6 +71,12 @@ class Network:
         else:
             self.stim_dict = None
         self.data_path = sim_dict['data_path']
+        if nest.Rank() == 0:
+            if os.path.isdir(self.sim_dict['data_path']):
+                print('data directory already exists')
+            else:
+                os.mkdir(self.sim_dict['data_path'])
+                print('data directory created')
         print('Data will be written to %s' % self.data_path)
 
     def setup_nest(self):
@@ -79,24 +84,24 @@ class Network:
 
         This function resets the NEST-kernel and passes parameters to it.
         The number of seeds for the NEST-kernel is computed, based on the
-        total number of threads and mpi-processes per thread.
+        total number of mpi-processes and threads of each.
 
         Parameters
         """
         nest.ResetKernel()
         master_seed = self.sim_dict['master_seed']
         print('Master seed: %i ' % master_seed)
-        nest.SetKernelStatus({
-            'local_num_threads': self.sim_dict['local_num_threads']
-            })
+        nest.SetKernelStatus(
+            {'local_num_threads': self.sim_dict['local_num_threads']}
+            )
         N_tp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
         print('Number of total processes: %i' % N_tp)
         rng_seeds = list(
-                        range(
-                            master_seed + 1 + N_tp,
-                            master_seed + 1 + (2 * N_tp)
-                            )
-                        )
+            range(
+                master_seed + 1 + N_tp,
+                master_seed + 1 + (2 * N_tp)
+                )
+            )
         grng_seed = master_seed + N_tp
         print(
             'Seeds for random number generators of virtual processes: %r'
@@ -195,10 +200,10 @@ class Network:
             '0 << /model /%s >> GetLocalNodes' % self.net_dict['neuron_model']
             )
         local_nodes = nest.sli_pop()
-        mpi_rank = nest.Rank()
-        print('mpi rank: %i' % mpi_rank)
+        vp = nest.GetStatus(local_nodes)[0]['vp']
+        print('vp: %i' % vp)
         nest.SetStatus(
-            local_nodes, 'V_m', self.pyrngs[mpi_rank].normal(
+            local_nodes, 'V_m', self.pyrngs[vp].normal(
                 self.net_dict['neuron_params']['V0_mean'],
                 self.net_dict['neuron_params']['V0_sd'],
                 len(local_nodes)
@@ -445,17 +450,26 @@ class Network:
     def evaluate(self, raster_plot_time_idx, fire_rate_time_idx):
         """ This function displays output of the simulation.
 
-        This function creates a raster plot of the recorded spikes, calculates
-        the firing rate of each population and creates a box plot of the
+        This calculates the firing rate of each population,
+        creates a spike raster plot and a box plot of the
         firing rates.
 
         """
-        plot_raster(
-            self.data_path, 'spike_detector',
-            raster_plot_time_idx[0], raster_plot_time_idx[1]
-            )
-        fire_rate(
-            self.data_path, 'spike_detector',
-            fire_rate_time_idx[0], fire_rate_time_idx[1]
-            )
-        box_plot(self.data_path, self.net_dict)
+        if nest.Rank() == 0:
+            print(
+                'Interval to compute firing rates: %s ms'
+                % np.array2string(fire_rate_time_idx)
+                )
+            fire_rate(
+                self.data_path, 'spike_detector',
+                fire_rate_time_idx[0], fire_rate_time_idx[1]
+                )
+            print(
+                'Interval to plot spikes: %s ms'
+                % np.array2string(raster_plot_time_idx)
+                )
+            plot_raster(
+                self.data_path, 'spike_detector',
+                raster_plot_time_idx[0], raster_plot_time_idx[1]
+                )
+            boxplot(self.net_dict, self.data_path)

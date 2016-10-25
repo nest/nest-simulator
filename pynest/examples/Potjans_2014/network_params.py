@@ -88,7 +88,7 @@ def get_mean_PSP_matrix(PSP_e, g, number_of_pop):
 
     The function creates a matrix of the mean evoked postsynaptic
     potentials between the recurrent connections of the microcircuit.
-    The weight of the connection between L23E and L4E is doubled.
+    The weight of the connection between L4E and L23E is doubled.
 
     Arguments
     ---------
@@ -119,10 +119,7 @@ def get_std_PSP_matrix(PSP_rel, number_of_pop):
     """ Relative standard deviation matrix of postsynaptic potential created.
 
     The relative standard deviation matrix of the evoked postsynaptic potential
-    for the recurrent connections of the microcircuit is created. The standard
-    deviation of the connection of L23E to L4E is set to a value of 0.05 to
-    compensate the doubling of the mean weight and to keep all standard
-    deviations of outgoing excitatory connections similar.
+    for the recurrent connections of the microcircuit is created.
 
     Arguments
     ---------
@@ -139,10 +136,7 @@ def get_std_PSP_matrix(PSP_rel, number_of_pop):
     """
     dim = number_of_pop
     std_mat = np.zeros((dim, dim))
-    std_value_normal = PSP_rel
-    std_value_exception = 0.05
-    std_mat[:, :] = std_value_normal
-    std_mat[0, 2] = std_value_exception
+    std_mat[:, :] = PSP_rel
     return std_mat
 
 net_dict = {

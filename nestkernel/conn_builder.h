@@ -102,7 +102,7 @@ public:
   void set_pre_synaptic_element_name( std::string name );
   void set_post_synaptic_element_name( std::string name );
 
-  int change_connected_synaptic_elements( index, index, const int, int );
+  bool change_connected_synaptic_elements( index, index, const int, int );
 
   virtual bool
   supports_symmetric() const
@@ -158,8 +158,8 @@ protected:
 
   // Name of the pre synaptic and post synaptic elements for this connection
   // builder
-  std::string pre_synaptic_element_name;
-  std::string post_synaptic_element_name;
+  std::string pre_synaptic_element_name_;
+  std::string post_synaptic_element_name_;
 
 private:
   typedef std::map< Name, ConnParameter* > ConnParameterMap;
@@ -316,12 +316,12 @@ public:
   std::string
   get_pre_synaptic_element_name() const
   {
-    return pre_synaptic_element_name;
+    return pre_synaptic_element_name_;
   }
   std::string
   get_post_synaptic_element_name() const
   {
-    return post_synaptic_element_name;
+    return post_synaptic_element_name_;
   }
 
   /**

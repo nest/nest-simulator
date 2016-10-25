@@ -569,12 +569,14 @@ class DimensionMismatch : public KernelException
 {
   int expected_;
   int provided_;
+  std::string msg_;
 
 public:
   DimensionMismatch()
     : KernelException( "DimensionMismatch" )
-    , expected_()
-    , provided_()
+    , expected_( -1 )
+    , provided_( -1 )
+    , msg_( "" )
   {
   }
 
@@ -582,8 +584,18 @@ public:
     : KernelException( "DimensionMismatch" )
     , expected_( expected )
     , provided_( provided )
+    , msg_( "" )
   {
   }
+
+  DimensionMismatch( const std::string& msg )
+    : KernelException( "DimensionMismatch" )
+    , expected_( -1 )
+    , provided_( -1 )
+    , msg_( msg )
+  {
+  }
+
 
   ~DimensionMismatch() throw()
   {

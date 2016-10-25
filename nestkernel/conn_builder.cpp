@@ -142,9 +142,9 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   if ( syn_spec->known( names::pre_synaptic_element )
     && syn_spec->known( names::post_synaptic_element ) )
   {
-    pre_synaptic_element_name =
+    pre_synaptic_element_name_ =
       getValue< std::string >( syn_spec, names::pre_synaptic_element );
-    post_synaptic_element_name =
+    post_synaptic_element_name_ =
       getValue< std::string >( syn_spec, names::post_synaptic_element );
   }
   else
@@ -156,8 +156,8 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
         "In order to use structural plasticity, both a pre and post synaptic "
         "element must be specified" );
     }
-    pre_synaptic_element_name = "";
-    post_synaptic_element_name = "";
+    pre_synaptic_element_name_ = "";
+    post_synaptic_element_name_ = "";
   }
 
   // synapse-specific parameters
@@ -341,14 +341,14 @@ nest::ConnBuilder::check_synapse_params_( std::string syn_name,
  * @param update amount of connected synaptic elements to update
  * @return
  */
-int
+bool
 nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
   index tgid,
   const int tid,
   int update )
 {
 
-  int local = 1;
+  int local = true;
   // check whether the source is on this mpi machine
   if ( kernel().node_manager.is_local_gid( sgid ) )
   {
@@ -359,14 +359,14 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
     if ( tid == source_thread )
     {
       // update the number of connected synaptic elements
-      source->connect_synaptic_element( pre_synaptic_element_name, update );
+      source->connect_synaptic_element( pre_synaptic_element_name_, update );
     }
   }
 
   // check whether the target is on this mpi machine
   if ( not kernel().node_manager.is_local_gid( tgid ) )
   {
-    local = 0;
+    local = false;
   }
   else
   {
@@ -375,12 +375,12 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
     // check whether the target is on our thread
     if ( tid != target_thread )
     {
-      local = 0;
+      local = false;
     }
     else
     {
       // update the number of connected synaptic elements
-      target->connect_synaptic_element( post_synaptic_element_name, update );
+      target->connect_synaptic_element( post_synaptic_element_name_, update );
     }
   }
   return local;
@@ -392,14 +392,15 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
 void
 nest::ConnBuilder::connect()
 {
-  // We test here, and not in the ConnBuilder constructor, so the derived classes are fully constructed when the test is executed
+  // We test here, and not in the ConnBuilder constructor, so the derived 
+  // classes are fully constructed when the test is executed
   if ( symmetric_ and not supports_symmetric() )
   {
     throw NotImplemented(
       "This connection rule does not support symmetric connections." );
   }
 
-  if ( pre_synaptic_element_name != "" && post_synaptic_element_name != "" )
+  if ( pre_synaptic_element_name_ != "" && post_synaptic_element_name_ != "" )
   {
     if ( symmetric_ )
       throw NotImplemented(
@@ -442,7 +443,7 @@ nest::ConnBuilder::connect()
 void
 nest::ConnBuilder::disconnect()
 {
-  if ( pre_synaptic_element_name != "" && post_synaptic_element_name != "" )
+  if ( pre_synaptic_element_name_ != "" && post_synaptic_element_name_ != "" )
   {
     sp_disconnect_();
   }
@@ -584,13 +585,13 @@ nest::ConnBuilder::single_connect_( index sgid,
 void
 nest::ConnBuilder::set_pre_synaptic_element_name( std::string name )
 {
-  pre_synaptic_element_name = name;
+  pre_synaptic_element_name_ = name;
 }
 
 void
 nest::ConnBuilder::set_post_synaptic_element_name( std::string name )
 {
-  post_synaptic_element_name = name;
+  post_synaptic_element_name_ = name;
 }
 
 nest::OneToOneBuilder::OneToOneBuilder( const GIDCollection& sources,
@@ -602,10 +603,7 @@ nest::OneToOneBuilder::OneToOneBuilder( const GIDCollection& sources,
   // make sure that target and source population have the same size
   if ( sources_->size() != targets_->size() )
   {
-    LOG( M_ERROR,
-      "Connect/Disconnect",
-      "Source and Target population must be of the same size." );
-    throw DimensionMismatch();
+    throw DimensionMismatch( "Source and Target population must be of the same size." );
   }
 }
 
@@ -892,7 +890,6 @@ nest::AllToAllBuilder::sp_connect_()
     // get thread id
     const int tid = kernel().vp_manager.get_thread_id();
     try
-
     {
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
@@ -1082,7 +1079,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( const GIDCollection& sources,
     }
   } // if (not multapses_ )
  
-  if ( indegree_ < static_cast< long >( 0 ) )
+  if ( indegree_ < 0 )
   {
     throw BadProperty( "Indegree cannot be less than zero." );
   }
@@ -1227,7 +1224,7 @@ nest::FixedOutDegreeBuilder::connect_()
         t_id = grng->ulrand( n_rnd );
         tgid = ( *targets_ )[ t_id ];
       } while ( ( not autapses_ and tgid == *sgid )
-        || ( not multapses_ and ch_ids.find( t_id ) != ch_ids.end() ) );
+        or ( not multapses_ and ch_ids.find( t_id ) != ch_ids.end() ) );
 
       if ( not multapses_ )
         ch_ids.insert( t_id );
@@ -1517,7 +1514,7 @@ nest::SPBuilder::SPBuilder( const GIDCollection& sources,
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   // Check that both pre and post synaptic element are provided
-  if ( pre_synaptic_element_name == "" || post_synaptic_element_name == "" )
+  if ( pre_synaptic_element_name_ == "" || post_synaptic_element_name_ == "" )
   {
     throw BadProperty(
       "pre_synaptic_element and/or post_synaptic_elements is missing" );

@@ -94,8 +94,8 @@ nest::aeif_psc_alpha_dynamics( double,
   // good compiler will optimize the verbosity away ...
 
   // shorthand for state variables
-  const double& V = std::min( y[ S::V_M ], node.P_.V_peak_ ); // bind V to the
-  // USER DEFINED V_peak_ value in Parameters.
+  const double& V =
+    std::min( y[ S::V_M ], node.P_.V_peak_ ); // enforce upper limit on V_m
   const double& dI_syn_ex = y[ S::DI_EXC ];
   const double& I_syn_ex = y[ S::I_EXC ];
   const double& dI_syn_in = y[ S::DI_INH ];

@@ -225,7 +225,7 @@ nest::aeif_psc_alpha::Parameters_::set( const DictionaryDatum& d )
 
   if ( V_reset_ >= V_peak_ )
   {
-    throw BadProperty( "Ensure that: V_reset < V_peak ." );
+    throw BadProperty( "Ensure that V_reset < V_peak ." );
   }
 
   if ( Delta_T < 0. )
@@ -248,9 +248,9 @@ nest::aeif_psc_alpha::Parameters_::set( const DictionaryDatum& d )
     }
   }
 
-  if ( V_peak_ <= V_th )
+  if ( V_peak_ < V_th )
   {
-    throw BadProperty( "V_peak must be larger than threshold." );
+    throw BadProperty( "V_peak >= V_th required." );
   }
 
   if ( C_m <= 0 )

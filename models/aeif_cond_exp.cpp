@@ -269,9 +269,9 @@ nest::aeif_cond_exp::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
 
-  if ( V_peak_ <= V_th )
+  if ( V_peak_ < V_th )
   {
-    throw BadProperty( "V_peak must be larger than threshold." );
+    throw BadProperty( "V_peak >= V_th required." );
   }
 
   if ( Delta_T < 0. )

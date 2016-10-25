@@ -234,9 +234,9 @@ aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
     HMIN = tmp;
   }
 
-  if ( V_peak_ <= V_th )
+  if ( V_peak_ < V_th )
   {
-    throw BadProperty( "V_peak must be larger than threshold." );
+    throw BadProperty( "V_peak >= V_th required." );
   }
 
   if ( V_reset_ >= V_peak_ )

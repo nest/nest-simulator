@@ -303,9 +303,9 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
     }
   }
 
-  if ( V_peak_ <= V_th )
+  if ( V_peak_ < V_th )
   {
-    throw BadProperty( "V_peak must be larger than threshold." );
+    throw BadProperty( "V_peak >= V_th required." );
   }
 
   if ( C_m <= 0 )

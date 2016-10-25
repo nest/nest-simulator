@@ -100,8 +100,10 @@ nest::aeif_psc_exp_dynamics( double, const double y[], double f[], void* pnode )
   const double& I_syn_in = y[ S::I_INH ];
   const double& w = y[ S::W ];
 
-  const double I_spike = node.P_.Delta_T == 0. ? 0. : node.P_.g_L
-      * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
+  const double I_spike = node.P_.Delta_T == 0.
+    ? 0.
+    : ( node.P_.g_L * node.P_.Delta_T
+        * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
   f[ S::V_M ] =

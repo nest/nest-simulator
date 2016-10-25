@@ -93,7 +93,7 @@ p_gens = nest.Create('poisson_generator', 4,
                      params={'rate': rate_in})
 mm = nest.Create('multimeter',
                  params={'interval': 0.1,
-                         'record_from': ['V_m', 'Theta',
+                         'record_from': ['V_m', 'theta',
                                          'g_AMPA', 'g_NMDA',
                                          'g_GABAA', 'g_GABAB',
                                          'I_NaP', 'I_KNa', 'I_T', 'I_h']})
@@ -164,7 +164,7 @@ fig = plt.figure()
 
 Vax = fig.add_subplot(311)
 Vax.plot(t, data['V_m'], 'b', lw=2, label=r'$V_m$')
-Vax.plot(t, data['Theta'], 'g', lw=2, label=r'$\Theta$')
+Vax.plot(t, data['theta'], 'g', lw=2, label=r'$\Theta$')
 Vax.set_ylabel('Potential [mV]')
 
 try:

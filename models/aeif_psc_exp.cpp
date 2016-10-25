@@ -242,6 +242,11 @@ nest::aeif_psc_exp::Parameters_::set( const DictionaryDatum& d )
     }
   }
 
+  if ( V_peak_ <= V_th )
+  {
+    throw BadProperty( "V_peak must be larger than threshold." );
+  }
+
   if ( C_m <= 0 )
   {
     throw BadProperty( "Ensure that C_m >0" );

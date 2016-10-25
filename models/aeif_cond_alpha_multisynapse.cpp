@@ -69,7 +69,7 @@ RecordablesMap< aeif_cond_alpha_multisynapse >::create()
  * ---------------------------------------------------------------- */
 
 aeif_cond_alpha_multisynapse::Parameters_::Parameters_()
-  : V_peak_( 0.0 )    // mV, should not be larger that V_th+10
+  : V_peak_( 0.0 )    // mV
   , V_reset_( -60.0 ) // mV
   , t_ref_( 0.0 )     // ms
   , g_L( 30.0 )       // nS
@@ -237,6 +237,11 @@ aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
   if ( V_peak_ <= V_th )
   {
     throw BadProperty( "V_peak must be larger than threshold." );
+  }
+
+  if ( V_reset_ >= V_peak_ )
+  {
+    throw BadProperty( "Ensure that: V_reset < V_peak ." );
   }
 
   if ( Delta_T < 0. )

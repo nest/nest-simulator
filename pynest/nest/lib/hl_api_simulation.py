@@ -24,7 +24,7 @@ Functions for simulation control
 """
 
 from .hl_api_helper import *
-
+from contextlib import contextmanager
 
 @check_stack
 def Simulate(t):
@@ -39,6 +39,49 @@ def Simulate(t):
     sps(float(t))
     sr('ms Simulate')
 
+@check_stack
+def Run(t):
+    """Simulate the network for t milliseconds.
+
+    Parameters
+    ----------
+    t : float
+        Time to simulate in ms
+    """
+
+    sps(float(t))
+    sr('ms Run')
+
+@check_stack
+def Prepare():
+    """Simulate the network for t milliseconds.
+
+    Parameters
+    ----------
+    t : float
+        Time to simulate in ms
+    """
+
+    sr('Prepare')
+
+
+@check_stack
+def Cleanup():
+    """Simulate the network for t milliseconds.
+
+    Parameters
+    ----------
+    t : float
+        Time to simulate in ms
+    """
+
+    sr('Cleanup')
+
+@contextmanager
+def IterateRuns():
+    Prepare()
+    try: yield
+    finally: Cleanup()
 
 @check_stack
 def ResumeSimulation():

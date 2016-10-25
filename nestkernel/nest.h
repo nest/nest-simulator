@@ -82,6 +82,9 @@ ArrayDatum get_connections( const DictionaryDatum& dict );
 
 void simulate( const double& t );
 void resume_simulation();
+void run( const double& t );
+void prepare();
+void cleanup();
 
 void copy_model( const Name& oldmodname,
   const Name& newmodname,

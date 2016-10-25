@@ -474,6 +474,39 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+void
+NestModule::RunFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  const double time = i->OStack.top();
+
+  run( time );
+
+  // successful end of simulate
+  i->OStack.pop();
+  i->EStack.pop();
+}
+
+
+void
+NestModule::PrepareFunction::execute( SLIInterpreter* i ) const
+{
+  prepare();
+
+  // successful end of simulate
+  i->EStack.pop();
+}
+
+void
+NestModule::CleanupFunction::execute( SLIInterpreter* i ) const
+{
+  cleanup();
+
+  // successful end of simulate
+  i->EStack.pop();
+}
+
 /* BeginDocumentation
    Name: CopyModel - copy a model to a new name, set parameters for copy, if
    given
@@ -1637,6 +1670,9 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "cva_C", &cva_cfunction );
 
   i->createcommand( "Simulate_d", &simulatefunction );
+  i->createcommand( "Run_d", &runfunction );
+  i->createcommand( "Prepare", &preparefunction );
+  i->createcommand( "Cleanup", &cleanupfunction );
 
   i->createcommand( "CopyModel_l_l_D", &copymodel_l_l_Dfunction );
   i->createcommand( "SetDefaults_l_D", &setdefaults_l_Dfunction );

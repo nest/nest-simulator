@@ -57,6 +57,7 @@ nest::SimulationManager::SimulationManager()
   , wfr_tol_( 0.0001 )
   , wfr_max_iterations_( 15 )
   , wfr_interpolation_order_( 3 )
+  , num_active_nodes( 0 )
 {
 }
 
@@ -360,7 +361,7 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
 }
 
 void
-nest::SimulationManager::simulate( Time const& t )
+nest::SimulationManager::prepare()
 {
   assert( kernel().is_initialized() );
 
@@ -375,6 +376,61 @@ nest::SimulationManager::simulate( Time const& t )
   t_slice_begin_ = timeval();
   t_slice_end_ = timeval();
 
+  // Reset profiling timers and counters within event_delivery_manager
+  kernel().event_delivery_manager.reset_timers_counters();
+
+  // find shortest and longest delay across all MPI processes
+  // this call sets the member variables
+  kernel().connection_manager.update_delay_extrema_();
+  kernel().event_delivery_manager.init_moduli();
+
+  // Check for synchronicity of global rngs over processes.
+  // We need to do this ahead of any simulation in case random numbers
+  // have been consumed on the SLI level.
+  if ( kernel().mpi_manager.get_num_processes() > 1 )
+  {
+    if ( !kernel().mpi_manager.grng_synchrony(
+           kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
+    {
+      LOG( M_ERROR,
+        "SimulationManager::simulate",
+        "Global Random Number Generators are not synchronized prior to "
+        "simulation." );
+      throw KernelException();
+    }
+  }
+
+  // if at the beginning of a simulation, set up spike buffers
+  if ( !simulated_ )
+    kernel().event_delivery_manager.configure_spike_buffers();
+
+  kernel().node_manager.ensure_valid_thread_local_ids();
+  num_active_nodes = kernel().node_manager.prepare_nodes();
+
+  kernel().model_manager.create_secondary_events_prototypes();
+
+  // we have to do enter_runtime after prepre_nodes, since we use
+  // calibrate to map the ports of MUSIC devices, which has to be done
+  // before enter_runtime
+  if ( !simulated_ ) // only enter the runtime mode once
+  {
+    double tick = Time::get_resolution().get_ms()
+      * kernel().connection_manager.get_min_delay();
+    kernel().music_manager.enter_runtime( tick );
+  }
+}
+
+void
+nest::SimulationManager::simulate( Time const& t )
+{
+  prepare();
+  run( t );
+  cleanup();
+}
+
+void
+nest::SimulationManager::run( Time const& t )
+{
   if ( t == Time::ms( 0.0 ) )
     return;
 
@@ -414,7 +470,7 @@ nest::SimulationManager::simulate( Time const& t )
   to_do_ += t.get_steps();
   to_do_total_ = to_do_;
 
-  const size_t num_active_nodes = prepare_simulation_();
+  prepare_simulation_();
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If
@@ -443,13 +499,17 @@ nest::SimulationManager::simulate( Time const& t )
       "is called repeatedly with simulation times that are not multiples of "
       "the minimal delay." );
 
-  resume_( num_active_nodes );
+  resume_();
+}
 
+void
+nest::SimulationManager::cleanup()
+{
   finalize_simulation_();
 }
 
 void
-nest::SimulationManager::resume_( size_t num_active_nodes )
+nest::SimulationManager::resume_()
 {
   assert( kernel().is_initialized() and not inconsistent_state_ );
 
@@ -463,16 +523,14 @@ nest::SimulationManager::resume_( size_t num_active_nodes )
   os << std::endl
      << "Number of OpenMP threads: " << kernel().vp_manager.get_num_threads();
 #else
-  os << std::endl
-     << "Not using OpenMP";
+  os << std::endl << "Not using OpenMP";
 #endif
 
 #ifdef HAVE_MPI
   os << std::endl
      << "Number of MPI processes: " << kernel().mpi_manager.get_num_processes();
 #else
-  os << std::endl
-     << "Not using MPI";
+  os << std::endl << "Not using MPI";
 #endif
 
   LOG( M_INFO, "SimulationManager::resume", os.str() );
@@ -511,58 +569,15 @@ nest::SimulationManager::resume_( size_t num_active_nodes )
   LOG( M_INFO, "SimulationManager::resume", "Simulation finished." );
 }
 
-size_t
+void
 nest::SimulationManager::prepare_simulation_()
 {
   assert( to_do_ != 0 ); // This is checked in simulate()
-
-  // Reset profiling timers and counters within event_delivery_manager
-  kernel().event_delivery_manager.reset_timers_counters();
-
-  // find shortest and longest delay across all MPI processes
-  // this call sets the member variables
-  kernel().connection_manager.update_delay_extrema_();
-  kernel().event_delivery_manager.init_moduli();
-
-  // Check for synchronicity of global rngs over processes.
-  // We need to do this ahead of any simulation in case random numbers
-  // have been consumed on the SLI level.
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
-  {
-    if ( !kernel().mpi_manager.grng_synchrony(
-           kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
-    {
-      LOG( M_ERROR,
-        "SimulationManager::simulate",
-        "Global Random Number Generators are not synchronized prior to "
-        "simulation." );
-      throw KernelException();
-    }
-  }
-
-  // if at the beginning of a simulation, set up spike buffers
-  if ( !simulated_ )
-    kernel().event_delivery_manager.configure_spike_buffers();
-
-  kernel().node_manager.ensure_valid_thread_local_ids();
-  const size_t num_active_nodes = kernel().node_manager.prepare_nodes();
 
   kernel().model_manager.create_secondary_events_prototypes();
 
   // Check whether waveform relaxation is used on any MPI process
   kernel().node_manager.check_wfr_use();
-
-  // we have to do enter_runtime after prepre_nodes, since we use
-  // calibrate to map the ports of MUSIC devices, which has to be done
-  // before enter_runtime
-  if ( !simulated_ ) // only enter the runtime mode once
-  {
-    double tick = Time::get_resolution().get_ms()
-      * kernel().connection_manager.get_min_delay();
-    kernel().music_manager.enter_runtime( tick );
-  }
-
-  return num_active_nodes;
 }
 
 bool
@@ -735,10 +750,10 @@ nest::SimulationManager::update_()
 
       const std::vector< Node* >& thread_local_nodes =
         kernel().node_manager.get_nodes_on_thread( thrd );
-      for (
-        std::vector< Node* >::const_iterator node = thread_local_nodes.begin();
-        node != thread_local_nodes.end();
-        ++node )
+      for ( std::vector< Node* >::const_iterator node =
+              thread_local_nodes.begin();
+            node != thread_local_nodes.end();
+            ++node )
       {
         // We update in a parallel region. Therefore, we need to catch
         // exceptions here and then handle them after the parallel region.

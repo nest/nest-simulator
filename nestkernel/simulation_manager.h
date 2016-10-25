@@ -59,6 +59,9 @@ public:
    * 3. call resume()
    * 4. call finalize_simulation()
    */
+  void prepare();
+  void run( Time const& );
+  void cleanup();
   void simulate( Time const& );
 
   /**
@@ -129,10 +132,10 @@ public:
   delay get_to_step() const;
 
 private:
-  void resume_( size_t );       //!< actually run simulation; TODO: review
-  size_t prepare_simulation_(); //! setup before simulation start
-  void finalize_simulation_();  //! wrap-up after simulation end
-  void update_();               //! actually perform simulation
+  void resume_();              //!< actually run simulation; TODO: review
+  void prepare_simulation_();  //! setup before simulation start
+  void finalize_simulation_(); //! wrap-up after simulation end
+  void update_();              //! actually perform simulation
   bool wfr_update_( Node* );
   void advance_time_();   //!< Update time to next time step
   void print_progress_(); //!< TODO: Remove, replace by logging!
@@ -163,6 +166,7 @@ private:
                             //!< relaxation
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
+  size_t num_active_nodes;
 };
 
 inline Time const&

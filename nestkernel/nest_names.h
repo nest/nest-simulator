@@ -222,6 +222,7 @@ extern const Name in_spikes; //!< Number of arriving inhibitory spikes
 extern const Name Inact_n;   //!< Specific to Hodgkin Huxley models
 extern const Name
   Inact_p; //!< Specific to Hodgkin Huxley models with gap junctions
+extern const Name indegree;                //!< In FixedInDegreeBuilder
 extern const Name index_map;               //!< Parameters for MUSIC devices
 extern const Name individual_spike_trains; //!< Generator parameters
 extern const Name inh_conductance;         //!< Recorder parameter
@@ -244,10 +245,12 @@ extern const Name linear;            //!< Parameter for MSP growth curves
 extern const Name local;             //!< Node parameter
 extern const Name local_id;          //!< Node
 
+extern const Name max_delay; //!< In ConnBuilder
 extern const Name MAXERR; //!< Largest permissible error for adaptive stepsize
                           //!< (Brette & Gerstner 2005)
 extern const Name mean;   //!< Miscellaneous parameters
 extern const Name memory; //!< Recorder parameter
+extern const Name min_delay; //!< In ConnBuilder
 extern const Name model;  //!< Node parameter
 extern const Name mother_rng;    //!< Specific to mip_generator
 extern const Name mother_seed;   //!< Specific to mip_generator
@@ -267,6 +270,7 @@ extern const Name neuron;              //!< Node type
 extern const Name node_uses_wfr;       //!< Node parameter
 extern const Name noise;               //!< Specific to iaf_chs_2008 neuron
 extern const Name ns; //!< Number of release sites (property arrays)
+extern const Name num_connections; //!< In ConnBuilder
 
 extern const Name offset;  //!< Miscellaneous parameters
 extern const Name offsets; //!< Recorder parameter
@@ -274,6 +278,7 @@ extern const Name omega;   //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name order;   //!< Specific to sinusoidally modulated generators
 extern const Name origin;  //!< Device parameters
 extern const Name other;   //!< Node type
+extern const Name outdegree; //!< In FixedOutDegreeBuilder
 
 extern const Name p; //!< current release probability  (Tsodyks2_connection)
 extern const Name p_copy;                //!< Specific to mip_generator
@@ -291,6 +296,7 @@ extern const Name potentials;            //!< Recorder parameter
 extern const Name pre_synaptic_element;  //!< Pre synaptic elements
 extern const Name precise_times;         //!< Recorder parameter
 extern const Name precision;             //!< Recorder parameter
+extern const Name property_object;       //!< In ConnBuilder
 extern const Name ps; //!< current release probability [0...1] (property arrays)
 extern const Name PSC_adapt_step;     //!< PSC increment (current homeostasis)
 extern const Name PSC_Unit_amplitude; //!< Scaling of PSC (current homeostasis)

@@ -63,7 +63,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                 all([
                     status['synapse_label'] == 123
                     for status in nest.GetStatus(c)
-                ])
+                    ])
             )
 
     def test_SetLabelToSynapseSetStatus(self):
@@ -82,7 +82,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                 all([
                     status['synapse_label'] == -1
                     for status in nest.GetStatus(c)
-                ])
+                    ])
             )
 
             # set a label
@@ -91,7 +91,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                 all([
                     status['synapse_label'] == 123
                     for status in nest.GetStatus(c)
-                ])
+                    ])
             )
 
     def test_SetLabelToSynapseSetDefaults(self):
@@ -110,7 +110,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                 all([
                     status['synapse_label'] == 123
                     for status in nest.GetStatus(c)
-                ])
+                    ])
             )
 
     def test_GetLabeledSynapses(self):
@@ -132,7 +132,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
                 all([
                     status['synapse_label'] == 123
                     for status in nest.GetStatus(c)
-                ])
+                    ])
             )
 
     def test_SetLabelToNotLabeledSynapse(self):

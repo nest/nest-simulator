@@ -270,28 +270,28 @@ extern const Name mother_seed;   //!< Specific to mip_generator
 extern const Name multapses;     //!< Connectivity-related
 extern const Name music_channel; //!< Parameters for MUSIC devices
 
-extern const Name n;           //!< Number of synaptic release sites (int >=0)
-                               //!< (Tsodyks2_connection)
-extern const Name N;           //!< Specific to population point process model
-                               //!< (pp_pop_psc_delta)
-extern const Name N_channels;  //!< Specific to correlomatrix_detector
-extern const Name n_events;    //!< Recorder parameter
-extern const Name n_proc;      //!< Number of component processes of ppd_sup_/
-                               //!< gamma_sup_generator
-extern const Name NaP_E_rev;   //!< specific to Hill & Tononi 2005
-extern const Name NaP_g_peak;  //!< specific to Hill & Tononi 2005
+extern const Name n;          //!< Number of synaptic release sites (int >=0)
+                              //!< (Tsodyks2_connection)
+extern const Name N;          //!< Specific to population point process model
+                              //!< (pp_pop_psc_delta)
+extern const Name N_channels; //!< Specific to correlomatrix_detector
+extern const Name n_events;   //!< Recorder parameter
+extern const Name n_proc;     //!< Number of component processes of ppd_sup_/
+                              //!< gamma_sup_generator
+extern const Name NaP_E_rev;  //!< specific to Hill & Tononi 2005
+extern const Name NaP_g_peak; //!< specific to Hill & Tononi 2005
 extern const Name needs_prelim_update; //!< Node parameter
-extern const Name neuron;      //!< Node type
-extern const Name NMDA_E_rev;  //!< specific to Hill & Tononi 2005
-extern const Name NMDA_Sact;   //!< specific to Hill & Tononi 2005
-extern const Name NMDA_Vact;   //!< specific to Hill & Tononi 2005
-extern const Name NMDA_g_peak; //!< specific to Hill & Tononi 2005
-extern const Name NMDA_tau_1;  //!< specific to Hill & Tononi 2005
-extern const Name NMDA_tau_2;  //!< specific to Hill & Tononi 2005
-extern const Name NMDA_tau_Mg_fast; //!< specific to Hill & Tononi 2005
-extern const Name NMDA_tau_Mg_slow; //!< specific to Hill & Tononi 2005
-extern const Name node_uses_wfr;    //!< Node parameter
-extern const Name noise;            //!< Specific to iaf_chs_2008 neuron
+extern const Name neuron;              //!< Node type
+extern const Name NMDA_E_rev;          //!< specific to Hill & Tononi 2005
+extern const Name NMDA_Sact;           //!< specific to Hill & Tononi 2005
+extern const Name NMDA_Vact;           //!< specific to Hill & Tononi 2005
+extern const Name NMDA_g_peak;         //!< specific to Hill & Tononi 2005
+extern const Name NMDA_tau_1;          //!< specific to Hill & Tononi 2005
+extern const Name NMDA_tau_2;          //!< specific to Hill & Tononi 2005
+extern const Name NMDA_tau_Mg_fast;    //!< specific to Hill & Tononi 2005
+extern const Name NMDA_tau_Mg_slow;    //!< specific to Hill & Tononi 2005
+extern const Name node_uses_wfr;       //!< Node parameter
+extern const Name noise;               //!< Specific to iaf_chs_2008 neuron
 extern const Name ns; //!< Number of release sites (property arrays)
 
 extern const Name offset;  //!< Miscellaneous parameters
@@ -331,7 +331,7 @@ extern const Name stc;      //!< Specific to gif models
 extern const Name V_T_star; //!< Specific to gif models
 extern const Name lambda_0; //!< Specific to gif models
 
-extern const Name r_spike;  //!< specific to Hill & Tononi 2005
+extern const Name r_spike; //!< specific to Hill & Tononi 2005
 extern const Name
   rate; //!< Specific to ppd_sup_generator and gamma_sup_generator
 extern const Name receptor_type;  //!< Connection parameters
@@ -390,8 +390,8 @@ extern const Name synapse_modelid;         //!< Connection parameters
 extern const Name synaptic_elements; //!< Synaptic elements used in structural
                                      //!< plasticity
 
-extern const Name T_E_rev;         //!< specific to Hill & Tononi 2005
-extern const Name T_g_peak;        //!< specific to Hill & Tononi 2005
+extern const Name T_E_rev;   //!< specific to Hill & Tononi 2005
+extern const Name T_g_peak;  //!< specific to Hill & Tononi 2005
 extern const Name t_lag;     //!< Lag within a time slice
 extern const Name t_origin;  //!< Origin of a time-slice
 extern const Name t_ref;     //!< Refractory period
@@ -442,9 +442,9 @@ extern const Name taus_eta;   //!< Specific to population point process model
 extern const Name taus_syn;   //!< Synapse time constants (array)
 extern const Name taus_rise;  //!< Synapse rise constants (array)
 extern const Name taus_decay; //!< Synapse decay constants (array)
-extern const Name theta;  //!< Did not compile without (theta neuron problem)
+extern const Name theta;    //!< Did not compile without (theta neuron problem)
 extern const Name theta_eq; //!< specific to Hill & Tononi 2005
-extern const Name thread; //!< Node parameter
+extern const Name thread;   //!< Node parameter
 extern const Name thread_local_id; //!< Thead-local ID of node,
                                    //!< see Kunkel et al 2014, Sec 3.3.2
 extern const Name time_in_steps;   //!< Recorder parameter

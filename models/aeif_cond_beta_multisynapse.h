@@ -56,9 +56,8 @@
  rise time and decay time constants. Synaptic conductance is modeled by a
  beta function, as described by A. Roth and M.C.W. van Rossum
  in Computational Modeling Methods for Neuroscientists, MIT Press 2013,
- Chapter 6
+ Chapter 6.
 
- The number of receptor ports is supplied by the function "n_receptors".
  The time constants are supplied by two arrays, "taus_rise" and "taus_decay" for
  the synaptic rise time and decay time, respectively. The synaptic
  reversal potentials are supplied by the array "E_rev". The port numbers
@@ -70,11 +69,12 @@
            - w + I_e
 
  where:
- I_syn_tot(V,t) = \sum_i g_i(t) (V - E_{rev,i})
+ I_syn_tot(V,t) = \sum_i g_i(t) (V - E_{rev,i}) ,
 
- and the synapse i is excitatory or inhibitory depending on the value of
- E_{rev,i}.
+ the synapse i is excitatory or inhibitory depending on the value of E_{rev,i}
+ and the differential equation for the spike-adaptation current w is:
 
+ tau_w * dw/dt = a(V - E_L) - W
 
 Parameters:
 The following parameters can be set in the status dictionary.
@@ -112,8 +112,6 @@ Integration parameters
                           numerical instabilities.
 
  Examples:
- % PyNEST example, of how to assign synaptic rise time and decay time
- % to a receptor type.
 
  import nest
  import numpy as np

@@ -781,7 +781,9 @@ nest::OneToOneBuilder::sp_disconnect_()
         assert( sgid != sources_->end() );
 
         if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
+        {
           continue;
+        }
         Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
@@ -985,11 +987,6 @@ nest::AllToAllBuilder::sp_disconnect_()
         {
           if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           {
-            for ( GIDCollection::const_iterator sgid = sources_->begin();
-                  sgid != sources_->end();
-                  ++sgid )
-                
-		skip_conn_parameter_( tid );
             continue;
           }
           Node* const target = kernel().node_manager.get_node( *tgid, tid );

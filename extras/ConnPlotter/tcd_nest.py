@@ -32,7 +32,7 @@ In order to use TCD plots, you need to create an instance of class
 SynapsesNEST. The constructor will import NEST to obtain all necessary
 information. TCD can then be obtained by calling the generated object.
 
-NB: At present, TCD is supported only for the ht_model. NMDA charge 
+NB: At present, TCD is supported only for the ht_model. NMDA charge
     deposition is based on steady-state value for open channels at given
     voltage.
 """
@@ -143,7 +143,7 @@ class TCD(object):
             """
             V is membrane potential.
             """
-            return - self._int_g * (V - self._e_rev)
+            return -self._int_g * (V - self._e_rev)
 
         def __str__(self):
             return "_int_g = %f, _e_rev = %f" % (self._int_g, self._e_rev)
@@ -153,7 +153,7 @@ class TCD(object):
     class _TcdNMDA(object):
         """
         Class representing NMDA synapse model in ht_neuron.
-        
+
         Note: NMDA charge deposition is based on steady-state value
               for open channels at given voltage.
         """

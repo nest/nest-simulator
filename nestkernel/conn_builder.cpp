@@ -673,22 +673,9 @@ nest::OneToOneBuilder::disconnect_()
 
         assert( sgid != sources_->end() );
 
-        // check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_gid( *tgid ) )
-        {
-          skip_conn_parameter_( tid );
-          continue;
-        }
-
         Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
-        // check whether the target is on our thread
-        if ( tid != target_thread )
-        {
-          skip_conn_parameter_( tid );
-          continue;
-        }
         single_disconnect_( *sgid, *target, target_thread );
       }
     }
@@ -951,28 +938,8 @@ nest::AllToAllBuilder::disconnect_()
             tgid != targets_->end();
             ++tgid )
       {
-        // check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_gid( *tgid ) )
-        {
-          for ( GIDCollection::const_iterator sgid = sources_->begin();
-                sgid != sources_->end();
-                ++sgid )
-            skip_conn_parameter_( tid );
-          continue;
-        }
-
         Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
-
-        // check whether the target is on our thread
-        if ( tid != target_thread )
-        {
-          for ( GIDCollection::const_iterator sgid = sources_->begin();
-                sgid != sources_->end();
-                ++sgid )
-            skip_conn_parameter_( tid );
-          continue;
-        }
 
         for ( GIDCollection::const_iterator sgid = sources_->begin();
               sgid != sources_->end();
@@ -1021,7 +988,8 @@ nest::AllToAllBuilder::sp_disconnect_()
             for ( GIDCollection::const_iterator sgid = sources_->begin();
                   sgid != sources_->end();
                   ++sgid )
-              skip_conn_parameter_( tid );
+                
+		skip_conn_parameter_( tid );
             continue;
           }
           Node* const target = kernel().node_manager.get_node( *tgid, tid );

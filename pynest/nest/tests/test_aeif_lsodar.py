@@ -67,13 +67,19 @@ if not path.endswith("/"):
 di_tolerances_lsodar = {
     "aeif_cond_alpha": {"V_m": 5e-4, "w": 1e-4},
     "aeif_cond_exp": {"V_m": 5e-4, "w": 1e-4},
-    "aeif_cond_alpha_multisynapse": {"V_m": 5e-2, "w": 2e-3},
+    "aeif_psc_alpha": {"V_m": 5e-4, "w": 1e-4},
+    "aeif_psc_exp": {"V_m": 5e-4, "w": 1e-4},
+    "aeif_cond_alpha_multisynapse": {"V_m": 5e-3, "w": 2e-3},
     "aeif_cond_alpha_RK5": {"V_m": 5e-3, "w": 2e-3}
 }
 
+# "high" difference for V_m on aeif_psc_* because of 1 gap in spike-time on
+# the 3rd spike
 di_tolerances_iaf = {
     "aeif_cond_alpha": {"V_m": 2e-3, "g_ex": 1e-6},
     "aeif_cond_exp": {"V_m": 5e-4, "g_ex": 1e-6},
+    "aeif_psc_alpha": {"V_m": 5e-3, "I_syn_ex": 1e-6},
+    "aeif_psc_exp": {"V_m": 5e-3, "I_syn_ex": 1e-6},
     "aeif_cond_alpha_RK5": {"V_m": 2e-3, "g_ex": 1e-6}
 }
 
@@ -86,6 +92,8 @@ di_tolerances_iaf = {
 models = [
     "aeif_cond_alpha",
     "aeif_cond_exp",
+    "aeif_psc_alpha",
+    "aeif_psc_exp",
     "aeif_cond_alpha_multisynapse",
     "aeif_cond_alpha_RK5"
 ]
@@ -127,11 +135,10 @@ aeif_DT0 = {
     'tau_syn_ex': 0.2
 }
 
-iaf_param = {
+iaf_param_base = {
     'V_reset': -60.,
     'V_th': -55.,
     'I_e': 200.,
-    'g_L': 16.7,
     'E_L': -70.,
     'C_m': 250.,
     'V_m': -70.,
@@ -139,15 +146,31 @@ iaf_param = {
     'tau_syn_ex': 0.2,
 }
 
+iaf_param_psc = iaf_param_base.copy()
+iaf_param_psc.update({'tau_m': aeif_DT0['C_m'] / aeif_DT0['g_L']})
+iaf_param_cond = iaf_param_base.copy()
+iaf_param_cond.update({'g_L': 16.7})
+
+di_iaf_param = {
+    "psc_alpha": iaf_param_psc,
+    "psc_exp": iaf_param_psc,
+    "cond_alpha": iaf_param_cond,
+    "cond_exp": iaf_param_cond
+}
+
 
 # --------------------------------------------------------------------------- #
-#  Synaptic types
+#  Synaptic types (link the models to their synapse dynamics)
 # -------------------------
 #
+
+lst_syn_types = ["cond_alpha", "cond_exp", "psc_alpha", "psc_exp"]
 
 di_syn_types = {
     "aeif_cond_alpha": "cond_alpha",
     "aeif_cond_exp": "cond_exp",
+    "aeif_psc_alpha": "psc_alpha",
+    "aeif_psc_exp": "psc_exp",
     "aeif_cond_alpha_RK5": "cond_alpha"
 }
 
@@ -262,10 +285,8 @@ class AEIFTestCase(unittest.TestCase):
         '''
         simtime = 200.
         # create the neurons and devices
-        refs = {
-            "cond_alpha": nest.Create("iaf_cond_alpha", params=iaf_param),
-            "cond_exp": nest.Create("iaf_cond_exp", params=iaf_param)
-        }
+        refs = {syn_type: nest.Create("iaf_" + syn_type,
+                params=di_iaf_param[syn_type]) for syn_type in lst_syn_types}
         ref_mm = {syn_type: nest.Create("multimeter") for syn_type in refs}
         neurons = {model: nest.Create(model, params=aeif_DT0)
                    for model in models if "multisynapse" not in model}
@@ -274,31 +295,35 @@ class AEIFTestCase(unittest.TestCase):
         pn = nest.Create("parrot_neuron")
 
         # connect them and simulate
-        recordables = {
-            "cond_alpha": ["V_m", "g_ex"],
-            "cond_exp": ["V_m", "g_ex"]
-        }
+        recordables = {"cond": ["V_m", "g_ex"], "psc": ["V_m", "I_syn_ex"]}
         nest.Connect(pg, pn)
         for model, mm in iter(multimeters.items()):
             syn_type = di_syn_types[model]
+            key = syn_type[:syn_type.index('_')]
             nest.SetStatus(mm, {"interval": self.resol,
-                                "record_from": recordables[syn_type]})
+                                "record_from": recordables[key]})
             nest.Connect(mm, neurons[model])
-            nest.Connect(pn, neurons[model])
+            weight = 80. if key == "psc" else 1.
+            nest.Connect(pn, neurons[model], syn_spec={'weight': weight})
         for syn_type, mm in iter(ref_mm.items()):
+            key = syn_type[:syn_type.index('_')]
             nest.SetStatus(mm, {"interval": self.resol,
-                                "record_from": recordables[syn_type]})
+                                "record_from": recordables[key]})
             nest.Connect(mm, refs[syn_type])
-            nest.Connect(pn, refs[syn_type])
+            weight = 80. if key == "psc" else 1.
+            nest.Connect(pn, refs[syn_type], syn_spec={'weight': weight})
         nest.Simulate(simtime)
 
         # compute the relative differences and assert tolerance
         for model in neurons:
             syn_type = di_syn_types[model]
             ref_data = nest.GetStatus(ref_mm[syn_type], "events")[0]
+            key = syn_type[:syn_type.index('_')]
             rel_diff = self.compute_difference(
-                {model: multimeters[model]}, aeif_DT0, ref_data,
-                recordables[syn_type])
+                {model: multimeters[model]},
+                aeif_DT0,
+                ref_data,
+                recordables[key])
             self.assert_pass_tolerance(rel_diff, di_tolerances_iaf)
 
 

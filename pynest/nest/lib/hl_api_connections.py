@@ -180,13 +180,23 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     In the case of scalar parameters, all keys must be doubles
     except for 'receptor_type' which must be initialised with an integer.
 
-    Parameter arrays are only available for the rules 'one_to_one' and
-    'all_to_all':
+    Parameter arrays are available for the rules 'one_to_one',
+    'all_to_all', 'fixed_indegree' and 'fixed_outdegree':
     - For 'one_to_one' the array has to be a one-dimensional
       NumPy array with length len(pre).
     - For 'all_to_all' the array has to be a two-dimensional NumPy array
       with shape (len(post), len(pre)), therefore the rows describe the
       target and the columns the source neurons.
+    - For 'fixed_indegree' the array has to be a two-dimensional NumPy array
+      with shape (len(post), indegree), where indegree is the number of
+      incoming connections per target neuron, therefore the rows describe the
+      target and the columns the connections converging to the target neuron,
+      regardless of the identity of the source neurons.
+    - For 'fixed_outdegree' the array has to be a two-dimensional NumPy array
+      with shape (len(pre), outdegree), where outdegree is the number of
+      outgoing connections per source neuron, therefore the rows describe the
+      source and the columns the connections starting from the source neuron
+      regardless of the identity of the target neuron.
 
     Any distributed parameter must be initialised with a further dictionary
     specifying the distribution type ('distribution', e.g. 'normal') and
@@ -300,12 +310,37 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                                     "a scalar or a dictionary.")
                             else:
                                 syn_spec[key] = value.flatten()
+                        elif rule == 'fixed_indegree':
+                            indegree = conn_spec['indegree']
+                            if value.shape[0] != len(post) or \
+                                    value.shape[1] != indegree:
+                                raise kernel.NESTError(
+                                    "'" + key + "' has to be an array of "
+                                    "dimension " + str(len(post)) + "x" +
+                                    str(indegree) +
+                                    " (n_target x indegree), " +
+                                    "a scalar or a dictionary.")
+                            else:
+                                syn_spec[key] = value.flatten()
+                        elif rule == 'fixed_outdegree':
+                            outdegree = conn_spec['outdegree']
+                            if value.shape[0] != len(pre) or \
+                                    value.shape[1] != outdegree:
+                                raise kernel.NESTError(
+                                    "'" + key + "' has to be an array of "
+                                    "dimension " + str(len(pre)) + "x" +
+                                    str(outdegree) +
+                                    " (n_sources x outdegree), " +
+                                    "a scalar or a dictionary.")
+                            else:
+                                syn_spec[key] = value.flatten()
                         else:
                             raise kernel.NESTError(
                                 "'" + key + "' has the wrong type. "
                                 "Two-dimensional parameter arrays can "
-                                "only be used in conjunction with rule "
-                                "'all_to_all'.")
+                                "only be used in conjunction with rules "
+                                "'all_to_all', 'fixed_indegree' or "
+                                "'fixed_outdegree'.")
             sps(syn_spec)
         else:
             raise kernel.NESTError(

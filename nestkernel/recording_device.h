@@ -247,7 +247,8 @@ public:
   {
     SPIKE_DETECTOR,
     MULTIMETER,
-    SPIN_DETECTOR
+    SPIN_DETECTOR,
+    WEIGHT_RECORDER
   };
 
   /**
@@ -258,12 +259,18 @@ public:
    * @param Default value for withtime property
    * @param Default value for withgid property
    * @param Default value for withweight property
+   * @param Default value for withtargetgid property
+   * @param Default value for withport property
+   * @param Default value for withrport property
    */
   RecordingDevice( const Node&,
     Mode,
     const std::string&,
     bool,
     bool,
+    bool = false,
+    bool = false,
+    bool = false,
     bool = false );
 
   /**
@@ -411,9 +418,31 @@ private:
   void print_weight_( std::ostream&, double );
 
   /**
-   * Store data in internal structure.
+   * Print the target gid of an event.
    */
-  void store_data_( index, const Time&, double, double );
+  void print_target_( std::ostream&, index );
+
+  /**
+   * Print the port of an event.
+   */
+  void print_port_( std::ostream&, long );
+
+  /**
+   * Print the rport of an event.
+   */
+  void print_rport_( std::ostream&, long );
+
+  /**
+   * Store data in internal structure.
+   * @param store sender gid of event
+   * @param store timestamp of event
+   * @param store offset of event
+   * @param store weight of event
+   * @param store target gid of event
+   * @param store port of event
+   * @param store rport of event
+   */
+  void store_data_( index, const Time&, double, double, index, long, long );
 
   /**
    * Clear data in internal structure, and call clear_data_hook().
@@ -454,6 +483,9 @@ private:
     bool withgid_;        //!< true if element GID is to be printed, default
     bool withtime_;       //!< true if time of event is to be printed, default
     bool withweight_;     //!< true if weight of event is to be printed
+    bool withtargetgid_;  //!< true if target GID is to be printed, default
+    bool withport_;       //!< true if port is to be printed, default
+    bool withrport_;      //!< true if rport is to be printed, default
 
     long precision_;  //!< precision of doubles written to file
     bool scientific_; //!< use scientific format if true, else fixed
@@ -479,8 +511,12 @@ private:
      * @param Default file name extension, excluding ".".
      * @param Default value for withtime property
      * @param Default value for withgid property
+     * @param Default value for withweight property
+     * @param Default value for withtargetgid property
+     * @param Default value for withport property
+     * @param Default value for withrport property
      */
-    Parameters_( const std::string&, bool, bool, bool );
+    Parameters_( const std::string&, bool, bool, bool, bool, bool, bool );
 
     //! Store current values in dictionary
     void get( const RecordingDevice&, DictionaryDatum& ) const;
@@ -494,6 +530,9 @@ private:
   {
     size_t events_;                         //!< Event counter
     std::vector< long > event_senders_;     //!< List of event sender ids
+    std::vector< long > event_targets_;     //!< List of event targets ids
+    std::vector< long > event_ports_;       //!< List of event ports
+    std::vector< long > event_rports_;      //!< List of event rports
     std::vector< double > event_times_ms_;  //!< List of event times in ms
     std::vector< long > event_times_steps_; //!< List of event times in steps
     //! List of event time offsets

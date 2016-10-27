@@ -677,7 +677,7 @@ def
      /target
      /weight
      /delay
-     /synapsemodel
+     /synapse_model
      
      Example:
      

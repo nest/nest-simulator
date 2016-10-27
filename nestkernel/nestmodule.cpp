@@ -818,7 +818,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
     /target
     /weight
     /delay
-    /model
+    /synapse_model
 
     Example:
 

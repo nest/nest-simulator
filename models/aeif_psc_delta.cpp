@@ -366,12 +366,6 @@ nest::aeif_psc_delta::calibrate()
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
 
-  const double h = Time::get_resolution().get_ms();
-  const double tau_m_ = P_.C_m/P_.g_L;
-
-  V_.P33_ = std::exp( -h / tau_m_ );
-  V_.P30_ = 1 / P_.C_m * ( 1 - V_.P33_ ) * tau_m_;
-
   // set the right threshold and GSL function depending on Delta_T
   if ( P_.Delta_T > 0. )
   {
@@ -441,8 +435,8 @@ nest::aeif_psc_delta::update( const Time& origin, const long from, const long to
       if ( S_.r_ == 0 )
       {
         // neuron not refractory
-        S_.y_[ State_::V_M ] = V_.P30_ * ( B_.I_stim_ + P_.I_e ) + V_.P33_
-                * S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
+        S_.y_[ State_::V_M ] = ( B_.I_stim_ + P_.I_e ) / P_.C_m +
+                S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
 
         // if we have accumulated spikes from refractory period,
         // add and reset accumulator

@@ -140,7 +140,7 @@ GenericConnectorModel< ConnectionT >::get_status( DictionaryDatum& d ) const
   default_connection_.get_status( d );
 
   ( *d )[ names::receptor_type ] = receptor_type_;
-  ( *d )[ "synapsemodel" ] = LiteralDatum( name_ );
+  ( *d )[ names::synapse_model ] = LiteralDatum( name_ );
 }
 
 template < typename ConnectionT >

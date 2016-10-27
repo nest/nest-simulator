@@ -165,7 +165,6 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   skip_set.insert( names::min_delay );
   skip_set.insert( names::max_delay );
   skip_set.insert( names::num_connections );
-  skip_set.insert( names::property_object );
   skip_set.insert( names::synapse_model );
 
   for ( Dictionary::const_iterator default_it = syn_defaults->begin();
@@ -670,12 +669,24 @@ nest::OneToOneBuilder::disconnect_()
             tgid != targets_->end();
             ++tgid, ++sgid )
       {
-
+        
         assert( sgid != sources_->end() );
-
+        
+        // check whether the target is on this mpi machine
+        if ( not kernel().node_manager.is_local_gid( *tgid ) )
+        {
+          // Disconnecting: no parameter skipping required
+          continue;
+        }
+        
         Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
-
+        // check whether the target is on our thread		
+        if ( tid != target_thread )		
+        {		
+          // Disconnecting: no parameter skipping required
+          continue;		
+        }
         single_disconnect_( *sgid, *target, target_thread );
       }
     }
@@ -782,6 +793,7 @@ nest::OneToOneBuilder::sp_disconnect_()
 
         if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
         {
+          // Disconnecting: no parameter skipping required
           continue;
         }
         Node* const target = kernel().node_manager.get_node( *tgid, tid );
@@ -940,9 +952,21 @@ nest::AllToAllBuilder::disconnect_()
             tgid != targets_->end();
             ++tgid )
       {
+        // check whether the target is on this mpi machine
+        if ( not kernel().node_manager.is_local_gid( *tgid ) )
+        {
+          // Disconnecting: no parameter skipping required
+          continue;
+        }
         Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
-
+        
+        if ( tid != target_thread )
+        {
+          // Disconnecting: no parameter skipping required
+          continue;
+        }
+        
         for ( GIDCollection::const_iterator sgid = sources_->begin();
               sgid != sources_->end();
               ++sgid )
@@ -987,6 +1011,7 @@ nest::AllToAllBuilder::sp_disconnect_()
         {
           if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           {
+            // Disconnecting: no parameter skipping required
             continue;
           }
           Node* const target = kernel().node_manager.get_node( *tgid, tid );

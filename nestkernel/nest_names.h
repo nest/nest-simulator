@@ -296,7 +296,6 @@ extern const Name potentials;            //!< Recorder parameter
 extern const Name pre_synaptic_element;  //!< Pre synaptic elements
 extern const Name precise_times;         //!< Recorder parameter
 extern const Name precision;             //!< Recorder parameter
-extern const Name property_object;       //!< In ConnBuilder
 extern const Name ps; //!< current release probability [0...1] (property arrays)
 extern const Name PSC_adapt_step;     //!< PSC increment (current homeostasis)
 extern const Name PSC_Unit_amplitude; //!< Scaling of PSC (current homeostasis)

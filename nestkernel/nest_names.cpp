@@ -232,7 +232,6 @@ const Name potentials( "potentials" );
 const Name pre_synaptic_element( "pre_synaptic_element" );
 const Name precise_times( "precise_times" );
 const Name precision( "precision" );
-const Name property_object( "property_object" );
 const Name ps( "ps" );
 const Name PSC_adapt_step( "PSC_adapt_step" );
 const Name PSC_Unit_amplitude( "PSC_Unit_amplitude" );

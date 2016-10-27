@@ -137,6 +137,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
           kernel().vp_manager.get_num_threads() );
   }
   register_parameters_requiring_skipping_( *delay_ );
+
   // Structural plasticity parameters
   // Check if both pre and post synaptic element are provided
   if ( syn_spec->known( names::pre_synaptic_element )
@@ -146,6 +147,9 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
       getValue< std::string >( syn_spec, names::pre_synaptic_element );
     post_synaptic_element_name_ =
       getValue< std::string >( syn_spec, names::post_synaptic_element );
+
+    use_pre_synaptic_element_ = true;
+    use_post_synaptic_element_ = true;
   }
   else
   {
@@ -156,9 +160,10 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
         "In order to use structural plasticity, both a pre and post synaptic "
         "element must be specified" );
     }
-    pre_synaptic_element_name_ = "";
-    post_synaptic_element_name_ = "";
-  }
+
+    use_pre_synaptic_element_ = false;
+    use_post_synaptic_element_ = false;
+  } 
 
   // synapse-specific parameters
   // TODO: Can we create this set once and for all?
@@ -359,7 +364,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
     if ( tid == source_thread )
     {
       // update the number of connected synaptic elements
-      source->connect_synaptic_element( pre_synaptic_element_name_, update );
+      source->connect_synaptic_element( pre_synaptic_element_name_.toString(), update );
     }
   }
 
@@ -380,7 +385,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
     else
     {
       // update the number of connected synaptic elements
-      target->connect_synaptic_element( post_synaptic_element_name_, update );
+      target->connect_synaptic_element( post_synaptic_element_name_.toString(), update );
     }
   }
   return local;
@@ -400,7 +405,7 @@ nest::ConnBuilder::connect()
       "This connection rule does not support symmetric connections." );
   }
 
-  if ( pre_synaptic_element_name_ != "" && post_synaptic_element_name_ != "" )
+  if ( use_pre_synaptic_element_ && use_post_synaptic_element_ )
   {
     if ( symmetric_ )
       throw NotImplemented(
@@ -443,7 +448,7 @@ nest::ConnBuilder::connect()
 void
 nest::ConnBuilder::disconnect()
 {
-  if ( pre_synaptic_element_name_ != "" && post_synaptic_element_name_ != "" )
+  if ( use_pre_synaptic_element_ && use_post_synaptic_element_ )
   {
     sp_disconnect_();
   }
@@ -583,15 +588,19 @@ nest::ConnBuilder::single_connect_( index sgid,
 }
 
 void
-nest::ConnBuilder::set_pre_synaptic_element_name( std::string name )
+nest::ConnBuilder::set_pre_synaptic_element_name( const Name& name )
 {
   pre_synaptic_element_name_ = name;
+  name.toString() != "" ? use_pre_synaptic_element_ = true 
+    : use_pre_synaptic_element_ = false;
 }
 
 void
-nest::ConnBuilder::set_post_synaptic_element_name( std::string name )
+nest::ConnBuilder::set_post_synaptic_element_name( const Name& name )
 {
   post_synaptic_element_name_ = name;
+  name.toString() != "" ? use_post_synaptic_element_ = true
+    : use_post_synaptic_element_ = false;
 }
 
 nest::OneToOneBuilder::OneToOneBuilder( const GIDCollection& sources,
@@ -1514,7 +1523,7 @@ nest::SPBuilder::SPBuilder( const GIDCollection& sources,
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   // Check that both pre and post synaptic element are provided
-  if ( pre_synaptic_element_name_ == "" || post_synaptic_element_name_ == "" )
+  if ( not use_pre_synaptic_element_ or not use_post_synaptic_element_ )
   {
     throw BadProperty(
       "pre_synaptic_element and/or post_synaptic_elements is missing" );

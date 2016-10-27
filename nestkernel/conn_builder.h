@@ -99,8 +99,8 @@ public:
     return default_delay_;
   }
 
-  void set_pre_synaptic_element_name( std::string name );
-  void set_post_synaptic_element_name( std::string name );
+  void set_pre_synaptic_element_name( const Name& name );
+  void set_post_synaptic_element_name( const Name&  name );
 
   bool change_connected_synaptic_elements( index, index, const int, int );
 
@@ -158,8 +158,11 @@ protected:
 
   // Name of the pre synaptic and post synaptic elements for this connection
   // builder
-  std::string pre_synaptic_element_name_;
-  std::string post_synaptic_element_name_;
+  Name pre_synaptic_element_name_;
+  Name post_synaptic_element_name_;
+
+  bool use_pre_synaptic_element_;
+  bool use_post_synaptic_element_;
 
 private:
   typedef std::map< Name, ConnParameter* > ConnParameterMap;
@@ -316,12 +319,12 @@ public:
   std::string
   get_pre_synaptic_element_name() const
   {
-    return pre_synaptic_element_name_;
+    return pre_synaptic_element_name_.toString();
   }
   std::string
   get_post_synaptic_element_name() const
   {
-    return post_synaptic_element_name_;
+    return post_synaptic_element_name_.toString();
   }
 
   /**

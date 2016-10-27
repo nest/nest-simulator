@@ -331,8 +331,7 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
     if ( S_.refractory_steps_ == 0 )
     {
       // neuron not refractory
-      S_.V_m_ = V_.P30_ * ( S_.I_const_ + P_.I_e_ ) 
-                             + V_.P33_ * S_.V_m_;
+      S_.V_m_ = V_.P30_ * ( S_.I_const_ + P_.I_e_ ) + V_.P33_ * S_.V_m_;
 
       S_.current_ = 0.0;
       for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
@@ -343,8 +342,7 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
       }
 
       // lower bound of membrane potential
-      S_.V_m_ = ( S_.V_m_ < P_.LowerBound_ 
-                                 ? P_.LowerBound_ : S_.V_m_ );
+      S_.V_m_ = ( S_.V_m_ < P_.LowerBound_ ? P_.LowerBound_ : S_.V_m_ );
     }
     else // neuron is absolute refractory
       --S_.refractory_steps_;

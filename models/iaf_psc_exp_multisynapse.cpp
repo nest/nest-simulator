@@ -56,7 +56,7 @@ void
 RecordablesMap< iaf_psc_exp_multisynapse >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m, &iaf_psc_exp_multisynapse::get_membrane_potential_ );
+  insert_( names::V_m, &iaf_psc_exp_multisynapse::get_V_m_ );
 }
 
 
@@ -79,8 +79,8 @@ iaf_psc_exp_multisynapse::Parameters_::Parameters_()
 }
 
 iaf_psc_exp_multisynapse::State_::State_()
-  : input_current_( 0.0 )
-  , membrane_potential_( 0.0 )
+  : I_const_( 0.0 )
+  , V_m_( 0.0 )
   , refractory_steps_( 0 )
 {
   i_syn_.clear();
@@ -189,22 +189,21 @@ void
 iaf_psc_exp_multisynapse::State_::get( DictionaryDatum& d,
   const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, 
-                 membrane_potential_ + p.E_L_ ); // Membrane potential
+  def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
 }
 
 void
 iaf_psc_exp_multisynapse::State_::set( const DictionaryDatum& d,
-  const Parameters_& p,
-  double delta_EL )
+                                       const Parameters_& p,
+                                       double delta_EL )
 {
-  if ( updateValue< double >( d, names::V_m, membrane_potential_ ) )
+  if ( updateValue< double >( d, names::V_m, V_m_ ) )
   {
-    membrane_potential_ -= p.E_L_;
+    V_m_ -= p.E_L_;
   }
   else
   {
-    membrane_potential_ -= delta_EL;
+    V_m_ -= delta_EL;
   }
 }
 
@@ -314,13 +313,13 @@ iaf_psc_exp_multisynapse::update( const Time& origin,
   {
     if ( S_.refractory_steps_ == 0 ) // neuron not refractory, so evolve V
     {
-      S_.membrane_potential_ = S_.membrane_potential_ * V_.P22_
-        + ( P_.I_e_ + S_.input_current_ ) * V_.P20_; // not sure about this
+      S_.V_m_ = S_.V_m_ * V_.P22_
+        + ( P_.I_e_ + S_.I_const_ ) * V_.P20_; // not sure about this
 
       S_.current_ = 0.0;
       for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
       {
-        S_.membrane_potential_ += V_.P21_syn_[ i ] * S_.i_syn_[ i ];
+        S_.V_m_ += V_.P21_syn_[ i ] * S_.i_syn_[ i ];
         S_.current_ += S_.i_syn_[ i ]; // not sure about this
       }
     }
@@ -337,10 +336,10 @@ iaf_psc_exp_multisynapse::update( const Time& origin,
       S_.i_syn_[ i ] += B_.spikes_[ i ].get_value( lag ); // not sure about this
     }
 
-    if ( S_.membrane_potential_ >= P_.Theta_ ) // threshold crossing
+    if ( S_.V_m_ >= P_.Theta_ ) // threshold crossing
     {
       S_.refractory_steps_ = V_.RefractoryCounts_;
-      S_.membrane_potential_ = P_.V_reset_;
+      S_.V_m_ = P_.V_reset_;
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
       SpikeEvent se;
@@ -348,7 +347,7 @@ iaf_psc_exp_multisynapse::update( const Time& origin,
     }
 
     // set new input current
-    S_.input_current_ = B_.currents_.get_value( lag );
+    S_.I_const_ = B_.currents_.get_value( lag );
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );

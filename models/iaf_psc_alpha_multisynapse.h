@@ -160,11 +160,11 @@ private:
    */
   struct State_
   {
-    double constant_current_; //!< Constant current
+    double I_const_; //!< Constant current
     std::vector< double > y1_syn_;
     std::vector< double > y2_syn_;
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
-    double membrane_potential_;
+    double V_m_;
     double current_; //! This is the current in a time step. This is only here
                      //! to allow logging
 
@@ -229,7 +229,7 @@ private:
   double
   get_V_m_() const
   {
-    return S_.membrane_potential_ + P_.E_L_;
+    return S_.V_m_ + P_.E_L_;
   }
   double
   get_current_() const

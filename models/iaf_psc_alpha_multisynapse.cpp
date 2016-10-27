@@ -81,8 +81,8 @@ iaf_psc_alpha_multisynapse::Parameters_::Parameters_()
 }
 
 iaf_psc_alpha_multisynapse::State_::State_()
-  : constant_current_( 0.0 )
-  , membrane_potential_( 0.0 )
+  : I_const_( 0.0 )
+  , V_m_( 0.0 )
   , refractory_steps_( 0 )
 {
   y1_syn_.clear();
@@ -197,8 +197,7 @@ void
 iaf_psc_alpha_multisynapse::State_::get( DictionaryDatum& d,
   const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, 
-                 membrane_potential_ + p.E_L_ ); // Membrane potential
+  def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
 }
 
 void
@@ -206,13 +205,13 @@ iaf_psc_alpha_multisynapse::State_::set( const DictionaryDatum& d,
   const Parameters_& p,
   const double delta_EL )
 {
-  if ( updateValue< double >( d, names::V_m, membrane_potential_ ) )
+  if ( updateValue< double >( d, names::V_m, V_m_ ) )
   {
-    membrane_potential_ -= p.E_L_;
+    V_m_ -= p.E_L_;
   }
   else
   {
-    membrane_potential_ -= delta_EL;
+    V_m_ -= delta_EL;
   }
 }
 
@@ -332,20 +331,20 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
     if ( S_.refractory_steps_ == 0 )
     {
       // neuron not refractory
-      S_.membrane_potential_ = V_.P30_ * ( S_.constant_current_ + P_.I_e_ ) 
-                             + V_.P33_ * S_.membrane_potential_;
+      S_.V_m_ = V_.P30_ * ( S_.I_const_ + P_.I_e_ ) 
+                             + V_.P33_ * S_.V_m_;
 
       S_.current_ = 0.0;
       for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
       {
-        S_.membrane_potential_ += V_.P31_syn_[ i ] * S_.y1_syn_[ i ]
+        S_.V_m_ += V_.P31_syn_[ i ] * S_.y1_syn_[ i ]
           + V_.P32_syn_[ i ] * S_.y2_syn_[ i ];
         S_.current_ += S_.y2_syn_[ i ];
       }
 
       // lower bound of membrane potential
-      S_.membrane_potential_ = ( S_.membrane_potential_ < P_.LowerBound_ 
-                                 ? P_.LowerBound_ : S_.membrane_potential_ );
+      S_.V_m_ = ( S_.V_m_ < P_.LowerBound_ 
+                                 ? P_.LowerBound_ : S_.V_m_ );
     }
     else // neuron is absolute refractory
       --S_.refractory_steps_;
@@ -362,10 +361,10 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
         V_.PSCInitialValues_[ i ] * B_.spikes_[ i ].get_value( lag );
     }
 
-    if ( S_.membrane_potential_ >= P_.Theta_ ) // threshold crossing
+    if ( S_.V_m_ >= P_.Theta_ ) // threshold crossing
     {
       S_.refractory_steps_ = V_.RefractoryCounts_;
-      S_.membrane_potential_ = P_.V_reset_;
+      S_.V_m_ = P_.V_reset_;
       // A supra-threshold membrane potential should never be observable.
       // The reset at the time of threshold crossing enables accurate
       // integration independent of the computation step size, see [2,3] for
@@ -377,7 +376,7 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
     }
 
     // set new input current
-    S_.constant_current_ = B_.currents_.get_value( lag );
+    S_.I_const_ = B_.currents_.get_value( lag );
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );

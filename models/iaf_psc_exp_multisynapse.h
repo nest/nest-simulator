@@ -152,9 +152,9 @@ private:
    */
   struct State_
   {
-    double input_current_; //!< synaptic dc input current, variable 0
+    double I_const_; //!< synaptic dc input current, variable 0
     std::vector< double > i_syn_;
-    double membrane_potential_;     //!< membrane potential, variable 2
+    double V_m_;     //!< membrane potential, variable 2
     double current_; //!< This is the current in a time step. This is only
                      //!< here to allow logging
 
@@ -221,9 +221,9 @@ private:
 
   //! Read out the real membrane potential
   double
-  get_membrane_potential_() const
+  get_V_m_() const
   {
-    return S_.membrane_potential_ + P_.E_L_;
+    return S_.V_m_ + P_.E_L_;
   }
 
   /**

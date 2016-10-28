@@ -4,9 +4,9 @@ Since 2014 ([Djurfeldt et al., 2014](http://dx.doi.org/10.3389/fninf.2014.00043)
 
 In contrast to the [built-in connection functions](connection-management.md) and the Topology module, the Connection Generator Interface has a different way for specifying the connectivity:
 
-2. pre- and postsynaptic neurons are created
-1. a Connection Generator object is created, which specifies the connectivity pattern
-3. the Connection Generator is applied to the sets of source and target neurons using the `CGConnect` function.
+1. pre- and postsynaptic neurons are created
+1. a Connection Generator object is created which specifies the connectivity pattern
+1. the Connection Generator is applied to the sets of source and target neurons using the `CGConnect` function.
 
 ## Example in PyNEST using the Connection-Set Algebra
 

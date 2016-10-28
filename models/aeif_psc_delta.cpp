@@ -200,7 +200,7 @@ nest::aeif_psc_delta::Parameters_::set( const DictionaryDatum& d )
 
   if ( V_reset_ >= V_peak_ )
   {
-    throw BadProperty( "Ensure that: V_reset < V_peak ." );
+    throw BadProperty( "Ensure that V_reset < V_peak ." );
   }
 
   if ( Delta_T < 0. )
@@ -223,9 +223,14 @@ nest::aeif_psc_delta::Parameters_::set( const DictionaryDatum& d )
     }
   }
 
+  if ( V_peak_ < V_th )
+  {
+    throw BadProperty( "V_peak >= V_th required." );
+  }
+
   if ( C_m <= 0 )
   {
-    throw BadProperty( "Ensure that C_m >0" );
+    throw BadProperty( "Ensure that C_m > 0" );
   }
 
   if ( t_ref_ < 0 )
@@ -435,8 +440,7 @@ nest::aeif_psc_delta::update( const Time& origin, const long from, const long to
       if ( S_.r_ == 0 )
       {
         // neuron not refractory
-        S_.y_[ State_::V_M ] = ( B_.I_stim_ + P_.I_e ) / P_.C_m +
-                S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
+        S_.y_[ State_::V_M ] = S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
 
         // if we have accumulated spikes from refractory period,
         // add and reset accumulator
@@ -475,6 +479,7 @@ nest::aeif_psc_delta::update( const Time& origin, const long from, const long to
 
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );
+
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );
   }

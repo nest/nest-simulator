@@ -294,8 +294,7 @@ public:
      * P.V_th if Delta_T == 0.
      */
     double V_peak;
-    double P30_;
-    double P33_;
+
     unsigned int refractory_counts_;
   };
 

@@ -364,7 +364,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
     if ( tid == source_thread )
     {
       // update the number of connected synaptic elements
-      source->connect_synaptic_element( pre_synaptic_element_name_.toString(), update );
+      source->connect_synaptic_element( pre_synaptic_element_name_, update );
     }
   }
 
@@ -385,7 +385,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
     else
     {
       // update the number of connected synaptic elements
-      target->connect_synaptic_element( post_synaptic_element_name_.toString(), update );
+      target->connect_synaptic_element( post_synaptic_element_name_, update );
     }
   }
   return local;
@@ -405,7 +405,7 @@ nest::ConnBuilder::connect()
       "This connection rule does not support symmetric connections." );
   }
 
-  if ( use_pre_synaptic_element_ && use_post_synaptic_element_ )
+  if ( use_structural_placity_() )  
   {
     if ( symmetric_ )
       throw NotImplemented(
@@ -448,7 +448,7 @@ nest::ConnBuilder::connect()
 void
 nest::ConnBuilder::disconnect()
 {
-  if ( use_pre_synaptic_element_ && use_post_synaptic_element_ )
+  if ( use_structural_placity_() )
   {
     sp_disconnect_();
   }
@@ -588,19 +588,29 @@ nest::ConnBuilder::single_connect_( index sgid,
 }
 
 void
-nest::ConnBuilder::set_pre_synaptic_element_name( const Name& name )
+nest::ConnBuilder::set_pre_synaptic_element_name( std::string name )
 {
-  pre_synaptic_element_name_ = name;
-  name.toString() != "" ? use_pre_synaptic_element_ = true 
-    : use_pre_synaptic_element_ = false;
+  if ( name.empty() )
+  {
+    throw BadProperty( "Pre synaptic element is empty." );
+  }
+
+  pre_synaptic_element_name_ = Name( name );
+
+  use_pre_synaptic_element_ = not name.empty();
 }
 
 void
-nest::ConnBuilder::set_post_synaptic_element_name( const Name& name )
+nest::ConnBuilder::set_post_synaptic_element_name( std::string name )
 {
-  post_synaptic_element_name_ = name;
-  name.toString() != "" ? use_post_synaptic_element_ = true
-    : use_post_synaptic_element_ = false;
+  if ( name.empty() )
+  {
+    throw BadProperty( "Post synaptic element is empty." );
+  }
+
+  post_synaptic_element_name_ = Name( name );
+  
+  use_post_synaptic_element_ = not name.empty();
 }
 
 nest::OneToOneBuilder::OneToOneBuilder( const GIDCollection& sources,

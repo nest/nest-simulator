@@ -99,8 +99,8 @@ public:
     return default_delay_;
   }
 
-  void set_pre_synaptic_element_name( const Name& name );
-  void set_post_synaptic_element_name( const Name&  name );
+  void set_pre_synaptic_element_name( std::string name );
+  void set_post_synaptic_element_name( std::string  name );
 
   bool change_connected_synaptic_elements( index, index, const int, int );
 
@@ -163,6 +163,12 @@ protected:
 
   bool use_pre_synaptic_element_;
   bool use_post_synaptic_element_;
+
+  inline bool
+  use_structural_placity_() const
+  {
+    return use_pre_synaptic_element_ and use_post_synaptic_element_;
+  }
 
 private:
   typedef std::map< Name, ConnParameter* > ConnParameterMap;

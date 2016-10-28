@@ -54,9 +54,6 @@ Details:
 
 HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 path = os.path.abspath(os.path.dirname(__file__))
-if not path.endswith("/"):
-    path += "/"
-
 
 # --------------------------------------------------------------------------- #
 #  Tolerances to compare LSODAR and NEST implementations
@@ -269,6 +266,7 @@ class AEIFTestCase(unittest.TestCase):
                                 "{} failed test for {}: {} > {}.".format(
                                     model, var, diff, di_tol[model][var]))
 
+    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def test_closeness_nest_lsodar(self):
         '''
         Compare models to the LSODAR implementation.

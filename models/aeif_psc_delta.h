@@ -43,8 +43,10 @@
 #include "universal_data_logger.h"
 
 /* BeginDocumentation
-Name: aeif_psc_delta - Current-based adaptive exponential integrate-and-fire neuron
-                      model according to Brette and Gerstner (2005) with delta synapse.
+Name: aeif_psc_delta - Current-based adaptive exponential integrate-and-fire
+neuron
+                      model according to Brette and Gerstner (2005) with delta
+synapse.
 
 Description:
 
@@ -64,7 +66,8 @@ tau_w * dw/dt= a(V-E_L) -W
 
 I_x(t) = J_x Sum_k delta(t - t^x_k),
 
-where x = (ex, in), delta is the dirac delta function and k indexes incoming spikes.
+where x = (ex, in), delta is the dirac delta function and k indexes incoming
+spikes.
 
 Note that the spike detection threshold V_peak is automatically set to
 V_th+10 mV to avoid numerical instabilites that may result from
@@ -177,12 +180,12 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double V_peak_;  //!< Spike detection threshold in mV
-    double V_reset_; //!< Reset Potential in mV
+    double V_peak_;        //!< Spike detection threshold in mV
+    double V_reset_;       //!< Reset Potential in mV
     bool with_refr_input_; //!< spikes arriving during refractory period are
                            //!< counted
 
-    double t_ref_;   //!< Refractory period in ms
+    double t_ref_; //!< Refractory period in ms
 
     double g_L;     //!< Leak Conductance in nS
     double C_m;     //!< Membrane Capacitance in pF
@@ -193,7 +196,7 @@ private:
     double b;       //!< Spike-triggered adaptation in pA
     double V_th;    //!< Spike threshold in mV.
     double t_ref;   //!< Refractory period in ms.
-    double I_e;        //!< Intrinsic current in pA.
+    double I_e;     //!< Intrinsic current in pA.
 
     double gsl_error_tol; //!< error bound for GSL integrator
 
@@ -213,10 +216,10 @@ public:
    */
   struct State_
   {
-      /** Accumulate spikes arriving during refractory period, discounted for
-          decay until end of refractory period.
-      */
-      double refr_spikes_buffer_;
+    /** Accumulate spikes arriving during refractory period, discounted for
+        decay until end of refractory period.
+    */
+    double refr_spikes_buffer_;
     /**
      * Enumeration identifying elements in state array State_::y_.
      * The state vector must be passed to GSL as a C array. This enum
@@ -348,7 +351,8 @@ aeif_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-aeif_psc_delta::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+aeif_psc_delta::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

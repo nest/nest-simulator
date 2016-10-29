@@ -54,6 +54,9 @@ Details:
 
 HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 path = os.path.abspath(os.path.dirname(__file__))
+if not path.endswith("/"):
+    path += "/"
+
 
 # --------------------------------------------------------------------------- #
 #  Tolerances to compare LSODAR and NEST implementations
@@ -141,12 +144,12 @@ aeif_DT0_delta = aeif_DT0.copy()
 aeif_DT0_delta.pop('tau_syn_ex')
 
 DT0_params = {"aeif_cond_alpha": aeif_DT0,
-            "aeif_cond_exp": aeif_DT0,
-            "aeif_psc_alpha": aeif_DT0,
-            "aeif_psc_delta": aeif_DT0_delta,
-            "aeif_psc_exp": aeif_DT0,
-            "aeif_cond_alpha_multisynapse": aeif_DT0,
-            "aeif_cond_alpha_RK5": aeif_DT0}
+              "aeif_cond_exp": aeif_DT0,
+              "aeif_psc_alpha": aeif_DT0,
+              "aeif_psc_delta": aeif_DT0_delta,
+              "aeif_psc_exp": aeif_DT0,
+              "aeif_cond_alpha_multisynapse": aeif_DT0,
+              "aeif_cond_alpha_RK5": aeif_DT0}
 
 iaf_param_base = {
     'V_reset': -60.,
@@ -266,7 +269,6 @@ class AEIFTestCase(unittest.TestCase):
                                 "{} failed test for {}: {} > {}.".format(
                                     model, var, diff, di_tol[model][var]))
 
-    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def test_closeness_nest_lsodar(self):
         '''
         Compare models to the LSODAR implementation.
@@ -365,8 +367,8 @@ class AEIFTestCase(unittest.TestCase):
                    for model in models if "multisynapse" not in model}
         multimeters = {model: nest.Create("multimeter") for model in neurons}
         pg = nest.Create("dc_generator", params={"amplitude": 250.0,
-                                                 "start"    : 50.0,
-                                                 "stop"     : 150.0})
+                                                 "start": 50.0,
+                                                 "stop": 150.0})
 
         # connect them and simulate
         for model, mm in iter(multimeters.items()):

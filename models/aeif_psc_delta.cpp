@@ -50,7 +50,8 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_psc_delta > nest::aeif_psc_delta::recordablesMap_;
+nest::RecordablesMap< nest::aeif_psc_delta >
+  nest::aeif_psc_delta::recordablesMap_;
 
 namespace nest
 {
@@ -67,13 +68,17 @@ RecordablesMap< aeif_psc_delta >::create()
   // use standard names whereever you can for consistency!
   insert_(
     names::V_m, &aeif_psc_delta::get_y_elem_< aeif_psc_delta::State_::V_M > );
-  insert_( names::w, &aeif_psc_delta::get_y_elem_< aeif_psc_delta::State_::W > );
+  insert_(
+    names::w, &aeif_psc_delta::get_y_elem_< aeif_psc_delta::State_::W > );
 }
 }
 
 
 extern "C" int
-nest::aeif_psc_delta_dynamics( double, const double y[], double f[], void* pnode )
+nest::aeif_psc_delta_dynamics( double,
+  const double y[],
+  double f[],
+  void* pnode )
 {
   // a shorthand
   typedef nest::aeif_psc_delta::State_ S;
@@ -98,9 +103,8 @@ nest::aeif_psc_delta_dynamics( double, const double y[], double f[], void* pnode
       * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
 
   // dv/dt
-  f[ S::V_M ] =
-    ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w
-      + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + node.P_.I_e
+                  + node.B_.I_stim_ ) / node.P_.C_m;
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
@@ -257,7 +261,8 @@ nest::aeif_psc_delta::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_psc_delta::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::aeif_psc_delta::State_::set( const DictionaryDatum& d,
+  const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::w, y_[ W ] );
@@ -329,8 +334,8 @@ nest::aeif_psc_delta::init_state_( const Node& proto )
 void
 nest::aeif_psc_delta::init_buffers_()
 {
-  B_.spikes_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.spikes_.clear();   // includes resize
+  B_.currents_.clear(); // includes resize
   Archiving_Node::clear_history();
 
   B_.logger_.reset();
@@ -391,14 +396,16 @@ nest::aeif_psc_delta::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_psc_delta::update( const Time& origin, const long from, const long to )
+nest::aeif_psc_delta::update( const Time& origin,
+  const long from,
+  const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
   const double h = Time::get_resolution().get_ms();
-  const double tau_m_ = P_.C_m/P_.g_L;
+  const double tau_m_ = P_.C_m / P_.g_L;
   for ( long lag = from; lag < to; ++lag )
   {
     double t = 0.0;
@@ -440,7 +447,8 @@ nest::aeif_psc_delta::update( const Time& origin, const long from, const long to
       if ( S_.r_ == 0 )
       {
         // neuron not refractory
-        S_.y_[ State_::V_M ] = S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
+        S_.y_[ State_::V_M ] =
+          S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
 
         // if we have accumulated spikes from refractory period,
         // add and reset accumulator
@@ -490,10 +498,9 @@ nest::aeif_psc_delta::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  B_.spikes_.add_value( e.get_rel_delivery_steps(
-                             kernel().simulation_manager.get_slice_origin() ),
+  B_.spikes_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
-
 }
 
 void

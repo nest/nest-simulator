@@ -88,7 +88,7 @@ def get_mean_PSP_matrix(PSP_e, g, number_of_pop):
 
     The function creates a matrix of the mean evoked postsynaptic
     potentials between the recurrent connections of the microcircuit.
-    The weight of the connection between L4E and L23E is doubled.
+    The weight of the connection from L4E to L23E is doubled.
 
     Arguments
     ---------
@@ -140,7 +140,7 @@ def get_std_PSP_matrix(PSP_rel, number_of_pop):
     return std_mat
 
 net_dict = {
-    # Neuron model
+    # Neuron model.
     'neuron_model': 'iaf_psc_exp',
     # The default recording device is the spike_detector. If you also
     # want to record the membrane potentials of the neurons, add
@@ -175,7 +175,7 @@ net_dict = {
     'K_scaling': 0.1,
     # Factor to scale the number of neurons.
     'N_scaling': 0.1,
-    # Amplitude of excitatory postsynaptic potential (in mV).
+    # Mean amplitude of excitatory postsynaptic potential (in mV).
     'PSP_e': 0.15,
     # Relative standard deviation of the postsynaptic potential.
     'PSP_sd': 0.1,

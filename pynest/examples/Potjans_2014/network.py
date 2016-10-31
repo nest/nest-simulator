@@ -31,7 +31,6 @@ Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 import nest
 import numpy as np
 import os
-import sys
 from helpers import adj_w_ext_to_K
 from helpers import synapses_th_matrix
 from helpers import get_total_number_of_synapses
@@ -51,7 +50,7 @@ class Network:
     sim_dict
         dictionary containing all parameters specific to the simulation
         such as the directory the data is stored in and the seeds
-        (see: stimulus_params.py)
+        (see: sim_params.py)
     net_dict
          dictionary containing all parameters specific to the neurons
          and the network (see: network_params.py)
@@ -84,7 +83,7 @@ class Network:
 
         This function resets the NEST-kernel and passes parameters to it.
         The number of seeds for the NEST-kernel is computed, based on the
-        total number of mpi-processes and threads of each.
+        total number of MPI processes and threads of each.
 
         Parameters
         """
@@ -120,7 +119,6 @@ class Network:
             }
         nest.SetKernelStatus(kernel_dict)
 
-    # create neuronal populations
     def create_populations(self):
         """ This function creates the neuronal populations.
 
@@ -164,7 +162,7 @@ class Network:
             % self.K_scaling
             )
 
-        # Scaling of the synapses
+        # Scaling of the synapses.
         if self.K_scaling != 1:
             synapses_indegree = self.synapses / (
                 self.N_full.reshape(len(self.N_full), 1) * self.N_scaling)
@@ -173,7 +171,7 @@ class Network:
                 self.w_from_PSP, self.DC_amp_e, self.net_dict, self.stim_dict
                 )
 
-        # Create cortical populations
+        # Create cortical populations.
         self.pops = []
         pop_file = open(
             os.path.join(self.data_path, 'population_GIDs.dat'), 'w+'
@@ -211,7 +209,11 @@ class Network:
             )
 
     def create_devices(self):
-        """ This function creates the recording devices."""
+        """ This function creates the recording devices.
+
+        Only devices which are given in net_dict['rec_dev'] are created.
+
+        """
         self.spike_detector = []
         self.voltmeter = []
         for i, pop in enumerate(self.pops):
@@ -244,10 +246,8 @@ class Network:
             print('Voltmeters created')
 
     def create_thalamic_input(self):
-        """ The thalamic neuronal population is created.
-
-        If thalamic input should be simulated, a thalamic neuronal population
-        is created.
+        """ This function creates the thalamic neuronal population if this
+        is specified in stimulus_params.py.
 
         """
         if self.stim_dict['thalamic_input']:
@@ -270,7 +270,9 @@ class Network:
                     }
                 )
             nest.Connect(self.poisson_th, self.thalamic_population)
-            self.nr_synapses_th = synapses_th_matrix()
+            self.nr_synapses_th = synapses_th_matrix(
+                self.net_dict, self.stim_dict
+                )
             if self.K_scaling != 1:
                 self.thalamic_weight = self.thalamic_weight / (
                     self.K_scaling ** 0.5)
@@ -360,7 +362,7 @@ class Network:
                         )
 
     def connect_poisson(self):
-        """ Connects the Poisson generator to the microcircuit."""
+        """ Connects the Poisson generators to the microcircuit."""
         print('Poisson background input is connected')
         for i, target_pop in enumerate(self.pops):
             conn_dict_poisson = {'rule': 'all_to_all'}
@@ -444,7 +446,7 @@ class Network:
         self.connect_devices()
 
     def simulate(self):
-        """ This function starts the simulation."""
+        """ This function simulates the microcircuit."""
         nest.Simulate(self.sim_dict['t_sim'])
 
     def evaluate(self, raster_plot_time_idx, fire_rate_time_idx):

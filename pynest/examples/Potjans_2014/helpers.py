@@ -38,7 +38,7 @@ from matplotlib.patches import Polygon
 def compute_DC(net_dict, w_ext):
     """ Computes DC input if no Poisson input is provided to the microcircuit.
 
-    Parameters
+   Parameters
     ----------
     net_dict
         Parameters of the microcircuit.
@@ -96,7 +96,7 @@ def get_total_number_of_synapses(net_dict):
     The first index (rows) of the output matrix is the target population
     and the second (columns) the source population. If a scaling of the
     synapses is intended this is done in the main simulation script and the
-    variable is ignored in this function.
+    variable 'K_scaling' is ignored in this function.
 
     Parameters
     ----------
@@ -127,7 +127,7 @@ def get_total_number_of_synapses(net_dict):
     N_full_matrix = np.column_stack(
         (N_full for i in list(range(number_N)))
         )
-    # if the network is scaled the indegrees are calculated in the same
+    # If the network is scaled the indegrees are calculated in the same
     # fashion as in the original version of the circuit, which is
     # written in sli
     K = (((n_syn_temp * (
@@ -262,7 +262,7 @@ def read_name(path, name):
         Lowest and highest ids of the spike detectors.
 
     """
-    # import filenames$
+    # Import filenames$
     files = []
     for file in os.listdir(path):
         if file.endswith('.gdf') and file.startswith(name):
@@ -270,7 +270,7 @@ def read_name(path, name):
             if temp not in files:
                 files.append(temp)
 
-    # import GIDs
+    # Import GIDs
     gidfile = open(path + 'population_GIDs.dat', 'r')
     gids = []
     for l in gidfile:
@@ -397,7 +397,6 @@ def fire_rate(path, name, begin, end):
     for h in list(range(len(files))):
         n_fil = data_all[h][:, 0]
         n_fil = n_fil.astype(int)
-        t_fil = data_all[h][:, 1]
         count_of_n = np.bincount(n_fil)
         count_of_n_fil = count_of_n[gids[h][0]-1:gids[h][1]]
         rate_each_n = count_of_n_fil * 1000. / (end - begin)

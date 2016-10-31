@@ -36,19 +36,22 @@ from sim_params import sim_dict
 from stimulus_params import stim_dict
 
 
-# initialize the network and pass parameters to it
+# Initialize the network and pass parameters to it.
 net = network.Network(sim_dict, net_dict, stim_dict)
-# connect all nodes
+# Connect all nodes.
 t1 = time.time()
 net.setup()
 time_con = time.time()-t1
 print("Time to create the connections: %.2f seconds" % time_con)
-# simulate
+# Simulate.
 t2 = time.time()
 net.simulate()
 time_sim = time.time()-t2
 print("Time to simulate: %.2f seconds" % time_sim)
-# plot results of the simulation
+# Plot a raster plot of the spikes of the simulated neurons and the average
+# spike rate of all populations. For visual purposes only spikes in the last
+# 200 ms are plotted here by default. The computation of spike rates discards
+# the first 500 ms of the simulation to exclude initialization artifacts.
 raster_plot_time_idx = np.array([sim_dict['t_sim'] - 200.0, sim_dict['t_sim']])
 fire_rate_time_idx = np.array([500.0, sim_dict['t_sim']])
 net.evaluate(raster_plot_time_idx, fire_rate_time_idx)

@@ -1194,7 +1194,7 @@ nest::FixedInDegreeBuilder::connect_()
 
           Node* target = kernel().node_manager.get_node( *tgid, tid );
 
-          inner_connect_( tid, rng, target, *tgid );
+          inner_connect_( tid, rng, target, *tgid, true );
         }
       }
       else
@@ -1211,7 +1211,7 @@ nest::FixedInDegreeBuilder::connect_()
           if ( targets_->find( tgid ) < 0 )
             continue;
 
-          inner_connect_( tid, rng, target, tgid );
+          inner_connect_( tid, rng, target, tgid, false );
         }
       }
     }
@@ -1229,7 +1229,8 @@ void
 nest::FixedInDegreeBuilder::inner_connect_( const int tid,
   librandom::RngPtr& rng,
   Node* target,
-  index tgid )
+  index tgid,
+  bool skip )
 {
   const thread target_thread = target->get_thread();
 
@@ -1237,7 +1238,10 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
   if ( tid != target_thread )
   {
     // skip array parameters handled in other virtual processes
-    skip_conn_parameter_( tid, indegree_ );
+    if ( skip )
+    {
+      skip_conn_parameter_( tid, indegree_ );
+    }
     return;
   }
 

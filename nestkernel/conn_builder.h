@@ -281,7 +281,7 @@ protected:
   void connect_();
 
 private:
-  void inner_connect_( const int, librandom::RngPtr&, Node*, index );
+  void inner_connect_( const int, librandom::RngPtr&, Node*, index, bool );
   long indegree_;
 };
 

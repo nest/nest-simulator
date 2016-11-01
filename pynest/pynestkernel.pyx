@@ -215,18 +215,22 @@ cdef class NESTEngine(object):
 
         if self.pEngine is NULL:
             raise NESTError("engine uninitialized")
-
-        cdef string cmd_bytes = cmd.encode()
-
+        cdef string cmd_bytes
+        try:
+            cmd_bytes = cmd.encode()
+        except UnicodeDecodeError:
+            raise NESTError("Please use only ascii characters.")
         self.pEngine.execute(cmd_bytes)
 
     def push(self, obj):
 
         if self.pEngine is NULL:
             raise NESTError("engine uninitialized")
-
-        self.pEngine.OStack.push(python_object_to_datum(obj))
-
+        try:
+            self.pEngine.OStack.push(python_object_to_datum(obj))
+        except UnicodeEncodeError:
+            raise NESTError("Please use only ascii characters.")
+            
     def pop(self):
 
         if self.pEngine is NULL:
@@ -236,9 +240,12 @@ cdef class NESTEngine(object):
             raise NESTError("interpreter stack is empty")
 
         cdef Datum* dat = (addr_tok(self.pEngine.OStack.top())).datum()
-
-        ret = sli_datum_to_object(dat)
-
+        
+        try:
+            ret = sli_datum_to_object(dat)
+        except UnicodeDecodeError:
+            raise NESTError("Please use only ascii characters.")
+            
         self.pEngine.OStack.pop()
 
         return ret

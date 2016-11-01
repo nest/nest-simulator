@@ -450,13 +450,13 @@ aeif_cond_alpha_multisynapse::calibrate()
   // set the right function for the dynamics
   if ( P_.Delta_T > 0. )
   {
-    V_.V_peak = P_.V_peak_;
+    V_.V_peak_ = P_.V_peak_;
     V_.model_dynamics =
       &aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics;
   }
   else
   {
-    V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
+    V_.V_peak_ = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
     V_.model_dynamics =
       &aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics_DT0;
   }
@@ -655,8 +655,8 @@ aeif_cond_alpha_multisynapse::update( Time const& origin,
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
       if ( S_.r_ > 0 ) // if neuron is still in refractory period
-        S_.y_[ State_::V_M ] = P_.V_reset_;         // clamp it to V_reset
-      else if ( S_.y_[ State_::V_M ] >= V_.V_peak_) // V_m >= V_peak: spike
+        S_.y_[ State_::V_M ] = P_.V_reset_;          // clamp it to V_reset
+      else if ( S_.y_[ State_::V_M ] >= V_.V_peak_ ) // V_m >= V_peak: spike
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b;    // spike-driven adaptation

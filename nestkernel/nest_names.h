@@ -260,6 +260,7 @@ extern const Name
   N; //!< Specific to population point process model (pp_pop_psc_delta)
 extern const Name N_channels; //!< Specific to correlomatrix_detector
 extern const Name n_events;   //!< Recorder parameter
+extern const Name n_synapses; //!< Multisynapse models
 extern const Name
   n_proc; //!< Number of component processes of ppd_sup_/gamma_sup_generator
 extern const Name needs_prelim_update; //!< Node parameter

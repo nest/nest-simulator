@@ -105,11 +105,11 @@ iaf_psc_alpha_multisynapse::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_m, Tau_ );
   def< double >( d, names::t_ref, TauR_ );
   def< double >( d, names::V_min, LowerBound_ + E_L_ );
-  def< int >( d, "n_synapses", num_of_receptors_ );
+  def< int >( d, names::n_synapses, num_of_receptors_ );
   def< bool >( d, names::has_connections, has_connections_ );
 
   ArrayDatum tau_syn_ad( tau_syn_ );
-  def< ArrayDatum >( d, "tau_syn", tau_syn_ad );
+  def< ArrayDatum >( d, names::tau_syn, tau_syn_ad );
 }
 
 double

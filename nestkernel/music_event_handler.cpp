@@ -125,7 +125,7 @@ MusicEventHandler::publish_port()
       "Mapping MUSIC input port '%1' with width=%2 , acceptable latency=%3 ms",
       portname_,
       music_port_width,
-      acceptable_latency );
+      acceptable_latency_ );
     if ( max_buffered_ > 0 )
       msg += String::compose( " and max buffered=%1 ticks", max_buffered_ );
     msg += ".";

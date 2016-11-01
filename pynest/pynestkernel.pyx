@@ -212,24 +212,20 @@ cdef class NESTEngine(object):
         return True
 
     def run(self, cmd):
-
         if self.pEngine is NULL:
             raise NESTError("engine uninitialized")
         cdef string cmd_bytes
         try:
+            cmd_bytes = cmd.encode('utf-8')
+        except UnicodeEncodeError:
             cmd_bytes = cmd.encode()
-        except UnicodeDecodeError:
-            raise NESTError("Please use only ascii characters.")
         self.pEngine.execute(cmd_bytes)
 
     def push(self, obj):
 
         if self.pEngine is NULL:
             raise NESTError("engine uninitialized")
-        try:
-            self.pEngine.OStack.push(python_object_to_datum(obj))
-        except UnicodeEncodeError:
-            raise NESTError("Please use only ascii characters.")
+        self.pEngine.OStack.push(python_object_to_datum(obj))
             
     def pop(self):
 
@@ -241,11 +237,8 @@ cdef class NESTEngine(object):
 
         cdef Datum* dat = (addr_tok(self.pEngine.OStack.top())).datum()
         
-        try:
-            ret = sli_datum_to_object(dat)
-        except UnicodeDecodeError:
-            raise NESTError("Please use only ascii characters.")
-            
+        ret = sli_datum_to_object(dat)
+        
         self.pEngine.OStack.pop()
 
         return ret
@@ -280,7 +273,7 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
     cdef DictionaryDatum* dd = NULL
 
     cdef string obj_str
-
+    
     if isinstance(obj, bool):
         ret = <Datum*> new BoolDatum(obj)
     elif isinstance(obj, (int, long)):
@@ -326,7 +319,7 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
         if ret is NULL:
             raise NESTError("failed to unpack passed connection generator object")
     else:
-
+    
         try:
             ret = python_buffer_to_datum[buffer_int_1d_t, long](obj)
         except (ValueError, TypeError):
@@ -409,7 +402,7 @@ cdef inline object sli_datum_to_object(Datum* dat):
     elif datum_type == SLI_TYPE_DOUBLE:
         ret = (<DoubleDatum*> dat).get()
     elif datum_type == SLI_TYPE_STRING:
-         ret = (<string> deref_str(<StringDatum*> dat)).decode()
+         ret = (<string> deref_str(<StringDatum*> dat)).decode('utf-8')
     elif datum_type == SLI_TYPE_LITERAL:
         obj_str = (<LiteralDatum*> dat).toString()
         ret = SLILiteral(obj_str.decode())

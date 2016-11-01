@@ -183,7 +183,7 @@ di_iaf_param = {
 # -------------------------
 #
 
-lst_syn_types = ["cond_alpha", "cond_exp", "psc_alpha", "psc_exp", 'psc_delta']
+lst_syn_types = ["cond_alpha", "cond_exp", "psc_alpha", "psc_exp", "psc_delta"]
 
 di_syn_types = {
     "aeif_cond_alpha": "cond_alpha",
@@ -373,12 +373,10 @@ class AEIFTestCase(unittest.TestCase):
         # connect them and simulate
         for model, mm in iter(multimeters.items()):
             syn_type = di_syn_types[model]
-            key = syn_type[:syn_type.index('_')]
             nest.SetStatus(mm, {"interval": self.resol,
                                 "record_from": ["V_m"]})
             nest.Connect(mm, neurons[model])
         for syn_type, mm in iter(ref_mm.items()):
-            key = syn_type[:syn_type.index('_')]
             nest.SetStatus(mm, {"interval": self.resol,
                                 "record_from": ["V_m"]})
             nest.Connect(mm, refs[syn_type])
@@ -388,7 +386,6 @@ class AEIFTestCase(unittest.TestCase):
         for model in neurons:
             syn_type = di_syn_types[model]
             ref_data = nest.GetStatus(ref_mm[syn_type], "events")[0]
-            key = syn_type[:syn_type.index('_')]
             rel_diff = self.compute_difference(
                 {model: multimeters[model]},
                 aeif_DT0,

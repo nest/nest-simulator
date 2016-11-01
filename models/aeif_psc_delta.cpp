@@ -379,11 +379,11 @@ nest::aeif_psc_delta::calibrate()
   // set the right threshold and GSL function depending on Delta_T
   if ( P_.Delta_T > 0. )
   {
-    V_.V_peak = P_.V_peak_;
+    V_.V_peak_ = P_.V_peak_;
   }
   else
   {
-    V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
+    V_.V_peak_ = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
   }
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
@@ -435,13 +435,15 @@ nest::aeif_psc_delta::update( const Time& origin,
         S_.y_ );              // neuronal state
 
       if ( status != GSL_SUCCESS )
-        throw GSLSolverFailure( get_name(), status );
-
+      {
+          throw GSLSolverFailure( get_name(), status );
+      }
       // check for unreasonable values; we allow V_M to explode
       if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
         || S_.y_[ State_::W ] > 1e6 )
-        throw NumericalInstability( get_name() );
-
+      {
+          throw NumericalInstability( get_name() );
+      }
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
       if ( S_.r_ == 0 )
@@ -463,17 +465,22 @@ nest::aeif_psc_delta::update( const Time& origin,
         // read spikes from buffer and accumulate them, discounting
         // for decay until end of refractory period
         if ( P_.with_refr_input_ )
+        {
           S_.refr_spikes_buffer_ +=
-            B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / tau_m_ );
+                B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / tau_m_ );
+        }
         else
+        {
           B_.spikes_.get_value( lag ); // clear buffer entry, ignore spike
 
-        --S_.r_;
+          --S_.r_;
+        }
       }
-
       if ( S_.r_ > 0 )
-        S_.y_[ State_::V_M ] = P_.V_reset_;
-      else if ( S_.y_[ State_::V_M ] >= V_.V_peak )
+      {
+          S_.y_[ State_::V_M ] = P_.V_reset_;
+      }
+      else if ( S_.y_[ State_::V_M ] >= V_.V_peak_ )
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation

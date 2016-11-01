@@ -405,7 +405,7 @@ nest::ConnBuilder::connect()
       "This connection rule does not support symmetric connections." );
   }
 
-  if ( use_structural_placity_() )  
+  if ( use_structural_plasticity_() )  
   {
     if ( symmetric_ )
       throw NotImplemented(
@@ -448,7 +448,7 @@ nest::ConnBuilder::connect()
 void
 nest::ConnBuilder::disconnect()
 {
-  if ( use_structural_placity_() )
+  if ( use_structural_plasticity_() )
   {
     sp_disconnect_();
   }
@@ -588,28 +588,26 @@ nest::ConnBuilder::single_connect_( index sgid,
 }
 
 void
-nest::ConnBuilder::set_pre_synaptic_element_name( std::string name )
+nest::ConnBuilder::set_pre_synaptic_element_name( const std::string& name )
 {
   if ( name.empty() )
   {
-    throw BadProperty( "Pre synaptic element is empty." );
+    throw BadProperty( "pre_synaptic_element cannot be empty." );
   }
 
   pre_synaptic_element_name_ = Name( name );
-
   use_pre_synaptic_element_ = not name.empty();
 }
 
 void
-nest::ConnBuilder::set_post_synaptic_element_name( std::string name )
+nest::ConnBuilder::set_post_synaptic_element_name( const std::string& name )
 {
   if ( name.empty() )
   {
-    throw BadProperty( "Post synaptic element is empty." );
+    throw BadProperty( "post_synaptic_element cannot be empty." );
   }
 
   post_synaptic_element_name_ = Name( name );
-  
   use_post_synaptic_element_ = not name.empty();
 }
 

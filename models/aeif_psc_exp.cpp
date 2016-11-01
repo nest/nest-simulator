@@ -401,11 +401,11 @@ nest::aeif_psc_exp::calibrate()
   // set the right threshold and GSL function depending on Delta_T
   if ( P_.Delta_T > 0. )
   {
-    V_.V_peak = P_.V_peak_;
+    V_.V_peak_ = P_.V_peak_;
   }
   else
   {
-    V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
+    V_.V_peak_ = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
   }
 
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
@@ -465,7 +465,7 @@ nest::aeif_psc_exp::update( const Time& origin, const long from, const long to )
       // due to spike-driven adaptation
       if ( S_.r_ > 0 )
         S_.y_[ State_::V_M ] = P_.V_reset_;
-      else if ( S_.y_[ State_::V_M ] >= V_.V_peak )
+      else if ( S_.y_[ State_::V_M ] >= V_.V_peak_ )
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation

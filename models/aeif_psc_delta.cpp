@@ -95,7 +95,7 @@ nest::aeif_psc_delta_dynamics( double,
   // good compiler will optimize the verbosity away ...
 
   // shorthand for state variables
-  const double& V = std::min( y[ S::V_M ], node.P_.V_peak_ ); // bind V to the
+  const double V = std::min( y[ S::V_M ], node.P_.V_peak_ ); // bind V to the
   // USER DEFINED V_peak_ value in Parameters.
   const double& w = y[ S::W ];
 
@@ -436,13 +436,13 @@ nest::aeif_psc_delta::update( const Time& origin,
 
       if ( status != GSL_SUCCESS )
       {
-          throw GSLSolverFailure( get_name(), status );
+        throw GSLSolverFailure( get_name(), status );
       }
       // check for unreasonable values; we allow V_M to explode
       if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
         || S_.y_[ State_::W ] > 1e6 )
       {
-          throw NumericalInstability( get_name() );
+        throw NumericalInstability( get_name() );
       }
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
@@ -467,7 +467,7 @@ nest::aeif_psc_delta::update( const Time& origin,
         if ( P_.with_refr_input_ )
         {
           S_.refr_spikes_buffer_ +=
-                B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / tau_m_ );
+            B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / tau_m_ );
         }
         else
         {
@@ -478,7 +478,7 @@ nest::aeif_psc_delta::update( const Time& origin,
       }
       if ( S_.r_ > 0 )
       {
-          S_.y_[ State_::V_M ] = P_.V_reset_;
+        S_.y_[ State_::V_M ] = P_.V_reset_;
       }
       else if ( S_.y_[ State_::V_M ] >= V_.V_peak_ )
       {

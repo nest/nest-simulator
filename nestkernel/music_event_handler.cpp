@@ -95,7 +95,7 @@ MusicEventHandler::publish_port()
       kernel().music_manager.get_music_setup()->publishEventInput( portname_ );
 
     // MUSIC wants seconds, NEST has miliseconds
-    double acceptable_latency = acceptable_latency_ / 1000.0;
+    double acceptable_latency_s = acceptable_latency_ / 1000.0;
 
     if ( !music_port_->isConnected() )
       throw MUSICPortUnconnected( "MusicEventHandler", portname_ );
@@ -117,9 +117,9 @@ MusicEventHandler::publish_port()
     // map the port
     if ( max_buffered_ >= 0 )
       music_port_->map(
-        music_perm_ind_, this, acceptable_latency, max_buffered_ );
+        music_perm_ind_, this, acceptable_latency_s, max_buffered_ );
     else
-      music_port_->map( music_perm_ind_, this, acceptable_latency );
+      music_port_->map( music_perm_ind_, this, acceptable_latency_s );
 
     std::string msg = String::compose(
       "Mapping MUSIC input port '%1' with width=%2 , acceptable latency=%3 ms",

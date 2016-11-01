@@ -340,6 +340,44 @@ void
 aeif_cond_alpha_multisynapse::State_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
+
+  if ( ( d->known( names::g_ex ) ) && ( d->known( names::dg_ex ) )
+    && ( d->known( names::g_in ) ) && ( d->known( names::dg_in ) ) )
+  {
+    const std::vector< double > g_exc =
+      getValue< std::vector< double > >( d->lookup( names::g_ex ) );
+    const std::vector< double > dg_exc =
+      getValue< std::vector< double > >( d->lookup( names::dg_ex ) );
+    const std::vector< double > g_inh =
+      getValue< std::vector< double > >( d->lookup( names::g_in ) );
+    const std::vector< double > dg_inh =
+      getValue< std::vector< double > >( d->lookup( names::dg_in ) );
+
+    if ( ( g_exc.size() != dg_exc.size() ) || ( g_exc.size() != g_inh.size() )
+      || ( g_exc.size() != dg_inh.size() ) )
+    {
+      throw BadProperty( "Conductances must have the same sizes." );
+    }
+
+    for ( size_t i = 0; i < g_exc.size(); ++i )
+    {
+      if ( ( g_exc[ i ] < 0 ) || ( dg_exc[ i ] < 0 ) || ( g_inh[ i ] < 0 )
+        || ( dg_inh[ i ] < 0 ) )
+      {
+        throw BadProperty( "Conductances must not be negative." );
+      }
+
+      y_[ State_::G_EXC
+        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = g_exc[ i ];
+      y_[ State_::DG_EXC + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                             * i ) ] = dg_exc[ i ];
+      y_[ State_::G_INH
+        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = g_inh[ i ];
+      y_[ State_::DG_INH + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR
+                             * i ) ] = dg_inh[ i ];
+    }
+  }
+
   updateValue< double >( d, names::w, y_[ W ] );
 }
 

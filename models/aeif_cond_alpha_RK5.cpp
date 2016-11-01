@@ -524,7 +524,7 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
       if ( S_.r_ > 0 ) // if neuron is still in refractory period
-        S_.y_[ State_::V_M ] = P_.V_reset_;         // clamp it to V_reset
+        S_.y_[ State_::V_M ] = P_.V_reset_;          // clamp it to V_reset
       else if ( S_.y_[ State_::V_M ] >= V_.V_peak_ ) // V_m >= V_peak: spike
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;

@@ -116,8 +116,11 @@ extern const Name dhaene_max_geq_V_th; //!< used for iaflossless_count_exp
 extern const Name dhaene_quick1;       //!< used for iaflossless_count_exp
 extern const Name dhaene_quick2;       //!< used for iaflossless_count_exp
 extern const Name dhaene_tmax_lt_t1;   //!< used for iaflossless_count_exp
-extern const Name distribution;        //!< Connectivity-related
-extern const Name dt;                  //!< Miscellaneous parameters
+extern const Name dI_syn_ex; //!< Derivative of the excitatory synaptic current
+extern const Name dI_syn_in; //!< Derivative of the inhibitory synaptic current
+extern const Name distribution; //!< Connectivity-related
+extern const Name distribution; //!< Connectivity-related
+extern const Name dt;           //!< Miscellaneous parameters
 extern const Name
   dU; //!< Unit increment of the utilization for a facilitating synapse [0...1]
       //!< (Tsodyks2_connection)
@@ -131,6 +134,7 @@ extern const Name E_in;         //!< Inhibitory reversal potential
 extern const Name E_K;          //!< Potassium reversal potential
 extern const Name E_L;          //!< Resting potential
 extern const Name E_Na;         //!< Sodium reversal potential
+extern const Name E_rev;        //!< Reversal potential (array)
 extern const Name E_rr;         //!< Other adaptation
 extern const Name E_sfa;        //!< Other adaptation
 extern const Name element_type; //!< Node type
@@ -262,6 +266,7 @@ extern const Name N_channels; //!< Specific to correlomatrix_detector
 extern const Name n_events;   //!< Recorder parameter
 extern const Name
   n_proc; //!< Number of component processes of ppd_sup_/gamma_sup_generator
+extern const Name n_receptors;         //!< number of receptor ports
 extern const Name n_synapses; //!< Multisynapse models
 extern const Name needs_prelim_update; //!< Node parameter
 extern const Name neuron;              //!< Node type
@@ -404,11 +409,11 @@ extern const Name tau_syn_in; //!< Inhibitory synaptic time constant
 extern const Name tau_v;      //!< Specific to amat2_*
 extern const Name tau_vacant; //!< Parameter for MSP dynamics
 extern const Name tau_w; //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
+extern const Name taus_decay; //!< Synapse decay constants (array)
 extern const Name taus_eta;   //!< Specific to population point process model
                               //!< (pp_pop_psc_delta)
-extern const Name taus_syn;   //!< Synapse time constants (array)
 extern const Name taus_rise;  //!< Synapse rise constants (array)
-extern const Name taus_decay; //!< Synapse decay constants (array)
+extern const Name taus_syn;   //!< Synapse time constants (array)
 extern const Name theta;  //!< Did not compile without (theta neuron problem)
 extern const Name thread; //!< Node parameter
 extern const Name thread_local_id; //!< Thead-local ID of node,

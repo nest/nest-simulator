@@ -226,7 +226,7 @@ cdef class NESTEngine(object):
         if self.pEngine is NULL:
             raise NESTError("engine uninitialized")
         self.pEngine.OStack.push(python_object_to_datum(obj))
-            
+
     def pop(self):
 
         if self.pEngine is NULL:
@@ -236,9 +236,9 @@ cdef class NESTEngine(object):
             raise NESTError("interpreter stack is empty")
 
         cdef Datum* dat = (addr_tok(self.pEngine.OStack.top())).datum()
-        
+
         ret = sli_datum_to_object(dat)
-        
+
         self.pEngine.OStack.pop()
 
         return ret
@@ -273,7 +273,7 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
     cdef DictionaryDatum* dd = NULL
 
     cdef string obj_str
-    
+
     if isinstance(obj, bool):
         ret = <Datum*> new BoolDatum(obj)
     elif isinstance(obj, (int, long)):
@@ -319,7 +319,7 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
         if ret is NULL:
             raise NESTError("failed to unpack passed connection generator object")
     else:
-    
+
         try:
             ret = python_buffer_to_datum[buffer_int_1d_t, long](obj)
         except (ValueError, TypeError):

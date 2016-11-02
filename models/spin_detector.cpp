@@ -87,7 +87,8 @@ nest::spin_detector::calibrate()
   if ( !user_set_precise_times_
     && kernel().event_delivery_manager.get_off_grid_communication() )
   {
-    device_.set_precise( true, 15 );
+    device_.set_precise_times( true );
+    device_.set_precision( 15 );
 
     LOG( M_INFO,
       "spin_detector::calibrate",

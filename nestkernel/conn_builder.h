@@ -102,6 +102,8 @@ public:
   void set_pre_synaptic_element_name( std::string name );
   void set_post_synaptic_element_name( std::string name );
 
+  bool all_parameters_scalar_() const;
+
   int change_connected_synaptic_elements( index, index, const int, int );
 
   virtual bool
@@ -249,7 +251,7 @@ public:
   bool
   is_symmetric() const
   {
-    return true;
+    return *sources_ == *targets_ && all_parameters_scalar_();
   }
 
 protected:

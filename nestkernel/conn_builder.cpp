@@ -590,6 +590,27 @@ nest::ConnBuilder::set_post_synaptic_element_name( std::string name )
   post_synaptic_element_name = name;
 }
 
+bool
+nest::ConnBuilder::all_parameters_scalar_() const
+{
+  bool all_scalar = true;
+  if ( weight_ )
+  {
+    all_scalar = all_scalar && weight_->is_scalar();
+  }
+  if ( delay_ )
+  {
+    all_scalar = all_scalar && delay_->is_scalar();
+  }
+  for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
+        it != synapse_params_.end();
+        ++it )
+  {
+    all_scalar = all_scalar && it->second->is_scalar();
+  }
+  return all_scalar;
+}
+
 void
 nest::OneToOneBuilder::connect_()
 {

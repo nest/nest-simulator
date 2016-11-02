@@ -166,6 +166,11 @@ public:
   void communicate_Allreduce_sum( std::vector< double_t >& send_buffer,
     std::vector< double_t >& recv_buffer );
 
+  /*
+   * Maximum across all ranks
+   */
+  void communicate_Allreduce_max_in_place( std::vector< size_t >& buffer );
+
   /**
    * Collect GIDs for all nodes in a given node list across processes.
    * The NodeListType should be one of LocalNodeList, LocalLeafList,

@@ -678,6 +678,18 @@ nest::MPIManager::communicate_Allreduce_sum(
 }
 
 void
+nest::MPIManager::communicate_Allreduce_max_in_place(
+  std::vector< size_t >& buffer )
+{
+  MPI_Allreduce( MPI_IN_PLACE,
+    &buffer[ 0 ],
+    1,
+    MPI_Type< size_t >::type,
+    MPI_MAX,
+    comm );
+}
+
+void
 nest::MPIManager::communicate_Allgather( std::vector< long_t >& buffer )
 {
   // avoid aliasing, see http://www.mpi-forum.org/docs/mpi-11-html/node10.html

@@ -80,21 +80,21 @@ def catching_sli_run(cmd):
     NESTError
         SLI errors are bubbled to the Python API as NESTErrors.
     """
-    
+
     if sys.version_info >= (3,):
-        engine.run('{%s} runprotected' % cmd) # Python 3
+        engine.run('{%s} runprotected' % cmd)  # Python 3
     else:
-        engine.run('{%s} runprotected' % cmd.decode('utf-8')) # Python 2
+        engine.run('{%s} runprotected' % cmd.decode('utf-8'))  # Python 2
     if not sli_pop():
         errorname = sli_pop()
         message = sli_pop()
         commandname = sli_pop()
         engine.run('clear')
-        errorstring = '%s in %s%s' %(errorname, commandname, message)
-        if sys.version_info >= (3,): 
-            raise _kernel.NESTError(errorstring) # Python 3
+        errorstring = '%s in %s%s' % (errorname, commandname, message)
+        if sys.version_info >= (3,):
+            raise _kernel.NESTError(errorstring)  # Python 3
         else:
-            raise _kernel.NESTError(errorstring.encode('utf-8')) # Python 2
+            raise _kernel.NESTError(errorstring.encode('utf-8'))  # Python 2
 
 sli_run = hl_api.sr = catching_sli_run
 

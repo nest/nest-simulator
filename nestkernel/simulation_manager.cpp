@@ -40,16 +40,16 @@
 #include "psignal.h"
 
 nest::SimulationManager::SimulationManager()
-  : simulating_( false )
-  , clock_( Time::tic( 0L ) )
+  : clock_( Time::tic( 0L ) )
   , slice_( 0L )
   , to_do_( 0L )
   , to_do_total_( 0L )
   , from_step_( 0L )
   , to_step_( 0L ) // consistent with to_do_ == 0
   , t_real_( 0L )
-  , terminate_( false )
+  , simulating_( false )
   , simulated_( false )
+  , inconsistent_state_( false )
   , print_time_( false )
   , use_wfr_( true )
   , wfr_comm_interval_( 1.0 )
@@ -66,7 +66,9 @@ nest::SimulationManager::initialize()
   Time::reset_resolution();
   clock_.calibrate();
 
+  simulating_ = false;
   simulated_ = false;
+  inconsistent_state_ = false;
 }
 
 void
@@ -360,6 +362,13 @@ nest::SimulationManager::simulate( Time const& t )
 {
   assert( kernel().is_initialized() );
 
+  if ( inconsistent_state_ )
+  {
+    throw KernelException(
+      "Kernel is in inconsistent state after an "
+      "earlier error. Please run ResetKernel first." );
+  }
+
   t_real_ = 0;
   t_slice_begin_ = timeval();
   t_slice_end_ = timeval();
@@ -440,7 +449,7 @@ nest::SimulationManager::simulate( Time const& t )
 void
 nest::SimulationManager::resume_( size_t num_active_nodes )
 {
-  assert( kernel().is_initialized() );
+  assert( kernel().is_initialized() and not inconsistent_state_ );
 
   std::ostringstream os;
   double t_sim = to_do_ * Time::get_resolution().get_ms();
@@ -467,8 +476,6 @@ nest::SimulationManager::resume_( size_t num_active_nodes )
   LOG( M_INFO, "SimulationManager::resume", os.str() );
 
 
-  terminate_ = false;
-
   if ( to_do_ == 0 )
     return;
 
@@ -490,25 +497,6 @@ nest::SimulationManager::resume_( size_t num_active_nodes )
     std::cout << std::endl;
 
   kernel().mpi_manager.synchronize();
-
-  if ( terminate_ )
-  {
-    LOG( M_ERROR,
-      "SimulationManager::resume",
-      "Exiting on error or user signal." );
-    LOG( M_ERROR,
-      "SimulationManager::resume",
-      "SimulationManager: Use 'ResumeSimulation' to resume." );
-
-    if ( SLIsignalflag != 0 )
-    {
-      SystemSignal signal( SLIsignalflag );
-      SLIsignalflag = 0;
-      throw signal;
-    }
-    else
-      throw SimulationError();
-  }
 
   LOG( M_INFO, "SimulationManager::resume", "Simulation finished." );
 }
@@ -750,7 +738,6 @@ nest::SimulationManager::update_()
           // so throw the exception after parallel region
           exceptions_raised.at( thrd ) = lockPTR< WrappedThreadException >(
             new WrappedThreadException( e ) );
-          terminate_ = true;
         }
       }
 
@@ -769,10 +756,9 @@ nest::SimulationManager::update_()
 
         if ( SLIsignalflag != 0 )
         {
-          LOG( M_INFO,
-            "SimulationManager::update",
-            "Simulation exiting on user signal." );
-          terminate_ = true;
+          exceptions_raised.at( thrd ) = lockPTR< WrappedThreadException >(
+            new WrappedThreadException( SystemSignal( SLIsignalflag ) ) );
+          SLIsignalflag = 0;
         }
 
         if ( print_time_ )
@@ -784,7 +770,7 @@ nest::SimulationManager::update_()
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
 
-    } while ( ( to_do_ != 0 ) && ( !terminate_ ) );
+    } while ( to_do_ != 0 and not exceptions_raised.at( thrd ) );
 
     // End of the slice, we update the number of synaptic element
     for ( std::vector< Node* >::const_iterator i =
@@ -800,8 +786,14 @@ nest::SimulationManager::update_()
 
   // check if any exceptions have been raised
   for ( index thrd = 0; thrd < kernel().vp_manager.get_num_threads(); ++thrd )
+  {
     if ( exceptions_raised.at( thrd ).valid() )
+    {
+      simulating_ = false; // must mark this here, see #311
+      inconsistent_state_ = true;
       throw WrappedThreadException( *( exceptions_raised.at( thrd ) ) );
+    }
+  }
 }
 
 void

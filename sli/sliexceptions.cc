@@ -34,7 +34,7 @@
 WrappedThreadException::WrappedThreadException( const std::exception& exc )
   : SLIException( exc.what() )
 {
-  SLIException const * se = dynamic_cast< SLIException const * >( &exc );
+  SLIException const* se = dynamic_cast< SLIException const* >( &exc );
   if ( se )
     message_ = se->message();
   else

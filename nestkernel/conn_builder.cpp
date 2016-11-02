@@ -386,7 +386,8 @@ nest::ConnBuilder::connect()
     && not symmetric_ && not is_symmetric() )
   {
     throw BadProperty(
-      "This synapse model requires symmetric (or all-to-all) connections" );
+      "This synapse model requires symmetric (or suitable uniform "
+      "all-to-all) connections" );
   }
 
   if ( symmetric_ && not supports_symmetric() )

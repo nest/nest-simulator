@@ -669,23 +669,23 @@ nest::OneToOneBuilder::disconnect_()
             tgid != targets_->end();
             ++tgid, ++sgid )
       {
-        
+
         assert( sgid != sources_->end() );
-        
+
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
         {
           // Disconnecting: no parameter skipping required
           continue;
         }
-        
+
         Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
-        // check whether the target is on our thread		
-        if ( tid != target_thread )		
-        {		
+        // check whether the target is on our thread
+        if ( tid != target_thread )
+        {
           // Disconnecting: no parameter skipping required
-          continue;		
+          continue;
         }
         single_disconnect_( *sgid, *target, target_thread );
       }
@@ -960,13 +960,13 @@ nest::AllToAllBuilder::disconnect_()
         }
         Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
-        
+
         if ( tid != target_thread )
         {
           // Disconnecting: no parameter skipping required
           continue;
         }
-        
+
         for ( GIDCollection::const_iterator sgid = sources_->begin();
               sgid != sources_->end();
               ++sgid )
@@ -1416,7 +1416,7 @@ nest::BernoulliBuilder::BernoulliBuilder( const GIDCollection& sources,
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
   , p_( ( *conn_spec )[ names::p ] )
 {
-  if ( p_ < 0 or 1 < p_)
+  if ( p_ < 0 or 1 < p_ )
   {
     throw BadProperty( "Connection probability 0 <= p <= 1 required." );
   }

@@ -250,8 +250,8 @@ extern const Name MAXERR; //!< Largest permissible error for adaptive stepsize
                           //!< (Brette & Gerstner 2005)
 extern const Name mean;   //!< Miscellaneous parameters
 extern const Name memory; //!< Recorder parameter
-extern const Name min_delay; //!< In ConnBuilder
-extern const Name model;  //!< Node parameter
+extern const Name min_delay;     //!< In ConnBuilder
+extern const Name model;         //!< Node parameter
 extern const Name mother_rng;    //!< Specific to mip_generator
 extern const Name mother_seed;   //!< Specific to mip_generator
 extern const Name multapses;     //!< Connectivity-related
@@ -272,12 +272,12 @@ extern const Name noise;               //!< Specific to iaf_chs_2008 neuron
 extern const Name ns; //!< Number of release sites (property arrays)
 extern const Name num_connections; //!< In ConnBuilder
 
-extern const Name offset;  //!< Miscellaneous parameters
-extern const Name offsets; //!< Recorder parameter
-extern const Name omega;   //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
-extern const Name order;   //!< Specific to sinusoidally modulated generators
-extern const Name origin;  //!< Device parameters
-extern const Name other;   //!< Node type
+extern const Name offset;    //!< Miscellaneous parameters
+extern const Name offsets;   //!< Recorder parameter
+extern const Name omega;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
+extern const Name order;     //!< Specific to sinusoidally modulated generators
+extern const Name origin;    //!< Device parameters
+extern const Name other;     //!< Node type
 extern const Name outdegree; //!< In FixedOutDegreeBuilder
 
 extern const Name p; //!< current release probability  (Tsodyks2_connection)

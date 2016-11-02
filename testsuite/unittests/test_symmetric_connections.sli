@@ -29,14 +29,16 @@ Synopsis: (test_symmetric_connections) run -> NEST exits if test fails
 
 Description: 
 This test ensures that the functionality to create symmetric connections
-works properly.
+works properly. It also ensures that the flag requires_symmetric works properly.
 
 In more detail the test ensures that
 - the symmetric flag works properly with one-to-one connection rule
 - the usage of the symmetric flag with any other connections throws
   an NotImplemented exception
+- connections that require_symmetric cannot be created without symmetric
+  except for suitable uniform all-to-all connections
 
-Author: Jan Hahne, 2016-04-22
+Author: Jan Hahne, 2016-04-22, updated 2016-11-02
 */
 
 (unittest) run
@@ -148,5 +150,92 @@ fail_or_die
   } MapThread
   true exch { and } Fold
 } assert_or_die
+
+
+% The now following tests need the synapse model
+% gap_junction (which has require_symmetric=true) and
+% ergo the model hh_psc_alpha_gap, so
+% this test should only run if we have GSL
+statusdict/have_gsl :: not
+{
+  exit_test_gracefully
+}
+if
+
+/setup2
+{
+  ResetKernel
+  
+  /hh_psc_alpha_gap 4 Create
+  
+  /set1 1 2 cvgidcollection def
+  /set2 3 4 cvgidcollection def
+} def
+
+% Check that connections that require_symmetric cannot be created without symmetric=true
+{
+  setup2
+  set1 set2 << /rule /one_to_one /symmetric false >> /gap_junction Connect
+}
+fail_or_die
+
+{
+  setup2
+  set1 set2 << /rule /fixed_indegree /indegree 3 /symmetric false >> /gap_junction Connect
+}
+fail_or_die
+
+{
+  setup2
+  set1 set2 << /rule /fixed_outdegree /outdegree 3 /symmetric false >> /gap_junction Connect
+}
+fail_or_die
+
+{
+  setup2
+  set1 set2 << /rule /fixed_total_number /N 3 /symmetric false >> /gap_junction Connect
+}
+fail_or_die
+
+% Check that all-to-all connection can only be created with scalar parameters and
+% sources == targets. These connections are inherently symmetric.
+{
+  setup2
+  set1 set2 << /rule /all_to_all /symmetric false >> /gap_junction Connect
+}
+fail_or_die
+
+{
+  setup2
+  set1 set1 
+  << /rule /all_to_all /symmetric false >> 
+  << /model /gap_junction /weight <. 1.0 2.0 3.0 4.0 .> >> 
+  Connect
+}
+fail_or_die
+
+{
+  setup2
+  set1 set1 
+  << /rule /all_to_all /symmetric false >> 
+  << /model /gap_junction /weight << /distribution  /uniform >> >> 
+  Connect
+}
+fail_or_die
+
+{
+  setup2
+  set1 set1 << /rule /all_to_all /symmetric false >> /gap_junction Connect
+}
+pass_or_die
+
+{
+  setup2
+  set1 set1 
+  << /rule /all_to_all /symmetric false >> 
+  << /model /gap_junction /weight 2.0 >> 
+  Connect
+}
+pass_or_die
 
 endusing

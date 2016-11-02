@@ -163,7 +163,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
 
     use_pre_synaptic_element_ = false;
     use_post_synaptic_element_ = false;
-  } 
+  }
 
   // synapse-specific parameters
   // TODO: Can we create this set once and for all?
@@ -397,7 +397,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
 void
 nest::ConnBuilder::connect()
 {
-  // We test here, and not in the ConnBuilder constructor, so the derived 
+  // We test here, and not in the ConnBuilder constructor, so the derived
   // classes are fully constructed when the test is executed
   if ( symmetric_ and not supports_symmetric() )
   {
@@ -405,7 +405,7 @@ nest::ConnBuilder::connect()
       "This connection rule does not support symmetric connections." );
   }
 
-  if ( use_structural_plasticity_() )  
+  if ( use_structural_plasticity_() )
   {
     if ( symmetric_ )
       throw NotImplemented(
@@ -620,7 +620,8 @@ nest::OneToOneBuilder::OneToOneBuilder( const GIDCollection& sources,
   // make sure that target and source population have the same size
   if ( sources_->size() != targets_->size() )
   {
-    throw DimensionMismatch( "Source and Target population must be of the same size." );
+    throw DimensionMismatch(
+      "Source and Target population must be of the same size." );
   }
 }
 
@@ -1095,7 +1096,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( const GIDCollection& sources,
         "Expect long connecting times!" );
     }
   } // if (not multapses_ )
- 
+
   if ( indegree_ < 0 )
   {
     throw BadProperty( "Indegree cannot be less than zero." );
@@ -1498,7 +1499,7 @@ nest::BernoulliBuilder::connect_()
           if ( not autapses_ and *sgid == *tgid )
             continue;
 
-          if ( rng->drand() < p_  )
+          if ( rng->drand() < p_ )
           {
             single_connect_( *sgid, *target, target_thread, rng );
           }

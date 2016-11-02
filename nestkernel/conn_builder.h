@@ -100,7 +100,7 @@ public:
   }
 
   void set_pre_synaptic_element_name( const std::string& name );
-  void set_post_synaptic_element_name( const std::string&  name );
+  void set_post_synaptic_element_name( const std::string& name );
 
   bool change_connected_synaptic_elements( index, index, const int, int );
 

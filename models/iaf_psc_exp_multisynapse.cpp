@@ -132,7 +132,7 @@ iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
   {
     Theta_ -= delta_EL;
   }
-  
+
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, C_ );
   updateValue< double >( d, names::tau_m, Tau_ );
@@ -159,8 +159,8 @@ iaf_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
       }
       if ( tau_tmp[ i ] <= 0 )
       {
-        throw BadProperty( 
-                     "All synaptic time constants must be strictly positive." );
+        throw BadProperty(
+          "All synaptic time constants must be strictly positive." );
       }
       if ( tau_tmp[ i ] == Tau_ )
       {
@@ -194,8 +194,8 @@ iaf_psc_exp_multisynapse::State_::get( DictionaryDatum& d,
 
 void
 iaf_psc_exp_multisynapse::State_::set( const DictionaryDatum& d,
-                                       const Parameters_& p,
-                                       double delta_EL )
+  const Parameters_& p,
+  double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
   {
@@ -362,7 +362,7 @@ iaf_psc_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }
-  
+
   P_.has_connections_ = true;
   return receptor_type;
 }
@@ -373,8 +373,7 @@ iaf_psc_exp_multisynapse::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   B_.spikes_[ e.get_rport() - 1 ].add_value(
-  e.get_rel_delivery_steps(
-    kernel().simulation_manager.get_slice_origin() ),
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     e.get_weight() * e.get_multiplicity() );
 }
 

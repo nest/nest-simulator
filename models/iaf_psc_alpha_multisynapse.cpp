@@ -164,15 +164,15 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
     for ( size_t i = 0; i < tau_tmp.size(); ++i )
     {
       if ( tau_tmp.size() < tau_syn_.size() && has_connections_ == true )
-      {  
+      {
         throw BadProperty(
           "The neuron has connections, therefore the number of ports cannot be "
           "reduced." );
       }
       if ( tau_tmp[ i ] <= 0 )
       {
-        throw BadProperty( 
-                     "All synaptic time constants must be strictly positive." );
+        throw BadProperty(
+          "All synaptic time constants must be strictly positive." );
       }
     }
 
@@ -399,11 +399,10 @@ void
 iaf_psc_alpha_multisynapse::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
-  
+
   B_.spikes_[ e.get_rport() - 1 ].add_value(
-        e.get_rel_delivery_steps(
-          kernel().simulation_manager.get_slice_origin() ),
-        e.get_weight() * e.get_multiplicity() );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void

@@ -45,6 +45,8 @@
 #include "aeif_cond_beta_multisynapse.h"
 #include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_exp.h"
+#include "aeif_psc_alpha.h"
+#include "aeif_psc_exp.h"
 #include "amat2_psc_exp.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
@@ -70,6 +72,10 @@
 #include "parrot_neuron.h"
 #include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
+#include "gif_psc_exp.h"
+#include "gif_psc_exp_multisynapse.h"
+#include "gif_cond_exp.h"
+#include "gif_cond_exp_multisynapse.h"
 
 // Stimulation devices
 #include "ac_generator.h"
@@ -92,6 +98,7 @@
 #include "multimeter.h"
 #include "spike_detector.h"
 #include "spin_detector.h"
+#include "weight_recorder.h"
 
 #include "volume_transmitter.h"
 
@@ -186,6 +193,9 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
   kernel().model_manager.register_node_model< pp_pop_psc_delta >(
     "pp_pop_psc_delta" );
+  kernel().model_manager.register_node_model< gif_psc_exp >( "gif_psc_exp" );
+  kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >(
+    "gif_psc_exp_multisynapse" );
 
   kernel().model_manager.register_node_model< ac_generator >( "ac_generator" );
   kernel().model_manager.register_node_model< dc_generator >( "dc_generator" );
@@ -217,6 +227,8 @@ ModelsModule::init( SLIInterpreter* )
 
   kernel().model_manager.register_node_model< spike_detector >(
     "spike_detector" );
+  kernel().model_manager.register_node_model< weight_recorder >(
+    "weight_recorder" );
   kernel().model_manager.register_node_model< spin_detector >(
     "spin_detector" );
   kernel().model_manager.register_node_model< Multimeter >( "multimeter" );
@@ -321,6 +333,9 @@ ModelsModule::init( SLIInterpreter* )
     "hh_cond_exp_traub" );
   kernel().model_manager.register_node_model< sinusoidal_gamma_generator >(
     "sinusoidal_gamma_generator" );
+  kernel().model_manager.register_node_model< gif_cond_exp >( "gif_cond_exp" );
+  kernel().model_manager.register_node_model< gif_cond_exp_multisynapse >(
+    "gif_cond_exp_multisynapse" );
 #endif
 
 #ifdef HAVE_GSL
@@ -328,6 +343,9 @@ ModelsModule::init( SLIInterpreter* )
     "aeif_cond_alpha" );
   kernel().model_manager.register_node_model< aeif_cond_exp >(
     "aeif_cond_exp" );
+  kernel().model_manager.register_node_model< aeif_psc_alpha >(
+    "aeif_psc_alpha" );
+  kernel().model_manager.register_node_model< aeif_psc_exp >( "aeif_psc_exp" );
   kernel().model_manager.register_node_model< ht_neuron >( "ht_neuron" );
   kernel().model_manager.register_node_model< aeif_cond_beta_multisynapse >(
     "aeif_cond_beta_multisynapse" );

@@ -73,24 +73,23 @@ statusdict/have_gsl :: not
 }
 if
 
-/tolerance   	5e-2 def %mV
-/simulation_t	2500 def %ms
-/V_peak			0. def
-/a 				4. def
-/b 				80.5 def
-/taus_decay		[400.0 200.0 200.0] def % synaptic decay times  
-/taus_rise		[200.0 100.0 100.0] def % synaptic rise times  
-/weights		[0.1 0.1 -0.1] def % synaptic weights
-/delays     	[1. 1000. 1500.] def % ms - synaptic delays
+/tolerance   	1e-2 def %mV
+/simulation_t	300 def %ms
+/V_peak		0. def
+/a 		4. def
+/b 		80.5 def
+/E_rev		[20.0 0.0 -85.0] def % synaptic reversal potentials  
+/taus_decay     [40.0 20.0 30.0] def % synaptic decay times  
+/taus_rise	[20.0 10.0 5.0] def % synaptic rise times  
+/weights	[0.1 0.2 0.15] def % synaptic weights
+/delays     	[1. 100. 130.] def % ms - synaptic delays
 /spike_time 	10. def
 /dt         	0.1 def % time step
-/Vrest -70.6 def % resting potential
-/g_L 30.0 def
-/E_in -85.0 def
+/Vrest          -70.6 def % resting potential
+/g_L            300.0 def
 
 /spike_generator Create /sg Set
 sg << /spike_times [spike_time] >> SetStatus % generates a single peak
-
 
 % Creates a voltmeter
 /voltmeter Create /vm Set
@@ -102,14 +101,14 @@ vm << /withtime true
 
 % Creates one aeif_conf_beta_multisynapse neuron
 /aeif_cond_beta_multisynapse Create /multisynapse_neuron Set
-multisynapse_neuron << /taus_decay taus_decay >> SetStatus
-multisynapse_neuron << /taus_rise taus_rise >> SetStatus
-multisynapse_neuron << /V_peak V_peak >> SetStatus
-multisynapse_neuron << /a a >> SetStatus
-multisynapse_neuron << /b b >> SetStatus
-multisynapse_neuron << /E_L Vrest >> SetStatus
-multisynapse_neuron << /g_L g_L >> SetStatus
-multisynapse_neuron << /E_in E_in >> SetStatus
+multisynapse_neuron << /E_rev E_rev
+                       /taus_decay taus_decay
+                       /taus_rise taus_rise
+                       /V_peak V_peak
+                       /a a
+                       /b b
+                       /E_L Vrest
+                       /g_L g_L >> SetStatus
 
 % creates an array of synaptic indexes 
 delays length 1 arraystore Range /synapses_idx exch def
@@ -143,17 +142,17 @@ d /times get cva /ts Set % get times
 {
 	Vrest sub /V_cur exch def % subtracts resting potential from V 
 	dt mul /t_cur exch def % current time in ms
-	[taus_rise taus_decay weights delays] % loop on connections
+	[E_rev taus_rise taus_decay weights delays] % loop on connections
 	{
 		/delay exch def % synaptic delay
 		/W exch def % synaptic weight
 		/td exch def % synaptic decay time
 		/tr exch def % synaptic rise time
+                /Er exch def % synaptic reversal potential
 
 		spike_time delay add /t0 exch def % peak starting time
-		% checks if connection is excitatory or inhibitory
-		% and evaluates the driving force		
-		W 0. gt {Vrest neg} {Vrest E_in sub} ifelse
+		% Evaluates the driving force		
+		Er Vrest sub
 		/Vforce exch def
 		% coefficient for approximate linear relationship
 		% between V(t) and g(t)

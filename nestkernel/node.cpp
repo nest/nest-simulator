@@ -236,6 +236,18 @@ Node::handles_test_event( SpikeEvent&, rport )
 }
 
 void
+Node::handle( WeightRecorderEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+port
+Node::handles_test_event( WeightRecorderEvent&, rport )
+{
+  throw IllegalConnection();
+}
+
+void
 Node::handle( RateEvent& )
 {
   throw UnexpectedEvent();

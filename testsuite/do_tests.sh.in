@@ -299,11 +299,12 @@ run_test ()
 
         msg_dirty=${param_failure##* ${exit_code} }
         msg_clean=${msg_dirty%%,*}
+        msg_error="$( cat "${TEST_OUTFILE}" )"
         if test "${msg_dirty}" != "${param_failure}" ; then
             explanation="${msg_clean}"
         else
             explanation="Failed: unexpected exit code ${exit_code}"
-            msg_error="$( cat "${TEST_OUTFILE}" )"
+            unexpected_exitcode=true
         fi
 
         junit_failure="${exit_code} (${explanation})"
@@ -311,15 +312,19 @@ run_test ()
 
     echo "${explanation}"
 
+    if test "x${msg_error}" != x ; then
+        echo
+        echo "${msg_error}"
+        echo
+    fi
+
     echo >> "${TEST_LOGFILE}" "-> ${exit_code} (${explanation})"
     echo >> "${TEST_LOGFILE}" "----------------------------------------"
 
     junit_write "${JUNIT_CLASSNAME}.${junit_class}" "${junit_name}" "${junit_failure}" "$(cat "${TEST_OUTFILE}")"
 
     # Panic on "unexpected" exit code
-    if test "x${msg_error}" != x ; then
-        echo "${msg_error}"
-        echo
+    if test "x${unexpected_exitcode}" != x ; then
         echo "***"
         echo "*** An unexpected exit code usually hints at a bug in the test suite!"
         ask_results
@@ -581,72 +586,72 @@ if test "x$(sli -c 'statusdict/have_music :: =')" = xtrue ; then
     TESTDIR=${TEST_BASEDIR}/musictests/
 
     for test_name in $(ls ${TESTDIR} | grep '.*\.music$') ; do
-	music_file=${TESTDIR}/${test_name}
+        music_file=${TESTDIR}/${test_name}
 
-	# Collect the list of SLI files from the .music file.
-	sli_files=$(grep '\.sli' ${music_file} | sed -e "s#args=#${TESTDIR}#g")
-	sli_files=$(for f in ${sli_files}; do if test -f ${f}; then echo ${f}; fi; done)
+        # Collect the list of SLI files from the .music file.
+        sli_files=$(grep '\.sli' ${music_file} | sed -e "s#args=#${TESTDIR}#g")
+        sli_files=$(for f in ${sli_files}; do if test -f ${f}; then echo ${f}; fi; done)
 
-	# Check if there is an accompanying shell script for the test.
-	sh_file=${TESTDIR}/$(basename ${music_file} .music).sh
+        # Check if there is an accompanying shell script for the test.
+        sh_file=${TESTDIR}/$(basename ${music_file} .music).sh
         if test ! -f ${sh_file}; then unset sh_file; fi
 
-	# Calculate the total number of processes in the .music file.
-	np=$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))
-	command=$(sli -c "${np} (@MUSIC_EXECUTABLE@) (${test_name}) mpirun =")
+        # Calculate the total number of processes in the .music file.
+        np=$(($(sed -n 's/np=//p' ${music_file} | paste -sd'+' -)))
+        command=$(sli -c "${np} (@MUSIC_EXECUTABLE@) (${test_name}) mpirun =")
 
-	proc_txt="processes"
-	if test $np -eq 1; then proc_txt="process"; fi
-	echo          "Running test '${test_name}' with $np $proc_txt... " >> "${TEST_LOGFILE}"
-	printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
+        proc_txt="processes"
+        if test $np -eq 1; then proc_txt="process"; fi
+        echo          "Running test '${test_name}' with $np $proc_txt... " >> "${TEST_LOGFILE}"
+        printf '%s' "  Running test '${test_name}' with $np $proc_txt... "
 
-	# Copy everything to the tmpdir.
-	cp ${music_file} ${sh_file} ${sli_files} ${tmpdir}
-	cd ${tmpdir}
+        # Copy everything to the tmpdir.
+        cp ${music_file} ${sh_file} ${sli_files} ${tmpdir}
+        cd ${tmpdir}
 
-	# Create the runner script
-	echo "#!/bin/sh" >  runner.sh
-	echo "set +e" >> runner.sh
-	echo "export NEST_DATA_PATH=${tmpdir}" >> runner.sh
-	echo "${command} > output.log 2>&1" >> runner.sh
-	if test -n "${sh_file}"; then
-	    chmod 755 $(basename ${sh_file})
-	    echo "./"$(basename ${sh_file}) >> runner.sh
-	fi
-	echo "echo \$? > exit_code ; exit 0" >> runner.sh
+        # Create the runner script
+        echo "#!/bin/sh" >  runner.sh
+        echo "set +e" >> runner.sh
+        echo "export NEST_DATA_PATH=${tmpdir}" >> runner.sh
+        echo "${command} > output.log 2>&1" >> runner.sh
+        if test -n "${sh_file}"; then
+            chmod 755 $(basename ${sh_file})
+            echo "./"$(basename ${sh_file}) >> runner.sh
+        fi
+        echo "echo \$? > exit_code ; exit 0" >> runner.sh
 
-	# Run the script and copy all output to the logfile.
-	chmod 755 runner.sh
-	./runner.sh
-	sed -e 's/^/   > /g' output.log >> "${TEST_LOGFILE}"
+        # Run the script and copy all output to the logfile.
+        chmod 755 runner.sh
+        ./runner.sh
+        sed -e 's/^/   > /g' output.log >> "${TEST_LOGFILE}"
 
-	# Retrieve the exit code. This is either the one of the mpirun
-	# call or of the accompanying shell script if present.
-	exit_code=$(cat exit_code)
+        # Retrieve the exit code. This is either the one of the mpirun
+        # call or of the accompanying shell script if present.
+        exit_code=$(cat exit_code)
 
-	rm ${tmpdir}/*
-	cd ${BASEDIR}
+        rm ${tmpdir}/*
+        cd ${BASEDIR}
 
-	# If the name of the test contains 'failure', we expect it to
-	# fail and the test logic is inverted.
-	TEST_TOTAL=$(( ${TEST_TOTAL} + 1 ))
-	if test -z $(echo ${test_name} | grep failure); then
-	    if test $exit_code -eq 0 ; then
-		echo "Success"
-		TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
-	    else
-		echo "Failure"
-		TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
-	    fi
-	else
-	    if test $exit_code -ne 0 ; then
-		echo "Success (expected failure)"
-		TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
-	    else
-		echo "Failure (test failed to fail)"
-		TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
-	    fi
-	fi
+        # If the name of the test contains 'failure', we expect it to
+        # fail and the test logic is inverted.
+        TEST_TOTAL=$(( ${TEST_TOTAL} + 1 ))
+        if test -z $(echo ${test_name} | grep failure); then
+            if test $exit_code -eq 0 ; then
+                echo "Success"
+                TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
+            else
+                echo "Failure"
+                TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
+            fi
+        else
+            if test $exit_code -ne 0 ; then
+                echo "Success (expected failure)"
+                TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
+            else
+                echo "Failure (test failed to fail)"
+                TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
+            fi
+        fi
     done
 
     rm -rf $tmpdir

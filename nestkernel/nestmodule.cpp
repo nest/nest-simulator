@@ -55,21 +55,6 @@
 #include "sliexceptions.h"
 #include "stringdatum.h"
 #include "tokenutils.h"
-<<<<<<< HEAD
-#include "sliexceptions.h"
-#include "random_datums.h"
-#include "communicator.h"
-#include "communicator_impl.h"
-#include "genericmodel.h"
-#include "conn_builder.h"
-
-#include "H5MikeReader.cpp"
-
-#ifdef _OPENMP
-#include <omp.h>
-#endif
-=======
->>>>>>> refs/remotes/origin/master
 
 extern int SLIsignalflag;
 
@@ -718,62 +703,7 @@ NestModule::Disconnect_i_i_lFunction::execute( SLIInterpreter* i ) const
 
 // Disconnect for gidcollection gidcollection conn_spec syn_spec
 void
-<<<<<<< HEAD
-NestModule::Connect_i_i_d_d_lFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 5 );
-
-  index source = getValue< long >( i->OStack.pick( 4 ) );
-  index target = getValue< long >( i->OStack.pick( 3 ) );
-  double_t weight = getValue< double_t >( i->OStack.pick( 2 ) );
-  double_t delay = getValue< double_t >( i->OStack.pick( 1 ) );
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-
-  const Token synmodel = get_network().get_synapsedict().lookup( synmodel_name );
-  if ( synmodel.empty() )
-    throw UnknownSynapseType( synmodel_name.toString() );
-  const index synmodel_id = static_cast< index >( synmodel );
-
-  // check whether the target is on this process
-  if ( get_network().is_local_gid( target ) )
-  {
-    Node* const target_node = get_network().get_node( target );
-    const thread target_thread = target_node->get_thread();
-    get_network().connect( source, target_node, target_thread, synmodel_id, delay, weight );
-  }
-
-  i->OStack.pop( 5 );
-  i->EStack.pop();
-}
-
-
-void NestModule::HDF5MikeLoad_s_sFunction::execute(SLIInterpreter *i) const
-{
-	//i->assert_stack_load(3);
-	 
-	//index source = getValue<long>(i->OStack.pick(2));
-	const std::string con_dir = getValue<std::string>(i->OStack.pick(1));
-	const std::string coord_file = getValue<std::string>(i->OStack.pick(0));
-
-
-
-	//get_network().divergent_connect(source, params,synmodel_id);
-	  // dict access control only if we actually made a connection
-
-
-	H5MikeReader(con_dir, coord_file);
-
-	i->OStack.pop(2);
-	i->EStack.pop();
-}
-
-// Connect for gid gid params syn_model
-// See lib/sli/nest-init.sli for details
-void
-NestModule::Connect_i_i_D_lFunction::execute( SLIInterpreter* i ) const
-=======
 NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
->>>>>>> refs/remotes/origin/master
 {
   i->assert_stack_load( 4 );
 
@@ -1703,6 +1633,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "cva_C", &cva_cfunction );
 
   i->createcommand( "Simulate_d", &simulatefunction );
+
   i->createcommand( "CopyModel_l_l_D", &copymodel_l_l_Dfunction );
   i->createcommand( "SetDefaults_l_D", &setdefaults_l_Dfunction );
   i->createcommand( "GetDefaults_l", &getdefaults_lfunction );
@@ -1714,21 +1645,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "DataConnect_i_D_s", &dataconnect_i_D_sfunction );
   i->createcommand( "DataConnect_a", &dataconnect_afunction );
 
-<<<<<<< HEAD
-  i->createcommand( "DivergentConnect_i_ia_a_a_l", &divergentconnect_i_ia_a_a_lfunction );
-  i->createcommand(
-    "RandomDivergentConnect_i_i_ia_da_da_b_b_l", &rdivergentconnect_i_i_ia_da_da_b_b_lfunction );
-
-  i->createcommand( "ConvergentConnect_ia_i_a_a_l", &convergentconnect_ia_i_a_a_lfunction );
-  i->createcommand(
-    "RandomConvergentConnect_ia_i_i_da_da_b_b_l", &rconvergentconnect_ia_i_i_da_da_b_b_lfunction );
-  i->createcommand( "RandomConvergentConnect_ia_ia_ia_daa_daa_b_b_l",
-    &rconvergentconnect_ia_ia_ia_daa_daa_b_b_lfunction );
-
-  i->createcommand("HDF5MikeLoad_s_s", &hdf5mikeload_s_sfunction);
-
-=======
->>>>>>> refs/remotes/origin/master
   i->createcommand( "ResetNetwork", &resetnetworkfunction );
   i->createcommand( "ResetKernel", &resetkernelfunction );
 

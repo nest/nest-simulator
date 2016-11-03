@@ -225,13 +225,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } getconnections_Dfunction;
 
-  class HDF5MikeLoad_s_sFunction: public SLIFunction
-  {
-  public:
-    void execute(SLIInterpreter *) const;
-  } hdf5mikeload_s_sfunction;
-
-
   class SimulateFunction : public SLIFunction
   {
   public:

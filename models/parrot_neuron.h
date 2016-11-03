@@ -27,65 +27,59 @@ Name: parrot_neuron - Neuron that repeats incoming spikes.
 Description:
 
 The parrot neuron simply emits one spike for every incoming spike.
-One possible application for this is to create different channels
-for the output of generator devices such as the poisson_generator
-or the mip_generator.
+An important application is to provide identical poisson spike
+trains to a group of neurons. The poisson_generator sends a different
+spike train to each of its target neurons. By connecting one
+poisson_generator to a parrot_neuron and then that parrot_neuron to
+a group of neurons, all target neurons will receive the same poisson
+spike train.
 
 Remarks:
 
-Network-wise the parrot neuron behaves like other neuron models
-regarding connections and communication. While the number of
-outgoing spikes equals that of incoming ones, the weigth of the
-outgoing spikes solely depends on the weigth of outgoing connections.
+- Weights on connection to the parrot_neuron are ignored.
+- Weights on connections from the parrot_neuron are handled as usual.
+- Delays are honored on incoming and outgoing connections.
 
-A Poisson generator that would send multiple spikes during a single
-time step due to a high rate will send single spikes with
-multiple synaptic strength instead, for effiacy reasons.
-This can be realized because of the way devices are implemented
-in the threaded environment. A parrot neuron on the other
-hand always emits single spikes. Hence, in a situation where for
-example a poisson generator with a high firing rate is connected
-to a parrot neuron, the communication cost associated with outgoing
-spikes is much bigger for the latter.
+Only spikes arriving on connections to port 0 will be repeated.
+Connections onto port 1 will be accepted, but spikes incoming
+through port 1 will be ignored. This allows setting exact pre-
+and post-synaptic spike times for STDP protocols by connecting
+two parrot neurons spiking at desired times by, e.g., a
+stdp_synapse onto port 1 on the post-synaptic parrot neuron.
 
 Receives: SpikeEvent
 
 Sends: SpikeEvent
 
 Parameters:
-
 No parameters to be set in the status dictionary.
 
-References:
-No references
-
-Author:  May 2006, Reichert, Morrison
+Author: David Reichert, Abigail Morrison, Alexander Seeholzer, Hans Ekkehard
+Plesser
+FirstVersion: May 2006
 */
 
 
 /**
- * The parrot neuron emits one spike for every incoming spike.
- * It is a (strongly) simplified version of the iaf_neuron class,
- * stripped of the dynamics and unneeded features.
- * Instead of the accumulated weigths of the incoming spikes the
+ * The parrot neuron emits one spike for every incoming spike,
+ * but may use multiplicity to indicate number of spikes in a single
+ * time step.
+ * Instead of the accumulated weigths of the incoming spikes, the
  * number of the spikes is stored within a ring buffer.
- * \author David Reichert
- * \date may 2006
  */
 
 #ifndef PARROT_NEURON_H
 #define PARROT_NEURON_H
 
-#include "nest.h"
-#include "event.h"
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 
 namespace nest
 {
-class Network;
-
 class parrot_neuron : public Archiving_Node
 {
 
@@ -99,8 +93,12 @@ public:
    */
   using Node::handle;
   using Node::handles_test_event;
+  using Node::sends_signal;
+  using Node::receives_signal;
 
   port send_test_event( Node&, rport, synindex, bool );
+  SignalType sends_signal() const;
+  SignalType receives_signal() const;
 
   void handle( SpikeEvent& );
   port handles_test_event( SpikeEvent&, rport );
@@ -119,7 +117,7 @@ private:
   {
   } // no variables
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /**
      Buffers and accumulates the number of incoming spikes per time step;
@@ -134,7 +132,10 @@ private:
 };
 
 inline port
-parrot_neuron::send_test_event( Node& target, rport receptor_type, synindex, bool )
+parrot_neuron::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -145,9 +146,28 @@ parrot_neuron::send_test_event( Node& target, rport receptor_type, synindex, boo
 inline port
 parrot_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
+  // Allow connections to port 0 (spikes to be repeated)
+  // and port 1 (spikes to be ignored).
+  if ( receptor_type == 0 or receptor_type == 1 )
+  {
+    return receptor_type;
+  }
+  else
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
-  return 0;
+  }
+}
+
+inline SignalType
+parrot_neuron::sends_signal() const
+{
+  return ALL;
+}
+
+inline SignalType
+parrot_neuron::receives_signal() const
+{
+  return ALL;
 }
 
 } // namespace

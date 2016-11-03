@@ -26,12 +26,15 @@
     Reference Counted Array class specialized on Token objects.
 */
 
-#include <typeinfo>
+// C++ includes:
+#include <algorithm>
 #include <cstddef>
+#include <typeinfo>
 #include <vector>
-#include <valarray>
-#include "tarrayobj.h"
+
+// Includes from sli:
 #include "sliexceptions.h"
+#include "tarrayobj.h"
 
 // class Tokenarray uses reference counting and lazy evaluation.
 // This means that only a pointer
@@ -120,9 +123,6 @@ public:
 
   TokenArray( const std::vector< size_t >& );
   TokenArray( const std::vector< long >& );
-  TokenArray( const std::valarray< long >& );
-  TokenArray( const std::valarray< double >& );
-  TokenArray( const std::valarray< float >& );
   TokenArray( const std::vector< double >& );
   TokenArray( const std::vector< float >& );
 
@@ -246,7 +246,8 @@ public:
 
   /**
    * Resizes the container to size s.
-   * If the new size is larger than the old size, the new space is initialized with t.
+   * If the new size is larger than the old size, the new space is initialized
+   * with t.
    */
   void
   resize( size_t s, const Token& t = Token() )
@@ -313,7 +314,8 @@ public:
     // the representations insert_move moves the
     // the contens of all Tokens in a.data and marks it empty.
 
-    //      assert(a.data->size()==0); // empty, but memory is still allocated incase
+    // assert(a.data->size()==0); // empty, but memory is still allocated incase
+    //
     // it will be used again. data->clear() would
     // free the memory. In any case the destructor
     // finally frees the memory.
@@ -412,8 +414,6 @@ public:
   const TokenArray& operator=( const TokenArray& );
   const TokenArray& operator=( const std::vector< long >& );
   const TokenArray& operator=( const std::vector< double >& );
-  const TokenArray& operator=( const std::valarray< long >& );
-  const TokenArray& operator=( const std::valarray< double >& );
 
   bool operator==( const TokenArray& a ) const
   {
@@ -434,8 +434,6 @@ public:
   void toVector( std::vector< long >& ) const;
   void toVector( std::vector< double >& ) const;
   void toVector( std::vector< std::string >& ) const;
-  void toValarray( std::valarray< long >& ) const;
-  void toValarray( std::valarray< double >& ) const;
 
   bool valid( void ) const; // check integrity
 

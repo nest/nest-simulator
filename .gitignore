@@ -1,20 +1,6 @@
 # git ignore patterns
 
-autom4te.cache/
 libltdl/
-
-libnestutil/config.h.in
-Makefile.in
-
-aclocal.m4
-compile
-config.guess
-config.sub
-configure
-depcomp
-install-sh
-ltmain.sh
-missing
 
 pynest/pynestkernel.cpp
 
@@ -23,15 +9,13 @@ pynest/pynestkernel.cpp
 *.la
 .*
 *.log
-config.status
 Makefile
 build/
 
 /juqueen/
 /extras/nest-config
+/extras/create_release.sh
 /libnestutil/config.h
-/libnestutil/sliconfig.h
-/libnestutil/stamp-h1
 /librandom/randomtest
 /libtool
 /nest/nest
@@ -42,9 +26,32 @@ build/
 /sli/sli
 /testsuite/do_tests.sh
 /topology/setup.py
+/topology/doc/Topology_UserManual.out
+/doc/doxygen/
 
 *.kdev4
 
 ### IPythonNotebook ###
 # Temporary data
 .ipynb_checkpoints/
+TAGS
+
+### tags and cscope
+tags
+cscope.out
+
+### CMAKE stuff
+cmake_install.cmake
+CMakeFiles/
+_CPack_Packages/
+CMakeCache.txt
+CPackConfig.cmake
+CPackSourceConfig.cmake
+
+# generated files
+doc/set_rcsinfo.cmake
+doc/fulldoc.conf
+doc/normaldoc.conf
+lib/sli/rcsinfo.sli
+extras/emacs/sli.el
+extras/nest_vars.sh

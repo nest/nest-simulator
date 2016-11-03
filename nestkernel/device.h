@@ -24,10 +24,13 @@
 #define DEVICE_H
 
 
-#include "nest.h"
-#include "node.h"
-#include "dictdatum.h"
+// Includes from nestkernel:
 #include "nest_time.h"
+#include "nest_types.h"
+#include "node.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {
@@ -78,8 +81,8 @@ namespace nest
  *
  * This class provides a common interface for all derived device classes.
  * Each class derived from Node and implementing a device, should have a
- * member derived from class Device. This member will contribute the implementation
- * of device specific properties.
+ * member derived from class Device. This member will contribute the
+ * implementation of device specific properties.
  *
  * This class manages the properties common to all devices, namely
  * origin, start and stop of the time window during which the device
@@ -138,14 +141,14 @@ public:
    * @todo Should be protected, but is temporarily public
    *       to solve inheritance problems in AnalogSamplingDevice.
    */
-  long_t get_t_min_() const;
+  long get_t_min_() const;
 
   /**
    * Return upper limit in steps.
    * @todo Should be protected, but is temporarily public
    *       to solve inheritance problems in AnalogSamplingDevice.
    */
-  long_t get_t_max_() const;
+  long get_t_max_() const;
 
   Time const& get_origin() const;
   Time const& get_start() const;
@@ -175,6 +178,10 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum& ); //!< Set values from dictionary
+
+  private:
+    //! Update given Time parameter including error checking
+    static void update_( const DictionaryDatum&, const Name&, Time& );
   };
 
 
@@ -193,7 +200,7 @@ private:
      * constructor and set to its proper value by calibrate. It should NOT
      * be returned by get_parameters().
      */
-    long_t t_min_;
+    long t_min_;
 
     /**
      * Time step of device deactivation.
@@ -202,7 +209,7 @@ private:
      * constructor and set to its proper value by calibrate. It should NOT
      * be returned by get_parameters().
      */
-    long_t t_max_;
+    long t_max_;
   };
 
   // ----------------------------------------------------------------
@@ -247,13 +254,13 @@ nest::Device::get_stop() const
   return P_.stop_;
 }
 
-inline nest::long_t
+inline long
 nest::Device::get_t_min_() const
 {
   return V_.t_min_;
 }
 
-inline nest::long_t
+inline long
 nest::Device::get_t_max_() const
 {
   return V_.t_max_;

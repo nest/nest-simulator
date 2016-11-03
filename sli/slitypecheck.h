@@ -22,7 +22,11 @@
 
 #ifndef SLITYPECHECK_H
 #define SLITYPECHECK_H
+
+// C++ includes:
 #include <typeinfo>
+
+// Includes from sli:
 #include "slifunction.h"
 
 class TrieFunction : public SLIFunction

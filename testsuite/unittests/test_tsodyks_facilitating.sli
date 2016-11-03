@@ -21,7 +21,7 @@
  */
 
  /* BeginDocumentation
-Name: test_tsodyks_facilitating - sli script for overall test of tsodyks_synapse synapse model
+Name: test_tsodyks_facilitating - sli script for overall test of tsodyks synapse models
 
 Synopsis: (test_tsodyks_facilitating) run -> compare cout with comments in file
 
@@ -44,6 +44,9 @@ date:	 March 2006
 /unittest using
 
 
+[/tsodyks_synapse /tsodyks_synapse_hom] {
+/tsodyks_model Set
+
 ResetKernel      % clear all existing network elements
 
 
@@ -55,7 +58,7 @@ userdict begin
 
       /Tau 60.0 def	     % membrane time constant
       /Theta 15.0 def	     % threshold
-      /U0 0.0 def	     % reset potential of Vm
+      /E_L 0.0 def	     % reset potential of Vm
       /C Tau 1.0 div def     % Tau [ms] / 1.0 GOhm in NEST units
       /TauR 2.0 def	     % refractory time
       /Tau_psc 1.5 def       % time constant of PSC (=Tau_inact)
@@ -81,7 +84,7 @@ userdict begin
 
       cout 15 setprecision
 
-      /tsodyks_synapse
+      tsodyks_model
       << /tau_psc Tau_psc 
          /tau_rec Tau_rec
 	 /tau_fac Tau_fac
@@ -100,9 +103,9 @@ userdict begin
 		 /tau_syn_ex Tau_psc
 		 /tau_syn_in Tau_psc
 		 /C_m C
-		 /V_reset U0
-		 /E_L U0
-                 /V_m U0  
+		 /V_reset E_L
+		 /E_L E_L
+		 /V_m E_L
 		 /V_th Theta
       >> SetStatus
     
@@ -116,10 +119,10 @@ userdict begin
 		 /tau_syn_ex Tau_psc
 		 /tau_syn_in Tau_psc
 		 /C_m C
-		 /V_reset U0
-		 /E_L U0
+		 /V_reset E_L
+		 /E_L E_L
 		 /V_th Theta
-                 /V_m U0
+		 /V_m E_L
       >> SetStatus
    
       % neuron2 GetStatus info
@@ -143,7 +146,7 @@ userdict begin
 
       vm neuron2 Connect
 
-      neuron1 neuron2 /tsodyks_synapse Connect
+      neuron1 neuron2 tsodyks_model Connect
 
       Tend Simulate
 
@@ -209,6 +212,8 @@ userdict begin
 vm_sim vm_expected eq assert_or_die
 
 end
+
+} forall % tsodyks models
 
 endusing % unittest
 

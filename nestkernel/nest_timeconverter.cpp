@@ -19,9 +19,11 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "nest.h"
-#include "nest_time.h"
+
 #include "nest_timeconverter.h"
+
+// Includes from nestkernel:
+#include "nest_time.h"
 
 namespace nest
 {
@@ -33,7 +35,7 @@ TimeConverter::TimeConverter()
 }
 
 Time
-TimeConverter::from_old_steps( long_t s_old ) const
+TimeConverter::from_old_steps( long s_old ) const
 {
   double ms = s_old * OLD_TICS_PER_STEP / OLD_TICS_PER_MS;
   return Time::ms( ms );

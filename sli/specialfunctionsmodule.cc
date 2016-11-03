@@ -20,26 +20,35 @@
  *
  */
 
-#include "config.h" // has definition of HAVE_GSL
-#include <cmath>
 #include "specialfunctionsmodule.h"
+
+// C++ includes:
+#include <cmath>
+
+// Generated includes:
+#include "config.h" // has definition of HAVE_GSL
+
+// Includes from sli:
 #include "doubledatum.h" // Include the data-types we use!
 
 #ifdef HAVE_GSL
 
-#include <gsl/gsl_math.h>
+// External includes:
 #include <gsl/gsl_errno.h>
-#include <gsl/gsl_sf.h>
 #include <gsl/gsl_integration.h>
+#include <gsl/gsl_math.h>
+#include <gsl/gsl_sf.h>
+#include <gsl/gsl_sf_erf.h>   // as more and more special functions get
+#include <gsl/gsl_sf_gamma.h> // added, replace by <gsl/gsl_sf.h>
 #include <gsl/gsl_sf_lambert.h>
-#include <gsl/gsl_sf_gamma.h> // as more and more special functions get
-#include <gsl/gsl_sf_erf.h>   // added, replace by <gsl/gsl_sf.h>
 
 #endif
 
 const int SpecialFunctionsModule::GaussDiskConvFunction::MAX_QUAD_SIZE = 5000;
-const double SpecialFunctionsModule::GaussDiskConvFunction::QUAD_ERR_LIM = 1e-12;
-const double SpecialFunctionsModule::GaussDiskConvFunction::QUAD_ERR_SCALE = 200.0;
+const double SpecialFunctionsModule::GaussDiskConvFunction::QUAD_ERR_LIM =
+  1e-12;
+const double SpecialFunctionsModule::GaussDiskConvFunction::QUAD_ERR_SCALE =
+  200.0;
 
 
 // We need this for some compiling reason... (ask Bjarne)
@@ -284,7 +293,8 @@ SpecialFunctionsModule::GaussDiskConvFunction::~GaussDiskConvFunction( void )
 }
 
 void
-SpecialFunctionsModule::GaussDiskConvFunction::execute( SLIInterpreter* i ) const
+SpecialFunctionsModule::GaussDiskConvFunction::execute(
+  SLIInterpreter* i ) const
 {
 
   i->EStack.pop(); // pop yourself
@@ -336,8 +346,8 @@ SpecialFunctionsModule::GaussDiskConvFunction::execute( SLIInterpreter* i ) cons
   }
   else if ( y > 1 && r0 > R + sqrt( -log( GSL_DBL_EPSILON / y ) ) )
   { /* tail */
-    result = 0.25 * R / r0
-      * ( std::exp( -( r0 - R ) * ( r0 - R ) ) - std::exp( -( r0 + R ) * ( r0 + R ) ) );
+    result = 0.25 * R / r0 * ( std::exp( -( r0 - R ) * ( r0 - R ) )
+                               - std::exp( -( r0 + R ) * ( r0 + R ) ) );
   }
   else
   { /* in all other cases, integration */
@@ -347,8 +357,16 @@ SpecialFunctionsModule::GaussDiskConvFunction::execute( SLIInterpreter* i ) cons
 
     double C = 0.0;
     double Cerr = 0.0;
-    int status = gsl_integration_qag(
-      &F_, 0.0, R, 0.0, QUAD_ERR_LIM, MAX_QUAD_SIZE, GSL_INTEG_GAUSS61, w_, &C, &Cerr );
+    int status = gsl_integration_qag( &F_,
+      0.0,
+      R,
+      0.0,
+      QUAD_ERR_LIM,
+      MAX_QUAD_SIZE,
+      GSL_INTEG_GAUSS61,
+      w_,
+      &C,
+      &Cerr );
 
     if ( status )
     {
@@ -441,7 +459,8 @@ SpecialFunctionsModule::GaussDiskConvFunction::~GaussDiskConvFunction( void )
 }
 
 void
-SpecialFunctionsModule::GaussDiskConvFunction::execute( SLIInterpreter* i ) const
+SpecialFunctionsModule::GaussDiskConvFunction::execute(
+  SLIInterpreter* i ) const
 {
   i->raiseerror( "GaussDiskConv", "Not implemented (no GSL)" );
 }

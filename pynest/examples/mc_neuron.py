@@ -34,22 +34,20 @@ Three stimulation paradigms are illustrated:
 Voltage and synaptic conductance traces are shown for all compartments.
 '''
 
-
 '''
 First, we import all necessary modules for simulation, analysis and
 plotting.
 '''
 
 import nest
-import matplotlib
-import pylab as pl
+import pylab
 
 nest.ResetKernel()
 
 '''
 Second, extract from the dictionary with receptor types and the list of
 recordable quantities from the neuron model. Receptor types and
-recordable quantities uniquely define the receptor type and the compartment 
+recordable quantities uniquely define the receptor type and the compartment
 while establishing synaptic connections or assigning multimeters.
 '''
 
@@ -64,15 +62,16 @@ Third, the simulation parameters are assigned to variables.
 '''
 
 nest.SetDefaults('iaf_cond_alpha_mc',
-                 { 'V_th' : -60.0,     #threshold potential
-                   'V_reset': -65.0,   #reset potential 
-                   't_ref': 10.0,      #refractory period
-                   'g_sp' : 5.0,       #somato-proximal coupling conductance
-                   'soma'    : { 'g_L': 12.0 },       #somatic leak conductance
-                   'proximal': { 'tau_syn_ex': 1.0,   #proximal excitatory synaptic time constants
-                                 'tau_syn_in': 5.0 }, #proximal inhibitory synaptic time constants
-                   'distal'  : { 'C_m': 90.0 }        #distal capacitance
-                 })
+                 {'V_th': -60.0,  # threshold potential
+                  'V_reset': -65.0,  # reset potential
+                  't_ref': 10.0,  # refractory period
+                  'g_sp': 5.0,  # somato-proximal coupling conductance
+                  'soma': {'g_L': 12.0},  # somatic leak conductance
+                  # proximal excitatory and inhibitory synaptic time constants
+                  'proximal': {'tau_syn_ex': 1.0,
+                               'tau_syn_in': 5.0},
+                  'distal': {'C_m': 90.0}  # distal capacitance
+                  })
 
 '''
 Fourth, the nodes are created using `Create`. We store the returned
@@ -82,14 +81,14 @@ handles in variables for later reference.
 n = nest.Create('iaf_cond_alpha_mc')
 
 '''
-Fifth, `multimeter`s are created and connected to the neurons. 
+Fifth, `multimeter`s are created and connected to the neurons.
 The parameters specified for the multimeter include the list of quantities
 that should be recorded and the time interval at which quantities are measured.
 '''
 
-mm = nest.Create('multimeter', 
-                 params = {'record_from': rqs, 
-                           'interval': 0.1})
+mm = nest.Create('multimeter',
+                 params={'record_from': rqs,
+                         'interval': 0.1})
 nest.Connect(mm, n)
 
 '''
@@ -100,20 +99,20 @@ the start,stop times and the amplitude of the injected current.
 '''
 
 cgs = nest.Create('dc_generator', 3)
-nest.SetStatus(cgs, 
-               [{'start': 250.0, 'stop': 300.0, 'amplitude':  50.0},  # soma
-                {'start': 150.0, 'stop': 200.0, 'amplitude': -50.0},  # proximal
-                {'start':  50.0, 'stop': 100.0, 'amplitude': 100.0}]) # distal
+nest.SetStatus(cgs,
+               [{'start': 250.0, 'stop': 300.0, 'amplitude': 50.0},   # soma
+                {'start': 150.0, 'stop': 200.0, 'amplitude': -50.0},  # proxim.
+                {'start': 50.0, 'stop': 100.0, 'amplitude': 100.0}])  # distal
 
 '''
-Generators are connected to the correct compartments. 
+Generators are connected to the correct compartments.
 Specification of the ``receptor_type`` uniquely defines the target
 compartment and receptor.
 '''
 
-nest.Connect([cgs[0]], n, syn_spec = {'receptor_type': syns['soma_curr']})
-nest.Connect([cgs[1]], n, syn_spec = {'receptor_type': syns['proximal_curr']})
-nest.Connect([cgs[2]], n, syn_spec = {'receptor_type': syns['distal_curr']})
+nest.Connect([cgs[0]], n, syn_spec={'receptor_type': syns['soma_curr']})
+nest.Connect([cgs[1]], n, syn_spec={'receptor_type': syns['proximal_curr']})
+nest.Connect([cgs[2]], n, syn_spec={'receptor_type': syns['distal_curr']})
 
 '''
 Create one excitatory and one inhibitory spike generator per compartment.
@@ -123,28 +122,28 @@ excitation and inhibition alternating.
 
 sgs = nest.Create('spike_generator', 6)
 nest.SetStatus(sgs,
-               [{'spike_times': [600.0, 620.0]}, # soma excitatory
-                {'spike_times': [610.0, 630.0]}, # soma inhibitory
-                {'spike_times': [500.0, 520.0]}, # proximal excitatory
-                {'spike_times': [510.0, 530.0]}, # proximal inhibitory
-                {'spike_times': [400.0, 420.0]}, # distal excitatory
-                {'spike_times': [410.0, 430.0]}]) # distal inhibitory
+               [{'spike_times': [600.0, 620.0]},  # soma excitatory
+                {'spike_times': [610.0, 630.0]},  # soma inhibitory
+                {'spike_times': [500.0, 520.0]},  # proximal excitatory
+                {'spike_times': [510.0, 530.0]},  # proximal inhibitory
+                {'spike_times': [400.0, 420.0]},  # distal excitatory
+                {'spike_times': [410.0, 430.0]}])  # distal inhibitory
 
 '''
 Connect generators to correct compartments in the same way as in case of
 current generator
 '''
 
-nest.Connect([sgs[0]], n, syn_spec = {'receptor_type': syns['soma_exc']})
-nest.Connect([sgs[1]], n, syn_spec = {'receptor_type': syns['soma_inh']})
-nest.Connect([sgs[2]], n, syn_spec = {'receptor_type': syns['proximal_exc']})
-nest.Connect([sgs[3]], n, syn_spec = {'receptor_type': syns['proximal_inh']})
-nest.Connect([sgs[4]], n, syn_spec = {'receptor_type': syns['distal_exc']})
-nest.Connect([sgs[5]], n, syn_spec = {'receptor_type': syns['distal_inh']})
+nest.Connect([sgs[0]], n, syn_spec={'receptor_type': syns['soma_exc']})
+nest.Connect([sgs[1]], n, syn_spec={'receptor_type': syns['soma_inh']})
+nest.Connect([sgs[2]], n, syn_spec={'receptor_type': syns['proximal_exc']})
+nest.Connect([sgs[3]], n, syn_spec={'receptor_type': syns['proximal_inh']})
+nest.Connect([sgs[4]], n, syn_spec={'receptor_type': syns['distal_exc']})
+nest.Connect([sgs[5]], n, syn_spec={'receptor_type': syns['distal_inh']})
 
 '''
 Run the simulation for 700ms.
-''' 
+'''
 
 nest.Simulate(700)
 
@@ -175,25 +174,30 @@ t = rec['times']
 
 '''
 Plot time traces of the membrane potential measured in different compartments.
-V_m.s,V_m.p,V_m.d state for the membrane potential in soma, proximal and distal dendrites.
+V_m.s,V_m.p,V_m.d state for the membrane potential in soma, proximal and
+distal dendrites.
 '''
 
-pl.figure()
-pl.subplot(211)
-pl.plot(t, rec['V_m.s'], t, rec['V_m.p'], t, rec['V_m.d'])
-pl.legend(('Soma', 'Proximal dendrite', 'Distal dendrite'),loc='lower right')
-pl.axis([0, 1000, -76, -59])
-pl.ylabel('Membrane potential [mV]')
-pl.title('Responses of iaf_cond_alpha_mc neuron')
+pylab.figure()
+pylab.subplot(211)
+pylab.plot(t, rec['V_m.s'], t, rec['V_m.p'], t, rec['V_m.d'])
+pylab.legend(('Soma', 'Proximal dendrite', 'Distal dendrite'),
+             loc='lower right')
+pylab.axis([0, 1000, -76, -59])
+pylab.ylabel('Membrane potential [mV]')
+pylab.title('Responses of iaf_cond_alpha_mc neuron')
 
 '''
-Plot time traces of the synaptic conductance measured in different compartments. 
+Plot time traces of the synaptic conductance measured
+in different compartments.
 '''
 
-pl.subplot(212)
-pl.plot(t, rec['g_ex.s'], 'b-', t, rec['g_ex.p'], 'g-', t, rec['g_ex.d'], 'r-')
-pl.plot(t, rec['g_in.s'], 'b--', t, rec['g_in.p'], 'g--', t, rec['g_in.d'], 'r--')
-pl.legend(('g_ex.s', 'g_ex.p', 'g_in.d','g_in.s', 'g_in.p', 'g_in.d'))
-pl.axis([350, 700, 0, 1.15])
-pl.xlabel('Time [ms]')
-pl.ylabel('Synaptic conductance [nS]')
+pylab.subplot(212)
+pylab.plot(t, rec['g_ex.s'], 'b-', t, rec['g_ex.p'], 'g-',
+           t, rec['g_ex.d'], 'r-')
+pylab.plot(t, rec['g_in.s'], 'b--', t, rec['g_in.p'], 'g--',
+           t, rec['g_in.d'], 'r--')
+pylab.legend(('g_ex.s', 'g_ex.p', 'g_in.d', 'g_in.s', 'g_in.p', 'g_in.d'))
+pylab.axis([350, 700, 0, 1.15])
+pylab.xlabel('Time [ms]')
+pylab.ylabel('Synaptic conductance [nS]')

@@ -21,10 +21,13 @@
  */
 
 #include "gamma_randomdev.h"
+
+// C++ includes:
+#include <cmath>
+
+// Includes from sli:
 #include "dictutils.h"
 #include "sliexceptions.h"
-
-#include <cmath>
 
 // by default, init as exponential density with mean 1
 librandom::GammaRandomDev::GammaRandomDev( RngPtr r_source, double a_in )
@@ -115,6 +118,8 @@ librandom::GammaRandomDev::set_status( const DictionaryDatum& d )
 void
 librandom::GammaRandomDev::get_status( DictionaryDatum& d ) const
 {
+  RandomDev::get_status( d );
+
   def< double >( d, "order", a );
   def< double >( d, "scale", b_ );
 }

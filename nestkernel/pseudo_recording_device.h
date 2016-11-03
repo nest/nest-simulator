@@ -23,20 +23,27 @@
 #ifndef PSEUDO_RECORDING_DEVICE_H
 #define PSEUDO_RECORDING_DEVICE_H
 
-#include "nest.h"
+// C++ includes:
+#include <fstream>
+#include <vector>
+
+// Includes from libnestutil:
+#include "lockptr.h"
+
+// Includes from nestkernel:
+#include "device.h"
+#include "nest_types.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 #include "dictutils.h"
-#include "lockptr.h"
-#include "device.h"
-
-#include <vector>
-#include <fstream>
 
 namespace nest
 {
 
 /*BeginDocumentation
-  Name: PseudoRecordingDevice - Common properties of all pseudo-recording devices.
+  Name: PseudoRecordingDevice - Common properties of all pseudo-recording
+                                devices.
   Description:
 
   Pseudo recording devices are used to measure properties of or signals emitted
@@ -93,7 +100,8 @@ inline PseudoRecordingDevice::PseudoRecordingDevice()
 {
 }
 
-inline PseudoRecordingDevice::PseudoRecordingDevice( const PseudoRecordingDevice& prd )
+inline PseudoRecordingDevice::PseudoRecordingDevice(
+  const PseudoRecordingDevice& prd )
   : Device( prd )
 {
 }
@@ -101,7 +109,7 @@ inline PseudoRecordingDevice::PseudoRecordingDevice( const PseudoRecordingDevice
 inline bool
 PseudoRecordingDevice::is_active( Time const& T ) const
 {
-  const long_t stamp = T.get_steps();
+  const long stamp = T.get_steps();
 
   return get_t_min_() < stamp && stamp <= get_t_max_();
 }

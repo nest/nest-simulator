@@ -20,10 +20,7 @@
  *
  */
 
-
-#include "config.h"
 #include "numerics.h"
-
 
 #ifndef HAVE_M_E
 
@@ -52,11 +49,16 @@
 #define M_PI_OK
 #endif
 
+#if defined( HAVE_STD_NAN )
+#include <cmath>
+#elif defined( HAVE_NAN )
+#include <math.h>
+#endif
 
 //
 //   e
 //
-#ifdef HAVE_GSL_1_2
+#ifdef HAVE_GSL
 
 #include <gsl/gsl_math.h>
 const double numerics::e = M_E;
@@ -78,6 +80,13 @@ const double numerics::pi = 3.14159265358979323846264338328;
 
 #endif
 
+#if defined( HAVE_STD_NAN )
+const double numerics::nan = ::nan( "" );
+#elif defined( HAVE_NAN )
+const double numerics::nan = NAN;
+#else
+const double numerics::nan = 0.0 / 0.0;
+#endif
 
 // later also in namespace
 long

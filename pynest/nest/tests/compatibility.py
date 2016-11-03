@@ -20,6 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import unittest
+import numpy
 import inspect
 
 
@@ -29,10 +30,13 @@ def _skipIf(condition, _):
     """
 
     def decorator(test_item):
-        if inspect.isclass(test_item) and issubclass(test_item, unittest.TestCase):
+        if inspect.isclass(test_item) and \
+           issubclass(test_item, unittest.TestCase):
             test_item = type("DummyTestCase", (unittest.TestCase, ), {})
         elif inspect.isfunction(test_item):
-            test_item = lambda obj: None
+            def ret_none(obj):
+                return None
+            test_item = ret_none
         else:
             raise ValueError("unable to decorate {0}".format(test_item))
         return test_item
@@ -65,3 +69,10 @@ if not hasattr(unittest.TestCase, 'assertIsInstance'):
 if not hasattr(unittest.TestCase, 'assertGreater'):
     unittest.TestCase.assertGreater = lambda self, a, b, **kwargs: \
         unittest.TestCase.assertTrue(self, a > b, **kwargs)
+
+# NumPy 1.4.0-
+if not hasattr(numpy, 'fill_diagonal'):
+    def fill_diagonal(a, b):
+        diagonal = [numpy.arange(min(a.shape))] * a.ndim
+        a[diagonal] = b
+    numpy.fill_diagonal = fill_diagonal

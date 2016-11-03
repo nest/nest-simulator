@@ -23,10 +23,14 @@
 #ifndef VOSE_H
 #define VOSE_H
 
+// C++ includes:
 #include <vector>
 
-#include "nest.h"
+// Includes from librandom:
 #include "randomgen.h"
+
+// Includes from nestkernel:
+#include "nest_types.h"
 
 namespace nest
 {
@@ -47,12 +51,12 @@ class Vose
   struct BiasedCoin
   {
     index heads, tails;
-    double_t probability; ///< Probability for heads
+    double probability; ///< Probability for heads
     BiasedCoin()
       : heads( 0 )
       , tails( 0 )
       , probability( 0 ){};
-    BiasedCoin( index h, index t, double_t p )
+    BiasedCoin( index h, index t, double p )
       : heads( h )
       , tails( t )
       , probability( p ){};
@@ -63,7 +67,7 @@ public:
    * Constructor taking a probability distribution.
    * @param dist - probability distribution.
    */
-  Vose( std::vector< double_t > dist );
+  Vose( std::vector< double > dist );
 
   /**
    * @returns a randomly selected index with the given distribution

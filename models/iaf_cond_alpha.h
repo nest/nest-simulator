@@ -23,24 +23,28 @@
 #ifndef IAF_COND_ALPHA_H
 #define IAF_COND_ALPHA_H
 
+// Generated includes:
 #include "config.h"
 
 #ifdef HAVE_GSL
 
-#include "nest.h"
-#include "event.h"
-#include "archiving_node.h"
-#include "ring_buffer.h"
-#include "connection.h"
-#include "universal_data_logger.h"
-#include "recordables_map.h"
-
+// C includes:
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
 
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
+
 /* BeginDocumentation
-Name: iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron model.
+Name: iaf_cond_alpha - Simple conductance based leaky integrate-and-fire neuron
+                       model.
 
 Description:
 iaf_cond_alpha is an implementation of a spiking neuron using IAF dynamics with
@@ -148,7 +152,7 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // END Boilerplate function declarations ----------------------------
 
@@ -167,17 +171,17 @@ private:
   //! Model parameters
   struct Parameters_
   {
-    double_t V_th;     //!< Threshold Potential in mV
-    double_t V_reset;  //!< Reset Potential in mV
-    double_t t_ref;    //!< Refractory period in ms
-    double_t g_L;      //!< Leak Conductance in nS
-    double_t C_m;      //!< Membrane Capacitance in pF
-    double_t E_ex;     //!< Excitatory reversal Potential in mV
-    double_t E_in;     //!< Inhibitory reversal Potential in mV
-    double_t E_L;      //!< Leak reversal Potential (aka resting potential) in mV
-    double_t tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
-    double_t tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double_t I_e;      //!< Constant Current in pA
+    double V_th;     //!< Threshold Potential in mV
+    double V_reset;  //!< Reset Potential in mV
+    double t_ref;    //!< Refractory period in ms
+    double g_L;      //!< Leak Conductance in nS
+    double C_m;      //!< Membrane Capacitance in pF
+    double E_ex;     //!< Excitatory reversal Potential in mV
+    double E_in;     //!< Inhibitory reversal Potential in mV
+    double E_L;      //!< Leak reversal Potential (aka resting potential) in mV
+    double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
+    double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
+    double I_e;      //!< Constant Current in pA
 
     Parameters_(); //!< Set default parameter values
 
@@ -213,10 +217,10 @@ public:
     };
 
     //! state vector, must be C-array for GSL solver
-    double_t y[ STATE_VEC_SIZE ];
+    double y[ STATE_VEC_SIZE ];
 
     //!< number of refractory steps remaining
-    int_t r;
+    int r;
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -263,7 +267,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double_t step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**
@@ -273,7 +277,7 @@ private:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double_t I_stim_;
+    double I_stim_;
   };
 
   // Variables class -------------------------------------------------------
@@ -288,30 +292,30 @@ private:
      * Impulse to add to DG_EXC on spike arrival to evoke unit-amplitude
      * conductance excursion.
      */
-    double_t PSConInit_E;
+    double PSConInit_E;
 
     /**
      * Impulse to add to DG_INH on spike arrival to evoke unit-amplitude
      * conductance excursion.
      */
-    double_t PSConInit_I;
+    double PSConInit_I;
 
     //! refractory time in steps
-    int_t RefractoryCounts;
+    int RefractoryCounts;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out state vector elements, used by UniversalDataLogger
   template < State_::StateVecElems elem >
-  double_t
+  double
   get_y_elem_() const
   {
     return S_.y[ elem ];
   }
 
   //! Read out remaining refractory time, used by UniversalDataLogger
-  double_t
+  double
   get_r_() const
   {
     return Time::get_resolution().get_ms() * S_.r;
@@ -333,7 +337,10 @@ private:
 // Boilerplate inline function definitions ----------------------------------
 
 inline port
-iaf_cond_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
+iaf_cond_alpha::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -357,7 +364,8 @@ iaf_cond_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-iaf_cond_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_cond_alpha::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );

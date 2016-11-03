@@ -24,13 +24,34 @@
     SLI's control structures
 */
 
+#include "slicontrol.h"
+
+// C includes:
+#include <sys/resource.h>
+#include <sys/time.h>
+#include <sys/times.h>
+#include <time.h>
+#include <unistd.h>
+
+// Generated includes:
+#include "config.h"
 #include "config.h"
 
-#include <time.h>
-#include <sys/time.h> // required to fix header dependencies in OS X, HEP
-#include <sys/times.h>
-#include <sys/resource.h>
-#include <unistd.h>
+// Includes from sli:
+#include "arraydatum.h"
+#include "booldatum.h"
+#include "dictstack.h"
+#include "doubledatum.h"
+#include "functiondatum.h"
+#include "integerdatum.h"
+#include "iostreamdatum.h"
+#include "namedatum.h"
+#include "parser.h"
+#include "processes.h"
+#include "scanner.h"
+#include "sliexceptions.h"
+#include "stringdatum.h"
+
 // sstream has functions std::?stringstream
 // strstream has functions std::?strstream
 // HEP 2002-10-06
@@ -39,23 +60,6 @@
 #else
 #include <strstream>
 #endif
-
-#include "sliconfig.h"
-#include "slicontrol.h"
-#include "namedatum.h"
-#include "booldatum.h"
-#include "arraydatum.h"
-#include "stringdatum.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include "scanner.h"
-#include "parser.h"
-#include "iostreamdatum.h"
-#include "dictstack.h"
-#include "functiondatum.h"
-#include "processes.h"
-
-#include "sliexceptions.h"
 
 
 /*BeginDocumentation
@@ -305,10 +309,12 @@ RepeatFunction::execute( SLIInterpreter* i ) const
   {
     i->EStack.pop();
 
-    ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
+    ProcedureDatum* proc =
+      dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
     if ( proc )
     {
-      IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+      IntegerDatum* id =
+        dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
       if ( id == 0 )
         throw ArgumentType( 1 );
 
@@ -409,7 +415,8 @@ StopFunction::execute( SLIInterpreter* i ) const
     if ( !found )
     {
       std::cerr << "No 'stopped' context found." << std::endl
-                << "Stack unrolling will erase the execution stack." << std::endl
+                << "Stack unrolling will erase the execution stack."
+                << std::endl
                 << "Entering debug mode. Type '?' for help." << std::endl;
     }
 
@@ -463,7 +470,8 @@ CloseinputFunction::execute( SLIInterpreter* i ) const
     if ( !found )
     {
       std::cerr << "In closeinput: No active input file was found." << std::endl
-                << "Stack unrolling will erase the execution stack." << std::endl
+                << "Stack unrolling will erase the execution stack."
+                << std::endl
                 << "Entering debug mode. Type '?' for help." << std::endl;
     }
 
@@ -477,7 +485,8 @@ CloseinputFunction::execute( SLIInterpreter* i ) const
 
   if ( !found )
   {
-    i->message( 30, "closeinput", "No active input file was found. \n  Restarting..." );
+    i->message(
+      30, "closeinput", "No active input file was found. \n  Restarting..." );
     i->EStack.clear();
     i->EStack.push( i->baselookup( Name( "start" ) ) );
     return;
@@ -585,7 +594,8 @@ IparseFunction::execute( SLIInterpreter* i ) const
   // Estack: handle  iparse
   // pick      1         0
 
-  XIstreamDatum* is = dynamic_cast< XIstreamDatum* >( i->EStack.pick( 1 ).datum() );
+  XIstreamDatum* is =
+    dynamic_cast< XIstreamDatum* >( i->EStack.pick( 1 ).datum() );
   assert( is );
   assert( is->valid() );
 
@@ -614,7 +624,8 @@ DefFunction::execute( SLIInterpreter* i ) const
   if ( i->OStack.load() < 2 )
     throw StackUnderflow( 2, i->OStack.load() );
 
-  LiteralDatum* nd = dynamic_cast< LiteralDatum* >( i->OStack.pick( 1 ).datum() );
+  LiteralDatum* nd =
+    dynamic_cast< LiteralDatum* >( i->OStack.pick( 1 ).datum() );
   if ( !nd )
     throw ArgumentType( 1 );
 
@@ -633,17 +644,19 @@ DefFunction::execute( SLIInterpreter* i ) const
 }
 
 /*BeginDocumentation
-Name: Set - Define an association between a name and an object in the current dictionary
+Name: Set - Define an association between a name and an object in the current
+            dictionary
 Synopsis:
   obj literal   Set -> -
   [... [obj_1 ...] ... obj_n] [... [literal_1 ...] ... literal_n] Set -> -
 Description:
- In the first form Set is identical to def, except for the reversed parameters and
- creates or modifies an entry for the literal in the current dictionary. The new value
- assigned to the literal is obj.
- In the second form multiple simultaneous assignments are made to the literals contained in
- the second. The nesting of this array is arbitrary, indicated in the synopsis by the
- inner brackets, and the same object are taken from the identical positions in first array.
+ In the first form Set is identical to def, except for the reversed parameters
+ and creates or modifies an entry for the literal in the current dictionary. The
+ new value assigned to the literal is obj.
+ In the second form multiple simultaneous assignments are made to the literals
+ contained in the second. The nesting of this array is arbitrary, indicated in
+ the synopsis by the inner brackets, and the same object are taken from the
+ identical positions in first array.
 
 
 Examples:
@@ -788,7 +801,8 @@ void
 ForFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
-  ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
+  ProcedureDatum* proc =
+    dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
   assert( proc );
 
   i->EStack.push_by_ref( i->baselookup( i->mark_name ) );
@@ -808,9 +822,9 @@ BeginDocumentation
    Name: forall - Call a procedure for each element of a list/string/dictionary
 
    Synopsis:
-     [v1 ... vn] {f}                   forall ->  f(v1) ... f(vn)
-     (c1...cn)   {f}                   forall ->  f(c1) ... f(cn)
-     <</key1 val1 ... /keyn valn>> {f} forall ->  f(/key1 val1) ... f(/keyn valn)
+     [v1 ... vn] {f}                   forall -> f(v1) ... f(vn)
+     (c1...cn)   {f}                   forall -> f(c1) ... f(cn)
+     <</key1 val1 ... /keyn valn>> {f} forall -> f(/key1 val1) ... f(/keyn valn)
 
    Parameters:
      [v1,...,vn]    - list of n arbitrary objects
@@ -847,7 +861,8 @@ BeginDocumentation
 
    References: The Red Book
 
-   SeeAlso: Map, MapAt, MapIndexed, Table, forallindexed, NestList, FoldList, Fold, exit
+   SeeAlso: Map, MapAt, MapIndexed, Table, forallindexed, NestList, FoldList,
+   Fold, exit
 
 */
 
@@ -869,15 +884,17 @@ Forall_aFunction::execute( SLIInterpreter* i ) const
   static Token mark( i->baselookup( i->mark_name ) );
   static Token forall( i->baselookup( i->iforallarray_name ) );
 
-  ProcedureDatum* proc = static_cast< ProcedureDatum* >( i->OStack.top().datum() );
+  ProcedureDatum* proc =
+    static_cast< ProcedureDatum* >( i->OStack.top().datum() );
   assert( proc );
 
   i->EStack.pop();
   i->EStack.push_by_ref( mark );
-  i->EStack.push_move( i->OStack.pick( 1 ) );                    // push object
-  i->EStack.push_by_pointer( new IntegerDatum( 0 ) );            // push array counter
-  i->EStack.push_by_ref( i->OStack.pick( 0 ) );                  // push procedure
-  i->EStack.push_by_pointer( new IntegerDatum( proc->size() ) ); // push procedure counter
+  i->EStack.push_move( i->OStack.pick( 1 ) );         // push object
+  i->EStack.push_by_pointer( new IntegerDatum( 0 ) ); // push array counter
+  i->EStack.push_by_ref( i->OStack.pick( 0 ) );       // push procedure
+  // push procedure counter
+  i->EStack.push_by_pointer( new IntegerDatum( proc->size() ) );
   i->EStack.push_by_ref( forall );
   i->OStack.pop( 2 );
   i->inc_call_depth();
@@ -893,7 +910,8 @@ void
 Forall_iterFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
-  ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
+  ProcedureDatum* proc =
+    dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
   assert( proc );
 
   i->EStack.push( i->baselookup( i->mark_name ) );
@@ -951,7 +969,8 @@ void
 Forallindexed_aFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
-  ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
+  ProcedureDatum* proc =
+    dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
   assert( proc );
 
   i->EStack.push( i->baselookup( i->mark_name ) );
@@ -978,7 +997,8 @@ void
 Forallindexed_sFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
-  ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
+  ProcedureDatum* proc =
+    dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
   assert( proc );
 
   i->EStack.push( i->baselookup( i->mark_name ) );
@@ -1005,7 +1025,8 @@ void
 Forall_sFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
-  ProcedureDatum* proc = dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
+  ProcedureDatum* proc =
+    dynamic_cast< ProcedureDatum* >( i->OStack.top().datum() );
   assert( proc );
 
   i->EStack.push( i->baselookup( i->mark_name ) );
@@ -1086,7 +1107,9 @@ RaiseerrorFunction::execute( SLIInterpreter* i ) const
   Name* cmdname = dynamic_cast< Name* >( cmd.datum() );
   if ( ( !errorname ) || ( !cmdname ) )
   {
-    i->message( SLIInterpreter::M_ERROR, "raiseerror", "Usage: /command /errorname raiserror" );
+    i->message( SLIInterpreter::M_ERROR,
+      "raiseerror",
+      "Usage: /command /errorname raiserror" );
     i->raiseerror( "ArgumentType" );
     return;
   }
@@ -1436,8 +1459,9 @@ PclocksFunction::execute( SLIInterpreter* i ) const
 
   if ( realtime == static_cast< clock_t >( -1 ) )
   {
-    i->message(
-      SLIInterpreter::M_ERROR, "PclocksFunction", "System function times() returned error!" );
+    i->message( SLIInterpreter::M_ERROR,
+      "PclocksFunction",
+      "System function times() returned error!" );
     i->raiseerror( Processes::systemerror( i ) );
     return;
   }
@@ -1624,7 +1648,8 @@ Sleep_dFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   const long sec = 0;
-  const long usec = static_cast< long >( static_cast< double >( i->OStack.pick( 0 ) ) * 1000000. );
+  const long usec = static_cast< long >(
+    static_cast< double >( i->OStack.pick( 0 ) ) * 1000000. );
 
   struct timeval tv = { sec, usec };
 
@@ -1765,7 +1790,8 @@ void
 SetGuardFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  IntegerDatum* count = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
+  IntegerDatum* count =
+    dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
   assert( count );
   i->setcycleguard( count->get() );
   i->OStack.pop();
@@ -1914,7 +1940,8 @@ void
 SetVerbosityFunction::execute( SLIInterpreter* i ) const
 {
   assert( i->OStack.load() > 0 );
-  IntegerDatum* count = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
+  IntegerDatum* count =
+    dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
   assert( count );
   i->verbosity( count->get() );
   i->OStack.pop();
@@ -1943,10 +1970,9 @@ StartFunction::execute( SLIInterpreter* i ) const
     "Start",
     "Something went wrong "
     "during initialization of NEST or one of its modules. Probably "
-    "there is a bug in the startup scripts. Please send the output "
-    "of NEST to the nest_user@nest-initiative.org mailing list to help "
-    "us to diagnose the problem. You can try to find the bug by "
-    "re-starting NEST with the option: --debug" );
+    "there is a bug in the startup scripts. Please report the output "
+    "of NEST at https://github.com/nest/nest-simulator/issues . You "
+    "can try to find the bug by starting NEST with the option --debug" );
 }
 
 void
@@ -1956,11 +1982,14 @@ MessageFunction::execute( SLIInterpreter* i ) const
 
   assert( i->OStack.load() >= 3 );
 
-  IntegerDatum* lev = dynamic_cast< IntegerDatum* >( i->OStack.pick( 2 ).datum() );
+  IntegerDatum* lev =
+    dynamic_cast< IntegerDatum* >( i->OStack.pick( 2 ).datum() );
   assert( lev );
-  StringDatum* frm = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
+  StringDatum* frm =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
   assert( frm );
-  StringDatum* msg = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
+  StringDatum* msg =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
   assert( msg );
 
   i->message( lev->get(), frm->c_str(), msg->c_str() );

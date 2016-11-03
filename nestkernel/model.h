@@ -22,12 +22,19 @@
 
 #ifndef MODEL_H
 #define MODEL_H
-#include <string>
 
+// C++ includes:
 #include <new>
+#include <string>
 #include <vector>
-#include "node.h"
+
+// Includes from libnestutil:
 #include "allocator.h"
+
+// Includes from nestkernel:
+#include "node.h"
+
+// Includes from sli:
 #include "dictutils.h"
 
 namespace nest
@@ -146,6 +153,16 @@ public:
   DictionaryDatum get_status( void );
 
   virtual port send_test_event( Node&, rport, synindex, bool ) = 0;
+
+  virtual void sends_secondary_event( GapJunctionEvent& ge ) = 0;
+
+  /**
+   * Check what type of signal this model is sending.
+   * Required so that proxynode can formward this call
+   * to model that in turn delegates the call to the underlying
+   * prototype.
+   */
+  virtual SignalType sends_signal() const = 0;
 
   /**
    * Return the size of the prototype.

@@ -21,11 +21,16 @@
  */
 
 #include "dc_generator.h"
-#include "network.h"
+
+// Includes from nestkernel:
+#include "event_delivery_manager_impl.h"
+#include "kernel_manager.h"
+
+// Includes from sli:
 #include "dict.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
 #include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
 
 
 /* ----------------------------------------------------------------
@@ -104,14 +109,14 @@ nest::dc_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::dc_generator::update( Time const& origin, const long_t from, const long_t to )
+nest::dc_generator::update( Time const& origin, const long from, const long to )
 {
-  long_t start = origin.get_steps();
+  long start = origin.get_steps();
 
   CurrentEvent ce;
   ce.set_current( P_.amp_ );
 
-  for ( long_t offs = from; offs < to; ++offs )
+  for ( long offs = from; offs < to; ++offs )
     if ( device_.is_active( Time::step( start + offs ) ) )
-      network()->send( *this, ce, offs );
+      kernel().event_delivery_manager.send( *this, ce, offs );
 }

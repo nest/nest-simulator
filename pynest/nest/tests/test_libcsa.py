@@ -46,95 +46,102 @@ HAVE_LIBNEUROSIM = nest.sli_pop()
 
 @nest.check_stack
 @unittest.skipIf(not HAVE_LIBCSA, 'Python libcsa package is not available')
-@unittest.skipIf(not HAVE_LIBNEUROSIM, 'PyNEST was built without the libneurosim library')
+@unittest.skipIf(
+    not HAVE_LIBNEUROSIM,
+    'PyNEST was built without the libneurosim library'
+)
 class libcsaTestCase(unittest.TestCase):
     """libcsa tests"""
-
 
     def test_libcsa_OneToOne_subnet_1d(self):
         """One-to-one connectivity with 1-dim subnets"""
 
         nest.ResetKernel()
 
-        n = 4 # number of neurons
+        n = 4  # number of neurons
 
         pop0 = nest.LayoutNetwork("iaf_neuron", [n])
         pop1 = nest.LayoutNetwork("iaf_neuron", [n])
 
         cg = libcsa.oneToOne
 
-        nest.CGConnect (pop0, pop1, cg)
+        nest.CGConnect(pop0, pop1, cg)
 
         sources = nest.GetLeaves(pop0)[0]
         targets = nest.GetLeaves(pop1)[0]
         for i in range(n):
-            conns = nest.GetStatus(nest.FindConnections([sources[i]]), 'target')
+            conns = nest.GetStatus(
+                nest.GetConnections([sources[i]]), 'target')
             self.assertEqual(len(conns), 1)
             self.assertEqual(conns[0], targets[i])
-            
-            conns = nest.GetStatus(nest.FindConnections([targets[i]]), 'target')
-            self.assertEqual(len(conns), 0)
 
+            conns = nest.GetStatus(
+                nest.GetConnections([targets[i]]), 'target')
+            self.assertEqual(len(conns), 0)
 
     def test_libcsa_OneToOne_subnet_nd(self):
         """One-to-one connectivity with n-dim subnets"""
 
         nest.ResetKernel()
 
-        n = 2 # number of neurons per dimension
+        n = 2  # number of neurons per dimension
 
         pop0 = nest.LayoutNetwork("iaf_neuron", [n, n])
         pop1 = nest.LayoutNetwork("iaf_neuron", [n, n])
 
         cg = libcsa.oneToOne
 
-        self.assertRaisesRegex(nest.NESTError, "BadProperty", nest.CGConnect, pop0, pop1, cg)
+        self.assertRaisesRegex(nest.NESTError, "BadProperty",
+                               nest.CGConnect, pop0, pop1, cg)
 
     def test_libcsa_OneToOne_idrange(self):
         """One-to-one connectivity with id ranges"""
 
         nest.ResetKernel()
 
-        n = 4 # number of neurons
+        n = 4  # number of neurons
 
         sources = nest.Create("iaf_neuron", n)
         targets = nest.Create("iaf_neuron", n)
 
         cg = libcsa.oneToOne
 
-        nest.CGConnect (sources, targets, cg)
+        nest.CGConnect(sources, targets, cg)
 
         for i in range(n):
-            conns = nest.GetStatus(nest.FindConnections([sources[i]]), 'target')
+            conns = nest.GetStatus(
+                nest.GetConnections([sources[i]]), 'target')
             self.assertEqual(len(conns), 1)
             self.assertEqual(conns[0], targets[i])
-            
-            conns = nest.GetStatus(nest.FindConnections([targets[i]]), 'target')
-            self.assertEqual(len(conns), 0)
 
+            conns = nest.GetStatus(
+                nest.GetConnections([targets[i]]), 'target')
+            self.assertEqual(len(conns), 0)
 
     def test_libcsa_OneToOne_params(self):
         """One-to-one connectivity"""
 
         nest.ResetKernel()
 
-        n = 4 # number of neurons
+        n = 4  # number of neurons
 
         pop0 = nest.LayoutNetwork("iaf_neuron", [n])
         pop1 = nest.LayoutNetwork("iaf_neuron", [n])
 
         cs = libcsa.cset(libcsa.oneToOne, 10000.0, 1.0)
-            
-        nest.CGConnect (pop0, pop1, cs, {"weight": 0, "delay": 1})
+
+        nest.CGConnect(pop0, pop1, cs, {"weight": 0, "delay": 1})
 
         sources = nest.GetLeaves(pop0)[0]
         targets = nest.GetLeaves(pop1)[0]
         for i in range(n):
-            conns = nest.GetStatus(nest.FindConnections([sources[i]]), 'target')
+            conns = nest.GetStatus(
+                nest.GetConnections([sources[i]]), 'target')
             self.assertEqual(len(conns), 1)
             self.assertEqual(conns[0], targets[i])
-            
-            conns = nest.GetStatus(nest.FindConnections([targets[i]]), 'target')
+
+            conns = nest.GetStatus(
+                nest.GetConnections([targets[i]]), 'target')
             self.assertEqual(len(conns), 0)
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
@@ -149,8 +156,8 @@ class libcsaTestCase(unittest.TestCase):
 
         nest.sli_push(cs)
         nest.sli_run('dup')
-        nest.sli_push(numpy.array([0,1,2,3]))
-        nest.sli_push(numpy.array([0,1,2,3]))
+        nest.sli_push(numpy.array([0, 1, 2, 3]))
+        nest.sli_push(numpy.array([0, 1, 2, 3]))
         nest.sli_run('cgsetmask')
         nest.sli_run('dup')
         nest.sli_run('cgstart')
@@ -168,7 +175,7 @@ class libcsaTestCase(unittest.TestCase):
 
 def suite():
 
-    suite = unittest.makeSuite(libcsaTestCase,'test')
+    suite = unittest.makeSuite(libcsaTestCase, 'test')
     return suite
 
 

@@ -23,10 +23,15 @@
 #ifndef UNIFORM_RANDOMDEV_H
 #define UNIFORM_RANDOMDEV_H
 
+// C++ includes:
 #include <cmath>
-#include "randomgen.h"
-#include "randomdev.h"
+
+// Includes from libnestutil:
 #include "lockptr.h"
+
+// Includes from librandom:
+#include "randomdev.h"
+#include "randomgen.h"
 
 /************************************************************/
 /* Class UniformRNG                                         */
@@ -50,7 +55,8 @@ namespace librandom
 
 /*BeginDocumentation
 Name: rdevdict::uniform - uniform random deviate generator
-Description: Generates uniformly distributed numbers in the interval [low, high).
+Description: Generates uniformly distributed numbers in the interval
+             [low, high).
 
 Parameters:
   low  - lower interval boundary, included

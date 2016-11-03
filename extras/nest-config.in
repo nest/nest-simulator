@@ -1,10 +1,7 @@
 #! /bin/sh
 
-prefix=@prefix@
-exec_prefix=@exec_prefix@
-srcdir=@PKGSRCDIR@
-builddir=@PKGBUILDDIR@
-configure_bluegene=@configure_bluegene@
+prefix=${NEST_INSTALL_DIR:-@CMAKE_INSTALL_PREFIX@}
+exec_prefix=${prefix}
 
 usage()
 {
@@ -17,8 +14,12 @@ Known values for OPTION are:
   --exec-prefix         NEST install prefix for architecture-dependent files
   --libs                print library linking information
   --cflags              print pre-processor and compiler flags
+  --includes            print includes
   --compiler            print the compiler used to compile NEST
-  --configure-bluegene  print "yes" if configured for BlueGene, "no" otherwise
+  --static-libraries    print "ON" if configured for static libraries, "OFF" otherwise
+  --docdir              print the relative path (to prefix) to the installed documentation
+  --datadir             print the relative path (to prefix) to the installed data
+  --libdir              print the relative path (to prefix) to the installed libraries
   --help                display this help and exit
   --version             output version information
 
@@ -44,50 +45,43 @@ while test $# -gt 0; do
     --prefix=*)
         prefix=$optarg
         ;;
-
     --prefix)
         echo $prefix
         ;;
-
     --exec-prefix)
         echo $exec_prefix
         ;;
-
     --version)
-        echo @SLI_VERSION@
-        exit 0
+        echo "@NEST_VERSION_VERSION@"
         ;;
-
     --help)
         usage 0
         ;;
-
+    --includes)
+        echo "@ALL_INCLUDES@"
+        ;;
     --cflags)
-        NEST_CFLAGS="-I${srcdir}/{libnestutil,librandom,sli,nestkernel,nest,topology} @MUSIC_INCLUDE@ @MPI_INCLUDE@ @GSL_CFLAGS@ @OPENMP_CXXFLAGS@"
-        if [ "${builddir}" != "${srcdir}" ]; then
-            NEST_CFLAGS="-I${builddir}/libnestutil ${NEST_CFLAGS}"
-        fi
-        echo $NEST_CFLAGS
+        echo "@ALL_CXXFLAGS@"
         ;;
-
     --libs)
-        NEST_LDFLAGS="-l{models,precise,topology}module -l{nest,random,sli} @SLI_LIBS@ @GSL_LIBS@ @MUSIC_LIBS@ @MPI_LIBS@ -lpthread @OPENMP_CXXFLAGS@ -export-dynamic"
-        if [ "${builddir}" != "${srcdir}" ]; then
-            NEST_LDFLAGS="-L${builddir}/{nestkernel,models,precise,librandom,sli,topology}/.libs ${NEST_LDFLAGS}"
-        else
-            NEST_LDFLAGS="-L${srcdir}/{nestkernel,models,precise,librandom,sli,topology}/.libs ${NEST_LDFLAGS}"
-        fi
-        echo $NEST_LDFLAGS
+        echo "-L$prefix/@CMAKE_INSTALL_LIBDIR@ @ALL_LIBS@"
         ;;
-
     --compiler)
-        echo @CXX@
+        echo "@CMAKE_CXX_COMPILER@"
         ;;
 
-    --configure-bluegene)
-        echo ${configure_bluegene}
+    --static-libraries)
+        echo "@static-libraries@"
         ;;
-
+    --docdir)
+        echo "@CMAKE_INSTALL_DOCDIR@"
+        ;;
+    --datadir)
+        echo "@CMAKE_INSTALL_DATADIR@"
+        ;;
+    --libdir)
+        echo "@CMAKE_INSTALL_LIBDIR@"
+        ;;
     *)
         usage
         exit 1

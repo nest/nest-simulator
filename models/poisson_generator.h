@@ -28,12 +28,15 @@
 /*                  Implementation: hep */
 /****************************************/
 
-#include "nest.h"
+// Includes from librandom:
+#include "poisson_randomdev.h"
+
+// Includes from nestkernel:
+#include "connection.h"
 #include "event.h"
+#include "nest_types.h"
 #include "node.h"
 #include "stimulating_device.h"
-#include "connection.h"
-#include "poisson_randomdev.h"
 
 namespace nest
 {
@@ -44,13 +47,14 @@ namespace nest
 
 
 /*BeginDocumentation
-Name: poisson_generator - simulate neuron firing with Poisson processes statistics.
+Name: poisson_generator - simulate neuron firing with Poisson processes
+                          statistics.
 Description:
-  The poisson_generator simulates a neuron that is firing with Poisson statistics,
-  i.e. exponentially distributed interspike intervals. It will generate a _unique_
-  spike train for each of it's targets. If you do not want this behavior and need
-  the same spike train for all targets, you have to use a parrot neuron inbetween
-  the poisson generator and the targets.
+  The poisson_generator simulates a neuron that is firing with Poisson
+  statistics, i.e. exponentially distributed interspike intervals. It will
+  generate a _unique_ spike train for each of it's targets. If you do not want
+  this behavior and need the same spike train for all targets, you have to use a
+  parrot neuron inbetween the poisson generator and the targets.
 
 Parameters:
    The following parameters appear in the element's status dictionary:
@@ -85,7 +89,7 @@ Remarks:
    guarantee reproducibility of the simulations across varying machine
    numbers.
 
-   Therefore, first, as network()->send sends spikes to all the
+   Therefore, first, as Network::get_network().send sends spikes to all the
    recipients, differentiation has to happen in the hook, second, the
    hook can use the RNG from the thread where the recipient neuron sits,
    which explains the current design of the generator. For details,
@@ -115,7 +119,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::event_hook;
 
@@ -129,7 +134,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
   void event_hook( DSSpikeEvent& );
 
   // ------------------------------------------------------------
@@ -139,7 +144,7 @@ private:
    */
   struct Parameters_
   {
-    double_t rate_; //!< process rate in Hz
+    double rate_; //!< process rate in Hz
 
     Parameters_(); //!< Sets default parameter values
 

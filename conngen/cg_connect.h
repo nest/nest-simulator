@@ -23,8 +23,17 @@
 #ifndef CG_CONNECT_H
 #define CG_CONNECT_H
 
-#include "conngenmodule.h"
-#include "vector"
+// C++ includes:
+#include <vector>
+
+// Includes from conngen:
+#include "conngendatum.h"
+
+// Includes from nestkernel:
+#include "nest_types.h"
+
+// Includes from sli:
+#include "dictdatum.h"
 
 namespace nest
 {
@@ -43,7 +52,9 @@ void cg_connect( ConnectionGeneratorDatum& cg,
   DictionaryDatum params_map,
   index syn );
 
-void cg_set_masks( ConnectionGeneratorDatum& cg, RangeSet& sources, RangeSet& targets );
+void cg_set_masks( ConnectionGeneratorDatum& cg,
+  RangeSet& sources,
+  RangeSet& targets );
 void cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
   RangeSet& sources,
   RangeSet& targets );

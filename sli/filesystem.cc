@@ -19,19 +19,28 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include <cassert>
+
 #include "filesystem.h"
-#include "arraydatum.h"
-#include "stringdatum.h"
-#include <errno.h>
+
+// C includes:
 #include <dirent.h>
+#include <errno.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <fstream>
+#include <unistd.h>
+
+// C++ includes:
+#include <cassert>
 #include <ctime>
+#include <fstream>
+
+// Includes from libnestutil:
 #include "compose.hpp"
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "stringdatum.h"
 
 
 void
@@ -110,8 +119,8 @@ FilesystemModule::SetDirectoryFunction::execute( SLIInterpreter* i ) const
 /* BeginDocumentation
  Name: Directory - Return current working directory
  Synopsis: Directory -> string
- Description: Returns name of current working directory. This is where all ls, filestream etc.
- operations are done per default.
+ Description: Returns name of current working directory. This is where all ls,
+ filestream etc. operations are done per default.
  Parameters: string : Name of current working directory
  Examples: Directory = -> /home/MyAccount/SNiFF/synod2
  Bugs: -
@@ -147,8 +156,10 @@ void
 FilesystemModule::MoveFileFunction::execute( SLIInterpreter* i ) const
 // string string -> boolean
 {
-  StringDatum* src = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
-  StringDatum* dst = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
+  StringDatum* src =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
+  StringDatum* dst =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
   assert( src != NULL );
   assert( dst != NULL );
   int s = link( src->c_str(), dst->c_str() );
@@ -177,15 +188,19 @@ void
 FilesystemModule::CopyFileFunction::execute( SLIInterpreter* i ) const
 // string string -> -
 {
-  StringDatum* src = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
-  StringDatum* dst = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
+  StringDatum* src =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
+  StringDatum* dst =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
   assert( src != NULL );
   assert( dst != NULL );
 
   std::ofstream deststream( dst->c_str() );
   if ( !deststream )
   {
-    i->message( SLIInterpreter::M_ERROR, "CopyFile", "Could not create destination file." );
+    i->message( SLIInterpreter::M_ERROR,
+      "CopyFile",
+      "Could not create destination file." );
     i->raiseerror( i->BadIOError );
     return;
   }
@@ -193,7 +208,8 @@ FilesystemModule::CopyFileFunction::execute( SLIInterpreter* i ) const
   std::ifstream sourcestream( src->c_str() );
   if ( !sourcestream )
   {
-    i->message( SLIInterpreter::M_ERROR, "CopyFile", "Could not open source file." );
+    i->message(
+      SLIInterpreter::M_ERROR, "CopyFile", "Could not open source file." );
     i->raiseerror( i->BadIOError );
     return;
   }
@@ -328,8 +344,10 @@ FilesystemModule::CompareFilesFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  StringDatum const* const flA = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
-  StringDatum const* const flB = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
+  StringDatum const* const flA =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
+  StringDatum const* const flB =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
   assert( flA );
   assert( flB );
 

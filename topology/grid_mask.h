@@ -23,13 +23,18 @@
 #ifndef GRID_MASK_H
 #define GRID_MASK_H
 
-#include "nest.h"
-#include "topology_names.h"
-#include "position.h"
+// Includes from nestkernel:
+#include "nest_types.h"
+
+// Includes from sli:
 #include "dictdatum.h"
 #include "dictutils.h"
-#include "topologymodule.h"
+
+// Includes from topology:
 #include "mask.h"
+#include "position.h"
+#include "topology_names.h"
+#include "topologymodule.h"
 
 namespace nest
 {
@@ -50,12 +55,12 @@ public:
   GridMask( const DictionaryDatum& d );
 
   bool
-  inside( const std::vector< double_t >& ) const
+  inside( const std::vector< double >& ) const
   {
     throw KernelException( "Grid mask must be applied to a grid layer." );
   }
 
-  void set_anchor( const Position< D, int_t >& );
+  void set_anchor( const Position< D, int >& );
 
   DictionaryDatum get_dict() const;
 
@@ -88,36 +93,36 @@ public:
     throw KernelException( "Grid masks can not be combined." );
   }
 
-  Position< D, int_t >
+  Position< D, int >
   get_upper_left() const
   {
     return upper_left_;
   }
 
-  Position< D, int_t >
+  Position< D, int >
   get_lower_right() const
   {
     return lower_right_;
   }
 
 protected:
-  Position< D, int_t > upper_left_;
-  Position< D, int_t > lower_right_;
+  Position< D, int > upper_left_;
+  Position< D, int > lower_right_;
 };
 
 template < int D >
 GridMask< D >::GridMask( const DictionaryDatum& d )
 {
-  int_t columns = getValue< long >( d, names::columns );
-  int_t rows = getValue< long >( d, names::rows );
+  int columns = getValue< long >( d, names::columns );
+  int rows = getValue< long >( d, names::rows );
   if ( D == 3 )
   {
-    int_t layers = getValue< long >( d, names::layers );
-    lower_right_ = Position< D, int_t >( columns, rows, layers );
+    int layers = getValue< long >( d, names::layers );
+    lower_right_ = Position< D, int >( columns, rows, layers );
   }
   else if ( D == 2 )
   {
-    lower_right_ = Position< D, int_t >( columns, rows );
+    lower_right_ = Position< D, int >( columns, rows );
   }
   else
   {
@@ -157,7 +162,7 @@ GridMask< D >::get_dict() const
 
 template < int D >
 void
-GridMask< D >::set_anchor( const Position< D, int_t >& anchor )
+GridMask< D >::set_anchor( const Position< D, int >& anchor )
 {
   lower_right_ = lower_right_ - upper_left_ - anchor;
   upper_left_ = -anchor;

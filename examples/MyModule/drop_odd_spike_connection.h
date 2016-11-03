@@ -23,6 +23,7 @@
 #ifndef DROP_ODD_SPIKE_CONNECTION_H
 #define DROP_ODD_SPIKE_CONNECTION_H
 
+// Includes from nestkernel:
 #include "connection.h"
 
 
@@ -30,8 +31,8 @@
   Name: drop_odd_spike - Synapse dropping spikes with odd time stamps.
 
   Description:
-  This synapse will not deliver any spikes with odd time stamps, while spikes with even
-  time stamps go through unchanged.
+  This synapse will not deliver any spikes with odd time stamps, while spikes
+  with even time stamps go through unchanged.
 
   Transmits: SpikeEvent
 
@@ -54,7 +55,7 @@ template < typename targetidentifierT >
 class DropOddSpikeConnection : public nest::Connection< targetidentifierT >
 {
 private:
-  nest::double_t weight_; //!< Synaptic weight
+  double weight_; //!< Synaptic weight
 
 public:
   //! Type to use for representing common synapse properties
@@ -117,20 +118,21 @@ public:
    * This function is a boilerplate function that should be included unchanged
    * in all synapse models. It is called before a connection is added to check
    * that the connection is legal. It is a wrapper that allows us to call
-   * the "real" `check_connection_()` method with the `ConnTestDummyNode dummy_target;` class
-   * for this connection type. This avoids a virtual function call for better
-   * performance.
+   * the "real" `check_connection_()` method with the `ConnTestDummyNode
+   * dummy_target;` class for this connection type. This avoids a virtual
+   * function call for better performance.
    *
    * @param s  Source node for connection
    * @param t  Target node for connection
    * @param receptor_type  Receptor type for connection
-   * @param lastspike Time of most recent spike of presynaptic (sender) neuron, not used here
+   * @param lastspike Time of most recent spike of presynaptic (sender) neuron,
+   *                  not used here
    */
   void
   check_connection( nest::Node& s,
     nest::Node& t,
     nest::rport receptor_type,
-    nest::double_t,
+    double,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -146,12 +148,12 @@ public:
    */
   void send( nest::Event& e,
     nest::thread t,
-    nest::double_t t_lastspike,
+    double t_lastspike,
     const CommonPropertiesType& cp );
 
-  // The following methods contain mostly fixed code to forward the corresponding
-  // tasks to corresponding methods in the base class and the w_ data member holding
-  // the weight.
+  // The following methods contain mostly fixed code to forward the
+  // corresponding tasks to corresponding methods in the base class and the w_
+  // data member holding the weight.
 
   //! Store connection status information in dictionary
   void get_status( DictionaryDatum& d ) const;
@@ -166,7 +168,7 @@ public:
 
   //! Allows efficient initialization on contstruction
   void
-  set_weight( nest::double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
@@ -177,7 +179,7 @@ template < typename targetidentifierT >
 inline void
 DropOddSpikeConnection< targetidentifierT >::send( nest::Event& e,
   nest::thread t,
-  nest::double_t last,
+  double last,
   const CommonPropertiesType& props )
 {
   if ( e.get_stamp().get_steps() % 2 ) // stamp is odd, drop it
@@ -194,20 +196,22 @@ DropOddSpikeConnection< targetidentifierT >::send( nest::Event& e,
 
 template < typename targetidentifierT >
 void
-DropOddSpikeConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+DropOddSpikeConnection< targetidentifierT >::get_status(
+  DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< nest::double_t >( d, nest::names::weight, weight_ );
-  def< nest::long_t >( d, nest::names::size_of, sizeof( *this ) );
+  def< double >( d, nest::names::weight, weight_ );
+  def< long >( d, nest::names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-DropOddSpikeConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
+DropOddSpikeConnection< targetidentifierT >::set_status(
+  const DictionaryDatum& d,
   nest::ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< nest::double_t >( d, nest::names::weight, weight_ );
+  updateValue< double >( d, nest::names::weight, weight_ );
 }
 
 } // namespace

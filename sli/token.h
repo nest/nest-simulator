@@ -26,14 +26,19 @@
     token.h defines the base objects used by the SLI interpreter.
 */
 
-#include <typeinfo>
-#include <iostream>
+// C++ includes:
 #include <iomanip>
+#include <iostream>
 #include <string>
+#include <typeinfo>
 #include <vector>
-#include <valarray>
+
+// Generated includes:
 #include "config.h"
+
+// Includes from sli:
 #include "datum.h"
+
 class Name;
 class Token;
 class TokenArray;
@@ -94,8 +99,10 @@ public:
   }
 
 
-  Token( Datum* p_s =
-           NULL ) //!< use existing pointer to datum, token takes responsibility of the pointer.
+  /**
+   * use existing pointer to datum, token takes responsibility of the pointer.
+   */
+  Token( Datum* p_s = NULL )
     : p( p_s )
   {
   }
@@ -114,7 +121,6 @@ public:
   Token( const char* );
   Token( std::string );
   Token( const std::vector< double >& );
-  Token( const std::valarray< double >& );
   Token( const std::vector< long >& );
   Token( const std::vector< size_t >& );
   Token( const std::ostream& );
@@ -199,7 +205,8 @@ public:
    * Initialize the token with a datum pointer.
    * This function assumes that the token does not point to
    * a valid datum.
-   * The function assumes that the datum is new and DOES NOT increases its reference count.
+   * The function assumes that the datum is new and DOES NOT increases its
+   * reference count.
    */
   void
   init_by_pointer( Datum* rhs )

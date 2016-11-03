@@ -491,6 +491,10 @@ properties.</p>
       <td>Hodgkin Huxley neuron model.</td>
     </tr>
     <tr>
+      <td width="25%"><a href="help/cc/hh_psc_alpha_gap.html">hh_psc_alpha_gap</a></td>
+      <td>Hodgkin Huxley neuron model with gap-junction support.</td>
+    </tr>
+    <tr>
       <td width="25%"><a href="help/cc/hh_cond_exp_traub.html">hh_cond_exp_traub</a></td>
       <td>Hodgin Huxley based model, Traub modified.</td>
     </tr>
@@ -610,24 +614,8 @@ connected to their targets like a neuron.</p>
       <td>Connect two network nodes.</td>
     </tr>
     <tr>
-      <td width="25%"><a href="help/cc/ConvergentConnect.html">ConvergentConnect</a></td>
-      <td>Connect many source nodes to one target node.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/cc/DivergentConnect.html">DivergentConnect</a></td>
-      <td>Connect one source node to many target nodes.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/sli/RandomConvergentConnect.html">RandomConvergentConnect</a></td>
-      <td>Randomly connect one source node to many target nodes.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/sli/RandomDivergentConnect.html">RandomDivergentConnect</a></td>
-      <td>Randomly connect one source node to many target nodes.</td>
-    </tr>
-    <tr>
-      <td width="25%"><a href="help/sli/BinomialConvergentConnect.html">BinomialConvergentConnect</a></td>
-      <td>Connect a target to a binomial number of sources.</td>
+      <td width="25%"><a href="help/sli/DataConnect.html">DataConnect</a></td>
+      <td>Build connections from explicit specifications.</td>
     </tr>
   </tbody>
 </table>
@@ -725,7 +713,7 @@ connected to their targets like a neuron.</p>
 <table class="commands">
   <tbody>
     <tr>
-      <td width="25%"><a href="help/sli/FindConnections.html">FindConnections</a></td>
+      <td width="25%"><a href="help/sli/GetConnections.html">GetConnections</a></td>
       <td>Find connections that fulfil the given criteria.</td>
     </tr>
     <tr>
@@ -3476,7 +3464,7 @@ not be restored to the state before the procedure was called.</p>
 </table>
 
 <p style="text-align:center">
-  &copy; 2000-2010 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+  &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
 </p>
 
 </body>

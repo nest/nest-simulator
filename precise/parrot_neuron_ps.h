@@ -23,49 +23,46 @@
 #ifndef PARROT_NEURON_PS_H
 #define PARROT_NEURON_PS_H
 
-#include "nest.h"
-#include "event.h"
-#include "node.h"
-#include "slice_ring_buffer.h"
+// Includes from nestkernel:
+#include "archiving_node.h"
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+
+// Includes from precise:
+#include "slice_ring_buffer.h"
 
 /* BeginDocumentation
 Name: parrot_neuron_ps - Neuron that repeats incoming spikes handling
 precise spike times.
 
 Description:
-  The parrot neuron simply emits one spike for every incoming spike.
-  One possible application for this is to create different channels
-  for the output of generator devices such as the poisson_generator
-  or the mip_generator.
+The parrot neuron simply emits one spike for every incoming spike.
+An important application is to provide identical poisson spike
+trains to a group of neurons. The poisson_generator sends a different
+spike train to each of its target neurons. By connecting one
+poisson_generator to a parrot_neuron and then that parrot_neuron to
+a group of neurons, all target neurons will receive the same poisson
+spike train.
 
 Remarks:
-  Network-wise the parrot neuron behaves like other neuron models
-  regarding connections and communication. While the number of
-  outgoing spikes equals that of incoming ones, the weigth of the
-  outgoing spikes solely depends on the weigth of outgoing connections.
 
-  A Poisson generator that would send multiple spikes during a single
-  time step due to a high rate will send single spikes with
-  multiple synaptic strength instead, for effiacy reasons.
-  This can be realized because of the way devices are implemented
-  in the threaded environment. A parrot neuron on the other
-  hand always emits single spikes. Hence, in a situation where for
-  example a poisson generator with a high firing rate is connected
-  to a parrot neuron, the communication cost associated with outgoing
-  spikes is much bigger for the latter.
+- Weights on connection to the parrot_neuron are ignored.
+- Weights on connections from the parrot_neuron are handled as usual.
+- Delays are honored on incoming and outgoing connections.
 
-  Please note that this node is capable of sending precise spike times
-  to target nodes (on-grid spike time plus offset). If this node is
-  connected to a spike_detector, the property "precise_times" of the
-  spike_detector has to be set to true in order to record the offsets
-  in addition to the on-grid spike times.
+Only spikes arriving on connections to port 0 will be repeated.
+Connections onto port 1 will be accepted, but spikes incoming
+through port 1 will be ignored. This allows setting exact pre-
+and post-synaptic spike times for STDP protocols by connecting
+two parrot neurons spiking at desired times by, e.g., a
+stdp_synapse onto port 1 on the post-synaptic parrot neuron.
 
-Parameters:
-  No parameters to be set in the status dictionary.
-
-References:
-  No references
+Please note that this node is capable of sending precise spike times
+to target nodes (on-grid spike time plus offset). If this node is
+connected to a spike_detector, the property "precise_times" of the
+spike_detector has to be set to true in order to record the offsets
+in addition to the on-grid spike times.
 
 Sends: SpikeEvent
 
@@ -76,16 +73,15 @@ Author: adapted from parrot_neuron by Kunkel
 
 namespace nest
 {
-class parrot_neuron_ps : public Node
+class parrot_neuron_ps : public Archiving_Node
 {
-  class Network;
-
 public:
   parrot_neuron_ps();
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -94,14 +90,8 @@ public:
   port send_test_event( Node&, rport, synindex, bool );
   port handles_test_event( SpikeEvent&, rport );
 
-  void
-  get_status( DictionaryDatum& ) const
-  {
-  }
-  void
-  set_status( const DictionaryDatum& )
-  {
-  }
+  void get_status( DictionaryDatum& ) const;
+  void set_status( const DictionaryDatum& );
 
   // uses off_grid events
   bool
@@ -115,13 +105,15 @@ private:
   init_state_( Node const& )
   {
   } // no state
+
   void init_buffers_();
+
   void
   calibrate()
   {
   } // no variables
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /** Queue for incoming events. */
   struct Buffers_
@@ -133,7 +125,10 @@ private:
 };
 
 inline port
-parrot_neuron_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
+parrot_neuron_ps::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -144,9 +139,16 @@ parrot_neuron_ps::send_test_event( Node& target, rport receptor_type, synindex, 
 inline port
 parrot_neuron_ps::handles_test_event( SpikeEvent&, rport receptor_type )
 {
-  if ( receptor_type != 0 )
+  // Allow connections to port 0 (spikes to be repeated)
+  // and port 1 (spikes to be ignored).
+  if ( receptor_type == 0 or receptor_type == 1 )
+  {
+    return receptor_type;
+  }
+  else
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
-  return 0;
+  }
 }
 
 } // namespace

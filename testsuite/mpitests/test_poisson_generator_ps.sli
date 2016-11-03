@@ -56,8 +56,8 @@ is_threaded not { exit_test_gracefully } if
                       >> Create def
   /pnet [ total_vps ] { ; /parrot_neuron Create } Table def
 
-  pg pnet DivergentConnect
-  pnet sd ConvergentConnect
+  [pg] pnet Connect
+  pnet [sd] Connect
   
   10. Simulate
 

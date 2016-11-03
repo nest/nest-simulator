@@ -23,7 +23,7 @@
 #ifndef SYN_ID_DELAY_H
 #define SYN_ID_DELAY_H
 
-#include "nest_time.h"
+// Includes from nestkernel:
 
 namespace nest
 {
@@ -33,7 +33,7 @@ struct SynIdDelay
   unsigned syn_id : 8;
   unsigned delay : 24;
 
-  SynIdDelay( double_t d )
+  SynIdDelay( double d )
     : syn_id( invalid_synindex )
   {
     set_delay_ms( d );
@@ -48,7 +48,7 @@ struct SynIdDelay
   /**
    * Return the delay of the connection in ms
    */
-  double_t
+  double
   get_delay_ms() const
   {
     return Time::delay_steps_to_ms( delay );
@@ -58,7 +58,7 @@ struct SynIdDelay
    * Set the delay of the connection specified in ms
    */
   void
-  set_delay_ms( const double_t d )
+  set_delay_ms( const double d )
   {
     delay = Time::delay_ms_to_steps( d );
   }

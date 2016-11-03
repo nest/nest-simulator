@@ -21,10 +21,13 @@
  */
 
 #include "uniform_randomdev.h"
+
+// C++ includes:
+#include <cmath>
+
+// Includes from sli:
 #include "dictutils.h"
 #include "sliexceptions.h"
-
-#include <cmath>
 
 // by default, init with interval [0, 1)
 librandom::UniformRandomDev::UniformRandomDev( RngPtr r_source )
@@ -63,6 +66,8 @@ librandom::UniformRandomDev::set_status( const DictionaryDatum& d )
 void
 librandom::UniformRandomDev::get_status( DictionaryDatum& d ) const
 {
+  RandomDev::get_status( d );
+
   def< double >( d, "low", low_ );
   def< double >( d, "high", high_ );
 }

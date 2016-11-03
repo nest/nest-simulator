@@ -23,12 +23,13 @@
 #ifndef SPIKE_DILUTOR_H
 #define SPIKE_DILUTOR_H
 
-#include "nest.h"
-#include "event.h"
-#include "node.h"
-#include "stimulating_device.h"
+// Includes from nestkernel:
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "node.h"
 #include "ring_buffer.h"
+#include "stimulating_device.h"
 
 namespace nest
 {
@@ -90,7 +91,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   void event_hook( DSSpikeEvent& );
 
@@ -101,7 +102,7 @@ private:
    */
   struct Parameters_
   {
-    double_t p_copy_; //!< copy probability for each incoming spike
+    double p_copy_; //!< copy probability for each incoming spike
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );
@@ -123,7 +124,10 @@ private:
 };
 
 inline port
-spike_dilutor::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
+spike_dilutor::send_test_event( Node& target,
+  rport receptor_type,
+  synindex syn_id,
+  bool )
 {
 
   device_.enforce_single_syn_type( syn_id );

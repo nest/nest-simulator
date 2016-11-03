@@ -33,7 +33,7 @@
    SeeAlso: synapsedict, static_synapse
 */
 
-
+// Includes from nestkernel:
 #include "common_synapse_properties.h"
 
 namespace nest
@@ -62,10 +62,10 @@ public:
   get_status( DictionaryDatum& d ) const
   {
     CommonSynapseProperties::get_status( d );
-    def< double_t >( d, names::weight, weight_ );
+    def< double >( d, names::weight, weight_ );
   }
 
-  double_t
+  double
   get_weight() const
   {
     return weight_;
@@ -78,12 +78,12 @@ public:
   set_status( const DictionaryDatum& d, ConnectorModel& cm )
   {
     CommonSynapseProperties::set_status( d, cm );
-    updateValue< double_t >( d, names::weight, weight_ );
+    updateValue< double >( d, names::weight, weight_ );
   }
 
 private:
   // data members common to all connections
-  double_t weight_;
+  double weight_;
 };
 
 } // namespace nest

@@ -40,148 +40,55 @@ Author: Hans Ekkehard Plesser, 2010-09-20
 M_INFO setverbosity
 
 /iaf_neuron 3 Create ;
+
 {
-/RandomConvergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
-[1 2 3] 1 4 << /InitSynapse { pop } >> RandomConvergentConnect
+[1 2 3] [1] << /rule /fixed_indegree /indegree 4 /multapses false /autapses true >> Connect
 } fail_or_die
 
 {
-/RandomConvergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
-[1 2 3] 1 3 << /InitSynapse { pop } >> RandomConvergentConnect
+[1 2 3] [1] << /rule /fixed_indegree /indegree 3 /multapses false /autapses true >> Connect
 } pass_or_die
 
 {
-/RandomConvergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
-[1 2 3] 1 2 << /InitSynapse { pop } >> RandomConvergentConnect
+[1 2 3] [1] << /rule /fixed_indegree /indegree 2 /multapses false /autapses true >> Connect
 } pass_or_die
 
 {
-/RandomConvergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
-[1 2 3] 1 4 << /InitSynapse { pop } >> RandomConvergentConnect
+[1 2 3] [1] << /rule /fixed_indegree /indegree 4 /multapses false /autapses false >> Connect
 } fail_or_die
 
 {
-/RandomConvergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
-[1 2 3] 1 3 << /InitSynapse { pop } >> RandomConvergentConnect
-} fail_or_die
-
-{
-/RandomConvergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
-[1 2 3] 1 2 << /InitSynapse { pop } >> RandomConvergentConnect
+[1 2 3] [1] << /rule /fixed_indegree /indegree 2 /multapses false /autapses false >> Connect
 } pass_or_die
 
 {
-/RandomConvergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
-[1] 1 1 << /InitSynapse { pop } >> RandomConvergentConnect
-} fail_or_die
-
-{
-/RandomConvergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
-[1 1 1] 1 1 << /InitSynapse { pop } >> RandomConvergentConnect
-} fail_or_die
-
-{
-/RandomConvergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
-[1 1 1 2] 1 1 << /InitSynapse { pop } >> RandomConvergentConnect
-} pass_or_die
-
-% --- 
-% Same stuff over again for plain RCC without init dict 
-
-{
-/RandomConvergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
-[1 2 3] 1 4  RandomConvergentConnect
-} fail_or_die
-
-{
-/RandomConvergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
-[1 2 3] 1 3  RandomConvergentConnect
-} pass_or_die
-
-{
-/RandomConvergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
-[1 2 3] 1 2  RandomConvergentConnect
-} pass_or_die
-
-{
-/RandomConvergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
-[1 2 3] 1 4  RandomConvergentConnect
-} fail_or_die
-
-{
-/RandomConvergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
-[1 2 3] 1 3  RandomConvergentConnect
-} fail_or_die
-
-{
-/RandomConvergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
-[1 2 3] 1 2  RandomConvergentConnect
-} pass_or_die
-
-{
-/RandomConvergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
-[1] 1 1  RandomConvergentConnect
-} fail_or_die
-
-{
-/RandomConvergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
-[1 1 1] 1 1  RandomConvergentConnect
-} fail_or_die
-
-{
-/RandomConvergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
-[1 1 1 2] 1 1  RandomConvergentConnect
+[1 1 1 2] [1] << /rule /fixed_indegree /indegree 1 /multapses true /autapses true >> Connect
 } pass_or_die
 
 % ---------------------
-% Finally, we test RandomDivergentConnect (no init dict variant)
 
 {
-/RandomDivergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
-1 4 [1 2 3]  RandomDivergentConnect
+[1] [1 2 3] << /rule /fixed_outdegree /outdegree 4 /multapses false /autapses true >> Connect
 } fail_or_die
 
 {
-/RandomDivergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
-1 3 [1 2 3]  RandomDivergentConnect
+[1] [1 2 3] << /rule /fixed_outdegree /outdegree 3 /multapses false /autapses true >> Connect
 } pass_or_die
 
 {
-/RandomDivergentConnect << /allow_multapses false /allow_autapses true >> SetOptions
-1 2 [1 2 3]  RandomDivergentConnect
+[1] [1 2 3] << /rule /fixed_outdegree /outdegree 2 /multapses false /autapses true >> Connect
 } pass_or_die
 
 {
-/RandomDivergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
-1 4 [1 2 3] RandomDivergentConnect
+[1] [1 2 3] << /rule /fixed_outdegree /outdegree 4 /multapses false /autapses false >> Connect
 } fail_or_die
 
 {
-/RandomDivergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
-1 3 [1 2 3] RandomDivergentConnect
-} fail_or_die
-
-{
-/RandomDivergentConnect << /allow_multapses false /allow_autapses false >> SetOptions
-1 2 [1 2 3]  RandomDivergentConnect
+[1] [1 2 3] << /rule /fixed_outdegree /outdegree 2 /multapses false /autapses false >> Connect
 } pass_or_die
 
 {
-/RandomDivergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
-1 1 [1]  RandomDivergentConnect
-} fail_or_die
-
-{
-/RandomDivergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
-1 1 [1 1 1]  RandomDivergentConnect
-} fail_or_die
-
-{
-/RandomDivergentConnect << /allow_multapses true /allow_autapses false >> SetOptions
-1 1 [1 1 1 2]  RandomDivergentConnect
+[1] [1 1 1 2] << /rule /fixed_outdegree /outdegree 1 /multapses true /autapses false >> Connect
 } pass_or_die
-
-
-
 
 endusing

@@ -58,8 +58,10 @@ Date:      18.11.95
 
 
 #include "typechk.h"
-#include "namedatum.h"
+
+// Includes from sli:
 #include "arraydatum.h"
+#include "namedatum.h"
 #include "sliexceptions.h"
 
 void
@@ -88,7 +90,8 @@ TypeTrie::TypeNode::toTokenArray( TokenArray& a ) const
 }
 
 void
-TypeTrie::TypeNode::info( std::ostream& out, std::vector< TypeNode const* >& tl ) const
+TypeTrie::TypeNode::info( std::ostream& out,
+  std::vector< TypeNode const* >& tl ) const
 {
   if ( next == NULL && alt == NULL ) // Leaf node
   {

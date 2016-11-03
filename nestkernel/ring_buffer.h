@@ -22,11 +22,15 @@
 
 #ifndef RING_BUFFER_H
 #define RING_BUFFER_H
-#include <valarray>
+
+// C++ includes:
 #include <list>
-#include "nest.h"
-#include "scheduler.h"
+#include <vector>
+
+// Includes from nestkernel:
+#include "kernel_manager.h"
 #include "nest_time.h"
+#include "nest_types.h"
 
 namespace nest
 {
@@ -69,7 +73,7 @@ namespace nest
 
    so that the ring buffer needs max_del elements.
 
-   Each field represents an entry in the valarray.
+   Each field represents an entry in the vector.
 
 */
 
@@ -82,23 +86,30 @@ public:
   /**
    * Add a value to the ring buffer.
    * @param  offs     Arrival time relative to beginning of slice.
-   * @param  double_t Value to add.
+   * @param  double Value to add.
    */
-  void add_value( const long_t offs, const double_t );
+  void add_value( const long offs, const double );
 
   /**
    * Set a ring buffer entry to a given value.
    * @param  offs     Arrival time relative to beginning of slice.
-   * @param  double_t Value to set.
+   * @param  double Value to set.
    */
-  void set_value( const long_t offs, const double_t );
+  void set_value( const long offs, const double );
 
   /**
    * Read one value from ring buffer.
    * @param  offs  Offset of element to read within slice.
    * @returns value
    */
-  double get_value( const long_t offs );
+  double get_value( const long offs );
+
+  /**
+   * Read one value from ring buffer without deleting it afterwards.
+   * @param  offs  Offset of element to read within slice.
+   * @returns value
+   */
+  double get_value_wfr_update( const long offs );
 
   /**
    * Initialize the buffer with noughts.
@@ -124,7 +135,7 @@ public:
 
 private:
   //! Buffered data
-  std::valarray< double_t > buffer_;
+  std::vector< double > buffer_;
 
   /**
    * Obtain buffer index.
@@ -136,35 +147,48 @@ private:
 };
 
 inline void
-RingBuffer::add_value( const long_t offs, const double_t v )
+RingBuffer::add_value( const long offs, const double v )
 {
   buffer_[ get_index_( offs ) ] += v;
 }
 
 inline void
-RingBuffer::set_value( const long_t offs, const double_t v )
+RingBuffer::set_value( const long offs, const double v )
 {
   buffer_[ get_index_( offs ) ] = v;
 }
 
 inline double
-RingBuffer::get_value( const long_t offs )
+RingBuffer::get_value( const long offs )
 {
   assert( 0 <= offs && ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < Scheduler::get_min_delay() );
+  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
-  long_t idx = get_index_( offs );
-  double_t val = buffer_[ idx ];
+  long idx = get_index_( offs );
+  double val = buffer_[ idx ];
   buffer_[ idx ] = 0.0; // clear buffer after reading
+  return val;
+}
+
+inline double
+RingBuffer::get_value_wfr_update( const long offs )
+{
+  assert( 0 <= offs && ( size_t ) offs < buffer_.size() );
+  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
+
+  // offs == 0 is beginning of slice, but we have to
+  // take modulo into account when indexing
+  long idx = get_index_( offs );
+  double val = buffer_[ idx ];
   return val;
 }
 
 inline size_t
 RingBuffer::get_index_( const delay d ) const
 {
-  const long_t idx = Scheduler::get_modulo( d );
+  const long idx = kernel().event_delivery_manager.get_modulo( d );
   assert( 0 <= idx );
   assert( ( size_t ) idx < buffer_.size() );
   return idx;
@@ -179,16 +203,16 @@ public:
   /**
    * Add a value to the ring buffer.
    * @param  offs     Arrival time relative to beginning of slice.
-   * @param  double_t Value to add.
+   * @param  double Value to add.
    */
-  void add_value( const long_t offs, const double_t );
+  void add_value( const long offs, const double );
 
   /**
    * Read one value from ring buffer.
    * @param  offs  Offset of element to read within slice.
    * @returns value
    */
-  double get_value( const long_t offs );
+  double get_value( const long offs );
 
   /**
    * Initialize the buffer with noughts.
@@ -211,7 +235,7 @@ public:
 
 private:
   //! Buffered data
-  std::valarray< double_t > buffer_;
+  std::vector< double > buffer_;
 
   /**
    * Obtain buffer index.
@@ -223,22 +247,22 @@ private:
 };
 
 inline void
-MultRBuffer::add_value( const long_t offs, const double_t v )
+MultRBuffer::add_value( const long offs, const double v )
 {
   assert( 0 <= offs && ( size_t ) offs < buffer_.size() );
   buffer_[ get_index_( offs ) ] *= v;
 }
 
 inline double
-MultRBuffer::get_value( const long_t offs )
+MultRBuffer::get_value( const long offs )
 {
   assert( 0 <= offs && ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < Scheduler::get_min_delay() );
+  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
-  long_t idx = get_index_( offs );
-  double_t val = buffer_[ idx ];
+  long idx = get_index_( offs );
+  double val = buffer_[ idx ];
   buffer_[ idx ] = 0.0; // clear buffer after reading
   return val;
 }
@@ -246,7 +270,7 @@ MultRBuffer::get_value( const long_t offs )
 inline size_t
 MultRBuffer::get_index_( const delay d ) const
 {
-  const long_t idx = Scheduler::get_modulo( d );
+  const long idx = kernel().event_delivery_manager.get_modulo( d );
   assert( 0 <= idx && ( size_t ) idx < buffer_.size() );
   return idx;
 }
@@ -260,11 +284,11 @@ public:
   /**
    * Append a value to the ring buffer list.
    * @param  offs     Arrival time relative to beginning of slice.
-   * @param  double_t Value to append.
+   * @param  double Value to append.
    */
-  void append_value( const long_t offs, const double_t );
+  void append_value( const long offs, const double );
 
-  std::list< double_t >& get_list( const long_t offs );
+  std::list< double >& get_list( const long offs );
 
   /**
    * Initialize the buffer with empty lists.
@@ -290,7 +314,7 @@ public:
 
 private:
   //! Buffered data
-  std::vector< std::list< double_t > > buffer_;
+  std::vector< std::list< double > > buffer_;
 
   /**
    * Obtain buffer index.
@@ -302,27 +326,27 @@ private:
 };
 
 inline void
-ListRingBuffer::append_value( const long_t offs, const double_t v )
+ListRingBuffer::append_value( const long offs, const double v )
 {
   buffer_[ get_index_( offs ) ].push_back( v );
 }
 
-inline std::list< double_t >&
-ListRingBuffer::get_list( const long_t offs )
+inline std::list< double >&
+ListRingBuffer::get_list( const long offs )
 {
   assert( 0 <= offs && ( size_t ) offs < buffer_.size() );
-  assert( ( delay ) offs < Scheduler::get_min_delay() );
+  assert( ( delay ) offs < kernel().connection_manager.get_min_delay() );
 
   // offs == 0 is beginning of slice, but we have to
   // take modulo into account when indexing
-  long_t idx = get_index_( offs );
+  long idx = get_index_( offs );
   return buffer_[ idx ];
 }
 
 inline size_t
 ListRingBuffer::get_index_( const delay d ) const
 {
-  const long_t idx = Scheduler::get_modulo( d );
+  const long idx = kernel().event_delivery_manager.get_modulo( d );
   assert( 0 <= idx );
   assert( ( size_t ) idx < buffer_.size() );
   return idx;

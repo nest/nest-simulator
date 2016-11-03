@@ -23,29 +23,28 @@
 #ifndef HH_PSC_ALPHA_H
 #define HH_PSC_ALPHA_H
 
+// Generated includes:
 #include "config.h"
 
 #ifdef HAVE_GSL
 
-#include "nest.h"
-#include "event.h"
-#include "archiving_node.h"
-#include "ring_buffer.h"
-#include "connection.h"
-
-#include "universal_data_logger.h"
-#include "recordables_map.h"
-
+// External includes:
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv.h>
 #include <gsl/gsl_sf_exp.h>
 
+// Includes from nestkernel:
+#include "archiving_node.h"
+#include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "recordables_map.h"
+#include "ring_buffer.h"
+#include "universal_data_logger.h"
+
 namespace nest
 {
-
-using std::vector;
-
 /**
  * Function computing right-hand side of ODE for GSL solver.
  * @note Must be declared here so we can befriend it in class.
@@ -63,7 +62,8 @@ Name: hh_psc_alpha - Hodgkin Huxley neuron model.
 
 Description:
 
- hh_psc_alpha is an implementation of a spiking neuron using the Hodkin-Huxley formalism.
+ hh_psc_alpha is an implementation of a spiking neuron using the Hodkin-Huxley
+ formalism.
 
  (1) Post-syaptic currents
  Incoming spike events induce a post-synaptic change of current modelled
@@ -72,8 +72,9 @@ Description:
 
 
  (2) Spike Detection
- Spike detection is done by a combined threshold-and-local-maximum search: if there
- is a local maximum above a certain threshold of the membrane potential, it is considered a spike.
+ Spike detection is done by a combined threshold-and-local-maximum search: if
+ there is a local maximum above a certain threshold of the membrane potential,
+ it is considered a spike.
 
 Parameters:
 
@@ -132,7 +133,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -155,17 +157,17 @@ potentials_.connect_logging_device();
    * @param Time the current network time
    *
    */
-  double_t get_potential( Time const& ) const;
+  double get_potential( Time const& ) const;
 
   /**
    * Define current membrane potential.
    * This function is thread-safe and should be used in threaded
    * contexts to change the current membrane potential value.
    * @param Time     the current network time
-   * @param double_t new value of the mebrane potential
+   * @param double new value of the mebrane potential
    *
    */
-  void set_potential( Time const&, double_t );
+  void set_potential( Time const&, double );
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -174,7 +176,7 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // END Boilerplate function declarations ----------------------------
 
@@ -193,17 +195,17 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double_t t_ref_;   //!< refractory time in ms
-    double_t g_Na;     //!< Sodium Conductance in nS
-    double_t g_K;      //!< Potassium Conductance in nS
-    double_t g_L;      //!< Leak Conductance in nS
-    double_t C_m;      //!< Membrane Capacitance in pF
-    double_t E_Na;     //!< Sodium Reversal Potential in mV
-    double_t E_K;      //!< Potassium Reversal Potential in mV
-    double_t E_L;      //!< Leak reversal Potential (aka resting potential) in mV
-    double_t tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
-    double_t tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double_t I_e;      //!< Constant Current in pA
+    double t_ref_;   //!< refractory time in ms
+    double g_Na;     //!< Sodium Conductance in nS
+    double g_K;      //!< Potassium Conductance in nS
+    double g_L;      //!< Leak Conductance in nS
+    double C_m;      //!< Membrane Capacitance in pF
+    double E_Na;     //!< Sodium Reversal Potential in mV
+    double E_K;      //!< Potassium Reversal Potential in mV
+    double E_L;      //!< Leak reversal Potential (aka resting potential) in mV
+    double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
+    double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
+    double I_e;      //!< Constant Current in pA
 
     Parameters_(); //!< Sets default parameter values
 
@@ -242,8 +244,9 @@ public:
     };
 
 
-    double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
-    int_t r_;                      //!< number of refractory steps remaining
+    //! neuron state, must be C-array for GSL solver
+    double y_[ STATE_VEC_SIZE ];
+    int r_; //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -282,7 +285,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double_t step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**
@@ -292,7 +295,7 @@ private:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double_t I_stim_;
+    double I_stim_;
   };
 
   // ----------------------------------------------------------------
@@ -303,19 +306,19 @@ private:
   struct Variables_
   {
     /** initial value to normalise excitatory synaptic current */
-    double_t PSCurrInit_E_;
+    double PSCurrInit_E_;
 
     /** initial value to normalise inhibitory synaptic current */
-    double_t PSCurrInit_I_;
+    double PSCurrInit_I_;
 
-    int_t RefractoryCounts_;
+    int RefractoryCounts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out state vector elements, used by UniversalDataLogger
   template < State_::StateVecElems elem >
-  double_t
+  double
   get_y_elem_() const
   {
     return S_.y_[ elem ];
@@ -334,7 +337,10 @@ private:
 
 
 inline port
-hh_psc_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
+hh_psc_alpha::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

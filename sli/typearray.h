@@ -22,9 +22,12 @@
 
 #ifndef TYPEARRAY_H
 #define TYPEARRAY_H
-#include <typeinfo>
 
+// C++ includes:
+#include <typeinfo>
 #include <vector>
+
+// Includes from sli:
 #include "name.h"
 
 typedef std::vector< Name > TypeArray;

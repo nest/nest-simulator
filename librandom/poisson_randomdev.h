@@ -23,12 +23,16 @@
 #ifndef POISSON_RANDOMDEV_H
 #define POISSON_RANDOMDEV_H
 
+// C++ includes:
 #include <cmath>
 #include <vector>
 
-#include "randomgen.h"
-#include "randomdev.h"
+// Includes from libnestutil:
 #include "lockptr.h"
+
+// Includes from librandom:
+#include "randomdev.h"
+#include "randomgen.h"
 
 /************************************************************/
 /* Class PoissonRNG                                         */
@@ -169,7 +173,11 @@ private:
   static const unsigned n_a_; //!< length of array
 
   //! Procedure F from Ahrens & Dieter
-  void proc_f_( const unsigned k, double& px, double& py, double& fx, double& fy ) const;
+  void proc_f_( const unsigned k,
+    double& px,
+    double& py,
+    double& fx,
+    double& fy ) const;
 };
 }
 

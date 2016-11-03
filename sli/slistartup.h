@@ -23,16 +23,22 @@
 #ifndef SLISTARTUP_H
 #define SLISTARTUP_H
 
+// C++ includes:
 #include <string>
-#include "sliconfig.h"
-#include "slimodule.h"
-#include "token.h"
-#include "slifunction.h"
-#include "name.h"
-#include "compose.hpp"
 
+// Generated includes:
 #include "dirent.h"
 #include "errno.h"
+#include "config.h"
+
+// Includes from libnestutil:
+#include "compose.hpp"
+
+// Includes from sli:
+#include "name.h"
+#include "slifunction.h"
+#include "slimodule.h"
+#include "token.h"
 
 class SLIStartup : public SLIModule
 {
@@ -40,11 +46,13 @@ class SLIStartup : public SLIModule
   const std::string slilibpath;
   std::string slihomepath;
   std::string slidocdir;
+  std::string sliprefix;
 
   std::string locateSLIInstallationPath( void );
   bool checkpath( std::string const&, std::string& ) const;
   std::string getenv( const std::string& ) const;
-  std::string checkenvpath( std::string const&, SLIInterpreter*, std::string ) const;
+  std::string
+  checkenvpath( std::string const&, SLIInterpreter*, std::string ) const;
 
   Token targs;
   int verbosity_;
@@ -59,8 +67,6 @@ public:
   Name prgpatch_name;
   Name prgbuilt_name;
   Name prefix_name;
-  Name prgsourcedir_name;
-  Name prgbuilddir_name;
   Name prgdatadir_name;
   Name prgdocdir_name;
 

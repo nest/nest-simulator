@@ -23,61 +23,69 @@
 #include "ring_buffer.h"
 
 nest::RingBuffer::RingBuffer()
-  : buffer_( 0.0, Scheduler::get_min_delay() + Scheduler::get_max_delay() )
+  : buffer_( kernel().connection_manager.get_min_delay()
+        + kernel().connection_manager.get_max_delay(),
+      0.0 )
 {
 }
 
 void
 nest::RingBuffer::resize()
 {
-  size_t size = Scheduler::get_min_delay() + Scheduler::get_max_delay();
+  size_t size = kernel().connection_manager.get_min_delay()
+    + kernel().connection_manager.get_max_delay();
   if ( buffer_.size() != size )
   {
     buffer_.resize( size );
-    buffer_ = 0.0;
   }
 }
 
 void
 nest::RingBuffer::clear()
 {
-  resize();      // does nothing if size is fine
-  buffer_ = 0.0; // clear all elements
+  resize(); // does nothing if size is fine
+  // clear all elements
+  buffer_.assign( buffer_.size(), 0.0 );
 }
 
 
 nest::MultRBuffer::MultRBuffer()
-  : buffer_( 0.0, Scheduler::get_min_delay() + Scheduler::get_max_delay() )
+  : buffer_( kernel().connection_manager.get_min_delay()
+        + kernel().connection_manager.get_max_delay(),
+      0.0 )
 {
 }
 
 void
 nest::MultRBuffer::resize()
 {
-  size_t size = Scheduler::get_min_delay() + Scheduler::get_max_delay();
+  size_t size = kernel().connection_manager.get_min_delay()
+    + kernel().connection_manager.get_max_delay();
   if ( buffer_.size() != size )
   {
     buffer_.resize( size );
-    buffer_ = 0.0;
   }
 }
 
 void
 nest::MultRBuffer::clear()
 {
-  buffer_ = 0.0;
+  // clear all elements
+  buffer_.assign( buffer_.size(), 0.0 );
 }
 
 
 nest::ListRingBuffer::ListRingBuffer()
-  : buffer_( Scheduler::get_min_delay() + Scheduler::get_max_delay() )
+  : buffer_( kernel().connection_manager.get_min_delay()
+      + kernel().connection_manager.get_max_delay() )
 {
 }
 
 void
 nest::ListRingBuffer::resize()
 {
-  size_t size = Scheduler::get_min_delay() + Scheduler::get_max_delay();
+  size_t size = kernel().connection_manager.get_min_delay()
+    + kernel().connection_manager.get_max_delay();
   if ( buffer_.size() != size )
   {
     buffer_.resize( size );

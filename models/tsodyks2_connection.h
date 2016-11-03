@@ -28,12 +28,13 @@
   Name: tsodyks2_synapse - Synapse type with short term plasticity.
 
   Description:
-   This synapse model implements synaptic short-term depression and short-term facilitation
-   according to [1] and [2]. It solves Eq (2) from [1] and modulates U according to eq. (2) of [2].
+   This synapse model implements synaptic short-term depression and short-term
+   facilitation according to [1] and [2]. It solves Eq (2) from [1] and
+   modulates U according to eq. (2) of [2].
 
-   This connection merely scales the synaptic weight, based on the spike history and the
-   parameters of the kinetic model. Thus, it is suitable for all types of synaptic dynamics,
-   that is current or conductance based.
+   This connection merely scales the synaptic weight, based on the spike history
+   and the parameters of the kinetic model. Thus, it is suitable for all types
+   of synaptic dynamics, that is current or conductance based.
 
    The parameter A_se from the publications is represented by the
    synaptic weight. The variable x in the synapse properties is the
@@ -41,8 +42,10 @@
 
    Parameters:
      The following parameters can be set in the status dictionary:
-     U          double - probability of release increment (U1) [0,1], default=0.5
-     u          double - Maximum probability of release (U_se) [0,1], default=0.5
+     U          double - probability of release increment (U1) [0,1],
+                         default=0.5
+     u          double - Maximum probability of release (U_se) [0,1],
+                         default=0.5
      x          double - current scaling factor of the weight, default=U
      tau_rec    double - time constant for depression in ms, default=800 ms
      tau_fac    double - time constant for facilitation in ms, default=0 (off)
@@ -57,12 +60,14 @@
 
 
   References:
-   [1] Tsodyks, M. V., & Markram, H. (1997). The neural code between neocortical pyramidal neurons
-       depends on neurotransmitter release probability. PNAS, 94(2), 719-23.
-   [2] Fuhrmann, G., Segev, I., Markram, H., & Tsodyks, M. V. (2002). Coding of temporal
-       information by activity-dependent synapses. Journal of neurophysiology, 87(1), 140-8.
-   [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers. Neural networks, 15(2),
-  155–61.
+   [1] Tsodyks, M. V., & Markram, H. (1997). The neural code between neocortical
+       pyramidal neurons depends on neurotransmitter release probability.
+       PNAS, 94(2), 719-23.
+   [2] Fuhrmann, G., Segev, I., Markram, H., & Tsodyks, M. V. (2002). Coding of
+       temporal information by activity-dependent synapses. Journal of
+       neurophysiology, 87(1), 140-8.
+   [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers.
+       Neural networks, 15(2), 155–61.
 
   Transmits: SpikeEvent
 
@@ -73,12 +78,16 @@
 
 
 /**
- * Class representing a synapse with Tsodyks short term plasticity, based on the iterative formula
- * A suitable Connector containing these connections can be obtained from the template
- * GenericConnector.
+ * Class representing a synapse with Tsodyks short term plasticity, based on the
+ * iterative formula. A suitable Connector containing these connections can be
+ * obtained from the template GenericConnector.
  */
-#include "connection.h"
+
+// C++ includes:
 #include <cmath>
+
+// Includes from nestkernel:
+#include "connection.h"
 
 namespace nest
 {
@@ -109,10 +118,10 @@ public:
   {
   }
 
-  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
-  // This avoids explicit name prefixes in all places these functions are used.
-  // Since ConnectionBase depends on the template parameter, they are not automatically
-  // found in the base class.
+  // Explicitly declare all methods inherited from the dependent base
+  // ConnectionBase. This avoids explicit name prefixes in all places these
+  // functions are used. Since ConnectionBase depends on the template parameter,
+  // they are not automatically found in the base class.
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
   using ConnectionBase::get_rport;
@@ -134,7 +143,10 @@ public:
    * \param t_lastspike Point in time of last spike sent.
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties& cp );
+  void send( Event& e,
+    thread t,
+    double t_lastspike,
+    const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -152,26 +164,30 @@ public:
 
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType& )
+  check_connection( Node& s,
+    Node& t,
+    rport receptor_type,
+    double,
+    const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
   }
 
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
 
 
 private:
-  double_t weight_;
-  double_t U_;       //!< unit increment of a facilitating synapse
-  double_t u_;       //!< dynamic value of probability of release
-  double_t x_;       //!< current fraction of the synaptic weight
-  double_t tau_rec_; //!< [ms] time constant for recovery
-  double_t tau_fac_; //!< [ms] time constant for facilitation
+  double weight_;
+  double U_;       //!< unit increment of a facilitating synapse
+  double u_;       //!< dynamic value of probability of release
+  double x_;       //!< current fraction of the synaptic weight
+  double tau_rec_; //!< [ms] time constant for recovery
+  double tau_fac_; //!< [ms] time constant for facilitation
 };
 
 
@@ -185,14 +201,14 @@ template < typename targetidentifierT >
 inline void
 Tsodyks2Connection< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
+  double t_lastspike,
   const CommonSynapseProperties& )
 {
   Node* target = get_target( t );
 
-  double_t h = e.get_stamp().get_ms() - t_lastspike;
-  double_t x_decay = std::exp( -h / tau_rec_ );
-  double_t u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
+  double h = e.get_stamp().get_ms() - t_lastspike;
+  double x_decay = std::exp( -h / tau_rec_ );
+  double u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
   // now we compute spike number n+1
   x_ = 1. + ( x_ - x_ * u_ - 1. ) * x_decay; // Eq. 5 from reference [3]
@@ -220,7 +236,8 @@ Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection()
 }
 
 template < typename targetidentifierT >
-Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection( const Tsodyks2Connection& rhs )
+Tsodyks2Connection< targetidentifierT >::Tsodyks2Connection(
+  const Tsodyks2Connection& rhs )
   : ConnectionBase( rhs )
   , weight_( rhs.weight_ )
   , U_( rhs.U_ )
@@ -237,28 +254,41 @@ void
 Tsodyks2Connection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
+  def< double >( d, names::weight, weight_ );
 
-  def< double_t >( d, names::dU, U_ );
-  def< double_t >( d, names::u, u_ );
-  def< double_t >( d, names::tau_rec, tau_rec_ );
-  def< double_t >( d, names::tau_fac, tau_fac_ );
-  def< double_t >( d, names::x, x_ );
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  def< double >( d, names::dU, U_ );
+  def< double >( d, names::u, u_ );
+  def< double >( d, names::tau_rec, tau_rec_ );
+  def< double >( d, names::tau_fac, tau_fac_ );
+  def< double >( d, names::x, x_ );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+Tsodyks2Connection< targetidentifierT >::set_status( const DictionaryDatum& d,
+  ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double_t >( d, names::weight, weight_ );
+  updateValue< double >( d, names::weight, weight_ );
 
-  updateValue< double_t >( d, names::dU, U_ );
-  updateValue< double_t >( d, names::u, u_ );
-  updateValue< double_t >( d, names::tau_rec, tau_rec_ );
-  updateValue< double_t >( d, names::tau_fac, tau_fac_ );
-  updateValue< double_t >( d, names::x, x_ );
+  updateValue< double >( d, names::dU, U_ );
+  if ( U_ > 1.0 || U_ < 0.0 )
+    throw BadProperty( "U must be in [0,1]." );
+
+  updateValue< double >( d, names::u, u_ );
+  if ( u_ > 1.0 || u_ < 0.0 )
+    throw BadProperty( "u must be in [0,1]." );
+
+  updateValue< double >( d, names::tau_rec, tau_rec_ );
+  if ( tau_rec_ <= 0.0 )
+    throw BadProperty( "tau_rec must be > 0." );
+
+  updateValue< double >( d, names::tau_fac, tau_fac_ );
+  if ( tau_fac_ < 0.0 )
+    throw BadProperty( "tau_fac must be >= 0." );
+
+  updateValue< double >( d, names::x, x_ );
 }
 
 } // namespace

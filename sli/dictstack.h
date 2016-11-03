@@ -25,9 +25,13 @@
 /*
     SLI's dictionary stack
 */
-#include <typeinfo>
-#include "dictdatum.h"
+
+// C++ includes:
 #include <list>
+#include <typeinfo>
+
+// Includes from sli:
+#include "dictdatum.h"
 #include "sliexceptions.h"
 
 
@@ -287,7 +291,8 @@ public:
    */
   void def( const Name&, const Token& );
 
-  /** Unbind a previously defined Name from its token. Seach in all dictionaries.
+  /** Unbind a previously defined Name from its token. Seach in all
+   * dictionaries.
    */
   void undef( const Name& );
 

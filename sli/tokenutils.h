@@ -23,11 +23,16 @@
 #ifndef TOKENUTILS_H
 #define TOKENUTILS_H
 
-#include "token.h"
-#include "sliexceptions.h"
-#include "namedatum.h"
+// C++ includes:
 #include <string>
+
+// Generated includes:
 #include "config.h"
+
+// Includes from sli:
+#include "namedatum.h"
+#include "sliexceptions.h"
+#include "token.h"
 
 /**
  * @defgroup TokenHandling Handling classes Token and Dictionary.
@@ -122,8 +127,8 @@
     The following specialized variants of getValue() can be used in addition:
 
     \verbatim
-        call                                    can be used on Token containing SLI-type
-       ---------------------------------------------------------------------------------
+        call                            can be used on Token containing SLI-type
+       -------------------------------------------------------------------------
         long             GetValue<long>              IntegerDatum
         double           GetValue<double>            DoubleDatum
         bool             GetValue<bool>              BoolDatum
@@ -132,8 +137,6 @@
         string           GetValue<string>            SymbolDatum
         vector<long>     GetValue<vector<long> >     ArrayDatum
         vector<double>   GetValue<vector<double> >   ArrayDatum
-        valarray<long>   GetValue<valarray<long> >   ArrayDatum
-        valarray<double> GetValue<valarray<double> > ArrayDatum
     \endverbatim
 
     What about the rest? (ElementFactoryDatum, el_prtdatum, FunctionDatum,
@@ -265,7 +268,8 @@ Token newToken< std::string >( std::string const& value );
 template <>
 std::vector< long > getValue< std::vector< long > >( const Token& );
 template <>
-void setValue< std::vector< long > >( const Token&, std::vector< long > const& value );
+void setValue< std::vector< long > >( const Token&,
+  std::vector< long > const& value );
 
 template <>
 Token newToken< std::vector< long > >( std::vector< long > const& value );
@@ -275,30 +279,10 @@ Token newToken< std::vector< long > >( std::vector< long > const& value );
 template <>
 std::vector< double > getValue< std::vector< double > >( const Token& );
 template <>
-void setValue< std::vector< double > >( const Token&, std::vector< double > const& value );
+void setValue< std::vector< double > >( const Token&,
+  std::vector< double > const& value );
 
 template <>
 Token newToken< std::vector< double > >( std::vector< double > const& value );
-
-
-// These will convert homogeneous int arrays to valarrays:
-template <>
-std::valarray< long > getValue< std::valarray< long > >( const Token& );
-template <>
-void setValue< std::valarray< long > >( const Token&, std::valarray< long > const& value );
-
-template <>
-Token newToken< std::valarray< long > >( std::valarray< long > const& value );
-
-
-// These will convert homogeneous double arrays to valarrays:
-template <>
-std::valarray< double > getValue< std::valarray< double > >( const Token& );
-template <>
-void setValue< std::valarray< double > >( const Token&, std::valarray< double > const& value );
-
-template <>
-Token newToken< std::valarray< double > >( std::valarray< double > const& value );
-
 
 #endif

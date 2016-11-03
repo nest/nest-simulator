@@ -38,7 +38,7 @@ PROJECT_NAME           = NEST
 # could be handy for archiving the generated documentation or if some version
 # control system is used.
 
-PROJECT_NUMBER         = @SLI_VERSION@
+PROJECT_NUMBER         = @NEST_VERSION_VERSION@
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -58,7 +58,7 @@ PROJECT_LOGO           =
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = @PKGBUILDDIR@/doc/doxygen
+OUTPUT_DIRECTORY       = @PROJECT_SOURCE_DIR@/doc/doxygen
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create 4096 sub-
 # directories (in 2 levels) under the output directory of each output format and
@@ -743,21 +743,21 @@ WARN_LOGFILE           = doxygen.log
 # spaces.
 # Note: If this tag is empty the current directory is searched.
 
-INPUT		=	@PKGSRCDIR@/conngen \
-			@PKGSRCDIR@/doc \
-			@PKGSRCDIR@/examples \
-			@PKGSRCDIR@/extras \
-			@PKGSRCDIR@/lib \
-			@PKGSRCDIR@/libnestutil \
-			@PKGSRCDIR@/librandom \
-			@PKGSRCDIR@/models \
-			@PKGSRCDIR@/nest \
-			@PKGSRCDIR@/nestkernel \
-			@PKGSRCDIR@/precise \
-			@PKGSRCDIR@/pynest \
-			@PKGSRCDIR@/sli \
-			@PKGSRCDIR@/testsuite \
-			@PKGSRCDIR@/topology
+INPUT		=	@PROJECT_SOURCE_DIR@/conngen \
+			@PROJECT_SOURCE_DIR@/doc \
+			@PROJECT_SOURCE_DIR@/examples \
+			@PROJECT_SOURCE_DIR@/extras \
+			@PROJECT_SOURCE_DIR@/lib \
+			@PROJECT_SOURCE_DIR@/libnestutil \
+			@PROJECT_SOURCE_DIR@/librandom \
+			@PROJECT_SOURCE_DIR@/models \
+			@PROJECT_SOURCE_DIR@/nest \
+			@PROJECT_SOURCE_DIR@/nestkernel \
+			@PROJECT_SOURCE_DIR@/precise \
+			@PROJECT_SOURCE_DIR@/pynest \
+			@PROJECT_SOURCE_DIR@/sli \
+			@PROJECT_SOURCE_DIR@/testsuite \
+			@PROJECT_SOURCE_DIR@/topology
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

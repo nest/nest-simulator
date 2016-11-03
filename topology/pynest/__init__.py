@@ -19,6 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+from .hl_api import *
+
 
 def test():
     """ Runs a battery of unit tests on Topology PyNEST """
@@ -27,6 +29,3 @@ def test():
 
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(tests.suite())
-
-
-from .hl_api import *

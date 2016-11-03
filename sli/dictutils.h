@@ -23,18 +23,22 @@
 #ifndef DICTUTILS_H
 #define DICTUTILS_H
 
-#include "dictdatum.h"
-#include "namedatum.h"
-#include "tokenutils.h"
-#include "arraydatum.h"
-#include "integerdatum.h"
-#include "doubledatum.h"
-#include <string>
+// C++ includes:
 #include <algorithm>
 #include <functional>
+#include <string>
+
+// Includes from sli:
+#include "arraydatum.h"
+#include "dictdatum.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+#include "namedatum.h"
+#include "tokenutils.h"
 
 /**
- * @defgroup DictUtils How to access the value contained in a Token contained in a dictionary.
+ * @defgroup DictUtils How to access the value contained in a Token contained in
+ * a dictionary.
  * @ingroup TokenHandling
  *
  * Class Dictionary defines the standard user interface for accessing tokens
@@ -47,7 +51,8 @@
 
 /** Get the value of an existing dictionary entry.
  * @ingroup DictUtils
- * @throws UnknownName An entry of the given name is not known in the dictionary.
+ * @throws UnknownName An entry of the given name is not known in the
+ * dictionary.
  */
 template < typename FT >
 FT
@@ -63,9 +68,9 @@ getValue( const DictionaryDatum& d, Name const n )
   return getValue< FT >( t );
 }
 
-/** Get the value of an existing dictionary entry and check that it is in a specified range.
- * The range is specified by two parameters min and max which have the same type as the template
- *argument.
+/** Get the value of an existing dictionary entry and check that it is in a
+ * specified range. The range is specified by two parameters min and max which
+ * have the same type as the template argument.
  * The last parameter mode defines the type of the range:
  * Mode    Relation
  *-------------------
@@ -74,11 +79,16 @@ getValue( const DictionaryDatum& d, Name const n )
  *  2      min <= x <= max
  *
  * @ingroup DictUtils
- * @throws UnknownName An entry of the given name is not known in the dictionary.
+ * @throws UnknownName An entry of the given name is not known in the
+ * dictionary.
  * @throws RangeCheck if a value is outside the range
  */
 inline double
-get_double_in_range( const DictionaryDatum& d, Name const n, double min, double max, int mode = 2 )
+get_double_in_range( const DictionaryDatum& d,
+  Name const n,
+  double min,
+  double max,
+  int mode = 2 )
 {
   // We must take a reference, so that access information can be stored in the
   // token.
@@ -120,9 +130,9 @@ get_double_in_range( const DictionaryDatum& d, Name const n, double min, double 
   throw RangeCheck();
 }
 
-/** Get the value of an existing dictionary entry and check that it is in a specified range.
- * The range is specified by two parameters min and max which have the same type as the template
- *argument.
+/** Get the value of an existing dictionary entry and check that it is in a
+ * specified range. The range is specified by two parameters min and max which
+ * have the same type as the template argument.
  * The last parameter mode defines the type of the range:
  * Mode    Relation
  *-------------------
@@ -131,11 +141,16 @@ get_double_in_range( const DictionaryDatum& d, Name const n, double min, double 
  *  2      min <= x <= max
  *
  * @ingroup DictUtils
- * @throws UnknownName An entry of the given name is not known in the dictionary.
+ * @throws UnknownName An entry of the given name is not known in the
+ * dictionary.
  * @throws RangeCheck if a value is outside the range
  */
 inline long
-get_long_in_range( const DictionaryDatum& d, Name const n, long min, long max, int mode = 2 )
+get_long_in_range( const DictionaryDatum& d,
+  Name const n,
+  long min,
+  long max,
+  int mode = 2 )
 {
   // We must take a reference, so that access information can be stored in the
   // token.
@@ -180,7 +195,8 @@ get_long_in_range( const DictionaryDatum& d, Name const n, long min, long max, i
 
 /** Define a new dictionary entry from a fundamental type.
  * @ingroup DictUtils
- * @throws TypeMismatch Fundamental type and requested SLI type are incompatible.
+ * @throws TypeMismatch Fundamental type and requested SLI type are
+ * incompatible.
  */
 template < typename FT, class D >
 void
@@ -203,7 +219,8 @@ def( DictionaryDatum& d, Name const n, FT const& value )
   d->insert_move( n, t );
 }
 
-/** Update a variable from a dictionary entry if it exists, skip call if it doesn't.
+/** Update a variable from a dictionary entry if it exists, skip call if it
+ * doesn't.
  * @ingroup DictUtils
  * @throws see getValue(DictionaryDatum, Name)
  */
@@ -229,14 +246,17 @@ updateValue( DictionaryDatum const& d, Name const n, VT& value )
   return true;
 }
 
-/** Call a member function of an object, passing the value of an dictionary entry if it exists,
- *  skip call if it doesn't.
+/** Call a member function of an object, passing the value of an dictionary
+ *  entry if it exists, skip call if it doesn't.
  * @ingroup DictUtils
  * @throws see getValue(DictionaryDatum, Name)
  */
 template < typename FT, typename VT, class C >
 void
-updateValue2( DictionaryDatum const& d, Name const n, C& obj, void ( C::*setfunc )( VT ) )
+updateValue2( DictionaryDatum const& d,
+  Name const n,
+  C& obj,
+  void ( C::*setfunc )( VT ) )
 {
   if ( d->known( n ) ) // Does name exist in the dictionary?
   {
@@ -246,19 +266,22 @@ updateValue2( DictionaryDatum const& d, Name const n, C& obj, void ( C::*setfunc
 }
 
 
-/** Create a property of type ArrayDatum in the dictionary, if it does not already exist.
+/** Create a property of type ArrayDatum in the dictionary, if it does not
+ * already exist.
  * @ingroup DictUtils
  */
 void initialize_property_array( DictionaryDatum& d, Name propname );
 
 
-/** Create a property of type DoubleVectorDatum in the dictionary, if it does not already exist.
+/** Create a property of type DoubleVectorDatum in the dictionary, if it does
+ * not already exist.
  * @ingroup DictUtils
  */
 void initialize_property_doublevector( DictionaryDatum& d, Name propname );
 
 
-/** Create a property of type IntVectorDatum in the dictionary, if it does not already exist.
+/** Create a property of type IntVectorDatum in the dictionary, if it does not
+ * already exist.
  * @ingroup DictUtils
  */
 void initialize_property_intvector( DictionaryDatum& d, Name propname );
@@ -325,7 +348,8 @@ append_property< std::vector< long > >( DictionaryDatum& d,
 /** Provide a value to a property DoubleVectorDatum in the dictionary.
  * In contrast to append_property, this function adds the value only once
  * to the property. On all subsequent events, it ensures that the value
- * passed in is identical to the value present. This is needed by recording_decive.
+ * passed in is identical to the value present. This is needed by
+ * recording_decive.
  * @ingroup DictUtils
  */
 void provide_property( DictionaryDatum&, Name, const std::vector< double >& );
@@ -333,18 +357,20 @@ void provide_property( DictionaryDatum&, Name, const std::vector< double >& );
 /** Provide a value to a property IntVectorDatum in the dictionary.
  * In contrast to append_property, this function adds the value only once
  * to the property. On all subsequent events, it ensures that the value
- * passed in is identical to the value present. This is needed by recording_decive.
+ * passed in is identical to the value present. This is needed by
+ * recording_decive.
  * @ingroup DictUtils
  */
 void provide_property( DictionaryDatum&, Name, const std::vector< long >& );
 
 
-/** Add values of a vector<double> to a property DoubleVectorDatum in the dictionary.
- * This variant of append_property is for adding vector<double>s to vector<double>s of the
- * same size. It is required for collecting data across threads when multimeter
- * is running in accumulation mode.
+/** Add values of a vector<double> to a property DoubleVectorDatum in the
+ * dictionary. This variant of append_property is for adding vector<double>s to
+ * vector<double>s of the same size. It is required for collecting data across
+ * threads when multimeter is running in accumulation mode.
  * @ingroup DictUtils
  */
-void accumulate_property( DictionaryDatum&, Name, const std::vector< double >& );
+void
+accumulate_property( DictionaryDatum&, Name, const std::vector< double >& );
 
 #endif

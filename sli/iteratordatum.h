@@ -29,10 +29,15 @@
 
 // this file is based on numericdatum.h and integerdatum.h
 
-#include "genericdatum.h"
-#include "allocator.h"
-#include "interpret.h"
+// C++ includes:
 #include <iostream>
+
+// Includes from libnestutil:
+#include "allocator.h"
+
+// Includes from sli:
+#include "genericdatum.h"
+#include "interpret.h"
 
 
 // prefixed all references to members of GenericDatum with this->,
@@ -58,7 +63,8 @@ public:
 std::ostream& operator<<( std::ostream&, const IteratorState& );
 
 
-class IteratorDatum : public GenericDatum< IteratorState, &SLIInterpreter::Iteratortype >
+class IteratorDatum
+  : public GenericDatum< IteratorState, &SLIInterpreter::Iteratortype >
 {
 protected:
   static sli::pool memory;

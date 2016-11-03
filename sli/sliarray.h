@@ -25,8 +25,10 @@
 /*
     SLI's array access functions
 */
-#include "slimodule.h"
+
+// Includes from sli:
 #include "slifunction.h"
+#include "slimodule.h"
 
 /**
  * SLI module defining array functions.
@@ -181,7 +183,7 @@ class SLIArrayModule : public SLIModule
    * @par Synopsis:
    *                    source_width source_anchor_y source_anchor_x
    *        area_height   area_width   area_anchor_y   area_anchor_x
-   *                                                            area -> [1d-indices]
+   *                                                   area -> *[1d-indices]
    *
    * @param source_width    width  of the (hypothetical) source
    *                        array to be subscribed into
@@ -221,7 +223,7 @@ class SLIArrayModule : public SLIModule
    * @par Synopsis:
    *                                 source_anchor_y source_anchor_x
    *        area_height   area_width   area_anchor_y   area_anchor_x
-   *                                                            area -> [1d-indices]
+   *                                                   area -> *[1d-indices]
    *
    * @param source_anchor_y y position of the anchor point relative
    *                        to ORIGIN OF THE SOURCE ARRAY

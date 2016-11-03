@@ -26,10 +26,14 @@
     Datum class for SLI builtin functions.
 */
 
+// Includes from libnestutil:
+#include "allocator.h"
+
+// Includes from sli:
 #include "datum.h"
 #include "interpret.h"
 #include "slifunction.h"
-#include "allocator.h"
+
 /*
   Each SLI command is represented by a derived class of class SLIFunction.
   For each command, the constructor of the interpreter must then create
@@ -60,7 +64,8 @@ class FunctionDatum : public TypedDatum< &SLIInterpreter::Functiontype >
 
   SLIFunction const& operator=( SLIFunction const& f )
   {
-    std::cerr << "Warning: Definition of FunctionDatum (" << name << ") changed!!\n";
+    std::cerr << "Warning: Definition of FunctionDatum (" << name
+              << ") changed!!\n";
 
     action = &f;
     return f;
@@ -108,7 +113,8 @@ public:
   bool
   equals( Datum const* dat ) const
   {
-    const FunctionDatum* fd = dynamic_cast< FunctionDatum* >( const_cast< Datum* >( dat ) );
+    const FunctionDatum* fd =
+      dynamic_cast< FunctionDatum* >( const_cast< Datum* >( dat ) );
 
     if ( fd == NULL )
       return false;

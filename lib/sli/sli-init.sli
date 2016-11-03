@@ -950,31 +950,6 @@ begin
 end
 
 
-
-/*
- * SLIHOME is obsolete. It may disappear anytime.
- * DO NOT USE !!!
- */
-systemdict begin
-  /SLIHOME 
-  {
-    M_WARNING (sli-init.sli) (The variable 'systemdict::SLIHOME' is obsolete. It may disappear anytime.) message    
-    M_WARNING (sli-init.sli) (  Go and fix your SLI code. It WILL break in the future.) message  
-    M_WARNING (sli-init.sli) (  Replacements:) message  
-    M_WARNING (sli-init.sli) (    (1) If you want to locate a file in the NEST distribution, use 'SLISearchPath <filename> LocateFileNames'.) message  
-    M_WARNING (sli-init.sli) (        For more information, type '/LocateFileNames help'.) message
-    M_WARNING (sli-init.sli) (        If you think a file is missing from the distribution, ask a developer to add it to the installation list.) message  
-    M_WARNING (sli-init.sli) (    (2) If you want to locate a file in a custom searchpath, use '[<searchpath>] <filename> LocateFileNames'.) message  
-    M_WARNING (sli-init.sli) (    (3) If you need the path to NEST's installation directory, use 'statusdict::prgdatadir'.) message
-    M_WARNING (sli-init.sli) (        For more information, type '/statusdict help'.) message  
-    M_WARNING (sli-init.sli) (    WARNING: NEVER try to locate a file in NEST's source directory, it may not exist any longer!) message  
-
-    % As a temporary workaround, this is where SLIHOME used to point to:
-    statusdict /prgsourcedir get_d
-  } def
-end  
-
-
 /SLISearchPath
   [ statusdict /prgdatadir get_d (/sli) join_s ]
 def
@@ -1734,7 +1709,7 @@ systemdict /GNUreadline known
   (Type 'sysinfo' to see details on the system configuration.) =
   (Type 'authors' for information about the makers of NEST.) =
   (Type 'license' to display the license agreement that came with your copy of NEST.) =
-  (For more information visit http://www.nest-initiative.org.) =  
+  (For more information visit http://www.nest-simulator.org.) =
   (Type 'help' to see this text again.) =
   () =  
 } def
@@ -1789,8 +1764,7 @@ SeeAlso: nestrc
    warranty
 
    (Problems or suggestions?) =
-   (  Website     : http://www.nest-initiative.org) =
-   (  Mailing list: nest_user@nest-initiative.org) =
+   (  Visit http://www.nest-simulator.org) =
    () =
 
    (Type 'help' to get more information.) =
@@ -1832,15 +1806,8 @@ SeeAlso: nestrc
   cout endl
   (NEST has been created and is maintained by the ) <- 
   (members of the NEST Initiative:) <- endl endl
-  (  * Honda Research Institute Europe, Offenbach, Germany) <- endl
-  (  * Computational Neurophysics Research Unit,) <- endl
-  (    RIKEN Brain Science Institute, Wako City, Japan) <- endl
-  (  * Department of Mathematical Sciences & Technology,) <- endl
-  (    Norwegian University of Life Sciences, Aas, Norway) <- endl
-  (  * Neurobiology & Biophysics, Institute for Biology III,) <- endl
-  (    Albrecht-Ludwigs-Universitaet Freiburg, Germany) <- endl
-  ()   <- endl endl
-  (For the list of developers and more information visit us at http://www.nest-initiative.org.) <- endl endl ;  
+  (For a list of associated institutions and contributors,) <- endl
+  (visit us at http://www.nest-initiative.org.) <- endl endl ;
     
 } def
 
@@ -2372,4 +2339,16 @@ SeeAlso: statusdict
   statusdict/threading :: ToLowercase (openmp) searchif
 } def
 
-(rcsinfo) run
+% Check for rcsinfo SLI file and run it. If it does not
+% exist, put an empty string into statusdict/rcsinfo.
+mark
+  { (rcsinfo) (r) file } stopped not
+    { (rcsinfo) run }
+    { statusdict /rcsinfo () put }
+  ifelse
+] ;
+
+
+% Add directories in environment variable SLI_PATH to the search path
+% for SLI files. Directories have to be separated by colon.
+(SLI_PATH) getenv { (:) breakup { addpath } forall } if

@@ -97,6 +97,12 @@ ConnectionManager::set_has_source_subsequent_targets( const thread tid, const sy
   connections_5g_[ tid ]->set_has_source_subsequent_targets( syn_index, lcid, subsequent_targets );
 }
 
+inline synindex
+ConnectionManager::get_syn_id( const thread tid, const synindex syn_index ) const
+{
+  return connections_5g_[ tid ]->get_syn_id( syn_index );
+}
+
 } // namespace nest
 
 #endif /* CONNECTION_MANAGER_IMPL_H */

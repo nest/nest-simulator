@@ -111,7 +111,7 @@ public:
   /**
    * Send a secondary event remote.
    */
-  void send_secondary( Node& source, SecondaryEvent& e );
+  void send_secondary( const Node& source, SecondaryEvent& e );
 
   /**
    * Add global id of event sender to the spike_register.
@@ -219,6 +219,8 @@ public:
    */
   void configure_spike_buffers();
 
+  void configure_secondary_buffers();
+
   /**
    * Read all event buffers for thread t and send the corresponding
    * Events to the Nodes that are targeted.
@@ -246,6 +248,15 @@ public:
    * MPI and creates presynaptic connection infrastructure.
    */
   void gather_target_data();
+
+  /**
+   * Collocates presynaptic connection information for secondary events (MPI buffer offsets), communicates via MPI and create presynaptic connection infrastructure for secondary events.
+   */
+  void gather_secondary_target_data();
+
+  void gather_secondary_events( const bool done );
+
+  bool deliver_secondary_events( const thread tid );
   
   /**
    * Update table of fixed modulos, including slice-based.
@@ -417,10 +428,10 @@ private:
   std::vector< std::vector< std::vector< std::vector< OffGridTarget > > >* > off_grid_spike_register_5g_;
 
   /**
-   * Buffer to collect the secondary events
-   * after serialization.
+   * Buffer to collect the secondary events after serialization.
    */
-  std::vector< std::vector< uint_t > > secondary_events_buffer_;
+  std::vector< uint_t > send_buffer_secondary_events_;
+  std::vector< uint_t > recv_buffer_secondary_events_;
 
   /**
    * Marker Value to be put between the data fields from different time
@@ -540,12 +551,27 @@ EventDeliveryManager::send_remote( thread t, SecondaryEvent& e )
 {
 
   // put the secondary events in a buffer for the remote machines
-  size_t old_size = secondary_events_buffer_[ t ].size();
+  // size_t old_size = secondary_events_buffer_[ t ].size();
 
-  secondary_events_buffer_[ t ].resize( old_size + e.size() );
-  std::vector< uint_t >::iterator it =
-    secondary_events_buffer_[ t ].begin() + old_size;
-  e >> it;
+  // secondary_events_buffer_[ t ].resize( old_size + e.size() );
+  // std::vector< uint_t >::iterator it =
+  //   secondary_events_buffer_[ t ].begin() + old_size;
+  // e >> it;
+  // |syn_id|gid|[SecondaryEventstuff]|
+
+  // secondary_events_buffer_5g_: 3d structure
+  // |write_threads->read_threads->syn_index(syn_id)->SecondaryEventDataWrapper|
+
+  // SecondaryEventDataWrapper:
+  // |syn_id|Target|[SecondaryEventStuff]*|
+
+  // SecondaryEventData:
+  // |tid|syn_index|lcid|marker|[SecondaryEventStuff]|
+
+  // |rank|tid|syn_index|lcid|
+
+  // prepare_simulation->event_delivery_manager->resize_secondary_events_buffers { for node in local_nodes: pos = 0 ; pos[] = node.register_secondary_targets( pos[] ); }
+  // nodes.update{ send_secondary( ..., pos[] ) { offset[] = 0; for target in targets: pos[target.rank] << e; offset[target.rank] += 1 }
 }
 
 } // namespace nest

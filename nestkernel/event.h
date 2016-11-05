@@ -744,6 +744,7 @@ public:
 
   //! size of event in units of uint_t
   virtual size_t size() = 0;
+  virtual size_t prototype_size() const = 0;
   virtual std::vector< uint_t >::iterator& operator<<(
     std::vector< uint_t >::iterator& pos ) = 0;
   virtual std::vector< uint_t >::iterator& operator>>(
@@ -920,8 +921,8 @@ public:
     std::vector< uint_t >::iterator& pos )
   {
     // The synid can be skipped here as it is stored in a static vector
-    pos += number_of_uints_covered< synindex >();
-    read_from_comm_buffer( sender_gid_, pos );
+    // pos += number_of_uints_covered< synindex >();
+    // read_from_comm_buffer( sender_gid_, pos );
 
     // generating a copy of the coeffarray is too time consuming
     // therefore we save an iterator to the beginning+end of the coeffarray
@@ -943,11 +944,11 @@ public:
   std::vector< uint_t >::iterator& operator>>(
     std::vector< uint_t >::iterator& pos )
   {
-    write_to_comm_buffer( *( supported_syn_ids_.begin() ), pos );
-    write_to_comm_buffer( sender_gid_, pos );
+    // write_to_comm_buffer( *( supported_syn_ids_.begin() ), pos );
+    // write_to_comm_buffer( sender_gid_, pos ); // TODO@5g: not needed
     for ( std::vector< double_t >::iterator i = coeffarray_as_doubles_begin_;
           i != coeffarray_as_doubles_end_;
-          i++ )
+          ++i )
     {
       write_to_comm_buffer( *i, pos );
     }
@@ -957,12 +958,17 @@ public:
   size_t
   size()
   {
-    size_t s = number_of_uints_covered< synindex >();
-    s += number_of_uints_covered< index >();
-    s += number_of_uints_covered< double_t >() * coeff_length_;
+    // size_t s = number_of_uints_covered< synindex >(); // first entry is syn_id to identify type of event
+    // s += number_of_uints_covered< index >(); // second entry is gid of sender
+    return number_of_uints_covered< double_t >() * coeff_length_; // payload
 
-    return s;
+    // return s;
   }
+
+  size_t prototype_size() const;
+  // {
+  //   return 0;
+  // }
 
   const std::vector< uint_t >::iterator&
   begin()

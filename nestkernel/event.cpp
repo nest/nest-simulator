@@ -28,6 +28,7 @@
  */
 
 #include "event.h"
+#include "event_impl.h"
 
 // Includes from nestkernel:
 #include "node.h"

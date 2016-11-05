@@ -93,7 +93,7 @@ public:
   //! returns true if the sources table has been cleared
   bool is_cleared() const;
   //! returns the next target data, according to the current_* positions
-  bool get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, thread& target_rank, TargetData& next_target_data );
+  bool get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, const size_t secondary_buffer_chunk_size_, thread& target_rank, TargetData& next_target_data );
   //! rejects the last target data, and resets the current_* positions accordingly
   void reject_last_target_data( const thread tid );
   //! stores the current_* positions
@@ -117,6 +117,8 @@ public:
   //! Sets saved_positions for this thread to minimal values so that
   //! these are not considered in find_maximal_position.
   void no_targets_to_process( const thread tid );
+  //! Computes the maximum number
+  size_t compute_send_recv_count_secondary_in_int_per_rank() const;
 };
 
 inline

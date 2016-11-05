@@ -129,14 +129,17 @@ EventDeliveryManager::send_off_grid_remote( thread tid,
 }
 
 inline void
-EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
+EventDeliveryManager::send_secondary( const Node& source, SecondaryEvent& e )
 {
-  e.set_stamp(
-    kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
-  e.set_sender( source );
-  e.set_sender_gid( source.get_gid() );
-  const thread tid = source.get_thread();
-  send_remote( tid, e );
+  const thread tid = kernel().vp_manager.get_thread_id();
+  const index lid = kernel().vp_manager.gid_to_lid( source.get_gid() );
+  const std::vector< size_t >& positions = kernel().connection_manager.get_secondary_send_buffer_positions( tid, lid );
+
+  for ( size_t i = 0; i < positions.size(); ++i )
+  {
+    std::vector< uint_t >::iterator it = send_buffer_secondary_events_.begin() + positions[ i ];
+    e >> it;
+  }
 }
 
 inline size_t

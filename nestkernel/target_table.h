@@ -24,9 +24,10 @@
 #define TARGET_TABLE_H
 
 // C++ includes:
-#include <vector>
-#include <map>
 #include <cassert>
+#include <iostream>
+#include <map>
+#include <vector>
 
 // Includes from nestkernel:
 #include "nest_types.h"
@@ -51,7 +52,10 @@ class TargetTable
 private:
   //! stores (remote) targets of local neurons
   std::vector< std::vector< std::vector< Target > >* > targets_;
-  
+
+  //! store secondary target of local neurons
+  std::vector< std::vector< std::vector< size_t > >* > secondary_send_buffer_pos_;
+
 public:
   TargetTable();
   ~TargetTable();
@@ -67,6 +71,8 @@ public:
   //! returns all targets of a neuron. used to fill spike_register_5g_
   //! in event_delivery_manager
   const std::vector< Target >& get_targets( const thread tid, const index lid ) const;
+  //! returns position in send buffer
+  const std::vector< size_t >& get_secondary_send_buffer_positions( const thread tid, const index lid ) const;
   //! clear all entries
   void clear( const thread tid );
 };
@@ -74,7 +80,17 @@ public:
 inline void
 TargetTable::add_target( const thread tid, const TargetData& target_data )
 {
-  (*targets_[ tid ])[ target_data.lid ].push_back( target_data.target );
+  if ( target_data.is_primary() )
+  {
+    std::cout<<"adding primary"<<std::endl;
+    (*targets_[ tid ])[ target_data.get_lid() ].push_back( target_data.get_target() );
+  }
+  else
+  {
+    std::cout<<"adding secondary "<<std::endl;
+    const size_t send_buffer_pos = reinterpret_cast< const SecondaryTargetData* >( &target_data )->get_send_buffer_pos();
+    (*secondary_send_buffer_pos_[ tid ])[ target_data.get_lid() ].push_back( send_buffer_pos );
+  }
 }
 
 inline const std::vector< Target >&
@@ -83,10 +99,17 @@ TargetTable::get_targets( const thread tid, const index lid ) const
   return (*targets_[ tid ])[ lid ];
 }
 
+inline const std::vector< size_t>&
+TargetTable::get_secondary_send_buffer_positions( const thread tid, const index lid ) const
+{
+  return (*secondary_send_buffer_pos_[ tid ])[ lid ];
+}
+
 inline void
 TargetTable::clear( const thread tid )
 {
   (*targets_[ tid ]).clear();
+  (*secondary_send_buffer_pos_[ tid ]).clear();
 }
 
 } // namespace nest

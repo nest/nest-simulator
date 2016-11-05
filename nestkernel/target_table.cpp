@@ -39,11 +39,14 @@ void
 nest::TargetTable::initialize()
 {
   thread num_threads = kernel().vp_manager.get_num_threads();
-  targets_.resize( num_threads );
+  targets_.resize( num_threads, NULL );
+  secondary_send_buffer_pos_.resize( num_threads, NULL );
   for( thread tid = 0; tid < num_threads; ++tid)
   {
     targets_[ tid ] = new std::vector< std::vector< Target > >(
-      0, std::vector< Target >( 0, Target() ) );
+      0, std::vector< Target >( 0 ) );
+    secondary_send_buffer_pos_[ tid ] = new std::vector< std::vector< size_t > >(
+      0, std::vector< size_t >( 0 ) );
   }
 }
 
@@ -56,11 +59,20 @@ nest::TargetTable::finalize()
     delete *it;
   }
   targets_.clear();
+
+  for( std::vector< std::vector< std::vector< size_t > >* >::iterator it =
+         secondary_send_buffer_pos_.begin(); it != secondary_send_buffer_pos_.end(); ++it )
+  {
+    delete *it;
+  }
+  secondary_send_buffer_pos_.clear();
 }
 
 void
 nest::TargetTable::prepare( const thread tid )
 {
   targets_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes(),
-    std::vector< Target >( 0, Target() ) );
+    std::vector< Target >( 0 ) );
+  secondary_send_buffer_pos_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes(),
+    std::vector< size_t >( 0 ) );
 }

@@ -571,6 +571,10 @@ nest::SimulationManager::prepare_simulation_()
     sw_sort.start();
     kernel().connection_manager.sort_connections(); //TODO@5g: move into restructure_
     sw_sort.stop();
+
+    kernel().connection_manager.compute_secondary_recv_buffer_positions_();
+    kernel().event_delivery_manager.configure_secondary_buffers();
+
     sw_gather_target_data.start();
     kernel().event_delivery_manager.gather_target_data();
     sw_gather_target_data.stop();
@@ -622,7 +626,7 @@ nest::SimulationManager::update_()
       if ( print_time_ )
         gettimeofday( &t_slice_begin_, NULL );
 
-      if ( kernel().sp_manager.is_structural_plasticity_enabled()
+      if ( false && kernel().sp_manager.is_structural_plasticity_enabled()
         && ( clock_.get_steps() + from_step_ )
             % kernel().sp_manager.get_structural_plasticity_update_interval()
           == 0 )
@@ -684,7 +688,7 @@ nest::SimulationManager::update_()
 
       // TODO@5g: implement secondary events
       // preliminary update of nodes that use waveform relaxtion
-      if ( false && kernel().node_manager.any_node_uses_wfr() )
+      if ( kernel().node_manager.any_node_uses_wfr() )
       {
 #pragma omp single
         {
@@ -724,12 +728,14 @@ nest::SimulationManager::update_()
 // the other threads wait at the end of the block
 #pragma omp single
           {
-            // set done_all
-            for ( size_t i = 0; i < done.size(); i++ )
+            // check whether all threads are done
+            for ( size_t i = 0; i < done.size(); ++i )
+            {
               done_all = done[ i ] && done_all;
+            }
 
             // gather SecondaryEvents (e.g. GapJunctionEvents)
-            kernel().event_delivery_manager.gather_events( done_all );
+            kernel().event_delivery_manager.gather_secondary_events( done_all );
 
             // reset done and done_all
             //(needs to be in the single threaded part)
@@ -739,7 +745,8 @@ nest::SimulationManager::update_()
 
           // deliver SecondaryEvents generated during wfr_update
           // returns the done value over all threads
-          done_p = kernel().event_delivery_manager.deliver_events( tid );
+          done_p = kernel().event_delivery_manager.deliver_secondary_events( tid );
+          std::cout<<std::endl;
 
           if ( done_p )
           {

@@ -670,6 +670,12 @@ public:
     return invalid_synindex;
   }
 
+  synindex
+  get_syn_id( const synindex syn_index ) const
+  {
+    return at( syn_index )->get_syn_id();
+  }
+
   // TODO@5g: can probably be removed
   void
   add_connector( bool is_primary, ConnectorBase* conn )

@@ -131,6 +131,9 @@ EventDeliveryManager::configure_spike_buffers()
     resize_spike_register_5g_( tid );
   }
 
+  send_buffer_spike_data_.clear();
+  send_buffer_off_grid_spike_data_.clear();
+
   send_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
   recv_buffer_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
   send_buffer_off_grid_spike_data_.resize( kernel().mpi_manager.get_buffer_size_spike_data() );
@@ -139,12 +142,6 @@ EventDeliveryManager::configure_spike_buffers()
   send_recv_count_spike_data_per_rank_ = floor( send_buffer_spike_data_.size() / kernel().mpi_manager.get_num_processes() );
   send_recv_count_spike_data_in_int_per_rank_ = sizeof( SpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_ ;
   send_recv_count_off_grid_spike_data_in_int_per_rank_ = sizeof( OffGridSpikeData ) / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_ ;
-
-  // this should also clear all contained elements
-  // so no loop required
-  secondary_events_buffer_.clear();
-  secondary_events_buffer_.resize( kernel().vp_manager.get_num_threads() );
-
 
   // send_buffer must be >= 2 as the 'overflow' signal takes up 2 spaces
   // plus the fiunal marker and the done flag for iterations
@@ -162,6 +159,15 @@ EventDeliveryManager::configure_spike_buffers()
   // int recv_buffer_size =
   //   send_buffer_size * kernel().mpi_manager.get_num_processes();
   // kernel().mpi_manager.set_buffer_sizes( send_buffer_size, recv_buffer_size );
+}
+
+void
+EventDeliveryManager::configure_secondary_buffers()
+{
+  send_buffer_secondary_events_.clear();
+  send_buffer_secondary_events_.resize( kernel().mpi_manager.get_buffer_size_secondary_events() );
+  recv_buffer_secondary_events_.clear();
+  recv_buffer_secondary_events_.resize( kernel().mpi_manager.get_buffer_size_secondary_events() );
 }
 
 void
@@ -547,6 +553,25 @@ EventDeliveryManager::gather_events( bool done )
   //     local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
   // else
   //   kernel().mpi_manager.communicate( local_grid_spikes_, global_grid_spikes_, displacements_ );
+}
+
+void
+EventDeliveryManager::gather_secondary_events( const bool done )
+{
+  // write done marker at last position in every chunk
+  const size_t chunk_size = kernel().mpi_manager.get_chunk_size_secondary_events();
+  for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+  {
+    send_buffer_secondary_events_[ ( rank + 1 ) * chunk_size - 1 ] = done;
+  }
+
+  kernel().mpi_manager.communicate_secondary_events_Alltoall( &send_buffer_secondary_events_[ 0 ], &recv_buffer_secondary_events_[ 0 ] );
+}
+
+bool
+EventDeliveryManager::deliver_secondary_events( const thread tid )
+{
+  return kernel().connection_manager.deliver_secondary_events( tid, recv_buffer_secondary_events_ );
 }
 
 void
@@ -1067,7 +1092,7 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid, c
     for ( unsigned int i = 0; i < num_target_data_per_rank; ++i )
     {
       const TargetData& target_data = recv_buffer[ rank * num_target_data_per_rank + i ];
-      if ( target_data.tid == tid )
+      if ( target_data.get_tid() == tid )
       {
         kernel().connection_manager.add_target( tid, target_data );
       }

@@ -42,12 +42,14 @@
 #include "connector_base.h"
 #include "connector_model.h"
 #include "delay_checker.h"
+#include "event_impl.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "nest_names.h"
 #include "node.h"
 #include "nodelist.h"
+#include "source_table_impl.h"
 #include "subnet.h"
 #include "target_table_devices_impl.h"
 #include "vp_manager_impl.h"
@@ -77,11 +79,13 @@ nest::ConnectionManager::~ConnectionManager()
 void
 nest::ConnectionManager::initialize()
 {
-  thread num_threads = kernel().vp_manager.get_num_threads();
-  connections_5g_.resize( num_threads, 0 );
+  const thread num_threads = kernel().vp_manager.get_num_threads();
+  connections_5g_.resize( num_threads, NULL );
+  secondary_recv_buffer_pos_.resize( num_threads, NULL );
   for( thread tid = 0; tid < num_threads; ++tid)
   {
     connections_5g_[ tid ] = new HetConnector();
+    secondary_recv_buffer_pos_[ tid ] = new std::vector< std::vector< size_t >* >();
   }
   source_table_.initialize();
   target_table_.initialize();
@@ -106,6 +110,15 @@ nest::ConnectionManager::finalize()
   target_table_.finalize();
   target_table_devices_.finalize();
   delete_connections_5g_();
+  for( std::vector< std::vector< std::vector< size_t >* >* >::iterator it = secondary_recv_buffer_pos_.begin(); it != secondary_recv_buffer_pos_.end(); ++it )
+  {
+    for( std::vector< std::vector< size_t >* >::iterator iit = (*it)->begin();
+         iit != (*it)->end(); ++iit)
+    {
+      delete *iit;
+    }
+    delete *it;
+  }
 }
 
 void
@@ -1435,4 +1448,105 @@ nest::ConnectionManager::reserve_connections( const thread tid, const synindex s
 {
   kernel().model_manager.get_synapse_prototype( syn_id, tid ).reserve_connections( connections_5g_[ tid ], syn_id, count );
   source_table_.reserve( tid, syn_id, count );
+}
+
+void
+nest::ConnectionManager::compute_secondary_recv_buffer_positions_()
+{
+  secondary_buffer_chunk_size_ = source_table_.compute_send_recv_count_secondary_in_int_per_rank();
+
+  // we need one additional int to communicate whether wfr has converged
+  ++secondary_buffer_chunk_size_;
+
+  kernel().mpi_manager.set_chunk_size_secondary_events( secondary_buffer_chunk_size_ );
+
+  // offsets in receive buffer
+  std::vector< size_t > buffer_position_by_rank( kernel().mpi_manager.get_num_processes(), 0 );
+  for ( size_t i = 0; i < buffer_position_by_rank.size(); ++i )
+  {
+    buffer_position_by_rank[ i ] = i * secondary_buffer_chunk_size_;
+  }
+
+  // we need to count offsets serially, otherwise a single position in
+  // an MPI buffer could be used twice
+  const thread num_threads = kernel().vp_manager.get_num_threads();
+  for ( thread tid = 0; tid < num_threads; ++tid )
+  {
+    // resize according to the number of different synapse types,
+    // overhead due to primary connectors is negligible
+    secondary_recv_buffer_pos_[ tid ]->resize( connections_5g_[ tid ]->size(), NULL);
+
+    for ( synindex syn_index = 0; syn_index < connections_5g_[ tid ]->size(); ++syn_index )
+    {
+      const synindex syn_id = kernel().connection_manager.get_syn_id( tid, syn_index );
+
+      if ( not kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary() )
+      {
+        // create vector for different synapse types; will be deleted
+        // in finalize()
+        (*secondary_recv_buffer_pos_[ tid ])[ syn_index ] = new std::vector< size_t >();
+        (*(*secondary_recv_buffer_pos_[ tid ])[ syn_index ]).resize( (*connections_5g_[ tid ]).get_num_connections( syn_id ), 0 );
+
+        index last_gid = invalid_index;
+        for ( size_t i = 0; i < (*connections_5g_[ tid ]).get_num_connections( syn_id ); ++i )
+        {
+          const index gid = source_table_.get_gid( tid, syn_id, i );
+          const thread target_rank = kernel().node_manager.get_process_id_of_gid( gid );
+          (*(*secondary_recv_buffer_pos_[ tid ])[ syn_index ])[ i ] = buffer_position_by_rank[ target_rank ];
+
+          if ( gid != last_gid )
+          {
+            const size_t event_size = kernel().model_manager.get_secondary_event_prototype( syn_id, tid ).prototype_size();
+            buffer_position_by_rank[ target_rank ] += event_size;
+            last_gid = gid;
+          }
+        }
+      }
+    }
+  }
+
+  // for ( std::vector< std::vector< std::vector< size_t >* >* >::iterator it = secondary_recv_buffer_pos_.begin(); it != secondary_recv_buffer_pos_.end(); ++it )
+  // {
+  //   for ( std::vector< std::vector< size_t >* >::iterator iit = (*it)->begin();
+  //         iit != (*it)->end(); ++iit )
+  //   {
+  //     for ( std::vector< size_t >::iterator iiit = (*iit)->begin(); iiit != (*iit)->end(); ++iiit )
+  //     {
+  //       std::cout<< *iiit << ", ";
+  //     }
+  //     std::cout<<std::endl;
+  //   }
+  //   std::cout<<std::endl;
+  // }
+  // std::cout<<"#######################################\n";
+}
+
+bool
+nest::ConnectionManager::deliver_secondary_events( const thread tid, std::vector< uint_t >& recv_buffer )
+{
+  for ( synindex syn_index = 0; syn_index < (*secondary_recv_buffer_pos_[ tid ]).size(); ++syn_index )
+  {
+    const synindex syn_id = get_syn_id( tid, syn_index );
+
+    if ( (*secondary_recv_buffer_pos_[ tid ])[ syn_index ] != NULL )
+    {
+      for ( index lcid = 0; lcid < (*(*secondary_recv_buffer_pos_[ tid ])[ syn_index ]).size(); ++lcid )
+      {
+        std::vector< uint_t >::iterator readpos = recv_buffer.begin() + (*(*secondary_recv_buffer_pos_[ tid ])[ syn_index ])[ lcid ];
+        kernel().model_manager.get_secondary_event_prototype( syn_id, tid ) << readpos;
+        kernel().model_manager.get_secondary_event_prototype( syn_id, tid ).set_stamp(
+          kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
+        (*connections_5g_[ tid ]).send( tid, syn_index, lcid, kernel().model_manager.get_secondary_event_prototype( syn_id, tid ), kernel().model_manager.get_synapse_prototypes( tid ) );
+      }
+    }
+  }
+
+  // read done marker from last position in every chunk
+  bool done = true;
+  const size_t chunk_size = kernel().mpi_manager.get_chunk_size_secondary_events();
+  for ( thread rank = 0; rank < kernel().mpi_manager.get_num_processes(); ++rank )
+  {
+    done = done && recv_buffer[ ( rank + 1 ) * chunk_size - 1 ];
+  }
+  return done;
 }

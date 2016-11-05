@@ -192,13 +192,16 @@ public:
 
   std::string get_processor_name();
 
-  int get_send_buffer_size();
-  int get_recv_buffer_size();
+  // int get_send_buffer_size();
+  // int get_recv_buffer_size();
   bool is_mpi_used();
   size_t get_buffer_size_target_data() const;
   size_t get_buffer_size_spike_data() const;
+  size_t get_chunk_size_secondary_events() const;
+  size_t get_buffer_size_secondary_events() const;
 
   void communicate_Alltoall( unsigned int* send_buffer, unsigned int* recv_buffer, const unsigned int send_recv_count );
+  void communicate_secondary_events_Alltoall( unsigned int* send_buffer, unsigned int* recv_buffer );
 
   void synchronize();
 
@@ -219,9 +222,11 @@ public:
   double_t time_communicate_alltoall( int num_bytes, int samples = 1000 );
   double_t time_communicate_alltoallv( int num_bytes, int samples = 1000 );
 
-  void set_buffer_sizes( int send_buffer_size, int recv_buffer_size );
+  // void set_buffer_sizes( int send_buffer_size, int recv_buffer_size );
   void set_buffer_size_target_data( size_t buffer_size );
   void set_buffer_size_spike_data( size_t buffer_size );
+
+  void set_chunk_size_secondary_events( const size_t chunk_size );
 
   bool increase_buffer_size_target_data();
   bool increase_buffer_size_spike_data();
@@ -239,6 +244,7 @@ private:
   bool use_mpi_;         //!< whether MPI is used
   size_t buffer_size_target_data_; //!< total size of MPI buffer for communication of connections
   size_t buffer_size_spike_data_; //!< total size of MPI buffer for communication of spikes
+  size_t chunk_size_secondary_events_; //!< total size of MPI buffer for communication of secondary events
   size_t max_buffer_size_target_data_; //!< maximal size of MPI buffer for communication of connections
   size_t max_buffer_size_spike_data_; //!< maximal size of MPI buffer for communication of spikes
   bool adaptive_target_buffers_; //!< whether MPI buffers for communication of connections resize on the fly
@@ -423,17 +429,17 @@ MPIManager::get_num_sim_processes() const
   return n_sim_procs_;
 }
 
-inline int
-MPIManager::get_send_buffer_size()
-{
-  return send_buffer_size_;
-}
+// inline int
+// MPIManager::get_send_buffer_size()
+// {
+//   return send_buffer_size_;
+// }
 
-inline int
-MPIManager::get_recv_buffer_size()
-{
-  return recv_buffer_size_;
-}
+// inline int
+// MPIManager::get_recv_buffer_size()
+// {
+//   return recv_buffer_size_;
+// }
 
 inline bool
 MPIManager::is_mpi_used()
@@ -453,23 +459,34 @@ MPIManager::get_buffer_size_spike_data() const
   return buffer_size_spike_data_;
 }
 
-inline void
-MPIManager::set_buffer_sizes( int send_buffer_size, int recv_buffer_size )
+inline size_t
+MPIManager::get_chunk_size_secondary_events() const
 {
-  send_buffer_size_ = send_buffer_size;
-  recv_buffer_size_ = recv_buffer_size;
+  return chunk_size_secondary_events_;
+}
+
+inline size_t
+MPIManager::get_buffer_size_secondary_events() const
+{
+  return chunk_size_secondary_events_ * get_num_processes();
 }
 
 inline void
-MPIManager::set_buffer_size_target_data( size_t buffer_size )
+MPIManager::set_buffer_size_target_data( const size_t buffer_size )
 {
   buffer_size_target_data_ = buffer_size;
 }
 
 inline void
-MPIManager::set_buffer_size_spike_data( size_t buffer_size )
+MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
 {
   buffer_size_spike_data_ = buffer_size;
+}
+
+inline void
+MPIManager::set_chunk_size_secondary_events( const size_t chunk_size )
+{
+  chunk_size_secondary_events_ = chunk_size;
 }
 
 inline bool

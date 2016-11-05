@@ -36,16 +36,22 @@ namespace nest
  * buffers.
  * SeeAlso: SpikeData
  */
-struct TargetData
+class TargetDataBase
 {
-  Target target;
-  index lid : 20; //!< local id of presynaptic neuron
-  thread tid : 10; //!< thread index of presynaptic neuron
-  unsigned int marker : 2;
-  static const unsigned int complete_marker = 1;
-  static const unsigned int end_marker = 2;
-  static const unsigned int invalid_marker = 3;
-  TargetData();
+private:
+  index lid_ : 20; //!< local id of presynaptic neuron
+  thread tid_ : 10; //!< thread index of presynaptic neuron
+  unsigned int marker_ : 2;
+  bool is_primary_;
+  static const unsigned int complete_marker_ = 1;
+  static const unsigned int end_marker_ = 2;
+  static const unsigned int invalid_marker_ = 3;
+
+protected:
+  TargetDataBase();
+
+public:
+  ~TargetDataBase();
   void reset_marker();
   void set_complete_marker();
   void set_end_marker();
@@ -53,57 +59,162 @@ struct TargetData
   bool is_complete_marker() const;
   bool is_end_marker() const;
   bool is_invalid_marker() const;
+  void set_lid( const index lid );
+  void set_tid( const thread tid );
+  index get_lid() const;
+  thread get_tid() const;
+  void is_primary( const bool is_primary );
+  bool is_primary() const;
 };
 
 inline
+TargetDataBase::TargetDataBase()
+  : lid_( 0 )
+  , tid_( 0 )
+  , marker_( 0 )
+  , is_primary_( true )
+{
+}
+
+inline
+TargetDataBase::~TargetDataBase()
+{
+}
+
+inline void
+TargetDataBase::reset_marker()
+{
+  marker_ = 0;
+}
+
+inline void
+TargetDataBase::set_complete_marker()
+{
+  marker_ = complete_marker_;
+}
+
+inline void
+TargetDataBase::set_end_marker()
+{
+  marker_ = end_marker_;
+}
+
+inline void
+TargetDataBase::set_invalid_marker()
+{
+  marker_ = invalid_marker_;
+}
+
+inline bool
+TargetDataBase::is_complete_marker() const
+{
+  return marker_ == complete_marker_;
+}
+
+inline bool
+TargetDataBase::is_end_marker() const
+{
+  return marker_ == end_marker_;
+}
+
+inline bool
+TargetDataBase::is_invalid_marker() const
+{
+  return marker_ == invalid_marker_;
+}
+
+inline void
+TargetDataBase::set_lid( const index lid )
+{
+  lid_ = lid;
+}
+
+inline void
+TargetDataBase::set_tid( const thread tid )
+{
+  tid_ = tid;
+}
+
+inline index
+TargetDataBase::get_lid() const
+{
+  return lid_;
+}
+
+inline thread
+TargetDataBase::get_tid() const
+{
+  return tid_;
+}
+
+inline void
+TargetDataBase::is_primary( const bool is_primary )
+{
+  is_primary_ = is_primary;
+}
+
+inline bool
+TargetDataBase::is_primary() const
+{
+  return is_primary_;
+}
+
+class TargetData : public TargetDataBase
+{
+private:
+  Target target_;
+public:
+  TargetData();
+  const Target& get_target() const;
+  Target& get_target();
+};
+  
+inline
 TargetData::TargetData()
-  : target( Target() )
-  , lid( 0 )
-  , tid( 0 )
-  , marker( 0 )
+  : TargetDataBase()
+  , target_( Target() )
+{
+}
+
+inline const Target&
+TargetData::get_target() const
+{
+  return target_;
+}
+
+inline Target&
+TargetData::get_target()
+{
+  return target_;
+}
+
+class SecondaryTargetData : public TargetDataBase
+{
+private:
+  size_t send_buffer_pos_;
+public:
+  SecondaryTargetData();
+  void set_send_buffer_pos( const size_t pos );
+  size_t get_send_buffer_pos() const;
+};
+
+inline
+SecondaryTargetData::SecondaryTargetData()
+  : TargetDataBase()
+  , send_buffer_pos_( invalid_index )
 {
 }
 
 inline void
-TargetData::reset_marker()
+SecondaryTargetData::set_send_buffer_pos( const size_t pos )
 {
-  marker = 0;
+  send_buffer_pos_ = pos;
 }
 
-inline void
-TargetData::set_complete_marker()
+inline size_t
+SecondaryTargetData::get_send_buffer_pos() const
 {
-  marker = complete_marker;
-}
-
-inline void
-TargetData::set_end_marker()
-{
-  marker = end_marker;
-}
-
-inline void
-TargetData::set_invalid_marker()
-{
-  marker = invalid_marker;
-}
-
-inline bool
-TargetData::is_complete_marker() const
-{
-  return marker == complete_marker;
-}
-
-inline bool
-TargetData::is_end_marker() const
-{
-  return marker == end_marker;
-}
-
-inline bool
-TargetData::is_invalid_marker() const
-{
-  return marker == invalid_marker;
+  return send_buffer_pos_;
 }
 
 } // namespace nest

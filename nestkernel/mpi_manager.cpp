@@ -60,8 +60,8 @@ nest::MPIManager::MPIManager()
   , rank_( 0 )
   , n_rec_procs_( 0 )
   , n_sim_procs_( 0 )
-  , send_buffer_size_( 1 )
-  , recv_buffer_size_( 1 )
+  // , send_buffer_size_( 1 )
+  // , recv_buffer_size_( 1 )
   , use_mpi_( false )
   , buffer_size_target_data_( 1 )
   , buffer_size_spike_data_( 1 )
@@ -180,8 +180,8 @@ void
 nest::MPIManager::get_status( DictionaryDatum& dict )
 {
   def< long >( dict, "num_processes", num_processes_ );
-  def< long >( dict, "send_buffer_size", send_buffer_size_ );
-  def< long >( dict, "receive_buffer_size", recv_buffer_size_ );
+  // def< long >( dict, "send_buffer_size", send_buffer_size_ );
+  // def< long >( dict, "receive_buffer_size", recv_buffer_size_ );
   def< bool >( dict, "adaptive_target_buffers", adaptive_target_buffers_ );
   def< bool >( dict, "adaptive_spike_buffers", adaptive_spike_buffers_ );
   def< size_t >( dict, "buffer_size_target_data", buffer_size_target_data_ );
@@ -712,6 +712,19 @@ nest::MPIManager::communicate_Alltoall(
                 comm );
 }
 
+void
+nest::MPIManager::communicate_secondary_events_Alltoall(
+  unsigned int* send_buffer,
+  unsigned int* recv_buffer )
+{
+  MPI_Alltoall( send_buffer,
+                chunk_size_secondary_events_,
+                MPI::UNSIGNED,
+                recv_buffer,
+                chunk_size_secondary_events_,
+                MPI::UNSIGNED,
+                comm );
+}
 
 /**
  * Ensure all processes have reached the same stage by waiting until all

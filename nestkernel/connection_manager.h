@@ -74,6 +74,8 @@ public:
 
   DictionaryDatum& get_connruledict();
 
+  void compute_secondary_recv_buffer_positions_();
+
   /**
    * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
    */
@@ -361,6 +363,17 @@ public:
 
   //! See source_table.h
   void no_targets_to_process( const thread tid );
+
+  synindex get_syn_id( const thread tid, const synindex syn_index ) const;
+
+  const std::vector< size_t>& get_secondary_send_buffer_positions( const thread tid, const index lid ) const;
+
+  //! returns read position in MPI receive buffer for secondary
+  //! connections
+  size_t get_secondary_recv_buffer_position( const thread tid, const synindex syn_index, const index lcid ) const;
+
+  bool deliver_secondary_events( const thread tid, std::vector< uint_t >& recv_buffer );
+
 private:
   /**
    * Update delay extrema to current values.
@@ -502,6 +515,13 @@ private:
    * Internally arragend in a 3d structure: threads|synapses|gids
    */
   SourceTable source_table_;
+
+  /** Stores absolute position in receive buffer of secondary events.
+   * structure: threads|synapses|position
+   */
+  std::vector< std::vector< std::vector< size_t >* >* > secondary_recv_buffer_pos_;
+
+  size_t secondary_buffer_chunk_size_;
 
   /** A structure to hold the information about targets for each
    * neuron on the presynaptic side. Internally arranged in a 3d
@@ -653,9 +673,20 @@ ConnectionManager::add_target( const thread tid, const TargetData& target_data)
 inline bool
 ConnectionManager::get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, thread& target_rank, TargetData& next_target_data )
 {
-  return source_table_.get_next_target_data( tid, rank_start, rank_end, target_rank, next_target_data );
+  return source_table_.get_next_target_data( tid, rank_start, rank_end, secondary_buffer_chunk_size_, target_rank, next_target_data );
 }
 
+inline const std::vector< size_t >&
+ConnectionManager::get_secondary_send_buffer_positions( const thread tid, const index lid ) const
+{
+  return target_table_.get_secondary_send_buffer_positions( tid, lid );
+}
+
+inline size_t
+ConnectionManager::get_secondary_recv_buffer_position( const thread tid, const synindex syn_index, const index lcid ) const
+{
+  return (*(*secondary_recv_buffer_pos_[ tid ])[ syn_index ])[ lcid ];
+}
 
 } // namespace nest
 

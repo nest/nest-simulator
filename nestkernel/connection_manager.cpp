@@ -1526,10 +1526,10 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid, std::vector
 {
   for ( synindex syn_index = 0; syn_index < (*secondary_recv_buffer_pos_[ tid ]).size(); ++syn_index )
   {
-    const synindex syn_id = get_syn_id( tid, syn_index );
-
     if ( (*secondary_recv_buffer_pos_[ tid ])[ syn_index ] != NULL )
     {
+      const synindex syn_id = get_syn_id( tid, syn_index );
+
       for ( index lcid = 0; lcid < (*(*secondary_recv_buffer_pos_[ tid ])[ syn_index ]).size(); ++lcid )
       {
         std::vector< uint_t >::iterator readpos = recv_buffer.begin() + (*(*secondary_recv_buffer_pos_[ tid ])[ syn_index ])[ lcid ];

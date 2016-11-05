@@ -805,6 +805,11 @@ nest::SimulationManager::update_()
       {
         // kernel().event_delivery_manager.gather_events( true );
         kernel().event_delivery_manager.gather_spike_data( tid );
+#pragma omp single
+        {
+          kernel().event_delivery_manager.gather_secondary_events( true );
+        }
+        kernel().event_delivery_manager.deliver_secondary_events( tid );
       }
       sw_gather_spike_data.stop();
 

@@ -51,11 +51,7 @@ stim_dict = {
     # Start of the DC generator (in ms).
     'dc_start': 0.0,
     # Duration of the DC generator (in ms).
-    'dc_dur': 1000.0
-    }
-
-updated_dict = {
-
+    'dc_dur': 1000.0,
     # Connection probabilities of the thalamus to the different populations.
     # Order as in 'populations' in 'network_params.py'
     'conn_probs_th':
@@ -69,6 +65,3 @@ updated_dict = {
     # Amplitude of the DC generator (in pA).
     'dc_amp': np.ones(len(net_dict['populations'])) * 0.3,
     }
-
-
-stim_dict.update(updated_dict)

@@ -138,7 +138,7 @@ nest::GrowthCurveGaussian::update( double t,
 nest::GrowthCurveSigmoid::GrowthCurveSigmoid()
   : GrowthCurve( names::sigmoid )
   , eps_( 0.7 )
-  , w_( 0.1 )
+  , psi_( 0.1 )
 {
 }
 
@@ -147,19 +147,19 @@ nest::GrowthCurveSigmoid::get( DictionaryDatum& d ) const
 {
   def< std::string >( d, names::growth_curve, name_.toString() );
   def< double >( d, names::eps, eps_ );
-  def< double >( d, names::w, w_ );
+  def< double >( d, names::psi, psi_ );
 }
 
 void
 nest::GrowthCurveSigmoid::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::eps, eps_ );
-  updateValue< double >( d, names::w, w_ );
+  updateValue< double >( d, names::psi, psi_ );
 
   // check that w is greater than 0
-  if ( not( w_ >= 0 ) )
+  if ( not( psi_ >= 0 ) )
   {
-    throw BadProperty( "w parameter must be greater than 0." );
+    throw BadProperty( "psi parameter must be greater than 0." );
   }
 }
 
@@ -182,7 +182,7 @@ nest::GrowthCurveSigmoid::update( double t,
   {
     Ca = Ca - ( ( Ca / tau_Ca ) * h );
     const double dz =
-      h * growth_rate * ( ( 2.0 / ( 1.0 + exp( ( Ca - eps_ ) / w_ ) ) ) - 1.0 );
+      h * growth_rate * ( ( 2.0 / ( 1.0 + exp( ( Ca - eps_ ) / psi_ ) ) ) - 1.0 );
     z_value = z_value + dz;
   }
 

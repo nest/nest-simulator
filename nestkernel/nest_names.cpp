@@ -234,6 +234,7 @@ const Name precision( "precision" );
 const Name ps( "ps" );
 const Name PSC_adapt_step( "PSC_adapt_step" );
 const Name PSC_Unit_amplitude( "PSC_Unit_amplitude" );
+const Name psi ("psi");
 const Name published( "published" );
 
 const Name q_rr( "q_rr" );

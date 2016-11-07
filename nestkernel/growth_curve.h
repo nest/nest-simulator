@@ -246,9 +246,9 @@ private:
    network during the simulation.
    This type of growth curve  uses a forward Euler integration method to update
    the number of synaptic elements:
-   dz/dt = nu ((2 / (1 + e^((Ca(t) - eps)/w))) - 1)
+   dz/dt = nu ((2 / (1 + e^((Ca(t) - eps)/psi))) - 1)
    eps is the target mean calcium concentration in the
-   neuron, w controls the width of the sigmoid and nu is the growth rate in
+   neuron, psi controls the width of the sigmoid and nu is the growth rate in
    elements/ms. The growth rate nu is defined in the SynapticElement class.
 
   Parameters:
@@ -271,7 +271,7 @@ private:
    nu           double -  Growth rate in elements/ms. The growth rate nu is
                           defined in the SynapticElement class. Can be negative.
 
-   w            double -  Parameter that controls the width of the curve.
+   psi          double -  Parameter that controls the width of the curve.
                           Must be greater than 0
 
   References:
@@ -288,9 +288,9 @@ private:
  * \class GrowthCurveSigmoid
  * Uses a forward Euler integration method to update the number of synaptic
  * elements:
- * dz/dt = nu ((2 / (1 + e^((Ca(t) - eps)/w))) - 1)
+ * dz/dt = nu ((2 / (1 + e^((Ca(t) - eps)/psi))) - 1)
  * eps is the target mean calcium concentration in the
- * neuron, w controls the width of the sigmoid
+ * neuron, psi controls the width of the sigmoid
  * and nu is the growth rate.
  */
 class GrowthCurveSigmoid : public GrowthCurve
@@ -308,7 +308,7 @@ public:
 
 private:
   double eps_;
-  double w_;
+  double psi_;
 };
 
 } // of namespace

@@ -221,24 +221,24 @@ class SigmoidNumericSEI(SynapticElementIntegrator):
     """
     Compute the number of synaptic element corresponding to a
     linear growth curve
-    dse/dCa = nu * ((2.0 / exp( (Ca - eps)/w)) - 1.0)
+    dse/dCa = nu * ((2.0 / exp( (Ca - eps)/psi)) - 1.0)
 
     Use numerical integration (see scipy.integrate.quad)
     """
 
-    def __init__(self, eps=0.7, growth_rate=1.0, w=0.1, *args, **kwargs):
+    def __init__(self, eps=0.7, growth_rate=1.0, psi=0.1, *args, **kwargs):
         """
         Constructor
 
         :param eps: set point
-        :param w: controls width of growth curve
+        :param psi: controls width of growth curve
         :param growth_rate: scaling of the growth curve
 
         .. seealso:: SynapticElementIntegrator()
         """
         super(SigmoidNumericSEI, self).__init__(*args, **kwargs)
         self.eps = eps
-        self.w = w
+        self.psi = psi
         self.growth_rate = growth_rate
 
     def get_se(self, t):
@@ -256,7 +256,7 @@ class SigmoidNumericSEI(SynapticElementIntegrator):
     def growth_curve(self, t):
         return self.growth_rate * (
             (2.0 / (1.0 + math.exp(
-                (self.get_ca(t) - self.eps) / self.w
+                (self.get_ca(t) - self.eps) / self.psi
             ))) - 1.0
         )
 
@@ -441,7 +441,7 @@ class TestGrowthCurve(unittest.TestCase):
         tau_ca = 10000.0
         growth_rate = 0.0001
         eps = 0.10
-        w = 0.10
+        psi = 0.10
         nest.SetStatus(
             self.local_nodes,
             {
@@ -451,14 +451,14 @@ class TestGrowthCurve(unittest.TestCase):
                     'se': {
                         'growth_curve': 'sigmoid',
                         'growth_rate': growth_rate,
-                        'eps': eps, 'w': 0.1, 'z': 0.0
+                        'eps': eps, 'psi': 0.1, 'z': 0.0
                     }
                 }
             }
         )
         self.se_integrator.append(
             SigmoidNumericSEI(tau_ca=tau_ca, beta_ca=beta_ca,
-                              eps=eps, w=w, growth_rate=growth_rate))
+                              eps=eps, psi=psi, growth_rate=growth_rate))
         self.simulate()
 
         # check that we got the same values from one run to another

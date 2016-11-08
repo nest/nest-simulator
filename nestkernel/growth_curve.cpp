@@ -181,8 +181,8 @@ nest::GrowthCurveSigmoid::update( double t,
   for ( double lag = t_minus; lag < ( t - h / 2.0 ); lag += h )
   {
     Ca = Ca - ( ( Ca / tau_Ca ) * h );
-    const double dz =
-      h * growth_rate * ( ( 2.0 / ( 1.0 + exp( ( Ca - eps_ ) / psi_ ) ) ) - 1.0 );
+    const double dz = h * growth_rate
+      * ( ( 2.0 / ( 1.0 + exp( ( Ca - eps_ ) / psi_ ) ) ) - 1.0 );
     z_value = z_value + dz;
   }
 

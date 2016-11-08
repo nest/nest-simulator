@@ -30,6 +30,7 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
+#include "gid_collection.h"
 #include "nest_types.h"
 #include "sparse_node_array.h"
 
@@ -80,9 +81,10 @@ public:
    * @param m valid Model ID.
    * @param n Number of Nodes to be created. Defaults to 1 if not
    * specified.
+   * @returns GIDCollection representing models created
    * @throws nest::UnknownModelID
    */
-  index add_node( index m, long n = 1 );
+  GIDCollection add_node( index m, long n = 1 );
 
 
   /**

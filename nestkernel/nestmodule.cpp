@@ -509,16 +509,21 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
 
 /* BeginDocumentation
    Name: Create - create a number of equal nodes in the current subnet
+
    Synopsis:
-   /model          Create -> gid
-   /model n        Create -> gid
-   /model   params Create -> gid
-   /model n params Create -> gid
+   /model          Create -> gids
+   /model n        Create -> gids
+   /model   params Create -> gids
+   /model n params Create -> gids
+
    Parameters:
    /model - literal naming the modeltype (entry in modeldict)
    n      - the desired number of nodes
    params - parameters for the newly created node(s)
-   gid    - gid of last created node
+
+   Returns:
+   gids   - GIDCollection representing nodes created
+
    Description:
    Create generates n new network objects of the supplied model
    type. If n is not given, a single node is created. The objects
@@ -540,10 +545,10 @@ NestModule::Create_l_iFunction::execute( SLIInterpreter* i ) const
 
   const std::string modname = getValue< std::string >( i->OStack.pick( 1 ) );
 
-  const long last_node_id = create( modname, n_nodes );
+  GIDCollectionDatum nodes_created = create( modname, n_nodes );
 
   i->OStack.pop( 2 );
-  i->OStack.push( last_node_id );
+  i->OStack.push( nodes_created );
   i->EStack.pop();
 }
 

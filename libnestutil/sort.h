@@ -57,7 +57,7 @@ namespace sort
   template< typename T1, typename T2 >
   void insertion_sort( std::vector< T1 >& vec_sort, std::vector< T2 >& vec_perm, const int lo, const int hi )
   {
-    for ( int i = lo + 1; i < hi; ++i )
+    for ( int i = lo + 1; i < hi + 1; ++i )
     {
       for ( int j = i; (j > lo) and ( vec_sort[ j ] < vec_sort[ j - 1 ] ); --j )
       {

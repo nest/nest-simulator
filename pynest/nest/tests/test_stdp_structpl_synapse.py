@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_spl_synapse.py
+# test_stdp_structpl_synapse.py
 #
 # This file is part of NEST.
 #
@@ -19,17 +19,17 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# This script compares the two variants of the Tsodyks/Markram synapse in NEST.
+# This script checks several features of the structural plasticity model
+# stdp_structpl_synapse_hom.
 
 import nest
 import numpy as np
-import math
 import unittest
 
 
 @nest.check_stack
 class StdpStructplSynapseTestCase(unittest.TestCase):
-    """Test SPL synapses."""
+    """Test Structpl synapses."""
 
     def test_resize(self):
         """Resizing of potential connections"""
@@ -1254,7 +1254,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-    # suite = unittest.TestSuite()
-    # suite.addTest(StdpStructplSynapseTestCase("test_deletion_manual"))
-    # runner = unittest.TextTestRunner(verbosity=2)
-    # runner.run(suite)

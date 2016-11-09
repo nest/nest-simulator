@@ -37,8 +37,8 @@ class GIDCollectionTestCase(unittest.TestCase):
     def test_GIDCollection_addition(self):
         """Addition of GIDCollections"""
 
-        nodes_a = nest.Create("iaf_neuron", 2)
-        nodes_b = nest.Create("iaf_neuron", 2)
+        nodes_a = nest.Create("iaf_psc_alpha", 2)
+        nodes_b = nest.Create("iaf_psc_alpha", 2)
         all_nodes = nodes_a + nodes_b
         all_nodes_list = [n for n in all_nodes]
         test_list = [1, 2, 3, 4]
@@ -47,7 +47,7 @@ class GIDCollectionTestCase(unittest.TestCase):
     def test_GIDCollection_membership(self):
         """Membership in GIDCollections"""
 
-        nodes = nest.Create("iaf_neuron", 10)
+        nodes = nest.Create("iaf_psc_alpha", 10)
 
         self.assertTrue(5 in nodes)
         self.assertTrue(10 in nodes)
@@ -56,7 +56,7 @@ class GIDCollectionTestCase(unittest.TestCase):
     def test_GIDCollection_slices(self):
         """Slices of GIDCollections"""
 
-        nodes = nest.Create("iaf_neuron", 50)
+        nodes = nest.Create("iaf_psc_alpha", 50)
         nodes_slice_a = nodes[:20]
         slice_list = [i for i in nodes_slice_a]
         test_list = [i for i in range(1, 21)]
@@ -65,21 +65,21 @@ class GIDCollectionTestCase(unittest.TestCase):
     def test_GIDCollection_iteration(self):
         """Iteration of GIDCollections"""
 
-        nodes = nest.Create("iaf_neuron", 10)
+        nodes = nest.Create("iaf_psc_alpha", 10)
         for i, gid in enumerate(nodes):
             self.assertEqual(i+1, gid)
 
     def test_GIDCollection_index(self):
         """Index of GIDCollections"""
 
-        nodes = nest.Create("iaf_neuron", 10)
+        nodes = nest.Create("iaf_psc_alpha", 10)
         for i in range(10):
             self.assertEqual(i+1, nodes[i])
 
     def test_GIDCollection_equal(self):
         """Equality of two GIDCollections"""
 
-        nodes_a = nest.Create("iaf_neuron", 10)
+        nodes_a = nest.Create("iaf_psc_alpha", 10)
         nodes_b = nodes_a
 
         for i in range(10):

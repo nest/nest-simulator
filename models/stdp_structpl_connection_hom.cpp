@@ -20,15 +20,11 @@
  *
  */
 
-#include "stdp_structpl_connection_hom.h"
-
-// Includes from nestkernel:
-#include "common_synapse_properties.h"
-#include "connector_model.h"
-#include "event.h"
-
-// Includes from sli:
 #include "dictdatum.h"
+#include "connector_model.h"
+#include "common_synapse_properties.h"
+#include "stdp_structpl_connection_hom.h"
+#include "event.h"
 
 namespace nest
 {
@@ -62,20 +58,20 @@ STDPStructplHomCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
 
-  def< double >( d, "tau_slow", tau_slow_ );
-  def< double >( d, "tau", tau_ );
-  def< double >( d, "A2_corr", A2_corr_ );
-  def< double >( d, "A4_post", A4_post_ );
-  def< double >( d, "A4_corr", A4_corr_ );
-  def< double >( d, "alpha", alpha_ );
-  def< double >( d, "lambda", lambda_ );
-  def< double >( d, "w0", w0_ );
-  def< double >( d, "wmax", wmax_ );
-  def< double >( d, "p_fail", p_fail_ );
-  def< double >( d, "t_cache", t_cache_ );
-  def< double >( d, "t_grace_period", t_grace_period_ );
-  def< bool >( d, "safe_mode", safe_mode_ );
-  def< bool >( d, "sleep_mode", sleep_mode_ );
+  def< double >( d, names::tau_slow, tau_slow_ );
+  def< double >( d, names::tau, tau_ );
+  def< double >( d, names::A2_corr, A2_corr_ );
+  def< double >( d, names::A4_post, A4_post_ );
+  def< double >( d, names::A4_corr, A4_corr_ );
+  def< double >( d, names::alpha, alpha_ );
+  def< double >( d, names::lambda, lambda_ );
+  def< double >( d, names::w0, w0_ );
+  def< double >( d, names::wmax, wmax_ );
+  def< double >( d, names::p_fail, p_fail_ );
+  def< double >( d, names::t_cache, t_cache_ );
+  def< double >( d, names::t_grace_period, t_grace_period_ );
+  def< bool >( d, names::safe_mode, safe_mode_ );
+  def< bool >( d, names::sleep_mode, sleep_mode_ );
 }
 
 void
@@ -110,20 +106,20 @@ STDPStructplHomCommonProperties::set_status( const DictionaryDatum& d,
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  updateValue< double >( d, "tau_slow", tau_slow_ );
-  updateValue< double >( d, "tau", tau_ );
-  updateValue< double >( d, "A2_corr", A2_corr_ );
-  updateValue< double >( d, "A4_corr", A4_corr_ );
-  updateValue< double >( d, "A4_post", A4_post_ );
-  updateValue< double >( d, "alpha", alpha_ );
-  updateValue< double >( d, "lambda", lambda_ );
-  updateValue< double >( d, "w0", w0_ );
-  updateValue< double >( d, "wmax", wmax_ );
-  updateValue< double >( d, "p_fail", p_fail_ );
-  updateValue< double >( d, "t_cache", t_cache_ );
-  updateValue< double >( d, "t_grace_period", t_grace_period_ );
-  updateValue< bool >( d, "safe_mode", safe_mode_ );
-  updateValue< bool >( d, "sleep_mode", sleep_mode_ );
+  updateValue< double >( d, names::tau_slow, tau_slow_ );
+  updateValue< double >( d, names::tau, tau_ );
+  updateValue< double >( d, names::A2_corr, A2_corr_ );
+  updateValue< double >( d, names::A4_corr, A4_corr_ );
+  updateValue< double >( d, names::A4_post, A4_post_ );
+  updateValue< double >( d, names::alpha, alpha_ );
+  updateValue< double >( d, names::lambda, lambda_ );
+  updateValue< double >( d, names::w0, w0_ );
+  updateValue< double >( d, names::wmax, wmax_ );
+  updateValue< double >( d, names::p_fail, p_fail_ );
+  updateValue< double >( d, names::t_cache, t_cache_ );
+  updateValue< double >( d, names::t_grace_period, t_grace_period_ );
+  updateValue< bool >( d, names::safe_mode, safe_mode_ );
+  updateValue< bool >( d, names::sleep_mode, sleep_mode_ );
 
   if ( not( tau_slow_ > tau_ ) )
   {

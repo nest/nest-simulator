@@ -23,6 +23,7 @@
 # stdp_structpl_synapse_hom.
 
 import nest
+import math
 import numpy as np
 import unittest
 

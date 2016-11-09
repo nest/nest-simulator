@@ -964,15 +964,15 @@ STDPStructplConnectionHom< targetidentifierT >::get_status(
   DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< long >( d, "n_pot_conns", n_conns_ );
-  def< long >( d, "n_create", n_create_ );
-  def< long >( d, "n_delete", n_delete_ );
-  def< std::vector< double > >( d, "w_jk", w_jk_ );
-  def< std::vector< double > >( d, "r_post_jk", r_post_jk_ );
-  def< std::vector< double > >( d, "R_post_jk", R_post_jk_ );
-  def< std::vector< double > >( d, "c_jk", c_jk_ );
-  def< std::vector< double > >( d, "r_jk", r_jk_ );
-  def< std::vector< long > >( d, "w_create_steps", w_create_steps_ );
+  def< long >( d, names::n_pot_conns, n_conns_ );
+  def< long >( d, names::n_create, n_create_ );
+  def< long >( d, names::n_delete, n_delete_ );
+  def< std::vector< double > >( d, names::w_jk, w_jk_ );
+  def< std::vector< double > >( d, names::r_post_jk, r_post_jk_ );
+  def< std::vector< double > >( d, names::R_post_jk, R_post_jk_ );
+  def< std::vector< double > >( d, names::c_jk, c_jk_ );
+  def< std::vector< double > >( d, names::r_jk, r_jk_ );
+  def< std::vector< long > >( d, names::w_create_steps, w_create_steps_ );
 }
 
 template < typename targetidentifierT >
@@ -983,10 +983,10 @@ STDPStructplConnectionHom< targetidentifierT >::set_status(
 {
   ConnectionBase::set_status( d, cm );
 
-  bool n_updated = updateValue< long >( d, "n_pot_conns", n_conns_ );
-  updateValue< long >( d, "n_create", n_create_ );
-  updateValue< long >( d, "n_delete", n_delete_ );
-  updateValue< long >( d, "n_pot_conns", n_conns_ );
+  bool n_updated = updateValue< long >( d, names::n_pot_conns, n_conns_ );
+  updateValue< long >( d, names::n_create, n_create_ );
+  updateValue< long >( d, names::n_delete, n_delete_ );
+  updateValue< long >( d, names::n_pot_conns, n_conns_ );
 
   if ( not( n_conns_ > 0 ) )
   {
@@ -1014,7 +1014,7 @@ STDPStructplConnectionHom< targetidentifierT >::set_status(
   }
 
   std::vector< double > r_jk_tmp;
-  if ( updateValue< std::vector< double > >( d, "r_jk", r_jk_tmp ) )
+  if ( updateValue< std::vector< double > >( d, names::r_jk, r_jk_tmp ) )
   {
     if ( r_jk_tmp.size() != ( unsigned ) n_conns_ )
     {
@@ -1024,7 +1024,7 @@ STDPStructplConnectionHom< targetidentifierT >::set_status(
   }
 
   std::vector< double > c_jk_tmp;
-  if ( updateValue< std::vector< double > >( d, "c_jk", c_jk_tmp ) )
+  if ( updateValue< std::vector< double > >( d, names::c_jk, c_jk_tmp ) )
   {
     if ( c_jk_tmp.size() != ( unsigned ) n_conns_ )
     {
@@ -1034,7 +1034,7 @@ STDPStructplConnectionHom< targetidentifierT >::set_status(
   }
 
   std::vector< double > r_post_jk_tmp;
-  if ( updateValue< std::vector< double > >( d, "r_post_jk", r_post_jk_tmp ) )
+  if ( updateValue< std::vector< double > >( d, names::r_post_jk, r_post_jk_tmp ) )
   {
     if ( r_post_jk_tmp.size() != ( unsigned ) n_conns_ )
     {
@@ -1044,7 +1044,7 @@ STDPStructplConnectionHom< targetidentifierT >::set_status(
   }
 
   std::vector< double > R_post_jk_tmp;
-  if ( updateValue< std::vector< double > >( d, "R_post_jk", R_post_jk_tmp ) )
+  if ( updateValue< std::vector< double > >( d, names::R_post_jk, R_post_jk_tmp ) )
   {
     if ( R_post_jk_tmp.size() != ( unsigned ) n_conns_ )
     {
@@ -1055,7 +1055,7 @@ STDPStructplConnectionHom< targetidentifierT >::set_status(
 
   bool weights_updated = false;
   std::vector< double > w_jk_tmp;
-  if ( updateValue< std::vector< double > >( d, "w_jk", w_jk_tmp ) )
+  if ( updateValue< std::vector< double > >( d, names::w_jk, w_jk_tmp ) )
   {
     if ( w_jk_tmp.size() != ( unsigned ) n_conns_ )
     {
@@ -1067,7 +1067,7 @@ STDPStructplConnectionHom< targetidentifierT >::set_status(
 
   std::vector< long > w_create_steps_tmp;
   if ( updateValue< std::vector< long > >(
-         d, "w_create_steps", w_create_steps_tmp ) )
+         d, names::w_create_steps, w_create_steps_tmp ) )
   {
     if ( w_create_steps_tmp.size() != ( unsigned ) n_conns_ )
     {

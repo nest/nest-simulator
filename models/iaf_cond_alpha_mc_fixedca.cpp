@@ -239,7 +239,7 @@ nest::iaf_cond_alpha_mc_fixedca::Parameters_::Parameters_()
   , Ca_amplitude( 1.0 ) // pA
   , jump_Th( 3.0 )      // mV
   , tau_Th( 3.0 )       // ms
-  , Ca_active( true )
+  , Ca_active( false )
   , reset_on_spike( true )
 
 {

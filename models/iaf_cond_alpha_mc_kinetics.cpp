@@ -263,7 +263,7 @@ nest::iaf_cond_alpha_mc_kinetics::Parameters_::Parameters_()
   , slope_h( -0.5 )  // mV-1
   , jump_Th( 25.0 )  // mV
   , tau_Th( 7.0 )    // ms
-  , Ca_active( true )
+  , Ca_active( false )
   , reset_on_spike( true )
 
 {

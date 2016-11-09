@@ -118,6 +118,9 @@ namespace nest
 class STDPStructplHomCommonProperties : public CommonSynapseProperties
 {
 
+template < typename targetidentifierT >
+  friend class STDPStructplConnectionHom;
+
 public:
   /**
    * Default constructor.
@@ -151,6 +154,7 @@ public:
   bool safe_mode_;
   bool sleep_mode_;
 
+private:
   // precomputed values
   long exp_cache_len_;
   long steps_grace_period_;
@@ -164,7 +168,6 @@ public:
   double pow_term_5_;
   double pow_term_6_;
 
-private:
   /**
    * Compute common dependent parameters
    */

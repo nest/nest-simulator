@@ -152,7 +152,6 @@ public:
   bool sleep_mode_;
 
 private:
-
   // precomputed values
   long exp_cache_len_;
   long steps_grace_period_;
@@ -592,13 +591,10 @@ private:
             else
             {
               // the delta_done in this case may be different from delta_this,
-              // in
-              // case the contact is deleted before delta_this is elapsed. If
-              // so,
-              // we reenter this while loop from the top.
+              // in case the contact is deleted before delta_this is elapsed.
+              // If so, we reenter this while loop from the top.
               // Therefore we update r_jk and the other variables at every
-              // round, to
-              // have initial conditions consistent with delta_done.
+              // round, to have initial conditions consistent with delta_done.
 
               // compute amplitudes of exponential terms of w_jk solution
               compute_amps_( cp, i ); //, r_post_i_, R_post_i_, amps_ );
@@ -657,8 +653,6 @@ private:
                 {
                   // we stop searching because we have found the first zero
                   // crossing, upon which the contact is immediately deleted.
-                  // std::cout << "deletion triggered in step-wise check."  <<
-                  // "\n";
                   deletion_trigger = true;
                   break;
                 }
@@ -1035,7 +1029,8 @@ STDPStructplConnectionHom< targetidentifierT >::set_status(
   }
 
   std::vector< double > r_post_jk_tmp;
-  if ( updateValue< std::vector< double > >( d, names::r_post_jk, r_post_jk_tmp ) )
+  if ( updateValue< std::vector< double > >(
+         d, names::r_post_jk, r_post_jk_tmp ) )
   {
     if ( r_post_jk_tmp.size() != ( unsigned ) n_conns_ )
     {
@@ -1045,7 +1040,8 @@ STDPStructplConnectionHom< targetidentifierT >::set_status(
   }
 
   std::vector< double > R_post_jk_tmp;
-  if ( updateValue< std::vector< double > >( d, names::R_post_jk, R_post_jk_tmp ) )
+  if ( updateValue< std::vector< double > >(
+         d, names::R_post_jk, R_post_jk_tmp ) )
   {
     if ( R_post_jk_tmp.size() != ( unsigned ) n_conns_ )
     {
@@ -1114,8 +1110,7 @@ STDPStructplConnectionHom< targetidentifierT >::set_status(
   }
 
   // Refresh minimum of w_create_steps_min_. SetStatus might have ended sleep
-  // mode
-  // of the synapse by changing w_create_steps_
+  // mode of the synapse by changing w_create_steps_
   w_create_steps_min_ =
     *std::min_element( w_create_steps_.begin(), w_create_steps_.end() );
   if ( w_create_steps_min_ < 0 )

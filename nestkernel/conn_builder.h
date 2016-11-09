@@ -42,6 +42,7 @@
 #include "gslrandomgen.h"
 
 // Includes from nestkernel:
+#include "conn_parameter.h"
 #include "gid_collection.h"
 #include "nest_time.h"
 
@@ -143,7 +144,7 @@ protected:
    * node is not located on the current thread or MPI-process and read of an
    * array.
    */
-  void skip_conn_parameter_( thread );
+  void skip_conn_parameter_( thread, size_t n_skip = 1 );
 
   GIDCollection const* sources_;
   GIDCollection const* targets_;
@@ -339,6 +340,25 @@ protected:
   void connect_();
   void connect_( GIDCollection sources, GIDCollection targets );
 };
+
+inline void
+ConnBuilder::register_parameters_requiring_skipping_( ConnParameter& param )
+{
+  if ( param.is_array() )
+  {
+    parameters_requiring_skipping_.push_back( &param );
+  }
+}
+
+inline void
+ConnBuilder::skip_conn_parameter_( thread target_thread, size_t n_skip )
+{
+  for ( std::vector< ConnParameter* >::iterator it =
+          parameters_requiring_skipping_.begin();
+        it != parameters_requiring_skipping_.end();
+        ++it )
+    ( *it )->skip( target_thread, n_skip );
+}
 
 } // namespace nest
 

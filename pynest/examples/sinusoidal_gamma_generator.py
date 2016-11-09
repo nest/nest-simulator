@@ -20,7 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-'''Sinusoidal gamma generator example
+'''
+Sinusoidal gamma generator example
 ----------------------------------
 
 This script demonstrates the use of the `sinusoidal_gamma_generator`
@@ -125,8 +126,8 @@ g = nest.Create('sinusoidal_gamma_generator',
 p = nest.Create('parrot_neuron', 20)
 s = nest.Create('spike_detector')
 
-nest.DivergentConnect(g, p)
-nest.ConvergentConnect(p, s)
+nest.Connect(g, p)
+nest.Connect(p, s)
 
 nest.Simulate(200)
 ev = nest.GetStatus(s)[0]['events']
@@ -153,8 +154,8 @@ g = nest.Create('sinusoidal_gamma_generator',
 p = nest.Create('parrot_neuron', 20)
 s = nest.Create('spike_detector')
 
-nest.DivergentConnect(g, p)
-nest.ConvergentConnect(p, s)
+nest.Connect(g, p)
+nest.Connect(p, s)
 
 nest.Simulate(200)
 ev = nest.GetStatus(s)[0]['events']
@@ -183,7 +184,7 @@ def step(t, n, initial, after, seed=1, dt=0.05):
 
     g = nest.Create('sinusoidal_gamma_generator', n, params=initial)
     sd = nest.Create('spike_detector')
-    nest.ConvergentConnect(g, sd)
+    nest.Connect(g, sd)
     nest.Simulate(t / 2)
     nest.SetStatus(g, after)
     nest.Simulate(t / 2)

@@ -93,7 +93,7 @@ MUSICManager::init_music( int* argc, char** argv[] )
 }
 
 void
-MUSICManager::enter_runtime( double_t h_min_delay )
+MUSICManager::enter_runtime( double h_min_delay )
 {
 #ifdef HAVE_MUSIC
   publish_music_in_ports_();
@@ -217,7 +217,7 @@ MUSICManager::set_music_in_port_acceptable_latency( std::string portname,
 
 void
 MUSICManager::set_music_in_port_max_buffered( std::string portname,
-  int_t maxbuffered )
+  int maxbuffered )
 {
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
@@ -237,8 +237,8 @@ MUSICManager::publish_music_in_ports_()
 
 void
 MUSICManager::update_music_event_handlers( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   std::map< std::string, MusicEventHandler >::iterator it;
   for ( it = music_in_portmap_.begin(); it != music_in_portmap_.end(); ++it )

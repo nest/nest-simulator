@@ -38,18 +38,18 @@
 
 // Includes from topology:
 #include "mask.h"
-#include "parameter.h"
+#include "topology_parameter.h"
 
 
 namespace nest
 {
 index create_layer( const DictionaryDatum& layer_dict );
-std::vector< double_t > get_position( const index node_gid );
-std::vector< double_t > displacement( const std::vector< double_t >& point,
+std::vector< double > get_position( const index node_gid );
+std::vector< double > displacement( const std::vector< double >& point,
   const index node_gid );
-double_t distance( const std::vector< double_t >& point, const index node_gid );
+double distance( const std::vector< double >& point, const index node_gid );
 MaskDatum create_mask( const DictionaryDatum& mask_dict );
-BoolDatum inside( const std::vector< double_t >& point, const MaskDatum& mask );
+BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum union_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
 MaskDatum minus_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
@@ -63,12 +63,12 @@ ParameterDatum subtract_parameter( const ParameterDatum& param1,
   const ParameterDatum& param2 );
 ArrayDatum get_global_children( const index gid,
   const MaskDatum& maskd,
-  const std::vector< double_t >& anchor );
+  const std::vector< double >& anchor );
 void connect_layers( const index source_gid,
   const index target_gid,
   const DictionaryDatum& dict );
 ParameterDatum create_parameter( const DictionaryDatum& param_dict );
-double_t get_value( const std::vector< double_t >& point,
+double get_value( const std::vector< double >& point,
   const ParameterDatum& param );
 void dump_layer_nodes( const index layer_gid, OstreamDatum& out );
 void dump_layer_connections( const Token& syn_model,

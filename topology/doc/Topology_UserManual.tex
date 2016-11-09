@@ -61,9 +61,7 @@
   backgroundcolor=\color{lstcolor},
   morekeywords={Create,SetStatus,GetStatus,Connect,
      GetNodes,GetLeaves,
-     ConvergentConnect,DivergentConnect,
-     Simulate,RandomConvergentConnect,
-     RandomDivergentConnect,CopyModel,
+     Simulate,CopyModel,
      SetKernelStatus,PrintNetwork,SetDefaults,
    voltage_trace,raster_plot,ResetKernel,GetConnections,
    CreateLayer,ConnectLayers,GetPosition,GetLayer,
@@ -1404,7 +1402,7 @@ overridden:
       { return new EllipticMask(*this); }
 
   protected:
-    double_t rx_, ry_;
+    double rx_, ry_;
   };
 \end{lstlisting}
 The overridden methods include a test if a point is inside the mask, and

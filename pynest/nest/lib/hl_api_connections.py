@@ -31,97 +31,6 @@ import numpy
 
 
 @check_stack
-@deprecated(alt_func_name='GetConnections')
-def FindConnections(source, target=None, synapse_model=None,
-                    synapse_type=None):
-    """Return an array of identifiers for connections that match the
-    given parameters.
-
-    .. note:: Deprecated
-        FindConnections() is deprecated and will be removed in the future.
-        Use GetConnections() instead.
-
-    If target and/or synapse_model is/are given, they must be single
-    values, lists of length one or the same length as source.
-    Use GetStatus()/SetStatus() to inspect/modify the found
-    connections.
-
-    Parameters
-    ----------
-    source : list
-        Source GIDs, only connections from these
-        pre-synaptic neurons are returned
-    target : list, optional
-        Target GIDs, only connections to these
-        post-synaptic neurons are returned
-    synapse_model : str, optional
-        Only connections with this synapse model are returned
-    synapse_type : str, optional
-        Only connections with this synapse type are returned
-
-    Returns
-    -------
-    tuple:
-        Connections as dictionaries with keys:
-        "source-gid", "target-gid", "target-thread", "synapse-modelid"
-
-    Raises
-    ------
-    kernel.NESTError
-        If the aliases 'synapse_type' and 'synapse_model' are used together.
-
-    Notes
-    -----
-    synapse_type is alias for synapse_model for backward compatibility
-
-    See also
-    --------
-    GetConnections
-    GetStatus
-    """
-
-    if synapse_model is not None and synapse_type is not None:
-        raise kernel.NESTError(
-            "'synapse_type' is alias for 'synapse_model' and cannot "
-            "be used together with 'synapse_model'.")
-
-    if synapse_type is not None:
-        synapse_model = synapse_type
-
-    if target is None and synapse_model is None:
-        params = [{"source": s} for s in source]
-
-    elif target is None and synapse_model is not None:
-        synapse_model = broadcast(
-            synapse_model, len(source), (uni_str,), "synapse_model")
-        params = [{"source": s, "synapse_model": syn}
-                  for s, syn in zip(source, synapse_model)]
-
-    elif target is not None and synapse_model is None:
-        target = broadcast(target, len(source), (int,), "target")
-        params = [{"source": s, "target": t} for s, t in zip(source, target)]
-
-    else:  # target is not None and synapse_model is not None
-        target = broadcast(target, len(source), (int,), "target")
-        synapse_model = broadcast(
-            synapse_model, len(source), (uni_str,), "synapse_model")
-        params = [{"source": s, "target": t, "synapse_model": syn}
-                  for s, t, syn in zip(source, target, synapse_model)]
-
-    sps(params)
-    sr("{FindConnections} Map Flatten")
-
-    result = ({
-        'source': int(src),
-        'target_thread': int(tt),
-        'synapse_modelid': int(sm),
-        'port': int(prt)
-    } for src, _, tt, sm, prt in spp())
-
-    return tuple(result)
-
-
-@check_stack
 def GetConnections(source=None, target=None, synapse_model=None,
                    synapse_label=None):
     """Return an array of connection identifiers.
@@ -182,291 +91,6 @@ def GetConnections(source=None, target=None, synapse_model=None,
     sr("GetConnections")
 
     return spp()
-
-
-@check_stack
-@deprecated(alt_func_name='Connect')
-def OneToOneConnect(pre, post, params=None, delay=None,
-                    model="static_synapse"):
-    """Make one-to-one connections between the nodes in
-    pre and the nodes in post.
-
-    .. note:: Deprecated
-        OneToOneConnect() is deprecated and will be removed in the future.
-        Use Connect() instead.
-
-    Parameters
-    ----------
-    pre : list
-        Presynaptic nodes, as list of GIDs (same length as post)
-    post : list
-        Postsynaptic nodes, as list of GIDs (same length as pre)
-    params : dict or list of dicts or float or list of floats, optional
-        If given as a single dict or list of dicts (of same length as pre
-        and post), these are used as parameters for the connections.
-        If given as a a single float or as list of floats (of same length
-        as pre and post), the value is used as weight(s). In this case the
-        delay also has to be given as float or as list of floats.
-    delay : float or list of floats, optional
-        Delays of the connections
-    model : str, optional
-        Synapse model to use
-
-    Raises
-    ------
-    kernel.NESTError
-    """
-
-    if len(pre) != len(post):
-        raise kernel.NESTError("pre and post have to be the same length")
-
-    # pre post Connect
-    if params is None and delay is None:
-        for s, d in zip(pre, post):
-            sps(s)
-            sps(d)
-            sr('/%s Connect' % model)
-
-    # pre post params Connect
-    elif params is not None and delay is None:
-        params = broadcast(params, len(pre), (dict,), "params")
-        if len(params) != len(pre):
-            raise kernel.NESTError(
-                "params must be a dict, or list of dicts of length 1 "
-                " or len(pre).")
-        for s, d, p in zip(pre, post, params):
-            sps(s)
-            sps(d)
-            sps(p)
-            sr('/%s Connect' % model)
-
-    # pre post w d Connect
-    elif params is not None and delay is not None:
-        params = broadcast(params, len(pre), (float,), "params")
-        if len(params) != len(pre):
-            raise kernel.NESTError(
-                "params must be a float, or list of floats of length 1 "
-                "or len(pre) and will be used as weight(s).")
-        delay = broadcast(delay, len(pre), (float,), "delay")
-        if len(delay) != len(pre):
-            raise kernel.NESTError(
-                "delay must be a float, or list of floats of length 1 "
-                "or len(pre).")
-
-        for s, d, w, dl in zip(pre, post, params, delay):
-            sps(s)
-            sps(d)
-            sps(w)
-            sps(dl)
-            sr('/%s Connect' % model)
-
-    else:
-        raise kernel.NESTError("Both 'params' and 'delay' have to be given.")
-
-
-@check_stack
-@deprecated(alt_func_name='Connect')
-def ConvergentConnect(pre, post, weight=None, delay=None,
-                      model="static_synapse"):
-    """Connect all neurons in pre to each neuron in post.
-
-    .. note:: Deprecated
-        ConvergentConnect() is deprecated and will be removed in the future.
-        Use Connect() instead.
-
-    Parameters
-    ----------
-    pre : list
-        Presynaptic nodes, as list of GIDs (same length as post)
-    post : list
-        Postsynaptic nodes, as list of GIDs (same length as pre)
-    weight : float or list of floats, optional
-        If given as a a single float or as list of floats (of same length
-        as pre and post), the value is used as weight(s). In this case the
-        delay also has to be given as float or as list of floats.
-    delay : float or list of floats, optional
-        Delays of the connections
-    model : str, optional
-        Synapse model to use
-
-    Raises
-    ------
-    kernel.NESTError
-    """
-
-    if weight is None and delay is None:
-        for d in post:
-            sps(pre)
-            sps(d)
-            sr('/%s ConvergentConnect' % model)
-
-    elif weight is not None and delay is not None:
-        weight = broadcast(weight, len(pre), (float,), "weight")
-        if len(weight) != len(pre):
-            raise kernel.NESTError(
-                "weight must be a float, or sequence of floats of length 1 "
-                "or len(pre)")
-        delay = broadcast(delay, len(pre), (float,), "delay")
-        if len(delay) != len(pre):
-            raise kernel.NESTError(
-                "delay must be a float, or sequence of floats of length 1 "
-                "or len(pre)")
-
-        for d in post:
-            sps(pre)
-            sps(d)
-            sps(weight)
-            sps(delay)
-            sr('/%s ConvergentConnect' % model)
-
-    else:
-        raise kernel.NESTError("Both 'weight' and 'delay' have to be given.")
-
-
-@check_stack
-@deprecated(alt_func_name='Connect')
-def RandomConvergentConnect(pre, post, n, weight=None, delay=None,
-                            model="static_synapse", options=None):
-    """Connect n randomly selected neurons from pre to each neuron in
-    post.
-
-    .. note:: Deprecated
-        RandomConvergentConnect() is deprecated and will be removed
-        in the future. Use Connect() instead.
-
-    Parameters
-    ----------
-    pre : list
-        Presynaptic nodes, as list of GIDs (same length as post)
-    post : list
-        Postsynaptic nodes, as list of GIDs (same length as pre)
-    n : int
-        Number of presynaptic neurons to connect
-    weight : float or list of floats, optional
-        If given as a a single float or as list of floats (of same length
-        as pre and post), the value is used as weight(s). In this case the
-        delay also has to be given as float or as list of floats.
-    delay : float or list of floats, optional
-        Delays of the connections
-    model : str, optional
-        Synapse model to use
-    options : dict, optional
-        Options to the RandomConvergentConnect function:
-        'allow_autapses', 'allow_multapses'
-
-    Raises
-    ------
-    kernel.NESTError
-    TypeError
-    """
-
-    if not isinstance(n, int):
-        raise TypeError("number of neurons n should be an integer")
-
-    # store current options, set desired options
-    old_options = None
-    error = False
-    if options is not None:
-        old_options = sli_func('GetOptions', '/RandomConvergentConnect',
-                               litconv=True)
-        del old_options['DefaultOptions']  # in the way when restoring
-        sli_func('SetOptions', '/RandomConvergentConnect', options,
-                 litconv=True)
-
-    if weight is None and delay is None:
-        sli_func(
-            '/m Set /n Set /pre Set ' +
-            '{ pre exch n m RandomConvergentConnect } forall',
-            post, pre, n, '/'+model, litconv=True)
-
-    elif weight is not None and delay is not None:
-        weight = broadcast(weight, n, (float,), "weight")
-        if len(weight) != n:
-            raise kernel.NESTError(
-                "weight must be a float, or sequence of floats of "
-                "length 1 or n")
-
-        delay = broadcast(delay, n, (float,), "delay")
-        if len(delay) != n:
-            raise kernel.NESTError(
-                "delay must be a float, or sequence "
-                "of floats of length 1 or n")
-
-        sli_func(
-            '/m Set /d Set /w Set /n Set ' +
-            '/pre Set { pre exch n w d m RandomConvergentConnect } forall',
-            post, pre, n, weight, delay, '/'+model, litconv=True)
-
-    else:
-        error = True
-
-    # restore old options
-    if old_options is not None:
-        sli_func('SetOptions', '/RandomConvergentConnect', old_options,
-                 litconv=True)
-
-    if error:
-        raise kernel.NESTError("Both 'weight' and 'delay' have to be given.")
-
-
-@check_stack
-@deprecated(alt_func_name='Connect')
-def DivergentConnect(pre, post, weight=None, delay=None,
-                     model="static_synapse"):
-    """
-    Connect each neuron in pre to all neurons in post.
-
-    .. note:: Deprecated
-        DivergentConnect() is deprecated and will be removed
-        in the future. Use Connect() instead.
-
-    Parameters
-    ----------
-    pre : list
-        Presynaptic nodes, as list of GIDs (same length as post)
-    post : list
-        Postsynaptic nodes, as list of GIDs (same length as pre)
-    weight : float or list of floats, optional
-        If given as a a single float or as list of floats (of same length
-        as pre and post), the value is used as weight(s). In this case the
-        delay also has to be given as float or as list of floats.
-    delay : float or list of floats, optional
-        Delays of the connections
-    model : str, optional
-        Synapse model to use
-
-    Raises
-    ------
-    kernel.NESTError
-    """
-
-    if weight is None and delay is None:
-        for s in pre:
-            sps(s)
-            sps(post)
-            sr('/%s DivergentConnect' % model)
-
-    elif weight is not None and delay is not None:
-        weight = broadcast(weight, len(post), (float,), "weight")
-        if len(weight) != len(post):
-            raise kernel.NESTError(
-                "weight must be a float, or sequence of floats of length "
-                "1 or len(post)")
-        delay = broadcast(delay, len(post), (float,), "delay")
-        if len(delay) != len(post):
-            raise kernel.NESTError(
-                "delay must be a float, or sequence of "
-                "floats of length 1 or len(post)")
-        cmd = '/%s DivergentConnect' % model
-        for s in pre:
-            sps(s)
-            sps(post)
-            sps(weight)
-            sps(delay)
-            sr(cmd)
-
-    else:
-        raise kernel.NESTError("Both 'weight' and 'delay' have to be given.")
 
 
 @check_stack
@@ -556,13 +180,23 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     In the case of scalar parameters, all keys must be doubles
     except for 'receptor_type' which must be initialised with an integer.
 
-    Parameter arrays are only available for the rules 'one_to_one' and
-    'all_to_all':
+    Parameter arrays are available for the rules 'one_to_one',
+    'all_to_all', 'fixed_indegree' and 'fixed_outdegree':
     - For 'one_to_one' the array has to be a one-dimensional
       NumPy array with length len(pre).
     - For 'all_to_all' the array has to be a two-dimensional NumPy array
       with shape (len(post), len(pre)), therefore the rows describe the
       target and the columns the source neurons.
+    - For 'fixed_indegree' the array has to be a two-dimensional NumPy array
+      with shape (len(post), indegree), where indegree is the number of
+      incoming connections per target neuron, therefore the rows describe the
+      target and the columns the connections converging to the target neuron,
+      regardless of the identity of the source neurons.
+    - For 'fixed_outdegree' the array has to be a two-dimensional NumPy array
+      with shape (len(pre), outdegree), where outdegree is the number of
+      outgoing connections per source neuron, therefore the rows describe the
+      source and the columns the connections starting from the source neuron
+      regardless of the identity of the target neuron.
 
     Any distributed parameter must be initialised with a further dictionary
     specifying the distribution type ('distribution', e.g. 'normal') and
@@ -676,12 +310,37 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                                     "a scalar or a dictionary.")
                             else:
                                 syn_spec[key] = value.flatten()
+                        elif rule == 'fixed_indegree':
+                            indegree = conn_spec['indegree']
+                            if value.shape[0] != len(post) or \
+                                    value.shape[1] != indegree:
+                                raise kernel.NESTError(
+                                    "'" + key + "' has to be an array of "
+                                    "dimension " + str(len(post)) + "x" +
+                                    str(indegree) +
+                                    " (n_target x indegree), " +
+                                    "a scalar or a dictionary.")
+                            else:
+                                syn_spec[key] = value.flatten()
+                        elif rule == 'fixed_outdegree':
+                            outdegree = conn_spec['outdegree']
+                            if value.shape[0] != len(pre) or \
+                                    value.shape[1] != outdegree:
+                                raise kernel.NESTError(
+                                    "'" + key + "' has to be an array of "
+                                    "dimension " + str(len(pre)) + "x" +
+                                    str(outdegree) +
+                                    " (n_sources x outdegree), " +
+                                    "a scalar or a dictionary.")
+                            else:
+                                syn_spec[key] = value.flatten()
                         else:
                             raise kernel.NESTError(
                                 "'" + key + "' has the wrong type. "
                                 "Two-dimensional parameter arrays can "
-                                "only be used in conjunction with rule "
-                                "'all_to_all'.")
+                                "only be used in conjunction with rules "
+                                "'all_to_all', 'fixed_indegree' or "
+                                "'fixed_outdegree'.")
             sps(syn_spec)
         else:
             raise kernel.NESTError(
@@ -773,93 +432,6 @@ def DataConnect(pre, params=None, model="static_synapse"):
         sr('DataConnect_a')
 
         SetKernelStatus({'dict_miss_is_error': dict_miss})
-
-
-@check_stack
-@deprecated(alt_func_name='Connect')
-def RandomDivergentConnect(pre, post, n, weight=None, delay=None,
-                           model="static_synapse", options=None):
-    """Connect each neuron in pre to n randomly selected neurons from
-    post.
-
-    .. note:: Deprecated
-        RandomDivergentConnect() is deprecated and will be removed
-        in the future. Use Connect() instead.
-
-    Parameters
-    ----------
-    pre : list
-        Presynaptic nodes, as list of GIDs (same length as post)
-    post : list
-        Postsynaptic nodes, as list of GIDs (same length as pre)
-    n : int
-        Number of postsynaptic neurons to connect to
-    weight : float or list of floats, optional
-        If given as a a single float or as list of floats (of same length
-        as pre and post), the value is used as weight(s). In this case the
-        delay also has to be given as float or as list of floats.
-    delay : float or list of floats, optional
-        Delays of the connections
-    model : str, optional
-        Synapse model to use
-    options : dict, optional
-        Options to the RandomDivergentConnect function:
-        'allow_autapses', 'allow_multapses'
-
-    Raises
-    ------
-    kernel.NESTError
-    TypeError
-    """
-
-    if not isinstance(n, int):
-        raise TypeError("number of neurons n should be an integer")
-
-    # store current options, set desired options
-    old_options = None
-    error = False
-    if options is not None:
-        old_options = sli_func('GetOptions', '/RandomDivergentConnect',
-                               litconv=True)
-        del old_options['DefaultOptions']  # in the way when restoring
-        sli_func('SetOptions', '/RandomDivergentConnect', options,
-                 litconv=True)
-
-    if weight is None and delay is None:
-        sli_func(
-            '/m Set /n Set /post Set ' +
-            '{ n post m RandomDivergentConnect } forall',
-            pre, post, n, '/'+model, litconv=True)
-
-    elif weight is not None and delay is not None:
-
-        weight = broadcast(weight, n, (float,), "weight")
-        if len(weight) != n:
-            raise kernel.NESTError(
-                "weight must be a float, or sequence of floats of length 1" +
-                " or n")
-
-        delay = broadcast(delay, n, (float,), "delay")
-        if len(delay) != n:
-            raise kernel.NESTError(
-                "delay must be a float, or sequence of floats of length 1" +
-                "or n")
-
-        sli_func(
-            '/m Set /d Set /w Set /n Set /post Set ' +
-            '{ n post w d m RandomDivergentConnect } forall',
-            pre, post, n, weight, delay, '/'+model, litconv=True)
-
-    else:
-        error = True
-
-    # restore old options
-    if old_options is not None:
-        sli_func('SetOptions', '/RandomDivergentConnect', old_options,
-                 litconv=True)
-
-    if error:
-        raise kernel.NESTError("Both 'weight' and 'delay' have to be given.")
 
 
 def _is_subnet_instance(gids):

@@ -184,7 +184,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // ------------------------------------------------------------
 
@@ -194,11 +194,11 @@ private:
    */
   struct Spike_
   {
-    long_t timestep_;
-    double_t weight_;
-    long_t receptor_channel_;
+    long timestep_;
+    double weight_;
+    long receptor_channel_;
 
-    Spike_( long_t timestep, double_t weight, long_t receptorchannel )
+    Spike_( long timestep, double weight, long receptorchannel )
       : timestep_( timestep )
       , weight_( weight )
       , receptor_channel_( receptorchannel )
@@ -223,11 +223,11 @@ private:
   struct Parameters_
   {
 
-    Time delta_tau_;    //!< width of correlation histogram bins
-    Time tau_max_;      //!< maximum time difference of events to detect
-    Time Tstart_;       //!< start of recording
-    Time Tstop_;        //!< end of recording
-    long_t N_channels_; //!< number of channels
+    Time delta_tau_;  //!< width of correlation histogram bins
+    Time tau_max_;    //!< maximum time difference of events to detect
+    Time Tstart_;     //!< start of recording
+    Time Tstop_;      //!< end of recording
+    long N_channels_; //!< number of channels
 
     Parameters_();                     //!< Sets default parameter values
     Parameters_( const Parameters_& ); //!< Recalibrate all times
@@ -256,16 +256,16 @@ private:
   struct State_
   {
 
-    std::vector< long_t > n_events_; //!< spike counters
-    SpikelistType incoming_;         //!< incoming spikes, sorted
-                                     /** Weighted covariance matrix.
-                                      *  @note Data type is double to accomodate weights.
-                                      */
-    std::vector< std::vector< std::vector< double_t > > > covariance_;
+    std::vector< long > n_events_; //!< spike counters
+    SpikelistType incoming_;       //!< incoming spikes, sorted
+                                   /** Weighted covariance matrix.
+                                    *  @note Data type is double to accomodate weights.
+                                    */
+    std::vector< std::vector< std::vector< double > > > covariance_;
 
     /** Unweighted covariance matrix.
      */
-    std::vector< std::vector< std::vector< long_t > > > count_covariance_;
+    std::vector< std::vector< std::vector< long > > > count_covariance_;
 
     State_(); //!< initialize default state
 

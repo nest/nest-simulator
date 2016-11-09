@@ -28,7 +28,7 @@ set( NEST_USER_EMAIL "nest_user@nest-initiative.org" )
 
 # VERSION exported to libnestutil/config.h, extras/create_release.sh
 set( NEST_VERSION_MAJOR 2 )
-set( NEST_VERSION_MINOR 10 )
+set( NEST_VERSION_MINOR 11 )
 set( NEST_VERSION_PATCHLEVEL 0 )
 
 set( NEST_VERSION_VERSION "${NEST_VERSION_MAJOR}.${NEST_VERSION_MINOR}.${NEST_VERSION_PATCHLEVEL}" )
@@ -93,7 +93,7 @@ include( GNUInstallDirs )
 
 if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
   # no prefix given?
-  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'? "
+  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'. "
                     "Please set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
 endif ()
 
@@ -109,16 +109,69 @@ find_program( SED NAMES sed gsed )
 ##################   CPack, checks, ... in external modules   ##################
 ################################################################################
 
+# This include checks the symbols, etc.
+include( CheckIncludesSymbols )
+
+# These includes publish function names.
+include( ProcessOptions )
+include( WriteStaticModules_h )
+include( CPackVariables )
+include( CheckExtraCompilerFeatures )
+include( ConfigureSummary )
 include( GetTriple )
+
+# get triples arch-vendor-os
 get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
 get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TARGET_OS )
 
-include( CPackVariables )
-include( CheckIncludesSymbols )
-include( ProcessOptions )
-include( WriteStaticModules_h )
-include( DetermineLibraries )
-include( CheckExtraCompilerFeatures )
+# set cpack variables and
+# generate CPackConfig.cmake CPackSourceConfig.cmake files
+nest_set_cpack_variables()
+
+# Process the command line arguments
+nest_process_with_optimize()
+nest_process_with_debug()
+nest_process_with_warning()
+nest_process_with_libraries()
+nest_process_with_includes()
+nest_process_with_defines()
+nest_process_k_computer()
+nest_process_enable_bluegene()
+nest_process_static_libraries()
+nest_process_external_modules()
+nest_process_tics_per_ms()
+nest_process_tics_per_step()
+nest_process_with_ps_array()
+nest_process_with_libltdl()
+nest_process_with_readline()
+nest_process_with_gsl()
+nest_process_with_python()
+nest_process_with_openmp()
+nest_process_with_mpi()
+nest_process_with_libneurosim()
+nest_process_with_music()
+
+nest_get_color_flags()
+set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEST_CXX_COLOR_FLAGS}" )
+
+# requires HAVE_LIBNEUROSIM
+nest_default_modules()
+
+nest_write_static_module_header( "${PROJECT_BINARY_DIR}/nest/static_modules.h" )
+
+# check additionals
+nest_check_exitcode_abort()
+nest_check_exitcode_segfault()
+nest_check_have_cmath_makros_ignored()
+nest_check_have_alpha_cxx_std_bug()
+nest_check_have_sigusr_ignored()
+nest_check_have_static_template_declaration_fail()
+nest_check_have_stl_vector_capacity_base_unity()
+nest_check_have_stl_vector_capacity_doubling()
+nest_check_have_xlc_ice_on_using()
+nest_check_have_std_nan()
+nest_check_have_std_isnan()
 
 ################################################################################
 ##################         Enable Testing Targets             ##################
@@ -311,4 +364,4 @@ install( FILES LICENSE README.md NEWS
     DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
 
-include( ConfigureSummary )
+nest_print_config_summary()

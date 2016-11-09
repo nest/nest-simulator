@@ -706,7 +706,9 @@ SeeAlso: unittest::distributed_assert_or_die, nest_indirect
 */
 /mpirun_self
 {
- statusdict/files :: First  mpirun shpawn exch pop  % keep only istream
+ statusdict/prefix :: (/bin/nest ) join
+ statusdict/files :: First
+ mpirun shpawn exch pop  % keep only istream
 }
 def
 

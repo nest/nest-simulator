@@ -168,45 +168,46 @@ cdef class NESTEngine(object):
         self.pEngine = NULL
 
     def init(self, argv, modulepath):
-
         if self.pEngine is not NULL:
             raise NESTError("engine already initialized")
 
         cdef int argc = <int> len(argv)
-
         if argc <= 0:
             raise NESTError("argv can't be empty")
 
-        cdef string modulepath_str = modulepath.encode()
-
+        # Create c-style argv arguments from sys.argv
         cdef char* arg0 = "pynest\0"
-        cdef char** argv_bytes = <char**> malloc((argc+1) * sizeof(char*))
-
-        if argv_bytes is NULL:
-            raise NESTError("couldn't allocate argv_bytes")
-
-        argv_bytes[0] = arg0        
-        argv_bytes[argc] = NULL
-
+        cdef char** argv_chars = <char**> malloc((argc+1) * sizeof(char*))
+        cdef char** argv_chars_off = argv_chars + 1 # map arguments in loop below
+        if argv_chars is NULL:
+            raise NESTError("couldn't allocate argv_char")
         try:
-            for i in range(1, argc):
-                arg_byte = argv[i].encode()
-                argv_bytes[i] = arg_byte
+            argv_chars[0] = arg0 # Why? Crazy SLI requirement
+            # argv must be null terminated. openmpi depends on this
+            argv_chars[argc] = NULL
+
+            # Need to keep a reference to encoded bytes issue #377
+            # argv_bytes = [byte...] which internally holds a reference
+            # to the c string in argv_char = [c-string... NULL]
+            # the `byte` is the utf-8 encoding of sys.argv[...]
+            argv_bytes = [argvi.encode() for argvi in argv[1:]]
+            for i, argvi in enumerate(argv_bytes):
+                argv_chars_off[i] = argvi # c-string ref extracted
 
             self.pEngine = new SLIInterpreter()
+            modulepath_bytes = modulepath.encode()
 
             neststartup(&argc,
-              &argv_bytes,
-              deref(self.pEngine),
-              modulepath_str)
+                        &argv_chars,
+                        deref(self.pEngine),
+                        modulepath_bytes)
+            
             # If using MPI, argv might now have changed, so rebuild it
             del argv[:]
-            for i in range(argc):
-                # str(...) will convert to ordinary string in Python2,
-                # otherwise Python2 will return a unicode string
-                argv.append(str(argv_bytes[i].decode()))
+            # Convert back from utf8 char* to utf8 str in both python2 & 3
+            argv.extend(str(argvi.decode()) for argvi in argv_chars[:argc])
         finally:
-            free(argv_bytes)
+            free(argv_chars)
 
         return True
 

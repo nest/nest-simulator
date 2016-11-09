@@ -194,110 +194,47 @@ ResetKernel      % clear all existing network elements
         /sources Set
         /N_conn Set
 
-
-        % draw weights from clipped Gaussian distribution
-        % with mean = A_mean, std = 0.5 A_mean
-        % clipping bounds: min = min(0.2 A_mean, 2.0 A_mean)
-        %                  max = max(0.2 A_mean, 2.0 A_mean)
-        normal_c
-        <<
-            /mu A_mean
-            /sigma A_mean 0.5 mul abs
-            /low A_mean dup 0.2 mul exch 2.0 mul min
-            /high A_mean dup 0.2 mul exch 2.0 mul max
+        sources
+        [target]
+        << /rule /fixed_indegree /indegree N_conn >>
+        << /model /tsodyks2_synapse
+           /weight <<
+               /distribution /normal_clipped
+               /mu A_mean
+               /sigma A_mean 0.5 mul abs
+               /low A_mean dup 0.2 mul exch 2.0 mul min
+               /high A_mean dup 0.2 mul exch 2.0 mul max
+           >>
+           /U <<
+               /distribution /normal_clipped
+               /mu U_mean
+               /sigma U_mean 0.5 mul abs
+               /low U_min
+               /high U_max
+           >>
+           /tau_rec <<
+               /distribution /normal_clipped  % former normal_cl
+               /mu Tau_rec_mean
+               /sigma Tau_rec_mean 0.5 mul abs
+               /low Tau_min
+           >>
+           Tau_fac_mean 0. gt {
+               /tau_fac <<
+                   /distribution /normal_clipped  % fromer normal_cl
+                   /mu Tau_fac_mean
+                   /sigma Tau_fac_mean 0.5 mul abs
+                   /low Tau_min
+               >>
+           }
+           {
+               /tau_fac 0.
+           }ifelse
+           /autapses false
+           /multapses false
         >>
-        SetStatus
+        Connect
 
-        % draw weight for each connection
-        normal_c N_conn RandomArray /weights Set
-
-
-        % draw random values for tau_rec from left-clipped Gaussian distribution
-        normal_cl
-        <<
-            /mu Tau_rec_mean
-            /sigma Tau_rec_mean 0.5 mul abs
-            /low Tau_min
-        >>
-        SetStatus
-
-        % draw Tau_rec for each connection
-        normal_cl N_conn RandomArray /tau_recs Set
-
-
-        % draw random values for tau_fac from left-clipped Gaussian distribution
-
-        %% create a copy of normal_cl
-
-        Tau_fac_mean 0.0 gt
-        {
-            normal_cl
-            <<
-                /mu Tau_fac_mean
-                /sigma Tau_fac_mean 0.5 mul abs
-                /low Tau_min
-            >>
-            SetStatus
-
-            % draw Tau_fac for each connection
-            normal_cl N_conn RandomArray
-        }
-        {
-            []
-        }
-        ifelse
-        /tau_facs Set
-
-
-        % draw random values for U from clipped Gaussian distribution
-        % create copy of normal_c
-
-
-        normal_c
-        <<
-            /mu U_mean
-            /sigma U_mean 0.5 mul abs
-            /low U_min
-            /high U_max
-        >>
-        SetStatus
-
-        % draw U for each connection
-        normal_c N_conn RandomArray /Us Set
-
-
-        %% create a dictionary containing the parameters for all synapses
-        %% and an initialization function InitSynapse, which will be called
-        %% by RandomConvergentConnect before each connection to be established.
-        /init_dict
-        <<
-
-            /weights weights
-            /tau_recs tau_recs
-            /tau_facs tau_facs
-            /Us Us
-
-            /facil Tau_fac_mean 0.0 gt
-
-            /InitSynapse
-            { % call: i InitSynapse
-                /i Set
-                /tsodyks2_synapse
-                <<
-                    /weight weights i get
-                    /U Us i get 
-                    /tau_rec tau_recs i get
-                    /tau_fac facil { tau_facs i get } { 0.0 } ifelse
-                >> SetDefaults
-            }
-
-        >> def
-
-        sources     % source population [we pick from this]
-        target      % target neuron
-        N_conn      % number of source neurons to pick
-        init_dict   % initialization dictionary
-        RandomConvergentConnect
+        sources
 
     end
 } def
@@ -314,19 +251,6 @@ ResetKernel      % clear all existing network elements
 
       % Gaussian distribution, left clipped
       myrng rdevdict /normal_clipped get CreateRDV /normal_cl Set
-
-
-      % set options of RandomConvergentConnect to forbid autapses/multapses
-      /RandomConvergentConnect
-      <<
-          /allow_multapses false
-          /allow_autapses false
-      >>
-      SetOptions
-
-      % use predefined tsodyks short term plasticity synapse for all
-      % subsequent connections
-      /Connect << /syn_spec << /model /tsodyks2_synapse >> >> SetOptions
 
       (Connecting inputs to excitatory neurons.) =
 
@@ -432,25 +356,10 @@ ResetKernel      % clear all existing network elements
 	    /to_memory false
         >> SetStatus
 
-        % select the standard synapse model for subsequent connections
-        /Connect << /syn_spec << /model /static_synapse  >> >> SetOptions
-
-        % connect all exc neurons to it
-        E_neurons
-        {
-            % stack: neuronaddress
-            sd         % stack: neuronaddress SDaddress
-            Connect    % defaults
-        } bind forall
-
-        % connect all inh neurons to it
-        I_neurons
-        {
-            % stack: neuronaddress
-            sd         % stack: neuronaddress SDaddress
-            Connect    % defaults
-        } bind forall
-
+        % connect all exc/inh neurons to it
+        E_neurons [sd] Connect
+        I_neurons [sd] Connect
+        
     end
 } def
 

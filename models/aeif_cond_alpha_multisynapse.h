@@ -99,6 +99,9 @@ class aeif_cond_alpha_multisynapse : public Archiving_Node
 {
 
 public:
+  typedef void ( aeif_cond_alpha_multisynapse::*func_ptr )(
+    const std::vector< double >&,
+    std::vector< double >& );
   aeif_cond_alpha_multisynapse();
   aeif_cond_alpha_multisynapse( const aeif_cond_alpha_multisynapse& );
   virtual ~aeif_cond_alpha_multisynapse();
@@ -128,11 +131,14 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   inline void aeif_cond_alpha_multisynapse_dynamics(
-    const std::vector< double_t >& y,
-    std::vector< double_t >& f );
+    const std::vector< double >& y,
+    std::vector< double >& f );
+  inline void aeif_cond_alpha_multisynapse_dynamics_DT0(
+    const std::vector< double >& y,
+    std::vector< double >& f );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< aeif_cond_alpha_multisynapse >;
@@ -145,26 +151,26 @@ private:
    */
   struct Parameters_
   {
-    double_t V_peak_;  //!< Spike detection threshold in mV
-    double_t V_reset_; //!< Reset Potential in mV
-    double_t t_ref_;   //!< Refractory period in ms
+    double V_peak_;  //!< Spike detection threshold in mV
+    double V_reset_; //!< Reset Potential in mV
+    double t_ref_;   //!< Refractory period in ms
 
-    double_t g_L;     //!< Leak Conductance in nS
-    double_t C_m;     //!< Membrane Capacitance in pF
-    double_t E_ex;    //!< Excitatory reversal Potential in mV
-    double_t E_in;    //!< Inhibitory reversal Potential in mV
-    double_t E_L;     //!< Leak reversal Potential (aka resting potential) in mV
-    double_t Delta_T; //!< Slope faktor in ms.
-    double_t tau_w;   //!< adaptation time-constant in ms.
-    double_t a;       //!< Subthreshold adaptation in nS.
-    double_t b;       //!< Spike-triggered adaptation in pA
-    double_t V_th;    //!< Spike threshold in mV.
-    double_t t_ref;   //!< Refractory period in ms.
-    std::vector< double_t > taus_syn; //!< Time constants of synaptic currents
-                                      //!< in ms..
-    double_t I_e;                     //!< Intrinsic current in pA.
-    double_t MAXERR; //!< Maximal error for adaptive stepsize solver
-    double_t HMIN;   //!< Smallest permissible stepsize in ms.
+    double g_L;     //!< Leak Conductance in nS
+    double C_m;     //!< Membrane Capacitance in pF
+    double E_ex;    //!< Excitatory reversal Potential in mV
+    double E_in;    //!< Inhibitory reversal Potential in mV
+    double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
+    double Delta_T; //!< Slope faktor in ms.
+    double tau_w;   //!< adaptation time-constant in ms.
+    double a;       //!< Subthreshold adaptation in nS.
+    double b;       //!< Spike-triggered adaptation in pA
+    double V_th;    //!< Spike threshold in mV.
+    double t_ref;   //!< Refractory period in ms.
+    std::vector< double > taus_syn; //!< Time constants of synaptic currents
+                                    //!< in ms..
+    double I_e;                     //!< Intrinsic current in pA.
+    double MAXERR; //!< Maximal error for adaptive stepsize solver
+    double HMIN;   //!< Smallest permissible stepsize in ms.
 
     // type is long because other types are not put through in GetStatus
     std::vector< long > receptor_types_;
@@ -211,18 +217,18 @@ private:
     // DG_EXC, G_EXC, DG_INH, G_INH
     static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 4;
 
-    std::vector< double_t > y_;   //!< neuron state
-    std::vector< double_t > k1;   //!< Runge-Kutta variable
-    std::vector< double_t > k2;   //!< Runge-Kutta variable
-    std::vector< double_t > k3;   //!< Runge-Kutta variable
-    std::vector< double_t > k4;   //!< Runge-Kutta variable
-    std::vector< double_t > k5;   //!< Runge-Kutta variable
-    std::vector< double_t > k6;   //!< Runge-Kutta variable
-    std::vector< double_t > k7;   //!< Runge-Kutta variable
-    std::vector< double_t > yin;  //!< Runge-Kutta variable
-    std::vector< double_t > ynew; //!< 5th order update
-    std::vector< double_t > yref; //!< 4th order update
-    int_t r_;                     //!< number of refractory steps remaining
+    std::vector< double > y_;   //!< neuron state
+    std::vector< double > k1;   //!< Runge-Kutta variable
+    std::vector< double > k2;   //!< Runge-Kutta variable
+    std::vector< double > k3;   //!< Runge-Kutta variable
+    std::vector< double > k4;   //!< Runge-Kutta variable
+    std::vector< double > k5;   //!< Runge-Kutta variable
+    std::vector< double > k6;   //!< Runge-Kutta variable
+    std::vector< double > k7;   //!< Runge-Kutta variable
+    std::vector< double > yin;  //!< Runge-Kutta variable
+    std::vector< double > ynew; //!< 5th order update
+    std::vector< double > yref; //!< 4th order update
+    unsigned int r_;            //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -255,7 +261,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double_t step_;          //!< simulation step size in ms
+    double step_;            //!< simulation step size in ms
     double IntegrationStep_; //!< current integration time step,
                              //!< updated by solver
 
@@ -266,7 +272,7 @@ private:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double_t I_stim_;
+    double I_stim_;
   };
 
   // ----------------------------------------------------------------
@@ -278,19 +284,28 @@ private:
   {
 
     /** initial value to normalise excitatory synaptic conductance */
-    std::vector< double_t > g0_ex_;
+    std::vector< double > g0_ex_;
 
     /** initial value to normalise inhibitory synaptic conductance */
-    std::vector< double_t > g0_in_;
+    std::vector< double > g0_in_;
 
-    int_t RefractoryCounts_;
+    /**
+     * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
+     * P.V_th if Delta_T == 0.
+     */
+    double V_peak;
+
+    /** pointer to the rhs function giving the dynamics to the ODE solver **/
+    func_ptr model_dynamics;
+
+    unsigned int refractory_counts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out state vector elements, used by UniversalDataLogger
   template < State_::StateVecElems elem >
-  double_t
+  double
   get_y_elem_() const
   {
     return S_.y_[ elem ];
@@ -375,14 +390,14 @@ aeif_cond_alpha_multisynapse::set_status( const DictionaryDatum& d )
 }
 
 /**
- * Function computing right-hand side of ODE for the ODE solver.
+ * Function computing right-hand side of ODE for the ODE solver if Delta_T != 0.
  * @param y State vector (input).
  * @param f Derivatives (output).
  */
 inline void
 aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics(
-  const std::vector< double_t >& y,
-  std::vector< double_t >& f )
+  const std::vector< double >& y,
+  std::vector< double >& f )
 {
   // a shorthand
   typedef aeif_cond_alpha_multisynapse::State_ S;
@@ -394,11 +409,11 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics(
   // good compiler will optimize the verbosity away ...
 
   // shorthand for state variables
-  const double_t& V = y[ S::V_M ];
-  const double_t& w = y[ S::W ];
+  const double& V = std::min( y[ S::V_M ], P_.V_peak_ );
+  const double& w = y[ S::W ];
 
-  double_t I_syn_exc = 0.0;
-  double_t I_syn_inh = 0.0;
+  double I_syn_exc = 0.0;
+  double I_syn_inh = 0.0;
 
   for ( size_t i = 0; i < ( P_.num_of_receptors_
                             * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
@@ -408,19 +423,70 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics(
     I_syn_inh += y[ S::G_INH + i ] * ( V - P_.E_in );
   }
 
-  // We pre-compute the argument of the exponential
-  const double_t exp_arg = ( V - P_.V_th ) / P_.Delta_T;
-
-  // Upper bound for exponential argument to avoid numerical instabilities
-  const double_t MAX_EXP_ARG = 10.;
-
-  // If the argument is too large, we clip it.
-  const double_t I_spike =
-    P_.Delta_T * std::exp( std::min( exp_arg, MAX_EXP_ARG ) );
+  // for this function the exponential must still be bounded
+  // otherwise either issue77.sli fails because of numerical instability or
+  // the value of w undergoes jumps because of V's divergence.
+  const double exp_arg = std::min( ( V - P_.V_th ) / P_.Delta_T, 10. );
+  const double I_spike = P_.Delta_T * std::exp( exp_arg );
 
   // dv/dt
   f[ S::V_M ] = ( -P_.g_L * ( ( V - P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
                   - w + P_.I_e + B_.I_stim_ ) / P_.C_m;
+
+  // Adaptation current w.
+  f[ S::W ] = ( P_.a * ( V - P_.E_L ) - w ) / P_.tau_w;
+
+  size_t j = 0;
+  for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
+  {
+    j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    f[ S::DG_EXC + j ] = -y[ S::DG_EXC + j ] / P_.taus_syn[ i ];
+    f[ S::G_EXC + j ] = y[ S::DG_EXC + j ]
+      - y[ S::G_EXC + j ] / P_.taus_syn[ i ]; // Synaptic Conductance (nS)
+
+    f[ S::DG_INH + j ] = -y[ S::DG_INH + j ] / P_.taus_syn[ i ];
+    f[ S::G_INH + j ] = y[ S::DG_INH + j ]
+      - y[ S::G_INH + j ] / P_.taus_syn[ i ]; // Synaptic Conductance (nS)
+  }
+}
+
+/**
+ * Function computing right-hand side of ODE for the ODE solver if Delta_T == 0.
+ * @param y State vector (input).
+ * @param f Derivatives (output).
+ */
+inline void
+aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics_DT0(
+  const std::vector< double >& y,
+  std::vector< double >& f )
+{
+  // a shorthand
+  typedef aeif_cond_alpha_multisynapse::State_ S;
+
+  // y[] is the current internal state of the integrator (yin), not the state
+  // vector in the node, node.S_.y[].
+
+  // The following code is verbose for the sake of clarity. We assume that a
+  // good compiler will optimize the verbosity away ...
+
+  // shorthand for state variables
+  const double& V = y[ S::V_M ];
+  const double& w = y[ S::W ];
+
+  double I_syn_exc = 0.0;
+  double I_syn_inh = 0.0;
+
+  for ( size_t i = 0; i < ( P_.num_of_receptors_
+                            * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR );
+        i += S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR )
+  {
+    I_syn_exc += y[ S::G_EXC + i ] * ( V - P_.E_ex );
+    I_syn_inh += y[ S::G_INH + i ] * ( V - P_.E_in );
+  }
+
+  // dv/dt
+  f[ S::V_M ] = ( -P_.g_L * ( V - P_.E_L ) - I_syn_exc - I_syn_inh - w + P_.I_e
+                  + B_.I_stim_ ) / P_.C_m;
 
   // Adaptation current w.
   f[ S::W ] = ( P_.a * ( V - P_.E_L ) - w ) / P_.tau_w;

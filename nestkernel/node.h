@@ -318,11 +318,11 @@ public:
    * T+from+1 .. T+to.
    *
    * @param Time   network time at beginning of time slice.
-   * @param long_t initial step inside time slice
-   * @param long_t post-final step inside time slice
+   * @param long initial step inside time slice
+   * @param long post-final step inside time slice
    *
    */
-  virtual void update( Time const&, const long_t, const long_t ) = 0;
+  virtual void update( Time const&, const long, const long ) = 0;
 
   /**
    * Bring the node from state $t$ to $t+n*dt$, sends SecondaryEvents
@@ -336,11 +336,11 @@ public:
    * throws UnexpectedEvent if not reimplemented in derived class
    *
    * @param Time   network time at beginning of time slice.
-   * @param long_t initial step inside time slice
-   * @param long_t post-final step inside time slice
+   * @param long initial step inside time slice
+   * @param long post-final step inside time slice
    *
    */
-  virtual bool wfr_update( Time const&, const long_t, const long_t );
+  virtual bool wfr_update( Time const&, const long, const long );
 
   /**
    * @defgroup status_interface Configuration interface.
@@ -425,6 +425,7 @@ public:
    * @throws IllegalConnection
    */
   virtual port handles_test_event( SpikeEvent&, rport receptor_type );
+  virtual port handles_test_event( WeightRecorderEvent&, rport receptor_type );
   virtual port handles_test_event( RateEvent&, rport receptor_type );
   virtual port handles_test_event( DataLoggingRequest&, rport receptor_type );
   virtual port handles_test_event( CurrentEvent&, rport receptor_type );
@@ -449,7 +450,7 @@ public:
    * @throws IllegalConnection
    *
    */
-  virtual void register_stdp_connection( double_t );
+  virtual void register_stdp_connection( double );
 
   /**
    * Handle incoming spike events.
@@ -462,6 +463,18 @@ public:
    * @ingroup event_interface
    */
   virtual void handle( SpikeEvent& e );
+
+  /**
+   * Handle incoming weight recording events.
+   * @param thrd Id of the calling thread.
+   * @param e Event object.
+   *
+   * This handler has to be implemented if a Node should
+   * accept weight recording events.
+   * @see class WeightRecordingEvent
+   * @ingroup event_interface
+   */
+  virtual void handle( WeightRecorderEvent& e );
 
   /**
    * Handler for rate events.
@@ -535,7 +548,7 @@ public:
    * Return 0.0 if not overridden
    * @ingroup SP_functions
    */
-  virtual double_t
+  virtual double
   get_Ca_minus() const
   {
     return 0.0;
@@ -547,7 +560,7 @@ public:
    * Return 0.0 if not overridden
    * @ingroup SP_functions
    */
-  virtual double_t get_synaptic_elements( Name ) const
+  virtual double get_synaptic_elements( Name ) const
   {
     return 0.0;
   }
@@ -557,7 +570,7 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int_t get_synaptic_elements_vacant( Name ) const
+  virtual int get_synaptic_elements_vacant( Name ) const
   {
     return 0;
   }
@@ -567,7 +580,7 @@ public:
    * Return 0 if not overridden
    * @ingroup SP_functions
    */
-  virtual int_t get_synaptic_elements_connected( Name ) const
+  virtual int get_synaptic_elements_connected( Name ) const
   {
     return 0;
   }
@@ -577,7 +590,7 @@ public:
    * Return an empty map if not overridden
    * @ingroup SP_functions
    */
-  virtual std::map< Name, double_t >
+  virtual std::map< Name, double >
   get_synaptic_elements() const
   {
     return std::map< Name, double >();
@@ -587,10 +600,10 @@ public:
    * Triggers the update of all SynapticElements
    * stored in the synaptic_element_map_. It also updates the calcium
    * concentration.
-   * @param t double_t time when the update is being performed
+   * @param t double time when the update is being performed
    * @ingroup SP_functions
    */
-  virtual void update_synaptic_elements( double_t ){};
+  virtual void update_synaptic_elements( double ){};
 
   /**
    * Is used to reduce the number of synaptic elements in the node through
@@ -604,31 +617,30 @@ public:
    * synaptic elements (SynapticElement::z_connected_) when a synapse
    * is formed or deleted.
    * @param type Name, name of the synaptic element to connect
-   * @param n int_t number of new connections of the given type
+   * @param n int number of new connections of the given type
    * @ingroup SP_functions
    */
-  virtual void connect_synaptic_element( Name, int_t ){};
+  virtual void connect_synaptic_element( Name, int ){};
 
   /**
    * return the Kminus value at t (in ms).
    * @throws UnexpectedEvent
    */
-  virtual double_t get_K_value( double_t t );
+  virtual double get_K_value( double t );
 
   /**
    * write the Kminus and triplet_Kminus values at t (in ms) to
    * the provided locations.
    * @throws UnexpectedEvent
    */
-  virtual void
-  get_K_values( double_t t, double_t& Kminus, double_t& triplet_Kminus );
+  virtual void get_K_values( double t, double& Kminus, double& triplet_Kminus );
 
   /**
   * return the spike history for (t1,t2].
   * @throws UnexpectedEvent
   */
-  virtual void get_history( double_t t1,
-    double_t t2,
+  virtual void get_history( double t1,
+    double t2,
     std::deque< histentry >::iterator* start,
     std::deque< histentry >::iterator* finish );
 
@@ -753,6 +765,35 @@ public:
     buffers_initialized_ = initialized;
   }
 
+  /**
+   * Return the number of thread siblings in SiblingContainer.
+   *
+   * This method is meaningful only for SiblingContainer, for which it
+   * returns the number of siblings in the container.
+   * For all other models (including Subnet), it returns 0, which is not
+   * wrong. By defining the method in this way, we avoid many dynamic casts.
+   */
+  virtual size_t
+  num_thread_siblings() const
+  {
+    return 0;
+  }
+
+  /**
+   * Return the specified member of a SiblingContainer.
+   *
+   * This method is meaningful only for SiblingContainer, for which it
+   * returns the pointer to the indexed node in the container.
+   * For all other models (including Subnet), it returns a null pointer
+   * and throws and assertion.By defining the method in this way, we avoid
+   * many dynamic casts.
+   */
+  virtual Node* get_thread_sibling( index ) const
+  {
+    assert( false );
+    return 0;
+  }
+
 private:
   void set_lid_( index );      //!< Set local id, relative to the parent subnet
   void set_parent_( Subnet* ); //!< Set pointer to parent subnet.
@@ -769,44 +810,6 @@ private:
   virtual DictionaryDatum get_status_dict_();
 
 protected:
-  /**
-   * Return the number of thread siblings in SiblingContainer.
-   *
-   * This method is meaningful only for SiblingContainer, for which it
-   * returns the number of siblings in the container.
-   * For all other models (including Subnet), it returns 0, which is not
-   * wrong. By defining the method in this way, we avoid many dynamic casts.
-   */
-  virtual size_t
-  num_thread_siblings_() const
-  {
-    return 0;
-  }
-
-  /**
-   * Return the specified member of a SiblingContainer.
-   *
-   * This method is meaningful only for SiblingContainer, for which it
-   * returns the pointer to the indexed node in the container.
-   * For all other models (including Subnet), it returns a null pointer
-   * and throws and assertion.By defining the method in this way, we avoid
-   * many dynamic casts.
-   */
-  virtual Node* get_thread_sibling_( index ) const
-  {
-    assert( false );
-    return 0;
-  }
-
-  /**
-   * Return specified member of a SiblingContainer, with access control.
-   */
-  virtual Node* get_thread_sibling_safe_( index ) const
-  {
-    assert( false );
-    return 0;
-  }
-
   /**
    * Private function to initialize the state of a node to model defaults.
    * This function, which must be overloaded by all derived classes, provides

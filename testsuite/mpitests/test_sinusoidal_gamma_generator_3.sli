@@ -74,8 +74,8 @@ is_threaded not { exit_test_gracefully } if
                       >> Create def
   /pnet [ nodes ] { ; /parrot_neuron Create } Table def
 
-  gen pnet DivergentConnect
-  pnet sd ConvergentConnect
+  [gen] pnet Connect
+  pnet [sd] Connect
   
   10. Simulate
 

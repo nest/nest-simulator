@@ -32,6 +32,7 @@
 #include "sparsetable.h"
 
 // Includes from nestkernel:
+#include "connection_id.h"
 #include "conn_builder.h"
 #include "gid_collection.h"
 #include "nest_time.h"
@@ -106,10 +107,11 @@ public:
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.
    *
-   * The parameters delay and weight have the default value NAN.
-   * NAN is a special value in cmath, which describes double values that
+   * The parameters delay and weight have the default value numerics::nan.
+   * numerics::nan is a special value, which describes double values that
    * are not a number. If delay or weight is omitted in a connect call,
-   * NAN indicates this and weight/delay are set only, if they are valid.
+   * numerics::nan indicates this and weight/delay are set only, if they are
+   *valid.
    *
    * \param s GID of the sending Node.
    * \param target Pointer to target Node.
@@ -122,18 +124,19 @@ public:
     Node* target,
     thread target_thread,
     index syn,
-    double_t d = NAN,
-    double_t w = NAN );
+    double d = numerics::nan,
+    double w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
    * The target node is defined by the node. The connection is
    * established on the thread/process that owns the target node.
    *
-   * The parameters delay and weight have the default value NAN.
-   * NAN is a special value in cmath, which describes double values that
+   * The parameters delay and weight have the default value numerics::nan.
+   * numerics::nan is a special value, which describes double values that
    * are not a number. If delay or weight is omitted in an connect call,
-   * NAN indicates this and weight/delay are set only, if they are valid.
+   * numerics::nan indicates this and weight/delay are set only, if they are
+   *valid.
    *
    * \param s GID of the sending Node.
    * \param target Pointer to target Node.
@@ -148,8 +151,8 @@ public:
     thread target_thread,
     index syn,
     DictionaryDatum& params,
-    double_t d = NAN,
-    double_t w = NAN );
+    double d = numerics::nan,
+    double w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -174,64 +177,12 @@ public:
    */
   bool connect( ArrayDatum& connectome );
 
-  void divergent_connect( index s,
-    const TokenArray& r,
-    const TokenArray& weights,
-    const TokenArray& delays,
-    index syn );
   /**
    * Connect one source node with many targets.
    * The dictionary d contains arrays for all the connections of type syn.
+   * AKA DataConnect
    */
-
   void divergent_connect( index s, DictionaryDatum d, index syn );
-
-  void random_divergent_connect( index s,
-    const TokenArray& r,
-    index n,
-    const TokenArray& w,
-    const TokenArray& d,
-    bool,
-    bool,
-    index syn );
-
-  void convergent_connect( const TokenArray& s,
-    index r,
-    const TokenArray& weights,
-    const TokenArray& delays,
-    index syn );
-
-  /**
-   * Specialized version of convegent_connect
-   * called by random_convergent_connect threaded
-   */
-  void convergent_connect( const std::vector< index >& s_id,
-    index r,
-    const TokenArray& weight,
-    const TokenArray& delays,
-    index syn );
-
-  void random_convergent_connect( const TokenArray& s,
-    index t,
-    index n,
-    const TokenArray& w,
-    const TokenArray& d,
-    bool,
-    bool,
-    index syn );
-
-  /**
-   * Use openmp threaded parallelization to speed up connection.
-   * Parallelize over target list.
-   */
-  void random_convergent_connect( TokenArray& s,
-    TokenArray& t,
-    TokenArray& n,
-    TokenArray& w,
-    TokenArray& d,
-    bool,
-    bool,
-    index syn );
 
   // aka conndatum GetStatus
   DictionaryDatum
@@ -253,18 +204,18 @@ public:
    * entry.
    * 'synapse_model' name of the synapse model, or all synapse models are
    * searched.
-   * 'synapse_label' label (long_t) of the synapse, or all synapses are
+   * 'synapse_label' label (long) of the synapse, or all synapses are
    * searched.
    * The function then iterates all entries in source and collects the
    * connection IDs to all neurons in target.
    */
   ArrayDatum get_connections( DictionaryDatum dict ) const;
 
-  void get_connections( ArrayDatum& connectome,
+  void get_connections( std::deque< ConnectionID >& connectome,
     TokenArray const* source,
     TokenArray const* target,
     size_t syn_id,
-    long_t synapse_label ) const;
+    long synapse_label ) const;
 
   /**
    * Returns the number of connections in the network.
@@ -288,9 +239,9 @@ public:
    * Triggeres updates for all connectors of dopamine synapses that
    * are registered with the volume transmitter with gid vt_gid.
    */
-  void trigger_update_weight( const long_t vt_gid,
+  void trigger_update_weight( const long vt_gid,
     const std::vector< spikecounter >& dopa_spikes,
-    const double_t t_trig );
+    const double t_trig );
 
   /**
    * Return minimal connection delay, which is precomputed by
@@ -363,10 +314,11 @@ private:
    * Connect is used to establish a connection between a sender and
    * receiving node.
    *
-   * The parameters delay and weight have the default value NAN.
-   * NAN is a special value in cmath, which describes double values that
+   * The parameters delay and weight have the default value numerics::nan.
+   * numerics::nan is a special value, which describes double values that
    * are not a number. If delay or weight is omitted in an connect call,
-   * NAN indicates this and weight/delay are set only, if they are valid.
+   * numerics::nan indicates this and weight/delay are set only, if they are
+   *valid.
    *
    * \param s A reference to the sending Node.
    * \param r A reference to the receiving Node.
@@ -379,16 +331,16 @@ private:
     index s_gid,
     thread tid,
     index syn,
-    double_t d = NAN,
-    double_t w = NAN );
+    double d = numerics::nan,
+    double w = numerics::nan );
   void connect_( Node& s,
     Node& r,
     index s_gid,
     thread tid,
     index syn,
     DictionaryDatum& p,
-    double_t d = NAN,
-    double_t w = NAN );
+    double d = numerics::nan,
+    double w = numerics::nan );
 
   /**
    * A 3-dim structure to hold the Connector objects which in turn hold the

@@ -163,9 +163,7 @@ nest::sli_neuron::calibrate()
  */
 
 void
-nest::sli_neuron::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+nest::sli_neuron::update( Time const& origin, const long from, const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
@@ -184,7 +182,7 @@ nest::sli_neuron::update( Time const& origin,
     return;
   }
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     ( *state_ )[ names::in_spikes ] =
       B_.in_spikes_.get_value( lag ); // in spikes arriving at right border
@@ -267,8 +265,8 @@ nest::sli_neuron::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t I = e.get_current();
-  const double_t w = e.get_weight();
+  const double I = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(

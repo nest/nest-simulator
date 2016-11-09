@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_dataconnect.py
+# test_GIDCollection.py
 #
 # This file is part of NEST.
 #
@@ -30,7 +30,7 @@ import nest
 @nest.check_stack
 class GIDCollectionTestCase(unittest.TestCase):
     """Test GIDCollection."""
-    
+
     def setUp(self):
         nest.ResetKernel()
 
@@ -43,16 +43,16 @@ class GIDCollectionTestCase(unittest.TestCase):
         all_nodes_list = [n for n in all_nodes]
         test_list = [1, 2, 3, 4]
         self.assertEqual(all_nodes_list, test_list)
-    
+
     def test_GIDCollection_membership(self):
         """Membership in GIDCollections"""
-        
+
         nodes = nest.Create("iaf_neuron", 10)
-        
+
         self.assertTrue(5 in nodes)
         self.assertTrue(10 in nodes)
         self.assertFalse(11 in nodes)
-        
+
     def test_GIDCollection_slices(self):
         """Slices of GIDCollections"""
 
@@ -61,9 +61,31 @@ class GIDCollectionTestCase(unittest.TestCase):
         slice_list = [i for i in nodes_slice_a]
         test_list = [i for i in range(1, 21)]
         self.assertEqual(slice_list, test_list)
-    
-        
-        
+
+    def test_GIDCollection_iteration(self):
+        """Iteration of GIDCollections"""
+
+        nodes = nest.Create("iaf_neuron", 10)
+        for i, gid in enumerate(nodes):
+            self.assertEqual(i+1, gid)
+
+    def test_GIDCollection_index(self):
+        """Index of GIDCollections"""
+
+        nodes = nest.Create("iaf_neuron", 10)
+        for i in range(10):
+            self.assertEqual(i+1, nodes[i])
+
+    def test_GIDCollection_equal(self):
+        """Equality of two GIDCollections"""
+
+        nodes_a = nest.Create("iaf_neuron", 10)
+        nodes_b = nodes_a
+
+        for i in range(10):
+            self.assertEqual(nodes_a[i], nodes_b[i])
+        self.assertTrue(nodes_a == nodes_b)
+
 
 def suite():
     suite = unittest.makeSuite(GIDCollectionTestCase, 'test')

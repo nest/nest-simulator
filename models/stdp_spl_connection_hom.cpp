@@ -46,6 +46,7 @@ STDPSplHomCommonProperties::STDPSplHomCommonProperties()
   , alpha_( 1.27142e-6 )
   , lambda_( 0.028 / ( 24. * 60. * 60. ) )
   , w0_( 0.01 )
+  , wmax_( -1. )
   , p_fail_( 0.2 )
   , t_cache_( 1. )
   , t_grace_period_( 0. )
@@ -69,6 +70,7 @@ STDPSplHomCommonProperties::get_status( DictionaryDatum& d ) const
   def< double_t >( d, "alpha", alpha_ );
   def< double_t >( d, "lambda", lambda_ );
   def< double_t >( d, "w0", w0_ );
+  def< double_t >( d, "wmax", wmax_ );
   def< double_t >( d, "p_fail", p_fail_ );
   def< double_t >( d, "t_cache", t_cache_ );
   def< double_t >( d, "t_grace_period", t_grace_period_ );
@@ -115,6 +117,7 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
   updateValue< double_t >( d, "alpha", alpha_ );
   updateValue< double_t >( d, "lambda", lambda_ );
   updateValue< double_t >( d, "w0", w0_ );
+  updateValue< double_t >( d, "wmax", wmax_ );
   updateValue< double_t >( d, "p_fail", p_fail_ );
   updateValue< double_t >( d, "t_cache", t_cache_ );
   updateValue< double_t >( d, "t_grace_period", t_grace_period_ );
@@ -124,13 +127,23 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
   if ( not( tau_slow_ > tau_ ) )
   {
     throw BadProperty(
-      "Parameter tau_slow_triplet (time-constant of long trace) must be larger than tau_plus "
-      "(time-constant of short trace)." );
+      "Parameter tau_slow (time-constant of slow trace) must be larger than tau "
+      "(time-constant of fast trace)." );
+  }
+
+  if ( not( w0_ >= 0 ) )
+  {
+    throw BadProperty( "w0 (creation weight) must be positive." );
+  }
+
+  if ( not( ( wmax_<0 ) or ( ( wmax_>0 ) and (w0_<=wmax_) ) ) )
+  {
+    throw BadProperty( "wmax must be negative (disabled) or greater than w0." );
   }
 
   if ( not( lambda_ >= 0 ) )
   {
-    throw BadProperty( "lambda must be positive." );
+    throw BadProperty( "lambda (creation rate) must be positive." );
   }
 
   if ( not( t_cache_ >= 0. ) )

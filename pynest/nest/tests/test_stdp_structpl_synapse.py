@@ -235,8 +235,8 @@ class StdpStructplSynapseTestCase(unittest.TestCase):
         nest.SetKernelStatus(
             {'rng_seeds': range(msd + N_vp + 1, msd + 2 * N_vp + 1)})
 
-        # simulate past spike 1, this causes deletion of the synapses internally
-        # and proper setting to nan.
+        # simulate past spike 1, this causes deletion of the synapses
+        # internally and proper setting to nan.
         nest.Simulate(101.)
 
         # set creation steps between next spikes

@@ -151,7 +151,6 @@ public:
   bool safe_mode_;
   bool sleep_mode_;
 
-private:
   // precomputed values
   long exp_cache_len_;
   long steps_grace_period_;
@@ -165,6 +164,7 @@ private:
   double pow_term_5_;
   double pow_term_6_;
 
+private:
   /**
    * Compute common dependent parameters
    */
@@ -831,7 +831,7 @@ STDPStructplConnectionHom< targetidentifierT >::send( Event& e,
     }
 
     // get random number generator of target thread
-    rng_ = kernel().rng_manager.get_rng( get_target( t )->get_vp() );
+    rng_ = kernel().rng_manager.get_rng( target->get_vp() );
 
     // integration of synapse state starts from the last spike received
     double t_last_postspike = t_lastspike;

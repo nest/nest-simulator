@@ -62,18 +62,18 @@ STDPSplHomCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
 
-  def< double_t >( d, "tau_slow", tau_slow_ );
-  def< double_t >( d, "tau", tau_ );
-  def< double_t >( d, "A2_corr", A2_corr_ );
-  def< double_t >( d, "A4_post", A4_post_ );
-  def< double_t >( d, "A4_corr", A4_corr_ );
-  def< double_t >( d, "alpha", alpha_ );
-  def< double_t >( d, "lambda", lambda_ );
-  def< double_t >( d, "w0", w0_ );
-  def< double_t >( d, "wmax", wmax_ );
-  def< double_t >( d, "p_fail", p_fail_ );
-  def< double_t >( d, "t_cache", t_cache_ );
-  def< double_t >( d, "t_grace_period", t_grace_period_ );
+  def< double >( d, "tau_slow", tau_slow_ );
+  def< double >( d, "tau", tau_ );
+  def< double >( d, "A2_corr", A2_corr_ );
+  def< double >( d, "A4_post", A4_post_ );
+  def< double >( d, "A4_corr", A4_corr_ );
+  def< double >( d, "alpha", alpha_ );
+  def< double >( d, "lambda", lambda_ );
+  def< double >( d, "w0", w0_ );
+  def< double >( d, "wmax", wmax_ );
+  def< double >( d, "p_fail", p_fail_ );
+  def< double >( d, "t_cache", t_cache_ );
+  def< double >( d, "t_grace_period", t_grace_period_ );
   def< bool >( d, "safe_mode", safe_mode_ );
   def< bool >( d, "sleep_mode", sleep_mode_ );
 }
@@ -93,9 +93,9 @@ STDPSplHomCommonProperties::compute_dependent_params()
   exp_2_.resize( exp_cache_len_ );
   exp_7_.resize( exp_cache_len_ );
   exp_8_.resize( exp_cache_len_ );
-  for ( long_t i = 0; i < exp_cache_len_; i++ )
+  for ( long i = 0; i < exp_cache_len_; i++ )
   {
-    double_t t_i_ = Time( Time::step( i ) ).get_ms() / 1000.;
+    double t_i_ = Time( Time::step( i ) ).get_ms() / 1000.;
     exp_2_[ i ] = std::exp( -t_i_ / tau_slow_ );
     exp_8_[ i ] = std::exp( -t_i_ / tau_ );
     exp_7_[ i ] = std::exp( -t_i_ * alpha_ );
@@ -109,18 +109,18 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  updateValue< double_t >( d, "tau_slow", tau_slow_ );
-  updateValue< double_t >( d, "tau", tau_ );
-  updateValue< double_t >( d, "A2_corr", A2_corr_ );
-  updateValue< double_t >( d, "A4_corr", A4_corr_ );
-  updateValue< double_t >( d, "A4_post", A4_post_ );
-  updateValue< double_t >( d, "alpha", alpha_ );
-  updateValue< double_t >( d, "lambda", lambda_ );
-  updateValue< double_t >( d, "w0", w0_ );
-  updateValue< double_t >( d, "wmax", wmax_ );
-  updateValue< double_t >( d, "p_fail", p_fail_ );
-  updateValue< double_t >( d, "t_cache", t_cache_ );
-  updateValue< double_t >( d, "t_grace_period", t_grace_period_ );
+  updateValue< double >( d, "tau_slow", tau_slow_ );
+  updateValue< double >( d, "tau", tau_ );
+  updateValue< double >( d, "A2_corr", A2_corr_ );
+  updateValue< double >( d, "A4_corr", A4_corr_ );
+  updateValue< double >( d, "A4_post", A4_post_ );
+  updateValue< double >( d, "alpha", alpha_ );
+  updateValue< double >( d, "lambda", lambda_ );
+  updateValue< double >( d, "w0", w0_ );
+  updateValue< double >( d, "wmax", wmax_ );
+  updateValue< double >( d, "p_fail", p_fail_ );
+  updateValue< double >( d, "t_cache", t_cache_ );
+  updateValue< double >( d, "t_grace_period", t_grace_period_ );
   updateValue< bool >( d, "safe_mode", safe_mode_ );
   updateValue< bool >( d, "sleep_mode", sleep_mode_ );
 
@@ -161,7 +161,7 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
     // check that the order of the solution's time constants is correct.
     // this is assumed for the zero-crossing theorem below (check_...)
     // 7, 2, 3, 4, 6, 1, 5
-    std::vector< double_t > rates_;
+    std::vector< double > rates_;
     rates_.resize( 0 );
     rates_.push_back( -alpha_ );
     rates_.push_back( -1 / tau_slow_ );
@@ -170,7 +170,7 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
     rates_.push_back( -2 / tau_ );
     rates_.push_back( -1 * ( 1 / tau_slow_ + 2 / tau_ ) );
     rates_.push_back( -4 / tau_ );
-    for ( int_t i = 1; i < 7; i++ )
+    for ( int i = 1; i < 7; i++ )
     {
       if ( not( rates_[ i ] < rates_[ i - 1 ] ) )
       {

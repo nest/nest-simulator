@@ -25,7 +25,7 @@
 
 /* BeginDocumentation
 
-Name: stdp_structpl_synapse_hom - Synapse type for spike-timing dependent 
+Name: stdp_structpl_synapse_hom - Synapse type for spike-timing dependent
  structural plasticity using homogeneous parameters.
 
 Description:

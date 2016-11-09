@@ -40,14 +40,18 @@ class TestGIDCollection(unittest.TestCase):
         list_compare = [1,2,3,4,5,6,7,8,9,10]
         self.assertEqual(n_list,list_compare)
 
-
     def test_equal(self):
 
         nest.ResetKernel()
 
         n = nest.Create('iaf_neuron', 10)
-        list_compare = (1,2,3,4,5,6,7,8,9,10)
-        self.assertEqual(n,list_compare)
+        n_list = [x for x in n]
+
+        nest.ResetKernel()
+
+        n = nest.Create('iaf_neuron', 10)
+        new_list = [x for x in n]
+        self.assertEqual(n_list, new_list)
 
     def test_indexing(self):
 
@@ -61,9 +65,23 @@ class TestGIDCollection(unittest.TestCase):
         nest.ResetKernel()
 
         n = nest.Create('iaf_neuron', 10)
-        self.assertEqual(n[:5],(1,2,3,4,5))
+        n = n[:5]
+        n_list = [x for x in n]
+        self.assertEqual(n_list,[1,2,3,4,5])
 
+    def test_correct_index(self):
 
+        nest.ResetKernel()
+
+        compare_begin = 1
+        compare_end = 11
+        for model in nest.Models(mtype='nodes'):
+            n = nest.Create(model, 10)
+            n_list = [x for x in n]
+            compare = [i for i in range(compare_begin, compare_end)]
+            compare_begin += 10
+            compare_end += 10
+            self.assertEqual(n_list,compare)
 
 def suite():
     suite = unittest.makeSuite(TestGIDCollection, 'test')

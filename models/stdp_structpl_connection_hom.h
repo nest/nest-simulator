@@ -1,5 +1,5 @@
 /*
- *  stdp_spl_connection_hom.h
+ *  stdp_structpl_connection_hom.h
  *
  *  This file is part of NEST.
  *
@@ -20,16 +20,16 @@
  *
  */
 
-#ifndef STDP_SPL_CONNECTION_HOM_H
-#define STDP_SPL_CONNECTION_HOM_H
+#ifndef STDP_STRUCTPL_CONNECTION_HOM_H
+#define STDP_STRUCTPL_CONNECTION_HOM_H
 
 /* BeginDocumentation
 
-Name: stdp_spl_synapse - Synapse type for spike-timing dependent structural
+Name: stdp_structpl_synapse - Synapse type for spike-timing dependent structural
  plasticity using homogeneous parameters.
 
 Description:
-stdp_spl_synapse_hom is a connector to create synapses with spike time
+stdp_structpl_synapse_hom is a connector to create synapses with spike time
 dependent plasticity as defined in [1]. Each synapse (connection) of this
 model consists of several (n_pot_conns) synaptic contacts. If the weight of
 a contact drops below 0 the contact is deleted. Deleted contacts are re-
@@ -37,7 +37,7 @@ created randomly with a constant rate.
 
 Parameters controlling plasticity are identical for all synapses of the
 model, reducing the memory required per synapse considerably.
-Furthermore, stdp_spl_synapse requires several exponential and power terms
+Furthermore, stdp_structpl_synapse requires several exponential and power terms
 every time it updates its state. These terms are precomputed and are also
 stored in the "CommonProperties", which allows them to be accessed by all
 synapses of the model without excessively consuming memory.
@@ -46,7 +46,7 @@ Parameters:
 Common parameters:
  tau          double - Time constant of fast traces (STDP window) (in s)
  tau_slow     double - Time constant of slow filtering of correlations and
-                       postsynaptic rate
+                       postsynaptic rate (in s)
  A2_corr      double - Amplitude of second-order correlation term of the STDP
                        rule (in s)
  A4_corr      double - Amplitude of fourth-order correlation term of the STDP
@@ -72,7 +72,7 @@ Common parameters:
  sleep_mode   bool   - If sleep_mode is true, a synapse that has no active
                        contacts will just count down steps until creation of
                        a new contact. It will not perform any other updates of
-                       its activity dependent state variables.
+                       its activity-dependent state variables.
 
 Individual parameters:
  n_pot_conns  int    - Number of synaptic contacts of this synapse
@@ -91,14 +91,16 @@ transmitted to the target.
 Transmits: SpikeEvent
 
 References:
-[1] Deger, M. & Gerstner, W. A spike timing dependent model of
-    dendritic spine plasticity and turnover. in preparation.
+[1] Moritz Deger, Alexander Seeholzer, Wulfram Gerstner - Multi-contact synapses
+    for stable networks: a spike-timing dependent model of dendritic spine
+    plasticity and turnover. Submitted. Preprint arXiv:1609.05730 [q-bio.NC]
+    https://arxiv.org/abs/1609.05730
 
-FirstVersion: Nov 2015
+FirstVersion: Nov 2016
 
 Author: Moritz Deger, Alexander Seeholzer
 
-SeeAlso: stdp_spl_synapse_hom_hpc, stdp_synapse_hom, static_synapse
+SeeAlso: stdp_synapse_hom, static_synapse
 */
 
 #include <cmath>
@@ -113,7 +115,7 @@ namespace nest
  * Class containing the common properties for all synapses of type
  * STDPConnectionHom.
  */
-class STDPSplHomCommonProperties : public CommonSynapseProperties
+class STDPStructplHomCommonProperties : public CommonSynapseProperties
 {
 
 public:
@@ -121,7 +123,7 @@ public:
    * Default constructor.
    * Sets all property values to defaults.
    */
-  STDPSplHomCommonProperties();
+  STDPStructplHomCommonProperties();
 
   /**
    * Get all properties and put them into a dictionary.
@@ -173,29 +175,29 @@ private:
 // (used for pointer / target index addressing)
 // derived from generic connection template
 template < typename targetidentifierT >
-class STDPSplConnectionHom : public Connection< targetidentifierT >
+class STDPStructplConnectionHom : public Connection< targetidentifierT >
 {
 
 public:
-  typedef STDPSplHomCommonProperties CommonPropertiesType;
+  typedef STDPStructplHomCommonProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
 
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  STDPSplConnectionHom();
+  STDPStructplConnectionHom();
 
   /**
    * Copy constructor.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  STDPSplConnectionHom( const STDPSplConnectionHom& );
+  STDPStructplConnectionHom( const STDPStructplConnectionHom& );
 
   /**
    * Default Destructor.
    */
-  ~STDPSplConnectionHom()
+  ~STDPStructplConnectionHom()
   {
     // delete allocated vector elements.
     // Do we need this?
@@ -232,7 +234,7 @@ public:
   void send( Event& e,
     thread t,
     double t_lastspike,
-    const STDPSplHomCommonProperties& cp );
+    const STDPStructplHomCommonProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -301,7 +303,7 @@ public:
 
 private:
   void
-  get_exps_( const STDPSplHomCommonProperties& cp, const long delta_i )
+  get_exps_( const STDPStructplHomCommonProperties& cp, const long delta_i )
   {
     double exp_term_2_;
     double exp_term_8_;
@@ -350,7 +352,7 @@ private:
 
 
   void
-  compute_amps_( const STDPSplHomCommonProperties& cp, const long i )
+  compute_amps_( const STDPStructplHomCommonProperties& cp, const long i )
   {
     // precompute power terms without using std::pow
     double pow_term_1_ = -( c_jk_[ i ] * cp.tau_ )
@@ -498,7 +500,7 @@ private:
 
 
   void
-  integrate_( const STDPSplHomCommonProperties& cp, const long delta )
+  integrate_( const STDPStructplHomCommonProperties& cp, const long delta )
   {
 
     // integrate all state variables the duration t analytically, assuming
@@ -782,10 +784,10 @@ private:
  */
 template < typename targetidentifierT >
 void
-STDPSplConnectionHom< targetidentifierT >::send( Event& e,
+STDPStructplConnectionHom< targetidentifierT >::send( Event& e,
   thread t,
   double t_lastspike,
-  const STDPSplHomCommonProperties& cp )
+  const STDPStructplHomCommonProperties& cp )
 {
   // once the synapse receives a spike event, it updates its state, from the
   // last spike to this one.
@@ -915,7 +917,7 @@ STDPSplConnectionHom< targetidentifierT >::send( Event& e,
 
 
 template < typename targetidentifierT >
-STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom()
+STDPStructplConnectionHom< targetidentifierT >::STDPStructplConnectionHom()
   : ConnectionBase()
   , n_conns_( 1 )
 {
@@ -934,8 +936,8 @@ STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom()
 }
 
 template < typename targetidentifierT >
-STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom(
-  const STDPSplConnectionHom< targetidentifierT >& rhs )
+STDPStructplConnectionHom< targetidentifierT >::STDPStructplConnectionHom(
+  const STDPStructplConnectionHom< targetidentifierT >& rhs )
   : ConnectionBase( rhs )
   , n_conns_( rhs.n_conns_ )
 {
@@ -958,7 +960,7 @@ STDPSplConnectionHom< targetidentifierT >::STDPSplConnectionHom(
 
 template < typename targetidentifierT >
 void
-STDPSplConnectionHom< targetidentifierT >::get_status(
+STDPStructplConnectionHom< targetidentifierT >::get_status(
   DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
@@ -975,7 +977,8 @@ STDPSplConnectionHom< targetidentifierT >::get_status(
 
 template < typename targetidentifierT >
 void
-STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
+STDPStructplConnectionHom< targetidentifierT >::set_status(
+  const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
@@ -1122,4 +1125,4 @@ STDPSplConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
 
 } // of namespace nest
 
-#endif // of #ifndef STDP_SPL_CONNECTION_HOM_H
+#endif // of #ifndef STDP_STRUCTPL_CONNECTION_HOM_H

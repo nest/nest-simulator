@@ -73,7 +73,7 @@ libmodelsmodule_la_SOURCES= \
 		static_connection.h\
 		static_connection_hom_w.h\
 		stdp_connection.h\
-		stdp_spl_connection_hom.h stdp_spl_connection_hom.cpp\
+		stdp_structpl_connection_hom.h stdp_structpl_connection_hom.cpp\
 		stdp_connection_facetshw_hom.h stdp_connection_facetshw_hom_impl.h\
 		stdp_connection_hom.h stdp_connection_hom.cpp\
 		stdp_dopa_connection.h stdp_dopa_connection.cpp\

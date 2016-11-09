@@ -1,5 +1,5 @@
 /*
- *  stdp_spl_connection_hom.cpp
+ *  stdp_structpl_connection_hom.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "stdp_spl_connection_hom.h"
+#include "stdp_structpl_connection_hom.h"
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
@@ -33,10 +33,10 @@
 namespace nest
 {
 //
-// Implementation of class STDPSplHomCommonProperties.
+// Implementation of class STDPStructplHomCommonProperties.
 //
 
-STDPSplHomCommonProperties::STDPSplHomCommonProperties()
+STDPStructplHomCommonProperties::STDPStructplHomCommonProperties()
   : CommonSynapseProperties()
   , tau_slow_( 2000.0 )
   , tau_( 20.0 )
@@ -58,7 +58,7 @@ STDPSplHomCommonProperties::STDPSplHomCommonProperties()
 }
 
 void
-STDPSplHomCommonProperties::get_status( DictionaryDatum& d ) const
+STDPStructplHomCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
 
@@ -79,7 +79,7 @@ STDPSplHomCommonProperties::get_status( DictionaryDatum& d ) const
 }
 
 void
-STDPSplHomCommonProperties::compute_dependent_params()
+STDPStructplHomCommonProperties::compute_dependent_params()
 {
   // precompute power terms that occur frequently
   pow_term_1_ = tau_ * tau_;
@@ -105,7 +105,8 @@ STDPSplHomCommonProperties::compute_dependent_params()
 }
 
 void
-STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+STDPStructplHomCommonProperties::set_status( const DictionaryDatum& d,
+  ConnectorModel& cm )
 {
   CommonSynapseProperties::set_status( d, cm );
 
@@ -127,7 +128,8 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
   if ( not( tau_slow_ > tau_ ) )
   {
     throw BadProperty(
-      "Parameter tau_slow (time-constant of slow trace) must be larger than tau "
+      "Parameter tau_slow (time-constant of slow trace) must be larger than "
+      "tau "
       "(time-constant of fast trace)." );
   }
 
@@ -136,7 +138,7 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
     throw BadProperty( "w0 (creation weight) must be positive." );
   }
 
-  if ( not( ( wmax_<0 ) or ( ( wmax_>0 ) and (w0_<=wmax_) ) ) )
+  if ( not( ( wmax_ < 0 ) or ( ( wmax_ > 0 ) and ( w0_ <= wmax_ ) ) ) )
   {
     throw BadProperty( "wmax must be negative (disabled) or greater than w0." );
   }
@@ -148,7 +150,8 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
 
   if ( not( t_cache_ >= 0. ) )
   {
-    throw BadProperty( "The time interval for caching of exponentials must be positive" );
+    throw BadProperty(
+      "The time interval for caching of exponentials must be positive" );
   }
 
   if ( not( t_grace_period_ >= 0. ) )
@@ -174,7 +177,8 @@ STDPSplHomCommonProperties::set_status( const DictionaryDatum& d, ConnectorModel
     {
       if ( not( rates_[ i ] < rates_[ i - 1 ] ) )
       {
-        throw BadProperty( "Safe mode is not supported for the supplied time constants" );
+        throw BadProperty(
+          "Safe mode is not supported for the supplied time constants" );
       }
     }
   }

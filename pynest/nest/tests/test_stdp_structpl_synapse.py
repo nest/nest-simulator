@@ -28,7 +28,7 @@ import unittest
 
 
 @nest.check_stack
-class SplSynapseTestCase(unittest.TestCase):
+class StdpStructplSynapseTestCase(unittest.TestCase):
     """Test SPL synapses."""
 
     def test_resize(self):
@@ -836,7 +836,6 @@ class SplSynapseTestCase(unittest.TestCase):
             val_1,
             "Transmitted weights not stochastic/correct, second spike.")
 
-
     def test_deletion_dynamic(self):
         """Deletion of synapses with zero crossings"""
         pars = {
@@ -956,8 +955,7 @@ class SplSynapseTestCase(unittest.TestCase):
             })
 
         nest.Simulate(51.)
-        nest.SetStatus(self.syn,
-            {
+        nest.SetStatus(self.syn, {
                 'w_jk': [0.],
                 'w_create_steps': [150]
             })
@@ -1043,7 +1041,7 @@ class SplSynapseTestCase(unittest.TestCase):
         }
 
         pars.update(params)
-        nest.CopyModel('stdp_spl_synapse_hom', 'testsyn', pars)
+        nest.CopyModel('stdp_structpl_synapse_hom', 'testsyn', pars)
 
     def setUp_iafpost(self, params={}):
         """Total transmitted weight per spike is stochastic sum of
@@ -1080,7 +1078,7 @@ class SplSynapseTestCase(unittest.TestCase):
         }
         pars.update(params)
 
-        nest.CopyModel('stdp_spl_synapse_hom', 'testsyn', pars)
+        nest.CopyModel('stdp_structpl_synapse_hom', 'testsyn', pars)
         syn_spec = {
             "model": "testsyn",
         }
@@ -1139,7 +1137,7 @@ class SplSynapseTestCase(unittest.TestCase):
             'n_pot_conns': 1,
             'tau': 10.
         }
-        nest.CopyModel('stdp_spl_synapse_hom', 'testsyn', pars)
+        nest.CopyModel('stdp_structpl_synapse_hom', 'testsyn', pars)
 
         syn_spec = {
             "model": "testsyn",
@@ -1201,7 +1199,7 @@ class SplSynapseTestCase(unittest.TestCase):
             'n_pot_conns': 1,
             'tau': 10.
         }
-        nest.CopyModel('stdp_spl_synapse_hom', 'testsyn', pars)
+        nest.CopyModel('stdp_structpl_synapse_hom', 'testsyn', pars)
 
         syn_spec = {
             "model": "testsyn",
@@ -1245,7 +1243,7 @@ class SplSynapseTestCase(unittest.TestCase):
 
 
 def suite():
-    suite = unittest.makeSuite(SplSynapseTestCase, 'test')
+    suite = unittest.makeSuite(StdpStructplSynapseTestCase, 'test')
     return suite
 
 
@@ -1257,6 +1255,6 @@ def run():
 if __name__ == "__main__":
     run()
     # suite = unittest.TestSuite()
-    # suite.addTest(SplSynapseTestCase("test_deletion_manual"))
+    # suite.addTest(StdpStructplSynapseTestCase("test_deletion_manual"))
     # runner = unittest.TextTestRunner(verbosity=2)
     # runner.run(suite)

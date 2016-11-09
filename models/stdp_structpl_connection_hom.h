@@ -118,7 +118,7 @@ namespace nest
 class STDPStructplHomCommonProperties : public CommonSynapseProperties
 {
 
-template < typename targetidentifierT >
+  template < typename targetidentifierT >
   friend class STDPStructplConnectionHom;
 
 public:

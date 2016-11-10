@@ -26,6 +26,7 @@ GIDCollection tests
 import unittest
 import nest
 
+
 @nest.check_stack
 class TestGIDCollection(unittest.TestCase):
     """GIDCollection tests"""
@@ -34,10 +35,10 @@ class TestGIDCollection(unittest.TestCase):
 
         nest.ResetKernel()
 
-        n = nest.Create('iaf_neuron', 10)
+        n_neurons = 10
+        n = nest.Create('iaf_neuron', n_neurons)
         n_list = [x for x in n]
-        list_compare = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        self.assertEqual(n_list, list_compare)
+        self.assertEqual(n_list, list(range(1, n_neurons+1)))
 
     def test_list_to_GIDCollection(self):
 
@@ -97,7 +98,7 @@ class TestGIDCollection(unittest.TestCase):
         nest.ResetKernel()
 
         n = nest.Create('aeif_cond_alpha', 10)
-        nest.Connect(n, n, {'rule':'one_to_one'})
+        nest.Connect(n, n, {'rule': 'one_to_one'})
         connections = nest.GetKernelStatus('num_connections')
         self.assertEqual(connections, 10)
 
@@ -110,7 +111,6 @@ class TestGIDCollection(unittest.TestCase):
         for gid in Enrns:
             self.assertEqual(gid, compare)
             compare += 1
-
 
 
 def suite():

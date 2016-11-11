@@ -324,9 +324,7 @@ nest::iaf_cond_exp::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_exp::update( Time const& origin,
-  const long from,
-  const long to )
+nest::iaf_cond_exp::update( Time const& origin, const long from, const long to )
 {
 
   assert(

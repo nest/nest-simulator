@@ -43,9 +43,9 @@ class Target
 private:
   unsigned long data_;
   // define masks to select correct bits in data_
-  static const unsigned long lcid_mask =      0x0000000007FFFFFF;
-  static const unsigned long rank_mask =      0x00007FFFF8000000;
-  static const unsigned long tid_mask =       0x01FF800000000000;
+  static const unsigned long lcid_mask = 0x0000000007FFFFFF;
+  static const unsigned long rank_mask = 0x00007FFFF8000000;
+  static const unsigned long tid_mask = 0x01FF800000000000;
   static const unsigned long syn_index_mask = 0x7E00000000000000;
   static const unsigned long processed_mask = 0x8000000000000000;
   // define shifts to arrive at correct bits
@@ -54,10 +54,14 @@ private:
   static const size_t tid_shift = 47;
   static const size_t syn_index_shift = 57;
   static const size_t processed_shift = 63;
+
 public:
   Target();
   Target( const Target& target );
-  Target( const thread tid, const thread rank, const synindex syn_index, const index lcid);
+  Target( const thread tid,
+    const thread rank,
+    const synindex syn_index,
+    const index lcid );
   void set_lcid( const size_t lcid );
   size_t get_lcid() const;
   void set_rank( const unsigned int rank );
@@ -71,21 +75,21 @@ public:
   double get_offset() const;
 };
 
-inline
-Target::Target()
+inline Target::Target()
   : data_( 0 )
 {
 }
 
-inline
-Target::Target( const Target& target )
+inline Target::Target( const Target& target )
   : data_( target.data_ )
 {
   set_processed( false ); // always initialize as non-processed
 }
 
-inline
-Target::Target( const thread tid, const thread rank, const synindex syn_index, const index lcid)
+inline Target::Target( const thread tid,
+  const thread rank,
+  const synindex syn_index,
+  const index lcid )
   : data_( 0 )
 {
   set_lcid( lcid );
@@ -93,7 +97,6 @@ Target::Target( const thread tid, const thread rank, const synindex syn_index, c
   set_tid( tid );
   set_syn_index( syn_index );
   set_processed( false ); // always initialize as non-processed
-
 }
 
 inline void
@@ -103,7 +106,8 @@ Target::set_lcid( const size_t lcid )
   // reset corresponding bits using complement of mask and write new
   // bits by shifting input appropiately. need to cast to long first,
   // to avoid overflow of input by left shifts.
-  data_ = ( data_ & ( ~lcid_mask ) ) | ( static_cast<unsigned long>( lcid ) << lcid_shift );
+  data_ = ( data_ & ( ~lcid_mask ) )
+    | ( static_cast< unsigned long >( lcid ) << lcid_shift );
 }
 
 inline size_t
@@ -116,7 +120,8 @@ inline void
 Target::set_rank( const unsigned int rank )
 {
   assert( rank < 1048576 );
-  data_ = ( data_ & ( ~rank_mask ) ) | ( static_cast<unsigned long>( rank ) << rank_shift );
+  data_ = ( data_ & ( ~rank_mask ) )
+    | ( static_cast< unsigned long >( rank ) << rank_shift );
 }
 
 inline unsigned int
@@ -129,7 +134,8 @@ inline void
 Target::set_tid( const unsigned int tid )
 {
   assert( tid < 1024 );
-  data_ = ( data_ & ( ~tid_mask ) ) | ( static_cast<unsigned long>( tid ) << tid_shift );
+  data_ = ( data_ & ( ~tid_mask ) )
+    | ( static_cast< unsigned long >( tid ) << tid_shift );
 }
 
 inline unsigned int
@@ -142,7 +148,8 @@ inline void
 Target::set_syn_index( const unsigned char syn_index )
 {
   assert( syn_index < 64 );
-  data_ = ( data_ & ( ~syn_index_mask ) ) | ( static_cast<unsigned long>( syn_index ) << syn_index_shift );
+  data_ = ( data_ & ( ~syn_index_mask ) )
+    | ( static_cast< unsigned long >( syn_index ) << syn_index_shift );
 }
 
 inline unsigned char
@@ -154,7 +161,8 @@ Target::get_syn_index() const
 inline void
 Target::set_processed( const bool processed )
 {
-  data_ = ( data_ & ( ~processed_mask ) ) | ( static_cast<unsigned long>( processed ) << processed_shift );
+  data_ = ( data_ & ( ~processed_mask ) )
+    | ( static_cast< unsigned long >( processed ) << processed_shift );
 }
 
 inline bool
@@ -173,21 +181,20 @@ class OffGridTarget : public Target
 {
 private:
   double offset;
+
 public:
   OffGridTarget();
   OffGridTarget( const Target& target, const double offset );
   double get_offset() const;
 };
 
-inline
-OffGridTarget::OffGridTarget()
+inline OffGridTarget::OffGridTarget()
   : Target()
   , offset( 0 )
 {
 }
 
-inline
-OffGridTarget::OffGridTarget( const Target& target, const double offset )
+inline OffGridTarget::OffGridTarget( const Target& target, const double offset )
   : Target( target )
   , offset( offset )
 {

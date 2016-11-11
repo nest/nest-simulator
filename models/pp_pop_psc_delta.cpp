@@ -392,7 +392,8 @@ nest::pp_pop_psc_delta::update( Time const& origin,
       % S_.n_spikes_past_.size(); // shift to the right
 
     int temp_sum = 0;
-    for ( unsigned int i = 0; i < S_.n_spikes_ages_.size(); i++ ) // cumulative sum
+    for ( unsigned int i = 0; i < S_.n_spikes_ages_.size();
+          i++ ) // cumulative sum
       temp_sum += S_.n_spikes_ages_[ i ];
 
     S_.n_spikes_past_[ S_.p_n_spikes_past_ ] = temp_sum;

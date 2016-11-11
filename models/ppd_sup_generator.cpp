@@ -207,7 +207,8 @@ nest::ppd_sup_generator::calibrate()
   double h = Time::get_resolution().get_ms();
 
   // compute number of age bins that need to be kept track of
-  unsigned long num_age_bins = static_cast< unsigned long >( P_.dead_time_ / h );
+  unsigned long num_age_bins =
+    static_cast< unsigned long >( P_.dead_time_ / h );
 
   // compute omega to evaluate modulation with, units [rad/ms]
   V_.omega_ = 2.0 * numerics::pi * P_.frequency_ / 1000.0;
@@ -233,9 +234,7 @@ nest::ppd_sup_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::ppd_sup_generator::update( Time const& T,
-  const long from,
-  const long to )
+nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );

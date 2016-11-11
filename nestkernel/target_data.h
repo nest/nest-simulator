@@ -30,7 +30,7 @@
 namespace nest
 {
 
-/** 
+/**
  * Structure used to communicate part of the connection infrastructure
  * from post- to presynaptic side. These are the elements of the MPI
  * buffers.
@@ -39,7 +39,7 @@ namespace nest
 struct TargetData
 {
   Target target;
-  index lid : 20; //!< local id of presynaptic neuron
+  index lid : 20;  //!< local id of presynaptic neuron
   thread tid : 10; //!< thread index of presynaptic neuron
   unsigned int marker : 2;
   static const unsigned int complete_marker = 1;
@@ -55,8 +55,7 @@ struct TargetData
   bool is_invalid_marker() const;
 };
 
-inline
-TargetData::TargetData()
+inline TargetData::TargetData()
   : target( Target() )
   , lid( 0 )
   , tid( 0 )

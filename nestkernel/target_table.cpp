@@ -27,8 +27,8 @@
 
 nest::TargetTable::TargetTable()
 {
-  assert( sizeof(Target) == 8 );
-  assert( sizeof(TargetData) == 16 );
+  assert( sizeof( Target ) == 8 );
+  assert( sizeof( TargetData ) == 16 );
 }
 
 nest::TargetTable::~TargetTable()
@@ -40,7 +40,7 @@ nest::TargetTable::initialize()
 {
   thread num_threads = kernel().vp_manager.get_num_threads();
   targets_.resize( num_threads );
-  for( thread tid = 0; tid < num_threads; ++tid)
+  for ( thread tid = 0; tid < num_threads; ++tid )
   {
     targets_[ tid ] = new std::vector< std::vector< Target > >(
       0, std::vector< Target >( 0, Target() ) );
@@ -50,8 +50,10 @@ nest::TargetTable::initialize()
 void
 nest::TargetTable::finalize()
 {
-  for( std::vector< std::vector< std::vector< Target > >* >::iterator it =
-         targets_.begin(); it != targets_.end(); ++it )
+  for ( std::vector< std::vector< std::vector< Target > >* >::iterator it =
+          targets_.begin();
+        it != targets_.end();
+        ++it )
   {
     delete *it;
   }

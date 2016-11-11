@@ -276,9 +276,7 @@ nest::iaf_psc_exp::calibrate()
 }
 
 void
-nest::iaf_psc_exp::update( const Time& origin,
-  const long from,
-  const long to )
+nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );

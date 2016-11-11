@@ -111,8 +111,7 @@ hh_psc_alpha_gap_dynamics( double time,
   const double alpha_h = 0.0035 / std::exp( V / 24.186 );
   const double beta_h =
     0.017 * ( 51.25 + V ) / ( 1. - std::exp( -( 51.25 + V ) / 5.2 ) );
-  const double alpha_p =
-    ( V - 95. ) / ( 1. - std::exp( -( V - 95. ) / 11.8 ) );
+  const double alpha_p = ( V - 95. ) / ( 1. - std::exp( -( V - 95. ) / 11.8 ) );
   const double beta_p = 0.025 / std::exp( V / 22.222 );
   const double alpha_n =
     0.014 * ( V + 44. ) / ( 1. - std::exp( -( V + 44. ) / 2.3 ) );

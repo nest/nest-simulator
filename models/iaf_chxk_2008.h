@@ -175,9 +175,9 @@ private:
     double tau_ahp;  //!< Afterhyperpolarization (AHP) time constant
     double g_ahp;    //!< AHP conductance
     double E_ahp;    //!< AHP potential
-    bool ahp_bug;      //!< If true, discard AHP conductance value from previous
-                       //!< spikes
-    Parameters_();     //!< Set default parameter values
+    bool ahp_bug;    //!< If true, discard AHP conductance value from previous
+                     //!< spikes
+    Parameters_();   //!< Set default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum& ); //!< Set values from dictionary
@@ -263,7 +263,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**

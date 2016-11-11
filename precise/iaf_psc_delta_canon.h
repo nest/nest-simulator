@@ -220,8 +220,7 @@ private:
    * @param offset_U  Time offset for U value, i.e. for time when threshold
    *                  crossing was detected
    */
-  void
-  emit_spike_( Time const& origin, const long lag, const double offset_U );
+  void emit_spike_( Time const& origin, const long lag, const double offset_U );
 
   /**
    * Instantaneously emit a spike at the precise time defined by
@@ -308,7 +307,7 @@ private:
     //! step of last spike, for reporting in status dict
     long last_spike_step_;
     double last_spike_offset_; //!< offset of last spike, for reporting in
-                                 //!< status dict
+                               //!< status dict
 
     bool is_refractory_;   //!< flag for refractoriness
     bool with_refr_input_; //!< spikes arriving during refractory period are

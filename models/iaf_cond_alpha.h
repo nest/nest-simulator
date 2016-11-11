@@ -171,14 +171,14 @@ private:
   //! Model parameters
   struct Parameters_
   {
-    double V_th;    //!< Threshold Potential in mV
-    double V_reset; //!< Reset Potential in mV
-    double t_ref;   //!< Refractory period in ms
-    double g_L;     //!< Leak Conductance in nS
-    double C_m;     //!< Membrane Capacitance in pF
-    double E_ex;    //!< Excitatory reversal Potential in mV
-    double E_in;    //!< Inhibitory reversal Potential in mV
-    double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
+    double V_th;     //!< Threshold Potential in mV
+    double V_reset;  //!< Reset Potential in mV
+    double t_ref;    //!< Refractory period in ms
+    double g_L;      //!< Leak Conductance in nS
+    double C_m;      //!< Membrane Capacitance in pF
+    double E_ex;     //!< Excitatory reversal Potential in mV
+    double E_in;     //!< Inhibitory reversal Potential in mV
+    double E_L;      //!< Leak reversal Potential (aka resting potential) in mV
     double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
     double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
     double I_e;      //!< Constant Current in pA
@@ -267,7 +267,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**

@@ -209,7 +209,8 @@ nest::gamma_sup_generator::calibrate()
   V_.transition_prob_ = P_.rate_ * P_.gamma_shape_ * h / 1000.0;
 
   // approximate equilibrium occupation to initialize to
-  unsigned long ini_occ_0 = static_cast< unsigned long >( P_.n_proc_ / P_.gamma_shape_ );
+  unsigned long ini_occ_0 =
+    static_cast< unsigned long >( P_.n_proc_ / P_.gamma_shape_ );
 
   // If new targets have been added during a simulation break, we
   // initialize the new elements in Internal_states with the initial dist. The

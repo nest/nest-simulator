@@ -156,7 +156,7 @@ private:
     std::vector< double > i_syn_;
     double V_m_;     //!< membrane potential, variable 2
     double current_; //!< This is the current in a time step. This is only
-                       //!< here to allow logging
+                     //!< here to allow logging
 
     //! absolute refractory counter (no membrane potential propagation)
     int r_ref_;

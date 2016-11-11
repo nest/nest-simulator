@@ -804,7 +804,8 @@ write_to_comm_buffer( T d, std::vector< unsigned int >::iterator& pos )
 
 /**
  * This template function reads data of type T from a given position of a
- * std::vector< unsigned int >. The function is used to read SecondaryEvents data from
+ * std::vector< unsigned int >. The function is used to read SecondaryEvents
+ * data from
  * the NEST communcation buffer.
  * The pos iterator is advanced during execution.
  * For a discussion on the functionality of this function see github issue #181

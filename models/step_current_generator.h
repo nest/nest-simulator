@@ -86,7 +86,7 @@ public:
   void set_status( const DictionaryDatum& );
 
   void set_local_device_id( const index ldid );
-  index get_local_device_id( ) const;
+  index get_local_device_id() const;
 
 private:
   void init_state_( const Node& );
@@ -117,7 +117,7 @@ private:
 
   struct Buffers_
   {
-    size_t idx_;   //!< index of current amplitude
+    size_t idx_; //!< index of current amplitude
     double amp_; //!< current amplitude
   };
 

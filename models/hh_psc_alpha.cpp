@@ -382,9 +382,7 @@ nest::hh_psc_alpha::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::hh_psc_alpha::update( Time const& origin,
-  const long from,
-  const long to )
+nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
 {
 
   assert(

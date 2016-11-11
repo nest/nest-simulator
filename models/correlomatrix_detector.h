@@ -223,10 +223,10 @@ private:
   struct Parameters_
   {
 
-    Time delta_tau_;    //!< width of correlation histogram bins
-    Time tau_max_;      //!< maximum time difference of events to detect
-    Time Tstart_;       //!< start of recording
-    Time Tstop_;        //!< end of recording
+    Time delta_tau_;  //!< width of correlation histogram bins
+    Time tau_max_;    //!< maximum time difference of events to detect
+    Time Tstart_;     //!< start of recording
+    Time Tstop_;      //!< end of recording
     long N_channels_; //!< number of channels
 
     Parameters_();                     //!< Sets default parameter values
@@ -257,10 +257,10 @@ private:
   {
 
     std::vector< long > n_events_; //!< spike counters
-    SpikelistType incoming_;         //!< incoming spikes, sorted
-                                     /** Weighted covariance matrix.
-                                      *  @note Data type is double to accomodate weights.
-                                      */
+    SpikelistType incoming_;       //!< incoming spikes, sorted
+                                   /** Weighted covariance matrix.
+                                    *  @note Data type is double to accomodate weights.
+                                    */
     std::vector< std::vector< std::vector< double > > > covariance_;
 
     /** Unweighted covariance matrix.

@@ -216,7 +216,7 @@ public:
   }
 
   void set_local_device_id( const index ldid );
-  index get_local_device_id( ) const;
+  index get_local_device_id() const;
 
 private:
   void init_state_( const Node& );

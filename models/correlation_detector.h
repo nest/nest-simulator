@@ -249,7 +249,7 @@ private:
    */
   struct State_
   {
-    std::vector< long > n_events_;        //!< spike counters
+    std::vector< long > n_events_;          //!< spike counters
     std::vector< SpikelistType > incoming_; //!< incoming spikes, sorted
 
     /** Weighted histogram.

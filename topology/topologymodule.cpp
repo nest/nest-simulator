@@ -209,8 +209,7 @@ TopologyModule::create_mask( const Token& t )
           {
             GridMask< 3 >& grid_mask_3d =
               dynamic_cast< GridMask< 3 >& >( *mask );
-            grid_mask_3d.set_anchor(
-              Position< 3, int >( column, row, layer ) );
+            grid_mask_3d.set_anchor( Position< 3, int >( column, row, layer ) );
           }
           catch ( std::bad_cast e )
           {

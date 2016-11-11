@@ -366,9 +366,7 @@ nest::pp_psc_delta::calibrate()
  */
 
 void
-nest::pp_psc_delta::update( Time const& origin,
-  const long from,
-  const long to )
+nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
 {
 
   assert(
@@ -404,8 +402,7 @@ nest::pp_psc_delta::update( Time const& origin,
 
       V_eff = S_.y3_ - S_.q_;
 
-      double rate =
-        ( P_.c_1_ * V_eff + P_.c_2_ * std::exp( P_.c_3_ * V_eff ) );
+      double rate = ( P_.c_1_ * V_eff + P_.c_2_ * std::exp( P_.c_3_ * V_eff ) );
 
       if ( rate > 0.0 )
       {

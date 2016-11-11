@@ -305,9 +305,7 @@ nest::mat2_psc_exp::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::mat2_psc_exp::update( Time const& origin,
-  const long from,
-  const long to )
+nest::mat2_psc_exp::update( Time const& origin, const long from, const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );

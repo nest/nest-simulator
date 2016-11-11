@@ -144,7 +144,8 @@ public:
     weight_ = w;
   }
 
-  void set_delay( double )
+  void
+  set_delay( double )
   {
     throw BadProperty( "gap_junction connection has no delay" );
   }

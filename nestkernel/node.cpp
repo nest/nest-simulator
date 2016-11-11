@@ -222,7 +222,8 @@ Node::send_test_event( Node&, rport, synindex, bool )
  * Default implementation of register_stdp_connection() just
  * throws IllegalConnection
  */
-void Node::register_stdp_connection( double )
+void
+Node::register_stdp_connection( double )
 {
   throw IllegalConnection();
 }
@@ -349,7 +350,8 @@ Node::sends_secondary_event( GapJunctionEvent& )
 }
 
 
-double Node::get_K_value( double )
+double
+Node::get_K_value( double )
 {
   throw UnexpectedEvent();
 }

@@ -65,12 +65,12 @@ RecordablesMap< izhikevich >::create()
  * ---------------------------------------------------------------- */
 
 nest::izhikevich::Parameters_::Parameters_()
-  : a_( 0.02 )                                        // a
-  , b_( 0.2 )                                         // b
-  , c_( -65.0 )                                       // c without unit
-  , d_( 8.0 )                                         // d
-  , I_e_( 0.0 )                                       // pA
-  , V_th_( 30.0 )                                     // mV
+  : a_( 0.02 )                                      // a
+  , b_( 0.2 )                                       // b
+  , c_( -65.0 )                                     // c without unit
+  , d_( 8.0 )                                       // d
+  , I_e_( 0.0 )                                     // pA
+  , V_th_( 30.0 )                                   // mV
   , V_min_( -std::numeric_limits< double >::max() ) // mV
   , consistent_integration_( true )
 {
@@ -197,9 +197,7 @@ nest::izhikevich::calibrate()
  */
 
 void
-nest::izhikevich::update( Time const& origin,
-  const long from,
-  const long to )
+nest::izhikevich::update( Time const& origin, const long from, const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );

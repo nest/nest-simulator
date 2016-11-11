@@ -184,7 +184,8 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
         throw BadProperty();
       for ( index i = 0; i < ad_rngseeds->size(); ++i )
       {
-        const long vpseed = ( *ad_rngseeds )[ i ]; // SLI has no unsigned long tokens
+        const long vpseed =
+          ( *ad_rngseeds )[ i ]; // SLI has no unsigned long tokens
         if ( !seedset.insert( vpseed ).second )
         {
           LOG( M_WARNING,
@@ -268,8 +269,8 @@ nest::RNGManager::create_rngs_()
 void
 nest::RNGManager::create_grng_()
 {
-  // create new grng
-  // LOG( M_INFO, "Network::create_grng_", "Creating new default global RNG" );
+// create new grng
+// LOG( M_INFO, "Network::create_grng_", "Creating new default global RNG" );
 
 // create default RNG with default seed
 #ifdef HAVE_GSL

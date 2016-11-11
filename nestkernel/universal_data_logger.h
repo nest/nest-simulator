@@ -166,8 +166,8 @@ private:
     size_t num_vars_;  //!< number of variables recorded
 
     Time recording_interval_; //!< interval between two recordings
-    long rec_int_steps_;    //!< interval in steps
-    long next_rec_step_;    //!< next time step at which to record
+    long rec_int_steps_;      //!< interval in steps
+    long next_rec_step_;      //!< next time step at which to record
 
     /** Vector of pointers to member functions for data access. */
     std::vector< typename RecordablesMap< HostNode >::DataAccessFct >

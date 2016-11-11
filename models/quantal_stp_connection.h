@@ -131,9 +131,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e,
-    thread t,
-    const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -170,8 +168,8 @@ private:
   double u_;       //!< dynamic value of probability of release
   double tau_rec_; //!< [ms] time constant for recovery from depression (D)
   double tau_fac_; //!< [ms] time constant for facilitation (F)
-  int n_;            //!< Number of release sites
-  int a_;            //!< Number of available release sites
+  int n_;          //!< Number of release sites
+  int a_;          //!< Number of available release sites
   double t_lastspike_;
 };
 

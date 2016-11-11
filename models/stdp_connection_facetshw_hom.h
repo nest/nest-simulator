@@ -189,8 +189,8 @@ private:
   std::vector< long > lookuptable_0_;
   std::vector< long > lookuptable_1_;
   std::vector< long > lookuptable_2_; // TODO: TP: to save memory one could
-                                        // introduce vector<bool> &
-                                        // BoolVectorDatum
+                                      // introduce vector<bool> &
+                                      // BoolVectorDatum
   std::vector< long > configbit_0_;
   std::vector< long > configbit_1_;
   std::vector< long > reset_pattern_;
@@ -309,7 +309,8 @@ private:
   double entry_to_weight_( unsigned int discrete_weight,
     double weight_per_lut_entry );
 
-  unsigned int lookup_( unsigned int discrete_weight_, std::vector< long > table );
+  unsigned int lookup_( unsigned int discrete_weight_,
+    std::vector< long > table );
 
   // data members of each connection
   double weight_;
@@ -321,15 +322,15 @@ private:
   bool init_flag_;
   long synapse_id_;
   double next_readout_time_;
-  unsigned int discrete_weight_; // TODO: TP: only needed in send, move to common
-                           // properties or "static"?
+  unsigned int
+    discrete_weight_; // TODO: TP: only needed in send, move to common
+                      // properties or "static"?
   double t_lastspike_;
 };
 
 template < typename targetidentifierT >
 inline bool
-STDPFACETSHWConnectionHom< targetidentifierT >::eval_function_(
-  double a_causal,
+STDPFACETSHWConnectionHom< targetidentifierT >::eval_function_( double a_causal,
   double a_acausal,
   double a_thresh_th,
   double a_thresh_tl,
@@ -345,8 +346,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::eval_function_(
 
 template < typename targetidentifierT >
 inline unsigned int
-STDPFACETSHWConnectionHom< targetidentifierT >::weight_to_entry_(
-  double weight,
+STDPFACETSHWConnectionHom< targetidentifierT >::weight_to_entry_( double weight,
   double weight_per_lut_entry )
 {
   // returns the discrete weight in terms of the look-up table index
@@ -470,8 +470,10 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  get_target( t )->get_history(
-    t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  get_target( t )->get_history( t_lastspike_ - dendritic_delay,
+    t_spike - dendritic_delay,
+    &start,
+    &finish );
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   double minus_dt = 0;
   double plus_dt = 0;

@@ -151,11 +151,11 @@ private:
    */
   struct Parameters_
   {
-    double rate_;      //!< process rate [Hz]
-    double dead_time_; //!< dead time [ms]
-    unsigned long n_proc_;     //!< number of component processes
-    double frequency_; //!< rate modulation frequency [Hz]
-    double amplitude_; //!< rate modulation amplitude [Hz]
+    double rate_;          //!< process rate [Hz]
+    double dead_time_;     //!< dead time [ms]
+    unsigned long n_proc_; //!< number of component processes
+    double frequency_;     //!< rate modulation frequency [Hz]
+    double amplitude_;     //!< rate modulation amplitude [Hz]
 
     /**
      * Number of targets.
@@ -181,8 +181,9 @@ private:
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
     //! occupation numbers of ages below dead time
     std::vector< unsigned long > occ_refractory_;
-    unsigned long occ_active_; //!< summed occupation number of ages above dead time
-    size_t activate_;    //!< rotating pointer
+    unsigned long
+      occ_active_;    //!< summed occupation number of ages above dead time
+    size_t activate_; //!< rotating pointer
 
   public:
     //! initialize age dist

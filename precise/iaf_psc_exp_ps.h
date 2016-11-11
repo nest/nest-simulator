@@ -306,7 +306,7 @@ private:
     double y1_in_; //!< Inh. exponetial current
     double y2_;    //!< Membrane potential (relative to resting potential)
 
-    bool is_refractory_;         //!< True while refractory
+    bool is_refractory_;       //!< True while refractory
     long last_spike_step_;     //!< Time stamp of most recent spike
     double last_spike_offset_; //!< Offset of most recent spike
 

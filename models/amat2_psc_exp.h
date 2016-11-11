@@ -254,11 +254,11 @@ private:
     double i_syn_in_; //!< postsynaptic current for inh. inputs, variable 2
     double V_m_;      //!< membrane potential, variable 3
     double V_th_1_;   //!< short time adaptive threshold (related to tau_1_),
-                        //!< variable 4
+                      //!< variable 4
     double V_th_2_;   //!< long time adaptive threshold (related to tau_2_),
-                        //!< variable 5
+                      //!< variable 5
     double V_th_dv_;  //!< derivative of voltage dependent threshold,
-                        //!< variable 6
+                      //!< variable 6
     double V_th_v_;   //!< voltage dependent threshold, variable 7
 
     int r_; //!< total refractory counter (no spikes can be generated)

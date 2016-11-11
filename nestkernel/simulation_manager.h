@@ -159,7 +159,7 @@ private:
                     //!< simulations (or not)
   bool use_wfr_;    //!< Indicates wheter waveform relaxation is used
   double wfr_comm_interval_; //!< Desired waveform relaxation communication
-                               //!< interval (in ms)
+                             //!< interval (in ms)
   double wfr_tol_; //!< Convergence tolerance of waveform relaxation method
   long wfr_max_iterations_; //!< maximal number of iterations used for waveform
                             //!< relaxation

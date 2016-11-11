@@ -247,8 +247,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
     {
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_manager.set_synapse_status(
-        con_id.get_source_gid(),
+      kernel().connection_manager.set_synapse_status( con_id.get_source_gid(),
         con_id.get_target_gid(),
         con_id.get_target_thread(),
         con_id.get_synapse_model_id(),
@@ -266,8 +265,7 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
       DictionaryDatum dict = getValue< DictionaryDatum >( dict_a[ con ] );
       ConnectionDatum con_id = getValue< ConnectionDatum >( conn_a[ con ] );
       dict->clear_access_flags();
-      kernel().connection_manager.set_synapse_status(
-        con_id.get_source_gid(),
+      kernel().connection_manager.set_synapse_status( con_id.get_source_gid(),
         con_id.get_target_gid(),
         con_id.get_target_thread(),
         con_id.get_synapse_model_id(),
@@ -359,12 +357,12 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
   long gid = conn.get_source_gid();
   kernel().node_manager.get_node( gid ); // Just to check if the node exists
 
-  DictionaryDatum result_dict = kernel().connection_manager.get_synapse_status(
-    conn.get_source_gid(),
-    conn.get_target_gid(),
-    conn.get_target_thread(),
-    conn.get_synapse_model_id(),
-    conn.get_port() );
+  DictionaryDatum result_dict =
+    kernel().connection_manager.get_synapse_status( conn.get_source_gid(),
+      conn.get_target_gid(),
+      conn.get_target_thread(),
+      conn.get_synapse_model_id(),
+      conn.get_port() );
 
   i->OStack.pop();
   i->OStack.push( result_dict );
@@ -384,8 +382,7 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
   {
     ConnectionDatum con_id = getValue< ConnectionDatum >( conns.get( nt ) );
     DictionaryDatum result_dict =
-      kernel().connection_manager.get_synapse_status(
-        con_id.get_source_gid(),
+      kernel().connection_manager.get_synapse_status( con_id.get_source_gid(),
         con_id.get_target_gid(),
         con_id.get_target_thread(),
         con_id.get_synapse_model_id(),

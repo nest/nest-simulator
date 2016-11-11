@@ -296,7 +296,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
       S_.n_events_[ sender ]++; // count this spike
 
       const long sign = 2 * sender - 1; // takes into account relative timing
-                                          // of spike from source 1 and source 2
+                                        // of spike from source 1 and source 2
 
       for ( SpikelistType::const_iterator spike_j = otherSpikes.begin();
             spike_j != otherSpikes.end();

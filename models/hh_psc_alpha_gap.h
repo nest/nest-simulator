@@ -220,15 +220,15 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double t_ref_; //!< refractory time in ms
-    double g_Na;   //!< Sodium Conductance in nS
-    double g_Kv1;  //!< Potassium Conductance in nS
-    double g_Kv3;  //!< Potassium Conductance in nS
-    double g_L;    //!< Leak Conductance in nS
-    double C_m;    //!< Membrane Capacitance in pF
-    double E_Na;   //!< Sodium Reversal Potential in mV
-    double E_K;    //!< Potassium Reversal Potential in mV
-    double E_L;    //!< Leak reversal Potential (aka resting potential) in mV
+    double t_ref_;   //!< refractory time in ms
+    double g_Na;     //!< Sodium Conductance in nS
+    double g_Kv1;    //!< Potassium Conductance in nS
+    double g_Kv3;    //!< Potassium Conductance in nS
+    double g_L;      //!< Leak Conductance in nS
+    double C_m;      //!< Membrane Capacitance in pF
+    double E_Na;     //!< Sodium Reversal Potential in mV
+    double E_K;      //!< Potassium Reversal Potential in mV
+    double E_L;      //!< Leak reversal Potential (aka resting potential) in mV
     double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
     double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
     double I_e;      //!< Constant Current in pA
@@ -312,7 +312,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     // remembers current lag for piecewise interpolation
@@ -372,9 +372,7 @@ private:
 };
 
 inline void
-hh_psc_alpha_gap::update( Time const& origin,
-  const long from,
-  const long to )
+hh_psc_alpha_gap::update( Time const& origin, const long from, const long to )
 {
   update_( origin, from, to, false );
 }

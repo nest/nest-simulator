@@ -106,7 +106,7 @@ public:
   void set_status( const DictionaryDatum& );
 
   void set_local_device_id( const index ldid );
-  index get_local_device_id( ) const;
+  index get_local_device_id() const;
 
 private:
   void init_state_( const Node& );
@@ -138,7 +138,7 @@ private:
    */
   struct Parameters_
   {
-    double rate_;       //!< rate of component gamma process [Hz]
+    double rate_;               //!< rate of component gamma process [Hz]
     unsigned long gamma_shape_; //!< gamma shape parameter [1]
     unsigned long n_proc_;      //!< number of component processes
 
@@ -163,7 +163,8 @@ private:
 
     librandom::BinomialRandomDev bino_dev_;   //!< random deviate generator
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    std::vector< unsigned long > occ_; //!< occupation numbers of internal states
+    std::vector< unsigned long >
+      occ_; //!< occupation numbers of internal states
 
   public:
     Internal_states_( size_t num_bins,
@@ -188,7 +189,7 @@ private:
   struct Variables_
   {
     double transition_prob_; //!< transition probabililty to go to next
-                               //!< internal state
+                             //!< internal state
 
     /**
      * @name update-hook communication.

@@ -195,9 +195,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e,
-    thread t,
-    const TsodyksHomCommonProperties& cp );
+  void send( Event& e, thread t, const TsodyksHomCommonProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -222,7 +220,8 @@ public:
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
   }
 
-  void set_weight( double )
+  void
+  set_weight( double )
   {
     throw BadProperty(
       "Setting of individual weights is not possible! The common weights can "

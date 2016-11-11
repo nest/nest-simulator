@@ -349,7 +349,7 @@ private:
     double y1_;                //!< alpha current, first component
     double y2_;                //!< alpha current, second component
     double y3_;                //!< Membrane pot. rel. to resting pot. E_L_.
-    bool is_refractory_;         //!< true while refractory
+    bool is_refractory_;       //!< true while refractory
     long last_spike_step_;     //!< time stamp of most recent spike
     double last_spike_offset_; //!< offset of most recent spike
 

@@ -136,9 +136,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e,
-    thread t,
-    const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -239,8 +237,10 @@ STDPConnection< targetidentifierT >::send( Event& e,
   // history[0, ..., t_last_spike - dendritic_delay] have been
   // incremented by Archiving_Node::register_stdp_connection(). See bug #218 for
   // details.
-  target->get_history(
-    t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  target->get_history( t_lastspike_ - dendritic_delay,
+    t_spike - dendritic_delay,
+    &start,
+    &finish );
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   double minus_dt;
   while ( start != finish )

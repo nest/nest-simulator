@@ -260,9 +260,7 @@ nest::iaf_neuron::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_neuron::update( Time const& origin,
-  const long from,
-  const long to )
+nest::iaf_neuron::update( Time const& origin, const long from, const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );

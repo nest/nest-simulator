@@ -138,8 +138,7 @@ public:
   /**
    * @returns the value of the parameter at the given point.
    */
-  double value( const std::vector< double >& pt,
-    librandom::RngPtr& rng ) const;
+  double value( const std::vector< double >& pt, librandom::RngPtr& rng ) const;
 
   /**
    * Clone method.

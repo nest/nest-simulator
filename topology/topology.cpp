@@ -277,8 +277,8 @@ get_element( const index layer_gid, const TokenArray array )
       throw TypeMismatch( "grid layer node", "something else" );
     }
 
-    node_gids = layer->get_nodes(
-      Position< 2, int >( static_cast< index >( array[ 0 ] ),
+    node_gids =
+      layer->get_nodes( Position< 2, int >( static_cast< index >( array[ 0 ] ),
         static_cast< index >( array[ 1 ] ) ) );
   }
   break;
@@ -292,8 +292,8 @@ get_element( const index layer_gid, const TokenArray array )
       throw TypeMismatch( "grid layer node", "something else" );
     }
 
-    node_gids = layer->get_nodes(
-      Position< 3, int >( static_cast< index >( array[ 0 ] ),
+    node_gids =
+      layer->get_nodes( Position< 3, int >( static_cast< index >( array[ 0 ] ),
         static_cast< index >( array[ 1 ] ),
         static_cast< index >( array[ 2 ] ) ) );
   }

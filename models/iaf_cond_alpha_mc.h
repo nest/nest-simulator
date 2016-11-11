@@ -285,17 +285,17 @@ private:
     double V_reset;             //!< Reset Potential in mV
     double t_ref;               //!< Refractory period in ms
     double g_conn[ NCOMP - 1 ]; //!< Conductances connecting compartments,
-                                  //!< in nS
+                                //!< in nS
     double g_L[ NCOMP ];        //!< Leak Conductance in nS
     double C_m[ NCOMP ];        //!< Membrane Capacitance in pF
     double E_ex[ NCOMP ];       //!< Excitatory reversal Potential in mV
     double E_in[ NCOMP ];       //!< Inhibitory reversal Potential in mV
     double E_L[ NCOMP ]; //!< Leak reversal Potential (aka resting potential)
-                           //!< in mV
+                         //!< in mV
     double tau_synE[ NCOMP ]; //!< Synaptic Time Constant Excitatory Synapse
-                                //!< in ms
+                              //!< in ms
     double tau_synI[ NCOMP ]; //!< Synaptic Time Constant for Inhibitory
-                                //!< Synapse in ms
+                              //!< Synapse in ms
     double I_e[ NCOMP ];      //!< Constant Current in pA
 
     Parameters_();                     //!< Sets default parameter values
@@ -393,7 +393,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**

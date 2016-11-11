@@ -61,8 +61,8 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d,
 {
   const bool ut =
     updateValue< std::vector< double > >( d, "amplitude_times", amp_times_ );
-  const bool uv = updateValue< std::vector< double > >(
-    d, "amplitude_values", amp_values_ );
+  const bool uv =
+    updateValue< std::vector< double > >( d, "amplitude_values", amp_values_ );
 
   if ( ut xor uv )
     throw BadProperty( "Amplitude times and values must be reset together." );

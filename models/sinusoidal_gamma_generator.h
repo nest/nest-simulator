@@ -154,7 +154,7 @@ public:
   void set_status( const DictionaryDatum& );
 
   void set_local_device_id( const index ldid );
-  index get_local_device_id( ) const;
+  index get_local_device_id() const;
 
   //! Model can be switched between proxies (single spike train) and not
   bool

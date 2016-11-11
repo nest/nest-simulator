@@ -34,12 +34,16 @@ namespace nest
 {
 
 inline bool
-SourceTable::get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, thread& target_rank, TargetData& next_target_data )
+SourceTable::get_next_target_data( const thread tid,
+  const thread rank_start,
+  const thread rank_end,
+  thread& target_rank,
+  TargetData& next_target_data )
 {
   SourceTablePosition& current_position = *current_positions_[ tid ];
   // we stay in this loop either until we can return a valid
   // TargetData object or we have reached the end of the sources table
-  while( true )
+  while ( true )
   {
     // check for validity of indices and update if necessary
     if ( current_position.lcid < 0 )
@@ -47,7 +51,9 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
       --current_position.syn_index;
       if ( current_position.syn_index >= 0 )
       {
-        current_position.lcid = (* sources_[ current_position.tid ] )[ current_position.syn_index ]->size() - 1;
+        current_position.lcid =
+          ( *sources_[ current_position.tid ] )[ current_position.syn_index ]
+            ->size() - 1;
         continue;
       }
       else
@@ -55,10 +61,13 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
         --current_position.tid;
         if ( current_position.tid >= 0 )
         {
-          current_position.syn_index = ( *sources_[ current_position.tid ] ).size() - 1;
+          current_position.syn_index =
+            ( *sources_[ current_position.tid ] ).size() - 1;
           if ( current_position.syn_index >= 0 )
           {
-            current_position.lcid = (* sources_[ current_position.tid ] )[ current_position.syn_index ]->size() - 1;
+            current_position.lcid =
+              ( *sources_[ current_position.tid ] )[ current_position
+                                                       .syn_index ]->size() - 1;
           }
           continue;
         }
@@ -73,7 +82,9 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
     }
 
     // the current position contains an entry, so we retrieve it
-    Source& current_source = ( *( *sources_[ current_position.tid ] )[ current_position.syn_index ])[ current_position.lcid ];
+    Source& current_source =
+      ( *( *sources_[ current_position.tid ] )[ current_position.syn_index ] )
+        [ current_position.lcid ];
     if ( current_source.processed )
     {
       // looks like we've processed this already, let's
@@ -82,7 +93,8 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
       continue;
     }
 
-    target_rank = kernel().node_manager.get_process_id_of_gid( current_source.gid );
+    target_rank =
+      kernel().node_manager.get_process_id_of_gid( current_source.gid );
     // now we need to determine whether this thread is
     // responsible for this part of the MPI buffer; if not we
     // just continue with the next iteration of the loop
@@ -97,16 +109,27 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
 
     // we need to set the marker whether the entry following this
     // entry, if existent, has the same source
-    if ( ( current_position.lcid + 1 < static_cast< long >( ( *sources_[ current_position.tid ] )[ current_position.syn_index  ]->size() )
-           && ( *( *sources_[ current_position.tid ] )[ current_position.syn_index ])[ current_position.lcid + 1 ].gid == current_source.gid ) )
+    if ( ( current_position.lcid + 1
+             < static_cast< long >(
+                 ( *sources_[ current_position.tid ] )[ current_position
+                                                          .syn_index ]->size() )
+           && ( *( *sources_[ current_position.tid ] )
+                  [ current_position.syn_index ] )[ current_position.lcid + 1 ]
+                .gid == current_source.gid ) )
     {
-      kernel().connection_manager.set_has_source_subsequent_targets( current_position.tid, current_position.syn_index, current_position.lcid, true );
+      kernel().connection_manager.set_has_source_subsequent_targets(
+        current_position.tid,
+        current_position.syn_index,
+        current_position.lcid,
+        true );
     }
 
     // we decrease the counter without returning a TargetData if the
     // entry preceeding this entry has the same source
     if ( ( current_position.lcid - 1 > -1
-           && (*( *sources_[ current_position.tid ] )[ current_position.syn_index  ])[ current_position.lcid - 1 ].gid == current_source.gid ) )
+           && ( *( *sources_[ current_position.tid ] )
+                  [ current_position.syn_index ] )[ current_position.lcid - 1 ]
+                .gid == current_source.gid ) )
     {
       --current_position.lcid;
       continue;
@@ -115,8 +138,10 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
     else
     {
       // set values of next_target_data
-      next_target_data.lid = kernel().vp_manager.gid_to_lid( current_source.gid );
-      next_target_data.tid = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( current_source.gid ) );
+      next_target_data.lid =
+        kernel().vp_manager.gid_to_lid( current_source.gid );
+      next_target_data.tid = kernel().vp_manager.vp_to_thread(
+        kernel().vp_manager.suggest_vp( current_source.gid ) );
       // we store the thread index of the sources table, not our own tid
       next_target_data.target.set_tid( current_position.tid );
       next_target_data.target.set_rank( kernel().mpi_manager.get_rank() );

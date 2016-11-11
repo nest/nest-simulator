@@ -151,9 +151,7 @@ nest::ac_generator::calibrate()
 }
 
 void
-nest::ac_generator::update( Time const& origin,
-  const long from,
-  const long to )
+nest::ac_generator::update( Time const& origin, const long from, const long to )
 {
   long start = origin.get_steps();
 

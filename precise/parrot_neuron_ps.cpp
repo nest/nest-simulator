@@ -56,9 +56,7 @@ parrot_neuron_ps::init_buffers_()
 }
 
 void
-parrot_neuron_ps::update( Time const& origin,
-  long const from,
-  long const to )
+parrot_neuron_ps::update( Time const& origin, long const from, long const to )
 {
   assert( to >= 0 );
   assert( static_cast< delay >( from )
@@ -81,7 +79,8 @@ parrot_neuron_ps::update( Time const& origin,
     while ( B_.events_.get_next_spike(
       T, ev_offset, ev_multiplicity, end_of_refract ) )
     {
-      const unsigned long multiplicity = static_cast< unsigned long >( ev_multiplicity );
+      const unsigned long multiplicity =
+        static_cast< unsigned long >( ev_multiplicity );
 
       // send spike
       SpikeEvent se;

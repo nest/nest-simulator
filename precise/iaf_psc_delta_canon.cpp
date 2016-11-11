@@ -67,14 +67,14 @@ RecordablesMap< iaf_psc_delta_canon >::create()
  * ---------------------------------------------------------------- */
 
 nest::iaf_psc_delta_canon::Parameters_::Parameters_()
-  : tau_m_( 10.0 )                                    // ms
-  , c_m_( 250.0 )                                     // pF
-  , t_ref_( 2.0 )                                     // ms
-  , E_L_( -70.0 )                                     // mV
-  , I_e_( 0.0 )                                       // pA
-  , U_th_( -55.0 - E_L_ )                             // mV, rel to E_L_
+  : tau_m_( 10.0 )                                  // ms
+  , c_m_( 250.0 )                                   // pF
+  , t_ref_( 2.0 )                                   // ms
+  , E_L_( -70.0 )                                   // mV
+  , I_e_( 0.0 )                                     // pA
+  , U_th_( -55.0 - E_L_ )                           // mV, rel to E_L_
   , U_min_( -std::numeric_limits< double >::max() ) // mV
-  , U_reset_( -70.0 - E_L_ )                          // mV, rel to E_L_
+  , U_reset_( -70.0 - E_L_ )                        // mV, rel to E_L_
 {
 }
 
@@ -454,8 +454,7 @@ nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
 
   // compute time since threhold crossing
   double v_inf = V_.v_inf_ + S_.I_ * P_.tau_m_ / P_.c_m_;
-  double dt =
-    -P_.tau_m_ * std::log( ( v_inf - S_.U_ ) / ( v_inf - P_.U_th_ ) );
+  double dt = -P_.tau_m_ * std::log( ( v_inf - S_.U_ ) / ( v_inf - P_.U_th_ ) );
 
   // set stamp and offset for spike
   S_.last_spike_step_ = origin.get_steps() + lag + 1;

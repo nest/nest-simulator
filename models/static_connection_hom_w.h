@@ -156,7 +156,8 @@ public:
     e();
   }
 
-  void set_weight( double )
+  void
+  set_weight( double )
   {
     throw BadProperty(
       "Setting of individual weights is not possible! The common weights can "

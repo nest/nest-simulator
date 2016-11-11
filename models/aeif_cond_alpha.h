@@ -237,7 +237,7 @@ public:
     };
 
     double y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for
-                                   //!< GSL solver
+                                 //!< GSL solver
     int r_;                      //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
@@ -276,7 +276,7 @@ public:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**

@@ -161,7 +161,7 @@ private:
     double V_th;    //!< Spike threshold in mV.
     double t_ref;   //!< Refractory period in ms.
     std::vector< double > taus_syn; //!< Time constants of synaptic currents
-                                      //!< in ms..
+                                    //!< in ms..
     double I_e;                     //!< Intrinsic current in pA.
     double MAXERR; //!< Maximal error for adaptive stepsize solver
     double HMIN;   //!< Smallest permissible stepsize in ms.
@@ -255,7 +255,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_;          //!< simulation step size in ms
+    double step_;            //!< simulation step size in ms
     double IntegrationStep_; //!< current integration time step,
                              //!< updated by solver
 

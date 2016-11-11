@@ -135,7 +135,7 @@ public:
   void set_status( const DictionaryDatum& );
 
   void set_local_device_id( const index ldid );
-  index get_local_device_id( ) const;
+  index get_local_device_id() const;
 
 private:
   void init_state_( const Node& );
@@ -162,8 +162,8 @@ private:
   {
     double rate_;   //!< process rate in Hz
     double p_copy_; //!< copy probability for each spike in the mother process
-    unsigned long mother_seed_;   //!< seed of the mother process
-    librandom::RngPtr rng_; //!< random number generator for mother process
+    unsigned long mother_seed_; //!< seed of the mother process
+    librandom::RngPtr rng_;     //!< random number generator for mother process
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );

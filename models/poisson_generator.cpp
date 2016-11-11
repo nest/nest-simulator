@@ -116,9 +116,7 @@ nest::poisson_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::poisson_generator::update( Time const& T,
-  const long from,
-  const long to )
+nest::poisson_generator::update( Time const& T, const long from, const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );

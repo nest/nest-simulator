@@ -102,9 +102,7 @@ nest::volume_transmitter::calibrate()
 }
 
 void
-nest::volume_transmitter::update( const Time&,
-  const long from,
-  const long to )
+nest::volume_transmitter::update( const Time&, const long from, const long to )
 {
   // spikes that arrive in this time slice are stored in spikecounter_
   double t_spike;

@@ -140,9 +140,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e,
-    thread t,
-    const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -239,8 +237,10 @@ STDPTripletConnection< targetidentifierT >::send( Event& e,
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  target->get_history(
-    t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  target->get_history( t_lastspike_ - dendritic_delay,
+    t_spike - dendritic_delay,
+    &start,
+    &finish );
 
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   while ( start != finish )

@@ -136,7 +136,7 @@ public:
   void set_status( const DictionaryDatum& );
 
   void set_local_device_id( const index ldid );
-  index get_local_device_id( ) const;
+  index get_local_device_id() const;
 
 private:
   void init_state_( const Node& );
@@ -165,7 +165,7 @@ private:
     double std_mod_; //!< standard deviation of current modulation, in pA
     double freq_;    //!< Standard frequency in Hz
     double phi_deg_; //!< Phase of sinusodial noise modulation (0-360 deg)
-    Time dt_;          //!< time interval between updates
+    Time dt_;        //!< time interval between updates
 
     /**
      * Number of targets.
@@ -200,16 +200,16 @@ private:
   struct Buffers_
   {
     long next_step_; //!< time step of next change in current
-    AmpVec_ amps_;     //!< amplitudes, one per target
+    AmpVec_ amps_;   //!< amplitudes, one per target
   };
 
   // ------------------------------------------------------------
 
   struct Variables_
   {
-    long dt_steps_;                       //!< update interval in steps
+    long dt_steps_;                         //!< update interval in steps
     librandom::NormalRandomDev normal_dev_; //!< random deviate generator
-    double omega_;                        //!< Angelfrequency i rad/s
+    double omega_;                          //!< Angelfrequency i rad/s
     double phi_rad_; //!< Phase of sine current (0-2Pi rad)
 
     // The exact integration matrix

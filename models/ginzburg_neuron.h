@@ -141,8 +141,7 @@ public:
   bool operator()( librandom::RngPtr rng, double h );
 };
 
-inline bool gainfunction_ginzburg::operator()( librandom::RngPtr rng,
-  double h )
+inline bool gainfunction_ginzburg::operator()( librandom::RngPtr rng, double h )
 {
   return rng->drand() < c1_ * h
     + c2_ * 0.5 * ( 1.0 + tanh( c3_ * ( h - theta_ ) ) );

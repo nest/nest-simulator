@@ -353,8 +353,7 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
       ConnectionDatum con_id =
         getValue< ConnectionDatum >( connectome.get( i ) );
       DictionaryDatum result_dict =
-        kernel().connection_manager.get_synapse_status(
-          con_id.get_source_gid(),
+        kernel().connection_manager.get_synapse_status( con_id.get_source_gid(),
           con_id.get_target_gid(),
           con_id.get_target_thread(),
           con_id.get_synapse_model_id(),

@@ -184,19 +184,19 @@ private:
     double C_m;      //!< Membrane Capacitance in pF
     double E_ex;     //!< Excitatory reversal Potential in mV
     double E_in;     //!< Inhibitory reversal Potential in mV
-    double E_L; //!< Leak reversal Potential (aka resting potential) in mV
+    double E_L;      //!< Leak reversal Potential (aka resting potential) in mV
     double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
     double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
     double I_e;      //!< Constant Current in pA
     double tau_sfa;  //!< spike-frequency adaptation (sfa) time constant
     double tau_rr;   //!< relative refractory (rr) time constant
     double E_sfa;    //!< spike-frequency adaptation (sfa) reversal Potential
-                       //!< in mV
+                     //!< in mV
     double E_rr;     //!<  relative refractory (rr) reversal Potential in mV
     double q_sfa;    //!< spike-frequency adaptation (sfa) quantal conductance
-                       //!< increase in nS
-    double q_rr; //!< relative refractory (rr) quantal conductance increase
-                   //!< in nS
+                     //!< increase in nS
+    double q_rr;     //!< relative refractory (rr) quantal conductance increase
+                     //!< in nS
 
     Parameters_(); //!< Sets default parameter values
 
@@ -268,7 +268,7 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**

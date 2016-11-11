@@ -104,7 +104,7 @@ public:
   void set_status( const DictionaryDatum& );
 
   void set_local_device_id( const index ldid );
-  index get_local_device_id( ) const;
+  index get_local_device_id() const;
 
 private:
   void init_state_( const Node& );
@@ -173,7 +173,7 @@ private:
 
   struct Variables_
   {
-    double inv_rate_ms_;            //!< 1000.0 / Parameters_.rate_
+    double inv_rate_ms_;              //!< 1000.0 / Parameters_.rate_
     librandom::ExpRandomDev exp_dev_; //!< random deviate generator
 
     /**

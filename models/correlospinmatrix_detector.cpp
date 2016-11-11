@@ -287,9 +287,7 @@ nest::correlospinmatrix_detector::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::correlospinmatrix_detector::update( Time const&,
-  const long,
-  const long )
+nest::correlospinmatrix_detector::update( Time const&, const long, const long )
 {
 }
 

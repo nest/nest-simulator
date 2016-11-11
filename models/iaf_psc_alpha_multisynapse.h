@@ -166,7 +166,7 @@ private:
     //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
     double y3_;
     double current_; //! This is the current in a time step. This is only here
-                       //! to allow logging
+                     //! to allow logging
 
     int r_; //!< Number of refractory steps remaining
 

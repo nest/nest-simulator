@@ -145,9 +145,7 @@ public:
    * \param e The event to send
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e,
-    thread t,
-    const CommonSynapseProperties& cp );
+  void send( Event& e, thread t, const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -210,7 +208,7 @@ public:
 private:
   double weight_;       //!< synaptic weight
   double delay_offset_; //!< fractional delay < h,
-                          //!< total delay = delay_ - delay_offset_
+                        //!< total delay = delay_ - delay_offset_
 };
 
 /**

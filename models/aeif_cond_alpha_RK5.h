@@ -184,7 +184,7 @@ private:
     double I_e;        //!< Intrinsic current in pA.
     double MAXERR;     //!< Maximal error for adaptive stepsize solver
     double HMIN;       //!< Smallest permissible stepsize in ms.
-    Parameters_();       //!< Sets default parameter values
+    Parameters_();     //!< Sets default parameter values
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum& ); //!< Set values from dicitonary

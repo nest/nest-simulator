@@ -31,52 +31,53 @@ namespace nest
  **/
 struct SourceTablePosition
 {
-  long tid; //!< thread index
+  long tid;       //!< thread index
   long syn_index; //!< synapse-type index
-  long lcid; //!< local connection index
+  long lcid;      //!< local connection index
   SourceTablePosition();
   SourceTablePosition( const long tid, const long syn_index, const long lcid );
   SourceTablePosition( const SourceTablePosition& rhs );
 };
 
-inline
-SourceTablePosition::SourceTablePosition()
+inline SourceTablePosition::SourceTablePosition()
   : tid( -1 )
   , syn_index( -1 )
   , lcid( -1 )
 {
 }
 
-inline
-SourceTablePosition::SourceTablePosition( const long tid, const long syn_index, const long lcid )
+inline SourceTablePosition::SourceTablePosition( const long tid,
+  const long syn_index,
+  const long lcid )
   : tid( tid )
   , syn_index( syn_index )
   , lcid( lcid )
 {
 }
 
-inline
-SourceTablePosition::SourceTablePosition( const SourceTablePosition& rhs )
+inline SourceTablePosition::SourceTablePosition(
+  const SourceTablePosition& rhs )
   : tid( rhs.tid )
   , syn_index( rhs.syn_index )
   , lcid( rhs.lcid )
 {
 }
 
-inline bool
-operator==(const SourceTablePosition& lhs, const SourceTablePosition& rhs)
+inline bool operator==( const SourceTablePosition& lhs,
+  const SourceTablePosition& rhs )
 {
-  return ( ( lhs.tid == rhs.tid ) && ( lhs.syn_index == rhs.syn_index ) && ( lhs.lcid == rhs.lcid ) ); 
+  return ( ( lhs.tid == rhs.tid ) && ( lhs.syn_index == rhs.syn_index )
+    && ( lhs.lcid == rhs.lcid ) );
 }
 
-inline bool
-operator!=(const SourceTablePosition& lhs, const SourceTablePosition& rhs)
+inline bool operator!=( const SourceTablePosition& lhs,
+  const SourceTablePosition& rhs )
 {
-  return !operator==(lhs,rhs);
+  return !operator==( lhs, rhs );
 }
 
-inline bool
-operator< (const SourceTablePosition& lhs, const SourceTablePosition& rhs)
+inline bool operator<( const SourceTablePosition& lhs,
+  const SourceTablePosition& rhs )
 {
   if ( lhs.tid == rhs.tid )
   {
@@ -95,22 +96,22 @@ operator< (const SourceTablePosition& lhs, const SourceTablePosition& rhs)
   }
 }
 
-inline bool
-operator> (const SourceTablePosition& lhs, const SourceTablePosition& rhs)
+inline bool operator>( const SourceTablePosition& lhs,
+  const SourceTablePosition& rhs )
 {
-  return  operator< (rhs,lhs);
+  return operator<( rhs, lhs );
 }
 
-inline bool
-operator<=(const SourceTablePosition& lhs, const SourceTablePosition& rhs)
+inline bool operator<=( const SourceTablePosition& lhs,
+  const SourceTablePosition& rhs )
 {
-  return !operator> (lhs,rhs);
+  return !operator>( lhs, rhs );
 }
 
-inline bool
-operator>=(const SourceTablePosition& lhs, const SourceTablePosition& rhs)
+inline bool operator>=( const SourceTablePosition& lhs,
+  const SourceTablePosition& rhs )
 {
-  return !operator< (lhs,rhs);
+  return !operator<( lhs, rhs );
 }
 
 } // namespace nest

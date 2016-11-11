@@ -70,7 +70,8 @@ public:
     }
   }
 
-  Node* get_target_ptr( const thread ) const
+  Node*
+  get_target_ptr( const thread ) const
   {
     return target_;
   }

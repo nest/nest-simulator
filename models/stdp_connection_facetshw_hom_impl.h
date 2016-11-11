@@ -179,8 +179,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status(
 
   // TP: they should not be allowed to be changed! But needed for CopyModel ...
   updateValue< double >( d, "weight_per_lut_entry", weight_per_lut_entry_ );
-  updateValue< double >(
-    d, "readout_cycle_duration", readout_cycle_duration_ );
+  updateValue< double >( d, "readout_cycle_duration", readout_cycle_duration_ );
   if ( updateValue< long >( d, "no_synapses", no_synapses_ ) )
   {
     calc_readout_cycle_duration_();
@@ -190,8 +189,7 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status(
   {
     calc_readout_cycle_duration_();
   }
-  if ( updateValue< double >(
-         d, "driver_readout_time", driver_readout_time_ ) )
+  if ( updateValue< double >( d, "driver_readout_time", driver_readout_time_ ) )
   {
     calc_readout_cycle_duration_();
   }
@@ -297,7 +295,7 @@ STDPFACETSHWConnectionHom< targetidentifierT >::STDPFACETSHWConnectionHom()
   , a_acausal_( 0.0 )
   , a_thresh_th_( 21.835 )
   , // exp(-10ms/20ms) * 36SSPs
-    a_thresh_tl_( 21.835 )
+  a_thresh_tl_( 21.835 )
   , init_flag_( false )
   , synapse_id_( 0 )
   , next_readout_time_( 0.0 )

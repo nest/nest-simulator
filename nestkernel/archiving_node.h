@@ -87,14 +87,14 @@ public:
   double get_synaptic_elements( Name n ) const;
 
   /**
-   * \fn int_t get_synaptic_elements_vacant(Name n)
+   * \fn int get_synaptic_elements_vacant(Name n)
    * get the number of synaptic elements of type n which are available
    * for new synapse creation
    */
   int get_synaptic_elements_vacant( Name n ) const;
 
   /**
-   * \fn int_t get_synaptic_elements_connected(Name n)
+   * \fn int get_synaptic_elements_connected(Name n)
    * get the number of synaptic element of type n which are currently
    * connected
    */

@@ -425,6 +425,7 @@ public:
    * @throws IllegalConnection
    */
   virtual port handles_test_event( SpikeEvent&, rport receptor_type );
+  virtual port handles_test_event( WeightRecorderEvent&, rport receptor_type );
   virtual port handles_test_event( RateEvent&, rport receptor_type );
   virtual port handles_test_event( DataLoggingRequest&, rport receptor_type );
   virtual port handles_test_event( CurrentEvent&, rport receptor_type );
@@ -462,6 +463,18 @@ public:
    * @ingroup event_interface
    */
   virtual void handle( SpikeEvent& e );
+
+  /**
+   * Handle incoming weight recording events.
+   * @param thrd Id of the calling thread.
+   * @param e Event object.
+   *
+   * This handler has to be implemented if a Node should
+   * accept weight recording events.
+   * @see class WeightRecordingEvent
+   * @ingroup event_interface
+   */
+  virtual void handle( WeightRecorderEvent& e );
 
   /**
    * Handler for rate events.
@@ -604,7 +617,7 @@ public:
    * synaptic elements (SynapticElement::z_connected_) when a synapse
    * is formed or deleted.
    * @param type Name, name of the synaptic element to connect
-   * @param n int_t number of new connections of the given type
+   * @param n int number of new connections of the given type
    * @ingroup SP_functions
    */
   virtual void connect_synaptic_element( Name, int ){};
@@ -755,6 +768,35 @@ public:
   virtual void set_local_device_id( const index lsdid );
   virtual index get_local_device_id() const;
 
+  /**
+   * Return the number of thread siblings in SiblingContainer.
+   *
+   * This method is meaningful only for SiblingContainer, for which it
+   * returns the number of siblings in the container.
+   * For all other models (including Subnet), it returns 0, which is not
+   * wrong. By defining the method in this way, we avoid many dynamic casts.
+   */
+  virtual size_t
+  num_thread_siblings() const
+  {
+    return 0;
+  }
+
+  /**
+   * Return the specified member of a SiblingContainer.
+   *
+   * This method is meaningful only for SiblingContainer, for which it
+   * returns the pointer to the indexed node in the container.
+   * For all other models (including Subnet), it returns a null pointer
+   * and throws and assertion.By defining the method in this way, we avoid
+   * many dynamic casts.
+   */
+  virtual Node* get_thread_sibling( index ) const
+  {
+    assert( false );
+    return 0;
+  }
+
 private:
   void set_lid_( index );      //!< Set local id, relative to the parent subnet
   void set_parent_( Subnet* ); //!< Set pointer to parent subnet.
@@ -771,44 +813,6 @@ private:
   virtual DictionaryDatum get_status_dict_();
 
 protected:
-  /**
-   * Return the number of thread siblings in SiblingContainer.
-   *
-   * This method is meaningful only for SiblingContainer, for which it
-   * returns the number of siblings in the container.
-   * For all other models (including Subnet), it returns 0, which is not
-   * wrong. By defining the method in this way, we avoid many dynamic casts.
-   */
-  virtual size_t
-  num_thread_siblings_() const
-  {
-    return 0;
-  }
-
-  /**
-   * Return the specified member of a SiblingContainer.
-   *
-   * This method is meaningful only for SiblingContainer, for which it
-   * returns the pointer to the indexed node in the container.
-   * For all other models (including Subnet), it returns a null pointer
-   * and throws and assertion.By defining the method in this way, we avoid
-   * many dynamic casts.
-   */
-  virtual Node* get_thread_sibling_( index ) const
-  {
-    assert( false );
-    return 0;
-  }
-
-  /**
-   * Return specified member of a SiblingContainer, with access control.
-   */
-  virtual Node* get_thread_sibling_safe_( index ) const
-  {
-    assert( false );
-    return 0;
-  }
-
   /**
    * Private function to initialize the state of a node to model defaults.
    * This function, which must be overloaded by all derived classes, provides

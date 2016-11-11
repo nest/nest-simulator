@@ -1,5 +1,5 @@
 /*
- *  minimalmusicsetup_receivenest.sli
+ *  test_supports_precise_spikes_flag.sli
  *
  *  This file is part of NEST.
  *
@@ -19,21 +19,18 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+ 
+/* BeginDocumentation
 
-statusdict/have_music :: not {statusdict/exitcodes/success :: quit_i} if
+Name: testsuite::test_supports_precise_spikes_flag - Checks that the 
+supports_precise_flag is a) available b) is set correctly by the precise and
+normal neuronal models.
 
-M_ERROR setverbosity
+Author: Dimitri Plotnikov, 2016-09-09
+*/
 
-/music_event_in_proxy Create /meip Set
-meip << /port_name (spikes_in) /music_channel 0 >> SetStatus
+(unittest) run
+/unittest using
 
-/iaf_neuron Create /n Set
-
-meip n << /weight 750.0 >> Connect
-
-/voltmeter Create /vm Set
-vm << /to_memory false /to_screen true >> SetStatus
-
-vm n Connect
-
-10 Simulate
+{ /iaf_psc_exp GetDefaults /supports_precise_spikes get not } assert_or_die
+{ /parrot_neuron_ps GetDefaults /supports_precise_spikes get } assert_or_die

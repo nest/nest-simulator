@@ -115,6 +115,11 @@ public:
   Node& get_receiver() const;
 
   /**
+   * Return GID of receiving Node.
+   */
+  index get_receiver_gid() const;
+
+  /**
    * Return reference to sending Node.
    */
   Node& get_sender() const;
@@ -319,7 +324,6 @@ protected:
 
 
 // Built-in event types
-
 /**
  * Event for spike information.
  * Used to send a spike from one node to the next.
@@ -359,6 +363,55 @@ inline int
 SpikeEvent::get_multiplicity() const
 {
   return multiplicity_;
+}
+
+
+/**
+ * Event for recording the weight of a spike.
+ */
+class WeightRecorderEvent : public Event
+{
+public:
+  WeightRecorderEvent();
+  WeightRecorderEvent* clone() const;
+  void operator()();
+
+  /**
+   * Return GID of receiving Node.
+   */
+  index get_receiver_gid() const;
+
+  /**
+   * Change GID of receiving Node.
+   */
+
+  void set_receiver_gid( index );
+
+protected:
+  index receiver_gid_; //!< GID of receiver or -1.
+};
+
+inline WeightRecorderEvent::WeightRecorderEvent()
+  : receiver_gid_( -1 )
+{
+}
+
+inline WeightRecorderEvent*
+WeightRecorderEvent::clone() const
+{
+  return new WeightRecorderEvent( *this );
+}
+
+inline void
+WeightRecorderEvent::set_receiver_gid( index gid )
+{
+  receiver_gid_ = gid;
+}
+
+inline index
+WeightRecorderEvent::get_receiver_gid( void ) const
+{
+  return receiver_gid_;
 }
 
 

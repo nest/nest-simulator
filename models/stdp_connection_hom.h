@@ -169,7 +169,9 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, thread t, const STDPHomCommonProperties& );
+  void send( Event& e,
+    thread t,
+    const STDPHomCommonProperties& );
 
   void
   set_weight( double w )

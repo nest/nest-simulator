@@ -116,7 +116,7 @@ NodeManager::initialize()
   }
 
   current_ = root_ =
-    static_cast< Subnet* >( ( *root_container ).get_thread_sibling_( 0 ) );
+    static_cast< Subnet* >( ( *root_container ).get_thread_sibling( 0 ) );
 
   /* END of code adding the root subnet. */
 
@@ -153,7 +153,7 @@ NodeManager::reinit_nodes()
   {
     Node* node = local_nodes_.get_node_by_index( n );
     assert( node != 0 );
-    if ( node->num_thread_siblings_() == 0 ) // not a SiblingContainer
+    if ( node->num_thread_siblings() == 0 ) // not a SiblingContainer
     {
       node->init_state();
       node->set_buffers_initialized( false );
@@ -217,9 +217,9 @@ index NodeManager::add_node( index mod, long n ) // no_p
   SiblingContainer* subnet_container =
     dynamic_cast< SiblingContainer* >( subnet_node );
   assert( subnet_container != 0 );
-  assert( subnet_container->num_thread_siblings_()
+  assert( subnet_container->num_thread_siblings()
     == static_cast< size_t >( n_threads ) );
-  assert( subnet_container->get_thread_sibling_( 0 ) == current_ );
+  assert( subnet_container->get_thread_sibling( 0 ) == current_ );
 
   if ( max_gid > local_nodes_.max_size() || max_gid < min_gid )
   {
@@ -362,7 +362,7 @@ index NodeManager::add_node( index mod, long n ) // no_p
     {
       model->reserve_additional( tid, n );
       siblingcontainer_model_->reserve_additional( tid, container_per_thread );
-      static_cast< Subnet* >( subnet_container->get_thread_sibling_( tid ) )
+      static_cast< Subnet* >( subnet_container->get_thread_sibling( tid ) )
         ->reserve( n );
     }
 
@@ -404,7 +404,7 @@ index NodeManager::add_node( index mod, long n ) // no_p
         container->push_back( newnode );
 
         // Register instance with per-thread instance of enclosing subnet.
-        static_cast< Subnet* >( subnet_container->get_thread_sibling_( t ) )
+        static_cast< Subnet* >( subnet_container->get_thread_sibling( t ) )
           ->add_node( newnode );
       }
     }
@@ -532,20 +532,20 @@ Node* NodeManager::get_node( index n, thread tid ) // no_p
     return kernel().model_manager.get_proxy_node( tid, n );
   }
 
-  if ( node->num_thread_siblings_() == 0 )
+  if ( node->num_thread_siblings() == 0 )
     return node; // plain node
 
-  if ( tid < 0 || tid >= static_cast< thread >( node->num_thread_siblings_() ) )
+  if ( tid < 0 || tid >= static_cast< thread >( node->num_thread_siblings() ) )
     throw UnknownNode();
 
-  return node->get_thread_sibling_( tid );
+  return node->get_thread_sibling( tid );
 }
 
 const SiblingContainer*
 NodeManager::get_thread_siblings( index n ) const
 {
   Node* node = local_nodes_.get_node_by_gid( n );
-  if ( node->num_thread_siblings_() == 0 )
+  if ( node->num_thread_siblings() == 0 )
     throw NoThreadSiblingsAvailable( n );
   const SiblingContainer* siblings = dynamic_cast< SiblingContainer* >( node );
   assert( siblings != 0 );
@@ -598,7 +598,7 @@ NodeManager::ensure_valid_thread_local_ids()
         {
           Node* node = local_nodes_.get_node_by_index( idx );
           if ( !node->is_subnet() && ( node->get_thread() == tid
-                                       || node->num_thread_siblings_() > 0 ) )
+                                       || node->num_thread_siblings() > 0 ) )
           {
             num_thread_local_nodes++;
             if ( node->node_uses_wfr() )
@@ -619,11 +619,11 @@ NodeManager::ensure_valid_thread_local_ids()
           // If a node has thread siblings, it is a sibling container, and we
           // need to add the replica for the current thread. Otherwise, we have
           // a normal node, which is added only on the thread it belongs to.
-          if ( node->num_thread_siblings_() > 0 )
+          if ( node->num_thread_siblings() > 0 )
           {
-            node->get_thread_sibling_( tid )->set_thread_lid(
+            node->get_thread_sibling( tid )->set_thread_lid(
               nodes_vec_[ tid ].size() );
-            nodes_vec_[ tid ].push_back( node->get_thread_sibling_( tid ) );
+            nodes_vec_[ tid ].push_back( node->get_thread_sibling( tid ) );
           }
           else if ( node->get_thread() == tid )
           {
@@ -665,8 +665,8 @@ NodeManager::destruct_nodes_()
   {
     Node* node = local_nodes_.get_node_by_index( n );
     assert( node != 0 );
-    for ( size_t t = 0; t < node->num_thread_siblings_(); ++t )
-      node->get_thread_sibling_( t )->~Node();
+    for ( size_t t = 0; t < node->num_thread_siblings(); ++t )
+      node->get_thread_sibling( t )->~Node();
     node->~Node();
   }
 
@@ -790,9 +790,9 @@ NodeManager::finalize_nodes()
       Node* node = local_nodes_.get_node_by_index( idx );
       if ( node != 0 )
       {
-        if ( node->num_thread_siblings_() > 0 )
+        if ( node->num_thread_siblings() > 0 )
         {
-          node->get_thread_sibling_( tid )->finalize();
+          node->get_thread_sibling( tid )->finalize();
         }
         else
         {
@@ -829,15 +829,15 @@ NodeManager::set_status( index gid, const DictionaryDatum& d )
     if ( target != 0 )
     {
       // node is local
-      if ( target->num_thread_siblings_() == 0 )
+      if ( target->num_thread_siblings() == 0 )
         set_status_single_node_( *target, d );
       else
-        for ( size_t t = 0; t < target->num_thread_siblings_(); ++t )
+        for ( size_t t = 0; t < target->num_thread_siblings(); ++t )
         {
           // non-root container for devices without proxies and subnets
           // we iterate over all threads
-          assert( target->get_thread_sibling_( t ) != 0 );
-          set_status_single_node_( *( target->get_thread_sibling_( t ) ), d );
+          assert( target->get_thread_sibling( t ) != 0 );
+          set_status_single_node_( *( target->get_thread_sibling( t ) ), d );
         }
     }
     return;
@@ -874,14 +874,13 @@ NodeManager::set_status( const DictionaryDatum& d )
     Node* target = local_nodes_.get_node_by_gid( 0 );
     assert( target != 0 );
 
-    for ( size_t t = 0; t < target->num_thread_siblings_(); ++t )
+    for ( size_t t = 0; t < target->num_thread_siblings(); ++t )
     {
       // Root container for per-thread subnets. We must prevent clearing of
       // access flags before each compound's properties are set by passing false
       // as last arg we iterate over all threads
-      assert( target->get_thread_sibling_( t ) != 0 );
-      set_status_single_node_(
-        *( target->get_thread_sibling_( t ) ), d, false );
+      assert( target->get_thread_sibling( t ) != 0 );
+      set_status_single_node_( *( target->get_thread_sibling( t ) ), d, false );
     }
   }
 }
@@ -906,7 +905,7 @@ NodeManager::reset_nodes_state()
   {
     Node* node = local_nodes_.get_node_by_index( n );
     assert( node != 0 );
-    if ( node->num_thread_siblings_() == 0 ) // not a SiblingContainer
+    if ( node->num_thread_siblings() == 0 ) // not a SiblingContainer
     {
       node->init_state();
       node->set_buffers_initialized( false );

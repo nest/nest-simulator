@@ -540,7 +540,7 @@ MPIManager::mpi_abort( int )
 }
 
 inline void
-MPIManager::communicate( std::vector< int_t >& )
+MPIManager::communicate( std::vector< int >& )
 {
 }
 

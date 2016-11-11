@@ -116,6 +116,11 @@ public:
   void send_secondary( Node& source, SecondaryEvent& e );
 
   /**
+   * Send event e to all targets of node source on thread t
+   */
+  void send_local( thread t, Node& source, Event& e );
+
+  /**
    * Add global id of event sender to the spike_register.
    * An event sent through this method will remain in the queue until
    * the network time has advanced by min_delay_ steps. After this period
@@ -260,6 +265,12 @@ public:
    * TODO: can probably be private
    */
   void init_moduli();
+
+  /**
+   * Set cumulative time measurements for collocating buffers
+   * and for communication to zero; set local spike counter to zero.
+   */
+  virtual void reset_timers_counters();
 
   Stopwatch sw_collocate;
   Stopwatch sw_communicate;
@@ -442,6 +453,24 @@ private:
    * steps during communication.
    */
   const unsigned int comm_marker_;
+
+  /**
+   * Time that was spent on collocation of MPI buffers during the last call to
+   * simulate.
+   */
+  double time_collocate_;
+
+  /**
+   * Time that was spent on communication of events during the last call to
+   * simulate.
+   */
+  double time_communicate_;
+
+  /**
+   * Number of generated spike events (both off- and on-grid) during the last
+   * call to simulate.
+   */
+  unsigned long local_spike_counter_;
 
   std::vector< SpikeData > send_buffer_spike_data_;
   std::vector< SpikeData > recv_buffer_spike_data_;

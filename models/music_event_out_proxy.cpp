@@ -226,7 +226,7 @@ nest::music_event_out_proxy::handle( SpikeEvent& e )
 #pragma omp critical( insertevent )
   {
 #endif
-    for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+    for ( int i = 0; i < e.get_multiplicity(); ++i )
       V_.MP_->insertEvent( time, MUSIC::GlobalIndex( receiver_port ) );
 #ifdef _OPENMP
   }

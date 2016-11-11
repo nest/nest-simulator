@@ -58,7 +58,7 @@ void register_music_event_in_proxy( std::string portname, int channel,
 nest::Node* mp );
 void set_music_in_port_acceptable_latency( std::string portname, double
 latency );
-void set_music_in_port_max_buffered( std::string portname, int_t maxbuffered );
+void set_music_in_port_max_buffered( std::string portname, int maxbuffered );
 void publish_music_in_ports_();
 void update_music_event_handlers_( Time const&, const long, const long );
 
@@ -143,14 +143,13 @@ public:
    */
   void set_music_in_port_acceptable_latency( std::string portname,
     double latency );
-  void set_music_in_port_max_buffered( std::string portname,
-    int_t maxbuffered );
+  void set_music_in_port_max_buffered( std::string portname, int maxbuffered );
   /**
    * Data structure to hold variables and parameters associated with a port.
    */
   struct MusicPortData
   {
-    MusicPortData( size_t n, double latency, int_t m )
+    MusicPortData( size_t n, double latency, int m )
       : n_input_proxies( n )
       , acceptable_latency( latency )
       , max_buffered( m )
@@ -162,7 +161,7 @@ public:
     size_t n_input_proxies; // Counter for number of music_input proxies
                             // connected to this port
     double acceptable_latency;
-    int_t max_buffered;
+    int max_buffered;
   };
 
   /**

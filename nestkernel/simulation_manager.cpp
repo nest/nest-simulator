@@ -520,6 +520,9 @@ nest::SimulationManager::prepare_simulation_()
 {
   assert( to_do_ != 0 ); // This is checked in simulate()
 
+  // Reset profiling timers and counters within event_delivery_manager
+  kernel().event_delivery_manager.reset_timers_counters();
+
   // find shortest and longest delay across all MPI processes
   // this call sets the member variables
   kernel().connection_manager.update_delay_extrema_();
@@ -817,6 +820,10 @@ nest::SimulationManager::update_()
 // the other threads are enforced to wait at the end of the block
 #pragma omp master
       {
+        // gather only at end of slice
+        // if ( to_step_ == kernel().connection_manager.get_min_delay() )
+        //   kernel().event_delivery_manager.gather_events( true );
+
         advance_time_();
 
         if ( SLIsignalflag != 0 )

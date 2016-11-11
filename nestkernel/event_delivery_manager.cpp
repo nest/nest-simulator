@@ -53,6 +53,9 @@ EventDeliveryManager::EventDeliveryManager()
   , moduli_()
   , slice_moduli_()
   , comm_marker_( 0 )
+  , time_collocate_( 0.0 )
+  , time_communicate_( 0.0 )
+  , local_spike_counter_( 0U )
   , buffer_size_target_data_has_changed_( false )
   , buffer_size_spike_data_has_changed_( false )
 {
@@ -66,6 +69,7 @@ void
 EventDeliveryManager::initialize()
 {
   init_moduli();
+  reset_timers_counters();
   const thread num_threads = kernel().vp_manager.get_num_threads();
   spike_register_5g_.resize( num_threads, 0 );
   off_grid_spike_register_5g_.resize( num_threads, 0 );
@@ -132,6 +136,9 @@ void
 EventDeliveryManager::get_status( DictionaryDatum& dict )
 {
   def< bool >( dict, "off_grid_spiking", off_grid_spiking_ );
+  def< double >( dict, "time_collocate", time_collocate_ );
+  def< double >( dict, "time_communicate", time_communicate_ );
+  def< unsigned long >( dict, "local_spike_counter", local_spike_counter_ );
 }
 
 void
@@ -263,6 +270,14 @@ EventDeliveryManager::update_moduli()
     slice_moduli_[ d ] = ( ( kernel().simulation_manager.get_clock().get_steps()
                              + d ) / min_delay ) % nbuff;
   }
+}
+
+void
+EventDeliveryManager::reset_timers_counters()
+{
+  time_collocate_ = 0.0;
+  time_communicate_ = 0.0;
+  local_spike_counter_ = 0U;
 }
 
 // TODO@5g: implement

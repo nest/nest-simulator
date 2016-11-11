@@ -217,7 +217,7 @@ MUSICManager::set_music_in_port_acceptable_latency( std::string portname,
 
 void
 MUSICManager::set_music_in_port_max_buffered( std::string portname,
-  int_t maxbuffered )
+  int maxbuffered )
 {
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );

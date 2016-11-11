@@ -1075,8 +1075,8 @@ nest::MPIManager::communicate( std::vector< unsigned long >& send_buffer,
 }
 
 void
-nest::MPIManager::communicate( std::vector< int_t >& send_buffer,
-  std::vector< int_t >& recv_buffer,
+nest::MPIManager::communicate( std::vector< int >& send_buffer,
+  std::vector< int >& recv_buffer,
   std::vector< int >& displacements )
 {
   displacements.resize( num_processes_, 0 );
@@ -1105,7 +1105,7 @@ nest::MPIManager::communicate_Allreduce_sum_in_place(
 
 void
 nest::MPIManager::communicate_Allreduce_sum_in_place(
-  std::vector< int_t >& buffer )
+  std::vector< int >& buffer )
 {
 }
 

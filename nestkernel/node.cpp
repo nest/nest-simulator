@@ -164,6 +164,7 @@ Node::get_status_base()
   }
 
   ( *dict )[ names::thread_local_id ] = get_thread_lid();
+  ( *dict )[ names::supports_precise_spikes ] = is_off_grid();
 
   // This is overwritten with a corresponding value in the
   // base classes for stimulating and recording devices, and
@@ -242,6 +243,18 @@ Node::handle( SpikeEvent& )
 
 port
 Node::handles_test_event( SpikeEvent&, rport )
+{
+  throw IllegalConnection();
+}
+
+void
+Node::handle( WeightRecorderEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+port
+Node::handles_test_event( WeightRecorderEvent&, rport )
 {
   throw IllegalConnection();
 }

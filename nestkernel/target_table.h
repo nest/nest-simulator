@@ -69,6 +69,8 @@ public:
   const std::vector< Target >& get_targets( const thread tid, const index lid ) const;
   //! clear all entries
   void clear( const thread tid );
+
+  void print_targets( const thread tid ) const;
 };
 
 inline void

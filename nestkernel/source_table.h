@@ -345,23 +345,6 @@ SourceTable::disable_connection( const thread tid, const synindex syn_index, con
 }
 
 inline void
-SourceTable::print_sources( const thread tid, const synindex syn_index ) const
-{
-  if ( syn_index >= ( *sources_[ tid ] ).size() )
-  {
-    return;
-  }
-  std::cout<<"---------------------------------------\n";
-  for ( std::vector< Source >::const_iterator it = (*(*sources_[ tid ])[ syn_index ]).begin();
-        it != (*(*sources_[ tid ])[ syn_index ]).end(); ++it )
-  {
-    std::cout<<"("<<it->gid<<", "<<it->is_disabled()<<")";
-  }
-  std::cout<<std::endl;
-  std::cout<<"---------------------------------------\n";
-}
-
-inline void
 SourceTable::get_source_gids( const thread tid, const synindex syn_index, const std::vector< index >& source_lcids, std::vector< index >& sources )
 {
   for ( std::vector< index >::const_iterator cit = source_lcids.begin();

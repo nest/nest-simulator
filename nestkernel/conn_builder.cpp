@@ -1574,6 +1574,7 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
         Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
+        std::cout<<"creating "<<*sgid<<"->"<<*tgid<<std::endl;
         single_connect_( *sgid, *target, target_thread, rng );
       }
     }

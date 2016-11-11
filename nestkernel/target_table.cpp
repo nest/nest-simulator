@@ -64,3 +64,20 @@ nest::TargetTable::prepare( const thread tid )
   targets_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes(),
     std::vector< Target >( 0, Target() ) );
 }
+
+void
+nest::TargetTable::print_targets( const thread tid ) const
+{
+  std::cout<<"-------------TARGETS-------------------\n";
+  for ( std::vector< std::vector< Target > >::const_iterator cit = (*targets_[ tid ]).begin(); cit != (*targets_[ tid ]).end(); ++cit )
+  {
+    for ( std::vector< Target >::const_iterator ciit = (*cit).begin(); ciit != (*cit).end(); ++ciit)
+    {
+      std::cout<<(*ciit).get_lcid()<<", ";
+    }
+    std::cout<<std::endl;
+  }
+  std::cout<<std::endl;
+  std::cout<<"---------------------------------------\n";
+
+}

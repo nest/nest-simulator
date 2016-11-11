@@ -46,7 +46,6 @@ struct Source
   explicit Source( const index gid, const bool is_primary );
   void disable();
   bool is_disabled() const;
-  bool is_enabled() const;
   static const size_t disabled_marker = 4611686018427387904 - 1; // 2 ** 62 - 1
 };
 
@@ -70,7 +69,7 @@ Source::Source( const index gid, const bool is_primary )
 inline void
 Source::disable()
 {
-  this->gid = disabled_marker;
+  gid = disabled_marker;
 }
 
 inline bool

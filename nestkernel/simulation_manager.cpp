@@ -632,47 +632,6 @@ nest::SimulationManager::update_()
       if ( print_time_ )
         gettimeofday( &t_slice_begin_, NULL );
 
-      // test structural plasticity (add and delete connections)
-      // if ( ( clock_.get_steps() + from_step_ ) % kernel().sp_manager.get_structural_plasticity_update_interval() == 0 )
-      // {
-      //   std::cout<<"test"<<std::endl;
-      //   // kernel().sp_manager.test( tid );
-      //   kernel().event_delivery_manager.gather_target_data( tid );
-      // }
-
-      // if ( ( clock_.get_steps() + from_step_ ) % ( 5 * kernel().sp_manager.get_structural_plasticity_update_interval() ) == 0 )
-      // {
-      //   std::cout<<"restructure"<<std::endl;
-      //   kernel().connection_manager.restructure_connection_tables( tid );
-      //   std::cout<<"resort and remove disabled connections"<<std::endl;
-      //   // kernel().connection_manager.print_source_table( tid );
-      //   kernel().connection_manager.sort_connections( tid );
-      //   // kernel().connection_manager.print_source_table( tid );
-      //   std::cout<<"gather"<<std::endl;
-      //   kernel().event_delivery_manager.gather_target_data( tid );
-      //   std::cout<<"done"<<std::endl;
-      // }
-
-      // std::vector< index > sources( 1, 1 );
-      // std::vector< std::vector< index > > targets;
-      // kernel().connection_manager.get_targets( sources, targets, 0 );
-      // for ( std::vector< index >::const_iterator it = targets[ 0 ].begin();
-      //       it != targets[ 0 ].end(); ++it )
-      // {
-      //   std::cout<<*it<<", ";
-      // }
-      // std::cout<<std::endl;
-
-      // std::vector< index > targets( 1, 4 );
-      // std::vector< std::vector< index > > sources;
-      // kernel().connection_manager.get_sources( targets, sources, 0 );
-      // for ( std::vector< index >::const_iterator it = sources[ 0 ].begin();
-      //       it != sources[ 0 ].end(); ++it )
-      // {
-      //   std::cout<<*it<<", ";
-      // }
-      // std::cout<<std::endl;
-
       if ( kernel().sp_manager.is_structural_plasticity_enabled()
         && ( clock_.get_steps() + from_step_ )
             % kernel().sp_manager.get_structural_plasticity_update_interval()
@@ -700,10 +659,13 @@ nest::SimulationManager::update_()
           ( *i )->decay_synaptic_elements_vacant();
         }
 
-        kernel().connection_manager.print_source_table( tid );
         kernel().connection_manager.restructure_connection_tables( tid );
         kernel().connection_manager.sort_connections( tid );
         kernel().event_delivery_manager.gather_target_data( tid );
+
+        kernel().connection_manager.print_source_table( tid );
+        kernel().connection_manager.print_connections( tid );
+        kernel().connection_manager.print_targets( tid );
       }
 
 

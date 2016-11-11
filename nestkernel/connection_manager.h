@@ -173,8 +173,12 @@ public:
 
   void print_source_table( const thread tid ) const
   {
-    this->source_table_.print_sources( tid, 0 );
+    source_table_.print_sources( tid, 0 );
   }
+
+  void print_connections( const thread tid ) const;
+
+  void print_targets( const thread tid ) const;
 
   void subnet_connect( Subnet&, Subnet&, int, index syn );
 

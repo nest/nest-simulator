@@ -48,46 +48,6 @@
 #include "arraydatum.h"
 #include "dictutils.h"
 
-// #ifdef USE_PMA
-
-// #ifdef IS_K
-
-// extern PaddedPMA poormansallocpool[];
-
-// #else
-
-// extern PoorMansAllocator poormansallocpool;
-
-// #ifdef _OPENMP
-// #pragma omp threadprivate( poormansallocpool )
-// #endif
-
-// #endif
-
-// #endif
-
-// template < typename Tnew, typename Told, typename C >
-// inline Tnew*
-// suicide_and_resurrect( Told* connector, C connection )
-// {
-// #if defined _OPENMP && defined USE_PMA
-// #ifdef IS_K
-//   Tnew* p =
-//     new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc(
-//       sizeof( Tnew ) ) ) Tnew( *connector, connection );
-// #else
-//   Tnew* p = new ( poormansallocpool.alloc( sizeof( Tnew ) ) )
-//     Tnew( *connector, connection );
-// #endif
-//   connector->~Told();
-// #else
-//   Tnew* p = new Tnew( *connector, connection );
-//   delete connector; // suicide
-// #endif
-//   return p;
-// }
-
-
 namespace nest
 {
 
@@ -210,6 +170,11 @@ public:
   remove_disabled_connections( const synindex syn_index, const index first_disabled_index ) { assert( false ); };
   virtual void
   remove_disabled_connections( const index first_disabled_index ) { assert( false ); };
+
+  virtual void
+  print_connections( const thread tid, const synindex syn_index ) const { assert( false ); };
+  virtual void
+  print_connections( const thread tid ) const { assert( false ); };
 
 };
 
@@ -585,6 +550,24 @@ public:
     C_.erase( C_.begin() + first_disabled_index, C_.end() );
   }
 
+  void
+  print_connections( const thread tid ) const
+  {
+    std::cout<<"---------------------------------------\n";
+    for ( typename std::vector< ConnectionT >::const_iterator cit = C_.begin();
+          cit != C_.end(); ++cit )
+    {
+      std::cout<<"("<<cit->get_target( tid )->get_gid()<<", "<<cit->is_disabled()<<", "<<cit->has_source_subsequent_targets()<<")";
+      if ( not cit->has_source_subsequent_targets() )
+      {
+        std::cout<<std::endl;
+      }
+    }
+    std::cout<<std::endl;
+    std::cout<<"---------------------------------------\n";
+  }
+
+
 };
 
 // heterogeneous connector containing different types of synapses
@@ -866,6 +849,16 @@ public:
   void remove_disabled_connections( const synindex syn_index, const index first_disabled_index )
   {
     at( syn_index )->remove_disabled_connections( first_disabled_index );
+  }
+
+  void print_connections( const thread tid, const synindex syn_index ) const
+  {
+    if ( syn_index >= size() )
+    {
+      return;
+    }
+
+    at( syn_index )->print_connections( tid );
   }
 };
 

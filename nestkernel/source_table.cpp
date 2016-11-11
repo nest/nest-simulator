@@ -234,3 +234,27 @@ nest::SourceTable::remove_disabled_sources( const thread tid, const synindex syn
   }
 }
 
+void
+nest::SourceTable::print_sources( const thread tid, const synindex syn_index ) const
+{
+  if ( syn_index >= ( *sources_[ tid ] ).size() )
+  {
+    return;
+  }
+
+  index prev_gid = 0;
+  std::cout<<"---------------------------------------\n";
+  for ( std::vector< Source >::const_iterator it = (*(*sources_[ tid ])[ syn_index ]).begin();
+        it != (*(*sources_[ tid ])[ syn_index ]).end(); ++it )
+  {
+    if ( prev_gid != it->gid )
+    {
+      std::cout<<std::endl;
+      prev_gid = it->gid;
+    }
+    std::cout<<"("<<it->gid<<", "<<it->is_disabled()<<")";
+  }
+  std::cout<<std::endl;
+  std::cout<<"---------------------------------------\n";
+}
+

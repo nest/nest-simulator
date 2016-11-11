@@ -76,6 +76,11 @@ private:
   //! reallocation happens
   static const size_t min_deleted_elements_ = 10000000;
 
+  //! stores the index of the end of the ordered sections in sources
+  //! vectors
+  // TODO@5g: rename
+  std::vector< std::vector< size_t >* > last_sorted_source_;
+
 public:
   SourceTable();
   ~SourceTable();
@@ -117,6 +122,22 @@ public:
   //! Sets saved_positions for this thread to minimal values so that
   //! these are not considered in find_maximal_position.
   void no_targets_to_process( const thread tid );
+
+  void reset_last_sorted_source( const thread tid );
+
+  void update_last_sorted_source( const thread tid );
+
+  index find_first_source( const thread tid, const index sgid );
+
+  void find_all_sources( const thread tid, const index sgid, const synindex syn_index, std::vector< index >& matchings_lcids );
+
+  void disable_connection( const thread tid, const synindex syn_index, const index lcid );
+
+  index remove_disabled_sources( const thread tid, const synindex syn_index );
+
+  void print_sources( const thread tid, const synindex syn_index ) const;
+
+  void get_source_gids( const thread tid, const synindex syn_index, const std::vector< index >& source_lcids, std::vector< index >& sources );
 };
 
 inline
@@ -208,7 +229,7 @@ SourceTable::reset_entry_point( const thread tid )
 {
   // since we read the source table backwards, we need to set saved
   // values to the biggest possible value. these will be used to
-  // initialize current_positions_ correctly upon calling
+  // initialize saved_positions_ correctly upon calling
   // restore_entry_point. however, this can only be done if other
   // values have valid values.
   ( *saved_positions_[ tid ] ).tid = sources_.size() - 1;
@@ -257,6 +278,99 @@ SourceTable::no_targets_to_process( const thread tid )
   ( *current_positions_[ tid ] ).syn_index = -1;
   ( *current_positions_[ tid ] ).lcid = -1;
 }
+
+inline void
+SourceTable::reset_last_sorted_source( const thread tid )
+{
+  (*last_sorted_source_[ tid ]).resize( (*sources_[ tid ]).size(), 0 );
+  for ( synindex syn_index = 0; syn_index < (*sources_[ tid ]).size(); ++syn_index )
+  {
+    (*last_sorted_source_[ tid ])[ syn_index ] = 0;
+  }
+}
+
+inline void
+SourceTable::update_last_sorted_source( const thread tid )
+{
+  (*last_sorted_source_[ tid ]).resize( (*sources_[ tid ]).size(), 0 );
+  for ( synindex syn_index = 0; syn_index < (*sources_[ tid ]).size(); ++syn_index )
+  {
+    (*last_sorted_source_[ tid ])[ syn_index ] = (*(*sources_[ tid ])[ syn_index ]).size();
+  }
+}
+
+inline index
+SourceTable::find_first_source( const thread tid, const index sgid )
+{
+  for ( synindex syn_index = 0; syn_index < (*sources_[ tid ]).size(); ++syn_index )
+  {
+    // binary search in sorted sources
+    const std::vector< Source >::iterator begin = (*(*sources_[ tid ])[ syn_index ]).begin();
+    const std::vector< Source >::iterator end_of_sorted = begin + (*last_sorted_source_[ tid ])[ syn_index ];
+    std::vector< Source >::iterator it = std::lower_bound( begin, end_of_sorted, Source( sgid, true ) );
+    if ( it != end_of_sorted && it->gid == sgid )
+    {
+      index lcid = it - begin;
+      std::cout<<"found (sorted) "<<(*(*sources_[ tid ])[ syn_index ])[ lcid ].gid;
+      return lcid;
+    }
+  }
+
+  std::cout<<"not found"<<sgid<<std::endl;
+  return invalid_index;
+}
+
+inline void
+SourceTable::find_all_sources( const thread tid, const index sgid, const synindex syn_index, std::vector< index >& matching_lcids )
+{
+  // iterate over unsorted sources
+  const std::vector< Source >::iterator begin = (*(*sources_[ tid ])[ syn_index ]).begin();
+  const std::vector< Source >::iterator end_of_sorted = begin + (*last_sorted_source_[ tid ])[ syn_index ];
+  const std::vector< Source >::iterator end = (*(*sources_[ tid ])[ syn_index ]).end();
+  for ( std::vector< Source >::iterator it = end_of_sorted; it != end; ++it )
+  {
+    if ( it->gid == sgid )
+    {
+      index lcid = it - begin;
+      std::cout<<"found (unsorted) "<<(*(*sources_[ tid ])[ syn_index ])[ lcid ].gid;
+      matching_lcids.push_back( lcid );
+    }
+  }
+}
+
+inline void
+SourceTable::disable_connection( const thread tid, const synindex syn_index, const index lcid )
+{
+  (*(*sources_[ tid ])[ syn_index ])[ lcid ].disable();
+}
+
+inline void
+SourceTable::print_sources( const thread tid, const synindex syn_index ) const
+{
+  if ( syn_index >= ( *sources_[ tid ] ).size() )
+  {
+    return;
+  }
+  std::cout<<"---------------------------------------\n";
+  for ( std::vector< Source >::const_iterator it = (*(*sources_[ tid ])[ syn_index ]).begin();
+        it != (*(*sources_[ tid ])[ syn_index ]).end(); ++it )
+  {
+    std::cout<<"("<<it->gid<<", "<<it->is_disabled()<<")";
+  }
+  std::cout<<std::endl;
+  std::cout<<"---------------------------------------\n";
+}
+
+inline void
+SourceTable::get_source_gids( const thread tid, const synindex syn_index, const std::vector< index >& source_lcids, std::vector< index >& sources )
+{
+  for ( std::vector< index >::const_iterator cit = source_lcids.begin();
+        cit != source_lcids.end(); ++cit )
+  {
+    sources.push_back( (*(*sources_[ tid ])[ syn_index ])[ *cit ].gid );
+  }
+}
+
 
 } // namespace nest
 

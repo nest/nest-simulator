@@ -24,19 +24,23 @@
 #define SYN_ID_DELAY_H
 
 // Includes from nestkernel:
+#include "nest_time.h"
+#include "nest_types.h"
 
 namespace nest
 {
 
 struct SynIdDelay
 {
-  unsigned int delay : 23;
+  unsigned int delay : 22;
   unsigned int syn_id : 8;
   bool subsequent_targets : 1;
+  bool disabled : 1;
 
   SynIdDelay( double_t d )
     : syn_id( invalid_synindex )
-    , subsequent_targets( 0 )
+    , subsequent_targets( false )
+    , disabled ( false )
   {
     set_delay_ms( d );
   }
@@ -45,6 +49,7 @@ struct SynIdDelay
     : delay( s.delay )
     , syn_id( s.syn_id )
     , subsequent_targets( s.subsequent_targets )
+    , disabled( s.disabled )
   {
   }
 
@@ -76,6 +81,18 @@ struct SynIdDelay
   has_source_subsequent_targets() const
   {
     return this->subsequent_targets;
+  }
+
+  void
+  disable()
+  {
+    disabled = true;
+  }
+
+  bool
+  is_disabled() const
+  {
+    return disabled;
   }
 
 };

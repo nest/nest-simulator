@@ -245,7 +245,7 @@ public:
    * Collocates presynaptic connection information, communicates via
    * MPI and creates presynaptic connection infrastructure.
    */
-  void gather_target_data();
+  void gather_target_data( const thread tid );
   
   /**
    * Update table of fixed modulos, including slice-based.
@@ -433,9 +433,15 @@ private:
   std::vector< OffGridSpikeData > send_buffer_off_grid_spike_data_;
   std::vector< OffGridSpikeData > recv_buffer_off_grid_spike_data_;
 
+  TargetData* send_buffer_target_data_;
+  TargetData* recv_buffer_target_data_;
+
   unsigned int send_recv_count_spike_data_per_rank_;
   unsigned int send_recv_count_spike_data_in_int_per_rank_;
   unsigned int send_recv_count_off_grid_spike_data_in_int_per_rank_;
+
+  unsigned int send_recv_count_target_data_per_rank_;
+  unsigned int send_recv_count_target_data_in_int_per_rank_;
 
   bool buffer_size_target_data_has_changed_; //!< whether size of MPI buffer for communication of connections was changed
   bool buffer_size_spike_data_has_changed_; //!< whether size of MPI buffer for communication of spikes was changed

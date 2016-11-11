@@ -40,7 +40,7 @@ VPManager::get_vp() const
 }
 
 inline thread
-VPManager::suggest_vp( index gid ) const
+VPManager::suggest_vp( const index gid ) const
 {
   return gid
     % ( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() );

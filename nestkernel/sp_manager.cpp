@@ -78,6 +78,19 @@ SPManager::finalize()
 }
 
 /*
+ * Enable structural plasticity
+ */
+void
+SPManager::enable_structural_plasticity()
+{
+  if ( not kernel().connection_manager.get_keep_source_table() )
+  {
+    throw KernelException( "Structural plasticity can not be enabled if source table is not kept." );
+  }
+  structural_plasticity_enabled_ = true;
+}
+
+/*
  * Methods to retrieve data regarding structural plasticity variables
  */
 void
@@ -606,8 +619,7 @@ SPManager::delete_synapse( index sgid,
     thread target_thread = target->get_thread();
     if ( tid == target_thread )
     {
-      kernel().connection_manager.disconnect(
-        *target, sgid, target_thread, syn_id );
+      kernel().connection_manager.disconnect_5g( tid, syn_id, sgid, tgid );
 
       target->connect_synaptic_element( se_post_name, -1 );
     }
@@ -788,5 +800,38 @@ nest::SPManager::global_shuffle( std::vector< index >& v, size_t n )
   }
   v = v2;
 }
+
+// void
+// nest::SPManager::test( const thread tid )
+// {
+//   disconnect_5g( tid, 1, 2 );
+
+//   // GIDCollection sources( std::vector< index >( 1, 3 ) );
+//   // GIDCollection targets( std::vector< index >( 1, 1 ) );
+//   // sp_conn_builders_[ 0 ]->sp_connect( sources, targets );
+
+//   GIDCollection sources2( std::vector< index >( 1, 2 ) );
+//   GIDCollection targets2( std::vector< index >( 1, 3 ) );
+//   sp_conn_builders_[ 0 ]->sp_connect( sources2, targets2 );
+
+//   disconnect_5g( tid, 2, 3 );
+
+//   GIDCollection sources3( std::vector< index >( 1, 1 ) );
+//   GIDCollection targets3( std::vector< index >( 1, 3 ) );
+//   sp_conn_builders_[ 0 ]->sp_connect( sources3, targets3 );
+// }
+
+// void
+// nest::SPManager::disconnect_5g( const thread tid, const index sgid, const index tgid )
+// {
+//   const Node* const target = kernel().node_manager.get_node( tgid, tid );
+//   const thread target_thread = target->get_thread();
+
+//   // check whether the target is on our thread
+//   if ( tid == target_thread )
+//   {
+//     kernel().connection_manager.disconnect_5g( tid, sgid, tgid );
+//   }
+// }
 
 } // namespace nest

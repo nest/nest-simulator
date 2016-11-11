@@ -72,9 +72,15 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
       }
     }
 
+    if ( current_position.lcid < static_cast< long >( (*last_sorted_source_[ current_position.tid ])[ current_position.syn_index ] )
+         && (*last_sorted_source_[ current_position.tid ])[ current_position.syn_index ] < (*(*sources_[ current_position.tid ])[ current_position.syn_index ]).size() )
+    {
+      return false;
+    }
+
     // the current position contains an entry, so we retrieve it
     Source& current_source = ( *( *sources_[ current_position.tid ] )[ current_position.syn_index ])[ current_position.lcid ];
-    if ( current_source.processed )
+    if ( current_source.processed || current_source.is_disabled() )
     {
       // looks like we've processed this already, let's
       // continue
@@ -97,6 +103,7 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
 
     // we need to set the marker whether the entry following this
     // entry, if existent, has the same source
+    kernel().connection_manager.set_has_source_subsequent_targets( current_position.tid, current_position.syn_index, current_position.lcid, false );
     if ( ( current_position.lcid + 1 < static_cast< long >( ( *sources_[ current_position.tid ] )[ current_position.syn_index  ]->size() )
            && ( *( *sources_[ current_position.tid ] )[ current_position.syn_index ])[ current_position.lcid + 1 ].gid == current_source.gid ) )
     {
@@ -104,13 +111,16 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
     }
 
     // we decrease the counter without returning a TargetData if the
-    // entry preceeding this entry has the same source
-    if ( ( current_position.lcid - 1 > -1
-           && (*( *sources_[ current_position.tid ] )[ current_position.syn_index  ])[ current_position.lcid - 1 ].gid == current_source.gid ) )
+    // entry preceeding this entry has the same source, but only if it
+    // was not processed yet
+    if ( current_position.lcid - 1 > -1
+         && (*( *sources_[ current_position.tid ] )[ current_position.syn_index  ])[ current_position.lcid - 1 ].gid == current_source.gid
+         && not (*( *sources_[ current_position.tid ] )[ current_position.syn_index  ])[ current_position.lcid - 1 ].processed )
     {
       --current_position.lcid;
       continue;
     }
+
     // otherwise we return a valid TargetData
     else
     {

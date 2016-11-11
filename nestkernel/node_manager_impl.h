@@ -29,7 +29,7 @@
 #include "kernel_manager.h"
 
 inline nest::thread
-nest::NodeManager::get_process_id_of_gid( index gid ) const
+nest::NodeManager::get_process_id_of_gid( const index gid ) const
 {
   return kernel().mpi_manager.get_process_id( kernel().vp_manager.suggest_vp( gid ) );
 }

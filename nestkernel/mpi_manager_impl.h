@@ -109,7 +109,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
   size_t np = get_num_processes();
   if ( np > 1 && remote )
   {
-    std::vector< long_t > localnodes;
+    std::vector< long > localnodes;
     for ( typename NodeListType::iterator n = local_nodes.begin();
           n != local_nodes.end();
           ++n )
@@ -119,7 +119,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
       localnodes.push_back( ( *n )->get_vp() );
     }
     // get size of buffers
-    std::vector< nest::int_t > n_nodes( np );
+    std::vector< int > n_nodes( np );
     n_nodes[ get_rank() ] = localnodes.size();
     communicate( n_nodes );
     // Set up displacements vector.
@@ -131,11 +131,11 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
     // Calculate total number of node data items to be gathered.
     size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
     assert( n_globals % 3 == 0 );
-    std::vector< long_t > globalnodes;
+    std::vector< long > globalnodes;
     if ( n_globals != 0 )
     {
       globalnodes.resize( n_globals, 0L );
-      communicate_Allgatherv< nest::long_t >(
+      communicate_Allgatherv< long >(
         localnodes, globalnodes, displacements, n_nodes );
 
       // Create unflattened vector
@@ -174,7 +174,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 
   if ( np > 1 && remote )
   {
-    std::vector< long_t > localnodes;
+    std::vector< long > localnodes;
     if ( params->empty() )
     {
       for ( typename NodeListType::iterator n = local_nodes.begin();
@@ -220,7 +220,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
     }
 
     // get size of buffers
-    std::vector< nest::int_t > n_nodes( np );
+    std::vector< int > n_nodes( np );
     n_nodes[ get_rank() ] = localnodes.size();
     communicate( n_nodes );
 
@@ -233,11 +233,11 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
     // Calculate sum of global connections.
     size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
     assert( n_globals % 3 == 0 );
-    std::vector< long_t > globalnodes;
+    std::vector< long > globalnodes;
     if ( n_globals != 0 )
     {
       globalnodes.resize( n_globals, 0L );
-      communicate_Allgatherv< nest::long_t >(
+      communicate_Allgatherv< long >(
         localnodes, globalnodes, displacements, n_nodes );
 
       // Create unflattened vector

@@ -58,8 +58,8 @@ RecordablesMap< iaf_psc_alpha >::create()
   insert_( names::V_m, &iaf_psc_alpha::get_V_m_ );
   insert_( names::weighted_spikes_ex, &iaf_psc_alpha::get_weighted_spikes_ex_ );
   insert_( names::weighted_spikes_in, &iaf_psc_alpha::get_weighted_spikes_in_ );
-  insert_( names::input_currents_ex, &iaf_psc_alpha::get_input_currents_ex_ );
-  insert_( names::input_currents_in, &iaf_psc_alpha::get_input_currents_in_ );
+  insert_( names::I_syn_ex, &iaf_psc_alpha::get_I_syn_ex_ );
+  insert_( names::I_syn_in, &iaf_psc_alpha::get_I_syn_in_ );
 }
 
 /* ----------------------------------------------------------------
@@ -74,7 +74,7 @@ iaf_psc_alpha::Parameters_::Parameters_()
   , I_e_( 0.0 )              // pA
   , V_reset_( -70.0 - E_L_ ) // mV, rel to E_L_
   , Theta_( -55.0 - E_L_ )   // mV, rel to E_L_
-  , LowerBound_( -std::numeric_limits< double_t >::infinity() )
+  , LowerBound_( -std::numeric_limits< double >::infinity() )
   , tau_ex_( 2.0 ) // ms
   , tau_in_( 2.0 ) // ms
 {
@@ -82,10 +82,10 @@ iaf_psc_alpha::Parameters_::Parameters_()
 
 iaf_psc_alpha::State_::State_()
   : y0_( 0.0 )
-  , y1_ex_( 0.0 )
-  , y2_ex_( 0.0 )
-  , y1_in_( 0.0 )
-  , y2_in_( 0.0 )
+  , dI_ex_( 0.0 )
+  , I_ex_( 0.0 )
+  , dI_in_( 0.0 )
+  , I_in_( 0.0 )
   , y3_( 0.0 )
   , r_( 0 )
 {
@@ -262,7 +262,7 @@ iaf_psc_alpha::calibrate()
   V_.IPSCInitialValue_ = 1.0 * numerics::e / P_.tau_in_;
 
   // TauR specifies the length of the absolute refractory period as
-  // a double_t in ms. The grid based iaf_psc_alpha can only handle refractory
+  // a double in ms. The grid based iaf_psc_alpha can only handle refractory
   // periods that are integer multiples of the computation step size (h).
   // To ensure consistency with the overall simulation scheme such conversion
   // should be carried out via objects of class nest::Time. The conversion
@@ -291,20 +291,20 @@ iaf_psc_alpha::calibrate()
  */
 
 void
-iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
+iaf_psc_alpha::update( Time const& origin, const long from, const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     if ( S_.r_ == 0 )
     {
       // neuron not refractory
-      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P31_ex_ * S_.y1_ex_
-        + V_.P32_ex_ * S_.y2_ex_ + V_.P31_in_ * S_.y1_in_
-        + V_.P32_in_ * S_.y2_in_ + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
+      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P31_ex_ * S_.dI_ex_
+        + V_.P32_ex_ * S_.I_ex_ + V_.P31_in_ * S_.dI_in_ + V_.P32_in_ * S_.I_in_
+        + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
 
       // lower bound of membrane potential
       S_.y3_ = ( S_.y3_ < P_.LowerBound_ ? P_.LowerBound_ : S_.y3_ );
@@ -313,22 +313,22 @@ iaf_psc_alpha::update( Time const& origin, const long_t from, const long_t to )
       --S_.r_;
 
     // alpha shape EPSCs
-    S_.y2_ex_ = V_.P21_ex_ * S_.y1_ex_ + V_.P22_ex_ * S_.y2_ex_;
-    S_.y1_ex_ *= V_.P11_ex_;
+    S_.I_ex_ = V_.P21_ex_ * S_.dI_ex_ + V_.P22_ex_ * S_.I_ex_;
+    S_.dI_ex_ *= V_.P11_ex_;
 
     // Apply spikes delivered in this step; spikes arriving at T+1 have
     // an immediate effect on the state of the neuron
     V_.weighted_spikes_ex_ = B_.ex_spikes_.get_value( lag );
-    S_.y1_ex_ += V_.EPSCInitialValue_ * V_.weighted_spikes_ex_;
+    S_.dI_ex_ += V_.EPSCInitialValue_ * V_.weighted_spikes_ex_;
 
     // alpha shape EPSCs
-    S_.y2_in_ = V_.P21_in_ * S_.y1_in_ + V_.P22_in_ * S_.y2_in_;
-    S_.y1_in_ *= V_.P11_in_;
+    S_.I_in_ = V_.P21_in_ * S_.dI_in_ + V_.P22_in_ * S_.I_in_;
+    S_.dI_in_ *= V_.P11_in_;
 
     // Apply spikes delivered in this step; spikes arriving at T+1 have
     // an immediate effect on the state of the neuron
     V_.weighted_spikes_in_ = B_.in_spikes_.get_value( lag );
-    S_.y1_in_ += V_.IPSCInitialValue_ * V_.weighted_spikes_in_;
+    S_.dI_in_ += V_.IPSCInitialValue_ * V_.weighted_spikes_in_;
 
     // threshold crossing
     if ( S_.y3_ >= P_.Theta_ )
@@ -358,7 +358,7 @@ iaf_psc_alpha::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t s = e.get_weight() * e.get_multiplicity();
+  const double s = e.get_weight() * e.get_multiplicity();
 
   if ( e.get_weight() > 0.0 )
     B_.ex_spikes_.add_value( e.get_rel_delivery_steps(
@@ -375,8 +375,8 @@ iaf_psc_alpha::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t I = e.get_current();
-  const double_t w = e.get_weight();
+  const double I = e.get_current();
+  const double w = e.get_weight();
 
   B_.currents_.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),

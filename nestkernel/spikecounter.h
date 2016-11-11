@@ -45,10 +45,10 @@ namespace nest
 class spikecounter
 {
 public:
-  spikecounter( double_t spike_time, double_t multiplicity );
+  spikecounter( double spike_time, double multiplicity );
 
-  double_t spike_time_; // point in time when spike occurred (in ms)
-  double_t multiplicity_;
+  double spike_time_; // point in time when spike occurred (in ms)
+  double multiplicity_;
 };
 }
 

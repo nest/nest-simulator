@@ -21,7 +21,7 @@
 
 # Define functions to get the host and target triple.
 
-function(get_host_triple out out_arch out_vendor out_os)
+function( get_host_triple out out_arch out_vendor out_os )
   # Get the architecture.
   set( arch "${CMAKE_HOST_SYSTEM_PROCESSOR}" )
   # i686 is an enhanced version of x86 
@@ -55,7 +55,7 @@ function(get_host_triple out out_arch out_vendor out_os)
 endfunction ()
 
 
-function(get_target_triple out out_arch out_vendor out_os)
+function( get_target_triple out out_arch out_vendor out_os )
   # Get the architecture.
   set( arch "${CMAKE_SYSTEM_PROCESSOR}" )
   # i686 is an enhanced version of x86 

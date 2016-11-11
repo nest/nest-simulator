@@ -37,7 +37,7 @@ struct SynIdDelay
   bool subsequent_targets : 1;
   bool disabled : 1;
 
-  SynIdDelay( double_t d )
+  SynIdDelay( double d )
     : syn_id( invalid_synindex )
     , subsequent_targets( false )
     , disabled( false )
@@ -56,7 +56,7 @@ struct SynIdDelay
   /**
    * Return the delay of the connection in ms
    */
-  double_t
+  double
   get_delay_ms() const
   {
     return Time::delay_steps_to_ms( delay );
@@ -66,7 +66,7 @@ struct SynIdDelay
    * Set the delay of the connection specified in ms
    */
   void
-  set_delay_ms( const double_t d )
+  set_delay_ms( const double d )
   {
     delay = Time::delay_ms_to_steps( d );
   }

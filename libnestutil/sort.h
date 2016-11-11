@@ -23,8 +23,8 @@
 #ifndef SORT_H
 #define SORT_H
 
-#include <cstddef>
 #include <vector>
+#include <cstddef>
 
 #define INSERTION_SORT_CUTOFF 10 // use insertion sort for smaller arrays
 
@@ -117,7 +117,7 @@ quicksort3way( std::vector< T1 >& vec_sort,
   size_t gt = hi;
   const T1 v = vec_sort[ lt ];
 
-  // adjust position of lt, i and pos (useful for sorted arrays)
+  // adjust position of i and lt (useful for sorted arrays)
   while ( vec_sort[ i ] < v )
   {
     ++i;

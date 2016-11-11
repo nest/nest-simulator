@@ -114,16 +114,16 @@ public:
     Node& tgt,
     ConnectorBase* conn,
     synindex syn_id,
-    double_t delay = numerics::nan,
-    double_t weight = numerics::nan ) = 0;
+    double delay = numerics::nan,
+    double weight = numerics::nan ) = 0;
 
   virtual ConnectorBase* add_connection( Node& src,
     Node& tgt,
     ConnectorBase* conn,
     synindex syn_id,
     DictionaryDatum& d,
-    double_t delay = numerics::nan,
-    double_t weight = numerics::nan ) = 0;
+    double delay = numerics::nan,
+    double weight = numerics::nan ) = 0;
 
   /**
    * Delete a connection of a given type directed to a defined target Node
@@ -143,15 +143,15 @@ public:
     Node& tgt,
     HetConnector* hetconn,
     synindex syn_id,
-    double_t delay = NAN,
-    double_t weight = NAN ) = 0;
+    double delay = NAN,
+    double weight = NAN ) = 0;
   virtual void add_connection_5g( Node& src,
     Node& tgt,
     HetConnector* hetconn,
     synindex syn_id,
     DictionaryDatum& d,
-    double_t delay = NAN,
-    double_t weight = NAN ) = 0;
+    double delay = NAN,
+    double weight = NAN ) = 0;
 
   virtual void reserve_connections( HetConnector* hetconn,
     const synindex syn_id,
@@ -235,15 +235,15 @@ public:
     Node& tgt,
     ConnectorBase* conn,
     synindex syn_id,
-    double_t weight,
-    double_t delay );
+    double weight,
+    double delay );
   ConnectorBase* add_connection( Node& src,
     Node& tgt,
     ConnectorBase* conn,
     synindex syn_id,
     DictionaryDatum& d,
-    double_t weight,
-    double_t delay );
+    double weight,
+    double delay );
 
   /**
    * Delete a connection of a given type directed to a defined target Node
@@ -263,15 +263,15 @@ public:
     Node& tgt,
     HetConnector* hetconn,
     synindex syn_id,
-    double_t delay,
-    double_t weight );
+    double delay,
+    double weight );
   void add_connection_5g( Node& src,
     Node& tgt,
     HetConnector* hetconn,
     synindex syn_id,
     DictionaryDatum& d,
-    double_t delay,
-    double_t weight );
+    double delay,
+    double weight );
 
   ConnectorModel* clone( std::string ) const;
 

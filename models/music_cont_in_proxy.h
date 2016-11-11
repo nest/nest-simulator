@@ -115,7 +115,7 @@ private:
   void calibrate();
 
   void
-  update( Time const&, const long_t, const long_t )
+  update( Time const&, const long, const long )
   {
   }
 

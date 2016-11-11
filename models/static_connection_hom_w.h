@@ -156,7 +156,8 @@ public:
     e();
   }
 
-  void set_weight( double_t )
+  void
+  set_weight( double )
   {
     throw BadProperty(
       "Setting of individual weights is not possible! The common weights can "
@@ -172,7 +173,7 @@ StaticConnectionHomW< targetidentifierT >::get_status(
   DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 } // namespace

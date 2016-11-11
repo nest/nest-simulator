@@ -108,12 +108,17 @@ public:
    * \see send_local()
    */
   template < class EventT >
-  void send( Node& source, EventT& e, const long_t lag = 0 );
+  void send( Node& source, EventT& e, const long lag = 0 );
 
   /**
    * Send a secondary event remote.
    */
   void send_secondary( Node& source, SecondaryEvent& e );
+
+  /**
+   * Send event e to all targets of node source on thread t
+   */
+  void send_local( thread t, Node& source, Event& e );
 
   /**
    * Add global id of event sender to the spike_register.
@@ -132,7 +137,7 @@ public:
    * in a synchronised (single threaded) state.
    * @see send_to_targets()
    */
-  void send_remote( thread tid, SpikeEvent&, const long_t lag = 0 );
+  void send_remote( thread tid, SpikeEvent&, const long lag = 0 );
 
   void send_remote( thread t, SecondaryEvent& e );
 
@@ -154,7 +159,7 @@ public:
    * in a synchronised (single threaded) state.
    * @see send_to_targets()
    */
-  void send_off_grid_remote( thread tid, SpikeEvent& e, const long_t lag = 0 );
+  void send_off_grid_remote( thread tid, SpikeEvent& e, const long lag = 0 );
 
   /**
    * Send event e directly to its target node. This should be
@@ -260,6 +265,12 @@ public:
    * TODO: can probably be private
    */
   void init_moduli();
+
+  /**
+   * Set cumulative time measurements for collocating buffers
+   * and for communication to zero; set local spike counter to zero.
+   */
+  virtual void reset_timers_counters();
 
   Stopwatch sw_collocate;
   Stopwatch sw_communicate;
@@ -376,7 +387,7 @@ private:
    * devices directly to targets.
    */
   template < class EventT >
-  void send_local_( Node& source, EventT& e, const long_t lag );
+  void send_local_( Node& source, EventT& e, const long lag );
 
   //--------------------------------------------------//
 
@@ -435,13 +446,31 @@ private:
    * Buffer to collect the secondary events
    * after serialization.
    */
-  std::vector< std::vector< uint_t > > secondary_events_buffer_;
+  std::vector< std::vector< unsigned int > > secondary_events_buffer_;
 
   /**
    * Marker Value to be put between the data fields from different time
    * steps during communication.
    */
-  const uint_t comm_marker_;
+  const unsigned int comm_marker_;
+
+  /**
+   * Time that was spent on collocation of MPI buffers during the last call to
+   * simulate.
+   */
+  double time_collocate_;
+
+  /**
+   * Time that was spent on communication of events during the last call to
+   * simulate.
+   */
+  double time_communicate_;
+
+  /**
+   * Number of generated spike events (both off- and on-grid) during the last
+   * call to simulate.
+   */
+  unsigned long local_spike_counter_;
 
   std::vector< SpikeData > send_buffer_spike_data_;
   std::vector< SpikeData > recv_buffer_spike_data_;
@@ -594,7 +623,7 @@ EventDeliveryManager::send_remote( thread t, SecondaryEvent& e )
   size_t old_size = secondary_events_buffer_[ t ].size();
 
   secondary_events_buffer_[ t ].resize( old_size + e.size() );
-  std::vector< uint_t >::iterator it =
+  std::vector< unsigned int >::iterator it =
     secondary_events_buffer_[ t ].begin() + old_size;
   e >> it;
 }

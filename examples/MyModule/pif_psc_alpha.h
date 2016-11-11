@@ -154,7 +154,7 @@ private:
   void calibrate();
 
   //! Take neuron through given time interval
-  void update( nest::Time const&, const nest::long_t, const nest::long_t );
+  void update( nest::Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class nest::RecordablesMap< pif_psc_alpha >;
@@ -296,7 +296,7 @@ private:
    * @{
    */
   //! Read out the real membrane potential
-  nest::double_t
+  double
   get_V_m_() const
   {
     return S_.V_m;

@@ -65,7 +65,7 @@ public:
    * Constructor
    * @param cutoff Values less than the cutoff are set to zero.
    */
-  TopologyParameter( double_t cutoff )
+  TopologyParameter( double cutoff )
     : cutoff_( cutoff )
   {
   }
@@ -79,7 +79,7 @@ public:
   TopologyParameter( const DictionaryDatum& d )
     : cutoff_( -std::numeric_limits< double >::infinity() )
   {
-    updateValue< double_t >( d, names::cutoff, cutoff_ );
+    updateValue< double >( d, names::cutoff, cutoff_ );
   }
 
   /**
@@ -92,10 +92,10 @@ public:
   /**
    * @returns the value of the parameter at the given point.
    */
-  double_t
+  double
   value( const Position< 2 >& p, librandom::RngPtr& rng ) const
   {
-    double_t val = raw_value( p, rng );
+    double val = raw_value( p, rng );
     if ( val < cutoff_ )
       return 0.0;
     else
@@ -105,10 +105,10 @@ public:
   /**
    * @returns the value of the parameter at the given point.
    */
-  double_t
+  double
   value( const Position< 3 >& p, librandom::RngPtr& rng ) const
   {
-    double_t val = raw_value( p, rng );
+    double val = raw_value( p, rng );
     if ( val < cutoff_ )
       return 0.0;
     else
@@ -119,7 +119,7 @@ public:
    * Raw value disregarding cutoff.
    * @returns the value of the parameter at the given point.
    */
-  virtual double_t
+  virtual double
   raw_value( const Position< 2 >&, librandom::RngPtr& ) const
   {
     throw KernelException( "Parameter not valid for 2D layer" );
@@ -129,7 +129,7 @@ public:
    * Raw value disregarding cutoff.
    * @returns the value of the parameter at the given point.
    */
-  virtual double_t
+  virtual double
   raw_value( const Position< 3 >&, librandom::RngPtr& ) const
   {
     throw KernelException( "Parameter not valid for 3D layer" );
@@ -138,8 +138,7 @@ public:
   /**
    * @returns the value of the parameter at the given point.
    */
-  double_t value( const std::vector< double_t >& pt,
-    librandom::RngPtr& rng ) const;
+  double value( const std::vector< double >& pt, librandom::RngPtr& rng ) const;
 
   /**
    * Clone method.
@@ -173,7 +172,7 @@ public:
     const TopologyParameter& other ) const;
 
 private:
-  double_t cutoff_;
+  double cutoff_;
 };
 
 typedef lockPTRDatum< TopologyParameter, &TopologyModule::ParameterType >
@@ -185,7 +184,7 @@ typedef lockPTRDatum< TopologyParameter, &TopologyModule::ParameterType >
 class ConstantParameter : public TopologyParameter
 {
 public:
-  ConstantParameter( double_t value )
+  ConstantParameter( double value )
     : TopologyParameter()
     , value_( value )
   {
@@ -198,7 +197,7 @@ public:
   ConstantParameter( const DictionaryDatum& d )
     : TopologyParameter( d )
   {
-    value_ = getValue< double_t >( d, "value" );
+    value_ = getValue< double >( d, "value" );
   }
 
   ~ConstantParameter()
@@ -208,12 +207,12 @@ public:
   /**
    * @returns the constant value of this parameter.
    */
-  double_t
+  double
   raw_value( const Position< 2 >&, librandom::RngPtr& ) const
   {
     return value_;
   }
-  double_t
+  double
   raw_value( const Position< 3 >&, librandom::RngPtr& ) const
   {
     return value_;
@@ -226,7 +225,7 @@ public:
   }
 
 private:
-  double_t value_;
+  double value_;
 };
 
 /**
@@ -240,7 +239,7 @@ public:
   {
   }
 
-  RadialParameter( double_t cutoff )
+  RadialParameter( double cutoff )
     : TopologyParameter( cutoff )
   {
   }
@@ -250,14 +249,14 @@ public:
   {
   }
 
-  virtual double_t raw_value( double_t ) const = 0;
+  virtual double raw_value( double ) const = 0;
 
-  double_t
+  double
   raw_value( const Position< 2 >& p, librandom::RngPtr& ) const
   {
     return raw_value( p.length() );
   }
-  double_t
+  double
   raw_value( const Position< 3 >& p, librandom::RngPtr& ) const
   {
     return raw_value( p.length() );
@@ -280,12 +279,12 @@ public:
     , a_( 1.0 )
     , c_( 0.0 )
   {
-    updateValue< double_t >( d, names::a, a_ );
-    updateValue< double_t >( d, names::c, c_ );
+    updateValue< double >( d, names::a, a_ );
+    updateValue< double >( d, names::c, c_ );
   }
 
-  double_t
-  raw_value( double_t x ) const
+  double
+  raw_value( double x ) const
   {
     return a_ * x + c_;
   }
@@ -297,7 +296,7 @@ public:
   }
 
 private:
-  double_t a_, c_;
+  double a_, c_;
 };
 
 
@@ -319,17 +318,17 @@ public:
     , c_( 0.0 )
     , tau_( 1.0 )
   {
-    updateValue< double_t >( d, names::a, a_ );
-    updateValue< double_t >( d, names::c, c_ );
-    updateValue< double_t >( d, names::tau, tau_ );
+    updateValue< double >( d, names::a, a_ );
+    updateValue< double >( d, names::c, c_ );
+    updateValue< double >( d, names::tau, tau_ );
     if ( tau_ <= 0 )
       throw BadProperty(
         "topology::ExponentialParameter: "
         "tau > 0 required." );
   }
 
-  double_t
-  raw_value( double_t x ) const
+  double
+  raw_value( double x ) const
   {
     return c_ + a_ * std::exp( -x / tau_ );
   }
@@ -341,7 +340,7 @@ public:
   }
 
 private:
-  double_t a_, c_, tau_;
+  double a_, c_, tau_;
 };
 
 
@@ -365,18 +364,18 @@ public:
     , mean_( 0.0 )
     , sigma_( 1.0 )
   {
-    updateValue< double_t >( d, names::c, c_ );
-    updateValue< double_t >( d, names::p_center, p_center_ );
-    updateValue< double_t >( d, names::mean, mean_ );
-    updateValue< double_t >( d, names::sigma, sigma_ );
+    updateValue< double >( d, names::c, c_ );
+    updateValue< double >( d, names::p_center, p_center_ );
+    updateValue< double >( d, names::mean, mean_ );
+    updateValue< double >( d, names::sigma, sigma_ );
     if ( sigma_ <= 0 )
       throw BadProperty(
         "topology::GaussianParameter: "
         "sigma > 0 required." );
   }
 
-  double_t
-  raw_value( double_t x ) const
+  double
+  raw_value( double x ) const
   {
     return c_
       + p_center_
@@ -390,7 +389,7 @@ public:
   }
 
 private:
-  double_t c_, p_center_, mean_, sigma_;
+  double c_, p_center_, mean_, sigma_;
 };
 
 
@@ -416,7 +415,7 @@ public:
    */
   Gaussian2DParameter( const DictionaryDatum& d );
 
-  double_t
+  double
   raw_value( const Position< 2 >& pos, librandom::RngPtr& ) const
   {
     return c_
@@ -430,7 +429,7 @@ public:
               / ( sigma_x_ * sigma_y_ ) ) / ( 2. * ( 1. - rho_ * rho_ ) ) );
   }
 
-  double_t
+  double
   raw_value( const Position< 3 >& pos, librandom::RngPtr& rng ) const
   {
     return raw_value( Position< 2 >( pos[ 0 ], pos[ 1 ] ), rng );
@@ -443,7 +442,7 @@ public:
   }
 
 private:
-  double_t c_, p_center_, mean_x_, sigma_x_, mean_y_, sigma_y_, rho_;
+  double c_, p_center_, mean_x_, sigma_x_, mean_y_, sigma_y_, rho_;
 };
 
 
@@ -464,8 +463,8 @@ public:
     , lower_( 0.0 )
     , range_( 1.0 )
   {
-    updateValue< double_t >( d, names::min, lower_ );
-    updateValue< double_t >( d, names::max, range_ );
+    updateValue< double >( d, names::min, lower_ );
+    updateValue< double >( d, names::max, range_ );
 
     if ( lower_ >= range_ )
       throw BadProperty(
@@ -475,13 +474,13 @@ public:
     range_ -= lower_;
   }
 
-  double_t
+  double
   raw_value( const Position< 2 >&, librandom::RngPtr& rng ) const
   {
     return lower_ + rng->drand() * range_;
   }
 
-  double_t
+  double
   raw_value( const Position< 3 >&, librandom::RngPtr& rng ) const
   {
     return lower_ + rng->drand() * range_;
@@ -494,7 +493,7 @@ public:
   }
 
 private:
-  double_t lower_, range_;
+  double lower_, range_;
 };
 
 
@@ -521,10 +520,10 @@ public:
     , max_( std::numeric_limits< double >::infinity() )
     , rdev()
   {
-    updateValue< double_t >( d, names::mean, mean_ );
-    updateValue< double_t >( d, names::sigma, sigma_ );
-    updateValue< double_t >( d, names::min, min_ );
-    updateValue< double_t >( d, names::max, max_ );
+    updateValue< double >( d, names::mean, mean_ );
+    updateValue< double >( d, names::sigma, sigma_ );
+    updateValue< double >( d, names::min, min_ );
+    updateValue< double >( d, names::max, max_ );
 
     if ( sigma_ <= 0 )
       throw BadProperty(
@@ -536,10 +535,10 @@ public:
         "min < max required." );
   }
 
-  double_t
+  double
   raw_value( librandom::RngPtr& rng ) const
   {
-    double_t val;
+    double val;
     do
     {
       val = mean_ + rdev( rng ) * sigma_;
@@ -547,13 +546,13 @@ public:
     return val;
   }
 
-  double_t
+  double
   raw_value( const Position< 2 >&, librandom::RngPtr& rng ) const
   {
     return raw_value( rng );
   }
 
-  double_t
+  double
   raw_value( const Position< 3 >&, librandom::RngPtr& rng ) const
   {
     return raw_value( rng );
@@ -566,7 +565,7 @@ public:
   }
 
 private:
-  double_t mean_, sigma_, min_, max_;
+  double mean_, sigma_, min_, max_;
   librandom::NormalRandomDev rdev;
 };
 
@@ -594,10 +593,10 @@ public:
     , max_( std::numeric_limits< double >::infinity() )
     , rdev()
   {
-    updateValue< double_t >( d, names::mu, mu_ );
-    updateValue< double_t >( d, names::sigma, sigma_ );
-    updateValue< double_t >( d, names::min, min_ );
-    updateValue< double_t >( d, names::max, max_ );
+    updateValue< double >( d, names::mu, mu_ );
+    updateValue< double >( d, names::sigma, sigma_ );
+    updateValue< double >( d, names::min, min_ );
+    updateValue< double >( d, names::max, max_ );
 
     if ( sigma_ <= 0 )
       throw BadProperty(
@@ -609,10 +608,10 @@ public:
         "min < max required." );
   }
 
-  double_t
+  double
   raw_value( librandom::RngPtr& rng ) const
   {
-    double_t val;
+    double val;
     do
     {
       val = std::exp( mu_ + rdev( rng ) * sigma_ );
@@ -620,13 +619,13 @@ public:
     return val;
   }
 
-  double_t
+  double
   raw_value( const Position< 2 >&, librandom::RngPtr& rng ) const
   {
     return raw_value( rng );
   }
 
-  double_t
+  double
   raw_value( const Position< 3 >&, librandom::RngPtr& rng ) const
   {
     return raw_value( rng );
@@ -639,7 +638,7 @@ public:
   }
 
 private:
-  double_t mu_, sigma_, min_, max_;
+  double mu_, sigma_, min_, max_;
   librandom::NormalRandomDev rdev;
 };
 
@@ -670,13 +669,13 @@ public:
     delete p_;
   }
 
-  double_t
+  double
   raw_value( const Position< D xor 1 >&, librandom::RngPtr& ) const
   {
     throw BadProperty( "Incorrect dimension." );
   }
 
-  double_t
+  double
   raw_value( const Position< D >& p, librandom::RngPtr& rng ) const
   {
     return p_->raw_value( p - anchor_, rng );
@@ -729,12 +728,12 @@ public:
   /**
    * @returns the value of the product.
    */
-  double_t
+  double
   raw_value( const Position< 2 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) * parameter2_->value( p, rng );
   }
-  double_t
+  double
   raw_value( const Position< 3 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) * parameter2_->value( p, rng );
@@ -786,12 +785,12 @@ public:
   /**
    * @returns the value of the product.
    */
-  double_t
+  double
   raw_value( const Position< 2 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) / parameter2_->value( p, rng );
   }
-  double_t
+  double
   raw_value( const Position< 3 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) / parameter2_->value( p, rng );
@@ -843,12 +842,12 @@ public:
   /**
    * @returns the value of the sum.
    */
-  double_t
+  double
   raw_value( const Position< 2 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) + parameter2_->value( p, rng );
   }
-  double_t
+  double
   raw_value( const Position< 3 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) + parameter2_->value( p, rng );
@@ -901,12 +900,12 @@ public:
   /**
    * @returns the value of the difference.
    */
-  double_t
+  double
   raw_value( const Position< 2 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) - parameter2_->value( p, rng );
   }
-  double_t
+  double
   raw_value( const Position< 3 >& p, librandom::RngPtr& rng ) const
   {
     return parameter1_->value( p, rng ) - parameter2_->value( p, rng );
@@ -955,12 +954,12 @@ public:
   /**
    * @returns the value of the parameter.
    */
-  double_t
+  double
   raw_value( const Position< 2 >& p, librandom::RngPtr& rng ) const
   {
     return p_->raw_value( -p, rng );
   }
-  double_t
+  double
   raw_value( const Position< 3 >& p, librandom::RngPtr& rng ) const
   {
     return p_->raw_value( -p, rng );

@@ -189,14 +189,14 @@ binary_neuron< TGainfunction >::calibrate()
 template < class TGainfunction >
 void
 binary_neuron< TGainfunction >::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     // update the input current
     // the buffer for incoming spikes for every time step contains the
@@ -204,7 +204,7 @@ binary_neuron< TGainfunction >::update( Time const& origin,
     // of the total input h with respect to the previous step, so sum them up
     S_.h_ += B_.spikes_.get_value( lag );
 
-    double_t c = B_.currents_.get_value( lag );
+    double c = B_.currents_.get_value( lag );
 
     // check, if the update needs to be done
     if ( Time::step( origin.get_steps() + lag ) > S_.t_next_ )
@@ -266,8 +266,8 @@ binary_neuron< TGainfunction >::handle( SpikeEvent& e )
   // correct.
 
 
-  long_t m = e.get_multiplicity();
-  long_t gid = e.get_sender_gid();
+  long m = e.get_multiplicity();
+  long gid = e.get_sender_gid();
   const Time& t_spike = e.get_stamp();
 
   if ( m == 1 )
@@ -309,8 +309,8 @@ binary_neuron< TGainfunction >::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // we use the spike buffer to receive the binary events
   // but also to handle the incoming current events added

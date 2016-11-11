@@ -112,12 +112,12 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   // data members common to all connections
-  double_t tau_plus_;
-  double_t lambda_;
-  double_t alpha_;
-  double_t mu_plus_;
-  double_t mu_minus_;
-  double_t Wmax_;
+  double tau_plus_;
+  double lambda_;
+  double alpha_;
+  double mu_plus_;
+  double mu_minus_;
+  double Wmax_;
 };
 
 
@@ -172,7 +172,7 @@ public:
   void send( Event& e, thread t, const STDPHomCommonProperties& );
 
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
@@ -217,28 +217,28 @@ public:
   }
 
 private:
-  double_t
-  facilitate_( double_t w, double_t kplus, const STDPHomCommonProperties& cp )
+  double
+  facilitate_( double w, double kplus, const STDPHomCommonProperties& cp )
   {
-    double_t norm_w = ( w / cp.Wmax_ )
+    double norm_w = ( w / cp.Wmax_ )
       + ( cp.lambda_ * std::pow( 1.0 - ( w / cp.Wmax_ ), cp.mu_plus_ )
-                        * kplus );
+                      * kplus );
     return norm_w < 1.0 ? norm_w * cp.Wmax_ : cp.Wmax_;
   }
 
-  double_t
-  depress_( double_t w, double_t kminus, const STDPHomCommonProperties& cp )
+  double
+  depress_( double w, double kminus, const STDPHomCommonProperties& cp )
   {
-    double_t norm_w =
+    double norm_w =
       ( w / cp.Wmax_ ) - ( cp.alpha_ * cp.lambda_
                            * std::pow( w / cp.Wmax_, cp.mu_minus_ ) * kminus );
     return norm_w > 0.0 ? norm_w * cp.Wmax_ : 0.0;
   }
 
   // data members of each connection
-  double_t weight_;
-  double_t Kplus_;
-  double_t t_lastspike_;
+  double weight_;
+  double Kplus_;
+  double t_lastspike_;
 };
 
 
@@ -278,12 +278,12 @@ STDPConnectionHom< targetidentifierT >::send( Event& e,
 {
   // synapse STDP depressing/facilitation dynamics
 
-  const double_t t_spike = e.get_stamp().get_ms();
+  const double t_spike = e.get_stamp().get_ms();
 
   // t_lastspike_ = 0 initially
 
   Node* target = get_target( t );
-  double_t dendritic_delay = get_delay();
+  double dendritic_delay = get_delay();
 
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
@@ -293,7 +293,7 @@ STDPConnectionHom< targetidentifierT >::send( Event& e,
     &start,
     &finish );
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
-  double_t minus_dt;
+  double minus_dt;
   while ( start != finish )
   {
     minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
@@ -326,11 +326,11 @@ STDPConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
   // base class properties, different for individual synapse
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
+  def< double >( d, names::weight, weight_ );
 
   // own properties, different for individual synapse
-  def< double_t >( d, "Kplus", Kplus_ );
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  def< double >( d, "Kplus", Kplus_ );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
@@ -340,9 +340,9 @@ STDPConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
 {
   // base class properties
   ConnectionBase::set_status( d, cm );
-  updateValue< double_t >( d, names::weight, weight_ );
+  updateValue< double >( d, names::weight, weight_ );
 
-  updateValue< double_t >( d, "Kplus", Kplus_ );
+  updateValue< double >( d, "Kplus", Kplus_ );
 }
 
 } // of namespace nest

@@ -26,7 +26,6 @@
 // C++ includes:
 #include <ostream>
 #include <stdexcept> // out_of_range
-#include <utility>   // pair
 #include <vector>
 
 // Includes from nestkernel:
@@ -39,106 +38,183 @@
 namespace nest
 {
 
+/*
 class GIDCollection
 {
-
-  std::vector< index > gid_array_;
-  std::pair< index, index > gid_range_;
-  bool is_range_;
 
 public:
   class const_iterator
   {
-    friend class GIDCollection;
-    const_iterator( const GIDCollection* gc, size_t offset )
-      : gc_( gc )
-      , offset_( offset )
-    {
-    }
-    const GIDCollection* gc_;
-    size_t offset_;
+    private:
+      const_iterator( index current, const GIDCollection& collection_ )
+        : current_( current )
+        , collection_( collection )
+      {
+      }
+      index current_;
+      const GIDCollection& collection_;
+      
+      class GIDPair
+      {
+        public:
+          index gid;
+          index model_id;
+      };
 
   public:
-    index operator*() const;
-    const const_iterator& operator++();
-    bool operator!=( const const_iterator& rhs ) const;
+    GIDPair operator*() const;
+    const iterator operator++();
+    bool operator!=( const iterator& rhs ) const;
+  };
+  */
+  /**
+  * Class for Metadata attached to GIDCollection.
+  *
+  * NEST modules that want to add metadata to GIDCollections they
+  * create need to implement their own concrete subclass.
+  */
+  /*
+  class GIDCollectionMetadata
+  {
+  public:
+    GIDCollectionMetadata() {}
+    virtual ~GIDCollectionMetadata() = 0;
   };
 
   GIDCollection()
   {
   }
-  GIDCollection( index first, index last );
-  GIDCollection( IntVectorDatum gids );
-  GIDCollection( TokenArray gids );
 
   void print_me( std::ostream& out ) const;
 
-  index operator[]( const size_t pos ) const;
-  bool operator==( const GIDCollection& rhs ) const;
+  virtual index operator[]( const size_t i ) = 0;
+  virtual const GIDCollection& operator+( const GIDCollection& rhs ) = 0;
+  virtual bool operator==( const GIDCollection& rhs ) = 0;
+
+  virtual iterator begin() = 0;
+  virtual iterator end() = 0;
+
+  virtual size_t size() = 0;
+  
+  virtual bool contains( index gid ) = 0;
+  virtual const GIDCollection& slice( long first, long last, long step ) = 0;
+};
+
+*/
+class GIDPair
+{
+public:
+  index gid;
+  index model_id;
+};  
+
+class GIDCollectionPrimitive // public GIDCollection
+{
+private:
+  index first_;
+  index last_;
+  long step_; // long/int?
+  index model_id_;
+  //void* metadata; // ???
+
+public:
+  class const_iterator
+  {
+    
+  private:
+    index current_;
+    const GIDCollectionPrimitive& collection_;
+
+  public: 
+    const_iterator( const GIDCollectionPrimitive& collection, index current )
+      : current_( current )
+      , collection_( collection )
+    {
+    } 
+    GIDPair operator*() const;
+    const const_iterator operator++();
+    bool operator!=( const const_iterator& rhs ) const;
+  };
+  
+
+  GIDCollectionPrimitive()
+  {
+  }
+  /*
+  // bare i composite
+  GIDCollectionPrimitive( const ArrayDatum iterable, index model_id );
+  */
+  GIDCollectionPrimitive( index first, index last, index model_id);
+  GIDCollectionPrimitive( index first, index last);
+  GIDCollectionPrimitive( TokenArray gids);
+  GIDCollectionPrimitive( IntVectorDatum gids );
+  
+
+  void print_me( std::ostream& out ) const;
+
+  index operator[]( const long i ) const;
+  const GIDCollectionPrimitive& operator+( 
+                                      const GIDCollectionPrimitive& rhs ) const;
+  bool operator==( const GIDCollectionPrimitive& rhs ) const;
 
   const_iterator begin() const;
   const_iterator end() const;
 
   size_t size() const;
+  
+  bool contains( index gid ) const;
+  const GIDCollectionPrimitive& slice( long first, long last, long step ) const;
 };
+typedef GIDCollectionPrimitive GIDCollection;
 
-inline index GIDCollection::const_iterator::operator*() const
+inline GIDPair GIDCollectionPrimitive::const_iterator::operator*() const
 {
-  return ( *gc_ )[ offset_ ];
+  GIDPair gp;
+  gp.gid = collection_.first_ + current_;
+  gp.model_id = collection_.model_id_;
+  return gp; //( collection_ )[ current_ ];
 }
 
-inline const GIDCollection::const_iterator& GIDCollection::const_iterator::
+inline const GIDCollectionPrimitive::const_iterator GIDCollectionPrimitive::const_iterator::
 operator++()
 {
-  ++offset_;
+  ++current_;
   return *this;
 }
 
-inline bool GIDCollection::const_iterator::operator!=(
-  const GIDCollection::const_iterator& rhs ) const
+inline bool GIDCollectionPrimitive::const_iterator::operator!=(
+  const GIDCollectionPrimitive::const_iterator& rhs ) const
 {
-  return offset_ != rhs.offset_;
+  return current_ != rhs.current_;
 }
 
-inline index GIDCollection::operator[]( const size_t pos ) const
+inline index GIDCollectionPrimitive::operator[]( const long i ) const
 {
-  if ( ( is_range_ && pos + gid_range_.first > gid_range_.second )
-    || ( !is_range_ && pos >= gid_array_.size() ) )
+  // throw exception if outside of GIDCollection
+  if ( first_ + i > last_ )
     throw std::out_of_range( "pos points outside of the GIDCollection" );
-
-  if ( is_range_ )
-    return gid_range_.first + pos;
-  else
-    return gid_array_[ pos ];
+  return first_ + i;
 }
 
-inline bool GIDCollection::operator==( const GIDCollection& rhs ) const
+inline bool GIDCollectionPrimitive::operator==( const GIDCollectionPrimitive& rhs ) const
 {
-  if ( is_range_ )
-    return gid_range_ == rhs.gid_range_;
-  else
-    return gid_array_ == rhs.gid_array_;
+  return first_ == rhs.first_ && last_ == rhs.last_;
 }
 
-inline GIDCollection::const_iterator
-GIDCollection::begin() const
+inline GIDCollectionPrimitive::const_iterator GIDCollectionPrimitive::begin() const
 {
-  return const_iterator( this, 0 );
+  return const_iterator( *this, 0 );
 }
 
-inline GIDCollection::const_iterator
-GIDCollection::end() const
+inline GIDCollectionPrimitive::const_iterator GIDCollectionPrimitive::end() const
 {
-  return const_iterator( this, size() );
+  return const_iterator( *this, size() );
 }
 
 inline size_t
-GIDCollection::size() const
+GIDCollectionPrimitive::size() const
 {
-  if ( is_range_ )
-    return gid_range_.second - gid_range_.first + 1;
-  else
-    return gid_array_.size();
+  return last_ - first_ + 1;
 }
 
 } // namespace nest

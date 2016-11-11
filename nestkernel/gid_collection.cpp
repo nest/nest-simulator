@@ -21,6 +21,7 @@
  */
 
 #include "gid_collection.h"
+#include "kernel_manager.h"
 
 // C++ includes:
 #include <algorithm> // copy
@@ -28,37 +29,47 @@
 namespace nest
 {
 
-GIDCollection::GIDCollection( index first, index last )
-  : is_range_( true )
+GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last, index model_id )
 {
-  gid_range_.first = first;
-  gid_range_.second = last;
+  first_ = first;
+  last_ = last;
+  model_id = model_id;
 }
 
-GIDCollection::GIDCollection( IntVectorDatum gids )
-  : is_range_( false )
+GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last)
 {
-  gid_array_.resize( gids->size() );
-  std::copy( gids->begin(), gids->end(), gid_array_.begin() );
+  first_ = first;
+  last_ = last;
+  
+  // find the model_id
+  const int model_id = kernel().node_manager.get_node( first )->get_model_id();
+  for (index gid = ++first; gid <= last; ++gid)
+  {
+    if ( model_id != kernel().node_manager.get_node( gid )->get_model_id() )
+      {
+        throw BadProperty( "model ids does not match" );
+      }
+  }
+  model_id_ = model_id;
 }
 
-GIDCollection::GIDCollection( TokenArray gids )
-  : is_range_( false )
+GIDCollectionPrimitive::GIDCollectionPrimitive( TokenArray gids )
 {
-  gid_array_.resize( gids.size() );
-  for ( size_t i = 0; i < gids.size(); ++i )
-    gid_array_[ i ] = gids[ i ];
+  //assert(false); // Constructor should not be used.
+  throw BadProperty( "constructor will be removed." );
+}
+
+GIDCollectionPrimitive::GIDCollectionPrimitive( IntVectorDatum gids )
+{
+  //assert(false); // Constructor should not be used.
+  throw BadProperty( "constructor will be removed." );
 }
 
 void
-GIDCollection::print_me( std::ostream& out ) const
+GIDCollectionPrimitive::print_me( std::ostream& out ) const
 {
-  out << "[[is_range=" << is_range_ << ",size=" << size() << ",";
-  if ( is_range_ )
-    out << "(" << gid_range_.first << ".." << gid_range_.second << ")";
-  else
-    out << "(" << gid_array_[ 0 ] << ".." << gid_array_[ gid_array_.size() - 1 ]
-        << ")";
+  out << "[[size=" << size() << ",";
+  out << "(" << first_ << ".." << last_ << ")";
   out << "]]";
 }
 

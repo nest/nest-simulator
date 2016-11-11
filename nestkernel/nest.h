@@ -71,7 +71,7 @@ void set_connection_status( const ConnectionDatum& conn,
   const DictionaryDatum& dict );
 DictionaryDatum get_connection_status( const ConnectionDatum& conn );
 
-index create( const Name& model_name, const index n );
+GIDCollectionPTR create( const Name& model_name, const index n );
 
 void connect( const GIDCollection& sources,
   const GIDCollection& targets,

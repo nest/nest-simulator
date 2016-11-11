@@ -190,7 +190,7 @@ get_connection_status( const ConnectionDatum& conn )
     conn.get_target_thread() );
 }
 
-index
+GIDCollectionPTR
 create( const Name& model_name, const index n_nodes )
 {
   if ( n_nodes == 0 )

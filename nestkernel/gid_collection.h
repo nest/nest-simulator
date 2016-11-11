@@ -29,6 +29,9 @@
 #include <utility>   // pair
 #include <vector>
 
+// Includes from libnestuil:
+#include "lockptr.h"
+
 // Includes from nestkernel:
 #include "nest_types.h"
 
@@ -38,10 +41,27 @@
 
 namespace nest
 {
+  class GIDCollection;
+  class GIDCollectionMetadata;
+
+  typedef lockPTR< GIDCollection > GIDCollectionPTR;
+  typedef lockPTR< GIDCollectionMetadata > GIDCollectionMetadataPTR;
+
+/**
+ * Class for Metadata attached to GIDCollection.
+ *
+ * NEST modules that want to add metadata to GIDCollections they
+ * create need to implement their own concrete subclass.
+ */
+class GIDCollectionMetadata
+{
+public:
+  GIDCollectionMetadata() {}
+  virtual ~GIDCollectionMetadata() {}
+};
 
 class GIDCollection
 {
-
   std::vector< index > gid_array_;
   std::pair< index, index > gid_range_;
   bool is_range_;
@@ -80,6 +100,26 @@ public:
   const_iterator end() const;
 
   size_t size() const;
+
+  void set_metadata( GIDCollectionMetadataPTR )
+  { assert( false && "not implemented" ); }
+
+  GIDCollectionMetadataPTR get_metadata() const
+  { assert(false);
+    return GIDCollectionMetadataPTR(0);
+  }
+
+  GIDCollectionPTR operator+( GIDCollectionPTR ) const
+  { assert(false);
+  return GIDCollectionPTR(new GIDCollection(0, 0));
+  }
+};
+
+class GIDCollectionPrimitive : public GIDCollection
+{
+public:
+  GIDCollectionPrimitive( index first, index last, index model_id )
+  {}
 };
 
 inline index GIDCollection::const_iterator::operator*() const

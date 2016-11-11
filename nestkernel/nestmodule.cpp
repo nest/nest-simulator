@@ -540,10 +540,10 @@ NestModule::Create_l_iFunction::execute( SLIInterpreter* i ) const
 
   const std::string modname = getValue< std::string >( i->OStack.pick( 1 ) );
 
-  const long last_node_id = create( modname, n_nodes );
+  GIDCollectionDatum gc = create( modname, n_nodes );
 
   i->OStack.pop( 2 );
-  i->OStack.push( last_node_id );
+  i->OStack.push( gc );
   i->EStack.pop();
 }
 
@@ -718,7 +718,9 @@ NestModule::Disconnect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 
   // dictionary access checking is handled by disconnect
   kernel().sp_manager.disconnect(
-    sources, targets, connectivity, synapse_params );
+		  *sources.get(), *targets.get(), connectivity, synapse_params );
+  sources.unlock();
+  targets.unlock();
 
   i->OStack.pop( 4 );
   i->EStack.pop();
@@ -742,7 +744,9 @@ NestModule::Connect_g_g_D_DFunction::execute( SLIInterpreter* i ) const
 
   // dictionary access checking is handled by connect
   kernel().connection_manager.connect(
-    sources, targets, connectivity, synapse_params );
+    *sources.get(), *targets.get(), connectivity, synapse_params );
+  sources.unlock();
+  targets.unlock();
 
   i->OStack.pop( 4 );
   i->EStack.pop();
@@ -1438,7 +1442,7 @@ NestModule::Cvgidcollection_i_iFunction::execute( SLIInterpreter* i ) const
 
   const long first = getValue< long >( i->OStack.pick( 1 ) );
   const long last = getValue< long >( i->OStack.pick( 0 ) );
-  GIDCollectionDatum gidcoll = GIDCollection( first, last );
+  GIDCollectionDatum gidcoll = new GIDCollection( first, last );
 
   i->OStack.pop( 2 );
   i->OStack.push( gidcoll );
@@ -1451,7 +1455,7 @@ NestModule::Cvgidcollection_iaFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   TokenArray gids = getValue< TokenArray >( i->OStack.pick( 0 ) );
-  GIDCollectionDatum gidcoll = GIDCollection( gids );
+  GIDCollectionDatum gidcoll = new GIDCollection( gids );
 
   i->OStack.pop();
   i->OStack.push( gidcoll );
@@ -1464,7 +1468,7 @@ NestModule::Cvgidcollection_ivFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   IntVectorDatum gids = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
-  GIDCollectionDatum gidcoll = GIDCollection( gids );
+  GIDCollectionDatum gidcoll = new GIDCollection( gids );
 
   i->OStack.pop();
   i->OStack.push( gidcoll );
@@ -1479,7 +1483,7 @@ NestModule::Size_gFunction::execute( SLIInterpreter* i ) const
     getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
   i->OStack.pop();
-  i->OStack.push( gidcoll.size() );
+  i->OStack.push( gidcoll->size() );
   i->EStack.pop();
 }
 

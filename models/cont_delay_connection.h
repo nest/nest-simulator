@@ -125,7 +125,7 @@ public:
 
   //! Used by ConnectorModel::add_connection() for fast initialization
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
@@ -208,8 +208,8 @@ public:
   }
 
 private:
-  double_t weight_;       //!< synaptic weight
-  double_t delay_offset_; //!< fractional delay < h,
+  double weight_;       //!< synaptic weight
+  double delay_offset_; //!< fractional delay < h,
                           //!< total delay = delay_ - delay_offset_
 };
 

@@ -184,7 +184,7 @@ NodeManager::get_status( index idx )
   return d;
 }
 
-index NodeManager::add_node( index mod, long_t n ) // no_p
+index NodeManager::add_node( index mod, long n ) // no_p
 {
   have_nodes_changed_ = true;
 

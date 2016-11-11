@@ -147,7 +147,7 @@ private:
   double phi_;
   long m_;
   unsigned int n_;            //!<parameter n in binomial distribution
-  std::vector< double_t > f_; //!< precomputed table of f
+  std::vector< double > f_; //!< precomputed table of f
   unsigned int n_tablemax_;   //!< current maximal n with precomputed values
 
   void init_();                   //!< check and initialize internal parameters

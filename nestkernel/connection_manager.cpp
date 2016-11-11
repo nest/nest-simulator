@@ -365,8 +365,8 @@ nest::ConnectionManager::connect( index sgid,
   Node* target,
   thread target_thread,
   index syn,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   have_connections_changed_ = true;
 
@@ -435,8 +435,8 @@ nest::ConnectionManager::connect( index sgid,
   thread target_thread,
   index syn,
   DictionaryDatum& params,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   have_connections_changed_ = true;
 
@@ -597,8 +597,8 @@ nest::ConnectionManager::connect_( Node& s,
   index s_gid,
   thread tid,
   index syn,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   kernel().model_manager.assert_valid_syn_id( syn );
 
@@ -621,8 +621,8 @@ nest::ConnectionManager::connect_( Node& s,
   thread tid,
   index syn,
   DictionaryDatum& p,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   kernel().model_manager.assert_valid_syn_id( syn );
 
@@ -644,8 +644,8 @@ nest::ConnectionManager::connect_to_device_( Node& s,
   index s_gid,
   thread tid,
   index syn,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   kernel().model_manager.assert_valid_syn_id( syn );
 
@@ -667,8 +667,8 @@ nest::ConnectionManager::connect_to_device_( Node& s,
   thread tid,
   index syn,
   DictionaryDatum& p,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   kernel().model_manager.assert_valid_syn_id( syn );
 
@@ -689,8 +689,8 @@ nest::ConnectionManager::connect_from_device_( Node& s,
   index s_gid,
   thread tid,
   index syn,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   kernel().model_manager.assert_valid_syn_id( syn ); // TODO@5g: move to connect(...)
 
@@ -713,8 +713,8 @@ nest::ConnectionManager::connect_from_device_( Node& s,
   thread tid,
   index syn,
   DictionaryDatum& p,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   kernel().model_manager.assert_valid_syn_id( syn );
 
@@ -1011,9 +1011,9 @@ nest::ConnectionManager::connect( ArrayDatum& conns )
 
 
 void
-nest::ConnectionManager::trigger_update_weight( const long_t vt_id,
+nest::ConnectionManager::trigger_update_weight( const long vt_id,
   const std::vector< spikecounter >& dopa_spikes,
-  const double_t t_trig )
+  const double t_trig )
 {
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
@@ -1111,8 +1111,8 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
   const Token& syn_model_t = params->lookup( names::synapse_model );
   const TokenArray* source_a = 0;
   const TokenArray* target_a = 0;
-  long_t synapse_label = UNLABELED_CONNECTION;
-  updateValue< long_t >( params, names::synapse_label, synapse_label );
+  long synapse_label = UNLABELED_CONNECTION;
+  updateValue< long >( params, names::synapse_label, synapse_label );
 
   if ( not source_t.empty() )
   {
@@ -1170,7 +1170,7 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
   TokenArray const* source,
   TokenArray const* target,
   synindex syn_id,
-  long_t synapse_label ) const
+  long synapse_label ) const
 {
   if ( is_source_table_cleared() )
   {

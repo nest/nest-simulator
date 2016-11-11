@@ -34,7 +34,7 @@ namespace nest
 
 template< class EventT >
 inline void
-EventDeliveryManager::send_local_( Node& source, EventT& e, const long_t lag )
+EventDeliveryManager::send_local_( Node& source, EventT& e, const long lag )
 {
   assert( not source.has_proxies() );
   e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
@@ -46,7 +46,7 @@ EventDeliveryManager::send_local_( Node& source, EventT& e, const long_t lag )
 
 template < class EventT >
 inline void
-EventDeliveryManager::send( Node& source, EventT& e, const long_t lag )
+EventDeliveryManager::send( Node& source, EventT& e, const long lag )
 {
   send_local_( source, e, lag );
 }
@@ -55,7 +55,7 @@ template <>
 inline void
 EventDeliveryManager::send< SpikeEvent >( Node& source,
   SpikeEvent& e,
-  const long_t lag )
+  const long lag )
 {
   const index source_gid = source.get_gid();
   e.set_sender_gid( source_gid );
@@ -86,14 +86,14 @@ template <>
 inline void
 EventDeliveryManager::send< DSSpikeEvent >( Node& source,
   DSSpikeEvent& e,
-  const long_t lag )
+  const long lag )
 {
   e.set_sender_gid( source.get_gid() );
   send_local_( source, e, lag );
 }
 
 inline void
-EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long_t lag )
+EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long lag )
 {
   // Put the spike in a buffer for the remote machines
   const index lid = kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() );
@@ -102,7 +102,7 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long_t lag )
   for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
   {
     const thread assigned_tid = ( *it ).get_rank() / kernel().vp_manager.get_num_assigned_ranks_per_thread();
-    for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+    for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
       ( *spike_register_5g_[ tid ] )[ assigned_tid ][ lag ].push_back( *it );
     }
@@ -112,7 +112,7 @@ EventDeliveryManager::send_remote( thread tid, SpikeEvent& e, const long_t lag )
 inline void
 EventDeliveryManager::send_off_grid_remote( thread tid,
   SpikeEvent& e,
-  const long_t lag )
+  const long lag )
 {
   // Put the spike in a buffer for the remote machines
   const index lid = kernel().vp_manager.gid_to_lid( e.get_sender().get_gid() );
@@ -121,7 +121,7 @@ EventDeliveryManager::send_off_grid_remote( thread tid,
   for ( std::vector< Target >::const_iterator it = targets.begin(); it != targets.end(); ++it )
   {
     const thread assigned_tid = ( *it ).get_rank() / kernel().vp_manager.get_num_assigned_ranks_per_thread();
-    for ( int_t i = 0; i < e.get_multiplicity(); ++i )
+    for ( int i = 0; i < e.get_multiplicity(); ++i )
     {
       ( *off_grid_spike_register_5g_[ tid ] )[ assigned_tid ][ lag ].push_back( OffGridTarget( *it, e.get_offset() ) );
     }

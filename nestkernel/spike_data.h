@@ -47,7 +47,7 @@ struct SpikeData
   SpikeData();
   SpikeData( const SpikeData& rhs );
   SpikeData( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag );
-  void set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag, const double_t offset );
+  void set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag, const double offset );
   void reset_marker();
   void set_complete_marker();
   void set_end_marker();
@@ -55,7 +55,7 @@ struct SpikeData
   bool is_complete_marker() const;
   bool is_end_marker() const;
   bool is_invalid_marker() const;
-  double_t get_offset() const;
+  double get_offset() const;
 };
 
 inline
@@ -89,7 +89,7 @@ SpikeData::SpikeData( const thread tid, const synindex syn_index, const index lc
 }
 
 inline void
-SpikeData::set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag, const double_t )
+SpikeData::set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag, const double )
 {
   (*this).lcid = lcid;
   marker = 0; // always initialize with default marker
@@ -140,7 +140,7 @@ SpikeData::is_invalid_marker() const
   return marker == invalid_marker;
 }
 
-inline double_t
+inline double
 SpikeData::get_offset() const
 {
   return 0;
@@ -148,9 +148,9 @@ SpikeData::get_offset() const
 
 struct OffGridSpikeData : SpikeData
 {
-  double_t offset;
-  void set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag, const double_t offset );
-  double_t get_offset() const;
+  double offset;
+  void set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag, const double offset );
+  double get_offset() const;
 };
 
 inline void
@@ -158,7 +158,7 @@ OffGridSpikeData::set( const thread tid,
   const synindex syn_index,
   const index lcid,
   const unsigned int lag,
-  const double_t offset)
+  const double offset)
 {
   (*this).lcid = lcid;
   marker = 0; // always initialize with default marker
@@ -168,7 +168,7 @@ OffGridSpikeData::set( const thread tid,
   (*this).offset = offset;
 }
 
-inline double_t
+inline double
 OffGridSpikeData::get_offset() const
 {
   return offset;

@@ -128,10 +128,10 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     }
 
     // check if seeds are unique
-    std::set< ulong_t > seedset;
+    std::set< unsigned long > seedset;
     for ( index i = 0; i < ad->size(); ++i )
     {
-      long s = ( *ad )[ i ]; // SLI has no ulong tokens
+      long s = ( *ad )[ i ]; // SLI has no unsigned long tokens
       if ( !seedset.insert( s ).second )
       {
         LOG( M_WARNING,
@@ -174,7 +174,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
 
     // check if grng seed is unique with respect to rng seeds
     // if grng_seed and rng_seeds given in one SetStatus call
-    std::set< ulong_t > seedset;
+    std::set< unsigned long > seedset;
     seedset.insert( gseed );
     if ( d->known( "rng_seeds" ) )
     {
@@ -184,7 +184,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
         throw BadProperty();
       for ( index i = 0; i < ad_rngseeds->size(); ++i )
       {
-        const long vpseed = ( *ad_rngseeds )[ i ]; // SLI has no ulong tokens
+        const long vpseed = ( *ad_rngseeds )[ i ]; // SLI has no unsigned long tokens
         if ( !seedset.insert( vpseed ).second )
         {
           LOG( M_WARNING,

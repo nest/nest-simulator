@@ -247,8 +247,8 @@ EventDeliveryManager::collocate_buffers_( bool done )
   // int num_offgrid_spikes = 0;
   // int uintsize_secondary_events = 0;
 
-  // std::vector< std::vector< std::vector< uint_t > > >::iterator i;
-  // std::vector< std::vector< uint_t > >::iterator j;
+  // std::vector< std::vector< std::vector< unsigned int > > >::iterator i;
+  // std::vector< std::vector< unsigned int > >::iterator j;
   // for ( i = spike_register_.begin(); i != spike_register_.end(); ++i )
   //   for ( j = i->begin(); j != i->end(); ++j )
   //     num_grid_spikes += j->size();
@@ -264,7 +264,7 @@ EventDeliveryManager::collocate_buffers_( bool done )
   // // assume that we already serialized all secondary
   // // events into the secondary_events_buffer_
   // // and that secondary_events_buffer_.size() contains the correct size
-  // // of this buffer in units of uint_t
+  // // of this buffer in units of unsigned int
 
   // for ( j = secondary_events_buffer_.begin(); j != secondary_events_buffer_.end(); ++j )
   //   uintsize_secondary_events += j->size();
@@ -276,22 +276,22 @@ EventDeliveryManager::collocate_buffers_( bool done )
   // {
   //   // make sure buffers are correctly sized
   //   if ( global_grid_spikes_.size()
-  //     != static_cast< uint_t >( kernel().mpi_manager.get_recv_buffer_size() ) )
+  //     != static_cast< unsigned int >( kernel().mpi_manager.get_recv_buffer_size() ) )
   //     global_grid_spikes_.resize( kernel().mpi_manager.get_recv_buffer_size(), 0 );
 
   //   if ( num_spikes + ( kernel().vp_manager.get_num_threads()
   //                       * kernel().connection_manager.get_min_delay() )
-  //     > static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
+  //     > static_cast< unsigned int >( kernel().mpi_manager.get_send_buffer_size() ) )
   //     local_grid_spikes_.resize(
   //       ( num_spikes + ( kernel().connection_manager.get_min_delay()
   //                        * kernel().vp_manager.get_num_threads() ) ),
   //       0 );
   //   else if ( local_grid_spikes_.size()
-  //     < static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
+  //     < static_cast< unsigned int >( kernel().mpi_manager.get_send_buffer_size() ) )
   //     local_grid_spikes_.resize( kernel().mpi_manager.get_send_buffer_size(), 0 );
 
   //   // collocate the entries of spike_registers into local_grid_spikes__
-  //   std::vector< uint_t >::iterator pos = local_grid_spikes_.begin();
+  //   std::vector< unsigned int >::iterator pos = local_grid_spikes_.begin();
   //   if ( num_offgrid_spikes == 0 )
   //   {
   //     for ( i = spike_register_.begin(); i != spike_register_.end(); ++i )
@@ -351,19 +351,19 @@ EventDeliveryManager::collocate_buffers_( bool done )
   // {
   //   // make sure buffers are correctly sized
   //   if ( global_offgrid_spikes_.size()
-  //     != static_cast< uint_t >( kernel().mpi_manager.get_recv_buffer_size() ) )
+  //     != static_cast< unsigned int >( kernel().mpi_manager.get_recv_buffer_size() ) )
   //     global_offgrid_spikes_.resize(
   //       kernel().mpi_manager.get_recv_buffer_size(), OffGridSpike( 0, 0.0 ) );
 
   //   if ( num_spikes + ( kernel().vp_manager.get_num_threads()
   //                       * kernel().connection_manager.get_min_delay() )
-  //     > static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
+  //     > static_cast< unsigned int >( kernel().mpi_manager.get_send_buffer_size() ) )
   //     local_offgrid_spikes_.resize(
   //       ( num_spikes + ( kernel().connection_manager.get_min_delay()
   //                        * kernel().vp_manager.get_num_threads() ) ),
   //       OffGridSpike( 0, 0.0 ) );
   //   else if ( local_offgrid_spikes_.size()
-  //     < static_cast< uint_t >( kernel().mpi_manager.get_send_buffer_size() ) )
+  //     < static_cast< unsigned int >( kernel().mpi_manager.get_send_buffer_size() ) )
   //     local_offgrid_spikes_.resize(
   //       kernel().mpi_manager.get_send_buffer_size(), OffGridSpike( 0, 0.0 ) );
 
@@ -379,7 +379,7 @@ EventDeliveryManager::collocate_buffers_( bool done )
   //       }
   //   else
   //   {
-  //     std::vector< uint_t >::iterator n;
+  //     std::vector< unsigned int >::iterator n;
   //     i = spike_register_.begin();
   //     for ( it = offgrid_spike_register_.begin(); it != offgrid_spike_register_.end(); ++it )
   //     {
@@ -466,11 +466,11 @@ EventDeliveryManager::deliver_events( thread t )
 
   //   for ( size_t pid = 0; pid < ( size_t ) kernel().mpi_manager.get_num_processes(); ++pid )
   //   {
-  //     std::vector< uint_t >::iterator readpos = global_grid_spikes_.begin() + pos[ pid ];
+  //     std::vector< unsigned int >::iterator readpos = global_grid_spikes_.begin() + pos[ pid ];
 
   //     while ( true )
   //     {
-  //       // we must not use uint_t for the type, otherwise
+  //       // we must not use unsigned int for the type, otherwise
   //       // the encoding will be different on JUQUEEN for the
   //       // index written into the buffer and read out of it
   //       synindex synid;

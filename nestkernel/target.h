@@ -68,7 +68,7 @@ public:
   unsigned char get_syn_index() const;
   void set_processed( const bool processed );
   bool is_processed() const;
-  double_t get_offset() const;
+  double get_offset() const;
 };
 
 inline
@@ -163,7 +163,7 @@ Target::is_processed() const
   return ( data_ & processed_mask ) >> processed_shift;
 }
 
-inline double_t
+inline double
 Target::get_offset() const
 {
   return 0;
@@ -172,11 +172,11 @@ Target::get_offset() const
 class OffGridTarget : public Target
 {
 private:
-  double_t offset;
+  double offset;
 public:
   OffGridTarget();
-  OffGridTarget( const Target& target, const double_t offset );
-  double_t get_offset() const;
+  OffGridTarget( const Target& target, const double offset );
+  double get_offset() const;
 };
 
 inline
@@ -187,13 +187,13 @@ OffGridTarget::OffGridTarget()
 }
 
 inline
-OffGridTarget::OffGridTarget( const Target& target, const double_t offset )
+OffGridTarget::OffGridTarget( const Target& target, const double offset )
   : Target( target )
   , offset( offset )
 {
 }
 
-inline double_t
+inline double
 OffGridTarget::get_offset() const
 {
   return offset;

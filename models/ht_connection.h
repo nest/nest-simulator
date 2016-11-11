@@ -147,20 +147,20 @@ public:
 
   //! allows efficient initialization from ConnectorModel::add_connection()
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
 
 private:
-  double_t weight_; //!< synpatic weight
+  double weight_; //!< synpatic weight
 
-  double_t tau_P_;   //!< [ms] time constant for recovery
-  double_t delta_P_; //!< fractional decrease in pool size per spike
+  double tau_P_;   //!< [ms] time constant for recovery
+  double delta_P_; //!< fractional decrease in pool size per spike
 
-  double_t p_; //!< current pool size
+  double p_; //!< current pool size
 
-  double_t t_lastspike_;
+  double t_lastspike_;
 };
 
 
@@ -175,8 +175,8 @@ HTConnection< targetidentifierT >::send( Event& e,
   thread t,
   const CommonSynapseProperties& )
 {
-  const double_t t_spike = e.get_stamp().get_ms();
-  const double_t h = t_spike - t_lastspike_;
+  const double t_spike = e.get_stamp().get_ms();
+  const double h = t_spike - t_lastspike_;
   Node* target = get_target( t );
 
   // propagation t_lastspike_ -> t_spike, t_lastspike_ = 0 initially, p_ = 1
@@ -222,11 +222,11 @@ void
 HTConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
-  def< double_t >( d, "tau_P", tau_P_ );
-  def< double_t >( d, "delta_P", delta_P_ );
-  def< double_t >( d, "P", p_ );
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  def< double >( d, names::weight, weight_ );
+  def< double >( d, "tau_P", tau_P_ );
+  def< double >( d, "delta_P", delta_P_ );
+  def< double >( d, "P", p_ );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
@@ -236,10 +236,10 @@ HTConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
 {
   ConnectionBase::set_status( d, cm );
 
-  updateValue< double_t >( d, names::weight, weight_ );
-  updateValue< double_t >( d, "tau_P", tau_P_ );
-  updateValue< double_t >( d, "delta_P", delta_P_ );
-  updateValue< double_t >( d, "P", p_ );
+  updateValue< double >( d, names::weight, weight_ );
+  updateValue< double >( d, "tau_P", tau_P_ );
+  updateValue< double >( d, "delta_P", delta_P_ );
+  updateValue< double >( d, "P", p_ );
 
   if ( tau_P_ <= 0.0 )
     throw BadProperty( "tau_P >= 0 required." );

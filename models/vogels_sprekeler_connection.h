@@ -146,35 +146,35 @@ public:
   }
 
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
 
 private:
-  double_t
-  facilitate_( double_t w, double_t kplus )
+  double
+  facilitate_( double w, double kplus )
   {
-    double_t new_w = std::abs( w ) + ( eta_ * kplus );
+    double new_w = std::abs( w ) + ( eta_ * kplus );
     return copysign( new_w < std::abs( Wmax_ ) ? new_w : Wmax_, Wmax_ );
   }
 
-  double_t
-  depress_( double_t w )
+  double
+  depress_( double w )
   {
-    double_t new_w = std::abs( w ) - ( alpha_ * eta_ );
+    double new_w = std::abs( w ) - ( alpha_ * eta_ );
     return copysign( new_w > 0.0 ? new_w : 0.0, Wmax_ );
   }
 
   // data members of each connection
-  double_t weight_;
-  double_t tau_;
-  double_t alpha_;
-  double_t eta_;
-  double_t Wmax_;
-  double_t Kplus_;
+  double weight_;
+  double tau_;
+  double alpha_;
+  double eta_;
+  double Wmax_;
+  double Kplus_;
 
-  double_t t_lastspike_;
+  double t_lastspike_;
 };
 
 
@@ -192,13 +192,13 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
   const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
-  double_t t_spike = e.get_stamp().get_ms();
+  double t_spike = e.get_stamp().get_ms();
   // t_lastspike_ = 0 initially
 
   // use accessor functions (inherited from Connection< >) to obtain delay and
   // target
   Node* target = get_target( t );
-  double_t dendritic_delay = get_delay();
+  double dendritic_delay = get_delay();
 
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
@@ -209,7 +209,7 @@ VogelsSprekelerConnection< targetidentifierT >::send( Event& e,
   // presynaptic neuron j, post synaptic neuron i
   // Facilitation for each post synaptic spike
   // Wij = Wij + eta*xj
-  double_t minus_dt;
+  double minus_dt;
   while ( start != finish )
   {
     minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
@@ -276,13 +276,13 @@ VogelsSprekelerConnection< targetidentifierT >::get_status(
   DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
-  def< double_t >( d, "tau", tau_ );
-  def< double_t >( d, "alpha", alpha_ );
-  def< double_t >( d, "eta", eta_ );
-  def< double_t >( d, "Wmax", Wmax_ );
-  def< double_t >( d, "Kplus", Kplus_ );
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  def< double >( d, names::weight, weight_ );
+  def< double >( d, "tau", tau_ );
+  def< double >( d, "alpha", alpha_ );
+  def< double >( d, "eta", eta_ );
+  def< double >( d, "Wmax", Wmax_ );
+  def< double >( d, "Kplus", Kplus_ );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
@@ -292,12 +292,12 @@ VogelsSprekelerConnection< targetidentifierT >::set_status(
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double_t >( d, names::weight, weight_ );
-  updateValue< double_t >( d, "tau", tau_ );
-  updateValue< double_t >( d, "alpha", alpha_ );
-  updateValue< double_t >( d, "eta", eta_ );
-  updateValue< double_t >( d, "Wmax", Wmax_ );
-  updateValue< double_t >( d, "Kplus", Kplus_ );
+  updateValue< double >( d, names::weight, weight_ );
+  updateValue< double >( d, "tau", tau_ );
+  updateValue< double >( d, "alpha", alpha_ );
+  updateValue< double >( d, "eta", eta_ );
+  updateValue< double >( d, "Wmax", Wmax_ );
+  updateValue< double >( d, "Kplus", Kplus_ );
 
   // check if weight_ and Wmax_ has the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )

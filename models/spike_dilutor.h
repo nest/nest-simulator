@@ -94,7 +94,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   void event_hook( DSSpikeEvent& );
 
@@ -105,7 +105,7 @@ private:
    */
   struct Parameters_
   {
-    double_t p_copy_; //!< copy probability for each incoming spike
+    double p_copy_; //!< copy probability for each incoming spike
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );

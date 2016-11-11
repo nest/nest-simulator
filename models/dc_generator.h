@@ -97,7 +97,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // ------------------------------------------------------------
 
@@ -106,7 +106,7 @@ private:
    */
   struct Parameters_
   {
-    double_t amp_; //!< stimulation amplitude, in pA
+    double amp_; //!< stimulation amplitude, in pA
 
     Parameters_(); //!< Sets default parameter values
 

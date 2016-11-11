@@ -98,15 +98,8 @@ const tic_t tic_t_min = LONG_MIN;
 
 using std::size_t;
 
-typedef double double_t;       ///< Double precision floating point numbers.
-typedef float float_t;         ///< Single precision floating point numbers.
-typedef int int_t;             ///< Integer number with at least 16 bit.
-typedef long long_t;           ///< Integer number with at least 32 bit.
-typedef unsigned int uint_t;   ///< Unsigned int_t.
-typedef unsigned long ulong_t; ///< Unsigned long_t.
-
-const long_t long_t_max = LONG_MAX;
-const long_t long_t_min = LONG_MIN;
+const long long_max = LONG_MAX;
+const long long_min = LONG_MIN;
 
 /**
  * Largest and smallest available double value.
@@ -114,8 +107,8 @@ const long_t long_t_min = LONG_MIN;
  * @note Compile-time constant must have integral type,
  * thus we must define double limits as macros.
  */
-#define double_t_max ( DBL_MAX )
-#define double_t_min ( DBL_MIN )
+#define double_max ( DBL_MAX )
+#define double_min ( DBL_MIN )
 
 /**
  *  Unsigned long type for enumerations.
@@ -148,7 +141,7 @@ const index max_targetindex = invalid_targetindex - 1;
  * identification.
  * For invalid or undefined threads, the value -1 is used.
  */
-typedef int_t thread;
+typedef int thread;
 
 /**
  * Value for invalid connection port number.
@@ -162,7 +155,7 @@ const thread invalid_thread_ = -1;
  * Valid port numbers start at zero (0).
  * The value -1 is used for invalid or unassigned ports.
  */
-typedef long_t rport;
+typedef long rport;
 
 /**
  * Connection port number to distinguis outgoing connections.
@@ -170,7 +163,7 @@ typedef long_t rport;
  * Valid port numbers start at zero (0).
  * The value -1 is used for invalid or unassigned ports.
  */
-typedef long_t port;
+typedef long port;
 
 /**
  * Value for invalid connection port number.
@@ -185,7 +178,7 @@ const rport invalid_port_ = -1;
  * as a non-existing connection. Otherwise, there is no default range for
  * connection weights.
  */
-typedef double_t weight;
+typedef double weight;
 
 /**
  * Delay of a connection.
@@ -193,9 +186,9 @@ typedef double_t weight;
  * before an Event arrives at the receiving Node.
  * Delays must be equal or larger than one.
  */
-typedef long_t delay;
-const long_t delay_max = long_t_max;
-const long_t delay_min = long_t_min;
+typedef long delay;
+const long delay_max = long_max;
+const long delay_min = long_min;
 
 
 /**

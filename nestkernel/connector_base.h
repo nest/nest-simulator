@@ -120,7 +120,7 @@ public:
     thread tid,
     synindex synapse_id,
     index lcid,
-    long_t synapse_label,
+    long synapse_label,
     ArrayDatum& conns ) const = 0;
 
   virtual void get_connection( index source_gid,
@@ -128,7 +128,7 @@ public:
     thread tid,
     synindex synapse_id,
     index lcid,
-    long_t synapse_label,
+    long synapse_label,
     ArrayDatum& conns ) const = 0;
 
   virtual void get_all_connections(
@@ -136,7 +136,7 @@ public:
     index requested_target_gid,
     thread tid,
     synindex synapse_id,
-    long_t synapse_label,
+    long synapse_label,
     ArrayDatum& conns ) const = 0;
 
   virtual void get_target_gids( std::vector< index >& target_gids,
@@ -155,10 +155,10 @@ public:
     Event& e,
     const std::vector< ConnectorModel* >& cm ) = 0;
 
-  virtual void trigger_update_weight( long_t vt_gid,
+  virtual void trigger_update_weight( long vt_gid,
     thread t,
     const std::vector< spikecounter >& dopa_spikes,
-    double_t t_trig,
+    double t_trig,
     const std::vector< ConnectorModel* >& cm ) = 0;
 
   virtual void send_to_all_secondary( SecondaryEvent& e,
@@ -297,7 +297,7 @@ public:
     thread tid,
     synindex synapse_id,
     index lcid,
-    long_t synapse_label,
+    long synapse_label,
     ArrayDatum& conns ) const
   {
     if ( syn_id_ == synapse_id )
@@ -325,7 +325,7 @@ public:
     thread tid,
     synindex synapse_id,
     index lcid,
-    long_t synapse_label,
+    long synapse_label,
     ArrayDatum& conns ) const
   {
     if ( syn_id_ == synapse_id )
@@ -347,7 +347,7 @@ public:
     index requested_target_gid,
     thread tid,
     synindex synapse_id,
-    long_t synapse_label,
+    long synapse_label,
     ArrayDatum& conns ) const
   {
     if ( syn_id_ == synapse_id )
@@ -421,10 +421,10 @@ public:
   }
 
   void
-  trigger_update_weight( long_t vt_gid,
+  trigger_update_weight( long vt_gid,
     thread t,
     const std::vector< spikecounter >& dopa_spikes,
-    double_t t_trig,
+    double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
     for ( size_t i = 0; i < C_.size(); ++i )
@@ -562,7 +562,7 @@ public:
     thread tid,
     synindex synapse_id,
     index lcid,
-    long_t synapse_label,
+    long synapse_label,
     ArrayDatum& conns ) const
   {
     for ( size_t i = 0; i < size(); ++i )
@@ -578,7 +578,7 @@ public:
     thread tid,
     synindex synapse_id,
     index lcid,
-    long_t synapse_label,
+    long synapse_label,
     ArrayDatum& conns ) const
   {
     for ( size_t i = 0; i < size(); ++i )
@@ -593,7 +593,7 @@ public:
     index requested_target_gid,
     thread tid,
     synindex synapse_id,
-    long_t synapse_label,
+    long synapse_label,
     ArrayDatum& conns ) const
   {
     for ( size_t i = 0; i < size(); ++i )
@@ -639,10 +639,10 @@ public:
   }
 
   void
-  trigger_update_weight( long_t vt_gid,
+  trigger_update_weight( long vt_gid,
     thread t,
     const std::vector< spikecounter >& dopa_spikes,
-    double_t t_trig,
+    double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
     for ( size_t i = 0; i < size(); ++i )

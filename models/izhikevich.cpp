@@ -71,7 +71,7 @@ nest::izhikevich::Parameters_::Parameters_()
   , d_( 8.0 )                                         // d
   , I_e_( 0.0 )                                       // pA
   , V_th_( 30.0 )                                     // mV
-  , V_min_( -std::numeric_limits< double_t >::max() ) // mV
+  , V_min_( -std::numeric_limits< double >::max() ) // mV
   , consistent_integration_( true )
 {
 }
@@ -113,7 +113,7 @@ nest::izhikevich::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::d, d_ );
   updateValue< bool >(
     d, names::consistent_integration, consistent_integration_ );
-  const double_t h = Time::get_resolution().get_ms();
+  const double h = Time::get_resolution().get_ms();
   if ( not consistent_integration_ && h != 1.0 )
   {
     LOG(
@@ -198,17 +198,17 @@ nest::izhikevich::calibrate()
 
 void
 nest::izhikevich::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  const double_t h = Time::get_resolution().get_ms();
-  double_t v_old, u_old;
+  const double h = Time::get_resolution().get_ms();
+  double v_old, u_old;
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     // neuron is never refractory
     // use standard forward Euler numerics in this case
@@ -271,8 +271,8 @@ nest::izhikevich::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
   B_.currents_.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     w * c );

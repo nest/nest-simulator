@@ -106,7 +106,7 @@ public:
    * \see send_local()
    */
   template < class EventT >
-  void send( Node& source, EventT& e, const long_t lag = 0 );
+  void send( Node& source, EventT& e, const long lag = 0 );
 
   /**
    * Send a secondary event remote.
@@ -130,7 +130,7 @@ public:
    * in a synchronised (single threaded) state.
    * @see send_to_targets()
    */
-  void send_remote( thread tid, SpikeEvent&, const long_t lag = 0 );
+  void send_remote( thread tid, SpikeEvent&, const long lag = 0 );
 
   void send_remote( thread t, SecondaryEvent& e );
 
@@ -152,7 +152,7 @@ public:
    * in a synchronised (single threaded) state.
    * @see send_to_targets()
    */
-  void send_off_grid_remote( thread tid, SpikeEvent& e, const long_t lag = 0 );
+  void send_off_grid_remote( thread tid, SpikeEvent& e, const long lag = 0 );
 
   /**
    * Send event e directly to its target node. This should be
@@ -363,7 +363,7 @@ private:
    * devices directly to targets.
    */
   template< class EventT >
-  void send_local_( Node& source, EventT& e, const long_t lag );
+  void send_local_( Node& source, EventT& e, const long lag );
 
   //--------------------------------------------------//
 
@@ -420,13 +420,13 @@ private:
    * Buffer to collect the secondary events
    * after serialization.
    */
-  std::vector< std::vector< uint_t > > secondary_events_buffer_;
+  std::vector< std::vector< unsigned int > > secondary_events_buffer_;
 
   /**
    * Marker Value to be put between the data fields from different time
    * steps during communication.
    */
-  const uint_t comm_marker_;
+  const unsigned int comm_marker_;
 
   std::vector< SpikeData > send_buffer_spike_data_;
   std::vector< SpikeData > recv_buffer_spike_data_;
@@ -543,7 +543,7 @@ EventDeliveryManager::send_remote( thread t, SecondaryEvent& e )
   size_t old_size = secondary_events_buffer_[ t ].size();
 
   secondary_events_buffer_[ t ].resize( old_size + e.size() );
-  std::vector< uint_t >::iterator it =
+  std::vector< unsigned int >::iterator it =
     secondary_events_buffer_[ t ].begin() + old_size;
   e >> it;
 }

@@ -52,31 +52,46 @@ ConnectionManager::register_conn_builder( const std::string& name )
 }
 
 inline index
-ConnectionManager::get_target_gid( const thread tid, const synindex syn_index, const index lcid ) const
+ConnectionManager::get_target_gid( const thread tid,
+  const synindex syn_index,
+  const index lcid ) const
 {
   return connections_5g_[ tid ]->get_target_gid( tid, syn_index, lcid );
 }
 
 inline void
-ConnectionManager::send_5g( const thread tid, const synindex syn_index, const index lcid, Event& e )
+ConnectionManager::send_5g( const thread tid,
+  const synindex syn_index,
+  const index lcid,
+  Event& e )
 {
   index lcid_offset = 0;
-  while ( connections_5g_[ tid ]->send( tid, syn_index, lcid + lcid_offset, e, kernel().model_manager.get_synapse_prototypes( tid ) ) )
+  while ( connections_5g_[ tid ]->send( tid,
+    syn_index,
+    lcid + lcid_offset,
+    e,
+    kernel().model_manager.get_synapse_prototypes( tid ) ) )
   {
     ++lcid_offset;
   }
 }
 
 inline void
-ConnectionManager::send_to_devices( const thread tid, const index source_gid, Event& e )
+ConnectionManager::send_to_devices( const thread tid,
+  const index source_gid,
+  Event& e )
 {
-  target_table_devices_.send_to_device( tid, source_gid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+  target_table_devices_.send_to_device(
+    tid, source_gid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
 }
 
 inline void
-ConnectionManager::send_from_device( const thread tid, const index ldid, Event& e)
+ConnectionManager::send_from_device( const thread tid,
+  const index ldid,
+  Event& e )
 {
-  target_table_devices_.send_from_device( tid, ldid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
+  target_table_devices_.send_from_device(
+    tid, ldid, e, kernel().model_manager.get_synapse_prototypes( tid ) );
 }
 
 inline void
@@ -85,14 +100,18 @@ ConnectionManager::restructure_connection_tables( const thread tid )
   assert( not source_table_.is_cleared() );
   target_table_.clear( tid );
   source_table_.reset_processed_flags( tid );
-  //TODO@5g: keep in order to only sort newly create connections?
+  // TODO@5g: keep in order to only sort newly create connections?
   source_table_.reset_last_sorted_source( tid );
 }
 
 inline void
-ConnectionManager::set_has_source_subsequent_targets( const thread tid, const synindex syn_index, const index lcid, const bool subsequent_targets )
+ConnectionManager::set_has_source_subsequent_targets( const thread tid,
+  const synindex syn_index,
+  const index lcid,
+  const bool subsequent_targets )
 {
-  connections_5g_[ tid ]->set_has_source_subsequent_targets( syn_index, lcid, subsequent_targets );
+  connections_5g_[ tid ]->set_has_source_subsequent_targets(
+    syn_index, lcid, subsequent_targets );
 }
 
 } // namespace nest

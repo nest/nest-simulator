@@ -470,8 +470,10 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
-  get_target( t )->get_history(
-    t_lastspike_ - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  get_target( t )->get_history( t_lastspike_ - dendritic_delay,
+    t_spike - dendritic_delay,
+    &start,
+    &finish );
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
   double_t minus_dt = 0;
   double_t plus_dt = 0;

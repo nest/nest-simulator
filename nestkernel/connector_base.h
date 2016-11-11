@@ -91,31 +91,36 @@ public:
     long_t synapse_label,
     ArrayDatum& conns ) const = 0;
 
-  virtual void get_all_connections(
-    index source_gid,
+  virtual void get_all_connections( index source_gid,
     index requested_target_gid,
     thread tid,
     synindex synapse_id,
     long_t synapse_label,
     ArrayDatum& conns ) const = 0;
 
-  virtual void
-  get_source_lcids( const thread tid, const synindex syn_index, const index tgid, std::vector< index >& source_lcids ) const = 0;
+  virtual void get_source_lcids( const thread tid,
+    const synindex syn_index,
+    const index tgid,
+    std::vector< index >& source_lcids ) const = 0;
 
   // virtual void get_target_gids( std::vector< index >& target_gids,
   //   thread tid,
   //   synindex synapse_id ) const = 0;
 
-  virtual void
-  get_target_gids( const thread tid, const synindex syn_index, const index start_lcid, std::vector< index >& target_gids ) const = 0;
+  virtual void get_target_gids( const thread tid,
+    const synindex syn_index,
+    const index start_lcid,
+    std::vector< index >& target_gids ) const = 0;
 
-  virtual index
-  get_target_gid( const thread tid, const synindex syn_index, const unsigned int lcid ) const = 0;
+  virtual index get_target_gid( const thread tid,
+    const synindex syn_index,
+    const unsigned int lcid ) const = 0;
 
-  virtual void send_to_all( Event& e, thread tid, const std::vector< ConnectorModel* >& cm ) = 0;
+  virtual void send_to_all( Event& e,
+    thread tid,
+    const std::vector< ConnectorModel* >& cm ) = 0;
 
-  virtual bool
-  send( const thread tid,
+  virtual bool send( const thread tid,
     const synindex syn_index,
     const unsigned int lcid,
     Event& e,
@@ -135,47 +140,113 @@ public:
   virtual synindex get_syn_id() const = 0;
 
   virtual void
-  sort_connections( std::vector< Source >& ){ assert( false ); };
+  sort_connections( std::vector< Source >& )
+  {
+    assert( false );
+  };
   virtual void
-  sort_connections( std::vector< std::vector< Source >* >& ){ assert( false ); };
+  sort_connections( std::vector< std::vector< Source >* >& )
+  {
+    assert( false );
+  };
 
-  virtual void reserve( const size_t ){ assert( false ); };
+  virtual void
+  reserve( const size_t )
+  {
+    assert( false );
+  };
 
   virtual void
-  set_has_source_subsequent_targets( const synindex syn_index, const index lcid, const bool subsequent_targets ){ assert( false ); };
+  set_has_source_subsequent_targets( const synindex syn_index,
+    const index lcid,
+    const bool subsequent_targets )
+  {
+    assert( false );
+  };
   virtual void
-  set_has_source_subsequent_targets( const index lcid, const bool subsequent_targets ){ assert( false ); };
+  set_has_source_subsequent_targets( const index lcid,
+    const bool subsequent_targets )
+  {
+    assert( false );
+  };
 
   virtual bool
-  has_source_subsequent_targets( const synindex syn_index, const index lcid ) const { assert( false ); };
+  has_source_subsequent_targets( const synindex syn_index,
+    const index lcid ) const
+  {
+    assert( false );
+  };
   virtual bool
-  has_source_subsequent_targets( const index lcid ) const { assert( false ); };
+  has_source_subsequent_targets( const index lcid ) const
+  {
+    assert( false );
+  };
 
   virtual index
-  find_first_target( const thread tid, const synindex syn_index, const index start_lcid, const index tgid ) const { assert( false ); };
+  find_first_target( const thread tid,
+    const synindex syn_index,
+    const index start_lcid,
+    const index tgid ) const
+  {
+    assert( false );
+  };
   virtual index
-  find_first_target( const thread tid, const index start_lcid, const index tgid ) const { assert( false ); };
+  find_first_target( const thread tid,
+    const index start_lcid,
+    const index tgid ) const
+  {
+    assert( false );
+  };
 
   virtual index
-  find_matching_target( const thread tid, const index tgid, const std::vector< index >& matching_lcids ) const { assert( false ); }
+  find_matching_target( const thread tid,
+    const index tgid,
+    const std::vector< index >& matching_lcids ) const
+  {
+    assert( false );
+  }
   virtual index
-  find_matching_target( const thread tid, const index tgid, const synindex syn_index, const std::vector< index >& matching_lcids ) const { assert( false ); }
+  find_matching_target( const thread tid,
+    const index tgid,
+    const synindex syn_index,
+    const std::vector< index >& matching_lcids ) const
+  {
+    assert( false );
+  }
 
   virtual void
-  disable_connection( const synindex syn_index, const index lcid ) { assert( false ); };
+  disable_connection( const synindex syn_index, const index lcid )
+  {
+    assert( false );
+  };
   virtual void
-  disable_connection( const index lcid ) { assert( false ); };
+  disable_connection( const index lcid )
+  {
+    assert( false );
+  };
 
   virtual void
-  remove_disabled_connections( const synindex syn_index, const index first_disabled_index ) { assert( false ); };
+  remove_disabled_connections( const synindex syn_index,
+    const index first_disabled_index )
+  {
+    assert( false );
+  };
   virtual void
-  remove_disabled_connections( const index first_disabled_index ) { assert( false ); };
+  remove_disabled_connections( const index first_disabled_index )
+  {
+    assert( false );
+  };
 
   virtual void
-  print_connections( const thread tid, const synindex syn_index ) const { assert( false ); };
+  print_connections( const thread tid, const synindex syn_index ) const
+  {
+    assert( false );
+  };
   virtual void
-  print_connections( const thread tid ) const { assert( false ); };
-
+  print_connections( const thread tid ) const
+  {
+    assert( false );
+  };
 };
 
 // homogeneous connector
@@ -189,7 +260,7 @@ private:
 
 public:
   explicit Connector( synindex syn_id )
-    : syn_id_ ( syn_id )
+    : syn_id_( syn_id )
   {
   }
 
@@ -294,19 +365,14 @@ public:
   {
     if ( syn_id_ == synapse_id && not C_[ lcid ].is_disabled() )
     {
-      if ( synapse_label == UNLABELED_CONNECTION ||
-           C_[ lcid ].get_label() == synapse_label )
+      if ( synapse_label == UNLABELED_CONNECTION
+        || C_[ lcid ].get_label() == synapse_label )
       {
-        conns.push_back(
-          ConnectionDatum(
-            ConnectionID(
-              source_gid,
-              C_[ lcid ].get_target( tid )->get_gid(),
-              tid,
-              synapse_id,
-              lcid )
-            )
-          );
+        conns.push_back( ConnectionDatum( ConnectionID( source_gid,
+          C_[ lcid ].get_target( tid )->get_gid(),
+          tid,
+          synapse_id,
+          lcid ) ) );
       }
     }
   }
@@ -322,15 +388,15 @@ public:
   {
     if ( syn_id_ == synapse_id && not C_[ lcid ].is_disabled() )
     {
-        if ( synapse_label == UNLABELED_CONNECTION ||
-             C_[ lcid ].get_label() == synapse_label )
+      if ( synapse_label == UNLABELED_CONNECTION
+        || C_[ lcid ].get_label() == synapse_label )
+      {
+        if ( C_[ lcid ].get_target( tid )->get_gid() == target_gid )
         {
-          if ( C_[ lcid ].get_target( tid )->get_gid() == target_gid )
-          {
-            conns.push_back(
-              ConnectionDatum( ConnectionID( source_gid, target_gid, tid, synapse_id, lcid ) ) );
-          }
+          conns.push_back( ConnectionDatum(
+            ConnectionID( source_gid, target_gid, tid, synapse_id, lcid ) ) );
         }
+      }
     }
   }
 
@@ -349,19 +415,11 @@ public:
         const index target_gid = C_[ i ].get_target( tid )->get_gid();
         if ( target_gid == requested_target_gid || requested_target_gid == 0 )
         {
-          if ( synapse_label == UNLABELED_CONNECTION ||
-               C_[ i ].get_label() == synapse_label )
+          if ( synapse_label == UNLABELED_CONNECTION
+            || C_[ i ].get_label() == synapse_label )
           {
-            conns.push_back(
-              ConnectionDatum(
-                ConnectionID(
-                  source_gid,
-                  target_gid,
-                  tid,
-                  synapse_id,
-                  i )
-                )
-              );
+            conns.push_back( ConnectionDatum(
+              ConnectionID( source_gid, target_gid, tid, synapse_id, i ) ) );
           }
         }
       }
@@ -369,9 +427,12 @@ public:
   }
 
   void
-  get_source_lcids( const thread tid, const synindex, const index tgid, std::vector< index >& source_lcids ) const
+  get_source_lcids( const thread tid,
+    const synindex,
+    const index tgid,
+    std::vector< index >& source_lcids ) const
   {
-    std::cout<<"hom conn"<<std::endl;
+    std::cout << "hom conn" << std::endl;
     for ( index lcid = 0; lcid < C_.size(); ++lcid )
     {
       const index current_tgid = C_[ lcid ].get_target( tid )->get_gid();
@@ -398,9 +459,12 @@ public:
   // }
 
   void
-  get_target_gids( const thread tid, const synindex, const index start_lcid, std::vector< index >& target_gids ) const
+  get_target_gids( const thread tid,
+    const synindex,
+    const index start_lcid,
+    std::vector< index >& target_gids ) const
   {
-    std::cout<<"hom conn"<<std::endl;
+    std::cout << "hom conn" << std::endl;
     index lcid = start_lcid;
     while ( true )
     {
@@ -416,7 +480,9 @@ public:
   }
 
   index
-  get_target_gid( const thread tid, const synindex, const unsigned int lcid ) const
+  get_target_gid( const thread tid,
+    const synindex,
+    const unsigned int lcid ) const
   {
     return C_[ lcid ].get_target( tid )->get_gid();
   }
@@ -427,9 +493,11 @@ public:
     for ( size_t i = 0; i < C_.size(); ++i )
     {
       e.set_port( i );
-      C_[ i ].send( e, tid, static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties() );
+      C_[ i ].send( e,
+        tid,
+        static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
+          ->get_common_properties() );
     }
-
   }
 
   bool
@@ -442,7 +510,10 @@ public:
     e.set_port( lcid ); // TODO@5g: does this make sense?
     if ( not C_[ lcid ].is_disabled() )
     {
-      C_[ lcid ].send( e, tid, static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties() );
+      C_[ lcid ].send( e,
+        tid,
+        static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
+          ->get_common_properties() );
     }
     return C_[ lcid ].has_source_subsequent_targets();
   }
@@ -466,9 +537,12 @@ public:
   }
 
   void
-  send_to_all_secondary( SecondaryEvent&, thread, const std::vector< ConnectorModel* >& )
+  send_to_all_secondary( SecondaryEvent&,
+    thread,
+    const std::vector< ConnectorModel* >& )
   {
-    assert( false ); // should not be called, only needed for heterogeneous connectors
+    assert(
+      false ); // should not be called, only needed for heterogeneous connectors
   };
 
   synindex
@@ -490,7 +564,8 @@ public:
   }
 
   void
-  set_has_source_subsequent_targets( const index lcid, const bool subsequent_targets )
+  set_has_source_subsequent_targets( const index lcid,
+    const bool subsequent_targets )
   {
     C_[ lcid ].set_has_source_subsequent_targets( subsequent_targets );
   }
@@ -502,14 +577,16 @@ public:
   }
 
   index
-  find_first_target( const thread tid, const index start_lcid, const index tgid ) const
+  find_first_target( const thread tid,
+    const index start_lcid,
+    const index tgid ) const
   {
     index lcid = start_lcid;
     while ( true )
     {
       if ( C_[ lcid ].get_target( tid )->get_gid() == tgid )
       {
-        std::cout<<" - found target "<<tgid<<std::endl;
+        std::cout << " - found target " << tgid << std::endl;
         return lcid;
       }
 
@@ -523,13 +600,15 @@ public:
   }
 
   index
-  find_matching_target( const thread tid, const index tgid, const std::vector< index >& matching_lcids ) const
+  find_matching_target( const thread tid,
+    const index tgid,
+    const std::vector< index >& matching_lcids ) const
   {
     for ( size_t i = 0; i < matching_lcids.size(); ++i )
     {
       if ( C_[ matching_lcids[ i ] ].get_target( tid )->get_gid() == tgid )
       {
-        std::cout<<" - found target "<<tgid<<std::endl;
+        std::cout << " - found target " << tgid << std::endl;
         return matching_lcids[ i ];
       }
     }
@@ -553,21 +632,22 @@ public:
   void
   print_connections( const thread tid ) const
   {
-    std::cout<<"---------------------------------------\n";
+    std::cout << "---------------------------------------\n";
     for ( typename std::vector< ConnectionT >::const_iterator cit = C_.begin();
-          cit != C_.end(); ++cit )
+          cit != C_.end();
+          ++cit )
     {
-      std::cout<<"("<<cit->get_target( tid )->get_gid()<<", "<<cit->is_disabled()<<", "<<cit->has_source_subsequent_targets()<<")";
+      std::cout << "(" << cit->get_target( tid )->get_gid() << ", "
+                << cit->is_disabled() << ", "
+                << cit->has_source_subsequent_targets() << ")";
       if ( not cit->has_source_subsequent_targets() )
       {
-        std::cout<<std::endl;
+        std::cout << std::endl;
       }
     }
-    std::cout<<std::endl;
-    std::cout<<"---------------------------------------\n";
+    std::cout << std::endl;
+    std::cout << "---------------------------------------\n";
   }
-
-
 };
 
 // heterogeneous connector containing different types of synapses
@@ -652,8 +732,7 @@ public:
   }
 
   void
-  get_connection(
-    index source_gid,
+  get_connection( index source_gid,
     thread tid,
     synindex synapse_id,
     index lcid,
@@ -662,13 +741,13 @@ public:
   {
     for ( size_t i = 0; i < size(); ++i )
     {
-      at( i )->get_connection( source_gid, tid, synapse_id, lcid, synapse_label, conns );
+      at( i )->get_connection(
+        source_gid, tid, synapse_id, lcid, synapse_label, conns );
     }
   }
 
   void
-  get_connection(
-    index source_gid,
+  get_connection( index source_gid,
     index target_gid,
     thread tid,
     synindex synapse_id,
@@ -678,13 +757,13 @@ public:
   {
     for ( size_t i = 0; i < size(); ++i )
     {
-      at( i )->get_connection( source_gid, target_gid, tid, synapse_id, lcid, synapse_label, conns );
+      at( i )->get_connection(
+        source_gid, target_gid, tid, synapse_id, lcid, synapse_label, conns );
     }
   }
 
   void
-  get_all_connections(
-    index source_gid,
+  get_all_connections( index source_gid,
     index requested_target_gid,
     thread tid,
     synindex synapse_id,
@@ -693,19 +772,28 @@ public:
   {
     for ( size_t i = 0; i < size(); ++i )
     {
-      at( i )->get_all_connections( source_gid, requested_target_gid, tid, synapse_id, synapse_label, conns );
+      at( i )->get_all_connections( source_gid,
+        requested_target_gid,
+        tid,
+        synapse_id,
+        synapse_label,
+        conns );
     }
   }
 
   void
-  get_source_lcids( const thread tid, const synindex syn_index, const index tgid, std::vector< index >& source_lcids ) const
+  get_source_lcids( const thread tid,
+    const synindex syn_index,
+    const index tgid,
+    std::vector< index >& source_lcids ) const
   {
-    std::cout<<"het conn"<<std::endl;
+    std::cout << "het conn" << std::endl;
     at( syn_index )->get_source_lcids( tid, syn_index, tgid, source_lcids );
   }
 
   // void
-  // get_target_gids( std::vector< size_t >& target_gids, thread tid, synindex synapse_id ) const
+  // get_target_gids( std::vector< size_t >& target_gids, thread tid, synindex
+  // synapse_id ) const
   // {
   //   for ( size_t i = 0; i < size(); ++i )
   //   {
@@ -717,20 +805,29 @@ public:
   // }
 
   void
-  get_target_gids( const thread tid, const synindex syn_index, const index start_lcid, std::vector< index >& target_gids ) const
+  get_target_gids( const thread tid,
+    const synindex syn_index,
+    const index start_lcid,
+    std::vector< index >& target_gids ) const
   {
-    std::cout<<"het conn"<<std::endl;
+    std::cout << "het conn" << std::endl;
     at( syn_index )->get_target_gids( tid, syn_index, start_lcid, target_gids );
   }
 
   index
-  get_target_gid( const thread tid, const synindex syn_index, const unsigned int lcid ) const
+  get_target_gid( const thread tid,
+    const synindex syn_index,
+    const unsigned int lcid ) const
   {
     return at( syn_index )->get_target_gid( tid, syn_index, lcid );
   }
 
   bool
-  send( const thread tid, const synindex syn_index, const unsigned int lcid, Event& e, const std::vector< ConnectorModel* >& cm )
+  send( const thread tid,
+    const synindex syn_index,
+    const unsigned int lcid,
+    Event& e,
+    const std::vector< ConnectorModel* >& cm )
   {
     return at( syn_index )->send( tid, syn_index, lcid, e, cm );
   }
@@ -741,9 +838,10 @@ public:
     // only called for events from or to devices. can not contain
     // secondary-event connections, so we can delegate send to
     // homogeneous connectors for all connections
-    for ( std::vector< ConnectorBase* >::iterator it = begin(); it != end(); ++it )
+    for ( std::vector< ConnectorBase* >::iterator it = begin(); it != end();
+          ++it )
     {
-      (*it)->send_to_all( e, tid, cm );
+      ( *it )->send_to_all( e, tid, cm );
     }
   }
 
@@ -760,10 +858,13 @@ public:
 
   // TODO@5g: can probably be removed
   void
-  send_to_all_secondary( SecondaryEvent& e, thread t, const std::vector< ConnectorModel* >& cm )
+  send_to_all_secondary( SecondaryEvent& e,
+    thread t,
+    const std::vector< ConnectorModel* >& cm )
   {
     assert( false );
-    // // for all secondary connections delegate send to the matching homogeneous connector only
+    // // for all secondary connections delegate send to the matching
+    // homogeneous connector only
     // for ( size_t i = primary_end_; i < size(); ++i )
     //   if ( e.supports_syn_id( at( i )->get_syn_id() ) )
     //   {
@@ -787,7 +888,8 @@ public:
     // if ( is_primary )
     // {
     //   insert( begin() + primary_end_,
-    //     conn ); // if empty, insert (begin(), conn) inserts into the first position
+    //     conn ); // if empty, insert (begin(), conn) inserts into the first
+    //     position
     //   ++primary_end_;
     // }
     // else
@@ -801,18 +903,19 @@ public:
   // an invalid index
   synindex
   find_synapse_index( const synindex syn_id ) const
+  {
+    for ( size_t i = 0; i < size(); ++i )
     {
-      for ( size_t i = 0; i < size(); ++i )
+      if ( at( i )->get_syn_id() == syn_id )
       {
-        if( at( i )->get_syn_id() == syn_id )
-        {
-          return i;
-        }
+        return i;
       }
-      return invalid_synindex;
     }
+    return invalid_synindex;
+  }
 
-  void sort_connections( std::vector< std::vector< Source >* >& sources )
+  void
+  sort_connections( std::vector< std::vector< Source >* >& sources )
   {
     for ( unsigned int i = 0; i < size(); ++i )
     {
@@ -820,38 +923,55 @@ public:
     }
   }
 
-  void set_has_source_subsequent_targets( const synindex syn_index, const index lcid, const bool subsequent_targets )
+  void
+  set_has_source_subsequent_targets( const synindex syn_index,
+    const index lcid,
+    const bool subsequent_targets )
   {
-    at( syn_index )->set_has_source_subsequent_targets( lcid, subsequent_targets );
+    at( syn_index )
+      ->set_has_source_subsequent_targets( lcid, subsequent_targets );
   }
 
-  bool has_source_subsequent_targets( const synindex syn_index, const index lcid ) const
+  bool
+  has_source_subsequent_targets( const synindex syn_index,
+    const index lcid ) const
   {
     return at( syn_index )->has_source_subsequent_targets( lcid );
   }
 
-  index find_first_target( const thread tid, const synindex syn_index, const index start_lcid, const index tgid ) const
+  index
+  find_first_target( const thread tid,
+    const synindex syn_index,
+    const index start_lcid,
+    const index tgid ) const
   {
     return at( syn_index )->find_first_target( tid, start_lcid, tgid );
   }
 
   index
-  find_matching_target( const thread tid, const index tgid, const synindex syn_index, const std::vector< index >& matching_lcids ) const
+  find_matching_target( const thread tid,
+    const index tgid,
+    const synindex syn_index,
+    const std::vector< index >& matching_lcids ) const
   {
     return at( syn_index )->find_matching_target( tid, tgid, matching_lcids );
   }
 
-  void disable_connection( const synindex syn_index, const index lcid )
+  void
+  disable_connection( const synindex syn_index, const index lcid )
   {
     at( syn_index )->disable_connection( lcid );
   }
 
-  void remove_disabled_connections( const synindex syn_index, const index first_disabled_index )
+  void
+  remove_disabled_connections( const synindex syn_index,
+    const index first_disabled_index )
   {
     at( syn_index )->remove_disabled_connections( first_disabled_index );
   }
 
-  void print_connections( const thread tid, const synindex syn_index ) const
+  void
+  print_connections( const thread tid, const synindex syn_index ) const
   {
     if ( syn_index >= size() )
     {

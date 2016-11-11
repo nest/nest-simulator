@@ -499,7 +499,8 @@ NodeManager::init_state( index GID )
 index
 NodeManager::get_max_num_local_nodes() const
 {
-  return ceil( float( size() ) / kernel().vp_manager.get_num_virtual_processes() );
+  return ceil(
+    float( size() ) / kernel().vp_manager.get_num_virtual_processes() );
 }
 
 index
@@ -596,9 +597,8 @@ NodeManager::ensure_valid_thread_local_ids()
         for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
         {
           Node* node = local_nodes_.get_node_by_index( idx );
-          if ( !node->is_subnet()
-            && ( node->get_thread() == tid
-                 || node->num_thread_siblings_() > 0 ) )
+          if ( !node->is_subnet() && ( node->get_thread() == tid
+                                       || node->num_thread_siblings_() > 0 ) )
           {
             num_thread_local_nodes++;
             if ( node->node_uses_wfr() )

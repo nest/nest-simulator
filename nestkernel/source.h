@@ -40,7 +40,8 @@ namespace nest
 struct Source
 {
   unsigned long gid : 62; //!< gid of source
-  bool processed : 1; //!< whether this target has already been moved to the MPI buffer
+  bool processed : 1; //!< whether this target has already been moved to the MPI
+                      //buffer
   bool primary : 1;
   Source();
   explicit Source( const index gid, const bool is_primary );
@@ -49,16 +50,14 @@ struct Source
   static const size_t disabled_marker = 4611686018427387904 - 1; // 2 ** 62 - 1
 };
 
-inline
-Source::Source()
+inline Source::Source()
   : gid( 0 )
   , processed( false )
   , primary( true )
 {
 }
 
-inline
-Source::Source( const index gid, const bool is_primary )
+inline Source::Source( const index gid, const bool is_primary )
   : gid( gid )
   , processed( false )
   , primary( is_primary )
@@ -78,20 +77,17 @@ Source::is_disabled() const
   return gid == disabled_marker;
 }
 
-inline bool
-operator<( const Source& lhs, const Source& rhs )
+inline bool operator<( const Source& lhs, const Source& rhs )
 {
   return ( lhs.gid < rhs.gid );
 }
 
-inline bool
-operator>( const Source& lhs, const Source& rhs )
+inline bool operator>( const Source& lhs, const Source& rhs )
 {
   return operator<( rhs, lhs );
 }
 
-inline bool
-operator==( const Source& lhs, const Source& rhs )
+inline bool operator==( const Source& lhs, const Source& rhs )
 {
   return ( lhs.gid == rhs.gid );
 }

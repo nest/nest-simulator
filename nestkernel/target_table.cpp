@@ -27,8 +27,8 @@
 
 nest::TargetTable::TargetTable()
 {
-  assert( sizeof(Target) == 8 );
-  assert( sizeof(TargetData) == 16 );
+  assert( sizeof( Target ) == 8 );
+  assert( sizeof( TargetData ) == 16 );
 }
 
 nest::TargetTable::~TargetTable()
@@ -40,7 +40,7 @@ nest::TargetTable::initialize()
 {
   thread num_threads = kernel().vp_manager.get_num_threads();
   targets_.resize( num_threads );
-  for( thread tid = 0; tid < num_threads; ++tid)
+  for ( thread tid = 0; tid < num_threads; ++tid )
   {
     targets_[ tid ] = new std::vector< std::vector< Target > >(
       0, std::vector< Target >( 0, Target() ) );
@@ -50,8 +50,10 @@ nest::TargetTable::initialize()
 void
 nest::TargetTable::finalize()
 {
-  for( std::vector< std::vector< std::vector< Target > >* >::iterator it =
-         targets_.begin(); it != targets_.end(); ++it )
+  for ( std::vector< std::vector< std::vector< Target > >* >::iterator it =
+          targets_.begin();
+        it != targets_.end();
+        ++it )
   {
     delete *it;
   }
@@ -68,16 +70,20 @@ nest::TargetTable::prepare( const thread tid )
 void
 nest::TargetTable::print_targets( const thread tid ) const
 {
-  std::cout<<"-------------TARGETS-------------------\n";
-  for ( std::vector< std::vector< Target > >::const_iterator cit = (*targets_[ tid ]).begin(); cit != (*targets_[ tid ]).end(); ++cit )
+  std::cout << "-------------TARGETS-------------------\n";
+  for ( std::vector< std::vector< Target > >::const_iterator cit =
+          ( *targets_[ tid ] ).begin();
+        cit != ( *targets_[ tid ] ).end();
+        ++cit )
   {
-    for ( std::vector< Target >::const_iterator ciit = (*cit).begin(); ciit != (*cit).end(); ++ciit)
+    for ( std::vector< Target >::const_iterator ciit = ( *cit ).begin();
+          ciit != ( *cit ).end();
+          ++ciit )
     {
-      std::cout<<(*ciit).get_lcid()<<", ";
+      std::cout << ( *ciit ).get_lcid() << ", ";
     }
-    std::cout<<std::endl;
+    std::cout << std::endl;
   }
-  std::cout<<std::endl;
-  std::cout<<"---------------------------------------\n";
-
+  std::cout << std::endl;
+  std::cout << "---------------------------------------\n";
 }

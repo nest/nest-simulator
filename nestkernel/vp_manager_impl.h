@@ -36,7 +36,8 @@ namespace nest
 inline thread
 VPManager::get_vp() const
 {
-  return kernel().mpi_manager.get_rank() + get_thread_id() * kernel().mpi_manager.get_num_sim_processes();
+  return kernel().mpi_manager.get_rank()
+    + get_thread_id() * kernel().mpi_manager.get_num_sim_processes();
 }
 
 inline thread
@@ -50,10 +51,13 @@ inline thread
 VPManager::vp_to_thread( thread vp ) const
 {
   if ( vp >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes()
-                                    * get_num_threads() ) )
+               * get_num_threads() ) )
   {
-    return ( vp + kernel().mpi_manager.get_num_sim_processes() * ( 1 - get_num_threads() )
-             - kernel().mpi_manager.get_rank() ) / kernel().mpi_manager.get_num_rec_processes();
+    return ( vp
+             + kernel().mpi_manager.get_num_sim_processes()
+               * ( 1 - get_num_threads() )
+             - kernel().mpi_manager.get_rank() )
+      / kernel().mpi_manager.get_num_rec_processes();
   }
   else
   {
@@ -106,7 +110,9 @@ VPManager::thread_to_vp( thread t ) const
 inline bool
 VPManager::is_vp_local( const index gid ) const
 {
-  return ( static_cast< long >( gid ) % ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() ) == get_vp() );
+  return ( static_cast< long >( gid )
+      % ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() )
+    == get_vp() );
 }
 
 inline index
@@ -138,7 +144,7 @@ VPManager::get_end_rank_per_thread( const thread tid,
   const thread rank_start,
   const thread num_assigned_ranks_per_thread ) const
 {
-  thread rank_end =  rank_start + num_assigned_ranks_per_thread;
+  thread rank_end = rank_start + num_assigned_ranks_per_thread;
 
   // if we have more threads than ranks, or if ranks can not be
   // distributed evenly on threads, we need to make sure, that all
@@ -163,7 +169,8 @@ VPManager::get_assigned_ranks( const thread tid )
   AssignedRanks assigned_ranks;
   assigned_ranks.begin = get_start_rank_per_thread( tid );
   assigned_ranks.max_size = get_num_assigned_ranks_per_thread();
-  assigned_ranks.end = get_end_rank_per_thread( tid, assigned_ranks.begin, assigned_ranks.max_size );
+  assigned_ranks.end = get_end_rank_per_thread(
+    tid, assigned_ranks.begin, assigned_ranks.max_size );
   assigned_ranks.size = assigned_ranks.end - assigned_ranks.begin;
   return assigned_ranks;
 }

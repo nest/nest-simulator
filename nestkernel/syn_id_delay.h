@@ -40,7 +40,7 @@ struct SynIdDelay
   SynIdDelay( double_t d )
     : syn_id( invalid_synindex )
     , subsequent_targets( false )
-    , disabled ( false )
+    , disabled( false )
   {
     set_delay_ms( d );
   }
@@ -94,7 +94,6 @@ struct SynIdDelay
   {
     return disabled;
   }
-
 };
 }
 

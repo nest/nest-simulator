@@ -31,7 +31,8 @@
 inline nest::thread
 nest::NodeManager::get_process_id_of_gid( const index gid ) const
 {
-  return kernel().mpi_manager.get_process_id( kernel().vp_manager.suggest_vp( gid ) );
+  return kernel().mpi_manager.get_process_id(
+    kernel().vp_manager.suggest_vp( gid ) );
 }
 
 #endif

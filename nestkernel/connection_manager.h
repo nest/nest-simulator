@@ -162,16 +162,23 @@ public:
   void
   disconnect( Node& target, index sgid, thread target_thread, index syn_id );
 
-  index
-  find_connection_sorted( const thread tid, const synindex syn_index, const index sgid, const index tgid );
+  index find_connection_sorted( const thread tid,
+    const synindex syn_index,
+    const index sgid,
+    const index tgid );
 
-  index
-  find_connection_unsorted( const thread tid, const synindex syn_index, const index sgid, const index tgid );
+  index find_connection_unsorted( const thread tid,
+    const synindex syn_index,
+    const index sgid,
+    const index tgid );
+
+  void disconnect_5g( const thread tid,
+    const synindex syn_id,
+    const index sgid,
+    const index tgid );
 
   void
-  disconnect_5g( const thread tid, const synindex syn_id, const index sgid, const index tgid );
-
-  void print_source_table( const thread tid ) const
+  print_source_table( const thread tid ) const
   {
     source_table_.print_sources( tid, 0 );
   }
@@ -195,8 +202,7 @@ public:
   void divergent_connect( index s, DictionaryDatum d, index syn );
 
   // aka conndatum GetStatus
-  DictionaryDatum
-  get_synapse_status( const index source_gid,
+  DictionaryDatum get_synapse_status( const index source_gid,
     const index target_gid,
     const thread tid,
     const synindex syn_id,
@@ -249,7 +255,8 @@ public:
     std::vector< std::vector< index > >& targets,
     const index synapse_model );
 
-  const std::vector< Target >& get_targets( const thread tid, const index lid ) const;
+  const std::vector< Target >& get_targets( const thread tid,
+    const index lid ) const;
 
   index get_target_gid( const thread tid,
     const synindex syn_index,
@@ -347,7 +354,7 @@ public:
 
   void restore_source_table_entry_point( const thread tid );
 
-  void add_target( const thread tid, const TargetData& target_data);
+  void add_target( const thread tid, const TargetData& target_data );
 
   /**
    * Sorts connections in the presynaptic infrastructure by increasing
@@ -381,16 +388,25 @@ public:
    * directly from the respective Connect functions when the number of
    * synapses could be estimated.
    */
-  void reserve_connections( const thread tid, const synindex syn_id, const size_t count );
+  void reserve_connections( const thread tid,
+    const synindex syn_id,
+    const size_t count );
 
   // void remove_disabled_connections( const thread tid );
 
-  void set_has_source_subsequent_targets( const thread tid, const synindex syn_index, const index lcid, const bool subsequent_targets );
+  void set_has_source_subsequent_targets( const thread tid,
+    const synindex syn_index,
+    const index lcid,
+    const bool subsequent_targets );
 
   //! See source_table.h
   void no_targets_to_process( const thread tid );
+
 private:
-  void get_source_gids_( const thread tid, const synindex syn_index, const index tgid, std::vector< index >& sources );
+  void get_source_gids_( const thread tid,
+    const synindex syn_index,
+    const index tgid,
+    std::vector< index >& sources );
 
   /**
    * Update delay extrema to current values.
@@ -566,7 +582,8 @@ private:
 
   delay max_delay_; //!< Value of the largest delay in the network in steps.
 
-  bool keep_source_table_;  //!< Whether to keep source table after connection setup is complete
+  bool keep_source_table_; //!< Whether to keep source table after connection
+                           //setup is complete
 
   bool have_connections_changed_; //!< true if new connections have been created
                                   //!< since startup or last call to simulate
@@ -681,15 +698,20 @@ ConnectionManager::set_have_connections_changed( const bool changed )
 }
 
 inline void
-ConnectionManager::add_target( const thread tid, const TargetData& target_data)
+ConnectionManager::add_target( const thread tid, const TargetData& target_data )
 {
   target_table_.add_target( tid, target_data );
 }
 
 inline bool
-ConnectionManager::get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, thread& target_rank, TargetData& next_target_data )
+ConnectionManager::get_next_target_data( const thread tid,
+  const thread rank_start,
+  const thread rank_end,
+  thread& target_rank,
+  TargetData& next_target_data )
 {
-  return source_table_.get_next_target_data( tid, rank_start, rank_end, target_rank, next_target_data );
+  return source_table_.get_next_target_data(
+    tid, rank_start, rank_end, target_rank, next_target_data );
 }
 
 

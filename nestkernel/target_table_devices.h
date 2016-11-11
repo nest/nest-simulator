@@ -55,9 +55,10 @@ private:
   std::vector< std::vector< HetConnector* >* > target_to_devices_;
   //! 3d structure storing connections from devices to neurons
   std::vector< std::vector< HetConnector* >* > target_from_devices_;
-  //! 3d structure storing gids of sending devices (necessary for get_connections)
+  //! 3d structure storing gids of sending devices (necessary for
+  //get_connections)
   std::vector< std::vector< index >* > sending_devices_gids_;
-  
+
 public:
   TargetTableDevices();
   ~TargetTableDevices();
@@ -66,29 +67,96 @@ public:
   //! delete data structure
   void finalize();
   //! add a connection from the neuron source to the device target
-  void add_connection_to_device( Node& source, Node& target, index s_gid, thread tid, index syn, double_t d, double_t w );
-  void add_connection_to_device( Node& source, Node& target, index s_gid, thread tid, index syn, DictionaryDatum& p, double_t d, double_t w );
+  void add_connection_to_device( Node& source,
+    Node& target,
+    index s_gid,
+    thread tid,
+    index syn,
+    double_t d,
+    double_t w );
+  void add_connection_to_device( Node& source,
+    Node& target,
+    index s_gid,
+    thread tid,
+    index syn,
+    DictionaryDatum& p,
+    double_t d,
+    double_t w );
   //! add a connection from the device source to the neuron target
-  void add_connection_from_device( Node& source, Node& target, index s_gid, thread tid, index syn, double_t d, double_t w );
-  void add_connection_from_device( Node& source, Node& target, index s_gid, thread tid, index syn, DictionaryDatum& p, double_t d, double_t w );
+  void add_connection_from_device( Node& source,
+    Node& target,
+    index s_gid,
+    thread tid,
+    index syn,
+    double_t d,
+    double_t w );
+  void add_connection_from_device( Node& source,
+    Node& target,
+    index s_gid,
+    thread tid,
+    index syn,
+    DictionaryDatum& p,
+    double_t d,
+    double_t w );
   //! send a spike event to all targets of the source neuron
-  void send_to_device( thread tid, const index s_gid, Event& e, const std::vector< ConnectorModel* >& cm );
+  void send_to_device( thread tid,
+    const index s_gid,
+    Event& e,
+    const std::vector< ConnectorModel* >& cm );
   //! send a spike event to all targets of the source device
-  void send_from_device( thread tid, const index ldid, Event& e, const std::vector< ConnectorModel* >& cm );
+  void send_from_device( thread tid,
+    const index ldid,
+    Event& e,
+    const std::vector< ConnectorModel* >& cm );
   //! resize the target table according to number of local nodes
   void resize();
   //! returns the number of connections from neurons to devices
-  size_t get_num_connections_to_devices_( const thread tid, const synindex synapse_id ) const;
+  size_t get_num_connections_to_devices_( const thread tid,
+    const synindex synapse_id ) const;
   //! returns the number of connections from devices
-  size_t get_num_connections_from_devices_( const thread tid, const synindex synapse_id ) const;
+  size_t get_num_connections_from_devices_( const thread tid,
+    const synindex synapse_id ) const;
   //! gets all connections from neurons to devices
-  void get_connections_to_devices_( const index requested_source_gid, const index requested_target_gid, const thread tid, const synindex synapse_id, const long_t synapse_label, ArrayDatum& conns ) const;
-  void get_connections_from_devices_( const index requested_source_gid, const index requested_target_gid, const thread tid, const synindex synapse_id, const long_t synapse_label, ArrayDatum& conns ) const;
-  void get_connections( const index requested_source_gid, const index requested_target_gid, const thread tid, const synindex synapse_id, const long_t synapse_label, ArrayDatum& conns ) const;
-  void get_synapse_status_to_device( const thread tid, const index source_gid, const synindex syn_id, DictionaryDatum& d, const port p ) const;
-  void get_synapse_status_from_device( const thread tid, const index ldid, const synindex syn_id, DictionaryDatum& d, const port p ) const;
-  void set_synapse_status_to_device( const thread tid, const index source_gid, const synindex syn_id, ConnectorModel& cm, const DictionaryDatum& d, const port p );
-  void set_synapse_status_from_device( const thread tid, const index ldid, const synindex syn_id, ConnectorModel& cm, const DictionaryDatum& d, const port p );
+  void get_connections_to_devices_( const index requested_source_gid,
+    const index requested_target_gid,
+    const thread tid,
+    const synindex synapse_id,
+    const long_t synapse_label,
+    ArrayDatum& conns ) const;
+  void get_connections_from_devices_( const index requested_source_gid,
+    const index requested_target_gid,
+    const thread tid,
+    const synindex synapse_id,
+    const long_t synapse_label,
+    ArrayDatum& conns ) const;
+  void get_connections( const index requested_source_gid,
+    const index requested_target_gid,
+    const thread tid,
+    const synindex synapse_id,
+    const long_t synapse_label,
+    ArrayDatum& conns ) const;
+  void get_synapse_status_to_device( const thread tid,
+    const index source_gid,
+    const synindex syn_id,
+    DictionaryDatum& d,
+    const port p ) const;
+  void get_synapse_status_from_device( const thread tid,
+    const index ldid,
+    const synindex syn_id,
+    DictionaryDatum& d,
+    const port p ) const;
+  void set_synapse_status_to_device( const thread tid,
+    const index source_gid,
+    const synindex syn_id,
+    ConnectorModel& cm,
+    const DictionaryDatum& d,
+    const port p );
+  void set_synapse_status_from_device( const thread tid,
+    const index ldid,
+    const synindex syn_id,
+    ConnectorModel& cm,
+    const DictionaryDatum& d,
+    const port p );
 };
 
 } // namespace nest

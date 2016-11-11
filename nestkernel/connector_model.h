@@ -155,7 +155,7 @@ public:
 
   virtual void reserve_connections( HetConnector* hetconn,
     const synindex syn_id,
-    const size_t count) = 0;
+    const size_t count ) = 0;
 
   virtual ConnectorModel* clone( std::string ) const = 0;
 
@@ -265,7 +265,7 @@ public:
     synindex syn_id,
     double_t delay,
     double_t weight );
-  void add_connection_5g(Node& src,
+  void add_connection_5g( Node& src,
     Node& tgt,
     HetConnector* hetconn,
     synindex syn_id,
@@ -312,7 +312,7 @@ public:
 
   void reserve_connections( HetConnector* hetconn,
     const synindex syn_id,
-    const size_t count);
+    const size_t count );
 
 private:
   void used_default_delay();

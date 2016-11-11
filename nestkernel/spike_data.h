@@ -36,18 +36,25 @@ namespace nest
  */
 struct SpikeData
 {
-  index lcid : 27; //!< local connection index
+  index lcid : 27;         //!< local connection index
   unsigned int marker : 2; //!< status flag
-  unsigned int lag : 14; //!< lag in this min-delay interval
-  thread tid : 10; //!< thread index
-  synindex syn_index : 8; //!< synapse-type index
+  unsigned int lag : 14;   //!< lag in this min-delay interval
+  thread tid : 10;         //!< thread index
+  synindex syn_index : 8;  //!< synapse-type index
   const static unsigned int end_marker = 1;
   const static unsigned int complete_marker = 2;
   const static unsigned int invalid_marker = 3;
   SpikeData();
   SpikeData( const SpikeData& rhs );
-  SpikeData( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag );
-  void set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag, const double_t offset );
+  SpikeData( const thread tid,
+    const synindex syn_index,
+    const index lcid,
+    const unsigned int lag );
+  void set( const thread tid,
+    const synindex syn_index,
+    const index lcid,
+    const unsigned int lag,
+    const double_t offset );
   void reset_marker();
   void set_complete_marker();
   void set_end_marker();
@@ -58,8 +65,7 @@ struct SpikeData
   double_t get_offset() const;
 };
 
-inline
-SpikeData::SpikeData()
+inline SpikeData::SpikeData()
   : lcid( 0 )
   , marker( 0 )
   , lag( 0 )
@@ -68,8 +74,7 @@ SpikeData::SpikeData()
 {
 }
 
-inline
-SpikeData::SpikeData( const SpikeData& rhs )
+inline SpikeData::SpikeData( const SpikeData& rhs )
   : lcid( rhs.lcid )
   , marker( 0 ) // always initialize with default marker
   , lag( rhs.lag )
@@ -78,8 +83,10 @@ SpikeData::SpikeData( const SpikeData& rhs )
 {
 }
 
-inline
-SpikeData::SpikeData( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag )
+inline SpikeData::SpikeData( const thread tid,
+  const synindex syn_index,
+  const index lcid,
+  const unsigned int lag )
   : lcid( lcid )
   , marker( 0 ) // always initialize with default marker
   , lag( lag )
@@ -89,13 +96,17 @@ SpikeData::SpikeData( const thread tid, const synindex syn_index, const index lc
 }
 
 inline void
-SpikeData::set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag, const double_t )
+SpikeData::set( const thread tid,
+  const synindex syn_index,
+  const index lcid,
+  const unsigned int lag,
+  const double_t )
 {
-  (*this).lcid = lcid;
+  ( *this ).lcid = lcid;
   marker = 0; // always initialize with default marker
-  (*this).lag = lag;
-  (*this).tid = tid;
-  (*this).syn_index = syn_index;
+  ( *this ).lag = lag;
+  ( *this ).tid = tid;
+  ( *this ).syn_index = syn_index;
 }
 
 inline void
@@ -149,7 +160,11 @@ SpikeData::get_offset() const
 struct OffGridSpikeData : SpikeData
 {
   double_t offset;
-  void set( const thread tid, const synindex syn_index, const index lcid, const unsigned int lag, const double_t offset );
+  void set( const thread tid,
+    const synindex syn_index,
+    const index lcid,
+    const unsigned int lag,
+    const double_t offset );
   double_t get_offset() const;
 };
 
@@ -158,14 +173,14 @@ OffGridSpikeData::set( const thread tid,
   const synindex syn_index,
   const index lcid,
   const unsigned int lag,
-  const double_t offset)
+  const double_t offset )
 {
-  (*this).lcid = lcid;
+  ( *this ).lcid = lcid;
   marker = 0; // always initialize with default marker
-  (*this).lag = lag;
-  (*this).tid = tid;
-  (*this).syn_index = syn_index;
-  (*this).offset = offset;
+  ( *this ).lag = lag;
+  ( *this ).tid = tid;
+  ( *this ).syn_index = syn_index;
+  ( *this ).offset = offset;
 }
 
 inline double_t

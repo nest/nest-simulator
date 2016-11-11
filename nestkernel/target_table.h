@@ -51,7 +51,7 @@ class TargetTable
 private:
   //! stores (remote) targets of local neurons
   std::vector< std::vector< std::vector< Target > >* > targets_;
-  
+
 public:
   TargetTable();
   ~TargetTable();
@@ -66,7 +66,8 @@ public:
   void add_target( const thread tid, const TargetData& target_data );
   //! returns all targets of a neuron. used to fill spike_register_5g_
   //! in event_delivery_manager
-  const std::vector< Target >& get_targets( const thread tid, const index lid ) const;
+  const std::vector< Target >& get_targets( const thread tid,
+    const index lid ) const;
   //! clear all entries
   void clear( const thread tid );
 
@@ -76,19 +77,19 @@ public:
 inline void
 TargetTable::add_target( const thread tid, const TargetData& target_data )
 {
-  (*targets_[ tid ])[ target_data.lid ].push_back( target_data.target );
+  ( *targets_[ tid ] )[ target_data.lid ].push_back( target_data.target );
 }
 
 inline const std::vector< Target >&
 TargetTable::get_targets( const thread tid, const index lid ) const
 {
-  return (*targets_[ tid ])[ lid ];
+  return ( *targets_[ tid ] )[ lid ];
 }
 
 inline void
 TargetTable::clear( const thread tid )
 {
-  (*targets_[ tid ]).clear();
+  ( *targets_[ tid ] ).clear();
 }
 
 } // namespace nest

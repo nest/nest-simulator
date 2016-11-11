@@ -61,25 +61,27 @@ struct SendBufferPosition
   std::vector< unsigned int > idx;
   std::vector< unsigned int > begin;
   std::vector< unsigned int > end;
-  SendBufferPosition( const AssignedRanks& assigned_ranks, const unsigned int send_recv_count_per_rank );
+  SendBufferPosition( const AssignedRanks& assigned_ranks,
+    const unsigned int send_recv_count_per_rank );
 };
-  
-inline
-SendBufferPosition::SendBufferPosition( const AssignedRanks& assigned_ranks, const unsigned int send_recv_count_per_rank )
+
+inline SendBufferPosition::SendBufferPosition(
+  const AssignedRanks& assigned_ranks,
+  const unsigned int send_recv_count_per_rank )
   : num_spike_data_written( 0 )
 {
   idx.resize( assigned_ranks.size );
   begin.resize( assigned_ranks.size );
   end.resize( assigned_ranks.size );
   for ( thread rank = assigned_ranks.begin; rank < assigned_ranks.end; ++rank )
-    {
-      // thread-local index of (global) rank
-      const thread lr_idx = rank % assigned_ranks.max_size;
-      assert( lr_idx < assigned_ranks.size );
-      idx[ lr_idx ] = rank * send_recv_count_per_rank;
-      begin[ lr_idx ] = rank * send_recv_count_per_rank;
-      end[ lr_idx ] = (rank + 1) * send_recv_count_per_rank;
-    }
+  {
+    // thread-local index of (global) rank
+    const thread lr_idx = rank % assigned_ranks.max_size;
+    assert( lr_idx < assigned_ranks.size );
+    idx[ lr_idx ] = rank * send_recv_count_per_rank;
+    begin[ lr_idx ] = rank * send_recv_count_per_rank;
+    end[ lr_idx ] = ( rank + 1 ) * send_recv_count_per_rank;
+  }
 }
 
 class EventDeliveryManager : public ManagerInterface
@@ -246,7 +248,7 @@ public:
    * MPI and creates presynaptic connection infrastructure.
    */
   void gather_target_data( const thread tid );
-  
+
   /**
    * Update table of fixed modulos, including slice-based.
    */
@@ -285,32 +287,37 @@ private:
    * Moves spikes from on grid and off grid spike registers to correct
    * locations in MPI buffers.
    */
-  template< typename TargetT, typename SpikeDataT >
+  template < typename TargetT, typename SpikeDataT >
   bool collocate_spike_data_buffers_( const thread tid,
     const AssignedRanks& assigned_ranks,
     SendBufferPosition& send_buffer_position,
-    std::vector< std::vector< std::vector< std::vector< TargetT > > >* >& spike_register,
+    std::vector< std::vector< std::vector< std::vector< TargetT > > >* >&
+      spike_register,
     std::vector< SpikeDataT >& send_buffer );
 
   /**
    * Marks end of valid regions in MPI buffers.
    */
-  template< typename SpikeDataT >
-  void set_end_and_invalid_markers_( const AssignedRanks& assigned_ranks, const SendBufferPosition& send_buffer_position, std::vector< SpikeDataT >& send_buffer );
+  template < typename SpikeDataT >
+  void set_end_and_invalid_markers_( const AssignedRanks& assigned_ranks,
+    const SendBufferPosition& send_buffer_position,
+    std::vector< SpikeDataT >& send_buffer );
 
   /**
    * Sets marker in MPI buffer that signals end of communication
    * across MPI ranks.
    */
-  template< typename SpikeDataT >
-  void set_complete_marker_spike_data_( const AssignedRanks& assigned_ranks, std::vector< SpikeDataT >& send_buffer );
+  template < typename SpikeDataT >
+  void set_complete_marker_spike_data_( const AssignedRanks& assigned_ranks,
+    std::vector< SpikeDataT >& send_buffer );
 
   /**
    * Reads spikes from MPI buffers and delivers them to ringbuffer of
    * nodes.
    */
-  template< typename SpikeDataT >
-  bool deliver_events_5g_( const thread tid, const std::vector< SpikeDataT >& recv_buffer );
+  template < typename SpikeDataT >
+  bool deliver_events_5g_( const thread tid,
+    const std::vector< SpikeDataT >& recv_buffer );
 
   /**
    * Deletes all spikes from spike registers and resets spike
@@ -343,26 +350,32 @@ private:
    * presynaptic to postsynaptic side. Builds TargetData objects from
    * SourceTable and connections information.
    */
-  bool collocate_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, TargetData* send_buffer );
+  bool collocate_target_data_buffers_( const thread tid,
+    const unsigned int num_target_data_per_rank,
+    TargetData* send_buffer );
 
   /**
    * Sets marker in MPI buffer that signals end of communication
    * across MPI ranks.
    */
-  void set_complete_marker_target_data_( const thread tid, const unsigned int num_target_data_per_rank, TargetData* send_buffer );
+  void set_complete_marker_target_data_( const thread tid,
+    const unsigned int num_target_data_per_rank,
+    TargetData* send_buffer );
 
   /**
    * Reads TargetData objects from MPI buffers and creates Target
    * objects on TargetTable (presynaptic part of connection
    * infrastructure).
    */
-  bool distribute_target_data_buffers_( const thread tid, const unsigned int num_target_data_per_rank, TargetData const* const recv_buffer );
+  bool distribute_target_data_buffers_( const thread tid,
+    const unsigned int num_target_data_per_rank,
+    TargetData const* const recv_buffer );
 
   /**
    * Sends event e to all targets of node source. Delivers events from
    * devices directly to targets.
    */
-  template< class EventT >
+  template < class EventT >
   void send_local_( Node& source, EventT& e, const long_t lag );
 
   //--------------------------------------------------//
@@ -402,7 +415,8 @@ private:
    * - Third dim: lag
    * - Fourth dim: Target (will be converted in SpikeData)
    */
-  std::vector< std::vector< std::vector< std::vector< Target > > >* > spike_register_5g_;
+  std::vector< std::vector< std::vector< std::vector< Target > > >* >
+    spike_register_5g_;
 
   /**
    * Register for gids of precise neurons that spiked. This is a 4-dim
@@ -414,7 +428,8 @@ private:
    * - Third dim: lag
    * - Fourth dim: OffGridTarget (will be converted in OffGridSpikeData)
    */
-  std::vector< std::vector< std::vector< std::vector< OffGridTarget > > >* > off_grid_spike_register_5g_;
+  std::vector< std::vector< std::vector< std::vector< OffGridTarget > > >* >
+    off_grid_spike_register_5g_;
 
   /**
    * Buffer to collect the secondary events
@@ -443,26 +458,42 @@ private:
   unsigned int send_recv_count_target_data_per_rank_;
   unsigned int send_recv_count_target_data_in_int_per_rank_;
 
-  bool buffer_size_target_data_has_changed_; //!< whether size of MPI buffer for communication of connections was changed
-  bool buffer_size_spike_data_has_changed_; //!< whether size of MPI buffer for communication of spikes was changed
+  bool buffer_size_target_data_has_changed_; //!< whether size of MPI buffer for
+                                             //communication of connections was
+                                             //changed
+  bool buffer_size_spike_data_has_changed_;  //!< whether size of MPI buffer for
+                                             //communication of spikes was
+                                             //changed
 };
 
 inline void
 EventDeliveryManager::reset_spike_register_5g_( const thread tid )
 {
-  for ( std::vector< std::vector< std::vector< Target > > >::iterator it = (*spike_register_5g_[ tid ]).begin(); it < (*spike_register_5g_[ tid ]).end(); ++it )
+  for ( std::vector< std::vector< std::vector< Target > > >::iterator it =
+          ( *spike_register_5g_[ tid ] ).begin();
+        it < ( *spike_register_5g_[ tid ] ).end();
+        ++it )
   {
-    for ( std::vector< std::vector< Target > >::iterator iit = (*it).begin(); iit < (*it).end(); ++iit )
+    for ( std::vector< std::vector< Target > >::iterator iit = ( *it ).begin();
+          iit < ( *it ).end();
+          ++iit )
     {
-      (*iit).clear();
+      ( *iit ).clear();
     }
   }
 
-  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = (*off_grid_spike_register_5g_[ tid ]).begin(); it < (*off_grid_spike_register_5g_[ tid ]).end(); ++it )
+  for (
+    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
+      ( *off_grid_spike_register_5g_[ tid ] ).begin();
+    it < ( *off_grid_spike_register_5g_[ tid ] ).end();
+    ++it )
   {
-    for ( std::vector< std::vector< OffGridTarget > >::iterator iit = (*it).begin(); iit < (*it).end(); ++iit )
+    for ( std::vector< std::vector< OffGridTarget > >::iterator iit =
+            ( *it ).begin();
+          iit < ( *it ).end();
+          ++iit )
     {
-      (*iit).clear();
+      ( *iit ).clear();
     }
   }
 }
@@ -476,20 +507,34 @@ EventDeliveryManager::is_marked_for_removal_( const Target& target )
 inline void
 EventDeliveryManager::clean_spike_register_( const thread tid )
 {
-  for ( std::vector< std::vector< std::vector< Target > > >::iterator it = (*spike_register_5g_[ tid ]).begin(); it < (*spike_register_5g_[ tid ]).end(); ++it )
+  for ( std::vector< std::vector< std::vector< Target > > >::iterator it =
+          ( *spike_register_5g_[ tid ] ).begin();
+        it < ( *spike_register_5g_[ tid ] ).end();
+        ++it )
   {
-    for ( std::vector< std::vector< Target > >::iterator iit = (*it).begin(); iit < (*it).end(); ++iit )
+    for ( std::vector< std::vector< Target > >::iterator iit = ( *it ).begin();
+          iit < ( *it ).end();
+          ++iit )
     {
-      std::vector< Target >::iterator new_end = std::remove_if( (*iit).begin(), (*iit).end(), is_marked_for_removal_ );
-      (*iit).erase( new_end, (*iit).end() );
+      std::vector< Target >::iterator new_end = std::remove_if(
+        ( *iit ).begin(), ( *iit ).end(), is_marked_for_removal_ );
+      ( *iit ).erase( new_end, ( *iit ).end() );
     }
   }
-  for ( std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it = (*off_grid_spike_register_5g_[ tid ]).begin(); it < (*off_grid_spike_register_5g_[ tid ]).end(); ++it )
+  for (
+    std::vector< std::vector< std::vector< OffGridTarget > > >::iterator it =
+      ( *off_grid_spike_register_5g_[ tid ] ).begin();
+    it < ( *off_grid_spike_register_5g_[ tid ] ).end();
+    ++it )
   {
-    for ( std::vector< std::vector< OffGridTarget > >::iterator iit = (*it).begin(); iit < (*it).end(); ++iit )
+    for ( std::vector< std::vector< OffGridTarget > >::iterator iit =
+            ( *it ).begin();
+          iit < ( *it ).end();
+          ++iit )
     {
-      std::vector< OffGridTarget >::iterator new_end = std::remove_if( (*iit).begin(), (*iit).end(), is_marked_for_removal_ );
-      (*iit).erase( new_end, (*iit).end() );
+      std::vector< OffGridTarget >::iterator new_end = std::remove_if(
+        ( *iit ).begin(), ( *iit ).end(), is_marked_for_removal_ );
+      ( *iit ).erase( new_end, ( *iit ).end() );
     }
   }
 }

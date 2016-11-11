@@ -43,15 +43,18 @@
 namespace nest
 {
 
-template< typename T >
-void print_vector( const std::vector< T >& vec )
+template < typename T >
+void
+print_vector( const std::vector< T >& vec )
 {
-  std::cout<<"#######BEGIN############################\n";
-  for ( const typename std::vector< T >::const_iterator cit = vec.begin(); cit != vec.end(); ++cit )
+  std::cout << "#######BEGIN############################\n";
+  for ( const typename std::vector< T >::const_iterator cit = vec.begin();
+        cit != vec.end();
+        ++cit )
   {
-    std::cout<<*cit<<", ";
+    std::cout << *cit << ", ";
   }
-  std::cout<<"########END############################\n";
+  std::cout << "########END############################\n";
 }
 
 SPManager::SPManager()
@@ -96,7 +99,8 @@ SPManager::enable_structural_plasticity()
 {
   if ( not kernel().connection_manager.get_keep_source_table() )
   {
-    throw KernelException( "Structural plasticity can not be enabled if source table is not kept." );
+    throw KernelException(
+      "Structural plasticity can not be enabled if source table is not kept." );
   }
   structural_plasticity_enabled_ = true;
 }
@@ -371,7 +375,7 @@ SPManager::disconnect( GIDCollection& sources,
 void
 SPManager::update_structural_plasticity()
 {
-  std::cout<<"update struct"<<std::endl;
+  std::cout << "update struct" << std::endl;
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin();
         i != sp_conn_builders_.end();
         i++ )
@@ -390,7 +394,7 @@ SPManager::update_structural_plasticity()
 void
 SPManager::update_structural_plasticity( SPBuilder* sp_builder )
 {
-  std::cout<<"update builder"<<std::endl;
+  std::cout << "update builder" << std::endl;
   // Index of neurons having a vacant synaptic element
   std::vector< index > pre_vacant_id;  // pre synaptic elements (e.g Axon)
   std::vector< index > post_vacant_id; // post synaptic element (e.g Den)
@@ -540,7 +544,7 @@ SPManager::create_synapses( std::vector< index >& pre_id,
   GIDCollection sources = GIDCollection( pre_id_rnd );
   GIDCollection targets = GIDCollection( post_id_rnd );
 
-  std::cout<<"sp_connect"<<std::endl;
+  std::cout << "sp_connect" << std::endl;
   sp_conn_builder->sp_connect( sources, targets );
 }
 
@@ -578,7 +582,7 @@ SPManager::delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
 
   kernel().connection_manager.get_targets(
     pre_deleted_id, connectivity, synapse_model );
-  
+
 
   id_it = pre_deleted_id.begin();
   n_it = pre_deleted_n.begin();
@@ -639,7 +643,7 @@ SPManager::delete_synapse( index sgid,
     thread target_thread = target->get_thread();
     if ( tid == target_thread )
     {
-      std::cout<<"deleting "<<sgid<<"->"<<tgid<<std::endl;
+      std::cout << "deleting " << sgid << "->" << tgid << std::endl;
       kernel().connection_manager.disconnect_5g( tid, syn_id, sgid, tgid );
 
       target->connect_synaptic_element( se_post_name, -1 );
@@ -844,7 +848,8 @@ nest::SPManager::global_shuffle( std::vector< index >& v, size_t n )
 // }
 
 // void
-// nest::SPManager::disconnect_5g( const thread tid, const index sgid, const index tgid )
+// nest::SPManager::disconnect_5g( const thread tid, const index sgid, const
+// index tgid )
 // {
 //   const Node* const target = kernel().node_manager.get_node( tgid, tid );
 //   const thread target_thread = target->get_thread();

@@ -35,65 +35,60 @@
 /:define_topology_functions
 {
 
-  /ConnectLayers [/integertype /integertype /dictionarytype]
-    /ConnectLayers_i_i_D load
+  /ConnectLayers [/gidcollectiontype /gidcollectiontype /dictionarytype]
+    /ConnectLayers_g_g_D load
   def
   
   /CreateLayer [/dictionarytype]
     /CreateLayer_D load
   def
   
-  /GetElement [/integertype /arraytype]
-    /GetElement_i_ia load
+  /GetElement [/gidcollectiontype /arraytype]
+    /GetElement_g_ia load
   def
   
-  /GetPosition [/integertype]
-    /GetPosition_i load
+  /GetPosition [/gidcollectiontype /integertype]
+    /GetPosition_g_i load
   def
   
-  /GetLayer [/integertype]
-    { GetStatus /parent get } bind
-  def
-  
-  /Displacement [/integertype /integertype]
+  /Displacement [/gidcollectiontype /integertype /integertype]
     { exch GetPosition exch
-      Displacement_a_i } bind
+      Displacement_g_a_i } bind
   def
   
-  /Displacement [/arraytype /integertype]
-    /Displacement_a_i load
+  /Displacement [/gidcollectiontype /arraytype /integertype]
+    /Displacement_g_a_i load
   def
   
-  /Displacement [/doublevectortype /integertype]
+  /Displacement [/gidcollectiontype /doublevectortype /integertype]
     { exch cva exch
-      Displacement_a_i } bind
+      Displacement_g_a_i } bind
   def
   
-  /Distance [/integertype /integertype]
+  /Distance [/gidcollectiontype /integertype /integertype]
     { exch GetPosition exch
-      Distance_a_i } bind
+      Distance_g_a_i } bind
   def
   
-  /Distance [/arraytype /integertype]
-    /Distance_a_i load
+  /Distance [/gidcollectiontype /arraytype /integertype]
+    /Distance_g_a_i load
   def
   
-  /Distance [/doublevectortype /integertype]
+  /Distance [/gidcollectiontype /doublevectortype /integertype]
     { exch cva exch
-      Distance_a_i } bind
+      Distance_g_a_i } bind
   def
   
-  /DumpLayerNodes [/ostreamtype /integertype]
-    { DumpLayerNodes_os_i } bind
+  /GetLayerStatus [/gidcollectiontype]
+     /GetLayerStatus_g load
+  def
+     
+  /DumpLayerNodes [/ostreamtype /gidcollectiontype]
+    { DumpLayerNodes_os_g } bind
   def
   
-  % /DumpLayerNodes_nowrite [/integertype]
-  %   { false DumpLayerNodes_os_i_b } bind
-  % def
-  
-  
-  /DumpLayerConnections [/ostreamtype /integertype /literaltype]
-    /DumpLayerConnections_os_i_l load
+  /DumpLayerConnections [/ostreamtype /gidcollectiontype /literaltype]
+    /DumpLayerConnections_os_g_l load
   def
   
   /CreateMask [/dictionarytype]
@@ -136,10 +131,6 @@
     /sub_P_P load
   def
   
-  /GetGlobalChildren [/integertype /masktype /arraytype]
-    /GetGlobalChildren_i_M_a load
-  def
-    
   /CreateParameter [/dictionarytype]
     /CreateParameter_D load
   def

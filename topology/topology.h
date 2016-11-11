@@ -27,6 +27,7 @@
 #include <vector>
 
 // Includes from nestkernel:
+#include "gid_collection.h"
 #include "nest_types.h"
 
 // Includes from sli:
@@ -37,17 +38,38 @@
 #include "token.h"
 
 // Includes from topology:
+#include "layer.h"
 #include "mask.h"
 #include "topology_parameter.h"
 
 
 namespace nest
 {
-index create_layer( const DictionaryDatum& layer_dict );
-std::vector< double > get_position( const index node_gid );
-std::vector< double > displacement( const std::vector< double >& point,
+
+/**
+ * Class representing metadata for topology layer.
+ */
+class LayerMetadata : public GIDCollectionMetadata
+{
+public:
+  LayerMetadata( AbstractLayerPTR );
+  ~LayerMetadata() {}
+
+  //! Returns pointer to object with layer representation
+  const AbstractLayerPTR get_layer() const { return layer_; }
+
+private:
+  const AbstractLayerPTR layer_;  //!< layer object
+};
+
+GIDCollectionPTR create_layer( const DictionaryDatum& layer_dict );
+std::vector< double > get_position( GIDCollectionPTR layer_gc,
+		const index node_gid );
+std::vector< double > displacement( GIDCollectionPTR layer_gc,
+		const std::vector< double >& point,
   const index node_gid );
-double distance( const std::vector< double >& point, const index node_gid );
+double distance( GIDCollectionPTR layer_gc,
+		const std::vector< double >& point, const index node_gid );
 MaskDatum create_mask( const DictionaryDatum& mask_dict );
 BoolDatum inside( const std::vector< double >& point, const MaskDatum& mask );
 MaskDatum intersect_mask( const MaskDatum& mask1, const MaskDatum& mask2 );
@@ -61,21 +83,19 @@ ParameterDatum add_parameter( const ParameterDatum& param1,
   const ParameterDatum& param2 );
 ParameterDatum subtract_parameter( const ParameterDatum& param1,
   const ParameterDatum& param2 );
-ArrayDatum get_global_children( const index gid,
-  const MaskDatum& maskd,
-  const std::vector< double >& anchor );
-void connect_layers( const index source_gid,
-  const index target_gid,
+void connect_layers( GIDCollectionPTR source_gc,
+  GIDCollectionPTR target_gc,
   const DictionaryDatum& dict );
 ParameterDatum create_parameter( const DictionaryDatum& param_dict );
 double get_value( const std::vector< double >& point,
   const ParameterDatum& param );
-void dump_layer_nodes( const index layer_gid, OstreamDatum& out );
+void dump_layer_nodes( GIDCollectionPTR layer_gc, OstreamDatum& out );
 void dump_layer_connections( const Token& syn_model,
-  const index layer_gid,
+  GIDCollectionPTR layer_gc,
   OstreamDatum& out_file );
-std::vector< index > get_element( const index layer_gid,
+std::vector< index > get_element( GIDCollectionPTR layer_gc,
   const TokenArray array );
+DictionaryDatum get_layer_status( GIDCollectionPTR layer_gc );
 }
 
 #endif /* TOPOLOGY_H */

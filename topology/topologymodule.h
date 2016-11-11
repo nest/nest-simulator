@@ -70,41 +70,41 @@ public:
     void execute( SLIInterpreter* ) const;
   } createlayer_Dfunction;
 
-  class GetPosition_iFunction : public SLIFunction
+  class GetPosition_g_iFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } getposition_ifunction;
+  } getposition_g_ifunction;
 
-  class Displacement_a_iFunction : public SLIFunction
+  class Displacement_g_a_iFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } displacement_a_ifunction;
+  } displacement_g_a_ifunction;
 
-  class Distance_a_iFunction : public SLIFunction
+  class Distance_g_a_iFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } distance_a_ifunction;
+  } distance_g_a_ifunction;
 
-  class GetGlobalChildren_i_M_aFunction : public SLIFunction
+  class ConnectLayers_g_g_DFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } getglobalchildren_i_M_afunction;
-
-  class ConnectLayers_i_i_DFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } connectlayers_i_i_Dfunction;
+  } connectlayers_g_g_Dfunction;
 
   class CreateMask_DFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
   } createmask_Dfunction;
+
+  class GetLayerStatus_gFunction : public SLIFunction
+  {
+  public:
+	void execute( SLIInterpreter* ) const;
+  } getlayerstatus_gfunction;
 
   class Inside_a_MFunction : public SLIFunction
   {
@@ -166,23 +166,23 @@ public:
     void execute( SLIInterpreter* ) const;
   } getvalue_a_Pfunction;
 
-  class DumpLayerNodes_os_iFunction : public SLIFunction
+  class DumpLayerNodes_os_gFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } dumplayernodes_os_ifunction;
+  } dumplayernodes_os_gfunction;
 
-  class DumpLayerConnections_os_i_lFunction : public SLIFunction
+  class DumpLayerConnections_os_g_lFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } dumplayerconnections_os_i_lfunction;
+  } dumplayerconnections_os_g_lfunction;
 
-  class GetElement_i_iaFunction : public SLIFunction
+  class GetElement_g_iaFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } getelement_i_iafunction;
+  } getelement_g_iafunction;
 
   class Cvdict_MFunction : public SLIFunction
   {

@@ -113,14 +113,22 @@ Layer< D >::get_status( DictionaryDatum& d ) const
 
 template < int D >
 void
-Layer< D >::connect( AbstractLayer& target_layer, ConnectionCreator& connector )
+Layer< D >::connect( AbstractLayerPTR target_layer, ConnectionCreator& connector )
 {
+  // We need to extract the real pointer here to be able to cast to the
+  // dimension-specific subclass.
+  AbstractLayer* target_abs = target_layer.get();
+  assert( target_abs != 0 );
+
+  // unlock before try, otherwise lockPTR would remain locked on error
+  target_layer.unlock();
+
   try
   {
-    Layer< D >& tgt = dynamic_cast< Layer< D >& >( target_layer );
+    Layer< D >& tgt = dynamic_cast< Layer< D >& >( *target_abs );
     connector.connect( *this, tgt );
   }
-  catch ( std::bad_cast e )
+  catch ( std::bad_cast& e )
   {
     throw BadProperty(
       "Target layer must have same number of dimensions as source layer." );
@@ -254,7 +262,6 @@ Layer< D >::get_global_positions_vector( Selector filter )
   }
   else
   {
-
     insert_global_positions_vector_( *cached_vector_, filter );
   }
 

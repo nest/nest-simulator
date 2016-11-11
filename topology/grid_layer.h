@@ -142,7 +142,7 @@ public:
    * @returns vector of gids at the depth column covering
    *          the input position.
    */
-  std::vector< index > get_nodes( Position< D, int > pos );
+  std::vector< index > get_nodes( Position< D, int > pos ) const;
 
   using Layer< D >::get_global_positions_vector;
 
@@ -292,7 +292,7 @@ GridLayer< D >::gridpos_to_lid( Position< D, int > pos ) const
 
 template < int D >
 std::vector< index >
-GridLayer< D >::get_nodes( Position< D, int > pos )
+GridLayer< D >::get_nodes( Position< D, int > pos ) const
 {
   std::vector< index > gids;
   index lid = gridpos_to_lid( pos );

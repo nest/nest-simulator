@@ -46,6 +46,9 @@
 namespace nest
 {
 
+class AbstractLayer;
+typedef lockPTR< AbstractLayer > AbstractLayerPTR;
+
 /**
  * Abstract base class for Layers of unspecified dimension.
  */
@@ -101,16 +104,16 @@ public:
    *                  as this layer.
    * @param connector connection properties
    */
-  virtual void connect( AbstractLayer& target,
+  virtual void connect( AbstractLayerPTR target,
     ConnectionCreator& connector ) = 0;
 
   /**
    * Factory function for layers. The supplied dictionary contains
    * parameters which specify the layer type and type-specific
    * parameters.
-   * @returns pointer to new layer
+   * @returns pointer to GIDCollection for new layer
    */
-  static index create_layer( const DictionaryDatum& );
+  static GIDCollectionPTR create_layer( const DictionaryDatum& );
 
   /**
    * Return a vector with the GIDs of the nodes inside the mask.
@@ -376,7 +379,7 @@ public:
    *                  as this layer.
    * @param connector connection properties
    */
-  void connect( AbstractLayer& target, ConnectionCreator& connector );
+  void connect( AbstractLayerPTR target, ConnectionCreator& connector );
 
   /**
    * Write layer data to stream.

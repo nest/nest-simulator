@@ -31,8 +31,12 @@
 #include "integerdatum.h"
 
 // Includes from topology:
+#include "connection_creator_impl.h"
 #include "free_layer.h"
 #include "grid_layer.h"
+#include "layer_impl.h"
+#include "mask_impl.h"
+#include "topology.h"
 #include "topology_names.h"
 
 namespace nest
@@ -45,17 +49,18 @@ AbstractLayer::~AbstractLayer()
 {
 }
 
-index
+GIDCollectionPTR
 AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 {
   index length = 0;
-  const char* layer_model_name = 0;
   std::vector< long > element_ids;
   std::string element_name;
   Token element_model;
 
   const Token& t = layer_dict->lookup( names::elements );
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( t.datum() );
+
+  AbstractLayer* layer_local = 0;
 
   if ( ad )
   {
@@ -118,9 +123,9 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     std::vector< double > pos =
       getValue< std::vector< double > >( positions[ 0 ] );
     if ( pos.size() == 2 )
-      layer_model_name = "topology_layer_free";
+      layer_local = new FreeLayer< 2 >();
     else if ( pos.size() == 3 )
-      layer_model_name = "topology_layer_free_3d";
+      layer_local = new FreeLayer< 3 >();
     else
       throw BadProperty( "Positions must have 2 or 3 coordinates." );
 
@@ -139,46 +144,40 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 
     if ( layer_dict->known( names::layers ) )
     {
-      layer_model_name = "topology_layer_grid_3d";
+      layer_local = new GridLayer< 3 >();
       length *= getValue< long >( layer_dict, names::layers );
     }
     else
     {
-      layer_model_name = "topology_layer_grid";
+      layer_local = new GridLayer< 2 >();
     }
   }
   else
   {
     throw BadProperty( "Unknown layer type." );
   }
+  assert( layer_local );
+  lockPTR<AbstractLayer> layer_safe(layer_local);
 
-  assert( layer_model_name != 0 );
-  Token layer_model =
-    kernel().model_manager.get_modeldict()->lookup( layer_model_name );
-  if ( layer_model.empty() )
-    throw UnknownModelName( layer_model_name );
+  layer_local->depth_ = element_ids.size();
+  layer_local->set_status( layer_dict );
 
-  index layer_node = kernel().node_manager.add_node( layer_model );
+  GIDCollectionMetadataPTR layer_meta(new LayerMetadata( layer_safe ));
 
-  // Remember original subnet
-  const index cwnode = kernel().node_manager.get_cwn()->get_gid();
+  // We have at least one element, create a GIDCollection for it
+  GIDCollectionPTR gid_coll = kernel().node_manager.add_node( element_ids[ 0 ], length );
+  gid_coll->set_metadata( layer_meta );
 
-  kernel().node_manager.go_to( layer_node );
+  // Create all remaining elements and add
+  for ( size_t i = 1; i < element_ids.size(); ++i )
+  {
+	GIDCollectionPTR next_coll = kernel().node_manager.add_node( element_ids[ i ], length );
+	next_coll->set_metadata( layer_meta );
+	gid_coll = gid_coll->operator+( next_coll );
+	next_coll.unlock();
+  }
 
-  // Create layer nodes.
-  for ( size_t i = 0; i < element_ids.size(); ++i )
-    kernel().node_manager.add_node( element_ids[ i ], length );
-
-  // Return to original subnet
-  kernel().node_manager.go_to( cwnode );
-
-  // Set layer parameters according to input dictionary.
-  AbstractLayer* layer = dynamic_cast< AbstractLayer* >(
-    kernel().node_manager.get_node( layer_node ) );
-  layer->depth_ = element_ids.size();
-  layer->set_status( layer_dict );
-
-  return layer_node;
+  return gid_coll;
 }
 
 std::vector< Node* >::iterator

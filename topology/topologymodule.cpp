@@ -176,7 +176,7 @@ TopologyModule::create_mask( const Token& t )
         delete mask;
         mask = amask;
       }
-      catch ( TypeMismatch e )
+      catch ( TypeMismatch& e )
       {
 
         DictionaryDatum ad = getValue< DictionaryDatum >( anchor_token );
@@ -326,11 +326,11 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "CreateLayer_D", &createlayer_Dfunction );
 
-  i->createcommand( "GetPosition_i", &getposition_ifunction );
+  i->createcommand( "GetPosition_g_i", &getposition_g_ifunction );
 
-  i->createcommand( "Displacement_a_i", &displacement_a_ifunction );
+  i->createcommand( "Displacement_g_a_i", &displacement_g_a_ifunction );
 
-  i->createcommand( "Distance_a_i", &distance_a_ifunction );
+  i->createcommand( "Distance_g_a_i", &distance_g_a_ifunction );
 
   i->createcommand( "CreateMask_D", &createmask_Dfunction );
 
@@ -350,32 +350,22 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "sub_P_P", &sub_P_Pfunction );
 
-  i->createcommand(
-    "GetGlobalChildren_i_M_a", &getglobalchildren_i_M_afunction );
-
-  i->createcommand( "ConnectLayers_i_i_D", &connectlayers_i_i_Dfunction );
+  i->createcommand( "ConnectLayers_g_g_D", &connectlayers_g_g_Dfunction );
 
   i->createcommand( "CreateParameter_D", &createparameter_Dfunction );
 
   i->createcommand( "GetValue_a_P", &getvalue_a_Pfunction );
 
-  i->createcommand( "DumpLayerNodes_os_i", &dumplayernodes_os_ifunction );
+  i->createcommand( "GetLayerStatus_g", &getlayerstatus_gfunction );
+
+  i->createcommand( "DumpLayerNodes_os_g", &dumplayernodes_os_gfunction );
 
   i->createcommand(
-    "DumpLayerConnections_os_i_l", &dumplayerconnections_os_i_lfunction );
+    "DumpLayerConnections_os_g_l", &dumplayerconnections_os_g_lfunction );
 
-  i->createcommand( "GetElement_i_ia", &getelement_i_iafunction );
+  i->createcommand( "GetElement_g_ia", &getelement_g_iafunction );
 
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
-
-  kernel().model_manager.register_node_model< FreeLayer< 2 > >(
-    "topology_layer_free" );
-  kernel().model_manager.register_node_model< FreeLayer< 3 > >(
-    "topology_layer_free_3d" );
-  kernel().model_manager.register_node_model< GridLayer< 2 > >(
-    "topology_layer_grid" );
-  kernel().model_manager.register_node_model< GridLayer< 3 > >(
-    "topology_layer_grid_3d" );
 
   // Register mask types
   register_mask< BallMask< 2 > >();
@@ -427,10 +417,10 @@ TopologyModule::CreateLayer_DFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum layer_dict =
     getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  index layernode = create_layer( layer_dict );
+  GIDCollectionDatum layer = create_layer( layer_dict );
 
   i->OStack.pop( 1 );
-  i->OStack.push( layernode );
+  i->OStack.push( layer );
   i->EStack.pop();
 }
 
@@ -439,11 +429,14 @@ TopologyModule::CreateLayer_DFunction::execute( SLIInterpreter* i ) const
 
   Name: topology::GetPosition - retrieve position of input node
 
-  Synopsis: node_gid GetPosition -> [array]
+  Synopsis: layer node GetPosition -> [array]
 
   Parameters:
-  node_gid      - gid of layer node
-  [array]       - spatial position of node [x y]
+  layer      - GIDCollection for layer
+  node       - gid of layer node
+
+  Returns:
+  [array]    - spatial position of node [x y]
 
   Description: Retrieves spatial 2D position of layer node.
 
@@ -459,21 +452,22 @@ TopologyModule::CreateLayer_DFunction::execute( SLIInterpreter* i ) const
 
   dictionary CreateLayer /src Set
 
-  4 GetPosition
+  src 4 GetPosition
 
   Author: Kittel Austvoll
 */
 
 void
-TopologyModule::GetPosition_iFunction::execute( SLIInterpreter* i ) const
+TopologyModule::GetPosition_g_iFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 1 );
+  i->assert_stack_load( 2 );
 
-  index node_gid = getValue< long >( i->OStack.pick( 0 ) );
+  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(1) );
+  const index node_gid = getValue< long >( i->OStack.pick( 0 ) );
 
-  Token result = get_position( node_gid );
+  Token result = get_position( layer, node_gid );
 
-  i->OStack.pop( 1 );
+  i->OStack.pop( 2 );
   i->OStack.push( result );
   i->EStack.pop();
 }
@@ -483,10 +477,11 @@ TopologyModule::GetPosition_iFunction::execute( SLIInterpreter* i ) const
 
   Name: topology::Displacement - compute displacement vector
 
-  Synopsis: from_gid to_gid Displacement -> [double vector]
-            from_pos to_gid Displacement -> [double vector]
+  Synopsis: layer from_gid to_gid Displacement -> [double vector]
+            layer from_pos to_gid Displacement -> [double vector]
 
   Parameters:
+  layer       - GIDCollection for layer
   from_gid    - int, gid of node in a topology layer
   from_pos    - double vector, position in layer
   to_gid      - int, gid of node in a topology layer
@@ -512,28 +507,30 @@ TopologyModule::GetPosition_iFunction::execute( SLIInterpreter* i ) const
   << /rows 5
      /columns 4
      /elements /iaf_neuron
-  >> CreateLayer ;
+  >> CreateLayer
+  /layer Set
 
-  4 5         Displacement
-  [0.2 0.3] 5 Displacement
+  layer 4 5         Displacement
+  layer [0.2 0.3] 5 Displacement
 
   Author: Håkon Enger, Hans E Plesser, Kittel Austvoll
 
   See also: Distance, GetPosition
 */
 void
-TopologyModule::Displacement_a_iFunction::execute( SLIInterpreter* i ) const
+TopologyModule::Displacement_g_a_iFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 2 );
+  i->assert_stack_load( 3 );
 
-  std::vector< double > point =
+  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(2) );
+  const std::vector< double > point =
     getValue< std::vector< double > >( i->OStack.pick( 1 ) );
 
-  index node_gid = getValue< long >( i->OStack.pick( 0 ) );
+  const index node_gid = getValue< long >( i->OStack.pick( 0 ) );
 
-  Token result = displacement( point, node_gid );
+  Token result = displacement( layer, point, node_gid );
 
-  i->OStack.pop( 2 );
+  i->OStack.pop( 3 );
   i->OStack.push( result );
   i->EStack.pop();
 }
@@ -543,10 +540,11 @@ TopologyModule::Displacement_a_iFunction::execute( SLIInterpreter* i ) const
 
   Name: topology::Distance - compute distance between nodes
 
-  Synopsis: from_gid to_gid Distance -> double
-            from_pos to_gid Distance -> double
+  Synopsis: layer from_gid to_gid Distance -> double
+            layer from_pos to_gid Distance -> double
 
   Parameters:
+  layer       - GIDCollection for layer
   from_gid    - int, gid of node in a topology layer
   from_pos    - double vector, position in layer
   to_gid      - int, gid of node in a topology layer
@@ -572,28 +570,30 @@ TopologyModule::Displacement_a_iFunction::execute( SLIInterpreter* i ) const
   << /rows 5
      /columns 4
      /elements /iaf_neuron
-  >> CreateLayer ;
+  >> CreateLayer
+  /layer Set
 
-  4 5         Distance
-  [0.2 0.3] 5 Distance
+  layer 4 5         Distance
+  layer [0.2 0.3] 5 Distance
 
   Author: Hans E Plesser, Kittel Austvoll
 
   See also: Displacement, GetPosition
 */
 void
-TopologyModule::Distance_a_iFunction::execute( SLIInterpreter* i ) const
+TopologyModule::Distance_g_a_iFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 2 );
+  i->assert_stack_load( 3 );
 
-  std::vector< double > point =
+  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  const std::vector< double > point =
     getValue< std::vector< double > >( i->OStack.pick( 1 ) );
 
-  index node_gid = getValue< long >( i->OStack.pick( 0 ) );
+  const index node_gid = getValue< long >( i->OStack.pick( 0 ) );
 
-  Token result = distance( point, node_gid );
+  Token result = distance( layer, point, node_gid );
 
-  i->OStack.pop( 2 );
+  i->OStack.pop( 3 );
   i->OStack.push( result );
   i->EStack.pop();
 }
@@ -768,30 +768,12 @@ TopologyModule::Sub_P_PFunction::execute( SLIInterpreter* i ) const
 }
 
 
-void
-TopologyModule::GetGlobalChildren_i_M_aFunction::execute(
-  SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 3 );
-
-  index gid = getValue< long >( i->OStack.pick( 2 ) );
-  MaskDatum maskd = getValue< MaskDatum >( i->OStack.pick( 1 ) );
-  std::vector< double > anchor =
-    getValue< std::vector< double > >( i->OStack.pick( 0 ) );
-
-  ArrayDatum result = get_global_children( gid, maskd, anchor );
-
-  i->OStack.pop( 3 );
-  i->OStack.push( result );
-  i->EStack.pop();
-}
-
 /*
   BeginDocumentation
 
   Name: topology::ConnectLayers - connect two layers
 
-  Synopsis: sourcelayergid targetlayergid connection_dict
+  Synopsis: sourcelayer targetlayer connection_dict
   ConnectLayers -> -
 
   Description: Connects nodes in two topological layers.
@@ -805,8 +787,8 @@ TopologyModule::GetGlobalChildren_i_M_aFunction::execute(
   to a region in the opposing layer.
 
   Parameters:
-  sourcelayergid  - GID of source layer
-  targetlayergid  - GID of target layer
+  sourcelayer  - GIDCollection for source layer
+  targetlayer  - GIDCollectoin for target layer
 
   connection_dict - dictionary containing any of the following
                     elements:
@@ -970,16 +952,16 @@ TopologyModule::GetGlobalChildren_i_M_aFunction::execute(
   SeeAlso: topology::CreateLayer
 */
 void
-TopologyModule::ConnectLayers_i_i_DFunction::execute( SLIInterpreter* i ) const
+TopologyModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  index source_gid = getValue< long >( i->OStack.pick( 2 ) );
-  index target_gid = getValue< long >( i->OStack.pick( 1 ) );
+  const GIDCollectionDatum source = getValue< GIDCollectionDatum >( i->OStack.pick(2) );
+  const GIDCollectionDatum target = getValue< GIDCollectionDatum >( i->OStack.pick(1) );
   const DictionaryDatum connection_dict =
     getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
-  connect_layers( source_gid, target_gid, connection_dict );
+  connect_layers( source, target, connection_dict );
 
   i->OStack.pop( 3 );
   i->EStack.pop();
@@ -1017,6 +999,33 @@ TopologyModule::CreateParameter_DFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop( 1 );
   i->OStack.push( datum );
+  i->EStack.pop();
+}
+
+/*BeginDocumentation
+
+  Name: topology::GetLayerStatus - return information about layer
+
+  Synopsis:
+  layer GetLayerStatus -> dict
+
+  Parameters:
+  layer - GIDCollection representing layer
+
+  Returns:
+  Status dictionary with information about layer
+ */
+void
+TopologyModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(0) );
+
+  DictionaryDatum result = get_layer_status( layer );
+
+  i->OStack.pop( 1 );
+  i->OStack.push( result );
   i->EStack.pop();
 }
 
@@ -1058,11 +1067,11 @@ TopologyModule::GetValue_a_PFunction::execute( SLIInterpreter* i ) const
 
   Name: topology::DumpLayerNodes - write information about layer nodes to file
 
-  Synopsis: ostream layer_gid DumpLayerNodes -> ostream
+  Synopsis: ostream layer DumpLayerNodes -> ostream
 
   Parameters:
-  ostream   - open output stream
-  layer_gid - topology layer
+  ostream - open output stream
+  layer   - GIDCollection for layer
 
   Description:
   Write information about each element in the given layer to the
@@ -1094,14 +1103,14 @@ TopologyModule::GetValue_a_PFunction::execute( SLIInterpreter* i ) const
   SeeAlso: topology::DumpLayerConnections, setprecision, modeldict
 */
 void
-TopologyModule::DumpLayerNodes_os_iFunction::execute( SLIInterpreter* i ) const
+TopologyModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const index layer_gid = getValue< long >( i->OStack.pick( 0 ) );
+  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 0) );
   OstreamDatum out = getValue< OstreamDatum >( i->OStack.pick( 1 ) );
 
-  dump_layer_nodes( layer_gid, out );
+  dump_layer_nodes( layer, out );
 
   i->OStack.pop( 1 ); // leave ostream on stack
   i->EStack.pop();
@@ -1113,12 +1122,12 @@ TopologyModule::DumpLayerNodes_os_iFunction::execute( SLIInterpreter* i ) const
   Name: topology::DumpLayerConnections - prints a list of the connections of the
                                          nodes in the layer to file
 
-  Synopsis: ostream source_layer_gid synapse_model DumpLayerConnections ->
+  Synopsis: ostream source_layer synapse_model DumpLayerConnections ->
                                                                          ostream
 
   Parameters:
   ostream          - open outputstream
-  source_layer_gid - topology layer
+  source_layer     - GIDCollection for layer
   synapse_model    - synapse model (literal)
 
   Description:
@@ -1150,18 +1159,16 @@ TopologyModule::DumpLayerNodes_os_iFunction::execute( SLIInterpreter* i ) const
 */
 
 void
-TopologyModule::DumpLayerConnections_os_i_lFunction::execute(
+TopologyModule::DumpLayerConnections_os_g_lFunction::execute(
   SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
   OstreamDatum out_file = getValue< OstreamDatum >( i->OStack.pick( 2 ) );
-
-  const index layer_gid = getValue< long >( i->OStack.pick( 1 ) );
-
+  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(1) );
   const Token syn_model = i->OStack.pick( 0 );
 
-  dump_layer_connections( syn_model, layer_gid, out_file );
+  dump_layer_connections( syn_model, layer, out_file );
 
   i->OStack.pop( 2 ); // leave ostream on stack
   i->EStack.pop();
@@ -1172,10 +1179,10 @@ TopologyModule::DumpLayerConnections_os_i_lFunction::execute(
 
   Name: topology::GetElement - return node GID at specified layer position
 
-  Synopsis: layer_gid [array] GetElement -> node_gid
+  Synopsis: layer [array] GetElement -> node_gid
 
   Parameters:
-  layer_gid     - topological layer
+  layer         - GIDCollection for layer
   [array]       - position of node
   node_gid      - node GID
 
@@ -1201,14 +1208,14 @@ TopologyModule::DumpLayerConnections_os_i_lFunction::execute(
   Author: Kittel Austvoll, Håkon Enger
 */
 void
-TopologyModule::GetElement_i_iaFunction::execute( SLIInterpreter* i ) const
+TopologyModule::GetElement_g_iaFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const index layer_gid = getValue< long >( i->OStack.pick( 1 ) );
+  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(1) );
   TokenArray array = getValue< TokenArray >( i->OStack.pick( 0 ) );
 
-  std::vector< index > node_gids = get_element( layer_gid, array );
+  std::vector< index > node_gids = get_element( layer, array );
 
   i->OStack.pop( 2 );
 

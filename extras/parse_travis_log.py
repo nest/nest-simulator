@@ -811,10 +811,12 @@ def build_return_code(status_vera_init,
        (status_make is True) and \
        (status_make_install is True) and \
        (status_tests is True) and \
-       (number_of_msgs_in_summary(summary_vera) == 0) and \
-       (number_of_msgs_in_summary(summary_cppcheck) == 0) and \
        (number_of_msgs_in_summary(summary_format) == 0) and \
        (number_of_msgs_in_summary(summary_pep8) == 0):
+       # Include these lines if the build should terminate with failure
+       # in case VERA++ and/or cppcheck failed.
+       # (number_of_msgs_in_summary(summary_vera) == 0) and \
+       # (number_of_msgs_in_summary(summary_cppcheck) == 0) and \
 
         return 0
     else:

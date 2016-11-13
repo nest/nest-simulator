@@ -1,25 +1,46 @@
 #!/bin/sh
 
-# Enables checking of all commands. If a command exits with an error and the
-# caller does not check such error, the script aborts immediately.
+# build.sh
+#
+# This file is part of NEST.
+#
+# Copyright (C) 2004 The NEST Initiative
+#
+# NEST is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# NEST is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+
+
+# This shell script is part of the NEST Travis CI build and test environment.
+# It is invoked by the top-level Travis script '.travis.yml'.
+#
+# NOTE: This shell script is pysically coupled to python script
+#       'extras/parse_travis_log.py'. 
+#       Any changes to message numbers (MSGBLDnnnn) or the variable name
+#      'file_names' have effects on the build/test-log parsing process.
+
+
+# Exit shell if any subcommand or pipline returns a non-zero status.
 set -e
 
-# uncomment this command, if you debug the build; it outputs subsequent command
-# before they are executed
+# Uncomment this shell-option for debugging.
 # set -x
-
-# This script is used during the continuous integration tests with TravisCI. After
-# its execution the Python script `extras/parse_travis_log.py` parses the output
-# and produces a summary of the static analysis, and of building and testing NEST.
-# Changes to the output might break the parsing. Please fix the script
-# `extras/parse_travis_log.py` in this case as well.
-
 
 mkdir -p $HOME/.matplotlib
 cat > $HOME/.matplotlib/matplotlibrc <<EOF
     backend : svg
 EOF
 
+# Set the NEST CMake-build configuration according to the build matrix in '.travis.yml'.
 if [ "$xTHREADING" = "1" ] ; then
     CONFIGURE_THREADING="-Dwith-openmp=ON"
 else
@@ -62,27 +83,22 @@ else
     CONFIGURE_READLINE="-Dwith-readline=OFF"
 fi
 
-
-
 NEST_VPATH=build
 NEST_RESULT=result
-
 mkdir "$NEST_VPATH" "$NEST_RESULT"
 mkdir "$NEST_VPATH/reports"
-
 NEST_RESULT=$(readlink -f $NEST_RESULT)
 
 if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
+  echo "\n"
+  echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+  echo "+               S T A T I C   C O D E   A N A L Y S I S                       +"
+  echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 
-  # static code analysis
-  echo "======= VERA++ init start ======="
-  # initialize vera++
+  echo "MSGBLD0010: Initializing VERA++ static code analysis."
+  # Create a VERA++ profile for NEST in './vera_home' for static code analysis.
   mkdir -p vera_home
-
-  # on ubuntu vera++ is installed to /usr/
-  # copy all scripts/rules/ ... into ./vera_home
   cp -r /usr/lib/vera++/* ./vera_home
-  # create the nest-profile for vera++
   cat > ./vera_home/profiles/nest <<EOF
 #!/usr/bin/tclsh
 # This profile includes all the rules for checking NEST
@@ -109,106 +125,120 @@ set rules {
   T019
 }
 EOF
-  echo "======= VERA++ init end ======="
+  echo "MSGBLD0020: VERA++ initialization completed."  
 
   if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
-    echo "======= CPPCHECK init start ======="
-    # initialize and build cppcheck 1.69
+    echo "MSGBLD0030: Installing CPPCHECK version 1.69."
+    # Build cppcheck version 1.69.
     git clone https://github.com/danmar/cppcheck.git
-    # go into source directory of cppcheck
     cd cppcheck
-    # set git to 1.69 version
     git checkout tags/1.69
-    # build cppcheck => now there is an executable ./cppcheck
     mkdir -p install
     make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
-    echo "======= CPPCHECK init end ======="
-
     cd ..
-    echo "======= CLANG-FORMAT init start ======="
+    echo "MSGBLD0040: CPPCHECK installation completed."
+
+    echo "MSGBLD0050: Installing CLANG-FORMAT."
     wget --no-verbose http://llvm.org/releases/3.6.2/clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
     tar xf clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04.tar.xz
-
-    # copy, not move, since .cache may contain other files in subdirs already
+    # Copy and not move because '.cache' may aleady contain other subdirectories and files.
     cp -R clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04/* $HOME/.cache
-    echo "======= CLANG-FORMAT init end ======="
-    # remove directories, otherwise copyright-header check complains
+    echo "MSGBLD0060: CLANG-FORMAT installation completed."
+
+    # Remove these directories, otherwise the copyright-header check will complain.
     rm -rf ./cppcheck
     rm -rf ./clang+llvm-3.6.2-x86_64-linux-gnu-ubuntu-14.04
-
   fi
 
-  # Prepend cache to PATH so we find stuff we have installed ourselves first
+  # Ensure that the cppcheck and clang-format installation can be found.
   export PATH=$HOME/.cache/bin:$PATH
-
-  vera++ --version
-  cppcheck --version
-  clang-format --version
-
-  # Extracting changed files in PR / push
-  echo "======= Extract changed files start ======="
+  VERA_VERS=`vera++ --version`
+  CPPCHECK_VERS=`cppcheck --version`
+  CLANG_FORMAT_VERS=`clang-format --version`
+  echo "MSGBLD0065: Following tools are in use:"
+  echo "MSGBLD0065: VERA++       : $VERA_VERS"
+  echo "MSGBLD0065: CPPCHECK     : $CPPCHECK_VERS"
+  echo "MSGBLD0065: CLANG-FORMAT : $CLANG_FORMAT_VERS"
+  
+  echo "MSGBLD0070: Retrieving changed files."
+  # Note: BUG: Extracting the filenames may not work in all cases. 
+  #            The commit range might not properly reflect the history.
+  #            see https://github.com/travis-ci/travis-ci/issues/2668
   if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+    echo "MSGBLD0080: PULL REQUEST: Retrieving changed files using GitHub API."
     file_names=`curl "https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST/files" | jq '.[] | .filename' | tr '\n' ' ' | tr '"' ' '`
   else
-    # extract filenames via git => has some problems with history rewrites
-    # see https://github.com/travis-ci/travis-ci/issues/2668
+    echo "MSGBLD0090: Retrieving changed files using git diff."    
     file_names=`(git diff --name-only $TRAVIS_COMMIT_RANGE || echo "") | tr '\n' ' '`
   fi
-  format_error_files=""
-  echo "file_names=$file_names"
-  echo "======= Extract changed files end ======="
 
+  printf '%s\n' "$file_names" | while IFS= read -r line
+  do
+    for single_file_name in $file_names
+    do
+      echo "MSGBLD0095: File changed: $single_file_name"
+    done
+  done
+  echo "MSGBLD0100: Retrieving changed files completed."
+
+  printf '%s\n' "$file_names" | while IFS= read -r line
+  do
+    echo "MSGBLD0095: File changed: $line"
+  done
+  echo "MSGBLD0100: Retrieving changed files completed."
+
+  format_error_files=""
   for f in $file_names; do
     if [ ! -f "$f" ]; then
-      echo "$f : Is not a file or does not exist anymore."
+      echo "MSGBLD0110: $f is not a file or does not exist anymore."
       continue
     fi
-    # filter files
-    echo "======= Static analysis on file $f ======="
+    echo "MSGBLD0120: Perform static code analysis for file $f."
     case $f in
       *.h | *.c | *.cc | *.hpp | *.cpp )
         f_base=$NEST_VPATH/reports/`basename $f`
-        # Vera++ checks the specified list of rules given in the profile
-        # nest which is placed in the <vera++ root>/lib/vera++/profile
 
-        echo "\n======= - vera++ for $f ======="
+        echo "\n"
+        echo "MSGBLD0130: Run VERA++ for file: $f"
         vera++ --root ./vera_home --profile nest $f > ${f_base}_vera.txt 2>&1
-        cat ${f_base}_vera.txt
-        echo "======= - vera++ end ======="
+        cat ${f_base}_vera.txt | while read line
+        do
+          echo "MSGBLD0135: VERA++ $line"
+        done
+        echo "MSGBLD0140: VERA++ for file $f completed."
 
-        echo "\n======= - cppcheck for $f ======="
+        echo "MSGBLD0150: Run CPPCHECK for file: $f"
         cppcheck --enable=all --inconclusive --std=c++03 $f > ${f_base}_cppcheck.txt 2>&1
-        cat ${f_base}_cppcheck.txt
-        echo "======= - cppcheck end ======="
+        cat ${f_base}_cppcheck.txt | while read line
+        do
+          echo "MSGBLD0155: CPPCHECK $line"
+        done        
+        echo "MSGBLD0160: CPPCHECK for file $f completed."
 
-        echo "\n======= - clang-format for $f ======="
-        # clang format creates tempory formatted file
+        echo "MSGBLD0170: Run CLANG-FORMAT for file: $f"
+        # Create a clang-format formatted temporary file and perform a diff with its origin.
         clang-format $f > ${f_base}_formatted_$TRAVIS_COMMIT.txt
-        # compare the committed file and formatted file and
-        # writes the differences to a temp file
         diff $f ${f_base}_formatted_$TRAVIS_COMMIT.txt | tee ${f_base}_clang_format.txt
-        cat ${f_base}_clang_format.txt
-        echo "======= - clang-format end ======="
+        cat ${f_base}_clang_format.txt | while read line
+        do
+          echo "MSGBLD0175: CLANG-FORMAT $line"
+        done        
+        echo "MSGBLD0180: CLANG-FORMAT for file $f completed."
 
-        # remove temporary files
+        # Remove temporary files.
         rm ${f_base}_formatted_$TRAVIS_COMMIT.txt
 
         if [ -s ${f_base}_clang_format.txt ]; then
-          # file exists and has size greater than zero
           format_error_files="$format_error_files $f"
         fi
 
         ;;
       *.py )
-        echo "======= Check PEP8 for $f ======="
-
-        # Ignore those PEP8 rules
+        echo "MSGBLD0190: Run PEP8 check for file: $f"
+        # Ignore those PEP8 rules.
         PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
-
-        # In example dirs, also ignore incorrectly placed imports
         PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
-        # regular expression of directory patterns on which to apply
-        # PEP8_IGNORES_EXAMPLES
+        # Regular expression of directory patterns on which to apply PEP8_IGNORES_EXAMPLES.
         case $f in
           *examples* | *user_manual_scripts*)
             IGNORES=$PEP8_IGNORES_EXAMPLES
@@ -218,30 +248,38 @@ EOF
             ;;
         esac
 
-        if ! pep8_result=`pep8 --first --ignore=$PEP8_IGNORES $f` ; then
-          echo "$pep8_result"
-
+        if ! pep8_result=`pep8 --ignore=$PEP8_IGNORES $f` ; then
+          printf '%s\n' "$pep8_result" | while IFS= read -r line
+          do
+            echo "MSGBLD0195: PEP8 $line"
+          done
           format_error_files="$format_error_files $f"
         fi
-        echo "======= Check PEP8 end ======="
+        echo "MSGBLD0200: PEP8 check for file $f completed."
         ;;
       *)
-        echo "$f : not a C/CPP/PY file. Do not do static analysis / formatting checking."
+        echo "MSGBLD0210: File $f is not a C/CPP/PY file. Static code analysis and formatting check skipped."
         continue
     esac
-    echo "======= Static analysis end ======="
   done
 
   if [ "x$format_error_files" != "x" ]; then
-    echo "There are files with a formatting error: $format_error_files ."
+    printf '%s\n' "$format_error_files" | while IFS= read -r line
+    do
+      echo "MSGBLD0220: Formatting error in file: $line"
+    done
   fi
-fi # if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
+fi   # static code analysis
+
 
 cd "$NEST_VPATH"
-
 cp ../examples/sli/nestrc.sli ~/.nestrc
 
-echo "======= Configure NEST start ======="
+echo "\n"
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "MSGBLD0230: Configuring CMake."
 cmake \
   -DCMAKE_INSTALL_PREFIX="$NEST_RESULT" \
   -Dwith-optimize=ON \
@@ -254,24 +292,38 @@ cmake \
   $CONFIGURE_LTDL \
   $CONFIGURE_READLINE \
   ..
-echo "======= Configure NEST end ======="
+echo "MSGBLD0240: CMake configure completed."
 
-echo "======= Make NEST start ======="
+echo "\n"
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "+               B U I L D   N E S T                                           +"
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "MSGBLD0250: Running Make."
 make VERBOSE=1
-echo "======= Make NEST end ======="
+echo "MSGBLD0260: Make completed."
 
-echo "======= Install NEST start ======="
+echo "\n"
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "+               I N S T A L L   N E S T                                       +"
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "MSGBLD0270: Running make install."
 make install
-echo "======= Install NEST end ======="
+echo "MSGBLD0280: Make install completed."
 
-echo "======= Test NEST start ======="
+echo "\n"
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "+               R U N   N E S T   T E S T S U I T E                           +"
+echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo "MSGBLD0290: Running make installcheck."
 make installcheck
-echo "======= Test NEST end ======="
+echo "MSGBLD0300: Make installcheck completed."
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-  echo "WARNING: Not uploading results as this is a pull request" >&2
+  echo "MSGBLD0310: This build was triggered by a pull request." >&2
+  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3." >&2
 fi
 
 if [ "$TRAVIS_REPO_SLUG" != "nest/nest-simulator" ] ; then
-  echo "WARNING: Not uploading results as this is from a forked repository" >&2
+  echo "MSGBLD0320: This build was from a forked repository and not from nest/nest-simulator." >&2
+  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3." >&2
 fi

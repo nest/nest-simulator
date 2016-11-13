@@ -197,6 +197,8 @@ def msg_summary_cppcheck(log_filename, msg_cppcheck_section_start,
 
         if in_a_cppcheck_section:
             if is_message(line, msg_cppcheck):
+                if 'Checking' in line:
+                    continue
                 message = line[line.find('('):].strip()
                 if 'is never used' in message:
                     continue

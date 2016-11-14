@@ -72,9 +72,9 @@ class TestGIDCollection(unittest.TestCase):
 
         gc = nest.Create("iaf_psc_alpha", 10)
         ngc = nest.GIDCollection(list(gc))
-        self.assertTrue(gc == ngc)
+        self.assertEqual(gc, ngc)
 
-        self.assertFalse(gc == n) #NB! Hva skjer når n blir objekt?################################
+        self.assertNotEqual(gc, n)
 
     def test_indexing(self):
         """Index of GIDCollections"""
@@ -168,14 +168,14 @@ class TestGIDCollection(unittest.TestCase):
 
         node_b_a = nodes_b + nodes_a
         node_b_a_list = [x for x in node_b_a]
-        test_b_a_list = list(range(n_neurons_a + 1, n_a_b + 1)) \
-                        + list(range(1, n_neurons_a + 1))
+        test_b_a_list = (list(range(n_neurons_a + 1, n_a_b + 1)) +
+                         list(range(1, n_neurons_a + 1)))
         self.assertEqual(node_b_a_list, test_b_a_list)
 
         node_a_c = nodes_a + nodes_c
         node_a_c_list = [x for x in node_a_c]
-        test_a_c_list = list(range(1, n_neurons_a + 1)) \
-                        + list(range(n_a_b + 1, n_a_b_c + 1))
+        test_a_c_list = (list(range(1, n_neurons_a + 1)) +
+                         list(range(n_a_b + 1, n_a_b_c + 1)))
         self.assertEqual(node_a_c_list, test_a_c_list)
 
         nest.ResetKernel()
@@ -213,8 +213,9 @@ class TestGIDCollection(unittest.TestCase):
         n_a = n_a[::2]
         nodes = n_a + n_c
         nodes_list = [x for x in nodes]
-        compare_list = list([x for x in range(1,11) if x % 2 != 0]) \
-                       + list(range(num_a + num_b + 1, num_a + num_b + num_c + 1))
+        compare_list = (list([x for x in range(1, 11) if x % 2 != 0])
+                        list(range(num_a + num_b + 1,
+                             num_a + num_b + num_c + 1)))
         self.assertEqual(nodes_list, compare_list)
 
         self.assertEqual(nodes[2], 5)
@@ -256,7 +257,7 @@ class TestGIDCollection(unittest.TestCase):
         modelID = list(nest.sli_pop().values())
 
         count = 0
-        for gid, mid in n: #NB! This will change with the implementation of the GIDCollection object
+        for gid, mid in n.items():
             self.assertEqual(mid, modelID[count])
             count += 1
 

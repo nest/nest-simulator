@@ -35,7 +35,7 @@
 \class lockPTR
 
  This template is the standard safe-pointer implementation
- of SYNOD.
+ of NEST.
 
  In order for this scheme to work smoothly, the user has to take some
  precautions:
@@ -55,8 +55,8 @@
 
  Since all access to the referenced object is done via a lockPTR, it
  is possible to maintain a count of all active references. If this
- count dropts to zero, the referenced object can savely be destroyed.
- For dynamically allocated objects, delete is envoked on the stored
+ count drops to zero, the referenced object can safely be destroyed.
+ For dynamically allocated objects, delete is invoked on the stored
  pointer.
 
  class lockPTR distinguishes between dynamically and automatically
@@ -67,7 +67,7 @@
  destructor once the reference count drops to zero.
 
  If the lockPTR is initialised with a reference, it assumes that the
- object is automatically allocated. Thus, the lockPTR wil NOT call the
+ object is automatically allocated. Thus, the lockPTR will NOT call the
  destructor.
 
  In some cases it is necessary for a routine to actually get hold of

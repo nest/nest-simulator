@@ -34,17 +34,16 @@
 
 // Includes from sli:
 #include "aggregatedatum.h"
+#include "lockptrdatum.h"
 
 typedef AggregateDatum< nest::ConnectionID, &nest::NestModule::ConnectionType >
   ConnectionDatum;
-typedef AggregateDatum< nest::GIDCollection,
+typedef lockPTRDatum< nest::GIDCollection,
   &nest::NestModule::GIDCollectionType > GIDCollectionDatum;
 
 #ifndef HAVE_STATIC_TEMPLATE_DECLARATION_FAILS
 template <>
 sli::pool ConnectionDatum::memory;
-template <>
-sli::pool GIDCollectionDatum::memory;
 #endif
 
 template <>

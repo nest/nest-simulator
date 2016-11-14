@@ -267,8 +267,8 @@ nest::ConnectionManager::get_user_set_delay_extrema() const
 
 nest::ConnBuilder*
 nest::ConnectionManager::get_conn_builder( const std::string& name,
-  const GIDCollection& sources,
-  const GIDCollection& targets,
+  GIDCollectionPTR sources,
+  GIDCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
 {
@@ -287,8 +287,8 @@ nest::ConnectionManager::calibrate( const TimeConverter& tc )
 }
 
 void
-nest::ConnectionManager::connect( const GIDCollection& sources,
-  const GIDCollection& targets,
+nest::ConnectionManager::connect( GIDCollectionPTR sources,
+  GIDCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
 {

@@ -137,8 +137,10 @@ SPManager::set_status( const DictionaryDatum& d )
   if ( d->known( names::multapses ) )
     def< bool >(
       conn_spec, names::multapses, getValue< bool >( d, names::multapses ) );
-  GIDCollection sources = GIDCollection();
-  GIDCollection targets = GIDCollection();
+
+  assert( false && "need to fix gid coll stuff here");
+  GIDCollectionPTR sources(0); // = GIDCollection();
+  GIDCollectionPTR targets(0); // = GIDCollection();
 
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin();
         i != sp_conn_builders_.end();
@@ -221,10 +223,14 @@ SPManager::disconnect_single( index sgid,
   if ( syn->known( names::pre_synaptic_element )
     && syn->known( names::post_synaptic_element ) )
   {
-    GIDCollection* sources = new GIDCollection();
-    GIDCollection* targets = new GIDCollection();
+	  assert( false && "need to fix gid coll stuff here");
+	  GIDCollectionPTR sources(0); // = GIDCollection();
+	  GIDCollectionPTR targets(0); // = GIDCollection();
+
+    //GIDCollection* sources = new GIDCollection();
+    //GIDCollection* targets = new GIDCollection();
     DictionaryDatum* conn_spec = new DictionaryDatum( new Dictionary() );
-    SPBuilder* cb = new SPBuilder( *sources, *targets, *conn_spec, syn );
+    SPBuilder* cb = new SPBuilder( sources, targets, *conn_spec, syn );
     cb->change_connected_synaptic_elements(
       sgid, target->get_gid(), target->get_thread(), -1 );
   }
@@ -293,8 +299,8 @@ SPManager::disconnect( index sgid,
  * @param syn_spec synapse specs
  */
 void
-SPManager::disconnect( GIDCollection& sources,
-  GIDCollection& targets,
+SPManager::disconnect( GIDCollectionPTR sources,
+  GIDCollectionPTR targets,
   DictionaryDatum& conn_spec,
   DictionaryDatum& syn_spec )
 {
@@ -506,8 +512,12 @@ SPManager::create_synapses( std::vector< index >& pre_id,
   }
 
   // create synapse
-  GIDCollection sources = GIDCollection( pre_id_rnd );
-  GIDCollection targets = GIDCollection( post_id_rnd );
+  assert( false && "need to fix gid coll stuff here");
+  GIDCollectionPTR sources(0); // = GIDCollection();
+  GIDCollectionPTR targets(0); // = GIDCollection();
+
+  //GIDCollectionPTR sources = new GIDCollectionComposite( pre_id_rnd );
+  //GIDCollectionPTR targets = new GIDCollectionComposite( post_id_rnd );
 
   sp_conn_builder->sp_connect( sources, targets );
 }

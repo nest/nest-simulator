@@ -509,16 +509,21 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
 
 /* BeginDocumentation
    Name: Create - create a number of equal nodes in the current subnet
+
    Synopsis:
-   /model          Create -> gid
-   /model n        Create -> gid
-   /model   params Create -> gid
-   /model n params Create -> gid
+   /model          Create -> gids
+   /model n        Create -> gids
+   /model   params Create -> gids
+   /model n params Create -> gids
+
    Parameters:
    /model - literal naming the modeltype (entry in modeldict)
    n      - the desired number of nodes
    params - parameters for the newly created node(s)
-   gid    - gid of last created node
+
+   Returns:
+   gids   - GIDCollection representing nodes created
+
    Description:
    Create generates n new network objects of the supplied model
    type. If n is not given, a single node is created. The objects
@@ -540,10 +545,10 @@ NestModule::Create_l_iFunction::execute( SLIInterpreter* i ) const
 
   const std::string modname = getValue< std::string >( i->OStack.pick( 1 ) );
 
-  const long last_node_id = create( modname, n_nodes );
+  GIDCollectionDatum nodes_created = create( modname, n_nodes );
 
   i->OStack.pop( 2 );
-  i->OStack.push( last_node_id );
+  i->OStack.push( nodes_created );
   i->EStack.pop();
 }
 
@@ -1438,7 +1443,8 @@ NestModule::Cvgidcollection_i_iFunction::execute( SLIInterpreter* i ) const
 
   const long first = getValue< long >( i->OStack.pick( 1 ) );
   const long last = getValue< long >( i->OStack.pick( 0 ) );
-  GIDCollectionDatum gidcoll = GIDCollection( first, last );
+
+  GIDCollectionDatum gidcoll = new GIDCollectionPrimitive( first, last );
 
   i->OStack.pop( 2 );
   i->OStack.push( gidcoll );
@@ -1451,7 +1457,9 @@ NestModule::Cvgidcollection_iaFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   TokenArray gids = getValue< TokenArray >( i->OStack.pick( 0 ) );
-  GIDCollectionDatum gidcoll = GIDCollection( gids );
+
+  assert( false && "not yet implemented");
+  GIDCollectionDatum gidcoll(GIDCollectionPTR(0)); // = new GIDCollectionComposite( gids );
 
   i->OStack.pop();
   i->OStack.push( gidcoll );
@@ -1464,7 +1472,8 @@ NestModule::Cvgidcollection_ivFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   IntVectorDatum gids = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
-  GIDCollectionDatum gidcoll = GIDCollection( gids );
+  assert( false && "not yet implemented");
+  GIDCollectionDatum gidcoll(GIDCollectionPTR(0)); // = new GIDCollectionComposite( gids );
 
   i->OStack.pop();
   i->OStack.push( gidcoll );
@@ -1479,7 +1488,7 @@ NestModule::Size_gFunction::execute( SLIInterpreter* i ) const
     getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
   i->OStack.pop();
-  i->OStack.push( gidcoll.size() );
+  i->OStack.push( gidcoll->size() );
   i->EStack.pop();
 }
 

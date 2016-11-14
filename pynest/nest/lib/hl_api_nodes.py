@@ -34,11 +34,12 @@ class GIDCollection(object):
 
     _datum = None
 
-    def __init__(self, datum):  ### Må man ha GIDList = None eller noe sånt? for hva om man konstruerer gjennom liste....
-        if not isinstance(datum, nest.SLIDatum) \
-           or datum.dtype != "gidcollectiontype":
-            raise TypeError("expected GIDCollection Datum")
-        self._datum = datum
+    def __init__(self, datum):
+        if isinstance(datum, nest.SLIDatum) \
+           or datum.dtype == "gidcollectiontype":
+            self._datum = datum
+        else: # Data from user, must be converted to datum
+            self._datum = nest.python_object_to_datum(datum)
 
     def __iter__(self):
         # Naive implementation

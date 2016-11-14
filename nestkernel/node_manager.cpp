@@ -181,7 +181,7 @@ NodeManager::get_status( index idx )
   return d;
 }
 
-GIDCollection NodeManager::add_node( index mod, long n )
+GIDCollectionPTR NodeManager::add_node( index mod, long n ) // no_p
 {
   assert( current_ != 0 );
   assert( root_ != 0 );
@@ -434,7 +434,8 @@ GIDCollection NodeManager::add_node( index mod, long n )
       "lead to inconsistent results." );
   }
 
-  return GIDCollection( min_gid, max_gid - 1 );
+  return GIDCollectionPTR(new GIDCollectionPrimitive(min_gid, max_gid - 1,
+		  mod));
 }
 
 void
@@ -464,8 +465,8 @@ NodeManager::restore_nodes( const ArrayDatum& node_list )
     if ( parent_gid >= min_gid ) // if the parent is one of the restored nodes
       local_parent_gid += gid_offset; // we must add the gid_offset
     go_to( local_parent_gid );
-    const GIDCollection node = add_node( model_id );
-    Node* node_ptr = get_node( *node.begin() );
+    GIDCollectionPTR node = add_node( model_id );
+    Node* node_ptr = get_node( (*node->begin()).gid );
     // we call directly set_status on the node
     // to bypass checking of unused dictionary items.
     node_ptr->set_status_base( node_props );

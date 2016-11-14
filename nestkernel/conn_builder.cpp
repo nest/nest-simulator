@@ -48,12 +48,12 @@
 #include "fdstream.h"
 #include "name.h"
 
-nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
-  const GIDCollection& targets,
+nest::ConnBuilder::ConnBuilder( GIDCollectionPTR sources,
+  GIDCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
-  : sources_( &sources )
-  , targets_( &targets )
+  : sources_( sources )
+  , targets_( targets )
   , autapses_( true )
   , multapses_( true )
   , symmetric_( false )
@@ -1041,8 +1041,8 @@ nest::AllToAllBuilder::sp_disconnect_()
   }
 }
 
-nest::FixedInDegreeBuilder::FixedInDegreeBuilder( const GIDCollection& sources,
-  const GIDCollection& targets,
+nest::FixedInDegreeBuilder::FixedInDegreeBuilder( GIDCollectionPTR sources,
+  GIDCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -1151,8 +1151,8 @@ nest::FixedInDegreeBuilder::connect_()
 }
 
 nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder(
-  const GIDCollection& sources,
-  const GIDCollection& targets,
+  GIDCollectionPTR sources,
+  GIDCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -1272,8 +1272,8 @@ nest::FixedOutDegreeBuilder::connect_()
 }
 
 nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder(
-  const GIDCollection& sources,
-  const GIDCollection& targets,
+  GIDCollectionPTR sources,
+  GIDCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -1420,8 +1420,8 @@ nest::FixedTotalNumberBuilder::connect_()
 }
 
 
-nest::BernoulliBuilder::BernoulliBuilder( const GIDCollection& sources,
-  const GIDCollection& targets,
+nest::BernoulliBuilder::BernoulliBuilder( GIDCollectionPTR sources,
+  GIDCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -1494,8 +1494,8 @@ nest::BernoulliBuilder::connect_()
  * @param conn_spec connectivity specs
  * @param syn_spec synapse specs
  */
-nest::SPBuilder::SPBuilder( const GIDCollection& sources,
-  const GIDCollection& targets,
+nest::SPBuilder::SPBuilder( GIDCollectionPTR sources,
+  GIDCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -1521,7 +1521,7 @@ nest::SPBuilder::update_delay( delay& d ) const
 }
 
 void
-nest::SPBuilder::sp_connect( GIDCollection sources, GIDCollection targets )
+nest::SPBuilder::sp_connect( GIDCollectionPTR sources, GIDCollectionPTR targets )
 {
   connect_( sources, targets );
 
@@ -1545,11 +1545,11 @@ nest::SPBuilder::connect_()
  * @param targets target nodes for the newly created synapses
  */
 void
-nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
+nest::SPBuilder::connect_( GIDCollectionPTR sources, GIDCollectionPTR targets )
 {
   // Code copied and adapted from OneToOneBuilder::connect_()
   // make sure that target and source population have the same size
-  if ( sources.size() != targets.size() )
+  if ( sources->size() != targets->size() )
   {
     LOG( M_ERROR,
       "Connect",
@@ -1567,12 +1567,12 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      for ( GIDCollection::const_iterator tgid = targets.begin(),
-                                          sgid = sources.begin();
-            tgid != targets.end();
+      for ( GIDCollection::const_iterator tgid = targets->begin(),
+                                          sgid = sources->begin();
+            tgid != targets->end();
             ++tgid, ++sgid )
       {
-        assert( sgid != sources.end() );
+        assert( sgid != sources->end() );
 
         if ( (*sgid).gid == (*tgid).gid and not autapses_ )
           continue;

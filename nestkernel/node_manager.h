@@ -81,10 +81,10 @@ public:
    * @param m valid Model ID.
    * @param n Number of Nodes to be created. Defaults to 1 if not
    * specified.
-   * @returns GIDCollection representing models created
+   * @returns GIDCollection as lock pointer
    * @throws nest::UnknownModelID
    */
-  GIDCollection add_node( index m, long n = 1 );
+  GIDCollectionPTR add_node( index m, long n = 1 );
 
 
   /**

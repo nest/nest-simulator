@@ -29,18 +29,30 @@
 namespace nest
 {
 
-GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last, index model_id )
+GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last,
+		index model_id, GIDCollectionMetadataPTR meta )
+: first_(first)
+, last_(last)
+, model_id_(model_id)
+, metadata_( meta )
 {
-  first_ = first;
-  last_ = last;
-  model_id = model_id;
+}
+
+GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last,
+		index model_id )
+: first_(first)
+, last_(last)
+, model_id_(model_id)
+, metadata_( 0 )
+{
 }
 
 GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last)
+: first_( first )
+, last_( last )
+, model_id_( 0 )
+, metadata_( 0 )
 {
-  first_ = first;
-  last_ = last;
-  
   // find the model_id
   const int model_id = kernel().node_manager.get_node( first )->get_model_id();
   for (index gid = ++first; gid <= last; ++gid)
@@ -53,16 +65,61 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last)
   model_id_ = model_id;
 }
 
-GIDCollectionPrimitive::GIDCollectionPrimitive( TokenArray gids )
+GIDCollectionPrimitive::GIDCollectionPrimitive( const GIDCollectionPrimitive& rhs )
+: first_( rhs.first_ )
+, last_( rhs.last_ )
+, model_id_( rhs.model_id_ )
+, metadata_( rhs.metadata_ )
+{
+}
+
+GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
+{
+  throw KernelException("not implemented yet");
+  return GIDCollectionPTR(0);
+}
+
+GIDCollectionPTR GIDCollectionPrimitive::GIDCollectionPrimitive::slice( size_t start,
+                                                              size_t stop,
+															  size_t step) const
+{
+	  if ( not ( start < stop ) )
+	  {
+		throw BadParameter("start < stop required.");
+	  }
+	  if ( not ( stop <= size() ) )
+	  {
+	    throw BadParameter("stop <= size() required.");
+	  }
+
+  if ( step == 1 )
+  {
+	 return GIDCollectionPTR( new GIDCollectionPrimitive( first_ + start,
+			 first_ + stop - 1, model_id_, metadata_ ) );
+  }
+  else
+  {
+     return GIDCollectionPTR( 0 ); //new GIDCollectionComposite( *this, start, stop, step ) );
+  }
+}
+
+
+GIDCollectionComposite::GIDCollectionComposite( TokenArray gids )
 {
   //assert(false); // Constructor should not be used.
   throw BadProperty( "constructor will be removed." );
 }
 
-GIDCollectionPrimitive::GIDCollectionPrimitive( IntVectorDatum gids )
+GIDCollectionComposite::GIDCollectionComposite( IntVectorDatum gids )
 {
   //assert(false); // Constructor should not be used.
   throw BadProperty( "constructor will be removed." );
+}
+
+GIDCollectionComposite::GIDCollectionComposite( const GIDCollectionPrimitive& prim,
+		size_t start, size_t stop, size_t step )
+
+{
 }
 
 void

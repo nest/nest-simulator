@@ -24,6 +24,7 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "gid_collection.h"
 #include "kernel_manager.h"
 
 // Includes from sli:
@@ -158,8 +159,8 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   if ( layer_model.empty() )
     throw UnknownModelName( layer_model_name );
 
-  const GIDCollection layer_gc = kernel().node_manager.add_node( layer_model );
-  const index layer_node = *layer_gc.begin();
+  GIDCollectionPTR layer_gc = kernel().node_manager.add_node( layer_model );
+  const index layer_node = (*(layer_gc->begin())).gid;
 
   // Remember original subnet
   const index cwnode = kernel().node_manager.get_cwn()->get_gid();

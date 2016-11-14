@@ -25,14 +25,12 @@
 // explicit instantiations
 template class AggregateDatum< nest::ConnectionID,
   &nest::NestModule::ConnectionType >;
-template class AggregateDatum< nest::GIDCollection,
+template class lockPTRDatum< nest::GIDCollection,
   &nest::NestModule::GIDCollectionType >;
 
 // instantiate memory management pool
 template <>
 sli::pool ConnectionDatum::memory( sizeof( nest::ConnectionID ), 10000, 1 );
-template <>
-sli::pool GIDCollectionDatum::memory( sizeof( nest::GIDCollection ), 10000, 1 );
 
 // simple type printing
 template <>
@@ -55,9 +53,11 @@ ConnectionDatum::pprint( std::ostream& out ) const
 {
   print_me( out );
 }
+
 template <>
 void
 GIDCollectionDatum::pprint( std::ostream& out ) const
 {
-  print_me( out );
+  get()->print_me( out );
+  unlock();
 }

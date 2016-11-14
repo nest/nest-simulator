@@ -1443,7 +1443,8 @@ NestModule::Cvgidcollection_i_iFunction::execute( SLIInterpreter* i ) const
 
   const long first = getValue< long >( i->OStack.pick( 1 ) );
   const long last = getValue< long >( i->OStack.pick( 0 ) );
-  GIDCollectionDatum gidcoll = GIDCollection( first, last );
+
+  GIDCollectionDatum gidcoll = new GIDCollectionPrimitive( first, last );
 
   i->OStack.pop( 2 );
   i->OStack.push( gidcoll );
@@ -1456,7 +1457,9 @@ NestModule::Cvgidcollection_iaFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   TokenArray gids = getValue< TokenArray >( i->OStack.pick( 0 ) );
-  GIDCollectionDatum gidcoll = GIDCollection( gids );
+
+  assert( false && "not yet implemented");
+  GIDCollectionDatum gidcoll(GIDCollectionPTR(0)); // = new GIDCollectionComposite( gids );
 
   i->OStack.pop();
   i->OStack.push( gidcoll );
@@ -1469,7 +1472,8 @@ NestModule::Cvgidcollection_ivFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   IntVectorDatum gids = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
-  GIDCollectionDatum gidcoll = GIDCollection( gids );
+  assert( false && "not yet implemented");
+  GIDCollectionDatum gidcoll(GIDCollectionPTR(0)); // = new GIDCollectionComposite( gids );
 
   i->OStack.pop();
   i->OStack.push( gidcoll );
@@ -1484,7 +1488,7 @@ NestModule::Size_gFunction::execute( SLIInterpreter* i ) const
     getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
   i->OStack.pop();
-  i->OStack.push( gidcoll.size() );
+  i->OStack.push( gidcoll->size() );
   i->EStack.pop();
 }
 

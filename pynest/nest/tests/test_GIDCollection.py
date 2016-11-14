@@ -213,7 +213,7 @@ class TestGIDCollection(unittest.TestCase):
         n_a = n_a[::2]
         nodes = n_a + n_c
         nodes_list = [x for x in nodes]
-        compare_list = (list([x for x in range(1, 11) if x % 2 != 0])
+        compare_list = (list([x for x in range(1, 11) if x % 2 != 0]) + 
                         list(range(num_a + num_b + 1,
                              num_a + num_b + num_c + 1)))
         self.assertEqual(nodes_list, compare_list)

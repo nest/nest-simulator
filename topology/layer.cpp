@@ -158,9 +158,10 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     kernel().model_manager.get_modeldict()->lookup( layer_model_name );
   if ( layer_model.empty() )
     throw UnknownModelName( layer_model_name );
+  const index layer_model_id = static_cast< index >( layer_model );
 
-  GIDCollectionPTR layer_gc = kernel().node_manager.add_node( layer_model );
-  const index layer_node = (*(layer_gc->begin())).gid;
+  GIDCollectionPTR layer_gc = kernel().node_manager.add_node( layer_model_id );
+  const index layer_node = ( *( layer_gc->begin() ) ).gid;
 
   // Remember original subnet
   const index cwnode = kernel().node_manager.get_cwn()->get_gid();

@@ -27,6 +27,71 @@ from .hl_api_helper import *
 from .hl_api_info import SetStatus
 
 
+class GIDCollection(object):
+    """
+    Class for GIDCollection.
+    """
+
+    _datum = None
+
+    def __init__(self, datum):  ### Må man ha GIDList = None eller noe sånt? for hva om man konstruerer gjennom liste....
+        if not isinstance(datum, nest.SLIDatum) \
+           or datum.dtype != "gidcollectiontype":
+            raise TypeError("expected GIDCollection Datum")
+        self._datum = datum
+
+    def __iter__(self):
+        # Naive implementation
+        gc_as_list = nest.sli_func('cva', self._datum)
+        try:
+            it = iter(gc_as_list)
+        except TypeError:
+            raise TypeError("The GIDCollection needs to be converted to list \
+                             in order to be iterable")
+        return it
+
+    def items(self):
+        # Naive implementation
+        gc_with_mid_as_list = nest.sli_func('cva_with_mid', self._datum)
+        try:
+            it = iter(gc_with_mid_as_list)
+        except TypeError:
+            raise TypeError("The GIDCollection needs to be converted to list \
+                             in order to be iterable")
+        return it
+
+    def __add__(self, other):
+        if not isinstance(other, GIDCollection):
+            return NotImplemented
+        return GIDCollection(nest.sli_func('join', self._datum, other_datum))
+
+    def __getitem__(self, key):
+        if isinstance(key, slice):
+            return GIDCollection(nest.sli_func('Take',
+                                 self._datum, [key.start, key.stop, key.step])
+        else:
+            gid = nest.sli_func('get', self._datum, key)
+            try:
+                gid + 1
+            except TypeError:
+                raise TypeError("Slicing of a GIDCollection should return a \
+                                gid")
+            return gid
+
+    def __contains__(self, gid):
+        return nest.sli_func('MemberQ', self._datum, gid)
+
+     def __eq__(self, other):
+        if not isinstance(other, GIDCollection):
+            return NotImplemented
+        return self._datum == other._datum
+
+    def __neq__(self, other):
+        if not isinstance(other, GIDCollection):
+            return NotImplemented
+        return not self == other
+
+
 @check_stack
 def Create(model, n=1, params=None):
     """Create n instances of type model.

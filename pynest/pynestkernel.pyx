@@ -51,6 +51,7 @@ cdef string SLI_TYPE_VECTOR_INT = b"intvectortype"
 cdef string SLI_TYPE_VECTOR_DOUBLE = b"doublevectortype"
 cdef string SLI_TYPE_MASK = b"masktype"
 cdef string SLI_TYPE_PARAMETER = b"parametertype"
+cdef string SLI_TYPE_GIDCOLLECTION = b"gidcollectiontype"
 
 
 DEF CONN_ELMS = 5
@@ -422,6 +423,9 @@ cdef inline object sli_datum_to_object(Datum* dat):
     elif datum_type == SLI_TYPE_PARAMETER:
         ret = SLIDatum()
         (<SLIDatum> ret)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())
+    elif datum_type == SLI_TYPE_GIDCOLLECTION:
+        ret SLIDatum()
+        (<SLIDatum> ret)._set_datum(<Datum*> new GIDCollectionDatum(deref(<GIDCollectionDatum*> dat)), SLI_TYPE_GIDCOLLECTION.decode())
     else:
         raise NESTError("unknown SLI type: {0}".format(datum_type.decode()))
 

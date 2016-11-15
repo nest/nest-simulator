@@ -1,0 +1,454 @@
+/*
+ *  test_gid_collection.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+ /* BeginDocumentation
+Name: testsuite::test_gid_collection - test handling of gid collections
+
+Synopsis: (test_gid_collection) run
+
+
+Description:
+
+ This testscript checks that gid collections work correctly from the SLI
+ level.
+
+Author:  November 2016, Plesser
+*/
+
+M_PROGRESS setverbosity
+
+(unittest) run
+/unittest using
+
+/skip_test { (SKIPPING) M_WARNING message ; } def
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (No gid collection without nodes) M_PROGRESS message
+  ResetKernel
+
+  [ 1 2 3 ] cvgidcollection
+
+  end
+} fail_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Create returns GIDCollection) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create type /gidcollectiontype eq
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check length of GIDCollections from Create) M_PROGRESS message
+  ResetKernel
+
+  true 
+  [ 1 2 10 100 ] 
+  { dup 
+    /iaf_psc_alpha exch Create
+    size eq
+  }
+  Fold
+       
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that GIDCollection can be converted to array) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  cva
+  [ 10 ] Range
+  eq  
+  
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check array can be converted to GIDCollection for existing neurons) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /gids [ 10 ] Range def
+  gids cvgidcollection
+  cva
+  gids eq 
+  end
+} skip_test % assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check unsorted array can be converted to GIDCollection for existing neurons) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  [ 5 3 4 7 ] cvgidcollection
+  cva
+  [ 3 4 5 7 ] eq 
+  end
+} skip_test % assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check unsorted array can be converted to GIDCollection for existing neurons, multiple types) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  [ 15 5 3 12 4 7 13 ] cvgidcollection
+  cva
+  [ 3 4 5 7 12 13 15 ] eq 
+  end
+} skip_test % assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check contiguous join) M_PROGRESS message
+  ResetKernel
+   
+  /n 10 def
+  /iaf_psc_alpha n Create
+  /iaf_psc_alpha n Create
+  join
+  cva
+  [ n 2 mul ] Range eq 
+  end
+} skip_test % assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check contiguous join with inverted order) M_PROGRESS message
+  ResetKernel
+   
+  /n 10 def
+  /iaf_psc_alpha n Create
+  /iaf_psc_alpha n Create
+  exch
+  join
+  cva
+  [ n 2 mul ] Range eq 
+  end
+} skip_test % assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check non-contiguous join) M_PROGRESS message
+  ResetKernel
+
+  /n 10 def
+  /iaf_psc_alpha n Create
+  /iaf_psc_alpha n Create pop
+  /iaf_psc_alpha n Create
+  join
+  cva
+  [  1 n ] Range
+  [ n 2 mul 1 add n 3 mul ] Range join
+  eq    
+  end
+} skip_test % assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check inhomogeneous join) M_PROGRESS message
+  ResetKernel
+
+  /n 10 def
+  /iaf_psc_alpha n Create
+  /iaf_psc_exp n Create
+  join
+  cva
+  [ n 2 mul ] Range
+  eq 
+  end
+} skip_test % assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Illegal join with different metadata) M_PROGRESS message
+  ResetKernel
+
+  << /rows 1 /columns 1 /elements /iaf_psc_alpha >> CreateLayer
+  << /rows 1 /columns 1 /elements /iaf_psc_alpha >> CreateLayer
+  join 
+  
+  end
+} fail_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check join with overlapping GIDs) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  [ 4 5 ] cvgidcollection
+  join
+
+  end
+} fail_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check element access) M_PROGRESS message
+  ResetKernel
+
+  /gc
+    /iaf_psc_alpha 10 Create
+    /iaf_psc_exp 10 Create 
+  join def
+
+  true [ 0 5 10 19 ] { dup 1 add exch gc exch get eq } Fold
+  true [ -1 -20 ] { dup 21 add exch gc exch get eq } Fold
+  and
+
+  end
+} skip_test % assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check too large positive index fails) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  11 get
+  
+  end
+} fail_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check too large negative index fails) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  -11 get
+  
+  end
+} fail_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Test iteration with forall) M_PROGRESS message
+  ResetKernel
+
+  /ok true def
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join
+  { 
+    dup /global_id get eq ok and /ok Set 
+  } 
+  forall
+  ok
+  end
+} skip_test % assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Test iteration with Map) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join
+  { 
+    dup /global_id get eq 
+  } 
+  Map
+  true exch { and } Fold
+  end
+} skip_test % assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Test slicing with Take) M_PROGRESS message
+  ResetKernel
+
+  /gc 
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join def
+  
+  true 
+  [ << /s 3 /e [ 1 2 3 ] >>
+    << /s -3 /e [ 18 19 20 ] >>
+    << /s [ 7 12 ] /e [ 7 8 9 10 11 12 ] >>
+    << /s [ -4 -2 ] /e [ 17 18 19 ] >>
+    << /s [ 1 20 7 ] /e [ 1 8 15 ] >>
+    << /s [ 1 20 70 ] /e [ 1 ] >>
+    << /s [ 5 20 5 ] /e [ 5 10 15 20 ] >>
+  ]
+  {
+    begin
+      gc s Take 
+      cva e eq
+    end
+  }
+  Fold
+
+  end
+} skip_test % assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Slice attempt with out-of-bound value 1) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create 20 Take
+  end
+} fail_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Slice attempt with out-of-bound value 2) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create -20 Take
+  end
+} fail_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Slice attempt with out-of-bound value 3) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create [ 1 30 ] Take
+  end
+} fail_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Slice attempt with negative step) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create [ 1 5 -1 ] Take
+  end
+} fail_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Element membership) M_PROGRESS message
+  ResetKernel
+
+  /gc
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join def
+  
+  gc 1 MemberQ
+  gc 15 MemberQ and
+  gc 40 MemberQ not and
+
+  end
+} skip_test % assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (GetStatus on collection) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join
+  GetStatus 
+  { /global_id get } Map
+  [ 20 ] Range eq
+
+  end
+} skip_test % assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (SetStatus on collection) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join dup
+  << /V_m -100.0 >> SetStatus
+  GetStatus  
+  true exch
+  { /V_m get 100.0 eq } Fold
+
+  end
+} skip_test % assert_or_die
+
+endusing

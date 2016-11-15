@@ -29,6 +29,11 @@
 namespace nest
 {
 
+GIDCollectionPTR operator+( GIDCollectionPTR lhs, GIDCollectionPTR rhs )
+{
+  throw KernelException( "not yet implemented" );
+}
+
 GIDCollectionPrimitive::GIDCollectionPrimitive( index first,
   index last,
   index model_id,
@@ -77,10 +82,15 @@ GIDCollectionPrimitive::GIDCollectionPrimitive(
 {
 }
 
-GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
+ArrayDatum GIDCollectionPrimitive::to_array() const
 {
-  throw KernelException( "not implemented yet" );
-  return GIDCollectionPTR( 0 );
+  ArrayDatum gids;
+  gids.reserve( size() );
+  for ( const_iterator it = begin(); it != end() ; ++it )
+  {
+	gids.push_back( (*it).gid );
+  }
+  return gids;
 }
 
 GIDCollectionPTR

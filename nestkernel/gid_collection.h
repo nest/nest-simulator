@@ -105,12 +105,13 @@ public:
   virtual void print_me( std::ostream& ) const = 0;
 
   virtual index operator[]( size_t ) const = 0;
-  virtual GIDCollectionPTR operator+( GIDCollectionPTR ) const = 0;
   virtual bool operator==( GIDCollectionPTR ) const = 0;
   virtual bool operator!=( GIDCollectionPTR ) const;
 
   virtual const_iterator begin() const = 0;
   virtual const_iterator end() const = 0;
+
+  virtual ArrayDatum to_array() const = 0;
 
   virtual size_t size() const = 0;
 
@@ -147,11 +148,12 @@ public:
   void print_me( std::ostream& ) const;
 
   index operator[]( const size_t ) const;
-  GIDCollectionPTR operator+( GIDCollectionPTR rhs ) const;
   bool operator==( const GIDCollectionPTR rhs ) const;
 
   const_iterator begin() const;
   const_iterator end() const;
+
+  ArrayDatum to_array() const;
 
   size_t size() const;
 
@@ -163,6 +165,7 @@ public:
   GIDCollectionMetadataPTR get_metadata() const;
 };
 
+GIDCollectionPTR operator+( GIDCollectionPTR lhs, GIDCollectionPTR rhs );
 
 class GIDCollectionComposite : public GIDCollection
 {

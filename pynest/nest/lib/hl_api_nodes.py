@@ -59,6 +59,9 @@ class GIDCollection(object):
             gids_in = [2, 4, 6, 8]
             new_gc = nest.GIDCollection(gids_in)
 
+            # Convert to list
+            gc_list =  [x for x in gc]
+
             # Concatination
             Enrns = nest.Create('aeif_cond_alpha', 600)
             Inrns = nest.Create('iaf_neuron', 400)

@@ -34,7 +34,40 @@ class GIDCollection(object):
 
     GIDCollection represents the nodes of a network. The class supports
     iteration, concatination, indexing, slicing, membership, convertion to and
-    from lists, and test for membership.
+    from lists, test for membership, and test for equality.
+
+    A GIDCollection is created by the ``Create`` function, or by converting a
+    list of nodes to a GIDCollection with ``nest.GIDCollection(list)``.
+
+    By iterating over the GIDCollection you get the gids. If you apply the
+    ``items()`` function, you can also read the modelID.
+
+    **Example**
+        ::
+            import nest
+
+            nest.ResetKernel()
+
+            # Create GIDCollection representing nodes
+            gc = nest.Create('iaf_neuron', 10)
+
+            # Print gids and modelID
+            for gid, mid in gc.items():
+                print(gid, mid)
+
+            # Convert from list
+            gids_in = [2, 4, 6, 8]
+            new_gc = nest.GIDCollection(gids_in)
+
+            # Concatination
+            Enrns = nest.Create('aeif_cond_alpha', 600)
+            Inrns = nest.Create('iaf_neuron', 400)
+            nrns = Enrns + Inrns
+
+            # Indexing, slicing and membership
+            print(new_gc[2])
+            print(new_gc[1:2])
+            6 in new_gc
     """
 
     _datum = None

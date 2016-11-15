@@ -21,7 +21,6 @@
 
 """
 GIDCollection tests
-
 """
 
 import unittest
@@ -36,7 +35,7 @@ class TestGIDCollection(unittest.TestCase):
         nest.ResetKernel()
 
     def test_GIDCollection_to_list(self):
-        """Convertion from GIDCollection to list"""
+        """Conversion from GIDCollection to list"""
 
         n_neurons = 10
         n = nest.Create('iaf_neuron', n_neurons)
@@ -199,6 +198,20 @@ class TestGIDCollection(unittest.TestCase):
         self.assertTrue(10 in nodes)
         self.assertFalse(11 in nodes)
 
+    def test_correct_len_on_GIDCollection(self):
+        """len function on GIDCollection"""
+
+        a = nest.Create('iaf_neuron', 10)
+        self.assertEqual(len(a), 10)
+
+        b = nest.Create('iaf_psc_alpha', 7)
+        nodes = a + b
+        self.assertEqual(len(nodes), 17)
+
+        c = nest.Create('aeif_cond_alpha', 20)
+        c = c[3:17:4]
+        self.assertEqual(len(c), 4)
+
     def test_composite_GIDCollection(self):
         """Tests on composite GIDCollection with patched GIDs"""
 
@@ -213,7 +226,7 @@ class TestGIDCollection(unittest.TestCase):
         n_a = n_a[::2]
         nodes = n_a + n_c
         nodes_list = [x for x in nodes]
-        compare_list = (list([x for x in range(1, 11) if x % 2 != 0]) + 
+        compare_list = (list([x for x in range(1, 11) if x % 2 != 0]) +
                         list(range(num_a + num_b + 1,
                              num_a + num_b + num_c + 1)))
         self.assertEqual(nodes_list, compare_list)
@@ -268,6 +281,17 @@ class TestGIDCollection(unittest.TestCase):
         nest.Connect(n, n, {'rule': 'one_to_one'})
         connections = nest.GetKernelStatus('num_connections')
         self.assertEqual(connections, 10)
+
+    def test_SetStatus_and_GetStatus(self):
+        """
+        Test that SetStatus and GetStatus works as expected with
+        GIDCollection
+        """
+
+        num_nodes = 10
+        n = nest.Create('iaf_neuron', num_nodes)
+        nest.SetStatus(n, {'V_m': 3.5})
+        self.assertEqual(nest.GetStatus(n[0], 'V_m'), 3.5)
 
 
 def suite():

@@ -135,6 +135,9 @@ class GIDCollection(object):
             return NotImplemented
         return not self == other
 
+    def __len__(self):
+        return nest.sli_func('size', self._datum)
+
 
 @check_stack
 def Create(model, n=1, params=None):
@@ -152,8 +155,8 @@ def Create(model, n=1, params=None):
 
     Returns
     -------
-    list:
-        Global IDs of created nodes
+    GIDCollection:
+        Object representing global IDs of created nodes
     """
 
     if isinstance(params, dict):
@@ -165,8 +168,6 @@ def Create(model, n=1, params=None):
     sps(n)
     sr(cmd)
 
-    # last_gid = spp()
-    # gids = tuple(range(last_gid - n + 1, last_gid + 1))
     gids = GIDCollection(spp())
 
     if params is not None and not isinstance(params, dict):

@@ -24,6 +24,7 @@ Functions to get information on NEST.
 """
 
 from .hl_api_helper import *
+import nest
 
 
 @check_stack
@@ -177,8 +178,8 @@ def SetStatus(nodes, params, val=None):
 
     Parameters
     ----------
-    nodes : list or tuple
-        Either a list of global ids of nodes, or a tuple of connection
+    nodes : GIDCollection or tuple
+        Either a GIDCollection representing nodes, or a tuple of connection
         handles as returned by GetConnections()
     params : str or dict or list
         Dictionary of parameters or list of dictionaries of parameters of
@@ -193,8 +194,8 @@ def SetStatus(nodes, params, val=None):
         Description
     """
 
-    if not is_coercible_to_sli_array(nodes):
-        raise TypeError("nodes must be a list of nodes or synapses")
+    if not isinstance(nodes, nest.GIDCollection):
+        raise TypeError("nodes must be a GIDCollection")
 
     # This was added to ensure that the function is a nop (instead of,
     # for instance, raising an exception) when applied to an empty list,
@@ -235,8 +236,8 @@ def GetStatus(nodes, keys=None):
 
     Parameters
     ----------
-    nodes : list or tuple
-        Either a list of global ids of nodes, or a tuple of connection
+    nodes : GIDCollection or tuple
+        Either a GIDCollection representing nodes, or a tuple of connection
         handles as returned by GetConnections()
     keys : str or list, optional
         String or a list of strings naming model properties. GetDefaults then
@@ -259,8 +260,8 @@ def GetStatus(nodes, keys=None):
         Description
     """
 
-    if not is_coercible_to_sli_array(nodes):
-        raise TypeError("nodes must be a list of nodes or synapses")
+    if not isinstance(nodes, nest.GIDCollection):
+        raise TypeError("nodes must be a GIDCollection")
 
     if len(nodes) == 0:
         return nodes

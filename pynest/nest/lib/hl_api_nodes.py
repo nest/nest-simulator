@@ -20,9 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Functions for node handling
+Classes and functions for node handling
 """
 
+import nest
 from .hl_api_helper import *
 from .hl_api_info import SetStatus
 
@@ -30,16 +31,22 @@ from .hl_api_info import SetStatus
 class GIDCollection(object):
     """
     Class for GIDCollection.
+
+    GIDCollection represents the nodes of a network. The class supports
+    iteration, concatination, indexing, slicing, membership, convertion to and
+    from lists, and test for membership.
     """
 
     _datum = None
 
-    def __init__(self, datum):
-        if isinstance(datum, nest.SLIDatum) \
-           or datum.dtype == "gidcollectiontype":
-            self._datum = datum
-        else: # Data from user, must be converted to datum
-            self._datum = nest.python_object_to_datum(datum)
+    def __init__(self, data):
+        if isinstance(data, nest.SLIDatum):
+            if data.dtype != "gidcollectiontype":
+                raise TypeError("Need GIDCollection Datum.")
+            self._datum = data
+        else:
+            # Data from user, must be converted to datum
+            self._datum = nest.sli_func('cvd', data)
 
     def __iter__(self):
         # Naive implementation
@@ -64,12 +71,12 @@ class GIDCollection(object):
     def __add__(self, other):
         if not isinstance(other, GIDCollection):
             return NotImplemented
-        return GIDCollection(nest.sli_func('join', self._datum, other_datum))
+        return GIDCollection(nest.sli_func('join', self._datum, other._datum))
 
     def __getitem__(self, key):
         if isinstance(key, slice):
-            return GIDCollection(nest.sli_func('Take',
-                                 self._datum, [key.start, key.stop, key.step])
+            return (GIDCollection(nest.sli_func('Take',
+                    self._datum, [key.start, key.stop, key.step])))
         else:
             gid = nest.sli_func('get', self._datum, key)
             try:
@@ -82,7 +89,7 @@ class GIDCollection(object):
     def __contains__(self, gid):
         return nest.sli_func('MemberQ', self._datum, gid)
 
-     def __eq__(self, other):
+    def __eq__(self, other):
         if not isinstance(other, GIDCollection):
             return NotImplemented
         return self._datum == other._datum
@@ -122,8 +129,9 @@ def Create(model, n=1, params=None):
     sps(n)
     sr(cmd)
 
-    last_gid = spp()
-    gids = tuple(range(last_gid - n + 1, last_gid + 1))
+    # last_gid = spp()
+    # gids = tuple(range(last_gid - n + 1, last_gid + 1))
+    gids = GIDCollection(spp())
 
     if params is not None and not isinstance(params, dict):
         try:

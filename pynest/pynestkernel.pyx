@@ -353,6 +353,13 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
             else:
                 raise NESTError("only vectors of integers or floats are supported")
 
+        if ret is NULL:
+            try:
+                if isinstance( obj._datum, SLIDatum ):
+                    ret = python_object_to_datum( obj._datum )
+            except:
+                pass
+
         if ret is not NULL:
             return ret
         else:

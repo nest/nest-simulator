@@ -44,7 +44,7 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(n_list, list(range(1, n_neurons+1)))
 
     def test_list_to_GIDCollection(self):
-        """Convertion from list to GIDCollection"""
+        """Conversion from list to GIDCollection"""
 
         gids_in = [5, 10, 15, 20]
         with self.assertRaises(nest.NESTError):

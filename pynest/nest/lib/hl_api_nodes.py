@@ -82,7 +82,7 @@ class GIDCollection(object):
             self._datum = data
         else:
             # Data from user, must be converted to datum
-            self._datum = nest.sli_func('cvd', data)
+            self._datum = nest.sli_func('cvgidcollection', data)
 
     def __iter__(self):
         # Naive implementation

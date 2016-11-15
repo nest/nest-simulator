@@ -138,7 +138,7 @@ SPManager::set_status( const DictionaryDatum& d )
     def< bool >(
       conn_spec, names::multapses, getValue< bool >( d, names::multapses ) );
 
-  assert( false && "need to fix gid coll stuff here" );
+  throw KernelException( "spmanager needs fixing" );
   GIDCollectionPTR sources( 0 ); // = GIDCollection();
   GIDCollectionPTR targets( 0 ); // = GIDCollection();
 
@@ -223,7 +223,7 @@ SPManager::disconnect_single( index sgid,
   if ( syn->known( names::pre_synaptic_element )
     && syn->known( names::post_synaptic_element ) )
   {
-    assert( false && "need to fix gid coll stuff here" );
+	throw KernelException( "spmanager needs fixing" );
     GIDCollectionPTR sources( 0 ); // = GIDCollection();
     GIDCollectionPTR targets( 0 ); // = GIDCollection();
 
@@ -512,7 +512,7 @@ SPManager::create_synapses( std::vector< index >& pre_id,
   }
 
   // create synapse
-  assert( false && "need to fix gid coll stuff here" );
+  throw KernelException( "spmanager needs fixing" );
   GIDCollectionPTR sources( 0 ); // = GIDCollection();
   GIDCollectionPTR targets( 0 ); // = GIDCollection();
 

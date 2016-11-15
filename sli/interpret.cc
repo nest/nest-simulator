@@ -75,6 +75,7 @@ const int SLIInterpreter::M_ALL = 0;
 const int SLIInterpreter::M_DEBUG = 5;
 const int SLIInterpreter::M_STATUS = 7;
 const int SLIInterpreter::M_INFO = 10;
+const int SLIInterpreter::M_PROGRESS = 15;
 const int SLIInterpreter::M_WARNING = 20;
 const int SLIInterpreter::M_ERROR = 30;
 const int SLIInterpreter::M_FATAL = 40;
@@ -84,6 +85,7 @@ const char* const SLIInterpreter::M_ALL_NAME = "";
 const char* const SLIInterpreter::M_DEBUG_NAME = "Debug";
 const char* const SLIInterpreter::M_STATUS_NAME = "Status";
 const char* const SLIInterpreter::M_INFO_NAME = "Info";
+const char* const SLIInterpreter::M_PROGRESS_NAME = "Progress";
 const char* const SLIInterpreter::M_WARNING_NAME = "Warning";
 const char* const SLIInterpreter::M_ERROR_NAME = "Error";
 const char* const SLIInterpreter::M_FATAL_NAME = "Fatal";
@@ -850,6 +852,8 @@ SLIInterpreter::message( int level,
         message( std::cout, M_ERROR_NAME, from, text, errorname );
       else if ( level >= M_WARNING )
         message( std::cout, M_WARNING_NAME, from, text, errorname );
+      else if ( level >= M_PROGRESS )
+        message( std::cout, M_PROGRESS_NAME, from, text, errorname );
       else if ( level >= M_INFO )
         message( std::cout, M_INFO_NAME, from, text, errorname );
       else if ( level >= M_STATUS )

@@ -1458,8 +1458,7 @@ NestModule::Cvgidcollection_iaFunction::execute( SLIInterpreter* i ) const
 
   TokenArray gids = getValue< TokenArray >( i->OStack.pick( 0 ) );
 
-  assert( false && "not yet implemented");
-  GIDCollectionDatum gidcoll(GIDCollectionPTR(0)); // = new GIDCollectionComposite( gids );
+  GIDCollectionDatum gidcoll( GIDCollection::create( gids ) );
 
   i->OStack.pop();
   i->OStack.push( gidcoll );
@@ -1472,11 +1471,23 @@ NestModule::Cvgidcollection_ivFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   IntVectorDatum gids = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
-  assert( false && "not yet implemented");
-  GIDCollectionDatum gidcoll(GIDCollectionPTR(0)); // = new GIDCollectionComposite( gids );
+  GIDCollectionDatum gidcoll( GIDCollection::create( gids ) );
 
   i->OStack.pop();
   i->OStack.push( gidcoll );
+  i->EStack.pop();
+}
+
+void
+NestModule::Cva_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  GIDCollectionDatum gidcoll =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  ArrayDatum gids = gidcoll->to_array();
+
+  i->OStack.pop();
+  i->OStack.push( gids );
   i->EStack.pop();
 }
 
@@ -1491,6 +1502,113 @@ NestModule::Size_gFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( gidcoll->size() );
   i->EStack.pop();
 }
+
+void
+NestModule::Join_g_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+  GIDCollectionDatum left =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  GIDCollectionDatum right =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+
+  GIDCollectionDatum combined = left + right;
+
+  i->OStack.pop( 2 );
+  i->OStack.push( combined );
+  i->EStack.pop();
+}
+
+void
+NestModule::MemberQ_g_iFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+  GIDCollectionDatum gidcoll =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  const long gid = getValue< long >( i->OStack.pick( 0 ) );
+
+  const bool res = gidcoll->contains( gid );
+  i->OStack.pop( 2 );
+  i->OStack.push( res );
+  i->EStack.pop();
+}
+
+void
+NestModule::Get_g_iFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+  GIDCollectionDatum gidcoll =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  long idx = getValue< long >( i->OStack.pick( 0 ) );
+
+  const size_t g_size = gidcoll->size();
+  if ( idx < 0 )
+  {
+    idx = g_size + idx;
+  }
+  if ( not( 0 <= idx and idx < static_cast< long >( g_size ) ) )
+  {
+    throw RangeCheck();
+  }
+
+  const index gid = ( *gidcoll )[ idx ];
+
+  i->OStack.pop( 2 );
+  i->OStack.push( gid );
+  i->EStack.pop();
+}
+
+void
+NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+  GIDCollectionDatum gidcoll =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  TokenArray slice = getValue< TokenArray >( i->OStack.pick( 0 ) );
+
+  if ( slice.size() != 3 )
+  {
+    throw DimensionMismatch( 3, slice.size() );
+  }
+
+  const size_t g_size = gidcoll->size();
+  long start = slice[ 0 ];
+  long stop = slice[ 1 ];
+  long step = slice[ 2 ];
+
+  if ( step <= 0 )
+  {
+    throw BadParameter( "Slicing step must be strictly positive." );
+  }
+
+  if ( start >= 0 )
+  {
+    start -= 1;
+  }
+  else
+  {
+    start += g_size;
+  }
+
+  if ( stop >= 0 )
+  {
+    stop -= 1;
+  }
+  else
+  {
+    stop += g_size;
+  }
+
+  throw KernelException( "not implemented yet" );
+  GIDCollectionDatum sliced_gc = gidcoll;
+  // GIDCollectionDatum sliced_gc = new GIDCollectionComposite( gidcoll, start,
+  // stop, step );
+
+  i->OStack.pop();
+  i->OStack.push( sliced_gc );
+  i->EStack.pop();
+}
+
 
 #ifdef HAVE_MUSIC
 /* BeginDocumentation
@@ -1686,7 +1804,12 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "cvgidcollection_i_i", &cvgidcollection_i_ifunction );
   i->createcommand( "cvgidcollection_ia", &cvgidcollection_iafunction );
   i->createcommand( "cvgidcollection_iv", &cvgidcollection_ivfunction );
+  i->createcommand( "cva_g", &cva_gfunction );
   i->createcommand( "size_g", &size_gfunction );
+  i->createcommand( "join_g_g", &join_g_gfunction );
+  i->createcommand( "MemberQ_g_i", &memberq_g_ifunction );
+  i->createcommand( "get_g_i", &get_g_ifunction );
+  i->createcommand( "Take_g_a", &take_g_afunction );
 
 #ifdef HAVE_MUSIC
   i->createcommand( "SetAcceptableLatency", &setacceptablelatency_l_dfunction );

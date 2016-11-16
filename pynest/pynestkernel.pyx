@@ -51,6 +51,7 @@ cdef string SLI_TYPE_VECTOR_INT = b"intvectortype"
 cdef string SLI_TYPE_VECTOR_DOUBLE = b"doublevectortype"
 cdef string SLI_TYPE_MASK = b"masktype"
 cdef string SLI_TYPE_PARAMETER = b"parametertype"
+cdef string SLI_TYPE_GIDCOLLECTION = b"gidcollectiontype"
 
 
 DEF CONN_ELMS = 5
@@ -312,6 +313,8 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
             ret = <Datum*> new MaskDatum(deref(<MaskDatum*> (<SLIDatum> obj).thisptr))
         elif (<SLIDatum> obj).dtype == SLI_TYPE_PARAMETER.decode():
             ret = <Datum*> new ParameterDatum(deref(<ParameterDatum*> (<SLIDatum> obj).thisptr))
+        elif (<SLIDatum> obj).dtype == SLI_TYPE_GIDCOLLECTION.decode():
+            ret = <Datum*> new GIDCollectionDatum(deref(<GIDCollectionDatum*> (<SLIDatum> obj).thisptr))
         else:
             raise NESTError("unknown SLI datum type: {0}".format((<SLIDatum> obj).dtype))
     elif isConnectionGenerator(<PyObject*> obj):
@@ -349,6 +352,13 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
                 ret = python_buffer_to_datum[object, double](obj)
             else:
                 raise NESTError("only vectors of integers or floats are supported")
+
+        if ret is NULL:
+            try:
+                if isinstance( obj._datum, SLIDatum ):
+                    ret = python_object_to_datum( obj._datum )
+            except:
+                pass
 
         if ret is not NULL:
             return ret
@@ -422,6 +432,9 @@ cdef inline object sli_datum_to_object(Datum* dat):
     elif datum_type == SLI_TYPE_PARAMETER:
         ret = SLIDatum()
         (<SLIDatum> ret)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())
+    elif datum_type == SLI_TYPE_GIDCOLLECTION:
+        ret = SLIDatum()
+        (<SLIDatum> ret)._set_datum(<Datum*> new GIDCollectionDatum(deref(<GIDCollectionDatum*> dat)), SLI_TYPE_GIDCOLLECTION.decode())
     else:
         raise NESTError("unknown SLI type: {0}".format(datum_type.decode()))
 

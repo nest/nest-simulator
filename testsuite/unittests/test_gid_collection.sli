@@ -111,7 +111,7 @@ M_PROGRESS setverbosity
   cva
   gids eq 
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 
@@ -156,7 +156,7 @@ M_PROGRESS setverbosity
   cva
   [ n 2 mul ] Range eq 
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 
@@ -173,7 +173,7 @@ M_PROGRESS setverbosity
   cva
   [ n 2 mul ] Range eq 
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 
@@ -192,7 +192,7 @@ M_PROGRESS setverbosity
   [ n 2 mul 1 add n 3 mul ] Range join
   eq    
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 
@@ -209,7 +209,7 @@ M_PROGRESS setverbosity
   [ n 2 mul ] Range
   eq 
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 
@@ -237,7 +237,7 @@ M_PROGRESS setverbosity
   join
 
   end
-} fail_or_die
+} skip_test % fail_or_die
 
 % --------------------------------------------------
 
@@ -256,7 +256,7 @@ M_PROGRESS setverbosity
   and
 
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 
@@ -301,7 +301,7 @@ M_PROGRESS setverbosity
   forall
   ok
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 
@@ -319,7 +319,7 @@ M_PROGRESS setverbosity
   Map
   true exch { and } Fold
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 
@@ -414,7 +414,7 @@ M_PROGRESS setverbosity
   gc 40 MemberQ not and
 
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 

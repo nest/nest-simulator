@@ -102,7 +102,7 @@ def
      }
      ifelse
      c
-     pstack
+     % pstack
      Take
   }
 def
@@ -130,7 +130,7 @@ def
     }
     if
     coll exch
-    pstack
+    % pstack
     Take_g_a
   }
   ifelse

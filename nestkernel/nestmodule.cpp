@@ -1458,9 +1458,7 @@ NestModule::Cvgidcollection_iaFunction::execute( SLIInterpreter* i ) const
 
   TokenArray gids = getValue< TokenArray >( i->OStack.pick( 0 ) );
 
-  throw KernelException( "cvgidcoll_ia not yet implemented" );
-  GIDCollectionDatum gidcoll(
-    GIDCollectionPTR( 0 ) ); // = new GIDCollectionComposite( gids );
+  GIDCollectionDatum gidcoll( GIDCollection::create( gids ) );
 
   i->OStack.pop();
   i->OStack.push( gidcoll );
@@ -1473,9 +1471,7 @@ NestModule::Cvgidcollection_ivFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   IntVectorDatum gids = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
-  throw KernelException( "cvgidcoll_iv not yet implemented" );
-  GIDCollectionDatum gidcoll(
-    GIDCollectionPTR( 0 ) ); // = new GIDCollectionComposite( gids );
+  GIDCollectionDatum gidcoll( GIDCollection::create( gids ) );
 
   i->OStack.pop();
   i->OStack.push( gidcoll );

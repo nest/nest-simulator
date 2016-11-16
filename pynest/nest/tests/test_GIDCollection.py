@@ -41,7 +41,7 @@ class TestGIDCollection(unittest.TestCase):
         n_neurons = 10
         n = nest.Create('iaf_neuron', n_neurons)
         n_list = [x for x in n]
-        self.assertEqual(n_list, list(range(1, n_neurons+1)))
+        self.assertEqual(n_list, list(range(1, n_neurons + 1)))
 
     def test_list_to_GIDCollection(self):
         """Conversion from list to GIDCollection"""
@@ -90,7 +90,7 @@ class TestGIDCollection(unittest.TestCase):
 
         nodes = nest.Create("iaf_psc_alpha", 10)
         for i in range(10):
-            self.assertEqual(i+1, nodes[i])
+            self.assertEqual(i + 1, nodes[i])
 
     def test_slicing(self):
         """Slices of GIDCollections"""
@@ -213,7 +213,7 @@ class TestGIDCollection(unittest.TestCase):
         n_a = n_a[::2]
         nodes = n_a + n_c
         nodes_list = [x for x in nodes]
-        compare_list = (list([x for x in range(1, 11) if x % 2 != 0]) + 
+        compare_list = (list([x for x in range(1, 11) if x % 2 != 0]) +
                         list(range(num_a + num_b + 1,
                              num_a + num_b + num_c + 1)))
         self.assertEqual(nodes_list, compare_list)

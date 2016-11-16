@@ -134,10 +134,8 @@ public:
   {
   }
 
-  static GIDCollectionPTR create( index first, index last );
   static GIDCollectionPTR create( IntVectorDatum gids );
   static GIDCollectionPTR create( TokenArray gids );
-  static GIDCollectionPTR create( const ArrayDatum iterable );
 
   virtual void print_me( std::ostream& ) const = 0;
 
@@ -160,6 +158,9 @@ public:
   virtual void set_metadata( GIDCollectionMetadataPTR );
 
   virtual GIDCollectionMetadataPTR get_metadata() const = 0;
+
+private:
+  static GIDCollectionPTR create_( const std::vector< index >& );
 };
 
 class GIDCollectionPrimitive : public GIDCollection

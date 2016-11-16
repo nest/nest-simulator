@@ -66,164 +66,57 @@ GIDCollectionPTR operator+( GIDCollectionPTR lhs, GIDCollectionPTR rhs )
 }
 
 GIDCollectionPTR
-GIDCollection::create( index first, index last )
+GIDCollection::create( IntVectorDatum gidsdatum )
 {
-  index it_first = first;
-  index it_last = it_first;
-  index prim_model_id = -1;
-  index node_model_id;
-  std::vector< GIDCollectionPrimitive > prims;
-  bool first_node_exists = false;
-
-  for ( index gid = first; gid <= last; ++gid )
+  if ( gidsdatum->size() == 0 )
   {
-    try
-    {
-      node_model_id = kernel().node_manager.get_node( gid )->get_model_id();
-      if ( not first_node_exists )
-      {
-        // first node
-        it_first = gid;
-        it_last = it_first;
-        prim_model_id = node_model_id;
-        first_node_exists = true;
-      }
-      else if ( node_model_id == prim_model_id )
-      {
-        // node goes in Primitive
-        ++it_last;
-      }
-      else
-      {
-        // store Primitive; node goes in new primitive
-        prims.push_back(
-          *( new GIDCollectionPrimitive( it_first, it_last, prim_model_id ) ) );
-        it_first = gid;
-        it_last = gid;
-        prim_model_id = node_model_id;
-      }
-    }
-    catch ( UnknownNode )
-    {
-      prim_model_id = -1; // sends the next found node into a new Primitive
-    }
+    throw KernelException( "Cannot create empty GIDCollection" );
   }
 
-  if ( not first_node_exists )
+  std::vector< index > gids;
+  gids.reserve( gidsdatum->size() );
+  for ( std::vector< long >::const_iterator it = gidsdatum->begin();
+        it != gidsdatum->end();
+        ++it )
   {
-    throw UnknownNode();
+    gids.push_back( static_cast< index >( getValue< long >( *it ) ) );
   }
-  else
-  {
-    prims.push_back(
-      *( new GIDCollectionPrimitive( it_first, it_last, prim_model_id ) ) );
-  }
-  if ( prims.size() == 1 ) // find type of GIDCollection
-  {
-    return GIDCollectionPTR( prims[ 0 ] );
-  }
-  else
-  {
-    return GIDCollectionPTR( new GIDCollectionComposite( prims ) );
-  }
+  std::sort( gids.begin(), gids.end() );
+
+  return GIDCollection::create_( gids );
 }
 
 GIDCollectionPTR
-GIDCollection::create( IntVectorDatum gids )
+GIDCollection::create( TokenArray gidsarray )
 {
-  std::sort( gids->begin(), gids->end() );
-
-  index it_first = *( gids->begin() );
-  index it_last = it_first;
-  index prim_model_id = -1;
-  index node_model_id;
-  index it_to_gid;
-  std::vector< GIDCollectionPrimitive > prims;
-  bool first_node_exists = false;
-
-  for ( std::vector< long >::const_iterator gid = gids->begin();
-        gid != gids->end();
-        ++gid )
-  {
-    try
-    {
-      node_model_id = kernel().node_manager.get_node( *gid )->get_model_id();
-      it_to_gid = *gid; // *gid is signed; want to avoid warnings when comparing
-      if ( not first_node_exists )
-      {
-        // first node
-        it_first = *gid;
-        it_last = it_first;
-        prim_model_id = node_model_id;
-        first_node_exists = true;
-      }
-      else if ( node_model_id == prim_model_id
-        and ( it_last + 1 ) == it_to_gid )
-      {
-        // node goes in Primitive
-        ++it_last;
-      }
-      else
-      {
-        // store Primitive; node goes in new Primitive
-        prims.push_back(
-          *( new GIDCollectionPrimitive( it_first, it_last, prim_model_id ) ) );
-        it_first = *gid;
-        it_last = *gid;
-        prim_model_id = node_model_id;
-      }
-    }
-    catch ( UnknownNode )
-    {
-      prim_model_id = -1; // sends the next found node into a new Primitive
-    }
-  }
-
-  if ( not first_node_exists )
-  {
-    throw UnknownNode();
-  }
-  else
-  {
-    prims.push_back(
-      *( new GIDCollectionPrimitive( it_first, it_last, prim_model_id ) ) );
-  }
-
-  if ( prims.size() == 1 ) // find type of GIDCollection
-  {
-    return GIDCollectionPTR( prims[ 0 ] );
-  }
-  else
-  {
-    return GIDCollectionPTR( new GIDCollectionComposite( prims ) );
-  }
-}
-
-GIDCollectionPTR
-GIDCollection::create( TokenArray gids )
-{
-  if ( gids.size() == 0 )
+  if ( gidsarray.size() == 0 )
   {
     throw BadProperty( "Cannot create empty GIDCollection" );
   }
 
-  std::vector< index > gids_vector;
-  gids_vector.reserve( gids.size() );
-  for ( Token const* it = gids.begin(); it != gids.end(); ++it )
+  std::vector< index > gids;
+  gids.reserve( gidsarray.size() );
+  for ( Token const* it = gidsarray.begin(); it != gidsarray.end(); ++it )
   {
-    gids_vector.push_back( static_cast< index >( getValue< long >( *it ) ) );
+    gids.push_back( static_cast< index >( getValue< long >( *it ) ) );
   }
-  std::sort( gids_vector.begin(), gids_vector.end() );
+  std::sort( gids.begin(), gids.end() );
 
-  index current_first = gids_vector[ 0 ];
+  return GIDCollection::create_( gids );
+}
+
+GIDCollectionPTR
+GIDCollection::create_( const std::vector< index >& gids )
+{
+  index current_first = gids[ 0 ];
   index current_last = current_first;
   index current_model =
-    kernel().node_manager.get_node( gids_vector[ 0 ] )->get_model_id();
+    kernel().node_manager.get_node( gids[ 0 ] )->get_model_id();
 
   std::vector< GIDCollectionPrimitive > parts;
 
-  for ( std::vector< index >::const_iterator gid = ++( gids_vector.begin() );
-        gid != gids_vector.end();
+  for ( std::vector< index >::const_iterator gid = ++( gids.begin() );
+        gid != gids.end();
         ++gid )
   {
     index next_model = kernel().node_manager.get_node( *gid )->get_model_id();
@@ -255,74 +148,6 @@ GIDCollection::create( TokenArray gids )
   else
   {
     return GIDCollectionPTR( new GIDCollectionComposite( parts ) );
-  }
-}
-
-GIDCollectionPTR
-GIDCollection::create( const ArrayDatum iterable )
-{
-  std::vector< index > gids_vector;
-  std::copy( iterable.begin(), iterable.end(), gids_vector.begin() );
-  std::sort( gids_vector.begin(), gids_vector.end() );
-
-  index it_first = *( gids_vector.begin() );
-  index it_last = it_first;
-  index prim_model_id = -1;
-  index node_model_id;
-  std::vector< GIDCollectionPrimitive > prims;
-  bool first_node_exists = false;
-
-  for ( std::vector< index >::const_iterator gid = gids_vector.begin();
-        gid != gids_vector.end();
-        ++gid )
-  {
-    try
-    {
-      node_model_id = kernel().node_manager.get_node( *gid )->get_model_id();
-      if ( not first_node_exists )
-      {
-        // first node
-        it_first = *gid;
-        it_last = it_first;
-        prim_model_id = node_model_id;
-        first_node_exists = true;
-      }
-      else if ( node_model_id == prim_model_id and ( it_last + 1 ) == *gid )
-      {
-        // node goes in Primitive
-        ++it_last;
-      }
-      else
-      {
-        // store Primitive; node goes in new Primitive
-        prims.push_back(
-          *( new GIDCollectionPrimitive( it_first, it_last, prim_model_id ) ) );
-        it_first = *gid;
-        it_last = *gid;
-        prim_model_id = node_model_id;
-      }
-    }
-    catch ( UnknownNode )
-    {
-      prim_model_id = -1; // sends the next found node into a new Primitive
-    }
-  }
-  if ( not first_node_exists )
-  {
-    throw UnknownNode();
-  }
-  else
-  {
-    prims.push_back(
-      *( new GIDCollectionPrimitive( it_first, it_last, prim_model_id ) ) );
-  }
-  if ( prims.size() == 1 ) // find type of GIDCollection
-  {
-    return GIDCollectionPTR( prims[ 0 ] );
-  }
-  else
-  {
-    return GIDCollectionPTR( new GIDCollectionComposite( prims ) );
   }
 }
 

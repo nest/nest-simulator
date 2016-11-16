@@ -41,13 +41,13 @@
 
 namespace nest
 {
-  class GIDCollection;
-  class GIDCollectionPrimitive;
-  class GIDCollectionComposite;
-  class GIDCollectionMetadata;
+class GIDCollection;
+class GIDCollectionPrimitive;
+class GIDCollectionComposite;
+class GIDCollectionMetadata;
 
-  typedef lockPTR< GIDCollection > GIDCollectionPTR;
-  typedef lockPTR< GIDCollectionMetadata > GIDCollectionMetadataPTR;
+typedef lockPTR< GIDCollection > GIDCollectionPTR;
+typedef lockPTR< GIDCollectionMetadata > GIDCollectionMetadataPTR;
 
 /**
  * Class for Metadata attached to GIDCollection.
@@ -58,8 +58,12 @@ namespace nest
 class GIDCollectionMetadata
 {
 public:
-  GIDCollectionMetadata() {}
-  virtual ~GIDCollectionMetadata() {}
+  GIDCollectionMetadata()
+  {
+  }
+  virtual ~GIDCollectionMetadata()
+  {
+  }
 };
 
 class GIDPair
@@ -74,8 +78,8 @@ class gc_const_iterator
 private:
   index current_gid_;
   index current_gc_;
-  GIDCollectionPrimitive const * const prim_collection_;
-  GIDCollectionComposite const * const comp_collection_;
+  GIDCollectionPrimitive const* const prim_collection_;
+  GIDCollectionComposite const* const comp_collection_;
 
 public:
   gc_const_iterator( const GIDCollectionPrimitive& collection, index current )
@@ -85,8 +89,9 @@ public:
     , comp_collection_( 0 )
   {
   }
-  gc_const_iterator( const GIDCollectionComposite& collection, index current_gc,
-                     index current )
+  gc_const_iterator( const GIDCollectionComposite& collection,
+    index current_gc,
+    index current )
     : current_gid_( current )
     , current_gc_( current_gc )
     , prim_collection_( 0 )
@@ -95,21 +100,22 @@ public:
   }
   GIDPair operator*() const;
   bool operator!=( const gc_const_iterator& rhs ) const;
-  
+
   gc_const_iterator& operator++();
 };
 
 
 class GIDCollection
 {
-	friend class gc_const_iterator;
+  friend class gc_const_iterator;
 
 public:
-
   typedef gc_const_iterator const_iterator;
 
-  virtual ~GIDCollection() {}
-  
+  virtual ~GIDCollection()
+  {
+  }
+
   GIDCollectionPTR create_GIDCollection( index first, index last ) const;
   GIDCollectionPTR create_GIDCollection( IntVectorDatum gids ) const;
   GIDCollectionPTR create_GIDCollection( TokenArray gids ) const;
@@ -125,20 +131,22 @@ public:
   virtual const_iterator begin() const = 0;
   virtual const_iterator end() const = 0;
 
+  virtual ArrayDatum to_array() const = 0;
+
   virtual size_t size() const = 0;
 
   virtual bool contains( index gid ) const = 0;
-  virtual GIDCollectionPTR slice( size_t first, size_t last, size_t step ) const = 0;
-  
+  virtual GIDCollectionPTR
+  slice( size_t first, size_t last, size_t step ) const = 0;
+
   virtual void set_metadata( GIDCollectionMetadataPTR );
 
   virtual GIDCollectionMetadataPTR get_metadata() const = 0;
-
 };
 
 class GIDCollectionPrimitive : public GIDCollection
 {
-	friend class gc_const_iterator;
+  friend class gc_const_iterator;
 
 private:
   index first_;
@@ -148,11 +156,13 @@ private:
 
 public:
   typedef gc_const_iterator const_iterator;
-  
-  GIDCollectionPrimitive( index first, index last, index model_id,
-		                      GIDCollectionMetadataPTR );
+
+  GIDCollectionPrimitive( index first,
+    index last,
+    index model_id,
+    GIDCollectionMetadataPTR );
   GIDCollectionPrimitive( index first, index last, index model_id );
-  GIDCollectionPrimitive( index first, index last);
+  GIDCollectionPrimitive( index first, index last );
   GIDCollectionPrimitive( const GIDCollectionPrimitive& );
 
   void print_me( std::ostream& ) const;
@@ -165,57 +175,61 @@ public:
   const_iterator begin() const;
   const_iterator end() const;
 
+  ArrayDatum to_array() const;
+
   size_t size() const;
-  
+
   bool contains( index gid ) const;
-  GIDCollectionPTR slice( size_t first, size_t last, size_t step=1 ) const;
+  GIDCollectionPTR slice( size_t first, size_t last, size_t step = 1 ) const;
 
   void set_metadata( GIDCollectionMetadataPTR );
 
   GIDCollectionMetadataPTR get_metadata() const;
 };
 
+GIDCollectionPTR operator+( GIDCollectionPTR lhs, GIDCollectionPTR rhs );
 
 class GIDCollectionComposite : public GIDCollection
 {
-	friend class gc_const_iterator;
+  friend class gc_const_iterator;
+
 private:
-  std::vector<GIDCollectionPrimitive> parts_;
+  std::vector< GIDCollectionPrimitive > parts_;
   size_t size_; // total number of GIDs
 public:
   GIDCollectionComposite( const GIDCollectionPrimitive& prim,
-		                      size_t start, size_t stop, size_t step );
-  GIDCollectionComposite( const GIDCollectionComposite& ); 
-  GIDCollectionComposite( const std::vector<GIDCollectionPrimitive> ); 
-  
+    size_t start,
+    size_t stop,
+    size_t step );
+  GIDCollectionComposite( const GIDCollectionComposite& );
+  GIDCollectionComposite( const std::vector< GIDCollectionPrimitive > );
+
   void print_me( std::ostream& ) const;
-  
+
   index operator[]( const size_t ) const;
   GIDCollectionPTR operator+( GIDCollectionPTR rhs ) const;
   GIDCollectionPTR operator+( const GIDCollectionPrimitive& rhs ) const;
   bool operator==( const GIDCollectionPTR rhs ) const;
-  
+
   const_iterator begin() const;
   const_iterator end() const;
-  
+
+  ArrayDatum to_array() const;
+
   size_t size() const;
-  
+
   bool contains( index gid ) const;
-  GIDCollectionPTR slice( size_t first, size_t last, size_t step=1 ) const;
-  
+  GIDCollectionPTR slice( size_t first, size_t last, size_t step = 1 ) const;
+
   GIDCollectionMetadataPTR get_metadata() const;
 };
 
-inline
-bool
-GIDCollection::operator!=( GIDCollectionPTR rhs ) const
+inline bool GIDCollection::operator!=( GIDCollectionPTR rhs ) const
 {
-  return not ( *this == rhs );
+  return not( *this == rhs );
 }
 
-inline
-void
-GIDCollection::set_metadata( GIDCollectionMetadataPTR )
+inline void GIDCollection::set_metadata( GIDCollectionMetadataPTR )
 {
   throw KernelException( "Cannot set Metadata on this type of GIDCollection." );
 }
@@ -233,7 +247,7 @@ inline GIDPair gc_const_iterator::operator*() const
   {
     // composite
     gp.gid = comp_collection_[ current_gc_ ][ current_gid_ ];
-    gp.model_id = comp_collection_->parts_[ current_gc_ ].model_id_; 
+    gp.model_id = comp_collection_->parts_[ current_gc_ ].model_id_;
   }
   return gp;
 }
@@ -252,7 +266,7 @@ inline gc_const_iterator& gc_const_iterator::operator++()
     if ( comp_collection_[ current_gc_ ].contains( current_gid_ + 1 ) )
     {
       ++current_gid_;
-    } 
+    }
     else
     {
       ++current_gc_;
@@ -262,8 +276,7 @@ inline gc_const_iterator& gc_const_iterator::operator++()
   }
 }
 
-inline bool gc_const_iterator::operator!=(
-  const gc_const_iterator& rhs ) const
+inline bool gc_const_iterator::operator!=( const gc_const_iterator& rhs ) const
 {
   return current_gid_ != rhs.current_gid_ and current_gc_ != rhs.current_gc_;
 }
@@ -278,26 +291,29 @@ inline index GIDCollectionPrimitive::operator[]( const size_t idx ) const
 
 inline bool GIDCollectionPrimitive::operator==( GIDCollectionPTR rhs ) const
 {
-  GIDCollectionPrimitive const * const rhs_ptr =
-     dynamic_cast< GIDCollectionPrimitive const * >( rhs.get() );
+  GIDCollectionPrimitive const* const rhs_ptr =
+    dynamic_cast< GIDCollectionPrimitive const* >( rhs.get() );
   rhs.unlock();
-  
-  return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_ and
-		 model_id_ == rhs_ptr->model_id_ and metadata_ == rhs_ptr->metadata_;
+
+  return first_ == rhs_ptr->first_ and last_ == rhs_ptr->last_
+    and model_id_ == rhs_ptr->model_id_ and metadata_ == rhs_ptr->metadata_;
 }
 
-inline bool GIDCollectionPrimitive::operator==( const GIDCollectionPrimitive& rhs ) const
-{  
-  return first_ == rhs.first_ and last_ == rhs.last_ and
-		 model_id_ == rhs.model_id_ and metadata_ == rhs.metadata_;
+inline bool GIDCollectionPrimitive::operator==(
+  const GIDCollectionPrimitive& rhs ) const
+{
+  return first_ == rhs.first_ and last_ == rhs.last_
+    and model_id_ == rhs.model_id_ and metadata_ == rhs.metadata_;
 }
 
-inline GIDCollectionPrimitive::const_iterator GIDCollectionPrimitive::begin() const
+inline GIDCollectionPrimitive::const_iterator
+GIDCollectionPrimitive::begin() const
 {
   return const_iterator( *this, 0 );
 }
 
-inline GIDCollectionPrimitive::const_iterator GIDCollectionPrimitive::end() const
+inline GIDCollectionPrimitive::const_iterator
+GIDCollectionPrimitive::end() const
 {
   return const_iterator( *this, size() );
 }
@@ -308,20 +324,19 @@ GIDCollectionPrimitive::size() const
   return last_ - first_ + 1;
 }
 
-inline bool GIDCollectionPrimitive::contains( index gid ) const
+inline bool
+GIDCollectionPrimitive::contains( index gid ) const
 {
   return first_ <= gid and gid <= last_;
 }
 
-inline
-void
+inline void
 GIDCollectionPrimitive::set_metadata( GIDCollectionMetadataPTR meta )
 {
   metadata_ = meta;
 }
 
-inline
-GIDCollectionMetadataPTR
+inline GIDCollectionMetadataPTR
 GIDCollectionPrimitive::get_metadata() const
 {
   return metadata_;
@@ -332,8 +347,10 @@ GIDCollectionPrimitive::get_metadata() const
 inline index GIDCollectionComposite::operator[]( const size_t i ) const
 {
   long tot_prev_gids = 0;
-  for ( std::vector<GIDCollectionPrimitive>::const_iterator gc = parts_.begin();
-       gc != parts_.end(); ++gc ) // iterate over GIDCollections
+  for (
+    std::vector< GIDCollectionPrimitive >::const_iterator gc = parts_.begin();
+    gc != parts_.end();
+    ++gc ) // iterate over GIDCollections
   {
     if ( tot_prev_gids + ( *gc ).size() > i ) // is i in current GIDCollection?
     {
@@ -351,55 +368,62 @@ inline index GIDCollectionComposite::operator[]( const size_t i ) const
 
 
 // composite ==
-inline bool 
-GIDCollectionComposite::operator==( GIDCollectionPTR rhs ) const
+inline bool GIDCollectionComposite::operator==( GIDCollectionPTR rhs ) const
 {
-  GIDCollectionComposite const * const rhs_ptr =
-     dynamic_cast< GIDCollectionComposite const * >( rhs.get() );
+  GIDCollectionComposite const* const rhs_ptr =
+    dynamic_cast< GIDCollectionComposite const* >( rhs.get() );
   rhs.unlock();
-  
+
   if ( size_ != rhs_ptr->size() || parts_.size() != rhs_ptr->parts_.size() )
   {
     return false;
   }
-  std::vector<GIDCollectionPrimitive>::const_iterator rhs_gc = rhs_ptr->parts_.begin();
-  for ( std::vector<GIDCollectionPrimitive>::const_iterator lhs_gc = parts_.begin();
+  std::vector< GIDCollectionPrimitive >::const_iterator rhs_gc =
+    rhs_ptr->parts_.begin();
+  for ( std::vector< GIDCollectionPrimitive >::const_iterator
+          lhs_gc = parts_.begin();
         lhs_gc != parts_.end();
         ++lhs_gc, ++rhs_gc ) // iterate over GIDCollections
   {
-    if ( not ( ( *lhs_gc ) == ( *rhs_gc ) ) )
+    if ( not( ( *lhs_gc ) == ( *rhs_gc ) ) )
     {
       return false;
     }
-  }  
+  }
   return true;
 }
 
 // composite begin()
-inline GIDCollectionComposite::const_iterator GIDCollectionComposite::begin() const
+inline GIDCollectionComposite::const_iterator
+GIDCollectionComposite::begin() const
 {
-  //return const_iterator( *this, 0, 0 );
+  // return const_iterator( *this, 0, 0 );
   return const_iterator( *this, 0, 0 );
 }
 
-//composite end()
-inline GIDCollectionComposite::const_iterator GIDCollectionComposite::end() const
+// composite end()
+inline GIDCollectionComposite::const_iterator
+GIDCollectionComposite::end() const
 {
-  //return const_iterator( *this, size(), parts_.size() );
+  // return const_iterator( *this, size(), parts_.size() );
   return const_iterator( *this, parts_.size(), parts_[ parts_.size() ].size() );
 }
 
 // composite size()
-inline size_t GIDCollectionComposite::size() const
+inline size_t
+GIDCollectionComposite::size() const
 {
   return size_;
 }
 
 // composite contains()
-inline bool GIDCollectionComposite::contains( index gid ) const
+inline bool
+GIDCollectionComposite::contains( index gid ) const
 {
-  for ( std::vector<GIDCollectionPrimitive>::const_iterator gc = parts_.begin();
-       gc != parts_.end(); ++gc ) // iterate over GIDCollections
+  for (
+    std::vector< GIDCollectionPrimitive >::const_iterator gc = parts_.begin();
+    gc != parts_.end();
+    ++gc ) // iterate over GIDCollections
   {
     if ( ( *gc ).contains( gid ) )
     {
@@ -409,11 +433,10 @@ inline bool GIDCollectionComposite::contains( index gid ) const
   return false;
 }
 
-inline
-GIDCollectionMetadataPTR
+inline GIDCollectionMetadataPTR
 GIDCollectionComposite::get_metadata() const
 {
-  return parts_[0].get_metadata();
+  return parts_[ 0 ].get_metadata();
 }
 
 } // namespace nest

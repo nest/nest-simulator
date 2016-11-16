@@ -382,10 +382,35 @@ public:
     void execute( SLIInterpreter* ) const;
   } cvgidcollection_ivfunction;
 
+  class Cva_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cva_gfunction;
+
   class Size_gFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
   } size_gfunction;
+
+  class Join_g_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } join_g_gfunction;
+
+  class MemberQ_g_iFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } memberq_g_ifunction;
+
+  class Get_g_iFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } get_g_ifunction;
+
+  class Take_g_aFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } take_g_afunction;
 
 #ifdef HAVE_MUSIC
   class SetAcceptableLatencyFunction : public SLIFunction

@@ -609,17 +609,18 @@ nest::OneToOneBuilder::connect_()
       {
         assert( sgid != sources_->end() );
 
-        if ( (*sgid).gid == (*tgid).gid and not autapses_ )
+        if ( ( *sgid ).gid == ( *tgid ).gid and not autapses_ )
           continue;
 
         // check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_gid( (*tgid).gid ) )
+        if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
         {
           skip_conn_parameter_( tid );
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node( (*tgid).gid, tid );
+        Node* const target =
+          kernel().node_manager.get_node( ( *tgid ).gid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -629,7 +630,7 @@ nest::OneToOneBuilder::connect_()
           continue;
         }
 
-        single_connect_( (*sgid).gid, *target, target_thread, rng );
+        single_connect_( ( *sgid ).gid, *target, target_thread, rng );
       }
     }
     catch ( std::exception& err )
@@ -675,13 +676,14 @@ nest::OneToOneBuilder::disconnect_()
         assert( sgid != sources_->end() );
 
         // check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_gid( (*tgid).gid ) )
+        if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
         {
           skip_conn_parameter_( tid );
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node( (*tgid).gid, tid );
+        Node* const target =
+          kernel().node_manager.get_node( ( *tgid ).gid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -690,7 +692,7 @@ nest::OneToOneBuilder::disconnect_()
           skip_conn_parameter_( tid );
           continue;
         }
-        single_disconnect_( (*sgid).gid, *target, target_thread );
+        single_disconnect_( ( *sgid ).gid, *target, target_thread );
       }
     }
     catch ( std::exception& err )
@@ -738,18 +740,20 @@ nest::OneToOneBuilder::sp_connect_()
       {
         assert( sgid != sources_->end() );
 
-        if ( (*sgid).gid == (*tgid).gid and not autapses_ )
+        if ( ( *sgid ).gid == ( *tgid ).gid and not autapses_ )
           continue;
 
-        if ( !change_connected_synaptic_elements( (*sgid).gid, (*tgid).gid, tid, 1 ) )
+        if ( !change_connected_synaptic_elements(
+               ( *sgid ).gid, ( *tgid ).gid, tid, 1 ) )
         {
           skip_conn_parameter_( tid );
           continue;
         }
-        Node* const target = kernel().node_manager.get_node( (*tgid).gid, tid );
+        Node* const target =
+          kernel().node_manager.get_node( ( *tgid ).gid, tid );
         const thread target_thread = target->get_thread();
 
-        single_connect_( (*sgid).gid, *target, target_thread, rng );
+        single_connect_( ( *sgid ).gid, *target, target_thread, rng );
       }
     }
     catch ( std::exception& err )
@@ -794,12 +798,14 @@ nest::OneToOneBuilder::sp_disconnect_()
       {
         assert( sgid != sources_->end() );
 
-        if ( !change_connected_synaptic_elements( (*sgid).gid, (*tgid).gid, tid, -1 ) )
+        if ( !change_connected_synaptic_elements(
+               ( *sgid ).gid, ( *tgid ).gid, tid, -1 ) )
           continue;
-        Node* const target = kernel().node_manager.get_node( (*tgid).gid, tid );
+        Node* const target =
+          kernel().node_manager.get_node( ( *tgid ).gid, tid );
         const thread target_thread = target->get_thread();
 
-        single_disconnect_( (*sgid).gid, *target, target_thread );
+        single_disconnect_( ( *sgid ).gid, *target, target_thread );
       }
     }
     catch ( std::exception& err )
@@ -831,7 +837,7 @@ nest::AllToAllBuilder::connect_()
             ++tgid )
       {
         // check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_gid( (*tgid).gid ) )
+        if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
         {
           for ( GIDCollection::const_iterator sgid = sources_->begin();
                 sgid != sources_->end();
@@ -840,7 +846,8 @@ nest::AllToAllBuilder::connect_()
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node( (*tgid).gid, tid );
+        Node* const target =
+          kernel().node_manager.get_node( ( *tgid ).gid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -857,13 +864,13 @@ nest::AllToAllBuilder::connect_()
               sgid != sources_->end();
               ++sgid )
         {
-          if ( not autapses_ and (*sgid).gid == (*tgid).gid )
+          if ( not autapses_ and ( *sgid ).gid == ( *tgid ).gid )
           {
             skip_conn_parameter_( target_thread );
             continue;
           }
 
-          single_connect_( (*sgid).gid, *target, target_thread, rng );
+          single_connect_( ( *sgid ).gid, *target, target_thread, rng );
         }
       }
     }
@@ -904,12 +911,13 @@ nest::AllToAllBuilder::sp_connect_()
               sgid != sources_->end();
               ++sgid )
         {
-          if ( not autapses_ and (*sgid).gid == (*tgid).gid )
+          if ( not autapses_ and ( *sgid ).gid == ( *tgid ).gid )
           {
             skip_conn_parameter_( tid );
             continue;
           }
-          if ( !change_connected_synaptic_elements( (*sgid).gid, (*tgid).gid, tid, 1 ) )
+          if ( !change_connected_synaptic_elements(
+                 ( *sgid ).gid, ( *tgid ).gid, tid, 1 ) )
           {
             for ( GIDCollection::const_iterator sgid = sources_->begin();
                   sgid != sources_->end();
@@ -917,9 +925,10 @@ nest::AllToAllBuilder::sp_connect_()
               skip_conn_parameter_( tid );
             continue;
           }
-          Node* const target = kernel().node_manager.get_node( (*tgid).gid, tid );
+          Node* const target =
+            kernel().node_manager.get_node( ( *tgid ).gid, tid );
           const thread target_thread = target->get_thread();
-          single_connect_( (*sgid).gid, *target, target_thread, rng );
+          single_connect_( ( *sgid ).gid, *target, target_thread, rng );
         }
       }
     }
@@ -953,7 +962,7 @@ nest::AllToAllBuilder::disconnect_()
             ++tgid )
       {
         // check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_gid( (*tgid).gid ) )
+        if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
         {
           for ( GIDCollection::const_iterator sgid = sources_->begin();
                 sgid != sources_->end();
@@ -962,7 +971,8 @@ nest::AllToAllBuilder::disconnect_()
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node( (*tgid).gid, tid );
+        Node* const target =
+          kernel().node_manager.get_node( ( *tgid ).gid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -979,7 +989,7 @@ nest::AllToAllBuilder::disconnect_()
               sgid != sources_->end();
               ++sgid )
         {
-          single_disconnect_( (*sgid).gid, *target, target_thread );
+          single_disconnect_( ( *sgid ).gid, *target, target_thread );
         }
       }
     }
@@ -1017,7 +1027,8 @@ nest::AllToAllBuilder::sp_disconnect_()
               sgid != sources_->end();
               ++sgid )
         {
-          if ( !change_connected_synaptic_elements( (*sgid).gid, (*tgid).gid, tid, -1 ) )
+          if ( !change_connected_synaptic_elements(
+                 ( *sgid ).gid, ( *tgid ).gid, tid, -1 ) )
           {
             for ( GIDCollection::const_iterator sgid = sources_->begin();
                   sgid != sources_->end();
@@ -1025,9 +1036,10 @@ nest::AllToAllBuilder::sp_disconnect_()
               skip_conn_parameter_( tid );
             continue;
           }
-          Node* const target = kernel().node_manager.get_node( (*tgid).gid, tid );
+          Node* const target =
+            kernel().node_manager.get_node( ( *tgid ).gid, tid );
           const thread target_thread = target->get_thread();
-          single_disconnect_( (*sgid).gid, *target, target_thread );
+          single_disconnect_( ( *sgid ).gid, *target, target_thread );
         }
       }
     }
@@ -1100,14 +1112,15 @@ nest::FixedInDegreeBuilder::connect_()
             ++tgid )
       {
         // check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_gid( (*tgid).gid ) )
+        if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
         {
           // skip array parameters handled in other virtual processes
           skip_conn_parameter_( tid, indegree_ );
           continue;
         }
 
-        Node* const target = kernel().node_manager.get_node( (*tgid).gid, tid );
+        Node* const target =
+          kernel().node_manager.get_node( ( *tgid ).gid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -1130,7 +1143,7 @@ nest::FixedInDegreeBuilder::connect_()
           {
             s_id = rng->ulrand( n_rnd );
             sgid = ( *sources_ )[ s_id ];
-          } while ( ( not autapses_ and sgid == (*tgid).gid )
+          } while ( ( not autapses_ and sgid == ( *tgid ).gid )
             || ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
 
           if ( not multapses_ )
@@ -1150,8 +1163,7 @@ nest::FixedInDegreeBuilder::connect_()
   }
 }
 
-nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder(
-  GIDCollectionPTR sources,
+nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder( GIDCollectionPTR sources,
   GIDCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
@@ -1215,7 +1227,7 @@ nest::FixedOutDegreeBuilder::connect_()
       {
         t_id = grng->ulrand( n_rnd );
         tgid = ( *targets_ )[ t_id ];
-      } while ( ( not autapses_ and tgid == (*sgid).gid )
+      } while ( ( not autapses_ and tgid == ( *sgid ).gid )
         || ( not multapses_ and ch_ids.find( t_id ) != ch_ids.end() ) );
 
       if ( not multapses_ )
@@ -1257,7 +1269,7 @@ nest::FixedOutDegreeBuilder::connect_()
             continue;
           }
 
-          single_connect_( (*sgid).gid, *target, target_thread, rng );
+          single_connect_( ( *sgid ).gid, *target, target_thread, rng );
         }
       }
       catch ( std::exception& err )
@@ -1448,10 +1460,11 @@ nest::BernoulliBuilder::connect_()
             ++tgid )
       {
         // check whether the target is on this mpi machine
-        if ( not kernel().node_manager.is_local_gid( (*tgid).gid ) )
+        if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
           continue;
 
-        Node* const target = kernel().node_manager.get_node( (*tgid).gid, tid );
+        Node* const target =
+          kernel().node_manager.get_node( ( *tgid ).gid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -1465,13 +1478,13 @@ nest::BernoulliBuilder::connect_()
           // not possible to create multapses with this implementation,
           // hence leave out the check for BernoulliBuilder
 
-          if ( not autapses_ and (*sgid).gid == (*tgid).gid )
+          if ( not autapses_ and ( *sgid ).gid == ( *tgid ).gid )
             continue;
 
           if ( not( rng->drand() < p_ ) )
             continue;
 
-          single_connect_( (*sgid).gid, *target, target_thread, rng );
+          single_connect_( ( *sgid ).gid, *target, target_thread, rng );
         }
       }
     }
@@ -1521,7 +1534,8 @@ nest::SPBuilder::update_delay( delay& d ) const
 }
 
 void
-nest::SPBuilder::sp_connect( GIDCollectionPTR sources, GIDCollectionPTR targets )
+nest::SPBuilder::sp_connect( GIDCollectionPTR sources,
+  GIDCollectionPTR targets )
 {
   connect_( sources, targets );
 
@@ -1574,18 +1588,20 @@ nest::SPBuilder::connect_( GIDCollectionPTR sources, GIDCollectionPTR targets )
       {
         assert( sgid != sources->end() );
 
-        if ( (*sgid).gid == (*tgid).gid and not autapses_ )
+        if ( ( *sgid ).gid == ( *tgid ).gid and not autapses_ )
           continue;
 
-        if ( !change_connected_synaptic_elements( (*sgid).gid, (*tgid).gid, tid, 1 ) )
+        if ( !change_connected_synaptic_elements(
+               ( *sgid ).gid, ( *tgid ).gid, tid, 1 ) )
         {
           skip_conn_parameter_( tid );
           continue;
         }
-        Node* const target = kernel().node_manager.get_node( (*tgid).gid, tid );
+        Node* const target =
+          kernel().node_manager.get_node( ( *tgid ).gid, tid );
         const thread target_thread = target->get_thread();
 
-        single_connect_( (*sgid).gid, *target, target_thread, rng );
+        single_connect_( ( *sgid ).gid, *target, target_thread, rng );
       }
     }
     catch ( std::exception& err )

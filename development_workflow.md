@@ -15,6 +15,35 @@ layout: index
 * TOC
 {:toc}
 
+# Filing bugs/issues
+
+If you come across a bug in NEST, please [file an issue on the GitHub issue tracker](https://github.com/nest/nest-simulator/issues/new). Please use the template below to provide information:
+
+```
+Description of problem:
+
+
+Version-Release or Git commit:
+
+
+How reproducible: (Always/Sometimes/Unsure)
+
+
+Steps to Reproduce:
+1.
+2.
+3.
+
+Actual results:
+
+
+Expected results:
+
+
+Additional info:
+```
+
+You can also attach files to issues. Data dumps or example code snippets that help to reproduce the issue is most welcome. This information enables developers to debug and fix issues quicker.
 
 # Basic Git Setup
 

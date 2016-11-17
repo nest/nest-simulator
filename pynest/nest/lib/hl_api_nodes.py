@@ -96,7 +96,7 @@ class GIDCollection(object):
 
     def items(self):
         # Naive implementation
-        gc_with_mid_as_list = nest.sli_func('cva_with_mid', self._datum)
+        gc_with_mid_as_list = nest.sli_func('cva_gid_mid', self._datum)
         try:
             it = iter(gc_with_mid_as_list)
         except TypeError:

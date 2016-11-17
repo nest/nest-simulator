@@ -31,7 +31,8 @@ namespace nest
 
 gc_const_iterator::gc_const_iterator( const GIDCollectionPrimitive& collection,
   size_t offset )
-  : element_idx_( offset )
+  : coll_ptr_( 0 )
+  , element_idx_( offset )
   , part_idx_( 0 )
   , primitive_collection_( &collection )
   , composite_collection_( 0 )
@@ -45,7 +46,8 @@ gc_const_iterator::gc_const_iterator( const GIDCollectionPrimitive& collection,
 gc_const_iterator::gc_const_iterator( const GIDCollectionComposite& collection,
   size_t part,
   size_t offset )
-  : element_idx_( offset )
+  : coll_ptr_( 0 )
+  , element_idx_( offset )
   , part_idx_( part )
   , primitive_collection_( 0 )
   , composite_collection_( &collection )
@@ -58,6 +60,63 @@ gc_const_iterator::gc_const_iterator( const GIDCollectionComposite& collection,
     throw KernelException(
       "Invalid part or offset into GIDCollectionComposite" );
   }
+}
+
+gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
+  const GIDCollectionPrimitive& collection,
+  size_t offset )
+  : coll_ptr_( collection_ptr )
+  , element_idx_( offset )
+  , part_idx_( 0 )
+  , primitive_collection_( &collection )
+  , composite_collection_( 0 )
+{
+  assert( collection_ptr.get() == &collection );
+  collection_ptr.unlock();
+
+  if ( offset > collection.size() ) // allow == size() for end iterator
+  {
+    throw KernelException( "Invalid offset into GIDCollectionPrimitive" );
+  }
+}
+
+gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
+  const GIDCollectionComposite& collection,
+  size_t part,
+  size_t offset )
+  : coll_ptr_( collection_ptr )
+  , element_idx_( offset )
+  , part_idx_( part )
+  , primitive_collection_( 0 )
+  , composite_collection_( &collection )
+{
+  assert( collection_ptr.get() == &collection );
+  collection_ptr.unlock();
+
+  if ( ( part >= collection.parts_.size()
+         or offset >= collection.parts_[ part ].size() )
+    and not( part == collection.parts_.size() and offset == 0 ) // end iterator
+    )
+  {
+    throw KernelException(
+      "Invalid part or offset into GIDCollectionComposite" );
+  }
+}
+
+gc_const_iterator::gc_const_iterator( const gc_const_iterator& gci )
+  : element_idx_( gci.element_idx_ )
+  , part_idx_( gci.part_idx_ )
+  , primitive_collection_( gci.primitive_collection_ )
+  , composite_collection_( gci.composite_collection_ )
+{
+}
+
+void
+gc_const_iterator::print_me( std::ostream& out ) const
+{
+  out << "[[" << this << " pc: " << primitive_collection_
+      << ", cc: " << composite_collection_ << ", px: " << part_idx_
+      << ", ex: " << element_idx_ << "]]";
 }
 
 GIDCollectionPTR operator+( GIDCollectionPTR lhs, GIDCollectionPTR rhs )
@@ -296,7 +355,7 @@ GIDCollectionPrimitive::GIDCollectionPrimitive::slice( size_t start,
 void // TODO: is this needed?
   GIDCollectionPrimitive::print_me( std::ostream& out ) const
 {
-  out << "[[model=" << model_id_ << ", size=" << size() << " ";
+  out << "[[" << this << " model=" << model_id_ << ", size=" << size() << " ";
   out << "(" << first_ << ".." << last_ << ")";
   out << "]]";
 }
@@ -418,7 +477,7 @@ GIDCollectionComposite::slice( size_t first, size_t last, size_t step ) const
 void
 GIDCollectionComposite::print_me( std::ostream& out ) const
 {
-  out << "[[size=" << size() << ": ";
+  out << "[[" << this << " size=" << size() << ": ";
   for (
     std::vector< GIDCollectionPrimitive >::const_iterator it = parts_.begin();
     it != parts_.end();

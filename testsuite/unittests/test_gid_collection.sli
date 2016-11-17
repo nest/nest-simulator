@@ -117,6 +117,21 @@ M_PROGRESS setverbosity
 
 {
   << >> begin
+  (Check intvector can be converted to GIDCollection for existing neurons) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /gids [ 10 ] Range def
+  gids cv_iv cvgidcollection
+  cva
+  gids eq 
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
   (Check unsorted array can be converted to GIDCollection for existing neurons) M_PROGRESS message
   ResetKernel
 

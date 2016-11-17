@@ -194,6 +194,32 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% convert to list of gid-modelid pairs
+/cva_gid_mid trie def
+/cva_gid_mid [/gidcollectiontype]
+{
+ << >> begin
+  dup 
+  :beginiterator_g /iter Set
+  :enditerator_g /enditer Set
+  
+  mark
+  {
+    iter :getgidmodelid_q
+    iter :next_q
+    enditer :eq_q_q { exit } if
+  }
+  loop
+  counttomark
+  arraystore
+  exch pop
+
+  end
+}
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % join for GIDCollections
 /join [/gidcollectiontype /gidcollectiontype]
   /join_g_g load
@@ -205,16 +231,44 @@ def
 
 /forall [/gidcollectiontype /proceduretype]
 {
-  exch cva_g 
-  exch
-  forall
+  << >> begin
+  /func Set
+  dup 
+  :beginiterator_g /iter Set
+  :enditerator_g /enditer Set
+  
+  {
+    iter :getgid_q
+    func
+    iter :next_q
+    enditer :eq_q_q { exit } if
+  }
+  loop
+
+  end
 } def
 
 /Map [/gidcollectiontype /proceduretype]
 {
-  exch cva_g 
-  exch
-  Map
+  << >> begin
+  /func Set
+  dup 
+  :beginiterator_g /iter Set
+  :enditerator_g /enditer Set
+  
+  mark
+  {
+    iter :getgid_q
+    func
+    iter :next_q
+    enditer :eq_q_q { exit } if
+  }
+  loop
+  counttomark
+  arraystore
+  exch pop
+
+  end
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

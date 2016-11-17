@@ -62,6 +62,7 @@ namespace nest
 {
 SLIType NestModule::ConnectionType;
 SLIType NestModule::GIDCollectionType;
+SLIType NestModule::GIDCollectionIteratorType;
 
 // At the time when NestModule is constructed, the SLI Interpreter
 // must already be initialized. NestModule relies on the presence of
@@ -78,6 +79,7 @@ NestModule::~NestModule()
 
   ConnectionType.deletetypename();
   GIDCollectionType.deletetypename();
+  GIDCollectionIteratorType.deletetypename();
 }
 
 // The following concerns the new module:
@@ -1534,6 +1536,97 @@ NestModule::MemberQ_g_iFunction::execute( SLIInterpreter* i ) const
 }
 
 void
+NestModule::BeginIterator_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  GIDCollectionDatum gidcoll =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+
+  GIDCollectionIteratorDatum it =
+    new gc_const_iterator( gidcoll->begin( gidcoll ) );
+
+  i->OStack.pop();
+  i->OStack.push( it );
+  i->EStack.pop();
+}
+
+void
+NestModule::EndIterator_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  GIDCollectionDatum gidcoll =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+
+  GIDCollectionIteratorDatum it =
+    new gc_const_iterator( gidcoll->end( gidcoll ) );
+
+  i->OStack.pop();
+  i->OStack.push( it );
+  i->EStack.pop();
+}
+
+void
+NestModule::GetGID_qFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  GIDCollectionIteratorDatum it =
+    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+
+  index gid = ( **it ).gid;
+
+  i->OStack.pop();
+  i->OStack.push( gid );
+  i->EStack.pop();
+}
+
+void
+NestModule::GetGIDModelID_qFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  GIDCollectionIteratorDatum it =
+    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+
+  ArrayDatum gm_pair;
+  const GIDPair& gp = **it;
+  gm_pair.push_back( gp.gid );
+  gm_pair.push_back( gp.model_id );
+
+  i->OStack.pop();
+  i->OStack.push( gm_pair );
+  i->EStack.pop();
+}
+
+void
+NestModule::Next_qFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  GIDCollectionIteratorDatum it =
+    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+
+  ++( *it );
+
+  // leave iterator on stack
+  i->EStack.pop();
+}
+
+void
+NestModule::Eq_q_qFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+  GIDCollectionIteratorDatum it_l =
+    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 1 ) );
+  GIDCollectionIteratorDatum it_r =
+    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+
+  const bool res = not it_l->operator!=( *it_r );
+
+  // leave iterator on stack
+  i->OStack.pop( 2 );
+  i->OStack.push( res );
+  i->EStack.pop();
+}
+
+void
 NestModule::Get_g_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
@@ -1739,6 +1832,10 @@ NestModule::init( SLIInterpreter* i )
   GIDCollectionType.settypename( "gidcollectiontype" );
   GIDCollectionType.setdefaultaction( SLIInterpreter::datatypefunction );
 
+  GIDCollectionIteratorType.settypename( "gidcollectioniteratortype" );
+  GIDCollectionIteratorType.setdefaultaction(
+    SLIInterpreter::datatypefunction );
+
   // register interface functions with interpreter
   i->createcommand( "ChangeSubnet", &changesubnet_ifunction );
   i->createcommand( "CurrentSubnet", &currentsubnetfunction );
@@ -1808,6 +1905,12 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "size_g", &size_gfunction );
   i->createcommand( "join_g_g", &join_g_gfunction );
   i->createcommand( "MemberQ_g_i", &memberq_g_ifunction );
+  i->createcommand( ":beginiterator_g", &beginiterator_gfunction );
+  i->createcommand( ":enditerator_g", &enditerator_gfunction );
+  i->createcommand( ":getgid_q", &getgid_qfunction );
+  i->createcommand( ":getgidmodelid_q", &getgidmodelid_qfunction );
+  i->createcommand( ":next_q", &next_qfunction );
+  i->createcommand( ":eq_q_q", &eq_q_qfunction );
   i->createcommand( "get_g_i", &get_g_ifunction );
   i->createcommand( "Take_g_a", &take_g_afunction );
 

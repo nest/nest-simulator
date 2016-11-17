@@ -81,9 +81,13 @@ public:
  */
 class gc_const_iterator
 {
+  friend class GIDCollectionPrimitive;
+  friend class GIDCollectionComposite;
+
 private:
-  size_t element_idx_; //!< index into (current) primitive gid collection
-  size_t part_idx_;    //!< index into parts vector of composite collection
+  GIDCollectionPTR coll_ptr_; //!< holds pointer reference in safe iterators
+  size_t element_idx_;        //!< index into (current) primitive gid collection
+  size_t part_idx_; //!< index into parts vector of composite collection
 
   /**
    * Pointer to primitive collection to iterate over.
@@ -97,7 +101,6 @@ private:
    */
   GIDCollectionComposite const* const composite_collection_;
 
-public:
   /**
    * Create iterator for GIDCollectionPrimitive.
    * @param collection  Collection to iterate over
@@ -116,12 +119,38 @@ public:
     size_t part,
     size_t offset );
 
+  /**
+   * Create safe iterator for GIDCollectionPrimitive.
+   * @param collection_ptr lockptr to collection to keep collection alive
+   * @param collection  Collection to iterate over
+   * @param offset  Index of collection element iterator points to
+   */
+  explicit gc_const_iterator( GIDCollectionPTR collection_ptr,
+    const GIDCollectionPrimitive& collection,
+    size_t offset );
+
+  /**
+   * Create safe iterator for GIDCollectionComposite.
+   * @param collection_ptr lockptr to collection to keep collection alive
+   * @param collection  Collection to iterate over
+   * @param part    Index of part of collection iterator points to
+   * @param offset  Index of element in part part that iterator points to
+   */
+  explicit gc_const_iterator( GIDCollectionPTR collection_ptr,
+    const GIDCollectionComposite& collection,
+    size_t part,
+    size_t offset );
+
+public:
+  gc_const_iterator( const gc_const_iterator& );
+
   GIDPair operator*() const;
   bool operator!=( const gc_const_iterator& rhs ) const;
 
   gc_const_iterator& operator++();
-};
 
+  void print_me( std::ostream& ) const;
+};
 
 class GIDCollection
 {
@@ -132,12 +161,11 @@ public:
 
   virtual ~GIDCollection()
   {
+    std::cerr << "Deleting GC: " << this << std::endl;
   }
 
-  static GIDCollectionPTR create( index first, index last );
   static GIDCollectionPTR create( IntVectorDatum gids );
   static GIDCollectionPTR create( TokenArray gids );
-  static GIDCollectionPTR create( const ArrayDatum iterable );
 
   virtual void print_me( std::ostream& ) const = 0;
 
@@ -147,7 +175,9 @@ public:
   virtual bool operator!=( GIDCollectionPTR ) const;
 
   virtual const_iterator begin() const = 0;
+  virtual const_iterator begin( GIDCollectionPTR ) const = 0;
   virtual const_iterator end() const = 0;
+  virtual const_iterator end( GIDCollectionPTR ) const = 0;
 
   virtual ArrayDatum to_array() const = 0;
 
@@ -160,11 +190,17 @@ public:
   virtual void set_metadata( GIDCollectionMetadataPTR );
 
   virtual GIDCollectionMetadataPTR get_metadata() const = 0;
+
+private:
+  static GIDCollectionPTR create_( const std::vector< index >& );
 };
 
 class GIDCollectionPrimitive : public GIDCollection
 {
   friend class gc_const_iterator;
+
+  using GIDCollection::begin;
+  using GIDCollection::end;
 
 private:
   index first_;
@@ -191,7 +227,9 @@ public:
   bool operator==( const GIDCollectionPrimitive& rhs ) const;
 
   const_iterator begin() const;
+  const_iterator begin( GIDCollectionPTR ) const;
   const_iterator end() const;
+  const_iterator end( GIDCollectionPTR ) const;
 
   ArrayDatum to_array() const;
 
@@ -210,6 +248,9 @@ GIDCollectionPTR operator+( GIDCollectionPTR lhs, GIDCollectionPTR rhs );
 class GIDCollectionComposite : public GIDCollection
 {
   friend class gc_const_iterator;
+
+  using GIDCollection::begin;
+  using GIDCollection::end;
 
 private:
   std::vector< GIDCollectionPrimitive > parts_;
@@ -230,7 +271,9 @@ public:
   bool operator==( const GIDCollectionPTR rhs ) const;
 
   const_iterator begin() const;
+  const_iterator begin( GIDCollectionPTR ) const;
   const_iterator end() const;
+  const_iterator end( GIDCollectionPTR ) const;
 
   ArrayDatum to_array() const;
 
@@ -258,10 +301,19 @@ inline GIDPair gc_const_iterator::operator*() const
   if ( primitive_collection_ )
   {
     gp.gid = primitive_collection_->first_ + element_idx_;
+    if ( gp.gid > primitive_collection_->last_ )
+    {
+      throw KernelException( "Invalid GIDCollection iterator " );
+    }
     gp.model_id = primitive_collection_->model_id_;
   }
   else
   {
+    if ( part_idx_ >= composite_collection_->parts_.size()
+      or element_idx_ >= composite_collection_->parts_[ part_idx_ ].size() )
+    {
+      throw KernelException( "Invalid GIDCollection iterator " );
+    }
     gp.gid = composite_collection_->parts_[ part_idx_ ][ element_idx_ ];
     gp.model_id = composite_collection_->parts_[ part_idx_ ].model_id_;
   }
@@ -324,9 +376,21 @@ GIDCollectionPrimitive::begin() const
 }
 
 inline GIDCollectionPrimitive::const_iterator
+GIDCollectionPrimitive::begin( GIDCollectionPTR cp ) const
+{
+  return const_iterator( cp, *this, 0 );
+}
+
+inline GIDCollectionPrimitive::const_iterator
 GIDCollectionPrimitive::end() const
 {
   return const_iterator( *this, size() );
+}
+
+inline GIDCollectionPrimitive::const_iterator
+GIDCollectionPrimitive::end( GIDCollectionPTR cp ) const
+{
+  return const_iterator( cp, *this, size() );
 }
 
 inline size_t
@@ -411,9 +475,21 @@ GIDCollectionComposite::begin() const
 }
 
 inline GIDCollectionComposite::const_iterator
+GIDCollectionComposite::begin( GIDCollectionPTR cp ) const
+{
+  return const_iterator( cp, *this, 0, 0 );
+}
+
+inline GIDCollectionComposite::const_iterator
 GIDCollectionComposite::end() const
 {
   return const_iterator( *this, parts_.size(), 0 );
+}
+
+inline GIDCollectionComposite::const_iterator
+GIDCollectionComposite::end( GIDCollectionPTR cp ) const
+{
+  return const_iterator( cp, *this, parts_.size(), 0 );
 }
 
 inline size_t

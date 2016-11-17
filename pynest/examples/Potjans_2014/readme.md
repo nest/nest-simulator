@@ -25,7 +25,7 @@ The original sli version can be found [here](https://github.com/nest/nest-simula
    
 How to use the example:
 
-To run the microcircuit on a local machine, adjust the variables `N_scaling` and `K_scaling` in `network_params.py` to 0.1 and create an output directory called `data`. `N_scaling` adjusts the number of neurons and `K_scaling` the number of connections to be simulated. The full network can be run by adjusting these values to 1. If this is done, the option to print the time progress should be set to False in the file `sim_params.py`. For running, use `python example.py`. The output will be saved in the directory `data`.
+To run the microcircuit on a local machine, adjust the variables `N_scaling` and `K_scaling` in `network_params.py` to `0.1`. `N_scaling` adjusts the number of neurons and `K_scaling` the number of connections to be simulated. The full network can be run by adjusting these values to 1. If this is done, the option to print the time progress should be set to False in the file `sim_params.py`. For running, use `python example.py`. The output will be saved in the directory `data`.
 
 The code can be parallelized using OpenMP and MPI, if NEST has been built with these applications [(Parallel computing with NEST)](http://www.nest-simulator.org/parallel_computing/). The number of threads (per MPI process) can be chosen by adjusting `local_num_threads` in `sim_params.py`. The number of MPI process can be set by choosing a reasonable value for `num_mpi_prc` and then running the script with the command `mpirun -n num_mpi_prc` `python` `example.py`. 
 

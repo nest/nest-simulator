@@ -76,7 +76,7 @@ class Network:
             else:
                 os.mkdir(self.sim_dict['data_path'])
                 print('data directory created')
-        print('Data will be written to %s' % self.data_path)
+            print('Data will be written to %s' % self.data_path)
 
     def setup_nest(self):
         """ Hands parameters to the NEST-kernel.
@@ -89,12 +89,14 @@ class Network:
         """
         nest.ResetKernel()
         master_seed = self.sim_dict['master_seed']
-        print('Master seed: %i ' % master_seed)
+        if nest.Rank() == 0:
+            print('Master seed: %i ' % master_seed)
         nest.SetKernelStatus(
             {'local_num_threads': self.sim_dict['local_num_threads']}
             )
         N_tp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
-        print('Number of total processes: %i' % N_tp)
+        if nest.Rank() == 0:
+            print('Number of total processes: %i' % N_tp)
         rng_seeds = list(
             range(
                 master_seed + 1 + N_tp,
@@ -102,11 +104,12 @@ class Network:
                 )
             )
         grng_seed = master_seed + N_tp
-        print(
-            'Seeds for random number generators of virtual processes: %r'
-            % rng_seeds
-            )
-        print('Global random number generator seed:%i' % grng_seed)
+        if nest.Rank() == 0:
+            print(
+                'Seeds for random number generators of virtual processes: %r'
+                % rng_seeds
+                )
+            print('Global random number generator seed: %i' % grng_seed)
         self.pyrngs = [np.random.RandomState(s) for s in list(range(
             master_seed, master_seed + N_tp))]
         self.sim_resolution = self.sim_dict['sim_resolution']
@@ -145,22 +148,24 @@ class Network:
         if self.net_dict['poisson_input']:
             self.DC_amp_e = np.zeros(len(self.net_dict['populations']))
         else:
-            print(
-                '''
-                no poisson input provided
-                calculating dc input to compensate
-                '''
-                )
+            if nest.Rank() == 0:
+                print(
+                    '''
+                    no poisson input provided
+                    calculating dc input to compensate
+                    '''
+                    )
             self.DC_amp_e = compute_DC(self.net_dict, self.w_ext)
 
-        print(
-            'The Number of neurons is scaled by a factor of: %.2f'
-            % self.N_scaling
-            )
-        print(
-            'The number of synapses is scaled by a factor of: %.2f'
-            % self.K_scaling
-            )
+        if nest.Rank() == 0:
+            print(
+                'The number of neurons is scaled by a factor of: %.2f'
+                % self.N_scaling
+                )
+            print(
+                'The number of synapses is scaled by a factor of: %.2f'
+                % self.K_scaling
+                )
 
         # Scaling of the synapses.
         if self.K_scaling != 1:
@@ -194,19 +199,21 @@ class Network:
             self.pops.append(population)
             pop_file.write('%d  %d \n' % (population[0], population[-1]))
         pop_file.close()
-        nest.sli_run(
-            '0 << /model /%s >> GetLocalNodes' % self.net_dict['neuron_model']
-            )
-        local_nodes = nest.sli_pop()
-        vp = nest.GetStatus(local_nodes)[0]['vp']
-        print('vp: %i' % vp)
-        nest.SetStatus(
-            local_nodes, 'V_m', self.pyrngs[vp].normal(
-                self.net_dict['neuron_params']['V0_mean'],
-                self.net_dict['neuron_params']['V0_sd'],
-                len(local_nodes)
-                )
-            )
+        for thread in np.arange(nest.GetKernelStatus('local_num_threads')):
+            local_nodes = nest.GetNodes(
+                [0], {
+                    'model': self.net_dict['neuron_model'],
+                    'thread': thread
+                     }, local_only=True
+                )[0]
+            vp = nest.GetStatus(local_nodes)[0]['vp']
+            # same thread on MPI proc -> same vp
+            nest.SetStatus(
+                local_nodes, 'V_m', self.pyrngs[vp].normal(
+                    self.net_dict['neuron_params']['V0_mean'],
+                    self.net_dict['neuron_params']['V0_sd'],
+                    len(local_nodes))
+                    )
 
     def create_devices(self):
         """ This function creates the recording devices.
@@ -241,9 +248,11 @@ class Network:
                 self.voltmeter.append(volt)
 
         if 'spike_detector' in self.net_dict['rec_dev']:
-            print('Spike detectors created')
+            if nest.Rank() == 0:
+                print('Spike detectors created')
         if 'voltmeter' in self.net_dict['rec_dev']:
-            print('Voltmeters created')
+            if nest.Rank() == 0:
+                print('Voltmeters created')
 
     def create_thalamic_input(self):
         """ This function creates the thalamic neuronal population if this
@@ -251,7 +260,8 @@ class Network:
 
         """
         if self.stim_dict['thalamic_input']:
-            print('Thalamic input provided')
+            if nest.Rank() == 0:
+                print('Thalamic input provided')
             self.thalamic_population = nest.Create(
                 'parrot_neuron', self.stim_dict['n_thal']
                 )
@@ -278,7 +288,8 @@ class Network:
                     self.K_scaling ** 0.5)
                 self.nr_synapses_th = (self.nr_synapses_th * self.K_scaling)
         else:
-            print('Thalamic input not provided')
+            if nest.Rank() == 0:
+                print('Thalamic input not provided')
 
     def create_poisson(self):
         """ This function creates the Poisson generators.
@@ -288,7 +299,8 @@ class Network:
 
         """
         if self.net_dict['poisson_input']:
-            print('Poisson background input created')
+            if nest.Rank() == 0:
+                print('Poisson background input created')
             rate_ext = self.net_dict['bg_rate'] * self.K_ext
             self.poisson = []
             for i, target_pop in enumerate(self.pops):
@@ -304,10 +316,12 @@ class Network:
 
         """
         if self.stim_dict['dc_input']:
-            print('DC generator created')
+            if nest.Rank() == 0:
+                print('DC generator created')
             dc_amp_stim = self.net_dict['K_ext'] * self.stim_dict['dc_amp']
             self.dc = []
-            print('DC_amp_stim', dc_amp_stim)
+            if nest.Rank() == 0:
+                print('DC_amp_stim', dc_amp_stim)
             for i, target_pop in enumerate(self.pops):
                 dc = nest.Create(
                     'dc_generator', params={
@@ -327,7 +341,8 @@ class Network:
         The recurrent connections between the neuronal populations are created.
 
         """
-        print('Recurrent connections are established')
+        if nest.Rank() == 0:
+            print('Recurrent connections are established')
         mean_delays = self.net_dict['mean_delay_matrix']
         std_delays = self.net_dict['std_delay_matrix']
         for i, target_pop in enumerate(self.pops):
@@ -363,7 +378,8 @@ class Network:
 
     def connect_poisson(self):
         """ Connects the Poisson generators to the microcircuit."""
-        print('Poisson background input is connected')
+        if nest.Rank() == 0:
+            print('Poisson background input is connected')
         for i, target_pop in enumerate(self.pops):
             conn_dict_poisson = {'rule': 'all_to_all'}
             syn_dict_poisson = {
@@ -379,7 +395,8 @@ class Network:
 
     def connect_thalamus(self):
         """ Connects the thalamic population to the microcircuit."""
-        print('Thalamus connection established')
+        if nest.Rank() == 0:
+            print('Thalamus connection established')
         for i, target_pop in enumerate(self.pops):
             conn_dict_th = {
                 'rule': 'fixed_total_number',
@@ -408,14 +425,26 @@ class Network:
 
     def connect_dc_generator(self):
         """ This function connects the DC generator to the microcircuit."""
-        print('DC Generator connection established')
+        if nest.Rank() == 0:
+            print('DC Generator connection established')
         for i, target_pop in enumerate(self.pops):
             if self.stim_dict['dc_input']:
                 nest.Connect(self.dc[i], target_pop)
 
     def connect_devices(self):
         """ Connects the recording devices to the microcircuit."""
-        print('%s of 2 Devices connected' % (len(self.net_dict['rec_dev'])))
+        if nest.Rank() == 0:
+            if ('spike_detector' in self.net_dict['rec_dev'] and
+                    'voltmeter' not in self.net_dict['rec_dev']):
+                print('Spike detector connected')
+            elif ('spike_detector' not in self.net_dict['rec_dev'] and
+                    'voltmeter' in self.net_dict['rec_dev']):
+                print('Voltmeter connected')
+            elif ('spike_detector' in self.net_dict['rec_dev'] and
+                    'voltmeter' in self.net_dict['rec_dev']):
+                print('Spike detector and voltmeter connected')
+            else:
+                print('no recording devices connected')
         for i, target_pop in enumerate(self.pops):
             if 'voltmeter' in self.net_dict['rec_dev']:
                 nest.Connect(self.voltmeter[i], target_pop)

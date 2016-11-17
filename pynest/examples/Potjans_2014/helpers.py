@@ -31,6 +31,9 @@ Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 import numpy as np
 import os
 import sys
+if 'DISPLAY' not in os.environ:
+    import matplotlib
+    matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from matplotlib.patches import Polygon
 
@@ -364,6 +367,7 @@ def plot_raster(path, name, begin, end):
         [L23_label_pos, L4_label_pos, L5_label_pos, L6_label_pos],
         ylabels, rotation=10, fontsize=18
         )
+    plt.savefig(os.path.join(path, 'raster_plot.png'), dpi=300)
     plt.show()
 
 
@@ -405,8 +409,8 @@ def fire_rate(path, name, begin, end):
         rates_averaged_all.append(float('%.3f' % rate_averaged))
         rates_std_all.append(float('%.3f' % rate_std))
         np.save(os.path.join(path, ('rate' + str(h) + '.npy')), rate_each_n)
-    print('mean rates: %r Hz' % rates_averaged_all)
-    print('std of rates: %r Hz' % rates_std_all)
+    print('Mean rates: %r Hz' % rates_averaged_all)
+    print('Standard deviation of rates: %r Hz' % rates_std_all)
 
 
 def boxplot(net_dict, path):
@@ -458,4 +462,5 @@ def boxplot(net_dict, path):
     plt.xlabel('firing rate [Hz]', fontsize=18)
     plt.yticks(label_pos, pop_names, fontsize=18)
     plt.xticks(fontsize=18)
+    plt.savefig(os.path.join(path, 'box_plot.png'), dpi=300)
     plt.show()

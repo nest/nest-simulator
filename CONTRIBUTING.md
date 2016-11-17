@@ -11,28 +11,29 @@ The NEST simulator is a scientific tool and as such it is never ready and consta
 
 If you come across a bug in NEST, please [file an issue on the GitHub issue tracker](https://github.com/nest/nest-simulator/issues/new). Please use the template below to provide information:
 
-    Description of problem:
+```
+Description of problem:
 
 
-    Version-Release or Git commit:
+Version-Release or Git commit:
 
 
-    How reproducible: (Always/Sometimes/Unsure)
+How reproducible: (Always/Sometimes/Unsure)
 
 
-    Steps to Reproduce:
-    1.
-    2.
-    3.
+Steps to Reproduce:
+1.
+2.
+3.
 
-    Actual results:
-
-
-    Expected results:
+Actual results:
 
 
-    Additional info:
+Expected results:
 
+
+Additional info:
+```
 
 You can also attach files to issues. Data dumps or example code snippets that help to reproduce the issue is most welcome. This information enables developers to debug and fix issues quicker.
 

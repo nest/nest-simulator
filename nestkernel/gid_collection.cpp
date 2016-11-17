@@ -438,6 +438,16 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
   }
 }
 
+// function object for sorting a vector of GIDCollcetionPrimitives
+class primitiveSort
+{
+public:
+  bool operator()( GIDCollectionPrimitive primitive_1, GIDCollectionPrimitive primitive_2 )
+  {
+    return primitive_1[ 0 ] < primitive_2[ 0 ];
+  }
+};
+
 GIDCollectionPTR GIDCollectionComposite::operator+(
   const GIDCollectionPrimitive& rhs ) const
 {

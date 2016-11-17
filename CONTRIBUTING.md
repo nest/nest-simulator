@@ -7,7 +7,7 @@ The NEST simulator is a scientific tool and as such it is never ready and consta
 * Make sure you have a [GitHub account](https://github.com/signup/free)
 * The development workflow is based purely on pull requests. This [article](https://nest.github.io/nest-simulator/development_workflow) gives information on how to work with git and GitHub if you are new to it.
 
-## Filing bugs/issues
+## Reporting bugs and issues
 
 If you come across a bug in NEST, please [file an issue on the GitHub issue tracker](https://github.com/nest/nest-simulator/issues/new). Please use the template below to provide information:
 

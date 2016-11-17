@@ -33,7 +33,7 @@ from network_params import net_dict
 
 stim_dict = {
     # Turn thalamic input on or off (True or False).
-    'thalamic_input': True,
+    'thalamic_input': False,
     # Turn DC input on or off (True or False).
     'dc_input': False,
     # Number of thalamic neurons.

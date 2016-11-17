@@ -55,7 +55,6 @@ print("Time to simulate: %.2f s" % toc)
 # spike rate of all populations. For visual purposes only spikes in the last
 # 200 ms are plotted here by default. The computation of spike rates discards
 # the first 500 ms of the simulation to exclude initialization artifacts.
-#raster_plot_time_idx = np.array([sim_dict['t_sim'] - 200.0, sim_dict['t_sim']])
 raster_plot_time_idx = np.array(
     [stim_dict['th_start'] - 100.0, stim_dict['th_start'] + 100.0]
     )

@@ -922,16 +922,16 @@ nest::ConnectionManager::trigger_update_weight( const long vt_id,
   const std::vector< spikecounter >& dopa_spikes,
   const double t_trig )
 {
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    for ( tSConnector::const_nonempty_iterator it =
-            connections_[ t ].nonempty_begin();
-          it != connections_[ t ].nonempty_end();
-          ++it )
-      validate_pointer( *it )->trigger_update_weight( vt_id,
-        t,
-        dopa_spikes,
-        t_trig,
-        kernel().model_manager.get_synapse_prototypes( t ) );
+  const index t = kernel().vp_manager.get_thread_id();
+  for ( tSConnector::const_nonempty_iterator it =
+          connections_[ t ].nonempty_begin();
+        it != connections_[ t ].nonempty_end();
+        ++it )
+    validate_pointer( *it )->trigger_update_weight( vt_id,
+      t,
+      dopa_spikes,
+      t_trig,
+      kernel().model_manager.get_synapse_prototypes( t ) );
 }
 
 void
@@ -1018,7 +1018,7 @@ nest::ConnectionManager::get_num_connections( synindex syn_id ) const
 ArrayDatum
 nest::ConnectionManager::get_connections( DictionaryDatum params ) const
 {
-  ArrayDatum connectome;
+  std::deque< ConnectionID > connectome;
 
   const Token& source_t = params->lookup( names::source );
   const Token& target_t = params->lookup( names::target );
@@ -1062,26 +1062,49 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
           syn_id < kernel().model_manager.get_num_synapse_prototypes();
           ++syn_id )
     {
-      ArrayDatum conn;
-      get_connections( conn, source_a, target_a, syn_id, synapse_label );
-      if ( conn.size() > 0 )
-        connectome.push_back( new ArrayDatum( conn ) );
+      get_connections( connectome, source_a, target_a, syn_id, synapse_label );
     }
   }
 
-  return connectome;
+  ArrayDatum result;
+  result.reserve( connectome.size() );
+
+  while ( not connectome.empty() )
+  {
+    result.push_back( ConnectionDatum( connectome.front() ) );
+    connectome.pop_front();
+  }
+
+  return result;
+}
+
+// Helper method, implemented as operator<<(), that removes ConnectionIDs from
+// input deque and appends them to output deque.
+static inline std::deque< nest::ConnectionID >& operator<<(
+  std::deque< nest::ConnectionID >& out,
+  std::deque< nest::ConnectionID >& in )
+{
+  while ( not in.empty() )
+  {
+    out.push_back( in.front() );
+    in.pop_front();
+  }
+
+  return out;
 }
 
 void
-nest::ConnectionManager::get_connections( ArrayDatum& connectome,
+nest::ConnectionManager::get_connections(
+  std::deque< ConnectionID >& connectome,
   TokenArray const* source,
   TokenArray const* target,
   size_t syn_id,
   long synapse_label ) const
 {
-  size_t num_connections = get_num_connections( syn_id );
-
-  connectome.reserve( num_connections );
+  if ( get_num_connections( syn_id ) == 0 )
+  {
+    return;
+  }
 
   if ( source == 0 and target == 0 )
   {
@@ -1093,22 +1116,8 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
     for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     {
 #endif
-      ArrayDatum conns_in_thread;
-      size_t num_connections_in_thread = 0;
-      // Count how many connections we will have.
-      for ( tSConnector::const_nonempty_iterator it =
-              connections_[ t ].nonempty_begin();
-            it != connections_[ t ].nonempty_end();
-            ++it )
-      {
-        num_connections_in_thread +=
-          validate_pointer( *it )->get_num_connections();
-      }
+      std::deque< ConnectionID > conns_in_thread;
 
-#ifdef _OPENMP
-#pragma omp critical( get_connections )
-#endif
-      conns_in_thread.reserve( num_connections_in_thread );
       for ( index source_id = 1; source_id < connections_[ t ].size();
             ++source_id )
       {
@@ -1122,7 +1131,7 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        connectome.append_move( conns_in_thread );
+        connectome << conns_in_thread;
       }
     }
 
@@ -1138,22 +1147,8 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
     for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     {
 #endif
-      ArrayDatum conns_in_thread;
-      size_t num_connections_in_thread = 0;
-      // Count how many connections we will have maximally.
-      for ( tSConnector::const_nonempty_iterator it =
-              connections_[ t ].nonempty_begin();
-            it != connections_[ t ].nonempty_end();
-            ++it )
-      {
-        num_connections_in_thread +=
-          validate_pointer( *it )->get_num_connections();
-      }
+      std::deque< ConnectionID > conns_in_thread;
 
-#ifdef _OPENMP
-#pragma omp critical( get_connections )
-#endif
-      conns_in_thread.reserve( num_connections_in_thread );
       for ( index source_id = 1; source_id < connections_[ t ].size();
             ++source_id )
       {
@@ -1177,7 +1172,7 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        connectome.append_move( conns_in_thread );
+        connectome << conns_in_thread;
       }
     }
     return;
@@ -1192,22 +1187,8 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
     for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     {
 #endif
-      ArrayDatum conns_in_thread;
-      size_t num_connections_in_thread = 0;
-      // Count how many connections we will have maximally.
-      for ( tSConnector::const_nonempty_iterator it =
-              connections_[ t ].nonempty_begin();
-            it != connections_[ t ].nonempty_end();
-            ++it )
-      {
-        num_connections_in_thread +=
-          validate_pointer( *it )->get_num_connections();
-      }
+      std::deque< ConnectionID > conns_in_thread;
 
-#ifdef _OPENMP
-#pragma omp critical( get_connections )
-#endif
-      conns_in_thread.reserve( num_connections_in_thread );
       for ( index s = 0; s < source->size(); ++s )
       {
         size_t source_id = source->get( s );
@@ -1242,7 +1223,7 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        connectome.append_move( conns_in_thread );
+        connectome << conns_in_thread;
       }
     }
     return;

@@ -1191,7 +1191,7 @@ SeeAlso: SetOptions, help, helpindex
 /:helpdesk_complete_command
 {
   /helpdesk /command GetOption
-  statusdict/hostos :: 6 Take (darwin) eq
+  (^darwin) statusdict/hostos :: regex_find
   {
     % OSX, must use open -a <cmd> <url>
     (open -a ) exch join

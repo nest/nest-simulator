@@ -1101,14 +1101,22 @@ nest::FixedInDegreeBuilder::connect_()
       {
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
+        {
+          // skip array parameters handled in other virtual processes
+          skip_conn_parameter_( tid, indegree_ );
           continue;
+        }
 
         Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
         if ( tid != target_thread )
+        {
+          // skip array parameters handled in other virtual processes
+          skip_conn_parameter_( tid, indegree_ );
           continue;
+        }
 
         std::set< long > ch_ids;
         long n_rnd = sources_->size();
@@ -1232,14 +1240,22 @@ nest::FixedOutDegreeBuilder::connect_()
         {
           // check whether the target is on this mpi machine
           if ( not kernel().node_manager.is_local_gid( *tgid ) )
+          {
+            // skip array parameters handled in other virtual processes
+            skip_conn_parameter_( tid );
             continue;
+          }
 
           Node* const target = kernel().node_manager.get_node( *tgid, tid );
           const thread target_thread = target->get_thread();
 
           // check whether the target is on our thread
           if ( tid != target_thread )
+          {
+            // skip array parameters handled in other virtual processes
+            skip_conn_parameter_( tid );
             continue;
+          }
 
           single_connect_( *sgid, *target, target_thread, rng );
         }

@@ -192,11 +192,11 @@ Example:
     syn_dict ={"model": "static_synapse", "weight":2.5, "delay":0.5, 'receptor_type': 1}
     Connect(A, B, syn_spec=syn_dict)
 
-**Array** parameters can be used in conjunction with the rules 'one\_to\_one'
-and 'all\_to\_all'. The arrays can be specified as numpy arrays or lists. As
-for the scalar parameters, all parameters but the receptor types must be
-specified as arrays of floats. For 'one\_to\_one' the array must have the same
-length as the population vector.
+**Array** parameters can be used in conjunction with the rules 'one\_to\_one',
+'all\_to\_all', 'fixed\_indegree' and 'fixed\_outdegree'. The arrays can be
+specified as numpy arrays or lists. As for the scalar parameters, all
+parameters but the receptor types must be specified as arrays of floats.
+For 'one\_to\_one' the array must have the same length as the population vector.
 
 Example:
 
@@ -215,6 +215,34 @@ Example:
     B = Create("iaf_neuron", 2)
     syn_dict = {'weight': [[1.2, -3.5, 2.5],[0.4, -0.2, 0.7]]}
     Connect(A, B, syn_spec=syn_dict)
+
+For 'fixed\_indegree' the array has to be a two-dimensional NumPy array
+with shape (len(post), indegree), where indegree is the number of
+incoming connections per target neuron, therefore the rows describe the
+target and the columns the connections converging to the target neuron,
+regardless of the identity of the source neurons.
+
+Example:
+
+    A = Create("iaf_neuron", 5)
+    B = Create("iaf_neuron", 3)
+    conn_dict = {'rule': 'fixed_indegree', 'indegree': 2}
+    syn_dict = {'weight': [[1.2, -3.5],[0.4, -0.2],[0.6, 2.2]]}
+    Connect(A, B, conn_spec=conn_dict, syn_spec=syn_dict)
+
+For 'fixed\_outdegree' the array has to be a two-dimensional NumPy array
+with shape (len(pre), outdegree), where outdegree is the number of
+outgoing connections per source neuron, therefore the rows describe the
+source and the columns the connections starting from the source neuron
+regardless of the identity of the target neuron.
+
+Example:
+
+    A = Create("iaf_neuron", 2)
+    B = Create("iaf_neuron", 5)
+    conn_dict = {'rule': 'fixed_outdegree', 'outdegree': 3}
+    syn_dict = {'weight': [[1.2, -3.5, 0.4], [-0.2, 0.6, 2.2]]}
+    Connect(A, B, conn_spec=conn_dict, syn_spec=syn_dict)
 
 **Distributed** parameters are initialized with yet another dictionary
 specifying the 'distribution' and the distribution-specific parameters, whose

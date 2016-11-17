@@ -40,7 +40,7 @@ class GIDCollection(object):
     list of nodes to a GIDCollection with ``nest.GIDCollection(list)``.
 
     By iterating over the GIDCollection you get the gids. If you apply the
-    ``items()`` function, you can also read the modelID.
+    ``items()`` function, you can also read the modelIDs.
 
     **Example**
         ::

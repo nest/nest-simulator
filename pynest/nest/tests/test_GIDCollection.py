@@ -256,7 +256,7 @@ class TestGIDCollection(unittest.TestCase):
         self.assertFalse(25 in nodes)
 
         ngc = nest.GIDCollection(nodes_list)
-        self.assertTrue(nodes == ngc)
+        self.assertEqual(nodes, ngc)
 
     def test_modelID(self):
         """Correct GIDCollection modelID"""
@@ -281,6 +281,16 @@ class TestGIDCollection(unittest.TestCase):
         nest.Connect(n, n, {'rule': 'one_to_one'})
         connections = nest.GetKernelStatus('num_connections')
         self.assertEqual(connections, 10)
+
+        for gid in n:
+            nest.Connect(GidCollection([gid]), GIDCollection([gid]))
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
+
+        nest.ResetKernel()
+
+        n = nest.Create('iaf_neuron', 2)
+        nest.Connect(n[0], n[1])
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 1)
 
     def test_SetStatus_and_GetStatus(self):
         """

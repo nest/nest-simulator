@@ -194,8 +194,9 @@ def SetStatus(nodes, params, val=None):
         Description
     """
 
-    if not isinstance(nodes, nest.GIDCollection):
-        raise TypeError("nodes must be a GIDCollection")
+    if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, tuple)):
+        raise TypeError("The first input (nodes) must be a GIDCollection or \
+                         a tuple of connection handles ")
 
     # This was added to ensure that the function is a nop (instead of,
     # for instance, raising an exception) when applied to an empty list,
@@ -260,8 +261,9 @@ def GetStatus(nodes, keys=None):
         Description
     """
 
-    if not isinstance(nodes, nest.GIDCollection):
-        raise TypeError("nodes must be a GIDCollection")
+    if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, tuple)):
+        raise TypeError("The first input (nodes) must be a GIDCollection or \
+                         a tuple of connection handles ")
 
     if len(nodes) == 0:
         return nodes

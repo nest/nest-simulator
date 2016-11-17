@@ -67,7 +67,7 @@ def
 
 % These variants of get access network elements represented by
 % a gid like dictionaries. In particular, if a gid returns a dictionary,
-% get can be used to acces the contents of the nested objects.
+% get can be used to access the contents of the nested objects.
 % 071108, Diesmann
 %
 /get [/integertype /literaltype] {exch GetStatus exch get} def
@@ -78,6 +78,63 @@ def
 /get [/connectiontype /literaltype] {exch GetStatus exch get} def
 /get [/connectiontype /arraytype] {exch GetStatus exch get_d_a} def
 
+% The following version allows extraction of a GID from a GIDCollection
+/get [/gidcollectiontype /integertype] { get_g_i } def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Slicing of GIDCollections with Take
+% Since n Take means take first n elements, while [n] Take means return
+%      n-th element, we need to be a bit careful, handling the letter case
+%      here at the SLI level and mapping the former to the two-element case
+% Note that Take indexes from 1, with -1 the last element
+/Take [/gidcollectiontype /integertype] 
+  { 
+     /n Set
+     /c Set
+     n 0 geq
+     {
+       [ 0 n ]
+     }
+     {
+       c size dup n add exch
+       2 arraystore
+     }
+     ifelse
+     c
+     % pstack
+     Take
+  }
+def
+
+/Take [/gidcollectiontype /arraytype] 
+{
+  /slice Set
+  /coll Set
+  slice length 1 eq
+  {
+    slice 0 get 
+    dup 0 geq
+    {
+      1 sub  % positive index, must subtract 1
+    }
+    if
+    coll exch
+    get      % negative index works the same for Take and get
+  }
+  {
+    % assume that we have two or three elements now
+    slice length 2 eq
+    {
+      slice 1 append
+    }
+    if
+    coll exch
+    % pstack
+    Take_g_a
+  }
+  ifelse
+} def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -126,6 +183,100 @@ def
   [/arraytype]                /cvgidcollection_ia  load addtotrie
   [/intvectortype]            /cvgidcollection_iv  load addtotrie
   [/gidcollectiontype]        {}                        addtotrie
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% add conversion from GIDCollection
+/cva [/gidcollectiontype]
+  /cva_g load
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% convert to list of gid-modelid pairs
+/cva_gid_mid trie def
+/cva_gid_mid [/gidcollectiontype]
+{
+ << >> begin
+  dup 
+  :beginiterator_g /iter Set
+  :enditerator_g /enditer Set
+  
+  mark
+  {
+    iter :getgidmodelid_q
+    iter :next_q
+    enditer :eq_q_q { exit } if
+  }
+  loop
+  counttomark
+  arraystore
+  exch pop
+
+  end
+}
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% join for GIDCollections
+/join [/gidcollectiontype /gidcollectiontype]
+  /join_g_g load
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% forall and Map for gid collections --- brutal implementation
+
+/forall [/gidcollectiontype /proceduretype]
+{
+  << >> begin
+  /func Set
+  dup 
+  :beginiterator_g /iter Set
+  :enditerator_g /enditer Set
+  
+  {
+    iter :getgid_q
+    func
+    iter :next_q
+    enditer :eq_q_q { exit } if
+  }
+  loop
+
+  end
+} def
+
+/Map [/gidcollectiontype /proceduretype]
+{
+  << >> begin
+  /func Set
+  dup 
+  :beginiterator_g /iter Set
+  :enditerator_g /enditer Set
+  
+  mark
+  {
+    iter :getgid_q
+    func
+    iter :next_q
+    enditer :eq_q_q { exit } if
+  }
+  loop
+  counttomark
+  arraystore
+  exch pop
+
+  end
+} def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% GIDCollection membership
+
+/MemberQ [/gidcollectiontype /integertype]
+  /MemberQ_g_i load
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

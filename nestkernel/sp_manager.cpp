@@ -223,7 +223,7 @@ SPManager::disconnect_single( index sgid,
   if ( syn->known( names::pre_synaptic_element )
     && syn->known( names::post_synaptic_element ) )
   {
-	throw KernelException( "spmanager needs fixing" );
+    throw KernelException( "spmanager needs fixing" );
     GIDCollectionPTR sources( 0 ); // = GIDCollection();
     GIDCollectionPTR targets( 0 ); // = GIDCollection();
 

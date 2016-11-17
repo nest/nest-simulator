@@ -48,6 +48,7 @@ class NestModule : public SLIModule
 public:
   static SLIType ConnectionType;
   static SLIType GIDCollectionType;
+  static SLIType GIDCollectionIteratorType;
 
   NestModule();
   ~NestModule();
@@ -90,6 +91,7 @@ public:
    * - @c C  : connectiontype
    * - @c cg : connectiongeneratortype
    * - @c g  : gid collection
+   * - @c q  : gid collection iterator
    *
    * @subsection compoundtypes Codes for compund data types
    * - @c A  : array
@@ -382,10 +384,65 @@ public:
     void execute( SLIInterpreter* ) const;
   } cvgidcollection_ivfunction;
 
+  class Cva_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cva_gfunction;
+
   class Size_gFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
   } size_gfunction;
+
+  class Join_g_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } join_g_gfunction;
+
+  class MemberQ_g_iFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } memberq_g_ifunction;
+
+  class BeginIterator_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } beginiterator_gfunction;
+
+  class EndIterator_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } enditerator_gfunction;
+
+  class GetGID_qFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } getgid_qfunction;
+
+  class GetGIDModelID_qFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } getgidmodelid_qfunction;
+
+  class Next_qFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } next_qfunction;
+
+  class Eq_q_qFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } eq_q_qfunction;
+
+  class Get_g_iFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } get_g_ifunction;
+
+  class Take_g_aFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } take_g_afunction;
 
 #ifdef HAVE_MUSIC
   class SetAcceptableLatencyFunction : public SLIFunction

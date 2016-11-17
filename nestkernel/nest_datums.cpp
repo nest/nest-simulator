@@ -27,6 +27,8 @@ template class AggregateDatum< nest::ConnectionID,
   &nest::NestModule::ConnectionType >;
 template class lockPTRDatum< nest::GIDCollection,
   &nest::NestModule::GIDCollectionType >;
+template class lockPTRDatum< nest::gc_const_iterator,
+  &nest::NestModule::GIDCollectionIteratorType >;
 
 // instantiate memory management pool
 template <>
@@ -38,12 +40,6 @@ void
 ConnectionDatum::print( std::ostream& out ) const
 {
   out << "/connectiontype";
-}
-template <>
-void
-GIDCollectionDatum::print( std::ostream& out ) const
-{
-  out << "/gidcollectiontype";
 }
 
 // printing of the objects
@@ -58,6 +54,12 @@ template <>
 void
 GIDCollectionDatum::pprint( std::ostream& out ) const
 {
-  get()->print_me( out );
-  unlock();
+  this->operator->()->print_me( out );
+}
+
+template <>
+void
+GIDCollectionIteratorDatum::pprint( std::ostream& out ) const
+{
+  this->operator->()->print_me( out );
 }

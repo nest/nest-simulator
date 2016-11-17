@@ -40,6 +40,8 @@ typedef AggregateDatum< nest::ConnectionID, &nest::NestModule::ConnectionType >
   ConnectionDatum;
 typedef lockPTRDatum< nest::GIDCollection,
   &nest::NestModule::GIDCollectionType > GIDCollectionDatum;
+typedef lockPTRDatum< nest::gc_const_iterator,
+  &nest::NestModule::GIDCollectionIteratorType > GIDCollectionIteratorDatum;
 
 #ifndef HAVE_STATIC_TEMPLATE_DECLARATION_FAILS
 template <>
@@ -48,12 +50,12 @@ sli::pool ConnectionDatum::memory;
 
 template <>
 void ConnectionDatum::print( std::ostream& ) const;
-template <>
-void GIDCollectionDatum::print( std::ostream& ) const;
 
 template <>
 void ConnectionDatum::pprint( std::ostream& ) const;
 template <>
 void GIDCollectionDatum::pprint( std::ostream& ) const;
+template <>
+void GIDCollectionIteratorDatum::pprint( std::ostream& ) const;
 
 #endif /* #ifndef NEST_DATUMS_H */

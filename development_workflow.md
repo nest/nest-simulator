@@ -15,7 +15,7 @@ layout: index
 * TOC
 {:toc}
 
-# Filing bugs/issues
+# Reporting bugs and issues
 
 If you come across a bug in NEST, please [file an issue on the GitHub issue tracker](https://github.com/nest/nest-simulator/issues/new). Please use the template below to provide information:
 

@@ -110,9 +110,9 @@ Specification of the ``receptor_type`` uniquely defines the target
 compartment and receptor.
 '''
 
-nest.Connect([cgs[0]], n, syn_spec={'receptor_type': syns['soma_curr']})
-nest.Connect([cgs[1]], n, syn_spec={'receptor_type': syns['proximal_curr']})
-nest.Connect([cgs[2]], n, syn_spec={'receptor_type': syns['distal_curr']})
+nest.Connect(cgs[0], n, syn_spec={'receptor_type': syns['soma_curr']})
+nest.Connect(cgs[1], n, syn_spec={'receptor_type': syns['proximal_curr']})
+nest.Connect(cgs[2], n, syn_spec={'receptor_type': syns['distal_curr']})
 
 '''
 Create one excitatory and one inhibitory spike generator per compartment.
@@ -134,12 +134,12 @@ Connect generators to correct compartments in the same way as in case of
 current generator
 '''
 
-nest.Connect([sgs[0]], n, syn_spec={'receptor_type': syns['soma_exc']})
-nest.Connect([sgs[1]], n, syn_spec={'receptor_type': syns['soma_inh']})
-nest.Connect([sgs[2]], n, syn_spec={'receptor_type': syns['proximal_exc']})
-nest.Connect([sgs[3]], n, syn_spec={'receptor_type': syns['proximal_inh']})
-nest.Connect([sgs[4]], n, syn_spec={'receptor_type': syns['distal_exc']})
-nest.Connect([sgs[5]], n, syn_spec={'receptor_type': syns['distal_inh']})
+nest.Connect(sgs[0], n, syn_spec={'receptor_type': syns['soma_exc']})
+nest.Connect(sgs[1], n, syn_spec={'receptor_type': syns['soma_inh']})
+nest.Connect(sgs[2], n, syn_spec={'receptor_type': syns['proximal_exc']})
+nest.Connect(sgs[3], n, syn_spec={'receptor_type': syns['proximal_inh']})
+nest.Connect(sgs[4], n, syn_spec={'receptor_type': syns['distal_exc']})
+nest.Connect(sgs[5], n, syn_spec={'receptor_type': syns['distal_inh']})
 
 '''
 Run the simulation for 700ms.

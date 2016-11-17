@@ -116,7 +116,7 @@ synaptic delays cannot be smaller then the simulation resolution).
 '''
 
 nest.ResetKernel()
-nest.SetStatus([0], [{"resolution": dt}])
+nest.SetKernelStatus({"resolution": dt})
 
 '''
 Now we start building the network and create excitatory and inhibitory
@@ -179,8 +179,7 @@ for trial in [0, 1]:
     sure that there is no spike left in the spike detector.
     '''
     nest.ResetNetwork()
-    nest.SetStatus([0], [{"rng_seeds": [seed_NEST]}])
-    nest.SetStatus([0], {'time': 0.0})
+    nest.SetKernelStatus({"rng_seeds": [seed_NEST], 'time': 0.0})
     nest.SetStatus(spikedetector, {'n_events': 0})
 
     '''

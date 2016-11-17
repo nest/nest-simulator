@@ -61,8 +61,8 @@ nest.SetStatus(source, {'spike_times':
 
 neuron = nest.Create("iaf_psc_exp", 2)
 
-nest.Connect(source, [neuron[0]], syn_spec="tsodyks2_synapse")
-nest.Connect(source, [neuron[1]], syn_spec="quantal_stp_synapse")
+nest.Connect(source, neuron[0], syn_spec="tsodyks2_synapse")
+nest.Connect(source, neuron[1], syn_spec="quantal_stp_synapse")
 
 voltmeter = nest.Create("voltmeter", 2)
 nest.SetStatus(voltmeter, {"withgid": False, "withtime": True})
@@ -79,8 +79,8 @@ nest.Simulate(t_tot)
 '''
 Now we connect the voltmeters
 '''
-nest.Connect([voltmeter[0]], [neuron[0]])
-nest.Connect([voltmeter[1]], [neuron[1]])
+nest.Connect(voltmeter[0], neuron[0])
+nest.Connect(voltmeter[1], neuron[1])
 
 '''
 WE now run the specified number of trials in a loop.
@@ -93,8 +93,8 @@ for t in range(n_trials):
 
 nest.Simulate(.1)  # flush the last voltmeter events from the queue
 
-vm = numpy.array(nest.GetStatus([voltmeter[1]], 'events')[0]['V_m'])
-vm_reference = numpy.array(nest.GetStatus([voltmeter[0]], 'events')[0]['V_m'])
+vm = numpy.array(nest.GetStatus(voltmeter[1], 'events')[0]['V_m'])
+vm_reference = numpy.array(nest.GetStatus(voltmeter[0], 'events')[0]['V_m'])
 
 vm.shape = (n_trials, t_tot)
 vm_reference.shape = (n_trials, t_tot)

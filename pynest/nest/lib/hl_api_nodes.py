@@ -111,8 +111,22 @@ class GIDCollection(object):
 
     def __getitem__(self, key):
         if isinstance(key, slice):
+            if key.start == None:
+                start = 0
+            else:
+                start = key.start
+            if key.stop == None:
+                stop = self.__len__() - 1
+            else:
+                stop = key.stop
+            if key.step == None:
+                step = 1
+            else:
+                step = key.step
+                
             return (GIDCollection(nest.sli_func('Take',
-                    self._datum, [key.start, key.stop, key.step])))
+                                                self._datum,
+                                                [start, stop, step])))
         else:
             gid = nest.sli_func('get', self._datum, key)
             try:

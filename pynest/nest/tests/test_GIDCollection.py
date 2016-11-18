@@ -82,7 +82,7 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(n[0], 1)
         self.assertEqual(n[2], 3)
         self.assertEqual(n[4], 5)
-        with self.assertRaises(IndexError):
+        with self.assertRaises(nest.NESTError):
             n[7]
 
         nest.ResetKernel()
@@ -292,7 +292,7 @@ class TestGIDCollection(unittest.TestCase):
         nest.Connect(nest.GIDCollection([n[0]]), nest.GIDCollection([n[1]]))
         self.assertEqual(nest.GetKernelStatus('num_connections'), 1)
 
-   def test_SetStatus_and_GetStatus(self):
+    def test_SetStatus_and_GetStatus(self):
         """
         Test that SetStatus and GetStatus works as expected with
         GIDCollection
@@ -300,9 +300,13 @@ class TestGIDCollection(unittest.TestCase):
 
         num_nodes = 10
         n = nest.Create('iaf_neuron', num_nodes)
-  #      nest.SetStatus(n, {'V_m': 3.5})
+        nest.SetStatus(n, {'V_m': 3.5})
         self.assertEqual(nest.GetStatus(n, 'V_m')[0], 3.5)
-
+        
+        V_m = [1., 2., 3., 4., 5., 6. ,7., 8., 9., 10.]
+        nest.SetStatus(n,'V_m', V_m)
+        for i in range(num_nodes):
+            self.assertEqual(nest.GetStatus(n, 'V_m')[i], V_m[i])
 
 def suite():
     suite = unittest.makeSuite(TestGIDCollection, 'test')

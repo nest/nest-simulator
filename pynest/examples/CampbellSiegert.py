@@ -176,9 +176,9 @@ sd = nest.Create('spike_detector', 1)
 We connect devices and neurons and start the simulation.
 '''
 for i, currentpg in enumerate(pg):
-    nest.Connect(currentpg, n,
+    nest.Connect(nest.GIDCollection([currentpg]), n,
                  syn_spec={'weight': float(J[i]), 'delay': 0.1})
-    nest.Connect(currentpg, n_free,
+    nest.Connect(nest.GIDCollection([currentpg]), n_free,
                  syn_spec={'weight': J[i]})
 
 nest.Connect(vm, n_free)

@@ -200,7 +200,7 @@ for trial in [0, 1]:
 
     if trial == 1:
         id_stim = [senders[0][spiketimes[0] > t_stim][0]]
-        nest.Connect(stimulus, list(id_stim),
+        nest.Connect(stimulus, nest.GIDCollection([list(id_stim)),
                      syn_spec={'weight': Jstim, 'delay': dt})
         nest.SetStatus(stimulus, {'spike_times': [t_stim]})
 

@@ -115,7 +115,7 @@ def run_model(model='aeif_cond_alpha', dt=0.1, reps=1):
     '''
     nest.ResetKernel()
     nest.sr("30 setverbosity")
-    nest.SetKernelStatus({"overwrite_files": True, {"resolution": dt}})
+    nest.SetKernelStatus({"overwrite_files": True, "resolution": dt})
     nest.SetDefaults('aeif_cond_alpha_RK5', {'HMIN': 0.001})
     nest.SetDefaults('aeif_cond_alpha_RK5', {'MAXERR': 1e-10})
 
@@ -126,10 +126,10 @@ def run_model(model='aeif_cond_alpha', dt=0.1, reps=1):
     nest.SetStatus(dc, [{"amplitude": 700.0,
                          "start": 700.0,
                          "stop": 2700.0}])
-    nest.Connect(dc, neuron[0])
+    nest.Connect(dc, nest.GIDCollection([neuron[0]]))
 
     sd = nest.Create('spike_detector')
-    nest.Connect(neuron[0], sd)
+    nest.Connect(nest.GIDCollection([neuron[0]]), sd)
 
     meter0 = nest.Create('multimeter',
                          params={'record_from': ['V_m', 'g_ex', 'g_in', 'w'],

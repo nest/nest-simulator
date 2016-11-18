@@ -241,6 +241,8 @@ public:
   void set_metadata( GIDCollectionMetadataPTR );
 
   GIDCollectionMetadataPTR get_metadata() const;
+
+  bool is_contigous_ascending( GIDCollectionPrimitive& next );
 };
 
 GIDCollectionPTR operator+( GIDCollectionPTR lhs, GIDCollectionPTR rhs );
@@ -255,6 +257,8 @@ class GIDCollectionComposite : public GIDCollection
 private:
   std::vector< GIDCollectionPrimitive > parts_;
   size_t size_; // total number of GIDs
+
+  void merge_parts( std::vector<GIDCollectionPrimitive>& parts ) const;
 public:
   GIDCollectionComposite( const GIDCollectionPrimitive& prim,
     size_t start,

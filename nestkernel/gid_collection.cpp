@@ -360,6 +360,12 @@ void // TODO: is this needed?
   out << "]]";
 }
 
+bool
+GIDCollectionPrimitive::is_contigous_ascending( GIDCollectionPrimitive& next )
+{
+  return ( last_ + 1 ) == next.first_;
+}
+
 // make a Primitive from start to stop with step into a Composite
 GIDCollectionComposite::GIDCollectionComposite(
   const GIDCollectionPrimitive& prim,
@@ -378,6 +384,16 @@ GIDCollectionComposite::GIDCollectionComposite(
   , size_( comp.size_ )
 {
 }
+
+// function object for sorting a vector of GIDCollcetionPrimitives
+struct
+{
+  bool operator()( GIDCollectionPrimitive& primitive_1,
+    GIDCollectionPrimitive& primitive_2 )
+  {
+    return primitive_1[ 0 ] < primitive_2[ 0 ];
+  }
+} primitiveSort;
 
 // construct Composite from a vector of Primitives
 GIDCollectionComposite::GIDCollectionComposite(
@@ -403,6 +419,7 @@ GIDCollectionComposite::GIDCollectionComposite(
     parts_.push_back( *gc );
     size_ += ( *gc ).size();
   }
+  std::sort( parts_.begin(), parts_.end(), primitiveSort );
 }
 
 GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
@@ -434,19 +451,21 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
       new_composite->parts_.push_back( *prim );
       new_composite->size_ += ( *prim ).size();
     }
-    return GIDCollectionPTR( new_composite );
+    std::sort( new_composite->parts_.begin(),
+      new_composite->parts_.end(),
+      primitiveSort );
+    merge_parts( new_composite->parts_ );
+    if ( new_composite->parts_.size() == 1 )
+    {
+      return GIDCollectionPTR(
+        new GIDCollectionPrimitive( new_composite->parts_[ 0 ] ) );
+    }
+    else
+    {
+      return GIDCollectionPTR( new_composite );
+    }
   }
 }
-
-// function object for sorting a vector of GIDCollcetionPrimitives
-class primitiveSort
-{
-public:
-  bool operator()( GIDCollectionPrimitive primitive_1, GIDCollectionPrimitive primitive_2 )
-  {
-    return primitive_1[ 0 ] < primitive_2[ 0 ];
-  }
-};
 
 GIDCollectionPTR GIDCollectionComposite::operator+(
   const GIDCollectionPrimitive& rhs ) const
@@ -458,7 +477,16 @@ GIDCollectionPTR GIDCollectionComposite::operator+(
 
   std::vector< GIDCollectionPrimitive > new_parts = parts_;
   new_parts.push_back( rhs );
-  return GIDCollectionPTR( new GIDCollectionComposite( new_parts ) );
+  std::sort( new_parts.begin(), new_parts.end(), primitiveSort );
+  merge_parts( new_parts );
+  if ( new_parts.size() == 1 )
+  {
+    return GIDCollectionPTR( new GIDCollectionPrimitive( new_parts[ 0 ] ) );
+  }
+  else
+  {
+    return GIDCollectionPTR( new GIDCollectionComposite( new_parts ) );
+  }
 }
 
 
@@ -482,6 +510,34 @@ GIDCollectionComposite::slice( size_t first, size_t last, size_t step ) const
 
   return GIDCollectionPTR(0);
   */
+}
+
+void
+GIDCollectionComposite::merge_parts(
+  std::vector< GIDCollectionPrimitive >& parts ) const
+{
+  bool did_merge = true;
+  while ( did_merge )
+  {
+    did_merge = false;
+    for ( size_t i = 0; i < parts.size() - 1; ++i )
+    {
+      if ( parts[ i ].is_contigous_ascending( parts[ i + 1 ] ) )
+      {
+        GIDCollectionPTR merged_primitivesPTR =
+          parts[ i ] + GIDCollectionPTR( parts[ i + 1 ] );
+        GIDCollectionPrimitive const* const merged_primitives =
+          dynamic_cast< GIDCollectionPrimitive const* >(
+            merged_primitivesPTR.get() );
+        merged_primitivesPTR.unlock();
+
+        parts[ i ] = *merged_primitives;
+        parts.erase( parts.begin() + i + 1 );
+        did_merge = true;
+        break;
+      }
+    }
+  }
 }
 
 void

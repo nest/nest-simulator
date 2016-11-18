@@ -194,9 +194,9 @@ def SetStatus(nodes, params, val=None):
         Description
     """
 
-    if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, tuple)):
-        raise TypeError("The first input (nodes) must be a GIDCollection or \
-                         a tuple of connection handles ")
+   # if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, tuple)):
+  #      raise TypeError("The first input (nodes) must be a GIDCollection or \
+   #                      a tuple of connection handles ")
 
     # This was added to ensure that the function is a nop (instead of,
     # for instance, raising an exception) when applied to an empty list,
@@ -212,20 +212,27 @@ def SetStatus(nodes, params, val=None):
         else:
             params = {params: val}
 
+    print("her!")
     params = broadcast(params, len(nodes), (dict,), "params")
     if len(nodes) != len(params):
+        print("her! i if")
         raise TypeError(
             "status dict must be a dict, or list of dicts of length 1 "
             "or len(nodes)")
 
     if is_sequence_of_connections(nodes):
+        print("her! i if2")
         pcd(nodes)
     else:
+        print("her! i else")
         sps(nodes)
 
     sps(params)
+    print("her!")
     sr('2 arraystore')
+    print("her!")
     sr('Transpose { arrayload pop SetStatus } forall')
+    print("her!")
 
 
 @check_stack

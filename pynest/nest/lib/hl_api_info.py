@@ -194,9 +194,9 @@ def SetStatus(nodes, params, val=None):
         Description
     """
 
-   # if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, tuple)):
-  #      raise TypeError("The first input (nodes) must be a GIDCollection or \
-   #                      a tuple of connection handles ")
+    if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, tuple)):
+        raise TypeError("The first input (nodes) must be a GIDCollection or "
+                         "a tuple of connection handles ")
 
     # This was added to ensure that the function is a nop (instead of,
     # for instance, raising an exception) when applied to an empty list,
@@ -212,27 +212,25 @@ def SetStatus(nodes, params, val=None):
         else:
             params = {params: val}
 
-    print("her!")
-    params = broadcast(params, len(nodes), (dict,), "params")
-    if len(nodes) != len(params):
-        print("her! i if")
+
+    if (isinstance(params, list) and len(nodes) != len(params)):
         raise TypeError(
-            "status dict must be a dict, or list of dicts of length 1 "
-            "or len(nodes)")
+            "status dict must be a dict, or a list of dicts of length "
+            "len(nodes)")
 
     if is_sequence_of_connections(nodes):
-        print("her! i if2")
+        params = broadcast(params, len(nodes), (dict,), "params")
+        
         pcd(nodes)
+        sps(params)
+    
+        sr('2 arraystore')
+        sr('Transpose { arrayload pop SetStatus } forall')
     else:
-        print("her! i else")
-        sps(nodes)
-
-    sps(params)
-    print("her!")
-    sr('2 arraystore')
-    print("her!")
-    sr('Transpose { arrayload pop SetStatus } forall')
-    print("her!")
+        if isinstance(params, dict):
+            sli_func('SetStatus', nodes, params)
+        else:
+            raise NotImplementedError()
 
 
 @check_stack
@@ -269,27 +267,33 @@ def GetStatus(nodes, keys=None):
     """
 
     if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, tuple)):
-        raise TypeError("The first input (nodes) must be a GIDCollection or \
-                         a tuple of connection handles ")
+        raise TypeError("The first input (nodes) must be a GIDCollection or "
+                         "a tuple of connection handles ")
 
     if len(nodes) == 0:
         return nodes
 
-    if keys is None:
-        cmd = '{ GetStatus } Map'
-    elif is_literal(keys):
-        cmd = '{{ GetStatus /{0} get }} Map'.format(keys)
-    elif is_iterable(keys):
-        keys_str = " ".join("/{0}".format(x) for x in keys)
-        cmd = '{{ GetStatus }} Map {{ [ [ {0} ] ] get }} Map'.format(keys_str)
-    else:
-        raise TypeError("keys should be either a string or an iterable")
-
     if is_sequence_of_connections(nodes):
+        if keys is None:
+            cmd = '{ GetStatus } Map'
+        elif is_literal(keys):
+            cmd = '{{ GetStatus /{0} get }} Map'.format(keys)
+        elif is_iterable(keys):
+            keys_str = " ".join("/{0}".format(x) for x in keys)
+            cmd = '{{ GetStatus }} Map {{ [ [ {0} ] ] get }} Map'.format(keys_str)
+        else:
+            raise TypeError("keys should be either a string or an iterable")
+    
         pcd(nodes)
+        sr(cmd)
+
+        return spp()
     else:
-        sps(nodes)
-
-    sr(cmd)
-
-    return spp()
+        if keys is None:
+            return sli_func('GetStatus', nodes)
+        elif (is_literal(keys) or is_iterable(keys)):
+            raise NotImplementedError()
+            #return sli_func('GetStatus', nodes, keys)
+        else:
+            raise TypeError("keys should be either a string or an iterable")
+        

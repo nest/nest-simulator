@@ -288,6 +288,22 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% GetStatus / SetStatus for GIDCollection
+/GetStatus [/gidcollectiontype]
+{
+  { GetStatus_i } Map
+}
+def
+
+/SetStatus [/gidcollectiontype /dictionarytype]
+{
+  exch { 1 pick SetStatus_id } forall
+  pop % dictionary
+}
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 /GetResolution {
     0 GetStatus /resolution get
 } def

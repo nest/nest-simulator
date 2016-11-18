@@ -446,7 +446,7 @@ M_PROGRESS setverbosity
   [ 20 ] Range eq
 
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 
@@ -461,9 +461,9 @@ M_PROGRESS setverbosity
   << /V_m -100.0 >> SetStatus
   GetStatus  
   true exch
-  { /V_m get 100.0 eq } Fold
+  { /V_m get -100.0 eq } Fold
 
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 endusing

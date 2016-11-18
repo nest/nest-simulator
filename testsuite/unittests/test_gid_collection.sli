@@ -140,7 +140,7 @@ M_PROGRESS setverbosity
   cva
   [ 3 4 5 7 ] eq 
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 
@@ -155,7 +155,7 @@ M_PROGRESS setverbosity
   cva
   [ 3 4 5 7 12 13 15 ] eq 
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 
@@ -252,7 +252,7 @@ M_PROGRESS setverbosity
   join
 
   end
-} skip_test % fail_or_die
+} fail_or_die
 
 % --------------------------------------------------
 
@@ -366,7 +366,7 @@ M_PROGRESS setverbosity
   Fold
 
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 
@@ -466,4 +466,4 @@ M_PROGRESS setverbosity
   end
 } assert_or_die
 
-endusing
+end using

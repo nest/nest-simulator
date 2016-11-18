@@ -1669,35 +1669,32 @@ NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
   long stop = slice[ 1 ];
   long step = slice[ 2 ];
 
-  if ( step <= 0 )
+  if ( step < 1 )
   {
     throw BadParameter( "Slicing step must be strictly positive." );
   }
 
   if ( start >= 0 )
   {
-    start -= 1;
+    start -= 1;  // adjust from 1-based to 0-based indexing
   }
   else
   {
-    start += g_size;
+    start += g_size;  // automatically correct for 0-based indexing
   }
 
   if ( stop >= 0 )
   {
-    stop -= 1;
+    stop -= 1;  // adjust for 1-based to 0-based indexing
   }
   else
   {
-    stop += g_size;
+    stop += g_size;  // automatically correct for 0-based indexing
   }
 
-  throw KernelException( "not implemented yet" );
-  GIDCollectionDatum sliced_gc = gidcoll;
-  // GIDCollectionDatum sliced_gc = new GIDCollectionComposite( gidcoll, start,
-  // stop, step );
+  GIDCollectionDatum sliced_gc = gidcoll->slice( start, stop, step );
 
-  i->OStack.pop();
+  i->OStack.pop( 2 );
   i->OStack.push( sliced_gc );
   i->EStack.pop();
 }

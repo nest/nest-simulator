@@ -89,26 +89,29 @@ def
 %      here at the SLI level and mapping the former to the two-element case
 % Note that Take indexes from 1, with -1 the last element
 /Take [/gidcollectiontype /integertype] 
-  { 
+ {
+   << >> begin 
      /n Set
      /c Set
      n 0 geq
      {
-       [ 0 n ]
+       [ 1 n ]
      }
      {
-       c size dup n add exch
+       c size dup n add 1 add exch
        2 arraystore
      }
      ifelse
      c
-     % pstack
+     exch
      Take
-  }
+   end
+}
 def
 
 /Take [/gidcollectiontype /arraytype] 
 {
+  << >> begin
   /slice Set
   /coll Set
   slice length 1 eq
@@ -124,16 +127,14 @@ def
   }
   {
     % assume that we have two or three elements now
-    slice length 2 eq
-    {
-      slice 1 append
-    }
-    if
+    slice dup
+    length 2 eq { 1 append } if
     coll exch
-    % pstack
     Take_g_a
   }
   ifelse
+  end
+  
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -284,6 +285,29 @@ def
 % typeinit.sli already defines size functions for other types
 /size [/gidcollectiontype]
   /size_g load
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% GetStatus / SetStatus for GIDCollection
+/GetStatus [/gidcollectiontype]
+{
+  { GetStatus_i } Map
+}
+def
+
+/SetStatus [/gidcollectiontype /dictionarytype]
+{
+  exch { 1 pick SetStatus_id } forall
+  pop % dictionary
+}
+def
+
+/SetStatus [/gidcollectiontype /arraytype]
+{
+  exch { 1 pick SetStatus_id } forall
+  pop % dictionary
+}
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

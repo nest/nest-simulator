@@ -34,9 +34,9 @@ gc_const_iterator::gc_const_iterator( const GIDCollectionPrimitive& collection,
   : coll_ptr_( 0 )
   , element_idx_( offset )
   , part_idx_( 0 )
+  , step_( 1 )
   , primitive_collection_( &collection )
   , composite_collection_( 0 )
-  , step_( 1 )
 {
   if ( offset > collection.size() ) // allow == size() for end iterator
   {
@@ -51,9 +51,9 @@ gc_const_iterator::gc_const_iterator( const GIDCollectionComposite& collection,
   : coll_ptr_( 0 )
   , element_idx_( offset )
   , part_idx_( part )
+  , step_( step )
   , primitive_collection_( 0 )
   , composite_collection_( &collection )
-  , step_( step )
 {
   if ( ( part >= collection.parts_.size()
          or offset >= collection.parts_[ part ].size() )
@@ -71,9 +71,9 @@ gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
   : coll_ptr_( collection_ptr )
   , element_idx_( offset )
   , part_idx_( 0 )
+  , step_( 1 )
   , primitive_collection_( &collection )
   , composite_collection_( 0 )
-  , step_( 1 )
 {
   assert( collection_ptr.get() == &collection );
   collection_ptr.unlock();
@@ -92,9 +92,9 @@ gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
   : coll_ptr_( collection_ptr )
   , element_idx_( offset )
   , part_idx_( part )
+  , step_( step )
   , primitive_collection_( 0 )
   , composite_collection_( &collection )
-  , step_( step )
 {
   assert( collection_ptr.get() == &collection );
   collection_ptr.unlock();
@@ -110,11 +110,12 @@ gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
 }
 
 gc_const_iterator::gc_const_iterator( const gc_const_iterator& gci )
-  : element_idx_( gci.element_idx_ )
+  : coll_ptr_( gci.coll_ptr_ )
+  , element_idx_( gci.element_idx_ )
   , part_idx_( gci.part_idx_ )
+  , step_( 1 )
   , primitive_collection_( gci.primitive_collection_ )
   , composite_collection_( gci.composite_collection_ )
-  , step_( 1 )
 {
 }
 
@@ -385,11 +386,11 @@ GIDCollectionComposite::GIDCollectionComposite(
   size_t stop,
   size_t step )
   : size_( 0 )
+  , step_( 1 )
   , start_part_( 0 )
   , start_offset_( 0 )
   , stop_part_( 0 )
   , stop_offset_( 0 )
-  , step_( 1 )
 {
   for ( const_iterator it = primitive.begin() + start;
         it != primitive.begin() + stop;
@@ -406,11 +407,11 @@ GIDCollectionComposite::GIDCollectionComposite(
   const GIDCollectionComposite& comp )
   : parts_( comp.parts_ )
   , size_( comp.size_ )
+  , step_( 1 )
   , start_part_( 0 )
   , start_offset_( 0 )
   , stop_part_( 0 )
   , stop_offset_( 0 )
-  , step_( 1 )
 {
 }
 
@@ -428,11 +429,11 @@ struct
 GIDCollectionComposite::GIDCollectionComposite(
   const std::vector< GIDCollectionPrimitive >& parts )
   : size_( 0 )
+  , step_( 1 )
   , start_part_( 0 )
   , start_offset_( 0 )
   , stop_part_( 0 )
   , stop_offset_( 0 )
-  , step_( 1 )
 {
   if ( parts.size() < 1 )
   {
@@ -462,11 +463,11 @@ GIDCollectionComposite::GIDCollectionComposite(
   size_t stop,
   size_t step )
   : size_( 0 )
+  , step_( 0 )
   , start_part_( 0 )
   , start_offset_( 0 )
   , stop_part_( composite.parts_.size() )
   , stop_offset_( 0 )
-  , step_( 0 )
 {
   if ( stop - start < 1 )
   {

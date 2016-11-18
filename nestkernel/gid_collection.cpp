@@ -287,7 +287,7 @@ GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
 {
   if ( get_metadata().valid() and not( get_metadata() == rhs->get_metadata() ) )
   {
-    throw BadProperty( "can only join GIDCollections with same metadata" );
+    throw BadProperty( "Can only join GIDCollections with same metadata." );
   }
   GIDCollectionPrimitive const* const rhs_ptr =
     dynamic_cast< GIDCollectionPrimitive const* >( rhs.get() );
@@ -295,6 +295,11 @@ GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
 
   if ( rhs_ptr ) // if rhs is Primitive
   {
+    if ( ( rhs_ptr->first_ <= last_ and rhs_ptr->first_ >= first_ )
+      or ( rhs_ptr->last_ <= last_ and rhs_ptr->last_ >= first_ ) )
+    {
+      throw BadProperty( "Cannot join overlapping GIDCollections." );
+    }
     if ( ( last_ + 1 ) == rhs_ptr->first_ and model_id_ == rhs_ptr->model_id_ )
     // if contiguous and homogenous
     {
@@ -352,8 +357,8 @@ GIDCollectionPrimitive::GIDCollectionPrimitive::slice( size_t start,
   }
 }
 
-void // TODO: is this needed?
-  GIDCollectionPrimitive::print_me( std::ostream& out ) const
+void
+GIDCollectionPrimitive::print_me( std::ostream& out ) const
 {
   out << "[[" << this << " model=" << model_id_ << ", size=" << size() << " ";
   out << "(" << first_ << ".." << last_ << ")";
@@ -433,6 +438,13 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
   rhs.unlock();
   if ( rhs_ptr ) // if rhs is Primitive
   {
+    for ( const_iterator it = begin(); it != end(); ++it )
+    {
+      if ( rhs_ptr->contains( ( *it ).gid ) )
+      {
+        throw BadProperty( "Cannot join overlapping GIDCollections." );
+      }
+    }
     return GIDCollectionPTR( *this + *rhs_ptr );
   }
   else // if rhs is not Primitive, i.e. Composite
@@ -440,6 +452,15 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
     GIDCollectionComposite const* const rhs_ptr =
       dynamic_cast< GIDCollectionComposite const* >( rhs.get() );
     rhs.unlock();
+
+    for ( const_iterator it = begin(); it != end(); ++it )
+    {
+      if ( rhs_ptr->contains( ( *it ).gid ) )
+      {
+        throw BadProperty( "Cannot join overlapping GIDCollections." );
+      }
+    }
+
     GIDCollectionComposite* new_composite = new GIDCollectionComposite( *this );
     new_composite->parts_.reserve(
       new_composite->parts_.size() + rhs_ptr->parts_.size() );

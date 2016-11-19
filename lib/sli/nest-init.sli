@@ -98,6 +98,8 @@ def
        [ 1 n ]
      }
      {
+       n neg c size gt { /Take /RangeError raiseerror } if
+       
        c size dup n add 1 add exch
        2 arraystore
      }
@@ -116,10 +118,17 @@ def
   /coll Set
   slice length 1 eq
   {
-    slice 0 get 
-    dup 0 geq
+    slice 0 get
+    dup 0 eq 
     {
-      1 sub  % positive index, must subtract 1
+      pop /Take /RangeCheck raiseerror
+    }
+    if
+      
+    dup 1 geq
+    {
+      % positive index, must subtract 1
+      1 sub
     }
     if
     coll exch
@@ -129,7 +138,7 @@ def
     % assume that we have two or three elements now
     slice dup
     length 2 eq { 1 append } if
-    coll exch
+    coll exch dup ==
     Take_g_a
   }
   ifelse
@@ -305,8 +314,29 @@ def
 
 /SetStatus [/gidcollectiontype /arraytype]
 {
-  exch { 1 pick SetStatus_id } forall
-  pop % dictionary
+  << >> begin
+  /params Set
+  /gc Set
+  
+  params length gc size neq
+  {
+    /SetStatus /IncompatibleLengths raiseerror
+  }
+  if
+ 
+  gc :beginiterator_g /iter Set
+  gc :enditerator_g /enditer Set
+  
+  params
+  {
+    iter :getgid_q exch
+    SetStatus_id
+    iter :next_q
+    enditer :eq_q_q { exit } if
+  }
+  forall
+
+  end
 }
 def
 

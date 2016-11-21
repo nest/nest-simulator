@@ -149,12 +149,13 @@ private:
   bool simulating_; //!< true if simulation in progress
   bool simulated_; //!< indicates whether the SimulationManager has already been
                    //!< simulated for sometime
-  bool exit_on_user_signal_;  //!< true if update loop was left due to signal received
-  bool inconsistent_state_; //!< true after exception during update_
-                            //!< simulation must not be resumed
-  bool print_time_;         //!< Indicates whether time should be printed during
-                            //!< simulations (or not)
-  bool use_wfr_;            //!< Indicates wheter waveform relaxation is used
+  bool exit_on_user_signal_; //!< true if update loop was left due to signal
+                             //received
+  bool inconsistent_state_;  //!< true after exception during update_
+                             //!< simulation must not be resumed
+  bool print_time_; //!< Indicates whether time should be printed during
+                    //!< simulations (or not)
+  bool use_wfr_;    //!< Indicates wheter waveform relaxation is used
   double wfr_comm_interval_; //!< Desired waveform relaxation communication
                              //!< interval (in ms)
   double wfr_tol_; //!< Convergence tolerance of waveform relaxation method

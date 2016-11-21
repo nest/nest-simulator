@@ -502,9 +502,9 @@ nest::SimulationManager::resume_( size_t num_active_nodes )
 
   if ( exit_on_user_signal_ )
   {
-	LOG( M_WARNING,
-         "SimulationManager::resume",
-	     String::compose( "Exiting on user signal %1.", SLIsignalflag ) );
+    LOG( M_WARNING,
+      "SimulationManager::resume",
+      String::compose( "Exiting on user signal %1.", SLIsignalflag ) );
     SLIsignalflag = 0;
   }
 
@@ -768,8 +768,8 @@ nest::SimulationManager::update_()
         if ( SLIsignalflag != 0 )
         {
           LOG( M_INFO,
-        	   "SimulationManager::update",
-        	   "Simulation exiting on user signal." );
+            "SimulationManager::update",
+            "Simulation exiting on user signal." );
           exit_on_user_signal_ = true;
         }
 
@@ -783,7 +783,7 @@ nest::SimulationManager::update_()
 #pragma omp barrier
 
     } while ( to_do_ > 0 and not exit_on_user_signal_
-    		  and not exceptions_raised.at( thrd ) );
+      and not exceptions_raised.at( thrd ) );
 
     // End of the slice, we update the number of synaptic elements
     for ( std::vector< Node* >::const_iterator i =
@@ -821,9 +821,10 @@ nest::SimulationManager::finalize_simulation_()
     if ( !kernel().mpi_manager.grng_synchrony(
            kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
-      throw KernelException("In SimulationManager::simulate(): "
-    	                    "Global Random Number Generators are not "
-    	                    "in sync at end of simulation." );
+      throw KernelException(
+        "In SimulationManager::simulate(): "
+        "Global Random Number Generators are not "
+        "in sync at end of simulation." );
     }
 
   kernel().node_manager.finalize_nodes();

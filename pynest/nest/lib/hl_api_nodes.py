@@ -111,19 +111,10 @@ class GIDCollection(object):
 
     def __getitem__(self, key):
         if isinstance(key, slice):
-            if key.start == None:
-                start = 0
-            else:
-                start = key.start
-            if key.stop == None:
-                stop = self.__len__() - 1
-            else:
-                stop = key.stop
-            if key.step == None:
-                step = 1
-            else:
-                step = key.step
-                
+            start = 1 if key.start is None else key.start + 1
+            stop = self.__len__() + 1 if key.stop is None else key.stop + 1
+            step = 1 if key.step is None else key.step
+
             return (GIDCollection(nest.sli_func('Take',
                                                 self._datum,
                                                 [start, stop, step])))

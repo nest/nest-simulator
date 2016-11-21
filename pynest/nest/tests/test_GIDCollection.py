@@ -94,7 +94,7 @@ class TestGIDCollection(unittest.TestCase):
     def test_slicing(self):
         """Slices of GIDCollections"""
 
-        n = nest.Create('iaf_neuron', 10)
+        n = nest.Create('iaf_psc_alpha', 10)
         n_slice = n[:5]
         n_list = [x for x in n_slice]
         self.assertEqual(n_list, [1, 2, 3, 4, 5])
@@ -167,8 +167,8 @@ class TestGIDCollection(unittest.TestCase):
 
         node_b_a = nodes_b + nodes_a
         node_b_a_list = [x for x in node_b_a]
-        test_b_a_list = (list(range(n_neurons_a + 1, n_a_b + 1)) +
-                         list(range(1, n_neurons_a + 1)))
+        test_b_a_list = (list(range(1, n_neurons_a + 1)) +
+                         list(range(n_neurons_a + 1, n_a_b + 1)))
         self.assertEqual(node_b_a_list, test_b_a_list)
 
         node_a_c = nodes_a + nodes_c
@@ -265,12 +265,17 @@ class TestGIDCollection(unittest.TestCase):
         for model in nest.Models(mtype='nodes'):
             n += nest.Create(model)
         n = n[1:]
-
+        
         nest.sli_run("modeldict")
         modelID = list(nest.sli_pop().values())
+        
+        print len(n)
+        print modelID
 
         count = 0
         for gid, mid in n.items():
+            print count
+            print mid
             self.assertEqual(mid, modelID[count])
             count += 1
 

@@ -194,7 +194,7 @@ verbosity using `set_verbosity()` to suppress info messages.
 '''
 
 nest.ResetKernel()
-nest.SetStatus([0], [{'resolution': simulation_resolution}])
+nest.SetKernelStatus({'resolution': simulation_resolution})
 nest.set_verbosity("M_WARNING")
 
 '''

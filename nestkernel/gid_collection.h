@@ -194,7 +194,7 @@ public:
 
   virtual bool contains( index gid ) const = 0;
   virtual GIDCollectionPTR
-  slice( size_t first, size_t last, size_t step ) const = 0;
+  slice( size_t start, size_t stop, size_t step ) const = 0;
 
   virtual void set_metadata( GIDCollectionMetadataPTR );
 
@@ -246,7 +246,7 @@ public:
   size_t size() const;
 
   bool contains( index gid ) const;
-  GIDCollectionPTR slice( size_t first, size_t last, size_t step = 1 ) const;
+  GIDCollectionPTR slice( size_t start, size_t stop, size_t step = 1 ) const;
 
   void set_metadata( GIDCollectionMetadataPTR );
 
@@ -304,7 +304,7 @@ public:
   size_t size() const;
 
   bool contains( index gid ) const;
-  GIDCollectionPTR slice( size_t first, size_t last, size_t step = 1 ) const;
+  GIDCollectionPTR slice( size_t start, size_t stop, size_t step = 1 ) const;
 
   GIDCollectionMetadataPTR get_metadata() const;
 };

@@ -340,7 +340,38 @@ M_PROGRESS setverbosity
 
 {
   << >> begin
-  (Test slicing with Take) M_PROGRESS message
+  (Test slicing with Take, primitive) M_PROGRESS message
+  ResetKernel
+
+  /gc 
+  /iaf_psc_alpha 20 Create
+  def
+  
+  true 
+  [ << /s 3 /e [ 1 2 3 ] >>
+    << /s -3 /e [ 18 19 20 ] >>
+    << /s [ 7 12 ] /e [ 7 8 9 10 11 12 ] >>
+    << /s [ -4 -2 ] /e [ 17 18 19 ] >>
+    << /s [ 1 20 7 ] /e [ 1 8 15 ] >>
+    << /s [ 1 20 70 ] /e [ 1 ] >>
+    << /s [ 5 20 5 ] /e [ 5 10 15 20 ] >>
+  ]
+  {
+    begin
+      gc s Take 
+      cva e pstack eq
+    end
+  }
+  Fold
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Test slicing with Take, composite) M_PROGRESS message
   ResetKernel
 
   /gc 
@@ -360,13 +391,13 @@ M_PROGRESS setverbosity
   {
     begin
       gc s Take 
-      cva e eq
+      cva e pstack eq
     end
   }
   Fold
 
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 

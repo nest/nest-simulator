@@ -24,6 +24,7 @@ Functions to get information on NEST.
 """
 
 from .hl_api_helper import *
+import nest
 
 
 @check_stack
@@ -177,8 +178,8 @@ def SetStatus(nodes, params, val=None):
 
     Parameters
     ----------
-    nodes : list or tuple
-        Either a list of global ids of nodes, or a tuple of connection
+    nodes : GIDCollection or tuple
+        Either a GIDCollection representing nodes, or a tuple of connection
         handles as returned by GetConnections()
     params : str or dict or list
         Dictionary of parameters or list of dictionaries of parameters of
@@ -193,8 +194,9 @@ def SetStatus(nodes, params, val=None):
         Description
     """
 
-    if not is_coercible_to_sli_array(nodes):
-        raise TypeError("nodes must be a list of nodes or synapses")
+    if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, tuple)):
+        raise TypeError("The first input (nodes) must be a GIDCollection or "
+                         "a tuple of connection handles ")
 
     # This was added to ensure that the function is a nop (instead of,
     # for instance, raising an exception) when applied to an empty list,
@@ -210,20 +212,25 @@ def SetStatus(nodes, params, val=None):
         else:
             params = {params: val}
 
-    params = broadcast(params, len(nodes), (dict,), "params")
-    if len(nodes) != len(params):
+
+    if (isinstance(params, list) and len(nodes) != len(params)):
         raise TypeError(
-            "status dict must be a dict, or list of dicts of length 1 "
-            "or len(nodes)")
+            "status dict must be a dict, or a list of dicts of length "
+            "len(nodes)")
 
     if is_sequence_of_connections(nodes):
+        params = broadcast(params, len(nodes), (dict,), "params")
+        
         pcd(nodes)
+        sps(params)
+    
+        sr('2 arraystore')
+        sr('Transpose { arrayload pop SetStatus } forall')
     else:
-        sps(nodes)
-
-    sps(params)
-    sr('2 arraystore')
-    sr('Transpose { arrayload pop SetStatus } forall')
+        if isinstance(params, dict):
+            sli_func('SetStatus', nodes, params)
+        else:
+            raise NotImplementedError()
 
 
 @check_stack
@@ -235,8 +242,8 @@ def GetStatus(nodes, keys=None):
 
     Parameters
     ----------
-    nodes : list or tuple
-        Either a list of global ids of nodes, or a tuple of connection
+    nodes : GIDCollection or tuple
+        Either a GIDCollection representing nodes, or a tuple of connection
         handles as returned by GetConnections()
     keys : str or list, optional
         String or a list of strings naming model properties. GetDefaults then
@@ -259,27 +266,34 @@ def GetStatus(nodes, keys=None):
         Description
     """
 
-    if not is_coercible_to_sli_array(nodes):
-        raise TypeError("nodes must be a list of nodes or synapses")
+    if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, tuple)):
+        raise TypeError("The first input (nodes) must be a GIDCollection or "
+                         "a tuple of connection handles ")
 
     if len(nodes) == 0:
         return nodes
 
-    if keys is None:
-        cmd = '{ GetStatus } Map'
-    elif is_literal(keys):
-        cmd = '{{ GetStatus /{0} get }} Map'.format(keys)
-    elif is_iterable(keys):
-        keys_str = " ".join("/{0}".format(x) for x in keys)
-        cmd = '{{ GetStatus }} Map {{ [ [ {0} ] ] get }} Map'.format(keys_str)
-    else:
-        raise TypeError("keys should be either a string or an iterable")
-
     if is_sequence_of_connections(nodes):
+        if keys is None:
+            cmd = '{ GetStatus } Map'
+        elif is_literal(keys):
+            cmd = '{{ GetStatus /{0} get }} Map'.format(keys)
+        elif is_iterable(keys):
+            keys_str = " ".join("/{0}".format(x) for x in keys)
+            cmd = '{{ GetStatus }} Map {{ [ [ {0} ] ] get }} Map'.format(keys_str)
+        else:
+            raise TypeError("keys should be either a string or an iterable")
+    
         pcd(nodes)
+        sr(cmd)
+
+        return spp()
     else:
-        sps(nodes)
-
-    sr(cmd)
-
-    return spp()
+        if keys is None:
+            return sli_func('GetStatus', nodes)
+        elif (is_literal(keys) or is_iterable(keys)):
+            raise NotImplementedError()
+            #return sli_func('GetStatus', nodes, keys)
+        else:
+            raise TypeError("keys should be either a string or an iterable")
+        

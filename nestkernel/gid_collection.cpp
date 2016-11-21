@@ -373,6 +373,27 @@ GIDCollectionPrimitive::print_me( std::ostream& out ) const
   out << "]]";
 }
 
+void
+GIDCollectionPrimitive::print_me( std::ostream& out,
+  size_t step,
+  size_t skip ) const
+{
+  if ( skip < size() )
+  {
+    size_t primitive_size = 0;
+    index last;
+    for ( size_t i = skip; i < size(); i += step )
+    {
+      primitive_size += 1;
+      last = first_ + i;
+    }
+    out << "[[" << this << " model=" << model_id_ << ", size=" << primitive_size
+        << " ";
+    out << "(" << first_ + skip << ".." << last << ")";
+    out << "]]";
+  }
+}
+
 bool
 GIDCollectionPrimitive::is_contigous_ascending( GIDCollectionPrimitive& next )
 {
@@ -386,14 +407,14 @@ GIDCollectionComposite::GIDCollectionComposite(
   size_t stop,
   size_t step )
   : size_( 0 )
-  , step_( 1 )
+  , step_( 1 ) // TODO: !
   , start_part_( 0 )
   , start_offset_( 0 )
   , stop_part_( 0 )
   , stop_offset_( 0 )
 {
   for ( const_iterator it = primitive.begin() + start;
-        it != primitive.begin() + stop;
+        it < primitive.begin() + stop;
         it += step )
   {
     parts_.push_back(
@@ -416,7 +437,7 @@ GIDCollectionComposite::GIDCollectionComposite(
 }
 
 // function object for sorting a vector of GIDCollcetionPrimitives
-struct
+struct // TODO: move this
 {
   bool operator()( GIDCollectionPrimitive& primitive_1,
     GIDCollectionPrimitive& primitive_2 )
@@ -463,7 +484,7 @@ GIDCollectionComposite::GIDCollectionComposite(
   size_t stop,
   size_t step )
   : size_( 0 )
-  , step_( 0 )
+  , step_( step )
   , start_part_( 0 )
   , start_offset_( 0 )
   , stop_part_( composite.parts_.size() )
@@ -477,21 +498,26 @@ GIDCollectionComposite::GIDCollectionComposite(
   {
     throw BadProperty( "Index out of range." );
   }
-  size_t index = 0;
+  size_t global_index = 0;
+  bool started = false;
   for ( const_iterator it = composite.begin(); it != composite.end(); ++it )
   {
-    if ( index == start )
+    if ( global_index == start )
     {
-      it.set_current_part_offset( start_part_, start_offset_ );
+      it.get_current_part_offset( start_part_, start_offset_ );
+      started = true;
     }
-    else if ( index == stop ) // TODO: verify correct stop
+    else if ( global_index == stop )
     {
-      it.set_current_part_offset( stop_part_, stop_offset_ );
+      it.get_current_part_offset( stop_part_, stop_offset_ );
       break;
     }
-    ++index;
+    ++global_index;
+    if ( started )
+    {
+      size_ += step;
+    }
   }
-  step_ = step;
 }
 
 GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
@@ -581,14 +607,15 @@ GIDCollectionPTR GIDCollectionComposite::operator+(
 GIDCollectionPTR
 GIDCollectionComposite::slice( size_t first, size_t last, size_t step ) const
 {
-  return GIDCollectionPTR( new GIDCollectionComposite( *this, first, last, step ) );
+  return GIDCollectionPTR(
+    new GIDCollectionComposite( *this, first, last, step ) );
 }
 
 void
 GIDCollectionComposite::merge_parts(
   std::vector< GIDCollectionPrimitive >& parts ) const
 {
-  bool did_merge = true;
+  bool did_merge = true; // initialize to enter the while loop
   while ( did_merge )
   {
     did_merge = false;
@@ -615,15 +642,55 @@ GIDCollectionComposite::merge_parts(
 void
 GIDCollectionComposite::print_me( std::ostream& out ) const
 {
-  out << "[[" << this << " size=" << size() << ": ";
-  for (
-    std::vector< GIDCollectionPrimitive >::const_iterator it = parts_.begin();
-    it != parts_.end();
-    ++it )
+  if ( step_ > 1 ) // TODO: fix this
   {
-    it->print_me( out );
+    size_t current_part = 0;
+    size_t current_offset = 0;
+    size_t previous_part = 4294967295; // initializing as large number (for now)
+    index primitive_last = 0;
+    for ( const_iterator it = begin(); it != end(); ++it )
+    {
+      if ( it != begin() )
+      {
+        out << primitive_last << ")]]";
+      }
+      it.get_current_part_offset( current_part, current_offset );
+      if ( current_part != previous_part )
+      {
+        GIDCollectionPrimitive primitive = parts_[ current_offset ];
+        index primitive_first = current_offset;
+        primitive_last = current_offset;
+        size_t primitive_size = 0;
+        GIDPair pair = *it;
+        for ( size_t i = current_offset; i <= primitive.size(); i += step_ )
+        {
+          ++primitive_size;
+        }
+
+        out << "[[" << &primitive << " model=" << pair.model_id
+            << ", size=" << primitive_size << " ";
+        out << "(" << primitive_first << "..";
+      }
+      else
+      {
+        primitive_last = current_offset;
+      }
+    }
+    out << primitive_last << ")]]";
+    out << "]]";
   }
-  out << "]]";
+  else
+  {
+    out << "[[" << this << " size=" << size() << ": ";
+    for (
+      std::vector< GIDCollectionPrimitive >::const_iterator it = parts_.begin();
+      it != parts_.end();
+      ++it )
+    {
+      it->print_me( out );
+    }
+    out << "]]";
+  }
 }
 
 } // namespace nest

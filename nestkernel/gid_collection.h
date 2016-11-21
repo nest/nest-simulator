@@ -88,7 +88,7 @@ private:
   GIDCollectionPTR coll_ptr_; //!< holds pointer reference in safe iterators
   size_t element_idx_;        //!< index into (current) primitive gid collection
   size_t part_idx_; //!< index into parts vector of composite collection
-  size_t step_; //!< step for slicing composite collection
+  size_t step_;     //!< step for slicing composite collection
 
   /**
    * Pointer to primitive collection to iterate over.
@@ -120,7 +120,7 @@ private:
   explicit gc_const_iterator( const GIDCollectionComposite& collection,
     size_t part,
     size_t offset,
-	size_t step=1);
+    size_t step = 1 );
 
   /**
    * Create safe iterator for GIDCollectionPrimitive.
@@ -144,14 +144,15 @@ private:
     const GIDCollectionComposite& collection,
     size_t part,
     size_t offset,
-	size_t step=1);
+    size_t step = 1 );
 
 public:
   gc_const_iterator( const gc_const_iterator& );
-  void set_current_part_offset( size_t&, size_t& );
+  void get_current_part_offset( size_t&, size_t& );
 
   GIDPair operator*() const;
   bool operator!=( const gc_const_iterator& rhs ) const;
+  bool operator<( const gc_const_iterator& rhs ) const;
 
   gc_const_iterator& operator++();
   gc_const_iterator& operator+=( const size_t );
@@ -228,6 +229,7 @@ public:
   GIDCollectionPrimitive( const GIDCollectionPrimitive& );
 
   void print_me( std::ostream& ) const;
+  void print_me( std::ostream&, size_t step, size_t skip ) const;
 
   index operator[]( const size_t ) const;
   GIDCollectionPTR operator+( GIDCollectionPTR rhs ) const;
@@ -351,7 +353,7 @@ inline gc_const_iterator& gc_const_iterator::operator++()
   }
   else
   {
-    element_idx_+= step_;
+    element_idx_ += step_;
 
     if ( element_idx_ >= composite_collection_->parts_[ part_idx_ ].size() )
     {
@@ -381,8 +383,13 @@ inline bool gc_const_iterator::operator!=( const gc_const_iterator& rhs ) const
   return not( part_idx_ == rhs.part_idx_ and element_idx_ == rhs.element_idx_ );
 }
 
+inline bool gc_const_iterator::operator<( const gc_const_iterator& rhs ) const
+{
+  return ( part_idx_ <= rhs.part_idx_ and element_idx_ < rhs.element_idx_ );
+}
+
 inline void
-gc_const_iterator::set_current_part_offset( size_t& part, size_t& offset )
+gc_const_iterator::get_current_part_offset( size_t& part, size_t& offset )
 {
   part = part_idx_;
   offset = element_idx_;

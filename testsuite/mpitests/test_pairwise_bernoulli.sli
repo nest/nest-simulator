@@ -27,11 +27,11 @@
 
     Description:
     test_pairwise_bernoulli.sli checks that all-to-all connections are created
-    correctly if then number of targets exceeds the number of local nodes.
+    correctly if the number of targets exceeds the number of local nodes.
     
     Author: Hans Ekkehard Plesser
-    SeeAlso: testsuite::test_one_to_one, testsuite::test_fixed_indegree,
-    testsuite::test_bernoulli
+    SeeAlso: testsuite::test_one_to_one, testsuite::all_to_all,
+    testsuite::test_fixed_indegree
 */
 
 (unittest) run

@@ -89,34 +89,46 @@ def
 %      here at the SLI level and mapping the former to the two-element case
 % Note that Take indexes from 1, with -1 the last element
 /Take [/gidcollectiontype /integertype] 
-  { 
+ {
+   << >> begin 
      /n Set
      /c Set
      n 0 geq
      {
-       [ 0 n ]
+       [ 1 n ]
      }
      {
-       c size dup n add exch
+       n neg c size gt { /Take /RangeError raiseerror } if
+       
+       c size dup n add 1 add exch
        2 arraystore
      }
      ifelse
      c
-     % pstack
+     exch
      Take
-  }
+   end
+}
 def
 
 /Take [/gidcollectiontype /arraytype] 
 {
+  << >> begin
   /slice Set
   /coll Set
   slice length 1 eq
   {
-    slice 0 get 
-    dup 0 geq
+    slice 0 get
+    dup 0 eq 
     {
-      1 sub  % positive index, must subtract 1
+      pop /Take /RangeCheck raiseerror
+    }
+    if
+      
+    dup 1 geq
+    {
+      % positive index, must subtract 1
+      1 sub
     }
     if
     coll exch
@@ -124,16 +136,14 @@ def
   }
   {
     % assume that we have two or three elements now
-    slice length 2 eq
-    {
-      slice 1 append
-    }
-    if
-    coll exch
-    % pstack
+    slice dup
+    length 2 eq { 1 append } if
+    coll exch dup ==
     Take_g_a
   }
   ifelse
+  end
+  
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -299,6 +309,34 @@ def
 {
   exch { 1 pick SetStatus_id } forall
   pop % dictionary
+}
+def
+
+/SetStatus [/gidcollectiontype /arraytype]
+{
+  << >> begin
+  /params Set
+  /gc Set
+  
+  params length gc size neq
+  {
+    /SetStatus /IncompatibleLengths raiseerror
+  }
+  if
+ 
+  gc :beginiterator_g /iter Set
+  gc :enditerator_g /enditer Set
+  
+  params
+  {
+    iter :getgid_q exch
+    SetStatus_id
+    iter :next_q
+    enditer :eq_q_q { exit } if
+  }
+  forall
+
+  end
 }
 def
 

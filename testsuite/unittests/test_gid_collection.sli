@@ -140,7 +140,7 @@ M_PROGRESS setverbosity
   cva
   [ 3 4 5 7 ] eq 
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 
@@ -155,7 +155,7 @@ M_PROGRESS setverbosity
   cva
   [ 3 4 5 7 12 13 15 ] eq 
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 
@@ -252,7 +252,7 @@ M_PROGRESS setverbosity
   join
 
   end
-} skip_test % fail_or_die
+} fail_or_die
 
 % --------------------------------------------------
 
@@ -466,4 +466,153 @@ M_PROGRESS setverbosity
   end
 } assert_or_die
 
-endusing
+% --------------------------------------------------
+
+{
+  << >> begin
+  (SetStatus on collection with multiple dicts) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 3 Create
+  dup
+  [ << /V_m -100. >> << /V_m -200. >> << /V_m -300. >> ] SetStatus
+  GetStatus  
+  { /V_m get } Map
+  [ -100. -200. -300. ] eq
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (SetStatus on collection with multiple dicts error) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 3 Create
+  dup
+  [ << /V_m -100. >> << /V_m -200. >> ] SetStatus
+  end
+} fail_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Basic Connect test) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 5 Create dup Connect
+
+  end
+} pass_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that Connect checks GC validity, first arg) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+  
+  ResetKernel
+  
+  /m /iaf_psc_alpha 5 Create def
+  
+  n m Connect
+
+  end
+} skip_test % fail_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that Connect checks GC validity, second arg) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+  
+  ResetKernel
+  
+  /m /iaf_psc_alpha 5 Create def
+  
+  m n Connect
+
+  end
+} skip_test % fail_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that GetStatus checks GC validity) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+  
+  ResetKernel
+  
+  /iaf_psc_alpha 5 Create ;
+  
+  n GetStatus
+
+  end
+} skip_test % fail_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that SetStatus checks GC validty) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+  
+  ResetKernel
+  
+  /iaf_psc_alpha 5 Create ;
+  
+  n << /V_m -75. >> SetStatus
+
+  end
+} skip_test % fail_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that join checks GC validity, first arg) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+  
+  ResetKernel
+  
+  /m /iaf_psc_alpha 5 Create def 
+  
+  n m join
+
+  end
+} skip_test % fail_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check that join checks GC validity, second arg) M_PROGRESS message
+  ResetKernel
+
+  /n /iaf_psc_alpha 5 Create def
+  
+  ResetKernel
+  
+  /m /iaf_psc_alpha 5 Create def 
+  
+  m n join
+
+  end
+} skip_test % fail_or_die
+
+end % using

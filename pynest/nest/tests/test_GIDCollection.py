@@ -21,7 +21,6 @@
 
 """
 GIDCollection tests
-
 """
 
 import unittest
@@ -36,7 +35,7 @@ class TestGIDCollection(unittest.TestCase):
         nest.ResetKernel()
 
     def test_GIDCollection_to_list(self):
-        """Convertion from GIDCollection to list"""
+        """Conversion from GIDCollection to list"""
 
         n_neurons = 10
         n = nest.Create('iaf_neuron', n_neurons)
@@ -83,7 +82,7 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(n[0], 1)
         self.assertEqual(n[2], 3)
         self.assertEqual(n[4], 5)
-        with self.assertRaises(IndexError):
+        with self.assertRaises(nest.NESTError):
             n[7]
 
         nest.ResetKernel()
@@ -95,7 +94,7 @@ class TestGIDCollection(unittest.TestCase):
     def test_slicing(self):
         """Slices of GIDCollections"""
 
-        n = nest.Create('iaf_neuron', 10)
+        n = nest.Create('iaf_psc_alpha', 10)
         n_slice = n[:5]
         n_list = [x for x in n_slice]
         self.assertEqual(n_list, [1, 2, 3, 4, 5])
@@ -168,8 +167,8 @@ class TestGIDCollection(unittest.TestCase):
 
         node_b_a = nodes_b + nodes_a
         node_b_a_list = [x for x in node_b_a]
-        test_b_a_list = (list(range(n_neurons_a + 1, n_a_b + 1)) +
-                         list(range(1, n_neurons_a + 1)))
+        test_b_a_list = (list(range(1, n_neurons_a + 1)) +
+                         list(range(n_neurons_a + 1, n_a_b + 1)))
         self.assertEqual(node_b_a_list, test_b_a_list)
 
         node_a_c = nodes_a + nodes_c
@@ -198,6 +197,20 @@ class TestGIDCollection(unittest.TestCase):
         self.assertTrue(5 in nodes)
         self.assertTrue(10 in nodes)
         self.assertFalse(11 in nodes)
+
+    def test_correct_len_on_GIDCollection(self):
+        """len function on GIDCollection"""
+
+        a = nest.Create('iaf_neuron', 10)
+        self.assertEqual(len(a), 10)
+
+        b = nest.Create('iaf_psc_alpha', 7)
+        nodes = a + b
+        self.assertEqual(len(nodes), 17)
+
+        c = nest.Create('aeif_cond_alpha', 20)
+        c = c[3:17:4]
+        self.assertEqual(len(c), 4)
 
     def test_composite_GIDCollection(self):
         """Tests on composite GIDCollection with patched GIDs"""
@@ -243,7 +256,7 @@ class TestGIDCollection(unittest.TestCase):
         self.assertFalse(25 in nodes)
 
         ngc = nest.GIDCollection(nodes_list)
-        self.assertTrue(nodes == ngc)
+        self.assertEqual(nodes, ngc)
 
     def test_modelID(self):
         """Correct GIDCollection modelID"""
@@ -252,12 +265,17 @@ class TestGIDCollection(unittest.TestCase):
         for model in nest.Models(mtype='nodes'):
             n += nest.Create(model)
         n = n[1:]
-
+        
         nest.sli_run("modeldict")
         modelID = list(nest.sli_pop().values())
+        
+        print len(n)
+        print modelID
 
         count = 0
         for gid, mid in n.items():
+            print count
+            print mid
             self.assertEqual(mid, modelID[count])
             count += 1
 
@@ -269,6 +287,31 @@ class TestGIDCollection(unittest.TestCase):
         connections = nest.GetKernelStatus('num_connections')
         self.assertEqual(connections, 10)
 
+        for gid in n:
+            nest.Connect(nest.GIDCollection([gid]), nest.GIDCollection([gid]))
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 20)
+
+        nest.ResetKernel()
+
+        n = nest.Create('iaf_neuron', 2)
+        nest.Connect(nest.GIDCollection([n[0]]), nest.GIDCollection([n[1]]))
+        self.assertEqual(nest.GetKernelStatus('num_connections'), 1)
+
+    def test_SetStatus_and_GetStatus(self):
+        """
+        Test that SetStatus and GetStatus works as expected with
+        GIDCollection
+        """
+
+        num_nodes = 10
+        n = nest.Create('iaf_neuron', num_nodes)
+        nest.SetStatus(n, {'V_m': 3.5})
+        self.assertEqual(nest.GetStatus(n, 'V_m')[0], 3.5)
+        
+        V_m = [1., 2., 3., 4., 5., 6. ,7., 8., 9., 10.]
+        nest.SetStatus(n,'V_m', V_m)
+        for i in range(num_nodes):
+            self.assertEqual(nest.GetStatus(n, 'V_m')[i], V_m[i])
 
 def suite():
     suite = unittest.makeSuite(TestGIDCollection, 'test')

@@ -115,8 +115,7 @@ def run_model(model='aeif_cond_alpha', dt=0.1, reps=1):
     '''
     nest.ResetKernel()
     nest.sr("30 setverbosity")
-    nest.SetKernelStatus({"overwrite_files": True})
-    nest.SetStatus([0], [{"resolution": dt}])
+    nest.SetKernelStatus({"overwrite_files": True, "resolution": dt})
     nest.SetDefaults('aeif_cond_alpha_RK5', {'HMIN': 0.001})
     nest.SetDefaults('aeif_cond_alpha_RK5', {'MAXERR': 1e-10})
 
@@ -127,15 +126,15 @@ def run_model(model='aeif_cond_alpha', dt=0.1, reps=1):
     nest.SetStatus(dc, [{"amplitude": 700.0,
                          "start": 700.0,
                          "stop": 2700.0}])
-    nest.Connect(dc, [neuron[0]])
+    nest.Connect(dc, nest.GIDCollection([neuron[0]]))
 
     sd = nest.Create('spike_detector')
-    nest.Connect([neuron[0]], sd)
+    nest.Connect(nest.GIDCollection([neuron[0]]), sd)
 
     meter0 = nest.Create('multimeter',
                          params={'record_from': ['V_m', 'g_ex', 'g_in', 'w'],
                                  'interval': 0.1})
-    nest.Connect(meter0, [neuron[0]])
+    nest.Connect(meter0, neuron[0])
     nest.SetStatus(meter0, [{"to_file": False, "withtime": True}])
 
     t = timeit.Timer("nest.Simulate(3000)", "import nest")
@@ -161,17 +160,17 @@ test = run_model(model='aeif_cond_alpha_RK5', dt=0.1, reps=50)
 Compare the execution times of the models.
 '''
 
-print 'Runtime GSL: ' + str(gsl[0])
-print 'Test: ' + str(test[0])
-print 'Ratio: ' + str(test[0] / gsl[0])
+print ('Runtime GSL: ' + str(gsl[0]))
+print ('Test: ' + str(test[0]))
+print ('Ratio: ' + str(test[0] / gsl[0]))
 
 '''
 Compute the error on the spike times.
 '''
-print 'Spike Times GSL - Reference:' + str(np.array(gsl[1]) -
-                                           np.array(reference[1]))
-print 'Spike Times Test - Reference: ' + str(np.array(test[1]) -
-                                             np.array(reference[1]))
+print ('Spike Times GSL - Reference:' + str(np.array(gsl[1]) -
+                                           np.array(reference[1])))
+print ('Spike Times Test - Reference: ' + str(np.array(test[1]) -
+                                             np.array(reference[1])))
 
 '''
 Also compare the L2-Norm of Voltage Traces

@@ -40,7 +40,7 @@ class GIDCollection(object):
     list of nodes to a GIDCollection with ``nest.GIDCollection(list)``.
 
     By iterating over the GIDCollection you get the gids. If you apply the
-    ``items()`` function, you can also read the modelID.
+    ``items()`` function, you can also read the modelIDs.
 
     **Example**
         ::
@@ -111,8 +111,13 @@ class GIDCollection(object):
 
     def __getitem__(self, key):
         if isinstance(key, slice):
+            start = 1 if key.start is None else key.start + 1
+            stop = self.__len__() + 1 if key.stop is None else key.stop + 1
+            step = 1 if key.step is None else key.step
+
             return (GIDCollection(nest.sli_func('Take',
-                    self._datum, [key.start, key.stop, key.step])))
+                                                self._datum,
+                                                [start, stop, step])))
         else:
             gid = nest.sli_func('get', self._datum, key)
             try:
@@ -135,6 +140,9 @@ class GIDCollection(object):
             return NotImplemented
         return not self == other
 
+    def __len__(self):
+        return nest.sli_func('size', self._datum)
+
 
 @check_stack
 def Create(model, n=1, params=None):
@@ -152,8 +160,8 @@ def Create(model, n=1, params=None):
 
     Returns
     -------
-    list:
-        Global IDs of created nodes
+    GIDCollection:
+        Object representing global IDs of created nodes
     """
 
     if isinstance(params, dict):
@@ -165,8 +173,6 @@ def Create(model, n=1, params=None):
     sps(n)
     sr(cmd)
 
-    # last_gid = spp()
-    # gids = tuple(range(last_gid - n + 1, last_gid + 1))
     gids = GIDCollection(spp())
 
     if params is not None and not isinstance(params, dict):

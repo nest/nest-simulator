@@ -24,7 +24,7 @@ Functions for connection handling
 """
 
 from .hl_api_helper import *
-from .hl_api_nodes import Create
+from .hl_api_nodes import Create, GIDCollection
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 import numpy
@@ -72,13 +72,13 @@ def GetConnections(source=None, target=None, synapse_model=None,
     params = {}
 
     if source is not None:
-        if not is_coercible_to_sli_array(source):
-            raise TypeError("source must be a list of GIDs")
+        if not isinstance(source, GIDCollection):
+            raise TypeError("Source must be a GIDCollection")
         params['source'] = source
 
     if target is not None:
-        if not is_coercible_to_sli_array(target):
-            raise TypeError("target must be a list of GIDs")
+        if not isinstance(target, GIDCollection):
+            raise TypeError("target must be a GIDCollection")
         params['target'] = target
 
     if synapse_model is not None:
@@ -104,10 +104,10 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
 
     Parameters
     ----------
-    pre : list
-        Presynaptic nodes, as list of GIDs
-    post : list
-        Postsynaptic nodes, as list of GIDs
+    pre : GIDCollection
+        Presynaptic nodes, as object representing the global IDs of the nodes
+    post : GIDCollection
+        Postsynaptic nodes, as object representing the global IDs of the nodes
     conn_spec : str or dict, optional
         Specifies connectivity rule, see below
     syn_spec : str or dict, optional
@@ -245,6 +245,11 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
         raise kernel.NESTError(
             "'model' is an alias for 'syn_spec' and cannot "
             "be used together with 'syn_spec'.")
+
+    if not isinstance(pre, GIDCollection):
+        raise TypeError("Presynaptic nodes must be a GIDCollection")
+    if not isinstance(post, GIDCollection):
+        raise TypeError("Postsynaptic nodes must be a GIDCollection")
 
     sps(pre)
     sps(post)

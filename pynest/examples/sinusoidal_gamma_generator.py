@@ -89,11 +89,11 @@ colors = ['b', 'g']
 
 for j in range(2):
 
-    ev = nest.GetStatus([m[j]])[0]['events']
+    ev = nest.GetStatus(nest.GIDCollection([m[j]]))[0]['events']
     t = ev['times']
     r = ev['rate']
 
-    sp = nest.GetStatus([s[j]])[0]['events']['times']
+    sp = nest.GetStatus(nest.GIDCollection([s[j]]))[0]['events']['times']
     plt.subplot(221)
     h, e = np.histogram(sp, bins=np.arange(0., 201., 5.))
     plt.plot(t, r, color=colors[j])
@@ -178,9 +178,8 @@ def step(t, n, initial, after, seed=1, dt=0.05):
     """Simulates for n generators for t ms. Step at t/2."""
 
     nest.ResetKernel()
-    nest.SetStatus([0], [{"resolution": dt}])
-    nest.SetStatus([0], [{"grng_seed": 256 * seed + 1}])
-    nest.SetStatus([0], [{"rng_seeds": [256 * seed + 2]}])
+    nest.SetKernelStatus({"resolution": dt, "grng_seed": 256 * seed + 1,
+                         "rng_seeds": [256 * seed + 2]})
 
     g = nest.Create('sinusoidal_gamma_generator', n, params=initial)
     sd = nest.Create('spike_detector')

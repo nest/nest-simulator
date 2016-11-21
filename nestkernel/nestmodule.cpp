@@ -1676,20 +1676,21 @@ NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
 
   if ( start >= 0 )
   {
-    start -= 1;  // adjust from 1-based to 0-based indexing
+    start -= 1; // adjust from 1-based to 0-based indexing
   }
   else
   {
-    start += g_size;  // automatically correct for 0-based indexing
+    start += g_size; // automatically correct for 0-based indexing
   }
 
   if ( stop >= 0 )
   {
-    stop -= 1;  // adjust for 1-based to 0-based indexing
+    // no adjustment necessary: adjustment from 1- to 0- based indexing
+    // and adjustment from last- to stop-based logic cancel
   }
   else
   {
-    stop += g_size;  // automatically correct for 0-based indexing
+    stop += g_size + 1; // adjust from 0- to 1- based indexin
   }
 
   GIDCollectionDatum sliced_gc = gidcoll->slice( start, stop, step );

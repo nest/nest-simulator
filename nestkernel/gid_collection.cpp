@@ -605,10 +605,10 @@ GIDCollectionPTR GIDCollectionComposite::operator+(
 
 
 GIDCollectionPTR
-GIDCollectionComposite::slice( size_t first, size_t last, size_t step ) const
+GIDCollectionComposite::slice( size_t start, size_t stop, size_t step ) const
 {
   return GIDCollectionPTR(
-    new GIDCollectionComposite( *this, first, last, step ) );
+    new GIDCollectionComposite( *this, start, stop, step ) );
 }
 
 void

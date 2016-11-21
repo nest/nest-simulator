@@ -88,7 +88,7 @@ private:
   GIDCollectionPTR coll_ptr_; //!< holds pointer reference in safe iterators
   size_t element_idx_;        //!< index into (current) primitive gid collection
   size_t part_idx_; //!< index into parts vector of composite collection
-  size_t step_; //!< step for slicing composite collection
+  size_t step_;     //!< step for slicing composite collection
 
   /**
    * Pointer to primitive collection to iterate over.
@@ -120,7 +120,7 @@ private:
   explicit gc_const_iterator( const GIDCollectionComposite& collection,
     size_t part,
     size_t offset,
-	size_t step=1);
+    size_t step = 1 );
 
   /**
    * Create safe iterator for GIDCollectionPrimitive.
@@ -144,7 +144,7 @@ private:
     const GIDCollectionComposite& collection,
     size_t part,
     size_t offset,
-	size_t step=1);
+    size_t step = 1 );
 
 public:
   gc_const_iterator( const gc_const_iterator& );
@@ -193,7 +193,7 @@ public:
 
   virtual bool contains( index gid ) const = 0;
   virtual GIDCollectionPTR
-  slice( size_t first, size_t last, size_t step ) const = 0;
+  slice( size_t start, size_t stop, size_t step ) const = 0;
 
   virtual void set_metadata( GIDCollectionMetadataPTR );
 
@@ -244,7 +244,7 @@ public:
   size_t size() const;
 
   bool contains( index gid ) const;
-  GIDCollectionPTR slice( size_t first, size_t last, size_t step = 1 ) const;
+  GIDCollectionPTR slice( size_t start, size_t stop, size_t step = 1 ) const;
 
   void set_metadata( GIDCollectionMetadataPTR );
 
@@ -302,7 +302,7 @@ public:
   size_t size() const;
 
   bool contains( index gid ) const;
-  GIDCollectionPTR slice( size_t first, size_t last, size_t step = 1 ) const;
+  GIDCollectionPTR slice( size_t start, size_t stop, size_t step = 1 ) const;
 
   GIDCollectionMetadataPTR get_metadata() const;
 };
@@ -351,7 +351,7 @@ inline gc_const_iterator& gc_const_iterator::operator++()
   }
   else
   {
-    element_idx_+= step_;
+    element_idx_ += step_;
 
     if ( element_idx_ >= composite_collection_->parts_[ part_idx_ ].size() )
     {

@@ -71,21 +71,21 @@ RecordablesMap< aeif_cond_beta_multisynapse >::create()
  * ---------------------------------------------------------------- */
 
 aeif_cond_beta_multisynapse::Parameters_::Parameters_()
-  : V_peak_( 0.0 )        // mV
-  , V_reset_( -60.0 )     // mV
-  , t_ref_( 0.0 )         // ms
-  , g_L( 30.0 )           // nS
-  , C_m( 281.0 )          // pF
-  , E_L( -70.6 )          // mV
-  , Delta_T( 2.0 )        // mV
-  , tau_w( 144.0 )        // ms
-  , a( 4.0 )              // nS
-  , b( 80.5 )             // pA
-  , V_th( -50.4 )         // mV
+  : V_peak_( 0.0 )       // mV
+  , V_reset_( -60.0 )    // mV
+  , t_ref_( 0.0 )        // ms
+  , g_L( 30.0 )          // nS
+  , C_m( 281.0 )         // pF
+  , E_L( -70.6 )         // mV
+  , Delta_T( 2.0 )       // mV
+  , tau_w( 144.0 )       // ms
+  , a( 4.0 )             // nS
+  , b( 80.5 )            // pA
+  , V_th( -50.4 )        // mV
   , tau_rise( 1, 2.0 )   // ms
   , tau_decay( 1, 20.0 ) // ms
-  , E_rev( 1, 0.0 )       // mV
-  , I_e( 0.0 )            // pA
+  , E_rev( 1, 0.0 )      // mV
+  , I_e( 0.0 )           // pA
   , gsl_error_tol( 1e-6 )
   , has_connections_( false )
 {
@@ -165,8 +165,7 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
     updateValue< std::vector< double > >( d, names::tau_decay, tau_decay );
   if ( Erev_flag || taur_flag || taud_flag )
   { // receptor arrays have been modified
-    if ( ( E_rev.size() != old_n_receptors
-           || tau_rise.size() != old_n_receptors
+    if ( ( E_rev.size() != old_n_receptors || tau_rise.size() != old_n_receptors
            || tau_decay.size() != old_n_receptors )
       && ( !Erev_flag || !taur_flag || !taud_flag ) )
     {

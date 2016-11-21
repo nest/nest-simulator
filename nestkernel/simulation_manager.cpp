@@ -49,6 +49,7 @@ nest::SimulationManager::SimulationManager()
   , t_real_( 0L )
   , simulating_( false )
   , simulated_( false )
+  , exit_on_user_signal_( false )
   , inconsistent_state_( false )
   , print_time_( false )
   , use_wfr_( true )
@@ -68,6 +69,7 @@ nest::SimulationManager::initialize()
 
   simulating_ = false;
   simulated_ = false;
+  exit_on_user_signal_ = false;
   inconsistent_state_ = false;
 }
 
@@ -498,6 +500,14 @@ nest::SimulationManager::resume_( size_t num_active_nodes )
 
   kernel().mpi_manager.synchronize();
 
+  if ( exit_on_user_signal_ )
+  {
+	LOG( M_WARNING,
+         "SimulationManager::resume",
+	     String::compose( "Exiting on user signal %1.", SLIsignalflag ) );
+    SLIsignalflag = 0;
+  }
+
   LOG( M_INFO, "SimulationManager::resume", "Simulation finished." );
 }
 
@@ -565,6 +575,7 @@ nest::SimulationManager::update_()
   std::vector< bool > done;
   bool done_all = true;
   delay old_to_step;
+  exit_on_user_signal_ = false;
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
     kernel().vp_manager.get_num_threads() );
@@ -756,9 +767,10 @@ nest::SimulationManager::update_()
 
         if ( SLIsignalflag != 0 )
         {
-          exceptions_raised.at( thrd ) = lockPTR< WrappedThreadException >(
-            new WrappedThreadException( SystemSignal( SLIsignalflag ) ) );
-          SLIsignalflag = 0;
+          LOG( M_INFO,
+        	   "SimulationManager::update",
+        	   "Simulation exiting on user signal." );
+          exit_on_user_signal_ = true;
         }
 
         if ( print_time_ )
@@ -770,9 +782,10 @@ nest::SimulationManager::update_()
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
 
-    } while ( to_do_ != 0 and not exceptions_raised.at( thrd ) );
+    } while ( to_do_ > 0 and not exit_on_user_signal_
+    		  and not exceptions_raised.at( thrd ) );
 
-    // End of the slice, we update the number of synaptic element
+    // End of the slice, we update the number of synaptic elements
     for ( std::vector< Node* >::const_iterator i =
             kernel().node_manager.get_nodes_on_thread( thrd ).begin();
           i != kernel().node_manager.get_nodes_on_thread( thrd ).end();
@@ -808,11 +821,9 @@ nest::SimulationManager::finalize_simulation_()
     if ( !kernel().mpi_manager.grng_synchrony(
            kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
-      LOG( M_ERROR,
-        "SimulationManager::simulate",
-        "Global Random Number Generators are not synchronized after "
-        "simulation." );
-      throw KernelException();
+      throw KernelException("In SimulationManager::simulate(): "
+    	                    "Global Random Number Generators are not "
+    	                    "in sync at end of simulation." );
     }
 
   kernel().node_manager.finalize_nodes();
@@ -823,7 +834,6 @@ nest::SimulationManager::reset_network()
 {
   if ( not has_been_simulated() )
     return; // nothing to do
-
 
   kernel().event_delivery_manager.clear_pending_spikes();
 

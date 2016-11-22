@@ -170,7 +170,7 @@ public:
 
   virtual ~GIDCollection()
   {
-    std::cerr << "Deleting GC: " << this << std::endl;
+    // std::cerr << "Deleting GC: " << this << std::endl; // TODO: couts
   }
 
   static GIDCollectionPTR create( IntVectorDatum gids );
@@ -353,13 +353,19 @@ inline gc_const_iterator& gc_const_iterator::operator++()
   }
   else
   {
-    element_idx_ += step_; // TODO: fix this!
-
-    if ( element_idx_ >= composite_collection_->parts_[ part_idx_ ].size() )
+    element_idx_ += step_;
+    size_t primitive_size = composite_collection_->parts_[ part_idx_ ].size();
+    while ( element_idx_ >= primitive_size )
     {
+
+      element_idx_ = element_idx_ - primitive_size;
       ++part_idx_;
-      element_idx_ = 0;
+      if ( part_idx_ < composite_collection_->parts_.size() )
+      {
+        primitive_size = composite_collection_->parts_[ part_idx_ ].size();
+      }
     }
+
     return *this;
   }
 }
@@ -385,7 +391,8 @@ inline bool gc_const_iterator::operator!=( const gc_const_iterator& rhs ) const
 
 inline bool gc_const_iterator::operator<( const gc_const_iterator& rhs ) const
 {
-  return ( part_idx_ <= rhs.part_idx_ and element_idx_ < rhs.element_idx_ );
+  return ( part_idx_ < rhs.part_idx_
+    or ( part_idx_ == rhs.part_idx_ and element_idx_ < rhs.element_idx_ ) );
 }
 
 inline void
@@ -522,7 +529,7 @@ inline bool GIDCollectionComposite::operator==( GIDCollectionPTR rhs ) const
 inline GIDCollectionComposite::const_iterator
 GIDCollectionComposite::begin() const
 {
-  return const_iterator( *this, start_part_, start_offset_ );
+  return const_iterator( *this, start_part_, start_offset_, step_ );
 }
 
 inline GIDCollectionComposite::const_iterator

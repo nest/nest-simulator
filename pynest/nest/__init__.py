@@ -88,9 +88,11 @@ def catching_sli_run(cmd):
         def decode(s):
             return s
     else:
-        def encode(s): return s.encode('utf-8')
+        def encode(s):
+            return s.encode('utf-8')
 
-        def decode(s): return s.decode('utf-8')
+        def decode(s):
+            return s.decode('utf-8')
     engine.run('{%s} runprotected' % decode(cmd))
     if not sli_pop():
         errorname = sli_pop()

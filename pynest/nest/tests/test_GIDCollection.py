@@ -38,7 +38,7 @@ class TestGIDCollection(unittest.TestCase):
         """Conversion from GIDCollection to list"""
 
         n_neurons = 10
-        n = nest.Create('iaf_neuron', n_neurons)
+        n = nest.Create('iaf_psc_alpha', n_neurons)
         n_list = [x for x in n]
         self.assertEqual(n_list, list(range(1, n_neurons + 1)))
 
@@ -49,21 +49,29 @@ class TestGIDCollection(unittest.TestCase):
         with self.assertRaises(nest.NESTError):
             gc = nest.GIDCollection(gids_in)
 
-        n = nest.Create('iaf_neuron', 20)
+        n = nest.Create('iaf_psc_alpha', 20)
         gids_in = [5, 10, 15, 20]
         gc = nest.GIDCollection(gids_in)
         for gid, compare in zip(gc, gids_in):
             self.assertEqual(gid, compare)
+            
+        nest.ResetKernel()
+        
+        n = nest.Create('iaf_psc_alpha', 10)
+        
+        gids_in = [7, 3, 8, 5, 2]
+        gc = nest.GIDCollection(gids_in)
+        self.assertEqual([x for x in gc], [2, 3, 5, 7, 8])
 
     def test_equal(self):
         """Equality of GIDCollections"""
 
-        n = nest.Create('iaf_neuron', 10)
+        n = nest.Create('aeif_cond_alpha', 10)
         n_list = [x for x in n]
 
         nest.ResetKernel()
 
-        n = nest.Create('iaf_neuron', 10)
+        n = nest.Create('aeif_cond_alpha', 10)
         new_list = [x for x in n]
         self.assertEqual(n_list, new_list)
 
@@ -78,7 +86,7 @@ class TestGIDCollection(unittest.TestCase):
     def test_indexing(self):
         """Index of GIDCollections"""
 
-        n = nest.Create('iaf_neuron', 5)
+        n = nest.Create('iaf_psc_alpha', 5)
         self.assertEqual(n[0], 1)
         self.assertEqual(n[2], 3)
         self.assertEqual(n[4], 5)
@@ -118,10 +126,13 @@ class TestGIDCollection(unittest.TestCase):
         n_slice_negative = n[-4:]
         n_list_negative = [x for x in n_slice_negative]
         self.assertEqual(n_list_negative, [7, 8, 9, 10])
+        
+        n_slice_negative_end = n[:-3:]
+        n_list_negative_end = [x for x in n_slice_negative_end]
+        self.assertEqual(n_list_negative_end, [1, 2, 3, 4, 5, 6, 7])
 
-        n_slice_negative_skip = n[4::-2]
-        n_list_negative_skip = [x for x in n_slice_negative_skip]
-        self.assertEqual(n_list_negative_skip, [5, 3, 1])
+        with self.assertRaises(nest.NESTError):
+            n[::-3]
 
     def test_correct_index(self):
         """Multiple GIDCOllection calls give right indexing"""
@@ -163,7 +174,7 @@ class TestGIDCollection(unittest.TestCase):
         n_a_b_c = n_a_b + n_neurons_c
         nodes_a = nest.Create('iaf_psc_alpha', n_neurons_a)
         nodes_b = nest.Create('iaf_psc_alpha', n_neurons_b)
-        nodes_c = nest.Create('iaf_neuron', n_neurons_c)
+        nodes_c = nest.Create('aeif_cond_alpha', n_neurons_c)
 
         node_b_a = nodes_b + nodes_a
         node_b_a_list = [x for x in node_b_a]
@@ -188,6 +199,15 @@ class TestGIDCollection(unittest.TestCase):
 
         compare_list = list(range(1, n_models * 10 + 1))
         self.assertEqual(n_list, compare_list)
+        
+        nest.ResetKernel()
+
+        gc_a = nest.Create('iaf_psc_alpha', 10)
+        gc_b = nest.Create('aeif_cond_alpha', 7)
+        gc_c = nest.GIDCollection([6, 8, 10, 12, 14])
+        
+        with self.assertRaises(nest.NESTError):
+            gc_sum = gc_a + gc_b + gc_c
 
     def test_GIDCollection_membership(self):
         """Membership in GIDCollections"""
@@ -201,7 +221,7 @@ class TestGIDCollection(unittest.TestCase):
     def test_correct_len_on_GIDCollection(self):
         """len function on GIDCollection"""
 
-        a = nest.Create('iaf_neuron', 10)
+        a = nest.Create('iaf_psc_exp', 10)
         self.assertEqual(len(a), 10)
 
         b = nest.Create('iaf_psc_alpha', 7)
@@ -219,7 +239,7 @@ class TestGIDCollection(unittest.TestCase):
         num_b = 15
         num_c = 30
 
-        n_a = nest.Create('iaf_neuron', num_a)
+        n_a = nest.Create('iaf_psc_exp', num_a)
         n_b = nest.Create('iaf_psc_alpha', num_b)
         n_c = nest.Create('aeif_cond_alpha', num_c)
 
@@ -261,21 +281,18 @@ class TestGIDCollection(unittest.TestCase):
     def test_modelID(self):
         """Correct GIDCollection modelID"""
 
-        n = nest.Create('iaf_neuron')
+        n = nest.Create('iaf_psc_alpha')
         for model in nest.Models(mtype='nodes'):
             n += nest.Create(model)
         n = n[1:]
         
+        self.assertTrue(len(n) > 0)
+
         nest.sli_run("modeldict")
         modelID = list(nest.sli_pop().values())
-        
-        print len(n)
-        print modelID
 
         count = 0
         for gid, mid in n.items():
-            print count
-            print mid
             self.assertEqual(mid, modelID[count])
             count += 1
 
@@ -293,7 +310,7 @@ class TestGIDCollection(unittest.TestCase):
 
         nest.ResetKernel()
 
-        n = nest.Create('iaf_neuron', 2)
+        n = nest.Create('iaf_psc_alpha', 2)
         nest.Connect(nest.GIDCollection([n[0]]), nest.GIDCollection([n[1]]))
         self.assertEqual(nest.GetKernelStatus('num_connections'), 1)
 
@@ -304,7 +321,7 @@ class TestGIDCollection(unittest.TestCase):
         """
 
         num_nodes = 10
-        n = nest.Create('iaf_neuron', num_nodes)
+        n = nest.Create('iaf_psc_alpha', num_nodes)
         nest.SetStatus(n, {'V_m': 3.5})
         self.assertEqual(nest.GetStatus(n, 'V_m')[0], 3.5)
         
@@ -312,6 +329,17 @@ class TestGIDCollection(unittest.TestCase):
         nest.SetStatus(n,'V_m', V_m)
         for i in range(num_nodes):
             self.assertEqual(nest.GetStatus(n, 'V_m')[i], V_m[i])
+            
+        with self.assertRaises(TypeError):
+            nest.SetStatus(n, [{'V_m': 34.}, {'V_m': -5.}])
+        
+        nest.ResetKernel()
+        
+        gc = nest.Create('aeif_cond_alpha', 5)
+        
+        with self.assertRaises(nest.NESTError):
+            nest.SetStatus(n, {'V_m': -40.})
+            nest.GetStatus(n)
 
 def suite():
     suite = unittest.makeSuite(TestGIDCollection, 'test')

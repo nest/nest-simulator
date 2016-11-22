@@ -74,6 +74,9 @@ cdef extern from "topology_parameter.h" namespace "nest":
 cdef extern from "gid_collection.h":
     cppclass GIDCollectionDatum:
         GIDCollectionDatum(const GIDCollectionDatum&)
+        
+    cppclass GIDCollectionIteratorDatum:
+        GIDCollectionIteratorDatum(const GIDCollectionIteratorDatum&)
 
 cdef extern from "connection_id.h" namespace "nest":
     cppclass ConnectionID:

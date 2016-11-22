@@ -212,13 +212,11 @@ cdef class NESTEngine(object):
         return True
 
     def run(self, cmd):
+        
         if self.pEngine is NULL:
             raise NESTError("engine uninitialized")
         cdef string cmd_bytes
-        try:
-            cmd_bytes = cmd.encode('utf-8')
-        except UnicodeEncodeError:
-            cmd_bytes = cmd.encode()
+        cmd_bytes = cmd.encode('utf-8')
         self.pEngine.execute(cmd_bytes)
 
     def push(self, obj):

@@ -82,19 +82,21 @@ def catching_sli_run(cmd):
     """
 
     if sys.version_info >= (3,):
-        engine.run('{%s} runprotected' % cmd)  # Python 3
+        def encode(s): return s
+
+        def decode(s): return s
     else:
-        engine.run('{%s} runprotected' % cmd.decode('utf-8'))  # Python 2
+        def encode(s): return s.encode('utf-8')
+
+        def decode(s): return s.decode('utf-8')
+    engine.run('{%s} runprotected' % decode(cmd))
     if not sli_pop():
         errorname = sli_pop()
         message = sli_pop()
         commandname = sli_pop()
         engine.run('clear')
         errorstring = '%s in %s%s' % (errorname, commandname, message)
-        if sys.version_info >= (3,):
-            raise _kernel.NESTError(errorstring)  # Python 3
-        else:
-            raise _kernel.NESTError(errorstring.encode('utf-8'))  # Python 2
+        raise _kernel.NESTError(encode(errorstring))
 
 sli_run = hl_api.sr = catching_sli_run
 

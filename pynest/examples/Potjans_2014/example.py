@@ -52,9 +52,10 @@ net.simulate()
 toc = time.time() - tic
 print("Time to simulate: %.2f s" % toc)
 # Plot a raster plot of the spikes of the simulated neurons and the average
-# spike rate of all populations. For visual purposes only spikes in the last
-# 200 ms are plotted here by default. The computation of spike rates discards
-# the first 500 ms of the simulation to exclude initialization artifacts.
+# spike rate of all populations. For visual purposes only spikes 100 ms
+# before and 100 ms after the thalamic stimulus time are plotted here by
+# default. The computation of spike rates discards the first 500 ms of
+# the simulation to exclude initialization artifacts.
 raster_plot_time_idx = np.array(
     [stim_dict['th_start'] - 100.0, stim_dict['th_start'] + 100.0]
     )

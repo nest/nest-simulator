@@ -283,10 +283,12 @@ and the second loop the inhibitory neurons.
 '''
 
 for n in range(N_neurons):
-    nest.Connect(list(sources_ex[n]), [n + 1], syn_spec="excitatory")
+    nest.Connect(nest.GIDCollection(list(sources_ex[n])),
+                 nest.GIDCollection([n + 1]), syn_spec="excitatory")
 
 for n in range(N_neurons):
-    nest.Connect(list(sources_in[n]), [n + 1], syn_spec="inhibitory")
+    nest.Connect(nest.GIDCollection(list(sources_in[n])),
+                 nest.GIDCollection([n + 1]), syn_spec="inhibitory")
 
 '''
 Storage of the time point after the buildup of the network in a

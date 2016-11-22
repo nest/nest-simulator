@@ -82,9 +82,11 @@ def catching_sli_run(cmd):
     """
 
     if sys.version_info >= (3,):
-        def encode(s): return s
+        def encode(s):
+            return s
 
-        def decode(s): return s
+        def decode(s):
+            return s
     else:
         def encode(s): return s.encode('utf-8')
 

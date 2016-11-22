@@ -353,7 +353,7 @@ inline gc_const_iterator& gc_const_iterator::operator++()
   }
   else
   {
-    element_idx_ += step_;
+    element_idx_ += step_; // TODO: fix this!
 
     if ( element_idx_ >= composite_collection_->parts_[ part_idx_ ].size() )
     {
@@ -522,33 +522,19 @@ inline bool GIDCollectionComposite::operator==( GIDCollectionPTR rhs ) const
 inline GIDCollectionComposite::const_iterator
 GIDCollectionComposite::begin() const
 {
-  if ( step_ > 1 )
-  {
-    return const_iterator( *this, start_part_, start_offset_ );
-  }
-  else
-  {
-    return const_iterator( *this, 0, 0 );
-  }
+  return const_iterator( *this, start_part_, start_offset_ );
 }
 
 inline GIDCollectionComposite::const_iterator
 GIDCollectionComposite::begin( GIDCollectionPTR cp ) const
 {
-  if ( step_ > 1 )
-  {
-    return const_iterator( *this, start_part_, start_offset_, step_ );
-  }
-  else
-  {
-    return const_iterator( *this, 0, 0 );
-  }
+  return const_iterator( *this, start_part_, start_offset_, step_ );
 }
 
 inline GIDCollectionComposite::const_iterator
 GIDCollectionComposite::end() const
 {
-  if ( step_ > 1 )
+  if ( stop_part_ != 0 or stop_offset_ != 0 )
   {
     return const_iterator( *this, stop_part_, stop_offset_, step_ );
   }

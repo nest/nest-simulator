@@ -60,6 +60,8 @@ gc_const_iterator::gc_const_iterator( const GIDCollectionComposite& collection,
     and not( part == collection.parts_.size() and offset == 0 ) // end iterator
     )
   {
+    std::cout << "part/offset: " << part << "/" << offset
+              << std::endl; // TODO: remove
     throw KernelException(
       "Invalid part or offset into GIDCollectionComposite" );
   }
@@ -483,7 +485,8 @@ GIDCollectionComposite::GIDCollectionComposite(
   size_t start,
   size_t stop,
   size_t step )
-  : size_( 0 )
+  : parts_( composite.parts_ )
+  , size_( 0 )
   , step_( step )
   , start_part_( 0 )
   , start_offset_( 0 )
@@ -515,9 +518,12 @@ GIDCollectionComposite::GIDCollectionComposite(
     ++global_index;
     if ( started )
     {
-      size_ += step;
+      size_ += 1;
     }
   }
+  std::cout << "START: " << start_part_ << " " << start_offset_ << std::endl;
+  std::cout << "STOP: " << stop_part_ << " " << stop_offset_ << std::endl;
+  std::cout << "SIZE: " << size_ << std::endl;
 }
 
 GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
@@ -642,40 +648,46 @@ GIDCollectionComposite::merge_parts(
 void
 GIDCollectionComposite::print_me( std::ostream& out ) const
 {
-  if ( step_ > 1 ) // TODO: fix this
+  if ( step_ > 1 or ( stop_part_ != 0 or stop_offset_ != 0 ) ) // TODO: fix this
   {
+    std::cout << "printme step > 1: step = " << step_ << std::endl;
     size_t current_part = 0;
     size_t current_offset = 0;
     size_t previous_part = 4294967295; // initializing as large number (for now)
     index primitive_last = 0;
+
+    size_t primitive_size;
+    GIDPair pair;
+
+    out << "[[" << this << " size=" << size() << ": ";
     for ( const_iterator it = begin(); it != end(); ++it )
     {
-      if ( it != begin() )
-      {
-        out << primitive_last << ")]]";
-      }
+
       it.get_current_part_offset( current_part, current_offset );
       if ( current_part != previous_part )
       {
-        GIDCollectionPrimitive primitive = parts_[ current_offset ];
-        index primitive_first = current_offset;
-        primitive_last = current_offset;
-        size_t primitive_size = 0;
-        GIDPair pair = *it;
-        for ( size_t i = current_offset; i <= primitive.size(); i += step_ )
+        if ( it != begin() )
         {
-          ++primitive_size;
+          out << "[["
+              << " model=" << pair.model_id << ", size=" << primitive_size
+              << " ";
+          out << "(" << pair.gid << "..";
+          out << primitive_last << ")]]";
         }
-
-        out << "[[" << &primitive << " model=" << pair.model_id
-            << ", size=" << primitive_size << " ";
-        out << "(" << primitive_first << "..";
+        primitive_last = current_offset;
+        primitive_size = 1;
+        pair = *it;
       }
       else
       {
-        primitive_last = current_offset;
+        primitive_last = ( *it ).gid;
+        ++primitive_size;
       }
+      previous_part = current_part;
     }
+    out << "[["
+        << " model=" << pair.model_id << ", size=" << primitive_size << " ";
+    out << "(" << pair.gid << "..";
     out << primitive_last << ")]]";
     out << "]]";
   }

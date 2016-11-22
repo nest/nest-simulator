@@ -74,12 +74,12 @@ def GetConnections(source=None, target=None, synapse_model=None,
     if source is not None:
         if not isinstance(source, GIDCollection):
             raise TypeError("Source must be a GIDCollection")
-        params['source'] = source
+        params['source'] = list(source)
 
     if target is not None:
         if not isinstance(target, GIDCollection):
             raise TypeError("target must be a GIDCollection")
-        params['target'] = target
+        params['target'] = list(target)
 
     if synapse_model is not None:
         params['synapse_model'] = kernel.SLILiteral(synapse_model)

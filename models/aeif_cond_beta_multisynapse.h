@@ -74,7 +74,9 @@
  the synapse i is excitatory or inhibitory depending on the value of E_{rev,i}
  and the differential equation for the spike-adaptation current w is:
 
- tau_w * dw/dt = a(V - E_L) - W
+ tau_w * dw/dt = a(V - E_L) - w
+
+ When the neuron fires a spike w <- w + b.
 
 Parameters:
 The following parameters can be set in the status dictionary.

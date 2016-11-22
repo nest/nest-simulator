@@ -67,6 +67,68 @@ RecordablesMap< aeif_cond_beta_multisynapse >::create()
 }
 
 /* ----------------------------------------------------------------
+ * Right-hand side function
+ * ---------------------------------------------------------------- */
+
+extern "C" int
+aeif_cond_beta_multisynapse_dynamics( double,
+  const double y[],
+  double f[],
+  void* pnode )
+{
+  // a shorthand
+  typedef nest::aeif_cond_beta_multisynapse::State_ S;
+
+  // get access to node so we can almost work as in a member function
+  assert( pnode );
+  const nest::aeif_cond_beta_multisynapse& node =
+    *( reinterpret_cast< nest::aeif_cond_beta_multisynapse* >( pnode ) );
+
+  // y[] here is---and must be---the state vector supplied by the integrator,
+  // not the state vector in the node, node.S_.y[].
+
+  // The following code is verbose for the sake of clarity. We assume that a
+  // good compiler will optimize the verbosity away ...
+
+  // shorthand for state variables
+  // we indeed want to use P_.V_peak_ and not V_.V_peak here
+  // V_m is clamped during the refractory period
+  const double& V = std::min( node.S_.r_ > 0 ? node.P_.V_reset_ : y[ S::V_M ],
+    node.P_.V_peak_ ); // bound V
+  const double& w = y[ S::W ];
+
+  // I_syn = - sum_k g_k (V - E_rev_k).
+  double I_syn = 0.0;
+  for ( size_t i = 0; i < node.P_.n_receptors(); ++i )
+  {
+    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    I_syn += y[ S::G + j ] * ( node.P_.E_rev[ i ] - V );
+  }
+
+  const double I_spike = node.P_.Delta_T == 0.
+    ? 0
+    : ( node.P_.Delta_T * node.P_.g_L
+        * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
+
+  // dv/dt
+  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn - w
+                  + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+
+  // Adaptation current w.
+  f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
+
+  for ( size_t i = 0; i < node.P_.n_receptors(); ++i )
+  {
+    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    // Synaptic conductance derivative dG/dt
+    f[ S::DG + j ] = -y[ S::DG + j ] / node.P_.taus_rise[ i ];
+    f[ S::G + j ] = y[ S::DG + j ] - y[ S::G + j ] / node.P_.taus_decay[ i ];
+  }
+
+  return GSL_SUCCESS;
+}
+
+/* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
@@ -331,17 +393,21 @@ aeif_cond_beta_multisynapse::Buffers_::Buffers_(
   , s_( 0 )
   , c_( 0 )
   , e_( 0 )
+  , step_( Time::get_resolution().get_ms() )
+  , IntegrationStep_( std::min( 0.01, step_ ) )
+  , I_stim_( 0.0 )
 {
-  // Initialization of the remaining members is deferred to
-  // init_buffers_().
 }
 
-aeif_cond_beta_multisynapse::Buffers_::Buffers_( const Buffers_&,
+aeif_cond_beta_multisynapse::Buffers_::Buffers_( const Buffers_& b,
   aeif_cond_beta_multisynapse& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
   , e_( 0 )
+  , step_( b.step_ )
+  , IntegrationStep_( b.IntegrationStep_ )
+  , I_stim_( b.I_stim_ )
 {
 }
 
@@ -524,12 +590,6 @@ aeif_cond_beta_multisynapse::update( Time const& origin,
   {
     double t = 0.0; // internal time of the integration period
 
-    if ( S_.r_ > 0 ) // decrease remaining refractory steps if non-zero
-    {
-      --S_.r_;
-    }
-
-    B_.sys_.dimension = S_.y_.size();
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
     // gsl_odeiv_evolve_apply performs only a single numerical
@@ -565,23 +625,23 @@ aeif_cond_beta_multisynapse::update( Time const& origin,
       {
         throw NumericalInstability( get_name() );
       }
-      // spikes are handled inside the while-loop
-      // due to spike-driven adaptation
-      if ( S_.r_ > 0 ) // if neuron is still in refractory period
-      {
-        S_.y_[ State_::V_M ] = P_.V_reset_; // clamp it to V_reset
-      }
-      else if ( S_.y_[ State_::V_M ] >= V_.V_peak ) // V_m >= V_peak: spike
-      {
-        S_.y_[ State_::V_M ] = P_.V_reset_;
-        S_.y_[ State_::W ] += P_.b;    // spike-driven adaptation
-        S_.r_ = V_.refractory_counts_; // initialize refractory steps with
-                                       // refractory period
+    }
 
-        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
-        SpikeEvent se;
-        kernel().event_delivery_manager.send( *this, se, lag );
-      }
+    if ( S_.r_ > 0 ) // if neuron is still in refractory period
+    {
+      S_.y_[ State_::V_M ] = P_.V_reset_; // clamp it to V_reset
+      --S_.r_;
+    }
+    else if ( S_.y_[ State_::V_M ] >= V_.V_peak ) // V_m >= V_peak: spike
+    {
+      S_.y_[ State_::V_M ] = P_.V_reset_;
+      S_.y_[ State_::W ] += P_.b;    // spike-driven adaptation
+      S_.r_ = V_.refractory_counts_; // initialize refractory steps with
+                                     // refractory period
+
+      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+      SpikeEvent se;
+      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     for ( size_t i = 0; i < P_.n_receptors(); ++i )
@@ -648,62 +708,6 @@ void
 aeif_cond_beta_multisynapse::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
-}
-
-extern "C" int
-aeif_cond_beta_multisynapse_dynamics( double,
-  const double y[],
-  double f[],
-  void* pnode )
-{
-  // a shorthand
-  typedef nest::aeif_cond_beta_multisynapse::State_ S;
-
-  // get access to node so we can almost work as in a member function
-  assert( pnode );
-  const nest::aeif_cond_beta_multisynapse& node =
-    *( reinterpret_cast< nest::aeif_cond_beta_multisynapse* >( pnode ) );
-
-  // y[] here is---and must be---the state vector supplied by the integrator,
-  // not the state vector in the node, node.S_.y[].
-
-  // The following code is verbose for the sake of clarity. We assume that a
-  // good compiler will optimize the verbosity away ...
-
-  // shorthand for state variables
-  // we indeed want to use P_.V_peak_ and not V_.V_peak here
-  const double& V = std::min( y[ S::V_M ], node.P_.V_peak_ ); // bound V
-  const double& w = y[ S::W ];
-
-  // I_syn = - sum_k g_k (V - E_rev_k).
-  double I_syn = 0.0;
-  for ( size_t i = 0; i < node.P_.n_receptors(); ++i )
-  {
-    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-    I_syn += y[ S::G + j ] * ( node.P_.E_rev[ i ] - V );
-  }
-
-  const double I_spike = node.P_.Delta_T == 0.
-    ? 0
-    : ( node.P_.Delta_T * node.P_.g_L
-        * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
-
-  // dv/dt
-  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn - w
-                  + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
-
-  // Adaptation current w.
-  f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
-
-  for ( size_t i = 0; i < node.P_.n_receptors(); ++i )
-  {
-    const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-    // Synaptic conductance derivative dG/dt
-    f[ S::DG + j ] = -y[ S::DG + j ] / node.P_.taus_rise[ i ];
-    f[ S::G + j ] = y[ S::DG + j ] - y[ S::G + j ] / node.P_.taus_decay[ i ];
-  }
-
-  return GSL_SUCCESS;
 }
 
 } // namespace nest

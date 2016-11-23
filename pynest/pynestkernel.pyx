@@ -212,7 +212,7 @@ cdef class NESTEngine(object):
         return True
 
     def run(self, cmd):
-        
+
         if self.pEngine is NULL:
             raise NESTError("engine uninitialized")
         cdef string cmd_bytes

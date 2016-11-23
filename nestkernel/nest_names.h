@@ -248,6 +248,7 @@ extern const Name linear;            //!< Parameter for MSP growth curves
 extern const Name local;             //!< Node parameter
 extern const Name local_id;          //!< Node
 
+extern const Name make_symmetric; //!< Connectivity-related
 extern const Name MAXERR; //!< Largest permissible error for adaptive stepsize
                           //!< (Brette & Gerstner 2005)
 extern const Name mean;   //!< Miscellaneous parameters
@@ -266,12 +267,11 @@ extern const Name N_channels; //!< Specific to correlomatrix_detector
 extern const Name n_events;   //!< Recorder parameter
 extern const Name
   n_proc; //!< Number of component processes of ppd_sup_/gamma_sup_generator
-extern const Name n_receptors;         //!< number of receptor ports
-extern const Name needs_prelim_update; //!< Node parameter
-extern const Name neuron;              //!< Node type
-extern const Name node_uses_wfr;       //!< Node parameter
-extern const Name noise;               //!< Specific to iaf_chs_2008 neuron
-extern const Name ns; //!< Number of release sites (property arrays)
+extern const Name n_receptors;   //!< number of receptor ports
+extern const Name neuron;        //!< Node type
+extern const Name node_uses_wfr; //!< Node parameter
+extern const Name noise;         //!< Specific to iaf_chs_2008 neuron
+extern const Name ns;            //!< Number of release sites (property arrays)
 
 extern const Name offset;  //!< Miscellaneous parameters
 extern const Name offsets; //!< Recorder parameter
@@ -358,7 +358,6 @@ extern const Name structure; //!< Node type
 extern const Name success;
 extern const Name supports_precise_spikes; //!< true if model supports precise
                                            //!< spikes
-extern const Name symmetric;               //!< Connectivity-related
 extern const Name synapse;                 //!< Node type
 extern const Name synapse_label;           //!< Label id of synapses with labels
 extern const Name synapse_model;           //!< Connection parameters

@@ -165,7 +165,8 @@ class LabeledSynapsesTestCase(unittest.TestCase):
 
             # try set on connect
             with self.assertRaises(nest.NESTError):
-                nest.Connect(a, a, {"rule": "one_to_one", "make_symmetric": symm},
+                nest.Connect(a, a, {"rule": "one_to_one",
+                                    "make_symmetric": symm},
                              {"model": syn, "synapse_label": 123})
 
             # plain connection

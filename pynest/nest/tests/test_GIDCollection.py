@@ -54,11 +54,11 @@ class TestGIDCollection(unittest.TestCase):
         gc = nest.GIDCollection(gids_in)
         for gid, compare in zip(gc, gids_in):
             self.assertEqual(gid, compare)
-            
+
         nest.ResetKernel()
-        
+
         n = nest.Create('iaf_psc_alpha', 10)
-        
+
         gids_in = [7, 3, 8, 5, 2]
         gc = nest.GIDCollection(gids_in)
         self.assertEqual([x for x in gc], [2, 3, 5, 7, 8])
@@ -71,9 +71,10 @@ class TestGIDCollection(unittest.TestCase):
 
         nest.ResetKernel()
 
-        n = nest.Create('aeif_cond_alpha', 10)
-        new_list = [x for x in n]
+        n_new = nest.Create('aeif_cond_alpha', 10)
+        new_list = [x for x in n_new]
         self.assertEqual(n_list, new_list)
+        self.assertEqual(n, n_new)
 
         nest.ResetKernel()
 
@@ -126,7 +127,7 @@ class TestGIDCollection(unittest.TestCase):
         n_slice_negative = n[-4:]
         n_list_negative = [x for x in n_slice_negative]
         self.assertEqual(n_list_negative, [7, 8, 9, 10])
-        
+
         n_slice_negative_end = n[:-3:]
         n_list_negative_end = [x for x in n_slice_negative_end]
         self.assertEqual(n_list_negative_end, [1, 2, 3, 4, 5, 6, 7])
@@ -199,13 +200,13 @@ class TestGIDCollection(unittest.TestCase):
 
         compare_list = list(range(1, n_models * 10 + 1))
         self.assertEqual(n_list, compare_list)
-        
+
         nest.ResetKernel()
 
         gc_a = nest.Create('iaf_psc_alpha', 10)
         gc_b = nest.Create('aeif_cond_alpha', 7)
         gc_c = nest.GIDCollection([6, 8, 10, 12, 14])
-        
+
         with self.assertRaises(nest.NESTError):
             gc_sum = gc_a + gc_b + gc_c
 
@@ -285,7 +286,7 @@ class TestGIDCollection(unittest.TestCase):
         for model in nest.Models(mtype='nodes'):
             n += nest.Create(model)
         n = n[1:]
-        
+
         self.assertTrue(len(n) > 0)
 
         nest.sli_run("modeldict")
@@ -324,22 +325,47 @@ class TestGIDCollection(unittest.TestCase):
         n = nest.Create('iaf_psc_alpha', num_nodes)
         nest.SetStatus(n, {'V_m': 3.5})
         self.assertEqual(nest.GetStatus(n, 'V_m')[0], 3.5)
-        
-        V_m = [1., 2., 3., 4., 5., 6. ,7., 8., 9., 10.]
-        nest.SetStatus(n,'V_m', V_m)
+
+        V_m = [1., 2., 3., 4., 5., 6., 7., 8., 9., 10.]
+        nest.SetStatus(n, 'V_m', V_m)
         for i in range(num_nodes):
             self.assertEqual(nest.GetStatus(n, 'V_m')[i], V_m[i])
-            
+
         with self.assertRaises(TypeError):
             nest.SetStatus(n, [{'V_m': 34.}, {'V_m': -5.}])
-        
+
         nest.ResetKernel()
-        
+
         gc = nest.Create('aeif_cond_alpha', 5)
-        
+
         with self.assertRaises(nest.NESTError):
             nest.SetStatus(n, {'V_m': -40.})
+        with self.assertRaises(nest.NESTError):
             nest.GetStatus(n)
+
+        nest.ResetKernel()
+        n = nest.Create('iaf_psc_alpha', 3)
+        nest.SetStatus(n, [{'V_m': 10.}, {'V_m': -10.}, {'V_m': -20.}])
+        self.assertEqual(nest.GetStatus(n, 'V_m'), (10., -10., -20.))
+        
+    def test_GetConnections(self):
+        """
+        GetConnection works as expected
+        """
+        
+        n = nest.Create('iaf_psc_alpha', 3)
+        nest.Connect(n,n)
+        
+        get_conn = nest.GetConnections()
+        get_conn_all = nest.GetConnections(n,n)
+        get_conn_list = nest.GetConnections([3,1])
+        
+        self.assertEqual(get_conn_all, get_conn )
+        
+        compare_list = [3, 1, 0, 0, 0]
+        for i,conn in enumerate(compare_list):
+            self.assertEqual(get_conn_list[3][i], conn)
+
 
 def suite():
     suite = unittest.makeSuite(TestGIDCollection, 'test')

@@ -33,14 +33,14 @@ class GIDCollectionIterator(object):
     Iterator class for GIDCollection.
 
     Can either return the respective gid (this is the default), or a pair
-    consisting of the respective gid and modelID. 
+    consisting of the respective gid and modelID.
     """
-    
+
     def __init__(self, gc, iterpairs=False):
         self._gciter = nest.sli_func(':beginiterator_g', gc)
         self._deref_and_increment = 'dup {} exch :next_q pop'.format(
             ':getgidmodelid_q' if iterpairs else ':getgid_q')
-        
+
     def __iter__(self):
         return self
 
@@ -50,7 +50,7 @@ class GIDCollectionIterator(object):
         except nest.NESTError:
             raise StopIteration
         return val
-    
+
     next = __next__ # Python2.x
 
 
@@ -132,7 +132,6 @@ class GIDCollection(object):
             else:
                 stop = key.stop if key.stop >= 0 else key.stop
             step = 1 if key.step is None else key.step
-            
 
             return (GIDCollection(nest.sli_func('Take',
                                                 self._datum,
@@ -152,9 +151,13 @@ class GIDCollection(object):
     def __eq__(self, other):
         if not isinstance(other, GIDCollection):
             return NotImplemented
-        print self.items()
-        print other.items()
-        return list(self.items()) == list(other.items())
+
+        if self.__len__() != other.__len__():
+            return False
+        for selfpair, otherpair in zip(self.items(), other.items()):
+            if selfpair != otherpair:
+                return False
+        return True
 
     def __neq__(self, other):
         if not isinstance(other, GIDCollection):

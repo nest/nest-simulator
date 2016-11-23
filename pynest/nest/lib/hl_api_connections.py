@@ -27,6 +27,7 @@ from .hl_api_helper import *
 from .hl_api_nodes import Create, GIDCollection
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
+import nest
 import numpy
 
 
@@ -40,10 +41,10 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
     Parameters
     ----------
-    source : list, optional
+    source : GIDCOllection or list, optional
         Source GIDs, only connections from these
         pre-synaptic neurons are returned
-    target : list, optional
+    target : GIDCollection or list, optional
         Target GIDs, only connections to these
         post-synaptic neurons are returned
     synapse_model : str, optional
@@ -72,14 +73,24 @@ def GetConnections(source=None, target=None, synapse_model=None,
     params = {}
 
     if source is not None:
-        if not isinstance(source, GIDCollection):
-            raise TypeError("Source must be a GIDCollection")
-        params['source'] = list(source)
+        if isinstance(source, GIDCollection):
+            params['source'] = source
+        else:
+            try:
+                params['source'] = nest.GIDCollection(source)
+            except nest.NESTError:
+                raise TypeError("source must be GIDCollection or convertible"
+                                " to GIDCollection")
 
     if target is not None:
-        if not isinstance(target, GIDCollection):
-            raise TypeError("target must be a GIDCollection")
-        params['target'] = list(target)
+        if isinstance(target, GIDCollection):
+            params['target'] = target
+        else:
+            try:
+                params['target'] = nest.GIDCollection(target)
+            except nest.NESTError:
+                raise TypeError("target must be GIDCollection or convertible"
+                                " to GIDCollection")
 
     if synapse_model is not None:
         params['synapse_model'] = kernel.SLILiteral(synapse_model)
@@ -247,9 +258,11 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
             "be used together with 'syn_spec'.")
 
     if not isinstance(pre, GIDCollection):
-        raise TypeError("Presynaptic nodes must be a GIDCollection")
+        raise TypeError("Not implemented, presynaptic nodes must be a "
+                        "GIDCollection")
     if not isinstance(post, GIDCollection):
-        raise TypeError("Postsynaptic nodes must be a GIDCollection")
+        raise TypeError("Not implemented, postsynaptic nodes must be a "
+                        "GIDCollection")
 
     sps(pre)
     sps(post)

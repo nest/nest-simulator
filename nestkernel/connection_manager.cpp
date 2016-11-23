@@ -1019,19 +1019,19 @@ ArrayDatum
 nest::ConnectionManager::get_connections( DictionaryDatum params ) const
 {
   std::deque< ConnectionID > connectome;
-
   const Token& source_t = params->lookup( names::source );
   const Token& target_t = params->lookup( names::target );
   const Token& syn_model_t = params->lookup( names::synapse_model );
-  const TokenArray* source_a = 0;
-  const TokenArray* target_a = 0;
+  const GIDCollectionPTR* source_a = 0;
+  const GIDCollectionPTR* target_a = 0;
+
   long synapse_label = UNLABELED_CONNECTION;
   updateValue< long >( params, names::synapse_label, synapse_label );
 
   if ( not source_t.empty() )
-    source_a = dynamic_cast< TokenArray const* >( source_t.datum() );
+    source_a = dynamic_cast< GIDCollectionPTR const* >( source_t.datum() );
   if ( not target_t.empty() )
-    target_a = dynamic_cast< TokenArray const* >( target_t.datum() );
+    target_a = dynamic_cast< GIDCollectionPTR const* >( target_t.datum() );
 
   size_t syn_id = 0;
 
@@ -1096,8 +1096,8 @@ static inline std::deque< nest::ConnectionID >& operator<<(
 void
 nest::ConnectionManager::get_connections(
   std::deque< ConnectionID >& connectome,
-  TokenArray const* source,
-  TokenArray const* target,
+  GIDCollectionPTR const* source,
+  GIDCollectionPTR const* target,
   size_t syn_id,
   long synapse_label ) const
 {
@@ -1142,7 +1142,7 @@ nest::ConnectionManager::get_connections(
 #ifdef _OPENMP
 #pragma omp parallel
     {
-      thread t = kernel().vp_manager.get_thread_id();
+	  thread t = kernel().vp_manager.get_thread_id();
 #else
     for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     {
@@ -1154,9 +1154,11 @@ nest::ConnectionManager::get_connections(
       {
         if ( validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
         {
-          for ( index t_id = 0; t_id < target->size(); ++t_id )
+          GIDCollection::const_iterator t_id = target->get()->begin();
+          target->unlock();
+          for ( ; t_id != target->get()->end(); ++t_id )
           {
-            size_t target_id = target->get( t_id );
+            size_t target_id = (*t_id).gid;
             validate_pointer( connections_[ t ].get( source_id ) )
               ->get_connections( source_id,
                 target_id,
@@ -1189,23 +1191,37 @@ nest::ConnectionManager::get_connections(
 #endif
       std::deque< ConnectionID > conns_in_thread;
 
-      for ( index s = 0; s < source->size(); ++s )
+      if (source->islocked())
       {
-        size_t source_id = source->get( s );
+    	  source->unlock();
+      }
+      GIDCollection::const_iterator s = source->get()->begin();
+      source->unlock();
+      for ( ; s != source->get()->end(); ++s )
+      {
+    	size_t source_id = (*s).gid;
         if ( source_id < connections_[ t ].size()
           && validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
         {
           if ( target == 0 )
           {
+        	source->unlock();
             validate_pointer( connections_[ t ].get( source_id ) )
               ->get_connections(
                 source_id, t, syn_id, synapse_label, conns_in_thread );
           }
           else
           {
-            for ( index t_id = 0; t_id < target->size(); ++t_id )
+        	target->unlock();
+        	GIDCollection::const_iterator t_id = target->get()->begin();
+        	target->unlock();
+            for ( ; t_id != target->get()->end(); ++t_id )
             {
-              size_t target_id = target->get( t_id );
+              if ( target->islocked() )
+              {
+            	  target->unlock();
+              }
+              size_t target_id = (*t_id).gid;
               validate_pointer( connections_[ t ].get( source_id ) )
                 ->get_connections( source_id,
                   target_id,
@@ -1214,10 +1230,10 @@ nest::ConnectionManager::get_connections(
                   synapse_label,
                   conns_in_thread );
             }
+              source->unlock();
           }
         }
       }
-
       if ( conns_in_thread.size() > 0 )
       {
 #ifdef _OPENMP
@@ -1226,6 +1242,9 @@ nest::ConnectionManager::get_connections(
         connectome << conns_in_thread;
       }
     }
+    if ( source->islocked() )
+      source->unlock();
+
     return;
   } // else
 }

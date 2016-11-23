@@ -386,8 +386,10 @@ nest::ConnBuilder::connect()
     && not symmetric_ && not is_symmetric() )
   {
     throw BadProperty(
-      "This synapse model requires symmetric (or suitable uniform "
-      "all-to-all) connections" );
+      "Connections with this synapse model can only be created as "
+      "one-to-one connections with \"make_symmetric\" set to true "
+      "or as all-to-all connections with equal source and target "
+      "populations and default or scalar parameters." );
   }
 
   if ( symmetric_ && not supports_symmetric() )
@@ -611,6 +613,7 @@ nest::ConnBuilder::all_parameters_scalar_() const
   return all_scalar;
 }
 
+bool
 nest::ConnBuilder::loop_over_targets_() const
 {
   return targets_->size() < kernel().node_manager.local_nodes_size()

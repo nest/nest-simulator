@@ -1,0 +1,87 @@
+Name: CyclicValue - project a cyclic value onto it's norm interval (e.g. angle on [0,360))
+
+Synopsis:
+
+value [b1 b2] CyclicValue -> normvalue 
+value  b1 b2  CyclicValue -> normvalue 
+See below for the meaning of b1, b2!
+
+
+Examples:
+
+%% project angle in degrees onto [0,360): 
+-3601 [0 360] CyclicValue -> 359.0 
+%% project angle in radians onto [-pi,pi): 
+23.0 [Pi -1 mul  Pi] CyclicValue -> -2.13274 
+%% this demonstrates the handling of open/closed interval ends: 
+%%   project number onto [1,4): 
+1 [1 4] CyclicValue -> 1 
+2 [1 4] CyclicValue -> 2 
+3 [1 4] CyclicValue -> 3 
+4 [1 4] CyclicValue -> 1 
+%%   project number onto (1,4]: 
+1 [4 1] CyclicValue -> 4 
+2 [4 1] CyclicValue -> 2 
+3 [4 1] CyclicValue -> 3 
+4 [4 1] CyclicValue -> 4
+
+
+Description:
+
+For a given value and a given norm interval, "CyclicValue" returns 
+the value's norm equivalent. This is useful for all values with a 
+cyclic definition, such as angles. 
+The output is always of type double, regardless of the input type. 
+Alternatives: Function CyclicValue_d_d_d if you use it with three doubles 
+(interval = double1	- double2), CyclicValue_d_a if you use it with 
+double and array (both undocumented) -> behaviour and synopsis are the same.
+
+
+Parameters:
+
+In :  value:   value in (-oo, oo) 
+b1, b2:  norm interval. 
+This interval is half-open: [.), or (.], depending on 
+the following rules: 
+b1 must not equal b2. 
+b1 always denotes the closed end of the interval. 
+b2 always denotes the open   end of the interval. 
+If b1<b2, the norm interval used is [b1,b2). 
+If b1>b2, the norm interval used is (b2,b1]. 
+See below for examples. 
+Out:  The value's norm equivalent in the interval [b1, b2). 
+The output is always of type double, regardless of the input 
+type.
+
+
+Diagnostics:
+
+b1 must not equal b2. This is not checked for efficency reasons! 
+If b1=b2, code will break with /DivisionByZero during execution.
+
+
+Remarks:
+
+Variant *_d_d_d is fastest. Prefer this variant over *_d_a in time 
+critical applications. 
+Inspired by IDL/NASE commandfunction cyclic_value().
+
+
+Author:
+
+Ruediger Kupper
+
+
+FirstVersion:
+
+13.3.2003
+
+
+SeeAlso:
+
+mod
+floor
+
+Source:
+
+../../lib/sli/misc_helpers.sli

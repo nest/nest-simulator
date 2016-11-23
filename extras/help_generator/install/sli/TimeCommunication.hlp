@@ -1,0 +1,35 @@
+Name: TimeCommunication - returns average time taken for MPI_Allgather over n calls with m bytes
+
+Synopsis:
+
+n m [bool] TimeCommunication -> time
+
+
+Description:
+
+The function allows a user to test how much time a call the Allgather costs 
+If boolean third argument is passed and true, time offgrid spike communication.
+
+
+Availability:
+
+NEST 2.0
+
+
+Author:
+
+Abigail Morrison
+
+
+FirstVersion:
+
+August 2009
+
+
+SeeAlso:
+
+TimeCommunicationOffgrid
+
+Source:
+
+../../lib/sli/nest-init.sli

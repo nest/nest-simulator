@@ -1,0 +1,10 @@
+Name: setpath - Append string to path array
+
+SeeAlso:
+
+addpath
+path
+
+Source:
+
+../../lib/sli/sli-init.sli

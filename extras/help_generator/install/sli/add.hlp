@@ -1,0 +1,41 @@
+Name: add - add two numbers or vectors
+
+Synopsis:
+
+n1 n2  add -> n3 
+a1 a2  add -> a3
+
+
+Examples:
+
+1 2   add -> 3 
+1.0 2 add -> 3.0 
+[1 2] [3 4] add -> [4 6] 
+1 [3 4] add -> [4 5]
+
+
+Description:
+
+add can be used to add numbers and arrays. 
+If applied to numbers, add returns the sum of the numbers. If one 
+of the arguments is a double, the result is also a double. 
+Applied to arrays, add perfoms a per-component addition of the two 
+arrays. The components must be numbers, however, integer and double 
+values may be mixed. 
+Note that the two arrays must be of the same size.
+
+
+Author:
+
+M-O Gewaltig
+
+
+SeeAlso:
+
+Dot
+Plus
+Times
+
+Source:
+
+../../lib/sli/mathematica.sli

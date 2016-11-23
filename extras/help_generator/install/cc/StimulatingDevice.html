@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: StimulatingDevice</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: StimulatingDevice</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>StimulatingDevice - General properties of stimulating devices.</pre>
+<b>Description: </b>
+<pre> <br/>   <br/>  Stimulating devices inject signals into a network, either as analog signals  <br/>  such a currents or as spike trains. Most stimulating devices are implemented  <br/>  so that they are replicated on each virtual process. Many, but not all  <br/>  devices generating noise or stochastic spike trains provide different signals  <br/>  to each of their recipients; see the documentation of the individual device.  <br/>   <br/>  Stimulating devices share the start, stop, and origin parameters global to  <br/>  devices. Start and stop have the following meaning for stimulating devices  <br/>  (origin is just a global offset):  <br/> 	- For spike-emitting devices, only spikes with times t that fulfill  <br/>  start < t <= stop  <br/>  are emitted. Note that spikes that have time t==start are NOT emitted.  <br/> 	- For current-emitting devices, the current is activated and deactivated such  <br/>  that the current first affects the target dynamics during the update step  <br/>  (start, start+h], i.e., an effect can be recorded at the earliest at time  <br/>  start+h. The last interval during which the current affects the target's  <br/>  dynamics is (stop-h, stop].  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  /start 	- Actication time, relative to origin.  <br/>  /stop  	- Inactivation time, relative to origin.  <br/>  /origin	- Reference time for start and stop.  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/Device.html">Device</a></li>
+    <li><a href="../cc/RecordingDevice.html">RecordingDevice</a></li>
+</ul>
+<b>Source:</b><pre>../../nestkernel/stimulating_device.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

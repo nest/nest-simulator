@@ -1,0 +1,126 @@
+Name: dup2 - Duplicate a filestream's file descriptor onto another's
+
+Synopsis:
+
+istream1 istream2 dup2 ->	- 
+ostream1 ostream2 dup2 ->	-
+
+
+Examples:
+
+1. myostream cout dup2 %subsequent writes to cout will be 
+%redirected to myostream 
+2. myistream cin  dup2 %subsequent reads from cin will read 
+%from myinstream 
+3. % The "dup2" in 1. would better be preceeded by a "flush": 
+mystream cout flush dup2 
+4. % A typical case: redirect output of a child process to a pipe. 
+% (This is what the "spawn" command does): 
+pipe %create a pipe 
+{ 
+cout flush dup2 %The child redirects its cout to the 
+%write end of the pipe 
+closeistream   %It closes the read end of the pipe, for 
+%it is not needed. 
+(ls) sysexec   %The child transfers control to "ls". 
+%"ls" will write to it's cout, i.e., to 
+%the pipe. 
+} spoon pop	 %we are not interested in the child's PID... 
+closeostream	 %The parent closes the write end of the 
+%pipe, for it is not needed. 
+% The parent may now read the output of "ls" from the read end 
+% of the pipe.
+
+
+Description:
+
+"dup2" is a wrapper to the "dup2()" UNIX system call. 
+This is a low-level file operation. It does not operate on 
+filestreams, but on the underlying UNIX file descriptors. 
+Operation: 
+1. "dup2" gets the file descriptors fd1 and fd2, to which 
+the two streams are bound. (See remarks below!) 
+2. System function dup2(fd1, fd2) is called. This means: 
+o If fd1 equals fd2, nothing is done. 
+o If not, the file associated with fd2, if any, is closed. 
+fd2 is then attached to the same file as fd1. It refers 
+to the same open file as fd1 and shares any locks. 
+Thus, the values of fd1 and fd2 stay unchanged, but 
+fd2 refers to a different file after the call. 
+Respectively, C++-stream2 stays unchanged in every 
+detail (buffer, value of undelying file descriptor, ...) 
+but is actually connected to a different file. 
+"dup2" will usually be called on "cin", "cout" or "cerr" after 
+a "fork" or "spoon" and prior to calling "sysexec". This is 
+used to redirect the standard channels of the newly created 
+process to a file, pipe or fifo. For a typical call see 
+examples below. 
+In a UNIX environment, each process expects the standard 
+channels stdin, stdout, stderr to be associated to three 
+special file descriptors (usually 0, 1 and 2). Thus, if a parent 
+process redirects one of these descriptors explicitely, a 
+child process will inherit this redirection and read/write 
+to a file when accessing cin/cout/cerr/clog WITHOUT 
+NOTICING. 
+Alternatives: Functions dup2_is_is for two istreams, 
+dup2_os_os for two osstreams (both undocumented) 
+-> behaviour and synopsis are the same.
+
+
+Parameters:
+
+In: i/ostream1: The stream to duplicate. This stream and it's 
+undelying filedescriptor will stay unchanged. 
+i/ostream2: The stream to be re-directed. The file 
+associated to this stream will be closed, and 
+this stream will be associated to the same file 
+as i/ostream1.
+
+
+Bugs:
+
+
+
+
+Diagnostics:
+
+System Errors: EBADF (Invalid file descriptor) 
+EINTR (Function was interrupted by a signal)
+
+
+Remarks:
+
+This is a typesafe wrapper to "dup2_is_is" and "dup2_os_os" 
+which operate on two input streams and two output streams 
+respectively. The code for these functions can be found in 
+file "synod2/sli/processes.{h|cc}". 
+It sure is not a bad idea to flush ostream2 prior to the 
+call, as it will be connected to another file afterwards, but 
+any buffered data stays unchanged! 
+Getting the file descriptors from C++-filestreams is not yet 
+supported by a POSIX call. (There is such a call for C-filestreams, 
+however). The code used here may be implementation dependent and 
+not fully portable! As soon as there is a reliably portable way 
+to detect file descriptors from a C++-filestream (or convert a C++ 
+stream to a C stream), the respective code found in function 
+Processes::fd(), file "synod2/sli/processes.cc", should be changed.
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+May 05 1999
+
+
+SeeAlso:
+
+pipe
+mkfifo
+
+Source:
+
+../../lib/sli/processes.sli

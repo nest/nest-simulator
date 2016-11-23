@@ -1,0 +1,50 @@
+Name: cvd_s - convert string to double
+
+Synopsis:
+
+string cvd_s -> double
+
+
+Examples:
+
+(23.5)  cvi_s -> 23.5 
+(23)   cvi_s -> 23   % doubletype! 
+(NEST)  cvi_s -> 0
+
+
+Description:
+
+This is a wrapper to the standard C "atof"-routine. 
+If cvd_s is executed with a string that contains letters 0 is returned.
+
+
+Bugs:
+
+-
+
+
+Diagnostics:
+
+No errors are raised. 
+In case of impossible conversion, zero is returned.
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+Nov 05 1999
+
+
+SeeAlso:
+
+cvi
+cvd
+cvs
+
+Source:
+
+../../sli/slidata.h

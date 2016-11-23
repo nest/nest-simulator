@@ -1,0 +1,22 @@
+Name: CompareFiles - Compare two files for equality.
+
+Synopsis:
+
+filenameA filenameB CompareFiles -> bool
+
+
+Description:
+
+This command compares the two files named and returns true if they 
+have identical content. Files are read in binary mode. FileOpenError 
+is raised if one of the files cannot be opened.
+
+
+Author:
+
+Hans E Plesser
+
+
+Source:
+
+../../sli/filesystem.cc

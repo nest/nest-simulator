@@ -1,0 +1,45 @@
+Name: nest_serial - Returns a non-distributed call of nest as a string 
+ 
+ Synopsis:  (sli-filename) nest_serial -> (string with shell command)
+
+Examples:
+
+(hello.sli) nest_serial -> (mpirun -mca btl self,tcp -np 1 /home/dummy/nest/bin/nest hello.sli)
+
+
+Description:
+
+If nest was compiled with MPI it may be unsafe to directly call the binary to 
+obtain a non-distributed version. The command nest_serial looks up the appropriate 
+way to call nest and returns a suitable command as a string. The algorithm is as 
+follows: 
+1. if nest is not compiled with MPI, return "nest" 
+2. if sli command /mpirun is defined, return this with 
+the -np 1 equivalent 
+3. issue and error with the message that nest was compiled with MPI 
+but no method to call nest has been specified.
+
+
+Diagnostics:
+
+This function issues an error if NEST was compiled with MPI but is not aware of 
+a safe method to call a non-distributed version of nest.
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+090711
+
+
+SeeAlso:
+
+nest_indirect
+
+Source:
+
+../../lib/sli/processes.sli

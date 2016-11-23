@@ -1,0 +1,62 @@
+Name: arraylib::Reform - Reform the dimensions of a hyperrectengular array
+
+Synopsis:
+
+[array] [dim1 dim2 ... dimn] Reform -> [reformedArray]
+
+
+Description:
+
+"Reform" changes the dimensionality i.e. the nesting of an array. The 
+result is a hyperrectangular array of the given dimensions. The order 
+of elements is not changed. 
+"Reform" relates to "Dimensions" in the following way: 
+Given a hyperrectangular array [a] of "Dimensions" [d], these 
+statements are true: 
+a	 d Reform -> a 
+a Flatten   d Reform -> a 
+a dv Reform d Reform -> a, for any valid dimension vector [dv]
+
+
+Diagnostics:
+
+If the new dimensionality is not consistent with the numer of elements 
+in the array, /RangeCheck is raised.
+
+
+Remarks:
+
+The new dimensionality must not change the number of elements in the 
+whole array, that is, dim1*...*dimn must equal the number of the 
+flattened source array.
+
+
+Availability:
+
+"Namespace"-dictionary "arraylib".
+
+
+References:
+
+This routine is inspired by IDL's REFORM() routine.
+
+
+Author:
+
+Ruediger Kupper
+
+
+FirstVersion:
+
+10.3.2003
+
+
+SeeAlso:
+
+Dimensions
+TensorRank
+Flatten
+
+Source:
+
+../../lib/sli/arraylib.sli

@@ -1,0 +1,35 @@
+Name: GaussDiskConv - Convolution of a Gaussian with an excentric disk 
+ 
+ Synopsis:R r0 GaussDiskConv -> result 
+ 
+ Description:Computes the convolution of an excentric normalized Gaussian 
+ with a disk 
+ 
+ C[R, r0] = IInt[ disk(rvec; R) * Gauss(rvec - r_0vec) d^2rvec ] 
+ = 2 Int[ r Exp[-r0^2-r^2] I_0[2 r r_0] dr, r=0..R] 
+ 
+ Parameters:R	 radius of the disk, centered at origin 
+ r0  distance of Gaussian center from origin 
+ 
+ Examples:SLI ] 3.2 2.3 GaussDiskConv = 
+ 0.873191 
+ 
+ Author:H E Plesser
+
+References:
+
+[1] G. T. Einevoll and P. Heggelund, Vis Neurosci 17:871-885 (2000). 
+[2] Hans E. Plesser, Convolution of an Excentric Gaussian with a Disk, 
+Technical Report, arken.nlh.no/ itfhep, 2002
+
+
+FirstVersion:
+
+2002-07-12 
+Remarks:This integral is needed to compute the response of a DOG model to 
+excentric light spots, see [1].  For technicalities, see [2].  Requires GSL.
+
+
+Source:
+
+../../sli/specialfunctionsmodule.h

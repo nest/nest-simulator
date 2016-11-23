@@ -1,0 +1,31 @@
+Name: topology::CreateParameter - create a spatial function
+
+Synopsis:
+
+<< /type dict >> CreateParameter -> parameter
+
+
+Description:
+
+Parameters are spatial functions which are used when 
+creating connections in the Topology module. A parameter may be used as 
+a probability kernel when creating connections or as synaptic 
+parameters (such as weight and delay). This command creates a parameter 
+object which may be combined with other parameter objects using 
+arithmetic operators. The parameter is specified in a dictionary.
+
+
+Parameters:
+
+/type	- parameter type 
+dict 	- dictionary with parameter specifications
+
+
+Author:
+
+Håkon Enger
+
+
+Source:
+
+../../topology/topologymodule.cpp

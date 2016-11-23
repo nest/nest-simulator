@@ -1,0 +1,30 @@
+Name: testsuite::test_corr_det - minimal test of correlation detector
+
+Synopsis:
+
+(test_corr_det) run -> dies if assertion fails
+
+
+Description:
+
+Feeds correlation detector with two hand-crafted spike trains with 
+known correlation. Correlation detector parameters are set in model.
+
+
+Remarks:
+
+The test does not test weighted correlations.
+
+
+Author:
+
+July 2008, Plesser
+
+
+SeeAlso:
+
+correlation_detector
+
+Source:
+
+../../testsuite/unittests/test_corr_det.sli

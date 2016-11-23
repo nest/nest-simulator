@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: testsuite::test_aeif_cond_beta_multisynapse</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: testsuite::test_aeif_cond_beta_multisynapse</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>testsuite::test_aeif_cond_beta_multisynapse - sli script for the aeif multisynapse model with synaptic conductance modeled by a double exponential function</pre>
+<b>Synopsis: </b>
+<pre>(test_aeif_cond_beta_multisynapse) run  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  This test creates a multisynapse neuron with three receptor ports with  <br/>  different synaptic rise times and decay times, and connect it to  <br/>  two excitatory and one inhibitory signals. At the end, the script compares  <br/>  the simulated values of V(t) with an approximate analytical formula, which  <br/>  can be derived as follows:  <br/>  For small excitatory inputs the synaptic current can be approximated as  <br/>  I(t)=g(t)[Vrest-Eex]  <br/>  where g(t) is the synaptic conductance, Vrest is the resting potential and  <br/>  Eex is the excitatory reverse potential (see Roth and van Rossum, p. 144).  <br/>  Using the LIF model, the differential equation for the membrane potential  <br/>  can be written as  <br/>  tau_m dv/dt = -v + G  <br/>  where tau_m = Cm/gL, v = Vm	- Vrest, and G=g(t)(Eex-Vrest)/gL  <br/>  Using a first-order Taylor expansion of v around a generic time t0:  <br/>  v(t0+tau_m)=v(t0)+tau_m dv/dt + O(tau_m^2)  <br/>  and substituting t=t0+tau_m we get  <br/>  v(t)=G(t-tau_m)  <br/>  This approximation is valid for small excitatory inputs if tau_m is small  <br/>  compared to the time scale of variation of G(t). Basically, this happens  <br/>  when the synaptic rise time and decay time are much greater than tau_m.  <br/>  An analogous approximation can be derived for small inhibitory inputs.  <br/>   <br/>  References  <br/>  A. Roth and M.C.W. van Rossum, Modeling synapses, in Computational  <br/>  Modeling Methods for Neuroscientists, MIT Press 2013, Chapter 6, pp. 139-159  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Bruno Golosio  <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>August 2016  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+</ul>
+<b>Source:</b><pre>../../testsuite/unittests/test_aeif_cond_beta_multisynapse.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

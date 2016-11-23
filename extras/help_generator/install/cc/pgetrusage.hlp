@@ -1,0 +1,46 @@
+Name: pgetrusage - Get resource consumption information 
+ Synopsis:  pgetrusage - selfinfo childinfo
+
+Description:
+
+Calls the POSIX getrusage() function to obtain information on 
+memory consumption, context switches, I/O operatin count, etc, 
+for both the main process and its children.  Information is 
+returned in dictionaries.
+
+
+Remarks:
+
+At least under Linux, child processes return 0 for all 
+entries, while the main process seems to produce meaningfull data 
+only for minflt and majflt, i.e., page reclaims and faults.
+
+
+References:
+
+man 2 getrusage
+
+
+Author:
+
+Hans Ekkehard Plesser
+
+
+FirstVersion:
+
+2003-07-29
+
+
+SeeAlso:
+
+pclockspersec
+ptimes
+realtime
+usertime
+systemtime
+tic
+toc
+
+Source:
+
+../../sli/slicontrol.cc

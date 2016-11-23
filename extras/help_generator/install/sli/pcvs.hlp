@@ -1,0 +1,28 @@
+Name: pcvs - Convert object to string (long version)
+
+Examples:
+
+23 pcvs -> (23) 
+{3 2 mul dup} pcvs -> ({3 2 mul dup}) 
+(hello) pcvs -> ((hello))
+
+
+Description:
+
+pcvs converts every object into a string (long version)
+
+
+Author:
+
+R Kupper by copy-and-modify from cvs
+
+
+SeeAlso:
+
+cvs
+print
+pprint
+
+Source:
+
+../../lib/sli/sli-init.sli

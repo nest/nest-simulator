@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: CompileMath</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: CompileMath</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>CompileMath - converts traditional math to postfix notation</pre>
+<b>Synopsis: </b>
+<pre>string CompileMath -> proc  <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>  ( 5 + 3 * 7 )	 CompileMath  exec  --> 26  <br/>  ( 5 * (3 + 7) )   CompileMath  exec  --> 50  <br/>  ( 5 + x * 7 )	 CompileMath	 --> {5 x 7 mul add}  <br/>  ( 3 + exp 5 )	 CompileMath	 --> {3 5 exp add}  <br/>  ( 3 + exp (  x ) ) CompileMath	 --> {3 x exp add}  <br/>  ( 3 + exp ( -x ) ) CompileMath	 --> {3 x neg exp add}  <br/>  ( 3 * exp (sin 2)) CompileMath	 --> {3 2 sin exp mul}  <br/>  ( 3 * exp sin 2 )  CompileMath	 --> {3 2 sin exp mul}  <br/>  (4 *	- 7)	 CompileMath exec   --> -28  <br/>  (2^3)	 CompileMath	 --> {2 3 pow}  <br/>  (5+3*2^3)	 CompileMath	 --> {5 3 2 3 pow mul add}  <br/>  (5+3*2^3-4)	 CompileMath	 --> {5 3 2 3 pow mul add 4 sub}  <br/>  (5+3*2^3/4)	 CompileMath	 --> {5 3 2 3 pow mul 4 div add}  <br/>  (5+3*2^-3)	 CompileMath	 --> {5 3 2 3 neg pow mul add}  <br/>  (4)	 CompileMath	 --> {4}  <br/>  ()	 CompileMath	 --> {}  <br/>  (a=7+3)	 CompileMath	 --> {/a 7 3 add dup rolld Set}  <br/>  (a=7+3;)	 CompileMath	 --> {/a 7 3 add dup rolld Set pop}  <br/>  (a=7+3;6)	 CompileMath	 --> {/a 7 3 add dup rolld Set pop 6}  <br/>  (a=7+4;b=2*exp(-2.0/10)) CompileMath  --> {/a 7 4 add dup rolld Set pop /b 2 2.0 neg 10 div exp mul dup rolld Set}  <br/>  (Function({x+2},'x)) CompileMath	 --> {{x 2 add} /x Function}  <br/>  (f=Function({x+2},'x)) CompileMath   --> {/f {x 2 add} /x Function dup rolld Set}  <br/>  (f={#+2})	 CompileMath   --> {/f {<< >> begin /# Set # 2 add end} dup rolld Set}  <br/>  (f={#1-#2})	 CompileMath   --> {/f {<< >> begin /#2 Set /#1 Set #1 #2 sub end} dup rolld Set}  <br/>  ({#1-#2})	 CompileMath exec --> {<< >> begin /#2 Set /#1 Set #1 #2 sub end}  <br/>  ([4,3,2])	 CompileMath   --> {[4 3 2]}  <br/>  (x=7+[4,3,2]*2)	 CompileMath   --> {/x 7 [ 4 3 2 ] 2 mul add dup rolld Set}  <br/>  ([])	 CompileMath   --> {[]}  <br/>  (<< 'x : [-3, 9]*2, 'y : 7 >>) CompileMath --> {<< /x [ 3 neg 9 ] 2 mul /y 7 >>}  <br/>  (<< >>)	 CompileMath   --> {<< >>}  <br/>  (5+3 // Function( {2*x+1},'x)  ) CompileMath exec  --> 17  <br/>  (1+(5+3 // Function( {2*x+1},'x))  ) CompileMath exec  --> 18  <br/>  ( [ 3, [ 2, 1], -9] // Flatten) CompileMath exec --> [3 2 1 -9]  <br/>  ( [ 3, [ 2, 1], -9] // Flatten // {Select(#,{#<3})}  ) CompileMath exec --> [2 1 -9]  <br/>  (5+3 // {#+1}  ) CompileMath exec --> 9  <br/>  (7 5 // {#1-#2}) CompileMath exec --> 2  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  CompileMath converts a string containing a mathematical expression  <br/>  in traditional infix notation to a procedure using the  <br/>  standard postfix notation of SLI. The algorithm is:  <br/>  1. replace traditonal operators like "-" and "+" with  <br/>  SLI literals like /sub and /add  <br/>  2. decompose the string into tokens using the standard  <br/>  SLI scanner  <br/>  3. compile the sequence of tokens to a SLI postfix expression  <br/>  using the predictive recursive-descent parser described in  <br/>  chapter 2 of the Dragon Book.  <br/>  The result is the unevaluated expression. This enables the user  <br/>  to store the expression for later reevaluation.  <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  string, is the mathematical expression  <br/>  proc, is the unevaluated expression in SLI postfix notation  <br/>  
+</pre>
+<b>Bugs: </b>
+<pre> <br/>  The present version fails for doubles with negative exponents  <br/>  because the lexer just replaces all "-" with /sub. A slightly  <br/>  smarter lexer using a regular expression can solve this problem.  <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  The function can be improved by using a more powerful parsing  <br/>  scheme. The predictive recursive parsing scheme is used here  <br/>  as an educational example.  <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  [1] The Dragon Book, 1988, chapter 2 
+</pre>
+<b>Author: </b>
+<pre>Diesmann  <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>090117  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../sli/Inline.html">Inline</a></li>
+    <li><a href="../sli/ExecMath.html">ExecMath</a></li>
+    <li><a href="../sli/cst.html">cst</a></li>
+    <li><a href="../sli/cvx.html">cvx</a></li>
+    <li><a href="../cc/exec.html">exec</a></li>
+</ul>
+<b>Source:</b><pre>../../lib/sli/mathematica.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: hh_psc_alpha</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: hh_psc_alpha</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>hh_psc_alpha - Hodgkin Huxley neuron model.</pre>
+<b>Description: </b>
+<pre> <br/>   <br/>  hh_psc_alpha is an implementation of a spiking neuron using the Hodkin-Huxley  <br/>  formalism.  <br/>   <br/>  (1) Post-syaptic currents  <br/>  Incoming spike events induce a post-synaptic change of current modelled  <br/>  by an alpha function. The alpha function is normalised such that an event of  <br/>  weight 1.0 results in a peak current of 1 pA.  <br/>   <br/>   <br/>  (2) Spike Detection  <br/>  Spike detection is done by a combined threshold-and-local-maximum search: if  <br/>  there is a local maximum above a certain threshold of the membrane potential,  <br/>  it is considered a spike.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>   <br/>  The following parameters can be set in the status dictionary.  <br/>   <br/>  V_m	 double	- Membrane potential in mV  <br/>  E_L	 double	- Resting membrane potential in mV.  <br/>  g_L	 double	- Leak conductance in nS.  <br/>  C_m	 double	- Capacity of the membrane in pF.  <br/>  tau_ex	 double	- Rise time of the excitatory synaptic alpha function in ms.  <br/>  tau_in	 double	- Rise time of the inhibitory synaptic alpha function in ms.  <br/>  E_Na	 double	- Sodium reversal potential in mV.  <br/>  g_Na	 double	- Sodium peak conductance in nS.  <br/>  E_K	 double	- Potassium reversal potential in mV.  <br/>  g_K	 double	- Potassium peak conductance in nS.  <br/>  Act_m	 double	- Activation variable m  <br/>  Act_h	 double	- Activation variable h  <br/>  Inact_n   double	- Inactivation variable n  <br/>  I_e	 double	- Constant external input current in pA.  <br/>   <br/>  Problems/Todo:  <br/>   <br/>  better spike detection  <br/>  initial wavelet/spike at simulation onset  <br/>   <br/>  
+</pre>
+<b>Require: </b>
+<pre>HAVE_GSL  <br/>  
+</pre>
+<b>Receives: </b>
+<pre>SpikeEvent, CurrentEvent, DataLoggingRequest  <br/>   <br/>  Authors: Schrader  <br/>  
+</pre>
+<b>Sends: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>   <br/>  Spiking Neuron Models:  <br/>  Single Neurons, Populations, Plasticity  <br/>  Wulfram Gerstner, Werner Kistler,  Cambridge University Press  <br/>   <br/>  Theoretical Neuroscience:  <br/>  Computational and Mathematical Modeling of Neural Systems  <br/>  Peter Dayan, L. F. Abbott, MIT Press (parameters taken from here)  <br/>   <br/>  Hodgkin, A. L. and Huxley, A. F.,  <br/>  A Quantitative Description of Membrane Current  <br/>  and Its Application to Conduction and Excitation in Nerve,  <br/>  Journal of Physiology, 117, 500-544 (1952)  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/hh_cond_exp_traub.html">hh_cond_exp_traub</a></li>
+</ul>
+<b>Source:</b><pre>../../models/hh_psc_alpha.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

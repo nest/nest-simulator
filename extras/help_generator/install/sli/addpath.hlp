@@ -1,0 +1,53 @@
+Name: addpath - add a path to SLISearchPath
+
+Synopsis:
+
+string addpath ->	-
+
+
+Examples:
+
+( /MySliRoutines) addpath --> sli files will additionally be looked 
+for in  /MySliRoutines now.
+
+
+Description:
+
+The new path will be appended to SLISearchPathvariable. There is no 
+check if path really exists.
+
+
+Parameters:
+
+string is path's name.
+
+
+Bugs:
+
+
+
+
+Remarks:
+
+Commented Hehl April 21, 1999
+
+
+Author:
+
+Gewaltig, Diesmann
+
+
+FirstVersion:
+
+??
+
+
+SeeAlso:
+
+searchfile
+path
+setpath
+
+Source:
+
+../../lib/sli/sli-init.sli

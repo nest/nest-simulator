@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: correlospinmatrix_detector</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: correlospinmatrix_detector</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>correlospinmatrix_detector - Device for measuring the covariance matrix  <br/>  from several inputs</pre>
+<b>Description: </b>
+<pre>The correlospinmatrix_detector is a recording device. It is used  <br/>  to record correlations from binary neurons from several binary sources and  <br/>  calculates the raw auto and cross correlation binned to bins of duration  <br/>  delta_tau. The result can be obtained via GetStatus under the key  <br/>  /count_covariance. The result is a tensor of rank 3 of size  <br/>  N_channels x N_channels, with each entry C_ij being a vector of size  <br/>  2*tau_max/delta_tau + 1 containing the histogram for the different time lags.  <br/>   <br/>  The bins are centered around the time difference they represent, and are  <br/>  left-closed and right-open in the lower triangular part of the matrix. On the  <br/>  diagonal and in the upper triangular part the intervals are left-open and  <br/>  right-closed. This ensures proper counting of events at the border of bins.  <br/>   <br/>  The correlospinmatrix_detector has a variable number of inputs which can be  <br/>  set via SetStatus under the key N_channels. All incoming connections to a  <br/>  specified receptor will be pooled.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  Tstart	 double  	- Time when to start counting events. This time should  <br/>  be set to at least start + tau_max in order to avoid  <br/>  edge effects of the correlation counts.  <br/>  Tstop	 double  	- Time when to stop counting events. This time should be  <br/>  set to at most Tsim	- tau_max, where Tsim is the  <br/>  duration of simulation, in order to avoid edge effects  <br/>  of the correlation counts.  <br/>  delta_tau  double  	- bin width in ms. This has to be a multiple of the  <br/>  resolution.  <br/>  tau_max   double  	- one-sided width in ms. In the lower triangular part  <br/>  events with differences in [0, tau_max+delta_tau/2)  <br/>  are counted. On the diagonal and in the upper  <br/>  triangular part events with differences in (0,  <br/>  tau_max+delta_tau/2]  <br/>  N_channels long		- The number of inputs to correlate. This defines the  <br/>  range of receptor_type. Default is 1.  <br/>   <br/>  count_covariance matrix of long vectors, read-only  	- raw, auto/cross  <br/>  correlation counts  <br/>   <br/>  
+</pre>
+<b>Receives: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre>This recorder does not record to file, screen or memory in the usual  <br/>  sense. The result must be obtained by a call to GetStatus. Setting either  <br/>  N_channels, Tstart, Tstop, tau_max or delta_tau clears count_covariance.  <br/>   <br/>  Example:  <br/>   <br/>  See also pynest/examples/correlospinmatrix_detector_two_neuron.py  <br/>  for a script reproducing a setting studied in Fig 1 of Grinzburg &  <br/>  Sompolinsky (1994) PRE 50(4) p. 3171.  <br/>   <br/>  See also examples/nest/correlospinmatrix_detector.sli for a basic  <br/>  example in sli.  <br/>   <br/>  /sg1 /spike_generator Create def  <br/>  /sg2 /spike_generator Create def  <br/>  /sg3 /spike_generator Create def  <br/>   <br/>  /csd /correlospinmatrix_detector Create def  <br/>   <br/>  csd << /N_channels 3 /tau_max 10. /delta_tau 1.0 >> SetStatus  <br/>   <br/>  sg1 << /spike_times [10. 10. 16.] >> SetStatus  <br/>  sg2 << /spike_times [15. 15. 20.] >> SetStatus  <br/>   <br/>   <br/>  % one final event needed so that last down transition will be detected  <br/>  sg3 << /spike_times [25.] >> SetStatus  <br/>   <br/>   <br/>  sg1 csd << /receptor_type 0 >> Connect  <br/>  sg2 csd << /receptor_type 1 >> Connect  <br/>  sg3 csd << /receptor_type 2 >> Connect  <br/>   <br/>  100. Simulate  <br/>   <br/>  
+</pre>
+<b>Availability: </b>
+<pre>NEST 
+</pre>
+<b>Author: </b>
+<pre>Moritz Helias  <br/>   <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>2015/08/25  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/correlation_detector.html">correlation_detector</a></li>
+    <li><a href="../cc/correlomatrix_detector.html">correlomatrix_detector</a></li>
+    <li><a href="../cc/spike_detector.html">spike_detector</a></li>
+    <li><a href="../cc/Device.html">Device</a></li>
+    <li><a href="../cc/PseudoRecordingDevice.html">PseudoRecordingDevice</a></li>
+</ul>
+<b>Source:</b><pre>../../models/correlospinmatrix_detector.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

@@ -1,0 +1,28 @@
+Name: testsuite::ticket-386 - ensure all models supporting multimeter work at minimal interval
+
+Synopsis:
+
+(ticket-386.sli) run -> dies if test code crashes
+
+
+Description:
+
+Due to wrong use of calibrate(), recording from ht_neuron with multimeter 
+with interval equal to resolution crashed. This test briefly simulates 
+nets with each model supporting multimeter recorded at interval equal to 
+resolution.
+
+
+Author:
+
+Plesser
+
+
+FirstVersion:
+
+2010-10-03
+
+
+Source:
+
+../../testsuite/regressiontests/ticket-386.sli

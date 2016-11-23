@@ -1,0 +1,24 @@
+Name: testsuite::test_gap_junctions_mpi - Test gap junction functionality in parallel
+
+Synopsis:
+
+(test_gap_junctions_mpi) run ->	-
+
+
+Description:
+
+test_gap_junctions_mpi.sli is an overall test of the hh_psc_alpha_gap model connected 
+by gap_junction connection. The test checks if the gap junction functionality 
+works in parallel. 
+Author:  Jan Hahne, Hans Ekkehard Plesser
+
+
+SeeAlso:
+
+testsuite::test_gap_junction
+hh_psc_alpha_gap
+gap_junction
+
+Source:
+
+../../testsuite/mpitests/test_gap_junctions_mpi.sli

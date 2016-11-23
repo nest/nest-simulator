@@ -1,0 +1,42 @@
+Name: cvgidcollection - Create a container of global ids.
+
+Synopsis:
+
+list_of_gids	 cvgidcollection -> gidcollection 
+first_gid   last_gid cvgidcollection -> gidcollection
+
+
+Description:
+
+This function creates a gidcollection object, which is a unified 
+representation for multiple global ids of neurons or devices. To 
+save memory in the case of contiguous ranges of GIDs, it is 
+possible to just use the first and last index of the range to 
+initialize the gidcollection.
+
+
+Parameters:
+
+list_of_gids  	- an array or intvector of global ids, or a gidcollection 
+first_gid		- an integer definig the first GID of the range 
+last_gid		- an integer definig the last GID of the range
+
+
+Author:
+
+Jochen Martin Eppler
+
+
+FirstVersion:
+
+April 2014
+
+
+SeeAlso:
+
+cv_iv
+Connect
+
+Source:
+
+../../lib/sli/nest-init.sli

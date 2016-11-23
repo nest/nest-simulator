@@ -1,0 +1,35 @@
+Name: rdevdict::lognormal - lognormal random deviate generator
+
+Description:
+
+Generates lognormally distributed random numbers. 
+p(x) = 1 / (x * sigma * \sqrt{2 pi}) * exp (-(ln(x)-mu)^2 / 2 sigma^2)
+
+
+Parameters:
+
+mu 	- mean of the underlying normal distribution (default: 0.0) 
+sigma	- standard deviation of the underlying normal distribution (default: 1.0)
+
+
+Remarks:
+
+Mean and variance of the lognormal numbers are given by 
+E[X] = exp(mu + sigma^2/2) 
+Var[X] = (exp(sigma^2)	- 1) * E[X]^2
+
+
+Author:
+
+Hans Ekkehard Plesser
+
+
+SeeAlso:
+
+CreateRDV
+RandomArray
+rdevdict
+
+Source:
+
+../../librandom/lognormal_randomdev.h

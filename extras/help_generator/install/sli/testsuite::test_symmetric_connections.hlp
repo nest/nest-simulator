@@ -1,0 +1,26 @@
+Name: testsuite::test_symmetric_connections - Tests that the functionality to create 
+ symmetric connections works properly.
+
+Synopsis:
+
+(test_symmetric_connections) run -> NEST exits if test fails
+
+
+Description:
+
+This test ensures that the functionality to create symmetric connections 
+works properly. 
+In more detail the test ensures that 
+	- the symmetric flag works properly with one-to-one connection rule 
+	- the usage of the symmetric flag with any other connections throws 
+an NotImplemented exception
+
+
+Author:
+
+Jan Hahne, 2016-04-22
+
+
+Source:
+
+../../testsuite/unittests/test_symmetric_connections.sli

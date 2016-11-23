@@ -1,0 +1,61 @@
+Name: start - interpreter start symbol
+
+Synopsis:
+
+- start ->	-
+
+
+Examples:
+
+
+
+
+Description:
+
+The full featured life of the interpreter begins after 
+boot-strapping with sli-init.sli by pushing the start symbol. 
+When no commandline arguments are present the start symbol 
+prepares for an interactive session in the shell with the 
+help of the executive command. When command line arguments 
+are present a non-interactive session is assumed and the start 
+symbol prepares for recognition of these 
+arguments with the help of the :commandline command. 
+When executing files and an error is raised that is not 
+caught by the script, quit with the exit code scripterror, which 
+is defined in the exitcodes dictionary in statusdict.
+
+
+Parameters:
+
+start does not take any arguments. It evaluates the length 
+of argv which resides in the statusdict.
+
+
+Bugs:
+
+
+
+
+Remarks:
+
+Commented Diesmann July 8, 2000
+
+
+Author:
+
+Gewaltig, Diesmann
+
+
+FirstVersion:
+
+similar code appeared in sli-1
+
+
+SeeAlso:
+
+executive
+statusdict
+
+Source:
+
+../../lib/sli/sli-init.sli

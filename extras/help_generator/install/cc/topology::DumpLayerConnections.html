@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: topology::DumpLayerConnections</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: topology::DumpLayerConnections</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>topology::DumpLayerConnections - prints a list of the connections of the  <br/>  nodes in the layer to file</pre>
+<b>Synopsis: </b>
+<pre>ostream source_layer_gid synapse_model DumpLayerConnections ->  <br/>  ostream  <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>   <br/>  topology using  <br/>  ...  <br/>  (out.cnn) (w) file layer_gid /static_synapse PrintLayerConnections close  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  Dumps information about all connections of the given type having their source  <br/>  in the given layer to the given output stream. The data format is one line per  <br/>  connection as follows:  <br/>   <br/>  source_gid target_gid weight delay displacement[x,y,z]  <br/>   <br/>  where displacement are up to three coordinates of the vector from the source  <br/>  to the target node. If targets do not have positions (eg. spike detectors  <br/>  outside any layer), NaN is written for each displacement coordinate.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  ostream		- open outputstream  <br/>  source_layer_gid	- topology layer  <br/>  synapse_model  	- synapse model (literal)  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  For distributed simulations  <br/> 	- this function will dump the connections with local targets only.  <br/> 	- the user is responsible for writing to a different output stream (file)  <br/>  on each MPI process.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Kittel Austvoll, Hans Ekkehard Plesser  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/topology::DumpLayerNodes.html">topology::DumpLayerNodes</a></li>
+</ul>
+<b>Source:</b><pre>../../topology/topologymodule.cpp</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

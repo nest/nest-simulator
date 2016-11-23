@@ -1,0 +1,45 @@
+Name: OptionsDictionary - Dictionary for global options
+
+Synopsis:
+
+none
+
+
+Description:
+
+This dictionary contains the global option for 
+certain functions. Within the dictionary each 
+function name is associated with a dictionary 
+which contains the options for that function. 
+Note that the accessibility, i.e. the dicitonary 
+in which a function is defined is not accounted for. 
+It is suggested that you use a C++-like notation to indicate the 
+availability of the function, if the function is defined in some 
+"namespace" dictionary. 
+For example: "arr::Mean".
+
+
+Diagnostics:
+
+None.
+
+
+Author:
+
+M. O. Gewaltig
+
+
+SeeAlso:
+
+GetOption
+GetOptions
+ShowOptions
+SetOptions
+Options
+ResetOptions
+SaveOptions
+RestoreOptions
+
+Source:
+
+../../lib/sli/mathematica.sli

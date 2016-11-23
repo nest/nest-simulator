@@ -1,0 +1,88 @@
+Name: validate - Check if a function is consistent with all its examples
+
+Synopsis:
+
+/literal -> boolean
+
+
+Examples:
+
+/Part validate	 --> true 
+%   /validate validate --> true   % infinite recursion
+
+
+Description:
+
+The function validate checks whether the examples in the documentation 
+of the function specified by the literal argument work as documented. 
+Every example in the example section is expected to result in a boolean 
+value. validate only returns true if the result of all examples is true. 
+In order to make the documentation of examples more readable validate 
+supports a special (infix) syntax for the examples: 
+a1 ... an --> b1 ...bm 
+is translated to 
+a b eq 
+assuming that the sequence ai collapses to a and the sequence bj to b. 
+Thus, --> has delayed execution time and is only processed after all 
+expressions in the example section have been executed once. The --> 
+expressions can be freely mixed with regular SLI code boolean 
+expressions like 
+a b eq 
+The documentation of function Part contains several examples. 
+Before a function can be validated it needs to be registered with the 
+help system. This is required because in SLI several functions can be 
+defined in the same source file. Thus, only after processing the source 
+file SLI is aware of the functions implemented by this file. The help 
+system of SLI stores the path to the implementing file with the 
+documentation of each function. Therefore, SLI can lookup the source 
+code for each function without searching. 
+The typical workflow in test driven programming in SLI is as follows: 
+1. create a new file myfunctions.sli 
+2. write documentation including examples for one or 
+more functions, e.g. /myfunc1 
+3. run make installcheck 
+4. implement /myfunc1 
+5. call /myfunc1 validate 
+6. continue with 4 (not 3) until validate is successful 
+The algorithm of function validate is as follows: 
+1. find the help file (.hlp) for the specified function. 
+2. obtain the source file implementing the function 
+from the help file 
+3. update the help file of the function 
+4. construct target path for test files 
+5. write some header 
+6. copy the invariants 
+7. write some footer 
+8. run the test file
+
+
+Remarks:
+
+The function is experimental. It constitutes a first attempt to 
+provide support for test driven programming in NEST. A variant of 
+this function could easily print a detailed report of the test results 
+and the intermediate generation of a test script is not necessary. 
+In the present implementation validate updates the plain text help file 
+(.hlp) but not the hypertext help (.html).
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+080503
+
+
+SeeAlso:
+
+EvaluateLiteralInfixes
+-->
+Part
+helpdesk
+
+Source:
+
+../../lib/sli/helpinit.sli

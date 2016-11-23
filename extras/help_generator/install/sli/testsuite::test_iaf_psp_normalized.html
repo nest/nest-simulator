@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: testsuite::test_iaf_psp_normalized</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: testsuite::test_iaf_psp_normalized</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>testsuite::test_iaf_psp_normalized - check if PSP can be normalized</pre>
+<b>Synopsis: </b>
+<pre>(test_iaf_psp_normalized) run -> compare response with desired outcome  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>   <br/>  The script computes the peak location of the PSP analytically for a  <br/>  neuron model with an alpha-shaped post-synaptic current (PSC) [1]. In case  <br/>  the GNU Scientific Library (GSL) is not present the peak location is  <br/>  found by searching for the root of the derivative of the PSP. We then  <br/>  compute the peak value for a PSC with unit amplitude and show how the  <br/>  synaptic weight can be adjusted to cause a PSP of a specific  <br/>  amplitiude. Finally, we check whether the simulation indeed generates  <br/>  a PSP of the desired amplitude.  <br/>   <br/>  In application code the test for the availability of the GSL is not  <br/>  necessary because NEST has a built in version of the LambertWm1 which  <br/>  automatically replaces the GSL function if required. This removes the  <br/>  need to specify the derivative of the function of interest, here the  <br/>  PSP, in application code.  A further alternative is used in  <br/>  test_lambertw where knowledge of the range of values of the  <br/>  non-principal branch of the Lambert-W function [-1,-\infty) is  <br/>  exploited to find the inverse of x*exp(x) by bisectioning.  <br/>   <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear  <br/>  systems with applications to neuronal modeling. Biologial Cybernetics  <br/>  81:381-402.  <br/>  [2] Galassi, M., Davies, J., Theiler, J., Gough, B., Jungman, G., Booth, M.,  <br/>  & Rossi, F. (2006). GNU Scientific Library Reference Manual (2nd Ed.).  <br/>  Network Theory Limited.  <br/>   <br/>  Author:  July 2009, Diesmann  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../sli/testsuite::test_iaf_psp_peak.html">testsuite::test_iaf_psp_peak</a></li>
+    <li><a href="../sli/testsuite::test_iaf_psp.html">testsuite::test_iaf_psp</a></li>
+    <li><a href="../sli/testsuite::test_lambertw.html">testsuite::test_lambertw</a></li>
+    <li><a href="../sli/LambertWm1.html">LambertWm1</a></li>
+</ul>
+<b>Source:</b><pre>../../testsuite/unittests/test_iaf_psp_normalized.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

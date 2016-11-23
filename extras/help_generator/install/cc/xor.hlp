@@ -1,0 +1,30 @@
+Name: xor - logical xor operator.
+
+Synopsis:
+
+bool1 bool2 xor -> bool
+
+
+Examples:
+
+true  false xor -> true 
+true  true  xor -> false 
+false false xor -> false
+
+
+Description:
+
+For booleans, xor returns true, if either, 
+but not both of the arguments are true and false 
+otherwise.
+
+
+SeeAlso:
+
+and
+or
+not
+
+Source:
+
+../../sli/slimath.cc

@@ -1,0 +1,24 @@
+Name: testsuite::ticket-481 - Ensure that poisson_generator_ps delivers spikes to more than one node
+
+Synopsis:
+
+(ticket-481) run -> NEST exits if test fails
+
+
+Description:
+
+Ensure that poisson_generator_ps delivers spikes to more than one node. 
+Peiran Gao reported to nest_bugs that poisson_generator_ps. 
+First analysis indicates that spikes are lost if poisson_generator_ps is connected 
+to target neurons using different synapse models, even if those are just copies of 
+the same underlying class.
+
+
+Author:
+
+Hans Ekkehard Plesser, 2010-11-03; based on original reproducer by Peiran Gao
+
+
+Source:
+
+../../testsuite/regressiontests/ticket-481.sli

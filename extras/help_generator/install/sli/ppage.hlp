@@ -1,0 +1,37 @@
+Name: ppage - print a file to cout in chunks of 20 lines.
+
+Synopsis:
+
+ifstream   ppage ->	- 
+(filename) ppage ->	-
+
+
+Description:
+
+This is a "poor man's pager" implemented in SLI. It can be used when 
+no external pager program is available.
+
+
+Diagnostics:
+
+If a filename is given and does not exist, /FileOpenError is raised. 
+If an ifstream is given, it will be closed by ppage.
+
+
+Author:
+
+Marc-Oliver Gewaltig, R Kupper
+
+
+FirstVersion:
+
+27-sep-2007
+
+
+SeeAlso:
+
+page
+
+Source:
+
+../../lib/sli/helpinit.sli

@@ -1,0 +1,24 @@
+Name: GetMin - get minimal element
+
+Synopsis:
+
+array GetMin -> int
+
+
+Description:
+
+returns the minimum value in an array of ints.
+
+
+Remarks:
+
+works only for integer arrays.
+
+
+SeeAlso:
+
+GetMax
+
+Source:
+
+../../sli/sliarray.cc

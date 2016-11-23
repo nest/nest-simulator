@@ -1,0 +1,39 @@
+Name: AppendTo - Append an object to a container
+
+Synopsis:
+
+any literal AppendTo -> --
+
+
+Examples:
+
+/j [4 5] def  7 /j AppendTo j --> [4 5 7]
+
+
+Description:
+
+Assignment like AddTo. Compared to Mathematica the order of 
+arguments is reversed here, because its more readable to 
+have the l-value close to the assignment operator, 
+like in ... // Set[x,#]& . 
+Allows for optimization of code.
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+8.5.01
+
+
+SeeAlso:
+
+Set
+JoinTo
+
+Source:
+
+../../lib/sli/mathematica.sli

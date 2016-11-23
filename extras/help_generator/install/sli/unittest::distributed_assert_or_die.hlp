@@ -1,0 +1,57 @@
+Name: unittest::distributed_assert_or_die - Checks whether code is independent of number of number of jobs
+
+Synopsis:
+
+array proc proc distributed_assert_or_die ->	- 
+array proc distributed_assert_or_die ->	-
+
+
+Description:
+
+The array specifies a list of numbers of 
+jobs. distributed_assert_or_die executes the procedure specified as 
+the second argument in parallel for all of the numbers of jobs given 
+in the arrays. This means that distributed_assert_or_die carries out 
+as many distributed simulations as there are entries in the array. 
+In each of the simulations a single job is expected to return a 
+value on the stack. It is of no importance which job returns the 
+value.  After completion of all simulations distributed_assert_or_die 
+compares the results of all the simulations using the second proc 
+as the test function. If no second proc is given distributed_assert_or_die 
+requires that all results are "true". 
+A variant of this function  distributed_invariant_assert_or_die 
+requires all results to be identical. 
+distributed_assert_or_die assumes that it is called from a file and 
+that this file contains only a single call of 
+distributed_assert_or_die because all distributed instances of the 
+simulator will rerun this file.  In addition distributed_assert_or_die 
+assumes that the test file is run with a version of nest capable of 
+spawning further instances of nest.  This can be assured by using 
+nest_indirect instead of the nest binary directly. The test file 
+should not make the call of distributed_assert_or_die or the 
+termination of the test file depending on the status flags is_mpi or 
+have_mpi. This would interfere with the proper functioning of 
+distributed_assert_or_die and the status flags have already been 
+checked by nest_indirect at this point.
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+090715
+
+
+SeeAlso:
+
+unittest::distributed_invariant_assert_or_die
+nest_indirect
+unittest::mpirun_self
+unittest::assert_or_die
+
+Source:
+
+../../lib/sli/unittest.sli

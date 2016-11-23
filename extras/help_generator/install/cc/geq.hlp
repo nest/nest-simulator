@@ -1,0 +1,25 @@
+Name: geq - Test if one object is greater or equal than another object
+
+Synopsis:
+
+any1 any2 geq -> bool
+
+
+Description:
+
+geq returns true if any1 >= any2 and false 
+otherwise. 
+geq can only be applied to numbers and strings.
+
+
+SeeAlso:
+
+eq
+neq
+gt
+lt
+leq
+
+Source:
+
+../../sli/slimath.cc

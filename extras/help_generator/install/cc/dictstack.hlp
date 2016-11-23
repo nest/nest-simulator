@@ -1,0 +1,25 @@
+Name: dictstack - return current dictionary stack as array
+
+Synopsis:
+
+dictstack -> array
+
+
+Description:
+
+Returns an array whose entries are references to the 
+dictionaries on the dictionary stack. The dictionaries are stored from 
+bottom to top, such that the first array element refers to the bottom of 
+the stack and the last array element to the top.
+
+
+SeeAlso:
+
+currentdict
+countdictstack
+cleardictstack
+whos
+
+Source:
+
+../../sli/slidict.cc

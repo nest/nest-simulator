@@ -1,0 +1,21 @@
+Name: testsuite::issue-105 - Ensure that min_delay and max_delay are set correctly
+
+Synopsis:
+
+(issue-105) run -> NEST exits if test fails
+
+
+Description:
+
+This ticket ensures that NEST sets min_delay and max_delay correctly also for 
+delays that are not multiples of the resolution.
+
+
+Author:
+
+Hans E Plesser, 2015-12-01 based on material by Jafet Diaz
+
+
+Source:
+
+../../testsuite/regressiontests/issue-105.sli

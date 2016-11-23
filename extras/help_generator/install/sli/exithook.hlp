@@ -1,0 +1,27 @@
+Name: exithook - Procedure executed if the executive mode is left.
+
+Description:
+
+The task of exithook is to handle accidental exits from the 
+interactive executive session. The most common reason is 
+the use of 'exit' when the user wants to quit the interpreter. 
+By default, exithook will issue a message and restart the executive 
+mode. 
+If you would like to quit the interpreter, put the following code 
+into your .nestrc file 
+/exithook {quit} def 
+For debugging it is often useful to be able to access the fallback 
+input which has no prompt. For this, put the following code to your 
+.nestrc file 
+/exithook {} def
+
+
+SeeAlso:
+
+quit
+exit
+executive
+
+Source:
+
+../../lib/sli/sli-init.sli

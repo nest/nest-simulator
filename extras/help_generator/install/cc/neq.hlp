@@ -1,0 +1,28 @@
+Name: neq - Test two objects for inequality
+
+Synopsis:
+
+any1 any2 neq -> bool
+
+
+Description:
+
+neq returns true if the two arguments are not equal and false 
+otherwise. 
+neq can also be applied to container objecs like arrays, procedures, strings, 
+and dictionaries: 
+* two arrays or strings are equal, if all their components are equal. 
+* two dictionaries are equal, if they represent the same object.
+
+
+SeeAlso:
+
+eq
+gt
+lt
+leq
+geq
+
+Source:
+
+../../sli/slimath.cc

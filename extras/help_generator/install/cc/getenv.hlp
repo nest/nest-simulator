@@ -1,0 +1,50 @@
+Name: getenv - evaluates if a string is an evironment variable
+
+Synopsis:
+
+string getenv -> path true 
+string getenv -> false
+
+
+Examples:
+
+SLI ] (HOME) getenv 
+SLI [2] pstack 
+true 
+(/home/gewaltig) 
+SLI ] (NONEXISTING) getenv = 
+false 
+SLI ] (NEST_DATA_DIR) getenv 
+SLI [2] { (Using root path: )  =only = } 
+SLI [3] { (Warning: $NEST_DATA_DIR undefined) =} 
+SLI [4] ifelse 
+Using root path: /home/gewaltig/nest/release/release 
+SLI ] (/home) getenv 
+false
+
+
+Description:
+
+getenv checks if the string is an environment variable. If 
+this is the case the path of the variable and true is pushed on the stack, 
+otherwise a false is pushed on the stack and the string is lost.
+
+
+Remarks:
+
+if getenv is used with the wrong argument (e.g. integer), 
+the SLI Session is terminated
+
+
+Author:
+
+docu by Marc Oliver Gewaltig and Sirko Straube
+
+
+SeeAlso:
+
+environment
+
+Source:
+
+../../sli/slistartup.cc

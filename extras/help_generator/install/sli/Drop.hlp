@@ -1,0 +1,58 @@
+Name: Drop - remove element sequences from an array
+
+Synopsis:
+
+array  n Drop	 remove the first n elements 
+array -n Drop	 remove the last n elements 
+array [n] Drop	 remove the nth element 
+array [n1 n2] Drop	 remove elements n1 through n2 
+array [n1 n2 s] Drop	 remove elements n1 through n2 in steps of s 
+array {[seq1]...[seqn]} Drop   return a nested list in which elements 
+specified by seqi are removed at level i in list.
+
+
+Examples:
+
+[4 9 -7 3 2 11] 2 Drop   --> [-7 3 2 11] 
+[4 9 -7 3 2 11] -2 Drop   --> [4 9 -7 3] 
+[1 2 3 4 5] [-2] Drop	 --> [1 2 3 5] 
+[1 2 3 4 5] [1 -2] Drop   --> [5] 
+[1 2 3 4 5] [1 -2 2] Drop --> [2 4 5] 
+[1 2 3 4 5] [1 -1 2] Drop --> [2 4] 
+[[-9 -12] [6 7]] {[2] [1]} Drop --> [[-12]]
+
+
+Bugs:
+
+The list of sequences is represented by a procedure. This has delayed 
+evaluation which may cause undesired effects. Should be replaced in a 
+future versionby a new container type for parameter lists of undefined 
+length. Candidate delimiters are <...> with cva as the only access method. 
+Just using [...] as the container is ambiguous.
+
+
+References:
+
+[1] The Mathematica Book V4.0 "Take"
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+2007.11.28
+
+
+SeeAlso:
+
+Take
+Part
+MathematicaToSliIndex
+erase
+
+Source:
+
+../../lib/sli/mathematica.sli

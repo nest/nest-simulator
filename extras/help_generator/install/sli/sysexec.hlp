@@ -1,0 +1,83 @@
+Name: sysexec - Transfer control to a UNIX-command
+
+Synopsis:
+
+CommandArray  sysexec ->	- 
+CommandString sysexec ->	-
+
+
+Examples:
+
+These two calls are equivalent: 
+1. [ (ls) (-l) (/home/kupper) ] sysexec 
+2. (ls -l /home/kupper) sysexec 
+This call is NOT equivalent to the above (see remarks below): 
+3. [ (ls) (-l /home/kupper) ] sysexec 
+4. {(ls -l /home/kupper) sysexec} spoon 
+Look at the program environment of the new command: 
+5. {(printenv) sysexec} spoon 
+It was inherited from the SLI process.
+
+
+Description:
+
+Transfer control to a UNIX-Command. The command may be 
+executed in a specified program environment. The command 
+may be given either as a string containing the command 
+name and all options, or as an array of strings, 
+specifying the command name and every single option. 
+Alternatives: Functions sysexec_a for arrays, sysexec_s 
+for strings (both undocumented) -> behaviour and synopsis 
+are the same.
+
+
+Parameters:
+
+In : CommandArray 
+(array of strings): An array containing the command to execute. 
+The first element is interpreted as the 
+command, the remaining elements as it's 
+parameters. 
+CommandString 
+(string)	 : A standard UNIX command string, containing 
+the command name and it's parameters to 
+execute. 
+Out: -whatever will be will be-
+
+
+Bugs:
+
+Will break down if given an array containing non-strings. 
+This call is NOT quivalent to example 3, as one should expect: 
+(ls "-l /home/kupper") sysexec. 
+The reason is the breakup-command not recognizing ".
+
+
+Remarks:
+
+A call to sysexec WILL NOT RETURN, as control is literally transfered to 
+the UNIX command. 
+Given an array of strings, each element is treated as -one- parameter. 
+That's why example 3. is equivalent to the UNIX-call 
+ls "-l /home/kupper".
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+Mar 18 1999
+
+
+SeeAlso:
+
+spoon
+breakup
+environment
+
+Source:
+
+../../lib/sli/processes.sli

@@ -1,0 +1,79 @@
+Name: testsuite::test_iaf_dc_aligned - sli script for test of iaf_neuron resolution independence
+
+Synopsis:
+
+(test_iaf_dc_aligned) run -> compare response with reference data
+
+
+Description:
+
+test_iaf_dc_aligned.sli is a modified version of test_iaf_dc. Here, 
+we discuss and remove one of the problems of test_iaf_dc leading to 
+simulation results not independent of the computation step size 
+(resolution). The remaining flaw is corrected in the follow up script 
+test_iaf_dc_delay.sli . 
+The expected output is documented and briefly commented at the end of 
+the script. 
+The intention of this script is that the current starts to affect the 
+neuron (is present from) at time t=3ms. By default, the delay of the 
+connection between DC generator and neuron assumes the minimal value 
+of 1 computation step h.  Therefore, the time stamp of the emitted 
+current event needs to be 3ms	- h. according to the definitions of 
+the timing scheme, the DC generator consequently needs to emit the 
+appropriate event in the step 3ms	- 2h -> 3ms	- h. 
+The property /start of a device specifies in ms the earliest time at 
+which the device emits an event. This enables resolution independent 
+specification of the emission time because at any computation step 
+size h the device can be activated in the step start	- h -> 
+start. The only requirement being that start	- h is a time larger or 
+equal to the current time.  Otherwise the device cannot fulfill the 
+request. The additional property /origin enables a shift of the 
+device's time axis, see the documentation of devices for details. If 
+resolution independence is desired origin should be specified in ms, 
+often 0. is a useful value.  The above considerations result in the 
+following settings for the DC generator device: 
+/origin 0.	 % in ms 
+/start arrival h sub   % in ms 
+It should be pointed out that not specifying the delay of a 
+connection in the .sli script, like it is done here 
+dc_gen neuron Connect ; 
+results in a simulation script that is not independent of the 
+computation step size. This is because at the time of creation of the 
+connection the minimal delay (1 computation step) is 
+assumed. Therefore we have to compensate for this dependency in the 
+start time of the DC generator as described above.  The alternative 
+approach would be to specify a delay between the DC generator and the 
+Neuron larger or equal to the largest computation time step to be 
+used. This approach is investigated in 
+test_iaf_dc_aligned.sli
+
+
+Remarks:
+
+In earlier versions /start was defined to specify the time step t at 
+which the device becomes activated, which is the transition t -> t+h. 
+On the basis of this definition, the correct code was: 
+/start  arrival 2 h mul sub	 % in ms 
+During the development of this script a conversion problem of device 
+start time expressed in ms was observed: 
+dc_gen << /start  1.8  >> SetStatus 
+dc_gen GetStatus /start get ==   --> 1.800000e+00 
+dc_gen << /start  2.8  >> SetStatus 
+dc_gen GetStatus /start get ==   --> 2.799000e+00 
+For the purpose of this script, the problem was temporarily fixed by 
+adding an epsilon 0.0001 
+/start arrival 2 h mul sub 0.0001 add  % in ms 
+The problem was fixed by Gewaltig 3.3.2004 and the code of this test 
+script changed accordingly, Diesmann . 
+Author:  February 2004, Diesmann, Gewaltig, Plesser
+
+
+SeeAlso:
+
+testsuite::test_iaf_dc
+testsuite::test_iaf_dc_aligned_delay
+testsuite::test_iaf_dc_aligned_automatic
+
+Source:
+
+../../testsuite/unittests/test_iaf_dc_aligned.sli

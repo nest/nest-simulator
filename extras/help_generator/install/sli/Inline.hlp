@@ -1,0 +1,49 @@
+Name: Inline - Replace names in a procedure with their definitions.
+
+Synopsis:
+
+{proc} <<dict>> Inline -> {proc'}
+
+
+Examples:
+
+SLI ] {a b add} <</a 1 /b 2 >> Inline == 
+{1 2 add} 
+SLI ] {1 2 3 stack} << /stack dup load  >> Inline == 
+{1 2 3 0 1 -count- 3 -sub_ii- /{-index- =} -for-} 
+Version: January 19 2008
+
+
+Description:
+
+Transform the input procedure {proc} such that all names that are 
+defined in <<dict>> are placed by their definitions. 
+Inline can be used to inline the code of procedures or to replace 
+names of constants with their literal values. All names that are not 
+defined in <<dict>> are unchanged. 
+Inline is particularly useful in combination with CompileMath. 
+Inline is similar to bind, but there are two big differences: 
+1. bind uses the current dictstack to determine which names are placed. 
+2. bind only replaces names that refer to C++-functions or tries.
+
+
+Parameters:
+
+{proc}  	- procedure to be transformed 
+<<dict>> 	- dictionary with names and definitions for the names to be inlined. 
+{proc'}  	- the transformed procedure with all names replaced.
+
+
+Author:
+
+marc-Oliver Gewaltig
+
+
+SeeAlso:
+
+bind
+CompileMath
+
+Source:
+
+../../lib/sli/mathematica.sli

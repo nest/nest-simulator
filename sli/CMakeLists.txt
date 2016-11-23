@@ -122,7 +122,3 @@ install( TARGETS sli_readline sli_lib sli
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
-
-install( FILES ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}
-    )

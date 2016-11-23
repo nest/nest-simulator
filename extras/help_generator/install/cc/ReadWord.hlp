@@ -1,0 +1,26 @@
+Name: ReadWord - read white space terminated string from stream
+
+Synopsis:
+
+istream ReadWord -> istream string true 
+-> istream false
+
+
+Description:
+
+ReadWord reads a single word from the istream. 
+The stream argument is not removed from the stack 
+to support successive application of gets.
+
+
+SeeAlso:
+
+getline
+gets
+getc
+ReadInt
+ReadDouble
+
+Source:
+
+../../sli/sli_io.cc

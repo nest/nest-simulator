@@ -1,0 +1,24 @@
+Name: GetDefaults - Return the default values for a node or synapse model.
+
+Synopsis:
+
+/modelname GetDefaults -> dict
+
+
+Author:
+
+Jochen Martin Eppler
+
+
+FirstVersion:
+
+September 2008
+
+
+SeeAlso:
+
+SetDefaults
+
+Source:
+
+../../nestkernel/nestmodule.cpp

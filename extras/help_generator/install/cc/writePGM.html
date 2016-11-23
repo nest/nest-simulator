@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: writePGM</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: writePGM</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>writePGM - write out a grey-level image in PGM format  <br/>   <br/>  Synopsis:string arraytype	 int	 int	 int	 writePGM  <br/>  fname  [grayvals] maxval height width writePGM  <br/>   <br/>  Description:This writes an array of integers as grey-level image  <br/>  using the PGM (PortableGrayMap) format.  <br/>  On Unix systems, man 5 pgm should give you a description of  <br/>  the PGM image format.  <br/>   <br/>  Parameters:fname		 - name of file to be written  <br/>  [grayvals] - one-dim. array containing the pixel gray values,  <br/>  starting at the upper left corner and continuing  <br/>  rowwise (normal english reading order).  <br/>  maxval		 - the maximum gray value  <br/>  width		 - width of image in pixels (no. of columns)  <br/>  height		 - height of image (no. of rows)  <br/>   <br/>  Remarks:So far, only the plain ASCII variant of the PGM Format is  <br/>  used. In the PGM manual, this is referred to as "P2".  <br/>   <br/>  Examples:(FancyImage.pgm) [grayvals] 255 24 16 writePGM  <br/>  This writes an image named FancyImage.pgm with the gray values  <br/>  from the array, having 16 columns and 24 rows.  <br/>   <br/>  Author:Schmuker, Gewaltig  <br/>   <br/>  FirstVersion:9.1.2003  <br/>   <br/>  SeeAlso:readPGM</pre>
+<b>Source:</b><pre>../../sli/sligraphics.cc</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

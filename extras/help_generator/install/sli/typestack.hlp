@@ -1,0 +1,55 @@
+Name: typestack - Display types of operand stack
+
+Synopsis:
+
+typestack -->	-
+
+
+Examples:
+
+{1} {2} {3} typestack 
+proceduretype:{3} 
+proceduretype:{2} 
+proceduretype:{1}
+
+
+Description:
+
+Displays operand stack, showing Type as well as value of each object.
+
+
+Parameters:
+
+-
+
+
+Bugs:
+
+
+
+
+Remarks:
+
+Commented Hehl April 20, 1999
+
+
+Author:
+
+Gewaltig, Diesmann
+
+
+FirstVersion:
+
+???
+
+
+SeeAlso:
+
+stack
+pstack
+=
+==
+
+Source:
+
+../../lib/sli/sli-init.sli

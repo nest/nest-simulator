@@ -1,0 +1,21 @@
+Name: testsuite::ticket-933 - Ensure that pp_pop_psc_delta generates same results when run in small intervals
+
+Synopsis:
+
+(ticket-933) run -> NEST exits if test fails
+
+
+Description:
+
+This ticket ensures that pp_pop_psc_delta produces the same results when run 10 times 1ms as when 
+run 1 time 10ms.
+
+
+Author:
+
+Hans Ekkehard Plesser, 2014-11-20
+
+
+Source:
+
+../../testsuite/regressiontests/ticket-933.sli

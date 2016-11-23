@@ -1,0 +1,44 @@
+Name: abort - Abort all NEST processes gracefully. 
+ Paramteres: 
+ exitcode - The exitcode to quit with
+
+Description:
+
+This function can be run by the user to end all NEST processes as 
+gracefully as possible. If NEST is compiled without MPI support, 
+this will just call quit_i. If compiled with MPI support, it will 
+call MPI_Abort, which will kill all processes of the application 
+and thus prevents deadlocks. The exitcode is userabort in both 
+cases (see statusdict/exitcodes).
+
+
+Require:
+
+HAVE_MPI
+
+
+Availability:
+
+NEST 2.0
+
+
+Author:
+
+Jochen Martin Eppler
+
+
+FirstVersion:
+
+October 2012
+
+
+SeeAlso:
+
+quit
+Rank
+SyncProcesses
+ProcessorName
+
+Source:
+
+../../nestkernel/nestmodule.cpp

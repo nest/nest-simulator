@@ -1,0 +1,33 @@
+Name: trie - Create a new type-trie object
+
+Synopsis:
+
+/name -> /name typetrie
+
+
+Examples:
+
+/square trie 
+[/doubletype] { dup mul } addtotrie def
+
+
+Description:
+
+Create a new typetrie with internal 
+name /name. This object is not bound to /name in the 
+current dictionary. This has to be done by an explicit def.
+
+
+Author:
+
+Marc-Oliver
+
+
+SeeAlso:
+
+addtotrie
+cva_t
+
+Source:
+
+../../sli/slitypecheck.cc

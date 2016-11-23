@@ -1,0 +1,29 @@
+Name: ChangeSubnet - change the current working subnet.
+
+Synopsis:
+
+gid   ChangeSubnet ->	-
+
+
+Description:
+
+Change the current subnet to the one given as argument. Create 
+will place newly created nodes in the current working subnet. 
+ChangeSubnet is not allowed for layer subnets used in the 
+topology module. 
+This function can be used to change the working subnet to a new 
+location, similar to the UNIX command cd.
+
+
+Parameters:
+
+gid	- The GID of the new current subnet.
+
+
+SeeAlso:
+
+CurrentSubnet
+
+Source:
+
+../../nestkernel/nestmodule.cpp

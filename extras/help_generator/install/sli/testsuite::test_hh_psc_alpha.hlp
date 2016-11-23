@@ -1,0 +1,37 @@
+Name: testsuite::test_hh_psc_alpha - sli script for hh_psc_alpha model
+
+Synopsis:
+
+(test_hh_psc_alpha) run -> 'rates.txt'
+
+
+Description:
+
+test_hh_psc_alpha produces a rate-response (FI) curve of the Hogkin-Huxley 
+neuron  in response to a range of different current (DC) stimulations. 
+The result is stored in an extra file, rates.txt, and can be plotted, 
+e.g. in matlab using 
+x=load('hh_rates.txt'); plot(x(:,1),x(:,2)) 
+or 
+plot "hh_rates.txt" with lines; 
+in gnuplot 
+Since a DC input affetcs only the neuron's channel dynamics, this routine 
+does not yet check correctness of synaptic response.
+
+
+Author:
+
+Schrader
+
+
+SeeAlso:
+
+iaf_psc_exp
+iaf_neuron
+testsuite::test_iaf_i0
+testsuite::test_iaf_i0_refractory
+testsuite::test_iaf_dc
+
+Source:
+
+../../testsuite/manualtests/test_hh_psc_alpha.sli

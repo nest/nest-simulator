@@ -1,0 +1,40 @@
+Name: arrayload - pushes array elements followed by number of elements
+
+Synopsis:
+
+array Transpose ->  array arrayload -> t1 ... tn n
+
+
+Examples:
+
+[ 5 4 2 ] arrayload  --> 5 4 2   3
+
+
+Description:
+
+The stack is invariant under the sequences 
+arrayload arraystore 
+arraystore arrayload  . 
+arrayload is the SLI version of PostScript operator aload. 
+In contrast to PostScript SLI arrays are dynamic therefore 
+the syntax of aload and astore is obsolete in SLI. 
+If used aload and astore issue a warning message.
+
+
+Remarks:
+
+There are two obsolete versions existing called aload and astore.
+
+
+Author:
+
+Marc-Oliver Gewaltig, Markus Diesmann
+
+
+SeeAlso:
+
+arraystore
+
+Source:
+
+../../sli/sliarray.cc

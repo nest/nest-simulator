@@ -1,0 +1,27 @@
+Name: testsuite::test_default_delays_weights - test default delay and weight handling
+
+Synopsis:
+
+(test_default_delays_weights) run
+
+
+Description:
+
+Test that correct delays and weights are set if synaptic defaults 
+are given or overridden. This in particular also tests that NaN-detection works 
+on an architecture (see Github #127).
+
+
+Author:
+
+Ippen, Plesser, Hahne
+
+
+FirstVersion:
+
+October 2015
+
+
+Source:
+
+../../testsuite/unittests/test_default_delays_weights.sli

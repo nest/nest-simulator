@@ -1,0 +1,24 @@
+Name: testsuite::test_pp_pop_psc_delta - sli script for test of pp_pop_psc_delta
+
+Synopsis:
+
+(test_pp_pop_psc_delta) run -> compare numbers of generated spikes of the model and a group of pp_psc_delta neurons
+
+
+Description:
+
+This script simulate three point process population models with different sets of parameters. After each simulation, it compares 
+the number of generated spikes by the model and the same quantity of a group of pp_psc_delta neurons. The parameters of 
+pp_psc_delta neurons (including the number of neurons) are the same as represented in the point process population model. 
+The ratio of number of spikes must not be less than 1-err and greater than 1+err. Here we choose err=0.2. 
+Author:  May 2014, Setareh, Deger
+
+
+SeeAlso:
+
+pp_pop_psc_delta
+testsuite::test_pp_psc_delta
+
+Source:
+
+../../testsuite/unittests/test_pp_pop_psc_delta.sli

@@ -1,0 +1,51 @@
+Name: cvn - Convert literal/string to name
+
+Synopsis:
+
+string  cvn -> name 
+literal cvn -> name
+
+
+Examples:
+
+(joe) cvn -> joe 
+/joe  cvn -> joe
+
+
+Description:
+
+cvn converts a given literal/string to a name.
+
+
+Diagnostics:
+
+no errors are issued.
+
+
+Remarks:
+
+The name follows the convention of PostScript and stands for 
+ConVert to Name. 
+This is a typesafe wrapper to cvn_l/cvn_s.
+
+
+Author:
+
+Marc-oliver Gewaltig, docu by HEP
+
+
+SeeAlso:
+
+cst
+cva
+cv1d
+cv2d
+cvd
+cvi
+cvlit
+cvs
+cvt_a
+
+Source:
+
+../../lib/sli/typeinit.sli

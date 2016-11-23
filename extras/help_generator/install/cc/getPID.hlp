@@ -1,0 +1,57 @@
+Name: getPID - Get ID of the current process
+
+Synopsis:
+
+getPID ->	-
+
+
+Examples:
+
+(I am process #) =only getPID =
+
+
+Description:
+
+Returns the process ID for the calling process.
+
+
+Parameters:
+
+-
+
+
+Bugs:
+
+-
+
+
+Diagnostics:
+
+A call to "getPID" should never produce an error.
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+May 26 1999
+
+
+SeeAlso:
+
+getPPID
+getPGRP
+fork
+spoon
+waitPID
+kill
+system
+spawn
+shpawn
+
+Source:
+
+../../sli/processes.h

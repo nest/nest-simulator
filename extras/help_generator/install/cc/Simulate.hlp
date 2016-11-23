@@ -1,0 +1,22 @@
+Name: Simulate - simulate n milliseconds
+
+Synopsis:
+
+n(int) Simulate ->	-
+
+
+Description:
+
+Simulate the network for n milliseconds. 
+Use resume to continue the simulation after an interrupt.
+
+
+SeeAlso:
+
+resume
+ResumeSimulation
+unit_conversion
+
+Source:
+
+../../nestkernel/nestmodule.cpp

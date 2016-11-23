@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: testsuite::test_iaf_ps_dc_accuracy</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: testsuite::test_iaf_ps_dc_accuracy</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>testsuite::test_iaf_ps_dc_accuracy - test of accuracy of neuron models subject to DC current</pre>
+<b>Synopsis: </b>
+<pre>(test_iaf_ps_dc_accuracy) run -> comparison with analytical solution  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>   <br/>  A DC current is injected for a finite duration. The membrane potential at  <br/>  the end of the simulated interval is compared to the theoretical value for  <br/>  different computation step sizes.  <br/>   <br/>  Computation step sizes are specified as base 2 values.  <br/>   <br/>  Two different intervals are tested. At the end of the first interval the membrane  <br/>  potential still steeply increases. At the end of the second, the membrane  <br/>  potential has within double precision already reached the limit for large t.  <br/>   <br/>  The high accuracy of the neuron models is achieved by the use of Exact Integration [1]  <br/>  and an appropriate arrangement of the terms [2]. For small computation step sizes the  <br/>  accuracy at large simulation time decreases because of the accumulation of errors.  <br/>   <br/>  The expected output is documented at the end of the script.  <br/>  Individual simulation results can be inspected by uncommented the call  <br/>  to function print_details.  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>   <br/>  The script checks whether the kernel can be appropriately configured.  <br/>  The script can be used to check whether the accuracy has survived optimization  <br/>  by the C++ compiler.  <br/>   <br/>  In case the accuracy is higher than specified by IEEE arithmetics this might  <br/>  be due to the use of processor registers. The compiler option  <br/>  -ffloat-store of the gcc compiler ensures that doubles are not stored in  <br/>  registers.  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  [1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear  <br/>  systems with applications to neuronal modeling. Biologial Cybernetics  <br/>  81:381-402.  <br/>  [2] Morrison A, Straube S, Plesser H E, & Diesmann M (2007) Exact Subthreshold  <br/>  Integration with Continuous Spike Times in Discrete Time Neural Network  <br/>  Simulations. Neural Computation 19:47--79  <br/>  
+</pre>
+<b>Author: </b>
+<pre>March 2009, Diesmann  <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>May 2005  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/iaf_psc_alpha_canon.html">iaf_psc_alpha_canon</a></li>
+    <li><a href="../cc/iaf_psc_alpha_presc.html">iaf_psc_alpha_presc</a></li>
+    <li><a href="../cc/iaf_psc_delta_canon.html">iaf_psc_delta_canon</a></li>
+    <li><a href="../sli/testsuite::test_iaf_ps_dc_t_accuracy.html">testsuite::test_iaf_ps_dc_t_accuracy</a></li>
+</ul>
+<b>Source:</b><pre>../../testsuite/unittests/test_iaf_ps_dc_accuracy.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

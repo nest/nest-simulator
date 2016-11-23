@@ -1,0 +1,12 @@
+Name: cont_delay_synapse_hpc - Variant of cont_delay_synapse with low 
+ memory consumption.
+
+SeeAlso:
+
+synapsedict
+cont_delay_synapse
+static_synapse_hpc
+
+Source:
+
+../../models/modelsmodule.cpp

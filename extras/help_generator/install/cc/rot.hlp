@@ -1,0 +1,16 @@
+Name: rot - Rotate entire stack contents
+
+Synopsis:
+
+obj_n ... obj1 obj0 rot -> obj0 obj_n ... obj1
+
+
+SeeAlso:
+
+roll
+rollu
+rolld
+
+Source:
+
+../../sli/slistack.cc

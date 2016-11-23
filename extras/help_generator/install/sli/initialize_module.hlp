@@ -1,0 +1,15 @@
+Name: initialize_module - Initialize module by executing commandstring
+
+Synopsis:
+
+commandstring initialize_module ->	-
+
+
+Description:
+
+Executes the command string provided by a module to initialize it.
+
+
+Source:
+
+../../lib/sli/library.sli

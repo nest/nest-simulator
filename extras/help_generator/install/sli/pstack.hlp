@@ -1,0 +1,56 @@
+Name: pstack - Display operand stack in syntax form.
+
+Synopsis:
+
+pstack -->	-
+
+
+Examples:
+
+{1} {2} {3} stack 
+--> {3} 
+{2} 
+{1}
+
+
+Description:
+
+Displays operand stack using == on each object.
+
+
+Parameters:
+
+-
+
+
+Bugs:
+
+
+
+
+Remarks:
+
+Commented Hehl April 20, 1999 
+compare RedBook 2nd ed. page 465
+
+
+Author:
+
+Gewaltig, Diesmann
+
+
+FirstVersion:
+
+???
+
+
+SeeAlso:
+
+stack
+typestack
+=
+==
+
+Source:
+
+../../lib/sli/sli-init.sli

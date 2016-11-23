@@ -1,0 +1,34 @@
+Name: testsuite::test_aeif_cond_alpha_multisynapse - sli script for the aeif multisynapse model
+
+Synopsis:
+
+(test_aeif_cond_alpha_multisynapse) run
+
+
+Description:
+
+This test creates a multisynapse neuron and first checks if time constants 
+can be set correctly. 
+Afterwards, it simulates the mutisynapse neuron with n (n=4) different time 
+constants and records the neuron's synaptic current. At the same time, it simulates 
+n (n=4) single synapse neurons with according parameters. 
+At the end, it compares the multisynapse neuron currents with each according single 
+synapse current.
+
+
+Author:
+
+Daniel Peppicelli
+
+
+FirstVersion:
+
+January 2014
+
+
+SeeAlso:
+
+
+Source:
+
+../../testsuite/unittests/test_aeif_cond_alpha_multisynapse.sli

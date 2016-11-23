@@ -1,0 +1,29 @@
+Name: Last - Return the last element of an array or string
+
+Synopsis:
+
+string Last -> char 
+array Last -> arrayelement
+
+
+Examples:
+
+(train) Last -> 110 
+[1 2 3] Last -> 3 
+[(this) (is) (an) (example)] Last -> (example)
+
+
+Author:
+
+docu edited by Sirko Straube
+
+
+SeeAlso:
+
+First
+Rest
+Most
+
+Source:
+
+../../lib/sli/mathematica.sli

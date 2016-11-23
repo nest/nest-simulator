@@ -1,0 +1,41 @@
+Name: sub - subtract two numbers or vectors
+
+Synopsis:
+
+n1 n2  sub -> n3 
+a1 a2  sub -> a3
+
+
+Examples:
+
+5 2   sub -> 3 
+5.0 2 sub -> 3.0 
+[5 7] [3 4] sub -> [2 3] 
+[3 4] 1 sub -> [2 3]
+
+
+Description:
+
+sub can be used to subtract numbers and arrays. 
+If applied to numbers, sub returns the difference of the numbers. If one 
+of the arguments is a double, the result is also a double. 
+Applied to arrays, sub perfoms a per-component subtraction of the two 
+arrays. The components must be numbers, however, integer and double 
+values may be mixed. 
+Note that the two arrays must be of the same size.
+
+
+Author:
+
+docu by Sirko Straube (adopted from add)
+
+
+SeeAlso:
+
+add
+mul
+div
+
+Source:
+
+../../lib/sli/mathematica.sli

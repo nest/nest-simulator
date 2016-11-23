@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: setverbosity</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: setverbosity</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>setverbosity - Set verbosity level for message  <br/>  shutupto - Set quiet level for message</pre>
+<b>Synopsis: </b>
+<pre> <br/>   <br/>  VerbosityLevel setverbosity ->	-  <br/>   <br/>  M_DEBUG	 setverbosity ->	-  <br/>  M_STATUS	 setverbosity ->	-  <br/>  M_INFO	 setverbosity ->	-  <br/>  M_WARNING	 setverbosity ->	-  <br/>  M_ERROR	 setverbosity ->	-  <br/>  M_FATAL	 setverbosity ->	-  <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>  1. M_INFO   setverbosity  <br/>  % Don't display any debugging- or status-messages, only informational and  <br/>  % above.  <br/>  2. M_ERROR setverbosity  <br/>  % Do inform me about severe errors only.  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>   <br/>  Set verbosity level for message.  <br/>  Only messages of priority equal to or greater than the specified  <br/>  level will be issued by the "message" command.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>   <br/>  VerbosityLevel:  <br/>  The new verbosity-level for message-display (see "message").  <br/>  You may use any poitive integer here. For conveniency,  <br/>  there exist five predifined error levels in systemdict:  <br/>  M_ALL=0,  display all messages  <br/>  M_DEBUG=5,  display debugging messages and above  <br/>  M_STATUS=7,  display status messages and above  <br/>  M_INFO=10, display information messages and above  <br/>  M_WARNING=20, display warning messages and above  <br/>  M_ERROR=30, display error messages and above  <br/>  M_FATAL=40, display failure messages and above  <br/>  M_QUIET=100, suppress all messages  <br/>   <br/>  Thus, by calling "M_WARNING=20 setverbosity" you  <br/>  indicate that you are interested in seeing error messages and  <br/>  more important messages only.  <br/>   <br/>  Side Effects: Change verbosity level of the SLI interpreter.  <br/>   <br/>  
+</pre>
+<b>Bugs: </b>
+<pre> <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  M_* values are defined in system dictionary.  <br/>  You may introduce new priority levels in the user dictionary if convenient.  <br/>  Standard values are: M_ALL	 = 0  <br/>  M_DEBUG   = 5  <br/>  M_STATUS  = 7  <br/>  M_INFO   = 10  <br/>  M_WARNING = 20  <br/>  M_ERROR   = 30  <br/>  M_FATAL   = 40  <br/>  M_QUIET   = 100  <br/>  Standard output:	 M_OUT	 = cout  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>R Kupper  <br/>   <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>Apr 9 1999,  <br/>  Modified by Marc-Oliver Gewaltig, July 21 1999  <br/>  Modified by Ruediger Kupper, March 19 2003  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../sli/message.html">message</a></li>
+    <li><a href="../cc/verbosity.html">verbosity</a></li>
+</ul>
+<b>Source:</b><pre>../../lib/sli/misc_helpers.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

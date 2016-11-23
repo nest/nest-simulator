@@ -1,0 +1,55 @@
+Name: RemoveDirectory - Delete a directory
+
+Synopsis:
+
+string RemoveDirectory -> boolean
+
+
+Examples:
+
+(RemoveMeDir) RemoveDirectory -> True, and 
+./RemoveMeDir does not longer exist, provided it ever did 
+and was empty.
+
+
+Description:
+
+RemoveDirectory deletes the named subdirectory of your 
+current working directory, provided it is empty.
+
+
+Parameters:
+
+string : Name of subdirectory to be deleted. 
+boolean : A flag if operation succeded.
+
+
+Bugs:
+
+-
+
+
+Remarks:
+
+-
+
+
+Author:
+
+Hehl
+
+
+FirstVersion:
+
+Oct 12th 1999
+
+
+SeeAlso:
+
+FileNames
+MoveDirectory
+RemoveDirectory
+
+Source:
+
+../../lib/sli/filesystem.sli

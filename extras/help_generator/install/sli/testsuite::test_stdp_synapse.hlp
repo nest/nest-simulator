@@ -1,0 +1,25 @@
+Name: testsuite::test_stdp_synapse - basic test of stdp_synapse
+
+Synopsis:
+
+(test_stdp_synapse) run
+
+
+Description:
+
+A parrot_neuron that repeats the spikes from a poisson generator is 
+connected to an iaf_psc_alpha that is driven by inh. and exc. poisson input. 
+The synapse is an stdp_synapse. After the simulation, we go through the pre- 
+and postsyn. spike-trains spike by spike and try to reproduce the STDP 
+results. The final weight obtained after simulation is compared to the final 
+weight obtained from the test.
+
+
+Author:
+
+Kunkel, Nov 2010
+
+
+Source:
+
+../../testsuite/unittests/test_stdp_synapse.sli

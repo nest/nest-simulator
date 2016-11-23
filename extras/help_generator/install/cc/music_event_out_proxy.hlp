@@ -1,0 +1,61 @@
+Name: music_event_out_proxy - Device to forward spikes to remote applications 
+ using MUSIC.
+
+Examples:
+
+/iaf_neuron Create /n Set 
+/music_event_out_proxy Create /meop Set 
+n meop << /music_channel 2 >> Connect
+
+
+Description:
+
+A music_event_out_proxy is used to send spikes to a remote application that 
+also uses MUSIC. 
+The music_event_out_proxy represents a complete MUSIC event output 
+port. The channel on the port to which a source node forwards its 
+events is determined during connection setup by using the parameter 
+music_channel of the connection. The name of the port is set via 
+SetStatus (see Parameters section below).
+
+
+Parameters:
+
+The following properties are available in the status dictionary: 
+port_name		- The name of the MUSIC output_port to forward events to 
+(default: event_out) 
+port_width		- The width of the MUSIC input port 
+published		- A bool indicating if the port has been already published 
+with MUSIC 
+The parameter port_name can be set using SetStatus.
+
+
+Require:
+
+HAVE_MUSIC
+
+
+Availability:
+
+Only when compiled with MUSIC
+
+
+Author:
+
+Moritz Helias, Jochen Martin Eppler
+
+
+FirstVersion:
+
+March 2009
+
+
+SeeAlso:
+
+music_event_in_proxy
+music_cont_in_proxy
+music_message_in_proxy
+
+Source:
+
+../../models/music_event_out_proxy.h

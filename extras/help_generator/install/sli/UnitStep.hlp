@@ -1,0 +1,61 @@
+Name: UnitStep - The unit step function (aka Heavyside function)
+
+Synopsis:
+
+x  UnitStep -> 0   ;if  x <  0 
+-> 1   ;if  x >= 0 
+[x1 x2 ...] UnitStep -> 0   ;if xi <  0 for any xi in [x] 
+-> 1   ;if xi >= 0 for all xi in [x]
+
+
+Description:
+
+"x UnitStep" represents the unit step function, 
+equal to 0 for x<0 and 1 for x>=0. 
+"[x1 x2 ...] UnitStep" represents the multidimensional unit step 
+function which is 1 only if none of the xi are negative. 
+Alternatives: Function UnitStep_i for integers, UnitStep_d for 
+doubles, UnitStep_ia for integer arrays, UnitStep_da for double 
+arrays (all undocumented) -> behavior and synopsis are the same, 
+except that no warnings or error messages are thrown.
+
+
+Diagnostics:
+
+When called on an empty array, /ArgumentType is raised. 
+When first element of the array is not of type integer or double, 
+/ArgumentType is raised. 
+Will break if called on an array containing non-numerical values.
+
+
+Remarks:
+
+This is the SLI version of the Mathematica function "UnitStep". 
+Documentation taken from the Mathematica Book. 
+Implementation of the type variants can be found in file 
+synod2/sli/slimath.cc.
+
+
+References:
+
+The Mathematica Book
+
+
+Author:
+
+Ruediger Kupper
+
+
+FirstVersion:
+
+13.3.2003
+
+
+SeeAlso:
+
+Sign
+abs
+
+Source:
+
+../../lib/sli/mathematica.sli

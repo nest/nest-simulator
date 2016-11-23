@@ -1,0 +1,23 @@
+Name: nestrc - Personal interpreter initialization file
+
+Description:
+
+During startup, the NEST searches 
+for a personal resource file. 
+The name (and PATH) 
+of this resource file can be specified by the 
+environment variable NESTRCFILENAME. 
+If this variable is not set sli executes 
+the file $HOME/.nestrc. 
+If this file does not exist, it is created from a template. 
+The resource file is executed 
+before the welcome messsage is printed.
+
+
+SeeAlso:
+
+welcome
+
+Source:
+
+../../lib/sli/sli-init.sli

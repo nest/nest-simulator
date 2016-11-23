@@ -1,0 +1,18 @@
+Name: clic - Start measuring interpreter cycles.
+
+Description:
+
+clic/cloc can be used to measure the number of 
+milliseconds per interpreter cycle. 
+The result includes also the cycles taken up by the
+
+
+SeeAlso:
+
+cloc
+tic
+toc
+
+Source:
+
+../../lib/sli/sli-init.sli

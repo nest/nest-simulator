@@ -1,0 +1,20 @@
+Name: testsuite::ticket-955 - Check that CreateLayer even works with a single neuron layer on multiple processes
+
+Synopsis:
+
+(ticket-955) run -> NEST exits if test fails
+
+
+Description:
+
+This test creates layer with a single node. The test should pass with any number of MPI processes.
+
+
+Author:
+
+Hans Ekkehard Plesser, 2015-02-03 based on a reproducer by Janne Morén
+
+
+Source:
+
+../../testsuite/mpitests/ticket-955.sli

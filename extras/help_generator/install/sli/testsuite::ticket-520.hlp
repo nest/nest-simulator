@@ -1,0 +1,21 @@
+Name: testsuite::ticket-520 - Ensure that multimeter returns correct number of time points in accumulator mode
+
+Synopsis:
+
+(ticket-520) run -> NEST exits if test fails
+
+
+Description:
+
+When running in accumulator mode, multimeter must pick up the times array from only one thread, 
+so that value and times arrays have the same length.
+
+
+Author:
+
+Hans Ekkehard Plesser, 2011-06-17
+
+
+Source:
+
+../../testsuite/regressiontests/ticket-520.sli

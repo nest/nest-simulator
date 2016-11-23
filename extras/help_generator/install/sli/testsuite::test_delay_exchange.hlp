@@ -1,0 +1,21 @@
+Name: testsuite::test_delay_exchange - check that delay extrema are exchanged correctly
+
+Synopsis:
+
+nest_indirect test_delay_exchange.sli -> compare results for different numbers of jobs
+
+
+Description:
+
+This tests that creating a single connection (on a single process) will properly set the delay 
+extrema on all processes. 
+Author:  November 2014, Plesser
+
+
+SeeAlso:
+
+unittest::distributed_collect_assert_or_die
+
+Source:
+
+../../testsuite/mpitests/test_delay_exchange.sli

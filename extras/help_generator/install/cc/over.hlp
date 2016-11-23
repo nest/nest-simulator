@@ -1,0 +1,28 @@
+Name: over - Copy object at stack level 1
+
+Synopsis:
+
+any obj over -> any obj any
+
+
+Examples:
+
+1 2 3 over -> 2 
+1 2 3 4 5 over -> 4
+
+
+Diagnostics:
+
+Raises StackUnderflow error if there are less than two objects on 
+the stack.
+
+
+SeeAlso:
+
+dup
+index
+copy
+
+Source:
+
+../../sli/slistack.cc

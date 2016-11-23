@@ -1,0 +1,29 @@
+Name: tmpnam - Generate a string that is a valid non-existing file-name.
+
+Synopsis:
+
+tpmnam -> filename
+
+
+Description:
+
+This command is a thin wrapper around the POSIX.1 tmpnam() kernel function. 
+The tmpnam function generates a string that is a valid filename and 
+that is not the name of an existing file. The tmpnam function 
+generates a different name each time it is called, (up to a number of 
+times that is defined by the compiler macro TMP_MAX).
+
+
+References:
+
+Donald Lewin, "The POSIX Programmer's Guide"
+
+
+Author:
+
+R. Kupper
+
+
+Source:
+
+../../sli/filesystem.cc

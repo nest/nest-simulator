@@ -1,0 +1,72 @@
+Name: spoon - execute a parallel SLI-process
+
+Synopsis:
+
+Command spoon -> Child_PID	 %for parent process 
+-> quit Command   %for child  process
+
+
+Examples:
+
+{ (I am the child!) = } spoon (I am the parent!) = 
+Try this several times. You will notice the child message to appear 
+before or after the parent message "by chance". (Even after the parent's 
+I-prompt...)
+
+
+Description:
+
+Basic process management: execute a parallel SLI-process
+
+
+Parameters:
+
+In:  Command (any): (However, Command is most likely to be a literal 
+procedure...) 
+Command will be executed by the child process, 
+which will terminate after execution. 
+It will be ignored by the parent process. 
+Out: For parent process: Child_PID (integer): The child's process-ID. 
+For child  process: none.
+
+
+Bugs:
+
+
+
+
+Remarks:
+
+A parallel process is forked. 
+Parent and child will execute in parallel. There is no way to know which 
+will start being executed first. 
+Child inherits all open files, including stdin and stdout, from parent! 
+If a SLI error is raised inside the child process, an error 
+message is issued and the process is terminated, in oder not 
+to leave two interactive SLI processes waiting for user 
+input. A copy of the error message is printed to cerr, in 
+case the standrad message stream M_OUT is redirected to a 
+pipe (i.e. by the spawn command). 
+Procedure: Call fork. 
+Check if you are parent/child by test of (PID eq 0). 
+If parent: discard (pop) Command, leave: (child)PID. 
+If child : discard (pop) 0-PID, execute Command, quit.
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+Mar 18 1999
+
+
+SeeAlso:
+
+fork
+
+Source:
+
+../../lib/sli/processes.sli

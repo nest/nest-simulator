@@ -1,0 +1,36 @@
+Name: iround - Round and convert double to the nearest integer
+
+Synopsis:
+
+double iround -> int
+
+
+Examples:
+
+
+
+
+Description:
+
+Round the argument to the nearest integer and converts it to type int.
+
+
+Remarks:
+
+
+
+
+Author:
+
+introduced non-trie-variant round_d, Ruediger Kupper.
+
+
+SeeAlso:
+
+iround
+floor
+ceil
+
+Source:
+
+../../lib/sli/ps-lib.sli

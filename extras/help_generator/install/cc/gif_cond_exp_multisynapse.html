@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: gif_cond_exp_multisynapse</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: gif_cond_exp_multisynapse</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>gif_cond_exp_multisynapse - Conductance-based generalized  <br/>  integrate-and-fire neuron model with multiple synaptic time constants  <br/>  according to Mensi et al. (2012) and Pozzorini et al. (2015).</pre>
+<b>Description: </b>
+<pre> <br/>   <br/>  gif_cond_exp_multisynapse is the generalized integrate-and-fire neuron  <br/>  according to Mensi et al. (2012) and Pozzorini et al. (2015), with  <br/>  post-synaptic conductances in the form of truncated exponentials.  <br/>   <br/>  This model features both an adaptation current and a dynamic threshold for  <br/>  spike-frequency adaptation. The membrane potential (V) is described by the  <br/>  differential equation:  <br/>   <br/>  C*dV(t)/dt = -g_L*(V(t)-E_L)	- eta_1(t)	- eta_2(t)	- ...	- eta_n(t) + I(t)  <br/>   <br/>  where each eta_i is a spike-triggered current (stc), and the neuron model can  <br/>  have arbitrary number of them.  <br/>  Dynamic of each eta_i is described by:  <br/>   <br/>  tau_eta_i*d{eta_i}/dt = -eta_i  <br/>   <br/>  and in case of spike emission, its value increased by a constant (which can be  <br/>  positive or negative):  <br/>   <br/>  eta_i = eta_i + q_eta_i  (in case of spike emission).  <br/>   <br/>  Neuron produces spikes STOCHASTICALLY according to a point process with the  <br/>  firing intensity:  <br/>   <br/>  lambda(t) = lambda_0 * exp[ (V(t)-V_T(t)) / Delta_V ]  <br/>   <br/>  where V_T(t) is a time-dependent firing threshold:  <br/>   <br/>  V_T(t) = V_T_star + gamma_1(t) + gamma_2(t) + ... + gamma_m(t)  <br/>   <br/>  where gamma_i is a kernel of spike-frequency adaptation (sfa), and the neuron  <br/>  model can have arbitrary number of them.  <br/>  Dynamic of each gamma_i is described by:  <br/>   <br/>  tau_gamma_i*d{gamma_i}/dt = -gamma_i  <br/>   <br/>  and in case of spike emission, its value increased by a constant (which can be  <br/>  positive or negative):  <br/>   <br/>  gamma_i = gamma_i + q_gamma_i  (in case of spike emission).  <br/>   <br/>  Note that in the current implementation of the model (as described in [1] and  <br/>  [2]) the values of eta_i and gamma_i are affected immediately after spike  <br/>  emission. However, GIF toolbox (http://wiki.epfl.ch/giftoolbox) which fits  <br/>  the model using experimental data, requires a different set of eta_i and  <br/>  gamma_i. It applies the jump of eta_i and gamma_i after the refractory period.  <br/>  One can easily convert between q_eta/gamma of these two approaches:  <br/>  q_eta_giftoolbox = q_eta_NEST * (1	- exp( -tau_ref / tau_eta ))  <br/>  The same formula applies for q_gamma.  <br/>   <br/>  On the postsynapic side, there can be arbitrarily many synaptic time constants  <br/>  (gif_psc_exp has exactly two: tau_syn_ex and tau_syn_in). This can be reached  <br/>  by specifying separate receptor ports, each for a different time constant. The  <br/>  port number has to match the respective "receptor_type" in the connectors.  <br/>   <br/>  The shape of synaptic conductance is exponential.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  C_m	 double	- Capacity of the membrane in pF  <br/>  t_ref	 double	- Duration of refractory period in ms.  <br/>  V_reset   double	- Reset value after a spike in mV.  <br/>  E_L	 double	- Leak reversal potential in mV.  <br/>  g_L	 double	- Leak conductance in nS.  <br/>  I_e	 double	- Constant external input current in pA.  <br/>   <br/>  Spike adaptation and firing intensity parameters:  <br/>  q_stc	 vector of double	- Values added to spike-triggered currents (stc)  <br/>  after each spike emission in nA.  <br/>  tau_stc   vector of double	- Time constants of stc variables in ms.  <br/>  q_sfa	 vector of double	- Values added to spike-frequency adaptation  <br/>  (sfa) after each spike emission in mV.  <br/>  tau_sfa   vector of double	- Time constants of sfa variables in ms.  <br/>  Delta_V   double	- Stochasticity level in mV.  <br/>  lambda_0   double	- Stochastic intensity at firing threshold V_T in 1/s.  <br/>  V_T_star   double	- Base threshold in mV  <br/>   <br/>  Synaptic parameters  <br/>  taus_syn   vector of double	- Time constants of the synaptic conductance  <br/>  in ms.  <br/>  E_ex	 double	- Excitatory reversal potential in mV.  <br/>  E_in	 double	- Inhibitory reversal potential in mV.  <br/>   <br/>  Integration parameters  <br/>  gsl_error_tol  double	- This parameter controls the admissible error of the  <br/>  GSL integrator. Reduce it if NEST complains about  <br/>  numerical instabilities.  <br/>   <br/>  
+</pre>
+<b>Require: </b>
+<pre>HAVE_GSL  <br/>  
+</pre>
+<b>Receives: </b>
+<pre>SpikeEvent, CurrentEvent, DataLoggingRequest  <br/>   <br/>  
+</pre>
+<b>Sends: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>   <br/>  [1] Mensi S, Naud R, Pozzorini C, Avermann M, Petersen CC, Gerstner W (2012)  <br/>  Parameter extraction and classification of three cortical neuron types  <br/>  reveals two distinct adaptation mechanisms. J. Neurophysiol., 107(6),  <br/>  1756-1775.  <br/>   <br/>  [2] Pozzorini C, Mensi S, Hagens O, Naud R, Koch C, Gerstner W (2015)  <br/>  Automated High-Throughput Characterization of Single Neurons by Means of  <br/>  Simplified Spiking Models. PLoS Comput. Biol., 11(6), e1004275.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>March 2016, Setareh  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/pp_psc_delta.html">pp_psc_delta</a></li>
+    <li><a href="../cc/gif_cond_exp.html">gif_cond_exp</a></li>
+    <li><a href="../cc/iaf_psc_exp_multisynapse.html">iaf_psc_exp_multisynapse</a></li>
+    <li><a href="../cc/gif_psc_exp_multisynapse.html">gif_psc_exp_multisynapse</a></li>
+</ul>
+<b>Source:</b><pre>../../models/gif_cond_exp_multisynapse.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

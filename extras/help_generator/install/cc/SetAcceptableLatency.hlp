@@ -1,0 +1,40 @@
+Name: SetAcceptableLatency - set the acceptable latency of a MUSIC input port
+
+Synopsis:
+
+(spikes_in) 0.5 SetAcceptableLatency ->	-
+
+
+Parameters:
+
+port_name	- the name of the MUSIC input port 
+latency  	- the acceptable latency (ms) to set for the port
+
+
+Require:
+
+HAVE_MUSIC
+
+
+Availability:
+
+Only when compiled with MUSIC
+
+
+Author:
+
+Jochen Martin Eppler
+
+
+FirstVersion:
+
+April 2009
+
+
+SeeAlso:
+
+music_event_in_proxy
+
+Source:
+
+../../nestkernel/nestmodule.cpp

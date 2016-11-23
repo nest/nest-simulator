@@ -1,0 +1,47 @@
+Name: cgstart - Call start() on a ConnectionGenerator
+
+Synopsis:
+
+cg cgstart ->	-
+
+
+Description:
+
+Call the start() function on a given ConnectionGenerator cg.
+
+
+Parameters:
+
+cg	- ConnectionGenerator
+
+
+Remarks:
+
+This function is part of the low-level access API for the 
+ConnectionGenerator module. It is mainly used for debugging 
+purposes. Usually, connections are created from a 
+ConnectionGenerator using CGConnect.
+
+
+Author:
+
+Mikael Djurfeldt
+
+
+FirstVersion:
+
+March 2011
+
+
+SeeAlso:
+
+CGParse
+CGParseFile
+CGConnect
+CGSelectImplementation
+cgsetmask
+cgnext
+
+Source:
+
+../../conngen/conngenmodule.cpp

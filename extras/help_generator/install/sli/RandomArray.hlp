@@ -1,0 +1,25 @@
+Name: RandomArray - Returns array with random numbers.
+
+Synopsis:
+
+rdvtype  n RandomArray -> [r1 .. rn] 
+dict	 n	 -> [r1 .. rn]
+
+
+Description:
+
+Returns an array with n random numbers drawn from a random 
+deviate generator.  The random deviate can be a deviate 
+implemented  in C++ represented by rdvtype or a SLI level deviate 
+represented by a dictionary.
+
+
+SeeAlso:
+
+Random
+CreateRDV
+rdevdict
+
+Source:
+
+../../lib/sli/librandom.sli

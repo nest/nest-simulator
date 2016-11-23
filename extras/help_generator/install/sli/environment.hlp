@@ -1,0 +1,21 @@
+Name: environment - return dictionary of environment variables
+
+Synopsis:
+
+enviromnent -> dict
+
+
+Description:
+
+Returns dictionary with the environment variables of the process that 
+invoked NEST. It is a shortcut for statusdict/environment ::, provided 
+for backward compatibility.
+
+
+SeeAlso:
+
+statusdict
+
+Source:
+
+../../lib/sli/sli-init.sli

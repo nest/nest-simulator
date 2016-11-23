@@ -1,0 +1,52 @@
+Name: igood - check the "good"-flag of a stream.
+
+Synopsis:
+
+istreamhandle igood -> istreamhandle true 
+-> istreamhandle false
+
+
+Examples:
+
+
+
+
+Description:
+
+This function provides a direct interface to 
+the C++ istream::good() member function.
+
+
+Parameters:
+
+
+
+
+Bugs:
+
+
+
+
+Remarks:
+
+
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+26.3.1999
+
+
+SeeAlso:
+
+ogood
+good
+
+Source:
+
+../../sli/sli_io.cc

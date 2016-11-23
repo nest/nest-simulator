@@ -1,0 +1,28 @@
+Name: testsuite::test_fast_operators - ensures that internal operators do not check number of arguments
+
+Synopsis:
+
+(test_fast_operators) run
+
+
+Description:
+
+User level operators like add and pop in SLI are safe in the sense that a StackUnderflow error is 
+raised if the stack does not contain a sufficient number of arguments. The user can then inspect the 
+state of the interpreter and solve the problem. In machine generated SLI code, however, checking the 
+number of arguments is unnecessary.
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+090227
+
+
+Source:
+
+../../testsuite/unittests/test_fast_operators.sli

@@ -1,0 +1,30 @@
+Name: in_avail - Return the number of available in an input stream's 
+ buffer.
+
+Synopsis:
+
+istreamhandle in_avail -> istreamhandle available_characters
+
+
+Description:
+
+This function provides a direct interface to 
+the C++ istream::rdbuf()->in_avail() member function.
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+May 05 1999
+
+
+SeeAlso:
+
+
+Source:
+
+../../sli/sli_io.cc

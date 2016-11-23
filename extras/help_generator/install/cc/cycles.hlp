@@ -1,0 +1,10 @@
+Name: cycles - return the number of elapsed interpreter cycles
+
+Synopsis:
+
+cycles -> n
+
+
+Source:
+
+../../sli/slicontrol.cc

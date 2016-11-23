@@ -1,0 +1,28 @@
+Name: testsuite::test_gsd - Test global spike detector with hybrid MPI and thread parallelism
+
+Synopsis:
+
+nest_indirect test_gsd_threaded.sli ->	-
+
+
+Description:
+
+This scripts tests the gsd spike detector scheme by comparing the 
+output of 2 poisson generators on 2 MPI procs with 2 threads run in 
+conventional mode to the output on 3 MPI procs with 2 threads run in 
+gsd mode.
+
+
+Author:
+
+Kunkel, Schmidt
+
+
+FirstVersion:
+
+February 2014
+
+
+Source:
+
+../../testsuite/mpitests/test_gsd_threaded.sli

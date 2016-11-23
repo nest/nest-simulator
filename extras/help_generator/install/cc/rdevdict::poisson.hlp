@@ -1,0 +1,27 @@
+Name: rdevdict::poisson - poisson random deviate generator
+
+Description:
+
+Generates poisson distributed random numbers. 
+p(n) = (lambda^n / n!) exp(-lambda)  , n = 0, 1, ...
+
+
+Parameters:
+
+lambda	- distribution parameter, lambda
+
+
+Author:
+
+Hans Ekkehard Plesser
+
+
+SeeAlso:
+
+CreateRDV
+RandomArray
+rdevdict
+
+Source:
+
+../../librandom/poisson_randomdev.h

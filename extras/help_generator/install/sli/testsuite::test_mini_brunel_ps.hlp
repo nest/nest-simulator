@@ -1,0 +1,18 @@
+Name: testsuite::test_mini_brunel_ps - Test parallel simulation of small Brunel-style network
+
+Synopsis:
+
+nest_indirect test_mini_brunel_ps.sli ->	-
+
+
+Description:
+
+Simulates scaled-down Brunel net with precise timing for different numbers of MPI 
+processes and compares results. 
+Author:  May 2012, Plesser, based on brunel_ps.sli 
+See: brunel_ps.sli
+
+
+Source:
+
+../../testsuite/mpitests/test_mini_brunel_ps.sli

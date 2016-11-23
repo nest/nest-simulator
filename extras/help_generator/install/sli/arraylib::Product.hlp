@@ -1,0 +1,55 @@
+Name: arraylib::Product - Return product of the elements in array.
+
+Synopsis:
+
+[array] Product -> number
+
+
+Examples:
+
+[1 2 3 4]   Product -> 24 
+[1 2 3 4.0] Product -> 24.0
+
+
+Description:
+
+Returns the product of all elements in the array. The array is expected 
+to contain only numbers, and is flattened before the computation.
+
+
+Parameters:
+
+[array]: array of numbers
+
+
+Remarks:
+
+The array must contain no other elements than numbers. 
+The return type (integer or double) depends on the type of elements.
+
+
+Availability:
+
+library "arraylib"
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+17-sep-2007
+
+
+SeeAlso:
+
+arraylib::Sum
+arraylib::Mean
+arraylib::SDev
+arraylib::Var
+
+Source:
+
+../../lib/sli/arraylib.sli

@@ -1,0 +1,39 @@
+Name: cvx - convert array/string to procedure
+
+Synopsis:
+
+array/string cvx -> <proceduretype>
+
+
+Examples:
+
+(hello) cvx -> <proceduretype>
+
+
+Description:
+
+Alternatives: Function cvx_a for arrays (undocumented) 
+-> behaviour and synopsis are the same.
+
+
+Author:
+
+docu by Sirko Straube
+
+
+SeeAlso:
+
+cst
+cv1d
+cv2d
+cva
+cvd
+cvi
+cvlit
+cvn
+cvs
+cvt_a
+
+Source:
+
+../../lib/sli/typeinit.sli

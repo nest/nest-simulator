@@ -1,0 +1,54 @@
+Name: Min - returns the smallest element of an array
+
+Synopsis:
+
+array Min -> min element
+
+
+Examples:
+
+[8 4 3 6 9 5] Min --> 3
+
+
+Description:
+
+This function finds the smallest element in a list, DoubleVector or intVector. 
+To process heterogeneous arrays, the operator lt must be supported between 
+any pair of objects in the list.
+
+
+Parameters:
+
+array
+
+
+Remarks:
+
+Replacess arr::Min in future versions.
+
+
+References:
+
+[1] The Mathematica Book "Min"
+
+
+Author:
+
+Gewaltig
+
+
+FirstVersion:
+
+2008.2.12 (Diesmann)
+
+
+SeeAlso:
+
+Max
+Sort
+Mean
+Variance
+
+Source:
+
+../../lib/sli/mathematica.sli

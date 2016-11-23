@@ -1,0 +1,52 @@
+Name: Max - returns the largest element of an array
+
+Synopsis:
+
+array Max -> max element
+
+
+Examples:
+
+[8 4 3 6 9 5] Max --> 9
+
+
+Description:
+
+This function finds the largest element in a list, DoubleVector or IntVector. To process 
+heterogeneous arrays, the operator gt must be supported between any pair of objects in 
+the list.
+
+
+Parameters:
+
+array
+
+
+Remarks:
+
+Replacess arr::Max in future versions.
+
+
+References:
+
+[1] The Mathematica Book "Max"
+
+
+Author:
+
+Gewaltig
+
+
+FirstVersion:
+
+2008.2.12 (Diesmann)
+
+
+SeeAlso:
+
+Min
+Sort
+
+Source:
+
+../../lib/sli/mathematica.sli

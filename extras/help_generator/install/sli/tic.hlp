@@ -1,0 +1,28 @@
+Name: tic - start timing script execution 
+ Synopsis:  tic -> -
+
+Description:
+
+Records the current real time obtained from the POSIX times() function 
+as starting point for timing script execution.
+
+
+Author:
+
+Hans Ekkehard Plesser
+
+
+FirstVersion:
+
+2003-07-29
+
+
+SeeAlso:
+
+toc
+realtime
+ptimes
+
+Source:
+
+../../lib/sli/sli-init.sli

@@ -1,0 +1,13 @@
+Name: StringQ - returns true if top object is a string 
+ Synposis: string StringQ -> true 
+ any	 StringQ -> false
+
+SeeAlso:
+
+NumberQ
+LiteralQ
+ArrayQ
+
+Source:
+
+../../lib/sli/mathematica.sli

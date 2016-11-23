@@ -1,0 +1,54 @@
+Name: unittest::fail_or_die - Execute a code block and exit with exit code 3 if it does not raise an error.
+
+Synopsis:
+
+{ code } fail_or_die ->	- 
+{ code } string fail_or_die ->	-
+
+
+Examples:
+
+/unittest (7391) require 
+/unittest using 
+{ 1 0 div } fail_or_die 
+{ 0 << /resolution 0 >> SetStatus} fail_or_die 
+endusing
+
+
+Description:
+
+This procedure is provided to test that certain errors are raised, e.g., when 
+illegal values are set.
+
+
+Diagnostics:
+
+This function will quit nest if the code does NOT raise an error 
+(exit code 3). It will print an error message to cerr, too.
+
+
+Availability:
+
+SLI-2.0
+
+
+Author:
+
+H. E. Plesser
+
+
+FirstVersion:
+
+07/02/2008
+
+
+SeeAlso:
+
+unittest::assert_or_die
+unittest::pass_or_die
+assert
+quit
+
+Source:
+
+../../lib/sli/unittest.sli

@@ -1,0 +1,43 @@
+Name: testsuite::test_stop - test if SLI returns exit code 126 when executing a file with a software interrupt.
+
+Synopsis:
+
+(test_stop) run ->
+
+
+Description:
+
+This script calls the SLI command `stop` that is not handled by any 
+user error handler. This is a rarely used feature of SLI called 
+"software interrupt". This scipt is used to test if SLI quits with 
+exit code 126 after executing a file that causes a software 
+interrupt.
+
+
+Remarks:
+
+Yes, this script is really meant to fail due to an unhandled software interrupt.
+
+
+Author:
+
+Ruediger Kupper
+
+
+FirstVersion:
+
+03-jul-2008
+
+
+SeeAlso:
+
+testsuite::test_pass
+testsuite::test_fail
+testsuite::test_stop
+testsuite::test_goodhandler
+testsuite::test_lazyhandler
+testsuite::test_badhandler
+
+Source:
+
+../../testsuite/selftests/test_stop.sli

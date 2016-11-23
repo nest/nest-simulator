@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: arraylib::getdeep</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: arraylib::getdeep</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>arraylib::getdeep - get an element from a nested container (array, dict, ...).</pre>
+<b>Synopsis: </b>
+<pre> <br/>  (general form:)  <br/>  nested_container index_array getdeep -> element  <br/>   <br/>  (specific forms:)  <br/>  [nested_array]	 [i1 i2 ... in]   getdeep -> element  <br/>  {nested_procedure}   [i1 i2 ... in]   getdeep -> element  <br/>  {nested_litprocedure} [i1 i2 ... in]   getdeep -> element  <br/>  <<nested_dictionary>> [/n1 /n2 ... /nn] getdeep -> element  <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>  [[1 2 3] [4 5 6] [7 8 9]] [0 2]   getdeep -> 3  <br/>  [[1 2 3] [4 5 6] [7 8 9]] [1]	 getdeep -> [4 5 6]  <br/>  << /a << /b 1  /c 2 >> >> [/a /c] getdeep -> 2  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  "Getdeep" resolves to a repeated call to "get". That is, it retrieves  <br/>  a single element from a nested array. The call iterates as deep into  <br/>  the nested structure as is indicated by the number of elements in the  <br/>  index array.  <br/>  In short: The call "a [i1 i2 ... in] getdeep" is identical to  <br/>  "a i1 get i2 get ... in get".  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  "Getdeep" can be used on all containers that "get" can be used on.  <br/>  Since strings cannot be nested, it does not make much sense for  <br/>  strings, though.  <br/>  The first argument is a (probably nested) container.  <br/>  The second argument is a flat index array. For all array type containers,  <br/>  this must be an array of integers. For nested dictionaries, this must  <br/>  be an array of literals.  <br/>  The call iterates as deep into  <br/>  the nested structure as is indicated by the number of elements in the  <br/>  index array.  <br/>   <br/>  
+</pre>
+<b>Diagnostics: </b>
+<pre> <br/>  The number of elements in the index array must not exceed the number  <br/>  of nested levels in the container. Otherwise, the nested call to get will  <br/>  raise /ArgumentType.  <br/>   <br/>  The elements in the index array must be suited to index the container.  <br/>  Otherwise, the nested call to get will raise /ArgumentType.  <br/>   <br/>  For array containers, the index at position i must be smaller than the  <br/>  number of elements at level i in the container. Otherwise, the nested  <br/>  call to get will raise /RangeCheck.  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  There currently is no "putdeep" command, but this functionality is  <br/>  provided by "put". See discussion thread on the nest developer list  <br/>  from 19-jun-2006.  <br/>   <br/>  
+</pre>
+<b>Availability: </b>
+<pre>library "arraylib"  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>R Kupper  <br/>   <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>19-jun-2006  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../sli/put.html">put</a></li>
+    <li><a href="../sli/get.html">get</a></li>
+    <li><a href="../sli/Dimensions.html">Dimensions</a></li>
+</ul>
+<b>Source:</b><pre>../../lib/sli/arraylib.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

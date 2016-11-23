@@ -1,0 +1,24 @@
+Name: append - Append an object to a string or array.
+
+Synopsis:
+
+(string) int append -> string 
+[array] obj append  -> array
+
+
+Examples:
+
+(hello) 44 append -> (hello,)  (44 is ASCII value for ,) 
+[1 2 3] (hello) append -> [1 2 3 (hello)] 
+[1 2 3] 44 append -> [1 2 3 44] 
+Author:  docu by Sirko Straube, Marc-Oliver Gewaltig
+
+
+SeeAlso:
+
+prepend
+insert
+
+Source:
+
+../../sli/slidata.cc

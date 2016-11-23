@@ -1,0 +1,43 @@
+Name: cvi - Convert double/string to integer
+
+Synopsis:
+
+double cvi -> integer 
+string cvi -> integer
+
+
+Examples:
+
+3.33 cvi	 --> 3 
+2   cvi	 --> 2 
+(23) cvi	 --> 23 
+(23.2323) cvi --> 23 
+(hello) cvi   --> 0
+
+
+Description:
+
+If cvi is executed with a double, the resulting 
+integer is the number without digits after decimal point (the same 
+result as floor), if it is executed with a 
+string that contains letters 0 is returned. If the string 
+contains a double or integer, the corresponding integer is 
+returned. 
+Alternatives: Function int (undocumented) -> behaviour and 
+synopsis are the same.
+
+
+Diagnostics:
+
+no errors are issued.
+
+
+Author:
+
+docu by Sirko Straube 
+SeeAlso:  floor, cst, cv1d, cv2d, cva_d, cva_t, cvd, cvi_s, cvlit, cvn, cvs, cvt_a
+
+
+Source:
+
+../../lib/sli/typeinit.sli

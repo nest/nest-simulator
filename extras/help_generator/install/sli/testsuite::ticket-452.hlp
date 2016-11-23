@@ -1,0 +1,24 @@
+Name: testsuite::ticket-452 - Ensure that precise simulations give identical results whether stepped or run continuously
+
+Synopsis:
+
+(ticket-452) run -> NEST exits if test fails
+
+
+Description:
+
+Ensure that simulations with precise spike timing yield identical results independent of 
+whether one simulates the full simulation time without interruption, or splits the simulation 
+into many small pieces. 
+The problem was unrelated to the setting of kernel property  /off_grid_spiking 
+and the spike_detector property  /precise_times.
+
+
+Author:
+
+Hans Ekkehard Plesser, 2010-09-30; based on original reproduced code by Alexander Hanuschkin
+
+
+Source:
+
+../../testsuite/regressiontests/ticket-452.sli

@@ -1,0 +1,74 @@
+Name: def - define a variable or function
+
+Synopsis:
+
+/name obj def ->	- 
+/name [/type1 .. /typen] any def ->	-
+
+
+Examples:
+
+SLI ] /a 1 def 
+SLI ] a = 
+1 
+SLI ] /f [/integertype /integertype] {add_ii} def 
+SLI ] 1 2 f 
+SLI [1] = 
+3 
+SLI ] 1 2.0 f 
+TypeTrie::lookup error at parameter level 0 
+Operand	 : 2 
+Operand type : doubletype 
+Expected type: integertype 
+Error: /ArgumentType in f 
+SLI ]  /f [/integertype /doubletype] {add_id} def 
+SLI ] 1 2.0 f = 
+2 
+SLI ] 1 2 f 
+SLI [1] = 
+3
+
+
+Description:
+
+def creates an association between /name and obj 
+in the current dictionary. 
+First variant: 
+The first variant unconditionally creates the association. Any 
+existing association will be overwritten. 
+Second variant: 
+The second variant creates a user-defined function with automatic 
+parameter checking. The second parameter must be an array of valid 
+type-specifiers. The last parameter must be a procedure object. If 
+the name is already bound to a trie, the new definition is added 
+to the trie, otherwise a trie is created. 
+If the array of type-specifiers is empty, it is checked, if there 
+already exists a trie for this name. If so, the definition would be 
+ambiguous, and an error is raised. If not, the first variant of 
+def is called. 
+Note that no name binding via bind is performed.
+
+
+Remarks:
+
+Ambiguous type trie definitions are not always detected! Only if the 
+new parameter list is longer than an existing one, a warning is issued 
+(but no error is raised). This needs improvement. 
+Author'sRemark: Maybe the trie variant should be called deffun, like in lisp.
+
+
+Author:
+
+Marc-oliver Gewaltig
+
+
+SeeAlso:
+
+bind
+type
+Set
+undef
+
+Source:
+
+../../lib/sli/typeinit.sli

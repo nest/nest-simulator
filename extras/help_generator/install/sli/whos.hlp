@@ -1,0 +1,31 @@
+Name: whos - list contents of all dictionaries on the dicitonary stack
+
+Synopsis:
+
+whos ->	-
+
+
+Description:
+
+whos prints the contents of all dictionaries which are cunnrently 
+on the dictionary stack to the standard output. 
+Dictionaries are printed from bottom to top, i.e. 
+systemdict then userdict and then all additional dictionaries (if any).
+
+
+Remarks:
+
+taken from Matlab. 
+The listing would be more legible with a pager. If you 
+want to pass the output to a stream, use info_ds instead.
+
+
+Author:
+
+Gewaltig 
+SeeAlso:  info_ds, dictstack, info, topinfo_d, who
+
+
+Source:
+
+../../lib/sli/sli-init.sli

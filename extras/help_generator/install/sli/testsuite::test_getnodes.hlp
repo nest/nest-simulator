@@ -1,0 +1,27 @@
+Name: testsuite::test_getnodes - sli script to test if GetGlobalNodes works as expected
+
+Synopsis:
+
+(test_getnodes) run
+
+
+Description:
+
+This test generates 10 iaf_neurons, 1 iaf_psc_alpha neuron and 10 
+iaf_psc_delta_neurons. It then uses GetGlobalNodes to retrieve these 
+different sets of neurons from the network.
+
+
+Author:
+
+Marc-Oliver Gewaltig
+
+
+FirstVersion:
+
+January 2012
+
+
+Source:
+
+../../testsuite/unittests/test_getnodes.sli

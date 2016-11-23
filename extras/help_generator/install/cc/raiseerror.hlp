@@ -1,0 +1,73 @@
+Name: raiseerror - raise an error to the system
+
+Synopsis:
+
+/command /error raiserror -> /command (side-effects see below!)
+
+
+Examples:
+
+/save_sqrt 
+{ 
+0 gt % is the argument positive ? 
+{ 
+sqrt 
+} 
+{ % else, issue an error 
+/save_sqrt /PositiveValueExpected raiseerror 
+} ifelse 
+} def
+
+
+Description:
+
+raiseerror is a SLI interface to the interpreter's error 
+handling mechanism (see The Red Book for details). If an error 
+is raised, the following actions are performed: 
+* the value of errordict /newerror is set to true 
+* the value of errordict /commandname is set to the name of the 
+command which raised the error 
+* the name of the command which raised the error is pushed on 
+the operand stack. 
+* If the value of errordict /recorstack is true, 
+the state of the interpreter is saved: 
+	- the operand stack is copied to errordict /ostack 
+	- the execution stack is copied to errordict /estack 
+	- the dictionary stack is copied to errordict /dstack 
+* stop is called. Stop then tries to find an enclosing stopped 
+context and calls the associated function. 
+This mechanism is explained in detail in The PostScript Reference Manual. 
+Please note that when raiserror is called, the state of the stacks 
+should be restored to its initial state.
+
+
+Bugs:
+
+lets wait...
+
+
+Remarks:
+
+not part of PostScript, but conform to the mechanism
+
+
+References:
+
+See the Red Book for PostScript's error handling facilities
+
+
+Author:
+
+Gewaltig
+
+
+SeeAlso:
+
+raiseagain
+stop
+stopped
+errordict
+
+Source:
+
+../../sli/slicontrol.cc

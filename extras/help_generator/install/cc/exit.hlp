@@ -1,0 +1,17 @@
+Name: exit - exit a loop construct
+
+Description:
+
+exit can be used to leave loop structures 
+like loop, repeat, for, forall, Map, etc. 
+in a clean way.
+
+
+Remarks:
+
+This command does not exit the SLI interpreter! Use quit instead.
+
+
+Source:
+
+../../sli/slicontrol.cc

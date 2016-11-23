@@ -1,0 +1,72 @@
+Name: ArrayShape - reduce a multidimensional array to a desired shape
+
+Synopsis:
+
+array1 [d1 d2 ...] LayoutArray -> array2
+
+
+Examples:
+
+[ [ 3 6 9] 100 [ 8 2 3 7 1] ] [2] ArrayShape 
+-> [[3 6 9] 100] 
+[ [ 3 6 9] [ 8 2 3 7 1] ] [/All 2] ArrayShape 
+-> [[3 6] [8 2]] 
+[ [ 3 6 9] [ 8 2 3 7 1] ] [/All 3] ArrayShape 
+-> [[3 6 9] [8 2 3]] 
+[ [ 3 6 9] [ 8 2 3 7 1] ] [/All 4] ArrayShape 
+-> [[8 2 3 7]] 
+[[[ 6 2 3] [-7 4 5] ] [[8 3 2] [2 -9 -5] 3 7 1]] [/All 2 3] ArrayShape 
+-> [[[6 2 3] [-7 4 5]] [[8 3 2] [2 -9 -5]]]
+
+
+Description:
+
+The function is useful if an operation needs to be performed on an 
+array of data which contains rows with insufficient data and rows 
+with trailing superfluous entries. 
+The algorithm is as follows: 
+	- if dim empty return [] 
+	- take first d1 elements of a if available 
+return [] otherwise 
+	- forall these elements 
+	- do nothing if [d2 ...dn] empty 
+	- otherwise apply [d2 ...dn] and remove 
+if result is []
+
+
+Parameters:
+
+array1		- array to operate on 
+[d1 d2 ...]	- array with specification of dimensions, where 
+di is an integer or /All 
+array2		- reduced array1
+
+
+Remarks:
+
+The Mathematica function ArrayDepth (not implemented) tests whether its 
+argument has the required dimensions. This is unlike the function Dimensions 
+which assumes that all elements of the array at a given level have identical 
+shape and, therefore, inspects only the first element at each level.
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+2007.11.28
+
+
+SeeAlso:
+
+LayoutArray
+Part
+Table
+Dimensions
+
+Source:
+
+../../lib/sli/mathematica.sli

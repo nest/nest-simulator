@@ -1,0 +1,46 @@
+Name: Erfc - complementary error function
+
+Synopsis:
+
+x Erfc -> result
+
+
+Examples:
+
+0.5 erfc -> 0.4795
+
+
+Description:
+
+Computes the error function 
+erfc(x) = 1	- erf(x) = 2/sqrt(pi) int_x^inf dt exp(-t^2) 
+Parameters:  x (double): error function argument
+
+
+Remarks:
+
+Requires the GSL.
+
+
+References:
+
+http://sources.redhat.com/gsl/ref
+
+
+Author:
+
+H E Plesser
+
+
+FirstVersion:
+
+2001-07-30
+
+
+SeeAlso:
+
+Erf
+
+Source:
+
+../../sli/specialfunctionsmodule.h

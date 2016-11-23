@@ -1,0 +1,11 @@
+Name: symbol_s - read a symbol from a string 
+ Synopsis:  string symbol_s -> post any true 
+ false
+
+SeeAlso:
+
+token
+
+Source:
+
+../../sli/slicontrol.cc

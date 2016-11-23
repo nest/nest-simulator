@@ -1,0 +1,42 @@
+Name: topology::GetElement - return node GID at specified layer position
+
+Synopsis:
+
+layer_gid [array] GetElement -> node_gid
+
+
+Examples:
+
+topology using 
+%%Create layer 
+<< /rows 5 
+/columns 4 
+/elements /iaf_neuron 
+>> /dictionary Set 
+dictionary CreateLayer /src Set 
+src [2 3] GetElement
+
+
+Description:
+
+Retrieves node at the layer grid position 
+given in [array]. [array] is on the format [column row]. 
+The layer must be of grid type. Returns an array of GIDs 
+if there are several nodes per grid point.
+
+
+Parameters:
+
+layer_gid		- topological layer 
+[array]		- position of node 
+node_gid		- node GID
+
+
+Author:
+
+Kittel Austvoll, Håkon Enger
+
+
+Source:
+
+../../topology/topologymodule.cpp

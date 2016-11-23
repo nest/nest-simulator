@@ -1,0 +1,27 @@
+Name: debug - execute an object in debug mode.
+
+Synopsis:
+
+any debug ->	-
+
+
+Examples:
+
+{1 2 add} debug -> 3
+
+
+Description:
+
+debug tries to execute the object by moving it to 
+the execution stack.
+
+
+SeeAlso:
+
+exec
+debugon
+debugoff
+
+Source:
+
+../../sli/slicontrol.cc

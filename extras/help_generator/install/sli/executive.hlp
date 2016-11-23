@@ -1,0 +1,12 @@
+Name: executive - Start interactive interpreter session.
+
+SeeAlso:
+
+callback
+exithook
+quit
+exit
+
+Source:
+
+../../lib/sli/sli-init.sli

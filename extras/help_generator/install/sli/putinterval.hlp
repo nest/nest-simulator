@@ -1,0 +1,27 @@
+Name: putinterval - replace sections of an array/string
+
+Synopsis:
+
+string int string putinterval -> string 
+array int array putinterval -> array 
+Examples:(hello) 2 (xx) putinterval -> (hexxo) 
+[1 2 3 4 5] 2 [(xx) 99] putinterval -> [1 2 (xx) 99 5]
+
+
+References:
+
+Postscript language
+
+
+Author:
+
+docu by Sirko Straube
+
+
+SeeAlso:
+
+getinterval
+
+Source:
+
+../../lib/sli/ps-lib.sli

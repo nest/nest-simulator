@@ -1,0 +1,28 @@
+Name: readline - read and edit a line from standard input
+
+Synopsis:
+
+any readline -> any true 
+-> false
+
+
+Description:
+
+readline takes anything from the prompt as a string and prints it. 
+If something is added, readline pushes the additional phrase as string 
+plus a true on the stack (that means readline reads a line from 
+standard input). If nothing is added false is pushed.
+
+
+Author:
+
+docu by Sirko Straube
+
+
+SeeAlso:
+
+GNUreadline
+
+Source:
+
+../../lib/sli/sli-init.sli

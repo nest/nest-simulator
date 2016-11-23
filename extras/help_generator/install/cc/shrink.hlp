@@ -1,0 +1,22 @@
+Name: shrink - Reduce the capacity of an array or string to its minimum.
+
+Synopsis:
+
+array shrink -> array bool
+
+
+Description:
+
+Shrink reduces the capacity of an array or string to its minimum. 
+The boolean return value indicates whether a re-sizing of the array was done.
+
+
+SeeAlso:
+
+capacity
+reserve
+allocations
+
+Source:
+
+../../sli/slidata.cc

@@ -1,0 +1,48 @@
+Name: Options - Define a new set of options for a given name.
+
+Synopsis:
+
+/f  optiondict Options -> --
+
+
+Description:
+
+Options defines a set of options for a name. 
+The options are supplied in a dictionary. Old 
+option values are overwritten by this operation. 
+Options should be used to initially define a 
+set of options for a given name. Use SetOptions 
+to modify one or more options from this set. 
+In addition to the supplied options, Options adds 
+the options /DefaultOptions with the original option 
+values. 
+It is suggested that you use a C++-like notation to indicate the 
+availability of the function, if the function is defined in some 
+"namespace" dictionary. 
+For example: "arr::Mean".
+
+
+Diagnostics:
+
+None
+
+
+Author:
+
+M. O. Gewaltig
+
+
+SeeAlso:
+
+GetOption
+GetOptions
+ShowOptions
+SetOptions
+ResetOptions
+SaveOptions
+RestoreOptions
+OptionsDictionary
+
+Source:
+
+../../lib/sli/mathematica.sli

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: multimeter</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: multimeter</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>multimeter - Device to record analog data from neurons.</pre>
+<b>Synopsis: </b>
+<pre>multimeter Create  <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>  SLI ] /iaf_cond_alpha Create /n Set  <br/>  SLI ] n /recordables get ==  <br/>  [/V_m /g_ex /g_in /t_ref_remaining]  <br/>  SLI ] /multimeter Create /mm Set  <br/>  SLI ] mm << /interval 0.5 /record_from [/V_m /g_ex /g_in] >> SetStatus  <br/>  SLI ] mm n Connect  <br/>  SLI ] 10 Simulate  <br/>  SLI ] mm /events get info  <br/>  --------------------------------------------------  <br/>  Name	 Type	 Value  <br/>  --------------------------------------------------  <br/>  g_ex	 doublevectortype   <doublevectortype>  <br/>  g_in	 doublevectortype   <doublevectortype>  <br/>  senders	 intvectortype	 <intvectortype>  <br/>  times	 doublevectortype   <doublevectortype>  <br/>  t_ref_remaining	 doublevectortype   <doublevectortype>  <br/>  V_m	 doublevectortype   <doublevectortype>  <br/>  --------------------------------------------------  <br/>  Total number of entries: 6  <br/>   <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  A multimeter records a user-defined set of state variables from connected nodes  <br/>  to memory, file or stdout.  <br/>   <br/>  The multimeter must be configured with the list of variables to record  <br/>  from, otherwise it will not record anything. The /recordables property  <br/>  of a neuron model shows which quantities can be recorded with a multimeter.  <br/>  A single multimeter should only record from neurons of the same basic  <br/>  type (e.g. /iaf_cond_alpha and any user-defined models derived from it  <br/>  using CopyModel). If the defaults or status dictionary of a model neuron  <br/>  does not contain a /recordables entry, it is not ready for use with  <br/>  multimeter.  <br/>   <br/>  By default, multimeters record values once per ms. Set the parameter /interval  <br/>  to change this. The recording interval cannot be smaller than the resolution.  <br/>   <br/>  Results are returned in the /events entry of the status dictionary. For  <br/>  each recorded quantity, a vector of doubles is returned. The vector has the  <br/>  same name as the /recordable. If /withtime is set, times are given in the  <br/>  /times vector in /events.  <br/>   <br/>  Accumulator mode:  <br/>  Multimeter can operate in accumulator mode. In this case, values for all  <br/>  recorded variables are added across all recorded nodes (but kept separate in  <br/>  time). This can be useful to record average membrane potential in a population.  <br/>   <br/>  To activate accumulator mode, either set /to_accumulator to true, or set  <br/>  /record_to [ /accumulator ].  In accumulator mode, you cannot record to file,  <br/>  to memory, to screen, with GID or with weight. You must activate accumulator  <br/>  mode before simulating. Accumulator data is never written to file. You must  <br/>  extract it from the device using GetStatus.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  The following parameters can be set in the status dictionary:  <br/>  interval	 double	- Recording interval in ms  <br/>  record_from  array 	- Array containing the names of variables to record  <br/>  from, obtained from the /recordables entry of the  <br/>  model from which one wants to record  <br/>   <br/>  
+</pre>
+<b>Sends: </b>
+<pre>DataLoggingRequest  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/> 	- The set of variables to record and the recording interval must be set  <br/>  BEFORE the multimeter is connected to any node, and cannot be changed  <br/>  afterwards.  <br/> 	- A multimeter cannot be frozen.  <br/> 	- If you record with multimeter in accumulator mode and some of the nodes  <br/>  you record from are frozen and others are not, data will only be collected  <br/>  from the unfrozen nodes. Most likely, this will lead to confusing results,  <br/>  so you should not use multimeter with frozen nodes.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Hans Ekkehard Plesser  <br/>   <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>2009-04-01  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/Device.html">Device</a></li>
+    <li><a href="../cc/RecordingDevice.html">RecordingDevice</a></li>
+</ul>
+<b>Source:</b><pre>../../models/multimeter.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

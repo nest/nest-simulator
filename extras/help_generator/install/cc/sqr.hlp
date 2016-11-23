@@ -1,0 +1,19 @@
+Name: sqr - Compute the square of a number.
+
+Synopsis:
+
+number sqr -> double
+
+
+Examples:
+
+2.0 sqr -> 4.0
+
+
+SeeAlso:
+
+sqrt
+
+Source:
+
+../../sli/slimath.cc

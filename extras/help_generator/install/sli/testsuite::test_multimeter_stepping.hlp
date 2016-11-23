@@ -1,0 +1,29 @@
+Name: testsuite::test_multimeter_stepping - test if multimeter returns same values for stepped simulation
+
+Synopsis:
+
+(test_multimeter_stepping.sli) run -> dies if assertion fails
+
+
+Description:
+
+The script checks all models providing a "recordables" entry in their 
+status dict.  It creates a multimeter, sets it to record from all 
+recordables. The neuron receives Poisson input. This is done once for 
+a single 50 x MinDelay simulation and once for 50 subsequent MinDelay simulations. The test passes 
+if both cases produce identical results.
+
+
+Author:
+
+Plesser
+
+
+FirstVersion:
+
+2010-10-05
+
+
+Source:
+
+../../testsuite/unittests/test_multimeter_stepping.sli

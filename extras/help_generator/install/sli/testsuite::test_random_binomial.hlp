@@ -1,0 +1,29 @@
+Name: testsuite::test_random_binomial - test of binomial random deviates
+
+Synopsis:
+
+(test_random_binomial) run -> compare binomial random numbers with desired distribution.
+
+
+Description:
+
+Kolmogorov-Smirnov test of binomial random deviate generator. 
+This test performs a Kolmogorov-Smirnov test of the random numbers generated 
+by the binomial random deviate generator. It draws realizations and compares 
+the observed cumulative distribution function against the theoretical one.
+
+
+Remarks:
+
+The test was implemented following 
+http://en.wikipedia.org/wiki/Kolmogorov%E2%80%93Smirnov_test 
+Author:  July 2011, Moritz Deger
+
+
+SeeAlso:
+
+rdevdict::binomial
+
+Source:
+
+../../testsuite/unittests/test_random_binomial.sli

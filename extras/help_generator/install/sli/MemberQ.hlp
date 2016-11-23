@@ -1,0 +1,45 @@
+Name: MemberQ - checks if array contains a specific element
+
+Synopsis:
+
+array any MemberQ -> true 
+-> false
+
+
+Examples:
+
+[3 8 2 9 -1] 2 MemberQ --> true 
+[3 8 9 -1]   2 MemberQ --> false
+
+
+Remarks:
+
+The Mathematica implementation is much more general
+
+
+References:
+
+[1] The Mathematica Book "MemberQ"
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+10.5.2001
+
+
+SeeAlso:
+
+LiteralQ
+NumberQ
+ArrayQ
+MatrixQ
+HasDifferentMemberQ
+
+Source:
+
+../../lib/sli/mathematica.sli

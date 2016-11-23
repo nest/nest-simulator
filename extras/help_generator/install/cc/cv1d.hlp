@@ -1,0 +1,42 @@
+Name: cv1d - convert 2-dimensional coordinates to 1-dim index
+
+Synopsis:
+
+y   x   w  cv1d -> i
+
+
+Description:
+
+This function converts a 2-dimensional matrix address to 
+the corresponding index of a linear array.  Useful if you have to handle 
+2-dimensional data (e.g. an image) which is stored in a linear array. 
+Note that by convention the origin is 0,0 and at the upper left corner.
+
+
+Parameters:
+
+y : integer. the y-coordinate 
+x : integer. the x coordinate 
+w : integer. the border with of the 2-dimensional coordinate system 
+Example: 3 2 4 cv1d -> 14 
+3 is the y-coordinate (row) 
+2 is the x coordinate (column) 
+4 is the number of columns 
+14 is the index of the corresponding element in a 1-dimensional array
+
+
+SeeAlso:
+
+cst
+cva
+cv2d
+cvd
+cvi
+cvlit
+cvn
+cvs
+cvt_a
+
+Source:
+
+../../sli/sliarray.cc

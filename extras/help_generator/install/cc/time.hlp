@@ -1,0 +1,30 @@
+Name: time - return wall clock time in s since 1.1.1970 0 
+ Synopsis:  time -> int
+
+Description:
+
+calls time() and returns seconds since 1.1.1970, 
+00:00:00 UTC.  This is mainly meant as a tool to generate random seeds.
+
+
+Author:
+
+Hans E. Plesser
+
+
+FirstVersion:
+
+2001-10-03
+
+
+SeeAlso:
+
+clock
+usertime
+tic
+toc
+sleep
+
+Source:
+
+../../sli/slicontrol.cc

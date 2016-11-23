@@ -1,0 +1,36 @@
+Name: oclear - Clear the state-flags of an output stream.
+
+Synopsis:
+
+ostream oclear -> ostream
+
+
+Description:
+
+This function provides a direct interface to 
+the C++ ostream::clear() member function.
+
+
+Bugs:
+
+
+
+
+Remarks:
+
+
+
+
+Author:
+
+Gewaltig
+
+
+SeeAlso:
+
+iclear
+good
+
+Source:
+
+../../sli/sli_io.cc

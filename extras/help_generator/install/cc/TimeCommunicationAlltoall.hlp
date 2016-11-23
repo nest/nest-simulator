@@ -1,0 +1,36 @@
+Name: TimeCommunicationAlltoall - returns average time taken for MPI_Alltoall 
+ over n calls with m 
+ bytes
+
+Synopsis:
+
+n m TimeCommunicationAlltoall -> time
+
+
+Description:
+
+The function allows a user to test how much time a call to MPI_Alltoall costs
+
+
+Availability:
+
+10kproject (>r11254)
+
+
+Author:
+
+Jakob Jordan
+
+
+FirstVersion:
+
+June 2014
+
+
+SeeAlso:
+
+TimeCommunication
+
+Source:
+
+../../nestkernel/nestmodule.cpp

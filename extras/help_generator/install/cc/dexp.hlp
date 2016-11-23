@@ -1,0 +1,42 @@
+Name: dexp - computes an integer power of 2 and returns the result as double
+
+Synopsis:
+
+integer dexp -> double
+
+
+Examples:
+
+-5 dexp frexp -> 0.5 -4
+
+
+Description:
+
+This is an interface to the C++ expression 
+double std::ldexp(1.0,int)
+
+
+References:
+
+Stroustrup 3rd ed p 661
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+17.5.2005
+
+
+SeeAlso:
+
+frexp
+ldexp
+modf
+
+Source:
+
+../../sli/slimath.cc

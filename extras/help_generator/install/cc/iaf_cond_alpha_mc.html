@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: iaf_cond_alpha_mc</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: iaf_cond_alpha_mc</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>iaf_cond_alpha_mc - PROTOTYPE Multi-compartment conductance-based leaky  <br/>  integrate-and-fire neuron model.</pre>
+<b>Description: </b>
+<pre> <br/>  THIS MODEL IS A PROTOTYPE FOR ILLUSTRATION PURPOSES. IT IS NOT YET  <br/>  FULLY TESTED. USE AT YOUR OWN PERIL!  <br/>   <br/>  iaf_cond_alpha_mc is an implementation of a multi-compartment spiking  <br/>  neuron using IAF dynamics with conductance-based synapses. It serves  <br/>  mainly to illustrate the implementation of multicompartment models in  <br/>  NEST.  <br/>   <br/>  The model has three compartments: soma, proximal and distal dendrite,  <br/>  labeled as s, p, and d, respectively. Compartments are connected through  <br/>  passive conductances as follows  <br/>   <br/>  C_m.s d/dt V_m.s = ...	- g_sp ( V_m.s	- V_m.p )  <br/>   <br/>  C_m.p d/dt V_m.p = ...	- g_sp ( V_m.p	- V_m.s )	- g_pd ( V_m.p	- V_m.d )  <br/>   <br/>  C_m.d d/dt V_m.d = ...		- g_pd ( V_m.d	- V_m.p )  <br/>   <br/>  A spike is fired when the somatic membrane potential exceeds threshold,  <br/>  V_m.s >= V_th. After a spike, somatic membrane potential is clamped to  <br/>  a reset potential, V_m.s == V_reset, for the refractory period. Dendritic  <br/>  membrane potentials are not manipulated after a spike.  <br/>   <br/>  There is one excitatory and one inhibitory conductance-based synapse  <br/>  onto each compartment, with alpha-function time course. The alpha  <br/>  function is normalised such that an event of weight 1.0 results in a  <br/>  peak current of 1 nS at t = tau_syn. Each compartment can also receive  <br/>  current input from a current generator, and an external (rheobase)  <br/>  current can be set for each compartment.  <br/>   <br/>  Synapses, including those for injection external currents, are addressed through  <br/>  the receptor types given in the receptor_types entry of the state dictionary.  <br/>  Note that in contrast to the single-compartment iaf_cond_alpha model, all  <br/>  synaptic weights must be positive numbers!  <br/>   <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  The following parameters can be set in the status dictionary. Parameters  <br/>  for each compartment are collected in a sub-dictionary; these sub-dictionaries  <br/>  are called "soma", "proximal", and "distal", respectively. In the list below,  <br/>  these parameters are marked with an asterisk.  <br/>   <br/>  V_m*	 double	- Membrane potential in mV  <br/>  E_L*	 double	- Leak reversal potential in mV.  <br/>  C_m*	 double	- Capacity of the membrane in pF  <br/>  E_ex*	 double	- Excitatory reversal potential in mV.  <br/>  E_in*	 double	- Inhibitory reversal potential in mV.  <br/>  g_L*	 double	- Leak conductance in nS;  <br/>  tau_syn_ex*  double	- Rise time of the excitatory synaptic alpha function in ms.  <br/>  tau_syn_in*  double	- Rise time of the inhibitory synaptic alpha function in ms.  <br/>  I_e*	 double	- Constant input current in pA.  <br/>   <br/>  g_sp	 double	- Conductance connecting soma and proximal dendrite, in nS.  <br/>  g_pd	 double	- Conductance connecting proximal and distal dendrite, in  <br/>  nS.  <br/>  t_ref	 double	- Duration of refractory period in ms.  <br/>  V_th	 double	- Spike threshold in mV.  <br/>  V_reset	 double	- Reset potential of the membrane in mV.  <br/>   <br/>  Example:  <br/>  See examples/nest/mc_neuron.py.  <br/>   <br/>  Remark:  <br/>  This is a prototype for illustration which has undergone only limited testing.  <br/>  Details of the implementation and user-interface will likely change.  <br/>  USE AT YOUR OWN PERIL!  <br/>   <br/>  
+</pre>
+<b>Require: </b>
+<pre>HAVE_GSL  <br/>  
+</pre>
+<b>Receives: </b>
+<pre>SpikeEvent, CurrentEvent, DataLoggingRequest  <br/>   <br/>  
+</pre>
+<b>Sends: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>   <br/>  Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical  <br/>  model for the large, fluctuating synaptic conductance state typical of  <br/>  neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159–175.  <br/>   <br/>  Bernander, O ., Douglas, R. J., Martin, K. A. C., & Koch, C. (1991).  <br/>  Synaptic background activity influences spatiotemporal integration in  <br/>  single pyramidal cells.  Proc. Natl. Acad. Sci. USA, 88(24),  <br/>  11569–11573.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Plesser  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/iaf_cond_alpha.html">iaf_cond_alpha</a></li>
+</ul>
+<b>Source:</b><pre>../../models/iaf_cond_alpha_mc.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

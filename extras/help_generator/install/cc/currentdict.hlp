@@ -1,0 +1,24 @@
+Name: currentdict - return topmost dictionary of the dictionary stack
+
+Synopsis:
+
+currentdict -> dict
+
+
+Description:
+
+Returns a reference to the current dictionary.
+
+
+SeeAlso:
+
+dictstack
+begin
+end
+cleardictstack
+who
+whos
+
+Source:
+
+../../sli/slidict.cc

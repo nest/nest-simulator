@@ -1,0 +1,22 @@
+Name: tsodyks2_shortterm_bursts - sli script for testing Tsodyks short term plastic synapses.
+
+Synopsis:
+
+(tsodyks2_shortterm_bursts) run
+
+
+Description:
+
+Script to test Tsodyks short term plasticity depressing/facilitating synapses according to 
+'Synchrony Generation in Recurrent Networks with Frequency-Dependent Synapses' 
+Tsodyks, Uziel, Markram 
+JNeuroSci, Vol. 20 RC50 p. 1--5, (2000) 
+author:  Moritz Helias 
+date:   March 2006 
+see also: brunel.sli 
+see also: http://ken.brainworks.uni-freiburg.de/nestwiki/index.php/Network_burst_generation_by_short-term_plasticity
+
+
+Source:
+
+../../examples/nest/tsodyks2_shortterm_bursts.sli

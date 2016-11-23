@@ -1,0 +1,48 @@
+Name: testsuite::test_iaf_dc_aligned_stop - sli script for test of iaf_neuron resolution independence
+
+Synopsis:
+
+(test_iaf_dc_aligned_stop) run -> compare response with reference data
+
+
+Description:
+
+test_iaf_dc_aligned_stop.sli is an extended version of 
+test_iaf_dc_aligned_delay.sli . In addition to the time when the 
+current is switched on (/start) (test_iaf_dc_aligned_delay.sli) also 
+a finite duration of the current is specified. This is done by 
+supplying the DC generator device with the time stamp of the 
+earliest DC event that should not be emitted.  Consequently, stop = 
+start + duration. 
+In the step stop	- h -> stop, no DC event is emitted anymore. A neuron 
+connected to the DC generator interprets this as a DC current that is 
+switched off precisely at time stop. Therefore, the DC current specified 
+by start and stop is independent of the resolution h. The minimal duration 
+is h. 
+See [1] for details on why the DC generator specification is 
+consistent with a grid based integration scheme of systems of 
+differential equations.  In this scheme DC currents are represeted 
+by the differential equation d/dt I = 0. 
+The resulting SLI code is independent of the resolution and 
+generates exactly the same voltage trace at all resolutions. 
+No output of the spike detector is visible here because of the short 
+stimulation period of 2 ms. 
+The expected output is documented at the end of the script.
+
+
+References:
+
+[1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear 
+systems with applications to neuronal modeling. Biologial Cybernetics 
+81:381-402. 
+Author:  July 2004, Diesmann
+
+
+SeeAlso:
+
+testsuite::test_iaf_dc
+testsuite::test_iaf_dc_aligned_delay
+
+Source:
+
+../../testsuite/unittests/test_iaf_dc_aligned_stop.sli

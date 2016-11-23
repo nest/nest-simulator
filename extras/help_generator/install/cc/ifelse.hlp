@@ -1,0 +1,30 @@
+Name: ifelse - conditionaly execute a procedure
+
+Synopsis:
+
+boolean  {proc1}  {proc2}   ifelse ->	- 
+boolean anytoken1 anytoken1 ifelse ->	-
+
+
+Examples:
+
+0 1 gt { (1 > 0) = } { (1 <= 0) =} ifelse -> (0 <= 1)
+
+
+Description:
+
+ifelse executes anytoken1 if the boolean is true, and anytoken2 
+otherwise. 
+The supplied tokens usually are procedures. 
+Alternatives: Function ifelse_ (undocumented) 
+-> behaviour and synopsis are the same, except that no 
+warnings or error messages are thrown.
+
+
+SeeAlso:
+
+if
+
+Source:
+
+../../sli/slicontrol.cc

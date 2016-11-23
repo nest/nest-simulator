@@ -1,0 +1,54 @@
+Name: = - Print object to screen.
+
+Synopsis:
+
+any = -->	-
+
+
+Examples:
+
+SLI ] 12 = 
+12 
+SLI ] {1211} = 
+<proceduretype> 
+SLI ]
+
+
+Description:
+
+Displays topmost operand stack object and pops it. In contrast to 
+== operator, = will only give part of the information if the object 
+is not of simple kind (for example, there's no difference for 
+integers, but there is one for procedures!)
+
+
+Parameters:
+
+any
+
+
+Remarks:
+
+Commented Hehl April 20, 1999 
+compare RedBook 2nd ed. page 362
+
+
+Author:
+
+Gewaltig, Diesmann
+
+
+FirstVersion:
+
+???
+
+
+SeeAlso:
+
+==
+=only
+==only
+
+Source:
+
+../../lib/sli/sli-init.sli

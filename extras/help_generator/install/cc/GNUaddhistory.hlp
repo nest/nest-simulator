@@ -1,0 +1,24 @@
+Name: GNUaddhistory - Add a string to the readline-history
+
+Synopsis:
+
+(string) GRNUaddhistory ->	-
+
+
+Description:
+
+Adds a string to the readline history.
+
+
+Require:
+
+HAVE_READLINE
+
+
+SeeAlso:
+
+GNUreadline
+
+Source:
+
+../../sli/gnureadline.cc

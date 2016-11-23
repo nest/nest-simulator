@@ -1,0 +1,52 @@
+Name: getPPID - Get parent ID of the current process
+
+Synopsis:
+
+getPPID ->	-
+
+
+Examples:
+
+(I was called by process #) =only getPPID =
+
+
+Description:
+
+Returns the process parent ID for the calling process.
+
+
+Parameters:
+
+-
+
+
+Bugs:
+
+-
+
+
+Author:
+
+S Schrader, taken from getPID
+
+
+FirstVersion:
+
+Nov 11 2005
+
+
+SeeAlso:
+
+getPID
+getPGRP
+fork
+spoon
+waitPID
+kill
+system
+spawn
+shpawn
+
+Source:
+
+../../sli/processes.h

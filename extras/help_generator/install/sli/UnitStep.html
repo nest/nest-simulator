@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: UnitStep</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: UnitStep</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>UnitStep - The unit step function (aka Heavyside function)</pre>
+<b>Synopsis: </b>
+<pre> <br/>  x  UnitStep -> 0   ;if  x <  0  <br/>  -> 1   ;if  x >= 0  <br/>  [x1 x2 ...] UnitStep -> 0   ;if xi <  0 for any xi in [x]  <br/>  -> 1   ;if xi >= 0 for all xi in [x]  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  "x UnitStep" represents the unit step function,  <br/>  equal to 0 for x<0 and 1 for x>=0.  <br/>   <br/>  "[x1 x2 ...] UnitStep" represents the multidimensional unit step  <br/>  function which is 1 only if none of the xi are negative.  <br/>   <br/>  Alternatives: Function UnitStep_i for integers, UnitStep_d for  <br/>  doubles, UnitStep_ia for integer arrays, UnitStep_da for double  <br/>  arrays (all undocumented) -> behavior and synopsis are the same,  <br/>  except that no warnings or error messages are thrown.  <br/>   <br/>  
+</pre>
+<b>Diagnostics: </b>
+<pre> <br/>  When called on an empty array, /ArgumentType is raised.  <br/>   <br/>  When first element of the array is not of type integer or double,  <br/>  /ArgumentType is raised.  <br/>   <br/>  Will break if called on an array containing non-numerical values.  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  This is the SLI version of the Mathematica function "UnitStep".  <br/>  Documentation taken from the Mathematica Book.  <br/>   <br/>  Implementation of the type variants can be found in file  <br/>  synod2/sli/slimath.cc.  <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  The Mathematica Book 
+</pre>
+<b>Author: </b>
+<pre>Ruediger Kupper  <br/>   <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>13.3.2003  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../sli/Sign.html">Sign</a></li>
+    <li><a href="../sli/abs.html">abs</a></li>
+</ul>
+<b>Source:</b><pre>../../lib/sli/mathematica.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

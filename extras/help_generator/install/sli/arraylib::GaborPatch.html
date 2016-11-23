@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: arraylib::GaborPatch</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: arraylib::GaborPatch</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>arraylib::GaborPatch - Return a two-dimensional array with Gabor function.</pre>
+<b>Synopsis: </b>
+<pre> <br/>  nrows ncols GaborPatch -> [[] .. []]  <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  This function returns a matrix of nrows by ncols, with the amplitudes  <br/>  of a Gabor function, computed over the range of [x_min,x_max] by [y_min,y_max].  <br/>  These and other parameters can be set by changing the function's options.  <br/>   <br/>  An orientation of 0 RAD results in a vertically oriented Gabor.  <br/>  An orientation of Pi/2 results in an horizontally oriented Gabor.  <br/>  Angles are measured counter clockwise from the positive x-axis.  <br/>   <br/>  The implementation follows the description given by  <br/>  N. Petkov and R. Kruizinga Biol.Cybern. 76, 83-97 (1997).  <br/>   <br/>  Note that GaborPatch automatically performs a coordinate transformation  <br/>  from the mathematical x-y plane to the matrix row-column system.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  nrows: number of rows of the result matrix.  <br/>  ncols: number of columns of the result matrix.  <br/>   <br/>  
+</pre>
+<b>Options: </b>
+<pre> <br/>  Options which determine the argument range of the Gabor patch.  <br/>   <br/>  x_min	 doubletype 	- smallest x coordinate value  [-2Pi]  <br/>  x_max	 doubletype 	- largest  x coordinate value. [ 2Pi]  <br/>  y_min	 doubletype 	- smallest y coordinate value. [-2Pi]  <br/>  y_max	 doubletype 	- largest  y coordinate value. [ 2Pi]  <br/>   <br/>  Options which determine the Gabor function:  <br/>   <br/>  lambda	 doubletype 	- Wavelength of the Gabor in RAD. [ 2Pi]  <br/>  phase	 doubletype 	- Phase of the Gabor in RAD.	 [ 0.0]  <br/>  orientation doubletype 	- Rotation of the Gabor in RAD   [ 0.0]  <br/>  sigma	 doubletype 	- Width of the Gaussian envelope. [ Pi]  <br/>  gamma	 doubletype 	- Spatial aspect ratio.	 [ 1.0]  <br/>   <br/>  The options correspond to the status dictionary entries of the  <br/>  gabor_device. Thus, it is possible to use the option dictionary  <br/>  of the GaborPatch to set the properties of a gabor device.  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre>Petkov N and Kruizinga P: Biol. Cybern. 76, 83-96 (1997)  <br/>  
+</pre>
+<b>Author: </b>
+<pre>Marc-Oliver Gewaltig  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/gabor_.html">gabor_</a></li>
+</ul>
+<b>Source:</b><pre>../../lib/sli/arraylib.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

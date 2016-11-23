@@ -1,0 +1,30 @@
+Name: Rest - Remove the first element of an array or string and return 
+ the rest.
+
+Synopsis:
+
+string Rest -> string 
+array Rest -> array
+
+
+Examples:
+
+(train) Rest -> (rain) 
+[1 2 3] Rest -> [2 3] 
+[(this) (is) (an) (example)] Rest -> [(is) (an) (example)]
+
+
+Author:
+
+docu edited by Sirko Straube
+
+
+SeeAlso:
+
+First
+Last
+Most
+
+Source:
+
+../../lib/sli/mathematica.sli

@@ -1,0 +1,9 @@
+Name: pA - Specification in pA (for readability)
+
+SeeAlso:
+
+unit_conversion
+
+Source:
+
+../../lib/sli/nest-init.sli

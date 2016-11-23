@@ -1,0 +1,28 @@
+Name: stop - raise a stop signal
+
+Synopsis:
+
+stop ->	- 
+Desctiption: 
+stop causes the execution stack to be popped until an 
+enclosing stopped context is found. Effectively, the 
+stopped/stop combination equals the catch/throw pair of 
+C++. 
+stop/stopped is used to implement SLI's error handling 
+capabilities. 
+Notes: stop, stopped is PostScript compatible.
+
+
+References:
+
+The Red Book, sec. 3.10
+
+
+SeeAlso:
+
+stopped
+raiseerror
+
+Source:
+
+../../sli/slicontrol.cc

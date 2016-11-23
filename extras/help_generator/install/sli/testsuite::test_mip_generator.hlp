@@ -1,0 +1,18 @@
+Name: testsuite::test_mip_generator - Test parallel generation of trains
+
+Synopsis:
+
+nest_indirect test_mip_generator.sli ->	-
+
+
+Description:
+
+Creates a Mip generator and sends spikes to spike detector. Assert invariant 
+results for fixed VP number. This is a partial response to #551. May be adapted 
+to other generators. 
+Author:  December 2012, Plesser, based on test_mini_brunel_ps.sli
+
+
+Source:
+
+../../testsuite/mpitests/test_mip_generator.sli

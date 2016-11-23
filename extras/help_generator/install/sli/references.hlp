@@ -1,0 +1,23 @@
+Name: references - Returns the number of references to a reference counted object.
+
+Synopsis:
+
+array references -> array  integer 
+dict  references -> dict   integer
+
+
+Examples:
+
+<< /x 0 >> dup references -> dict dict 2 
+[ 0 ] dup references -> array array 2
+
+
+Description:
+
+references returns the number of references to 
+a reference counted object including potential self references.
+
+
+Source:
+
+../../lib/sli/typeinit.sli

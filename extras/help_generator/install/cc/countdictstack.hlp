@@ -1,0 +1,27 @@
+Name: countdictstack - return number of dictionaries on the dictionary stack.
+
+Synopsis:
+
+No arguments.
+
+
+Description:
+
+Returns the current load of the dictionary stack. The default 
+value is 2.
+
+
+Parameters:
+
+None.
+
+
+SeeAlso:
+
+dictstack
+cleardictstack
+whos
+
+Source:
+
+../../sli/slidict.cc

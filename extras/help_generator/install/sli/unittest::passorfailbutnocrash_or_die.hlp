@@ -1,0 +1,43 @@
+Name: unittest::passorfailbutnocrash_or_die - Execute a code block and exit with exit code 3 if it crashes
+
+Synopsis:
+
+{ code } [string] passorfailbutnocrash_or_die ->	-
+
+
+Examples:
+
+{ 1 0 add } passorfailbutnocrash_or_die -> success   % code passes 
+{ 1 0 div } passorfailbutnocrash_or_die -> success   % code fails, but does not crash
+
+
+Description:
+
+This procedure executes the code. Anything except a crash (e.g. due to uncaught C++ exception such 
+as a segfault) is considered a pass.
+
+
+Diagnostics:
+
+This function will quit nest  (exit code 3) if the code crashed.
+
+
+Author:
+
+Diesmann, Plesser
+
+
+FirstVersion:
+
+2014-11-12
+
+
+SeeAlso:
+
+unittest::failbutnocrash_or_die
+assert
+quit
+
+Source:
+
+../../lib/sli/unittest.sli

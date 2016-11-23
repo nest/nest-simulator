@@ -1,0 +1,17 @@
+Name: testsuite::test_spin_detector - test decoding mechanism of binary events by spin_detector
+
+Synopsis:
+
+(test_spin_detector) run -> test decoding mechanism of binary events by spin_detector
+
+
+Description:
+
+Test, whether the communication mechanism for binary neurons 
+works and whether the spin detector correctly decodes binary transitions. 
+Author:  March 2013, Helias
+
+
+Source:
+
+../../testsuite/unittests/test_spin_detector.sli

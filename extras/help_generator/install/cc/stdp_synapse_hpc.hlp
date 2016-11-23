@@ -1,0 +1,12 @@
+Name: stdp_synapse_hpc - Variant of stdp_synapse with low memory 
+ consumption.
+
+SeeAlso:
+
+synapsedict
+stdp_synapse
+static_synapse_hpc
+
+Source:
+
+../../models/modelsmodule.cpp

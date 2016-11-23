@@ -1,0 +1,28 @@
+Name: SaveDictionary - Save contents of a dictionary to a file.
+
+Synopsis:
+
+dict (fname) SaveDictionary ->	-
+
+
+Description:
+
+SaveDictionary tries to save the contents of the dicitonary 
+to a file. For this, it reproduces the input syntax of the dictionary. 
+Thus, the resulting file is a readable ASCII-file. 
+SaveDictionary only processes those definitions which have a 
+keyboard input form. Currently, the following types are saved 
+	- integertype 
+	- doubletype 
+	- stringtype 
+	- arraytype
+
+
+SeeAlso:
+
+RestoreDictionary
+MergeDictionary
+
+Source:
+
+../../lib/sli/FormattedIO.sli

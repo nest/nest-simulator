@@ -1,0 +1,59 @@
+Name: topinfo_d - print contents of top dictionary to stream
+
+Synopsis:
+
+ostream topinfo_d ->	-
+
+
+Examples:
+
+
+
+
+Description:
+
+Print the contents of the top dictionary on the 
+dictionary stack to the supplied stream.
+
+
+Parameters:
+
+ostream	- a valid output stream
+
+
+Bugs:
+
+
+
+
+Diagnostics:
+
+
+
+
+Remarks:
+
+
+
+
+Author:
+
+
+
+
+FirstVersion:
+
+
+
+
+SeeAlso:
+
+dictstack
+currentdict
+info
+who
+whos
+
+Source:
+
+../../sli/slidict.cc

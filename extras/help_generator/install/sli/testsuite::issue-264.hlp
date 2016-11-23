@@ -1,0 +1,22 @@
+Name: testsuite::issue-264 - Ensure error is raised on times incommensurate with resolution
+
+Synopsis:
+
+(issue-264) run -> NEST exits if test fails
+
+
+Description:
+
+This test ensures that NEST raises an error if the requested simulation 
+time is not a multiple of the resolution, or if one attempts to set 
+start/stop/origin for devices that are not multiples of the resolution.
+
+
+Author:
+
+Hans E Plesser, 2016-03-08
+
+
+Source:
+
+../../testsuite/regressiontests/issue-264.sli

@@ -1,0 +1,15 @@
+Name: RestoreDictionary - Read a dictionary definition from a file.
+
+Synopsis:
+
+(fname) RestoreDictionary -> dict
+
+
+SeeAlso:
+
+SaveDictionary
+MergeDictionary
+
+Source:
+
+../../lib/sli/FormattedIO.sli

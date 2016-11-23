@@ -1,0 +1,81 @@
+Name: Function - creates pure function with named arguments
+
+Synopsis:
+
+{proc} literal_1 ... literal_n   Function -> proc' 
+string literal_1 ... literal_n   Function -> proc' 
+[literal_1 ... literal_n] {proc}  Function -> proc' 
+[literal_1 ... literal_n] string  Function -> proc'
+
+
+Examples:
+
+2   {x 1 x add mul} /x   Function exec --> 6 
+2 3 {x 1 x add mul} /x /y Function exec --> 6 
+2 3 {x y x add mul} /x /y Function exec --> 10 
+2 3   ( x*(y+x) )   /x /y Function exec --> 10 
+( x*(y+x) ) /x /y Function --> {<< >> begin /y Set /x Set x y x add mul end} 
+[2. 3. 4. 5.]  (x + (1+x)^3) /x Function Map --> [29. 67. 129. 221.] 
+/f ( x*(y+x) )  /x /y  Function def 
+/f [/x /y] ( x*(y+x) ) Function def 
+/f [/doubletype /doubletype] [/x /y] (y+x^2) Function def 
+/f [/doubletype /doubletype] [/x /y] {y x dup mul add} Function def 
+/f [] (x=sin(0.7);x^2-3*x) Function def 
+Version: 090302
+
+
+Description:
+
+Pure functions are one of the most powerful features of SLI. They are 
+first class objects and can be assembled at run time like arrays. Some 
+times pure functions are constructed for one time execution, however more 
+often they are used as arguments of functional operators like Map and Fold 
+executing the pure function many times. 
+If a pure function has several arguments or a particular argument is used many 
+times in the code managing the location of the arguments on the stack can be 
+cumbersome. In these situations operator Function is helpful, it assigns each 
+argument of the pure function to a formal name which can be used in the body 
+of function. If the pure function is specified as a string, Compile Math is 
+called for conversion to rpn. Note that the example combining Function and Map 
+is efficient. The pure function is constructed from the string only once but 
+executed 4 times with different arguments. In the alternative syntax the variables 
+are declared by an array prior to the body of the function. This notation increases 
+the readability of definitions of  named functions because in most programming 
+languages the declaration of variables preceeds the function body. In combination 
+with operator def also the type of the arguments can be specified. The definition 
+of a function without arguments is useful if the body of the function introduces 
+local variables and therefore profits from the automatic restriction of scope by 
+operator Function. This is shown in the last example. Without the empty array the 
+arguments of Function would not be unique. 
+The availability of the alternative version ExecFunction with immediate execution 
+highlights the fact that a pure function with named arguments maybe used 
+for clarity even in situations where it needs to be evaluated only once.
+
+
+Parameters:
+
+proc		- code body using variables 
+string		- code body using variables in infix notation 
+literal_i 	- the name of the ith argument 
+proc'		- pure function with named arguments
+
+
+References:
+
+[1] The Mathematica Book "Function"
+
+
+Author:
+
+Diesmann
+
+
+SeeAlso:
+
+CompileMath
+Inline
+ExecFunction
+
+Source:
+
+../../lib/sli/mathematica.sli

@@ -1,0 +1,51 @@
+Name: cgnext - Call next() on a ConnectionGenerator
+
+Synopsis:
+
+cg cgnext -> source target v[0] ... true | false
+
+
+Description:
+
+Call the next() function on a given ConnectionGenerator cg 
+to iterate cg's connections on the SLI level. This function 
+will return the source and the target of the connection, a 
+list containing the values for the connection (if there are 
+any), and true, or false, if cg cannot be iterated further.
+
+
+Parameters:
+
+cg	- ConnectionGenerator
+
+
+Remarks:
+
+This function is part of the low-level access API for the 
+ConnectionGenerator module. It is mainly used for debugging 
+purposes. Usually, connections are created from a 
+ConnectionGenerator using CGConnect.
+
+
+Author:
+
+Mikael Djurfeldt
+
+
+FirstVersion:
+
+December 2012
+
+
+SeeAlso:
+
+CGParse
+CGParseFile
+CGConnect
+CGSelectImplementation
+cgstart
+cgsetmask
+
+Source:
+
+../../conngen/conngenmodule.cpp

@@ -1,0 +1,13 @@
+Name: DictQ - returns true if top object is a dictionary 
+ Synposis: dictionary DictQ -> true 
+ any		 DictQ -> false
+
+SeeAlso:
+
+NumberQ
+LiteralQ
+ArrayQ
+
+Source:
+
+../../lib/sli/mathematica.sli

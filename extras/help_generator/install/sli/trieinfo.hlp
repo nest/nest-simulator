@@ -1,0 +1,10 @@
+Name: trieinfo - print the function variants of a type-trie.
+
+Synopsis:
+
+ostream trieinfo ->	-
+
+
+Source:
+
+../../lib/sli/typeinit.sli

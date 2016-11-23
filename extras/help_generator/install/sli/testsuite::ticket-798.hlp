@@ -1,0 +1,20 @@
+Name: testsuite::ticket-798 - Random number generation fails in multi-threaded simulation of quantal_stp_synapse
+
+Synopsis:
+
+(ticket-798) run -> NEST exits if test fails
+
+
+Description:
+
+This test creates a large number of neurons with a convergent connetion to one target neuron, using the quantal_stp_synapse
+
+
+Author:
+
+Marc-Oliver Gewaltig
+
+
+Source:
+
+../../testsuite/regressiontests/ticket-798.sli

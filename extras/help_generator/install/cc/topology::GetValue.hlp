@@ -1,0 +1,23 @@
+Name: topology::GetValue - compute value of parameter at a point
+
+Synopsis:
+
+point param GetValue -> value
+
+
+Parameters:
+
+point	- array of coordinates 
+param	- parameter object 
+Returns: 
+value	- the value of the parameter at the point.
+
+
+Author:
+
+Håkon Enger
+
+
+Source:
+
+../../topology/topologymodule.cpp

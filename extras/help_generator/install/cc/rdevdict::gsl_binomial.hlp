@@ -1,0 +1,37 @@
+Name: rdevdict::gsl_binomial - GSL binomial random deviate generator
+
+Description:
+
+This function returns a random integer from the binomial distribution, 
+the number of successes in n independent trials with probability 
+p. The probability distribution for binomial variates is, 
+p(k) = (n! / k!(n-k)!) p^k (1-p)^(n-k)  , 0<=k<=n, n>0 
+Please note that the RNG used to initialize gsl_binomial has to be 
+from the GSL (prefixed gsl_ in rngdict)
+
+
+Parameters:
+
+p	- probability of success in a single trial (double) 
+n	- number of trials (positive integer)
+
+
+Require:
+
+HAVE_GSL
+
+
+Author:
+
+Jochen Martin Eppler
+
+
+SeeAlso:
+
+CreateRDV
+RandomArray
+rdevdict
+
+Source:
+
+../../librandom/gsl_binomial_randomdev.h

@@ -1,0 +1,61 @@
+Name: put - put indexed object into container
+
+Synopsis:
+
+array/proc int any	 --> array/proc 
+array  array any	 --> array 
+string/array/proc int int  --> string/array/proc 
+litproc int any	 --> litproc 
+dict literal any	 -->	-
+
+
+Examples:
+
+(Hello Wxrld!)	 7 111   put --> (Hello World!) 
+[(Hello) 1 /a 12]   2 /here  put --> [Hello 1 here 12] 
+[[1 2][3 4]]   [1 1] 6	 put --> [[1 2] [3 6]] 
+{(Hello World!) ==} (Bye!) 1 put --> {(Bye!) ==} 
+systemdict	 /MyLit 5 put -->	-  % MyLit equals integer 5 now!
+
+
+Description:
+
+put will call appropriate typedepending put operator. The indexed 
+object of the container will be replaced by the new one. 
+Alternatives: Functions put_a for arrays, put_p for procedures, 
+put_lp for literal procedures, put_s for strings (all undocumented) 
+and put_d for dictionaries (SeeAlso) 
+-> behaviour and synopsis are the same.
+
+
+Parameters:
+
+First parameter is the container, 
+Second the index, 
+third the object to put. 
+The modified container is returned.
+
+
+Remarks:
+
+Commented Hehl April 21, 1999
+
+
+Author:
+
+Gewaltig, Diesmann
+
+
+FirstVersion:
+
+??
+
+
+SeeAlso:
+
+get
+put_d
+
+Source:
+
+../../lib/sli/sli-init.sli

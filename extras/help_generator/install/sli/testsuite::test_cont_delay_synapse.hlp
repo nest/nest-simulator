@@ -1,0 +1,34 @@
+Name: testsuite::test_cont_delay_synapse - test of synapse with continuous delay
+
+Synopsis:
+
+(test_cont_delay_synapse) run ->	-
+
+
+Description:
+
+A minimal test for the continuous delay synapse.
+
+
+References:
+
+
+
+
+Author:
+
+Plesser
+
+
+FirstVersion:
+
+June 2015
+
+
+SeeAlso:
+
+cont_delay_synapse
+
+Source:
+
+../../testsuite/unittests/test_cont_delay_synapse.sli

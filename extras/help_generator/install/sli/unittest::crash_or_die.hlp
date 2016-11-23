@@ -1,0 +1,63 @@
+Name: unittest::crash_or_die - Execute a code block and exit with exit code 3 if nest does not crash
+
+Synopsis:
+
+{ code } [string] crash_or_die ->	-
+
+
+Examples:
+
+{add_dd} (add_dd)  crash_or_die  -> success 
+{add}	 crash_or_die  -> quit
+
+
+Description:
+
+The procedure tests that the code block crashes nest. An example 
+is a call of operator add_dd in a situation where the operand stack is empty. 
+add_dd does not check whether the operand stack contains enough data, no exception 
+is raised. Therefore, the assertion in the C++ implementation of add_dd that the 
+operand stack contains at least 2 elements fails and nest terminates with the exit 
+code statusdict::exitcodes::abort. This is the desired behavior and therefore 
+crash_or_die reports success. There are several alternative and undesired behaviors 
+of the code block in question. add_dd may raise a StackUnderflow error, return without 
+raising an error, or crash because of a segmentation fault. This is not the expected behavior 
+and therefore crash_or_die reports a problem. Like failbutnocrash_or_die, crash_or_die 
+survives a crash of the code block by probing the code block in a separate nest instance 
+and inspecting the result. The procedure uses the symbolic exit codes defined in 
+statusdict::exitcodes, abort is one of them. 
+This test does not work if nest is compiled with the NDEBUG flag set and it is not 
+safe to just test for a crash because nest may become inconsistent without crashing. 
+Therefore, crah_or_die always reports success if the NDEBUG flag is set.
+
+
+Diagnostics:
+
+This function will quit nest (exit code 3) if the code does NOT crash nest 
+with exit code abort. It will print an error message to cerr, too.
+
+
+Availability:
+
+SLI-2.0
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+090209
+
+
+SeeAlso:
+
+unittest::failbutnocrash_or_die
+assert
+quit
+
+Source:
+
+../../lib/sli/unittest.sli

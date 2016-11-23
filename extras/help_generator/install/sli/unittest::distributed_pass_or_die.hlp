@@ -1,0 +1,28 @@
+Name: unittest::distributed_pass_or_die - Checks whether code runs for different numbers of jobs
+
+Synopsis:
+
+array proc distributed_pass_or_die ->	-
+
+
+Description:
+
+proc is executed for the different numbers of jobs specified in the 
+array. distributed_pass_or_die only checks whether proc completes 
+without errors and does not leave anything on the stack.
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+100918 
+SeeAlso:  unittest::distributed_assert_or_die, nest_indirect, unittest::mpirun_self, unittest::assert_or_die
+
+
+Source:
+
+../../lib/sli/unittest.sli

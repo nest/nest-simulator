@@ -1,0 +1,23 @@
+Name: test_tsodyks_depressing - sli script for overall test of tsodyks synapse models 
+ 
+ Synopsis:(test_tsodyks_depressing) run -> compare cout with comments in file
+
+Description:
+
+Script to test Tsodyks short term plasticity depressing synapses according to 
+'Neural Networks with Dynamic Synapses' 
+Misha Tsodyks, Klaus Pawelzik, Henry Markram 
+Neural computation 10, 821--853 (1998) 
+Reproduces figure 1 A 
+Revised by Hans Ekkehard Plesser 2016 using explicit input spike train. 
+Author:  Markus Diesmann, Moritz Helias
+
+
+FirstVersion:
+
+March 2006
+
+
+Source:
+
+../../testsuite/unittests/test_tsodyks_depressing.sli

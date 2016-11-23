@@ -1,0 +1,42 @@
+Name: info - Display the contents of a dictionary
+
+Synopsis:
+
+ostream dict info ->	-
+
+
+Examples:
+
+std::cout  <</a 1 /b 2.5 /c (Hallo World)>> info 
+shows 
+-------------------------------------------------- 
+Name	 Type	 Value 
+-------------------------------------------------- 
+a	 integertype	 1 
+b	 doubletype	 2.5 
+c	 stringtype	 Hallo World 
+-------------------------------------------------- 
+Total number of dictionary entries: 3
+
+
+Description:
+
+Prints the contents of the dictionary to the supplied stream.
+
+
+Parameters:
+
+dict	- a dictionary 
+No return values are given.
+
+
+SeeAlso:
+
+info_ds
+topinfo_d
+who
+whos
+
+Source:
+
+../../sli/slidict.cc

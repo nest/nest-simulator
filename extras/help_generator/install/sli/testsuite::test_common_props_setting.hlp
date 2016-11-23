@@ -1,0 +1,26 @@
+Name: testsuite::test_common_props_setting - test that common properties can be set as defaults, not else
+
+Synopsis:
+
+(test_common_props_setting) run -> compare response with reference data
+
+
+Description:
+
+For synapses with common properties, ensure that common and individual properties can be set by 
+SetDefaults and CopyModel, but that an exception is raised if they are set via an individual connection.
+
+
+Author:
+
+Hans E Plesser
+
+
+FirstVersion:
+
+November 2014
+
+
+Source:
+
+../../testsuite/unittests/test_common_props_setting.sli

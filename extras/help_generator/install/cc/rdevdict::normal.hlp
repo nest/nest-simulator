@@ -1,0 +1,28 @@
+Name: rdevdict::normal - normal random deviate generator
+
+Description:
+
+Generates normally distributed random numbers. 
+p(x) = 1 / (sigma * \sqrt{2 pi}) * exp (-(x-mu)^2 / 2 sigma^2)
+
+
+Parameters:
+
+mu 	- mean (default: 0.0) 
+sigma	- standard deviation (default: 1.0)
+
+
+Author:
+
+Hans Ekkehard Plesser
+
+
+SeeAlso:
+
+CreateRDV
+RandomArray
+rdevdict
+
+Source:
+
+../../librandom/normal_randomdev.h

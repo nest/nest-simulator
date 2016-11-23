@@ -1,0 +1,47 @@
+Name: MathematicaToSliIndex - Convert Mathematica-like indices to SLI indices
+
+Synopsis:
+
+[array] mathematicaIndex MathematicaToSliIndex -> [array] sliIndex
+
+
+Examples:
+
+[3 5 6 9 11] -2	 MathematicaToSliIndex -> [3 5 6 9 11] 3 
+[3 5 6 9 11] [ -2 2 ] MathematicaToSliIndex -> [3 5 6 9 11] [3 1]
+
+
+Description:
+
+"MathematicaToSliIndex" converts Mathematica-like indices 
+to SLI indices. 
+For an array of size N, valid SLI indices are in the range 0..N-1 
+while valid Matematica indices are in the range -N..-1, 1..N 
+(negative indices indicating backward indexing from the end of the 
+array). 
+The given array is left untouched, solely its length is taken to 
+correctly map negative Mathematica indices to the correct SLI 
+indices. 
+Alternatives: Function MathematicaToSliIndex_i if index is a 
+number (example 1) and  MathematicaToSliIndex_a if index is an 
+array (example 2) (both undocumented) -> behaviour and synopsis are 
+the same.
+
+
+Remarks:
+
+Commented Ruediger Kupper
+
+
+Author:
+
+Markus Diesmann
+
+
+SeeAlso:
+
+SliToMathematicaIndex
+
+Source:
+
+../../lib/sli/mathematica.sli

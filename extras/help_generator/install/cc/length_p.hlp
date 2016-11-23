@@ -1,0 +1,29 @@
+Name: length_p - counts elements of a procedure
+
+Synopsis:
+
+procedure length_p -> int
+
+
+Examples:
+
+{mul dup} length_p --> 2
+
+
+Remarks:
+
+Use length if you are not sure of the data type.
+
+
+Author:
+
+docu by Sirko Straube
+
+
+SeeAlso:
+
+length
+
+Source:
+
+../../sli/slidata.cc

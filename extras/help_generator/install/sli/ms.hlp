@@ -1,0 +1,10 @@
+Name: ms - Specification in ms (for readability)
+
+SeeAlso:
+
+unit_conversion
+ms2hms
+
+Source:
+
+../../lib/sli/nest-init.sli

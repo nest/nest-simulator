@@ -1,0 +1,35 @@
+Name: cva - Converts argument to an array
+
+Synopsis:
+
+dict	 cva -> array 
+trie	 cva -> array 
+array	 cva -> array 
+intvector   cva -> array 
+doublevector cva -> array 
+iterator	 cva -> array
+
+
+Examples:
+
+<< /a 1 /b 2>> cva	 --> [/a 1 /b 2] 
+/square trie [/doubletype] { dup mul } addtotrie exch pop cva --> [/doubletype [{dup mul}]] 
+[ << /a 1 >> << /b 2>>] cva --> [[/a 1] [/b 2]] 
+[1 3 -5 2] cv_iv cva	 --> [1 3 -5 2] 
+[1. 3. -5. 2.] cv_dv cva   --> [1. 3. -5. 2.] 
+[2 10] RangeIterator cva   --> [2 3 4 5 6 7 8 9 10] 
+Author:   Marc-oliver Gewaltig 
+SeeAlso:  <<>>, trie, cst, cv1d, cv2d, cva_d, cva_t, cvd, cvi, cvlit, cvn, cvs, cvt_a
+
+
+Description:
+
+cva converts the argument to an array. The 
+array is shaped close to a form usable to recreate the original 
+data type. In case the argument is already an array, cva is 
+applied recursively.
+
+
+Source:
+
+../../lib/sli/typeinit.sli

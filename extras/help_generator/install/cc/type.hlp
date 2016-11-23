@@ -1,0 +1,15 @@
+Name: type - Return the type of an object
+
+Synopsis:
+
+obj type -> /typename
+
+
+Examples:
+
+1 type -> /integertype
+
+
+Source:
+
+../../sli/slitypecheck.cc

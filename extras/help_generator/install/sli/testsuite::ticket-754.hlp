@@ -1,0 +1,20 @@
+Name: testsuite::ticket-754 - grng_seed not set correctly under certain circumstances
+
+Synopsis:
+
+(ticket-754) run -> NEST exits if test fails
+
+
+Description:
+
+Ensure that all random number seeds in the kernel are set as expected.
+
+
+Author:
+
+Hans Ekkehard Plesser, 2013-06-25
+
+
+Source:
+
+../../testsuite/regressiontests/ticket-754.sli

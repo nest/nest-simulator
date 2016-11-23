@@ -1,0 +1,22 @@
+Name: testsuite::test_sinusoidal_poisson_generator_6 - Test parallel generation of sinusoidally modulate Poissonian trains with individual spike trains
+
+Synopsis:
+
+nest_indirect test_sinusoidal_poisson_generator_6.sli ->	-
+
+
+Description:
+
+Creates a sinusoidally modulated Poisson generator emitting an 
+individual spike train to each of its targets and sends spikes to spike 
+detectors. Ensures that all targets receive identical spike trains. 
+NOTE: THIS TEST DOES NOT WORK AUTOMATICALLY, DUE TO PROBLEMS WITH UNITTEST. 
+You can run it manually and see if the output is as expected with 
+mpirun -np 2 nest test_sinusoidal_poisson_generator_6.sli 
+Author:  December 2012, May 2013, Plesser, based on test_poisson_generator.sli 
+See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson_generator_nostat
+
+
+Source:
+
+../../testsuite/manualtests/test_sinusoidal_poisson_generator_6.sli

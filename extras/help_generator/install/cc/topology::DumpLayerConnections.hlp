@@ -1,0 +1,54 @@
+Name: topology::DumpLayerConnections - prints a list of the connections of the 
+ nodes in the layer to file
+
+Synopsis:
+
+ostream source_layer_gid synapse_model DumpLayerConnections -> 
+ostream
+
+
+Examples:
+
+topology using 
+... 
+(out.cnn) (w) file layer_gid /static_synapse PrintLayerConnections close
+
+
+Description:
+
+Dumps information about all connections of the given type having their source 
+in the given layer to the given output stream. The data format is one line per 
+connection as follows: 
+source_gid target_gid weight delay displacement[x,y,z] 
+where displacement are up to three coordinates of the vector from the source 
+to the target node. If targets do not have positions (eg. spike detectors 
+outside any layer), NaN is written for each displacement coordinate.
+
+
+Parameters:
+
+ostream		- open outputstream 
+source_layer_gid	- topology layer 
+synapse_model  	- synapse model (literal)
+
+
+Remarks:
+
+For distributed simulations 
+	- this function will dump the connections with local targets only. 
+	- the user is responsible for writing to a different output stream (file) 
+on each MPI process.
+
+
+Author:
+
+Kittel Austvoll, Hans Ekkehard Plesser
+
+
+SeeAlso:
+
+topology::DumpLayerNodes
+
+Source:
+
+../../topology/topologymodule.cpp

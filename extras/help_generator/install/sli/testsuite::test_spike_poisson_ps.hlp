@@ -1,0 +1,46 @@
+Name: testsuite::test_spike_poisson_ps - tests if spikes independent of resolution
+
+Synopsis:
+
+(test_spike_poisson_ps) run -> compare with results at other resolutions
+
+
+Description:
+
+The difference in spike times is exactly 0.0 between 
+all resolutions. 
+test_spike_poisson_ps_precision.sli 
+already verified that spikes are produced and recorded with 
+double resolution. 
+This script will give identical results almost always, even if the resolution 
+is not representable as a double. The main reason for this is that the 
+poisson_generator_ps generates spikes without attention to resolution. This 
+means that exactly the same sequence of spike times is generated internally 
+in the generator independent of resolution. Rounding errors occur, if at all, 
+only when the spike time is split into a multiple of the resolution and the 
+offset. In this calculation, the resolution enters as a fixed multiple of tics. 
+The calculation is reversed in the spike detector, when step-multiple and offset 
+are recombined. This splitting and recombination apparently gives reproducible 
+results. The only deviation observed was for two spikes at very early times (<0.01 ms) 
+and coarse resolution (0.1 ms); total of 388.533 spikes tested. Therefore I 
+introduced the check against the 1e-15 relative error limit below. 
+If this test fails go back to 
+test_spike_poisson_ps_precision.sli 
+to check whether poisson_generator_ps can emit spike times at 
+double precision or whether spike times are limited to the 
+precision of a tic.
+
+
+Author:
+
+Plesser, Diesmann
+
+
+FirstVersion:
+
+February 2007
+
+
+Source:
+
+../../testsuite/unittests/test_spike_poisson_ps.sli

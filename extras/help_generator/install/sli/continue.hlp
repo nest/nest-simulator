@@ -1,0 +1,9 @@
+Name: continue - continue an interrupted  procedure
+
+SeeAlso:
+
+break
+
+Source:
+
+../../lib/sli/debug.sli

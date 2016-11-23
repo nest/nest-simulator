@@ -1,0 +1,20 @@
+Name: testsuite::ticket-785 - fail_or_die inconsistenly reports errors
+
+Synopsis:
+
+(ticket-748) run -> NEST exits if test fails
+
+
+Description:
+
+Test that GetConnections throws an error if argument list is not of dimension 1
+
+
+Author:
+
+Maximilian Schmidt, 2014-01-28
+
+
+Source:
+
+../../testsuite/regressiontests/ticket-748.sli

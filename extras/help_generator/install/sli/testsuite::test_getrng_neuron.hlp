@@ -1,0 +1,23 @@
+Name: testsuite::test_getrng_neuron - sli script of assignment of rng to neuron
+
+Synopsis:
+
+nest_indirect test_getrng_neuron.sli -> compare results for different numbers of jobs
+
+
+Description:
+
+The scripts test whether in simulations distributed over different numbers of 
+processors the assignment of the global id and the random number generator stay 
+the same. 
+See #336 for discussion. 
+Author:  July 2009, Diesmann
+
+
+SeeAlso:
+
+unittest::distributed_assert_or_die
+
+Source:
+
+../../testsuite/mpitests/test_getrng_neuron.sli

@@ -1,0 +1,61 @@
+Name: bind - recursively replaces executable operator names by their values.
+
+Synopsis:
+
+proc bind --> proc
+
+
+Examples:
+
+{1 2 add} bind --> {1 2 +add+} 
+if you know the arguments are integer, 
+{1 2 add_ii} will be the fastest choice, but there will be no 
+sli-level typechecking any more!
+
+
+Description:
+
+bind iterates through the given procedure object and replaces names which are bound to 
+tries or functions by their values. 
+bind works recursively and processes any nested procedure object it encounters. 
+bind uses the current dictionary context to perform its operation. Thus, changing 
+the dictionary context after bound was applied has no effect on the name-lookup 
+of operators during the execution of the procedure. 
+bind removes some execution overhead which is due to name-lookup. Thus, a bound procedure 
+executes 10%-50% faster.
+
+
+Parameters:
+
+proc	- procedure to be bound
+
+
+Bugs:
+
+
+
+
+Remarks:
+
+Commented Hehl April 20, 1999 
+compare RedBook 2nd ed. page 370
+
+
+Author:
+
+Gewaltig
+
+
+FirstVersion:
+
+???
+
+
+SeeAlso:
+
+trie
+addtotrie
+
+Source:
+
+../../lib/sli/sli-init.sli

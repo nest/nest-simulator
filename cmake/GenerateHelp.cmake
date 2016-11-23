@@ -48,29 +48,11 @@ function(NEST_GENERATE_HELP)
   endforeach ()
 
   if ( NOT CMAKE_CROSSCOMPILING )
-    # install help (depends on sli and lib/sli/* installed)
     install( CODE
-        "execute_process(
-          COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_INSTALL_FULL_DOCDIR}/help/sli
-          COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_INSTALL_FULL_DOCDIR}/help/cc
-          COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_FULL_DOCDIR}/help/helpindex.html
-          COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_FULL_DOCDIR}/help/helpindex.hlp
-
-          COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_INSTALL_FULL_DOCDIR}/help
-          COMMAND ${CMAKE_COMMAND}
-              -DDOC_DIR='${CMAKE_INSTALL_FULL_DOCDIR}'
-              -DDATA_DIR='${CMAKE_INSTALL_FULL_DATADIR}'
-              -DHELPDIRS='${HELPDIRS}'
-              -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
-              -P ${PROJECT_SOURCE_DIR}/cmake/generate_help.cmake
-            WORKING_DIRECTORY \"${PROJECT_BINARY_DIR}\"
-          )"
-        )
-        install( CODE
-            "execute_process(
-                COMMAND ${PYTHON} parse_help.py \"${CMAKE_INSTALL_FULL_DOCDIR}/help2\"
-                WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/userdoc/generator\"
-              )"
-            )
+      "execute_process(
+         COMMAND python -B parse_help.py \"${PROJECT_SOURCE_DIR}\" \"${PROJECT_BINARY_DIR}\" \"${CMAKE_INSTALL_FULL_DOCDIR}/help\"
+         WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/help_generator\"
+         )"
+      )
   endif ()
 endfunction()

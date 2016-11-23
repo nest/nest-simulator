@@ -1,0 +1,16 @@
+Name: ReadDouble - Read a double number from an input stream.
+
+Synopsis:
+
+istream ReadDouble -> istream double true 
+-> istream false
+
+
+SeeAlso:
+
+ReadInt
+ReadWord
+
+Source:
+
+../../sli/sli_io.cc

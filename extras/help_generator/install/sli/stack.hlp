@@ -1,0 +1,57 @@
+Name: stack - Display operand stack
+
+Synopsis:
+
+stack -->	-
+
+
+Examples:
+
+1 2 3 stack 
+--> 3 
+2 
+1 
+{123} stack --> <proceduretype>
+
+
+Description:
+
+Displays operand stack using = operator on each object.
+
+
+Parameters:
+
+-
+
+
+Bugs:
+
+
+
+
+Remarks:
+
+Commented Hehl April 20, 1999 
+compare RedBook 2nd ed. page 522
+
+
+Author:
+
+Gewaltig, Diesmann
+
+
+FirstVersion:
+
+???
+
+
+SeeAlso:
+
+pstack
+typestack
+=
+==
+
+Source:
+
+../../lib/sli/sli-init.sli

@@ -1,0 +1,50 @@
+Name: put_d - Add an entry to a dictionary
+
+Synopsis:
+
+<<dict>> /key val -> <<dict>>
+
+
+Examples:
+
+userdict /a 1 put_d 
+<< >> /a 1 put_d
+
+
+Description:
+
+put_d adds the pair /key value to the supplied dictionary. 
+If /key was already defined in that dictionary, its old 
+value is lost. 
+In contrast to PostScript dictionaries, only literal names can 
+be used as keys in a dictionary.
+
+
+Parameters:
+
+dict	- a dictionary 
+/key	- a literal name 
+val 	- an object of arbitrary type
+
+
+Diagnostics:
+
+No errors are raised.
+
+
+Author:
+
+Marc-Oliver Gewaltig
+
+
+SeeAlso:
+
+get_d
+known
+dict
+<<>>
+clonedict
+
+Source:
+
+../../sli/slidict.cc

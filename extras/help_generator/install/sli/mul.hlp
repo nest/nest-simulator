@@ -1,0 +1,31 @@
+Name: mul - multiply two numbers or vectors (point-wise)
+
+Synopsis:
+
+int int mul -> int 
+int double mul -> double 
+array int/double mul -> array
+
+
+Examples:
+
+3 4 mul -> 12 
+3.33 3 mul -> 9.99 
+[1 2.2 3] 4 mul -> [4 8.8 12]
+
+
+Author:
+
+docu by Sirko Straube
+
+
+SeeAlso:
+
+add
+sub
+div
+Dot
+
+Source:
+
+../../lib/sli/mathematica.sli

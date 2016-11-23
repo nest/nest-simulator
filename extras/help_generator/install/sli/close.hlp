@@ -1,0 +1,42 @@
+Name: close - close a stream
+
+Synopsis:
+
+stream close ->	-
+
+
+Description:
+
+This function closes a stream. This may be an istream 
+or an ostream.
+
+
+Parameters:
+
+stream(istreamtype|ostreamtype): The stream to close
+
+
+Remarks:
+
+This is just a trie-wrapper for "closeistream" and "closeostream".
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+May 19 1999
+
+
+SeeAlso:
+
+ifstream
+ofstream
+ostrstream
+
+Source:
+
+../../lib/sli/typeinit.sli

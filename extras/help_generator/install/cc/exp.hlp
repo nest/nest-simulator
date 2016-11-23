@@ -1,0 +1,27 @@
+Name: exp - Calculate the exponential of double number 
+ Synopsis:  double exp -> double
+
+Examples:
+
+1.0 exp -> 2.71828
+
+
+Author:
+
+Hehl
+
+
+FirstVersion:
+
+10.6.1999
+
+
+SeeAlso:
+
+E
+sin
+cos
+
+Source:
+
+../../sli/slimath.cc

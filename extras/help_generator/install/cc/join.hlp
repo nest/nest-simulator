@@ -1,0 +1,31 @@
+Name: join - Join two strings or arrays.
+
+Synopsis:
+
+(string1) (string2) join -> (string1string2) 
+[array1] [array2] -> [array1 array2] 
+<< dict1 >> << dict2 >> -> << contents of dict2 assigned to dict1 >>
+
+
+Examples:
+
+(spike) (train) join -> (spiketrain) 
+[1 2] [3 4] join -> [1 2 3 4] 
+/j << /C_m 250.0 /Tau_m 10.0 >> def  j  << /Tau_m 25.0 /I_e 130.0 >> join j 
+-> << /C_m 250.0 /Tau_m 25.0 /I_e 130.0 >>
+
+
+Author:
+
+docu edited by Sirko Straube
+
+
+SeeAlso:
+
+append
+getinterval
+get
+
+Source:
+
+../../sli/slidata.cc

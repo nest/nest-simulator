@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: sli_neuron</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: sli_neuron</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>sli_neuron - neuron with SLI callback</pre>
+<b>Description: </b>
+<pre> <br/>  The sli_neuron is a model whose state, update and calibration can be  <br/>  defined in SLI.  <br/>   <br/>  The state of the neuron is a SLI dictionary which can be retrieved  <br/>  with GetStatus. The state should contain two procedures:  <br/>  1. /update  <br/>  2. /calibrate  <br/>   <br/>  /calibrate is called before the simulation starts. It is used to  <br/>  pre-compute constants of the dynamics and to scale  <br/>  parameters to the temporal resolution.  A minimal  <br/>  implementation of calibrate is:  <br/>   <br/>  /calibrate { GetResolution /h Set } def  <br/>   <br/>  /update   is called during simulation and must propagate the node's  <br/>  state by one integration step h.  If /update decides that  <br/>  the node should spike, it must set the variable /spike to  <br/>  true.  <br/>   <br/>  Both /calibrate and /update are called with the node's status  <br/>  dictionary on top of the dictionary stack.  This means that node  <br/>  variables override names in the systemdict or in the userdict.  <br/>  Moreover, all definitions are done in the node's statusdict and  <br/>  persist throughout the simulation.  <br/>   <br/>  Errors.  <br/>  If an error occurs during the evaluation of /calibrate or /update, the  <br/>  errorneous neuron is skipped and update proceeds to the next node  <br/>  until the time-slice is finished. After the time-slice is finished,  <br/>  simulation terminates with an additional error message that issues the  <br/>  global id of the errorneous node.  <br/>   <br/>  Errors are handled by the SLI standard errorhandler. In addition, the  <br/>  contents of the error dictionary is copied into the node's status  <br/>  dictionary, to allow debugging of the node.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>   <br/>   <br/>  
+</pre>
+<b>Receives: </b>
+<pre>SpikeEvent, CurrentEvent, DataLoggingRequest  <br/>   <br/>  
+</pre>
+<b>Sends: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Diesmann, Plesser, Gewaltig  <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>January 2009  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/iaf_psc_delta.html">iaf_psc_delta</a></li>
+    <li><a href="../cc/iaf_psc_exp.html">iaf_psc_exp</a></li>
+    <li><a href="../cc/iaf_cond_exp.html">iaf_cond_exp</a></li>
+    <li><a href="../sli/testsuite::test_sli_neuron.html">testsuite::test_sli_neuron</a></li>
+</ul>
+<b>Source:</b><pre>../../nest/sli_neuron.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

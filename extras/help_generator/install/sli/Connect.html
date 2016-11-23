@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: Connect</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: Connect</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>Connect - Establish a connection between two nodes or lists of nodes.</pre>
+<b>Synopsis: </b>
+<pre> <br/>  source target	 Connect  <br/>  source target	 syn_model Connect  <br/>  source target weight delay	 Connect  <br/>  source target weight delay syn_model Connect  <br/>  source target params	 Connect  <br/>  source target params	 syn_model Connect  <br/>   <br/>  sources targets	 Connect  <br/>  sources targets conn_rule	 Connect  <br/>  sources targets conn_spec	 Connect  <br/>  sources targets conn_rule syn_model  Connect  <br/>  sources targets conn_spec syn_model  Connect  <br/>  sources targets conn_rule syn_spec   Connect  <br/>  sources targets conn_spec syn_spec   Connect  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  Connects sources to targets according to the given connectivity  <br/>  specification conn_spec. Some connection rules impose requirements.  <br/>  E.g. /one_to_one requires that sources and targets have the same  <br/>  number of elements. Others may have additional parameters,  <br/>  e.g. connection probability /p for /pairwise_binomial.  <br/>   <br/>  The variants with two global ids as arguments implicitly connect  <br/>  the two neurons using the all_to_all rule. If given, weight, delay,  <br/>  syn_model, and params are used for the connection.  <br/>   <br/>  The variants with only literal arguments /conn_rule or /syn_model  <br/>  are shorthand for the corresponding calls with a connectivity or  <br/>  synapse specification dictionaries as explained in the Options  <br/>  section.  The literals are expanded to << /rule /conn_rule >> and  <br/>  << /model /syn_model >>, respectively.  <br/>   <br/>  Parameters for connectivity rules must have fixed values.  <br/>   <br/>  Parameters for synapses may be fixed single values and random deviate  <br/>  specifications.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  source	 integer 	- the GID of the source  <br/>  target	 integer 	- the GID of the target  <br/>  weight	 double  	- the weight of the connection  <br/>  delay	 double  	- the delay of the connection  <br/>  params	 dict		- dictionary with synapse parameters  <br/>   <br/>  sources   array/intvector/gidcollection 	- the GIDs of the sources  <br/>  targets   array/intvector/gidcollection 	- the GIDs of the targets  <br/>  syn_model  literal 	- the name of the synapse model, see synapsedict  <br/>  syn_spec   dict		- dictionary with synapse model specification (see Options)  <br/>  conn_rule  literal 	- the name of the connection rule, see connruledict  <br/>  conn_spec  dict		- dictionary with connectivity specification (see Options)  <br/>   <br/>  
+</pre>
+<b>Options: </b>
+<pre> <br/>  /conn_spec	- dictionary with connectivity specification, must at least contain /rule  <br/>   <br/>  The following options may be given for all connection rules;  <br/>  not all rules support all options and many rules add rule-specific options.  <br/>   <br/>  autapses	 bool 	- allow self-connections (default: true)  <br/>  multapses	 bool 	- allow multiple connections between pairs  <br/>  of neurons (default: true)  <br/>  symmetric	 bool 	- also create connection in opposite direction to  <br/>  obtain symmetric connections (default: false)  <br/>   <br/>  /syn_spec 	- dictionary with synapse specification, must at least contain /model  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Hannah Bos, Hans Ekkehard Plesser, Jochen Martin Eppler  <br/>   <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>January 2014 
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/synapsedict.html">synapsedict</a></li>
+    <li><a href="../cc/connruledict.html">connruledict</a></li>
+    <li><a href="../sli/cvgidcollection.html">cvgidcollection</a></li>
+</ul>
+<b>Source:</b><pre>../../lib/sli/nest-init.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

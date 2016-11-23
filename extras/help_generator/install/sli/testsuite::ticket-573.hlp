@@ -1,0 +1,20 @@
+Name: testsuite::ticket-573 - Maximum number of synapse types reached in copy_synapse_prototype without error message
+
+Synopsis:
+
+(ticket-573) run -> NEST exits if test fails
+
+
+Description:
+
+Ensure that nest throws an error message if number of synapse types exceeds the maximum number of 255
+
+
+Author:
+
+Maximilian Schmidt, 2014-02-20
+
+
+Source:
+
+../../testsuite/regressiontests/ticket-573.sli

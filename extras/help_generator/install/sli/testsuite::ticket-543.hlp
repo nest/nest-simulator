@@ -1,0 +1,22 @@
+Name: testsuite::ticket-543 - Regression test showing too many connections being created on iteration over nested subnets
+
+Synopsis:
+
+(ticket-543) run -> NEST exits if test fails
+
+
+Description:
+
+This test detects the creation of a too large number of connections 
+when FixedIndegree / FixedOutdegree Connect iterate over target/source subnets 
+which contain nested subnets
+
+
+Author:
+
+Hans Ekkehard Plesser & Susanne Kunkel, 2012-02-08
+
+
+Source:
+
+../../testsuite/regressiontests/ticket-543.sli

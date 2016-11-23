@@ -1,0 +1,43 @@
+Name: eval - evaluate a string of SLI code
+
+Synopsis:
+
+string eval -> obj1 ... objn
+
+
+Examples:
+
+(1 2 add) eval	 --> 3 
+([1 2 3] /peter 5 def) eval --> [1 2 3]
+
+
+Description:
+
+Reads a string and evaluates its content. The resulting objects are 
+pushed onto the stack. 
+As in regular batch mode the interpreter reads tokens from a 
+stream, a string stream in this case, and immediately executes the 
+incoming language constructs. 
+A similar function to eval also occurs in Python.
+
+
+Author:
+
+Jochen M. Eppler
+
+
+FirstVersion:
+
+June 2013
+
+
+SeeAlso:
+
+cvx
+exec
+cst
+token
+
+Source:
+
+../../lib/sli/typeinit.sli

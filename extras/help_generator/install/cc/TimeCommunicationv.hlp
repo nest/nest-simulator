@@ -1,0 +1,33 @@
+Name: TimeCommunicationv - returns average time taken for MPI_Allgatherv over 
+ n calls with m 
+ bytes
+
+Synopsis:
+
+n m TimeCommunication -> time
+
+
+Description:
+
+The function allows a user to test how much time a call the Allgatherv costs 
+Does not work for offgrid!!!
+
+
+Availability:
+
+NEST 2.0
+
+
+Author:
+
+
+
+
+FirstVersion:
+
+August 2012
+
+
+Source:
+
+../../nestkernel/nestmodule.cpp

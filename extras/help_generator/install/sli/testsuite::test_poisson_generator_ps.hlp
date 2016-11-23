@@ -1,0 +1,18 @@
+Name: testsuite::test_poisson_generator_ps - Test parallel generation of Poissonian trains
+
+Synopsis:
+
+nest_indirect test_poisson_generator_ps.sli ->	-
+
+
+Description:
+
+Creates a precise Poisson generator and sends spikes to spike detector. Assert invariant 
+results for fixed VP number. This is a partial response to #551. May be adapted 
+to other generators. 
+Author:  December 2012, Plesser, based on test_poisson_generator.sli
+
+
+Source:
+
+../../testsuite/mpitests/test_poisson_generator_ps.sli

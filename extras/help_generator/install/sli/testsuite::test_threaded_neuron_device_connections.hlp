@@ -1,0 +1,28 @@
+Name: testsuite::test_threaded_neuron_device_connections - test for correct creation of neuron-neuron, neuron-device, device-neuron and device-device connections using multiple threads
+
+Synopsis:
+
+(test_threaded_neuron_device_connections) run -> dies if assertion fails
+
+
+Description:
+
+this script creates connections between neurons and devices and checks whether the actually created connections coincide with the expected connections
+
+
+Author:
+
+Jakob Jordan
+
+
+FirstVersion:
+
+January 2016
+
+
+SeeAlso:
+
+
+Source:
+
+../../testsuite/regressiontests/issue-211.sli

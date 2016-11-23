@@ -1,0 +1,16 @@
+Name: ReadInt - Read an integer number from an input stream.
+
+Synopsis:
+
+istream ReadInt -> istream int true 
+-> istream false
+
+
+SeeAlso:
+
+ReadDouble
+ReadWord
+
+Source:
+
+../../sli/sli_io.cc

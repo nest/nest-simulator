@@ -1,0 +1,28 @@
+Name: restoreestack - Restore the execution stack from an array.
+
+Synopsis:
+
+array restoreexecstack ->	-
+
+
+Description:
+
+restoreexecstack is used to restore the execution stack 
+from an array. Most probably this array was obtained by saving a previous 
+state of the execution stack with execstack. 
+Be very careful with this command, as it can easily damage or terminate 
+the SLI interpreter.
+
+
+Diagnostics:
+
+ArgumentType, StackUnderflow
+
+
+SeeAlso:
+
+execstack
+
+Source:
+
+../../sli/slistack.cc

@@ -1,0 +1,33 @@
+Name: addtotrie - Add a function variant to a trie-object
+
+Synopsis:
+
+trie [type-list] obj addtotrie -> trie
+
+
+Description:
+
+addtotrie adds a new variant to the type-trie. Note, the type-list must 
+contain at least one type. (Functions without parameters cannot be 
+overloaded.
+
+
+Parameters:
+
+trie		- a trie object, obtained by a call to trie. 
+[type-list]	- an array with type-names, corresponding to the 
+types of the parameters, expected by the function.
+
+
+Author:
+
+Marc-Oliver Gewaltig
+
+
+SeeAlso:
+
+trie
+
+Source:
+
+../../sli/slitypecheck.cc

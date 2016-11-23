@@ -1,0 +1,32 @@
+Name: SetSynapseStatus - Return synapse status information
+
+Synopsis:
+
+[ conn1 conn2 ... ] [ sdict1 sdict2 ... ] SetSynapseStatus ->	-
+
+
+Description:
+
+Sets the given properties on the given connections. If the list of 
+dictionaries contains more than one dictionary, there must be one 
+dictionary per connection. Otherwise, the single dictionary is used 
+for all connections.
+
+
+Parameters:
+
+An list of connection objects as returned by GetConnections and a list 
+of synapse properties dictionaries.
+
+
+Remarks:
+
+Only some connection properties can be changed. Properties can only 
+be changed for connections with targets on the MPI process executing 
+SetSynapseStatus. 
+See also: GetConnections, GetSynapseStatus, DataConnect
+
+
+Source:
+
+../../lib/sli/nest-init.sli

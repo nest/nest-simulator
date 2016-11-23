@@ -1,0 +1,21 @@
+Name: testsuite::ticket-926 - Ensure stdp_dopamine_synapse does not lead to segfault
+
+Synopsis:
+
+(ticket-926) run -> NEST exits if test fails
+
+
+Description:
+
+This ticket ensures that stdp_dopamine_synapse does not lead to a segfault, even 
+if volume transmitter is not set.
+
+
+Author:
+
+Hans Ekkehard Plesser, 2014-11-12
+
+
+Source:
+
+../../testsuite/regressiontests/ticket-926.sli

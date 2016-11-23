@@ -1,0 +1,59 @@
+Name: unittest::distributed_collect_assert_or_die - Checks whether result is independent of number of number of jobs
+
+Synopsis:
+
+array proc proc distributed_collect assert_or_die ->	- 
+array proc	 distributed_collect assert_or_die ->	-
+
+
+Description:
+
+The array specifies a list of numbers of 
+jobs. distributed_collect_assert_or_die executes the procedure specified as 
+the second argument in parallel for all of the numbers of jobs given 
+in the arrays. This means that distributed_collect_assert_or_die carries out 
+as many distributed simulations as there are entries in the array. 
+In each of the simulations all jobs are expected to return a value on 
+the stack. The order in which the jobs are completed is of no 
+importance.  After completion of all simulations 
+distributed_collect_assert_or_die compares the sets of results of all 
+the simulations using the comparison function supplied by the second 
+procedure. If the second procedure is not given it requires that all 
+jobs of all runs return true. 
+A variant of this function distributed_collect_assert_or_die 
+requires that the contents of all sets of results is identical. The 
+order of the results in each set is irrelevant. 
+distributed_collect_assert_or_die assumes that it is called from a 
+file and that this file contains only a single call of 
+distributed_collect_assert_or_die because all distributed instances of 
+the simulator will rerun this file.  In addition the function assumes 
+that the test file is run with a version of nest capable of spawning 
+further instances of nest.  This can be assured by using nest_indirect 
+instead of the nest binary directly. The test file should not make the 
+call of distributed_collect_assert_or_die or the termination of the 
+test file depending on the status flags is_mpi or have_mpi. This would 
+interfere with the proper control flow and the status flags have 
+already been checked by nest_indirect at this point.
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+100925
+
+
+SeeAlso:
+
+unittest::distributed_assert_or_die
+unittest::distributed_collect_assert_or_die
+nest_indirect
+unittest::mpirun_self
+unittest::assert_or_die
+
+Source:
+
+../../lib/sli/unittest.sli

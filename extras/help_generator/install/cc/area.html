@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: area</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: area</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>area - Return array of indices defining a 2d subarea of a 2d array.</pre>
+<b>Synopsis: </b>
+<pre> <br/>  source_width source_anchor_y source_anchor_x  <br/>  area_height   area_width   area_anchor_y   area_anchor_x  <br/>  area -> [1d-indices]  <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>  (Examples are illustrated):  <br/>   <br/>  Ex. 1: source array: (height=5), width=10, anchor=(0,0)  <br/>  subarea	 :  height=3, width= 3, anchor=(0,0)  <br/>  xoo.......  <br/>  ooo.......  <br/>  ooo.......  <br/>  ..........  <br/>  ..........  <br/>   <br/>  10 0 0  3 3 0 0 area -> [0 1 2  10 11 12  20 21 22]  <br/>   <br/>  Ex. 1b:source array: (height=5), width=10, anchor=(2,2)  <br/>  subarea	 :  height=3, width= 3, anchor=(2,2)  <br/>  ooo.......  <br/>  ooo.......  <br/>  oox.......  <br/>  ..........  <br/>  ..........  <br/>   <br/>  10 2 2  3 3 2 2 area -> [0 1 2  10 11 12  20 21 22]  <br/>   <br/>  Ex. 1c:Note that anchor point may lie outside both  <br/>  arrays' bounds:  <br/>  source array: (height=5), width=10, anchor=(1,12)  <br/>  subarea	 :  height=3, width= 3, anchor=(1,12)  <br/>  ooo.......  <br/>  ooo.......  x  <br/>  ooo.......  <br/>  ..........  <br/>  ..........  <br/>   <br/>  10 1 12  3 3 1 12 area -> [0 1 2  10 11 12  20 21 22]  <br/>   <br/>  Ex. 2: source array: (height=6), width=15, anchor=(2,5)  <br/>  subarea	 :  height=4, width= 5, anchor=(1,3)  <br/>  ...............  <br/>  ..ooooo........  <br/>  ..oooxo........  <br/>  ..ooooo........  <br/>  ..ooooo........  <br/>  ...............  <br/>   <br/>  15 2 5  4 5 1 3 area -> [17 18 19 20 21  <br/>  32 33 34 35 36  <br/>  47 48 49 50 51  <br/>  62 63 64 65 66]  <br/>   <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  Given a -- hypothetical -- twodimensional array,  <br/>  "area" tells you, what indices you need to  <br/>  subscript a contiguous, twodimensional subarea.  <br/>   <br/>  The subarea is defined by specifying it's size  <br/>  (width and height), as well as its location in the  <br/>  source array. The location is defined by specifying  <br/>  an anchor point in the source array as well as in  <br/>  the subarea. Anchor points are matched, see  <br/>  illustration, and examples below:  <br/>   <br/>  source array: height=6, width=15, anchor=(2,5)  <br/>  subarea	 : height=4, width= 5, anchor=(1,3)  <br/>  ...............  <br/>  ..ooooo........  <br/>  ..oooxo........  <br/>  ..ooooo........  <br/>  ..ooooo........  <br/>  ...............  <br/>   <br/>   <br/>  "area" returns an array of ONEDIMENSIONAL indices.  <br/>  There is a SLI function called "area2" returning  <br/>  twodimensional indices, as well as the conversion  <br/>  functions "cv1d" and "cv2d".  <br/>  (For information on the order of subscription in NEST  <br/>  arrays, see references below.)  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  In: "area" takes seven integer arguments (one integer  <br/>  and three pairs). These arguments describe (1) the width of the  <br/>  (hypothetical) source array, (2) the height and width of the  <br/>  subarea, as well as (3&4) an anchor point in each of the two  <br/>  arrays (see illustration above):  <br/>   <br/>  source_width   : width  of the (hypothetical) source  <br/>  array to be subscribed into  <br/>  source_anchor_y,  <br/>  source_anchor_x: position of the anchor point relative  <br/>  to ORIGIN OF THE SOURCE ARRAY  <br/>   <br/>  area_heigh  t  : height of the subarea to be subscribed  <br/>  area_width	 : width  of the subarea to be subscribed  <br/>  area_anchor_y,  <br/>  area_anchor_x  : position of the anchor point relative  <br/>  to ORIGIN OF THE SUBAREA  <br/>   <br/>  Out: "area" returns an array of ONEDIMENSIONAL indices:  <br/>   <br/>  [1d-indices]   : flat integer array containing the indices  <br/>  that can be used to subscript the  <br/>  (hypothetical) source array in order to  <br/>  access the desired subarea.  <br/>   <br/>  Indices are onedimensional, and are returned  <br/>  in standard NEST (monotonic) counting order.  <br/>  (For information on the order of  <br/>  subscription in NEST arrays, see references  <br/>  below.)  <br/>   <br/>  
+</pre>
+<b>Diagnostics: </b>
+<pre> <br/>  May raise the following SLI interpreter errors:  <br/>  StackUnderflowError  <br/>  ArgumentTypeError  <br/>   <br/>  NO ARGUMENT RANGE CHECK IS PERFORMED.  <br/>  The result may be useless if subarea is not  <br/>  contained in the source array. Note that THIS  <br/>  RESTRICTION DOES NOT APPLY TO FUNCTION "area2".  <br/>   <br/>  However, anchor points may lie outside the array  <br/>  bounds.  <br/>   <br/>  Note that the height of the source array is not used in computation,  <br/>  and does not appear in the parameter list  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre>(TO BE DONE: NEST layer indexing conventions)  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Ruediger Kupper  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/area2.html">area2</a></li>
+</ul>
+<b>Source:</b><pre>../../sli/sliarray.cc</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

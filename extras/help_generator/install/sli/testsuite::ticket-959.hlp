@@ -1,0 +1,20 @@
+Name: testsuite::ticket-959 - Ensure that pp_psc_delta generates same results when run in small intervals
+
+Synopsis:
+
+(ticket-959) run -> NEST exits if test fails
+
+
+Description:
+
+This ticket ensures that pp_psc_delta produces the same results when run 1000 times 10ms as when run 1 time 10000ms. This test was adapted from ticket-933.
+
+
+Author:
+
+Moritz Deger, 2015-03-16
+
+
+Source:
+
+../../testsuite/regressiontests/ticket-959.sli

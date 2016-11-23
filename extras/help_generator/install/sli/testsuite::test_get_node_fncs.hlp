@@ -1,0 +1,35 @@
+Name: testsuite::test_get_node_fncs - sli script for test of Get(Local/Global)(Nodes/Leaves/Children)
+
+Synopsis:
+
+nest_indirect test_get_node_fncs --> success
+
+
+Description:
+
+The following network is created 
+0 
+__|__ 
+/ / \ \ 
+1 2   3 4 
+__|__ 
+/ / \ \ 
+5 6  7 8 
+| 
+/ \ 
+9   10 
+where the gids 0, 3, 4, 7 and 8 refer to subnets. 
+test_get_node_fncs checks if GetGlobalNodes, GetLocalNodes, 
+GetGlobalLeaves, GetLocalLeaves, GetGlobalChildren, GetLocalChildren 
+return the correct array of gids when given the subnet gids 0, 3, 8 
+and 4.
+
+
+Author:
+
+February 2012, Kunkel
+
+
+Source:
+
+../../testsuite/mpitests/test_get_node_fncs.sli

@@ -1,0 +1,31 @@
+Name: ToLowercase - Convert a string to lower case.
+
+Synopsis:
+
+(string) ToLowercase -> (string)
+
+
+Examples:
+
+SLI ] (MiXeD cAsE) ToLowercase 
+(mixed case)
+
+
+Description:
+
+ToLowercase converts a string to lower case. If no lower case 
+representation of a letter exists, the letter is kept unchanged.
+
+
+Author:
+
+Jochen Martin Eppler
+
+
+SeeAlso:
+
+ToUppercase
+
+Source:
+
+../../sli/stringdatum.cc

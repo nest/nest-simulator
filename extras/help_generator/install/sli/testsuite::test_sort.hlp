@@ -1,0 +1,26 @@
+Name: testsuite::test_sort - sli script to test if sorting works
+
+Synopsis:
+
+(test_sort) run
+
+
+Description:
+
+This test generates a list of descending doubles, sorts them and checks if 
+it is equal to the ascending list.
+
+
+Author:
+
+Jochen Martin Eppler
+
+
+FirstVersion:
+
+July 2007
+
+
+Source:
+
+../../testsuite/unittests/test_sort.sli

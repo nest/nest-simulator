@@ -1,0 +1,67 @@
+Name: music_event_in_proxy - A device which receives spikes from MUSIC.
+
+Examples:
+
+/music_event_in_proxy Create /meip Set 
+meip << /music_channel 2 >> SetStatus 
+/iaf_neuron Create /n Set 
+(event_in) 0.2 SetAcceptableLatency 
+meip n Connect
+
+
+Description:
+
+A music_event_in_proxy can be used to pass spikes to nodes within NEST 
+which are received from another application. 
+It uses the MUSIC library to receive spike events from other 
+applications. The music_event_in_proxy represents one channel on a port 
+to which MUSIC can connect an event source. The music_event_in_proxy can 
+be connected to local neurons or devices within NEST to receive 
+the events. Multiple music_in_proxies can be configured to listen 
+on the same port, but each channel can only listened to by a 
+single proxy.
+
+
+Parameters:
+
+The following properties are available in the status dictionary: 
+port_name		- The name of the MUSIC input port to listen to (default: 
+event_in) 
+music_channel 	- The MUSIC global index on the input port to listen to 
+registered		- A bool indicating if the port has been already registered 
+with the corresponding MUSIC event handler 
+The parameters port_name and music_channel can be set using SetStatus. 
+The acceptable latency of the MUSIC input port can be set using the 
+command SetAcceptableLatency.
+
+
+Require:
+
+HAVE_MUSIC
+
+
+Availability:
+
+Only when compiled with MUSIC
+
+
+Author:
+
+Moritz Helias, Jochen Martin Eppler
+
+
+FirstVersion:
+
+October 2008
+
+
+SeeAlso:
+
+SetAcceptableLatency
+music_event_out_proxy
+music_cont_in_proxy
+music_message_in_proxy
+
+Source:
+
+../../models/music_event_in_proxy.h

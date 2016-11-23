@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: Apply</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: Apply</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>Apply - calls a function with the elements of an array as arguments</pre>
+<b>Synopsis: </b>
+<pre>array proc Apply -> any  <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>   <br/>  [1 2] {add} Apply --> 3  <br/>  [1 2] {dup mul} Map --> [1 4]  <br/>  [(hell world) 4 (o)] {insert} Apply --> (hello world)  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  Apply interprets the elements of the input array a as the list  <br/>  of arguments of the supplied function f,  <br/>  f(a(1),a(2), ...,a(n))  <br/>   <br/>  This is to be distinguished from Map which individually applies  <br/>  the function to the elements of the array,  <br/>  [f(a(1),f(a(2), ...,f(a(n))]  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  array is an arbitrarily shaped heterogeneous array.  <br/>  proc is any procedure object (pure function).  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  This function is an implementation of Mathematica's Apply function.  <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  [1] The Mathematica Book V4.0 "Apply" 
+</pre>
+<b>Author: </b>
+<pre>Diesmann  <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>unknown, documented 121124  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/Map.html">Map</a></li>
+    <li><a href="../sli/MapAt.html">MapAt</a></li>
+    <li><a href="../cc/MapThread.html">MapThread</a></li>
+</ul>
+<b>Source:</b><pre>../../lib/sli/mathematica.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

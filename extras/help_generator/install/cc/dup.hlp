@@ -1,0 +1,32 @@
+Name: dup - Duplicate the object which is on top of the stack
+
+Synopsis:
+
+any dup -> any any
+
+
+Examples:
+
+2 dup -> 2 2 
+(hello) dup -> (hello) (hello)
+
+
+Diagnostics:
+
+Raises StackUnderflow error if the stack is empty.
+
+
+Author:
+
+docu edited by Sirko Straube
+
+
+SeeAlso:
+
+over
+index
+copy
+
+Source:
+
+../../sli/slistack.cc

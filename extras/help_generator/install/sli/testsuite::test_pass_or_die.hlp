@@ -1,0 +1,20 @@
+Name: testsuite::test_pass_or_die - sli script to test the pass_or_die function
+
+Synopsis:
+
+(test_pass_or_die) run
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+07-jul-2008
+
+
+Source:
+
+../../testsuite/selftests/test_pass_or_die.sli

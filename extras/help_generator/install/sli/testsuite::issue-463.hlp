@@ -1,0 +1,28 @@
+Name: testsuite::issue-463 - Simple failing test for connection with parameter arrays and connection rule fixed_indegree, with more than one virtual process
+
+Synopsis:
+
+(issue-463) run -> NEST exits if test fails
+
+
+Description:
+
+This script creates connections between neurons with parameter arrays and connection rule fixed_indegree, with more than one virtual process, and checks that created connection parameters coincide with array elements.
+
+
+Author:
+
+Bruno Golosio
+
+
+FirstVersion:
+
+August 2016
+
+
+SeeAlso:
+
+
+Source:
+
+../../testsuite/unittests/issue-463.sli

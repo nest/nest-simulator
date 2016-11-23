@@ -1,0 +1,36 @@
+Name: testsuite::test_iaf_i0_refractory - sli script for test of iaf_neuron internal DC current
+
+Synopsis:
+
+(test_iaf_i0_refractory) run -> compare cout with comments in file
+
+
+Description:
+
+test_iaf_i0_refractory.sli is a test of a specific feature of the 
+iaf_neuron model. It is tested whether the voltage traces of simulations 
+carried out at different resolutions (computation step sizes) are well 
+aligned and identical when the neuron recovers from refractoriness. 
+In grid based simulation a prerequisite is that the spike is reported at 
+a grid position shared by all the resolutions compared. 
+Here, we compare resolutions 0.1, 0.2, 0.5, and 1.0 ms. Therefore, the 
+internal DC current is adjusted such (1450.0 pA) that the spike is 
+reported at time 3.0 ms, corresponding to computation step 30, 15, 6, 
+and 3, respectively. 
+The results are consistent with those of iaf_neuron_ps capable of 
+handling off-grid spike timing when the interpolation order is set to 
+0. 
+The expected output is documented and briefly commented at the end of 
+the script. 
+The file is an extended version of test_iaf_i0.sli . 
+Author:  July 2004, Diesmann
+
+
+SeeAlso:
+
+iaf_neuron
+testsuite::test_iaf_i0
+
+Source:
+
+../../testsuite/unittests/test_iaf_i0_refractory.sli

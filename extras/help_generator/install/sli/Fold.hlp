@@ -1,0 +1,36 @@
+Name: Fold - result of repeatedly applying a function with two arguments
+
+Synopsis:
+
+x [a b c ...] f Select -> f( ...n times... f(f(f(x,a),b),c) ...)
+
+
+Examples:
+
+1 [2 x] Range {mul} Fold 
+computes faculty of integer x
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+9.2.01 
+Remarks:Fold is a restricted variant of forall. 
+It is implemented to demonstrate the use of forall as a 
+functional operator and for compatibility with Mathematica.
+
+
+SeeAlso:
+
+forall
+repeat
+FoldList
+Nest
+
+Source:
+
+../../lib/sli/mathematica.sli

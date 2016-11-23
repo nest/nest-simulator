@@ -1,0 +1,31 @@
+Name: testsuite::ticket-459 - test that changing the leak reversal potential leaves all other neuron parameters else unchanged
+
+Synopsis:
+
+(ticket-459.sli) run -> dies if assertion fails
+
+
+Description:
+
+For all models having a reversal potential E_L, we change this potential and check that 
+all other parameters and properties of the model remain unchanged. #459 reports that the 
+order in which E_L and V_th are set determines which values are actually set. This is a 
+direct consequence of incorrect handling of changes to E_L, which show up as changes in, 
+e.g. V_m and V_th as a side effect of changing E_L. This happened in those neuron models 
+that internally represent voltages relative to E_L and did not adjust those values on 
+changes to E_L.
+
+
+Author:
+
+Plesser
+
+
+FirstVersion:
+
+2011-02-12
+
+
+Source:
+
+../../testsuite/regressiontests/ticket-459.sli

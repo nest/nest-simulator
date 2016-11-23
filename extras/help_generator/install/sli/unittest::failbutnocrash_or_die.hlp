@@ -1,0 +1,59 @@
+Name: unittest::failbutnocrash_or_die - Execute a code block and exit with exit code 3 if it does not raise a scripterror
+
+Synopsis:
+
+{ code } [string] failbutnocrash_or_die ->	-
+
+
+Examples:
+
+{add}	 (add ok) failbutnocrash_or_die  -> success 
+{1 0 div} failbutnocrash_or_die  -> success 
+{add_dd}  failbutnocrash_or_die  -> quit
+
+
+Description:
+
+The procedure tests that a specific error, a scripterror, is raised. An example 
+is a call of operator add in a situation where the operand stack is empty. add 
+raises a StackUnderflow error in this case which is a scripterror and the desired 
+behavior. There are several alternative and undesired behaviors of the code block 
+in question. add may return without raising an error, this is not the expected behavior 
+and therefore failbutnocrash_or_die reports a problem. However, other scenarios 
+are that the code block causes an assertion to fail or that it causes a segmentation 
+fault. In contrast to fail_or_die, failbutnocrash_or_die survives such a crash of 
+the code block to be tested. This is achieved by probing the code block in a separate 
+nest instance and inspecting the result. The procedure uses the symbolic exit codes 
+defined in statusdict::exitcodes, scripterror is one of them.
+
+
+Diagnostics:
+
+This function will quit nest  (exit code 3) if the code does NOT raise an error of the 
+scripterror type. It will print an error message to cerr, too.
+
+
+Availability:
+
+SLI-2.0
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+090209
+
+
+SeeAlso:
+
+unittest::fail_or_die
+assert
+quit
+
+Source:
+
+../../lib/sli/unittest.sli

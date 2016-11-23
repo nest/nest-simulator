@@ -1,0 +1,42 @@
+Name: Most - Remove the last element of an array or string and return the rest.
+
+Synopsis:
+
+string Most -> string 
+array Most -> array
+
+
+Examples:
+
+(computer) Most -> (compute) 
+[1 2 3] Most -> [1 2] 
+[(this) (is) (an) (example)] Rest -> [(this) (is) (an)]
+
+
+Remarks:
+
+In 2003 this function did not exist in Mathematica and was 
+introduced as LRest by Kupper. Mathematica 5 introduced the 
+function and its SLI Name was changed for compatibility 
+(Apr 2008, Diesmann).
+
+
+Author:
+
+Ruediger Kupper, docu edited by Sirko Straube
+
+
+FirstVersion:
+
+10.3.2003
+
+
+SeeAlso:
+
+First
+Last
+Rest
+
+Source:
+
+../../lib/sli/mathematica.sli

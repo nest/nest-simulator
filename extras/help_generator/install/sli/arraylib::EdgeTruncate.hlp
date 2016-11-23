@@ -1,0 +1,56 @@
+Name: arraylib::EdgeTruncate - Truncate 2-d array indices at array edges
+
+Synopsis:
+
+[2d-indices] height width EdgeTruncate -> [truncated-2d-indices]
+
+
+Description:
+
+This function iterates through the given array indices and checks if 
+they lie inside the bounds [0,height) and [0,width), respectively. 
+Indices are modified according to the following rules: 
+1. If both indices lie inside [0,height) and [0,width), respectively, 
+they are left untouched. 
+2. If either the row index lies outside [0,height), or the column 
+index lies outside [0,width), the respective index is replaced by "false". 
+Note that by NEST convention, for index pairs, the first index denotes 
+the row, and the second index denotes the column. 
+Dimensions of the index array are preserved.
+
+
+Diagnostics:
+
+The index array is expected to be a (nested) array of integer values 
+only. Code will break otherwise.
+
+
+Remarks:
+
+The index array is expected to be a (nested) array of integer values only.
+
+
+Availability:
+
+"Namespace"-dictionary "arraylib".
+
+
+Author:
+
+Ruediger Kupper
+
+
+FirstVersion:
+
+17.3.2003
+
+
+SeeAlso:
+
+arraylib::EdgeWrap
+arraylib::EdgeClip
+area2
+
+Source:
+
+../../lib/sli/arraylib.sli

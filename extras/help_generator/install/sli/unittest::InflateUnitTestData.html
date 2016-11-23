@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: unittest::InflateUnitTestData</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: unittest::InflateUnitTestData</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>unittest::InflateUnitTestData - reformat compressed reference data</pre>
+<b>Synopsis: </b>
+<pre> <br/>  array1 array2 InflateUnitTestData -> array3  <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>  % h=   (in ms)  <br/>  [ 0.1   0.2   0.5   1.0 ]  <br/>  %  <br/>  % time	 voltage  <br/>  [  <br/>  [  1	 -69.4229]  <br/>  [  2	 1	 -68.8515]  <br/>  [  3	 -68.2858]  <br/>  [  4	 2	 -67.7258]  <br/>  [  5	 1	 -67.1713]  <br/>  [  6	 3	 -66.6223]  <br/>  [  7	 -66.0788]  <br/>  [  8	 4	 -65.5407]  <br/>  [  9	 -65.008]  <br/>  [ 10	 5	 2   1   -64.4806]  <br/>  [ 11	 -63.9584]  <br/>  ]  <br/>   <br/>   <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  The idea of the compressed data format is to represent the reference  <br/>  data in a compact human readable format at the end of the testsuite  <br/>  files. Although redundant, the time stamps of all step sizes  <br/>  corresponding to a particular reference data point are listed.  <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  array1	- array of sorted simulation step sizes [h1,...,hn]  <br/>  All simulation step sizes must be multiples of the  <br/>  smallest one h1.  <br/>  array2	- array of reference data with one row per data point.  <br/>  the last element v in each row is the value of the recorded  <br/>  quantity. The first element in each row is the time stamp  <br/>  t1 of the smallest step size. The time stamps of larger  <br/>  step sizes are located between t1 and v if the temporal  <br/>  position coincides with t1.  <br/>  array3	- array of length n with one entry per step size h1,...,hn.  <br/>  Each entry is a two-dimensional vector of tuples [ti,vi],  <br/>  where ti is a time stamp and vi the corresponding value of  <br/>  the recorded quantity.  <br/>  
+</pre>
+<b>Author: </b>
+<pre>Markus Diesmann  <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>071128  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/unittest::ToUnitTestPrecision.html">unittest::ToUnitTestPrecision</a></li>
+</ul>
+<b>Source:</b><pre>../../lib/sli/unittest.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

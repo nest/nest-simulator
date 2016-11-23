@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: DataConnect</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: DataConnect</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>DataConnect - Connect many neurons from data.</pre>
+<b>Synopsis: </b>
+<pre> <br/>  1.   source dict model  DataConnect_i_D_a ->	-  <br/>   <br/>  source	- GID of the source neuron  <br/>  dict  	- dictionary with connection parameters  <br/>  model 	- the synapse model as string or literal  <br/>   <br/>  2. [dict1 dict2 .... dict_n] DataConnect_a ->	-  <br/>   <br/>  The argument is a list with synapse status dictionaries as obtained from GetStatus.  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>   <br/>  Variant 1:  <br/>  This variant is used if connectivity data is explicitly given and read from files.  <br/>  Connects the source neuron to targets according to the data in dict, using the synapse 'model'.  <br/>  Dict is a parameter dictionary that must contain at least the following fields:  <br/>  /target  <br/>  /weight  <br/>  /delay  <br/>  Other parameters depend on the synapse model.  <br/>  The values in the dictionaries are arrays of equal size, specifying the parameters for the  <br/>  respective connection. The arrays should all be of type DoubleVectorDatum (numpy.array(dtype=float)).  <br/>  Note that for performance reasons, target GIDs must be given as doubles rather than integers!  <br/>   <br/>  The second variant of DataConnect can be used to re-instantiate a given connectivity matrix.  <br/>  The argument is a list of dictionaries, each containing at least the keys  <br/>  /source  <br/>  /target  <br/>  /weight  <br/>  /delay  <br/>  /synapsemodel  <br/>   <br/>  Example:  <br/>   <br/>  % assume a connected network  <br/>   <br/>  << >> GetConnections /conns Set	 % Get all connections  <br/>  conns { GetStatus } Map  /syns  Set  % retrieve their synapse status  <br/>   <br/>  ResetKernel	 % clear everything  <br/>  % rebuild neurons  <br/>  syns DataConnect	 % restore the connecions  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Marc-Oliver Gewaltig  <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>August 2011  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/DataConnect_i_D_s.html">DataConnect_i_D_s</a></li>
+    <li><a href="../cc/DataConnect_a.html">DataConnect_a</a></li>
+    <li><a href="../sli/Connect.html">Connect</a></li>
+</ul>
+<b>Source:</b><pre>../../lib/sli/nest-init.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

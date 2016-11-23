@@ -1,0 +1,9 @@
+Name: nS - Specification in nS (for readability)
+
+SeeAlso:
+
+unit_conversion
+
+Source:
+
+../../lib/sli/nest-init.sli

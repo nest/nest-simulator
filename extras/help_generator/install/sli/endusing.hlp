@@ -1,0 +1,61 @@
+Name: endusing - Close the scope of a 'using' context.
+
+Synopsis:
+
+/namespacename using ...your.code... endusing ->	-
+
+
+Examples:
+
+% the following makes the routines of the unittest library available to the current scope: 
+(unittest) run 
+/unittest using 
+..your code.. 
+endusing
+
+
+Description:
+
+'endusing' must be used to close a 'using' statement. 
+For further information, see 'using'.
+
+
+Remarks:
+
+Please note that 'using'/'endusing' is implemented by the opening and 
+closing of dictionaries. Code between 'using' and 'endusing' should 
+hence have completely matched 'begin' and 'end' statements, or special 
+care must be taken when using non-matched 'begin'/'end' constructs 
+inside a 'using' context.
+
+
+Availability:
+
+SLI2.0
+
+
+References:
+
+[1] Ruediger Kupper, SLI library management, 
+HRI-EU Report 06/05, Honda Research Institute Europe GmbH, 2006.
+
+
+Author:
+
+Ruediger Kupper
+
+
+FirstVersion:
+
+6-aug-2003
+
+
+SeeAlso:
+
+using
+namespace
+call
+
+Source:
+
+../../lib/sli/library.sli

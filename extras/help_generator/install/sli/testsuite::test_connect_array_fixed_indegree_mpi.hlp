@@ -1,0 +1,31 @@
+Name: testsuite::test_connect_array_fixed_indegree_mpi - SLI script to test connection with parameter arrays and connection rule fixed_indegree, with hybrid MPI and thread parallelism
+
+Synopsis:
+
+(test_connect_array_fixed_indegree_mpi) run
+
+
+Description:
+
+Tests with hybrid MPI and thread parallelism the possibility to use 
+parameter arrays to define connection weights and/or delays in conjunction 
+with the connection rules fixed_indegree
+
+
+Author:
+
+Bruno Golosio
+
+
+FirstVersion:
+
+August 2016
+
+
+SeeAlso:
+
+Connect
+
+Source:
+
+../../testsuite/mpitests/test_connect_array_fixed_indegree_mpi.sli

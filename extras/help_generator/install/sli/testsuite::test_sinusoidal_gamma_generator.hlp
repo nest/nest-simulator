@@ -1,0 +1,40 @@
+Name: testsuite::test_sinusoidal_gamma_generator - test basic properties of sinusoidal gamma generator
+
+Synopsis:
+
+(test_sinusoidal_gamma_generator) run -> dies if assertion fails
+
+
+Description:
+
+This test asserts that 
+	- that /individual_spike_trains is true by default 
+	- the /individual_spike_trains property can be set on the model, but not on instances 
+	- that instances inherit the correct /individual_spike_trains value 
+	- that different targets (on same or different threads) 
+* identical spike trains if /individual_spike_trains is false 
+* different spike trains otherwise 
+	- that a multimeter can be connected to record the rate 
+* independent of /individual_spike_trains ..., only a single trace is returned 
+	- the recorded rate profile is tested against expectation 
+This test DOES NOT test the statistical properties of the spike trains generated.
+
+
+Author:
+
+Plesser
+
+
+FirstVersion:
+
+May 2013
+
+
+SeeAlso:
+
+testsuite::test_sinusoidal_gamma_generator_1
+testsuite::test_sinusoidal_poisson_generator
+
+Source:
+
+../../testsuite/unittests/test_sinusoidal_gamma_generator.sli

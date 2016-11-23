@@ -1,0 +1,27 @@
+Name: MatrixQ - Test whether a nested array i a matrix
+
+Synopsis:
+
+[array] MatrixQ -> true | false
+
+
+Examples:
+
+[1 2 3] MatrixQ -> true 
+[[1 2] [3 4]] MatrixQ -> true 
+[[1] [2 3]] MatrixQ ->False
+
+
+Bugs:
+
+This version fails on the third example
+
+
+Author:
+
+Marc-Oliver Gewaltig
+
+
+Source:
+
+../../lib/sli/mathematica.sli

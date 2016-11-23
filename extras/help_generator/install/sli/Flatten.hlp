@@ -1,0 +1,45 @@
+Name: Flatten - flatten out a nested list
+
+Synopsis:
+
+array	 Flatten -> array 
+array integer Flatten -> array
+
+
+Examples:
+
+[3 [4 [5 [6]]] 7] Flatten   -->  [3 4 5 6 7] 
+[3 [4 [5 [6]]] 7] 1 Flatten -->  [3 4 [5 [6]] 7] 
+[3 [4 [5 [6]]] 7] 2 Flatten -->  [3 4 5 [6] 7]
+
+
+Description:
+
+Flatten called with one argument flattens out all levels of 
+the argument. Flatten called with two arguments flattens out 
+the first n levels.
+
+
+References:
+
+[1] The Mathematica Book V4.0 "Flatten"
+
+
+Author:
+
+Gewaltig, Diesmann
+
+
+FirstVersion:
+
+Gewaltig
+
+
+SeeAlso:
+
+Partition
+FixedPoint
+
+Source:
+
+../../lib/sli/mathematica.sli

@@ -1,0 +1,25 @@
+Name: testsuite::test_cva - check if cva function works
+
+Synopsis:
+
+(test_cva) run ->
+
+
+Description:
+
+Tests basic properties of cva. Note that the tests 
+are directly compiled from the Examples section of 
+the documentation which is evaluated by the command 
+/validate . 
+Future versions of NEST should generate this test 
+directly from the Examples section. 
+Author:  130603, Diesmann
+
+
+SeeAlso:
+
+cva
+
+Source:
+
+../../testsuite/unittests/test_cva.sli

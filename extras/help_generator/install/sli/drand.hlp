@@ -1,0 +1,31 @@
+Name: drand - Generate a random double number.
+
+Synopsis:
+
+rangen drand -> double
+
+
+Examples:
+
+<pre> 
+SLI ] rngdict /knuthran get 1234567 CreateRNG /rng Set 
+SLI ] [ 4 ] { pop rng drand } Table == 
+[6.922545e-01 1.587092e-01 8.004862e-01 5.062180e-01] 
+</pre>
+
+
+Description:
+
+drand uses the supplied random number generator to generate 
+a random number in [0, 1).
+
+
+SeeAlso:
+
+irand
+CreateRNG
+seed
+
+Source:
+
+../../lib/sli/librandom.sli

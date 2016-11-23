@@ -1,0 +1,27 @@
+Name: testsuite::test_rdv_discreteness - test discreteness of random distributions
+
+Synopsis:
+
+(test_rdv_discreteness.sli) run -> dies if assertion fails
+
+
+Description:
+
+Test that discrete random distributions actually return integer values for 
+Random and RandomArray and continuous random distributions return double values 
+for Random and RandomArray.
+
+
+Author:
+
+Ippen
+
+
+FirstVersion:
+
+160304
+
+
+Source:
+
+../../testsuite/unittests/test_rdv_discreteness.sli

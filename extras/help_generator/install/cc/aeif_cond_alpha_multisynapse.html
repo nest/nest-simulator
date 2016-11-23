@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: aeif_cond_alpha_multisynapse</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: aeif_cond_alpha_multisynapse</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>aeif_cond_alpha_multisynapse - Conductance based exponential  <br/>  integrate-and-fire neuron model according  <br/>  to Brette and Gerstner (2005) with  <br/>  multiple synaptic time constants.</pre>
+<b>Examples: </b>
+<pre> <br/>  % PyNEST example, of how to assign a synaptic time constant to a receptor type.  <br/>   <br/>  nest.SetDefaults('aeif_cond_alpha_multisynapse', {'HMIN':0.001})  <br/>  nest.SetDefaults('aeif_cond_alpha_multisynapse', {'MAXERR':1e-10})  <br/>   <br/>  neuron = nest.Create('aeif_cond_alpha_multisynapse')  <br/>  nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})  <br/>  nest.SetStatus(neuron, {'taus_syn':[0.2,2.0,20.0,20.0]})  <br/>   <br/>  spike = nest.Create('spike_generator', params = {'spike_times':  <br/>  np.array([100.0])})  <br/>  voltmeter = nest.Create('voltmeter', 1, {'withgid': True})  <br/>   <br/>  nest.CopyModel("static_synapse", "synapse1", {"weight":1.0, "delay":1.0,  <br/>  'receptor_type': 1})  <br/>  nest.CopyModel("static_synapse", "synapse2", {"weight":1.0, "delay":100.0,  <br/>  'receptor_type': 2})  <br/>  nest.CopyModel("static_synapse", "synapse3", {"weight":1.0, "delay":300.0,  <br/>  'receptor_type': 3})  <br/>  nest.CopyModel("static_synapse", "synapse4", {"weight":-1.0, "delay":500.0,  <br/>  'receptor_type': 4})  <br/>   <br/>  nest.Connect(spike, neuron, model="synapse1")  <br/>  nest.Connect(spike, neuron, model="synapse2")  <br/>  nest.Connect(spike, neuron, model="synapse3")  <br/>  nest.Connect(spike, neuron, model="synapse4")  <br/>   <br/>  nest.Connect(voltmeter, neuron)  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>   <br/>  aeif_cond_alpha_multisynapse is a direct extension of  <br/>  aeif_cond_alpha_RK5.  In contrast to most other neuron models, this  <br/>  one allow an arbitrary number of synaptic time constant.  <br/>   <br/>  The time constants are supplied by two arrays tau_ex and tau_in for  <br/>  the excitatory and inhibitory synapses, respectively.  Port numbers  <br/>  are then automatically assigned and there range is from 1 to n.  (n  <br/>  being the index of the last element of the tau_ex and tau_in  <br/>  arrays).  <br/>  During connection, the ports are selected with the property "receptor_type".  <br/>   <br/>  
+</pre>
+<b>Receives: </b>
+<pre>SpikeEvent, CurrentEvent, DataLoggingRequest  <br/>   <br/>  Author:  Daniel Peppicelli, adapted from aeif_cond_alpha_RK5  <br/>  
+</pre>
+<b>Sends: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/aeif_cond_alpha_RK5.html">aeif_cond_alpha_RK5</a></li>
+</ul>
+<b>Source:</b><pre>../../models/aeif_cond_alpha_multisynapse.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

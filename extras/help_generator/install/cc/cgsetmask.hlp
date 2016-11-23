@@ -1,0 +1,50 @@
+Name: cgsetmask - Call setMasks() on a ConnectionGenerator
+
+Synopsis:
+
+cg sources targets cgsetmask ->	-
+
+
+Description:
+
+Set masks for sources and targets on a given ConnectionGenerator 
+cg. This is calling the setMasks() function on cg internally.
+
+
+Parameters:
+
+cg		- ConnectionGenerator 
+sources	- A list of nodes used as source masks 
+targets	- A list of nodes used as target masks
+
+
+Remarks:
+
+This function is part of the low-level access API for the 
+ConnectionGenerator module. It is mainly used for debugging 
+purposes. Usually, connections are created from a 
+ConnectionGenerator using CGConnect.
+
+
+Author:
+
+Mikael Djurfeldt
+
+
+FirstVersion:
+
+March 2011
+
+
+SeeAlso:
+
+CGParse
+CGParseFile
+CGConnect
+CGSelectImplementation
+cgstart
+cgnext
+
+Source:
+
+../../conngen/conngenmodule.cpp

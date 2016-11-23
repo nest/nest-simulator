@@ -1,0 +1,55 @@
+Name: arraylib::Sum - Return sum of the elements in array.
+
+Synopsis:
+
+[array] Sum -> number
+
+
+Examples:
+
+[1 2 3 4]   Sum -> 10 
+[1 2 3 4.0] Sum -> 10.0
+
+
+Description:
+
+Returns the sum of all elements in the array. The array is expected 
+to contain only numbers, and is flattened before the computation.
+
+
+Parameters:
+
+[array]: array of numbers
+
+
+Remarks:
+
+The array must contain no other elements than numbers. 
+The return type (integer or double) depends on the type of elements.
+
+
+Availability:
+
+library "arraylib"
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+17-sep-2007
+
+
+SeeAlso:
+
+arraylib::Product
+arraylib::Mean
+arraylib::SDev
+arraylib::Var
+
+Source:
+
+../../lib/sli/arraylib.sli

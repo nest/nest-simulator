@@ -1,0 +1,29 @@
+Name: First - Return the first element of an array or string.
+
+Synopsis:
+
+string First -> char 
+array First -> arrayelement
+
+
+Examples:
+
+(train) First -> 104 
+[1 2 3] First -> 1 
+[(this) (is) (an) (example)] First -> (this)
+
+
+Author:
+
+docu edited by Sirko Straube
+
+
+SeeAlso:
+
+Last
+Rest
+Most
+
+Source:
+
+../../lib/sli/mathematica.sli

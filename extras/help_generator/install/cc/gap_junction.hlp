@@ -1,0 +1,9 @@
+Name: gap_junction - Connection model for gap junctions.
+
+SeeAlso:
+
+synapsedict
+
+Source:
+
+../../models/modelsmodule.cpp

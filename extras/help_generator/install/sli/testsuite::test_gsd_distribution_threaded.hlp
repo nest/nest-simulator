@@ -1,0 +1,27 @@
+Name: testsuite::test_gsd_distribution_threaded - Test global spike detector with hybrid MPI and thread parallelism
+
+Synopsis:
+
+nest_indirect test_gsd_distribution_threaded.sli ->	-
+
+
+Description:
+
+Tests if global spike detectors are equally distributed among virtual 
+recording processes. The script creates 4 Spike detectors on 1x2 and 
+2x2 recording processes and checks if they are equally distributed.
+
+
+Author:
+
+Kunkel, Schmidt
+
+
+FirstVersion:
+
+April 2014
+
+
+Source:
+
+../../testsuite/mpitests/test_gsd_distribution_threaded.sli

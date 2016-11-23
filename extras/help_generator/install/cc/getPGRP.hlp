@@ -1,0 +1,51 @@
+Name: getPGRP - Get process group ID of the current process
+
+Synopsis:
+
+getPGRP ->	-
+
+
+Examples:
+
+(I am member of process group #) =only getPGRP =
+
+
+Description:
+
+Returns the process group ID for the calling process.
+
+
+Parameters:
+
+-
+
+
+Bugs:
+
+-
+
+
+Diagnostics:
+
+A call to "getPGRP" should never produce an error.
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+Apr 18 2000
+
+
+SeeAlso:
+
+fork
+getPID
+kill
+
+Source:
+
+../../sli/processes.h

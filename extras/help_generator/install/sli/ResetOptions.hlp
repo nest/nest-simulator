@@ -1,0 +1,39 @@
+Name: ResetOptions - Reset all options of a command to their default values.
+
+Synopsis:
+
+/f ResetOptions ->	-
+
+
+Description:
+
+Usually, a C++-like notation is used to indicate the 
+availability of the function, if the function is defined in some 
+"namespace" dictionary. 
+For example: "arr::Mean".
+
+
+Author:
+
+Ruediger Kupper
+
+
+FirstVersion:
+
+28.3.2003, by copy-paste-and-modify from RestoreOptions
+
+
+SeeAlso:
+
+GetOption
+GetOptions
+ShowOptions
+SetOptions
+Options
+SaveOptions
+RestoreOptions
+OptionsDictionary
+
+Source:
+
+../../lib/sli/mathematica.sli

@@ -1,0 +1,66 @@
+Name: testsuite::test_spike_generator - sli script to test spike_generator device
+
+Synopsis:
+
+(test_spike_generator) run
+
+
+Description:
+
+test_spike_generator checks the spike_generator device and its 
+consistency with the nest simulation kernel. 
+/start specifies the earliest possible time stamp of a spike event to 
+be emitted. /stop specifies the earliest time stamp of a potential 
+spike event that is not emitted. 
+spike_generator is a device emitting spike events restricted to the 
+time grid spanned by the computation step size h. Nevertheless, the 
+time stamps of the spike events to be emitted are specified by device 
+property /spike_times as double floats in milliseconds (ms). The 
+spike_generator automatically assigns the appropriate time stamps on 
+the simulation grid. For an arbitrary spike time s this is t=i*h with 
+s in the interval (t-h, t], the corresponding event with time stamp t 
+is emitted in the simulation step t-h -> t. See test_iaf_i0_refractory 
+for consistency with spike generation in integrate-and-fire type neuron 
+models and test_iaf_dc_aligned_stop.sli for consistency with the 
+generation of grid based dc currents. 
+A a consequence of the restriction of spike events to the simulation 
+grid, multiple spike events with identical time stamps may be emitted. 
+The results at different computation step sizes (resolutions) require 
+some further discussion. Let us assume that /start and /stop are at 
+joined grid positions of all resolutions tested. If all spike events 
+are specified on joined grid positions, the simulation results are 
+inependent of the computation step size.  However, if spikes occur on 
+non-joined grid positions, spike times are shifted to the appropriate 
+position on the current grid and simulation results will differ. Also, 
+the spike count cannot be preserved because spikes at the end of the 
+interval may be shifted to grid position /stop which is not a valid 
+time stamp of a spike event anymore. 
+Note that the number of emitted spike events can always be made 
+independent of the computation step size by setting /stop to an 
+appropriately late joined grid position. 
+The usage of values for /start and /stop that are not simultaneous 
+grid positions of the computation step sizes to be used should be 
+avoided because the set of spike events delivered in the simulation 
+will vary in complex ways. 
+The expected output is documented at the end of the script.
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+July 2004
+
+
+SeeAlso:
+
+spike_generator
+testsuite::test_iaf_i0_refractory
+testsuite::test_iaf_dc_aligned_stop
+
+Source:
+
+../../testsuite/unittests/test_spike_generator.sli

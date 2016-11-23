@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: topology::ConnectLayers</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: topology::ConnectLayers</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>topology::ConnectLayers - connect two layers</pre>
+<b>Synopsis: </b>
+<pre>sourcelayergid targetlayergid connection_dict  <br/>  ConnectLayers ->	-  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre>Connects nodes in two topological layers.  <br/>   <br/>  The parameters set in the input dictionary decides the nature  <br/>  of the connection pattern being created. Please see parameter  <br/>  list below for a detailed description of these variables.  <br/>   <br/>  The connections are created by iterating through either the  <br/>  source or the target layer, consecutively connecting each node  <br/>  to a region in the opposing layer.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  model*	 literal  <br/>  lid^	 integer  <br/>   <br/>  *modeltype (i.e. /iaf_neuron) of nodes that should be connected to  <br/>  in the layer. All nodes are used if this variable isn't set.  <br/>  ^Nesting depth of nodes that should be connected to. All layers are used  <br/>  if this variable isn't set.  <br/>   <br/>   <br/>  Parameter name: target  <br/>   <br/>  Type: dictionary  <br/>   <br/>  Parameter description:  <br/>   <br/>  See description for source dictionary.  <br/>   <br/>   <br/>  Parameter name: number_of_connections  <br/>   <br/>  Type: integer  <br/>   <br/>  Parameter description:  <br/>   <br/>  Maximum number of connections that each iterating node is allowed.  <br/>  The actual connections being created are picked at random from all  <br/>  the candidate connections.  <br/>   <br/>   <br/>  Parameter name: synapse_model  <br/>   <br/>  Type: literal  <br/>   <br/>  Parameter description:  <br/>   <br/>  The synapse model to be used for creating the connection.  <br/>  .  <br/>  Parameter name: allow_autapses  <br/>   <br/>  Type: bool  <br/>   <br/>  Parameter description: Used together with the number_of_connections option to  <br/>  indicate if autapses are allowed.  <br/>   <br/>   <br/>  Parameter name: allow_multapses  <br/>   <br/>  Type: bool  <br/>   <br/>  Parameter description: Used together with the number_of_connections option to  <br/>  indicate if multapses are allowed.  <br/>   <br/>  ------------------------------------------------------------------  <br/>   <br/>  Example:  <br/>   <br/>  topology using  <br/>   <br/>  %Create source layer with CreateLayer  <br/>  << /rows 15  <br/>  /columns 43  <br/>  /extent [1.0 2.0]  <br/>  /elements /iaf_neuron  <br/>  >> /src_dictionary Set  <br/>   <br/>  src_dictionary CreateLayer /src Set  <br/>   <br/>  %Create target layer with CreateLayer  <br/>  %%Create layer  <br/>  << /rows 34  <br/>  /columns 71  <br/>  /extent [3.0 1.0]  <br/>  /elements {/iaf_neuron Create ; /iaf_psc_alpha Create ;}  <br/>  >> /tgt_dictionary Set  <br/>   <br/>  tgt_dictionary CreateLayer /tgt Set  <br/>   <br/>  << /connection_type (convergent)  <br/>  /mask << /grid << /rows 2 /columns 3 >>  <br/>  /anchor << /row 4 /column 2 >> >>  <br/>  /weights 2.3  <br/>  /delays [2.3 1.2 3.2 1.3 2.3 1.2]  <br/>  /kernel << /gaussian << /sigma 1.2 /p_center 1.41 >> >>  <br/>  /sources << /model /iaf_neuron  <br/>  /lid 1 >>  <br/>  /targets << /model /iaf_neuron  <br/>  /lid 2 >>  <br/>  /synapse_model /stdp_synapse  <br/>   <br/>  >> /parameters Set  <br/>   <br/>  src tgt parameters ConnectLayers  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Håkon Enger, Kittel Austvoll  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/topology::CreateLayer.html">topology::CreateLayer</a></li>
+</ul>
+<b>Source:</b><pre>../../topology/topologymodule.cpp</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

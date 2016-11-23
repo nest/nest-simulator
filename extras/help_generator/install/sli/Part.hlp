@@ -1,0 +1,87 @@
+Name: Part - returns a sub-array of an array
+
+Synopsis:
+
+array1 array2 Part -> array3
+
+
+Examples:
+
+[ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ [1 3] [2 3] ] Part  --> [[5 6] [1 8]] 
+[ [3 [-12 -19] 6 9] [11 4 7 2] [-9 1 8 10] ]  [ 1 2 2] Part --> -19 
+[3 4 5 6 7] [-2] Part	 --> 6 
+[3 [-9 -12] 5 6 7] [2] Part	 --> [-9 -12] 
+[3 [-9 -12] 5 6 7] [2 2] Part	 --> -12 
+[3 [-9 -12] 5 6 7] [[2 3]] Part	 --> [[-9 -12] 5] 
+[3 [-9 -12] 5 6 7] [[2 3 2]] Part	 --> [[-9 -12] 5 [-9 -12]] 
+[ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ 1 []  ] Part   --> [] 
+[ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ [] 1 ] Part	 --> [] 
+[3 [5 -12] 6 9]  [ [ 2 ] ] Part	 --> [[5 -12]] 
+[3 [5 -12] 6 9]  [ [ 2 ] 2] Part	 --> [-12] 
+[ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ /All [3 2]  ] Part --> [[6 5] [7 4] [8 1]]
+
+
+Description:
+
+Part returns a sub-array of array1 specified by 
+array2. This function is an implementation of 
+Mathematica's Part function. It can also be used 
+to rearrange or copy parts of array1. Note, 
+Mathematica-style functions in SLI use Mathematica 
+index notation.
+
+
+Parameters:
+
+array1 is an arbitrarily shaped array. In particular 
+it does not need to be rectangular. 
+array2 is an array [i,j, ...] where the i,j specify the 
+selected elements on each level. Any i,j can itself be 
+an array [i1,i2,....] specifying a list of elements on 
+that level. When i is the literal /All, all elements on 
+the corresponding level are returned. The first element 
+on each level has index 1. Indices can also be specified 
+counting from the end of the array, in this case the last 
+element has index -1. Positive and neative indices can 
+arbitrarily be intermixed. 
+Alternatives: Function Part_a (undocumented) -> behaviour and 
+synopsis are the same.
+
+
+Bugs:
+
+
+
+
+Remarks:
+
+Literal /All plays the role of the index specifier ':' 
+in Matlab when used without arguments. Note, that 
+Matlab in addition provides specifier 'end'. 
+This is not necessary in the formalism of Mathematica 
+because indices counting from the end of the array can be 
+expressed by negative values.
+
+
+References:
+
+[1] The Mathematica Book V4.0 "Part"
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+29.9.1999
+
+
+SeeAlso:
+
+MathematicaToSliIndex
+
+Source:
+
+../../lib/sli/mathematica.sli

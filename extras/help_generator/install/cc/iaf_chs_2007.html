@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: iaf_chs_2007</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: iaf_chs_2007</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>iaf_chs_2007 - Spike-response model used in Carandini et al 2007.</pre>
+<b>Description: </b>
+<pre> <br/>  The membrane potential is the sum of stereotyped events: the postsynaptic  <br/>  potentials (V_syn), waveforms that include a spike and the subsequent  <br/>  after-hyperpolarization (V_spike) and Gaussian-distributed white noise.  <br/>   <br/>  The postsynaptic potential is described by alpha function where where  <br/>  U_epsp is the maximal amplitude of the EPSP and tau_epsp is the time to  <br/>  peak of the EPSP.  <br/>   <br/>  The spike waveform is described as a delta peak followed by a membrane  <br/>  potential reset and exponential decay. U_reset is the magnitude of the  <br/>  reset/after-hyperpolarization and tau_reset is the time constant of  <br/>  recovery from this hyperpolarization.  <br/>   <br/>  The linear subthresold dynamics is integrated by the Exact  <br/>  Integration scheme [1]. The neuron dynamics is solved on the time  <br/>  grid given by the computation step size. Incoming as well as emitted  <br/>  spikes are forced to that grid.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  The following parameters can be set in the status dictionary.  <br/>   <br/>  tau_epsp	 double	- Membrane time constant in ms.  <br/>  tau_reset	 double	- Refractory time constant in ms.  <br/>  U_epsp	 double	- Maximum amplitude of the EPSP. Normalized.  <br/>  U_reset	 double	- Reset value of the membrane potential. Normalized.  <br/>  U_noise	 double	- Noise scale. Normalized.  <br/>  noise   vector<double>- Noise signal.  <br/>   <br/>  
+</pre>
+<b>Receives: </b>
+<pre>SpikeEvent, DataLoggingRequest  <br/>   <br/>  
+</pre>
+<b>Sends: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  The way the noise term was implemented in the original model makes it  <br/>  unsuitable for simulation in NEST. The workaround was to prepare the  <br/>  noise signal externally prior to simulation. The noise signal,  <br/>  if present, has to be at least as long as the simulation.  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  [1] Carandini M, Horton JC, Sincich LC (2007) Thalamic filtering of retinal  <br/>  spike trains by postsynaptic summation. J Vis 7(14):20,1-11.  <br/>  [2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear  <br/>  systems with applications to neuronal modeling. Biologial Cybernetics  <br/>  81:381-402.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Thomas Heiberg, Birgit Kriener 
+</pre>
+<b>FirstVersion: </b>
+<pre>May 2012  <br/>  
+</pre>
+<b>Source:</b><pre>../../models/iaf_chs_2007.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

@@ -1,0 +1,43 @@
+Name: Dimensions - determine dimenstions of a (hyper-rectangular) SLI array
+
+Synopsis:
+
+[array] Dimensions -> [d1 d2 ... dn]
+
+
+Examples:
+
+SLI ] [1 2 3]	 Dimensions -> [3] 
+SLI ] [[1 2 3] [4 5 6]]	 Dimensions -> [2 3] 
+SLI ] [[[1 2][3 4]][[5 6][7 8]]] Dimensions -> [2 2 2]
+
+
+Description:
+
+Dimensions corresponds to the Mathematica function of 
+the same name. It takes a sli array and returns a list with 
+dimensions [d1 d2 ... dn] where di gives the dimension of the 
+array at level i. 
+The length of the dimensions-list corresponds to the TensorRank of 
+the array.
+
+
+Remarks:
+
+Dimensions assumes that the array is hyper-rectangular 
+(rectangle,cuboid, ...), i.e., all subarrays at a given level 
+have the same number of elements. 
+Dimensions does not check, if the array really is hyper-rectangular. It 
+will not fail if this is not the case. Instead, the dimensions 
+that are returned correspond to the number of elements of the 
+first subarray in each level.
+
+
+SeeAlso:
+
+TensorRank
+MatrixQ
+
+Source:
+
+../../lib/sli/mathematica.sli

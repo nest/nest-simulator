@@ -1,0 +1,36 @@
+Name: pow - raise a number to a power
+
+Synopsis:
+
+x y pow -> number
+
+
+Description:
+
+pow computes x raised to the y-th power (x^y).
+
+
+Remarks:
+
+Raises a RangeCheck error if x is negative, unless y is positive 
+integer.
+
+
+Author:
+
+Plesser
+
+
+FirstVersion:
+
+17.05.2004
+
+
+SeeAlso:
+
+exp
+log
+
+Source:
+
+../../sli/slimath.cc

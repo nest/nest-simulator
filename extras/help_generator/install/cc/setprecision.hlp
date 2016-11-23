@@ -1,0 +1,27 @@
+Name: setprecision - set precision for decimal place of a stream
+
+Synopsis:
+
+ostream int setprecision -> ostream
+
+
+Examples:
+
+cerr 3 setprecision 3.12345678901 pprint endl -> 3.123 
+cerr 9 setprecision 3.12345678901 pprint endl -> 3.123456789
+
+
+Author:
+
+docu by Sirko Straube
+
+
+SeeAlso:
+
+cerr
+endl
+pprint
+
+Source:
+
+../../sli/sli_io.cc

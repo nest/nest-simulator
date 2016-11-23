@@ -1,0 +1,40 @@
+Name: Rank - Return the MPI rank of the process.
+
+Synopsis:
+
+Rank -> int
+
+
+Description:
+
+Returns the rank of the MPI process (MPI_Comm_rank) executing the 
+command. This function is mainly meant for logging and debugging 
+purposes. It is highly discouraged to use this function to write 
+rank-dependent code in a simulation script as this can break NEST 
+in funny ways, of which dead-locks are the nicest.
+
+
+Availability:
+
+NEST 2.0
+
+
+Author:
+
+Jochen Martin Eppler
+
+
+FirstVersion:
+
+January 2006
+
+
+SeeAlso:
+
+NumProcesses
+SyncProcesses
+ProcessorName
+
+Source:
+
+../../nestkernel/nestmodule.cpp

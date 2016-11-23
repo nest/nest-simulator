@@ -1,0 +1,42 @@
+Name: CGParseFile - Call ConnectionGenerator::fromXMLFile() and return a 
+ ConnectionGenerator
+
+Synopsis:
+
+xml_filename CGParseFile -> cg
+
+
+Description:
+
+Return a ConnectionGenerator created by deserializing the given 
+XML file. The library to parse the XML file can be selected using 
+CGSelectImplementation
+
+
+Parameters:
+
+xml_filename	- The XML file to read.
+
+
+Author:
+
+Jochen Martin Eppler
+
+
+FirstVersion:
+
+February 2014
+
+
+SeeAlso:
+
+CGParse
+CGConnect
+CGSelectImplementation
+cgstart
+cgsetmask
+cgnext
+
+Source:
+
+../../conngen/conngenmodule.cpp

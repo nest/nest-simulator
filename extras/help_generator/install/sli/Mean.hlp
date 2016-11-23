@@ -1,0 +1,54 @@
+Name: Mean - returns the mean of the elements of an array
+
+Synopsis:
+
+array Mean -> double, mean of elements
+
+
+Examples:
+
+[8 4 3 6 9 5] Mean --> 5.833
+
+
+Description:
+
+The function is implemented in SLI and based on the 
+operator Total.
+
+
+Parameters:
+
+array
+
+
+Remarks:
+
+The Mathematica version is more general 
+Replaces arr:Mean in future versions.
+
+
+References:
+
+[1] The Mathematica Book "Mean"
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+2009.2.22
+
+
+SeeAlso:
+
+Max
+Sort
+Total
+Variance
+
+Source:
+
+../../lib/sli/mathematica.sli

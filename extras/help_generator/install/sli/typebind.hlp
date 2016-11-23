@@ -1,0 +1,126 @@
+Name: typebind - optimizes procedure for certain data type
+
+Synopsis:
+
+proc dict typebind -> proc
+
+
+Examples:
+
+The following is the closed form expression of a postsynaptic potential at 
+at time t 
+( 
+weight * E/tau_syn * 1./C_m 
+* (   (exp(-t/tau_m)-exp(-t/tau_syn)) / (1./tau_syn	- 1./tau_m)^2. 
+-	 t*exp(-t/tau_syn)	 / (1./tau_syn	- 1./tau_m) 
+) 
+) 
+CompileMath /v Set 
+The expression operates on doubles. Therefore we optimize with 
+/v load 
+<< 
+/add [/doubletype /doubletype] 
+/sub [/doubletype /doubletype] 
+/mul [/doubletype /doubletype] 
+/div [/doubletype /doubletype] 
+/pow [/doubletype /doubletype] 
+/exp [/doubletype ] 
+/neg [/doubletype ] 
+>> typebind /v_d Set 
+We can further optimize by replacing all symbolic constants by the 
+corresponding values 
+/v_d load 
+<< 
+/weight   3.2 
+/tau_syn   0.5 
+/tau_m   10.0 
+/C_m	 250.0 
+/t	 1.345 
+/E	 E 
+>> Inline /v_c Set 
+Let us now explore the required number of interpreter cycles and the run time 
+of the three versions 
+clic v cloc 
+clic v_d cloc 
+clic v_c cloc 
+tic 500000 {v pop}   repeat toc 
+tic 500000 {v_d pop} repeat toc 
+tic 500000 {v_c pop} repeat toc 
+The results are: 
+v   v_d   v_c 
+---------------------------------- 
+cycles	 138   112   97 
+reduction factor	 1.2   1.4 
+20%   30% 
+---------------------------------- 
+time	 20.8  8.3   6.5 
+reduction factor	 2.5   3.2 
+60%   69% 
+----------------------------------
+
+
+Description:
+
+The operator is called on a procedure and optimizes the function 
+calls in this procedure by removing type checking of the overloaded 
+functions according to the information in the dictionary. The dictionary 
+specifies the names of the functions for which the type of the arguments 
+is knon and the expected combination of argument types. typebind uses this 
+information to replace the function calls in the procedure by the appropriate 
+variant. This reduces the number of interpreter cycles required to evaluate 
+the procedure. However, the bigger effect is the reduction of run time. 
+The operator typebind can be used to optimize SLI code for speed in 
+situations where it is guaranteed that a particular variant of a 
+function is needed. Here, replacing the overloaded function by the 
+specific variant removes the overhead of type checking. A typical 
+situation in which the data types of the arguments are known is a 
+function call inside a function with a specified signature (see 
+example below). Another situation is machine generated SLI code where 
+the machine, for example a compiler, is requested to emit optimized 
+code restricted to particular data type. 
+/incr [/doubletype] 
+{ 
+1.0 add 
+} 
+<< /add [/doubletype /doubletype] >> typebind 
+def 
+The example below achieves a reduction of interpreter cycles by 20% 
+but a reduction of rune time by 60%.
+
+
+Parameters:
+
+proc, is the procedure to be optimized 
+dict, contains as keys the names of the operators that should 
+be constrained to a certain combination of argument types. 
+The value associated to the key is an array specifying the 
+data type of each argument.
+
+
+Remarks:
+
+typebind may be implemented by Inline, see the documentation of variant.
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+090210
+
+
+SeeAlso:
+
+variant
+Inline
+CompileMath
+def
+clic
+tic
+
+Source:
+
+../../lib/sli/typeinit.sli

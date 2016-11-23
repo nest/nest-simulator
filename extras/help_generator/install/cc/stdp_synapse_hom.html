@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: stdp_synapse_hom</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: stdp_synapse_hom</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>stdp_synapse_hom - Synapse type for spike-timing dependent  <br/>  plasticity using homogeneous parameters.</pre>
+<b>Examples: </b>
+<pre> <br/>  multiplicative STDP [2]  mu_plus = mu_minus = 1.0  <br/>  additive STDP	 [3]  mu_plus = mu_minus = 0.0  <br/>  Guetig STDP	 [1]  mu_plus = mu_minus = [0.0,1.0]  <br/>  van Rossum STDP	 [4]  mu_plus = 0.0 mu_minus = 1.0  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  stdp_synapse_hom is a connector to create synapses with spike time  <br/>  dependent plasticity (as defined in [1]). Here the weight dependence  <br/>  exponent can be set separately for potentiation and depression.  <br/>   <br/>  Parameters controlling plasticity are identical for all synapses of the  <br/>  model, reducing the memory required per synapse considerably.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  tau_plus   double	- Time constant of STDP window, potentiation in ms  <br/>  (tau_minus defined in post-synaptic neuron)  <br/>  lambda	 double	- Step size  <br/>  alpha	 double	- Asymmetry parameter (scales depressing increments as  <br/>  alpha*lambda)  <br/>  mu_plus   double	- Weight dependence exponent, potentiation  <br/>  mu_minus   double	- Weight dependence exponent, depression  <br/>  Wmax	 double	- Maximum allowed weight  <br/>   <br/>  
+</pre>
+<b>Transmits: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  The parameters are common to all synapses of the model and must be set using  <br/>  SetDefaults on the synapse model.  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  [1] Guetig et al. (2003) Learning Input Correlations through Nonlinear  <br/>  Temporally Asymmetric Hebbian Plasticity. Journal of Neuroscience  <br/>   <br/>  [2] Rubin, J., Lee, D. and Sompolinsky, H. (2001). Equilibrium  <br/>  properties of temporally asymmetric Hebbian plasticity, PRL  <br/>  86,364-367  <br/>   <br/>  [3] Song, S., Miller, K. D. and Abbott, L. F. (2000). Competitive  <br/>  Hebbian learning through spike-timing-dependent synaptic  <br/>  plasticity,Nature Neuroscience 3:9,919--926  <br/>   <br/>  [4] van Rossum, M. C. W., Bi, G-Q and Turrigiano, G. G. (2000).  <br/>  Stable Hebbian learning from spike timing-dependent  <br/>  plasticity, Journal of Neuroscience, 20:23,8812--8821  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Moritz Helias, Abigail Morrison  <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>March 2006  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/synapsedict.html">synapsedict</a></li>
+    <li><a href="../cc/tsodyks_synapse.html">tsodyks_synapse</a></li>
+    <li><a href="../cc/static_synapse.html">static_synapse</a></li>
+</ul>
+<b>Source:</b><pre>../../models/stdp_connection_hom.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

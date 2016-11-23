@@ -1,0 +1,87 @@
+Name: arraylib::getdeep - get an element from a nested container (array, dict, ...).
+
+Synopsis:
+
+(general form:) 
+nested_container index_array getdeep -> element 
+(specific forms:) 
+[nested_array]	 [i1 i2 ... in]   getdeep -> element 
+{nested_procedure}   [i1 i2 ... in]   getdeep -> element 
+{nested_litprocedure} [i1 i2 ... in]   getdeep -> element 
+<<nested_dictionary>> [/n1 /n2 ... /nn] getdeep -> element
+
+
+Examples:
+
+[[1 2 3] [4 5 6] [7 8 9]] [0 2]   getdeep -> 3 
+[[1 2 3] [4 5 6] [7 8 9]] [1]	 getdeep -> [4 5 6] 
+<< /a << /b 1  /c 2 >> >> [/a /c] getdeep -> 2
+
+
+Description:
+
+"Getdeep" resolves to a repeated call to "get". That is, it retrieves 
+a single element from a nested array. The call iterates as deep into 
+the nested structure as is indicated by the number of elements in the 
+index array. 
+In short: The call "a [i1 i2 ... in] getdeep" is identical to 
+"a i1 get i2 get ... in get".
+
+
+Parameters:
+
+"Getdeep" can be used on all containers that "get" can be used on. 
+Since strings cannot be nested, it does not make much sense for 
+strings, though. 
+The first argument is a (probably nested) container. 
+The second argument is a flat index array. For all array type containers, 
+this must be an array of integers. For nested dictionaries, this must 
+be an array of literals. 
+The call iterates as deep into 
+the nested structure as is indicated by the number of elements in the 
+index array.
+
+
+Diagnostics:
+
+The number of elements in the index array must not exceed the number 
+of nested levels in the container. Otherwise, the nested call to get will 
+raise /ArgumentType. 
+The elements in the index array must be suited to index the container. 
+Otherwise, the nested call to get will raise /ArgumentType. 
+For array containers, the index at position i must be smaller than the 
+number of elements at level i in the container. Otherwise, the nested 
+call to get will raise /RangeCheck.
+
+
+Remarks:
+
+There currently is no "putdeep" command, but this functionality is 
+provided by "put". See discussion thread on the nest developer list 
+from 19-jun-2006.
+
+
+Availability:
+
+library "arraylib"
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+19-jun-2006
+
+
+SeeAlso:
+
+put
+get
+Dimensions
+
+Source:
+
+../../lib/sli/arraylib.sli

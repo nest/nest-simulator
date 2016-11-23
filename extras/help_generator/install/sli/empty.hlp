@@ -1,0 +1,28 @@
+Name: empty - Tests if a string or array is empty.
+
+Synopsis:
+
+array empty -> array  bool 
+string empty-> string bool 
+dict empty -> dict bool
+
+
+Examples:
+
+(hello) empty -> (hello) false
+
+
+Description:
+
+empty returns true if the supplied string/array is 
+of length 0, or the supplied dict has no entries.
+
+
+SeeAlso:
+
+length
+size
+
+Source:
+
+../../lib/sli/typeinit.sli

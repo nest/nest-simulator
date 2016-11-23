@@ -1,0 +1,24 @@
+Name: testsuite::crash_distributed_collect_assert_or_die - self test of distributed_collect_assert_or_die
+
+Synopsis:
+
+nest_indirect distributed_collect_assert_or_die.sli -> crash
+
+
+Description:
+
+This is a self test of 
+distributed_collect_assert_or_die. The function needs to be 
+able to collect the results of an arbitrary number of jobs and 
+checks whether all jobs return true for all runs. 
+Author:  September 2010, Diesmann; May 2012, Plesser
+
+
+SeeAlso:
+
+testsuite::fail_distributed_collect_assert_or_die
+testsuite::test_distributed_collect_assert_or_die
+
+Source:
+
+../../testsuite/mpi_selftests/fail/crash_distributed_collect_assert_or_die.sli

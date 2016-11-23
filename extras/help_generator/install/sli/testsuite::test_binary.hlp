@@ -1,0 +1,18 @@
+Name: testsuite::test_binary - sli script for overall test of binary neuron models
+
+Synopsis:
+
+(test_binary) run -> test basic communication patterns employed by binary neurons
+
+
+Description:
+
+Test, whether the communication mechanism for binary neurons 
+works. Two spikes indicate an up-transition, a single spike 
+indicate a down transition. 
+Author:  March 2013, Helias
+
+
+Source:
+
+../../testsuite/unittests/test_binary.sli

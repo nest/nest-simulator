@@ -1,0 +1,31 @@
+Name: end - Close the current (topmost) dictionary.
+
+Synopsis:
+
+- end ->	-
+
+
+Description:
+
+Closes the current dictionary by removing the top element 
+of the dictionary stack. 
+Note that end cannot pop the dictionary stack beyond the two 
+standard dictionaries systemdict and userdict. If this is tried, 
+a DictStackUnderflow Error is raised.
+
+
+Diagnostics:
+
+DictStackUnderflow
+
+
+SeeAlso:
+
+begin
+dictstack
+cleardictstack
+countdictstack
+
+Source:
+
+../../sli/slidict.cc

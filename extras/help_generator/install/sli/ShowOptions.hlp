@@ -1,0 +1,39 @@
+Name: ShowOptions - Display all options for a given name
+
+Synopsis:
+
+/f  ShowOptions -> --
+
+
+Description:
+
+Usually, a C++-like notation is used to indicate the 
+availability of the function, if the function is defined in some 
+"namespace" dictionary. 
+For example: "arr::Mean".
+
+
+Diagnostics:
+
+None
+
+
+Author:
+
+M. O. Gewaltig
+
+
+SeeAlso:
+
+GetOption
+GetOptions
+SetOptions
+Options
+ResetOptions
+SaveOptions
+RestoreOptions
+OptionsDictionary
+
+Source:
+
+../../lib/sli/mathematica.sli

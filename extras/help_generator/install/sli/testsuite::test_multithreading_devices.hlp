@@ -1,0 +1,28 @@
+Name: testsuite::test_multithreading_devices - sli script to test data collection across threads
+
+Synopsis:
+
+(test_multithreading_devices) run
+
+
+Description:
+
+This script tests, if data collection across threads is working 
+correctly. In particular, the test checks if the events dictionary 
+is the same if we run with one or two threads. 
+SeeAlso:testsuite::test_multithreading
+
+
+Author:
+
+Jochen Martin Eppler
+
+
+FirstVersion:
+
+May 2010
+
+
+Source:
+
+../../testsuite/unittests/test_multithreading_devices.sli

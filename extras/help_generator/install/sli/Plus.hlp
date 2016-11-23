@@ -1,0 +1,60 @@
+Name: Plus - represents/computes sum of terms
+
+Synopsis:
+
+array Plus -> double 
+-> integer
+
+
+Examples:
+
+[4 3 2 5 6] Plus -->  20 
+[ ] Plus	 -->   0
+
+
+Description:
+
+Plus represents or computes the sum of its 
+arguments v1,-,vn. The arguments are supplied 
+by an array [v1, -,vn]. The sum of an empty 
+argument list is defined to be zero. 
+Plus is an implementation of Mathematica's Plus [1].
+
+
+Parameters:
+
+
+
+
+Bugs:
+
+not yet protected by trie
+
+
+Remarks:
+
+
+
+
+References:
+
+[1] The Mathematica Book "Plus"
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+31.5.2000
+
+
+SeeAlso:
+
+Times
+
+Source:
+
+../../lib/sli/mathematica.sli

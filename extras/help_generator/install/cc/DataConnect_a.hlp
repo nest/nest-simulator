@@ -1,0 +1,41 @@
+Name: DataConnect_a - Connect many neurons from a list of synapse status 
+ dictionaries.
+
+Synopsis:
+
+[dict1, dict2, ..., dict_n ]  DataConnect_a ->	- 
+This variant of DataConnect can be used to re-instantiate a given 
+connectivity matrix. 
+The argument is a list of dictionaries, each containing at least the keys 
+/source 
+/target 
+/weight 
+/delay 
+/model 
+Example: 
+% assume a connected network 
+<< >> GetConnections Flatten /conns Set % Get all connections 
+conns { GetStatus } Map	 /syns  Set % retrieve their synapse status 
+ResetKernel	 % clear everything 
+% rebuild neurons 
+syns DataConnect	 % restore the connecions
+
+
+Author:
+
+Marc-Oliver Gewaltig
+
+
+FirstVersion:
+
+May 2012
+
+
+SeeAlso:
+
+DataConnect_i_D_s
+Connect
+
+Source:
+
+../../nestkernel/nestmodule.cpp

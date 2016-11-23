@@ -1,0 +1,36 @@
+Name: handleerror - Default error handler
+
+Description:
+
+handleerror is the default error handler. 
+It issues error messages according to the 
+state of the errordict. 
+The command that caused the error is left at the 
+top of the dicitonary stack. 
+An error is raised by the command 
+/func /error raiseerror 
+The flag newerror helps to distinguish between interrupts caused 
+by call of stop and interrupts raised by raiseerror. 
+It also helps to find errors in the handler itself. This is 
+why it should be re-set to false at the very end of the handler! 
+Examples:  To catch errors from an unknown function f, 
+one can write: 
+{f} stopped {handleerror} if
+
+
+References:
+
+The Red Book
+
+
+SeeAlso:
+
+raiseerror
+raiseagain
+stopped
+stop
+errordict
+
+Source:
+
+../../lib/sli/sli-init.sli

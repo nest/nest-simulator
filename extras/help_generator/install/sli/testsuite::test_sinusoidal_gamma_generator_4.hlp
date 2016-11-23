@@ -1,0 +1,19 @@
+Name: testsuite::test_sinusoidal_gamma_generator_4 - Test parallel generation of sinusoidally modulate Gammaian trains with individual spike trains
+
+Synopsis:
+
+nest_indirect test_sinusoidal_gamma_generator_4.sli ->	-
+
+
+Description:
+
+Creates a sinusoidally modulated Gamma generator emitting 
+individual spike trains to each of its targets and sends spikes to 
+spike detector. Identical to ..._2, but with single generator, not one per VP. 
+Author:  December 2012, May 2013, Plesser, based on test_gamma_generator.sli 
+See also: testsuite::test_sinusoidal_gamma_generator_1, testsuite::test_sinusoidal_gamma_generator
+
+
+Source:
+
+../../testsuite/mpitests/test_sinusoidal_gamma_generator_4.sli

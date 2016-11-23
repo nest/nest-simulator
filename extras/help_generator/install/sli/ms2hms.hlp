@@ -1,0 +1,18 @@
+Name: ms2hms - Convert milliseconds to an array  [h min sec].
+
+Synopsis:
+
+ms ms2hms -> [h min sec] 
+Converts the given number of milliseconds into 
+an array containing the corresponding number 
+of hours minutes and seconds
+
+
+SeeAlso:
+
+tic
+toc
+
+Source:
+
+../../lib/sli/sli-init.sli

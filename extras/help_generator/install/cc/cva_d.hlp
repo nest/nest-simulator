@@ -1,0 +1,78 @@
+Name: cva_d - Convert dictionary to array
+
+Synopsis:
+
+dict cva_d -> array
+
+
+Examples:
+
+<< /a 1 /b 2>> cva_d -> [/a 1 /b 2]
+
+
+Description:
+
+cda converts a given dictionary to an array. 
+The contents of the dictionay is mapped to the array in a 
+form which is similar to the construction of an array, namely 
+<< key1 val1 ... keyn valn>> cva_d -> [key1 val1 ... keyn valn]
+
+
+Parameters:
+
+dict is a dictionary which may be empty
+
+
+Diagnostics:
+
+no errors are issued.
+
+
+Remarks:
+
+The name follows the convention of PostScript and stands for 
+ConVert to Array. 
+Implementation: 
+Class TokenMap provides an iterator which allows to step through the 
+elements stored in the TokenMap. Member function begin() returns an 
+iterator which points to the "first" element in the TokenMap and end() 
+to the "last" element. operator ++ moves the iterator from one element 
+to the next. Note, the iteration process itself does not define any 
+order of the elements, e.g. in terms of the comparison operators. The 
+only guaranteed function is that during the iteration from begin() to 
+end() all elements in the TokenMap are accessed. 
+Operator * applied to the iterator returns a pair. Member first of the 
+pair is the key and member second is the value of the element the iterator 
+points to. 
+See 
+@Book{Musser96, 
+author =	 "Musser, David R. and Saini, Atul", 
+title =	 "STL Tutorial and Reference Guide: {C++} Programming 
+with the Standard Template Library", 
+publisher =   "Addison Wesley", 
+year =	 1996, 
+isbn =	 "0-201-63398-1", 
+pages =	 432, 
+address =	 {Reading Massachusetts}, 
+note =	 "(hardcover)" 
+} 
+for a discussion of the definition and use of iterators in combination 
+with containers.
+
+
+Author:
+
+Marc-oliver Gewaltig
+
+
+SeeAlso:
+
+keys
+values
+<<>>
+cva
+cvdict
+
+Source:
+
+../../sli/slidict.cc

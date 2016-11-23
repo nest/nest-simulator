@@ -1,0 +1,67 @@
+Name: forall - Call a procedure for each element of a list/string/dictionary
+
+Synopsis:
+
+[v1 ... vn] {f}	 forall -> f(v1) ... f(vn) 
+(c1...cn)   {f}	 forall -> f(c1) ... f(cn) 
+<</key1 val1 ... /keyn valn>> {f} forall -> f(/key1 val1) ... f(/keyn valn)
+
+
+Examples:
+
+[1 2 3 4 5]  {=} forall ->	- % Print all values of the list 
+[1 2 3 4 5]  {} forall  -> 1 2 3 4 5 
+(abc) {=} forall -> prints 97 98 99 on separate lines 
+<</a 1 /b 2>> {== ==} forall -> prints 1 /a 2 /b on separate lines
+
+
+Description:
+
+Arrays: 
+For each element of the input array, forall calls f. 
+forall is similar to Map, however, it does not construct a 
+new list from the return values. 
+Dictionaries: 
+For each key/value pair of the dictionary, forall calls f. 
+Order on the operand stack will be: key, value. (I.e. value on top.) 
+*Note: The dictionary contents are copied before operation. 
+This can be a potentially expensive operation.* 
+Loops can be nested. The loop can be quit prematurely with exit.
+
+
+Parameters:
+
+[v1,...,vn]  	- list of n arbitrary objects 
+(c1...cn)		- arbitrary string 
+<</keyi vali>>	- arbitrary dictionary 
+{f}		- function which can operate on the elements of the 
+array, or on key/value pairs of the dictionary. 
+f is not required to return a specific number 
+of values.
+
+
+References:
+
+The Red Book
+
+
+Author:
+
+Marc-Oliver Gewaltig, Ruediger Kupper (dictionary variant)
+
+
+SeeAlso:
+
+Map
+MapAt
+MapIndexed
+Table
+forallindexed
+NestList
+FoldList
+Fold
+exit
+
+Source:
+
+../../sli/slicontrol.cc

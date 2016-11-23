@@ -1,0 +1,10 @@
+Name: path - Return current search path as array
+
+SeeAlso:
+
+addpath
+setpath
+
+Source:
+
+../../lib/sli/sli-init.sli

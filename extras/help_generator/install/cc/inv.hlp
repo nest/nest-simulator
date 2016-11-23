@@ -1,0 +1,16 @@
+Name: inv - compute 1/x 
+ Synopsis:	 double inv -> double
+
+Examples:
+
+2.0 inv -> 0.5
+
+
+Author:
+
+Gewaltig
+
+
+Source:
+
+../../sli/slimath.cc

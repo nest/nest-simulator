@@ -1,0 +1,29 @@
+Name: loop - repeatedly execute a procedure
+
+Synopsis:
+
+proc loop	-
+
+
+Description:
+
+loop takes a procedure object an executes it repeatedly. 
+Since there is no direct termination condition, the loop 
+has to be terminated by calling exit. 
+If the procedure has to be evaluated for a certain number of 
+times, consider the use of repeat or for. 
+If some container should be iterated, consider forall or Map
+
+
+SeeAlso:
+
+exit
+repeat
+for
+forall
+forallindexed
+Map
+
+Source:
+
+../../sli/slicontrol.cc

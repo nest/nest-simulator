@@ -1,0 +1,25 @@
+Name: trunc - Truncate decimals of a double
+
+Synopsis:
+
+double trunc -> int
+
+
+Examples:
+
+3.123456 trunc -> 3
+
+
+Author:
+
+docu by Sirko Straube
+
+
+SeeAlso:
+
+floor
+ceil
+
+Source:
+
+../../lib/sli/ps-lib.sli

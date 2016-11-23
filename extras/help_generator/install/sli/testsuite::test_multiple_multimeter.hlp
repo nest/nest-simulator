@@ -1,0 +1,49 @@
+Name: testsuite::test_multiple_multimeter - test support for multiple multimeters
+
+Synopsis:
+
+(test_multiple_multimeter.sli) run -> dies if assertion fails
+
+
+Description:
+
+This script tests support for multiple multimeters: 
+	- Connections created must have receptor != 0 
+(this test is crucial to find models that have not been modified from 
+inline 
+port aeif_cond_alpha::connect_sender(DataLoggingRequest& dlr, 
+port receptor_type) 
+{ 
+if (receptor_type != 0) 
+throw UnknownReceptorType(receptor_type, get_name()); 
+B_.logger_.connect_logging_device(dlr, recordablesMap_); 
+return 0; 
+} 
+to 
+inline 
+port aeif_cond_alpha::connect_sender(DataLoggingRequest& dlr, 
+port receptor_type) 
+{ 
+if (receptor_type != 0) 
+throw UnknownReceptorType(receptor_type, get_name()); 
+return B_.logger_.connect_logging_device(dlr, recordablesMap_); 
+} 
+	- Check that one multimeter cannot be connected more than once to 
+one neuron 
+	- Multiple meters with identcial configurations connected to the 
+same neuron record identical data
+
+
+Author:
+
+Plesser
+
+
+FirstVersion:
+
+2011-02-04
+
+
+Source:
+
+../../testsuite/unittests/test_multiple_multimeter.sli

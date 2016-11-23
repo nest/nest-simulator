@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: testsuite::test_iaf_dc_aligned_automatic</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: testsuite::test_iaf_dc_aligned_automatic</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>testsuite::test_iaf_dc_aligned_automatic - sli script for test of iaf_neuron resolution independence</pre>
+<b>Synopsis: </b>
+<pre>(test_iaf_dc_aligned_automatic) run -> compare response with reference data  <br/>   <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>   <br/>  test_iaf_dc_aligned_automatic.sli is a modified version of  <br/>  test_iaf_dc_aligned_delay.sli .  <br/>   <br/>  The code of this program is now identical to  <br/>  test_iaf_dc_aligned_delay.sli. Previous versions used a different  <br/>  definition of start which was not independent of the resolution.  <br/>  Therefore, an additional device property /on was required.  See  <br/>  test_iaf_dc_aligned_automatic.sli for details.  <br/>   <br/>  The documentation below refers to the old definition of start  <br/>   <br/>  The output generated is exactly identical to the output of the  <br/>  previous file. The dependence  of the simulation script on the  <br/>  computation step size is completely removed by using the capability  <br/>  of the DC generator to adjust the required starting time to the  <br/>  computation time step. This functionality is implemented in the Device  <br/>  base class and, thus, available to all devices.  <br/>   <br/>  Instead of specifying the start time of the generator as in  <br/>  test_iaf_dc_aligned_delay.sli, the emission time of the first current  <br/>  event is specified. A device can only take action in a step t-h -> t.  <br/>  When t-h represents the start time of the device, t is the earliest time  <br/>  stamp of an emitted event. In our case the time stamp is the onset of the  <br/>  current. Thus, both times can not simultaneously be independent of the  <br/>  computation time step h. It is sufficient to specify one of the two measures,  <br/>  the other one is computed automatically. Internally, only the start time  <br/>  is stored. A warning is issued when both measures are specified because  <br/>  a difference other than h would be meaningless and a difference of h may  <br/>  not be representable by the two double values. In case both properties are  <br/>  specified, on  overrides start. The timer of the device does not rely on  <br/>  computing differences between doubles but uses the exact representation of  <br/>  time provided by the simulation kernel.  <br/>   <br/>  An inspection of the property dictionary of the DC generator at different  <br/>  computation step sizes shows the relationship between DC generator  <br/>  on and start.  <br/>   <br/>  h=0.1ms	 h=0.5ms  <br/>  <<	 <<  <br/>  /start 1.9	 /start 1.5  <br/>  /on 2.0	 /on 2.0  <br/>  >>	 >>  <br/>   <br/>  No output of the spike detector is visible here because of the short simulation  <br/>  time of only 6 ms. Set the simulation time to larger values to verify the  <br/>  consistency of voltage meter and spike detector.  <br/>   <br/>  The expected output is documented at the end of the script.  <br/>   <br/>  July 2004,  <br/>  updated, Diesmann  <br/>   <br/>  Author:  February 2004, Diesmann, Gewaltig, Plesser  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../sli/testsuite::test_iaf_dc.html">testsuite::test_iaf_dc</a></li>
+    <li><a href="../sli/testsuite::test_iaf_dc_aligned.html">testsuite::test_iaf_dc_aligned</a></li>
+    <li><a href="../sli/testsuite::test_iaf_dc_aligned_delay.html">testsuite::test_iaf_dc_aligned_delay</a></li>
+</ul>
+<b>Source:</b><pre>../../testsuite/unittests/test_iaf_dc_aligned_automatic.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

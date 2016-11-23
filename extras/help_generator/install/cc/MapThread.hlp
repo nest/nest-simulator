@@ -1,0 +1,40 @@
+Name: MapThread - apply a procedure to corresponding elements of n arrays
+
+Synopsis:
+
+[[a11 ... a1n]...[am1 ... amn]] {f} MapThread -> 
+[f(a11, a21,... am1)...f(a1n, a2n,...,amn)]
+
+
+Description:
+
+MapThread is like a multidimensional Map. It applies the function 
+of to corresponding elements of m argument arrays.
+
+
+Parameters:
+
+the first parameter is a list of m arrays of equal size n. 
+The second parameter is a procedure which takes m arguments and 
+returns a single value. 
+Examples:   [[1 2][3 4]] {add} MapThread -> [4 6] 
+[[1 2 3 4] [1 1 1 1]] {add} MapThread -> [2 3 4 5]
+
+
+References:
+
+This function implements the simple version of Mathematica's 
+MapThread
+
+
+SeeAlso:
+
+Map
+MapIndexed
+NestList
+FoldList
+ScanThread
+
+Source:
+
+../../sli/sliarray.cc

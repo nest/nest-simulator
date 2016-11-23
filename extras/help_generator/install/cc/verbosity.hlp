@@ -1,0 +1,15 @@
+Name: verbosity - return the current verbosity level for interpreter messages
+
+Synopsis:
+
+verbosity -> n
+
+
+SeeAlso:
+
+setverbosity
+message
+
+Source:
+
+../../sli/slicontrol.cc

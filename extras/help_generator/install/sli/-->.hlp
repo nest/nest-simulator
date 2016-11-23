@@ -1,0 +1,50 @@
+Name: --> - longrightarrow, usually delayed comparison
+
+Synopsis:
+
+--> -> /-->
+
+
+Examples:
+
+[8 --> 6] --> 8 /--> cvx exec 6  3 arraystore
+
+
+Description:
+
+The symbol --> is used in the example sections of the NEST 
+documentation to indicate the transformation an operator 
+performs to its arguments. The SLI operator --> is defined 
+to just reproduce itself. This enables NEST to evaluate the 
+example sections as regular SLI code. As a result, the arguments 
+of the documented operator and its results are separated by 
+the literaal /-->. A parser for infix notation can then apply 
+the documented operator to the values on the left side of --> 
+and compare the results to the values on the right side of -->
+
+
+Remarks:
+
+The idea of --> is to contribute to a notation for test driven 
+programming and user documentation which keeps the syntactic 
+clutter at a minimum.
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+080506
+
+
+SeeAlso:
+
+helpdesk
+EvaluateLiteralInfixes
+
+Source:
+
+../../lib/sli/helpinit.sli

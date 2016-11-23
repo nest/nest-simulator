@@ -1,0 +1,65 @@
+Name: OuterProduct - outer product
+
+Synopsis:
+
+array array OuterProduct -> array
+
+
+Examples:
+
+[3 4 5] [6 7 8 9] OuterProduct -> 
+[ 
+[18 21 24 27] 
+[24 28 32 36] 
+[30 35 40 45] 
+]
+
+
+Description:
+
+A B OuterProduct computes the outer product of A 
+and B by forming all possible combinations of the 
+lowest level elements (rightmost indices) in both 
+lists. 
+OuterProduct is compatible to Mathematica's 
+Outer[Times,A,B] [1]
+
+
+Parameters:
+
+
+
+
+Bugs:
+
+not yet protected by trie
+
+
+Remarks:
+
+
+
+
+References:
+
+[1] The Mathematica Book "Outer"
+
+
+Author:
+
+Marc-Oliver Gewaltig, Diesmann
+
+
+FirstVersion:
+
+31.5.2000, rewritten Dec 18 2012
+
+
+SeeAlso:
+
+Times
+Dot
+
+Source:
+
+../../lib/sli/mathematica.sli

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: MapAt</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: MapAt</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>MapAt - applies a function to some of the elements of its argument</pre>
+<b>Synopsis: </b>
+<pre>array1 proc array2 MapAt -> array3  <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>   <br/>  [3 4 5 6 7] {dup mul} -2 MapAt  <br/>  -> [3 4 5 36 7]  <br/>  [3 [-9 -12] 5 6 7] {dup mul} [2 2] MapAt  <br/>  -> [3 [-9 144] 5 6 7]  <br/>  [3 4 5 6 7] {dup mul} [[1] [3]] MapAt  <br/>  -> [9 4 25 6 7]  <br/>  [[3 9] 4 [5 -11] 6 7] {dup mul} [[1 2] [3 1]] MapAt  <br/>  -> [[3 81] 4 [25 -11] 6 7]  <br/>   <br/>  [0 0 0 0 0] {1 add} [2 4 5 2 3 2 2 5] 1 1 Partition MapAt  <br/>  -> [0 4 1 1 2]  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  MapAt successively applies proc to the elements of array1  <br/>  specified by array2 and replaces the original values by the  <br/>  return value of proc. The return value array3 has exactly the  <br/>  same shape as the first argument array1.  <br/>   <br/>  Compared to languages like Matlab MapAt constitutes an lhs  <br/>  assignment operator for constructs like a(i)=f(a(i)), where  <br/>  i may be an array of indices. However, unlike in Matlab no  <br/>  temporary object a(i) for the rhs expression is created.  <br/>  Consequently, if the index ii occurs in array i n times the  <br/>  final value of a(ii) returned by MapAt is the cumulative effect  <br/>  of f operating n times on the original value of a(ii):  <br/>  a(ii) <- f(f(...f(a(ii))...))  <br/>  n times  <br/>  In Matlab the result is f(a(ii)), independent of n.  <br/>  The behavior of MapAt is, for example, useful in counting  <br/>  processes like the construction of a histogram as shown in the  <br/>  last example of the examples section.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  array1 is an arbitrarily shaped array. In particular  <br/>  it does not need to be rectangular.  <br/>  array2 specifies a multi-dimensional position [i, j,...]  <br/>  in array1 or a list of positions [ [i1,j1,...], [i2,j2,...], ...].  <br/>  The same element may be specified multiple times in array2 at  <br/>  arbitrary positions.  <br/>   <br/>  The first element on each level has index 1. Indices can also  <br/>  be specified counting from the end of the array, in this case the  <br/>  last element has index -1. Positive and negative indices can  <br/>  arbitrarily be intermixed.  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  This function is an implementation of Mathematica's MapAt function.  <br/>  Mathematica-style functions in SLI use Mathematica index notation.  <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  [1] The Mathematica Book V4.0 "Part" 
+</pre>
+<b>Author: </b>
+<pre>Diesmann  <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>2007.08.12  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../sli/ReplacePart.html">ReplacePart</a></li>
+    <li><a href="../sli/Part.html">Part</a></li>
+    <li><a href="../cc/Map.html">Map</a></li>
+    <li><a href="../sli/Partition.html">Partition</a></li>
+</ul>
+<b>Source:</b><pre>../../lib/sli/mathematica.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

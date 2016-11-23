@@ -1,0 +1,63 @@
+Name: pageoutput - Display the output of a procedure through "page".
+
+Synopsis:
+
+{procedure} pageoutput -> result_of_procedure
+
+
+Examples:
+
+{(This is my output.) =} pageoutput 
+{MemoryInfo} pageoutput 
+{whos} pageoutput 
+{mydir info} pageoutput
+
+
+Description:
+
+"pageoutput" executes the procedure that is passed as an argument. It 
+captures any printed output that the procedure generates and 
+displays it via the "page" command (see documentation of "page"). 
+"pageoutput" redirects SLI's standard output at the level of the 
+file descriptor. This is a very low-level operation, and captures 
+*all* output that the SLI process sends to stdout. This includes any 
+output from SLI commands, from the simulation kernel, and all error 
+messages that go to stdout. 
+If the procedure raises an error, the error message is included in 
+the paged output, and the file descriptors are restored, so that 
+subsequent output goes to the SLI prompt again.
+
+
+Bugs:
+
+"pageoutput" creates a temporary file that is passed to the "page" 
+command. The pager may be executed in a subprocess of SLI. Since we 
+do not know how long it takes the pager process to open the file, we 
+cannot delete it right after calling "page". Hence, the temporary 
+file remains forever. Currently it is unclear how the temporary file 
+can be removed at a later time. This bug is filed as ticket #262.
+
+
+Diagnostics:
+
+Any error messages that the procedure raises go to the paged output. 
+In case of errors, the file descriptors are correctly restored.
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+22-jul-2008
+
+
+SeeAlso:
+
+page
+
+Source:
+
+../../lib/sli/misc_helpers.sli

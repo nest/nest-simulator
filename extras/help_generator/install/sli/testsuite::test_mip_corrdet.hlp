@@ -1,0 +1,25 @@
+Name: testsuite::test_mip_corrdet - sli script for testing mip_generator and correlation_detector
+
+Synopsis:
+
+(test_mip_corrdet) run -> compare cout with comments in file
+
+
+Description:
+
+test_mip_corrdet.sli creates two poisson spiking sources with a rate of 
+50 Hz each, which have half of their events in common. The correlation 
+detector records these spike trains and calculates the raw cross correlation 
+in a time window of +-100 ms with a bin width of 10 ms. 
+After the simulation, the accumulated number of events in the bins is displayed. 
+Author:  October 2007, Helias
+
+
+SeeAlso:
+
+mip_generator
+correlation_detector
+
+Source:
+
+../../testsuite/unittests/test_mip_corrdet.sli

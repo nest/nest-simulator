@@ -1,0 +1,83 @@
+Name: setNONBLOCK - Switch between blocking and non-blocking I/O.
+
+Synopsis:
+
+ifstream {true|false} setNONBLOCK -> ifstream
+
+
+Examples:
+
+cin   false setNONBLOCK 
+myfifo true  setNONBLOCK % set non-blocking I/O for my fifo.
+
+
+Description:
+
+"setNONBLOCK" sets or erases the O_NONBLOCK flag on 
+an input stream. The O_NONBLOCK flag determines, if 
+a read attempt will block when no data is currently 
+available from the stream. By default, a newly 
+created stream has the O_NONBLOCK-Flag erased, 
+meaning that blocking I/O is selected. By erasing 
+O_NONBLOCK, a subsequent read attempt on the stream 
+will yield EOF if no data is available. 
+Alternatives: Function setNONBLOCK_is_b (undocumented) 
+-> behavior and synopsis are the same.
+
+
+Parameters:
+
+In : ifstream: The stream to change the flag on. 
+Out:	-
+
+
+Bugs:
+
+-
+
+
+Diagnostics:
+
+If a system-error occurs, a code is stored in "sys_errno" 
+(contained in errordict) to identify the error, and "sys_errname" 
+is set to the error message. Then a "SystemError" is raised. 
+The following system errors may be issued, according to the 
+POSIX standard (errors in parentheses are not 
+expected to occur in this routines' context): 
+(EACCES)  Search permission is denied for a 
+directory in a files path prefix. 
+(EAGAIN)  The ON_NONBLOCK flag is set for a file 
+descriptor and the process would be 
+delayed in the I/O operation. 
+EBADF   Invalid file descriptor. (With the current 
+implementation, this indicates trouble 
+getting a filedescriptor from a stream. If 
+it occurs, ask the author for a proper 
+solution!) 
+(EDEADLK) An fcntl with function F_SETLKW would 
+cause a deadlock. 
+EINTR   Function was interrupted by a signal. 
+(EINVAL)  Invalid argument. 
+(EMFILE   Too many file descriptors are in use by 
+this process. 
+(ENOLCK)  No locks available.
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+Oct 20 1999
+
+
+SeeAlso:
+
+available
+ignore
+
+Source:
+
+../../sli/processes.h

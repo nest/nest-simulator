@@ -1,0 +1,24 @@
+Name: GetStatus_v - return the property dictionary of a random deviate generator 
+ Synopsis:rdvtype  GetStatus -> dict
+
+Description:
+
+GetStatus returns a dictionary with the status information 
+of the random deviate generator given as argument.  The information 
+contained in the property dictionary depends on the particular 
+generator. 
+The random deviate can be a deviate implemented in C++ represented 
+by rdvtype or a SLI level deviate represented by a dictionary. For 
+the Latter case GetStatus is overloaded with GetStatus_d.
+
+
+SeeAlso:
+
+SetStatus_v
+GetStatus_dict
+CreateRDV
+rdevdict
+
+Source:
+
+../../lib/sli/librandom.sli

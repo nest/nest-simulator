@@ -1,0 +1,33 @@
+Name: testsuite::test_wfr_settings - Tests the possible settings for the waveform relaxation method
+
+Synopsis:
+
+(test_wfr_settings) run -> NEST exits if test fails
+
+
+Description:
+
+The waveform relaxation method is used for iterative solution when connections 
+without delay are present (e.g. gap junctions) 
+This test ensures that 
+	- use_wfr can only be set before nodes are created 
+	- wfr_comm_interval can only be set greater or equal the resolution and if use_wfr = true 
+	- setting of use_wfr = false sets wfr_comm_interval to resolution 
+	- wfr_comm_interval is updated when resolution is changed and use_wfr = false 
+	- use_wfr is set correctly in created nodes
+
+
+Author:
+
+Jan Hahne, March 2016
+
+
+SeeAlso:
+
+testsuite::test_hh_psc_alpha_gap
+hh_psc_alpha_gap
+gap_junction
+
+Source:
+
+../../testsuite/unittests/test_wfr_settings.sli

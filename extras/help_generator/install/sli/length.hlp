@@ -1,0 +1,55 @@
+Name: length - counts elements of a container object
+
+Synopsis:
+
+proc/literal/array/string/dict length -> int
+
+
+Examples:
+
+(Hello world!)	 length --> 12 
+{(Hello world!) ==} length --> 2
+
+
+Description:
+
+length counts type-dependent elements, e.g. characters of a string, 
+entries of a dictonary, number of command of a procedure. 
+Alternatives: Functions length_p, length_lp, length_a, length_s, 
+length_d (documented:SeeAlso)
+
+
+Parameters:
+
+One of the types proc, literal, array, string, dict 
+Returns integer with number of elements.
+
+
+Bugs:
+
+
+
+
+Author:
+
+Gewaltig, Diesmann
+
+
+FirstVersion:
+
+??
+
+
+SeeAlso:
+
+length_p
+length_lp
+length_a
+length_s
+length_d
+capacity
+size
+
+Source:
+
+../../lib/sli/sli-init.sli

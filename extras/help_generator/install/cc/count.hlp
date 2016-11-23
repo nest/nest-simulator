@@ -1,0 +1,10 @@
+Name: count - Count the number of objects on the stack.
+
+Synopsis:
+
+obj_n-1 ... obj0 count -> obj_n-1 ... obj0 n
+
+
+Source:
+
+../../sli/slistack.cc

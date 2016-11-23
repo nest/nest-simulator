@@ -1,0 +1,28 @@
+Name: restore - restore interpreter state from state dictionary 
+ synopsis: statedict restore -> false
+
+Description:
+
+Experimental function to restore the interpreter state from a previously stored state 
+dictionary, created by the command save. 
+After restore, execution will resume with the next command after 'save'. 
+The boolean return value can be used to branch execution after saving or restoring the state.
+
+
+Bugs:
+
+Currently, the state of the dictionary stack cannot be restored.
+
+
+Author:
+
+Marc-Oliver Gewaltig
+
+
+SeeAlso:
+
+save
+
+Source:
+
+../../lib/sli/sli-init.sli

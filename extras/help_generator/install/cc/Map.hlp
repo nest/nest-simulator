@@ -1,0 +1,77 @@
+Name: Map - Apply a procedure to each element of a list or string
+
+Synopsis:
+
+[v1 ... vn] {f} Map -> [ f(v1) ... f(vn) ] 
+[ [... n levels [a1 ... an] ... [b1 ... bn] ...] ] {f} [n] Map 
+-> [ [... [f(a1) ... f(an)] ... [f(b1) ... f(bn)] ...] ] 
+(c1 ... cn) {f} Map -> (f(c1)...f(vn))
+
+
+Examples:
+
+[1 2 3 4 5]  {2 mul} Map	 --> [2 4 6 8 10] 
+[ [3. 4.] [7. 8.] ] {cvi} [2] Map --> [[3 4] [7 8]] 
+[3. 4. 7. 8.] {cvi} [1] Map	 --> [3 4 7 8] 
+(abc) {1 add} Map	 --> (bcd)
+
+
+Description:
+
+Map works like the corresponding Mathematica function. 
+For each element of the input array, Map calls f and replaces 
+the element with the result of f. 
+Note that f must return exactly one value! The result of Map 
+is a list with the same number of values as the argument list. 
+If f does not return a value, Map fails. 
+If f returns more than one value, the result of Map is undefined. 
+The specification of the nesting level in Mathematica is more general. 
+Currently NEST only supports [n]
+
+
+Parameters:
+
+[v1 ... vn]	- list of n arbitrary objects 
+(c1 ... cn)	- string with n characters 
+{f}		- function which can operate on the elements of [array]. 
+This function must return exaclty one value. 
+[n]		- nesting level at which {f} is applied
+
+
+Bugs:
+
+
+
+
+Diagnostics:
+
+
+
+
+Remarks:
+
+Map is not part of PostScript
+
+
+References:
+
+The Mathematica Book
+
+
+Author:
+
+Marc-Oliver Gewaltig
+
+
+SeeAlso:
+
+MapAt
+MapIndexed
+Table
+forall
+forallindexed
+NestList
+
+Source:
+
+../../sli/sliarray.cc

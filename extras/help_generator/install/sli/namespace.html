@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: namespace</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: namespace</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>namespace - Open a namespace</pre>
+<b>Synopsis: </b>
+<pre> <br/>  /name namespace ...your.code... end ->	-  <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>  /myspace namespace % this opens namespace "myspace"  <br/>  /var 23 def	 % this creates the variable "myspace::var"  <br/>  /func {(This is stupid.) =} def % this creates the function "myspace::func"  <br/>  end	 % this closes the namespace "myspace"  <br/>   <br/>  /myspace namespace % this re-opens the namespace "myspace"  <br/>  who	 % this shows the variables defined in the namespace  <br/>  end	 % this closes the namespace "myspace"  <br/>   <br/>  myspace /func call % this calls "myspace::func"  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  "namespace" provides to SLI the concept of namespaces,  <br/>  as known from C++.  <br/>   <br/>  The command changes the current scope to the namespace of the given  <br/>  name, i.e.,  <br/> 	- all following symbol definitions go to this namespace  <br/> 	- all symbols that were previously defined in this namespace become  <br/>  known  <br/>  The namespace must be closed by an "end" statement.  <br/>   <br/>  The symbols defined in a namespace persist across closing and  <br/>  re-opening of the namespace. Namespaces can be nested.  <br/>   <br/>  For alternative ways of accessing a namespace,  <br/>  see "using" and "call".  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  /name	- the namespace to open  <br/>   <br/>  
+</pre>
+<b>Diagnostics: </b>
+<pre> <br/>  If the named object is not a dictionary, TypeMismatchError is raised.  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  Currently, namespaces are implemented as  <br/>  dictionaries. Namespaces may become more tightly  <br/>  integrated with the SLI interpreter in future.  <br/>  The idea is to define a set of symbols not in the global user  <br/>  dictionary, but in a separate dictionary that has the name of the  <br/>  namespace. Thus, symbols in different namespaces can have  <br/>  identical names, and are effectively disambiguated by the current  <br/>  dictionary context.  <br/>  Note that the namespace dictionary is looked up and created in the  <br/>  current scope. This is to allow for nested namespaces.  <br/>   <br/>  
+</pre>
+<b>Availability: </b>
+<pre>SLI2.0  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  [1] Ruediger Kupper, SLI library management,  <br/>  HRI-EU Report 06/05, Honda Research Institute Europe GmbH, 2006.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre> <br/>  Ruediger Kupper  <br/>   <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre> <br/>  21-jul-2003  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../sli/call.html">call</a></li>
+    <li><a href="../sli/using.html">using</a></li>
+    <li><a href="../sli/endusing.html">endusing</a></li>
+</ul>
+<b>Source:</b><pre>../../lib/sli/library.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

@@ -1,0 +1,28 @@
+Name: testsuite::test_multimeter_accu - test support for multimeter accumulation mode
+
+Synopsis:
+
+(test_multimeter_accu.sli) run -> dies if assertion fails
+
+
+Description:
+
+1. Test that all recording flags incompatible with /to_accumulator are set to false 
+2. Simulate iaf_cond_alpha net with poisson input and record detailed and accumulated 
+potentials, compare. 
+3. Run network for different thread numbers to check accumulation across threads.
+
+
+Author:
+
+Plesser
+
+
+FirstVersion:
+
+2011-02-11
+
+
+Source:
+
+../../testsuite/unittests/test_multimeter_accu.sli

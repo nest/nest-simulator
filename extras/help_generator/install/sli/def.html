@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: def</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: def</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>def - define a variable or function</pre>
+<b>Synopsis: </b>
+<pre>/name obj def ->	-  <br/>  /name [/type1 .. /typen] any def ->	-  <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>  SLI ] /a 1 def  <br/>  SLI ] a =  <br/>  1  <br/>   <br/>  SLI ] /f [/integertype /integertype] {add_ii} def  <br/>  SLI ] 1 2 f  <br/>  SLI [1] =  <br/>  3  <br/>  SLI ] 1 2.0 f  <br/>  TypeTrie::lookup error at parameter level 0  <br/>  Operand	 : 2  <br/>  Operand type : doubletype  <br/>  Expected type: integertype  <br/>  Error: /ArgumentType in f  <br/>  SLI ]  /f [/integertype /doubletype] {add_id} def  <br/>  SLI ] 1 2.0 f =  <br/>  2  <br/>  SLI ] 1 2 f  <br/>  SLI [1] =  <br/>  3  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  def creates an association between /name and obj  <br/>  in the current dictionary.  <br/>   <br/>  First variant:  <br/>  The first variant unconditionally creates the association. Any  <br/>  existing association will be overwritten.  <br/>   <br/>  Second variant:  <br/>  The second variant creates a user-defined function with automatic  <br/>  parameter checking. The second parameter must be an array of valid  <br/>  type-specifiers. The last parameter must be a procedure object. If  <br/>  the name is already bound to a trie, the new definition is added  <br/>  to the trie, otherwise a trie is created.  <br/>   <br/>  If the array of type-specifiers is empty, it is checked, if there  <br/>  already exists a trie for this name. If so, the definition would be  <br/>  ambiguous, and an error is raised. If not, the first variant of  <br/>  def is called.  <br/>   <br/>  Note that no name binding via bind is performed.  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  Ambiguous type trie definitions are not always detected! Only if the  <br/>  new parameter list is longer than an existing one, a warning is issued  <br/>  (but no error is raised). This needs improvement.  <br/>   <br/>  Author'sRemark: Maybe the trie variant should be called deffun, like in lisp.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Marc-oliver Gewaltig  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../sli/bind.html">bind</a></li>
+    <li><a href="../cc/type.html">type</a></li>
+    <li><a href="../cc/Set.html">Set</a></li>
+    <li><a href="../cc/undef.html">undef</a></li>
+</ul>
+<b>Source:</b><pre>../../lib/sli/typeinit.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

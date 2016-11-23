@@ -1,0 +1,39 @@
+Name: Set - Define an association between a name and an object in the current 
+ dictionary
+
+Synopsis:
+
+obj literal   Set ->	- 
+[... [obj_1 ...] ... obj_n] [... [literal_1 ...] ... literal_n] Set ->	-
+
+
+Examples:
+
+{1 2 add} /myproc Set 
+[4 3] [/x /y] Set 
+[[4 3 7] [-9 1]] [[/a /b /c] [/x /y]] Set 
+[[4 9] 3] [/x /y] Set 
+[[4 9] 3] [[/a /b] /y] Set
+
+
+Description:
+
+In the first form Set is identical to def, except for the reversed parameters 
+and creates or modifies an entry for the literal in the current dictionary. The 
+new value assigned to the literal is obj. 
+In the second form multiple simultaneous assignments are made to the literals 
+contained in the second. The nesting of this array is arbitrary, indicated in 
+the synopsis by the inner brackets, and the same object are taken from the 
+identical positions in first array.
+
+
+SeeAlso:
+
+def
+undef
+begin
+end
+
+Source:
+
+../../sli/slicontrol.cc

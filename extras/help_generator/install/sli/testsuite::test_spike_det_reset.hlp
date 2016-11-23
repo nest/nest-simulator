@@ -1,0 +1,26 @@
+Name: testsuite::test_spike_det_reset - test if resetting works on spike_detector
+
+Synopsis:
+
+(test_spike_det_reset) run -> dies if assertion fails
+
+
+Description:
+
+Feeds spike detector with given set of spikes, checks if they 
+are recorded properly to memory, then resets, then records a 
+few more and checks.
+
+
+Author:
+
+August 2008, Plesser
+
+
+SeeAlso:
+
+spike_detector
+
+Source:
+
+../../testsuite/unittests/test_spike_det_reset.sli

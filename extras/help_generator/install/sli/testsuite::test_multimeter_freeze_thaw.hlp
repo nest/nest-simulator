@@ -1,0 +1,29 @@
+Name: testsuite::test_multimeter_freeze_thaw - test if multimeter handles frozen nodes properly
+
+Synopsis:
+
+(test_multimeter_freeze_thaw.sli) run -> dies if assertion fails
+
+
+Description:
+
+1. Record from neuron initially frozen, then thawed, then frozen, then thawed. See 
+that correct number of data points collected. 
+2. Same as above, simultaneously record from thawed node. 
+3. Record from two synchrounsly frozen/thawed nodes in accumulator mode. 
+4. Same as above, but one node permanently thawed.
+
+
+Author:
+
+Plesser
+
+
+FirstVersion:
+
+2011-02-11
+
+
+Source:
+
+../../testsuite/unittests/test_multimeter_freeze_thaw.sli

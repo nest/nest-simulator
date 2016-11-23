@@ -1,0 +1,70 @@
+Name: unittest::InflateUnitTestData - reformat compressed reference data
+
+Synopsis:
+
+array1 array2 InflateUnitTestData -> array3
+
+
+Examples:
+
+% h=   (in ms) 
+[ 0.1   0.2   0.5   1.0 ] 
+% 
+% time	 voltage 
+[ 
+[  1	 -69.4229] 
+[  2	 1	 -68.8515] 
+[  3	 -68.2858] 
+[  4	 2	 -67.7258] 
+[  5	 1	 -67.1713] 
+[  6	 3	 -66.6223] 
+[  7	 -66.0788] 
+[  8	 4	 -65.5407] 
+[  9	 -65.008] 
+[ 10	 5	 2   1   -64.4806] 
+[ 11	 -63.9584] 
+]
+
+
+Description:
+
+The idea of the compressed data format is to represent the reference 
+data in a compact human readable format at the end of the testsuite 
+files. Although redundant, the time stamps of all step sizes 
+corresponding to a particular reference data point are listed.
+
+
+Parameters:
+
+array1	- array of sorted simulation step sizes [h1,...,hn] 
+All simulation step sizes must be multiples of the 
+smallest one h1. 
+array2	- array of reference data with one row per data point. 
+the last element v in each row is the value of the recorded 
+quantity. The first element in each row is the time stamp 
+t1 of the smallest step size. The time stamps of larger 
+step sizes are located between t1 and v if the temporal 
+position coincides with t1. 
+array3	- array of length n with one entry per step size h1,...,hn. 
+Each entry is a two-dimensional vector of tuples [ti,vi], 
+where ti is a time stamp and vi the corresponding value of 
+the recorded quantity.
+
+
+Author:
+
+Markus Diesmann
+
+
+FirstVersion:
+
+071128
+
+
+SeeAlso:
+
+unittest::ToUnitTestPrecision
+
+Source:
+
+../../lib/sli/unittest.sli

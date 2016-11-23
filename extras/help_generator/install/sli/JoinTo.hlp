@@ -1,0 +1,33 @@
+Name: JoinTo - Join an object to a container
+
+Synopsis:
+
+array literal JoinTo -> -- 
+dict  literal JoinTo -> --
+
+
+Examples:
+
+/j [4 5] def [6 7 8] /j JoinTo j --> [4 5 6 7 8] 
+/j << /C_m 250.0 /Tau_m 10.0 >> def 
+<< /Tau_m 25.0 /I_e 130.0 >> /j JoinTo j --> << /C_m 250.0 /Tau_m 25.0 /I_e 130.0 >>
+
+
+Description:
+
+Assignment like AddTo. Compared to Mathematica the order of 
+arguments is reversed here, because its more readable to 
+have the l-value close to the assignment operator, 
+like in ... // Set[x,#]& . 
+Allows for optimization of code.
+
+
+SeeAlso:
+
+Set
+AppendTo
+MergeDictionary
+
+Source:
+
+../../lib/sli/mathematica.sli

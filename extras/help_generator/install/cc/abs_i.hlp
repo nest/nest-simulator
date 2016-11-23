@@ -1,0 +1,43 @@
+Name: abs_i - absolute value of integer 
+ Synopsis:  integer abs -> integer
+
+Examples:
+
+-3 abs_i -> 3
+
+
+Description:
+
+implemented by C/C++ 
+long   labs(long) and
+
+
+Remarks:
+
+If you are not sure, if the value is of type double or integer, use 
+abs. If e.g. abs_d gets an integer as argument, NEST will exit throwing an 
+assertion.
+
+
+References:
+
+Stroustrup 3rd ed p 661
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+27.4.1999
+
+
+SeeAlso:
+
+abs
+
+Source:
+
+../../sli/slimath.cc

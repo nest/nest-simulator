@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: typebind</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: typebind</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>typebind - optimizes procedure for certain data type</pre>
+<b>Synopsis: </b>
+<pre>proc dict typebind -> proc  <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>   <br/>  The following is the closed form expression of a postsynaptic potential at  <br/>  at time t  <br/>   <br/>  (  <br/>  weight * E/tau_syn * 1./C_m  <br/>  * (   (exp(-t/tau_m)-exp(-t/tau_syn)) / (1./tau_syn	- 1./tau_m)^2.  <br/>  -	 t*exp(-t/tau_syn)	 / (1./tau_syn	- 1./tau_m)  <br/>  )  <br/>  )  <br/>  CompileMath /v Set  <br/>   <br/>  The expression operates on doubles. Therefore we optimize with  <br/>   <br/>  /v load  <br/>  <<  <br/>  /add [/doubletype /doubletype]  <br/>  /sub [/doubletype /doubletype]  <br/>  /mul [/doubletype /doubletype]  <br/>  /div [/doubletype /doubletype]  <br/>  /pow [/doubletype /doubletype]  <br/>  /exp [/doubletype ]  <br/>  /neg [/doubletype ]  <br/>  >> typebind /v_d Set  <br/>   <br/>  We can further optimize by replacing all symbolic constants by the  <br/>  corresponding values  <br/>   <br/>  /v_d load  <br/>  <<  <br/>  /weight   3.2  <br/>  /tau_syn   0.5  <br/>  /tau_m   10.0  <br/>  /C_m	 250.0  <br/>  /t	 1.345  <br/>  /E	 E  <br/>  >> Inline /v_c Set  <br/>   <br/>  Let us now explore the required number of interpreter cycles and the run time  <br/>  of the three versions  <br/>   <br/>  clic v cloc  <br/>  clic v_d cloc  <br/>  clic v_c cloc  <br/>  tic 500000 {v pop}   repeat toc  <br/>  tic 500000 {v_d pop} repeat toc  <br/>  tic 500000 {v_c pop} repeat toc  <br/>   <br/>  The results are:  <br/>  v   v_d   v_c  <br/>  ----------------------------------  <br/>  cycles	 138   112   97  <br/>  reduction factor	 1.2   1.4  <br/>  20%   30%  <br/>  ----------------------------------  <br/>  time	 20.8  8.3   6.5  <br/>  reduction factor	 2.5   3.2  <br/>  60%   69%  <br/>  ----------------------------------  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  The operator is called on a procedure and optimizes the function  <br/>  calls in this procedure by removing type checking of the overloaded  <br/>  functions according to the information in the dictionary. The dictionary  <br/>  specifies the names of the functions for which the type of the arguments  <br/>  is knon and the expected combination of argument types. typebind uses this  <br/>  information to replace the function calls in the procedure by the appropriate  <br/>  variant. This reduces the number of interpreter cycles required to evaluate  <br/>  the procedure. However, the bigger effect is the reduction of run time.  <br/>  The operator typebind can be used to optimize SLI code for speed in  <br/>  situations where it is guaranteed that a particular variant of a  <br/>  function is needed. Here, replacing the overloaded function by the  <br/>  specific variant removes the overhead of type checking. A typical  <br/>  situation in which the data types of the arguments are known is a  <br/>  function call inside a function with a specified signature (see  <br/>  example below). Another situation is machine generated SLI code where  <br/>  the machine, for example a compiler, is requested to emit optimized  <br/>  code restricted to particular data type.  <br/>   <br/>  /incr [/doubletype]  <br/>  {  <br/>  1.0 add  <br/>  }  <br/>  << /add [/doubletype /doubletype] >> typebind  <br/>  def  <br/>   <br/>  The example below achieves a reduction of interpreter cycles by 20%  <br/>  but a reduction of rune time by 60%.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  proc, is the procedure to be optimized  <br/>  dict, contains as keys the names of the operators that should  <br/>  be constrained to a certain combination of argument types.  <br/>  The value associated to the key is an array specifying the  <br/>  data type of each argument.  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  typebind may be implemented by Inline, see the documentation of variant.  <br/>   <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Diesmann  <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>090210  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../sli/variant.html">variant</a></li>
+    <li><a href="../sli/Inline.html">Inline</a></li>
+    <li><a href="../sli/CompileMath.html">CompileMath</a></li>
+    <li><a href="../sli/def.html">def</a></li>
+    <li><a href="../sli/clic.html">clic</a></li>
+    <li><a href="../sli/tic.html">tic</a></li>
+</ul>
+<b>Source:</b><pre>../../lib/sli/typeinit.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

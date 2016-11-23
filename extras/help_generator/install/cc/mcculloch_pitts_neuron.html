@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: mcculloch_pitts_neuron</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: mcculloch_pitts_neuron</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>mcculloch_pitts_neuron - Binary deterministic neuron with Heaviside  <br/>  activation function.</pre>
+<b>Description: </b>
+<pre> <br/>  The mcculloch_pitts_neuron is an implementation of a binary  <br/>  neuron that is irregularly updated as Poisson time points [1]. At  <br/>  each update point the total synaptic input h into the neuron is  <br/>  summed up, passed through a Heaviside gain function g(h) = H(h-theta),  <br/>  whose output is either 1 (if input is above) or 0 (if input is below  <br/>  threshold theta).  <br/>  The time constant tau_m is defined as the  <br/>  mean inter-update-interval that is drawn from an exponential  <br/>  distribution with this parameter. Using this neuron to reprodce  <br/>  simulations with asynchronous update [1], the time constant needs  <br/>  to be chosen as tau_m = dt*N, where dt is the simulation time  <br/>  step and N the number of neurons in the original simulation with  <br/>  asynchronous update. This ensures that a neuron is updated on  <br/>  average every tau_m ms. Since in the original paper [1] neurons  <br/>  are coupled with zero delay, this implementation follows this  <br/>  definition. It uses the update scheme described in [3] to  <br/>  maintain causality: The incoming events in time step t_i are  <br/>  taken into account at the beginning of the time step to calculate  <br/>  the gain function and to decide upon a transition.  In order to  <br/>  obtain delayed coupling with delay d, the user has to specify the  <br/>  delay d+h upon connection, where h is the simulation time step.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  tau_m	 double	- Membrane time constant (mean inter-update-interval)  <br/>  in ms.  <br/>  theta	 double	- threshold for sigmoidal activation function mV  <br/>   <br/>  
+</pre>
+<b>Receives: </b>
+<pre>SpikeEvent, PotentialRequest  <br/>  
+</pre>
+<b>Sends: </b>
+<pre>SpikeEvent  <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  This neuron has a special use for spike events to convey the  <br/>  binary state of the neuron to the target. The neuron model  <br/>  only sends a spike if a transition of its state occurs. If the  <br/>  state makes an up-transition it sends a spike with multiplicity 2,  <br/>  if a down transition occurs, it sends a spike with multiplicity 1.  <br/>  The decoding scheme relies on the feature that spikes with multiplicity  <br/>  larger 1 are delivered consecutively, also in a parallel setting.  <br/>  The creation of double connections between binary neurons will  <br/>  destroy the decoding scheme, as this effectively duplicates  <br/>  every event. Using random connection routines it is therefore  <br/>  advisable to set the property 'multapses' to false.  <br/>  The neuron accepts several sources of currents, e.g. from a  <br/>  noise_generator.  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  [1] W. McCulloch und W. Pitts (1943). A logical calculus of the ideas  <br/>  immanent in nervous activity. Bulletin of Mathematical Biophysics, 5:115-133.  <br/>  [2] Hertz Krogh, Palmer. Introduction to the theory of neural computation.  <br/>  Westview (1991).  <br/>  [3] Abigail Morrison, Markus Diesmann. Maintaining Causality in Discrete Time  <br/>  Neuronal Simulations.  <br/>  In: Lectures in Supercomputational Neuroscience, p. 267. Peter beim Graben,  <br/>  Changsong Zhou, Marco Thiel, Juergen Kurths (Eds.), Springer 2008.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Moritz Helias  <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>February 2013  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/pp_psc_delta.html">pp_psc_delta</a></li>
+</ul>
+<b>Source:</b><pre>../../models/mcculloch_pitts_neuron.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

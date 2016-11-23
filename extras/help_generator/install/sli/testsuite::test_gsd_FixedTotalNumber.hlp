@@ -1,0 +1,28 @@
+Name: testsuite::test_gsd_FixedTotalNumber - Test global spike detector with MPI
+
+Synopsis:
+
+nest_indirect test_gsd_FixedTotalNumber.sli ->	-
+
+
+Description:
+
+This scripts tests the 'fixed_total_number' connection rule in combination 
+with the gsd spike detector scheme. A network is created on 2 MPI 
+processes with 0 recording procs and on 3 MPI procs with 1 recording 
+proc. The script should yield the very same connections for both cases.
+
+
+Author:
+
+Kunkel, Schmidt
+
+
+FirstVersion:
+
+February 2014
+
+
+Source:
+
+../../testsuite/mpitests/test_gsd_FixedTotalNumber.sli

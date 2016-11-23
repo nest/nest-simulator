@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: Part</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: Part</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>Part - returns a sub-array of an array</pre>
+<b>Synopsis: </b>
+<pre>array1 array2 Part -> array3  <br/>  
+</pre>
+<b>Examples: </b>
+<pre> <br/>   <br/>   <br/>  [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ [1 3] [2 3] ] Part  --> [[5 6] [1 8]]  <br/>  [ [3 [-12 -19] 6 9] [11 4 7 2] [-9 1 8 10] ]  [ 1 2 2] Part --> -19  <br/>  [3 4 5 6 7] [-2] Part	 --> 6  <br/>  [3 [-9 -12] 5 6 7] [2] Part	 --> [-9 -12]  <br/>  [3 [-9 -12] 5 6 7] [2 2] Part	 --> -12  <br/>  [3 [-9 -12] 5 6 7] [[2 3]] Part	 --> [[-9 -12] 5]  <br/>  [3 [-9 -12] 5 6 7] [[2 3 2]] Part	 --> [[-9 -12] 5 [-9 -12]]  <br/>  [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ 1 []  ] Part   --> []  <br/>  [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ [] 1 ] Part	 --> []  <br/>  [3 [5 -12] 6 9]  [ [ 2 ] ] Part	 --> [[5 -12]]  <br/>  [3 [5 -12] 6 9]  [ [ 2 ] 2] Part	 --> [-12]  <br/>  [ [3 5 6 9] [11 4 7 2] [-9 1 8 10] ]  [ /All [3 2]  ] Part --> [[6 5] [7 4] [8 1]]  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre> <br/>  Part returns a sub-array of array1 specified by  <br/>  array2. This function is an implementation of  <br/>  Mathematica's Part function. It can also be used  <br/>  to rearrange or copy parts of array1. Note,  <br/>  Mathematica-style functions in SLI use Mathematica  <br/>  index notation.  <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  array1 is an arbitrarily shaped array. In particular  <br/>  it does not need to be rectangular.  <br/>   <br/>  array2 is an array [i,j, ...] where the i,j specify the  <br/>  selected elements on each level. Any i,j can itself be  <br/>  an array [i1,i2,....] specifying a list of elements on  <br/>  that level. When i is the literal /All, all elements on  <br/>  the corresponding level are returned. The first element  <br/>  on each level has index 1. Indices can also be specified  <br/>  counting from the end of the array, in this case the last  <br/>  element has index -1. Positive and neative indices can  <br/>  arbitrarily be intermixed.  <br/>   <br/>  Alternatives: Function Part_a (undocumented) -> behaviour and  <br/>  synopsis are the same.  <br/>   <br/>  
+</pre>
+<b>Bugs: </b>
+<pre> <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  Literal /All plays the role of the index specifier ':'  <br/>  in Matlab when used without arguments. Note, that  <br/>  Matlab in addition provides specifier 'end'.  <br/>  This is not necessary in the formalism of Mathematica  <br/>  because indices counting from the end of the array can be  <br/>  expressed by negative values.  <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  [1] The Mathematica Book V4.0 "Part" 
+</pre>
+<b>Author: </b>
+<pre>Diesmann  <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>29.9.1999  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../sli/MathematicaToSliIndex.html">MathematicaToSliIndex</a></li>
+</ul>
+<b>Source:</b><pre>../../lib/sli/mathematica.sli</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

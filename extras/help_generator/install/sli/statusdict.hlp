@@ -1,0 +1,33 @@
+Name: statusdict - dictionary with platform dependent status 
+ information.
+
+Description:
+
+The status dictionary contains various platform dependend status 
+information. Among others, it contains the following useful things: 
+argv	 arraytype   full list of commandline arguments given to NEST 
+userargs   arraytype   user supplied arguments, usable by scripts 
+interactive booltype   does this NEST session read its commands from an interactive prompt? 
+files	 arraytype   list of files to execute, as specified on the commandline 
+prgdatadir  stringtype  path to the installation directory 
+prgdocdir   stringtype  path to the documentation directory 
+have_mpi   booltype   this flag is always defined and indicates whether an 
+MPI library is available to the NEST system or not. 
+The flag does not indicate whether the interpreter 
+actually has MPI support. 
+is_mpi	 booltype   this flag may not be defined if the interpreter does not 
+have MPI support. If the value of the flag is true, the 
+interpreter has support for parallel computing. 
+View the whole contents of the status dictionary with 'statusdict info'.
+
+
+SeeAlso:
+
+info
+LocateFileNames
+searchifstream
+searchfile
+
+Source:
+
+../../lib/sli/sli-init.sli

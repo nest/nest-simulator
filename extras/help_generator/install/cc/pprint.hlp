@@ -1,0 +1,32 @@
+Name: pprint - pretty print: Print object to a stream
+
+Synopsis:
+
+ostream any <- -> ostream
+
+
+Examples:
+
+cerr [1 2 3] pprint endl ; -> [1 2 3]
+
+
+Description:
+
+Alternatives: You can use <-- (undocumented), 
+which is the same as pprint.
+
+
+Author:
+
+docu by Marc Oliver Gewaltig and Sirko Straube
+
+
+SeeAlso:
+
+print
+=
+==
+
+Source:
+
+../../sli/sli_io.cc

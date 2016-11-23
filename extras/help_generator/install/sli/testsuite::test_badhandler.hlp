@@ -1,0 +1,41 @@
+Name: testsuite::test_badhandler - test if SLI returns exit code 126 when an error is handled by a bad user error handler.
+
+Synopsis:
+
+(test_badhandler) run ->
+
+
+Description:
+
+This script establishes a user error handler and then provokes an 
+error. The error handler itself contains an error. This error should 
+be reported by the interpreter and cause NEST to quit with exit code 126.
+
+
+Remarks:
+
+Yes, this script is really meant to fail!
+
+
+Author:
+
+Ruediger Kupper
+
+
+FirstVersion:
+
+03-jul-2008
+
+
+SeeAlso:
+
+testsuite::test_pass
+testsuite::test_fail
+testsuite::test_stop
+testsuite::test_goodhandler
+testsuite::test_lazyhandler
+testsuite::test_badhandler
+
+Source:
+
+../../testsuite/selftests/test_badhandler.sli

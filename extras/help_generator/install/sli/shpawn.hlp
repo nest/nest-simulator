@@ -1,0 +1,116 @@
+Name: shpawn - Spawn a UNIX process using a shell and redirect stdin and stdout.
+
+Synopsis:
+
+CommandString	 shpawn }   { Flag=0: Status NormalExitFlag 
+CommandArray	 shpawn }   { 
+}   { Flag=1 or omitted: 
+CommandString Flag shpawn } -> {	 ear(write) mouth(read) 
+CommandArray  Flag shpawn }   { 
+{ Flag=2: ChildPID ear(write) mouth(read)
+
+
+Examples:
+
+%try these examples with "spawn" as well to see the difference: 
+1. (echo $PATH) 0 shpawn 
+2. (rm synod2/lib/help/cc/*.hlp) 0 shpawn 
+3. (ls | sort) 0 shpawn
+
+
+Description:
+
+"shpawn" does the same as "spawn" does (see there). 
+However, the command is not executed directly but is passed 
+to a shell which then will process the command. 
+This way it is possible to use the full functionality of a 
+shell, e.g. wildcard extension, alias, piping, ... 
+By default, /bin/sh is used as the shell binary, and a login 
+shell is requested by giving the -l flag. These values can be 
+changed in the options dictionary, see sections "Options" below. 
+In addition, the piping facility of the shell can be used to 
+monitor the standard input and standard output of the 
+invoked command. Monitoring can conveniently be turned on 
+for stdin and stdout independently, via the options 
+dictionary. 
+See sections "Options" and "Remarks" below.
+
+
+Parameters:
+
+-see "spawn"-
+
+
+Options:
+
+Options-name: /shpawn 
+Option	 type	 default   description 
+----------------  ----------  --------  ------------------------------ 
+/terminal	 string	 $TERM	 Terminal command to be used for 
+monitoring stdin and stdout. 
+/monitor-stdin   booltype   false	 True, if the standard input of 
+the invoked command shall be 
+monitored in a terminal window. 
+/monitor-stout   booltype   false	 True, if the standard output of 
+the invoked command shall be 
+monitored in a terminal window. 
+/sh-binary	 string	 (/bin/sh) Path to the shell binary to use. 
+This binary must accept the flag -c 
+for execution of a command. 
+/sh-flags	 stringarray []	 Flags added wehn calling the shell 
+binary. Flags must be given as separate 
+string elements (e.g. [(-l)]. 
+The array may be empty. 
+The flag -c is automatically added 
+to this list of flags by the routine.
+
+
+Bugs:
+
+-see "spawn"-
+
+
+Diagnostics:
+
+-see "spawn"-
+
+
+Remarks:
+
+"shpawn" invokes "/sh-binary" from the options dictionary 
+(/bin/sh by default) and passes the given command after 
+a "-c" flag. This means the specified shell binary must 
+support this -c flag. 
+The monitoring option for stdin and stdout exploits the 
+piping deature of the shell, by piping information through 
+instances of the "tee" command, which writes it to a file. 
+(tee infile | command | tee outfile). 
+These files are then monitored in separate subprocesses, using 
+"tail" in a terminal window. The terminal command to be used is 
+defined in the Options of shpawn. 
+See manpages of sh, tee, tail, xterm/konsole for references. 
+The monitoring option creates two files named 
+/tmp/SLI-shpawn-monitor-stdin and /tmp/SLI-shpawn-monitor-stdout, 
+which will persist after command execution terminated, so 
+that their contents may be analyzed.
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+May 19 1999
+
+
+SeeAlso:
+
+spawn
+system
+environment
+
+Source:
+
+../../lib/sli/processes.sli

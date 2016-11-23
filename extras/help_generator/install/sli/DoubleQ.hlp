@@ -1,0 +1,20 @@
+Name: DoubleQ - returns true if top object is a double
+
+Synopsis:
+
+double DoubleQ -> true 
+any   DoubleQ -> false
+
+
+SeeAlso:
+
+IntegerQ
+DoubleQ
+FiniteQ
+LiteralQ
+ArrayQ
+StringQ
+
+Source:
+
+../../lib/sli/mathematica.sli

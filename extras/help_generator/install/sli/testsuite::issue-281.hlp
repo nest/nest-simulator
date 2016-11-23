@@ -1,0 +1,21 @@
+Name: testsuite::issue-281 - Check that ConnectLayers works MPI-parallel for fixed fan-out
+
+Synopsis:
+
+(issue-281) run -> NEST exits if test fails
+
+
+Description:
+
+This test connects a layer with itself with fixed fan-out. 
+The test should pass with any number of MPI processes.
+
+
+Author:
+
+Hans Ekkehard Plesser, 2016-03-18
+
+
+Source:
+
+../../testsuite/mpitests/issue-281.sli

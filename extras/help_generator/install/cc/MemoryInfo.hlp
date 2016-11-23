@@ -1,0 +1,30 @@
+Name: MemoryInfo - Report current memory usage.
+
+Synopsis:
+
+MemoryInfo ->	-
+
+
+Description:
+
+MemoryInfo reports the current utilization of the memory manager for all 
+models, which are used at least once. The output is sorted ascending 
+according according to the name of the model is written to stdout. The unit 
+of the data is byte. Note that MemoryInfo only gives you information about 
+the memory requirements of the static model data inside of NEST. It does not 
+tell anything about the memory situation on your computer.
+
+
+Availability:
+
+NEST
+
+
+Author:
+
+Jochen Martin Eppler
+
+
+Source:
+
+../../nestkernel/nestmodule.cpp

@@ -1,0 +1,29 @@
+Name: <> - Construct an array or vector, depending on the element type.
+
+Synopsis:
+
+< obj1 ... obj n > -> [obj1, ... , objn] 
+< int1 ... intn >  -> <# int1 ... intn #> 
+< double1 ... doublen > -> <. d1 ... dn .>
+
+
+Description:
+
+Create an array, intvector, or doublevector, depending on the type of the entered elements. 
+This constructor uses the type of the first element in the sequence to determine the target type. All other 
+elements will be converted.
+
+
+Author:
+
+Marc-Oliver Gewaltig
+
+
+FirstVersion:
+
+Dec 18 2012
+
+
+Source:
+
+../../lib/sli/mathematica.sli

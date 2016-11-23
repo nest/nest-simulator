@@ -1,0 +1,27 @@
+Name: rdevdict::exponential - exponential random deviate generator
+
+Description:
+
+Generates exponentially distributed random numbers. 
+p(x) = lambda exp(-lambda*x), x >= 0.
+
+
+Parameters:
+
+lambda	- rate parameter (default: 1.0)
+
+
+Author:
+
+Hans Ekkehard Plesser
+
+
+SeeAlso:
+
+CreateRDV
+RandomArray
+rdevdict
+
+Source:
+
+../../librandom/exp_randomdev.h

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: sinusoidal_gamma_generator</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: sinusoidal_gamma_generator</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>sinusoidal_gamma_generator - Generates sinusoidally modulated gamma  <br/>  spike trains.</pre>
+<b>Description: </b>
+<pre> <br/>  sinusoidal_gamma_generator generates sinusoidally modulated gamma spike  <br/>  trains. By default, each target of the generator will receive a different  <br/>  spike train.  <br/>   <br/>  The instantaneous rate of the process is given by  <br/>   <br/>  f(t) = rate + amplitude sin ( 2 pi frequency t + phase * pi/180 )  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  The following parameters can be set in the status dictionary:  <br/>   <br/>  rate	 double	- Mean firing rate in spikes/second, default: 0 s^-1  <br/>  amplitude  double	- Firing rate modulation amplitude in spikes/second,  <br/>  default: 0 s^-1  <br/>  frequency  double	- Modulation frequency in Hz, default: 0 Hz  <br/>  phase	 double	- Modulation phase in degree [0-360], default: 0  <br/>  order	 double	- Gamma order (>= 1), default: 1  <br/>   <br/>  individual_spike_trains   bool	- See note below, default: true  <br/>   <br/>  
+</pre>
+<b>Require: </b>
+<pre>HAVE_GSL  <br/>  
+</pre>
+<b>Receives: </b>
+<pre>DataLoggingRequest  <br/>   <br/>  
+</pre>
+<b>Sends: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/> 	- The gamma generator requires 0 <= amplitude <= rate.  <br/> 	- The state of the generator is reset on calibration.  <br/> 	- The generator does not support precise spike timing.  <br/> 	- You can use the multimeter to sample the rate of the generator.  <br/> 	- The generator will create different trains if run at different  <br/>  temporal resolutions.  <br/>   <br/> 	- Individual spike trains vs single spike train:  <br/>  By default, the generator sends a different spike train to each of its  <br/>  targets. If /individual_spike_trains is set to false using either  <br/>  SetDefaults or CopyModel before a generator node is created, the generator  <br/>  will send the same spike train to all of its targets.  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre>Barbieri et al, J Neurosci Methods 105:25-37 (2001)  <br/>  
+</pre>
+<b>Author: </b>
+<pre>Hans E Plesser, Thomas Heiberg  <br/>   <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>October 2007, May 2013  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/sinusoidal_poisson_generator.html">sinusoidal_poisson_generator</a></li>
+    <li><a href="../cc/gamma_sup_generator.html">gamma_sup_generator</a></li>
+</ul>
+<b>Source:</b><pre>../../models/sinusoidal_gamma_generator.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

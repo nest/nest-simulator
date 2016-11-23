@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: noise_generator</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: noise_generator</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>noise_generator - Device to generate Gaussian white noise current.</pre>
+<b>Description: </b>
+<pre> <br/>  This device can be used to inject a Gaussian "white" noise current into a node.  <br/>  The current is not really white, but a piecewise constant current with Gaussian  <br/>  distributed amplitude. The current changes at intervals of dt. dt must be a  <br/>  multiple of the simulation step size, the default is 1.0ms,  <br/>  corresponding to a 1kHz cut-off.  <br/>  Additionally a second sinusodial modulated term can be added to the standard  <br/>  deviation of the noise.  <br/>   <br/>  The current generated is given by  <br/>   <br/>  I(t) = mean + std * N_j  for t_0 + j dt <= t < t_0 + (j-1) dt  <br/>   <br/>  where N_j are Gaussian random numbers with unit standard deviation and t_0 is  <br/>  the device onset time.  <br/>  If the modulation is added the current is given by  <br/>   <br/>  I(t) = mean + sqrt(std^2 + std_mod^2 * sin(omega * t + phase)) * N_j  <br/>  for t_0 + j dt <= t < t_0 + (j-1) dt  <br/>   <br/>  For a detailed discussion of the properties of the noise generator, please see  <br/>  the noise_generator.ipynb notebook included in the NEST source code  <br/>  (docs/model_details).  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  The following parameters can be set in the status dictionary:  <br/>   <br/>  mean	 double	- mean value of the noise current in pA  <br/>  std	 double	- standard deviation of noise current in pA  <br/>  dt	 double	- interval between changes in current in ms, default 1.0ms  <br/>  std_mod   double	- modulated standard deviation of noise current in pA  <br/>  phase	 double	- Phase of sine modulation (0-360 deg)  <br/>  frequency double	- Frequency of sine modulation in Hz  <br/>   <br/>  
+</pre>
+<b>Sends: </b>
+<pre>CurrentEvent  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/> 	- All targets receive different currents.  <br/> 	- The currents for all targets change at the same points in time.  <br/> 	- The interval between changes, dt, must be a multiple of the time step.  <br/> 	- The effect of this noise current on a neuron DEPENDS ON DT. Consider  <br/>  the membrane potential fluctuations evoked when a noise current is  <br/>  injected into a neuron. The standard deviation of these fluctuations  <br/>  across an ensemble will increase with dt for a given value of std.  <br/>  For the leaky integrate-and-fire neuron with time constant tau_m and  <br/>  capacity C_m, membrane potential fluctuations Sigma at times t_j+delay are  <br/>  given by  <br/>   <br/>  Sigma = std * tau_m / C_m * sqrt( (1-x) / (1+x) ) where x = exp(-dt/tau_m)  <br/>   <br/>  for large t_j. In the white noise limit, dt -> 0, one has  <br/>   <br/>  Sigma -> std / C_m * sqrt(dt * tau / 2).  <br/>   <br/>  To obtain comparable results for different values of dt, you must  <br/>  adapt std.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Ported to NEST2 API 08/2007 by Jochen Eppler, updated 07/2008 by HEP 
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/Device.html">Device</a></li>
+</ul>
+<b>Source:</b><pre>../../models/noise_generator.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

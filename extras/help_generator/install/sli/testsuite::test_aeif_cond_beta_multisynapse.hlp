@@ -1,0 +1,51 @@
+Name: testsuite::test_aeif_cond_beta_multisynapse - sli script for the aeif multisynapse model with synaptic conductance modeled by a double exponential function
+
+Synopsis:
+
+(test_aeif_cond_beta_multisynapse) run
+
+
+Description:
+
+This test creates a multisynapse neuron with three receptor ports with 
+different synaptic rise times and decay times, and connect it to 
+two excitatory and one inhibitory signals. At the end, the script compares 
+the simulated values of V(t) with an approximate analytical formula, which 
+can be derived as follows: 
+For small excitatory inputs the synaptic current can be approximated as 
+I(t)=g(t)[Vrest-Eex] 
+where g(t) is the synaptic conductance, Vrest is the resting potential and 
+Eex is the excitatory reverse potential (see Roth and van Rossum, p. 144). 
+Using the LIF model, the differential equation for the membrane potential 
+can be written as 
+tau_m dv/dt = -v + G 
+where tau_m = Cm/gL, v = Vm	- Vrest, and G=g(t)(Eex-Vrest)/gL 
+Using a first-order Taylor expansion of v around a generic time t0: 
+v(t0+tau_m)=v(t0)+tau_m dv/dt + O(tau_m^2) 
+and substituting t=t0+tau_m we get 
+v(t)=G(t-tau_m) 
+This approximation is valid for small excitatory inputs if tau_m is small 
+compared to the time scale of variation of G(t). Basically, this happens 
+when the synaptic rise time and decay time are much greater than tau_m. 
+An analogous approximation can be derived for small inhibitory inputs. 
+References 
+A. Roth and M.C.W. van Rossum, Modeling synapses, in Computational 
+Modeling Methods for Neuroscientists, MIT Press 2013, Chapter 6, pp. 139-159
+
+
+Author:
+
+Bruno Golosio
+
+
+FirstVersion:
+
+August 2016
+
+
+SeeAlso:
+
+
+Source:
+
+../../testsuite/unittests/test_aeif_cond_beta_multisynapse.sli

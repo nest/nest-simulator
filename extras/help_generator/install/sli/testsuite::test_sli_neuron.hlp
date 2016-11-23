@@ -1,0 +1,30 @@
+Name: testsuite::test_sli_neuron - test of sli_neuron
+
+Synopsis:
+
+(test_sli_neuron) run -> completes successfully
+
+
+Description:
+
+
+
+
+Author:
+
+Marc-Oliver Gewaltig
+
+
+FirstVersion:
+
+January 2009
+
+
+SeeAlso:
+
+testsuite::test_iaf
+sli_neuron
+
+Source:
+
+../../testsuite/unittests/test_sli_neuron.sli

@@ -1,0 +1,36 @@
+Name: GetLocalLeaves - Return IDs of all local leaves of a subnet that fulfill the 
+ conditions given in the dictionary, or all leaves if no dictionary given.
+
+Synopsis:
+
+gid [<<dict>>]  GetLocalLeaves -> [gid1 ... gidn]
+
+
+Description:
+
+This function does the same as GetGlobalLeaves, but returns only the 
+nodes local to the MPI process executing the program.
+
+
+Parameters:
+
+gid		- id of a subnet 
+<<dict>>	- Dictionary of selection properties 
+Returns: 
+[gid..]	- Array with the global ids of all local leaf nodes.
+
+
+Author:
+
+Hans Ekkehard Plesser, Abigail Morrison
+
+
+SeeAlso:
+
+GetGlobalLeaves
+GetLocalNodes
+GetLocalChildren
+
+Source:
+
+../../lib/sli/nest-init.sli

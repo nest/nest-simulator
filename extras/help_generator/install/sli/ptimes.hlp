@@ -1,0 +1,45 @@
+Name: ptimes - returns real, user, and system time 
+ Synopsis:  ptimes -> [rtimes utimes stimes cutimes cstimes]
+
+Description:
+
+Calls the POSIX times() function to obtain real, user, 
+and system time in seconds, as well as user and system times 
+counts for all child processes.  Real time has arbitrary origin, 
+i.e., only differences are meaningful.
+
+
+Remarks:
+
+results for user and system time may not be reliable if more 
+than one thread is used.
+
+
+References:
+
+man 2 times
+
+
+Author:
+
+Hans Ekkehard Plesser
+
+
+FirstVersion:
+
+2003-07-29
+
+
+SeeAlso:
+
+realtime
+usertime
+systemtime
+tic
+toc
+pclockspersec
+pclocks
+
+Source:
+
+../../lib/sli/sli-init.sli

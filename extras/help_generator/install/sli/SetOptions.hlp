@@ -1,0 +1,47 @@
+Name: SetOptions - Set options for a given name
+
+Synopsis:
+
+/f  optiondict SetOptions -> --
+
+
+Description:
+
+SetOptions set all option values given in 
+the supplied dictionary. Options which are not listed 
+in this dicitonary are not modified. 
+Note that only those options can be modified which were 
+initially defined by the Options command. 
+Use the option /DefaultOptions to retrieve the default 
+values for all options. 
+Usually, a C++-like notation is used to indicate the 
+availability of the function, if the function is defined in some 
+"namespace" dictionary. 
+For example: "arr::Mean".
+
+
+Diagnostics:
+
+SetOptions gives a warning message for each unknown 
+options it encounters.
+
+
+Author:
+
+M. O. Gewaltig
+
+
+SeeAlso:
+
+GetOption
+GetOptions
+ShowOptions
+Options
+ResetOptions
+SaveOptions
+RestoreOptions
+OptionsDictionary
+
+Source:
+
+../../lib/sli/mathematica.sli

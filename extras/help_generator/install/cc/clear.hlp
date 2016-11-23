@@ -1,0 +1,10 @@
+Name: clear - Clear the entire stack.
+
+SeeAlso:
+
+pop
+npop
+
+Source:
+
+../../sli/slistack.cc

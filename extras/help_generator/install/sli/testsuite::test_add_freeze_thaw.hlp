@@ -1,0 +1,28 @@
+Name: testsuite::test_add_freeze_thaw - test that per-thread nodes vectors are updated
+
+Synopsis:
+
+(test_add_freeze_thaw.sli) run -> dies if assertion fails
+
+
+Description:
+
+1. Create nodes driven by internal current, simulate, check V_m changes. 
+2. Add more nodes, reset old nodes, simulate again, check V_m changes for all. 
+3. Freeze half the nodes, simulate, check their V_m is constant. 
+4. Thaw nodes, simulate, check V_m changes again.
+
+
+Author:
+
+Plesser
+
+
+FirstVersion:
+
+2014-11-05
+
+
+Source:
+
+../../testsuite/unittests/test_add_freeze_thaw.sli

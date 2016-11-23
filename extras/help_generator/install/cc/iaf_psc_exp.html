@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: iaf_psc_exp</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: iaf_psc_exp</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>iaf_psc_exp - Leaky integrate-and-fire neuron model with exponential  <br/>  PSCs.</pre>
+<b>Description: </b>
+<pre> <br/>  iaf_psc_expp is an implementation of a leaky integrate-and-fire model  <br/>  with exponential shaped postsynaptic currents (PSCs) according to [1].  <br/>  Thus, postsynaptic currents have an infinitely short rise time.  <br/>   <br/>  The threshold crossing is followed by an absolute refractory period (t_ref)  <br/>  during which the membrane potential is clamped to the resting potential  <br/>  and spiking is prohibited.  <br/>   <br/>  The linear subthresold dynamics is integrated by the Exact  <br/>  Integration scheme [2]. The neuron dynamics is solved on the time  <br/>  grid given by the computation step size. Incoming as well as emitted  <br/>  spikes are forced to that grid.  <br/>   <br/>  An additional state variable and the corresponding differential  <br/>  equation represents a piecewise constant external current.  <br/>   <br/>  The general framework for the consistent formulation of systems with  <br/>  neuron like dynamics interacting by point events is described in  <br/>  [2]. A flow chart can be found in [3].  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  The following parameters can be set in the status dictionary.  <br/>   <br/>  E_L	 double	- Resting membrane potential in mV.  <br/>  C_m	 double	- Capacity of the membrane in pF  <br/>  tau_m	 double	- Membrane time constant in ms.  <br/>  tau_syn_ex   double	- Time constant of postsynaptic excitatory currents in ms  <br/>  tau_syn_in   double	- Time constant of postsynaptic inhibitory currents in ms  <br/>  t_ref	 double	- Duration of refractory period (V_m = V_reset) in ms.  <br/>  V_m	 double	- Membrane potential in mV  <br/>  V_th	 double	- Spike threshold in mV.  <br/>  V_reset	 double	- Reset membrane potential after a spike in mV.  <br/>  I_e	 double	- Constant input current in pA.  <br/>  t_spike	 double	- Point in time of last spike in ms.  <br/>   <br/>  
+</pre>
+<b>Receives: </b>
+<pre>SpikeEvent, CurrentEvent, DataLoggingRequest  <br/>   <br/>  
+</pre>
+<b>Sends: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>   <br/>  If tau_m is very close to tau_syn_ex or tau_syn_in, the model  <br/>  will numerically behave as if tau_m is equal to tau_syn_ex or  <br/>  tau_syn_in, respectively, to avoid numerical instabilities.  <br/>  For details, please see IAF_Neruons_Singularity.ipynb in the  <br/>  NEST source code (docs/model_details).  <br/>   <br/>  iaf_psc_exp can handle current input in two ways: Current input  <br/>  through receptor_type 0 are handled as stepwise constant current  <br/>  input as in other iaf models, i.e., this current directly enters  <br/>  the membrane potential equation. Current input through  <br/>  receptor_type 1, in contrast, is filtered through an exponential  <br/>  kernel with the time constant of the excitatory synapse,  <br/>  tau_syn_ex. For an example application, see [4].  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  [1] Misha Tsodyks, Asher Uziel, and Henry Markram (2000) Synchrony Generation  <br/>  in Recurrent Networks with Frequency-Dependent Synapses, The Journal of  <br/>  Neuroscience, 2000, Vol. 20 RC50 p. 1-5  <br/>  [2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear  <br/>  systems with applications to neuronal modeling. Biologial Cybernetics  <br/>  81:381-402.  <br/>  [3] Diesmann M, Gewaltig M-O, Rotter S, & Aertsen A (2001) State space  <br/>  analysis of synchronous spiking in cortical neural networks.  <br/>  Neurocomputing 38-40:565-571.  <br/>  [4] Schuecker J, Diesmann M, Helias M (2015) Modulated escape from a  <br/>  metastable state driven by colored noise.  <br/>  Physical Review E 92:052119  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Moritz Helias 
+</pre>
+<b>FirstVersion: </b>
+<pre>March 2006  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/iaf_psc_exp_ps.html">iaf_psc_exp_ps</a></li>
+</ul>
+<b>Source:</b><pre>../../models/iaf_psc_exp.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

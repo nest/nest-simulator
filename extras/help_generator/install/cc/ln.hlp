@@ -1,0 +1,29 @@
+Name: ln - Calculate natural logarithm of double number. 
+ Synopsis:  double ln -> double
+
+Examples:
+
+E ln -> 1.0
+
+
+Author:
+
+Gewaltig
+
+
+FirstVersion:
+
+7.6.2000
+
+
+SeeAlso:
+
+E
+sin
+cos
+exp
+log
+
+Source:
+
+../../sli/slimath.cc

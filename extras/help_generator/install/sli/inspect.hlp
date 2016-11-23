@@ -1,0 +1,74 @@
+Name: inspect - inspect an object
+
+Synopsis:
+
+any inspect ->	- 
+any  ?	 ->	-
+
+
+Examples:
+
+/stack inspect 
+/stack : proceduretype := 
+{ 
+0i 
+1i 
+-count- 
+3i 
+-sub_ii- 
+{ 
+-index- 
+= 
+} 
+-for- 
+} 
+SLI ] [10] Range inspect 
+[ 1i 2i 3i 4i 5i   ...  ] 
+SLI ] [1. 10.] Range inspect 
+[ 1d 2d 3d 4d 5d   ...  ]
+
+
+Description:
+
+inspect (or ?) displays the contents of an object in a formatted form. 
+SLI procedures are displayed with indentation according to their 
+nesting level. The amount of indentation is controlled by the 
+value of :INDENTATION, which is defined in debugdir. 
+The most common usage is to apply inspect to a literal. Inspect 
+resolves the name in the current dictionary context and gives 
+a formatted output of the contents. 
+Numeric values are displayed with the letters (d) or (i) to indicate 
+the type of the numeral. 
+The display of arrays is truncated, if they are longer than the 
+value of :ARRAYLIMIT. the remaining entries are replaced by 
+an elipsis ( ... ).
+
+
+Bugs:
+
+The displays of TypeTrees and Procedures could be more elaborated. 
+Maybe the next version will show the individual parameter-lists of 
+a TypeTree.
+
+
+Remarks:
+
+? can be used as shortcut to inspect
+
+
+Author:
+
+Marc-Oliver Gewaltig, Honda R&D
+
+
+FirstVersion:
+
+July 9 1999
+
+
+SeeAlso:
+
+
+Source:
+
+../../lib/sli/debug.sli

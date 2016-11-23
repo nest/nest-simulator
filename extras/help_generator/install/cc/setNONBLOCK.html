@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: setNONBLOCK</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: setNONBLOCK</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>setNONBLOCK - Switch between blocking and non-blocking I/O.</pre>
+<b>Synopsis: </b>
+<pre>ifstream {true|false} setNONBLOCK -> ifstream  <br/>   <br/>  
+</pre>
+<b>Examples: </b>
+<pre>cin   false setNONBLOCK  <br/>  myfifo true  setNONBLOCK % set non-blocking I/O for my fifo.  <br/>   <br/>  
+</pre>
+<b>Description: </b>
+<pre>"setNONBLOCK" sets or erases the O_NONBLOCK flag on  <br/>  an input stream. The O_NONBLOCK flag determines, if  <br/>  a read attempt will block when no data is currently  <br/>  available from the stream. By default, a newly  <br/>  created stream has the O_NONBLOCK-Flag erased,  <br/>  meaning that blocking I/O is selected. By erasing  <br/>  O_NONBLOCK, a subsequent read attempt on the stream  <br/>  will yield EOF if no data is available.  <br/>   <br/>  Alternatives: Function setNONBLOCK_is_b (undocumented)  <br/>  -> behavior and synopsis are the same.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre>In : ifstream: The stream to change the flag on.  <br/>  Out:	-  <br/>   <br/>  
+</pre>
+<b>Bugs: </b>
+<pre>-  <br/>   <br/>  
+</pre>
+<b>Diagnostics: </b>
+<pre>If a system-error occurs, a code is stored in "sys_errno"  <br/>  (contained in errordict) to identify the error, and "sys_errname"  <br/>  is set to the error message. Then a "SystemError" is raised.  <br/>  The following system errors may be issued, according to the  <br/>  POSIX standard (errors in parentheses are not  <br/>  expected to occur in this routines' context):  <br/>   <br/>  (EACCES)  Search permission is denied for a  <br/>  directory in a files path prefix.  <br/>  (EAGAIN)  The ON_NONBLOCK flag is set for a file  <br/>  descriptor and the process would be  <br/>  delayed in the I/O operation.  <br/>  EBADF   Invalid file descriptor. (With the current  <br/>  implementation, this indicates trouble  <br/>  getting a filedescriptor from a stream. If  <br/>  it occurs, ask the author for a proper  <br/>  solution!)  <br/>  (EDEADLK) An fcntl with function F_SETLKW would  <br/>  cause a deadlock.  <br/>  EINTR   Function was interrupted by a signal.  <br/>  (EINVAL)  Invalid argument.  <br/>  (EMFILE   Too many file descriptors are in use by  <br/>  this process.  <br/>  (ENOLCK)  No locks available.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>R Kupper  <br/>   <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>Oct 20 1999  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/available.html">available</a></li>
+    <li><a href="../sli/ignore.html">ignore</a></li>
+</ul>
+<b>Source:</b><pre>../../sli/processes.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

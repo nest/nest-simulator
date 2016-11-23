@@ -1,0 +1,52 @@
+Name: min - return the smaller of two values
+
+Synopsis:
+
+val1 val2 min -> result
+
+
+Examples:
+
+1   2   min -> 1 
+1   2.0 min -> 1 
+1.0 2   min -> 1.0
+
+
+Description:
+
+This function returns the smaller of two values, by removing the other 
+one from the stack. Hence, the output type is the same as the 
+respective input type (integer or double). 
+Alternatives: Functions  min_i_i, min_i_d, min_d_i, min_d_d (all 
+undocumented), where i is standing for integer and for double as 
+arguments -> behaviour and synopsis are the same.
+
+
+Parameters:
+
+val1, val2: numeric values (integer or double) 
+result   : the smaller of the two values (keeping its type, integer 
+or double)
+
+
+Author:
+
+Ruediger Kupper
+
+
+FirstVersion:
+
+17.3.2003
+
+
+SeeAlso:
+
+max
+gt
+lt
+geq
+leq
+
+Source:
+
+../../lib/sli/typeinit.sli

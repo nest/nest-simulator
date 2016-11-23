@@ -1,0 +1,27 @@
+Name: known - check whether a name is defined in a dictionary or object
+
+Synopsis:
+
+dict /key known -> bool 
+int  /key known -> bool
+
+
+Examples:
+
+modeldict /iaf_neuron known -> true 
+modeldict /parkinson_neuron known -> false 
+/iaf_psc_alpha_presc Create /Interpol_Order know -> true
+
+
+Author:
+
+docu edited by Sirko Straube
+
+
+SeeAlso:
+
+lookup
+
+Source:
+
+../../sli/slidict.cc

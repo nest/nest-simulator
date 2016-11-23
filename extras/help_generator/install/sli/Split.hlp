@@ -1,0 +1,40 @@
+Name: Split - splits array into subarrays of sequences of identical elements
+
+Synopsis:
+
+array  Split	 -> [array1 ... arrayn] 
+array proc Split -> [array1 ... arrayn]
+
+
+Examples:
+
+[1 1 1 2 2 3 3 3 3 4 4 4] Split -> [[1 1 1] [2 2] [3 3 3 3] [4 4 4]] 
+[1.1 1.3 1.7 2.1 2.3 2.7] {floor exch floor eq} Split -> 
+[[1.1 1.3 1.7] [2.1 2.3 2.7]] 
+[1] Split -> [[1]] 
+[] Split  -> []
+
+
+Remarks:
+
+Mathematica compatible
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+13.2.01
+
+
+SeeAlso:
+
+Take
+Select
+
+Source:
+
+../../lib/sli/mathematica.sli

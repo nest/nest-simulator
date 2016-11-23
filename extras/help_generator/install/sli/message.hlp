@@ -1,0 +1,107 @@
+Name: message - Display an information message
+
+Synopsis:
+
+(Message) Priority	 message ->	- 
+Priority (From) (Message) message -> 
+where "Priority" may be any positive integer, or one of the following: 
+M_DEBUG, M_STATUS, M_INFO, M_WARNING, M_ERROR, M_FATAL
+
+
+Examples:
+
+Short form: 
+1. (Still alive) M_DEBUG message 
+issues something like 
+% Jul 21 16:23:12 SLI[5] Still alive 
+1. (Something happened) M_STATUS message 
+issues something like 
+% Jul 21 16:23:12 SLI[5] Still alive 
+3. (Your last action had no effect) M_INFO message 
+issues something like 
+% Jul 21 16:24:12 SLI[10] Your last action had no effect 
+4. (Result may be invalid) M_WARNING message 
+issues something like 
+% Jul 21 16:24:24 SLI[20] Result may be invalid 
+5. (This should never happen!) M_ERROR message 
+issues something like 
+% Jul 21 16:24:36 SLI[30] This should never happen! 
+6. (It's all broken, let's go home.) M_FATAL message 
+issues something like 
+% Jul 21 16:24:36 SLI[40] It's all broken, let's go home. 
+Long form: 
+1. M_DEBUG (DEBUGMESSAGE) (This should never happen!) message 
+issues something like 
+% Jul 21 16:24:36 DEBUGMESSAGE[30] This should never happen! 
+Depending on the verbosity-level, the output may be suppressed.
+
+
+Description:
+
+Display a message, if priority is higher than current verbosity-level. 
+message uses the message mechanism which is provided 
+by the SLIInterpreter class. 
+The output consists of a time-stamp (date and time), the name of the 
+calling function, the priority level and the message text. 
+% month dd hh:mm::ss from[pl] messagetext 
+Where 
+month	- abbreviated month (Jan-Dec) 
+dd  	- day in month (01-31) 
+hh  	- hour (00-23) 
+mm  	- minute (00-61) 
+ss  	- seconds (00-61) 
+from 	- name of the caller, defaults to (SLI) in the short form 
+pl  	- priority level of the message 
+The time-stamp is useful during long-running simulations. 
+All output is sent to the stream defined in M_OUT which is 
+set to cout by default. 
+The verbosity level can be controlled by the functions 
+verbosity and setverbosity. For compatibility, the function 
+shutupto is still supported as alias to setverbosity.
+
+
+Parameters:
+
+In : (MyMessage: Message to display 
+Priority  : Priority level of message (integer). 
+Opt: (From)   : Name of the caller of class of message.
+
+
+Bugs:
+
+
+
+
+Remarks:
+
+M_* values are defined in system dictionary. 
+You may introduce new priority levels in the user dictionary if convenient. 
+Standard values are: M_ALL   = 0 
+M_DEBUG   = 5 
+M_STATUS  = 7 
+M_INFO   = 10 
+M_WARNING = 20 
+M_ERROR   = 30 
+M_FATAL   = 40 
+M_QUIET   = 100 
+Standard output:	 M_OUT	 = cout
+
+
+Author:
+
+R Kupper, 
+M.O. Gewaltig,
+
+
+FirstVersion:
+
+Apr 9 1999
+
+
+SeeAlso:
+
+setverbosity
+
+Source:
+
+../../lib/sli/misc_helpers.sli

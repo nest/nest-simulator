@@ -1,0 +1,38 @@
+Name: mathexecutive - start interactive math session
+
+Description:
+
+Starts an interactive shell similar to the standard shell of SLI 
+provided by the command executive. You can leave the shell by 
+typing exit. 
+In contrast to executive, mathexecutive accepts an infix mathematical 
+notation. The input is compiled with command CompileMath prior to 
+execution.  See the documentation of CompileMath for the details of 
+the syntax.
+
+
+Remarks:
+
+The syntax accepted by this command is experimental, be prepared for 
+substantial changes.
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+March 2010
+
+
+SeeAlso:
+
+executive
+exit
+CompileMath
+
+Source:
+
+../../lib/sli/mathematica.sli

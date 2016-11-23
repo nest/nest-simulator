@@ -1,0 +1,67 @@
+Name: regcomp - Create a regular expression
+
+Synopsis:
+
+string integer regcomp -> regex 
+string	 regcomp -> regex
+
+
+Examples:
+
+1) (.*) regcomp -> <regextype> 
+2) regexdict begin 
+(\() REG_EXTENDED regcomp -> <ERROR>
+
+
+Description:
+
+regcomp will prepare a regular expression to be used with regexec. 
+Any allowed flags are found in dictionary regexdict.
+
+
+Parameters:
+
+in:  string: defining the regular expression, 
+integer: flag, see Remarks. If in doubt, choose second 
+call of regcomp which presets integer to REG_EXTENDED. 
+out:  the regular expression object
+
+
+Variants:
+
+The variant "regcomp_" never raises an error, but returns: 
+-> regex true 
+-> regex integer false 
+In case of an error, the regex error code is returned as an integer. 
+This error code can be translated to a string using ":regerror" (see there).
+
+
+Diagnostics:
+
+If the string cannot be converted to a regular expression, 
+an error message is displayed and /InvalidRegexError is raised.
+
+
+Remarks:
+
+See man regcomp for futher details on POSIX regcomp.
+
+
+Author:
+
+Diesmann & Hehl, R Kupper (added error handling)
+
+
+FirstVersion:
+
+27.9.99
+
+
+SeeAlso:
+
+regexec
+:regerror
+
+Source:
+
+../../lib/sli/regexp.sli

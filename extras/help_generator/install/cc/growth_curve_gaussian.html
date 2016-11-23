@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: growth_curve_gaussian</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: growth_curve_gaussian</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>growth_curve_gaussian - Gaussian version of a growth curve</pre>
+<b>Description: </b>
+<pre> <br/>  This class represents a Gaussian growth rule for the number of synaptic  <br/>  elements  <br/>  inside a neuron. The creation and deletion of synaptic elements when  <br/>  structural  <br/>  plasticity is enabled, allows the dynamic rewiring of the network during the  <br/>  simulation.  <br/>  This type of growth curve  uses a forward Euler integration method to update  <br/>  the number of synaptic elements:  <br/>  dz/dt = nu (2 * e^(- ((Ca(t)	- xi)/z)^2 )	- 1)  <br/>  where xi = (eta  + eps)/2,  <br/>  zeta = (eps	- eta)/2 * sqrt(ln(2))),  <br/>  eta is the minimum calcium concentration required for any synaptic element  <br/>  to be created, eps is the target mean calcium concentration in the  <br/>  neuron and nu is the growth rate in elements/ms. The growth rate nu is  <br/>  defined in the SynapticElement class.  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  eta	 double	-  Minimum amount of calcium concentration that the  <br/>  neuron needs to start creating synaptic elements.  <br/>  eta can have a negative value, making the growth curve  <br/>  move its maximum to the left. For example, if eta=-0.5  <br/>  and eps=0.5 [Ca2+], the maximum growth rate  <br/>  (elements/ms) will  <br/>  be achieved at 0.0 [Ca2+]. If eta=0.0 [Ca2+] and  <br/>  eps=0.5 [Ca2+]  <br/>  the maximum growth rate will be achieved at 0.25  <br/>  [Ca2+] while at  <br/>  0.0 [Ca+2] no new elements will be created.  <br/>  eps	 double	-  The target calcium concentration that  <br/>  the neuron should look to achieve by creating or  <br/>  deleting  <br/>  synaptic elements. It should always be a positive  <br/>  value.  <br/>  It is important to note that the calcium concentration  <br/>  is linearly proportional to the firing rate. This is  <br/>  because dCa/dt =	- Ca(t)/tau_Ca + beta_Ca if the  <br/>  neuron  <br/>  fires and dCa/dt =	- Ca(t)/tau_Ca otherwise, where  <br/>  tau_Ca  <br/>  is the calcium concentration decay constant and  <br/>  beta_Ca  <br/>  is the calcium intake constant (see SynapticElement  <br/>  class).  <br/>  This means that eps can also be  <br/>  seen as the desired firing rate that the neuron should  <br/>  achieve.  <br/>  For example, an eps = 0.05 [Ca2+] with tau_Ca =  <br/>  10000.0  <br/>  and beta_Ca = 0.001 for a synaptic element means a  <br/>  desired  <br/>  firing rate of 5Hz.  <br/>  nu	 double	-  Growth rate in elements/ms. The growth rate nu is  <br/>  defined in the SynapticElement class. Can be negative.  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  [1] Butz, Markus, Florentin Wörgötter, and Arjen van Ooyen.  <br/>  "Activity-dependent structural plasticity." Brain research reviews 60.2  <br/>  (2009): 287-305.  <br/>   <br/>  [2] Butz, Markus, and Arjen van Ooyen. "A simple rule for dendritic spine  <br/>  and axonal bouton formation can account for cortical reorganization after  <br/>  focal retinal lesions." PLoS Comput Biol 9.10 (2013): e1003259.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Mikael Naveau  <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>July 2013  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/SynapticElement.html">SynapticElement</a></li>
+    <li><a href="../cc/SPManager.html">SPManager</a></li>
+    <li><a href="../cc/SPBuilder.html">SPBuilder</a></li>
+    <li><a href="../cc/GrowthCurveLinear.html">GrowthCurveLinear</a></li>
+    <li><a href="../cc/GrowthCurveGaussian.html">GrowthCurveGaussian</a></li>
+</ul>
+<b>Source:</b><pre>../../nestkernel/growth_curve.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

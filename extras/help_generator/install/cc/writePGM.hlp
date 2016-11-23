@@ -1,0 +1,34 @@
+Name: writePGM - write out a grey-level image in PGM format 
+ 
+ Synopsis:string arraytype	 int	 int	 int	 writePGM 
+ fname  [grayvals] maxval height width writePGM 
+ 
+ Description:This writes an array of integers as grey-level image 
+ using the PGM (PortableGrayMap) format. 
+ On Unix systems, man 5 pgm should give you a description of 
+ the PGM image format. 
+ 
+ Parameters:fname		 - name of file to be written 
+ [grayvals] - one-dim. array containing the pixel gray values, 
+ starting at the upper left corner and continuing 
+ rowwise (normal english reading order). 
+ maxval		 - the maximum gray value 
+ width		 - width of image in pixels (no. of columns) 
+ height		 - height of image (no. of rows) 
+ 
+ Remarks:So far, only the plain ASCII variant of the PGM Format is 
+ used. In the PGM manual, this is referred to as "P2". 
+ 
+ Examples:(FancyImage.pgm) [grayvals] 255 24 16 writePGM 
+ This writes an image named FancyImage.pgm with the gray values 
+ from the array, having 16 columns and 24 rows. 
+ 
+ Author:Schmuker, Gewaltig 
+ 
+ FirstVersion:9.1.2003 
+ 
+ SeeAlso:readPGM
+
+Source:
+
+../../sli/sligraphics.cc

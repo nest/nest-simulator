@@ -1,0 +1,84 @@
+Name: pipe - Open up a pipe
+
+Synopsis:
+
+pipe -> read_end write_end 
+Description:  The pipe function creates a pipe, placing a filestream 
+for the read end and a filestream for the write end of 
+the pipe on the stack. 
+Data can be written to "write_end" and read from "read_end". 
+A read on "read_end" accesses the data written to "write_end" 
+on a first-in-first-out basis.
+
+
+Examples:
+
+pipe 
+(Hello Pipe) <- std::endl 
+pop 
+getline =
+
+
+Parameters:
+
+In : -none- 
+Out: read_end(ifstream): 
+A filestream open for reading, connected to the read- 
+end of the newly created pipe. 
+write_end(ofstream): 
+A filestream open for writing, connected to the write- 
+end of the newly created pipe.
+
+
+Bugs:
+
+-
+
+
+Diagnostics:
+
+If a system-error occurs, a code is stored in "sys_errno" 
+(contained in errordict) to identify the error, and 
+"sys_errname" is set to the error message. Then a 
+"SystemError" is raised.
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+May 02 1999 
+Remarks:  Description-text taken mainly from "POSIX Programmer's Guide", 
+D. Lewine, O'Reilly & Assoc. Inc. 
+The O_NONBLOCK and FD_CLOEXEC flags are clear on the 
+file descriptors of both streams. 
+Opening a pipe in a single process is next to useless (however, 
+it might be used for buffering data). The usual application 
+is for inter-process-communication: A pipe is opened, and fork 
+is called. The child process inherits both filestreams from 
+the parent. The child will then close one of the streams (say: 
+the read-end), the parent will close the other (say: the write- 
+end). Data may then be transfered from the child to the parent 
+process through the pipe. 
+If the child is to "sysexec" a UNIX command, it may duplicate 
+the pipes's write-end onto its standard "cout" stream using "dup2", 
+thus directing any data written to "cout" into the pipe. It then 
+calles "sysexec". The parent process is thus enabled to read 
+the UNIX-command's standard output from the pipe. 
+Pipes are unidirectional communication channels. 
+For bidirectional communication, two separate pipes must be opened. 
+The "spawn" command provides this functionality.
+
+
+SeeAlso:
+
+dup2
+available
+spawn
+
+Source:
+
+../../sli/processes.h

@@ -1,0 +1,20 @@
+Name: npop - Pop n object off the stack
+
+Synopsis:
+
+obj_k ... obj_n+1 ojb_n ... obj_0 n pop -> obj_k ... obj_n
+
+
+Diagnostics:
+
+Raises StackUnderflow error if the stack contains less 
+than n elements.
+
+
+SeeAlso:
+
+pop
+
+Source:
+
+../../sli/slistack.cc

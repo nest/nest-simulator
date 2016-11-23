@@ -1,0 +1,73 @@
+Name: variant - return specific variant of function
+
+Synopsis:
+
+funcname signature variant -> anytype  true 
+false
+
+
+Examples:
+
+/add [/doubletype /doubletype] variant pop --> /add_dd load 
+/add [/doubletype /stringtype] variant	 --> false 
+/add [/stringtype /doubletype] variant	 --> false 
+/ArrayQ [/anytype]	 variant pop --> false 
+/f {(hello) ==} def 
+/f [/integertype] variant pop --> {(hello) ==}
+
+
+Description:
+
+The operator variant checks whether a variant of the function 
+matching a particular signature is available. If so, this variant and 
+the value true are returned. If not, the return value is false. If 
+the literal specifying the function does not refer to a trie the 
+function has only a single variant and no information about the 
+signature. In this case, the unique variant is returned.  The 
+operator variant can be used to optimize SLI code for speed in 
+situations where it is guaranteed that a particular variant of a 
+function is needed. Here, replacing the overloaded function by the 
+specific variant removes the overhead of type checking. A typical 
+situation in which the data types of the arguments are known is a 
+function call inside a function with a specified signature (see 
+example below). Another situation is machine generated SLI code where 
+the machine, for example a compiler, is requested to emit optimized 
+code restricted to particular data type. 
+/incr [/doubletype] 
+{ 
+1.0 add 
+} 
+<< /add /add [/doubletype /doubletype] variant pop >> Inline 
+def
+
+
+Parameters:
+
+funcname, is a literal specifying the name of the function. 
+Usually the literal refers to a trie with several 
+variants. 
+signature, is an array of literals defining the signature 
+of the variant searched for
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+090201
+
+
+SeeAlso:
+
+Inline
+CompileMath
+def
+addtotrie
+cva
+
+Source:
+
+../../lib/sli/typeinit.sli

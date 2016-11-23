@@ -1,0 +1,55 @@
+Name: CGConnect - Establish connections contained in a ConnectionGenerator
+
+Synopsis:
+
+cg sources targets	 -> 	- 
+cg sources targets params	 -> 	- 
+cg sources targets	 syn_model -> 	- 
+cg sources targets params syn_model -> 	-
+
+
+Description:
+
+CGConnect connects a source and a target population according to 
+the rules defined in the given connection generator. params is an 
+optional dictionary, that maps the names /weight and/or /delay to 
+their integer index in the value set in the connection generator. 
+If not specified, the synapse model is taken from the Options of 
+the Connect command.
+
+
+Parameters:
+
+cg		- ConnectionGenerator 
+sources  	- The sources. Either a subnet or a list of nodes 
+targets  	- The targets. Either a subnet or a list of nodes 
+params  	- A dict specifying the index of /weight and /delay 
+in the value set of the connection generator 
+syn_model	- A literal specifying te synapse model to be used
+
+
+Author:
+
+Jochen Martin Eppler
+
+
+FirstVersion:
+
+August 2012
+
+
+SeeAlso:
+
+Connect
+synapsedict
+GetOptions
+CGParse
+CGParseFile
+CGSelectImplementation
+cgstart
+cgsetmask
+cgnext
+
+Source:
+
+../../conngen/conngenmodule.cpp

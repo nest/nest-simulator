@@ -1,0 +1,25 @@
+Name: testsuite::test_recorde_close_flush - test {close,flush}_after_simulate flags for recording devices
+
+Description:
+
+Two voltmeters record from an iaf_neuron driven by an intrisic 
+current. One voltmeter has close_after_simulate set, the other 
+flush_after_simulate. After simulating for 100ms, the two files must 
+have identical content. After simulating for another 100ms, the 
+flushed file must contain data for 200ms, the "closed" file for the 
+second 200ms only.
+
+
+Author:
+
+Plesser
+
+
+FirstVersion:
+
+August 2008
+
+
+Source:
+
+../../testsuite/unittests/test_recorder_close_flush.sli

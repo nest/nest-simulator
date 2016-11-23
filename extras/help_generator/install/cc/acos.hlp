@@ -1,0 +1,32 @@
+Name: acos - Calculate the arc cosine of double number. 
+ Synopsis:  double acos -> double
+
+Examples:
+
+1.0 acos -> 0.0
+
+
+Description:
+
+Alternatives: Function acos_d (undocumented) 
+-> behaviour and synopsis are the same.
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+090225
+
+
+SeeAlso:
+
+cos
+asin
+
+Source:
+
+../../sli/slimath.cc

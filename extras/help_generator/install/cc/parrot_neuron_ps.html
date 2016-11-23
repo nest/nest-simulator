@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: parrot_neuron_ps</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: parrot_neuron_ps</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>parrot_neuron_ps - Neuron that repeats incoming spikes handling  <br/>  precise spike times.</pre>
+<b>Description: </b>
+<pre> <br/>  The parrot neuron simply emits one spike for every incoming spike.  <br/>  An important application is to provide identical poisson spike  <br/>  trains to a group of neurons. The poisson_generator sends a different  <br/>  spike train to each of its target neurons. By connecting one  <br/>  poisson_generator to a parrot_neuron and then that parrot_neuron to  <br/>  a group of neurons, all target neurons will receive the same poisson  <br/>  spike train.  <br/>   <br/>  
+</pre>
+<b>Receives: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>Sends: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>   <br/> 	- Weights on connection to the parrot_neuron are ignored.  <br/> 	- Weights on connections from the parrot_neuron are handled as usual.  <br/> 	- Delays are honored on incoming and outgoing connections.  <br/>   <br/>  Only spikes arriving on connections to port 0 will be repeated.  <br/>  Connections onto port 1 will be accepted, but spikes incoming  <br/>  through port 1 will be ignored. This allows setting exact pre-  <br/>  and post-synaptic spike times for STDP protocols by connecting  <br/>  two parrot neurons spiking at desired times by, e.g., a  <br/>  stdp_synapse onto port 1 on the post-synaptic parrot neuron.  <br/>   <br/>  Please note that this node is capable of sending precise spike times  <br/>  to target nodes (on-grid spike time plus offset). If this node is  <br/>  connected to a spike_detector, the property "precise_times" of the  <br/>  spike_detector has to be set to true in order to record the offsets  <br/>  in addition to the on-grid spike times.  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>adapted from parrot_neuron by Kunkel 
+</pre>
+<b>Source:</b><pre>../../precise/parrot_neuron_ps.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

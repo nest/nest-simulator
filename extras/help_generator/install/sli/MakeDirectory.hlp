@@ -1,0 +1,53 @@
+Name: MakeDirectory - Create a new directory
+
+Synopsis:
+
+string MakeDirectory -> boolean
+
+
+Examples:
+
+(NewSubDir) MakeDirectory -> ./NewSubDir created
+
+
+Description:
+
+MakeDirectory creates the named subdirectory of your 
+current working directory.
+
+
+Parameters:
+
+string : Name of new subdirectory 
+boolean : A flag if operation succeded.
+
+
+Bugs:
+
+-
+
+
+Remarks:
+
+-
+
+
+Author:
+
+Hehl
+
+
+FirstVersion:
+
+Oct 12th 1999
+
+
+SeeAlso:
+
+FileNames
+MoveDirectory
+RemoveDirectory
+
+Source:
+
+../../lib/sli/filesystem.sli

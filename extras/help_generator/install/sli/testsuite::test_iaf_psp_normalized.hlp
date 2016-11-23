@@ -1,0 +1,48 @@
+Name: testsuite::test_iaf_psp_normalized - check if PSP can be normalized
+
+Synopsis:
+
+(test_iaf_psp_normalized) run -> compare response with desired outcome
+
+
+Description:
+
+The script computes the peak location of the PSP analytically for a 
+neuron model with an alpha-shaped post-synaptic current (PSC) [1]. In case 
+the GNU Scientific Library (GSL) is not present the peak location is 
+found by searching for the root of the derivative of the PSP. We then 
+compute the peak value for a PSC with unit amplitude and show how the 
+synaptic weight can be adjusted to cause a PSP of a specific 
+amplitiude. Finally, we check whether the simulation indeed generates 
+a PSP of the desired amplitude. 
+In application code the test for the availability of the GSL is not 
+necessary because NEST has a built in version of the LambertWm1 which 
+automatically replaces the GSL function if required. This removes the 
+need to specify the derivative of the function of interest, here the 
+PSP, in application code.  A further alternative is used in 
+test_lambertw where knowledge of the range of values of the 
+non-principal branch of the Lambert-W function [-1,-\infty) is 
+exploited to find the inverse of x*exp(x) by bisectioning.
+
+
+References:
+
+[1] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear 
+systems with applications to neuronal modeling. Biologial Cybernetics 
+81:381-402. 
+[2] Galassi, M., Davies, J., Theiler, J., Gough, B., Jungman, G., Booth, M., 
+& Rossi, F. (2006). GNU Scientific Library Reference Manual (2nd Ed.). 
+Network Theory Limited. 
+Author:  July 2009, Diesmann
+
+
+SeeAlso:
+
+testsuite::test_iaf_psp_peak
+testsuite::test_iaf_psp
+testsuite::test_lambertw
+LambertWm1
+
+Source:
+
+../../testsuite/unittests/test_iaf_psp_normalized.sli

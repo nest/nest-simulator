@@ -1,0 +1,44 @@
+Name: oldgetline - "old", ignorant version of getline
+
+Synopsis:
+
+istream getline -> istream string
+
+
+Description:
+
+Reads a string from the supplied stream. If an error occured 
+during the read process, an empty string is returned. 
+This function is for compatibility. Eventually, all 
+occurences of oldgetline should convert to the new, 
+more save version of getline.
+
+
+Diagnostics:
+
+NO ERRORS are raised!
+
+
+Remarks:
+
+
+
+
+Author:
+
+Marc-Oliver Gewaltig
+
+
+FirstVersion:
+
+July 9 1999
+
+
+SeeAlso:
+
+getline
+readline
+
+Source:
+
+../../lib/sli/misc_helpers.sli

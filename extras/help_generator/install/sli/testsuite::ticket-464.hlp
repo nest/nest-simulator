@@ -1,0 +1,29 @@
+Name: testsuite::ticket-464 - Ensure that UniversalDataLogger triggers assertion with frozen multimeter.
+
+Synopsis:
+
+(ticket-464) run -> NEST exits if test fails
+
+
+Description:
+
+Ensure that NEST triggers an assertion in UniversalDataLogger::record_data() instead of seg faulting 
+when a frozen multimeter is connected to a node.
+
+
+Remarks:
+
+This test has been modified (2011-02-11) to reflect the fact that NEST now protects 
+multimeter against being frozen. Thus, the first test triggers an error instead of 
+and assertion, and crash_or_die has been replaced by fail_or_die. 
+This test will only be executed if NEST has been compiled without MPI support.
+
+
+Author:
+
+Hans Ekkehard Plesser, 2010-10-04
+
+
+Source:
+
+../../testsuite/regressiontests/ticket-464.sli

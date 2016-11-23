@@ -1,0 +1,49 @@
+Name: abs - absolute value 
+ Synopsis:  value abs -> value
+
+Examples:
+
+-3 abs -> 3 
+3 abs -> 3 
+-3.456 abs -> 3.456
+
+
+Description:
+
+implemented by C/C++ 
+long   labs(long) and 
+double fabs(double) 
+Alternatives: Functions abs_i for integers, abs_d for doubles 
+(SeeAlso) -> behaviour and synopsis are the same.
+
+
+Remarks:
+
+If you are not sure, if the value is of type double or 
+integer, use abs. 
+If e.g. abs_d gets an integer as argument, NEST will exit throwing an assertion.
+
+
+References:
+
+Stroustrup 3rd ed p 660, p 661
+
+
+Author:
+
+Diesmann, docu by Sirko Straube
+
+
+FirstVersion:
+
+27.4.1999
+
+
+SeeAlso:
+
+abs_i
+abs_d
+
+Source:
+
+../../lib/sli/typeinit.sli

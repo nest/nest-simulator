@@ -1,0 +1,19 @@
+Name: unittest::exit_test_gracefully - End test script and report success
+
+Synopsis:
+
+exit_test_gracefully ->	-
+
+
+Description:
+
+This function will terminate NEST/SLI with a return code signaling success. 
+It should be used to leave test scripts that have special prerequisites. 
+Example: 
+/unittest using 
+is_threaded_with_openmp not { exit_test_gracefully } if
+
+
+Source:
+
+../../lib/sli/unittest.sli

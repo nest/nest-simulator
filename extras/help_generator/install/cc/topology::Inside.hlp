@@ -1,0 +1,18 @@
+Name: topology::Inside - test if a point is inside a mask
+
+Synopsis:
+
+point mask Inside -> bool
+
+
+Parameters:
+
+point	- array of coordinates 
+mask	- mask object 
+Returns: 
+bool	- true if the point is inside the mask
+
+
+Source:
+
+../../topology/topologymodule.cpp

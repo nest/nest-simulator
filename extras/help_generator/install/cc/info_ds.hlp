@@ -1,0 +1,24 @@
+Name: info_ds - print contents of all dictionaries on the dicitonary stack to 
+ stream
+
+Synopsis:
+
+ostream info_ds ->	-
+
+
+Description:
+
+info_ds prints the contents of all dictionaries on the dictionary 
+stack to the supplied ostream. Dictionaries are printed from 
+bottom to top.
+
+
+Parameters:
+
+ostream	- a valid output stream 
+SeeAlso:  dictstack, info, topinfo_d, who, whos
+
+
+Source:
+
+../../sli/slidict.cc

@@ -1,0 +1,12 @@
+Name: tsodyks2_synapse_hpc - Variant of tsodyks2_synapse with low memory 
+ consumption.
+
+SeeAlso:
+
+synapsedict
+tsodyks2_synapse
+static_synapse_hpc
+
+Source:
+
+../../models/modelsmodule.cpp

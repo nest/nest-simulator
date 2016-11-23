@@ -1,0 +1,72 @@
+Name: edit - Open a file in an external editor
+
+Synopsis:
+
+(filename) edit ->	-
+
+
+Examples:
+
+(helloworld.sli) edit
+
+
+Description:
+
+Opens the file specified by filename.
+
+
+Parameters:
+
+The name of a file to be edited (or created, if non-existent).
+
+
+Options:
+
+/command	- UNIX command to edit a file (default: see below) 
+/command can be either false or a string. 
+If /command is set to false, "edit" will issue a message that informs 
+about how to set the editor 
+If it is set to the name of a UNIX program, "edit" will execute 
+this program as a child process, passing the name of the 
+file as argument. 
+/command defaults to the contents of the $EDITOR environment 
+variable. If this variable is not set, it defaults to false. 
+/wait	- whether to wait for the UNIX program to finish. (default: true) 
+If /wait is set to true, the "edit" command will not return until 
+the UNIX process is terminated. Use this setting for all editors 
+that use the terminal exclusively. 
+If /wait is set to false, "edit" will return immediately after 
+creating the child process. Use this setting for all editors that 
+open up their own window. 
+The value of /wait is ignored, if /command is set to false.
+
+
+Bugs:
+
+
+
+
+Remarks:
+
+The location of the file is only specified by the parameter; 
+SLISearchPath is not scanned as e.g. in 'run'.
+
+
+Author:
+
+Schrader
+
+
+FirstVersion:
+
+
+
+
+SeeAlso:
+
+page
+run
+
+Source:
+
+../../lib/sli/helpinit.sli

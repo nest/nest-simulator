@@ -1,0 +1,66 @@
+Name: regex_find_sf - Check if a regex is included in a stream
+
+Synopsis:
+
+string istream -> boolean
+
+
+Examples:
+
+See examples of regex_find, exchange second string with a file.
+
+
+Description:
+
+Takes the first argument. Converts to regex 
+and calls regexec to find out if this regex matches the 
+stream. Reports success/failure in a boolean true/false.
+
+
+Parameters:
+
+in: first argument  : a string which will be converted 
+to a regex by a regcomp call. 
+second argument : an istream where this 
+regex should be matched. 
+out: true/false telling if there is/is no match.
+
+
+Bugs:
+
+-
+
+
+Diagnostics:
+
+Will raise an /InvalidRegexError if regcomp cannot 
+compile the regex. Try immidiate 
+:regerror = to find out why!
+
+
+Remarks:
+
+Does _not_ return any information about the matched 
+expression more than matched/not matched; use lower 
+level commands regcomp, regexec if in need!
+
+
+Author:
+
+Hehl
+
+
+FirstVersion:
+
+1.10.99
+
+
+SeeAlso:
+
+regexec
+regcomp
+regex_replace
+
+Source:
+
+../../lib/sli/regexp.sli

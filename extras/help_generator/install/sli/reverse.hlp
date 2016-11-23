@@ -1,0 +1,59 @@
+Name: reverse - Reverse a string or array.
+
+Synopsis:
+
+MyStr reverse -> rtSyM 
+MyArr reverse -> rrAyM
+
+
+Examples:
+
+(Madam I'm Adam) reverse -> (madA m'I madaM) 
+(Lagerregal)	 reverse -> (lagerregaL) 
+(Aide-moi o media) reverse -> (aidem  o iom-ediA) 
+[1 2 3] reverse -> [3 2 1]
+
+
+Description:
+
+Reverse a string or array.
+
+
+Parameters:
+
+In : MyStr(string)/MyArr(array) 
+Out: rtSyM(string)/rrAyM(array): The reverse of MyStr/MyArr
+
+
+Bugs:
+
+
+
+
+Remarks:
+
+There is no "forallindexed" for strings. why? 
+Apr 13 1999: 
+-Name changed from "revert" to "reverse" on Apr 13 1999.- 
+-Name "revert" will still be valid, but will issue a warning message.- 
+String-Handling has been changed to a call to the C++-coded function "Revert". 
+The command "Reverse" can also be used for arrays.
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+Apr 11 1999
+
+
+SeeAlso:
+
+trim
+
+Source:
+
+../../lib/sli/misc_helpers.sli

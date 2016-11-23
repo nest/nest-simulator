@@ -1,0 +1,21 @@
+Name: typeinfo - return the type of an object
+
+Synopsis:
+
+any type -> any literal
+
+
+Description:
+
+typeinfo returns a literal name, which represents 
+the type of the argument. The argument is left on the stack.
+
+
+SeeAlso:
+
+typestack
+type
+
+Source:
+
+../../sli/slicontrol.cc

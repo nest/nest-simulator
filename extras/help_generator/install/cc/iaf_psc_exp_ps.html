@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: iaf_psc_exp_ps</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: iaf_psc_exp_ps</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>iaf_psc_exp_ps - Leaky integrate-and-fire neuron  <br/>  with exponential postsynaptic currents; canoncial implementation;  <br/>  bisectioning method for approximation of threshold crossing.</pre>
+<b>Description: </b>
+<pre> <br/>  iaf_psc_exp_ps is the "canonical" implementation of the leaky  <br/>  integrate-and-fire model neuron with exponential postsynaptic currents  <br/>  that uses the bisectioning method to approximate the timing of a threshold  <br/>  crossing [1,2]. This is the most exact implementation available.  <br/>   <br/>  The canonical implementation handles neuronal dynamics in a locally  <br/>  event-based manner with in coarse time grid defined by the minimum  <br/>  delay in the network, see [1,2]. Incoming spikes are applied at the  <br/>  precise moment of their arrival, while the precise time of outgoing  <br/>  spikes is determined by bisectioning once a threshold crossing has  <br/>  been detected. Return from refractoriness occurs precisely at spike  <br/>  time plus refractory period.  <br/>   <br/>  This implementation is more complex than the plain iaf_psc_exp  <br/>  neuron, but achieves much higher precision. In particular, it does not  <br/>  suffer any binning of spike times to grid points. Depending on your  <br/>  application, the canonical application with bisectioning may provide  <br/>  superior overall performance given an accuracy goal; see [1,2] for  <br/>  details. Subthreshold dynamics are integrated using exact integration  <br/>  between events [3].  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  The following parameters can be set in the status dictionary.  <br/>  E_L	 double	- Resting membrane potential in mV.  <br/>  C_m	 double	- Capacitance of the membrane in pF.  <br/>  tau_m	 double	- Membrane time constant in ms.  <br/>  tau_syn_ex   double	- Excitatory synaptic time constant in ms.  <br/>  tau_syn_in   double	- Inhibitory synaptic time constant in ms.  <br/>  t_ref	 double	- Duration of refractory period in ms.  <br/>  V_th	 double	- Spike threshold in mV.  <br/>  I_e	 double	- Constant input current in pA.  <br/>  V_min	 double	- Absolute lower value for the membrane potential in mV.  <br/>  V_reset	 double	- Reset value for the membrane potential in mV.  <br/>   <br/>  
+</pre>
+<b>Receives: </b>
+<pre>SpikeEvent, CurrentEvent, DataLoggingRequest  <br/>   <br/>  
+</pre>
+<b>Sends: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/>  If tau_m is very close to tau_syn_ex or tau_syn_in, the model  <br/>  will numerically behave as if tau_m is equal to tau_syn_ex or  <br/>  tau_syn_in, respectively, to avoid numerical instabilities.  <br/>  For details, please see IAF_Neruons_Singularity.ipynb in the  <br/>  NEST source code (docs/model_details).  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>  [1] Morrison A, Straube S, Plesser HE & Diesmann M (2007) Exact subthreshold  <br/>  integration with continuous spike times in discrete time neural network  <br/>  simulations. Neural Comput 19, 47-79  <br/>  [2] Hanuschkin A, Kunkel S, Helias M, Morrison A and Diesmann M (2010) A  <br/>  general and efficient method for incorporating precise spike times in  <br/>  globally timedriven simulations. Front Neuroinform 4:113  <br/>  [3] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear  <br/>  systems with applications to neuronal modeling. Biol Cybern 81:381-402  <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>Kunkel  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/iaf_psc_exp.html">iaf_psc_exp</a></li>
+    <li><a href="../cc/iaf_psc_alpha_canon.html">iaf_psc_alpha_canon</a></li>
+</ul>
+<b>Source:</b><pre>../../precise/iaf_psc_exp_ps.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

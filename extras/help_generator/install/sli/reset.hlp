@@ -1,0 +1,16 @@
+Name: reset - Reset the SLI interpreter
+
+Description:
+
+reset re-initializes most of the SLI interpreter by clearing the operand stack, the dictionary stack, 
+and the userdict. reset also clears the error state. 
+Non-standard symbols and data defined in any of the other dictionaries, such as the statusdict or systemdict remain unchanged.
+
+
+SeeAlso:
+
+ResetKernel
+
+Source:
+
+../../lib/sli/sli-init.sli

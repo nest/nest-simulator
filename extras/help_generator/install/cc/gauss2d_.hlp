@@ -1,0 +1,27 @@
+Name: gauss2d_ - Return 2D array with Gauss patch.
+
+Synopsis:
+
+nr nc xmin xmax ymin ymax phi sigma gamma
+
+
+Description:
+
+Returns an nr by nc matrix with a Gauss patch, computed over the 
+argument range of [xmin,xmax] by [ymin,ymax]. 
+This function is the low level variant of the more user-friendly 
+GaussPatch.
+
+
+Author:
+
+Marc-Oliver Gewaltig
+
+
+SeeAlso:
+
+arraylib::GaussPatch
+
+Source:
+
+../../sli/sliarray.cc

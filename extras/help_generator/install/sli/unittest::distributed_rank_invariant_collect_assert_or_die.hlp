@@ -1,0 +1,47 @@
+Name: unittest::distributed_rank_invariant_collect_assert_or_die - Checks whether all ranks produce equal results, independent of the number of MPI processes
+
+Synopsis:
+
+array proc distributed_rank_invariant_collect_assert_or_die ->	-
+
+
+Description:
+
+The array specifies a list of numbers of 
+jobs. distributed_rank_invariant_collect_assert_or_die executes the 
+procedure specified as the second argument in parallel for all of the 
+numbers of jobs given in the arrays. This means that 
+distributed_rank_invariant_collect_assert_or_die carries out as many 
+distributed simulations as there are entries in the array. 
+In each of the simulations all jobs are expected to return a value on 
+the stack. The order in which the jobs are completed is of no 
+importance.  After completion of all simulations 
+distributed_rank_invariant_collect_assert_or_die requires that the 
+contents of the results of all ranks are identical, independent of 
+the number of processes. 
+See distributed_collect_assert_or_die for further documentation and 
+implementation details and distributed_process_invariant_collect_assert_or_die for 
+a version requiring identical output from each rank.
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+100925
+
+
+SeeAlso:
+
+unittest::distributed_assert_or_die
+unittest::distributed_collect_assert_or_die
+nest_indirect
+unittest::mpirun_self
+unittest::assert_or_die
+
+Source:
+
+../../lib/sli/unittest.sli

@@ -1,0 +1,27 @@
+Name: testsuite::ticket-787 - Ensure that all commands raise errors instead of crashing
+
+Synopsis:
+
+(ticket-787) run -> NEST fails if test fails
+
+
+Description:
+
+This ticket executes all tries, procedures and functions in systemdict. 
+Candidates with names beginning with :, ending with _ or explicitly 
+excluded are not tested, since they are internals that need not implement 
+complete error checking. 
+As long as they all either pass or raise proper errors, the test will pass. 
+Remark: 
+	- This test will only run in serial mode, as it needs to spawn subprocesses. 
+	- Functions defined in other dictionaries that systemdict are not tested.
+
+
+Author:
+
+Hans Ekkehard Plesser, 2014-11-26
+
+
+Source:
+
+../../testsuite/regressiontests/ticket-787.sli

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: RecordingDevice</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: RecordingDevice</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>RecordingDevice - Common properties of all recording devices.</pre>
+<b>Description: </b>
+<pre> <br/>   <br/>  Recording devices are used to measure properties of or signals emitted  <br/>  by network nodes, e.g., using a multimeter, voltmeter or a spike detector.  <br/>   <br/>  Recording devices can collect data in memory, display it on the terminal  <br/>  output or write it to file in any combination. The output format can be  <br/>  controlled by device parameters as discussed below.  <br/>   <br/>  Recording devices can be subdivided into two groups: collectors and samplers.  <br/> 	- Collectors collect events sent to them; the spike detector is the  <br/>  archetypical example. Nodes are connected to collectors and the collector  <br/>  then collects all spikes emitted by the nodes connected to it and records  <br/>  them.  <br/> 	- Samplers actively interrogate their targets at given time intervals  <br/>  (default: 1ms), and record the data they obtain. This means that the sampler  <br/>  must be connected to the node (not the node to the sampler), and that the  <br/>  node must support the particular type of sampling; see device specific  <br/>  documentation for details.  <br/>   <br/>  Recording devices share the start, stop, and origin parameters global to  <br/>  devices. Start and stop have the following meaning for stimulating devices  <br/>  (origin is just a global offset):  <br/> 	- Collectors collect all events with timestamps T that fulfill  <br/>  start < T <= stop.  <br/>  Note that events with timestamp T == start are NOT recorded.  <br/> 	- Sampling devices sample at times t = nh with  <br/>  start < t <= stop  <br/>  (t-start) mod interval == 0  <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>  The following parameters are shared with all devices:  <br/>  /start 	- Activation time, relative to origin.  <br/>  /stop  	- Inactivation time, relative to origin.  <br/>  /origin	- Reference time for start and stop.  <br/>   <br/>  The following parameter is only relevant for sampling devices:  <br/>  /interval	- Sampling interval in ms (default: 1ms).  <br/>   <br/>  The following parameters control where output is sent/data collected:  <br/>  /record_to	- An array containing any combination of /file, /memory, /screen,  <br/>  indicating whether to write to file, record in memory or write  <br/>  to the console window. An empty array turns all recording of  <br/>  individual events off, only an event count is kept. You can also  <br/>  pass strings (file), (memory), (screen), mainly for compatibility  <br/>  with Python.  <br/>   <br/>  The name of the output file is  <br/>  data_path/data_prefix(label|model_name)-gid-vp.file_extension  <br/>   <br/>  See /label and /file_extension for how to change the name.  <br/>  /data_prefix is changed in the root node. If you change any part  <br/>  of the name, an open file will be closed and a new file opened.  <br/>   <br/>  To close the file, pass a /record_to array without /file, or pass  <br/>  /to_file false. If you later turn recording to file on again, the  <br/>  file will be overwritten, unless you have changed data_prefix,  <br/>  label, or file_extension.  <br/>   <br/>  /to_file  	- If true, turn on recording to file. Similar to /record_to  <br/>  [/file], but does not affect settings for recording to memory and  <br/>  screen.  <br/>  /to_screen	- If true, turn on recording to screen. Similar to /record_to  <br/>  [/screen], but does not affect settings for recording to memory  <br/>  and file.  <br/>  /to_memory	- If true, turn on recording to memory Similar to /record_to  <br/>  [/memory], but does not affect settings for recording to file and  <br/>  screen.  <br/>   <br/>  /filenames	- Array containing the filenames where data is recorded to. This  <br/>  array has one entry per local thread and is only available if  <br/>  /to_file is set to true, or if /record_to contains /to_file.  <br/>   <br/>  /label		- String specifying an arbitrary label for the device. It is used  <br/>  instead of model_name in the output file name.  <br/>  /file_extension	- String specifying the file name extension, without leading  <br/>  dot. The default depends on the specific device.  <br/>  /close_after_simulate	- Close output stream before Simulate returns. If set to  <br/>  false, any output streams will remain open when  <br/>  Simulate returns. (Default: false).  <br/>  /flush_after_simulate	- Flush output stream before Simulate returns. If set to  <br/>  false, any output streams will be in an undefined  <br/>  state when Simulate returns. (Default: true).  <br/>  /flush_records	- Flush output stream whenever new data has been written to the  <br/>  stream. This may impede performance (Default: false).  <br/>  /close_on_reset	- Close output file stream upon ResetNetwork. Upon the next  <br/>  call to Simulate, the file is reopened, overwriting its  <br/>  contents. If set to false, the file will remain open after  <br/>  ResetNetwork, so you can record continuously. NB:  <br/>  the file is always closed upon ResetKernel. (Default: true).  <br/>   <br/>  The following parameters control how output is formatted:  <br/>  /withtime		- boolean value which specifies whether the network time should  <br/>  be recorded (default: true).  <br/>  /withgid		- boolean value which specifies whether the global id of the  <br/>  observed node(s) should be recorded (default: false).  <br/>  /withweight  	- boolean value which specifies whether the weight of the event  <br/>  should be recorded (default: false).  <br/>  /time_in_steps	- boolean value which specifies whether to print time in steps,  <br/>  i.e., multiples of the resolution, rather than in ms. If  <br/>  combined with /precise_times, each time is printed as a pair  <br/>  of an integer step number and a double offset < 0.  <br/>  /precise_times	- boolean value which specifies whether offsets describing the  <br/>  precise timing of a spike within a time step should be taken  <br/>  into account when computing the spike time. This is only  <br/>  useful when recording from neurons that can emit spikes  <br/>  off-grid (see module precise). Times are given in  <br/>  milliseconds. If /time_in_steps is true, times are given as  <br/>  steps and negative offset.  <br/>  /scientific  	- if set to true, doubles are written in scientific format,  <br/>  otherwise in fixed format; affects file output only, not  <br/>  screen output (default: false)  <br/>  /precision		- number of digits to use in output of doubles to file  <br/>  (default: 3)  <br/>  /binary		- if set to true, data is written in binary mode to files  <br/>  instead of ASCII. This setting affects file output only, not  <br/>  screen output (default: false)  <br/>  /fbuffer_size 	- the size of the buffer to use for writing to files. The  <br/>  default size is determined by the implementation of the C++  <br/>  standard library. To obtain an unbuffered file stream, use a  <br/>  buffer size of 0.  <br/>   <br/>  Data recorded in memory is available through the following parameter:  <br/>  /n_events		- Number of events collected or sampled. n_events can be set to  <br/>  0, but no other value. Setting n_events to 0 will delete all  <br/>  spikes recorded in memory. n_events will count events even  <br/>  when not recording to memory.  <br/>  /events		- Dictionary with elements /senders (sender GID, only if  <br/>  /withgid or /withpath are true), /times (spike times in ms or  <br/>  steps, depending on /time_in_steps; only if /withtime is  <br/>  true) and /offsets (only if /time_in_steps, /precise_times  <br/>  and /withtime are true). All data stored in memory is erased  <br/>  when /n_events is set to 0.  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre> <br/> 	- Recording devices can only reliably record data generated during the  <br/>  previous min_delay interval. This means that in order to ensure consistent  <br/>  results, you should always set a stop time for a recording device that is at  <br/>  least one min_delay before the end of the simulation time.  <br/> 	- By default, devices record to memory. If you want to record to file, it may  <br/>  be a good idea to turn off recording to memory, to avoid that you computer's  <br/>  memory fills up with gigabytes of data:  <br/>  << /to_file true /to_memory false >>.  <br/> 	- Events are not necessarily recorded in chronological order.  <br/> 	- The device will not open an existing file, since that would erase the  <br/>  existing data in the file. If you want existing files to be overwritten  <br/>  automatically, you must set /overwrite_files in the root node.  <br/>   <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/Device.html">Device</a></li>
+    <li><a href="../cc/StimulatingDevice.html">StimulatingDevice</a></li>
+</ul>
+<b>Source:</b><pre>../../nestkernel/recording_device.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

@@ -1,0 +1,74 @@
+Name: trim - Delete leading/trailing elements in a container.
+
+Synopsis:
+
+MyStr Character Flag={0|1|2} trim -> TrimmedStr 
+MyArr Element   Flag={0|1|2} trim -> TrimmedArr
+
+
+Examples:
+
+(--hello-you---) (-) 0 trim -> (hello-you---) 
+(--hello-you---) (-) 1 trim -> (--hello-you) 
+(--hello-you---) (-) 2 trim -> (hello-you)
+
+
+Description:
+
+The trim function returns a copy of MyStr (MyArr) with 
+leading and/or trailing Characters (Elements) removed.
+
+
+Parameters:
+
+In : MyStr(string): The String to be strimmed 
+MyArr(array): The array to be trimmed 
+Optional In: Character(string): The character to remove 
+Element(any)   : The element to remove 
+Flag(int) : A value that controls the action 
+of trim. If Flag is zero, 
+trailing elements are removed. 
+Leading elements are removed if it is 
+equal to 1. Both are removed if it is 
+equal to 2. 
+Out: TrimmedStr(string)/TrimmedArr(array): 
+a copy of MyStr (MyArr) with 
+leading and/or trailing Characters (Elements) removed.
+
+
+Bugs:
+
+array-type-trie doesn't work (why?)
+
+
+Remarks:
+
+Inspired by IDL's STRTRIM-Function. 
+If Flag doesn't equal 0, 1 or 2, it defaults to 0 and 
+a warning message is issued 
+If trim is called on an empty container, a debugging message is issued 
+Set shutup-level to hide messages! (see shutup) 
+Procedure: a. Flag=0: Scan string for first non-occurance of character, 
+then delete string up to this position. 
+b. Flag=1 executes a. on the reversed string 
+c. Flag=3 executes a. and b.
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+Apr 10 1999
+
+
+SeeAlso:
+
+reverse
+message
+
+Source:
+
+../../lib/sli/misc_helpers.sli

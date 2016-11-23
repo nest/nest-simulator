@@ -1,0 +1,28 @@
+Name: testsuite::test_rng_seeds - test if setting and getting of the rng seeds works
+
+Synopsis:
+
+(test_rng_seeds) run -> dies if assertion fails
+
+
+Description:
+
+This script checks for different numbers of threads if the seeds are 
+consistently set for all threads. This script can be run using a 
+single process. However, to test all aspects of rng seeding, it should 
+be run via mpirun and different numbers of processes.
+
+
+Author:
+
+Eppler
+
+
+FirstVersion:
+
+October 2008
+
+
+Source:
+
+../../testsuite/unittests/test_rng_seeds.sli

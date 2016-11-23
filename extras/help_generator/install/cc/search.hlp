@@ -1,0 +1,22 @@
+Name: search - Search for a sequence in an array or string.
+
+Synopsis:
+
+(string) (seek) search -> (post) (match) (pre) true 
+-> (string) false 
+[array] [seek]  search -> [post] [match] [pre] true 
+-> [array] false
+
+
+Examples:
+
+(hamburger) (burg) search -> true (ham) (burg) (er)
+
+
+SeeAlso:
+
+searchif
+
+Source:
+
+../../sli/slidata.cc

@@ -1,0 +1,88 @@
+Name: iaf_psc_alpha_canon - Leaky integrate-and-fire neuron 
+ with alpha-shape postsynaptic currents; canoncial implementation.
+
+Description:
+
+iaf_psc_alpha_canon is the "canonical" implementatoin of the leaky 
+integrate-and-fire model neuron with alpha-shaped postsynaptic 
+currents in the sense of [1].  This is the most exact implementation 
+available. 
+PSCs are normalized to an amplitude of 1pA. 
+The canonical implementation handles neuronal dynamics in a locally 
+event-based manner with in coarse time grid defined by the minimum 
+delay in the network, see [1]. Incoming spikes are applied at the 
+precise moment of their arrival, while the precise time of outgoing 
+spikes is determined by interpolation once a threshold crossing has 
+been detected. Return from refractoriness occurs precisly at spike 
+time plus refractory period. 
+This implementation is more complex than the plain iaf_psc_alpha 
+neuron, but achieves much higher precision. In particular, it does not 
+suffer any binning of spike times to grid points. Depending on your 
+application, the canonical application may provide superior overall 
+performance given an accuracy goal; see [1] for details.  Subthreshold 
+dynamics are integrated using exact integration between events [2].
+
+
+Parameters:
+
+The following parameters can be set in the status dictionary. 
+V_m	 double	- Membrane potential in mV 
+E_L	 double	- Resting membrane potential in mV. 
+V_min	 double	- Absolute lower value for the membrane potential. 
+C_m	 double	- Capacity of the membrane in pF 
+tau_m	 double	- Membrane time constant in ms. 
+t_ref	 double	- Duration of refractory period in ms. 
+V_th	 double	- Spike threshold in mV. 
+V_reset	 double	- Reset potential of the membrane in mV. 
+tau_syn	 double	- Rise time of the synaptic alpha function in ms. 
+I_e	 double	- Constant external input current in pA. 
+Interpol_Order  int	- Interpolation order for spike time: 
+0-none, 1-linear, 2-quadratic, 3-cubic
+
+
+Receives:
+
+SpikeEvent, CurrentEvent, DataLoggingRequest
+
+
+Sends:
+
+SpikeEvent
+
+
+Remarks:
+
+If tau_m is very close to tau_syn_ex or tau_syn_in, the model 
+will numerically behave as if tau_m is equal to tau_syn_ex or 
+tau_syn_in, respectively, to avoid numerical instabilities. 
+For details, please see IAF_Neruons_Singularity.ipynb in 
+the NEST source code (docs/model_details).
+
+
+References:
+
+[1] Morrison A, Straube S, Plesser H E, & Diesmann M (2006) Exact Subthreshold 
+Integration with Continuous Spike Times in Discrete Time Neural Network 
+Simulations. To appear in Neural Computation. 
+[2] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear 
+systems with applications to neuronal modeling. Biologial Cybernetics 
+81:381-402. 
+[3] Hanuschkin A, Kunkel S, Helias M, Morrison A & Diesmann M (2010) 
+A general and efficient method for incorporating exact spike times in 
+globally time-driven simulations Front Neuroinformatics, 4:113
+
+
+Author:
+
+Diesmann, Eppler, Morrison, Plesser, Straube
+
+
+SeeAlso:
+
+iaf_psc_alpha
+iaf_psc_alpha_presc
+iaf_psc_exp_ps
+
+Source:
+
+../../precise/iaf_psc_alpha_canon.h

@@ -1,0 +1,29 @@
+Name: osstream - Create a string-stream object.
+
+Synopsis:
+
+osstream -> osstream-handle true 
+-> false
+
+
+Description:
+
+osstream creates a stream object which can later be turned into a 
+string. If creation of a usable string-stream object failed for any 
+reason, false is returned. Replaces obsolete ostrstream.
+
+
+Remarks:
+
+commented 6.11.2003, Diesmann
+
+
+SeeAlso:
+
+str
+ofstream
+ofsopen
+
+Source:
+
+../../sli/sli_io.cc

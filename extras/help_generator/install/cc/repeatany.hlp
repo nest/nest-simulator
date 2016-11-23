@@ -1,0 +1,20 @@
+Name: repeatany - Place any object n times on stack.
+
+Synopsis:
+
+n obj repeatany -> obj obj ... obj (n times)
+
+
+Examples:
+
+3 (foo) repeatany -> (foo) (foo) (foo)
+
+
+SeeAlso:
+
+repeat
+Table
+
+Source:
+
+../../sli/slidata.cc

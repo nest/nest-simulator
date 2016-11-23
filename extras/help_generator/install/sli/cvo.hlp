@@ -1,0 +1,40 @@
+Name: cvo - Label a dictionary for usage as an object in oo-programming 
+ Synopsis:dict cvo -> dict 
+ Parameters:The operator modfies its argument 
+ Description:In SLI dictionaries are used to represent the elements of the 
+ object oriented programming paradigm. This is natural because the key value 
+ pairs can specify functions as well as other data. Certain SLI operators like 
+ SetStatus and GetStatus take C++ objects like nodes and random number distributions 
+ as arguments but also SLI dictionaries. This enables the same algorithms to operate 
+ on C++ and SLI objects. In order to avoid confusion with dictionaries not intended 
+ to be used as an object, some operators require the dictionary to be labeld as 
+ an object. If the dictionary is not labeles an error is issued. The operator cvdict 
+ removes the label; cvd is the inverse operator of cvo.
+
+Examples:
+
+<< /c 0 /inc {/c c 1 add def} >> cvo dup  << /c 3 >> SetStatus /c get --> 3 
+{<< /c 0 /inc {/c c 1 add def} >> << /c 3 >> SetStatus} stopped 
+{3 npop true} {false} ifelse --> true 
+Remarks:The labeling is done by inserting the key /__is_object with value true. 
+The dictionary is only recognized as labeled if the key exists and its value is 
+true. However, usage of this key is considered to be an implementation detail and 
+may change in future versions of SLI. 
+Author:Diesmann
+
+
+FirstVersion:
+
+2008-08-23
+
+
+SeeAlso:
+
+cvdict
+call
+SetStatus
+GetStatus
+
+Source:
+
+../../lib/sli/oosupport.sli

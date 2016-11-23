@@ -1,0 +1,25 @@
+Name: if - conditionaly execute a procedure
+
+Synopsis:
+
+boolean {procedure} if ->	- 
+boolean   anytoken  if ->	-
+
+
+Description:
+
+if executes the supplied token if the boolean 
+is true. The supplied token usually is a procedure. 
+Alternatives: Function if_ (undocumented) 
+-> behaviour and synopsis are the same, except that no 
+warnings or error messages are thrown. 
+Examples:  1 0 gt { (1 > 0) = } if -> (1 > 0)
+
+
+SeeAlso:
+
+ifelse
+
+Source:
+
+../../sli/slicontrol.cc

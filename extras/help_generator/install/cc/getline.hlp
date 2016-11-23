@@ -1,0 +1,44 @@
+Name: getline - Read a newline terminated string from an input stream.
+
+Synopsis:
+
+istreamhandle getline -> istreamhandle string true 
+-> istreamhandle false
+
+
+Description:
+
+getline reads a line from the supplied stream. 
+If the read process was successful, a result string and 
+the boolean true are returned. 
+If an error occured while reading from the stream, only the 
+stream and boolean false is returned.
+
+
+Diagnostics:
+
+No errors are raised. If getline is applied to an 
+invalid stream, the return value is false. The return value 
+false indicates that the state of the stream is no longer 
+"good".
+
+
+Remarks:
+
+commented 26.3.1999, Diesmann
+
+
+Author:
+
+Diesmann & Gewaltig
+
+
+SeeAlso:
+
+getc
+gets
+file
+
+Source:
+
+../../sli/sli_io.cc

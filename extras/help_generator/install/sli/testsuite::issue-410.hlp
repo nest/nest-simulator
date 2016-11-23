@@ -1,0 +1,26 @@
+Name: testsuite::issue-410 - Ensure thread safety of volume transmitter
+
+Synopsis:
+
+(issue-410) run -> NEST exits if test fails
+
+
+Description:
+
+This test compares the impact of the volume transmitter 
+on a dopamine synapse using different number of threads.
+
+
+Author:
+
+Till Schumann
+
+
+FirstVersion:
+
+07/2016
+
+
+Source:
+
+../../testsuite/regressiontests/issue-410.sli

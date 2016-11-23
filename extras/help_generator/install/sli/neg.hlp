@@ -1,0 +1,35 @@
+Name: neg - reverse sign of value 
+ Synopsis:  value neg -> value
+
+Description:
+
+implemented by C/C++ 
+	- operator 
+Alternatives: Functions neg_i for integers, neg_d for doubles 
+(SeeAlso) -> behaviour and synopsis are the same.
+
+
+Remarks:
+
+This function is called CHS in HP48S and 
+related dialects.
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+29.7.1999
+
+
+SeeAlso:
+
+neg_i
+neg_d
+
+Source:
+
+../../lib/sli/typeinit.sli

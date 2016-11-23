@@ -1,0 +1,23 @@
+Name: load - Search for a key in each dictionary on the dictionary stack.
+
+Synopsis:
+
+/name load -> obj
+
+
+Description:
+
+Load tries to find an association for /name in each dictionary 
+on the dictionary stack, starting with the current (top) dictionary. 
+If an association is found, load pushes the associated value on the 
+stack. If no association is found, an UndefineName error is raised.
+
+
+SeeAlso:
+
+lookup
+def
+
+Source:
+
+../../sli/slicontrol.cc

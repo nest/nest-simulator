@@ -1,0 +1,63 @@
+Name: quit - leave the SLI interpreter, optionally return exit code
+
+Synopsis:
+
+quit   ->	- 
+exitcode quit_i ->	-
+
+
+Examples:
+
+quit	 % quit SLI with exit code statusdict/exitcode. 
+23 quit_i % quit SLI with exit code 23.
+
+
+Description:
+
+This function leaves the SLI interpreter, returning an exit code to 
+the calling shell. The first variant (quit) returns the value 
+EXIT_SUCCESS (usually 0). The second variant (quit_i) returns the 
+value given by the integer argument. All data which has not been saved 
+is lost. 
+Common exit codes and their reasons can be found in the dictionary 
+statusdict/exitcodes.
+
+
+Parameters:
+
+exitcode (integertype): exit code to return to the shell. If this 
+parameter is not given, statusdict/exitcode is used instead.
+
+
+Remarks:
+
+This command should not be mixed up with exit.
+
+
+Availability:
+
+SLI-2.0
+
+
+References:
+
+POSIX Programmer's Manual.
+
+
+Author:
+
+unknown, JM Eppler, R Kupper
+
+
+FirstVersion:
+
+long time ago
+
+
+SeeAlso:
+
+exit
+
+Source:
+
+../../sli/slicontrol.cc

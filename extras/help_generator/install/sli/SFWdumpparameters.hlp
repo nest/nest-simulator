@@ -1,0 +1,58 @@
+Name: SFWdumpparameters - Dump parameters of a SLIFunctionWrapper routine.
+
+Synopsis:
+
+SWFdumpparameters ->	-
+
+
+Examples:
+
+/myfunc [/integertype /doubletype] [/x /y] 
+{ (hello) = 
+SFW_dumpparameters 
+(hello) = 
+} SLIFunctionWrapper 
+SLI ] 1 1.0 myfunc 
+hello 
+Dumping parameters for SLIFunctionWrapper routine /myfunc 
+y = 1.000000e+00 
+x = 1 
+hello
+
+
+Description:
+
+Debugging aid for SLIFunctionWrapper. This routine can be called from 
+any routine defined using SLIFunctionWrapper. It 
+dumps all parameters and their values to the 
+standard output.
+
+
+Diagnostics:
+
+Issues a warning, if no enclosing SLIFunctionWrapper was found.
+
+
+References:
+
+[1] Ruediger Kupper, SLI library management, 
+HRI-EU Report 06/05, Honda Research Institute Europe GmbH, 2006.
+
+
+Author:
+
+R. Kupper
+
+
+FirstVersion:
+
+6-Dec-2006
+
+
+SeeAlso:
+
+SLIFunctionWrapper
+
+Source:
+
+../../lib/sli/misc_helpers.sli

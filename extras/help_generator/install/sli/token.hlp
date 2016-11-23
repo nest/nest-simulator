@@ -1,0 +1,36 @@
+Name: token - read a token from a stream or string
+
+Synopsis:
+
+string token -> post any true 
+false 
+istream token -> istream any true 
+istream false
+
+
+Examples:
+
+(1 2 hello) token -> true 1 (2 hello) 
+({1 2 add}) token -> true {1 2 add} ()
+
+
+Description:
+
+reads a token from a string or stream and 
+pushes true and extracted token plus rest-string/stream 
+on the stack (if successful).
+
+
+Author:
+
+docu by Markus Diesmann and Sirko Straube
+
+
+SeeAlso:
+
+token_s
+token_is
+
+Source:
+
+../../lib/sli/typeinit.sli

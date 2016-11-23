@@ -1,0 +1,20 @@
+Name: memory_thisjob_darwin - Reports memory usage on Darwin/Apple systems
+
+Description:
+
+memory_thisjob_darwin returns the resident memory usage of a process in Bytes.
+
+
+Availability:
+
+Processes
+
+
+Author:
+
+Tammo Ippen
+
+
+Source:
+
+../../sli/processes.cc

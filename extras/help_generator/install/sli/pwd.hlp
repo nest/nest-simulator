@@ -1,0 +1,44 @@
+Name: pwd - Print working directory
+
+Synopsis:
+
+pwd ->	-
+
+
+Description:
+
+Prints the working directory. 
+For UNIX compatibility.
+
+
+Parameters:
+
+-
+
+
+Bugs:
+
+-
+
+
+Remarks:
+
+This is a wrapper to Directory
+
+
+Author:
+
+Schrader
+
+
+SeeAlso:
+
+Directory
+SetDirectory
+MakeDirectory
+RemoveDirectory
+ls
+
+Source:
+
+../../lib/sli/filesystem.sli

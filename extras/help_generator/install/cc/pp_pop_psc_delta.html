@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: pp_pop_psc_delta</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: pp_pop_psc_delta</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>pp_pop_psc_delta - Population of point process neurons with leaky  <br/>  integration of delta-shaped PSCs.</pre>
+<b>Description: </b>
+<pre> <br/>   <br/>  pp_pop_psc_delta is an effective model of a population of neurons. The  <br/>  N component neurons are assumed to be spike response models with escape  <br/>  noise, also known as generalized linear models. We follow closely the  <br/>  nomenclature of [1]. The component neurons are a special case of  <br/>  pp_psc_delta (with purely exponential rate function, no reset and no  <br/>  random dead_time). All neurons in the population share the inputs that it  <br/>  receives, and the output is the pooled spike train.  <br/>   <br/>  The instantaneous firing rate of the N component neurons is defined as  <br/>   <br/>  rate(t) = rho_0 * exp( (h(t)	- eta(t))/delta_u ),  <br/>   <br/>  where h(t) is the input potential (synaptic delta currents convolved with  <br/>  an exponential kernel with time constant tau_m), eta(t) models the effect  <br/>  of refractoriness and adaptation (the neuron's own spike train convolved with  <br/>  a sum of exponential kernels with time constants taus_eta), and delta_u  <br/>  sets the scale of the voltages.  <br/>   <br/>  To represent a (homogeneous) population of N inhomogeneous renewal process  <br/>  neurons, we can keep track of the numbers of neurons that fired a certain  <br/>  number of time steps in the past. These neurons will have the same value of  <br/>  the hazard function (instantaneous rate), and we draw a binomial random  <br/>  number for each of these groups. This algorithm is thus very similar to  <br/>  ppd_sup_generator and gamma_sup_generator, see also [2].  <br/>   <br/>  However, the adapting threshold eta(t) of the neurons generally makes the  <br/>  neurons non-renewal processes. We employ the quasi-renewal approximation  <br/>  [1], to be able to use the above algorithm. For the extension of [1] to  <br/>  coupled populations see [3].  <br/>   <br/>  In effect, in each simulation time step, a binomial random number for each  <br/>  of the groups of neurons has to be drawn, independent of the number of  <br/>  represented neurons. For large N, it should be much more efficient than  <br/>  simulating N individual pp_psc_delta models.  <br/>   <br/>  pp_pop_psc_delta emits spike events like other neuron models, but no more  <br/>  than one per time step. If several component neurons spike in the time step,  <br/>  the multiplicity of the spike event is set accordingly. Thus, to monitor  <br/>  its output, the multiplicity of the spike events has to be taken into  <br/>  account. Alternatively, the internal variable n_events gives the number of  <br/>  spikes emitted in a time step, and can be monitored using a multimeter.  <br/>   <br/>  A journal article that describes the model and algorithm in detail is  <br/>  in preparation.  <br/>   <br/>   <br/>  
+</pre>
+<b>Parameters: </b>
+<pre> <br/>   <br/>  The following parameters can be set in the status dictionary.  <br/>   <br/>   <br/>  N	 int  	- Number of represented neurons.  <br/>  tau_m	 double	- Membrane time constant in ms.  <br/>  C_m	 double	- Capacitance of the membrane in pF.  <br/>  rho_0	 double	- Base firing rate in 1/s.  <br/>  delta_u	 double	- Voltage scale parameter in mV.  <br/>  I_e	 double	- Constant input current in pA.  <br/>  taus_eta	 list of doubles	- time constants of post-spike kernel  <br/>  in ms.  <br/>  vals_eta	 list of doubles	- amplitudes of exponentials in  <br/>  post-spike-kernel in mV.  <br/>  len_kernel	 double	- post-spike kernel eta is truncated after  <br/>  max(taus_eta) * len_kernel.  <br/>   <br/>   <br/>  The parameters correspond to the ones of pp_psc_delta as follows.  <br/>   <br/>  c_1	 =  0.0  <br/>  c_2	 =  rho_0  <br/>  c_3	 =  1/delta_u  <br/>  q_sfa	 =  vals_eta  <br/>  tau_sfa	 =  taus_eta  <br/>  I_e	 =  I_e  <br/>   <br/>  dead_time	 =  simulation resolution  <br/>  dead_time_random =  False  <br/>  with_reset	 =  False  <br/>  t_ref_remaining  =  0.0  <br/>   <br/>   <br/>  
+</pre>
+<b>Receives: </b>
+<pre>SpikeEvent, CurrentEvent, DataLoggingRequest  <br/>   <br/>  
+</pre>
+<b>Sends: </b>
+<pre>SpikeEvent  <br/>   <br/>  
+</pre>
+<b>References: </b>
+<pre> <br/>   <br/>  [1] Naud R, Gerstner W (2012) Coding and decoding with adapting neurons:  <br/>  a population approach to the peri-stimulus time histogram.  <br/>  PLoS Compututational Biology 8: e1002711.  <br/>   <br/>  [2] Deger M, Helias M, Boucsein C, Rotter S (2012) Statistical properties  <br/>  of superimposed stationary spike trains. Journal of Computational  <br/>  Neuroscience 32:3, 443-463.  <br/>   <br/>  [3] Deger M, Schwalger T, Naud R, Gerstner W (2014) Fluctuations and  <br/>  information filtering in coupled populations of spiking neurons with  <br/>  adaptation. Physical Review E 90:6, 062704.  <br/>   <br/>   <br/>  
+</pre>
+<b>Author: </b>
+<pre>May 2014, Setareh, Deger  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/pp_psc_delta.html">pp_psc_delta</a></li>
+    <li><a href="../cc/ppd_sup_generator.html">ppd_sup_generator</a></li>
+    <li><a href="../cc/gamma_sup_generator.html">gamma_sup_generator</a></li>
+</ul>
+<b>Source:</b><pre>../../models/pp_pop_psc_delta.h</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

@@ -1,0 +1,60 @@
+Name: ls - print contents of current working directory
+
+Synopsis:
+
+ls ->	-
+
+
+Examples:
+
+There's only one usage: 
+ls -> see contents of current working directory
+
+
+Description:
+
+Prints the contents of the working directory on stdout. 
+Don't mess it up with UNIX ls, this is POSIX. No parameters can 
+be set like -l, -a ! 
+Any files starting with a . are NOT shown by default. 
+Use FileNames if you need them.
+
+
+Parameters:
+
+-
+
+
+Bugs:
+
+
+
+
+Remarks:
+
+This is in fact not much more than a wrapper to FileNames, 
+in addition using a regex to filter out ".anything" files.
+
+
+Author:
+
+Hehl
+
+
+FirstVersion:
+
+Oct 12th 1999
+
+
+SeeAlso:
+
+FileNames
+SetDirectory
+Directory
+MakeDirectory
+RemoveDirectory
+cd
+
+Source:
+
+../../lib/sli/filesystem.sli

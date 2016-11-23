@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+    <html>
+        <head>
+    
+        <title>NEST Command Index: pgetrusage</title>
+        <style type="text/css">
+            body {
+  padding: 0;
+  margin: 0;
+}
+h1 {
+  padding: 15px 0 0 15px;
+}
+p {
+  padding-left: 15px;
+}
+a {
+  color: #339;
+  text-decoration: none;
+}
+a:visited {
+  color: #339;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+h1 a {
+  color: #000;
+  text-decoration: none;
+}
+table.headerfooter {
+  margin: 20px 0 20px 0;
+  background-color: #eee;
+  width: 100%;
+  height: 30px;
+  border-top: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+  text-align: center;
+}
+table.commands {
+  margin: 15px 0 15px 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.commands td {
+  border-bottom: 1px solid #ccc;
+  border-right: 1px dotted #ccc;
+  padding: 5px 0 5px 10px;
+  text-align: left;
+}
+table.letteridx {
+  margin: 0;
+  background-color: #eee;
+  width: 90%;
+  border: 2px solid #ccc;
+  border-spacing: 0px;
+  border-collapse: collapse;
+}
+table.letteridx td {
+  border-right: 1px solid #ccc;
+  padding: 5px;
+  text-align: center;
+}
+table.letteridx a {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+td.left{
+    width:30%;
+}
+div.wrap {
+        padding-left: 15px;
+      }
+         </style>
+        </head>
+        <body>
+    <h1>Command: pgetrusage</h1>
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+    <div class="wrap">
+    <!-- Begin -->
+    <b>Name:</b><pre>pgetrusage - Get resource consumption information  <br/>  Synopsis:  pgetrusage - selfinfo childinfo</pre>
+<b>Description: </b>
+<pre> <br/>  Calls the POSIX getrusage() function to obtain information on  <br/>  memory consumption, context switches, I/O operatin count, etc,  <br/>  for both the main process and its children.  Information is  <br/>  returned in dictionaries.  <br/>   <br/>  
+</pre>
+<b>Remarks: </b>
+<pre>At least under Linux, child processes return 0 for all  <br/>  entries, while the main process seems to produce meaningfull data  <br/>  only for minflt and majflt, i.e., page reclaims and faults.  <br/>  
+</pre>
+<b>References: </b>
+<pre>man 2 getrusage  <br/>  
+</pre>
+<b>Author: </b>
+<pre>Hans Ekkehard Plesser  <br/>  
+</pre>
+<b>FirstVersion: </b>
+<pre>2003-07-29  <br/>  
+</pre>
+<b>SeeAlso: </b>
+<ul>
+    <li><a href="../cc/pclockspersec.html">pclockspersec</a></li>
+    <li><a href="../sli/ptimes.html">ptimes</a></li>
+    <li><a href="../sli/realtime.html">realtime</a></li>
+    <li><a href="../sli/usertime.html">usertime</a></li>
+    <li><a href="../sli/systemtime.html">systemtime</a></li>
+    <li><a href="../sli/tic.html">tic</a></li>
+    <li><a href="../sli/toc.html">toc</a></li>
+</ul>
+<b>Source:</b><pre>../../sli/slicontrol.cc</pre>
+</div>
+    <!-- End -->
+    </div>
+
+
+    <table class="headerfooter">
+      <tbody><tr>
+        <td width="30%" align="center"><a href="../../index.html">
+            NEST HelpDesk</a></td>
+        <td width="30%" align="center"><a href="../helpindex.html">
+            Command Index</a></td>
+        <td width="30%" align="center"><a href="../../quickref.html">
+            NEST Quick Reference</a></td>
+      </tr>
+    </tbody></table>
+
+     <p style="text-align:center">
+    &copy; 2004 <a href="http://www.nest-initiative.org">The NEST Initiative</a>
+ </p>
+
+    </body>
+</html>

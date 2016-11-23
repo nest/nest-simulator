@@ -1,0 +1,161 @@
+Name: area2 - Return array of indices defining a 2d subarea of a 2d array.
+
+Synopsis:
+
+source_anchor_y source_anchor_x 
+area_height   area_width   area_anchor_y   area_anchor_x 
+area2 -> [2d-indices]
+
+
+Examples:
+
+(Examples are illustrated): 
+Ex. 1: source array: (height=5), (width=10), anchor=(0,0) 
+subarea	 :  height=3,   width= 3,  anchor=(0,0) 
+xoo....... 
+ooo....... 
+ooo....... 
+.......... 
+.......... 
+0 0  3 3 0 0 area2 -> [0 0  0 1  0 2 
+1 0  1 1  1 2 
+2 0  2 1  2 2] 
+Ex. 1b:source array: (height=5), (width=10), anchor=(2,2) 
+subarea	 :  height=3,   width= 3,  anchor=(2,2) 
+ooo....... 
+ooo....... 
+oox....... 
+.......... 
+.......... 
+2 2  3 3 2 2 area2 -> [0 0  0 1  0 2 
+1 0  1 1  1 2 
+2 0  2 1  2 2] 
+Ex. 1c:Note that anchor point may lie outside both 
+arrays' bounds: 
+source array: (height=5), (width=10), anchor=(1,12) 
+subarea	 :  height=3,   width= 3,  anchor=(1,12) 
+ooo....... 
+ooo.......  x 
+ooo....... 
+.......... 
+.......... 
+1 12  3 3 1 12 area2 -> [0 0  0 1  0 2 
+1 0  1 1  1 2 
+2 0  2 1  2 2] 
+Ex. 2: source array: (height=6), (width=15), anchor=(2,5) 
+subarea	 :  height=4,   width= 5,  anchor=(1,3) 
+............... 
+..ooooo........ 
+..oooxo........ 
+..ooooo........ 
+..ooooo........ 
+............... 
+2 5  4 5 1 3 area2 -> [1 2  1 3  1 4  1 5  1 6 
+2 2  2 3  2 4  2 5  2 6 
+3 2  3 3  3 4  3 5  3 6 
+4 2  4 3  4 4  4 5  4 6] 
+Ex. 3: Note that subarea doesn't need to lie 
+inside bounds of source array: 
+source array: (height=4), (width= 8), anchor=(4,-1) 
+subarea	 :  height=2,   width= 3,  anchor=(1, 0) 
+........ 
+........ 
+........ 
+ooo...... 
+xoo 
+4 -1  2 3 1 0 area2 -> [3 -1  3 0  3 1 
+4 -1  4 0  4 1]
+
+
+Description:
+
+Given a -- hypothetical -- twodimensional array, 
+"area" tells you, what indices you need to 
+subscript a contiguous, twodimensional subarea. 
+The subarea is defined by specifying it's size 
+(width and height), as well as its location in the 
+source array. The location is defined by specifying 
+an anchor point in the source array as well as in 
+the subarea. Anchor points are matched, see 
+illustration, and examples below: 
+source array: height=6, width=15, anchor=(2,5) 
+subarea	 : height=4, width= 5, anchor=(1,3) 
+............... 
+..ooooo........ 
+..oooxo........ 
+..ooooo........ 
+..ooooo........ 
+............... 
+"area2" returns an array of TWODIMENSIONAL indices. 
+There is a SLI function called "area" returning 
+onedimensional indices, as well as the conversion 
+functions "cv1d" and "cv2d". 
+(For information on the order of subscription in NEST 
+arrays, see references below.)
+
+
+Parameters:
+
+In: "area2" takes six integer arguments (three pairs). 
+These arguments describe (1) the height and width of the 
+subarea to be indexed in the (hypothetical) source array, as 
+well as (2&3) an anchor point in each of the two arrays (see 
+illustration above): 
+source_anchor_y, 
+source_anchor_x: position of the anchor point relative 
+to ORIGIN OF THE SOURCE ARRAY 
+area_heigh  t  : height of the subarea to be subscribed 
+area_width	 : width  of the subarea to be subscribed 
+area_anchor_y, 
+area_anchor_x  : position of the anchor point relative 
+to ORIGIN OF THE SUBAREA 
+Out: "area" returns an array of ONEDIMENSIONAL indices: 
+[2d-indices]   : flat integer array containing the indices 
+that can be used to subscript the 
+(hypothetical) source array in order to 
+access the desired subarea. 
+Indices are twodimensional. The returned 
+array is flat and has the following order: 
+[1y 1x  2y 2x  3y 3x  ...  ny nx] 
+That is, each pair of numbers indicates the 
+y- and the x-component of a respective 
+index. 
+The indices 1..n are returned in standard 
+NEST counting order. (For information on the 
+order of subscription in NEST arrays, see 
+references below.)
+
+
+Diagnostics:
+
+"area2" may raise the following SLI interpreter errors: 
+StackUnderflowError 
+ArgumentTypeError 
+No argument range check is performed. The returned 
+indices may indicate regions outside the source 
+array (see Example 3). This is not a bug, it's a 
+feature :-). Note that restrictions apply to the 
+related function "area". 
+However, anchor points may lie outside the array 
+bounds. 
+Note that arguments source_width and source_height are not used in 
+computation, and do not appear in the argument list.
+
+
+References:
+
+(TO BE DONE: NEST layer indexing conventions)
+
+
+Author:
+
+Ruediger Kupper
+
+
+SeeAlso:
+
+area
+
+Source:
+
+../../sli/sliarray.cc

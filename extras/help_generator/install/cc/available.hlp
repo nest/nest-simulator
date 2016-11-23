@@ -1,0 +1,107 @@
+Name: available - check if data is available from an istream
+
+Synopsis:
+
+istream available -> istream {true|false}
+
+
+Examples:
+
+myfifo available { getline } if % read it data is available.
+
+
+Description:
+
+"available" gives the answer to one question: 
+--Is there at least one character waiting to be read 
+from the istream?-- 
+If "available" returns true, it can be safely assumed that 
+reading one character from the given istream is safe, 
+i.e. it will NEITHER BLOCK nor yield EOF or an error. 
+Alternative: Functions available_is (undocumented) 
+-> behavior and synopsis are the same.
+
+
+Parameters:
+
+In:  istream: The istream to check. 
+Out: true or false, indicating if data is waiting on the stream.
+
+
+Bugs:
+
+-
+
+
+Diagnostics:
+
+If a system-error occurs, a code is stored in "sys_errno" 
+(contained in errordict) to identify the error, and "sys_errname" 
+is set to the error message. Then a "SystemError" is raised. 
+The following system errors may be issued, according to the 
+POSIX standard (errors in parentheses are not 
+expected to occur in this routines' context): 
+(EACCES)  Search permission is denied for a 
+directory in a files path prefix. 
+(EAGAIN)  The ON_NONBLOCK flag is set for a file 
+descriptor and the process would be 
+delayed in the I/O operation. 
+EBADF   Invalid file descriptor. (With the current 
+implementation, this indicates trouble 
+getting a fildescriptor from a stream. If 
+it occurs, ask the author for a proper 
+solution!) 
+(EDEADLK) A fcntl with function F_SETLKW would 
+cause a deadlock. 
+EINTR   Function was interrupted by a signal. 
+(EINVAL)  Invalid argument. 
+(EMFILE   Too many file descriptors are in use by 
+this process. 
+(ENOLCK)  No locks available.
+
+
+Remarks:
+
+"available" will be typically used with pipes or fifos. 
+There are two possible reasons why "available" may return false: 
+1. There are processes writing to the pipe/fifo, but none 
+of the is currently writing data to it. 
+A subsequent read attempt will block until data becomes 
+available. 
+2. There are no processes writing to the pipe (any longer). 
+A subsequent read attempt will yield EOF. 
+It is NOT possible to tell these possibilities apart! This is 
+not a fault of the implementation of this function. It is generally 
+impossible to do this. The only way to know is to start a read 
+attempt. If it blocks, you know the answer	- but you could wait 
+forever. Anyway, there normally is no need to distinguish between 
+these alternatives: Just NEVER try a read attempt, if "available" 
+returned false. Even if temporarily no process was connected to 
+the stream, it will return true as soon as the connection is re- 
+established and data is waiting. 
+"available" just tells you if -one- character may be read safely. 
+It is left to the programmer to assure that a given amount of 
+data (e.g. upto the next linefeed) may be read.
+
+
+Author:
+
+R Kupper
+
+
+FirstVersion:
+
+May 10 1999
+
+
+SeeAlso:
+
+pipe
+mkfifo
+spawn
+eof
+in_avail
+
+Source:
+
+../../sli/processes.h

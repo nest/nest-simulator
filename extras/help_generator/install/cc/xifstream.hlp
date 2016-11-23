@@ -1,0 +1,25 @@
+Name: xifstream - Create an executable input-stream.
+
+Synopsis:
+
+(filename) xifstream -> file true 
+-> false
+
+
+Description:
+
+xifstream first tries to open a file 
+by the given name. If this was successful, it creates 
+an executable stream-handle. 
+If an executable stream is executed (e.g. with exec), 
+the interpreter parses this file according to SLI syntax 
+and evaluates all contained objects.
+
+
+SeeAlso:
+
+run
+
+Source:
+
+../../sli/sli_io.cc

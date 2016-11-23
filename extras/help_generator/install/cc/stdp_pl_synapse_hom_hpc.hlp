@@ -1,0 +1,12 @@
+Name: stdp_pl_synapse_hom_hpc - Variant of stdp_pl_synapse_hom with low 
+ memory consumption.
+
+SeeAlso:
+
+synapsedict
+stdp_pl_synapse_hom
+static_synapse_hpc
+
+Source:
+
+../../models/modelsmodule.cpp

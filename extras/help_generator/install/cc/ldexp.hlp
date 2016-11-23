@@ -1,0 +1,45 @@
+Name: ldexp - computes the product of integer power of 2 and a factor
+
+Synopsis:
+
+double integer ldexp -> double
+
+
+Examples:
+
+1.5 3 ldexp -> 12 
+12.0 frexp -> 0.75 4 
+12.0 frexp ldexp -> 12.0 
+1.0 -5 ldexp frexp -> 0.5 -4
+
+
+Description:
+
+This is an interface to the C++ function 
+double std::ldexp(double,int)
+
+
+References:
+
+Stroustrup 3rd ed p 661
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+17.5.2005
+
+
+SeeAlso:
+
+frexp
+dexp
+modf
+
+Source:
+
+../../sli/slimath.cc

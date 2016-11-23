@@ -1,0 +1,47 @@
+Name: nest_indirect - Returns a nest call as a string able to spawn distributed simulations 
+ 
+ Synopsis:  (sli-filename) nest_indirect -> (string with shell command)
+
+Examples:
+
+(hello.sli) nest_indirect -> (/home/dummy/nest/bin/sli hello.sli)
+
+
+Description:
+
+If a task requires multiple distributed simulations with different 
+numbers of processors NEST needs to be compiled with support for distributed 
+computing and be aware of the corresponding method to start itself. However, 
+some libraries for distributed computing do not support the nested call of 
+further processes. Therefore, nest_indirect provides a serial environment 
+for the preparation of the distributed simulations. 
+The algorithm is as follows: 
+1. if nest is not compiled with MPI, quit with fatal error 
+2. if sli command /mpirun is not defined, quit with fatal error 
+3. return "sli"
+
+
+Diagnostics:
+
+This function quits nest with a fatal error if there is no support for 
+distributed computing or NEST does not know how to start a distributed version 
+of itself.
+
+
+Author:
+
+Diesmann
+
+
+FirstVersion:
+
+090711
+
+
+SeeAlso:
+
+nest_serial
+
+Source:
+
+../../lib/sli/processes.sli

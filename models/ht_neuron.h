@@ -228,15 +228,15 @@ private:
    */
   struct Parameters_
   {
-	Parameters_();
+    Parameters_();
 
-	void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-	void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
     // Note: Conductances are unitless
-	// Leaks
-    double E_Na;  // mV
-    double E_K;   // mV
+    // Leaks
+    double E_Na; // mV
+    double E_K;  // mV
     double g_NaL;
     double g_KL;
     double tau_m; // ms
@@ -247,32 +247,32 @@ private:
 
     // Post-spike potassium current
     double tau_spike; // ms, membrane time constant for this current
-    double t_ref;   // ms, refractory time
+    double t_ref;     // ms, refractory time
 
     // Parameters for synapse of type AMPA, GABA_A, GABA_B and NMDA
     double g_peak_AMPA;
-    double tau_rise_AMPA; // ms
+    double tau_rise_AMPA;  // ms
     double tau_decay_AMPA; // ms
-    double E_rev_AMPA; // mV
+    double E_rev_AMPA;     // mV
 
     double g_peak_NMDA;
-    double tau_rise_NMDA; // ms
+    double tau_rise_NMDA;  // ms
     double tau_decay_NMDA; // ms
-    double E_rev_NMDA; // mV
-    double V_act_NMDA;  // mV, inactive for V << Vact, inflection of sigmoid
-    double S_act_NMDA;  // mV, scale of inactivation
+    double E_rev_NMDA;     // mV
+    double V_act_NMDA;     // mV, inactive for V << Vact, inflection of sigmoid
+    double S_act_NMDA;     // mV, scale of inactivation
     double tau_Mg_slow_NMDA; // ms
     double tau_Mg_fast_NMDA; // ms
 
     double g_peak_GABA_A;
-    double tau_rise_GABA_A; // ms
+    double tau_rise_GABA_A;  // ms
     double tau_decay_GABA_A; // ms
-    double E_rev_GABA_A; // mV
+    double E_rev_GABA_A;     // mV
 
     double g_peak_GABA_B;
-    double tau_rise_GABA_B; // ms
+    double tau_rise_GABA_B;  // ms
     double tau_decay_GABA_B; // ms
-    double E_rev_GABA_B; // mV
+    double E_rev_GABA_B;     // mV
 
     // parameters for intrinsic currents
     double g_peak_NaP;

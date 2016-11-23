@@ -104,8 +104,8 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   I_syn += -y[ S::G_GABA_B ] * ( V - node.P_.E_rev_GABA_B );
 
   // The post-spike K-current, only while refractory
-  const double I_spike = node.S_.ref_steps_ > 0 ?
-		                     -( V - node.P_.E_K ) / node.P_.tau_spike : 0.0 ;
+  const double I_spike =
+    node.S_.ref_steps_ > 0 ? -( V - node.P_.E_K ) / node.P_.tau_spike : 0.0;
 
   // leak currents
   const double I_Na = -node.P_.g_NaL * ( V - node.P_.E_Na );
@@ -154,9 +154,10 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   f[ S::G_AMPA ] = y[ S::DG_AMPA ] - y[ S::G_AMPA ] / node.P_.tau_decay_AMPA;
 
   // NMDA
-  f[ S::DG_NMDA_TIMECOURSE ] = -y[ S::DG_NMDA_TIMECOURSE ] / node.P_.tau_rise_NMDA;
-  f[ S::G_NMDA_TIMECOURSE ] =
-    y[ S::DG_NMDA_TIMECOURSE ] - y[ S::G_NMDA_TIMECOURSE ] / node.P_.tau_decay_NMDA;
+  f[ S::DG_NMDA_TIMECOURSE ] =
+    -y[ S::DG_NMDA_TIMECOURSE ] / node.P_.tau_rise_NMDA;
+  f[ S::G_NMDA_TIMECOURSE ] = y[ S::DG_NMDA_TIMECOURSE ]
+    - y[ S::G_NMDA_TIMECOURSE ] / node.P_.tau_decay_NMDA;
   f[ S::Mg_slow ] = ( Mg_ss - Mg_s ) / node.P_.tau_Mg_slow_NMDA;
   f[ S::Mg_fast ] = ( Mg_ss - Mg_f ) / node.P_.tau_Mg_fast_NMDA;
 
@@ -206,35 +207,35 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
  * ---------------------------------------------------------------- */
 
 nest::ht_neuron::Parameters_::Parameters_()
-  : E_Na( 30.0 )      // mV
-  , E_K( -90.0 )      // mV
+  : E_Na( 30.0 ) // mV
+  , E_K( -90.0 ) // mV
   , g_NaL( 0.2 )
   , g_KL( 1.0 )
   , tau_m( 16.0 )     // ms
   , theta_eq( -51.0 ) // mV
   , tau_theta( 2.0 )  // ms
   , tau_spike( 1.75 ) // ms
-  , t_ref( 2.0 )    // ms
+  , t_ref( 2.0 )      // ms
   , g_peak_AMPA( 0.1 )
-  , tau_rise_AMPA( 0.5 ) // ms
+  , tau_rise_AMPA( 0.5 )  // ms
   , tau_decay_AMPA( 2.4 ) // ms
-  , E_rev_AMPA( 0.0 ) // mV
+  , E_rev_AMPA( 0.0 )     // mV
   , g_peak_NMDA( 0.075 )
-  , tau_rise_NMDA( 4.0 )        // ms
-  , tau_decay_NMDA( 40.0 )       // ms
+  , tau_rise_NMDA( 4.0 )     // ms
+  , tau_decay_NMDA( 40.0 )   // ms
   , E_rev_NMDA( 0.0 )        // mV
-  , V_act_NMDA( -25.57 )      // mV
-  , S_act_NMDA( 0.081 )       // mV
+  , V_act_NMDA( -25.57 )     // mV
+  , S_act_NMDA( 0.081 )      // mV
   , tau_Mg_slow_NMDA( 22.7 ) // ms
   , tau_Mg_fast_NMDA( 0.68 ) // ms
   , g_peak_GABA_A( 0.33 )
-  , tau_rise_GABA_A( 1.0 )   // ms
-  , tau_decay_GABA_A( 7.0 )   // ms
-  , E_rev_GABA_A( -70.0 ) // mV
+  , tau_rise_GABA_A( 1.0 )  // ms
+  , tau_decay_GABA_A( 7.0 ) // ms
+  , E_rev_GABA_A( -70.0 )   // mV
   , g_peak_GABA_B( 0.0132 )
-  , tau_rise_GABA_B( 60.0 )  // ms
+  , tau_rise_GABA_B( 60.0 )   // ms
   , tau_decay_GABA_B( 200.0 ) // ms
-  , E_rev_GABA_B( -90.0 ) // mV
+  , E_rev_GABA_B( -90.0 )     // mV
   , g_peak_NaP( 1.0 )
   , E_rev_NaP( 30.0 ) // mV
   , g_peak_KNa( 1.0 )
@@ -723,11 +724,11 @@ nest::ht_neuron::calibrate()
   V_.cond_steps_[ NMDA - 1 ] =
     get_synapse_constant( P_.tau_rise_NMDA, P_.tau_decay_NMDA, P_.g_peak_NMDA );
 
-  V_.cond_steps_[ GABA_A - 1 ] =
-    get_synapse_constant( P_.tau_rise_GABA_A, P_.tau_decay_GABA_A, P_.g_peak_GABA_A );
+  V_.cond_steps_[ GABA_A - 1 ] = get_synapse_constant(
+    P_.tau_rise_GABA_A, P_.tau_decay_GABA_A, P_.g_peak_GABA_A );
 
-  V_.cond_steps_[ GABA_B - 1 ] =
-    get_synapse_constant( P_.tau_rise_GABA_B, P_.tau_decay_GABA_B, P_.g_peak_GABA_B );
+  V_.cond_steps_[ GABA_B - 1 ] = get_synapse_constant(
+    P_.tau_rise_GABA_B, P_.tau_decay_GABA_B, P_.g_peak_GABA_B );
 
   V_.PotassiumRefractoryCounts_ = Time( Time::ms( P_.t_ref ) ).get_steps();
 

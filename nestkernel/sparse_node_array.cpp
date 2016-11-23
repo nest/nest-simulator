@@ -26,7 +26,7 @@
 #include "exceptions.h"
 #include "node.h"
 
-nest::SparseNodeArray::NodeEntry_::NodeEntry_( Node& node, index gid )
+nest::SparseNodeArray::NodeEntry::NodeEntry( Node& node, index gid )
   : node_( &node )
   , gid_( gid )
 {
@@ -70,7 +70,7 @@ nest::SparseNodeArray::add_local_node( Node& node )
   assert( gid > max_gid_ || ( gid == 0 && max_gid_ == 0 ) );
 
   // all is consistent, register node and update auxiliary variables
-  nodes_.push_back( NodeEntry_( node, gid ) );
+  nodes_.push_back( NodeEntry( node, gid ) );
   if ( local_min_gid_ == 0 ) // only first non-zero
     local_min_gid_ = gid;
   local_max_gid_ = gid;

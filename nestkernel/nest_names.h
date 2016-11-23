@@ -265,6 +265,7 @@ extern const Name linear;            //!< Parameter for MSP growth curves
 extern const Name local;             //!< Node parameter
 extern const Name local_id;          //!< Node
 
+extern const Name make_symmetric; //!< Connectivity-related
 extern const Name MAXERR; //!< Largest permissible error for adaptive stepsize
                           //!< (Brette & Gerstner 2005)
 extern const Name mean;   //!< Miscellaneous parameters
@@ -378,7 +379,6 @@ extern const Name structure; //!< Node type
 extern const Name success;
 extern const Name supports_precise_spikes; //!< true if model supports precise
                                            //!< spikes
-extern const Name symmetric;               //!< Connectivity-related
 extern const Name synapse;                 //!< Node type
 extern const Name synapse_label;           //!< Label id of synapses with labels
 extern const Name synapse_model;           //!< Connection parameters

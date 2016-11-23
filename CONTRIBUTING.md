@@ -1,4 +1,4 @@
-# How to contribute
+# Contributing to NEST
 
 The NEST simulator is a scientific tool and as such it is never ready and constantly changing to meet the needs of novel neuroscientific endeavors. Here you find the most important information on how you can contribute to NEST. This document is an excerpt from our [developer space](https://nest.github.io/nest-simulator/), which provides more detailed information.
 
@@ -6,6 +6,36 @@ The NEST simulator is a scientific tool and as such it is never ready and consta
 
 * Make sure you have a [GitHub account](https://github.com/signup/free)
 * The development workflow is based purely on pull requests. This [article](https://nest.github.io/nest-simulator/development_workflow) gives information on how to work with git and GitHub if you are new to it.
+
+## Reporting bugs and issues
+
+If you come across a bug in NEST, please [file an issue on the GitHub issue tracker](https://github.com/nest/nest-simulator/issues/new). Please use the template below to provide information:
+
+```
+Description of problem:
+
+
+Version-Release or Git commit:
+
+
+How reproducible: (Always/Sometimes/Unsure)
+
+
+Steps to Reproduce:
+1.
+2.
+3.
+
+Actual results:
+
+
+Expected results:
+
+
+Additional info:
+```
+
+You can also attach files to issues. Data dumps or example code snippets that help to reproduce the issue is most welcome. This information enables developers to debug and fix issues quicker.
 
 ## Making Changes
 

@@ -26,6 +26,7 @@ NEST help writer
 Collect all the data and write help files.
 """
 
+import glob
 import os
 import re
 import textwrap
@@ -74,10 +75,6 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
     for key, value in doc_dic.iteritems():
         if key == "Name":
             name = value.strip()
-            # htmllist.append('<title>NEST Command Index: %s</title>%s</head>'
-            #                 % (name, header_style) + '<body>')
-            # htmllist.append('<h1>Command: %s</h1>' % name)
-            # htmllist.append('<div class="wrap">')
     for key, value in doc_dic.iteritems():
         if key == "FullName":
             fullname = value.strip("###### ######")
@@ -105,10 +102,9 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
                     value = re.sub("(\~\~)", '  ', value)
                     value = re.sub("(\~)", ' ', value)
                     value = re.sub(' - ', '\t- ', value)
-
                     htmllist.append('<b>%s: </b>' % key)
                     htmllist.append('<pre>%s</pre>' % value)
-                    hlpvalue = re.sub(' <br\/> ', '\n', value).rstrip()
+                    hlpvalue = re.sub(' <br/> ', '\n', value).rstrip()
                     hlpvalue = re.sub('\n ', '\n', hlpvalue).rstrip()
                     hlpvalue = hlpvalue.lstrip('\n')
                     hlpvalue = re.sub('\n[\s?]*\n', '\n', hlpvalue).rstrip()
@@ -123,7 +119,7 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
             hlplist.append('%s:\n' % key)
             htmllist.append('<ul>')
             for i in value:
-                see = i.strip("###### ###### $$")
+                # see = i.strip("###### ###### $$")
                 see = i.strip("###### ~~")
                 if see:
                     if see in sli_command_list:
@@ -167,20 +163,13 @@ def write_help_html(doc_dic, file, sli_command_list, keywords):
         # return name
 
 
-def write_helpindex(index_dic_list):
+def write_helpindex():
     """
-    Write helpindex.html.
+    Returns index.html and index.hlp
+    --------------------------------
 
-    Collect the long list of dicts and transform it toa sorted html file.
     """
-
-    alpha = [('A', 'a'), ('B', 'b'), ('C', 'c'), ('D', 'd'), ('E', 'e'),
-             ('F', 'f'), ('G', 'g'), ('H', 'h'), ('I', 'i'), ('J' 'j'),
-             ('K', 'k'), ('L', 'l'), ('M', 'm'), ('N', 'n'), ('O', 'o'),
-             ('P', 'p'), ('Q', 'q'), ('R', 'r'), ('S', 's'), ('T', 't'),
-             ('U', 'u'), ('V', 'v'), ('W', 'w'), ('X', 'x'), ('Z', 'z'), '-',
-             ':', '<', '=']
-
+    filelist = glob.glob("../cmds/*/*.hlp")
     html_list = []
     hlp_list = []
 
@@ -199,8 +188,13 @@ def write_helpindex(index_dic_list):
 
     s = Template(templ)
 
-    from operator import itemgetter
-    index_dic_list = sorted(index_dic_list, key=itemgetter('name'))
+    alpha = [('A', 'a'), ('B', 'b'), ('C', 'c'), ('D', 'd'), ('E', 'e'),
+             ('F', 'f'), ('G', 'g'), ('H', 'h'), ('I', 'i'), ('J', 'j'),
+             ('K', 'k'), ('L', 'l'), ('M', 'm'), ('N', 'n'), ('O', 'o'),
+             ('P', 'p'), ('Q', 'q'), ('R', 'r'), ('S', 's'), ('T', 't'),
+             ('U', 'u'), ('V', 'v'), ('W', 'w'), ('X', 'x'), ('Z', 'z'), '-',
+             ':', '<', '=']
+
     for doubles in alpha:
         html_list.append('<center><table class="alpha">')
         html_list.append('<table class="letteridx"><tr>')
@@ -209,36 +203,73 @@ def write_helpindex(index_dic_list):
         html_list.append('</tr></table></center>')
         html_list.append('<center><table class="commands" id="%s">'
                          % doubles[0])
-        for item in index_dic_list:
-            if item['name'].startswith(doubles):
+        for item in filelist:
+            fitem = open(('%s' % (item,)), 'r')
+            itemtext = fitem.read()
+            fitem.close()
+            # only the basename of the file
+            name = os.path.basename(item)[:-4]
+            # only the firts line of itemtext
+            name_line = itemtext.splitlines()[0]
+            #
+            if name_line.rsplit(' - ')[0] == 'Name: ' + name:
+                fullname = name_line.rsplit(' - ')[1]
+            else:
+                fullname = name
+            # file extension
+            itemext = item.rsplit('/')[2]
+            if name.startswith(doubles) and os.path.isfile(item):
+                # check if 'name' is available in folder with os.path.isfile(
+                # checkfile)
                 html_list.append('<tr><td class="left">')
                 html_list.append('<a href="%s/%s.html">%s</a></td>' %
-                                 (item['ext'], item['name'], item['name']))
-                html_list.append('<td>%s</td></tr>' % item['fullname'])
+                                 (itemext, name, name))
+                html_list.append('<td>%s</td></tr>' % fullname)
+
                 # Better Format for the index.hlp
-                c = len(item['name'])
-                if (c < 8):
-                    hlp_list.append("%s\t\t\t\t%s" % (item['name'],
-                                                      item['fullname']))
-                elif (c < 16):
-                    hlp_list.append("%s\t\t\t%s" % (item['name'],
-                                                    item['fullname']))
-                elif(c < 24):
-                    hlp_list.append("%s\t\t%s" % (item['name'],
-                                                  item['fullname']))
-                elif(c < 32):
-                    hlp_list.append("%s\t%s" % (item['name'],
-                                                item['fullname']))
+                c = len(name)
+                if c < 4:
+                    hlp_list.append(name + '\t' * 16 + fullname)
+                elif c < 8:
+                    hlp_list.append(name + '\t' * 15 + fullname)
+                elif c < 12:
+                    hlp_list.append(name + '\t' * 14 + fullname)
+                elif c < 16:
+                    hlp_list.append(name + '\t' * 13 + fullname)
+                elif c < 20:
+                    hlp_list.append(name + '\t' * 12 + fullname)
+                elif c < 24:
+                    hlp_list.append(name + '\t' * 11 + fullname)
+                elif c < 28:
+                    hlp_list.append(name + '\t' * 10 + fullname)
+                elif c < 32:
+                    hlp_list.append(name + '\t' * 9 + fullname)
+                elif c < 36:
+                    hlp_list.append(name + '\t' * 8 + fullname)
+                elif c < 40:
+                    hlp_list.append(name + '\t' * 7 + fullname)
+                elif c < 44:
+                    hlp_list.append(name + '\t' * 6 + fullname)
+                elif c < 48:
+                    hlp_list.append(name + '\t' * 5 + fullname)
+                elif c < 52:
+                    hlp_list.append(name + '\t' * 4 + fullname)
+                elif c < 56:
+                    hlp_list.append(name + '\t' * 3 + fullname)
+                elif c < 60:
+                    hlp_list.append(name + '\t' * 2 + fullname)
                 else:
-                    hlp_list.append("%s %s" % (item['name'],
-                                               item['fullname']))
+                    hlp_list.append(name + '\t' * 1 + fullname)
+            elif not os.path.isfile(item):
+                print 'WARNING: Checkfile ' + item + ' not exist.'
+
         html_list.append('</table></center>')
         html_list.append('</table></center>')
-    #html_list.append(footer)
+
+    # html_list.append(footer)
     htmlstring = ('\n'.join(html_list))
     indexstring = s.substitute(indexbody=htmlstring, css=csstempl,
                                footer=footertempl)
-
     f_helpindex = open('../cmds/helpindex.html', 'w')
     f_helpindex.write(indexstring)
     f_helpindex.close()

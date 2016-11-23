@@ -33,7 +33,13 @@ import shutil
 import textwrap
 
 from modules.writers import coll_data, write_helpindex
-from modules.helpers import check_ifdef
+from modules.helpers import check_ifdef, cut_it
+
+num = 0
+full_list = []
+sli_command_list = []
+cc_command_list = []
+index_dic_list = []
 
 path = '../../../'
 path = os.path.abspath(path)
@@ -45,12 +51,6 @@ for dirpath, dirnames, files in os.walk(path):
                 allfiles.append(os.path.join(dirpath, f))
 
 
-num = 0
-full_list = []
-sli_command_list = []
-cc_command_list = []
-index_dic_list = []
-
 keywords = ["Name:", "Synopsis:", "Examples:", "Description:", "Parameters:",
             "Options:", "Requires:", "Require:", "Receives:", "Transmits:",
             "Sends:", "Variants:", "Bugs:", "Diagnostics:", "Remarks:",
@@ -59,47 +59,27 @@ keywords = ["Name:", "Synopsis:", "Examples:", "Description:", "Parameters:",
 
 # TODO combine the following 2 loops to make it faster (and shorter)
 
-# Now begin to collect the data for the helpindex.html
-
+# Now begin to collect the data for the help files and start generating.
 dcs = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
+
+# searching for a sli_command_list
 for file in allfiles:
-    if not file.endswith('.py'):
+    if file.endswith('.sli'):
         f = open(('%s' % (file,)), 'r')
         filetext = f.read()
         f.close()
         items = re.findall(dcs, filetext, re.DOTALL)
-        # List of all .sli files. Needed for the SeeAlso part.
-        # if file.endswith('.sli'):
-        index_dic = {}
-        fullname = ""
         for item in items:
-            namestring = r'([\s*]?Name[\s*]?\:[\s*]?)(.*?)([\s*]?\n)'
-            docnames = re.findall(namestring, item, re.DOTALL)
-            for docname in docnames:
-                if docname[1].strip():
-                    fullname = docname[1].strip()
-                    docname = fullname.split()[0].rstrip("-")
-                    fullname = fullname.lstrip(docname).strip()
-                    fullname = fullname.lstrip("-").strip()
-                if file.endswith('.sli'):
-                    sli_command_list.append(docname.strip())
-                    index_dic = {'name': docname, 'ext': 'sli'}
-                else:
-                    index_dic = {'name': docname, 'ext': 'cc'}
-                filename_dic = {'file': file}
-                if fullname:
-                    fullname_dic = {'fullname': fullname}
-                    index_dic.update(fullname_dic)
-                    filename_dic = {'file': file}
-                else:
-                    fullname_dic = {'fullname': ''}
-                    index_dic.update(fullname_dic)
-                index_dic.update(filename_dic)
-            index_dic_list.append(index_dic)
-write_helpindex(index_dic_list)
+            for line in item.splitlines():
+                name_line = re.findall(r"([\s*]?Name[\s*]?\:)(.*)", line)
+                if name_line:
+                    if name_line:
+                        # Clean the Name: line!
+                        name_line_0 = name_line[0][0].strip()
+                        name_line_1 = name_line[0][1].strip()
+                        sliname = cut_it(' - ', name_line_1)[0]
+                        sli_command_list.append(sliname)
 
-# Now begin to collect the data for the help files and start generating.
-dcs = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
 for file in allfiles:
     # .py is for future use
     if not file.endswith('.py'):
@@ -142,6 +122,9 @@ for file in allfiles:
 
             all_data = coll_data(keywords, documentation, num, file,
                                  sli_command_list)
+
+write_helpindex()
+
 if len(sys.argv) > 1:
     shutil.rmtree(sys.argv[1], ignore_errors=True)
     shutil.copytree("../cmds", sys.argv[1])

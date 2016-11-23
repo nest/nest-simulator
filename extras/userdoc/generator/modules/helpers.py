@@ -24,21 +24,23 @@ import re
 
 def cut_it(separator, text):
     """
-    Cut it.
+    Cut it
+    ------
 
-    cut text by separator
+    Cut text by separator.
     """
     if separator:
         return re.split(separator, text)
     else:
-        return text
+        return [separator, text]
 
 
 def check_ifdef(item, filetext, docstring):
         """
-        Check the ifdef context.
+        Check the 'ifdef' context
+        -------------------------
 
-        If there is an ifdef requirement write it to the data.
+        If there is an 'ifdef' requirement write it to the data.
         """
         ifdefstring = r'(\#ifdef((.*?)\n(.*?)\n*))\#endif'
         require_reg = re.compile('HAVE\_((.*?)*)\n')

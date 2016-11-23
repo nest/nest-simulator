@@ -183,7 +183,7 @@ public:
 
   virtual ~GIDCollection()
   {
-    std::cerr << "Deleting GC: " << this << std::endl; // TODO: couts
+    // std::cerr << "Deleting GC: " << this << std::endl; // TODO: couts
   }
 
   /**
@@ -335,10 +335,9 @@ public:
 GIDCollectionPTR operator+( GIDCollectionPTR lhs, GIDCollectionPTR rhs );
 
 /**
- * Subclass for the primitive GIDCollection type.
+ * Subclass for the composite GIDCollection type.
  *
- * The primitive type contains only homogenous and contiguous GIDs. It also
- * contains model ID and metadata of the GIDs.
+ * The composite type contains a collection of primitives.
  */
 class GIDCollectionComposite : public GIDCollection
 {
@@ -348,26 +347,60 @@ class GIDCollectionComposite : public GIDCollection
   using GIDCollection::end;
 
 private:
-  std::vector< GIDCollectionPrimitive > parts_;
-  size_t size_; // total number of GIDs
-  size_t step_;
-  size_t start_part_;
-  size_t start_offset_;
-  size_t stop_part_;
-  size_t stop_offset_;
+  std::vector< GIDCollectionPrimitive > parts_; //!< Vector of primitives
+  size_t size_;                                 //!< Total number of GIDs
+  size_t step_;         //!< Steplength, set when slicing.
+  size_t start_part_;   //!< Primitive to start at, set when slicing
+  size_t start_offset_; //!< Element to start at, set when slicing
+  size_t stop_part_;    //!< Primitive to stop at, set when slicing
+  size_t stop_offset_;  //!< Element to stop at, set when slicing
 
+  /**
+   * Go through the vector of primitives, merge as much as possible.
+   *
+   * @param parts Vector of primitives to be merged.
+   */
   void merge_parts( std::vector< GIDCollectionPrimitive >& parts ) const;
 
 public:
-  GIDCollectionComposite( const GIDCollectionPrimitive& prim,
+  /**
+   * Create a composite from a primitive, with boundaries and steplength.
+   *
+   * @param primitive Primitive to be converted
+   * @param start Offset in the primitive to begin at.
+   * @param stop Offset in the primtive to stop at.
+   * @param step Length to step in the primitive.
+   */
+  GIDCollectionComposite( const GIDCollectionPrimitive&,
     size_t,
     size_t,
     size_t );
+
+  /**
+     * Composite copy constructor.
+     *
+     * @param comp Composite to be copied.
+     */
   GIDCollectionComposite( const GIDCollectionComposite& );
+
+  /**
+     * Create a new composite from another, with boundaries and steplength.
+     * Used when slicing.
+     *
+     * @param composite Composite to slice.
+     * @param start Index in the composite to begin at.
+     * @param stop Index in the composite to stop at.
+     * @param step Length to step in the composite.
+     */
   GIDCollectionComposite( const GIDCollectionComposite&,
     size_t,
     size_t,
     size_t );
+  /**
+   * Create a composite from a vector of primitives.
+   *
+   * @param parts Vector of primitives.
+   */
   GIDCollectionComposite( const std::vector< GIDCollectionPrimitive >& );
 
   void print_me( std::ostream& ) const;

@@ -46,7 +46,8 @@ nest::KernelManager::destroy_kernel_manager()
 }
 
 nest::KernelManager::KernelManager()
-  : logging_manager()
+  : fingerprint_( 0 )
+  , logging_manager()
   , io_manager()
   , mpi_manager()
   , vp_manager()
@@ -60,7 +61,6 @@ nest::KernelManager::KernelManager()
   , music_manager()
   , node_manager()
   , initialized_( false )
-  , fingerprint_( 0 )
 {
 }
 

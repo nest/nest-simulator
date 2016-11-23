@@ -251,7 +251,6 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( index first,
 {
 }
 
-
 GIDCollectionPrimitive::GIDCollectionPrimitive( index first,
   index last,
   index model_id )
@@ -422,7 +421,6 @@ GIDCollectionPrimitive::is_contiguous_ascending( GIDCollectionPrimitive& other )
   return ( ( last_ + 1 ) == other.first_ ) and ( model_id_ == other.model_id_ );
 }
 
-// make a Primitive from start to stop with step into a Composite
 GIDCollectionComposite::GIDCollectionComposite(
   const GIDCollectionPrimitive& primitive,
   size_t start,
@@ -445,7 +443,6 @@ GIDCollectionComposite::GIDCollectionComposite(
   }
 }
 
-// Composite copy constructor
 GIDCollectionComposite::GIDCollectionComposite(
   const GIDCollectionComposite& comp )
   : parts_( comp.parts_ )
@@ -458,7 +455,6 @@ GIDCollectionComposite::GIDCollectionComposite(
 {
 }
 
-// construct Composite from a vector of Primitives
 GIDCollectionComposite::GIDCollectionComposite(
   const std::vector< GIDCollectionPrimitive >& parts )
   : size_( 0 )
@@ -490,7 +486,6 @@ GIDCollectionComposite::GIDCollectionComposite(
   std::sort( parts_.begin(), parts_.end(), primitiveSort );
 }
 
-// constructor used when slicing
 GIDCollectionComposite::GIDCollectionComposite(
   const GIDCollectionComposite& composite,
   size_t start,

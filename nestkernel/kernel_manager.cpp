@@ -60,6 +60,7 @@ nest::KernelManager::KernelManager()
   , music_manager()
   , node_manager()
   , initialized_( false )
+  , fingerprint_( 0 )
 {
 }
 
@@ -102,6 +103,8 @@ nest::KernelManager::initialize()
   //   - model_manager for pristine models
   //   - vp_manager for number of threads
   node_manager.initialize(); // must come last
+
+  fingerprint_ = std::clock();
 
   initialized_ = true;
 }

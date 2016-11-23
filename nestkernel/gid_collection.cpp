@@ -23,6 +23,7 @@
 #include "gid_collection.h"
 #include "kernel_manager.h"
 
+
 // C++ includes:
 #include <algorithm> // copy
 
@@ -142,6 +143,11 @@ GIDCollectionPTR operator+( GIDCollectionPTR lhs, GIDCollectionPTR rhs )
   return lhs->operator+( rhs );
 }
 
+GIDCollection::GIDCollection()
+  : fingerprint_( kernel().get_fingerprint() )
+{
+}
+
 GIDCollectionPTR
 GIDCollection::create( IntVectorDatum gidsdatum )
 {
@@ -226,6 +232,12 @@ GIDCollection::create_( const std::vector< index >& gids )
   {
     return GIDCollectionPTR( new GIDCollectionComposite( parts ) );
   }
+}
+
+bool
+GIDCollection::valid() const
+{
+  return fingerprint_ == kernel().get_fingerprint();
 }
 
 GIDCollectionPrimitive::GIDCollectionPrimitive( index first,
@@ -405,9 +417,9 @@ GIDCollectionPrimitive::print_me( std::ostream& out,
 }
 
 bool
-GIDCollectionPrimitive::is_contigous_ascending( GIDCollectionPrimitive& next )
+GIDCollectionPrimitive::is_contiguous_ascending( GIDCollectionPrimitive& other )
 {
-  return ( ( last_ + 1 ) == next.first_ ) and ( model_id_ == next.model_id_ );
+  return ( ( last_ + 1 ) == other.first_ ) and ( model_id_ == other.model_id_ );
 }
 
 // make a Primitive from start to stop with step into a Composite
@@ -417,7 +429,7 @@ GIDCollectionComposite::GIDCollectionComposite(
   size_t stop,
   size_t step )
   : size_( 0 )
-  , step_( 1 ) // TODO: !
+  , step_( 1 )
   , start_part_( 0 )
   , start_offset_( 0 )
   , stop_part_( 0 )
@@ -500,7 +512,11 @@ GIDCollectionComposite::GIDCollectionComposite(
   {
     throw BadProperty( "Index out of range." );
   }
-  // TODO: throw error for slicing a sliced composite
+  if ( composite.step_ > 1 or composite.stop_part_ != 0
+    or composite.stop_offset_ != 0 )
+  {
+    throw BadProperty( "Cannot slice a sliced composite GIDCollection." );
+  }
   size_t global_index = 0;
   bool started = false;
   size_t step_since_prev = 0;
@@ -634,7 +650,7 @@ GIDCollectionComposite::merge_parts(
     did_merge = false;
     for ( size_t i = 0; i < parts.size() - 1; ++i )
     {
-      if ( parts[ i ].is_contigous_ascending( parts[ i + 1 ] ) )
+      if ( parts[ i ].is_contiguous_ascending( parts[ i + 1 ] ) )
       {
         GIDCollectionPTR merged_primitivesPTR =
           parts[ i ] + GIDCollectionPTR( parts[ i + 1 ] );

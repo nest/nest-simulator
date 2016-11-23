@@ -24,6 +24,7 @@
 #define GID_COLLECTION_H
 
 // C++ includes:
+#include <ctime>
 #include <ostream>
 #include <stdexcept> // out_of_range
 #include <vector>
@@ -162,6 +163,12 @@ public:
   void print_me( std::ostream& ) const;
 };
 
+/**
+ * Superclass for GIDCollections.
+ *
+ * This class is an interface to the primitive and composite GIDCollection
+ * types.
+ */
 class GIDCollection
 {
   friend class gc_const_iterator;
@@ -169,14 +176,38 @@ class GIDCollection
 public:
   typedef gc_const_iterator const_iterator;
 
+  /**
+   * Initializer gets current fingerprint from the kernel.
+   */
+  GIDCollection();
+
   virtual ~GIDCollection()
   {
     std::cerr << "Deleting GC: " << this << std::endl; // TODO: couts
   }
 
+  /**
+   * Create a GIDCollection from a vector of GIDs.
+   *
+   * @param gids Vector of GIDs from which to create the GIDCollection
+   */
   static GIDCollectionPTR create( IntVectorDatum gids );
+
+  /**
+   * Create a GIDCollection from an array of GIDs.
+   *
+   * @param gids Array of GIDs from which to create the GIDCollection
+   */
   static GIDCollectionPTR create( TokenArray gids );
 
+  /**
+   * Check if the fingerprint of the GIDCollection matches that of the kernel.
+   */
+  bool valid() const;
+
+  /**
+   * For printing out the contents of the GIDCollection.
+   */
   virtual void print_me( std::ostream& ) const = 0;
 
   virtual index operator[]( size_t ) const = 0;
@@ -202,9 +233,17 @@ public:
   virtual GIDCollectionMetadataPTR get_metadata() const = 0;
 
 private:
+  std::clock_t fingerprint_; //!< Unique identity of the kernel that created the
+                             // GIDCollection
   static GIDCollectionPTR create_( const std::vector< index >& );
 };
 
+/**
+ * Subclass for the primitive GIDCollection type.
+ *
+ * The primitive type contains only homogenous and contiguous GIDs. It also
+ * contains model ID and metadata of the GIDs.
+ */
 class GIDCollectionPrimitive : public GIDCollection
 {
   friend class gc_const_iterator;
@@ -213,20 +252,51 @@ class GIDCollectionPrimitive : public GIDCollection
   using GIDCollection::end;
 
 private:
-  index first_;
-  index last_;
-  index model_id_;
-  GIDCollectionMetadataPTR metadata_;
+  index first_;                       //!< The first GID in the primitive
+  index last_;                        //!< The last GID in the primitive
+  index model_id_;                    //!< Model ID of the GIDs
+  GIDCollectionMetadataPTR metadata_; //!< Pointer to the metadata of the GIDs
 
 public:
   typedef gc_const_iterator const_iterator;
 
+  /**
+   * Create a primitive from a range of GIDs, with provided model ID and
+   * metadata pointer.
+   *
+   * @param first The first GID in the primitive
+   * @param last  The last GID in the primitive
+   * @param model_id Model ID of the GIDs
+   * @param meta Metadata pointer of the GIDs
+   */
   GIDCollectionPrimitive( index first,
     index last,
     index model_id,
     GIDCollectionMetadataPTR );
+
+  /**
+   * Create a primitive from a range of GIDs, with provided model ID.
+   *
+   * @param first The first GID in the primitive
+   * @param last  The last GID in the primitive
+   * @param model_id Model ID of the GIDs
+   */
   GIDCollectionPrimitive( index first, index last, index model_id );
+
+  /**
+   * Create a primitive from a range of GIDs. The model ID has to be found by
+   * the constructor.
+   *
+   * @param first The first GID in the primitive
+   * @param last  The last GID in the primitive
+   */
   GIDCollectionPrimitive( index first, index last );
+
+  /**
+   * Primitive copy constructor.
+   *
+   * @param rhs Primitive to copy
+   */
   GIDCollectionPrimitive( const GIDCollectionPrimitive& );
 
   void print_me( std::ostream& ) const;
@@ -253,11 +323,23 @@ public:
 
   GIDCollectionMetadataPTR get_metadata() const;
 
-  bool is_contigous_ascending( GIDCollectionPrimitive& next );
+  /**
+   * Checks if GIDs in another primitive is a continuation of GIDs in this
+   * primitive.
+   *
+   * @param other Primitive to check for continuity
+   */
+  bool is_contiguous_ascending( GIDCollectionPrimitive& other );
 };
 
 GIDCollectionPTR operator+( GIDCollectionPTR lhs, GIDCollectionPTR rhs );
 
+/**
+ * Subclass for the primitive GIDCollection type.
+ *
+ * The primitive type contains only homogenous and contiguous GIDs. It also
+ * contains model ID and metadata of the GIDs.
+ */
 class GIDCollectionComposite : public GIDCollection
 {
   friend class gc_const_iterator;
@@ -545,7 +627,7 @@ GIDCollectionComposite::begin( GIDCollectionPTR cp ) const
 inline GIDCollectionComposite::const_iterator
 GIDCollectionComposite::end() const
 {
-  if ( stop_part_ != 0 or stop_offset_ != 0 ) // todo: possible error
+  if ( stop_part_ != 0 or stop_offset_ != 0 )
   {
     return const_iterator( *this, stop_part_, stop_offset_, step_ );
   }

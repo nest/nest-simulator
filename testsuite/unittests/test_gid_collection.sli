@@ -554,7 +554,7 @@ M_PROGRESS setverbosity
   n m Connect
 
   end
-} skip_test % fail_or_die
+} fail_or_die
 
 % --------------------------------------------------
 
@@ -572,7 +572,7 @@ M_PROGRESS setverbosity
   m n Connect
 
   end
-} skip_test % fail_or_die
+} fail_or_die
 
 % --------------------------------------------------
 

@@ -227,6 +227,11 @@ nest::ConnBuilder::ConnBuilder( GIDCollectionPTR sources,
       it->second->reset();
     }
   }
+
+  if ( not( sources_->valid() and targets_->valid() ) )
+  {
+    throw KernelException( "Sources and Targets must be valid GIDCollections" );
+  }
 }
 
 

@@ -143,6 +143,7 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
         f_file_name_hlp.write('\n'.join(hlplist))
         f_file_name_hlp.close()
 
+
 def write_helpindex(helpdir):
     """
     Returns index.html and index.hlp

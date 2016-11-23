@@ -383,7 +383,7 @@ void
 nest::ConnBuilder::connect()
 {
   if ( kernel().model_manager.connector_requires_symmetric( synapse_model_ )
-    and not ( is_symmetric() or make_symmetric_ ) )
+    and not( is_symmetric() or make_symmetric_ ) )
   {
     throw BadProperty(
       "Connections with this synapse model can only be created as "

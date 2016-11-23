@@ -248,7 +248,7 @@ extern const Name linear;            //!< Parameter for MSP growth curves
 extern const Name local;             //!< Node parameter
 extern const Name local_id;          //!< Node
 
-extern const Name make_symmetric;    //!< Connectivity-related
+extern const Name make_symmetric; //!< Connectivity-related
 extern const Name MAXERR; //!< Largest permissible error for adaptive stepsize
                           //!< (Brette & Gerstner 2005)
 extern const Name mean;   //!< Miscellaneous parameters

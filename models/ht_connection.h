@@ -33,7 +33,7 @@
   This synapse implements the depression model described in [1, p 1678].
   Synaptic dynamics are given by
 
-  P'(t) = ( 1 - P ) / tau_p
+  P'(t) = ( 1 - P ) / tau_P
   P(T+) = (1 - delta_P) P(T-)   for T : time of a spike
   P(t=0) = 1
 
@@ -41,7 +41,7 @@
 
   Parameters:
      The following parameters can be set in the status dictionary:
-     tauP     double - synaptic vesicle pool recovery time constant [ms]
+     tau_P    double - synaptic vesicle pool recovery time constant [ms]
      delta_P  double - fractional change in vesicle pool on incoming spikes
                        [unitless]
      P        double - current size of the vesicle pool [unitless, 0 <= P <= 1]

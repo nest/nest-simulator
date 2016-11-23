@@ -95,7 +95,7 @@ mm = nest.Create('multimeter',
                  params={'interval': 0.1,
                          'record_from': ['V_m', 'theta',
                                          'g_AMPA', 'g_NMDA',
-                                         'g_GABAA', 'g_GABAB',
+                                         'g_GABA_A', 'g_GABA_B',
                                          'I_NaP', 'I_KNa', 'I_T', 'I_h']})
 
 '''
@@ -174,7 +174,7 @@ except TypeError:
 Vax.set_title('ht_neuron driven by Poisson processes')
 
 Gax = fig.add_subplot(312)
-for gname in ('g_AMPA', 'g_NMDA', 'g_GABAA', 'g_GABAB'):
+for gname in ('g_AMPA', 'g_NMDA', 'g_GABA_A', 'g_GABA_B'):
     Gax.plot(t, data[gname], lw=2, label=texify_name(gname))
 
 try:

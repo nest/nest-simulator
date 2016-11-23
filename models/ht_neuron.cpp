@@ -50,11 +50,9 @@ RecordablesMap< ht_neuron >::create()
     names::g_AMPA, &ht_neuron::get_y_elem_< ht_neuron::State_::G_AMPA > );
   insert_( names::g_NMDA, &ht_neuron::get_g_NMDA_ );
   insert_(
-    names::g_GABAA, &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_A > );
+    names::g_GABA_A, &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_A > );
   insert_(
-    names::g_GABAB, &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_B > );
-  insert_( names::r_spike, &ht_neuron::get_r_spike_ );
-  insert_( names::g_spike, &ht_neuron::get_g_spike_ );
+    names::g_GABA_B, &ht_neuron::get_y_elem_< ht_neuron::State_::G_GABA_B > );
   insert_( names::I_NaP, &ht_neuron::get_I_NaP_ );
   insert_( names::I_KNa, &ht_neuron::get_I_KNa_ );
   insert_( names::I_T, &ht_neuron::get_I_T_ );
@@ -78,9 +76,6 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   // easier access to membrane potential
   const double& V = y[ S::VM ];
 
-  // Synaptic channels
-  double I_syn = 0;
-
   /*
    * NMDA conductance
    *
@@ -101,15 +96,16 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   // Calculate sum of all synaptic channels.
   // Sign convention: For each current, write I = - g * ( V - E )
   //    then dV/dt ~ Sum(I)
-  I_syn += -y[ S::G_AMPA ] * ( V - node.P_.AMPA_E_rev );
+  double I_syn = 0;
+  I_syn += -y[ S::G_AMPA ] * ( V - node.P_.E_rev_AMPA );
   I_syn += -y[ S::G_NMDA_TIMECOURSE ] * ( A1 * Mg_f + A2 * Mg_s )
-    * ( V - node.P_.NMDA_E_rev );
-  I_syn += -y[ S::G_GABA_A ] * ( V - node.P_.GABA_A_E_rev );
-  I_syn += -y[ S::G_GABA_B ] * ( V - node.P_.GABA_B_E_rev );
+    * ( V - node.P_.E_rev_NMDA );
+  I_syn += -y[ S::G_GABA_A ] * ( V - node.P_.E_rev_GABA_A );
+  I_syn += -y[ S::G_GABA_B ] * ( V - node.P_.E_rev_GABA_B );
 
-  // The spike current is only activate immediately after a spike.
-  const double I_spike =
-    node.S_.g_spike_ ? -( V - node.P_.E_K ) / node.P_.tau_spike : 0;
+  // The post-spike K-current, only while refractory
+  const double I_spike = node.S_.ref_steps_ > 0 ?
+		                     -( V - node.P_.E_K ) / node.P_.tau_spike : 0.0 ;
 
   // leak currents
   const double I_Na = -node.P_.g_NaL * ( V - node.P_.E_Na );
@@ -121,26 +117,26 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   const double INaP_slope = 7.7;
   const double m_inf_NaP =
     1.0 / ( 1.0 + std::exp( -( V - INaP_thresh ) / INaP_slope ) );
-  node.S_.I_NaP_ = -node.P_.NaP_g_peak * std::pow( m_inf_NaP, 3.0 )
-    * ( V - node.P_.NaP_E_rev );
+  node.S_.I_NaP_ = -node.P_.g_peak_NaP * std::pow( m_inf_NaP, 3.0 )
+    * ( V - node.P_.E_rev_NaP );
 
   // I_DK
   const double d_half = 0.25;
   const double m_inf_KNa =
     1.0 / ( 1.0 + std::pow( d_half / y[ S::IKNa_D ], 3.5 ) );
-  node.S_.I_KNa_ = -node.P_.KNa_g_peak * m_inf_KNa * ( V - node.P_.KNa_E_rev );
+  node.S_.I_KNa_ = -node.P_.g_peak_KNa * m_inf_KNa * ( V - node.P_.E_rev_KNa );
 
   // I_T
   const double m_inf_T = 1.0 / ( 1.0 + std::exp( -( V + 59.0 ) / 6.2 ) );
   const double h_inf_T = 1.0 / ( 1.0 + std::exp( ( V + 83.0 ) / 4 ) );
-  node.S_.I_T_ = -node.P_.T_g_peak * y[ S::IT_m ] * y[ S::IT_m ] * y[ S::IT_h ]
-    * ( V - node.P_.T_E_rev );
+  node.S_.I_T_ = -node.P_.g_peak_T * y[ S::IT_m ] * y[ S::IT_m ] * y[ S::IT_h ]
+    * ( V - node.P_.E_rev_T );
 
   // I_h
   const double I_h_Vthreshold = -75.0;
   const double m_inf_h =
     1.0 / ( 1.0 + std::exp( ( V - I_h_Vthreshold ) / 5.5 ) );
-  node.S_.I_h_ = -node.P_.h_g_peak * y[ S::Ih_m ] * ( V - node.P_.h_E_rev );
+  node.S_.I_h_ = -node.P_.g_peak_h * y[ S::Ih_m ] * ( V - node.P_.E_rev_h );
 
   // delta V
   f[ S::VM ] =
@@ -154,25 +150,25 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   // Synaptic channels
 
   // AMPA
-  f[ S::DG_AMPA ] = -y[ S::DG_AMPA ] / node.P_.AMPA_tau_1;
-  f[ S::G_AMPA ] = y[ S::DG_AMPA ] - y[ S::G_AMPA ] / node.P_.AMPA_tau_2;
+  f[ S::DG_AMPA ] = -y[ S::DG_AMPA ] / node.P_.tau_rise_AMPA;
+  f[ S::G_AMPA ] = y[ S::DG_AMPA ] - y[ S::G_AMPA ] / node.P_.tau_decay_AMPA;
 
   // NMDA
-  f[ S::DG_NMDA_TIMECOURSE ] = -y[ S::DG_NMDA_TIMECOURSE ] / node.P_.NMDA_tau_1;
+  f[ S::DG_NMDA_TIMECOURSE ] = -y[ S::DG_NMDA_TIMECOURSE ] / node.P_.tau_rise_NMDA;
   f[ S::G_NMDA_TIMECOURSE ] =
-    y[ S::DG_NMDA_TIMECOURSE ] - y[ S::G_NMDA_TIMECOURSE ] / node.P_.NMDA_tau_2;
-  f[ S::Mg_slow ] = ( Mg_ss - Mg_s ) / node.P_.NMDA_tau_Mg_slow;
-  f[ S::Mg_fast ] = ( Mg_ss - Mg_f ) / node.P_.NMDA_tau_Mg_fast;
+    y[ S::DG_NMDA_TIMECOURSE ] - y[ S::G_NMDA_TIMECOURSE ] / node.P_.tau_decay_NMDA;
+  f[ S::Mg_slow ] = ( Mg_ss - Mg_s ) / node.P_.tau_Mg_slow_NMDA;
+  f[ S::Mg_fast ] = ( Mg_ss - Mg_f ) / node.P_.tau_Mg_fast_NMDA;
 
   // GABA_A
-  f[ S::DG_GABA_A ] = -y[ S::DG_GABA_A ] / node.P_.GABA_A_tau_1;
+  f[ S::DG_GABA_A ] = -y[ S::DG_GABA_A ] / node.P_.tau_rise_GABA_A;
   f[ S::G_GABA_A ] =
-    y[ S::DG_GABA_A ] - y[ S::G_GABA_A ] / node.P_.GABA_A_tau_2;
+    y[ S::DG_GABA_A ] - y[ S::G_GABA_A ] / node.P_.tau_decay_GABA_A;
 
   // GABA_B
-  f[ S::DG_GABA_B ] = -y[ S::DG_GABA_B ] / node.P_.GABA_B_tau_1;
+  f[ S::DG_GABA_B ] = -y[ S::DG_GABA_B ] / node.P_.tau_rise_GABA_B;
   f[ S::G_GABA_B ] =
-    y[ S::DG_GABA_B ] - y[ S::G_GABA_B ] / node.P_.GABA_B_tau_2;
+    y[ S::DG_GABA_B ] - y[ S::G_GABA_B ] / node.P_.tau_decay_GABA_B;
 
   // I_KNa
   const double D_influx_peak = 0.025;
@@ -210,49 +206,48 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
  * ---------------------------------------------------------------- */
 
 nest::ht_neuron::Parameters_::Parameters_()
-  : E_Na( 30.0 )      // 30 mV
-  , E_K( -90.0 )      // -90 mV
-  , g_NaL( 0.2 )      // 0.2
-  , g_KL( 1.0 )       // 1.0 - 1.85
+  : E_Na( 30.0 )      // mV
+  , E_K( -90.0 )      // mV
+  , g_NaL( 0.2 )
+  , g_KL( 1.0 )
   , tau_m( 16.0 )     // ms
   , theta_eq( -51.0 ) // mV
   , tau_theta( 2.0 )  // ms
   , tau_spike( 1.75 ) // ms
-  , t_spike( 2.0 )    // ms
-  , AMPA_g_peak( 0.1 )
-  , AMPA_tau_1( 0.5 ) // ms
-  , AMPA_tau_2( 2.4 ) // ms
-  , AMPA_E_rev( 0.0 ) // mV
-  , NMDA_g_peak( 0.075 )
-  , NMDA_tau_1( 4.0 )        // ms
-  , NMDA_tau_2( 40.0 )       // ms
-  , NMDA_E_rev( 0.0 )        // mV
-  , NMDA_Vact( -25.57 )      // mV
-  , NMDA_Sact( 0.081 )       // mV
-  , NMDA_tau_Mg_slow( 22.7 ) // ms
-  , NMDA_tau_Mg_fast( 0.68 ) // ms
-  , GABA_A_g_peak( 0.33 )
-  , GABA_A_tau_1( 1.0 )   // ms
-  , GABA_A_tau_2( 7.0 )   // ms
-  , GABA_A_E_rev( -70.0 ) // mV
-  , GABA_B_g_peak( 0.0132 )
-  , GABA_B_tau_1( 60.0 )  // ms
-  , GABA_B_tau_2( 200.0 ) // ms
-  , GABA_B_E_rev( -90.0 ) // mV
-  , NaP_g_peak( 1.0 )
-  , NaP_E_rev( 30.0 ) // mV
-  , KNa_g_peak( 1.0 )
-  , KNa_E_rev( -90.0 ) // mV
-  , T_g_peak( 1.0 )
-  , T_E_rev( 0.0 ) // mV
-  , h_g_peak( 1.0 )
-  , h_E_rev( -40.0 ) // mV
+  , t_ref( 2.0 )    // ms
+  , g_peak_AMPA( 0.1 )
+  , tau_rise_AMPA( 0.5 ) // ms
+  , tau_decay_AMPA( 2.4 ) // ms
+  , E_rev_AMPA( 0.0 ) // mV
+  , g_peak_NMDA( 0.075 )
+  , tau_rise_NMDA( 4.0 )        // ms
+  , tau_decay_NMDA( 40.0 )       // ms
+  , E_rev_NMDA( 0.0 )        // mV
+  , V_act_NMDA( -25.57 )      // mV
+  , S_act_NMDA( 0.081 )       // mV
+  , tau_Mg_slow_NMDA( 22.7 ) // ms
+  , tau_Mg_fast_NMDA( 0.68 ) // ms
+  , g_peak_GABA_A( 0.33 )
+  , tau_rise_GABA_A( 1.0 )   // ms
+  , tau_decay_GABA_A( 7.0 )   // ms
+  , E_rev_GABA_A( -70.0 ) // mV
+  , g_peak_GABA_B( 0.0132 )
+  , tau_rise_GABA_B( 60.0 )  // ms
+  , tau_decay_GABA_B( 200.0 ) // ms
+  , E_rev_GABA_B( -90.0 ) // mV
+  , g_peak_NaP( 1.0 )
+  , E_rev_NaP( 30.0 ) // mV
+  , g_peak_KNa( 1.0 )
+  , E_rev_KNa( -90.0 ) // mV
+  , g_peak_T( 1.0 )
+  , E_rev_T( 0.0 ) // mV
+  , g_peak_h( 1.0 )
+  , E_rev_h( -40.0 ) // mV
 {
 }
 
 nest::ht_neuron::State_::State_()
-  : r_spike_( 0 )
-  , g_spike_( false )
+  : ref_steps_( 0 )
   , I_NaP_( 0.0 )
   , I_KNa_( 0.0 )
   , I_T_( 0.0 )
@@ -266,13 +261,13 @@ nest::ht_neuron::State_::State_()
 }
 
 nest::ht_neuron::State_::State_( const Parameters_& p )
-  : r_spike_( 0 )
-  , g_spike_( false )
+  : ref_steps_( 0 )
   , I_NaP_( 0.0 )
   , I_KNa_( 0.0 )
   , I_T_( 0.0 )
   , I_h_( 0.0 )
 {
+  // initialize with equilibrium values
   y_[ VM ] = ( p.g_NaL * p.E_Na + p.g_KL * p.E_K ) / ( p.g_NaL + p.g_KL );
   y_[ THETA ] = p.theta_eq;
 
@@ -285,8 +280,7 @@ nest::ht_neuron::State_::State_( const Parameters_& p )
 }
 
 nest::ht_neuron::State_::State_( const State_& s )
-  : r_spike_( s.r_spike_ )
-  , g_spike_( s.g_spike_ )
+  : ref_steps_( s.ref_steps_ )
   , I_NaP_( s.I_NaP_ )
   , I_KNa_( s.I_KNa_ )
   , I_T_( s.I_T_ )
@@ -305,8 +299,7 @@ nest::ht_neuron::State_& nest::ht_neuron::State_::operator=( const State_& s )
     return *this;
   }
 
-  r_spike_ = s.r_spike_;
-  g_spike_ = s.g_spike_;
+  ref_steps_ = s.ref_steps_;
   I_NaP_ = s.I_NaP_;
   I_KNa_ = s.I_KNa_;
   I_T_ = s.I_T_;
@@ -338,36 +331,36 @@ nest::ht_neuron::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_m, tau_m );
   def< double >( d, names::theta_eq, theta_eq );
   def< double >( d, names::tau_theta, tau_theta );
+  def< double >( d, names::t_spike, t_ref );
   def< double >( d, names::tau_spike, tau_spike );
-  def< double >( d, names::spike_duration, t_spike );
-  def< double >( d, names::AMPA_g_peak, AMPA_g_peak );
-  def< double >( d, names::AMPA_tau_1, AMPA_tau_1 );
-  def< double >( d, names::AMPA_tau_2, AMPA_tau_2 );
-  def< double >( d, names::AMPA_E_rev, AMPA_E_rev );
-  def< double >( d, names::NMDA_g_peak, NMDA_g_peak );
-  def< double >( d, names::NMDA_tau_1, NMDA_tau_1 );
-  def< double >( d, names::NMDA_tau_2, NMDA_tau_2 );
-  def< double >( d, names::NMDA_E_rev, NMDA_E_rev );
-  def< double >( d, names::NMDA_Vact, NMDA_Vact );
-  def< double >( d, names::NMDA_Sact, NMDA_Sact );
-  def< double >( d, names::NMDA_tau_Mg_slow, NMDA_tau_Mg_slow );
-  def< double >( d, names::NMDA_tau_Mg_fast, NMDA_tau_Mg_fast );
-  def< double >( d, names::GABA_A_g_peak, GABA_A_g_peak );
-  def< double >( d, names::GABA_A_tau_1, GABA_A_tau_1 );
-  def< double >( d, names::GABA_A_tau_2, GABA_A_tau_2 );
-  def< double >( d, names::GABA_A_E_rev, GABA_A_E_rev );
-  def< double >( d, names::GABA_B_g_peak, GABA_B_g_peak );
-  def< double >( d, names::GABA_B_tau_1, GABA_B_tau_1 );
-  def< double >( d, names::GABA_B_tau_2, GABA_B_tau_2 );
-  def< double >( d, names::GABA_B_E_rev, GABA_B_E_rev );
-  def< double >( d, names::NaP_g_peak, NaP_g_peak );
-  def< double >( d, names::NaP_E_rev, NaP_E_rev );
-  def< double >( d, names::KNa_g_peak, KNa_g_peak );
-  def< double >( d, names::KNa_E_rev, KNa_E_rev );
-  def< double >( d, names::T_g_peak, T_g_peak );
-  def< double >( d, names::T_E_rev, T_E_rev );
-  def< double >( d, names::h_g_peak, h_g_peak );
-  def< double >( d, names::h_E_rev, h_E_rev );
+  def< double >( d, names::g_peak_AMPA, g_peak_AMPA );
+  def< double >( d, names::tau_rise_AMPA, tau_rise_AMPA );
+  def< double >( d, names::tau_decay_AMPA, tau_decay_AMPA );
+  def< double >( d, names::E_rev_AMPA, E_rev_AMPA );
+  def< double >( d, names::g_peak_NMDA, g_peak_NMDA );
+  def< double >( d, names::tau_rise_NMDA, tau_rise_NMDA );
+  def< double >( d, names::tau_decay_NMDA, tau_decay_NMDA );
+  def< double >( d, names::E_rev_NMDA, E_rev_NMDA );
+  def< double >( d, names::V_act_NMDA, V_act_NMDA );
+  def< double >( d, names::S_act_NMDA, S_act_NMDA );
+  def< double >( d, names::tau_Mg_slow_NMDA, tau_Mg_slow_NMDA );
+  def< double >( d, names::tau_Mg_fast_NMDA, tau_Mg_fast_NMDA );
+  def< double >( d, names::g_peak_GABA_A, g_peak_GABA_A );
+  def< double >( d, names::tau_rise_GABA_A, tau_rise_GABA_A );
+  def< double >( d, names::tau_decay_GABA_A, tau_decay_GABA_A );
+  def< double >( d, names::E_rev_GABA_A, E_rev_GABA_A );
+  def< double >( d, names::g_peak_GABA_B, g_peak_GABA_B );
+  def< double >( d, names::tau_rise_GABA_B, tau_rise_GABA_B );
+  def< double >( d, names::tau_decay_GABA_B, tau_decay_GABA_B );
+  def< double >( d, names::E_rev_GABA_B, E_rev_GABA_B );
+  def< double >( d, names::g_peak_NaP, g_peak_NaP );
+  def< double >( d, names::E_rev_NaP, E_rev_NaP );
+  def< double >( d, names::g_peak_KNa, g_peak_KNa );
+  def< double >( d, names::E_rev_KNa, E_rev_KNa );
+  def< double >( d, names::g_peak_T, g_peak_T );
+  def< double >( d, names::E_rev_T, E_rev_T );
+  def< double >( d, names::g_peak_h, g_peak_h );
+  def< double >( d, names::E_rev_h, E_rev_h );
 }
 
 void
@@ -381,75 +374,75 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::theta_eq, theta_eq );
   updateValue< double >( d, names::tau_theta, tau_theta );
   updateValue< double >( d, names::tau_spike, tau_spike );
-  updateValue< double >( d, names::spike_duration, t_spike );
-  updateValue< double >( d, names::AMPA_g_peak, AMPA_g_peak );
-  updateValue< double >( d, names::AMPA_tau_1, AMPA_tau_1 );
-  updateValue< double >( d, names::AMPA_tau_2, AMPA_tau_2 );
-  updateValue< double >( d, names::AMPA_E_rev, AMPA_E_rev );
-  updateValue< double >( d, names::NMDA_g_peak, NMDA_g_peak );
-  updateValue< double >( d, names::NMDA_tau_1, NMDA_tau_1 );
-  updateValue< double >( d, names::NMDA_tau_2, NMDA_tau_2 );
-  updateValue< double >( d, names::NMDA_E_rev, NMDA_E_rev );
-  updateValue< double >( d, names::NMDA_Vact, NMDA_Vact );
-  updateValue< double >( d, names::NMDA_Sact, NMDA_Sact );
-  updateValue< double >( d, names::NMDA_tau_Mg_slow, NMDA_tau_Mg_slow );
-  updateValue< double >( d, names::NMDA_tau_Mg_fast, NMDA_tau_Mg_fast );
-  updateValue< double >( d, names::GABA_A_g_peak, GABA_A_g_peak );
-  updateValue< double >( d, names::GABA_A_tau_1, GABA_A_tau_1 );
-  updateValue< double >( d, names::GABA_A_tau_2, GABA_A_tau_2 );
-  updateValue< double >( d, names::GABA_A_E_rev, GABA_A_E_rev );
-  updateValue< double >( d, names::GABA_B_g_peak, GABA_B_g_peak );
-  updateValue< double >( d, names::GABA_B_tau_1, GABA_B_tau_1 );
-  updateValue< double >( d, names::GABA_B_tau_2, GABA_B_tau_2 );
-  updateValue< double >( d, names::GABA_B_E_rev, GABA_B_E_rev );
-  updateValue< double >( d, names::NaP_g_peak, NaP_g_peak );
-  updateValue< double >( d, names::NaP_E_rev, NaP_E_rev );
-  updateValue< double >( d, names::KNa_g_peak, KNa_g_peak );
-  updateValue< double >( d, names::KNa_E_rev, KNa_E_rev );
-  updateValue< double >( d, names::T_g_peak, T_g_peak );
-  updateValue< double >( d, names::T_E_rev, T_E_rev );
-  updateValue< double >( d, names::h_g_peak, h_g_peak );
-  updateValue< double >( d, names::h_E_rev, h_E_rev );
+  updateValue< double >( d, names::t_spike, t_ref );
+  updateValue< double >( d, names::g_peak_AMPA, g_peak_AMPA );
+  updateValue< double >( d, names::tau_rise_AMPA, tau_rise_AMPA );
+  updateValue< double >( d, names::tau_decay_AMPA, tau_decay_AMPA );
+  updateValue< double >( d, names::E_rev_AMPA, E_rev_AMPA );
+  updateValue< double >( d, names::g_peak_NMDA, g_peak_NMDA );
+  updateValue< double >( d, names::tau_rise_NMDA, tau_rise_NMDA );
+  updateValue< double >( d, names::tau_decay_NMDA, tau_decay_NMDA );
+  updateValue< double >( d, names::E_rev_NMDA, E_rev_NMDA );
+  updateValue< double >( d, names::V_act_NMDA, V_act_NMDA );
+  updateValue< double >( d, names::S_act_NMDA, S_act_NMDA );
+  updateValue< double >( d, names::tau_Mg_slow_NMDA, tau_Mg_slow_NMDA );
+  updateValue< double >( d, names::tau_Mg_fast_NMDA, tau_Mg_fast_NMDA );
+  updateValue< double >( d, names::g_peak_GABA_A, g_peak_GABA_A );
+  updateValue< double >( d, names::tau_rise_GABA_A, tau_rise_GABA_A );
+  updateValue< double >( d, names::tau_decay_GABA_A, tau_decay_GABA_A );
+  updateValue< double >( d, names::E_rev_GABA_A, E_rev_GABA_A );
+  updateValue< double >( d, names::g_peak_GABA_B, g_peak_GABA_B );
+  updateValue< double >( d, names::tau_rise_GABA_B, tau_rise_GABA_B );
+  updateValue< double >( d, names::tau_decay_GABA_B, tau_decay_GABA_B );
+  updateValue< double >( d, names::E_rev_GABA_B, E_rev_GABA_B );
+  updateValue< double >( d, names::g_peak_NaP, g_peak_NaP );
+  updateValue< double >( d, names::E_rev_NaP, E_rev_NaP );
+  updateValue< double >( d, names::g_peak_KNa, g_peak_KNa );
+  updateValue< double >( d, names::E_rev_KNa, E_rev_KNa );
+  updateValue< double >( d, names::g_peak_T, g_peak_T );
+  updateValue< double >( d, names::E_rev_T, E_rev_T );
+  updateValue< double >( d, names::g_peak_h, g_peak_h );
+  updateValue< double >( d, names::E_rev_h, E_rev_h );
 
-  if ( AMPA_g_peak < 0 )
+  if ( g_peak_AMPA < 0 )
   {
-    throw BadParameter( "AMPA_g_peak >= 0 required." );
+    throw BadParameter( "g_peak_AMPA >= 0 required." );
   }
-  if ( GABA_A_g_peak < 0 )
+  if ( g_peak_GABA_A < 0 )
   {
-    throw BadParameter( "GABA_A_g_peak >= 0 required." );
+    throw BadParameter( "g_peak_GABA_A >= 0 required." );
   }
-  if ( GABA_B_g_peak < 0 )
+  if ( g_peak_GABA_B < 0 )
   {
-    throw BadParameter( "GABA_B_g_peak >= 0 required." );
+    throw BadParameter( "g_peak_GABA_B >= 0 required." );
   }
-  if ( KNa_g_peak < 0 )
+  if ( g_peak_KNa < 0 )
   {
-    throw BadParameter( "KNa_g_peak >= 0 required." );
+    throw BadParameter( "g_peak_KNa >= 0 required." );
   }
-  if ( NMDA_Sact < 0 )
+  if ( S_act_NMDA < 0 )
   {
-    throw BadParameter( "NMDA_Sact >= 0 required." );
+    throw BadParameter( "S_act_NMDA >= 0 required." );
   }
-  if ( NMDA_g_peak < 0 )
+  if ( g_peak_NMDA < 0 )
   {
-    throw BadParameter( "NMDA_g_peak >= 0 required." );
+    throw BadParameter( "g_peak_NMDA >= 0 required." );
   }
-  if ( T_g_peak < 0 )
+  if ( g_peak_T < 0 )
   {
-    throw BadParameter( "T_g_peak >= 0 required." );
+    throw BadParameter( "g_peak_T >= 0 required." );
   }
-  if ( h_g_peak < 0 )
+  if ( g_peak_h < 0 )
   {
-    throw BadParameter( "h_g_peak >= 0 required." );
+    throw BadParameter( "g_peak_h >= 0 required." );
   }
-  if ( t_spike < 0 )
+  if ( t_ref < 0 )
   {
     throw BadParameter( "t_spike >= 0 required." );
   }
-  if ( NaP_g_peak < 0 )
+  if ( g_peak_NaP < 0 )
   {
-    throw BadParameter( "NaP_g_peak >= 0 required." );
+    throw BadParameter( "g_peak_NaP >= 0 required." );
   }
   if ( g_KL < 0 )
   {
@@ -460,45 +453,45 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
     throw BadParameter( "g_NaL >= 0 required." );
   }
 
-  if ( AMPA_tau_1 <= 0 )
+  if ( tau_rise_AMPA <= 0 )
   {
-    throw BadParameter( "AMPA_tau_1 > 0 required." );
+    throw BadParameter( "tau_rise_AMPA > 0 required." );
   }
-  if ( AMPA_tau_2 <= 0 )
+  if ( tau_decay_AMPA <= 0 )
   {
-    throw BadParameter( "AMPA_tau_2 > 0 required." );
+    throw BadParameter( "tau_decay_AMPA > 0 required." );
   }
-  if ( GABA_A_tau_1 <= 0 )
+  if ( tau_rise_GABA_A <= 0 )
   {
-    throw BadParameter( "GABA_A_tau_1 > 0 required." );
+    throw BadParameter( "tau_rise_GABA_A > 0 required." );
   }
-  if ( GABA_A_tau_2 <= 0 )
+  if ( tau_decay_GABA_A <= 0 )
   {
-    throw BadParameter( "GABA_A_tau_2 > 0 required." );
+    throw BadParameter( "tau_decay_GABA_A > 0 required." );
   }
-  if ( GABA_B_tau_1 <= 0 )
+  if ( tau_rise_GABA_B <= 0 )
   {
-    throw BadParameter( "GABA_B_tau_1 > 0 required." );
+    throw BadParameter( "tau_rise_GABA_B > 0 required." );
   }
-  if ( GABA_B_tau_2 <= 0 )
+  if ( tau_decay_GABA_B <= 0 )
   {
-    throw BadParameter( "GABA_B_tau_2 > 0 required." );
+    throw BadParameter( "tau_decay_GABA_B > 0 required." );
   }
-  if ( NMDA_tau_1 <= 0 )
+  if ( tau_rise_NMDA <= 0 )
   {
-    throw BadParameter( "NMDA_tau_1 > 0 required." );
+    throw BadParameter( "tau_rise_NMDA > 0 required." );
   }
-  if ( NMDA_tau_2 <= 0 )
+  if ( tau_decay_NMDA <= 0 )
   {
-    throw BadParameter( "NMDA_tau_2 > 0 required." );
+    throw BadParameter( "tau_decay_NMDA > 0 required." );
   }
-  if ( NMDA_tau_Mg_fast <= 0 )
+  if ( tau_Mg_fast_NMDA <= 0 )
   {
-    throw BadParameter( "NMDA_tau_Mg_fast > 0 required." );
+    throw BadParameter( "tau_Mg_fast_NMDA > 0 required." );
   }
-  if ( NMDA_tau_Mg_slow <= 0 )
+  if ( tau_Mg_slow_NMDA <= 0 )
   {
-    throw BadParameter( "NMDA_tau_Mg_slow > 0 required." );
+    throw BadParameter( "tau_Mg_slow_NMDA > 0 required." );
   }
   if ( tau_spike <= 0 )
   {
@@ -513,25 +506,25 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
     throw BadParameter( "tau_m > 0 required." );
   }
 
-  if ( AMPA_tau_1 >= AMPA_tau_2 )
+  if ( tau_rise_AMPA >= tau_decay_AMPA )
   {
-    throw BadParameter( "AMPA_tau_1 < AMPA_tau_2 required." );
+    throw BadParameter( "tau_rise_AMPA < tau_decay_AMPA required." );
   }
-  if ( GABA_A_tau_1 >= GABA_A_tau_2 )
+  if ( tau_rise_GABA_A >= tau_decay_GABA_A )
   {
-    throw BadParameter( "GABA_A_tau_1 < GABA_A_tau_2 required." );
+    throw BadParameter( "tau_rise_GABA_A < tau_decay_GABA_A required." );
   }
-  if ( GABA_B_tau_1 >= GABA_B_tau_2 )
+  if ( tau_rise_GABA_B >= tau_decay_GABA_B )
   {
-    throw BadParameter( "GABA_B_tau_1 < GABA_B_tau_2 required." );
+    throw BadParameter( "tau_rise_GABA_B < tau_decay_GABA_B required." );
   }
-  if ( NMDA_tau_1 >= NMDA_tau_2 )
+  if ( tau_rise_NMDA >= tau_decay_NMDA )
   {
-    throw BadParameter( "NMDA_tau_1 < NMDA_tau_2 required." );
+    throw BadParameter( "tau_rise_NMDA < tau_decay_NMDA required." );
   }
-  if ( NMDA_tau_Mg_fast >= NMDA_tau_Mg_slow )
+  if ( tau_Mg_fast_NMDA >= tau_Mg_slow_NMDA )
   {
-    throw BadParameter( "NMDA_tau_Mg_fast < NMDA_tau_Mg_slow required." );
+    throw BadParameter( "tau_Mg_fast_NMDA < tau_Mg_slow_NMDA required." );
   }
 }
 
@@ -725,18 +718,18 @@ nest::ht_neuron::calibrate()
   V_.cond_steps_.resize( SUP_SPIKE_RECEPTOR - 1 );
 
   V_.cond_steps_[ AMPA - 1 ] =
-    get_synapse_constant( P_.AMPA_tau_1, P_.AMPA_tau_2, P_.AMPA_g_peak );
+    get_synapse_constant( P_.tau_rise_AMPA, P_.tau_decay_AMPA, P_.g_peak_AMPA );
 
   V_.cond_steps_[ NMDA - 1 ] =
-    get_synapse_constant( P_.NMDA_tau_1, P_.NMDA_tau_2, P_.NMDA_g_peak );
+    get_synapse_constant( P_.tau_rise_NMDA, P_.tau_decay_NMDA, P_.g_peak_NMDA );
 
   V_.cond_steps_[ GABA_A - 1 ] =
-    get_synapse_constant( P_.GABA_A_tau_1, P_.GABA_A_tau_2, P_.GABA_A_g_peak );
+    get_synapse_constant( P_.tau_rise_GABA_A, P_.tau_decay_GABA_A, P_.g_peak_GABA_A );
 
   V_.cond_steps_[ GABA_B - 1 ] =
-    get_synapse_constant( P_.GABA_B_tau_1, P_.GABA_B_tau_2, P_.GABA_B_g_peak );
+    get_synapse_constant( P_.tau_rise_GABA_B, P_.tau_decay_GABA_B, P_.g_peak_GABA_B );
 
-  V_.PotassiumRefractoryCounts_ = Time( Time::ms( P_.t_spike ) ).get_steps();
+  V_.PotassiumRefractoryCounts_ = Time( Time::ms( P_.t_ref ) ).get_steps();
 
   // since t_spike_ >= 0, this can only fail in error
   assert( V_.PotassiumRefractoryCounts_ >= 0 );
@@ -751,12 +744,12 @@ nest::ht_neuron::get_status( DictionaryDatum& d ) const
 
   DictionaryDatum receptor_type = new Dictionary();
 
-  ( *receptor_type )[ "AMPA" ] = AMPA;
-  ( *receptor_type )[ "NMDA" ] = NMDA;
-  ( *receptor_type )[ "GABA_A" ] = GABA_A;
-  ( *receptor_type )[ "GABA_B" ] = GABA_B;
+  ( *receptor_type )[ names::AMPA ] = AMPA;
+  ( *receptor_type )[ names::NMDA ] = NMDA;
+  ( *receptor_type )[ names::GABA_A ] = GABA_A;
+  ( *receptor_type )[ names::GABA_B ] = GABA_B;
 
-  ( *d )[ "receptor_types" ] = receptor_type;
+  ( *d )[ names::receptor_types ] = receptor_type;
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
@@ -818,10 +811,10 @@ ht_neuron::update( Time const& origin, const long from, const long to )
     S_.y_[ State_::Mg_slow ] = std::min( Mg_ss, S_.y_[ State_::Mg_slow ] );
     S_.y_[ State_::Mg_fast ] = std::min( Mg_ss, S_.y_[ State_::Mg_fast ] );
 
-    // Deactivate potassium current after spike time have expired
-    if ( S_.r_spike_ && --S_.r_spike_ == 0 )
+    // Deactivate potassium current after t_spike
+    if ( S_.ref_steps_ > 0 )
     {
-      S_.g_spike_ = false; // Deactivate potassium current.
+      --S_.ref_steps_;
     }
 
     /* Add new spikes to node state array.
@@ -835,19 +828,16 @@ ht_neuron::update( Time const& origin, const long from, const long to )
         V_.cond_steps_[ i ] * B_.spike_inputs_[ i ].get_value( lag );
     }
 
-    // A spike is generated when the membrane potential (V) exceeds
-    // the threshold (theta).
-    if ( not S_.g_spike_ && S_.y_[ State_::VM ] >= S_.y_[ State_::THETA ] )
+    // A spike is generated if then neuron is not refractory and the membrane
+    // potential exceeds the threshold.
+    if ( S_.ref_steps_ == 0 and S_.y_[ State_::VM ] >= S_.y_[ State_::THETA ] )
     {
       // Set V and theta to the sodium reversal potential.
       S_.y_[ State_::VM ] = P_.E_Na;
       S_.y_[ State_::THETA ] = P_.E_Na;
 
-      // Activate fast potassium current. Drives the
-      // membrane potential towards the potassium reversal
-      // potential (activate only if duration is non-zero).
-      S_.g_spike_ = V_.PotassiumRefractoryCounts_ > 0;
-      S_.r_spike_ = V_.PotassiumRefractoryCounts_;
+      // Activate fast re-polarizing potassium current.
+      S_.ref_steps_ = V_.PotassiumRefractoryCounts_;
 
       set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 

@@ -60,15 +60,15 @@
    - AMPA, NMDA, GABA_A, and GABA_B conductance-based synapses with
      beta-function (difference of two exponentials) time course.
    - Voltage-dependent NMDA with instantaneous blocking and two-stage
-     unblocking as described in [1].
+     unblocking as described in [1, 2].
    - Intrinsic currents I_h (pacemaker), I_T (low-threshold calcium),
      I_Na(p) (persistent sodium), and I_KNa (depolarization-activated
      potassium).
-   - Several apparent typographical errors in the descriptions of
-     the intrinsic currents were fixed, hopefully in a meaningful
-     way.
+   - Conductances are unitless in this model.
+   - For details in the model and a discussion of corrections, see
+     doc/model_details/hill_tononi.ipynb.
 
-   NMDA conductances is modeled as follows
+   NMDA conductances is modeled as follows [2]
 
      g_NMDA(t, V) = m(V, t) g(t)
 
@@ -86,7 +86,7 @@
    unblocking. For a given V, the steady-state value is given by a
    sigmoidal function
 
-      m_ss(V) = 1 / ( 1 + exp( -NMDA_Sact ( V - NMDA_Vact ) ) )
+      m_ss(V) = 1 / ( 1 + exp( -S_act ( V - V_act ) ) )
 
    Instantaneous blocking means that
 
@@ -94,7 +94,7 @@
 
    while unblocking occurs at two different speeds according to
 
-      dm_X / dt = ( m_ss(V) - m_X ) / NMDA_tau_Mg_X  for X: slow, fast
+      dm_X / dt = ( m_ss(V) - m_X ) / tau_Mg_X  for X: slow, fast
 
 
    I am grateful to thank Sean Hill for giving me access to his Synthesis
@@ -109,23 +109,25 @@
 
    Parameters:
    V_m            -  membrane potential
-   spike_duration - duration of re-polarizing potassium current
+   t_spike - duration of re-polarizing potassium current
    tau_m          - membrane time constant applying to all currents but
                     repolarizing K-current (see [1, p 1677])
-   tau_spike      - membrane time constant applying to repolarizing K-current
+   t_ref          - refractory time and duration of post-spike repolarizing
+                    potassium current (t_spike in [1])
+   tau_spike      - membrane time constant for post-spike repolarizing
+                    potassium current
    theta, theta_eq, tau_theta - Threshold, equilibrium value, time constant
    g_KL, E_K, g_NaL, E_Na     - conductances and reversal potentials for K and
                                 Na leak currents
-   {AMPA,NMDA,GABA_A,GABA_B}_{E_rev,g_peak,tau_1,tau_2}
+   {E_rev,g_peak,tau_rise,tau_decay}_{AMPA,NMDA,GABA_A,GABA_B}
                                 - reversal potentials, peak conductances and
-                                  time constants for synapses (tau_1: rise time,
-                                  tau_2: decay time, tau_1 < tau_2)
-   NMDA_Sact, NMDA_Vact, NMDA_tau_Mg_{fast, slow}
+                                  time constants for synapses (tau_rise/
+                                  tau_decay correspond to tau_1/tau_2 in the
+                                  paper)
+   V_act_NMDA, S_act_NMDA, tau_Mg_{fast, slow}_NMDA
                                 - Parameters for voltage dependence of NMDA-
                                   conductance, see above
-        - Time constants for NMDA Mg unblocking,
-                                  see [1, p 1678]
-   {h,T,NaP,KNa}_{E_rev,g_peak} - reversal potential and peak conductance for
+   {E_rev,g_peak}_{h,T,NaP,KNa} - reversal potential and peak conductance for
                                   intrinsic currents
    receptor_types               - dictionary mapping synapse names to ports on
                                   neuron model
@@ -141,6 +143,7 @@
 
    References:
    [1] S Hill and G Tononi (2005). J Neurophysiol 93:1671-1698.
+   [2] M Vargas-Caballero HPC Robinson (2003). J Neurophysiol 89:2778–2783.
 
    SeeAlso: ht_synapse
 */
@@ -225,63 +228,64 @@ private:
    */
   struct Parameters_
   {
-    // Leaks
-    double E_Na;  // 30 mV
-    double E_K;   // -90 mV
-    double g_NaL; // 0.2
-    double g_KL;  // 1.0 - 1.85
+	Parameters_();
+
+	void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+	void set( const DictionaryDatum& ); //!< Set values from dicitonary
+
+    // Note: Conductances are unitless
+	// Leaks
+    double E_Na;  // mV
+    double E_K;   // mV
+    double g_NaL;
+    double g_KL;
     double tau_m; // ms
 
     // Dynamic threshold
     double theta_eq;  // mV
     double tau_theta; // ms
 
-    // Spike potassium current
-    double tau_spike; // ms
-    double t_spike;   // ms
-
-    Parameters_();
-
-    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    // Post-spike potassium current
+    double tau_spike; // ms, membrane time constant for this current
+    double t_ref;   // ms, refractory time
 
     // Parameters for synapse of type AMPA, GABA_A, GABA_B and NMDA
-    double AMPA_g_peak;
-    double AMPA_tau_1; // ms
-    double AMPA_tau_2; // ms
-    double AMPA_E_rev; // mV
+    double g_peak_AMPA;
+    double tau_rise_AMPA; // ms
+    double tau_decay_AMPA; // ms
+    double E_rev_AMPA; // mV
 
-    double NMDA_g_peak;
-    double NMDA_tau_1; // ms
-    double NMDA_tau_2; // ms
-    double NMDA_E_rev; // mV
-    double NMDA_Vact;  //!< mV, inactive for V << Vact, inflection of sigmoid
-    double NMDA_Sact;  //!< mV, scale of inactivation
-    double NMDA_tau_Mg_slow; // ms
-    double NMDA_tau_Mg_fast; // ms
+    double g_peak_NMDA;
+    double tau_rise_NMDA; // ms
+    double tau_decay_NMDA; // ms
+    double E_rev_NMDA; // mV
+    double V_act_NMDA;  // mV, inactive for V << Vact, inflection of sigmoid
+    double S_act_NMDA;  // mV, scale of inactivation
+    double tau_Mg_slow_NMDA; // ms
+    double tau_Mg_fast_NMDA; // ms
 
-    double GABA_A_g_peak;
-    double GABA_A_tau_1; // ms
-    double GABA_A_tau_2; // ms
-    double GABA_A_E_rev; // mV
+    double g_peak_GABA_A;
+    double tau_rise_GABA_A; // ms
+    double tau_decay_GABA_A; // ms
+    double E_rev_GABA_A; // mV
 
-    double GABA_B_g_peak;
-    double GABA_B_tau_1; // ms
-    double GABA_B_tau_2; // ms
-    double GABA_B_E_rev; // mV
+    double g_peak_GABA_B;
+    double tau_rise_GABA_B; // ms
+    double tau_decay_GABA_B; // ms
+    double E_rev_GABA_B; // mV
 
     // parameters for intrinsic currents
-    double NaP_g_peak;
-    double NaP_E_rev; // mV
+    double g_peak_NaP;
+    double E_rev_NaP; // mV
 
-    double KNa_g_peak;
-    double KNa_E_rev; // mV
+    double g_peak_KNa;
+    double E_rev_KNa; // mV
 
-    double T_g_peak;
-    double T_E_rev; // mV
+    double g_peak_T;
+    double E_rev_T; // mV
 
-    double h_g_peak;
-    double h_E_rev; // mV
+    double g_peak_h;
+    double E_rev_h; // mV
   };
 
   // ----------------------------------------------------------------
@@ -319,10 +323,10 @@ public:
     //! neuron state, must be C-array for GSL solver
     double y_[ STATE_VEC_SIZE ];
 
-    //! Timer (counter) for spike-activated repolarizing potassium current.
-    int r_spike_;
-
-    bool g_spike_; //!< active / not active
+    /** Timer (counter) for spike-activated repolarizing potassium current.
+     * Neuron is absolutely refractory during this period.
+     */
+    int ref_steps_;
 
     double I_NaP_; //!< Persistent Na current; member only to allow recording
     double I_KNa_; //!< Depol act. K current; member only to allow recording
@@ -408,16 +412,6 @@ private:
     return S_.y_[ elem ];
   }
   double
-  get_r_spike_() const
-  {
-    return S_.r_spike_;
-  }
-  double
-  get_g_spike_() const
-  {
-    return S_.g_spike_;
-  }
-  double
   get_I_NaP_() const
   {
     return S_.I_NaP_;
@@ -456,7 +450,7 @@ private:
   double
   Mg_steady_state_( double V ) const
   {
-    return 1.0 / ( 1.0 + std::exp( -P_.NMDA_Sact * ( V - P_.NMDA_Vact ) ) );
+    return 1.0 / ( 1.0 + std::exp( -P_.S_act_NMDA * ( V - P_.V_act_NMDA ) ) );
   }
 
   static RecordablesMap< ht_neuron > recordablesMap_;

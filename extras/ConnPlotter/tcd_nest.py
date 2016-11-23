@@ -162,15 +162,15 @@ class TCD(object):
             """
             props is property dictionary of ht_neuron.
             """
-            td = props['NMDA_tau_2']  # decay time
-            tr = props['NMDA_tau_1']  # rise time
+            td = props['tau_decay_NMDA']  # decay time
+            tr = props['tau_rise_NMDA']  # rise time
             # integral over g(t)
-            self._int_g = (props['NMDA_g_peak'] * (td - tr) /
+            self._int_g = (props['g_peak_NMDA'] * (td - tr) /
                            ((tr / td) ** (tr / (td - tr)) -
                             (tr / td) ** (td / (td - tr))))
-            self._e_rev = props['NMDA_E_rev']
-            self._v_act = props['NMDA_Vact']
-            self._s_act = props['NMDA_Sact']
+            self._e_rev = props['E_rev_NMDA']
+            self._v_act = props['V_act_NMDA']
+            self._s_act = props['S_act_NMDA']
 
         def __call__(self, V):
             """

@@ -110,7 +110,7 @@ private:
     double C_;
 
     /** Refractory period in ms. */
-    double t_ref_;
+    double refractory_time_;
 
     /** Resting potential in mV. */
     double E_L_;
@@ -128,12 +128,10 @@ private:
     /** Time constants of synaptic currents in ms. */
     std::vector< double > tau_syn_;
 
-    // type is long because other types are not put through in GetStatus
-    std::vector< long > receptor_types_;
-    size_t num_of_receptors_;
-
     // boolean flag which indicates whether the neuron has connections
     bool has_connections_;
+
+    size_t n_receptors_() const; //!< Returns the size of tau_syn_
 
     Parameters_(); //!< Sets default parameter values
 
@@ -242,6 +240,12 @@ private:
   //! Mapping of recordables names to access functions
   static RecordablesMap< iaf_psc_exp_multisynapse > recordablesMap_;
 };
+
+inline size_t
+iaf_psc_exp_multisynapse::Parameters_::n_receptors_() const
+{
+  return tau_syn_.size();
+}
 
 inline port
 iaf_psc_exp_multisynapse::send_test_event( Node& target,

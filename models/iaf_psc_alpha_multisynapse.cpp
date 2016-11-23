@@ -68,13 +68,12 @@ RecordablesMap< iaf_psc_alpha_multisynapse >::create()
 iaf_psc_alpha_multisynapse::Parameters_::Parameters_()
   : Tau_( 10.0 )             // ms
   , C_( 250.0 )              // pF
-  , TauR_( 2.0 )             // ms
+  , refractory_time_( 2.0 )  // ms
   , E_L_( -70.0 )            // mV
   , I_e_( 0.0 )              // pA
   , V_reset_( -70.0 - E_L_ ) // mV, rel to E_L_
   , Theta_( -55.0 - E_L_ )   // mV, rel to E_L_
   , LowerBound_( -std::numeric_limits< double >::infinity() )
-  , num_of_receptors_( 0 )
   , has_connections_( false )
 {
   tau_syn_.clear();
@@ -103,9 +102,9 @@ iaf_psc_alpha_multisynapse::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_reset, V_reset_ + E_L_ );
   def< double >( d, names::C_m, C_ );
   def< double >( d, names::tau_m, Tau_ );
-  def< double >( d, names::t_ref, TauR_ );
+  def< double >( d, names::t_ref, refractory_time_ );
   def< double >( d, names::V_min, LowerBound_ + E_L_ );
-  def< int >( d, names::n_synapses, num_of_receptors_ );
+  def< int >( d, names::n_synapses, n_receptors_() );
   def< bool >( d, names::has_connections, has_connections_ );
 
   ArrayDatum tau_syn_ad( tau_syn_ );
@@ -148,7 +147,7 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, C_ );
   updateValue< double >( d, names::tau_m, Tau_ );
-  updateValue< double >( d, names::t_ref, TauR_ );
+  updateValue< double >( d, names::t_ref, refractory_time_ );
 
   if ( C_ <= 0 )
   {
@@ -158,29 +157,26 @@ iaf_psc_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
   {
     throw BadProperty( "Membrane time constant must be strictly positive." );
   }
-  std::vector< double > tau_tmp;
-  if ( updateValue< std::vector< double > >( d, "tau_syn", tau_tmp ) )
+  const size_t old_n_receptors = this->n_receptors_();
+  if ( updateValue< std::vector< double > >( d, "tau_syn", tau_syn_ ) )
   {
-    for ( size_t i = 0; i < tau_tmp.size(); ++i )
+    if ( this->n_receptors_() != old_n_receptors && has_connections_ == true )
     {
-      if ( tau_tmp.size() < tau_syn_.size() && has_connections_ == true )
-      {
-        throw BadProperty(
-          "The neuron has connections, therefore the number of ports cannot be "
-          "reduced." );
-      }
-      if ( tau_tmp[ i ] <= 0 )
+      throw BadProperty(
+        "The neuron has connections, therefore the number of ports cannot be "
+        "reduced." );
+    }
+    for ( size_t i = 0; i < tau_syn_.size(); ++i )
+    {
+      if ( tau_syn_[ i ] <= 0 )
       {
         throw BadProperty(
           "All synaptic time constants must be strictly positive." );
       }
     }
-
-    tau_syn_ = tau_tmp;
-    num_of_receptors_ = tau_syn_.size();
   }
 
-  if ( TauR_ < 0. )
+  if ( refractory_time_ < 0. )
   {
     throw BadProperty( "Refractory time must not be negative." );
   }
@@ -205,6 +201,9 @@ iaf_psc_alpha_multisynapse::State_::set( const DictionaryDatum& d,
   const Parameters_& p,
   const double delta_EL )
 {
+  // If the dictionary contains a value for the membrane potential, V_m, adjust
+  // it with the resting potential, E_L_. If not, adjust the membrane potential
+  // with the provided change in resting potential.
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
   {
     V_m_ -= p.E_L_;
@@ -279,29 +278,23 @@ iaf_psc_alpha_multisynapse::calibrate()
 
   const double h = Time::get_resolution().get_ms();
 
-  P_.receptor_types_.resize( P_.num_of_receptors_ );
-  for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
-  {
-    P_.receptor_types_[ i ] = i + 1;
-  }
+  V_.P11_syn_.resize( P_.n_receptors_() );
+  V_.P21_syn_.resize( P_.n_receptors_() );
+  V_.P22_syn_.resize( P_.n_receptors_() );
+  V_.P31_syn_.resize( P_.n_receptors_() );
+  V_.P32_syn_.resize( P_.n_receptors_() );
 
-  V_.P11_syn_.resize( P_.num_of_receptors_ );
-  V_.P21_syn_.resize( P_.num_of_receptors_ );
-  V_.P22_syn_.resize( P_.num_of_receptors_ );
-  V_.P31_syn_.resize( P_.num_of_receptors_ );
-  V_.P32_syn_.resize( P_.num_of_receptors_ );
+  S_.y1_syn_.resize( P_.n_receptors_() );
+  S_.y2_syn_.resize( P_.n_receptors_() );
 
-  S_.y1_syn_.resize( P_.num_of_receptors_ );
-  S_.y2_syn_.resize( P_.num_of_receptors_ );
+  V_.PSCInitialValues_.resize( P_.n_receptors_() );
 
-  V_.PSCInitialValues_.resize( P_.num_of_receptors_ );
-
-  B_.spikes_.resize( P_.num_of_receptors_ );
+  B_.spikes_.resize( P_.n_receptors_() );
 
   V_.P33_ = std::exp( -h / P_.Tau_ );
   V_.P30_ = 1 / P_.C_ * ( 1 - V_.P33_ ) * P_.Tau_;
 
-  for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
+  for ( size_t i = 0; i < P_.n_receptors_(); i++ )
   {
     V_.P11_syn_[ i ] = V_.P22_syn_[ i ] = std::exp( -h / P_.tau_syn_[ i ] );
     V_.P21_syn_[ i ] = h * V_.P11_syn_[ i ];
@@ -314,7 +307,7 @@ iaf_psc_alpha_multisynapse::calibrate()
     B_.spikes_[ i ].resize();
   }
 
-  V_.RefractoryCounts_ = Time( Time::ms( P_.TauR_ ) ).get_steps();
+  V_.RefractoryCounts_ = Time( Time::ms( P_.refractory_time_ ) ).get_steps();
 }
 
 void
@@ -334,7 +327,7 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
       S_.V_m_ = V_.P30_ * ( S_.I_const_ + P_.I_e_ ) + V_.P33_ * S_.V_m_;
 
       S_.current_ = 0.0;
-      for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
+      for ( size_t i = 0; i < P_.n_receptors_(); i++ )
       {
         S_.V_m_ += V_.P31_syn_[ i ] * S_.y1_syn_[ i ]
           + V_.P32_syn_[ i ] * S_.y2_syn_[ i ];
@@ -347,7 +340,7 @@ iaf_psc_alpha_multisynapse::update( Time const& origin,
     else // neuron is absolute refractory
       --S_.refractory_steps_;
 
-    for ( size_t i = 0; i < P_.num_of_receptors_; i++ )
+    for ( size_t i = 0; i < P_.n_receptors_(); i++ )
     {
       // alpha shape PSCs
       S_.y2_syn_[ i ] =
@@ -386,7 +379,7 @@ iaf_psc_alpha_multisynapse::handles_test_event( SpikeEvent&,
   rport receptor_type )
 {
   if ( receptor_type <= 0
-    || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
+    || receptor_type > static_cast< port >( P_.n_receptors_() ) )
   {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
   }

@@ -187,6 +187,7 @@ const Name linear( "linear" );
 const Name local( "local" );
 const Name local_id( "local_id" );
 
+const Name make_symmetric( "make_symmetric" );
 const Name MAXERR( "MAXERR" );
 const Name mean( "mean" );
 const Name memory( "memory" );
@@ -280,7 +281,6 @@ const Name structural_plasticity_update_interval(
 const Name structure( "structure" );
 const Name supports_precise_spikes( "supports_precise_spikes" );
 const Name success( "success" );
-const Name symmetric( "symmetric" );
 const Name synapse( "synapse" );
 const Name synapse_label( "synapse_label" );
 const Name synapse_model( "synapse_model" );

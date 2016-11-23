@@ -57,35 +57,35 @@ M_ERROR setverbosity
   /set2 6 10 cvgidcollection def
 } def
 
-% Check that symmetric flag cannot be used with other connection rules than one_to_one
+% Check that make_symmetric flag cannot be used with other connection rules than one_to_one
 {
   setup
-  set1 set2 << /rule /all_to_all /symmetric true >> /static_synapse Connect
+  set1 set2 << /rule /all_to_all /make_symmetric true >> /static_synapse Connect
 }
 fail_or_die
 
 {
   setup
-  set1 set2 << /rule /fixed_indegree /indegree 3 /symmetric true >> /static_synapse Connect
+  set1 set2 << /rule /fixed_indegree /indegree 3 /make_symmetric true >> /static_synapse Connect
 }
 fail_or_die
 
 {
   setup
-  set1 set2 << /rule /fixed_outdegree /outdegree 3 /symmetric true >> /static_synapse Connect
+  set1 set2 << /rule /fixed_outdegree /outdegree 3 /make_symmetric true >> /static_synapse Connect
 }
 fail_or_die
 
 {
   setup
-  set1 set2 << /rule /fixed_total_number /N 3 /symmetric true >> /static_synapse Connect
+  set1 set2 << /rule /fixed_total_number /N 3 /make_symmetric true >> /static_synapse Connect
 }
 fail_or_die
 
-% Check that symmetric flag works properly for basic one_to_one connections
+% Check that make_symmetric flag works properly for basic one_to_one connections
 {
   setup
-  set1 set2 << /rule /one_to_one /symmetric true >> /static_synapse Connect
+  set1 set2 << /rule /one_to_one /make_symmetric true >> /static_synapse Connect
 
   << /source [1 5] Range >> GetConnections /fwd Set
   << /source [6 10] Range >> GetConnections /bck Set
@@ -101,12 +101,12 @@ fail_or_die
   true exch { and } Fold
 } assert_or_die
 
-% Check that symmetric flag cannot be used with random parameters
+% Check that make_symmetric flag cannot be used with random parameters
 {
   setup
   set1 set2 
   << /rule /one_to_one 
-     /symmetric true >> 
+     /make_symmetric true >> 
   << /model /stdp_synapse 
      /weight << /distribution  /uniform >> >> 
   Connect
@@ -117,20 +117,20 @@ fail_or_die
   setup
   set1 set2 
   << /rule /one_to_one 
-     /symmetric true >> 
+     /make_symmetric true >> 
   << /model /stdp_synapse 
      /alpha << /distribution  /uniform >> >> 
   Connect
 }
 fail_or_die
 
-% Check that symmetric flag works properly for one_to_one connections
+% Check that make_symmetric flag works properly for one_to_one connections
 % containing array-parameters
 {
   setup
   set1 set2 
   << /rule /one_to_one 
-     /symmetric true >> 
+     /make_symmetric true >> 
   << /model /stdp_synapse 
      /weight <. 1.0 2.0 3.0 4.0 5.0 .>
      /delay <. 1.5 2.5 3.5 4.5 5.5 .>
@@ -154,7 +154,7 @@ fail_or_die
 
 
 % The now following tests need the synapse model
-% gap_junction (which has require_symmetric=true) and
+% gap_junction (which has require_make_symmetric=true) and
 % ergo the model hh_psc_alpha_gap, so
 % this test should only run if we have GSL
 statusdict/have_gsl :: not
@@ -173,28 +173,28 @@ if
   /set2 3 4 cvgidcollection def
 } def
 
-% Check that connections that require_symmetric cannot be created without symmetric=true
+% Check that connections that require_symmetric cannot be created without make_symmetric=true
 {
   setup2
-  set1 set2 << /rule /one_to_one /symmetric false >> /gap_junction Connect
+  set1 set2 << /rule /one_to_one /make_symmetric false >> /gap_junction Connect
 }
 fail_or_die
 
 {
   setup2
-  set1 set2 << /rule /fixed_indegree /indegree 3 /symmetric false >> /gap_junction Connect
+  set1 set2 << /rule /fixed_indegree /indegree 3 /make_symmetric false >> /gap_junction Connect
 }
 fail_or_die
 
 {
   setup2
-  set1 set2 << /rule /fixed_outdegree /outdegree 3 /symmetric false >> /gap_junction Connect
+  set1 set2 << /rule /fixed_outdegree /outdegree 3 /make_symmetric false >> /gap_junction Connect
 }
 fail_or_die
 
 {
   setup2
-  set1 set2 << /rule /fixed_total_number /N 3 /symmetric false >> /gap_junction Connect
+  set1 set2 << /rule /fixed_total_number /N 3 /make_symmetric false >> /gap_junction Connect
 }
 fail_or_die
 
@@ -202,14 +202,14 @@ fail_or_die
 % sources == targets. These connections are inherently symmetric.
 {
   setup2
-  set1 set2 << /rule /all_to_all /symmetric false >> /gap_junction Connect
+  set1 set2 << /rule /all_to_all /make_symmetric false >> /gap_junction Connect
 }
 fail_or_die
 
 {
   setup2
   set1 set1 
-  << /rule /all_to_all /symmetric false >> 
+  << /rule /all_to_all /make_symmetric false >> 
   << /model /gap_junction /weight <. 1.0 2.0 3.0 4.0 .> >> 
   Connect
 }
@@ -218,7 +218,7 @@ fail_or_die
 {
   setup2
   set1 set1 
-  << /rule /all_to_all /symmetric false >> 
+  << /rule /all_to_all /make_symmetric false >> 
   << /model /gap_junction /weight << /distribution  /uniform >> >> 
   Connect
 }
@@ -226,14 +226,14 @@ fail_or_die
 
 {
   setup2
-  set1 set1 << /rule /all_to_all /symmetric false >> /gap_junction Connect
+  set1 set1 << /rule /all_to_all /make_symmetric false >> /gap_junction Connect
 }
 pass_or_die
 
 {
   setup2
   set1 set1 
-  << /rule /all_to_all /symmetric false >> 
+  << /rule /all_to_all /make_symmetric false >> 
   << /model /gap_junction /weight 2.0 >> 
   Connect
 }

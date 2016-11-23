@@ -56,7 +56,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   , targets_( &targets )
   , autapses_( true )
   , multapses_( true )
-  , symmetric_( false )
+  , make_symmetric_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
   , synapse_model_( kernel().model_manager.get_synapsedict()->lookup(
       "static_synapse" ) )
@@ -70,7 +70,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   //  - rule-specific params are handled by subclass c'tor
   updateValue< bool >( conn_spec, names::autapses, autapses_ );
   updateValue< bool >( conn_spec, names::multapses, multapses_ );
-  updateValue< bool >( conn_spec, names::symmetric, symmetric_ );
+  updateValue< bool >( conn_spec, names::make_symmetric, make_symmetric_ );
 
   // read out synapse-related parameters ----------------------
   if ( !syn_spec->known( names::model ) )
@@ -208,9 +208,9 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
     }
   }
 
-  // If symmetric_ is requested call reset on all parameters in order
+  // If make_symmetric_ is requested call reset on all parameters in order
   // to check if all parameters support symmetric connections
-  if ( symmetric_ )
+  if ( make_symmetric_ )
   {
     if ( weight_ )
     {
@@ -383,7 +383,7 @@ void
 nest::ConnBuilder::connect()
 {
   if ( kernel().model_manager.connector_requires_symmetric( synapse_model_ )
-    && not symmetric_ && not is_symmetric() )
+    and not ( is_symmetric() or make_symmetric_ ) )
   {
     throw BadProperty(
       "Connections with this synapse model can only be created as "
@@ -392,7 +392,7 @@ nest::ConnBuilder::connect()
       "populations and default or scalar parameters." );
   }
 
-  if ( symmetric_ && not supports_symmetric() )
+  if ( make_symmetric_ && not supports_symmetric() )
   {
     throw NotImplemented(
       "This connection rule does not support symmetric connections." );
@@ -400,7 +400,7 @@ nest::ConnBuilder::connect()
 
   if ( pre_synaptic_element_name != "" && post_synaptic_element_name != "" )
   {
-    if ( symmetric_ )
+    if ( make_symmetric_ )
       throw NotImplemented(
         "Symmetric connections are not supported in combination with "
         "structural plasticity." );
@@ -409,7 +409,7 @@ nest::ConnBuilder::connect()
   else
   {
     connect_();
-    if ( symmetric_ )
+    if ( make_symmetric_ )
     {
       // call reset on all parameters
       if ( weight_ )

@@ -58,7 +58,7 @@ nest.Connect(vm, neuron, 'all_to_all')
 Use 'all_to_all' to connect neurons.
 This is equivalent to:
 nest.Connect([neuron[0]],[neuron[1]],
-             {'rule': 'one_to_one', 'symmetric': True},
+             {'rule': 'one_to_one', 'make_symmetric': True},
              {'model': 'gap_junction', 'weight': 0.5})
 """
 

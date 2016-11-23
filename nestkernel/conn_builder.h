@@ -176,7 +176,7 @@ protected:
 
   bool autapses_;
   bool multapses_;
-  bool symmetric_;
+  bool make_symmetric_;
 
   //! buffer for exceptions raised in threads
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;

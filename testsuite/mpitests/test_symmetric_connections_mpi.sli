@@ -32,7 +32,7 @@ This test ensures that the functionality to create symmetric connections
 works properly when running on several MPI processes.
 
 In more detail the test ensures that
-- the symmetric flag works properly with one-to-one connection rule
+- the make_symmetric flag works properly with one-to-one connection rule
 
 Author: Hans Ekkehard Plesser, 2016-05-03 based on serial test by Jan Hahne, 2016-04-22
 */
@@ -58,7 +58,7 @@ M_ERROR setverbosity
 
     set1 set2 
     << /rule /one_to_one 
-       /symmetric true >> 
+       /make_symmetric true >> 
     << /model /stdp_synapse 
        /weight <. 1.0 2.0 3.0 4.0 5.0 .>
        /delay <. 1.5 2.5 3.5 4.5 5.5 .>

@@ -1627,6 +1627,23 @@ NestModule::Eq_q_qFunction::execute( SLIInterpreter* i ) const
 }
 
 void
+NestModule::Lt_q_qFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+  GIDCollectionIteratorDatum it_l =
+    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 1 ) );
+  GIDCollectionIteratorDatum it_r =
+    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+
+  const bool res = it_l->operator<( *it_r );
+
+  // leave iterator on stack
+  i->OStack.pop( 2 );
+  i->OStack.push( res );
+  i->EStack.pop();
+}
+
+void
 NestModule::Get_g_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
@@ -1909,6 +1926,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( ":getgidmodelid_q", &getgidmodelid_qfunction );
   i->createcommand( ":next_q", &next_qfunction );
   i->createcommand( ":eq_q_q", &eq_q_qfunction );
+  i->createcommand( ":lt_q_q", &lt_q_qfunction );
   i->createcommand( "get_g_i", &get_g_ifunction );
   i->createcommand( "Take_g_a", &take_g_afunction );
 

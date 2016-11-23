@@ -29,6 +29,16 @@
 namespace nest
 {
 
+// function object for sorting a vector of GIDCollcetionPrimitives
+struct
+{
+  bool operator()( GIDCollectionPrimitive& primitive_1,
+    GIDCollectionPrimitive& primitive_2 )
+  {
+    return primitive_1[ 0 ] < primitive_2[ 0 ];
+  }
+} primitiveSort;
+
 gc_const_iterator::gc_const_iterator( const GIDCollectionPrimitive& collection,
   size_t offset )
   : coll_ptr_( 0 )
@@ -60,8 +70,6 @@ gc_const_iterator::gc_const_iterator( const GIDCollectionComposite& collection,
     and not( part == collection.parts_.size() and offset == 0 ) // end iterator
     )
   {
-    std::cout << "part/offset: " << part << "/" << offset
-              << std::endl; // TODO: remove
     throw KernelException(
       "Invalid part or offset into GIDCollectionComposite" );
   }
@@ -286,7 +294,7 @@ GIDCollectionComposite::to_array() const
 {
   ArrayDatum gids;
   gids.reserve( size() );
-  for ( const_iterator it = begin(); it != end(); ++it )
+  for ( const_iterator it = begin(); it < end(); ++it )
   {
     gids.push_back( ( *it ).gid );
   }
@@ -438,16 +446,6 @@ GIDCollectionComposite::GIDCollectionComposite(
 {
 }
 
-// function object for sorting a vector of GIDCollcetionPrimitives
-struct // TODO: move this
-{
-  bool operator()( GIDCollectionPrimitive& primitive_1,
-    GIDCollectionPrimitive& primitive_2 )
-  {
-    return primitive_1[ 0 ] < primitive_2[ 0 ];
-  }
-} primitiveSort;
-
 // construct Composite from a vector of Primitives
 GIDCollectionComposite::GIDCollectionComposite(
   const std::vector< GIDCollectionPrimitive >& parts )
@@ -480,6 +478,7 @@ GIDCollectionComposite::GIDCollectionComposite(
   std::sort( parts_.begin(), parts_.end(), primitiveSort );
 }
 
+// constructor used when slicing
 GIDCollectionComposite::GIDCollectionComposite(
   const GIDCollectionComposite& composite,
   size_t start,
@@ -501,6 +500,7 @@ GIDCollectionComposite::GIDCollectionComposite(
   {
     throw BadProperty( "Index out of range." );
   }
+  // TODO: throw error for slicing a sliced composite
   size_t global_index = 0;
   bool started = false;
   size_t step_since_prev = 0;
@@ -527,11 +527,14 @@ GIDCollectionComposite::GIDCollectionComposite(
       }
     }
   }
+  std::cout << "START: part=" << start_part_ << " | element=" << start_offset_
+            << std::endl;
+  std::cout << "STOP: part=" << stop_part_ << " | element=" << stop_offset_
+            << std::endl;
 }
 
 GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
 {
-  std::cout << "C operator + " << std::endl;
   if ( get_metadata().valid() and not( get_metadata() == rhs->get_metadata() ) )
   {
     throw BadProperty( "can only join GIDCollections with the same metadata" );
@@ -541,18 +544,8 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
   rhs.unlock();
   if ( rhs_ptr ) // if rhs is Primitive
   {
-
-    print_me(std::cout);
-    rhs->print_me(std::cout);
-    const_iterator my_begin = begin();
-    const_iterator my_end= end();
-    size_t part, offset;
-    my_begin.get_current_part_offset(part, offset);
-    my_end.get_current_part_offset(part, offset);
-
     for ( const_iterator it = begin(); it != end(); ++it )
     {
-      it.get_current_part_offset(part, offset);
       if ( rhs_ptr->contains( ( *it ).gid ) )
       {
         throw BadProperty( "Cannot join overlapping GIDCollections." );
@@ -662,9 +655,8 @@ GIDCollectionComposite::merge_parts(
 void
 GIDCollectionComposite::print_me( std::ostream& out ) const
 {
-  if ( step_ > 1 or ( stop_part_ != 0 or stop_offset_ != 0 ) ) // TODO: fix this
+  if ( step_ > 1 or ( stop_part_ != 0 or stop_offset_ != 0 ) )
   {
-    std::cout << "printme step > 1: step = " << step_ << std::endl;
     size_t current_part = 0;
     size_t current_offset = 0;
     size_t previous_part = 4294967295; // initializing as large number (for now)
@@ -672,10 +664,6 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
 
     size_t primitive_size;
     GIDPair pair;
-
-    const_iterator out_end = end();
-    size_t p, o;
-    out_end.get_current_part_offset( p, o );
 
     out << "[[" << this << " size=" << size() << ": ";
     for ( const_iterator it = begin(); it < end(); ++it )
@@ -692,15 +680,14 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
           out << "(" << pair.gid << "..";
           out << primitive_last << ")]]";
         }
-        primitive_last = current_offset;
         primitive_size = 1;
         pair = *it;
       }
       else
       {
-        primitive_last = ( *it ).gid;
         ++primitive_size;
       }
+      primitive_last = ( *it ).gid;
       previous_part = current_part;
     }
     out << "[["
@@ -719,7 +706,7 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
     {
       it->print_me( out );
     }
-    out << "]]" << std::endl;
+    out << "]]";
   }
 }
 

@@ -434,6 +434,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } eq_q_qfunction;
 
+  class Lt_q_qFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } lt_q_qfunction;
+
   class Get_g_iFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;

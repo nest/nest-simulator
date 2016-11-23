@@ -217,7 +217,7 @@ def
   {
     iter :getgidmodelid_q
     iter :next_q
-    enditer :eq_q_q { exit } if
+    enditer :lt_q_q not { exit } if
   }
   loop
   counttomark
@@ -251,7 +251,7 @@ def
     iter :getgid_q
     func
     iter :next_q
-    enditer :eq_q_q { exit } if
+    enditer :lt_q_q not { exit } if
   }
   loop
 
@@ -271,7 +271,7 @@ def
     iter :getgid_q
     func
     iter :next_q
-    enditer :eq_q_q { exit } if
+    enditer :lt_q_q not { exit } if
   }
   loop
   counttomark
@@ -331,8 +331,7 @@ def
   {
     iter :getgid_q exch
     SetStatus_id
-    iter :next_q
-    enditer :eq_q_q { exit } if
+    iter :next_q pop
   }
   forall
 

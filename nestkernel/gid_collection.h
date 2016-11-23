@@ -153,6 +153,7 @@ public:
   GIDPair operator*() const;
   bool operator!=( const gc_const_iterator& rhs ) const;
   bool operator<( const gc_const_iterator& rhs ) const;
+  bool operator<=( const gc_const_iterator& rhs ) const;
 
   gc_const_iterator& operator++();
   gc_const_iterator& operator+=( const size_t );
@@ -170,7 +171,7 @@ public:
 
   virtual ~GIDCollection()
   {
-    // std::cerr << "Deleting GC: " << this << std::endl; // TODO: couts
+    std::cerr << "Deleting GC: " << this << std::endl; // TODO: couts
   }
 
   static GIDCollectionPTR create( IntVectorDatum gids );
@@ -365,7 +366,6 @@ inline gc_const_iterator& gc_const_iterator::operator++()
         primitive_size = composite_collection_->parts_[ part_idx_ ].size();
       }
     }
-
     return *this;
   }
 }
@@ -393,6 +393,12 @@ inline bool gc_const_iterator::operator<( const gc_const_iterator& rhs ) const
 {
   return ( part_idx_ < rhs.part_idx_
     or ( part_idx_ == rhs.part_idx_ and element_idx_ < rhs.element_idx_ ) );
+}
+
+inline bool gc_const_iterator::operator<=( const gc_const_iterator& rhs ) const
+{
+  return ( part_idx_ < rhs.part_idx_
+    or ( part_idx_ == rhs.part_idx_ and element_idx_ <= rhs.element_idx_ ) );
 }
 
 inline void
@@ -476,7 +482,6 @@ GIDCollectionPrimitive::get_metadata() const
 }
 
 
-// composite []
 inline index GIDCollectionComposite::operator[]( const size_t i ) const
 {
   long tot_prev_gids = 0;
@@ -500,7 +505,6 @@ inline index GIDCollectionComposite::operator[]( const size_t i ) const
 }
 
 
-// composite ==
 inline bool GIDCollectionComposite::operator==( GIDCollectionPTR rhs ) const
 {
   GIDCollectionComposite const* const rhs_ptr =
@@ -541,7 +545,7 @@ GIDCollectionComposite::begin( GIDCollectionPTR cp ) const
 inline GIDCollectionComposite::const_iterator
 GIDCollectionComposite::end() const
 {
-  if ( stop_part_ != 0 or stop_offset_ != 0 )
+  if ( stop_part_ != 0 or stop_offset_ != 0 ) // todo: possible error
   {
     return const_iterator( *this, stop_part_, stop_offset_, step_ );
   }

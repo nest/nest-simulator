@@ -75,7 +75,6 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
             hlpfullname = re.sub(' <br\/> ', '\n', fullname).strip()
             hlplist.append('Name: %s - %s\n' % (name, hlpfullname))
 
-    # print keywords
     # sorting linked keywords
     for word in keywords:
         word = word.strip(':')
@@ -199,7 +198,6 @@ def write_helpindex(helpdir):
                 fullname = name
             # file extension
             itemext = item.rsplit('/')[4]
-            print itemext
             if name.startswith(doubles) and os.path.isfile(item):
                 # check if 'name' is available in folder with os.path.isfile(
                 # checkfile)

@@ -1,9 +1,0 @@
-Name: break - interrupt the execution of a procedure for inspection
-
-SeeAlso:
-
-continue
-
-Source:
-
-../../lib/sli/debug.sli

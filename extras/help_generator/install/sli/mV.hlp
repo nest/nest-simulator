@@ -1,9 +1,0 @@
-Name: mV - Specification in mV (for readability)
-
-SeeAlso:
-
-unit_conversion
-
-Source:
-
-../../lib/sli/nest-init.sli

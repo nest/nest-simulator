@@ -138,7 +138,7 @@ def
     % assume that we have two or three elements now
     slice dup
     length 2 eq { 1 append } if
-    coll exch dup ==
+    coll exch
     Take_g_a
   }
   ifelse

@@ -1022,16 +1022,30 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
   const Token& source_t = params->lookup( names::source );
   const Token& target_t = params->lookup( names::target );
   const Token& syn_model_t = params->lookup( names::synapse_model );
-  const GIDCollectionPTR* source_a = 0;
-  const GIDCollectionPTR* target_a = 0;
+  GIDCollectionPTR source_a = GIDCollectionPTR( 0 );
+  GIDCollectionPTR target_a = GIDCollectionPTR( 0 );
 
   long synapse_label = UNLABELED_CONNECTION;
   updateValue< long >( params, names::synapse_label, synapse_label );
 
   if ( not source_t.empty() )
-    source_a = dynamic_cast< GIDCollectionPTR const* >( source_t.datum() );
+  {
+    source_a = getValue< GIDCollectionDatum >( source_t );
+    if ( not source_a->valid() )
+    {
+      throw KernelException(
+        "GetConnection requires valid source GIDCollection." );
+    }
+  }
   if ( not target_t.empty() )
-    target_a = dynamic_cast< GIDCollectionPTR const* >( target_t.datum() );
+  {
+    target_a = getValue< GIDCollectionDatum >( target_t );
+    if ( not target_a->valid() )
+    {
+      throw KernelException(
+        "GetConnection requires valid target GIDCollection." );
+    }
+  }
 
   size_t syn_id = 0;
 
@@ -1096,8 +1110,8 @@ static inline std::deque< nest::ConnectionID >& operator<<(
 void
 nest::ConnectionManager::get_connections(
   std::deque< ConnectionID >& connectome,
-  GIDCollectionPTR const* source,
-  GIDCollectionPTR const* target,
+  GIDCollectionPTR source,
+  GIDCollectionPTR target,
   size_t syn_id,
   long synapse_label ) const
 {
@@ -1106,7 +1120,7 @@ nest::ConnectionManager::get_connections(
     return;
   }
 
-  if ( source == 0 and target == 0 )
+  if ( not source.valid() and not target.valid() )
   {
 #ifdef _OPENMP
 #pragma omp parallel
@@ -1137,12 +1151,12 @@ nest::ConnectionManager::get_connections(
 
     return;
   }
-  else if ( source == 0 and target != 0 )
+  else if ( not source.valid() and target.valid() )
   {
 #ifdef _OPENMP
 #pragma omp parallel
     {
-	  thread t = kernel().vp_manager.get_thread_id();
+      thread t = kernel().vp_manager.get_thread_id();
 #else
     for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
     {
@@ -1154,11 +1168,10 @@ nest::ConnectionManager::get_connections(
       {
         if ( validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
         {
-          GIDCollection::const_iterator t_id = target->get()->begin();
-          target->unlock();
-          for ( ; t_id != target->get()->end(); ++t_id )
+          GIDCollection::const_iterator t_id = target->begin();
+          for ( ; t_id != target->end(); ++t_id )
           {
-            size_t target_id = (*t_id).gid;
+            size_t target_id = ( *t_id ).gid;
             validate_pointer( connections_[ t ].get( source_id ) )
               ->get_connections( source_id,
                 target_id,
@@ -1179,7 +1192,7 @@ nest::ConnectionManager::get_connections(
     }
     return;
   }
-  else if ( source != 0 )
+  else if ( source.valid() )
   {
 #ifdef _OPENMP
 #pragma omp parallel
@@ -1191,40 +1204,25 @@ nest::ConnectionManager::get_connections(
 #endif
       std::deque< ConnectionID > conns_in_thread;
 
-      if ( source->islocked() )
+      GIDCollection::const_iterator s = source->begin();
+      for ( ; s != source->end(); ++s )
       {
-    	  source->unlock();
-      }
-      GIDCollection::const_iterator s = source->get()->begin();
-      source->unlock();
-      for ( ; s != source->get()->end(); ++s )
-      {
-    	size_t source_id = (*s).gid;
+        size_t source_id = ( *s ).gid;
         if ( source_id < connections_[ t ].size()
           && validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
         {
-          if ( target == 0 )
+          if ( not target.valid() )
           {
-        	if ( source->islocked() )
-        	{
-        	  source->unlock();
-        	}
             validate_pointer( connections_[ t ].get( source_id ) )
               ->get_connections(
                 source_id, t, syn_id, synapse_label, conns_in_thread );
           }
           else
           {
-        	target->unlock();
-        	GIDCollection::const_iterator t_id = target->get()->begin();
-        	target->unlock();
-            for ( ; t_id != target->get()->end(); ++t_id )
+            GIDCollection::const_iterator t_id = target->begin();
+            for ( ; t_id != target->end(); ++t_id )
             {
-              if ( target->islocked() )
-              {
-            	  target->unlock();
-              }
-              size_t target_id = (*t_id).gid;
+              size_t target_id = ( *t_id ).gid;
               validate_pointer( connections_[ t ].get( source_id ) )
                 ->get_connections( source_id,
                   target_id,
@@ -1233,7 +1231,6 @@ nest::ConnectionManager::get_connections(
                   synapse_label,
                   conns_in_thread );
             }
-              source->unlock();
           }
         }
       }
@@ -1245,11 +1242,6 @@ nest::ConnectionManager::get_connections(
         connectome << conns_in_thread;
       }
     }
-    if ( source->islocked() )
-    {
-      source->unlock();
-    }
-
     return;
   } // else
 }

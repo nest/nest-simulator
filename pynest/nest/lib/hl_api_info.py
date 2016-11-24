@@ -197,7 +197,7 @@ def SetStatus(nodes, params, val=None):
 
     if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, tuple)):
         raise TypeError("The first input (nodes) must be a GIDCollection or "
-                         "a tuple of connection handles ")
+                        "a tuple of connection handles ")
 
     # This was added to ensure that the function is a nop (instead of,
     # for instance, raising an exception) when applied to an empty list,
@@ -213,7 +213,6 @@ def SetStatus(nodes, params, val=None):
         else:
             params = {params: val}
 
-
     if (isinstance(params, list) and len(nodes) != len(params)):
         raise TypeError(
             "status dict must be a dict, or a list of dicts of length "
@@ -221,10 +220,10 @@ def SetStatus(nodes, params, val=None):
 
     if is_sequence_of_connections(nodes):
         params = broadcast(params, len(nodes), (dict,), "params")
-        
+
         pcd(nodes)
         sps(params)
-    
+
         sr('2 arraystore')
         sr('Transpose { arrayload pop SetStatus } forall')
     else:
@@ -266,11 +265,11 @@ def GetStatus(nodes, keys=None):
 
     if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, tuple)):
         raise TypeError("The first input (nodes) must be a GIDCollection or "
-                         "a tuple of connection handles ")
+                        "a tuple of connection handles ")
 
     if len(nodes) == 0:
         return nodes
-    
+
     if keys is None:
         cmd = '{ GetStatus } Map'
     elif is_literal(keys):
@@ -281,11 +280,11 @@ def GetStatus(nodes, keys=None):
     else:
         raise TypeError("keys should be either a string or an iterable")
 
-    if is_sequence_of_connections(nodes):    
+    if is_sequence_of_connections(nodes):
         pcd(nodes)
     else:
         sps(nodes)
-        
+
     sr(cmd)
 
     return spp()

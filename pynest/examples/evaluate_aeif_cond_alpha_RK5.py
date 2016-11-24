@@ -168,9 +168,9 @@ print ('Ratio: ' + str(test[0] / gsl[0]))
 Compute the error on the spike times.
 '''
 print ('Spike Times GSL - Reference:' + str(np.array(gsl[1]) -
-                                           np.array(reference[1])))
+                                            np.array(reference[1])))
 print ('Spike Times Test - Reference: ' + str(np.array(test[1]) -
-                                             np.array(reference[1])))
+                                              np.array(reference[1])))
 
 '''
 Also compare the L2-Norm of Voltage Traces

@@ -213,20 +213,20 @@ neuron_pars = {
     'E_L': V0,
     'V_reset': V0,
     'V_m': V0
-    }
+}
 neurons = nest.Create('iaf_psc_alpha', n_neurons, neuron_pars)
 ppg_pars = {
     'pulse_times': [pulsetime],
     'activity': a,
     'sdev': sdev
-    }
+}
 ppgs = nest.Create('pulsepacket_generator', n_neurons, ppg_pars)
 vm_pars = {
     'record_to': ['memory'],
     'withtime': True,
     'withgid': True,
     'interval': sampling_resolution
-    }
+}
 vm = nest.Create('voltmeter', 1, vm_pars)
 
 '''

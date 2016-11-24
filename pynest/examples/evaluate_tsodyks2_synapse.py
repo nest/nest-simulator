@@ -95,9 +95,9 @@ Neuron one produces spikes. Neurons 2 and 3 receive the spikes via
 the two synapse models.
 '''
 
-nest.Connect(nest.GIDCollection([neuron[0]]), nest.GIDCollection([neuron[1]]),\
+nest.Connect(nest.GIDCollection([neuron[0]]), nest.GIDCollection([neuron[1]]),
              syn_spec="tsodyks_synapse")
-nest.Connect(nest.GIDCollection([neuron[0]]), nest.GIDCollection([neuron[2]]),\
+nest.Connect(nest.GIDCollection([neuron[0]]), nest.GIDCollection([neuron[2]]),
              syn_spec="tsodyks2_synapse")
 
 '''
@@ -109,9 +109,9 @@ nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 '''
 Connect the voltmeters to the neurons.
 '''
-nest.Connect(nest.GIDCollection([voltmeter[0]]),\
+nest.Connect(nest.GIDCollection([voltmeter[0]]),
              nest.GIDCollection([neuron[1]]))
-nest.Connect(nest.GIDCollection([voltmeter[1]]),\
+nest.Connect(nest.GIDCollection([voltmeter[1]]),
              nest.GIDCollection([neuron[2]]))
 
 '''

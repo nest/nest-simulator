@@ -113,7 +113,7 @@ compartment and receptor.
 nest.Connect(nest.GIDCollection([cgs[0]]), n,
              syn_spec={'receptor_type': syns['soma_curr']})
 nest.Connect(nest.GIDCollection([cgs[1]]), n,
-                                syn_spec={'receptor_type': syns['proximal_curr']})
+             syn_spec={'receptor_type': syns['proximal_curr']})
 nest.Connect(nest.GIDCollection([cgs[2]]), n,
              syn_spec={'receptor_type': syns['distal_curr']})
 

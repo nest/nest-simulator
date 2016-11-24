@@ -51,7 +51,7 @@ class GIDCollectionIterator(object):
             raise StopIteration
         return val
 
-    next = __next__ # Python2.x
+    next = __next__  # Python2.x
 
 
 class GIDCollection(object):

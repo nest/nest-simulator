@@ -249,7 +249,7 @@ class TestGIDCollection(unittest.TestCase):
         nodes_list = [x for x in nodes]
         compare_list = (list([x for x in range(1, 11) if x % 2 != 0]) +
                         list(range(num_a + num_b + 1,
-                             num_a + num_b + num_c + 1)))
+                                   num_a + num_b + num_c + 1)))
         self.assertEqual(nodes_list, compare_list)
 
         self.assertEqual(nodes[2], 5)
@@ -261,7 +261,7 @@ class TestGIDCollection(unittest.TestCase):
         n_slice_middle_jump = nodes[2:12:2]
         n_list_first = [x for x in n_slice_first]
         n_list_middle = [x for x in n_slice_middle]
-        n_list_middle_jump = [x for x in n_slice_middle_jump]        
+        n_list_middle_jump = [x for x in n_slice_middle_jump]
         compare_list_first = [1, 3, 5, 7, 9, 26, 27, 28, 29, 30]
         compare_list_middle = [5, 7, 9, 26, 27]
         compare_list_middle_jump = [5, 9, 27, 29, 31]
@@ -299,7 +299,7 @@ class TestGIDCollection(unittest.TestCase):
 
         count = 0
         for gid, mid in n.items():
-            #print gid, mid, modelID[count]
+            # print gid, mid, modelID[count]
             self.assertEqual(mid, modelID[count])
             count += 1
 
@@ -353,23 +353,23 @@ class TestGIDCollection(unittest.TestCase):
         n = nest.Create('iaf_psc_alpha', 3)
         nest.SetStatus(n, [{'V_m': 10.}, {'V_m': -10.}, {'V_m': -20.}])
         self.assertEqual(nest.GetStatus(n, 'V_m'), (10., -10., -20.))
-        
+
     def test_GetConnections(self):
         """
         GetConnection works as expected
         """
-        
+
         n = nest.Create('iaf_psc_alpha', 3)
-        nest.Connect(n,n)
-        
+        nest.Connect(n, n)
+
         get_conn = nest.GetConnections()
-        get_conn_all = nest.GetConnections(n,n)
-        get_conn_list = nest.GetConnections([3,1])
-        
-        self.assertEqual(get_conn_all, get_conn )
-        
+        get_conn_all = nest.GetConnections(n, n)
+        get_conn_list = nest.GetConnections([3, 1])
+
+        self.assertEqual(get_conn_all, get_conn)
+
         compare_list = [3, 1, 0, 0, 0]
-        for i,conn in enumerate(compare_list):
+        for i, conn in enumerate(compare_list):
             self.assertEqual(get_conn_list[3][i], conn)
 
 

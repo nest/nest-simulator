@@ -115,13 +115,13 @@ neuron = nest.Create("iaf_psc_exp", 3)
 '''
 The connection from neuron 1 to neuron 2 is a deterministic synapse.
 '''
-nest.Connect(nest.GIDCollection([neuron[0]]), nest.GIDCollection([neuron[1]]),\
+nest.Connect(nest.GIDCollection([neuron[0]]), nest.GIDCollection([neuron[1]]),
              syn_spec="tsodyks2_synapse")
 
 '''
 The connection from neuron 1 to neuron 3 has a stochastic quantal_stp_synapse.
 '''
-nest.Connect(nest.GIDCollection([neuron[0]]), nest.GIDCollection([neuron[2]]),\
+nest.Connect(nest.GIDCollection([neuron[0]]), nest.GIDCollection([neuron[2]]),
              syn_spec="quantal_stp_synapse")
 
 '''
@@ -144,9 +144,9 @@ nest.Simulate(1000.0)
 '''
 Only now do we connect the voltmeter to the neurons.
 '''
-nest.Connect(nest.GIDCollection([voltmeter[0]]),\
+nest.Connect(nest.GIDCollection([voltmeter[0]]),
              nest.GIDCollection([neuron[1]]))
-nest.Connect(nest.GIDCollection([voltmeter[1]]),\
+nest.Connect(nest.GIDCollection([voltmeter[1]]),
              nest.GIDCollection([neuron[2]]))
 
 
@@ -169,9 +169,9 @@ nest.Simulate(.1)
 '''
 Extract the reference trace.
 '''
-vm = numpy.array(nest.GetStatus(nest.GIDCollection([voltmeter[1]]),\
+vm = numpy.array(nest.GetStatus(nest.GIDCollection([voltmeter[1]]),
                                 'events')[0]['V_m'])
-vm_reference = numpy.array(nest.GetStatus(nest.GIDCollection([voltmeter[0]]),\
+vm_reference = numpy.array(nest.GetStatus(nest.GIDCollection([voltmeter[0]]),
                                           'events')[0]['V_m'])
 
 vm.shape = (n_trials, 1500)
@@ -182,7 +182,7 @@ Now compute the mean of all trials and plot agains trials and references.
 '''
 vm_mean = numpy.array([numpy.mean(vm[:, i]) for (i, j) in enumerate(vm[0, :])])
 vm_ref_mean = numpy.array([numpy.mean(vm_reference[:, i])
-                          for (i, j) in enumerate(vm_reference[0, :])])
+                           for (i, j) in enumerate(vm_reference[0, :])])
 pylab.plot(vm_mean)
 pylab.plot(vm_ref_mean)
 

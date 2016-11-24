@@ -103,7 +103,7 @@ Simulation parameters.
 '''
 
 T = 1000.                 # simulation time per trial (ms)
-fade_out = 2.*delay       # fade out time (ms)
+fade_out = 2. * delay       # fade out time (ms)
 dt = 0.01                 # simulation time resolution (ms)
 seed_NEST = 30            # seed of random number generator in Nest
 seed_numpy = 30           # seed of random number generator in numpy
@@ -127,14 +127,14 @@ population assigned randomly.
 
 nodes_ex = nest.Create(neuron_model, NE)
 nodes_in = nest.Create(neuron_model, NI)
-allnodes = nodes_ex+nodes_in
+allnodes = nodes_ex + nodes_in
 
 nest.Connect(nodes_ex, allnodes,
              conn_spec={'rule': 'fixed_indegree', 'indegree': KE},
              syn_spec={'weight': J, 'delay': dt})
 nest.Connect(nodes_in, allnodes,
              conn_spec={'rule': 'fixed_indegree', 'indegree': KI},
-             syn_spec={'weight': -g*J, 'delay': dt})
+             syn_spec={'weight': -g * J, 'delay': dt})
 '''
 Afterwards we create a Poisson generator that provides spikes (the
 external input) to the neurons until time 'T' is reached.
@@ -152,7 +152,7 @@ nest.Connect(ext, allnodes,
 
 suppr = nest.Create("dc_generator",
                     params={'amplitude': -1e16, 'start': T,
-                            'stop': T+fade_out})
+                            'stop': T + fade_out})
 nest.Connect(suppr, allnodes)
 
 spikedetector = nest.Create("spike_detector")

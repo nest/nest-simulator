@@ -137,7 +137,7 @@ public:
 
   void update_last_sorted_source( const thread tid );
 
-  index find_first_source( const thread tid, const index sgid );
+  index find_first_source( const thread tid, const synindex syn_index, const index sgid ) const;
 
   void find_all_sources( const thread tid,
     const index sgid,
@@ -347,28 +347,25 @@ SourceTable::update_last_sorted_source( const thread tid )
 }
 
 inline index
-SourceTable::find_first_source( const thread tid, const index sgid )
+SourceTable::find_first_source( const thread tid, const synindex syn_index, const index sgid ) const
 {
-  for ( synindex syn_index = 0; syn_index < ( *sources_[ tid ] ).size();
-        ++syn_index )
+  // binary search in sorted sources
+  const std::vector< Source >::const_iterator begin =
+    ( *( *sources_[ tid ] )[ syn_index ] ).begin();
+  const std::vector< Source >::const_iterator end_of_sorted =
+    begin + ( *last_sorted_source_[ tid ] )[ syn_index ];
+  std::vector< Source >::const_iterator it =
+    std::lower_bound( begin, end_of_sorted, Source( sgid, true ) );
+  std::cout << it->gid << " -- " << ( *last_sorted_source_[ tid ] )[ syn_index ] << std::endl;
+  if ( it != end_of_sorted && it->gid == sgid )
   {
-    // binary search in sorted sources
-    const std::vector< Source >::iterator begin =
-      ( *( *sources_[ tid ] )[ syn_index ] ).begin();
-    const std::vector< Source >::iterator end_of_sorted =
-      begin + ( *last_sorted_source_[ tid ] )[ syn_index ];
-    std::vector< Source >::iterator it =
-      std::lower_bound( begin, end_of_sorted, Source( sgid, true ) );
-    if ( it != end_of_sorted && it->gid == sgid )
-    {
-      index lcid = it - begin;
-      std::cout << "found (sorted) "
-                << ( *( *sources_[ tid ] )[ syn_index ] )[ lcid ].gid;
-      return lcid;
-    }
+    index lcid = it - begin;
+    std::cout << "found (sorted) "
+              << ( *( *sources_[ tid ] )[ syn_index ] )[ lcid ].gid;
+    return lcid;
   }
 
-  std::cout << "not found" << sgid << std::endl;
+  std::cout << "not found (source " << sgid << ")" << std::endl;
   return invalid_index;
 }
 
@@ -379,13 +376,13 @@ SourceTable::find_all_sources( const thread tid,
   std::vector< index >& matching_lcids )
 {
   // iterate over unsorted sources
-  const std::vector< Source >::iterator begin =
+  const std::vector< Source >::const_iterator begin =
     ( *( *sources_[ tid ] )[ syn_index ] ).begin();
-  const std::vector< Source >::iterator end_of_sorted =
+  const std::vector< Source >::const_iterator end_of_sorted =
     begin + ( *last_sorted_source_[ tid ] )[ syn_index ];
-  const std::vector< Source >::iterator end =
+  const std::vector< Source >::const_iterator end =
     ( *( *sources_[ tid ] )[ syn_index ] ).end();
-  for ( std::vector< Source >::iterator it = end_of_sorted; it != end; ++it )
+  for ( std::vector< Source >::const_iterator it = end_of_sorted; it != end; ++it )
   {
     if ( it->gid == sgid )
     {
@@ -402,6 +399,13 @@ SourceTable::disable_connection( const thread tid,
   const synindex syn_index,
   const index lcid )
 {
+  // disabling a source changes its gid to 2^62 -1, hence only smaller
+  // lcids that this remain sorted and we need to update last sorted
+  // source here
+  if ( lcid < ( *last_sorted_source_[ tid ] )[ syn_index ] )
+  {
+    ( *last_sorted_source_[ tid ] )[ syn_index ] = lcid;
+  }
   ( *( *sources_[ tid ] )[ syn_index ] )[ lcid ].disable();
 }
 

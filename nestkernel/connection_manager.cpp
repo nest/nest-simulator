@@ -823,7 +823,7 @@ nest::ConnectionManager::find_connection_sorted( const thread tid,
 {
   // lcid will hold the position of the /first/ connection from node
   // sgid to any local node or be invalid
-  index lcid = source_table_.find_first_source( tid, sgid );
+  index lcid = source_table_.find_first_source( tid, syn_index, sgid );
   if ( lcid == invalid_index )
   {
     return invalid_index;
@@ -940,11 +940,13 @@ nest::ConnectionManager::disconnect_5g( const thread tid,
   {
     lcid = find_connection_unsorted( tid, syn_index, sgid, tgid );
   }
-  // assert( lcid != invalid_index ); // this function should only be
-  // called with a valid connection
+  assert( lcid != invalid_index ); // this function should only be
+                                   // called with a valid connection
 
   ( *connections_5g_[ tid ] ).disable_connection( syn_index, lcid );
   source_table_.disable_connection( tid, syn_index, lcid );
+
+  --vv_num_connections_[ tid ][ syn_id ];
 
   std::cout << "#################################################\n";
 }
@@ -1650,16 +1652,18 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
       for ( size_t i = 0; i < sources.size(); ++i )
       {
         const index start_lcid =
-          source_table_.find_first_source( tid, sources[ i ] );
+          source_table_.find_first_source( tid, syn_index, sources[ i ] );
         if ( start_lcid != invalid_index )
         {
+          std::cout<<"find targets for "<<sources[ i ]<<": ";
           ( *connections_5g_[ tid ] )
             .get_target_gids( tid, syn_index, start_lcid, targets[ i ] );
         }
         std::vector< index > matching_lcids;
         source_table_.find_all_sources(
           tid, sources[ i ], syn_index, matching_lcids );
-        assert( matching_lcids.size() == 0 ); // TODO@5g: search in unsorted
+         // TODO@5g: search in unsorted, needs to be implemented when sorting does not happen on every SP update
+        assert( matching_lcids.size() == 0 );
       }
     }
   }

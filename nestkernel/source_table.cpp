@@ -268,7 +268,7 @@ nest::SourceTable::print_sources( const thread tid,
   }
 
   index prev_gid = 0;
-  std::cout << "---------------------------------------\n";
+  std::cout << "-------------SOURCES-------------------\n";
   for ( std::vector< Source >::const_iterator it =
           ( *( *sources_[ tid ] )[ syn_index ] ).begin();
         it != ( *( *sources_[ tid ] )[ syn_index ] ).end();

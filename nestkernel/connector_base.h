@@ -432,7 +432,6 @@ public:
     const index tgid,
     std::vector< index >& source_lcids ) const
   {
-    std::cout << "hom conn" << std::endl;
     for ( index lcid = 0; lcid < C_.size(); ++lcid )
     {
       const index current_tgid = C_[ lcid ].get_target( tid )->get_gid();
@@ -443,32 +442,17 @@ public:
     }
   }
 
-  // void
-  // get_target_gids( std::vector< index >& target_gids,
-  //   thread tid,
-  //   synindex synapse_id ) const
-  // {
-  //   typename std::vector< ConnectionT >::const_iterator C_it;
-  //   if ( syn_id_ == synapse_id )
-  //   {
-  //     for ( C_it = C_.begin(); C_it != C_.end(); C_it++ )
-  //     {
-  //       target_gids.push_back( ( *C_it ).get_target( tid )->get_gid() );
-  //     }
-  //   }
-  // }
-
   void
   get_target_gids( const thread tid,
     const synindex,
     const index start_lcid,
     std::vector< index >& target_gids ) const
   {
-    std::cout << "hom conn" << std::endl;
     index lcid = start_lcid;
     while ( true )
     {
       target_gids.push_back( C_[ lcid ].get_target( tid )->get_gid() );
+      std::cout<<"found target "<<target_gids.back()<<std::endl;
 
       if ( not C_[ lcid ].has_source_subsequent_targets() )
       {
@@ -586,7 +570,7 @@ public:
     {
       if ( C_[ lcid ].get_target( tid )->get_gid() == tgid )
       {
-        std::cout << " - found target " << tgid << std::endl;
+        // std::cout << " - found target " << tgid << std::endl;
         return lcid;
       }
 
@@ -608,7 +592,7 @@ public:
     {
       if ( C_[ matching_lcids[ i ] ].get_target( tid )->get_gid() == tgid )
       {
-        std::cout << " - found target " << tgid << std::endl;
+        // std::cout << " - found target " << tgid << std::endl;
         return matching_lcids[ i ];
       }
     }
@@ -787,7 +771,7 @@ public:
     const index tgid,
     std::vector< index >& source_lcids ) const
   {
-    std::cout << "het conn" << std::endl;
+    // std::cout << "het conn" << std::endl;
     at( syn_index )->get_source_lcids( tid, syn_index, tgid, source_lcids );
   }
 
@@ -810,7 +794,7 @@ public:
     const index start_lcid,
     std::vector< index >& target_gids ) const
   {
-    std::cout << "het conn" << std::endl;
+    // std::cout << "het conn" << std::endl;
     at( syn_index )->get_target_gids( tid, syn_index, start_lcid, target_gids );
   }
 

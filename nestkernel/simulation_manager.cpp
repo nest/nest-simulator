@@ -676,9 +676,9 @@ nest::SimulationManager::update_()
         kernel().connection_manager.sort_connections( tid );
         kernel().event_delivery_manager.gather_target_data( tid );
 
-        kernel().connection_manager.print_source_table( tid );
-        kernel().connection_manager.print_connections( tid );
-        kernel().connection_manager.print_targets( tid );
+        // kernel().connection_manager.print_source_table( tid );
+        // kernel().connection_manager.print_connections( tid );
+        // kernel().connection_manager.print_targets( tid );
       }
 
 

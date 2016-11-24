@@ -940,11 +940,9 @@ EventDeliveryManager::deliver_events_5g_( const thread tid,
   const std::vector< SpikeDataT >& recv_buffer )
 {
   bool are_others_completed = true;
-  // deliver only at beginning of time slice
-  if ( kernel().simulation_manager.get_from_step() > 0 )
-  {
-    return are_others_completed;
-  }
+
+  // deliver only at end of time slice
+  assert( kernel().simulation_manager.get_to_step() == kernel().connection_manager.get_min_delay() );
 
   SpikeEvent se;
 

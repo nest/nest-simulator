@@ -375,10 +375,9 @@ SPManager::disconnect( GIDCollection& sources,
 void
 SPManager::update_structural_plasticity()
 {
-  std::cout << "update struct" << std::endl;
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin();
         i != sp_conn_builders_.end();
-        i++ )
+        ++i )
   {
     update_structural_plasticity( ( *i ) );
   }
@@ -394,7 +393,6 @@ SPManager::update_structural_plasticity()
 void
 SPManager::update_structural_plasticity( SPBuilder* sp_builder )
 {
-  std::cout << "update builder" << std::endl;
   // Index of neurons having a vacant synaptic element
   std::vector< index > pre_vacant_id;  // pre synaptic elements (e.g Axon)
   std::vector< index > post_vacant_id; // post synaptic element (e.g Den)
@@ -427,6 +425,7 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
     post_vacant_n,
     post_deleted_id,
     post_deleted_n );
+
   // Communicate the number of deleted pre-synaptic elements
   kernel().mpi_manager.communicate(
     pre_deleted_id, pre_deleted_id_global, displacements );
@@ -435,11 +434,11 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
 
   if ( pre_deleted_id_global.size() > 0 )
   {
-    // delete_synapses_from_pre( pre_deleted_id_global,
-    //   pre_deleted_n_global,
-    //   sp_builder->get_synapse_model(),
-    //   sp_builder->get_pre_synaptic_element_name(),
-    //   sp_builder->get_post_synaptic_element_name() );
+    delete_synapses_from_pre( pre_deleted_id_global,
+      pre_deleted_n_global,
+      sp_builder->get_synapse_model(),
+      sp_builder->get_pre_synaptic_element_name(),
+      sp_builder->get_post_synaptic_element_name() );
     // update the number of synaptic elements
     get_synaptic_elements( sp_builder->get_pre_synaptic_element_name(),
       pre_vacant_id,
@@ -461,11 +460,11 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
 
   if ( post_deleted_id_global.size() > 0 )
   {
-    // delete_synapses_from_post( post_deleted_id_global,
-    //   post_deleted_n_global,
-    //   sp_builder->get_synapse_model(),
-    //   sp_builder->get_pre_synaptic_element_name(),
-    //   sp_builder->get_post_synaptic_element_name() );
+    delete_synapses_from_post( post_deleted_id_global,
+      post_deleted_n_global,
+      sp_builder->get_synapse_model(),
+      sp_builder->get_pre_synaptic_element_name(),
+      sp_builder->get_post_synaptic_element_name() );
     get_synaptic_elements( sp_builder->get_pre_synaptic_element_name(),
       pre_vacant_id,
       pre_vacant_n,
@@ -521,9 +520,6 @@ SPManager::create_synapses( std::vector< index >& pre_id,
   serialize_id( pre_id, pre_n, pre_id_rnd );
   serialize_id( post_id, post_n, post_id_rnd );
 
-  std::sort( pre_id_rnd.begin(), pre_id_rnd.end() );
-  std::sort( post_id_rnd.begin(), post_id_rnd.end() );
-
   // Shuffle only the largest vector
   if ( pre_id_rnd.size() > post_id_rnd.size() )
   {
@@ -544,7 +540,6 @@ SPManager::create_synapses( std::vector< index >& pre_id,
   GIDCollection sources = GIDCollection( pre_id_rnd );
   GIDCollection targets = GIDCollection( post_id_rnd );
 
-  std::cout << "sp_connect" << std::endl;
   sp_conn_builder->sp_connect( sources, targets );
 }
 
@@ -559,12 +554,13 @@ SPManager::create_synapses( std::vector< index >& pre_id,
  * @param se_post_name post synaptic element name
  */
 void
-SPManager::delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
+SPManager::delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
   std::vector< int >& pre_deleted_n,
-  index synapse_model,
-  std::string se_pre_name,
-  std::string se_post_name )
+  const index synapse_model,
+  const std::string& se_pre_name,
+  const std::string& se_post_name )
 {
+  std::cout<<"delete from pre"<<std::endl;
   /*
    * Synapses deletion due to the loss of a pre-synaptic element need a
    * communication of the lists of target
@@ -577,12 +573,11 @@ SPManager::delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
 
   // iterators
   std::vector< std::vector< index > >::iterator connectivity_it;
-  std::vector< index >::iterator id_it;
+  std::vector< index >::const_iterator id_it;
   std::vector< int >::iterator n_it;
 
   kernel().connection_manager.get_targets(
     pre_deleted_id, connectivity, synapse_model );
-
 
   id_it = pre_deleted_id.begin();
   n_it = pre_deleted_n.begin();
@@ -599,7 +594,7 @@ SPManager::delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
       *n_it = -global_targets.size();
     global_shuffle( global_targets, -( *n_it ) );
 
-    for ( int i = 0; i < -( *n_it ); i++ ) // n is negative
+    for ( int i = 0; i < -( *n_it ); ++i ) // n is negative
     {
       delete_synapse(
         *id_it, global_targets[ i ], synapse_model, se_pre_name, se_post_name );
@@ -619,11 +614,11 @@ SPManager::delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
  * @param se_post_name name of the post synaptic element
  */
 void
-SPManager::delete_synapse( index sgid,
-  index tgid,
-  long syn_id,
-  std::string se_pre_name,
-  std::string se_post_name )
+SPManager::delete_synapse( const index sgid,
+  const index tgid,
+  const long syn_id,
+  const std::string se_pre_name,
+  const std::string se_post_name )
 {
   // get thread id
   const int tid = kernel().vp_manager.get_thread_id();
@@ -640,10 +635,9 @@ SPManager::delete_synapse( index sgid,
   if ( kernel().node_manager.is_local_gid( tgid ) )
   {
     Node* const target = kernel().node_manager.get_node( tgid );
-    thread target_thread = target->get_thread();
+    const thread target_thread = target->get_thread();
     if ( tid == target_thread )
     {
-      std::cout << "deleting " << sgid << "->" << tgid << std::endl;
       kernel().connection_manager.disconnect_5g( tid, syn_id, sgid, tgid );
 
       target->connect_synaptic_element( se_post_name, -1 );
@@ -668,6 +662,7 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
   std::string se_pre_name,
   std::string se_post_name )
 {
+  std::cout<<"delete from post"<<std::endl;
   /*
    * TODO: Synapses deletion due to the loss of a post-synaptic element can
    * be done locally (except for the update of the number of pre-synaptic
@@ -826,39 +821,5 @@ nest::SPManager::global_shuffle( std::vector< index >& v, size_t n )
   }
   v = v2;
 }
-
-// void
-// nest::SPManager::test( const thread tid )
-// {
-//   disconnect_5g( tid, 1, 2 );
-
-//   // GIDCollection sources( std::vector< index >( 1, 3 ) );
-//   // GIDCollection targets( std::vector< index >( 1, 1 ) );
-//   // sp_conn_builders_[ 0 ]->sp_connect( sources, targets );
-
-//   GIDCollection sources2( std::vector< index >( 1, 2 ) );
-//   GIDCollection targets2( std::vector< index >( 1, 3 ) );
-//   sp_conn_builders_[ 0 ]->sp_connect( sources2, targets2 );
-
-//   disconnect_5g( tid, 2, 3 );
-
-//   GIDCollection sources3( std::vector< index >( 1, 1 ) );
-//   GIDCollection targets3( std::vector< index >( 1, 3 ) );
-//   sp_conn_builders_[ 0 ]->sp_connect( sources3, targets3 );
-// }
-
-// void
-// nest::SPManager::disconnect_5g( const thread tid, const index sgid, const
-// index tgid )
-// {
-//   const Node* const target = kernel().node_manager.get_node( tgid, tid );
-//   const thread target_thread = target->get_thread();
-
-//   // check whether the target is on our thread
-//   if ( tid == target_thread )
-//   {
-//     kernel().connection_manager.disconnect_5g( tid, sgid, tgid );
-//   }
-// }
 
 } // namespace nest

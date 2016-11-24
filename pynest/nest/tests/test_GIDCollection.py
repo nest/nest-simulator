@@ -130,7 +130,7 @@ class TestGIDCollection(unittest.TestCase):
 
         n_slice_negative_end = n[:-3:]
         n_list_negative_end = [x for x in n_slice_negative_end]
-        self.assertEqual(n_list_negative_end, [1, 2, 3, 4, 5, 6, 7])
+        self.assertEqual(n_list_negative_end, [1, 2, 3, 4, 5, 6, 7, 8])
 
         with self.assertRaises(nest.NESTError):
             n[::-3]
@@ -261,7 +261,7 @@ class TestGIDCollection(unittest.TestCase):
         n_slice_middle_jump = nodes[2:12:2]
         n_list_first = [x for x in n_slice_first]
         n_list_middle = [x for x in n_slice_middle]
-        n_list_middle_jump = [x for x in n_slice_middle_jump]
+        n_list_middle_jump = [x for x in n_slice_middle_jump]        
         compare_list_first = [1, 3, 5, 7, 9, 26, 27, 28, 29, 30]
         compare_list_middle = [5, 7, 9, 26, 27]
         compare_list_middle_jump = [5, 9, 27, 29, 31]
@@ -283,17 +283,23 @@ class TestGIDCollection(unittest.TestCase):
         """Correct GIDCollection modelID"""
 
         n = nest.Create('iaf_psc_alpha')
-        for model in nest.Models(mtype='nodes'):
+
+        nest.sli_run("modeldict")
+        dict = nest.sli_pop()
+
+        models = dict.keys()
+        modelID = dict.values()
+
+        for model in models:
             n += nest.Create(model)
+
         n = n[1:]
 
         self.assertTrue(len(n) > 0)
 
-        nest.sli_run("modeldict")
-        modelID = list(nest.sli_pop().values())
-
         count = 0
         for gid, mid in n.items():
+            #print gid, mid, modelID[count]
             self.assertEqual(mid, modelID[count])
             count += 1
 

@@ -28,6 +28,32 @@ from .hl_api_helper import *
 from .hl_api_info import SetStatus
 
 
+class GIDCollectionIterator(object):
+    """
+    Iterator class for GIDCollection.
+
+    Can either return the respective gid (this is the default), or a pair
+    consisting of the respective gid and modelID.
+    """
+
+    def __init__(self, gc, iterpairs=False):
+        self._gciter = nest.sli_func(':beginiterator_g', gc)
+        self._deref_and_increment = 'dup {} exch :next_q pop'.format(
+            ':getgidmodelid_q' if iterpairs else ':getgid_q')
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        try:
+            val = nest.sli_func(self._deref_and_increment, self._gciter)
+        except nest.NESTError:
+            raise StopIteration
+        return val
+
+    next = __next__ # Python2.x
+
+
 class GIDCollection(object):
     """
     Class for GIDCollection.
@@ -85,24 +111,10 @@ class GIDCollection(object):
             self._datum = nest.sli_func('cvgidcollection', data)
 
     def __iter__(self):
-        # Naive implementation
-        gc_as_list = nest.sli_func('cva', self._datum)
-        try:
-            it = iter(gc_as_list)
-        except TypeError:
-            raise TypeError("The GIDCollection needs to be converted to list \
-                             in order to be iterable")
-        return it
+        return GIDCollectionIterator(self)
 
     def items(self):
-        # Naive implementation
-        gc_with_mid_as_list = nest.sli_func('cva_gid_mid', self._datum)
-        try:
-            it = iter(gc_with_mid_as_list)
-        except TypeError:
-            raise TypeError("The GIDCollection needs to be converted to list \
-                             in order to be iterable")
-        return it
+        return GIDCollectionIterator(self, True)
 
     def __add__(self, other):
         if not isinstance(other, GIDCollection):
@@ -111,8 +123,14 @@ class GIDCollection(object):
 
     def __getitem__(self, key):
         if isinstance(key, slice):
-            start = 1 if key.start is None else key.start + 1
-            stop = self.__len__() + 1 if key.stop is None else key.stop + 1
+            if key.start is None:
+                start = 1
+            else:
+                start = key.start + 1 if key.start >= 0 else key.start
+            if key.stop is None:
+                stop = self.__len__()
+            else:
+                stop = key.stop if key.stop >= 0 else key.stop
             step = 1 if key.step is None else key.step
 
             return (GIDCollection(nest.sli_func('Take',
@@ -133,7 +151,13 @@ class GIDCollection(object):
     def __eq__(self, other):
         if not isinstance(other, GIDCollection):
             return NotImplemented
-        return self._datum == other._datum
+
+        if self.__len__() != other.__len__():
+            return False
+        for selfpair, otherpair in zip(self.items(), other.items()):
+            if selfpair != otherpair:
+                return False
+        return True
 
     def __neq__(self, other):
         if not isinstance(other, GIDCollection):

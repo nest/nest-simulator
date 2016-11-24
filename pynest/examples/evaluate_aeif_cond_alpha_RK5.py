@@ -120,7 +120,7 @@ def run_model(model='aeif_cond_alpha', dt=0.1, reps=1):
     nest.SetDefaults('aeif_cond_alpha_RK5', {'MAXERR': 1e-10})
 
     neuron = nest.Create(model, 2)
-    nest.SetStatus(neuron, [{"V_peak": 0.0, "a": 4.0, "b": 80.5}])
+    nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b": 80.5})
 
     dc = nest.Create("dc_generator")
     nest.SetStatus(dc, [{"amplitude": 700.0,
@@ -134,7 +134,7 @@ def run_model(model='aeif_cond_alpha', dt=0.1, reps=1):
     meter0 = nest.Create('multimeter',
                          params={'record_from': ['V_m', 'g_ex', 'g_in', 'w'],
                                  'interval': 0.1})
-    nest.Connect(meter0, neuron[0])
+    nest.Connect(meter0, nest.GIDCollection([neuron[0]]))
     nest.SetStatus(meter0, [{"to_file": False, "withtime": True}])
 
     t = timeit.Timer("nest.Simulate(3000)", "import nest")

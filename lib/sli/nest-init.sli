@@ -204,6 +204,13 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+/GIDCollectionQ trie 
+  [/gidcollectiontype] true addtotrie
+  [/anytype] false addtotrie
+def                  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % convert to list of gid-modelid pairs
 /cva_gid_mid trie def
 /cva_gid_mid [/gidcollectiontype]
@@ -774,31 +781,26 @@ def
 */
 /GetConnections [/dictionarytype] 
 { 
-  dup /pdict Set
+  /pdict Set
   [ /source /target ]
   {
     /key Set
     pdict key known 
     { 
       pdict key get 
-      ArrayQ exch ; not  
+      GIDCollectionQ exch ; not  
       {
-	key cvs ( argument must be list of GIDs) join M_ERROR message
-	/GetConnections /ArgumentError raiseerror
+	      key cvs ( argument must be GIDCollection) join M_ERROR message
+	      /GetConnections /ArgumentError raiseerror
       }
       if
-      pdict key get
-      TensorRank 1 eq not
-      {
-        key cvs ( list of GIDs must be of dimension 1) join M_ERROR message
-      	/GetConnections /ArgumentError raiseerror
-      }
-      if
-    } if    
-  } forall
-  GetConnections_D 
-  Flatten 
-} def
+    }
+    if
+  }
+  forall
+  pdict GetConnections_D 
+}
+def
 
 
 /* BeginDocumentation

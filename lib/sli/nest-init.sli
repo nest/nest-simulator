@@ -98,7 +98,7 @@ def
        [ 1 n ]
      }
      {
-       n neg c size gt { /Take /RangeError raiseerror } if
+       n neg c size gt { c n /Take /RangeError raiseerror } if
        
        c size dup n add 1 add exch
        2 arraystore
@@ -121,7 +121,7 @@ def
     slice 0 get
     dup 0 eq 
     {
-      pop /Take /RangeCheck raiseerror
+      pop coll slice /Take /RangeCheck raiseerror
     }
     if
       
@@ -308,12 +308,14 @@ def
 % GetStatus / SetStatus for GIDCollection
 /GetStatus [/gidcollectiontype]
 {
+  dup ValidQ_g not { /GetStatus /InvalidGIDCollectionError raiseerror } if
   { GetStatus_i } Map
 }
 def
 
 /SetStatus [/gidcollectiontype /dictionarytype]
 {
+  1 pick ValidQ_g not { /SetStatus /InvalidGIDCollectionError raiseerror } if
   exch { 1 pick SetStatus_id } forall
   pop % dictionary
 }
@@ -321,13 +323,14 @@ def
 
 /SetStatus [/gidcollectiontype /arraytype]
 {
+  1 pick ValidQ_g not { /SetStatus /InvalidGIDCollectionError raiseerror } if
   << >> begin
   /params Set
   /gc Set
   
   params length gc size neq
   {
-    /SetStatus /IncompatibleLengths raiseerror
+    gc params /SetStatus /IncompatibleLengths raiseerror
   }
   if
  

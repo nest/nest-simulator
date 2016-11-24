@@ -394,6 +394,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } size_gfunction;
 
+  class ValidQ_gFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } validq_gfunction;
+
   class Join_g_gFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;

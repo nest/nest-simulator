@@ -831,12 +831,12 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 
     % assume a connected network
 
-    << >> GetConnections Flatten /conns Set % Get all connections
-    conns { GetStatus } Map      /syns  Set % retrieve their synapse status
+    << >> GetConnections    /conns Set % Get all connections
+    conns { GetStatus } Map /syns  Set % retrieve their synapse status
 
-    ResetKernel                             % clear everything
+    ResetKernel                        % clear everything
     % rebuild neurons
-    syns DataConnect                        % restore the connecions
+    syns DataConnect                   % restore the connecions
 
 
     Author: Marc-Oliver Gewaltig
@@ -1506,6 +1506,18 @@ NestModule::Size_gFunction::execute( SLIInterpreter* i ) const
 }
 
 void
+NestModule::ValidQ_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  GIDCollectionDatum gidcoll =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+
+  i->OStack.pop();
+  i->OStack.push( gidcoll->valid() );
+  i->EStack.pop();
+}
+
+void
 NestModule::Join_g_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
@@ -1918,6 +1930,7 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "cvgidcollection_iv", &cvgidcollection_ivfunction );
   i->createcommand( "cva_g", &cva_gfunction );
   i->createcommand( "size_g", &size_gfunction );
+  i->createcommand( "ValidQ_g", &validq_gfunction );
   i->createcommand( "join_g_g", &join_g_gfunction );
   i->createcommand( "MemberQ_g_i", &memberq_g_ifunction );
   i->createcommand( ":beginiterator_g", &beginiterator_gfunction );

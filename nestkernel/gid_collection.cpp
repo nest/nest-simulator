@@ -40,41 +40,6 @@ struct
   }
 } primitiveSort;
 
-gc_const_iterator::gc_const_iterator( const GIDCollectionPrimitive& collection,
-  size_t offset )
-  : coll_ptr_( 0 )
-  , element_idx_( offset )
-  , part_idx_( 0 )
-  , step_( 1 )
-  , primitive_collection_( &collection )
-  , composite_collection_( 0 )
-{
-  if ( offset > collection.size() ) // allow == size() for end iterator
-  {
-    throw KernelException( "Invalid offset into GIDCollectionPrimitive" );
-  }
-}
-
-gc_const_iterator::gc_const_iterator( const GIDCollectionComposite& collection,
-  size_t part,
-  size_t offset,
-  size_t step )
-  : coll_ptr_( 0 )
-  , element_idx_( offset )
-  , part_idx_( part )
-  , step_( step )
-  , primitive_collection_( 0 )
-  , composite_collection_( &collection )
-{
-  if ( ( part >= collection.parts_.size()
-         or offset >= collection.parts_[ part ].size() )
-    and not( part == collection.parts_.size() and offset == 0 ) // end iterator
-    )
-  {
-    throw KernelException(
-      "Invalid part or offset into GIDCollectionComposite" );
-  }
-}
 
 gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
   const GIDCollectionPrimitive& collection,
@@ -86,7 +51,8 @@ gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
   , primitive_collection_( &collection )
   , composite_collection_( 0 )
 {
-  assert( collection_ptr.get() == &collection );
+  // test requiring get() first so that unlock() can be run afterwards
+  assert( collection_ptr.get() == &collection or not collection_ptr.valid() );
   collection_ptr.unlock();
 
   if ( offset > collection.size() ) // allow == size() for end iterator
@@ -107,7 +73,8 @@ gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
   , primitive_collection_( 0 )
   , composite_collection_( &collection )
 {
-  assert( collection_ptr.get() == &collection );
+  // test requiring get() first so that unlock() can be run afterwards
+  assert( collection_ptr.get() == &collection or not collection_ptr.valid() );
   collection_ptr.unlock();
 
   if ( ( part >= collection.parts_.size()

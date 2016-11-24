@@ -420,7 +420,8 @@ inline GIDPair gc_const_iterator::operator*() const
   else
   {
     if ( part_idx_ >= composite_collection_->parts_.size()
-      or element_idx_ >= composite_collection_->parts_[ part_idx_ ].size() )
+      or element_idx_ >= composite_collection_->parts_[ part_idx_ ].size()
+      or not this->operator<( composite_collection_->end() ) )
     {
       throw KernelException( "Invalid GIDCollection iterator " );
     }

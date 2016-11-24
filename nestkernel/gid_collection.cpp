@@ -459,7 +459,8 @@ GIDCollectionComposite::GIDCollectionComposite(
   size_t stop,
   size_t step )
   : parts_( composite.parts_ )
-  , size_( 1 )
+  , size_( floor( ( stop - start ) / ( float ) step )
+      + ( ( stop - start ) % step > 0 ) )
   , step_( step )
   , start_part_( 0 )
   , start_offset_( 0 )
@@ -479,15 +480,13 @@ GIDCollectionComposite::GIDCollectionComposite(
   {
     throw BadProperty( "Cannot slice a sliced composite GIDCollection." );
   }
+
   size_t global_index = 0;
-  bool started = false;
-  size_t step_since_prev = 0;
   for ( const_iterator it = composite.begin(); it != composite.end(); ++it )
   {
     if ( global_index == start )
     {
       it.get_current_part_offset( start_part_, start_offset_ );
-      started = true;
     }
     else if ( global_index == stop )
     {
@@ -495,15 +494,6 @@ GIDCollectionComposite::GIDCollectionComposite(
       break;
     }
     ++global_index;
-    if ( started )
-    {
-      ++step_since_prev;
-      if ( step_since_prev == step )
-      {
-        size_ += 1;
-        step_since_prev = 0;
-      }
-    }
   }
   std::cout << "START: part=" << start_part_ << " | element=" << start_offset_
             << std::endl;

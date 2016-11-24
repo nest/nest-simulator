@@ -212,10 +212,8 @@ public:
   ArrayDatum get_connections( DictionaryDatum dict ) const;
 
   void get_connections( std::deque< ConnectionID >& connectome,
-    //TokenArray const* source,
-    //TokenArray const* target,
-    GIDCollectionPTR const* source,
-	GIDCollectionPTR const* target,
+    GIDCollectionPTR source,
+    GIDCollectionPTR target,
     size_t syn_id,
     long synapse_label ) const;
 

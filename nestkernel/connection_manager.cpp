@@ -1191,7 +1191,7 @@ nest::ConnectionManager::get_connections(
 #endif
       std::deque< ConnectionID > conns_in_thread;
 
-      if (source->islocked())
+      if ( source->islocked() )
       {
     	  source->unlock();
       }
@@ -1205,7 +1205,10 @@ nest::ConnectionManager::get_connections(
         {
           if ( target == 0 )
           {
-        	source->unlock();
+        	if ( source->islocked() )
+        	{
+        	  source->unlock();
+        	}
             validate_pointer( connections_[ t ].get( source_id ) )
               ->get_connections(
                 source_id, t, syn_id, synapse_label, conns_in_thread );
@@ -1243,7 +1246,9 @@ nest::ConnectionManager::get_connections(
       }
     }
     if ( source->islocked() )
+    {
       source->unlock();
+    }
 
     return;
   } // else

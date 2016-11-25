@@ -231,10 +231,10 @@ extern const Name N_channels; //!< Specific to correlomatrix_detector
 extern const Name n_events;   //!< Recorder parameter
 extern const Name
   n_proc; //!< Number of component processes of ppd_sup_/gamma_sup_generator
-extern const Name n_receptors;         //!< number of receptor ports
-extern const Name neuron;              //!< Node type
-extern const Name node_uses_wfr;       //!< Node parameter
-extern const Name noise;               //!< Specific to iaf_chs_2008 neuron
+extern const Name n_receptors;   //!< number of receptor ports
+extern const Name neuron;        //!< Node type
+extern const Name node_uses_wfr; //!< Node parameter
+extern const Name noise;         //!< Specific to iaf_chs_2008 neuron
 
 extern const Name offset;  //!< Miscellaneous parameters
 extern const Name offsets; //!< Recorder parameter

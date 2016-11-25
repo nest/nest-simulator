@@ -99,32 +99,6 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
   # Create a VERA++ profile for NEST in './vera_home' for static code analysis.
   mkdir -p vera_home
   cp -r /usr/lib/vera++/* ./vera_home
-  cat > ./vera_home/profiles/nest <<EOF
-#!/usr/bin/tclsh
-# This profile includes all the rules for checking NEST
-set rules {
-  F001
-  F002
-  L001
-  L002
-  L003
-  L005
-  L006
-  T001
-  T002
-  T004
-  T005
-  T006
-  T007
-  T010
-  T011
-  T012
-  T013
-  T017
-  T018
-  T019
-}
-EOF
   echo "MSGBLD0020: VERA++ initialization completed."  
 
   if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then

@@ -248,6 +248,7 @@ extern const Name individual_spike_trains; //!< Generator parameters
 extern const Name inh_conductance;         //!< Recorder parameter
 extern const Name input_currents_ex;       //!< Incoming excitatory currents
 extern const Name input_currents_in;       //!< Incoming inhibitory currents
+extern const Name instant_unblock_NMDA;  //!< specific to Hill-Tononi
 extern const Name
   Interpol_Order;           //!< Interpolation order (precise timing neurons)
 extern const Name interval; //!< Recorder parameter

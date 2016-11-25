@@ -208,6 +208,7 @@ const Name Inact_p( "Inact_p" );
 const Name index_map( "index_map" );
 const Name individual_spike_trains( "individual_spike_trains" );
 const Name inh_conductance( "inh_conductance" );
+const Name instant_unblock_NMDA( "instant_unblock_NMDA" );
 const Name Interpol_Order( "Interpol_Order" );
 const Name interval( "interval" );
 const Name is_refractory( "is_refractory" );

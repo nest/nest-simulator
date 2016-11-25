@@ -96,11 +96,14 @@
 
       dm_X / dt = ( m_ss(V) - m_X ) / tau_Mg_X  for X: slow, fast
 
+   If /instant_unblock_NMDA is set to true, NMDA unblocking is
+   instantaneous, i.e., m(V, t) = m_ss(V).
 
    I am grateful to thank Sean Hill for giving me access to his Synthesis
    simulator source code.
 
-   Examples:
+   Documentation and Examples:
+   - docs/model_details/HillTononi.ipynb
    - pynest/examples/intrinsic_currents_spiking.py
    - pynest/examples/intrinsic_currents_subthreshold.py
 
@@ -127,6 +130,7 @@
    V_act_NMDA, S_act_NMDA, tau_Mg_{fast, slow}_NMDA
                                 - Parameters for voltage dependence of NMDA-
                                   conductance, see above
+   instant_unblock_NMDA         - Instantaneous NMDA unblocking (default: false)
    {E_rev,g_peak}_{h,T,NaP,KNa} - reversal potential and peak conductance for
                                   intrinsic currents
    receptor_types               - dictionary mapping synapse names to ports on
@@ -263,6 +267,7 @@ private:
     double S_act_NMDA;     // mV, scale of inactivation
     double tau_Mg_slow_NMDA; // ms
     double tau_Mg_fast_NMDA; // ms
+    bool   instant_unblock_NMDA;
 
     double g_peak_GABA_A;
     double tau_rise_GABA_A;  // ms

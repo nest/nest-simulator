@@ -92,16 +92,16 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   const double Mg_f = std::min( Mg_ss, y[ S::Mg_fast ] );
   const double A1 = 0.51 - 0.0028 * y[ S::VM ];
   const double A2 = 1 - A1;
+  const double m_NMDA = node.P_.instant_unblock_NMDA ? Mg_ss
+		  : A1 * Mg_f + A2 * Mg_s;
 
   // Calculate sum of all synaptic channels.
   // Sign convention: For each current, write I = - g * ( V - E )
   //    then dV/dt ~ Sum(I)
-  double I_syn = 0;
-  I_syn += -y[ S::G_AMPA ] * ( V - node.P_.E_rev_AMPA );
-  I_syn += -y[ S::G_NMDA_TIMECOURSE ] * ( A1 * Mg_f + A2 * Mg_s )
-    * ( V - node.P_.E_rev_NMDA );
-  I_syn += -y[ S::G_GABA_A ] * ( V - node.P_.E_rev_GABA_A );
-  I_syn += -y[ S::G_GABA_B ] * ( V - node.P_.E_rev_GABA_B );
+  const double I_syn = -y[ S::G_AMPA ] * ( V - node.P_.E_rev_AMPA )
+  -y[ S::G_NMDA_TIMECOURSE ] * m_NMDA * ( V - node.P_.E_rev_NMDA )
+  -y[ S::G_GABA_A ] * ( V - node.P_.E_rev_GABA_A )
+  -y[ S::G_GABA_B ] * ( V - node.P_.E_rev_GABA_B );
 
   // The post-spike K-current, only while refractory
   const double I_spike =
@@ -228,6 +228,7 @@ nest::ht_neuron::Parameters_::Parameters_()
   , S_act_NMDA( 0.081 )      // mV
   , tau_Mg_slow_NMDA( 22.7 ) // ms
   , tau_Mg_fast_NMDA( 0.68 ) // ms
+  , instant_unblock_NMDA( false )
   , g_peak_GABA_A( 0.33 )
   , tau_rise_GABA_A( 1.0 )  // ms
   , tau_decay_GABA_A( 7.0 ) // ms
@@ -332,7 +333,7 @@ nest::ht_neuron::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_m, tau_m );
   def< double >( d, names::theta_eq, theta_eq );
   def< double >( d, names::tau_theta, tau_theta );
-  def< double >( d, names::t_spike, t_ref );
+  def< double >( d, names::t_ref, t_ref );
   def< double >( d, names::tau_spike, tau_spike );
   def< double >( d, names::g_peak_AMPA, g_peak_AMPA );
   def< double >( d, names::tau_rise_AMPA, tau_rise_AMPA );
@@ -346,6 +347,7 @@ nest::ht_neuron::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::S_act_NMDA, S_act_NMDA );
   def< double >( d, names::tau_Mg_slow_NMDA, tau_Mg_slow_NMDA );
   def< double >( d, names::tau_Mg_fast_NMDA, tau_Mg_fast_NMDA );
+  def< bool >( d, names::instant_unblock_NMDA, instant_unblock_NMDA );
   def< double >( d, names::g_peak_GABA_A, g_peak_GABA_A );
   def< double >( d, names::tau_rise_GABA_A, tau_rise_GABA_A );
   def< double >( d, names::tau_decay_GABA_A, tau_decay_GABA_A );
@@ -375,7 +377,7 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::theta_eq, theta_eq );
   updateValue< double >( d, names::tau_theta, tau_theta );
   updateValue< double >( d, names::tau_spike, tau_spike );
-  updateValue< double >( d, names::t_spike, t_ref );
+  updateValue< double >( d, names::t_ref, t_ref );
   updateValue< double >( d, names::g_peak_AMPA, g_peak_AMPA );
   updateValue< double >( d, names::tau_rise_AMPA, tau_rise_AMPA );
   updateValue< double >( d, names::tau_decay_AMPA, tau_decay_AMPA );
@@ -388,6 +390,7 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::S_act_NMDA, S_act_NMDA );
   updateValue< double >( d, names::tau_Mg_slow_NMDA, tau_Mg_slow_NMDA );
   updateValue< double >( d, names::tau_Mg_fast_NMDA, tau_Mg_fast_NMDA );
+  updateValue< bool >( d, names::instant_unblock_NMDA, instant_unblock_NMDA );
   updateValue< double >( d, names::g_peak_GABA_A, g_peak_GABA_A );
   updateValue< double >( d, names::tau_rise_GABA_A, tau_rise_GABA_A );
   updateValue< double >( d, names::tau_decay_GABA_A, tau_decay_GABA_A );

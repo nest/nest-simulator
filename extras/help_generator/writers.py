@@ -135,11 +135,12 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
         else:
             path = os.path.join(helpdir, 'cc')
 
-        f_file_name = open((path + '/%s.html' % name), 'w')
+        f_file_name = open('{}/{}.html'.format(path, name), 'w')
+        "{}/{}.html".format(path, name)
         f_file_name.write(cmdindexstring)
         f_file_name.close()
 
-        f_file_name_hlp = open((path + '/%s.hlp' % name), 'w')
+        f_file_name_hlp = open('{}/{}.hlp'.format(path, name), 'w')
         f_file_name_hlp.write('\n'.join(hlplist))
         f_file_name_hlp.close()
 

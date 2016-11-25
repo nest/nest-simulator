@@ -71,7 +71,7 @@ dcs = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
 # searching for a sli_command_list
 for file in allfiles:
     if file.endswith('.sli'):
-        f = open(('%s' % (file,)), 'r')
+        f = open(file, 'r')
         filetext = f.read()
         f.close()
         items = re.findall(dcs, filetext, re.DOTALL)
@@ -91,7 +91,7 @@ dcs = r'\/\*[\s?]*[\n?]*BeginDocumentation[\s?]*\:?[\s?]*[.?]*\n(.*?)\n*?\*\/'
 for fname in allfiles:
     # .py is for future use
     if not fname.endswith('.py'):
-        f = open(('%s' % (fname,)), 'r')
+        f = open(fname, 'r')
         filetext = f.read()
         f.close()
         # Multiline matching to find codeblock

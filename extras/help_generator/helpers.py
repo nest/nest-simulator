@@ -64,13 +64,10 @@ def makedirs(path):
     directory at the given path including all subdirectories and
     returns silently if the directory already exists.
     """
-
     try:
         os.makedirs(path)
     except OSError as exc:
-        if exc.errno == errno.EEXIST and os.path.isdir(path):
-            pass
-        else:
+        if exc.errno != errno.EEXIST or os.path.isdir(path):
             raise
 
 

@@ -186,7 +186,7 @@ def write_helpindex(helpdir):
         html_list.append('<center><table class="commands" id="%s">'
                          % doubles[0])
         for item in filelist:
-            fitem = open(('%s' % (item,)), 'r')
+            fitem = open(item, 'r')
             itemtext = fitem.read()
             fitem.close()
             # only the basename of the file

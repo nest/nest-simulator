@@ -357,6 +357,13 @@ public:
    */
   GIDCollectionPrimitive( const GIDCollectionPrimitive& );
 
+  /**
+   * Create empty GIDCollection.
+   *
+   * @note This is only for use by SPBuilder.
+   */
+  GIDCollectionPrimitive();
+
   void print_me( std::ostream& ) const;
   void print_me( std::ostream&, size_t step, size_t skip ) const;
 
@@ -637,7 +644,8 @@ GIDCollectionPrimitive::end( GIDCollectionPTR cp ) const
 inline size_t
 GIDCollectionPrimitive::size() const
 {
-  return last_ - first_ + 1;
+  // empty GC has first_ == last_ == 0, need to handle that special
+  return std::min( last_, last_ - first_ + 1 );
 }
 
 inline bool

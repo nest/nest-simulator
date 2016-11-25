@@ -1539,8 +1539,7 @@ nest::SPBuilder::update_delay( delay& d ) const
 }
 
 void
-nest::SPBuilder::sp_connect( GIDCollectionPTR sources,
-  GIDCollectionPTR targets )
+nest::SPBuilder::sp_connect( const std::vector< index >& sources, const std::vector< index >& targets )
 {
   connect_( sources, targets );
 
@@ -1558,17 +1557,20 @@ nest::SPBuilder::connect_()
     "connection builder" );
 }
 
-/**
- * In charge of dynamically creating the new synapses
- * @param sources nodes from which synapses can be created
- * @param targets target nodes for the newly created synapses
- */
 void
 nest::SPBuilder::connect_( GIDCollectionPTR sources, GIDCollectionPTR targets )
 {
+  throw NotImplemented(
+	    "Connection without structural plasticity is not possible for this "
+	    "connection builder" );
+}
+
+void
+nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vector< index >& targets )
+{
   // Code copied and adapted from OneToOneBuilder::connect_()
   // make sure that target and source population have the same size
-  if ( sources->size() != targets->size() )
+  if ( sources.size() != targets.size() )
   {
     LOG( M_ERROR,
       "Connect",
@@ -1586,27 +1588,27 @@ nest::SPBuilder::connect_( GIDCollectionPTR sources, GIDCollectionPTR targets )
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
-      for ( GIDCollection::const_iterator tgid = targets->begin(),
-                                          sgid = sources->begin();
-            tgid != targets->end();
+      for ( std::vector< index >::const_iterator tgid = targets.begin(),
+                                                 sgid = sources.begin();
+            tgid != targets.end();
             ++tgid, ++sgid )
       {
-        assert( sgid != sources->end() );
+        assert( sgid != sources.end() );
 
-        if ( ( *sgid ).gid == ( *tgid ).gid and not autapses_ )
+        if ( *sgid == *tgid and not autapses_ )
           continue;
 
         if ( !change_connected_synaptic_elements(
-               ( *sgid ).gid, ( *tgid ).gid, tid, 1 ) )
+               *sgid, *tgid, tid, 1 ) )
         {
           skip_conn_parameter_( tid );
           continue;
         }
         Node* const target =
-          kernel().node_manager.get_node( ( *tgid ).gid, tid );
+          kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
-        single_connect_( ( *sgid ).gid, *target, target_thread, rng );
+        single_connect_( *sgid, *target, target_thread, rng );
       }
     }
     catch ( std::exception& err )

@@ -334,11 +334,22 @@ public:
    */
   void update_delay( delay& d ) const;
 
-  void sp_connect( GIDCollectionPTR sources, GIDCollectionPTR targets );
+  /**
+   *  @note Only for internal use by SPManager.
+   */
+  void sp_connect( const std::vector< index >& sources, const std::vector< index >& targets );
 
 protected:
+  using ConnBuilder::connect_;
   void connect_();
   void connect_( GIDCollectionPTR sources, GIDCollectionPTR targets );
+
+  /**
+   * In charge of dynamically creating the new synapses
+   * @param sources nodes from which synapses can be created
+   * @param targets target nodes for the newly created synapses
+   */
+  void connect_( const std::vector< index >& sources, const std::vector< index >& targets );
 };
 
 inline void

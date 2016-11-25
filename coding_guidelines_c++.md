@@ -755,9 +755,9 @@ nest::Stopwatch::Stopwatch()
 
 ## clang-format configuration file
 
-The file `.clang-format` is available in the toplevel source directory
-of NEST. It has to reside in the directory from which `clang-format`
-is run and does not have to be installed.
+The file `.clang-format` is available in the top level source
+directory of NEST. It has to reside in the directory from which
+`clang-format` is run and does not have to be installed.
 
 ## Vera++ profile
 

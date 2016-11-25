@@ -442,7 +442,7 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
   }
   if ( t_ref < 0 )
   {
-    throw BadParameter( "t_spike >= 0 required." );
+    throw BadParameter( "t_ref >= 0 required." );
   }
   if ( g_peak_NaP < 0 )
   {
@@ -735,7 +735,7 @@ nest::ht_neuron::calibrate()
 
   V_.PotassiumRefractoryCounts_ = Time( Time::ms( P_.t_ref ) ).get_steps();
 
-  // since t_spike_ >= 0, this can only fail in error
+  // since t_ref_ >= 0, this can only fail in error
   assert( V_.PotassiumRefractoryCounts_ >= 0 );
 }
 
@@ -815,7 +815,7 @@ ht_neuron::update( Time const& origin, const long from, const long to )
     S_.y_[ State_::Mg_slow ] = std::min( Mg_ss, S_.y_[ State_::Mg_slow ] );
     S_.y_[ State_::Mg_fast ] = std::min( Mg_ss, S_.y_[ State_::Mg_fast ] );
 
-    // Deactivate potassium current after t_spike
+    // Deactivate potassium current after t_ref
     if ( S_.ref_steps_ > 0 )
     {
       --S_.ref_steps_;

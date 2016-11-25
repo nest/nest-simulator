@@ -112,7 +112,6 @@
 
    Parameters:
    V_m            -  membrane potential
-   t_spike - duration of re-polarizing potassium current
    tau_m          - membrane time constant applying to all currents but
                     repolarizing K-current (see [1, p 1677])
    t_ref          - refractory time and duration of post-spike repolarizing

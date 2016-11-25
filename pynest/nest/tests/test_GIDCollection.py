@@ -234,7 +234,7 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(len(c), 4)
 
     def test_composite_GIDCollection(self):
-        """Tests on composite GIDCollection with patched GIDs"""
+        """Tests composite GIDCollection with patched GIDs"""
 
         num_a = 10
         num_b = 15

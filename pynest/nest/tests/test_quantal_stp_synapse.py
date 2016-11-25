@@ -87,8 +87,10 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         nest.Simulate(t_tot)
 
         # Now we connect the voltmeters
-        nest.Connect([voltmeter[0]], [neuron[0]])
-        nest.Connect([voltmeter[1]], [neuron[1]])
+        nest.Connect(nest.GIDCollection([voltmeter[0]]),
+                     nest.GIDCollection([neuron[0]]))
+        nest.Connect(nest.GIDCollection([voltmeter[1]]),
+                     nest.GIDCollection([neuron[1]]))
 
         for t in range(n_trials):
             t_net = nest.GetKernelStatus('time')
@@ -97,9 +99,10 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
 
         nest.Simulate(.1)  # flush the last voltmeter events from the queue
 
-        vm = numpy.array(nest.GetStatus([voltmeter[1]], 'events')[0]['V_m'])
+        vm = numpy.array(nest.GetStatus(nest.GIDCollection([voltmeter[1]]),
+                                        'events')[0]['V_m'])
         vm_reference = numpy.array(nest.GetStatus(
-            [voltmeter[0]], 'events')[0]['V_m'])
+            nest.GIDCollection([voltmeter[0]]), 'events')[0]['V_m'])
 
         vm.shape = (n_trials, t_tot)
         vm_reference.shape = (n_trials, t_tot)

@@ -297,7 +297,7 @@ GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
       throw BadProperty( "Cannot join overlapping GIDCollections." );
     }
     if ( ( last_ + 1 ) == rhs_ptr->first_ and model_id_ == rhs_ptr->model_id_ )
-    // if contiguous and homogenous
+    // if contiguous and homogeneous
     {
       return GIDCollectionPTR( new GIDCollectionPrimitive(
         first_, rhs_ptr->last_, model_id_, metadata_ ) );
@@ -308,7 +308,7 @@ GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
       return GIDCollectionPTR( new GIDCollectionPrimitive(
         rhs_ptr->first_, last_, model_id_, metadata_ ) );
     }
-    else // not contiguous and homogenous
+    else // not contiguous and homogeneous
     {
       std::vector< GIDCollectionPrimitive > primitives;
       primitives.reserve( 2 );
@@ -495,10 +495,6 @@ GIDCollectionComposite::GIDCollectionComposite(
     }
     ++global_index;
   }
-  std::cout << "START: part=" << start_part_ << " | element=" << start_offset_
-            << std::endl;
-  std::cout << "STOP: part=" << stop_part_ << " | element=" << stop_offset_
-            << std::endl;
 }
 
 GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
@@ -597,7 +593,7 @@ GIDCollectionComposite::merge_parts(
   std::vector< GIDCollectionPrimitive >& parts ) const
 {
   bool did_merge = true; // initialize to enter the while loop
-  while ( did_merge )
+  while ( did_merge )    // if parts is changed, it has to be checked again
   {
     did_merge = false;
     for ( size_t i = 0; i < parts.size() - 1; ++i )

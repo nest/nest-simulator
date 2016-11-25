@@ -267,7 +267,7 @@ private:
     double S_act_NMDA;     // mV, scale of inactivation
     double tau_Mg_slow_NMDA; // ms
     double tau_Mg_fast_NMDA; // ms
-    bool   instant_unblock_NMDA;
+    bool instant_unblock_NMDA;
 
     double g_peak_GABA_A;
     double tau_rise_GABA_A;  // ms

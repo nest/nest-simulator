@@ -92,16 +92,16 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   const double Mg_f = std::min( Mg_ss, y[ S::Mg_fast ] );
   const double A1 = 0.51 - 0.0028 * y[ S::VM ];
   const double A2 = 1 - A1;
-  const double m_NMDA = node.P_.instant_unblock_NMDA ? Mg_ss
-		  : A1 * Mg_f + A2 * Mg_s;
+  const double m_NMDA =
+    node.P_.instant_unblock_NMDA ? Mg_ss : A1 * Mg_f + A2 * Mg_s;
 
   // Calculate sum of all synaptic channels.
   // Sign convention: For each current, write I = - g * ( V - E )
   //    then dV/dt ~ Sum(I)
   const double I_syn = -y[ S::G_AMPA ] * ( V - node.P_.E_rev_AMPA )
-  -y[ S::G_NMDA_TIMECOURSE ] * m_NMDA * ( V - node.P_.E_rev_NMDA )
-  -y[ S::G_GABA_A ] * ( V - node.P_.E_rev_GABA_A )
-  -y[ S::G_GABA_B ] * ( V - node.P_.E_rev_GABA_B );
+    - y[ S::G_NMDA_TIMECOURSE ] * m_NMDA * ( V - node.P_.E_rev_NMDA )
+    - y[ S::G_GABA_A ] * ( V - node.P_.E_rev_GABA_A )
+    - y[ S::G_GABA_B ] * ( V - node.P_.E_rev_GABA_B );
 
   // The post-spike K-current, only while refractory
   const double I_spike =

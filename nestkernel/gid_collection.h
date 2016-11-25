@@ -38,7 +38,6 @@
 
 // Includes from sli:
 #include "arraydatum.h"
-#include "tokenarray.h"
 
 namespace nest
 {
@@ -146,8 +145,13 @@ public:
 /**
  * Superclass for GIDCollections.
  *
- * This class is an interface to the primitive and composite GIDCollection
- * types.
+ * The superclass acts as an interface to the primitive and composite
+ * GIDCollection types. It contains methods, mostly virtual, for the subclasses,
+ * and also create()-methods to be interfaced externally.
+ *
+ * The superclass also contains handling of the fingerprint, a unique identity
+ * the GIDCollection gets from the kernel on creation, which ensures that the
+ * GIDCollection is not used after the kernel is reset.
  */
 class GIDCollection
 {
@@ -167,61 +171,138 @@ public:
   }
 
   /**
-   * Create a GIDCollection from a vector of GIDs.
+   * Create a GIDCollection from a vector of GIDs. Results in a primitive if the
+   * GIDs are homogeneous and contiguous, or a composite otherwise.
    *
    * @param gids Vector of GIDs from which to create the GIDCollection
+   * @return a GIDCollection pointer to the created GIDCollection
    */
   static GIDCollectionPTR create( IntVectorDatum gids );
 
   /**
-   * Create a GIDCollection from an array of GIDs.
+   * Create a GIDCollection from an array of GIDs. Results in a primitive if the
+   * GIDs are homogeneous and contiguous, or a composite otherwise.
    *
    * @param gids Array of GIDs from which to create the GIDCollection
+   * @return a GIDCollection pointer to the created GIDCollection
    */
   static GIDCollectionPTR create( TokenArray gids );
 
   /**
-   * Check if the fingerprint of the GIDCollection matches that of the kernel.
+   * Check to see if the fingerprint of the GIDCollection matches that of the
+   * kernel.
+   *
+   * @return true if the fingerprint matches that of the kernel, false otherwise
    */
   bool valid() const;
 
   /**
-   * For printing out the contents of the GIDCollection.
+   * Print out the contents of the GIDCollection in a pretty and informative
+   * way.
    */
   virtual void print_me( std::ostream& ) const = 0;
 
+  /**
+   * Get the GID in the specified index in the GIDCollection.
+   *
+   * @param idx Index in the GIDCollection
+   * @return a GID
+   */
   virtual index operator[]( size_t ) const = 0;
+
+  /**
+   * Join two GIDCollections. May return a primitive or composite, depending on
+   * the input.
+   *
+   * @param rhs GIDCollection pointer to the GIDCollection to be added
+   * @return a GIDCollection pointer
+   */
   virtual GIDCollectionPTR operator+( GIDCollectionPTR ) const = 0;
   virtual bool operator==( GIDCollectionPTR ) const = 0;
+
+  /**
+   * Check if two GIDCollections are equal.
+   *
+   * @param rhs GIDCollection pointer to the GIDCollection to be checked against
+   * @return true if they are equal, false otherwise
+   */
   virtual bool operator!=( GIDCollectionPTR ) const;
 
+  /**
+   * Method to get an iterator representing the beginning of the GIDCollection.
+   *
+   * @return an iterator representing the beginning of the GIDCollection
+   */
   virtual const_iterator begin(
     GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const = 0;
+
+  /**
+   * Method to get an iterator representing the end of the GIDCollection.
+   *
+   * @return an iterator representing the end of the GIDCollection
+   */
   virtual const_iterator end(
     GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const = 0;
 
+  /**
+   * Method that creates an ArrayDatum filled with GIDs from the GIDCollection.
+   *
+   * @return an ArrayDatum containing GIDs
+   */
   virtual ArrayDatum to_array() const = 0;
 
+  /**
+   * Get the size of the GIDCollection.
+   *
+   * @return number of GIDs in the GIDCollection
+   */
   virtual size_t size() const = 0;
 
+  /**
+   * Check if the GIDCollection contains a specified GID
+   *
+   * @param gid GID to see if exists in the GIDCollection
+   * @return true if the GIDCollection contains the GID, false otherwise
+   */
   virtual bool contains( index gid ) const = 0;
+
+  //! Slice the GIDCollection to the boundaries, with a step.
+  /**
+   * Slices the GIDCollection to the boundaries, with an optional step
+   * parameter. Note that the boundaries being specified are inclusive.
+   *
+   * @param start Index of the GIDCollection to start at
+   * @param stop Index of the GIDCollection to stop at
+   * @param step Number of places between GIDs to skip. Defaults to 1
+   * @return a GIDCollection pointer to the new, sliced GIDCollection.
+   */
   virtual GIDCollectionPTR
   slice( size_t start, size_t stop, size_t step ) const = 0;
 
+  /**
+   * Sets the metadata of the GIDCollection.
+   *
+   * @param meta A Metadata pointer
+   */
   virtual void set_metadata( GIDCollectionMetadataPTR );
 
+  /**
+   * Gets the metadata of the GIDCollection.
+   *
+   * @return A Metadata pointer
+   */
   virtual GIDCollectionMetadataPTR get_metadata() const = 0;
 
 private:
   std::clock_t fingerprint_; //!< Unique identity of the kernel that created the
-                             // GIDCollection
+                             //!< GIDCollection
   static GIDCollectionPTR create_( const std::vector< index >& );
 };
 
 /**
  * Subclass for the primitive GIDCollection type.
  *
- * The primitive type contains only homogenous and contiguous GIDs. It also
+ * The primitive type contains only homogeneous and contiguous GIDs. It also
  * contains model ID and metadata of the GIDs.
  */
 class GIDCollectionPrimitive : public GIDCollection
@@ -276,6 +357,13 @@ public:
    */
   GIDCollectionPrimitive( const GIDCollectionPrimitive& );
 
+  /**
+   * Create empty GIDCollection.
+   *
+   * @note This is only for use by SPBuilder.
+   */
+  GIDCollectionPrimitive();
+
   void print_me( std::ostream& ) const;
   void print_me( std::ostream&, size_t step, size_t skip ) const;
 
@@ -287,8 +375,10 @@ public:
   const_iterator begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
   const_iterator end( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
 
+  //! Returns an ArrayDatum filled with GIDs from the primitive.
   ArrayDatum to_array() const;
 
+  //! Returns total number of GIDs in the primitive.
   size_t size() const;
 
   bool contains( index gid ) const;
@@ -303,6 +393,9 @@ public:
    * primitive.
    *
    * @param other Primitive to check for continuity
+   * @return true if the first element in the other primitive is the next after
+   * the last element in this primitive, and they both have the same model ID.
+   * Otherwise false.
    */
   bool is_contiguous_ascending( GIDCollectionPrimitive& other );
 };
@@ -312,7 +405,10 @@ GIDCollectionPTR operator+( GIDCollectionPTR lhs, GIDCollectionPTR rhs );
 /**
  * Subclass for the composite GIDCollection type.
  *
- * The composite type contains a collection of primitives.
+ * The composite type contains a collection of primitives which are not
+ * contiguous and homogeneous with each other. If the composite is sliced, it
+ * also holds information about what index to start at and which to end at, and
+ * the step.
  */
 class GIDCollectionComposite : public GIDCollection
 {
@@ -321,14 +417,14 @@ class GIDCollectionComposite : public GIDCollection
 private:
   std::vector< GIDCollectionPrimitive > parts_; //!< Vector of primitives
   size_t size_;                                 //!< Total number of GIDs
-  size_t step_;         //!< Steplength, set when slicing.
+  size_t step_;         //!< Step length, set when slicing.
   size_t start_part_;   //!< Primitive to start at, set when slicing
   size_t start_offset_; //!< Element to start at, set when slicing
   size_t stop_part_;    //!< Primitive to stop at, set when slicing
   size_t stop_offset_;  //!< Element to stop at, set when slicing
 
   /**
-   * Go through the vector of primitives, merge as much as possible.
+   * Goes through the vector of primitives, merging as much as possible.
    *
    * @param parts Vector of primitives to be merged.
    */
@@ -336,7 +432,7 @@ private:
 
 public:
   /**
-   * Create a composite from a primitive, with boundaries and steplength.
+   * Create a composite from a primitive, with boundaries and step length.
    *
    * @param primitive Primitive to be converted
    * @param start Offset in the primitive to begin at.
@@ -356,8 +452,8 @@ public:
   GIDCollectionComposite( const GIDCollectionComposite& );
 
   /**
-     * Create a new composite from another, with boundaries and steplength.
-     * Used when slicing.
+     * Creates a new composite from another, with boundaries and step length.
+     * This constructor is used only when slicing.
      *
      * @param composite Composite to slice.
      * @param start Index in the composite to begin at.
@@ -368,6 +464,7 @@ public:
     size_t,
     size_t,
     size_t );
+
   /**
    * Create a composite from a vector of primitives.
    *
@@ -378,6 +475,17 @@ public:
   void print_me( std::ostream& ) const;
 
   index operator[]( const size_t ) const;
+
+  /**
+   * Addition operator.
+   *
+   * Joins this composite with another GIDCollection. The resulting
+   * GIDCollection is sorted and merged, and converted to a primitive if
+   * possible.
+   *
+   * @param rhs GIDCollection to add to this composite
+   * @return a GIDCollection pointer to either a primitive or a composite.
+   */
   GIDCollectionPTR operator+( GIDCollectionPTR rhs ) const;
   GIDCollectionPTR operator+( const GIDCollectionPrimitive& rhs ) const;
   bool operator==( const GIDCollectionPTR rhs ) const;
@@ -385,8 +493,10 @@ public:
   const_iterator begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
   const_iterator end( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
 
+  //! Returns an ArrayDatum filled with GIDs from the composite.
   ArrayDatum to_array() const;
 
+  //! Returns total number of GIDs in the composite.
   size_t size() const;
 
   bool contains( index gid ) const;
@@ -534,7 +644,8 @@ GIDCollectionPrimitive::end( GIDCollectionPTR cp ) const
 inline size_t
 GIDCollectionPrimitive::size() const
 {
-  return last_ - first_ + 1;
+  // empty GC has first_ == last_ == 0, need to handle that special
+  return std::min( last_, last_ - first_ + 1 );
 }
 
 inline bool
@@ -569,7 +680,7 @@ inline index GIDCollectionComposite::operator[]( const size_t i ) const
       long local_i = i - tot_prev_gids; // get local i
       return ( *gc )[ local_i ];
     }
-    else // if is not in current GIDCollection
+    else // i is not in current GIDCollection
     {
       tot_prev_gids += ( *gc ).size();
     }

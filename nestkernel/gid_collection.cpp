@@ -216,6 +216,7 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( index first,
   , model_id_( model_id )
   , metadata_( meta )
 {
+  assert( first_ <= last_ );
 }
 
 GIDCollectionPrimitive::GIDCollectionPrimitive( index first,
@@ -226,6 +227,7 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( index first,
   , model_id_( model_id )
   , metadata_( 0 )
 {
+  assert( first_ <= last_ );
 }
 
 GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last )
@@ -234,6 +236,8 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last )
   , model_id_( 0 )
   , metadata_( 0 )
 {
+  assert( first_ <= last_ );
+
   // find the model_id
   const int model_id = kernel().node_manager.get_node( first )->get_model_id();
   for ( index gid = ++first; gid <= last; ++gid )
@@ -252,6 +256,14 @@ GIDCollectionPrimitive::GIDCollectionPrimitive(
   , last_( rhs.last_ )
   , model_id_( rhs.model_id_ )
   , metadata_( rhs.metadata_ )
+{
+}
+
+GIDCollectionPrimitive::GIDCollectionPrimitive()
+  : first_( 0 )
+  , last_( 0 )
+  , model_id_( 0 )
+  , metadata_( 0 )
 {
 }
 
@@ -297,7 +309,7 @@ GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
       throw BadProperty( "Cannot join overlapping GIDCollections." );
     }
     if ( ( last_ + 1 ) == rhs_ptr->first_ and model_id_ == rhs_ptr->model_id_ )
-    // if contiguous and homogenous
+    // if contiguous and homogeneous
     {
       return GIDCollectionPTR( new GIDCollectionPrimitive(
         first_, rhs_ptr->last_, model_id_, metadata_ ) );
@@ -308,7 +320,7 @@ GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
       return GIDCollectionPTR( new GIDCollectionPrimitive(
         rhs_ptr->first_, last_, model_id_, metadata_ ) );
     }
-    else // not contiguous and homogenous
+    else // not contiguous and homogeneous
     {
       std::vector< GIDCollectionPrimitive > primitives;
       primitives.reserve( 2 );
@@ -495,10 +507,6 @@ GIDCollectionComposite::GIDCollectionComposite(
     }
     ++global_index;
   }
-  std::cout << "START: part=" << start_part_ << " | element=" << start_offset_
-            << std::endl;
-  std::cout << "STOP: part=" << stop_part_ << " | element=" << stop_offset_
-            << std::endl;
 }
 
 GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
@@ -597,7 +605,7 @@ GIDCollectionComposite::merge_parts(
   std::vector< GIDCollectionPrimitive >& parts ) const
 {
   bool did_merge = true; // initialize to enter the while loop
-  while ( did_merge )
+  while ( did_merge )    // if parts is changed, it has to be checked again
   {
     did_merge = false;
     for ( size_t i = 0; i < parts.size() - 1; ++i )

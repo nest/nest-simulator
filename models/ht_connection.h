@@ -31,6 +31,8 @@
 
   Description:
   This synapse implements the depression model described in [1, p 1678].
+  See docs/model_details/HillTononi.ipynb for details.
+
   Synaptic dynamics are given by
 
   P'(t) = ( 1 - P ) / tau_P
@@ -198,7 +200,7 @@ HTConnection< targetidentifierT >::HTConnection()
   : ConnectionBase()
   , weight_( 1.0 )
   , tau_P_( 500.0 )
-  , delta_P_( 0.5 )
+  , delta_P_( 0.125 )
   , p_( 1.0 )
 {
 }
@@ -238,7 +240,7 @@ HTConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   updateValue< double >( d, names::P, p_ );
 
   if ( tau_P_ <= 0.0 )
-    throw BadProperty( "tau_P >= 0 required." );
+    throw BadProperty( "tau_P > 0 required." );
 
   if ( delta_P_ < 0.0 || delta_P_ > 1.0 )
     throw BadProperty( "0 <= delta_P <= 1 required." );

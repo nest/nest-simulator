@@ -119,7 +119,6 @@ extern const Name dhaene_tmax_lt_t1;   //!< used for iaflossless_count_exp
 extern const Name dI_syn_ex; //!< Derivative of the excitatory synaptic current
 extern const Name dI_syn_in; //!< Derivative of the inhibitory synaptic current
 extern const Name distribution; //!< Connectivity-related
-extern const Name distribution; //!< Connectivity-related
 extern const Name dt;           //!< Miscellaneous parameters
 extern const Name
   dU; //!< Unit increment of the utilization for a facilitating synapse [0...1]
@@ -268,10 +267,10 @@ extern const Name n_events;   //!< Recorder parameter
 extern const Name
   n_proc; //!< Number of component processes of ppd_sup_/gamma_sup_generator
 extern const Name n_receptors;   //!< number of receptor ports
+extern const Name n_synapses;    //!< Multisynapse models
 extern const Name neuron;        //!< Node type
 extern const Name node_uses_wfr; //!< Node parameter
 extern const Name noise;         //!< Specific to iaf_chs_2008 neuron
-extern const Name ns;            //!< Number of release sites (property arrays)
 
 extern const Name offset;  //!< Miscellaneous parameters
 extern const Name offsets; //!< Recorder parameter

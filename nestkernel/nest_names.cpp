@@ -203,6 +203,7 @@ const Name N_channels( "N_channels" );
 const Name n_events( "n_events" );
 const Name n_proc( "n_proc" );
 const Name n_receptors( "n_receptors" );
+const Name n_synapses( "n_synapses" );
 const Name neuron( "neuron" );
 const Name node_uses_wfr( "node_uses_wfr" );
 const Name noise( "noise" );

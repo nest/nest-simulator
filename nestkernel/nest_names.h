@@ -89,6 +89,7 @@ extern const Name covariance;       //!< Specific to correlomatrix_detector
 extern const Name currents;         //!< Recorder parameter
 
 extern const Name d; //!< Specific to Izhikevich 2003
+extern const Name D_eq_KNa;   //!< Specific to ht_neuron
 extern const Name D_lower;
 extern const Name D_mean;
 extern const Name D_std;
@@ -150,6 +151,7 @@ extern const Name E_sfa;        //!< Other adaptation
 extern const Name element_type; //!< Node type
 extern const Name epoch;
 extern const Name eps;             //!< MSP growth curve parameter
+extern const Name equilibrate;     //!< specific to ht_neuron
 extern const Name eq12;            //!< used for iaflossless_count_exp
 extern const Name eq13;            //!< used for iaflossless_count_exp
 extern const Name eq7;             //!< used for iaflossless_count_exp
@@ -490,6 +492,7 @@ extern const Name
 extern const Name V_th_v; //!< Specific to amat2_*
 extern const Name
   vals_eta; //!< Specific to population point process model (pp_pop_psc_delta)
+extern const Name voltage_clamp;  //!< Enforce voltage clamp
 extern const Name vp; //!< Node parameter
 
 extern const Name w;      //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)

@@ -71,6 +71,7 @@ const Name covariance( "covariance" );
 const Name currents( "currents" );
 
 const Name d( "d" );
+const Name D_eq_KNa( "D_eq_KNa" );
 const Name D_lower( "D_lower" );
 const Name D_mean( "D_mean" );
 const Name D_std( "D_std" );
@@ -106,6 +107,7 @@ const Name E_in( "E_in" );
 const Name E_K( "E_K" );
 const Name E_L( "E_L" );
 const Name E_Na( "E_Na" );
+const Name equilibrate( "equilibrate" );
 const Name E_rev( "E_rev" );
 const Name E_rev_AMPA( "E_rev_AMPA" );
 const Name E_rev_GABA_A( "E_rev_GABA_A" );
@@ -412,6 +414,7 @@ const Name V_th_alpha_1( "V_th_alpha_1" );
 const Name V_th_alpha_2( "V_th_alpha_2" );
 const Name V_th_v( "V_th_v" );
 const Name vals_eta( "vals_eta" );
+const Name voltage_clamp( "voltage_clamp" );
 const Name vp( "vp" );
 
 const Name w( "w" );

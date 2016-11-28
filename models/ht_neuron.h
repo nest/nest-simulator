@@ -111,14 +111,16 @@
    THIS MODEL NEURON HAS NOT BEEN TESTED EXTENSIVELY!
 
    Parameters:
-   V_m            -  membrane potential
+   V_m            - membrane potential
    tau_m          - membrane time constant applying to all currents but
                     repolarizing K-current (see [1, p 1677])
    t_ref          - refractory time and duration of post-spike repolarizing
                     potassium current (t_spike in [1])
    tau_spike      - membrane time constant for post-spike repolarizing
                     potassium current
-   theta, theta_eq, tau_theta - Threshold, equilibrium value, time constant
+   voltage_clamp  - if true, clamp voltage to value at beginning of simulation
+                    (default: false, mainly for testing)
+   theta, theta_eq, tau_theta - threshold, equilibrium value, time constant
    g_KL, E_K, g_NaL, E_Na     - conductances and reversal potentials for K and
                                 Na leak currents
    {E_rev,g_peak,tau_rise,tau_decay}_{AMPA,NMDA,GABA_A,GABA_B}
@@ -127,14 +129,20 @@
                                   tau_decay correspond to tau_1/tau_2 in the
                                   paper)
    V_act_NMDA, S_act_NMDA, tau_Mg_{fast, slow}_NMDA
-                                - Parameters for voltage dependence of NMDA-
+                                - parameters for voltage dependence of NMDA-
                                   conductance, see above
-   instant_unblock_NMDA         - Instantaneous NMDA unblocking (default: false)
+   instant_unblock_NMDA         - instantaneous NMDA unblocking (default: false)
    {E_rev,g_peak}_{h,T,NaP,KNa} - reversal potential and peak conductance for
                                   intrinsic currents
+   D_eq_KNa                     - equilibrium depolarization factor D for I_KNa
    receptor_types               - dictionary mapping synapse names to ports on
                                   neuron model
-   recordables                  - list of recordable quantities.
+   recordables                  - list of recordable quantities
+   equilibrate                  - if given and true, time-dependent activation
+                                    and inactivation state variables (h, m) of
+                                    intrinsic currents and NMDA channels are set
+                                    to their equilibrium values in this set-
+                                    status call.
 
    Author: Hans Ekkehard Plesser
 
@@ -284,12 +292,15 @@ private:
 
     double g_peak_KNa;
     double E_rev_KNa; // mV
+    double D_eq_KNa;
 
     double g_peak_T;
     double E_rev_T; // mV
 
     double g_peak_h;
     double E_rev_h; // mV
+
+    bool voltage_clamp;
   };
 
   // ----------------------------------------------------------------
@@ -304,7 +315,7 @@ public:
     // y_ = [V, theta, Synapses]
     enum StateVecElems_
     {
-      VM = 0,
+      V_M = 0,
       THETA,
       DG_AMPA,
       G_AMPA,
@@ -337,15 +348,14 @@ public:
     double I_T_;   //!< Low-thresh Ca current; member only to allow recording
     double I_h_;   //!< Pacemaker current; member only to allow recording
 
-    State_();
-    State_( const Parameters_& p );
+    State_( const ht_neuron&, const Parameters_& p );
     State_( const State_& s );
     ~State_();
 
     State_& operator=( const State_& s );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const Parameters_& );
+    void set( const DictionaryDatum&, const ht_neuron&, const Parameters_& );
   };
 
 private:
@@ -405,6 +415,9 @@ private:
 
     //! Duration of potassium current.
     int PotassiumRefractoryCounts_;
+
+    //! Voltage at beginning of simulation, for clamping
+    double V_clamp_;
   };
 
 
@@ -436,14 +449,31 @@ private:
     return S_.I_h_;
   }
 
-  double
-  get_g_NMDA_() const
-  {
-    const double A1 = 0.51 - 0.0028 * S_.y_[ State_::VM ];
-    const double A2 = 1 - A1;
-    return S_.y_[ State_::G_NMDA_TIMECOURSE ]
-      * ( A1 * S_.y_[ State_::Mg_fast ] + A2 * S_.y_[ State_::Mg_slow ] );
-  }
+  double get_g_NMDA_() const;
+
+  /**
+   * Return equilibrium value of I_h activation
+   *
+   * @param V Membrane potential for which to evaluate
+   *        (may differ from y_[V_M] when clamping)
+   */
+  double m_eq_h_( double V ) const;
+
+  /**
+   * Return equilibrium value of I_T activation
+   *
+   * @param V Membrane potential for which to evaluate
+   *        (may differ from y_[V_M] when clamping)
+   */
+  double m_eq_T_( double V ) const;
+
+  /**
+   * Return equilibrium value of I_T inactivation
+   *
+   * @param V Membrane potential for which to evaluate
+   *        (may differ from y_[V_M] when clamping)
+   */
+  double h_eq_T_( double V ) const;
 
   /**
    * Return steady-state magnesium unblock ratio.
@@ -451,11 +481,7 @@ private:
    * Receives V_m as argument since it is called from ht_neuron_dyamics
    * with temporary state values.
    */
-  double
-  Mg_steady_state_( double V ) const
-  {
-    return 1.0 / ( 1.0 + std::exp( -P_.S_act_NMDA * ( V - P_.V_act_NMDA ) ) );
-  }
+  double m_eq_NMDA_( double V ) const;
 
   static RecordablesMap< ht_neuron > recordablesMap_;
 

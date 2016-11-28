@@ -34,17 +34,13 @@
 namespace nest
 {
 
-// Could be a param, but fixed by Hill-Tononi. We need
-// it several places, thus we put it here. It's a hack.
-const double KNa_D_EQ = 0.001;
-
 RecordablesMap< ht_neuron > ht_neuron::recordablesMap_;
 
 template <>
 void
 RecordablesMap< ht_neuron >::create()
 {
-  insert_( names::V_m, &ht_neuron::get_y_elem_< ht_neuron::State_::VM > );
+  insert_( names::V_m, &ht_neuron::get_y_elem_< ht_neuron::State_::V_M > );
   insert_( names::theta, &ht_neuron::get_y_elem_< ht_neuron::State_::THETA > );
   insert_(
     names::g_AMPA, &ht_neuron::get_y_elem_< ht_neuron::State_::G_AMPA > );
@@ -74,7 +70,7 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   nest::ht_neuron& node = *( reinterpret_cast< nest::ht_neuron* >( pnode ) );
 
   // easier access to membrane potential
-  const double& V = y[ S::VM ];
+  const double& V = node.P_.voltage_clamp ? node.V_.V_clamp_ : y[ S::V_M ];
 
   /*
    * NMDA conductance
@@ -87,10 +83,10 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
    * use local variables for the values at the current time, and check the
    * state variables once the ODE solver has completed the time step.
    */
-  const double Mg_ss = node.Mg_steady_state_( y[ S::VM ] );
+  const double Mg_ss = node.m_eq_NMDA_( y[ S::V_M ] );
   const double Mg_s = std::min( Mg_ss, y[ S::Mg_slow ] );
   const double Mg_f = std::min( Mg_ss, y[ S::Mg_fast ] );
-  const double A1 = 0.51 - 0.0028 * y[ S::VM ];
+  const double A1 = 0.51 - 0.0028 * y[ S::V_M ];
   const double A2 = 1 - A1;
   const double m_NMDA =
     node.P_.instant_unblock_NMDA ? Mg_ss : A1 * Mg_f + A2 * Mg_s;
@@ -127,19 +123,14 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   node.S_.I_KNa_ = -node.P_.g_peak_KNa * m_inf_KNa * ( V - node.P_.E_rev_KNa );
 
   // I_T
-  const double m_inf_T = 1.0 / ( 1.0 + std::exp( -( V + 59.0 ) / 6.2 ) );
-  const double h_inf_T = 1.0 / ( 1.0 + std::exp( ( V + 83.0 ) / 4 ) );
   node.S_.I_T_ = -node.P_.g_peak_T * y[ S::IT_m ] * y[ S::IT_m ] * y[ S::IT_h ]
     * ( V - node.P_.E_rev_T );
 
   // I_h
-  const double I_h_Vthreshold = -75.0;
-  const double m_inf_h =
-    1.0 / ( 1.0 + std::exp( ( V - I_h_Vthreshold ) / 5.5 ) );
   node.S_.I_h_ = -node.P_.g_peak_h * y[ S::Ih_m ] * ( V - node.P_.E_rev_h );
 
   // delta V
-  f[ S::VM ] =
+  f[ S::V_M ] =
     ( I_Na + I_K + I_syn + node.S_.I_NaP_ + node.S_.I_KNa_ + node.S_.I_T_
       + node.S_.I_h_ + node.B_.I_stim_ ) / node.P_.tau_m
     + I_spike;
@@ -182,7 +173,7 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   // equation modified from y[](1-D_eq) to (y[]-D_eq), since we'd not
   // be converging to equilibrium otherwise
   f[ S::IKNa_D ] =
-    D_influx_peak * D_influx - ( y[ S::IKNa_D ] - KNa_D_EQ ) / tau_D;
+    D_influx_peak * D_influx - ( y[ S::IKNa_D ] - node.P_.D_eq_KNa ) / tau_D;
 
   // I_T
   const double tau_m_T = 0.22
@@ -191,15 +182,54 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   const double tau_h_T = 8.2
     + ( 56.6 + 0.27 * std::exp( ( V + 115.2 ) / 5.0 ) )
       / ( 1.0 + std::exp( ( V + 86.0 ) / 3.2 ) );
-  f[ S::IT_m ] = ( m_inf_T - y[ S::IT_m ] ) / tau_m_T;
-  f[ S::IT_h ] = ( h_inf_T - y[ S::IT_h ] ) / tau_h_T;
+  f[ S::IT_m ] = ( node.m_eq_T_( V ) - y[ S::IT_m ] ) / tau_m_T;
+  f[ S::IT_h ] = ( node.h_eq_T_( V ) - y[ S::IT_h ] ) / tau_h_T;
 
   // I_h
   const double tau_m_h =
     1.0 / ( std::exp( -14.59 - 0.086 * V ) + std::exp( -1.87 + 0.0701 * V ) );
-  f[ S::Ih_m ] = ( m_inf_h - y[ S::Ih_m ] ) / tau_m_h;
+  f[ S::Ih_m ] = ( node.m_eq_h_( V ) - y[ S::Ih_m ] ) / tau_m_h;
 
   return GSL_SUCCESS;
+}
+
+inline
+double
+nest::ht_neuron::m_eq_h_( double V ) const
+{
+  const double I_h_Vthreshold = -75.0;
+  return 1.0 / ( 1.0 + std::exp( ( V - I_h_Vthreshold ) / 5.5 ) );
+}
+
+inline
+double
+nest::ht_neuron::h_eq_T_( double V ) const
+{
+  return 1.0 / ( 1.0 + std::exp( ( V + 83.0 ) / 4 ) );
+}
+
+inline
+double
+nest::ht_neuron::m_eq_T_( double V ) const
+{
+  return 1.0 / ( 1.0 + std::exp( -( V + 59.0 ) / 6.2 ) );
+}
+
+inline
+double
+nest::ht_neuron::m_eq_NMDA_( double V ) const
+{
+  return 1.0 / ( 1.0 + std::exp( -P_.S_act_NMDA * ( V - P_.V_act_NMDA ) ) );
+}
+
+inline
+double
+nest::ht_neuron::get_g_NMDA_() const
+{
+  const double A1 = 0.51 - 0.0028 * S_.y_[ State_::V_M ];
+  const double A2 = 1 - A1;
+  return S_.y_[ State_::G_NMDA_TIMECOURSE ]
+    * ( A1 * S_.y_[ State_::Mg_fast ] + A2 * S_.y_[ State_::Mg_slow ] );
 }
 
 /* ----------------------------------------------------------------
@@ -241,28 +271,16 @@ nest::ht_neuron::Parameters_::Parameters_()
   , E_rev_NaP( 30.0 ) // mV
   , g_peak_KNa( 1.0 )
   , E_rev_KNa( -90.0 ) // mV
+  , D_eq_KNa( 0.001 )
   , g_peak_T( 1.0 )
   , E_rev_T( 0.0 ) // mV
   , g_peak_h( 1.0 )
   , E_rev_h( -40.0 ) // mV
+  , voltage_clamp( false )
 {
 }
 
-nest::ht_neuron::State_::State_()
-  : ref_steps_( 0 )
-  , I_NaP_( 0.0 )
-  , I_KNa_( 0.0 )
-  , I_T_( 0.0 )
-  , I_h_( 0.0 )
-{
-  for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
-  {
-    y_[ i ] = 0;
-  }
-  y_[ IKNa_D ] = KNa_D_EQ;
-}
-
-nest::ht_neuron::State_::State_( const Parameters_& p )
+nest::ht_neuron::State_::State_( const ht_neuron& node, const Parameters_& p )
   : ref_steps_( 0 )
   , I_NaP_( 0.0 )
   , I_KNa_( 0.0 )
@@ -270,7 +288,7 @@ nest::ht_neuron::State_::State_( const Parameters_& p )
   , I_h_( 0.0 )
 {
   // initialize with equilibrium values
-  y_[ VM ] = ( p.g_NaL * p.E_Na + p.g_KL * p.E_K ) / ( p.g_NaL + p.g_KL );
+  y_[ V_M ] = ( p.g_NaL * p.E_Na + p.g_KL * p.E_K ) / ( p.g_NaL + p.g_KL );
   y_[ THETA ] = p.theta_eq;
 
   for ( size_t i = 2; i < STATE_VEC_SIZE; ++i )
@@ -278,7 +296,12 @@ nest::ht_neuron::State_::State_( const Parameters_& p )
     y_[ i ] = 0.0;
   }
 
-  y_[ IKNa_D ] = KNa_D_EQ;
+  y_[ IKNa_D ] = p.D_eq_KNa;
+  y_[ IT_m ] = node.m_eq_T_( y_[V_M] );
+  y_[ IT_h ] = node.h_eq_T_( y_[V_M] );
+  y_[ Ih_m ] = node.m_eq_h_( y_[V_M] );
+  y_[ Mg_fast ] = node.m_eq_NMDA_( y_[V_M] );
+  y_[ Mg_slow ] = node.m_eq_NMDA_( y_[V_M] );
 }
 
 nest::ht_neuron::State_::State_( const State_& s )
@@ -360,10 +383,12 @@ nest::ht_neuron::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::E_rev_NaP, E_rev_NaP );
   def< double >( d, names::g_peak_KNa, g_peak_KNa );
   def< double >( d, names::E_rev_KNa, E_rev_KNa );
+  def< double >( d, names::D_eq_KNa, D_eq_KNa );
   def< double >( d, names::g_peak_T, g_peak_T );
   def< double >( d, names::E_rev_T, E_rev_T );
   def< double >( d, names::g_peak_h, g_peak_h );
   def< double >( d, names::E_rev_h, E_rev_h );
+  def< bool >( d, names::voltage_clamp, voltage_clamp );
 }
 
 void
@@ -403,10 +428,12 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::E_rev_NaP, E_rev_NaP );
   updateValue< double >( d, names::g_peak_KNa, g_peak_KNa );
   updateValue< double >( d, names::E_rev_KNa, E_rev_KNa );
+  updateValue< double >( d, names::D_eq_KNa, D_eq_KNa );
   updateValue< double >( d, names::g_peak_T, g_peak_T );
   updateValue< double >( d, names::E_rev_T, E_rev_T );
   updateValue< double >( d, names::g_peak_h, g_peak_h );
   updateValue< double >( d, names::E_rev_h, E_rev_h );
+  updateValue< bool >( d, names::voltage_clamp, voltage_clamp );
 
   if ( g_peak_AMPA < 0 )
   {
@@ -440,10 +467,6 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
   {
     throw BadParameter( "g_peak_h >= 0 required." );
   }
-  if ( t_ref < 0 )
-  {
-    throw BadParameter( "t_ref >= 0 required." );
-  }
   if ( g_peak_NaP < 0 )
   {
     throw BadParameter( "g_peak_NaP >= 0 required." );
@@ -455,6 +478,16 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
   if ( g_NaL < 0 )
   {
     throw BadParameter( "g_NaL >= 0 required." );
+  }
+
+  if ( D_eq_KNa <= 0 )
+  {
+    throw BadParameter( "D_eq_KNa > 0 required." );
+  }
+
+  if ( t_ref < 0 )
+  {
+    throw BadParameter( "t_ref >= 0 required." );
   }
 
   if ( tau_rise_AMPA <= 0 )
@@ -535,15 +568,28 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
 void
 nest::ht_neuron::State_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::V_m, y_[ VM ] );      // Membrane potential
+  def< double >( d, names::V_m, y_[ V_M ] );      // Membrane potential
   def< double >( d, names::theta, y_[ THETA ] ); // Threshold
 }
 
 void
-nest::ht_neuron::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::ht_neuron::State_::set( const DictionaryDatum& d, const ht_neuron& node,
+		                      const Parameters_& p )
 {
-  updateValue< double >( d, names::V_m, y_[ VM ] );
+  updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::theta, y_[ THETA ] );
+
+  bool equilibrate = false;
+  updateValue< bool >( d, names::equilibrate, equilibrate);
+  if ( equilibrate )
+  {
+    y_[ State_::IKNa_D ] = p.D_eq_KNa;
+    y_[ IT_m ] = node.m_eq_T_( y_[V_M] );
+    y_[ IT_h ] = node.h_eq_T_( y_[V_M] );
+    y_[ Ih_m ] = node.m_eq_h_( y_[V_M] );
+    y_[ Mg_fast ] = node.m_eq_NMDA_( y_[V_M] );
+    y_[ Mg_slow ] = node.m_eq_NMDA_( y_[V_M] );
+  }
 }
 
 nest::ht_neuron::Buffers_::Buffers_( ht_neuron& n )
@@ -577,7 +623,7 @@ nest::ht_neuron::Buffers_::Buffers_( const Buffers_&, ht_neuron& n )
 nest::ht_neuron::ht_neuron()
   : Archiving_Node()
   , P_()
-  , S_( P_ )
+  , S_( *this, P_ )
   , B_( *this )
 {
   recordablesMap_.create();
@@ -735,8 +781,7 @@ nest::ht_neuron::calibrate()
 
   V_.PotassiumRefractoryCounts_ = Time( Time::ms( P_.t_ref ) ).get_steps();
 
-  // since t_ref_ >= 0, this can only fail in error
-  assert( V_.PotassiumRefractoryCounts_ >= 0 );
+  V_.V_clamp_ = S_.y_[ State_::V_M ];
 }
 
 void
@@ -763,7 +808,7 @@ nest::ht_neuron::set_status( const DictionaryDatum& d )
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
   State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, ptmp );   // throws if BadProperty
+  stmp.set( d, *this, ptmp );   // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -809,9 +854,17 @@ ht_neuron::update( Time const& origin, const long from, const long to )
       }
     }
 
+    /* Enforce voltage clamp; we do not need to do this in the loop above,
+     * because the rhs-function clamps internally.
+     */
+    if ( P_.voltage_clamp )
+    {
+      S_.y_[ State_::V_M ] = V_.V_clamp_;
+    }
+
     // Enforce instantaneous blocking of NMDA channels, see comment
     // in ht_neuron_dynamics().
-    const double Mg_ss = Mg_steady_state_( S_.y_[ State_::VM ] );
+    const double Mg_ss = m_eq_NMDA_( S_.y_[ State_::V_M ] );
     S_.y_[ State_::Mg_slow ] = std::min( Mg_ss, S_.y_[ State_::Mg_slow ] );
     S_.y_[ State_::Mg_fast ] = std::min( Mg_ss, S_.y_[ State_::Mg_fast ] );
 
@@ -834,10 +887,10 @@ ht_neuron::update( Time const& origin, const long from, const long to )
 
     // A spike is generated if then neuron is not refractory and the membrane
     // potential exceeds the threshold.
-    if ( S_.ref_steps_ == 0 and S_.y_[ State_::VM ] >= S_.y_[ State_::THETA ] )
+    if ( S_.ref_steps_ == 0 and S_.y_[ State_::V_M ] >= S_.y_[ State_::THETA ] )
     {
       // Set V and theta to the sodium reversal potential.
-      S_.y_[ State_::VM ] = P_.E_Na;
+      S_.y_[ State_::V_M ] = P_.E_Na;
       S_.y_[ State_::THETA ] = P_.E_Na;
 
       // Activate fast re-polarizing potassium current.

@@ -105,7 +105,6 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
             hlplist.append('%s:\n' % key)
             htmllist.append('<ul>')
             for i in value:
-                # see = i.strip("###### ###### $$")
                 see = i.strip("###### ~~")
                 if see:
                     if see in sli_command_list:
@@ -210,38 +209,8 @@ def write_helpindex(helpdir):
 
                 # Better Format for the index.hlp
                 c = len(name)
-                if c < 4:
-                    hlp_list.append(name + '\t' * 16 + fullname)
-                elif c < 8:
-                    hlp_list.append(name + '\t' * 15 + fullname)
-                elif c < 12:
-                    hlp_list.append(name + '\t' * 14 + fullname)
-                elif c < 16:
-                    hlp_list.append(name + '\t' * 13 + fullname)
-                elif c < 20:
-                    hlp_list.append(name + '\t' * 12 + fullname)
-                elif c < 24:
-                    hlp_list.append(name + '\t' * 11 + fullname)
-                elif c < 28:
-                    hlp_list.append(name + '\t' * 10 + fullname)
-                elif c < 32:
-                    hlp_list.append(name + '\t' * 9 + fullname)
-                elif c < 36:
-                    hlp_list.append(name + '\t' * 8 + fullname)
-                elif c < 40:
-                    hlp_list.append(name + '\t' * 7 + fullname)
-                elif c < 44:
-                    hlp_list.append(name + '\t' * 6 + fullname)
-                elif c < 48:
-                    hlp_list.append(name + '\t' * 5 + fullname)
-                elif c < 52:
-                    hlp_list.append(name + '\t' * 4 + fullname)
-                elif c < 56:
-                    hlp_list.append(name + '\t' * 3 + fullname)
-                elif c < 60:
-                    hlp_list.append(name + '\t' * 2 + fullname)
-                else:
-                    hlp_list.append(name + '\t' * 1 + fullname)
+                hlp_list.append(name +  '\t' * (16 - min(c, 60) // 4) +
+                                fullname)
             elif not os.path.isfile(item):
                 print 'WARNING: Checkfile ' + item + ' not exist.'
 

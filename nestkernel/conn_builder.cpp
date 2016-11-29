@@ -1019,7 +1019,7 @@ nest::AllToAllBuilder::sp_connect_()
           }
           if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
           {
-	    skip_conn_parameter_( tid, sources_->size() );
+            skip_conn_parameter_( tid, sources_->size() );
             continue;
           }
           Node* const target = kernel().node_manager.get_node( *tgid, tid );

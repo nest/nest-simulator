@@ -180,30 +180,26 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   return GSL_SUCCESS;
 }
 
-inline
-double
+inline double
 nest::ht_neuron::m_eq_h_( double V ) const
 {
   const double I_h_Vthreshold = -75.0;
   return 1.0 / ( 1.0 + std::exp( ( V - I_h_Vthreshold ) / 5.5 ) );
 }
 
-inline
-double
+inline double
 nest::ht_neuron::h_eq_T_( double V ) const
 {
   return 1.0 / ( 1.0 + std::exp( ( V + 83.0 ) / 4 ) );
 }
 
-inline
-double
+inline double
 nest::ht_neuron::m_eq_T_( double V ) const
 {
   return 1.0 / ( 1.0 + std::exp( -( V + 59.0 ) / 6.2 ) );
 }
 
-inline
-double
+inline double
 nest::ht_neuron::D_eq_KNa_( double V ) const
 {
   const double D_influx_peak = 0.025;
@@ -211,35 +207,36 @@ nest::ht_neuron::D_eq_KNa_( double V ) const
   const double D_slope = 5.0;
   const double D_eq_0 = 0.001;
 
-  const double D_influx = D_influx_peak / ( 1.0 + std::exp( -( V - D_thresh ) / D_slope ) );
+  const double D_influx =
+    D_influx_peak / ( 1.0 + std::exp( -( V - D_thresh ) / D_slope ) );
   return P_.tau_D_KNa * D_influx + D_eq_0;
 }
 
-inline
-double
+inline double
 nest::ht_neuron::m_eq_NMDA_( double V ) const
 {
   return 1.0 / ( 1.0 + std::exp( -P_.S_act_NMDA * ( V - P_.V_act_NMDA ) ) );
 }
 
-inline
-double
-nest::ht_neuron::m_NMDA_( double V, double m_eq, double m_fast, double m_slow ) const
+inline double
+nest::ht_neuron::m_NMDA_( double V,
+  double m_eq,
+  double m_fast,
+  double m_slow ) const
 {
   const double A1 = 0.51 - 0.0028 * V;
   const double A2 = 1 - A1;
   return P_.instant_unblock_NMDA ? m_eq : A1 * m_fast + A2 * m_slow;
 }
 
-inline
-double
+inline double
 nest::ht_neuron::get_g_NMDA_() const
 {
-  return S_.y_[ State_::G_NMDA_TIMECOURSE ] *
-   	     m_NMDA_( S_.y_[ State_::V_M ],
-				  m_eq_NMDA_( S_.y_[ State_::V_M] ),
-				  S_.y_[ State_::m_fast_NMDA ],
-				  S_.y_[ State_::m_slow_NMDA ]);
+  return S_.y_[ State_::G_NMDA_TIMECOURSE ]
+    * m_NMDA_( S_.y_[ State_::V_M ],
+           m_eq_NMDA_( S_.y_[ State_::V_M ] ),
+           S_.y_[ State_::m_fast_NMDA ],
+           S_.y_[ State_::m_slow_NMDA ] );
 }
 
 /* ----------------------------------------------------------------
@@ -280,8 +277,8 @@ nest::ht_neuron::Parameters_::Parameters_()
   , g_peak_NaP( 1.0 )
   , E_rev_NaP( 30.0 ) // mV
   , g_peak_KNa( 1.0 )
-  , E_rev_KNa( -90.0 ) // mV
-  , tau_D_KNa( 1250.0 )  // ms
+  , E_rev_KNa( -90.0 )  // mV
+  , tau_D_KNa( 1250.0 ) // ms
   , g_peak_T( 1.0 )
   , E_rev_T( 0.0 ) // mV
   , g_peak_h( 1.0 )
@@ -306,12 +303,12 @@ nest::ht_neuron::State_::State_( const ht_neuron& node, const Parameters_& p )
     y_[ i ] = 0.0;
   }
 
-  y_[ m_fast_NMDA ] = node.m_eq_NMDA_( y_[V_M] );
-  y_[ m_slow_NMDA ] = node.m_eq_NMDA_( y_[V_M] );
-  y_[ m_Ih ] = node.m_eq_h_( y_[V_M] );
-  y_[ D_IKNa ] = node.D_eq_KNa_( y_[V_M] );
-  y_[ m_IT ] = node.m_eq_T_( y_[V_M] );
-  y_[ h_IT ] = node.h_eq_T_( y_[V_M] );
+  y_[ m_fast_NMDA ] = node.m_eq_NMDA_( y_[ V_M ] );
+  y_[ m_slow_NMDA ] = node.m_eq_NMDA_( y_[ V_M ] );
+  y_[ m_Ih ] = node.m_eq_h_( y_[ V_M ] );
+  y_[ D_IKNa ] = node.D_eq_KNa_( y_[ V_M ] );
+  y_[ m_IT ] = node.m_eq_T_( y_[ V_M ] );
+  y_[ h_IT ] = node.h_eq_T_( y_[ V_M ] );
 }
 
 nest::ht_neuron::State_::State_( const State_& s )
@@ -571,27 +568,28 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
 void
 nest::ht_neuron::State_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::V_m, y_[ V_M ] );      // Membrane potential
+  def< double >( d, names::V_m, y_[ V_M ] );     // Membrane potential
   def< double >( d, names::theta, y_[ THETA ] ); // Threshold
 }
 
 void
-nest::ht_neuron::State_::set( const DictionaryDatum& d, const ht_neuron& node,
-		                      const Parameters_& p )
+nest::ht_neuron::State_::set( const DictionaryDatum& d,
+  const ht_neuron& node,
+  const Parameters_& p )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::theta, y_[ THETA ] );
 
   bool equilibrate = false;
-  updateValue< bool >( d, names::equilibrate, equilibrate);
+  updateValue< bool >( d, names::equilibrate, equilibrate );
   if ( equilibrate )
   {
-	y_[ m_fast_NMDA ] = node.m_eq_NMDA_( y_[V_M] );
-	y_[ m_slow_NMDA ] = node.m_eq_NMDA_( y_[V_M] );
-	y_[ m_Ih ] = node.m_eq_h_( y_[V_M] );
-    y_[ State_::D_IKNa ] = node.D_eq_KNa_( y_[V_M] );
-    y_[ m_IT ] = node.m_eq_T_( y_[V_M] );
-    y_[ h_IT ] = node.h_eq_T_( y_[V_M] );
+    y_[ m_fast_NMDA ] = node.m_eq_NMDA_( y_[ V_M ] );
+    y_[ m_slow_NMDA ] = node.m_eq_NMDA_( y_[ V_M ] );
+    y_[ m_Ih ] = node.m_eq_h_( y_[ V_M ] );
+    y_[ State_::D_IKNa ] = node.D_eq_KNa_( y_[ V_M ] );
+    y_[ m_IT ] = node.m_eq_T_( y_[ V_M ] );
+    y_[ h_IT ] = node.h_eq_T_( y_[ V_M ] );
   }
 }
 
@@ -808,10 +806,10 @@ nest::ht_neuron::get_status( DictionaryDatum& d ) const
 void
 nest::ht_neuron::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( d );         // throws if BadProperty
-  State_ stmp = S_;      // temporary copy in case of errors
-  stmp.set( d, *this, ptmp );   // throws if BadProperty
+  Parameters_ ptmp = P_;      // temporary copy in case of errors
+  ptmp.set( d );              // throws if BadProperty
+  State_ stmp = S_;           // temporary copy in case of errors
+  stmp.set( d, *this, ptmp ); // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that
@@ -868,8 +866,10 @@ ht_neuron::update( Time const& origin, const long from, const long to )
     // Enforce instantaneous blocking of NMDA channels, see comment
     // in ht_neuron_dynamics().
     const double m_eq_NMDA = m_eq_NMDA_( S_.y_[ State_::V_M ] );
-    S_.y_[ State_::m_fast_NMDA ] = std::min( m_eq_NMDA, S_.y_[ State_::m_fast_NMDA ] );
-    S_.y_[ State_::m_slow_NMDA ] = std::min( m_eq_NMDA, S_.y_[ State_::m_slow_NMDA ] );
+    S_.y_[ State_::m_fast_NMDA ] =
+      std::min( m_eq_NMDA, S_.y_[ State_::m_fast_NMDA ] );
+    S_.y_[ State_::m_slow_NMDA ] =
+      std::min( m_eq_NMDA, S_.y_[ State_::m_slow_NMDA ] );
 
     // Deactivate potassium current after t_ref
     if ( S_.ref_steps_ > 0 )

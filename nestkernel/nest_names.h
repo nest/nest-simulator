@@ -491,8 +491,8 @@ extern const Name
 extern const Name V_th_v; //!< Specific to amat2_*
 extern const Name
   vals_eta; //!< Specific to population point process model (pp_pop_psc_delta)
-extern const Name voltage_clamp;  //!< Enforce voltage clamp
-extern const Name vp; //!< Node parameter
+extern const Name voltage_clamp; //!< Enforce voltage clamp
+extern const Name vp;            //!< Node parameter
 
 extern const Name w;      //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name weight; //!< Connection parameters

@@ -97,9 +97,9 @@ extern const Name dead_time_random; //!< Random dead time or fixed dead time
                                     //!< (stochastic neuron pp_psc_delta)
 extern const Name dead_time_shape;  //!< Shape parameter of the dead time
 //!< distribution (stochastic neuron pp_psc_delta)
-extern const Name delay;            //!< Connection parameters
-extern const Name delays;           //!< Connection parameters
-extern const Name delta_P;          //!< specific to Hill & Tononi 2005
+extern const Name delay;   //!< Connection parameters
+extern const Name delays;  //!< Connection parameters
+extern const Name delta_P; //!< specific to Hill & Tononi 2005
 extern const Name Delta_T; //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name delta_tau; //!< Specific to correlation_and correlomatrix
                              //!< detector
@@ -136,11 +136,11 @@ extern const Name E_rr;         //!< Other adaptation
 extern const Name E_sfa;        //!< Other adaptation
 extern const Name element_type; //!< Node type
 extern const Name epoch;
-extern const Name eps;    //!< MSP growth curve parameter
-extern const Name equilibrate;     //!< specific to ht_neuron
-extern const Name error;  //!< Indicates an error (sli_neuron)
-extern const Name eta;    //!< MSP growth curve parameter
-extern const Name events; //!< Recorder parameter
+extern const Name eps;         //!< MSP growth curve parameter
+extern const Name equilibrate; //!< specific to ht_neuron
+extern const Name error;       //!< Indicates an error (sli_neuron)
+extern const Name eta;         //!< MSP growth curve parameter
+extern const Name events;      //!< Recorder parameter
 extern const Name
   ex_spikes; //!< Number of arriving excitatory spikes (sli_neuron)
 
@@ -267,8 +267,9 @@ extern const Name N_channels; //!< Specific to correlomatrix_detector
 extern const Name n_events;   //!< Recorder parameter
 extern const Name
   n_proc; //!< Number of component processes of ppd_sup_/gamma_sup_generator
-extern const Name n_receptors;         //!< number of receptor ports
-extern const Name neuron;              //!< Node type
+extern const Name n_receptors; //!< number of receptor ports
+extern const Name n_synapses;
+extern const Name neuron; //!< Node type
 extern const Name NMDA;
 extern const Name node_uses_wfr; //!< Node parameter
 extern const Name noise;         //!< Specific to iaf_chs_2008 neuron
@@ -380,9 +381,9 @@ extern const Name tau_decay_AMPA;   //!< specific to Hill & Tononi 2005
 extern const Name tau_decay_GABA_A; //!< specific to Hill & Tononi 2005
 extern const Name tau_decay_GABA_B; //!< specific to Hill & Tononi 2005
 extern const Name tau_decay_NMDA;   //!< specific to Hill & Tononi 2005
-extern const Name tau_epsp;  //!< Specific to iaf_chs_2008 neuron
-extern const Name tau_eta;   //!< Specific to population point process model
-                             //!< (pp_pop_psc_delta)
+extern const Name tau_epsp;         //!< Specific to iaf_chs_2008 neuron
+extern const Name tau_eta; //!< Specific to population point process model
+                           //!< (pp_pop_psc_delta)
 extern const Name
   tau_fac; //!< facilitation time constant (ms) (Tsodyks2_connection)
 extern const Name
@@ -398,26 +399,26 @@ extern const Name tau_minus_triplet; //!< used for ArchivingNode
 extern const Name tau_P;             //!< specific to Hill & Tononi 2005
 extern const Name
   tau_rec; //!< time constant for recovery (ms) (Tsodyks2_connection)
-extern const Name tau_reset;  //!< Specific to iaf_chs_2008 neuron
-extern const Name tau_rise;   //!< Synapse rise constant (beta fct rise)
+extern const Name tau_reset;       //!< Specific to iaf_chs_2008 neuron
+extern const Name tau_rise;        //!< Synapse rise constant (beta fct rise)
 extern const Name tau_rise_AMPA;   //!< specific to Hill & Tononi 2005
 extern const Name tau_rise_GABA_A; //!< specific to Hill & Tononi 2005
 extern const Name tau_rise_GABA_B; //!< specific to Hill & Tononi 2005
 extern const Name tau_rise_NMDA;   //!< specific to Hill & Tononi 2005
-extern const Name tau_rr;     //!< Other adaptation
-extern const Name tau_sfa;    //!< Other adaptation
+extern const Name tau_rr;          //!< Other adaptation
+extern const Name tau_sfa;         //!< Other adaptation
 extern const Name tau_spike;       //!< Specific to Hill-Tononi (2005)
-extern const Name tau_stc;    //!< Specific to gif models
-extern const Name tau_syn;    //!< Synapse time constant
-extern const Name tau_syn_ex; //!< Excitatory synaptic time constant
-extern const Name tau_syn_in; //!< Inhibitory synaptic time constant
+extern const Name tau_stc;         //!< Specific to gif models
+extern const Name tau_syn;         //!< Synapse time constant
+extern const Name tau_syn_ex;      //!< Excitatory synaptic time constant
+extern const Name tau_syn_in;      //!< Inhibitory synaptic time constant
 extern const Name tau_theta;       //!< Specific to Hill-Tononi (2005)
-extern const Name tau_v;      //!< Specific to amat2_*
-extern const Name tau_vacant; //!< Parameter for MSP dynamics
-extern const Name tau_w;  //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
-extern const Name theta;  //!< Did not compile without (theta neuron problem)
-extern const Name theta_eq; //!< specific to Hill & Tononi 2005
-extern const Name thread; //!< Node parameter
+extern const Name tau_v;           //!< Specific to amat2_*
+extern const Name tau_vacant;      //!< Parameter for MSP dynamics
+extern const Name tau_w; //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
+extern const Name theta; //!< Did not compile without (theta neuron problem)
+extern const Name theta_eq;        //!< specific to Hill & Tononi 2005
+extern const Name thread;          //!< Node parameter
 extern const Name thread_local_id; //!< Thead-local ID of node,
                                    //!< see Kunkel et al 2014, Sec 3.3.2
 extern const Name time_in_steps;   //!< Recorder parameter
@@ -456,8 +457,8 @@ extern const Name
 extern const Name V_th_v; //!< Specific to amat2_*
 extern const Name
   val_eta; //!< Specific to population point process model (pp_pop_psc_delta)
-extern const Name theta_eq; //!< specific to Hill & Tononi 2005
-extern const Name vp; //!< Node parameter
+extern const Name voltage_clamp; //!< Enforce voltage clamp
+extern const Name vp;            //!< Node parameter
 
 extern const Name w;      //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name weight; //!< Connection parameters

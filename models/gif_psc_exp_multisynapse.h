@@ -119,7 +119,7 @@
     V_T_star   double - Base threshold in mV
 
   Synaptic parameters
-    taus_syn  vector of double - Time constants of the synaptic currents in ms.
+    tau_syn  vector of double - Time constants of the synaptic currents in ms.
 
   References:
 

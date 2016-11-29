@@ -268,17 +268,13 @@ install( FILES ${MODULE_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} )
 install( DIRECTORY sli DESTINATION ${CMAKE_INSTALL_DATADIR} )
 
 # Install help.
-set( HELPDIRS "${PROJECT_SOURCE_DIR}:${PROJECT_SOURCE_DIR}/sli" )
 install( CODE
-    "execute_process(COMMAND ${CMAKE_COMMAND}
-          -DDOC_DIR='${CMAKE_INSTALL_FULL_DOCDIR}'
-          -DDATA_DIR='${CMAKE_INSTALL_FULL_DATADIR}'
-          -DHELPDIRS='${HELPDIRS}'
-          -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
-          -P ${CMAKE_INSTALL_FULL_DOCDIR}/generate_help.cmake
-        WORKING_DIRECTORY \"${PROJECT_BINARY_DIR}\"
-      )"
+    "execute_process(
+        COMMAND python -B parse_help.py ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR} \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}/help\"
+        WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${NEST_DATADIR}/help_generator\"
+        )"
     )
+
 
 message( "" )
 message( "-------------------------------------------------------" )

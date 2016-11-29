@@ -297,6 +297,8 @@ run_test ()
         TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
         JUNIT_FAILURES=$(( ${JUNIT_FAILURES} + 1 ))
 
+	cat ${TEST_OUTFILE}
+
         msg_dirty=${param_failure##* ${exit_code} }
         msg_clean=${msg_dirty%%,*}
         msg_error="$( cat "${TEST_OUTFILE}" )"

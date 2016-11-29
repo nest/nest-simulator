@@ -76,20 +76,20 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
    * NMDA conductance
    *
    * We need to take care to handle instantaneous blocking correctly.
-   * If the unblock-variables Mg_{fast,slow} are greater than the steady-state
-   * value M_ss for the present membrane potential, we cannot change
-   * Mg_{fast,slow} values in State_[], since the ODE Solver may call this
-   * function multiple times and in arbitrary temporal order. We thus need to
-   * use local variables for the values at the current time, and check the
-   * state variables once the ODE solver has completed the time step.
+   * If the unblock-variables m_NMDA_{fast,slow} are greater than the
+   * equilibrium value m_eq_NMDA for the present membrane potential, we cannot
+   * change m_NMDA_{fast,slow} values in State_[], since the ODE Solver may
+   * call this function multiple times and in arbitrary temporal order. We thus
+   * need to use local variables for the values at the current time, and check
+   * the state variables once the ODE solver has completed the time step.
    */
-  const double Mg_ss = node.m_eq_NMDA_( y[ S::V_M ] );
-  const double Mg_s = std::min( Mg_ss, y[ S::Mg_slow ] );
-  const double Mg_f = std::min( Mg_ss, y[ S::Mg_fast ] );
+  const double m_eq_NMDA = node.m_eq_NMDA_( y[ S::V_M ] );
+  const double m_fast_NMDA = std::min( m_eq_NMDA, y[ S::m_fast_NMDA ] );
+  const double m_slow_NMDA = std::min( m_eq_NMDA, y[ S::m_slow_NMDA ] );
   const double A1 = 0.51 - 0.0028 * y[ S::V_M ];
   const double A2 = 1 - A1;
   const double m_NMDA =
-    node.P_.instant_unblock_NMDA ? Mg_ss : A1 * Mg_f + A2 * Mg_s;
+    node.P_.instant_unblock_NMDA ? m_eq_NMDA : A1 * m_fast_NMDA + A2 * m_slow_NMDA;
 
   // Calculate sum of all synaptic channels.
   // Sign convention: For each current, write I = - g * ( V - E )
@@ -119,15 +119,15 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   // I_DK
   const double d_half = 0.25;
   const double m_inf_KNa =
-    1.0 / ( 1.0 + std::pow( d_half / y[ S::IKNa_D ], 3.5 ) );
+    1.0 / ( 1.0 + std::pow( d_half / y[ S::D_IKNa ], 3.5 ) );
   node.S_.I_KNa_ = -node.P_.g_peak_KNa * m_inf_KNa * ( V - node.P_.E_rev_KNa );
 
   // I_T
-  node.S_.I_T_ = -node.P_.g_peak_T * y[ S::IT_m ] * y[ S::IT_m ] * y[ S::IT_h ]
+  node.S_.I_T_ = -node.P_.g_peak_T * y[ S::m_IT ] * y[ S::m_IT ] * y[ S::h_IT ]
     * ( V - node.P_.E_rev_T );
 
   // I_h
-  node.S_.I_h_ = -node.P_.g_peak_h * y[ S::Ih_m ] * ( V - node.P_.E_rev_h );
+  node.S_.I_h_ = -node.P_.g_peak_h * y[ S::m_Ih ] * ( V - node.P_.E_rev_h );
 
   // delta V
   f[ S::V_M ] =
@@ -149,8 +149,8 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
     -y[ S::DG_NMDA_TIMECOURSE ] / node.P_.tau_rise_NMDA;
   f[ S::G_NMDA_TIMECOURSE ] = y[ S::DG_NMDA_TIMECOURSE ]
     - y[ S::G_NMDA_TIMECOURSE ] / node.P_.tau_decay_NMDA;
-  f[ S::Mg_slow ] = ( Mg_ss - Mg_s ) / node.P_.tau_Mg_slow_NMDA;
-  f[ S::Mg_fast ] = ( Mg_ss - Mg_f ) / node.P_.tau_Mg_fast_NMDA;
+  f[ S::m_fast_NMDA ] = ( m_eq_NMDA - m_fast_NMDA ) / node.P_.tau_Mg_fast_NMDA;
+  f[ S::m_slow_NMDA ] = ( m_eq_NMDA - m_slow_NMDA ) / node.P_.tau_Mg_slow_NMDA;
 
   // GABA_A
   f[ S::DG_GABA_A ] = -y[ S::DG_GABA_A ] / node.P_.tau_rise_GABA_A;
@@ -163,17 +163,7 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
     y[ S::DG_GABA_B ] - y[ S::G_GABA_B ] / node.P_.tau_decay_GABA_B;
 
   // I_KNa
-  const double D_influx_peak = 0.025;
-  const double tau_D = 1250.0; // yes, 1.25s
-  const double D_thresh = -10.0;
-  const double D_slope = 5.0;
-  const double D_influx =
-    1.0 / ( 1.0 + std::exp( -( V - D_thresh ) / D_slope ) );
-
-  // equation modified from y[](1-D_eq) to (y[]-D_eq), since we'd not
-  // be converging to equilibrium otherwise
-  f[ S::IKNa_D ] =
-    D_influx_peak * D_influx - ( y[ S::IKNa_D ] - node.P_.D_eq_KNa ) / tau_D;
+  f[ S::D_IKNa ] = ( node.D_eq_KNa_( V ) - y[ S::D_IKNa ] ) / node.P_.tau_D_KNa;
 
   // I_T
   const double tau_m_T = 0.22
@@ -182,13 +172,13 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   const double tau_h_T = 8.2
     + ( 56.6 + 0.27 * std::exp( ( V + 115.2 ) / 5.0 ) )
       / ( 1.0 + std::exp( ( V + 86.0 ) / 3.2 ) );
-  f[ S::IT_m ] = ( node.m_eq_T_( V ) - y[ S::IT_m ] ) / tau_m_T;
-  f[ S::IT_h ] = ( node.h_eq_T_( V ) - y[ S::IT_h ] ) / tau_h_T;
+  f[ S::m_IT ] = ( node.m_eq_T_( V ) - y[ S::m_IT ] ) / tau_m_T;
+  f[ S::h_IT ] = ( node.h_eq_T_( V ) - y[ S::h_IT ] ) / tau_h_T;
 
   // I_h
   const double tau_m_h =
     1.0 / ( std::exp( -14.59 - 0.086 * V ) + std::exp( -1.87 + 0.0701 * V ) );
-  f[ S::Ih_m ] = ( node.m_eq_h_( V ) - y[ S::Ih_m ] ) / tau_m_h;
+  f[ S::m_Ih ] = ( node.m_eq_h_( V ) - y[ S::m_Ih ] ) / tau_m_h;
 
   return GSL_SUCCESS;
 }
@@ -217,6 +207,19 @@ nest::ht_neuron::m_eq_T_( double V ) const
 
 inline
 double
+nest::ht_neuron::D_eq_KNa_( double V ) const
+{
+  const double D_influx_peak = 0.025;
+  const double D_thresh = -10.0;
+  const double D_slope = 5.0;
+  const double D_eq_0 = 0.001;
+
+  const double D_influx = D_influx_peak / ( 1.0 + std::exp( -( V - D_thresh ) / D_slope ) );
+  return P_.tau_D_KNa * D_influx + D_eq_0;
+}
+
+inline
+double
 nest::ht_neuron::m_eq_NMDA_( double V ) const
 {
   return 1.0 / ( 1.0 + std::exp( -P_.S_act_NMDA * ( V - P_.V_act_NMDA ) ) );
@@ -229,7 +232,7 @@ nest::ht_neuron::get_g_NMDA_() const
   const double A1 = 0.51 - 0.0028 * S_.y_[ State_::V_M ];
   const double A2 = 1 - A1;
   return S_.y_[ State_::G_NMDA_TIMECOURSE ]
-    * ( A1 * S_.y_[ State_::Mg_fast ] + A2 * S_.y_[ State_::Mg_slow ] );
+    * ( A1 * S_.y_[ State_::m_fast_NMDA ] + A2 * S_.y_[ State_::m_slow_NMDA ] );
 }
 
 /* ----------------------------------------------------------------
@@ -271,7 +274,7 @@ nest::ht_neuron::Parameters_::Parameters_()
   , E_rev_NaP( 30.0 ) // mV
   , g_peak_KNa( 1.0 )
   , E_rev_KNa( -90.0 ) // mV
-  , D_eq_KNa( 0.001 )
+  , tau_D_KNa( 1250.0 )  // ms
   , g_peak_T( 1.0 )
   , E_rev_T( 0.0 ) // mV
   , g_peak_h( 1.0 )
@@ -296,12 +299,12 @@ nest::ht_neuron::State_::State_( const ht_neuron& node, const Parameters_& p )
     y_[ i ] = 0.0;
   }
 
-  y_[ IKNa_D ] = p.D_eq_KNa;
-  y_[ IT_m ] = node.m_eq_T_( y_[V_M] );
-  y_[ IT_h ] = node.h_eq_T_( y_[V_M] );
-  y_[ Ih_m ] = node.m_eq_h_( y_[V_M] );
-  y_[ Mg_fast ] = node.m_eq_NMDA_( y_[V_M] );
-  y_[ Mg_slow ] = node.m_eq_NMDA_( y_[V_M] );
+  y_[ m_fast_NMDA ] = node.m_eq_NMDA_( y_[V_M] );
+  y_[ m_slow_NMDA ] = node.m_eq_NMDA_( y_[V_M] );
+  y_[ m_Ih ] = node.m_eq_h_( y_[V_M] );
+  y_[ D_IKNa ] = node.D_eq_KNa_( y_[V_M] );
+  y_[ m_IT ] = node.m_eq_T_( y_[V_M] );
+  y_[ h_IT ] = node.h_eq_T_( y_[V_M] );
 }
 
 nest::ht_neuron::State_::State_( const State_& s )
@@ -383,7 +386,6 @@ nest::ht_neuron::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::E_rev_NaP, E_rev_NaP );
   def< double >( d, names::g_peak_KNa, g_peak_KNa );
   def< double >( d, names::E_rev_KNa, E_rev_KNa );
-  def< double >( d, names::D_eq_KNa, D_eq_KNa );
   def< double >( d, names::g_peak_T, g_peak_T );
   def< double >( d, names::E_rev_T, E_rev_T );
   def< double >( d, names::g_peak_h, g_peak_h );
@@ -428,7 +430,6 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::E_rev_NaP, E_rev_NaP );
   updateValue< double >( d, names::g_peak_KNa, g_peak_KNa );
   updateValue< double >( d, names::E_rev_KNa, E_rev_KNa );
-  updateValue< double >( d, names::D_eq_KNa, D_eq_KNa );
   updateValue< double >( d, names::g_peak_T, g_peak_T );
   updateValue< double >( d, names::E_rev_T, E_rev_T );
   updateValue< double >( d, names::g_peak_h, g_peak_h );
@@ -478,11 +479,6 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
   if ( g_NaL < 0 )
   {
     throw BadParameter( "g_NaL >= 0 required." );
-  }
-
-  if ( D_eq_KNa <= 0 )
-  {
-    throw BadParameter( "D_eq_KNa > 0 required." );
   }
 
   if ( t_ref < 0 )
@@ -583,12 +579,12 @@ nest::ht_neuron::State_::set( const DictionaryDatum& d, const ht_neuron& node,
   updateValue< bool >( d, names::equilibrate, equilibrate);
   if ( equilibrate )
   {
-    y_[ State_::IKNa_D ] = p.D_eq_KNa;
-    y_[ IT_m ] = node.m_eq_T_( y_[V_M] );
-    y_[ IT_h ] = node.h_eq_T_( y_[V_M] );
-    y_[ Ih_m ] = node.m_eq_h_( y_[V_M] );
-    y_[ Mg_fast ] = node.m_eq_NMDA_( y_[V_M] );
-    y_[ Mg_slow ] = node.m_eq_NMDA_( y_[V_M] );
+	y_[ m_fast_NMDA ] = node.m_eq_NMDA_( y_[V_M] );
+	y_[ m_slow_NMDA ] = node.m_eq_NMDA_( y_[V_M] );
+	y_[ m_Ih ] = node.m_eq_h_( y_[V_M] );
+    y_[ State_::D_IKNa ] = node.D_eq_KNa_( y_[V_M] );
+    y_[ m_IT ] = node.m_eq_T_( y_[V_M] );
+    y_[ h_IT ] = node.h_eq_T_( y_[V_M] );
   }
 }
 
@@ -864,9 +860,9 @@ ht_neuron::update( Time const& origin, const long from, const long to )
 
     // Enforce instantaneous blocking of NMDA channels, see comment
     // in ht_neuron_dynamics().
-    const double Mg_ss = m_eq_NMDA_( S_.y_[ State_::V_M ] );
-    S_.y_[ State_::Mg_slow ] = std::min( Mg_ss, S_.y_[ State_::Mg_slow ] );
-    S_.y_[ State_::Mg_fast ] = std::min( Mg_ss, S_.y_[ State_::Mg_fast ] );
+    const double m_eq_NMDA = m_eq_NMDA_( S_.y_[ State_::V_M ] );
+    S_.y_[ State_::m_fast_NMDA ] = std::min( m_eq_NMDA, S_.y_[ State_::m_fast_NMDA ] );
+    S_.y_[ State_::m_slow_NMDA ] = std::min( m_eq_NMDA, S_.y_[ State_::m_slow_NMDA ] );
 
     // Deactivate potassium current after t_ref
     if ( S_.ref_steps_ > 0 )

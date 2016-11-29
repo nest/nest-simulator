@@ -134,7 +134,6 @@
    instant_unblock_NMDA         - instantaneous NMDA unblocking (default: false)
    {E_rev,g_peak}_{h,T,NaP,KNa} - reversal potential and peak conductance for
                                   intrinsic currents
-   D_eq_KNa                     - equilibrium depolarization factor D for I_KNa
    receptor_types               - dictionary mapping synapse names to ports on
                                   neuron model
    recordables                  - list of recordable quantities
@@ -292,7 +291,7 @@ private:
 
     double g_peak_KNa;
     double E_rev_KNa; // mV
-    double D_eq_KNa;
+    double tau_D_KNa; // ms; in P_ for technical reasons, not meant to be public
 
     double g_peak_T;
     double E_rev_T; // mV
@@ -326,12 +325,12 @@ public:
       DG_GABA_B,
       G_GABA_B, // DO NOT INSERT ANYTHING UP TO HERE, WILL MIX UP
                 // SPIKE DELIVERY
-      Mg_slow,
-      Mg_fast,
-      IKNa_D,
-      IT_m,
-      IT_h,
-      Ih_m,
+      m_fast_NMDA,
+      m_slow_NMDA,
+      m_Ih,
+      D_IKNa,
+      m_IT,
+      h_IT,
       STATE_VEC_SIZE
     };
 
@@ -482,6 +481,11 @@ private:
    * with temporary state values.
    */
   double m_eq_NMDA_( double V ) const;
+
+  /**
+   * Steady-state "D" value for given voltage.
+   */
+  double D_eq_KNa_( double V ) const;
 
   static RecordablesMap< ht_neuron > recordablesMap_;
 

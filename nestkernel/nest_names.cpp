@@ -71,7 +71,6 @@ const Name covariance( "covariance" );
 const Name currents( "currents" );
 
 const Name d( "d" );
-const Name D_eq_KNa( "D_eq_KNa" );
 const Name D_lower( "D_lower" );
 const Name D_mean( "D_mean" );
 const Name D_std( "D_std" );

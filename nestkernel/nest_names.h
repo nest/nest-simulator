@@ -89,7 +89,6 @@ extern const Name covariance;       //!< Specific to correlomatrix_detector
 extern const Name currents;         //!< Recorder parameter
 
 extern const Name d; //!< Specific to Izhikevich 2003
-extern const Name D_eq_KNa;   //!< Specific to ht_neuron
 extern const Name D_lower;
 extern const Name D_mean;
 extern const Name D_std;

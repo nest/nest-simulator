@@ -451,6 +451,13 @@ private:
   double get_g_NMDA_() const;
 
   /**
+   * NMDA activation for given parameters
+   * Needs to take parameter values explicitly since it is called from
+   * _dynamics.
+   */
+  double m_NMDA_( double V, double m_eq, double m_fast, double m_slow ) const;
+
+  /**
    * Return equilibrium value of I_h activation
    *
    * @param V Membrane potential for which to evaluate

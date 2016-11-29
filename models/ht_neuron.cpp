@@ -83,13 +83,10 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
    * need to use local variables for the values at the current time, and check
    * the state variables once the ODE solver has completed the time step.
    */
-  const double m_eq_NMDA = node.m_eq_NMDA_( y[ S::V_M ] );
+  const double m_eq_NMDA = node.m_eq_NMDA_( V );
   const double m_fast_NMDA = std::min( m_eq_NMDA, y[ S::m_fast_NMDA ] );
   const double m_slow_NMDA = std::min( m_eq_NMDA, y[ S::m_slow_NMDA ] );
-  const double A1 = 0.51 - 0.0028 * y[ S::V_M ];
-  const double A2 = 1 - A1;
-  const double m_NMDA =
-    node.P_.instant_unblock_NMDA ? m_eq_NMDA : A1 * m_fast_NMDA + A2 * m_slow_NMDA;
+  const double m_NMDA = node.m_NMDA_( V, m_eq_NMDA, m_fast_NMDA, m_slow_NMDA );
 
   // Calculate sum of all synaptic channels.
   // Sign convention: For each current, write I = - g * ( V - E )
@@ -227,12 +224,22 @@ nest::ht_neuron::m_eq_NMDA_( double V ) const
 
 inline
 double
+nest::ht_neuron::m_NMDA_( double V, double m_eq, double m_fast, double m_slow ) const
+{
+  const double A1 = 0.51 - 0.0028 * V;
+  const double A2 = 1 - A1;
+  return P_.instant_unblock_NMDA ? m_eq : A1 * m_fast + A2 * m_slow;
+}
+
+inline
+double
 nest::ht_neuron::get_g_NMDA_() const
 {
-  const double A1 = 0.51 - 0.0028 * S_.y_[ State_::V_M ];
-  const double A2 = 1 - A1;
-  return S_.y_[ State_::G_NMDA_TIMECOURSE ]
-    * ( A1 * S_.y_[ State_::m_fast_NMDA ] + A2 * S_.y_[ State_::m_slow_NMDA ] );
+  return S_.y_[ State_::G_NMDA_TIMECOURSE ] *
+   	     m_NMDA_( S_.y_[ State_::V_M ],
+				  m_eq_NMDA_( S_.y_[ State_::V_M] ),
+				  S_.y_[ State_::m_fast_NMDA ],
+				  S_.y_[ State_::m_slow_NMDA ]);
 }
 
 /* ----------------------------------------------------------------

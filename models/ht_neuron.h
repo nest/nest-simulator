@@ -107,9 +107,6 @@
    - pynest/examples/intrinsic_currents_spiking.py
    - pynest/examples/intrinsic_currents_subthreshold.py
 
-   Note:
-   THIS MODEL NEURON HAS NOT BEEN TESTED EXTENSIVELY!
-
    Parameters:
    V_m            - membrane potential
    tau_m          - membrane time constant applying to all currents but

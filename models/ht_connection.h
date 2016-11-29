@@ -48,9 +48,6 @@
                        [unitless]
      P        double - current size of the vesicle pool [unitless, 0 <= P <= 1]
 
-  Warning:
-  THIS SYNAPSE MODEL HAS NOT BEEN TESTED EXTENSIVELY!
-
   References:
    [1] S Hill and G Tononi (2005). J Neurophysiol 93:1671-1698.
 

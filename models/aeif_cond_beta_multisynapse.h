@@ -58,7 +58,7 @@
  in Computational Modeling Methods for Neuroscientists, MIT Press 2013,
  Chapter 6.
 
- The time constants are supplied by two arrays, "taus_rise" and "taus_decay" for
+ The time constants are supplied by two arrays, "tau_rise" and "tau_decay" for
  the synaptic rise time and decay time, respectively. The synaptic
  reversal potentials are supplied by the array "E_rev". The port numbers
  are automatically assigned in the range from 1 to n_receptors.
@@ -101,9 +101,9 @@ Spike adaptation parameters:
 
 Synaptic parameters
   E_rev      double vector - Reversal potential in mV.
-  taus_rise  double vector - Rise time of synaptic conductance in ms (beta
+  tau_rise  double vector - Rise time of synaptic conductance in ms (beta
                       function).
-  taus_decay double vector - Decay time of synaptic conductance in ms (beta
+  tau_decay double vector - Decay time of synaptic conductance in ms (beta
                       function).
 
 Integration parameters
@@ -119,8 +119,8 @@ Integration parameters
  neuron = nest.Create('aeif_cond_beta_multisynapse')
  nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
  nest.SetStatus(neuron, {'E_rev':[0.0,0.0,0.0,-85.0],
-                         'taus_decay':[50.0,20.0,20.0,20.0],
-                         'taus_rise':[10.0,10.0,1.0,1.0]})
+                         'tau_decay':[50.0,20.0,20.0,20.0],
+                         'tau_rise':[10.0,10.0,1.0,1.0]})
 
  spike = nest.Create('spike_generator', params = {'spike_times':
                                                  np.array([10.0])})
@@ -235,11 +235,11 @@ private:
     double b;       //!< Spike-triggered adaptation in pA
     double V_th;    //!< Spike threshold in mV.
 
-    std::vector< double > taus_rise;  //!< Rise time of synaptic conductance
-                                      //!< in ms..
-    std::vector< double > taus_decay; //!< Decay time of synaptic conductance
-                                      //!< in ms..
-    std::vector< double > E_rev;      //!< reversal potentials in mV
+    std::vector< double > tau_rise;  //!< Rise time of synaptic conductance
+                                     //!< in ms.
+    std::vector< double > tau_decay; //!< Decay time of synaptic conductance
+                                     //!< in ms.
+    std::vector< double > E_rev;     //!< reversal potentials in mV
 
     double I_e; //!< Intrinsic current in pA.
 

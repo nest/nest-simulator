@@ -128,8 +128,8 @@
     V_T_star   double - Base threshold in mV
 
   Synaptic parameters
-    taus_syn   vector of double - Time constants of the synaptic conductance
-                                  in ms.
+    tau_syn   vector of double - Time constants of the synaptic conductance
+                                 in ms.
     E_ex       double - Excitatory reversal potential in mV.
     E_in       double - Inhibitory reversal potential in mV.
 

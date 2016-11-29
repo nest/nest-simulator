@@ -114,9 +114,9 @@ connections = numpy.transpose(
     [random.sample(neurons, 2) for _ in range(n_connection)])
 
 # Connect sources -> targets and targets -> sources with
-# one call to nest.Connect using the "symmetric" flag
+# one call to nest.Connect using the "make_symmetric" flag
 nest.Connect(connections[0], connections[1],
-             {'rule': 'one_to_one', 'symmetric': True},
+             {'rule': 'one_to_one', 'make_symmetric': True},
              {'model': 'gap_junction', 'weight': gap_weight})
 
 nest.Simulate(simtime)

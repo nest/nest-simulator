@@ -72,32 +72,32 @@ public:
     index s_gid,
     thread tid,
     index syn,
-    double_t d,
-    double_t w );
+    double d,
+    double w );
   void add_connection_to_device( Node& source,
     Node& target,
     index s_gid,
     thread tid,
     index syn,
     DictionaryDatum& p,
-    double_t d,
-    double_t w );
+    double d,
+    double w );
   //! add a connection from the device source to the neuron target
   void add_connection_from_device( Node& source,
     Node& target,
     index s_gid,
     thread tid,
     index syn,
-    double_t d,
-    double_t w );
+    double d,
+    double w );
   void add_connection_from_device( Node& source,
     Node& target,
     index s_gid,
     thread tid,
     index syn,
     DictionaryDatum& p,
-    double_t d,
-    double_t w );
+    double d,
+    double w );
   //! send a spike event to all targets of the source neuron
   void send_to_device( thread tid,
     const index s_gid,
@@ -121,19 +121,19 @@ public:
     const index requested_target_gid,
     const thread tid,
     const synindex synapse_id,
-    const long_t synapse_label,
+    const long synapse_label,
     ArrayDatum& conns ) const;
   void get_connections_from_devices_( const index requested_source_gid,
     const index requested_target_gid,
     const thread tid,
     const synindex synapse_id,
-    const long_t synapse_label,
+    const long synapse_label,
     ArrayDatum& conns ) const;
   void get_connections( const index requested_source_gid,
     const index requested_target_gid,
     const thread tid,
     const synindex synapse_id,
-    const long_t synapse_label,
+    const long synapse_label,
     ArrayDatum& conns ) const;
   void get_synapse_status_to_device( const thread tid,
     const index source_gid,

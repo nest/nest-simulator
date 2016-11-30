@@ -50,17 +50,17 @@ using namespace nest;
 #define CONFIG_TICS_PER_STEP 100
 #endif
 
-const nest::double_t Time::Range::TICS_PER_MS_DEFAULT = CONFIG_TICS_PER_MS;
+const double Time::Range::TICS_PER_MS_DEFAULT = CONFIG_TICS_PER_MS;
 const tic_t Time::Range::TICS_PER_STEP_DEFAULT = CONFIG_TICS_PER_STEP;
 
 tic_t Time::Range::TICS_PER_STEP = Time::Range::TICS_PER_STEP_DEFAULT;
 tic_t Time::Range::TICS_PER_STEP_RND = Time::Range::TICS_PER_STEP - 1;
 
-nest::double_t Time::Range::TICS_PER_MS = Time::Range::TICS_PER_MS_DEFAULT;
-nest::double_t Time::Range::MS_PER_TIC = 1 / Time::Range::TICS_PER_MS;
+double Time::Range::TICS_PER_MS = Time::Range::TICS_PER_MS_DEFAULT;
+double Time::Range::MS_PER_TIC = 1 / Time::Range::TICS_PER_MS;
 
-nest::double_t Time::Range::MS_PER_STEP = TICS_PER_STEP / TICS_PER_MS;
-nest::double_t Time::Range::STEPS_PER_MS = 1 / Time::Range::MS_PER_STEP;
+double Time::Range::MS_PER_STEP = TICS_PER_STEP / TICS_PER_MS;
+double Time::Range::STEPS_PER_MS = 1 / Time::Range::MS_PER_STEP;
 
 // define for unit -- const'ness is in the header
 // should only be necessary when not folded away
@@ -73,7 +73,7 @@ const delay Time::LimitNegInf::steps;
 tic_t
 Time::compute_max()
 {
-  const long_t lmax = std::numeric_limits< long_t >::max();
+  const long lmax = std::numeric_limits< long >::max();
   const tic_t tmax = std::numeric_limits< tic_t >::max();
 
   tic_t tics;
@@ -97,7 +97,7 @@ Time::Limit Time::LIM_MAX( +Time::compute_max() );
 Time::Limit Time::LIM_MIN( -Time::compute_max() );
 
 void
-Time::set_resolution( double_t ms_per_step )
+Time::set_resolution( double ms_per_step )
 {
   assert( ms_per_step > 0 );
 
@@ -115,7 +115,7 @@ Time::set_resolution( double_t ms_per_step )
 }
 
 void
-Time::set_resolution( double_t tics_per_ms, double_t ms_per_step )
+Time::set_resolution( double tics_per_ms, double ms_per_step )
 {
   Range::TICS_PER_MS = tics_per_ms;
   Range::MS_PER_TIC = 1 / tics_per_ms;
@@ -133,12 +133,12 @@ Time::reset_resolution()
   LIM_MIN = -max;
 }
 
-nest::double_t
+double
 Time::ms::fromtoken( const Token& t )
 {
   IntegerDatum* idat = dynamic_cast< IntegerDatum* >( t.datum() );
   if ( idat )
-    return static_cast< double_t >( idat->get() );
+    return static_cast< double >( idat->get() );
 
   DoubleDatum* ddat = dynamic_cast< DoubleDatum* >( t.datum() );
   if ( ddat )
@@ -162,7 +162,7 @@ Time::fromstamp( Time::ms_stamp t )
   // intended ones.
   tic_t n = static_cast< tic_t >( t.t * Range::TICS_PER_MS );
   n -= ( n % Range::TICS_PER_STEP );
-  long_t s = n / Range::TICS_PER_STEP;
+  long s = n / Range::TICS_PER_STEP;
   double ms = s * Range::MS_PER_STEP;
   if ( ms < t.t )
     n += Range::TICS_PER_STEP;

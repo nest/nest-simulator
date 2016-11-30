@@ -82,7 +82,7 @@ public:
    * specified.
    * @throws nest::UnknownModelID
    */
-  index add_node( index m, long_t n = 1 );
+  index add_node( index m, long n = 1 );
 
 
   /**

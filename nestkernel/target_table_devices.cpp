@@ -158,7 +158,7 @@ nest::TargetTableDevices::get_connections_to_devices_(
   const index requested_target_gid,
   const thread tid,
   const synindex synapse_id,
-  const long_t synapse_label,
+  const long synapse_label,
   ArrayDatum& conns ) const
 {
   for ( size_t lid = 0; lid < target_to_devices_[ tid ]->size(); ++lid )
@@ -185,7 +185,7 @@ nest::TargetTableDevices::get_connections_from_devices_(
   const index requested_target_gid,
   const thread tid,
   const synindex synapse_id,
-  const long_t synapse_label,
+  const long synapse_label,
   ArrayDatum& conns ) const
 {
   for ( std::vector< index >::const_iterator it =
@@ -217,7 +217,7 @@ nest::TargetTableDevices::get_connections( const index requested_source_gid,
   const index requested_target_gid,
   const thread tid,
   const synindex synapse_id,
-  const long_t synapse_label,
+  const long synapse_label,
   ArrayDatum& conns ) const
 {
   // collect all connections from neurons to devices

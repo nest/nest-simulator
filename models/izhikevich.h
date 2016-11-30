@@ -126,7 +126,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // ----------------------------------------------------------------
 
@@ -135,19 +135,19 @@ private:
    */
   struct Parameters_
   {
-    double_t a_;
-    double_t b_;
-    double_t c_;
-    double_t d_;
+    double a_;
+    double b_;
+    double c_;
+    double d_;
 
     /** External DC current */
-    double_t I_e_;
+    double I_e_;
 
     /** Threshold */
-    double_t V_th_;
+    double V_th_;
 
     /** Lower bound */
-    double_t V_min_;
+    double V_min_;
 
     /** Use standard integration numerics **/
     bool consistent_integration_;
@@ -165,9 +165,9 @@ private:
    */
   struct State_
   {
-    double_t v_; // membrane potential
-    double_t u_; // membrane recovery variable
-    double_t I_; // input current
+    double v_; // membrane potential
+    double u_; // membrane recovery variable
+    double I_; // input current
 
 
     /** Accumulate spikes arriving during refractory period, discounted for
@@ -211,13 +211,13 @@ private:
   // Access functions for UniversalDataLogger -----------------------
 
   //! Read out the membrane potential
-  double_t
+  double
   get_V_m_() const
   {
     return S_.v_;
   }
   //! Read out the recovery variable
-  double_t
+  double
   get_U_m_() const
   {
     return S_.u_;

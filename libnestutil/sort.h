@@ -63,7 +63,7 @@ insertion_sort( std::vector< T1 >& vec_sort,
   const int lo,
   const int hi )
 {
-  for ( int i = lo + 1; i < hi; ++i )
+  for ( int i = lo + 1; i < hi + 1; ++i )
   {
     for ( int j = i; ( j > lo ) and ( vec_sort[ j ] < vec_sort[ j - 1 ] ); --j )
     {

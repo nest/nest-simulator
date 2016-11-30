@@ -70,7 +70,7 @@
  *   ...
  *   librandom::RngPtr rng=kernel().rng_manager.get_rng(thrd);
  *   ...
- *     long_t n_spikes = poisson_dev_.ldev(rng);
+ *     long n_spikes = poisson_dev_.ldev(rng);
  *   ...
  * }
  * @endcode
@@ -111,9 +111,9 @@
  * double drand()              [0, 1)
  *        ()                   [0, 1)
  * double drandpos()           (0, 1)
- * ulong  ulrand(N)            [0, N-1]
+ * unsigned long  ulrand(N)            [0, N-1]
  *
- * void   seed(N)              seed the RNG, N: ulong
+ * void   seed(N)              seed the RNG, N: unsigned long
  * -------------------------------------------------------
  * @endverbatim
  *
@@ -347,7 +347,7 @@ RandomGen::drandpos( void )
 inline unsigned long
 RandomGen::ulrand( const unsigned long n )
 {
-  // no check for size of n required, since n is ulong
+  // no check for size of n required, since n is unsigned long
   return static_cast< unsigned long >( std::floor( n * drand() ) );
 }
 }

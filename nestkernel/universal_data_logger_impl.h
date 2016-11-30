@@ -57,7 +57,7 @@ nest::UniversalDataLogger< HostNode >::init()
 
 template < typename HostNode >
 void
-nest::UniversalDataLogger< HostNode >::record_data( long_t step )
+nest::UniversalDataLogger< HostNode >::record_data( long step )
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
     it->record_data( host_, step );
@@ -112,8 +112,8 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
     - 1;
 
   // number of data points per slice
-  const long_t recs_per_slice = static_cast< long_t >(
-    std::ceil( kernel().connection_manager.get_min_delay()
+  const long recs_per_slice =
+    static_cast< long >( std::ceil( kernel().connection_manager.get_min_delay()
       / static_cast< double >( rec_int_steps_ ) ) );
 
   data_.resize( 2,
@@ -128,7 +128,7 @@ template < typename HostNode >
 void
 nest::UniversalDataLogger< HostNode >::DataLogger_::record_data(
   const HostNode& host,
-  long_t step )
+  long step )
 {
   if ( num_vars_ < 1 || step < next_rec_step_ )
     return;

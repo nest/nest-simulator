@@ -60,9 +60,9 @@ namespace nest
  * @ingroup Devices
  */
 template < typename HostNode >
-class RecordablesMap : public std::map< Name, double_t ( HostNode::* )() const >
+class RecordablesMap : public std::map< Name, double ( HostNode::* )() const >
 {
-  typedef std::map< Name, double_t ( HostNode::* )() const > Base_;
+  typedef std::map< Name, double ( HostNode::* )() const > Base_;
 
 public:
   virtual ~RecordablesMap()
@@ -70,7 +70,7 @@ public:
   }
 
   //! Datatype for access functions
-  typedef double_t ( HostNode::*DataAccessFct )() const;
+  typedef double ( HostNode::*DataAccessFct )() const;
 
   /**
    * Create the map.

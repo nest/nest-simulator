@@ -75,7 +75,7 @@ namespace nest
 // synapse types with homogeneous delays must provide a specialization
 // that returns the default delay from CommonProperties (or from  else where)
 // template<typename ConnectionT>
-// double_t get_default_delay(const GenericConnectorModel<ConnectionT> &cm)
+// double get_default_delay(const GenericConnectorModel<ConnectionT> &cm)
 // {
 //   //std::cout << "standard implementation of get_default_delay" << std::endl;
 //   return cm.get_default_connection().get_delay();
@@ -127,10 +127,10 @@ template < typename ConnectionT >
 void
 GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
 {
-  updateValue< long_t >( d, names::receptor_type, receptor_type_ );
+  updateValue< long >( d, names::receptor_type, receptor_type_ );
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during connection setup
-  updateValue< long_t >( d, names::music_channel, receptor_type_ );
+  updateValue< long >( d, names::music_channel, receptor_type_ );
 #endif
 
   // If the parameter dict d contains /delay, this should set the delay
@@ -217,8 +217,8 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   Node& tgt,
   ConnectorBase* conn,
   synindex syn_id,
-  double_t delay,
-  double_t weight )
+  double delay,
+  double weight )
 {
   assert( false );
   // if ( not numerics::is_nan( delay ) && has_delay_ )
@@ -256,8 +256,8 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   Node& tgt,
   HetConnector* hetconn,
   synindex syn_id,
-  double_t delay,
-  double_t weight )
+  double delay,
+  double weight )
 {
   if ( !numerics::is_nan( delay ) )
     kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
@@ -295,8 +295,8 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   ConnectorBase* conn,
   synindex syn_id,
   DictionaryDatum& p,
-  double_t delay,
-  double_t weight )
+  double delay,
+  double weight )
 {
   if ( not numerics::is_nan( delay ) )
   {
@@ -314,9 +314,9 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   else
   {
     // check delay
-    double_t delay = 0.0;
+    double delay = 0.0;
 
-    if ( updateValue< double_t >( p, names::delay, delay ) )
+    if ( updateValue< double >( p, names::delay, delay ) )
     {
       if ( has_delay_ )
       {
@@ -354,9 +354,9 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   rport actual_receptor_type = receptor_type_;
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during connection setup
-  updateValue< long_t >( p, names::music_channel, actual_receptor_type );
+  updateValue< long >( p, names::music_channel, actual_receptor_type );
 #endif
-  updateValue< long_t >( p, names::receptor_type, actual_receptor_type );
+  updateValue< long >( p, names::receptor_type, actual_receptor_type );
 
   return add_connection( src, tgt, conn, syn_id, c, actual_receptor_type );
 }
@@ -374,8 +374,8 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   HetConnector* hetconn,
   synindex syn_id,
   DictionaryDatum& p,
-  double_t delay,
-  double_t weight )
+  double delay,
+  double weight )
 {
   if ( !numerics::is_nan( delay ) )
   {
@@ -390,9 +390,9 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   else
   {
     // check delay
-    double_t delay = 0.0;
+    double delay = 0.0;
 
-    if ( updateValue< double_t >( p, names::delay, delay ) )
+    if ( updateValue< double >( p, names::delay, delay ) )
       kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
         delay );
     else
@@ -420,9 +420,9 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   rport actual_receptor_type = receptor_type_;
 #ifdef HAVE_MUSIC
   // We allow music_channel as alias for receptor_type during connection setup
-  updateValue< long_t >( p, names::music_channel, actual_receptor_type );
+  updateValue< long >( p, names::music_channel, actual_receptor_type );
 #endif
-  updateValue< long_t >( p, names::receptor_type, actual_receptor_type );
+  updateValue< long >( p, names::receptor_type, actual_receptor_type );
 
   add_connection_5g_( src, tgt, hetconn, syn_id, c, actual_receptor_type );
 }

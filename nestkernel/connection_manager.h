@@ -118,8 +118,8 @@ public:
     Node* target,
     thread target_thread,
     index syn,
-    double_t d = numerics::nan,
-    double_t w = numerics::nan );
+    double d = numerics::nan,
+    double w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -145,8 +145,8 @@ public:
     thread target_thread,
     index syn,
     DictionaryDatum& params,
-    double_t d = numerics::nan,
-    double_t w = numerics::nan );
+    double d = numerics::nan,
+    double w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -202,7 +202,7 @@ public:
    * entry.
    * 'synapse_model' name of the synapse model, or all synapse models are
    * searched.
-   * 'synapse_label' label (long_t) of the synapse, or all synapses are
+   * 'synapse_label' label (long) of the synapse, or all synapses are
    * searched.
    * The function then iterates all entries in source and collects the
    * connection IDs to all neurons in target.
@@ -213,7 +213,7 @@ public:
     TokenArray const* source,
     TokenArray const* target,
     synindex syn_id,
-    long_t synapse_label ) const;
+    long synapse_label ) const;
 
   /**
    * Returns the number of connections in the network.
@@ -244,9 +244,9 @@ public:
    * Triggeres updates for all connectors of dopamine synapses that
    * are registered with the volume transmitter with gid vt_gid.
    */
-  void trigger_update_weight( const long_t vt_gid,
+  void trigger_update_weight( const long vt_gid,
     const std::vector< spikecounter >& dopa_spikes,
-    const double_t t_trig );
+    const double t_trig );
 
   /**
    * Return minimal connection delay, which is precomputed by
@@ -382,7 +382,7 @@ public:
     const index lcid ) const;
 
   bool deliver_secondary_events( const thread tid,
-    std::vector< uint_t >& recv_buffer );
+    std::vector< unsigned int >& recv_buffer );
 
 private:
   /**
@@ -434,16 +434,16 @@ private:
     index s_gid,
     thread tid,
     index syn,
-    double_t d = numerics::nan,
-    double_t w = numerics::nan );
+    double d = numerics::nan,
+    double w = numerics::nan );
   void connect_( Node& s,
     Node& r,
     index s_gid,
     thread tid,
     index syn,
     DictionaryDatum& p,
-    double_t d = numerics::nan,
-    double_t w = numerics::nan );
+    double d = numerics::nan,
+    double w = numerics::nan );
 
   /**
    * connect_to_device_ is used to establish a connection between a sender and
@@ -468,16 +468,16 @@ private:
     index s_gid,
     thread tid,
     index syn,
-    double_t d = NAN,
-    double_t w = NAN );
+    double d = NAN,
+    double w = NAN );
   void connect_to_device_( Node& s,
     Node& r,
     index s_gid,
     thread tid,
     index syn,
     DictionaryDatum& p,
-    double_t d = NAN,
-    double_t w = NAN );
+    double d = NAN,
+    double w = NAN );
 
   /**
    * connect_from_device_ is used to establish a connection between a sender and
@@ -502,16 +502,16 @@ private:
     index s_gid,
     thread tid,
     index syn,
-    double_t d = NAN,
-    double_t w = NAN );
+    double d = NAN,
+    double w = NAN );
   void connect_from_device_( Node& s,
     Node& r,
     index s_gid,
     thread tid,
     index syn,
     DictionaryDatum& p,
-    double_t d = NAN,
-    double_t w = NAN );
+    double d = NAN,
+    double w = NAN );
 
   /** A structure to hold the Connector objects which in turn hold the
    * connection information. Corresponds to a three dimensional

@@ -90,13 +90,13 @@ void
 nest::correlation_detector::State_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::n_events ] =
-    IntVectorDatum( new std::vector< long_t >( n_events_ ) );
+    IntVectorDatum( new std::vector< long >( n_events_ ) );
   ( *d )[ names::histogram ] =
-    DoubleVectorDatum( new std::vector< double_t >( histogram_ ) );
+    DoubleVectorDatum( new std::vector< double >( histogram_ ) );
   ( *d )[ names::histogram_correction ] =
-    DoubleVectorDatum( new std::vector< double_t >( histogram_correction_ ) );
+    DoubleVectorDatum( new std::vector< double >( histogram_correction_ ) );
   ( *d )[ names::count_histogram ] =
-    IntVectorDatum( new std::vector< long_t >( count_histogram_ ) );
+    IntVectorDatum( new std::vector< long >( count_histogram_ ) );
 }
 
 bool
@@ -104,26 +104,26 @@ nest::correlation_detector::Parameters_::set( const DictionaryDatum& d,
   const correlation_detector& n )
 {
   bool reset = false;
-  double_t t;
-  if ( updateValue< double_t >( d, names::delta_tau, t ) )
+  double t;
+  if ( updateValue< double >( d, names::delta_tau, t ) )
   {
     delta_tau_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double_t >( d, names::tau_max, t ) )
+  if ( updateValue< double >( d, names::tau_max, t ) )
   {
     tau_max_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double_t >( d, names::Tstart, t ) )
+  if ( updateValue< double >( d, names::Tstart, t ) )
   {
     Tstart_ = Time::ms( t );
     reset = true;
   }
 
-  if ( updateValue< double_t >( d, names::Tstop, t ) )
+  if ( updateValue< double >( d, names::Tstop, t ) )
   {
     Tstop_ = Time::ms( t );
     reset = true;
@@ -144,8 +144,8 @@ nest::correlation_detector::State_::set( const DictionaryDatum& d,
   const Parameters_& p,
   bool reset_required )
 {
-  std::vector< long_t > nev;
-  if ( updateValue< std::vector< long_t > >( d, names::n_events, nev ) )
+  std::vector< long > nev;
+  if ( updateValue< std::vector< long > >( d, names::n_events, nev ) )
   {
     if ( nev.size() == 2 && nev[ 0 ] == 0 && nev[ 1 ] == 0 )
       reset_required = true;
@@ -240,7 +240,7 @@ nest::correlation_detector::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::correlation_detector::update( Time const&, const long_t, const long_t )
+nest::correlation_detector::update( Time const&, const long, const long )
 {
 }
 
@@ -261,10 +261,10 @@ nest::correlation_detector::handle( SpikeEvent& e )
   if ( device_.is_active( stamp ) )
   {
 
-    const long_t spike_i = stamp.get_steps();
+    const long spike_i = stamp.get_steps();
     const port other = 1 - sender; // port of the neuron not sending
     SpikelistType& otherSpikes = S_.incoming_[ other ];
-    const double_t tau_edge =
+    const double tau_edge =
       P_.tau_max_.get_steps() + 0.5 * P_.delta_tau_.get_steps();
 
     // throw away all spikes of the other neuron which are too old to
@@ -279,7 +279,7 @@ nest::correlation_detector::handle( SpikeEvent& e )
     //     > spike_i - tau_edge, if sender = 1
 
     // temporary variables for kahan summation algorithm
-    double_t y, t;
+    double y, t;
 
     // only count events in histogram, if the current event is within the time
     // window [Tstart, Tstop]
@@ -295,8 +295,8 @@ nest::correlation_detector::handle( SpikeEvent& e )
       // (which is not yet in the deque)
       S_.n_events_[ sender ]++; // count this spike
 
-      const long_t sign = 2 * sender - 1; // takes into account relative timing
-                                          // of spike from source 1 and source 2
+      const long sign = 2 * sender - 1; // takes into account relative timing
+                                        // of spike from source 1 and source 2
 
       for ( SpikelistType::const_iterator spike_j = otherSpikes.begin();
             spike_j != otherSpikes.end();

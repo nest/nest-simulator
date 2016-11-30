@@ -40,8 +40,8 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
   index s_gid,
   thread tid,
   index syn,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   const index lid = kernel().vp_manager.gid_to_lid( s_gid );
   assert( lid < target_to_devices_[ tid ]->size() );
@@ -58,8 +58,8 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
   thread tid,
   index syn,
   DictionaryDatum& p,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   const index lid = kernel().vp_manager.gid_to_lid( s_gid );
   assert( lid < target_to_devices_[ tid ]->size() );
@@ -76,8 +76,8 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
   index s_gid,
   thread tid,
   index syn,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   const index ldid = source.get_local_device_id();
   assert( ldid != invalid_index );
@@ -98,8 +98,8 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
   thread tid,
   index syn,
   DictionaryDatum& p,
-  double_t d,
-  double_t w )
+  double d,
+  double w )
 {
   const index ldid = source.get_local_device_id();
   assert( ldid != invalid_index );

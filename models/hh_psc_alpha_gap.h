@@ -180,17 +180,17 @@ potentials_.connect_logging_device();
    * @param Time the current network time
    *
    */
-  double_t get_potential( Time const& ) const;
+  double get_potential( Time const& ) const;
 
   /**
    * Define current membrane potential.
    * This function is thread-safe and should be used in threaded
    * contexts to change the current membrane potential value.
    * @param Time     the current network time
-   * @param double_t new value of the mebrane potential
+   * @param double new value of the mebrane potential
    *
    */
-  void set_potential( Time const&, double_t );
+  void set_potential( Time const&, double );
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -199,9 +199,9 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-  bool update_( Time const&, const long_t, const long_t, const bool );
-  void update( Time const&, const long_t, const long_t );
-  bool wfr_update( Time const&, const long_t, const long_t );
+  bool update_( Time const&, const long, const long, const bool );
+  void update( Time const&, const long, const long );
+  bool wfr_update( Time const&, const long, const long );
 
   // END Boilerplate function declarations ----------------------------
 
@@ -220,18 +220,18 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double_t t_ref_; //!< refractory time in ms
-    double_t g_Na;   //!< Sodium Conductance in nS
-    double_t g_Kv1;  //!< Potassium Conductance in nS
-    double_t g_Kv3;  //!< Potassium Conductance in nS
-    double_t g_L;    //!< Leak Conductance in nS
-    double_t C_m;    //!< Membrane Capacitance in pF
-    double_t E_Na;   //!< Sodium Reversal Potential in mV
-    double_t E_K;    //!< Potassium Reversal Potential in mV
-    double_t E_L;    //!< Leak reversal Potential (aka resting potential) in mV
-    double_t tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
-    double_t tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double_t I_e;      //!< Constant Current in pA
+    double t_ref_;   //!< refractory time in ms
+    double g_Na;     //!< Sodium Conductance in nS
+    double g_Kv1;    //!< Potassium Conductance in nS
+    double g_Kv3;    //!< Potassium Conductance in nS
+    double g_L;      //!< Leak Conductance in nS
+    double C_m;      //!< Membrane Capacitance in pF
+    double E_Na;     //!< Sodium Reversal Potential in mV
+    double E_K;      //!< Potassium Reversal Potential in mV
+    double E_L;      //!< Leak reversal Potential (aka resting potential) in mV
+    double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
+    double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
+    double I_e;      //!< Constant Current in pA
 
     Parameters_(); //!< Sets default parameter values
 
@@ -271,8 +271,8 @@ public:
     };
 
     //! neuron state, must be C-array for GSL solver
-    double_t y_[ STATE_VEC_SIZE ];
-    int_t r_; //!< number of refractory steps remaining
+    double y_[ STATE_VEC_SIZE ];
+    int r_; //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -312,17 +312,17 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double_t step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     // remembers current lag for piecewise interpolation
-    long_t lag_;
+    long lag_;
     // remembers y_values from last wfr_update
-    std::vector< double_t > last_y_values;
+    std::vector< double > last_y_values;
     // summarized gap weight
-    double_t sumj_g_ij_;
+    double sumj_g_ij_;
     // summarized coefficients of the interpolation polynomial
-    std::vector< double_t > interpolation_coefficients;
+    std::vector< double > interpolation_coefficients;
 
     /**
      * Input current injected by CurrentEvent.
@@ -331,7 +331,7 @@ private:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double_t I_stim_;
+    double I_stim_;
   };
 
   // ----------------------------------------------------------------
@@ -342,19 +342,19 @@ private:
   struct Variables_
   {
     /** initial value to normalise excitatory synaptic current */
-    double_t PSCurrInit_E_;
+    double PSCurrInit_E_;
 
     /** initial value to normalise inhibitory synaptic current */
-    double_t PSCurrInit_I_;
+    double PSCurrInit_I_;
 
-    int_t RefractoryCounts_;
+    int RefractoryCounts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out state vector elements, used by UniversalDataLogger
   template < State_::StateVecElems elem >
-  double_t
+  double
   get_y_elem_() const
   {
     return S_.y_[ elem ];
@@ -372,17 +372,15 @@ private:
 };
 
 inline void
-hh_psc_alpha_gap::update( Time const& origin,
-  const long_t from,
-  const long_t to )
+hh_psc_alpha_gap::update( Time const& origin, const long from, const long to )
 {
   update_( origin, from, to, false );
 }
 
 inline bool
 hh_psc_alpha_gap::wfr_update( Time const& origin,
-  const long_t from,
-  const long_t to )
+  const long from,
+  const long to )
 {
   bool done = false;
   State_ old_state = S_; // save state before wfr_update

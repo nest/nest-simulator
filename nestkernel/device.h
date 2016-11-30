@@ -141,14 +141,14 @@ public:
    * @todo Should be protected, but is temporarily public
    *       to solve inheritance problems in AnalogSamplingDevice.
    */
-  long_t get_t_min_() const;
+  long get_t_min_() const;
 
   /**
    * Return upper limit in steps.
    * @todo Should be protected, but is temporarily public
    *       to solve inheritance problems in AnalogSamplingDevice.
    */
-  long_t get_t_max_() const;
+  long get_t_max_() const;
 
   Time const& get_origin() const;
   Time const& get_start() const;
@@ -200,7 +200,7 @@ private:
      * constructor and set to its proper value by calibrate. It should NOT
      * be returned by get_parameters().
      */
-    long_t t_min_;
+    long t_min_;
 
     /**
      * Time step of device deactivation.
@@ -209,7 +209,7 @@ private:
      * constructor and set to its proper value by calibrate. It should NOT
      * be returned by get_parameters().
      */
-    long_t t_max_;
+    long t_max_;
   };
 
   // ----------------------------------------------------------------
@@ -254,13 +254,13 @@ nest::Device::get_stop() const
   return P_.stop_;
 }
 
-inline nest::long_t
+inline long
 nest::Device::get_t_min_() const
 {
   return V_.t_min_;
 }
 
-inline nest::long_t
+inline long
 nest::Device::get_t_max_() const
 {
   return V_.t_max_;

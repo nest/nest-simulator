@@ -372,7 +372,7 @@ class TestGIDCollection(unittest.TestCase):
         for i, conn in enumerate(compare_list):
             self.assertEqual(get_conn_list[3][i], conn)
             
-    def test_tsGetConnections_bad_source(self):
+    def test_GetConnections_bad_source(self):
         """
         GetConnection raises a TypeError when called with 0
         """

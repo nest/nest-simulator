@@ -30,13 +30,12 @@
 namespace nest
 {
 
-// function object for sorting a vector of GIDCollcetionPrimitives
-struct
+struct // function object for sorting a vector of GIDCollcetionPrimitives
 {
-  bool operator()( GIDCollectionPrimitive& primitive_1,
-    GIDCollectionPrimitive& primitive_2 )
+  bool operator()( GIDCollectionPrimitive& primitive_lhs,
+    GIDCollectionPrimitive& primitive_rhs )
   {
-    return primitive_1[ 0 ] < primitive_2[ 0 ];
+    return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
   }
 } primitiveSort;
 
@@ -132,7 +131,10 @@ GIDCollection::create( IntVectorDatum gidsdatum )
     gids.push_back( static_cast< index >( getValue< long >( *it ) ) );
   }
   std::sort( gids.begin(), gids.end() );
-
+  if ( gids[ 0 ] == 0 )
+  {
+    throw KernelException( "GIDCollection cannot contain root" );
+  }
   return GIDCollection::create_( gids );
 }
 
@@ -151,7 +153,10 @@ GIDCollection::create( TokenArray gidsarray )
     gids.push_back( static_cast< index >( getValue< long >( *it ) ) );
   }
   std::sort( gids.begin(), gids.end() );
-
+  if ( gids[ 0 ] == 0 )
+  {
+    throw KernelException( "GIDCollection cannot contain root" );
+  }
   return GIDCollection::create_( gids );
 }
 
@@ -279,18 +284,6 @@ GIDCollectionPrimitive::to_array() const
   return gids;
 }
 
-ArrayDatum
-GIDCollectionComposite::to_array() const
-{
-  ArrayDatum gids;
-  gids.reserve( size() );
-  for ( const_iterator it = begin(); it < end(); ++it )
-  {
-    gids.push_back( ( *it ).gid );
-  }
-  return gids;
-}
-
 GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
 {
   if ( get_metadata().valid() and not( get_metadata() == rhs->get_metadata() ) )
@@ -373,27 +366,6 @@ GIDCollectionPrimitive::print_me( std::ostream& out ) const
   out << "]]";
 }
 
-void
-GIDCollectionPrimitive::print_me( std::ostream& out,
-  size_t step,
-  size_t skip ) const
-{
-  if ( skip < size() )
-  {
-    size_t primitive_size = 0;
-    index last;
-    for ( size_t i = skip; i < size(); i += step )
-    {
-      primitive_size += 1;
-      last = first_ + i;
-    }
-    out << "[[" << this << " model=" << model_id_ << ", size=" << primitive_size
-        << " ";
-    out << "(" << first_ + skip << ".." << last << ")";
-    out << "]]";
-  }
-}
-
 bool
 GIDCollectionPrimitive::is_contiguous_ascending( GIDCollectionPrimitive& other )
 {
@@ -412,6 +384,8 @@ GIDCollectionComposite::GIDCollectionComposite(
   , stop_part_( 0 )
   , stop_offset_( 0 )
 {
+  parts_.reserve(
+    primitive.size() / ( float ) step + ( primitive.size() % step > 0 ) );
   for ( const_iterator it = primitive.begin() + start;
         it < primitive.begin() + stop;
         it += step )
@@ -592,6 +566,17 @@ GIDCollectionPTR GIDCollectionComposite::operator+(
   }
 }
 
+ArrayDatum
+GIDCollectionComposite::to_array() const
+{
+  ArrayDatum gids;
+  gids.reserve( size() );
+  for ( const_iterator it = begin(); it < end(); ++it )
+  {
+    gids.push_back( ( *it ).gid );
+  }
+  return gids;
+}
 
 GIDCollectionPTR
 GIDCollectionComposite::slice( size_t start, size_t stop, size_t step ) const
@@ -605,10 +590,11 @@ GIDCollectionComposite::merge_parts(
   std::vector< GIDCollectionPrimitive >& parts ) const
 {
   bool did_merge = true; // initialize to enter the while loop
+  size_t last_i = 0;
   while ( did_merge )    // if parts is changed, it has to be checked again
   {
     did_merge = false;
-    for ( size_t i = 0; i < parts.size() - 1; ++i )
+    for ( size_t i = last_i; i < parts.size() - 1; ++i )
     {
       if ( parts[ i ].is_contiguous_ascending( parts[ i + 1 ] ) )
       {
@@ -622,6 +608,7 @@ GIDCollectionComposite::merge_parts(
         parts[ i ] = *merged_primitives;
         parts.erase( parts.begin() + i + 1 );
         did_merge = true;
+        last_i = i;
         break;
       }
     }

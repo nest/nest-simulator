@@ -563,13 +563,15 @@ nest::SimulationManager::prepare_simulation_()
     kernel().music_manager.enter_runtime( tick );
   }
 
-  if ( kernel().node_manager.have_nodes_changed() || kernel().connection_manager.have_connections_changed() )
+  if ( kernel().node_manager.have_nodes_changed()
+    || kernel().connection_manager.have_connections_changed() )
   {
     sw_reset_connections.start();
     kernel().connection_manager.restructure_connection_tables();
     sw_reset_connections.stop();
     sw_sort.start();
-    kernel().connection_manager.sort_connections(); //TODO@5g: move into restructure_
+    kernel()
+      .connection_manager.sort_connections(); // TODO@5g: move into restructure_
     sw_sort.stop();
 
     kernel().connection_manager.compute_secondary_recv_buffer_positions_();
@@ -587,10 +589,16 @@ nest::SimulationManager::prepare_simulation_()
     sw_reset_connections.print( "0] ResetConnections time: " );
     sw_sort.print( "0] SortConnections time: " );
     sw_gather_target_data.print( "0] GatherTargetData time: " );
-    kernel().event_delivery_manager.sw_collocate_target_data.print("--collocate: ");
-    kernel().event_delivery_manager.sw_communicate_target_data.print("--communicate: ");
-    kernel().event_delivery_manager.sw_deliver_target_data.print("--deliver: ");
-    std::cout<<"0] CommSteps(Rounds)TargetData: "<<kernel().event_delivery_manager.comm_steps_target_data<<"("<<kernel().event_delivery_manager.comm_rounds_target_data<<")"<<std::endl;
+    kernel().event_delivery_manager.sw_collocate_target_data.print(
+      "--collocate: " );
+    kernel().event_delivery_manager.sw_communicate_target_data.print(
+      "--communicate: " );
+    kernel().event_delivery_manager.sw_deliver_target_data.print(
+      "--deliver: " );
+    std::cout << "0] CommSteps(Rounds)TargetData: "
+              << kernel().event_delivery_manager.comm_steps_target_data << "("
+              << kernel().event_delivery_manager.comm_rounds_target_data << ")"
+              << std::endl;
   }
 
   return num_active_nodes;
@@ -657,7 +665,7 @@ nest::SimulationManager::update_()
 
       if ( from_step_ == 0 ) // deliver only at beginning of slice
       {
-        // kernel().event_delivery_manager.deliver_events( tid );
+// kernel().event_delivery_manager.deliver_events( tid );
 #ifdef HAVE_MUSIC
 // advance the time of music by one step (min_delay * h) must
 // be done after deliver_events_() since it calls
@@ -745,8 +753,9 @@ nest::SimulationManager::update_()
 
           // deliver SecondaryEvents generated during wfr_update
           // returns the done value over all threads
-          done_p = kernel().event_delivery_manager.deliver_secondary_events( tid );
-          std::cout<<std::endl;
+          done_p =
+            kernel().event_delivery_manager.deliver_secondary_events( tid );
+          std::cout << std::endl;
 
           if ( done_p )
           {
@@ -800,8 +809,10 @@ nest::SimulationManager::update_()
       sw_update.stop();
 
       sw_gather_spike_data.start();
-      if ( to_step_
-           == kernel().connection_manager.get_min_delay() ) // gather only at end of slice
+      if ( to_step_ == kernel().connection_manager.get_min_delay() ) // gather
+                                                                     // only at
+                                                                     // end of
+                                                                     // slice
       {
         // kernel().event_delivery_manager.gather_events( true );
         kernel().event_delivery_manager.gather_spike_data( tid );
@@ -856,12 +867,15 @@ nest::SimulationManager::update_()
     {
       sw_update.print( "0] Update time: " );
       sw_gather_spike_data.print( "0] GatherSpikeData time: " );
-      kernel().event_delivery_manager.sw_collocate.print("--collocate: ");
-      kernel().event_delivery_manager.sw_communicate.print("--communicate: ");
-      kernel().event_delivery_manager.sw_deliver.print("--deliver: ");
-      kernel().event_delivery_manager.sw_send.print("--send: ");
+      kernel().event_delivery_manager.sw_collocate.print( "--collocate: " );
+      kernel().event_delivery_manager.sw_communicate.print( "--communicate: " );
+      kernel().event_delivery_manager.sw_deliver.print( "--deliver: " );
+      kernel().event_delivery_manager.sw_send.print( "--send: " );
       sw_total.print( "0] Total time: " );
-      std::cout<<"0] CommSteps(Rounds)SpikeData: "<<kernel().event_delivery_manager.comm_steps_spike_data<<"("<<kernel().event_delivery_manager.comm_rounds_spike_data<<")"<<std::endl;
+      std::cout << "0] CommSteps(Rounds)SpikeData: "
+                << kernel().event_delivery_manager.comm_steps_spike_data << "("
+                << kernel().event_delivery_manager.comm_rounds_spike_data << ")"
+                << std::endl;
     }
 
   } // end of #pragma parallel omp

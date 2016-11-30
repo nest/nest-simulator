@@ -54,7 +54,8 @@ private:
   std::vector< std::vector< std::vector< Target > >* > targets_;
 
   //! store secondary target of local neurons
-  std::vector< std::vector< std::vector< size_t > >* > secondary_send_buffer_pos_;
+  std::vector< std::vector< std::vector< size_t > >* >
+    secondary_send_buffer_pos_;
 
 public:
   TargetTable();
@@ -70,9 +71,12 @@ public:
   void add_target( const thread tid, const TargetData& target_data );
   //! returns all targets of a neuron. used to fill spike_register_5g_
   //! in event_delivery_manager
-  const std::vector< Target >& get_targets( const thread tid, const index lid ) const;
+  const std::vector< Target >& get_targets( const thread tid,
+    const index lid ) const;
   //! returns position in send buffer
-  const std::vector< size_t >& get_secondary_send_buffer_positions( const thread tid, const index lid ) const;
+  const std::vector< size_t >& get_secondary_send_buffer_positions(
+    const thread tid,
+    const index lid ) const;
   //! clear all entries
   void clear( const thread tid );
 };
@@ -82,34 +86,39 @@ TargetTable::add_target( const thread tid, const TargetData& target_data )
 {
   if ( target_data.is_primary() )
   {
-    std::cout<<"adding primary"<<std::endl;
-    (*targets_[ tid ])[ target_data.get_lid() ].push_back( target_data.get_target() );
+    std::cout << "adding primary" << std::endl;
+    ( *targets_[ tid ] )[ target_data.get_lid() ].push_back(
+      target_data.get_target() );
   }
   else
   {
-    std::cout<<"adding secondary "<<std::endl;
-    const size_t send_buffer_pos = reinterpret_cast< const SecondaryTargetData* >( &target_data )->get_send_buffer_pos();
-    (*secondary_send_buffer_pos_[ tid ])[ target_data.get_lid() ].push_back( send_buffer_pos );
+    std::cout << "adding secondary " << std::endl;
+    const size_t send_buffer_pos =
+      reinterpret_cast< const SecondaryTargetData* >( &target_data )
+        ->get_send_buffer_pos();
+    ( *secondary_send_buffer_pos_[ tid ] )[ target_data.get_lid() ].push_back(
+      send_buffer_pos );
   }
 }
 
 inline const std::vector< Target >&
 TargetTable::get_targets( const thread tid, const index lid ) const
 {
-  return (*targets_[ tid ])[ lid ];
+  return ( *targets_[ tid ] )[ lid ];
 }
 
-inline const std::vector< size_t>&
-TargetTable::get_secondary_send_buffer_positions( const thread tid, const index lid ) const
+inline const std::vector< size_t >&
+TargetTable::get_secondary_send_buffer_positions( const thread tid,
+  const index lid ) const
 {
-  return (*secondary_send_buffer_pos_[ tid ])[ lid ];
+  return ( *secondary_send_buffer_pos_[ tid ] )[ lid ];
 }
 
 inline void
 TargetTable::clear( const thread tid )
 {
-  (*targets_[ tid ]).clear();
-  (*secondary_send_buffer_pos_[ tid ]).clear();
+  ( *targets_[ tid ] ).clear();
+  ( *secondary_send_buffer_pos_[ tid ] ).clear();
 }
 
 } // namespace nest

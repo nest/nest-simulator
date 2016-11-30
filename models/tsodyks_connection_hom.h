@@ -195,9 +195,7 @@ public:
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e,
-    thread t,
-    const TsodyksHomCommonProperties& cp );
+  void send( Event& e, thread t, const TsodyksHomCommonProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {

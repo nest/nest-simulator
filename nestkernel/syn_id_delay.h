@@ -77,7 +77,6 @@ struct SynIdDelay
   {
     return this->subsequent_targets;
   }
-
 };
 }
 

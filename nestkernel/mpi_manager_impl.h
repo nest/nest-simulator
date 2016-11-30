@@ -367,7 +367,8 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 inline nest::thread
 nest::MPIManager::get_process_id_of_gid( index gid ) const
 {
-  return gid % ( kernel().vp_manager.get_num_virtual_processes() ) % n_sim_procs_;
+  return gid % ( kernel().vp_manager.get_num_virtual_processes() )
+    % n_sim_procs_;
 }
 
 #endif

@@ -140,7 +140,7 @@ public:
   void set_status( const DictionaryDatum& d );
 
   void set_local_device_id( const index ldid );
-  index get_local_device_id( ) const;
+  index get_local_device_id() const;
 
   const std::vector< spikecounter >& deliver_spikes();
 

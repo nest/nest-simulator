@@ -201,9 +201,11 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
         if ( it->first == names::receptor_type
           || it->first == names::music_channel
           || it->first == names::synapse_label )
-          ( *param_dicts_[ tid ] )[ it->first ] = Token( new IntegerDatum( 0 ) );
+          ( *param_dicts_[ tid ] )[ it->first ] =
+            Token( new IntegerDatum( 0 ) );
         else
-          ( *param_dicts_[ tid ] )[ it->first ] = Token( new DoubleDatum( 0.0 ) );
+          ( *param_dicts_[ tid ] )[ it->first ] =
+            Token( new DoubleDatum( 0.0 ) );
       }
     }
   }
@@ -484,7 +486,8 @@ nest::ConnBuilder::single_connect_( index sgid,
   }
   else
   {
-    assert( kernel().vp_manager.get_num_threads() == static_cast< thread >( param_dicts_.size() ) );
+    assert( kernel().vp_manager.get_num_threads()
+      == static_cast< thread >( param_dicts_.size() ) );
 
     for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
           it != synapse_params_.end();
@@ -1089,8 +1092,10 @@ nest::FixedInDegreeBuilder::connect_()
   {
     // get thread id
     const thread tid = kernel().vp_manager.get_thread_id();
-    const size_t expected_targets = std::ceil( float(targets_->size()) / kernel().vp_manager.get_num_virtual_processes() );
-    kernel().connection_manager.reserve_connections( tid, get_synapse_model(), expected_targets * indegree_ );
+    const size_t expected_targets = std::ceil( float( targets_->size() )
+      / kernel().vp_manager.get_num_virtual_processes() );
+    kernel().connection_manager.reserve_connections(
+      tid, get_synapse_model(), expected_targets * indegree_ );
 
     try
     {

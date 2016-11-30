@@ -30,7 +30,7 @@
 namespace nest
 {
 
-/** 
+/**
  * Structure used to communicate part of the connection infrastructure
  * from post- to presynaptic side. These are the elements of the MPI
  * buffers.
@@ -39,7 +39,7 @@ namespace nest
 class TargetDataBase
 {
 private:
-  index lid_ : 20; //!< local id of presynaptic neuron
+  index lid_ : 20;  //!< local id of presynaptic neuron
   thread tid_ : 10; //!< thread index of presynaptic neuron
   unsigned int marker_ : 2;
   bool is_primary_;
@@ -67,8 +67,7 @@ public:
   bool is_primary() const;
 };
 
-inline
-TargetDataBase::TargetDataBase()
+inline TargetDataBase::TargetDataBase()
   : lid_( 0 )
   , tid_( 0 )
   , marker_( 0 )
@@ -76,8 +75,7 @@ TargetDataBase::TargetDataBase()
 {
 }
 
-inline
-TargetDataBase::~TargetDataBase()
+inline TargetDataBase::~TargetDataBase()
 {
 }
 
@@ -163,14 +161,14 @@ class TargetData : public TargetDataBase
 {
 private:
   Target target_;
+
 public:
   TargetData();
   const Target& get_target() const;
   Target& get_target();
 };
-  
-inline
-TargetData::TargetData()
+
+inline TargetData::TargetData()
   : TargetDataBase()
   , target_( Target() )
 {
@@ -192,14 +190,14 @@ class SecondaryTargetData : public TargetDataBase
 {
 private:
   size_t send_buffer_pos_;
+
 public:
   SecondaryTargetData();
   void set_send_buffer_pos( const size_t pos );
   size_t get_send_buffer_pos() const;
 };
 
-inline
-SecondaryTargetData::SecondaryTargetData()
+inline SecondaryTargetData::SecondaryTargetData()
   : TargetDataBase()
   , send_buffer_pos_( invalid_index )
 {

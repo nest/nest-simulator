@@ -200,8 +200,11 @@ public:
   size_t get_chunk_size_secondary_events() const;
   size_t get_buffer_size_secondary_events() const;
 
-  void communicate_Alltoall( unsigned int* send_buffer, unsigned int* recv_buffer, const unsigned int send_recv_count );
-  void communicate_secondary_events_Alltoall( unsigned int* send_buffer, unsigned int* recv_buffer );
+  void communicate_Alltoall( unsigned int* send_buffer,
+    unsigned int* recv_buffer,
+    const unsigned int send_recv_count );
+  void communicate_secondary_events_Alltoall( unsigned int* send_buffer,
+    unsigned int* recv_buffer );
 
   void synchronize();
 
@@ -242,13 +245,20 @@ private:
   int send_buffer_size_; //!< expected size of send buffer
   int recv_buffer_size_; //!< size of receive buffer
   bool use_mpi_;         //!< whether MPI is used
-  size_t buffer_size_target_data_; //!< total size of MPI buffer for communication of connections
-  size_t buffer_size_spike_data_; //!< total size of MPI buffer for communication of spikes
-  size_t chunk_size_secondary_events_; //!< total size of MPI buffer for communication of secondary events
-  size_t max_buffer_size_target_data_; //!< maximal size of MPI buffer for communication of connections
-  size_t max_buffer_size_spike_data_; //!< maximal size of MPI buffer for communication of spikes
-  bool adaptive_target_buffers_; //!< whether MPI buffers for communication of connections resize on the fly
-  bool adaptive_spike_buffers_; //!< whether MPI buffers for communication of spikes resize on the fly
+  size_t buffer_size_target_data_;     //!< total size of MPI buffer for
+                                       //communication of connections
+  size_t buffer_size_spike_data_;      //!< total size of MPI buffer for
+                                       //communication of spikes
+  size_t chunk_size_secondary_events_; //!< total size of MPI buffer for
+                                       //communication of secondary events
+  size_t max_buffer_size_target_data_; //!< maximal size of MPI buffer for
+                                       //communication of connections
+  size_t max_buffer_size_spike_data_;  //!< maximal size of MPI buffer for
+                                       //communication of spikes
+  bool adaptive_target_buffers_; //!< whether MPI buffers for communication of
+                                 //connections resize on the fly
+  bool adaptive_spike_buffers_;  //!< whether MPI buffers for communication of
+                                 //spikes resize on the fly
 
 #ifdef HAVE_MPI
   //! array containing communication partner for each step.

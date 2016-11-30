@@ -179,8 +179,7 @@ public:
   void divergent_connect( index s, DictionaryDatum d, index syn );
 
   // aka conndatum GetStatus
-  DictionaryDatum
-  get_synapse_status( const index source_gid,
+  DictionaryDatum get_synapse_status( const index source_gid,
     const index target_gid,
     const thread tid,
     const synindex syn_id,
@@ -233,7 +232,8 @@ public:
     std::vector< std::vector< index > >& targets,
     index synapse_model );
 
-  const std::vector< Target >& get_targets( const thread tid, const index lid ) const;
+  const std::vector< Target >& get_targets( const thread tid,
+    const index lid ) const;
 
   index get_target_gid( const thread tid,
     const synindex syn_index,
@@ -328,7 +328,7 @@ public:
 
   void restore_source_table_entry_point( const thread tid );
 
-  void add_target( const thread tid, const TargetData& target_data);
+  void add_target( const thread tid, const TargetData& target_data );
 
   /**
    * Sorts connections in the presynaptic infrastructure by increasing
@@ -357,22 +357,32 @@ public:
    * directly from the respective Connect functions when the number of
    * synapses could be estimated.
    */
-  void reserve_connections( const thread tid, const synindex syn_id, const size_t count );
+  void reserve_connections( const thread tid,
+    const synindex syn_id,
+    const size_t count );
 
-  void set_has_source_subsequent_targets( const thread tid, const synindex syn_index, const index lcid, const bool subsequent_targets );
+  void set_has_source_subsequent_targets( const thread tid,
+    const synindex syn_index,
+    const index lcid,
+    const bool subsequent_targets );
 
   //! See source_table.h
   void no_targets_to_process( const thread tid );
 
   synindex get_syn_id( const thread tid, const synindex syn_index ) const;
 
-  const std::vector< size_t>& get_secondary_send_buffer_positions( const thread tid, const index lid ) const;
+  const std::vector< size_t >& get_secondary_send_buffer_positions(
+    const thread tid,
+    const index lid ) const;
 
   //! returns read position in MPI receive buffer for secondary
   //! connections
-  size_t get_secondary_recv_buffer_position( const thread tid, const synindex syn_index, const index lcid ) const;
+  size_t get_secondary_recv_buffer_position( const thread tid,
+    const synindex syn_index,
+    const index lcid ) const;
 
-  bool deliver_secondary_events( const thread tid, std::vector< uint_t >& recv_buffer );
+  bool deliver_secondary_events( const thread tid,
+    std::vector< uint_t >& recv_buffer );
 
 private:
   /**
@@ -519,7 +529,8 @@ private:
   /** Stores absolute position in receive buffer of secondary events.
    * structure: threads|synapses|position
    */
-  std::vector< std::vector< std::vector< size_t >* >* > secondary_recv_buffer_pos_;
+  std::vector< std::vector< std::vector< size_t >* >* >
+    secondary_recv_buffer_pos_;
 
   size_t secondary_buffer_chunk_size_;
 
@@ -556,7 +567,8 @@ private:
 
   delay max_delay_; //!< Value of the largest delay in the network in steps.
 
-  bool keep_source_table_;  //!< Whether to keep source table after connection setup is complete
+  bool keep_source_table_; //!< Whether to keep source table after connection
+                           //setup is complete
 
   bool have_connections_changed_; //!< true if new connections have been created
                                   //!< since startup or last call to simulate
@@ -665,27 +677,39 @@ ConnectionManager::set_have_connections_changed( const bool changed )
 }
 
 inline void
-ConnectionManager::add_target( const thread tid, const TargetData& target_data)
+ConnectionManager::add_target( const thread tid, const TargetData& target_data )
 {
   target_table_.add_target( tid, target_data );
 }
 
 inline bool
-ConnectionManager::get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, thread& target_rank, TargetData& next_target_data )
+ConnectionManager::get_next_target_data( const thread tid,
+  const thread rank_start,
+  const thread rank_end,
+  thread& target_rank,
+  TargetData& next_target_data )
 {
-  return source_table_.get_next_target_data( tid, rank_start, rank_end, secondary_buffer_chunk_size_, target_rank, next_target_data );
+  return source_table_.get_next_target_data( tid,
+    rank_start,
+    rank_end,
+    secondary_buffer_chunk_size_,
+    target_rank,
+    next_target_data );
 }
 
 inline const std::vector< size_t >&
-ConnectionManager::get_secondary_send_buffer_positions( const thread tid, const index lid ) const
+ConnectionManager::get_secondary_send_buffer_positions( const thread tid,
+  const index lid ) const
 {
   return target_table_.get_secondary_send_buffer_positions( tid, lid );
 }
 
 inline size_t
-ConnectionManager::get_secondary_recv_buffer_position( const thread tid, const synindex syn_index, const index lcid ) const
+ConnectionManager::get_secondary_recv_buffer_position( const thread tid,
+  const synindex syn_index,
+  const index lcid ) const
 {
-  return (*(*secondary_recv_buffer_pos_[ tid ])[ syn_index ])[ lcid ];
+  return ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] )[ lcid ];
 }
 
 } // namespace nest

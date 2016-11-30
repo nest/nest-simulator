@@ -87,14 +87,23 @@ public:
   //! connection creation
   void reserve( const thread tid, const synindex syn_id, const size_t count );
   //! adds a source to the sources table
-  void add_source( const thread tid, const synindex syn_id, const index gid, const bool is_primary );
+  void add_source( const thread tid,
+    const synindex syn_id,
+    const index gid,
+    const bool is_primary );
   //! clears the sources table
   void clear( const thread tid );
   //! returns true if the sources table has been cleared
   bool is_cleared() const;
   //! returns the next target data, according to the current_* positions
-  bool get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, const size_t secondary_buffer_chunk_size_, thread& target_rank, TargetData& next_target_data );
-  //! rejects the last target data, and resets the current_* positions accordingly
+  bool get_next_target_data( const thread tid,
+    const thread rank_start,
+    const thread rank_end,
+    const size_t secondary_buffer_chunk_size_,
+    thread& target_rank,
+    TargetData& next_target_data );
+  //! rejects the last target data, and resets the current_* positions
+  //accordingly
   void reject_last_target_data( const thread tid );
   //! stores the current_* positions
   void save_entry_point( const thread tid );
@@ -103,9 +112,11 @@ public:
   //! resets the save_* positions to zero
   void reset_entry_point( const thread tid );
   //! returns the global id of the source at tid|syn_id|lcid
-  index get_gid( const thread tid, const synindex syn_id, const index lcid ) const;
+  index
+  get_gid( const thread tid, const synindex syn_id, const index lcid ) const;
   //! returns a reference to all sources local on thread tid (used for sorting)
-  std::vector< std::vector< Source >* >& get_thread_local_sources( const thread tid );
+  std::vector< std::vector< Source >* >& get_thread_local_sources(
+    const thread tid );
   //! Determines maximal saved position after which it is save to
   //! delete sources.
   SourceTablePosition find_maximal_position() const;
@@ -121,72 +132,89 @@ public:
   size_t compute_send_recv_count_secondary_in_int_per_rank() const;
 };
 
-inline
-void
-SourceTable::add_source( const thread tid, const synindex syn_id, const index gid, const bool is_primary )
+inline void
+SourceTable::add_source( const thread tid,
+  const synindex syn_id,
+  const index gid,
+  const bool is_primary )
 {
   // the sources table is not ordered by synapse ids, to avoid wasting
   // memory, hence we need to determine for each source we are adding
   // the correct synapse index according to its synapse id
-  std::map< synindex, synindex >::iterator it = synapse_ids_[ tid ]->find( syn_id );
+  std::map< synindex, synindex >::iterator it =
+    synapse_ids_[ tid ]->find( syn_id );
   const Source src( gid, is_primary );
   // if this synapse type is not known yet, create entry for new synapse vector
-  if (it == synapse_ids_[ tid ]->end())
+  if ( it == synapse_ids_[ tid ]->end() )
   {
     const index prev_n_synapse_types = synapse_ids_[ tid ]->size();
-    (*synapse_ids_[ tid ])[ syn_id ] = prev_n_synapse_types;
-    sources_[ tid ]->resize( prev_n_synapse_types + 1);
-    (*sources_[ tid ])[ prev_n_synapse_types ] = new std::vector< Source >( 0 );
-    (*sources_[ tid ])[ prev_n_synapse_types ]->push_back( src );
+    ( *synapse_ids_[ tid ] )[ syn_id ] = prev_n_synapse_types;
+    sources_[ tid ]->resize( prev_n_synapse_types + 1 );
+    ( *sources_[ tid ] )[ prev_n_synapse_types ] =
+      new std::vector< Source >( 0 );
+    ( *sources_[ tid ] )[ prev_n_synapse_types ]->push_back( src );
   }
   // otherwise we can directly add the new source
   else
   {
-    (*sources_[ tid ])[ it->second ]->push_back( src );
+    ( *sources_[ tid ] )[ it->second ]->push_back( src );
   }
 }
 
-inline
-void
+inline void
 SourceTable::clear( const thread tid )
 {
-  for ( std::vector< std::vector< Source >* >::iterator it = sources_[ tid ]->begin();
-        it != sources_[ tid ]->end(); ++it )
+  for ( std::vector< std::vector< Source >* >::iterator it =
+          sources_[ tid ]->begin();
+        it != sources_[ tid ]->end();
+        ++it )
   {
-    (*it)->clear();
+    ( *it )->clear();
     delete *it;
   }
   sources_[ tid ]->clear();
   is_cleared_[ tid ] = true;
 }
 
-inline
-void
+inline void
 SourceTable::reject_last_target_data( const thread tid )
 {
   // adding the last target data returned by get_next_target_data
   // could not be inserted into MPI buffer due to overflow. we hence
   // need to correct the processed flag of the last entry (see
   // source_table_impl.h)
-  assert( ( *current_positions_[ tid ] ).lcid + 1 < static_cast< long >( ( *sources_[ ( *current_positions_[ tid ]).tid ] )[ ( *current_positions_[ tid ] ).syn_index ]->size() ) );
-  ( *( *sources_[ ( *current_positions_[ tid ] ).tid ] )[ ( *current_positions_[ tid ] ).syn_index ] )[ ( *current_positions_[ tid ] ).lcid + 1 ].processed = false;
+  assert( ( *current_positions_[ tid ] ).lcid + 1
+    < static_cast< long >(
+            ( *sources_[ ( *current_positions_[ tid ] )
+                           .tid ] )[ ( *current_positions_[ tid ] ).syn_index ]
+              ->size() ) );
+  ( *( *sources_[ ( *current_positions_[ tid ] )
+                    .tid ] )[ ( *current_positions_[ tid ] )
+                                .syn_index ] )[ ( *current_positions_[ tid ] )
+                                                  .lcid + 1 ].processed = false;
 }
 
-inline
-void
+inline void
 SourceTable::save_entry_point( const thread tid )
 {
   if ( not saved_entry_point_[ tid ] )
   {
     ( *saved_positions_[ tid ] ).tid = ( *current_positions_[ tid ] ).tid;
-    ( *saved_positions_[ tid ] ).syn_index = ( *current_positions_[ tid ] ).syn_index;
+    ( *saved_positions_[ tid ] ).syn_index =
+      ( *current_positions_[ tid ] ).syn_index;
     // if tid and syn_index are valid entries, also store valid entry for lcid
-    if ( ( *current_positions_[ tid ] ).tid > -1 && ( *current_positions_[ tid ] ).syn_index > -1 )
+    if ( ( *current_positions_[ tid ] ).tid > -1
+      && ( *current_positions_[ tid ] ).syn_index > -1 )
     {
       // either store current_position.lcid + 1, since this can
       // contain non-processed entry (see reject_last_target_data()) or
       // store maximal value for lcid.
-      ( *saved_positions_[ tid ] ).lcid = std::min( ( *current_positions_[ tid ] ).lcid + 1, static_cast< long >( ( *sources_[ ( *current_positions_[ tid ]).tid ] )[ ( *current_positions_[ tid ] ).syn_index ]->size() - 1 ) );
+      ( *saved_positions_[ tid ] ).lcid = std::min(
+        ( *current_positions_[ tid ] ).lcid + 1,
+        static_cast< long >(
+          ( *sources_[ ( *current_positions_[ tid ] )
+                         .tid ] )[ ( *current_positions_[ tid ] ).syn_index ]
+            ->size() - 1 ) );
     }
     else
     {
@@ -196,16 +224,14 @@ SourceTable::save_entry_point( const thread tid )
   }
 }
 
-inline
-void
+inline void
 SourceTable::restore_entry_point( const thread tid )
 {
   *current_positions_[ tid ] = *saved_positions_[ tid ];
   saved_entry_point_[ tid ] = false;
 }
 
-inline
-void
+inline void
 SourceTable::reset_entry_point( const thread tid )
 {
   // since we read the source table backwards, we need to set saved
@@ -214,17 +240,21 @@ SourceTable::reset_entry_point( const thread tid )
   // restore_entry_point. however, this can only be done if other
   // values have valid values.
   ( *saved_positions_[ tid ] ).tid = sources_.size() - 1;
-  if ( (*saved_positions_[ tid ] ).tid > -1 )
+  if ( ( *saved_positions_[ tid ] ).tid > -1 )
   {
-    ( *saved_positions_[ tid ] ).syn_index = ( *sources_[ ( *saved_positions_[ tid ]).tid ] ).size() - 1;
+    ( *saved_positions_[ tid ] ).syn_index =
+      ( *sources_[ ( *saved_positions_[ tid ] ).tid ] ).size() - 1;
   }
   else
   {
     ( *saved_positions_[ tid ] ).syn_index = -1;
   }
-  if ( (*saved_positions_[ tid ] ).syn_index > -1 )
+  if ( ( *saved_positions_[ tid ] ).syn_index > -1 )
   {
-    ( *saved_positions_[ tid ] ).lcid = ( *sources_[ ( *saved_positions_[ tid ]).tid ] )[ ( *saved_positions_[ tid ] ).syn_index ]->size() - 1;
+    ( *saved_positions_[ tid ] ).lcid =
+      ( *sources_[ ( *saved_positions_[ tid ] )
+                     .tid ] )[ ( *saved_positions_[ tid ] ).syn_index ]->size()
+      - 1;
   }
   else
   {
@@ -233,19 +263,26 @@ SourceTable::reset_entry_point( const thread tid )
 }
 
 inline index
-SourceTable::get_gid( const thread tid, const synindex syn_id, const index lcid ) const
+SourceTable::get_gid( const thread tid,
+  const synindex syn_id,
+  const index lcid ) const
 {
-  std::map< synindex, synindex >::iterator it = synapse_ids_[ tid ]->find( syn_id );
-  return ( *(*sources_[ tid ])[ it->second ])[ lcid ].gid;
+  std::map< synindex, synindex >::iterator it =
+    synapse_ids_[ tid ]->find( syn_id );
+  return ( *( *sources_[ tid ] )[ it->second ] )[ lcid ].gid;
 }
 
 inline void
 SourceTable::reset_processed_flags( const thread tid )
 {
-  for( std::vector< std::vector< Source >* >::iterator it = (*sources_[ tid ]).begin();
-       it != (*sources_[ tid ]).end(); ++it )
+  for ( std::vector< std::vector< Source >* >::iterator it =
+          ( *sources_[ tid ] ).begin();
+        it != ( *sources_[ tid ] ).end();
+        ++it )
   {
-    for( std::vector< Source >::iterator iit = (*it)->begin(); iit != (*it)->end(); ++iit )
+    for ( std::vector< Source >::iterator iit = ( *it )->begin();
+          iit != ( *it )->end();
+          ++iit )
     {
       iit->processed = false;
     }

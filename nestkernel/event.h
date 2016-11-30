@@ -958,7 +958,8 @@ public:
   size_t
   size()
   {
-    // size_t s = number_of_uints_covered< synindex >(); // first entry is syn_id to identify type of event
+    // size_t s = number_of_uints_covered< synindex >(); // first entry is
+    // syn_id to identify type of event
     // s += number_of_uints_covered< index >(); // second entry is gid of sender
     return number_of_uints_covered< double_t >() * coeff_length_; // payload
 

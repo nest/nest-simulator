@@ -39,12 +39,17 @@ namespace nest
 {
 
 inline bool
-SourceTable::get_next_target_data( const thread tid, const thread rank_start, const thread rank_end, const size_t secondary_buffer_chunk_size, thread& target_rank, TargetData& next_target_data )
+SourceTable::get_next_target_data( const thread tid,
+  const thread rank_start,
+  const thread rank_end,
+  const size_t secondary_buffer_chunk_size,
+  thread& target_rank,
+  TargetData& next_target_data )
 {
   SourceTablePosition& current_position = *current_positions_[ tid ];
   // we stay in this loop either until we can return a valid
   // TargetData object or we have reached the end of the sources table
-  while( true )
+  while ( true )
   {
     // check for validity of indices and update if necessary
     if ( current_position.lcid < 0 )
@@ -52,7 +57,9 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
       --current_position.syn_index;
       if ( current_position.syn_index >= 0 )
       {
-        current_position.lcid = (* sources_[ current_position.tid ] )[ current_position.syn_index ]->size() - 1;
+        current_position.lcid =
+          ( *sources_[ current_position.tid ] )[ current_position.syn_index ]
+            ->size() - 1;
         continue;
       }
       else
@@ -60,10 +67,13 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
         --current_position.tid;
         if ( current_position.tid >= 0 )
         {
-          current_position.syn_index = ( *sources_[ current_position.tid ] ).size() - 1;
+          current_position.syn_index =
+            ( *sources_[ current_position.tid ] ).size() - 1;
           if ( current_position.syn_index >= 0 )
           {
-            current_position.lcid = (* sources_[ current_position.tid ] )[ current_position.syn_index ]->size() - 1;
+            current_position.lcid =
+              ( *sources_[ current_position.tid ] )[ current_position
+                                                       .syn_index ]->size() - 1;
           }
           continue;
         }
@@ -78,7 +88,9 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
     }
 
     // the current position contains an entry, so we retrieve it
-    Source& current_source = ( *( *sources_[ current_position.tid ] )[ current_position.syn_index ])[ current_position.lcid ];
+    Source& current_source =
+      ( *( *sources_[ current_position.tid ] )[ current_position.syn_index ] )
+        [ current_position.lcid ];
     if ( current_source.processed )
     {
       // looks like we've processed this already, let's
@@ -88,7 +100,8 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
     }
 
     // TODO@5g: this really is the source rank, isn't it? rename?
-    target_rank = kernel().node_manager.get_process_id_of_gid( current_source.gid );
+    target_rank =
+      kernel().node_manager.get_process_id_of_gid( current_source.gid );
     // now we need to determine whether this thread is
     // responsible for this part of the MPI buffer; if not we
     // just continue with the next iteration of the loop
@@ -103,16 +116,27 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
 
     // we need to set the marker whether the entry following this
     // entry, if existent, has the same source
-    if ( ( current_position.lcid + 1 < static_cast< long >( ( *sources_[ current_position.tid ] )[ current_position.syn_index  ]->size() )
-           && ( *( *sources_[ current_position.tid ] )[ current_position.syn_index ])[ current_position.lcid + 1 ].gid == current_source.gid ) )
+    if ( ( current_position.lcid + 1
+             < static_cast< long >(
+                 ( *sources_[ current_position.tid ] )[ current_position
+                                                          .syn_index ]->size() )
+           && ( *( *sources_[ current_position.tid ] )
+                  [ current_position.syn_index ] )[ current_position.lcid + 1 ]
+                .gid == current_source.gid ) )
     {
-      kernel().connection_manager.set_has_source_subsequent_targets( current_position.tid, current_position.syn_index, current_position.lcid, true );
+      kernel().connection_manager.set_has_source_subsequent_targets(
+        current_position.tid,
+        current_position.syn_index,
+        current_position.lcid,
+        true );
     }
 
     // we decrease the counter without returning a TargetData if the
     // entry preceeding this entry has the same source
     if ( ( current_position.lcid - 1 > -1
-           && (*( *sources_[ current_position.tid ] )[ current_position.syn_index  ])[ current_position.lcid - 1 ].gid == current_source.gid ) )
+           && ( *( *sources_[ current_position.tid ] )
+                  [ current_position.syn_index ] )[ current_position.lcid - 1 ]
+                .gid == current_source.gid ) )
     {
       --current_position.lcid;
       continue;
@@ -121,24 +145,35 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
     else
     {
       // set values of next_target_data
-      next_target_data.set_lid( kernel().vp_manager.gid_to_lid( current_source.gid ) );
-      next_target_data.set_tid( kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( current_source.gid ) ) );
+      next_target_data.set_lid(
+        kernel().vp_manager.gid_to_lid( current_source.gid ) );
+      next_target_data.set_tid( kernel().vp_manager.vp_to_thread(
+        kernel().vp_manager.suggest_vp( current_source.gid ) ) );
       if ( current_source.is_primary )
       {
         next_target_data.is_primary( true );
         // we store the thread index of the sources table, not our own tid
         next_target_data.get_target().set_tid( current_position.tid );
-        next_target_data.get_target().set_rank( kernel().mpi_manager.get_rank() );
+        next_target_data.get_target().set_rank(
+          kernel().mpi_manager.get_rank() );
         next_target_data.get_target().set_processed( false );
-        next_target_data.get_target().set_syn_index( current_position.syn_index );
+        next_target_data.get_target().set_syn_index(
+          current_position.syn_index );
         next_target_data.get_target().set_lcid( current_position.lcid );
       }
       else
       {
         next_target_data.is_primary( false );
-        const size_t recv_buffer_pos = kernel().connection_manager.get_secondary_recv_buffer_position( current_position.tid, current_position.syn_index, current_position.lcid );
-        const size_t send_buffer_pos = kernel().mpi_manager.get_rank() * secondary_buffer_chunk_size + ( recv_buffer_pos - target_rank * secondary_buffer_chunk_size );
-        reinterpret_cast< SecondaryTargetData* >( &next_target_data )->set_send_buffer_pos( send_buffer_pos );
+        const size_t recv_buffer_pos =
+          kernel().connection_manager.get_secondary_recv_buffer_position(
+            current_position.tid,
+            current_position.syn_index,
+            current_position.lcid );
+        const size_t send_buffer_pos =
+          kernel().mpi_manager.get_rank() * secondary_buffer_chunk_size
+          + ( recv_buffer_pos - target_rank * secondary_buffer_chunk_size );
+        reinterpret_cast< SecondaryTargetData* >( &next_target_data )
+          ->set_send_buffer_pos( send_buffer_pos );
       }
       --current_position.lcid;
       return true; // found a valid entry
@@ -149,20 +184,31 @@ SourceTable::get_next_target_data( const thread tid, const thread rank_start, co
 inline size_t
 SourceTable::compute_send_recv_count_secondary_in_int_per_rank() const
 {
-  std::vector< size_t > count_per_rank( kernel().mpi_manager.get_num_processes() );
+  std::vector< size_t > count_per_rank(
+    kernel().mpi_manager.get_num_processes() );
 
 #pragma omp parallel shared( count_per_rank )
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    for ( size_t syn_index = 0; syn_index < sources_[ tid ]->size(); ++syn_index )
+    for ( size_t syn_index = 0; syn_index < sources_[ tid ]->size();
+          ++syn_index )
     {
-      const synindex syn_id = kernel().connection_manager.get_syn_id( tid, syn_index );
-      if ( not kernel().model_manager.get_synapse_prototype( syn_id, tid ).is_primary() )
+      const synindex syn_id =
+        kernel().connection_manager.get_syn_id( tid, syn_index );
+      if ( not kernel()
+                 .model_manager.get_synapse_prototype( syn_id, tid )
+                 .is_primary() )
       {
-        const size_t event_size = kernel().model_manager.get_secondary_event_prototype( syn_id, tid ).prototype_size();
+        const size_t event_size =
+          kernel()
+            .model_manager.get_secondary_event_prototype( syn_id, tid )
+            .prototype_size();
 
         index last_gid = invalid_index;
-        for ( std::vector< Source >::const_iterator cit = ( *sources_[ tid ] )[ syn_index ]->begin(); cit != ( *sources_[ tid ] )[ syn_index ]->end(); ++cit )
+        for ( std::vector< Source >::const_iterator cit =
+                ( *sources_[ tid ] )[ syn_index ]->begin();
+              cit != ( *sources_[ tid ] )[ syn_index ]->end();
+              ++cit )
         {
           const index gid = cit->gid;
 
@@ -172,7 +218,8 @@ SourceTable::compute_send_recv_count_secondary_in_int_per_rank() const
           // required entries in the MPI buffer
           if ( gid != last_gid )
           {
-            const thread target_rank = kernel().node_manager.get_process_id_of_gid( gid );
+            const thread target_rank =
+              kernel().node_manager.get_process_id_of_gid( gid );
 #pragma omp atomic
             count_per_rank[ target_rank ] += event_size;
 
@@ -182,14 +229,17 @@ SourceTable::compute_send_recv_count_secondary_in_int_per_rank() const
       }
     }
   }
-  for ( std::vector< size_t >::const_iterator it = count_per_rank.begin(); it != count_per_rank.end(); ++it )
+  for ( std::vector< size_t >::const_iterator it = count_per_rank.begin();
+        it != count_per_rank.end();
+        ++it )
   {
-    std::cout<<(*it)<<", ";
+    std::cout << ( *it ) << ", ";
   }
-  std::cout<<std::endl;
-  std::vector< size_t > max_count( 1, *std::max_element( count_per_rank.begin(), count_per_rank.end() ) );
+  std::cout << std::endl;
+  std::vector< size_t > max_count(
+    1, *std::max_element( count_per_rank.begin(), count_per_rank.end() ) );
   kernel().mpi_manager.communicate_Allreduce_max_in_place( max_count );
-  std::cout<<"max "<<max_count[ 0 ] << std::endl;
+  std::cout << "max " << max_count[ 0 ] << std::endl;
   return max_count[ 0 ];
 }
 

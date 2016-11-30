@@ -222,7 +222,8 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 {
   assert( false );
   // if ( not numerics::is_nan( delay ) && has_delay_ )
-  //   kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
+  //   kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+  //   delay );
 
   // // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
@@ -259,7 +260,8 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   double_t weight )
 {
   if ( !numerics::is_nan( delay ) )
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+      delay );
 
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
@@ -377,11 +379,13 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
 {
   if ( !numerics::is_nan( delay ) )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
+    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+      delay );
 
     if ( p->known( names::delay ) )
       throw BadParameter(
-        "Parameter dictionary must not contain delay if delay is given explicitly." );
+        "Parameter dictionary must not contain delay if delay is given "
+        "explicitly." );
   }
   else
   {
@@ -389,7 +393,8 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
     double_t delay = 0.0;
 
     if ( updateValue< double_t >( p, names::delay, delay ) )
-      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms( delay );
+      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+        delay );
     else
       used_default_delay();
   }
@@ -397,7 +402,8 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
   if ( !p->empty() )
-    c.set_status( p, *this ); // reference to connector model needed here to check delay (maybe this
+    c.set_status( p, *this ); // reference to connector model needed here to
+                              // check delay (maybe this
                               // could be done one level above?)
   if ( !numerics::is_nan( weight ) )
   {
@@ -433,7 +439,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   rport receptor_type )
 {
   // TODO@5g: remove this function
-  assert(false);
+  assert( false );
   // Let connections without delay contribute to the delay extrema with
   // wfr_comm_interval. For those connections the min_delay is important
   // as it determines the length of the global communication interval.
@@ -463,9 +469,11 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
   //   // the following line will throw an exception, if it does not work
   //   c.check_connection(
-  //     src, tgt, receptor_type, 0., get_common_properties() ); // set last_spike to 0
+  //     src, tgt, receptor_type, 0., get_common_properties() ); // set
+  //     last_spike to 0
 
-  //   // no entry at all, so start with homogeneous container for exactly one connection
+  //   // no entry at all, so start with homogeneous container for exactly one
+  //   connection
   //   conn = allocate< Connector< ConnectionT > >();
 
   //   // there is only one connection, so either it is primary or secondary
@@ -475,9 +483,12 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   // {
   //   // case 1 or case 2
 
-  //   // Already existing pointers of type ConnectorBase contain (in their two lowest bits) the
-  //   // information if *conn has primary and/or secondary connections. Before the pointer can
-  //   // be used as a valid pointer this information needs to be read and the original pointer
+  //   // Already existing pointers of type ConnectorBase contain (in their two
+  //   lowest bits) the
+  //   // information if *conn has primary and/or secondary connections. Before
+  //   the pointer can
+  //   // be used as a valid pointer this information needs to be read and the
+  //   original pointer
   //   // needs to be restored by calling validate_pointer( conn ).
   //   bool b_has_primary = has_primary( conn );
   //   bool b_has_secondary = has_secondary( conn );
@@ -486,41 +497,54 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   //   // from here on we can use conn as a valid pointer
 
   //   // the following line will throw an exception, if it does not work
-  //   c.check_connection( src, tgt, receptor_type, conn->get_t_lastspike(), get_common_properties() );
+  //   c.check_connection( src, tgt, receptor_type, conn->get_t_lastspike(),
+  //   get_common_properties() );
 
   //   if ( conn->homogeneous_model() ) //  there is already a homogeneous entry
   //   {
-  //     if ( conn->get_syn_id() == syn_id ) // case 1: connector for this syn_id
+  //     if ( conn->get_syn_id() == syn_id ) // case 1: connector for this
+  //     syn_id
   //     {
-  //       // we can safely static cast, because we checked syn_id == syn_id(connectionT)
-  //       Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( conn );
+  //       // we can safely static cast, because we checked syn_id ==
+  //       syn_id(connectionT)
+  //       Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >*
+  //       >( conn );
 
-  //       // we do not need to change the flags is_primary or is_secondary, because the new synapse is
+  //       // we do not need to change the flags is_primary or is_secondary,
+  //       because the new synapse is
   //       // of the same type as the existing ones
-  //       conn = pack_pointer( &vc->push_back( c ), b_has_primary, b_has_secondary );
+  //       conn = pack_pointer( &vc->push_back( c ), b_has_primary,
+  //       b_has_secondary );
   //     }
   //     else
   //     {
-  //       // syn_id is different from the one stored in the homogeneous connector
-  //       // we need to create a heterogeneous connector now and insert the existing
-  //       // homogeneous connector and a new homogeneous connector for the new syn_id
+  //       // syn_id is different from the one stored in the homogeneous
+  //       connector
+  //       // we need to create a heterogeneous connector now and insert the
+  //       existing
+  //       // homogeneous connector and a new homogeneous connector for the new
+  //       syn_id
   //       HetConnector* hc = allocate< HetConnector >();
 
   //       // add existing connector
-  //       // we read out the primary/secondary property of the existing connector conn above
+  //       // we read out the primary/secondary property of the existing
+  //       connector conn above
   //       hc->add_connector( b_has_primary, conn );
 
   //       // create hom connector for new synid
-  //       Connector< ConnectionT >* vc = allocate< Connector< ConnectionT > >();
+  //       Connector< ConnectionT >* vc = allocate< Connector< ConnectionT >
+  //       >();
 
   //       // append new homogeneous connector to heterogeneous connector
   //       hc->add_connector( is_primary_, vc );
 
-  //       // make entry in connections_[sgid] point to new heterogeneous connector
+  //       // make entry in connections_[sgid] point to new heterogeneous
+  //       connector
   //       // the existing connections had b_has_primary or b_has_secondary,
   //       // our new connection is_primary
   //       conn =
-  //         pack_pointer( hc, b_has_primary || is_primary_, b_has_secondary || ( !is_primary_ ) );
+  //         pack_pointer( hc, b_has_primary || is_primary_, b_has_secondary ||
+  //         ( !is_primary_ ) );
   //     }
   //   }
   //   else // case 2: the entry is heterogeneous, need to search for syn_id
@@ -532,9 +556,11 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   //     for ( size_t i = 0; i < hc->size() && !found; i++ )
   //     {
   //       // need to cast to Connector to access syn_id
-  //       if ( ( *hc )[ i ]->get_syn_id() == syn_id ) // there is already an entry for this type
+  //       if ( ( *hc )[ i ]->get_syn_id() == syn_id ) // there is already an
+  //       entry for this type
   //       {
-  //         // here we know that the type is Connector<connectionT>, because syn_id agrees
+  //         // here we know that the type is Connector<connectionT>, because
+  //         syn_id agrees
   //         // so we can safely static cast
   //         Connector< ConnectionT >* vc =
   //           static_cast< Connector< ConnectionT >* >( ( *hc )[ i ] );
@@ -542,18 +568,21 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   //         found = true;
   //       }
   //     }             // of for
-  //     if ( !found ) // we need to create a new entry for this type of connection
+  //     if ( !found ) // we need to create a new entry for this type of
+  //     connection
   //     {
-  //       Connector< ConnectionT >* vc = allocate< Connector< ConnectionT > >();
+  //       Connector< ConnectionT >* vc = allocate< Connector< ConnectionT >
+  //       >();
 
   //       hc->add_connector( is_primary_, vc );
 
   //       conn =
-  //         pack_pointer( hc, b_has_primary || is_primary_, b_has_secondary || ( !is_primary_ ) );
+  //         pack_pointer( hc, b_has_primary || is_primary_, b_has_secondary ||
+  //         ( !is_primary_ ) );
   //     }
   //   }
   // }
-  
+
   return conn;
 }
 
@@ -594,7 +623,8 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
   //   for ( size_t i = 0; i < vc->size(); i++ )
   //   {
   //     ConnectionT* connection = &vc->at( i );
-  //     if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
+  //     if ( connection->get_target( target_thread )->get_gid() ==
+  //     tgt.get_gid() )
   //     {
   //       if ( vc->get_num_connections() > 1 )
   //         conn = &vc->erase( i );
@@ -620,27 +650,34 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
   //   for ( size_t i = 0; i < hc->size() && !found; i++ )
   //   {
   //     // need to cast to Connector to access syn_id
-  //     if ( ( *hc )[ i ]->get_syn_id() == syn_id ) // there is already an entry for this type
+  //     if ( ( *hc )[ i ]->get_syn_id() == syn_id ) // there is already an
+  //     entry for this type
   //     {
-  //       // here we know that the type is Connector<connectionT>, because syn_id agrees
+  //       // here we know that the type is Connector<connectionT>, because
+  //       syn_id agrees
   //       // so we can safely static cast
-  //       Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( ( *hc )[ i ] );
+  //       Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >*
+  //       >( ( *hc )[ i ] );
   //       // Find and delete the first Connection corresponding to the target
   //       for ( size_t j = 0; j < vc->size(); j++ )
   //       {
   //         ConnectionT* connection = &vc->at( j );
-  //         if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
+  //         if ( connection->get_target( target_thread )->get_gid() ==
+  //         tgt.get_gid() )
   //         {
-  //           // Get rid of the ConnectionBase for this type of synapse if there is only this element
+  //           // Get rid of the ConnectionBase for this type of synapse if
+  //           there is only this element
   //           // left
   //           if ( vc->size() == 1 )
   //           {
   //             ( *hc ).erase( ( *hc ).begin() + i );
-  //             // Test if the homogeneous vector of connections went back to only 1 type of
+  //             // Test if the homogeneous vector of connections went back to
+  //             only 1 type of
   //             // synapse... then go back to the simple Connector case.
   //             if ( hc->size() == 1 )
   //             {
-  //               conn = static_cast< Connector< ConnectionT >* >( ( *hc )[ 0 ] );
+  //               conn = static_cast< Connector< ConnectionT >* >( ( *hc )[ 0 ]
+  //               );
   //               conn = pack_pointer( conn, b_has_primary, b_has_secondary );
   //             }
   //             else
@@ -676,7 +713,8 @@ GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
   rport receptor_type )
 {
   // here we need to distinguish two cases:
-  // 1) no homogeneous Connector with this syn_id exists, in this case conn is a null pointer
+  // 1) no homogeneous Connector with this syn_id exists, in this case conn is a
+  // null pointer
   //    and we need to create a new homogeneous Connector
   // 2) a homogeneous Connector with synapse type syn_id exists
 
@@ -686,26 +724,27 @@ GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
   if ( syn_index == invalid_synindex )
   {
     // the following line will throw an exception, if it does not work
-    c.check_connection(
-      src, tgt, receptor_type, get_common_properties() );
+    c.check_connection( src, tgt, receptor_type, get_common_properties() );
 
-    // no entry at all, so create a homogeneous container for this connection type
+    // no entry at all, so create a homogeneous container for this connection
+    // type
     conn = allocate< Connector< ConnectionT > >( syn_id );
     syn_index = hetconn->size();
-    hetconn->resize( syn_index + 1);
+    hetconn->resize( syn_index + 1 );
   }
   else
   {
-    conn = (*hetconn)[ syn_index ];
+    conn = ( *hetconn )[ syn_index ];
     // the following line will throw an exception, if it does not work
     c.check_connection( src, tgt, receptor_type, get_common_properties() );
   }
   assert( conn != 0 );
 
-  Connector< ConnectionT >* vc = static_cast< Connector< ConnectionT >* >( conn );
+  Connector< ConnectionT >* vc =
+    static_cast< Connector< ConnectionT >* >( conn );
   conn = &vc->push_back( c );
 
-  (*hetconn)[ syn_index ] = conn;
+  ( *hetconn )[ syn_index ] = conn;
 }
 
 template < typename ConnectionT >
@@ -724,17 +763,17 @@ GenericConnectorModel< ConnectionT >::reserve_connections(
     // container for this connection type
     conn = allocate< Connector< ConnectionT > >( syn_id );
     syn_index = hetconn->size();
-    hetconn->resize( syn_index + 1);
+    hetconn->resize( syn_index + 1 );
   }
   else
   {
-    conn = (*hetconn)[ syn_index ];
+    conn = ( *hetconn )[ syn_index ];
   }
   assert( conn != 0 );
 
   conn->reserve( count );
 
-  (*hetconn)[ syn_index ] = conn;
+  ( *hetconn )[ syn_index ] = conn;
 }
 
 } // namespace nest

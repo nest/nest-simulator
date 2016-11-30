@@ -203,7 +203,7 @@ nest::gif_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
 {
   def< double >( d, names::V_m, V_ );     // Membrane potential
   def< double >( d, names::E_sfa, sfa_ ); // Adaptive threshold potential
-  def< double >( d, names::stc, stc_ );   // Spike-triggered current
+  def< double >( d, names::I_stc, stc_ ); // Spike-triggered current
 }
 
 void

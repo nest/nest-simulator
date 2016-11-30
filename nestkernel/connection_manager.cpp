@@ -1546,7 +1546,8 @@ nest::ConnectionManager::compute_secondary_recv_buffer_positions_()
   secondary_buffer_chunk_size_ =
     source_table_.compute_send_recv_count_secondary_in_int_per_rank();
 
-  // we need one additional int to communicate whether wfr has converged
+  // we need one additional int in every chunk to communicate whether
+  // wfr has converged
   ++secondary_buffer_chunk_size_;
 
   kernel().mpi_manager.set_chunk_size_secondary_events(
@@ -1589,25 +1590,34 @@ nest::ConnectionManager::compute_secondary_recv_buffer_positions_()
             ( *connections_5g_[ tid ] ).get_num_connections( syn_id ), 0 );
 
         index last_gid = invalid_index;
-        for ( size_t i = 0;
-              i < ( *connections_5g_[ tid ] ).get_num_connections( syn_id );
-              ++i )
+        for ( size_t lcid = 0;
+              lcid < ( *connections_5g_[ tid ] ).get_num_connections( syn_id );
+              ++lcid )
         {
-          const index gid = source_table_.get_gid( tid, syn_id, i );
-          const thread target_rank =
-            kernel().node_manager.get_process_id_of_gid( gid );
-          ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] )[ i ] =
-            buffer_position_by_rank[ target_rank ];
+          const index sgid = source_table_.get_gid( tid, syn_id, lcid );
+          const thread source_rank =
+            kernel().node_manager.get_process_id_of_gid( sgid );
 
-          if ( gid != last_gid )
+          if ( last_gid == invalid_index ) // only in first iteration
+          {
+            last_gid = sgid;
+          }
+          // if current source is different from the previous one, we
+          // need to increase read position in receive buffer
+          else if ( last_gid != sgid )
           {
             const size_t event_size =
               kernel()
                 .model_manager.get_secondary_event_prototype( syn_id, tid )
                 .prototype_size();
-            buffer_position_by_rank[ target_rank ] += event_size;
-            last_gid = gid;
+            buffer_position_by_rank[ source_rank ] += event_size;
+            last_gid = sgid;
           }
+
+          // read secondary events for this connection from this
+          // receive buffer position
+          ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] )[ lcid ] =
+            buffer_position_by_rank[ source_rank ];
         }
       }
     }

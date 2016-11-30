@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-microcicuit stimulus parameters
--------------------------------
+microcircuit stimulus parameters
+--------------------------------
 
 Stimulus parameters for the microcircuit.
 

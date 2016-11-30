@@ -20,10 +20,10 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-microcicuit simulation parameters
----------------------------------
+microcircuit simulation parameters
+----------------------------------
 
-Simulation Parameters for the microcircuit.
+Simulation parameters for the microcircuit.
 
 Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
 '''
@@ -42,8 +42,8 @@ sim_dict = {
     'local_num_threads': 1,
     # Recording interval of the membrane potential (in ms).
     'rec_V_int': 1.0,
-    # If True data will be overwritten,
-    # if False a NESTError is raised if the files already exist.
+    # If True, data will be overwritten,
+    # If False, a NESTError is raised if the files already exist.
     'overwrite_files': True,
     # Print the time progress, this should only be used when the simulation
     # is run on a local machine.

@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-pynest microcicuit network
---------------------------
+pynest microcircuit network
+---------------------------
 
 Main file for the microcircuit.
 
@@ -81,11 +81,10 @@ class Network:
     def setup_nest(self):
         """ Hands parameters to the NEST-kernel.
 
-        This function resets the NEST-kernel and passes parameters to it.
+        Resets the NEST-kernel and passes parameters to it.
         The number of seeds for the NEST-kernel is computed, based on the
         total number of MPI processes and threads of each.
 
-        Parameters
         """
         nest.ResetKernel()
         master_seed = self.sim_dict['master_seed']
@@ -123,7 +122,7 @@ class Network:
         nest.SetKernelStatus(kernel_dict)
 
     def create_populations(self):
-        """ This function creates the neuronal populations.
+        """ Creates the neuronal populations.
 
         The neuronal populations are created and the parameters are assigned
         to them. The initial membrane potential of the neurons is drawn from a
@@ -207,7 +206,7 @@ class Network:
                      }, local_only=True
                 )[0]
             vp = nest.GetStatus(local_nodes)[0]['vp']
-            # same thread on MPI proc -> same vp
+            # vp is the same for all local nodes on the same thread
             nest.SetStatus(
                 local_nodes, 'V_m', self.pyrngs[vp].normal(
                     self.net_dict['neuron_params']['V0_mean'],
@@ -216,7 +215,7 @@ class Network:
                     )
 
     def create_devices(self):
-        """ This function creates the recording devices.
+        """ Creates the recording devices.
 
         Only devices which are given in net_dict['rec_dev'] are created.
 
@@ -292,7 +291,7 @@ class Network:
                 print('Thalamic input not provided')
 
     def create_poisson(self):
-        """ This function creates the Poisson generators.
+        """ Creates the Poisson generators.
 
         If Poissonian input is provided, the Poissonian generators are created
         and the parameters needed are passed to the Poissonian generator.
@@ -309,7 +308,7 @@ class Network:
                 self.poisson.append(poisson)
 
     def create_dc_generator(self):
-        """ This function creates a DC input generator.
+        """ Creates a DC input generator.
 
         If DC input is provided, the DC generators are created and the
         necessary parameters are passed to them.
@@ -336,7 +335,7 @@ class Network:
                 self.dc.append(dc)
 
     def create_connections(self):
-        """ This function creates the recurrent connections.
+        """ Creates the recurrent connections.
 
         The recurrent connections between the neuronal populations are created.
 
@@ -424,7 +423,7 @@ class Network:
                 )
 
     def connect_dc_generator(self):
-        """ This function connects the DC generator to the microcircuit."""
+        """ Connects the DC generator to the microcircuit."""
         if nest.Rank() == 0:
             print('DC Generator connection established')
         for i, target_pop in enumerate(self.pops):
@@ -475,13 +474,13 @@ class Network:
         self.connect_devices()
 
     def simulate(self):
-        """ This function simulates the microcircuit."""
+        """ Simulates the microcircuit."""
         nest.Simulate(self.sim_dict['t_sim'])
 
     def evaluate(self, raster_plot_time_idx, fire_rate_time_idx):
-        """ This function displays output of the simulation.
+        """ Displays output of the simulation.
 
-        This calculates the firing rate of each population,
+        Calculates the firing rate of each population,
         creates a spike raster plot and a box plot of the
         firing rates.
 

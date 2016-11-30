@@ -13,7 +13,7 @@ The original sli version can be found [here](https://github.com/nest/nest-simula
 	* `helpers.py`  
 	Helper functions for the simulation and evaluation of the microcircuit.	
 	* `network.py`  
-	File which gathers all parameters and connects the different nodes with each other.
+	Gathers all parameters and connects the different nodes with each other.
 	* `network_params.py`  
 	Contains the parameters for the network.
 	* `sim_params.py`  

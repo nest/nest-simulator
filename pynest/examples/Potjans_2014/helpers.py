@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-pynest microcicuit helpers
---------------------------
+pynest microcircuit helpers
+---------------------------
 
 Helper functions for the simulation and evaluation of the microcircuit.
 
@@ -41,7 +41,7 @@ from matplotlib.patches import Polygon
 def compute_DC(net_dict, w_ext):
     """ Computes DC input if no Poisson input is provided to the microcircuit.
 
-   Parameters
+    Parameters
     ----------
     net_dict
         Parameters of the microcircuit.
@@ -61,7 +61,7 @@ def compute_DC(net_dict, w_ext):
 
 
 def get_weight(PSP_val, net_dict):
-    """ Function computes weight to elicit a change in the membrane potential.
+    """ Computes weight to elicit a change in the membrane potential.
 
     This function computes the weight which elicits a change in the membrane
     potential of size PSP_val. To implement this, the weight is calculated to
@@ -94,7 +94,7 @@ def get_weight(PSP_val, net_dict):
 
 
 def get_total_number_of_synapses(net_dict):
-    """ Function returns the total number of synapses between all populations.
+    """ Returns the total number of synapses between all populations.
 
     The first index (rows) of the output matrix is the target population
     and the second (columns) the source population. If a scaling of the
@@ -132,7 +132,7 @@ def get_total_number_of_synapses(net_dict):
         )
     # If the network is scaled the indegrees are calculated in the same
     # fashion as in the original version of the circuit, which is
-    # written in sli
+    # written in sli.
     K = (((n_syn_temp * (
         N_full_matrix * scaling).astype(int)) / N_full_matrix).astype(int))
     return K
@@ -179,11 +179,11 @@ def synapses_th_matrix(net_dict, stim_dict):
 
 
 def adj_w_ext_to_K(K_full, K_scaling, w, w_from_PSP, DC, net_dict, stim_dict):
-    """ Adjustment of weights to scaling is dine in this function.
+    """ Adjustment of weights to scaling is performed.
 
-    With this funtion the recurrent and external weights are adjusted
-    to the scaling of the indegrees. Extra DC input is added to
-    compensate the scaling and preserve the mean and variance of the input.
+    The recurrent and external weights are adjusted to the scaling
+    of the indegrees. Extra DC input is added to compensate the scaling
+    and preserve the mean and variance of the input.
 
     Parameters
     ----------
@@ -245,10 +245,10 @@ def adj_w_ext_to_K(K_full, K_scaling, w, w_from_PSP, DC, net_dict, stim_dict):
 def read_name(path, name):
     """ Reads names and ids of spike detector.
 
-    This function reads out the names of the spike detectors and
-    computes the lowest and highest id of each spike detector.
-    If the simulation was run on several threads or mpi-processes,
-    one name per spike detector per mpi-process/thread is extracted.
+    The names of the spike detectors are gathered and the lowest and
+    highest id of each spike detector is computed. If the simulation was
+    run on several threads or mpi-processes, one name per spike detector
+    per mpi-process/thread is extracted.
 
     Arguments
     ---------
@@ -284,10 +284,10 @@ def read_name(path, name):
 
 
 def load_spike_times(path, name, begin, end):
-    """ This function loads spike times of each spike detector.
+    """ Loads spike times of each spike detector.
 
-    Arguements
-    ----------
+    Arguments
+    ---------
     path
         Path where the files with the spike times are stored.
     name
@@ -324,7 +324,7 @@ def load_spike_times(path, name, begin, end):
 
 
 def plot_raster(path, name, begin, end):
-    """ This function creates a spike raster plot of the microcircuit.
+    """ Creates a spike raster plot of the microcircuit.
 
     Arguments
     ---------
@@ -372,11 +372,11 @@ def plot_raster(path, name, begin, end):
 
 
 def fire_rate(path, name, begin, end):
-    """ This function computes firing rate and standard deviation of it.
+    """ Computes firing rate and standard deviation of it.
 
     The firing rate of each neuron for each population is computed and stored
     in a numpy file in the directory of the spike detectors. The mean firing
-    rate and its standard deviation is also displayed for each population.
+    rate and its standard deviation is displayed for each population.
 
     Arguments
     ---------
@@ -414,11 +414,10 @@ def fire_rate(path, name, begin, end):
 
 
 def boxplot(net_dict, path):
-    """ Function creates a boxblot of the firing rates.
+    """ Creates a boxblot of the firing rates of the eight populations.
 
-    Creates a boxplot of the firing rates of populations of the
-    microcircuit. Before this can be done the firing rates need to be computed
-    with the function 'fire_rate'.
+    To create the boxplot, the firing rates of each population need to be
+    computed with the function 'fire_rate'.
 
     Arguments
     ---------

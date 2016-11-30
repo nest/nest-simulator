@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-pynest microcicuit parameters
------------------------------
+pynest microcircuit parameters
+------------------------------
 
 Network parameters for the microcircuit.
 

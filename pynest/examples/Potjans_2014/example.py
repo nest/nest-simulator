@@ -20,8 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 '''
-pynest microcicuit example
---------------------------
+pynest microcircuit example
+---------------------------
 
 Example file to run the microcircuit.
 

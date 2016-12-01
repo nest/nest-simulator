@@ -54,63 +54,23 @@
    This model neuron implements a slightly modified version of the
    neuron model described in [1]. The most important properties are:
 
-   - Integrate-and-fire with threshold that is increased on spiking
-     and decays back to an equilibrium value.
-   - No hard reset, but repolarizing potassium current.
+   - Integrate-and-fire with threshold adaptive threshold.
+   - Repolarizing potassium current instead of hard reset.
    - AMPA, NMDA, GABA_A, and GABA_B conductance-based synapses with
-     beta-function (difference of two exponentials) time course.
-   - Voltage-dependent NMDA with instantaneous blocking and two-stage
-     unblocking as described in [1, 2].
-   - Intrinsic currents I_h (pacemaker), I_T (low-threshold calcium),
-     I_Na(p) (persistent sodium), and I_KNa (depolarization-activated
-     potassium).
-   - Conductances are unitless in this model.
-   - For details in the model and a discussion of corrections, see
-     doc/model_details/hill_tononi.ipynb.
-
-   NMDA conductances is modeled as follows [2]
-
-     g_NMDA(t, V) = m(V, t) g(t)
-
-   where
-
-     g(t) = g_peak ( e^(-t/tau_1) - e^(-t/tau_2) )
-               / ( e^(-t_peak/tau_1) - e^(-t_peak/tau_2) )
-
-     t_peak = tau_2 tau_1 / ( tau_2 - tau_1 ) ln( tau_2 / tau_1 )
-
-     m(V, t) = a(V) m_fast*(V, t) + ( 1 - a(V) ) m_slow*(V, t)
-     a(V)    = 0.51 - 0.0028 V
-
-   represents the voltage-dependence with components for fast and slow
-   unblocking. For a given V, the steady-state value is given by a
-   sigmoidal function
-
-      m_ss(V) = 1 / ( 1 + exp( -S_act ( V - V_act ) ) )
-
-   Instantaneous blocking means that
-
-      m_X*(V, t) = min(m_ss(V), m_X(V, t))  for X: slow, fast
-
-   while unblocking occurs at two different speeds according to
-
-      dm_X / dt = ( m_ss(V) - m_X ) / tau_Mg_X  for X: slow, fast
-
-   If /instant_unblock_NMDA is set to true, NMDA unblocking is
-   instantaneous, i.e., m(V, t) = m_ss(V).
-
-   I am grateful to thank Sean Hill for giving me access to his Synthesis
-   simulator source code.
+     beta-function (difference of exponentials) time course.
+   - Voltage-dependent NMDA with instantaneous or two-stage unblocking [1, 2].
+   - Intrinsic currents I_h, I_T, I_Na(p), and I_KNa.
+   - Synaptic "minis" are not implemented.
 
    Documentation and Examples:
-   - docs/model_details/HillTononi.ipynb
+   - docs/model_details/HillTononiModels.ipynb
    - pynest/examples/intrinsic_currents_spiking.py
    - pynest/examples/intrinsic_currents_subthreshold.py
 
    Parameters:
    V_m            - membrane potential
-   tau_m          - membrane time constant applying to all currents but
-                    repolarizing K-current (see [1, p 1677])
+   tau_m          - membrane time constant applying to all currents except
+                    repolarizing K-current (see [1], p 1677)
    t_ref          - refractory time and duration of post-spike repolarizing
                     potassium current (t_spike in [1])
    tau_spike      - membrane time constant for post-spike repolarizing
@@ -131,22 +91,25 @@
    instant_unblock_NMDA         - instantaneous NMDA unblocking (default: false)
    {E_rev,g_peak}_{h,T,NaP,KNa} - reversal potential and peak conductance for
                                   intrinsic currents
+   tau_D_KNa                    - relaxation time constant for I_KNa
    receptor_types               - dictionary mapping synapse names to ports on
                                   neuron model
    recordables                  - list of recordable quantities
    equilibrate                  - if given and true, time-dependent activation
-                                    and inactivation state variables (h, m) of
-                                    intrinsic currents and NMDA channels are set
-                                    to their equilibrium values in this set-
-                                    status call.
+                                  and inactivation state variables (h, m) of
+                                  intrinsic currents and NMDA channels are set
+                                  to their equilibrium values during this
+                                  SetStatus call; otherwise they retain their
+                                  present values.
+
+   Note: Conductances are unitless in this model and currents are in mV.
 
    Author: Hans Ekkehard Plesser
 
    Sends: SpikeEvent
-
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-   FirstVersion: October 2009; full NMDA model September 2016
+   FirstVersion: October 2009; full revision November 2016
 
    References:
    [1] S Hill and G Tononi (2005). J Neurophysiol 93:1671-1698.
@@ -288,7 +251,7 @@ private:
 
     double g_peak_KNa;
     double E_rev_KNa; // mV
-    double tau_D_KNa; // ms; in P_ for technical reasons, not meant to be public
+    double tau_D_KNa; // ms
 
     double g_peak_T;
     double E_rev_T; // mV
@@ -337,7 +300,7 @@ public:
     /** Timer (counter) for spike-activated repolarizing potassium current.
      * Neuron is absolutely refractory during this period.
      */
-    int ref_steps_;
+    long ref_steps_;
 
     double I_NaP_; //!< Persistent Na current; member only to allow recording
     double I_KNa_; //!< Depol act. K current; member only to allow recording

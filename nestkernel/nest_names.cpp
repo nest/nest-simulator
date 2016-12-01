@@ -319,6 +319,7 @@ const Name tau_1( "tau_1" );
 const Name tau_2( "tau_2" );
 const Name tau_ahp( "tau_ahp" );
 const Name tau_Ca( "tau_Ca" );
+const Name tau_D_KNa( "tau_D_KNa" );
 const Name tau_decay( "tau_decay" );
 const Name tau_decay_AMPA( "tau_decay_AMPA" );
 const Name tau_decay_GABA_A( "tau_decay_GABA_A" );

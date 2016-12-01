@@ -376,6 +376,7 @@ extern const Name tau_1;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name tau_2;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name tau_ahp;   //!< Specific to iaf_chxk_2008 neuron
 extern const Name tau_Ca;    //!< Rate of loss of calcium concentration
+extern const Name tau_D_KNa; //!< specific to Hill & Tononi 2005
 extern const Name tau_decay; //!< Synapse decay constant (beta fct decay)
 extern const Name tau_decay_AMPA;   //!< specific to Hill & Tononi 2005
 extern const Name tau_decay_GABA_A; //!< specific to Hill & Tononi 2005

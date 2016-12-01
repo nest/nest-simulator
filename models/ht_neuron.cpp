@@ -69,14 +69,14 @@ ht_neuron_dynamics( double, const double y[], double f[], void* pnode )
   assert( pnode );
   nest::ht_neuron& node = *( reinterpret_cast< nest::ht_neuron* >( pnode ) );
 
-  // easier access to membrane potential
+  // easier access to membrane potential, clamp if requested
   const double& V = node.P_.voltage_clamp ? node.V_.V_clamp_ : y[ S::V_M ];
 
   /*
    * NMDA conductance
    *
    * We need to take care to handle instantaneous blocking correctly.
-   * If the unblock-variables m_NMDA_{fast,slow} are greater than the
+   * If the unblock-variables m_{fast,slow}_NMDA are greater than the
    * equilibrium value m_eq_NMDA for the present membrane potential, we cannot
    * change m_NMDA_{fast,slow} values in State_[], since the ODE Solver may
    * call this function multiple times and in arbitrary temporal order. We thus
@@ -205,11 +205,11 @@ nest::ht_neuron::D_eq_KNa_( double V ) const
   const double D_influx_peak = 0.025;
   const double D_thresh = -10.0;
   const double D_slope = 5.0;
-  const double D_eq_0 = 0.001;
+  const double D_eq = 0.001;
 
   const double D_influx =
     D_influx_peak / ( 1.0 + std::exp( -( V - D_thresh ) / D_slope ) );
-  return P_.tau_D_KNa * D_influx + D_eq_0;
+  return P_.tau_D_KNa * D_influx + D_eq;
 }
 
 inline double
@@ -390,6 +390,7 @@ nest::ht_neuron::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::E_rev_NaP, E_rev_NaP );
   def< double >( d, names::g_peak_KNa, g_peak_KNa );
   def< double >( d, names::E_rev_KNa, E_rev_KNa );
+  def< double >( d, names::tau_D_KNa, tau_D_KNa );
   def< double >( d, names::g_peak_T, g_peak_T );
   def< double >( d, names::E_rev_T, E_rev_T );
   def< double >( d, names::g_peak_h, g_peak_h );
@@ -434,6 +435,7 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::E_rev_NaP, E_rev_NaP );
   updateValue< double >( d, names::g_peak_KNa, g_peak_KNa );
   updateValue< double >( d, names::E_rev_KNa, E_rev_KNa );
+  updateValue< double >( d, names::tau_D_KNa, tau_D_KNa );
   updateValue< double >( d, names::g_peak_T, g_peak_T );
   updateValue< double >( d, names::E_rev_T, E_rev_T );
   updateValue< double >( d, names::g_peak_h, g_peak_h );
@@ -541,6 +543,10 @@ nest::ht_neuron::Parameters_::set( const DictionaryDatum& d )
   if ( tau_m <= 0 )
   {
     throw BadParameter( "tau_m > 0 required." );
+  }
+  if ( tau_D_KNa <= 0 )
+  {
+    throw BadParameter( "tau_D_KNa > 0 required." );
   }
 
   if ( tau_rise_AMPA >= tau_decay_AMPA )
@@ -853,31 +859,44 @@ ht_neuron::update( Time const& origin, const long from, const long to )
       {
         throw GSLSolverFailure( get_name(), status );
       }
+
+      // Enforce voltage clamp
+      if ( P_.voltage_clamp )
+      {
+        S_.y_[ State_::V_M ] = V_.V_clamp_;
+      }
+
+      // Enforce instantaneous blocking of NMDA channels
+      const double m_eq_NMDA = m_eq_NMDA_( S_.y_[ State_::V_M ] );
+      S_.y_[ State_::m_fast_NMDA ] =
+        std::min( m_eq_NMDA, S_.y_[ State_::m_fast_NMDA ] );
+      S_.y_[ State_::m_slow_NMDA ] =
+        std::min( m_eq_NMDA, S_.y_[ State_::m_slow_NMDA ] );
+
+      // A spike is generated if the neuron is not refractory and the membrane
+      // potential exceeds the threshold.
+      if ( S_.ref_steps_ == 0
+        and S_.y_[ State_::V_M ] >= S_.y_[ State_::THETA ] )
+      {
+        // Set V and theta to the sodium reversal potential.
+        S_.y_[ State_::V_M ] = P_.E_Na;
+        S_.y_[ State_::THETA ] = P_.E_Na;
+
+        // Activate fast re-polarizing potassium current. Add 1 to compensate
+        // to subtraction right after while loop.
+        S_.ref_steps_ = V_.PotassiumRefractoryCounts_ + 1;
+
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
     }
 
-    /* Enforce voltage clamp; we do not need to do this in the loop above,
-     * because the rhs-function clamps internally.
-     */
-    if ( P_.voltage_clamp )
-    {
-      S_.y_[ State_::V_M ] = V_.V_clamp_;
-    }
-
-    // Enforce instantaneous blocking of NMDA channels, see comment
-    // in ht_neuron_dynamics().
-    const double m_eq_NMDA = m_eq_NMDA_( S_.y_[ State_::V_M ] );
-    S_.y_[ State_::m_fast_NMDA ] =
-      std::min( m_eq_NMDA, S_.y_[ State_::m_fast_NMDA ] );
-    S_.y_[ State_::m_slow_NMDA ] =
-      std::min( m_eq_NMDA, S_.y_[ State_::m_slow_NMDA ] );
-
-    // Deactivate potassium current after t_ref
     if ( S_.ref_steps_ > 0 )
-    {
       --S_.ref_steps_;
-    }
 
-    /* Add new spikes to node state array.
+    /* Add arriving spikes.
      *
      * The input variable for the synapse type with buffer index i is
      * at position 2 + 2*i in the state variable vector.
@@ -886,23 +905,6 @@ ht_neuron::update( Time const& origin, const long from, const long to )
     {
       S_.y_[ 2 + 2 * i ] +=
         V_.cond_steps_[ i ] * B_.spike_inputs_[ i ].get_value( lag );
-    }
-
-    // A spike is generated if then neuron is not refractory and the membrane
-    // potential exceeds the threshold.
-    if ( S_.ref_steps_ == 0 and S_.y_[ State_::V_M ] >= S_.y_[ State_::THETA ] )
-    {
-      // Set V and theta to the sodium reversal potential.
-      S_.y_[ State_::V_M ] = P_.E_Na;
-      S_.y_[ State_::THETA ] = P_.E_Na;
-
-      // Activate fast re-polarizing potassium current.
-      S_.ref_steps_ = V_.PotassiumRefractoryCounts_;
-
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
-
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     // set new input current

@@ -54,6 +54,8 @@ nest.SetDefaults("tsodyks2_synapse", t1_params)
 nest.SetDefaults("quantal_stp_synapse", t2_params)
 nest.SetDefaults("iaf_psc_exp", {"tau_syn_ex": 3., 'tau_m': 70.})
 
+parrot = nest.Create('parrot_neuron')
+
 source = nest.Create('spike_generator')
 nest.SetStatus(source, {'spike_times':
                         [30., 60., 90., 120., 150., 180., 210., 240., 270.,
@@ -61,8 +63,9 @@ nest.SetStatus(source, {'spike_times':
 
 neuron = nest.Create("iaf_psc_exp", 2)
 
-nest.Connect(source, neuron[:1], syn_spec="tsodyks2_synapse")
-nest.Connect(source, neuron[1:], syn_spec="quantal_stp_synapse")
+nest.Connect(source, parrot)
+nest.Connect(parrot, neuron[:1], syn_spec="tsodyks2_synapse")
+nest.Connect(parrot, neuron[1:], syn_spec="quantal_stp_synapse")
 
 voltmeter = nest.Create("voltmeter", 2)
 nest.SetStatus(voltmeter, {"withgid": False, "withtime": True})

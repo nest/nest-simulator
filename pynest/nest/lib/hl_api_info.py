@@ -209,6 +209,8 @@ def SetStatus(nodes, params, val=None):
     #
     if len(nodes) == 0:
         return
+    
+    print params
 
     if val is not None and is_literal(params):
         if is_iterable(val) and not isinstance(val, (uni_str, dict)):
@@ -230,6 +232,13 @@ def SetStatus(nodes, params, val=None):
         sr('2 arraystore')
         sr('Transpose { arrayload pop SetStatus } forall')
     else:
+        if isinstance(nodes, tuple):
+        # Tuple is only allowed if they come from GetConnections()
+            try:
+                nodes = nest.GIDCollection(nodes)
+            except nest.NESTError:
+                raise TypeError("The first input (nodes) must be GIDCollection, "
+                        "or convertible to GIDCollection handles ")
         sli_func('SetStatus', nodes, params)
 
 

@@ -64,8 +64,14 @@ class ErrorTestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
-        self.assertRaisesRegex(
-            nest.NESTError, "UnknownNode", nest.Connect, (99, ), (99, ))
+        gc = nest.Create('iaf_psc_alpha', 10)
+        nest.ResetKernel()
+        
+        self.assertRaisesRegexp(
+            nest.NESTError, "UnknownNode", nest.Connect, gc[8:9], gc[8:9])
+        
+        self.assertRaisesRegexp(
+            nest.NESTError, "UnknownNode", nest.GIDCollection, [99])
 
     def test_UnknownModel(self):
         """Unknown model name"""

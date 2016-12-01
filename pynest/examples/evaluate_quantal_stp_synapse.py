@@ -136,9 +136,9 @@ The default initialization does not achieve this. In large network simulations
 this problem does not show, but in small simulations like this,
 we would see it.
 '''
-nest.SetStatus(nest.GIDCollection([neuron[0]]), "I_e", 376.0)
+nest.SetStatus([neuron[0]], "I_e", 376.0)
 nest.Simulate(500.0)
-nest.SetStatus(nest.GIDCollection([neuron[0]]), "I_e", 0.0)
+nest.SetStatus([neuron[0]], "I_e", 0.0)
 nest.Simulate(1000.0)
 
 '''
@@ -155,9 +155,9 @@ This loop runs over the n_trials trials and performs a standard protocol
 of a high-rate response, followed by a pause and then a recovery response.
 '''
 for t in range(n_trials):
-    nest.SetStatus(nest.GIDCollection([neuron[0]]), "I_e", 376.0)
+    nest.SetStatus([neuron[0]], "I_e", 376.0)
     nest.Simulate(500.0)
-    nest.SetStatus(nest.GIDCollection([neuron[0]]), "I_e", 0.0)
+    nest.SetStatus([neuron[0]], "I_e", 0.0)
     nest.Simulate(1000.0)
 
 '''
@@ -169,10 +169,8 @@ nest.Simulate(.1)
 '''
 Extract the reference trace.
 '''
-vm = numpy.array(nest.GetStatus(nest.GIDCollection([voltmeter[1]]),
-                                'events')[0]['V_m'])
-vm_reference = numpy.array(nest.GetStatus(nest.GIDCollection([voltmeter[0]]),
-                                          'events')[0]['V_m'])
+vm = numpy.array(nest.GetStatus([voltmeter[1]], 'events')[0]['V_m'])
+vm_reference = numpy.array(nest.GetStatus([voltmeter[0]], 'events')[0]['V_m'])
 
 vm.shape = (n_trials, 1500)
 vm_reference.shape = (n_trials, 1500)

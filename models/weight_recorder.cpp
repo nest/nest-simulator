@@ -31,7 +31,9 @@
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include "gid_collection.h"
 #include "kernel_manager.h"
+#include "nest_datums.h"
 #include "sibling_container.h"
 
 // Includes from sli:
@@ -83,8 +85,24 @@ nest::weight_recorder::Parameters_::Parameters_( const Parameters_& p )
 void
 nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ names::senders ] = senders_;
-  ( *d )[ names::targets ] = targets_;
+  if ( senders_.valid() )
+  {
+	( *d )[ names::senders ] = senders_;
+  }
+  else
+  {
+	ArrayDatum ad;
+    ( *d )[ names::senders ] = ad;
+  }
+  if ( targets_.valid() )
+  {
+	( *d )[ names::targets ] = targets_;
+  }
+  else
+  {
+	ArrayDatum ad;
+    ( *d )[ names::targets ] = ad;
+  }
 }
 
 void
@@ -92,14 +110,46 @@ nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
 {
   if ( d->known( names::senders ) )
   {
-    senders_ = getValue< std::vector< long > >( d->lookup( names::senders ) );
-    std::sort( senders_.begin(), senders_.end() );
+	const Token& tkn = d->lookup( names::senders );
+	if ( tkn.is_a< GIDCollectionDatum>() )
+	{
+	  senders_ = getValue< GIDCollectionDatum >( tkn );
+	}
+	else
+	{
+	  if ( tkn.is_a< IntVectorDatum>() )
+	  {
+	    IntVectorDatum ivd = getValue< IntVectorDatum >( tkn );
+		senders_ = GIDCollection::create( ivd );
+	  }
+	  if ( tkn.is_a< ArrayDatum>() )
+	  {
+        ArrayDatum ad = getValue< ArrayDatum >( tkn );
+		senders_ = GIDCollection::create( ad );
+	  }
+	}
   }
 
   if ( d->known( names::targets ) )
   {
-    targets_ = getValue< std::vector< long > >( d->lookup( names::targets ) );
-    std::sort( targets_.begin(), targets_.end() );
+	const Token& tkn = d->lookup( names::targets );
+	if ( tkn.is_a< GIDCollectionDatum>() )
+	{
+	  targets_ = getValue< GIDCollectionDatum >( tkn );
+	}
+	else
+	{
+	  if ( tkn.is_a< IntVectorDatum>() )
+	  {
+		IntVectorDatum ivd = getValue< IntVectorDatum >( tkn );
+		targets_ = GIDCollection::create( ivd );
+	  }
+	  if ( tkn.is_a< ArrayDatum>() )
+	  {
+		ArrayDatum ad = getValue< ArrayDatum >( tkn );
+		targets_ = GIDCollection::create( ad );
+	  }
+	}
   }
 }
 
@@ -207,14 +257,11 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
   {
     // P_senders_ is defined and sender is not in it
     // or P_targets_ is defined and receiver is not in it
-    if ( ( not P_.senders_.empty()
-           and not std::binary_search(
-                 P_.senders_.begin(), P_.senders_.end(), e.get_sender_gid() ) )
-      or ( not P_.targets_.empty()
-           and not std::binary_search( P_.targets_.begin(),
-                 P_.targets_.end(),
-                 e.get_receiver_gid() ) ) )
-      return;
+	if ( ( P_.senders_.valid() and not P_.senders_->contains( e.get_sender_gid() ) )
+		or ( P_.targets_.valid() and not P_.targets_->contains( e.get_receiver_gid() ) ) )
+	{
+	  return;
+	}
 
     WeightRecorderEvent* event = e.clone();
     B_.events_.push_back( *event );

@@ -55,7 +55,6 @@ ResetKernel
 /dc_generator 1 << /amplitude 1500.0 >> Create /stim1 Set
 /dc_generator 1 << /amplitude 1000.0 >> Create /stim2 Set
 
-
 /iaf_neuron 1 << /C_m 100.0 /tau_m 10.0 >> Create /neuron1 Set
 /iaf_neuron 1 << /C_m 100.0 /tau_m 10.0 /tau_minus 10.0>> Create /neuron2 Set
 
@@ -74,17 +73,17 @@ dopa_first dopa_last cvgidcollection /dopa Set
                 /b 45.45
                 /tau_c 1.0
                 /tau_n 100.0
-                /vt vt >> CopyModel
+                /vt vt 0 get >> CopyModel
 
-stim1 neuron1 << /weight 10.0 /delay 1.0 >> Connect 
-[stim2] cvgidcollection dopa <</rule /all_to_all >> << /weight 10.0 /delay 1.0 >> Connect
-neuron1 neuron2 << /weight 500.0 /delay 1.0 >> /syn1 Connect
-dopa [vt] cvgidcollection Connect
+stim1 0 get neuron1 0 get << /weight 10.0 /delay 1.0 >> Connect 
+stim2 dopa <</rule /all_to_all >> << /weight 10.0 /delay 1.0 >> Connect
+neuron1 0 get neuron2 0 get << /weight 500.0 /delay 1.0 >> /syn1 Connect
+dopa vt Connect
 
 2000.0 Simulate
 
 %push return value
-<< /source [neuron1] /target [neuron2] >> GetConnections /conns Set
+<< /source neuron1 /target neuron2 >> GetConnections /conns Set
 conns size 0 gt {
   0 get GetStatus /weight get
 }

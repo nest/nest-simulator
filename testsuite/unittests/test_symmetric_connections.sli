@@ -84,8 +84,8 @@ fail_or_die
   setup
   set1 set2 << /rule /one_to_one /symmetric true >> /static_synapse Connect
 
-  << /source [1 5] Range >> GetConnections /fwd Set
-  << /source [6 10] Range >> GetConnections /bck Set
+  << /source [1 5] Range cvgidcollection >> GetConnections /fwd Set
+  << /source [6 10] Range cvgidcollection >> GetConnections /bck Set
   
   [ fwd bck ] 
   {
@@ -134,8 +134,8 @@ fail_or_die
      /alpha <. 1.2 2.2 3.2 4.2 5.2 .> >> 
   Connect
 
-  << /source [1 5] Range >> GetConnections /fwd Set
-  << /source [6 10] Range >> GetConnections /bck Set
+  << /source [1 5] Range cvgidcollection >> GetConnections /fwd Set
+  << /source [6 10] Range cvgidcollection >> GetConnections /bck Set
   
   [ fwd bck ] 
   {

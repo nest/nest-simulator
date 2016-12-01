@@ -84,7 +84,7 @@ net2 % loop on all neurons of target subnet
         {
                 /n_loc n_loc 1 add def  % increases n_loc
                 % gets all connections to the target neuron
-                /conn << /target [neuron2] >> GetConnections def
+                /conn << /target [neuron2] cvgidcollection >> GetConnections def
 
                 /sdict_lst conn GetSynapseStatus def % gets info on synapses
 

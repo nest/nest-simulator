@@ -46,9 +46,9 @@
     pg << /rate 1000. >> SetStatus
 
     /iaf_psc_delta [1000] LayoutNetwork /net Set
-    /neurons net GetLocalLeaves def
+    /neurons net 0 get GetLocalLeaves def
           
-    [pg] neurons Connect
+    pg neurons cvgidcollection Connect
 
     1000. Simulate
   end

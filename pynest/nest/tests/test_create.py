@@ -65,7 +65,7 @@ class CreateTestCase(unittest.TestCase):
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
             self.assertRaises(TypeError, nest.Create,
-                              'iaf_neuron', 10, tuple())
+                              'iaf_neuron', 10, [])
             self.assertTrue(issubclass(w[-1].category, UserWarning))
 
     def test_ModelDicts(self):
@@ -93,7 +93,8 @@ class CreateTestCase(unittest.TestCase):
         self.assertEqual(vm, 10.0)
 
         nest.CopyModel('static_synapse', 'new_synapse', {'weight': 10.})
-        nest.Connect([n[0]], [n[1]], syn_spec='new_synapse')
+        nest.Connect(nest.GIDCollection([n[0]]), nest.GIDCollection([n[1]]),
+                     syn_spec='new_synapse')
         w = nest.GetDefaults('new_synapse')['weight']
         self.assertEqual(w, 10.0)
 

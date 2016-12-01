@@ -123,12 +123,12 @@ ResetKernel      % clear all existing network elements
         0 ChangeSubnet             % return to full network
 
         /E_net /subnet Create def    % create subnet
-        E_net ChangeSubnet           % enter subnet
+        E_net 0 get ChangeSubnet           % enter subnet
         /iaf_tum_2000 Ne Create      % create neurons in subnet
         pop                          % pop gids returned by Create
 
         %% obtain array with GIDs of all excitatory neurons
-        /E_neurons E_net GetGlobalNodes def
+        /E_neurons E_net 0 get GetGlobalNodes def
 
         /E_params <<
             /tau_m   Tau
@@ -149,12 +149,12 @@ ResetKernel      % clear all existing network elements
         0 ChangeSubnet             % return to full network
 
         /I_net /subnet Create def    % create subnet
-        I_net ChangeSubnet           % enter subnet
+        I_net 0 get ChangeSubnet           % enter subnet
         /iaf_tum_2000 Ni Create      % create neurons in subnet
         pop                          % pop gids returned by Create
 
         % obtain array with GIDs of all excitatory neurons
-        /I_neurons I_net GetGlobalNodes def
+        /I_neurons I_net 0 get GetGlobalNodes def
 
         /I_params <<
                 /tau_m    Tau
@@ -357,8 +357,8 @@ ResetKernel      % clear all existing network elements
         >> SetStatus
 
         % connect all exc/inh neurons to it
-        E_neurons [sd] Connect
-        I_neurons [sd] Connect
+        E_neurons cvgidcollection sd Connect
+        I_neurons cvgidcollection sd Connect
         
     end
 } def

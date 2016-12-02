@@ -296,8 +296,7 @@ GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
 
   if ( rhs_ptr ) // if rhs is Primitive
   {
-    if ( ( rhs_ptr->first_ <= last_ and rhs_ptr->first_ >= first_ )
-      or ( rhs_ptr->last_ <= last_ and rhs_ptr->last_ >= first_ ) )
+    if ( overlapping( *rhs_ptr ) )
     {
       throw BadProperty( "Cannot join overlapping GIDCollections." );
     }
@@ -370,6 +369,13 @@ bool
 GIDCollectionPrimitive::is_contiguous_ascending( GIDCollectionPrimitive& other )
 {
   return ( ( last_ + 1 ) == other.first_ ) and ( model_id_ == other.model_id_ );
+}
+
+bool
+GIDCollectionPrimitive::overlapping( const GIDCollectionPrimitive& rhs ) const
+{
+  return ( ( rhs.first_ <= last_ and rhs.first_ >= first_ )
+    or ( rhs.last_ <= last_ and rhs.last_ >= first_ ) );
 }
 
 GIDCollectionComposite::GIDCollectionComposite(
@@ -494,9 +500,13 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
   rhs.unlock();
   if ( rhs_ptr ) // if rhs is Primitive
   {
-    for ( const_iterator it = begin(); it != end(); ++it )
+    // check primitives in the composite for overlap
+    for ( std::vector< GIDCollectionPrimitive >::const_iterator this_it =
+            parts_.begin();
+          this_it < parts_.end();
+          ++this_it )
     {
-      if ( rhs_ptr->contains( ( *it ).gid ) )
+      if ( this_it->overlapping( *rhs_ptr ) )
       {
         throw BadProperty( "Cannot join overlapping GIDCollections." );
       }
@@ -509,11 +519,21 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
       dynamic_cast< GIDCollectionComposite const* >( rhs.get() );
     rhs.unlock();
 
-    for ( const_iterator it = begin(); it != end(); ++it )
+    // check primitives in the composites for overlap
+    for ( std::vector< GIDCollectionPrimitive >::const_iterator this_it =
+            parts_.begin();
+          this_it < parts_.end();
+          ++this_it )
     {
-      if ( rhs_ptr->contains( ( *it ).gid ) )
+      for ( std::vector< GIDCollectionPrimitive >::const_iterator other_it =
+              rhs_ptr->parts_.begin();
+            other_it < rhs_ptr->parts_.end();
+            ++other_it )
       {
-        throw BadProperty( "Cannot join overlapping GIDCollections." );
+        if ( this_it->overlapping( *other_it ) )
+        {
+          throw BadProperty( "Cannot join overlapping GIDCollections." );
+        }
       }
     }
 
@@ -550,6 +570,18 @@ GIDCollectionPTR GIDCollectionComposite::operator+(
   if ( get_metadata().valid() and not( get_metadata() == rhs.get_metadata() ) )
   {
     throw BadProperty( "can only join GIDCollections with the same metadata" );
+  }
+
+  // check primitives in the composites for overlap
+  for ( std::vector< GIDCollectionPrimitive >::const_iterator this_it =
+          parts_.begin();
+        this_it < parts_.end();
+        ++this_it )
+  {
+    if ( this_it->overlapping( rhs ) )
+    {
+      throw BadProperty( "Cannot join overlapping GIDCollections." );
+    }
   }
 
   std::vector< GIDCollectionPrimitive > new_parts = parts_;
@@ -591,7 +623,7 @@ GIDCollectionComposite::merge_parts(
 {
   bool did_merge = true; // initialize to enter the while loop
   size_t last_i = 0;
-  while ( did_merge )    // if parts is changed, it has to be checked again
+  while ( did_merge ) // if parts is changed, it has to be checked again
   {
     did_merge = false;
     for ( size_t i = last_i; i < parts.size() - 1; ++i )

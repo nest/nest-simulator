@@ -391,11 +391,19 @@ public:
    * primitive.
    *
    * @param other Primitive to check for continuity
-   * @return true if the first element in the other primitive is the next after
+   * @return True if the first element in the other primitive is the next after
    * the last element in this primitive, and they both have the same model ID.
    * Otherwise false.
    */
   bool is_contiguous_ascending( GIDCollectionPrimitive& other );
+
+  /**
+   * Checks if GIDs of another primitive is overlapping GIDs of this primitive
+   *
+   * @param rhs Primitive to be checked.
+   * @return True if the other primitive overlaps, false otherwise.
+   */
+  bool overlapping( const GIDCollectionPrimitive& rhs ) const;
 };
 
 GIDCollectionPTR operator+( GIDCollectionPTR lhs, GIDCollectionPTR rhs );

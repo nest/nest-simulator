@@ -76,7 +76,9 @@ aeif_cond_beta_multisynapse_dynamics( double,
   double f[],
   void* pnode )
 {
-  // a shorthand
+  // y[] is the state vector supplied by the integrator,
+  // not the state vector in the node, node.S_.y[].
+
   typedef nest::aeif_cond_beta_multisynapse::State_ S;
 
   // get access to node so we can almost work as in a member function
@@ -84,17 +86,13 @@ aeif_cond_beta_multisynapse_dynamics( double,
   const nest::aeif_cond_beta_multisynapse& node =
     *( reinterpret_cast< nest::aeif_cond_beta_multisynapse* >( pnode ) );
 
-  // y[] here is---and must be---the state vector supplied by the integrator,
-  // not the state vector in the node, node.S_.y[].
+  const bool is_refractory = node.S_.r_ > 0;
 
-  // The following code is verbose for the sake of clarity. We assume that a
-  // good compiler will optimize the verbosity away ...
-
-  // shorthand for state variables
-  // we indeed want to use P_.V_peak_ and not V_.V_peak here
-  // V_m is clamped during the refractory period
-  const double& V = std::min( node.S_.r_ > 0 ? node.P_.V_reset_ : y[ S::V_M ],
-    node.P_.V_peak_ ); // bound V
+  // Clamp membrane potential to V_reset while refractory, otherwise bound
+  // it to V_peak. Do not use V_.V_peak_ here, since that is set to V_th if
+  // Delta_T == 0.
+  const double& V =
+    is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_peak_ );
   const double& w = y[ S::W ];
 
   // I_syn = - sum_k g_k (V - E_rev_k).
@@ -111,8 +109,9 @@ aeif_cond_beta_multisynapse_dynamics( double,
         * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn - w
-                  + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] =
+    is_refractory ? 0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn
+                          - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
@@ -624,23 +623,29 @@ aeif_cond_beta_multisynapse::update( Time const& origin,
       {
         throw NumericalInstability( get_name() );
       }
+
+      if ( S_.r_ > 0 ) // if neuron is still in refractory period
+      {
+        S_.y_[ State_::V_M ] = P_.V_reset_; // clamp it to V_reset
+      }
+      else if ( S_.y_[ State_::V_M ] >= V_.V_peak ) // V_m >= V_peak: spike
+      {
+        S_.y_[ State_::V_M ] = P_.V_reset_;
+        S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
+
+        // initialize refractory steps, adding 1 to compensate for immediate
+        // subtraction after the while loop
+        S_.r_ = V_.refractory_counts_ + 1;
+
+        set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
+        SpikeEvent se;
+        kernel().event_delivery_manager.send( *this, se, lag );
+      }
     }
 
-    if ( S_.r_ > 0 ) // if neuron is still in refractory period
+    if ( S_.r_ > 0 )
     {
-      S_.y_[ State_::V_M ] = P_.V_reset_; // clamp it to V_reset
       --S_.r_;
-    }
-    else if ( S_.y_[ State_::V_M ] >= V_.V_peak ) // V_m >= V_peak: spike
-    {
-      S_.y_[ State_::V_M ] = P_.V_reset_;
-      S_.y_[ State_::W ] += P_.b;    // spike-driven adaptation
-      S_.r_ = V_.refractory_counts_; // initialize refractory steps with
-                                     // refractory period
-
-      set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
-      SpikeEvent se;
-      kernel().event_delivery_manager.send( *this, se, lag );
     }
 
     for ( size_t i = 0; i < P_.n_receptors(); ++i )

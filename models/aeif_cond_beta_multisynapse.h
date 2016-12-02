@@ -76,7 +76,7 @@
 
  tau_w * dw/dt = a(V - E_L) - w
 
- When the neuron fires a spike w <- w + b.
+ When the neuron fires a spike, the adaptation current w <- w + b.
 
 Parameters:
 The following parameters can be set in the status dictionary.
@@ -183,6 +183,7 @@ public:
   aeif_cond_beta_multisynapse();
   aeif_cond_beta_multisynapse( const aeif_cond_beta_multisynapse& );
   virtual ~aeif_cond_beta_multisynapse();
+
   friend int
   aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 

@@ -314,7 +314,7 @@ public:
     State_& operator=( const State_& s );
 
     void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const ht_neuron&, const Parameters_& );
+    void set( const DictionaryDatum&, const ht_neuron& );
   };
 
 private:

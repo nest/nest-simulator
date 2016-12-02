@@ -579,9 +579,7 @@ nest::ht_neuron::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::ht_neuron::State_::set( const DictionaryDatum& d,
-  const ht_neuron& node,
-  const Parameters_& p )
+nest::ht_neuron::State_::set( const DictionaryDatum& d, const ht_neuron& node )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
   updateValue< double >( d, names::theta, y_[ THETA ] );
@@ -812,10 +810,10 @@ nest::ht_neuron::get_status( DictionaryDatum& d ) const
 void
 nest::ht_neuron::set_status( const DictionaryDatum& d )
 {
-  Parameters_ ptmp = P_;      // temporary copy in case of errors
-  ptmp.set( d );              // throws if BadProperty
-  State_ stmp = S_;           // temporary copy in case of errors
-  stmp.set( d, *this, ptmp ); // throws if BadProperty
+  Parameters_ ptmp = P_; // temporary copy in case of errors
+  ptmp.set( d );         // throws if BadProperty
+  State_ stmp = S_;      // temporary copy in case of errors
+  stmp.set( d, *this );  // throws if BadProperty
 
   // We now know that (ptmp, stmp) are consistent. We do not
   // write them back to (P_, S_) before we are also sure that

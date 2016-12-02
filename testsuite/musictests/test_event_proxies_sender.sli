@@ -32,7 +32,7 @@ sg << /spike_times [1.0 1.5 2.0 ]>> SetStatus
 
 /iaf_neuron Create /n Set
 
-sg n << /weight 750.0 >> Connect
+sg 0 get n 0 get << /weight 750.0 >> Connect
 
 /voltmeter Create /vm Set
 vm << /label (sender) /record_to [ /file ] >> SetStatus

@@ -61,9 +61,9 @@ is_threaded not { exit_test_gracefully } if
                       >> Create def
   /pnet [ total_vps ] { ; /parrot_neuron Create } Table def
 
-  [sg] gens Connect
+  gens { sg exch Connect } forall
   [ gens pnet ] { Connect } ScanThread
-  pnet [sd] Connect
+  pnet { sd Connect } forall
   
   20. Simulate
 

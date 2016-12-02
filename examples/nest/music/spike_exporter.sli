@@ -37,17 +37,17 @@ statusdict/have_music :: not {statusdict/exitcodes/success :: quit_i} if
 % these are the dummy population to send data to the
 % music port
 /subnet Create /SN Set
-SN ChangeSubnet
+SN 0 get ChangeSubnet
 /parrot_neuron N Create pop
 0 ChangeSubnet
-SN GetGlobalNodes /parrots Set
+SN 0 get GetGlobalNodes /parrots Set
 
 % create N spike generators each to feed one of the N parrots
 /subnet Create /SNG Set
-SNG ChangeSubnet
+SNG 0 get ChangeSubnet
 /spike_generator N Create pop
 0 ChangeSubnet
-SNG GetGlobalNodes /generators Set
+SNG 0 get GetGlobalNodes /generators Set
 
 % let the spike generator i
 % produce a spike at 1.0 + 2.0*i ms

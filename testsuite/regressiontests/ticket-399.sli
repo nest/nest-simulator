@@ -41,7 +41,7 @@ M_WARNING setverbosity
  /iaf_psc_alpha Create /n Set
  /poisson_generator Create /inp Set
  inp << /rate 300. >> SetStatus
- inp n << /weight 1.0 >> /static_synapse Connect
+ inp 0 get n 0 get << /weight 1.0 >> /static_synapse Connect
  100. Simulate
 }
 pass_or_die

@@ -54,8 +54,8 @@ M_ERROR setverbosity
     0 << /total_num_virtual_procs N_VP >> SetStatus
 
     /net /iaf_neuron [ N ] LayoutNetwork def
-    /nodes net GetGlobalNodes def
-    /local_nodes net GetLocalNodes def
+    /nodes net 0 get GetGlobalNodes def
+    /local_nodes net 0 get GetLocalNodes def
     nodes local_nodes << /rule /fixed_indegree /indegree C >> Connect
 
     0 /num_connections get dup ==

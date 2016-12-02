@@ -45,7 +45,7 @@ Author: Hans Ekkehard Plesser, 2010-09-24
 
  ResetKernel
  /s1 /subnet Create def   % gid 1
- s1 ChangeSubnet
+ s1 0 get ChangeSubnet
  /s2 /subnet Create def   % gid 2
  /s3 /subnet Create def   % gid 3
 
@@ -54,11 +54,11 @@ Author: Hans Ekkehard Plesser, 2010-09-24
 
  /iaf_neuron 2 Create ;   % gid 6,7
 
- s2 ChangeSubnet
+ s2 0 get ChangeSubnet
  /iaf_neuron 6 Create ;   % gid 8,9,10,11,12,13
- s1 ChangeSubnet
+ s1 0 get ChangeSubnet
  /iaf_neuron 4 Create ;   % gid 14,15,16,17
- s3 ChangeSubnet
+ s3 0 get ChangeSubnet
  /iaf_neuron 3 Create ;   % gid 18,19,20
 
  0 GetGlobalNodes    Sort [1 20] Range eq % 1..20

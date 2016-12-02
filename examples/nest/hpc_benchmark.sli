@@ -175,13 +175,13 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
   M_INFO (BuildNetwork)
   (Creating excitatory population.) message  % show message
   /iaf_neuron [NE] LayoutNetwork /E_net Set  % subnet gets own gid
-  /E_from E_net 1 add def                    % gid of first child
+  /E_from E_net 0 get 1 add def                    % gid of first child
   /E_to 0 GetStatus /network_size get 1 sub def % gid of last child
   
   M_INFO (BuildNetwork)
   (Creating inhibitory population.) message  % show message
   /iaf_neuron [NI] LayoutNetwork /I_net Set  % subnet gets own gid
-  /I_from I_net 1 add def                    % gid of first child
+  /I_from I_net 0 get 1 add def                    % gid of first child
   /I_to 0 GetStatus /network_size get 1 sub def % gid of last child
 
   randomize_Vm
@@ -193,13 +193,13 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
       rngdict/MT19937 :: exch CreateRNG
       rdevdict/normal :: CreateRDV /normal Set
 
-      E_net GetLocalNodes
+      E_net 0 get GetLocalNodes
       {
           << /V_m mean_potential sigma_potential normal Random mul add >>
 	  SetStatus
       } forall
 
-      I_net GetLocalNodes
+      I_net 0 get GetLocalNodes
       { 
 	  << /V_m mean_potential sigma_potential normal Random mul add >>
 	  SetStatus
@@ -279,8 +279,8 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
 
   % Connect Poisson generator to neuron
 
-  E_stimulus E_stimulus cvgidcollection E_neurons << /rule (all_to_all) >> << /model /syn_ex >> Connect
-  E_stimulus E_stimulus cvgidcollection I_neurons << /rule (all_to_all) >> << /model /syn_ex >> Connect
+  E_stimulus E_neurons << /rule (all_to_all) >> << /model /syn_ex >> Connect
+  E_stimulus I_neurons << /rule (all_to_all) >> << /model /syn_ex >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting excitatory -> excitatory population.) message
@@ -305,7 +305,7 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
 
   record_spikes true eq
   {
-    E_net GetLocalNodes size /local_neurons Set
+    E_net 0 get GetLocalNodes size /local_neurons Set
 
     local_neurons Nrec lt
     {
@@ -318,7 +318,7 @@ Aborting the simulation!) message
 
     M_INFO (BuildNetwork)
     (Connecting spike detectors.) message
-    E_net GetLocalNodes Nrec Take [E_detector] << /rule (all_to_all) >> << /model /syn_std >> Connect
+    E_net 0 get GetLocalNodes Nrec Take cvgidcollection E_detector << /rule (all_to_all) >> << /model /syn_std >> Connect
   } if
 
   % read out time used for building

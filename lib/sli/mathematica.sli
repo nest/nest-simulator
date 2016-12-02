@@ -3015,9 +3015,7 @@ References:
    [1] The Mathematica Book "MemberQ"
 SeeAlso: LiteralQ, NumberQ, ArrayQ, MatrixQ, HasDifferentMemberQ
 */
-/MemberQ trie def
-
-/MemberQ [/arraytype /anytype]
+/MemberQ
 {
  << >> begin
   /member Set

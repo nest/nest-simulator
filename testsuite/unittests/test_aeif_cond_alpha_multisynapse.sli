@@ -77,28 +77,26 @@ sg << /spike_times [spike_time] >> SetStatus
  	singlesynapse_neuron << /tau_syn_ex tau_syn_ex_var >> SetStatus
  	singlesynapse_neuron << /tau_syn_in tau_syn_in_var >> SetStatus
 
- 	[sg] [singlesynapse_neuron] /one_to_one << /model /static_synapse /delay delay_var /weight weight_var >> Connect
- 	
+
+ 	sg singlesynapse_neuron /one_to_one << /model /static_synapse /delay delay_var /weight weight_var >> Connect
  	/voltmeter Create /vm_for_single_synapse_neuron Set
  	vm_for_single_synapse_neuron << /withtime true /time_in_steps true /interval 0.1 /precision 5 >> SetStatus
-	vm_for_single_synapse_neuron singlesynapse_neuron 1. 8. /static_synapse Connect
  
+	vm_for_single_synapse_neuron 0 get singlesynapse_neuron 0 get 1. 8. /static_synapse Connect
  	vm_for_single_synapse_neuron
- 	
+  
 } MapThread /vms_for_single_synapse_neuron Set
 
 % Create one voltmeter for the multi synapse neuron
 /voltmeter Create /vm Set
 vm << /withtime true /time_in_steps true /interval dt /to_file true /precision 5 >> SetStatus
-
 % Create one aeif_conf_alpha_multisynapse
 /aeif_cond_alpha_multisynapse Create /multisynapse_neuron Set
 multisynapse_neuron << /taus_syn tau_syn_ex >> SetStatus
 multisynapse_neuron << /V_peak V_peak >> SetStatus
 multisynapse_neuron << /a a >> SetStatus
 multisynapse_neuron << /b b >> SetStatus
-
-multisynapse_neuron ShowStatus
+%multisynapse_neuron GetStatus ShowStatus
 
 % create and array [1 .. n] 
 delays length 1 arraystore Range /synapses_indices exch def
@@ -108,29 +106,25 @@ delays length 1 arraystore Range /synapses_indices exch def
 	/synapses_indice_var exch def
 	/weight_var exch def
 	/delay_var exch def
-	
-	[sg] [multisynapse_neuron] /one_to_one << /model /static_synapse /delay delay_var /weight weight_var /receptor_type synapses_indice_var >> Connect
-	
+	sg multisynapse_neuron /one_to_one << /model /static_synapse /delay delay_var /weight weight_var /receptor_type synapses_indice_var >> Connect
 } ScanThread
 
-vm multisynapse_neuron 1. 8. /static_synapse Connect
+vm multisynapse_neuron  1. 8. /static_synapse Connect
 
 simulation_t ms Simulate
 
 % Get the currents of the multisynapse neuron
 /d vm GetStatus /events get def
-d /V_m get cva /currents Set
 
+d /V_m get cva /currents Set
 % Take the array of delays, remove the first element and append at the end (total simulation time - spiketime).
 % The new array will be used to determine the ranges of comparison between the single neurons and the multisynapse neurons.
-
 delays reverse arrayload pop pop
 delays length 1 sub
 arraystore reverse 
 simulation_t spike_time sub 1 dt div sub
 append
 /delays_shifted exch def
-
 
 % Go over every dt in the ranges (0 -> delays_shifted[1], ... , delays_shifted[n] -> delays_shifted[n+1])
 % For each one of them, compare the multisynapse_current[t] with singlesynapse_current[n][t].

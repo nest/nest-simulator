@@ -199,8 +199,8 @@ def SetStatus(nodes, params, val=None):
             nodes = nest.GIDCollection(nodes)
         except nest.NESTError:
             raise TypeError("The first input (nodes) must be GIDCollection, "
-                        "convertible to GIDCollection or a tuple of connection "
-                        "handles ")
+                            "convertible to GIDCollection or a tuple of "
+                            "connection handles ")
 
     # This was added to ensure that the function is a nop (instead of,
     # for instance, raising an exception) when applied to an empty list,
@@ -231,12 +231,13 @@ def SetStatus(nodes, params, val=None):
         sr('Transpose { arrayload pop SetStatus } forall')
     else:
         if isinstance(nodes, tuple):
-        # Tuple is only allowed if they come from GetConnections()
+            # Tuple is only allowed if they come from GetConnections()
             try:
                 nodes = nest.GIDCollection(nodes)
             except nest.NESTError:
-                raise TypeError("The first input (nodes) must be GIDCollection, "
-                        "or convertible to GIDCollection handles ")
+                raise TypeError("The first input (nodes) must be "
+                                "GIDCollection, or convertible to "
+                                "GIDCollection handles.")
         sli_func('SetStatus', nodes, params)
 
 
@@ -278,8 +279,8 @@ def GetStatus(nodes, keys=None):
             nodes = nest.GIDCollection(nodes)
         except nest.NESTError:
             raise TypeError("The first input (nodes) must be GIDCollection, "
-                        "convertible to GIDCollection or a tuple of connection "
-                        "handles ")
+                            "convertible to GIDCollection or a tuple of "
+                            "connection handles ")
 
     if len(nodes) == 0:
         return nodes

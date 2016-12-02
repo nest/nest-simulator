@@ -591,7 +591,7 @@ GIDCollectionComposite::merge_parts(
 {
   bool did_merge = true; // initialize to enter the while loop
   size_t last_i = 0;
-  while ( did_merge )    // if parts is changed, it has to be checked again
+  while ( did_merge ) // if parts is changed, it has to be checked again
   {
     did_merge = false;
     for ( size_t i = last_i; i < parts.size() - 1; ++i )

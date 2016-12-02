@@ -140,8 +140,8 @@ connection routine via the ``syn_spec`` parameter.
 '''
 
 nest.CopyModel("tsodyks_synapse", "syn", syn_param)
-nest.Connect(nest.GIDCollection([neurons[0]]), nest.GIDCollection([neurons[1]]),
-             syn_spec="syn")
+nest.Connect(nest.GIDCollection([neurons[0]]),
+             nest.GIDCollection([neurons[1]]), syn_spec="syn")
 
 '''
 Finally, we simulate the configuration using the command

@@ -87,20 +87,20 @@ nest::weight_recorder::Parameters_::get( DictionaryDatum& d ) const
 {
   if ( senders_.valid() )
   {
-	( *d )[ names::senders ] = senders_;
+    ( *d )[ names::senders ] = senders_;
   }
   else
   {
-	ArrayDatum ad;
+    ArrayDatum ad;
     ( *d )[ names::senders ] = ad;
   }
   if ( targets_.valid() )
   {
-	( *d )[ names::targets ] = targets_;
+    ( *d )[ names::targets ] = targets_;
   }
   else
   {
-	ArrayDatum ad;
+    ArrayDatum ad;
     ( *d )[ names::targets ] = ad;
   }
 }
@@ -110,46 +110,46 @@ nest::weight_recorder::Parameters_::set( const DictionaryDatum& d )
 {
   if ( d->known( names::senders ) )
   {
-	const Token& tkn = d->lookup( names::senders );
-	if ( tkn.is_a< GIDCollectionDatum>() )
-	{
-	  senders_ = getValue< GIDCollectionDatum >( tkn );
-	}
-	else
-	{
-	  if ( tkn.is_a< IntVectorDatum>() )
-	  {
-	    IntVectorDatum ivd = getValue< IntVectorDatum >( tkn );
-		senders_ = GIDCollection::create( ivd );
-	  }
-	  if ( tkn.is_a< ArrayDatum>() )
-	  {
+    const Token& tkn = d->lookup( names::senders );
+    if ( tkn.is_a< GIDCollectionDatum >() )
+    {
+      senders_ = getValue< GIDCollectionDatum >( tkn );
+    }
+    else
+    {
+      if ( tkn.is_a< IntVectorDatum >() )
+      {
+        IntVectorDatum ivd = getValue< IntVectorDatum >( tkn );
+        senders_ = GIDCollection::create( ivd );
+      }
+      if ( tkn.is_a< ArrayDatum >() )
+      {
         ArrayDatum ad = getValue< ArrayDatum >( tkn );
-		senders_ = GIDCollection::create( ad );
-	  }
-	}
+        senders_ = GIDCollection::create( ad );
+      }
+    }
   }
 
   if ( d->known( names::targets ) )
   {
-	const Token& tkn = d->lookup( names::targets );
-	if ( tkn.is_a< GIDCollectionDatum>() )
-	{
-	  targets_ = getValue< GIDCollectionDatum >( tkn );
-	}
-	else
-	{
-	  if ( tkn.is_a< IntVectorDatum>() )
-	  {
-		IntVectorDatum ivd = getValue< IntVectorDatum >( tkn );
-		targets_ = GIDCollection::create( ivd );
-	  }
-	  if ( tkn.is_a< ArrayDatum>() )
-	  {
-		ArrayDatum ad = getValue< ArrayDatum >( tkn );
-		targets_ = GIDCollection::create( ad );
-	  }
-	}
+    const Token& tkn = d->lookup( names::targets );
+    if ( tkn.is_a< GIDCollectionDatum >() )
+    {
+      targets_ = getValue< GIDCollectionDatum >( tkn );
+    }
+    else
+    {
+      if ( tkn.is_a< IntVectorDatum >() )
+      {
+        IntVectorDatum ivd = getValue< IntVectorDatum >( tkn );
+        targets_ = GIDCollection::create( ivd );
+      }
+      if ( tkn.is_a< ArrayDatum >() )
+      {
+        ArrayDatum ad = getValue< ArrayDatum >( tkn );
+        targets_ = GIDCollection::create( ad );
+      }
+    }
   }
 }
 
@@ -257,11 +257,13 @@ nest::weight_recorder::handle( WeightRecorderEvent& e )
   {
     // P_senders_ is defined and sender is not in it
     // or P_targets_ is defined and receiver is not in it
-	if ( ( P_.senders_.valid() and not P_.senders_->contains( e.get_sender_gid() ) )
-		or ( P_.targets_.valid() and not P_.targets_->contains( e.get_receiver_gid() ) ) )
-	{
-	  return;
-	}
+    if ( ( P_.senders_.valid()
+           and not P_.senders_->contains( e.get_sender_gid() ) )
+      or ( P_.targets_.valid()
+           and not P_.targets_->contains( e.get_receiver_gid() ) ) )
+    {
+      return;
+    }
 
     WeightRecorderEvent* event = e.clone();
     B_.events_.push_back( *event );

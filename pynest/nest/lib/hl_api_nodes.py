@@ -166,7 +166,7 @@ class GIDCollection(object):
 
     def __len__(self):
         return nest.sli_func('size', self._datum)
-    
+
     def __str__(self):
         return '{}'.format(list(nest.sli_func('cva', self._datum)))
 

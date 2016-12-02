@@ -371,7 +371,7 @@ class TestGIDCollection(unittest.TestCase):
         compare_list = [3, 1, 0, 0, 0]
         for i, conn in enumerate(compare_list):
             self.assertEqual(get_conn_list[3][i], conn)
-            
+
     def test_GetConnections_bad_source(self):
         """
         GetConnection raises a TypeError when called with 0
@@ -379,10 +379,10 @@ class TestGIDCollection(unittest.TestCase):
 
         n = nest.Create('iaf_psc_alpha', 3)
         nest.Connect(n, n)
-        
+
         with self.assertRaises(TypeError):
             nest.GetConnections([0, 1])
-        
+
     def test_senders_and_targets(self):
         """
         Senders and targets for weight recorder works as GIDCollection and list
@@ -401,14 +401,14 @@ class TestGIDCollection(unittest.TestCase):
 
         gss = nest.GetStatus(wr, "senders")[0]
         gst = nest.GetStatus(wr, "targets")[0]
-        self.assertEqual([x for x in nest.GIDCollection(gss)], [3,4])
-        self.assertEqual([x for x in nest.GIDCollection(gst)], [10,11])
+        self.assertEqual([x for x in nest.GIDCollection(gss)], [3, 4])
+        self.assertEqual([x for x in nest.GIDCollection(gst)], [10, 11])
 
         nest.SetStatus(wr, {"senders": [2, 6], "targets": [8, 9]})
         gss = nest.GetStatus(wr, "senders")[0]
         gst = nest.GetStatus(wr, "targets")[0]
-        self.assertEqual([x for x in nest.GIDCollection(gss)], [2,6])
-        self.assertEqual([x for x in nest.GIDCollection(gst)], [8,9])
+        self.assertEqual([x for x in nest.GIDCollection(gss)], [2, 6])
+        self.assertEqual([x for x in nest.GIDCollection(gst)], [8, 9])
 
 
 def suite():

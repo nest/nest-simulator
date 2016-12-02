@@ -66,10 +66,10 @@ class ErrorTestCase(unittest.TestCase):
 
         gc = nest.Create('iaf_psc_alpha', 10)
         nest.ResetKernel()
-        
+
         self.assertRaisesRegexp(
             nest.NESTError, "UnknownNode", nest.Connect, gc[8:9], gc[8:9])
-        
+
         self.assertRaisesRegexp(
             nest.NESTError, "UnknownNode", nest.GIDCollection, [99])
 

@@ -337,7 +337,8 @@ public:
   /**
    *  @note Only for internal use by SPManager.
    */
-  void sp_connect( const std::vector< index >& sources, const std::vector< index >& targets );
+  void sp_connect( const std::vector< index >& sources,
+    const std::vector< index >& targets );
 
 protected:
   using ConnBuilder::connect_;
@@ -349,7 +350,8 @@ protected:
    * @param sources nodes from which synapses can be created
    * @param targets target nodes for the newly created synapses
    */
-  void connect_( const std::vector< index >& sources, const std::vector< index >& targets );
+  void connect_( const std::vector< index >& sources,
+    const std::vector< index >& targets );
 };
 
 inline void

@@ -209,8 +209,6 @@ def SetStatus(nodes, params, val=None):
     #
     if len(nodes) == 0:
         return
-    
-    print params
 
     if val is not None and is_literal(params):
         if is_iterable(val) and not isinstance(val, (uni_str, dict)):

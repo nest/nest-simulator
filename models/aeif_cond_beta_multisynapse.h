@@ -92,14 +92,14 @@ Membrane Parameters:
   E_L        double - Leak reversal potential in mV.
   g_L        double - Leak conductance in nS.
   I_e        double - Constant external input current in pA.
-
-Spike adaptation parameters:
-  a          double - Subthreshold adaptation in nS.
-  b          double - Spike-triggered adaptation in pA.
   Delta_T    double - Slope factor in mV
-  tau_w      double - Adaptation time constant in ms
   V_th       double - Spike initiation threshold in mV
   V_peak     double - Spike detection threshold in mV.
+
+Adaptation parameters:
+  a          double - Subthreshold adaptation in nS.
+  b          double - Spike-triggered adaptation in pA.
+  tau_w      double - Adaptation time constant in ms
 
 Synaptic parameters
   E_rev      double vector - Reversal potential in mV.

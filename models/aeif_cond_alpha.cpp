@@ -413,7 +413,7 @@ nest::aeif_cond_alpha::init_buffers_()
   B_.sys_.jacobian = NULL;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
-  B_.sys_.function = aeif_psc_alpha_dynamics;
+  B_.sys_.function = aeif_cond_alpha_dynamics;
 
   B_.I_stim_ = 0.0;
 }

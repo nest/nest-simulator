@@ -87,15 +87,20 @@ nest::aeif_psc_alpha_dynamics( double,
   const nest::aeif_psc_alpha& node =
     *( reinterpret_cast< nest::aeif_psc_alpha* >( pnode ) );
 
+  const bool is_refractory = node.S_.r_ > 0;
+
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
 
-  // shorthand for state variables
+  // Clamp membrane potential to V_reset while refractory, otherwise bound
+  // it to V_peak. Do not use V_.V_peak_ here, since that is set to V_th if
+  // Delta_T == 0.
   const double& V =
-    std::min( y[ S::V_M ], node.P_.V_peak_ ); // enforce upper limit on V_m
+    is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_peak_ );
+  // shorthand for the other state variables
   const double& dI_syn_ex = y[ S::DI_EXC ];
   const double& I_syn_ex = y[ S::I_EXC ];
   const double& dI_syn_in = y[ S::DI_INH ];
@@ -109,7 +114,7 @@ nest::aeif_psc_alpha_dynamics( double,
 
   // dv/dt
   f[ S::V_M ] =
-    ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn_ex - I_syn_in - w
+    is_refractory ? 0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn_ex - I_syn_in - w
       + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::DI_EXC ] = -dI_syn_ex / node.P_.tau_syn_ex;
@@ -444,9 +449,6 @@ nest::aeif_psc_alpha::update( Time const& origin,
   {
     double t = 0.0;
 
-    if ( S_.r_ > 0 )
-      --S_.r_;
-
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
     // gsl_odeiv_evolve_apply performs only a single numerical
@@ -487,13 +489,24 @@ nest::aeif_psc_alpha::update( Time const& origin,
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
-        S_.r_ = V_.refractory_counts_;
+        
+        // initialize refractory steps, adding 1 to compensate for immediate
+        // subtraction after the while loop
+        S_.r_ = V_.refractory_counts_ + 1;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
         kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
+
+    // decrement refractory count
+    if ( S_.r_ > 0 )
+    {
+      --S_.r_;
+    }
+
+    // apply spikes
     S_.y_[ State_::DI_EXC ] += B_.spike_exc_.get_value( lag ) * V_.i0_ex_;
     S_.y_[ State_::DI_INH ] += B_.spike_inh_.get_value( lag ) * V_.i0_in_;
 

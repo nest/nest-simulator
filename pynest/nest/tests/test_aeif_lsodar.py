@@ -245,7 +245,9 @@ class AEIFTestCase(unittest.TestCase):
         '''
         for model, di_rel_diff in iter(rel_diff.items()):
             for var, diff in iter(di_rel_diff.items()):
-                self.assertTrue(diff < di_tol[model][var])
+                self.assertTrue(diff < di_tol[model][var],
+                                "{} failed test: {} > {}.".format(
+                                    model, diff, di_tol[model][var]))
 
     def test_closeness_nest_lsodar(self):
         '''

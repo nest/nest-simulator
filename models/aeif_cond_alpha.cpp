@@ -116,9 +116,10 @@ nest::aeif_cond_alpha_dynamics( double,
         * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] =
-    is_refractory ? 0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike
-    - I_syn_exc - I_syn_inh - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = is_refractory
+    ? 0
+    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - I_syn_exc - I_syn_inh - w
+        + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::DG_EXC ] = -dg_ex / node.P_.tau_syn_ex;
   // Synaptic Conductance (nS)
@@ -499,7 +500,7 @@ nest::aeif_cond_alpha::update( Time const& origin,
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
-        
+
         // initialize refractory steps, adding 1 to compensate for immediate
         // subtraction after the while loop
         S_.r_ = V_.refractory_counts_ + 1;

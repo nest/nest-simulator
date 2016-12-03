@@ -91,8 +91,6 @@ nest::aeif_cond_exp_dynamics( double,
   const nest::aeif_cond_exp& node =
     *( reinterpret_cast< nest::aeif_cond_exp* >( pnode ) );
 
-  const bool is_refractory = node.S_.r_ > 0;
-
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
@@ -102,8 +100,7 @@ nest::aeif_cond_exp_dynamics( double,
   // Clamp membrane potential to V_reset while refractory, otherwise bound
   // it to V_peak. Do not use V_.V_peak_ here, since that is set to V_th if
   // Delta_T == 0.
-  const double& V =
-    is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_peak_ );
+  const double& V = std::min( y[ S::V_M ], node.P_.V_peak_ );
   // shorthand for the other state variables
   const double& g_ex = y[ S::G_EXC ];
   const double& g_in = y[ S::G_INH ];
@@ -118,10 +115,9 @@ nest::aeif_cond_exp_dynamics( double,
         * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] = is_refractory
-    ? 0
-    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - I_syn_exc - I_syn_inh - w
-        + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] =
+    ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - I_syn_exc - I_syn_inh - w
+      + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::G_EXC ] = -g_ex / node.P_.tau_syn_ex; // Synaptic Conductance (nS)
 
@@ -482,8 +478,10 @@ nest::aeif_cond_exp::update( const Time& origin,
 
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
-      if ( S_.r_ > 0 )
+      if ( S_.r_ > 0 && S_.r_ <= V_.refractory_counts_ )
+      {
         S_.y_[ State_::V_M ] = P_.V_reset_;
+      }
       else if ( S_.y_[ State_::V_M ] >= V_.V_peak )
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;

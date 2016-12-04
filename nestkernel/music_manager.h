@@ -138,6 +138,10 @@ public:
     int channel,
     nest::Node* mp );
 
+  void register_music_cont_out_port( std::string portname,
+    std::vector< MUSIC::GlobalIndex >& music_index_map,
+	int max_buffered);
+
   /**
    * Set the acceptable latency (latency) for a music input port (portname).
    */
@@ -164,6 +168,36 @@ public:
     int max_buffered;
   };
 
+  struct MusicContPortData
+  {
+    MusicContPortData( unsigned long channels, std::vector< MUSIC::GlobalIndex >& index_map, int m )
+      : data( channels )
+	  , index_map( index_map )
+      , max_buffered( m )
+    {
+    }
+
+    MusicContPortData()
+	  : data()
+	  , index_map()
+	  , max_buffered( 1 )
+    {
+    }
+	std::vector< double > data;
+	std::vector< MUSIC::GlobalIndex > index_map;
+    int max_buffered;
+  };
+
+  std::vector< double >* get_music_cont_out_buffer( std::string port_name );
+
+  /**
+   * The mapping between MUSIC continous output ports identified by portname
+   * and the corresponding port variables and parameters.
+   * @see register_music_in_port()
+   * @see unregister_music_in_port()
+   */
+  std::map< std::string, MusicContPortData > music_cont_out_portlist_;
+
   /**
    * The mapping between MUSIC input ports identified by portname
    * and the corresponding port variables and parameters.
@@ -188,11 +222,14 @@ public:
    */
   std::map< std::string, MusicEventHandler > music_in_portmap_;
 
+
   /**
    * Publish all MUSIC input ports that were registered using
    * Network::register_music_event_in_proxy().
    */
   void publish_music_in_ports_();
+
+  void publish_music_cont_out_ports_();
 
   /**
    * Call update() for each of the registered MUSIC event handlers

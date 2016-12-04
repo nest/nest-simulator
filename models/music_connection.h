@@ -1,5 +1,5 @@
 /*
- *  static_connection.h
+ *  music_connection.h
  *
  *  This file is part of NEST.
  *
@@ -39,11 +39,11 @@
   SeeAlso: synapsedict, tsodyks_synapse, stdp_synapse
 */
 
-#ifndef STATICCONNECTION_H
-#define STATICCONNECTION_H
+#ifndef MUSIC_CONNECTION_H
+#define MUSIC_CONNECTION_H
 
 // Includes from nestkernel:
-#include "connection.h"
+#include "static_connection.h"
 
 namespace nest
 {
@@ -56,24 +56,23 @@ namespace nest
 
 
 template < typename targetidentifierT >
-class StaticConnection : public Connection< targetidentifierT >
+class MusicConnection: public StaticConnection< targetidentifierT >
 {
-protected:
-  double weight_;
+  long music_channel_;
 
 public:
-  // this line determines which common properties to use
+  /* // this line determines which common properties to use */
   typedef CommonSynapseProperties CommonPropertiesType;
 
-  typedef Connection< targetidentifierT > ConnectionBase;
+  typedef StaticConnection< targetidentifierT > StaticConnectionBase;
 
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  StaticConnection()
-    : ConnectionBase()
-    , weight_( 1.0 )
+  MusicConnection()
+    : StaticConnectionBase()
+    , music_channel_( 0 )
   {
   }
 
@@ -81,9 +80,9 @@ public:
    * Copy constructor from a property object.
    * Needs to be defined properly in order for GenericConnector to work.
    */
-  StaticConnection( const StaticConnection& rhs )
-    : ConnectionBase( rhs )
-    , weight_( rhs.weight_ )
+  MusicConnection( const MusicConnection& rhs )
+    : StaticConnectionBase( rhs )
+    , music_channel_( rhs.music_channel_ )
   {
   }
 
@@ -91,111 +90,43 @@ public:
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
   // they are not automatically found in the base class.
-  using ConnectionBase::get_delay_steps;
-  using ConnectionBase::get_rport;
-  using ConnectionBase::get_target;
-
-
-  class ConnTestDummyNode : public ConnTestDummyNodeBase
-  {
-  public:
-    // Ensure proper overriding of overloaded virtual functions.
-    // Return values from functions are ignored.
-    using ConnTestDummyNodeBase::handles_test_event;
-    port
-    handles_test_event( SpikeEvent&, rport )
-    {
-      return invalid_port_;
-    }
-    port
-    handles_test_event( RateEvent&, rport )
-    {
-      return invalid_port_;
-    }
-    port
-    handles_test_event( DataLoggingRequest&, rport )
-    {
-      return invalid_port_;
-    }
-    port
-    handles_test_event( CurrentEvent&, rport )
-    {
-      return invalid_port_;
-    }
-    port
-    handles_test_event( ConductanceEvent&, rport )
-    {
-      return invalid_port_;
-    }
-    port
-    handles_test_event( DoubleDataEvent&, rport )
-    {
-      return invalid_port_;
-    }
-    port
-    handles_test_event( DSSpikeEvent&, rport )
-    {
-      return invalid_port_;
-    }
-    port
-    handles_test_event( DSCurrentEvent&, rport )
-    {
-      return invalid_port_;
-    }
-  };
-
-  void
-  check_connection( Node& s,
-    Node& t,
-    rport receptor_type,
-    double,
-    const CommonPropertiesType& )
-  {
-    ConnTestDummyNode dummy_target;
-    ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
-  }
-
-  void
-  send( Event& e, thread t, double, const CommonSynapseProperties& )
-  {
-    e.set_weight( weight_ );
-    e.set_delay( get_delay_steps() );
-    e.set_receiver( *get_target( t ) );
-    e.set_rport( get_rport() );
-    e();
-  }
+  using StaticConnectionBase::get_delay_steps;
+  using StaticConnectionBase::get_rport;
+  using StaticConnectionBase::get_target;
+  using StaticConnectionBase::set_weight;
+  using StaticConnectionBase::check_connection;
+  using StaticConnectionBase::send;
 
   void get_status( DictionaryDatum& d ) const;
 
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   void
-  set_weight( double w )
+  set_music_channel( long music_channel )
   {
-    weight_ = w;
+	music_channel_ = music_channel;
   }
-
 };
 
 template < typename targetidentifierT >
 void
-StaticConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+MusicConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
 
-  ConnectionBase::get_status( d );
-  def< double >( d, names::weight, weight_ );
+  StaticConnectionBase::get_status( d );
+  def< long >( d, names::music_channel, music_channel_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-StaticConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
+MusicConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectorModel& cm )
 {
-  ConnectionBase::set_status( d, cm );
-  updateValue< double >( d, names::weight, weight_ );
+  StaticConnectionBase::set_status( d, cm );
+  updateValue< long >( d, names::music_channel, music_channel_ );
 }
 
 } // namespace
 
-#endif /* #ifndef STATICCONNECTION_H */
+#endif /* #ifndef MUSIC_CONNECTION */

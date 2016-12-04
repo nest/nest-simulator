@@ -248,6 +248,7 @@ extern const Name linear;            //!< Parameter for MSP growth curves
 extern const Name local;             //!< Node parameter
 extern const Name local_id;          //!< Node
 
+extern const Name max_buffered; //!< MUSIC-related
 extern const Name make_symmetric; //!< Connectivity-related
 extern const Name MAXERR; //!< Largest permissible error for adaptive stepsize
                           //!< (Brette & Gerstner 2005)
@@ -257,6 +258,7 @@ extern const Name model;  //!< Node parameter
 extern const Name mother_rng;    //!< Specific to mip_generator
 extern const Name mother_seed;   //!< Specific to mip_generator
 extern const Name multapses;     //!< Connectivity-related
+extern const Name music; //!< MUSIC-related
 extern const Name music_channel; //!< Parameters for MUSIC devices
 
 extern const Name
@@ -420,6 +422,7 @@ extern const Name time_in_steps;   //!< Recorder parameter
 extern const Name times;           //!< Recorder parameter
 extern const Name to_accumulator;  //!< Recorder parameter
 extern const Name to_file;         //!< Recorder parameter
+extern const Name to_music;
 extern const Name to_memory;       //!< Recorder parameter
 extern const Name to_screen;       //!< Recorder parameter
 extern const Name Tstart;          //!< Specific to correlation and

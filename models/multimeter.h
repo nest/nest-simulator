@@ -339,8 +339,10 @@ nest::Multimeter::set_status( const DictionaryDatum& d )
   if ( updateValue< bool >( d, names::frozen, freeze ) && freeze )
     throw BadProperty( "Multimeter cannot be frozen." );
 
+
   Parameters_ ptmp = P_;
   ptmp.set( d, B_ );
+
 
   // Set properties in device. As a side effect, this will clear data_,
   // if /clear_events set in d

@@ -150,10 +150,6 @@ void
 GenericConnectorModel< ConnectionT >::set_status( const DictionaryDatum& d )
 {
   updateValue< long >( d, names::receptor_type, receptor_type_ );
-#ifdef HAVE_MUSIC
-  // We allow music_channel as alias for receptor_type during connection setup
-  updateValue< long >( d, names::music_channel, receptor_type_ );
-#endif
 
   // If the parameter dict d contains /delay, this should set the delay
   // on the default connection, but not affect the actual min/max_delay
@@ -337,10 +333,6 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   // receptor type. We must not change the receptor_type_ data member, because
   // that represents the *default* value. See #921.
   rport actual_receptor_type = receptor_type_;
-#ifdef HAVE_MUSIC
-  // We allow music_channel as alias for receptor_type during connection setup
-  updateValue< long >( p, names::music_channel, actual_receptor_type );
-#endif
   updateValue< long >( p, names::receptor_type, actual_receptor_type );
 
   return add_connection( src, tgt, conn, syn_id, c, actual_receptor_type );

@@ -187,6 +187,7 @@ const Name linear( "linear" );
 const Name local( "local" );
 const Name local_id( "local_id" );
 
+const Name max_buffered( "max_buffered" );
 const Name make_symmetric( "make_symmetric" );
 const Name MAXERR( "MAXERR" );
 const Name mean( "mean" );
@@ -195,6 +196,7 @@ const Name model( "model" );
 const Name mother_rng( "mother_rng" );
 const Name mother_seed( "mother_seed" );
 const Name multapses( "multapses" );
+const Name music( "music" );
 const Name music_channel( "music_channel" );
 
 const Name n( "n" );
@@ -332,6 +334,7 @@ const Name time_in_steps( "time_in_steps" );
 const Name times( "times" );
 const Name to_accumulator( "to_accumulator" );
 const Name to_file( "to_file" );
+const Name to_music( "to_music" );
 const Name to_memory( "to_memory" );
 const Name to_screen( "to_screen" );
 const Name Tstart( "Tstart" );

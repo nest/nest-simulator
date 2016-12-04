@@ -528,24 +528,17 @@ ModelManager::memory_info() const
 void
 ModelManager::create_secondary_events_prototypes()
 {
-  if ( static_cast< thread >( secondary_events_prototypes_.size() )
-    < kernel().vp_manager.get_num_threads() )
+  delete_secondary_events_prototypes();
+  secondary_events_prototypes_.resize( kernel().vp_manager.get_num_threads(), NULL );
+
+  for ( thread tid = 0; tid < static_cast< thread >( secondary_events_prototypes_.size() ); ++tid )
   {
-    delete_secondary_events_prototypes();
-    std::vector< SecondaryEvent* > prototype;
-    prototype.resize( secondary_connector_models_.size(), NULL );
-    secondary_events_prototypes_.resize(
-      kernel().vp_manager.get_num_threads(), prototype );
-
-
-    for ( size_t i = 0; i < secondary_connector_models_.size(); i++ )
+    secondary_events_prototypes_[ tid ] = new std::map< synindex, SecondaryEvent* >;
+    for ( synindex syn_id = 0; syn_id < prototypes_[ tid ].size(); ++syn_id )
     {
-      if ( secondary_connector_models_[ i ] != NULL )
+      if ( not prototypes_[ tid ][ syn_id ]->is_primary() )
       {
-        prototype = secondary_connector_models_[ i ]->create_event(
-          kernel().vp_manager.get_num_threads() );
-        for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
-          secondary_events_prototypes_[ j ][ i ] = prototype[ j ];
+        (*secondary_events_prototypes_[ tid ]).insert( std::pair< synindex, SecondaryEvent* >( syn_id, prototypes_[ tid ][ syn_id ]->create_event( 1 )[ 0 ] ) );
       }
     }
   }

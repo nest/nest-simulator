@@ -1653,6 +1653,7 @@ bool
 nest::ConnectionManager::deliver_secondary_events( const thread tid,
   std::vector< unsigned int >& recv_buffer )
 {
+  const Time stamp = kernel().simulation_manager.get_slice_origin() + Time::step( 1 );
   for ( synindex syn_index = 0;
         syn_index < ( *secondary_recv_buffer_pos_[ tid ] ).size();
         ++syn_index )
@@ -1669,7 +1670,7 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
         std::vector< unsigned int >::iterator readpos = recv_buffer.begin()
           + ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] )[ lcid ];
         prototype << readpos;
-        prototype.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
+        prototype.set_stamp( stamp );
         ( *connections_5g_[ tid ] )
           .send( tid,
             syn_index,

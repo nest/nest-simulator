@@ -684,7 +684,7 @@ nest::hh_psc_alpha_gap::handle( GapJunctionEvent& e )
   {
     B_.interpolation_coefficients[ i ] +=
       e.get_weight() * e.get_coeffvalue( it );
-    i++;
+    ++i;
   }
 }
 

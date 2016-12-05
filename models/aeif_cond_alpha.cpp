@@ -87,6 +87,9 @@ nest::aeif_cond_alpha_dynamics( double,
   const nest::aeif_cond_alpha& node =
     *( reinterpret_cast< nest::aeif_cond_alpha* >( pnode ) );
 
+  const bool is_refractory =
+    ( node.S_.r_ > 0 && node.S_.r_ <= node.V_.refractory_counts_ );
+
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
@@ -96,7 +99,8 @@ nest::aeif_cond_alpha_dynamics( double,
   // Clamp membrane potential to V_reset while refractory, otherwise bound
   // it to V_peak. Do not use V_.V_peak_ here, since that is set to V_th if
   // Delta_T == 0.
-  const double& V = std::min( y[ S::V_M ], node.P_.V_peak_ );
+  const double& V =
+    is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_peak_ );
   // shorthand for the other state variables
   const double& dg_ex = y[ S::DG_EXC ];
   const double& g_ex = y[ S::G_EXC ];
@@ -113,9 +117,10 @@ nest::aeif_cond_alpha_dynamics( double,
         * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] =
-    ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - I_syn_exc - I_syn_inh - w
-      + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = is_refractory
+    ? 0.
+    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - I_syn_exc - I_syn_inh - w
+        + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::DG_EXC ] = -dg_ex / node.P_.tau_syn_ex;
   // Synaptic Conductance (nS)

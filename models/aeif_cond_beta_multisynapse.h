@@ -51,7 +51,7 @@
 
  Description:
 
- aeif_cond_beta_multisynapse is a conductance based adaptive exponential
+ aeif_cond_beta_multisynapse is a conductance-based adaptive exponential
  integrate-and-fire neuron model. It allows an arbitrary number of synaptic
  rise time and decay time constants. Synaptic conductance is modeled by a
  beta function, as described by A. Roth and M.C.W. van Rossum

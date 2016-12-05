@@ -633,9 +633,13 @@ aeif_cond_beta_multisynapse::update( Time const& origin,
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
 
-        // initialize refractory steps, adding 1 to compensate for immediate
-        // subtraction after the while loop
-        S_.r_ = V_.refractory_counts_ + 1;
+        /* Initialize refractory step counter.
+         * - We need to add 1 to compensate for count-down immediately after
+         *   while loop.
+         * - If neuron has no refractory time, set to 0 to avoid refractory
+         *   artifact inside while loop.
+         */
+        S_.r_ = V_.refractory_counts_ > 0 ? V_.refractory_counts_ + 1 : 0;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
@@ -682,7 +686,7 @@ aeif_cond_beta_multisynapse::handle( SpikeEvent& e )
   if ( e.get_weight() < 0 )
   {
     throw BadProperty(
-      "Synaptic weights for conductance based models "
+      "Synaptic weights for conductance-based multisynapse models "
       "must be positive." );
   }
   assert( e.get_delay() > 0 );

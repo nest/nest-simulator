@@ -222,10 +222,10 @@ SPManager::disconnect_single( index sgid,
   if ( syn->known( names::pre_synaptic_element )
     && syn->known( names::post_synaptic_element ) )
   {
-	GIDCollectionPTR sources( new GIDCollectionPrimitive() );
-	GIDCollectionPTR targets( new GIDCollectionPrimitive() );
+    GIDCollectionPTR sources( new GIDCollectionPrimitive() );
+    GIDCollectionPTR targets( new GIDCollectionPrimitive() );
 
-	DictionaryDatum* conn_spec = new DictionaryDatum( new Dictionary() );
+    DictionaryDatum* conn_spec = new DictionaryDatum( new Dictionary() );
     SPBuilder* cb = new SPBuilder( sources, targets, *conn_spec, syn );
     cb->change_connected_synaptic_elements(
       sgid, target->get_gid(), target->get_thread(), -1 );

@@ -1539,7 +1539,8 @@ nest::SPBuilder::update_delay( delay& d ) const
 }
 
 void
-nest::SPBuilder::sp_connect( const std::vector< index >& sources, const std::vector< index >& targets )
+nest::SPBuilder::sp_connect( const std::vector< index >& sources,
+  const std::vector< index >& targets )
 {
   connect_( sources, targets );
 
@@ -1561,12 +1562,13 @@ void
 nest::SPBuilder::connect_( GIDCollectionPTR sources, GIDCollectionPTR targets )
 {
   throw NotImplemented(
-	    "Connection without structural plasticity is not possible for this "
-	    "connection builder" );
+    "Connection without structural plasticity is not possible for this "
+    "connection builder" );
 }
 
 void
-nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vector< index >& targets )
+nest::SPBuilder::connect_( const std::vector< index >& sources,
+  const std::vector< index >& targets )
 {
   // Code copied and adapted from OneToOneBuilder::connect_()
   // make sure that target and source population have the same size
@@ -1598,14 +1600,12 @@ nest::SPBuilder::connect_( const std::vector< index >& sources, const std::vecto
         if ( *sgid == *tgid and not autapses_ )
           continue;
 
-        if ( !change_connected_synaptic_elements(
-               *sgid, *tgid, tid, 1 ) )
+        if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
         {
           skip_conn_parameter_( tid );
           continue;
         }
-        Node* const target =
-          kernel().node_manager.get_node( *tgid, tid );
+        Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
         single_connect_( *sgid, *target, target_thread, rng );

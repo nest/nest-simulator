@@ -139,8 +139,8 @@ private:
 
   struct Parameters_
   {
-	GIDCollectionDatum senders_;
-	GIDCollectionDatum targets_;
+    GIDCollectionDatum senders_;
+    GIDCollectionDatum targets_;
 
     Parameters_();
     Parameters_( const Parameters_& );

@@ -74,7 +74,8 @@ class TestDisconnect(unittest.TestCase):
                 src_neurons = neurons[:5]
                 tgt_neurons = neurons[5:]
 
-                conns = nest.GetConnections(src_neurons, tgt_neurons, syn_model)
+                conns = nest.GetConnections(src_neurons, tgt_neurons,
+                                            syn_model)
                 assert conns
 
                 conndictionary = {'rule': 'all_to_all'}
@@ -128,7 +129,8 @@ class TestDisconnect(unittest.TestCase):
                 src_neurons = neurons[:5]
                 tgt_neurons = neurons[5:]
 
-                conns = nest.GetConnections(src_neurons, tgt_neurons, syn_model)
+                conns = nest.GetConnections(src_neurons, tgt_neurons,
+                                            syn_model)
                 assert conns
 
                 conndictionary = {'rule': 'one_to_one'}
@@ -159,7 +161,8 @@ class TestDisconnect(unittest.TestCase):
                 src_neurons = neurons[:5]
                 tgt_neurons = neurons[5:]
 
-                conns = nest.GetConnections(src_neurons, tgt_neurons, syn_model)
+                conns = nest.GetConnections(src_neurons, tgt_neurons,
+                                            syn_model)
                 assert len(conns) == 25
 
                 conndictionary = {'rule': 'one_to_one'}
@@ -171,7 +174,8 @@ class TestDisconnect(unittest.TestCase):
                     syndictionary
                 )
 
-                conns = nest.GetConnections(src_neurons, tgt_neurons, syn_model)
+                conns = nest.GetConnections(src_neurons, tgt_neurons,
+                                            syn_model)
                 assert len(conns) == 20
 
     def test_single_synapse_deletion_sp(self):

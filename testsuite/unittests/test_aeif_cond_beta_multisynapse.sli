@@ -79,8 +79,8 @@ if
 /a 		4. def
 /b 		80.5 def
 /E_rev		[20.0 0.0 -85.0] def % synaptic reversal potentials  
-/taus_decay     [40.0 20.0 30.0] def % synaptic decay times  
-/taus_rise	[20.0 10.0 5.0] def % synaptic rise times  
+/tau_decay     [40.0 20.0 30.0] def % synaptic decay times  
+/tau_rise	[20.0 10.0 5.0] def % synaptic rise times  
 /weights	[0.1 0.2 0.15] def % synaptic weights
 /delays     	[1. 100. 130.] def % ms - synaptic delays
 /spike_time 	10. def
@@ -102,8 +102,8 @@ vm << /withtime true
 % Creates one aeif_conf_beta_multisynapse neuron
 /aeif_cond_beta_multisynapse Create /multisynapse_neuron Set
 multisynapse_neuron << /E_rev E_rev
-                       /taus_decay taus_decay
-                       /taus_rise taus_rise
+                       /tau_decay tau_decay
+                       /tau_rise tau_rise
                        /V_peak V_peak
                        /a a
                        /b b
@@ -142,7 +142,7 @@ d /times get cva /ts Set % get times
 {
 	Vrest sub /V_cur exch def % subtracts resting potential from V 
 	dt mul /t_cur exch def % current time in ms
-	[E_rev taus_rise taus_decay weights delays] % loop on connections
+	[E_rev tau_rise tau_decay weights delays] % loop on connections
 	{
 		/delay exch def % synaptic delay
 		/W exch def % synaptic weight

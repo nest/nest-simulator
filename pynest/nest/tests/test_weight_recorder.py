@@ -265,7 +265,7 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("aeif_cond_alpha_multisynapse", 5,
-                           {"V_th": -69.9, 'taus_syn': [20., 30.]})
+                           {"V_th": -69.9, 'tau_syn': [20., 30.]})
 
         nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec_0")
         nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec_1")

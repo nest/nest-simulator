@@ -229,17 +229,9 @@ SourceTable::compute_send_recv_count_secondary_in_int_per_rank() const
       }
     }
   }
-  for ( std::vector< size_t >::const_iterator it = count_per_rank.begin();
-        it != count_per_rank.end();
-        ++it )
-  {
-    std::cout << ( *it ) << ", ";
-  }
-  std::cout << std::endl;
   std::vector< size_t > max_count(
     1, *std::max_element( count_per_rank.begin(), count_per_rank.end() ) );
   kernel().mpi_manager.communicate_Allreduce_max_in_place( max_count );
-  std::cout << "max " << max_count[ 0 ] << std::endl;
   return max_count[ 0 ];
 }
 

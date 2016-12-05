@@ -86,13 +86,11 @@ TargetTable::add_target( const thread tid, const TargetData& target_data )
 {
   if ( target_data.is_primary() )
   {
-    std::cout << "adding primary" << std::endl;
     ( *targets_[ tid ] )[ target_data.get_lid() ].push_back(
       target_data.get_target() );
   }
   else
   {
-    std::cout << "adding secondary " << std::endl;
     const size_t send_buffer_pos =
       reinterpret_cast< const SecondaryTargetData* >( &target_data )
         ->get_send_buffer_pos();

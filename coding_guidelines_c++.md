@@ -753,98 +753,16 @@ nest::Stopwatch::Stopwatch()
 }
 ```
 
-## .clang-format File
+## clang-format configuration file
 
-Copy as `.clang-format` file into directory, in which you execute the `clang-format` command.
+The file `.clang-format` is available in the top level source
+directory of NEST. It has to reside in the directory from which
+`clang-format` is run and does not have to be installed.
 
-```
-BasedOnStyle: WebKit
+## Vera++ profile
 
-AccessModifierOffset: -2
-AlignEscapedNewlinesLeft: true
-AlignTrailingComments: true
-AllowAllParametersOfDeclarationOnNextLine: false
-AllowShortBlocksOnASingleLine: false
-AllowShortCaseLabelsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: None
-AllowShortIfStatementsOnASingleLine: false
-AllowShortLoopsOnASingleLine: false
-AlwaysBreakAfterDefinitionReturnType: true
-AlwaysBreakBeforeMultilineStrings: true
-AlwaysBreakTemplateDeclarations: true
-
-BinPackArguments: false
-BinPackParameters: false
-BreakBeforeBinaryOperators: NonAssignment
-BreakBeforeBraces: Allman
-BreakBeforeTernaryOperators: true
-BreakConstructorInitializersBeforeComma: true
-
-ColumnLimit: 80
-ConstructorInitializerAllOnOneLineOrOnePerLine: false
-ConstructorInitializerIndentWidth: 2
-ContinuationIndentWidth: 2
-
-DerivePointerAlignment: false
-
-ExperimentalAutoDetectBinPacking: false
-
-IndentCaseLabels: false
-IndentWidth: 2
-IndentWrappedFunctionNames: false
-
-KeepEmptyLinesAtTheStartOfBlocks: true
-
-Language: Cpp
-
-MaxEmptyLinesToKeep: 2
-
-NamespaceIndentation: None
-
-PointerAlignment: Left
-
-SpaceAfterCStyleCast: true
-SpaceBeforeAssignmentOperators: true
-SpaceBeforeParens: ControlStatements
-SpaceInEmptyParentheses: false
-SpacesBeforeTrailingComments: 1
-SpacesInAngles: true
-SpacesInCStyleCastParentheses: true
-SpacesInParentheses: true
-SpacesInSquareBrackets: true
-Standard: Cpp03
-
-UseTab: false
-```
-
-## Vera++ profile nest
-
-Copy as `nest` into `<vera++ home>/lib/vera++/profile`.
-
-```tcl
-#!/usr/bin/tclsh
-# This profile includes all the rules for checking NEST
-
-set rules {
-  F001
-  F002
-  L001
-  L002
-  L003
-  L005
-  L006
-  T001
-  T002
-  T004
-  T005
-  T006
-  T007
-  T010
-  T011
-  T012
-  T013
-  T017
-  T018
-  T019
-}
-```
+The Vera++ profile required for testing NEST is available as
+`extras/vera++.profile`. To make it available, copy this file with the
+new name `nest` to `/usr/lib/vera++/profiles`. The exact path might
+differ depending on how you installed Vera++. Please refer to the
+documentation of Vera++ in that case.

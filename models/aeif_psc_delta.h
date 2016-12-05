@@ -67,7 +67,8 @@ tau_w * dw/dt= a(V-E_L) -W
 I_x(t) = J_x Sum_k delta(t - t^x_k),
 
 where x = (ex, in), delta is the dirac delta function and k indexes incoming
-spikes.
+spikes. This is implemented such that V_m will be incremented/decremented by
+the value of J_x after a spike.
 
 Parameters:
 The following parameters can be set in the status dictionary.

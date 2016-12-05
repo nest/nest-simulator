@@ -95,7 +95,11 @@ nest::aeif_psc_delta_dynamics( double,
   // good compiler will optimize the verbosity away ...
 
   // shorthand for state variables
-  const double V = std::min( y[ S::V_M ], node.P_.V_peak_ ); // bind V to the
+  const bool is_refractory = node.S_.r_ > 0;
+
+  const double V = is_refractory
+    ? node.P_.V_reset_
+    : std::min( y[ S::V_M ], node.P_.V_peak_ ); // bind V to the
   // USER DEFINED V_peak_ value in Parameters.
   const double& w = y[ S::W ];
 
@@ -103,7 +107,9 @@ nest::aeif_psc_delta_dynamics( double,
       * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
 
   // dv/dt
-  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + node.P_.I_e
+  f[ S::V_M ] = is_refractory
+          ? 0.0
+          : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + node.P_.I_e
                   + node.B_.I_stim_ ) / node.P_.C_m;
 
   // Adaptation current w.
@@ -410,9 +416,6 @@ nest::aeif_psc_delta::update( const Time& origin,
   {
     double t = 0.0;
 
-    if ( S_.r_ > 0 )
-      --S_.r_;
-
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
     // gsl_odeiv_evolve_apply performs only a single numerical
@@ -444,6 +447,7 @@ nest::aeif_psc_delta::update( const Time& origin,
       {
         throw NumericalInstability( get_name() );
       }
+
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
       if ( S_.r_ == 0 )
@@ -462,6 +466,8 @@ nest::aeif_psc_delta::update( const Time& origin,
       }
       else // neuron is absolute refractory
       {
+        S_.y_[ State_::V_M ] = P_.V_reset_; // clamp it to V_reset
+
         // read spikes from buffer and accumulate them, discounting
         // for decay until end of refractory period
         if ( P_.with_refr_input_ )
@@ -472,25 +478,23 @@ nest::aeif_psc_delta::update( const Time& origin,
         else
         {
           B_.spikes_.get_value( lag ); // clear buffer entry, ignore spike
-
-          --S_.r_;
         }
       }
-      if ( S_.r_ > 0 )
+      if ( S_.r_ == 0 and S_.y_[ State_::V_M ] >= V_.V_peak_ )
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
-      }
-      else if ( S_.y_[ State_::V_M ] >= V_.V_peak_ )
-      {
-        S_.y_[ State_::V_M ] = P_.V_reset_;
+        // add 1 to compensate for count-down right after loop
+        S_.r_ = V_.refractory_counts_ > 0 ? V_.refractory_counts_ + 1 : 0;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
-        S_.r_ = V_.refractory_counts_;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
         kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
+
+    if ( S_.r_ > 0 )
+      --S_.r_;
 
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );

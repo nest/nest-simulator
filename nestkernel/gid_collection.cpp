@@ -360,9 +360,24 @@ GIDCollectionPrimitive::GIDCollectionPrimitive::slice( size_t start,
 void
 GIDCollectionPrimitive::print_me( std::ostream& out ) const
 {
-  out << "[[" << this << " model=" << model_id_ << ", size=" << size() << " ";
-  out << "(" << first_ << ".." << last_ << ")";
-  out << "]]";
+  out << "[[" << this
+      << " model=" << kernel().model_manager.get_model( model_id_ )->get_name()
+      << ", size=" << size() << " ";
+  if ( size() == 1 )
+  {
+    out << "(" << first_ << ")";
+    out << "]]";
+  }
+  else if ( size() == 2 )
+  {
+    out << "(" << first_ << ", " << last_ << ")";
+    out << "]]";
+  }
+  else
+  {
+    out << "(" << first_ << ".." << last_ << ")";
+    out << "]]";
+  }
 }
 
 bool
@@ -660,7 +675,7 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
     size_t primitive_size;
     GIDPair pair;
 
-    out << "[[" << this << " size=" << size() << ": ";
+    out << "[[" << this << " step=" << step_ << " size=" << size() << ": ";
     for ( const_iterator it = begin(); it < end(); ++it )
     {
 
@@ -669,11 +684,24 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
       {
         if ( it != begin() )
         {
-          out << "[["
-              << " model=" << pair.model_id << ", size=" << primitive_size
-              << " ";
-          out << "(" << pair.gid << "..";
-          out << primitive_last << ")]]";
+          out << "\n  [["
+              << "model="
+              << kernel().model_manager.get_model( pair.model_id )->get_name()
+              << ", size=" << primitive_size << " ";
+          if ( primitive_size == 1 )
+          {
+            out << "(" << pair.gid << ")]],";
+          }
+          else if ( primitive_size == 2 )
+          {
+            out << "(" << pair.gid << ", ";
+            out << primitive_last << ")]],";
+          }
+          else
+          {
+            out << "(" << pair.gid << "..";
+            out << primitive_last << ")]],";
+          }
         }
         primitive_size = 1;
         pair = *it;
@@ -685,10 +713,24 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
       primitive_last = ( *it ).gid;
       previous_part = current_part;
     }
-    out << "[["
-        << " model=" << pair.model_id << ", size=" << primitive_size << " ";
-    out << "(" << pair.gid << "..";
-    out << primitive_last << ")]]";
+    out << "\n  [["
+        << "model="
+        << kernel().model_manager.get_model( pair.model_id )->get_name()
+        << ", size=" << primitive_size << " ";
+    if ( primitive_size == 1 )
+    {
+      out << "(" << pair.gid << ")]]";
+    }
+    else if ( primitive_size == 2 )
+    {
+      out << "(" << pair.gid << ", ";
+      out << primitive_last << ")]]";
+    }
+    else
+    {
+      out << "(" << pair.gid << "..";
+      out << primitive_last << ")]]";
+    }
     out << "]]";
   }
   else
@@ -699,7 +741,12 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
       it != parts_.end();
       ++it )
     {
+      out << "\n  ";
       it->print_me( out );
+      if ( it != ( parts_.end() - 1 ) )
+      {
+        out << ",";
+      }
     }
     out << "]]";
   }

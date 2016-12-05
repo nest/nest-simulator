@@ -71,6 +71,11 @@ class GIDPair
 public:
   index gid;
   index model_id;
+  GIDPair()
+    : gid( 0 )
+    , model_id( 0 )
+  {
+  }
 };
 
 /**

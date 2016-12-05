@@ -78,8 +78,8 @@ nest::pp_pop_psc_delta::Parameters_::Parameters_()
   , len_kernel_( 5.0 )
   , I_e_( 0.0 ) // pA
 {
-  taus_eta_.push_back( 10.0 );
-  vals_eta_.push_back( 0.0 );
+  tau_eta_.push_back( 10.0 );
+  val_eta_.push_back( 0.0 );
 }
 
 nest::pp_pop_psc_delta::State_::State_()
@@ -111,11 +111,11 @@ nest::pp_pop_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::len_kernel, len_kernel_ );
 
-  ArrayDatum taus_eta_list_ad( taus_eta_ );
-  def< ArrayDatum >( d, names::taus_eta, taus_eta_list_ad );
+  ArrayDatum tau_eta_list_ad( tau_eta_ );
+  def< ArrayDatum >( d, names::tau_eta, tau_eta_list_ad );
 
-  ArrayDatum vals_eta_list_ad( vals_eta_ );
-  def< ArrayDatum >( d, names::vals_eta, vals_eta_list_ad );
+  ArrayDatum val_eta_list_ad( val_eta_ );
+  def< ArrayDatum >( d, names::val_eta, val_eta_list_ad );
 }
 
 void
@@ -130,16 +130,16 @@ nest::pp_pop_psc_delta::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, c_m_ );
   updateValue< double >( d, names::tau_m, tau_m_ );
-  updateValue< std::vector< double > >( d, names::taus_eta, taus_eta_ );
-  updateValue< std::vector< double > >( d, names::vals_eta, vals_eta_ );
+  updateValue< std::vector< double > >( d, names::tau_eta, tau_eta_ );
+  updateValue< std::vector< double > >( d, names::val_eta, val_eta_ );
 
 
-  if ( taus_eta_.size() != vals_eta_.size() )
+  if ( tau_eta_.size() != val_eta_.size() )
     throw BadProperty( String::compose(
-      "'taus_eta' and 'vals_eta' need to have the same dimension.\nSize of "
-      "taus_eta: %1\nSize of vals_eta: %2",
-      taus_eta_.size(),
-      vals_eta_.size() ) );
+      "'tau_eta' and 'val_eta' need to have the same dimension.\nSize of "
+      "tau_eta: %1\nSize of val_eta: %2",
+      tau_eta_.size(),
+      val_eta_.size() ) );
 
   if ( c_m_ <= 0 )
     throw BadProperty( "Capacitance must be strictly positive." );
@@ -147,9 +147,9 @@ nest::pp_pop_psc_delta::Parameters_::set( const DictionaryDatum& d )
   if ( tau_m_ <= 0 )
     throw BadProperty( "The time constants must be strictly positive." );
 
-  for ( unsigned int i = 0; i < taus_eta_.size(); i++ )
+  for ( unsigned int i = 0; i < tau_eta_.size(); i++ )
   {
-    if ( taus_eta_[ i ] <= 0 )
+    if ( tau_eta_[ i ] <= 0 )
       throw BadProperty( "All time constants must be strictly positive." );
   }
 
@@ -239,10 +239,10 @@ void
 nest::pp_pop_psc_delta::calibrate()
 {
 
-  if ( P_.taus_eta_.size() == 0 )
+  if ( P_.tau_eta_.size() == 0 )
     throw BadProperty( "Time constant array should not be empty. " );
 
-  if ( P_.vals_eta_.size() == 0 )
+  if ( P_.val_eta_.size() == 0 )
     throw BadProperty( "Adaptation value array should not be empty. " );
 
   B_.logger_.init();
@@ -251,11 +251,11 @@ nest::pp_pop_psc_delta::calibrate()
   V_.rng_ = kernel().rng_manager.get_rng( get_thread() );
   V_.min_double_ = std::numeric_limits< double >::min();
 
-  double tau_eta_max = -1; // finding max of taus_eta_
+  double tau_eta_max = -1; // finding max of tau_eta_
 
-  for ( unsigned int j = 0; j < P_.taus_eta_.size(); j++ )
-    if ( P_.taus_eta_.at( j ) > tau_eta_max )
-      tau_eta_max = P_.taus_eta_.at( j );
+  for ( unsigned int j = 0; j < P_.tau_eta_.size(); j++ )
+    if ( P_.tau_eta_.at( j ) > tau_eta_max )
+      tau_eta_max = P_.tau_eta_.at( j );
 
   V_.len_eta_ = tau_eta_max * ( P_.len_kernel_ / V_.h_ );
 
@@ -280,9 +280,9 @@ nest::pp_pop_psc_delta::calibrate()
 
     for ( int j = 0; j < V_.len_eta_; j++ )
     {
-      for ( unsigned int i = 0; i < P_.taus_eta_.size(); i++ )
-        temp += std::exp( -ts[ j ] / P_.taus_eta_.at( i ) )
-          * ( -P_.vals_eta_.at( i ) );
+      for ( unsigned int i = 0; i < P_.tau_eta_.size(); i++ )
+        temp +=
+          std::exp( -ts[ j ] / P_.tau_eta_.at( i ) ) * ( -P_.val_eta_.at( i ) );
 
       V_.theta_kernel_.push_back( temp );
       V_.eta_kernel_.push_back( std::exp( temp ) - 1 );

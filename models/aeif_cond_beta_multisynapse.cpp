@@ -71,21 +71,21 @@ RecordablesMap< aeif_cond_beta_multisynapse >::create()
  * ---------------------------------------------------------------- */
 
 aeif_cond_beta_multisynapse::Parameters_::Parameters_()
-  : V_peak_( 0.0 )        // mV
-  , V_reset_( -60.0 )     // mV
-  , t_ref_( 0.0 )         // ms
-  , g_L( 30.0 )           // nS
-  , C_m( 281.0 )          // pF
-  , E_L( -70.6 )          // mV
-  , Delta_T( 2.0 )        // mV
-  , tau_w( 144.0 )        // ms
-  , a( 4.0 )              // nS
-  , b( 80.5 )             // pA
-  , V_th( -50.4 )         // mV
-  , taus_rise( 1, 2.0 )   // ms
-  , taus_decay( 1, 20.0 ) // ms
-  , E_rev( 1, 0.0 )       // mV
-  , I_e( 0.0 )            // pA
+  : V_peak_( 0.0 )       // mV
+  , V_reset_( -60.0 )    // mV
+  , t_ref_( 0.0 )        // ms
+  , g_L( 30.0 )          // nS
+  , C_m( 281.0 )         // pF
+  , E_L( -70.6 )         // mV
+  , Delta_T( 2.0 )       // mV
+  , tau_w( 144.0 )       // ms
+  , a( 4.0 )             // nS
+  , b( 80.5 )            // pA
+  , V_th( -50.4 )        // mV
+  , tau_rise( 1, 2.0 )   // ms
+  , tau_decay( 1, 20.0 ) // ms
+  , E_rev( 1, 0.0 )      // mV
+  , I_e( 0.0 )           // pA
   , gsl_error_tol( 1e-6 )
   , has_connections_( false )
 {
@@ -129,11 +129,11 @@ aeif_cond_beta_multisynapse::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_reset, V_reset_ );
   def< size_t >( d, names::n_receptors, n_receptors() );
   ArrayDatum E_rev_ad( E_rev );
-  ArrayDatum taus_rise_ad( taus_rise );
-  ArrayDatum taus_decay_ad( taus_decay );
+  ArrayDatum tau_rise_ad( tau_rise );
+  ArrayDatum tau_decay_ad( tau_decay );
   def< ArrayDatum >( d, names::E_rev, E_rev_ad );
-  def< ArrayDatum >( d, names::taus_rise, taus_rise_ad );
-  def< ArrayDatum >( d, names::taus_decay, taus_decay_ad );
+  def< ArrayDatum >( d, names::tau_rise, tau_rise_ad );
+  def< ArrayDatum >( d, names::tau_decay, tau_decay_ad );
   def< double >( d, names::a, a );
   def< double >( d, names::b, b );
   def< double >( d, names::Delta_T, Delta_T );
@@ -160,45 +160,44 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
   bool Erev_flag =
     updateValue< std::vector< double > >( d, names::E_rev, E_rev );
   bool taur_flag =
-    updateValue< std::vector< double > >( d, names::taus_rise, taus_rise );
+    updateValue< std::vector< double > >( d, names::tau_rise, tau_rise );
   bool taud_flag =
-    updateValue< std::vector< double > >( d, names::taus_decay, taus_decay );
+    updateValue< std::vector< double > >( d, names::tau_decay, tau_decay );
   if ( Erev_flag || taur_flag || taud_flag )
   { // receptor arrays have been modified
-    if ( ( E_rev.size() != old_n_receptors
-           || taus_rise.size() != old_n_receptors
-           || taus_decay.size() != old_n_receptors )
+    if ( ( E_rev.size() != old_n_receptors || tau_rise.size() != old_n_receptors
+           || tau_decay.size() != old_n_receptors )
       && ( !Erev_flag || !taur_flag || !taud_flag ) )
     {
       throw BadProperty(
         "If the number of receptor ports is changed, all three arrays "
-        "E_rev, taus_rise and taus_decay must be provided." );
+        "E_rev, tau_rise and tau_decay must be provided." );
     }
-    if ( ( E_rev.size() != taus_rise.size() )
-      || ( E_rev.size() != taus_decay.size() ) )
+    if ( ( E_rev.size() != tau_rise.size() )
+      || ( E_rev.size() != tau_decay.size() ) )
     {
       throw BadProperty(
         "The reversal potential, synaptic rise time and synaptic decay time "
         "arrays must have the same size." );
     }
-    if ( taus_rise.size() == 0 )
+    if ( tau_rise.size() == 0 )
     {
       throw BadProperty( "The neuron must have at least one port." );
     }
-    if ( taus_rise.size() < old_n_receptors && has_connections_ )
+    if ( tau_rise.size() < old_n_receptors && has_connections_ )
     {
       throw BadProperty(
         "The neuron has connections, therefore the number of ports cannot be "
         "reduced." );
     }
-    for ( size_t i = 0; i < taus_rise.size(); ++i )
+    for ( size_t i = 0; i < tau_rise.size(); ++i )
     {
-      if ( taus_rise[ i ] <= 0 || taus_decay[ i ] <= 0 )
+      if ( tau_rise[ i ] <= 0 || tau_decay[ i ] <= 0 )
       {
         throw BadProperty(
           "All synaptic time constants must be strictly positive" );
       }
-      if ( taus_decay[ i ] < taus_rise[ i ] )
+      if ( tau_decay[ i ] < tau_rise[ i ] )
       {
         throw BadProperty(
           "Synaptic rise time must be smaller than or equal to decay time." );
@@ -444,30 +443,30 @@ aeif_cond_beta_multisynapse::calibrate()
     // is computed here to check that it is != 0
     // another denominator denom2 appears in the expression of the
     // normalization factor g0
-    // Both denom1 and denom2 are null if taus_decay = taus_rise, but they
-    // can also be null if taus_decay and taus_rise are not equal but very
+    // Both denom1 and denom2 are null if tau_decay = tau_rise, but they
+    // can also be null if tau_decay and tau_rise are not equal but very
     // close to each other, due to the numerical precision limits.
     // In such case the beta function reduces to the alpha function,
     // and the normalization factor for the alpha function should be used.
-    double denom1 = P_.taus_decay[ i ] - P_.taus_rise[ i ];
+    double denom1 = P_.tau_decay[ i ] - P_.tau_rise[ i ];
     double denom2 = 0;
     if ( denom1 != 0 )
     {
       // peak time
-      const double t_p = P_.taus_decay[ i ] * P_.taus_rise[ i ]
-        * std::log( P_.taus_decay[ i ] / P_.taus_rise[ i ] ) / denom1;
+      const double t_p = P_.tau_decay[ i ] * P_.tau_rise[ i ]
+        * std::log( P_.tau_decay[ i ] / P_.tau_rise[ i ] ) / denom1;
       // another denominator is computed here to check that it is != 0
-      denom2 = std::exp( -t_p / P_.taus_decay[ i ] )
-        - std::exp( -t_p / P_.taus_rise[ i ] );
+      denom2 = std::exp( -t_p / P_.tau_decay[ i ] )
+        - std::exp( -t_p / P_.tau_rise[ i ] );
     }
     if ( denom2 == 0 ) // if rise time == decay time use alpha function
     {                  // use normalization for alpha function in this case
-      V_.g0_[ i ] = 1.0 * numerics::e / P_.taus_decay[ i ];
+      V_.g0_[ i ] = 1.0 * numerics::e / P_.tau_decay[ i ];
     }
     else // if rise time != decay time use beta function
     {
       V_.g0_[ i ] // normalization factor for conductance
-        = ( 1. / P_.taus_rise[ i ] - 1. / P_.taus_decay[ i ] ) / denom2;
+        = ( 1. / P_.tau_rise[ i ] - 1. / P_.tau_decay[ i ] ) / denom2;
     }
   }
 
@@ -699,8 +698,8 @@ aeif_cond_beta_multisynapse_dynamics( double,
   {
     const size_t j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
     // Synaptic conductance derivative dG/dt
-    f[ S::DG + j ] = -y[ S::DG + j ] / node.P_.taus_rise[ i ];
-    f[ S::G + j ] = y[ S::DG + j ] - y[ S::G + j ] / node.P_.taus_decay[ i ];
+    f[ S::DG + j ] = -y[ S::DG + j ] / node.P_.tau_rise[ i ];
+    f[ S::G + j ] = y[ S::DG + j ] - y[ S::G + j ] / node.P_.tau_decay[ i ];
   }
 
   return GSL_SUCCESS;

@@ -758,7 +758,6 @@ nest::SimulationManager::update_()
           // returns the done value over all threads
           done_p =
             kernel().event_delivery_manager.deliver_secondary_events( tid );
-          std::cout << std::endl;
 
           if ( done_p )
           {

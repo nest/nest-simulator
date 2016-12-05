@@ -1660,6 +1660,7 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
     if ( ( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] != NULL )
     {
       const synindex syn_id = get_syn_id( tid, syn_index );
+      SecondaryEvent& prototype = kernel().model_manager.get_secondary_event_prototype( syn_id, tid );
 
       for ( index lcid = 0; lcid
               < ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] ).size();
@@ -1667,17 +1668,13 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
       {
         std::vector< unsigned int >::iterator readpos = recv_buffer.begin()
           + ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] )[ lcid ];
-        kernel().model_manager.get_secondary_event_prototype( syn_id, tid )
-          << readpos;
-        kernel()
-          .model_manager.get_secondary_event_prototype( syn_id, tid )
-          .set_stamp(
-            kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
+        prototype << readpos;
+        prototype.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
         ( *connections_5g_[ tid ] )
           .send( tid,
             syn_index,
             lcid,
-            kernel().model_manager.get_secondary_event_prototype( syn_id, tid ),
+            prototype,
             kernel().model_manager.get_synapse_prototypes( tid ) );
       }
     }

@@ -263,8 +263,8 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( std::map< in
   std::vector< size_t > count_per_rank(
     kernel().mpi_manager.get_num_processes(), 0 );
   size_t i = 0;
-  for ( std::set< std::pair< index, size_t > >::const_iterator cit = unique_secondary_sources_set.cbegin();
-        cit != unique_secondary_sources_set.cend(); ++cit )
+  for ( std::set< std::pair< index, size_t > >::const_iterator cit = unique_secondary_sources_set.begin();
+        cit != unique_secondary_sources_set.end(); ++cit )
   {
     count_per_rank[ kernel().node_manager.get_process_id_of_gid( cit->first ) ] += cit->second;
     ++i;
@@ -288,8 +288,8 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( std::map< in
     buffer_position_by_rank[ i ] = i * secondary_buffer_chunk_size;
   }
 
-  for ( std::set< std::pair< index, size_t > >::const_iterator cit = unique_secondary_sources_set.cbegin();
-        cit != unique_secondary_sources_set.cend(); ++cit )
+  for ( std::set< std::pair< index, size_t > >::const_iterator cit = unique_secondary_sources_set.begin();
+        cit != unique_secondary_sources_set.end(); ++cit )
   {
     const thread target_rank = kernel().node_manager.get_process_id_of_gid( cit->first );
     gid_to_buffer_pos.insert( std::pair< index, size_t >( cit->first, buffer_position_by_rank[ target_rank ] ) );

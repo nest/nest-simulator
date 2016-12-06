@@ -821,7 +821,6 @@ nest::SimulationManager::update_()
                                                                      // end of
                                                                      // slice
       {
-        // kernel().event_delivery_manager.gather_events( true );
         sw_gather_spike_data.start();
         kernel().event_delivery_manager.gather_spike_data( tid );
         sw_gather_spike_data.stop();
@@ -886,9 +885,10 @@ nest::SimulationManager::update_()
       kernel().event_delivery_manager.sw_collocate.print( "--collocate: " );
       kernel().event_delivery_manager.sw_communicate.print( "--communicate: " );
       kernel().event_delivery_manager.sw_deliver.print( "--deliver: " );
-      kernel().event_delivery_manager.sw_send.print( "--send: " );
       sw_gather_secondary_events.print( "0] GatherSecondaryData time: " );
-      sw_deliver_secondary_events.print( "0] DeliverSecondaryData time: " );
+      kernel().event_delivery_manager.sw_collocate_secondary_events.print( "--collocate(snd): " );
+      kernel().event_delivery_manager.sw_communicate_secondary_events.print( "--communicate(snd): " );
+      sw_deliver_secondary_events.print( "--deliver(snd): " );
       sw_total.print( "0] Total time: " );
       std::cout << "0] CommSteps(Rounds)SpikeData: "
                 << kernel().event_delivery_manager.comm_steps_spike_data << "("

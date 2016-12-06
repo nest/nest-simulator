@@ -24,6 +24,8 @@ Functions to get information on NEST.
 """
 
 from .hl_api_helper import *
+import os
+import re
 
 
 @check_stack
@@ -85,8 +87,38 @@ def help(obj=None, pager="less"):
     """
 
     if obj is not None:
-        sr("/page << /command (%s) >> SetOptions" % pager)
-        sr("/%s help" % obj)
+        if os.environ['_'] == '/usr/local/bin/jupyter':
+            helpdir = os.environ['NEST_INSTALL_DIR'] + "/share/doc/nest/help/"
+            objname = obj + '.hlp'
+            for dirpath, dirnames, files in os.walk(helpdir):
+                for hlp in files:
+                    if hlp == objname:
+                        fhlp = open(os.path.join(dirpath, objname), 'r')
+                        hlptxt = fhlp.read()
+                        fhlp.close()
+                        print hlptxt
+            if hlptxt == '':
+                print('Sorry, no help available.')
+        else:
+            sr("/page << /command (%s) >> SetOptions" % pager)
+            sr("/%s help" % obj)
+
+    else:
+        print("Type 'nest.helpdesk()' to access the online documentation "
+              "in a browser.")
+        print("Type 'nest.help(object)' to get help on a NEST object or "
+              "command.\n")
+        print("Type 'nest.Models()' to see a list of available models "
+              "in NEST.\n")
+        print("Type 'nest.authors()' for information about the makers "
+              "of NEST.")
+        print("Type 'nest.sysinfo()' to see details on the system "
+              "configuration.")
+        print("Type 'nest.version()' for information about the NEST "
+              "version.\n")
+        print("For more information visit http://www.nest-simulator.org.")
+
+
     else:
         print("Type 'nest.helpdesk()' to access the online documentation "
               "in a browser.")

@@ -79,6 +79,7 @@ public:
     const index lid ) const;
   //! clear all entries
   void clear( const thread tid );
+  void compress_secondary_send_buffer_pos( const thread tid );
 };
 
 inline void

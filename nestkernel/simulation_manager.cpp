@@ -577,7 +577,7 @@ nest::SimulationManager::prepare_simulation_()
       .connection_manager.sort_connections(); // TODO@5g: move into restructure_
     sw_sort.stop();
 
-    kernel().connection_manager.compute_secondary_recv_buffer_positions_();
+    kernel().connection_manager.compute_compressed_secondary_recv_buffer_positions_();
     kernel().event_delivery_manager.configure_secondary_buffers();
 
     sw_gather_target_data.start();

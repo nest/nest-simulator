@@ -1124,6 +1124,7 @@ EventDeliveryManager::gather_target_data()
 #pragma omp barrier
     } // of while(true)
     kernel().connection_manager.clear_source_table( tid );
+    kernel().connection_manager.compress_secondary_send_buffer_pos( tid );
   } // of omp parallel
 
   free( send_buffer_target_data );

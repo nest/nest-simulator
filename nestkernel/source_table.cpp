@@ -21,8 +21,10 @@
  */
 
 // Includes from nestkernel:
-#include "source_table.h"
+#include "connection_manager_impl.h"
+#include "node_manager_impl.h"
 #include "kernel_manager.h"
+#include "source_table.h"
 #include "vp_manager_impl.h"
 
 nest::SourceTable::SourceTable()
@@ -217,5 +219,80 @@ nest::SourceTable::reserve( const thread tid,
   else
   {
     ( *sources_[ tid ] )[ it->second ]->reserve( count );
+  }
+}
+
+void
+nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( std::map< index, size_t >& gid_to_buffer_pos ) const
+{
+  // collect all unique sources
+  std::set< std::pair< index, size_t > > unique_secondary_sources_set;
+
+#pragma omp parallel shared( unique_secondary_sources_set )
+  {
+    const thread tid = kernel().vp_manager.get_thread_id();
+    for ( size_t syn_index = 0; syn_index < sources_[ tid ]->size();
+          ++syn_index )
+    {
+      const synindex syn_id =
+        kernel().connection_manager.get_syn_id( tid, syn_index );
+      if ( not kernel()
+                 .model_manager.get_synapse_prototype( syn_id, tid )
+                 .is_primary() )
+      {
+        const size_t event_size =
+          kernel()
+          .model_manager.get_secondary_event_prototype( syn_id, tid )
+          .prototype_size();
+        for ( std::vector< Source >::const_iterator cit =
+                ( *sources_[ tid ] )[ syn_index ]->begin();
+              cit != ( *sources_[ tid ] )[ syn_index ]->end();
+              ++cit )
+        {
+#pragma omp critical
+          {
+            unique_secondary_sources_set.insert( std::pair< index, size_t >( cit->gid, event_size ) );
+          }
+        }
+      }
+    }
+  } // of omp parallel
+
+  // given all unique sources, calculate maximal chunksize per rank
+  // and fill vector of unique sources
+  std::vector< size_t > count_per_rank(
+    kernel().mpi_manager.get_num_processes(), 0 );
+  size_t i = 0;
+  for ( std::set< std::pair< index, size_t > >::const_iterator cit = unique_secondary_sources_set.cbegin();
+        cit != unique_secondary_sources_set.cend(); ++cit )
+  {
+    count_per_rank[ kernel().node_manager.get_process_id_of_gid( cit->first ) ] += cit->second;
+    ++i;
+  }
+
+  // determine maximal chunksize across all MPI ranks
+  std::vector< size_t > max_count(
+    1, *std::max_element( count_per_rank.begin(), count_per_rank.end() ) );
+  kernel().mpi_manager.communicate_Allreduce_max_in_place( max_count );
+
+  const size_t secondary_buffer_chunk_size = max_count[ 0 ] + 1;
+
+  kernel().mpi_manager.set_chunk_size_secondary_events(
+    secondary_buffer_chunk_size );
+
+  // offsets in receive buffer
+  std::vector< size_t > buffer_position_by_rank(
+    kernel().mpi_manager.get_num_processes(), 0 );
+  for ( size_t i = 0; i < buffer_position_by_rank.size(); ++i )
+  {
+    buffer_position_by_rank[ i ] = i * secondary_buffer_chunk_size;
+  }
+
+  for ( std::set< std::pair< index, size_t > >::const_iterator cit = unique_secondary_sources_set.cbegin();
+        cit != unique_secondary_sources_set.cend(); ++cit )
+  {
+    const thread target_rank = kernel().node_manager.get_process_id_of_gid( cit->first );
+    gid_to_buffer_pos.insert( std::pair< index, size_t >( cit->first, buffer_position_by_rank[ target_rank ] ) );
+    buffer_position_by_rank[ target_rank ] += cit->second;
   }
 }

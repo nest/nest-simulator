@@ -75,6 +75,7 @@ public:
   DictionaryDatum& get_connruledict();
 
   void compute_secondary_recv_buffer_positions_();
+  void compute_compressed_secondary_recv_buffer_positions_();
 
   /**
    * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
@@ -383,6 +384,8 @@ public:
 
   bool deliver_secondary_events( const thread tid,
     std::vector< unsigned int >& recv_buffer );
+
+  void compress_secondary_send_buffer_pos( const thread tid );
 
 private:
   /**

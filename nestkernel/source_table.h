@@ -28,6 +28,7 @@
 #include <cassert>
 #include <iostream>
 #include <map>
+#include <set>
 #include <vector>
 
 // Includes from nestkernel:
@@ -130,6 +131,7 @@ public:
   void no_targets_to_process( const thread tid );
   //! Computes the maximum number
   size_t compute_send_recv_count_secondary_in_int_per_rank() const;
+  void compute_buffer_pos_for_unique_secondary_sources( std::map< index, size_t >& gid_to_buffer_pos ) const;
 };
 
 inline void

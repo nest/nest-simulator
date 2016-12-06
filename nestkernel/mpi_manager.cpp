@@ -198,6 +198,7 @@ nest::MPIManager::get_status( DictionaryDatum& dict )
   def< bool >( dict, "adaptive_spike_buffers", adaptive_spike_buffers_ );
   def< size_t >( dict, "buffer_size_target_data", buffer_size_target_data_ );
   def< size_t >( dict, "buffer_size_spike_data", buffer_size_spike_data_ );
+  def< size_t >( dict, "buffer_size_secondary_events", get_buffer_size_secondary_events() );
   def< size_t >(
     dict, "max_buffer_size_target_data", max_buffer_size_target_data_ );
   def< size_t >(

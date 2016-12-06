@@ -250,11 +250,65 @@ pop pop
 
 {
   << >> begin
-  (Check join with overlapping GIDs) M_PROGRESS message
+  (Check join primitives with overlapping GIDs) M_PROGRESS message
   ResetKernel
 
   /iaf_psc_alpha 10 Create
   [ 4 5 ] cvgidcollection
+  join
+
+  end
+} fail_or_die
+
+% remove arguments of failed commands
+pop pop
+
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check join composites with overlapping GIDs) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join
+  [ 4 5 11 12 ] cvgidcollection
+  join
+
+  end
+} fail_or_die
+
+% remove arguments of failed commands
+pop pop
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check join primitive with composite with overlapping GIDs) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  [ 4 5 11 12 ] cvgidcollection
+  join
+
+  end
+} fail_or_die
+
+% remove arguments of failed commands
+pop pop
+
+{
+  << >> begin
+  (Check join composite with primitive with overlapping GIDs) M_PROGRESS message
+  ResetKernel
+
+  /iaf_psc_alpha 10 Create
+  /iaf_psc_exp 10 Create
+  join
+  [ 11 12 ] cvgidcollection
   join
 
   end
@@ -436,7 +490,7 @@ pop pop
   
   and and 
   end
-} skip_test % assert_or_die
+} assert_or_die
 
 % --------------------------------------------------
 
@@ -506,9 +560,9 @@ pop pop
   /iaf_psc_exp 10 Create
   join def
   
-  gc 1 MemberQ
-  gc 15 MemberQ and
-  gc 40 MemberQ not and
+  gc 1 InCollection
+  gc 15 InCollection and
+  gc 40 InCollection not and
 
   end
 } assert_or_die

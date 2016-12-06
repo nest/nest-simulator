@@ -55,7 +55,7 @@ is_threaded not { exit_test_gracefully } if
 
  n3 /local get                                      % only a single job should generate output
  {
-  n3 GetVpRNG drand               % should be independent of number of jobs 
+  n3 0 get GetVpRNG drand               % should be independent of number of jobs 
  } if                             % involved in the computation
 
 }

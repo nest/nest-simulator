@@ -234,7 +234,7 @@ class TestGIDCollection(unittest.TestCase):
         self.assertEqual(len(c), 4)
 
     def test_composite_GIDCollection(self):
-        """Tests on composite GIDCollection with patched GIDs"""
+        """Tests composite GIDCollection with patched GIDs"""
 
         num_a = 10
         num_b = 15
@@ -371,6 +371,44 @@ class TestGIDCollection(unittest.TestCase):
         compare_list = [3, 1, 0, 0, 0]
         for i, conn in enumerate(compare_list):
             self.assertEqual(get_conn_list[3][i], conn)
+
+    def test_GetConnections_bad_source(self):
+        """
+        GetConnection raises a TypeError when called with 0
+        """
+
+        n = nest.Create('iaf_psc_alpha', 3)
+        nest.Connect(n, n)
+
+        with self.assertRaises(TypeError):
+            nest.GetConnections([0, 1])
+
+    def test_senders_and_targets(self):
+        """
+        Senders and targets for weight recorder works as GIDCollection and list
+        """
+
+        wr = nest.Create('weight_recorder')
+        pre = nest.Create("parrot_neuron", 5)
+        post = nest.Create("parrot_neuron", 5)
+
+        with self.assertRaises(nest.NESTError):
+            [x for x in nest.GIDCollection(nest.GetStatus(wr, "senders")[0])]
+        with self.assertRaises(nest.NESTError):
+            [x for x in nest.GIDCollection(nest.GetStatus(wr, "targets")[0])]
+
+        nest.SetStatus(wr, {"senders": pre[1:3], "targets": post[3:]})
+
+        gss = nest.GetStatus(wr, "senders")[0]
+        gst = nest.GetStatus(wr, "targets")[0]
+        self.assertEqual([x for x in nest.GIDCollection(gss)], [3, 4])
+        self.assertEqual([x for x in nest.GIDCollection(gst)], [10, 11])
+
+        nest.SetStatus(wr, {"senders": [2, 6], "targets": [8, 9]})
+        gss = nest.GetStatus(wr, "senders")[0]
+        gst = nest.GetStatus(wr, "targets")[0]
+        self.assertEqual([x for x in nest.GIDCollection(gss)], [2, 6])
+        self.assertEqual([x for x in nest.GIDCollection(gst)], [8, 9])
 
 
 def suite():

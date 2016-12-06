@@ -39,7 +39,7 @@
  ResetKernel
 
  /n /iaf_neuron Create def
- n n << /weight 1.0 >> Connect
+ n 0 get n 0 get << /weight 1.0 >> Connect
 
 }
 distributed_pass_or_die

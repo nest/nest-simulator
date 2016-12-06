@@ -30,13 +30,12 @@
 namespace nest
 {
 
-// function object for sorting a vector of GIDCollcetionPrimitives
-struct
+struct // function object for sorting a vector of GIDCollcetionPrimitives
 {
-  bool operator()( GIDCollectionPrimitive& primitive_1,
-    GIDCollectionPrimitive& primitive_2 )
+  bool operator()( GIDCollectionPrimitive& primitive_lhs,
+    GIDCollectionPrimitive& primitive_rhs )
   {
-    return primitive_1[ 0 ] < primitive_2[ 0 ];
+    return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
   }
 } primitiveSort;
 
@@ -132,7 +131,10 @@ GIDCollection::create( IntVectorDatum gidsdatum )
     gids.push_back( static_cast< index >( getValue< long >( *it ) ) );
   }
   std::sort( gids.begin(), gids.end() );
-
+  if ( gids[ 0 ] == 0 )
+  {
+    throw KernelException( "GIDCollection cannot contain root" );
+  }
   return GIDCollection::create_( gids );
 }
 
@@ -151,7 +153,10 @@ GIDCollection::create( TokenArray gidsarray )
     gids.push_back( static_cast< index >( getValue< long >( *it ) ) );
   }
   std::sort( gids.begin(), gids.end() );
-
+  if ( gids[ 0 ] == 0 )
+  {
+    throw KernelException( "GIDCollection cannot contain root" );
+  }
   return GIDCollection::create_( gids );
 }
 
@@ -279,18 +284,6 @@ GIDCollectionPrimitive::to_array() const
   return gids;
 }
 
-ArrayDatum
-GIDCollectionComposite::to_array() const
-{
-  ArrayDatum gids;
-  gids.reserve( size() );
-  for ( const_iterator it = begin(); it < end(); ++it )
-  {
-    gids.push_back( ( *it ).gid );
-  }
-  return gids;
-}
-
 GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
 {
   if ( get_metadata().valid() and not( get_metadata() == rhs->get_metadata() ) )
@@ -303,8 +296,7 @@ GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
 
   if ( rhs_ptr ) // if rhs is Primitive
   {
-    if ( ( rhs_ptr->first_ <= last_ and rhs_ptr->first_ >= first_ )
-      or ( rhs_ptr->last_ <= last_ and rhs_ptr->last_ >= first_ ) )
+    if ( overlapping( *rhs_ptr ) )
     {
       throw BadProperty( "Cannot join overlapping GIDCollections." );
     }
@@ -368,28 +360,22 @@ GIDCollectionPrimitive::GIDCollectionPrimitive::slice( size_t start,
 void
 GIDCollectionPrimitive::print_me( std::ostream& out ) const
 {
-  out << "[[" << this << " model=" << model_id_ << ", size=" << size() << " ";
-  out << "(" << first_ << ".." << last_ << ")";
-  out << "]]";
-}
-
-void
-GIDCollectionPrimitive::print_me( std::ostream& out,
-  size_t step,
-  size_t skip ) const
-{
-  if ( skip < size() )
+  out << "[[" << this
+      << " model=" << kernel().model_manager.get_model( model_id_ )->get_name()
+      << ", size=" << size() << " ";
+  if ( size() == 1 )
   {
-    size_t primitive_size = 0;
-    index last;
-    for ( size_t i = skip; i < size(); i += step )
-    {
-      primitive_size += 1;
-      last = first_ + i;
-    }
-    out << "[[" << this << " model=" << model_id_ << ", size=" << primitive_size
-        << " ";
-    out << "(" << first_ + skip << ".." << last << ")";
+    out << "(" << first_ << ")";
+    out << "]]";
+  }
+  else if ( size() == 2 )
+  {
+    out << "(" << first_ << ", " << last_ << ")";
+    out << "]]";
+  }
+  else
+  {
+    out << "(" << first_ << ".." << last_ << ")";
     out << "]]";
   }
 }
@@ -398,6 +384,13 @@ bool
 GIDCollectionPrimitive::is_contiguous_ascending( GIDCollectionPrimitive& other )
 {
   return ( ( last_ + 1 ) == other.first_ ) and ( model_id_ == other.model_id_ );
+}
+
+bool
+GIDCollectionPrimitive::overlapping( const GIDCollectionPrimitive& rhs ) const
+{
+  return ( ( rhs.first_ <= last_ and rhs.first_ >= first_ )
+    or ( rhs.last_ <= last_ and rhs.last_ >= first_ ) );
 }
 
 GIDCollectionComposite::GIDCollectionComposite(
@@ -412,6 +405,8 @@ GIDCollectionComposite::GIDCollectionComposite(
   , stop_part_( 0 )
   , stop_offset_( 0 )
 {
+  parts_.reserve(
+    primitive.size() / ( float ) step + ( primitive.size() % step > 0 ) );
   for ( const_iterator it = primitive.begin() + start;
         it < primitive.begin() + stop;
         it += step )
@@ -520,9 +515,13 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
   rhs.unlock();
   if ( rhs_ptr ) // if rhs is Primitive
   {
-    for ( const_iterator it = begin(); it != end(); ++it )
+    // check primitives in the composite for overlap
+    for ( std::vector< GIDCollectionPrimitive >::const_iterator this_it =
+            parts_.begin();
+          this_it < parts_.end();
+          ++this_it )
     {
-      if ( rhs_ptr->contains( ( *it ).gid ) )
+      if ( this_it->overlapping( *rhs_ptr ) )
       {
         throw BadProperty( "Cannot join overlapping GIDCollections." );
       }
@@ -535,11 +534,21 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
       dynamic_cast< GIDCollectionComposite const* >( rhs.get() );
     rhs.unlock();
 
-    for ( const_iterator it = begin(); it != end(); ++it )
+    // check primitives in the composites for overlap
+    for ( std::vector< GIDCollectionPrimitive >::const_iterator this_it =
+            parts_.begin();
+          this_it < parts_.end();
+          ++this_it )
     {
-      if ( rhs_ptr->contains( ( *it ).gid ) )
+      for ( std::vector< GIDCollectionPrimitive >::const_iterator other_it =
+              rhs_ptr->parts_.begin();
+            other_it < rhs_ptr->parts_.end();
+            ++other_it )
       {
-        throw BadProperty( "Cannot join overlapping GIDCollections." );
+        if ( this_it->overlapping( *other_it ) )
+        {
+          throw BadProperty( "Cannot join overlapping GIDCollections." );
+        }
       }
     }
 
@@ -578,6 +587,18 @@ GIDCollectionPTR GIDCollectionComposite::operator+(
     throw BadProperty( "can only join GIDCollections with the same metadata" );
   }
 
+  // check primitives in the composites for overlap
+  for ( std::vector< GIDCollectionPrimitive >::const_iterator this_it =
+          parts_.begin();
+        this_it < parts_.end();
+        ++this_it )
+  {
+    if ( this_it->overlapping( rhs ) )
+    {
+      throw BadProperty( "Cannot join overlapping GIDCollections." );
+    }
+  }
+
   std::vector< GIDCollectionPrimitive > new_parts = parts_;
   new_parts.push_back( rhs );
   std::sort( new_parts.begin(), new_parts.end(), primitiveSort );
@@ -592,6 +613,17 @@ GIDCollectionPTR GIDCollectionComposite::operator+(
   }
 }
 
+ArrayDatum
+GIDCollectionComposite::to_array() const
+{
+  ArrayDatum gids;
+  gids.reserve( size() );
+  for ( const_iterator it = begin(); it < end(); ++it )
+  {
+    gids.push_back( ( *it ).gid );
+  }
+  return gids;
+}
 
 GIDCollectionPTR
 GIDCollectionComposite::slice( size_t start, size_t stop, size_t step ) const
@@ -605,10 +637,11 @@ GIDCollectionComposite::merge_parts(
   std::vector< GIDCollectionPrimitive >& parts ) const
 {
   bool did_merge = true; // initialize to enter the while loop
-  while ( did_merge )    // if parts is changed, it has to be checked again
+  size_t last_i = 0;
+  while ( did_merge ) // if parts is changed, it has to be checked again
   {
     did_merge = false;
-    for ( size_t i = 0; i < parts.size() - 1; ++i )
+    for ( size_t i = last_i; i < parts.size() - 1; ++i )
     {
       if ( parts[ i ].is_contiguous_ascending( parts[ i + 1 ] ) )
       {
@@ -622,6 +655,7 @@ GIDCollectionComposite::merge_parts(
         parts[ i ] = *merged_primitives;
         parts.erase( parts.begin() + i + 1 );
         did_merge = true;
+        last_i = i;
         break;
       }
     }
@@ -641,7 +675,7 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
     size_t primitive_size;
     GIDPair pair;
 
-    out << "[[" << this << " size=" << size() << ": ";
+    out << "[[" << this << " step=" << step_ << " size=" << size() << ": ";
     for ( const_iterator it = begin(); it < end(); ++it )
     {
 
@@ -650,11 +684,24 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
       {
         if ( it != begin() )
         {
-          out << "[["
-              << " model=" << pair.model_id << ", size=" << primitive_size
-              << " ";
-          out << "(" << pair.gid << "..";
-          out << primitive_last << ")]]";
+          out << "\n  [["
+              << "model="
+              << kernel().model_manager.get_model( pair.model_id )->get_name()
+              << ", size=" << primitive_size << " ";
+          if ( primitive_size == 1 )
+          {
+            out << "(" << pair.gid << ")]],";
+          }
+          else if ( primitive_size == 2 )
+          {
+            out << "(" << pair.gid << ", ";
+            out << primitive_last << ")]],";
+          }
+          else
+          {
+            out << "(" << pair.gid << "..";
+            out << primitive_last << ")]],";
+          }
         }
         primitive_size = 1;
         pair = *it;
@@ -666,10 +713,24 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
       primitive_last = ( *it ).gid;
       previous_part = current_part;
     }
-    out << "[["
-        << " model=" << pair.model_id << ", size=" << primitive_size << " ";
-    out << "(" << pair.gid << "..";
-    out << primitive_last << ")]]";
+    out << "\n  [["
+        << "model="
+        << kernel().model_manager.get_model( pair.model_id )->get_name()
+        << ", size=" << primitive_size << " ";
+    if ( primitive_size == 1 )
+    {
+      out << "(" << pair.gid << ")]]";
+    }
+    else if ( primitive_size == 2 )
+    {
+      out << "(" << pair.gid << ", ";
+      out << primitive_last << ")]]";
+    }
+    else
+    {
+      out << "(" << pair.gid << "..";
+      out << primitive_last << ")]]";
+    }
     out << "]]";
   }
   else
@@ -680,7 +741,12 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
       it != parts_.end();
       ++it )
     {
+      out << "\n  ";
       it->print_me( out );
+      if ( it != ( parts_.end() - 1 ) )
+      {
+        out << ",";
+      }
     }
     out << "]]";
   }

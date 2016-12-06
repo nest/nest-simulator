@@ -90,7 +90,7 @@ modeldict keys{
 	300 Simulate
 
 	% compare final membrane potentials
-	n1 GetStatus /V_m get n2 GetStatus /V_m get eq dup 
+	n1 GetStatus /V_m get n2 GetStatus /V_m get eq dup
 	  {(pass) =}
 	  { (failed: unequal voltages) =  executive } 
 	ifelse 

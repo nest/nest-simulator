@@ -138,7 +138,7 @@ userdict begin
 
       vm neuron2 Connect
 
-      neuron1 neuron2 /tsodyks_synapse Connect
+      neuron1 0 get neuron2 0 get /tsodyks_synapse Connect
 
       Tend Simulate
 end

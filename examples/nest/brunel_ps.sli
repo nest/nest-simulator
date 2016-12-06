@@ -195,14 +195,14 @@ tic % start timer on construction
 
   (Creating excitatory population.) =  % show message
   /E_net /subnet Create def            % create subnet
-  E_net ChangeSubnet                   % enter subnet
+  E_net 0 get ChangeSubnet                   % enter subnet
   /iaf_psc_alpha_canon NE Create       % create neurons in subnet
   ;                                    % pop gids returned by Create
   0 ChangeSubnet                     % return to full network
 
   (Creating inhibitory population.) =  % show message
   /I_net /subnet Create def            % create subnet
-  I_net ChangeSubnet                   % enter subnet
+  I_net 0 get ChangeSubnet                   % enter subnet
   /iaf_psc_alpha_canon NI Create       % create neurons in subnet
   ;                                    % pop gids returned by Create
   0 ChangeSubnet                     % return to full network
@@ -249,10 +249,10 @@ tic % start timer on construction
   % lists from the subnetworks
 
   % obtain array with GIDs of all excitatory neurons
-  /E_neurons E_net GetGlobalNodes def
+  /E_neurons E_net 0 get GetGlobalNodes cvgidcollection def
 
   % obtain array with GIDs of all inhibitory neurons
-  /I_neurons I_net GetGlobalNodes def
+  /I_neurons I_net 0 get GetGlobalNodes cvgidcollection def
 
   % all neurons
   /allNeurons E_neurons I_neurons join def
@@ -286,7 +286,7 @@ tic % start timer on construction
   /static_synapse /syn_in << /weight JI >> CopyModel
 
   (Connecting excitatory population.) =
-  [expoisson] E_neurons /all_to_all /syn_ex Connect
+  expoisson E_neurons /all_to_all /syn_ex Connect
 
   % E -> E connections
   % the following is a single call to FixedIndegree connect
@@ -301,7 +301,7 @@ tic % start timer on construction
   I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
 
   (Connecting inhibitory population.) =
-  [inpoisson] I_neurons /all_to_all /syn_ex Connect
+  inpoisson I_neurons /all_to_all /syn_ex Connect
 
   % ... as above, just written more compact
 
@@ -315,10 +315,10 @@ tic % start timer on construction
   (Connecting spike detectors.) =
 
   E_neurons Nrec Take % pick the first 500 neurons
-    [exsd] Connect
+    exsd Connect
 
   I_neurons Nrec Take % pick the first 500 neurons
-    [insd] Connect
+    insd Connect
 
   % read out time used for building
 

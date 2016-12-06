@@ -54,7 +54,7 @@ is_threaded not { exit_test_gracefully } if
   /iaf_neuron Create 
   dup /local get
   {
-    GetVpRNG /rng Set
+    0 get GetVpRNG /rng Set
     [ 10 ] { pop rng drand } Table
   }
   {

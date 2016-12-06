@@ -103,7 +103,7 @@ net1 % loop on all neurons of source subnet
 
         %cout (n1 ) print neuron1 =
         % gets all connections from the source neuron
-        /conn << /source [neuron1] >> GetConnections def
+        /conn << /source [neuron1] cvgidcollection >> GetConnections def
 
         /sdict_lst conn GetSynapseStatus def % gets info on synapses
 

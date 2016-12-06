@@ -160,26 +160,26 @@ test = run_model(model='aeif_cond_alpha_RK5', dt=0.1, reps=50)
 Compare the execution times of the models.
 '''
 
-print ('Runtime GSL: ' + str(gsl[0]))
-print ('Test: ' + str(test[0]))
-print ('Ratio: ' + str(test[0] / gsl[0]))
+print('Runtime GSL: ' + str(gsl[0]))
+print('Test: ' + str(test[0]))
+print('Ratio: ' + str(test[0] / gsl[0]))
 
 '''
 Compute the error on the spike times.
 '''
-print ('Spike Times GSL - Reference:' + str(np.array(gsl[1]) -
-                                            np.array(reference[1])))
-print ('Spike Times Test - Reference: ' + str(np.array(test[1]) -
-                                              np.array(reference[1])))
+print('Spike Times GSL - Reference:' + str(np.array(gsl[1]) -
+                                           np.array(reference[1])))
+print('Spike Times Test - Reference: ' + str(np.array(test[1]) -
+                                             np.array(reference[1])))
 
 '''
 Also compare the L2-Norm of Voltage Traces
 '''
 
-print ('L2-Error (per s) GSL - Reference: ' +
-       str(np.linalg.norm(gsl[2] - reference[2], ord=2) / 3))
-print ('L2-Error (per s) Test - Reference: ' +
-       str(np.linalg.norm(test[2] - reference[2], ord=2) / 3))
-print ('L2-Error ratio: ' +
-       str((np.linalg.norm(test[2] - reference[2], ord=2) / 3) /
-           (np.linalg.norm(gsl[2] - reference[2], ord=2) / 3)))
+print('L2-Error (per s) GSL - Reference: ' +
+      str(np.linalg.norm(gsl[2] - reference[2], ord=2) / 3))
+print('L2-Error (per s) Test - Reference: ' +
+      str(np.linalg.norm(test[2] - reference[2], ord=2) / 3))
+print('L2-Error ratio: ' +
+      str((np.linalg.norm(test[2] - reference[2], ord=2) / 3) /
+          (np.linalg.norm(gsl[2] - reference[2], ord=2) / 3)))

@@ -71,6 +71,11 @@ class GIDPair
 public:
   index gid;
   index model_id;
+  GIDPair()
+    : gid( 0 )
+    , model_id( 0 )
+  {
+  }
 };
 
 /**
@@ -266,7 +271,6 @@ public:
    */
   virtual bool contains( index gid ) const = 0;
 
-  //! Slice the GIDCollection to the boundaries, with a step.
   /**
    * Slices the GIDCollection to the boundaries, with an optional step
    * parameter. Note that the boundaries being specified are inclusive.
@@ -365,7 +369,6 @@ public:
   GIDCollectionPrimitive();
 
   void print_me( std::ostream& ) const;
-  void print_me( std::ostream&, size_t step, size_t skip ) const;
 
   index operator[]( const size_t ) const;
   GIDCollectionPTR operator+( GIDCollectionPTR rhs ) const;
@@ -393,11 +396,19 @@ public:
    * primitive.
    *
    * @param other Primitive to check for continuity
-   * @return true if the first element in the other primitive is the next after
+   * @return True if the first element in the other primitive is the next after
    * the last element in this primitive, and they both have the same model ID.
    * Otherwise false.
    */
   bool is_contiguous_ascending( GIDCollectionPrimitive& other );
+
+  /**
+   * Checks if GIDs of another primitive is overlapping GIDs of this primitive
+   *
+   * @param rhs Primitive to be checked.
+   * @return True if the other primitive overlaps, false otherwise.
+   */
+  bool overlapping( const GIDCollectionPrimitive& rhs ) const;
 };
 
 GIDCollectionPTR operator+( GIDCollectionPTR lhs, GIDCollectionPTR rhs );
@@ -608,7 +619,9 @@ inline index GIDCollectionPrimitive::operator[]( const size_t idx ) const
 {
   // throw exception if outside of GIDCollection
   if ( first_ + idx > last_ )
+  {
     throw std::out_of_range( "pos points outside of the GIDCollection" );
+  }
   return first_ + idx;
 }
 
@@ -743,12 +756,21 @@ GIDCollectionComposite::size() const
 inline bool
 GIDCollectionComposite::contains( index gid ) const
 {
-  for (
-    std::vector< GIDCollectionPrimitive >::const_iterator gc = parts_.begin();
-    gc != parts_.end();
-    ++gc ) // iterate over GIDCollections
+  long lower = 0;
+  long upper = parts_.size() - 1;
+  while ( lower <= upper )
   {
-    if ( ( *gc ).contains( gid ) )
+    size_t middle = floor( ( lower + upper ) / 2.0 );
+    if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid
+      < gid )
+    {
+      lower = middle + 1;
+    }
+    else if ( gid < ( *( parts_[ middle ].begin() ) ).gid )
+    {
+      upper = middle - 1;
+    }
+    else
     {
       return true;
     }

@@ -114,7 +114,7 @@ nest::aeif_psc_alpha_dynamics( double,
 
   // dv/dt
   f[ S::V_M ] = is_refractory
-    ? 0
+    ? 0.
     : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn_ex - I_syn_in - w
         + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 

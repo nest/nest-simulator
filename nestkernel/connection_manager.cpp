@@ -1663,20 +1663,24 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
       const synindex syn_id = get_syn_id( tid, syn_index );
       SecondaryEvent& prototype = kernel().model_manager.get_secondary_event_prototype( syn_id, tid );
 
-      for ( index lcid = 0; lcid
-              < ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] ).size();
-            ++lcid )
+      index lcid = 0;
+      while ( lcid < ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] ).size() )
       {
         std::vector< unsigned int >::iterator readpos = recv_buffer.begin()
           + ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] )[ lcid ];
         prototype << readpos;
         prototype.set_stamp( stamp );
-        ( *connections_5g_[ tid ] )
-          .send( tid,
-            syn_index,
-            lcid,
-            prototype,
-            kernel().model_manager.get_synapse_prototypes( tid ) );
+
+        while( ( *connections_5g_[ tid ] )
+               .send( tid,
+                      syn_index,
+                      lcid,
+                      prototype,
+                      kernel().model_manager.get_synapse_prototypes( tid ) ) )
+        {
+          ++lcid;
+        }
+        ++lcid;
       }
     }
   }

@@ -1628,25 +1628,6 @@ nest::ConnectionManager::compute_secondary_recv_buffer_positions_()
       }
     }
   }
-
-  // for ( std::vector< std::vector< std::vector< size_t >* >* >::iterator it =
-  // secondary_recv_buffer_pos_.begin(); it != secondary_recv_buffer_pos_.end();
-  // ++it )
-  // {
-  //   for ( std::vector< std::vector< size_t >* >::iterator iit =
-  //   (*it)->begin();
-  //         iit != (*it)->end(); ++iit )
-  //   {
-  //     for ( std::vector< size_t >::iterator iiit = (*iit)->begin(); iiit !=
-  //     (*iit)->end(); ++iiit )
-  //     {
-  //       std::cout<< *iiit << ", ";
-  //     }
-  //     std::cout<<std::endl;
-  //   }
-  //   std::cout<<std::endl;
-  // }
-  // std::cout<<"#######################################\n";
 }
 
 bool

@@ -178,23 +178,6 @@ EventDeliveryManager::configure_spike_buffers()
     sizeof( OffGridSpikeData ) / sizeof( unsigned int )
     * send_recv_count_spike_data_per_rank_;
 
-  // send_buffer must be >= 2 as the 'overflow' signal takes up 2 spaces
-  // plus the fiunal marker and the done flag for iterations
-  // + 1 for the final markers of each thread (invalid_synindex) of secondary
-  // events
-  // + 1 for the done flag (true) of each process
-  // int send_buffer_size = kernel().vp_manager.get_num_threads()
-  //         * kernel().connection_manager.get_min_delay()
-  //       + 2
-  //     > 4
-  //   ? kernel().vp_manager.get_num_threads()
-  //       * kernel().connection_manager.get_min_delay()
-  //     + 2
-  //   : 4;
-  // int recv_buffer_size =
-  //   send_buffer_size * kernel().mpi_manager.get_num_processes();
-  // kernel().mpi_manager.set_buffer_sizes( send_buffer_size, recv_buffer_size
-  // );
 }
 
 void

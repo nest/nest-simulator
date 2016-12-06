@@ -630,6 +630,8 @@ nest::SimulationManager::update_()
     Stopwatch sw_total;
     Stopwatch sw_update;
     Stopwatch sw_gather_spike_data;
+    Stopwatch sw_gather_secondary_events;
+    Stopwatch sw_deliver_secondary_events;
 
     sw_total.start();
     do
@@ -733,6 +735,7 @@ nest::SimulationManager::update_()
 #pragma omp critical
           done.push_back( done_p );
 // parallel section ends, wait until all threads are done -> synchronize
+          sw_gather_secondary_events.start();
 #pragma omp barrier
 
 // the following block is executed by a single thread
@@ -753,11 +756,14 @@ nest::SimulationManager::update_()
             done_all = true;
             done.clear();
           }
+          sw_gather_secondary_events.stop();
 
           // deliver SecondaryEvents generated during wfr_update
           // returns the done value over all threads
+          sw_deliver_secondary_events.start();
           done_p =
             kernel().event_delivery_manager.deliver_secondary_events( tid );
+          sw_deliver_secondary_events.stop();
 
           if ( done_p )
           {
@@ -810,21 +816,25 @@ nest::SimulationManager::update_()
 #pragma omp barrier
       sw_update.stop();
 
-      sw_gather_spike_data.start();
       if ( to_step_ == kernel().connection_manager.get_min_delay() ) // gather
                                                                      // only at
                                                                      // end of
                                                                      // slice
       {
         // kernel().event_delivery_manager.gather_events( true );
+        sw_gather_spike_data.start();
         kernel().event_delivery_manager.gather_spike_data( tid );
+        sw_gather_spike_data.stop();
+        sw_gather_secondary_events.start();
 #pragma omp single
         {
           kernel().event_delivery_manager.gather_secondary_events( true );
         }
+        sw_gather_secondary_events.stop();
+        sw_deliver_secondary_events.start();
         kernel().event_delivery_manager.deliver_secondary_events( tid );
+        sw_deliver_secondary_events.stop();
       }
-      sw_gather_spike_data.stop();
 
 #pragma omp barrier
 
@@ -877,6 +887,8 @@ nest::SimulationManager::update_()
       kernel().event_delivery_manager.sw_communicate.print( "--communicate: " );
       kernel().event_delivery_manager.sw_deliver.print( "--deliver: " );
       kernel().event_delivery_manager.sw_send.print( "--send: " );
+      sw_gather_secondary_events.print( "0] GatherSecondaryData time: " );
+      sw_deliver_secondary_events.print( "0] DeliverSecondaryData time: " );
       sw_total.print( "0] Total time: " );
       std::cout << "0] CommSteps(Rounds)SpikeData: "
                 << kernel().event_delivery_manager.comm_steps_spike_data << "("

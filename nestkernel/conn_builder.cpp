@@ -384,15 +384,15 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
 void
 nest::ConnBuilder::connect()
 {
-  if ( kernel().model_manager.connector_requires_symmetric( synapse_model_ )
-    and not( is_symmetric() or make_symmetric_ ) )
-  {
-    throw BadProperty(
-      "Connections with this synapse model can only be created as "
-      "one-to-one connections with \"make_symmetric\" set to true "
-      "or as all-to-all connections with equal source and target "
-      "populations and default or scalar parameters." );
-  }
+  // if ( kernel().model_manager.connector_requires_symmetric( synapse_model_ )
+  //   and not( is_symmetric() or make_symmetric_ ) )
+  // {
+  //   throw BadProperty(
+  //     "Connections with this synapse model can only be created as "
+  //     "one-to-one connections with \"make_symmetric\" set to true "
+  //     "or as all-to-all connections with equal source and target "
+  //     "populations and default or scalar parameters." );
+  // }
 
   if ( make_symmetric_ && not supports_symmetric() )
   {

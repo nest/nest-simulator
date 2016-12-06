@@ -247,6 +247,7 @@ class AEIFTestCase(unittest.TestCase):
                 self.assertLess(diff, di_tol[model][var],
                                 "Failed for {} {}".format(model, var))
 
+    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def test_closeness_nest_lsodar(self):
         '''
         Compare models to the LSODAR implementation.
@@ -278,6 +279,7 @@ class AEIFTestCase(unittest.TestCase):
                                            ['V_m', 'w'])
         self.assert_pass_tolerance(rel_diff, di_tolerances_lsodar)
 
+    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def test_iaf_behaviour(self):
         '''
         The models should behave as iaf_cond_* if a == 0., b == 0. and

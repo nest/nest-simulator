@@ -43,6 +43,13 @@
 (unittest) run
 /unittest using
 
+% This test should only run if we have GSL
+statusdict/have_gsl :: not
+{
+  exit_test_gracefully
+}
+if
+
 0
 << 
     /overwrite_files true

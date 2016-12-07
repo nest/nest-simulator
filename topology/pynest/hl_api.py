@@ -64,6 +64,7 @@ using the same dictionary to specify both connections.
 """
 
 import nest
+import nest.lib.hl_api_helper as hlh
 
 
 def topology_func(slifunc, *args):
@@ -1610,6 +1611,9 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     if len(tgt_layer) != 1:
         raise nest.NESTError("tgt_layer must be a one-element list")
 
+    # Turn of deprecation warning as users shouldn't change implementation of 
+    # GetTargetNodes, it is done by the developers
+    hlh._deprecation_warning['GetLeaves'] = False
     # obtain local nodes in target layer, to pass to GetConnections
     tgt_nodes = nest.GetLeaves(tgt_layer,
                                properties={
@@ -1786,6 +1790,9 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         xext, yext = ext
         xctr, yctr = nest.GetStatus(layer, 'topology')[0]['center']
 
+        # Turn of deprecation warning as users shouldn't change implementation
+        # of PlotLayer, it is done by the developers
+        hlh._deprecation_warning['GetChildren'] = False
         # extract position information, transpose to list of x and y positions
         xpos, ypos = zip(*GetPosition(nest.GetChildren(layer)[0]))
 
@@ -1803,6 +1810,9 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         # 3D layer
         from mpl_toolkits.mplot3d import Axes3D
 
+        # Turn of deprecation warning as users shouldn't change implementation of 
+        # GetTargetNodes, it is done by the developers
+        hlh._deprecation_warning['GetLeaves'] = False
         # extract position information, transpose to list of x,y,z positions
         pos = zip(*GetPosition(nest.GetChildren(layer)[0]))
 

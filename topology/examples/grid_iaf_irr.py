@@ -45,8 +45,8 @@ l1 = topo.CreateLayer({'extent': [2., 1.5],
                        'positions': pos,
                        'elements': 'iaf_neuron'})
 
-nest.PrintNetwork()
-nest.PrintNetwork(2)
+nest.PrintNetwork(1, (0,))
+nest.PrintNetwork(2, (0,))
 nest.PrintNetwork(2, l1)
 
 topo.PlotLayer(l1, nodesize=50)

@@ -350,6 +350,7 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
 
 
 @check_stack
+@deprecated("", "DataConnect: use Connect() with one_to_one rule")
 def DataConnect(pre, params=None, model="static_synapse"):
     """Connect neurons from lists of connection data.
 

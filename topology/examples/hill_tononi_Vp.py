@@ -377,12 +377,14 @@ layerProps = {'rows': Params['N'],
 layerProps.update({'elements': 'RetinaNode'})
 retina = topo.CreateLayer(layerProps)
 
+gids = range(retina[0] + 1, retina[0] + Params['N']*Params['N'] + 1)
+
 # ! Now set phases of retinal oscillators; we use a list comprehension instead
 # ! of a loop.
 [nest.SetStatus([n], {"phase": phaseInit(topo.GetPosition([n])[0],
                                          Params["lambda_dg"],
                                          Params["phi_dg"])})
- for n in nest.GetLeaves(retina)[0]]
+ for n in gids]
 
 # ! Thalamus
 # ! --------
@@ -400,6 +402,7 @@ retina = topo.CreateLayer(layerProps)
 # ! interneuron per location:
 layerProps.update({'elements': ['TpRelay', 'TpInter']})
 Tp = topo.CreateLayer(layerProps)
+gids_Tp = range(Tp[0] + 1, Params['N']*Params['N']*len(layerProps['elements']) + Tp[0] + 1)
 
 # ! Reticular nucleus
 # ! -----------------
@@ -409,6 +412,7 @@ Tp = topo.CreateLayer(layerProps)
  ('RpNeuron',)]
 layerProps.update({'elements': 'RpNeuron'})
 Rp = topo.CreateLayer(layerProps)
+gids_Rp = range(Rp[0] + 1, Params['N']*Params['N'] + Rp[0] + 1)
 
 # ! Primary visual cortex
 # ! ---------------------
@@ -433,6 +437,8 @@ layerProps.update({'elements': ['L23pyr', 2, 'L23in', 1,
                                 'L56pyr', 2, 'L56in', 1]})
 Vp_h = topo.CreateLayer(layerProps)
 Vp_v = topo.CreateLayer(layerProps)
+gids_Vp_h = range(Vp_h[0] + 1, Params['N']*Params['N']*9 + Vp_h[0] + 1)
+gids_Vp_v = range(Vp_v[0] + 1, Params['N']*Params['N']*9 + Vp_v[0] + 1)
 
 # ! Collect all populations
 # ! -----------------------
@@ -445,7 +451,7 @@ populations = (retina, Tp, Rp, Vp_h, Vp_v)
 # ! ----------
 
 # ! We can now look at the network using `PrintNetwork`:
-nest.PrintNetwork()
+nest.PrintNetwork(1, (0,))
 
 # ! We can also try to plot a single layer in a network. For
 # ! simplicity, we use Rp, which has only a single neuron per position.
@@ -817,12 +823,13 @@ pylab.show()
 # ! connect. ``loc`` is the subplot location for the layer.
 print("Connecting: Recording devices")
 recorders = {}
-for name, loc, population, model in [('TpRelay', 1, Tp, 'TpRelay'),
-                                     ('Rp', 2, Rp, 'RpNeuron'),
-                                     ('Vp_v L4pyr', 3, Vp_v, 'L4pyr'),
-                                     ('Vp_h L4pyr', 4, Vp_h, 'L4pyr')]:
+gids = [gids_Tp, gids_Rp, gids_Vp_v, gids_Vp_h]
+for name, loc, model in [('TpRelay', 1, 'TpRelay'),
+                                     ('Rp', 2, 'RpNeuron'),
+                                     ('Vp_v L4pyr', 3, 'L4pyr'),
+                                     ('Vp_h L4pyr', 4, 'L4pyr')]:
     recorders[name] = (nest.Create('RecordingNode'), loc)
-    tgts = [nd for nd in nest.GetLeaves(population)[0]
+    tgts = [nd for nd in gids[loc-1]
             if nest.GetStatus([nd], 'model')[0] == model]
     nest.Connect(recorders[name][0], tgts)  # one recorder to all targets
 

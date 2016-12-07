@@ -186,6 +186,16 @@ def CopyModel(existing, new, params=None):
         Default parameters assigned to the copy. Not provided parameters are
         taken from the existing model.
     """
+    try:
+        deprecated_models = ['subnet', 'aeif_cond_alpha_RK5']
+        if GetDefaults(existing)['type_id'] in deprecated_models:
+            text = "{0}:  model is going to be removed".format(existing)
+            if existing == "subnet":
+                text += ", work with GIDCollections instead"
+            text = get_wrapped_text(text)
+            warnings.warn('\n' + text)
+    except(KeyError):
+        pass
 
     if params is not None:
         sps(params)

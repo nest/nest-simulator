@@ -55,6 +55,7 @@ def PrintNetwork(depth=1, subnet=None):
     sr("%i PrintNetwork" % depth)
 
 
+@deprecated("", "CurrentSubnet: irrelevant without subnets")
 @check_stack
 def CurrentSubnet():
     """Returns the global id of the current subnet.
@@ -70,6 +71,7 @@ def CurrentSubnet():
 
 
 @check_stack
+@deprecated("", "ChangeSubnet: irrelevant without subnets")
 def ChangeSubnet(subnet):
     """Make given subnet the current.
 
@@ -91,6 +93,7 @@ def ChangeSubnet(subnet):
 
 
 @check_stack
+@deprecated("", "GetLeaves: elements of GIDCollection are leaves")
 def GetLeaves(subnets, properties=None, local_only=False):
     """Return the GIDs of the leaf nodes of the given subnets.
 
@@ -130,6 +133,7 @@ def GetLeaves(subnets, properties=None, local_only=False):
 
 
 @check_stack
+@deprecated("", "GetNodes: you have nodes in GIDCollections")
 def GetNodes(subnets, properties=None, local_only=False):
     """Return the global ids of the all nodes of the given subnets.
 
@@ -167,6 +171,8 @@ def GetNodes(subnets, properties=None, local_only=False):
 
 
 @check_stack
+@deprecated("", "GetChildren: irrelevant without subnets, work with "
+            "GIDCollections")
 def GetChildren(subnets, properties=None, local_only=False):
     """Return the global ids of the immediate children of the given subnets.
 
@@ -204,6 +210,8 @@ def GetChildren(subnets, properties=None, local_only=False):
 
 
 @check_stack
+@deprecated("", "GetNetwork: irrelevant without subnets, script is responsible "
+            "for retaining structure information if needed")
 def GetNetwork(gid, depth):
     """Return a nested list with the children of subnet id at level
     depth.
@@ -236,6 +244,7 @@ def GetNetwork(gid, depth):
 
 
 @check_stack
+@deprecated("", "BeginSubnet: no longer needed, work with GIDCollections")
 def BeginSubnet(label=None, params=None):
     """Create a new subnet and change into it.
 
@@ -256,6 +265,7 @@ def BeginSubnet(label=None, params=None):
 
 
 @check_stack
+@deprecated("", "EndSubnet: no longer needed, work with GIDCollections")
 def EndSubnet():
     """Change to the parent subnet and return the gid of the current.
 
@@ -277,6 +287,8 @@ def EndSubnet():
 
 
 @check_stack
+@deprecated("", "LayoutNetwork: use Create(<model>, n=<number>) and get a "
+            "GIDCollection")
 def LayoutNetwork(model, dim, label=None, params=None):
     """Create a subnetwork of dimension dim with nodes of type model and
     return a list of ids.

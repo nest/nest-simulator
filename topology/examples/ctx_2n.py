@@ -40,22 +40,26 @@ nest.ResetKernel()
 
 nest.CopyModel('iaf_neuron', 'pyr')
 nest.CopyModel('iaf_neuron', 'in')
-ctx = topo.CreateLayer({'columns': 4, 'rows': 3,
+col = 4
+row = 3
+el = ['pyr', 'in']
+ctx = topo.CreateLayer({'columns': col, 'rows': row,
                         'extent': [2.0, 1.5],
-                        'elements': ['pyr', 'in']})
+                        'elements': el})
 
-nest.PrintNetwork()
+nest.PrintNetwork(1,(0,))
 
-nest.PrintNetwork(2)
+nest.PrintNetwork(2,(0,))
 
 nest.PrintNetwork(2, ctx)
 
+gids = range(ctx[0] + 1, col*row*len(el) + ctx[0] + 1)
 # extract position information
 ppyr = pylab.array(
-    tuple(zip(*[topo.GetPosition([n])[0] for n in nest.GetLeaves(ctx)[0]
+    tuple(zip(*[topo.GetPosition([n])[0] for n in gids
                 if nest.GetStatus([n], 'model')[0] == 'pyr'])))
 pin = pylab.array(
-    tuple(zip(*[topo.GetPosition([n])[0] for n in nest.GetLeaves(ctx)[0]
+    tuple(zip(*[topo.GetPosition([n])[0] for n in gids
                 if nest.GetStatus([n], 'model')[0] == 'in'])))
 # plot
 pylab.clf()

@@ -128,9 +128,9 @@
     V_T_star   double - Base threshold in mV
 
   Synaptic parameters
-    tau_syn   vector of double - Time constants of the synaptic conductance
-                                 in ms.
-    E_rev      double vector - Reversal potential in mV.
+    tau_syn    double vector - Time constants of the synaptic conductance
+                                 in ms (same size as E_rev).
+    E_rev      double vector - Reversal potentials in mV (same size as tau_syn).
 
   Integration parameters
     gsl_error_tol  double - This parameter controls the admissible error of the
@@ -139,36 +139,22 @@
 
   Example:
 
-  import nest
-  import numpy as np
+  neuron = nest.Create('gif_cond_exp_multisynapse',
+                       params={'E_rev': [0.0, -85.0],
+                               'tau_syn': [4.0, 8.0]})
 
-  neuron = nest.Create('gif_cond_exp_multisynapse')
-  nest.SetStatus(neuron, {'E_rev':[0.0, -85.0],
-                         'tau_syn':[4.0, 8.0]})
-
-  spike = nest.Create('spike_generator', params = {'spike_times':
+  spike = nest.Create('spike_generator', params={'spike_times':
                                                  np.array([10.0])})
 
-  voltmeter = nest.Create('voltmeter', 1, {'withgid': True})
-
-  delays=[1.0, 300.0]
-  w=[1.0, 1.0, 1.0, 1.0]
+  delays = [1., 30.]
+  w = [1., 5.]
   for syn in range(2):
-     nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
-                                           'receptor_type': 1 + syn,
-                                           'weight': w[syn],
-                                           'delay': delays[syn]})
+      nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
+                                            'receptor_type': 1 + syn,
+                                            'weight': w[syn],
+                                            'delay': delays[syn]})
+  nest.Simulate(100.)
 
-  nest.Connect(voltmeter, neuron)
-
-  nest.Simulate(1000.0)
-  dmm = nest.GetStatus(voltmeter)[0]
-  Vms = dmm["events"]["V_m"]
-  ts = dmm["events"]["times"]
-  import pylab
-  pylab.figure(2)
-  pylab.plot(ts, Vms)
-  pylab.show()
 
   References:
 

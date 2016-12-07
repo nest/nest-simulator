@@ -402,7 +402,9 @@ gids = range(retina[0] + 1, retina[0] + Params['N']*Params['N'] + 1)
 # ! interneuron per location:
 layerProps.update({'elements': ['TpRelay', 'TpInter']})
 Tp = topo.CreateLayer(layerProps)
-gids_Tp = range(Tp[0] + 1, Params['N']*Params['N']*len(layerProps['elements']) + Tp[0] + 1)
+gids_Tp = range(Tp[0] + 1,
+                Params['N']*Params['N']*len(layerProps['elements']) +
+                Tp[0] + 1)
 
 # ! Reticular nucleus
 # ! -----------------
@@ -825,9 +827,9 @@ print("Connecting: Recording devices")
 recorders = {}
 gids = [gids_Tp, gids_Rp, gids_Vp_v, gids_Vp_h]
 for name, loc, model in [('TpRelay', 1, 'TpRelay'),
-                                     ('Rp', 2, 'RpNeuron'),
-                                     ('Vp_v L4pyr', 3, 'L4pyr'),
-                                     ('Vp_h L4pyr', 4, 'L4pyr')]:
+                         ('Rp', 2, 'RpNeuron'),
+                         ('Vp_v L4pyr', 3, 'L4pyr'),
+                         ('Vp_h L4pyr', 4, 'L4pyr')]:
     recorders[name] = (nest.Create('RecordingNode'), loc)
     tgts = [nd for nd in gids[loc-1]
             if nest.GetStatus([nd], 'model')[0] == model]

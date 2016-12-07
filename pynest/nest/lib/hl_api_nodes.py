@@ -28,8 +28,6 @@ from .hl_api_info import SetStatus
 from .hl_api_models import GetDefaults
 from ..pynestkernel import NESTError
 
-#import nest
-
 
 @check_stack
 def Create(model, n=1, params=None):

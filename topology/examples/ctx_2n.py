@@ -47,9 +47,9 @@ ctx = topo.CreateLayer({'columns': col, 'rows': row,
                         'extent': [2.0, 1.5],
                         'elements': el})
 
-nest.PrintNetwork(1,(0,))
+nest.PrintNetwork(1, (0,))
 
-nest.PrintNetwork(2,(0,))
+nest.PrintNetwork(2, (0,))
 
 nest.PrintNetwork(2, ctx)
 

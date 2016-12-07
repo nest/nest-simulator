@@ -210,8 +210,8 @@ def GetChildren(subnets, properties=None, local_only=False):
 
 
 @check_stack
-@deprecated("", "GetNetwork: irrelevant without subnets, script is responsible "
-            "for retaining structure information if needed")
+@deprecated("", "GetNetwork: irrelevant without subnets, script is responsible"
+            " for retaining structure information if needed")
 def GetNetwork(gid, depth):
     """Return a nested list with the children of subnet id at level
     depth.

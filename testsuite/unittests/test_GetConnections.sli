@@ -126,7 +126,7 @@
     /stgt_stdp stdp_targets -3 Take def     % those with static+stdp
     /ssrc_all ssrc_static ssrc_stdp join def
     /stgt_all stgt_static stgt_stdp join def  
-    /conns << /source ssrc_all >> GetConnections { cva } Map def
+    /conns << /source ssrc_all cvgidcollection >> GetConnections { cva } Map def
     /csrc conns { 0 get } Map def
     /ctgt conns { 1 get } Map def
 
@@ -147,7 +147,7 @@
     /stgt_stdp stdp_targets -3 Take def     % those with static+stdp
     /ssrc_all ssrc_static ssrc_stdp join def
     /stgt_all stgt_static stgt_stdp join def  
-    /conns << /target stgt_all >> GetConnections { cva } Map def
+    /conns << /target stgt_all cvgidcollection >> GetConnections { cva } Map def
     /csrc conns { 0 get } Map def
     /ctgt conns { 1 get } Map def
 
@@ -169,7 +169,7 @@
     /stgt_stdp stdp_targets [-3 -1] Take def     % those with static+stdp
     /ssrc_all ssrc_static ssrc_stdp join def
     /stgt_all stgt_static stgt_stdp join def  
-    /conns << /source ssrc_all /target stgt_all >> GetConnections { cva } Map def
+    /conns << /source ssrc_all cvgidcollection /target stgt_all cvgidcollection >> GetConnections { cva } Map def
     /csrc conns { 0 get } Map def
     /ctgt conns { 1 get } Map def
 
@@ -192,7 +192,7 @@
     /ssrc_all ssrc_static ssrc_stdp join def
     /stgt_all stgt_static stgt_stdp join def  
     /conns 
-      << /source ssrc_all /target stgt_all /synapse_model /static_synapse >> 
+      << /source ssrc_all cvgidcollection /target stgt_all cvgidcollection /synapse_model /static_synapse >> 
       GetConnections { cva } Map 
     def
     /csrc conns { 0 get } Map def

@@ -178,9 +178,8 @@ def step(t, n, initial, after, seed=1, dt=0.05):
     """Simulates for n generators for t ms. Step at t/2."""
 
     nest.ResetKernel()
-    nest.SetStatus([0], [{"resolution": dt}])
-    nest.SetStatus([0], [{"grng_seed": 256 * seed + 1}])
-    nest.SetStatus([0], [{"rng_seeds": [256 * seed + 2]}])
+    nest.SetKernelStatus({"resolution": dt, "grng_seed": 256 * seed + 1,
+                          "rng_seeds": [256 * seed + 2]})
 
     g = nest.Create('sinusoidal_gamma_generator', n, params=initial)
     sd = nest.Create('spike_detector')

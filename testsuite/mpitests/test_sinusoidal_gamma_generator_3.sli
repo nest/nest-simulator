@@ -74,8 +74,8 @@ is_threaded not { exit_test_gracefully } if
                       >> Create def
   /pnet [ nodes ] { ; /parrot_neuron Create } Table def
 
-  [gen] pnet Connect
-  pnet [sd] Connect
+  pnet { gen exch Connect } forall
+  pnet { sd Connect } forall
   
   10. Simulate
 

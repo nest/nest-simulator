@@ -210,8 +210,8 @@ create( const Name& model_name, const index n_nodes )
 }
 
 void
-connect( const GIDCollection& sources,
-  const GIDCollection& targets,
+connect( GIDCollectionPTR sources,
+  GIDCollectionPTR targets,
   const DictionaryDatum& connectivity,
   const DictionaryDatum& synapse_params )
 {

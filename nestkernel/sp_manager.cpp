@@ -137,8 +137,9 @@ SPManager::set_status( const DictionaryDatum& d )
   if ( d->known( names::multapses ) )
     def< bool >(
       conn_spec, names::multapses, getValue< bool >( d, names::multapses ) );
-  GIDCollection sources = GIDCollection();
-  GIDCollection targets = GIDCollection();
+
+  GIDCollectionPTR sources( new GIDCollectionPrimitive() );
+  GIDCollectionPTR targets( new GIDCollectionPrimitive() );
 
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin();
         i != sp_conn_builders_.end();
@@ -221,10 +222,11 @@ SPManager::disconnect_single( index sgid,
   if ( syn->known( names::pre_synaptic_element )
     && syn->known( names::post_synaptic_element ) )
   {
-    GIDCollection* sources = new GIDCollection();
-    GIDCollection* targets = new GIDCollection();
+    GIDCollectionPTR sources( new GIDCollectionPrimitive() );
+    GIDCollectionPTR targets( new GIDCollectionPrimitive() );
+
     DictionaryDatum* conn_spec = new DictionaryDatum( new Dictionary() );
-    SPBuilder* cb = new SPBuilder( *sources, *targets, *conn_spec, syn );
+    SPBuilder* cb = new SPBuilder( sources, targets, *conn_spec, syn );
     cb->change_connected_synaptic_elements(
       sgid, target->get_gid(), target->get_thread(), -1 );
   }
@@ -293,8 +295,8 @@ SPManager::disconnect( index sgid,
  * @param syn_spec synapse specs
  */
 void
-SPManager::disconnect( GIDCollection& sources,
-  GIDCollection& targets,
+SPManager::disconnect( GIDCollectionPTR sources,
+  GIDCollectionPTR targets,
   DictionaryDatum& conn_spec,
   DictionaryDatum& syn_spec )
 {
@@ -506,10 +508,7 @@ SPManager::create_synapses( std::vector< index >& pre_id,
   }
 
   // create synapse
-  GIDCollection sources = GIDCollection( pre_id_rnd );
-  GIDCollection targets = GIDCollection( post_id_rnd );
-
-  sp_conn_builder->sp_connect( sources, targets );
+  sp_conn_builder->sp_connect( pre_id_rnd, post_id_rnd );
 }
 
 /**

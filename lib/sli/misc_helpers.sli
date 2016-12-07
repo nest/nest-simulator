@@ -116,15 +116,16 @@ FirstVersion: Apr 9 1999
 Remarks: 
          M_* values are defined in system dictionary.
          You may introduce new priority levels in the user dictionary if convenient.
-         Standard values are: M_ALL    = 0
-                              M_DEBUG   = 5
-                              M_STATUS  = 7
-                              M_INFO    = 10
-                              M_WARNING = 20
-                              M_ERROR   = 30
-                              M_FATAL   = 40
-                              M_QUIET   = 100
-         Standard output:     M_OUT     = cout
+         Standard values are: M_ALL      =   0
+                              M_DEBUG    =   5
+                              M_STATUS   =   7
+                              M_INFO     =  10
+                              M_PROGRESS =  15
+                              M_WARNING  =  20
+                              M_ERROR    =  30
+                              M_FATAL    =  40
+                              M_QUIET    = 100
+         Standard output:     M_OUT      = cout
 
 SeeAlso: setverbosity
 */
@@ -138,6 +139,7 @@ systemdict begin %this is unnessessary, if misc_helpers.sli is called from sli-i
   /M_DEBUG    5 def
   /M_STATUS   7 def
   /M_INFO    10 def
+  /M_PROGRESS 15 def
   /M_WARNING 20 def
   /M_ERROR   30 def
   /M_FATAL   40 def

@@ -28,6 +28,7 @@ from .hl_api_nodes import Create
 from .hl_api_info import GetStatus, SetStatus
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 def PrintNetwork(depth=1, subnet=None):
     """Print the network tree up to depth, starting at subnet.
@@ -55,6 +56,7 @@ def PrintNetwork(depth=1, subnet=None):
     sr("%i PrintNetwork" % depth)
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 def CurrentSubnet():
     """Returns the global id of the current subnet.
@@ -69,6 +71,7 @@ def CurrentSubnet():
     return (spp(), )
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 def ChangeSubnet(subnet):
     """Make given subnet the current.
@@ -90,6 +93,7 @@ def ChangeSubnet(subnet):
     sr("ChangeSubnet")
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 def GetLeaves(subnets, properties=None, local_only=False):
     """Return the GIDs of the leaf nodes of the given subnets.
@@ -129,6 +133,7 @@ def GetLeaves(subnets, properties=None, local_only=False):
                     litconv=True)
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 def GetNodes(subnets, properties=None, local_only=False):
     """Return the global ids of the all nodes of the given subnets.
@@ -166,6 +171,7 @@ def GetNodes(subnets, properties=None, local_only=False):
                     litconv=True)
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 def GetChildren(subnets, properties=None, local_only=False):
     """Return the global ids of the immediate children of the given subnets.
@@ -203,6 +209,7 @@ def GetChildren(subnets, properties=None, local_only=False):
                     litconv=True)
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 def GetNetwork(gid, depth):
     """Return a nested list with the children of subnet id at level
@@ -235,6 +242,7 @@ def GetNetwork(gid, depth):
     return spp()
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 def BeginSubnet(label=None, params=None):
     """Create a new subnet and change into it.
@@ -255,6 +263,7 @@ def BeginSubnet(label=None, params=None):
     ChangeSubnet(sn)
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 def EndSubnet():
     """Change to the parent subnet and return the gid of the current.
@@ -276,6 +285,7 @@ def EndSubnet():
             "Unexpected EndSubnet(). Cannot go higher than the root node.")
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 def LayoutNetwork(model, dim, label=None, params=None):
     """Create a subnetwork of dimension dim with nodes of type model and

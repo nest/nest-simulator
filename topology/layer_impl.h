@@ -26,6 +26,7 @@
 #include "layer.h"
 
 // Includes from nestkernel:
+#include "gid_collection.h"
 #include "nest_datums.h"
 
 // Includes from topology:
@@ -350,7 +351,9 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
     const Position< D > source_pos = src_iter->first;
 
     source_array[ 0 ] = source_gid;
-    def( gcdict, names::source, source_array );
+    def( gcdict,
+      names::source,
+      GIDCollectionDatum( GIDCollection::create( source_array ) ) );
     ArrayDatum connectome =
       kernel().connection_manager.get_connections( gcdict );
 

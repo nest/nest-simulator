@@ -48,14 +48,14 @@ is_threaded not { exit_test_gracefully } if
   0 << /total_num_virtual_procs 4 >> SetStatus
 
   /subnet Create /net Set
-  net ChangeSubnet
+  net 0 get ChangeSubnet
     /iaf_neuron Create /n1 Set
     /iaf_neuron Create /n2 Set
     /iaf_neuron Create /n3 Set
     /iaf_neuron Create /n4 Set
   0 ChangeSubnet
 
-  net GetGlobalNodesInfo /nodes Set
+  net 0 get GetGlobalNodesInfo /nodes Set
 
  Rank 0 eq
  {

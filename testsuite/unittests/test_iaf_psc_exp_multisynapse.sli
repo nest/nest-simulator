@@ -62,7 +62,7 @@ ResetKernel
 /iaf_psc_exp_multisynapse Create /npost Set
 npost << /tau_syn taus >> SetStatus
 
-npost GetStatus /tau_syn get
+npost 0 get GetStatus /tau_syn get
 taus eq assert_or_die
 
 /voltmeter Create /vm Set
@@ -76,7 +76,7 @@ sg << /spike_times [spike_time] >> SetStatus
   /receptor Set
   /delay Set
   /weight Set
-  [sg] [npost] /one_to_one << /weight weight /delay delay /receptor_type receptor >> Connect
+  sg npost /one_to_one pstack << /weight weight /delay delay /receptor_type receptor >> Connect
 } ScanThread
 
 

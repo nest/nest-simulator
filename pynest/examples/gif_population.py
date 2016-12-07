@@ -41,6 +41,8 @@ import nest
 import nest.raster_plot
 import matplotlib.pyplot as plt
 
+nest.ResetKernel()
+
 '''
 Assigning the simulation parameters to variables.
 '''
@@ -117,7 +119,7 @@ population.
 nest.Connect(
     population, population, {'rule': 'pairwise_bernoulli', 'p': p_ex},
     syn_spec={"weight": w_ex}
-    )
+)
 
 nest.Connect(noise, population, 'all_to_all', syn_spec={"weight": w_noise})
 

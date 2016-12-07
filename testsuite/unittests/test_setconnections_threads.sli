@@ -40,9 +40,9 @@ ResetKernel
 /iaf_neuron Create /source Set
 /iaf_neuron Create /target Set
 
-source target /stdp_synapse Connect
+source 0 get target 0 get /stdp_synapse Connect
 
-<< /source [source] /synapse_model /stdp_synapse >> GetConnections 0 get /conn Set
+<< /source source /synapse_model /stdp_synapse >> GetConnections 0 get /conn Set
 
 { conn /weight get 1.0 eq} assert_or_die
 { conn /synapse_model get /stdp_synapse eq} assert_or_die

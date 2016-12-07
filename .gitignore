@@ -55,3 +55,5 @@ doc/normaldoc.conf
 lib/sli/rcsinfo.sli
 extras/emacs/sli.el
 extras/nest_vars.sh
+*.bak
+*.pyc

@@ -31,6 +31,7 @@
 #include "event.h"
 #include "exceptions.h"
 #include "nest_types.h"
+#include "nest_datums.h"
 #include "node.h"
 #include "recording_device.h"
 #include "kernel_manager.h"
@@ -138,8 +139,8 @@ private:
 
   struct Parameters_
   {
-    std::vector< long > senders_;
-    std::vector< long > targets_;
+    GIDCollectionDatum senders_;
+    GIDCollectionDatum targets_;
 
     Parameters_();
     Parameters_( const Parameters_& );

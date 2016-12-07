@@ -81,8 +81,8 @@ public:
   virtual void disconnect();
 
   //! parameters: sources, targets, specifications
-  ConnBuilder( const GIDCollection&,
-    const GIDCollection&,
+  ConnBuilder( GIDCollectionPTR,
+    GIDCollectionPTR,
     const DictionaryDatum&,
     const DictionaryDatum& );
   virtual ~ConnBuilder();
@@ -146,8 +146,8 @@ protected:
    */
   void skip_conn_parameter_( thread, size_t n_skip = 1 );
 
-  GIDCollection const* sources_;
-  GIDCollection const* targets_;
+  GIDCollectionPTR sources_;
+  GIDCollectionPTR targets_;
 
   bool autapses_;
   bool multapses_;
@@ -208,8 +208,8 @@ private:
 class OneToOneBuilder : public ConnBuilder
 {
 public:
-  OneToOneBuilder( const GIDCollection& sources,
-    const GIDCollection& targets,
+  OneToOneBuilder( GIDCollectionPTR sources,
+    GIDCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec )
     : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -232,8 +232,8 @@ protected:
 class AllToAllBuilder : public ConnBuilder
 {
 public:
-  AllToAllBuilder( const GIDCollection& sources,
-    const GIDCollection& targets,
+  AllToAllBuilder( GIDCollectionPTR sources,
+    GIDCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec )
     : ConnBuilder( sources, targets, conn_spec, syn_spec )
@@ -251,8 +251,8 @@ protected:
 class FixedInDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedInDegreeBuilder( const GIDCollection&,
-    const GIDCollection&,
+  FixedInDegreeBuilder( GIDCollectionPTR,
+    GIDCollectionPTR,
     const DictionaryDatum&,
     const DictionaryDatum& );
 
@@ -266,8 +266,8 @@ private:
 class FixedOutDegreeBuilder : public ConnBuilder
 {
 public:
-  FixedOutDegreeBuilder( const GIDCollection&,
-    const GIDCollection&,
+  FixedOutDegreeBuilder( GIDCollectionPTR,
+    GIDCollectionPTR,
     const DictionaryDatum&,
     const DictionaryDatum& );
 
@@ -281,8 +281,8 @@ private:
 class FixedTotalNumberBuilder : public ConnBuilder
 {
 public:
-  FixedTotalNumberBuilder( const GIDCollection&,
-    const GIDCollection&,
+  FixedTotalNumberBuilder( GIDCollectionPTR,
+    GIDCollectionPTR,
     const DictionaryDatum&,
     const DictionaryDatum& );
 
@@ -296,8 +296,8 @@ private:
 class BernoulliBuilder : public ConnBuilder
 {
 public:
-  BernoulliBuilder( const GIDCollection&,
-    const GIDCollection&,
+  BernoulliBuilder( GIDCollectionPTR,
+    GIDCollectionPTR,
     const DictionaryDatum&,
     const DictionaryDatum& );
 
@@ -311,8 +311,8 @@ private:
 class SPBuilder : public ConnBuilder
 {
 public:
-  SPBuilder( const GIDCollection& sources,
-    const GIDCollection& targets,
+  SPBuilder( GIDCollectionPTR sources,
+    GIDCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec );
 
@@ -334,11 +334,24 @@ public:
    */
   void update_delay( delay& d ) const;
 
-  void sp_connect( GIDCollection sources, GIDCollection targets );
+  /**
+   *  @note Only for internal use by SPManager.
+   */
+  void sp_connect( const std::vector< index >& sources,
+    const std::vector< index >& targets );
 
 protected:
+  using ConnBuilder::connect_;
   void connect_();
-  void connect_( GIDCollection sources, GIDCollection targets );
+  void connect_( GIDCollectionPTR sources, GIDCollectionPTR targets );
+
+  /**
+   * In charge of dynamically creating the new synapses
+   * @param sources nodes from which synapses can be created
+   * @param targets target nodes for the newly created synapses
+   */
+  void connect_( const std::vector< index >& sources,
+    const std::vector< index >& targets );
 };
 
 inline void

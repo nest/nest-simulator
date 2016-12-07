@@ -147,7 +147,7 @@ params begin userdict begin
  ]
  {Create dup params SetStatus} Map /neurons Set
 
- neurons {/Interpol_Order known} Select {<< /Interpol_Order O >> SetStatus} forall
+ neurons {0 get /Interpol_Order known} Select {<< /Interpol_Order O >> SetStatus} forall
 
 
  T Simulate

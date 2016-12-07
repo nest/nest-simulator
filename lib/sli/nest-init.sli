@@ -67,7 +67,7 @@ def
 
 % These variants of get access network elements represented by
 % a gid like dictionaries. In particular, if a gid returns a dictionary,
-% get can be used to acces the contents of the nested objects.
+% get can be used to access the contents of the nested objects.
 % 071108, Diesmann
 %
 /get [/integertype /literaltype] {exch GetStatus exch get} def
@@ -78,6 +78,88 @@ def
 /get [/connectiontype /literaltype] {exch GetStatus exch get} def
 /get [/connectiontype /arraytype] {exch GetStatus exch get_d_a} def
 
+% The following version allows extraction of a GID from a GIDCollection
+/get [/gidcollectiontype /integertype] { get_g_i } def
+
+% Using GID in a GIDCollection with size=1 as a dictionary 
+/get [/gidcollectiontype /literaltype] 
+{ 
+  exch 
+  dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if
+  0 get_g_i GetStatus exch get 
+} def
+
+/get [/gidcollectiontype /arraytype] 
+{ 
+  exch 
+  dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if 
+  0 get_g_i GetStatus exch get_d_a
+} def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Slicing of GIDCollections with Take
+% Since n Take means take first n elements, while [n] Take means return
+%      n-th element, we need to be a bit careful, handling the letter case
+%      here at the SLI level and mapping the former to the two-element case
+% Note that Take indexes from 1, with -1 the last element
+/Take [/gidcollectiontype /integertype] 
+ {
+   << >> begin 
+     /n Set
+     /c Set
+     n 0 geq
+     {
+       [ 1 n ]
+     }
+     {
+       n neg c size gt { c n /Take /RangeError raiseerror } if
+       
+       c size dup n add 1 add exch
+       2 arraystore
+     }
+     ifelse
+     c
+     exch
+     Take
+   end
+}
+def
+
+/Take [/gidcollectiontype /arraytype] 
+{
+  << >> begin
+  /slice Set
+  /coll Set
+  slice length 1 eq
+  {
+    slice 0 get
+    dup 0 eq 
+    {
+      pop coll slice /Take /RangeCheck raiseerror
+    }
+    if
+      
+    dup 1 geq
+    {
+      % positive index, must subtract 1
+      1 sub
+    }
+    if
+    coll exch
+    get      % negative index works the same for Take and get
+  }
+  {
+    % assume that we have two or three elements now
+    slice dup
+    length 2 eq { 1 append } if
+    coll exch
+    Take_g_a
+  }
+  ifelse
+  end
+  
+} def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -130,9 +212,158 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% add conversion from GIDCollection
+/cva [/gidcollectiontype]
+  /cva_g load
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/GIDCollectionQ trie 
+  [/gidcollectiontype] true addtotrie
+  [/anytype] false addtotrie
+def                  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% convert to list of gid-modelid pairs
+/cva_gid_mid trie def
+/cva_gid_mid [/gidcollectiontype]
+{
+ << >> begin
+  dup 
+  :beginiterator_g /iter Set
+  :enditerator_g /enditer Set
+  
+  mark
+  {
+    iter :getgidmodelid_q
+    iter :next_q
+    enditer :lt_q_q not { exit } if
+  }
+  loop
+  counttomark
+  arraystore
+  exch pop
+
+  end
+}
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% join for GIDCollections
+/join [/gidcollectiontype /gidcollectiontype]
+  /join_g_g load
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% forall and Map for gid collections --- brutal implementation
+
+/forall [/gidcollectiontype /proceduretype]
+{
+  << >> begin
+  /func Set
+  dup 
+  :beginiterator_g /iter Set
+  :enditerator_g /enditer Set
+  
+  {
+    iter :getgid_q
+    func
+    iter :next_q
+    enditer :lt_q_q not { exit } if
+  }
+  loop
+
+  end
+} def
+
+/Map [/gidcollectiontype /proceduretype]
+{
+  << >> begin
+  /func Set
+  dup 
+  :beginiterator_g /iter Set
+  :enditerator_g /enditer Set
+  
+  mark
+  {
+    iter :getgid_q
+    func
+    iter :next_q
+    enditer :lt_q_q not { exit } if
+  }
+  loop
+  counttomark
+  arraystore
+  exch pop
+
+  end
+} def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% GIDCollection membership
+
+/InCollection [/gidcollectiontype /integertype]
+  /MemberQ_g_i load
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % typeinit.sli already defines size functions for other types
 /size [/gidcollectiontype]
   /size_g load
+def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% GetStatus / SetStatus for GIDCollection
+/GetStatus [/gidcollectiontype]
+{
+  dup size /get_s_siz Set
+  dup ValidQ_g not { /GetStatus /InvalidGIDCollectionError raiseerror } if
+  { GetStatus_i } Map
+  get_s_siz 1 eq { 0 get } if
+}
+def
+
+/SetStatus [/gidcollectiontype /dictionarytype]
+{
+  1 pick ValidQ_g not { /SetStatus /InvalidGIDCollectionError raiseerror } if
+  exch { 1 pick SetStatus_id } forall
+  pop % dictionary
+}
+def
+
+/SetStatus [/gidcollectiontype /arraytype]
+{
+  1 pick ValidQ_g not { /SetStatus /InvalidGIDCollectionError raiseerror } if
+  << >> begin
+  /params Set
+  /gc Set
+  
+  params length gc size neq
+  {
+    gc params /SetStatus /IncompatibleLengths raiseerror
+  }
+  if
+ 
+  gc :beginiterator_g /iter Set
+  gc :enditerator_g /enditer Set
+  
+  params
+  {
+    iter :getgid_q exch
+    SetStatus_id
+    iter :next_q pop
+  }
+  forall
+
+  end
+}
 def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -416,7 +647,32 @@ def
   % Connect two nodes using given synapse parameters and synapse model
   [/integertype /integertype /dictionarytype /literaltype]
       /Connect_i_i_D_l load addtotrie
-
+  
+  
+  % Connect two GIDCollections, each containing one GID, using given weight and 
+  % delay and default synapse model
+  [/gidcollectiontype /gidcollectiontype /doubletype /doubletype] {
+      /Connect /syn_spec GetOption /model get
+      5 3 roll
+      dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if
+      0 get
+      exch dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if
+      0 get exch
+      5 2 roll
+      Connect_i_i_d_d_l
+  } bind addtotrie
+  
+  % Connect two GIDCollections, each containing one GID, using given weight and 
+  % delay and synapse model
+  [/gidcollectiontype /gidcollectiontype /doubletype /doubletype /literaltype] {
+      5 3 roll
+      dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if
+      0 get
+      exch dup size 1 eq not{ /get /InvalidGIDCollectionError raiseerror }if
+      0 get exch
+      5 2 roll
+      Connect_i_i_d_d_l
+  } bind addtotrie
 
   % We create the type trie for the list variants using a loop
   [/arraytype /intvectortype /gidcollectiontype] {
@@ -570,31 +826,26 @@ def
 */
 /GetConnections [/dictionarytype] 
 { 
-  dup /pdict Set
+  /pdict Set
   [ /source /target ]
   {
     /key Set
     pdict key known 
     { 
       pdict key get 
-      ArrayQ exch ; not  
+      GIDCollectionQ exch ; not  
       {
-	key cvs ( argument must be list of GIDs) join M_ERROR message
-	/GetConnections /ArgumentError raiseerror
+	      key cvs ( argument must be GIDCollection) join M_ERROR message
+	      /GetConnections /ArgumentError raiseerror
       }
       if
-      pdict key get
-      TensorRank 1 eq not
-      {
-        key cvs ( list of GIDs must be of dimension 1) join M_ERROR message
-      	/GetConnections /ArgumentError raiseerror
-      }
-      if
-    } if    
-  } forall
-  GetConnections_D 
-  Flatten 
-} def
+    }
+    if
+  }
+  forall
+  pdict GetConnections_D 
+}
+def
 
 
 /* BeginDocumentation
@@ -754,7 +1005,7 @@ def
     {
       1 arraystore val SetStatus
     } for
-    cwn ChangeSubnet
+    cwn 0 get ChangeSubnet
   }
   {
     % go down in recursion
@@ -768,7 +1019,7 @@ def
   } ifelse
   % return root as result
   result
-  cwn ChangeSubnet
+  cwn 0 get ChangeSubnet
   end
 } bind def
 
@@ -783,7 +1034,7 @@ def
   /cwn CurrentSubnet def
   /subnet Create
   dup /result Set
-  ChangeSubnet
+  0 get ChangeSubnet
   n_dim 1 eq
   {
     % we have reached the end of the recursion

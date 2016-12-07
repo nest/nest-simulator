@@ -89,16 +89,16 @@ public:
   void register_conn_builder( const std::string& name );
 
   ConnBuilder* get_conn_builder( const std::string& name,
-    const GIDCollection& sources,
-    const GIDCollection& targets,
+    GIDCollectionPTR sources,
+    GIDCollectionPTR targets,
     const DictionaryDatum& conn_spec,
     const DictionaryDatum& syn_spec );
 
   /**
    * Create connections.
    */
-  void connect( const GIDCollection&,
-    const GIDCollection&,
+  void connect( GIDCollectionPTR,
+    GIDCollectionPTR,
     const DictionaryDatum&,
     const DictionaryDatum& );
 
@@ -212,8 +212,8 @@ public:
   ArrayDatum get_connections( DictionaryDatum dict ) const;
 
   void get_connections( std::deque< ConnectionID >& connectome,
-    TokenArray const* source,
-    TokenArray const* target,
+    GIDCollectionPTR source,
+    GIDCollectionPTR target,
     size_t syn_id,
     long synapse_label ) const;
 

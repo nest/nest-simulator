@@ -24,6 +24,7 @@
 
 // Includes from nestkernel:
 #include "exceptions.h"
+#include "gid_collection.h"
 #include "kernel_manager.h"
 
 // Includes from sli:

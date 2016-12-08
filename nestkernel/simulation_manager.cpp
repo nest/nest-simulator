@@ -824,15 +824,18 @@ nest::SimulationManager::update_()
         sw_gather_spike_data.start();
         kernel().event_delivery_manager.gather_spike_data( tid );
         sw_gather_spike_data.stop();
-        sw_gather_secondary_events.start();
-#pragma omp single
+        if ( kernel().node_manager.any_node_uses_wfr() )
         {
-          kernel().event_delivery_manager.gather_secondary_events( true );
+          sw_gather_secondary_events.start();
+#pragma omp single
+          {
+            kernel().event_delivery_manager.gather_secondary_events( true );
+          }
+          sw_gather_secondary_events.stop();
+          sw_deliver_secondary_events.start();
+          kernel().event_delivery_manager.deliver_secondary_events( tid );
+          sw_deliver_secondary_events.stop();
         }
-        sw_gather_secondary_events.stop();
-        sw_deliver_secondary_events.start();
-        kernel().event_delivery_manager.deliver_secondary_events( tid );
-        sw_deliver_secondary_events.stop();
       }
 
 #pragma omp barrier

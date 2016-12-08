@@ -1312,7 +1312,7 @@ nest::ConnectionManager::get_targets( std::vector< index > sources,
     target_it = targets.begin();
     for ( ; source_it != sources.end(); source_it++, target_it++ )
     {
-      if ( ( *it ).get( *source_it ) != 0 )
+      if ( not( *it ).empty() and ( *it ).get( *source_it ) != 0 )
       {
         validate_pointer( ( *it ).get( *source_it ) )
           ->get_target_gids( ( *target_it ), thread_id, synapse_model );

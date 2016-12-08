@@ -238,11 +238,6 @@ public:
   bool deliver_events( thread t );
 
   /**
-   * Collocate buffers and exchange events with other MPI processes.
-   */
-  void gather_events( bool );
-
-  /**
    * Collocates spikes from register to MPI buffers, communicates via
    * MPI and delivers events to targets.
    */
@@ -287,6 +282,12 @@ public:
   unsigned int comm_rounds_spike_data;
 
 private:
+
+  template< typename SpikeDataT >
+  void gather_spike_data_( const thread tid, const unsigned int& send_recv_count_in_int, std::vector< SpikeDataT >& send_buffer, std::vector< SpikeDataT >& recv_buffer );
+
+  void resize_send_recv_buffers_spike_data_();
+
   /**
    * Rearrange the spike_register into a 2-dim structure. This is
    * done by collecting the spikes from all threads in each slice of

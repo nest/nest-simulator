@@ -148,6 +148,35 @@ EventDeliveryManager::clear_pending_spikes()
 }
 
 void
+EventDeliveryManager::resize_send_recv_buffers_spike_data_()
+{
+  send_buffer_spike_data_.resize(
+    kernel().mpi_manager.get_buffer_size_spike_data() );
+  recv_buffer_spike_data_.resize(
+    kernel().mpi_manager.get_buffer_size_spike_data() );
+  send_buffer_off_grid_spike_data_.resize(
+    kernel().mpi_manager.get_buffer_size_spike_data() );
+  recv_buffer_off_grid_spike_data_.resize(
+    kernel().mpi_manager.get_buffer_size_spike_data() );
+
+  // calculate new send counts
+  send_recv_count_spike_data_per_rank_ = floor(
+    send_buffer_spike_data_.size() / kernel().mpi_manager.get_num_processes() );
+  send_recv_count_spike_data_in_int_per_rank_ = sizeof( SpikeData )
+    / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
+  send_recv_count_off_grid_spike_data_in_int_per_rank_ =
+    sizeof( OffGridSpikeData ) / sizeof( unsigned int )
+    * send_recv_count_spike_data_per_rank_;
+
+  assert(
+    send_buffer_spike_data_.size() <= send_recv_count_spike_data_per_rank_
+    * kernel().mpi_manager.get_num_processes() );
+  assert( send_buffer_off_grid_spike_data_.size()
+          <= send_recv_count_spike_data_per_rank_
+          * kernel().mpi_manager.get_num_processes() );
+}
+
+void
 EventDeliveryManager::configure_spike_buffers()
 {
   assert( kernel().connection_manager.get_min_delay() != 0 );
@@ -158,28 +187,12 @@ EventDeliveryManager::configure_spike_buffers()
     resize_spike_register_5g_( tid );
   }
 
-  send_buffer_spike_data_.resize(
-    kernel().mpi_manager.get_buffer_size_spike_data() );
-  recv_buffer_spike_data_.resize(
-    kernel().mpi_manager.get_buffer_size_spike_data() );
-  send_buffer_off_grid_spike_data_.resize(
-    kernel().mpi_manager.get_buffer_size_spike_data() );
-  recv_buffer_off_grid_spike_data_.resize(
-    kernel().mpi_manager.get_buffer_size_spike_data() );
-
-  send_recv_count_spike_data_per_rank_ = floor(
-    send_buffer_spike_data_.size() / kernel().mpi_manager.get_num_processes() );
-  send_recv_count_spike_data_in_int_per_rank_ = sizeof( SpikeData )
-    / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
-  send_recv_count_off_grid_spike_data_in_int_per_rank_ =
-    sizeof( OffGridSpikeData ) / sizeof( unsigned int )
-    * send_recv_count_spike_data_per_rank_;
+  resize_send_recv_buffers_spike_data_();
 
   // this should also clear all contained elements
   // so no loop required
   secondary_events_buffer_.clear();
   secondary_events_buffer_.resize( kernel().vp_manager.get_num_threads() );
-
 
   // send_buffer must be >= 2 as the 'overflow' signal takes up 2 spaces
   // plus the fiunal marker and the done flag for iterations
@@ -611,40 +624,51 @@ EventDeliveryManager::deliver_events( thread t )
   // return done;
 }
 
-// TODO@5g: is replace by gather_spike_data & gather_secondary_data(?)
-void
-EventDeliveryManager::gather_events( bool done )
-{
-  assert( false );
-  // collocate_buffers_( done );
-  // if ( off_grid_spiking_ )
-  //   kernel().mpi_manager.communicate(
-  //     local_offgrid_spikes_, global_offgrid_spikes_, displacements_ );
-  // else
-  //   kernel().mpi_manager.communicate( local_grid_spikes_,
-  //   global_grid_spikes_, displacements_ );
-}
-
 void
 EventDeliveryManager::gather_spike_data( const thread tid )
+{
+  if ( off_grid_spiking_ )
+  {
+    gather_spike_data_(
+      tid,
+      send_recv_count_off_grid_spike_data_in_int_per_rank_,
+      send_buffer_off_grid_spike_data_,
+      recv_buffer_off_grid_spike_data_ );
+  }
+  else
+  {
+    gather_spike_data_(
+      tid,
+      send_recv_count_spike_data_in_int_per_rank_,
+      send_buffer_spike_data_,
+      recv_buffer_spike_data_ );
+  }
+}
+
+template< typename SpikeDataT >
+void
+EventDeliveryManager::gather_spike_data_( const thread tid,
+                                          const unsigned int& send_recv_count_in_int,
+                                          std::vector< SpikeDataT >& send_buffer,
+                                          std::vector< SpikeDataT >& recv_buffer )
 {
 #pragma omp single
   {
     ++comm_steps_spike_data;
   }
 
+  // counters to keep track of threads and ranks that have send out
+  // all spikes
   static unsigned int completed_count;
   const unsigned int half_completed_count =
     2 * kernel().vp_manager.get_num_threads();
   const unsigned int max_completed_count =
     half_completed_count + kernel().vp_manager.get_num_threads();
-  size_t me_completed_tid;
-  size_t others_completed_tid;
+  unsigned int me_completed_tid = 0;
+  unsigned int others_completed_tid = 0;
 
-  // const size_t num_grid_spikes = std::accumulate( num_grid_spikes_.begin(),
-  // num_grid_spikes_.end(), 0 );
-  // const size_t num_off_grid_spikes = std::accumulate(
-  // num_off_grid_spikes_.begin(), num_off_grid_spikes_.end(), 0 );
+  const AssignedRanks assigned_ranks =
+    kernel().vp_manager.get_assigned_ranks( tid );
 
   // can not use while(true) and break in an omp structured block
   bool done = false;
@@ -657,139 +681,85 @@ EventDeliveryManager::gather_spike_data( const thread tid )
       if ( kernel().mpi_manager.adaptive_spike_buffers()
         && buffer_size_spike_data_has_changed_ )
       {
-        // resize buffer
-        send_buffer_spike_data_.resize(
-          kernel().mpi_manager.get_buffer_size_spike_data() );
-        recv_buffer_spike_data_.resize(
-          kernel().mpi_manager.get_buffer_size_spike_data() );
-        send_buffer_off_grid_spike_data_.resize(
-          kernel().mpi_manager.get_buffer_size_spike_data() );
-        recv_buffer_off_grid_spike_data_.resize(
-          kernel().mpi_manager.get_buffer_size_spike_data() );
-        // calculate new send counts
-        send_recv_count_spike_data_per_rank_ =
-          floor( send_buffer_spike_data_.size()
-            / kernel().mpi_manager.get_num_processes() );
-        send_recv_count_spike_data_in_int_per_rank_ = sizeof( SpikeData )
-          / sizeof( unsigned int ) * send_recv_count_spike_data_per_rank_;
-        send_recv_count_off_grid_spike_data_in_int_per_rank_ =
-          sizeof( OffGridSpikeData ) / sizeof( unsigned int )
-          * send_recv_count_spike_data_per_rank_;
+        resize_send_recv_buffers_spike_data_();
         buffer_size_spike_data_has_changed_ = false;
-
-        assert(
-          send_buffer_spike_data_.size() <= send_recv_count_spike_data_per_rank_
-            * kernel().mpi_manager.get_num_processes() );
-        assert( send_buffer_off_grid_spike_data_.size()
-          <= send_recv_count_spike_data_per_rank_
-            * kernel().mpi_manager.get_num_processes() );
       }
     } // of omp single; implicit barrier
     sw_collocate.start();
 
-    const AssignedRanks assigned_ranks =
-      kernel().vp_manager.get_assigned_ranks( tid );
+    // need to get new positions in case buffer size has changed
     SendBufferPosition send_buffer_position(
       assigned_ranks, send_recv_count_spike_data_per_rank_ );
 
-    if ( not off_grid_spiking_ )
+    // collocate spikes to send buffer
+    me_completed_tid = collocate_spike_data_buffers_( tid,
+                                                      assigned_ranks,
+                                                      send_buffer_position,
+                                                      spike_register_5g_,
+                                                      send_buffer );
+
+    if ( off_grid_spiking_ )
     {
-      me_completed_tid = collocate_spike_data_buffers_( tid,
-        assigned_ranks,
-        send_buffer_position,
-        spike_register_5g_,
-        send_buffer_spike_data_ );
       me_completed_tid += collocate_spike_data_buffers_( tid,
-        assigned_ranks,
-        send_buffer_position,
-        off_grid_spike_register_5g_,
-        send_buffer_spike_data_ );
-      set_end_and_invalid_markers_(
-        assigned_ranks, send_buffer_position, send_buffer_spike_data_ );
+                                                         assigned_ranks,
+                                                         send_buffer_position,
+                                                         off_grid_spike_register_5g_,
+                                                         send_buffer );
     }
     else
     {
-      me_completed_tid = collocate_spike_data_buffers_( tid,
-        assigned_ranks,
-        send_buffer_position,
-        spike_register_5g_,
-        send_buffer_off_grid_spike_data_ );
-      me_completed_tid += collocate_spike_data_buffers_( tid,
-        assigned_ranks,
-        send_buffer_position,
-        off_grid_spike_register_5g_,
-        send_buffer_off_grid_spike_data_ );
-      set_end_and_invalid_markers_( assigned_ranks,
-        send_buffer_position,
-        send_buffer_off_grid_spike_data_ );
+      ++me_completed_tid;
     }
 
+    // set markers to signal end of valid spikes, and remove spikes
+    // from register that have been collected in send buffer
 #pragma omp barrier
+    set_end_and_invalid_markers_(
+      assigned_ranks, send_buffer_position, send_buffer );
     clean_spike_register_( tid );
 
 #pragma omp atomic
     completed_count += me_completed_tid;
 #pragma omp barrier
 
+    // if we do not have any spikes left, set corresponding marker in
+    // send buffer
     if ( completed_count == half_completed_count )
     {
-      if ( not off_grid_spiking_ )
-      {
-        set_complete_marker_spike_data_(
-          assigned_ranks, send_buffer_spike_data_ );
-      }
-      else
-      {
-        set_complete_marker_spike_data_(
-          assigned_ranks, send_buffer_off_grid_spike_data_ );
-      }
+      set_complete_marker_spike_data_(
+        assigned_ranks, send_buffer );
 #pragma omp barrier
     }
     sw_collocate.stop();
 
+    // communicate spikes using a single thread
     sw_communicate.start();
 #pragma omp single
     {
-      if ( not off_grid_spiking_ )
-      {
-        unsigned int* send_buffer_int =
-          reinterpret_cast< unsigned int* >( &send_buffer_spike_data_[ 0 ] );
-        unsigned int* recv_buffer_int =
-          reinterpret_cast< unsigned int* >( &recv_buffer_spike_data_[ 0 ] );
-        kernel().mpi_manager.communicate_Alltoall( send_buffer_int,
-          recv_buffer_int,
-          send_recv_count_spike_data_in_int_per_rank_ );
-      }
-      else
-      {
-        unsigned int* send_buffer_int = reinterpret_cast< unsigned int* >(
-          &send_buffer_off_grid_spike_data_[ 0 ] );
-        unsigned int* recv_buffer_int = reinterpret_cast< unsigned int* >(
-          &recv_buffer_off_grid_spike_data_[ 0 ] );
-        kernel().mpi_manager.communicate_Alltoall( send_buffer_int,
-          recv_buffer_int,
-          send_recv_count_off_grid_spike_data_in_int_per_rank_ );
-      }
-    } // of omp single
+      unsigned int* send_buffer_int =
+        reinterpret_cast< unsigned int* >( &send_buffer[ 0 ] );
+      unsigned int* recv_buffer_int =
+        reinterpret_cast< unsigned int* >( &recv_buffer[ 0 ] );
+      kernel().mpi_manager.communicate_Alltoall( send_buffer_int,
+                                                 recv_buffer_int,
+                                                 send_recv_count_in_int );
+    } // of omp single; implicit barrier
     sw_communicate.stop();
 
+    // deliver spikes from receive buffer to ring buffers
     sw_deliver.start();
-    if ( not off_grid_spiking_ )
-    {
-      others_completed_tid = deliver_events_5g_( tid, recv_buffer_spike_data_ );
-    }
-    else
-    {
-      others_completed_tid =
-        deliver_events_5g_( tid, recv_buffer_off_grid_spike_data_ );
-    }
+    others_completed_tid = deliver_events_5g_( tid, recv_buffer );
 #pragma omp atomic
     completed_count += others_completed_tid;
+
+    // exit gather loop if all local threads and remote processes are
+    // done
 #pragma omp barrier
     if ( completed_count == max_completed_count )
     {
       done = true;
     }
+    // otherwise, resize mpi buffers, if allowed
     else if ( kernel().mpi_manager.adaptive_spike_buffers() )
     {
 #pragma omp single
@@ -800,7 +770,7 @@ EventDeliveryManager::gather_spike_data( const thread tid )
     }
 #pragma omp barrier
     sw_deliver.stop();
-  } // of while(true)
+  } // of while( true )
 
   reset_spike_register_5g_( tid );
 }

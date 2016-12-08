@@ -229,22 +229,6 @@ public:
   void configure_secondary_buffers();
 
   /**
-   * Read all event buffers for thread t and send the corresponding
-   * Events to the Nodes that are targeted.
-   *
-   * @note It is a crucial property of deliver_events_() that events
-   * are delivered ordered by non-decreasing time stamps. BUT: this
-   * ordering applies to time stamps only, it does NOT take into
-   * account the offsets of precise spikes.
-   */
-  bool deliver_events( thread t );
-
-  /**
-   * Collocate buffers and exchange events with other MPI processes.
-   */
-  void gather_events( bool );
-
-  /**
    * Collocates spikes from register to MPI buffers, communicates via
    * MPI and delivers events to targets.
    */
@@ -303,12 +287,11 @@ public:
   unsigned int comm_steps_secondary_events;
 
 private:
-  /**
-   * Rearrange the spike_register into a 2-dim structure. This is
-   * done by collecting the spikes from all threads in each slice of
-   * the min_delay_ interval.
-   */
-  void collocate_buffers_( bool );
+
+  template< typename SpikeDataT >
+  void gather_spike_data_( const thread tid, const unsigned int& send_recv_count_in_int, std::vector< SpikeDataT >& send_buffer, std::vector< SpikeDataT >& recv_buffer );
+
+  void resize_send_recv_buffers_spike_data_();
 
   /**
    * Moves spikes from on grid and off grid spike registers to correct

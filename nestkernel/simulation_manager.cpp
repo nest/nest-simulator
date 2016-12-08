@@ -34,6 +34,7 @@
 
 // Includes from nestkernel:
 #include "connection_manager_impl.h"
+#include "event_delivery_manager.h"
 #include "kernel_manager.h"
 #include "sibling_container.h"
 
@@ -546,7 +547,9 @@ nest::SimulationManager::prepare_simulation_()
 
   // if at the beginning of a simulation, set up spike buffers
   if ( !simulated_ )
+  {
     kernel().event_delivery_manager.configure_spike_buffers();
+  }
 
   kernel().node_manager.ensure_valid_thread_local_ids();
   const size_t num_active_nodes = kernel().node_manager.prepare_nodes();
@@ -813,6 +816,7 @@ nest::SimulationManager::update_()
 #pragma omp barrier
       sw_update.stop();
 
+      // gather only at end of slice
       if ( to_step_ == kernel().connection_manager.get_min_delay() ) // gather
                                                                      // only at
                                                                      // end of

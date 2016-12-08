@@ -897,6 +897,7 @@ nest::SimulationManager::update_()
                 << kernel().event_delivery_manager.comm_steps_spike_data << "("
                 << kernel().event_delivery_manager.comm_rounds_spike_data << ")"
                 << std::endl;
+      std::cout << "0] CommStepsSecondaryEvents: " << kernel().event_delivery_manager.comm_steps_secondary_events << std::endl;
     }
 
   } // end of #pragma parallel omp

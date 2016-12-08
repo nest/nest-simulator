@@ -300,6 +300,7 @@ public:
   unsigned int comm_rounds_target_data;
   unsigned int comm_steps_spike_data;
   unsigned int comm_rounds_spike_data;
+  unsigned int comm_steps_secondary_events;
 
 private:
   /**

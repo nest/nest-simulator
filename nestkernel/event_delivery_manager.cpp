@@ -49,6 +49,7 @@ EventDeliveryManager::EventDeliveryManager()
   , comm_rounds_target_data( 0 )
   , comm_steps_spike_data( 0 )
   , comm_rounds_spike_data( 0 )
+  , comm_steps_secondary_events( 0 )
   , off_grid_spiking_( false )
   , moduli_()
   , slice_moduli_()
@@ -619,6 +620,8 @@ EventDeliveryManager::gather_events( bool done )
 void
 EventDeliveryManager::gather_secondary_events( const bool done )
 {
+  ++comm_steps_secondary_events;
+
   sw_collocate_secondary_events.start();
   // write done marker at last position in every chunk
   const size_t chunk_size =

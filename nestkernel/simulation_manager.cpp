@@ -667,10 +667,8 @@ nest::SimulationManager::update_()
         }
       }
 
-
       if ( from_step_ == 0 ) // deliver only at beginning of slice
       {
-// kernel().event_delivery_manager.deliver_events( tid );
 #ifdef HAVE_MUSIC
 // advance the time of music by one step (min_delay * h) must
 // be done after deliver_events_() since it calls
@@ -699,7 +697,6 @@ nest::SimulationManager::update_()
 #endif
       }
 
-      // TODO@5g: implement secondary events
       // preliminary update of nodes that use waveform relaxtion
       if ( kernel().node_manager.any_node_uses_wfr() )
       {
@@ -844,10 +841,6 @@ nest::SimulationManager::update_()
 // the other threads are enforced to wait at the end of the block
 #pragma omp master
       {
-        // gather only at end of slice
-        // if ( to_step_ == kernel().connection_manager.get_min_delay() )
-        //   kernel().event_delivery_manager.gather_events( true );
-
         advance_time_();
 
         if ( SLIsignalflag != 0 )
@@ -900,7 +893,7 @@ nest::SimulationManager::update_()
       std::cout << "0] CommStepsSecondaryEvents: " << kernel().event_delivery_manager.comm_steps_secondary_events << std::endl;
     }
 
-  } // end of #pragma parallel omp
+  } // of omp parallel
 
   // check if any exceptions have been raised
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )

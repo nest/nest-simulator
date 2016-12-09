@@ -413,7 +413,8 @@ nest::ConnectionManager::connect( index sgid,
     // we do not allow to connect a device to a global receiver at the moment
     if ( not source->has_proxies() )
     {
-      return;
+      throw IllegalConnection( "The models " + target->get_name() + " and "
+        + source->get_name() + " cannot be connected." );
     }
     connect_( *source, *target, sgid, tid, syn, d, w );
   }
@@ -474,7 +475,8 @@ nest::ConnectionManager::connect( index sgid,
     // we do not allow to connect a device to a global receiver at the moment
     if ( not source->has_proxies() )
     {
-      return;
+      throw IllegalConnection( "The models " + target->get_name() + " and "
+        + source->get_name() + " cannot be connected." );
     }
     connect_( *source, *target, sgid, tid, syn, params, d, w );
   }

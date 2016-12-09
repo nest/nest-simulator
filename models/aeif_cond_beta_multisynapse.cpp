@@ -241,10 +241,6 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
         "The reversal potential, synaptic rise time and synaptic decay time "
         "arrays must have the same size." );
     }
-    if ( tau_rise.size() == 0 )
-    {
-      throw BadProperty( "The neuron must have at least one port." );
-    }
     if ( tau_rise.size() < old_n_receptors && has_connections_ )
     {
       throw BadProperty(

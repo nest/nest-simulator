@@ -70,6 +70,7 @@ def activation_function_theory(sigma, theta):
 
 
 class ErfcNeuronTheoryTestCase(unittest.TestCase):
+
     """Compare results to theoretical predictions"""
 
     def setUp(self):
@@ -103,10 +104,14 @@ class ErfcNeuronTheoryTestCase(unittest.TestCase):
                     get_mean_activity(self.detector, self.T), 5)
                 mean_activity_theory = np.round(
                     activation_function_theory(sigma, theta), 5)
-                self.assertAlmostEqual(mean_activity, mean_activity_theory,
-                    delta=np.max([
-                    2e-1 * mean_activity_theory * (1. - mean_activity_theory),
-                    1e-2]))
+                delta = np.max([2e-1 * mean_activity_theory *
+                                (1. -
+                                 mean_activity_theory),
+                                1e-2])
+                self.assertAlmostEqual(
+                    mean_activity,
+                    mean_activity_theory,
+                    delta=delta)
 
 
 def suite():

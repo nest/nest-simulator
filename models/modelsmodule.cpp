@@ -46,6 +46,7 @@
 #include "aeif_cond_alpha_RK5.h"
 #include "aeif_cond_exp.h"
 #include "amat2_psc_exp.h"
+#include "erfc_neuron.h"
 #include "ginzburg_neuron.h"
 #include "hh_cond_exp_traub.h"
 #include "hh_psc_alpha.h"

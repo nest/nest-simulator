@@ -25,8 +25,6 @@ Functions for node handling
 
 from .hl_api_helper import *
 from .hl_api_info import SetStatus
-from .hl_api_models import GetDefaults
-from ..pynestkernel import NESTError
 
 
 @check_stack
@@ -49,16 +47,7 @@ def Create(model, n=1, params=None):
         Global IDs of created nodes
     """
 
-    try:
-        deprecated_models = ['subnet', 'aeif_cond_alpha_RK5']
-        if GetDefaults(model)['type_id'] in deprecated_models:
-            text = "{0}:  model is going to be removed".format(model)
-            if model == "subnet":
-                text += ", work with GIDCollections instead"
-            text = get_wrapped_text(text)
-            warnings.warn('\n' + text)
-    except(KeyError, NESTError):
-        pass
+    model_deprecation_warning(model)
 
     if isinstance(params, dict):
         cmd = "/%s 3 1 roll exch Create" % model
@@ -85,8 +74,8 @@ def Create(model, n=1, params=None):
 
 
 @check_stack
-@deprecated("", "GetLID: LIDs disappear with subnets, use index into "
-            "GIDCollection")
+@deprecated('', 'GetLID is deprecated and will be removed in NEST3. Use \
+index into GIDCollection instead.')
 def GetLID(gid):
     """Return the local id of a node with the global ID gid.
 

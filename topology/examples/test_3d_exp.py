@@ -55,9 +55,11 @@ l1 = topo.CreateLayer(
 # xext, yext = nest.GetStatus(l1, 'topology')[0]['extent']
 # xctr, yctr = nest.GetStatus(l1, 'topology')[0]['center']
 
+# l1_children is a work-around until NEST3 is released
+l1_children = nest.GetChildren(l1)[0]
+
 # extract position information, transpose to list of x, y and z positions
-gids = range(l1[0] + 1, len(pos) + l1[0] + 1)
-xpos, ypos, zpos = zip(*topo.GetPosition(gids))
+xpos, ypos, zpos = zip(*topo.GetPosition(l1_children))
 fig = plt.figure()
 ax = fig.add_subplot(111, projection='3d')
 ax.scatter(xpos, ypos, zpos, s=15, facecolor='b', edgecolor='none')

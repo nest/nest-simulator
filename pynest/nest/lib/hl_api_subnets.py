@@ -27,6 +27,8 @@ from .hl_api_helper import *
 from .hl_api_nodes import Create
 from .hl_api_info import GetStatus, SetStatus
 
+import nest.lib.hl_api_helper as hlh
+
 
 @check_stack
 def PrintNetwork(depth=1, subnet=None):
@@ -47,7 +49,15 @@ def PrintNetwork(depth=1, subnet=None):
     """
 
     if subnet is None:
+        # Turn off _deprecation_warning as users shouldn't change
+        # implementation of PrintNetwork, it is done by the developers
+        deprecation_bool = hlh._deprecation_warning['CurrentSubnet']
+        hlh._deprecation_warning['CurrentSubnet'] = False
+
         subnet = CurrentSubnet()
+
+        # Need to reset the deprecation warning to its old value
+        hlh._deprecation_warning['CurrentSubnet'] = deprecation_bool
     elif len(subnet) > 1:
         raise NESTError("PrintNetwork() expects exactly one GID.")
 
@@ -55,8 +65,8 @@ def PrintNetwork(depth=1, subnet=None):
     sr("%i PrintNetwork" % depth)
 
 
-@deprecated("", "CurrentSubnet: irrelevant without subnets")
 @check_stack
+@deprecated('', 'CurrentSubnet is deprecated and will be removed in NEST3.')
 def CurrentSubnet():
     """Returns the global id of the current subnet.
 
@@ -71,7 +81,7 @@ def CurrentSubnet():
 
 
 @check_stack
-@deprecated("", "ChangeSubnet: irrelevant without subnets")
+@deprecated('', 'ChangeSubnet is deprecated and will be removed in NEST3.')
 def ChangeSubnet(subnet):
     """Make given subnet the current.
 
@@ -93,7 +103,8 @@ def ChangeSubnet(subnet):
 
 
 @check_stack
-@deprecated("", "GetLeaves: elements of GIDCollection are leaves")
+@deprecated('', 'GetLeaves is deprecated and will be removed in NEST3. Use \
+GIDCollection instead.')
 def GetLeaves(subnets, properties=None, local_only=False):
     """Return the GIDs of the leaf nodes of the given subnets.
 
@@ -133,7 +144,8 @@ def GetLeaves(subnets, properties=None, local_only=False):
 
 
 @check_stack
-@deprecated("", "GetNodes: you have nodes in GIDCollections")
+@deprecated('', 'GetNodes is deprecated and will be removed in NEST3. Use \
+GIDCollection instead.')
 def GetNodes(subnets, properties=None, local_only=False):
     """Return the global ids of the all nodes of the given subnets.
 
@@ -171,8 +183,8 @@ def GetNodes(subnets, properties=None, local_only=False):
 
 
 @check_stack
-@deprecated("", "GetChildren: irrelevant without subnets, work with "
-            "GIDCollections")
+@deprecated('', 'GetChilden is deprecated and will be removed in NEST3. Use \
+GIDCollection instead.')
 def GetChildren(subnets, properties=None, local_only=False):
     """Return the global ids of the immediate children of the given subnets.
 
@@ -210,8 +222,8 @@ def GetChildren(subnets, properties=None, local_only=False):
 
 
 @check_stack
-@deprecated("", "GetNetwork: irrelevant without subnets, script is responsible"
-            " for retaining structure information if needed")
+@deprecated('', 'GetNetwork is deprecated and will be removed in Nest3.\
+Script is responsible for retaining structure information if needed')
 def GetNetwork(gid, depth):
     """Return a nested list with the children of subnet id at level
     depth.
@@ -244,7 +256,8 @@ def GetNetwork(gid, depth):
 
 
 @check_stack
-@deprecated("", "BeginSubnet: no longer needed, work with GIDCollections")
+@deprecated('', 'BeginSubnet is deprecated and will be removed in NEST3. Use \
+GIDCollection instead.')
 def BeginSubnet(label=None, params=None):
     """Create a new subnet and change into it.
 
@@ -265,7 +278,8 @@ def BeginSubnet(label=None, params=None):
 
 
 @check_stack
-@deprecated("", "EndSubnet: no longer needed, work with GIDCollections")
+@deprecated('', 'EndSubnet is deprecated and will be removed in NEST3. Use \
+GIDCollection instead.')
 def EndSubnet():
     """Change to the parent subnet and return the gid of the current.
 
@@ -287,8 +301,8 @@ def EndSubnet():
 
 
 @check_stack
-@deprecated("", "LayoutNetwork: use Create(<model>, n=<number>) and get a "
-            "GIDCollection")
+@deprecated('', 'LayoutNetwork is deprecated and will be removed in NEST3. Use \
+Create(<model>, n=<number>) instead.')
 def LayoutNetwork(model, dim, label=None, params=None):
     """Create a subnetwork of dimension dim with nodes of type model and
     return a list of ids.

@@ -24,6 +24,8 @@ These are helper functions to ease the definition of the high-level
 API of the PyNEST wrapper.
 """
 
+
+import nest
 import warnings
 import inspect
 import functools
@@ -398,3 +400,24 @@ def broadcast(item, length, allowed_types, name="item"):
                         % (name, length))
 
     return item
+
+
+def model_deprecation_warning(model):
+    """Checks whether the model is to be removed in a future verstion of NEST.
+    If so, a deprecation warning is released.
+
+    Parameters
+    ----------
+    model: str
+        Name of model
+    """
+
+    deprecated_models = {'subnet': 'GIDCollection',
+                         'aeif_cond_alpha_RK5': 'aeif_cond_alpha'}
+
+    if model in deprecated_models:
+        text = "The {0} model is deprecated and will be removed in a \
+        future verstion of NEST, use {1} instead\
+        ".format(model, deprecated_models[model])
+        text = get_wrapped_text(text)
+        warnings.warn('\n' + text)

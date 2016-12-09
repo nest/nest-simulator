@@ -301,8 +301,8 @@ def EndSubnet():
 
 
 @check_stack
-@deprecated('', 'LayoutNetwork is deprecated and will be removed in NEST3. Use \
-Create(<model>, n=<number>) instead.')
+@deprecated('', 'LayoutNetwork is deprecated and will be removed in NEST3. \
+Use Create(<model>, n=<number>) instead.')
 def LayoutNetwork(model, dim, label=None, params=None):
     """Create a subnetwork of dimension dim with nodes of type model and
     return a list of ids.

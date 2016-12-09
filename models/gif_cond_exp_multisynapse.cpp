@@ -289,10 +289,6 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
         "The reversal potential, and synaptic time constant arrays "
         "must have the same size." );
     }
-    if ( tau_syn_.size() == 0 )
-    {
-      throw BadProperty( "The neuron must have at least one port." );
-    }
     if ( tau_syn_.size() < old_n_receptors && has_connections_ )
     {
       throw BadProperty(

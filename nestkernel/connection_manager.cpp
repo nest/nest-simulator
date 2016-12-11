@@ -805,7 +805,6 @@ nest::ConnectionManager::divergent_connect( index source_id,
 
       // here we fill a parameter dictionary with the values of the current loop
       // index.
-      par_i->clear();
       for ( di_s = ( *pars ).begin(); di_s != ( *pars ).end(); ++di_s )
       {
         DoubleVectorDatum const* tmp =

@@ -279,8 +279,8 @@ public:
   int execute_debug_( size_t exitlevel = 0 );
 
   void createdouble( Name const&, double );
-  void createcommand( Name const&, SLIFunction const* );
-  void createcommand( Name const&, Name const&, SLIFunction const* );
+  void createcommand( Name const&, SLIFunction const*,
+		   std::string deprecation_info = std::string() );
   void createconstant( Name const&, const Token& );
 
 

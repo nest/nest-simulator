@@ -1614,7 +1614,7 @@ NestModule::init( SLIInterpreter* i )
 
   // register interface functions with interpreter
   i->createcommand( "ChangeSubnet", &changesubnet_ifunction );
-  i->createcommand( "CurrentSubnet", &currentsubnetfunction );
+  i->createcommand( "CurrentSubnet", &currentsubnetfunction, "NEST 3.0" );
   i->createcommand( "GetNodes_i_D_b_b", &getnodes_i_D_b_bfunction );
   i->createcommand( "GetLeaves_i_D_b", &getleaves_i_D_bfunction );
   i->createcommand( "GetChildren_i_D_b", &getchildren_i_D_bfunction );

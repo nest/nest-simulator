@@ -340,33 +340,6 @@ void
 aeif_cond_alpha_multisynapse::State_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
-
-  if ( ( d->known( names::dg ) ) && ( d->known( names::g ) ) )
-  {
-    const std::vector< double > dg =
-      getValue< std::vector< double > >( d->lookup( names::dg ) );
-    const std::vector< double > g =
-      getValue< std::vector< double > >( d->lookup( names::g ) );
-
-    if ( ( dg.size() != g.size() ) )
-    {
-      throw BadProperty( "Conductances must have the same sizes." );
-    }
-
-    for ( size_t i = 0; i < dg.size(); ++i )
-    {
-      if ( ( dg[ i ] < 0 ) || ( g[ i ] < 0 ) )
-      {
-        throw BadProperty( "Conductances must not be negative." );
-      }
-
-      y_[ State_::DG
-        + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] = dg[ i ];
-      y_[ State_::G + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * i ) ] =
-        g[ i ];
-    }
-  }
-
   updateValue< double >( d, names::w, y_[ W ] );
 }
 

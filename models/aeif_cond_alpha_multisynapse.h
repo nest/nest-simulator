@@ -58,7 +58,7 @@
 
  neuron = nest.Create('aeif_cond_alpha_multisynapse')
  nest.SetStatus(neuron, {"V_peak": 0.0, "a": 4.0, "b":80.5})
- nest.SetStatus(neuron, {'taus_syn':[0.2,2.0,20.0,20.0]})
+ nest.SetStatus(neuron, {'tau_syn':[0.2,2.0,20.0,20.0]})
 
  spike = nest.Create('spike_generator', params = {'spike_times':
                                                              np.array([100.0])})
@@ -166,9 +166,9 @@ private:
     double b;       //!< Spike-triggered adaptation in pA
     double V_th;    //!< Spike threshold in mV.
     double t_ref;   //!< Refractory period in ms.
-    std::vector< double > taus_syn; //!< Time constants of synaptic currents
-                                    //!< in ms..
-    double I_e;                     //!< Intrinsic current in pA.
+    std::vector< double > tau_syn; //!< Time constants of synaptic currents
+                                   //!< in ms..
+    double I_e;                    //!< Intrinsic current in pA.
     double MAXERR; //!< Maximal error for adaptive stepsize solver
     double HMIN;   //!< Smallest permissible stepsize in ms.
 
@@ -440,13 +440,13 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics(
   for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
   {
     j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-    f[ S::DG_EXC + j ] = -y[ S::DG_EXC + j ] / P_.taus_syn[ i ];
+    f[ S::DG_EXC + j ] = -y[ S::DG_EXC + j ] / P_.tau_syn[ i ];
     f[ S::G_EXC + j ] = y[ S::DG_EXC + j ]
-      - y[ S::G_EXC + j ] / P_.taus_syn[ i ]; // Synaptic Conductance (nS)
+      - y[ S::G_EXC + j ] / P_.tau_syn[ i ]; // Synaptic Conductance (nS)
 
-    f[ S::DG_INH + j ] = -y[ S::DG_INH + j ] / P_.taus_syn[ i ];
+    f[ S::DG_INH + j ] = -y[ S::DG_INH + j ] / P_.tau_syn[ i ];
     f[ S::G_INH + j ] = y[ S::DG_INH + j ]
-      - y[ S::G_INH + j ] / P_.taus_syn[ i ]; // Synaptic Conductance (nS)
+      - y[ S::G_INH + j ] / P_.tau_syn[ i ]; // Synaptic Conductance (nS)
   }
 }
 
@@ -495,13 +495,13 @@ aeif_cond_alpha_multisynapse::aeif_cond_alpha_multisynapse_dynamics_DT0(
   for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
   {
     j = i * S::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-    f[ S::DG_EXC + j ] = -y[ S::DG_EXC + j ] / P_.taus_syn[ i ];
+    f[ S::DG_EXC + j ] = -y[ S::DG_EXC + j ] / P_.tau_syn[ i ];
     f[ S::G_EXC + j ] = y[ S::DG_EXC + j ]
-      - y[ S::G_EXC + j ] / P_.taus_syn[ i ]; // Synaptic Conductance (nS)
+      - y[ S::G_EXC + j ] / P_.tau_syn[ i ]; // Synaptic Conductance (nS)
 
-    f[ S::DG_INH + j ] = -y[ S::DG_INH + j ] / P_.taus_syn[ i ];
+    f[ S::DG_INH + j ] = -y[ S::DG_INH + j ] / P_.tau_syn[ i ];
     f[ S::G_INH + j ] = y[ S::DG_INH + j ]
-      - y[ S::G_INH + j ] / P_.taus_syn[ i ]; // Synaptic Conductance (nS)
+      - y[ S::G_INH + j ] / P_.tau_syn[ i ]; // Synaptic Conductance (nS)
   }
 }
 

@@ -93,7 +93,7 @@ vm << /withtime true /time_in_steps true /interval dt /to_file true /precision 5
 
 % Create one aeif_conf_alpha_multisynapse
 /aeif_cond_alpha_multisynapse Create /multisynapse_neuron Set
-multisynapse_neuron << /taus_syn tau_syn_ex >> SetStatus
+multisynapse_neuron << /tau_syn tau_syn_ex >> SetStatus
 multisynapse_neuron << /V_peak V_peak >> SetStatus
 multisynapse_neuron << /a a >> SetStatus
 multisynapse_neuron << /b b >> SetStatus

@@ -83,6 +83,12 @@ public:
   }
   virtual bool is_array() const = 0;
 
+  virtual bool
+  is_scalar() const
+  {
+    return false;
+  }
+
   virtual void
   reset() const
   {
@@ -148,6 +154,13 @@ public:
   {
   }
 
+  bool
+  is_scalar() const
+  {
+    return true;
+  }
+
+
 private:
   double value_;
 };
@@ -186,6 +199,12 @@ public:
   void
   reset() const
   {
+  }
+
+  bool
+  is_scalar() const
+  {
+    return true;
   }
 
 private:

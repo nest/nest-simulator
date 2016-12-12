@@ -130,8 +130,9 @@ public:
    * register_prototype_connection
    */
   template < class ModelT >
-  index register_node_model( const Name& name, bool private_model = false,
-		  std::string deprecation_info = std::string() );
+  index register_node_model( const Name& name,
+    bool private_model = false,
+    std::string deprecation_info = std::string() );
 
   /**
    * Register a pre-configured model prototype with the network.
@@ -157,7 +158,7 @@ public:
   index register_preconf_node_model( const Name& name,
     DictionaryDatum& conf,
     bool private_model = false,
-	std::string deprecation_info = std::string() );
+    std::string deprecation_info = std::string() );
 
   /**
    * Copy an existing model and register it as a new model.

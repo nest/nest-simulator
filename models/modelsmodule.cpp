@@ -176,8 +176,9 @@ ModelsModule::commandstring( void ) const
 void
 ModelsModule::init( SLIInterpreter* )
 {
-  kernel().model_manager.register_node_model< iaf_neuron >( "iaf_neuron", /* private_model */ false,
-		  /* deprecation_info */ "NEST 3.0");
+  kernel().model_manager.register_node_model< iaf_neuron >( "iaf_neuron",
+    /* private_model */ false,
+    /* deprecation_info */ "NEST 3.0" );
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
   kernel().model_manager.register_node_model< iaf_psc_alpha >(
     "iaf_psc_alpha" );

@@ -44,8 +44,7 @@ template < typename ElementT >
 class GenericModel : public Model
 {
 public:
-  GenericModel( const std::string&,
-		  const std::string& deprecation_info  );
+  GenericModel( const std::string&, const std::string& deprecation_info );
 
   /**
    * Create copy of model with new name.
@@ -120,7 +119,8 @@ private:
 };
 
 template < typename ElementT >
-GenericModel< ElementT >::GenericModel( const std::string& name, const std::string& deprecation_info )
+GenericModel< ElementT >::GenericModel( const std::string& name,
+  const std::string& deprecation_info )
   : Model( name )
   , proto_()
   , deprecation_info_( deprecation_info )
@@ -251,6 +251,5 @@ GenericModel< ElementT >::set_model_id( int i )
 {
   proto_.set_model_id( i );
 }
-
 }
 #endif

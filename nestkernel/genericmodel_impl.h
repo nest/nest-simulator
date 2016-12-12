@@ -36,17 +36,17 @@ template < typename ElementT >
 void
 GenericModel< ElementT >::deprecation_warning( const std::string& caller )
 {
-  if ( deprecation_warning_issued_  or deprecation_info_.empty() )
-	return;
+  if ( deprecation_warning_issued_ or deprecation_info_.empty() )
+    return;
 
   if ( not deprecation_info_.empty() )
   {
-	LOG( M_WARNING, caller,
-		 "Model " + get_name() + " is deprecated in " + deprecation_info_ + ".");
+    LOG( M_WARNING,
+      caller,
+      "Model " + get_name() + " is deprecated in " + deprecation_info_ + "." );
   }
 
   deprecation_warning_issued_ = true;
 }
-
 }
 #endif

@@ -255,13 +255,15 @@ SLIInterpreter::initexternals( void )
 FunctionDatum*
 SLIInterpreter::Ilookup( void ) const
 {
-  return new FunctionDatum( ilookup_name, &SLIInterpreter::ilookupfunction, "" );
+  return new FunctionDatum(
+    ilookup_name, &SLIInterpreter::ilookupfunction, "" );
 }
 
 FunctionDatum*
 SLIInterpreter::Iiterate( void ) const
 {
-  return new FunctionDatum( iiterate_name, &SLIInterpreter::iiteratefunction, "" );
+  return new FunctionDatum(
+    iiterate_name, &SLIInterpreter::iiteratefunction, "" );
 }
 
 void
@@ -279,8 +281,9 @@ SLIInterpreter::createdouble( Name const& n, double d )
  *  exists.
  */
 void
-SLIInterpreter::createcommand( Name const& n, SLIFunction const* fn,
-		std::string deprecation_info )
+SLIInterpreter::createcommand( Name const& n,
+  SLIFunction const* fn,
+  std::string deprecation_info )
 {
   if ( DStack->known( n ) )
     throw NamingConflict("A function called '" + std::string(n.toString()) 

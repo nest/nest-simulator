@@ -81,18 +81,19 @@ public:
   FunctionDatum( FunctionDatum const& fd )
     : TypedDatum< &SLIInterpreter::Functiontype >( fd )
     , name( fd.name )
-	, deprecation_info_( fd.deprecation_info_ )
-	, deprecation_warning_issued_( false )
+    , deprecation_info_( fd.deprecation_info_ )
+    , deprecation_warning_issued_( false )
   {
     set_executable();
   }
 
-  FunctionDatum( Name const& n, SLIFunction const* f,
-		         const std::string& deprecation_info )
+  FunctionDatum( Name const& n,
+    SLIFunction const* f,
+    const std::string& deprecation_info )
     : TypedDatum< &SLIInterpreter::Functiontype >()
     , name( n )
-	, deprecation_info_( deprecation_info )
-	, deprecation_warning_issued_( false )
+    , deprecation_info_( deprecation_info )
+    , deprecation_warning_issued_( false )
   {
     //! Here, we shortcut the default action of the type object and directly
     //! place the function pointer in the datum's action field. Thus, we
@@ -104,13 +105,14 @@ public:
   void
   execute( SLIInterpreter* i )
   {
-	if ( not ( deprecation_warning_issued_  or deprecation_info_.empty() ) )
-	{
-	  i->message( SLIInterpreter::M_WARNING, "SLIInterpreter",
-			 ("SLI function " + name.toString() + " is deprecated in "
-			 + deprecation_info_ + ".").c_str());
-	  deprecation_warning_issued_ = true;
-	}
+    if ( not( deprecation_warning_issued_ or deprecation_info_.empty() ) )
+    {
+      i->message( SLIInterpreter::M_WARNING,
+        "SLIInterpreter",
+        ( "SLI function " + name.toString() + " is deprecated in "
+          + deprecation_info_ + "." ).c_str() );
+      deprecation_warning_issued_ = true;
+    }
 
     action->execute( i );
   }

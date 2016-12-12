@@ -562,6 +562,8 @@ pop pop
   
   gc 1 InCollection
   gc 15 InCollection and
+  gc 20 InCollection and
+  gc 21 InCollection not and
   gc 40 InCollection not and
 
   end

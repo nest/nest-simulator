@@ -172,7 +172,6 @@ public:
 
   virtual ~GIDCollection()
   {
-    // std::cerr << "Deleting GC: " << this << std::endl; // TODO: couts
   }
 
   /**
@@ -579,9 +578,16 @@ inline gc_const_iterator& gc_const_iterator::operator++()
 
 inline gc_const_iterator& gc_const_iterator::operator+=( const size_t n )
 {
-  for ( size_t i = 0; i < n; ++i )
+  if ( primitive_collection_ )
   {
-    operator++();
+    element_idx_ += n;
+  }
+  else
+  {
+    for ( size_t i = 0; i < n; ++i )
+    {
+      operator++();
+    }
   }
   return *this;
 }

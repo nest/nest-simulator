@@ -128,15 +128,33 @@
     V_T_star   double - Base threshold in mV
 
   Synaptic parameters
-    taus_syn   vector of double - Time constants of the synaptic conductance
-                                  in ms.
-    E_ex       double - Excitatory reversal potential in mV.
-    E_in       double - Inhibitory reversal potential in mV.
+    tau_syn    double vector - Time constants of the synaptic conductance
+                                 in ms (same size as E_rev).
+    E_rev      double vector - Reversal potentials in mV (same size as tau_syn).
 
   Integration parameters
     gsl_error_tol  double - This parameter controls the admissible error of the
                             GSL integrator. Reduce it if NEST complains about
                             numerical instabilities.
+
+  Example:
+
+  neuron = nest.Create('gif_cond_exp_multisynapse',
+                       params={'E_rev': [0.0, -85.0],
+                               'tau_syn': [4.0, 8.0]})
+
+  spike = nest.Create('spike_generator', params={'spike_times':
+                                                 np.array([10.0])})
+
+  delays = [1., 30.]
+  w = [1., 5.]
+  for syn in range(2):
+      nest.Connect(spike, neuron, syn_spec={'model': 'static_synapse',
+                                            'receptor_type': 1 + syn,
+                                            'weight': w[syn],
+                                            'delay': delays[syn]})
+  nest.Simulate(100.)
+
 
   References:
 
@@ -248,14 +266,10 @@ private:
     /** Time constants of synaptic currents in ms */
     std::vector< double > tau_syn_;
 
+    std::vector< double > E_rev_; //!< reversal potentials in mV
+
     /** External DC current. */
     double I_e_;
-
-    size_t num_of_receptors_;
-
-    /** Reversal potential of synapses in mV */
-    double E_ex_; //!< Excitatory reversal Potential in mV
-    double E_in_; //!< Inhibitory reversal Potential in mV
 
     /** boolean flag which indicates whether the neuron has connections */
     bool has_connections_;
@@ -266,6 +280,13 @@ private:
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum& ); //!< Set values from dictionary
+
+    //! Return the number of receptor ports
+    inline size_t
+    n_receptors() const
+    {
+      return E_rev_.size();
+    }
   };
 
   // ----------------------------------------------------------------
@@ -280,14 +301,14 @@ private:
     enum StateVecElems
     {
       V_M = 0,
-      G_EXC,
-      G_INH,
+      G,
       STATE_VEC_SIZE
     };
 
-    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1; //!< V_M
+    static const size_t NUMBER_OF_FIXED_STATES_ELEMENTS = 1;        //!< V_M
+    static const size_t NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR = 1; //!< G
 
-    double* y_;                      //!< neuron state
+    std::vector< double > y_;        //!< neuron state
     unsigned int size_neuron_state_; // size of neuron state array
 
     double I_stim_; //!< This is piecewise constant external current
@@ -307,9 +328,7 @@ private:
     void get( DictionaryDatum&, const Parameters_& ) const;
     void set( const DictionaryDatum&, const Parameters_& );
 
-  private:
-    void neuron_state_memory_allocate_( int new_size );
-  };
+  }; // State_
 
   // ----------------------------------------------------------------
 
@@ -322,8 +341,7 @@ private:
     Buffers_( const Buffers_&, gif_cond_exp_multisynapse& );
 
     /** buffers and sums up incoming spikes/currents */
-    std::vector< RingBuffer > spike_exc_;
-    std::vector< RingBuffer > spike_inh_;
+    std::vector< RingBuffer > spikes_;
     RingBuffer currents_;
 
     //! Logger for all analog data
@@ -418,8 +436,10 @@ gif_cond_exp_multisynapse::handles_test_event( SpikeEvent&,
   rport receptor_type )
 {
   if ( receptor_type <= 0
-    || receptor_type > static_cast< port >( P_.num_of_receptors_ ) )
+    || receptor_type > static_cast< port >( P_.n_receptors() ) )
+  {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
+  }
 
   P_.has_connections_ = true;
   return receptor_type;
@@ -430,7 +450,9 @@ gif_cond_exp_multisynapse::handles_test_event( CurrentEvent&,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -439,7 +461,9 @@ gif_cond_exp_multisynapse::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

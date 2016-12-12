@@ -121,7 +121,7 @@ nest::gif_psc_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
   def< bool >( d, names::has_connections, has_connections_ );
 
   ArrayDatum tau_syn_ad( tau_syn_ );
-  def< ArrayDatum >( d, names::taus_syn, tau_syn_ad );
+  def< ArrayDatum >( d, names::tau_syn, tau_syn_ad );
 
   ArrayDatum tau_sfa_list_ad( tau_sfa_ );
   def< ArrayDatum >( d, names::tau_sfa, tau_sfa_list_ad );
@@ -197,7 +197,7 @@ nest::gif_psc_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
       throw BadProperty( "All time constants must be strictly positive." );
 
   std::vector< double > tau_tmp;
-  if ( updateValue< std::vector< double > >( d, names::taus_syn, tau_tmp ) )
+  if ( updateValue< std::vector< double > >( d, names::tau_syn, tau_tmp ) )
   {
     if ( has_connections_ && tau_tmp.size() < tau_syn_.size() )
       throw BadProperty(
@@ -221,7 +221,7 @@ nest::gif_psc_exp_multisynapse::State_::get( DictionaryDatum& d,
 {
   def< double >( d, names::V_m, V_ );     // Membrane potential
   def< double >( d, names::E_sfa, sfa_ ); // Adaptive threshold potential
-  def< double >( d, names::stc, stc_ );   // Spike-triggered current
+  def< double >( d, names::I_stc, stc_ ); // Spike-triggered current
 }
 
 void

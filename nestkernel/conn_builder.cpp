@@ -56,7 +56,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   , targets_( &targets )
   , autapses_( true )
   , multapses_( true )
-  , symmetric_( false )
+  , make_symmetric_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
   , synapse_model_( kernel().model_manager.get_synapsedict()->lookup(
       "static_synapse" ) )
@@ -70,7 +70,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   //  - rule-specific params are handled by subclass c'tor
   updateValue< bool >( conn_spec, names::autapses, autapses_ );
   updateValue< bool >( conn_spec, names::multapses, multapses_ );
-  updateValue< bool >( conn_spec, names::symmetric, symmetric_ );
+  updateValue< bool >( conn_spec, names::make_symmetric, make_symmetric_ );
 
   // read out synapse-related parameters ----------------------
   if ( !syn_spec->known( names::model ) )
@@ -208,9 +208,9 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
     }
   }
 
-  // If symmetric_ is requested call reset on all parameters in order
+  // If make_symmetric_ is requested call reset on all parameters in order
   // to check if all parameters support symmetric connections
-  if ( symmetric_ )
+  if ( make_symmetric_ )
   {
     if ( weight_ )
     {
@@ -382,13 +382,25 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
 void
 nest::ConnBuilder::connect()
 {
-  if ( symmetric_ && not supports_symmetric() )
+  if ( kernel().model_manager.connector_requires_symmetric( synapse_model_ )
+    and not( is_symmetric() or make_symmetric_ ) )
+  {
+    throw BadProperty(
+      "Connections with this synapse model can only be created as "
+      "one-to-one connections with \"make_symmetric\" set to true "
+      "or as all-to-all connections with equal source and target "
+      "populations and default or scalar parameters." );
+  }
+
+  if ( make_symmetric_ && not supports_symmetric() )
+  {
     throw NotImplemented(
       "This connection rule does not support symmetric connections." );
+  }
 
   if ( pre_synaptic_element_name != "" && post_synaptic_element_name != "" )
   {
-    if ( symmetric_ )
+    if ( make_symmetric_ )
       throw NotImplemented(
         "Symmetric connections are not supported in combination with "
         "structural plasticity." );
@@ -397,7 +409,7 @@ nest::ConnBuilder::connect()
   else
   {
     connect_();
-    if ( symmetric_ )
+    if ( make_symmetric_ )
     {
       // call reset on all parameters
       if ( weight_ )
@@ -585,6 +597,27 @@ void
 nest::ConnBuilder::set_post_synaptic_element_name( std::string name )
 {
   post_synaptic_element_name = name;
+}
+
+bool
+nest::ConnBuilder::all_parameters_scalar_() const
+{
+  bool all_scalar = true;
+  if ( weight_ )
+  {
+    all_scalar = all_scalar && weight_->is_scalar();
+  }
+  if ( delay_ )
+  {
+    all_scalar = all_scalar && delay_->is_scalar();
+  }
+  for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
+        it != synapse_params_.end();
+        ++it )
+  {
+    all_scalar = all_scalar && it->second->is_scalar();
+  }
+  return all_scalar;
 }
 
 bool
@@ -886,10 +919,7 @@ nest::AllToAllBuilder::connect_()
           // check whether the target is on this mpi machine
           if ( not kernel().node_manager.is_local_gid( *tgid ) )
           {
-            for ( GIDCollection::const_iterator sgid = sources_->begin();
-                  sgid != sources_->end();
-                  ++sgid )
-              skip_conn_parameter_( tid );
+            skip_conn_parameter_( tid, sources_->size() );
             continue;
           }
 
@@ -940,12 +970,7 @@ nest::AllToAllBuilder::inner_connect_( const int tid,
   {
     if ( skip )
     {
-      for ( GIDCollection::const_iterator sgid = sources_->begin();
-            sgid != sources_->end();
-            ++sgid )
-      {
-        skip_conn_parameter_( tid );
-      }
+      skip_conn_parameter_( tid, sources_->size() );
     }
     return;
   }
@@ -1001,10 +1026,7 @@ nest::AllToAllBuilder::sp_connect_()
           }
           if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
           {
-            for ( GIDCollection::const_iterator sgid = sources_->begin();
-                  sgid != sources_->end();
-                  ++sgid )
-              skip_conn_parameter_( tid );
+            skip_conn_parameter_( tid, sources_->size() );
             continue;
           }
           Node* const target = kernel().node_manager.get_node( *tgid, tid );
@@ -1045,10 +1067,7 @@ nest::AllToAllBuilder::disconnect_()
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
         {
-          for ( GIDCollection::const_iterator sgid = sources_->begin();
-                sgid != sources_->end();
-                ++sgid )
-            skip_conn_parameter_( tid );
+          skip_conn_parameter_( tid, sources_->size() );
           continue;
         }
 
@@ -1058,10 +1077,7 @@ nest::AllToAllBuilder::disconnect_()
         // check whether the target is on our thread
         if ( tid != target_thread )
         {
-          for ( GIDCollection::const_iterator sgid = sources_->begin();
-                sgid != sources_->end();
-                ++sgid )
-            skip_conn_parameter_( tid );
+          skip_conn_parameter_( tid, sources_->size() );
           continue;
         }
 
@@ -1109,10 +1125,7 @@ nest::AllToAllBuilder::sp_disconnect_()
         {
           if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           {
-            for ( GIDCollection::const_iterator sgid = sources_->begin();
-                  sgid != sources_->end();
-                  ++sgid )
-              skip_conn_parameter_( tid );
+            skip_conn_parameter_( tid, sources_->size() );
             continue;
           }
           Node* const target = kernel().node_manager.get_node( *tgid, tid );

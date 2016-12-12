@@ -32,6 +32,7 @@
 // Includes from nestkernel:
 #include "event_delivery_manager.h"
 #include "genericmodel.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "model.h"
 #include "model_manager_impl.h"
@@ -200,6 +201,8 @@ index NodeManager::add_node( index mod, long n ) // no_p
 
   Model* model = kernel().model_manager.get_model( mod );
   assert( model != 0 );
+
+  model->deprecation_warning( "Create" );
 
   /* current_ points to the instance of the current subnet on thread 0.
      The following code makes subnet a pointer to the wrapper container

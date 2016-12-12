@@ -44,8 +44,8 @@ template < typename ElementT >
 class GenericModel : public Model
 {
 public:
-  GenericModel( const std::string& );
-  GenericModel( const char[] );
+  GenericModel( const std::string&,
+		  const std::string& deprecation_info  );
 
   /**
    * Create copy of model with new name.
@@ -85,6 +85,8 @@ public:
 
   void set_model_id( int );
 
+  void deprecation_warning( const std::string& );
+
 private:
   void set_status_( DictionaryDatum );
   DictionaryDatum get_status_();
@@ -105,20 +107,24 @@ private:
    * Prototype node from which all instances are constructed.
    */
   ElementT proto_;
+
+  /**
+   * String containing deprecation information; empty if model not deprecated.
+   */
+  std::string deprecation_info_;
+
+  /**
+   * False until deprecation warning has been issued once
+   */
+  bool deprecation_warning_issued_;
 };
 
 template < typename ElementT >
-GenericModel< ElementT >::GenericModel( const std::string& name )
+GenericModel< ElementT >::GenericModel( const std::string& name, const std::string& deprecation_info )
   : Model( name )
   , proto_()
-{
-  set_threads();
-}
-
-template < typename ElementT >
-GenericModel< ElementT >::GenericModel( const char name[] )
-  : Model( std::string( name ) )
-  , proto_()
+  , deprecation_info_( deprecation_info )
+  , deprecation_warning_issued_( false )
 {
   set_threads();
 }
@@ -128,6 +134,8 @@ GenericModel< ElementT >::GenericModel( const GenericModel& oldmod,
   const std::string& newname )
   : Model( newname )
   , proto_( oldmod.proto_ )
+  , deprecation_info_( oldmod.deprecation_info_ )
+  , deprecation_warning_issued_( false )
 {
   set_type_id( oldmod.get_type_id() );
   set_threads();
@@ -243,5 +251,6 @@ GenericModel< ElementT >::set_model_id( int i )
 {
   proto_.set_model_id( i );
 }
+
 }
 #endif

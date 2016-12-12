@@ -39,7 +39,8 @@ namespace nest
 
 template < class ModelT >
 index
-ModelManager::register_node_model( const Name& name, bool private_model )
+ModelManager::register_node_model( const Name& name, bool private_model,
+		std::string deprecation_info )
 {
   if ( !private_model && modeldict_->known( name ) )
   {
@@ -50,7 +51,8 @@ ModelManager::register_node_model( const Name& name, bool private_model )
     throw NamingConflict( msg );
   }
 
-  Model* model = new GenericModel< ModelT >( name.toString() );
+  Model* model = new GenericModel< ModelT >( name.toString(),
+		  deprecation_info );
   return register_node_model_( model, private_model );
 }
 
@@ -58,7 +60,7 @@ template < class ModelT >
 index
 ModelManager::register_preconf_node_model( const Name& name,
   DictionaryDatum& conf,
-  bool private_model )
+  bool private_model, std::string deprecation_info )
 {
   if ( !private_model && modeldict_->known( name ) )
   {
@@ -69,7 +71,8 @@ ModelManager::register_preconf_node_model( const Name& name,
     throw NamingConflict( msg );
   }
 
-  Model* model = new GenericModel< ModelT >( name.toString() );
+  Model* model = new GenericModel< ModelT >( name.toString(),
+		  deprecation_info );
   conf->clear_access_flags();
   model->set_status( conf );
   std::string missed;

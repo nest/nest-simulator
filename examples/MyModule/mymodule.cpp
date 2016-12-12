@@ -36,6 +36,7 @@
 #include "dynamicloader.h"
 #include "exceptions.h"
 #include "genericmodel.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "model.h"
 #include "model_manager_impl.h"

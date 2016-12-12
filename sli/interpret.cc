@@ -255,13 +255,15 @@ SLIInterpreter::initexternals( void )
 FunctionDatum*
 SLIInterpreter::Ilookup( void ) const
 {
-  return new FunctionDatum( ilookup_name, &SLIInterpreter::ilookupfunction );
+  return new FunctionDatum(
+    ilookup_name, &SLIInterpreter::ilookupfunction, "" );
 }
 
 FunctionDatum*
 SLIInterpreter::Iiterate( void ) const
 {
-  return new FunctionDatum( iiterate_name, &SLIInterpreter::iiteratefunction );
+  return new FunctionDatum(
+    iiterate_name, &SLIInterpreter::iiteratefunction, "" );
 }
 
 void
@@ -279,14 +281,16 @@ SLIInterpreter::createdouble( Name const& n, double d )
  *  exists.
  */
 void
-SLIInterpreter::createcommand( Name const& n, SLIFunction const* fn )
+SLIInterpreter::createcommand( Name const& n,
+  SLIFunction const* fn,
+  std::string deprecation_info )
 {
   if ( DStack->known( n ) )
     throw NamingConflict("A function called '" + std::string(n.toString()) 
 			   + "' exists already.\n"
 			   "Please choose a different name!");
 
-  Token t( new FunctionDatum( n, fn ) );
+  Token t( new FunctionDatum( n, fn, deprecation_info ) );
   DStack->def_move( n, t );
 }
 
@@ -302,34 +306,6 @@ SLIInterpreter::createconstant( Name const& n, Token const& val )
 {
   Token t( val );
   DStack->def_move( n, t );
-}
-
-/** Define a function inside a "namespace" (bottom level dictionary).
- *  This function may be used to group SLI commands in some kind of
- *  "name spaces" that are implemented using dictionaries.
- *  It defines the SLI function inside a dictionary of
- *  the given Name, which is known in systemdict.
- *  If a dictionary of the given Name is not yet known inside
- *  systemdict, it is created.
- *  Note that you may also pass strings as the first arguments, as
- *  there is an implicit type conversion operator from string to Name.
- *  Use the Name when name objects already exist.
- */
-void
-SLIInterpreter::createcommand( Name const& dictn,
-  Name const& n,
-  SLIFunction const* fn )
-{
-  if ( !( baseknown( dictn ) ) )
-  {
-    Dictionary* d = new Dictionary; // get a new dictionary from the heap
-    basedef( dictn, new DictionaryDatum( d ) );
-  }
-  Token dt = baselookup( dictn );
-  DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( dt.datum() );
-  DStack->push( *dd );
-  createcommand( n, fn );
-  DStack->pop();
 }
 
 const Token&

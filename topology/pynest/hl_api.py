@@ -627,7 +627,7 @@ def CreateLayer(specs):
         specs = (specs, )
     elif not all(isinstance(spec, dict) for spec in specs):
         raise TypeError("specs must be a dictionary or a list of dictionaries")
-    
+
     for dicts in specs:
         elements = dicts['elements']
         if isinstance(elements, list):

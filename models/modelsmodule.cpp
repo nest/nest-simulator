@@ -358,8 +358,9 @@ ModelsModule::init( SLIInterpreter* )
 #endif
   // This version of the AdEx model does not depend on GSL.
   kernel().model_manager.register_node_model< aeif_cond_alpha_RK5 >(
-    "aeif_cond_alpha_RK5", /*private_model*/ false,
-	/*deprecation_model*/ "NEST 3.0" );
+    "aeif_cond_alpha_RK5",
+    /*private_model*/ false,
+    /*deprecation_model*/ "NEST 3.0" );
   kernel().model_manager.register_node_model< aeif_cond_alpha_multisynapse >(
     "aeif_cond_alpha_multisynapse" );
 

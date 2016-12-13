@@ -74,7 +74,7 @@ def Create(model, n=1, params=None):
 
 
 @check_stack
-@deprecated('', 'GetLID is deprecated and will be removed in NEST3. Use \
+@deprecated('', 'GetLID is deprecated and will be removed in NEST 3.0. Use \
 index into GIDCollection instead.')
 def GetLID(gid):
     """Return the local id of a node with the global ID gid.

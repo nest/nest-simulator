@@ -627,6 +627,14 @@ def CreateLayer(specs):
         specs = (specs, )
     elif not all(isinstance(spec, dict) for spec in specs):
         raise TypeError("specs must be a dictionary or a list of dictionaries")
+    
+    for dicts in specs:
+        elements = dicts['elements']
+        if isinstance(elements, list):
+            for elem in elements:
+                hlh.model_deprecation_warning(elem)
+        else:
+            hlh.model_deprecation_warning(elements)
 
     return topology_func('{ CreateLayer } Map', specs)
 

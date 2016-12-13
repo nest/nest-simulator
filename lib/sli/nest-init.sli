@@ -732,9 +732,16 @@ def
    SeeAlso: Create, LayoutArray
 */
 
+true /first_deprecation_warning Set
+
 /LayoutNetwork_l_a_dict
 {
   << >> begin
+  first_deprecation_warning true eq
+  {
+    (Sli function LayoutNetwork is deprecated in NEST 3.0.) M_WARNING message
+    false /first_deprecation_warning Set
+  } if
              /val   Set
   size       /n_dim Set
    dup 0 get /n     Set
@@ -775,6 +782,11 @@ def
 /LayoutNetwork_l_a
 {
   << >> begin
+  first_deprecation_warning true eq
+  {
+    (Sli function LayoutNetwork is deprecated in NEST 3.0.) M_WARNING message
+    false /first_deprecation_warning Set
+  } if
   size       /n_dim Set
    dup 0 get /n     Set
              /dim   Set
@@ -1222,8 +1234,15 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+true /first_deprecation_warning Set
+
 /GetNetwork_i_i {
   << >> begin
+  first_deprecation_warning true eq
+  {
+    (Sli function GetNetwork is deprecated in NEST 3.0.) M_WARNING message
+    false /first_deprecation_warning Set
+  } if
   /depth Set
   dup
   GetStatus /model get % id model

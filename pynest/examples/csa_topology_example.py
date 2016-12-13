@@ -80,12 +80,12 @@ def geometryFunction(topologyLayer):
     return geometry_function
 
 """
-We create two layers that have 20x20 neurons of type `iaf_neuron`.
+We create two layers that have 20x20 neurons of type `iaf_psc_alpha`.
 """
 
-pop1 = topo.CreateLayer({'elements': 'iaf_neuron',
+pop1 = topo.CreateLayer({'elements': 'iaf_psc_alpha',
                          'rows': 20, 'columns': 20})
-pop2 = topo.CreateLayer({'elements': 'iaf_neuron',
+pop2 = topo.CreateLayer({'elements': 'iaf_psc_alpha',
                          'rows': 20, 'columns': 20})
 
 """
@@ -113,7 +113,11 @@ the parameters weight and delay to positions in the value set
 associated with the connection set.
 """
 
-nest.CGConnect(pop1, pop2, cs, {"weight": 0, "delay": 1})
+# Find the gids to use in CGConnect, this is a work-around until NEST 3.0.
+pop1_gids = nest.GetLeaves(pop1)
+pop2_gids = nest.GetLeaves(pop2)
+
+nest.CGConnect(pop1_gids[0], pop2_gids[0], cs, {"weight": 0, "delay": 1})
 
 """
 Finally, we use the `PlotTargets` function to show all targets in

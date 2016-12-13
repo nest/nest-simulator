@@ -38,7 +38,7 @@ nest.ResetKernel()
 
 l1 = topo.CreateLayer({'columns': 4, 'rows': 3,
                        'extent': [2.0, 1.5],
-                       'elements': 'iaf_neuron'})
+                       'elements': 'iaf_psc_alpha'})
 
 nest.PrintNetwork()
 nest.PrintNetwork(2)

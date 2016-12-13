@@ -72,8 +72,8 @@ ignore_model = [
 
 nodes = nest.Models("nodes")
 # list of all neuronal models to be tested
-neurons = [m for m in nodes if nest.GetDefaults(m, "element_type") == "neuron"
-           and m not in ignore_model]
+neurons = [m for m in nodes if (nest.GetDefaults(
+           m, "element_type") == "neuron" and m not in ignore_model)]
 
 # additional parameters for the connector
 add_connect_param = {
@@ -100,7 +100,7 @@ max_steps = 200
 def foreach_neuron(func):
     '''
     Decorator that automatically does the test for all neurons.
-    '''       
+    '''
     def wrapper(*args, **kwargs):
         self = args[0]
         msd = 123456
@@ -152,7 +152,6 @@ class RefractoryTestCase(unittest.TestCase):
         t_ref_sim = idx_end * resolution
         return t_ref_sim
 
-
     @foreach_neuron
     def test_refractory_time(self, model):
         '''
@@ -172,13 +171,13 @@ class RefractoryTestCase(unittest.TestCase):
         nest.Connect(vm, neuron)
         nest.Connect(cg, neuron, syn_spec=add_connect_param.get(model, {}))
         nest.Connect(neuron, sd)
-        
+
         nest.Simulate(simtime)
 
         # get and compare t_ref
         Vr = nest.GetStatus(neuron, "V_reset")[0]
         t_ref_sim = self.compute_reftime(model, sd, vm, Vr)
-        
+
         self.assertEqual(t_ref, t_ref_sim, '''Error in model {}:
                          {} != {}'''.format(model, t_ref, t_ref_sim))
 

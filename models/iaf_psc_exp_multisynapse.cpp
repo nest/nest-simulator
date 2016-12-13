@@ -72,14 +72,15 @@ iaf_psc_exp_multisynapse::Parameters_::Parameters_()
   , I_e_( 0.0 )              // in pA
   , V_reset_( -70.0 - E_L_ ) // in mV
   , Theta_( -55.0 - E_L_ )   // relative E_L_
+  , tau_syn_( 1, 2.0 )       // in ms
   , has_connections_( false )
 {
-  tau_syn_.clear();
 }
 
 iaf_psc_exp_multisynapse::State_::State_()
   : I_const_( 0.0 )
   , V_m_( 0.0 )
+  , current_( 0.0 )
   , refractory_steps_( 0 )
 {
   i_syn_.clear();

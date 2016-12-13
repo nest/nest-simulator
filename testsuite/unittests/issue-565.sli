@@ -1,0 +1,83 @@
+/*
+ *  issue-565.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /* BeginDocumentation
+Name: testsuite::issue-565
+
+Synopsis: (issue-565) run -> NEST exits if test fails
+
+Description:
+This test provokes a switch from a heterogeneous connector to a
+homogeneous connector using the structural plasticity framework and
+asserts that the resulting homogeneous connector is correctly used.
+
+Author: Jakob Jordan
+FirstVersion: November 2016
+SeeAlso:
+*/
+
+(unittest) run
+/unittest using
+
+/BuildNetwork
+{
+  ResetKernel
+
+  M_ERROR setverbosity
+
+  % Create neurons and spike detector
+  /iaf_psc_alpha 2 << /I_e 400. >> Create /neurons Set
+  /spike_detector Create
+
+  % Create first connection with static_synapse, instantiating a
+  % homogeneous connector
+  [2] [1] << /rule /all_to_all >>
+    << /model /static_synapse /weight 0. >> Connect
+
+  % Create second connection with new synapse type, causing the
+  % homogeneous connector to be turned into a heterogeneous connector
+  /static_synapse /dev_syn CopyModel
+  [2] [3] << /rule /all_to_all >> << /model /dev_syn >> Connect
+} def
+
+% Measure event count without deleting connection (ground truth)
+BuildNetwork
+
+100 Simulate
+
+3 GetStatus /n_events get /n_events_target Set
+
+% Measure event count with deleting connection
+BuildNetwork
+
+% Delete the first connection causing the heterogeneous
+% connector to be turned into a homogeneous connector
+[2] cvgidcollection [1] cvgidcollection << /rule /all_to_all >>
+  << /model /static_synapse >> Disconnect_g_g_D_D
+
+100 Simulate
+
+% Compare result to ground truth
+{
+  3 GetStatus /n_events get n_events_target eq
+} assert_or_die

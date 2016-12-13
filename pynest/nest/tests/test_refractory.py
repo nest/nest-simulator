@@ -44,6 +44,9 @@ during exactly ``t_ref``.
 #
 
 ignore_model = [
+    "aeif_cond_alpha_RK5",
+    "aeif_cond_alpha_multisynapse",
+    "aeif_cond_beta_multisynapse",
     "amat2_psc_exp",
     "ginzburg_neuron",
     "hh_cond_exp_traub",
@@ -52,7 +55,6 @@ ignore_model = [
     "ht_neuron",
     "iaf_chs_2007",
     "iaf_chxk_2008",
-    "iaf_cond_alpha_mc",
     "iaf_psc_alpha_canon",
     "iaf_psc_alpha_presc",
     "iaf_psc_delta_canon",
@@ -73,10 +75,10 @@ nodes = nest.Models("nodes")
 neurons = [m for m in nodes if nest.GetDefaults(m, "element_type") == "neuron"
            and m not in ignore_model]
 
-# additional parameters for the recorder
-#~ add_vm_param = {
-    #~ "iaf_cond_alpha_mc": {"record_from": "V_m.s"},
-#~ }
+# additional parameters for the connector
+add_connect_param = {
+    "iaf_cond_alpha_mc": {"receptor_type": 7},
+}
 
 
 # --------------------------------------------------------------------------- #
@@ -124,6 +126,8 @@ class RefractoryTestCase(unittest.TestCase):
 
         Parameters
         ----------
+        model : str
+          Name of the neuronal model.
         sd : tuple
             GID of the spike detector.
         vm : tuple
@@ -140,15 +144,12 @@ class RefractoryTestCase(unittest.TestCase):
         times = nest.GetStatus(vm, "events")[0]["times"]
         idx_max = (np.argwhere(np.isclose(times, spike_times[1]))[0]
                    if len(spike_times) > 1 else -1)
-        Vs = nest.GetStatus(vm, "events")[0]["V_m"]
+        name_Vm = "V_m.s" if model == "iaf_cond_alpha_mc" else "V_m"
+        Vs = nest.GetStatus(vm, "events")[0][name_Vm]
         # get the index at which the spike occured
         idx_spike = np.argwhere(times == spike_times[0])[0]
         idx_end = np.where(np.isclose(Vs[idx_spike:idx_max], Vr, 1e-6))[0][-1]
-        t_ref_sim = 0.
-        if "gif" in model or "iaf" in model:
-            t_ref_sim = idx_end * resolution
-        else:
-            t_ref_sim = (idx_end) * resolution
+        t_ref_sim = idx_end * resolution
         return t_ref_sim
 
 
@@ -162,14 +163,14 @@ class RefractoryTestCase(unittest.TestCase):
         # create the neuron and devices
         nparams = {"t_ref": t_ref}
         neuron = nest.Create(model, params=nparams)
-        vm_params = {"interval": resolution}
-        #~ vm_params.update(add_vm_param.get(model, {}))
+        name_Vm = "V_m.s" if model == "iaf_cond_alpha_mc" else "V_m"
+        vm_params = {"interval": resolution, "record_from": [name_Vm]}
         vm = nest.Create("voltmeter", params=vm_params)
         sd = nest.Create("spike_detector")
         cg = nest.Create("dc_generator", params={"amplitude": 600.})
         # connect them and simulate
         nest.Connect(vm, neuron)
-        nest.Connect(cg, neuron)
+        nest.Connect(cg, neuron, syn_spec=add_connect_param.get(model, {}))
         nest.Connect(neuron, sd)
         
         nest.Simulate(simtime)

@@ -26,7 +26,8 @@ import numpy as np
 import nest
 
 """
-Assert that all neuronal models implement refractory period correctly.
+Assert that all neuronal models that have a refractory period implement it
+correctly (except for Hodgkin-Huxley models which cannot be tested).
 
 Details
 -------
@@ -35,6 +36,28 @@ Submit the neuron to a constant excitatory current so that it spikes in the
 A ``spike_detector`` is used to detect the time at which the neuron spikes and
 a ``voltmeter`` is then used to make sure the voltage is clamped to ``V_reset``
 during exactly ``t_ref``.
+
+For neurons that do not clamp the potential, use a very large current to
+trigger immediate spiking
+
+Untested models
+---------------
+* ``aeif_cond_alpha_RK5``
+* ``ginzburg_neuron``
+* ``hh_cond_exp_traub``
+* ``hh_psc_alpha``
+* ``hh_psc_alpha_gap``
+* ``ht_neuron``
+* ``iaf_chs_2007``
+* ``iaf_chxk_2008``
+* ``iaf_tum_2000``
+* ``izhikevich``
+* ``mcculloch_pitts_neuron``
+* ``parrot_neuron``
+* ``parrot_neuron_ps``
+* ``pp_pop_psc_delta``
+* ``pp_psc_delta``
+* ``sli_neuron``
 """
 
 
@@ -43,37 +66,45 @@ during exactly ``t_ref``.
 # -------------------------
 #
 
-ignore_model = [
-    "aeif_cond_alpha_RK5",
-    "aeif_cond_alpha_multisynapse",
-    "aeif_cond_beta_multisynapse",
+# list of all neuronal models that can be tested by looking at clamped V
+neurons_V_clamped = [
+    'aeif_cond_alpha',
+    'aeif_cond_alpha_multisynapse',
+    'aeif_cond_beta_multisynapse',
+    'aeif_cond_exp',
+    'aeif_psc_alpha',
+    'aeif_psc_exp',
+    'gif_cond_exp',
+    'gif_cond_exp_multisynapse',
+    'gif_psc_exp',
+    'gif_psc_exp_multisynapse',
+    'iaf_cond_alpha',
+    'iaf_cond_alpha_mc',
+    'iaf_cond_exp',
+    'iaf_cond_exp_sfa_rr',
+    'iaf_neuron',
+    'iaf_psc_alpha',
+    'iaf_psc_alpha_multisynapse',
+    'iaf_psc_delta',
+    'iaf_psc_exp',
+    'iaf_psc_exp_multisynapse'
+]
+
+# neurons that must be tested through a high current to spike immediately
+# (t_ref = interspike)
+neurons_interspike = [
     "amat2_psc_exp",
-    "ginzburg_neuron",
-    "hh_cond_exp_traub",
-    "hh_psc_alpha",
-    "hh_psc_alpha_gap",
-    "ht_neuron",
-    "iaf_chs_2007",
-    "iaf_chxk_2008",
+    "mat2_psc_exp"
+]
+
+neurons_interspike_ps = [
     "iaf_psc_alpha_canon",
     "iaf_psc_alpha_presc",
     "iaf_psc_delta_canon",
     "iaf_psc_exp_ps",
-    "iaf_tum_2000",
-    "izhikevich",
-    "mat2_psc_exp",
-    "mcculloch_pitts_neuron",
-    "parrot_neuron",
-    "parrot_neuron_ps",
-    "pp_pop_psc_delta",
-    "pp_psc_delta",
-    "sli_neuron",
 ]
 
-nodes = nest.Models("nodes")
-# list of all neuronal models to be tested
-neurons = [m for m in nodes if (nest.GetDefaults(
-           m, "element_type") == "neuron" and m not in ignore_model)]
+tested_models = neurons_V_clamped + neurons_interspike + neurons_interspike_ps
 
 # additional parameters for the connector
 add_connect_param = {
@@ -106,7 +137,7 @@ def foreach_neuron(func):
         msd = 123456
         N_vp = nest.GetKernelStatus(['total_num_virtual_procs'])[0]
         pyrngs = [np.random.RandomState(s) for s in range(msd, msd + N_vp)]
-        for name in neurons:
+        for name in tested_models:
             nest.ResetKernel()
             nest.SetKernelStatus({
                 'resolution': resolution, 'grng_seed': msd + N_vp,
@@ -120,7 +151,7 @@ class RefractoryTestCase(unittest.TestCase):
     Check the correct implementation of refractory time in all neuronal models.
     """
 
-    def compute_reftime(self, model, sd, vm, Vr):
+    def compute_reftime(self, model, sd, vm, neuron):
         '''
         Compute the refractory time of the neuron.
 
@@ -132,8 +163,8 @@ class RefractoryTestCase(unittest.TestCase):
             GID of the spike detector.
         vm : tuple
             GID of the voltmeter.
-        Vr : double
-            Value of the reset potential.
+        neuron : tuple
+            GID of the recorded neuron.
 
         Returns
         -------
@@ -141,16 +172,24 @@ class RefractoryTestCase(unittest.TestCase):
             Value of the simulated refractory period.
         '''
         spike_times = nest.GetStatus(sd, "events")[0]["times"]
-        times = nest.GetStatus(vm, "events")[0]["times"]
-        idx_max = (np.argwhere(np.isclose(times, spike_times[1]))[0]
-                   if len(spike_times) > 1 else -1)
-        name_Vm = "V_m.s" if model == "iaf_cond_alpha_mc" else "V_m"
-        Vs = nest.GetStatus(vm, "events")[0][name_Vm]
-        # get the index at which the spike occured
-        idx_spike = np.argwhere(times == spike_times[0])[0]
-        idx_end = np.where(np.isclose(Vs[idx_spike:idx_max], Vr, 1e-6))[0][-1]
-        t_ref_sim = idx_end * resolution
-        return t_ref_sim
+        if model in neurons_interspike:
+            # spike emitted at next timestep so substract resolution
+            return spike_times[1]-spike_times[0]-resolution
+        elif model in neurons_interspike_ps:
+            return spike_times[1]-spike_times[0]
+        else:
+            Vr = nest.GetStatus(neuron, "V_reset")[0]
+            times = nest.GetStatus(vm, "events")[0]["times"]
+            idx_max = (np.argwhere(np.isclose(times, spike_times[1]))[0][0]
+                       if len(spike_times) > 1 else -1)
+            name_Vm = "V_m.s" if model == "iaf_cond_alpha_mc" else "V_m"
+            Vs = nest.GetStatus(vm, "events")[0][name_Vm]
+            # get the index at which the spike occured
+            idx_spike = np.argwhere(times == spike_times[0])[0][0]
+            idx_end = np.where(
+                np.isclose(Vs[idx_spike:idx_max], Vr, 1e-6))[0][-1]
+            t_ref_sim = idx_end * resolution
+            return t_ref_sim
 
     @foreach_neuron
     def test_refractory_time(self, model):
@@ -165,8 +204,12 @@ class RefractoryTestCase(unittest.TestCase):
         name_Vm = "V_m.s" if model == "iaf_cond_alpha_mc" else "V_m"
         vm_params = {"interval": resolution, "record_from": [name_Vm]}
         vm = nest.Create("voltmeter", params=vm_params)
-        sd = nest.Create("spike_detector")
+        sd = nest.Create("spike_detector", params={'precise_times': True})
         cg = nest.Create("dc_generator", params={"amplitude": 600.})
+        # for models that do not clamp V_m, use very large current to trigger
+        # almost immediate spiking => t_ref almost equals interspike
+        if model not in neurons_V_clamped:
+            nest.SetStatus(cg, "amplitude", 10000000.)
         # connect them and simulate
         nest.Connect(vm, neuron)
         nest.Connect(cg, neuron, syn_spec=add_connect_param.get(model, {}))
@@ -175,11 +218,16 @@ class RefractoryTestCase(unittest.TestCase):
         nest.Simulate(simtime)
 
         # get and compare t_ref
-        Vr = nest.GetStatus(neuron, "V_reset")[0]
-        t_ref_sim = self.compute_reftime(model, sd, vm, Vr)
+        t_ref_sim = self.compute_reftime(model, sd, vm, neuron)
 
-        self.assertEqual(t_ref, t_ref_sim, '''Error in model {}:
-                         {} != {}'''.format(model, t_ref, t_ref_sim))
+        # approximate result for precise spikes (interpolation error)
+        if model in neurons_interspike_ps:
+            self.assertAlmostEqual(t_ref, t_ref_sim, places=3,
+                                   msg='''Error in model {}:
+                                   {} != {}'''.format(model, t_ref, t_ref_sim))
+        else:
+            self.assertAlmostEqual(t_ref, t_ref_sim, msg='''Error in model {}:
+                                   {} != {}'''.format(model, t_ref, t_ref_sim))
 
 
 # --------------------------------------------------------------------------- #

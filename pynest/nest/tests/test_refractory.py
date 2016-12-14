@@ -104,7 +104,32 @@ neurons_interspike_ps = [
     "iaf_psc_exp_ps",
 ]
 
-tested_models = neurons_V_clamped + neurons_interspike + neurons_interspike_ps
+# models that cannot be tested
+ignore_model = [
+    "aeif_cond_alpha_RK5", # this one is known to be faulty and will be removed
+    "ginzburg_neuron",
+    "hh_cond_exp_traub",
+    "hh_psc_alpha",
+    "hh_psc_alpha_gap",
+    "ht_neuron",
+    "iaf_chs_2007",
+    "iaf_chxk_2008",
+    "iaf_psc_alpha_canon",
+    "iaf_psc_alpha_presc",
+    "iaf_psc_delta_canon",
+    "iaf_psc_exp_ps",
+    "iaf_tum_2000",
+    "izhikevich",
+    "mcculloch_pitts_neuron",
+    "parrot_neuron",
+    "parrot_neuron_ps",
+    "pp_pop_psc_delta",
+    "pp_psc_delta",
+    "sli_neuron",
+]
+
+tested_models = [m for m in nest.Models("nodes") if (nest.GetDefaults(
+                 m, "element_type") == "neuron" and m not in ignore_model)]
 
 # additional parameters for the connector
 add_connect_param = {

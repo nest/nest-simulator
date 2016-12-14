@@ -609,10 +609,10 @@ nest::OneToOneBuilder::connect_()
 
       for ( GIDCollection::const_iterator tgid = targets_->begin(),
                                           sgid = sources_->begin();
-            tgid != targets_->end();
+            tgid < targets_->end();
             ++tgid, ++sgid )
       {
-        assert( sgid != sources_->end() );
+        assert( sgid < sources_->end() );
 
         if ( ( *sgid ).gid == ( *tgid ).gid and not autapses_ )
           continue;
@@ -674,11 +674,11 @@ nest::OneToOneBuilder::disconnect_()
     {
       for ( GIDCollection::const_iterator tgid = targets_->begin(),
                                           sgid = sources_->begin();
-            tgid != targets_->end();
+            tgid < targets_->end();
             ++tgid, ++sgid )
       {
 
-        assert( sgid != sources_->end() );
+        assert( sgid < sources_->end() );
 
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
@@ -740,10 +740,10 @@ nest::OneToOneBuilder::sp_connect_()
 
       for ( GIDCollection::const_iterator tgid = targets_->begin(),
                                           sgid = sources_->begin();
-            tgid != targets_->end();
+            tgid < targets_->end();
             ++tgid, ++sgid )
       {
-        assert( sgid != sources_->end() );
+        assert( sgid < sources_->end() );
 
         if ( ( *sgid ).gid == ( *tgid ).gid and not autapses_ )
           continue;
@@ -798,10 +798,10 @@ nest::OneToOneBuilder::sp_disconnect_()
     {
       for ( GIDCollection::const_iterator tgid = targets_->begin(),
                                           sgid = sources_->begin();
-            tgid != targets_->end();
+            tgid < targets_->end();
             ++tgid, ++sgid )
       {
-        assert( sgid != sources_->end() );
+        assert( sgid < sources_->end() );
 
         if ( !change_connected_synaptic_elements(
                ( *sgid ).gid, ( *tgid ).gid, tid, -1 ) )
@@ -838,14 +838,14 @@ nest::AllToAllBuilder::connect_()
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
       for ( GIDCollection::const_iterator tgid = targets_->begin();
-            tgid != targets_->end();
+            tgid < targets_->end();
             ++tgid )
       {
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
         {
           for ( GIDCollection::const_iterator sgid = sources_->begin();
-                sgid != sources_->end();
+                sgid < sources_->end();
                 ++sgid )
             skip_conn_parameter_( tid );
           continue;
@@ -859,14 +859,14 @@ nest::AllToAllBuilder::connect_()
         if ( tid != target_thread )
         {
           for ( GIDCollection::const_iterator sgid = sources_->begin();
-                sgid != sources_->end();
+                sgid < sources_->end();
                 ++sgid )
             skip_conn_parameter_( tid );
           continue;
         }
 
         for ( GIDCollection::const_iterator sgid = sources_->begin();
-              sgid != sources_->end();
+              sgid < sources_->end();
               ++sgid )
         {
           if ( not autapses_ and ( *sgid ).gid == ( *tgid ).gid )
@@ -909,11 +909,11 @@ nest::AllToAllBuilder::sp_connect_()
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
       for ( GIDCollection::const_iterator tgid = targets_->begin();
-            tgid != targets_->end();
+            tgid < targets_->end();
             ++tgid )
       {
         for ( GIDCollection::const_iterator sgid = sources_->begin();
-              sgid != sources_->end();
+              sgid < sources_->end();
               ++sgid )
         {
           if ( not autapses_ and ( *sgid ).gid == ( *tgid ).gid )
@@ -925,7 +925,7 @@ nest::AllToAllBuilder::sp_connect_()
                  ( *sgid ).gid, ( *tgid ).gid, tid, 1 ) )
           {
             for ( GIDCollection::const_iterator sgid = sources_->begin();
-                  sgid != sources_->end();
+                  sgid < sources_->end();
                   ++sgid )
               skip_conn_parameter_( tid );
             continue;
@@ -963,14 +963,14 @@ nest::AllToAllBuilder::disconnect_()
     try
     {
       for ( GIDCollection::const_iterator tgid = targets_->begin();
-            tgid != targets_->end();
+            tgid < targets_->end();
             ++tgid )
       {
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
         {
           for ( GIDCollection::const_iterator sgid = sources_->begin();
-                sgid != sources_->end();
+                sgid < sources_->end();
                 ++sgid )
             skip_conn_parameter_( tid );
           continue;
@@ -984,14 +984,14 @@ nest::AllToAllBuilder::disconnect_()
         if ( tid != target_thread )
         {
           for ( GIDCollection::const_iterator sgid = sources_->begin();
-                sgid != sources_->end();
+                sgid < sources_->end();
                 ++sgid )
             skip_conn_parameter_( tid );
           continue;
         }
 
         for ( GIDCollection::const_iterator sgid = sources_->begin();
-              sgid != sources_->end();
+              sgid < sources_->end();
               ++sgid )
         {
           single_disconnect_( ( *sgid ).gid, *target, target_thread );
@@ -1025,18 +1025,18 @@ nest::AllToAllBuilder::sp_disconnect_()
     try
     {
       for ( GIDCollection::const_iterator tgid = targets_->begin();
-            tgid != targets_->end();
+            tgid < targets_->end();
             ++tgid )
       {
         for ( GIDCollection::const_iterator sgid = sources_->begin();
-              sgid != sources_->end();
+              sgid < sources_->end();
               ++sgid )
         {
           if ( !change_connected_synaptic_elements(
                  ( *sgid ).gid, ( *tgid ).gid, tid, -1 ) )
           {
             for ( GIDCollection::const_iterator sgid = sources_->begin();
-                  sgid != sources_->end();
+                  sgid < sources_->end();
                   ++sgid )
               skip_conn_parameter_( tid );
             continue;
@@ -1113,7 +1113,7 @@ nest::FixedInDegreeBuilder::connect_()
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
       for ( GIDCollection::const_iterator tgid = targets_->begin();
-            tgid != targets_->end();
+            tgid < targets_->end();
             ++tgid )
       {
         // check whether the target is on this mpi machine
@@ -1216,7 +1216,7 @@ nest::FixedOutDegreeBuilder::connect_()
   librandom::RngPtr grng = kernel().rng_manager.get_grng();
 
   for ( GIDCollection::const_iterator sgid = sources_->begin();
-        sgid != sources_->end();
+        sgid < sources_->end();
         ++sgid )
   {
     std::set< long > ch_ids;
@@ -1461,7 +1461,7 @@ nest::BernoulliBuilder::connect_()
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
 
       for ( GIDCollection::const_iterator tgid = targets_->begin();
-            tgid != targets_->end();
+            tgid < targets_->end();
             ++tgid )
       {
         // check whether the target is on this mpi machine
@@ -1477,7 +1477,7 @@ nest::BernoulliBuilder::connect_()
           continue;
 
         for ( GIDCollection::const_iterator sgid = sources_->begin();
-              sgid != sources_->end();
+              sgid < sources_->end();
               ++sgid )
         {
           // not possible to create multapses with this implementation,

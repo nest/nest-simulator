@@ -651,6 +651,38 @@ pop pop
 
 {
   << >> begin
+  (Check connect with sliced composite with step>1) M_PROGRESS message
+  ResetKernel
+
+  /a /iaf_psc_alpha 100 Create def
+  /b /iaf_psc_alpha 100 Create def
+  /c /iaf_psc_exp 20 Create def
+  /m b c join def
+  /m_step m [ 6 117 6 ] Take def
+  m_step m_step /all_to_all Connect
+
+  << >> GetConnections length
+  m_step size dup mul eq
+
+  ResetKernel
+
+  /a /iaf_psc_alpha 100 Create def
+  /b /iaf_psc_alpha 100 Create def
+  /c /iaf_psc_exp 20 Create def
+  /m b c join def
+  /m_step m [ 6 117 6 ] Take def
+  m_step m_step /one_to_one Connect
+
+  << >> GetConnections length
+  m_step size eq and
+
+  end
+} assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
   (Check that Connect checks GC validity, first arg) M_PROGRESS message
   ResetKernel
 

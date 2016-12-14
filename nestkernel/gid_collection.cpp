@@ -277,7 +277,7 @@ GIDCollectionPrimitive::to_array() const
 {
   ArrayDatum gids;
   gids.reserve( size() );
-  for ( const_iterator it = begin(); it != end(); ++it )
+  for ( const_iterator it = begin(); it < end(); ++it )
   {
     gids.push_back( ( *it ).gid );
   }
@@ -289,6 +289,10 @@ GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
   if ( get_metadata().valid() and not( get_metadata() == rhs->get_metadata() ) )
   {
     throw BadProperty( "Can only join GIDCollections with same metadata." );
+  }
+  if ( not valid() or not rhs->valid() )
+  {
+    throw KernelException( "InvalidGIDCollection" );
   }
   GIDCollectionPrimitive const* const rhs_ptr =
     dynamic_cast< GIDCollectionPrimitive const* >( rhs.get() );
@@ -343,6 +347,10 @@ GIDCollectionPrimitive::GIDCollectionPrimitive::slice( size_t start,
   if ( not( stop <= size() ) )
   {
     throw BadParameter( "stop <= size() required." );
+  }
+  if ( not valid() )
+  {
+    throw KernelException( "InvalidGIDCollection" );
   }
 
   if ( step == 1 )
@@ -489,7 +497,7 @@ GIDCollectionComposite::GIDCollectionComposite(
   }
 
   size_t global_index = 0;
-  for ( const_iterator it = composite.begin(); it != composite.end(); ++it )
+  for ( const_iterator it = composite.begin(); it < composite.end(); ++it )
   {
     if ( global_index == start )
     {
@@ -509,6 +517,10 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
   if ( get_metadata().valid() and not( get_metadata() == rhs->get_metadata() ) )
   {
     throw BadProperty( "can only join GIDCollections with the same metadata" );
+  }
+  if ( not valid() or not rhs->valid() )
+  {
+    throw KernelException( "InvalidGIDCollection" );
   }
   GIDCollectionPrimitive const* const rhs_ptr =
     dynamic_cast< GIDCollectionPrimitive const* >( rhs.get() );
@@ -628,6 +640,10 @@ GIDCollectionComposite::to_array() const
 GIDCollectionPTR
 GIDCollectionComposite::slice( size_t start, size_t stop, size_t step ) const
 {
+  if ( not valid() )
+  {
+    throw KernelException( "InvalidGIDCollection" );
+  }
   return GIDCollectionPTR(
     new GIDCollectionComposite( *this, start, stop, step ) );
 }

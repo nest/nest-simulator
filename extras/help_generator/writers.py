@@ -198,7 +198,7 @@ def write_helpindex(helpdir):
             else:
                 fullname = name
             # file extension
-            itemext = item.rsplit('/')[4]
+            itemext = item.rsplit('/')[-2]
             if name.startswith(doubles) and os.path.isfile(item):
                 # check if 'name' is available in folder with os.path.isfile(
                 # checkfile)

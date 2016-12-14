@@ -106,7 +106,7 @@ neurons_interspike_ps = [
 
 # models that cannot be tested
 ignore_model = [
-    "aeif_cond_alpha_RK5", # this one is known to be faulty and will be removed
+    "aeif_cond_alpha_RK5",  # this one is faulty and will be removed
     "ginzburg_neuron",
     "hh_cond_exp_traub",
     "hh_psc_alpha",
@@ -114,10 +114,6 @@ ignore_model = [
     "ht_neuron",
     "iaf_chs_2007",
     "iaf_chxk_2008",
-    "iaf_psc_alpha_canon",
-    "iaf_psc_alpha_presc",
-    "iaf_psc_delta_canon",
-    "iaf_psc_exp_ps",
     "iaf_tum_2000",
     "izhikevich",
     "mcculloch_pitts_neuron",

@@ -112,11 +112,11 @@ mynest::StepPatternBuilder::connect_()
       librandom::RngPtr rng = nest::kernel().rng_manager.get_rng( tid );
 
       for ( nest::GIDCollection::const_iterator tgid = targets_->begin();
-            tgid != targets_->end();
+            tgid < targets_->end();
             tgid = advance_( tgid, targets_->end(), target_step_ ) )
       {
         for ( nest::GIDCollection::const_iterator sgid = sources_->begin();
-              sgid != sources_->end();
+              sgid < sources_->end();
               sgid = advance_( sgid, sources_->end(), source_step_ ) )
         {
           if ( not autapses_ and *sgid == *tgid )
@@ -127,7 +127,7 @@ mynest::StepPatternBuilder::connect_()
           if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
           {
             for ( nest::GIDCollection::const_iterator sgid = sources_->begin();
-                  sgid != sources_->end();
+                  sgid < sources_->end();
                   ++sgid )
               skip_conn_parameter_( tid );
             continue;
@@ -154,7 +154,7 @@ mynest::StepPatternBuilder::advance_( nest::GIDCollection::const_iterator& it,
   const nest::GIDCollection::const_iterator& end,
   size_t step )
 {
-  while ( step > 0 and it != end )
+  while ( step > 0 and it < end )
   {
     --step;
     ++it;

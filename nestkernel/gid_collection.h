@@ -570,15 +570,6 @@ inline gc_const_iterator& gc_const_iterator::operator++()
         primitive_size = composite_collection_->parts_[ part_idx_ ].size();
       }
     }
-    // if we go past end(), set the iterator equal to end(), so it works when
-    // using operator!=( end() ).
-    if ( part_idx_ >= composite_collection_->parts_.size()
-      or element_idx_ >= composite_collection_->parts_[ part_idx_ ].size()
-      or not this->operator<( composite_collection_->end() ) )
-    {
-      part_idx_ = composite_collection_->end().part_idx_;
-      element_idx_ = composite_collection_->end().element_idx_;
-    }
   }
   return *this;
 }

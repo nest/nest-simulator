@@ -59,6 +59,43 @@ class ErrorTestCase(unittest.TestCase):
         self.assertRaisesRegex(
             nest.NESTError, "DivisionByZero", nest.sli_run, '1 0 div')
 
+    def test_InvalidGIDCollection(self):
+        """Invalid GIDCollection"""
+
+        nest.ResetKernel()
+
+        gc1 = nest.Create('iaf_psc_alpha', 10)
+        gc2 = nest.Create('iaf_psc_alpha', 10)
+        gc3 = nest.Create('iaf_psc_exp', 10)
+        gc_c = gc1 + gc3
+
+        nest.ResetKernel()
+
+        def add_test_primitive():
+            return gc1 + gc2
+
+        def add_test_composite():
+            return gc1 + gc3
+
+        def add_test_pc():
+            return gc_c + gc2
+
+        def slice_test():
+            return gc1[8:9]
+
+        self.assertRaisesRegexp(
+            nest.NESTError, "InvalidGIDCollection", add_test_primitive)
+
+        self.assertRaisesRegexp(
+            nest.NESTError, "InvalidGIDCollection", add_test_composite)
+
+        self.assertRaisesRegexp(
+            nest.NESTError, "InvalidGIDCollection", add_test_pc)
+
+        self.assertRaisesRegexp(
+            nest.NESTError, "InvalidGIDCollection", slice_test)
+
+
     def test_UnknownNode(self):
         """Unknown node"""
 
@@ -66,9 +103,6 @@ class ErrorTestCase(unittest.TestCase):
 
         gc = nest.Create('iaf_psc_alpha', 10)
         nest.ResetKernel()
-
-        self.assertRaisesRegexp(
-            nest.NESTError, "UnknownNode", nest.Connect, gc[8:9], gc[8:9])
 
         self.assertRaisesRegexp(
             nest.NESTError, "UnknownNode", nest.GIDCollection, [99])

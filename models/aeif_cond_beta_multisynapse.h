@@ -51,7 +51,7 @@
 
  Description:
 
- aeif_cond_beta_multisynapse is a conductance based adaptive exponential
+ aeif_cond_beta_multisynapse is a conductance-based adaptive exponential
  integrate-and-fire neuron model. It allows an arbitrary number of synaptic
  rise time and decay time constants. Synaptic conductance is modeled by a
  beta function, as described by A. Roth and M.C.W. van Rossum
@@ -74,7 +74,9 @@
  the synapse i is excitatory or inhibitory depending on the value of E_{rev,i}
  and the differential equation for the spike-adaptation current w is:
 
- tau_w * dw/dt = a(V - E_L) - W
+ tau_w * dw/dt = a(V - E_L) - w
+
+ When the neuron fires a spike, the adaptation current w <- w + b.
 
 Parameters:
 The following parameters can be set in the status dictionary.
@@ -90,14 +92,14 @@ Membrane Parameters:
   E_L        double - Leak reversal potential in mV.
   g_L        double - Leak conductance in nS.
   I_e        double - Constant external input current in pA.
-
-Spike adaptation parameters:
-  a          double - Subthreshold adaptation in nS.
-  b          double - Spike-triggered adaptation in pA.
   Delta_T    double - Slope factor in mV
-  tau_w      double - Adaptation time constant in ms
   V_th       double - Spike initiation threshold in mV
   V_peak     double - Spike detection threshold in mV.
+
+Adaptation parameters:
+  a          double - Subthreshold adaptation in nS.
+  b          double - Spike-triggered adaptation in pA.
+  tau_w      double - Adaptation time constant in ms
 
 Synaptic parameters
   E_rev      double vector - Reversal potential in mV.
@@ -181,6 +183,7 @@ public:
   aeif_cond_beta_multisynapse();
   aeif_cond_beta_multisynapse( const aeif_cond_beta_multisynapse& );
   virtual ~aeif_cond_beta_multisynapse();
+
   friend int
   aeif_cond_beta_multisynapse_dynamics( double, const double*, double*, void* );
 

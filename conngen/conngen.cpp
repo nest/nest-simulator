@@ -161,17 +161,17 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  index source_offset = sources->operator []( 0 );
+  index source_offset = sources->operator[]( 0 );
 
   RangeSet source_ranges;
-  source_ranges.push_back(
-    Range( sources->operator []( 0 ), sources->operator []( sources->size() - 1 ) ) );
+  source_ranges.push_back( Range(
+    sources->operator[]( 0 ), sources->operator[]( sources->size() - 1 ) ) );
 
-  index target_offset = targets->operator []( 0 );
+  index target_offset = targets->operator[]( 0 );
 
   RangeSet target_ranges;
-  target_ranges.push_back(
-    Range( targets->operator []( 0 ), targets->operator []( targets->size() - 1 ) ) );
+  target_ranges.push_back( Range(
+    targets->operator[]( 0 ), targets->operator[]( targets->size() - 1 ) ) );
 
   cg_connect( cg,
     source_ranges,

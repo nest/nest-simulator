@@ -165,8 +165,10 @@ ConnectionGeneratorModule::CGConnect_cg_g_g_D_lFunction::execute(
 
   ConnectionGeneratorDatum cg =
     getValue< ConnectionGeneratorDatum >( i->OStack.pick( 4 ) );
-  GIDCollectionDatum sources = getValue< GIDCollectionDatum >( i->OStack.pick( 3 ) );
-  GIDCollectionDatum targets = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  GIDCollectionDatum sources =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 3 ) );
+  GIDCollectionDatum targets =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
   DictionaryDatum params_map =
     getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );

@@ -136,10 +136,10 @@ class CSATestCase(unittest.TestCase):
         pop1 = nest.LayoutNetwork("iaf_neuron", [n])
 
         cs = csa.cset(csa.oneToOne, 10000.0, 1.0)
-        
+
         pop0_list = [x for x in nest.GIDCollection(pop0[0])]
         pop1_list = [x for x in nest.GIDCollection(pop1[0])]
-        
+
         sources = nest.GetLeaves(pop0_list)[0]
         targets = nest.GetLeaves(pop1_list)[0]
 
@@ -157,8 +157,7 @@ class CSATestCase(unittest.TestCase):
             conns = nest.GetStatus(
                 nest.GetConnections([targets[i]]), 'target')
             self.assertEqual(len(conns), 0)
-            
-            
+
         nest.ResetKernel()
 
         sources = nest.Create('iaf_psc_alpha', n)

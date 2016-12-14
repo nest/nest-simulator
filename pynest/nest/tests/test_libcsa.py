@@ -26,7 +26,7 @@ CSA tests
 import unittest
 import nest
 
-#from . import compatibility
+from . import compatibility
 
 try:
     import libcsa
@@ -64,7 +64,7 @@ class libcsaTestCase(unittest.TestCase):
         pop1 = nest.LayoutNetwork("iaf_neuron", [n])
 
         cg = libcsa.oneToOne
-        
+
         pop0_list = [x for x in nest.GIDCollection(pop0[0])]
         pop1_list = [x for x in nest.GIDCollection(pop1[0])]
 
@@ -136,10 +136,10 @@ class libcsaTestCase(unittest.TestCase):
         pop1 = nest.LayoutNetwork("iaf_neuron", [n])
 
         cs = libcsa.cset(libcsa.oneToOne, 10000.0, 1.0)
-        
+
         pop0_list = [x for x in nest.GIDCollection(pop0[0])]
         pop1_list = [x for x in nest.GIDCollection(pop1[0])]
-        
+
         sources = nest.GetLeaves(pop0_list)[0]
         targets = nest.GetLeaves(pop1_list)[0]
 

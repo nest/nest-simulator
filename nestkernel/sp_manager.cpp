@@ -384,7 +384,7 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
   // Vector of displacements for communication
   std::vector< int > displacements;
 
-  // Get pre synaptic elements data from global nodes
+  // Get pre synaptic elements data from local nodes
   get_synaptic_elements( sp_builder->get_pre_synaptic_element_name(),
     pre_vacant_id,
     pre_vacant_n,
@@ -402,6 +402,9 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
   kernel().mpi_manager.communicate(
     pre_deleted_n, pre_deleted_n_global, displacements );
 
+  // This implies that there are no more vacant pre-synaptic elements.
+  // Instead, some synapses need to be deleted to reduce the number of synaptic
+  // elements.
   if ( pre_deleted_id_global.size() > 0 )
   {
     delete_synapses_from_pre( pre_deleted_id_global,
@@ -544,6 +547,7 @@ SPManager::delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
   std::vector< index >::iterator id_it;
   std::vector< int >::iterator n_it;
 
+  // Get all targets of pre-synaptic neurons that need deletion of synapses
   kernel().connection_manager.get_targets(
     pre_deleted_id, connectivity, synapse_model );
 
@@ -553,6 +557,8 @@ SPManager::delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
   for ( ; id_it != pre_deleted_id.end() && n_it != pre_deleted_n.end();
         id_it++, n_it++, connectivity_it++ )
   {
+    // Remove invalid targets
+    validate_partners( *connectivity_it, se_post_name );
     // Communicate the list of targets
     kernel().mpi_manager.communicate(
       *connectivity_it, global_targets, displacements );
@@ -658,6 +664,8 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
   for ( ; id_it != post_deleted_id.end() && n_it != post_deleted_n.end();
         id_it++, n_it++, connectivity_it++ )
   {
+    // Remove invalid sources
+    validate_partners( *connectivity_it, se_pre_name );
     // Communicate the list of sources
     kernel().mpi_manager.communicate(
       *connectivity_it, global_sources, displacements );
@@ -787,6 +795,40 @@ nest::SPManager::global_shuffle( std::vector< index >& v, size_t n )
     v.erase( rndi + rnd );
   }
   v = v2;
+}
+
+void
+nest::SPManager::validate_partners( std::vector< index >& partners,
+  std::string partner_element_name )
+{
+  // If we used functors or lambdas (C++08, C++11), we could use
+  // std::remove_if: http://stackoverflow.com/q/8597240/375067
+  // In the meantime, do what remove_if does ourselves:
+  // https://www.quora.com/What-is-the-best-way-to-iterate-through-a-vector-while-popping-certain-elements-out-in-C%2B%2B/answer/Marcelo-Juchem?srid=HRod
+  std::vector< index >::iterator w_it = partners.begin();
+  for ( std::vector< index >::iterator r_it = w_it; r_it != partners.end();
+        ++r_it )
+  {
+    if ( is_valid_partner( *r_it, partner_element_name ) )
+    {
+      if ( r_it != w_it )
+      {
+        *w_it = *r_it;
+      }
+      w_it++;
+    }
+  }
+  partners.erase( w_it, partners.end() );
+}
+
+inline bool
+nest::SPManager::is_valid_partner( index tgt_id, std::string se_post_name )
+{
+  Node* tgt_node = kernel().node_manager.get_node( tgt_id );
+  return ( tgt_node->has_proxies()
+           && ( tgt_node->get_synaptic_elements( se_post_name ) != 0 ) )
+    ? true
+    : false;
 }
 
 } // namespace nest

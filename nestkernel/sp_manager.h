@@ -228,6 +228,27 @@ private:
    * GrowthCurve factories, indexed by growthcurvedict_ elements.
    */
   std::vector< GenericGrowthCurveFactory* > growthcurve_factories_;
+
+  /**
+   * \fn void validate_partners (std::vector< index >& parnters, std::string
+   * partner_element_name)
+   * Remove invalid partners from list.
+   *
+   * To be valid, a partner node must be neuronal and must have the required
+   * partner synaptic element
+   */
+  void validate_partners( std::vector< index >& partners,
+    std::string partner_element_name );
+  // Helper method to implement erase-remove
+  // https://en.wikipedia.org/wiki/Erase%E2%80%93remove_idiom
+  /**
+   * \fn inline bool is_valid_partner(index tgt_id, std::string se_post_name)
+   * check to see if the tgt_id is a valid target for the source neuron.
+   *
+   * It checks to see if the target is a neuronal entity, and then to see if
+   * it has the required post_synaptic elements (se_post_name).
+   */
+  inline bool is_valid_partner( index tgt_id, std::string se_post_name );
 };
 
 inline DictionaryDatum&

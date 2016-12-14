@@ -70,6 +70,7 @@ ConnectionGeneratorModule::init( SLIInterpreter* i )
   // Register the user functions of the connection generator interface
   i->createcommand( "CGConnect_cg_i_i_D_l", &cgconnect_cg_i_i_D_lfunction );
   i->createcommand( "CGConnect_cg_iV_iV_D_l", &cgconnect_cg_iV_iV_D_lfunction );
+  i->createcommand( "CGConnect_cg_g_g_D_l", &cgconnect_cg_g_g_D_lfunction );
   i->createcommand( "CGParse", &cgparse_sfunction );
   i->createcommand( "CGParseFile", &cgparsefile_sfunction );
   i->createcommand(
@@ -145,6 +146,27 @@ ConnectionGeneratorModule::CGConnect_cg_iV_iV_D_lFunction::execute(
     getValue< ConnectionGeneratorDatum >( i->OStack.pick( 4 ) );
   IntVectorDatum sources = getValue< IntVectorDatum >( i->OStack.pick( 3 ) );
   IntVectorDatum targets = getValue< IntVectorDatum >( i->OStack.pick( 2 ) );
+  DictionaryDatum params_map =
+    getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
+
+  cg_connect( cg, sources, targets, params_map, synmodel_name );
+
+  i->OStack.pop( 5 );
+  i->EStack.pop();
+}
+
+// Connect for conn_generator gidcollection gidcollection dict synapsetype
+void
+ConnectionGeneratorModule::CGConnect_cg_g_g_D_lFunction::execute(
+  SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 5 );
+
+  ConnectionGeneratorDatum cg =
+    getValue< ConnectionGeneratorDatum >( i->OStack.pick( 4 ) );
+  GIDCollectionDatum sources = getValue< GIDCollectionDatum >( i->OStack.pick( 3 ) );
+  GIDCollectionDatum targets = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
   DictionaryDatum params_map =
     getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );

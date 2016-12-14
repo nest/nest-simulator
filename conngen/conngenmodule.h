@@ -63,6 +63,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } cgconnect_cg_iV_iV_D_lfunction;
 
+  class CGConnect_cg_g_g_D_lFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } cgconnect_cg_g_g_D_lfunction;
+
   class CGParse_sFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;

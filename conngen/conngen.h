@@ -30,6 +30,7 @@
 #include "conngendatum.h"
 
 // Includes from nestkernel:
+#include "nest_datums.h"
 #include "nest_names.h"
 #include "nest_types.h"
 
@@ -50,6 +51,12 @@ void cg_connect( ConnectionGeneratorDatum& cg,
 void cg_connect( ConnectionGeneratorDatum& cg,
   IntVectorDatum& source_id,
   IntVectorDatum& target_id,
+  const DictionaryDatum& params_map,
+  const Name& synmodel_name );
+
+void cg_connect( ConnectionGeneratorDatum& cg,
+  GIDCollectionDatum& source_id,
+  GIDCollectionDatum& target_id,
   const DictionaryDatum& params_map,
   const Name& synmodel_name );
 

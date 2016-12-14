@@ -26,7 +26,7 @@ CSA tests
 import unittest
 import nest
 
-from . import compatibility
+#from . import compatibility
 
 try:
     import libcsa
@@ -64,11 +64,17 @@ class libcsaTestCase(unittest.TestCase):
         pop1 = nest.LayoutNetwork("iaf_neuron", [n])
 
         cg = libcsa.oneToOne
+        
+        pop0_list = [x for x in nest.GIDCollection(pop0[0])]
+        pop1_list = [x for x in nest.GIDCollection(pop1[0])]
 
-        nest.CGConnect(pop0, pop1, cg)
+        sources = nest.GetLeaves(pop0_list)[0]
+        targets = nest.GetLeaves(pop1_list)[0]
 
-        sources = nest.GetLeaves(pop0)[0]
-        targets = nest.GetLeaves(pop1)[0]
+        nest.CGConnect(nest.GIDCollection(pop0[0]),
+                       nest.GIDCollection(pop1[0]),
+                       cg)
+
         for i in range(n):
             conns = nest.GetStatus(
                 nest.GetConnections([sources[i]]), 'target')
@@ -92,7 +98,8 @@ class libcsaTestCase(unittest.TestCase):
         cg = libcsa.oneToOne
 
         self.assertRaisesRegex(nest.NESTError, "BadProperty",
-                               nest.CGConnect, pop0, pop1, cg)
+                               nest.CGConnect, nest.GIDCollection(pop0[0]),
+                               nest.GIDCollection(pop1[0]), cg)
 
     def test_libcsa_OneToOne_idrange(self):
         """One-to-one connectivity with id ranges"""
@@ -129,11 +136,18 @@ class libcsaTestCase(unittest.TestCase):
         pop1 = nest.LayoutNetwork("iaf_neuron", [n])
 
         cs = libcsa.cset(libcsa.oneToOne, 10000.0, 1.0)
+        
+        pop0_list = [x for x in nest.GIDCollection(pop0[0])]
+        pop1_list = [x for x in nest.GIDCollection(pop1[0])]
+        
+        sources = nest.GetLeaves(pop0_list)[0]
+        targets = nest.GetLeaves(pop1_list)[0]
 
-        nest.CGConnect(pop0, pop1, cs, {"weight": 0, "delay": 1})
+        nest.CGConnect(nest.GIDCollection(pop0[0]),
+                       nest.GIDCollection(pop1[0]),
+                       cs,
+                       {"weight": 0, "delay": 1})
 
-        sources = nest.GetLeaves(pop0)[0]
-        targets = nest.GetLeaves(pop1)[0]
         for i in range(n):
             conns = nest.GetStatus(
                 nest.GetConnections([sources[i]]), 'target')

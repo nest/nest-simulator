@@ -30,6 +30,7 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
+#include "conn_builder.h"
 #include "nest_types.h"
 #include "sparse_node_array.h"
 
@@ -83,7 +84,6 @@ public:
    * @throws nest::UnknownModelID
    */
   index add_node( index m, long n = 1 );
-
 
   /**
    * Restore nodes from an array of status dictionaries.
@@ -209,6 +209,21 @@ public:
    */
   bool any_node_uses_wfr() const;
 
+  /**
+   * Iterator pointing to beginning of process-local nodes.
+   */
+  SparseNodeArray::const_iterator local_nodes_begin() const;
+
+  /**
+   * Iterator pointing to end of process-local nodes.
+   */
+  SparseNodeArray::const_iterator local_nodes_end() const;
+
+  /**
+   * Number of process-local nodes.
+   */
+  size_t local_nodes_size() const;
+
 private:
   /**
    * Initialize the network data structures.
@@ -235,6 +250,13 @@ private:
    * @see prepare_nodes_()
    */
   void prepare_node_( Node* );
+
+  /**
+   * Returns the next local gid after curr_gid (in round robin fashion).
+   * In the case of GSD, there might be no valid gids, hence you should still
+   * check, if it returns a local gid.
+   */
+  index next_local_gid_( index curr_gid ) const;
 
 private:
   SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
@@ -325,6 +347,24 @@ inline bool
 NodeManager::any_node_uses_wfr() const
 {
   return any_node_uses_wfr_;
+}
+
+inline SparseNodeArray::const_iterator
+NodeManager::local_nodes_begin() const
+{
+  return local_nodes_.begin();
+}
+
+inline SparseNodeArray::const_iterator
+NodeManager::local_nodes_end() const
+{
+  return local_nodes_.end();
+}
+
+inline size_t
+NodeManager::local_nodes_size() const
+{
+  return local_nodes_.size();
 }
 
 } // namespace

@@ -27,6 +27,7 @@ from .hl_api_helper import *
 from .hl_api_nodes import Create, GIDCollection
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
+from .hl_api_subnets import GetChildren
 import nest
 import numpy
 
@@ -511,7 +512,6 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
         parameter_map = {}
 
     if _is_subnet_instance(pre[:1]):
-
         if not _is_subnet_instance(post[:1]):
             raise kernel.NESTError(
                 "if pre is a subnet, post also has to be a subnet")

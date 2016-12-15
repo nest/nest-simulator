@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# two_neurons.py
+# gap_junctions_two_neurons.py
 #
 # This file is part of NEST.
 #
@@ -23,7 +23,7 @@
 This is a simple example of two hh_psc_alpha_gap neurons connected
 by a gap-junction. Please note that gap junctions are two-way connections:
 In order to create an accurate gap-junction connection between two
-neurons i and j two connections are required.
+neurons i and j the use of the flag "make_symmetric" is required.
 """
 
 import nest
@@ -61,7 +61,6 @@ nest.Connect([neuron[0]],[neuron[1]],
              {'rule': 'one_to_one', 'make_symmetric': True},
              {'model': 'gap_junction', 'weight': 0.5})
 """
-
 nest.Connect(neuron, neuron,
              {'rule': 'all_to_all', 'autapses': False},
              {'model': 'gap_junction', 'weight': 0.5})

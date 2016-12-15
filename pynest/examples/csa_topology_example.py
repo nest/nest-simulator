@@ -35,6 +35,9 @@ http://dx.doi.org/10.3389/fninf.2014.00043
 
 For a related example, see csa_example.py
 
+This example uses the function GetLeaves, which is deprecated. A deprecation
+warning is therefore released. For details about deprecated functions, see
+documentation.  
 """
 
 """
@@ -113,11 +116,12 @@ the parameters weight and delay to positions in the value set
 associated with the connection set.
 """
 
-# Find the gids to use in CGConnect, this is a work-around until NEST 3.0.
-pop1_gids = nest.GetLeaves(pop1)
-pop2_gids = nest.GetLeaves(pop2)
+# This is a work-around until NEST 3.0 is released. It will issue a deprecation
+# warning.
+pop1_gids = nest.GetLeaves(pop1)[0]
+pop2_gids = nest.GetLeaves(pop2)[0]
 
-nest.CGConnect(pop1_gids[0], pop2_gids[0], cs, {"weight": 0, "delay": 1})
+nest.CGConnect(pop1_gids, pop2_gids, cs, {"weight": 0, "delay": 1})
 
 """
 Finally, we use the `PlotTargets` function to show all targets in

@@ -144,6 +144,10 @@
 # ! **Note:** By default, the script does not show any graphics.
 # ! Set ``SHOW_FIGURES`` to ``True`` to activate graphics.
 
+# ! This example uses the function GetLeaves, which is deprecated. A deprecation
+# ! warning is therefore released. For details about deprecated functions, see
+# ! documentation. 
+
 
 import pylab
 SHOW_FIGURES = False
@@ -377,7 +381,7 @@ layerProps = {'rows': Params['N'],
 layerProps.update({'elements': 'RetinaNode'})
 retina = topo.CreateLayer(layerProps)
 
-# retina_leaves is a work-around until NEST3 is released
+# retina_leaves is a work-around until NEST 3.0 is released
 retina_leaves = nest.GetLeaves(retina)[0]
 
 # ! Now set phases of retinal oscillators; we use a list comprehension instead
@@ -825,7 +829,7 @@ for name, loc, population, model in [('TpRelay', 1, Tp, 'TpRelay'),
                                      ('Vp_v L4pyr', 3, Vp_v, 'L4pyr'),
                                      ('Vp_h L4pyr', 4, Vp_h, 'L4pyr')]:
     recorders[name] = (nest.Create('RecordingNode'), loc)
-    # population_leaves is a work-around until NEST3 is released
+    # population_leaves is a work-around until NEST 3.0 is released
     population_leaves = nest.GetLeaves(population)[0]
     tgts = [nd for nd in population_leaves
             if nest.GetStatus([nd], 'model')[0] == model]

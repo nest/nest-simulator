@@ -27,6 +27,10 @@ EXPERIMENTAL example of 3d layer.
 3d layers are currently not supported, use at your own risk!
 
 Hans Ekkehard Plesser, UMB
+
+This example uses the function GetChildren, which is deprecated. A deprecation
+warning is therefore released. For details about deprecated functions, see
+documentation. 
 '''
 
 import nest
@@ -55,7 +59,7 @@ l1 = topo.CreateLayer(
 # xext, yext = nest.GetStatus(l1, 'topology')[0]['extent']
 # xctr, yctr = nest.GetStatus(l1, 'topology')[0]['center']
 
-# l1_children is a work-around until NEST3 is released
+# l1_children is a work-around until NEST 3.0 is released
 l1_children = nest.GetChildren(l1)[0]
 
 # extract position information, transpose to list of x, y and z positions

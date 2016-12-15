@@ -49,15 +49,14 @@ def PrintNetwork(depth=1, subnet=None):
     """
 
     if subnet is None:
-        # Turn off _deprecation_warning as users shouldn't change
-        # implementation of PrintNetwork, it is done by the developers
-        deprecation_bool = hlh._deprecation_warning['CurrentSubnet']
-        hlh._deprecation_warning['CurrentSubnet'] = False
-
+        # Turn off deprecation warning on Python and SLI level as users
+        # shouldn't change implementation of PrintNetwork, it is done by the
+        # developers.
+        deprecation_bool, verbosity_level = turn_of_deprecation_warning('CurrentSubnet')
         subnet = CurrentSubnet()
-
         # Need to reset the deprecation warning to its old value
-        hlh._deprecation_warning['CurrentSubnet'] = deprecation_bool
+        turn_on_deprecation_warning('CurrentSubnet', deprecation_bool, verbosity_level)
+        
     elif len(subnet) > 1:
         raise NESTError("PrintNetwork() expects exactly one GID.")
 

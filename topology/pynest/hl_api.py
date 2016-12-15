@@ -1619,17 +1619,18 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     if len(tgt_layer) != 1:
         raise nest.NESTError("tgt_layer must be a one-element list")
 
-    # Turn off _deprecation _warning as users shouldn't change implementation
-    # of GetTargetNodes, it is done by the developers
-    deprecation_bool = hlh._deprecation_warning['GetLeaves']
-    hlh._deprecation_warning['GetLeaves'] = False
+    # Turn off deprecation warning on Python and SLI level as users
+    # shouldn't change implementation of GetTargetNodes, it is done by the
+    # developers.
+    deprecation_bool, verbosity_level = nest.turn_of_deprecation_warning('GetLeaves')
+    
     # obtain local nodes in target layer, to pass to GetConnections
     tgt_nodes = nest.GetLeaves(tgt_layer,
                                properties={
                                    'model': tgt_model} if tgt_model else None,
                                local_only=True)[0]
     # Need to reset the deprecation warning to its old value
-    hlh._deprecation_warning['GetLeaves'] = deprecation_bool
+    nest.turn_on_deprecation_warning('GetLeaves', deprecation_bool, verbosity_level)
 
     conns = nest.GetConnections(sources, tgt_nodes, synapse_model=syn_model)
 
@@ -1801,14 +1802,14 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         xext, yext = ext
         xctr, yctr = nest.GetStatus(layer, 'topology')[0]['center']
 
-        # Turn off _deprecation_warning as users shouldn't change
-        # implementation of PlotLayer, it is done by the developers
-        deprecation_bool = hlh._deprecation_warning['GetChildren']
-        hlh._deprecation_warning['GetChildren'] = False
+        # Turn off deprecation warning on Python and SLI level as users
+        # shouldn't change implementation of PrintNetwork, it is done by the
+        # developers.
+        deprecation_bool, verbosity_level = nest.turn_of_deprecation_warning('GetChildren')        
         # extract position information, transpose to list of x and y positions
         xpos, ypos = zip(*GetPosition(nest.GetChildren(layer)[0]))
         # Need to reset the deprecation warning to its old value
-        hlh._deprecation_warning['GetChildren'] = deprecation_bool
+        nest.turn_on_deprecation_warning('GetCildren', deprecation_bool, verbosity_level)
 
         if fig is None:
             fig = plt.figure()
@@ -1824,14 +1825,14 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         # 3D layer
         from mpl_toolkits.mplot3d import Axes3D
 
-        # Turn off _deprecation_warning as users shouldn't change
-        # implementation of PlotLayer, it is done by the developers
-        deprecation_bool = hlh._deprecation_warning['GetChildren']
-        hlh._deprecation_warning['GetChildren'] = False
+        # Turn off deprecation warning on Python and SLI level as users
+        # shouldn't change implementation of PrintNetwork, it is done by the
+        # developers.
+        deprecation_bool, verbosity_level = nest.turn_of_deprecation_warning('GetChildren')        
         # extract position information, transpose to list of x,y,z positions
         pos = zip(*GetPosition(nest.GetChildren(layer)[0]))
         # Need to reset the deprecation warning to its old value
-        hlh._deprecation_warning['GetChildren'] = deprecation_bool
+        nest.turn_on_deprecation_warning('GetChildren', deprecation_bool, verbosity_level)
 
         if fig is None:
             fig = plt.figure()

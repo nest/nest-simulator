@@ -422,3 +422,63 @@ def model_deprecation_warning(model):
         ".format(model, deprecated_models[model])
         text = get_wrapped_text(text)
         warnings.warn('\n' + text)
+
+
+def turn_of_deprecation_warning(deprecated_func_name):
+    """Turns of deprecation warnings on SLI and Python level for given function.
+
+    Think thouroughly before use. The function should only be used as a way to
+    make sure examples do not display deprecation warnings, that is, used in
+    functions called from examples, and not as a way to make tedious
+    deprecation warnings dissapear. 
+
+    NB! Remember to always use turn_on_deprecation_warning(deprecated_func_name,
+    deprecation_bool, verbosity_level) after deprecated function is called, so
+    as to reset the deprecation warnings to their old value.
+
+    Parameters
+    ----------
+    deprecated_func_name: str
+        Name of deprecated function
+
+    Returns
+    -------
+    bool and int:
+        Present deprecation warning status and verbosity level
+    """
+
+    # Need to know the present deprecation warning status so we can reset after
+    # function is called
+    deprecation_bool = _deprecation_warning[deprecated_func_name]
+    _deprecation_warning[deprecated_func_name] = False
+    verbosity_level = nest.get_verbosity()
+    # Verbosity level for deprecation warnings is 18, so if verbosity level is
+    # greater we don't need to turn of deprecation warnings from SLI
+    if verbosity_level <= 18:
+        nest.set_verbosity(20)
+
+    return deprecation_bool, verbosity_level
+
+
+def turn_on_deprecation_warning(deprecated_func_name, deprecation_bool,
+                                verbosity_level):
+    """Return deprecation warning status back to original value.
+    
+    Whenever turn_of_deprecation_warning(deprecated_func_name) is used, this
+    function must be called in order to reset to original status.
+
+    Parameters
+    ----------
+    deprecated_func_name: str
+        Name of deprecated function
+    deprecation_bool: bool
+        Original status of _deprecation_warning[deprecated_func_name]
+    verbosity_level: int
+        Original verbosity level
+    """
+
+    # Need to reset the deprecation warnings to their old value
+    if verbosity_level <= 18:
+        nest.set_verbosity(verbosity_level)
+    
+    _deprecation_warning[deprecated_func_name] = deprecation_bool

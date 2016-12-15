@@ -107,7 +107,7 @@ public:
   {
     if ( not( deprecation_warning_issued_ or deprecation_info_.empty() ) )
     {
-      i->message( SLIInterpreter::M_WARNING,
+      i->message( SLIInterpreter::M_DEPRECATED,
         "SLIInterpreter",
         ( "SLI function " + name.toString() + " is deprecated in "
           + deprecation_info_ + "." ).c_str() );

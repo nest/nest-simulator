@@ -27,6 +27,10 @@ pyramidal cell and one interneuron, visualize
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
+
+This example uses the function GetLeaves, which is deprecated. A deprecation
+warning is therefore released. For details about deprecated functions, see
+documentation. 
 '''
 
 import nest
@@ -50,7 +54,7 @@ nest.PrintNetwork(2)
 
 nest.PrintNetwork(2, ctx)
 
-# ctx_leaves is a work-around until NEST3 is released
+# ctx_leaves is a work-around until NEST 3.0 is released
 ctx_leaves = nest.GetLeaves(ctx)[0]
 
 # extract position information

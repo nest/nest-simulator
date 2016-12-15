@@ -175,7 +175,7 @@ public:
   //! Predefined error level for informational messages
   static const int M_INFO;
   static const int M_DEPRECATED; //!< Predefined error level for deprecation
-  	  	  	  	  	  	  	     //!< warnings
+                                 //!< warnings
   static const int M_WARNING; //!< Predefined error level for warning messages
   static const int M_ERROR;   //!< Predefined error level for error messages
   static const int M_FATAL;   //!< Predefined error level for failure messages

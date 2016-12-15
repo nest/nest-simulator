@@ -144,9 +144,9 @@
 # ! **Note:** By default, the script does not show any graphics.
 # ! Set ``SHOW_FIGURES`` to ``True`` to activate graphics.
 
-# ! This example uses the function GetLeaves, which is deprecated. A deprecation
-# ! warning is therefore released. For details about deprecated functions, see
-# ! documentation. 
+# ! This example uses the function GetLeaves, which is deprecated. A
+# ! deprecation warning is therefore released. For details about deprecated
+# ! functions, see documentation.
 
 
 import pylab

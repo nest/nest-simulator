@@ -430,11 +430,12 @@ def turn_of_deprecation_warning(deprecated_func_name):
     Think thouroughly before use. The function should only be used as a way to
     make sure examples do not display deprecation warnings, that is, used in
     functions called from examples, and not as a way to make tedious
-    deprecation warnings dissapear. 
+    deprecation warnings dissapear.
 
-    NB! Remember to always use turn_on_deprecation_warning(deprecated_func_name,
-    deprecation_bool, verbosity_level) after deprecated function is called, so
-    as to reset the deprecation warnings to their old value.
+    NB! Remember to always use turn_on_deprecation_warning(
+    deprecated_func_name, deprecation_bool, verbosity_level) after deprecated
+    function is called, so as to reset the deprecation warnings to their old
+    value.
 
     Parameters
     ----------
@@ -463,7 +464,7 @@ def turn_of_deprecation_warning(deprecated_func_name):
 def turn_on_deprecation_warning(deprecated_func_name, deprecation_bool,
                                 verbosity_level):
     """Return deprecation warning status back to original value.
-    
+
     Whenever turn_of_deprecation_warning(deprecated_func_name) is used, this
     function must be called in order to reset to original status.
 
@@ -480,5 +481,5 @@ def turn_on_deprecation_warning(deprecated_func_name, deprecation_bool,
     # Need to reset the deprecation warnings to their old value
     if verbosity_level <= 18:
         nest.set_verbosity(verbosity_level)
-    
+
     _deprecation_warning[deprecated_func_name] = deprecation_bool

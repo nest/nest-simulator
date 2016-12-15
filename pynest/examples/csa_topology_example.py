@@ -37,7 +37,7 @@ For a related example, see csa_example.py
 
 This example uses the function GetLeaves, which is deprecated. A deprecation
 warning is therefore released. For details about deprecated functions, see
-documentation.  
+documentation.
 """
 
 """

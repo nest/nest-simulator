@@ -64,8 +64,8 @@ std::ostream& operator<<( std::ostream& out, const LoggingEvent& e )
     out << "[INFO] ";
     break;
   case M_DEPRECATED:
-	out << "[INFO] ";
-	break;
+    out << "[INFO] ";
+    break;
   case M_WARNING:
     out << "[WARNING] ";
     break;

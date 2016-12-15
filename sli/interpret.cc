@@ -829,7 +829,7 @@ SLIInterpreter::message( int level,
       else if ( level >= M_WARNING )
         message( std::cout, M_WARNING_NAME, from, text, errorname );
       else if ( level >= M_DEPRECATED )
-    	message( std::cout, M_DEPRECATED_NAME, from, text, errorname );
+        message( std::cout, M_DEPRECATED_NAME, from, text, errorname );
       else if ( level >= M_INFO )
         message( std::cout, M_INFO_NAME, from, text, errorname );
       else if ( level >= M_STATUS )

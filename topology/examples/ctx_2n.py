@@ -30,7 +30,7 @@ Hans Ekkehard Plesser, UMB
 
 This example uses the function GetLeaves, which is deprecated. A deprecation
 warning is therefore released. For details about deprecated functions, see
-documentation. 
+documentation.
 '''
 
 import nest

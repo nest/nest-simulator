@@ -540,27 +540,31 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
     }
     return GIDCollectionPTR( *this + *rhs_ptr );
   }
-  else // if rhs is not Primitive, i.e. Composite
+  else // rhs is Composite
   {
     GIDCollectionComposite const* const rhs_ptr =
       dynamic_cast< GIDCollectionComposite const* >( rhs.get() );
     rhs.unlock();
 
-    // check primitives in the composites for overlap
-    for ( std::vector< GIDCollectionPrimitive >::const_iterator this_it =
-            parts_.begin();
-          this_it < parts_.end();
-          ++this_it )
+    // check overlap between the two composites
+    const GIDCollectionComposite* shortest, *longest;
+    if ( size() < rhs_ptr->size() )
     {
-      for ( std::vector< GIDCollectionPrimitive >::const_iterator other_it =
-              rhs_ptr->parts_.begin();
-            other_it < rhs_ptr->parts_.end();
-            ++other_it )
+      shortest = this;
+      longest = rhs_ptr;
+    }
+    else
+    {
+      shortest = rhs_ptr;
+      longest = this;
+    }
+    for ( GIDCollectionComposite::const_iterator short_it = shortest->begin();
+          short_it < shortest->end();
+          ++short_it )
+    {
+      if ( longest->contains( ( *short_it ).gid ) )
       {
-        if ( this_it->overlapping( *other_it ) )
-        {
-          throw BadProperty( "Cannot join overlapping GIDCollections." );
-        }
+        throw BadProperty( "Cannot join overlapping GIDCollections." );
       }
     }
 

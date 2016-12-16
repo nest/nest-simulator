@@ -142,7 +142,7 @@ public:
 
   gc_const_iterator& operator++();
   gc_const_iterator& operator+=( const size_t );
-  gc_const_iterator operator+( const size_t );
+  gc_const_iterator operator+( const size_t ) const;
 
   void print_me( std::ostream& ) const;
 };
@@ -590,9 +590,10 @@ inline gc_const_iterator& gc_const_iterator::operator+=( const size_t n )
   return *this;
 }
 
-inline gc_const_iterator gc_const_iterator::operator+( const size_t n )
+inline gc_const_iterator gc_const_iterator::operator+( const size_t n ) const
 {
-  return ( *this ) += n;
+  gc_const_iterator it = *this;
+  return it += n;
 }
 
 inline bool gc_const_iterator::operator!=( const gc_const_iterator& rhs ) const

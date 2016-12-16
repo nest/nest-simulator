@@ -29,7 +29,7 @@ EXPERIMENTAL example of 3d layer.
 Hans Ekkehard Plesser, UMB
 
 This example uses the function GetChildren, which is deprecated. A deprecation
-warning is therefore released. For details about deprecated functions, see
+warning is therefore issued. For details about deprecated functions, see
 documentation.
 '''
 

@@ -36,7 +36,7 @@ http://dx.doi.org/10.3389/fninf.2014.00043
 For a related example, see csa_example.py
 
 This example uses the function GetLeaves, which is deprecated. A deprecation
-warning is therefore released. For details about deprecated functions, see
+warning is therefore issued. For details about deprecated functions, see
 documentation.
 """
 

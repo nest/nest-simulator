@@ -29,7 +29,7 @@ BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
 
 This example uses the function GetLeaves, which is deprecated. A deprecation
-warning is therefore released. For details about deprecated functions, see
+warning is therefore issued. For details about deprecated functions, see
 documentation.
 '''
 

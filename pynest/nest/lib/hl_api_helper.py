@@ -404,7 +404,7 @@ def broadcast(item, length, allowed_types, name="item"):
 
 def model_deprecation_warning(model):
     """Checks whether the model is to be removed in a future verstion of NEST.
-    If so, a deprecation warning is released.
+    If so, a deprecation warning is issued.
 
     Parameters
     ----------
@@ -424,8 +424,8 @@ def model_deprecation_warning(model):
         warnings.warn('\n' + text)
 
 
-def turn_of_deprecation_warning(deprecated_func_name):
-    """Turns of deprecation warnings on SLI and Python level for given
+def turn_off_deprecation_warning(deprecated_func_name):
+    """Turns off deprecation warnings on SLI and Python level for given
     function.
 
     Think thouroughly before use. The function should only be used as a way to
@@ -466,7 +466,7 @@ def turn_on_deprecation_warning(deprecated_func_name, deprecation_bool,
                                 verbosity_level):
     """Return deprecation warning status back to original value.
 
-    Whenever turn_of_deprecation_warning(deprecated_func_name) is used, this
+    Whenever turn_off_deprecation_warning(deprecated_func_name) is used, this
     function must be called in order to reset to original status.
 
     Parameters

@@ -1622,7 +1622,7 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     # Turn off deprecation warning on Python and SLI level as users
     # shouldn't change implementation of GetTargetNodes, it is done by the
     # developers.
-    deprecation_bool, verbosity_level = nest.turn_of_deprecation_warning(
+    deprecation_bool, verbosity_level = nest.turn_off_deprecation_warning(
         'GetLeaves')
 
     # obtain local nodes in target layer, to pass to GetConnections
@@ -1807,7 +1807,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         # Turn off deprecation warning on Python and SLI level as users
         # shouldn't change implementation of PrintNetwork, it is done by the
         # developers.
-        deprecation_bool, verbosity_level = nest.turn_of_deprecation_warning(
+        deprecation_bool, verbosity_level = nest.turn_off_deprecation_warning(
             'GetChildren')
         # extract position information, transpose to list of x and y positions
         xpos, ypos = zip(*GetPosition(nest.GetChildren(layer)[0]))
@@ -1832,7 +1832,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         # Turn off deprecation warning on Python and SLI level as users
         # shouldn't change implementation of PrintNetwork, it is done by the
         # developers.
-        deprecation_bool, verbosity_level = nest.turn_of_deprecation_warning(
+        deprecation_bool, verbosity_level = nest.turn_off_deprecation_warning(
             'GetChildren')
         # extract position information, transpose to list of x,y,z positions
         pos = zip(*GetPosition(nest.GetChildren(layer)[0]))

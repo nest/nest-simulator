@@ -52,7 +52,7 @@ def PrintNetwork(depth=1, subnet=None):
         # Turn off deprecation warning on Python and SLI level as users
         # shouldn't change implementation of PrintNetwork, it is done by the
         # developers.
-        deprecation_bool, verbosity_level = turn_of_deprecation_warning(
+        deprecation_bool, verbosity_level = turn_off_deprecation_warning(
             'CurrentSubnet')
         subnet = CurrentSubnet()
         # Need to reset the deprecation warning to its old value

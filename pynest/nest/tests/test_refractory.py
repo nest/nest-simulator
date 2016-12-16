@@ -87,14 +87,15 @@ neurons_V_clamped = [
     'iaf_psc_alpha_multisynapse',
     'iaf_psc_delta',
     'iaf_psc_exp',
-    'iaf_psc_exp_multisynapse'
+    'iaf_psc_exp_multisynapse',
 ]
 
 # neurons that must be tested through a high current to spike immediately
 # (t_ref = interspike)
 neurons_interspike = [
     "amat2_psc_exp",
-    "mat2_psc_exp"
+    "mat2_psc_exp",
+    "ht_neuron",
 ]
 
 neurons_interspike_ps = [
@@ -111,7 +112,6 @@ ignore_model = [
     "hh_cond_exp_traub",
     "hh_psc_alpha",
     "hh_psc_alpha_gap",
-    "ht_neuron",
     "iaf_chs_2007",
     "iaf_chxk_2008",
     "iaf_tum_2000",
@@ -229,8 +229,10 @@ class RefractoryTestCase(unittest.TestCase):
         cg = nest.Create("dc_generator", params={"amplitude": 600.})
         # for models that do not clamp V_m, use very large current to trigger
         # almost immediate spiking => t_ref almost equals interspike
-        if model not in neurons_V_clamped:
+        if model in neurons_interspike_ps:
             nest.SetStatus(cg, "amplitude", 10000000.)
+        elif model in neurons_interspike:
+            nest.SetStatus(cg, "amplitude", 2000.)
         # connect them and simulate
         nest.Connect(vm, neuron)
         nest.Connect(cg, neuron, syn_spec=add_connect_param.get(model, {}))

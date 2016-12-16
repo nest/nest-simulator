@@ -354,8 +354,6 @@ ModelsModule::init( SLIInterpreter* )
     "aeif_cond_beta_multisynapse" );
   kernel().model_manager.register_node_model< aeif_cond_alpha_multisynapse >(
     "aeif_cond_alpha_multisynapse" );
-  kernel().model_manager.register_node_model< aeif_cond_alpha_multisynapse >(
-      "aeif_cond_alpha_multisynapse" );
 #endif
 
   // This version of the AdEx model does not depend on GSL.

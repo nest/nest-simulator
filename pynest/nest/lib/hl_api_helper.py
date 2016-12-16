@@ -425,7 +425,8 @@ def model_deprecation_warning(model):
 
 
 def turn_of_deprecation_warning(deprecated_func_name):
-    """Turns of deprecation warnings on SLI and Python level for given function.
+    """Turns of deprecation warnings on SLI and Python level for given
+    function.
 
     Think thouroughly before use. The function should only be used as a way to
     make sure examples do not display deprecation warnings, that is, used in

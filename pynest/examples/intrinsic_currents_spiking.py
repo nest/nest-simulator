@@ -68,7 +68,7 @@ Note that all parameter values should be doubles, since NEST expects doubles.
 '''
 
 rate_in = 100.
-w_recep = {'AMPA': 500., 'NMDA': 50., 'GABA_A': 250., 'GABA_B': 100.}
+w_recep = {'AMPA': 30., 'NMDA': 30., 'GABA_A': 5., 'GABA_B': 10.}
 t_sim = 250.
 
 num_recep = len(w_recep)
@@ -93,9 +93,9 @@ p_gens = nest.Create('poisson_generator', 4,
                      params={'rate': rate_in})
 mm = nest.Create('multimeter',
                  params={'interval': 0.1,
-                         'record_from': ['V_m', 'Theta',
+                         'record_from': ['V_m', 'theta',
                                          'g_AMPA', 'g_NMDA',
-                                         'g_GABAA', 'g_GABAB',
+                                         'g_GABA_A', 'g_GABA_B',
                                          'I_NaP', 'I_KNa', 'I_T', 'I_h']})
 
 '''
@@ -164,7 +164,7 @@ fig = plt.figure()
 
 Vax = fig.add_subplot(311)
 Vax.plot(t, data['V_m'], 'b', lw=2, label=r'$V_m$')
-Vax.plot(t, data['Theta'], 'g', lw=2, label=r'$\Theta$')
+Vax.plot(t, data['theta'], 'g', lw=2, label=r'$\Theta$')
 Vax.set_ylabel('Potential [mV]')
 
 try:
@@ -174,7 +174,7 @@ except TypeError:
 Vax.set_title('ht_neuron driven by Poisson processes')
 
 Gax = fig.add_subplot(312)
-for gname in ('g_AMPA', 'g_NMDA', 'g_GABAA', 'g_GABAB'):
+for gname in ('g_AMPA', 'g_NMDA', 'g_GABA_A', 'g_GABA_B'):
     Gax.plot(t, data[gname], lw=2, label=texify_name(gname))
 
 try:

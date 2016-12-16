@@ -65,7 +65,7 @@ nest::ConnectionManager::ConnectionManager()
   , min_delay_( 1 )
   , max_delay_( 1 )
   , keep_source_table_( true )
-  , have_connections_changed_( false )
+  , have_connections_changed_( true )
 {
 }
 
@@ -777,44 +777,6 @@ nest::ConnectionManager::connect_from_device_( Node& s,
   ++vv_num_connections_[ tid ][ syn ];
 }
 
-// TODO@5g: implement
-/**
- * Works in a similar way to connect, same logic but removes a connection.
- * @param target target node
- * @param sgid id of the source
- * @param target_thread thread of the target
- * @param syn_id type of synapse
- */
-void
-nest::ConnectionManager::disconnect( Node& target,
-  index sgid,
-  thread target_thread,
-  index syn_id )
-{
-  assert( false );
-
-  // if ( kernel().node_manager.is_local_gid( target.get_gid() ) )
-  // {
-  //   // get the ConnectorBase corresponding to the source
-  //   ConnectorBase* conn = validate_pointer( validate_source_entry_(
-  //   target_thread, sgid, syn_id ) );
-  //   ConnectorBase* c = kernel()
-  //                        .model_manager.get_synapse_prototype( syn_id,
-  //                        target_thread )
-  //                        .delete_connection( target, target_thread, conn,
-  //                        syn_id );
-  //   if ( c == 0 )
-  //   {
-  //     connections_[ target_thread ].erase( sgid );
-  //   }
-  //   else
-  //   {
-  //     connections_[ target_thread ].set( sgid, c );
-  //   }
-  //   --vv_num_connections_[ target_thread ][ syn_id ];
-  // }
-}
-
 nest::index
 nest::ConnectionManager::find_connection_sorted( const thread tid,
   const synindex syn_index,
@@ -876,11 +838,9 @@ nest::ConnectionManager::find_connection_unsorted( const thread tid,
   const index sgid,
   const index tgid )
 {
-  std::cout << "searching unsorted" << std::endl;
   std::vector< index > matching_lcids;
 
   source_table_.find_all_sources( tid, sgid, syn_index, matching_lcids );
-  std::cout << "size: " << matching_lcids.size() << std::endl;
   if ( matching_lcids.size() > 0 )
   {
     const index lcid =
@@ -888,7 +848,6 @@ nest::ConnectionManager::find_connection_unsorted( const thread tid,
         .find_matching_target( tid, tgid, syn_index, matching_lcids );
     if ( lcid != invalid_index )
     {
-      std::cout << lcid << std::endl;
       return lcid;
     }
   }
@@ -928,12 +887,11 @@ nest::ConnectionManager::disconnect_5g( const thread tid,
   const index sgid,
   const index tgid )
 {
+  have_connections_changed_ = true;
+
   const synindex syn_index =
     ( *connections_5g_[ tid ] ).find_synapse_index( syn_id );
   assert( syn_index != invalid_synindex );
-
-  std::cout << "#################################################\n";
-  std::cout << "disconnect(" << sgid << ", " << tgid << ")\n";
 
   index lcid = find_connection_sorted( tid, syn_index, sgid, tgid );
   if ( lcid == invalid_index )
@@ -947,8 +905,6 @@ nest::ConnectionManager::disconnect_5g( const thread tid,
   source_table_.disable_connection( tid, syn_index, lcid );
 
   --vv_num_connections_[ tid ][ syn_id ];
-
-  std::cout << "#################################################\n";
 }
 
 // TODO@5g: remove?
@@ -1655,7 +1611,6 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
           source_table_.find_first_source( tid, syn_index, sources[ i ] );
         if ( start_lcid != invalid_index )
         {
-          std::cout<<"find targets for "<<sources[ i ]<<": ";
           ( *connections_5g_[ tid ] )
             .get_target_gids( tid, syn_index, start_lcid, targets[ i ] );
         }

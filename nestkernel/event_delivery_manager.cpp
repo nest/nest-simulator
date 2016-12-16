@@ -144,11 +144,28 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
 void
 EventDeliveryManager::clear_pending_spikes()
 {
-  configure_spike_buffers();
+  configure_spike_data_buffers();
 }
 
 void
-EventDeliveryManager::configure_spike_buffers()
+EventDeliveryManager::configure_target_data_buffers()
+{
+  send_recv_count_target_data_per_rank_ =
+    floor( kernel().mpi_manager.get_buffer_size_target_data()
+           / kernel().mpi_manager.get_num_processes() );
+  send_recv_count_target_data_in_int_per_rank_ = sizeof( TargetData )
+    / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
+
+  send_buffer_target_data_ = static_cast< TargetData* >(
+    malloc( kernel().mpi_manager.get_buffer_size_target_data()
+            * sizeof( TargetData ) ) );
+  recv_buffer_target_data_ = static_cast< TargetData* >(
+    malloc( kernel().mpi_manager.get_buffer_size_target_data()
+            * sizeof( TargetData ) ) );
+}
+
+void
+EventDeliveryManager::configure_spike_data_buffers()
 {
   assert( kernel().connection_manager.get_min_delay() != 0 );
 
@@ -157,6 +174,9 @@ EventDeliveryManager::configure_spike_buffers()
     reset_spike_register_5g_( tid );
     resize_spike_register_5g_( tid );
   }
+
+  send_buffer_spike_data_.clear();
+  send_buffer_off_grid_spike_data_.clear();
 
   send_buffer_spike_data_.resize(
     kernel().mpi_manager.get_buffer_size_spike_data() );
@@ -175,24 +195,10 @@ EventDeliveryManager::configure_spike_buffers()
     sizeof( OffGridSpikeData ) / sizeof( unsigned int )
     * send_recv_count_spike_data_per_rank_;
 
-  send_recv_count_target_data_per_rank_ =
-    floor( kernel().mpi_manager.get_buffer_size_target_data()
-      / kernel().mpi_manager.get_num_processes() );
-  send_recv_count_target_data_in_int_per_rank_ = sizeof( TargetData )
-    / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
-
-  send_buffer_target_data_ = static_cast< TargetData* >(
-    malloc( kernel().mpi_manager.get_buffer_size_target_data()
-      * sizeof( TargetData ) ) );
-  recv_buffer_target_data_ = static_cast< TargetData* >(
-    malloc( kernel().mpi_manager.get_buffer_size_target_data()
-      * sizeof( TargetData ) ) );
-
   // this should also clear all contained elements
   // so no loop required
   secondary_events_buffer_.clear();
   secondary_events_buffer_.resize( kernel().vp_manager.get_num_threads() );
-
 
   // send_buffer must be >= 2 as the 'overflow' signal takes up 2 spaces
   // plus the fiunal marker and the done flag for iterations

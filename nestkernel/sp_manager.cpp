@@ -245,6 +245,14 @@ SPManager::disconnect_single( index sgid,
   thread target_thread,
   DictionaryDatum& syn )
 {
+  if ( kernel().connection_manager.have_connections_changed() )
+  {
+#pragma omp parallel
+    {
+      const thread tid = kernel().vp_manager.get_thread_id();
+      kernel().simulation_manager.update_connection_infrastructure( tid );
+    }
+  }
 
   if ( syn->known( names::pre_synaptic_element )
     && syn->known( names::post_synaptic_element ) )
@@ -268,19 +276,19 @@ SPManager::disconnect_single( index sgid,
  * @param sgid
  * @param target
  * @param target_thread
- * @param syn
+ * @param syn_id
  */
 void
-SPManager::disconnect( index sgid,
+SPManager::disconnect( const index sgid,
   Node* target,
   thread target_thread,
-  index syn )
+  const index syn_id )
 {
   Node* const source = kernel().node_manager.get_node( sgid );
   // normal nodes and devices with proxies
   if ( target->has_proxies() )
   {
-    kernel().connection_manager.disconnect( *target, sgid, target_thread, syn );
+    kernel().connection_manager.disconnect_5g( target_thread, syn_id, sgid, target->get_gid() );
   }
   else if ( target->local_receiver() ) // normal devices
   {
@@ -292,8 +300,7 @@ SPManager::disconnect( index sgid,
       target_thread = source->get_thread();
       target = kernel().node_manager.get_node( target->get_gid(), sgid );
     }
-    // thread target_thread = target->get_thread();
-    kernel().connection_manager.disconnect( *target, sgid, target_thread, syn );
+    kernel().connection_manager.disconnect_5g( target_thread, syn_id, sgid, target->get_gid() );
   }
   else // globally receiving devices iterate over all target threads
   {
@@ -305,8 +312,7 @@ SPManager::disconnect( index sgid,
     {
       target = kernel().node_manager.get_node( target->get_gid(), t );
       target_thread = target->get_thread();
-      kernel().connection_manager.disconnect(
-        *target, sgid, target_thread, syn ); // tgid
+      kernel().connection_manager.disconnect_5g( target_thread, syn_id, sgid, target->get_gid() );
     }
   }
 }
@@ -326,6 +332,15 @@ SPManager::disconnect( GIDCollection& sources,
   DictionaryDatum& conn_spec,
   DictionaryDatum& syn_spec )
 {
+  if ( kernel().connection_manager.have_connections_changed() )
+  {
+#pragma omp parallel
+    {
+      const thread tid = kernel().vp_manager.get_thread_id();
+      kernel().simulation_manager.update_connection_infrastructure( tid );
+    }
+  }
+
   ConnBuilder* cb = NULL;
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
@@ -560,7 +575,6 @@ SPManager::delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
   const std::string& se_pre_name,
   const std::string& se_post_name )
 {
-  std::cout<<"delete from pre"<<std::endl;
   /*
    * Synapses deletion due to the loss of a pre-synaptic element need a
    * communication of the lists of target
@@ -662,7 +676,6 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
   std::string se_pre_name,
   std::string se_post_name )
 {
-  std::cout<<"delete from post"<<std::endl;
   /*
    * TODO: Synapses deletion due to the loss of a post-synaptic element can
    * be done locally (except for the update of the number of pre-synaptic

@@ -159,9 +159,6 @@ public:
    */
   bool connect( index s, index r, DictionaryDatum& params, index syn );
 
-  void
-  disconnect( Node& target, index sgid, thread target_thread, index syn_id );
-
   index find_connection_sorted( const thread tid,
     const synindex syn_index,
     const index sgid,

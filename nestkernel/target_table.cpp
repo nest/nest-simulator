@@ -38,7 +38,7 @@ nest::TargetTable::~TargetTable()
 void
 nest::TargetTable::initialize()
 {
-  thread num_threads = kernel().vp_manager.get_num_threads();
+  const thread num_threads = kernel().vp_manager.get_num_threads();
   targets_.resize( num_threads );
   for ( thread tid = 0; tid < num_threads; ++tid )
   {

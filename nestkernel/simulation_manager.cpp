@@ -116,7 +116,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       from_step_ = 0;
       slice_ = 0;
       // clear all old spikes
-      kernel().event_delivery_manager.configure_spike_buffers();
+      kernel().event_delivery_manager.configure_spike_data_buffers();
     }
   }
 
@@ -546,7 +546,9 @@ nest::SimulationManager::prepare_simulation_()
 
   // if at the beginning of a simulation, set up spike buffers
   if ( !simulated_ )
-    kernel().event_delivery_manager.configure_spike_buffers();
+  {
+    kernel().event_delivery_manager.configure_spike_data_buffers();
+  }
 
   kernel().node_manager.ensure_valid_thread_local_ids();
   const size_t num_active_nodes = kernel().node_manager.prepare_nodes();
@@ -556,9 +558,6 @@ nest::SimulationManager::prepare_simulation_()
   // we have to do enter_runtime after prepre_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
   // before enter_runtime
-  Stopwatch sw_reset_connections;
-  Stopwatch sw_sort;
-  Stopwatch sw_gather_target_data;
   if ( !simulated_ ) // only enter the runtime mode once
   {
     double tick = Time::get_resolution().get_ms()
@@ -571,31 +570,9 @@ nest::SimulationManager::prepare_simulation_()
   {
 #pragma omp parallel
     {
-      Stopwatch sw_reset_connections;
-      Stopwatch sw_sort;
-      Stopwatch sw_gather_target_data;
-
       const thread tid = kernel().vp_manager.get_thread_id();
-      sw_reset_connections.start();
-      kernel().connection_manager.restructure_connection_tables( tid );
-      sw_reset_connections.stop();
-      sw_sort.start();
-      kernel().connection_manager.sort_connections(
-        tid ); // TODO@5g: move into restructure_
-      sw_sort.stop();
-      sw_gather_target_data.start();
-      kernel().event_delivery_manager.gather_target_data( tid );
-      sw_gather_target_data.stop();
-
-      if ( tid == 0 )
-      {
-        sw_reset_connections.print( "0] ResetConnections time: " );
-        sw_sort.print( "0] SortConnections time: " );
-        sw_gather_target_data.print( "0] GatherTargetData time: " );
-      }
-    }
-    kernel().node_manager.set_have_nodes_changed( false );
-    kernel().connection_manager.set_have_connections_changed( false );
+      update_connection_infrastructure( tid );
+    } // of omp parallel
   }
 
   if ( kernel().mpi_manager.get_rank() < 30 )
@@ -613,6 +590,43 @@ nest::SimulationManager::prepare_simulation_()
   }
 
   return num_active_nodes;
+}
+
+void
+nest::SimulationManager::update_connection_infrastructure( const thread tid )
+{
+  Stopwatch sw_reset_connections;
+  Stopwatch sw_sort;
+  Stopwatch sw_gather_target_data;
+
+#pragma omp single
+  {
+    kernel().event_delivery_manager.configure_target_data_buffers();
+  }
+
+  sw_reset_connections.start();
+  kernel().connection_manager.restructure_connection_tables( tid );
+  sw_reset_connections.stop();
+  sw_sort.start();
+  kernel().connection_manager.sort_connections(
+    tid ); // TODO@5g: move into restructure_
+  sw_sort.stop();
+  sw_gather_target_data.start();
+  kernel().event_delivery_manager.gather_target_data( tid );
+  sw_gather_target_data.stop();
+
+  if ( tid == 0 )
+  {
+    sw_reset_connections.print( "0] ResetConnections time: " );
+    sw_sort.print( "0] SortConnections time: " );
+    sw_gather_target_data.print( "0] GatherTargetData time: " );
+  }
+
+#pragma omp single
+  {
+    kernel().node_manager.set_have_nodes_changed( false );
+    kernel().connection_manager.set_have_connections_changed( false );
+  }
 }
 
 bool
@@ -672,15 +686,9 @@ nest::SimulationManager::update_()
           ( *i )->decay_synaptic_elements_vacant();
         }
 
-        kernel().connection_manager.restructure_connection_tables( tid );
-        kernel().connection_manager.sort_connections( tid );
-        kernel().event_delivery_manager.gather_target_data( tid );
+        update_connection_infrastructure( tid );
 
-        // kernel().connection_manager.print_source_table( tid );
-        // kernel().connection_manager.print_connections( tid );
-        // kernel().connection_manager.print_targets( tid );
-      }
-
+      } // of structural plasticity
 
       if ( from_step_ == 0 ) // deliver only at beginning of slice
       {

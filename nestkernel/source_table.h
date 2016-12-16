@@ -356,16 +356,12 @@ SourceTable::find_first_source( const thread tid, const synindex syn_index, cons
     begin + ( *last_sorted_source_[ tid ] )[ syn_index ];
   std::vector< Source >::const_iterator it =
     std::lower_bound( begin, end_of_sorted, Source( sgid, true ) );
-  std::cout << it->gid << " -- " << ( *last_sorted_source_[ tid ] )[ syn_index ] << std::endl;
   if ( it != end_of_sorted && it->gid == sgid )
   {
     index lcid = it - begin;
-    std::cout << "found (sorted) "
-              << ( *( *sources_[ tid ] )[ syn_index ] )[ lcid ].gid;
     return lcid;
   }
 
-  std::cout << "not found (source " << sgid << ")" << std::endl;
   return invalid_index;
 }
 
@@ -387,8 +383,6 @@ SourceTable::find_all_sources( const thread tid,
     if ( it->gid == sgid )
     {
       index lcid = it - begin;
-      std::cout << "found (unsorted) "
-                << ( *( *sources_[ tid ] )[ syn_index ] )[ lcid ].gid;
       matching_lcids.push_back( lcid );
     }
   }

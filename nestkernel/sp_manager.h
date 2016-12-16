@@ -129,7 +129,7 @@ public:
    * \param target_thread Thread that hosts the target node.
    * \param syn The synapse model to use.
    */
-  void disconnect( index s, Node* target, thread target_thread, index syn );
+  void disconnect( const index sgid, Node* target, thread target_thread, const index syn_id );
 
   void update_structural_plasticity();
   void update_structural_plasticity( SPBuilder* );

@@ -224,7 +224,9 @@ public:
    * simulate() has been called. ConnectorModel::check_delay() and
    * Network::set_status() ensure this.
    */
-  void configure_spike_buffers();
+  void configure_spike_data_buffers();
+
+  void configure_target_data_buffers();
 
   /**
    * Read all event buffers for thread t and send the corresponding

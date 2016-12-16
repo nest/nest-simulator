@@ -243,7 +243,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::gsl_error_tol, gsl_error_tol );
 
   ArrayDatum tau_syn_ad( tau_syn_ );
-  def< ArrayDatum >( d, names::taus_syn, tau_syn_ad );
+  def< ArrayDatum >( d, names::tau_syn, tau_syn_ad );
 
   ArrayDatum tau_sfa_list_ad( tau_sfa_ );
   def< ArrayDatum >( d, names::tau_sfa, tau_sfa_list_ad );
@@ -285,7 +285,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
   updateValue< std::vector< double > >( d, names::q_stc, q_stc_ );
 
   std::vector< double > tau_tmp;
-  if ( updateValue< std::vector< double > >( d, names::taus_syn, tau_tmp ) )
+  if ( updateValue< std::vector< double > >( d, names::tau_syn, tau_tmp ) )
   {
     if ( has_connections_ && tau_tmp.size() < tau_syn_.size() )
       throw BadProperty(
@@ -346,7 +346,7 @@ nest::gif_cond_exp_multisynapse::State_::get( DictionaryDatum& d,
 {
   def< double >( d, names::V_m, y_[ V_M ] ); // Membrane potential
   def< double >( d, names::E_sfa, sfa_ );    // Adaptive threshold potential
-  def< double >( d, names::stc, stc_ );      // Spike-triggered current
+  def< double >( d, names::I_stc, stc_ );    // Spike-triggered current
 }
 
 void

@@ -192,8 +192,6 @@ void
 nest::MPIManager::get_status( DictionaryDatum& dict )
 {
   def< long >( dict, "num_processes", num_processes_ );
-  def< long >( dict, "send_buffer_size", send_buffer_size_ );
-  def< long >( dict, "receive_buffer_size", recv_buffer_size_ );
   def< bool >( dict, "adaptive_target_buffers", adaptive_target_buffers_ );
   def< bool >( dict, "adaptive_spike_buffers", adaptive_spike_buffers_ );
   def< size_t >( dict, "buffer_size_target_data", buffer_size_target_data_ );

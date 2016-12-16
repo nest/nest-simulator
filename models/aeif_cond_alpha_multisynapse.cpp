@@ -88,7 +88,7 @@ aeif_cond_alpha_multisynapse::Parameters_::Parameters_()
   , num_of_receptors_( 0 )
   , has_connections_( false )
 {
-  taus_syn.clear();
+  tau_syn.clear();
 }
 
 aeif_cond_alpha_multisynapse::State_::State_( const Parameters_& p )
@@ -158,8 +158,8 @@ aeif_cond_alpha_multisynapse::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_reset, V_reset_ );
   def< double >( d, names::E_ex, E_ex );
   def< double >( d, names::E_in, E_in );
-  ArrayDatum taus_syn_ad( taus_syn );
-  def< ArrayDatum >( d, names::taus_syn, taus_syn_ad );
+  ArrayDatum tau_syn_ad( tau_syn );
+  def< ArrayDatum >( d, names::tau_syn, tau_syn_ad );
   def< double >( d, names::a, a );
   def< double >( d, names::b, b );
   def< double >( d, names::Delta_T, Delta_T );
@@ -189,11 +189,11 @@ aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::g_L, g_L );
 
   std::vector< double > tau_tmp;
-  if ( updateValue< std::vector< double > >( d, names::taus_syn, tau_tmp ) )
+  if ( updateValue< std::vector< double > >( d, names::tau_syn, tau_tmp ) )
   {
     for ( size_t i = 0; i < tau_tmp.size(); ++i )
     {
-      if ( tau_tmp.size() < taus_syn.size() && has_connections_ == true )
+      if ( tau_tmp.size() < tau_syn.size() && has_connections_ == true )
       {
         throw BadProperty(
           "The neuron has connections, therefore the number of ports cannot be "
@@ -205,8 +205,8 @@ aeif_cond_alpha_multisynapse::Parameters_::set( const DictionaryDatum& d )
           "All synaptic time constants must be strictly positive" );
       }
     }
-    taus_syn = tau_tmp;
-    num_of_receptors_ = taus_syn.size();
+    tau_syn = tau_tmp;
+    num_of_receptors_ = tau_syn.size();
   }
 
   updateValue< double >( d, names::a, a );
@@ -443,8 +443,8 @@ aeif_cond_alpha_multisynapse::calibrate()
 
   for ( size_t i = 0; i < P_.num_of_receptors_; ++i )
   {
-    V_.g0_ex_[ i ] = 1.0 * numerics::e / P_.taus_syn[ i ];
-    V_.g0_in_[ i ] = 1.0 * numerics::e / P_.taus_syn[ i ];
+    V_.g0_ex_[ i ] = 1.0 * numerics::e / P_.tau_syn[ i ];
+    V_.g0_in_[ i ] = 1.0 * numerics::e / P_.tau_syn[ i ];
   }
 
   // set the right function for the dynamics

@@ -71,8 +71,14 @@ nest::ConnectionManager::ConnectionManager()
 
 nest::ConnectionManager::~ConnectionManager()
 {
-  source_table_.finalize();
-  delete_connections_5g_();
+  // Memory leak on purpose!
+  // The ConnectionManager is deleted, when the network is deleted, and
+  // this happens only, when main() is finished and we give the allocated memory
+  // back to the system anyway. Hence, why bother cleaning up our highly
+  // scattered connection infrastructure? They do not have any open files, which
+  // need to be closed or similar.
+  // source_table_.finalize();
+  // delete_connections_5g_();
 }
 
 void

@@ -692,7 +692,6 @@ nest::SimulationManager::update_()
 
       if ( from_step_ == 0 ) // deliver only at beginning of slice
       {
-        // kernel().event_delivery_manager.deliver_events( tid );
 #ifdef HAVE_MUSIC
 // advance the time of music by one step (min_delay * h) must
 // be done after deliver_events_() since it calls
@@ -768,7 +767,7 @@ nest::SimulationManager::update_()
               done_all = done[ i ] && done_all;
 
             // gather SecondaryEvents (e.g. GapJunctionEvents)
-            kernel().event_delivery_manager.gather_events( done_all );
+            // kernel().event_delivery_manager.gather_events( done_all );
 
             // reset done and done_all
             //(needs to be in the single threaded part)
@@ -778,7 +777,7 @@ nest::SimulationManager::update_()
 
           // deliver SecondaryEvents generated during wfr_update
           // returns the done value over all threads
-          done_p = kernel().event_delivery_manager.deliver_events( tid );
+          // done_p = kernel().event_delivery_manager.deliver_events( tid );
 
           if ( done_p )
           {
@@ -837,7 +836,6 @@ nest::SimulationManager::update_()
                                                                      // end of
                                                                      // slice
       {
-        // kernel().event_delivery_manager.gather_events( true );
         kernel().event_delivery_manager.gather_spike_data( tid );
       }
       sw_gather_spike_data.stop();
@@ -848,10 +846,6 @@ nest::SimulationManager::update_()
 // the other threads are enforced to wait at the end of the block
 #pragma omp master
       {
-        // gather only at end of slice
-        // if ( to_step_ == kernel().connection_manager.get_min_delay() )
-        //   kernel().event_delivery_manager.gather_events( true );
-
         advance_time_();
 
         if ( SLIsignalflag != 0 )

@@ -1805,7 +1805,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         xctr, yctr = nest.GetStatus(layer, 'topology')[0]['center']
 
         # Turn off deprecation warning on Python and SLI level as users
-        # shouldn't change implementation of PrintNetwork, it is done by the
+        # shouldn't change implementation of PlotLayer, it is done by the
         # developers.
         deprecation_bool, verbosity_level = nest.turn_off_deprecation_warning(
             'GetChildren')
@@ -1830,7 +1830,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         from mpl_toolkits.mplot3d import Axes3D
 
         # Turn off deprecation warning on Python and SLI level as users
-        # shouldn't change implementation of PrintNetwork, it is done by the
+        # shouldn't change implementation of PlotLayer, it is done by the
         # developers.
         deprecation_bool, verbosity_level = nest.turn_off_deprecation_warning(
             'GetChildren')

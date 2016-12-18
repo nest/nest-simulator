@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# inhibitory_network.py
+# gap_junctions_inhibitory_network.py
 #
 # This file is part of NEST.
 #
@@ -103,9 +103,9 @@ for i in range(n_neuron):
 
 """
 We must not use the 'fixed_indegree' oder 'fixed_outdegree' functionality of
-nest.Connect() to create the connections, as gap_junction connections are
-two-way connections and we need to make sure that the same neurons are
-connected in both ways.
+nest.Connect() to create the connections, as gap_junction connections are two-
+way connections and we need to make sure that the same neurons are connected
+in both ways (using the "make_symmetric" flag for one-to-one connections).
 """
 
 # create gap_junction connections

@@ -639,10 +639,8 @@ EventDeliveryManager::deliver_events_5g_( const thread tid,
       {
         se.set_stamp( prepared_timestamps[ spike_data.lag ] );
         se.set_offset( spike_data.get_offset() );
-        // sw_send.start();
         kernel().connection_manager.send_5g(
           tid, spike_data.syn_index, spike_data.lcid, se );
-        // sw_send.stop();
       }
 
       // is this the last spike from this rank?

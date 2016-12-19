@@ -462,6 +462,13 @@ nest::ConnBuilder::single_connect_( index sgid,
   thread target_thread,
   librandom::RngPtr& rng )
 {
+  if ( this->requires_proxies() and not target.has_proxies() )
+  {
+    throw IllegalConnection(
+      "Cannot use this rule to connect to nodes"
+      " without proxies (usually devices)." );
+  }
+
   if ( param_dicts_.empty() ) // indicates we have no synapse params
   {
     if ( default_weight_and_delay_ )

@@ -170,10 +170,10 @@ EventDeliveryManager::resize_send_recv_buffers_spike_data_()
     * send_recv_count_spike_data_per_rank_;
 
   assert(
-    send_buffer_spike_data_.size() <= send_recv_count_spike_data_per_rank_
+    send_buffer_spike_data_.size() >= send_recv_count_spike_data_per_rank_
     * kernel().mpi_manager.get_num_processes() );
   assert( send_buffer_off_grid_spike_data_.size()
-          <= send_recv_count_spike_data_per_rank_
+          >= send_recv_count_spike_data_per_rank_
           * kernel().mpi_manager.get_num_processes() );
 }
 
@@ -373,13 +373,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       {
         resize_send_recv_buffers_spike_data_();
         buffer_size_spike_data_has_changed_ = false;
-
-        assert(
-          send_buffer_spike_data_.size() <= send_recv_count_spike_data_per_rank_
-            * kernel().mpi_manager.get_num_processes() );
-        assert( send_buffer_off_grid_spike_data_.size()
-          <= send_recv_count_spike_data_per_rank_
-            * kernel().mpi_manager.get_num_processes() );
       }
     } // of omp single; implicit barrier
     sw_collocate.start();

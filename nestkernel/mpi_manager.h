@@ -34,6 +34,7 @@
 
 // C++ includes:
 #include <cassert>
+#include <cmath>
 #include <iostream>
 #include <limits>
 #include <numeric>
@@ -259,6 +260,8 @@ private:
                                  //connections resize on the fly
   bool adaptive_spike_buffers_;  //!< whether MPI buffers for communication of
                                  //spikes resize on the fly
+  double growth_factor_buffer_spike_data_;
+  double growth_factor_buffer_target_data_;
 
 #ifdef HAVE_MPI
   //! array containing communication partner for each step.
@@ -507,7 +510,7 @@ MPIManager::increase_buffer_size_target_data()
   assert( adaptive_target_buffers_ );
   if ( buffer_size_target_data_ < max_buffer_size_target_data_ )
   {
-    buffer_size_target_data_ *= 2;
+    buffer_size_target_data_ = static_cast< size_t >( floor( buffer_size_target_data_ * growth_factor_buffer_target_data_ ) );
     return true;
   }
   else
@@ -522,7 +525,7 @@ MPIManager::increase_buffer_size_spike_data()
   assert( adaptive_spike_buffers_ );
   if ( buffer_size_spike_data_ < max_buffer_size_spike_data_ )
   {
-    buffer_size_spike_data_ *= 2;
+    buffer_size_spike_data_ = static_cast< size_t >( floor( buffer_size_spike_data_ * growth_factor_buffer_spike_data_ ) );
     return true;
   }
   else

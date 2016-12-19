@@ -389,11 +389,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 
     if ( off_grid_spiking_ )
     {
-      me_completed_tid = collocate_spike_data_buffers_( tid,
-        assigned_ranks,
-        send_buffer_position,
-        spike_register_5g_,
-        send_buffer_spike_data_ );
       me_completed_tid += collocate_spike_data_buffers_( tid,
                                                          assigned_ranks,
                                                          send_buffer_position,

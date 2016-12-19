@@ -261,7 +261,6 @@ public:
   Stopwatch sw_collocate;
   Stopwatch sw_communicate;
   Stopwatch sw_deliver;
-  Stopwatch sw_send;
 
   Stopwatch sw_collocate_target_data;
   Stopwatch sw_communicate_target_data;

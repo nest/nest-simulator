@@ -886,7 +886,6 @@ nest::SimulationManager::update_()
       kernel().event_delivery_manager.sw_collocate.print( "--collocate: " );
       kernel().event_delivery_manager.sw_communicate.print( "--communicate: " );
       kernel().event_delivery_manager.sw_deliver.print( "--deliver: " );
-      kernel().event_delivery_manager.sw_send.print( "--send: " );
       sw_total.print( "0] Total time: " );
       std::cout << "0] CommSteps(Rounds)SpikeData: "
                 << kernel().event_delivery_manager.comm_steps_spike_data << "("

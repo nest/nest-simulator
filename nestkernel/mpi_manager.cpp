@@ -69,6 +69,8 @@ nest::MPIManager::MPIManager()
   , max_buffer_size_spike_data_( 4194304 )
   , adaptive_target_buffers_( true )
   , adaptive_spike_buffers_( true )
+  , growth_factor_buffer_spike_data_( 1.5 )
+  , growth_factor_buffer_target_data_( 1.5 )
 #ifdef HAVE_MPI
   , comm_step_( std::vector< int >() )
   , COMM_OVERFLOW_ERROR( std::numeric_limits< unsigned int >::max() )
@@ -182,6 +184,11 @@ nest::MPIManager::set_status( const DictionaryDatum& dict )
     set_buffer_size_spike_data( new_buffer_size_spike_data );
   }
 
+  updateValue< double >(
+    dict, "growth_factor_buffer_spike_data", growth_factor_buffer_spike_data_ );
+  updateValue< double >(
+    dict, "growth_factor_buffer_target_data", growth_factor_buffer_target_data_ );
+
   updateValue< long >(
     dict, "max_buffer_size_target_data", max_buffer_size_target_data_ );
   updateValue< long >(
@@ -200,6 +207,8 @@ nest::MPIManager::get_status( DictionaryDatum& dict )
     dict, "max_buffer_size_target_data", max_buffer_size_target_data_ );
   def< size_t >(
     dict, "max_buffer_size_spike_data", max_buffer_size_spike_data_ );
+  def< double >( dict, "growth_factor_buffer_spike_data", growth_factor_buffer_spike_data_ );
+  def< double >( dict, "growth_factor_buffer_target_data", growth_factor_buffer_target_data_ );
 }
 
 void

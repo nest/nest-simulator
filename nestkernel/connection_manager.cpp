@@ -643,6 +643,11 @@ nest::ConnectionManager::disconnect( Node& target,
     // get the ConnectorBase corresponding to the source
     ConnectorBase* conn =
       validate_pointer( validate_source_entry_( target_thread, sgid, syn_id ) );
+    if ( conn == 0 )
+    {
+      return;
+    }
+    // else
     ConnectorBase* c =
       kernel()
         .model_manager.get_synapse_prototype( syn_id, target_thread )

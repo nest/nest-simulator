@@ -43,10 +43,10 @@ pos = [[random.uniform(-0.75, 0.75), random.uniform(-0.5, 0.5)]
 
 l1 = topo.CreateLayer({'extent': [2., 1.5],
                        'positions': pos,
-                       'elements': 'iaf_neuron'})
+                       'elements': 'iaf_psc_alpha'})
 
-nest.PrintNetwork(1, (0,))
-nest.PrintNetwork(2, (0,))
+nest.PrintNetwork()
+nest.PrintNetwork(2)
 nest.PrintNetwork(2, l1)
 
 topo.PlotLayer(l1, nodesize=50)

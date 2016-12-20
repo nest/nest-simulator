@@ -912,10 +912,7 @@ nest::AllToAllBuilder::connect_()
           // check whether the target is on this mpi machine
           if ( not kernel().node_manager.is_local_gid( *tgid ) )
           {
-            for ( GIDCollection::const_iterator sgid = sources_->begin();
-                  sgid != sources_->end();
-                  ++sgid )
-              skip_conn_parameter_( tid );
+            skip_conn_parameter_( tid, sources_->size() );
             continue;
           }
 
@@ -966,12 +963,7 @@ nest::AllToAllBuilder::inner_connect_( const int tid,
   {
     if ( skip )
     {
-      for ( GIDCollection::const_iterator sgid = sources_->begin();
-            sgid != sources_->end();
-            ++sgid )
-      {
-        skip_conn_parameter_( tid );
-      }
+      skip_conn_parameter_( tid, sources_->size() );
     }
     return;
   }
@@ -1027,10 +1019,7 @@ nest::AllToAllBuilder::sp_connect_()
           }
           if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
           {
-            for ( GIDCollection::const_iterator sgid = sources_->begin();
-                  sgid != sources_->end();
-                  ++sgid )
-              skip_conn_parameter_( tid );
+            skip_conn_parameter_( tid, sources_->size() );
             continue;
           }
           Node* const target = kernel().node_manager.get_node( *tgid, tid );
@@ -1071,10 +1060,7 @@ nest::AllToAllBuilder::disconnect_()
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
         {
-          for ( GIDCollection::const_iterator sgid = sources_->begin();
-                sgid != sources_->end();
-                ++sgid )
-            skip_conn_parameter_( tid );
+          skip_conn_parameter_( tid, sources_->size() );
           continue;
         }
 
@@ -1084,10 +1070,7 @@ nest::AllToAllBuilder::disconnect_()
         // check whether the target is on our thread
         if ( tid != target_thread )
         {
-          for ( GIDCollection::const_iterator sgid = sources_->begin();
-                sgid != sources_->end();
-                ++sgid )
-            skip_conn_parameter_( tid );
+          skip_conn_parameter_( tid, sources_->size() );
           continue;
         }
 
@@ -1135,10 +1118,7 @@ nest::AllToAllBuilder::sp_disconnect_()
         {
           if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           {
-            for ( GIDCollection::const_iterator sgid = sources_->begin();
-                  sgid != sources_->end();
-                  ++sgid )
-              skip_conn_parameter_( tid );
+            skip_conn_parameter_( tid, sources_->size() );
             continue;
           }
           Node* const target = kernel().node_manager.get_node( *tgid, tid );

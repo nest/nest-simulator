@@ -124,7 +124,8 @@ def set_verbosity(level):
     Parameters
     ----------
     level : str
-        Can be one of 'M_FATAL', 'M_ERROR', 'M_WARNING', or 'M_INFO'.
+        Can be one of 'M_FATAL', 'M_ERROR', 'M_WARNING', 'M_DEPRECATED',
+        'M_INFO' or 'M_ALL'.
     """
 
     sr("%s setverbosity" % level)

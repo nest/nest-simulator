@@ -27,6 +27,10 @@ pyramidal cell and one interneuron, visualize
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
+
+This example uses the function GetLeaves, which is deprecated. A deprecation
+warning is therefore issued. For details about deprecated functions, see
+documentation.
 '''
 
 import nest
@@ -38,28 +42,27 @@ pylab.ion()
 
 nest.ResetKernel()
 
-nest.CopyModel('iaf_neuron', 'pyr')
-nest.CopyModel('iaf_neuron', 'in')
-col = 4
-row = 3
-el = ['pyr', 'in']
-ctx = topo.CreateLayer({'columns': col, 'rows': row,
+nest.CopyModel('iaf_psc_alpha', 'pyr')
+nest.CopyModel('iaf_psc_alpha', 'in')
+ctx = topo.CreateLayer({'columns': 4, 'rows': 3,
                         'extent': [2.0, 1.5],
-                        'elements': el})
+                        'elements': ['pyr', 'in']})
 
-nest.PrintNetwork(1, (0,))
+nest.PrintNetwork()
 
-nest.PrintNetwork(2, (0,))
+nest.PrintNetwork(2)
 
 nest.PrintNetwork(2, ctx)
 
-gids = range(ctx[0] + 1, col*row*len(el) + ctx[0] + 1)
+# ctx_leaves is a work-around until NEST 3.0 is released
+ctx_leaves = nest.GetLeaves(ctx)[0]
+
 # extract position information
 ppyr = pylab.array(
-    tuple(zip(*[topo.GetPosition([n])[0] for n in gids
+    tuple(zip(*[topo.GetPosition([n])[0] for n in ctx_leaves
                 if nest.GetStatus([n], 'model')[0] == 'pyr'])))
 pin = pylab.array(
-    tuple(zip(*[topo.GetPosition([n])[0] for n in gids
+    tuple(zip(*[topo.GetPosition([n])[0] for n in ctx_leaves
                 if nest.GetStatus([n], 'model')[0] == 'in'])))
 # plot
 pylab.clf()

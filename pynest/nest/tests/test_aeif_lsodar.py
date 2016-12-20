@@ -54,9 +54,6 @@ Details:
 
 HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 path = os.path.abspath(os.path.dirname(__file__))
-if not path.endswith("/"):
-    path += "/"
-
 
 # --------------------------------------------------------------------------- #
 #  Tolerances to compare LSODAR and NEST implementations
@@ -69,7 +66,8 @@ di_tolerances_lsodar = {
     "aeif_cond_exp": {"V_m": 5e-4, "w": 1e-4},
     "aeif_psc_alpha": {"V_m": 5e-4, "w": 1e-4},
     "aeif_psc_exp": {"V_m": 5e-4, "w": 1e-4},
-    "aeif_cond_alpha_multisynapse": {"V_m": 5e-3, "w": 2e-3},
+    "aeif_cond_alpha_multisynapse": {"V_m": 5e-4, "w": 1e-4},
+    "aeif_cond_beta_multisynapse": {"V_m": 5e-4, "w": 1e-4},
     "aeif_cond_alpha_RK5": {"V_m": 5e-3, "w": 2e-3}
 }
 
@@ -95,6 +93,7 @@ models = [
     "aeif_psc_alpha",
     "aeif_psc_exp",
     "aeif_cond_alpha_multisynapse",
+    "aeif_cond_beta_multisynapse",
     "aeif_cond_alpha_RK5"
 ]
 
@@ -245,8 +244,11 @@ class AEIFTestCase(unittest.TestCase):
         '''
         for model, di_rel_diff in iter(rel_diff.items()):
             for var, diff in iter(di_rel_diff.items()):
-                self.assertTrue(diff < di_tol[model][var])
+                self.assertLess(diff, di_tol[model][var],
+                                "{} failed test for {}: {} > {}.".format(
+                                    model, var, diff, di_tol[model][var]))
 
+    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def test_closeness_nest_lsodar(self):
         '''
         Compare models to the LSODAR implementation.
@@ -254,7 +256,7 @@ class AEIFTestCase(unittest.TestCase):
         simtime = 100.
 
         # get lsodar reference
-        lsodar = np.loadtxt(path + 'test_aeif_data_lsodar.dat').T
+        lsodar = np.loadtxt(os.path.join(path, 'test_aeif_data_lsodar.dat')).T
         V_interp = interp1d(lsodar[0, :], lsodar[1, :])
         w_interp = interp1d(lsodar[0, :], lsodar[2, :])
 
@@ -278,6 +280,7 @@ class AEIFTestCase(unittest.TestCase):
                                            ['V_m', 'w'])
         self.assert_pass_tolerance(rel_diff, di_tolerances_lsodar)
 
+    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def test_iaf_behaviour(self):
         '''
         The models should behave as iaf_cond_* if a == 0., b == 0. and

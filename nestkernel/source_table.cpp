@@ -48,8 +48,9 @@ nest::SourceTable::initialize()
   saved_positions_.resize( num_threads );
   last_sorted_source_.resize( num_threads );
 
-  for ( thread tid = 0; tid < num_threads; ++tid )
+#pragma omp parallel
   {
+    const thread tid = kernel().vp_manager.get_thread_id();
     synapse_ids_[ tid ] = new std::map< synindex, synindex >();
     sources_[ tid ] = new std::vector< std::vector< Source >* >( 0 );
     current_positions_[ tid ] = new SourceTablePosition();
@@ -57,7 +58,7 @@ nest::SourceTable::initialize()
     is_cleared_[ tid ] = false;
     saved_entry_point_[ tid ] = false;
     last_sorted_source_[ tid ] = new std::vector< size_t >( 0 );
-  }
+  } // of omp parallel
 }
 
 void

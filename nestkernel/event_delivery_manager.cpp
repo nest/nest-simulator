@@ -75,8 +75,9 @@ EventDeliveryManager::initialize()
   spike_register_5g_.resize( num_threads, 0 );
   off_grid_spike_register_5g_.resize( num_threads, 0 );
 
-  for ( thread tid = 0; tid < num_threads; ++tid )
+#pragma omp parallel
   {
+    const thread tid = kernel().vp_manager.get_thread_id();
     if ( spike_register_5g_[ tid ] != 0 )
     {
       delete ( spike_register_5g_[ tid ] ); // TODO@5g: does this make sense or
@@ -100,7 +101,7 @@ EventDeliveryManager::initialize()
         std::vector< std::vector< OffGridTarget > >(
           kernel().connection_manager.get_min_delay(),
           std::vector< OffGridTarget >( 0 ) ) );
-  }
+  } // of omp parallel
 }
 
 void

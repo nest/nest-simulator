@@ -41,13 +41,15 @@ nest::TargetTable::initialize()
   const thread num_threads = kernel().vp_manager.get_num_threads();
   targets_.resize( num_threads, NULL );
   secondary_send_buffer_pos_.resize( num_threads, NULL );
-  for ( thread tid = 0; tid < num_threads; ++tid )
+
+#pragma omp parallel
   {
+    const thread tid = kernel().vp_manager.get_thread_id();
     targets_[ tid ] =
       new std::vector< std::vector< Target > >( 0, std::vector< Target >( 0, Target() ) );
     secondary_send_buffer_pos_[ tid ] =
       new std::vector< std::vector< size_t > >( 0, std::vector< size_t >( 0 ) );
-  }
+  } // of omp parallel
 }
 
 void

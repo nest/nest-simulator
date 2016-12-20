@@ -88,12 +88,15 @@ nest::ConnectionManager::initialize()
   const thread num_threads = kernel().vp_manager.get_num_threads();
   connections_5g_.resize( num_threads, NULL );
   secondary_recv_buffer_pos_.resize( num_threads, NULL );
-  for ( thread tid = 0; tid < num_threads; ++tid )
+
+#pragma omp parallel
   {
+    const thread tid = kernel().vp_manager.get_thread_id();
     connections_5g_[ tid ] = new HetConnector();
     secondary_recv_buffer_pos_[ tid ] =
       new std::vector< std::vector< size_t >* >();
-  }
+  } // of omp parallel
+
   source_table_.initialize();
   target_table_.initialize();
   target_table_devices_.initialize();

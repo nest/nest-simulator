@@ -45,12 +45,14 @@ nest::TargetTableDevices::initialize()
   target_to_devices_.resize( num_threads );
   target_from_devices_.resize( num_threads );
   sending_devices_gids_.resize( num_threads );
-  for ( thread tid = 0; tid < num_threads; ++tid )
+
+#pragma omp parallel
   {
+    const thread tid = kernel().vp_manager.get_thread_id();
     target_to_devices_[ tid ] = new std::vector< HetConnector* >( 0 );
     target_from_devices_[ tid ] = new std::vector< HetConnector* >( 0 );
     sending_devices_gids_[ tid ] = new std::vector< index >( 0 );
-  }
+  } // of omp parallel
 }
 
 void

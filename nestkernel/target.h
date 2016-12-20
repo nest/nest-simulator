@@ -1,5 +1,5 @@
 /*
- *  target_table.h
+ *  target.h
  *
  *  This file is part of NEST.
  *

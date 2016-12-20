@@ -75,7 +75,7 @@ public:
   DictionaryDatum& get_connruledict();
 
   void compute_secondary_recv_buffer_positions_();
-  void compute_compressed_secondary_recv_buffer_positions_();
+  void compute_compressed_secondary_recv_buffer_positions_( const thread tid );
 
   /**
    * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
@@ -571,6 +571,8 @@ private:
    */
   std::vector< std::vector< std::vector< size_t >* >* >
     secondary_recv_buffer_pos_;
+
+  std::map< index, size_t > gid_to_buffer_pos_;
 
   size_t secondary_buffer_chunk_size_;
 

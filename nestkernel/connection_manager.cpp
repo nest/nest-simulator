@@ -1670,43 +1670,43 @@ nest::ConnectionManager::reserve_connections( const thread tid,
 }
 
 void
-nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions_()
+nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions_( const thread tid )
 {
-  std::map< index, size_t > gid_to_buffer_pos;
-  source_table_.compute_buffer_pos_for_unique_secondary_sources( gid_to_buffer_pos );
-#pragma omp parallel
+#pragma omp single
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
-    secondary_recv_buffer_pos_[ tid ]->resize(
-      connections_5g_[ tid ]->size(), NULL );
+    gid_to_buffer_pos_.clear();
+  }
 
-    for ( synindex syn_index = 0; syn_index < connections_5g_[ tid ]->size();
-          ++syn_index )
+  source_table_.compute_buffer_pos_for_unique_secondary_sources( tid, gid_to_buffer_pos_ );
+  secondary_recv_buffer_pos_[ tid ]->resize(
+    connections_5g_[ tid ]->size(), NULL );
+
+  for ( synindex syn_index = 0; syn_index < connections_5g_[ tid ]->size();
+        ++syn_index )
+  {
+    const synindex syn_id =
+      kernel().connection_manager.get_syn_id( tid, syn_index );
+
+    if ( not kernel()
+         .model_manager.get_synapse_prototype( syn_id, tid )
+         .is_primary() )
     {
-      const synindex syn_id =
-        kernel().connection_manager.get_syn_id( tid, syn_index );
+      // create vector for different synapse types; needs to deleted
+      // in finalize()
+      ( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] =
+        new std::vector< size_t >();
+      ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] )
+        .resize(
+          ( *connections_5g_[ tid ] ).get_num_connections( syn_id ), 0 );
 
-      if ( not kernel()
-                 .model_manager.get_synapse_prototype( syn_id, tid )
-                 .is_primary() )
+      for ( size_t lcid = 0;
+            lcid < ( *connections_5g_[ tid ] ).get_num_connections( syn_id );
+            ++lcid )
       {
-        // create vector for different synapse types; needs to deleted
-        // in finalize()
-        ( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] =
-          new std::vector< size_t >();
-        ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] )
-          .resize(
-            ( *connections_5g_[ tid ] ).get_num_connections( syn_id ), 0 );
-
-        for ( size_t lcid = 0;
-              lcid < ( *connections_5g_[ tid ] ).get_num_connections( syn_id );
-              ++lcid )
-        {
-          // read secondary events for this connection from this
-          // receive buffer position
-          ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] )[ lcid ] =
-            gid_to_buffer_pos[ source_table_.get_gid( tid, syn_id, lcid ) ];
-        }
+        // read secondary events for this connection from this
+        // receive buffer position
+        ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] )[ lcid ] =
+          gid_to_buffer_pos_[ source_table_.get_gid( tid, syn_id, lcid ) ];
       }
     }
   }

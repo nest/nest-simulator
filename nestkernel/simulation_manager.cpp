@@ -613,8 +613,15 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
     tid ); // TODO@5g: move into restructure_
   sw_sort.stop();
 
-  kernel().connection_manager.compute_compressed_secondary_recv_buffer_positions_();
-  kernel().event_delivery_manager.configure_secondary_buffers();
+  if ( kernel().node_manager.any_node_uses_wfr() )
+  {
+#pragma omp barrier
+    kernel().connection_manager.compute_compressed_secondary_recv_buffer_positions_( tid );
+#pragma omp single
+    {
+      kernel().event_delivery_manager.configure_secondary_buffers();
+    }
+  }
 
   sw_gather_target_data.start();
   kernel().event_delivery_manager.gather_target_data( tid );

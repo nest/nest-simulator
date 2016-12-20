@@ -75,7 +75,7 @@ class GIDCollection(object):
             nest.ResetKernel()
 
             # Create GIDCollection representing nodes
-            gc = nest.Create('iaf_neuron', 10)
+            gc = nest.Create('iaf_psc_alpha', 10)
 
             # Print gids and modelID
             for gid, mid in gc.items():
@@ -90,7 +90,7 @@ class GIDCollection(object):
 
             # Concatination
             Enrns = nest.Create('aeif_cond_alpha', 600)
-            Inrns = nest.Create('iaf_neuron', 400)
+            Inrns = nest.Create('iaf_psc_alpha', 400)
             nrns = Enrns + Inrns
 
             # Indexing, slicing and membership
@@ -168,7 +168,7 @@ class GIDCollection(object):
         return nest.sli_func('size', self._datum)
 
     def __str__(self):
-        return '{}'.format(list(nest.sli_func('cva', self._datum)))
+        return ''.format(nest.sli_func('==only', self._datum))
 
 
 @check_stack

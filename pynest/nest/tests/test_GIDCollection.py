@@ -279,6 +279,21 @@ class TestGIDCollection(unittest.TestCase):
         ngc = nest.GIDCollection(nodes_list)
         self.assertEqual(nodes, ngc)
 
+    def test_composite_wrong_slice(self):
+        """
+        A NESTError is raised when trying to add a sliced composite and
+        GIDCollection
+        """
+
+        a = nest.Create('iaf_psc_alpha', 10)
+        b = nest.Create('iaf_psc_exp', 7)
+        c = a + b
+        d = c[::2]
+        e = nest.Create('aeif_cond_alpha', 13)
+
+        with self.assertRaises(nest.NESTError):
+            f = d + e
+
     def test_modelID(self):
         """Correct GIDCollection modelID"""
 

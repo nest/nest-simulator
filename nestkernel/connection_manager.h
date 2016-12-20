@@ -119,8 +119,8 @@ public:
     Node* target,
     thread target_thread,
     index syn,
-    double d = numerics::nan,
-    double w = numerics::nan );
+    double_t d = numerics::nan,
+    double_t w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -146,8 +146,8 @@ public:
     thread target_thread,
     index syn,
     DictionaryDatum& params,
-    double d = numerics::nan,
-    double w = numerics::nan );
+    double_t d = numerics::nan,
+    double_t w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -162,8 +162,30 @@ public:
    */
   bool connect( index s, index r, DictionaryDatum& params, index syn );
 
+  index find_connection_sorted( const thread tid,
+    const synindex syn_index,
+    const index sgid,
+    const index tgid );
+
+  index find_connection_unsorted( const thread tid,
+    const synindex syn_index,
+    const index sgid,
+    const index tgid );
+
+  void disconnect_5g( const thread tid,
+    const synindex syn_id,
+    const index sgid,
+    const index tgid );
+
   void
-  disconnect( Node& target, index sgid, thread target_thread, index syn_id );
+  print_source_table( const thread tid ) const
+  {
+    source_table_.print_sources( tid, 0 );
+  }
+
+  void print_connections( const thread tid ) const;
+
+  void print_targets( const thread tid ) const;
 
   void subnet_connect( Subnet&, Subnet&, int, index syn );
 
@@ -226,12 +248,12 @@ public:
    */
   size_t get_num_connections( synindex syn_id ) const;
 
-  void get_sources( std::vector< index > targets,
+  void get_sources( const std::vector< index >& targets,
     std::vector< std::vector< index > >& sources,
-    index synapse_model );
-  void get_targets( std::vector< index > sources,
+    const index synapse_model );
+  void get_targets( const std::vector< index >& sources,
     std::vector< std::vector< index > >& targets,
-    index synapse_model );
+    const index synapse_model );
 
   const std::vector< Target >& get_targets( const thread tid,
     const index lid ) const;
@@ -308,6 +330,9 @@ public:
   //! Clears all entries in source table
   void clear_source_table( const thread tid );
 
+  //! Returns true if source table is kept after building network
+  bool get_keep_source_table() const;
+
   //! Returns true if source table was cleared
   bool is_source_table_cleared() const;
 
@@ -335,7 +360,12 @@ public:
    * Sorts connections in the presynaptic infrastructure by increasing
    * source gid.
    */
-  void sort_connections();
+  void sort_connections( const thread tid );
+
+  /**
+   * Removes disabled connections (of structural plasticity)
+   */
+  void remove_disabled_connections( const thread tid );
 
   /**
    * Returns true if connection information needs to be
@@ -351,7 +381,7 @@ public:
    * basically restores the connection infrastructure to a state where
    * all information only exists on the postsynaptic side.
    */
-  void restructure_connection_tables();
+  void restructure_connection_tables( const thread tid );
 
   /**
    * Reserves memory in connections and source table. Should be called
@@ -361,6 +391,8 @@ public:
   void reserve_connections( const thread tid,
     const synindex syn_id,
     const size_t count );
+
+  // void remove_disabled_connections( const thread tid );
 
   void set_has_source_subsequent_targets( const thread tid,
     const synindex syn_index,
@@ -388,6 +420,11 @@ public:
   void compress_secondary_send_buffer_pos( const thread tid );
 
 private:
+  void get_source_gids_( const thread tid,
+    const synindex syn_index,
+    const index tgid,
+    std::vector< index >& sources );
+
   /**
    * Update delay extrema to current values.
    *
@@ -611,6 +648,12 @@ ConnectionManager::clear_source_table( const thread tid )
   {
     source_table_.clear( tid );
   }
+}
+
+inline bool
+ConnectionManager::get_keep_source_table() const
+{
+  return keep_source_table_;
 }
 
 inline bool

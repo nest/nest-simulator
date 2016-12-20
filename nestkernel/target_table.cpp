@@ -38,13 +38,13 @@ nest::TargetTable::~TargetTable()
 void
 nest::TargetTable::initialize()
 {
-  thread num_threads = kernel().vp_manager.get_num_threads();
+  const thread num_threads = kernel().vp_manager.get_num_threads();
   targets_.resize( num_threads, NULL );
   secondary_send_buffer_pos_.resize( num_threads, NULL );
   for ( thread tid = 0; tid < num_threads; ++tid )
   {
     targets_[ tid ] =
-      new std::vector< std::vector< Target > >( 0, std::vector< Target >( 0 ) );
+      new std::vector< std::vector< Target > >( 0, std::vector< Target >( 0, Target() ) );
     secondary_send_buffer_pos_[ tid ] =
       new std::vector< std::vector< size_t > >( 0, std::vector< size_t >( 0 ) );
   }
@@ -76,10 +76,31 @@ void
 nest::TargetTable::prepare( const thread tid )
 {
   targets_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes(),
-    std::vector< Target >( 0 ) );
+    std::vector< Target >( 0, Target() ) );
   secondary_send_buffer_pos_[ tid ]->resize(
     kernel().node_manager.get_max_num_local_nodes(),
     std::vector< size_t >( 0 ) );
+}
+
+void
+nest::TargetTable::print_targets( const thread tid ) const
+{
+  std::cout << "-------------TARGETS-------------------\n";
+  for ( std::vector< std::vector< Target > >::const_iterator cit =
+          ( *targets_[ tid ] ).begin();
+        cit != ( *targets_[ tid ] ).end();
+        ++cit )
+  {
+    for ( std::vector< Target >::const_iterator ciit = ( *cit ).begin();
+          ciit != ( *cit ).end();
+          ++ciit )
+    {
+      std::cout << ( *ciit ).get_lcid() << ", ";
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
+  std::cout << "---------------------------------------\n";
 }
 
 void

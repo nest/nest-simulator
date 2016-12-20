@@ -66,7 +66,7 @@ nest::ConnectionManager::ConnectionManager()
   , min_delay_( 1 )
   , max_delay_( 1 )
   , keep_source_table_( true )
-  , have_connections_changed_( false )
+  , have_connections_changed_( true )
 {
 }
 
@@ -140,7 +140,14 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
   {
     delay_checkers_[ i ].set_status( d );
   }
+
   updateValue< bool >( d, "keep_source_table", keep_source_table_ );
+  if ( not keep_source_table_
+    && kernel().sp_manager.is_structural_plasticity_enabled() )
+  {
+    throw KernelException(
+      "Structural plasticity can not be enabled if source table is not kept." );
+  }
 }
 
 nest::DelayChecker&
@@ -794,43 +801,170 @@ nest::ConnectionManager::connect_from_device_( Node& s,
   ++vv_num_connections_[ tid ][ syn ];
 }
 
-// TODO@5g: implement
-/**
- * Works in a similar way to connect, same logic but removes a connection.
- * @param target target node
- * @param sgid id of the source
- * @param target_thread thread of the target
- * @param syn_id type of synapse
- */
-void
-nest::ConnectionManager::disconnect( Node& target,
-  index sgid,
-  thread target_thread,
-  index syn_id )
+nest::index
+nest::ConnectionManager::find_connection_sorted( const thread tid,
+  const synindex syn_index,
+  const index sgid,
+  const index tgid )
 {
-  assert( false );
+  // lcid will hold the position of the /first/ connection from node
+  // sgid to any local node or be invalid
+  index lcid = source_table_.find_first_source( tid, syn_index, sgid );
+  if ( lcid == invalid_index )
+  {
+    return invalid_index;
+  }
 
-  // if ( kernel().node_manager.is_local_gid( target.get_gid() ) )
-  // {
-  //   // get the ConnectorBase corresponding to the source
-  //   ConnectorBase* conn = validate_pointer( validate_source_entry_(
-  //   target_thread, sgid, syn_id ) );
-  //   ConnectorBase* c = kernel()
-  //                        .model_manager.get_synapse_prototype( syn_id,
-  //                        target_thread )
-  //                        .delete_connection( target, target_thread, conn,
-  //                        syn_id );
-  //   if ( c == 0 )
-  //   {
-  //     connections_[ target_thread ].erase( sgid );
-  //   }
-  //   else
-  //   {
-  //     connections_[ target_thread ].set( sgid, c );
-  //   }
-  //   --vv_num_connections_[ target_thread ][ syn_id ];
-  // }
+  // lcid will hold the position of the /first/ connection from node
+  // sgid to node tgid or be invalid
+  lcid =
+    ( *connections_5g_[ tid ] ).find_first_target( tid, syn_index, lcid, tgid );
+  if ( lcid != invalid_index )
+  {
+    return lcid;
+  }
+
+  return invalid_index;
 }
+
+// TODO@5g: remove?
+// std::pair< nest::synindex, nest::index>
+// nest::ConnectionManager::find_connection_sorted( const thread tid, const
+// index sgid, const index tgid )
+// {
+//   for ( synindex syn_index = 0; syn_index < (*connections_5g_[ tid ]).size();
+//   ++syn_index )
+//   {
+//     // lcid will hold the position of the /first/ connection from node
+//     // sgid to any local node or be invalid
+//     index lcid = source_table_.find_first_source( tid, sgid );
+//     if ( lcid == invalid_index )
+//     {
+//       continue;
+//     }
+
+//     // lcid will hold the position of the /first/ connection from node
+//     // sgid to node tgid or be invalid
+//     lcid = (*connections_5g_[ tid ]).find_first_target( tid, syn_index, lcid,
+//     tgid );
+//     if ( lcid != invalid_index )
+//     {
+//       return std::pair< synindex, index >( syn_index, lcid );
+//     }
+//   }
+
+//   return std::pair< synindex, index >( invalid_synindex, invalid_index );
+// }
+
+nest::index
+nest::ConnectionManager::find_connection_unsorted( const thread tid,
+  const synindex syn_index,
+  const index sgid,
+  const index tgid )
+{
+  std::vector< index > matching_lcids;
+
+  source_table_.find_all_sources( tid, sgid, syn_index, matching_lcids );
+  if ( matching_lcids.size() > 0 )
+  {
+    const index lcid =
+      ( *connections_5g_[ tid ] )
+        .find_matching_target( tid, tgid, syn_index, matching_lcids );
+    if ( lcid != invalid_index )
+    {
+      return lcid;
+    }
+  }
+
+  return invalid_index;
+}
+
+// std::pair< nest::synindex, nest::index >
+// nest::ConnectionManager::find_connection_unsorted( const thread tid, const
+// index sgid, const index tgid )
+// {
+//   std::cout<<"searching unsorted"<<std::endl;
+//   std::vector< index > matching_lcids;
+//   for ( synindex syn_index = 0; syn_index < (*connections_5g_[ tid ]).size();
+//   ++syn_index )
+//   {
+//     matching_lcids.clear();
+//     source_table_.find_all_sources( tid, sgid, syn_index, matching_lcids );
+//     std::cout<<"size: "<<matching_lcids.size()<<std::endl;
+//     if ( matching_lcids.size() > 0 )
+//     {
+//       const index lcid = (*connections_5g_[ tid ]).find_matching_target( tid,
+//       tgid, syn_index, matching_lcids );
+//       if ( lcid != invalid_index )
+//       {
+//         std::cout<<lcid<<std::endl;
+//         return std::pair< synindex, index >( syn_index, lcid );
+//       }
+//     }
+//   }
+//   return std::pair< synindex, index >( invalid_synindex, invalid_index );
+// }
+
+void
+nest::ConnectionManager::disconnect_5g( const thread tid,
+  const synindex syn_id,
+  const index sgid,
+  const index tgid )
+{
+  have_connections_changed_ = true;
+
+  const synindex syn_index =
+    ( *connections_5g_[ tid ] ).find_synapse_index( syn_id );
+  assert( syn_index != invalid_synindex );
+
+  index lcid = find_connection_sorted( tid, syn_index, sgid, tgid );
+  if ( lcid == invalid_index )
+  {
+    lcid = find_connection_unsorted( tid, syn_index, sgid, tgid );
+  }
+  assert( lcid != invalid_index ); // this function should only be
+                                   // called with a valid connection
+
+  ( *connections_5g_[ tid ] ).disable_connection( syn_index, lcid );
+  source_table_.disable_connection( tid, syn_index, lcid );
+
+  --vv_num_connections_[ tid ][ syn_id ];
+}
+
+// TODO@5g: remove?
+// void
+// nest::ConnectionManager::disconnect_5g( const thread tid, const index sgid,
+// const index tgid )
+// {
+//   std::cout<<"#################################################\n";
+//   std::cout<<"disconnect("<<sgid<<", "<<tgid<<")\n";
+//   std::pair< synindex, index > syn_index_lcid = find_connection_sorted( tid,
+//   sgid, tgid );
+//   if ( syn_index_lcid.first == invalid_synindex || syn_index_lcid.second ==
+//   invalid_index )
+//   {
+//     syn_index_lcid = find_connection_unsorted( tid, sgid, tgid );
+//   }
+
+//   if ( syn_index_lcid.first != invalid_synindex && syn_index_lcid.second !=
+//   invalid_index )
+//   {
+//     (*connections_5g_[ tid ]).disable_connection( syn_index_lcid.first,
+//     syn_index_lcid.second );
+//     source_table_.disable_connection( tid, syn_index_lcid.first,
+//     syn_index_lcid.second );
+//   }
+//   else
+//   {
+//     std::cout<<"connection not found :(\n";
+//   }
+//   std::cout<<"#################################################\n";
+
+//   // TODO@5g
+//   // assert( false ); // this should never be reached, since this
+//                    // function should only be called with a valid
+//                    // connection
+// }
 
 /**
  * Divergent connection routine for use by DataConnect.
@@ -1437,102 +1571,91 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
   } // else if
 }
 
-// TODO@5g: implement
 void
-nest::ConnectionManager::get_sources( std::vector< index > targets,
+nest::ConnectionManager::get_source_gids_( const thread tid,
+  const synindex syn_index,
+  const index tgid,
+  std::vector< index >& sources )
+{
+  std::vector< index > source_lcids;
+  ( *connections_5g_[ tid ] )
+    .get_source_lcids( tid, syn_index, tgid, source_lcids );
+  source_table_.get_source_gids( tid, syn_index, source_lcids, sources );
+}
+
+void
+nest::ConnectionManager::get_sources( const std::vector< index >& targets,
   std::vector< std::vector< index > >& sources,
-  index synapse_model )
+  const index syn_model )
 {
-  assert( false );
-  // thread thread_id;
-  // index source_gid;
-  // std::vector< std::vector< index > >::iterator source_it;
-  // std::vector< index >::iterator target_it;
-  // size_t num_connections;
+  sources.resize( targets.size() );
+  for ( std::vector< std::vector< index > >::iterator i = sources.begin();
+        i != sources.end();
+        ++i )
+  {
+    ( *i ).clear();
+  }
 
-  // sources.resize( targets.size() );
-  // for ( std::vector< std::vector< index > >::iterator i = sources.begin();
-  //       i != sources.end();
-  //       i++ )
-  // {
-  //   ( *i ).clear();
-  // }
-
-  // // loop over the threads
-  // for ( tVSConnector::iterator it = connections_.begin();
-  //       it != connections_.end();
-  //       ++it )
-  // {
-  //   thread_id = it - connections_.begin();
-  //   // loop over the sources (return the corresponding ConnectorBase)
-  //   for ( tSConnector::nonempty_iterator iit = it->nonempty_begin();
-  //         iit != it->nonempty_end();
-  //         ++iit )
-  //   {
-  //     source_gid = connections_[ thread_id ].get_pos( iit );
-
-  //     // loop over the targets/sources
-  //     source_it = sources.begin();
-  //     target_it = targets.begin();
-  //     for ( ; target_it != targets.end(); target_it++, source_it++ )
-  //     {
-  //       num_connections = validate_pointer( *iit )->get_num_connections(
-  //         *target_it, thread_id, syn_model );
-  //       for ( size_t c = 0; c < num_connections; c++ )
-  //       {
-  //         ( *source_it ).push_back( source_gid );
-  //       }
-  //     }
-  //   }
-  // }
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    const synindex syn_index =
+      ( *connections_5g_[ tid ] ).find_synapse_index( syn_model );
+    if ( syn_index != invalid_index )
+    {
+      for ( size_t i = 0; i < targets.size(); ++i )
+      {
+        get_source_gids_( tid, syn_index, targets[ i ], sources[ i ] );
+      }
+    }
+  }
 }
 
-// TODO@5g: implement
 void
-nest::ConnectionManager::get_targets( std::vector< index > sources,
+nest::ConnectionManager::get_targets( const std::vector< index >& sources,
   std::vector< std::vector< index > >& targets,
-  index synapse_model )
+  const index syn_model )
 {
-  assert( false );
-  // thread thread_id;
-  // std::vector< index >::iterator source_it;
-  // std::vector< std::vector< index > >::iterator target_it;
-  // targets.resize( sources.size() );
-  // for ( std::vector< std::vector< index > >::iterator i = targets.begin();
-  //       i != targets.end();
-  //       i++ )
-  // {
-  //   ( *i ).clear();
-  // }
+  targets.resize( sources.size() );
+  for ( std::vector< std::vector< index > >::iterator i = targets.begin();
+        i != targets.end();
+        ++i )
+  {
+    ( *i ).clear();
+  }
 
-  // for ( tVSConnector::iterator it = connections_.begin(); it !=
-  // connections_.end(); ++it )
-  // {
-  //   thread_id = it - connections_.begin();
-  //   // loop over the targets/sources
-  //   source_it = sources.begin();
-  //   target_it = targets.begin();
-  //   for ( ; source_it != sources.end(); source_it++, target_it++ )
-  //   {
-  //     if ( ( *it ).get( *source_it ) != 0 )
-  //     {
-  //       validate_pointer( ( *it ).get( *source_it ) )
-  //         ->get_target_gids( ( *target_it ), thread_id, syn_model );
-  //     }
-  //   }
-  // }
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    const synindex syn_index =
+      ( *connections_5g_[ tid ] ).find_synapse_index( syn_model );
+    if ( syn_index != invalid_index )
+    {
+      for ( size_t i = 0; i < sources.size(); ++i )
+      {
+        const index start_lcid =
+          source_table_.find_first_source( tid, syn_index, sources[ i ] );
+        if ( start_lcid != invalid_index )
+        {
+          ( *connections_5g_[ tid ] )
+            .get_target_gids( tid, syn_index, start_lcid, targets[ i ] );
+        }
+        std::vector< index > matching_lcids;
+        source_table_.find_all_sources(
+          tid, sources[ i ], syn_index, matching_lcids );
+         // TODO@5g: search in unsorted, needs to be implemented when sorting does not happen on every SP update
+        assert( matching_lcids.size() == 0 );
+      }
+    }
+  }
 }
 
 void
-nest::ConnectionManager::sort_connections()
+nest::ConnectionManager::sort_connections( const thread tid )
 {
   assert( not source_table_.is_cleared() );
-#pragma omp parallel
-  {
-    const thread tid = kernel().vp_manager.get_thread_id();
-    ( *connections_5g_[ tid ] )
-      .sort_connections( source_table_.get_thread_local_sources( tid ) );
-  } // of omp parallel
+  ( *connections_5g_[ tid ] )
+    .sort_connections( source_table_.get_thread_local_sources( tid ) );
+  remove_disabled_connections( tid );
+  source_table_.update_last_sorted_source( tid );
 }
 
 void
@@ -1725,4 +1848,31 @@ void
 nest::ConnectionManager::compress_secondary_send_buffer_pos( const thread tid )
 {
   target_table_.compress_secondary_send_buffer_pos( tid );
+}
+void
+nest::ConnectionManager::remove_disabled_connections( const thread tid )
+{
+  for ( synindex syn_index = 0; syn_index < ( *connections_5g_[ tid ] ).size();
+        ++syn_index )
+  {
+    const index first_disabled_index =
+      source_table_.remove_disabled_sources( tid, syn_index );
+    if ( first_disabled_index != invalid_index )
+    {
+      ( *connections_5g_[ tid ] )
+        .remove_disabled_connections( syn_index, first_disabled_index );
+    }
+  }
+}
+
+void
+nest::ConnectionManager::print_connections( const thread tid ) const
+{
+  ( *connections_5g_[ tid ] ).print_connections( tid, 0 );
+}
+
+void
+nest::ConnectionManager::print_targets( const thread tid ) const
+{
+  target_table_.print_targets( tid );
 }

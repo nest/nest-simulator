@@ -46,6 +46,7 @@ nest::SourceTable::initialize()
   saved_entry_point_.resize( num_threads );
   current_positions_.resize( num_threads );
   saved_positions_.resize( num_threads );
+  last_sorted_source_.resize( num_threads );
 
   for ( thread tid = 0; tid < num_threads; ++tid )
   {
@@ -55,6 +56,7 @@ nest::SourceTable::initialize()
     saved_positions_[ tid ] = new SourceTablePosition();
     is_cleared_[ tid ] = false;
     saved_entry_point_[ tid ] = false;
+    last_sorted_source_[ tid ] = new std::vector< size_t >( 0 );
   }
 }
 
@@ -100,6 +102,15 @@ nest::SourceTable::finalize()
     delete *it;
   }
   saved_positions_.clear();
+
+  for ( std::vector< std::vector< size_t >* >::iterator it =
+          last_sorted_source_.begin();
+        it != last_sorted_source_.end();
+        ++it )
+  {
+    delete *it;
+  }
+  last_sorted_source_.clear();
 }
 
 bool
@@ -220,6 +231,60 @@ nest::SourceTable::reserve( const thread tid,
   {
     ( *sources_[ tid ] )[ it->second ]->reserve( count );
   }
+}
+
+nest::index
+nest::SourceTable::remove_disabled_sources( const thread tid,
+  const synindex syn_index )
+{
+  const index max_size = ( *( *sources_[ tid ] )[ syn_index ] ).size();
+  index i = max_size - 1;
+
+  while ( ( *( *sources_[ tid ] )[ syn_index ] )[ i ].is_disabled() && i >= 0 )
+  {
+    --i;
+  }
+  ++i;
+
+  ( *( *sources_[ tid ] )[ syn_index ] )
+    .erase( ( *( *sources_[ tid ] )[ syn_index ] ).begin() + i,
+      ( *( *sources_[ tid ] )[ syn_index ] ).end() );
+
+  if ( i == max_size )
+  {
+    return invalid_index;
+  }
+  else
+  {
+    return i;
+  }
+}
+
+void
+nest::SourceTable::print_sources( const thread tid,
+  const synindex syn_index ) const
+{
+  if ( syn_index >= ( *sources_[ tid ] ).size() )
+  {
+    return;
+  }
+
+  index prev_gid = 0;
+  std::cout << "-------------SOURCES-------------------\n";
+  for ( std::vector< Source >::const_iterator it =
+          ( *( *sources_[ tid ] )[ syn_index ] ).begin();
+        it != ( *( *sources_[ tid ] )[ syn_index ] ).end();
+        ++it )
+  {
+    if ( prev_gid != it->gid )
+    {
+      std::cout << std::endl;
+      prev_gid = it->gid;
+    }
+    std::cout << "(" << it->gid << ", " << it->is_disabled() << ")";
+  }
+  std::cout << std::endl;
+  std::cout << "---------------------------------------\n";
 }
 
 void

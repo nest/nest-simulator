@@ -133,6 +133,8 @@ public:
   // TODO: rename / precisely how defined?
   delay get_to_step() const;
 
+  void update_connection_infrastructure( const thread tid ); //!< sort source table and connections and create new target table
+
 private:
   void resume_( size_t );       //!< actually run simulation; TODO: review
   size_t prepare_simulation_(); //! setup before simulation start

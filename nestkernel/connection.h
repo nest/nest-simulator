@@ -246,6 +246,18 @@ public:
     return syn_id_delay_.has_source_subsequent_targets();
   }
 
+  void
+  disable()
+  {
+    syn_id_delay_.disable();
+  }
+
+  bool
+  is_disabled() const
+  {
+    return syn_id_delay_.is_disabled();
+  }
+
 protected:
   /**
    * This function calls check_connection() on the sender to check if the

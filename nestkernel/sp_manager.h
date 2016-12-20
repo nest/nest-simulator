@@ -129,7 +129,7 @@ public:
    * \param target_thread Thread that hosts the target node.
    * \param syn The synapse model to use.
    */
-  void disconnect( index s, Node* target, thread target_thread, index syn );
+  void disconnect( const index sgid, Node* target, thread target_thread, const index syn_id );
 
   void update_structural_plasticity();
   void update_structural_plasticity( SPBuilder* );
@@ -173,11 +173,11 @@ public:
     std::vector< int >& post_vacant_n,
     SPBuilder* sp_conn_builder );
   // Deletion of synapses on the pre synaptic side
-  void delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
+  void delete_synapses_from_pre( const std::vector< index >& pre_deleted_id,
     std::vector< int >& pre_deleted_n,
-    index synapse_model,
-    std::string se_pre_name,
-    std::string se_post_name );
+    const index synapse_model,
+    const std::string& se_pre_name,
+    const std::string& se_post_name );
   // Deletion of synapses on the post synaptic side
   void delete_synapses_from_post( std::vector< index >& post_deleted_id,
     std::vector< int >& post_deleted_n,
@@ -202,6 +202,8 @@ public:
     std::vector< index >& res );
   void global_shuffle( std::vector< index >& v );
   void global_shuffle( std::vector< index >& v, size_t n );
+
+  // void test( const thread tid );
 
 private:
   /**
@@ -255,14 +257,6 @@ SPManager::get_structural_plasticity_update_interval() const
   return structural_plasticity_update_interval_;
 }
 
-/*
- Enable structural plasticity
- */
-inline void
-SPManager::enable_structural_plasticity()
-{
-  structural_plasticity_enabled_ = true;
-}
 /*
  Disable  structural plasticity
  */

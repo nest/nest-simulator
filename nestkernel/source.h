@@ -23,6 +23,9 @@
 #ifndef SOURCE_H
 #define SOURCE_H
 
+// C++ include
+#include <cassert>
+
 // Includes from nestkernel:
 #include "nest_types.h"
 
@@ -42,6 +45,9 @@ struct Source
   bool is_primary : 1;
   Source();
   explicit Source( const index gid, const bool is_primary );
+  void disable();
+  bool is_disabled() const;
+  static const size_t disabled_marker = 4611686018427387904 - 1; // 2 ** 62 - 1
 };
 
 inline Source::Source()
@@ -56,6 +62,19 @@ inline Source::Source( const index gid, const bool is_primary )
   , processed( false )
   , is_primary( is_primary )
 {
+  assert( gid < disabled_marker );
+}
+
+inline void
+Source::disable()
+{
+  gid = disabled_marker;
+}
+
+inline bool
+Source::is_disabled() const
+{
+  return gid == disabled_marker;
 }
 
 inline bool operator<( const Source& lhs, const Source& rhs )
@@ -66,6 +85,11 @@ inline bool operator<( const Source& lhs, const Source& rhs )
 inline bool operator>( const Source& lhs, const Source& rhs )
 {
   return operator<( rhs, lhs );
+}
+
+inline bool operator==( const Source& lhs, const Source& rhs )
+{
+  return ( lhs.gid == rhs.gid );
 }
 
 } // namespace nest

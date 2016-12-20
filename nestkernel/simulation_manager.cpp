@@ -117,7 +117,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
       from_step_ = 0;
       slice_ = 0;
       // clear all old spikes
-      kernel().event_delivery_manager.configure_spike_buffers();
+      kernel().event_delivery_manager.configure_spike_data_buffers();
     }
   }
 
@@ -548,7 +548,7 @@ nest::SimulationManager::prepare_simulation_()
   // if at the beginning of a simulation, set up spike buffers
   if ( !simulated_ )
   {
-    kernel().event_delivery_manager.configure_spike_buffers();
+    kernel().event_delivery_manager.configure_spike_data_buffers();
   }
 
   kernel().node_manager.ensure_valid_thread_local_ids();
@@ -559,9 +559,6 @@ nest::SimulationManager::prepare_simulation_()
   // we have to do enter_runtime after prepre_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
   // before enter_runtime
-  Stopwatch sw_reset_connections;
-  Stopwatch sw_sort;
-  Stopwatch sw_gather_target_data;
   if ( !simulated_ ) // only enter the runtime mode once
   {
     double tick = Time::get_resolution().get_ms()
@@ -572,29 +569,15 @@ nest::SimulationManager::prepare_simulation_()
   if ( kernel().node_manager.have_nodes_changed()
     || kernel().connection_manager.have_connections_changed() )
   {
-    sw_reset_connections.start();
-    kernel().connection_manager.restructure_connection_tables();
-    sw_reset_connections.stop();
-    sw_sort.start();
-    kernel()
-      .connection_manager.sort_connections(); // TODO@5g: move into restructure_
-    sw_sort.stop();
-
-    kernel().connection_manager.compute_compressed_secondary_recv_buffer_positions_();
-    kernel().event_delivery_manager.configure_secondary_buffers();
-
-    sw_gather_target_data.start();
-    kernel().event_delivery_manager.gather_target_data();
-    sw_gather_target_data.stop();
-    kernel().node_manager.set_have_nodes_changed( false );
-    kernel().connection_manager.set_have_connections_changed( false );
+#pragma omp parallel
+    {
+      const thread tid = kernel().vp_manager.get_thread_id();
+      update_connection_infrastructure( tid );
+    } // of omp parallel
   }
 
   if ( kernel().mpi_manager.get_rank() < 30 )
   {
-    sw_reset_connections.print( "0] ResetConnections time: " );
-    sw_sort.print( "0] SortConnections time: " );
-    sw_gather_target_data.print( "0] GatherTargetData time: " );
     kernel().event_delivery_manager.sw_collocate_target_data.print(
       "--collocate: " );
     kernel().event_delivery_manager.sw_communicate_target_data.print(
@@ -608,6 +591,47 @@ nest::SimulationManager::prepare_simulation_()
   }
 
   return num_active_nodes;
+}
+
+void
+nest::SimulationManager::update_connection_infrastructure( const thread tid )
+{
+  Stopwatch sw_reset_connections;
+  Stopwatch sw_sort;
+  Stopwatch sw_gather_target_data;
+
+#pragma omp single
+  {
+    kernel().event_delivery_manager.configure_target_data_buffers();
+  }
+
+  sw_reset_connections.start();
+  kernel().connection_manager.restructure_connection_tables( tid );
+  sw_reset_connections.stop();
+  sw_sort.start();
+  kernel().connection_manager.sort_connections(
+    tid ); // TODO@5g: move into restructure_
+  sw_sort.stop();
+
+  kernel().connection_manager.compute_compressed_secondary_recv_buffer_positions_();
+  kernel().event_delivery_manager.configure_secondary_buffers();
+
+  sw_gather_target_data.start();
+  kernel().event_delivery_manager.gather_target_data( tid );
+  sw_gather_target_data.stop();
+
+  if ( tid == 0 )
+  {
+    sw_reset_connections.print( "0] ResetConnections time: " );
+    sw_sort.print( "0] SortConnections time: " );
+    sw_gather_target_data.print( "0] GatherTargetData time: " );
+  }
+
+#pragma omp single
+  {
+    kernel().node_manager.set_have_nodes_changed( false );
+    kernel().connection_manager.set_have_connections_changed( false );
+  }
 }
 
 bool
@@ -642,7 +666,7 @@ nest::SimulationManager::update_()
       if ( print_time_ )
         gettimeofday( &t_slice_begin_, NULL );
 
-      if ( false && kernel().sp_manager.is_structural_plasticity_enabled()
+      if ( kernel().sp_manager.is_structural_plasticity_enabled()
         && ( clock_.get_steps() + from_step_ )
             % kernel().sp_manager.get_structural_plasticity_update_interval()
           == 0 )
@@ -668,7 +692,10 @@ nest::SimulationManager::update_()
         {
           ( *i )->decay_synaptic_elements_vacant();
         }
-      }
+
+        update_connection_infrastructure( tid );
+
+      } // of structural plasticity
 
       if ( from_step_ == 0 ) // deliver only at beginning of slice
       {

@@ -24,6 +24,8 @@
 #define TARGET_TABLE_H
 
 // C++ includes:
+#include <vector>
+#include <map>
 #include <cassert>
 #include <iostream>
 #include <map>
@@ -80,6 +82,8 @@ public:
   //! clear all entries
   void clear( const thread tid );
   void compress_secondary_send_buffer_pos( const thread tid );
+
+  void print_targets( const thread tid ) const;
 };
 
 inline void

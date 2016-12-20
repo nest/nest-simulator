@@ -145,7 +145,24 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
 void
 EventDeliveryManager::clear_pending_spikes()
 {
-  configure_spike_buffers();
+  configure_spike_data_buffers();
+}
+
+void
+EventDeliveryManager::configure_target_data_buffers()
+{
+  send_recv_count_target_data_per_rank_ =
+    floor( kernel().mpi_manager.get_buffer_size_target_data()
+           / kernel().mpi_manager.get_num_processes() );
+  send_recv_count_target_data_in_int_per_rank_ = sizeof( TargetData )
+    / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
+
+  send_buffer_target_data_ = static_cast< TargetData* >(
+    malloc( kernel().mpi_manager.get_buffer_size_target_data()
+            * sizeof( TargetData ) ) );
+  recv_buffer_target_data_ = static_cast< TargetData* >(
+    malloc( kernel().mpi_manager.get_buffer_size_target_data()
+            * sizeof( TargetData ) ) );
 }
 
 void
@@ -178,7 +195,7 @@ EventDeliveryManager::resize_send_recv_buffers_spike_data_()
 }
 
 void
-EventDeliveryManager::configure_spike_buffers()
+EventDeliveryManager::configure_spike_data_buffers()
 {
   assert( kernel().connection_manager.get_min_delay() != 0 );
 
@@ -188,10 +205,10 @@ EventDeliveryManager::configure_spike_buffers()
     resize_spike_register_5g_( tid );
   }
 
-  resize_send_recv_buffers_spike_data_();
-
   send_buffer_spike_data_.clear();
   send_buffer_off_grid_spike_data_.clear();
+
+  resize_send_recv_buffers_spike_data_();
 }
 
 void
@@ -587,11 +604,9 @@ EventDeliveryManager::deliver_events_5g_( const thread tid,
   const std::vector< SpikeDataT >& recv_buffer )
 {
   bool are_others_completed = true;
-  // deliver only at beginning of time slice
-  if ( kernel().simulation_manager.get_from_step() > 0 )
-  {
-    return are_others_completed;
-  }
+
+  // deliver only at end of time slice
+  assert( kernel().simulation_manager.get_to_step() == kernel().connection_manager.get_min_delay() );
 
   SpikeEvent se;
 
@@ -649,130 +664,115 @@ EventDeliveryManager::deliver_events_5g_( const thread tid,
 
 // TODO@5g: documentation
 void
-EventDeliveryManager::gather_target_data()
+EventDeliveryManager::gather_target_data( const thread tid )
 {
   assert( not kernel().connection_manager.is_source_table_cleared() );
 
-  ++comm_steps_target_data;
-
-  // use calloc to zero initialize all entries
-  TargetData* send_buffer_target_data = static_cast< TargetData* >(
-    calloc( kernel().mpi_manager.get_buffer_size_target_data(),
-      sizeof( TargetData ) ) );
-  TargetData* recv_buffer_target_data = static_cast< TargetData* >(
-    calloc( kernel().mpi_manager.get_buffer_size_target_data(),
-      sizeof( TargetData ) ) );
+#pragma omp single
+  {
+    ++comm_steps_target_data;
+  }
 
   // when a thread does not have any more spike to collocate and when
   // it detects a remote MPI rank is finished this count is increased
   // by 1 in each case. only if all threads are done AND all threads
   // detect all remote ranks are done, we are allowed to stop
   // communication.
-  unsigned int completed_count;
+  static unsigned int completed_count;
   const unsigned int half_completed_count =
     kernel().vp_manager.get_num_threads();
   const unsigned int max_completed_count = 2 * half_completed_count;
 
-  unsigned int send_recv_count_target_data_per_rank =
-    floor( kernel().mpi_manager.get_buffer_size_target_data()
-      / kernel().mpi_manager.get_num_processes() );
-  unsigned int send_recv_count_target_data_in_int_per_rank =
-    sizeof( TargetData ) / sizeof( unsigned int )
-    * send_recv_count_target_data_per_rank;
+  bool me_completed_tid;
+  bool others_completed_tid;
+  kernel().connection_manager.prepare_target_table( tid );
+  kernel().connection_manager.reset_source_table_entry_point( tid );
 
-#pragma omp parallel shared( completed_count )
+  // can not use while(true) and break in an omp structured block
+  bool done = false;
+  while ( not done )
   {
-    const thread tid = kernel().vp_manager.get_thread_id();
-    bool me_completed_tid;
-    bool others_completed_tid;
-    kernel().connection_manager.prepare_target_table( tid );
-    kernel().connection_manager.reset_source_table_entry_point( tid );
+#pragma omp single
+    {
+      completed_count = 0;
+      ++comm_rounds_target_data;
+      if ( kernel().mpi_manager.adaptive_target_buffers()
+        && buffer_size_target_data_has_changed_ )
+      {
+        free( send_buffer_target_data_ );
+        free( recv_buffer_target_data_ );
 
-    // can not use while(true) and break in an omp structured block
-    bool done = false;
-    while ( not done )
+        send_buffer_target_data_ = static_cast< TargetData* >(
+          malloc( kernel().mpi_manager.get_buffer_size_target_data()
+            * sizeof( TargetData ) ) );
+        recv_buffer_target_data_ = static_cast< TargetData* >(
+          malloc( kernel().mpi_manager.get_buffer_size_target_data()
+            * sizeof( TargetData ) ) );
+
+        send_recv_count_target_data_per_rank_ =
+          floor( kernel().mpi_manager.get_buffer_size_target_data()
+            / kernel().mpi_manager.get_num_processes() );
+        send_recv_count_target_data_in_int_per_rank_ = sizeof( TargetData )
+          / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
+      }
+    } // of omp single; implicit barrier
+    kernel().connection_manager.restore_source_table_entry_point( tid );
+
+    sw_collocate_target_data.start();
+
+    // TODO@5g: no need to pass send buffer
+    me_completed_tid = collocate_target_data_buffers_(
+      tid, send_recv_count_target_data_per_rank_, send_buffer_target_data_ );
+#pragma omp atomic
+    completed_count += me_completed_tid;
+#pragma omp barrier
+    sw_collocate_target_data.stop();
+    if ( completed_count == half_completed_count )
+    {
+      set_complete_marker_target_data_(
+        tid, send_recv_count_target_data_per_rank_, send_buffer_target_data_ );
+#pragma omp barrier
+    }
+    kernel().connection_manager.save_source_table_entry_point( tid );
+#pragma omp barrier
+    kernel().connection_manager.clean_source_table( tid );
+#pragma omp single
+    {
+      sw_communicate_target_data.start();
+      unsigned int* send_buffer_int =
+        reinterpret_cast< unsigned int* >( &send_buffer_target_data_[ 0 ] );
+      unsigned int* recv_buffer_int =
+        reinterpret_cast< unsigned int* >( &recv_buffer_target_data_[ 0 ] );
+      kernel().mpi_manager.communicate_Alltoall( send_buffer_int,
+        recv_buffer_int,
+        send_recv_count_target_data_in_int_per_rank_ );
+      sw_communicate_target_data.stop();
+    } // of omp single
+
+    sw_deliver_target_data.start();
+    others_completed_tid = distribute_target_data_buffers_(
+      tid, send_recv_count_target_data_per_rank_, recv_buffer_target_data_ );
+    sw_deliver_target_data.stop();
+
+#pragma omp atomic
+    completed_count += others_completed_tid;
+#pragma omp barrier
+    if ( completed_count == max_completed_count )
+    {
+      done = true;
+    }
+    else if ( kernel().mpi_manager.adaptive_target_buffers() )
     {
 #pragma omp single
       {
-        completed_count = 0;
-        ++comm_rounds_target_data;
-        if ( kernel().mpi_manager.adaptive_target_buffers()
-          && buffer_size_target_data_has_changed_ )
-        {
-          free( send_buffer_target_data );
-          free( recv_buffer_target_data );
-          send_buffer_target_data = static_cast< TargetData* >(
-            calloc( kernel().mpi_manager.get_buffer_size_target_data(),
-              sizeof( TargetData ) ) );
-          recv_buffer_target_data = static_cast< TargetData* >(
-            calloc( kernel().mpi_manager.get_buffer_size_target_data(),
-              sizeof( TargetData ) ) );
-          send_recv_count_target_data_per_rank =
-            floor( kernel().mpi_manager.get_buffer_size_target_data()
-              / kernel().mpi_manager.get_num_processes() );
-          send_recv_count_target_data_in_int_per_rank = sizeof( TargetData )
-            / sizeof( unsigned int ) * send_recv_count_target_data_per_rank;
-        }
-      } // of omp single; implicit barrier
-      kernel().connection_manager.restore_source_table_entry_point( tid );
-
-      sw_collocate_target_data.start();
-      me_completed_tid = collocate_target_data_buffers_(
-        tid, send_recv_count_target_data_per_rank, send_buffer_target_data );
-#pragma omp atomic
-      completed_count += me_completed_tid;
-#pragma omp barrier
-      sw_collocate_target_data.stop();
-      if ( completed_count == half_completed_count )
-      {
-        set_complete_marker_target_data_(
-          tid, send_recv_count_target_data_per_rank, send_buffer_target_data );
-#pragma omp barrier
+        buffer_size_target_data_has_changed_ =
+          kernel().mpi_manager.increase_buffer_size_target_data();
       }
-      kernel().connection_manager.save_source_table_entry_point( tid );
+    }
 #pragma omp barrier
-      kernel().connection_manager.clean_source_table( tid );
-#pragma omp single
-      {
-        sw_communicate_target_data.start();
-        unsigned int* send_buffer_int =
-          reinterpret_cast< unsigned int* >( &send_buffer_target_data[ 0 ] );
-        unsigned int* recv_buffer_int =
-          reinterpret_cast< unsigned int* >( &recv_buffer_target_data[ 0 ] );
-        kernel().mpi_manager.communicate_Alltoall( send_buffer_int,
-          recv_buffer_int,
-          send_recv_count_target_data_in_int_per_rank );
-        sw_communicate_target_data.stop();
-      } // of omp single
+  } // of while(true)
 
-      sw_deliver_target_data.start();
-      others_completed_tid = distribute_target_data_buffers_(
-        tid, send_recv_count_target_data_per_rank, recv_buffer_target_data );
-      sw_deliver_target_data.stop();
-
-#pragma omp atomic
-      completed_count += others_completed_tid;
-#pragma omp barrier
-      if ( completed_count == max_completed_count )
-      {
-        done = true;
-      }
-      else if ( kernel().mpi_manager.adaptive_target_buffers() )
-      {
-#pragma omp single
-        {
-          buffer_size_target_data_has_changed_ =
-            kernel().mpi_manager.increase_buffer_size_target_data();
-        }
-      }
-#pragma omp barrier
-    } // of while(true)
-    kernel().connection_manager.clear_source_table( tid );
-    kernel().connection_manager.compress_secondary_send_buffer_pos( tid );
-  } // of omp parallel
-
-  free( send_buffer_target_data );
-  free( recv_buffer_target_data );
+  kernel().connection_manager.clear_source_table( tid );
 }
 
 bool

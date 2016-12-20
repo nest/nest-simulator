@@ -74,7 +74,6 @@ public:
 
   DictionaryDatum& get_connruledict();
 
-  void compute_secondary_recv_buffer_positions_();
   void compute_compressed_secondary_recv_buffer_positions_( const thread tid );
 
   /**

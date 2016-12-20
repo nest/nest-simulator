@@ -138,8 +138,7 @@ public:
   //! Sets saved_positions for this thread to minimal values so that
   //! these are not considered in find_maximal_position.
   void no_targets_to_process( const thread tid );
-  //! Computes the maximum number
-  size_t compute_send_recv_count_secondary_in_int_per_rank() const;
+
   void compute_buffer_pos_for_unique_secondary_sources( const thread tid, std::map< index, size_t >& gid_to_buffer_pos );
 
   void reset_last_sorted_source( const thread tid );

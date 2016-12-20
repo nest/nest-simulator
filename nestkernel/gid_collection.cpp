@@ -522,6 +522,10 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
   {
     throw KernelException( "InvalidGIDCollection" );
   }
+  if ( step_ > 1 or stop_part_ != 0 or stop_offset_ != 0 )
+  {
+    throw BadProperty( "Cannot add GIDCollection to a sliced composite." );
+  }
   GIDCollectionPrimitive const* const rhs_ptr =
     dynamic_cast< GIDCollectionPrimitive const* >( rhs.get() );
   rhs.unlock();
@@ -545,6 +549,11 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
     GIDCollectionComposite const* const rhs_ptr =
       dynamic_cast< GIDCollectionComposite const* >( rhs.get() );
     rhs.unlock();
+    if ( rhs_ptr->step_ > 1 or rhs_ptr->stop_part_ != 0
+      or rhs_ptr->stop_offset_ != 0 )
+    {
+      throw BadProperty( "Cannot add GIDCollection to a sliced composite." );
+    }
 
     // check overlap between the two composites
     const GIDCollectionComposite* shortest, *longest;

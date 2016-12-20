@@ -151,6 +151,12 @@ EventDeliveryManager::clear_pending_spikes()
 void
 EventDeliveryManager::configure_target_data_buffers()
 {
+  if ( send_buffer_target_data_ != NULL )
+  {
+    free( send_buffer_target_data_ );
+    free( recv_buffer_target_data_ );
+  }
+
   send_recv_count_target_data_per_rank_ =
     floor( kernel().mpi_manager.get_buffer_size_target_data()
            / kernel().mpi_manager.get_num_processes() );
@@ -699,21 +705,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
       if ( kernel().mpi_manager.adaptive_target_buffers()
         && buffer_size_target_data_has_changed_ )
       {
-        free( send_buffer_target_data_ );
-        free( recv_buffer_target_data_ );
-
-        send_buffer_target_data_ = static_cast< TargetData* >(
-          malloc( kernel().mpi_manager.get_buffer_size_target_data()
-            * sizeof( TargetData ) ) );
-        recv_buffer_target_data_ = static_cast< TargetData* >(
-          malloc( kernel().mpi_manager.get_buffer_size_target_data()
-            * sizeof( TargetData ) ) );
-
-        send_recv_count_target_data_per_rank_ =
-          floor( kernel().mpi_manager.get_buffer_size_target_data()
-            / kernel().mpi_manager.get_num_processes() );
-        send_recv_count_target_data_in_int_per_rank_ = sizeof( TargetData )
-          / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
+        configure_target_data_buffers();
       }
     } // of omp single; implicit barrier
     kernel().connection_manager.restore_source_table_entry_point( tid );

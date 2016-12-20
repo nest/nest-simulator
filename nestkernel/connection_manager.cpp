@@ -1199,14 +1199,12 @@ nest::ConnectionManager::trigger_update_weight( const long vt_id,
   const std::vector< spikecounter >& dopa_spikes,
   const double t_trig )
 {
-  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
-  {
-    connections_5g_[ tid ]->trigger_update_weight( vt_id,
-      tid,
-      dopa_spikes,
-      t_trig,
-      kernel().model_manager.get_synapse_prototypes( tid ) );
-  }
+  const thread tid = kernel().vp_manager.get_thread_id();
+  connections_5g_[ tid ]->trigger_update_weight( vt_id,
+    tid,
+    dopa_spikes,
+    t_trig,
+    kernel().model_manager.get_synapse_prototypes( tid ) );
 }
 
 // TODO@5g: implement

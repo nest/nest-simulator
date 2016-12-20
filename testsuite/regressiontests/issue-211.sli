@@ -68,8 +68,8 @@ n2 d4 << /weight 1. >> Connect
 [g5 g5] [n1] Connect
 g5 n3 << /weight 1. >> Connect
 
-% device-device; but g5g5 should be ignored
-[g5 g5] [d4 g5] /one_to_one Connect
+% device-device
+[g5] [d4] /one_to_one Connect
 [g5 g5] [d4] Connect
 g5 d4 << /weight 1. >> Connect
 

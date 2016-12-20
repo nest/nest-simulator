@@ -56,8 +56,6 @@
  * Diesmann, Markus and Gewaltig, Marc-Oliver (2008) PyNEST: A
  * convenient interface to the NEST simulator.  Front. Neuroinform. 2
  * : 12. doi:10.3389/neuro.11.012.2008
- *
- * Copyright (C) 2004 The NEST Initiative.
  */
 
 /**

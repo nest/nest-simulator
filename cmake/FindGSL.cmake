@@ -112,7 +112,7 @@
 #  * Kitware, Inc.
 #=============================================================================
 
-# Modified for fit with NEST by Tammo Ippen <t.ippen@fz-juelich.de> 20 Jan 2016.
+# Modified for NEST by Tammo Ippen <t.ippen@fz-juelich.de> 20 Jan 2016.
 
 # Include these modules to handle the QUIETLY and REQUIRED arguments.
 # include(Modules/FindPackageHandleStandardArgs.cmake)

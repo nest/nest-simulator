@@ -430,7 +430,7 @@ nest::ConnectionManager::connect( index sgid,
     connect_( *source, *target, sgid, target_thread, syn, d, w );
   }
   // normal nodes and devices with proxies -> normal devices
-  else if ( source->has_proxies() && not target->has_proxies() )
+  else if ( source->has_proxies() && not target->has_proxies() and target->local_receiver() )
   {
     if ( source->is_proxy() || source->get_thread() != tid )
     {
@@ -464,15 +464,8 @@ nest::ConnectionManager::connect( index sgid,
     {
       return;
     }
-    // TODO@5g: implement
-    assert( false );
-    // globally receiving devices iterate over all target threads
-    const thread n_threads = kernel().vp_manager.get_num_threads();
-    for ( thread tid = 0; tid < n_threads; ++tid )
-    {
-      target = kernel().node_manager.get_node( target->get_gid(), tid );
-      connect_( *source, *target, sgid, tid, syn, d, w );
-    }
+    target = kernel().node_manager.get_node( target->get_gid(), tid );
+    connect_( *source, *target, sgid, tid, syn, d, w );
   }
   else
   {
@@ -501,7 +494,7 @@ nest::ConnectionManager::connect( index sgid,
     connect_( *source, *target, sgid, target_thread, syn, params, d, w );
   }
   // normal nodes and devices with proxies -> normal devices
-  else if ( source->has_proxies() && not target->has_proxies() )
+  else if ( source->has_proxies() && not target->has_proxies() and target->local_receiver() )
   {
     if ( source->is_proxy() )
     {
@@ -547,15 +540,9 @@ nest::ConnectionManager::connect( index sgid,
     {
       return;
     }
-    // TODO@5g: implement
-    assert( false );
-    // globally receiving devices iterate over all target threads
-    const thread n_threads = kernel().vp_manager.get_num_threads();
-    for ( thread tid = 0; tid < n_threads; ++tid )
-    {
-      target = kernel().node_manager.get_node( target->get_gid(), tid );
-      connect_to_device_( *source, *target, sgid, tid, syn, params, d, w );
-    }
+    thread tid = kernel().vp_manager.get_thread_id();
+    target = kernel().node_manager.get_node( target->get_gid(), tid );
+    connect_to_device_( *source, *target, sgid, tid, syn, params, d, w );
   }
   else
   {
@@ -590,7 +577,7 @@ nest::ConnectionManager::connect( index sgid,
     connect_( *source, *target, sgid, target_thread, syn, params );
   }
   // normal nodes and devices with proxies -> normal devices
-  else if ( source->has_proxies() && not target->has_proxies() )
+  else if ( source->has_proxies() && not target->has_proxies() and target->local_receiver() )
   {
     if ( source->is_proxy() )
     {
@@ -632,15 +619,8 @@ nest::ConnectionManager::connect( index sgid,
     {
       return false;
     }
-    // TODO@5g: implement
-    assert( false );
-    // globally receiving devices iterate over all target threads
-    const thread n_threads = kernel().vp_manager.get_num_threads();
-    for ( thread tid = 0; tid < n_threads; ++tid )
-    {
-      target = kernel().node_manager.get_node( tgid, tid );
-      connect_( *source, *target, sgid, tid, syn, params );
-    }
+    target = kernel().node_manager.get_node( tgid, tid );
+    connect_( *source, *target, sgid, tid, syn, params );
   }
   else
   {

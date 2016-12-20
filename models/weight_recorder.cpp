@@ -55,6 +55,7 @@ nest::weight_recorder::weight_recorder()
   , has_proxies_( false )
   , local_receiver_( true )
   , P_()
+  , local_device_id_( invalid_index )
 {
 }
 
@@ -65,6 +66,7 @@ nest::weight_recorder::weight_recorder( const weight_recorder& n )
   , has_proxies_( false )
   , local_receiver_( true )
   , P_( n.P_ )
+  , local_device_id_( invalid_index ) // copy must get its own device id
 {
 }
 

@@ -10,7 +10,7 @@ at the command prompt. You should then see something like this:
     gewaltig@jasmin-vm:~$ nest
                 -- N E S T 2 beta --
 
-      Copyright 1995-2009 The NEST Initiative
+      Copyright (C) 2004 The NEST Initiative
        Version 1.9-svn Feb  6 2010 00:33:50
 
     This program is provided AS IS and comes with

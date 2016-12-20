@@ -162,7 +162,7 @@ following output:
 
                -- N E S T 2 beta --
               Neural Simulation Tool
-      Copyright 1995-2009 The NEST Initiative
+      Copyright (C) 2004 The NEST Initiative
        Version 1.9-svn Sep 22 2010 16:50:01
 
     This program is provided AS IS and comes with
@@ -254,7 +254,7 @@ following output:
 
                -- N E S T 2 beta --
               Neural Simulation Tool
-      Copyright 1995-2009 The NEST Initiative
+      Copyright (C) 2004 The NEST Initiative
        Version 1.9-svn Sep 22 2010 16:50:01
 
     This program is provided AS IS and comes with

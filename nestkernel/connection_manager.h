@@ -32,6 +32,7 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
+#include "connection_id.h"
 #include "gid_collection.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
@@ -231,7 +232,7 @@ public:
    */
   ArrayDatum get_connections( DictionaryDatum dict ) const;
 
-  void get_connections( ArrayDatum& connectome,
+  void get_connections( std::deque< ConnectionID >& connectome,
     TokenArray const* source,
     TokenArray const* target,
     synindex syn_id,

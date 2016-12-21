@@ -81,7 +81,7 @@ public:
     synindex synapse_id,
     index lcid,
     long synapse_label,
-    ArrayDatum& conns ) const = 0;
+    std::deque< ConnectionID >& conns ) const = 0;
 
   virtual void get_connection( index source_gid,
     index target_gid,
@@ -89,14 +89,14 @@ public:
     synindex synapse_id,
     index lcid,
     long synapse_label,
-    ArrayDatum& conns ) const = 0;
+    std::deque< ConnectionID >& conns ) const = 0;
 
   virtual void get_all_connections( index source_gid,
     index requested_target_gid,
     thread tid,
     synindex synapse_id,
     long synapse_label,
-    ArrayDatum& conns ) const = 0;
+    std::deque< ConnectionID >& conns ) const = 0;
 
   virtual void get_source_lcids( const thread tid,
     const synindex syn_index,
@@ -361,7 +361,7 @@ public:
     synindex synapse_id,
     index lcid,
     long synapse_label,
-    ArrayDatum& conns ) const
+    std::deque< ConnectionID >& conns ) const
   {
     if ( syn_id_ == synapse_id && not C_[ lcid ].is_disabled() )
     {
@@ -384,7 +384,7 @@ public:
     synindex synapse_id,
     index lcid,
     long synapse_label,
-    ArrayDatum& conns ) const
+    std::deque< ConnectionID >& conns ) const
   {
     if ( syn_id_ == synapse_id && not C_[ lcid ].is_disabled() )
     {
@@ -406,7 +406,7 @@ public:
     thread tid,
     synindex synapse_id,
     long synapse_label,
-    ArrayDatum& conns ) const
+    std::deque< ConnectionID >& conns ) const
   {
     if ( syn_id_ == synapse_id )
     {
@@ -721,7 +721,7 @@ public:
     synindex synapse_id,
     index lcid,
     long synapse_label,
-    ArrayDatum& conns ) const
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < size(); ++i )
     {
@@ -737,7 +737,7 @@ public:
     synindex synapse_id,
     index lcid,
     long synapse_label,
-    ArrayDatum& conns ) const
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < size(); ++i )
     {
@@ -752,7 +752,7 @@ public:
     thread tid,
     synindex synapse_id,
     long synapse_label,
-    ArrayDatum& conns ) const
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < size(); ++i )
     {
@@ -771,7 +771,6 @@ public:
     const index tgid,
     std::vector< index >& source_lcids ) const
   {
-    // std::cout << "het conn" << std::endl;
     at( syn_index )->get_source_lcids( tid, syn_index, tgid, source_lcids );
   }
 

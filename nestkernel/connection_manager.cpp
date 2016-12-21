@@ -1287,7 +1287,7 @@ nest::ConnectionManager::get_num_connections( synindex syn_id ) const
 ArrayDatum
 nest::ConnectionManager::get_connections( DictionaryDatum params ) const
 {
-  ArrayDatum connectome;
+  std::deque< ConnectionID > connectome;
 
   const Token& source_t = params->lookup( names::source );
   const Token& target_t = params->lookup( names::target );
@@ -1337,20 +1337,40 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
           syn_id < kernel().model_manager.get_num_synapse_prototypes();
           ++syn_id )
     {
-      ArrayDatum conn;
-      get_connections( conn, source_a, target_a, syn_id, synapse_label );
-      if ( conn.size() > 0 )
-      {
-        connectome.push_back( new ArrayDatum( conn ) );
-      }
+      get_connections( connectome, source_a, target_a, syn_id, synapse_label );
     }
   }
 
-  return connectome;
+  ArrayDatum result;
+  result.reserve( connectome.size() );
+
+  while ( not connectome.empty() )
+  {
+    result.push_back( ConnectionDatum( connectome.front() ) );
+    connectome.pop_front();
+  }
+
+  return result;
+}
+
+// Helper method, implemented as operator<<(), that removes ConnectionIDs from
+// input deque and appends them to output deque.
+static inline std::deque< nest::ConnectionID >& operator<<(
+  std::deque< nest::ConnectionID >& out,
+  std::deque< nest::ConnectionID >& in )
+{
+  while ( not in.empty() )
+  {
+    out.push_back( in.front() );
+    in.pop_front();
+  }
+
+  return out;
 }
 
 void
-nest::ConnectionManager::get_connections( ArrayDatum& connectome,
+nest::ConnectionManager::get_connections(
+  std::deque< ConnectionID >& connectome,
   TokenArray const* source,
   TokenArray const* target,
   synindex syn_id,
@@ -1365,7 +1385,11 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
 
   const size_t num_connections = get_num_connections( syn_id );
 
-  connectome.reserve( num_connections );
+  if ( num_connections == 0 )
+  {
+    return;
+  }
+
   if ( source == 0 and target == 0 )
   {
 #ifdef _OPENMP
@@ -1376,16 +1400,10 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
     for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
     {
 #endif
-      ArrayDatum conns_in_thread;
+      std::deque< ConnectionID > conns_in_thread;
 
-      // collect all connections between neurons
       const size_t num_connections_in_thread =
         connections_5g_[ tid ]->get_num_connections( syn_id );
-// TODO@5g: why do we need the critical construct?
-#ifdef _OPENMP
-#pragma omp critical( get_connections )
-#endif
-      conns_in_thread.reserve( num_connections_in_thread );
       for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
       {
         const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
@@ -1401,7 +1419,7 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        connectome.append_move( conns_in_thread );
+        connectome << conns_in_thread;
       }
     } // of omp parallel
     return;
@@ -1416,15 +1434,11 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
     for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
     {
 #endif
-      ArrayDatum conns_in_thread;
+      std::deque< ConnectionID > conns_in_thread;
 
       // collect all connections between neurons
       const size_t num_connections_in_thread =
         connections_5g_[ tid ]->get_num_connections( syn_id );
-#ifdef _OPENMP
-#pragma omp critical( get_connections )
-#endif
-      conns_in_thread.reserve( num_connections_in_thread );
       for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
       {
         const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
@@ -1453,7 +1467,7 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        connectome.append_move( conns_in_thread );
+        connectome <<  conns_in_thread;
       }
     } // of omp parallel
     return;
@@ -1468,21 +1482,15 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
     for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
     {
 #endif
-      ArrayDatum conns_in_thread;
-
-      // collect all connections between neurons
-      const size_t num_connections_in_thread =
-        connections_5g_[ tid ]->get_num_connections( syn_id );
-#ifdef _OPENMP
-#pragma omp critical( get_connections )
-#endif
-      conns_in_thread.reserve( num_connections_in_thread );
+      std::deque< ConnectionID > conns_in_thread;
 
       // TODO@5g: this this too expensive? are there alternatives?
       std::vector< index > sources;
       source->toVector( sources );
       std::sort( sources.begin(), sources.end() );
 
+      const size_t num_connections_in_thread =
+        connections_5g_[ tid ]->get_num_connections( syn_id );
       for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
       {
         const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
@@ -1538,7 +1546,7 @@ nest::ConnectionManager::get_connections( ArrayDatum& connectome,
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        connectome.append_move( conns_in_thread );
+        connectome << conns_in_thread;
       }
     } // of omp parallel
     return;

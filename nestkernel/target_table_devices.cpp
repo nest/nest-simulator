@@ -161,7 +161,7 @@ nest::TargetTableDevices::get_connections_to_devices_(
   const thread tid,
   const synindex synapse_id,
   const long synapse_label,
-  ArrayDatum& conns ) const
+  std::deque< ConnectionID >& conns ) const
 {
   for ( size_t lid = 0; lid < target_to_devices_[ tid ]->size(); ++lid )
   {
@@ -188,7 +188,7 @@ nest::TargetTableDevices::get_connections_from_devices_(
   const thread tid,
   const synindex synapse_id,
   const long synapse_label,
-  ArrayDatum& conns ) const
+  std::deque< ConnectionID >& conns ) const
 {
   for ( std::vector< index >::const_iterator it =
           sending_devices_gids_[ tid ]->begin();
@@ -220,12 +220,9 @@ nest::TargetTableDevices::get_connections( const index requested_source_gid,
   const thread tid,
   const synindex synapse_id,
   const long synapse_label,
-  ArrayDatum& conns ) const
+  std::deque< ConnectionID >& conns ) const
 {
   // collect all connections from neurons to devices
-  const size_t num_connections_to_devices_in_thread =
-    get_num_connections_to_devices_( tid, synapse_id );
-  conns.reserve( conns.size() + num_connections_to_devices_in_thread );
   get_connections_to_devices_( requested_source_gid,
     requested_target_gid,
     tid,
@@ -234,9 +231,6 @@ nest::TargetTableDevices::get_connections( const index requested_source_gid,
     conns );
 
   // collect all connections from devices
-  const size_t num_connections_from_devices_in_thread =
-    get_num_connections_from_devices_( tid, synapse_id );
-  conns.reserve( conns.size() + num_connections_from_devices_in_thread );
   get_connections_from_devices_( requested_source_gid,
     requested_target_gid,
     tid,

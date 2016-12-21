@@ -29,8 +29,9 @@
 #include <cassert>
 
 // Includes from nestkernel:
-#include "nest_types.h"
+#include "connection_id.h"
 #include "event.h"
+#include "nest_types.h"
 
 // Includes from SLI:
 #include "arraydatum.h"
@@ -122,19 +123,19 @@ public:
     const thread tid,
     const synindex synapse_id,
     const long synapse_label,
-    ArrayDatum& conns ) const;
+    std::deque< ConnectionID >& conns ) const;
   void get_connections_from_devices_( const index requested_source_gid,
     const index requested_target_gid,
     const thread tid,
     const synindex synapse_id,
     const long synapse_label,
-    ArrayDatum& conns ) const;
+    std::deque< ConnectionID >& conns ) const;
   void get_connections( const index requested_source_gid,
     const index requested_target_gid,
     const thread tid,
     const synindex synapse_id,
     const long synapse_label,
-    ArrayDatum& conns ) const;
+    std::deque< ConnectionID >& conns ) const;
   void get_synapse_status_to_device( const thread tid,
     const index source_gid,
     const synindex syn_id,

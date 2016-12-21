@@ -661,15 +661,10 @@ nest::ConnectionManager::disconnect( Node& target,
 
 // -----------------------------------------------------------------------------
 
-/**
- * Divergent connection routine for use by DataConnect.
- *
- * @note This method is used only by DataConnect.
- */
 void
-nest::ConnectionManager::divergent_connect( index source_id,
+nest::ConnectionManager::data_connect_single( const index source_id,
   DictionaryDatum pars,
-  index syn )
+  const index syn )
 {
   // We extract the parameters from the dictionary explicitly since getValue()
   // for DoubleVectorDatum
@@ -698,10 +693,8 @@ nest::ConnectionManager::divergent_connect( index source_id,
       std::string msg = String::compose(
         "Parameter '%1' must be a DoubleVectorArray or numpy.array. ",
         di_s->first.toString() );
-      LOG( M_DEBUG, "DivergentConnect", msg );
-      LOG( M_DEBUG,
-        "DivergentConnect",
-        "Trying to convert, but this takes time." );
+      LOG( M_DEBUG, "DataConnect", msg );
+      LOG( M_DEBUG, "DataConnect", "Trying to convert, but this takes time." );
 
       if ( tmpint )
       {
@@ -747,7 +740,7 @@ nest::ConnectionManager::divergent_connect( index source_id,
   if ( !complete_wd_lists )
   {
     LOG( M_ERROR,
-      "DivergentConnect",
+      "DataConnect",
       "All lists in the parameter dictionary must be of equal size." );
     throw DimensionMismatch();
   }
@@ -757,10 +750,9 @@ nest::ConnectionManager::divergent_connect( index source_id,
   Subnet* source_comp = dynamic_cast< Subnet* >( source );
   if ( source_comp != 0 )
   {
-    LOG(
-      M_INFO, "DivergentConnect", "Source ID is a subnet; I will iterate it." );
+    LOG( M_INFO, "DataConnect", "Source ID is a subnet; I will iterate it." );
 
-    // collect all leaves in source subnet, then divergent-connect each leaf
+    // collect all leaves in source subnet, then data-connect each leaf
     LocalLeafList local_sources( *source_comp );
     std::vector< MPIManager::NodeAddressingData > global_sources;
     kernel().mpi_manager.communicate( local_sources, global_sources );
@@ -768,7 +760,7 @@ nest::ConnectionManager::divergent_connect( index source_id,
             global_sources.begin();
           src != global_sources.end();
           ++src )
-      divergent_connect( src->get_gid(), pars, syn );
+      data_connect_single( src->get_gid(), pars, syn );
 
     return;
   }
@@ -794,7 +786,7 @@ nest::ConnectionManager::divergent_connect( index source_id,
           target_ids[ i ] );
         if ( !e.message().empty() )
           msg += "\nDetails: " + e.message();
-        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
 
@@ -825,7 +817,7 @@ nest::ConnectionManager::divergent_connect( index source_id,
           target_ids[ i ] );
         if ( !e.message().empty() )
           msg += "\nDetails: " + e.message();
-        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
       catch ( IllegalConnection& e )
@@ -836,7 +828,7 @@ nest::ConnectionManager::divergent_connect( index source_id,
           target_ids[ i ] );
         if ( !e.message().empty() )
           msg += "\nDetails: " + e.message();
-        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
       catch ( UnknownReceptorType& e )
@@ -849,33 +841,17 @@ nest::ConnectionManager::divergent_connect( index source_id,
           target_ids[ i ] );
         if ( !e.message().empty() )
           msg += "\nDetails: " + e.message();
-        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
     }
   }
 }
 
-/**
- * Connect, using a dictionary with arrays.
- * The connection rule is based on the details of the dictionary entries source
- * and target.
- * If source and target are both either a GID or a list of GIDs with equal size,
- * then source and target are connected one-to-one.
- * If source is a gid and target is a list of GIDs then the sources is
- * connected to all targets.
- * If source is a list of GIDs and target is a GID, then all sources are
- * connected to the target.
- * At this stage, the task of connect is to separate the dictionary into one
- * for each thread and then to forward the connect call to the connectors who
- * can then deal with the details of the connection.
- *
- * @note This method is used only by DataConnect.
- */
 bool
-nest::ConnectionManager::connect( ArrayDatum& conns )
+nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
 {
-  for ( Token* ct = conns.begin(); ct != conns.end(); ++ct )
+  for ( Token* ct = connectome.begin(); ct != connectome.end(); ++ct )
   {
     DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
     index target_gid = static_cast< size_t >( ( *cd )[ names::target ] );

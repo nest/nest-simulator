@@ -109,7 +109,6 @@ public:
   bool get_next_target_data( const thread tid,
     const thread rank_start,
     const thread rank_end,
-    const size_t secondary_buffer_chunk_size_,
     thread& target_rank,
     TargetData& next_target_data );
   //! rejects the last target data, and resets the current_* positions

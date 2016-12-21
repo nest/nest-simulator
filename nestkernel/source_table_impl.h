@@ -42,7 +42,6 @@ inline bool
 SourceTable::get_next_target_data( const thread tid,
   const thread rank_start,
   const thread rank_end,
-  const size_t secondary_buffer_chunk_size,
   thread& target_rank,
   TargetData& next_target_data )
 {
@@ -192,8 +191,8 @@ SourceTable::get_next_target_data( const thread tid,
             current_position.syn_index,
             current_position.lcid );
         const size_t send_buffer_pos =
-          kernel().mpi_manager.get_rank() * secondary_buffer_chunk_size
-          + ( recv_buffer_pos - target_rank * secondary_buffer_chunk_size );
+          kernel().mpi_manager.get_rank() * kernel().mpi_manager.get_chunk_size_secondary_events()
+          + ( recv_buffer_pos - target_rank * kernel().mpi_manager.get_chunk_size_secondary_events() );
         reinterpret_cast< SecondaryTargetData* >( &next_target_data )
           ->set_send_buffer_pos( send_buffer_pos );
       }

@@ -573,8 +573,6 @@ private:
 
   std::map< index, size_t > gid_to_buffer_pos_;
 
-  size_t secondary_buffer_chunk_size_;
-
   /** A structure to hold the information about targets for each
    * neuron on the presynaptic side. Internally arranged in a 3d
    * structure: threads|localnodes|targets
@@ -739,7 +737,6 @@ ConnectionManager::get_next_target_data( const thread tid,
   return source_table_.get_next_target_data( tid,
     rank_start,
     rank_end,
-    secondary_buffer_chunk_size_,
     target_rank,
     next_target_data );
 }

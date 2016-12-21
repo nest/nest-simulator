@@ -191,14 +191,14 @@ public:
   /**
    * Connect from an array of dictionaries.
    */
-  bool connect( ArrayDatum& connectome );
+  bool data_connect_connectome( const ArrayDatum& connectome );
 
   /**
    * Connect one source node with many targets.
    * The dictionary d contains arrays for all the connections of type syn.
    * AKA DataConnect
    */
-  void divergent_connect( index s, DictionaryDatum d, index syn );
+  void data_connect_single( const index source_id, DictionaryDatum d, const index syn );
 
   // aka conndatum GetStatus
   DictionaryDatum get_synapse_status( const index source_gid,

@@ -949,17 +949,11 @@ nest::ConnectionManager::disconnect_5g( const thread tid,
 //                    // connection
 // }
 
-/**
- * Divergent connection routine for use by DataConnect.
- *
- * @note This method is used only by DataConnect.
- */
 void
-nest::ConnectionManager::divergent_connect( index source_id,
+nest::ConnectionManager::data_connect_single( const index source_id,
   DictionaryDatum pars,
-  index syn )
+  const index syn )
 {
-  assert( false );
   // We extract the parameters from the dictionary explicitly since getValue()
   // for DoubleVectorDatum
   // copies the data into an array, from which the data must then be copied once
@@ -987,9 +981,9 @@ nest::ConnectionManager::divergent_connect( index source_id,
       std::string msg = String::compose(
         "Parameter '%1' must be a DoubleVectorArray or numpy.array. ",
         di_s->first.toString() );
-      LOG( M_DEBUG, "DivergentConnect", msg );
+      LOG( M_DEBUG, "DataConnect", msg );
       LOG( M_DEBUG,
-        "DivergentConnect",
+        "DataConnect",
         "Trying to convert, but this takes time." );
 
       if ( tmpint )
@@ -1036,7 +1030,7 @@ nest::ConnectionManager::divergent_connect( index source_id,
   if ( !complete_wd_lists )
   {
     LOG( M_ERROR,
-      "DivergentConnect",
+      "DataConnect",
       "All lists in the parameter dictionary must be of equal size." );
     throw DimensionMismatch();
   }
@@ -1047,7 +1041,7 @@ nest::ConnectionManager::divergent_connect( index source_id,
   if ( source_comp != 0 )
   {
     LOG(
-      M_INFO, "DivergentConnect", "Source ID is a subnet; I will iterate it." );
+      M_INFO, "DataConnect", "Source ID is a subnet; I will iterate it." );
 
     // collect all leaves in source subnet, then divergent-connect each leaf
     LocalLeafList local_sources( *source_comp );
@@ -1057,7 +1051,7 @@ nest::ConnectionManager::divergent_connect( index source_id,
             global_sources.begin();
           src != global_sources.end();
           ++src )
-      divergent_connect( src->get_gid(), pars, syn );
+      data_connect_single( src->get_gid(), pars, syn );
 
     return;
   }
@@ -1083,7 +1077,7 @@ nest::ConnectionManager::divergent_connect( index source_id,
           target_ids[ i ] );
         if ( !e.message().empty() )
           msg += "\nDetails: " + e.message();
-        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
 
@@ -1115,7 +1109,7 @@ nest::ConnectionManager::divergent_connect( index source_id,
           target_ids[ i ] );
         if ( !e.message().empty() )
           msg += "\nDetails: " + e.message();
-        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
       catch ( IllegalConnection& e )
@@ -1126,7 +1120,7 @@ nest::ConnectionManager::divergent_connect( index source_id,
           target_ids[ i ] );
         if ( !e.message().empty() )
           msg += "\nDetails: " + e.message();
-        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
       catch ( UnknownReceptorType& e )
@@ -1139,7 +1133,7 @@ nest::ConnectionManager::divergent_connect( index source_id,
           target_ids[ i ] );
         if ( !e.message().empty() )
           msg += "\nDetails: " + e.message();
-        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
     }
@@ -1163,9 +1157,8 @@ nest::ConnectionManager::divergent_connect( index source_id,
  * @note This method is used only by DataConnect.
  */
 bool
-nest::ConnectionManager::connect( ArrayDatum& conns )
+nest::ConnectionManager::data_connect_connectome( const ArrayDatum& conns )
 {
-  assert( false );
   for ( Token* ct = conns.begin(); ct != conns.end(); ++ct )
   {
     DictionaryDatum cd = getValue< DictionaryDatum >( *ct );

@@ -640,13 +640,13 @@ nest::ConnectionManager::disconnect( Node& target,
 
   if ( kernel().node_manager.is_local_gid( target.get_gid() ) )
   {
-    // get the ConnectorBase corresponding to the source
-    ConnectorBase* conn =
-      validate_pointer( validate_source_entry_( target_thread, sgid, syn_id ) );
     ConnectorBase* c =
       kernel()
         .model_manager.get_synapse_prototype( syn_id, target_thread )
-        .delete_connection( target, target_thread, conn, syn_id );
+        .delete_connection( target,
+          target_thread,
+          validate_source_entry_( target_thread, sgid, syn_id ),
+          syn_id );
     if ( c == 0 )
     {
       connections_[ target_thread ].erase( sgid );

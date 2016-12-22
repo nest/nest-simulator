@@ -208,11 +208,11 @@ public:
    * Returns if any node uses waveform relaxation
    */
   bool any_node_uses_wfr() const;
-  
+
   /**
    * Allows to set any_node_uses_wfr_
    */
-  void set_any_node_uses_wfr( bool ); 
+  void set_any_node_uses_wfr( bool );
 
   /**
    * Iterator pointing to beginning of process-local nodes.

@@ -720,13 +720,8 @@ nest::MPIManager::wfr_synchrony( bool any_node_uses_wfr )
   if ( get_num_processes() > 1 )
   {
     std::vector< char > wfr( get_num_processes() );
-    MPI_Allgather( &any_node_uses_wfr,
-      1,
-      MPI_CHAR,
-      &wfr[ 0 ],
-      1,
-      MPI_CHAR,
-      comm );
+    MPI_Allgather(
+      &any_node_uses_wfr, 1, MPI_CHAR, &wfr[ 0 ], 1, MPI_CHAR, comm );
     // check if any MPI process uses wfr
     for ( unsigned int i = 0; i < wfr.size(); ++i )
     {

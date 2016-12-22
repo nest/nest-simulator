@@ -162,7 +162,7 @@ one generator providing independent input to each target neuron\\\hline
  Number of excitatory neurons $N_E$ & 8000 \\
  Number of inhibitory neurons $N_I$ & 2000\\
  Excitatory synapses per neuron $C_E$ & 800 \\
- Inhibitory synapses per neuron $C_E$ & 200 \\
+ Inhibitory synapses per neuron $C_I$ & 200 \\
 \hline
 \end{tabularx}
 \begin{tabularx}{0.95\linewidth}{Xr}

@@ -1436,22 +1436,22 @@ nest::ConnectionManager::get_connections(
 #endif
       std::deque< ConnectionID > conns_in_thread;
 
-      // collect all connections between neurons
-      const size_t num_connections_in_thread =
-        connections_5g_[ tid ]->get_num_connections( syn_id );
-      for ( index lcid = 0; lcid < num_connections_in_thread; ++lcid )
+      const synindex syn_index = connections_5g_[ tid ]->find_synapse_index( syn_id );
+      for ( size_t t_id = 0; t_id < target->size(); ++t_id )
       {
-        const index source_gid = source_table_.get_gid( tid, syn_id, lcid );
-        for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+        const index target_gid = target->get( t_id );
+
+        std::vector< index > source_lcids;
+        connections_5g_[ tid ]->get_source_lcids( tid, syn_index, target_gid, source_lcids );
+
+        for ( size_t i = 0; i < source_lcids.size(); ++i )
         {
-          const index target_gid = target->get( t_id );
-          connections_5g_[ tid ]->get_connection( source_gid,
+          conns_in_thread.push_back( ConnectionDatum( ConnectionID(
+            source_table_.get_gid( tid, syn_id, source_lcids[ i ] ),
             target_gid,
             tid,
             syn_id,
-            lcid,
-            synapse_label,
-            conns_in_thread );
+            source_lcids[ i ] ) ) );
         }
       }
 

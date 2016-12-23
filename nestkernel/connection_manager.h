@@ -234,6 +234,11 @@ public:
     std::vector< std::vector< index > >& targets,
     index synapse_model );
 
+  void get_targets( std::vector< index > sources,
+    std::vector< std::vector< index > >& targets,
+    index synapse_model,
+    std::string post_synaptic_element );
+
   /**
    * Triggered by volume transmitter in update.
    * Triggeres updates for all connectors of dopamine synapses that
@@ -309,6 +314,8 @@ private:
 
   ConnectorBase*
   validate_source_entry_( thread tid, index s_gid, synindex syn_id );
+
+  ConnectorBase* validate_source_entry_( thread tid, index s_gid );
 
   /**
    * Connect is used to establish a connection between a sender and

@@ -227,12 +227,12 @@ SPManager::disconnect_single( index sgid,
     SPBuilder* cb = new SPBuilder( *sources, *targets, *conn_spec, syn );
     cb->change_connected_synaptic_elements(
       sgid, target->get_gid(), target->get_thread(), -1 );
+    const std::string syn_name = ( *syn )[ names::model ];
+    disconnect( sgid,
+      target,
+      target_thread,
+      kernel().model_manager.get_synapsedict()->lookup( syn_name ) );
   }
-  const std::string syn_name = ( *syn )[ names::model ];
-  disconnect( sgid,
-    target,
-    target_thread,
-    kernel().model_manager.get_synapsedict()->lookup( syn_name ) );
 }
 
 /**
@@ -390,12 +390,7 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
     pre_vacant_n,
     pre_deleted_id,
     pre_deleted_n );
-  // Get post synaptic elements data from local nodes
-  get_synaptic_elements( sp_builder->get_post_synaptic_element_name(),
-    post_vacant_id,
-    post_vacant_n,
-    post_deleted_id,
-    post_deleted_n );
+
   // Communicate the number of deleted pre-synaptic elements
   kernel().mpi_manager.communicate(
     pre_deleted_id, pre_deleted_id_global, displacements );
@@ -415,13 +410,13 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
       pre_vacant_n,
       pre_deleted_id,
       pre_deleted_n );
-    get_synaptic_elements( sp_builder->get_post_synaptic_element_name(),
-      post_vacant_id,
-      post_vacant_n,
-      post_deleted_id,
-      post_deleted_n );
   }
-
+  // Get post synaptic elements data from local nodes
+  get_synaptic_elements( sp_builder->get_post_synaptic_element_name(),
+    post_vacant_id,
+    post_vacant_n,
+    post_deleted_id,
+    post_deleted_n );
   // Communicate the number of deleted post-synaptic elements
   kernel().mpi_manager.communicate(
     post_deleted_id, post_deleted_id_global, displacements );
@@ -545,7 +540,7 @@ SPManager::delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
   std::vector< int >::iterator n_it;
 
   kernel().connection_manager.get_targets(
-    pre_deleted_id, connectivity, synapse_model );
+    pre_deleted_id, connectivity, synapse_model, se_post_name );
 
   id_it = pre_deleted_id.begin();
   n_it = pre_deleted_n.begin();

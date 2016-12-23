@@ -641,12 +641,13 @@ nest::ConnectionManager::disconnect( Node& target,
   if ( kernel().node_manager.is_local_gid( target.get_gid() ) )
   {
     // get the ConnectorBase corresponding to the source
-    ConnectorBase* conn =
-      validate_pointer( validate_source_entry_( target_thread, sgid, syn_id ) );
     ConnectorBase* c =
       kernel()
         .model_manager.get_synapse_prototype( syn_id, target_thread )
-        .delete_connection( target, target_thread, conn, syn_id );
+        .delete_connection( target,
+          target_thread,
+          validate_source_entry_( target_thread, sgid, syn_id ),
+          syn_id );
     if ( c == 0 )
     {
       connections_[ target_thread ].erase( sgid );
@@ -908,7 +909,12 @@ nest::ConnectionManager::validate_source_entry_( thread tid,
   synindex syn_id )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
+  return validate_source_entry_( tid, s_gid );
+}
 
+nest::ConnectorBase*
+nest::ConnectionManager::validate_source_entry_( thread tid, index s_gid )
+{
   // resize sparsetable to full network size
   if ( connections_[ tid ].size() < kernel().node_manager.size() )
     connections_[ tid ].resize( kernel().node_manager.size() );
@@ -1311,10 +1317,47 @@ nest::ConnectionManager::get_targets( std::vector< index > sources,
     target_it = targets.begin();
     for ( ; source_it != sources.end(); source_it++, target_it++ )
     {
-      if ( ( *it ).get( *source_it ) != 0 )
+      if ( validate_source_entry_( thread_id, *source_it ) != 0 )
       {
-        validate_pointer( ( *it ).get( *source_it ) )
+        validate_pointer( validate_source_entry_( thread_id, *source_it ) )
           ->get_target_gids( ( *target_it ), thread_id, synapse_model );
+      }
+    }
+  }
+}
+
+void
+nest::ConnectionManager::get_targets( std::vector< index > sources,
+  std::vector< std::vector< index > >& targets,
+  index synapse_model,
+  std::string post_synaptic_element )
+{
+  thread thread_id;
+  std::vector< index >::iterator source_it;
+  std::vector< std::vector< index > >::iterator target_it;
+  targets.resize( sources.size() );
+  for ( std::vector< std::vector< index > >::iterator i = targets.begin();
+        i != targets.end();
+        i++ )
+  {
+    ( *i ).clear();
+  }
+
+  for ( tVSConnector::iterator it = connections_.begin();
+        it != connections_.end();
+        ++it )
+  {
+    thread_id = it - connections_.begin();
+    // loop over the targets/sources
+    source_it = sources.begin();
+    target_it = targets.begin();
+    for ( ; source_it != sources.end(); source_it++, target_it++ )
+    {
+      if ( validate_source_entry_( thread_id, *source_it ) != 0 )
+      {
+        validate_pointer( validate_source_entry_( thread_id, *source_it ) )
+          ->get_target_gids(
+            ( *target_it ), thread_id, synapse_model, post_synaptic_element );
       }
     }
   }

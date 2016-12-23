@@ -640,7 +640,6 @@ nest::ConnectionManager::disconnect( Node& target,
 
   if ( kernel().node_manager.is_local_gid( target.get_gid() ) )
   {
-    // get the ConnectorBase corresponding to the source
     ConnectorBase* c =
       kernel()
         .model_manager.get_synapse_prototype( syn_id, target_thread )

@@ -551,6 +551,16 @@ nest::SimulationManager::prepare_simulation_()
 
   kernel().model_manager.create_secondary_events_prototypes();
 
+  if ( kernel().mpi_manager.get_num_processes() > 1 )
+  {
+    // Check if any MPI process uses waveform relaxation and set
+    // kernel().node_manager.any_node_uses_wfr() correspondingly
+    // across all MPI processes
+    kernel().node_manager.set_any_node_uses_wfr(
+      kernel().mpi_manager.wfr_synchrony(
+        kernel().node_manager.any_node_uses_wfr() ) );
+  }
+
   // we have to do enter_runtime after prepre_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
   // before enter_runtime

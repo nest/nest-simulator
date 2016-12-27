@@ -198,6 +198,7 @@ public:
   void test_links();
 
   bool grng_synchrony( unsigned long );
+  bool wfr_synchrony( bool );
 
   /** Benchmark communication time of different MPI methods
    *
@@ -481,6 +482,12 @@ inline bool
 MPIManager::grng_synchrony( unsigned long )
 {
   return true;
+}
+
+inline bool
+MPIManager::wfr_synchrony( bool any_node_uses_wfr )
+{
+  return any_node_uses_wfr;
 }
 
 inline double

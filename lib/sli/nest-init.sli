@@ -741,7 +741,7 @@ Options
   << >> begin
   /LayoutNetwork /deprecation_warning GetOption true eq
   {
-    (Sli function LayoutNetwork is deprecated in NEST 3.0.) M_DEPRECATED message
+    (SLI function LayoutNetwork is deprecated in NEST 3.0.) M_DEPRECATED message
     /LayoutNetwork << /deprecation_warning false >> SetOptions
   } if
              /val   Set
@@ -786,7 +786,7 @@ Options
   << >> begin
   /LayoutNetwork /deprecation_warning GetOption true eq
   {
-    (Sli function LayoutNetwork is deprecated in NEST 3.0.) M_DEPRECATED message
+    (SLI function LayoutNetwork is deprecated in NEST 3.0.) M_DEPRECATED message
     /LayoutNetwork << /deprecation_warning false >> SetOptions
   } if
   size       /n_dim Set
@@ -1268,7 +1268,7 @@ Options
   << >> begin
   /GetNetwork /deprecation_warning GetOption true eq
   {
-    (Sli function GetNetwork is deprecated in NEST 3.0.) M_DEPRECATED message
+    (SLI function GetNetwork is deprecated in NEST 3.0.) M_DEPRECATED message
     /GetNetwork << /deprecation_warning false >> SetOptions
   } if
   /depth Set

@@ -360,7 +360,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< aeif_cond_alpha_RK5 >(
     "aeif_cond_alpha_RK5",
     /*private_model*/ false,
-    /*deprecation_model*/ "NEST 3.0" );
+    /*deprecation_info*/ "NEST 3.0" );
 
 #ifdef HAVE_MUSIC
   //// proxies for inter-application communication using MUSIC

@@ -539,12 +539,24 @@ inline GIDPair gc_const_iterator::operator*() const
   }
   else
   {
-    if ( part_idx_ >= composite_collection_->parts_.size()
-      or element_idx_ >= composite_collection_->parts_[ part_idx_ ].size()
-      or not this->operator<( composite_collection_->end() ) )
+    // for efficiency we check each value instead of simply checking against
+    // composite_collection->end()
+    if ( composite_collection_->stop_offset_ != 0
+      or composite_collection_->stop_part_ != 0 )
+    {
+      if ( not( part_idx_ < composite_collection_->stop_part_
+             or ( part_idx_ == composite_collection_->stop_part_
+                  and element_idx_ < composite_collection_->stop_offset_ ) ) )
+      {
+        throw KernelException( "Invalid GIDCollection iterator " );
+      }
+    }
+    else if ( part_idx_ >= composite_collection_->parts_.size()
+      or element_idx_ >= composite_collection_->parts_[ part_idx_ ].size() )
     {
       throw KernelException( "Invalid GIDCollection iterator " );
     }
+
     gp.gid = composite_collection_->parts_[ part_idx_ ][ element_idx_ ];
     gp.model_id = composite_collection_->parts_[ part_idx_ ].model_id_;
   }

@@ -81,6 +81,24 @@ spike files and `dat` for analog recordings from the `multimeter`.
 The `label` and `file_extension` of a recording device can be set like any other
 parameter of a node using `SetStatus`.
 
+### Spike exchange and synapse updates
+
+For spikes between neurons, spikes are always exchanged through the global 
+spike exchange mechanism and it is then the thread responsible for the target 
+neuron that updates the synapse and delivers the spike.
+
+For connections involving devices, either spike generators or detectors, 
+things are a bit different. Here, each device is replicated (cloned) on each 
+thread. Thus, spikes from, e.g., a spike_generator, are delivered by the clone
+for a given thread and these spikes are delivered locally, bypassing the gobal 
+exchange mechanism. In this case, pre- and postsynaptic node (sender and 
+target) are handled by the same thread. Similarly, when a neuron emits a spike,
+the spike is locally transmitted to the clone of the spike_detector belonging 
+to the same thread as the neuron.
+
+Thus, it is always the thread of the target of a connection that is 
+responsible for the synapse.
+
 ## Using multiple threads
 
 Thread-parallelism is compiled into NEST by default and should work on all MacOS

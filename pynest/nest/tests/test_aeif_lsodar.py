@@ -55,8 +55,6 @@ Details:
 
 HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 path = os.path.abspath(os.path.dirname(__file__))
-if not path.endswith("/"):
-    path += "/"
 
 # --------------------------------------------------------------------------- #
 #  Tolerances to compare LSODAR and NEST implementations

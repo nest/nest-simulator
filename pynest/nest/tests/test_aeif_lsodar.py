@@ -45,7 +45,8 @@ Rationale of the test:
   - all models should be close to the reference LSODAR when
     submitted to the same excitatory current.
   - for ``Delta_T = 0.``, ``a = 0.`` and ``b = 0.``, starting from ``w = 0.``,
-    models should behave as the associated iaf model.
+    models should behave as the associated iaf model. This is tested both with
+    spike input and direct current input.
 
 Details:
   The models are compared and we assess that the difference between the
@@ -301,10 +302,10 @@ class AEIFTestCase(unittest.TestCase):
         self.assert_pass_tolerance(rel_diff, di_tolerances_lsodar)
 
     @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
-    def test_iaf_behaviour(self):
+    def test_iaf_spike_input(self):
         '''
-        The models should behave as iaf_cond_* if a == 0., b == 0. and
-        Delta_T == 0.
+        Test that the models behave as iaf_* if a == 0., b == 0. and
+        Delta_T == 0 due to random spike input.
         '''
         simtime = 200.
         # create the neurons and devices
@@ -353,10 +354,10 @@ class AEIFTestCase(unittest.TestCase):
                 recordables[syn_type])
             self.assert_pass_tolerance(rel_diff, di_tolerances_iaf)
 
-    def test_iaf_dc_current(self):
+    def test_iaf_dc_input(self):
         '''
-        The models should behave as iaf_cond_* if a == 0., b == 0. and
-        Delta_T == 0.
+        Test that the models behave as iaf_* if a == 0., b == 0. and
+        Delta_T == 0 due to direct current input.
         '''
         simtime = 200.
         # create the neurons and devices
@@ -366,9 +367,9 @@ class AEIFTestCase(unittest.TestCase):
         neurons = {model: nest.Create(model, params=DT0_params[model])
                    for model in models if "multisynapse" not in model}
         multimeters = {model: nest.Create("multimeter") for model in neurons}
-        pg = nest.Create("dc_generator", params={"amplitude": 250.0,
-                                                 "start": 50.0,
-                                                 "stop": 150.0})
+        dcg = nest.Create("dc_generator", params={"amplitude": 250.0,
+                                                  "start": 50.0,
+                                                  "stop": 150.0})
 
         # connect them and simulate
         for model, mm in iter(multimeters.items()):
@@ -376,10 +377,12 @@ class AEIFTestCase(unittest.TestCase):
             nest.SetStatus(mm, {"interval": self.resol,
                                 "record_from": ["V_m"]})
             nest.Connect(mm, neurons[model])
+            nest.Connect(dcg, neurons[model])
         for syn_type, mm in iter(ref_mm.items()):
             nest.SetStatus(mm, {"interval": self.resol,
                                 "record_from": ["V_m"]})
             nest.Connect(mm, refs[syn_type])
+            nest.Connect(dcg, refs[syn_type])
         nest.Simulate(simtime)
 
         # compute the relative differences and assert tolerance

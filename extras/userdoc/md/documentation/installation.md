@@ -187,6 +187,11 @@ implementation that should work with [OpenMPI](http://www.openmpi.org/) library.
 
 ## Mac OS X
 
+On the Mac, you can install NEST either via Homebrew or manually. If you 
+want to use PyNEST, you need to have a version of Python with some science
+packages installed, see the [section Python on Mac](installation.md#python-on-mac) 
+for details. 
+
 ### Installation via Homebrew
 
 The easiest way to install NEST on a Mac is to install it via the Homebrew
@@ -253,6 +258,33 @@ and all other dependencies installed via [Homebrew](http://brew.sh).
 
 To compile NEST with MPI support, add `-Dwith-mpi=ON` as `cmake` option.
 
+### Python on Mac
+
+The version of Python shipping with OSX/macOS is rather dated and does not
+include key packages such as NumPy. Therefore, you need to install Python via
+a channel that provides scientific packages.
+
+One well-tested source is the [Anaconda](https://www.continuum.io/anaconda-overview) 
+Python distribution for both Python 2 and 3. If you do not want to install the
+full Anaconda distribution, you can also install [Miniconda](http://conda.pydata.org/miniconda.html)
+and then install the packages needed by NEST by running
+
+    conda install numpy scipy matplotlib ipython cython nose
+
+Alternatively, you should be able to install the necessary Python packages via Homebrew, but
+this has not been tested.
+
+## Troubleshooting
+
+If your operating system does not find the `nest` executable or Python does not
+find the `nest` module, your path variables may not be set correctly. This may
+also be the case if Python cannot load the `nest` module due to missing or
+incompatible libraries. In this case, please run
+
+    source </path/to/nest_install_dir>/bin/nest_vars.sh
+
+to set the necessary environment variables. You may want to include this line
+in your `.bashrc` file, so that the environment variables are set automatically.
 
 ## Windows
 

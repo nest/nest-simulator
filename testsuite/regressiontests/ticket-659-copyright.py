@@ -125,7 +125,7 @@ for dirpath, _, fnames in os.walk(source_dir):
                 line_exp = template_line.replace('{{file_name}}', fname)
                 if line_src != line_exp:
                     print("Incorrect copyright header in '{0}':".format(tested_file))           # noqa
-                    print("    expected -> '{0}', actual -> '{1}'\n".format(line_exp.strip(),  # noqa
+                    print("    expected -> '{0}', actual -> '{1}'\n".format(line_exp.strip(),   # noqa
                                                                             line_src.strip()))  # noqa
                     total_errors += 1
                     break

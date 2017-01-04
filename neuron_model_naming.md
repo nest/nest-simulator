@@ -22,11 +22,25 @@ And therefore we get:
     iaf_cond_alpha       IaF with conductance-based alpha input
 
 A further label could specify the number and interpretation of the
-`rports`. For example: `exin` for neurons with different dynamics for
-excitatory and inhibitory synapses, e.g. `iaf_psc_exin_alpha` to
-denote "2 dendrites".
+`rports`, for example `iaf_psc_alpha_multisynapse`.
 
-More specific and complicated neuron models are probably better
-described by a project name than by a full list of all their
-components: e.g. use `facets_neuron` instead of
-`iaf_psc_exp_sfa_exin_fancy_something`.
+For models based on specific publications the general naming rule is
+
+    <model category>_<initials>_year
+
+Examples are
+- `iaf_chs_2007` (Carandini M, Horton JC, Sincich LC (2007) Thalamic filtering of retinal
+   spike trains by postsynaptic summation. J Vis 7(14):20,1-11)
+- `iaf_chxk_2008` (Casti A, Hayot F, Xiao Y, and Kaplan E (2008) A simple model of retina-LGN
+transmission. J Comput Neurosci 24:235-252)
+- `iaf_tum_2000` (Tsodyks M, Uziel A, Markram H (2000) Synchrony Generation
+   in Recurrent Networks with Frequency-Dependent Synapses. J Neurosci
+   20:RC50, 1-5)
+
+We haven't applied these rules completely consistently, but for neuron
+models that are mainly known from a single paper and that have not
+been given a more general name in the publications that introduced
+them (e.g. `aeif` and `amat` models), one should stick to this rule.
+
+
+

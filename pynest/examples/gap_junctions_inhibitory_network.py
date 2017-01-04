@@ -30,9 +30,9 @@ This is the inhibitory network used as test case 2 (see figure 9 and 10) in
     doi: 10.3389/fninf.2015.00022
 
 The network contains 500 hh_psc_alpha_gap neurons with random initial
-membrane potentials between −40 and −80 mV. Each neuron receives 50
+membrane potentials between -40 and -80 mV. Each neuron receives 50
 inhibitory synaptic inputs that are randomly selected from all other
-neurons, each with synaptic weight JI = −50.0 pA and synaptic delay
+neurons, each with synaptic weight JI = -50.0 pA and synaptic delay
 d = 1.0 ms. Each neuron receives an excitatory external Poissonian
 input of 500.0 Hz with synaptic weight JE = 300.0 pA and the same
 delay d. In addition (60*500)/2 gap junctions are added randomly to the

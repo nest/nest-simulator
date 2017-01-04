@@ -113,7 +113,7 @@
 
    References:
    [1] S Hill and G Tononi (2005). J Neurophysiol 93:1671-1698.
-   [2] M Vargas-Caballero HPC Robinson (2003). J Neurophysiol 89:2778–2783.
+   [2] M Vargas-Caballero HPC Robinson (2003). J Neurophysiol 89:2778-2783.
 
    SeeAlso: ht_synapse
 */

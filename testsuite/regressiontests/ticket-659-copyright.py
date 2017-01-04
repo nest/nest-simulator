@@ -106,7 +106,7 @@ for dirpath, _, fnames in os.walk(source_dir):
                 for exclude_file in exclude_files]):
             continue
 
-        with open(tested_file) as source_file:
+        with open(tested_file, encoding='utf-8') as source_file:
             total_files += 1
             for template_line in template_contents[extension]:
                 try:

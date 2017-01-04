@@ -47,7 +47,7 @@ By default, source GID, target GID, time and weight of each spike is recorded.
 
 In order to record only from a subset of connected synapses, the
 weight_recorder accepts the parameters 'senders' and 'targets', with which the
-recorded data is limited to the synapses with the correspondig source or target
+recorded data is limited to the synapses with the corresponding source or target
 gid.
 
 The weight recorder can also record weights with full precision

@@ -352,8 +352,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
 
 
 @check_stack
-@deprecated('', 'DataConnect is deprecated and will be removed in NEST3. Use \
-Connect() with one_to_one rule instead.')
+@deprecated('', 'DataConnect is deprecated and will be removed in NEST 3.0.\
+Use Connect() with one_to_one rule instead.')
 def DataConnect(pre, params=None, model="static_synapse"):
     """Connect neurons from lists of connection data.
 

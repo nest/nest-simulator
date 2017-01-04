@@ -36,6 +36,9 @@
 
 #include "modelsmodule.h"
 
+// Includes from nestkernel
+#include "genericmodel_impl.h"
+
 // Generated includes:
 #include "config.h"
 
@@ -173,7 +176,9 @@ ModelsModule::commandstring( void ) const
 void
 ModelsModule::init( SLIInterpreter* )
 {
-  kernel().model_manager.register_node_model< iaf_neuron >( "iaf_neuron" );
+  kernel().model_manager.register_node_model< iaf_neuron >( "iaf_neuron",
+    /* private_model */ false,
+    /* deprecation_info */ "NEST 3.0" );
   kernel().model_manager.register_node_model< iaf_chs_2007 >( "iaf_chs_2007" );
   kernel().model_manager.register_node_model< iaf_psc_alpha >(
     "iaf_psc_alpha" );
@@ -353,7 +358,9 @@ ModelsModule::init( SLIInterpreter* )
 
   // This version of the AdEx model does not depend on GSL.
   kernel().model_manager.register_node_model< aeif_cond_alpha_RK5 >(
-    "aeif_cond_alpha_RK5" );
+    "aeif_cond_alpha_RK5",
+    /*private_model*/ false,
+    /*deprecation_info*/ "NEST 3.0" );
 
 #ifdef HAVE_MUSIC
   //// proxies for inter-application communication using MUSIC

@@ -28,8 +28,8 @@ weight = 20.0
 delay = 1.0
 stim = 1000.0
 
-neuron1 = nest.Create("iaf_neuron")
-neuron2 = nest.Create("iaf_neuron")
+neuron1 = nest.Create("iaf_psc_alpha")
+neuron2 = nest.Create("iaf_psc_alpha")
 voltmeter = nest.Create("voltmeter")
 
 nest.SetStatus(neuron1, {"I_e": stim})

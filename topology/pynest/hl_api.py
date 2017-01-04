@@ -64,6 +64,7 @@ using the same dictionary to specify both connections.
 """
 
 import nest
+import nest.lib.hl_api_helper as hlh
 
 
 def topology_func(slifunc, *args):
@@ -626,6 +627,14 @@ def CreateLayer(specs):
         specs = (specs, )
     elif not all(isinstance(spec, dict) for spec in specs):
         raise TypeError("specs must be a dictionary or a list of dictionaries")
+
+    for dicts in specs:
+        elements = dicts['elements']
+        if isinstance(elements, list):
+            for elem in elements:
+                hlh.model_deprecation_warning(elem)
+        else:
+            hlh.model_deprecation_warning(elements)
 
     return topology_func('{ CreateLayer } Map', specs)
 
@@ -1610,11 +1619,20 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     if len(tgt_layer) != 1:
         raise nest.NESTError("tgt_layer must be a one-element list")
 
+    # Turn off deprecation warning on Python and SLI level as users
+    # shouldn't change implementation of GetTargetNodes, it is done by the
+    # developers.
+    deprecation_bool, verbosity_level = nest.turn_off_deprecation_warning(
+        'GetLeaves')
+
     # obtain local nodes in target layer, to pass to GetConnections
     tgt_nodes = nest.GetLeaves(tgt_layer,
                                properties={
                                    'model': tgt_model} if tgt_model else None,
                                local_only=True)[0]
+    # Need to reset the deprecation warning to its old value
+    nest.turn_on_deprecation_warning('GetLeaves', deprecation_bool,
+                                     verbosity_level)
 
     conns = nest.GetConnections(sources, tgt_nodes, synapse_model=syn_model)
 
@@ -1786,8 +1804,16 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         xext, yext = ext
         xctr, yctr = nest.GetStatus(layer, 'topology')[0]['center']
 
+        # Turn off deprecation warning on Python and SLI level as users
+        # shouldn't change implementation of PlotLayer, it is done by the
+        # developers.
+        deprecation_bool, verbosity_level = nest.turn_off_deprecation_warning(
+            'GetChildren')
         # extract position information, transpose to list of x and y positions
         xpos, ypos = zip(*GetPosition(nest.GetChildren(layer)[0]))
+        # Need to reset the deprecation warning to its old value
+        nest.turn_on_deprecation_warning('GetCildren', deprecation_bool,
+                                         verbosity_level)
 
         if fig is None:
             fig = plt.figure()
@@ -1803,8 +1829,16 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         # 3D layer
         from mpl_toolkits.mplot3d import Axes3D
 
+        # Turn off deprecation warning on Python and SLI level as users
+        # shouldn't change implementation of PlotLayer, it is done by the
+        # developers.
+        deprecation_bool, verbosity_level = nest.turn_off_deprecation_warning(
+            'GetChildren')
         # extract position information, transpose to list of x,y,z positions
         pos = zip(*GetPosition(nest.GetChildren(layer)[0]))
+        # Need to reset the deprecation warning to its old value
+        nest.turn_on_deprecation_warning('GetChildren', deprecation_bool,
+                                         verbosity_level)
 
         if fig is None:
             fig = plt.figure()

@@ -1614,11 +1614,12 @@ NestModule::init( SLIInterpreter* i )
   GIDCollectionType.setdefaultaction( SLIInterpreter::datatypefunction );
 
   // register interface functions with interpreter
-  i->createcommand( "ChangeSubnet", &changesubnet_ifunction );
-  i->createcommand( "CurrentSubnet", &currentsubnetfunction );
-  i->createcommand( "GetNodes_i_D_b_b", &getnodes_i_D_b_bfunction );
-  i->createcommand( "GetLeaves_i_D_b", &getleaves_i_D_bfunction );
-  i->createcommand( "GetChildren_i_D_b", &getchildren_i_D_bfunction );
+  i->createcommand( "ChangeSubnet", &changesubnet_ifunction, "NEST 3.0" );
+  i->createcommand( "CurrentSubnet", &currentsubnetfunction, "NEST 3.0" );
+  i->createcommand( "GetNodes_i_D_b_b", &getnodes_i_D_b_bfunction, "NEST 3.0" );
+  i->createcommand( "GetLeaves_i_D_b", &getleaves_i_D_bfunction, "NEST 3.0" );
+  i->createcommand(
+    "GetChildren_i_D_b", &getchildren_i_D_bfunction, "NEST 3.0" );
 
   i->createcommand( "RestoreNodes_a", &restorenodes_afunction );
 
@@ -1643,8 +1644,9 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
 
-  i->createcommand( "DataConnect_i_D_s", &dataconnect_i_D_sfunction );
-  i->createcommand( "DataConnect_a", &dataconnect_afunction );
+  i->createcommand(
+    "DataConnect_i_D_s", &dataconnect_i_D_sfunction, "NEST 3.0" );
+  i->createcommand( "DataConnect_a", &dataconnect_afunction, "NEST 3.0" );
 
   i->createcommand( "ResetNetwork", &resetnetworkfunction );
   i->createcommand( "ResetKernel", &resetkernelfunction );

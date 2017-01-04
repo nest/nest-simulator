@@ -556,9 +556,8 @@ nest::SimulationManager::prepare_simulation_()
     // Check if any MPI process uses waveform relaxation and set
     // kernel().node_manager.any_node_uses_wfr() correspondingly
     // across all MPI processes
-    kernel().node_manager.set_any_node_uses_wfr(
-      kernel().mpi_manager.wfr_synchrony(
-        kernel().node_manager.any_node_uses_wfr() ) );
+    kernel().node_manager.set_any_node_uses_wfr( kernel().mpi_manager.any_true(
+      kernel().node_manager.any_node_uses_wfr() ) );
   }
 
   // we have to do enter_runtime after prepre_nodes, since we use

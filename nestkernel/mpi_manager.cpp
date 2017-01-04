@@ -713,22 +713,23 @@ nest::MPIManager::grng_synchrony( unsigned long process_rnd_number )
   return true;
 }
 
-// wfr_synchrony: called at the beginning of each simulate
+// any_true: takes a single bool, exchanges with all other processes,
+// and returns "true" if one or more processes provide "true"
 bool
-nest::MPIManager::wfr_synchrony( bool any_node_uses_wfr )
+nest::MPIManager::any_true( bool my_bool )
 {
-  int uses_wfr = 0;
-  if ( any_node_uses_wfr )
-    uses_wfr = 1;
+  int my_int = 0;
+  if ( my_bool )
+    my_int = 1;
 
   if ( get_num_processes() > 1 )
   {
-    std::vector< int > wfr( get_num_processes() );
-    MPI_Allgather( &uses_wfr, 1, MPI_INT, &wfr[ 0 ], 1, MPI_INT, comm );
-    // check if any MPI process uses wfr
-    for ( unsigned int i = 0; i < wfr.size(); ++i )
+    std::vector< int > all_int( get_num_processes() );
+    MPI_Allgather( &my_int, 1, MPI_INT, &all_int[ 0 ], 1, MPI_INT, comm );
+    // check if any MPI process sent a "true"
+    for ( unsigned int i = 0; i < all_int.size(); ++i )
     {
-      if ( wfr[ i ] == 1 )
+      if ( all_int[ i ] == 1 )
       {
         return true;
       }

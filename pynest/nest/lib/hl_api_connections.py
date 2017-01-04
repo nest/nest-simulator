@@ -205,10 +205,10 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     any distribution-specific parameters (e.g. 'mu' and 'sigma').
 
     To see all available distributions, run:
-    nest.slirun(’rdevdict info’)
+    nest.slirun('rdevdict info')
 
     To get information on a particular distribution, e.g. 'binomial', run:
-    nest.help(’rdevdict::binomial’)
+    nest.help('rdevdict::binomial')
 
     Most common available distributions and associated parameters
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

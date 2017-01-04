@@ -70,7 +70,7 @@
        in computational neuroscience, 3(November), 27.
        doi:10.3389/neuro.10.027.2009
    [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers.
-       Neural networks, 15(2), 155–61.
+       Neural networks, 15(2), 155-61.
 
   Transmits: SpikeEvent
 

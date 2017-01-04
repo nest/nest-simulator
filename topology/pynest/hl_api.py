@@ -573,7 +573,7 @@ def CreateLayer(specs):
         Explicit specification of the positions of all elements.
         The coordinates have a length 2 or 3 dependent on the number of
         dimensions.
-        All element positions must be within the layer’s extent.
+        All element positions must be within the layer's extent.
         Mutually exclusive with 'rows' and 'columns'.
     rows : int, obligatory for grid-based layers
         Number of rows.

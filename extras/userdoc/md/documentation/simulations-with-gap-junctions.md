@@ -3,7 +3,7 @@
 **Note:** This documentation describes the usage of gap junctions in NEST 2.12.
 A documentation for NEST 2.10 can be found in
 [Hahne et al. 2016](http://link.springer.com/chapter/10.1007/978-3-319-50862-7_4).
-It is however recommended to use NEST 2.12 (or higher), 
+It is however recommended to use NEST 2.12 (or later), 
 due to several improvements in terms of usability. 
 
 ## Introduction
@@ -13,18 +13,7 @@ The synapse model to create a gap-junction connection is named `gap_junction`.
 Unlike chemical synapses gap junctions are bidirectional connections. 
 In order to create **one** accurate gap-junction connection 
 **two** NEST connections are required:
-
-```python
-import nest
-
-a = nest.Create('hh_psc_alpha_gap')
-b = nest.Create('hh_psc_alpha_gap')
-# Create gap junction between neurons a and b
-nest.Connect(a, b, {'rule': 'one_to_one'}, {'model': 'gap_junction', 'weight': 0.5})
-nest.Connect(b, a, {'rule': 'one_to_one'}, {'model': 'gap_junction', 'weight': 0.5})
-```
-
-Thus for each created connection a second connection with the exact same parameters 
+For each created connection a second connection with the exact same parameters 
 in the opposite direction is required.
 NEST provides the possibility to create both connections with a single call to `nest.Connect`
 via the `make_symmetric` flag (default value: `False`) of the connection dictionary:
@@ -44,9 +33,6 @@ is restricted to
 
 - `one_to_one` connections with `'make_symmetric': True`
 - `all_to_all` connections with equal source and target populations and default or scalar parameters 
-
-Accordingly the first script is only for demonstrative purposes and will result in an 
-error when executed with NEST 2.12.
 
 ## Create random connections
 

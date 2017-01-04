@@ -23,6 +23,10 @@ import os
 import sys
 import re
 
+# Use encoding-aware Py3 open also in Py2
+if sys.version_info[0] < 3:
+    from io import open
+    
 EXIT_SUCCESS = 0
 EXIT_BAD_HEADER = 20
 EXIT_NO_SOURCE = 126

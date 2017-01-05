@@ -59,10 +59,10 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
     hlplist = []
     name = ''
 
-    for key, value in doc_dic.iteritems():
+    for key, value in doc_dic.items():
         if key == "Name":
             name = value.strip()
-    for key, value in doc_dic.iteritems():
+    for key, value in doc_dic.items():
         if key == "FullName":
             fullname = value.strip("###### ######")
             fullname = re.sub("(######)", " <br/> ", fullname)
@@ -78,7 +78,7 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
     # sorting linked keywords
     for word in keywords:
         word = word.strip(':')
-        for key, value in doc_dic.iteritems():
+        for key, value in doc_dic.items():
             if key == word:
                 if (key != "Name" and key != "FullName" and
                         key != "SeeAlso" and key != "File"):
@@ -99,7 +99,7 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
                     hlpcontent = ('%s:\n\n%s\n\n' % (key, dedented_text))
                     hlplist.append(hlpcontent)
 
-    for key, value in doc_dic.iteritems():
+    for key, value in doc_dic.items():
         if key == "SeeAlso":
             htmllist.append('<b>%s: </b>' % key)
             hlplist.append('%s:\n' % key)
@@ -118,7 +118,7 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
             hlplist.append('')
             htmllist.append('</ul>')
 
-    for key, value in doc_dic.iteritems():
+    for key, value in doc_dic.items():
         if key == "File":
             value = value.strip("###### ###### $$")
             htmllist.append('<b>Source:</b><pre>%s</pre>' % value)

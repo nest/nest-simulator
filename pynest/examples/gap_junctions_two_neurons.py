@@ -20,6 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+Gap Junctions: Two neurons example
+------------------
 This is a simple example of two hh_psc_alpha_gap neurons connected
 by a gap-junction. Please note that gap junctions are two-way connections:
 In order to create an accurate gap-junction connection between two
@@ -55,14 +57,13 @@ nest.SetStatus([neuron[0]], {'V_m': -10.})
 nest.Connect(vm, neuron, 'all_to_all')
 
 """
-Use 'all_to_all' to connect neurons.
-This is equivalent to:
-nest.Connect([neuron[0]],[neuron[1]],
-             {'rule': 'one_to_one', 'make_symmetric': True},
-             {'model': 'gap_junction', 'weight': 0.5})
+Use the 'make_symmetric' flag to connect
+neuron[0] -> neuron[1] and neuron[1] -> neuron[0]
+with a single call to nest.Connect in order to create
+an accurate gap junction between both neurons
 """
-nest.Connect(neuron, neuron,
-             {'rule': 'all_to_all', 'autapses': False},
+nest.Connect([neuron[0]], [neuron[1]],
+             {'rule': 'one_to_one', 'make_symmetric': True},
              {'model': 'gap_junction', 'weight': 0.5})
 
 nest.Simulate(351.)

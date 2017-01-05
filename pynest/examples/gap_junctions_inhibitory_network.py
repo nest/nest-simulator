@@ -20,6 +20,8 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
+Gap Junctions: Inhibitory network example
+------------------
 This is the inhibitory network used as test case 2 (see figure 9 and 10) in
 
     Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
@@ -54,9 +56,8 @@ threads = 8
 stepsize = 0.05
 simtime = 501.
 
-"""
-Set gap weight here
-"""
+
+#Set gap weight here
 gap_weight = 0.32
 
 random.seed(1)

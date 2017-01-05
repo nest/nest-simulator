@@ -79,7 +79,7 @@
 Håkon Enger\\[1ex]
 \normalsize Department of Mathematical Sciences and Technology\\\normalsize Norwegian University of Life Sciences\\
 \normalsize 1432 Ås, Norway}
-\date{NEST 2.2, 2.4, and 2.6 (r9977 or later)\\[8cm]
+\date{NEST 2.12\\[8cm]
 \centerline{\includegraphics{nest-initiative.pdf}}}
 
 
@@ -92,22 +92,22 @@ Håkon Enger\\[1ex]
   Topology Module for the NEST Neural Simulation Tool.
 
   Rüdiger Kupper wrote a first topology library for NEST many years
-  ago entirly in SLI (actually, it pre-dates the NEST kernel).  Kittel
+  ago entirely in SLI (actually, it pre-dates the NEST kernel).  Kittel
   Austvoll and Hans Ekkehard Plesser designed and wrote a completely
   new Topology library in 2007/8. That library has been available with
-  the NEST 1.9.x pre-releases since.
+  the NEST~1.9.x pre-releases since.
 
-  For NEST 2.0, Håkon Enger and Hans Ekkehard Plesser re-factored
+  For NEST~2.0, Håkon Enger and Hans Ekkehard Plesser re-factored
   parts of the Topology library code, improved and extended the PyNEST
   interface for the Topology library, fixed bugs and added tests.
 
-  For NEST 2.2, Håkon Enger rewrote most of the Topology library code,
+  For NEST~2.2, Håkon Enger rewrote most of the Topology library code,
   thereby improving performance considerably.
 
-  This User Manual describes the NEST 2.2 and 2.4 versions of the NEST Topology
-  Library. Please see Chapter~\ref{sec:changes} for a summary of
-  changes to 2.2. There are no changes in Topology from 2.2 to 2.4. In
-  NEST 2.6, Topology functions check their arguments more carefully.
+  This User Manual describes the NEST~2.12 version of the NEST Topology
+  Library. There have been no major changes to the Topology library since 
+  NEST~2.2, although Topology functions check their arguments more carefully
+  since NEST~2.6.
 
   We plan further improvements to the Topology Module in the future, 
   which may include changes to the API to remove some of the remaining
@@ -138,11 +138,9 @@ reference manual. Please consult the online documentation in PyNEST
 for details; where appropriate, that documentation also points to
 relevant SLI documentation.
 
-This manual describes the Topology Module included with NEST~2.2 and~2.4, code
-revision 9977 or later.  This version differs from older ones in some
-important aspects as detailed in Section~\ref{sec:changes}. In our
-experience, though, most scripts using the Topology Module can be
-ported to the new version with minimal changes.
+This manual describes the Topology Module included with NEST~2.12;
+the user interface and behavior of the module has not changed 
+significantly since NEST~2.2.
 
 In the next chapter of this manual, we introduce Topology layers,
 which place neurons in space. In Chapter~\ref{sec:connections} we then
@@ -208,7 +206,7 @@ properties:
 \item The \lstinline!'elements'! entry of the dictionary passed to
   \lstinline!CreateLayer! determines the
   \emph{elements}\index{element} of the layer. In this case, the layer
-  contains \lstinline!iaf_neuron!s.
+  contains \lstinline!iaf_psc_alpha! neurons.
 \item The \emph{center}\index{center} of the layer is at the origin of
   the coordinate system, $(0,0)$. 
 \item The \emph{extent}\index{extent} or size of the layer is $1\times
@@ -238,12 +236,6 @@ in x- and y-direction.
   conventions, indices run from 0. 
 \end{itemize}
 
-\textbf{Note}: The \textbf{definition of the extent has changed} from
-NEST~1.9 to NEST~2.0. In NEST~1.9, the outermost elements of the layer
-were placed on the limits of the extent. When working with periodic
-boundary conditions (see Sec.~\ref{sec:periodic}), Topology then
-silently padded the layer with half a grid spacing on all sides, to
-ensure that nodes at opposite edges did not coincide.
 
 \subsection{Setting the extent}\label{sec:setextent}
 
@@ -311,7 +303,7 @@ the circle the center of the layer.}
 \emph{Free layers}\index{free layer} do not restrict node positions to
 a grid, but allow free placement within the extent. To this end, the
 user needs to specify the positions of all nodes explicitly. The
-following code creates a layer of 50 \lstinline!iaf_neurons! uniformly
+following code creates a layer of 50 \lstinline!iaf_psc_alpha! neurons uniformly
 distributed in a layer with extent $1\times 1$, i.e., spanning the
 square $[-0.5,0.5]\times[-0.5,0.5]$:
 %
@@ -432,7 +424,8 @@ The \lstinline!'topology'! entry is read-only.
 \lstinputlisting[linerange=layer1p.log-end.log]{user_manual_scripts/layers.log}
 %
 The $5\times 5$ layer created above appears here as a
-\lstinline!topology_layer_grid! subnet of 25 \lstinline!iaf_neuron!s.
+\lstinline!topology_layer_grid! subnet of 25 \lstinline!iaf_psc_alpha!
+neurons.
 Only Topology connection and visualization functions heed the spatial
 structure of the layer.
 \end{itemize}
@@ -500,8 +493,8 @@ spanning $0.5^\circ\times 0.5^\circ$ of visual space. Neurons within each
 microcolumn are organized into L2/3, L4, and L56
 subpopulations. Each subpopulation consists of three pyramidal cells
 and one interneuron. All pyramidal cells are modeled as NEST
-\lstinline!iaf_neuron!s with default parameter values, while
-interneurons are \lstinline!iaf_neuron!s with threshold voltage
+\lstinline!iaf_psc_alpha! neurons with default parameter values, while
+interneurons are \lstinline!iaf_psc_alpha! neurons with threshold voltage
 $V_{\text{th}}=-52$mV. 
 \end{quote}
 How should you implement such a network using the Topology module?
@@ -880,6 +873,13 @@ $p \in [\text{min},\text{max})$ lognormal with given $\mu$ and $\sigma$ \\
 \label{tab:kernels}
 \end{table}
 
+\scriptfig{conn4}{0.9}{Kernel functions}%
+{Illustration of various kernel functions. Top left: constant kernel,
+  $p=0.5$. Top center: Gaussian kernel, green dashed lines show
+  $\sigma$, $2\sigma$, $3\sigma$. Top right: Same Gaussian kernel
+  anchored at $(1.5,1.5)$. Bottom left: Same Gaussian kernel, but all
+  $p<0.5$ treated as $p=0$. Bottom center: 2D-Gaussian.}
+
 Several examples follow. They are illustrated in Fig.~\ref{fig:conn4}.
 \begin{description}
 \item[Constant\index{constant kernel}] The simplest kernel is a fixed connection
@@ -903,12 +903,6 @@ containing the parameters for the Gaussian.
   displacement, not only on distance:
 \lstinputlisting[linerange=conn42d-end]{user_manual_scripts/connections.py} 
 \end{description}
-\scriptfig{conn4}{0.9}{Kernel functions}%
-{Illustration of various kernel functions. Top left: constant kernel,
-  $p=0.5$. Top center: Gaussian kernel, green dashed lines show
-  $\sigma$, $2\sigma$, $3\sigma$. Top right: Same Gaussian kernel
-  anchored at $(1.5,1.5)$. Bottom left: Same Gaussian kernel, but all
-  $p<0.5$ treated as $p=0$. Bottom center: 2D-Gaussian.}
 Note that for pool layers with periodic boundary conditions, Topology
 always uses the shortest possible displacement vector from driver
 to pool neuron as argument to the kernel function.
@@ -990,21 +984,6 @@ with long-range interactions, periodic boundary conditions may not
 make sense. In general, we recommend to use periodic boundary
 conditions only when connection masks are significantly smaller than
 the layers they are applied to.
-
-\emph{Important changes upon NEST 2.0}: 
-\begin{itemize}
-\item Prior to NEST~2.0, oversized
-masks were not prohibited by default and you may have created networks
-with oversized masks by accident. You will now get a NEST error
-message in this case. You can force Topology to accept oversized
-masks\index{oversized mask}
-by adding \lstinline!'allow_oversized_mask': True! to the connection
-dictionary. Be sure to inspect the results, e.g., using
-\lstinline!DumpLayerConnections!.
-\item Distance- and displacement-dependent kernel, weight and delay
-  functions did not handle periodic boundary conditions correctly
-  prior to NEST~2.0.
-\end{itemize}
 
 
 \section{Prescribed number of connections}\label{sec:prescribed_numbers}
@@ -1337,7 +1316,7 @@ available to be used in connections, e.g.
 \begin{lstlisting}
 nest.Install('mymodule')
 l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [1.,1.],
-                        'elements': 'iaf_neuron'})
+                        'elements': 'iaf_psc_alpha'})
 tp.ConnectLayers(l,l,{'connection_type': 'convergent',
             'mask': {'circular': {'radius': 0.5}},
             'kernel': {'affine2d': {'a': 1.0, 'b': 2.0, 'c': 0.5}}})
@@ -1422,7 +1401,7 @@ in connections, e.g.
 \begin{lstlisting}
 nest.Install('mymodule')
 l = tp.CreateLayer({'rows': 11, 'columns': 11, 'extent': [1.,1.],
-                        'elements': 'iaf_neuron'})
+                        'elements': 'iaf_psc_alpha'})
 tp.ConnectLayers(l,l,{'connection_type': 'convergent',
             'mask': {'elliptic': {'r_x': 0.5, 'r_y': 0.25}}})
 \end{lstlisting}
@@ -1488,6 +1467,8 @@ Topology Module from the 1.9-xxxx to the 2.0 version.
   are applied to are now prohibited by default. This avoids multiple
   connections when masks overwrap.
 \end{itemize}
+
+
 
 \bibliographystyle{plainnat}
 \bibliography{../../extras/bibliography/nest.bib}

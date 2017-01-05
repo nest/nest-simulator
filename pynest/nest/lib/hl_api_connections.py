@@ -28,7 +28,7 @@ from .hl_api_nodes import Create
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_subnets import GetChildren
-import hl_api_helper as hlh
+#import hl_api_helper as hlh
 import numpy
 
 

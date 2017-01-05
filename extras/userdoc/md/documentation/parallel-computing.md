@@ -83,21 +83,24 @@ parameter of a node using `SetStatus`.
 
 ### Spike exchange and synapse updates
 
-For spikes between neurons, spikes are always exchanged through the global 
-spike exchange mechanism and it is then the thread responsible for the target 
-neuron that updates the synapse and delivers the spike.
+Spike exchange in NEST takes different routes depending on the type of the 
+sending and receiving node. There are two distinct cases.
 
-For connections involving devices, either spike generators or detectors, 
-things are a bit different. Here, each device is replicated (cloned) on each 
-thread. Thus, spikes from, e.g., a spike_generator, are delivered by the clone
-for a given thread and these spikes are delivered locally, bypassing the gobal 
-exchange mechanism. In this case, pre- and postsynaptic node (sender and 
-target) are handled by the same thread. Similarly, when a neuron emits a spike,
-the spike is locally transmitted to the clone of the spike_detector belonging 
-to the same thread as the neuron.
+Spikes between neurons are always exchanged through the global spike exchange 
+mechanism. Neuron update and spike generation in the source neuron and spike 
+delivery to the target neuron may be handled by different virtual process in 
+this case. Spike delivery is always handled by the virtual process to which 
+the *target* neuron is assigned (see property `vp` in the status dictionary).
 
-Thus, it is always the thread of the target of a connection that is 
-responsible for the synapse.
+Spike exchange to or from neurons over connections that either originate or 
+terminate at a device (e.g., `spike_generator -> neuron` or `neuron -> spike_detector)
+differs in that it bypasses the global spike exchange mechanism. Instead, 
+spikes are delivered locally within the virtual process from or to a replica 
+of the device. In this case, both the pre- and postsynaptic nodes are handled 
+by the virtual process to which the neuron is assigned.
+
+For synapse models supporting plasticity, synapse dynamics in the `Connection` 
+object are always handled by the virtual process of the target node.
 
 ## Using multiple threads
 

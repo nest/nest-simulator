@@ -184,8 +184,8 @@ def GetNodes(subnets, properties=None, local_only=False):
 
 
 @check_stack
-@deprecated('', 'GetChilden is deprecated and will be removed in NEST 3.0. Use \
-GIDCollection instead.')
+@deprecated('',
+            'GetChilden is deprecated and will be removed in NEST 3.0. Use GIDCollection instead.')  # noqa
 def GetChildren(subnets, properties=None, local_only=False):
     """Return the global ids of the immediate children of the given subnets.
 

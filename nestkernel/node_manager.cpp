@@ -55,7 +55,7 @@ NodeManager::NodeManager()
   , n_gsd_( 0 )
   , nodes_vec_()
   , wfr_nodes_vec_()
-  , any_node_uses_wfr_( false )
+  , wfr_is_used_( false )
   , nodes_vec_network_size_( 0 ) // zero to force update
 {
 }
@@ -675,15 +675,15 @@ NodeManager::ensure_valid_thread_local_ids()
 
       nodes_vec_network_size_ = size();
 
-      any_node_uses_wfr_ = false;
-      // any_node_uses_wfr_ indicates, whether at least one
+      wfr_is_used_ = false;
+      // wfr_is_used_ indicates, whether at least one
       // of the threads has a neuron that uses waveform relaxtion
       // all threads then need to perform a wfr_update
       // step, because gather_events() has to be done in a
       // openmp single section
       for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
         if ( wfr_nodes_vec_[ t ].size() > 0 )
-          any_node_uses_wfr_ = true;
+          wfr_is_used_ = true;
     }
 #ifdef _OPENMP
   } // end of omp critical region
@@ -843,9 +843,9 @@ NodeManager::finalize_nodes()
 }
 
 void
-NodeManager::set_any_node_uses_wfr( bool uses_wfr )
+NodeManager::check_wfr_use( void )
 {
-  any_node_uses_wfr_ = uses_wfr;
+  wfr_is_used_ = kernel().mpi_manager.any_true( wfr_is_used_ );
 }
 
 void

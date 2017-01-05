@@ -718,23 +718,24 @@ nest::MPIManager::grng_synchrony( unsigned long process_rnd_number )
 bool
 nest::MPIManager::any_true( bool my_bool )
 {
+  if ( get_num_processes() == 1 )
+    return my_bool;
+
   int my_int = 0;
   if ( my_bool )
     my_int = 1;
 
-  if ( get_num_processes() > 1 )
+  std::vector< int > all_int( get_num_processes() );
+  MPI_Allgather( &my_int, 1, MPI_INT, &all_int[ 0 ], 1, MPI_INT, comm );
+  // check if any MPI process sent a "true"
+  for ( unsigned int i = 0; i < all_int.size(); ++i )
   {
-    std::vector< int > all_int( get_num_processes() );
-    MPI_Allgather( &my_int, 1, MPI_INT, &all_int[ 0 ], 1, MPI_INT, comm );
-    // check if any MPI process sent a "true"
-    for ( unsigned int i = 0; i < all_int.size(); ++i )
+    if ( all_int[ i ] == 1 )
     {
-      if ( all_int[ i ] == 1 )
-      {
-        return true;
-      }
+      return true;
     }
   }
+
   return false;
 }
 

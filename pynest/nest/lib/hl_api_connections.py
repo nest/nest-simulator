@@ -28,7 +28,6 @@ from .hl_api_nodes import Create
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_subnets import GetChildren
-import hl_api_helper as hlh
 import numpy
 
 
@@ -453,15 +452,15 @@ def _is_subnet_instance(gids):
     """
 
     try:
-        # Turn off _deprecation_warning as users shouldn't change
-        # implementation of this function, it is done by the developers
-        deprecation_bool = hlh._deprecation_warning['GetChildren']
-        hlh._deprecation_warning['GetChildren'] = False
+        # Turn off deprecation warning to avoid confusing users with
+        # internals.
+        #deprecation_status = suppress_deprecation_warning('GetChildren')
 
-        GetChildren(gids)
+        with SuppressedDeprecationWarning(['GetChildren']):
+            GetChildren(gids)
 
         # Need to reset the deprecation warning to its old value
-        hlh._deprecation_warning['GetChildren'] = deprecation_bool
+        #restore_deprecation_warning('GetChildren', deprecation_status)
         return True
     except kernel.NESTError:
         return False

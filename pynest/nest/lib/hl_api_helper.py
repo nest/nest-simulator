@@ -24,8 +24,6 @@ These are helper functions to ease the definition of the high-level
 API of the PyNEST wrapper.
 """
 
-
-import nest
 import warnings
 import inspect
 import functools
@@ -402,6 +400,38 @@ def broadcast(item, length, allowed_types, name="item"):
     return item
 
 
+@check_stack
+def get_verbosity():
+    """Return verbosity level of NEST's messages.
+
+    Returns
+    -------
+    int:
+        The current verbosity level
+    """
+
+    # Defined in hl_api_helper to avoid circular inclusion problem with
+    # hl_api_info.py
+    sr('verbosity')
+    return spp()
+
+
+@check_stack
+def set_verbosity(level):
+    """Change verbosity level for NEST's messages.
+
+    Parameters
+    ----------
+    level : str
+        Can be one of 'M_FATAL', 'M_ERROR', 'M_WARNING', 'M_DEPRECATED',
+        'M_INFO' or 'M_ALL'.
+    """
+
+    # Defined in hl_api_helper to avoid circular inclusion problem with
+    # hl_api_info.py
+    sr("%s setverbosity" % level)
+
+
 def model_deprecation_warning(model):
     """Checks whether the model is to be removed in a future verstion of NEST.
     If so, a deprecation warning is issued.
@@ -424,63 +454,43 @@ def model_deprecation_warning(model):
         warnings.warn('\n' + text)
 
 
-def turn_off_deprecation_warning(deprecated_func_name):
-    """Turns off deprecation warnings on SLI and Python level for given
-    function.
+class SuppressedDeprecationWarning(object):
+    """
+    Context manager turning off deprecation warnings for given methods.
 
-    Think thouroughly before use. The function should only be used as a way to
+    Think thoroughly before use. This context should only be used as a way to
     make sure examples do not display deprecation warnings, that is, used in
     functions called from examples, and not as a way to make tedious
     deprecation warnings dissapear.
-
-    NB! Remember to always use turn_on_deprecation_warning(
-    deprecated_func_name, deprecation_bool, verbosity_level) after deprecated
-    function is called, so as to reset the deprecation warnings to their old
-    value.
-
-    Parameters
-    ----------
-    deprecated_func_name: str
-        Name of deprecated function
-
-    Returns
-    -------
-    bool and int:
-        Present deprecation warning status and verbosity level
     """
+    
+    def __init__(self, no_dep_funcs):
+        """
+        Parameters
+        ----------
+        no_dep_funcs: Function name (string) or iterable of function names
+                      for which to suppress deprecation warnings
+        """
+    
+        self._no_dep_funcs = ( no_dep_funcs if not is_string(no_dep_funcs) 
+                               else (no_dep_funcs, ) )
+        self._deprecation_status = {}
+        self._verbosity_level = get_verbosity()
+        
+    def __enter__(self):
 
-    # Need to know the present deprecation warning status so we can reset after
-    # function is called
-    deprecation_bool = _deprecation_warning[deprecated_func_name]
-    _deprecation_warning[deprecated_func_name] = False
-    verbosity_level = nest.get_verbosity()
-    # Verbosity level for deprecation warnings is 18, so if verbosity level is
-    # greater we don't need to turn of deprecation warnings from SLI
-    if verbosity_level <= 18:
-        nest.set_verbosity(20)
+        for func_name in self._no_dep_funcs:
+            self._deprecation_status[func_name] = _deprecation_warning[func_name]
+            _deprecation_warning[func_name] = False
+            
+            # Suppress only if verbosity level is deprecated or lower
+            if self._verbosity_level <= sli_func('M_DEPRECATED'):
+                set_verbosity(sli_func('M_WARNING'))
 
-    return deprecation_bool, verbosity_level
+    def __exit__(self, *args):
 
-
-def turn_on_deprecation_warning(deprecated_func_name, deprecation_bool,
-                                verbosity_level):
-    """Return deprecation warning status back to original value.
-
-    Whenever turn_off_deprecation_warning(deprecated_func_name) is used, this
-    function must be called in order to reset to original status.
-
-    Parameters
-    ----------
-    deprecated_func_name: str
-        Name of deprecated function
-    deprecation_bool: bool
-        Original status of _deprecation_warning[deprecated_func_name]
-    verbosity_level: int
-        Original verbosity level
-    """
-
-    # Need to reset the deprecation warnings to their old value
-    if verbosity_level <= 18:
-        nest.set_verbosity(verbosity_level)
-
-    _deprecation_warning[deprecated_func_name] = deprecation_bool
+        # Reset the verbosity level and deprecation warning status
+        set_verbosity(self._verbosity_level)
+    
+        for func_name, deprec_status in self._deprecation_status.items():
+            _deprecation_warning[func_name] = deprec_status

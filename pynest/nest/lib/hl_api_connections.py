@@ -454,13 +454,8 @@ def _is_subnet_instance(gids):
     try:
         # Turn off deprecation warning to avoid confusing users with
         # internals.
-        # deprecation_status = suppress_deprecation_warning('GetChildren')
-
         with SuppressedDeprecationWarning(['GetChildren']):
             GetChildren(gids)
-
-        # Need to reset the deprecation warning to its old value
-        # restore_deprecation_warning('GetChildren', deprecation_status)
         return True
     except kernel.NESTError:
         return False

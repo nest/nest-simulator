@@ -1250,10 +1250,10 @@ def Displacement(from_arg, to_arg):
                                 'elements'  : 'iaf_neuron'})
 
             # displacement between node 2 and 3
-            print tp.Displacement([2], [3])
+            print(tp.Displacement([2], [3]))
 
             # displacment between the position (0.0., 0.0) and node 2
-            print tp.Displacement([(0.0, 0.0)], [2])
+            print(tp.Displacement([(0.0, 0.0)], [2]))
     """
 
     from_arg, to_arg = _check_displacement_args(from_arg, to_arg,
@@ -1321,10 +1321,10 @@ def Distance(from_arg, to_arg):
                                 'elements'  : 'iaf_neuron'})
 
             # distance between node 2 and 3
-            print tp.Distance([2], [3])
+            print(tp.Distance([2], [3]))
 
             # distance between the position (0.0., 0.0) and node 2
-            print tp.Distance([(0.0, 0.0)], [2])
+            print(tp.Distance([(0.0, 0.0)], [2]))
 
     """
 

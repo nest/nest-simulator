@@ -212,7 +212,7 @@ def write_helpindex(helpdir):
                 hlp_list.append(name + '\t' * (16 - min(c, 60) // 4)
                                 + fullname)
             elif not os.path.isfile(item):
-                print 'WARNING: Checkfile ' + item + ' not exist.'
+                print('WARNING: Checkfile ' + item + ' not exist.')
 
         html_list.append('</table></center>')
         html_list.append('</table></center>')

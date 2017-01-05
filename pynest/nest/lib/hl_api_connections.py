@@ -515,11 +515,11 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
                 "are given")
 
         sli_func('CGConnect', cg, pre[0], post[0],
-                 parameter_map, '/'+model, litconv=True)
+                 parameter_map, '/' + model, litconv=True)
 
     else:
         sli_func('CGConnect', cg, pre, post,
-                 parameter_map, '/'+model, litconv=True)
+                 parameter_map, '/' + model, litconv=True)
 
 
 @check_stack

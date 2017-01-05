@@ -111,6 +111,7 @@ def deprecated(alt_func_name, text=None):
     function:
         Decorator function
     """
+
     def deprecated_decorator(func):
         _deprecation_warning[func.__name__] = True
 
@@ -170,7 +171,6 @@ def is_string(obj):
         True if obj is a unicode string
     """
     return isinstance(obj, uni_str)
-
 
 __debug = False
 
@@ -389,7 +389,7 @@ def broadcast(item, length, allowed_types, name="item"):
     """
 
     if isinstance(item, allowed_types):
-        return length * (item,)
+        return length * (item, )
     elif len(item) == 1:
         return length * item
     elif len(item) != length:
@@ -463,7 +463,7 @@ class SuppressedDeprecationWarning(object):
     functions called from examples, and not as a way to make tedious
     deprecation warnings dissapear.
     """
-    
+
     def __init__(self, no_dep_funcs):
         """
         Parameters
@@ -471,18 +471,18 @@ class SuppressedDeprecationWarning(object):
         no_dep_funcs: Function name (string) or iterable of function names
                       for which to suppress deprecation warnings
         """
-    
-        self._no_dep_funcs = ( no_dep_funcs if not is_string(no_dep_funcs) 
-                               else (no_dep_funcs, ) )
+
+        self._no_dep_funcs = (no_dep_funcs if not is_string(no_dep_funcs)
+                               else (no_dep_funcs, ))
         self._deprecation_status = {}
         self._verbosity_level = get_verbosity()
-        
+
     def __enter__(self):
 
         for func_name in self._no_dep_funcs:
             self._deprecation_status[func_name] = _deprecation_warning[func_name]
             _deprecation_warning[func_name] = False
-            
+
             # Suppress only if verbosity level is deprecated or lower
             if self._verbosity_level <= sli_func('M_DEPRECATED'):
                 set_verbosity(sli_func('M_WARNING'))
@@ -491,6 +491,6 @@ class SuppressedDeprecationWarning(object):
 
         # Reset the verbosity level and deprecation warning status
         set_verbosity(self._verbosity_level)
-    
+
         for func_name, deprec_status in self._deprecation_status.items():
             _deprecation_warning[func_name] = deprec_status

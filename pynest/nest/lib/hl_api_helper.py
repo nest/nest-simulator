@@ -473,14 +473,14 @@ class SuppressedDeprecationWarning(object):
         """
 
         self._no_dep_funcs = (no_dep_funcs if not is_string(no_dep_funcs)
-                               else (no_dep_funcs, ))
+                              else (no_dep_funcs, ))
         self._deprecation_status = {}
         self._verbosity_level = get_verbosity()
 
     def __enter__(self):
 
         for func_name in self._no_dep_funcs:
-            self._deprecation_status[func_name] = _deprecation_warning[func_name]
+            self._deprecation_status[func_name] = _deprecation_warning[func_name]  # noqa
             _deprecation_warning[func_name] = False
 
             # Suppress only if verbosity level is deprecated or lower

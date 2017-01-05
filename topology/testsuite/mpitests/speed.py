@@ -67,6 +67,6 @@ nest.sli_run('SyncProcesses')  # make sure all are done dumping
 #    os.system('rm *.cnn_tmp')
 
 print("Rank {}: {} connections".format(nest.Rank(),
-                                       nest.GetKernelStatus('num_connections')))
+                                       nest.GetKernelStatus('num_connections')))  # noqa
 
 # directories for any number of MPI processes should now be diff-able

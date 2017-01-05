@@ -80,8 +80,8 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
         word = word.strip(':')
         for key, value in doc_dic.iteritems():
             if key == word:
-                if (key != "Name" and key != "FullName" and key != "SeeAlso"
-                   and key != "File"):
+                if (key != "Name" and key != "FullName" and
+                        key != "SeeAlso" and key != "File"):
                     value = re.sub("(######)", " <br/> ", value)
                     # value = re.sub("(\~\~)", '  ', value)
                     value = re.sub("(\~\~\~)", '\t', value)
@@ -209,8 +209,8 @@ def write_helpindex(helpdir):
 
                 # Better Format for the index.hlp
                 c = len(name)
-                hlp_list.append(name + '\t' * (16 - min(c, 60) // 4)
-                                + fullname)
+                hlp_list.append(name + '\t' * (16 - min(c, 60) // 4) +
+                                fullname)
             elif not os.path.isfile(item):
                 print('WARNING: Checkfile ' + item + ' not exist.')
 

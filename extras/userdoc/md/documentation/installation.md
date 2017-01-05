@@ -3,88 +3,80 @@
 These installation instructions are for NEST 2.12 and later as well as the
 most recent version obtained from [Github](https://github.com/nest/nest-simulator). 
 Installation instructions for NEST 2.10 and earlier are provided 
-[below](installation.md#instructions-for-nest-2.10-and-earlier).
+[below](#instructions-for-nest-2.10-and-earlier).
 
 ## Introduction
 
 NEST compiles and runs on most Unix-like operating systems. 
 The installation instructions here should work on recent versions of Ubuntu or 
 Debian, while additional instructions for 
-[OSX/macOS are given below](installation.md#macos). 
-For more generic installation instructions, `INSTALL` file in the top source
-directory. For using NEST on Microsoft Windows, see [below](installation.md#windows).
+[OS X/macOS are given below](#macos). 
+For more generic installation instructions, see the `INSTALL` file in the top source
+directory. For using NEST on Microsoft Windows, see [below](#windows).
 
 Following are the basic steps to compile and install NEST from source code:
 
 1.  [Download NEST](download.md)
-
-2.  Unpack the tarball: `tar -xzvf nest-x.y.z.tar.gz`
-
-3.  Create a build directory: `mkdir nest-x.y.z-build`
-
-4.  Change to the build directory: `cd nest-x.y.z-build`
-
-5.  Configure NEST: `cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>` with
+1.  Unpack the tarball: `tar -xzvf nest-x.y.z.tar.gz`
+1.  Create a build directory: `mkdir nest-x.y.z-build`
+1.  Change to the build directory: `cd nest-x.y.z-build`
+1.  Configure NEST: `cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>` with
 additional `cmake` options as needed (see `INSTALL` file)
-
-6.  Compile by running `make `
-
-7.  Install by running `make install`
-
-8.  Run tests by running `make installcheck
-
-8.  See the [Getting started](getting-started.md) pages to
+1.  Compile by running `make`
+1.  Install by running `make install`
+1.  Run tests by running `make installcheck`
+1.  See the [Getting started](getting-started.md) pages to
     find out how to get going with NEST
 
-Please see the sections on [minimal](installation.md#minimal-configuration) and
-[standard configuration](installation.md#standard-configuration)
+Please see the sections on [minimal](#minimal-configuration) and
+[standard configuration](#standard-configuration)
 below for details.
 
 ## What gets installed where
 
 By default, everything will be installed to the subdirectories
-`$PREFIX/{bin,lib,share}`, where `$PREFIX` is the install path given to `cmake:
+`/install/path/{bin,lib,share}`, where `/install/path` is the install path given to `cmake`:
 
 Executables   
-`$PREFIX/bin`
+`/install/path/bin`
 
 Dynamic libraries   
-`$PREFIX/lib/`
+`/install/path/lib/`
 
 SLI libraries   
-`$PREFIX/share/nest/sli`
+`/install/path/share/nest/sli`
 
 Documentation   
-`$PREFIX/share/doc/nest`
+`/install/path/share/doc/nest`
 
 Examples   
-`$PREFIX/share/doc/nest/examples`
+`/install/path/share/doc/nest/examples`
 
 PyNEST   
-`$PREFIX/lib/pythonX.Y/site-packages/nest`
+`/install/path/lib/pythonX.Y/site-packages/nest`
 
 PyNEST examples   
-`$PREFIX/share/doc/nest/examples/pynest`
+`/install/path/share/doc/nest/examples/pynest`
 
 Extras   
-`$PREFIX/share/nest/extras/`
+`/install/path/share/nest/extras/`
 
 If you want to run the `nest` executable or use the `nest` Python module without
 providing explicit paths, you have to add the installation directory to your
 search paths. For example, if you are using bash:
 
-    export PATH=$PATH:$PREFIX/bin
-    export PYTHONPATH=$PREFIX/lib/pythonX.Y/site-packages:$PYTHONPATH
+    export PATH=$PATH:/install/path/bin
+    export PYTHONPATH=/install/path/lib/pythonX.Y/site-packages:$PYTHONPATH
 
 ## Dependencies
 
 NEST needs a few third party tools and libraries to work. On many operating
 systems, these can be installed using a *package manager* such as `apt` or `brew` 
-(see [Standard configuration](installation.md#standard-configuration)).
+(see [Standard configuration](#standard-configuration)).
 
 To build NEST, you need recent versions of [CMake](http://cmake.org) and
 [libtool](https://www.gnu.org/software/libtool/libtool.html); the latter
-should be available on most systems.
+should be available for most systems and is probably already installed.
 
 The [GNU readline library](http://www.gnu.org/software/readline/) is recommended
 if you use NEST interactively without Python. Although most Linux distributions
@@ -101,24 +93,24 @@ development packages.
 If you want to use PyNEST, we recommend to install the following along with
 their development packages:
 
--   Python (<http://www.python.org/download>)
--   NumPy (<http://www.scipy.org/Download>)
--   SciPy (<http://www.scipy.org/Download>)
--   matplotlib (<http://matplotlib.sourceforge.net/>)
--   IPython (<http://ipython.scipy.org/moin/Download>)
+- [Python](http://www.python.org)
+- [NumPy](http://www.scipy.org)
+- [SciPy](http://www.scipy.org)
+- [matplotlib](http://matplotlib.org)
+- [IPython](http://ipython.org)
 
 
 ## Minimal configuration
 
-NEST can be compiled without any external packages; such configuration may be
+NEST can be compiled without any external packages; such a configuration may be
 useful e.g. for initial porting to a new supercomputer. However, this implies
 several restrictions: First, some neuron and synapse models will not be
-available, as they depend on ODE solvers from the GNU scientific library.
+available, as they depend on ODE solvers from the GNU Scientific Library.
 Second, the Python extension will not be available, and third, multi-threading
 and parallel computing facilities will be disabled.
 
-To compile NEST without external packages, use the following command line to
-configure it:
+To configure NEST for compilation without external packages, use the following 
+command line:
 
     cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
           -Dwith-python=OFF \
@@ -154,8 +146,7 @@ by, e.g.,
 
 ### Compiler-specific options
 
-NEST is pre-configured with a reasonable set of compiler options for the most 
-common compilers.
+NEST has reasonable default compiler options for the most common compilers.
 
 When compiling with the Portland compiler, use the `-Kieee` flag to ensure that 
 computations obey the IEEE754 standard for floating point numerics.
@@ -173,24 +164,22 @@ the help pages. The browser is set as an option of `helpdesk`. Please see the
 file `~/.nestrc` for an example setting `firefox` as browser. Please note that
 the command `helpdesk` does not work if you have compiled NEST with MPI support,
 but you have to enter the address of the helpdesk
-(`file://$PREFIX/share/doc/nest/index.html`) manually into the browser.
-Please replace `$PREFIX` with the prefix you chose during the configuration of
-NEST. If you did not explicitly specify one, it is most likely set to `/usr` or
-`/usr/local` depending on what system you are.
+(`file:///install/path/share/doc/nest/index.html`) manually into the browser.
+Please replace `/install/path` with the path under which NEST is installed.
 
 ### Tell NEST about your MPI setup
 
 If you compiled NEST with support for distributed computing via MPI, you have
 to tell it how your`mpirun`/`mpiexec` command works by defining the function
 mpirun in your `~/.nestrc` file. This file already contains an example
-implementation that should work with [OpenMPI](http://www.openmpi.org/) library.
+implementation that should work with [OpenMPI](http://www.openmpi.org/).
 
 ## Mac OS X
 
-On the Mac, you can install NEST either via Homebrew or manually. If you 
-want to use PyNEST, you need to have a version of Python with some science
-packages installed, see the [section Python on Mac](installation.md#python-on-mac) 
-for details. 
+On the Mac, you can install NEST either via Homebrew or manually. 
+If you want to use PyNEST, you need to have a version of Python with some 
+science packages installed, see the 
+[section Python on Mac](#python-on-mac) for details. 
 
 ### Installation via Homebrew
 
@@ -211,16 +200,16 @@ package manager:
 Options have to be appended, e.g. to install NEST with PyNEST run
 brew install nest --with-python`.
 
-
 ### Manual installation
 
-The clang/clang++ compiler that ships with OSX/macOS does not support OpenMP
+The clang/clang++ compiler that ships with OS X/macOS does not support OpenMP
 threads and creates code that fails some tests. You therefore need to use GCC 
-to compile NEST under OSX/macOS.
+to compile NEST under OS X/macOS.
 
-Installation instructions here have been tested under OSX 10.11 *El Capitan* 
+Installation instructions here have been tested under OS X 10.11 *El Capitan* 
 and macOS 10.12 *Sierra* with [Anaconda Python 2 and 3](https://www.continuum.io/anaconda-overview)
-and all other dependencies installed via [Homebrew](http://brew.sh).
+and all other dependencies installed via [Homebrew](http://brew.sh). See below
+for information when using MacPorts.
 
 1.  Install Xcode from the AppStore.
 
@@ -241,14 +230,14 @@ and all other dependencies installed via [Homebrew](http://brew.sh).
 
         mkdir NEST       # directory for all NEST stuff
         cd NEST
-        tar zxf  nest-2.12.0.tar.gz
+        tar zxf nest-2.12.0.tar.gz
         mkdir bld
         cd bld
 
-6.  Configure and build NEST inside that directory:
+6.  Configure and build NEST inside the build directory:
 
     cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
-          -DCMAKE_C_COMPILER=gcc-6\
+          -DCMAKE_C_COMPILER=gcc-6 \
           -DCMAKE_CXX_COMPILER=g++-6 \
           </path/to/NEST/src>
 
@@ -258,9 +247,34 @@ and all other dependencies installed via [Homebrew](http://brew.sh).
 
 To compile NEST with MPI support, add `-Dwith-mpi=ON` as `cmake` option.
 
+#### Manual installation with dependencies from MacPorts
+
+The following should work if you install dependencies using MacPorts (only
+steps that differ from the instructions above are shown):
+
+3. Install dependencies via MacPorts
+
+    sudo port install gcc6 cmake gsl openmpi-default libtool python27 py27-cython py27-nose doxygen
+    
+6. Configure and build NEST inside the build directory:
+
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+          -DPYTHON_LIBRARY=/opt/local/lib/libpython2.7.dylib \
+          -DPYTHON_INCLUDE_DIR=/opt/local/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7 \
+          -DCMAKE_C_COMPILER=/opt/local/bin/gcc-mp-6 \
+          -DCMAKE_CXX_COMPILER=/opt/local/bin/g++-mp-6 \
+          </path/to/NEST/src>
+
+    make -j4         # -j4 builds in parallel using 4 processes
+    make install
+    make installcheck
+
+To compile NEST with MPI support, add `-Dwith-mpi=ON` as `cmake` option.
+
+
 ### Python on Mac
 
-The version of Python shipping with OSX/macOS is rather dated and does not
+The version of Python shipping with OS X/macOS is rather dated and does not
 include key packages such as NumPy. Therefore, you need to install Python via
 a channel that provides scientific packages.
 
@@ -292,22 +306,13 @@ Windows and Linux differ considerably. This is the reason why it is difficult
 to compile NEST natively under Windows. However, it is still possible to use
 NEST under Windows using one of the following methods:
 
-### Using the NEST LiveCD
-
-This is the easiest way to use NEST without having to install anything on your
-computer. The LiveCD can be used in almost any computer and boots directly into
-a complete Ubuntu system, which already has NEST, Python, and some analysis
-tools installed.
-The CD image is available on the [download page](download.md).
-
 ### Virtual Machines
 
-A virtual machine is a software that lets you use Linux in parallel to Windows.
-We recommend to use VirtualBox, which is free software and can be downloaded
-from <http://www.virtualbox.org/>. Another popular virtual machine software is <http://www.vmware.com/>.
-The easiest way to get started is to download the NEST LiveCD from the [download page](download.md)
-and either just boot the CD image directly or install it into a virtual hard
-disk.
+A virtual machine is a software that lets you use Linux on top of Windows.
+Popular virtual machine packages are [VirtualBox](http://www.virtualbox.org) 
+and [VMWare](http://www.vmware.com). Once you have installed a virtual machine
+package, you can [download OVA images containing NEST](download.md) and import
+them into your virtual machine. 
 
 ### Cygwin
 
@@ -320,11 +325,8 @@ to an equivalent Linux installation.
 
 ## Instructions for NEST 2.10 and earlier
 
-NEST compiles and runs on most Unix-like operating systems including Linux and
-Mac OS X. For using NEST on Microsoft Windows, see [below](installation.md#windows).
-The installation instructions here should work on all recent versions of Debian
-or Ubuntu. For more generic installation instructions, see the files README and
-INSTALL in the top source directory.
+Note: These instructions contain only information on points that differ from
+current versions of NEST.
 
 Following are the basic steps to compile and install NEST from source code:
 
@@ -337,7 +339,7 @@ Following are the basic steps to compile and install NEST from source code:
 4.  Change to the build directory: `cd nest-x.y.z-build`
 
 5.  Configure NEST: `../nest-x.y.z/configure` with appropriate
-     configuration options (**prefix**, etc.)
+     configuration options
 
 6.  Compile by running `make`
 
@@ -346,25 +348,7 @@ Following are the basic steps to compile and install NEST from source code:
 8.  See the [Getting started](getting-started.md) pages to
     find out how to get going with NEST
 
-Please see the sections on [minimal](installation.md#minimal-configuration) and
-[standard configuration](installation.md#standard-configuration)
-below for details.
-
-
 ## Dependencies
-
-NEST needs a few third party tools and libraries to work. On many operating
-systems, these can be installed using a *package manager* like `apt`, `port` or
-`fink`
-(see [Standard configuration](installation.md#standard-configuration)).
-
-If you are building NEST from the SVN sources, you need the GNU autotools
-installed on your system to bootstrap the build system. These consist of
-
--   autoconf
--   automake
--   libtool
--   libltdl
 
 The [GNU readline library](http://www.gnu.org/software/readline/) is recommended
 if you use NEST interactively without Python. Although most Linux distributions
@@ -382,18 +366,18 @@ Scientific Library v1.11 or later.
 If you want to use PyNEST, we recommend to install the following along with
 their development packages:
 
--   Python (<http://www.python.org/download>)
--   NumPy (<http://www.scipy.org/Download>)
--   SciPy (<http://www.scipy.org/Download>)
--   matplotlib (<http://matplotlib.sourceforge.net/>)
--   IPython (<http://ipython.scipy.org/moin/Download>)
+- [Python](http://www.python.org)
+- [NumPy](http://www.scipy.org)
+- [SciPy](http://www.scipy.org)
+- [matplotlib](http://matplotlib.org)
+- [IPython](http://ipython.org)
 
 Additionally, NEST depends on a few POSIX libraries which are usually present
 on all UNIX like operating systems (Linux, Mac OS), so don't worry. But if you
 wonder why NEST is difficult to compile on Windows, it is because of these:
 
--   libpthread, for threading support
--   libregexp, for regular expressions.
+- libpthread, for threading support
+- libregexp, for regular expressions.
 
 ## Minimal configuration
 
@@ -408,7 +392,6 @@ To compile NEST without external packages, use the following command line to
 configure it:
 
     tar -xzvf nest-x.y.z.tar.gz
-
     mkdir nest-x.y.z-build
     cd nest-x.y.z-build
 
@@ -431,157 +414,15 @@ Then configure NEST using:
 
     ../nest-x.y.z/configure --prefix=$HOME/opt/nest
 
-## Choice of compiler
-
-Most NEST developers use the GNU gcc/g++ compilers. We also regularly compile 
-NEST using the IBM xlc/xlC compilers. You can find the version of your compiler 
-by, e.g.,
-
-    g++ -v
-
-
-### Compiler-specific options
-
-NEST is pre-configured with a reasonable set of compiler options for the most
-common compilers.
-
-When compiling with the Portland compiler, use the `-Kieee` flag to ensure that
-computations obey the IEEE754 standard for floating point numerics.
-
 ## Configuration options
 
 If you need special features, like e.g. support for [distributed computing](parallel-computing.md),
 you can add command line switches to the call to configure. `./configure --help`
 will show you all available options. For more information on the installation of
-NEST, please see the file INSTALL that is included in the distribution archive.
+NEST, please see the file INSTALL that is included in the distribution archive
+for the version of NEST you want to install.
 
-### Set up the integrated helpdesk
-
-The command `helpdesk` needs to know which browser to launch in order to display
-the help pages. The browser is set as an option of `helpdesk`. Please see the
-file `~/.nestrc` for an example setting `firefox` as browser. Please note that
-the command `helpdesk` does not work if you have compiled NEST with MPI support,
-but you have to enter the address of the helpdesk
-(`file://$PREFIX/share/doc/nest/index.html`) manually into the browser.
-Please replace `$PREFIX` with the prefix you chose during the configuration of
-NEST. If you did not explicitly specify one, it is most likely set to `/usr` or
-`/usr/local` depending on what system you are.
-
-### Tell NEST about your MPI setup
-
-If you compiled NEST with support for distributed computing via MPI, you have
-to tell it how your`mpirun`/`mpiexec` command works by defining the function
-mpirun in your `~/.nestrc` file. This file already contains an example
-implementation that should work with [OpenMPI](http://www.openmpi.org/) library.
-
-## Mac OS X
-
-The easiest way to install NEST on a Mac is to install it via the Homebrew
-package manager:
-
-1.  To install homebrew, follow the instructions here: <http://brew.sh/>
-
-2.  Then, in a terminal
-
-    1.  Add the homebrew/science tap: execute 'brew tap homebrew/science'
-
-    2.  For information on what options NEST has and what will be installed,
-        execute 'brew info nest'
-
-    3.  To install nest, execute 'brew install nest'
-
-Options have to be appended, e.g. to install NEST with PyNEST execute
-'brew install nest --with-python'.
-
-#Sorry, the following instructions are a little bit outdated!#
-A more detailed up-to-date instruction for installation on OSX will
-follow soon.
-
-### Installation on OSX 10.9 Mavericks
-
-The clang compiler that ships with OSX 10.9 does not support OpenMP threads.
-You therefore need to use GCC to compile NEST. Below you will find instructions
-to install all necessary software for building NEST without and with MPI
-support.
-
-#### NEST without MPI
-
-1.  Install Xcode from the AppStore.
-
-2.  Install the Xcode command line tools by executing the following line in the
-    Terminal and following the instructions in the windows that will pop up
-
-        xcode-select --install
-
-3.  Install the GNU Compiler Collection, the GNU Science Library, and Python
-    from [MacPorts](http://en.wikipedia.org/wiki/Macports) (you could use Fink
-    or Homebrew, too, but instructions here are based on MacPorts; if you
-    have installed a complete Python from another source, e.g. Anaconda,
-    you do not need Python from MacPorts):
-
-        sudo port install gcc48                   # GCC compiler collection
-        sudo port select gcc mp-gcc48      # make gcc-48 the default compiler
-        sudo port install gsl +gcc48           # install GNU Science Library,
-        use GCC 4.8 compiler
-        sudo port install autoconf automake libtool    # build tools
-
-        # now the Python stuff
-        sudo port install python27
-        sudo port select python python27   # make MacPorts Python 2.7 the default
-        sudo port install py27-cython
-        sudo port select cython cython27   # make Python 2.7 python the default cython
-        sudo port install py27-numpy py27-scipy py27-matplotlib py27-ipython
-        sudo port select ipython ipython27   # set default
-
-4.  Create a directory for building and installing NEST (you should always build
-    NEST outside the source code directory; installing NEST in a "place of its
-    own" makes it easy to remove NEST later).
-
-5.  Extract the NEST tarball as a subdirectory in that directory, create a
-    build-directory next to the source code directory
-
-        cd ~                  # move to home directory
-        mkdir NEST       # directory for all NEST stuff
-        cd NEST
-        mkdir nest22    # directory for all NEST 2.2 stuff
-        cd nest22
-        tar zxf  nest-2.2.2.tar.gz
-        mkdir bld
-        cd bld
-
-6.  Configure and build NEST inside that directory:
-
-        ../nest-2.2.2/configure --prefix=<home dir>/NEST/nest22/ins
-        make -j4         # -j4 builds in parallel using 4 processes
-        make install
-        make installcheck
-
-#### NEST with MPI
-
-To compile NEST with MPI, you need to install OpenMPI first. Unfortunately,
-recent OpenMPI 1.7 versions do not work with NEST under Mavericks. You therefore
-need to trick MacPorts into installing OpenMPI 1.6.4. Proceed as follows:
-
-1.  Perform Steps 1-3 as for NEST without MPI above.
-
-2.  Download the MacPorts [Portfile-openmpi-1.6.4.txt](../../diff/Portfile-openmpi-1.6.4.txt)
-    and save it under the name `Portfile` in an arbitrary directory
-
-3.  In Terminal, move to the directory containing `Portfile` and run
-
-        sudo port install +gcc48 +threads configure.compiler=macports-gcc-4.8
-
-4.  Perform steps 4 and 5 as above.
-
-5.  Configure and build NEST as follows
-
-        ../nest-2.2.2/configure CXX=openmpicxx --with-mpi --prefix=<home dir>/NEST/nest22/ins
-        make -j4
-        make install
-        make installcheck
-
-
-### Known problems
+### Known problems for NEST 2.10 and earlier
 
 ####  Using the correct compiler
 
@@ -658,34 +499,3 @@ please try making NEST as follows:
     env MACOSX_DEPLOYMENT_TARGET=10.5 make
 
 Thanks to Harold Gutch for this hint.
-
-## Windows
-
-Windows and Linux differ considerably. This is the reason why it is difficult
-to compile NEST natively under Windows. However, it is still possible to use
-NEST under Windows using one of the following methods:
-
-### Using the NEST LiveCD
-
-This is the easiest way to use NEST without having to install anything on your
-computer. The LiveCD can be used in almost any computer and boots directly into
-a complete Ubuntu system, which already has NEST, Python, and some analysis
-tools installed.
-The CD image is available on the [download page](download.md).
-
-### Virtual Machines
-
-A virtual machine is a software that lets you use Linux in parallel to Windows.
-We recommend to use VirtualBox, which is free software and can be downloaded
-from <http://www.virtualbox.org/>. Another popular virtual machine software is <http://www.vmware.com/>.
-The easiest way to get started is to download the NEST LiveCD from the [download page](download.md)
-and either just boot the CD image directly or install it into a virtual hard
-disk.
-
-### Cygwin
-
-Cywin is a software layer which emulates Unix system calls. NEST should compile
-and install under Cygwin with the generic installation instructions, but we do
-not tests this regularly and do not support NEST under Cygwin at present.
-Compilation under Cygwin is very slow, but the execution times are comparable
-to an equivalent Linux installation.

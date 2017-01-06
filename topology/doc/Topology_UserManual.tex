@@ -129,7 +129,7 @@ layers with probabilities and properties depending on the relative
 placement of neurons.  This permits the creation of complex networks
 with spatial structure.
 
-This user manual provides an introdcution to the functionality
+This user manual provides an introduction to the functionality
 provided by the Topology Module. It is based exclusively on the
 PyNEST, the Python interface to NEST \citep{Eppl:2008(12)}. NEST users
 using the SLI interface should be able to map instructions to
@@ -269,7 +269,7 @@ The center is given as a two-element tuple of floats.
 Changing the center does not affect grid indices: For each of the
 three layers in Fig.~\ref{fig:layer3}, grid indices run from 0 to 4
 through columns and rows, respectively, even though elements in these
-three layers have different positions in the gobal coordinate system.
+three layers have different positions in the global coordinate system.
 
 \subsection{Constructing a layer: an example}\label{sec:fixedlayerexample}
 
@@ -367,7 +367,7 @@ for a one-dimensional layer, which turns from a line to a ring upon
 introduction of periodic boundary conditions. 
 
 You specify periodic boundary conditions for a layer using the
-dictionary entry \lstinline!edge_wrap!\index{egde\_wrap}:
+dictionary entry \lstinline!edge_wrap!\index{edge\_wrap}:
 %
 \lstinputlisting[linerange=player-end]{user_manual_scripts/layers.py}
 \scriptfig{player}{0.8}{Periodic boundary conditions.}%
@@ -380,7 +380,7 @@ dictionary entry \lstinline!edge_wrap!\index{egde\_wrap}:
   Note that the element at $(2,0)$ now is a nearest
   neighbor to the element at $(-2,0)$.
   Right: Layer with periodic boundary condition arranged on a circle
-  to illustrate neighborhood relationsships.}
+  to illustrate neighborhood relationships.}
 
 Note that the longest possible distance between two elements in a
 layer without periodic boundary conditions is
@@ -566,14 +566,14 @@ The \emph{target} of a single connection
 \item[Displacement\index{displacement}] The \emph{displacement}
   between a driver and a pool node is the shortest vector connecting
   the driver to the pool node, taking
-  boundary conditions into accout.
+  boundary conditions into account.
 \item[Distance\index{distance}] The \emph{distance} between a driver
   and a pool node is the length of their displacement.
 \item[Mask\index{mask}] The \emph{mask} defines which pool nodes are
   at all considered as potential targets for each driver node. See
   Sec.~\ref{sec:conn_masks} for details.
 \item[Kernel\index{kernel}] The \emph{kernel} is a function returning
-  a (possibly distance- or displacment-dependent) 
+  a (possibly distance- or displacement-dependent) 
   probability for creating a connection between a driver and a pool
   node. The default kernel is $1$, i.e., connections are created with
   certainty. See Sec.~\ref{sec:conn_kernels} for details.
@@ -683,7 +683,7 @@ free and grid-based layers. They are illustrated in Fig.~\ref{fig:conn2}.
 The masks are
 \begin{description}
 \item[Rectangular\index{rectangular}] All nodes within a rectangular
-  area are connected. The area is speficied by its lower left and
+  area are connected. The area is specified by its lower left and
   upper right corners, measured in the same unit as element
   coordinates. Example:
 \lstinputlisting[linerange=conn2r-end]{user_manual_scripts/connections.py}
@@ -723,7 +723,7 @@ using the \lstinline!'anchor'! parameter.}
 Similarly, there are two mask types that can be used for 3D layers\index{3D layers},
 \begin{description}
 \item[Box\index{box}] All nodes within a cuboid volume are connected. The
-  area is speficied by its lower left and upper right corners, measured in
+  area is specified by its lower left and upper right corners, measured in
   the same unit as element coordinates. Example:
   \lstinputlisting[linerange=conn_3d_a-end]{user_manual_scripts/connections.py}
 \item[Spherical\index{spherical}] All nodes within a sphere are
@@ -889,12 +889,12 @@ Several examples follow. They are illustrated in Fig.~\ref{fig:conn4}.
   connection probability is 1 for $d=0$ and falls off with a
   ``standard deviation'' of $\sigma=1$:
 \lstinputlisting[linerange=conn4g-end]{user_manual_scripts/connections.py} 
-\item[Excentric Gaussian\index{excentric kernel}] In this example, both kernel and mask have
+\item[Eccentric Gaussian\index{eccentric kernel}] In this example, both kernel and mask have
   been moved using anchors:
 \lstinputlisting[linerange=conn4gx-end]{user_manual_scripts/connections.py} 
 Note that the anchor for the kernel is specified inside the dictionary
 containing the parameters for the Gaussian.
-\item[Cut-off Gaussian\index{cut-off kernel}] In this example, all probabilties less than
+\item[Cut-off Gaussian\index{cut-off kernel}] In this example, all probabilities less than
   $0.5$ are set to zero:
 \lstinputlisting[linerange=conn4cut-end]{user_manual_scripts/connections.py} 
 \item[2D Gaussian\index{2D Gaussian kernel}] We conclude with an
@@ -1015,7 +1015,7 @@ Connection generation now proceeds in a different way than before:
   with the spatial profile given by the kernel.
 \item If you prohibit multapses\index{multapse} (cf Sec.~\ref{sec:terminology}) and
   prescribe a number of connections greater than the number of pool nodes
-  in the mask, \lstinline!ConnectLayers! may get stuck in an infinte
+  in the mask, \lstinline!ConnectLayers! may get stuck in an infinite
   loop and NEST will hang\index{infinite loop}\index{hang}. Keep in
   mind that the number of nodes within the mask may vary considerably
   for free layers with randomly placed nodes. 
@@ -1042,7 +1042,7 @@ Fig.~\ref{fig:conn6}.
 \scriptfig{conn6}{0.5}{Distribution of connection distances}%
 {Distribution of distances between source and target for a network of
   1000 randomly placed nodes, a fixed fan out of 50 connections and a
-  connection probability decaying linerarly from 1 to 0 at
+  connection probability decaying linearly from 1 to 0 at
   $d=0.5$. The red line is the expected distribution from Eq.~\ref{eq:ptheo}.}
 
 Functions determining weight and delay as function of
@@ -1064,11 +1064,11 @@ following principles:
 \item If only nodes of a given model\index{model} within each element
   shall be considered as sources or targets then this can be achieved
   by adding a \lstinline!'sources'! or \lstinline!'targets'! entry to
-  the connection dictionary, which speficies the model to connect.
+  the connection dictionary, which specifies the model to connect.
 \end{itemize}
 This is exemplified by the following code, which connects pyramidal
 cells (\lstinline!pyr!) to interneurons (\lstinline!in!) with a
-circular mask and uniform probablity and interneurons to pyramidal
+circular mask and uniform probability and interneurons to pyramidal
 cells with a rectangular mask unit probability.
 \lstinputlisting[linerange=conn7-end]{user_manual_scripts/connections.py}
 
@@ -1185,7 +1185,7 @@ circle is the mask, the dashed green lines mark $\sigma$, $2\sigma$
 and $3\sigma$ of the Gaussian kernel.}
 
 The following code shows a practical example: A $21\times21$ network
-which connects to itself with divegent Gaussian connections. The
+which connects to itself with divegernt Gaussian connections. The
 resulting graphics is shown in Fig.~\ref{fig:vislayer}. All
 elements and the targets of the center neuron are shown, as well as
 mask and kernel.
@@ -1462,7 +1462,7 @@ Topology Module from the 1.9-xxxx to the 2.0 version.
   Sec.~\ref{sec:conn_masks} and \ref{sec:conn_kernels}.
 \item Functions computing connection probabilities, weights and delays
   as functions of distance between source and target nodes now handle
-  periodic boudary conditions correctly.
+  periodic boundary conditions correctly.
 \item Masks with a diameter larger than the diameter of the layer they
   are applied to are now prohibited by default. This avoids multiple
   connections when masks overwrap.

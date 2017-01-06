@@ -102,7 +102,7 @@ print("#{ end.log #}")
 
 print("#{ layer1p.log #}")
 #{ layer1p #}
-nest.PrintNetwork(depth=2)
+nest.PrintNetwork(depth=3)
 #{ end #}
 print("#{ end.log #}")
 

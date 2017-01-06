@@ -195,10 +195,10 @@ package manager:
     2.  For information on what options NEST has and what will be installed,
         run `brew info nest`
         
-    3.  To install nest, execute 'brew install nest'
+    3.  To install nest, execute `brew install nest`
 
 Options have to be appended, e.g. to install NEST with PyNEST run
-brew install nest --with-python`.
+brew install nest `--with-python`.
 
 ### Manual installation
 
@@ -220,7 +220,7 @@ for information when using MacPorts.
 
 3.  Install dependencies via Homebrew
 
-    brew install gcc cmake gsl open-mpi libtool
+     brew install gcc cmake gsl open-mpi libtool
 
 4.  Create a directory for building and installing NEST (you should always build
     NEST outside the source code directory; installing NEST in a "place of its
@@ -236,14 +236,14 @@ for information when using MacPorts.
 
 6.  Configure and build NEST inside the build directory:
 
-    cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
-          -DCMAKE_C_COMPILER=gcc-6 \
-          -DCMAKE_CXX_COMPILER=g++-6 \
-          </path/to/NEST/src>
+     cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
+           -DCMAKE_C_COMPILER=gcc-6 \
+           -DCMAKE_CXX_COMPILER=g++-6 \
+           </path/to/NEST/src>
 
-    make -j4         # -j4 builds in parallel using 4 processes
-    make install
-    make installcheck
+     make -j4         # -j4 builds in parallel using 4 processes
+     make install
+     make installcheck
 
 To compile NEST with MPI support, add `-Dwith-mpi=ON` as `cmake` option.
 

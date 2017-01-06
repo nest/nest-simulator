@@ -1221,7 +1221,7 @@ cd mmb
   \lstinline!nest-config! is not in your path, you need to provided it
   explicitly like this
 \begin{lstlisting}[language=bash]
-cmake -DWITH_NEST=${NEST_INSTALL_DIR}/bin/nest-config ../MyModule
+cmake -Dwith-nest=${NEST_INSTALL_DIR}/bin/nest-config ../MyModule
 \end{lstlisting}
 \item MyModule will then be installed to \lstinline!${NEST_INSTALL_DIR}!. This
   ensures that NEST will be able to find initializing SLI files for the

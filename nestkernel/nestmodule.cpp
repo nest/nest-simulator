@@ -884,7 +884,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
 
    +-[0] Subnet Dim=[1]
    |
-   +- iaf_neuron [1]
+   +- iaf_psc_alpha [1]
 
    - Consecutive Nodes of the same model are summarised in a list.
    The list shows the model name, the global id of the first node in the
@@ -893,7 +893,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
 
    +-[0] Subnet Dim=[1]
    |
-   +- iaf_neuron [1]..(2)..[2]
+   +- iaf_psc_alpha [1]..(2)..[2]
 
    - If a node is a subnet, its global id is printed first, followed by the
    model name or its label (if it is defined). Next, the dimension is shown.
@@ -905,95 +905,97 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    subnet is continued.
 
    Example:
-   SLI ] /iaf_neuron Create
+   SLI ] /iaf_psc_alpha Create
    SLI [1] /iaf_cond_alpha 10 Create
    SLI [2] /dc_generator [2 5 6] LayoutNetwork
-   SLI [3] [0] 1 PrintNetwork
-   +-[0] Subnet Dim=[12]
+   SLI [3] 0 1 PrintNetwork
+   +-[0] root dim=[12]
+   SLI [3] 0 2 PrintNetwork
+   +-[0] root dim=[12]
       |
-      +- iaf_neuron [1]
-      +- lifb_cond_neuron [2]..(10)..[11]
-      +-[12] Subnet Dim=[2 5 6]
-   SLI [3] [0] 2 PrintNetwork
-   +-[0] Subnet Dim=[12]
+      +- [1] iaf_psc_alpha
+      +- [2]...[11] iaf_cond_neuron
+      +- [12] subnet dim=[2 5 6]
+   SLI [3] 0 3 PrintNetwork
+   +-[0] root dim=[12]
       |
-      +- iaf_neuron [1]
-      +- lifb_cond_neuron [2]..(10)..[11]
-      +-[12] Subnet Dim=[2 5 6]
+      +- [1] iaf_psc_alpha
+      +- [2]...[11] iaf_cond_neuron
+      +- [12] subnet dim=[2 5 6]
           |
-          +-[13] Subnet Dim=[5 6]
-          +-[49] Subnet Dim=[5 6]
-   SLI [3] [0] 3 PrintNetwork
-   +-[0] Subnet Dim=[12]
+          +-[1] subnet dim=[5 6]
+          +-[2] subnet dim=[5 6]
+   SLI [3] 0 4 PrintNetwork
+   +-[0] root dim=[12]
       |
-      +- iaf_neuron [1]
-      +- lifb_cond_neuron [2]..(10)..[11]
-      +-[12] Subnet Dim=[2 5 6]
+      +- [1] iaf_psc_alpha
+      +- [2]...[11] iaf_cond_neuron
+      +- [12] subnet dim=[2 5 6]
           |
-          +-[13] Subnet Dim=[5 6]
-          |   |
-          |   +-[14] Subnet Dim=[6]
-          |   +-[21] Subnet Dim=[6]
-          |   +-[28] Subnet Dim=[6]
-          |   +-[35] Subnet Dim=[6]
-          |   +-[42] Subnet Dim=[6]
-          +-[49] Subnet Dim=[5 6]
-              |
-              +-[50] Subnet Dim=[6]
-              +-[57] Subnet Dim=[6]
-              +-[64] Subnet Dim=[6]
-              +-[71] Subnet Dim=[6]
-              +-[78] Subnet Dim=[6]
-   SLI [3] [0] 4 PrintNetwork
-   +-[0] Subnet Dim=[12]
+          +-[1] subnet dim=[5 6]
+          |  |
+          |  +-[1] subnet dim=[6]
+          |  +-[2] subnet dim=[6]
+          |  +-[3] subnet dim=[6]
+          |  +-[4] subnet dim=[6]
+          |  +-[5] subnet dim=[6]
+          +-[2] subnet dim=[5 6]
+             |
+             +-[1] subnet dim=[6]
+             +-[2] subnet dim=[6]
+             +-[3] subnet dim=[6]
+             +-[4] subnet dim=[6]
+             +-[5] subnet dim=[6]
+   SLI [3] 0 5 PrintNetwork
+   +-[0] root dim=[12]
       |
-      +- iaf_neuron [1]
-      +- lifb_cond_neuron [2]..(10)..[11]
-      +-[12] Subnet Dim=[2 5 6]
+      +- [1] iaf_psc_alpha
+      +- [2]...[11] iaf_cond_neuron
+      +- [12] subnet dim=[2 5 6]
           |
-          +-[13] Subnet Dim=[5 6]
-          |   |
-          |   +-[14] Subnet Dim=[6]
-          |   |   |
-          |   |   +- dc_generator [15]..(6)..[20]
-          |   |
-          |   +-[21] Subnet Dim=[6]
-          |   |   |
-          |   |   +- dc_generator [22]..(6)..[27]
-          |   |
-          |   +-[28] Subnet Dim=[6]
-          |   |   |
-          |   |   +- dc_generator [29]..(6)..[34]
-          |   |
-          |   +-[35] Subnet Dim=[6]
-          |   |   |
-          |   |   +- dc_generator [36]..(6)..[41]
-          |   |
-          |   +-[42] Subnet Dim=[6]
-          |       |
-          |       +- dc_generator [43]..(6)..[48]
+          +-[1] subnet dim=[5 6]
+          |  |
+          |  +-[1] subnet dim=[6]
+          |  |  |
+          |  |  +- [1]...[6] dc_generator
+          |  |
+          |  +-[2] subnet dim=[6]
+          |  |  |
+          |  |  +- [1]...[6] dc_generator
+          |  |
+          |  +-[3] subnet dim=[6]
+          |  |  |
+          |  |  +- [1]...[6] dc_generator
+          |  |
+          |  +-[4] subnet dim=[6]
+          |  |  |
+          |  |  +- [1]...[6] dc_generator
+          |  |
+          |  +-[5] subnet dim=[6]
+          |     |
+          |     +- [1]...[6] dc_generator
           |
-          +-[49] Subnet Dim=[5 6]
-              |
-              +-[50] Subnet Dim=[6]
-              |   |
-              |   +- dc_generator [51]..(6)..[56]
-              |
-              +-[57] Subnet Dim=[6]
-              |   |
-              |   +- dc_generator [58]..(6)..[63]
-              |
-              +-[64] Subnet Dim=[6]
-              |   |
-              |   +- dc_generator [65]..(6)..[70]
-              |
-              +-[71] Subnet Dim=[6]
-              |   |
-              |   +- dc_generator [72]..(6)..[77]
-              |
-              +-[78] Subnet Dim=[6]
-                  |
-                  +- dc_generator [79]..(6)..[84]
+          +-[2] subnet dim=[5 6]
+             |
+             +-[1] subnet dim=[6]
+             |  |
+             |  +- [1]...[6] dc_generator
+             |
+             +-[2] subnet dim=[6]
+             |  |
+             |  +- [1]...[6] dc_generator
+             |
+             +-[3] subnet dim=[6]
+             |  |
+             |  +- [1]...[6] dc_generator
+             |
+             +-[4] subnet dim=[6]
+             |  |
+             |  +- [1]...[6] dc_generator
+             |
+             +-[5] subnet dim=[6]
+                |
+                +- [1]...[6] dc_generator
 
 
    Availability: NEST
@@ -1078,7 +1080,7 @@ NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
              ResetNetwork
 
              %%% Build network
-             /iaf_neuron 100 Create
+             /iaf_psc_alpha 100 Create
              [1 100] Range /n Set
 
              << /source n /target n >> Connect

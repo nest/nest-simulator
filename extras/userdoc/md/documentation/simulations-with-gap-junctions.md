@@ -8,7 +8,7 @@ due to several improvements in terms of usability.
 
 ## Introduction
 
-Simulations with gap junctions are supported by the Hodgin-Huxley neuron model `hh_psc_alpha_gap`.
+Simulations with gap junctions are supported by the Hodgkin-Huxley neuron model `hh_psc_alpha_gap`.
 The synapse model to create a gap-junction connection is named `gap_junction`. 
 Unlike chemical synapses gap junctions are bidirectional connections. 
 In order to create **one** accurate gap-junction connection 

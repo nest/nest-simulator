@@ -1619,7 +1619,7 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     if len(tgt_layer) != 1:
         raise nest.NESTError("tgt_layer must be a one-element list")
 
-    with nest.SuppressDeprecationWarning('GetLeaves'):
+    with nest.SuppressedDeprecationWarning('GetLeaves'):
         # obtain local nodes in target layer, to pass to GetConnections
         tgt_nodes = nest.GetLeaves(tgt_layer,
                                    properties={'model': tgt_model}
@@ -1796,7 +1796,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         xext, yext = ext
         xctr, yctr = nest.GetStatus(layer, 'topology')[0]['center']
 
-        with nest.SuppressDeprecationWarning('GetChildren'):
+        with nest.SuppressedDeprecationWarning('GetChildren'):
             # extract position information, transpose to list of x and y pos
             xpos, ypos = zip(*GetPosition(nest.GetChildren(layer)[0]))
 
@@ -1814,7 +1814,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         # 3D layer
         from mpl_toolkits.mplot3d import Axes3D
 
-        with nest.SuppressDeprecationWarning('GetChildren'):
+        with nest.SuppressedDeprecationWarning('GetChildren'):
             # extract position information, transpose to list of x,y,z pos
             pos = zip(*GetPosition(nest.GetChildren(layer)[0]))
 

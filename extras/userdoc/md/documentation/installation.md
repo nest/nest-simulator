@@ -3,14 +3,14 @@
 These installation instructions are for NEST 2.12 and later as well as the
 most recent version obtained from [Github](https://github.com/nest/nest-simulator). 
 Installation instructions for NEST 2.10 and earlier are provided 
-[below](#instructions-for-nest-2.10-and-earlier).
+[below](#instructions-for-nest-2-10-and-earlier).
 
 ## Introduction
 
 NEST compiles and runs on most Unix-like operating systems. 
 The installation instructions here should work on recent versions of Ubuntu or 
 Debian, while additional instructions for 
-[OS X/macOS are given below](#macos). 
+[OS X/macOS are given below](#mac-os-x). 
 For more generic installation instructions, see the `INSTALL` file in the top source
 directory. For using NEST on Microsoft Windows, see [below](#windows).
 

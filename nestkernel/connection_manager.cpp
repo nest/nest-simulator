@@ -640,6 +640,22 @@ nest::ConnectionManager::disconnect( Node& target,
 
   if ( kernel().node_manager.is_local_gid( target.get_gid() ) )
   {
+    // We check that a connection actually exists between target and source
+    // This is to propperly handle the case when structural plasticity is not
+    // enabled but the user wants to delete a connection between a target and
+    // a source which are not connected
+    if ( validate_source_entry_( target_thread, sgid, syn_id ) == 0 )
+    {
+      throw InexistentConnection();
+    }
+    DictionaryDatum data = DictionaryDatum( new Dictionary );
+    def< index >( data, names::target, target.get_gid() );
+    def< index >( data, names::source, sgid );
+    ArrayDatum conns = kernel().connection_manager.get_connections( data );
+    if ( conns.numReferences() == 0 )
+    {
+      throw InexistentConnection();
+    }
     ConnectorBase* c =
       kernel()
         .model_manager.get_synapse_prototype( syn_id, target_thread )
@@ -921,9 +937,13 @@ nest::ConnectionManager::validate_source_entry_( thread tid, index s_gid )
   // check, if entry exists
   // if not put in zero pointer
   if ( connections_[ tid ].test( s_gid ) )
+  {
     return connections_[ tid ].get( s_gid );
+  }
   else
+  {
     return 0; // if non-existing
+  }
 }
 
 // -----------------------------------------------------------------------------

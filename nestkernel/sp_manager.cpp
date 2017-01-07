@@ -217,7 +217,7 @@ SPManager::disconnect_single( index sgid,
   thread target_thread,
   DictionaryDatum& syn )
 {
-
+  // Disconnect if Structural plascity is activated
   if ( syn->known( names::pre_synaptic_element )
     && syn->known( names::post_synaptic_element ) )
   {
@@ -227,6 +227,15 @@ SPManager::disconnect_single( index sgid,
     SPBuilder* cb = new SPBuilder( *sources, *targets, *conn_spec, syn );
     cb->change_connected_synaptic_elements(
       sgid, target->get_gid(), target->get_thread(), -1 );
+    const std::string syn_name = ( *syn )[ names::model ];
+    disconnect( sgid,
+      target,
+      target_thread,
+      kernel().model_manager.get_synapsedict()->lookup( syn_name ) );
+  }
+  else
+  {
+    // Disconnect if Structural plasticity is not activated.
     const std::string syn_name = ( *syn )[ names::model ];
     disconnect( sgid,
       target,

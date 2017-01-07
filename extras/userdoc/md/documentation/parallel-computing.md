@@ -93,7 +93,7 @@ this case. Spike delivery is always handled by the virtual process to which
 the *target* neuron is assigned (see property `vp` in the status dictionary).
 
 Spike exchange to or from neurons over connections that either originate or 
-terminate at a device (e.g., `spike_generator -> neuron` or `neuron -> spike_detector)
+terminate at a device (e.g., `spike_generator -> neuron` or `neuron -> spike_detector`)
 differs in that it bypasses the global spike exchange mechanism. Instead, 
 spikes are delivered locally within the virtual process from or to a replica 
 of the device. In this case, both the pre- and postsynaptic nodes are handled 

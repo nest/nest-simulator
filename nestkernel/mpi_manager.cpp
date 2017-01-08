@@ -716,14 +716,12 @@ nest::MPIManager::grng_synchrony( unsigned long process_rnd_number )
 // any_true: takes a single bool, exchanges with all other processes,
 // and returns "true" if one or more processes provide "true"
 bool
-nest::MPIManager::any_true( bool my_bool )
+nest::MPIManager::any_true( const bool my_bool )
 {
   if ( get_num_processes() == 1 )
     return my_bool;
 
-  int my_int = 0;
-  if ( my_bool )
-    my_int = 1;
+  int my_int = my_bool;
 
   std::vector< int > all_int( get_num_processes() );
   MPI_Allgather( &my_int, 1, MPI_INT, &all_int[ 0 ], 1, MPI_INT, comm );

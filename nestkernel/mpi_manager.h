@@ -198,7 +198,7 @@ public:
   void test_links();
 
   bool grng_synchrony( unsigned long );
-  bool any_true( bool );
+  bool any_true( const bool );
 
   /** Benchmark communication time of different MPI methods
    *
@@ -485,7 +485,7 @@ MPIManager::grng_synchrony( unsigned long )
 }
 
 inline bool
-MPIManager::any_true( bool my_bool )
+MPIManager::any_true( const bool my_bool )
 {
   return my_bool;
 }

@@ -843,7 +843,7 @@ NodeManager::finalize_nodes()
 }
 
 void
-NodeManager::check_wfr_use( void )
+NodeManager::check_wfr_use()
 {
   wfr_is_used_ = kernel().mpi_manager.any_true( wfr_is_used_ );
 }

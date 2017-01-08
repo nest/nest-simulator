@@ -912,7 +912,7 @@ private:
   // we chose std::vector over std::set because we expect this always to be
   // short
   static std::vector< synindex > supported_syn_ids_;
-  size_t coeff_length_; // length of coeffarray
+  static size_t coeff_length_; // length of coeffarray
 
   std::vector< double >::iterator coeffarray_as_doubles_begin_;
   std::vector< double >::iterator coeffarray_as_doubles_end_;
@@ -952,6 +952,12 @@ public:
     supported_syn_ids_.push_back( synid );
   }
 
+  static void
+  set_coeff_length( const size_t coeff_length )
+  {
+    coeff_length_ = coeff_length;
+  }
+
   bool
   supports_syn_id( const synindex synid ) const
   {
@@ -965,7 +971,7 @@ public:
   {
     coeffarray_as_doubles_begin_ = ca.begin();
     coeffarray_as_doubles_end_ = ca.end();
-    coeff_length_ = ca.size();
+    assert( coeff_length_ == ca.size() );
   }
 
   /**
@@ -978,7 +984,6 @@ public:
     // The synid can be skipped here as it is stored in a static vector
     pos += number_of_uints_covered< synindex >();
     read_from_comm_buffer( sender_gid_, pos );
-    read_from_comm_buffer( coeff_length_, pos );
 
     // generating a copy of the coeffarray is too time consuming
     // therefore we save an iterator to the beginning+end of the coeffarray
@@ -1002,7 +1007,6 @@ public:
   {
     write_to_comm_buffer( *( supported_syn_ids_.begin() ), pos );
     write_to_comm_buffer( sender_gid_, pos );
-    write_to_comm_buffer( coeff_length_, pos );
     for ( std::vector< double >::iterator i = coeffarray_as_doubles_begin_;
           i != coeffarray_as_doubles_end_;
           i++ )
@@ -1017,7 +1021,6 @@ public:
   {
     size_t s = number_of_uints_covered< synindex >();
     s += number_of_uints_covered< index >();
-    s += number_of_uints_covered< size_t >();
     s += number_of_uints_covered< double >() * coeff_length_;
 
     return s;

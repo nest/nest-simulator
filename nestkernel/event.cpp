@@ -106,6 +106,7 @@ void GapJunctionEvent::operator()()
 }
 
 std::vector< synindex > GapJunctionEvent::supported_syn_ids_;
+size_t GapJunctionEvent::coeff_length_ = 0;
 }
 
 

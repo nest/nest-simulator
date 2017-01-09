@@ -21,7 +21,7 @@
  */
 
  /* BeginDocumentation
-Name: tsodyks_facilitating - sli script for overall test of iaf_neuron model
+Name: tsodyks_facilitating - sli script for overall test of iaf_psc_exp model
 
 Synopsis: (tsodyks_facilitating) run -> compare cout with comments in file
 

@@ -21,7 +21,7 @@
  */
 
  /* BeginDocumentation
-Name: test_tsodyks_depressing - sli script for overall test of iaf_neuron model
+Name: test_tsodyks_depressing - sli script for overall test of iaf_psc_exp model
 
 Synopsis: (test_iaf) run -> compare cout with comments in file
 

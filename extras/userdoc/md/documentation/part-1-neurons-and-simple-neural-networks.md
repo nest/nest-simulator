@@ -86,14 +86,14 @@ call.
 
 After having imported NEST and also the Pylab interface to Matplotlib , which we
 will use to display the results, we can start to create nodes. For a first
-example, we will create a neuron of type `iaf_neuron`. This neuron is an
+example, we will create a neuron of type `iaf_psc_alpha`. This neuron is an
 integrate-and-fire neuron with alpha-shaped postsynaptic currents. The function
 returns a list of the ids of all the created neurons, in this case only one,
 which we store in a variable called `neuron`.
 
     import pylab
     import nest
-    neuron = nest.Create("iaf_neuron")
+    neuron = nest.Create("iaf_psc_alpha")
 
 We can now use the id to access the properties of this neuron. Properties of
 nodes in NEST are generally accessed via Python dictionaries of key-value pairs
@@ -301,9 +301,9 @@ current, and add a second neuron.
 
     import pylab
     import nest
-    neuron1 = nest.Create("iaf_neuron")
+    neuron1 = nest.Create("iaf_psc_alpha")
     nest.SetStatus(neuron1, {"I_e": 376.0})
-    neuron2 = nest.Create("iaf_neuron")
+    neuron2 = nest.Create("iaf_psc_alpha")
     multimeter = nest.Create("multimeter")
     nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]}
 
@@ -336,9 +336,9 @@ extended to two populations of ten neurons each.
 
     import pylab
     import nest
-    pop1 = nest.Create("iaf_neuron",10)
+    pop1 = nest.Create("iaf_psc_alpha",10)
     nest.SetStatus(pop1, {"I_e": 376.0})
-    pop2 = nest.Create("iaf_neuron",10)
+    pop2 = nest.Create("iaf_psc_alpha",10)
     multimeter = nest.Create("multimeter",10)
     nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]}
 

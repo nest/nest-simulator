@@ -30,7 +30,7 @@ of identically parameterised neurons is to exploit the optional arguments of
 `Create()`:
 
     ndict = {"I_e": 200.0, "tau_m": 20.0}
-    neuronpop = nest.Create("iaf_neuron", 100, params=ndict)
+    neuronpop = nest.Create("iaf_psc_alpha", 100, params=ndict)
 
 The variable `neuronpop` is a list of all the ids of the created neurons.
 
@@ -46,10 +46,10 @@ have the same parameters. The defaults of a model can be queried with
 is a dictionary containing the desired parameter/value pairings. For example:
 
     ndict = {"I_e": 200.0, "tau_m": 20.0}
-    nest.SetDefaults("iaf_neuron", ndict)
-    neuronpop1 = nest.Create("iaf_neuron", 100)
-    neuronpop2 = nest.Create("iaf_neuron", 100)
-    neuronpop3 = nest.Create("iaf_neuron", 100)
+    nest.SetDefaults("iaf_psc_alpha", ndict)
+    neuronpop1 = nest.Create("iaf_psc_alpha", 100)
+    neuronpop2 = nest.Create("iaf_psc_alpha", 100)
+    neuronpop3 = nest.Create("iaf_psc_alpha", 100)
 
 The three populations are now identically parameterised with the usual model
 default values for all parameters except `I_e` and `tau_m`, which have the
@@ -63,13 +63,13 @@ you can use the name of the model to indicate what role it plays in the
 simulation. Set up your customised model in two steps using `SetDefaults()`:
 
     edict = {"I_e": 200.0, "tau_m": 20.0}
-    nest.CopyModel("iaf_neuron", "exc_iaf_neuron")
+    nest.CopyModel("iaf_psc_alpha", "exc_iaf_neuron")
     nest.SetDefaults("exc_iaf_neuron", edict)
 
 or in one step:
 
     idict = {"I_e": 300.0}
-    nest.CopyModel("iaf_neuron", "inh_iaf_neuron", params=idict)
+    nest.CopyModel("iaf_psc_alpha", "inh_iaf_neuron", params=idict)
 
 Either way, the newly defined models can now be used to generate neuron
 populations and will also be returned by the function `Models()`.

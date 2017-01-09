@@ -190,7 +190,7 @@ files.
     from nest import *
     SetKernelStatus({"total_num_virtual_procs": 4})
     pg = Create("poisson_generator", params={"rate": 50000.0})
-    n = Create("iaf_neuron", 4)
+    n = Create("iaf_psc_alpha", 4)
     sd = Create("spike_detector", params={"to_file": True})
     Connect(pg, [n[0]], syn_spec={'weight': 1000.0, 'delay': 1.0})
     Connect([n[0]], [n[1]], syn_spec={'weight': 1000.0, 'delay': 1.0})

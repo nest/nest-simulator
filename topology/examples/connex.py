@@ -22,7 +22,7 @@
 '''
 NEST Topology Module Example
 
-Create two 30x30 layers of iaf_neurons,
+Create two 30x30 layers of iaf_psc_alphas,
 connect with circular mask, flat probability,
 visualize.
 

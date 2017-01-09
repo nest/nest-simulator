@@ -22,7 +22,7 @@
 '''
 NEST Topology Module Example
 
-Create three layers of 4x3 iaf_neurons, each with different center.
+Create three layers of 4x3 iaf_psc_alphas, each with different center.
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB

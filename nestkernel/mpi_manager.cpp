@@ -713,6 +713,27 @@ nest::MPIManager::grng_synchrony( unsigned long process_rnd_number )
   return true;
 }
 
+// wfr_synchrony: called at the beginning of each simulate
+bool
+nest::MPIManager::wfr_synchrony( bool any_node_uses_wfr )
+{
+  if ( get_num_processes() > 1 )
+  {
+    std::vector< char > wfr( get_num_processes() );
+    MPI_Allgather(
+      &any_node_uses_wfr, 1, MPI_CHAR, &wfr[ 0 ], 1, MPI_CHAR, comm );
+    // check if any MPI process uses wfr
+    for ( unsigned int i = 0; i < wfr.size(); ++i )
+    {
+      if ( wfr[ i ] )
+      {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 // average communication time for a packet size of num_bytes using Allgather
 double
 nest::MPIManager::time_communicate( int num_bytes, int samples )

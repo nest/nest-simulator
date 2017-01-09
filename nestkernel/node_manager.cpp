@@ -846,6 +846,12 @@ NodeManager::finalize_nodes()
 }
 
 void
+NodeManager::set_any_node_uses_wfr( bool uses_wfr )
+{
+  any_node_uses_wfr_ = uses_wfr;
+}
+
+void
 NodeManager::print( index p, int depth )
 {
   Subnet* target = dynamic_cast< Subnet* >( get_node( p ) );

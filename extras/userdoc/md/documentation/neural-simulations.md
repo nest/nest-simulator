@@ -173,7 +173,7 @@ dictionary `modeldict`. The most important neuron models are:
 
 Model name
 Description
-`iaf_neuron`
+`iaf_psc_alpha`
 Simple integrate-and-fire neuron with alpha-function PSCs.
 `iaf_psc_delta`
 Integrate-and-fire neuron with delta-function PSCs.

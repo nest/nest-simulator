@@ -110,7 +110,7 @@ in both ways (using the "make_symmetric" flag for one-to-one connections).
 """
 
 # create gap_junction connections
-n_connection = n_neuron * gap_per_neuron / 2
+n_connection = n_neuron * gap_per_neuron // 2
 connections = numpy.transpose(
     [random.sample(neurons, 2) for _ in range(n_connection)])
 

@@ -204,7 +204,7 @@ def plot_hist(spikes):
 t = 1000
 n = 1000
 dt = 1.0
-steps = t / dt
+steps = t // dt
 offset = t / 1000. * 2 * np.pi
 
 '''
@@ -227,8 +227,8 @@ spikes = step(t, n,
               seed=123, dt=dt)
 plot_hist(spikes)
 exp = np.ones(steps)
-exp[:steps / 2] *= 20
-exp[steps / 2:] *= 50
+exp[:int(steps / 2)] *= 20
+exp[int(steps / 2):] *= 50
 plt.plot(exp, 'r')
 plt.title('DC rate: 20 -> 50')
 plt.ylabel('Spikes per second')
@@ -248,8 +248,8 @@ spikes = step(t, n,
               seed=123, dt=dt)
 plot_hist(spikes)
 exp = np.ones(steps)
-exp[:steps / 2] *= 80
-exp[steps / 2:] *= 40
+exp[:int(steps / 2)] *= 80
+exp[int(steps / 2):] *= 40
 plt.plot(exp, 'r')
 plt.title('DC rate: 80 -> 40')
 
@@ -267,12 +267,12 @@ spikes = step(t, n,
                'frequency': 10., 'phase': 0.},
               seed=123, dt=dt)
 plot_hist(spikes)
-exp = np.zeros(steps)
-exp[:steps / 2] = (40. +
+exp = np.zeros(int(steps))
+exp[:int(steps / 2)] = (40. +
                    40. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
                                           t / 1000. * np.pi * 10. /
                                           (steps / 2))))
-exp[steps / 2:] = (40. + 20. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
+exp[int(steps / 2):] = (40. + 20. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
                                                 t / 1000. * np.pi * 10. /
                                                 (steps / 2)) + offset))
 plt.plot(exp, 'r')
@@ -292,11 +292,11 @@ spikes = step(t, n,
                'frequency': 10., 'phase': 0.},
               seed=123, dt=dt)
 plot_hist(spikes)
-exp = np.zeros(steps)
-exp[:steps / 2] = (20. + 20. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
+exp = np.zeros(int(steps))
+exp[:int(steps / 2)] = (20. + 20. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
                                                 t / 1000. * np.pi * 10. /
                                                 (steps / 2))))
-exp[steps / 2:] = (50. + 50. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
+exp[int(steps / 2):] = (50. + 50. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
                                                 t / 1000. * np.pi * 10. /
                                                 (steps / 2)) + offset))
 plt.plot(exp, 'r')
@@ -316,9 +316,9 @@ spikes = step(t, n,
               {'amplitude': 40.0, 'frequency': 20.},
               seed=123, dt=1.)
 plot_hist(spikes)
-exp = np.zeros(steps)
-exp[:steps / 2] = 40. * np.ones(steps / 2)
-exp[steps / 2:] = (40. + 40. * np.sin(np.arange(0, t / 1000. * np.pi * 20,
+exp = np.zeros(int(steps))
+exp[:int(steps / 2)] = 40. * np.ones(steps / 2)
+exp[int(steps / 2):] = (40. + 40. * np.sin(np.arange(0, t / 1000. * np.pi * 20,
                                                 t / 1000. * np.pi * 20. /
                                                 (steps / 2))))
 plt.plot(exp, 'r')
@@ -339,13 +339,14 @@ spikes = step(t, n,
                'frequency': 10., 'phase': 180.},
               seed=123, dt=1.)
 plot_hist(spikes)
-exp = np.zeros(steps)
-exp[:steps / 2] = (60. + 60. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
+exp = np.zeros(int(steps))
+
+exp[:int(steps / 2)] = (60. + 60. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
                                                 t / 1000. * np.pi * 10. /
                                                 (steps / 2))))
-exp[steps / 2:] = (60. + 60. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
+exp[int(steps / 2):] = (60. + 60. * np.sin(np.arange(0, t / 1000. * np.pi * 10,
                                                 t / 1000. * np.pi * 10. /
-                                                (steps / 2)) + offset + np.pi))
+                                                (steps // 2)) + offset + np.pi))
 plt.plot(exp, 'r')
 plt.title('Modulation Phase: 0 -> Pi')
 plt.xlabel('Time [ms]')

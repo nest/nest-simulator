@@ -199,12 +199,13 @@ class Network:
             pop_file.write('%d  %d \n' % (population[0], population[-1]))
         pop_file.close()
         for thread in np.arange(nest.GetKernelStatus('local_num_threads')):
-            local_nodes = nest.GetNodes(
-                [0], {
-                    'model': self.net_dict['neuron_model'],
-                    'thread': thread
-                     }, local_only=True
-                )[0]
+            with nest.SuppressedDeprecationWarning('GetNodes'):
+                local_nodes = nest.GetNodes(
+                    [0], {
+                        'model': self.net_dict['neuron_model'],
+                        'thread': thread
+                         }, local_only=True
+                    )[0]
             vp = nest.GetStatus(local_nodes)[0]['vp']
             # vp is the same for all local nodes on the same thread
             nest.SetStatus(

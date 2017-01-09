@@ -721,6 +721,7 @@ nest::MPIManager::any_true( const bool my_bool )
   if ( get_num_processes() == 1 )
     return my_bool;
 
+  // since there is no MPI_BOOL we first convert to int
   int my_int = my_bool;
 
   std::vector< int > all_int( get_num_processes() );
@@ -728,7 +729,7 @@ nest::MPIManager::any_true( const bool my_bool )
   // check if any MPI process sent a "true"
   for ( unsigned int i = 0; i < all_int.size(); ++i )
   {
-    if ( all_int[ i ] == 1 )
+    if ( all_int[ i ] != 0 )
     {
       return true;
     }

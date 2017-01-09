@@ -40,6 +40,11 @@
 // Includes from sli:
 #include "name.h"
 
+#ifdef _OPENMP
+// C includes:
+#include <omp.h>
+#endif
+
 namespace nest
 {
 
@@ -936,6 +941,9 @@ public:
   static void
   set_syn_id( const synindex synid )
   {
+#ifdef _OPENMP
+    assert( omp_get_num_threads() == 1 );
+#endif
     supported_syn_ids_.push_back( synid );
   }
 
@@ -949,12 +957,18 @@ public:
   add_syn_id( const synindex synid )
   {
     assert( not supports_syn_id( synid ) );
+#ifdef _OPENMP
+    assert( omp_get_num_threads() == 1 );
+#endif
     supported_syn_ids_.push_back( synid );
   }
 
   static void
   set_coeff_length( const size_t coeff_length )
   {
+#ifdef _OPENMP
+    assert( omp_get_num_threads() == 1 );
+#endif
     coeff_length_ = coeff_length;
   }
 

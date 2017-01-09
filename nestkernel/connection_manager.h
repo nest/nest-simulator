@@ -250,10 +250,10 @@ public:
 
   void get_sources( const std::vector< index >& targets,
     std::vector< std::vector< index > >& sources,
-    const index synapse_model );
+    const index syn_id );
   void get_targets( const std::vector< index >& sources,
     std::vector< std::vector< index > >& targets,
-    const index synapse_model );
+    const index syn_id );
 
   const std::vector< Target >& get_targets( const thread tid,
     const index lid ) const;

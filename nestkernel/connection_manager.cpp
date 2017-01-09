@@ -1437,21 +1437,24 @@ nest::ConnectionManager::get_connections(
       std::deque< ConnectionID > conns_in_thread;
 
       const synindex syn_index = connections_5g_[ tid ]->find_synapse_index( syn_id );
-      for ( size_t t_id = 0; t_id < target->size(); ++t_id )
+      if ( syn_index != invalid_synindex )
       {
-        const index target_gid = target->get( t_id );
-
-        std::vector< index > source_lcids;
-        connections_5g_[ tid ]->get_source_lcids( tid, syn_index, target_gid, source_lcids );
-
-        for ( size_t i = 0; i < source_lcids.size(); ++i )
+        for ( size_t t_id = 0; t_id < target->size(); ++t_id )
         {
-          conns_in_thread.push_back( ConnectionDatum( ConnectionID(
-            source_table_.get_gid( tid, syn_id, source_lcids[ i ] ),
-            target_gid,
-            tid,
-            syn_id,
-            source_lcids[ i ] ) ) );
+          const index target_gid = target->get( t_id );
+
+          std::vector< index > source_lcids;
+          connections_5g_[ tid ]->get_source_lcids( tid, syn_index, target_gid, source_lcids );
+
+          for ( size_t i = 0; i < source_lcids.size(); ++i )
+          {
+            conns_in_thread.push_back( ConnectionDatum( ConnectionID(
+              source_table_.get_gid( tid, syn_id, source_lcids[ i ] ),
+              target_gid,
+              tid,
+              syn_id,
+              source_lcids[ i ] ) ) );
+          }
         }
       }
 
@@ -1568,7 +1571,7 @@ nest::ConnectionManager::get_source_gids_( const thread tid,
 void
 nest::ConnectionManager::get_sources( const std::vector< index >& targets,
   std::vector< std::vector< index > >& sources,
-  const index syn_model )
+  const index syn_id )
 {
   sources.resize( targets.size() );
   for ( std::vector< std::vector< index > >::iterator i = sources.begin();
@@ -1581,7 +1584,7 @@ nest::ConnectionManager::get_sources( const std::vector< index >& targets,
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     const synindex syn_index =
-      ( *connections_5g_[ tid ] ).find_synapse_index( syn_model );
+      ( *connections_5g_[ tid ] ).find_synapse_index( syn_id );
     if ( syn_index != invalid_index )
     {
       for ( size_t i = 0; i < targets.size(); ++i )
@@ -1595,7 +1598,7 @@ nest::ConnectionManager::get_sources( const std::vector< index >& targets,
 void
 nest::ConnectionManager::get_targets( const std::vector< index >& sources,
   std::vector< std::vector< index > >& targets,
-  const index syn_model )
+  const index syn_id )
 {
   targets.resize( sources.size() );
   for ( std::vector< std::vector< index > >::iterator i = targets.begin();
@@ -1608,7 +1611,7 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     const synindex syn_index =
-      ( *connections_5g_[ tid ] ).find_synapse_index( syn_model );
+      ( *connections_5g_[ tid ] ).find_synapse_index( syn_id );
     if ( syn_index != invalid_index )
     {
       for ( size_t i = 0; i < sources.size(); ++i )

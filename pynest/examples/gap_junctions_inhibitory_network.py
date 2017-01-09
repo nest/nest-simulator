@@ -57,7 +57,7 @@ stepsize = 0.05
 simtime = 501.
 
 
-#Set gap weight here
+# Set gap weight here
 gap_weight = 0.32
 
 random.seed(1)

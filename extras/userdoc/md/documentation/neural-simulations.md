@@ -296,7 +296,7 @@ ms.
 
     SLI ] /iaf_psc_alpha Create /n1 Set
     SLI ] /iaf_psc_alpha Create /n2 Set
-    SLI ] /v Create /n3 Set
+    SLI ] /iaf_psc_alpha Create /n3 Set
     SLI ]
     SLI ] n1 n2 Connect
     SLI ] n1 n3 Connect

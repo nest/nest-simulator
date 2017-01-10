@@ -190,6 +190,12 @@ SourceTable::add_source( const thread tid,
   // otherwise we can directly add the new source
   else
   {
+    // use 1.5 growth strategy (see, e.g.,
+    // https://github.com/facebook/folly/blob/master/folly/docs/FBVector.md)
+    if ( ( *sources_[ tid ] )[ it->second ]->size() == ( *sources_[ tid ] )[ it->second ]->capacity() )
+    {
+      ( *sources_[ tid ] )[ it->second ]->reserve( ( ( *sources_[ tid ] )[ it->second ]->size() * 3 + 1 ) / 2 );
+    }
     ( *sources_[ tid ] )[ it->second ]->push_back( src );
   }
 }

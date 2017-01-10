@@ -89,9 +89,18 @@ public:
 inline void
 TargetTable::add_target( const thread tid, const TargetData& target_data )
 {
+  const index lid = target_data.get_lid();
+
+  // use 1.5 growth strategy (see, e.g.,
+  // https://github.com/facebook/folly/blob/master/folly/docs/FBVector.md)
+  if ( ( *targets_[ tid ] )[ lid ].size() == ( *targets_[ tid ] )[ lid ].capacity() )
+  {
+    ( *targets_[ tid ] )[ lid ].reserve( ( ( *targets_[ tid ] )[ lid ].size() * 3 + 1 ) / 2 );
+  }
+
   if ( target_data.is_primary() )
   {
-    ( *targets_[ tid ] )[ target_data.get_lid() ].push_back(
+    ( *targets_[ tid ] )[ lid ].push_back(
       target_data.get_target() );
   }
   else
@@ -99,7 +108,7 @@ TargetTable::add_target( const thread tid, const TargetData& target_data )
     const size_t send_buffer_pos =
       reinterpret_cast< const SecondaryTargetData* >( &target_data )
         ->get_send_buffer_pos();
-    ( *secondary_send_buffer_pos_[ tid ] )[ target_data.get_lid() ].push_back(
+    ( *secondary_send_buffer_pos_[ tid ] )[ lid ].push_back(
       send_buffer_pos );
   }
 }

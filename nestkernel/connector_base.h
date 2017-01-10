@@ -339,6 +339,12 @@ public:
   Connector< ConnectionT >&
   push_back( const ConnectionT& c )
   {
+    // use 1.5 growth strategy (see, e.g.,
+    // https://github.com/facebook/folly/blob/master/folly/docs/FBVector.md)
+    if ( C_.size() == C_.capacity() )
+    {
+      C_.reserve( ( C_.size() * 3 + 1 ) / 2 );
+    }
     C_.push_back( c );
     return *this;
   }

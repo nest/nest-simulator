@@ -55,9 +55,11 @@ class TestDisconnectSingle(unittest.TestCase):
                 )
                 neurons = nest.Create('iaf_neuron', 4)
                 syn_dict = {'model': syn_model}
-                
-                nest.Connect([neurons[0]], [neurons[2]], "one_to_one", syn_dict)
-                nest.Connect([neurons[1]], [neurons[3]], "one_to_one", syn_dict)
+
+                nest.Connect([neurons[0]], [neurons[2]], 
+                            "one_to_one", syn_dict)
+                nest.Connect([neurons[1]], [neurons[3]], 
+                            "one_to_one", syn_dict)
                 #Delete existent connection
                 conns = nest.GetConnections([neurons[0]], [neurons[2]], syn_model)
                 connstotal = None

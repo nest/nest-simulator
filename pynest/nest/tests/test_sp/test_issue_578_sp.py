@@ -25,6 +25,7 @@ import unittest
 
 class TestIssue578(unittest.TestCase):
 
+
     def test_targets(self):
         nest.ResetKernel()
         nest.set_verbosity('M_ALL')
@@ -77,11 +78,10 @@ class TestIssue578(unittest.TestCase):
             }
         })
 
-
         try:
             nest.Simulate(200*1000)
         except:
-            self.fail("Exception was rised during structural plasticity deletion")
+            self.fail("Exception during structural plasticity deletion")
 
     def suite():
         test_suite = unittest.makeSuite(TestIssue578, 'test')

@@ -36,6 +36,7 @@
 #include "exceptions.h"
 #include "nest_time.h"
 #include "nest_types.h"
+#include "vp_manager.h"
 
 // Includes from sli:
 #include "name.h"
@@ -936,6 +937,7 @@ public:
   static void
   set_syn_id( const synindex synid )
   {
+    VPManager::assert_single_threaded();
     supported_syn_ids_.push_back( synid );
   }
 
@@ -949,7 +951,15 @@ public:
   add_syn_id( const synindex synid )
   {
     assert( not supports_syn_id( synid ) );
+    VPManager::assert_single_threaded();
     supported_syn_ids_.push_back( synid );
+  }
+
+  static void
+  set_coeff_length( const size_t coeff_length )
+  {
+    VPManager::assert_single_threaded();
+    coeff_length_ = coeff_length;
   }
 
   bool
@@ -965,7 +975,7 @@ public:
   {
     coeffarray_as_doubles_begin_ = ca.begin();
     coeffarray_as_doubles_end_ = ca.end();
-    coeff_length_ = ca.size();
+    assert( coeff_length_ == ca.size() );
   }
 
   /**

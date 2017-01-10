@@ -914,13 +914,13 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    +-[0] root dim=[12]
       |
       +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_neuron
+      +- [2]...[11] iaf_cond_alpha
       +- [12] subnet dim=[2 5 6]
    SLI [3] 0 3 PrintNetwork
    +-[0] root dim=[12]
       |
       +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_neuron
+      +- [2]...[11] iaf_cond_alpha
       +- [12] subnet dim=[2 5 6]
           |
           +-[1] subnet dim=[5 6]
@@ -929,7 +929,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    +-[0] root dim=[12]
       |
       +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_neuron
+      +- [2]...[11] iaf_cond_alpha
       +- [12] subnet dim=[2 5 6]
           |
           +-[1] subnet dim=[5 6]
@@ -950,7 +950,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    +-[0] root dim=[12]
       |
       +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_neuron
+      +- [2]...[11] iaf_cond_alpha
       +- [12] subnet dim=[2 5 6]
           |
           +-[1] subnet dim=[5 6]

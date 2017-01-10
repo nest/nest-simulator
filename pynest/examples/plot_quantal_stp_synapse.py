@@ -99,6 +99,7 @@ vm = numpy.array(nest.GetStatus([voltmeter[1]], 'events')[0]['V_m'])
 vm_reference = numpy.array(nest.GetStatus([voltmeter[0]], 'events')[0]['V_m'])
 
 t_tot = int(t_tot)
+t_plot = int(t_plot)
 
 vm.shape = (n_trials, t_tot)
 vm_reference.shape = (n_trials, t_tot)
@@ -108,9 +109,9 @@ vm_ref_mean = numpy.array([numpy.mean(vm_reference[:, i])
                            for i in range(t_tot)])
 
 for t in range(n_trials):
-    pylab.plot(vm[t][:int(t_plot)], color='gray', lw=0.5)
-pylab.plot(vm_mean[:int(t_plot)], color='black', lw=2.)
-pylab.plot(vm_reference[0][:int(t_plot)], color='red', lw=2.)
+    pylab.plot(vm[t][:t_plot], color='gray', lw=0.5)
+pylab.plot(vm_mean[:t_plot], color='black', lw=2.)
+pylab.plot(vm_reference[0][:t_plot], color='red', lw=2.)
 
 '''
 To display the results, you need to execute

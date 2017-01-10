@@ -22,7 +22,7 @@
 '''
 NEST Topology Module Example
 
-Create layer of 4x3 iaf_psc_alphas, visualize
+Create layer of 4x3 iaf_psc_alpha neurons, visualize
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB

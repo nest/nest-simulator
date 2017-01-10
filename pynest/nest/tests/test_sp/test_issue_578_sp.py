@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_issue-578-sp.py
+# test_issue_578_sp.py
 #
 # This file is part of NEST.
 #

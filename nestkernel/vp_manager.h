@@ -117,8 +117,7 @@ public:
   /**
    * Fails if NEST is in thread-parallel section.
    */
-  static
-  void assert_single_threaded();
+  static void assert_single_threaded();
 
 private:
   const bool force_singlethreading_;

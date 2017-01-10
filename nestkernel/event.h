@@ -938,7 +938,7 @@ public:
   set_syn_id( const synindex synid )
   {
     VPManager::assert_single_threaded();
-	supported_syn_ids_.push_back( synid );
+    supported_syn_ids_.push_back( synid );
   }
 
   /**
@@ -958,7 +958,7 @@ public:
   static void
   set_coeff_length( const size_t coeff_length )
   {
-	VPManager::assert_single_threaded();
+    VPManager::assert_single_threaded();
     coeff_length_ = coeff_length;
   }
 

@@ -194,4 +194,3 @@ nest::VPManager::assert_single_threaded()
   assert( omp_get_num_threads() == 1 );
 #endif
 }
-

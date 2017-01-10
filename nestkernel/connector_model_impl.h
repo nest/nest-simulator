@@ -773,7 +773,7 @@ GenericConnectorModel< ConnectionT >::reserve_connections(
   }
   assert( conn != 0 );
 
-  conn->reserve( count );
+  conn->reserve( conn->size() + count );
 
   ( *hetconn )[ syn_index ] = conn;
 }

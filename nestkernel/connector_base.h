@@ -247,6 +247,18 @@ public:
   {
     assert( false );
   };
+
+  virtual size_t
+  size() const
+  {
+    assert( false );
+  }
+
+  virtual size_t
+  capacity() const
+  {
+    assert( false );
+  }
 };
 
 // homogeneous connector
@@ -632,6 +644,18 @@ public:
     std::cout << std::endl;
     std::cout << "---------------------------------------\n";
   }
+
+  size_t
+  size() const
+  {
+    return C_.size();
+  }
+
+  size_t
+  capacity() const
+  {
+    return C_.capacity();
+  }
 };
 
 // heterogeneous connector containing different types of synapses
@@ -642,6 +666,12 @@ public:
 class HetConnector : public std::vector< ConnectorBase* >, public ConnectorBase
 {
 public:
+
+  // avoid ambigous names size and capacity, since they are also
+  // defined in ConnectorBase
+  using std::vector< ConnectorBase* >::size;
+  using std::vector< ConnectorBase* >::capacity;
+
   HetConnector()
     : std::vector< ConnectorBase* >( 0 )
   {

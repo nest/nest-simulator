@@ -230,7 +230,7 @@ nest::SourceTable::reserve( const thread tid,
   // otherwise we can directly reserve
   else
   {
-    ( *sources_[ tid ] )[ it->second ]->reserve( count );
+    ( *sources_[ tid ] )[ it->second ]->reserve( ( *sources_[ tid ] )[ it->second ]->size() + count );
   }
 }
 

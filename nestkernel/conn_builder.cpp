@@ -1214,7 +1214,7 @@ nest::FixedInDegreeBuilder::connect_()
     const size_t expected_targets = std::ceil( float( targets_->size() )
       / kernel().vp_manager.get_num_virtual_processes() );
     kernel().connection_manager.reserve_connections(
-      tid, get_synapse_model(), expected_targets * indegree_ );
+      tid, get_synapse_model(), expected_targets * indegree_ + 100 );
 
     try
     {

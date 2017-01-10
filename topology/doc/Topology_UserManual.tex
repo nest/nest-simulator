@@ -241,7 +241,7 @@ in x- and y-direction.
 
 Layers have a default extent of $1\times 1$. 
 You can specify a different extent of a layer, i.e., its size in $x$- and
-$y$-direction by adding and \lstinline!'extent'! entry to the
+$y$-direction by adding an \lstinline!'extent'! entry to the
 dictionary passed to \lstinline!CreateLayer!:
 %
 \lstinputlisting[linerange=layer2-end]{user_manual_scripts/layers.py}
@@ -325,7 +325,7 @@ Note the following points:
   of the elements. One layer element is created per element in the
   \lstinline!'positions'! entry.
 \item All layer element positions must be \emph{within} the layer's
-  extent. Elements may be place on the perimeter of the extent as long
+  extent. Elements may be placed on the perimeter of the extent as long
   as no periodic boundary conditions are used; see Sec.~\ref{sec:periodic}.
 \item Element positions in free layers are \emph{not} shifted when
   specifying the \lstinline!'center'! of the layer. The user must make
@@ -531,12 +531,12 @@ We begin by introducing important terminology:
   \lstinline!CreateLayers!.
 \item[Source\index{source}] The \emph{source} of a single connection
   is the node sending signals (usually spikes). In a projection, the
-  source layer\index{source layer} is the layer from which source node
+  source layer\index{source layer} is the layer from which source nodes
   are chosen.
 \item[Target\index{target}]
 The \emph{target} of a single connection
   is the node receiving signals (usually spikes). In a projection, the
-  target layer\index{target layer} is the layer from which source node
+  target layer\index{target layer} is the layer from which target nodes
   are chosen.
 \item[Connection type\index{connection type}] The \emph{connection
     type} determines how nodes are selected when
@@ -601,14 +601,14 @@ Connections between Topology layers are created by calling
   or \lstinline!'divergent'!.
 \end{description}
 \end{enumerate}
-I many cases, the connection dictionary will also contain
+In many cases, the connection dictionary will also contain
 \begin{description}
 \item['mask'] a mask specification as described in
   Sec.~\ref{sec:conn_masks}.
 \end{description}
 Only neurons within the mask are considered as potential sources or
-targets. If no mask is given, the all neurons in the respective layer
-are consider sources or targets.
+targets. If no mask is given, all neurons in the respective layer
+are considered sources or targets.
 
 Here is a simple example, cf.~\ref{fig:conn1}:
 %
@@ -617,7 +617,7 @@ Here is a simple example, cf.~\ref{fig:conn1}:
 {Left: Minimal connection example from a layer onto itself using a
   rectangular mask shown as red line for the node at $(0,0)$ (marked
   light red). The targets of this node are marked with red dots. The targets
-  for the node at $(4,5)$ (marked light orange) are marked with orange
+  for the node at $(4,5)$ are marked with yellow
   dots. This node has fewer targets since it is at the corner and many
   potential targets are beyond the layer.
 Right: The effect of periodic boundary conditions\index{periodic
@@ -796,7 +796,7 @@ rules\index{probabilistic connection rules}. Topology supports
 probabilistic connections through \emph{kernels}\index{kernel}. A
 kernel is a function mapping the distance (or displacement) between a
 driver and a pool node to a connection probability. Topology then
-generates a connections according to this probability.
+generates a connection according to this probability.
 
 Probabilistic connections can be generated in two different ways using
 Topology:
@@ -815,7 +815,7 @@ Topology:
 \end{description}
 
 Available kernel functions are shown in Table~\ref{tab:kernels}. More
-kernel function may be created in a NEST extension module. This is covered
+kernel functions may be created in a NEST extension module. This is covered
 in Chapter~\ref{ch:extending}.
 
 \begin{table}
@@ -913,7 +913,7 @@ to pool neuron as argument to the kernel function.
 The functions presented in Table~\ref{tab:kernels} can also be used to
 specify distance-dependent or randomized weights and delays\index{distance-dependent
   weight}\index{distance-dependent delay}\index{randomized
-  delay}\index{randomized weight}for the connections
+  delay}\index{randomized weight} for the connections
 created by \lstinline!ConnectLayers!.
 
 Figure~\ref{fig:conn5} illustrates weights and delays generated using
@@ -929,7 +929,7 @@ Results are shown in the top panel of Fig.~\ref{fig:conn5}.
 Connection weights and delays are shown for the leftmost neuron as
 driver. Weights drop linearly from $1$. From the node at $(20,0)$ on,
 the cutoff sets weights to 0. There are no connections to nodes beyond
-$(25,0)$ since as the mask extends only 25 units to the right of the
+$(25,0)$, since the mask extends only 25 units to the right of the
 driver. Delays increase in a stepwise linear fashion\index{delays, stepwise}, as NEST requires
 delays to be multiples of the simulation resolution. 
 \item[Linear example with periodic boundary conditions\index{periodic

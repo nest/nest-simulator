@@ -29,6 +29,7 @@
 #include <cassert>
 #include <cmath>
 #include <set>
+#include <vector>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -919,16 +920,17 @@ nest::ConnectionManager::connect( ArrayDatum& conns )
 }
 
 nest::ConnectorBase*
-nest::ConnectionManager::validate_source_entry_( thread tid,
-  index s_gid,
-  synindex syn_id )
+nest::ConnectionManager::validate_source_entry_( const thread tid,
+  const index s_gid,
+  const synindex syn_id )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
   return validate_source_entry_( tid, s_gid );
 }
 
 nest::ConnectorBase*
-nest::ConnectionManager::validate_source_entry_( thread tid, index s_gid )
+nest::ConnectionManager::validate_source_entry_( const thread tid,
+  const index s_gid )
 {
   // resize sparsetable to full network size
   if ( connections_[ tid ].size() < kernel().node_manager.size() )
@@ -1313,60 +1315,26 @@ nest::ConnectionManager::get_sources( std::vector< index > targets,
 void
 nest::ConnectionManager::get_targets( std::vector< index > sources,
   std::vector< std::vector< index > >& targets,
-  index synapse_model )
-{
-  thread thread_id;
-  std::vector< index >::iterator source_it;
-  std::vector< std::vector< index > >::iterator target_it;
-  targets.resize( sources.size() );
-  for ( std::vector< std::vector< index > >::iterator i = targets.begin();
-        i != targets.end();
-        i++ )
-  {
-    ( *i ).clear();
-  }
-
-  for ( tVSConnector::iterator it = connections_.begin();
-        it != connections_.end();
-        ++it )
-  {
-    thread_id = it - connections_.begin();
-    // loop over the targets/sources
-    source_it = sources.begin();
-    target_it = targets.begin();
-    for ( ; source_it != sources.end(); source_it++, target_it++ )
-    {
-      if ( validate_source_entry_( thread_id, *source_it ) != 0 )
-      {
-        validate_pointer( validate_source_entry_( thread_id, *source_it ) )
-          ->get_target_gids( ( *target_it ), thread_id, synapse_model );
-      }
-    }
-  }
-}
-
-void
-nest::ConnectionManager::get_targets( std::vector< index > sources,
-  std::vector< std::vector< index > >& targets,
   index synapse_model,
   std::string post_synaptic_element )
 {
-  thread thread_id;
+  unsigned int thread_id;
   std::vector< index >::iterator source_it;
   std::vector< std::vector< index > >::iterator target_it;
   targets.resize( sources.size() );
   for ( std::vector< std::vector< index > >::iterator i = targets.begin();
         i != targets.end();
-        i++ )
+        ++i )
   {
     ( *i ).clear();
   }
 
-  for ( tVSConnector::iterator it = connections_.begin();
+  /*for ( tVSConnector::iterator it = connections_.begin();
         it != connections_.end();
-        ++it )
+        ++it )*/
+  for ( thread_id = 0; thread_id < connections_.size(); ++thread_id )
   {
-    thread_id = it - connections_.begin();
+    // thread_id = it - connections_.begin();
     // loop over the targets/sources
     source_it = sources.begin();
     target_it = targets.begin();

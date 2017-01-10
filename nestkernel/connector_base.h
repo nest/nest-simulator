@@ -162,10 +162,6 @@ public:
 
   virtual void get_target_gids( std::vector< size_t >& target_gids,
     size_t thrd,
-    synindex synapse_id ) const = 0;
-
-  virtual void get_target_gids( std::vector< size_t >& target_gids,
-    size_t thrd,
     synindex synapse_id,
     std::string post_synaptic_element ) const = 0;
 
@@ -446,27 +442,6 @@ public:
   }
 
   /**
-   * Return the GIDs of the target nodes in a given thread, for all connections
-   * on this Connector which match a defined synapse_id.
-   * @param target_gids Vector to store the GIDs of the target nodes
-   * @param thrd Thread where targets are being looked for
-   * @param synapse_id Synapse type
-   */
-  void
-  get_target_gids( std::vector< size_t >& target_gids,
-    size_t thrd,
-    synindex synapse_id ) const
-  {
-    if ( get_syn_id() == synapse_id )
-    {
-      for ( size_t i = 0; i < K; i++ )
-      {
-        target_gids.push_back( C_[ i ].get_target( thrd )->get_gid() );
-      }
-    }
-  }
-
-  /**
  * Return the GIDs of the target nodes in a given thread, for all connections
  * on this Connector which match a defined synapse_id.
  * @param target_gids Vector to store the GIDs of the target nodes
@@ -475,13 +450,13 @@ public:
  */
   void
   get_target_gids( std::vector< size_t >& target_gids,
-    size_t thrd,
-    synindex synapse_id,
-    std::string post_synaptic_element ) const
+    const size_t thrd,
+    const synindex synapse_id,
+    const std::string post_synaptic_element ) const
   {
     if ( get_syn_id() == synapse_id )
     {
-      for ( size_t i = 0; i < K; i++ )
+      for ( size_t i = 0; i < K; ++i )
       {
         if ( C_[ i ].get_target( thrd )->get_synaptic_elements(
                post_synaptic_element ) != 0.0 )
@@ -712,20 +687,9 @@ public:
 
   void
   get_target_gids( std::vector< size_t >& target_gids,
-    size_t thrd,
-    synindex synapse_id ) const
-  {
-    if ( get_syn_id() == synapse_id )
-    {
-      target_gids.push_back( C_[ 0 ].get_target( thrd )->get_gid() );
-    }
-  }
-
-  void
-  get_target_gids( std::vector< size_t >& target_gids,
-    size_t thrd,
-    synindex synapse_id,
-    std::string post_synaptic_element ) const
+    const size_t thrd,
+    const synindex synapse_id,
+    const std::string post_synaptic_element ) const
   {
     if ( get_syn_id() == synapse_id )
     {
@@ -958,29 +922,14 @@ public:
 
   void
   get_target_gids( std::vector< size_t >& target_gids,
-    size_t thrd,
-    synindex synapse_id ) const
+    const size_t thrd,
+    const synindex synapse_id,
+    const std::string post_synaptic_element ) const
   {
     typename std::vector< ConnectionT >::const_iterator C_it;
     if ( get_syn_id() == synapse_id )
     {
-      for ( C_it = C_.begin(); C_it != C_.end(); C_it++ )
-      {
-        target_gids.push_back( ( *C_it ).get_target( thrd )->get_gid() );
-      }
-    }
-  }
-
-  void
-  get_target_gids( std::vector< size_t >& target_gids,
-    size_t thrd,
-    synindex synapse_id,
-    std::string post_synaptic_element ) const
-  {
-    typename std::vector< ConnectionT >::const_iterator C_it;
-    if ( get_syn_id() == synapse_id )
-    {
-      for ( C_it = C_.begin(); C_it != C_.end(); C_it++ )
+      for ( C_it = C_.begin(); C_it != C_.end(); ++C_it )
       {
         if ( ( *C_it ).get_target( thrd )->get_synaptic_elements(
                post_synaptic_element ) != 0.0 )
@@ -1143,27 +1092,14 @@ public:
         source_gid, target_gid, thrd, synapse_id, synapse_label, conns );
   }
 
-  void
-  get_target_gids( std::vector< size_t >& target_gids,
-    size_t thrd,
-    synindex synapse_id ) const
-  {
-    for ( size_t i = 0; i < size(); i++ )
-    {
-      if ( synapse_id == at( i )->get_syn_id() )
-      {
-        at( i )->get_target_gids( target_gids, thrd, synapse_id );
-      }
-    }
-  }
 
   void
   get_target_gids( std::vector< size_t >& target_gids,
-    size_t thrd,
-    synindex synapse_id,
-    std::string post_synaptic_element ) const
+    const size_t thrd,
+    const synindex synapse_id,
+    const std::string post_synaptic_element ) const
   {
-    for ( size_t i = 0; i < size(); i++ )
+    for ( size_t i = 0; i < size(); ++i )
     {
       if ( synapse_id == at( i )->get_syn_id() )
       {

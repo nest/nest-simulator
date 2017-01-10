@@ -230,9 +230,6 @@ public:
   void get_sources( std::vector< index > targets,
     std::vector< std::vector< index > >& sources,
     index synapse_model );
-  void get_targets( std::vector< index > sources,
-    std::vector< std::vector< index > >& targets,
-    index synapse_model );
 
   void get_targets( std::vector< index > sources,
     std::vector< std::vector< index > >& targets,

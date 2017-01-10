@@ -42,7 +42,7 @@ class TestDisconnectSingle(unittest.TestCase):
             'gap_junction',
             'gap_junction_lbl',
         ]
-                
+
     def test_synapse_deletion_one_to_one_no_sp(self):
         for syn_model in nest.Models('synapses'):
             if syn_model not in self.exclude_synapse_model:

@@ -186,3 +186,12 @@ nest::VPManager::set_num_threads( nest::thread n_threads )
   omp_set_num_threads( n_threads_ );
 #endif
 }
+
+void
+nest::VPManager::assert_single_threaded()
+{
+#ifdef _OPENMP
+  assert( omp_get_num_threads() == 1 );
+#endif
+}
+

@@ -65,47 +65,43 @@ public:
   virtual ~ConnectorBase(){};
 
   virtual void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const = 0;
-  virtual void set_synapse_status( synindex syn_id,
+  get_synapse_status( const synindex syn_id, DictionaryDatum& d, const port p ) const = 0;
+  virtual void set_synapse_status( const synindex syn_id,
     ConnectorModel& cm,
     const DictionaryDatum& d,
-    port p ) = 0;
+    const port p ) = 0;
 
-  virtual size_t get_num_connections() = 0;
-  virtual size_t get_num_connections( synindex syn_id ) = 0;
+  virtual size_t get_num_connections() const = 0;
+  virtual size_t get_num_connections( const synindex syn_id ) const = 0;
   virtual size_t
-  get_num_connections( index target_gid, thread tid, synindex syn_id ) = 0;
+  get_num_connections( const index target_gid, const thread tid, const synindex syn_id ) const = 0;
 
-  virtual void get_connection( index source_gid,
-    thread tid,
-    synindex synapse_id,
-    index lcid,
-    long synapse_label,
+  virtual void get_connection( const index source_gid,
+    const thread tid,
+    const synindex syn_id,
+    const index lcid,
+    const long synapse_label,
     std::deque< ConnectionID >& conns ) const = 0;
 
-  virtual void get_connection( index source_gid,
-    index target_gid,
-    thread tid,
-    synindex synapse_id,
-    index lcid,
-    long synapse_label,
+  virtual void get_connection( const index source_gid,
+    const index target_gid,
+    const thread tid,
+    const synindex syn_id,
+    const index lcid,
+    const long synapse_label,
     std::deque< ConnectionID >& conns ) const = 0;
 
-  virtual void get_all_connections( index source_gid,
-    index requested_target_gid,
-    thread tid,
-    synindex synapse_id,
-    long synapse_label,
+  virtual void get_all_connections( const index source_gid,
+    const index target_gid,
+    const thread tid,
+    const synindex syn_id,
+    const long synapse_label,
     std::deque< ConnectionID >& conns ) const = 0;
 
   virtual void get_source_lcids( const thread tid,
     const synindex syn_index,
-    const index tgid,
+    const index target_gid,
     std::vector< index >& source_lcids ) const = 0;
-
-  // virtual void get_target_gids( std::vector< index >& target_gids,
-  //   thread tid,
-  //   synindex synapse_id ) const = 0;
 
   virtual void get_target_gids( const thread tid,
     const synindex syn_index,
@@ -117,7 +113,7 @@ public:
     const unsigned int lcid ) const = 0;
 
   virtual void send_to_all( Event& e,
-    thread tid,
+    const thread tid,
     const std::vector< ConnectorModel* >& cm ) = 0;
 
   virtual bool send( const thread tid,
@@ -126,14 +122,10 @@ public:
     Event& e,
     const std::vector< ConnectorModel* >& cm ) = 0;
 
-  virtual void trigger_update_weight( long vt_gid,
-    thread t,
+  virtual void trigger_update_weight( const long vt_gid,
+    const thread tid,
     const std::vector< spikecounter >& dopa_spikes,
-    double t_trig,
-    const std::vector< ConnectorModel* >& cm ) = 0;
-
-  virtual void send_to_all_secondary( SecondaryEvent& e,
-    thread t,
+    const double t_trig,
     const std::vector< ConnectorModel* >& cm ) = 0;
 
   // returns id of synapse type
@@ -186,28 +178,28 @@ public:
   find_first_target( const thread tid,
     const synindex syn_index,
     const index start_lcid,
-    const index tgid ) const
+    const index target_gid ) const
   {
     assert( false );
   };
   virtual index
   find_first_target( const thread tid,
     const index start_lcid,
-    const index tgid ) const
+    const index target_gid ) const
   {
     assert( false );
   };
 
   virtual index
   find_matching_target( const thread tid,
-    const index tgid,
+    const index target_gid,
     const std::vector< index >& matching_lcids ) const
   {
     assert( false );
   }
   virtual index
   find_matching_target( const thread tid,
-    const index tgid,
+    const index target_gid,
     const synindex syn_index,
     const std::vector< index >& matching_lcids ) const
   {
@@ -271,7 +263,7 @@ private:
   synindex syn_id_;
 
 public:
-  explicit Connector( synindex syn_id )
+  explicit Connector( const synindex syn_id )
     : syn_id_( syn_id )
   {
   }
@@ -281,7 +273,7 @@ public:
   }
 
   void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
+  get_synapse_status( const synindex syn_id, DictionaryDatum& d, const port p ) const
   {
     if ( syn_id == syn_id_ )
     {
@@ -291,10 +283,10 @@ public:
   }
 
   void
-  set_synapse_status( synindex syn_id,
+  set_synapse_status( const synindex syn_id,
     ConnectorModel& cm,
     const DictionaryDatum& d,
-    port p )
+    const port p )
   {
     if ( syn_id == syn_id_ )
     {
@@ -305,13 +297,13 @@ public:
   }
 
   size_t
-  get_num_connections()
+  get_num_connections() const
   {
     return C_.size();
   }
 
   size_t
-  get_num_connections( synindex syn_id )
+  get_num_connections( const synindex syn_id ) const
   {
     if ( syn_id == syn_id_ )
       return C_.size();
@@ -320,16 +312,16 @@ public:
   }
 
   size_t
-  get_num_connections( index target_gid, thread tid, synindex syn_id )
+  get_num_connections( const index target_gid, const thread tid, const synindex syn_id ) const
   {
     size_t num_connections = 0;
     if ( syn_id == syn_id_ )
     {
-      for ( size_t i = 0; i < C_.size(); i++ )
+      for ( size_t i = 0; i < C_.size(); ++i )
       {
         if ( C_[ i ].get_target( tid )->get_gid() == target_gid )
         {
-          num_connections++;
+          ++num_connections;
         }
       }
     }
@@ -350,7 +342,7 @@ public:
   }
 
   ConnectorBase&
-  erase( size_t i )
+  erase( const size_t i )
   {
     typename std::vector< ConnectionT >::iterator it;
     it = C_.begin() + i;
@@ -358,14 +350,8 @@ public:
     return *this;
   }
 
-  size_t
-  size()
-  {
-    return C_.size();
-  }
-
   ConnectionT&
-  at( size_t i )
+  at( const size_t i )
   {
     if ( i >= C_.size() || i < 0 )
       throw std::out_of_range( String::compose(
@@ -374,14 +360,14 @@ public:
   }
 
   void
-  get_connection( index source_gid,
-    thread tid,
-    synindex synapse_id,
-    index lcid,
-    long synapse_label,
+  get_connection( const index source_gid,
+    const thread tid,
+    const synindex syn_id,
+    const index lcid,
+    const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
-    if ( syn_id_ == synapse_id && not C_[ lcid ].is_disabled() )
+    if ( syn_id_ == syn_id && not C_[ lcid ].is_disabled() )
     {
       if ( synapse_label == UNLABELED_CONNECTION
         || C_[ lcid ].get_label() == synapse_label )
@@ -389,22 +375,22 @@ public:
         conns.push_back( ConnectionDatum( ConnectionID( source_gid,
           C_[ lcid ].get_target( tid )->get_gid(),
           tid,
-          synapse_id,
+          syn_id,
           lcid ) ) );
       }
     }
   }
 
   void
-  get_connection( index source_gid,
-    index target_gid,
-    thread tid,
-    synindex synapse_id,
-    index lcid,
-    long synapse_label,
+  get_connection( const index source_gid,
+    const index target_gid,
+    const thread tid,
+    const synindex syn_id,
+    const index lcid,
+    const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
-    if ( syn_id_ == synapse_id && not C_[ lcid ].is_disabled() )
+    if ( syn_id_ == syn_id && not C_[ lcid ].is_disabled() )
     {
       if ( synapse_label == UNLABELED_CONNECTION
         || C_[ lcid ].get_label() == synapse_label )
@@ -412,32 +398,32 @@ public:
         if ( C_[ lcid ].get_target( tid )->get_gid() == target_gid )
         {
           conns.push_back( ConnectionDatum(
-            ConnectionID( source_gid, target_gid, tid, synapse_id, lcid ) ) );
+            ConnectionID( source_gid, target_gid, tid, syn_id, lcid ) ) );
         }
       }
     }
   }
 
   void
-  get_all_connections( index source_gid,
-    index requested_target_gid,
-    thread tid,
-    synindex synapse_id,
-    long synapse_label,
+  get_all_connections( const index source_gid,
+    const index target_gid,
+    const thread tid,
+    const synindex syn_id,
+    const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
-    if ( syn_id_ == synapse_id )
+    if ( syn_id_ == syn_id )
     {
       for ( size_t i = 0; i < C_.size(); ++i )
       {
-        const index target_gid = C_[ i ].get_target( tid )->get_gid();
-        if ( target_gid == requested_target_gid || requested_target_gid == 0 )
+        const index current_target_gid = C_[ i ].get_target( tid )->get_gid();
+        if ( current_target_gid == target_gid || target_gid == 0 )
         {
           if ( synapse_label == UNLABELED_CONNECTION
             || C_[ i ].get_label() == synapse_label )
           {
             conns.push_back( ConnectionDatum(
-              ConnectionID( source_gid, target_gid, tid, synapse_id, i ) ) );
+              ConnectionID( source_gid, target_gid, tid, syn_id, i ) ) );
           }
         }
       }
@@ -447,13 +433,13 @@ public:
   void
   get_source_lcids( const thread tid,
     const synindex,
-    const index tgid,
+    const index target_gid,
     std::vector< index >& source_lcids ) const
   {
     for ( index lcid = 0; lcid < C_.size(); ++lcid )
     {
-      const index current_tgid = C_[ lcid ].get_target( tid )->get_gid();
-      if ( current_tgid == tgid )
+      const index current_target_gid = C_[ lcid ].get_target( tid )->get_gid();
+      if ( current_target_gid == target_gid )
       {
         source_lcids.push_back( lcid );
       }
@@ -470,7 +456,6 @@ public:
     while ( true )
     {
       target_gids.push_back( C_[ lcid ].get_target( tid )->get_gid() );
-      std::cout<<"found target "<<target_gids.back()<<std::endl;
 
       if ( not C_[ lcid ].has_source_subsequent_targets() )
       {
@@ -490,11 +475,11 @@ public:
   }
 
   void
-  send_to_all( Event& e, thread tid, const std::vector< ConnectorModel* >& cm )
+  send_to_all( Event& e, const thread tid, const std::vector< ConnectorModel* >& cm )
   {
     for ( size_t i = 0; i < C_.size(); ++i )
     {
-      e.set_port( i );
+      e.set_port( i ); // TODO@5g: does this make sense?
       C_[ i ].send( e,
         tid,
         static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
@@ -521,31 +506,22 @@ public:
   }
 
   void
-  trigger_update_weight( long vt_gid,
-    thread t,
+  trigger_update_weight( const long vt_gid,
+    const thread tid,
     const std::vector< spikecounter >& dopa_spikes,
-    double t_trig,
+    const double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
     for ( size_t i = 0; i < C_.size(); ++i )
       if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
              ->get_common_properties()
              .get_vt_gid() == vt_gid )
-        C_[ i ].trigger_update_weight( t,
+        C_[ i ].trigger_update_weight( tid,
           dopa_spikes,
           t_trig,
           static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
             ->get_common_properties() );
   }
-
-  void
-  send_to_all_secondary( SecondaryEvent&,
-    thread,
-    const std::vector< ConnectorModel* >& )
-  {
-    assert(
-      false ); // should not be called, only needed for heterogeneous connectors
-  };
 
   synindex
   get_syn_id() const
@@ -581,14 +557,13 @@ public:
   index
   find_first_target( const thread tid,
     const index start_lcid,
-    const index tgid ) const
+    const index target_gid ) const
   {
     index lcid = start_lcid;
     while ( true )
     {
-      if ( C_[ lcid ].get_target( tid )->get_gid() == tgid )
+      if ( C_[ lcid ].get_target( tid )->get_gid() == target_gid )
       {
-        // std::cout << " - found target " << tgid << std::endl;
         return lcid;
       }
 
@@ -603,14 +578,13 @@ public:
 
   index
   find_matching_target( const thread tid,
-    const index tgid,
+    const index target_gid,
     const std::vector< index >& matching_lcids ) const
   {
     for ( size_t i = 0; i < matching_lcids.size(); ++i )
     {
-      if ( C_[ matching_lcids[ i ] ].get_target( tid )->get_gid() == tgid )
+      if ( C_[ matching_lcids[ i ] ].get_target( tid )->get_gid() == target_gid )
       {
-        // std::cout << " - found target " << tgid << std::endl;
         return matching_lcids[ i ];
       }
     }
@@ -692,7 +666,7 @@ public:
   }
 
   void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
+  get_synapse_status( const synindex syn_id, DictionaryDatum& d, const port p ) const
   {
     for ( size_t i = 0; i < size(); ++i )
     {
@@ -701,10 +675,10 @@ public:
   }
 
   void
-  set_synapse_status( synindex syn_id,
+  set_synapse_status( const synindex syn_id,
     ConnectorModel& cm,
     const DictionaryDatum& d,
-    port p )
+    const port p )
   {
     for ( size_t i = 0; i < size(); ++i )
     {
@@ -713,7 +687,7 @@ public:
   }
 
   size_t
-  get_num_connections()
+  get_num_connections() const
   {
     size_t n = 0;
     for ( size_t i = 0; i < size(); ++i )
@@ -724,7 +698,7 @@ public:
   }
 
   size_t
-  get_num_connections( synindex syn_id )
+  get_num_connections( const synindex syn_id ) const
   {
     const size_t i = find_synapse_index( syn_id );
     if ( i != invalid_synindex )
@@ -738,7 +712,7 @@ public:
   }
 
   size_t
-  get_num_connections( index target_gid, thread tid, synindex syn_id )
+  get_num_connections( const index target_gid, const thread tid, const synindex syn_id ) const
   {
     const size_t i = find_synapse_index( syn_id );
     if ( i != invalid_synindex )
@@ -752,50 +726,50 @@ public:
   }
 
   void
-  get_connection( index source_gid,
-    thread tid,
-    synindex synapse_id,
-    index lcid,
-    long synapse_label,
+  get_connection( const index source_gid,
+    const thread tid,
+    const synindex syn_id,
+    const index lcid,
+    const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < size(); ++i )
     {
       at( i )->get_connection(
-        source_gid, tid, synapse_id, lcid, synapse_label, conns );
+        source_gid, tid, syn_id, lcid, synapse_label, conns );
     }
   }
 
   void
-  get_connection( index source_gid,
-    index target_gid,
-    thread tid,
-    synindex synapse_id,
-    index lcid,
-    long synapse_label,
+  get_connection( const index source_gid,
+    const index target_gid,
+    const thread tid,
+    const synindex syn_id,
+    const index lcid,
+    const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < size(); ++i )
     {
       at( i )->get_connection(
-        source_gid, target_gid, tid, synapse_id, lcid, synapse_label, conns );
+        source_gid, target_gid, tid, syn_id, lcid, synapse_label, conns );
     }
   }
 
   void
-  get_all_connections( index source_gid,
-    index requested_target_gid,
-    thread tid,
-    synindex synapse_id,
-    long synapse_label,
+  get_all_connections( const index source_gid,
+    const index target_gid,
+    const thread tid,
+    const synindex syn_id,
+    const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < size(); ++i )
     {
       at( i )->get_all_connections( source_gid,
-        requested_target_gid,
+        target_gid,
         tid,
-        synapse_id,
+        syn_id,
         synapse_label,
         conns );
     }
@@ -804,24 +778,11 @@ public:
   void
   get_source_lcids( const thread tid,
     const synindex syn_index,
-    const index tgid,
+    const index target_gid,
     std::vector< index >& source_lcids ) const
   {
-    at( syn_index )->get_source_lcids( tid, syn_index, tgid, source_lcids );
+    at( syn_index )->get_source_lcids( tid, syn_index, target_gid, source_lcids );
   }
-
-  // void
-  // get_target_gids( std::vector< size_t >& target_gids, thread tid, synindex
-  // synapse_id ) const
-  // {
-  //   for ( size_t i = 0; i < size(); ++i )
-  //   {
-  //     if ( synapse_id == at( i )->get_syn_id() )
-  //     {
-  //       at( i )->get_target_gids( target_gids, tid, synapse_id );
-  //     }
-  //   }
-  // }
 
   void
   get_target_gids( const thread tid,
@@ -829,7 +790,6 @@ public:
     const index start_lcid,
     std::vector< index >& target_gids ) const
   {
-    // std::cout << "het conn" << std::endl;
     at( syn_index )->get_target_gids( tid, syn_index, start_lcid, target_gids );
   }
 
@@ -852,7 +812,7 @@ public:
   }
 
   void
-  send_to_all( Event& e, thread tid, const std::vector< ConnectorModel* >& cm )
+  send_to_all( Event& e, const thread tid, const std::vector< ConnectorModel* >& cm )
   {
     // only called for events from or to devices. can not contain
     // secondary-event connections, so we can delegate send to
@@ -865,31 +825,16 @@ public:
   }
 
   void
-  trigger_update_weight( long vt_gid,
-    thread t,
+  trigger_update_weight( const long vt_gid,
+    const thread tid,
     const std::vector< spikecounter >& dopa_spikes,
-    double t_trig,
+    const double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
     for ( size_t i = 0; i < size(); ++i )
-      at( i )->trigger_update_weight( vt_gid, t, dopa_spikes, t_trig, cm );
-  }
-
-  // TODO@5g: can probably be removed
-  void
-  send_to_all_secondary( SecondaryEvent& e,
-    thread t,
-    const std::vector< ConnectorModel* >& cm )
-  {
-    assert( false );
-    // // for all secondary connections delegate send to the matching
-    // homogeneous connector only
-    // for ( size_t i = primary_end_; i < size(); ++i )
-    //   if ( e.supports_syn_id( at( i )->get_syn_id() ) )
-    //   {
-    //     at( i )->send_to_all( e, t, cm );
-    //     break;
-    //   }
+    {
+      at( i )->trigger_update_weight( vt_gid, tid, dopa_spikes, t_trig, cm );
+    }
   }
 
   // returns id of synapse type
@@ -903,24 +848,6 @@ public:
   get_syn_id( const synindex syn_index ) const
   {
     return at( syn_index )->get_syn_id();
-  }
-
-  // TODO@5g: can probably be removed
-  void
-  add_connector( bool is_primary, ConnectorBase* conn )
-  {
-    assert( false );
-    // if ( is_primary )
-    // {
-    //   insert( begin() + primary_end_,
-    //     conn ); // if empty, insert (begin(), conn) inserts into the first
-    //     position
-    //   ++primary_end_;
-    // }
-    // else
-    // {
-    //   push_back( conn );
-    // }
   }
 
   // we check whether an entry with this synapse id already exists in
@@ -968,18 +895,18 @@ public:
   find_first_target( const thread tid,
     const synindex syn_index,
     const index start_lcid,
-    const index tgid ) const
+    const index target_gid ) const
   {
-    return at( syn_index )->find_first_target( tid, start_lcid, tgid );
+    return at( syn_index )->find_first_target( tid, start_lcid, target_gid );
   }
 
   index
   find_matching_target( const thread tid,
-    const index tgid,
+    const index target_gid,
     const synindex syn_index,
     const std::vector< index >& matching_lcids ) const
   {
-    return at( syn_index )->find_matching_target( tid, tgid, matching_lcids );
+    return at( syn_index )->find_matching_target( tid, target_gid, matching_lcids );
   }
 
   void

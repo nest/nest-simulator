@@ -66,7 +66,7 @@ m = np.zeros(2, dtype=float)
 for i in xrange(2):
     m[i] = c[i][i][int(tau_max / h)] * (h / T)
 
-print 'mean activities =', m
+print('mean activities =', m)
 
 cmat = np.zeros((2, 2, int(2 * tau_max / h) + 1), dtype=float)
 for i in xrange(2):

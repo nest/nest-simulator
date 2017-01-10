@@ -50,7 +50,7 @@ nest.ResetKernel()
 # In this example we will configure these parameters in an additional
 # step, which is explained in the third section.
 
-neuron = nest.Create("iaf_neuron")
+neuron = nest.Create("iaf_psc_alpha")
 voltmeter = nest.Create("voltmeter")
 # Third, the neuron and the voltmeter are configured using
 # `SetStatus()`, which expects a list of node handles and a list of

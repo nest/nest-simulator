@@ -785,7 +785,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  index source = getValue< long >( i->OStack.pick( 2 ) );
+  const index source = getValue< long >( i->OStack.pick( 2 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
@@ -795,7 +795,8 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  kernel().connection_manager.divergent_connect( source, params, synmodel_id );
+  kernel().connection_manager.data_connect_single(
+    source, params, synmodel_id );
 
   ALL_ENTRIES_ACCESSED(
     *params, "Connect", "The following synapse parameters are unused: " );
@@ -840,9 +841,9 @@ void
 NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  ArrayDatum connectome = getValue< ArrayDatum >( i->OStack.top() );
+  const ArrayDatum connectome = getValue< ArrayDatum >( i->OStack.top() );
 
-  kernel().connection_manager.connect( connectome );
+  kernel().connection_manager.data_connect_connectome( connectome );
   i->OStack.pop();
   i->EStack.pop();
 }
@@ -1613,11 +1614,12 @@ NestModule::init( SLIInterpreter* i )
   GIDCollectionType.setdefaultaction( SLIInterpreter::datatypefunction );
 
   // register interface functions with interpreter
-  i->createcommand( "ChangeSubnet", &changesubnet_ifunction );
-  i->createcommand( "CurrentSubnet", &currentsubnetfunction );
-  i->createcommand( "GetNodes_i_D_b_b", &getnodes_i_D_b_bfunction );
-  i->createcommand( "GetLeaves_i_D_b", &getleaves_i_D_bfunction );
-  i->createcommand( "GetChildren_i_D_b", &getchildren_i_D_bfunction );
+  i->createcommand( "ChangeSubnet", &changesubnet_ifunction, "NEST 3.0" );
+  i->createcommand( "CurrentSubnet", &currentsubnetfunction, "NEST 3.0" );
+  i->createcommand( "GetNodes_i_D_b_b", &getnodes_i_D_b_bfunction, "NEST 3.0" );
+  i->createcommand( "GetLeaves_i_D_b", &getleaves_i_D_bfunction, "NEST 3.0" );
+  i->createcommand(
+    "GetChildren_i_D_b", &getchildren_i_D_bfunction, "NEST 3.0" );
 
   i->createcommand( "RestoreNodes_a", &restorenodes_afunction );
 
@@ -1642,8 +1644,9 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
 
-  i->createcommand( "DataConnect_i_D_s", &dataconnect_i_D_sfunction );
-  i->createcommand( "DataConnect_a", &dataconnect_afunction );
+  i->createcommand(
+    "DataConnect_i_D_s", &dataconnect_i_D_sfunction, "NEST 3.0" );
+  i->createcommand( "DataConnect_a", &dataconnect_afunction, "NEST 3.0" );
 
   i->createcommand( "ResetNetwork", &resetnetworkfunction );
   i->createcommand( "ResetKernel", &resetkernelfunction );

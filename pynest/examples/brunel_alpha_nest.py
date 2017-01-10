@@ -28,7 +28,7 @@ the basis of the network used in
 
 Brunel N, Dynamics of Sparsely Connected Networks of Excitatory and
 Inhibitory Spiking Neurons, Journal of Computational Neuroscience 8,
-183–208 (2000).
+183-208 (2000).
 
 In contrast to brunel-alpha-numpy.py, this variant uses NEST's builtin
 connection routines to draw the random connections instead of NumPy.

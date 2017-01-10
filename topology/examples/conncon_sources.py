@@ -42,9 +42,9 @@ nest.set_verbosity('M_WARNING')
 
 # create two test layers
 a = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'iaf_neuron', 'edge_wrap': True})
+                      'elements': 'iaf_psc_alpha', 'edge_wrap': True})
 b = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'iaf_neuron', 'edge_wrap': True})
+                      'elements': 'iaf_psc_alpha', 'edge_wrap': True})
 
 topo.ConnectLayers(a, b, {'connection_type': 'convergent',
                           'mask': {'rectangular': {'lower_left': [-0.2, -0.5],

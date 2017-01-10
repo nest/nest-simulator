@@ -87,8 +87,8 @@ def main():
 
     cross = corr_spikes_sorted(sp1, sp2, t_bin, tau_max, h)
 
-    print cross
-    print sum(cross)
+    print(cross)
+    print(sum(cross))
 
 
 main()

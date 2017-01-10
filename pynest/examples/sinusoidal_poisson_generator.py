@@ -69,7 +69,7 @@ s = nest.Create('spike_detector', n=2, params={'withgid': False})
 
 nest.Connect(m, g, 'one_to_one')
 nest.Connect(g, s, 'one_to_one')
-print nest.GetStatus(m)
+print(nest.GetStatus(m))
 nest.Simulate(200)
 
 '''

@@ -56,25 +56,27 @@ class TestDisconnectSingle(unittest.TestCase):
                 neurons = nest.Create('iaf_neuron', 4)
                 syn_dict = {'model': syn_model}
 
-                nest.Connect([neurons[0]], [neurons[2]], 
-                            "one_to_one", syn_dict)
-                nest.Connect([neurons[1]], [neurons[3]], 
-                            "one_to_one", syn_dict)
-                #Delete existent connection
-                conns = nest.GetConnections([neurons[0]], [neurons[2]], syn_model)
+                nest.Connect([neurons[0]], [neurons[2]],
+                             "one_to_one", syn_dict)
+                nest.Connect([neurons[1]], [neurons[3]],
+                             "one_to_one", syn_dict)
+                # Delete existent connection
+                conns = nest.GetConnections(
+                    [neurons[0]], [neurons[2]], syn_model)
                 connstotal = None
                 conns = self.comm.allgather(conns, connstotal)
                 conns = filter(None, conns)
 
                 assert len(conns) == 1
                 nest.DisconnectOneToOne(neurons[0], neurons[2], syn_dict)
-                conns = nest.GetConnections([neurons[0]], [neurons[2]], syn_model)
+                conns = nest.GetConnections(
+                    [neurons[0]], [neurons[2]], syn_model)
                 connstotal = None
                 conns = self.comm.allgather(conns, connstotal)
                 conns = filter(None, conns)
                 assert len(conns) == 0
 
-                #Assert that one can not delete a non existent connection
+                # Assert that one can not delete a non existent connection
                 conns1 = nest.GetConnections(
                     [neurons[0]], [neurons[1]], syn_model)
                 connstotal1 = None
@@ -86,8 +88,8 @@ class TestDisconnectSingle(unittest.TestCase):
                     assertFail()
                 except:
                     print ("Synapse deletion ok: " + syn_model)
-                    
-                
+
+
 def suite():
     test_suite = unittest.makeSuite(TestDisconnectSingle, 'test')
     return test_suite

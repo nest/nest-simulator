@@ -23,8 +23,8 @@
 import nest
 import unittest
 
-class TestIssue578(unittest.TestCase):
 
+class TestIssue578(unittest.TestCase):
 
     def test_targets(self):
         nest.ResetKernel()
@@ -79,14 +79,13 @@ class TestIssue578(unittest.TestCase):
         })
 
         try:
-            nest.Simulate(200*1000)
+            nest.Simulate(200 * 1000)
         except:
             self.fail("Exception during structural plasticity deletion")
 
     def suite():
         test_suite = unittest.makeSuite(TestIssue578, 'test')
         return test_suite
-
 
     if __name__ == '__main__':
         unittest.main()

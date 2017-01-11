@@ -140,8 +140,8 @@ add_connect_param = {
 
 simtime = 100
 resolution = 0.1
-min_steps = 1 # minimal number of refractory steps (t_ref = resolution in ms)
-max_steps = 200 # maximal number of steps (t_ref = 200 * resolution in ms)
+min_steps = 1    # minimal number of refractory steps (t_ref = resolution)
+max_steps = 200  # maximal number of steps (t_ref = 200 * resolution)
 
 
 # --------------------------------------------------------------------------- #

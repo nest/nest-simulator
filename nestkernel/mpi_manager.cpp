@@ -639,6 +639,20 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
 }
 
 void
+nest::MPIManager::communicate_Allreduce_min_in_place(
+  std::vector< long >& buffer )
+{
+  MPI_Allreduce( MPI_IN_PLACE, &buffer[ 0 ], 1, MPI_LONG, MPI_MIN, comm );
+}
+
+void
+nest::MPIManager::communicate_Allreduce_max_in_place(
+  std::vector< long >& buffer )
+{
+  MPI_Allreduce( MPI_IN_PLACE, &buffer[ 0 ], 1, MPI_LONG, MPI_MAX, comm );
+}
+
+void
 nest::MPIManager::communicate_Allgather( std::vector< long >& buffer )
 {
   // avoid aliasing, see http://www.mpi-forum.org/docs/mpi-11-html/node10.html
@@ -1063,6 +1077,19 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
   std::vector< double >& recv_buffer )
 {
   recv_buffer.swap( send_buffer );
+}
+
+
+void
+nest::MPIManager::communicate_Allreduce_min_in_place(
+  std::vector< long >& buffer )
+{
+}
+
+void
+nest::MPIManager::communicate_Allreduce_max_in_place(
+  std::vector< long >& buffer )
+{
 }
 
 #endif /* #ifdef HAVE_MPI */

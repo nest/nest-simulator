@@ -19,11 +19,19 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+__author__ = 'naveau'
+
 import nest
 import unittest
-from mpi4py import MPI
 
-__author__ = 'naveau'
+try:
+    from mpi4py import MPI
+except ImportError:
+    # Test without MPI
+    mpi_test = 0
+else:
+    # Test with MPI
+    mpi_test = 1
 
 
 class TestDisconnectSingle(unittest.TestCase):
@@ -31,9 +39,12 @@ class TestDisconnectSingle(unittest.TestCase):
     def setUp(self):
         nest.ResetKernel()
         nest.set_verbosity('M_ERROR')
-        self.comm = MPI.COMM_WORLD
-        self.rank = self.comm.Get_rank()
-        assert(nest.Rank() == self.rank)
+        self.num_procs = 1
+        if mpi_test:
+            self.comm = MPI.COMM_WORLD
+            self.rank = self.comm.Get_rank()
+            assert(nest.Rank() == self.rank)
+            self.num_procs = 2
         self.exclude_synapse_model = [
             'stdp_dopamine_synapse',
             'stdp_dopamine_synapse_lbl',
@@ -50,7 +61,7 @@ class TestDisconnectSingle(unittest.TestCase):
                 nest.SetKernelStatus(
                     {
                         'resolution': 0.1,
-                        'total_num_virtual_procs': 2
+                        'total_num_virtual_procs': self.num_procs
                     }
                 )
                 neurons = nest.Create('iaf_neuron', 4)
@@ -63,25 +74,27 @@ class TestDisconnectSingle(unittest.TestCase):
                 # Delete existent connection
                 conns = nest.GetConnections(
                     [neurons[0]], [neurons[2]], syn_model)
-                connstotal = None
-                conns = self.comm.allgather(conns, connstotal)
-                conns = filter(None, conns)
-
+                if mpi_test:
+                    connstotal = None
+                    conns = self.comm.allgather(conns, connstotal)
+                    conns = filter(None, conns)
                 assert len(conns) == 1
                 nest.DisconnectOneToOne(neurons[0], neurons[2], syn_dict)
                 conns = nest.GetConnections(
                     [neurons[0]], [neurons[2]], syn_model)
-                connstotal = None
-                conns = self.comm.allgather(conns, connstotal)
-                conns = filter(None, conns)
+                if mpi_test:
+                    connstotal = None
+                    conns = self.comm.allgather(conns, connstotal)
+                    conns = filter(None, conns)
                 assert len(conns) == 0
 
                 # Assert that one can not delete a non existent connection
                 conns1 = nest.GetConnections(
                     [neurons[0]], [neurons[1]], syn_model)
-                connstotal1 = None
-                conns1 = self.comm.allgather(conns1, connstotal1)
-                conns1 = filter(None, conns1)
+                if mpi_test:
+                    connstotal1 = None
+                    conns1 = self.comm.allgather(conns1, connstotal1)
+                    conns1 = filter(None, conns1)
                 assert len(conns1) == 0
                 try:
                     nest.DisconnectOneToOne(neurons[0], neurons[1], syn_dict)

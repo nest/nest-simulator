@@ -85,9 +85,10 @@ class TestIssue578(unittest.TestCase):
             print sys.exc_info()[0]
             self.fail("Exception during simulation")
 
-    def suite():
-        test_suite = unittest.makeSuite(TestIssue578, 'test')
-        return test_suite
 
-    if __name__ == '__main__':
-        unittest.main()
+def suite():
+    test_suite = unittest.makeSuite(TestIssue578, 'test')
+    return test_suite
+
+if __name__ == '__main__':
+    unittest.main()

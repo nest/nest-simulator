@@ -1313,37 +1313,32 @@ nest::ConnectionManager::get_sources( std::vector< index > targets,
 }
 
 void
-nest::ConnectionManager::get_targets( std::vector< index > sources,
+nest::ConnectionManager::get_targets( const std::vector< index > sources,
   std::vector< std::vector< index > >& targets,
-  index synapse_model,
-  std::string post_synaptic_element )
+  const index synapse_model,
+  const std::string post_synaptic_element )
 {
-  unsigned int thread_id;
-  std::vector< index >::iterator source_it;
-  std::vector< std::vector< index > >::iterator target_it;
-  targets.resize( sources.size() );
-  for ( std::vector< std::vector< index > >::iterator i = targets.begin();
-        i != targets.end();
-        ++i )
-  {
-    ( *i ).clear();
-  }
+  // Clear targets vector and resize to sources size
+  std::vector< std::vector< index > >( sources.size() ).swap( targets );
 
   // We go through the connections data structure to retrieve all
   // targets which have an specific post synaptic element for each
   // source.
-  for ( thread_id = 0; thread_id < connections_.size(); ++thread_id )
+  for ( thread tid = 0;
+        static_cast< unsigned int >( tid ) < connections_.size();
+        ++tid )
   {
     // loop over the targets/sources
-    source_it = sources.begin();
-    target_it = targets.begin();
-    for ( ; source_it != sources.end(); source_it++, target_it++ )
+    std::vector< index >::const_iterator sources_it = sources.begin();
+    std::vector< std::vector< index > >::iterator targets_it = targets.begin();
+    for ( ; sources_it != sources.end(); ++sources_it, ++targets_it )
     {
-      if ( validate_source_entry_( thread_id, *source_it ) != 0 )
+      ConnectorBase* connector = validate_source_entry_( tid, *sources_it );
+      if ( connector != 0 )
       {
-        validate_pointer( validate_source_entry_( thread_id, *source_it ) )
+        validate_pointer( connector )
           ->get_target_gids(
-            ( *target_it ), thread_id, synapse_model, post_synaptic_element );
+            *targets_it, tid, synapse_model, post_synaptic_element );
       }
     }
   }

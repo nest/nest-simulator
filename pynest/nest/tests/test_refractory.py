@@ -134,7 +134,7 @@ add_connect_param = {
 
 
 # --------------------------------------------------------------------------- #
-#  Simulation and refractory time limits
+#  Simulation time and refractory time limits
 # -------------------------
 #
 

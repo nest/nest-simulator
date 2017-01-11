@@ -51,10 +51,11 @@
 namespace nest
 {
 
-// base clase to provide interface to decide
-// - homogeneous connector (containing =1 synapse type)
-//    -- which synapse type stored (syn_id)
-// - heterogeneous connector (containing >1 synapse type)
+/** Base clase to provide interface to decide
+ * - homogeneous connector (containing =1 synapse type)
+ *    -- which synapse type stored (syn_id)
+ * - heterogeneous connector (containing >1 synapse type)
+ */
 class ConnectorBase
 {
 
@@ -64,17 +65,26 @@ public:
   // destructor needed to delete connections
   virtual ~ConnectorBase(){};
 
-  virtual void
-  get_synapse_status( const synindex syn_id, DictionaryDatum& d, const port p ) const = 0;
+  /** Adds status of synapse of type syn_id at position lcid to
+   * dictionary d.
+   */
+  virtual void get_synapse_status( const synindex syn_id,
+    DictionaryDatum& d,
+    const index lcid ) const = 0;
+
+  /** Sets status of synapse of type syn_id at position lcid according
+   * to dictionary d.
+   */
   virtual void set_synapse_status( const synindex syn_id,
     ConnectorModel& cm,
     const DictionaryDatum& d,
-    const port p ) = 0;
+    const index lcid ) = 0;
 
   virtual size_t get_num_connections() const = 0;
   virtual size_t get_num_connections( const synindex syn_id ) const = 0;
-  virtual size_t
-  get_num_connections( const index target_gid, const thread tid, const synindex syn_id ) const = 0;
+  virtual size_t get_num_connections( const index target_gid,
+    const thread tid,
+    const synindex syn_id ) const = 0;
 
   virtual void get_connection( const index source_gid,
     const thread tid,
@@ -128,118 +138,58 @@ public:
     const double t_trig,
     const std::vector< ConnectorModel* >& cm ) = 0;
 
-  // returns id of synapse type
+  /** Returns syn_id of synapse (index in list of prototypes).
+   */
   virtual synindex get_syn_id() const = 0;
 
   virtual void
-  sort_connections( std::vector< Source >& )
-  {
-    assert( false );
-  };
-  virtual void
-  sort_connections( std::vector< std::vector< Source >* >& )
-  {
-    assert( false );
-  };
+  sort_connections( std::vector< Source >& ) = 0;
 
   virtual void
-  reserve( const size_t )
-  {
-    assert( false );
-  };
+  sort_connections( std::vector< std::vector< Source >* >& ) = 0;
+
+  virtual void reserve( const size_t ) = 0;
 
   virtual void
   set_has_source_subsequent_targets( const synindex syn_index,
     const index lcid,
-    const bool subsequent_targets )
-  {
-    assert( false );
-  };
-  virtual void
-  set_has_source_subsequent_targets( const index lcid,
-    const bool subsequent_targets )
-  {
-    assert( false );
-  };
+    const bool subsequent_targets ) = 0;
 
   virtual bool
   has_source_subsequent_targets( const synindex syn_index,
-    const index lcid ) const
-  {
-    assert( false );
-  };
-  virtual bool
-  has_source_subsequent_targets( const index lcid ) const
-  {
-    assert( false );
-  };
+    const index lcid ) const = 0;
 
+  /** Returns lcid of first connection with correct target gid,
+   * starting at position lcid.
+   */
   virtual index
   find_first_target( const thread tid,
     const synindex syn_index,
     const index start_lcid,
-    const index target_gid ) const
-  {
-    assert( false );
-  };
-  virtual index
-  find_first_target( const thread tid,
-    const index start_lcid,
-    const index target_gid ) const
-  {
-    assert( false );
-  };
+    const index target_gid ) const = 0;
 
+  /** Returns lcid of connection with correct target gid, using lcids
+   * in matching_lcids array.
+   */
   virtual index
   find_matching_target( const thread tid,
-    const index target_gid,
-    const std::vector< index >& matching_lcids ) const
-  {
-    assert( false );
-  }
-  virtual index
-  find_matching_target( const thread tid,
-    const index target_gid,
     const synindex syn_index,
-    const std::vector< index >& matching_lcids ) const
-  {
-    assert( false );
-  }
+    const std::vector< index >& matching_lcids,
+    const index target_gid ) const = 0;
 
   virtual void
-  disable_connection( const synindex syn_index, const index lcid )
-  {
-    assert( false );
-  };
-  virtual void
-  disable_connection( const index lcid )
-  {
-    assert( false );
-  };
+  disable_connection( const synindex syn_index, const index lcid ) = 0;
 
   virtual void
   remove_disabled_connections( const synindex syn_index,
-    const index first_disabled_index )
-  {
-    assert( false );
-  };
-  virtual void
-  remove_disabled_connections( const index first_disabled_index )
-  {
-    assert( false );
-  };
+    const index first_disabled_index ) = 0;
 
   virtual void
-  print_connections( const thread tid, const synindex syn_index ) const
-  {
-    assert( false );
-  };
-  virtual void
-  print_connections( const thread tid ) const
-  {
-    assert( false );
-  };
+  print_connections( const thread tid, const synindex syn_index ) const = 0;
 
+  // in the HetConnector, we use the size and capacity functions from
+  // std::vector, so we can not define our own functions as pure
+  // virtual, and need to provide an implementation.
   virtual size_t
   size() const
   {
@@ -253,8 +203,8 @@ public:
   }
 };
 
-// homogeneous connector
-// internally use a normal vector to store elements
+/** Homogeneous connector, contains synapses of one particluar type (syn_id).
+ */
 template < typename ConnectionT >
 class Connector : public ConnectorBase
 {
@@ -273,12 +223,12 @@ public:
   }
 
   void
-  get_synapse_status( const synindex syn_id, DictionaryDatum& d, const port p ) const
+  get_synapse_status( const synindex syn_id, DictionaryDatum& d, const index lcid ) const
   {
     if ( syn_id == syn_id_ )
     {
-      assert( p >= 0 && static_cast< size_t >( p ) < C_.size() );
-      C_[ p ].get_status( d );
+      assert( lcid >= 0 && lcid < C_.size() );
+      C_[ lcid ].get_status( d );
     }
   }
 
@@ -286,12 +236,12 @@ public:
   set_synapse_status( const synindex syn_id,
     ConnectorModel& cm,
     const DictionaryDatum& d,
-    const port p )
+    const index lcid )
   {
     if ( syn_id == syn_id_ )
     {
-      assert( p >= 0 && static_cast< size_t >( p ) < C_.size() );
-      C_[ p ].set_status(
+      assert( lcid >= 0 && lcid < C_.size() );
+      C_[ lcid ].set_status(
         d, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
     }
   }
@@ -530,32 +480,40 @@ public:
   }
 
   void
-  sort_connections( std::vector< Source >& sources )
-  {
-    sort::sort( sources, C_ );
-  }
-
-  void
   reserve( const size_t count )
   {
     C_.reserve( count );
   }
 
   void
-  set_has_source_subsequent_targets( const index lcid,
+  sort_connections( std::vector< Source >& sources )
+  {
+    sort::sort( sources, C_ );
+  }
+
+  void
+  sort_connections( std::vector< std::vector< Source >* >& )
+  {
+    assert( false ); // should only be called on heterogeneous connectors
+  };
+
+  void
+  set_has_source_subsequent_targets( const synindex,
+    const index lcid,
     const bool subsequent_targets )
   {
     C_[ lcid ].set_has_source_subsequent_targets( subsequent_targets );
   }
 
   bool
-  has_source_subsequent_targets( const index lcid ) const
+  has_source_subsequent_targets( const synindex, const index lcid ) const
   {
     return C_[ lcid ].has_source_subsequent_targets();
   }
 
   index
   find_first_target( const thread tid,
+    const synindex,
     const index start_lcid,
     const index target_gid ) const
   {
@@ -578,8 +536,9 @@ public:
 
   index
   find_matching_target( const thread tid,
-    const index target_gid,
-    const std::vector< index >& matching_lcids ) const
+    const synindex,
+    const std::vector< index >& matching_lcids,
+    const index target_gid ) const
   {
     for ( size_t i = 0; i < matching_lcids.size(); ++i )
     {
@@ -593,20 +552,20 @@ public:
   }
 
   void
-  disable_connection( const index lcid )
+  disable_connection( const synindex, const index lcid )
   {
     C_[ lcid ].disable();
   }
 
   void
-  remove_disabled_connections( const index first_disabled_index )
+  remove_disabled_connections( const synindex, const index first_disabled_index )
   {
     assert( C_[ first_disabled_index ].is_disabled() );
     C_.erase( C_.begin() + first_disabled_index, C_.end() );
   }
 
   void
-  print_connections( const thread tid ) const
+  print_connections( const thread tid, const synindex ) const
   {
     std::cout << "---------------------------------------\n";
     for ( typename std::vector< ConnectionT >::const_iterator cit = C_.begin();
@@ -638,11 +597,12 @@ public:
   }
 };
 
-// heterogeneous connector containing different types of synapses
-// each entry is of type connectorbase, so in principle the structure could be
-// nested indefinitely
-// the logic in add_connection, however, assumes that these entries are
-// homogeneous connectors
+/** Heterogeneous connector, contains different types of
+ * synapses. Each entry is of type ConnectorBase, so in principle the
+ * structure could be nested indefinitely. However, we generally
+ * assume that all entries in a heterogeneous connector are
+ * homogeneous connectors.
+ */
 class HetConnector : public std::vector< ConnectorBase* >, public ConnectorBase
 {
 public:
@@ -666,11 +626,11 @@ public:
   }
 
   void
-  get_synapse_status( const synindex syn_id, DictionaryDatum& d, const port p ) const
+  get_synapse_status( const synindex syn_id, DictionaryDatum& d, const index lcid ) const
   {
     for ( size_t i = 0; i < size(); ++i )
     {
-      at( i )->get_synapse_status( syn_id, d, p );
+      at( i )->get_synapse_status( syn_id, d, lcid );
     }
   }
 
@@ -678,11 +638,11 @@ public:
   set_synapse_status( const synindex syn_id,
     ConnectorModel& cm,
     const DictionaryDatum& d,
-    const port p )
+    const index lcid )
   {
     for ( size_t i = 0; i < size(); ++i )
     {
-      at( i )->set_synapse_status( syn_id, cm, d, p );
+      at( i )->set_synapse_status( syn_id, cm, d, lcid );
     }
   }
 
@@ -867,6 +827,18 @@ public:
   }
 
   void
+  reserve( const size_t count )
+  {
+    assert( false ); // should only be called on homogeneous connectors
+  }
+
+  void
+  sort_connections( std::vector< Source >& )
+  {
+    assert( false ); // should only be called on homogeneous connectors
+  };
+
+  void
   sort_connections( std::vector< std::vector< Source >* >& sources )
   {
     for ( unsigned int i = 0; i < size(); ++i )
@@ -881,14 +853,14 @@ public:
     const bool subsequent_targets )
   {
     at( syn_index )
-      ->set_has_source_subsequent_targets( lcid, subsequent_targets );
+      ->set_has_source_subsequent_targets( syn_index, lcid, subsequent_targets );
   }
 
   bool
   has_source_subsequent_targets( const synindex syn_index,
     const index lcid ) const
   {
-    return at( syn_index )->has_source_subsequent_targets( lcid );
+    return at( syn_index )->has_source_subsequent_targets( syn_index, lcid );
   }
 
   index
@@ -897,29 +869,29 @@ public:
     const index start_lcid,
     const index target_gid ) const
   {
-    return at( syn_index )->find_first_target( tid, start_lcid, target_gid );
+    return at( syn_index )->find_first_target( tid, syn_index, start_lcid, target_gid );
   }
 
   index
   find_matching_target( const thread tid,
-    const index target_gid,
     const synindex syn_index,
-    const std::vector< index >& matching_lcids ) const
+    const std::vector< index >& matching_lcids,
+    const index target_gid ) const
   {
-    return at( syn_index )->find_matching_target( tid, target_gid, matching_lcids );
+    return at( syn_index )->find_matching_target( tid, syn_index, matching_lcids, target_gid );
   }
 
   void
   disable_connection( const synindex syn_index, const index lcid )
   {
-    at( syn_index )->disable_connection( lcid );
+    at( syn_index )->disable_connection( syn_index, lcid );
   }
 
   void
   remove_disabled_connections( const synindex syn_index,
     const index first_disabled_index )
   {
-    at( syn_index )->remove_disabled_connections( first_disabled_index );
+    at( syn_index )->remove_disabled_connections( syn_index, first_disabled_index );
   }
 
   void
@@ -930,7 +902,7 @@ public:
       return;
     }
 
-    at( syn_index )->print_connections( tid );
+    at( syn_index )->print_connections( tid, syn_index );
   }
 };
 

@@ -852,7 +852,7 @@ nest::ConnectionManager::find_connection_unsorted( const thread tid,
   {
     const index lcid =
       ( *connections_5g_[ tid ] )
-        .find_matching_target( tid, tgid, syn_index, matching_lcids );
+      .find_matching_target( tid, syn_index, matching_lcids, tgid );
     if ( lcid != invalid_index )
     {
       return lcid;
@@ -877,7 +877,7 @@ nest::ConnectionManager::find_connection_unsorted( const thread tid,
 //     if ( matching_lcids.size() > 0 )
 //     {
 //       const index lcid = (*connections_5g_[ tid ]).find_matching_target( tid,
-//       tgid, syn_index, matching_lcids );
+//       syn_index, matching_lcids, tgid );
 //       if ( lcid != invalid_index )
 //       {
 //         std::cout<<lcid<<std::endl;

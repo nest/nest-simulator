@@ -1,8 +1,8 @@
 # Installation
 
-These installation instructions are for NEST 2.12 and later as well as the most recent version obtained from [Github](https://github.com/nest/nest-simulator). 
+These installation instructions are for NEST 2.12 and later as well as the most recent version obtained from [GitHub](https://github.com/nest/nest-simulator). 
 
-Installation instructions for NEST 2.10 and earlier are provided [below](#instructions-for-nest-2-10-and-earlier).
+Installation instructions for NEST 2.10 and earlier are provided [below](#instructions-for-nest-210-and-earlier).
 
 ## Introduction
 

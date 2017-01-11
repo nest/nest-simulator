@@ -134,14 +134,14 @@ add_connect_param = {
 
 
 # --------------------------------------------------------------------------- #
-#  Simulation and refractory time
+#  Simulation and refractory time limits
 # -------------------------
 #
 
 simtime = 100
 resolution = 0.1
-min_steps = 1
-max_steps = 200
+min_steps = 1 # minimal number of refractory steps (t_ref = resolution in ms)
+max_steps = 200 # maximal number of steps (t_ref = 200 * resolution in ms)
 
 
 # --------------------------------------------------------------------------- #
@@ -201,12 +201,13 @@ class RefractoryTestCase(unittest.TestCase):
         else:
             Vr = nest.GetStatus(neuron, "V_reset")[0]
             times = nest.GetStatus(vm, "events")[0]["times"]
-            idx_max = (np.argwhere(np.isclose(times, spike_times[1]))[0][0]
-                       if len(spike_times) > 1 else -1)
+            # index of the 2nd spike
+            idx_max = np.argwhere(times == spike_times[1])[0][0]
             name_Vm = "V_m.s" if model == "iaf_cond_alpha_mc" else "V_m"
             Vs = nest.GetStatus(vm, "events")[0][name_Vm]
             # get the index at which the spike occured
             idx_spike = np.argwhere(times == spike_times[0])[0][0]
+            # find end of refractory period between 1st and 2nd spike
             idx_end = np.where(
                 np.isclose(Vs[idx_spike:idx_max], Vr, 1e-6))[0][-1]
             t_ref_sim = idx_end * resolution
@@ -226,7 +227,7 @@ class RefractoryTestCase(unittest.TestCase):
         vm_params = {"interval": resolution, "record_from": [name_Vm]}
         vm = nest.Create("voltmeter", params=vm_params)
         sd = nest.Create("spike_detector", params={'precise_times': True})
-        cg = nest.Create("dc_generator", params={"amplitude": 600.})
+        cg = nest.Create("dc_generator", params={"amplitude": 900.})
         # for models that do not clamp V_m, use very large current to trigger
         # almost immediate spiking => t_ref almost equals interspike
         if model in neurons_interspike_ps:

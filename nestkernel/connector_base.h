@@ -225,11 +225,9 @@ public:
   void
   get_synapse_status( const synindex syn_id, DictionaryDatum& d, const index lcid ) const
   {
-    if ( syn_id == syn_id_ )
-    {
-      assert( lcid >= 0 && lcid < C_.size() );
-      C_[ lcid ].get_status( d );
-    }
+    assert( syn_id == syn_id_ );
+    assert( lcid >= 0 && lcid < C_.size() );
+    C_[ lcid ].get_status( d );
   }
 
   void
@@ -238,12 +236,10 @@ public:
     const DictionaryDatum& d,
     const index lcid )
   {
-    if ( syn_id == syn_id_ )
-    {
-      assert( lcid >= 0 && lcid < C_.size() );
-      C_[ lcid ].set_status(
-        d, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
-    }
+    assert( syn_id == syn_id_ );
+    assert( lcid >= 0 && lcid < C_.size() );
+    C_[ lcid ].set_status(
+      d, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
   }
 
   size_t
@@ -255,24 +251,20 @@ public:
   size_t
   get_num_connections( const synindex syn_id ) const
   {
-    if ( syn_id == syn_id_ )
-      return C_.size();
-    else
-      return 0;
+    assert( syn_id == syn_id_ );
+    return C_.size();
   }
 
   size_t
   get_num_connections( const index target_gid, const thread tid, const synindex syn_id ) const
   {
     size_t num_connections = 0;
-    if ( syn_id == syn_id_ )
+    assert( syn_id == syn_id_ );
+    for ( size_t i = 0; i < C_.size(); ++i )
     {
-      for ( size_t i = 0; i < C_.size(); ++i )
+      if ( C_[ i ].get_target( tid )->get_gid() == target_gid )
       {
-        if ( C_[ i ].get_target( tid )->get_gid() == target_gid )
-        {
-          ++num_connections;
-        }
+        ++num_connections;
       }
     }
     return num_connections;
@@ -317,7 +309,8 @@ public:
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
-    if ( syn_id_ == syn_id && not C_[ lcid ].is_disabled() )
+    assert( syn_id_ == syn_id );
+    if ( not C_[ lcid ].is_disabled() )
     {
       if ( synapse_label == UNLABELED_CONNECTION
         || C_[ lcid ].get_label() == synapse_label )
@@ -340,7 +333,8 @@ public:
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
-    if ( syn_id_ == syn_id && not C_[ lcid ].is_disabled() )
+    assert( syn_id_ == syn_id );
+    if ( not C_[ lcid ].is_disabled() )
     {
       if ( synapse_label == UNLABELED_CONNECTION
         || C_[ lcid ].get_label() == synapse_label )
@@ -362,18 +356,19 @@ public:
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
-    if ( syn_id_ == syn_id )
+    assert( syn_id_ == syn_id );
+    for ( size_t i = 0; i < C_.size(); ++i )
     {
-      for ( size_t i = 0; i < C_.size(); ++i )
+      if ( not C_[ i ].is_disabled() )
       {
         const index current_target_gid = C_[ i ].get_target( tid )->get_gid();
         if ( current_target_gid == target_gid || target_gid == 0 )
         {
           if ( synapse_label == UNLABELED_CONNECTION
-            || C_[ i ].get_label() == synapse_label )
+               || C_[ i ].get_label() == synapse_label )
           {
             conns.push_back( ConnectionDatum(
-              ConnectionID( source_gid, target_gid, tid, syn_id, i ) ) );
+                               ConnectionID( source_gid, current_target_gid, tid, syn_id, i ) ) );
           }
         }
       }
@@ -628,9 +623,10 @@ public:
   void
   get_synapse_status( const synindex syn_id, DictionaryDatum& d, const index lcid ) const
   {
-    for ( size_t i = 0; i < size(); ++i )
+    const synindex syn_index = find_synapse_index( syn_id );
+    if ( syn_index != invalid_synindex )
     {
-      at( i )->get_synapse_status( syn_id, d, lcid );
+      at( syn_index )->get_synapse_status( syn_id, d, lcid );
     }
   }
 
@@ -640,9 +636,10 @@ public:
     const DictionaryDatum& d,
     const index lcid )
   {
-    for ( size_t i = 0; i < size(); ++i )
+    const synindex syn_index = find_synapse_index( syn_id );
+    if ( syn_index != invalid_synindex )
     {
-      at( i )->set_synapse_status( syn_id, cm, d, lcid );
+      at( syn_index )->set_synapse_status( syn_id, cm, d, lcid );
     }
   }
 
@@ -660,10 +657,10 @@ public:
   size_t
   get_num_connections( const synindex syn_id ) const
   {
-    const size_t i = find_synapse_index( syn_id );
-    if ( i != invalid_synindex )
+    const synindex syn_index = find_synapse_index( syn_id );
+    if ( syn_index != invalid_synindex )
     {
-      return at( i )->get_num_connections( syn_id );
+      return at( syn_index )->get_num_connections( syn_id );
     }
     else
     {
@@ -674,10 +671,10 @@ public:
   size_t
   get_num_connections( const index target_gid, const thread tid, const synindex syn_id ) const
   {
-    const size_t i = find_synapse_index( syn_id );
-    if ( i != invalid_synindex )
+    const synindex syn_index = find_synapse_index( syn_id );
+    if ( syn_index != invalid_synindex )
     {
-      return at( i )->get_num_connections( target_gid, tid, syn_id );
+      return at( syn_index )->get_num_connections( target_gid, tid, syn_id );
     }
     else
     {
@@ -693,9 +690,10 @@ public:
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
-    for ( size_t i = 0; i < size(); ++i )
+    const synindex syn_index = find_synapse_index( syn_id );
+    if ( syn_index != invalid_synindex )
     {
-      at( i )->get_connection(
+      at( syn_index )->get_connection(
         source_gid, tid, syn_id, lcid, synapse_label, conns );
     }
   }
@@ -709,9 +707,10 @@ public:
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
-    for ( size_t i = 0; i < size(); ++i )
+    const synindex syn_index = find_synapse_index( syn_id );
+    if ( syn_index != invalid_synindex )
     {
-      at( i )->get_connection(
+      at( syn_index )->get_connection(
         source_gid, target_gid, tid, syn_id, lcid, synapse_label, conns );
     }
   }
@@ -724,9 +723,10 @@ public:
     const long synapse_label,
     std::deque< ConnectionID >& conns ) const
   {
-    for ( size_t i = 0; i < size(); ++i )
+    const synindex syn_index = find_synapse_index( syn_id );
+    if ( syn_index != invalid_synindex )
     {
-      at( i )->get_all_connections( source_gid,
+      at( syn_index )->get_all_connections( source_gid,
         target_gid,
         tid,
         syn_id,
@@ -797,11 +797,10 @@ public:
     }
   }
 
-  // returns id of synapse type
   synindex
   get_syn_id() const
   {
-    return invalid_synindex;
+    assert( false ); // should only be called on homogeneous connectors
   }
 
   synindex

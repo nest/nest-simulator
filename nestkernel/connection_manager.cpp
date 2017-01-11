@@ -1329,12 +1329,11 @@ nest::ConnectionManager::get_targets( std::vector< index > sources,
     ( *i ).clear();
   }
 
-  /*for ( tVSConnector::iterator it = connections_.begin();
-        it != connections_.end();
-        ++it )*/
+  // We go through the connections data structure to retrieve all
+  // targets which have an specific post synaptic element for each
+  // source.
   for ( thread_id = 0; thread_id < connections_.size(); ++thread_id )
   {
-    // thread_id = it - connections_.begin();
     // loop over the targets/sources
     source_it = sources.begin();
     target_it = targets.begin();

@@ -22,6 +22,7 @@
 
 import nest
 import unittest
+import sys
 
 
 class TestIssue578(unittest.TestCase):
@@ -81,7 +82,8 @@ class TestIssue578(unittest.TestCase):
         try:
             nest.Simulate(200 * 1000)
         except:
-            self.fail("Exception during structural plasticity deletion")
+            print sys.exc_info()[0]
+            self.fail("Exception during simulation")
 
     def suite():
         test_suite = unittest.makeSuite(TestIssue578, 'test')

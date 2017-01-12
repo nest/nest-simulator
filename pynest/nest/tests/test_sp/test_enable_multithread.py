@@ -28,6 +28,8 @@ __author__ = 'sdiaz'
 # An exception should be rised if structural plasticity is enabled
 # and multiple threads are set, or if multiple threads are set and
 # the enable_structural_plasticity function is called.
+
+
 class TestEnableMultithread(unittest.TestCase):
 
     def setUp(self):
@@ -35,33 +37,31 @@ class TestEnableMultithread(unittest.TestCase):
         nest.set_verbosity('M_ERROR')
 
     def test_enable_multithread(self):
-        
+
         nest.ResetKernel()
         nest.EnableStructuralPlasticity()
-	try:
-		nest.SetKernelStatus(
-		    {
-		        'resolution': 0.1,
-		        'local_num_threads': 2
-		    }
-		)
-		self.fail("Setting multiple threads when structural plasticity is enabled should throw an exception")
-	except nest.NESTError:
-		pass
+        # Setting multiple threads when structural plasticity is enabled should
+        # throw an exception
+        with self.assertRaises(nest.NESTError):
+            nest.SetKernelStatus(
+                {
+                    'resolution': 0.1,
+                    'local_num_threads': 2
+                }
+            )
 
     def test_multithread_enable(self):
         nest.ResetKernel()
-	nest.SetKernelStatus(
-	    {
-	        'resolution': 0.1,
-	        'local_num_threads': 2
-	    }
-	)
-	try:
-        	nest.EnableStructuralPlasticity()		
-		self.fail("Setting multiple threads when structural plasticity is enabled should throw an exception")
-	except nest.NESTError:
-		pass
+        nest.SetKernelStatus(
+            {
+                'resolution': 0.1,
+                'local_num_threads': 2
+            }
+        )
+        # Setting multiple threads when structural plasticity is enabled should
+        # throw an exception
+        with self.assertRaises(nest.NESTError):
+            nest.EnableStructuralPlasticity()
 
 
 def suite():

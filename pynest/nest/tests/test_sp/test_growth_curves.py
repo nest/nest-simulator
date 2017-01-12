@@ -383,7 +383,7 @@ class TestGrowthCurve(unittest.TestCase):
 
         # check that we got the same values from one run to another
         # expected = self.se_nest[:, 10]
-        # print self.se_nest[:, 10].__repr__()
+        # print(self.se_nest[:, 10].__repr__())
         expected = numpy.array([
             0.08376263, 0.08374046, 0.08376031, 0.08376756, 0.08375428,
             0.08378699, 0.08376784, 0.08369779, 0.08374215, 0.08370484
@@ -423,7 +423,7 @@ class TestGrowthCurve(unittest.TestCase):
 
         # check that we got the same values from one run to another
         # expected = self.se_nest[:, 30]
-        # print self.se_nest[:, 30].__repr__()
+        # print(self.se_nest[:, 30].__repr__())
         expected = numpy.array([
             0.10044035, 0.10062526, 0.1003149, 0.10046311, 0.1005713,
             0.10031755, 0.10032216, 0.10040191, 0.10058179, 0.10068598

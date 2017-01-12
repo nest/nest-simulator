@@ -173,16 +173,27 @@ public:
   void subnet_connect( Subnet&, Subnet&, int, index syn );
 
   /**
-   * Connect from an array of dictionaries.
+   * Connect, using a dictionary with arrays.
+   * The connection rule is based on the details of the dictionary entries
+   * source and target.
+   * If source and target are both either a GID or a list of GIDs with equal
+   * size, then source and target are connected one-to-one.
+   * If source is a gid and target is a list of GIDs then the sources is
+   * connected to all targets.
+   * If source is a list of GIDs and target is a GID, then all sources are
+   * connected to the target.
+   * At this stage, the task of connect is to separate the dictionary into one
+   * for each thread and then to forward the connect call to the connectors who
+   * can then deal with the details of the connection.
    */
-  bool connect( ArrayDatum& connectome );
+  bool data_connect_connectome( const ArrayDatum& connectome );
 
   /**
    * Connect one source node with many targets.
-   * The dictionary d contains arrays for all the connections of type syn.
-   * AKA DataConnect
+   * The dictionary d contains arrays for all the outgoing connections of type
+   * syn.
    */
-  void divergent_connect( index s, DictionaryDatum d, index syn );
+  void data_connect_single( const index s, DictionaryDatum d, const index syn );
 
   // aka conndatum GetStatus
   DictionaryDatum

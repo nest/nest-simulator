@@ -14,7 +14,11 @@ PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
 
 # regular expression of directory patterns on which to apply
 # PEP8_IGNORES_EXAMPLES
-EXAMPLE_DIRS='examples|user_manual_scripts'
+EXAMPLE_DIRS='examples'
+
+# Topology manual scripts need to allow #{
+PEP8_IGNORES_TOPO_MANUAL="${PEP8_IGNORES_EXAMPLES},E265"
+TOPO_MANUAL_DIRS='user_manual_scripts'
 
 CLANG_FORMAT=clang-format-3.6
 INCREMENTAL=false
@@ -241,6 +245,8 @@ for f in $file_names; do
 
       if [[ $f =~ $EXAMPLE_DIRS ]]; then
         IGNORES=$PEP8_IGNORES_EXAMPLES
+      elif [[ $f =~ $TOPO_MANUAL_DIRS ]]; then
+        IGNORES=$PEP8_IGNORES_TOPO_MANUAL
       else
         IGNORES=$PEP8_IGNORES
       fi

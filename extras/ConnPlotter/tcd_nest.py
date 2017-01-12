@@ -32,7 +32,9 @@ In order to use TCD plots, you need to create an instance of class
 SynapsesNEST. The constructor will import NEST to obtain all necessary
 information. TCD can then be obtained by calling the generated object.
 
-NB: At present, TCD is supported only for the ht_model.
+NB: At present, TCD is supported only for the ht_model. NMDA charge
+    deposition is based on steady-state value for open channels at given
+    voltage.
 """
 
 # ----------------------------------------------------------------------------
@@ -129,8 +131,8 @@ class TCD(object):
             syn is name of synapse type.
             props is property dictionary of ht_neuron.
             """
-            td = props[syn + '_Tau_2']  # decay time
-            tr = props[syn + '_Tau_1']  # rise time
+            td = props[syn + '_tau_2']  # decay time
+            tr = props[syn + '_tau_1']  # rise time
             # integral over g(t)
             self._int_g = (props[syn + '_g_peak'] * (td - tr) /
                            ((tr / td) ** (tr / (td - tr)) -
@@ -141,7 +143,7 @@ class TCD(object):
             """
             V is membrane potential.
             """
-            return - self._int_g * (V - self._e_rev)
+            return -self._int_g * (V - self._e_rev)
 
         def __str__(self):
             return "_int_g = %f, _e_rev = %f" % (self._int_g, self._e_rev)
@@ -151,21 +153,24 @@ class TCD(object):
     class _TcdNMDA(object):
         """
         Class representing NMDA synapse model in ht_neuron.
+
+        Note: NMDA charge deposition is based on steady-state value
+              for open channels at given voltage.
         """
 
         def __init__(self, props):
             """
             props is property dictionary of ht_neuron.
             """
-            td = props['NMDA_Tau_2']  # decay time
-            tr = props['NMDA_Tau_1']  # rise time
+            td = props['tau_decay_NMDA']  # decay time
+            tr = props['tau_rise_NMDA']  # rise time
             # integral over g(t)
-            self._int_g = (props['NMDA_g_peak'] * (td - tr) /
+            self._int_g = (props['g_peak_NMDA'] * (td - tr) /
                            ((tr / td) ** (tr / (td - tr)) -
                             (tr / td) ** (td / (td - tr))))
-            self._e_rev = props['NMDA_E_rev']
-            self._v_act = props['NMDA_Vact']
-            self._s_act = props['NMDA_Sact']
+            self._e_rev = props['E_rev_NMDA']
+            self._v_act = props['V_act_NMDA']
+            self._s_act = props['S_act_NMDA']
 
         def __call__(self, V):
             """

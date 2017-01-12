@@ -59,10 +59,12 @@ nest.SetStatus(source, {'spike_times':
                         [30., 60., 90., 120., 150., 180., 210., 240., 270.,
                          300., 330., 360., 390., 900.]})
 
+parrot = nest.Create('parrot_neuron')
 neuron = nest.Create("iaf_psc_exp", 2)
 
-nest.Connect(source, [neuron[0]], syn_spec="tsodyks2_synapse")
-nest.Connect(source, [neuron[1]], syn_spec="quantal_stp_synapse")
+nest.Connect(source, parrot)
+nest.Connect(parrot, neuron[:1], syn_spec="tsodyks2_synapse")
+nest.Connect(parrot, neuron[1:], syn_spec="quantal_stp_synapse")
 
 voltmeter = nest.Create("voltmeter", 2)
 nest.SetStatus(voltmeter, {"withgid": False, "withtime": True})

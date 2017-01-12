@@ -119,6 +119,13 @@ public:
     return false;
   }
 
+  //! Return true if rule is applicable only to nodes with proxies
+  virtual bool
+  requires_proxies() const
+  {
+    return true;
+  }
+
 protected:
   //! Implements the actual connection algorithm
   virtual void connect_() = 0;
@@ -248,6 +255,12 @@ public:
     return true;
   }
 
+  bool
+  requires_proxies() const
+  {
+    return false;
+  }
+
 protected:
   void connect_();
   void sp_connect_();
@@ -270,6 +283,12 @@ public:
   is_symmetric() const
   {
     return *sources_ == *targets_ && all_parameters_scalar_();
+  }
+
+  bool
+  requires_proxies() const
+  {
+    return false;
   }
 
 protected:

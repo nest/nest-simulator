@@ -59,10 +59,10 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
     hlplist = []
     name = ''
 
-    for key, value in doc_dic.iteritems():
+    for key, value in doc_dic.items():
         if key == "Name":
             name = value.strip()
-    for key, value in doc_dic.iteritems():
+    for key, value in doc_dic.items():
         if key == "FullName":
             fullname = value.strip("###### ######")
             fullname = re.sub("(######)", " <br/> ", fullname)
@@ -78,10 +78,10 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
     # sorting linked keywords
     for word in keywords:
         word = word.strip(':')
-        for key, value in doc_dic.iteritems():
+        for key, value in doc_dic.items():
             if key == word:
-                if (key != "Name" and key != "FullName" and key != "SeeAlso"
-                   and key != "File"):
+                if (key != "Name" and key != "FullName" and
+                        key != "SeeAlso" and key != "File"):
                     value = re.sub("(######)", " <br/> ", value)
                     # value = re.sub("(\~\~)", '  ', value)
                     value = re.sub("(\~\~\~)", '\t', value)
@@ -99,7 +99,7 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
                     hlpcontent = ('%s:\n\n%s\n\n' % (key, dedented_text))
                     hlplist.append(hlpcontent)
 
-    for key, value in doc_dic.iteritems():
+    for key, value in doc_dic.items():
         if key == "SeeAlso":
             htmllist.append('<b>%s: </b>' % key)
             hlplist.append('%s:\n' % key)
@@ -118,7 +118,7 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
             hlplist.append('')
             htmllist.append('</ul>')
 
-    for key, value in doc_dic.iteritems():
+    for key, value in doc_dic.items():
         if key == "File":
             value = value.strip("###### ###### $$")
             htmllist.append('<b>Source:</b><pre>%s</pre>' % value)
@@ -198,7 +198,7 @@ def write_helpindex(helpdir):
             else:
                 fullname = name
             # file extension
-            itemext = item.rsplit('/')[4]
+            itemext = item.rsplit('/')[-2]
             if name.startswith(doubles) and os.path.isfile(item):
                 # check if 'name' is available in folder with os.path.isfile(
                 # checkfile)
@@ -209,10 +209,10 @@ def write_helpindex(helpdir):
 
                 # Better Format for the index.hlp
                 c = len(name)
-                hlp_list.append(name + '\t' * (16 - min(c, 60) // 4)
-                                + fullname)
+                hlp_list.append(name + '\t' * (16 - min(c, 60) // 4) +
+                                fullname)
             elif not os.path.isfile(item):
-                print 'WARNING: Checkfile ' + item + ' not exist.'
+                print('WARNING: Checkfile ' + item + ' not exist.')
 
         html_list.append('</table></center>')
         html_list.append('</table></center>')

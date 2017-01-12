@@ -642,7 +642,7 @@ nest::ConnectionManager::disconnect( Node& target,
   if ( kernel().node_manager.is_local_gid( target.get_gid() ) )
   {
     // We check that a connection actually exists between target and source
-    // This is to propperly handle the case when structural plasticity is not
+    // This is to properly handle the case when structural plasticity is not
     // enabled but the user wants to delete a connection between a target and
     // a source which are not connected
     if ( validate_source_entry_( target_thread, sgid, syn_id ) == 0 )
@@ -1313,10 +1313,10 @@ nest::ConnectionManager::get_sources( std::vector< index > targets,
 }
 
 void
-nest::ConnectionManager::get_targets( const std::vector< index > sources,
+nest::ConnectionManager::get_targets( const std::vector< index >& sources,
   std::vector< std::vector< index > >& targets,
   const index synapse_model,
-  const std::string post_synaptic_element )
+  const std::string& post_synaptic_element )
 {
   // Clear targets vector and resize to sources size
   std::vector< std::vector< index > >( sources.size() ).swap( targets );

@@ -231,10 +231,10 @@ public:
     std::vector< std::vector< index > >& sources,
     index synapse_model );
 
-  void get_targets( const std::vector< index > sources,
+  void get_targets( const std::vector< index >& sources,
     std::vector< std::vector< index > >& targets,
     const index synapse_model,
-    const std::string post_synaptic_element );
+    const std::string& post_synaptic_element );
 
   /**
    * Triggered by volume transmitter in update.

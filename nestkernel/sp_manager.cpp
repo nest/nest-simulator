@@ -217,7 +217,7 @@ SPManager::disconnect_single( index sgid,
   thread target_thread,
   DictionaryDatum& syn )
 {
-  // Disconnect if Structural plascity is activated
+  // Disconnect if Structural plasticity is activated
   if ( syn->known( names::pre_synaptic_element )
     && syn->known( names::post_synaptic_element ) )
   {

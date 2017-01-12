@@ -28,6 +28,7 @@ from . import test_growth_curves
 from . import test_sp_manager
 from . import test_disconnect
 from . import test_disconnect_multiple
+from . import test_enable_multithread
 
 __author__ = 'naveau'
 
@@ -42,6 +43,7 @@ def suite():
     test_suite.addTest(test_synaptic_elements.suite())
     test_suite.addTest(test_disconnect.suite())
     test_suite.addTest(test_disconnect_multiple.suite())
+    test_suite.addTest(test_enable_multithread.suite())
 
     return test_suite
 

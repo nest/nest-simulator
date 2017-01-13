@@ -187,6 +187,8 @@ def CopyModel(existing, new, params=None):
         taken from the existing model.
     """
 
+    model_deprecation_warning(existing)
+
     if params is not None:
         sps(params)
         sr("/%s /%s 3 2 roll CopyModel" % (existing, new))

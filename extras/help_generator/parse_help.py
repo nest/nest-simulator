@@ -37,7 +37,7 @@ from helpers import check_ifdef, create_helpdirs, cut_it
 
 
 if len(sys.argv) != 4:
-    print "Usage: python parse_help.py <source_dir> <build_dir> <install_dir>"
+    print("Usage: python parse_help.py <source_dir> <build_dir> <install_dir>")
     sys.exit(1)
 
 source_dir, build_dir, install_dir = sys.argv[1:]

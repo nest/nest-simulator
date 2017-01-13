@@ -73,8 +73,8 @@ the pre- and postsynaptic populations, each of which containing 16
 neurons.
 """
 
-pre = nest.Create("iaf_neuron", 16)
-post = nest.Create("iaf_neuron", 16)
+pre = nest.Create("iaf_psc_alpha", 16)
+post = nest.Create("iaf_psc_alpha", 16)
 
 """
 We can now connect the populations using the `CGConnect` function.

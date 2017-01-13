@@ -45,7 +45,6 @@ class TestEnableMultithread(unittest.TestCase):
         with self.assertRaises(nest.NESTError):
             nest.SetKernelStatus(
                 {
-                    'resolution': 0.1,
                     'local_num_threads': 2
                 }
             )
@@ -54,7 +53,6 @@ class TestEnableMultithread(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus(
             {
-                'resolution': 0.1,
                 'local_num_threads': 2
             }
         )

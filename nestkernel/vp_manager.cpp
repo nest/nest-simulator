@@ -181,9 +181,10 @@ void
 nest::VPManager::set_num_threads( nest::thread n_threads )
 {
   if ( kernel().sp_manager.is_structural_plasticity_enabled()
-    && ( n_threads > 1 ) )
+    && ( n_threads > 1 ) ){
     throw KernelException(
       "Multiple threads can not be used if structural plasticity is enabled" );
+  }
   n_threads_ = n_threads;
 
 #ifdef _OPENMP

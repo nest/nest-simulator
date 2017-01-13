@@ -795,9 +795,10 @@ nest::SPManager::global_shuffle( std::vector< index >& v, size_t n )
 void
 nest::SPManager::enable_structural_plasticity()
 {
-  if ( kernel().vp_manager.get_num_threads() > 1 )
+  if ( kernel().vp_manager.get_num_threads() > 1 ){
     throw KernelException(
       "Structural plasticity can not be used with multiple threads" );
+  }
   structural_plasticity_enabled_ = true;
 }
 

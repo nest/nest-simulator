@@ -135,3 +135,4 @@ write_helpindex(helpdir)
 
 shutil.rmtree(install_dir, ignore_errors=True)
 shutil.copytree(helpdir, install_dir)
+shutil.rmtree(helpdir, ignore_errors=True)

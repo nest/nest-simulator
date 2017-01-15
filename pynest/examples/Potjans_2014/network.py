@@ -26,6 +26,10 @@ pynest microcircuit network
 Main file for the microcircuit.
 
 Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
+
+This example uses the function GetNodes, which is deprecated. A deprecation
+warning is therefore issued. For details about deprecated functions, see
+documentation.
 '''
 
 import nest
@@ -199,13 +203,14 @@ class Network:
             pop_file.write('%d  %d \n' % (population[0], population[-1]))
         pop_file.close()
         for thread in np.arange(nest.GetKernelStatus('local_num_threads')):
-            with nest.SuppressedDeprecationWarning('GetNodes'):
-                local_nodes = nest.GetNodes(
-                    [0], {
-                        'model': self.net_dict['neuron_model'],
-                        'thread': thread
-                         }, local_only=True
-                    )[0]
+            # Using GetNodes is a work-around until NEST 3.0 is released. It
+            # will issue a deprecation warning.
+            local_nodes = nest.GetNodes(
+                [0], {
+                    'model': self.net_dict['neuron_model'],
+                    'thread': thread
+                    }, local_only=True
+                )[0]
             vp = nest.GetStatus(local_nodes)[0]['vp']
             # vp is the same for all local nodes on the same thread
             nest.SetStatus(

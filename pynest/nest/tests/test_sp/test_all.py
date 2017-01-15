@@ -29,7 +29,17 @@ from . import test_sp_manager
 from . import test_disconnect
 from . import test_disconnect_multiple
 from . import test_enable_multithread
-from . import test_issue_578_sp
+try:
+    from mpi4py import MPI
+except ImportError:
+    # Test without MPI
+    print "Tests without MPI"
+    mpi_test = 0
+else:
+    # Test with MPI
+    mpi_test = 1
+    print "Testing with MPI"
+    from subprocess import call
 
 __author__ = 'naveau'
 
@@ -45,7 +55,6 @@ def suite():
     test_suite.addTest(test_disconnect.suite())
     test_suite.addTest(test_disconnect_multiple.suite())
     test_suite.addTest(test_enable_multithread.suite())
-    test_suite.addTest(test_issue - 578 - sp.suite())
 
     return test_suite
 
@@ -54,3 +63,10 @@ if __name__ == "__main__":
     nest.set_verbosity('M_WARNING')
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
+    # MPI tests
+    if mpi_test:
+        try:
+            call(["mpiexec", "-n", "2", "python", "test_sp/test_issue_578_sp.py"])
+        except:
+            print sys.exc_info()[0]
+            print "Test call with MPI ended in error"

@@ -303,7 +303,7 @@ class TestGIDCollection(unittest.TestCase):
         dict = nest.sli_pop()
 
         models = dict.keys()
-        modelID = dict.values()
+        modelID = list(dict.values())
 
         for model in models:
             n += nest.Create(model)

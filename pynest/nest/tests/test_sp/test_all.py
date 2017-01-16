@@ -33,13 +33,15 @@ try:
     from mpi4py import MPI
 except ImportError:
     # Test without MPI
-    print "Tests without MPI"
+    print ("MPI is not available. Skipping MPI tests.")
     mpi_test = 0
 else:
     # Test with MPI
     mpi_test = 1
-    print "Testing with MPI"
+    print ("Testing with MPI")
     from subprocess import call
+    import sys
+    import os
 
 __author__ = 'naveau'
 
@@ -59,6 +61,24 @@ def suite():
     return test_suite
 
 
+def getMPITestCommand(test_file):
+    # Open nestrc file and obtain the right mpi exec command
+    # Substitute the scriptfile with the test file and substitute the number
+    # of processes with 2 for this tests
+    path = os.path.expanduser('~/.nestrc')
+    nestrcf = open(path, "r")
+    for line in nestrcf:
+        if "(mpi" in line:
+            line = line.replace("numproc", "2")
+            line = line.replace("cvs ( ) executable", "python")
+            line = line.replace("( ) scriptfile", test_file)
+            line = line.replace("(", "")
+            line = line.replace(")", "")
+            command = line.split()
+            print ("MPI test command: " + line)
+    nestrcf.close()
+    return command
+
 if __name__ == "__main__":
     nest.set_verbosity('M_WARNING')
     runner = unittest.TextTestRunner(verbosity=2)
@@ -66,7 +86,9 @@ if __name__ == "__main__":
     # MPI tests
     if mpi_test:
         try:
-            call(["mpiexec", "-n", "2", "python", "test_sp/test_issue_578_sp.py"])
+            command = getMPITestCommand("test_sp/test_issue_578_sp.py")
+            call(command)
         except:
-            print sys.exc_info()[0]
-            print "Test call with MPI ended in error"
+            print (sys.exc_info()[0])
+            print ("Test call with MPI ended in error")
+            raise

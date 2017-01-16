@@ -61,7 +61,7 @@ def suite():
     return test_suite
 
 
-def getMPITestCommand(test_file):
+def getMPITestCommand():
     # Open nestrc file and obtain the right mpi exec command
     # Substitute the scriptfile with the test file and substitute the number
     # of processes with 2 for this tests
@@ -71,13 +71,11 @@ def getMPITestCommand(test_file):
         if "(mpi" in line:
             line = line.replace("numproc", "2")
             line = line.replace("cvs ( ) executable", "python")
-            line = line.replace("( ) scriptfile", test_file)
             line = line.replace("(", "")
             line = line.replace(")", "")
-            command = line.split()
             print ("MPI test command: " + line)
-    nestrcf.close()
-    return command
+            nestrcf.close()
+            return line
 
 if __name__ == "__main__":
     nest.set_verbosity('M_WARNING')
@@ -86,7 +84,10 @@ if __name__ == "__main__":
     # MPI tests
     if mpi_test:
         try:
-            command = getMPITestCommand("test_sp/test_issue_578_sp.py")
+            command = getMPITestCommand()
+            command = command.replace(
+                "  scriptfile", "test_sp/test_issue_578_sp.py")
+            command = command.split()
             call(command)
         except:
             print (sys.exc_info()[0])

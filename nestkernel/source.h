@@ -37,49 +37,98 @@ namespace nest
  * and the number of local targets, along with a flag, whether this
  * entry has been processed yet. Used in SourceTable.
  */
-struct Source
+class Source
 {
-  unsigned long gid : 62; //!< gid of source
-  bool processed : 1; //!< whether this target has already been moved to the MPI
-                      //buffer
-  bool is_primary : 1;
+private:
+  unsigned long gid_ : 62; //!< gid of source
+  bool processed_ : 1; //!< whether this target has already been moved
+                       //!to the MPI buffer
+  bool primary_ : 1;
+  static const size_t disabled_marker_ = 4611686018427387904 - 1; // 2 ** 62 - 1
+
+public:
   Source();
-  explicit Source( const index gid, const bool is_primary );
+  explicit Source( const index gid, const bool primary );
+  void set_gid( const index gid );
+  index get_gid() const;
+  void set_processed( const bool processed );
+  bool is_processed() const;
+  void set_primary( const bool primary );
+  bool is_primary() const;
   void disable();
   bool is_disabled() const;
-  static const size_t disabled_marker = 4611686018427387904 - 1; // 2 ** 62 - 1
+  friend bool operator<( const Source& lhs, const Source& rhs );
+  friend bool operator>( const Source& lhs, const Source& rhs );
+  friend bool operator==( const Source& lhs, const Source& rhs );
 };
 
 inline Source::Source()
-  : gid( 0 )
-  , processed( false )
-  , is_primary( true )
+  : gid_( 0 )
+  , processed_( false )
+  , primary_( true )
 {
 }
 
 inline Source::Source( const index gid, const bool is_primary )
-  : gid( gid )
-  , processed( false )
-  , is_primary( is_primary )
+  : gid_( gid )
+  , processed_( false )
+  , primary_( is_primary )
 {
-  assert( gid < disabled_marker );
+  assert( gid < disabled_marker_ );
+}
+
+inline void
+Source::set_gid( const index gid )
+{
+  assert( gid < disabled_marker_ );
+  gid_ = gid;
+}
+
+inline index
+Source::get_gid() const
+{
+  return gid_;
+}
+
+inline void
+Source::set_processed( const bool processed )
+{
+  processed_ = processed;
+}
+
+inline bool
+Source::is_processed() const
+{
+  return processed_;
+}
+
+inline void
+Source::set_primary( const bool primary )
+{
+  primary_ = primary;
+}
+
+inline bool
+Source::is_primary() const
+{
+  return primary_;
 }
 
 inline void
 Source::disable()
 {
-  gid = disabled_marker;
+  gid_ = disabled_marker_;
 }
 
 inline bool
 Source::is_disabled() const
 {
-  return gid == disabled_marker;
+  return gid_ == disabled_marker_;
 }
 
 inline bool operator<( const Source& lhs, const Source& rhs )
 {
-  return ( lhs.gid < rhs.gid );
+  return ( lhs.gid_ < rhs.gid_ );
 }
 
 inline bool operator>( const Source& lhs, const Source& rhs )
@@ -89,7 +138,7 @@ inline bool operator>( const Source& lhs, const Source& rhs )
 
 inline bool operator==( const Source& lhs, const Source& rhs )
 {
-  return ( lhs.gid == rhs.gid );
+  return ( lhs.gid_ == rhs.gid_ );
 }
 
 } // namespace nest

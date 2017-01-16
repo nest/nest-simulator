@@ -230,7 +230,7 @@ SourceTable::reject_last_target_data( const thread tid )
   ( *( *sources_[ ( *current_positions_[ tid ] )
                     .tid ] )[ ( *current_positions_[ tid ] )
                                 .syn_index ] )[ ( *current_positions_[ tid ] )
-                                                  .lcid + 1 ].processed = false;
+                                                  .lcid + 1 ].set_processed( false );
 }
 
 inline void
@@ -308,7 +308,7 @@ SourceTable::get_gid( const thread tid,
 {
   std::map< synindex, synindex >::iterator it =
     synapse_ids_[ tid ]->find( syn_id );
-  return ( *( *sources_[ tid ] )[ it->second ] )[ lcid ].gid;
+  return ( *( *sources_[ tid ] )[ it->second ] )[ lcid ].get_gid();
 }
 
 inline void
@@ -323,7 +323,7 @@ SourceTable::reset_processed_flags( const thread tid )
           iit != ( *it )->end();
           ++iit )
     {
-      iit->processed = false;
+      iit->set_processed( false );
     }
   }
 }
@@ -369,7 +369,7 @@ SourceTable::find_first_source( const thread tid, const synindex syn_index, cons
     begin + ( *last_sorted_source_[ tid ] )[ syn_index ];
   std::vector< Source >::const_iterator it =
     std::lower_bound( begin, end_of_sorted, Source( sgid, true ) );
-  if ( it != end_of_sorted && it->gid == sgid )
+  if ( it != end_of_sorted && it->get_gid() == sgid )
   {
     index lcid = it - begin;
     return lcid;
@@ -393,7 +393,7 @@ SourceTable::find_all_sources( const thread tid,
     ( *( *sources_[ tid ] )[ syn_index ] ).end();
   for ( std::vector< Source >::const_iterator it = end_of_sorted; it != end; ++it )
   {
-    if ( it->gid == sgid )
+    if ( it->get_gid() == sgid )
     {
       index lcid = it - begin;
       matching_lcids.push_back( lcid );
@@ -426,7 +426,7 @@ SourceTable::get_source_gids( const thread tid,
         cit != source_lcids.end();
         ++cit )
   {
-    sources.push_back( ( *( *sources_[ tid ] )[ syn_index ] )[ *cit ].gid );
+    sources.push_back( ( *( *sources_[ tid ] )[ syn_index ] )[ *cit ].get_gid() );
   }
 }
 

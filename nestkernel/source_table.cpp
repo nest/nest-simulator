@@ -277,12 +277,12 @@ nest::SourceTable::print_sources( const thread tid,
         it != ( *( *sources_[ tid ] )[ syn_index ] ).end();
         ++it )
   {
-    if ( prev_gid != it->gid )
+    if ( prev_gid != it->get_gid() )
     {
       std::cout << std::endl;
-      prev_gid = it->gid;
+      prev_gid = it->get_gid();
     }
-    std::cout << "(" << it->gid << ", " << it->is_disabled() << ")";
+    std::cout << "(" << it->get_gid() << ", " << it->is_disabled() << ")";
   }
   std::cout << std::endl;
   std::cout << "---------------------------------------\n";
@@ -322,7 +322,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
       {
 #pragma omp critical
         {
-          unique_secondary_sources_.insert( std::pair< index, size_t >( cit->gid, event_size ) );
+          unique_secondary_sources_.insert( std::pair< index, size_t >( cit->get_gid(), event_size ) );
         }
       }
     }

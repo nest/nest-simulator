@@ -102,7 +102,7 @@ SourceTable::get_next_target_data( const thread tid,
     Source& current_source =
       ( *( *sources_[ current_position.tid ] )[ current_position.syn_index ] )
         [ current_position.lcid ];
-    if ( current_source.processed || current_source.is_disabled() )
+    if ( current_source.is_processed() || current_source.is_disabled() )
     {
       // looks like we've processed this already, let's
       // continue
@@ -112,7 +112,7 @@ SourceTable::get_next_target_data( const thread tid,
 
     // TODO@5g: this really is the source rank, isn't it? rename?
     target_rank =
-      kernel().node_manager.get_process_id_of_gid( current_source.gid );
+      kernel().node_manager.get_process_id_of_gid( current_source.get_gid() );
     // now we need to determine whether this thread is
     // responsible for this part of the MPI buffer; if not we
     // just continue with the next iteration of the loop
@@ -123,7 +123,7 @@ SourceTable::get_next_target_data( const thread tid,
     }
 
     // we have found a valid entry, so mark it as processed
-    current_source.processed = true;
+    current_source.set_processed( true );
 
     // we need to set the marker whether the entry following this
     // entry, if existent, has the same source
@@ -138,7 +138,7 @@ SourceTable::get_next_target_data( const thread tid,
                                                           .syn_index ]->size() )
            && ( *( *sources_[ current_position.tid ] )
                   [ current_position.syn_index ] )[ current_position.lcid + 1 ]
-                .gid == current_source.gid ) )
+                .get_gid() == current_source.get_gid() ) )
     {
       kernel().connection_manager.set_has_source_subsequent_targets(
         current_position.tid,
@@ -152,11 +152,11 @@ SourceTable::get_next_target_data( const thread tid,
     // was not processed yet
     if ( current_position.lcid - 1 > -1
       && ( *( *sources_[ current_position.tid ] )
-             [ current_position.syn_index ] )[ current_position.lcid - 1 ].gid
-        == current_source.gid
+             [ current_position.syn_index ] )[ current_position.lcid - 1 ].get_gid()
+        == current_source.get_gid()
       && not( *( *sources_[ current_position.tid ] )
                 [ current_position.syn_index ] )[ current_position.lcid - 1 ]
-              .processed )
+              .is_processed() )
     {
       --current_position.lcid;
       continue;
@@ -167,10 +167,10 @@ SourceTable::get_next_target_data( const thread tid,
     {
       // set values of next_target_data
       next_target_data.set_lid(
-        kernel().vp_manager.gid_to_lid( current_source.gid ) );
+        kernel().vp_manager.gid_to_lid( current_source.get_gid() ) );
       next_target_data.set_tid( kernel().vp_manager.vp_to_thread(
-        kernel().vp_manager.suggest_vp( current_source.gid ) ) );
-      if ( current_source.is_primary )
+        kernel().vp_manager.suggest_vp( current_source.get_gid() ) ) );
+      if ( current_source.is_primary() )
       {
         next_target_data.is_primary( true );
         // we store the thread index of the sources table, not our own tid

@@ -22,7 +22,7 @@
 '''
 NEST Topology Module Example
 
-Create two 30x30 layers of iaf_neurons,
+Create two 30x30 layers of iaf_psc_alpha neurons,
 connect with convergent projection and rectangular mask,
 visualize connection from target perspective.
 

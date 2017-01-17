@@ -354,7 +354,7 @@ private:
    Name: modeldict - dictionary containing all devices and models of NEST
    Description:
    'modeldict info' shows the contents of the dictionary
-   SeeAlso: info, Device, RecordingDevice, iaf_neuron, subnet
+   SeeAlso: info, Device, RecordingDevice, subnet
    */
   DictionaryDatum modeldict_; //!< Dictionary of all models
 

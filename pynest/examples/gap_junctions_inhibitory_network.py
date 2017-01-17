@@ -126,7 +126,7 @@ the Python level with the `random` module of the Python Standard Library
 and connecting the neurons using the `make_symmetric` flag for
 `one_to_one` connections.
 """
-n_connection = n_neuron * gap_per_neuron / 2
+n_connection = int(n_neuron * gap_per_neuron / 2)
 connections = numpy.transpose(
     [random.sample(neurons, 2) for _ in range(n_connection)])
 

@@ -56,9 +56,9 @@ def non_dale():
     modelList = []
 
     layerList = [('A', {'columns': N, 'rows': N, 'extent': [1.0, 1.0],
-                        'elements': 'iaf_neuron'}),
+                        'elements': 'iaf_psc_alpha'}),
                  ('B', {'columns': N, 'rows': N, 'extent': [1.0, 1.0],
-                        'elements': 'iaf_neuron'})]
+                        'elements': 'iaf_psc_alpha'})]
 
     common = {'connection_type': 'divergent',
               'synapse_model': 'static_synapse',

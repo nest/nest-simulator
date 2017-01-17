@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_issue_578_sp.py
+# mpitest_issue_578_sp.py
 #
 # This file is part of NEST.
 #
@@ -21,15 +21,16 @@
 
 
 import nest
-import unittest
 import sys
+import traceback
 
 
-class TestIssue578(unittest.TestCase):
+class TestIssue578():
 
-    def test_targets(self):
+    def do_test_targets(self):
         nest.ResetKernel()
         nest.set_verbosity('M_ALL')
+        # Testing with 2 MPI processes
         nest.SetKernelStatus(
             {
                 'resolution': 0.1,
@@ -37,7 +38,10 @@ class TestIssue578(unittest.TestCase):
             }
         )
         # Update the SP interval
+        a,
         nest.EnableStructuralPlasticity()
+        print (sys.exc_info()[0])
+        print (traceback.print_stack)
         nest.SetStructuralPlasticityStatus({
             'structural_plasticity_update_interval':
             100,
@@ -86,9 +90,5 @@ class TestIssue578(unittest.TestCase):
             self.fail("Exception during simulation")
 
 
-def suite():
-    test_suite = unittest.makeSuite(TestIssue578, 'test')
-    return test_suite
-
-if __name__ == '__main__':
-    unittest.main()
+mpitest = TestIssue578()
+mpitest.do_test_targets()

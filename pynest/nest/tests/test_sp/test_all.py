@@ -47,6 +47,19 @@ __author__ = 'naveau'
 
 
 def suite():
+    # MPI tests
+    if mpi_test:
+        try:
+            command = getMPITestCommand()
+            command = command.replace(
+                "  scriptfile", "test_sp/mpitest_issue_578_sp.py")
+            print ("Executing test with command: " + command)
+            command = command.split()
+            call(command)
+        except:
+            print (sys.exc_info()[0])
+            print ("Test call with MPI ended in error")
+            raise
     test_suite = unittest.TestSuite()
 
     test_suite.addTest(test_synaptic_elements.suite())
@@ -69,7 +82,7 @@ def getMPITestCommand():
     nestrcf = open(path, "r")
     for line in nestrcf:
         if "(mpi" in line:
-            line = line.replace("numproc", "2")
+            line = line.replace(" numproc", "2")
             line = line.replace("cvs ( ) executable", "python")
             line = line.replace("(", "")
             line = line.replace(")", "")
@@ -81,15 +94,3 @@ if __name__ == "__main__":
     nest.set_verbosity('M_WARNING')
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
-    # MPI tests
-    if mpi_test:
-        try:
-            command = getMPITestCommand()
-            command = command.replace(
-                "  scriptfile", "test_sp/test_issue_578_sp.py")
-            command = command.split()
-            call(command)
-        except:
-            print (sys.exc_info()[0])
-            print ("Test call with MPI ended in error")
-            raise

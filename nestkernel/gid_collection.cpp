@@ -30,7 +30,8 @@
 namespace nest
 {
 
-struct // function object for sorting a vector of GIDCollcetionPrimitives
+// function object for sorting a vector of GIDCollcetionPrimitives
+struct PrimitiveSortObject
 {
   bool operator()( GIDCollectionPrimitive& primitive_lhs,
     GIDCollectionPrimitive& primitive_rhs )

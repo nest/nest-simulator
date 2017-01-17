@@ -241,9 +241,11 @@ public:
   void get_sources( std::vector< index > targets,
     std::vector< std::vector< index > >& sources,
     index synapse_model );
-  void get_targets( std::vector< index > sources,
+
+  void get_targets( const std::vector< index >& sources,
     std::vector< std::vector< index > >& targets,
-    index synapse_model );
+    const index synapse_model,
+    const std::string& post_synaptic_element );
 
   /**
    * Triggered by volume transmitter in update.
@@ -320,6 +322,8 @@ private:
 
   ConnectorBase*
   validate_source_entry_( thread tid, index s_gid, synindex syn_id );
+
+  ConnectorBase* validate_source_entry_( thread tid, index s_gid );
 
   /**
    * Connect is used to establish a connection between a sender and

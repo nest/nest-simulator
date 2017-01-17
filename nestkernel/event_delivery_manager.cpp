@@ -136,7 +136,7 @@ EventDeliveryManager::configure_spike_buffers()
 
 
   // send_buffer must be >= 2 as the 'overflow' signal takes up 2 spaces
-  // plus the fiunal marker and the done flag for iterations
+  // plus the final marker and the done flag for iterations
   // + 1 for the final markers of each thread (invalid_synindex) of secondary
   // events
   // + 1 for the done flag (true) of each process

@@ -129,12 +129,12 @@ References:
 
 Meffin, H., Burkitt, A. N., & Grayden, D. B. (2004). An analytical
 model for the large, fluctuating synaptic conductance state typical of
-neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159–175.
+neocortical neurons in vivo. J.  Comput. Neurosci., 16, 159-175.
 
 Bernander, O ., Douglas, R. J., Martin, K. A. C., & Koch, C. (1991).
 Synaptic background activity influences spatiotemporal integration in
 single pyramidal cells.  Proc. Natl. Acad. Sci. USA, 88(24),
-11569–11573.
+11569-11573.
 
 Author: Plesser
 

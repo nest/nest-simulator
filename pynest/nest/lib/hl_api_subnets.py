@@ -27,8 +27,6 @@ from .hl_api_helper import *
 from .hl_api_nodes import Create
 from .hl_api_info import GetStatus, SetStatus
 
-import nest.lib.hl_api_helper as hlh
-
 
 @check_stack
 def PrintNetwork(depth=1, subnet=None):
@@ -49,16 +47,9 @@ def PrintNetwork(depth=1, subnet=None):
     """
 
     if subnet is None:
-        # Turn off deprecation warning on Python and SLI level as users
-        # shouldn't change implementation of PrintNetwork, it is done by the
-        # developers.
-        deprecation_bool, verbosity_level = turn_off_deprecation_warning(
-            'CurrentSubnet')
-        subnet = CurrentSubnet()
-        # Need to reset the deprecation warning to its old value
-        turn_on_deprecation_warning('CurrentSubnet', deprecation_bool,
-                                    verbosity_level)
-
+        # Avoid confusing user by deprecation warning
+        with SuppressedDeprecationWarning('CurrentSubnet'):
+            subnet = CurrentSubnet()
     elif len(subnet) > 1:
         raise NESTError("PrintNetwork() expects exactly one GID.")
 
@@ -184,8 +175,8 @@ def GetNodes(subnets, properties=None, local_only=False):
 
 
 @check_stack
-@deprecated('', 'GetChilden is deprecated and will be removed in NEST 3.0. Use \
-GIDCollection instead.')
+@deprecated('',
+            'GetChilden is deprecated and will be removed in NEST 3.0. Use GIDCollection instead.')  # noqa
 def GetChildren(subnets, properties=None, local_only=False):
     """Return the global ids of the immediate children of the given subnets.
 

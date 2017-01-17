@@ -286,7 +286,7 @@ private:
 
 /**
  * Factory class for random generators.
- * @ingroup RandomNumberGenerators
+ * @ingroup RandomNumberGenerators
  */
 class GenericRNGFactory
 {
@@ -308,7 +308,7 @@ public:
 /**
  * Concrete template for factories for built-in
  * (non GSL) random generators.
- * @ingroup RandomNumberGenerators
+ * @ingroup RandomNumberGenerators
  */
 template < typename Generator >
 class BuiltinRNGFactory : public GenericRNGFactory

@@ -28,7 +28,6 @@ from .hl_api_nodes import Create
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_subnets import GetChildren
-import hl_api_helper as hlh
 import numpy
 
 
@@ -205,10 +204,10 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     any distribution-specific parameters (e.g. 'mu' and 'sigma').
 
     To see all available distributions, run:
-    nest.slirun(’rdevdict info’)
+    nest.slirun('rdevdict info')
 
     To get information on a particular distribution, e.g. 'binomial', run:
-    nest.help(’rdevdict::binomial’)
+    nest.help('rdevdict::binomial')
 
     Most common available distributions and associated parameters
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -453,15 +452,10 @@ def _is_subnet_instance(gids):
     """
 
     try:
-        # Turn off _deprecation_warning as users shouldn't change
-        # implementation of this function, it is done by the developers
-        deprecation_bool = hlh._deprecation_warning['GetChildren']
-        hlh._deprecation_warning['GetChildren'] = False
-
-        GetChildren(gids)
-
-        # Need to reset the deprecation warning to its old value
-        hlh._deprecation_warning['GetChildren'] = deprecation_bool
+        # Turn off deprecation warning to avoid confusing users with
+        # internals.
+        with SuppressedDeprecationWarning(['GetChildren']):
+            GetChildren(gids)
         return True
     except kernel.NESTError:
         return False
@@ -516,11 +510,11 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
                 "are given")
 
         sli_func('CGConnect', cg, pre[0], post[0],
-                 parameter_map, '/'+model, litconv=True)
+                 parameter_map, '/' + model, litconv=True)
 
     else:
         sli_func('CGConnect', cg, pre, post,
-                 parameter_map, '/'+model, litconv=True)
+                 parameter_map, '/' + model, litconv=True)
 
 
 @check_stack

@@ -13,7 +13,8 @@
 	\usepackage{multirow}
 	\usepackage{colortbl}
 	\usepackage{authblk}
-
+	\usepackage[authoryear,round]{natbib}
+  \renewcommand{\cite}[1]{\citep{#1}}
 	\newcommand{\hdr}[2]{%
 \textbf{\makebox[0pt]{\hspace{5mm}#1}\hspace{0.5\linewidth}\makebox[0pt][c]{#2}}%
 }
@@ -39,7 +40,7 @@ Norway}
   programmed and simulated in NEST.
 
   This document is based on a preprint version of
-  \cite{Gewa:2012(533)} and has been updated for NEST 2.12.
+  \citet{Gewa:2012(533)} and has been updated for NEST 2.12.
 
 \begin{description}
 \item[Converted to Jupyter Notebook and updated to 2.12.0] Håkon\ Mørk, January 2017
@@ -212,5 +213,5 @@ Background rate $\eta$ & 2.0 \\
 
 ((* block bibliography *))
 	\bibliography{NEST_by_Example}
-	\bibliographystyle{apalike}
+	\bibliographystyle{plainnat}
 ((* endblock bibliography *))

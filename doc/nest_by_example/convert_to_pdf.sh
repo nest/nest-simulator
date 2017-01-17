@@ -7,7 +7,7 @@ LATEX=pdflatex
 BIBTEX=bibtex
 CONVERTER="jupyter nbconvert"
 
-fname="NEST by Example"
+fname=NEST_by_Example
 template=latex_template
 
 # Convert from Jupyter Notebook to LaTeX

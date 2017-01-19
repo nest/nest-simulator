@@ -283,15 +283,6 @@ public:
     return *this;
   }
 
-  ConnectorBase&
-  erase( const size_t i )
-  {
-    typename std::vector< ConnectionT >::iterator it;
-    it = C_.begin() + i;
-    C_.erase( it );
-    return *this;
-  }
-
   ConnectionT&
   at( const size_t i )
   {

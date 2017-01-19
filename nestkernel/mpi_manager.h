@@ -170,7 +170,7 @@ public:
   /*
    * Maximum across all ranks
    */
-  void communicate_Allreduce_max_in_place( std::vector< size_t >& buffer );
+  void communicate_Allreduce_max_in_place( std::vector< long >& buffer );
 
   /**
    * Collect GIDs for all nodes in a given node list across processes.

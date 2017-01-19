@@ -342,7 +342,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
     }
 
     // determine maximal chunksize across all MPI ranks
-    std::vector< size_t > max_count(
+    std::vector< long > max_count(
       1, *std::max_element( count_per_rank.begin(), count_per_rank.end() ) );
     kernel().mpi_manager.communicate_Allreduce_max_in_place( max_count );
 

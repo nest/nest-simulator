@@ -703,10 +703,10 @@ nest::MPIManager::communicate_Allreduce_sum( std::vector< double >& send_buffer,
 
 void
 nest::MPIManager::communicate_Allreduce_max_in_place(
-  std::vector< size_t >& buffer )
+  std::vector< long >& buffer )
 {
   MPI_Allreduce(
-    MPI_IN_PLACE, &buffer[ 0 ], 1, MPI_Type< size_t >::type, MPI_MAX, comm );
+    MPI_IN_PLACE, &buffer[ 0 ], 1, MPI_LONG, MPI_MAX, comm );
 }
 
 void

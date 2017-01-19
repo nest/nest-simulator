@@ -39,20 +39,20 @@ try:
 except:
     pass
 
-# This is a workaround to make MPI-enabled NEST import properly. The
-# underlying problem is that the shared object pynestkernel
-# dynamically opens other libraries that open other libraries...
+# Make MPI-enabled NEST import properly. The underlying problem is that the
+# shared object pynestkernel dynamically opens other libraries that open
+# yet other libraries.
 try:
-    try:
-        import dl
-    except:
-        import DLFCN as dl
-    sys.setdlopenflags(dl.RTLD_NOW | dl.RTLD_GLOBAL)
+    # Python 3.3 and later has flags in os
+    sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
 except:
-    # this is a hack for Python 2.6 on Mac, where RTDL_NOW is nowhere
-    # to be found. See trac ticket #397
+    # Python 2.6 and later have flags in ctypes, RTLD_NOW may be missing
     import ctypes
-    sys.setdlopenflags(ctypes.RTLD_GLOBAL)
+    try:
+        sys.setdlopenflags(ctypes.RTLD_GLOBAL | ctypes.RTLD_NOW)
+    except:
+        # RTLD_NOW missing from ctypes eg on OSX
+        sys.setdlopenflags(ctypes.RTLD_GLOBAL)
 
 from . import pynestkernel as _kernel      # noqa
 from .lib import hl_api_helper as hl_api   # noqa
@@ -81,7 +81,7 @@ def catching_sli_run(cmd):
         SLI errors are bubbled to the Python API as NESTErrors.
     """
 
-    if sys.version_info >= (3,):
+    if sys.version_info >= (3, ):
         def encode(s):
             return s
 
@@ -159,7 +159,6 @@ def sli_func(s, *args, **kwargs):
 
     if len(r) != 0:
         return r
-
 
 hl_api.sli_func = sli_func
 

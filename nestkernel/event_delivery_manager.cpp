@@ -38,6 +38,7 @@
 #include "connection_manager.h"
 #include "connection_manager_impl.h"
 #include "event_delivery_manager_impl.h"
+#include "source.h"
 
 // Includes from sli:
 #include "dictutils.h"

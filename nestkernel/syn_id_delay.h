@@ -37,7 +37,7 @@ struct SynIdDelay
   bool subsequent_targets : 1;
   bool disabled : 1;
 
-  SynIdDelay( double d )
+  explicit SynIdDelay( double d )
     : syn_id( invalid_synindex )
     , subsequent_targets( false )
     , disabled( false )

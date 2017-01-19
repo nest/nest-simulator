@@ -34,9 +34,9 @@ namespace nest
 {
 
 /**
- * A structure containing all information required to uniquely
- * identify a target neuron on a (remote) machine. Used in TargetTable
- * for presynaptic part of connection infrastructure.
+ * Contains all information required to uniquely identify a target
+ * neuron on a (remote) machine. Used in TargetTable for presynaptic
+ * part of connection infrastructure.
  */
 class Target
 {
@@ -92,6 +92,10 @@ inline Target::Target( const thread tid,
   const index lcid )
   : data_( 0 )
 {
+  assert( tid < 1024 );
+  assert( rank < 1048576 );
+  assert( syn_index < 64 );
+  assert( lcid < 134217728 );
   set_lcid( lcid );
   set_rank( rank );
   set_tid( tid );
@@ -180,7 +184,7 @@ Target::get_offset() const
 class OffGridTarget : public Target
 {
 private:
-  double offset;
+  double offset_;
 
 public:
   OffGridTarget();
@@ -190,20 +194,20 @@ public:
 
 inline OffGridTarget::OffGridTarget()
   : Target()
-  , offset( 0 )
+  , offset_( 0 )
 {
 }
 
 inline OffGridTarget::OffGridTarget( const Target& target, const double offset )
   : Target( target )
-  , offset( offset )
+  , offset_( offset )
 {
 }
 
 inline double
 OffGridTarget::get_offset() const
 {
-  return offset;
+  return offset_;
 }
 
 } // namespace nest

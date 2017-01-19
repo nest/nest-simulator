@@ -31,8 +31,8 @@ namespace nest
 {
 
 /**
- * Structure used to communicate part of the connection infrastructure
- * from post- to presynaptic side. These are the elements of the MPI
+ * Used to communicate part of the connection infrastructure from
+ * post- to presynaptic side. These are the elements of the MPI
  * buffers.
  * SeeAlso: SpikeData
  */

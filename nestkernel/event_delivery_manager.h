@@ -49,7 +49,7 @@ namespace nest
 {
 typedef MPIManager::OffGridSpike OffGridSpike;
 
-struct TargetData;
+class TargetData;
 
 /**
  * Struct to simplify keeping track of write position in MPI buffer

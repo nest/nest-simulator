@@ -39,7 +39,7 @@
 namespace nest
 {
 
-struct TargetData;
+class TargetData;
 
 /** This data structure that stores the global ids of presynaptic
  * neuron during postsynaptic connection creation, before the

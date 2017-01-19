@@ -650,12 +650,12 @@ EventDeliveryManager::deliver_events_5g_( const thread tid,
       const SpikeDataT& spike_data =
         recv_buffer[ rank * send_recv_count_spike_data_per_rank_ + i ];
 
-      if ( spike_data.tid == tid )
+      if ( spike_data.get_tid() == tid )
       {
-        se.set_stamp( prepared_timestamps[ spike_data.lag ] );
+        se.set_stamp( prepared_timestamps[ spike_data.get_lag() ] );
         se.set_offset( spike_data.get_offset() );
         kernel().connection_manager.send_5g(
-          tid, spike_data.syn_index, spike_data.lcid, se );
+          tid, spike_data.get_syn_index(), spike_data.get_lcid(), se );
       }
 
       // is this the last spike from this rank?

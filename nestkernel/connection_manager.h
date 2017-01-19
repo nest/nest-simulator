@@ -58,7 +58,7 @@ class Event;
 class SecondaryEvent;
 class DelayChecker;
 class GrowthCurve;
-struct SpikeData;
+class SpikeData;
 
 class ConnectionManager : public ManagerInterface
 {

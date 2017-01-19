@@ -23,6 +23,9 @@
 #ifndef SPIKE_DATA_H
 #define SPIKE_DATA_H
 
+// C++ includes
+#include <cassert>
+
 // Includes from nestkernel:
 #include "nest_types.h"
 
@@ -30,20 +33,25 @@ namespace nest
 {
 
 /**
- * Structure used to communicate spikes. These are the elements of the
- * MPI buffers.
+ * Used to communicate spikes. These are the elements of the MPI
+ * buffers.
  * SeeAlso: TargetData
  */
-struct SpikeData
+class SpikeData
 {
-  index lcid : 27;         //!< local connection index
-  unsigned int marker : 2; //!< status flag
-  unsigned int lag : 14;   //!< lag in this min-delay interval
-  thread tid : 10;         //!< thread index
-  synindex syn_index : 8;  //!< synapse-type index
-  const static unsigned int end_marker = 1;
-  const static unsigned int complete_marker = 2;
-  const static unsigned int invalid_marker = 3;
+private:
+  const static unsigned int end_marker_ = 1;
+  const static unsigned int complete_marker_ = 2;
+  const static unsigned int invalid_marker_ = 3;
+
+protected:
+  index lcid_ : 27;         //!< local connection index
+  unsigned int marker_ : 2; //!< status flag
+  unsigned int lag_ : 14;   //!< lag in this min-delay interval
+  thread tid_ : 10;         //!< thread index
+  synindex syn_index_ : 8;  //!< synapse-type index
+
+public:
   SpikeData();
   SpikeData( const SpikeData& rhs );
   SpikeData( const thread tid,
@@ -55,6 +63,10 @@ struct SpikeData
     const index lcid,
     const unsigned int lag,
     const double offset );
+  index get_lcid() const;
+  unsigned int get_lag() const;
+  thread get_tid() const;
+  synindex get_syn_index() const;
   void reset_marker();
   void set_complete_marker();
   void set_end_marker();
@@ -66,20 +78,20 @@ struct SpikeData
 };
 
 inline SpikeData::SpikeData()
-  : lcid( 0 )
-  , marker( 0 )
-  , lag( 0 )
-  , tid( 0 )
-  , syn_index( 0 )
+  : lcid_( 0 )
+  , marker_( 0 )
+  , lag_( 0 )
+  , tid_( 0 )
+  , syn_index_( 0 )
 {
 }
 
 inline SpikeData::SpikeData( const SpikeData& rhs )
-  : lcid( rhs.lcid )
-  , marker( 0 ) // always initialize with default marker
-  , lag( rhs.lag )
-  , tid( rhs.tid )
-  , syn_index( rhs.syn_index )
+  : lcid_( rhs.lcid_ )
+  , marker_( 0 ) // always initialize with default marker
+  , lag_( rhs.lag_ )
+  , tid_( rhs.tid_ )
+  , syn_index_( rhs.syn_index_ )
 {
 }
 
@@ -87,11 +99,11 @@ inline SpikeData::SpikeData( const thread tid,
   const synindex syn_index,
   const index lcid,
   const unsigned int lag )
-  : lcid( lcid )
-  , marker( 0 ) // always initialize with default marker
-  , lag( lag )
-  , tid( tid )
-  , syn_index( syn_index )
+  : lcid_( lcid )
+  , marker_( 0 ) // always initialize with default marker
+  , lag_( lag )
+  , tid_( tid )
+  , syn_index_( syn_index )
 {
 }
 
@@ -102,53 +114,82 @@ SpikeData::set( const thread tid,
   const unsigned int lag,
   const double )
 {
-  ( *this ).lcid = lcid;
-  marker = 0; // always initialize with default marker
-  ( *this ).lag = lag;
-  ( *this ).tid = tid;
-  ( *this ).syn_index = syn_index;
+  assert( tid < 1024 );
+  // assert( syn_index < 256 ); // no need to check, because syn_index is of type char
+  assert( lcid < 134217728 );
+  assert( lag < 16384 );
+
+  lcid_ = lcid;
+  marker_ = 0; // always initialize with default marker
+  lag_ = lag;
+  tid_ = tid;
+  syn_index_ = syn_index;
+}
+
+inline index
+SpikeData::get_lcid() const
+{
+  return lcid_;
+}
+
+inline unsigned int
+SpikeData::get_lag() const
+{
+  return lag_;
+}
+
+inline thread
+SpikeData::get_tid() const
+{
+  return tid_;
+}
+
+inline synindex
+SpikeData::get_syn_index() const
+{
+  return syn_index_;
 }
 
 inline void
 SpikeData::reset_marker()
 {
-  marker = 0;
+  marker_ = 0;
 }
 
 inline void
 SpikeData::set_complete_marker()
 {
-  marker = complete_marker;
+  marker_ = complete_marker_;
 }
 
 inline void
 SpikeData::set_end_marker()
 {
-  marker = end_marker;
+  marker_ = end_marker_;
 }
 
 inline void
 SpikeData::set_invalid_marker()
 {
-  marker = invalid_marker;
+  marker_ = invalid_marker_;
 }
 
 inline bool
 SpikeData::is_complete_marker() const
 {
-  return marker == complete_marker;
+  return marker_ == complete_marker_;
 }
 
 inline bool
 SpikeData::is_end_marker() const
 {
-  return marker == end_marker;
+  return marker_ == end_marker_;
 }
 
 inline bool
 SpikeData::is_invalid_marker() const
 {
-  return marker == invalid_marker;
+  return marker_ == invalid_marker_;
 }
 
 inline double
@@ -157,9 +198,18 @@ SpikeData::get_offset() const
   return 0;
 }
 
-struct OffGridSpikeData : SpikeData
+class OffGridSpikeData : public SpikeData
 {
-  double offset;
+private:
+  double offset_;
+
+public:
+  OffGridSpikeData();
+  OffGridSpikeData( const thread tid,
+    const synindex syn_index,
+    const index lcid,
+    const unsigned int lag,
+    const double offset );
   void set( const thread tid,
     const synindex syn_index,
     const index lcid,
@@ -168,6 +218,22 @@ struct OffGridSpikeData : SpikeData
   double get_offset() const;
 };
 
+inline OffGridSpikeData::OffGridSpikeData()
+  : SpikeData()
+  , offset_( 0. )
+{
+}
+
+inline OffGridSpikeData::OffGridSpikeData( const thread tid,
+  const synindex syn_index,
+  const index lcid,
+  const unsigned int lag,
+  const double offset )
+  : SpikeData( tid, syn_index, lcid, lag )
+  , offset_( offset )
+{
+}
+
 inline void
 OffGridSpikeData::set( const thread tid,
   const synindex syn_index,
@@ -175,18 +241,23 @@ OffGridSpikeData::set( const thread tid,
   const unsigned int lag,
   const double offset )
 {
-  ( *this ).lcid = lcid;
-  marker = 0; // always initialize with default marker
-  ( *this ).lag = lag;
-  ( *this ).tid = tid;
-  ( *this ).syn_index = syn_index;
-  ( *this ).offset = offset;
+  assert( tid < 1024 );
+  // assert( syn_index < 256 ); // no need to check, because syn_index is of type char
+  assert( lcid < 134217728 );
+  assert( lag < 16384 );
+
+  lcid_ = lcid;
+  marker_ = 0; // always initialize with default marker
+  lag_ = lag;
+  tid_ = tid;
+  syn_index_ = syn_index;
+  offset_ = offset;
 }
 
 inline double
 OffGridSpikeData::get_offset() const
 {
-  return offset;
+  return offset_;
 }
 
 } // namespace nest

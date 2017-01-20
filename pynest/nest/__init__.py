@@ -45,14 +45,27 @@ except:
 try:
     # Python 3.3 and later has flags in os
     sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
-except:
-    # Python 2.6 and later have flags in ctypes, RTLD_NOW may be missing
-    import ctypes
+except AttributeError:
+    # Python 2.6 and 2.7 have flags in ctypes, but RTLD_NOW may only
+    # be available in dl or DLFCN and is required at least under 
+    # Ubuntu 14.04. The latter two are not available under OSX,
+    # but OSX does not have and does not need RTLD_NOW. We therefore
+    # first try dl and DLFCN, then ctypes just for OSX.
     try:
-        sys.setdlopenflags(ctypes.RTLD_GLOBAL | ctypes.RTLD_NOW)
-    except:
-        # RTLD_NOW missing from ctypes eg on OSX
-        sys.setdlopenflags(ctypes.RTLD_GLOBAL)
+        import dl
+        sys.setdlopenflags(dl.RTLD_GLOBAL | dl.RTLD_NOW)
+    except ImportError, AttributeError:
+        try:
+            import DLFCN
+            sys.setdlopenflags(DLFCN.RTLD_GLOBAL | DLFCN.RTLD_NOW)
+        except ImportError, AttributeError:
+            import ctypes
+            try:
+                sys.setdlopenflags(ctypes.RTLD_GLOBAL | ctypes.RTLD_NOW)
+            except AttributeError:
+                # We must test this last, since it is the only case without
+                # RTLD_NOW (OSX)
+                sys.setdlopenflags(ctypes.RTLD_GLOBAL)
 
 from . import pynestkernel as _kernel      # noqa
 from .lib import hl_api_helper as hl_api   # noqa

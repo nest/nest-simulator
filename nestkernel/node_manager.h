@@ -205,9 +205,14 @@ public:
   void finalize_nodes();
 
   /**
-   *
+   * Returns whether any node uses waveform relaxation
    */
-  bool any_node_uses_wfr() const;
+  bool wfr_is_used() const;
+
+  /**
+   * Checks whether waveform relaxation is used by any node
+   */
+  void check_wfr_use();
 
   /**
    * Iterator pointing to beginning of process-local nodes.
@@ -281,10 +286,10 @@ private:
    */
   std::vector< std::vector< Node* > > nodes_vec_;
   std::vector< std::vector< Node* > >
-    wfr_nodes_vec_;        //!< Nodelists for unfrozen nodes that
-                           //!< use the waveform relaxation method
-  bool any_node_uses_wfr_; //!< there is at least one neuron model that uses
-                           //!< waveform relaxation
+    wfr_nodes_vec_;  //!< Nodelists for unfrozen nodes that
+                     //!< use the waveform relaxation method
+  bool wfr_is_used_; //!< there is at least one node that uses
+                     //!< waveform relaxation
   //! Network size when nodes_vec_ was last updated
   index nodes_vec_network_size_;
 };
@@ -344,9 +349,9 @@ NodeManager::get_wfr_nodes_on_thread( thread t ) const
 }
 
 inline bool
-NodeManager::any_node_uses_wfr() const
+NodeManager::wfr_is_used() const
 {
-  return any_node_uses_wfr_;
+  return wfr_is_used_;
 }
 
 inline SparseNodeArray::const_iterator

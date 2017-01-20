@@ -47,7 +47,7 @@ the post-synaptic spike train as well as the pre-synaptic one. As a consequence,
 the time constant of the depressing window of STDP is a parameter of the
 post-synaptic neuron. It can be set as follows:
 
-    nest.Create("iaf_neuron", params={"tau_minus": 30.0})
+    nest.Create("iaf_psc_alpha", params={"tau_minus": 30.0})
 
 or by using any of the other methods of parameterising neurons demonstrated in
 the first two parts of this introduction.
@@ -249,7 +249,7 @@ in a population. As neurons receive ids at the time of creation, it is possible
 to use your knowledge of these ids explictly:
 
     Nrec = 50
-    neuronpop = nest.Create("iaf_neuron", 200)
+    neuronpop = nest.Create("iaf_psc_alpha", 200)
     sd = nest.Create("spike_detector")
     nest.Connect(range(1,N_rec+1),sd,"all_to_all")
 

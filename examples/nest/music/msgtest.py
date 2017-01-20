@@ -37,5 +37,5 @@ time = 0
 while time < 1000:
     nest.Simulate(10)
     data = nest.GetStatus(mmip, 'data')
-    print data
+    print(data)
     time += 10

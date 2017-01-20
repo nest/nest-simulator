@@ -31,6 +31,7 @@
 #include "compose.hpp"
 
 // Includes from nestkernel:
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "model_manager_impl.h"
 #include "proxynode.h"
@@ -84,18 +85,21 @@ ModelManager::initialize()
     // initialize these models only once outside of the constructor
     // as the node model asks for the # of threads to setup slipools
     // but during construction of ModelManager, the KernelManager is not created
-    subnet_model_ = new GenericModel< Subnet >( "subnet" );
+    subnet_model_ = new GenericModel< Subnet >( "subnet",
+      /* deprecation_info */ "NEST 3.0" );
     subnet_model_->set_type_id( 0 );
     pristine_models_.push_back(
       std::pair< Model*, bool >( subnet_model_, false ) );
 
     siblingcontainer_model_ =
-      new GenericModel< SiblingContainer >( "siblingcontainer" );
+      new GenericModel< SiblingContainer >( std::string( "siblingcontainer" ),
+        /* deprecation_info */ "" );
     siblingcontainer_model_->set_type_id( 1 );
     pristine_models_.push_back(
       std::pair< Model*, bool >( siblingcontainer_model_, true ) );
 
-    proxynode_model_ = new GenericModel< proxynode >( "proxynode" );
+    proxynode_model_ =
+      new GenericModel< proxynode >( "proxynode", /* deprecation_info */ "" );
     proxynode_model_->set_type_id( 2 );
     pristine_models_.push_back(
       std::pair< Model*, bool >( proxynode_model_, true ) );
@@ -250,7 +254,10 @@ ModelManager::register_node_model_( Model* model, bool private_model )
 index
 ModelManager::copy_node_model_( index old_id, Name new_name )
 {
-  Model* new_model = get_model( old_id )->clone( new_name.toString() );
+  Model* old_model = get_model( old_id );
+  old_model->deprecation_warning( "CopyModel" );
+
+  Model* new_model = old_model->clone( new_name.toString() );
   models_.push_back( new_model );
 
   index new_id = models_.size() - 1;
@@ -422,6 +429,14 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
     kernel().connection_manager.get_num_connections( syn_id );
 
   return dict;
+}
+
+bool
+ModelManager::connector_requires_symmetric( synindex syn_id ) const
+{
+  assert_valid_syn_id( syn_id );
+
+  return prototypes_[ 0 ][ syn_id ]->requires_symmetric();
 }
 
 void

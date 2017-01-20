@@ -103,12 +103,27 @@ public:
   void set_pre_synaptic_element_name( std::string name );
   void set_post_synaptic_element_name( std::string name );
 
+  bool all_parameters_scalar_() const;
+
   int change_connected_synaptic_elements( index, index, const int, int );
 
   virtual bool
   supports_symmetric() const
   {
     return false;
+  }
+
+  virtual bool
+  is_symmetric() const
+  {
+    return false;
+  }
+
+  //! Return true if rule is applicable only to nodes with proxies
+  virtual bool
+  requires_proxies() const
+  {
+    return true;
   }
 
 protected:
@@ -168,7 +183,7 @@ protected:
 
   bool autapses_;
   bool multapses_;
-  bool symmetric_;
+  bool make_symmetric_;
 
   //! buffer for exceptions raised in threads
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;
@@ -240,6 +255,12 @@ public:
     return true;
   }
 
+  bool
+  requires_proxies() const
+  {
+    return false;
+  }
+
 protected:
   void connect_();
   void sp_connect_();
@@ -256,6 +277,18 @@ public:
     const DictionaryDatum& syn_spec )
     : ConnBuilder( sources, targets, conn_spec, syn_spec )
   {
+  }
+
+  bool
+  is_symmetric() const
+  {
+    return *sources_ == *targets_ && all_parameters_scalar_();
+  }
+
+  bool
+  requires_proxies() const
+  {
+    return false;
   }
 
 protected:

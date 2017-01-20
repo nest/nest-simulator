@@ -78,7 +78,7 @@ before_install:
   # Install Python testsuite nosetests.
   - sudo apt-get install -y python-nose
 
-  # Install VERA++ for static code analysis.
+  # Install VERA++ and pep8 for static code analysis.
   - sudo apt-get install -y vera++ pep8
 
   # Required for building cppcheck-1.69.
@@ -125,7 +125,7 @@ before_deploy:
   - mv logfiles.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
   - mv reports.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
 
-# S3 Deployment (Travis CI upload to Amazon S3).
+# S3 Deployment (Uploading the Travis CI build artefacts to Amazon S3).
 deploy:
   provider: s3
   access_key_id:

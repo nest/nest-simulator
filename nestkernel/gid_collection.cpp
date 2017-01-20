@@ -595,8 +595,11 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
     merge_parts( new_composite->parts_ );
     if ( new_composite->parts_.size() == 1 )
     {
-      return GIDCollectionPTR(
-        new GIDCollectionPrimitive( new_composite->parts_[ 0 ] ) );
+      // If there is only a single primitive in the composite, we extract it,
+      // ensuring that the composite is deleted from memory.
+      GIDCollectionPrimitive new_primitive = new_composite->parts_[ 0 ];
+      delete new_composite;
+      return GIDCollectionPTR( new GIDCollectionPrimitive( new_primitive ) );
     }
     else
     {

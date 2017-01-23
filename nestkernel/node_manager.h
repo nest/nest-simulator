@@ -30,6 +30,7 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
+#include "conn_builder.h"
 #include "nest_types.h"
 #include "sparse_node_array.h"
 
@@ -83,7 +84,6 @@ public:
    * @throws nest::UnknownModelID
    */
   index add_node( index m, long n = 1 );
-
 
   /**
    * Restore nodes from an array of status dictionaries.
@@ -205,9 +205,29 @@ public:
   void finalize_nodes();
 
   /**
-   *
+   * Returns whether any node uses waveform relaxation
    */
-  bool any_node_uses_wfr() const;
+  bool wfr_is_used() const;
+
+  /**
+   * Checks whether waveform relaxation is used by any node
+   */
+  void check_wfr_use();
+
+  /**
+   * Iterator pointing to beginning of process-local nodes.
+   */
+  SparseNodeArray::const_iterator local_nodes_begin() const;
+
+  /**
+   * Iterator pointing to end of process-local nodes.
+   */
+  SparseNodeArray::const_iterator local_nodes_end() const;
+
+  /**
+   * Number of process-local nodes.
+   */
+  size_t local_nodes_size() const;
 
 private:
   /**
@@ -236,6 +256,13 @@ private:
    */
   void prepare_node_( Node* );
 
+  /**
+   * Returns the next local gid after curr_gid (in round robin fashion).
+   * In the case of GSD, there might be no valid gids, hence you should still
+   * check, if it returns a local gid.
+   */
+  index next_local_gid_( index curr_gid ) const;
+
 private:
   SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
   Subnet* root_;                //!< Root node.
@@ -259,10 +286,10 @@ private:
    */
   std::vector< std::vector< Node* > > nodes_vec_;
   std::vector< std::vector< Node* > >
-    wfr_nodes_vec_;        //!< Nodelists for unfrozen nodes that
-                           //!< use the waveform relaxation method
-  bool any_node_uses_wfr_; //!< there is at least one neuron model that uses
-                           //!< waveform relaxation
+    wfr_nodes_vec_;  //!< Nodelists for unfrozen nodes that
+                     //!< use the waveform relaxation method
+  bool wfr_is_used_; //!< there is at least one node that uses
+                     //!< waveform relaxation
   //! Network size when nodes_vec_ was last updated
   index nodes_vec_network_size_;
 };
@@ -322,9 +349,27 @@ NodeManager::get_wfr_nodes_on_thread( thread t ) const
 }
 
 inline bool
-NodeManager::any_node_uses_wfr() const
+NodeManager::wfr_is_used() const
 {
-  return any_node_uses_wfr_;
+  return wfr_is_used_;
+}
+
+inline SparseNodeArray::const_iterator
+NodeManager::local_nodes_begin() const
+{
+  return local_nodes_.begin();
+}
+
+inline SparseNodeArray::const_iterator
+NodeManager::local_nodes_end() const
+{
+  return local_nodes_.end();
+}
+
+inline size_t
+NodeManager::local_nodes_size() const
+{
+  return local_nodes_.size();
 }
 
 } // namespace

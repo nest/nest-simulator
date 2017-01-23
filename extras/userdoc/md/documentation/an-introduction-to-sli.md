@@ -7,6 +7,7 @@ NEST can be started by typing
     <prefix>/bin/nest
 
 at the command prompt. You should then see something like this:
+
     gewaltig@jasmin-vm:~$ nest
                 -- N E S T 2 beta --
 

@@ -104,33 +104,6 @@ def help(obj=None, pager="less"):
 
 
 @check_stack
-def get_verbosity():
-    """Return verbosity level of NEST's messages.
-
-    Returns
-    -------
-    int:
-        The current verbosity level
-    """
-
-    sr('verbosity')
-    return spp()
-
-
-@check_stack
-def set_verbosity(level):
-    """Change verbosity level for NEST's messages.
-
-    Parameters
-    ----------
-    level : str
-        Can be one of 'M_FATAL', 'M_ERROR', 'M_WARNING', or 'M_INFO'.
-    """
-
-    sr("%s setverbosity" % level)
-
-
-@check_stack
 def get_argv():
     """Return argv as seen by NEST.
 

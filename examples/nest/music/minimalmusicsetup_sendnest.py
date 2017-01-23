@@ -34,7 +34,7 @@ nest.set_verbosity("M_ERROR")
 sg = nest.Create('spike_generator')
 nest.SetStatus(sg, {'spike_times': [1.0, 1.5, 2.0]})
 
-n = nest.Create('iaf_neuron')
+n = nest.Create('iaf_psc_alpha')
 
 nest.Connect(sg, n, 'one_to_one', {'weight': 750.0, 'delay': 1.0})
 

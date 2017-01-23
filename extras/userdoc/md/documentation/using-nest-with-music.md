@@ -50,7 +50,7 @@ MUSIC port `spikes_out` to the second, which receives the events on the port
 
     /spike_generator Create /sg Set
     sg << /spike_times [1.0 1.5 2.0 ]>> SetStatus
-    /iaf_neuron Create /n Set
+    /iaf_psc_alpha Create /n Set
     sg n << /weight 750.0 >> Connect
     /voltmeter Create /vm Set
     vm << /to_memory false /to_screen true >> SetStatus
@@ -61,11 +61,11 @@ MUSIC port `spikes_out` to the second, which receives the events on the port
     10 Simulate
 
 Line 1 creates a `spike_generator`, which sends three spikes. The spike times
-are specified in line 2. The script then creates an `iaf_neuron` in line 3 and
-connects the `spike_generator` to the `iaf_neuron` in line 4. The membrane
-potential of the `iaf_neuron` is measured by a `voltmeter`, which is created in
+are specified in line 2. The script then creates an `iaf_psc_alpha` in line 3 and
+connects the `spike_generator` to the `iaf_psc_alpha` in line 4. The membrane
+potential of the `iaf_psc_alpha` is measured by a `voltmeter`, which is created in
 line 5 and set to print the measured values in line 6. The connection between
-the `voltmeter` and the `iaf_neuron` is established in line 7. Line 8 creates a
+the `voltmeter` and the `iaf_psc_alpha` is established in line 7. Line 8 creates a
 `music_event_out_proxy`, which forwards the spikes it receives directly to the
 MUSIC event output port `spikes_out` (set in line 9). The `spike_generator` is
 connected to the MUSIC channel 0 on the `music_event_out_proxy` in line 10.
@@ -75,7 +75,7 @@ The next listing contains the content of `minimalmusicsetup_receivenest.sli`:
 
 /music_event_in_proxy Create /meip Set
 meip << /port_name (spikes_in) /music_channel 0 >> SetStatus
-/iaf_neuron Create /n Set
+/iaf_psc_alpha Create /n Set
 meip n << /weight 750.0 >> Connect
 /voltmeter Create /vm Set
 vm << /to_memory false /to_screen true >> SetStatus

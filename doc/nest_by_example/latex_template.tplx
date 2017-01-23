@@ -1,0 +1,217 @@
+((*- extends 'article.tplx' -*))
+
+((* set cell_style = 'style_python.tplx' *))
+
+((* block title *))
+\title{NEST by Example: An Introduction to the \\ Neural Simulation Tool NEST Version 2.12.0}
+((* endblock title *))
+
+((* block header *))
+	((( super() )))
+	\usepackage{multicol}
+	\usepackage{tabularx}
+	\usepackage{multirow}
+	\usepackage{colortbl}
+	\usepackage{authblk}
+	\usepackage[authoryear,round]{natbib}
+  \renewcommand{\cite}[1]{\citep{#1}}
+	\newcommand{\hdr}[2]{%
+\textbf{\makebox[0pt]{\hspace{5mm}#1}\hspace{0.5\linewidth}\makebox[0pt][c]{#2}}%
+}
+\author[1]{Marc-Oliver Gewaltig}
+\author[2]{Abigail Morrison}
+\author[3, 2]{Hans Ekkehard Plesser}
+\affil[1]{Blue Brain Project, Ecole Polytechnique Federale de
+  Lausanne, QI-J, Lausanne 1015, Switzerland}
+\affil[2]{Institute of Neuroscience and Medicine (INM-6)
+Functional Neural Circuits Group, J\"ulich Research Center, 52425
+J\"ulich, Germany}
+\affil[3]{Dept of Mathematical Sciences and Technology, 
+Norwegian University of Life Sciences, PO Box 5003, 1432 Aas,
+Norway}
+\date{}
+((* endblock header *))
+
+
+((* block abstract *))
+\abstract{The neural simulation tool NEST can simulate small to very
+  large networks of point-neurons or neurons with a few
+  compartments. In this chapter, we show by example how models are
+  programmed and simulated in NEST.
+
+  This document is based on a preprint version of
+  \citet{Gewa:2012(533)} and has been updated for NEST 2.12.
+
+\begin{description}
+\item[Converted to Jupyter Notebook and updated to 2.12.0] Håkon\ Mørk, January 2017
+\item[Edited] Sacha J.\ van Albada, May 2015
+\item[Updated to 2.6.0] Hans E.\ Plesser, December 2014
+\item[Updated to 2.4.0] Hans E.\ Plesser, June 2014
+\item[Updated to 2.2.2] Hans E.\ Plesser \& Marc-Oliver Gewaltig,
+  December 2012
+\end{description}
+}
+((* endblock abstract *))
+
+((* block markdowncell *))
+    
+    ((*- if not cell.metadata.get('table', {}) and not cell.metadata.get('title', {}) and not cell.metadata.get('bib', {}) and not cell.metadata.get('image', {}) -*))
+    	((( super() )))
+    ((*- endif -*))
+    ((*- if cell.metadata.get('table', {}) -*))
+    	
+\begin{table}[!htp]
+\noindent
+\centering
+\caption{Summary of the network model.}
+\begin{tabularx}{0.95\linewidth}{|l|X|}\hline
+%
+\multicolumn{2}{|l|}{\color{white}\cellcolor[gray]{0.0}\hdr{A}{Model Summary}}\\\hline
+\textbf{Populations} & Three: excitatory, inhibitory, external input \\\hline
+\textbf{Topology} & --- \\\hline
+\textbf{Connectivity} & Random convergent connections with probability
+$P=0.1$ and fixed in-degree of $C_E=P N_E$ and $C_I=P N_I$.
+\\\hline
+{\textbf{Neuron model}} & Leaky integrate-and-fire, fixed voltage
+threshold, fixed absolute refractory time (voltage clamp) \\\hline
+\textbf{Channel models} & --- \\\hline
+\textbf{Synapse model} & $\delta$-current inputs (discontinuous
+  voltage jumps) \\\hline
+\textbf{Plasticity} & ---\\\hline
+\textbf{Input} & Independent fixed-rate Poisson spike trains to all
+neurons \\\hline
+\textbf{Measurements} & Spike activity \\\hline
+\end{tabularx}
+
+\vspace{1ex}
+
+\noindent\begin{tabularx}{0.95\linewidth}{|l|l|X|}\hline
+\multicolumn{3}{|l|}{\color{white}\cellcolor[gray]{0.0}\hdr{B}{Populations}}\\\hline
+  \textbf{Name} & \textbf{Elements} & \textbf{Size} \\\hline
+nodes\_E & \texttt{iaf\_psc\_delta} neuron & $N_{\text{E}} = 4N_{\text{I}}$  \\\hline
+nodes\_I & \texttt{iaf\_psc\_delta} neuron & $N_{\text{I}}$ \\\hline
+noise & Poisson generator & $1$ \\\hline
+\end{tabularx}
+
+\vspace{1ex}
+
+\noindent\begin{tabularx}{0.95\linewidth}{|l|l|l|X|}\hline
+\multicolumn{4}{|l|}{\color{white}\cellcolor[gray]{0.0}\hdr{C}{Connectivity}}\\\hline
+\textbf{Name} & \textbf{Source} & \textbf{Target} & \textbf{Pattern} \\\hline
+  EE & nodes\_E & nodes\_E & 
+  Random convergent $C_{\text{E}}\rightarrow 1$, weight $J$, delay $D$ \\\hline
+  IE & nodes\_E & nodes\_I & 
+  Random convergent $C_{\text{E}}\rightarrow 1$, weight $J$, delay $D$ \\\hline
+  EI & nodes\_I & nodes\_E & 
+  Random convergent $C_{\text{I}}\rightarrow 1$, weight $-gJ$, delay $D$ \\\hline
+  II & nodes\_I & nodes\_I & 
+  Random convergent $C_{\text{I}}\rightarrow 1$, weight $-gJ$, delay $D$ \\\hline
+  Ext& noise & nodes\_E $\cup$ nodes\_I & 
+  Divergent $1 \rightarrow N_{\text{E}} + N_{\text{I}}$, weight $J$, delay $D$ \\\hline
+\end{tabularx}
+
+\vspace{1ex}
+
+\noindent\begin{tabularx}{0.95\linewidth}{|l|X|}\hline
+\multicolumn{2}{|l|}{\color{white}\cellcolor[gray]{0.0}\hdr{D}{Neuron and Synapse Model}}\\\hline
+\textbf{Name} & \texttt{iaf\_psc\_delta} neuron \\\hline
+\textbf{Type} & Leaky integrate-and-fire, $\delta$-current input\\\hline
+\raisebox{-4.5ex}{\parbox{5em}{\textbf{Sub\-threshold dynamics}}} &
+\rule{1em}{0em}\vspace*{-3.5ex}
+    \begin{equation*}
+      \begin{array}{r@{\;=\;}ll}
+      \tau_m \dot{V_m}(t) & -V_m(t) + R_m I(t) &\text{if not refractory}\; (t > t^*+\tau_{\text{rp}}) \\[1ex]
+      V_m(t) & V_{\text{r}} & \text{while refractory}\; (t^*<t\leq t^*+\tau_{\text{rp}}) \\[2ex]
+      I(t) & \multicolumn{2}{l}{\frac{\tau_m}{R_m} \sum_{\tilde{t}} w
+        \delta(t-(\tilde{t}+D))}
+      \end{array}
+    \end{equation*} 
+\vspace*{-2.5ex}\rule{1em}{0em}
+ \\\hline
+\multirow{3}{*}{\textbf{Spiking}} & 
+   If $V_m(t-)<V_{\theta} \wedge V_m(t+)\geq V_{\theta}$
+\vspace*{-1ex}
+\begin{enumerate}\setlength{\itemsep}{-0.5ex}
+\item set $t^* = t$
+\item emit spike with time-stamp $t^*$
+\end{enumerate}
+\vspace*{-4ex}\rule{1em}{0em}
+\\\hline
+\end{tabularx}
+
+\vspace{1ex}
+
+\noindent\begin{tabularx}{0.95\linewidth}{|l|X|}\hline
+\multicolumn{2}{|l|}{\color{white}\cellcolor[gray]{0.0}\hdr{E}{Input}}\\\hline
+\textbf{Type} & \textbf{Description} \\\hline
+{Poisson generator} & Fixed rate $\nu_{\text{ext}} \cdot C_{\text{E}}$,
+one generator providing independent input to each target neuron\\\hline
+\end{tabularx}
+
+\vspace{1ex}
+
+\noindent\begin{tabularx}{0.95\linewidth}{|X|}\hline
+  \multicolumn{1}{|l|}{\color{white}\cellcolor[gray]{0.0}\hdr{F}{Measurements}}\\\hline
+  Spike activity as raster plots, rates and ``global frequencies'', no
+  details given \\\hline
+\end{tabularx}
+\end{table}
+\begin{table}[!htp]
+\noindent
+\centering
+\caption{\label{nest:tab:Brunelparams} Summary of the network
+  parameters for the model.} 
+\begin{tabularx}{0.95\linewidth}{Xr}
+%
+\multicolumn{2}{|l|}{\color{white}\cellcolor[gray]{0.0}\hdr{G}{Network
+  Parameters}}\\
+ \textbf{Parameter} & \textbf{Value}\\\hline
+ Number of excitatory neurons $N_E$ & 8000 \\
+ Number of inhibitory neurons $N_I$ & 2000\\
+ Excitatory synapses per neuron $C_E$ & 800 \\
+ Inhibitory synapses per neuron $C_I$ & 200 \\
+\hline
+\end{tabularx}
+
+\vspace{1ex}
+
+\begin{tabularx}{0.95\linewidth}{Xr}
+\multicolumn{2}{|l|}{\color{white}\cellcolor[gray]{0.0}\hdr{H}{Neuron
+  Parameters}}\\
+ \textbf{Parameter} & \textbf{Value}\\\hline
+Membrane time constant $\tau_m$ & 20 ms\\
+Refractory period $\tau_{\text{rp}}$ & 2 ms\\
+Firing threshold $V_{\text{th}}$ & 20 mV\\
+Membrane capacitance $C_m$ & 1 pF\\
+Resting potential    $V_E$ & 0 mV\\
+Reset potential      $V_{\text{reset}}$ & 10 mV\\
+Excitatory PSP amplitude $J_E$ & 0.1 mV\\
+Inhibitory PSP amplitude $J_I$ & $-0.5$ mV\\
+Synaptic delay $D$ & 1.5 ms \\
+Background rate $\eta$ & 2.0 \\
+\hline
+\end{tabularx}
+\end{table}
+    ((*- endif -*))
+    ((*- if cell.metadata.get('image', {}) -*))
+\begin{figure}[h]
+\centering
+\includegraphics{figures/brunel_detailed_external_single2.jpg}
+\caption{\label{nest:fig:brunel2000} \small Sketch of the network model
+  proposed by \cite{Brunel00}. The network consists of
+  three populations: $N_E$ excitatory neurons (circle labelled E), $N_I$
+  inhibitory neurons (circle labelled I), and a
+  population of identical, independent Poisson processes (PGs) representing
+  activity from outside the network. Arrows represent connections
+  between the network nodes. Triangular arrow-heads represent
+  excitatory and round arrow-heads represent inhibitory
+  connections. The numbers at the start and end of each arrow indicate
+  the multiplicity of the connection.}
+\end{figure}
+    ((*- endif -*))
+((* endblock markdowncell *))
+
+((* block bibliography *))
+	\bibliography{NEST_by_Example}
+	\bibliographystyle{plainnat}
+((* endblock bibliography *))

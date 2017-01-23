@@ -110,7 +110,7 @@ The following snippet produces Fig. \[fig:onoffgrid\]A:
     layer_dict_ex = {"extent" : [2.,2.], # the size of the layer in mm
             "rows" : 10, # the number of rows in this layer ...
             "columns" : 10, # ... and the number of columns
-            "elements" : "iaf_neuron"} # the element at each (x,y) coordinate in the grid
+            "elements" : "iaf_psc_alpha"} # the element at each (x,y) coordinate in the grid
 
 ### 2) Off grid
 
@@ -131,7 +131,7 @@ The following snippet produces Fig. \[fig:onoffgrid\] B:
     poss = [[p[0]+np.random.uniform(-jit,jit),p[1]+np.random.uniform(-jit,jit)] for p in poss]
     layer_dict_ex = {"positions": poss,
             "extent" : [1.1,1.1],
-            "elements" : "iaf_neuron"}
+            "elements" : "iaf_psc_alpha"}
 
 Note: The topology module does support 3D `layer`s, but this is outside the
 scope of this handout.
@@ -161,8 +161,8 @@ For a simple example, let’s consider a grid of elements, where each element
 comprises of 4 pyramidal cells, 1 interneuron, 1 poisson generator and 1 noise
 generator. The corresponding code is:
 
-    nest.CopyModel("iaf_neuron","pyr")
-    nest.CopyModel("iaf_neuron","inh", {"V_th": -52.})
+    nest.CopyModel("iaf_psc_alpha","pyr")
+    nest.CopyModel("iaf_psc_alpha","inh", {"V_th": -52.})
     comp_layer = topp.CreateLayer({"rows":5,"columns":5,
             "elements": ["pyr",4,"inh","poisson_generator","noise_generator"]})
 
@@ -247,8 +247,8 @@ Connecting layers is the easiest step: having defined a source layer, a target
 layer and a connection dictionary, we simply use the function
 `topp.ConnectLayers()`:
 
-    ex_layer = topp.CreateLayer({"rows":5,"columns":5,"elements":"iaf_neuron"})
-    in_layer = topp.CreateLayer({"rows":4,"columns":4,"elements":"iaf_neuron"})
+    ex_layer = topp.CreateLayer({"rows":5,"columns":5,"elements":"iaf_psc_alpha"})
+    in_layer = topp.CreateLayer({"rows":4,"columns":4,"elements":"iaf_psc_alpha"})
     conn_dict_ex = {"connection_type":"divergent","mask":{"circular":{"radius":0.5}}}
     # And now we connect E->I
     topp.ConnectLayers(ex_layer,in_layer,conn_dict_ex)

@@ -26,13 +26,10 @@
 // C++ includes:
 #include <string>
 
-// Includes from libnestutil:
-#include "manager_interface.h"
-
 // Includes from nestkernel:
 #include "connector_model.h"
 #include "genericmodel.h"
-#include "genericmodel.h"
+#include "manager_interface.h"
 #include "model.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
@@ -126,12 +123,16 @@ public:
    * is in a *module.cpp file.
    * @param name of the new node model.
    * @param private_model if true, don't add model to modeldict.
+   * @param deprecation_info  If non-empty string, deprecation warning will
+   *                          be issued for model with this info to user.
    * @return ID of the new model object.
    * @see register_private_prototype_model, register_preconf_node_model,
    * register_prototype_connection
    */
   template < class ModelT >
-  index register_node_model( const Name& name, bool private_model = false );
+  index register_node_model( const Name& name,
+    bool private_model = false,
+    std::string deprecation_info = std::string() );
 
   /**
    * Register a pre-configured model prototype with the network.
@@ -146,6 +147,9 @@ public:
    * @param name of the new node model.
    * @param private_model if true, don't add model to modeldict.
    * @param dictionary to use to pre-configure model
+   * @param deprecation_info  If non-empty string, deprecation warning will
+   *                          be issued for model with this info to user.
+   *
    * @return ID of the new model object.
    * @see register_private_prototype_model, register_node_model,
    * register_prototype_connection
@@ -153,7 +157,8 @@ public:
   template < class ModelT >
   index register_preconf_node_model( const Name& name,
     DictionaryDatum& conf,
-    bool private_model = false );
+    bool private_model = false,
+    std::string deprecation_info = std::string() );
 
   /**
    * Copy an existing model and register it as a new model.
@@ -180,11 +185,13 @@ public:
    * @return an ID for the synapse prototype.
    */
   template < class ConnectionT >
-  void register_connection_model( const std::string& name );
+  void register_connection_model( const std::string& name,
+    bool requires_symmetric = false );
 
   template < class ConnectionT >
   void register_secondary_connection_model( const std::string& name,
-    bool has_delay = true );
+    bool has_delay = true,
+    bool requires_symmetric = false );
 
   /**
    * @return The model id of a given model name
@@ -197,6 +204,12 @@ public:
   Model* get_model( index ) const;
 
   DictionaryDatum get_connector_defaults( synindex syn_id ) const;
+
+  /**
+   * Checks, whether synapse type requires symmetric connections
+   */
+  bool connector_requires_symmetric( synindex syn_id ) const;
+
   void set_connector_defaults( synindex syn_id, const DictionaryDatum& d );
 
   /**
@@ -341,7 +354,7 @@ private:
    Name: modeldict - dictionary containing all devices and models of NEST
    Description:
    'modeldict info' shows the contents of the dictionary
-   SeeAlso: info, Device, RecordingDevice, iaf_neuron, subnet
+   SeeAlso: info, Device, RecordingDevice, subnet
    */
   DictionaryDatum modeldict_; //!< Dictionary of all models
 

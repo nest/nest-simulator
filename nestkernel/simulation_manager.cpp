@@ -549,6 +549,9 @@ nest::SimulationManager::prepare_simulation_()
 
   kernel().model_manager.create_secondary_events_prototypes();
 
+  // Check whether waveform relaxation is used on any MPI process
+  kernel().node_manager.check_wfr_use();
+
   // we have to do enter_runtime after prepre_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
   // before enter_runtime
@@ -650,7 +653,7 @@ nest::SimulationManager::update_()
       }
 
       // preliminary update of nodes that use waveform relaxtion
-      if ( kernel().node_manager.any_node_uses_wfr() )
+      if ( kernel().node_manager.wfr_is_used() )
       {
 #pragma omp single
         {
@@ -727,7 +730,7 @@ nest::SimulationManager::update_()
           }
         }
 
-      } // of if(any_node_uses_wfr)
+      } // of if(wfr_is_used)
       // end of preliminary update
 
       const std::vector< Node* >& thread_local_nodes =

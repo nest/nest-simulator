@@ -1,5 +1,5 @@
 /*
- *  test_round_validate.sli
+ *  genericmodel_impl.h
  *
  *  This file is part of NEST.
  *
@@ -20,31 +20,33 @@
  *
  */
 
+#ifndef GENERICMODEL_IMPL_H
+#define GENERICMODEL_IMPL_H
 
-/* BeginDocumentation
-Name: testsuite::test_round_validate - check if round function works
+#include "genericmodel.h"
 
-Synopsis: (test_round_validate) run -> 
+// Includes from nestkernel:
+#include "kernel_manager.h"
+#include "logging_manager.h"
 
-Description:
+namespace nest
+{
 
-Tests basic properties of round. Note that the tests
-are directly compiled from the the Examples section of
-the documentation which is evaluated by the command 
-/validate .
-Future versions of NEST should generate this test 
-directly from the Examples section.
+template < typename ElementT >
+void
+GenericModel< ElementT >::deprecation_warning( const std::string& caller )
+{
+  if ( deprecation_warning_issued_ or deprecation_info_.empty() )
+    return;
 
-Author:  130531, Diesmann
-SeeAlso: floor, cvi
-*/
+  if ( not deprecation_info_.empty() )
+  {
+    LOG( M_DEPRECATED,
+      caller,
+      "Model " + get_name() + " is deprecated in " + deprecation_info_ + "." );
+  }
 
-(unittest) run
-/unittest using
-
-M_ERROR setverbosity
-
-
-/- /--> def - 1. 1. eq exch pop assert_or_die
-
-/round validate  assert_or_die
+  deprecation_warning_issued_ = true;
+}
+}
+#endif

@@ -417,6 +417,38 @@ private:
 };
 
 /**
+ * To be thrown if a connection does not exists but something is to be done with
+ * it.
+ * This exception is e.g. thrown if a deletion was attempted with
+ * an inexistent connection.
+ * @ingroup KernelExceptions
+ */
+class InexistentConnection : public KernelException
+{
+public:
+  InexistentConnection()
+    : KernelException( "The connection does not exist" )
+    , msg_()
+  {
+  }
+
+  InexistentConnection( std::string msg )
+    : KernelException( "The connection does not exist" )
+    , msg_( msg )
+  {
+  }
+
+  ~InexistentConnection() throw()
+  {
+  }
+
+  std::string message() const;
+
+private:
+  std::string msg_;
+};
+
+/**
  * Exception to be thrown if a thread id outside the range encountered.
  * @ingroup KernelExceptions
  */

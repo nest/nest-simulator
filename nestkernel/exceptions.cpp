@@ -179,6 +179,15 @@ nest::IllegalConnection::message() const
 }
 
 std::string
+nest::InexistentConnection::message() const
+{
+  if ( msg_.empty() )
+    return "Deletion of connection is not possible.";
+  else
+    return "Deletion of connection is not possible because:\n" + msg_;
+}
+
+std::string
 nest::UnknownThread::message() const
 {
   std::ostringstream out;

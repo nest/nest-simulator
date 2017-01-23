@@ -1,5 +1,5 @@
 /*
- *  install-help.sli
+ *  test_round.sli
  *
  *  This file is part of NEST.
  *
@@ -21,8 +21,23 @@
  */
 
 
-/MakeHelpSearchPath statusdict /userargs get_d def
+/* BeginDocumentation
+Name: testsuite::test_round - check if round function works
 
-(Generating on-line help pages for NEST ...) =
-:makeallhelp
-(Done.) =
+Synopsis: (test_round) run ->
+
+Description:
+
+Tests basic properties of round.
+Author:  130531, Diesmann; 161006, Plesser
+SeeAlso: floor, cvi
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+{ 1.4 round 1.0 eq } assert_or_die
+{ 1.5 round 2.0 eq } assert_or_die
+{ 2      round 2.0 eq } assert_or_die

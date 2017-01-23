@@ -32,6 +32,7 @@
 // Includes from nestkernel:
 #include "event_delivery_manager.h"
 #include "genericmodel.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "model.h"
 #include "model_manager_impl.h"
@@ -55,7 +56,7 @@ NodeManager::NodeManager()
   , n_gsd_( 0 )
   , nodes_vec_()
   , wfr_nodes_vec_()
-  , any_node_uses_wfr_( false )
+  , wfr_is_used_( false )
   , nodes_vec_network_size_( 0 ) // zero to force update
 {
 }
@@ -200,6 +201,8 @@ index NodeManager::add_node( index mod, long n ) // no_p
 
   Model* model = kernel().model_manager.get_model( mod );
   assert( model != 0 );
+
+  model->deprecation_warning( "Create" );
 
   /* current_ points to the instance of the current subnet on thread 0.
      The following code makes subnet a pointer to the wrapper container
@@ -675,15 +678,15 @@ NodeManager::ensure_valid_thread_local_ids()
 
       nodes_vec_network_size_ = size();
 
-      any_node_uses_wfr_ = false;
-      // any_node_uses_wfr_ indicates, whether at least one
+      wfr_is_used_ = false;
+      // wfr_is_used_ indicates, whether at least one
       // of the threads has a neuron that uses waveform relaxtion
       // all threads then need to perform a wfr_update
       // step, because gather_events() has to be done in a
       // openmp single section
       for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
         if ( wfr_nodes_vec_[ t ].size() > 0 )
-          any_node_uses_wfr_ = true;
+          wfr_is_used_ = true;
     }
 #ifdef _OPENMP
   } // end of omp critical region
@@ -839,6 +842,18 @@ NodeManager::finalize_nodes()
         }
       }
     }
+  }
+}
+
+void
+NodeManager::check_wfr_use()
+{
+  wfr_is_used_ = kernel().mpi_manager.any_true( wfr_is_used_ );
+  if ( wfr_is_used_ )
+  {
+    GapJunctionEvent::set_coeff_length(
+      kernel().connection_manager.get_min_delay()
+      * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 ) );
   }
 }
 

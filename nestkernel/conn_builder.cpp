@@ -628,20 +628,6 @@ nest::ConnBuilder::set_post_synaptic_element_name( const std::string& name )
   use_post_synaptic_element_ = not name.empty();
 }
 
-nest::OneToOneBuilder::OneToOneBuilder( const GIDCollection& sources,
-  const GIDCollection& targets,
-  const DictionaryDatum& conn_spec,
-  const DictionaryDatum& syn_spec )
-  : ConnBuilder( sources, targets, conn_spec, syn_spec )
-{
-  // make sure that target and source population have the same size
-  if ( sources_->size() != targets_->size() )
-  {
-    throw DimensionMismatch(
-      "Source and Target population must be of the same size." );
-  }
-}
-
 bool
 nest::ConnBuilder::all_parameters_scalar_() const
 {
@@ -668,6 +654,20 @@ nest::ConnBuilder::loop_over_targets_() const
 {
   return targets_->size() < kernel().node_manager.local_nodes_size()
     or not targets_->is_range() or parameters_requiring_skipping_.size() > 0;
+}
+
+nest::OneToOneBuilder::OneToOneBuilder( const GIDCollection& sources,
+  const GIDCollection& targets,
+  const DictionaryDatum& conn_spec,
+  const DictionaryDatum& syn_spec )
+  : ConnBuilder( sources, targets, conn_spec, syn_spec )
+{
+  // make sure that target and source population have the same size
+  if ( sources_->size() != targets_->size() )
+  {
+    throw DimensionMismatch(
+      "Source and Target population must be of the same size." );
+  }
 }
 
 void

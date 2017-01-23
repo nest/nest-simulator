@@ -40,30 +40,22 @@
 
 /*BeginDocumentation
 Name: iaf_psc_exp_ps_time_reversal - Leaky integrate-and-fire neuron
-with exponential postsynaptic currents; canoncial implementation;
-bisectioning method for approximation of threshold crossing.
+with exponential postsynaptic currents; precise implementation;
+applies state space analysis to predict exact number of spikes in a
+simulation for any given resolution.
 
 Description:
-iaf_psc_exp_ps_time_reversal is the "canonical" implementation of the leaky
+iaf_psc_exp_ps_time_reversal is the precise state space implementation of the leaky
 integrate-and-fire model neuron with exponential postsynaptic currents
-that uses the bisectioning method to approximate the timing of a threshold
-crossing [1,2]. This is the most exact implementation available.
+that uses time reversal to detect spikes [1]. This is the most exact 
+implementation available.
 
-The canonical implementation handles neuronal dynamics in a locally
-event-based manner with in coarse time grid defined by the minimum
-delay in the network, see [1,2]. Incoming spikes are applied at the
-precise moment of their arrival, while the precise time of outgoing
-spikes is determined by bisectioning once a threshold crossing has
-been detected. Return from refractoriness occurs precisely at spike
-time plus refractory period.
-
-This implementation is more complex than the plain iaf_psc_exp
-neuron, but achieves much higher precision. In particular, it does not
-suffer any binning of spike times to grid points. Depending on your
-application, the canonical application with bisectioning may provide
-superior overall performance given an accuracy goal; see [1,2] for
-details. Subthreshold dynamics are integrated using exact integration
-between events [3].
+Time-reversed state space analysis provides a general method to solve the
+threshold-detection problem for an integrable, affine or linear time
+evolution. This method is based on the idea of propagating the threshold
+backwards in time, and see whether it meets the initial state, rather
+than propagating the initial state forward in time and see whether it
+meets the threshold. 
 
 Parameters: 
   The following parameters can be set in the status dictionary.
@@ -77,31 +69,19 @@ Parameters:
   I_e           double - Constant input current in pA.
   V_min         double - Absolute lower value for the membrane potential.
   V_reset       double - Reset value for the membrane potential.
-
-Remarks:
-  Please note that this node is capable of sending precise spike times
-  to target nodes (on-grid spike time plus offset). If this node is
-  connected to a spike_detector, the property "precise_times" of the
-  spike_detector has to be set to true in order to record the offsets
-  in addition to the on-grid spike times.
-  
+ 
 References:
-  [1] Morrison A, Straube S, Plesser HE & Diesmann M (2007) Exact subthreshold
-      integration with continuous spike times in discrete time neural network
-      simulations. Neural Comput 19, 47–79
-  [2] Hanuschkin A, Kunkel S, Helias M, Morrison A and Diesmann M (2010) A
-      general and efficient method for incorporating precise spike times in
-      globally timedriven simulations. Front Neuroinform 4:113
-  [3] Rotter S & Diesmann M (1999) Exact simulation of time-invariant linear
-      systems with applications to neuronal modeling. Biol Cybern 81:381-402
-        
-Author: Kunkel
+	[1] J.Krishnan, P.G.L.Porta Mana, M.Helias, M.Diesmann, E.Di.Napoli
+(2017) Perfect spike detection via time reversal (to be submitted to Front.
+Neuroinform.)
+
+Author: Krishnan
 
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-SeeAlso: iaf_psc_exp, iaf_psc_alpha_canon
+SeeAlso: iaf_psc_exp_ps
 */ 
 
 namespace nest

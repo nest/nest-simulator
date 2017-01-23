@@ -42,8 +42,8 @@ import nest
 cs = csa.random (0.1)
 
 # create two neuron populations
-pop1 = nest.LayoutNetwork("iaf_neuron", [16])
-pop2 = nest.LayoutNetwork("iaf_neuron", [16])
+pop1 = nest.LayoutNetwork("iaf_psc_alpha", [16])
+pop2 = nest.LayoutNetwork("iaf_psc_alpha", [16])
 
 # connect them using the connection generator cs
 nest.CGConnect (pop0, pop1, cs)

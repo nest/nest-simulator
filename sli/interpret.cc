@@ -75,6 +75,7 @@ const int SLIInterpreter::M_ALL = 0;
 const int SLIInterpreter::M_DEBUG = 5;
 const int SLIInterpreter::M_STATUS = 7;
 const int SLIInterpreter::M_INFO = 10;
+const int SLIInterpreter::M_DEPRECATED = 18;
 const int SLIInterpreter::M_WARNING = 20;
 const int SLIInterpreter::M_ERROR = 30;
 const int SLIInterpreter::M_FATAL = 40;
@@ -84,6 +85,7 @@ const char* const SLIInterpreter::M_ALL_NAME = "";
 const char* const SLIInterpreter::M_DEBUG_NAME = "Debug";
 const char* const SLIInterpreter::M_STATUS_NAME = "Status";
 const char* const SLIInterpreter::M_INFO_NAME = "Info";
+const char* const SLIInterpreter::M_DEPRECATED_NAME = "Deprecated";
 const char* const SLIInterpreter::M_WARNING_NAME = "Warning";
 const char* const SLIInterpreter::M_ERROR_NAME = "Error";
 const char* const SLIInterpreter::M_FATAL_NAME = "Fatal";
@@ -255,13 +257,15 @@ SLIInterpreter::initexternals( void )
 FunctionDatum*
 SLIInterpreter::Ilookup( void ) const
 {
-  return new FunctionDatum( ilookup_name, &SLIInterpreter::ilookupfunction );
+  return new FunctionDatum(
+    ilookup_name, &SLIInterpreter::ilookupfunction, "" );
 }
 
 FunctionDatum*
 SLIInterpreter::Iiterate( void ) const
 {
-  return new FunctionDatum( iiterate_name, &SLIInterpreter::iiteratefunction );
+  return new FunctionDatum(
+    iiterate_name, &SLIInterpreter::iiteratefunction, "" );
 }
 
 void
@@ -279,14 +283,16 @@ SLIInterpreter::createdouble( Name const& n, double d )
  *  exists.
  */
 void
-SLIInterpreter::createcommand( Name const& n, SLIFunction const* fn )
+SLIInterpreter::createcommand( Name const& n,
+  SLIFunction const* fn,
+  std::string deprecation_info )
 {
   if ( DStack->known( n ) )
     throw NamingConflict("A function called '" + std::string(n.toString()) 
 			   + "' exists already.\n"
 			   "Please choose a different name!");
 
-  Token t( new FunctionDatum( n, fn ) );
+  Token t( new FunctionDatum( n, fn, deprecation_info ) );
   DStack->def_move( n, t );
 }
 
@@ -302,34 +308,6 @@ SLIInterpreter::createconstant( Name const& n, Token const& val )
 {
   Token t( val );
   DStack->def_move( n, t );
-}
-
-/** Define a function inside a "namespace" (bottom level dictionary).
- *  This function may be used to group SLI commands in some kind of
- *  "name spaces" that are implemented using dictionaries.
- *  It defines the SLI function inside a dictionary of
- *  the given Name, which is known in systemdict.
- *  If a dictionary of the given Name is not yet known inside
- *  systemdict, it is created.
- *  Note that you may also pass strings as the first arguments, as
- *  there is an implicit type conversion operator from string to Name.
- *  Use the Name when name objects already exist.
- */
-void
-SLIInterpreter::createcommand( Name const& dictn,
-  Name const& n,
-  SLIFunction const* fn )
-{
-  if ( !( baseknown( dictn ) ) )
-  {
-    Dictionary* d = new Dictionary; // get a new dictionary from the heap
-    basedef( dictn, new DictionaryDatum( d ) );
-  }
-  Token dt = baselookup( dictn );
-  DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( dt.datum() );
-  DStack->push( *dd );
-  createcommand( n, fn );
-  DStack->pop();
 }
 
 const Token&
@@ -850,6 +828,8 @@ SLIInterpreter::message( int level,
         message( std::cout, M_ERROR_NAME, from, text, errorname );
       else if ( level >= M_WARNING )
         message( std::cout, M_WARNING_NAME, from, text, errorname );
+      else if ( level >= M_DEPRECATED )
+        message( std::cout, M_DEPRECATED_NAME, from, text, errorname );
       else if ( level >= M_INFO )
         message( std::cout, M_INFO_NAME, from, text, errorname );
       else if ( level >= M_STATUS )

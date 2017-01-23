@@ -36,7 +36,7 @@ ResetKernel
 
  M_INFO 1 add setverbosity                 % suppress output from Simulate
 
- /iaf_neuron        Create /neuron Set % target neuron
+ /iaf_psc_alpha     Create /neuron Set % target neuron
  /poisson_generator Create /ex_pop Set % excitatory population
  /poisson_generator Create /in_pop Set % inhibitory population
  /spike_detector    Create /spikes Set % the spike detector device

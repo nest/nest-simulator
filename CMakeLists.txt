@@ -108,6 +108,7 @@ find_program( SED NAMES sed gsed )
 ################################################################################
 ##################   CPack, checks, ... in external modules   ##################
 ################################################################################
+include(GenerateHelp)
 
 # This include checks the symbols, etc.
 include( CheckIncludesSymbols )
@@ -172,6 +173,7 @@ nest_check_have_stl_vector_capacity_doubling()
 nest_check_have_xlc_ice_on_using()
 nest_check_have_std_nan()
 nest_check_have_std_isnan()
+nest_generate_help()
 
 ################################################################################
 ##################         Enable Testing Targets             ##################
@@ -287,6 +289,7 @@ set( ALL_INCLUDES_tmp
   "${PROJECT_BINARY_DIR}/libnestutil"
   "${PROJECT_SOURCE_DIR}/librandom"
   "${PROJECT_SOURCE_DIR}/sli"
+  "${PROJECT_SOURCE_DIR}/topology"
   "${PROJECT_SOURCE_DIR}/nestkernel"
   "${PROJECT_SOURCE_DIR}/nest"
   "${LTDL_INCLUDE_DIRS}"

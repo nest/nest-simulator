@@ -294,6 +294,11 @@ SLIStartup::SLIStartup( int argc, char** argv )
       verbosity_ = SLIInterpreter::M_INFO;
       continue;
     }
+    if ( *sd == "--verbosity=DEPRECATED" )
+    {
+      verbosity_ = SLIInterpreter::M_DEPRECATED;
+      continue;
+    }
     if ( *sd == "--verbosity=WARNING" )
     {
       verbosity_ = SLIInterpreter::M_WARNING;

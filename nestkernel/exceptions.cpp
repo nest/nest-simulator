@@ -242,7 +242,7 @@ nest::DimensionMismatch::message()
   }
   else if ( expected_ == -1 )
   {
-    out << "Dimension of two or more variables do not match.";
+    out << "Dimensions of two or more variables do not match.";
   }
   else
   {

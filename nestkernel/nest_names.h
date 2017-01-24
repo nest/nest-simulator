@@ -199,6 +199,7 @@ extern const Name gsl_error_tol; //!< GSL integrator tolerance
 extern const Name h; //!< Summed input to a neuron (Ginzburg neuron)
 extern const Name has_connections; //!< Specific to iaf_psc_exp_multisynapse and
                                    //!< iaf_psc_alpha_multisynapse
+extern const Name has_delay;       //!< Used in connector_model_impl
 extern const Name histogram;       //!< Specific to correlation_detector
 extern const Name histogram_correction; //!< Specific to correlation_detector
 extern const Name HMIN; //!< Smallest integration step for adaptive stepsize
@@ -322,7 +323,8 @@ extern const Name
                     //!< (precise timing neurons)
 extern const Name registered; //!< Parameters for MUSIC devices
 extern const Name
-  relative_amplitude;    //!< Signal modulation amplitude relative to mean
+  relative_amplitude; //!< Signal modulation amplitude relative to mean
+extern const Name requires_symmetric; //!< Used in connector_model_impl
 extern const Name rho_0; //!< Specific to population point process model
                          //!< (pp_pop_psc_delta)
 extern const Name rms;   //!< Root mean square

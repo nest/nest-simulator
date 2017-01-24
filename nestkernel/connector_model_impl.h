@@ -141,8 +141,8 @@ GenericConnectorModel< ConnectionT >::get_status( DictionaryDatum& d ) const
 
   ( *d )[ names::receptor_type ] = receptor_type_;
   ( *d )[ names::synapse_model ] = LiteralDatum( name_ );
-  ( *d )[ "requires_symmetric" ] = requires_symmetric_;
-  ( *d )[ "has_delay" ] = has_delay_;
+  ( *d )[ names::requires_symmetric ] = requires_symmetric_;
+  ( *d )[ names::has_delay ] = has_delay_;
 }
 
 template < typename ConnectionT >

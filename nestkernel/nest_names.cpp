@@ -170,6 +170,7 @@ const Name gsl_error_tol( "gsl_error_tol" );
 
 const Name h( "h" );
 const Name has_connections( "has_connections" );
+const Name has_delay( "has_delay" );
 const Name histogram( "histogram" );
 const Name histogram_correction( "histogram_correction" );
 const Name HMIN( "HMIN" );
@@ -276,6 +277,7 @@ const Name recorder( "recorder" );
 const Name refractory_input( "refractory_input" );
 const Name registered( "registered" );
 const Name relative_amplitude( "relative_amplitude" );
+const Name requires_symmetric( "requires_symmetric" );
 const Name rho_0( "rho_0" );
 const Name rms( "rms" );
 const Name root_finding_epsilon( "root_finding_epsilon" );

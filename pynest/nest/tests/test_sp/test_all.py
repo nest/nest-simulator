@@ -50,9 +50,7 @@ def suite():
     # MPI tests
     if mpi_test:
         try:
-            command = getMPITestCommand()
-            command = command.replace(
-                "  scriptfile", "test_sp/mpitest_issue_578_sp.py")
+            command = getMPITestCommand(2, "test_sp/mpitest_issue_578_sp.py")
             print ("Executing test with command: " + command)
             command = command.split()
             call(command)
@@ -74,21 +72,11 @@ def suite():
     return test_suite
 
 
-def getMPITestCommand():
+def getMPITestCommand(np, script):
     # Open nestrc file and obtain the right mpi exec command
     # Substitute the scriptfile with the test file and substitute the number
     # of processes with 2 for this tests
-    path = os.path.expanduser('~/.nestrc')
-    nestrcf = open(path, "r")
-    for line in nestrcf:
-        if "(mpi" in line:
-            line = line.replace(" numproc", "2")
-            line = line.replace("cvs ( ) executable", "python")
-            line = line.replace("(", "")
-            line = line.replace(")", "")
-            print ("MPI test command: " + line)
-            nestrcf.close()
-            return line
+    return nest.sli_func("mpirun", np, "python", script)
 
 if __name__ == "__main__":
     nest.set_verbosity('M_WARNING')

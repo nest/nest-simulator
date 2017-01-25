@@ -38,10 +38,7 @@ class TestIssue578():
             }
         )
         # Update the SP interval
-        a,
         nest.EnableStructuralPlasticity()
-        print (sys.exc_info()[0])
-        print (traceback.print_stack)
         nest.SetStructuralPlasticityStatus({
             'structural_plasticity_update_interval':
             100,

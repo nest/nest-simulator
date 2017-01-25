@@ -720,6 +720,36 @@ private:
 };
 
 /**
+ * Exception to be thrown on prototype construction if Time objects
+ * incompatible. This exception is to be thrown by the default constructor of
+ * nodes which require that Time objects have properties wrt resolution.
+ * @ingroup KernelExceptions
+ * @see InvalidDefaultResolution
+ */
+class InvalidSimulationResolution : public KernelException
+{
+public:
+  /**
+   * @note model should be passed from get_name() to ensure that
+   *             names of copied models are reported correctly.
+   * @param model     name of model causing problem
+   */
+  InvalidSimulationResolution( const std::string& model )
+    : KernelException( "InvalidSimulationResolution" )
+    , model_( model )
+  {
+  }
+  ~InvalidSimulationResolution() throw()
+  {
+  }
+
+  std::string message();
+
+private:
+  const std::string model_;
+};
+
+/**
  * Exception to be thrown on instance construction if Time objects incompatible.
  * This exception is to be thrown by the copy constructor of nodes which
  * require that Time objects have properties wrt resolution.

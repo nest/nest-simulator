@@ -280,6 +280,16 @@ nest::InvalidDefaultResolution::message()
 }
 
 std::string
+nest::InvalidSimulationResolution::message()
+{
+  std::ostringstream msg;
+  msg << "The simulation resolution = " << Time::get_resolution()
+      << ". For the model " << model_ << " to work, the resolution "
+      << "has to be set to 0.1 with SetKernelStatus!";
+  return msg.str();
+}
+
+std::string
 nest::InvalidTimeInModel::message()
 {
   std::ostringstream msg;

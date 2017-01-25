@@ -154,8 +154,8 @@ extern const Name file_extension; //!< Recorder parameter
 extern const Name filename;       //!< Recorder parameter
 extern const Name
   filenames; //!< Recorder parameter---keep, will disappear with NESTIO
-extern const Name filter_events;  //!< Filter events for filtering device
-extern const Name filter_values;  //!< Interval for filtering device
+extern const Name filter_events; //!< Filter events for filtering device
+extern const Name filter_values; //!< Interval for filtering device
 extern const Name filter_report_interval; //!< Interval for filtering device
 extern const Name filter_start_times;     //!< Start times for filtering device
 extern const Name filter_stop_times;      //!< Stop times for filtering device
@@ -319,7 +319,7 @@ extern const Name
 extern const Name receptor_type;  //!< Connection parameter
 extern const Name receptor_types; //!< Publishing available types
 extern const Name record_from;    //!< Recorder parameter
-extern const Name record_spikes;      //!< Recorder parameter
+extern const Name record_spikes;  //!< Recorder parameter
 extern const Name record_to;      //!< Recorder parameter
 extern const Name
   recordables; //!< List of recordable state data (Device parameters)

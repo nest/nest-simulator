@@ -83,7 +83,7 @@
   - Filtered traces and/or spikes are not necessarily written to file in
   chronological order.
   - To get the most performance when only needing the trace at certain times,
-  set start_times and start_times
+  set start_times and stop_times
   with only 1 filter_report_interval intervals. For example, if the trace is
   needed at 50ms and 100ms, specify
   filter_start_times = [49.0, 99.0] , filter_stop_times = [50.0, 100.0] , and

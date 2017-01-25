@@ -106,7 +106,7 @@ def
 
   /model_params
   <<
-    % Set variables for iaf_neuron
+    % Set variables for iaf_psc_alpha
     /E_L     0.0  mV  % Resting membrane potential (mV)
     /C_m   250.0  pF  % Capacity of the membrane (pF)
     /tau_m  10.0  ms  % Membrane time constant (ms)
@@ -171,16 +171,16 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
      /overwrite_files true
   >> SetStatus
 
-  /iaf_neuron    model_params    SetDefaults
+  /iaf_psc_alpha    model_params    SetDefaults
   M_INFO (BuildNetwork)
   (Creating excitatory population.) message  % show message
-  /iaf_neuron [NE] LayoutNetwork /E_net Set  % subnet gets own gid
+  /iaf_psc_alpha [NE] LayoutNetwork /E_net Set  % subnet gets own gid
   /E_from E_net 1 add def                    % gid of first child
   /E_to 0 GetStatus /network_size get 1 sub def % gid of last child
   
   M_INFO (BuildNetwork)
   (Creating inhibitory population.) message  % show message
-  /iaf_neuron [NI] LayoutNetwork /I_net Set  % subnet gets own gid
+  /iaf_psc_alpha [NI] LayoutNetwork /I_net Set  % subnet gets own gid
   /I_from I_net 1 add def                    % gid of first child
   /I_to 0 GetStatus /network_size get 1 sub def % gid of last child
 

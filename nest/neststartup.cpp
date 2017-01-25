@@ -41,6 +41,7 @@
 
 // Includes from nestkernel:
 #include "dynamicloader.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "nest.h"
 #include "nestmodule.h"

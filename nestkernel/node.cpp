@@ -184,8 +184,6 @@ Node::set_status_base( const DictionaryDatum& dict )
   }
 
   updateValue< bool >( dict, names::frozen, frozen_ );
-
-  updateValue< bool >( dict, names::node_uses_wfr, node_uses_wfr_ );
 }
 
 /**
@@ -231,6 +229,18 @@ Node::handle( SpikeEvent& )
 
 port
 Node::handles_test_event( SpikeEvent&, rport )
+{
+  throw IllegalConnection();
+}
+
+void
+Node::handle( WeightRecorderEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+port
+Node::handles_test_event( WeightRecorderEvent&, rport )
 {
   throw IllegalConnection();
 }

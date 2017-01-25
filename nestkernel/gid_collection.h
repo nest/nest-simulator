@@ -75,12 +75,41 @@ public:
 
   index operator[]( const size_t pos ) const;
   bool operator==( const GIDCollection& rhs ) const;
+  int find( const index ) const;
+  bool is_range() const;
 
   const_iterator begin() const;
   const_iterator end() const;
 
   size_t size() const;
 };
+
+inline int
+GIDCollection::find( const index neuron_id ) const
+{
+  if ( is_range_ )
+  {
+    if ( neuron_id > gid_range_.second )
+      return -1;
+    else
+      return neuron_id - gid_range_.first;
+  }
+  else
+  {
+    for ( size_t i = 0; i < gid_array_.size(); ++i )
+    {
+      if ( neuron_id == gid_array_[ i ] )
+        return i;
+    }
+    return -1;
+  }
+}
+
+inline bool
+GIDCollection::is_range() const
+{
+  return is_range_;
+}
 
 inline index GIDCollection::const_iterator::operator*() const
 {

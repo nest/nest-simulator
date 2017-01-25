@@ -23,6 +23,7 @@
 import nest
 import sys
 import traceback
+HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 
 
 class TestIssue578():
@@ -86,6 +87,8 @@ class TestIssue578():
             print(sys.exc_info()[0])
             self.fail("Exception during simulation")
 
-
-mpitest = TestIssue578()
-mpitest.do_test_targets()
+if HAVE_GSL:
+    mpitest = TestIssue578()
+    mpitest.do_test_targets()
+else:
+    print ("Skipping because GSL is not available")

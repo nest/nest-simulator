@@ -29,15 +29,8 @@ from . import test_sp_manager
 from . import test_disconnect
 from . import test_disconnect_multiple
 from . import test_enable_multithread
-try:
-    from mpi4py import MPI
-except ImportError:
-    # Test without MPI
-    print ("MPI is not available. Skipping MPI tests.")
-    mpi_test = 0
-else:
-    # Test with MPI
-    mpi_test = 1
+HAVE_MPI = nest.sli_func("statusdict/have_mpi ::")
+if HAVE_MPI:
     print ("Testing with MPI")
     from subprocess import call
     import sys
@@ -48,9 +41,11 @@ __author__ = 'naveau'
 
 def suite():
     # MPI tests
-    if mpi_test:
+    if HAVE_MPI:
         try:
-            command = getMPITestCommand(2, "test_sp/mpitest_issue_578_sp.py")
+            # Get the MPI command
+            command = nest.sli_func(
+                "mpirun", 2, "python", "test_sp/mpitest_issue_578_sp.py")
             print ("Executing test with command: " + command)
             command = command.split()
             call(command)
@@ -70,13 +65,6 @@ def suite():
     test_suite.addTest(test_enable_multithread.suite())
 
     return test_suite
-
-
-def getMPITestCommand(np, script):
-    # Open nestrc file and obtain the right mpi exec command
-    # Substitute the scriptfile with the test file and substitute the number
-    # of processes with 2 for this tests
-    return nest.sli_func("mpirun", np, "python", script)
 
 if __name__ == "__main__":
     nest.set_verbosity('M_WARNING')

@@ -26,6 +26,7 @@ Test of events
 import unittest
 import nest
 import numpy as np
+HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 
 
 @nest.check_stack
@@ -244,6 +245,7 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         self.assertEqual(sorted(unique_ids), sorted(connections))
 
+    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def testRPorts(self):
         """Weight Recorder rports"""
 

@@ -92,7 +92,8 @@ def
   
 } def
 
-% Inverting this equation numerically leads to tau_syn = 0.32582722403722841 ms, as specified in model_params below.
+% Inverting this equation numerically leads to tau_syn = 0.32582722403722841 ms,
+% as specified in model_params below.
 
 % -------------------------------------------------------------------------------------
 
@@ -104,6 +105,9 @@ def
   % number of neurons to record spikes from
   /Nrec 1000
 
+  % synaptic time constant
+  /tau_syn 0.32582722403722841 def   % ms
+  
   /model_params
   <<
     % Set variables for iaf_psc_alpha
@@ -113,7 +117,8 @@ def
     /t_ref 0.5  ms  % duration of refractory period (ms)
     /V_th   20.0  mV  % Threshold (mV)
     /V_reset 0.0  mV  % Reset Potential (mV)
-    /tau_syn  0.32582722403722841 ms  % time const. postsynaptic excitatory currents (ms)
+    /tau_syn_ex tau_syn
+    /tau_syn_in tau_syn
     /tau_minus 30.0 ms %time constant for STDP (depression)
     % V can be randomly initialized see below
     /V_m 5.7 mV % mean value of membrane potential

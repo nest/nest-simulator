@@ -235,15 +235,21 @@ std::string
 nest::DimensionMismatch::message() const
 {
   std::ostringstream out;
-  if ( expected_ != provided_ )
+
+  if ( not msg_.empty() )
+  {
+    out << msg_;
+  }
+  else if ( expected_ == -1 )
+  {
+    out << "Dimensions of two or more variables do not match.";
+  }
+  else
   {
     out << "Expected dimension size: " << expected_
         << "\nProvided dimension size: " << provided_;
   }
-  else
-  {
-    out << "Dimension of two or more variables do not match.";
-  }
+
   return out.str();
 }
 

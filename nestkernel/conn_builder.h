@@ -100,12 +100,12 @@ public:
     return default_delay_;
   }
 
-  void set_pre_synaptic_element_name( std::string name );
-  void set_post_synaptic_element_name( std::string name );
+  void set_pre_synaptic_element_name( const std::string& name );
+  void set_post_synaptic_element_name( const std::string& name );
 
   bool all_parameters_scalar_() const;
 
-  int change_connected_synaptic_elements( index, index, const int, int );
+  bool change_connected_synaptic_elements( index, index, const int, int );
 
   virtual bool
   supports_symmetric() const
@@ -190,8 +190,17 @@ protected:
 
   // Name of the pre synaptic and post synaptic elements for this connection
   // builder
-  std::string pre_synaptic_element_name;
-  std::string post_synaptic_element_name;
+  Name pre_synaptic_element_name_;
+  Name post_synaptic_element_name_;
+
+  bool use_pre_synaptic_element_;
+  bool use_post_synaptic_element_;
+
+  inline bool
+  use_structural_plasticity_() const
+  {
+    return use_pre_synaptic_element_ and use_post_synaptic_element_;
+  }
 
 private:
   typedef std::map< Name, ConnParameter* > ConnParameterMap;
@@ -244,10 +253,7 @@ public:
   OneToOneBuilder( const GIDCollection& sources,
     const GIDCollection& targets,
     const DictionaryDatum& conn_spec,
-    const DictionaryDatum& syn_spec )
-    : ConnBuilder( sources, targets, conn_spec, syn_spec )
-  {
-  }
+    const DictionaryDatum& syn_spec );
 
   bool
   supports_symmetric() const
@@ -375,12 +381,12 @@ public:
   std::string
   get_pre_synaptic_element_name() const
   {
-    return pre_synaptic_element_name;
+    return pre_synaptic_element_name_.toString();
   }
   std::string
   get_post_synaptic_element_name() const
   {
-    return post_synaptic_element_name;
+    return post_synaptic_element_name_.toString();
   }
 
   /**

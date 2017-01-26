@@ -162,12 +162,10 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   std::set< Name > skip_set;
   skip_set.insert( names::weight );
   skip_set.insert( names::delay );
-  skip_set.insert( Name( "min_delay" ) );
-  skip_set.insert( Name( "max_delay" ) );
-  skip_set.insert( Name( "num_connections" ) );
-  skip_set.insert( Name( "num_connectors" ) );
-  skip_set.insert( Name( "property_object" ) );
-  skip_set.insert( Name( "synapsemodel" ) );
+  skip_set.insert( names::min_delay );
+  skip_set.insert( names::max_delay );
+  skip_set.insert( names::num_connections );
+  skip_set.insert( names::synapse_model );
 
   for ( Dictionary::const_iterator default_it = syn_defaults->begin();
         default_it != syn_defaults->end();
@@ -761,7 +759,7 @@ nest::OneToOneBuilder::disconnect_()
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
         {
-          skip_conn_parameter_( tid );
+          // Disconnecting: no parameter skipping required
           continue;
         }
 
@@ -771,7 +769,7 @@ nest::OneToOneBuilder::disconnect_()
         // check whether the target is on our thread
         if ( tid != target_thread )
         {
-          skip_conn_parameter_( tid );
+          // Disconnecting: no parameter skipping required
           continue;
         }
         single_disconnect_( *sgid, *target, target_thread );
@@ -879,7 +877,10 @@ nest::OneToOneBuilder::sp_disconnect_()
         assert( sgid != sources_->end() );
 
         if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
+        {
+          // Disconnecting: no parameter skipping required
           continue;
+        }
         Node* const target = kernel().node_manager.get_node( *tgid, tid );
         const thread target_thread = target->get_thread();
 
@@ -1067,7 +1068,7 @@ nest::AllToAllBuilder::disconnect_()
         // check whether the target is on this mpi machine
         if ( not kernel().node_manager.is_local_gid( *tgid ) )
         {
-          skip_conn_parameter_( tid, sources_->size() );
+          // Disconnecting: no parameter skipping required
           continue;
         }
 
@@ -1077,7 +1078,7 @@ nest::AllToAllBuilder::disconnect_()
         // check whether the target is on our thread
         if ( tid != target_thread )
         {
-          skip_conn_parameter_( tid, sources_->size() );
+          // Disconnecting: no parameter skipping required
           continue;
         }
 
@@ -1125,7 +1126,7 @@ nest::AllToAllBuilder::sp_disconnect_()
         {
           if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           {
-            skip_conn_parameter_( tid, sources_->size() );
+            // Disconnecting: no parameter skipping required
             continue;
           }
           Node* const target = kernel().node_manager.get_node( *tgid, tid );
@@ -1149,7 +1150,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( const GIDCollection& sources,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
-  , indegree_( ( *conn_spec )[ Name( "indegree" ) ] )
+  , indegree_( ( *conn_spec )[ names::indegree ] )
 {
   // check for potential errors
   long n_sources = static_cast< long >( sources_->size() );
@@ -1293,7 +1294,7 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder(
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
-  , outdegree_( ( *conn_spec )[ Name( "outdegree" ) ] )
+  , outdegree_( ( *conn_spec )[ names::outdegree ] )
 {
   // check for potential errors
   long n_targets = static_cast< long >( targets_->size() );
@@ -1414,7 +1415,7 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder(
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
-  , N_( ( *conn_spec )[ Name( "N" ) ] )
+  , N_( ( *conn_spec )[ names::N ] )
 {
 
   // check for potential errors
@@ -1582,8 +1583,12 @@ nest::BernoulliBuilder::BernoulliBuilder( const GIDCollection& sources,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
-  , p_( ( *conn_spec )[ Name( "p" ) ] )
+  , p_( ( *conn_spec )[ names::p ] )
 {
+  if ( p_ < 0 or 1 < p_ )
+  {
+    throw BadProperty( "Connection probability 0 <= p <= 1 required." );
+  }
 }
 
 

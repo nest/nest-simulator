@@ -1240,7 +1240,7 @@ TopologyModule::Cvdict_MFunction::execute( SLIInterpreter* i ) const
 }
 
 std::string
-LayerExpected::message()
+LayerExpected::message() const
 {
   return std::string();
 }

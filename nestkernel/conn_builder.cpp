@@ -73,16 +73,22 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   updateValue< bool >( conn_spec, names::make_symmetric, make_symmetric_ );
 
   // read out synapse-related parameters ----------------------
-  if ( !syn_spec->known( names::model ) )
+  if ( not syn_spec->known( names::model ) )
+  {
     throw BadProperty( "Synapse spec must contain synapse model." );
+  }
   const std::string syn_name = ( *syn_spec )[ names::model ];
   if ( not kernel().model_manager.get_synapsedict()->known( syn_name ) )
+  {
     throw UnknownSynapseType( syn_name );
+  }
 
   // if another synapse than static_synapse is defined we need to make
   // sure that Connect can process all parameter specified
   if ( syn_name != "static_synapse" )
+  {
     check_synapse_params_( syn_name, syn_spec );
+  }
 
   synapse_model_ = kernel().model_manager.get_synapsedict()->lookup( syn_name );
 
@@ -131,15 +137,19 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
           kernel().vp_manager.get_num_threads() );
   }
   register_parameters_requiring_skipping_( *delay_ );
+
   // Structural plasticity parameters
   // Check if both pre and post synaptic element are provided
   if ( syn_spec->known( names::pre_synaptic_element )
     && syn_spec->known( names::post_synaptic_element ) )
   {
-    pre_synaptic_element_name =
+    pre_synaptic_element_name_ =
       getValue< std::string >( syn_spec, names::pre_synaptic_element );
-    post_synaptic_element_name =
+    post_synaptic_element_name_ =
       getValue< std::string >( syn_spec, names::post_synaptic_element );
+
+    use_pre_synaptic_element_ = true;
+    use_post_synaptic_element_ = true;
   }
   else
   {
@@ -150,8 +160,9 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
         "In order to use structural plasticity, both a pre and post synaptic "
         "element must be specified" );
     }
-    pre_synaptic_element_name = "";
-    post_synaptic_element_name = "";
+
+    use_pre_synaptic_element_ = false;
+    use_post_synaptic_element_ = false;
   }
 
   // synapse-specific parameters
@@ -173,7 +184,9 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   {
     const Name param_name = default_it->first;
     if ( skip_set.find( param_name ) != skip_set.end() )
+    {
       continue; // weight, delay or not-settable parameter
+    }
 
     if ( syn_spec->known( param_name ) )
     {
@@ -331,14 +344,14 @@ nest::ConnBuilder::check_synapse_params_( std::string syn_name,
  * @param update amount of connected synaptic elements to update
  * @return
  */
-int
+bool
 nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
   index tgid,
   const int tid,
   int update )
 {
 
-  int local = 1;
+  int local = true;
   // check whether the source is on this mpi machine
   if ( kernel().node_manager.is_local_gid( sgid ) )
   {
@@ -349,14 +362,14 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
     if ( tid == source_thread )
     {
       // update the number of connected synaptic elements
-      source->connect_synaptic_element( pre_synaptic_element_name, update );
+      source->connect_synaptic_element( pre_synaptic_element_name_, update );
     }
   }
 
   // check whether the target is on this mpi machine
   if ( not kernel().node_manager.is_local_gid( tgid ) )
   {
-    local = 0;
+    local = false;
   }
   else
   {
@@ -364,11 +377,13 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
     const thread target_thread = target->get_thread();
     // check whether the target is on our thread
     if ( tid != target_thread )
-      local = 0;
+    {
+      local = false;
+    }
     else
     {
       // update the number of connected synaptic elements
-      target->connect_synaptic_element( post_synaptic_element_name, update );
+      target->connect_synaptic_element( post_synaptic_element_name_, update );
     }
   }
   return local;
@@ -380,6 +395,8 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
 void
 nest::ConnBuilder::connect()
 {
+  // We test here, and not in the ConnBuilder constructor, so the derived
+  // classes are fully constructed when the test is executed
   if ( kernel().model_manager.connector_requires_symmetric( synapse_model_ )
     and not( is_symmetric() or make_symmetric_ ) )
   {
@@ -390,13 +407,13 @@ nest::ConnBuilder::connect()
       "populations and default or scalar parameters." );
   }
 
-  if ( make_symmetric_ && not supports_symmetric() )
+  if ( make_symmetric_ and not supports_symmetric() )
   {
     throw NotImplemented(
       "This connection rule does not support symmetric connections." );
   }
 
-  if ( pre_synaptic_element_name != "" && post_synaptic_element_name != "" )
+  if ( use_structural_plasticity_() )
   {
     if ( make_symmetric_ )
       throw NotImplemented(
@@ -439,7 +456,7 @@ nest::ConnBuilder::connect()
 void
 nest::ConnBuilder::disconnect()
 {
-  if ( pre_synaptic_element_name != "" && post_synaptic_element_name != "" )
+  if ( use_structural_plasticity_() )
   {
     sp_disconnect_();
   }
@@ -586,15 +603,27 @@ nest::ConnBuilder::single_connect_( index sgid,
 }
 
 void
-nest::ConnBuilder::set_pre_synaptic_element_name( std::string name )
+nest::ConnBuilder::set_pre_synaptic_element_name( const std::string& name )
 {
-  pre_synaptic_element_name = name;
+  if ( name.empty() )
+  {
+    throw BadProperty( "pre_synaptic_element cannot be empty." );
+  }
+
+  pre_synaptic_element_name_ = Name( name );
+  use_pre_synaptic_element_ = not name.empty();
 }
 
 void
-nest::ConnBuilder::set_post_synaptic_element_name( std::string name )
+nest::ConnBuilder::set_post_synaptic_element_name( const std::string& name )
 {
-  post_synaptic_element_name = name;
+  if ( name.empty() )
+  {
+    throw BadProperty( "post_synaptic_element cannot be empty." );
+  }
+
+  post_synaptic_element_name_ = Name( name );
+  use_post_synaptic_element_ = not name.empty();
 }
 
 bool
@@ -625,17 +654,23 @@ nest::ConnBuilder::loop_over_targets_() const
     or not targets_->is_range() or parameters_requiring_skipping_.size() > 0;
 }
 
-void
-nest::OneToOneBuilder::connect_()
+nest::OneToOneBuilder::OneToOneBuilder( const GIDCollection& sources,
+  const GIDCollection& targets,
+  const DictionaryDatum& conn_spec,
+  const DictionaryDatum& syn_spec )
+  : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   // make sure that target and source population have the same size
   if ( sources_->size() != targets_->size() )
   {
-    LOG( M_ERROR,
-      "Connect",
+    throw DimensionMismatch(
       "Source and Target population must be of the same size." );
-    throw DimensionMismatch();
   }
+}
+
+void
+nest::OneToOneBuilder::connect_()
+{
 
 #pragma omp parallel
   {
@@ -657,7 +692,9 @@ nest::OneToOneBuilder::connect_()
           assert( sgid != sources_->end() );
 
           if ( *sgid == *tgid and not autapses_ )
+          {
             continue;
+          }
 
           // check whether the target is on this mpi machine
           if ( not kernel().node_manager.is_local_gid( *tgid ) )
@@ -732,14 +769,6 @@ nest::OneToOneBuilder::connect_()
 void
 nest::OneToOneBuilder::disconnect_()
 {
-  // make sure that target and source population have the same size
-  if ( sources_->size() != targets_->size() )
-  {
-    LOG( M_ERROR,
-      "Disconnect",
-      "Source and Target population must be of the same size." );
-    throw DimensionMismatch();
-  }
 
 #pragma omp parallel
   {
@@ -794,14 +823,6 @@ nest::OneToOneBuilder::disconnect_()
 void
 nest::OneToOneBuilder::sp_connect_()
 {
-  // make sure that target and source population have the same size
-  if ( sources_->size() != targets_->size() )
-  {
-    LOG( M_ERROR,
-      "Connect",
-      "Source and Target population must be of the same size." );
-    throw DimensionMismatch();
-  }
 
 #pragma omp parallel
   {
@@ -821,9 +842,11 @@ nest::OneToOneBuilder::sp_connect_()
         assert( sgid != sources_->end() );
 
         if ( *sgid == *tgid and not autapses_ )
+        {
           continue;
+        }
 
-        if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
+        if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
         {
           skip_conn_parameter_( tid );
           continue;
@@ -853,14 +876,6 @@ nest::OneToOneBuilder::sp_connect_()
 void
 nest::OneToOneBuilder::sp_disconnect_()
 {
-  // make sure that target and source population have the same size
-  if ( sources_->size() != targets_->size() )
-  {
-    LOG( M_ERROR,
-      "Disconnect",
-      "Source and Target population must be of the same size." );
-    throw DimensionMismatch();
-  }
 
 #pragma omp parallel
   {
@@ -876,7 +891,7 @@ nest::OneToOneBuilder::sp_disconnect_()
       {
         assert( sgid != sources_->end() );
 
-        if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
+        if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
         {
           // Disconnecting: no parameter skipping required
           continue;
@@ -1007,7 +1022,6 @@ nest::AllToAllBuilder::sp_connect_()
     // get thread id
     const int tid = kernel().vp_manager.get_thread_id();
     try
-
     {
       // allocate pointer to thread specific random generator
       librandom::RngPtr rng = kernel().rng_manager.get_rng( tid );
@@ -1025,7 +1039,7 @@ nest::AllToAllBuilder::sp_connect_()
             skip_conn_parameter_( tid );
             continue;
           }
-          if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
+          if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
           {
             skip_conn_parameter_( tid, sources_->size() );
             continue;
@@ -1124,7 +1138,7 @@ nest::AllToAllBuilder::sp_disconnect_()
               sgid != sources_->end();
               ++sgid )
         {
-          if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
+          if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, -1 ) )
           {
             // Disconnecting: no parameter skipping required
             continue;
@@ -1184,6 +1198,11 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( const GIDCollection& sources,
         "Expect long connecting times!" );
     }
   } // if (not multapses_ )
+
+  if ( indegree_ < 0 )
+  {
+    throw BadProperty( "Indegree cannot be less than zero." );
+  }
 }
 
 void
@@ -1329,6 +1348,11 @@ nest::FixedOutDegreeBuilder::FixedOutDegreeBuilder(
         "Expect long connecting times!" );
     }
   }
+
+  if ( outdegree_ < 0 )
+  {
+    throw BadProperty( "Outdegree cannot be less than zero." );
+  }
 }
 
 void
@@ -1354,7 +1378,7 @@ nest::FixedOutDegreeBuilder::connect_()
         t_id = grng->ulrand( n_rnd );
         tgid = ( *targets_ )[ t_id ];
       } while ( ( not autapses_ and tgid == *sgid )
-        || ( not multapses_ and ch_ids.find( t_id ) != ch_ids.end() ) );
+        or ( not multapses_ and ch_ids.find( t_id ) != ch_ids.end() ) );
 
       if ( not multapses_ )
         ch_ids.insert( t_id );
@@ -1428,6 +1452,11 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder(
       throw BadProperty(
         "Total number of connections cannot exceed product "
         "of source and targer population sizes." );
+  }
+
+  if ( N_ < 0 )
+  {
+    throw BadProperty( "Total number of connections cannot be negative." );
   }
 
   // for now multapses cannot be forbidden
@@ -1694,7 +1723,7 @@ nest::SPBuilder::SPBuilder( const GIDCollection& sources,
   : ConnBuilder( sources, targets, conn_spec, syn_spec )
 {
   // Check that both pre and post synaptic element are provided
-  if ( pre_synaptic_element_name == "" || post_synaptic_element_name == "" )
+  if ( not use_pre_synaptic_element_ or not use_post_synaptic_element_ )
   {
     throw BadProperty(
       "pre_synaptic_element and/or post_synaptic_elements is missing" );
@@ -1770,7 +1799,7 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
         if ( *sgid == *tgid and not autapses_ )
           continue;
 
-        if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
+        if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
         {
           skip_conn_parameter_( tid );
           continue;

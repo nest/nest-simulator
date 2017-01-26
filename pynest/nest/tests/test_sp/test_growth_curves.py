@@ -28,6 +28,7 @@ import unittest
 import nest
 from nest import raster_plot
 import time
+HAVE_OPENMP = nest.sli_func("statusdict/threading ::")
 
 
 class SynapticElementIntegrator(object):
@@ -216,6 +217,7 @@ class GaussianNumericSEI(SynapticElementIntegrator):
         )
 
 
+@unittest.skipIf(HAVE_OPENMP == 'no', 'OpenMP is not available')
 class TestGrowthCurve(unittest.TestCase):
     """
     Unittest class to test the GrowthCurve used with nest

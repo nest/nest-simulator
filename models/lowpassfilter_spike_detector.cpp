@@ -201,8 +201,26 @@ nest::lowpassfilter_spike_detector::print_value( long sender,
 long
 nest::lowpassfilter_spike_detector::filter_step_( long update_start )
 {
-  // This method returns the first step to report based on the current filter
-  // block.
+  /**
+   *
+   * This method returns the first step to report based on the current filter
+   * block and progression of the simulation. This is complex because there
+   * are no constraints on setting the filter blocks, interval, and min_delay.
+   * Let's look at the algorithm in steps:
+   *
+   * 1. To simplify, we first check if the next step to report exceeds
+   * the update start step. In such a case, the first step to report would
+   * be the start step of the current filter block + interval.
+   *
+   * 2. If "1" is not the case, it is calculated as follows:
+   *
+   * 2.1 start from the first filter step of the current block and add
+   * the value to it that gives the next filter step immediately after the
+   * current update start step.
+   * 2.2 There is an exception in how 2.1 calculates the value (in some
+   * combinations it fails), it is necessary to substract values to get
+   * the correct filter step.
+   */
 
   long interval_step = P_.filter_report_interval_.get_steps();
   long filterblock_start_step =
@@ -210,18 +228,22 @@ nest::lowpassfilter_spike_detector::filter_step_( long update_start )
       .get_steps();
   long filter_step;
 
+  // This if statement is step "1" explained above.
   if ( filterblock_start_step + interval_step > update_start )
   {
     filter_step = filterblock_start_step + interval_step;
   }
 
+  // This else statement is step "2" explained above.
   else
   {
+    // This step "2.1" explained above.
     filter_step = filterblock_start_step + interval_step
       + std::ceil( ( ( double ) ( ( update_start + 1 )
                        - ( filterblock_start_step + interval_step ) )
           / interval_step ) ) * interval_step;
 
+    // This step "2.2" explained above.
     if ( ( filter_step - ( filterblock_start_step + interval_step ) )
         % interval_step
       != 0 )

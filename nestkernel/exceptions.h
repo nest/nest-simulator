@@ -68,12 +68,17 @@ public:
   {
   }
 
+  KernelException( const std::string& what )
+    : SLIException( what )
+  {
+  }
+
   virtual ~KernelException() throw()
   {
   }
 
   virtual std::string
-  message()
+  message() const
   {
     return std::string();
   }
@@ -99,7 +104,7 @@ public:
   ~UnknownModelName() throw()
   {
   }
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -120,7 +125,7 @@ public:
   ~NewModelNameExists() throw()
   {
   }
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -143,7 +148,7 @@ public:
   ~UnknownModelID() throw()
   {
   }
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -168,7 +173,7 @@ public:
   ~ModelInUse() throw()
   {
   }
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -200,7 +205,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -232,7 +237,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -264,7 +269,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 
@@ -283,7 +288,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 class NodeWithProxiesExpected : public KernelException
@@ -301,7 +306,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -325,7 +330,7 @@ public:
   ~UnknownReceptorType() throw()
   {
   }
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -353,7 +358,7 @@ public:
   ~IncompatibleReceptorType() throw()
   {
   }
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -377,7 +382,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -405,7 +410,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 
 private:
   std::string msg_;
@@ -437,7 +442,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 
 private:
   std::string msg_;
@@ -462,7 +467,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -487,7 +492,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -508,7 +513,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -528,7 +533,7 @@ public:
   ~UnsupportedEvent() throw()
   {
   }
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -558,7 +563,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -588,7 +593,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -633,7 +638,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -652,7 +657,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -671,7 +676,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -690,7 +695,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -723,7 +728,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 
 private:
   const std::string model_;
@@ -761,7 +766,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 
 private:
   const std::string model_;
@@ -797,7 +802,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 
 private:
   const std::string model_;
@@ -839,7 +844,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 
 private:
   const std::string model_;
@@ -872,7 +877,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 
 private:
   const std::string model_;
@@ -900,7 +905,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 
 private:
   const std::string model_;
@@ -931,7 +936,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 
 private:
   const std::string model_;
@@ -962,7 +967,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 
 private:
   const std::string model_;
@@ -994,7 +999,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 
 private:
   const std::string model_;
@@ -1023,7 +1028,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 
 private:
   const std::string model_;
@@ -1056,7 +1061,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 
 private:
   const std::string portname_;
@@ -1081,7 +1086,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 
 private:
   const std::string portname_;
@@ -1113,7 +1118,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 
 private:
   const std::string portname_;

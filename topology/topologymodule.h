@@ -325,7 +325,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 template < class T >

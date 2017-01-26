@@ -199,38 +199,38 @@ extern const Name gsl_error_tol; //!< GSL integrator tolerance
 extern const Name h; //!< Summed input to a neuron (Ginzburg neuron)
 extern const Name has_connections; //!< Specific to iaf_psc_exp_multisynapse and
                                    //!< iaf_psc_alpha_multisynapse
+extern const Name has_delay;       //!< Used in connector_model_impl
 extern const Name histogram;       //!< Specific to correlation_detector
 extern const Name histogram_correction; //!< Specific to correlation_detector
 extern const Name HMIN; //!< Smallest integration step for adaptive stepsize
                         //!< (Brette & Gerstner 2005)
 
-extern const Name I;         //!< Specific to mirollo_strogatz_ps
-extern const Name I_adapt;   //!< Goal of current homeostasis
-                             //!< (current homeostasis)
-extern const Name I_e;       //!< Input current
-extern const Name I_ex;      //!< Excitatory synaptic input current
-extern const Name I_h;       //!< specific to Hill & Tononi 2005
-extern const Name I_in;      //!< Inhibitory synaptic input current
-extern const Name I_KNa;     //!< specific to Hill & Tononi 2005
-extern const Name I_L;       //!< Leak current
-extern const Name I_NaP;     //!< specific to Hill & Tononi 2005
-extern const Name I_stc;     //!< relevant for gif models
-extern const Name I_std;     //!< Standard deviation of current distribution
-                             //!< (current homeostasis)
-extern const Name I_syn;     //!< used for iaflossless_count_exp
-extern const Name I_syn_ex;  //!< Total excitatory synaptic current
-                             //!< (iaf_tum_2000)
-extern const Name I_syn_in;  //!< Total inhibitory synaptic current
-                             //!< (iaf_tum_2000)
-extern const Name I_T;       //!< specific to Hill & Tononi 2005
-extern const Name I_total;   //!< Total current (current homeostasis)
-extern const Name in_spikes; //!< Number of arriving inhibitory spikes
-extern const Name Inact_n;   //!< Specific to Hodgkin Huxley models
+extern const Name I;        //!< Specific to mirollo_strogatz_ps
+extern const Name I_adapt;  //!< Goal of current homeostasis
+                            //!< (current homeostasis)
+extern const Name I_e;      //!< Input current
+extern const Name I_ex;     //!< Excitatory synaptic input current
+extern const Name I_h;      //!< specific to Hill & Tononi 2005
+extern const Name I_in;     //!< Inhibitory synaptic input current
+extern const Name I_KNa;    //!< specific to Hill & Tononi 2005
+extern const Name I_L;      //!< Leak current
+extern const Name I_NaP;    //!< specific to Hill & Tononi 2005
+extern const Name I_stc;    //!< relevant for gif models
+extern const Name I_std;    //!< Standard deviation of current distribution
+                            //!< (current homeostasis)
+extern const Name I_syn;    //!< used for iaflossless_count_exp
+extern const Name I_syn_ex; //!< Total excitatory synaptic current
+                            //!< (iaf_tum_2000)
+extern const Name I_syn_in; //!< Total inhibitory synaptic current
+                            //!< (iaf_tum_2000)
+extern const Name I_T;      //!< specific to Hill & Tononi 2005
+extern const Name I_total;  //!< Total current (current homeostasis)
 extern const Name
   in_spikes; //!< Number of arriving inhibitory spikes (sli_neuron)
 extern const Name Inact_n; //!< Specific to Hodgkin Huxley models
 extern const Name
   Inact_p; //!< Specific to Hodgkin Huxley models with gap junctions
+extern const Name indegree;                //!< In FixedInDegreeBuilder
 extern const Name index_map;               //!< Parameters for MUSIC devices
 extern const Name individual_spike_trains; //!< Generator parameters
 extern const Name inh_conductance;         //!< Recorder parameter
@@ -249,11 +249,13 @@ extern const Name local;      //!< Node parameter
 extern const Name local_id;   //!< Node
 
 extern const Name make_symmetric; //!< Connectivity-related
+extern const Name max_delay;      //!< In ConnBuilder
 extern const Name MAXERR; //!< Largest permissible error for adaptive stepsize
                           //!< (Brette & Gerstner 2005)
 extern const Name mean;   //!< Miscellaneous parameters
 extern const Name memory; //!< Recorder parameter
-extern const Name model;  //!< Node parameter
+extern const Name min_delay;     //!< In ConnBuilder
+extern const Name model;         //!< Node parameter
 extern const Name mother_rng;    //!< Specific to mip_generator
 extern const Name mother_seed;   //!< Specific to mip_generator
 extern const Name multapses;     //!< Connectivity-related
@@ -271,15 +273,17 @@ extern const Name n_receptors; //!< number of receptor ports
 extern const Name n_synapses;
 extern const Name neuron; //!< Node type
 extern const Name NMDA;
-extern const Name node_uses_wfr; //!< Node parameter
-extern const Name noise;         //!< Specific to iaf_chs_2008 neuron
+extern const Name node_uses_wfr;   //!< Node parameter
+extern const Name noise;           //!< Specific to iaf_chs_2008 neuron
+extern const Name num_connections; //!< In ConnBuilder
 
-extern const Name offset;  //!< Miscellaneous parameters
-extern const Name offsets; //!< Recorder parameter
-extern const Name omega;   //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
-extern const Name order;   //!< Specific to sinusoidally modulated generators
-extern const Name origin;  //!< Device parameters
-extern const Name other;   //!< Node type
+extern const Name offset;    //!< Miscellaneous parameters
+extern const Name offsets;   //!< Recorder parameter
+extern const Name omega;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
+extern const Name order;     //!< Specific to sinusoidally modulated generators
+extern const Name origin;    //!< Device parameters
+extern const Name other;     //!< Node type
+extern const Name outdegree; //!< In FixedOutDegreeBuilder
 
 extern const Name P; //!< specific to Hill & Tononi 2005
 extern const Name p; //!< current release probability  (Tsodyks2_connection)
@@ -319,7 +323,8 @@ extern const Name
                     //!< (precise timing neurons)
 extern const Name registered; //!< Parameters for MUSIC devices
 extern const Name
-  relative_amplitude;    //!< Signal modulation amplitude relative to mean
+  relative_amplitude; //!< Signal modulation amplitude relative to mean
+extern const Name requires_symmetric; //!< Used in connector_model_impl
 extern const Name rho_0; //!< Specific to population point process model
                          //!< (pp_pop_psc_delta)
 extern const Name rms;   //!< Root mean square

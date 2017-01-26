@@ -40,16 +40,17 @@
 #include "psignal.h"
 
 nest::SimulationManager::SimulationManager()
-  : simulating_( false )
-  , clock_( Time::tic( 0L ) )
+  : clock_( Time::tic( 0L ) )
   , slice_( 0L )
   , to_do_( 0L )
   , to_do_total_( 0L )
   , from_step_( 0L )
   , to_step_( 0L ) // consistent with to_do_ == 0
   , t_real_( 0L )
-  , terminate_( false )
+  , simulating_( false )
   , simulated_( false )
+  , exit_on_user_signal_( false )
+  , inconsistent_state_( false )
   , print_time_( false )
   , use_wfr_( true )
   , wfr_comm_interval_( 1.0 )
@@ -66,7 +67,10 @@ nest::SimulationManager::initialize()
   Time::reset_resolution();
   clock_.calibrate();
 
+  simulating_ = false;
   simulated_ = false;
+  exit_on_user_signal_ = false;
+  inconsistent_state_ = false;
 }
 
 void
@@ -360,6 +364,13 @@ nest::SimulationManager::simulate( Time const& t )
 {
   assert( kernel().is_initialized() );
 
+  if ( inconsistent_state_ )
+  {
+    throw KernelException(
+      "Kernel is in inconsistent state after an "
+      "earlier error. Please run ResetKernel first." );
+  }
+
   t_real_ = 0;
   t_slice_begin_ = timeval();
   t_slice_end_ = timeval();
@@ -440,7 +451,7 @@ nest::SimulationManager::simulate( Time const& t )
 void
 nest::SimulationManager::resume_( size_t num_active_nodes )
 {
-  assert( kernel().is_initialized() );
+  assert( kernel().is_initialized() and not inconsistent_state_ );
 
   std::ostringstream os;
   double t_sim = to_do_ * Time::get_resolution().get_ms();
@@ -467,8 +478,6 @@ nest::SimulationManager::resume_( size_t num_active_nodes )
   LOG( M_INFO, "SimulationManager::resume", os.str() );
 
 
-  terminate_ = false;
-
   if ( to_do_ == 0 )
     return;
 
@@ -491,23 +500,12 @@ nest::SimulationManager::resume_( size_t num_active_nodes )
 
   kernel().mpi_manager.synchronize();
 
-  if ( terminate_ )
+  if ( exit_on_user_signal_ )
   {
-    LOG( M_ERROR,
+    LOG( M_WARNING,
       "SimulationManager::resume",
-      "Exiting on error or user signal." );
-    LOG( M_ERROR,
-      "SimulationManager::resume",
-      "SimulationManager: Use 'ResumeSimulation' to resume." );
-
-    if ( SLIsignalflag != 0 )
-    {
-      SystemSignal signal( SLIsignalflag );
-      SLIsignalflag = 0;
-      throw signal;
-    }
-    else
-      throw SimulationError();
+      String::compose( "Exiting on user signal %1.", SLIsignalflag ) );
+    SLIsignalflag = 0;
   }
 
   LOG( M_INFO, "SimulationManager::resume", "Simulation finished." );
@@ -580,6 +578,7 @@ nest::SimulationManager::update_()
   std::vector< bool > done;
   bool done_all = true;
   delay old_to_step;
+  exit_on_user_signal_ = false;
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
     kernel().vp_manager.get_num_threads() );
@@ -753,7 +752,6 @@ nest::SimulationManager::update_()
           // so throw the exception after parallel region
           exceptions_raised.at( thrd ) = lockPTR< WrappedThreadException >(
             new WrappedThreadException( e ) );
-          terminate_ = true;
         }
       }
 
@@ -775,7 +773,7 @@ nest::SimulationManager::update_()
           LOG( M_INFO,
             "SimulationManager::update",
             "Simulation exiting on user signal." );
-          terminate_ = true;
+          exit_on_user_signal_ = true;
         }
 
         if ( print_time_ )
@@ -787,9 +785,10 @@ nest::SimulationManager::update_()
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
 
-    } while ( ( to_do_ != 0 ) && ( !terminate_ ) );
+    } while ( to_do_ > 0 and not exit_on_user_signal_
+      and not exceptions_raised.at( thrd ) );
 
-    // End of the slice, we update the number of synaptic element
+    // End of the slice, we update the number of synaptic elements
     for ( std::vector< Node* >::const_iterator i =
             kernel().node_manager.get_nodes_on_thread( thrd ).begin();
           i != kernel().node_manager.get_nodes_on_thread( thrd ).end();
@@ -803,8 +802,14 @@ nest::SimulationManager::update_()
 
   // check if any exceptions have been raised
   for ( index thrd = 0; thrd < kernel().vp_manager.get_num_threads(); ++thrd )
+  {
     if ( exceptions_raised.at( thrd ).valid() )
+    {
+      simulating_ = false; // must mark this here, see #311
+      inconsistent_state_ = true;
       throw WrappedThreadException( *( exceptions_raised.at( thrd ) ) );
+    }
+  }
 }
 
 void
@@ -819,11 +824,10 @@ nest::SimulationManager::finalize_simulation_()
     if ( !kernel().mpi_manager.grng_synchrony(
            kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
-      LOG( M_ERROR,
-        "SimulationManager::simulate",
-        "Global Random Number Generators are not synchronized after "
-        "simulation." );
-      throw KernelException();
+      throw KernelException(
+        "In SimulationManager::simulate(): "
+        "Global Random Number Generators are not "
+        "in sync at end of simulation." );
     }
 
   kernel().node_manager.finalize_nodes();
@@ -834,7 +838,6 @@ nest::SimulationManager::reset_network()
 {
   if ( not has_been_simulated() )
     return; // nothing to do
-
 
   kernel().event_delivery_manager.clear_pending_spikes();
 

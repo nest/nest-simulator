@@ -237,13 +237,13 @@ nest::lowpassfilter_spike_detector::filter_step_( long update_start )
   // This else statement is step "2" explained above.
   else
   {
-    // This step "2.1" explained above.
+    // This is step "2.1" explained above.
     filter_step = filterblock_start_step + interval_step
       + std::ceil( ( ( double ) ( ( update_start + 1 )
                        - ( filterblock_start_step + interval_step ) )
           / interval_step ) ) * interval_step;
 
-    // This step "2.2" explained above.
+    // This is step "2.2" explained above.
     if ( ( filter_step - ( filterblock_start_step + interval_step ) )
         % interval_step
       != 0 )

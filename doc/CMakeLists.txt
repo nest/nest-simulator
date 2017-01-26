@@ -17,6 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+if ( NOT CMAKE_CROSSCOMPILING )
+  add_custom_target( generate_help ALL )
+  add_custom_command( TARGET generate_help POST_BUILD
+    COMMAND python -B parse_help.py "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}"
+    WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/extras/help_generator"
+    )
+  install( DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/help"
+    DESTINATION "${CMAKE_INSTALL_DOCDIR}"
+    )
+endif ()
+
 install( DIRECTORY conngen model_details
     DESTINATION ${CMAKE_INSTALL_DOCDIR} )
 

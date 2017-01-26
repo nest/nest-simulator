@@ -29,20 +29,19 @@ Parse all NEST files for documentation and build the help.
 import os
 import re
 import sys
-import shutil
 import textwrap
 
 from writers import coll_data, write_helpindex
 from helpers import check_ifdef, create_helpdirs, cut_it
 
 
-if len(sys.argv) != 4:
-    print("Usage: python parse_help.py <source_dir> <build_dir> <install_dir>")
+if len(sys.argv) != 3:
+    print("Usage: python parse_help.py <source_dir> <build_dir>")
     sys.exit(1)
 
-source_dir, build_dir, install_dir = sys.argv[1:]
+source_dir, build_dir = sys.argv[1:]
 
-helpdir = os.path.join(build_dir, "doc/help")
+helpdir = os.path.join(build_dir, "doc", "help")
 create_helpdirs(helpdir)
 
 allfiles = []
@@ -132,6 +131,3 @@ for fname in allfiles:
                                  sli_command_list)
 
 write_helpindex(helpdir)
-
-shutil.rmtree(install_dir, ignore_errors=True)
-shutil.copytree(helpdir, install_dir)

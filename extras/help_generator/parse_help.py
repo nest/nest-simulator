@@ -46,11 +46,10 @@ create_helpdirs(helpdir)
 
 allfiles = []
 for dirpath, dirnames, files in os.walk(source_dir):
-    if not re.findall(r'[.?]*MyModule[.?]*', dirpath):
+    if not re.findall(r'[.?]*examples/MyModule[.?]*', dirpath):
         for f in files:
             if f.endswith((".sli", ".cpp", ".cc", ".h", ".py")):
                 allfiles.append(os.path.join(dirpath, f))
-
 
 num = 0
 full_list = []

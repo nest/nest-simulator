@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# parse_help.py
+# generate_help.py
 #
 # This file is part of NEST.
 #
@@ -23,7 +23,8 @@
 Generate NEST help files
 ========================
 
-Parse all NEST files for documentation and build the help.
+Scan all source files for documentation and build the help files and
+the corresponding helpindex.
 """
 
 import os
@@ -34,9 +35,8 @@ import textwrap
 from writers import coll_data, write_helpindex
 from helpers import check_ifdef, create_helpdirs, cut_it
 
-
 if len(sys.argv) != 3:
-    print("Usage: python parse_help.py <source_dir> <build_dir>")
+    print("Usage: python generate_help.py <source_dir> <build_dir>")
     sys.exit(1)
 
 source_dir, build_dir = sys.argv[1:]

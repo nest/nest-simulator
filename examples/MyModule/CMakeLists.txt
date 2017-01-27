@@ -271,11 +271,17 @@ install( DIRECTORY sli DESTINATION ${CMAKE_INSTALL_DATADIR} )
 if ( NOT CMAKE_CROSSCOMPILING )
   add_custom_target( generate_help ALL )
   add_custom_command( TARGET generate_help POST_BUILD
-    COMMAND python -B parse_help.py "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}"
+    COMMAND python -B generate_help.py "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}"
     WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${NEST_DATADIR}/help_generator"
     )
   install( DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc/help"
     DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
+    )
+  install( CODE
+    "execute_process(
+      COMMAND python -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
+      WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${NEST_DATADIR}/help_generator\"
+    )"
     )
 endif ()
 

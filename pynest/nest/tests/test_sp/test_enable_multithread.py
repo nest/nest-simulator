@@ -29,10 +29,10 @@ __author__ = 'sdiaz'
 # and multiple threads are set, or if multiple threads are set and
 # the enable_structural_plasticity function is called.
 
-HAVE_OPENMP = nest.sli_func("statusdict/threading ::")
+HAVE_OPENMP = nest.sli_func("is_threaded")
 
 
-@unittest.skipIf(HAVE_OPENMP == 'no', 'OpenMP is not available')
+@unittest.skipIf(not HAVE_OPENMP, 'NEST was compiled without multi-threading')
 class TestEnableMultithread(unittest.TestCase):
 
     def setUp(self):

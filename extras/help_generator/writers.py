@@ -190,7 +190,7 @@ def write_helpindex(helpdir):
             fitem.close()
             # only the basename of the file
             name = os.path.basename(item)[:-4]
-            # only the firts line of itemtext
+            # only the first line of itemtext
             name_line = itemtext.splitlines()[0]
             #
             if name_line.rsplit(' - ')[0] == 'Name: ' + name:

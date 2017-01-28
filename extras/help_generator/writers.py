@@ -176,6 +176,9 @@ def write_helpindex(helpdir):
              ('U', 'u'), ('V', 'v'), ('W', 'w'), ('X', 'x'), ('Z', 'z'), '-',
              ':', '<', '=']
 
+    def key_func(key):
+        return key.lower().rsplit('/', 1)[1]
+
     for doubles in alpha:
         html_list.append('<center><table class="alpha">')
         html_list.append('<table class="letteridx"><tr>')
@@ -184,8 +187,7 @@ def write_helpindex(helpdir):
         html_list.append('</tr></table></center>')
         html_list.append('<center><table class="commands" id="%s">'
                          % doubles[0])
-        keyfunc = lambda x: x.lower().rsplit('/', 1)[1]
-        for item in sorted(filelist, key=keyfunc):
+        for item in sorted(filelist, key=key_func):
             fitem = open(item, 'r')
             itemtext = fitem.read()
             fitem.close()

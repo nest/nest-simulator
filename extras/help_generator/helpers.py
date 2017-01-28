@@ -66,8 +66,9 @@ def makedirs(path):
     """
     try:
         os.makedirs(path)
-    except:
-        pass
+    except OSError as exc:
+        if exc.errno != errno.EEXIST or not os.path.isdir(path):
+            raise
 
 
 def create_helpdirs(path):

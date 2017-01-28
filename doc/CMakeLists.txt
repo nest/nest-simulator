@@ -19,13 +19,20 @@
 
 if ( NOT CMAKE_CROSSCOMPILING )
   add_custom_target( generate_help ALL )
+  # Extract help from all source files in the source code, put them in
+  # doc/help and generate a help index containing links to the help
+  # files.
   add_custom_command( TARGET generate_help POST_BUILD
     COMMAND python -B generate_help.py "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}"
     WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/extras/help_generator"
     )
+  # Copy the local doc/help directory to the global installation
+  # directory for documentation.
   install( DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/help"
     DESTINATION "${CMAKE_INSTALL_DOCDIR}"
     )
+  # Update the global help index to contain all help files that are
+  # located in the global installation directory for documentation.
   install( CODE
     "execute_process(
       COMMAND python -B generate_helpindex.py \"${CMAKE_INSTALL_DOCDIR}\"

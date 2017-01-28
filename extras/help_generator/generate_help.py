@@ -44,9 +44,12 @@ source_dir, build_dir = sys.argv[1:]
 helpdir = os.path.join(build_dir, "doc", "help")
 create_helpdirs(helpdir)
 
+is_MyModule_build = "MyModule" in source_dir
+
 allfiles = []
 for dirpath, dirnames, files in os.walk(source_dir):
-    if not re.findall(r'[.?]*examples/MyModule[.?]*', dirpath):
+    is_MyModule_dir = "MyModule" in dirpath
+    if not is_MyModule_dir or (is_MyModule_dir and is_MyModule_build):
         for f in files:
             if f.endswith((".sli", ".cpp", ".cc", ".h", ".py")):
                 allfiles.append(os.path.join(dirpath, f))

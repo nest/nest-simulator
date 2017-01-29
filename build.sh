@@ -23,7 +23,7 @@
 # This shell script is part of the NEST Travis CI build and test environment.
 # It is invoked by the top-level Travis script '.travis.yml'.
 #
-# NOTE: This shell script is pysically coupled to python script
+# NOTE: This shell script is tightly coupled to Python script
 #       'extras/parse_travis_log.py'. 
 #       Any changes to message numbers (MSGBLDnnnn) or the variable name
 #      'file_names' have effects on the build/test-log parsing process.
@@ -173,7 +173,6 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
       *.h | *.c | *.cc | *.hpp | *.cpp )
         f_base=$NEST_VPATH/reports/`basename $f`
 
-        echo "\n"
         echo "MSGBLD0130: Run VERA++ for file: $f"
         vera++ --root ./vera_home --profile nest $f > ${f_base}_vera.txt 2>&1
         cat ${f_base}_vera.txt | while read line
@@ -210,7 +209,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
         ;;
       *.py )
         echo "MSGBLD0190: Run PEP8 check for file: $f"
-        # Ignore those PEP8 rules.
+        # PEP8 rules to ignore.
         PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
         PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
         # Regular expression of directory patterns on which to apply PEP8_IGNORES_EXAMPLES.
@@ -233,7 +232,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
         echo "MSGBLD0200: PEP8 check for file $f completed."
         ;;
       *)
-        echo "MSGBLD0210: File $f is not a C/CPP/PY file. Static code analysis and formatting check skipped."
+        echo "MSGBLD0210: File $f is not a C/C++/Python file. Static code analysis and formatting check skipped."
         continue
     esac
   done
@@ -244,7 +243,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
       echo "MSGBLD0220: Formatting error in file: $line"
     done
   fi
-fi   # static code analysis
+fi   # Static code analysis.
 
 
 cd "$NEST_VPATH"

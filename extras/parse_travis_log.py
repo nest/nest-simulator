@@ -20,7 +20,7 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-This python script is part of the NEST Travis CI build and test environment.
+This Python script is part of the NEST Travis CI build and test environment.
 It parses the Travis CI build log file 'build.sh.log' (The name is hard-wired
 in '.travis.yml'.) and creates the 'NEST Travis CI Build Summary'.
 
@@ -32,51 +32,68 @@ NOTE: Please note that the parsing process is coupled to shell script
 
 def is_message_pair_in_logfile(log_filename, msg_start_of_section,
                                msg_end_of_section):
-    """
-    Read the NEST Travis CI build log file and return 'True' in case both
+    """Read the NEST Travis CI build log file and return 'True' in case both
     messages are found in correct order. Return 'False' if only the first
     message was found. Return 'None' in case the first or both messages
     are not contained in the file.
 
-    :param log_filename:         NEST Travis CI build log file name.
-    :param msg_start_of_section: Message number string, e.g. "MSGBLD1234"
-    :param msg_end_of_section:   Message number string, e.g. "MSGBLD1234"
-    :return:                     True, False or None
+    Parameters
+    ----------
+    log_filename:         NEST Travis CI build log file name.
+    msg_start_of_section: Message number string, e.g. "MSGBLD1234".
+    msg_end_of_section:   Message number string, e.g. "MSGBLD1234".
+
+    Returns
+    -------
+    True, False or None.
     """
+
     pair_found = None
-    for line in open(log_filename, "r"):
-        if pair_found is None and is_message(line, msg_start_of_section):
-            pair_found = False
-        if pair_found is False and is_message(line, msg_end_of_section):
-            pair_found = True
+    with open(log_filename) as fh:
+        for line in fh:
+            if pair_found is None and is_message(line, msg_start_of_section):
+                pair_found = False
+            if not pair_found and is_message(line, msg_end_of_section):
+                pair_found = True
 
     return pair_found
 
 
 def is_message_in_logfile(log_filename, msg_number):
-    """
-    Read the NEST Travis CI build log file. Return 'True' if the message is
+    """Read the NEST Travis CI build log file. Return 'True' if the message is
     contained in the log file.
 
-    :param log_filename: NEST Travis CI build log file name.
-    :param msg_number:   Message number string, e.g. "MSGBLD1234".
-    :return:             True or False
+    Parameters
+    ----------
+    log_filename: NEST Travis CI build log file name.
+    msg_number:   Message number string, e.g. "MSGBLD1234".
+
+    Returns
+    -------
+    True or False.
     """
-    for line in open(log_filename, "r"):
-        if is_message(line, msg_number):
-            return True
+
+    with open(log_filename) as fh:
+        for line in fh:
+            if is_message(line, msg_number):
+                return True
 
     return False
 
 
 def is_message(line, msg_number):
-    """
-    Return 'True' if 'line' contains the message identified by 'msg_number'.
+    """Return 'True' if 'line' contains the message identified by 'msg_number'.
 
-    :param line:       A single line from the NEST CI build log file.
-    :param msg_number: Message number string.
-    :return:           True or False
+    Parameters
+    ----------
+    line:       A single line from the NEST CI build log file.
+    msg_number: Message number string.
+
+    Returns
+    -------
+    True or False
     """
+
     if msg_number in line:
         return True
 
@@ -85,19 +102,21 @@ def is_message(line, msg_number):
 
 def list_of_changed_files(log_filename, msg_changed_files_section_start,
                           msg_changed_files_section_end, msg_changed_files):
-    """
-    Read the NEST Travis CI build log file, find the 'changed files' section
+    """Read the NEST Travis CI build log file, find the 'changed files' section
     and return a list of the changed files or an empty list, respectively.
 
-    :param log_filename:                    NEST Travis CI build log file name.
-    :param msg_changed_files_section_start: Message number string,
-                                            e.g. "MSGBLD1234".
-    :param msg_changed_files_section_end:   Message number string,
-                                            e.g. "MSGBLD1234".
-    :param msg_changed_files:               Message number string,
-                                            e.g. "MSGBLD1234".
-    :return:                                List of changed files.
+    Parameters
+    ----------
+    log_filename:                    NEST Travis CI build log file name.
+    msg_changed_files_section_start: Message number string, e.g. "MSGBLD1234".
+    msg_changed_files_section_end:   Message number string, e.g. "MSGBLD1234".
+    msg_changed_files:               Message number string, e.g. "MSGBLD1234".
+
+    Returns
+    -------
+    List of changed files.
     """
+
     changed_files = []
     if not is_message_pair_in_logfile(log_filename,
                                       msg_changed_files_section_start,
@@ -105,314 +124,344 @@ def list_of_changed_files(log_filename, msg_changed_files_section_start,
         return changed_files
 
     in_changed_files_section = False
-    for line in open(log_filename, "r"):
-        if not in_changed_files_section and \
-                is_message(line, msg_changed_files_section_start):
-            in_changed_files_section = True
-            continue
-
-        if in_changed_files_section:
-            if is_message(line, msg_changed_files):
-                changed_files.append(line.split(' ')[-1].strip())
+    with open(log_filename) as fh:
+        for line in fh:
+            if not in_changed_files_section and \
+                    is_message(line, msg_changed_files_section_start):
+                in_changed_files_section = True
                 continue
 
-            if is_message(line, msg_changed_files_section_end):
-                # The log file contains only one 'changed-files-section'.
-                # Stop reading the log file.
-                return changed_files
+            if in_changed_files_section:
+                if is_message(line, msg_changed_files):
+                    changed_files.append(line.split(' ')[-1].strip())
+                    continue
+
+                if is_message(line, msg_changed_files_section_end):
+                    # The log file contains only one 'changed-files-section'.
+                    # Stop reading the log file.
+                    return changed_files
 
     return changed_files
 
 
 def msg_summary_vera(log_filename, msg_vera_section_start,
                      msg_vera_section_end, msg_vera):
-    """
-    Read the NEST Travis CI build log file, find the VERA++ sections, extract
-    the VERA messages per file and return a dictionary containing an overall
-    summary of the VERA++ code analysis.
+    """Read the NEST Travis CI build log file, find the VERA++ sections,
+    extract the VERA messages per file and return a dictionary containing an
+    overall summary of the VERA++ code analysis.
 
-    :param log_filename:           NEST Travis CI build log file name.
-    :param msg_vera_section_start: Message number string, e.g. "MSGBLD1234".
-    :param msg_vera_section_end:   Message number string, e.g. "MSGBLD1234".
-    :param msg_vera:               Message number string, e.g. "MSGBLD1234".
-    :return:                       None or a dictionary of dictionaries of
-                                   VERA++ messages per file.
+    Parameters
+    ----------
+    log_filename:           NEST Travis CI build log file name.
+    msg_vera_section_start: Message number string, e.g. "MSGBLD1234".
+    msg_vera_section_end:   Message number string, e.g. "MSGBLD1234".
+    msg_vera:               Message number string, e.g. "MSGBLD1234".
+
+    Returns
+    -------
+    None or a dictionary of dictionaries of VERA++ messages per file.
     """
+
     all_vera_msgs = None
     in_a_vera_section = False
-    for line in open(log_filename, "r"):
-        if not in_a_vera_section and is_message(line, msg_vera_section_start):
-            in_a_vera_section = True
-            source_filename = line.split(' ')[-1].strip()
-            single_file_vera_msgs = {}
-            if all_vera_msgs is None:
-                all_vera_msgs = {}
-            all_vera_msgs.update({source_filename: single_file_vera_msgs})
-            continue
-
-        if in_a_vera_section:
-            if is_message(line, msg_vera):
-                message = line.split(":")[-1].strip()
-                if message not in single_file_vera_msgs:
-                    single_file_vera_msgs[message] = 0
-                single_file_vera_msgs[message] += 1
+    with open(log_filename) as fh:
+        for line in fh:
+            if not in_a_vera_section and is_message(line,
+                                                    msg_vera_section_start):
+                in_a_vera_section = True
+                source_filename = line.split(' ')[-1].strip()
+                single_file_vera_msgs = {}
+                if all_vera_msgs is None:
+                    all_vera_msgs = {}
+                all_vera_msgs.update({source_filename: single_file_vera_msgs})
                 continue
 
-            if is_message(line, msg_vera_section_end):
-                in_a_vera_section = False
+            if in_a_vera_section:
+                if is_message(line, msg_vera):
+                    message = line.split(":")[-1].strip()
+                    if message not in single_file_vera_msgs:
+                        single_file_vera_msgs[message] = 0
+                    single_file_vera_msgs[message] += 1
+                    continue
+
+                if is_message(line, msg_vera_section_end):
+                    in_a_vera_section = False
 
     return all_vera_msgs
 
 
 def msg_summary_cppcheck(log_filename, msg_cppcheck_section_start,
                          msg_cppcheck_section_end, msg_cppcheck):
-    """
-    Read the NEST Travis CI build log file, find the cppcheck sections,
+    """Read the NEST Travis CI build log file, find the cppcheck sections,
     extract the cppcheck messages per file and return a dictionary containing
     an overall summary of the cppcheck code analysis.
 
-    :param log_filename:               NEST Travis CI build log file name.
-    :param msg_cppcheck_section_start: Message number string,
-                                       e.g. "MSGBLD1234".
-    :param msg_cppcheck_section_end:   Message number string,
-                                       e.g. "MSGBLD1234".
-    :param msg_cppcheck:               Message number string,
-                                       e.g. "MSGBLD1234".
-    :return:                           None or a dictionary of dictionaries of
-                                       cppcheck messages per file.
+    Parameters
+    ---------
+    log_filename:               NEST Travis CI build log file name.
+    msg_cppcheck_section_start: Message number string, e.g. "MSGBLD1234".
+    msg_cppcheck_section_end:   Message number string, e.g. "MSGBLD1234".
+    msg_cppcheck:               Message number string, e.g. "MSGBLD1234".
+
+    Returns
+    -------
+    None or a dictionary of dictionaries of cppcheck messages per file.
     """
+
     all_cppcheck_msgs = None
     in_a_cppcheck_section = False
-    for line in open(log_filename, "r"):
-        if not in_a_cppcheck_section and \
-                is_message(line, msg_cppcheck_section_start):
-            in_a_cppcheck_section = True
-            source_filename = line.split(' ')[-1].strip()
-            single_file_cppcheck_msgs = {}
-            if all_cppcheck_msgs is None:
-                all_cppcheck_msgs = {}
-            all_cppcheck_msgs.update({source_filename:
-                                      single_file_cppcheck_msgs})
-            continue
-
-        if in_a_cppcheck_section:
-            if is_message(line, msg_cppcheck):
-                if 'Checking' in line:
-                    continue
-                message = line[line.find('('):].strip()
-                if 'is never used' in message:
-                    continue
-                if '(information)' in message:
-                    continue
-                if message not in single_file_cppcheck_msgs:
-                    single_file_cppcheck_msgs[message] = 0
-                single_file_cppcheck_msgs[message] += 1
+    with open(log_filename) as fh:
+        for line in fh:
+            if not in_a_cppcheck_section and \
+                    is_message(line, msg_cppcheck_section_start):
+                in_a_cppcheck_section = True
+                source_filename = line.split(' ')[-1].strip()
+                single_file_cppcheck_msgs = {}
+                if all_cppcheck_msgs is None:
+                    all_cppcheck_msgs = {}
+                all_cppcheck_msgs.update({source_filename:
+                                          single_file_cppcheck_msgs})
                 continue
 
-            if is_message(line, msg_cppcheck_section_end):
-                in_a_cppcheck_section = False
+            if in_a_cppcheck_section:
+                if is_message(line, msg_cppcheck):
+                    if 'Checking' in line:
+                        continue
+                    message = line[line.find('('):].strip()
+                    if 'is never used' in message:
+                        continue
+                    if '(information)' in message:
+                        continue
+                    if message not in single_file_cppcheck_msgs:
+                        single_file_cppcheck_msgs[message] = 0
+                    single_file_cppcheck_msgs[message] += 1
+                    continue
+
+                if is_message(line, msg_cppcheck_section_end):
+                    in_a_cppcheck_section = False
 
     return all_cppcheck_msgs
 
 
 def msg_summary_format(log_filename, msg_format_section_start,
                        msg_format_section_end, msg_format):
-    """
-    Read the NEST Travis CI build log file, find the clang-format sections,
+    """Read the NEST Travis CI build log file, find the clang-format sections,
     extract the 'diff-messages' per file and return a dictionary containing an
     overall summary of the clang-format code analysis.
 
-    :param log_filename:             NEST Travis CI build log file name.
-    :param msg_format_section_start: Message number string, e.g. "MSGBLD1234".
-    :param msg_format_section_end:   Message number string, e.g. "MSGBLD1234".
-    :param msg_format:               Message number string, e.g. "MSGBLD1234".
-    :return:                         None or a dictionary of dictionaries
-                                     of clang-format 'diff- messages' per file.
+    Parameters
+    ----------
+    log_filename:             NEST Travis CI build log file name.
+    msg_format_section_start: Message number string, e.g. "MSGBLD1234".
+    msg_format_section_end:   Message number string, e.g. "MSGBLD1234".
+    msg_format:               Message number string, e.g. "MSGBLD1234".
+
+    Returns
+    -------
+    None or a dictionary of dictionaries of clang-format diff-messages per
+    file.
     """
+
     all_format_msgs = None
     in_a_format_section = False
-    for line in open(log_filename, "r"):
-        if not in_a_format_section and is_message(line,
-                                                  msg_format_section_start):
-            in_a_format_section = True
-            source_filename = line.split(' ')[-1].strip()
-            single_file_format_msgs = {}
-            if all_format_msgs is None:
-                all_format_msgs = {}
-            all_format_msgs.update({source_filename: single_file_format_msgs})
-            continue
-
-        if in_a_format_section:
-            if is_message(line, msg_format):
-                diffline = line.split(":")[-1].strip()
-                if diffline not in single_file_format_msgs:
-                    single_file_format_msgs[diffline] = 0
-                single_file_format_msgs[diffline] += 1
+    with open(log_filename) as fh:
+        for line in fh:
+            if not in_a_format_section and is_message(line, msg_format_section_start):  # noqa
+                in_a_format_section = True
+                source_filename = line.split(' ')[-1].strip()
+                single_file_format_msgs = {}
+                if all_format_msgs is None:
+                    all_format_msgs = {}
+                all_format_msgs.update({source_filename: single_file_format_msgs})      # noqa
                 continue
 
-        if is_message(line, msg_format_section_end):
-            in_a_format_section = False
+            if in_a_format_section:
+                if is_message(line, msg_format):
+                    diffline = line.split(":")[-1].strip()
+                    if diffline not in single_file_format_msgs:
+                        single_file_format_msgs[diffline] = 0
+                    single_file_format_msgs[diffline] += 1
+                    continue
+
+                if is_message(line, msg_format_section_end):
+                    in_a_format_section = False
 
     return all_format_msgs
 
 
 def msg_summary_pep8(log_filename, msg_pep8_section_start,
                      msg_pep8_section_end, msg_pep8):
-    """
-    Read the NEST Travis CI build log file, find the PEP8 sections, extract
+    """Read the NEST Travis CI build log file, find the PEP8 sections, extract
     the PEP8 messages per file and return a dictionary containing an overall
     summary.
 
-    :param log_filename:           NEST Travis CI build log file name.
-    :param msg_pep8_section_start: Message number string, e.g. "MSGBLD1234".
-    :param msg_pep8_section_end:   Message number string, e.g. "MSGBLD1234".
-    :param msg_pep8:               Message number string, e.g. "MSGBLD1234".
-    :return:                       None or a dictionary of dictionaries of
-                                   PEP8 messages per file.
+    Parameters:
+    ----------
+    log_filename:           NEST Travis CI build log file name.
+    msg_pep8_section_start: Message number string, e.g. "MSGBLD1234".
+    msg_pep8_section_end:   Message number string, e.g. "MSGBLD1234".
+    msg_pep8:               Message number string, e.g. "MSGBLD1234".
+
+    Returns
+    -------
+    None or a dictionary of dictionaries of PEP8 messages per file.
     """
+
     all_pep8_msgs = None
     in_a_pep8_section = False
-    for line in open(log_filename, "r"):
-        if not in_a_pep8_section and is_message(line, msg_pep8_section_start):
-            in_a_pep8_section = True
-            source_filename = line.split(' ')[-1].strip()
-            single_file_pep8_msgs = {}
-            if all_pep8_msgs is None:
-                all_pep8_msgs = {}
-            all_pep8_msgs.update({source_filename: single_file_pep8_msgs})
-            continue
-
-        if in_a_pep8_section:
-            if is_message(line, msg_pep8):
-                message = line.split(":")[-1].strip()
-                if message not in single_file_pep8_msgs:
-                    single_file_pep8_msgs[message] = 0
-                single_file_pep8_msgs[message] += 1
+    with open(log_filename) as fh:
+        for line in fh:
+            if not in_a_pep8_section and is_message(line, msg_pep8_section_start):      # noqa
+                in_a_pep8_section = True
+                source_filename = line.split(' ')[-1].strip()
+                single_file_pep8_msgs = {}
+                if all_pep8_msgs is None:
+                    all_pep8_msgs = {}
+                all_pep8_msgs.update({source_filename: single_file_pep8_msgs})
                 continue
 
-            if is_message(line, msg_pep8_section_end):
-                in_a_pep8_section = False
+            if in_a_pep8_section:
+                if is_message(line, msg_pep8):
+                    message = line.split(":")[-1].strip()
+                    if message not in single_file_pep8_msgs:
+                        single_file_pep8_msgs[message] = 0
+                    single_file_pep8_msgs[message] += 1
+                    continue
+
+                if is_message(line, msg_pep8_section_end):
+                    in_a_pep8_section = False
 
     return all_pep8_msgs
 
 
 def makebuild_summary(log_filename, msg_make_section_start,
                       msg_make_section_end):
-    """
-    Read the NEST Travis CI build log file and return the number of build error
-    and warning messages as well as dictionaries summarizing their occurrences.
+    """Read the NEST Travis CI build log file and return the number of build
+    error and warning messages as well as dictionaries summarizing their
+    occurrences.
 
-    :param  log_filename:           NEST Travis CI build log file name.
-    :param  msg_make_section_start: Message number string, e.g. "MSGBLD1234".
-    :param  msg_make_section_end:   Message number string, e.g. "MSGBLD1234".
-    :return                         True or False depending on the number of
-                                    error messages.
-                                    Number of error messages.
-                                    Dictionary of file names and the number of
-                                    error within this file.
-                                    Number of warning messages.
-                                    Dictionary of file names and the number of
-                                    warnings within this file.
+    Parameters
+    ----------
+    log_filename:           NEST Travis CI build log file name.
+    msg_make_section_start: Message number string, e.g. "MSGBLD1234".
+    msg_make_section_end:   Message number string, e.g. "MSGBLD1234".
+
+    Returns
+    -------
+    True or False depending on the number of error messages.
+    Number of error messages.
+    Dictionary of file names and the number of errors within these files.
+    Number of warning messages.
+    Dictionary of file names and the number of warnings within these file.
     """
+
     error_summary = None
     warning_summary = None
     number_of_error_msgs = 0
     number_of_warning_msgs = 0
     in_make_section = False
-    for line in open(log_filename, "r"):
-        if is_message(line, msg_make_section_start):
-            in_make_section = True
-            error_summary = {}
-            warning_summary = {}
+    with open(log_filename) as fh:
+        for line in fh:
+            if is_message(line, msg_make_section_start):
+                in_make_section = True
+                error_summary = {}
+                warning_summary = {}
 
-        if in_make_section:
-            if ': error:' in line:
-                file_name = line.split(':')[0]
-                if file_name not in error_summary:
-                    error_summary[file_name] = 0
-                error_summary[file_name] += 1
-                number_of_error_msgs += 1
+            if in_make_section:
+                if ': error:' in line:
+                    file_name = line.split(':')[0]
+                    if file_name not in error_summary:
+                        error_summary[file_name] = 0
+                    error_summary[file_name] += 1
+                    number_of_error_msgs += 1
 
-            if ': warning:' in line:
-                file_name = line.split(':')[0]
-                if file_name not in warning_summary:
-                    warning_summary[file_name] = 0
-                warning_summary[file_name] += 1
-                number_of_warning_msgs += 1
+                if ': warning:' in line:
+                    file_name = line.split(':')[0]
+                    if file_name not in warning_summary:
+                        warning_summary[file_name] = 0
+                    warning_summary[file_name] += 1
+                    number_of_warning_msgs += 1
 
-        if is_message(line, msg_make_section_end):
-            # The log file contains only one 'make' section, return.
-            if number_of_error_msgs == 0:
-                return True, number_of_error_msgs, error_summary, \
-                       number_of_warning_msgs, warning_summary
-            else:
-                return False, number_of_error_msgs, error_summary, \
-                       number_of_warning_msgs, warning_summary
+            if is_message(line, msg_make_section_end):
+                # The log file contains only one 'make' section, return.
+                if number_of_error_msgs == 0:
+                    return True, number_of_error_msgs, error_summary, \
+                           number_of_warning_msgs, warning_summary
+                else:
+                    return False, number_of_error_msgs, error_summary, \
+                           number_of_warning_msgs, warning_summary
 
     return None, None, None, None, None
 
 
 def testsuite_results(log_filename, msg_testsuite_section_start,
                       msg_testsuite_end_message):
-    """
-    Read the NEST Travis CI build log file, find the 'make-installcheck'
+    """Read the NEST Travis CI build log file, find the 'make-installcheck'
     section which runs the NEST test suite. Extract the total number of tests
     and the number of tests failed. Return True if all tests passed
     successfully and False in case one or more tests failed. Additionally the
     total number of tests performed and the number of tests failed are
     returned.
 
-    :param log_filename:                NEST Travis CI build log file name.
-    :param msg_testsuite_section_start: Message number string,
-                                        e.g. "MSGBLD1234".
-    :param msg_testsuite_end_message:   Message number string,
-                                        e.g. "MSGBLD1234".
-    :return:                            True or False
-                                        Total number of tests.
-                                        Number of tests failed.
+    Parameters
+    ----------
+    log_filename:                NEST Travis CI build log file name.
+    msg_testsuite_section_start: Message number string, e.g. "MSGBLD1234".
+    msg_testsuite_end_message:   Message number string, e.g. "MSGBLD1234".
+
+    Returns
+    -------
+    True or False.
+    Total number of tests.
+    Number of tests failed.
     """
+
     in_installcheck_section = False
     in_results_section = False
     total_number_of_tests = None
     number_of_tests_failed = None
     status_tests = None
-    for line in open(log_filename, "r"):
-        if is_message(line, msg_testsuite_section_start):
-            in_installcheck_section = True
+    with open(log_filename) as fh:
+        for line in fh:
+            if is_message(line, msg_testsuite_section_start):
+                in_installcheck_section = True
 
-        if in_installcheck_section:
-            if line.strip() == "NEST Testsuite Summary":
-                in_results_section = True
+            if in_installcheck_section:
+                if line.strip() == "NEST Testsuite Summary":
+                    in_results_section = True
 
-            if in_results_section:
-                if "Total number of tests:" in line:
-                    total_number_of_tests = \
-                        int(line.split(' ')[-1])
-                if "Failed" in line:
-                    number_of_tests_failed = \
-                        [int(s) for s in line.split() if s.isdigit()][0]
+                if in_results_section:
+                    if "Total number of tests:" in line:
+                        total_number_of_tests = int(line.split(' ')[-1])
+                    if "Failed" in line:
+                        number_of_tests_failed = \
+                            [int(s) for s in line.split() if s.isdigit()][0]
 
-            if is_message(line, msg_testsuite_end_message):
-                if number_of_tests_failed == 0:
-                    status_tests = True
-                else:
-                    status_tests = False
-                # The log file contains only one 'make-installcheck' section.
-                # Stop reading the log file.
-                break
+                if is_message(line, msg_testsuite_end_message):
+                    if number_of_tests_failed == 0:
+                        status_tests = True
+                    else:
+                        status_tests = False
+                    # The log file contains only one 'make-installcheck'
+                    # section. Stop reading the log file.
+                    break
 
     return status_tests, total_number_of_tests, number_of_tests_failed
 
 
 def convert_bool_value_to_status_string(value):
-    """
-    Convert a boolean value, e.g. the value returned by
+    """Convert a boolean value, e.g. the value returned by
     is_message_pair_in_logfile(), into a meaningful string representation.
 
-    :param value:  Boolean value: True, None or False
-    :return:       "Passed Successfully", "Skipped" or "Failed" (default)
+    Parameters
+    ----------
+    value:  Boolean value: True, None or False
+
+    Returns
+    -------
+    String "Passed Successfully", "Skipped" or "Failed" (default).
     """
-    if value is True:
+    if value:
         return "Passed successfully"
     if value is None:
         return "Skipped"
@@ -421,27 +470,37 @@ def convert_bool_value_to_status_string(value):
 
 
 def convert_bool_value_to_yes_no_string(value):
-    """
-    Convert a boolean value into a 'Yes' or 'No' string representation.
+    """Convert a boolean value into a 'Yes' or 'No' string representation.
 
-    :param value:  Boolean value.
-    :return:       "YES", "NO" (default)
+    Parameters
+    ----------
+    value:  Boolean value.
+
+
+    Returns
+    -------
+    String "YES", "NO" (default).
     """
-    if value is True:
+
+    if value:
         return "Yes"
 
     return "No"
 
 
 def convert_summary_to_status_string(summary):
-    """
-    Determine the status of any performed static code analysis and
+    """Determine the status of any performed static code analysis and
     return a string representation of that status.
 
-    :param summary: A dictionary containing per file dictionaries of static
-                    code analysis messages.
-    :return:        "Passed Successfully", "Skipped" or "Failed"
+    Parameters
+    ----------
+    summary: A dictionary containing per file dictionaries of static code
+             analysis messages.
+    Returns
+    -------
+    String "Passed Successfully", "Skipped" or "Failed".
     """
+
     if summary is None:
         value = None
     else:
@@ -455,13 +514,18 @@ def convert_summary_to_status_string(summary):
 
 
 def number_of_msgs_in_summary(summary):
-    """
-    Return the number of messages of any static code analysis.
+    """Return the number of messages of any static code analysis.
 
-    :param summary: A dictionary containing per file dictionaries of static
-                    code analysis messages.
-    :return:        The total number of messages contained in the dictionary.
+    Parameters
+    ----------
+    summary: A dictionary containing per file dictionaries of static code
+             analysis messages.
+
+    Returns
+    -------
+    The total number of messages contained in the dictionary.
     """
+
     number_of_msgs = 0
     if summary is not None:
         for file_name in summary.keys():
@@ -472,16 +536,20 @@ def number_of_msgs_in_summary(summary):
 
 
 def number_of_msgs_for_file_in_summary(file_name, summary):
-    """
-    Return the number of messages of any static code analysis for a particular
-    source file.
+    """Return the number of messages of any static code analysis for a
+    particular source file.
 
-    :param file_name: Source file name.
-    :param summary:   A dictionary containing per file dictionaries of static
-                      code analysis messages.
-    :return:          The number of messages for the source file contained
-                      in the dictionary.
+    Parameters
+    ----------
+    file_name: Source file name.
+    summary:   A dictionary containing per file dictionaries of static code
+               analysis messages.
+
+    Returns
+    -------
+    The number of messages for the source file contained in the dictionary.
     """
+
     number_of_messages = 0
     if summary is not None:
         for message, occurrences in summary[file_name].iteritems():
@@ -492,20 +560,22 @@ def number_of_msgs_for_file_in_summary(file_name, summary):
 
 def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
                                   summary_format, summary_pep8):
-    """
-    Create formatted per-file-tables of VERA++, Cppcheck, clang-format and
+    """Create formatted per-file-tables of VERA++, Cppcheck, clang-format and
     PEP8 messages. Concatenate and return them.
 
-    :param summary_vera:     Dictionary of dictionaries of VERA++ messages
-                             per file.
-    :param summary_cppcheck: Dictionary of dictionaries of cppcheck messages
-                             per file.
-    :param summary_format:   Dictionary of dictionaries of clang-format
-                             messages per file.
-    :param summary_pep8:     Dictionary of dictionaries of PEP8 messages
-                             per file.
-    :return:                 Formatted tables string.
+    Parameters
+    ----------
+    summary_vera:     Dictionary of dictionaries of VERA++ messages per file.
+    summary_cppcheck: Dictionary of dictionaries of cppcheck messages per file.
+    summary_format:   Dictionary of dictionaries of clang-format messages per
+                      file.
+    summary_pep8:     Dictionary of dictionaries of PEP8 messages per file.
+
+    Returns
+    -------
+    Formatted tables string.
     """
+
     all_tables = ''
 
     # VERA++, cppcheck, clang-format
@@ -579,14 +649,18 @@ def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
 
 
 def warnings_table(summary):
-    """
-    Create a formatted table of source file names and the number of build
+    """Create a formatted table of source file names and the number of build
     warnings reported for that file.
 
-    :param summary: Dictionary of source file names and number of build
-                    warnings.
-    :return:        Formatted table string.
+    Parameters
+    ----------
+    summary: Dictionary of source file names and number of build warnings.
+
+    Returns
+    -------
+    Formatted table string.
     """
+
     file_table = [['Warnings in file:', 'Count']]
 
     for file in summary.keys():
@@ -599,14 +673,18 @@ def warnings_table(summary):
 
 
 def errors_table(summary):
-    """
-    Create a formatted table of source file names and the number of build
+    """Create a formatted table of source file names and the number of build
     errors reported for that file.
 
-    :param summary: Dictionary of source file names and number of build
-                    errors.
-    :return:        Formatted table string.
+    Parameters
+    ----------
+    summary: Dictionary of source file names and number of build errors.
+
+    Returns
+    -------
+    Formatted table string.
     """
+
     file_table = [['Errors in file:', 'Count']]
 
     for file in summary.keys():
@@ -638,55 +716,51 @@ def printable_summary(list_of_changed_files,
                       number_of_tests_total,
                       number_of_tests_failed,
                       exit_code):
-    """
-    Create an overall build summary in a printable format.
+    """Create an overall build summary in a printable format.
 
-    :param list_of_changed_files:   List of changed source files.
-    :param status_vera_init:        Status of the VERA++ initialization:
-                                    True, False or None
-    :param status_cppcheck_init:    Status of the cppcheck initialization:
-                                    True, False or None
-    :param status_format_init:      Status of the clang-format initialization:
-                                    True, False or None
-    :param status_cmake_configure:  Status of the 'CMake configure':
-                                    True, False or None
-    :param status_make:             Status of the 'make':
-                                    True, False or None
-    :param status_make_install:     Status of the 'make install':
-                                    True, False or None
-    :param status_amazon_s3_upload: Status of the Amazon S3 upload:
-                                    True, False
-    :param status_tests:            Status of the test suite run:
-                                    True, False or None
-    :param summary_vera:            Dictionary of dictionaries of VERA++
-                                    messages per file.
-    :param summary_cppcheck:        Dictionary of dictionaries of cppcheck
-                                    messages per file.
-    :param summary_format:          Dictionary of dictionaries of clang-format
-                                    messages per file.
-    :param summary_pep8:            Dictionary of dictionaries of PEP8
-                                    messages per file.
-    :param summary_errors:          Dictionary of build error messages.
-    :param summary_warnings:        Dictionary of build warning messages.
-    :param number_of_errors:        Number of errors.
-    :param number_of_warnings:      Number of warnings.
-    :param number_of_tests_total:   Number of tests total.
-    :param number_of_tests_failed:  Number of tests failed.
-    :param exit_code:               Build exit code: 0 or 1
-    :return:                        Formatted build summary string.
-    """
-    header = '\n+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ' \
-             '+ + + + + + + + + +' + \
-             '\n+                                                           ' \
-             '                  +' + \
-             '\n+           N E S T   T r a v i s   C I   B u i l d   S u m ' \
-             'm a r y           +' + \
-             '\n+                                                           ' \
-             '                  +' + \
-             '\n+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + ' \
-             '+ + + + + + + + + +'
+    Parameters
+    ----------
+    list_of_changed_files:   List of changed source files.
+    status_vera_init:        Status of the VERA++ initialization: True, False
+                             or None
+    status_cppcheck_init:    Status of the cppcheck initialization: True, False
+                             or None
+    status_format_init:      Status of the clang-format initialization: True,
+                             False or None
+    status_cmake_configure:  Status of the 'CMake configure': True, False or
+                             None
+    status_make:             Status of the 'make': True, False or None
+    status_make_install:     Status of the 'make install': True, False or None
+    status_amazon_s3_upload: Status of the Amazon S3 upload: True, False
+    status_tests:            Status of the test suite run: True, False or None
+    summary_vera:            Dictionary of dictionaries of VERA++ messages per
+                             file.
+    summary_cppcheck:        Dictionary of dictionaries of cppcheck messages
+                             per file.
+    summary_format:          Dictionary of dictionaries of clang-format
+                             messages per file.
+    summary_pep8:            Dictionary of dictionaries of PEP8 messages per
+                             file.
+    summary_errors:          Dictionary of build error messages.
+    summary_warnings:        Dictionary of build warning messages.
+    number_of_errors:        Number of errors.
+    number_of_warnings:      Number of warnings.
+    number_of_tests_total:   Number of tests total.
+    number_of_tests_failed:  Number of tests failed.
+    exit_code:               Build exit code: 0 or 1.
 
-    build_summary = header + '\n\n'
+    Returns
+    -------
+    Formatted build summary string.
+    """
+
+    header_l1 = '\n+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +'  # noqa
+    header_l2 = '\n+                                                                             +'  # noqa
+    header_l3 = '\n+           N E S T   T r a v i s   C I   B u i l d   S u m m a r y           +'  # noqa
+    header_l4 = '\n+                                                                             +'  # noqa
+    header_l5 = '\n+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +'  # noqa
+
+    build_summary = header_l1 + header_l2 + header_l3 + header_l4 + header_l5 + '\n\n'               # noqa
 
     if number_of_msgs_in_summary(summary_vera) > 0 or \
        number_of_msgs_in_summary(summary_cppcheck) > 0 or \
@@ -777,46 +851,46 @@ def build_return_code(status_vera_init,
                       summary_cppcheck,
                       summary_format,
                       summary_pep8):
-    """
-    Depending in the build results, create a return code.
+    """Depending in the build results, create a return code.
 
-    :param status_vera_init:       Status of the VERA++ initialization:
-                                   True, False or None
-    :param status_cppcheck_init:   Status of the cppcheck initialization:
-                                   True, False or None
-    :param status_format_init:     Status of the clang-format initialization:
-                                   True, False or None
-    :param status_cmake_configure: Status of the 'CMake configure':
-                                   True, False or None
-    :param status_make:            Status of the 'make':
-                                   True, False or None
-    :param status_make_install:    Status of the 'make install':
-                                   True, False or None
-    :param status_tests:           Status of the test suite run:
-                                   True, False or None
-    :param summary_vera:           Dictionary of dictionaries of VERA++
-                                   messages per file.
-    :param summary_cppcheck:       Dictionary of dictionaries of cppcheck
-                                   messages per file.
-    :param summary_format:         Dictionary of dictionaries of clang-format
-                                   messages per file.
-    :param summary_pep8:           Dictionary of dictionaries of PEP8
-                                   messages per file.
-    :return:                       0 (success) or 1
+    Parameters
+    ----------
+    status_vera_init:       Status of the VERA++ initialization: True, False
+                            or None
+    status_cppcheck_init:   Status of the cppcheck initialization: True, False
+                            or None
+    status_format_init:     Status of the clang-format initialization: True,
+                            False or None
+    status_cmake_configure: Status of the 'CMake configure': True, False
+                            or None
+    status_make:            Status of the 'make': True, False or None
+    status_make_install:    Status of the 'make install': True, False or None
+    status_tests:           Status of the test suite run: True, False or None
+    summary_vera:           Dictionary of dictionaries of VERA++ messages per
+                            file.
+    summary_cppcheck:       Dictionary of dictionaries of cppcheck messages per
+                            file.
+    summary_format:         Dictionary of dictionaries of clang-format messages
+                            per file.
+    summary_pep8:           Dictionary of dictionaries of PEP8 messages per
+                            file.
+
+    Returns
+    -------
+    0 (success) or 1.
     """
-    if (status_vera_init is None or status_vera_init is True) and \
-       (status_cppcheck_init is None or status_cppcheck_init is True) and \
-       (status_format_init is None or status_format_init is True) and \
-       (status_cmake_configure is True) and \
-       (status_make is True) and \
-       (status_make_install is True) and \
-       (status_tests is True) and \
+
+    if (status_vera_init is None or status_vera_init) and \
+       (status_cppcheck_init is None or status_cppcheck_init) and \
+       (status_format_init is None or status_format_init) and \
+       (status_cmake_configure) and \
+       (status_make) and \
+       (status_make_install) and \
+       (status_tests) and \
+       (number_of_msgs_in_summary(summary_vera) == 0) and \
+       (number_of_msgs_in_summary(summary_cppcheck) == 0) and \
        (number_of_msgs_in_summary(summary_format) == 0) and \
        (number_of_msgs_in_summary(summary_pep8) == 0):
-       # Include these lines if the build should terminate with failure
-       # in case VERA++ and/or cppcheck failed.
-       # (number_of_msgs_in_summary(summary_vera) == 0) and \
-       # (number_of_msgs_in_summary(summary_cppcheck) == 0) and \
 
         return 0
     else:

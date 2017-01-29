@@ -59,11 +59,11 @@ before_install:
   - ls /etc/apt/sources.list.d/
   - sudo apt-get update -qq
 
-  # Remove any obsolete libraries.
+  # Remove automatically all unused packages.
   - sudo apt-get autoremove
 
   # Install packages required by NEST.
-  # (Please see also: http://www.nest-simulator.org/installation-2/#Standard_configuration )
+  # (Please see also: http://www.nest-simulator.org/installation/#standard-configuration)
   - sudo apt-get install -y build-essential cmake libltdl7-dev libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy python-matplotlib ipython
 
   # Install pip and Cython.
@@ -72,13 +72,13 @@ before_install:
   - sudo pip install -U setuptools
   - pip install --user cython==0.23.4
 
-  # Install package 'terminaltables' required by 'parse_travis_log.py' to create the build summary.
+  # Install package terminaltables required by parse_travis_log.py to create the build summary.
   - sudo pip install terminaltables
 
   # Install OpenMPI.
   - sudo apt-get install -y openmpi-bin libopenmpi-dev
 
-  # Install Python testsuite nosetests.
+  # Install nose framework for the Python testsuite.
   - sudo apt-get install -y python-nose
 
   # Install VERA++ and pep8 for static code analysis.

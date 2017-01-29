@@ -35,7 +35,7 @@ if ( NOT CMAKE_CROSSCOMPILING )
   # located in the global installation directory for documentation.
   install( CODE
     "execute_process(
-      COMMAND python -B generate_helpindex.py \"${CMAKE_INSTALL_DOCDIR}\"
+      COMMAND python -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
       WORKING_DIRECTORY \"${PROJECT_SOURCE_DIR}/extras/help_generator\"
     )"
     )

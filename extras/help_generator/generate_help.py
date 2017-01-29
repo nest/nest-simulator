@@ -23,8 +23,8 @@
 Generate NEST help files
 ========================
 
-Scan all source files for documentation and build the help files and
-the corresponding helpindex.
+Scan all source files for documentation and build the help files.
+The helpindex is built during installation in a separate step.
 """
 
 import os
@@ -32,7 +32,7 @@ import re
 import sys
 import textwrap
 
-from writers import coll_data, write_helpindex
+from writers import coll_data
 from helpers import check_ifdef, create_helpdirs, cut_it
 
 if len(sys.argv) != 3:
@@ -44,15 +44,11 @@ source_dir, build_dir = sys.argv[1:]
 helpdir = os.path.join(build_dir, "doc", "help")
 create_helpdirs(helpdir)
 
-is_MyModule_build = "MyModule" in source_dir
-
 allfiles = []
 for dirpath, dirnames, files in os.walk(source_dir):
-    is_MyModule_dir = "MyModule" in dirpath
-    if not is_MyModule_dir or (is_MyModule_dir and is_MyModule_build):
-        for f in files:
-            if f.endswith((".sli", ".cpp", ".cc", ".h", ".py")):
-                allfiles.append(os.path.join(dirpath, f))
+    for f in files:
+        if f.endswith((".sli", ".cpp", ".cc", ".h", ".py")):
+            allfiles.append(os.path.join(dirpath, f))
 
 num = 0
 full_list = []
@@ -131,5 +127,3 @@ for fname in allfiles:
 
             all_data = coll_data(keywords, documentation, num, helpdir, fname,
                                  sli_command_list)
-
-write_helpindex(helpdir)

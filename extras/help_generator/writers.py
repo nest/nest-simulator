@@ -186,7 +186,7 @@ def write_helpindex(helpdir):
         html_list.append('</tr></table></center>')
         html_list.append('<center><table class="commands" id="%s">'
                          % doubles[0])
-        for item in sorted(filelist, 
+        for item in sorted(filelist,
                            key=lambda name: name.lower().rsplit('/', 1)[1]):
             fitem = open(item, 'r')
             itemtext = fitem.read()

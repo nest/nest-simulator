@@ -148,6 +148,7 @@ nest::hh_cond_exp_traub::Parameters_::Parameters_()
   , E_in( -80.0 )
   , tau_synE( 5.0 )  // Synaptic Time Constant Excitatory Synapse (ms)
   , tau_synI( 10.0 ) // Synaptic Time Constant Excitatory Synapse (ms)
+  , t_ref_( 0.0 )    // Refractory time in ms
   , I_e( 0.0 )       // Stimulus Current (pA)
 {
 }
@@ -213,6 +214,7 @@ nest::hh_cond_exp_traub::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::E_in, E_in );
   def< double >( d, names::tau_syn_ex, tau_synE );
   def< double >( d, names::tau_syn_in, tau_synI );
+  def< double >( d, names::t_ref, t_ref_ );
   def< double >( d, names::I_e, I_e );
 }
 
@@ -231,13 +233,23 @@ nest::hh_cond_exp_traub::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::E_in, E_in );
   updateValue< double >( d, names::tau_syn_ex, tau_synE );
   updateValue< double >( d, names::tau_syn_in, tau_synI );
+  updateValue< double >( d, names::t_ref, t_ref_ );
   updateValue< double >( d, names::I_e, I_e );
 
   if ( C_m <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
+  }
 
   if ( tau_synE <= 0 || tau_synI <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
+
+  if ( t_ref_ < 0 )
+  {
+    throw BadProperty( "Refractory time cannot be negative." );
+  }
 }
 
 void
@@ -368,7 +380,7 @@ nest::hh_cond_exp_traub::calibrate()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
-  V_.RefractoryCounts_ = 20;
+  V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   V_.U_old_ = S_.y_[ State_::V_M ];
 }
 
@@ -422,7 +434,7 @@ nest::hh_cond_exp_traub::update( Time const& origin,
       if ( S_.y_[ State_::V_M ] >= P_.V_T + 30.
         && V_.U_old_ > S_.y_[ State_::V_M ] )
       {
-        S_.r_ = V_.RefractoryCounts_;
+        S_.r_ = V_.refractory_counts_;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
 

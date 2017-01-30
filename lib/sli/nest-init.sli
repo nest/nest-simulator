@@ -677,7 +677,7 @@ def
      /target
      /weight
      /delay
-     /synapsemodel
+     /synapse_model
      
      Example:
      
@@ -732,9 +732,18 @@ def
    SeeAlso: Create, LayoutArray
 */
 
+/LayoutNetwork
+<< /deprecation_warning true >>
+Options
+
 /LayoutNetwork_l_a_dict
 {
   << >> begin
+  /LayoutNetwork /deprecation_warning GetOption true eq
+  {
+    (SLI function LayoutNetwork is deprecated in NEST 3.0.) M_DEPRECATED message
+    /LayoutNetwork << /deprecation_warning false >> SetOptions
+  } if
              /val   Set
   size       /n_dim Set
    dup 0 get /n     Set
@@ -775,6 +784,11 @@ def
 /LayoutNetwork_l_a
 {
   << >> begin
+  /LayoutNetwork /deprecation_warning GetOption true eq
+  {
+    (SLI function LayoutNetwork is deprecated in NEST 3.0.) M_DEPRECATED message
+    /LayoutNetwork << /deprecation_warning false >> SetOptions
+  } if
   size       /n_dim Set
    dup 0 get /n     Set
              /dim   Set
@@ -1222,22 +1236,6 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-/GetNetwork_i_i {
-  << >> begin
-  /depth Set
-  dup
-  GetStatus /model get % id model
-  /subnet eq depth 1 geq and {       % id
-    dup                % id id
-    [
-      exch           % id [ id
-      GetGlobalChildren { depth 1 sub GetNetwork_i_i } forall
-    ]
-    exch prepend
-  } if
-  end
-} def
-
 /* BeginDocumentation
 Name: GetNetwork - Return a nested list with the IDs of nodes in a multi-dimensional subnet.
 Synpsis: ID n GetNetwork -> [ ]
@@ -1261,6 +1259,32 @@ and can thus take a lot of time and consume huge amounts of memory.
 
 SeeAlso: GetGlobalNodes, GetLocalNodes, GetGlobalLeaves, GetLocalLeaves, GetGlobalChildren, GetLocalChildren
 */
+
+/GetNetwork
+<< /deprecation_warning true >>
+Options
+
+/GetNetwork_i_i {
+  << >> begin
+  /GetNetwork /deprecation_warning GetOption true eq
+  {
+    (SLI function GetNetwork is deprecated in NEST 3.0.) M_DEPRECATED message
+    /GetNetwork << /deprecation_warning false >> SetOptions
+  } if
+  /depth Set
+  dup
+  GetStatus /model get % id model
+  /subnet eq depth 1 geq and {       % id
+    dup                % id id
+    [
+      exch           % id [ id
+      GetGlobalChildren { depth 1 sub GetNetwork_i_i } forall
+    ]
+    exch prepend
+  } if
+  end
+} def
+
 /GetNetwork trie
 [/integertype /integertype] /GetNetwork_i_i load addtotrie
 def

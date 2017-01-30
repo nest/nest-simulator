@@ -27,6 +27,7 @@
 
 // Includes from nestkernel:
 #include "genericmodel.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "model.h"
 #include "model_manager_impl.h"
@@ -1239,7 +1240,7 @@ TopologyModule::Cvdict_MFunction::execute( SLIInterpreter* i ) const
 }
 
 std::string
-LayerExpected::message()
+LayerExpected::message() const
 {
   return std::string();
 }

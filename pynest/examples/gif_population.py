@@ -41,6 +41,8 @@ import nest
 import nest.raster_plot
 import matplotlib.pyplot as plt
 
+nest.ResetKernel()
+
 '''
 Assigning the simulation parameters to variables.
 '''

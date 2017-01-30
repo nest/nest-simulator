@@ -175,7 +175,7 @@ public:
     return ( type == &t );
   }
 
-  void
+  virtual void
   execute( SLIInterpreter* i )
   {
     action->execute( i );

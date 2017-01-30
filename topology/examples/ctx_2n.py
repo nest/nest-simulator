@@ -27,6 +27,10 @@ pyramidal cell and one interneuron, visualize
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
+
+This example uses the function GetLeaves, which is deprecated. A deprecation
+warning is therefore issued. For details about deprecated functions, see
+documentation.
 '''
 
 import nest
@@ -50,12 +54,15 @@ nest.PrintNetwork(2)
 
 nest.PrintNetwork(2, ctx)
 
+# ctx_leaves is a work-around until NEST 3.0 is released
+ctx_leaves = nest.GetLeaves(ctx)[0]
+
 # extract position information
 ppyr = pylab.array(
-    tuple(zip(*[topo.GetPosition([n])[0] for n in nest.GetLeaves(ctx)[0]
+    tuple(zip(*[topo.GetPosition([n])[0] for n in ctx_leaves
                 if nest.GetStatus([n], 'model')[0] == 'pyr'])))
 pin = pylab.array(
-    tuple(zip(*[topo.GetPosition([n])[0] for n in nest.GetLeaves(ctx)[0]
+    tuple(zip(*[topo.GetPosition([n])[0] for n in ctx_leaves
                 if nest.GetStatus([n], 'model')[0] == 'in'])))
 # plot
 pylab.clf()

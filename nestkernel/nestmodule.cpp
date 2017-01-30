@@ -785,7 +785,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  index source = getValue< long >( i->OStack.pick( 2 ) );
+  const index source = getValue< long >( i->OStack.pick( 2 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
 
@@ -795,7 +795,8 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
     throw UnknownSynapseType( synmodel_name.toString() );
   const index synmodel_id = static_cast< index >( synmodel );
 
-  kernel().connection_manager.divergent_connect( source, params, synmodel_id );
+  kernel().connection_manager.data_connect_single(
+    source, params, synmodel_id );
 
   ALL_ENTRIES_ACCESSED(
     *params, "Connect", "The following synapse parameters are unused: " );
@@ -818,7 +819,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
     /target
     /weight
     /delay
-    /model
+    /synapse_model
 
     Example:
 
@@ -840,9 +841,9 @@ void
 NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
-  ArrayDatum connectome = getValue< ArrayDatum >( i->OStack.top() );
+  const ArrayDatum connectome = getValue< ArrayDatum >( i->OStack.top() );
 
-  kernel().connection_manager.connect( connectome );
+  kernel().connection_manager.data_connect_connectome( connectome );
   i->OStack.pop();
   i->EStack.pop();
 }
@@ -881,7 +882,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    - Each Node is shown on a separate line, showing its model name followed
    by its in global id in brackets.
 
-   +-[0] Subnet Dim=[1]
+   +-[0] subnet Dim=[1]
    |
    +- iaf_psc_alpha [1]
 
@@ -890,7 +891,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    sequence, then the number of consecutive nodes, then the global id of
    the last node in the sequence.
 
-   +-[0] Subnet Dim=[1]
+   +-[0] subnet Dim=[1]
    |
    +- iaf_psc_alpha [1]..(2)..[2]
 
@@ -907,93 +908,94 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    SLI ] /iaf_psc_alpha Create
    SLI [1] /iaf_cond_alpha 10 Create
    SLI [2] /dc_generator [2 5 6] LayoutNetwork
-   SLI [3] [0] 1 PrintNetwork
-   +-[0] Subnet Dim=[12]
+   SLI [3] 0 1 PrintNetwork
+   +-[0] root dim=[12]
+   SLI [3] 0 2 PrintNetwork
+   +-[0] root dim=[12]
       |
-      +- iaf_psc_alpha [1]
-      +- lifb_cond_neuron [2]..(10)..[11]
-      +-[12] Subnet Dim=[2 5 6]
-   SLI [3] [0] 2 PrintNetwork
-   +-[0] Subnet Dim=[12]
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
+   SLI [3] 0 3 PrintNetwork
+   +-[0] root dim=[12]
       |
-      +- iaf_psc_alpha [1]
-      +- lifb_cond_neuron [2]..(10)..[11]
-      +-[12] Subnet Dim=[2 5 6]
-          |
-          +-[13] Subnet Dim=[5 6]
-          +-[49] Subnet Dim=[5 6]
-   SLI [3] [0] 3 PrintNetwork
-   +-[0] Subnet Dim=[12]
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
+         |
+         +-[1] subnet dim=[5 6]
+         +-[2] subnet dim=[5 6]
+   SLI [3] 0 4 PrintNetwork
+   +-[0] root dim=[12]
       |
-      +- iaf_psc_alpha [1]
-      +- lifb_cond_neuron [2]..(10)..[11]
-      +-[12] Subnet Dim=[2 5 6]
-          |
-          +-[13] Subnet Dim=[5 6]
-          |   |
-          |   +-[14] Subnet Dim=[6]
-          |   +-[21] Subnet Dim=[6]
-          |   +-[28] Subnet Dim=[6]
-          |   +-[35] Subnet Dim=[6]
-          |   +-[42] Subnet Dim=[6]
-          +-[49] Subnet Dim=[5 6]
-              |
-              +-[50] Subnet Dim=[6]
-              +-[57] Subnet Dim=[6]
-              +-[64] Subnet Dim=[6]
-              +-[71] Subnet Dim=[6]
-              +-[78] Subnet Dim=[6]
-   SLI [3] [0] 4 PrintNetwork
-   +-[0] Subnet Dim=[12]
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
+         |
+         +-[1] subnet dim=[5 6]
+         |  |
+         |  +-[1] subnet dim=[6]
+         |  +-[2] subnet dim=[6]
+         |  +-[3] subnet dim=[6]
+         |  +-[4] subnet dim=[6]
+         |  +-[5] subnet dim=[6]
+         +-[2] subnet dim=[5 6]
+            |
+            +-[1] subnet dim=[6]
+            +-[2] subnet dim=[6]
+            +-[3] subnet dim=[6]
+            +-[4] subnet dim=[6]
+            +-[5] subnet dim=[6]
+   SLI [3] 0 5 PrintNetwork
+   +-[0] root dim=[12]
       |
-      +- iaf_psc_alpha [1]
-      +- lifb_cond_neuron [2]..(10)..[11]
-      +-[12] Subnet Dim=[2 5 6]
-          |
-          +-[13] Subnet Dim=[5 6]
-          |   |
-          |   +-[14] Subnet Dim=[6]
-          |   |   |
-          |   |   +- dc_generator [15]..(6)..[20]
-          |   |
-          |   +-[21] Subnet Dim=[6]
-          |   |   |
-          |   |   +- dc_generator [22]..(6)..[27]
-          |   |
-          |   +-[28] Subnet Dim=[6]
-          |   |   |
-          |   |   +- dc_generator [29]..(6)..[34]
-          |   |
-          |   +-[35] Subnet Dim=[6]
-          |   |   |
-          |   |   +- dc_generator [36]..(6)..[41]
-          |   |
-          |   +-[42] Subnet Dim=[6]
-          |       |
-          |       +- dc_generator [43]..(6)..[48]
-          |
-          +-[49] Subnet Dim=[5 6]
-              |
-              +-[50] Subnet Dim=[6]
-              |   |
-              |   +- dc_generator [51]..(6)..[56]
-              |
-              +-[57] Subnet Dim=[6]
-              |   |
-              |   +- dc_generator [58]..(6)..[63]
-              |
-              +-[64] Subnet Dim=[6]
-              |   |
-              |   +- dc_generator [65]..(6)..[70]
-              |
-              +-[71] Subnet Dim=[6]
-              |   |
-              |   +- dc_generator [72]..(6)..[77]
-              |
-              +-[78] Subnet Dim=[6]
-                  |
-                  +- dc_generator [79]..(6)..[84]
-
+      +-[1] iaf_psc_alpha
+      +-[2]...[11] iaf_cond_alpha
+      +-[12] subnet dim=[2 5 6]
+         |
+         +-[1] subnet dim=[5 6]
+         |  |
+         |  +-[1] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |  
+         |  +-[2] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |  
+         |  +-[3] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |  
+         |  +-[4] subnet dim=[6]
+         |  |  |
+         |  |  +-[1]...[6] dc_generator
+         |  |  
+         |  +-[5] subnet dim=[6]
+         |     |
+         |     +-[1]...[6] dc_generator
+         |     
+         +-[2] subnet dim=[5 6]
+            |
+            +-[1] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |  
+            +-[2] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |  
+            +-[3] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |  
+            +-[4] subnet dim=[6]
+            |  |
+            |  +-[1]...[6] dc_generator
+            |  
+            +-[5] subnet dim=[6]
+               |
+               +-[1]...[6] dc_generator
 
    Availability: NEST
    Author: Marc-Oliver Gewaltig, Jochen Martin Eppler
@@ -1613,11 +1615,12 @@ NestModule::init( SLIInterpreter* i )
   GIDCollectionType.setdefaultaction( SLIInterpreter::datatypefunction );
 
   // register interface functions with interpreter
-  i->createcommand( "ChangeSubnet", &changesubnet_ifunction );
-  i->createcommand( "CurrentSubnet", &currentsubnetfunction );
-  i->createcommand( "GetNodes_i_D_b_b", &getnodes_i_D_b_bfunction );
-  i->createcommand( "GetLeaves_i_D_b", &getleaves_i_D_bfunction );
-  i->createcommand( "GetChildren_i_D_b", &getchildren_i_D_bfunction );
+  i->createcommand( "ChangeSubnet", &changesubnet_ifunction, "NEST 3.0" );
+  i->createcommand( "CurrentSubnet", &currentsubnetfunction, "NEST 3.0" );
+  i->createcommand( "GetNodes_i_D_b_b", &getnodes_i_D_b_bfunction, "NEST 3.0" );
+  i->createcommand( "GetLeaves_i_D_b", &getleaves_i_D_bfunction, "NEST 3.0" );
+  i->createcommand(
+    "GetChildren_i_D_b", &getchildren_i_D_bfunction, "NEST 3.0" );
 
   i->createcommand( "RestoreNodes_a", &restorenodes_afunction );
 
@@ -1642,8 +1645,9 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "Connect_g_g_D_D", &connect_g_g_D_Dfunction );
 
-  i->createcommand( "DataConnect_i_D_s", &dataconnect_i_D_sfunction );
-  i->createcommand( "DataConnect_a", &dataconnect_afunction );
+  i->createcommand(
+    "DataConnect_i_D_s", &dataconnect_i_D_sfunction, "NEST 3.0" );
+  i->createcommand( "DataConnect_a", &dataconnect_afunction, "NEST 3.0" );
 
   i->createcommand( "ResetNetwork", &resetnetworkfunction );
   i->createcommand( "ResetKernel", &resetkernelfunction );

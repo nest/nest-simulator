@@ -1,0 +1,81 @@
+/*
+ *  issue-596.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /* BeginDocumentation
+Name: testsuite::issue-565
+
+Synopsis: (issue-565) run -> NEST exits if test fails
+
+Description:
+This test makes sure that after deleting a connection in a
+heterogenenous connector, the resulting connector can still be
+correctly used to deliver spikes
+
+Author: Jakob Jordan
+FirstVersion: December 2016
+SeeAlso:
+*/
+
+(unittest) run
+/unittest using
+
+/BuildNetwork
+{
+  ResetKernel
+
+  % Create neurons and spike detector
+  /iaf_psc_delta 2 Create
+  /spike_detector 1 Create /sd Set
+
+  % Get neuron one to continously spike
+  1 << /I_e 600. >> SetStatus
+
+  % Create connections, need to be of different types to create
+  % heterogenenous connector
+  [1] [2] << /rule /all_to_all >>
+    << /weight 0. /model /static_synapse >> Connect
+  [1] [2] << /rule /all_to_all >>
+    << /weight 0. /model /stdp_synapse >> Connect
+
+  % Create connection to spike detector
+  [1] [sd] Connect
+} def
+
+% Measure event count without deleting connection (ground truth)
+BuildNetwork
+
+100 Simulate
+
+sd GetStatus /n_events get /n_events_target Set
+
+% Measure event count with deleting connection
+BuildNetwork
+
+[1] cvgidcollection [2] cvgidcollection << /rule /all_to_all >>
+  << /model /static_synapse >> Disconnect_g_g_D_D
+
+100 Simulate
+
+{
+  sd GetStatus /n_events get n_events_target eq
+} assert_or_die

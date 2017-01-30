@@ -32,6 +32,7 @@
 // Includes from nestkernel:
 #include "event_delivery_manager.h"
 #include "genericmodel.h"
+#include "genericmodel_impl.h"
 #include "kernel_manager.h"
 #include "model.h"
 #include "model_manager_impl.h"
@@ -55,7 +56,7 @@ NodeManager::NodeManager()
   , n_gsd_( 0 )
   , nodes_vec_()
   , wfr_nodes_vec_()
-  , any_node_uses_wfr_( false )
+  , wfr_is_used_( false )
   , nodes_vec_network_size_( 0 ) // zero to force update
 {
 }
@@ -201,6 +202,8 @@ index NodeManager::add_node( index mod, long n ) // no_p
   Model* model = kernel().model_manager.get_model( mod );
   assert( model != 0 );
 
+  model->deprecation_warning( "Create" );
+
   /* current_ points to the instance of the current subnet on thread 0.
      The following code makes subnet a pointer to the wrapper container
      containing the instances of the current subnet on all threads.
@@ -229,7 +232,7 @@ index NodeManager::add_node( index mod, long n ) // no_p
   if ( model->potential_global_receiver()
     and kernel().mpi_manager.get_num_rec_processes() > 0 )
   {
-    // In this branch we create nodes for all GIDs which are on a local thread
+    // In this branch we create nodes for global receivers
     const int n_per_process = n / kernel().mpi_manager.get_num_rec_processes();
     const int n_per_thread = n_per_process / n_threads + 1;
 
@@ -301,7 +304,28 @@ index NodeManager::add_node( index mod, long n ) // no_p
       }
     }
 
-    for ( size_t gid = min_gid; gid < max_gid; ++gid )
+    size_t gid;
+    if ( kernel().vp_manager.is_local_vp(
+           kernel().vp_manager.suggest_vp( min_gid ) ) )
+    {
+      gid = min_gid;
+    }
+    else
+    {
+      gid = next_local_gid_( min_gid );
+    }
+    size_t next_lid = current_->global_size() + gid - min_gid;
+    // The next loop will not visit every node, if more than one rank is
+    // present.
+    // Since we already know what range of gids will be created, we can tell the
+    // current subnet the range and subsequent calls to
+    // `current_->add_remote_node()`
+    // become irrelevant.
+    current_->add_gid_range( min_gid, max_gid - 1 );
+
+    // min_gid is first valid gid i should create, hence ask for the first local
+    // gid after min_gid-1
+    while ( gid < max_gid )
     {
       const thread vp = kernel().vp_manager.suggest_vp( gid );
       const thread t = kernel().vp_manager.vp_to_thread( vp );
@@ -316,12 +340,26 @@ index NodeManager::add_node( index mod, long n ) // no_p
 
         local_nodes_.add_local_node( *newnode ); // put into local nodes list
         current_->add_node( newnode ); // and into current subnet, thread 0.
+
+        // lid setting is wrong, if a range is set, as the subnet already
+        // assumes,
+        // the nodes are available.
+        newnode->set_lid_( next_lid );
+        const size_t next_gid = next_local_gid_( gid );
+        next_lid += next_gid - gid;
+        gid = next_gid;
       }
       else
       {
-        local_nodes_.add_remote_node( gid ); // ensures max_gid is correct
-        current_->add_remote_node( gid, mod );
+        ++gid; // brutal fix, next_lid has been set in if-branch
       }
+    }
+    // if last gid is not on this process, we need to add it as a remote node
+    if ( not kernel().vp_manager.is_local_vp(
+           kernel().vp_manager.suggest_vp( max_gid - 1 ) ) )
+    {
+      local_nodes_.add_remote_node( max_gid - 1 ); // ensures max_gid is correct
+      current_->add_remote_node( max_gid - 1, mod );
     }
   }
   else if ( !model->one_node_per_process() )
@@ -489,6 +527,31 @@ NodeManager::is_local_node( Node* n ) const
   return kernel().vp_manager.is_local_vp( n->get_vp() );
 }
 
+inline index
+NodeManager::next_local_gid_( index curr_gid ) const
+{
+  index rank = kernel().mpi_manager.get_rank();
+  index sim_procs = kernel().mpi_manager.get_num_sim_processes();
+  if ( rank >= sim_procs )
+  {
+    // i am a rec proc trying to add a non-gsd node => just iterate to next gid
+    return curr_gid + sim_procs;
+  }
+  // responsible process for curr_gid
+  index proc_of_curr_gid = curr_gid % sim_procs;
+
+  if ( proc_of_curr_gid == rank )
+  {
+    // I am responsible for curr_gid, then add 'modulo'.
+    return curr_gid + sim_procs;
+  }
+  else
+  {
+    // else add difference
+    // make modulo positive and difference of my proc an curr_gid proc
+    return curr_gid + ( sim_procs + rank - proc_of_curr_gid ) % sim_procs;
+  }
+}
 
 void
 NodeManager::go_to( index n )
@@ -615,15 +678,15 @@ NodeManager::ensure_valid_thread_local_ids()
 
       nodes_vec_network_size_ = size();
 
-      any_node_uses_wfr_ = false;
-      // any_node_uses_wfr_ indicates, whether at least one
+      wfr_is_used_ = false;
+      // wfr_is_used_ indicates, whether at least one
       // of the threads has a neuron that uses waveform relaxtion
       // all threads then need to perform a wfr_update
       // step, because gather_events() has to be done in a
       // openmp single section
       for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
         if ( wfr_nodes_vec_[ t ].size() > 0 )
-          any_node_uses_wfr_ = true;
+          wfr_is_used_ = true;
     }
 #ifdef _OPENMP
   } // end of omp critical region
@@ -779,6 +842,18 @@ NodeManager::finalize_nodes()
         }
       }
     }
+  }
+}
+
+void
+NodeManager::check_wfr_use()
+{
+  wfr_is_used_ = kernel().mpi_manager.any_true( wfr_is_used_ );
+  if ( wfr_is_used_ )
+  {
+    GapJunctionEvent::set_coeff_length(
+      kernel().connection_manager.get_min_delay()
+      * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 ) );
   }
 }
 

@@ -28,11 +28,31 @@ from . import test_growth_curves
 from . import test_sp_manager
 from . import test_disconnect
 from . import test_disconnect_multiple
+from . import test_enable_multithread
+HAVE_MPI = nest.sli_func("statusdict/have_mpi ::")
+if HAVE_MPI:
+    print ("Testing with MPI")
+    from subprocess import call
+    import sys
+    import os
 
 __author__ = 'naveau'
 
 
 def suite():
+    # MPI tests
+    if HAVE_MPI:
+        try:
+            # Get the MPI command
+            command = nest.sli_func(
+                "mpirun", 2, "python", "test_sp/mpitest_issue_578_sp.py")
+            print ("Executing test with command: " + command)
+            command = command.split()
+            call(command)
+        except:
+            print (sys.exc_info()[0])
+            print ("Test call with MPI ended in error")
+            raise
     test_suite = unittest.TestSuite()
 
     test_suite.addTest(test_synaptic_elements.suite())
@@ -42,9 +62,9 @@ def suite():
     test_suite.addTest(test_synaptic_elements.suite())
     test_suite.addTest(test_disconnect.suite())
     test_suite.addTest(test_disconnect_multiple.suite())
+    test_suite.addTest(test_enable_multithread.suite())
 
     return test_suite
-
 
 if __name__ == "__main__":
     nest.set_verbosity('M_WARNING')

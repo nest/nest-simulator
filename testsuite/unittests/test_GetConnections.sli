@@ -27,7 +27,8 @@
 
    Description:
 
-   This test generates 100 iaf_psc_alphas and connects them with different synapses.
+   This test generates 100 iaf_psc_alpha neurons and connects
+   them with different synapses.
 
    SeeAlso: GetConnections
 

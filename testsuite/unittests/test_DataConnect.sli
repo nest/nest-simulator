@@ -27,7 +27,8 @@
 
    Description:
 
-   This test generates 100 iaf_psc_alphas and creates a connectivity vector per neuron
+   This test generates 100 iaf_psc_alpha neurons and creates
+   a connectivity vector per neuron
 
    SeeAlso: DataConnect
 

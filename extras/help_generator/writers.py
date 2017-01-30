@@ -150,11 +150,9 @@ def write_helpindex(helpdir):
     ---------------------------------------
 
     """
-    print(helpdir)
     filelist = glob.glob(os.path.join(helpdir, '*', '*.hlp'))
     html_list = []
     hlp_list = []
-    print(filelist[:10])
 
     # Loading Template for helpindex.html
     ftemplate = open(os.path.join('templates', 'helpindex.tpl.html'), 'r')
@@ -225,7 +223,6 @@ def write_helpindex(helpdir):
     indexstring = s.substitute(indexbody=htmlstring, css=csstempl,
                                footer=footertempl)
 
-    print(helpdir)
     f_helpindex = open(os.path.join(helpdir, 'helpindex.html'), 'w')
     f_helpindex.write(indexstring)
     f_helpindex.close()

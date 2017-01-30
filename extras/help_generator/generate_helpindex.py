@@ -26,6 +26,7 @@ Generate NEST helpindex
 Generate the helpindex containing all help files in the given
 help_dir.
 """
+
 import os
 import sys
 from writers import write_helpindex

@@ -552,10 +552,9 @@ bool iaf_psc_exp_ps_time_reversal::is_spike_(double_t dt)
   const double_t exp_tau_m  = numerics::expm1(dt/P_.tau_m_) ; 
   const double_t exp_tau_m_s = numerics::expm1(dt/P_.tau_m_ - dt/P_.tau_ex_);
   
-  //pre-compute g
   double_t g = ((P_.a1_ * I_0 * exp_tau_m_s + exp_tau_m * (P_.a3_ - P_.I_e_ * P_.a2_) + P_.a3_)/P_.a4_) ; 
 
-    //no-spike
+    //no-spike, NS_1
     // intersecting line
   if((V_0 <= (((I_0 + P_.I_e_)*(P_.b1_ * exp_tau_m + P_.b2_* exp_tau_s) + P_.b5_*(exp_tau_m - exp_tau_s))/( P_.b7_ * exp_tau_s)))
     //continuation line       
@@ -564,18 +563,18 @@ bool iaf_psc_exp_ps_time_reversal::is_spike_(double_t dt)
       return false;
     }
   
-    //spike
+    //spike, S_1
   else if (V_0 >= g )  
     {
       return true;
     }
-  //no-spike
+  //no-spike, NS_2
   else if(V_0 < (P_.c1_ * P_.I_e_ + P_.c2_ * I_0 + P_.c3_* pow(I_0, P_.c4_) * pow((P_.c5_ - P_.I_e_), P_.c6_)))
     { 
       return false;
     }
   else
-  //spike
+  //spike, S_2
     {
       V_.bisection_step = (P_.a1_ / P_.tau_m_ * P_.tau_ex_ ) * log ( P_.b1_ * I_0 / (P_.a2_ * P_.I_e_ - P_.a1_ * I_0 - P_.a4_ * V_0 ) );
       return true;

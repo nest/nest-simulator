@@ -754,13 +754,15 @@ def printable_summary(list_of_changed_files,
     Formatted build summary string.
     """
 
-    header_l1 = '\n+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +'  # noqa
-    header_l2 = '\n+                                                                             +'  # noqa
-    header_l3 = '\n+           N E S T   T r a v i s   C I   B u i l d   S u m m a r y           +'  # noqa
-    header_l4 = '\n+                                                                             +'  # noqa
-    header_l5 = '\n+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +'  # noqa
+    header = """
+    + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+    +                                                                         +
+    +        N E S T   T r a v i s   C I   B u i l d   S u m m a r y          +
+    +                                                                         +
+    + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
+    """
 
-    build_summary = header_l1 + header_l2 + header_l3 + header_l4 + header_l5 + '\n\n'               # noqa
+    build_summary = header
 
     if number_of_msgs_in_summary(summary_vera) > 0 or \
        number_of_msgs_in_summary(summary_cppcheck) > 0 or \
@@ -904,8 +906,9 @@ if __name__ == '__main__':
 
     this_script_filename, log_filename = argv
 
-    changed_files = list_of_changed_files(log_filename, "MSGBLD0070",
-                                          "MSGBLD0100", "MSGBLD0095")
+    changed_files = \
+        list_of_changed_files(log_filename, "MSGBLD0070",
+                              "MSGBLD0100", "MSGBLD0095")
 
     # The NEST Travis CI build consists of several steps and sections.
     # Each section is enclosed in a start- and an end-message.

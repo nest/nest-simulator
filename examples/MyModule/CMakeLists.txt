@@ -275,7 +275,9 @@ if ( NOT CMAKE_CROSSCOMPILING )
   # files.
   add_custom_command( TARGET generate_help POST_BUILD
     COMMAND python -B generate_help.py "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}"
+    COMMAND python -B generate_helpindex.py "${PROJECT_BINARY_DIR}/doc"
     WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${NEST_DATADIR}/help_generator"
+    COMMENT "Extracting help information; this may take a litte while."
     )
   # Copy the local doc/help directory to the global installation
   # directory for documentation.

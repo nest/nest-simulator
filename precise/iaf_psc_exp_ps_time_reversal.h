@@ -509,14 +509,6 @@ void nest::iaf_psc_exp_ps_time_reversal::spike_test_(const double_t t1)
     {
       if ( Vdot_0*t1 + V_0 >= V_th )
       {
-        //if ( V_0 + Vdot_0 * (V_0 - V_t1 + Vdot_t1*t1) / (Vdot_t1-Vdot_0) >= V_th )
-    	//{
-    	  /* //final iaflossles test */
-    	  /* double_t const V_th_bar = V_th - tauC_m*I_x;  */
-    	  /* double_t const y        = V_th_bar/tauC_m / I_0; */
-
-    	  /* if ( V_0 >= tau_m/(tau_m-tau) * (-tau/C_m * I_0 + V_th_bar * pow(y, (-tau/tau_m))) ) */
-	  /*   S_.det_spikes++; */
 
   	  // D'Haene tests
   	  double_t const minus_taus = -tau_m*tau / (tau_m-tau);
@@ -541,20 +533,22 @@ void nest::iaf_psc_exp_ps_time_reversal::spike_test_(const double_t t1)
   }
 }
 
-//time-reversal state space analysis test 
-//looks for the no-spike region first
-//the state space test takes argument dt and
-//returns true, spike: if (V(t_{right}) > V_(\theta));
-//returns false: ( (V(t_{right} < V_(\theta) or initial conditions in no-spike region);
-//returns true, spike: missed spike excursion, compute t_{max} = dt and find point of
-//threshold crossing t_{\theta} using emit_spike_.
+
+/* Conventional spike detection algorithms propagate the initial state forwards in time and see whether it meets the threshold.
+This function implements a general method to solve the threshold-detection problem for an integrable, affine or linear
+time evolution by applying geometric analysis. The idea is to propagate the threshold backwards in time and see whether
+it meets the initial state. In state space spanned by voltage and current, this clearly separates the spiking region and 
+non-spiking region. is_spike_ takes argument dt which corresponds to the time window at which this spike prediction occurs.
+returns true, spike: if (V(t_{right}) > V_(\theta)); returns false: (V(t_{right} < V_(\theta) or initial conditions in no-spike region;
+returns true, spike: missed spike excursion, compute t_{max} = dt and find point of threshold crossing t_{\theta} using emit_spike_.
+inequalities are adjusted such that backward propagation (negative time) is already accounted for here */
 
 inline
 bool iaf_psc_exp_ps_time_reversal::is_spike_(double_t dt)
 {
   double_t const I_0   = V_.y1_ex_before_ + V_.y1_in_before_;
   double_t const V_0   = V_.y2_before_; 
-  const double_t exp_tau_s = numerics::expm1(dt/P_.tau_ex_) ; //inequalities are adjusted such that backward propagation (negative time) is already accounted for here
+  const double_t exp_tau_s = numerics::expm1(dt/P_.tau_ex_) ; 
   const double_t exp_tau_m  = numerics::expm1(dt/P_.tau_m_) ; 
   const double_t exp_tau_m_s = numerics::expm1(dt/P_.tau_m_ - dt/P_.tau_ex_);
   

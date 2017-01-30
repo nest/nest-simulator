@@ -84,7 +84,7 @@ ResetKernel
   { /st Set 
     % create new nodes for each connection to avoid any issues with prohibited multiple connections
     ds_models 
-    { Create /iaf_psc_alpha Create st Connect } forall  
+    { Create /iaf_psc_alpha Create st Connect } forall
   } forall
 } pass_or_die
 
@@ -117,7 +117,7 @@ ResetKernel
 models_to_fail
 {
     /st Set
-    /multimeter Create /iaf_psc_alpha Create { st Connect } fail_or_die 
+    /multimeter Create /iaf_psc_alpha Create { st Connect } fail_or_die
 } forall 
   
 endusing

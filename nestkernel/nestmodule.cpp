@@ -958,41 +958,41 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
          |  +-[1] subnet dim=[6]
          |  |  |
          |  |  +-[1]...[6] dc_generator
-         |  |  
+         |  |
          |  +-[2] subnet dim=[6]
          |  |  |
          |  |  +-[1]...[6] dc_generator
-         |  |  
+         |  |
          |  +-[3] subnet dim=[6]
          |  |  |
          |  |  +-[1]...[6] dc_generator
-         |  |  
+         |  |
          |  +-[4] subnet dim=[6]
          |  |  |
          |  |  +-[1]...[6] dc_generator
-         |  |  
+         |  |
          |  +-[5] subnet dim=[6]
          |     |
          |     +-[1]...[6] dc_generator
-         |     
+         |
          +-[2] subnet dim=[5 6]
             |
             +-[1] subnet dim=[6]
             |  |
             |  +-[1]...[6] dc_generator
-            |  
+            |
             +-[2] subnet dim=[6]
             |  |
             |  +-[1]...[6] dc_generator
-            |  
+            |
             +-[3] subnet dim=[6]
             |  |
             |  +-[1]...[6] dc_generator
-            |  
+            |
             +-[4] subnet dim=[6]
             |  |
             |  +-[1]...[6] dc_generator
-            |  
+            |
             +-[5] subnet dim=[6]
                |
                +-[1]...[6] dc_generator

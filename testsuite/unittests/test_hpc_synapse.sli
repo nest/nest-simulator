@@ -99,7 +99,7 @@ M_ERROR setverbosity
   % we connect via a parrot neuron, so we can test plastic synapses, too 
   /sg /spike_generator << /spike_times [ 5.0 ] >> Create def
   /pn /parrot_neuron Create def
-  /nrn /iaf_psc_alpha << /V_th 100000. >> Create def 
+  /nrn /iaf_psc_alpha << /V_th 100000. >> Create def
   sg pn Connect
   pn nrn syn Connect
   10 Simulate

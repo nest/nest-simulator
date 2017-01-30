@@ -271,8 +271,8 @@ install( DIRECTORY sli DESTINATION ${CMAKE_INSTALL_DATADIR} )
 if ( NOT CMAKE_CROSSCOMPILING )
   add_custom_target( generate_help ALL )
   # Extract help from all source files in the source code, put them in
-  # doc/help and generate a help index containing links to the help
-  # files.
+  # doc/help and generate a local help index in the build directory containing 
+  # links to the help files.
   add_custom_command( TARGET generate_help POST_BUILD
     COMMAND python -B generate_help.py "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}"
     COMMAND python -B generate_helpindex.py "${PROJECT_BINARY_DIR}/doc"

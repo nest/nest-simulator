@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# parse_help.py
+# generate_help.py
 #
 # This file is part of NEST.
 #
@@ -23,35 +23,36 @@
 Generate NEST help files
 ========================
 
-Parse all NEST files for documentation and build the help.
+Scan all source files for documentation and build the help files.
+The helpindex is built during installation in a separate step.
 """
 
 import os
 import re
 import sys
-import shutil
 import textwrap
 
-from writers import coll_data, write_helpindex
+from writers import coll_data
 from helpers import check_ifdef, create_helpdirs, cut_it
 
-
-if len(sys.argv) != 4:
-    print("Usage: python parse_help.py <source_dir> <build_dir> <install_dir>")
+if len(sys.argv) != 3:
+    print("Usage: python generate_help.py <source_dir> <build_dir>")
     sys.exit(1)
 
-source_dir, build_dir, install_dir = sys.argv[1:]
+source_dir, build_dir = sys.argv[1:]
 
-helpdir = os.path.join(build_dir, "doc/help")
+helpdir = os.path.join(build_dir, "doc", "help")
 create_helpdirs(helpdir)
 
 allfiles = []
 for dirpath, dirnames, files in os.walk(source_dir):
-    if not re.findall(r'[.?]*MyModule[.?]*', dirpath):
-        for f in files:
-            if f.endswith((".sli", ".cpp", ".cc", ".h", ".py")):
-                allfiles.append(os.path.join(dirpath, f))
+    if "MyModule" in dirpath and "MyModule" not in source_dir:
+        # Do not generate help from MyModule unless we are building MyModule
+        continue
 
+    for f in files:
+        if f.endswith((".sli", ".cpp", ".cc", ".h", ".py")):
+            allfiles.append(os.path.join(dirpath, f))
 
 num = 0
 full_list = []
@@ -130,8 +131,3 @@ for fname in allfiles:
 
             all_data = coll_data(keywords, documentation, num, helpdir, fname,
                                  sli_command_list)
-
-write_helpindex(helpdir)
-
-shutil.rmtree(install_dir, ignore_errors=True)
-shutil.copytree(helpdir, install_dir)

@@ -40,6 +40,7 @@ def Simulate(t):
     sps(float(t))
     sr('ms Simulate')
 
+
 @check_stack
 def Run(t):
     """Simulate the network for t milliseconds.
@@ -57,6 +58,7 @@ def Run(t):
     sps(float(t))
     sr('ms Run')
 
+
 @check_stack
 def Prepare():
     """Prepares network before a Run call. Not needed for Simulate.
@@ -73,6 +75,7 @@ def Cleanup():
     """
     sr('Cleanup')
 
+
 @contextmanager
 def RunManager():
     """ContextManager for Run.
@@ -80,12 +83,13 @@ def RunManager():
     Calls Prepare() before a series of Run() calls,
     and  adds a Cleanup() at end
     """
-    
+
     Prepare()
     try:
         yield
     finally:
         Cleanup()
+
 
 @check_stack
 def ResumeSimulation():

@@ -54,7 +54,7 @@ class TestSplit(unittest.TestCase):
     def runs(self):
         self.setup()
         steps, time = self.steps, self.time
-        
+
         with nest.IterateRuns():
             return [
               (s, t)
@@ -65,7 +65,7 @@ class TestSplit(unittest.TestCase):
     def simulate(self):
         self.setup()
         steps, time = self.steps, self.time
-        
+
         return [
             (s, t)
             for s, t in self.runner(time*steps, nest.Simulate)

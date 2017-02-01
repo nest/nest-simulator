@@ -22,6 +22,7 @@
 import unittest
 import nest
 
+
 class TestSplit(unittest.TestCase):
     steps = 100
     time = 100
@@ -43,7 +44,7 @@ class TestSplit(unittest.TestCase):
     def runner(self, time, f):
         spike = self.spike
         nest.SetStatus(spike, [{'n_events': 0}])
-        
+
         f(time)
         spikes = nest.GetStatus(spike, 'events')[0]
         senders, times = spikes['senders'], spikes['times']

@@ -26,6 +26,7 @@ Functions for simulation control
 from .hl_api_helper import *
 from contextlib import contextmanager
 
+
 @check_stack
 def Simulate(t):
     """Simulate the network for t milliseconds.
@@ -67,7 +68,7 @@ def Prepare():
 @check_stack
 def Cleanup():
     """Cleans up resources after a Run call. Not needed for Simulate.
-    
+
     A Prepare is needed after a Cleanup before another Run.
     """
     sr('Cleanup')
@@ -81,8 +82,10 @@ def RunManager():
     """
     
     Prepare()
-    try: yield
-    finally: Cleanup()
+    try:
+        yield
+    finally:
+        Cleanup()
 
 @check_stack
 def ResumeSimulation():

@@ -35,7 +35,7 @@ class TestSplit(unittest.TestCase):
         nest.ResetKernel()
         nest.SetDefaults('spike_detector', {'withtime': True})
 
-        n1 = nest.Create("iaf_neuron")
+        n1 = nest.Create("iaf_psc_alpha")
         nest.SetStatus(n1, {"I_e": 376.0})
 
         self.spike = spike = nest.Create('spike_detector')
@@ -55,7 +55,7 @@ class TestSplit(unittest.TestCase):
         self.setup()
         steps, time = self.steps, self.time
 
-        with nest.IterateRuns():
+        with nest.RunManager():
             return [
               (s, t)
               for _ in range(steps)

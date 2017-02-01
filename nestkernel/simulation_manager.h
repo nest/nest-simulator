@@ -51,6 +51,18 @@ public:
   virtual void set_status( const DictionaryDatum& );
   virtual void get_status( DictionaryDatum& );
 
+  // check for errors in time before run
+  void check_run( Time const& );
+  
+  /**
+     Simulate can be broken up into .. prepare... run.. run.. cleanup..
+     instead of calling simulate multiple times, and thus reduplicating
+     effort in prepare, cleanup many times.
+  */
+  void prepare();
+  void run( Time const& );
+  void cleanup();
+
   /**
    * Simulate for the given time .
    * This function performs the following steps
@@ -59,9 +71,6 @@ public:
    * 3. call resume()
    * 4. call finalize_simulation()
    */
-  void prepare();
-  void run( Time const& );
-  void cleanup();
   void simulate( Time const& );
 
   /**
@@ -132,9 +141,7 @@ public:
   delay get_to_step() const;
 
 private:
-  void resume_();              //!< actually run simulation; TODO: review
-  void prepare_simulation_();  //! setup before simulation start
-  void finalize_simulation_(); //! wrap-up after simulation end
+  void start_updating_();              //!< actually run simulation; TODO: review
   void update_();              //! actually perform simulation
   bool wfr_update_( Node* );
   void advance_time_();   //!< Update time to next time step
@@ -166,7 +173,7 @@ private:
                             //!< relaxation
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
-  size_t num_active_nodes;
+  size_t num_active_nodes_;  //!< number of nodes return by prepare_nodes
 };
 
 inline Time const&

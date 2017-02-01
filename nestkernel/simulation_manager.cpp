@@ -57,7 +57,7 @@ nest::SimulationManager::SimulationManager()
   , wfr_tol_( 0.0001 )
   , wfr_max_iterations_( 15 )
   , wfr_interpolation_order_( 3 )
-  , num_active_nodes( 0 )
+  , num_active_nodes_( 0 )
 {
 }
 
@@ -405,7 +405,7 @@ nest::SimulationManager::prepare()
     kernel().event_delivery_manager.configure_spike_buffers();
 
   kernel().node_manager.ensure_valid_thread_local_ids();
-  num_active_nodes = kernel().node_manager.prepare_nodes();
+  num_active_nodes_ = kernel().node_manager.prepare_nodes();
 
   kernel().model_manager.create_secondary_events_prototypes();
 
@@ -429,7 +429,7 @@ nest::SimulationManager::simulate( Time const& t )
 }
 
 void
-nest::SimulationManager::run( Time const& t )
+nest::SimulationManager::check_run( Time const& t)
 {
   if ( t == Time::ms( 0.0 ) )
     return;
@@ -466,11 +466,19 @@ nest::SimulationManager::run( Time const& t )
     LOG( M_ERROR, "SimulationManager::simulate", msg );
     throw KernelException();
   }
+}    
 
+void
+nest::SimulationManager::run( Time const& t )
+{
+  check_run(t);
+    
   to_do_ += t.get_steps();
   to_do_total_ = to_do_;
+  assert( to_do_ != 0 );
 
-  prepare_simulation_();
+  // Check whether waveform relaxation is used on any MPI process
+  kernel().node_manager.check_wfr_use();
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If
@@ -499,24 +507,39 @@ nest::SimulationManager::run( Time const& t )
       "is called repeatedly with simulation times that are not multiples of "
       "the minimal delay." );
 
-  resume_();
+  start_updating_();
 }
 
 void
 nest::SimulationManager::cleanup()
 {
-  finalize_simulation_();
+  if ( not simulated_ )
+    return;
+
+  // Check for synchronicity of global rngs over processes
+  // TODO: This seems double up, there is such a test at end of simulate()
+  if ( kernel().mpi_manager.get_num_processes() > 1 )
+    if ( !kernel().mpi_manager.grng_synchrony(
+           kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
+    {
+      throw KernelException(
+        "In SimulationManager::simulate(): "
+        "Global Random Number Generators are not "
+        "in sync at end of simulation." );
+    }
+
+  kernel().node_manager.finalize_nodes();
 }
 
 void
-nest::SimulationManager::resume_()
+nest::SimulationManager::start_updating_()
 {
   assert( kernel().is_initialized() and not inconsistent_state_ );
 
   std::ostringstream os;
   double t_sim = to_do_ * Time::get_resolution().get_ms();
 
-  os << "Number of local nodes: " << num_active_nodes << std::endl;
+  os << "Number of local nodes: " << num_active_nodes_ << std::endl;
   os << "Simulaton time (ms): " << t_sim;
 
 #ifdef _OPENMP
@@ -567,17 +590,6 @@ nest::SimulationManager::resume_()
   }
 
   LOG( M_INFO, "SimulationManager::resume", "Simulation finished." );
-}
-
-void
-nest::SimulationManager::prepare_simulation_()
-{
-  assert( to_do_ != 0 ); // This is checked in simulate()
-
-  kernel().model_manager.create_secondary_events_prototypes();
-
-  // Check whether waveform relaxation is used on any MPI process
-  kernel().node_manager.check_wfr_use();
 }
 
 bool
@@ -825,27 +837,6 @@ nest::SimulationManager::update_()
       throw WrappedThreadException( *( exceptions_raised.at( thrd ) ) );
     }
   }
-}
-
-void
-nest::SimulationManager::finalize_simulation_()
-{
-  if ( not simulated_ )
-    return;
-
-  // Check for synchronicity of global rngs over processes
-  // TODO: This seems double up, there is such a test at end of simulate()
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
-    if ( !kernel().mpi_manager.grng_synchrony(
-           kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
-    {
-      throw KernelException(
-        "In SimulationManager::simulate(): "
-        "Global Random Number Generators are not "
-        "in sync at end of simulation." );
-    }
-
-  kernel().node_manager.finalize_nodes();
 }
 
 void

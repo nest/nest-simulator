@@ -474,6 +474,19 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 }
 
+/* BeginDocumentation
+   Name: Run - simulate n milliseconds
+
+   Synopsis:
+   n(int) Run -> -
+
+   Description: Simulate the network for n milliseconds.
+   Call prepare before, and cleanup after.
+   n simulate = prepare n/m run ... m times... cleanup
+  
+
+   SeeAlso: simulate, resume, unit_conversion, prepare, cleanup
+*/
 void
 NestModule::RunFunction::execute( SLIInterpreter* i ) const
 {
@@ -483,27 +496,44 @@ NestModule::RunFunction::execute( SLIInterpreter* i ) const
 
   run( time );
 
-  // successful end of simulate
   i->OStack.pop();
   i->EStack.pop();
 }
 
 
+/* BeginDocumentation
+   Name: Prepare - prepare the network for a simulation
+
+   Synopsis:
+   Prepare -> -
+
+   Description: sets up network calibration before run is called
+   any number of times
+
+   SeeAlso: run, cleanup, simulate
+*/
 void
 NestModule::PrepareFunction::execute( SLIInterpreter* i ) const
 {
   prepare();
-
-  // successful end of simulate
   i->EStack.pop();
 }
 
+/* BeginDocumentation
+   Name: Cleanup - cleanup the network after a simulation
+
+   Synopsis:
+   Cleanup -> -
+
+   Description: tears down a network after run is called
+   any number of times
+
+   SeeAlso: run, prepare, simulate
+*/
 void
 NestModule::CleanupFunction::execute( SLIInterpreter* i ) const
 {
   cleanup();
-
-  // successful end of simulate
   i->EStack.pop();
 }
 

@@ -47,6 +47,10 @@ def Run(t):
     ----------
     t : float
         Time to simulate in ms
+
+    Call between Prepare and Cleanup calls, or within an
+    with RunManager: clause
+    Simulate(n) = Prepare() Run(n/m) ... m times ... Cleanup()
     """
 
     sps(float(t))
@@ -54,12 +58,7 @@ def Run(t):
 
 @check_stack
 def Prepare():
-    """Simulate the network for t milliseconds.
-
-    Parameters
-    ----------
-    t : float
-        Time to simulate in ms
+    """Prepares network before a Run call. Not needed for Simulate.
     """
 
     sr('Prepare')
@@ -67,18 +66,20 @@ def Prepare():
 
 @check_stack
 def Cleanup():
-    """Simulate the network for t milliseconds.
-
-    Parameters
-    ----------
-    t : float
-        Time to simulate in ms
+    """Cleans up resources after a Run call. Not needed for Simulate.
+    
+    A Prepare is needed after a Cleanup before another Run.
     """
-
     sr('Cleanup')
 
 @contextmanager
-def IterateRuns():
+def RunManager():
+    """ContextManager for Run.
+
+    Calls Prepare() before a series of Run() calls,
+    and  adds a Cleanup() at end
+    """
+    
     Prepare()
     try: yield
     finally: Cleanup()

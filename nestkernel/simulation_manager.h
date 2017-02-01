@@ -53,7 +53,7 @@ public:
 
   // check for errors in time before run
   void check_run( Time const& );
-  
+
   /**
      Simulate can be broken up into .. prepare... run.. run.. cleanup..
      instead of calling simulate multiple times, and thus reduplicating
@@ -141,8 +141,8 @@ public:
   delay get_to_step() const;
 
 private:
-  void start_updating_();              //!< actually run simulation; TODO: review
-  void update_();              //! actually perform simulation
+  void start_updating_(); //!< actually run simulation; TODO: review
+  void update_();         //! actually perform simulation
   bool wfr_update_( Node* );
   void advance_time_();   //!< Update time to next time step
   void print_progress_(); //!< TODO: Remove, replace by logging!
@@ -173,7 +173,7 @@ private:
                             //!< relaxation
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
-  size_t num_active_nodes_;  //!< number of nodes return by prepare_nodes
+  size_t num_active_nodes_;        //!< number of nodes return by prepare_nodes
 };
 
 inline Time const&

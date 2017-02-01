@@ -483,7 +483,7 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
    Description: Simulate the network for n milliseconds.
    Call prepare before, and cleanup after.
    n simulate = prepare n/m run ... m times... cleanup
-  
+
 
    SeeAlso: simulate, resume, unit_conversion, prepare, cleanup
 */

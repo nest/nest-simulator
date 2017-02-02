@@ -60,7 +60,8 @@ ResetKernel
 
  neuron
  <<
-    /tau_syn 1.0
+    /tau_syn_ex 1.0
+    /tau_syn_in 1.0
     /V_th -55.0
  >> SetStatus
 

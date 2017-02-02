@@ -44,7 +44,6 @@ namespace nest
 
 class RNGManager : public ManagerInterface
 {
-  friend void MPIManager::set_num_rec_processes( int, bool ); // create_rngs_
 public:
   RNGManager();
   virtual ~RNGManager()

@@ -339,12 +339,6 @@ get_model_defaults( const Name& modelname )
 }
 
 void
-set_num_rec_processes( const index n_rec_procs )
-{
-  kernel().mpi_manager.set_num_rec_processes( n_rec_procs, false );
-}
-
-void
 change_subnet( const index node_gid )
 {
   if ( kernel().node_manager.get_node( node_gid )->is_subnet() )

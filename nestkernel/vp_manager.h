@@ -113,16 +113,6 @@ public:
   thread suggest_vp_for_gid( const index gid ) const;
 
   /**
-   * Return a thread number for a given global recording node id.
-   * Each node has a default thread on which it will run.
-   * The thread is defined by the relation:
-   * t = (gid div P) mod T, where P is the number of recording processes and
-   * T the number of threads. This may be used by Network::add_node()
-   * if the user has not specified anything.
-   */
-  thread suggest_rec_vp_for_gid( const index gid ) const;
-
-  /**
    * Convert a given VP ID to the corresponding thread ID
    */
   thread vp_to_thread( const thread vp ) const;

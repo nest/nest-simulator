@@ -41,19 +41,7 @@
 inline nest::thread
 nest::MPIManager::get_process_id_of_vp( const thread vp ) const
 {
-  if ( vp
-    >= static_cast< thread >( n_sim_procs_
-         * kernel()
-             .vp_manager.get_num_threads() ) ) // vp belongs to recording VPs
-  {
-    return ( vp - n_sim_procs_ * kernel().vp_manager.get_num_threads() )
-      % n_rec_procs_
-      + n_sim_procs_;
-  }
-  else // vp belongs to simulating VPs
-  {
-    return vp % n_sim_procs_;
-  }
+  return vp % num_processes_;
 }
 
 #ifdef HAVE_MPI
@@ -312,8 +300,8 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 inline nest::thread
 nest::MPIManager::get_process_id_of_gid( const index gid ) const
 {
-  return gid % ( kernel().vp_manager.get_num_virtual_processes() )
-    % n_sim_procs_;
+  return gid % kernel().vp_manager.get_num_virtual_processes()
+    % num_processes_;
 }
 
 #else // HAVE_MPI

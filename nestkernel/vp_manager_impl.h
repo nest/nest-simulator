@@ -37,32 +37,19 @@ inline thread
 VPManager::get_vp() const
 {
   return kernel().mpi_manager.get_rank()
-    + get_thread_id() * kernel().mpi_manager.get_num_sim_processes();
+    + get_thread_id() * kernel().mpi_manager.get_num_processes();
 }
 
 inline thread
 VPManager::suggest_vp_for_gid( const index gid ) const
 {
-  return gid
-    % ( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() );
+  return gid % get_num_virtual_processes();
 }
 
 inline thread
 VPManager::vp_to_thread( const thread vp ) const
 {
-  if ( vp >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes()
-               * get_num_threads() ) )
-  {
-    return ( vp
-             + kernel().mpi_manager.get_num_sim_processes()
-               * ( 1 - get_num_threads() )
-             - kernel().mpi_manager.get_rank() )
-      / kernel().mpi_manager.get_num_rec_processes();
-  }
-  else
-  {
-    return vp / kernel().mpi_manager.get_num_sim_processes();
-  }
+  return vp / kernel().mpi_manager.get_num_processes();
 }
 
 inline thread
@@ -78,52 +65,30 @@ VPManager::is_local_vp( const thread vp ) const
     == kernel().mpi_manager.get_rank();
 }
 
-
-inline thread
-VPManager::suggest_rec_vp_for_gid( const index gid ) const
-{
-  return gid
-    % ( kernel().mpi_manager.get_num_rec_processes() * get_num_threads() )
-    + kernel().mpi_manager.get_num_sim_processes() * get_num_threads();
-}
-
 inline thread
 VPManager::thread_to_vp( const thread tid ) const
 {
-  if ( kernel().mpi_manager.get_rank()
-    >= static_cast< int >( kernel().mpi_manager.get_num_sim_processes() ) )
-  {
-    // Rank is a recording process
-    return tid * kernel().mpi_manager.get_num_rec_processes()
-      + kernel().mpi_manager.get_rank()
-      - kernel().mpi_manager.get_num_sim_processes()
-      + kernel().mpi_manager.get_num_sim_processes() * get_num_threads();
-  }
-  else
-  {
-    // Rank is a simulating process
-    return tid * kernel().mpi_manager.get_num_sim_processes()
-      + kernel().mpi_manager.get_rank();
-  }
+  return tid * kernel().mpi_manager.get_num_processes()
+    + kernel().mpi_manager.get_rank();
 }
 
 inline bool
 VPManager::is_gid_vp_local( const index gid ) const
 {
-  return ( gid % ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() )
+  return ( gid % get_num_virtual_processes()
            == static_cast< index >( get_vp() ) );
 }
 
 inline index
 VPManager::gid_to_lid( const index gid ) const
 {
-  return floor( static_cast< double >( gid ) / ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() ) );
+  return floor( static_cast< double >( gid ) / get_num_virtual_processes() );
 }
 
 inline index
 VPManager::lid_to_gid( const index lid ) const
 {
-  return lid * ( get_num_virtual_processes() ) + get_vp();
+  return lid * get_num_virtual_processes() + get_vp();
 }
 
 inline thread

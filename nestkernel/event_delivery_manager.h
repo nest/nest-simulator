@@ -472,7 +472,7 @@ private:
    * Number of generated spike events (both off- and on-grid) during the last
    * call to simulate.
    */
-  unsigned long local_spike_counter_;
+  std::vector< unsigned long > local_spike_counter_;
 
   std::vector< SpikeData > send_buffer_spike_data_;
   std::vector< SpikeData > recv_buffer_spike_data_;

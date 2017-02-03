@@ -58,6 +58,8 @@ EventDeliveryManager::send< SpikeEvent >( Node& source,
   SpikeEvent& e,
   const long lag )
 {
+  const thread tid = source.get_thread();
+  ++local_spike_counter_[ tid ];
   const index source_gid = source.get_gid();
   e.set_sender_gid( source_gid );
   if ( source.has_proxies() )
@@ -65,7 +67,6 @@ EventDeliveryManager::send< SpikeEvent >( Node& source,
     e.set_stamp(
       kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
     e.set_sender( source );
-    const thread tid = source.get_thread();
 
     if ( source.is_off_grid() )
     {

@@ -25,6 +25,7 @@
 // C++ includes:
 #include <algorithm> // rotate
 #include <iostream>
+#include <numeric> // accumulate
 
 // Includes from libnestutil:
 #include "logging.h"
@@ -57,7 +58,7 @@ EventDeliveryManager::EventDeliveryManager()
   , comm_marker_( 0 )
   , time_collocate_( 0.0 )
   , time_communicate_( 0.0 )
-  , local_spike_counter_( 0U )
+  , local_spike_counter_( std::vector< unsigned long >() )
   , buffer_size_target_data_has_changed_( false )
   , buffer_size_spike_data_has_changed_( false )
 {
@@ -70,9 +71,11 @@ EventDeliveryManager::~EventDeliveryManager()
 void
 EventDeliveryManager::initialize()
 {
-  init_moduli();
-  reset_timers_counters();
   const thread num_threads = kernel().vp_manager.get_num_threads();
+
+  init_moduli();
+  local_spike_counter_.resize( num_threads, 0 );
+  reset_timers_counters();
   spike_register_5g_.resize( num_threads, 0 );
   off_grid_spike_register_5g_.resize( num_threads, 0 );
 
@@ -141,7 +144,7 @@ EventDeliveryManager::get_status( DictionaryDatum& dict )
   def< bool >( dict, "off_grid_spiking", off_grid_spiking_ );
   def< double >( dict, "time_collocate", time_collocate_ );
   def< double >( dict, "time_communicate", time_communicate_ );
-  def< unsigned long >( dict, "local_spike_counter", local_spike_counter_ );
+  def< unsigned long >( dict, "local_spike_counter", std::accumulate( local_spike_counter_.begin(), local_spike_counter_.end(), 0 ) );
 }
 
 void
@@ -307,7 +310,11 @@ EventDeliveryManager::reset_timers_counters()
 {
   time_collocate_ = 0.0;
   time_communicate_ = 0.0;
-  local_spike_counter_ = 0U;
+  for ( std::vector< unsigned long >::iterator it = local_spike_counter_.begin();
+        it != local_spike_counter_.end(); ++it )
+  {
+    ( *it ) = 0;
+  }
 }
 
 void

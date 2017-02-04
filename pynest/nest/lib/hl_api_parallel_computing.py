@@ -86,3 +86,19 @@ def SetAcceptableLatency(port, latency):
 
     sps(latency)
     sr("/%s exch SetAcceptableLatency" % port)
+
+
+@check_stack
+def SetMaxBuffered(port, size):
+    """Set the maximum buffer size for a MUSIC port.
+
+    Parameters
+    ----------
+    port : object
+        MUSIC port to set buffer size for
+    size : int
+        Buffer size
+    """
+
+    sps(size)
+    sr("/%s exch SetMaxBuffered" % port)

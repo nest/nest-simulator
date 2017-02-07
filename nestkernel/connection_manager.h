@@ -33,6 +33,7 @@
 // Includes from nestkernel:
 #include "conn_builder.h"
 #include "connection_id.h"
+#include "connector_base.h"
 #include "gid_collection.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
@@ -48,8 +49,6 @@
 
 namespace nest
 {
-class ConnectorBase;
-class HetConnector;
 class GenericConnBuilderFactory;
 class spikecounter;
 class Node;
@@ -420,6 +419,9 @@ public:
   void compress_secondary_send_buffer_pos( const thread tid );
 
 private:
+  synindex find_synapse_index_( const thread tid, const synindex syn_id ) const;
+  size_t get_num_connections_( const thread tid, const synindex syn_id ) const;
+
   void get_source_gids_( const thread tid,
     const synindex syn_index,
     const index tgid,
@@ -556,7 +558,7 @@ private:
   /** A structure to hold the Connector objects which in turn hold the
    * connection information. Corresponds to a three dimensional
    * structure: threads|synapses|connections */
-  std::vector< HetConnector* > connections_5g_;
+  std::vector< std::vector< ConnectorBase* >* > connections_5g_;
 
   /**
    * A structure to hold the global ids of presynaptic neurons during
@@ -755,6 +757,33 @@ ConnectionManager::get_secondary_recv_buffer_position( const thread tid,
   const index lcid ) const
 {
   return ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] )[ lcid ];
+}
+
+inline synindex
+ConnectionManager::find_synapse_index_( const thread tid, const synindex syn_id ) const
+{
+  for ( size_t i = 0; i < ( *connections_5g_[ tid ] ).size(); ++i )
+  {
+    if ( ( *connections_5g_[ tid ] )[ i ]->get_syn_id() == syn_id )
+    {
+      return i;
+    }
+  }
+  return invalid_synindex;
+}
+
+inline size_t
+ConnectionManager::get_num_connections_( const thread tid, const synindex syn_id ) const
+{
+  const synindex syn_index = find_synapse_index_( tid, syn_id );
+  if ( syn_index != invalid_synindex )
+  {
+    return ( *connections_5g_[ tid ] )[ syn_index ]->get_num_connections( syn_id );
+  }
+  else
+  {
+    return 0;
+  }
 }
 
 } // namespace nest

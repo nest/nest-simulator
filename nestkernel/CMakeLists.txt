@@ -28,7 +28,7 @@ set( nestkernel_sources
     connection_label.h
     common_properties_hom_w.h
     syn_id_delay.h
-    connector_base.h connector_base.cpp
+    connector_base.h
     connector_model.h connector_model_impl.h connector_model.cpp
     connection_id.h connection_id.cpp
     device.h device.cpp

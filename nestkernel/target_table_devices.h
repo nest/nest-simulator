@@ -40,7 +40,7 @@
 namespace nest
 {
 class Node;
-class HetConnector;
+class ConnectorBase;
 class ConnectorModel;
 
 /** This data structure stores the connections of the local neurons to
@@ -53,12 +53,15 @@ class TargetTableDevices
 {
 private:
   //! 3d structure storing connections from neurons to devices
-  std::vector< std::vector< HetConnector* >* > target_to_devices_;
+  std::vector< std::vector< std::vector< ConnectorBase* >* >* > target_to_devices_;
   //! 3d structure storing connections from devices to neurons
-  std::vector< std::vector< HetConnector* >* > target_from_devices_;
+  std::vector< std::vector< std::vector< ConnectorBase* >* >* > target_from_devices_;
   //! 3d structure storing gids of sending devices (necessary for
   //get_connections)
   std::vector< std::vector< index >* > sending_devices_gids_;
+
+  synindex find_synapse_index_to_devices_( const thread tid, const index lid, const synindex syn_id ) const;
+  synindex find_synapse_index_from_devices_( const thread tid, const index ldid, const synindex syn_id ) const;
 
 public:
   TargetTableDevices();

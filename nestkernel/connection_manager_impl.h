@@ -56,7 +56,7 @@ ConnectionManager::get_target_gid( const thread tid,
   const synindex syn_index,
   const index lcid ) const
 {
-  return connections_5g_[ tid ]->get_target_gid( tid, syn_index, lcid );
+  return ( *connections_5g_[ tid ] )[ syn_index ]->get_target_gid( tid, syn_index, lcid );
 }
 
 inline void
@@ -66,7 +66,7 @@ ConnectionManager::send_5g( const thread tid,
   Event& e )
 {
   index lcid_offset = 0;
-  while ( connections_5g_[ tid ]->send( tid,
+  while ( ( *connections_5g_[ tid ] )[ syn_index ]->send( tid,
     syn_index,
     lcid + lcid_offset,
     e,
@@ -110,7 +110,7 @@ ConnectionManager::set_has_source_subsequent_targets( const thread tid,
   const index lcid,
   const bool subsequent_targets )
 {
-  connections_5g_[ tid ]->set_has_source_subsequent_targets(
+  ( *connections_5g_[ tid ] )[ syn_index ]->set_has_source_subsequent_targets(
     syn_index, lcid, subsequent_targets );
 }
 
@@ -118,7 +118,7 @@ inline synindex
 ConnectionManager::get_syn_id( const thread tid,
   const synindex syn_index ) const
 {
-  return connections_5g_[ tid ]->get_syn_id( syn_index );
+  return ( *connections_5g_[ tid ] )[ syn_index ]->get_syn_id();
 }
 
 } // namespace nest

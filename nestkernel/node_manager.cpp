@@ -849,12 +849,10 @@ void
 NodeManager::check_wfr_use()
 {
   wfr_is_used_ = kernel().mpi_manager.any_true( wfr_is_used_ );
-  if ( wfr_is_used_ )
-  {
-    GapJunctionEvent::set_coeff_length(
-      kernel().connection_manager.get_min_delay()
-      * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 ) );
-  }
+
+  GapJunctionEvent::set_coeff_length(
+    kernel().connection_manager.get_min_delay()
+    * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 ) );
 }
 
 void

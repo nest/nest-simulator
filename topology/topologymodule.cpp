@@ -369,6 +369,8 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
 
+  i->createcommand( "SelectNodesByMask_L_M_d_d", &selectnodesbymask_L_M_d_dfunction );
+
   kernel().model_manager.register_node_model< FreeLayer< 2 > >(
     "topology_layer_free" );
   kernel().model_manager.register_node_model< FreeLayer< 3 > >(
@@ -1238,6 +1240,44 @@ TopologyModule::Cvdict_MFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( dict );
   i->EStack.pop();
 }
+
+
+void
+TopologyModule::SelectNodesByMask_L_M_d_dFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 4 );
+
+
+  const index& layer_gid = getValue< long >( i->OStack.pick( 0 ) );
+  MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 1 ) );
+  double xpos = getValue< double >( i->OStack.pick( 2 ) );
+  double ypos = getValue< double >( i->OStack.pick( 3 ) );
+
+  Layer<2>* l = dynamic_cast< Layer<2>* >(
+      kernel().node_manager.get_node( layer_gid ) );
+
+
+  //DictionaryDatum dict = mask->get_dict();
+
+  std::vector< index > mask_gids;
+
+  MaskedLayer< 2 > ml = MaskedLayer< 2 >(  *l, Selector(), mask, true, false);
+
+  for ( Ntree<2, index>::masked_iterator it = ml.begin( Position<2>(xpos, ypos)) ; it != ml.end() ; ++it )
+  {
+	mask_gids.push_back( it->second );
+  }
+
+
+
+
+  //std::vector< index > mask_gids = TopologyModule::select_nodes_by_mask( dict );
+
+  i->OStack.pop();
+  i->OStack.push( mask_gids );
+  i->EStack.pop();
+}
+
 
 std::string
 LayerExpected::message() const

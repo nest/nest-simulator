@@ -190,6 +190,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } cvdict_Mfunction;
 
+  class SelectNodesByMask_L_M_d_dFunction : public SLIFunction
+  {
+    public:
+      void execute( SLIInterpreter* ) const;
+  } selectnodesbymask_L_M_d_dfunction;
+
   typedef GenericFactory< AbstractMask > MaskFactory;
   typedef GenericFactory< AbstractMask >::CreatorFunction MaskCreatorFunction;
 

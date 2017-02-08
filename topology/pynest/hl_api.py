@@ -2115,3 +2115,22 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                              'version of PyTopology')
 
     plt.draw()
+
+
+def SelectNodesByMask(layer, lower_left, upper_right):
+    
+    spec = {'lower_left': lower_left, 'upper_right': upper_right}
+    
+    mask = CreateMask('rectangular', spec)
+    
+    xpos = (upper_right[0] - lower_left[0])/2.0
+    ypos = (upper_right[1] - lower_left[1])/2.0
+    
+    gid_list = nest.sli_func('SelectNodesByMask', ypos, xpos, mask, layer)
+    
+    return gid_list
+    
+
+
+
+

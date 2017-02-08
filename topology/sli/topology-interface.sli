@@ -158,6 +158,11 @@
     
   /get [/masktype /literaltype] {exch cvdict_M exch get} def
   /get [/masktype /arraytype] {exch cvdict_M exch get} def
+  
+  /SelectNodesByMask [/integertype /masktype /doubletype /doubletype]
+    /SelectNodesByMask_L_M_d_d load
+  def
+  
 } def
 
 % define functions in global namespace

@@ -437,7 +437,7 @@ nest::SimulationManager::check_run( Time const& t )
   if ( t < Time::step( 1 ) )
   {
     LOG( M_ERROR,
-      "SimulationManager::simulate",
+      "SimulationManager::run",
       String::compose( "Simulation time must be >= %1 ms (one time step).",
            Time::get_resolution().get_ms() ) );
     throw KernelException();
@@ -453,7 +453,7 @@ nest::SimulationManager::check_run( Time const& t )
         "clock first!",
         ( Time::max() - clock_ ).get_ms(),
         t.get_ms() );
-      LOG( M_ERROR, "SimulationManager::simulate", msg );
+      LOG( M_ERROR, "SimulationManager::run", msg );
       throw KernelException();
     }
   }
@@ -463,7 +463,7 @@ nest::SimulationManager::check_run( Time const& t )
       "The requested simulation time exceeds the largest time NEST can handle "
       "(T_max = %1 ms). Please use a shorter time!",
       Time::max().get_ms() );
-    LOG( M_ERROR, "SimulationManager::simulate", msg );
+    LOG( M_ERROR, "SimulationManager::run", msg );
     throw KernelException();
   }
 }

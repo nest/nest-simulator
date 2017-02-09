@@ -374,7 +374,7 @@ nest::SimulationManager::prepare()
 
   t_real_ = 0;
   t_slice_begin_ = timeval(); // set to timeval{0, 0} as unset flag
-  t_slice_end_ = timeval(); // set to timeval{0, 0} as unset flag
+  t_slice_end_ = timeval();   // set to timeval{0, 0} as unset flag
 
   // Reset profiling timers and counters within event_delivery_manager
   kernel().event_delivery_manager.reset_timers_counters();

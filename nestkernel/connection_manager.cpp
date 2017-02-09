@@ -197,7 +197,6 @@ DictionaryDatum nest::ConnectionManager::get_synapse_status(
 
   if ( source->has_proxies() and target->has_proxies() )
   {
-    // TODO@5g: get_synapse_neuron_to_neuron_status
     const synindex syn_index = find_synapse_index_( tid, syn_id );
     if ( syn_index != invalid_synindex )
     {
@@ -206,13 +205,11 @@ DictionaryDatum nest::ConnectionManager::get_synapse_status(
   }
   else if ( source->has_proxies() and not target->has_proxies() )
   {
-    // TODO@5g: get_synapse_neuron_to_device_status
     target_table_devices_.get_synapse_status_to_device(
       tid, source_gid, syn_id, dict, p );
   }
   else if ( not source->has_proxies() )
   {
-    // TODO@5g: get_synapse_from_device_status
     const index ldid = source->get_local_device_id();
     target_table_devices_.get_synapse_status_from_device(
       tid, ldid, syn_id, dict, p );
@@ -433,6 +430,8 @@ nest::ConnectionManager::connect( index sgid,
   double d,
   double w )
 {
+  kernel().model_manager.assert_valid_syn_id( syn );
+
   have_connections_changed_ = true;
 
   Node* const source = kernel().node_manager.get_node( sgid, target_thread );
@@ -498,6 +497,8 @@ nest::ConnectionManager::connect( index sgid,
   double d,
   double w )
 {
+  kernel().model_manager.assert_valid_syn_id( syn );
+
   have_connections_changed_ = true;
 
   Node* const source = kernel().node_manager.get_node( sgid, target_thread );
@@ -572,6 +573,8 @@ nest::ConnectionManager::connect( index sgid,
   DictionaryDatum& params,
   index syn )
 {
+  kernel().model_manager.assert_valid_syn_id( syn );
+
   have_connections_changed_ = true;
 
   thread tid = kernel().vp_manager.get_thread_id();
@@ -658,7 +661,6 @@ nest::ConnectionManager::connect_( Node& s,
   double d,
   double w )
 {
-  kernel().model_manager.assert_valid_syn_id( syn );
   const synindex syn_index = find_synapse_index_( tid, syn );
 
   kernel()
@@ -674,7 +676,6 @@ nest::ConnectionManager::connect_( Node& s,
     update_syn_id_to_syn_index_( tid );
   }
 
-  // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
   {
     vv_num_connections_[ tid ].resize( syn + 1 );
@@ -692,7 +693,6 @@ nest::ConnectionManager::connect_( Node& s,
   double d,
   double w )
 {
-  kernel().model_manager.assert_valid_syn_id( syn );
   const synindex syn_index = find_synapse_index_( tid, syn );
 
   kernel()
@@ -708,7 +708,6 @@ nest::ConnectionManager::connect_( Node& s,
     update_syn_id_to_syn_index_( tid );
   }
 
-  // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
   {
     vv_num_connections_[ tid ].resize( syn + 1 );
@@ -725,12 +724,9 @@ nest::ConnectionManager::connect_to_device_( Node& s,
   double d,
   double w )
 {
-  kernel().model_manager.assert_valid_syn_id( syn );
-
   // create entries in connection structure for connections to devices
   target_table_devices_.add_connection_to_device( s, r, s_gid, tid, syn, d, w );
 
-  // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
   {
     vv_num_connections_[ tid ].resize( syn + 1 );
@@ -748,13 +744,10 @@ nest::ConnectionManager::connect_to_device_( Node& s,
   double d,
   double w )
 {
-  kernel().model_manager.assert_valid_syn_id( syn );
-
   // create entries in connection structure for connections to devices
   target_table_devices_.add_connection_to_device(
     s, r, s_gid, tid, syn, p, d, w );
 
-  // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
   {
     vv_num_connections_[ tid ].resize( syn + 1 );
@@ -771,15 +764,10 @@ nest::ConnectionManager::connect_from_device_( Node& s,
   double d,
   double w )
 {
-  kernel().model_manager.assert_valid_syn_id(
-    syn ); // TODO@5g: move to connect(...)
-
   // create entries in connections vector of devices
   target_table_devices_.add_connection_from_device(
     s, r, s_gid, tid, syn, d, w );
 
-  // TODO@5g: move to connect(...)
-  // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
   {
     vv_num_connections_[ tid ].resize( syn + 1 );
@@ -797,13 +785,10 @@ nest::ConnectionManager::connect_from_device_( Node& s,
   double d,
   double w )
 {
-  kernel().model_manager.assert_valid_syn_id( syn );
-
   // create entries in connections vector of devices
   target_table_devices_.add_connection_from_device(
     s, r, s_gid, tid, syn, p, d, w );
 
-  // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
   {
     vv_num_connections_[ tid ].resize( syn + 1 );
@@ -1234,7 +1219,7 @@ nest::ConnectionManager::trigger_update_weight( const long vt_id,
 size_t
 nest::ConnectionManager::get_num_target_data( const thread tid ) const
 {
-  size_t num_connections = 1;
+  size_t num_connections = 0;
   for ( synindex syn_index = 0; syn_index < ( *connections_5g_[ tid ] ).size(); ++syn_index )
   {
     num_connections += source_table_.num_unique_sources( tid, syn_index );
@@ -1246,19 +1231,21 @@ size_t
 nest::ConnectionManager::get_num_connections() const
 {
   size_t num_connections = 0;
-  std::vector< DelayChecker >::const_iterator i;
   for ( index t = 0; t < vv_num_connections_.size(); ++t )
+  {
     for ( index s = 0; s < vv_num_connections_[ t ].size(); ++s )
+    {
       num_connections += vv_num_connections_[ t ][ s ];
+    }
+  }
 
   return num_connections;
 }
 
 size_t
-nest::ConnectionManager::get_num_connections( synindex syn_id ) const
+nest::ConnectionManager::get_num_connections( const synindex syn_id ) const
 {
   size_t num_connections = 0;
-  std::vector< DelayChecker >::const_iterator i;
   for ( index t = 0; t < vv_num_connections_.size(); ++t )
   {
     if ( vv_num_connections_[ t ].size() > syn_id )

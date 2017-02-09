@@ -246,7 +246,7 @@ public:
   /**
    * Returns the number of connections of this synapse type.
    */
-  size_t get_num_connections( synindex syn_id ) const;
+  size_t get_num_connections( const synindex syn_id ) const;
 
   void get_sources( const std::vector< index >& targets,
     std::vector< std::vector< index > >& sources,

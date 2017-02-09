@@ -628,7 +628,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   kernel().event_delivery_manager.gather_target_data( tid );
   sw_gather_target_data.stop();
 
-  if ( tid == 0 )
+  if ( tid == 0 && kernel().mpi_manager.get_rank() < 30 )
   {
     sw_reset_connections.print( "0] ResetConnections time: " );
     sw_sort.print( "0] SortConnections time: " );

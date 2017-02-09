@@ -476,7 +476,7 @@ nest::SimulationManager::run( Time const& t )
 
   // Reset profiling timers and counters within event_delivery_manager
   kernel().event_delivery_manager.reset_timers_counters();
-  
+
   // Check whether waveform relaxation is used on any MPI process
   kernel().node_manager.check_wfr_use();
 

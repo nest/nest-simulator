@@ -1214,62 +1214,9 @@ nest::ConnectionManager::trigger_update_weight( const long vt_id,
   }
 }
 
-// TODO@5g: implement
-void
-nest::ConnectionManager::send( thread t, index sgid, Event& e )
-{
-  assert( false );
-  // if ( sgid < connections_[ t ].size() ) // probably test only fails, if
-  // there are no connections
-  // {
-  //   ConnectorBase* p = connections_[ t ].get( sgid );
-  //   if ( p != 0 ) // only send, if connections exist
-  //   {
-  //     // the two least significant bits of the pointer
-  //     // contain the information, whether there are
-  //     // primary and secondary connections behind
-  //     if ( has_primary( p ) )
-  //     {
-  //       // erase 2 least significant bits to obtain the correct pointer
-  //       validate_pointer( p )->send_to_all( e, t,
-  //       kernel().model_manager.get_synapse_prototypes( t ) );
-  //     }
-  //   }
-  // }
-}
-
-// TODO@5g: implement
-void
-nest::ConnectionManager::send_secondary( thread t, SecondaryEvent& e )
 size_t
 nest::ConnectionManager::get_num_target_data( const thread tid ) const
 {
-  assert( false );
-  // index sgid = e.get_sender_gid();
-
-  // if ( sgid < connections_[ t ].size() ) // probably test only fails, if
-  // there are no connections
-  // {
-  //   ConnectorBase* p = connections_[ t ].get( sgid );
-  //   if ( p != 0 ) // only send, if connections exist
-  //   {
-  //     if ( has_secondary( p ) )
-  //     {
-  //       // erase 2 least significant bits to obtain the correct pointer
-  //       p = validate_pointer( p );
-
-  //       if ( p->homogeneous_model() )
-  //       {
-  //         if ( e.supports_syn_id( p->get_syn_id() ) )
-  //           p->send_to_all( e, t,
-  //           kernel().model_manager.get_synapse_prototypes( t ) );
-  //       }
-  //       else
-  //         p->send_to_all_secondary( e, t,
-  //         kernel().model_manager.get_synapse_prototypes( t ) );
-  //     }
-  //   }
-  // }
   size_t num_connections = 1;
   for ( synindex syn_index = 0; syn_index < ( *connections_5g_[ tid ] ).size(); ++syn_index )
   {

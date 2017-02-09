@@ -444,18 +444,6 @@ MPIManager::get_num_sim_processes() const
   return n_sim_procs_;
 }
 
-// inline int
-// MPIManager::get_send_buffer_size()
-// {
-//   return send_buffer_size_;
-// }
-
-// inline int
-// MPIManager::get_recv_buffer_size()
-// {
-//   return recv_buffer_size_;
-// }
-
 inline bool
 MPIManager::is_mpi_used()
 {

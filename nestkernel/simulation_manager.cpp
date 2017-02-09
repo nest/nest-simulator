@@ -373,8 +373,8 @@ nest::SimulationManager::prepare()
   }
 
   t_real_ = 0;
-  t_slice_begin_ = timeval();
-  t_slice_end_ = timeval();
+  t_slice_begin_ = timeval(); // set to timeval{0, 0} as unset flag
+  t_slice_end_ = timeval(); // set to timeval{0, 0} as unset flag
 
   // Reset profiling timers and counters within event_delivery_manager
   kernel().event_delivery_manager.reset_timers_counters();
@@ -393,7 +393,7 @@ nest::SimulationManager::prepare()
            kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
       LOG( M_ERROR,
-        "SimulationManager::simulate",
+        "SimulationManager::prepare",
         "Global Random Number Generators are not synchronized prior to "
         "simulation." );
       throw KernelException();
@@ -499,7 +499,7 @@ nest::SimulationManager::run( Time const& t )
   // above.
   if ( t.get_steps() % kernel().connection_manager.get_min_delay() != 0 )
     LOG( M_WARNING,
-      "SimulationManager::simulate",
+      "SimulationManager::run",
       "The requested simulation time is not an integer multiple of the minimal "
       "delay in the network. This may result in inconsistent results under the "
       "following conditions: (i) A network contains more than one source of "
@@ -517,13 +517,12 @@ nest::SimulationManager::cleanup()
     return;
 
   // Check for synchronicity of global rngs over processes
-  // TODO: This seems double up, there is such a test at end of simulate()
   if ( kernel().mpi_manager.get_num_processes() > 1 )
     if ( !kernel().mpi_manager.grng_synchrony(
            kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
       throw KernelException(
-        "In SimulationManager::simulate(): "
+        "In SimulationManager::cleanup(): "
         "Global Random Number Generators are not "
         "in sync at end of simulation." );
     }
@@ -558,7 +557,7 @@ nest::SimulationManager::start_updating_()
      << "Not using MPI";
 #endif
 
-  LOG( M_INFO, "SimulationManager::resume", os.str() );
+  LOG( M_INFO, "SimulationManager::start_updating_", os.str() );
 
 
   if ( to_do_ == 0 )

@@ -163,8 +163,7 @@ public:
    * connection has the same source.
    */
   virtual void
-  set_has_source_subsequent_targets( const synindex syn_index,
-    const index lcid,
+  set_has_source_subsequent_targets( const index lcid,
     const bool subsequent_targets ) = 0;
 
   /** Returns lcid of first connection with correct target gid,
@@ -451,8 +450,7 @@ public:
   }
 
   void
-  set_has_source_subsequent_targets( const synindex,
-    const index lcid,
+  set_has_source_subsequent_targets( const index lcid,
     const bool subsequent_targets )
   {
     C_[ lcid ].set_has_source_subsequent_targets( subsequent_targets );

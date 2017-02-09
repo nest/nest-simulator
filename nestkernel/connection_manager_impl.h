@@ -110,8 +110,7 @@ ConnectionManager::set_has_source_subsequent_targets( const thread tid,
   const index lcid,
   const bool subsequent_targets )
 {
-  ( *connections_5g_[ tid ] )[ syn_index ]->set_has_source_subsequent_targets(
-    syn_index, lcid, subsequent_targets );
+  ( *connections_5g_[ tid ] )[ syn_index ]->set_has_source_subsequent_targets( lcid, subsequent_targets );
 }
 
 inline synindex

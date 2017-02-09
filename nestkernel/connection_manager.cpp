@@ -88,6 +88,7 @@ nest::ConnectionManager::initialize()
   const thread num_threads = kernel().vp_manager.get_num_threads();
   connections_5g_.resize( num_threads, NULL );
   secondary_recv_buffer_pos_.resize( num_threads, NULL );
+  syn_id_to_syn_index_.resize( num_threads, NULL );
 
 #pragma omp parallel
   {
@@ -95,6 +96,7 @@ nest::ConnectionManager::initialize()
     connections_5g_[ tid ] = new std::vector< ConnectorBase* >( 0, NULL );
     secondary_recv_buffer_pos_[ tid ] =
       new std::vector< std::vector< size_t >* >();
+    syn_id_to_syn_index_[ tid ] = new std::map< synindex, synindex >;
   } // of omp parallel
 
   source_table_.initialize();
@@ -132,6 +134,11 @@ nest::ConnectionManager::finalize()
     {
       delete *iit;
     }
+    delete *it;
+  }
+  for ( std::vector< std::map< synindex, synindex >* >::iterator it = syn_id_to_syn_index_.begin();
+        it != syn_id_to_syn_index_.end(); ++it )
+  {
     delete *it;
   }
 }
@@ -662,6 +669,11 @@ nest::ConnectionManager::connect_( Node& s,
     s_gid,
     kernel().model_manager.get_synapse_prototype( syn, tid ).is_primary() );
 
+  if ( ( *syn_id_to_syn_index_[ tid ] ).size() != ( *connections_5g_[ tid ] ).size() )
+  {
+    update_syn_id_to_syn_index_( tid );
+  }
+
   // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
   {
@@ -690,6 +702,11 @@ nest::ConnectionManager::connect_( Node& s,
     syn,
     s_gid,
     kernel().model_manager.get_synapse_prototype( syn, tid ).is_primary() );
+
+  if ( ( *syn_id_to_syn_index_[ tid ] ).size() != ( *connections_5g_[ tid ] ).size() )
+  {
+    update_syn_id_to_syn_index_( tid );
+  }
 
   // TODO: set size of vv_num_connections in init
   if ( vv_num_connections_[ tid ].size() <= syn )
@@ -1632,6 +1649,12 @@ nest::ConnectionManager::reserve_connections( const thread tid,
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
     .reserve_connections( connections_5g_[ tid ], syn_id, syn_index, count );
+
+  if ( ( *syn_id_to_syn_index_[ tid ] ).size() != ( *connections_5g_[ tid ] ).size() )
+  {
+    update_syn_id_to_syn_index_( tid );
+  }
+
   source_table_.reserve( tid, syn_id, count );
 }
 

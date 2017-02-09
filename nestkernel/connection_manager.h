@@ -424,6 +424,8 @@ private:
   size_t get_num_target_data( const thread tid ) const;
 
   synindex find_synapse_index_( const thread tid, const synindex syn_id ) const;
+  void update_syn_id_to_syn_index_( const thread tid );
+
   size_t get_num_connections_( const thread tid, const synindex syn_id ) const;
 
   void get_source_gids_( const thread tid,
@@ -618,6 +620,8 @@ private:
 
   bool have_connections_changed_; //!< true if new connections have been created
                                   //!< since startup or last call to simulate
+
+  std::vector< std::map< synindex, synindex >* > syn_id_to_syn_index_;
 };
 
 inline DictionaryDatum&
@@ -766,14 +770,24 @@ ConnectionManager::get_secondary_recv_buffer_position( const thread tid,
 inline synindex
 ConnectionManager::find_synapse_index_( const thread tid, const synindex syn_id ) const
 {
-  for ( size_t i = 0; i < ( *connections_5g_[ tid ] ).size(); ++i )
+  std::map< synindex, synindex >::const_iterator cit = ( *syn_id_to_syn_index_[ tid ] ).find( syn_id );
+  if ( cit != ( *syn_id_to_syn_index_[ tid ] ).end() )
   {
-    if ( ( *connections_5g_[ tid ] )[ i ]->get_syn_id() == syn_id )
-    {
-      return i;
-    }
+    return ( *cit ).second;
   }
-  return invalid_synindex;
+  else
+  {
+    return invalid_synindex;
+  }
+}
+
+inline void
+ConnectionManager::update_syn_id_to_syn_index_( const thread tid )
+{
+  for ( synindex syn_index = 0; syn_index < ( *connections_5g_[ tid ] ).size(); ++syn_index )
+  {
+    ( *syn_id_to_syn_index_[ tid ] )[ ( *( *connections_5g_[ tid ] )[ syn_index ] ).get_syn_id() ] = syn_index;
+  }
 }
 
 inline size_t

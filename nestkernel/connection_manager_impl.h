@@ -97,6 +97,11 @@ ConnectionManager::send_from_device( const thread tid,
 inline void
 ConnectionManager::restructure_connection_tables( const thread tid )
 {
+  if ( ( *syn_id_to_syn_index_[ tid ] ).size() != ( *connections_5g_[ tid ] ).size() )
+  {
+    update_syn_id_to_syn_index_( tid );
+  }
+
   assert( not source_table_.is_cleared() );
   target_table_.clear( tid );
   source_table_.reset_processed_flags( tid );

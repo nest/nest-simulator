@@ -302,10 +302,11 @@ public:
       if ( synapse_label == UNLABELED_CONNECTION
         || C_[ lcid ].get_label() == synapse_label )
       {
-        if ( C_[ lcid ].get_target( tid )->get_gid() == target_gid || target_gid == 0 )
+        const index current_target_gid = C_[ lcid ].get_target( tid )->get_gid();
+        if ( current_target_gid == target_gid || target_gid == 0 )
         {
           conns.push_back( ConnectionDatum(
-            ConnectionID( source_gid, target_gid, tid, syn_id, lcid ) ) );
+            ConnectionID( source_gid, current_target_gid, tid, syn_id, lcid ) ) );
         }
       }
     }

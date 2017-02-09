@@ -159,7 +159,7 @@
   /get [/masktype /literaltype] {exch cvdict_M exch get} def
   /get [/masktype /arraytype] {exch cvdict_M exch get} def
   
-  /SelectNodesByMask [/integertype /masktype /doubletype /doubletype]
+  /SelectNodesByMask [/doubletype /doubletype /dictionarytype /integertype]
     /SelectNodesByMask_L_M_d_d load
   def
   

@@ -2119,14 +2119,14 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
 
 def SelectNodesByMask(layer, lower_left, upper_right):
     
-    spec = {'lower_left': lower_left, 'upper_right': upper_right}
+    #mask = CreateMask('rectangular', spec)
     
-    mask = CreateMask('rectangular', spec)
+    xpos = (upper_right[0] + lower_left[0])/2.0
+    ypos = (upper_right[1] + lower_left[1])/2.0
     
-    xpos = (upper_right[0] - lower_left[0])/2.0
-    ypos = (upper_right[1] - lower_left[1])/2.0
+    spec = {'rectangular': {'lower_left': [lower_left[0] - xpos, lower_left[1] - ypos] , 'upper_right': [upper_right[0] - xpos, upper_right[1] - ypos]}}
     
-    gid_list = nest.sli_func('SelectNodesByMask', ypos, xpos, mask, layer)
+    gid_list = nest.sli_func('SelectNodesByMask', ypos, xpos, spec, layer[0])
     
     return gid_list
     

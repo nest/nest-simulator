@@ -1241,6 +1241,8 @@ nest::ConnectionManager::send( thread t, index sgid, Event& e )
 // TODO@5g: implement
 void
 nest::ConnectionManager::send_secondary( thread t, SecondaryEvent& e )
+size_t
+nest::ConnectionManager::get_num_target_data( const thread tid ) const
 {
   assert( false );
   // index sgid = e.get_sender_gid();
@@ -1268,6 +1270,12 @@ nest::ConnectionManager::send_secondary( thread t, SecondaryEvent& e )
   //     }
   //   }
   // }
+  size_t num_connections = 1;
+  for ( synindex syn_index = 0; syn_index < ( *connections_5g_[ tid ] ).size(); ++syn_index )
+  {
+    num_connections += source_table_.num_unique_sources( tid, syn_index );
+  }
+  return num_connections;
 }
 
 size_t
@@ -1681,7 +1689,27 @@ nest::ConnectionManager::reserve_connections( const thread tid,
 }
 
 void
-nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions_( const thread tid )
+nest::ConnectionManager::compute_target_data_buffer_size()
+{
+  // determine number of target data on this rank
+  size_t num_target_data = 0;
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
+    num_target_data += get_num_target_data( tid );
+  }
+
+  // determine maximum number of target data across all ranks
+  std::vector< long > global_num_target_data( kernel().mpi_manager.get_num_processes() );
+  global_num_target_data[ kernel().mpi_manager.get_rank() ] = num_target_data;
+  kernel().mpi_manager.communicate( global_num_target_data );
+  num_target_data = *std::max_element( global_num_target_data.begin(), global_num_target_data.end() );
+
+  // adjust target data buffers accordingly
+  kernel().mpi_manager.set_buffer_size_target_data( num_target_data * kernel().mpi_manager.get_num_processes() );
+}
+
+void
+nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( const thread tid )
 {
 #pragma omp single
   {

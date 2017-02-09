@@ -74,7 +74,8 @@ public:
 
   DictionaryDatum& get_connruledict();
 
-  void compute_compressed_secondary_recv_buffer_positions_( const thread tid );
+  void compute_target_data_buffer_size();
+  void compute_compressed_secondary_recv_buffer_positions( const thread tid );
 
   /**
    * Add a connectivity rule, i.e. the respective ConnBuilderFactory.
@@ -419,6 +420,9 @@ public:
   void compress_secondary_send_buffer_pos( const thread tid );
 
 private:
+
+  size_t get_num_target_data( const thread tid ) const;
+
   synindex find_synapse_index_( const thread tid, const synindex syn_id ) const;
   size_t get_num_connections_( const thread tid, const synindex syn_id ) const;
 

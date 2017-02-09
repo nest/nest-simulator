@@ -163,6 +163,8 @@ public:
     const synindex syn_index,
     const std::vector< index >& source_lcids,
     std::vector< index >& sources );
+
+  size_t num_unique_sources( const thread tid, const synindex syn_index ) const;
 };
 
 inline void
@@ -430,6 +432,25 @@ SourceTable::get_source_gids( const thread tid,
   }
 }
 
+inline size_t
+SourceTable::num_unique_sources( const thread tid, const synindex syn_index ) const
+{
+  size_t n = 0;
+  index last_source = 0;
+  for ( std::vector< Source >::const_iterator cit = ( *( *sources_[ tid ] )[ syn_index ] ).begin();
+        cit != ( *( *sources_[ tid ] )[ syn_index ] ).end(); ++cit )
+  {
+    // number of unique sources will correspond to the number of
+    // targets that need to be communicated during construction of the
+    // presynaptic connection infrastructure
+    if ( last_source != ( *cit ).get_gid() )
+    {
+      last_source = ( *cit ).get_gid();
+      ++n;
+    }
+  }
+  return n;
+}
 
 } // namespace nest
 

@@ -600,11 +600,6 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
   Stopwatch sw_sort;
   Stopwatch sw_gather_target_data;
 
-#pragma omp single
-  {
-    kernel().event_delivery_manager.configure_target_data_buffers();
-  }
-
   sw_reset_connections.start();
   kernel().connection_manager.restructure_connection_tables( tid );
   sw_reset_connections.stop();
@@ -613,10 +608,16 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
     tid ); // TODO@5g: move into restructure_
   sw_sort.stop();
 
+#pragma omp single
+  {
+    kernel().connection_manager.compute_target_data_buffer_size();
+    kernel().event_delivery_manager.configure_target_data_buffers();
+  }
+
   if ( kernel().node_manager.any_node_uses_wfr() )
   {
 #pragma omp barrier
-    kernel().connection_manager.compute_compressed_secondary_recv_buffer_positions_( tid );
+    kernel().connection_manager.compute_compressed_secondary_recv_buffer_positions( tid );
 #pragma omp single
     {
       kernel().event_delivery_manager.configure_secondary_buffers();

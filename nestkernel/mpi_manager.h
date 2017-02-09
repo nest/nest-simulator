@@ -489,13 +489,27 @@ MPIManager::get_buffer_size_secondary_events() const
 inline void
 MPIManager::set_buffer_size_target_data( const size_t buffer_size )
 {
-  buffer_size_target_data_ = buffer_size;
+  if ( buffer_size < max_buffer_size_target_data_ )
+  {
+    buffer_size_target_data_ = buffer_size;
+  }
+  else
+  {
+    buffer_size_target_data_ = max_buffer_size_target_data_;
+  }
 }
 
 inline void
 MPIManager::set_buffer_size_spike_data( const size_t buffer_size )
 {
-  buffer_size_spike_data_ = buffer_size;
+  if ( buffer_size < max_buffer_size_spike_data_ )
+  {
+    buffer_size_spike_data_ = buffer_size;
+  }
+  else
+  {
+    buffer_size_spike_data_ = max_buffer_size_spike_data_;
+  }
 }
 
 inline void

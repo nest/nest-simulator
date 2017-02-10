@@ -92,7 +92,7 @@ void resume_simulation();
  * pair to divide a simulation into multiple pieces with access
  * to the API in between.
  *
- * Thus, simulate(t) = prepare(); run(n/2); run(n/2); cleanup()
+ * Thus, simulate(t) = prepare(); run(t/2); run(t/2); cleanup()
  *
  * @see prepare()
  * @see cleanup()

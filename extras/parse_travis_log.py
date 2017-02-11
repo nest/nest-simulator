@@ -760,7 +760,7 @@ def printable_summary(list_of_changed_files,
     +        N E S T   T r a v i s   C I   B u i l d   S u m m a r y          +
     +                                                                         +
     + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +
-    """
+    \n\n"""
 
     build_summary = header
 

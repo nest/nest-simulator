@@ -32,9 +32,6 @@
 # Exit shell if any subcommand or pipline returns a non-zero status.
 set -e
 
-# Uncomment this shell-option for debugging.
-# set -x
-
 mkdir -p $HOME/.matplotlib
 cat > $HOME/.matplotlib/matplotlibrc <<EOF
     backend : svg
@@ -85,9 +82,10 @@ fi
 
 NEST_VPATH=build
 NEST_RESULT=result
+NEST_RESULT=$(readlink -f $NEST_RESULT)
+
 mkdir "$NEST_VPATH" "$NEST_RESULT"
 mkdir "$NEST_VPATH/reports"
-NEST_RESULT=$(readlink -f $NEST_RESULT)
 
 if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
   echo "\n"
@@ -96,10 +94,8 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
   echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 
   echo "MSGBLD0010: Initializing VERA++ static code analysis."
-  # Create a VERA++ profile for NEST in './vera_home' for static code analysis.
-  mkdir -p vera_home
-  cp -r /usr/lib/vera++/* ./vera_home
-  cp $NEST_VPATH/../extras/vera++.profile ./vera_home/profiles/nest
+  # Add the NEST profile to the VERA++ profiles.
+  sudo cp ./extras/vera++.profile /usr/lib/vera++/profiles/nest
   echo "MSGBLD0020: VERA++ initialization completed."  
 
   if [ ! -f "$HOME/.cache/bin/cppcheck" ]; then
@@ -127,13 +123,6 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
 
   # Ensure that the cppcheck and clang-format installation can be found.
   export PATH=$HOME/.cache/bin:$PATH
-  VERA_VERS=`vera++ --version`
-  CPPCHECK_VERS=`cppcheck --version`
-  CLANG_FORMAT_VERS=`clang-format --version`
-  echo "MSGBLD0065: Following tools are in use:"
-  echo "MSGBLD0065: VERA++       : $VERA_VERS"
-  echo "MSGBLD0065: CPPCHECK     : $CPPCHECK_VERS"
-  echo "MSGBLD0065: CLANG-FORMAT : $CLANG_FORMAT_VERS"
   
   echo "MSGBLD0070: Retrieving changed files."
   # Note: BUG: Extracting the filenames may not work in all cases. 
@@ -162,87 +151,16 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
   done
   echo "MSGBLD0100: Retrieving changed files completed."
 
-  format_error_files=""
-  for f in $file_names; do
-    if [ ! -f "$f" ]; then
-      echo "MSGBLD0110: $f is not a file or does not exist anymore."
-      continue
-    fi
-    echo "MSGBLD0120: Perform static code analysis for file $f."
-    case $f in
-      *.h | *.c | *.cc | *.hpp | *.cpp )
-        f_base=$NEST_VPATH/reports/`basename $f`
+  sudo chmod +x ./extras/static_code_analysis.sh
 
-        echo "MSGBLD0130: Run VERA++ for file: $f"
-        vera++ --root ./vera_home --profile nest $f > ${f_base}_vera.txt 2>&1
-        cat ${f_base}_vera.txt | while read line
-        do
-          echo "MSGBLD0135: VERA++ $line"
-        done
-        echo "MSGBLD0140: VERA++ for file $f completed."
+  RUNS_ON_TRAVIS=true
+  INCREMENTAL=false
+  VERA=vera++
+  CPPCHECK=cppcheck
+  CLANG_FORMAT=clang-format
+  PEP8=pep8
 
-        echo "MSGBLD0150: Run CPPCHECK for file: $f"
-        cppcheck --enable=all --inconclusive --std=c++03 $f > ${f_base}_cppcheck.txt 2>&1
-        cat ${f_base}_cppcheck.txt | while read line
-        do
-          echo "MSGBLD0155: CPPCHECK $line"
-        done        
-        echo "MSGBLD0160: CPPCHECK for file $f completed."
-
-        echo "MSGBLD0170: Run CLANG-FORMAT for file: $f"
-        # Create a clang-format formatted temporary file and perform a diff with its origin.
-        clang-format $f > ${f_base}_formatted_$TRAVIS_COMMIT.txt
-        diff $f ${f_base}_formatted_$TRAVIS_COMMIT.txt | tee ${f_base}_clang_format.txt
-        cat ${f_base}_clang_format.txt | while read line
-        do
-          echo "MSGBLD0175: CLANG-FORMAT $line"
-        done        
-        echo "MSGBLD0180: CLANG-FORMAT for file $f completed."
-
-        # Remove temporary files.
-        rm ${f_base}_formatted_$TRAVIS_COMMIT.txt
-
-        if [ -s ${f_base}_clang_format.txt ]; then
-          format_error_files="$format_error_files $f"
-        fi
-
-        ;;
-      *.py )
-        echo "MSGBLD0190: Run PEP8 check for file: $f"
-        # PEP8 rules to ignore.
-        PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
-        PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
-        # Regular expression of directory patterns on which to apply PEP8_IGNORES_EXAMPLES.
-        case $f in
-          *examples* | *user_manual_scripts*)
-            IGNORES=$PEP8_IGNORES_EXAMPLES
-            ;;
-          *)
-            IGNORES=$PEP8_IGNORES
-            ;;
-        esac
-
-        if ! pep8_result=`pep8 --ignore=$PEP8_IGNORES $f` ; then
-          printf '%s\n' "$pep8_result" | while IFS= read -r line
-          do
-            echo "MSGBLD0195: PEP8 $line"
-          done
-          format_error_files="$format_error_files $f"
-        fi
-        echo "MSGBLD0200: PEP8 check for file $f completed."
-        ;;
-      *)
-        echo "MSGBLD0210: File $f is not a C/C++/Python file. Static code analysis and formatting check skipped."
-        continue
-    esac
-  done
-
-  if [ "x$format_error_files" != "x" ]; then
-    printf '%s\n' "$format_error_files" | while IFS= read -r line
-    do
-      echo "MSGBLD0220: Formatting error in file: $line"
-    done
-  fi
+  ./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8"
 fi   # Static code analysis.
 
 

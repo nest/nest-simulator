@@ -146,24 +146,24 @@ def write_help_html(doc_dic, helpdir, fname, sli_command_list, keywords):
 
 def write_helpindex(helpdir):
     """
-    Returns index.html and index.hlp
-    --------------------------------
+    Writes helpindex.html and helpindex.hlp
+    ---------------------------------------
 
     """
-    filelist = glob.glob(helpdir + "/*/*.hlp")
+    filelist = glob.glob(os.path.join(helpdir, '*', '*.hlp'))
     html_list = []
     hlp_list = []
 
     # Loading Template for helpindex.html
-    ftemplate = open('templates/helpindex.tpl.html', 'r')
+    ftemplate = open(os.path.join('templates', 'helpindex.tpl.html'), 'r')
     templ = ftemplate.read()
     ftemplate.close()
     # Loading Template for CSS
-    cssf = open('templates/nest.tpl.css', 'r')
+    cssf = open(os.path.join('templates', 'nest.tpl.css'), 'r')
     csstempl = cssf.read()
     cssf.close()
     # Loading Template for footer
-    footerf = open('templates/footer.tpl.html', 'r')
+    footerf = open(os.path.join('templates', 'footer.tpl.html'), 'r')
     footertempl = footerf.read()
     footerf.close()
 
@@ -184,13 +184,14 @@ def write_helpindex(helpdir):
         html_list.append('</tr></table></center>')
         html_list.append('<center><table class="commands" id="%s">'
                          % doubles[0])
-        for item in filelist:
+        for item in sorted(filelist,
+                           key=lambda name: name.lower().rsplit('/', 1)[1]):
             fitem = open(item, 'r')
             itemtext = fitem.read()
             fitem.close()
             # only the basename of the file
             name = os.path.basename(item)[:-4]
-            # only the firts line of itemtext
+            # only the first line of itemtext
             name_line = itemtext.splitlines()[0]
             #
             if name_line.rsplit(' - ')[0] == 'Name: ' + name:
@@ -222,12 +223,12 @@ def write_helpindex(helpdir):
     indexstring = s.substitute(indexbody=htmlstring, css=csstempl,
                                footer=footertempl)
 
-    f_helpindex = open(helpdir + '/helpindex.html', 'w')
+    f_helpindex = open(os.path.join(helpdir, 'helpindex.html'), 'w')
     f_helpindex.write(indexstring)
     f_helpindex.close()
 
     # Todo: using string template for .hlp
-    f_helphlpindex = open(helpdir + '/helpindex.hlp', 'w')
+    f_helphlpindex = open(os.path.join(helpdir, 'helpindex.hlp'), 'w')
     f_helphlpindex.write('\n'.join(hlp_list))
     f_helphlpindex.close()
 

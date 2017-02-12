@@ -124,12 +124,14 @@ TargetDataBase::is_invalid_marker() const
 inline void
 TargetDataBase::set_lid( const index lid )
 {
+  assert( lid < 1048576 );
   lid_ = lid;
 }
 
 inline void
 TargetDataBase::set_tid( const thread tid )
 {
+  assert( tid < 1024 );
   tid_ = tid;
 }
 

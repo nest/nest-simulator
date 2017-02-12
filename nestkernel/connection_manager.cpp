@@ -93,7 +93,7 @@ nest::ConnectionManager::initialize()
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    connections_5g_[ tid ] = new std::vector< ConnectorBase* >( 0, NULL );
+    connections_5g_[ tid ] = new std::vector< ConnectorBase* >( 0 );
     secondary_recv_buffer_pos_[ tid ] =
       new std::vector< std::vector< size_t >* >();
     syn_id_to_syn_index_[ tid ] = new std::map< synindex, synindex >;

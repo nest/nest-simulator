@@ -842,6 +842,9 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
     send_buffer_begin[ lr_idx ] = rank * num_target_data_per_rank;
     send_buffer_end[ lr_idx ] = ( rank + 1 ) * num_target_data_per_rank;
     send_buffer[ send_buffer_end[ lr_idx ] - 1 ].reset_marker();
+    // set first entry to invalid to avoid accidentally reading
+    // uninitialized parts of the receive buffer
+    send_buffer[ send_buffer_begin[ lr_idx ] ].set_invalid_marker();
   }
 
   while ( true )

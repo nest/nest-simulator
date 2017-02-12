@@ -24,7 +24,6 @@
 
 // C++ includes:
 #include <algorithm> // rotate
-#include <cstdlib> // calloc
 #include <iostream>
 #include <numeric> // accumulate
 
@@ -170,11 +169,11 @@ EventDeliveryManager::configure_target_data_buffers()
     / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
 
   send_buffer_target_data_ = static_cast< TargetData* >(
-    calloc( kernel().mpi_manager.get_buffer_size_target_data(),
-            sizeof( TargetData ) ) );
+    malloc( kernel().mpi_manager.get_buffer_size_target_data()
+            * sizeof( TargetData ) ) );
   recv_buffer_target_data_ = static_cast< TargetData* >(
-    calloc( kernel().mpi_manager.get_buffer_size_target_data(),
-            sizeof( TargetData ) ) );
+    malloc( kernel().mpi_manager.get_buffer_size_target_data()
+            * sizeof( TargetData ) ) );
 }
 
 void

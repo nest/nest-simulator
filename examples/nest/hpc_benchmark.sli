@@ -210,13 +210,13 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
   (Creating excitatory population.) message  % show message
   /iaf_psc_alpha [NE] LayoutNetwork /E_net Set  % subnet gets own gid
   /E_from E_net 1 add def                    % gid of first child
-  /E_to 0 GetStatus /network_size get 1 sub def % gid of last child
+  /E_to E_from NE add 1 sub def              % gid of last child
   
   M_INFO (BuildNetwork)
   (Creating inhibitory population.) message  % show message
   /iaf_psc_alpha [NI] LayoutNetwork /I_net Set  % subnet gets own gid
   /I_from I_net 1 add def                    % gid of first child
-  /I_to 0 GetStatus /network_size get 1 sub def % gid of last child
+  /I_to I_from NI add 1 sub def              % gid of last child
 
   randomize_Vm
   {

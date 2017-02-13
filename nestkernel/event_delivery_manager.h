@@ -362,26 +362,20 @@ private:
    * presynaptic to postsynaptic side. Builds TargetData objects from
    * SourceTable and connections information.
    */
-  bool collocate_target_data_buffers_( const thread tid,
-    const unsigned int num_target_data_per_rank,
-    TargetData* send_buffer );
+  bool collocate_target_data_buffers_( const thread tid );
 
   /**
    * Sets marker in MPI buffer that signals end of communication
    * across MPI ranks.
    */
-  void set_complete_marker_target_data_( const thread tid,
-    const unsigned int num_target_data_per_rank,
-    TargetData* send_buffer );
+  void set_complete_marker_target_data_( const thread tid );
 
   /**
    * Reads TargetData objects from MPI buffers and creates Target
    * objects on TargetTable (presynaptic part of connection
    * infrastructure).
    */
-  bool distribute_target_data_buffers_( const thread tid,
-    const unsigned int num_target_data_per_rank,
-    TargetData const* const recv_buffer );
+  bool distribute_target_data_buffers_( const thread tid );
 
   /**
    * Sends event e to all targets of node source. Delivers events from

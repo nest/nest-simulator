@@ -741,7 +741,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
 
     // TODO@5g: no need to pass send buffer
     me_completed_tid = collocate_target_data_buffers_(
-      tid, send_recv_count_target_data_per_rank_, send_buffer_target_data_ );
+      tid );
 #pragma omp atomic
     completed_count += me_completed_tid;
 #pragma omp barrier
@@ -754,7 +754,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
    if ( completed_count == half_completed_count )
     {
       set_complete_marker_target_data_(
-        tid, send_recv_count_target_data_per_rank_, send_buffer_target_data_ );
+        tid );
 #pragma omp barrier
     }
     kernel().connection_manager.save_source_table_entry_point( tid );
@@ -779,7 +779,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
     }
 
     others_completed_tid = distribute_target_data_buffers_(
-      tid, send_recv_count_target_data_per_rank_, recv_buffer_target_data_ );
+      tid );
 
 #pragma omp single
     {
@@ -808,9 +808,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
 }
 
 bool
-EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
-  const unsigned int num_target_data_per_rank,
-  TargetData* send_buffer )
+EventDeliveryManager::collocate_target_data_buffers_( const thread tid )
 {
   const AssignedRanks assigned_ranks =
     kernel().vp_manager.get_assigned_ranks( tid );
@@ -837,13 +835,13 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
     // thread-local index of (global) rank
     const thread lr_idx = rank % assigned_ranks.max_size;
     assert( lr_idx < assigned_ranks.size );
-    send_buffer_idx[ lr_idx ] = rank * num_target_data_per_rank;
-    send_buffer_begin[ lr_idx ] = rank * num_target_data_per_rank;
-    send_buffer_end[ lr_idx ] = ( rank + 1 ) * num_target_data_per_rank;
-    send_buffer[ send_buffer_end[ lr_idx ] - 1 ].reset_marker();
+    send_buffer_idx[ lr_idx ] = rank * send_recv_count_target_data_per_rank_;
+    send_buffer_begin[ lr_idx ] = rank * send_recv_count_target_data_per_rank_;
+    send_buffer_end[ lr_idx ] = ( rank + 1 ) * send_recv_count_target_data_per_rank_;
+    send_buffer_target_data_[ send_buffer_end[ lr_idx ] - 1 ].reset_marker();
     // set first entry to invalid to avoid accidentally reading
     // uninitialized parts of the receive buffer
-    send_buffer[ send_buffer_begin[ lr_idx ] ].set_invalid_marker();
+    send_buffer_target_data_[ send_buffer_begin[ lr_idx ] ].set_invalid_marker();
   }
 
   while ( true )
@@ -870,7 +868,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
         // fully read
         is_source_table_read = false;
         if ( num_target_data_written
-          == ( num_target_data_per_rank
+          == ( send_recv_count_target_data_per_rank_
                * assigned_ranks.size ) ) // buffer is full
         {
           return is_source_table_read;
@@ -882,7 +880,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
       }
       else
       {
-        send_buffer[ send_buffer_idx[ lr_idx ] ] = next_target_data;
+        send_buffer_target_data_[ send_buffer_idx[ lr_idx ] ] = next_target_data;
         ++send_buffer_idx[ lr_idx ];
         ++num_target_data_written;
       }
@@ -897,11 +895,11 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
         const thread lr_idx = target_rank % assigned_ranks.max_size;
         if ( send_buffer_idx[ lr_idx ] > send_buffer_begin[ lr_idx ] )
         {
-          send_buffer[ send_buffer_idx[ lr_idx ] - 1 ].set_end_marker();
+          send_buffer_target_data_[ send_buffer_idx[ lr_idx ] - 1 ].set_end_marker();
         }
         else
         {
-          send_buffer[ send_buffer_begin[ lr_idx ] ].set_invalid_marker();
+          send_buffer_target_data_[ send_buffer_begin[ lr_idx ] ].set_invalid_marker();
         }
       }
       return is_source_table_read;
@@ -910,9 +908,7 @@ EventDeliveryManager::collocate_target_data_buffers_( const thread tid,
 }
 
 void
-nest::EventDeliveryManager::set_complete_marker_target_data_( const thread tid,
-  const unsigned int num_target_data_per_rank,
-  TargetData* send_buffer )
+nest::EventDeliveryManager::set_complete_marker_target_data_( const thread tid )
 {
   const AssignedRanks assigned_ranks =
     kernel().vp_manager.get_assigned_ranks( tid );
@@ -921,15 +917,13 @@ nest::EventDeliveryManager::set_complete_marker_target_data_( const thread tid,
         target_rank < assigned_ranks.end;
         ++target_rank )
   {
-    const thread idx = ( target_rank + 1 ) * num_target_data_per_rank - 1;
-    send_buffer[ idx ].set_complete_marker();
+    const thread idx = ( target_rank + 1 ) * send_recv_count_target_data_per_rank_ - 1;
+    send_buffer_target_data_[ idx ].set_complete_marker();
   }
 }
 
 bool
-nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid,
-  const unsigned int num_target_data_per_rank,
-  TargetData const* const recv_buffer )
+nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
 {
   bool are_others_completed = true;
 
@@ -937,22 +931,22 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid,
         ++rank )
   {
     // check last entry for completed marker
-    if ( not recv_buffer[ ( rank + 1 ) * num_target_data_per_rank - 1 ]
+    if ( not recv_buffer_target_data_[ ( rank + 1 ) * send_recv_count_target_data_per_rank_ - 1 ]
                .is_complete_marker() )
     {
       are_others_completed = false;
     }
 
     // were spikes sent by this rank?
-    if ( recv_buffer[ rank * num_target_data_per_rank ].is_invalid_marker() )
+    if ( recv_buffer_target_data_[ rank * send_recv_count_target_data_per_rank_ ].is_invalid_marker() )
     {
       continue;
     }
 
-    for ( unsigned int i = 0; i < num_target_data_per_rank; ++i )
+    for ( unsigned int i = 0; i < send_recv_count_target_data_per_rank_; ++i )
     {
       const TargetData& target_data =
-        recv_buffer[ rank * num_target_data_per_rank + i ];
+        recv_buffer_target_data_[ rank * send_recv_count_target_data_per_rank_ + i ];
       if ( target_data.get_tid() == tid )
       {
         kernel().connection_manager.add_target( tid, target_data );

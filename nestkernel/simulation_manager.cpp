@@ -578,12 +578,8 @@ nest::SimulationManager::prepare_simulation_()
 
   if ( kernel().mpi_manager.get_rank() < 30 )
   {
-    kernel().event_delivery_manager.sw_collocate_target_data.print(
-      "--collocate: " );
     kernel().event_delivery_manager.sw_communicate_target_data.print(
-      "--communicate: " );
-    kernel().event_delivery_manager.sw_deliver_target_data.print(
-      "--deliver: " );
+      "0] GatherTargetData::communicate: " );
     std::cout << "0] CommSteps(Rounds)TargetData: "
               << kernel().event_delivery_manager.comm_steps_target_data << "("
               << kernel().event_delivery_manager.comm_rounds_target_data << ")"
@@ -596,17 +592,9 @@ nest::SimulationManager::prepare_simulation_()
 void
 nest::SimulationManager::update_connection_infrastructure( const thread tid )
 {
-  Stopwatch sw_reset_connections;
-  Stopwatch sw_sort;
-  Stopwatch sw_gather_target_data;
-
-  sw_reset_connections.start();
   kernel().connection_manager.restructure_connection_tables( tid );
-  sw_reset_connections.stop();
-  sw_sort.start();
   kernel().connection_manager.sort_connections(
     tid ); // TODO@5g: move into restructure_
-  sw_sort.stop();
 
 #pragma omp single
   {
@@ -624,16 +612,7 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
     }
   }
 
-  sw_gather_target_data.start();
   kernel().event_delivery_manager.gather_target_data( tid );
-  sw_gather_target_data.stop();
-
-  if ( tid == 0 && kernel().mpi_manager.get_rank() < 30 )
-  {
-    sw_reset_connections.print( "0] ResetConnections time: " );
-    sw_sort.print( "0] SortConnections time: " );
-    sw_gather_target_data.print( "0] GatherTargetData time: " );
-  }
 
 #pragma omp single
   {
@@ -664,9 +643,6 @@ nest::SimulationManager::update_()
     const thread tid = kernel().vp_manager.get_thread_id();
     Stopwatch sw_total;
     Stopwatch sw_update;
-    Stopwatch sw_gather_spike_data;
-    Stopwatch sw_gather_secondary_events;
-    Stopwatch sw_deliver_secondary_events;
 
     sw_total.start();
     do
@@ -770,7 +746,6 @@ nest::SimulationManager::update_()
 #pragma omp critical
           done.push_back( done_p );
 // parallel section ends, wait until all threads are done -> synchronize
-          sw_gather_secondary_events.start();
 #pragma omp barrier
 
 // the following block is executed by a single thread
@@ -791,14 +766,11 @@ nest::SimulationManager::update_()
             done_all = true;
             done.clear();
           }
-          sw_gather_secondary_events.stop();
 
           // deliver SecondaryEvents generated during wfr_update
           // returns the done value over all threads
-          sw_deliver_secondary_events.start();
           done_p =
             kernel().event_delivery_manager.deliver_secondary_events( tid );
-          sw_deliver_secondary_events.stop();
 
           if ( done_p )
           {
@@ -857,20 +829,14 @@ nest::SimulationManager::update_()
                                                                      // end of
                                                                      // slice
       {
-        sw_gather_spike_data.start();
         kernel().event_delivery_manager.gather_spike_data( tid );
-        sw_gather_spike_data.stop();
         if ( kernel().node_manager.any_node_uses_wfr() )
         {
-          sw_gather_secondary_events.start();
 #pragma omp single
           {
             kernel().event_delivery_manager.gather_secondary_events( true );
           }
-          sw_gather_secondary_events.stop();
-          sw_deliver_secondary_events.start();
           kernel().event_delivery_manager.deliver_secondary_events( tid );
-          sw_deliver_secondary_events.stop();
         }
       }
 
@@ -916,14 +882,8 @@ nest::SimulationManager::update_()
     if ( tid == 0 && kernel().mpi_manager.get_rank() < 30 )
     {
       sw_update.print( "0] Update time: " );
-      sw_gather_spike_data.print( "0] GatherSpikeData time: " );
-      kernel().event_delivery_manager.sw_collocate.print( "--collocate: " );
-      kernel().event_delivery_manager.sw_communicate.print( "--communicate: " );
-      kernel().event_delivery_manager.sw_deliver.print( "--deliver: " );
-      sw_gather_secondary_events.print( "0] GatherSecondaryData time: " );
-      kernel().event_delivery_manager.sw_collocate_secondary_events.print( "--collocate(snd): " );
-      kernel().event_delivery_manager.sw_communicate_secondary_events.print( "--communicate(snd): " );
-      sw_deliver_secondary_events.print( "--deliver(snd): " );
+      kernel().event_delivery_manager.sw_communicate_spike_data.print( "0] GatherSpikeData::communicate: " );
+      kernel().event_delivery_manager.sw_communicate_secondary_events.print( "0] GatherSecondaryData::communicate: " );
       sw_total.print( "0] Total time: " );
       std::cout << "0] CommSteps(Rounds)SpikeData: "
                 << kernel().event_delivery_manager.comm_steps_spike_data << "("

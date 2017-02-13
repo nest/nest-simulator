@@ -322,7 +322,6 @@ EventDeliveryManager::gather_secondary_events( const bool done )
 {
   ++comm_steps_secondary_events;
 
-  sw_collocate_secondary_events.start();
   // write done marker at last position in every chunk
   const size_t chunk_size =
     kernel().mpi_manager.get_chunk_size_secondary_events();
@@ -331,7 +330,6 @@ EventDeliveryManager::gather_secondary_events( const bool done )
   {
     send_buffer_secondary_events_[ ( rank + 1 ) * chunk_size - 1 ] = done;
   }
-  sw_collocate_secondary_events.stop();
 
   sw_communicate_secondary_events.start();
   kernel().mpi_manager.communicate_secondary_events_Alltoall(
@@ -399,7 +397,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 #pragma omp single
     {
       completed_count = 0;
-      ++comm_rounds_spike_data;
       if ( kernel().mpi_manager.adaptive_spike_buffers()
         && buffer_size_spike_data_has_changed_ )
       {
@@ -407,11 +404,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
         buffer_size_spike_data_has_changed_ = false;
       }
     } // of omp single; implicit barrier
-
-#pragma omp single
-    {
-      sw_collocate.start();
-    }
 
     // need to get new positions in case buffer size has changed
     SendBufferPosition send_buffer_position(
@@ -457,15 +449,11 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 #pragma omp barrier
     }
 
-#pragma omp single
-    {
-      sw_collocate.stop();
-    }
-
     // communicate spikes using a single thread
 #pragma omp single
     {
-      sw_communicate.start();
+      ++comm_rounds_spike_data;
+      sw_communicate_spike_data.start();
       unsigned int* send_buffer_int =
         reinterpret_cast< unsigned int* >( &send_buffer[ 0 ] );
       unsigned int* recv_buffer_int =
@@ -473,14 +461,10 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       kernel().mpi_manager.communicate_Alltoall( send_buffer_int,
                                                  recv_buffer_int,
                                                  send_recv_count_in_int );
-      sw_communicate.stop();
+      sw_communicate_spike_data.stop();
     } // of omp single; implicit barrier
 
     // deliver spikes from receive buffer to ring buffers
-#pragma omp single
-    {
-      sw_deliver.start();
-    }
     others_completed_tid = deliver_events_5g_( tid, recv_buffer );
 #pragma omp atomic
     completed_count += others_completed_tid;
@@ -503,10 +487,6 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     }
 #pragma omp barrier
 
-#pragma omp single
-    {
-      sw_deliver.stop();
-    }
   } // of while( true )
 
   reset_spike_register_5g_( tid );
@@ -725,7 +705,6 @@ EventDeliveryManager::gather_target_data( const thread tid )
 #pragma omp single
     {
       completed_count = 0;
-      ++comm_rounds_target_data;
       if ( kernel().mpi_manager.adaptive_target_buffers()
         && buffer_size_target_data_has_changed_ )
       {
@@ -734,22 +713,11 @@ EventDeliveryManager::gather_target_data( const thread tid )
     } // of omp single; implicit barrier
     kernel().connection_manager.restore_source_table_entry_point( tid );
 
-#pragma omp single
-    {
-      sw_collocate_target_data.start();
-    }
-
-    // TODO@5g: no need to pass send buffer
     me_completed_tid = collocate_target_data_buffers_(
       tid );
 #pragma omp atomic
     completed_count += me_completed_tid;
 #pragma omp barrier
-
-#pragma omp single
-    {
-      sw_collocate_target_data.stop();
-    }
 
    if ( completed_count == half_completed_count )
     {
@@ -762,6 +730,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
     kernel().connection_manager.clean_source_table( tid );
 #pragma omp single
     {
+      ++comm_rounds_target_data;
       sw_communicate_target_data.start();
       unsigned int* send_buffer_int =
         reinterpret_cast< unsigned int* >( &send_buffer_target_data_[ 0 ] );
@@ -773,18 +742,8 @@ EventDeliveryManager::gather_target_data( const thread tid )
       sw_communicate_target_data.stop();
     } // of omp single
 
-#pragma omp single
-    {
-      sw_deliver_target_data.start();
-    }
-
     others_completed_tid = distribute_target_data_buffers_(
       tid );
-
-#pragma omp single
-    {
-      sw_deliver_target_data.stop();
-    }
 
 #pragma omp atomic
     completed_count += others_completed_tid;

@@ -91,7 +91,8 @@ We next have to decide whether the nodes should be placed in a **grid-based** or
 of our network be regularly and evenly placed within a 2D network, or do we need
 to tell them where they should be located?".
 
-<table><tr>
+<table>
+<tr>
 <td>
 A
 <img src="../../img/grid.png" alt="Example of (A) on-grid and (B) off-grid, 
@@ -104,7 +105,8 @@ B
 in which the neurons are positioned as grid+jitter." title="Example of (A) 
 on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.">
 </td>
-</tr></table>
+</tr>
+</table>
 
 
 Figure 1<a id="figure-1"></a>: Example of (A) on-grid and (B) off-grid, in 
@@ -198,7 +200,8 @@ constraints, as well as reading through the different examples listed there.
 Here are some representative examples for setting up a connectivity profile, and
 the following table lists the parameters that can be used.
 
-<table><tr>
+<table>
+<tr>
 <td style="max-width: 400px;">
  A
 <img src ="../../img/sample1_circgauss.png" alt="Examples of 

@@ -250,6 +250,100 @@ BallMask< D >::get_dict() const
   return d;
 }
 
+
+
+template < int D >
+bool
+EllipseMask< D >::inside( const Position< D >& p ) const
+{
+  return std::pow( p[ 0 ] - center_[ 0 ], 2 ) / ( long_side_ * long_side_ )
+    + std::pow( p[ 1 ] - center_[ 1 ], 2 ) / ( short_side_ * short_side_ )
+    <= 1;
+}
+
+template <>
+bool
+EllipseMask< 2 >::inside( const Box< 2 >& b ) const
+{
+  Position< 2 > p = b.lower_left;
+
+  // Test if all corners are inside circle
+  if ( !inside( p ) )
+    return false; // (0,0)
+  p[ 0 ] = b.upper_right[ 0 ];
+  if ( !inside( p ) )
+    return false; // (0,1)
+  p[ 1 ] = b.upper_right[ 1 ];
+  if ( !inside( p ) )
+    return false; // (1,1)
+  p[ 0 ] = b.lower_left[ 0 ];
+  if ( !inside( p ) )
+    return false; // (1,0)
+
+  return true;
+}
+
+template <>
+bool
+EllipseMask< 3 >::inside( const Box< 3 >& b ) const
+{
+  throw NotImplemented( "" );
+}
+
+template < int D >
+bool
+EllipseMask< D >::outside( const Box< D >& b ) const
+{
+  // Currently only checks if the box is outside the bounding box of
+  // the ellipse. This could be made more refined.
+  for ( int i = 0; i < D; ++i )
+  {
+    // todo: uses only long side -> large bounding box
+    if ( ( b.upper_right[ i ] < center_[ i ] - long_side_ )
+      || ( b.lower_left[ i ] > center_[ i ] + long_side_ ) )
+    {
+      return true;
+    }
+  }
+  return false;
+}
+
+template < int D >
+Box< D >
+EllipseMask< D >::get_bbox() const
+{
+  Box< D > bb( center_, center_ );
+  for ( int i = 0; i < D; ++i )
+  {
+    // todo: uses only long side -> large bounding box
+    bb.lower_left[ i ] -= long_side_;
+    bb.upper_right[ i ] += long_side_;
+  }
+  return bb;
+}
+
+template < int D >
+Mask< D >*
+EllipseMask< D >::clone() const
+{
+  return new EllipseMask( *this );
+}
+
+template < int D >
+DictionaryDatum
+EllipseMask< D >::get_dict() const
+{
+  DictionaryDatum d( new Dictionary );
+  DictionaryDatum maskd( new Dictionary );
+  def< DictionaryDatum >( d, get_name(), maskd );
+  def< double >( maskd, "long_side", long_side_ );
+  def< double >( maskd, "short_side", short_side_ );
+  def< std::vector< double > >( maskd, names::anchor, center_ );
+  return d;
+}
+
+
+
 template < int D >
 bool
 IntersectionMask< D >::inside( const Position< D >& p ) const

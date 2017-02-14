@@ -312,6 +312,69 @@ protected:
 };
 
 /**
+ * Mask defining a circular or spherical region.
+ */
+template < int D >
+class EllipseMask : public Mask< D >
+{
+public:
+  /**
+   * @param center Center of sphere
+   * @param radius Radius of sphere
+   */
+  EllipseMask( Position< D > center, double long_side, double short_side )
+    : center_( center )
+    , long_side_( long_side )
+    , short_side_( short_side )
+  {
+  }
+
+  /**
+   * Creates a BallMask from a Dictionary which should contain the key
+   * "radius" with a double value and optionally the key "anchor" (the
+   * center position) with an array of doubles.
+   */
+  EllipseMask( const DictionaryDatum& );
+
+  ~EllipseMask()
+  {
+  }
+
+  using Mask< D >::inside;
+
+  /**
+   * @returns true if point is inside the circle
+   */
+  bool inside( const Position< D >& p ) const;
+
+  /**
+   * @returns true if the whole box is inside the circle
+   */
+  bool inside( const Box< D >& ) const;
+
+  /**
+   * @returns true if the whole box is outside the circle
+   */
+  bool outside( const Box< D >& b ) const;
+
+  Box< D > get_bbox() const;
+
+  DictionaryDatum get_dict() const;
+
+  Mask< D >* clone() const;
+
+  /**
+   * @returns the name of this mask type.
+   */
+  static Name get_name();
+
+protected:
+  Position< D > center_;
+  double long_side_;
+  double short_side_;
+};
+
+/**
  * Mask combining two masks with a Boolean AND, the intersection.
  */
 template < int D >
@@ -602,6 +665,36 @@ BallMask< D >::BallMask( const DictionaryDatum& d )
     throw BadProperty(
       "topology::BallMask<D>: "
       "radius > 0 required." );
+
+  if ( d->known( names::anchor ) )
+  {
+    center_ = getValue< std::vector< double > >( d, names::anchor );
+  }
+}
+
+template <>
+inline Name
+EllipseMask< 2 >::get_name()
+{
+  return "ellipse";
+}
+
+template <>
+inline Name
+EllipseMask< 3 >::get_name()
+{
+  return "ellipsoid";
+}
+
+template < int D >
+EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
+{
+  long_side_ = getValue< double >( d, "long_side" );
+  short_side_ = getValue< double >( d, "short_side" );
+  if ( long_side_ <= 0 or short_side_ <= 0 )
+    throw BadProperty(
+      "topology::EllipseMask<D>: "
+      "side > 0 required." );
 
   if ( d->known( names::anchor ) )
   {

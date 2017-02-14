@@ -141,7 +141,6 @@ TopologyModule::create_mask( const Token& t )
           throw BadProperty(
             "Mask definition dictionary contains extraneous items." );
         }
-
         mask =
           create_mask( dit->first, getValue< DictionaryDatum >( dit->second ) );
       }
@@ -383,6 +382,8 @@ TopologyModule::init( SLIInterpreter* i )
   // Register mask types
   register_mask< BallMask< 2 > >();
   register_mask< BallMask< 3 > >();
+  register_mask< EllipseMask< 2 > >();
+  register_mask< EllipseMask< 3 > >();
   register_mask< BoxMask< 2 > >();
   register_mask< BoxMask< 3 > >();
   register_mask< BoxMask< 3 > >( "volume" ); // For compatibility with topo 2.0
@@ -1246,14 +1247,15 @@ void
 TopologyModule::SelectNodesByMask_L_M_d_dFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 4 );
-
   const index& layer_gid = getValue< long >( i->OStack.pick( 0 ) );
-  DictionaryDatum mask_dict = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
+  DictionaryDatum mask_dict =
+    getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   double xpos = getValue< double >( i->OStack.pick( 2 ) );
   double ypos = getValue< double >( i->OStack.pick( 3 ) );
   Layer<2>* l = dynamic_cast< Layer<2>* >(
       kernel().node_manager.get_node( layer_gid ) );
   MaskDatum mask = create_mask( mask_dict );
+
 
   std::vector< index > mask_gids;
 

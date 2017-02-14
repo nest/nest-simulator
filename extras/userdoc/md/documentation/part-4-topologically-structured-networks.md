@@ -109,7 +109,7 @@ on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.">
 Figure 1<a id="figure-1"></a>: Example of (A) on-grid and (B) off-grid, in 
 which the neurons are positioned as grid+jitter.
 
-### 1) On-grid
+### 1 - On-grid
 
 we have to explicitly specify the size and spacing of the grid, by the number or
 rows *m* and columns *n* as well as the extent (layer size). The grid spacing i
@@ -124,7 +124,7 @@ The following snippet produces Fig. A:
                      "columns" : 10, # ... and the number of columns
                      "elements" : "iaf_psc_alpha"} # the element at each (x,y) coordinate in the grid
 
-### 2) Off grid
+### 2 - Off grid
 
 we define only the elements, their positions and the extent. The number of 
 elements created is equivalent to the length of the list of positions. This 

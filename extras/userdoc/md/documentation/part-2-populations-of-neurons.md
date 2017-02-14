@@ -282,7 +282,7 @@ These are the new functions we introduced for the examples in this handout.
     - List of parameter values if called with list of parameter names
     - Set parameters for the simulation kernel.
 
-### Models {#models .unnumbered}
+### Models
 
 -   `GetDefaults(model)`:
 

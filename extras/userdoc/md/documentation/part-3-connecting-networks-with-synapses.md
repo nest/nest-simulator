@@ -44,7 +44,7 @@ For the majority of synapses, all of their parameters are accessible via
 `GetDefaults()` and `SetDefaults()`. Synapse models implementing spike-timing
 dependent plasticity are an exception to this, as their dynamics are driven by
 the post-synaptic spike train as well as the pre-synaptic one. As a consequence,
-the time constant of the depressing window of STDP is a parameter of the
+the time constant of the depressing window of STDP is a parameter of the 
 post-synaptic neuron. It can be set as follows:
 
     nest.Create("iaf_psc_alpha", params={"tau_minus": 30.0})
@@ -63,6 +63,39 @@ set in the synapse specification dictionary accepted by the connection routine.
 
 If no synapse model is given, connections are made using the model
 `static_synapse`.
+
+## Distributing synapse parameters
+
+The synapse parameters are specified in the synapse dictionary which is 
+passed to the Connect-function. If the parameter is set to a scalar all 
+connections will be drawn using the same parameter. Parameters can be 
+randomly distributed by assigning a dictionary to the parameter. The 
+dictionary has to contain the key `distribution` setting the target 
+distribution of the parameters (for example `normal`). Optionally parameters 
+associated with the distribution can be set (for example `mu`). Here we show 
+an example where the parameters `alpha` and `weight` of the stdp synapse are 
+uniformly distributed.
+
+    syn_dict = {"model": "stdp_synapse", 
+                "alpha": {"distribution": "uniform", "low": Min_alpha, "high": Max_alpha},
+                "weight": {"distribution": "uniform", "low": Wmin, "high": Wmax},
+                "delay": 1.0 }
+    nest.Connect(epop1, neuron, "all_to_all", syn_dict)
+
+
+Available distributions and associated parameters are described in 
+[Connection Management](connection-management.md), the most common ones are:
+
+| Distributions  |        Keys      |
+|--------------- |------------------|
+| `normal`       | `mu`, `sigma`    |
+| `lognormal`    | `mu`, `sigma`    |
+| `uniform`      | `low`, `high`    |
+| `uniform_int`  | `low`, `high`    |
+| `binomial`     | `n`, `p`         |
+| `exponential`  | `lambda`         |
+| `gamma`        | `order`, `scale` |
+| `poisson`      | `lambda`         |
 
 ## Querying the synapses
 
@@ -122,37 +155,6 @@ The variable `conn_vals` is now a list of lists, containing the `target` and
 
 To get used to these methods of querying the synapses, it is recommended to try
 them out on a small network where all connections are known.
-
-## Distributing synapse parameters
-
-The synapse parameters are specified in the synapse dictionary which is passed
-to the Connect-function. If the parameter is set to a scalar all connections
-will be drawn using the same parameter. Parameters can be randomly distributed
-by assigning a dictionary to the parameter. The dictionary has to contain the
-key `distribution` setting the target distribution of the parameters (for
-example `normal`). Optionally parameters associated with the distribution can be
-set (for example `mu`). Here we show an example where the parameters `alpha` and
-`weight` of the stdp synapse are uniformly distributed.
-
-    syn_dict = {"model": "stdp_synapse",
-                "alpha": {"distribution": "uniform", "low": Min_alpha, "high": Max_alpha},
-                "weight": {"distribution": "uniform", "low": Wmin, "high": Wmax},
-                "delay": 1.0 }
-    nest.Connect(epop1, neuron, "all_to_all", syn_dict)
-
-Available distributions and associated parameters are described in [Connection Management](connection-management.md),
-the most common ones are:
-
-| Distributions | Keys             |
-|---------------|------------------|
-| `normal`      | `mu`, `sigma`    |
-| `lognormal`   | `mu`, `sigma`    |
-| `uniform`     | `low`, `high`    |
-| `uniform_int` | `low`, `high`    |
-| `binomial`    | `n`, `p`         |
-| `exponential` | `lambda`         |
-| `gamma`       | `order`, `scale` |
-| `poisson`     | `lambda`         |
 
 ## Coding style
 
@@ -293,20 +295,25 @@ These are the new functions we introduced for the examples in this handout.
 
 ### Querying Synapses
 
-`GetConnections(neuron, synapse_model="None"))`
-Return an array of connection identifiers.
-
-Parameters:
-`source` - list of source GIDs
-`target` - list of target GIDs
-`synapse_model` - string with the synapse model
-If GetConnections is called without parameters, all connections in the network
-are returned. If a list of source neurons is given, only connections from these
-pre-synaptic neurons are returned. If a list of target neurons is given, only
-connections to these post-synaptic neurons are returned. If a synapse model is
-given, only connections with this synapse type are returned. Any combination of
-source, target and synapse\_model parameters is permitted. Each connection id is
-a 5-tuple or, if available, a NumPy array with the following five entries:
-source-gid, target-gid, target-thread, synapse-id, port
-Note: Only connections with targets on the MPI process executing the command are
-returned.
+-   `GetConnections(neuron, synapse_model="None"))`
+    
+    Return an array of connection identifiers.
+    
+    Parameters:
+    
+    `source` - list of source GIDs
+    `target` - list of target GIDs
+    `synapse_model` - string with the synapse model
+    
+    If GetConnections is called without parameters, all connections in the 
+    network are returned. If a list of source neurons is given, only 
+    connections from these pre-synaptic neurons are returned. If a list of 
+    target neurons is given, only connections to these post-synaptic neurons 
+    are returned. If a synapse model is given, only connections with this 
+    synapse type are returned. Any combination of source, target and 
+    synapse\_model parameters is permitted. Each connection id is a 5-tuple 
+    or, if available, a NumPy array with the following five entries:
+    source-gid, target-gid, target-thread, synapse-id, port
+    
+    Note: Only connections with targets on the MPI process executing the 
+    command are returned.

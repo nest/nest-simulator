@@ -105,7 +105,15 @@ quicksort3way( std::vector< T1 >& vec_sort,
   }
 
   // use median-of-3 as partitioning element
-  const size_t m = median3_( vec_sort, lo, lo + n / 2, hi );
+  size_t m = median3_( vec_sort, lo, lo + n / 2, hi );
+
+  // in case of many equal entries, make sure to use first entry with
+  // this value (useful for sorted arrays)
+  const T1 m_val = vec_sort[ m ];
+  while ( m > 0 and vec_sort[ m - 1 ] == m_val )
+  {
+    --m;
+  }
 
   // move pivot to the front
   exchange_( vec_sort, m, lo );
@@ -115,7 +123,7 @@ quicksort3way( std::vector< T1 >& vec_sort,
   size_t lt = lo;
   size_t i = lo + 1;
   size_t gt = hi;
-  const T1 v = vec_sort[ lt ];
+  const T1 v = vec_sort[ lt ]; // pivot
 
   // adjust position of i and lt (useful for sorted arrays)
   while ( vec_sort[ i ] < v )

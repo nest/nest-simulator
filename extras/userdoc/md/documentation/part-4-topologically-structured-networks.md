@@ -106,7 +106,7 @@ on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.">
 </td>
 </tr></table>
 
-Figure 1<a id="figure-1"></a>: Example of (A) on-grid and (B) off-grid, in 
+Figure 1<a id="figure-1"></a>\: Example of (A) on-grid and (B) off-grid, in 
 which the neurons are positioned as grid+jitter.
 
 ### 1) On-grid
@@ -202,8 +202,7 @@ the following table lists the parameters that can be used.
 <img src ="./../img/sample1_circgauss.png" alt="Examples of 
 connectivity for each of the connectivity dictionaries mentioned in the 
 following Python code snippet." title="Examples of connectivity for each of 
-the connectivity dictionaries mentioned in the 
-following Python code snippet.">
+the connectivity dictionaries mentioned in the following Python code snippet.">
 </td>
 <td style="max-width: 400px;">
 B

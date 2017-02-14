@@ -97,7 +97,7 @@ A
 <img src="../../img/grid.png" alt="Example of (A) on-grid and (B) off-grid, 
 in which the neurons are positioned as grid+jitter." title="Example of (A) 
 on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.">
-</t>
+</td>
 <td>
 B
 <img src="../../img/free.png" alt="Example of (A) on-grid and (B) off-grid, 
@@ -106,7 +106,7 @@ on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.">
 </td>
 </tr></table>
 
-Figure 1<a id="figure-1"></a>\: Example of (A) on-grid and (B) off-grid, in 
+Figure 1<a id="figure-1"></a>: Example of (A) on-grid and (B) off-grid, in 
 which the neurons are positioned as grid+jitter.
 
 ### 1) On-grid

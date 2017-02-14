@@ -186,7 +186,7 @@ A
 <img src="../../img/vm_one_neuron.pdf.png" alt="A Membrane potential of 
 integrate-and-fire neuron with constant input current." title="A Membrane 
 potential of integrate-and-fire neuron with constant input current.">
-</t>
+</td>
 <td>
 B
 <img src="../../img/spikes_one_neuron.pdf.png" alt="B Spikes of the neuron." 

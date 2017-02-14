@@ -199,7 +199,7 @@ the following table lists the parameters that can be used.
 <table><tr>
 <td style="max-width: 400px;">
  A
-<img src ="./../img/sample1_circgauss.png" alt="Examples of 
+<img src ="../../img/sample1_circgauss.png" alt="Examples of 
 connectivity for each of the connectivity dictionaries mentioned in the 
 following Python code snippet." title="Examples of connectivity for each of 
 the connectivity dictionaries mentioned in the following Python code snippet.">

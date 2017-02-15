@@ -2124,13 +2124,15 @@ def SelectNodesByMask(layer, lower_left, upper_right, mask_type='rectangular'):
     xpos = (upper_right[0] + lower_left[0])/2.0
     ypos = (upper_right[1] + lower_left[1])/2.0
     
-    if mask_type == 'rectangular':
+    if mask_type == 'rectangle':
         spec = {'rectangular': {'lower_left': [lower_left[0] - xpos, lower_left[1] - ypos] , 'upper_right': [upper_right[0] - xpos, upper_right[1] - ypos]}}
     elif mask_type == 'ellipse':
         ls = (upper_right[0] - lower_left[0])/2.0
         sh = (upper_right[1] - lower_left[1])/2.0
         #spec = {'circular': {'radius': ls}}
         spec = {'ellipse': {'long_side': ls , 'short_side': sh}}
+    else:
+        raise ValueError('Invalid mask type: %s' % mask_type )
     
     gid_list = nest.sli_func('SelectNodesByMask', ypos, xpos, spec, layer[0])
     

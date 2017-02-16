@@ -2118,7 +2118,6 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
 
 
 def SelectNodesByMask(layer, lower_left, upper_right, mask_type='rectangular'):
-    # For ellipse, change long_side, short_side names, change bbox imp.
     xpos = (upper_right[0] + lower_left[0])/2.0
     ypos = (upper_right[1] + lower_left[1])/2.0
     
@@ -2129,7 +2128,6 @@ def SelectNodesByMask(layer, lower_left, upper_right, mask_type='rectangular'):
     elif mask_type == 'ellipse':
         x_side = (upper_right[0] - lower_left[0])/2.0
         y_side = (upper_right[1] - lower_left[1])/2.0
-        #spec = {'circular': {'radius': ls}}
         spec = {'ellipse': {'x_side': x_side , 'y_side': y_side}}
     else:
         raise ValueError('Invalid mask type: %s' % mask_type )

@@ -1247,29 +1247,25 @@ void
 TopologyModule::SelectNodesByMask_L_M_d_dFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 4 );
+
   const index& layer_gid = getValue< long >( i->OStack.pick( 0 ) );
   DictionaryDatum mask_dict =
     getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   double xpos = getValue< double >( i->OStack.pick( 2 ) );
   double ypos = getValue< double >( i->OStack.pick( 3 ) );
+
   Layer<2>* l = dynamic_cast< Layer<2>* >(
       kernel().node_manager.get_node( layer_gid ) );
   MaskDatum mask = create_mask( mask_dict );
 
-
   std::vector< index > mask_gids;
 
-  MaskedLayer< 2 > ml = MaskedLayer< 2 >(  *l, Selector(), mask, true, false);
+  MaskedLayer< 2 > ml = MaskedLayer< 2 >(  *l, Selector(), mask, true, false );
 
   for ( Ntree<2, index>::masked_iterator it = ml.begin( Position<2>(xpos, ypos)) ; it != ml.end() ; ++it )
   {
     mask_gids.push_back( it->second );
   }
-
-
-
-
-  //std::vector< index > mask_gids = TopologyModule::select_nodes_by_mask( dict );
 
   i->OStack.pop( 4 );
   i->OStack.push( mask_gids );

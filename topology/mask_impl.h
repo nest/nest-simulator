@@ -269,7 +269,7 @@ EllipseMask< 2 >::inside( const Box< 2 >& b ) const
   // Currently EllipseMask only works in 2 dimensions.
   Position< 2 > p = b.lower_left;
 
-  // Test if all corners are inside circle
+  // Test if all corners are inside ellipse
   if ( !inside( p ) )
     return false; // (0,0)
   p[ 0 ] = b.upper_right[ 0 ];
@@ -338,6 +338,7 @@ DictionaryDatum
 EllipseMask< D >::get_dict() const
 {
   // Currently EllipseMask only works in 2 dimensions.
+
   DictionaryDatum d( new Dictionary );
   DictionaryDatum maskd( new Dictionary );
   def< DictionaryDatum >( d, get_name(), maskd );

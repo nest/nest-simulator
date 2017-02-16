@@ -15,7 +15,7 @@ to:
 -   reset simulations
 
 For more information on the usage of NEST, please visit:
-[Documentation](documentation.md). To carry out the code snippets in
+[Connection management][cm]. To carry out the code snippets in
 this handout, you need to import `nest` and `numpy`.
 
 ## Creating parameterised populations of nodes
@@ -140,7 +140,7 @@ to every neuron in `pop2`, resulting in $10^2$ connections.
 
     nest.Connect(pop1, pop2, syn_spec={"weight":20.0})
 
-Alternatively, the neurans can be connected with the `one\_to\_one`. This 
+Alternatively, the neurons can be connected with the `one\_to\_one`. This 
 means that the first neuron in `pop1` is connected to the first neuron in 
 `pop2`, the second to the second, etc., creating ten connections in total.
 
@@ -153,9 +153,8 @@ Finally, the multimeters are connected using the default rule
 Here we have just used very simple connection schemes. Connectivity patterns 
 requiring the specification of further parameters, such as in-degree or 
 connection probabilities, must be defined in a dictionary containing the key 
-`rule` and the key for parameters associated to the rule. Please see
-<http://www.nest-simulator.org/connection_management/> for an illustrated 
-guide to the usage of `Connect`.
+`rule` and the key for parameters associated to the rule. Please see 
+[Connection management][cm] for an illustrated guide to the usage of `Connect`.
 
 ## Connecting populations with random connections
 
@@ -212,7 +211,7 @@ Note that for all connectivity rules, it is perfectly legitimate to have the
 same population simultaneously in the role of `pre` and `post`. 
 
 For more information on connecting neurons, please read the documentation of 
-the `Connect` function and consult the guide at [Connection Management](connection-management.md).
+the `Connect` function and consult the guide at [Connection management][cm].
 
 ## Specifying the behaviour of devices
 
@@ -313,3 +312,5 @@ These are the new functions we introduced for the examples in this handout.
 
     Reset all nodes and connections to the defaults of their
     respective model.
+
+[cm]: connection_management.md "Connection management"

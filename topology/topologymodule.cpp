@@ -1263,7 +1263,6 @@ TopologyModule::SelectNodesByMask_L_M_d_dFunction::execute( SLIInterpreter* i ) 
 
   for ( Ntree<2, index>::masked_iterator it = ml.begin( Position<2>(xpos, ypos)) ; it != ml.end() ; ++it )
   {
-	std::cout << it->first << std::endl;
     mask_gids.push_back( it->second );
   }
 

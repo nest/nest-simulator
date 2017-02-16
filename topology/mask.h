@@ -322,10 +322,10 @@ public:
    * @param center Center of sphere
    * @param radius Radius of sphere
    */
-  EllipseMask( Position< D > center, double long_side, double short_side )
+  EllipseMask( Position< D > center, double x_side, double y_side )
     : center_( center )
-    , long_side_( long_side )
-    , short_side_( short_side )
+    , x_side_( x_side )
+    , y_side_( y_side )
   {
   }
 
@@ -370,8 +370,8 @@ public:
 
 protected:
   Position< D > center_;
-  double long_side_;
-  double short_side_;
+  double x_side_;
+  double y_side_;
 };
 
 /**
@@ -689,9 +689,14 @@ EllipseMask< 3 >::get_name()
 template < int D >
 EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
 {
-  long_side_ = getValue< double >( d, "long_side" );
-  short_side_ = getValue< double >( d, "short_side" );
-  if ( long_side_ <= 0 or short_side_ <= 0 )
+  // Currently EllipseMask only works in 2 dimensions.
+  if ( D != 2 )
+  {
+    throw NotImplemented( "" );
+  }
+  x_side_ = getValue< double >( d, "x_side" );
+  y_side_ = getValue< double >( d, "y_side" );
+  if ( x_side_ <= 0 or y_side_ <= 0 )
     throw BadProperty(
       "topology::EllipseMask<D>: "
       "side > 0 required." );

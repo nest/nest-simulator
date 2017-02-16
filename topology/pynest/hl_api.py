@@ -2118,7 +2118,30 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
 
 
 def SelectNodesByMask(layer, lower_left, upper_right, mask_type='rectangular'):
-    # For ellipse, change long_side, short_side names, change bbox imp.
+    """
+    Obtain GIDs inside a specified area.
+    
+    Default area type is rectangular. If elliptical area type is chosen, 
+    the sides of the ellipse be calculated from lower_left and upper_right.
+
+
+    Parameters
+    ----------
+    layer : tuple/list of int
+        List containing the single layer to get GIDs from.
+    lower_left : tuple/list of doubles
+        Position of the lower left corner of the area.
+    upper_right : tuple/list of doubles
+        Position of the upper right corner of the area.
+    mask_type: string (optional)
+        Type of shape specifying the area. Defaults to 'rectangular'.
+
+    Returns
+    -------
+    out : list of int(s)
+        GID(s) of neurons inside the specified area.
+    """
+
     xpos = (upper_right[0] + lower_left[0])/2.0
     ypos = (upper_right[1] + lower_left[1])/2.0
     

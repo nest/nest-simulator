@@ -312,15 +312,16 @@ protected:
 };
 
 /**
- * Mask defining a circular or spherical region.
+ * Mask defining a elliptical region. Only 2D is implemented
  */
 template < int D >
 class EllipseMask : public Mask< D >
 {
 public:
   /**
-   * @param center Center of sphere
-   * @param radius Radius of sphere
+   * @param center Center of ellipse
+   * @param x_side Length between center and x vertices
+   * @param y_side Length between center and y vertices
    */
   EllipseMask( Position< D > center, double x_side, double y_side )
     : center_( center )
@@ -330,9 +331,9 @@ public:
   }
 
   /**
-   * Creates a BallMask from a Dictionary which should contain the key
-   * "radius" with a double value and optionally the key "anchor" (the
-   * center position) with an array of doubles.
+   * Creates an EllipseMask from a Dictionary which should contain the keys
+   * "x_side" and "y_side" with double values, and optionally the key "anchor"
+   * the center position) with an array of doubles.
    */
   EllipseMask( const DictionaryDatum& );
 
@@ -343,17 +344,17 @@ public:
   using Mask< D >::inside;
 
   /**
-   * @returns true if point is inside the circle
+   * @returns true if point is inside the ellipse
    */
   bool inside( const Position< D >& p ) const;
 
   /**
-   * @returns true if the whole box is inside the circle
+   * @returns true if the whole box is inside the ellipse
    */
   bool inside( const Box< D >& ) const;
 
   /**
-   * @returns true if the whole box is outside the circle
+   * @returns true if the whole box is outside the ellipse
    */
   bool outside( const Box< D >& b ) const;
 

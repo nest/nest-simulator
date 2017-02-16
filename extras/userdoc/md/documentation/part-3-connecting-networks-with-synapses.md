@@ -301,9 +301,9 @@ These are the new functions we introduced for the examples in this handout.
     
     Parameters:
     
-    `source` - list of source GIDs
-    `target` - list of target GIDs
-    `synapse_model` - string with the synapse model
+    - `source` - list of source GIDs
+    - `target` - list of target GIDs
+    - `synapse_model` - string with the synapse model
     
     If GetConnections is called without parameters, all connections in the 
     network are returned. If a list of source neurons is given, only 
@@ -315,5 +315,5 @@ These are the new functions we introduced for the examples in this handout.
     or, if available, a NumPy array with the following five entries:
     source-gid, target-gid, target-thread, synapse-id, port
     
-    Note: Only connections with targets on the MPI process executing the 
+    *Note:* Only connections with targets on the MPI process executing the 
     command are returned.

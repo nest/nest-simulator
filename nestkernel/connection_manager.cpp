@@ -29,6 +29,7 @@
 #include <cassert>
 #include <cmath>
 #include <set>
+#include <vector>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -640,6 +641,22 @@ nest::ConnectionManager::disconnect( Node& target,
 
   if ( kernel().node_manager.is_local_gid( target.get_gid() ) )
   {
+    // We check that a connection actually exists between target and source
+    // This is to properly handle the case when structural plasticity is not
+    // enabled but the user wants to delete a connection between a target and
+    // a source which are not connected
+    if ( validate_source_entry_( target_thread, sgid, syn_id ) == 0 )
+    {
+      throw InexistentConnection();
+    }
+    DictionaryDatum data = DictionaryDatum( new Dictionary );
+    def< index >( data, names::target, target.get_gid() );
+    def< index >( data, names::source, sgid );
+    ArrayDatum conns = kernel().connection_manager.get_connections( data );
+    if ( conns.numReferences() == 0 )
+    {
+      throw InexistentConnection();
+    }
     ConnectorBase* c =
       kernel()
         .model_manager.get_synapse_prototype( syn_id, target_thread )
@@ -879,12 +896,18 @@ nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
 }
 
 nest::ConnectorBase*
-nest::ConnectionManager::validate_source_entry_( thread tid,
-  index s_gid,
-  synindex syn_id )
+nest::ConnectionManager::validate_source_entry_( const thread tid,
+  const index s_gid,
+  const synindex syn_id )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
+  return validate_source_entry_( tid, s_gid );
+}
 
+nest::ConnectorBase*
+nest::ConnectionManager::validate_source_entry_( const thread tid,
+  const index s_gid )
+{
   // resize sparsetable to full network size
   if ( connections_[ tid ].size() < kernel().node_manager.size() )
     connections_[ tid ].resize( kernel().node_manager.size() );
@@ -892,9 +915,13 @@ nest::ConnectionManager::validate_source_entry_( thread tid,
   // check, if entry exists
   // if not put in zero pointer
   if ( connections_[ tid ].test( s_gid ) )
+  {
     return connections_[ tid ].get( s_gid );
+  }
   else
+  {
     return 0; // if non-existing
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -1262,35 +1289,32 @@ nest::ConnectionManager::get_sources( std::vector< index > targets,
 }
 
 void
-nest::ConnectionManager::get_targets( std::vector< index > sources,
+nest::ConnectionManager::get_targets( const std::vector< index >& sources,
   std::vector< std::vector< index > >& targets,
-  index synapse_model )
+  const index synapse_model,
+  const std::string& post_synaptic_element )
 {
-  thread thread_id;
-  std::vector< index >::iterator source_it;
-  std::vector< std::vector< index > >::iterator target_it;
-  targets.resize( sources.size() );
-  for ( std::vector< std::vector< index > >::iterator i = targets.begin();
-        i != targets.end();
-        i++ )
-  {
-    ( *i ).clear();
-  }
+  // Clear targets vector and resize to sources size
+  std::vector< std::vector< index > >( sources.size() ).swap( targets );
 
-  for ( tVSConnector::iterator it = connections_.begin();
-        it != connections_.end();
-        ++it )
+  // We go through the connections data structure to retrieve all
+  // targets which have an specific post synaptic element for each
+  // source.
+  for ( thread tid = 0;
+        static_cast< unsigned int >( tid ) < connections_.size();
+        ++tid )
   {
-    thread_id = it - connections_.begin();
     // loop over the targets/sources
-    source_it = sources.begin();
-    target_it = targets.begin();
-    for ( ; source_it != sources.end(); source_it++, target_it++ )
+    std::vector< index >::const_iterator sources_it = sources.begin();
+    std::vector< std::vector< index > >::iterator targets_it = targets.begin();
+    for ( ; sources_it != sources.end(); ++sources_it, ++targets_it )
     {
-      if ( ( *it ).get( *source_it ) != 0 )
+      ConnectorBase* connector = validate_source_entry_( tid, *sources_it );
+      if ( connector != 0 )
       {
-        validate_pointer( ( *it ).get( *source_it ) )
-          ->get_target_gids( ( *target_it ), thread_id, synapse_model );
+        validate_pointer( connector )
+          ->get_target_gids(
+            *targets_it, tid, synapse_model, post_synaptic_element );
       }
     }
   }

@@ -1,7 +1,6 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# minimalmusicsetup_receivenest.py
+# generate_helpindex.py
 #
 # This file is part of NEST.
 #
@@ -20,27 +19,21 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import nest
+"""
+Generate NEST helpindex
+=======================
 
-nest.sli_run("statusdict/have_music ::")
-if not nest.spp():
-    import sys
+Generate the helpindex containing all help files in the given
+help_dir.
+"""
 
-    print("NEST was not compiled with support for MUSIC, not running.")
-    sys.exit()
+import os
+import sys
+from writers import write_helpindex
 
-nest.set_verbosity("M_ERROR")
+if len(sys.argv) != 2:
+    print("Usage: python generate_helpindex.py <help_dir>")
+    sys.exit(1)
 
-meip = nest.Create('music_event_in_proxy')
-nest.SetStatus(meip, {'port_name': 'spikes_in', 'music_channel': 0})
-
-n = nest.Create('iaf_psc_alpha')
-
-nest.Connect(meip, n, 'one_to_one', {'weight': 750.0})
-
-vm = nest.Create('voltmeter')
-nest.SetStatus(vm, {'to_memory': False, 'to_screen': True})
-
-nest.Connect(vm, n)
-
-nest.Simulate(10)
+help_dir = os.path.join(sys.argv[1], "help")
+write_helpindex(help_dir)

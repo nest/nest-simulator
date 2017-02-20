@@ -205,7 +205,7 @@ extern const Name histogram_correction; //!< Specific to correlation_detector
 extern const Name HMIN; //!< Smallest integration step for adaptive stepsize
                         //!< (Brette & Gerstner 2005)
 
-extern const Name I;        //!< Specific to mirollo_strogatz_ps
+extern const Name I;        //!< mirollo_strogatz_ps, StimulatingDevice
 extern const Name I_adapt;  //!< Goal of current homeostasis
                             //!< (current homeostasis)
 extern const Name I_e;      //!< Input current

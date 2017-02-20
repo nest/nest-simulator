@@ -35,6 +35,7 @@
 #include "nest_types.h"
 #include "node.h"
 #include "stimulating_device.h"
+#include "universal_data_logger.h"
 
 namespace nest
 {
@@ -125,6 +126,8 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
+  using Node::handle;
+  using Node::handles_test_event;
   using Node::event_hook;
   using Node::sends_signal;
 
@@ -132,8 +135,19 @@ public:
 
   SignalType sends_signal() const;
 
+  void handle( DataLoggingRequest& );
+
+  port handles_test_event( DataLoggingRequest&, rport );
+
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
+
+  //! Allow multimeter to connect to local instances
+  bool
+  local_receiver() const
+  {
+    return true;
+  }
 
 private:
   void init_state_( const Node& );
@@ -174,6 +188,7 @@ private:
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );
+    Parameters_& operator=( const Parameters_& p ); // Copy constructor EN
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
@@ -186,6 +201,7 @@ private:
   {
     double y_0_;
     double y_1_;
+    double I_;
 
     State_(); //!< Sets default parameter values
 
@@ -194,10 +210,19 @@ private:
 
   // ------------------------------------------------------------
 
+  // These friend declarations must be precisely here.
+  friend class RecordablesMap< noise_generator >;
+  friend class UniversalDataLogger< noise_generator >;
+
+  // ------------------------------------------------------------
+
   struct Buffers_
   {
     long next_step_; //!< time step of next change in current
     AmpVec_ amps_;   //!< amplitudes, one per target
+    Buffers_( noise_generator& );
+    Buffers_( const Buffers_&, noise_generator& );
+    UniversalDataLogger< noise_generator > logger_;
   };
 
   // ------------------------------------------------------------
@@ -216,15 +241,29 @@ private:
     double A_11_;
   };
 
+  double
+  get_I_() const
+  {
+    return S_.I_;
+  }
+
   // ------------------------------------------------------------
 
   StimulatingDevice< CurrentEvent > device_;
+  static RecordablesMap< noise_generator > recordablesMap_;
   Parameters_ P_;
   Variables_ V_;
   Buffers_ B_;
   State_ S_;
 };
 
+inline port
+noise_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+{
+  if ( receptor_type != 0 )
+    throw UnknownReceptorType( receptor_type, get_name() );
+  return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
+}
 
 inline void
 noise_generator::get_status( DictionaryDatum& d ) const

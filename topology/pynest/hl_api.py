@@ -2117,13 +2117,9 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
     plt.draw()
 
 
-def SelectNodesByMask(layer, lower_left, upper_right, mask_type='rectangular'):
+def SelectNodesByMask(layer, xpos, ypos, mask_obj):
     """
     Obtain GIDs inside a specified area.
-    
-    Default area type is rectangular. If elliptical area type is chosen, 
-    the sides of the ellipse be calculated from lower_left and upper_right.
-
 
     Parameters
     ----------
@@ -2133,8 +2129,8 @@ def SelectNodesByMask(layer, lower_left, upper_right, mask_type='rectangular'):
         Position of the lower left corner of the area.
     upper_right : tuple/list of doubles
         Position of the upper right corner of the area.
-    mask_type: string (optional)
-        Type of shape specifying the area. Defaults to 'rectangular'.
+    mask_obj: object
+        Mask object specifying chosen area.
 
     Returns
     -------
@@ -2142,21 +2138,12 @@ def SelectNodesByMask(layer, lower_left, upper_right, mask_type='rectangular'):
         GID(s) of neurons inside the specified area.
     """
 
-    xpos = (upper_right[0] + lower_left[0])/2.0
-    ypos = (upper_right[1] + lower_left[1])/2.0
+   # xpos = (upper_right[0] + lower_left[0])/2.0
+    #ypos = (upper_right[1] + lower_left[1])/2.0
+
+    mask_datum = mask_obj._datum
     
-    if mask_type == 'rectangle':
-        spec = {'rectangular': 
-                {'lower_left': [lower_left[0] - xpos, lower_left[1] - ypos], 
-                 'upper_right': [upper_right[0] - xpos, upper_right[1] - ypos]}}
-    elif mask_type == 'ellipse':
-        x_side = (upper_right[0] - lower_left[0])/2.0
-        y_side = (upper_right[1] - lower_left[1])/2.0
-        spec = {'ellipse': {'x_side': x_side , 'y_side': y_side}}
-    else:
-        raise ValueError('Invalid mask type: %s' % mask_type )
-    
-    gid_list = nest.sli_func('SelectNodesByMask', ypos, xpos, spec, layer[0])
+    gid_list = topology_func('SelectNodesByMask', ypos, xpos, mask_datum, layer[0])
     
     return gid_list
     

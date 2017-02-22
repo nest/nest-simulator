@@ -12,12 +12,16 @@ networks. When you have worked through this material, you will know how to:
 -   simulate the network
 -   extract the data from recording devices
 
-For more information on the usage of PyNEST and for more advanced examples than
-discusses in this primer, please visit [nest-initiative.org/](http://nest-initiative.org/) 
-or have a look at the source directory of your NEST installation in the
-subdirectory:
-`pynest/examples/`. For the internals of the NEST simulator you may refer
-to the [\[1\]](#1),[\[2\]](#2).
+For more information on the usage of PyNEST, please see the other sections of
+this primer: 
+
+-   [Part 2: Populations of neurons](part-2-populations-of-neurons.md)
+-   [Part 3: Connecting networks with synapses](part-3-connecting-networks-with-synapses.md)
+-   [Part 4: Topologically structured networks](part-4-topologically-structured-networks.md)
+
+More advanced examples can be found at [Example Networks](http://www.nest-simulator.org/more-example-networks/), or have a 
+look at at the source directory of your NEST installation in the 
+subdirectory: `pynest/examples/`. 
 
 ## PyNEST - an interface to the NEST simulator
 
@@ -43,9 +47,9 @@ SLI (Simulation Language Interpreter), the native language of the interpreter
 The NEural Simulation Tool (NEST: [www.nest-initiative.org](part-1-neurons-and-simple-neural-networks.md))
 is designed for the simulation of large heterogeneous networks of point neurons.
 It is open source software released under the GPL licence. The simulator comes
-with an interface to Python [\[5\]](#5). [Fig. 1](#figure-1) illustrates the 
+with an interface to Python [\[4\]](#4). [Fig. 1](#figure-1) illustrates the 
 interaction between the user’s simulation script (`mysimulation.py`) and the 
-NEST simulator. [\[2]\](#2) contains a technically detailed description of the 
+NEST simulator. [\[2\]](#2) contains a technically detailed description of the 
 implementation of this interface and parts of this text are based on this 
 reference. The simulation kernel is written in C++ to obtain highest 
 possible performance for the simulation.
@@ -92,13 +96,13 @@ command `Create`, which takes as arguments the model name of the desired node
 type, and optionally the number of nodes to be created and the initialising
 parameters. The function returns a list of handles to the new nodes, which you
 can assign to a variable for later use. These handles are integer numbers,
-called \*id\*s. Many PyNEST functions expect or return a list of ids (see 
+called _ids_. Many PyNEST functions expect or return a list of ids (see 
 [Sec.8](#command-overview)). Thus it is easy to apply functions to large sets
 of nodes with a single function call.
 
 After having imported NEST and also the Pylab interface to Matplotlib [\[3\]]
-(#3), which we will use to display the results, we can start to create nodes.
-For a first example, we will create a neuron of type `iaf_psc_alpha`. This 
+(#3), which we will use to display the results, we can start creating nodes.
+As a first example, we will create a neuron of type `iaf_psc_alpha`. This 
 neuron is an integrate-and-fire neuron with alpha-shaped postsynaptic 
 currents. The function returns a list of the ids of all the created neurons, 
 in this case only one, which we store in a variable called `neuron`.
@@ -109,7 +113,7 @@ in this case only one, which we store in a variable called `neuron`.
 
 We can now use the id to access the properties of this neuron. Properties of
 nodes in NEST are generally accessed via Python dictionaries of key-value pairs
-of the form `{key : value}`. In order to see which properties a
+of the form `{key: value}`. In order to see which properties a
 neuron has, you may ask it for its status.
 
     nest.GetStatus(neuron)
@@ -198,7 +202,7 @@ Figure 2<a id="figure-2"></a>: A Membrane potential of integrate-and-fire
 neuron with constant input current. B Spikes of the neuron.
 
 The order in which the arguments to `Connect` are specified reflects the flow of
-events: if the neuron spikes, it send an event to the spike detector.
+events: if the neuron spikes, it sends an event to the spike detector.
 Conversely, the multimeter periodically sends requests to the neuron to ask
 for its membrane potential at that point in time. This can be regarded as a
 perfect electrode stuck into the neuron.
@@ -249,24 +253,7 @@ window and the fourth line actually produces the plot. You can’t see it yet
 because we have not used `pylab.show()`. Before we do that, we proceed
 analogously to obtain and display the spikes from the spike detector.
 
-<table><tr>
-<td style="max-width: 400px;">
- A
-<img src ="../../img/vm_one_neuron_noise.pdf.png" alt="Membrane potential of
-integrate-and-fire neuron with Poisson noise as input." title="Membrane 
-potential of integrate-and-fire neuron with Poisson noise as input.">
-</td>
-<td style="max-width: 400px;">
-B
-<img src ="../../img/spikes_one_neuron_noise.pdf.png" alt="Spikes of the 
-neuron." title="Spikes of the neuron.">
-</td>
-</tr></table>
-
-Figure 3<a id="figure-3"></a>: A Membrane potential of integrate-and-fire 
-neuron with Poisson noise as input. B Spikes of the neuron.
-
-    dSD = nest.GetStatus(spikedetector,keys=`events')[0]
+    dSD = nest.GetStatus(spikedetector,keys="events")[0]
     evs = dSD["senders"]
     ts = dSD["times"]
     pylab.figure(2)
@@ -282,12 +269,12 @@ the command line by prefixing the file name with `python`, or from the
 Python or ipython prompt, by prefixing it with `run`.
 
 It is possible to collect information of multiple neurons on a single 
-multimeter. This does complicate retrieving the information: The data for 
-each of the n neurons will be stored and returned back interleaved. Luckily 
-Python provides us with a handy array operation to split the data easily: 
-array slicing with a step (sometimes called stride). To explain this you have
-to adapt the model created in the previous part. Save your code under a new 
-name, in the next section you will also work on this code.
+multimeter. This does complicate retrieving the information: the data for 
+each of the n neurons will be stored and returned in an interleaved fashion. 
+Luckily Python provides us with a handy array operation to split the data 
+easily: array slicing with a step (sometimes called stride). To explain this 
+you have to adapt the model created in the previous part. Save your code 
+under a new name, in the next section you will also work on this code.
 Create an extra neuron with the background current given a different value:
 
     neuron2 = nest.Create("iaf_neuron")
@@ -298,8 +285,9 @@ now connect this newly created neuron to the multimeter:
     nest.Connect(multimeter, neuron2)
     
 Run the simulation and plot the results, they will look incorrect. To fix
-this you must plot the two neuron traces separately. Remove lines 22 to 26
-from your script. and replace them with the following lines
+this you must plot the two neuron traces separately. 
+Replace the code that extracts the events from the `multimeter` with the 
+following lines.
 
     pylab.figure(2)
     Vms1 = dmm["events"]["V_m"][::2] # start at index 0: till the end: each second entry
@@ -309,25 +297,23 @@ from your script. and replace them with the following lines
     ts2 = dmm["events"]["times"][1::2]
     pylab.plot(ts2, Vms2)
     
-The slicing with strides is done in line 23-24 and 26-28. Additional
-information can be found
-at. <http://docs.scipy.org/doc/numpy-1.10.0/reference/arrays.indexing.html>
+Additional information can be found at <http://docs.scipy.org/doc/numpy-1.10
+.0/reference/arrays.indexing.html>.
 
 ## Connecting nodes with specific connections
 
 A commonly used model of neural activity is the Poisson process. We now adapt
-the previous example such that the neuron receives 2 Poisson spike trains,
+the previous example so that the neuron receives 2 Poisson spike trains,
 one excitatory and the other inhibitory. Hence, we need a new device, the
-`poisson_generator`. After line 9 we create these two generators and set
-their rates to 80000Hz and 15000Hz, respectively.
+`poisson_generator`. After creating the neurons, we create these two 
+generators and set their rates to 80000Hz and 15000Hz, respectively.
 
     noise_ex = nest.Create("poisson_generator")
     noise_in = nest.Create("poisson_generator")
     nest.SetStatus(noise_ex, {"rate": 80000.0})
     nest.SetStatus(noise_in, {"rate": 15000.0})
 
-We can either remove line 5 entirely or change it to set the constant input
-current to 0:
+Additionally, the constant input current should be set to 0:
 
     nest.SetStatus(neuron, {"I_e": 0.0})
 
@@ -346,23 +332,40 @@ to the synaptic model.
 
 <table><tr>
 <td style="max-width: 400px;">
-<img src ="../../img/vm_psp_two_neurons.pdf.png" alt="Postsynaptic potentials
- in neuron2 evoked by the spikes of neuron1" title="Postsynaptic potentials 
- in neuron2 evoked by the spikes of neuron1">
+ A
+<img src ="../../img/vm_one_neuron_noise.pdf.png" alt="Membrane potential of
+integrate-and-fire neuron with Poisson noise as input." title="Membrane 
+potential of integrate-and-fire neuron with Poisson noise as input.">
+</td>
+<td style="max-width: 400px;">
+B
+<img src ="../../img/spikes_one_neuron_noise.pdf.png" alt="Spikes of the 
+neuron." title="Spikes of the neuron.">
+</td>
+</tr></table>
+
+Figure 3<a id="figure-3"></a>: A Membrane potential of integrate-and-fire 
+neuron with Poisson noise as input. B Spikes of the neuron.
+
+The rest of the code remains as before. You should see a membrane potential 
+as in [Fig. 3](#figure-3).
+
+In the next part of the introduction ([Part 2: Populations of neurons](part-2-populations-of-neurons.md))
+we will look at more methods for connecting many neurons at once.
+
+## Two connected neurons
+
+<table><tr>
+<td style="max-width: 400px;">
+<img src ="../../img/vm_psp_two_neurons.pdf-w400.png" alt="Postsynaptic 
+potentials in neuron2 evoked by the spikes of neuron1" title="Postsynaptic 
+potentials in neuron2 evoked by the spikes of neuron1">
 </td>
 <td></td>
 </tr></table>
 
 Figure 4<a id="figure-4"></a>: Postsynaptic potentials in `neuron2` evoked by 
 the spikes of `neuron1`
-
-The rest of the code remains as before. You should see a membrane potential 
-as in [Fig. 3](#figure-3).
-
-In the next part of the introduction we will look at more methods for connecting
-many neurons at once.
-
-## Two connected neurons
 
 There is no additional magic involved in connecting neurons. To demonstrate
 this, we start from our original example of one neuron with a constant input
@@ -394,37 +397,37 @@ of `neuron1` as in [Fig. 4](#figure4).
 
 ## Command overview
 
-These are the functions we introduced for the examples in this handout; as the
-week progresses we will add more.
+These are the functions we introduced for the examples in this handout; the 
+following sections of this introduction will add more.
 
 ### Getting information about NEST
 
--   `Models(mtype="all", sel=None)`:  
+-   [`Models(mtype="all", sel=None)`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_models-Models):  
     Return a list of all available models (nodes and synapses). Use `mtype="nodes"`
     to only see node models, `mtype="synapses"` to only see synapse models. `sel`
     can be a string, used to filter the result list and only return models 
     containing it.
 
--   `helpdesk(browser="firefox")`:  
+-   [`helpdesk(browser="firefox")`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_info-helpdesk):  
     Opens the NEST documentation pages in the given browser.
 
--   `help(obj=None,pager="less")`:  
+-   [`help(obj=None,pager="less")`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_info-help):  
     Opens the help page for the given object.
 
 ### Nodes
 
--   `Create(model, n=1, params=None)`:  
+-   [`Create(model, n=1, params=None)`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_nodes-Create):  
     Create `n` instances of type `model` in the current sub-network. 
     Parameters for the new nodes can be given as `params` (a single 
     dictionary, or a list of dictionaries with size `n`). If omitted, the 
     `model`’s defaults are used.
 
--   `GetStatus(nodes, keys=None)`:  
+-   [`GetStatus(nodes, keys=None)`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_info-GetStatus):  
     Return a list of parameter dictionaries for the given list of `nodes`. If
     `keys` is given, a list of values is returned instead. `keys` may also 
     be a list, in which case the returned list contains lists of values.
 
--   `SetStatus(nodes, params, val=None)`:  
+-   [`SetStatus(nodes, params, val=None)`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_info-SetStatus):  
     Set the parameters of the given `nodes` to `params`, which may be a single
     dictionary, or a list of dictionaries of the same size as `nodes`. If 
     `val` is given, `params` has to be the name of a property, which is set 
@@ -437,7 +440,7 @@ This is an abbreviated version of the documentation for the `Connect` function,
 please see NEST’s online help for the full version and [Connection Management](connection-management.md)
 for an introduction and worked examples.
 
--   `Connect(pre, post, conn_spec=None, syn_spec=None, model=None)`:  
+-   [`Connect(pre, post, conn_spec=None, syn_spec=None, model=None)`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_connections-Connect):  
     Connect pre neurons to post neurons.Neurons in pre and post are connected
     using the specified connectivity (`"one_to_one"` by default) and synapse 
     type (`"static_synapse"` by default). Details depend on the connectivity 
@@ -477,7 +480,7 @@ distribution-specific paramters (such as `"mu"` and `"sigma"`).
 
 ### Simulation control
 
--   `Simulate(t)`:  
+-   [`Simulate(t)`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_simulation-Simulate):  
     Simulate the network for `t` milliseconds.
 
 ## References
@@ -492,10 +495,5 @@ distribution-specific paramters (such as `"mu"` and `"sigma"`).
 -   \[3\]<a id="3"></a> John D. Hunter. Matplotlib: A 2d graphics environment., 
     9(3):90–95, 2007.
 
--   \[4\]<a id="4"></a> Abigail Morrison, Sirko Straube, Hans Ekkehard  
-    Plesser, and Markus Diesmann. Exact subthreshold integration with 
-    continuous spike times in discrete time neural network simulations. ,
-    19(1):47–79, 2007.
-
--   \[5\]<a id="5"></a> Python Software Foundation. The Python programming 
+-   \[4\]<a id="4"></a> Python Software Foundation. The Python programming 
     language, 2008. <http://www.python.org>.

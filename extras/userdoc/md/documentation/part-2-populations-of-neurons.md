@@ -14,9 +14,16 @@ to:
 -   set up devices to start, stop and save data to file
 -   reset simulations
 
-For more information on the usage of NEST, please visit:
-[Connection management][cm]. To carry out the code snippets in
-this handout, you need to import `nest` and `numpy`.
+For more information on the usage of PyNEST, please see the other sections of
+this primer: 
+
+-   [Part 1: Neurons and simple neural networkss](part-1-neurons-and-simple-neural-networks.md)
+-   [Part 3: Connecting networks with synapses](part-3-connecting-networks-with-synapses.md)
+-   [Part 4: Topologically structured networks](part-4-topologically-structured-networks.md)
+
+More advanced examples can be found at [Example Networks](http://www.nest-simulator.org/more-example-networks/), or have a 
+look at at the source directory of your NEST installation in the 
+subdirectory: `pynest/examples/`. 
 
 ## Creating parameterised populations of nodes
 
@@ -98,7 +105,7 @@ population and set the status of each one:
     Vth=-55.                  
     Vrest=-70.               
     for neuron in epop1:
-        nest.SetStatus([neuron], {"V_m": Vrest+(Vth-Vrest)\*numpy.random.rand()})
+        nest.SetStatus([neuron], {"V_m": Vrest+(Vth-Vrest)*numpy.random.rand()})
 
 However, `SetStatus()` expects a list of nodes and can set the parameters for
 each of them, which is more efficient, and thus to be preferred. One way to do
@@ -135,12 +142,12 @@ ten neurons each.
     nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]})
 
 If no connectivity pattern is specified, the populations are connected via 
-the default rule, namely `all\_to\_all`. Each neuron of `pop1` is connected 
+the default rule, namely `all_to_all`. Each neuron of `pop1` is connected 
 to every neuron in `pop2`, resulting in $10^2$ connections.
 
     nest.Connect(pop1, pop2, syn_spec={"weight":20.0})
 
-Alternatively, the neurons can be connected with the `one\_to\_one`. This 
+Alternatively, the neurons can be connected with the `one_to_one`. This 
 means that the first neuron in `pop1` is connected to the first neuron in 
 `pop2`, the second to the second, etc., creating ten connections in total.
 
@@ -216,7 +223,7 @@ the `Connect` function and consult the guide at [Connection management][cm].
 ## Specifying the behaviour of devices
 
 All devices implement a basic timing capacity; the parameter `start`
-(default $0$) determines the beginning of the device’s activity and the
+(default 0) determines the beginning of the device's activity and the
 parameter `stop` (default: $∞$) its end. These values are taken relative to
 the value of `origin` (default: 0). For example, the following example
 creates a `poisson_generator` which is only active between 100 and 150ms:
@@ -267,11 +274,10 @@ from recording devices.
 
 These are the new functions we introduced for the examples in this handout.
 
-### Getting information about NEST
 
 ### Getting and setting basic settings and parameters of NEST
 
--   `GetKernelStatus(keys=none)`:
+-   [`GetKernelStatus(keys=none)`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_simulation-GetKernelStatus):
 
     Obtain parameters of the simulation kernel.
     Returns:
@@ -283,17 +289,17 @@ These are the new functions we introduced for the examples in this handout.
 
 ### Models
 
--   `GetDefaults(model)`:
+-   [`GetDefaults(model)`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_models-GetDefaults):
 
     Return a dictionary with the default parameters of the given
     `model`, specified by a string.
 
--    `SetDefaults(model, params)`:
+-    [`SetDefaults(model, params)`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_models-SetDefaults):
 
     Set the default parameters of the given `model` to the
     values specified in the `params` dictionary.
 
--   `CopyModel(existing, new, params=None)`:
+-   [`CopyModel(existing, new, params=None)`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_models-CopyModel):
 
     Create a `new` model by copying an `existing` one.
     Default parameters can be given as `params`, or else are
@@ -301,14 +307,14 @@ These are the new functions we introduced for the examples in this handout.
 
 ### Simulation control
 
--   `ResetKernel()`:
+-   [`ResetKernel()`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_simulation-ResetKernel):
 
     Reset the simulation kernel. This will destroy the network as well
     as all custom models created with  `CopyModel()`. The
     parameters of built-in models are reset to their defaults. Calling
     this function is equivalent to restarting NEST.
 
--   `ResetNetwork()`:
+-   [`ResetNetwork()`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_simulation-ResetNetwork):
 
     Reset all nodes and connections to the defaults of their
     respective model.

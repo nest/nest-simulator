@@ -10,8 +10,16 @@ networks. When you have worked through this material you will be able to:
 -   Connect populations using profiles
 -   Visualise the connectivity
 
-For more information on the usage of NEST, please visit:
-[Documentation](documentation.md))
+For more information on the usage of PyNEST, please see the other sections of
+this primer: 
+
+-   [Part 1: Neurons and simple neural networkss](part-1-neurons-and-simple-neural-networks.md)
+-   [Part 2: Populations of neurons](part-2-populations-of-neurons.md)
+-   [Part 3: Connecting networks with synapses](part-3-connecting-networks-with-synapses.md)
+
+More advanced examples can be found at [Example Networks](http://www.nest-simulator.org/more-example-networks/), or have a 
+look at at the source directory of your NEST installation in the 
+subdirectory: `pynest/examples/`. 
 
 ## Incorporating structure in networks of point neurons
 
@@ -313,16 +321,24 @@ times and connect to the same layer:
 There are two main methods that we can use for checking that our network was
 built correctly:
 
--   **nest.PrintNetworks(depth=1)** which prints out all the neurons and
-    subnetworks within the network in text form. This is a good manner in which
-    to inspect the hierarchy of composite layers;
+-   [`nest.PrintNetwork(depth=1)`](http://www.nest-simulator.org/cc/PrintNetwork/) 
 
--   **create plots using functions in `nest.topology`**. There are three
-    functions that can be combined: `PlotLayer`, `PlotTargets` and `PlotKernel`,
+    which prints out all the neurons and subnetworks within the network in 
+    text form. This is a good manner in which to inspect the hierarchy of 
+    composite layers;
+
+-   [create plots using functions in `nest.topology`](http://www.nest-simulator.org/pynest-topology/) 
+
+    There are three functions that can be combined: 
+    
+    - [`PlotLayer`](http://www.nest-simulator.org/pynest-topology/#hl_api_PlotLayer)
+    - [`PlotTargets`](http://www.nest-simulator.org/pynest-topology/#hl_api_PlotTargets)
+    - [`PlotKernel`](http://www.nest-simulator.org/pynest-topology/#hl_api_PlotKernel)
+    
     which allow us to generate the plots used with NUTM and this handout. See
     Section 4.2 of NTUM for more details.
 
-Other useful functions that may be of help, in addition to those already
+Other useful functions that may be of help, in addition to those already 
 listed in NTUM Section 4.1, are:
 
 | Function                         | Description                                                                               |
@@ -335,9 +351,4 @@ listed in NTUM Section 4.1, are:
 ## References
 
 \[1\]<a id="1"></a>  Hans Ekkehard Plesser and Håkon Enger NEST Topology User
- Manual
-
-## Acknowledgments
-
-This handout is based on a previous document by Sarah Jarvis, many thanks to
-her.
+ Manual, <http://www.nest-simulator.org/wp-content/uploads/2015/04/Topology_UserManual.pdf>

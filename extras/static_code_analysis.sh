@@ -201,7 +201,7 @@ else
   if [ "x$format_error_files" != "x" ]; then
     print_msg "" ""
     print_msg "" "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-    print_msg "" "+                 TRAVIS CI MAY REPORT FORMAT ERRORS !                        +"
+    print_msg "" "+                 STATIC CODE ANALYSIS DETECTED PROBLEMS !                    +"
     print_msg "" "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
     for f in $format_error_files; do
       print_msg "" "Formatting error in file: $f"
@@ -213,7 +213,7 @@ else
   else
     print_msg "" ""
     print_msg "" "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-    print_msg "" "+             STATIC CODE ANALYSIS TERMINATED SUCESSFULLY !                   +"
+    print_msg "" "+               STATIC CODE ANALYSIS TERMINATED SUCESSFULLY !                 +"
     print_msg "" "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
   fi
 fi

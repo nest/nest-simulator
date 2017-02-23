@@ -385,11 +385,11 @@ def makebuild_summary(log_filename, msg_make_section_start,
             if is_message(line, msg_make_section_end):
                 # The log file contains only one 'make' section, return.
                 if number_of_error_msgs == 0:
-                    return True, number_of_error_msgs, error_summary, \
-                           number_of_warning_msgs, warning_summary
+                    return(True, number_of_error_msgs, error_summary,
+                           number_of_warning_msgs, warning_summary)
                 else:
-                    return False, number_of_error_msgs, error_summary, \
-                           number_of_warning_msgs, warning_summary
+                    return(False, number_of_error_msgs, error_summary,
+                           number_of_warning_msgs, warning_summary)
 
     return None, None, None, None, None
 
@@ -793,7 +793,7 @@ def printable_summary(list_of_changed_files,
         ['', 'No files have been changed.'],
         ['Tools Initialization :', ''],
         ['VERA++', convert_bool_value_to_status_string(status_vera_init)],
-        ['Cppcheck',
+        ['Cppcheck (DEACTIVATED)',
          convert_bool_value_to_status_string(status_cppcheck_init)],
         ['clang-format',
          convert_bool_value_to_status_string(status_format_init)],
@@ -801,7 +801,8 @@ def printable_summary(list_of_changed_files,
         ['VERA++', convert_summary_to_status_string(summary_vera) +
          '\n' + '\nNumber of messages (MSGBLD0135): ' +
          str(number_of_msgs_in_summary(summary_vera))],
-        ['Cppcheck', convert_summary_to_status_string(summary_cppcheck) +
+        ['Cppcheck (DEACTIVATED)',
+         convert_summary_to_status_string(summary_cppcheck) +
          '\n' + '\nNumber of messages (MSGBLD0155): ' +
          str(number_of_msgs_in_summary(summary_cppcheck))],
         ['clang-format', convert_summary_to_status_string(summary_format) +
@@ -881,9 +882,17 @@ def build_return_code(status_vera_init,
     -------
     0 (success) or 1.
     """
+    # Note: cppcheck is deactivated !
+    #       It may cause false positives. Even though cppcheck is executed
+    #       and all its messages can be found in the log, cppcheck messages
+    #       will not cause the build to fail.
+    #       To activate cppcheck, add following line to the if statement below.
+    #       Remove also the two strings '(DEACTIVATED)' behind cppcheck in
+    #       the summary_table above.
+    #
+    #       (status_cppcheck_init is None or status_cppcheck_init) and \
 
     if (status_vera_init is None or status_vera_init) and \
-       (status_cppcheck_init is None or status_cppcheck_init) and \
        (status_format_init is None or status_format_init) and \
        (status_cmake_configure) and \
        (status_make) and \

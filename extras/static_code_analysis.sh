@@ -62,7 +62,6 @@ VERA_VERS=`$VERA --version`
 CPPCHECK_VERS=`$CPPCHECK --version | sed 's/^Cppcheck //'`
 CLANG_FORMAT_VERS=`$CLANG_FORMAT --version`
 PEP8_VERS=`$PEP8 --version`
-print_msg "" ""
 print_msg "MSGBLD0105: " "Following tools are in use:"
 print_msg "MSGBLD0105: " "---------------------------"
 print_msg "MSGBLD0105: " "VERA++       : $VERA_VERS"
@@ -72,7 +71,8 @@ print_msg "MSGBLD0105: " "PEP8         : $PEP8_VERS"
 print_msg "" ""
 
 # Perfom static code analysis.
-format_error_files=""
+c_files_with_errors=""
+python_files_with_errors=""
 for f in $FILE_NAMES; do
 
   if [ ! -f "$f" ]; then
@@ -154,7 +154,7 @@ for f in $FILE_NAMES; do
 
       # Add the file to the list of files with format errors.
       if $vera_failed || $cppcheck_failed || $clang_format_failed; then
-        format_error_files="$format_error_files $f"
+        c_files_with_errors="$c_files_with_errors $f"
       fi
       ;;
 
@@ -178,7 +178,7 @@ for f in $FILE_NAMES; do
           print_msg "MSGBLD0195: " "[PEP8] $line"
         done
         # Add the file to the list of files with format errors.
-        format_error_files="$format_error_files $f"
+        python_files_with_errors="$python_files_with_errors $f"
       fi
       if $RUNS_ON_TRAVIS; then
         print_msg "MSGBLD0200: " "PEP8 check for file $f completed."
@@ -191,29 +191,41 @@ for f in $FILE_NAMES; do
   esac
 done
 
-if $RUNS_ON_TRAVIS; then
-  if [ "x$format_error_files" != "x" ]; then
-    for f in $format_error_files; do
-      print_msg "MSGBLD0220: " "Formatting error in file: $f"
+if [ "x$c_files_with_errors" != "x" ] || [ "x$python_files_with_errors" != "x" ]; then
+  print_msg "" ""
+  print_msg "MSGBLD0220: " "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+  print_msg "MSGBLD0220: " "+                 STATIC CODE ANALYSIS DETECTED PROBLEMS !                    +"
+  print_msg "MSGBLD0220: " "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+  print_msg "" ""
+  if [ "x$c_files_with_errors" != "x" ]; then
+    print_msg "MSGBLD0220: " "C/C++ files with formatting errors:"
+    for f in $c_files_with_errors; do
+      print_msg "MSGBLD0220: " "... $f"
     done
+    if ! $RUNS_ON_TRAVIS; then
+      print_msg "" "Run $CLANG_FORMAT -i <filename> for autocorrection."
+      print_msg "" ""
+    fi
+  fi
+
+  if [ "x$python_files_with_errors" != "x" ]; then
+    print_msg "MSGBLD0220: " "Python files with formatting errors:"
+    for f in $python_files_with_errors; do
+      print_msg "MSGBLD0220: " "... $f"
+    done
+    if ! $RUNS_ON_TRAVIS; then
+      print_msg "" "Run pep8ify -w <filename> for autocorrection."
+      print_msg "" ""
+    fi
+  fi
+  
+  if ! $RUNS_ON_TRAVIS; then
+    print_msg "" "For other problems, please correct your code according to the [VERA], [CPPC], [DIFF], and [PEP8] messages above."
   fi
 else
-  if [ "x$format_error_files" != "x" ]; then
-    print_msg "" ""
-    print_msg "" "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-    print_msg "" "+                 STATIC CODE ANALYSIS DETECTED PROBLEMS !                    +"
-    print_msg "" "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-    for f in $format_error_files; do
-      print_msg "" "Formatting error in file: $f"
-    done
-    print_msg "" "Please work through the [VERA], [CPPC], [PEP8] and [DIFF] messages and correct your source code accordingly."
-    print_msg "" "- On C/C++ files, perform '$CLANG_FORMAT -i <filename>'."
-    print_msg "" "- On Python files, perform 'pep8ify -w <filename>'."
-    print_msg "" "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-  else
-    print_msg "" ""
-    print_msg "" "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-    print_msg "" "+               STATIC CODE ANALYSIS TERMINATED SUCESSFULLY !                 +"
-    print_msg "" "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-  fi
+  print_msg "" ""
+  print_msg "MSGBLD0220: " "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+  print_msg "MSGBLD0220: " "+               STATIC CODE ANALYSIS TERMINATED SUCESSFULLY !                 +"
+  print_msg "MSGBLD0220: " "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+  print_msg "" ""  
 fi

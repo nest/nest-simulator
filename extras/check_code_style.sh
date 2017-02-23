@@ -108,10 +108,11 @@ Options:
 EOF
 }
 
-echo ""
+echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "+                       NEST STATIC CODE ANALYSIS TOOL                        +"
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+echo
 
 # Process parameters.
 while test $# -gt 0 ; do

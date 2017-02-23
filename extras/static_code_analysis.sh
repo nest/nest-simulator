@@ -62,11 +62,14 @@ VERA_VERS=`$VERA --version`
 CPPCHECK_VERS=`$CPPCHECK --version | sed 's/^Cppcheck //'`
 CLANG_FORMAT_VERS=`$CLANG_FORMAT --version`
 PEP8_VERS=`$PEP8 --version`
+print_msg "" ""
 print_msg "MSGBLD0105: " "Following tools are in use:"
+print_msg "MSGBLD0105: " "---------------------------"
 print_msg "MSGBLD0105: " "VERA++       : $VERA_VERS"
 print_msg "MSGBLD0105: " "CPPCHECK     : $CPPCHECK_VERS"
 print_msg "MSGBLD0105: " "CLANG-FORMAT : $CLANG_FORMAT_VERS"
 print_msg "MSGBLD0105: " "PEP8         : $PEP8_VERS"
+print_msg "" ""
 
 # Perfom static code analysis.
 format_error_files=""

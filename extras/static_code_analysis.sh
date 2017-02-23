@@ -74,6 +74,7 @@ print_msg "" ""
 # Perfom static code analysis.
 format_error_files=""
 for f in $FILE_NAMES; do
+
   if [ ! -f "$f" ]; then
     print_msg "MSGBLD0110: " "$f is not a file or does not exist anymore."
     continue
@@ -83,7 +84,10 @@ for f in $FILE_NAMES; do
     print_msg "" "Press [Enter] to continue.  (Static code analysis for file $f.)"
     read continue
   fi
-  print_msg "MSGBLD0120: " "Perform static code analysis for file $f."
+  if $RUNS_ON_TRAVIS; then
+    print_msg "MSGBLD0120: " "Perform static code analysis for file $f."
+  fi
+
   case $f in
     *.h | *.c | *.cc | *.hpp | *.cpp )
       vera_failed=false
@@ -97,7 +101,7 @@ for f in $FILE_NAMES; do
       fi
 
       # VERA++
-      print_msg "MSGBLD0130: " "Run VERA++ for file: $f"
+      print_msg "MSGBLD0130: " "Running VERA++ .....: $f"
       $VERA --profile nest $f > ${f_base}_vera.txt 2>&1
       if [ -s "${f_base}_vera.txt" ]; then
         vera_failed=true
@@ -107,10 +111,12 @@ for f in $FILE_NAMES; do
         done
       fi
       rm ${f_base}_vera.txt
-      print_msg "MSGBLD0140: " "VERA++ for file $f completed."
+      if $RUNS_ON_TRAVIS; then
+        print_msg "MSGBLD0140: " "VERA++ for file $f completed."
+      fi
 
       # CPPCHECK
-      print_msg "MSGBLD0150: " "Run CPPCHECK for file: $f"
+      print_msg "MSGBLD0150: " "Running CPPCHECK ...: $f"
       $CPPCHECK --enable=all --inconclusive --std=c++03 --suppress=missingIncludeSystem $f > ${f_base}_cppcheck.txt 2>&1
       # Remove the header, the first line.
       tail -n +2 "${f_base}_cppcheck.txt" > "${f_base}_cppcheck.tmp" && mv "${f_base}_cppcheck.tmp" "${f_base}_cppcheck.txt"
@@ -121,11 +127,13 @@ for f in $FILE_NAMES; do
           print_msg "MSGBLD0155: " "[CPPC] $line"
         done
       fi
-      rm ${f_base}_cppcheck.txt     
-      print_msg "MSGBLD0160: " "CPPCHECK for file $f completed."
+      rm ${f_base}_cppcheck.txt
+      if $RUNS_ON_TRAVIS; then
+        print_msg "MSGBLD0160: " "CPPCHECK for file $f completed."
+      fi
 
       # CLANG-FORMAT
-      print_msg "MSGBLD0170: " "Run CLANG-FORMAT for file: $f"
+      print_msg "MSGBLD0170: " "Running CLANG-FORMAT: $f"
       # Create a clang-format formatted temporary file and perform a diff with its origin.
       file_formatted="${f_base}_formatted.txt"
       file_diff="${f_base}_diff.txt"
@@ -140,7 +148,9 @@ for f in $FILE_NAMES; do
       fi
       rm $file_formatted
       rm $file_diff
-      print_msg "MSGBLD0180: " "CLANG-FORMAT for file $f completed."
+      if $RUNS_ON_TRAVIS; then
+        print_msg "MSGBLD0180: " "CLANG-FORMAT for file $f completed."
+      fi
 
       # Add the file to the list of files with format errors.
       if $vera_failed || $cppcheck_failed || $clang_format_failed; then
@@ -150,7 +160,7 @@ for f in $FILE_NAMES; do
 
     *.py )
       # PEP8
-      print_msg "MSGBLD0190: " "Run PEP8 check for file: $f"
+      print_msg "MSGBLD0190: " "Running PEP8 .......: $f"
       case $f in
         *user_manual_scripts*)
           IGNORES=$PEP8_IGNORES_TOPO_MANUAL
@@ -170,11 +180,13 @@ for f in $FILE_NAMES; do
         # Add the file to the list of files with format errors.
         format_error_files="$format_error_files $f"
       fi
-      print_msg "MSGBLD0200: " "PEP8 check for file $f completed."
+      if $RUNS_ON_TRAVIS; then
+        print_msg "MSGBLD0200: " "PEP8 check for file $f completed."
+      fi
       ;;
 
     *)
-      print_msg "MSGBLD0210: " "File $f is not a C/C++/Python file. Static code analysis and formatting check skipped."
+      print_msg "MSGBLD0210: " "Skipping ...........: $f  (not a C/C++/Python file)"
       continue
   esac
 done

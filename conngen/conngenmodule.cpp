@@ -74,9 +74,9 @@ ConnectionGeneratorModule::init( SLIInterpreter* i )
     "CGSelectImplementation", &cgselectimplementation_s_sfunction );
 
   // Register the low level functions of the connection generator interface
-  i->createcommand( "cgsetmask", &cgsetmask_cg_g_gfunction );
-  i->createcommand( "cgstart", &cgstart_cgfunction );
-  i->createcommand( "cgnext", &cgnext_cgfunction );
+  i->createcommand( ":cgsetmask", &cgsetmask_cg_g_gfunction );
+  i->createcommand( ":cgstart", &cgstart_cgfunction );
+  i->createcommand( ":cgnext", &cgnext_cgfunction );
 }
 
 /* BeginDocumentation
@@ -108,8 +108,7 @@ ConnectionGeneratorModule::init( SLIInterpreter* i )
    Author: Jochen Martin Eppler
    FirstVersion: August 2012
    SeeAlso: Connect, synapsedict, GetOptions, CGParse, CGParseFile,
-   CGSelectImplementation, cgstart,
-   cgsetmask, cgnext
+   CGSelectImplementation
 */
 
 // CGConnect for conngen gidcollection gidcollection dict literal
@@ -154,8 +153,7 @@ ConnectionGeneratorModule::CGConnect_cg_g_g_D_lFunction::execute(
    Availability: Only if compiled with libneurosim support
    Author: Jochen Martin Eppler
    FirstVersion: September 2013
-   SeeAlso: CGParseFile, CGConnect, CGSelectImplementation, cgstart, cgsetmask,
-   cgnext
+   SeeAlso: CGParseFile, CGConnect, CGSelectImplementation
 */
 void
 ConnectionGeneratorModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
@@ -189,8 +187,7 @@ ConnectionGeneratorModule::CGParse_sFunction::execute( SLIInterpreter* i ) const
    Availability: Only if compiled with libneurosim support
    Author: Jochen Martin Eppler
    FirstVersion: February 2014
-   SeeAlso: CGParse, CGConnect, CGSelectImplementation, cgstart, cgsetmask,
-   cgnext
+   SeeAlso: CGParse, CGConnect, CGSelectImplementation
 */
 void
 ConnectionGeneratorModule::CGParseFile_sFunction::execute(
@@ -225,7 +222,7 @@ ConnectionGeneratorModule::CGParseFile_sFunction::execute(
    Availability: Only if compiled with libneurosim support
    Author: Jochen Martin Eppler
    FirstVersion: September 2013
-   SeeAlso: CGParse, CGParseFile, CGConnect, cgstart, cgsetmask, cgnext
+   SeeAlso: CGParse, CGParseFile, CGConnect
 */
 void
 ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute(
@@ -244,10 +241,10 @@ ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute(
 
 
 /* BeginDocumentation
-   Name: cgsetmask - Call setMasks() on a ConnectionGenerator
+   Name: :cgsetmask - Call setMasks() on a ConnectionGenerator
 
    Synopsis:
-   cg sources targets cgsetmask -> -
+   cg sources targets :cgsetmask -> -
 
    Parameters:
    cg      - ConnectionGenerator
@@ -267,8 +264,7 @@ ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute(
    Availability: Only if compiled with libneurosim support
    Author: Mikael Djurfeldt
    FirstVersion: March 2011
-   SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation, cgstart,
-   cgnext
+   SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation
 */
 void
 ConnectionGeneratorModule::CGSetMask_cg_g_gFunction::execute(
@@ -297,10 +293,10 @@ ConnectionGeneratorModule::CGSetMask_cg_g_gFunction::execute(
 
 
 /* BeginDocumentation
-   Name: cgstart - Call start() on a ConnectionGenerator
+   Name: :cgstart - Call start() on a ConnectionGenerator
 
    Synopsis:
-   cg cgstart -> -
+   cg :cgstart -> -
 
    Parameters:
    cg - ConnectionGenerator
@@ -317,8 +313,7 @@ ConnectionGeneratorModule::CGSetMask_cg_g_gFunction::execute(
    Availability: Only if compiled with libneurosim support
    Author: Mikael Djurfeldt
    FirstVersion: March 2011
-   SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation, cgsetmask,
-   cgnext
+   SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation
 */
 void
 ConnectionGeneratorModule::CGStart_cgFunction::execute(
@@ -337,10 +332,10 @@ ConnectionGeneratorModule::CGStart_cgFunction::execute(
 
 
 /* BeginDocumentation
-   Name: cgnext - Call next() on a ConnectionGenerator
+   Name: :cgnext - Call next() on a ConnectionGenerator
 
    Synopsis:
-   cg cgnext -> source target v[0] ... true | false
+   cg :cgnext -> source target v[0] ... true | false
 
    Parameters:
    cg - ConnectionGenerator
@@ -361,8 +356,7 @@ ConnectionGeneratorModule::CGStart_cgFunction::execute(
    Availability: Only if compiled with libneurosim support
    Author: Mikael Djurfeldt, Jochen Martin Eppler
    FirstVersion: December 2012
-   SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation, cgstart,
-   cgsetmask
+   SeeAlso: CGParse, CGParseFile, CGConnect, CGSelectImplementation
 */
 void
 ConnectionGeneratorModule::CGNext_cgFunction::execute( SLIInterpreter* i ) const

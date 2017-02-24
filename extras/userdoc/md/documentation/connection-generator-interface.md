@@ -28,7 +28,7 @@ nest.CGConnect(sources, targets, cg)
 
 # Verify the connectivity
 conn = nest.GetConnections(sources)
-print map(lambda x: x["target"], nest.GetStatus(conn))
+print((c['source'], c['target']) for c in nest.GetStatus(conn))
 ```
 
 ## Example in SLI using the Connection-Set Algebra

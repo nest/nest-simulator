@@ -39,8 +39,8 @@ namespace nest
 
 void
 cg_connect( ConnectionGeneratorDatum& cg,
-  GIDCollection& source_gids,
-  GIDCollection& target_gids,
+  const GIDCollection& source_gids,
+  const GIDCollection& target_gids,
   const DictionaryDatum& params_map,
   const Name& synmodel_name )
 {
@@ -239,7 +239,7 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
  * \param gids The std::vector<long> of gids to search in
  */
 index
-cg_get_right_border( index left, size_t step, GIDCollection& gids )
+cg_get_right_border( index left, size_t step, const GIDCollection& gids )
 {
   // Check if left is already the index of the last element in
   // gids. If yes, return left as the right border
@@ -299,7 +299,7 @@ cg_get_right_border( index left, size_t step, GIDCollection& gids )
  * and add the ranges to the given RangeSet.
  *
  * \param ranges A reference to the RangeSet to add to
- * \param gids The std::vector<long> of gids
+ * \param gids A reference to a std::vector<long> of gids
  *
  * \note We do not store the indices into the given range, but
  * instead we store the actual gids. This allows us to use CG
@@ -307,7 +307,7 @@ cg_get_right_border( index left, size_t step, GIDCollection& gids )
  * RangeSet. Index translation is done in cg_create_masks().
  */
 void
-cg_get_ranges( RangeSet& ranges, GIDCollection& gids )
+cg_get_ranges( RangeSet& ranges, const GIDCollection& gids )
 {
   index right, left = 0;
   while ( true )

@@ -248,8 +248,8 @@ ConnectionGeneratorModule::CGSelectImplementation_s_sFunction::execute(
 
    Parameters:
    cg      - ConnectionGenerator
-   sources - A list of nodes used as source masks
-   targets - A list of nodes used as target masks
+   sources - A gidcollection of nodes used as source masks
+   targets - A gidcollection of nodes used as target masks
 
    Description:
    Set masks for sources and targets on a given ConnectionGenerator

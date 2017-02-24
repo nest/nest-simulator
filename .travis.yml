@@ -10,10 +10,13 @@ env:
     # independent. This means we only need a minimal and maximal configuration
     # and some additional jobs for interdependent options.
     # See also https://docs.travis-ci.com/user/caching/#Caches-and-build-matrices
-    - xLTDL=0 xREADLINE=0 xTHREADING=0 xMPI=0 xPYTHON=0 xGSL=0 xLIBNEUROSIM=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB  # minimal
-    - xLTDL=1 xREADLINE=1 xTHREADING=0 xMPI=1 xPYTHON=0 xGSL=0 xLIBNEUROSIM=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB  # only MPI
-    - xLTDL=1 xREADLINE=1 xTHREADING=1 xMPI=0 xPYTHON=0 xGSL=0 xLIBNEUROSIM=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB  # only threading
-    - xLTDL=1 xREADLINE=1 xTHREADING=1 xMPI=1 xPYTHON=1 xGSL=1 xLIBNEUROSIM=1 xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB  # full
+    - xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
+    - xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
+    - xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
+    - xTHREADING=1 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & Threading
+    - xTHREADING=0 xMPI=1 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & MPI
+    - xTHREADING=0 xMPI=0 xGSL=0 xLIBNEUROSIM=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only Python
+    - xTHREADING=1 xMPI=1 xGSL=1 xLIBNEUROSIM=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full
 matrix:
   # do notify immediately about it when a job of a build fails.
   fast_finish: true
@@ -108,10 +111,10 @@ script:
 
 before_deploy:
   - cd $TRAVIS_BUILD_DIR/build
-  - tar -zcvf logfiles.tar.gz ./*.log
   - tar -zcvf reports.tar.gz ./reports
+  - tar -zcvf docs.tar.gz $TRAVIS_BUILD_DIR/result/share/doc/nest/*.*
   - mkdir -p $TRAVIS_BUILD_DIR/build/artefacts_upload
-  - mv logfiles.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
+  - mv docs.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
   - mv reports.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
 
 #S3 deployment

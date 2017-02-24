@@ -66,7 +66,7 @@ Example:
 one-to-one connections
 
     n = 10
-    A = Create("iaf_neuron", n)
+    A = Create("iaf_psc_alpha", n)
     B = Create("spike_detector", n)
     Connect(A, B, 'one_to_one')
 
@@ -92,8 +92,8 @@ the default, 'rule' doesn't need to specified.
 Example:
 
     n, m = 10, 12
-    A = Create("iaf_neuron", n)
-    B = Create("iaf_neuron", m)
+    A = Create("iaf_psc_alpha", n)
+    B = Create("iaf_psc_alpha", m)
     Connect(A, B)
 
 ### fixed-indegree
@@ -107,8 +107,8 @@ each node in `post` has a fixed `indegree`.
 Example:
 
     n, m, N = 10, 12, 2
-    A = Create("iaf_neuron", n)
-    B = Create("iaf_neuron", m)
+    A = Create("iaf_psc_alpha", n)
+    B = Create("iaf_psc_alpha", m)
     conn_dict = {'rule': 'fixed_indegree', 'indegree': N}
     Connect(A, B, conn_dict)
 
@@ -123,8 +123,8 @@ each node in `pre` has a fixed `outdegree`.
 Example:
 
     n, m, N = 10, 12, 2
-    A = Create("iaf_neuron", n)
-    B = Create("iaf_neuron", m)
+    A = Create("iaf_psc_alpha", n)
+    B = Create("iaf_psc_alpha", m)
     conn_dict = {'rule': 'fixed_outdegree', 'outdegree': N}
     Connect(A, B, conn_dict)
 
@@ -136,8 +136,8 @@ total number of connections equals `N`.
 Example:
 
     n, m, N = 10, 12, 30
-    A = Create("iaf_neuron", n)
-    B = Create("iaf_neuron", m)
+    A = Create("iaf_psc_alpha", n)
+    B = Create("iaf_psc_alpha", m)
     conn_dict = {'rule': 'fixed_total_number', 'N': N}
     Connect(A, B, conn_dict)
 
@@ -149,8 +149,8 @@ with probability `p`.
 Example:
 
     n, m, p = 10, 12, 0.2
-    A = Create("iaf_neuron", n)
-    B = Create("iaf_neuron", m)
+    A = Create("iaf_psc_alpha", n)
+    B = Create("iaf_psc_alpha", m)
     conn_dict = {'rule': 'pairwise_bernoulli', 'p': p}
     Connect(A, B, conn_dict)
 
@@ -164,8 +164,8 @@ manually defined synapse via `CopyModel()`.
 Example:
 
     n = 10
-    A = Create("iaf_neuron", n)
-    B = Create("iaf_neuron", n)
+    A = Create("iaf_psc_alpha", n)
+    B = Create("iaf_psc_alpha", n)
     CopyModel("static_synapse","excitatory",{"weight":2.5, "delay":0.5})
     Connect(A, B, syn_spec="excitatory")
 
@@ -200,7 +200,7 @@ For 'one\_to\_one' the array must have the same length as the population vector.
 
 Example:
 
-    A = Create("iaf_neuron", 2)
+    A = Create("iaf_psc_alpha", 2)
     B = Create("spike_detector", 2)
     conn_dict = {'rule': 'one_to_one'}
     syn_dict = {'weight': [1.2, -3.5]}
@@ -211,8 +211,8 @@ x len(pre).
 
 Example:
 
-    A = Create("iaf_neuron", 3)
-    B = Create("iaf_neuron", 2)
+    A = Create("iaf_psc_alpha", 3)
+    B = Create("iaf_psc_alpha", 2)
     syn_dict = {'weight': [[1.2, -3.5, 2.5],[0.4, -0.2, 0.7]]}
     Connect(A, B, syn_spec=syn_dict)
 
@@ -224,8 +224,8 @@ regardless of the identity of the source neurons.
 
 Example:
 
-    A = Create("iaf_neuron", 5)
-    B = Create("iaf_neuron", 3)
+    A = Create("iaf_psc_alpha", 5)
+    B = Create("iaf_psc_alpha", 3)
     conn_dict = {'rule': 'fixed_indegree', 'indegree': 2}
     syn_dict = {'weight': [[1.2, -3.5],[0.4, -0.2],[0.6, 2.2]]}
     Connect(A, B, conn_spec=conn_dict, syn_spec=syn_dict)
@@ -238,8 +238,8 @@ regardless of the identity of the target neuron.
 
 Example:
 
-    A = Create("iaf_neuron", 2)
-    B = Create("iaf_neuron", 5)
+    A = Create("iaf_psc_alpha", 2)
+    B = Create("iaf_psc_alpha", 5)
     conn_dict = {'rule': 'fixed_outdegree', 'outdegree': 3}
     syn_dict = {'weight': [[1.2, -3.5, 0.4], [-0.2, 0.6, 2.2]]}
     Connect(A, B, conn_spec=conn_dict, syn_spec=syn_dict)
@@ -297,8 +297,8 @@ Keys
 Example:
 
     n = 10
-    A = Create("iaf_neuron", n)
-    B = Create("iaf_neuron", n)
+    A = Create("iaf_psc_alpha", n)
+    B = Create("iaf_psc_alpha", n)
     syn_dict = {'model': 'stdp_synapse',
                 'weight': 2.5,
                 'delay': {'distribution': 'uniform', 'low': 0.8, 'high': 2.5},
@@ -317,8 +317,8 @@ If the synapse is supposed to have a unique name and distributed parameters it
 needs to be defined in two steps:
 
     n = 10
-    A = Create("iaf_neuron", n)
-    B = Create("iaf_neuron", n)
+    A = Create("iaf_psc_alpha", n)
+    B = Create("iaf_psc_alpha", n)
     CopyModel('stdp_synapse','excitatory',{'weight':2.5})
     syn_dict = {'model': 'excitatory',
                 'weight': 2.5,
@@ -358,7 +358,7 @@ as list of floats.
 
 Example old connection routine:
 
-    A = Create("iaf_neuron", 2)
+    A = Create("iaf_psc_alpha", 2)
     B = Create("spike_detector", 2)
     weight = [1.2, -3.5]
     delay = [0.3, 0.5]
@@ -371,7 +371,7 @@ is provided which works in the same manner as the previous `Connect()`. However,
 
 Example temporary fix for old connection routine:
 
-    A = Create("iaf_neuron", 2)
+    A = Create("iaf_psc_alpha", 2)
     B = Create("spike_detector", 2)
     weight = [1.2, -3.5]
     delay = [0.3, 0.5]
@@ -379,7 +379,7 @@ Example temporary fix for old connection routine:
 
 Example new connection routine:
 
-    A = Create("iaf_neuron", 2)
+    A = Create("iaf_psc_alpha", 2)
     B = Create("spike_detector", 2)
     conn_dict = {'rule': 'one_to_one'}
     syn_dict = {'weight': weight, 'delay', delay}
@@ -397,13 +397,13 @@ also has to be given as float or as list of floats.
 
 Example old connection routine:
 
-    A = Create("iaf_neuron", 2)
+    A = Create("iaf_psc_alpha", 2)
     B = Create("spike_detector")
     ConvergentConnect(A, B)
 
 Example new connection routine:
 
-    A = Create("iaf_neuron", 2)
+    A = Create("iaf_psc_alpha", 2)
     B = Create("spike_detector")
     Connect(A, B)
 
@@ -437,13 +437,13 @@ also has to be given as float or as list of floats.
 
 Example old connection routine:
 
-    A = Create("iaf_neuron")
+    A = Create("iaf_psc_alpha")
     B = Create("spike_detector", 2)
     DivergentConnect(A, B)
 
 Example new connection routine:
 
-    A = Create("iaf_neuron")
+    A = Create("iaf_psc_alpha")
     B = Create("spike_detector", 2)
     Connect(A, B)
 
@@ -488,7 +488,7 @@ presynaptic nodes and a multi-compartment integrate-and-fire neuron
 ![Receptor types](../../img/Receptor_types.png)
 Receptor types
 
-    A1, A2, A3, A4 = Create("iaf_neuron", 4)
+    A1, A2, A3, A4 = Create("iaf_psc_alpha", 4)
     B = Create("iaf_cond_alpha_mc")
     receptors = GetDefaults("iaf_cond_alpha_mc")["receptor_types"]
     print receptors
@@ -587,8 +587,8 @@ five entries: source-gid, target-gid, target-thread, synapse-id, port.
 The result of `GetConnections` can be given as an argument to the `GetStatus`
 function, which will then return a list with the parameters of the connections:
 
-    n1 = Create("iaf_neuron")
-    n2 = Create("iaf_neuron")
+    n1 = Create("iaf_psc_alpha")
+    n2 = Create("iaf_psc_alpha")
     Connect(n1, n2)
     conn = GetConnections(n1)
     print GetStatus(conn)
@@ -606,8 +606,8 @@ To modify the connections of an existing connection, one also has to obtain
 handles to the connections with `GetConnections()` first. These can then be
 given as arguments to the `SetStatus()` functions:
 
-    n1 = Create("iaf_neuron")
-    n2 = Create("iaf_neuron")
+    n1 = Create("iaf_psc_alpha")
+    n2 = Create("iaf_psc_alpha")
     Connect(n1, n2)
     conn = GetConnections(n1)
     SetStatus(conn, {"weight": 2.0})

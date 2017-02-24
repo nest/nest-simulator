@@ -287,6 +287,7 @@ set( ALL_INCLUDES_tmp
   "${PROJECT_BINARY_DIR}/libnestutil"
   "${PROJECT_SOURCE_DIR}/librandom"
   "${PROJECT_SOURCE_DIR}/sli"
+  "${PROJECT_SOURCE_DIR}/topology"
   "${PROJECT_SOURCE_DIR}/nestkernel"
   "${PROJECT_SOURCE_DIR}/nest"
   "${LTDL_INCLUDE_DIRS}"

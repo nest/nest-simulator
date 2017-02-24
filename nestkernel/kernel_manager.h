@@ -23,13 +23,11 @@
 #ifndef KERNEL_MANAGER_H
 #define KERNEL_MANAGER_H
 
-// Includes from libnestutil:
-#include "logging_manager.h"
-
 // Includes from nestkernel:
 #include "connection_manager.h"
 #include "event_delivery_manager.h"
 #include "io_manager.h"
+#include "logging_manager.h"
 #include "model_manager.h"
 #include "modelrange_manager.h"
 #include "mpi_manager.h"

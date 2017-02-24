@@ -217,7 +217,7 @@ SPManager::disconnect_single( index sgid,
   thread target_thread,
   DictionaryDatum& syn )
 {
-
+  // Disconnect if Structural plasticity is activated
   if ( syn->known( names::pre_synaptic_element )
     && syn->known( names::post_synaptic_element ) )
   {
@@ -390,12 +390,7 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
     pre_vacant_n,
     pre_deleted_id,
     pre_deleted_n );
-  // Get post synaptic elements data from local nodes
-  get_synaptic_elements( sp_builder->get_post_synaptic_element_name(),
-    post_vacant_id,
-    post_vacant_n,
-    post_deleted_id,
-    post_deleted_n );
+
   // Communicate the number of deleted pre-synaptic elements
   kernel().mpi_manager.communicate(
     pre_deleted_id, pre_deleted_id_global, displacements );
@@ -415,13 +410,13 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
       pre_vacant_n,
       pre_deleted_id,
       pre_deleted_n );
-    get_synaptic_elements( sp_builder->get_post_synaptic_element_name(),
-      post_vacant_id,
-      post_vacant_n,
-      post_deleted_id,
-      post_deleted_n );
   }
-
+  // Get post synaptic elements data from local nodes
+  get_synaptic_elements( sp_builder->get_post_synaptic_element_name(),
+    post_vacant_id,
+    post_vacant_n,
+    post_deleted_id,
+    post_deleted_n );
   // Communicate the number of deleted post-synaptic elements
   kernel().mpi_manager.communicate(
     post_deleted_id, post_deleted_id_global, displacements );
@@ -545,7 +540,7 @@ SPManager::delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
   std::vector< int >::iterator n_it;
 
   kernel().connection_manager.get_targets(
-    pre_deleted_id, connectivity, synapse_model );
+    pre_deleted_id, connectivity, synapse_model, se_post_name );
 
   id_it = pre_deleted_id.begin();
   n_it = pre_deleted_n.begin();
@@ -787,6 +782,29 @@ nest::SPManager::global_shuffle( std::vector< index >& v, size_t n )
     v.erase( rndi + rnd );
   }
   v = v2;
+}
+
+/*
+ Enable structural plasticity
+ */
+void
+nest::SPManager::enable_structural_plasticity()
+{
+  if ( kernel().vp_manager.get_num_threads() > 1 )
+  {
+    throw KernelException(
+      "Structural plasticity can not be used with multiple threads" );
+  }
+  structural_plasticity_enabled_ = true;
+}
+
+/*
+ Disable  structural plasticity
+ */
+void
+nest::SPManager::disable_structural_plasticity()
+{
+  structural_plasticity_enabled_ = false;
 }
 
 } // namespace nest

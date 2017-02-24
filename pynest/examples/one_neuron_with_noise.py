@@ -24,7 +24,7 @@ import nest.voltage_trace
 
 nest.ResetKernel()
 
-neuron = nest.Create("iaf_neuron")
+neuron = nest.Create("iaf_psc_alpha")
 
 noise = nest.Create("poisson_generator", 2)
 nest.SetStatus(noise, [{"rate": 80000.0}, {"rate": 15000.0}])

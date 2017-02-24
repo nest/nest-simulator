@@ -177,13 +177,13 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
   for ( RangeSet::iterator source = sources.begin(); source != sources.end();
         ++source )
   {
-    size_t num_elements = source->last - source->first;
-    size_t right = cg_idx_left + num_elements;
+    size_t num_elements = source->last - source->first + 1;
+    size_t right = cg_idx_left + num_elements - 1;
     for ( size_t proc = 0; proc
             < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
           ++proc )
       ( *masks )[ proc ].sources.insert( cg_idx_left, right );
-    cg_idx_left += num_elements + 1;
+    cg_idx_left += num_elements;
   }
 
   // Reset the index of the left border of the range for index
@@ -193,7 +193,7 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
   for ( RangeSet::iterator target = targets.begin(); target != targets.end();
         ++target )
   {
-    size_t num_elements = target->last - target->first;
+    size_t num_elements = target->last - target->first + 1;
     for ( size_t proc = 0; proc
             < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
           ++proc )
@@ -201,7 +201,7 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
       // Make sure that the range is only added on as many ranks as
       // there are elements in the range, or exactly on every rank,
       // if there are more elements in the range.
-      if ( proc <= num_elements )
+      if ( proc <= num_elements - 1 )
       {
         // For the different ranks, left will take on the CG indices
         // of all first local nodes that are contained in the range.
@@ -211,7 +211,7 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
 
         // right is set to the CG index of the right border of the
         // range. This is the same for all ranks.
-        size_t right = cg_idx_left + num_elements;
+        size_t right = cg_idx_left + num_elements - 1;
 
         // We index the masks according to the modulo distribution
         // of neurons in NEST. This ensures that the mask is set for
@@ -225,7 +225,7 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
 
     // Update the CG index of the left border of the next range to
     // be one behind the current range.
-    cg_idx_left += num_elements + 1;
+    cg_idx_left += num_elements;
   }
 }
 

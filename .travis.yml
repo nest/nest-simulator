@@ -63,7 +63,7 @@ before_install:
   - sudo apt-get install -y jq
 
   # Install libneurosim
-  - https://github.com/INCF/libneurosim.git
+  - git clone https://github.com/INCF/libneurosim.git
   - cd libneurosim
   - ./autogen.sh
   - ./configure --prefix=$HOME/.cache/libneurosim.install --with-mpi
@@ -72,7 +72,7 @@ before_install:
   - cd $HOME/build
 
   # Install csa
-  - https://github.com/INCF/csa.git
+  - git clone https://github.com/INCF/csa.git
   - cd csa
   - ./autogen.sh
   - ./configure --with-libneurosim=$HOME/.cache/libneurosim.install --prefix=$HOME/.cache/csa.install

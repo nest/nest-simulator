@@ -272,34 +272,8 @@ nest::lowpassfilter_spike_detector::calculate_decay_( long node,
   return B_.traces_[ node ];
 }
 
-void
-nest::lowpassfilter_spike_detector::update( Time const& origin,
-  const long from,
-  const long to )
+void nest::lowpassfilter_spike_detector::determine_steps_( Time const& origin, const long from )
 {
-
-  /**
-   *
-   * Simulations progress in cycles defined by the minimum delay but the
-   * filter_report_interval can be lower than the minimum delay. So it
-   * is possible that multiple filter blocks fall within an update
-   * window.
-   *
-   * There are three stages:
-   * Stage 1: Finding out all the steps to report within this update window.
-   * Finding out the recording steps (RS), steps that have to be reported
-   * within this update window.
-   *
-   * Stage 2: Iterating over all nodes and events for each node and filtering
-   * the data. Two parts are completed in each iteration.
-   * Part 1. Adding to the buffer the trace for all RS that are equal to or
-   * lower than the latest spike's step for each node.
-   * Part 2. After all events are processed for a particular node, recording
-   * any RS that exceeds the latest event's step for each node.
-   *
-   * Stage 3: Recording filtered data.
-   * Committing the processed data to memory or printing it to file/screen.
-   */
 
   /**
    *
@@ -371,12 +345,53 @@ nest::lowpassfilter_spike_detector::update( Time const& origin,
       }
     }
   }
+}
+
+void
+nest::lowpassfilter_spike_detector::update( Time const& origin,
+  const long from,
+  const long to )
+{
+
+  /**
+   *
+   * Simulations progress in cycles defined by the minimum delay but the
+   * filter_report_interval can be lower than the minimum delay. So it
+   * is possible that multiple filter blocks fall within an update
+   * window.
+   *
+   * There are three stages:
+   * Stage 1: Finding out all the steps to report within this update window.
+   * Finding out the recording steps (RS), steps that have to be reported
+   * within this update window.
+   *
+   * Stage 2: Iterating over all nodes and events for each node and filtering
+   * the data. Two parts are completed in each iteration.
+   * Part 1. Adding to the buffer the trace for all RS that are equal to or
+   * lower than the latest spike's step for each node.
+   * Part 2. After all events are processed for a particular node, recording
+   * any RS that exceeds the latest event's step for each node.
+   *
+   * Stage 3: Recording filtered data.
+   * Committing the processed data to memory or printing it to file/screen.
+   */
+
+  /**
+   *
+   * Stage 1: Finding out all the steps to report within this update window.
+   * Finding out the recording steps (RS), steps that have to be reported within
+   * this update window.
+   * 
+   * These steps are determined and added to the B_.steps_to_filter_ vector in
+   * the following method.
+   */
+  determine_steps_(origin, from);
 
   /**
    *
    * Stage 2: Iterating over all nodes and events for each node and filtering
-   * the data.
-   * All spikes are also recorded in this stage if /record_spikes is true.
+   * the data. All spikes are also recorded in this stage if /record_spikes
+   * is true.
    */
   std::vector< std::vector< nest::Event* > >::iterator node_iter;
   long node_idx;
@@ -392,8 +407,8 @@ nest::lowpassfilter_spike_detector::update( Time const& origin,
     /**
      *
      * Stage 2 (Part 1): Iterating over all nodes and events for each node and
-     * recording all RS
-     * that are equal to or lower than the latest spike's step for each node.
+     * recording all RS that are equal to or lower than the latest spike's
+     * step for each node.
      */
     size_t report_step_idx = 0; // Stores position in steps buffer.
     bool addition = false;      // Stores whether steps pushed.
@@ -407,8 +422,8 @@ nest::lowpassfilter_spike_detector::update( Time const& origin,
       if ( B_.steps_to_filter_.size() == 0 )
       {
         // If there are no steps to report within this interval, it is not
-        // necessary to record anything.
-        // But it is still necessary to calculate the trace.
+        // necessary to record anything, but it is still necessary to 
+        // calculate the trace.
         calculate_decay_( node_idx, ( *event_iter )->get_stamp().get_ms() );
         add_impulse_( node_idx );
       }

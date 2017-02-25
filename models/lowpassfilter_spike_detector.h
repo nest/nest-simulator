@@ -198,7 +198,8 @@ private:
   double calculate_decay_( long node,
     double
       to_time ); // calculates and returns the decayed trace value for the node.
-
+  void determine_steps_( Time const& origin, const long from );
+  
   /**
    * Perform filtering and update device by recording spikes.
    *

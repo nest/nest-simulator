@@ -2141,13 +2141,8 @@ def SelectNodesByMask(layer, xpos, ypos, mask_obj):
     """
 
     mask_datum = mask_obj._datum
-    
+
     gid_list = topology_func('SelectNodesByMask', ypos, xpos, mask_datum,
                              layer[0])
-    
+
     return gid_list
-    
-
-
-
-

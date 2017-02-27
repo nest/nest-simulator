@@ -251,7 +251,6 @@ BallMask< D >::get_dict() const
 }
 
 
-
 template < int D >
 bool
 EllipseMask< D >::inside( const Position< D >& p ) const
@@ -343,7 +342,6 @@ EllipseMask< D >::get_dict() const
   def< std::vector< double > >( maskd, names::anchor, center_ );
   return d;
 }
-
 
 
 template < int D >

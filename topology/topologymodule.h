@@ -192,8 +192,8 @@ public:
 
   class SelectNodesByMask_L_M_d_dFunction : public SLIFunction
   {
-    public:
-      void execute( SLIInterpreter* ) const;
+  public:
+    void execute( SLIInterpreter* ) const;
   } selectnodesbymask_L_M_d_dfunction;
 
   typedef GenericFactory< AbstractMask > MaskFactory;

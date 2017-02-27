@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # static_code_analysis.sh
 #
@@ -32,14 +32,18 @@
 #
 
 # Command line parameters.
-RUNS_ON_TRAVIS=$1        # true or false, indicating whether the script is executed on Travis CI or runs local.
-INCREMENTAL=$2           # true or false, user needs to confirm befor checking a source file.
-FILE_NAMES=$3            # The list of files or a single file to be checked.
-NEST_VPATH=$4            # The high level NEST build path.
-VERA=$5                  # Name of the VERA++ executable.
-CPPCHECK=$6              # Name of the CPPCHECK executable.
-CLANG_FORMAT=$7          # Name of the CLANG-FORMAT executable.
-PEP8=$8                  # Name of the PEP8 executable.
+RUNS_ON_TRAVIS=${1}           # true or false, indicating whether the script is executed on Travis CI or runs local.
+INCREMENTAL=${2}              # true or false, user needs to confirm befor checking a source file.
+FILE_NAMES=${3}               # The list of files or a single file to be checked.
+NEST_VPATH=${4}               # The high level NEST build path.
+VERA=${5}                     # Name of the VERA++ executable.
+CPPCHECK=${6}                 # Name of the CPPCHECK executable.
+CLANG_FORMAT=${7}             # Name of the CLANG-FORMAT executable.
+PEP8=${8}                     # Name of the PEP8 executable.
+PERFORM_VERA=${9}             # true or false, indicating whether VERA++ analysis is performed or not.
+PERFORM_CPPCHECK=${10}        # true or false, indicating whether CPPCHECK analysis is performed or not.
+PERFORM_CLANG_FORMAT=${11}    # true or false, indicating whether CLANG-FORMAT analysis is performed or not.
+PERFORM_PEP8=${12}            # true or false, indicating whether PEP8 analysis is performed or not.
 
 # PEP8 rules to ignore.
 PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
@@ -58,16 +62,24 @@ print_msg() {
 }
 
 # Print version information.
-VERA_VERS=`$VERA --version`
-CPPCHECK_VERS=`$CPPCHECK --version | sed 's/^Cppcheck //'`
-CLANG_FORMAT_VERS=`$CLANG_FORMAT --version`
-PEP8_VERS=`$PEP8 --version`
 print_msg "MSGBLD0105: " "Following tools are in use:"
 print_msg "MSGBLD0105: " "---------------------------"
-print_msg "MSGBLD0105: " "VERA++       : $VERA_VERS"
-print_msg "MSGBLD0105: " "CPPCHECK     : $CPPCHECK_VERS"
-print_msg "MSGBLD0105: " "CLANG-FORMAT : $CLANG_FORMAT_VERS"
-print_msg "MSGBLD0105: " "PEP8         : $PEP8_VERS"
+if $PERFORM_VERA; then
+  VERA_VERS=`$VERA --version`
+  print_msg "MSGBLD0105: " "VERA++       : $VERA_VERS"
+fi
+if $PERFORM_CPPCHECK; then
+  CPPCHECK_VERS=`$CPPCHECK --version | sed 's/^Cppcheck //'`
+  print_msg "MSGBLD0105: " "CPPCHECK     : $CPPCHECK_VERS"
+fi
+if $PERFORM_CLANG_FORMAT; then
+  CLANG_FORMAT_VERS=`$CLANG_FORMAT --version`
+  print_msg "MSGBLD0105: " "CLANG-FORMAT : $CLANG_FORMAT_VERS"
+fi
+if $PERFORM_PEP8; then
+  PEP8_VERS=`$PEP8 --version`
+  print_msg "MSGBLD0105: " "PEP8         : $PEP8_VERS"
+fi
 print_msg "" ""
 
 # Perfom static code analysis.
@@ -101,55 +113,61 @@ for f in $FILE_NAMES; do
       fi
 
       # VERA++
-      print_msg "MSGBLD0130: " "Running VERA++ .....: $f"
-      $VERA --profile nest $f > ${f_base}_vera.txt 2>&1
-      if [ -s "${f_base}_vera.txt" ]; then
-        vera_failed=true
-        cat ${f_base}_vera.txt | while read line
-        do
-          print_msg "MSGBLD0135: " "[VERA] $line"
-        done
-      fi
-      rm ${f_base}_vera.txt
-      if $RUNS_ON_TRAVIS; then
-        print_msg "MSGBLD0140: " "VERA++ for file $f completed."
+      if $PERFORM_VERA; then
+        print_msg "MSGBLD0130: " "Running VERA++ .....: $f"
+        $VERA --profile nest $f > ${f_base}_vera.txt 2>&1
+        if [ -s "${f_base}_vera.txt" ]; then
+          vera_failed=true
+          cat ${f_base}_vera.txt | while read line
+          do
+            print_msg "MSGBLD0135: " "[VERA] $line"
+          done
+        fi
+        rm ${f_base}_vera.txt
+        if $RUNS_ON_TRAVIS; then
+          print_msg "MSGBLD0140: " "VERA++ for file $f completed."
+        fi
       fi
 
       # CPPCHECK
-      print_msg "MSGBLD0150: " "Running CPPCHECK ...: $f"
-      $CPPCHECK --enable=all --inconclusive --std=c++03 --suppress=missingIncludeSystem $f > ${f_base}_cppcheck.txt 2>&1
-      # Remove the header, the first line.
-      tail -n +2 "${f_base}_cppcheck.txt" > "${f_base}_cppcheck.tmp" && mv "${f_base}_cppcheck.tmp" "${f_base}_cppcheck.txt"
-      if [ -s "${f_base}_cppcheck.txt" ]; then
-        cppcheck_failed=true
-        cat ${f_base}_cppcheck.txt | while read line
-        do
-          print_msg "MSGBLD0155: " "[CPPC] $line"
-        done
-      fi
-      rm ${f_base}_cppcheck.txt
-      if $RUNS_ON_TRAVIS; then
-        print_msg "MSGBLD0160: " "CPPCHECK for file $f completed."
+      if $PERFORM_CPPCHECK; then
+        print_msg "MSGBLD0150: " "Running CPPCHECK ...: $f"
+        $CPPCHECK --enable=all --inconclusive --std=c++03 --suppress=missingIncludeSystem $f > ${f_base}_cppcheck.txt 2>&1
+        # Remove the header, the first line.
+        tail -n +2 "${f_base}_cppcheck.txt" > "${f_base}_cppcheck.tmp" && mv "${f_base}_cppcheck.tmp" "${f_base}_cppcheck.txt"
+        if [ -s "${f_base}_cppcheck.txt" ]; then
+          cppcheck_failed=true
+          cat ${f_base}_cppcheck.txt | while read line
+          do
+            print_msg "MSGBLD0155: " "[CPPC] $line"
+          done
+        fi
+        rm ${f_base}_cppcheck.txt
+        if $RUNS_ON_TRAVIS; then
+          print_msg "MSGBLD0160: " "CPPCHECK for file $f completed."
+        fi
       fi
 
       # CLANG-FORMAT
-      print_msg "MSGBLD0170: " "Running CLANG-FORMAT: $f"
-      # Create a clang-format formatted temporary file and perform a diff with its origin.
-      file_formatted="${f_base}_formatted.txt"
-      file_diff="${f_base}_diff.txt"
-      $CLANG_FORMAT $f > $file_formatted
-      diff $f $file_formatted > $file_diff 2>&1
-      if [ -s "$file_diff" ]; then
-        clang_format_failed=true
-        cat $file_diff | while read line
-        do
-          print_msg "MSGBLD0175: " "[DIFF] $line"
-        done
-      fi
-      rm $file_formatted
-      rm $file_diff
-      if $RUNS_ON_TRAVIS; then
-        print_msg "MSGBLD0180: " "CLANG-FORMAT for file $f completed."
+      if $PERFORM_CLANG_FORMAT; then
+        print_msg "MSGBLD0170: " "Running CLANG-FORMAT: $f"
+        # Create a clang-format formatted temporary file and perform a diff with its origin.
+        file_formatted="${f_base}_formatted.txt"
+        file_diff="${f_base}_diff.txt"
+        $CLANG_FORMAT $f > $file_formatted
+        diff $f $file_formatted > $file_diff 2>&1
+        if [ -s "$file_diff" ]; then
+          clang_format_failed=true
+          cat $file_diff | while read line
+          do
+            print_msg "MSGBLD0175: " "[DIFF] $line"
+          done
+        fi
+        rm $file_formatted
+        rm $file_diff
+        if $RUNS_ON_TRAVIS; then
+          print_msg "MSGBLD0180: " "CLANG-FORMAT for file $f completed."
+        fi
       fi
 
       # Add the file to the list of files with format errors.
@@ -160,28 +178,30 @@ for f in $FILE_NAMES; do
 
     *.py )
       # PEP8
-      print_msg "MSGBLD0190: " "Running PEP8 .......: $f"
-      case $f in
-        *user_manual_scripts*)
-          IGNORES=$PEP8_IGNORES_TOPO_MANUAL
-          ;;
-        *examples*)
-          IGNORES=$PEP8_IGNORES_EXAMPLES
-          ;;
-        *)
-          IGNORES=$PEP8_IGNORES
-          ;;
-      esac
-      if ! pep8_result=`$PEP8 --ignore=$PEP8_IGNORES $f` ; then
-        printf '%s\n' "$pep8_result" | while IFS= read -r line
-        do
-          print_msg "MSGBLD0195: " "[PEP8] $line"
-        done
-        # Add the file to the list of files with format errors.
-        python_files_with_errors="$python_files_with_errors $f"
-      fi
-      if $RUNS_ON_TRAVIS; then
-        print_msg "MSGBLD0200: " "PEP8 check for file $f completed."
+      if $PERFORM_PEP8; then
+        print_msg "MSGBLD0190: " "Running PEP8 .......: $f"
+        case $f in
+          *user_manual_scripts*)
+            IGNORES=$PEP8_IGNORES_TOPO_MANUAL
+            ;;
+          *examples*)
+            IGNORES=$PEP8_IGNORES_EXAMPLES
+            ;;
+          *)
+            IGNORES=$PEP8_IGNORES
+            ;;
+        esac
+        if ! pep8_result=`$PEP8 --ignore=$PEP8_IGNORES $f` ; then
+          printf '%s\n' "$pep8_result" | while IFS= read -r line
+          do
+            print_msg "MSGBLD0195: " "[PEP8] $line"
+          done
+          # Add the file to the list of files with format errors.
+          python_files_with_errors="$python_files_with_errors $f"
+        fi
+        if $RUNS_ON_TRAVIS; then
+          print_msg "MSGBLD0200: " "PEP8 check for file $f completed."
+        fi
       fi
       ;;
 

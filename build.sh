@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # build.sh
 #
@@ -159,8 +159,13 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
   CPPCHECK=cppcheck
   CLANG_FORMAT=clang-format
   PEP8=pep8
+  PERFORM_VERA=true
+  PERFORM_CPPCHECK=true
+  PERFORM_CLANG_FORMAT=true
+  PERFORM_PEP8=true
 
-  ./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8"
+  ./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
+  "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8"
 fi   # Static code analysis.
 
 

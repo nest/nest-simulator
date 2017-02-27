@@ -2125,10 +2125,12 @@ def SelectNodesByMask(layer, xpos, ypos, mask_obj):
     ----------
     layer : tuple/list of int
         List containing the single layer to get GIDs from.
-    lower_left : tuple/list of doubles
-        Position of the lower left corner of the area.
-    upper_right : tuple/list of doubles
-        Position of the upper right corner of the area.
+    xpos : double
+        Double value specifying x-coordinate of where we start to search. Can
+        for instance be center of layer.
+    ypos : double
+        Double value specifying y-coordinate of where we start to search. Can
+        for instance be center of layer.
     mask_obj: object
         Mask object specifying chosen area.
 
@@ -2138,12 +2140,10 @@ def SelectNodesByMask(layer, xpos, ypos, mask_obj):
         GID(s) of neurons inside the specified area.
     """
 
-   # xpos = (upper_right[0] + lower_left[0])/2.0
-    #ypos = (upper_right[1] + lower_left[1])/2.0
-
     mask_datum = mask_obj._datum
     
-    gid_list = topology_func('SelectNodesByMask', ypos, xpos, mask_datum, layer[0])
+    gid_list = topology_func('SelectNodesByMask', ypos, xpos, mask_datum,
+                             layer[0])
     
     return gid_list
     

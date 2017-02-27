@@ -256,7 +256,7 @@ template < int D >
 bool
 EllipseMask< D >::inside( const Position< D >& p ) const
 {
-  // Currently EllipseMask only works in 2 dimensions.
+  // EllipseMask currently only works in 2 dimensions.
   return std::pow( p[ 0 ] - center_[ 0 ], 2 ) / ( x_side_ * x_side_ )
     + std::pow( p[ 1 ] - center_[ 1 ], 2 ) / ( y_side_ * y_side_ )
     <= 1;
@@ -266,7 +266,6 @@ template <>
 bool
 EllipseMask< 2 >::inside( const Box< 2 >& b ) const
 {
-  // Currently EllipseMask only works in 2 dimensions.
   Position< 2 > p = b.lower_left;
 
   // Test if all corners are inside ellipse
@@ -289,7 +288,6 @@ template <>
 bool
 EllipseMask< 3 >::inside( const Box< 3 >& b ) const
 {
-  // Currently EllipseMask only works in 2 dimensions.
   throw NotImplemented( "" );
 }
 
@@ -316,7 +314,7 @@ template < int D >
 Box< D >
 EllipseMask< D >::get_bbox() const
 {
-  // Currently only works in 2 dimensions.
+  // EllipseMask currently only works in 2 dimensions.
   Box< D > bb( center_, center_ );
 
   bb.lower_left[ 0 ] -= x_side_;
@@ -337,8 +335,6 @@ template < int D >
 DictionaryDatum
 EllipseMask< D >::get_dict() const
 {
-  // Currently EllipseMask only works in 2 dimensions.
-
   DictionaryDatum d( new Dictionary );
   DictionaryDatum maskd( new Dictionary );
   def< DictionaryDatum >( d, get_name(), maskd );

@@ -320,8 +320,8 @@ class EllipseMask : public Mask< D >
 public:
   /**
    * @param center Center of ellipse
-   * @param x_side Length between center and x vertices
-   * @param y_side Length between center and y vertices
+   * @param x_side Length between center and x vertex
+   * @param y_side Length between center and y vertex
    */
   EllipseMask( Position< D > center, double x_side, double y_side )
     : center_( center )
@@ -333,7 +333,7 @@ public:
   /**
    * Creates an EllipseMask from a Dictionary which should contain the keys
    * "x_side" and "y_side" with double values, and optionally the key "anchor"
-   * the center position) with an array of doubles.
+   * (the center position) with an array of doubles.
    */
   EllipseMask( const DictionaryDatum& );
 

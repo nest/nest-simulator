@@ -56,7 +56,7 @@ def is_message_pair_in_logfile(log_filename, msg_start_of_section,
             if not pair_found and is_message(line, msg_end_of_section):
                 pair_found = True
 
-    return pair_found
+    return(pair_found)
 
 
 def is_message_in_logfile(log_filename, msg_number):
@@ -76,9 +76,9 @@ def is_message_in_logfile(log_filename, msg_number):
     with open(log_filename) as fh:
         for line in fh:
             if is_message(line, msg_number):
-                return True
+                return(True)
 
-    return False
+    return(False)
 
 
 def is_message(line, msg_number):
@@ -95,9 +95,9 @@ def is_message(line, msg_number):
     """
 
     if msg_number in line:
-        return True
+        return(True)
 
-    return False
+    return(False)
 
 
 def list_of_changed_files(log_filename, msg_changed_files_section_start,
@@ -121,7 +121,7 @@ def list_of_changed_files(log_filename, msg_changed_files_section_start,
     if not is_message_pair_in_logfile(log_filename,
                                       msg_changed_files_section_start,
                                       msg_changed_files_section_end):
-        return changed_files
+        return(changed_files)
 
     in_changed_files_section = False
     with open(log_filename) as fh:
@@ -139,9 +139,9 @@ def list_of_changed_files(log_filename, msg_changed_files_section_start,
                 if is_message(line, msg_changed_files_section_end):
                     # The log file contains only one 'changed-files-section'.
                     # Stop reading the log file.
-                    return changed_files
+                    return(changed_files)
 
-    return changed_files
+    return(changed_files)
 
 
 def msg_summary_vera(log_filename, msg_vera_section_start,
@@ -187,7 +187,7 @@ def msg_summary_vera(log_filename, msg_vera_section_start,
                 if is_message(line, msg_vera_section_end):
                     in_a_vera_section = False
 
-    return all_vera_msgs
+    return(all_vera_msgs)
 
 
 def msg_summary_cppcheck(log_filename, msg_cppcheck_section_start,
@@ -240,7 +240,7 @@ def msg_summary_cppcheck(log_filename, msg_cppcheck_section_start,
                 if is_message(line, msg_cppcheck_section_end):
                     in_a_cppcheck_section = False
 
-    return all_cppcheck_msgs
+    return(all_cppcheck_msgs)
 
 
 def msg_summary_format(log_filename, msg_format_section_start,
@@ -286,7 +286,7 @@ def msg_summary_format(log_filename, msg_format_section_start,
                 if is_message(line, msg_format_section_end):
                     in_a_format_section = False
 
-    return all_format_msgs
+    return(all_format_msgs)
 
 
 def msg_summary_pep8(log_filename, msg_pep8_section_start,
@@ -331,7 +331,7 @@ def msg_summary_pep8(log_filename, msg_pep8_section_start,
                 if is_message(line, msg_pep8_section_end):
                     in_a_pep8_section = False
 
-    return all_pep8_msgs
+    return(all_pep8_msgs)
 
 
 def makebuild_summary(log_filename, msg_make_section_start,
@@ -391,7 +391,7 @@ def makebuild_summary(log_filename, msg_make_section_start,
                     return(False, number_of_error_msgs, error_summary,
                            number_of_warning_msgs, warning_summary)
 
-    return None, None, None, None, None
+    return(None, None, None, None, None)
 
 
 def testsuite_results(log_filename, msg_testsuite_section_start,
@@ -446,7 +446,7 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
                     # section. Stop reading the log file.
                     break
 
-    return status_tests, total_number_of_tests, number_of_tests_failed
+    return(status_tests, total_number_of_tests, number_of_tests_failed)
 
 
 def convert_bool_value_to_status_string(value):
@@ -462,11 +462,11 @@ def convert_bool_value_to_status_string(value):
     String "Passed Successfully", "Skipped" or "Failed" (default).
     """
     if value:
-        return "Passed successfully"
+        return("Passed successfully")
     if value is None:
-        return "Skipped"
+        return("Skipped")
 
-    return "Failed"
+    return("Failed")
 
 
 def convert_bool_value_to_yes_no_string(value):
@@ -483,9 +483,9 @@ def convert_bool_value_to_yes_no_string(value):
     """
 
     if value:
-        return "Yes"
+        return("Yes")
 
-    return "No"
+    return("No")
 
 
 def convert_summary_to_status_string(summary):
@@ -510,7 +510,7 @@ def convert_summary_to_status_string(summary):
         else:
             value = False
 
-    return convert_bool_value_to_status_string(value)
+    return(convert_bool_value_to_status_string(value))
 
 
 def number_of_msgs_in_summary(summary):
@@ -532,7 +532,7 @@ def number_of_msgs_in_summary(summary):
             number_of_msgs += \
                 number_of_msgs_for_file_in_summary(file_name, summary)
 
-    return number_of_msgs
+    return(number_of_msgs)
 
 
 def number_of_msgs_for_file_in_summary(file_name, summary):
@@ -555,7 +555,7 @@ def number_of_msgs_for_file_in_summary(file_name, summary):
         for message, occurrences in summary[file_name].iteritems():
             number_of_messages += occurrences
 
-    return number_of_messages
+    return(number_of_messages)
 
 
 def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
@@ -645,7 +645,7 @@ def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
 
             all_tables += file_table
 
-    return all_tables
+    return(all_tables)
 
 
 def warnings_table(summary):
@@ -669,7 +669,7 @@ def warnings_table(summary):
     table = AsciiTable(file_table)
     table.inner_row_border = True
 
-    return table.table + '\n'
+    return(table.table + '\n')
 
 
 def errors_table(summary):
@@ -693,7 +693,7 @@ def errors_table(summary):
     table = AsciiTable(file_table)
     table.inner_row_border = True
 
-    return table.table + '\n'
+    return(table.table + '\n')
 
 
 def printable_summary(list_of_changed_files,
@@ -840,7 +840,7 @@ def printable_summary(list_of_changed_files,
     else:
         build_summary += '\nBUILD FAILED'
 
-    return build_summary
+    return(build_summary)
 
 
 def build_return_code(status_vera_init,
@@ -903,9 +903,9 @@ def build_return_code(status_vera_init,
        (number_of_msgs_in_summary(summary_format) == 0) and \
        (number_of_msgs_in_summary(summary_pep8) == 0):
 
-        return 0
+        return(0)
     else:
-        return 1
+        return(1)
 
 
 if __name__ == '__main__':

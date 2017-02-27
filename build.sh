@@ -88,7 +88,7 @@ mkdir "$NEST_VPATH" "$NEST_RESULT"
 mkdir "$NEST_VPATH/reports"
 
 if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
-  echo "\n"
+  echo
   echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
   echo "+               S T A T I C   C O D E   A N A L Y S I S                       +"
   echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -150,6 +150,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
     echo "MSGBLD0095: File changed: $line"
   done
   echo "MSGBLD0100: Retrieving changed files completed."
+  echo
 
   sudo chmod +x ./extras/static_code_analysis.sh
 
@@ -172,7 +173,7 @@ fi   # Static code analysis.
 cd "$NEST_VPATH"
 cp ../examples/sli/nestrc.sli ~/.nestrc
 
-echo "\n"
+echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "+               C O N F I G U R E   N E S T   B U I L D                       +"
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -191,7 +192,7 @@ cmake \
   ..
 echo "MSGBLD0240: CMake configure completed."
 
-echo "\n"
+echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "+               B U I L D   N E S T                                           +"
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -199,7 +200,7 @@ echo "MSGBLD0250: Running Make."
 make VERBOSE=1
 echo "MSGBLD0260: Make completed."
 
-echo "\n"
+echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "+               I N S T A L L   N E S T                                       +"
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
@@ -207,7 +208,7 @@ echo "MSGBLD0270: Running make install."
 make install
 echo "MSGBLD0280: Make install completed."
 
-echo "\n"
+echo
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "+               R U N   N E S T   T E S T S U I T E                           +"
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"

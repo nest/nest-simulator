@@ -107,16 +107,16 @@ you received in the NEST sources.
 
 Please cite NEST if you use it in your work.
 
-If you use NEST 2.12.0, please cite it as `Kunkel, Susanne et al. (2017).
-NEST 2.12.0. Zenodo. 10.5281/zenodo.259534`. The full citation is available
+If you use NEST 2.12.0, please cite it as **Kunkel, Susanne et al. (2017).
+NEST 2.12.0. Zenodo. 10.5281/zenodo.259534**. The full citation is available
 in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.259534).
 
 If you use NEST v2.10.0, please cite it as **Bos, Hannah et al. (2015).
 NEST 2.10.0. Zenodo. 10.5281/zenodo.44222**. The full citation is available
 in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.44222).
 
-If you use NEST v2.8.0, please cite it as `Eppler, Jochen Martin et al. (2015).
-NEST 2.8.0. Zenodo. 10.5281/zenodo.32969`. The full citation is available
+If you use NEST v2.8.0, please cite it as **Eppler, Jochen Martin et al. (2015).
+NEST 2.8.0. Zenodo. 10.5281/zenodo.32969**. The full citation is available
 in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.32969).
 
 For all versions below NEST v2.8.0 and for citing NEST without referring to a

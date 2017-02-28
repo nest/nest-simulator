@@ -221,7 +221,7 @@ class SigmoidNumericSEI(SynapticElementIntegrator):
 
     """
     Compute the number of synaptic element corresponding to a
-    linear growth curve
+    sigmoid growth curve
     dse/dCa = nu * ((2.0 / exp( (Ca - eps)/psi)) - 1.0)
 
     Use numerical integration (see scipy.integrate.quad)

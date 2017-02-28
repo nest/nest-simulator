@@ -1713,6 +1713,7 @@ NestModule::init( SLIInterpreter* i )
     "fixed_total_number" );
 
   // Add MSP growth curves
+  kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
   kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >(
     "gaussian" );
   kernel().sp_manager.register_growth_curve< GrowthCurveLinear >( "linear" );

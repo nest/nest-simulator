@@ -130,3 +130,61 @@ nest::GrowthCurveGaussian::update( double t,
 
   return std::max( z_value, 0.0 );
 }
+
+/* ----------------------------------------------------------------
+ * GrowthCurveSigmoid
+ * ---------------------------------------------------------------- */
+
+nest::GrowthCurveSigmoid::GrowthCurveSigmoid()
+  : GrowthCurve( names::sigmoid )
+  , eps_( 0.7 )
+  , psi_( 0.1 )
+{
+}
+
+void
+nest::GrowthCurveSigmoid::get( DictionaryDatum& d ) const
+{
+  def< std::string >( d, names::growth_curve, name_.toString() );
+  def< double >( d, names::eps, eps_ );
+  def< double >( d, names::psi, psi_ );
+}
+
+void
+nest::GrowthCurveSigmoid::set( const DictionaryDatum& d )
+{
+  updateValue< double >( d, names::eps, eps_ );
+  updateValue< double >( d, names::psi, psi_ );
+
+  // check that w is greater than 0
+  if ( not( psi_ >= 0 ) )
+  {
+    throw BadProperty( "psi parameter must be greater than 0." );
+  }
+}
+
+double
+nest::GrowthCurveSigmoid::update( double t,
+  double t_minus,
+  double Ca_minus,
+  double z_minus,
+  double tau_Ca,
+  double growth_rate ) const
+{
+  // Numerical integration from t_minus to t
+  // use standard forward Euler numerics
+  const double h = Time::get_resolution().get_ms();
+
+  double z_value = z_minus;
+  double Ca = Ca_minus;
+
+  for ( double lag = t_minus; lag < ( t - h / 2.0 ); lag += h )
+  {
+    Ca = Ca - ( ( Ca / tau_Ca ) * h );
+    const double dz = h * growth_rate
+      * ( ( 2.0 / ( 1.0 + exp( ( Ca - eps_ ) / psi_ ) ) ) - 1.0 );
+    z_value = z_value + dz;
+  }
+
+  return std::max( z_value, 0.0 );
+}

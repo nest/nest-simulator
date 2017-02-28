@@ -236,21 +236,27 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
 
       if ( target_filter_.select_model()
         && ( tgt->get_model_id() != target_filter_.model ) )
+      {
         continue;
+      }
 
       const Position< D > target_pos =
         target.get_position( tgt->get_subnet_index() );
 
       if ( mask_.valid() )
+      {
         connect_to_target_( pool.masked_begin( target_pos ),
           pool.masked_end(),
           tgt,
           target_pos,
           thread_id,
           source );
+      }
       else
+      {
         connect_to_target_(
           pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
+      }
     } // for target_begin
   }   // omp parallel
 }

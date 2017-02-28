@@ -579,6 +579,6 @@ tp.ConnectLayers(nrn_layer, rec, cdict_rec)
 
 #{ conn11 #}
 rec = nest.Create('spike_detector')
-nrns = nest.GetLeaves(nrn_layer, local_only=True)
+nrns = nest.GetLeaves(nrn_layer, local_only=True)[0]
 nest.Connect(nrns, rec)
 #{ end #}

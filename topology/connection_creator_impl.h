@@ -218,36 +218,39 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
 #pragma omp parallel // default(none) shared(source, target, masked_layer,
                      // target_begin, target_end)
   {
+    const int thread_id = kernel().vp_manager.get_thread_id();
+
     for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
           tgt_it != target_end;
           ++tgt_it )
     {
-      const thread target_thread = ( *tgt_it )->get_thread();
+      Node* const tgt =
+        kernel().node_manager.get_node( ( *tgt_it )->get_gid(), thread_id );
+      const thread target_thread = tgt->get_thread();
 
-      if ( target_thread != kernel().vp_manager.get_thread_id() )
+      // check whether the target is on our thread
+      if ( thread_id != target_thread )
+      {
         continue;
+      }
 
       if ( target_filter_.select_model()
-        && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
+        && ( tgt->get_model_id() != target_filter_.model ) )
         continue;
 
       const Position< D > target_pos =
-        target.get_position( ( *tgt_it )->get_subnet_index() );
+        target.get_position( tgt->get_subnet_index() );
 
       if ( mask_.valid() )
         connect_to_target_( pool.masked_begin( target_pos ),
           pool.masked_end(),
-          *tgt_it,
+          tgt,
           target_pos,
-          target_thread,
+          thread_id,
           source );
       else
-        connect_to_target_( pool.begin(),
-          pool.end(),
-          *tgt_it,
-          target_pos,
-          target_thread,
-          source );
+        connect_to_target_(
+          pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
     } // for target_begin
   }   // omp parallel
 }
@@ -279,6 +282,21 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
   {
     target_begin = target.local_begin();
     target_end = target.local_end();
+  }
+
+  // protect against connecting to devices without proxies
+  // we need to do this before creating the first connection to leave
+  // the network untouched if any target does not have proxies
+  for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
+        tgt_it != target_end;
+        ++tgt_it )
+  {
+    if ( not( *tgt_it )->has_proxies() )
+    {
+      throw IllegalConnection(
+        "Topology Divergent connections"
+        " to devices are not possible." );
+    }
   }
 
   if ( mask_.valid() )
@@ -456,6 +474,21 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
   {
     target_begin = target.local_begin();
     target_end = target.local_end();
+  }
+
+  // protect against connecting to devices without proxies
+  // we need to do this before creating the first connection to leave
+  // the network untouched if any target does not have proxies
+  for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
+        tgt_it != target_end;
+        ++tgt_it )
+  {
+    if ( not( *tgt_it )->has_proxies() )
+    {
+      throw IllegalConnection(
+        "Topology Divergent connections"
+        " to devices are not possible." );
+    }
   }
 
   if ( mask_.valid() )
@@ -727,6 +760,36 @@ template < int D >
 void
 ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
 {
+  // protect against connecting to devices without proxies
+  // we need to do this before creating the first connection to leave
+  // the network untouched if any target does not have proxies
+  // Nodes in the subnet are grouped by depth, so to select by depth, we
+  // just adjust the begin and end pointers:
+  std::vector< Node* >::const_iterator target_begin;
+  std::vector< Node* >::const_iterator target_end;
+  if ( target_filter_.select_depth() )
+  {
+    target_begin = target.local_begin( target_filter_.depth );
+    target_end = target.local_end( target_filter_.depth );
+  }
+  else
+  {
+    target_begin = target.local_begin();
+    target_end = target.local_end();
+  }
+
+  for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
+        tgt_it != target_end;
+        ++tgt_it )
+  {
+    if ( not( *tgt_it )->has_proxies() )
+    {
+      throw IllegalConnection(
+        "Topology Divergent connections"
+        " to devices are not possible." );
+    }
+  }
+
   // Divergent connections (fixed fan out)
   //
   // For each (global) source: (All connections made on all mpi procs)

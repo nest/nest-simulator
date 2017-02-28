@@ -136,7 +136,8 @@ assert_or_die
 {
   << /connection_type /divergent >> layer_to_det_test
 }
-assert_or_die
+fail_or_die
+clear
 
 {
   % four incoming connections, one to each neuron in layer
@@ -145,13 +146,15 @@ assert_or_die
      /number_of_connections 4
      /allow_multapses false >> layer_to_det_test
 }
-assert_or_die
+fail_or_die
+clear
 
 {
   % one outgoing connection from each neuron in layer
   << /connection_type /divergent 
      /number_of_connections 1 >> layer_to_det_test
 }
-assert_or_die
+fail_or_die
+clear
 
 endusing

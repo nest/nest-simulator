@@ -20,7 +20,7 @@
  *
  */
 
-#include "target_table_devices.h"
+#include "target_table_devices_impl.h"
 
 // Includes from nestkernel:
 #include "kernel_manager.h"

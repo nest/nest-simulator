@@ -465,9 +465,19 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     } // of omp single; implicit barrier
 
     // deliver spikes from receive buffer to ring buffers
+#pragma omp single
+    {
+      sw_deliver_spike_data.start();
+    } // of omp single; implicit barrier
+
     others_completed_tid = deliver_events_5g_( tid, recv_buffer );
 #pragma omp atomic
     completed_count += others_completed_tid;
+
+#pragma omp single
+    {
+      sw_deliver_spike_data.stop();
+    } // of omp single; implicit barrier
 
     // exit gather loop if all local threads and remote processes are
     // done

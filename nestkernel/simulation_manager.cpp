@@ -361,6 +361,12 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
 void
 nest::SimulationManager::simulate( Time const& t )
 {
+  Stopwatch sw_simulate;
+  if ( kernel().mpi_manager.get_rank() < 30 )
+  {
+    sw_simulate.start();
+  }
+
   assert( kernel().is_initialized() );
 
   t_real_ = 0;
@@ -438,6 +444,12 @@ nest::SimulationManager::simulate( Time const& t )
   resume_( num_active_nodes );
 
   finalize_simulation_();
+
+  if ( kernel().mpi_manager.get_rank() < 30 )
+  {
+    sw_simulate.stop();
+    sw_simulate.print( "0] Simulate time: " );
+  }
 }
 
 void
@@ -521,6 +533,12 @@ nest::SimulationManager::prepare_simulation_()
 {
   assert( to_do_ != 0 ); // This is checked in simulate()
 
+  Stopwatch sw_prepare;
+  if ( kernel().mpi_manager.get_rank() < 30 )
+  {
+    sw_prepare.start();
+  }
+
   // Reset profiling timers and counters within event_delivery_manager
   kernel().event_delivery_manager.reset_timers_counters();
 
@@ -578,10 +596,13 @@ nest::SimulationManager::prepare_simulation_()
 
   if ( kernel().mpi_manager.get_rank() < 30 )
   {
+    sw_prepare.stop();
+    sw_prepare.print( "0] PrepareSimulation time: " );
+
     kernel().event_delivery_manager.sw_communicate_target_data.print(
-      "0] GatherTargetData::communicate: " );
+      "0] GatherTargetData::communicate time: " );
     std::cout << "0] CommSteps(Rounds)TargetData: "
-              << kernel().event_delivery_manager.comm_steps_target_data << "("
+              << kernel().event_delivery_manager.comm_steps_target_data << " ("
               << kernel().event_delivery_manager.comm_rounds_target_data << ")"
               << std::endl;
   }
@@ -644,7 +665,10 @@ nest::SimulationManager::update_()
     Stopwatch sw_total;
     Stopwatch sw_update;
 
-    sw_total.start();
+    if ( kernel().mpi_manager.get_rank() < 30 )
+    {
+      sw_total.start();
+    }
     do
     {
       if ( print_time_ )
@@ -795,7 +819,10 @@ nest::SimulationManager::update_()
       } // of if(any_node_uses_wfr)
       // end of preliminary update
 
-      sw_update.start();
+      if ( kernel().mpi_manager.get_rank() < 30 )
+      {
+        sw_update.start();
+      }
       const std::vector< Node* >& thread_local_nodes =
         kernel().node_manager.get_nodes_on_thread( tid );
       for (
@@ -821,7 +848,10 @@ nest::SimulationManager::update_()
 
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
-      sw_update.stop();
+      if ( kernel().mpi_manager.get_rank() < 30 )
+      {
+        sw_update.stop();
+      }
 
       // gather only at end of slice
       if ( to_step_ == kernel().connection_manager.get_min_delay() ) // gather
@@ -867,7 +897,6 @@ nest::SimulationManager::update_()
 
     } while ( ( to_do_ != 0 ) && ( !terminate_ ) );
 
-    sw_total.stop();
     // TODO@5g: implement SP
     // End of the slice, we update the number of synaptic element
     // for ( std::vector< Node* >::const_iterator i =
@@ -881,12 +910,14 @@ nest::SimulationManager::update_()
 
     if ( tid == 0 && kernel().mpi_manager.get_rank() < 30 )
     {
+      sw_total.stop();
       sw_update.print( "0] Update time: " );
-      kernel().event_delivery_manager.sw_communicate_spike_data.print( "0] GatherSpikeData::communicate: " );
-      kernel().event_delivery_manager.sw_communicate_secondary_events.print( "0] GatherSecondaryData::communicate: " );
+      kernel().event_delivery_manager.sw_communicate_spike_data.print( "0] GatherSpikeData::communicate time: " );
+      kernel().event_delivery_manager.sw_deliver_spike_data.print( "0] GatherSpikeData::deliver time: " );
+      kernel().event_delivery_manager.sw_communicate_secondary_events.print( "0] GatherSecondaryData::communicate time: " );
       sw_total.print( "0] Total time: " );
       std::cout << "0] CommSteps(Rounds)SpikeData: "
-                << kernel().event_delivery_manager.comm_steps_spike_data << "("
+                << kernel().event_delivery_manager.comm_steps_spike_data << " ("
                 << kernel().event_delivery_manager.comm_rounds_spike_data << ")"
                 << std::endl;
       std::cout << "0] CommStepsSecondaryEvents: " << kernel().event_delivery_manager.comm_steps_secondary_events << std::endl;

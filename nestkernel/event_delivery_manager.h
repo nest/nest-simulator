@@ -273,6 +273,7 @@ public:
 
   Stopwatch sw_communicate_secondary_events;
   Stopwatch sw_communicate_spike_data;
+  Stopwatch sw_deliver_spike_data;
   Stopwatch sw_communicate_target_data;
 
   unsigned int comm_steps_target_data;

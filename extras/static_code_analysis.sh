@@ -191,7 +191,7 @@ for f in $FILE_NAMES; do
             IGNORES=$PEP8_IGNORES
             ;;
         esac
-        if ! pep8_result=`$PEP8 --ignore=$PEP8_IGNORES $f` ; then
+        if ! pep8_result=`$PEP8 --ignore=$IGNORES $f` ; then
           printf '%s\n' "$pep8_result" | while IFS= read -r line
           do
             print_msg "MSGBLD0195: " "[PEP8] $line"

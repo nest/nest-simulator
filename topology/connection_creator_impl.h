@@ -96,7 +96,9 @@ ConnectionCreator::connect_to_target_( Iterator from,
   for ( Iterator iter = from; iter != to; ++iter )
   {
     if ( ( not allow_autapses_ ) and ( iter->second == tgt_ptr->get_gid() ) )
+    {
       continue;
+    }
 
     if ( without_kernel
       or rng->drand()
@@ -126,7 +128,9 @@ template < int D >
 ConnectionCreator::PoolWrapper_< D >::~PoolWrapper_()
 {
   if ( masked_layer_ )
+  {
     delete masked_layer_;
+  }
 }
 
 template < int D >
@@ -209,45 +213,58 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   // retrieve global positions, either for masked or unmasked pool
   PoolWrapper_< D > pool;
   if ( mask_.valid() ) // MaskedLayer will be freed by PoolWrapper d'tor
+  {
     pool.define( new MaskedLayer< D >(
       source, source_filter_, mask_, true, allow_oversized_ ) );
+  }
   else
+  {
     pool.define( source.get_global_positions_vector( source_filter_ ) );
+  }
 
 // sharing specs on next line commented out because gcc 4.2 cannot handle them
 #pragma omp parallel // default(none) shared(source, target, masked_layer,
                      // target_begin, target_end)
   {
+    const int thread_id = kernel().vp_manager.get_thread_id();
+
     for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
           tgt_it != target_end;
           ++tgt_it )
     {
-      const thread target_thread = ( *tgt_it )->get_thread();
+      Node* const tgt =
+        kernel().node_manager.get_node( ( *tgt_it )->get_gid(), thread_id );
+      const thread target_thread = tgt->get_thread();
 
-      if ( target_thread != kernel().vp_manager.get_thread_id() )
+      // check whether the target is on our thread
+      if ( thread_id != target_thread )
+      {
         continue;
+      }
 
       if ( target_filter_.select_model()
-        && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
+        && ( tgt->get_model_id() != target_filter_.model ) )
+      {
         continue;
+      }
 
       const Position< D > target_pos =
-        target.get_position( ( *tgt_it )->get_subnet_index() );
+        target.get_position( tgt->get_subnet_index() );
 
       if ( mask_.valid() )
+      {
         connect_to_target_( pool.masked_begin( target_pos ),
           pool.masked_end(),
-          *tgt_it,
+          tgt,
           target_pos,
-          target_thread,
+          thread_id,
           source );
+      }
       else
-        connect_to_target_( pool.begin(),
-          pool.end(),
-          *tgt_it,
-          target_pos,
-          target_thread,
-          source );
+      {
+        connect_to_target_(
+          pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
+      }
     } // for target_begin
   }   // omp parallel
 }
@@ -281,6 +298,21 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
     target_end = target.local_end();
   }
 
+  // protect against connecting to devices without proxies
+  // we need to do this before creating the first connection to leave
+  // the network untouched if any target does not have proxies
+  for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
+        tgt_it != target_end;
+        ++tgt_it )
+  {
+    if ( not( *tgt_it )->has_proxies() )
+    {
+      throw IllegalConnection(
+        "Topology Divergent connections"
+        " to devices are not possible." );
+    }
+  }
+
   if ( mask_.valid() )
   {
 
@@ -296,7 +328,9 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
 
       if ( target_filter_.select_model()
         && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
+      {
         continue;
+      }
 
       index target_id = ( *tgt_it )->get_gid();
       thread target_thread = ( *tgt_it )->get_thread();
@@ -317,7 +351,9 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
         {
 
           if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
+          {
             continue;
+          }
 
           if ( rng->drand()
             < kernel_->value(
@@ -346,7 +382,9 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
         {
 
           if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
+          {
             continue;
+          }
           double w, d;
           get_parameters_(
             target.compute_displacement( iter->first, target_pos ), rng, w, d );
@@ -369,7 +407,9 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
 
       if ( target_filter_.select_model()
         && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
+      {
         continue;
+      }
 
       index target_id = ( *tgt_it )->get_gid();
       thread target_thread = ( *tgt_it )->get_thread();
@@ -391,7 +431,9 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
         {
 
           if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
+          {
             continue;
+          }
 
           if ( rng->drand()
             < kernel_->value(
@@ -419,7 +461,10 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
         {
 
           if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
+          {
             continue;
+          }
+
           double w, d;
           get_parameters_(
             target.compute_displacement( iter->first, target_pos ), rng, w, d );
@@ -458,6 +503,21 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
     target_end = target.local_end();
   }
 
+  // protect against connecting to devices without proxies
+  // we need to do this before creating the first connection to leave
+  // the network untouched if any target does not have proxies
+  for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
+        tgt_it != target_end;
+        ++tgt_it )
+  {
+    if ( not( *tgt_it )->has_proxies() )
+    {
+      throw IllegalConnection(
+        "Topology Divergent connections"
+        " to devices are not possible." );
+    }
+  }
+
   if ( mask_.valid() )
   {
 
@@ -468,7 +528,9 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
 
       if ( target_filter_.select_model()
         && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
+      {
         continue;
+      }
 
       index target_id = ( *tgt_it )->get_gid();
       thread target_thread = ( *tgt_it )->get_thread();
@@ -610,7 +672,9 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
 
       if ( target_filter_.select_model()
         && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
+      {
         continue;
+      }
 
       index target_id = ( *tgt_it )->get_gid();
       thread target_thread = ( *tgt_it )->get_thread();
@@ -727,6 +791,36 @@ template < int D >
 void
 ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
 {
+  // protect against connecting to devices without proxies
+  // we need to do this before creating the first connection to leave
+  // the network untouched if any target does not have proxies
+  // Nodes in the subnet are grouped by depth, so to select by depth, we
+  // just adjust the begin and end pointers:
+  std::vector< Node* >::const_iterator target_begin;
+  std::vector< Node* >::const_iterator target_end;
+  if ( target_filter_.select_depth() )
+  {
+    target_begin = target.local_begin( target_filter_.depth );
+    target_end = target.local_end( target_filter_.depth );
+  }
+  else
+  {
+    target_begin = target.local_begin();
+    target_end = target.local_end();
+  }
+
+  for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
+        tgt_it != target_end;
+        ++tgt_it )
+  {
+    if ( not( *tgt_it )->has_proxies() )
+    {
+      throw IllegalConnection(
+        "Topology Divergent connections"
+        " to devices are not possible." );
+    }
+  }
+
   // Divergent connections (fixed fan out)
   //
   // For each (global) source: (All connections made on all mpi procs)
@@ -762,7 +856,9 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
     {
 
       if ( ( not allow_autapses_ ) and ( source_id == tgt_it->second ) )
+      {
         continue;
+      }
 
       Position< D > target_displ =
         target.compute_displacement( source_pos, tgt_it->first );
@@ -772,9 +868,13 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
       displacements.push_back( target_displ );
 
       if ( kernel_.valid() )
+      {
         probabilities.push_back( kernel_->value( target_displ, rng ) );
+      }
       else
+      {
         probabilities.push_back( 1.0 );
+      }
     }
 
     if ( targets.empty()

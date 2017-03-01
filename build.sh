@@ -161,7 +161,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
   CLANG_FORMAT=clang-format
   PEP8=pep8
   PERFORM_VERA=true
-  PERFORM_CPPCHECK=true
+  PERFORM_CPPCHECK=false
   PERFORM_CLANG_FORMAT=true
   PERFORM_PEP8=true
 

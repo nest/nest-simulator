@@ -260,6 +260,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   double delay,
   double weight )
 {
+  std::cout << "here weight: " << weight << std::endl;
   if ( !numerics::is_nan( delay ) )
   {
     kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
@@ -282,12 +283,10 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
       used_default_delay();
   }
 
+
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
-  if ( !p->empty() )
-    c.set_status( p, *this ); // reference to connector model needed here to
-                              // check delay (maybe this
-                              // could be done one level above?)
+  
   if ( !numerics::is_nan( weight ) )
   {
     c.set_weight( weight );
@@ -296,7 +295,11 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   {
     c.set_delay( delay );
   }
-
+  if ( !p->empty() )
+    c.set_status( p, *this ); // reference to connector model needed here to
+                              // check delay (maybe this
+                              // could be done one level above?)
+  
   // We must use a local variable here to hold the actual value of the
   // receptor type. We must not change the receptor_type_ data member, because
   // that represents the *default* value. See #921.

@@ -47,7 +47,11 @@ private:
   static const unsigned long tid_mask = 0x01FF800000000000;
   static const unsigned long syn_index_mask = 0x7E00000000000000;
   static const unsigned long processed_mask = 0x8000000000000000;
-  // define shifts to arrive at correct bits
+  // define shifts to arrive at correct bits; note: the size of these
+  // variables is most likely not enough for exascale computers, or
+  // very small number of threads; if any issues are encountered with
+  // these values, we can introduce compilerflags that rearrange these
+  // sizes according to the target platform/application
   static const size_t lcid_shift = 0;
   static const size_t rank_shift = 27;
   static const size_t tid_shift = 47;

@@ -163,9 +163,9 @@ nest::SourceTable::clean( const thread tid )
           syn_index < ( *sources_[ tid ] ).size();
           ++syn_index )
     {
-      std::vector< Source >& sources = *( *sources_[ tid ] )[ syn_index ];
       if ( max_position.syn_index == syn_index )
       {
+        std::vector< Source >& sources = *( *sources_[ tid ] )[ syn_index ];
         // we need to add 1 to max_position.lcid since
         // max_position.lcid can contain a valid entry which we do not
         // want to delete.
@@ -184,13 +184,10 @@ nest::SourceTable::clean( const thread tid )
       }
       else
       {
-        const size_t deleted_elements = sources.end() - sources.begin();
-        sources.erase( sources.begin(), sources.end() );
-        if ( deleted_elements > min_deleted_elements_ )
-        {
-          std::vector< Source >( sources.begin(), sources.end() )
-            .swap( sources );
-        }
+        assert( max_position.syn_index < syn_index );
+        ( *sources_[ tid ] )[ syn_index ]->clear();
+        delete ( *sources_[ tid ] )[ syn_index ];
+        ( *sources_[ tid ] )[ syn_index ] = NULL;
       }
     }
   }
@@ -199,14 +196,14 @@ nest::SourceTable::clean( const thread tid )
     for ( synindex syn_index = 0; syn_index < ( *sources_[ tid ] ).size();
           ++syn_index )
     {
-      std::vector< Source >& sources = *( *sources_[ tid ] )[ syn_index ];
-      const size_t deleted_elements = sources.end() - sources.begin();
-      sources.erase( sources.begin(), sources.end() );
-      if ( deleted_elements > min_deleted_elements_ )
-      {
-        std::vector< Source >( sources.begin(), sources.end() ).swap( sources );
-      }
+      ( *sources_[ tid ] )[ syn_index ]->clear();
+      delete ( *sources_[ tid ] )[ syn_index ];
+      ( *sources_[ tid ] )[ syn_index ] = NULL;
     }
+  }
+  else
+  {
+    // do nothing
   }
 }
 

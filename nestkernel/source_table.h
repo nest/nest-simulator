@@ -75,7 +75,7 @@ private:
   std::vector< bool > saved_entry_point_;
   //! minimal number of elements that need to be deleted before
   //! reallocation happens
-  static const size_t min_deleted_elements_ = 10000000;
+  static const size_t min_deleted_elements_ = 1000000;
 
   //! stores the index of the end of the ordered sections in sources
   //! vectors
@@ -210,8 +210,11 @@ SourceTable::clear( const thread tid )
         it != sources_[ tid ]->end();
         ++it )
   {
-    ( *it )->clear();
-    delete *it;
+    if ( ( *it ) != NULL )
+    {
+      ( *it )->clear();
+      delete *it;
+    }
   }
   sources_[ tid ]->clear();
   is_cleared_[ tid ] = true;

@@ -536,7 +536,9 @@ NestModule::Create_l_iFunction::execute( SLIInterpreter* i ) const
   // extract arguments
   const long n_nodes = getValue< long >( i->OStack.pick( 0 ) );
   if ( n_nodes <= 0 )
+  {
     throw RangeCheck();
+  }
 
   const std::string modname = getValue< std::string >( i->OStack.pick( 1 ) );
 
@@ -792,7 +794,9 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
   const Token synmodel =
     kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
+  {
     throw UnknownSynapseType( synmodel_name.toString() );
+  }
   const index synmodel_id = static_cast< index >( synmodel );
 
   kernel().connection_manager.data_connect_single(
@@ -1091,8 +1095,6 @@ NestModule::NumProcessesFunction::execute( SLIInterpreter* i ) const
        Execute this script with
              mpirun -np 1 nest example.sli
 
-
-
    Availability: NEST 2.2
    Author: Susanne Kunkel
    FirstVersion: July 2011
@@ -1179,9 +1181,13 @@ NestModule::TimeCommunication_i_i_bFunction::execute( SLIInterpreter* i ) const
 
   double time = 0.0;
   if ( offgrid )
+  {
     time = kernel().mpi_manager.time_communicate_offgrid( num_bytes, samples );
+  }
   else
+  {
     time = kernel().mpi_manager.time_communicate( num_bytes, samples );
+  }
 
   i->OStack.pop( 3 );
   i->OStack.push( time );
@@ -1713,6 +1719,7 @@ NestModule::init( SLIInterpreter* i )
     "fixed_total_number" );
 
   // Add MSP growth curves
+  kernel().sp_manager.register_growth_curve< GrowthCurveSigmoid >( "sigmoid" );
   kernel().sp_manager.register_growth_curve< GrowthCurveGaussian >(
     "gaussian" );
   kernel().sp_manager.register_growth_curve< GrowthCurveLinear >( "linear" );

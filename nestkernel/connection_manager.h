@@ -419,6 +419,10 @@ public:
 
   void compress_secondary_send_buffer_pos( const thread tid );
 
+  index get_source_gid( const thread tid,
+    const synindex syn_index,
+    const index lcid );
+
 private:
 
   size_t get_num_target_data( const thread tid ) const;
@@ -804,6 +808,14 @@ ConnectionManager::get_num_connections_( const thread tid, const synindex syn_id
   }
 }
 
+inline index
+ConnectionManager::get_source_gid( const thread tid,
+  const synindex syn_index,
+  const index lcid )
+{
+  return source_table_.get_gid( tid, syn_index, lcid );
+}
+  
 } // namespace nest
 
 #endif /* CONNECTION_MANAGER_H */

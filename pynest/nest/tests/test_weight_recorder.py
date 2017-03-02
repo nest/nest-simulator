@@ -137,7 +137,7 @@ class WeightRecorderTestCase(unittest.TestCase):
                                                         "source"))
 
         wr_senders = nest.GetStatus(wr, "events")[0]["senders"]
-
+        
         self.addTypeEqualityFunc(type(wr_senders), self.is_subset)
         self.assertEqual(wr_senders, senders)
 
@@ -170,6 +170,7 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         wr_targets = nest.GetStatus(wr, "events")[0]["targets"]
 
+        print targets, wr_targets
         self.addTypeEqualityFunc(type(wr_targets), self.is_subset)
         self.assertEqual(wr_targets, targets)
 
@@ -192,10 +193,14 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.Connect(sg, pre)
 
         nest.SetStatus(wr, {"senders": pre[1:3], "targets": post[:3]})
-        connections = nest.GetConnections(pre[1:3], post[:3])
+        
+        # simulate before GetConnections
+        # as order of connections changes at beginning of simulation (sorting)
+        nest.Simulate(1)
 
+        connections = nest.GetConnections(pre[1:3], post[:3])
         targets = np.array([])
-        for i in range(100):
+        for i in range(1):
             nest.Simulate(1)
             targets = np.append(targets, nest.GetStatus(connections,
                                                         "target"))
@@ -224,6 +229,10 @@ class WeightRecorderTestCase(unittest.TestCase):
         nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec")
         nest.Connect(sg, pre)
 
+        # simulate before GetConnections
+        # as order of connections changes at beginning of simulation (sorting)
+        nest.Simulate(1)
+        
         connections = [(c[0], c[1], c[4])
                        for c in nest.GetConnections(pre, post)]
 

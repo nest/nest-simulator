@@ -35,6 +35,7 @@
 #include "sort.h"
 
 // Includes from nestkernel:
+#include "common_synapse_properties.h"
 #include "connection_label.h"
 #include "connector_model.h"
 #include "event.h"
@@ -137,6 +138,12 @@ public:
     const unsigned int lcid,
     Event& e,
     const std::vector< ConnectorModel* >& cm ) = 0;
+
+  virtual void send_weight_event( const thread tid,
+    const synindex syn_index,
+    const unsigned int lcid,
+    Event& e,
+    const CommonSynapseProperties& cp ) = 0;
 
   /** Updates weights of dopamine modulated STDP connections.
    */
@@ -398,7 +405,7 @@ public:
 
   bool
   send( const thread tid,
-    const synindex,
+    const synindex syn_index,
     const unsigned int lcid,
     Event& e,
     const std::vector< ConnectorModel* >& cm )
@@ -406,13 +413,20 @@ public:
     e.set_port( lcid ); // TODO@5g: does this make sense?
     if ( not C_[ lcid ].is_disabled() )
     {
-      C_[ lcid ].send( e,
-        tid,
-        static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
-          ->get_common_properties() );
+      typename ConnectionT::CommonPropertiesType const& cp = static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )->get_common_properties();
+      C_[ lcid ].send( e, tid, cp );
+      send_weight_event( tid, syn_index, lcid, e, cp );
     }
     return C_[ lcid ].has_source_subsequent_targets();
   }
+
+  // implemented in connector_base_impl.h
+  void
+  send_weight_event( const thread tid,
+    const synindex syn_index,
+    const unsigned int lcid,
+    Event& e,
+    const CommonSynapseProperties& cp );
 
   void
   trigger_update_weight( const long vt_gid,

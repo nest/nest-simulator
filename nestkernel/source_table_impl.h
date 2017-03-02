@@ -53,11 +53,11 @@ SourceTable::get_next_target_data( const thread tid,
     // check for validity of indices and update if necessary
     if ( current_position.lcid < 0 )
     {
-      --current_position.syn_index;
-      if ( current_position.syn_index >= 0 )
+      --current_position.syn_id;
+      if ( current_position.syn_id >= 0 )
       {
         current_position.lcid =
-          ( *sources_[ current_position.tid ] )[ current_position.syn_index ]
+          ( *sources_[ current_position.tid ] )[ current_position.syn_id ]
             ->size() - 1;
         continue;
       }
@@ -66,20 +66,20 @@ SourceTable::get_next_target_data( const thread tid,
         --current_position.tid;
         if ( current_position.tid >= 0 )
         {
-          current_position.syn_index =
+          current_position.syn_id =
             ( *sources_[ current_position.tid ] ).size() - 1;
-          if ( current_position.syn_index >= 0 )
+          if ( current_position.syn_id >= 0 )
           {
             current_position.lcid =
               ( *sources_[ current_position.tid ] )[ current_position
-                                                       .syn_index ]->size() - 1;
+                                                       .syn_id ]->size() - 1;
           }
           continue;
         }
         else
         {
           assert( current_position.tid < 0 );
-          assert( current_position.syn_index < 0 );
+          assert( current_position.syn_id < 0 );
           assert( current_position.lcid < 0 );
           return false; // reached the end of the sources table
         }
@@ -89,18 +89,18 @@ SourceTable::get_next_target_data( const thread tid,
     if ( current_position.lcid
         < static_cast< long >(
             ( *last_sorted_source_[ current_position.tid ] )[ current_position
-                                                                .syn_index ] )
+                                                                .syn_id ] )
       && ( *last_sorted_source_[ current_position.tid ] )[ current_position
-                                                             .syn_index ]
+                                                             .syn_id ]
         < ( *( *sources_[ current_position.tid ] )[ current_position
-                                                      .syn_index ] ).size() )
+                                                      .syn_id ] ).size() )
     {
       return false;
     }
 
     // the current position contains an entry, so we retrieve it
     Source& current_source =
-      ( *( *sources_[ current_position.tid ] )[ current_position.syn_index ] )
+      ( *( *sources_[ current_position.tid ] )[ current_position.syn_id ] )
         [ current_position.lcid ];
     if ( current_source.is_processed() || current_source.is_disabled() )
     {
@@ -129,20 +129,20 @@ SourceTable::get_next_target_data( const thread tid,
     // entry, if existent, has the same source
     kernel().connection_manager.set_has_source_subsequent_targets(
       current_position.tid,
-      current_position.syn_index,
+      current_position.syn_id,
       current_position.lcid,
       false );
     if ( ( current_position.lcid + 1
              < static_cast< long >(
                  ( *sources_[ current_position.tid ] )[ current_position
-                                                          .syn_index ]->size() )
+                                                          .syn_id ]->size() )
            && ( *( *sources_[ current_position.tid ] )
-                  [ current_position.syn_index ] )[ current_position.lcid + 1 ]
+                  [ current_position.syn_id ] )[ current_position.lcid + 1 ]
                 .get_gid() == current_source.get_gid() ) )
     {
       kernel().connection_manager.set_has_source_subsequent_targets(
         current_position.tid,
-        current_position.syn_index,
+        current_position.syn_id,
         current_position.lcid,
         true );
     }
@@ -152,10 +152,10 @@ SourceTable::get_next_target_data( const thread tid,
     // was not processed yet
     if ( current_position.lcid - 1 > -1
       && ( *( *sources_[ current_position.tid ] )
-             [ current_position.syn_index ] )[ current_position.lcid - 1 ].get_gid()
+             [ current_position.syn_id ] )[ current_position.lcid - 1 ].get_gid()
         == current_source.get_gid()
       && not( *( *sources_[ current_position.tid ] )
-                [ current_position.syn_index ] )[ current_position.lcid - 1 ]
+                [ current_position.syn_id ] )[ current_position.lcid - 1 ]
               .is_processed() )
     {
       --current_position.lcid;
@@ -178,8 +178,8 @@ SourceTable::get_next_target_data( const thread tid,
         next_target_data.get_target().set_rank(
           kernel().mpi_manager.get_rank() );
         next_target_data.get_target().set_processed( false );
-        next_target_data.get_target().set_syn_index(
-          current_position.syn_index );
+        next_target_data.get_target().set_syn_id(
+          current_position.syn_id );
         next_target_data.get_target().set_lcid( current_position.lcid );
       }
       else
@@ -188,7 +188,7 @@ SourceTable::get_next_target_data( const thread tid,
         const size_t recv_buffer_pos =
           kernel().connection_manager.get_secondary_recv_buffer_position(
             current_position.tid,
-            current_position.syn_index,
+            current_position.syn_id,
             current_position.lcid );
         const size_t send_buffer_pos =
           kernel().mpi_manager.get_rank() * kernel().mpi_manager.get_chunk_size_secondary_events()

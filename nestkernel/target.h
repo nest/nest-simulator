@@ -45,7 +45,7 @@ private:
   static const unsigned long lcid_mask = 0x0000000007FFFFFF;
   static const unsigned long rank_mask = 0x00007FFFF8000000;
   static const unsigned long tid_mask = 0x01FF800000000000;
-  static const unsigned long syn_index_mask = 0x7E00000000000000;
+  static const unsigned long syn_id_mask = 0x7E00000000000000;
   static const unsigned long processed_mask = 0x8000000000000000;
   // define shifts to arrive at correct bits; note: the size of these
   // variables is most likely not enough for exascale computers, or
@@ -55,7 +55,7 @@ private:
   static const size_t lcid_shift = 0;
   static const size_t rank_shift = 27;
   static const size_t tid_shift = 47;
-  static const size_t syn_index_shift = 57;
+  static const size_t syn_id_shift = 57;
   static const size_t processed_shift = 63;
 
 public:
@@ -63,7 +63,7 @@ public:
   Target( const Target& target );
   Target( const thread tid,
     const thread rank,
-    const synindex syn_index,
+    const synindex syn_id,
     const index lcid );
   void set_lcid( const size_t lcid );
   size_t get_lcid() const;
@@ -71,8 +71,8 @@ public:
   unsigned int get_rank() const;
   void set_tid( const unsigned int tid );
   unsigned int get_tid() const;
-  void set_syn_index( const unsigned char syn_index );
-  unsigned char get_syn_index() const;
+  void set_syn_id( const unsigned char syn_id );
+  unsigned char get_syn_id() const;
   void set_processed( const bool processed );
   bool is_processed() const;
   double get_offset() const;
@@ -91,18 +91,18 @@ inline Target::Target( const Target& target )
 
 inline Target::Target( const thread tid,
   const thread rank,
-  const synindex syn_index,
+  const synindex syn_id,
   const index lcid )
   : data_( 0 )
 {
   assert( tid < 1024 );
   assert( rank < 1048576 );
-  assert( syn_index < 64 );
+  assert( syn_id < 64 );
   assert( lcid < 134217728 );
   set_lcid( lcid );
   set_rank( rank );
   set_tid( tid );
-  set_syn_index( syn_index );
+  set_syn_id( syn_id );
   set_processed( false ); // always initialize as non-processed
 }
 
@@ -152,17 +152,17 @@ Target::get_tid() const
 }
 
 inline void
-Target::set_syn_index( const unsigned char syn_index )
+Target::set_syn_id( const unsigned char syn_id )
 {
-  assert( syn_index < 64 );
-  data_ = ( data_ & ( ~syn_index_mask ) )
-    | ( static_cast< unsigned long >( syn_index ) << syn_index_shift );
+  assert( syn_id < 64 );
+  data_ = ( data_ & ( ~syn_id_mask ) )
+    | ( static_cast< unsigned long >( syn_id ) << syn_id_shift );
 }
 
 inline unsigned char
-Target::get_syn_index() const
+Target::get_syn_id() const
 {
-  return ( data_ & syn_index_mask ) >> syn_index_shift;
+  return ( data_ & syn_id_mask ) >> syn_id_shift;
 }
 
 inline void

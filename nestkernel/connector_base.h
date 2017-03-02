@@ -105,7 +105,7 @@ public:
    * source_lcids.
    */
   virtual void get_source_lcids( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const index target_gid,
     std::vector< index >& source_lcids ) const = 0;
 
@@ -113,14 +113,14 @@ public:
    * that belong to the same source.
    */
   virtual void get_target_gids( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const index start_lcid,
     std::vector< index >& target_gids ) const = 0;
 
   /** For a given lcid, returns the gid of the corresponding target.
    */
   virtual index get_target_gid( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const unsigned int lcid ) const = 0;
 
   /** Sends an event to all connections.
@@ -133,7 +133,6 @@ public:
    * the subsequent connection belongs to the same source.
    */
   virtual bool send( const thread tid,
-    const synindex syn_index,
     const unsigned int lcid,
     Event& e,
     const std::vector< ConnectorModel* >& cm ) = 0;
@@ -171,7 +170,7 @@ public:
    */
   virtual index
   find_first_target( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const index start_lcid,
     const index target_gid ) const = 0;
 
@@ -180,7 +179,7 @@ public:
    */
   virtual index
   find_matching_target( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const std::vector< index >& matching_lcids,
     const index target_gid ) const = 0;
 
@@ -188,16 +187,16 @@ public:
    * afterwards.
    */
   virtual void
-  disable_connection( const synindex syn_index, const index lcid ) = 0;
+  disable_connection( const synindex syn_id, const index lcid ) = 0;
 
   /** Removes disabled connections from the connector.
    */
   virtual void
-  remove_disabled_connections( const synindex syn_index,
+  remove_disabled_connections( const synindex syn_id,
     const index first_disabled_index ) = 0;
 
   virtual void
-  print_connections( const thread tid, const synindex syn_index ) const = 0;
+  print_connections( const thread tid, const synindex syn_id ) const = 0;
 
   /** Returns the number of connections in this Connector.
    */
@@ -398,7 +397,6 @@ public:
 
   bool
   send( const thread tid,
-    const synindex,
     const unsigned int lcid,
     Event& e,
     const std::vector< ConnectorModel* >& cm )

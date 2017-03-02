@@ -53,21 +53,20 @@ ConnectionManager::register_conn_builder( const std::string& name )
 
 inline index
 ConnectionManager::get_target_gid( const thread tid,
-  const synindex syn_index,
+  const synindex syn_id,
   const index lcid ) const
 {
-  return ( *connections_5g_[ tid ] )[ syn_index ]->get_target_gid( tid, syn_index, lcid );
+  return ( *connections_5g_[ tid ] )[ syn_id ]->get_target_gid( tid, syn_id, lcid );
 }
 
 inline void
 ConnectionManager::send_5g( const thread tid,
-  const synindex syn_index,
+  const synindex syn_id,
   const index lcid,
   Event& e )
 {
   index lcid_offset = 0;
-  while ( ( *connections_5g_[ tid ] )[ syn_index ]->send( tid,
-    syn_index,
+  while ( ( *connections_5g_[ tid ] )[ syn_id ]->send( tid,
     lcid + lcid_offset,
     e,
     kernel().model_manager.get_synapse_prototypes( tid ) ) )
@@ -97,11 +96,6 @@ ConnectionManager::send_from_device( const thread tid,
 inline void
 ConnectionManager::restructure_connection_tables( const thread tid )
 {
-  if ( ( *syn_id_to_syn_index_[ tid ] ).size() != ( *connections_5g_[ tid ] ).size() )
-  {
-    update_syn_id_to_syn_index_( tid );
-  }
-
   assert( not source_table_.is_cleared() );
   target_table_.clear( tid );
   source_table_.reset_processed_flags( tid );
@@ -111,18 +105,11 @@ ConnectionManager::restructure_connection_tables( const thread tid )
 
 inline void
 ConnectionManager::set_has_source_subsequent_targets( const thread tid,
-  const synindex syn_index,
+  const synindex syn_id,
   const index lcid,
   const bool subsequent_targets )
 {
-  ( *connections_5g_[ tid ] )[ syn_index ]->set_has_source_subsequent_targets( lcid, subsequent_targets );
-}
-
-inline synindex
-ConnectionManager::get_syn_id( const thread tid,
-  const synindex syn_index ) const
-{
-  return ( *connections_5g_[ tid ] )[ syn_index ]->get_syn_id();
+  ( *connections_5g_[ tid ] )[ syn_id ]->set_has_source_subsequent_targets( lcid, subsequent_targets );
 }
 
 } // namespace nest

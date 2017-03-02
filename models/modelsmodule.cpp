@@ -609,6 +609,8 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< VogelsSprekelerConnection< TargetIdentifierIndex > >(
       "vogels_sprekeler_synapse_hpc" );
+
+  kernel().connection_manager.resize_connections();
 }
 
 } // namespace nest

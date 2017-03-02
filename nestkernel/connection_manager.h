@@ -118,7 +118,7 @@ public:
   void connect( index s,
     Node* target,
     thread target_thread,
-    index syn,
+    index syn_id,
     double_t d = numerics::nan,
     double_t w = numerics::nan );
 
@@ -144,7 +144,7 @@ public:
   void connect( index s,
     Node* target,
     thread target_thread,
-    index syn,
+    index syn_id,
     DictionaryDatum& params,
     double_t d = numerics::nan,
     double_t w = numerics::nan );
@@ -163,12 +163,12 @@ public:
   bool connect( index s, index r, DictionaryDatum& params, index syn );
 
   index find_connection_sorted( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const index sgid,
     const index tgid );
 
   index find_connection_unsorted( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const index sgid,
     const index tgid );
 
@@ -259,7 +259,7 @@ public:
     const index lid ) const;
 
   index get_target_gid( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const index lcid ) const;
 
   /**
@@ -290,7 +290,7 @@ public:
   void send_secondary( thread t, SecondaryEvent& e );
 
   void send_5g( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const index lcid,
     Event& e );
 
@@ -395,14 +395,12 @@ public:
   // void remove_disabled_connections( const thread tid );
 
   void set_has_source_subsequent_targets( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const index lcid,
     const bool subsequent_targets );
 
   //! See source_table.h
   void no_targets_to_process( const thread tid );
-
-  synindex get_syn_id( const thread tid, const synindex syn_index ) const;
 
   const std::vector< size_t >& get_secondary_send_buffer_positions(
     const thread tid,
@@ -411,7 +409,7 @@ public:
   //! returns read position in MPI receive buffer for secondary
   //! connections
   size_t get_secondary_recv_buffer_position( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const index lcid ) const;
 
   bool deliver_secondary_events( const thread tid,
@@ -419,17 +417,16 @@ public:
 
   void compress_secondary_send_buffer_pos( const thread tid );
 
+  void resize_connections();
+
 private:
 
   size_t get_num_target_data( const thread tid ) const;
 
-  synindex find_synapse_index_( const thread tid, const synindex syn_id ) const;
-  void update_syn_id_to_syn_index_( const thread tid );
-
   size_t get_num_connections_( const thread tid, const synindex syn_id ) const;
 
   void get_source_gids_( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const index tgid,
     std::vector< index >& sources );
 
@@ -481,14 +478,14 @@ private:
     Node& r,
     index s_gid,
     thread tid,
-    index syn,
+    index syn_id,
     double d = numerics::nan,
     double w = numerics::nan );
   void connect_( Node& s,
     Node& r,
     index s_gid,
     thread tid,
-    index syn,
+    index syn_id,
     DictionaryDatum& p,
     double d = numerics::nan,
     double w = numerics::nan );
@@ -515,14 +512,14 @@ private:
     Node& r,
     index s_gid,
     thread tid,
-    index syn,
+    index syn_id,
     double d = NAN,
     double w = NAN );
   void connect_to_device_( Node& s,
     Node& r,
     index s_gid,
     thread tid,
-    index syn,
+    index syn_id,
     DictionaryDatum& p,
     double d = NAN,
     double w = NAN );
@@ -549,14 +546,14 @@ private:
     Node& r,
     index s_gid,
     thread tid,
-    index syn,
+    index syn_id,
     double d = NAN,
     double w = NAN );
   void connect_from_device_( Node& s,
     Node& r,
     index s_gid,
     thread tid,
-    index syn,
+    index syn_id,
     DictionaryDatum& p,
     double d = NAN,
     double w = NAN );
@@ -620,8 +617,6 @@ private:
 
   bool have_connections_changed_; //!< true if new connections have been created
                                   //!< since startup or last call to simulate
-
-  std::vector< std::map< synindex, synindex >* > syn_id_to_syn_index_;
 };
 
 inline DictionaryDatum&
@@ -761,47 +756,16 @@ ConnectionManager::get_secondary_send_buffer_positions( const thread tid,
 
 inline size_t
 ConnectionManager::get_secondary_recv_buffer_position( const thread tid,
-  const synindex syn_index,
+  const synindex syn_id,
   const index lcid ) const
 {
-  return ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_index ] )[ lcid ];
-}
-
-inline synindex
-ConnectionManager::find_synapse_index_( const thread tid, const synindex syn_id ) const
-{
-  std::map< synindex, synindex >::const_iterator cit = ( *syn_id_to_syn_index_[ tid ] ).find( syn_id );
-  if ( cit != ( *syn_id_to_syn_index_[ tid ] ).end() )
-  {
-    return ( *cit ).second;
-  }
-  else
-  {
-    return invalid_synindex;
-  }
-}
-
-inline void
-ConnectionManager::update_syn_id_to_syn_index_( const thread tid )
-{
-  for ( synindex syn_index = 0; syn_index < ( *connections_5g_[ tid ] ).size(); ++syn_index )
-  {
-    ( *syn_id_to_syn_index_[ tid ] )[ ( *( *connections_5g_[ tid ] )[ syn_index ] ).get_syn_id() ] = syn_index;
-  }
+  return ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] )[ lcid ];
 }
 
 inline size_t
 ConnectionManager::get_num_connections_( const thread tid, const synindex syn_id ) const
 {
-  const synindex syn_index = find_synapse_index_( tid, syn_id );
-  if ( syn_index != invalid_synindex )
-  {
-    return ( *connections_5g_[ tid ] )[ syn_index ]->get_num_connections( syn_id );
-  }
-  else
-  {
-    return 0;
-  }
+  return ( *connections_5g_[ tid ] )[ syn_id ]->get_num_connections( syn_id );
 }
 
 } // namespace nest

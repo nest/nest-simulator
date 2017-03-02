@@ -139,8 +139,6 @@ public:
    */
   void send_remote( thread tid, SpikeEvent&, const long lag = 0 );
 
-  void send_remote( thread t, SecondaryEvent& e );
-
   /**
    * Add global id of event sender to the spike_register.
    * Store event offset with global id.
@@ -603,37 +601,6 @@ EventDeliveryManager::get_slice_modulo( delay d )
     < slice_moduli_.size() );
 
   return slice_moduli_[ d ];
-}
-
-inline void
-EventDeliveryManager::send_remote( thread t, SecondaryEvent& e )
-{
-
-  // put the secondary events in a buffer for the remote machines
-  // size_t old_size = secondary_events_buffer_[ t ].size();
-
-  // secondary_events_buffer_[ t ].resize( old_size + e.size() );
-  // std::vector< unsigned int >::iterator it =
-  //   secondary_events_buffer_[ t ].begin() + old_size;
-  // e >> it;
-  // |syn_id|gid|[SecondaryEventstuff]|
-
-  // secondary_events_buffer_5g_: 3d structure
-  // |write_threads->read_threads->syn_index(syn_id)->SecondaryEventDataWrapper|
-
-  // SecondaryEventDataWrapper:
-  // |syn_id|Target|[SecondaryEventStuff]*|
-
-  // SecondaryEventData:
-  // |tid|syn_index|lcid|marker|[SecondaryEventStuff]|
-
-  // |rank|tid|syn_index|lcid|
-
-  // prepare_simulation->event_delivery_manager->resize_secondary_events_buffers
-  // { for node in local_nodes: pos = 0 ; pos[] =
-  // node.register_secondary_targets( pos[] ); }
-  // nodes.update{ send_secondary( ..., pos[] ) { offset[] = 0; for target in
-  // targets: pos[target.rank] << e; offset[target.rank] += 1 }
 }
 
 } // namespace nest

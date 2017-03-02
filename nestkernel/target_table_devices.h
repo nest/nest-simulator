@@ -60,9 +60,6 @@ private:
   //get_connections)
   std::vector< std::vector< index >* > sending_devices_gids_;
 
-  synindex find_synapse_index_to_devices_( const thread tid, const index lid, const synindex syn_id ) const;
-  synindex find_synapse_index_from_devices_( const thread tid, const index ldid, const synindex syn_id ) const;
-
 public:
   TargetTableDevices();
   ~TargetTableDevices();
@@ -75,14 +72,14 @@ public:
     Node& target,
     index s_gid,
     thread tid,
-    index syn,
+    index syn_id,
     double d,
     double w );
   void add_connection_to_device( Node& source,
     Node& target,
     index s_gid,
     thread tid,
-    index syn,
+    index syn_id,
     DictionaryDatum& p,
     double d,
     double w );
@@ -91,14 +88,14 @@ public:
     Node& target,
     index s_gid,
     thread tid,
-    index syn,
+    index syn_id,
     double d,
     double w );
   void add_connection_from_device( Node& source,
     Node& target,
     index s_gid,
     thread tid,
-    index syn,
+    index syn_id,
     DictionaryDatum& p,
     double d,
     double w );
@@ -161,6 +158,7 @@ public:
     ConnectorModel& cm,
     const DictionaryDatum& d,
     const port p );
+  void resize_connections( const thread tid );
 };
 
 } // namespace nest

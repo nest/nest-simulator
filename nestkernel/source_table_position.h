@@ -32,25 +32,25 @@ namespace nest
 struct SourceTablePosition
 {
   long tid;       //!< thread index
-  long syn_index; //!< synapse-type index
+  long syn_id; //!< synapse-type index
   long lcid;      //!< local connection index
   SourceTablePosition();
-  SourceTablePosition( const long tid, const long syn_index, const long lcid );
+  SourceTablePosition( const long tid, const long syn_id, const long lcid );
   SourceTablePosition( const SourceTablePosition& rhs );
 };
 
 inline SourceTablePosition::SourceTablePosition()
   : tid( -1 )
-  , syn_index( -1 )
+  , syn_id( -1 )
   , lcid( -1 )
 {
 }
 
 inline SourceTablePosition::SourceTablePosition( const long tid,
-  const long syn_index,
+  const long syn_id,
   const long lcid )
   : tid( tid )
-  , syn_index( syn_index )
+  , syn_id( syn_id )
   , lcid( lcid )
 {
 }
@@ -58,7 +58,7 @@ inline SourceTablePosition::SourceTablePosition( const long tid,
 inline SourceTablePosition::SourceTablePosition(
   const SourceTablePosition& rhs )
   : tid( rhs.tid )
-  , syn_index( rhs.syn_index )
+  , syn_id( rhs.syn_id )
   , lcid( rhs.lcid )
 {
 }
@@ -66,7 +66,7 @@ inline SourceTablePosition::SourceTablePosition(
 inline bool operator==( const SourceTablePosition& lhs,
   const SourceTablePosition& rhs )
 {
-  return ( ( lhs.tid == rhs.tid ) && ( lhs.syn_index == rhs.syn_index )
+  return ( ( lhs.tid == rhs.tid ) && ( lhs.syn_id == rhs.syn_id )
     && ( lhs.lcid == rhs.lcid ) );
 }
 
@@ -81,13 +81,13 @@ inline bool operator<( const SourceTablePosition& lhs,
 {
   if ( lhs.tid == rhs.tid )
   {
-    if ( lhs.syn_index == rhs.syn_index )
+    if ( lhs.syn_id == rhs.syn_id )
     {
       return lhs.lcid < rhs.lcid;
     }
     else
     {
-      return lhs.syn_index < rhs.syn_index;
+      return lhs.syn_id < rhs.syn_id;
     }
   }
   else

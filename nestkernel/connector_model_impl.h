@@ -217,7 +217,6 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >* hetconn,
   synindex syn_id,
-  synindex syn_index,
   double delay,
   double weight )
 {
@@ -240,7 +239,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
     // tell the connector model, that we used the default delay
     used_default_delay();
   }
-  add_connection_5g_( src, tgt, hetconn, syn_id, syn_index, c, receptor_type_ );
+  add_connection_5g_( src, tgt, hetconn, syn_id, c, receptor_type_ );
 }
 
 /**
@@ -255,7 +254,6 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >* hetconn,
   synindex syn_id,
-  synindex syn_index,
   DictionaryDatum& p,
   double delay,
   double weight )
@@ -307,7 +305,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
 #endif
   updateValue< long >( p, names::receptor_type, actual_receptor_type );
 
-  add_connection_5g_( src, tgt, hetconn, syn_id, syn_index, c, actual_receptor_type );
+  add_connection_5g_( src, tgt, hetconn, syn_id, c, actual_receptor_type );
 }
 
 
@@ -317,42 +315,28 @@ GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >* hetconn,
   synindex syn_id,
-  synindex syn_index,
   ConnectionT& c,
   rport receptor_type )
 {
-  // here we need to distinguish two cases:
-  // 1) no homogeneous Connector with this syn_id exists, in this case conn is a
-  // null pointer
-  //    and we need to create a new homogeneous Connector
-  // 2) a homogeneous Connector with synapse type syn_id exists
+  assert( syn_id != invalid_synindex );
 
-  ConnectorBase* conn = 0;
-
-  if ( syn_index == invalid_synindex )
+  if ( ( *hetconn )[ syn_id ] == NULL )
   {
-    // the following line will throw an exception, if it does not work
-    c.check_connection( src, tgt, receptor_type, get_common_properties() );
+    // no homogeneous Connector with this syn_id exists, we need to create a new homogeneous Connector
+    ( *hetconn )[ syn_id ] = allocate< Connector< ConnectionT > >( syn_id );
+  }
 
-    // no entry at all, so create a homogeneous container for this connection
-    // type
-    conn = allocate< Connector< ConnectionT > >( syn_id );
-    syn_index = hetconn->size();
-    hetconn->resize( syn_index + 1 );
-  }
-  else
-  {
-    conn = ( *hetconn )[ syn_index ];
-    // the following line will throw an exception, if it does not work
-    c.check_connection( src, tgt, receptor_type, get_common_properties() );
-  }
+  ConnectorBase* conn = ( *hetconn )[ syn_id ];
+  // the following line will throw an exception, if it does not work
+  c.check_connection( src, tgt, receptor_type, get_common_properties() );
+
   assert( conn != 0 );
 
   Connector< ConnectionT >* vc =
     static_cast< Connector< ConnectionT >* >( conn );
   conn = &vc->push_back( c );
 
-  ( *hetconn )[ syn_index ] = conn;
+  ( *hetconn )[ syn_id ] = conn;
 }
 
 template < typename ConnectionT >
@@ -360,28 +344,22 @@ void
 GenericConnectorModel< ConnectionT >::reserve_connections(
   std::vector< ConnectorBase* >* hetconn,
   const synindex syn_id,
-  synindex syn_index,
   const size_t count )
 {
-  ConnectorBase* conn = 0;
+  assert( syn_id != invalid_synindex );
 
-  if ( syn_index == invalid_synindex )
+  if ( ( *hetconn )[ syn_id ] == NULL )
   {
-    // synapse type does not exists yet, so create a homogeneous
-    // container for this connection type
-    conn = allocate< Connector< ConnectionT > >( syn_id );
-    syn_index = hetconn->size();
-    hetconn->resize( syn_index + 1 );
+    // no homogeneous Connector with this syn_id exists, we need to create a new homogeneous Connector
+    ( *hetconn )[ syn_id ] = allocate< Connector< ConnectionT > >( syn_id );
   }
-  else
-  {
-    conn = ( *hetconn )[ syn_index ];
-  }
+
+  ConnectorBase* conn = ( *hetconn )[ syn_id ];
   assert( conn != 0 );
 
   conn->reserve( conn->size() + count );
 
-  ( *hetconn )[ syn_index ] = conn;
+  ( *hetconn )[ syn_id ] = conn;
 }
 
 } // namespace nest

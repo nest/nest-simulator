@@ -144,12 +144,6 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
     done
   done
   echo "MSGBLD0100: Retrieving changed files completed."
-
-  printf '%s\n' "$file_names" | while IFS= read -r line
-  do
-    echo "MSGBLD0095: File changed: $line"
-  done
-  echo "MSGBLD0100: Retrieving changed files completed."
   echo
 
   sudo chmod +x ./extras/static_code_analysis.sh
@@ -161,7 +155,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
   CLANG_FORMAT=clang-format
   PEP8=pep8
   PERFORM_VERA=true
-  PERFORM_CPPCHECK=false
+  PERFORM_CPPCHECK=true
   PERFORM_CLANG_FORMAT=true
   PERFORM_PEP8=true
 

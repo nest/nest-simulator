@@ -886,11 +886,12 @@ def build_return_code(status_vera_init,
     #       It may cause false positives. Even though cppcheck is executed
     #       and all its messages can be found in the log, cppcheck messages
     #       will not cause the build to fail.
-    #       To activate cppcheck, add following line to the if statement below.
-    #       Remove also the two strings '(DEACTIVATED)' behind cppcheck in
-    #       the summary_table above.
+    #       To activate cppcheck, add following lines to the if statement
+    #       below. Remove also the two strings '(DEACTIVATED)' behind
+    #       cppcheck in the summary_table above.
     #
     #       (status_cppcheck_init is None or status_cppcheck_init) and \
+    #       (number_of_msgs_in_summary(summary_cppcheck) == 0) and \
 
     if (status_vera_init is None or status_vera_init) and \
        (status_format_init is None or status_format_init) and \
@@ -899,7 +900,6 @@ def build_return_code(status_vera_init,
        (status_make_install) and \
        (status_tests) and \
        (number_of_msgs_in_summary(summary_vera) == 0) and \
-       (number_of_msgs_in_summary(summary_cppcheck) == 0) and \
        (number_of_msgs_in_summary(summary_format) == 0) and \
        (number_of_msgs_in_summary(summary_pep8) == 0):
 

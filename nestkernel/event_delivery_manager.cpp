@@ -444,6 +444,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     // send buffer
     if ( completed_count == half_completed_count )
     {
+      // needs to be called /after/ set_end_and_invalid_markers_
       set_complete_marker_spike_data_(
         assigned_ranks, send_buffer );
 #pragma omp barrier
@@ -588,6 +589,14 @@ EventDeliveryManager::set_end_and_invalid_markers_(
     if ( send_buffer_position.idx[ lr_idx ]
       > send_buffer_position.begin[ lr_idx ] )
     {
+      // set end marker at last position that contains a valid
+      // entry. this could possibly be the last entry in this
+      // chunk. since we call set_complete_marker_spike_data_ /after/
+      // this function, the end marker would be replaced by a complete
+      // marker. however, the effect of and end marker and a complete
+      // marker /at the last postition in a chunk/ leads effectively
+      // to the same behaviour: the first entry of the next chunk is
+      // read, i.e., the next element in the buffer
       assert( send_buffer_position.idx[ lr_idx ] - 1
         < send_buffer_position.end[ lr_idx ] );
       send_buffer[ send_buffer_position.idx[ lr_idx ] - 1 ].set_end_marker();
@@ -611,7 +620,8 @@ EventDeliveryManager::set_complete_marker_spike_data_(
         target_rank < assigned_ranks.end;
         ++target_rank )
   {
-    // use last entry for completion marker
+    // use last entry for completion marker. for possible collision
+    // with end marker, see comment in set_end_and_invalid_markers_
     const thread idx =
       ( target_rank + 1 ) * send_recv_count_spike_data_per_rank_ - 1;
     send_buffer[ idx ].set_complete_marker();

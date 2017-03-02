@@ -26,6 +26,7 @@
 #include "kernel_manager.h"
 #include "source_table.h"
 #include "vp_manager_impl.h"
+#include <iostream>
 
 nest::SourceTable::SourceTable()
 {
@@ -40,8 +41,7 @@ nest::SourceTable::initialize()
 {
   assert( sizeof( Source ) == 8 );
   const thread num_threads = kernel().vp_manager.get_num_threads();
-  synapse_ids_.resize( num_threads );
-  sources_.resize( num_threads );
+   sources_.resize( num_threads );
   is_cleared_.resize( num_threads );
   saved_entry_point_.resize( num_threads );
   current_positions_.resize( num_threads );
@@ -51,8 +51,8 @@ nest::SourceTable::initialize()
 #pragma omp parallel
   {
     const thread tid = kernel().vp_manager.get_thread_id();
-    synapse_ids_[ tid ] = new std::map< synindex, synindex >();
-    sources_[ tid ] = new std::vector< std::vector< Source >* >( 0 );
+    sources_[ tid ] = new std::vector< std::vector< Source >* >( kernel().model_manager.get_num_synapse_prototypes(), NULL );
+    resize_sources( tid );
     current_positions_[ tid ] = new SourceTablePosition();
     saved_positions_[ tid ] = new SourceTablePosition();
     is_cleared_[ tid ] = false;
@@ -64,14 +64,6 @@ nest::SourceTable::initialize()
 void
 nest::SourceTable::finalize()
 {
-  for ( std::vector< std::map< synindex, synindex >* >::iterator it =
-          synapse_ids_.begin();
-        it != synapse_ids_.end();
-        ++it )
-  {
-    delete *it;
-  }
-  synapse_ids_.clear();
   if ( not is_cleared() )
   {
     for ( size_t tid = 0; tid < sources_.size(); ++tid )
@@ -159,46 +151,52 @@ nest::SourceTable::clean( const thread tid )
   // maximal position, otherwise we need to respect to indices.
   if ( max_position.tid == tid )
   {
-    for ( synindex syn_index = max_position.syn_index;
-          syn_index < ( *sources_[ tid ] ).size();
-          ++syn_index )
+    for ( synindex syn_id = max_position.syn_id;
+          syn_id < ( *sources_[ tid ] ).size();
+          ++syn_id )
     {
-      if ( max_position.syn_index == syn_index )
+      if ( ( *sources_[ tid ] )[ syn_id ] != NULL )
       {
-        std::vector< Source >& sources = *( *sources_[ tid ] )[ syn_index ];
-        // we need to add 1 to max_position.lcid since
-        // max_position.lcid can contain a valid entry which we do not
-        // want to delete.
-        if ( max_position.lcid + 1 < static_cast< long >( sources.size() ) )
+        if ( max_position.syn_id == syn_id )
         {
-          const size_t deleted_elements =
-            sources.end() - ( sources.begin() + max_position.lcid + 1 );
-          sources.erase(
-            sources.begin() + max_position.lcid + 1, sources.end() );
-          if ( deleted_elements > min_deleted_elements_ )
+          std::vector< Source >& sources = *( *sources_[ tid ] )[ syn_id ];
+          // we need to add 1 to max_position.lcid since
+          // max_position.lcid can contain a valid entry which we do not
+          // want to delete.
+          if ( max_position.lcid + 1 < static_cast< long >( sources.size() ) )
           {
-            std::vector< Source >( sources.begin(), sources.end() )
-              .swap( sources );
+            const size_t deleted_elements =
+              sources.end() - ( sources.begin() + max_position.lcid + 1 );
+            sources.erase(
+              sources.begin() + max_position.lcid + 1, sources.end() );
+            if ( deleted_elements > min_deleted_elements_ )
+            {
+              std::vector< Source >( sources.begin(), sources.end() )
+                .swap( sources );
+            }
           }
         }
-      }
-      else
-      {
-        assert( max_position.syn_index < syn_index );
-        ( *sources_[ tid ] )[ syn_index ]->clear();
-        delete ( *sources_[ tid ] )[ syn_index ];
-        ( *sources_[ tid ] )[ syn_index ] = NULL;
+        else
+        {
+          assert( max_position.syn_id < syn_id );
+          ( *sources_[ tid ] )[ syn_id ]->clear();
+          delete ( *sources_[ tid ] )[ syn_id ];
+          ( *sources_[ tid ] )[ syn_id ] = NULL;
+        }
       }
     }
   }
   else if ( max_position.tid < tid )
   {
-    for ( synindex syn_index = 0; syn_index < ( *sources_[ tid ] ).size();
-          ++syn_index )
+    for ( synindex syn_id = 0; syn_id < ( *sources_[ tid ] ).size();
+          ++syn_id )
     {
-      ( *sources_[ tid ] )[ syn_index ]->clear();
-      delete ( *sources_[ tid ] )[ syn_index ];
-      ( *sources_[ tid ] )[ syn_index ] = NULL;
+      if ( ( *sources_[ tid ] )[ syn_id ] != NULL )
+      {
+        ( *sources_[ tid ] )[ syn_id ]->clear();
+        delete ( *sources_[ tid ] )[ syn_id ];
+        ( *sources_[ tid ] )[ syn_id ] = NULL;
+      }
     }
   }
   else
@@ -212,41 +210,36 @@ nest::SourceTable::reserve( const thread tid,
   const synindex syn_id,
   const size_t count )
 {
-  std::map< synindex, synindex >::iterator it =
-    synapse_ids_[ tid ]->find( syn_id );
-  // if this synapse type is not known yet, create entry for new synapse vector
-  if ( it == synapse_ids_[ tid ]->end() )
-  {
-    const index prev_n_synapse_types = synapse_ids_[ tid ]->size();
-    ( *synapse_ids_[ tid ] )[ syn_id ] = prev_n_synapse_types;
-    sources_[ tid ]->resize( prev_n_synapse_types + 1 );
-    ( *sources_[ tid ] )[ prev_n_synapse_types ] =
-      new std::vector< Source >( 0 );
-    ( *sources_[ tid ] )[ prev_n_synapse_types ]->reserve( count );
-  }
-  // otherwise we can directly reserve
-  else
-  {
-    ( *sources_[ tid ] )[ it->second ]->reserve( ( *sources_[ tid ] )[ it->second ]->size() + count );
-  }
+  ( *sources_[ tid ] )[ syn_id ]->reserve( ( *sources_[ tid ] )[ syn_id ]->size() + count );
 }
 
 nest::index
 nest::SourceTable::remove_disabled_sources( const thread tid,
-  const synindex syn_index )
+  const synindex syn_id )
 {
-  const index max_size = ( *( *sources_[ tid ] )[ syn_index ] ).size();
+  if ( ( *sources_[ tid ] )[ syn_id ] == NULL )
+  {
+    return invalid_index;
+  }
+
+  const index max_size = ( *( *sources_[ tid ] )[ syn_id ] ).size();
+
+  if ( max_size == 0 )
+  {
+    return invalid_index;
+  }
+
   index i = max_size - 1;
 
-  while ( ( *( *sources_[ tid ] )[ syn_index ] )[ i ].is_disabled() && i >= 0 )
+  while ( ( *( *sources_[ tid ] )[ syn_id ] )[ i ].is_disabled() && i >= 0 )
   {
     --i;
   }
   ++i;
 
-  ( *( *sources_[ tid ] )[ syn_index ] )
-    .erase( ( *( *sources_[ tid ] )[ syn_index ] ).begin() + i,
-      ( *( *sources_[ tid ] )[ syn_index ] ).end() );
+  ( *( *sources_[ tid ] )[ syn_id ] )
+    .erase( ( *( *sources_[ tid ] )[ syn_id ] ).begin() + i,
+      ( *( *sources_[ tid ] )[ syn_id ] ).end() );
 
   if ( i == max_size )
   {
@@ -260,9 +253,9 @@ nest::SourceTable::remove_disabled_sources( const thread tid,
 
 void
 nest::SourceTable::print_sources( const thread tid,
-  const synindex syn_index ) const
+  const synindex syn_id ) const
 {
-  if ( syn_index >= ( *sources_[ tid ] ).size() )
+  if ( syn_id >= ( *sources_[ tid ] ).size() )
   {
     return;
   }
@@ -270,8 +263,8 @@ nest::SourceTable::print_sources( const thread tid,
   index prev_gid = 0;
   std::cout << "-------------SOURCES-------------------\n";
   for ( std::vector< Source >::const_iterator it =
-          ( *( *sources_[ tid ] )[ syn_index ] ).begin();
-        it != ( *( *sources_[ tid ] )[ syn_index ] ).end();
+          ( *( *sources_[ tid ] )[ syn_id ] ).begin();
+        it != ( *( *sources_[ tid ] )[ syn_id ] ).end();
         ++it )
   {
     if ( prev_gid != it->get_gid() )
@@ -299,11 +292,9 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
   }
 
   // collect all unique sources
-  for ( size_t syn_index = 0; syn_index < sources_[ tid ]->size();
-        ++syn_index )
+  for ( size_t syn_id = 0; syn_id < sources_[ tid ]->size();
+        ++syn_id )
   {
-    const synindex syn_id =
-      kernel().connection_manager.get_syn_id( tid, syn_index );
     if ( not kernel()
          .model_manager.get_synapse_prototype( syn_id, tid )
          .is_primary() )
@@ -313,8 +304,8 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
         .model_manager.get_secondary_event_prototype( syn_id, tid )
         .prototype_size();
       for ( std::vector< Source >::const_iterator cit =
-              ( *sources_[ tid ] )[ syn_index ]->begin();
-            cit != ( *sources_[ tid ] )[ syn_index ]->end();
+              ( *sources_[ tid ] )[ syn_id ]->begin();
+            cit != ( *sources_[ tid ] )[ syn_id ]->end();
             ++cit )
       {
 #pragma omp critical
@@ -362,4 +353,17 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
       buffer_position_by_rank[ target_rank ] += cit->second;
     }
   } // of omp single
+}
+
+void
+nest::SourceTable::resize_sources( const thread tid )
+{
+  sources_[ tid ]->resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
+  for ( size_t syn_id = 0; syn_id < sources_[ tid ]->size(); ++syn_id )
+  {
+    if ( ( *sources_[ tid ])[ syn_id ] == NULL )
+    {
+      ( *sources_[ tid ] )[ syn_id ] = new std::vector< Source >( 0 );
+    }
+  }
 }

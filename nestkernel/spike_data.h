@@ -49,24 +49,24 @@ protected:
   unsigned int marker_ : 2; //!< status flag
   unsigned int lag_ : 14;   //!< lag in this min-delay interval
   thread tid_ : 10;         //!< thread index
-  synindex syn_index_ : 8;  //!< synapse-type index
+  synindex syn_id_ : 8;  //!< synapse-type index
 
 public:
   SpikeData();
   SpikeData( const SpikeData& rhs );
   SpikeData( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const index lcid,
     const unsigned int lag );
   void set( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const index lcid,
     const unsigned int lag,
     const double offset );
   index get_lcid() const;
   unsigned int get_lag() const;
   thread get_tid() const;
-  synindex get_syn_index() const;
+  synindex get_syn_id() const;
   void reset_marker();
   void set_complete_marker();
   void set_end_marker();
@@ -82,7 +82,7 @@ inline SpikeData::SpikeData()
   , marker_( 0 )
   , lag_( 0 )
   , tid_( 0 )
-  , syn_index_( 0 )
+  , syn_id_( 0 )
 {
 }
 
@@ -91,31 +91,31 @@ inline SpikeData::SpikeData( const SpikeData& rhs )
   , marker_( 0 ) // always initialize with default marker
   , lag_( rhs.lag_ )
   , tid_( rhs.tid_ )
-  , syn_index_( rhs.syn_index_ )
+  , syn_id_( rhs.syn_id_ )
 {
 }
 
 inline SpikeData::SpikeData( const thread tid,
-  const synindex syn_index,
+  const synindex syn_id,
   const index lcid,
   const unsigned int lag )
   : lcid_( lcid )
   , marker_( 0 ) // always initialize with default marker
   , lag_( lag )
   , tid_( tid )
-  , syn_index_( syn_index )
+  , syn_id_( syn_id )
 {
 }
 
 inline void
 SpikeData::set( const thread tid,
-  const synindex syn_index,
+  const synindex syn_id,
   const index lcid,
   const unsigned int lag,
   const double )
 {
   assert( tid < 1024 );
-  // assert( syn_index < 256 ); // no need to check, because syn_index is of type char
+  // assert( syn_id < 256 ); // no need to check, because syn_id is of type char
   assert( lcid < 134217728 );
   assert( lag < 16384 );
 
@@ -123,7 +123,7 @@ SpikeData::set( const thread tid,
   marker_ = 0; // always initialize with default marker
   lag_ = lag;
   tid_ = tid;
-  syn_index_ = syn_index;
+  syn_id_ = syn_id;
 }
 
 inline index
@@ -145,9 +145,9 @@ SpikeData::get_tid() const
 }
 
 inline synindex
-SpikeData::get_syn_index() const
+SpikeData::get_syn_id() const
 {
-  return syn_index_;
+  return syn_id_;
 }
 
 inline void
@@ -206,12 +206,12 @@ private:
 public:
   OffGridSpikeData();
   OffGridSpikeData( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const index lcid,
     const unsigned int lag,
     const double offset );
   void set( const thread tid,
-    const synindex syn_index,
+    const synindex syn_id,
     const index lcid,
     const unsigned int lag,
     const double offset );
@@ -225,24 +225,24 @@ inline OffGridSpikeData::OffGridSpikeData()
 }
 
 inline OffGridSpikeData::OffGridSpikeData( const thread tid,
-  const synindex syn_index,
+  const synindex syn_id,
   const index lcid,
   const unsigned int lag,
   const double offset )
-  : SpikeData( tid, syn_index, lcid, lag )
+  : SpikeData( tid, syn_id, lcid, lag )
   , offset_( offset )
 {
 }
 
 inline void
 OffGridSpikeData::set( const thread tid,
-  const synindex syn_index,
+  const synindex syn_id,
   const index lcid,
   const unsigned int lag,
   const double offset )
 {
   assert( tid < 1024 );
-  // assert( syn_index < 256 ); // no need to check, because syn_index is of type char
+  // assert( syn_id < 256 ); // no need to check, because syn_id is of type char
   assert( lcid < 134217728 );
   assert( lag < 16384 );
 
@@ -250,7 +250,7 @@ OffGridSpikeData::set( const thread tid,
   marker_ = 0; // always initialize with default marker
   lag_ = lag;
   tid_ = tid;
-  syn_index_ = syn_index;
+  syn_id_ = syn_id;
   offset_ = offset;
 }
 

@@ -62,21 +62,18 @@ public:
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,
     synindex syn_id,
-    synindex syn_index,
     double delay = NAN,
     double weight = NAN ) = 0;
   virtual void add_connection_5g( Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,
     synindex syn_id,
-    synindex syn_index,
     DictionaryDatum& d,
     double delay = NAN,
     double weight = NAN ) = 0;
 
   virtual void reserve_connections( std::vector< ConnectorBase* >* hetconn,
     const synindex syn_id,
-    synindex syn_index,
     const size_t count ) = 0;
 
   virtual ConnectorModel* clone( std::string ) const = 0;
@@ -166,14 +163,12 @@ public:
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,
     synindex syn_id,
-    synindex syn_index,
     double delay,
     double weight );
   void add_connection_5g( Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,
     synindex syn_id,
-    synindex syn_index,
     DictionaryDatum& d,
     double delay,
     double weight );
@@ -217,7 +212,6 @@ public:
 
   void reserve_connections( std::vector< ConnectorBase* >* hetconn,
     const synindex syn_id,
-    synindex syn_index,
     const size_t count );
 
 private:
@@ -227,7 +221,6 @@ private:
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,
     synindex syn_id,
-    synindex syn_index,
     ConnectionT& c,
     rport receptor_type );
 

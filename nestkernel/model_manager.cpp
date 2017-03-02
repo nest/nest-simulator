@@ -302,6 +302,8 @@ ModelManager::copy_synapse_model_( index old_id, Name new_name )
   }
 
   synapsedict_->insert( new_name, new_id );
+
+  kernel().connection_manager.resize_connections();
   return new_id;
 }
 

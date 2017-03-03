@@ -109,7 +109,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
   next_rec_step_ =
     ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 )
       * rec_int_steps_
-    - 1;
+    - 1 + recording_origin_.get_steps();
 
   // number of data points per slice
   const long recs_per_slice =

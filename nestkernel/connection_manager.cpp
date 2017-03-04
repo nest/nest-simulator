@@ -1584,6 +1584,7 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
   }
 }
 
+// TODO@5gNOW: pass recv_buffer as const reference
 bool
 nest::ConnectionManager::deliver_secondary_events( const thread tid,
   std::vector< unsigned int >& recv_buffer )
@@ -1619,7 +1620,8 @@ nest::ConnectionManager::deliver_secondary_events( const thread tid,
     }
   }
 
-  // read done marker from last position in every chunk
+  // read waveform relaxation done marker from last position in every
+  // chunk
   bool done = true;
   const size_t chunk_size =
     kernel().mpi_manager.get_chunk_size_secondary_events();
@@ -1636,6 +1638,7 @@ nest::ConnectionManager::compress_secondary_send_buffer_pos( const thread tid )
 {
   target_table_.compress_secondary_send_buffer_pos( tid );
 }
+
 void
 nest::ConnectionManager::remove_disabled_connections( const thread tid )
 {

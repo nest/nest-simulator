@@ -916,7 +916,7 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
       are_others_completed = false;
     }
 
-    // were spikes sent by this rank?
+    // were targets sent by this rank?
     if ( recv_buffer_target_data_[ rank * send_recv_count_target_data_per_rank_ ].is_invalid_marker() )
     {
       continue;

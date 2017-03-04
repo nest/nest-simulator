@@ -291,7 +291,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
     unique_secondary_sources_.clear();
   }
 
-  // collect all unique sources
+  // collect all unique combination of source gid and event size
   for ( size_t syn_id = 0; syn_id < sources_[ tid ]->size();
         ++syn_id )
   {
@@ -319,8 +319,9 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
 
 #pragma omp single
   {
-    // given all unique sources, calculate maximal chunksize per rank
-    // and fill vector of unique sources
+    // given all unique combination of source gid and event size,
+    // calculate maximal chunksize per rank and fill vector of unique
+    // sources
     std::vector< size_t > count_per_rank(
       kernel().mpi_manager.get_num_processes(), 0 );
     for ( std::set< std::pair< index, size_t > >::const_iterator cit = unique_secondary_sources_.begin();
@@ -337,7 +338,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
     kernel().mpi_manager.set_chunk_size_secondary_events(
       max_count[ 0 ] + 1 );
 
-    // offsets in receive buffer
+    // compute offsets in receive buffer
     std::vector< size_t > buffer_position_by_rank(
       kernel().mpi_manager.get_num_processes(), 0 );
     for ( size_t rank = 0; rank < buffer_position_by_rank.size(); ++rank )
@@ -348,9 +349,9 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
     for ( std::set< std::pair< index, size_t > >::const_iterator cit = unique_secondary_sources_.begin();
           cit != unique_secondary_sources_.end(); ++cit )
     {
-      const thread target_rank = kernel().node_manager.get_process_id_of_gid( cit->first );
-      gid_to_buffer_pos.insert( std::pair< index, size_t >( cit->first, buffer_position_by_rank[ target_rank ] ) );
-      buffer_position_by_rank[ target_rank ] += cit->second;
+      const thread source_rank = kernel().node_manager.get_process_id_of_gid( cit->first );
+      gid_to_buffer_pos.insert( std::pair< index, size_t >( cit->first, buffer_position_by_rank[ source_rank ] ) );
+      buffer_position_by_rank[ source_rank ] += cit->second;
     }
   } // of omp single
 }

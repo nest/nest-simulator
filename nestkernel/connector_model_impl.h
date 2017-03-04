@@ -41,32 +41,6 @@
 // Includes from sli:
 #include "dictutils.h"
 
-
-template < typename T, typename C >
-inline T*
-allocate( C c )
-{
-  T* p = new T( c );
-  // we need to check, if the two lowest bits of the pointer
-  // are 0, because we want to use them to encode for the
-  // existence of primary and secondary events
-  assert( ( reinterpret_cast< unsigned long >( p ) & 3 ) == 0 );
-  return p;
-}
-
-template < typename T >
-inline T*
-allocate()
-{
-  T* p = new T();
-  // we need to check, if the two lowest bits of the pointer
-  // are 0, because we want to use them to encode for the
-  // existence of primary and secondary events
-  assert( ( reinterpret_cast< unsigned long >( p ) & 3 ) == 0 );
-  return p;
-}
-
-
 namespace nest
 {
 
@@ -325,7 +299,7 @@ GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
   if ( ( *hetconn )[ syn_id ] == NULL )
   {
     // no homogeneous Connector with this syn_id exists, we need to create a new homogeneous Connector
-    ( *hetconn )[ syn_id ] = allocate< Connector< ConnectionT > >( syn_id );
+    ( *hetconn )[ syn_id ] = new Connector< ConnectionT >( syn_id );
   }
 
   ConnectorBase* conn = ( *hetconn )[ syn_id ];
@@ -353,7 +327,7 @@ GenericConnectorModel< ConnectionT >::reserve_connections(
   if ( ( *hetconn )[ syn_id ] == NULL )
   {
     // no homogeneous Connector with this syn_id exists, we need to create a new homogeneous Connector
-    ( *hetconn )[ syn_id ] = allocate< Connector< ConnectionT > >( syn_id );
+    ( *hetconn )[ syn_id ] = new Connector< ConnectionT >( syn_id );
   }
 
   ConnectorBase* conn = ( *hetconn )[ syn_id ];

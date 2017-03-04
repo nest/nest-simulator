@@ -633,7 +633,14 @@ nest::SimulationManager::update_connection_infrastructure( const thread tid )
     }
   }
 
+  // communicate connection information from postsynaptic to
+  // presynaptic side
   kernel().event_delivery_manager.gather_target_data( tid );
+
+  if ( kernel().node_manager.any_node_uses_wfr() )
+  {
+    kernel().connection_manager.compress_secondary_send_buffer_pos( tid );
+  }
 
 #pragma omp single
   {

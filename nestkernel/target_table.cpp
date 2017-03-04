@@ -108,9 +108,10 @@ nest::TargetTable::print_targets( const thread tid ) const
 void
 nest::TargetTable::compress_secondary_send_buffer_pos( const thread tid )
 {
-  for ( std::vector< std::vector< size_t > >::iterator it = (*secondary_send_buffer_pos_[ tid ]).begin();
-        it != (*secondary_send_buffer_pos_[ tid ]).end(); ++it )
+  for ( std::vector< std::vector< size_t > >::iterator it = ( *secondary_send_buffer_pos_[ tid ] ).begin();
+        it != ( *secondary_send_buffer_pos_[ tid ] ).end(); ++it )
   {
+    std::sort( it->begin(), it->end() );
     const std::vector< size_t >::iterator new_it = std::unique( it->begin(), it->end() );
     it->resize( std::distance( it->begin(), new_it) );
   }

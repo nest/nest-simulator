@@ -55,7 +55,7 @@
 
   Sends: SpikeEvent
 
-  Author: Renato Duarte
+  Authors: Renato Duarte, Barna Zajzon
 
   SeeAlso: sinusoidal_poisson_generator, step_current_generator, Device, StimulatingDevice
 */

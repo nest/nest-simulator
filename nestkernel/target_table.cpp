@@ -106,6 +106,27 @@ nest::TargetTable::print_targets( const thread tid ) const
 }
 
 void
+nest::TargetTable::print_secondary_send_buffer_pos( const thread tid ) const
+{
+  std::cout << "-------------SENDBUFFERPOS-------------------\n";
+  for ( std::vector< std::vector< size_t > >::const_iterator cit =
+          ( *secondary_send_buffer_pos_[ tid ] ).begin();
+        cit != ( *secondary_send_buffer_pos_[ tid ] ).end();
+        ++cit )
+  {
+    for ( std::vector< size_t >::const_iterator ciit = ( *cit ).begin();
+          ciit != ( *cit ).end();
+          ++ciit )
+    {
+      std::cout << *ciit << ", ";
+    }
+    std::cout << std::endl;
+  }
+  std::cout << std::endl;
+  std::cout << "---------------------------------------\n";
+}
+
+void
 nest::TargetTable::compress_secondary_send_buffer_pos( const thread tid )
 {
   for ( std::vector< std::vector< size_t > >::iterator it = ( *secondary_send_buffer_pos_[ tid ] ).begin();

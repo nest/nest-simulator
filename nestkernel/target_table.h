@@ -84,6 +84,8 @@ public:
   void compress_secondary_send_buffer_pos( const thread tid );
 
   void print_targets( const thread tid ) const;
+  void print_secondary_send_buffer_pos( const thread tid ) const;
+
 };
 
 inline void

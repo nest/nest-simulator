@@ -186,6 +186,7 @@ public:
   void print_connections( const thread tid ) const;
 
   void print_targets( const thread tid ) const;
+  void print_send_buffer_pos( const thread tid ) const;
 
   void subnet_connect( Subnet&, Subnet&, int, index syn );
 

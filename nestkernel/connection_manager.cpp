@@ -1670,6 +1670,12 @@ nest::ConnectionManager::print_targets( const thread tid ) const
 }
 
 void
+nest::ConnectionManager::print_send_buffer_pos( const thread tid ) const
+{
+  target_table_.print_secondary_send_buffer_pos( tid );
+}
+
+void
 nest::ConnectionManager::resize_connections()
 {
   assert( kernel().vp_manager.get_thread_id() == 0 );

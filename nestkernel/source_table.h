@@ -81,7 +81,7 @@ private:
 
   //! set of unique sources, required to determine secondary events
   //! buffer positions
-  std::set< std::pair< index, size_t > > unique_secondary_sources_;
+  std::set< std::pair< index, size_t > > unique_secondary_source_gid_syn_id_;
 
 public:
   SourceTable();
@@ -135,7 +135,7 @@ public:
   //! these are not considered in find_maximal_position.
   void no_targets_to_process( const thread tid );
 
-  void compute_buffer_pos_for_unique_secondary_sources( const thread tid, std::map< index, size_t >& gid_to_buffer_pos );
+  void compute_buffer_pos_for_unique_secondary_sources( const thread tid, std::map< index, size_t >& buffer_pos_of_source_gid_syn_id_ );
 
   void reset_last_sorted_source( const thread tid );
 
@@ -164,6 +164,8 @@ public:
   size_t num_unique_sources( const thread tid, const synindex syn_id ) const;
 
   void resize_sources( const thread tid );
+
+  index pack_source_gid_and_syn_id( const std::pair< index, synindex >& source_gid_syn_id ) const;
 };
 
 inline void
@@ -432,6 +434,16 @@ SourceTable::num_unique_sources( const thread tid, const synindex syn_id ) const
     }
   }
   return n;
+}
+
+inline index
+SourceTable::pack_source_gid_and_syn_id( const std::pair< index, synindex >& source_gid_syn_id ) const
+{
+  assert( source_gid_syn_id.first < 72057594037927936 );
+  assert( source_gid_syn_id.second < invalid_synindex );
+  // syn_id is maximally 256, so shifting gid by 8 bits and storing
+  // syn_id in the lowest 8 leads to a unique number
+  return ( source_gid_syn_id.first << 8 ) + source_gid_syn_id.second;
 }
 
 } // namespace nest

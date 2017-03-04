@@ -1547,10 +1547,10 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
 {
 #pragma omp single
   {
-    gid_to_buffer_pos_.clear();
+    buffer_pos_of_source_gid_syn_id_.clear();
   }
 
-  source_table_.compute_buffer_pos_for_unique_secondary_sources( tid, gid_to_buffer_pos_ );
+  source_table_.compute_buffer_pos_for_unique_secondary_sources( tid, buffer_pos_of_source_gid_syn_id_ );
   secondary_recv_buffer_pos_[ tid ]->resize(
     connections_5g_[ tid ]->size(), NULL );
 
@@ -1576,8 +1576,7 @@ nest::ConnectionManager::compute_compressed_secondary_recv_buffer_positions( con
         {
           // read secondary events for this connection from this
           // receive buffer position
-          ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] )[ lcid ] =
-            gid_to_buffer_pos_[ source_table_.get_gid( tid, syn_id, lcid ) ];
+          ( *( *secondary_recv_buffer_pos_[ tid ] )[ syn_id ] )[ lcid ] = buffer_pos_of_source_gid_syn_id_[ source_table_.pack_source_gid_and_syn_id( std::pair< index, synindex >( source_table_.get_gid( tid, syn_id, lcid ), syn_id ) ) ];
         }
       }
     }

@@ -581,7 +581,7 @@ private:
   std::vector< std::vector< std::vector< size_t >* >* >
     secondary_recv_buffer_pos_;
 
-  std::map< index, size_t > gid_to_buffer_pos_;
+  std::map< index, size_t > buffer_pos_of_source_gid_syn_id_;
 
   /** A structure to hold the information about targets for each
    * neuron on the presynaptic side. Internally arranged in a 3d

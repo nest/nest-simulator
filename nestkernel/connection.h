@@ -273,7 +273,7 @@ protected:
   void check_connection_( Node& dummy_target,
     Node& source,
     Node& target,
-    rport receptor_type );
+    const rport receptor_type );
 
   /* the order of the members below is critical
      as it influcences the size of the object. Please leave unchanged
@@ -294,7 +294,7 @@ inline void
 Connection< targetidentifierT >::check_connection_( Node& dummy_target,
   Node& source,
   Node& target,
-  rport receptor_type )
+  const rport receptor_type )
 {
   // 1. does this connection support the event type sent by source
   // try to send event from source to dummy_target

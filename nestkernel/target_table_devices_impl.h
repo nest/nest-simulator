@@ -34,11 +34,11 @@
 inline void
 nest::TargetTableDevices::add_connection_to_device( Node& source,
   Node& target,
-  index s_gid,
-  thread tid,
-  index syn_id,
-  double d,
-  double w )
+  const index s_gid,
+  const thread tid,
+  const synindex syn_id,
+  const double d,
+  const double w )
 {
   const index lid = kernel().vp_manager.gid_to_lid( s_gid );
   assert( lid < target_to_devices_[ tid ]->size() );
@@ -51,12 +51,12 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
 inline void
 nest::TargetTableDevices::add_connection_to_device( Node& source,
   Node& target,
-  index s_gid,
-  thread tid,
-  index syn_id,
-  DictionaryDatum& p,
-  double d,
-  double w )
+  const index s_gid,
+  const thread tid,
+  const synindex syn_id,
+  const DictionaryDatum& p,
+  const double d,
+  const double w )
 {
   const index lid = kernel().vp_manager.gid_to_lid( s_gid );
   assert( lid < target_to_devices_[ tid ]->size() );
@@ -70,11 +70,11 @@ nest::TargetTableDevices::add_connection_to_device( Node& source,
 inline void
 nest::TargetTableDevices::add_connection_from_device( Node& source,
   Node& target,
-  index s_gid,
-  thread tid,
-  index syn_id,
-  double d,
-  double w )
+  const index s_gid,
+  const thread tid,
+  const synindex syn_id,
+  const double d,
+  const double w )
 {
   const index ldid = source.get_local_device_id();
   assert( ldid != invalid_index );
@@ -91,12 +91,12 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
 inline void
 nest::TargetTableDevices::add_connection_from_device( Node& source,
   Node& target,
-  index s_gid,
-  thread tid,
-  index syn_id,
-  DictionaryDatum& p,
-  double d,
-  double w )
+  const index s_gid,
+  const thread tid,
+  const synindex syn_id,
+  const DictionaryDatum& p,
+  const double d,
+  const double w )
 {
   const index ldid = source.get_local_device_id();
   assert( ldid != invalid_index );
@@ -111,7 +111,7 @@ nest::TargetTableDevices::add_connection_from_device( Node& source,
 }
 
 inline void
-nest::TargetTableDevices::send_to_device( thread tid,
+nest::TargetTableDevices::send_to_device( const thread tid,
   const index s_gid,
   Event& e,
   const std::vector< ConnectorModel* >& cm )
@@ -128,7 +128,7 @@ nest::TargetTableDevices::send_to_device( thread tid,
 }
 
 inline void
-nest::TargetTableDevices::send_from_device( thread tid,
+nest::TargetTableDevices::send_from_device( const thread tid,
   const index ldid,
   Event& e,
   const std::vector< ConnectorModel* >& cm )

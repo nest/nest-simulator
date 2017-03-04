@@ -190,9 +190,9 @@ void
 GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >* hetconn,
-  synindex syn_id,
-  double delay,
-  double weight )
+  const synindex syn_id,
+  const double delay,
+  const double weight )
 {
   if ( !numerics::is_nan( delay ) )
     kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
@@ -227,10 +227,10 @@ void
 GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >* hetconn,
-  synindex syn_id,
-  DictionaryDatum& p,
-  double delay,
-  double weight )
+  const synindex syn_id,
+  const DictionaryDatum& p,
+  const double delay,
+  const double weight )
 {
   if ( !numerics::is_nan( delay ) )
   {
@@ -290,9 +290,9 @@ void
 GenericConnectorModel< ConnectionT >::add_connection_5g_( Node& src,
   Node& tgt,
   std::vector< ConnectorBase* >* hetconn,
-  synindex syn_id,
+  const synindex syn_id,
   ConnectionT& c,
-  rport receptor_type )
+  const rport receptor_type )
 {
   assert( syn_id != invalid_synindex );
 

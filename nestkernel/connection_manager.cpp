@@ -408,12 +408,12 @@ nest::ConnectionManager::update_delay_extrema_()
 
 // gid node thread syn_id delay weight
 void
-nest::ConnectionManager::connect( index sgid,
+nest::ConnectionManager::connect( const index sgid,
   Node* target,
   thread target_thread,
-  index syn_id,
-  double d,
-  double w )
+  const synindex syn_id,
+  const double d,
+  const double w )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
@@ -474,13 +474,13 @@ nest::ConnectionManager::connect( index sgid,
 
 // gid node thread syn_id dict delay weight
 void
-nest::ConnectionManager::connect( index sgid,
+nest::ConnectionManager::connect( const index sgid,
   Node* target,
   thread target_thread,
-  index syn_id,
-  DictionaryDatum& params,
-  double d,
-  double w )
+  const synindex syn_id,
+  const DictionaryDatum& params,
+  const double d,
+  const double w )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
@@ -553,10 +553,10 @@ nest::ConnectionManager::connect( index sgid,
 
 // gid gid dict
 bool
-nest::ConnectionManager::connect( index sgid,
-  index tgid,
-  DictionaryDatum& params,
-  index syn_id )
+nest::ConnectionManager::connect( const index sgid,
+  const index tgid,
+  const DictionaryDatum& params,
+  const synindex syn_id )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
 
@@ -640,11 +640,11 @@ nest::ConnectionManager::connect( index sgid,
 void
 nest::ConnectionManager::connect_( Node& s,
   Node& r,
-  index s_gid,
-  thread tid,
-  index syn_id,
-  double d,
-  double w )
+  const index s_gid,
+  const thread tid,
+  const synindex syn_id,
+  const double d,
+  const double w )
 {
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
@@ -664,12 +664,12 @@ nest::ConnectionManager::connect_( Node& s,
 void
 nest::ConnectionManager::connect_( Node& s,
   Node& r,
-  index s_gid,
-  thread tid,
-  index syn_id,
-  DictionaryDatum& p,
-  double d,
-  double w )
+  const index s_gid,
+  const thread tid,
+  const synindex syn_id,
+  const DictionaryDatum& p,
+  const double d,
+  const double w )
 {
   kernel()
     .model_manager.get_synapse_prototype( syn_id, tid )
@@ -689,11 +689,11 @@ nest::ConnectionManager::connect_( Node& s,
 void
 nest::ConnectionManager::connect_to_device_( Node& s,
   Node& r,
-  index s_gid,
-  thread tid,
-  index syn_id,
-  double d,
-  double w )
+  const index s_gid,
+  const thread tid,
+  const synindex syn_id,
+  const double d,
+  const double w )
 {
   // create entries in connection structure for connections to devices
   target_table_devices_.add_connection_to_device( s, r, s_gid, tid, syn_id, d, w );
@@ -708,12 +708,12 @@ nest::ConnectionManager::connect_to_device_( Node& s,
 void
 nest::ConnectionManager::connect_to_device_( Node& s,
   Node& r,
-  index s_gid,
-  thread tid,
-  index syn_id,
-  DictionaryDatum& p,
-  double d,
-  double w )
+  const index s_gid,
+  const thread tid,
+  const synindex syn_id,
+  const DictionaryDatum& p,
+  const double d,
+  const double w )
 {
   // create entries in connection structure for connections to devices
   target_table_devices_.add_connection_to_device(
@@ -729,11 +729,11 @@ nest::ConnectionManager::connect_to_device_( Node& s,
 void
 nest::ConnectionManager::connect_from_device_( Node& s,
   Node& r,
-  index s_gid,
-  thread tid,
-  index syn_id,
-  double d,
-  double w )
+  const index s_gid,
+  const thread tid,
+  const synindex syn_id,
+  const double d,
+  const double w )
 {
   // create entries in connections vector of devices
   target_table_devices_.add_connection_from_device(
@@ -749,12 +749,12 @@ nest::ConnectionManager::connect_from_device_( Node& s,
 void
 nest::ConnectionManager::connect_from_device_( Node& s,
   Node& r,
-  index s_gid,
-  thread tid,
-  index syn_id,
-  DictionaryDatum& p,
-  double d,
-  double w )
+  const index s_gid,
+  const thread tid,
+  const synindex syn_id,
+  const DictionaryDatum& p,
+  const double d,
+  const double w )
 {
   // create entries in connections vector of devices
   target_table_devices_.add_connection_from_device(

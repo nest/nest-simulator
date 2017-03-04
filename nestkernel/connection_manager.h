@@ -115,12 +115,12 @@ public:
    * \param d Delay of the connection (in ms).
    * \param w Weight of the connection.
    */
-  void connect( index s,
+  void connect( const index s,
     Node* target,
     thread target_thread,
-    index syn_id,
-    double_t d = numerics::nan,
-    double_t w = numerics::nan );
+    const synindex syn_id,
+    const double_t d = numerics::nan,
+    const double_t w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -141,13 +141,13 @@ public:
    * \param d Delay of the connection (in ms).
    * \param w Weight of the connection.
    */
-  void connect( index s,
+  void connect( const index s,
     Node* target,
     thread target_thread,
-    index syn_id,
-    DictionaryDatum& params,
-    double_t d = numerics::nan,
-    double_t w = numerics::nan );
+    const synindex syn_id,
+    const DictionaryDatum& params,
+    const double_t d = numerics::nan,
+    const double_t w = numerics::nan );
 
   /**
    * Connect two nodes. The source node is defined by its global ID.
@@ -160,7 +160,7 @@ public:
    * \param params parameter dict to configure the synapse
    * \param syn The synapse model to use.
    */
-  bool connect( index s, index r, DictionaryDatum& params, index syn );
+  bool connect( const index s, const index r, const DictionaryDatum& params, const synindex syn_id );
 
   index find_connection_sorted( const thread tid,
     const synindex syn_id,
@@ -480,19 +480,19 @@ private:
    */
   void connect_( Node& s,
     Node& r,
-    index s_gid,
-    thread tid,
-    index syn_id,
-    double d = numerics::nan,
-    double w = numerics::nan );
+    const index s_gid,
+    const thread tid,
+    const synindex syn_id,
+    const double d = numerics::nan,
+    const double w = numerics::nan );
   void connect_( Node& s,
     Node& r,
-    index s_gid,
-    thread tid,
-    index syn_id,
-    DictionaryDatum& p,
-    double d = numerics::nan,
-    double w = numerics::nan );
+    const index s_gid,
+    const thread tid,
+    const synindex syn_id,
+    const DictionaryDatum& p,
+    const double d = numerics::nan,
+    const double w = numerics::nan );
 
   /**
    * connect_to_device_ is used to establish a connection between a sender and
@@ -514,19 +514,19 @@ private:
    */
   void connect_to_device_( Node& s,
     Node& r,
-    index s_gid,
-    thread tid,
-    index syn_id,
-    double d = NAN,
-    double w = NAN );
+    const index s_gid,
+    const thread tid,
+    const synindex syn_id,
+    const double d = NAN,
+    const double w = NAN );
   void connect_to_device_( Node& s,
     Node& r,
-    index s_gid,
-    thread tid,
-    index syn_id,
-    DictionaryDatum& p,
-    double d = NAN,
-    double w = NAN );
+    const index s_gid,
+    const thread tid,
+    const synindex syn_id,
+    const DictionaryDatum& p,
+    const double d = NAN,
+    const double w = NAN );
 
   /**
    * connect_from_device_ is used to establish a connection between a sender and
@@ -548,19 +548,19 @@ private:
    */
   void connect_from_device_( Node& s,
     Node& r,
-    index s_gid,
-    thread tid,
-    index syn_id,
-    double d = NAN,
-    double w = NAN );
+    const index s_gid,
+    const thread tid,
+    const synindex syn_id,
+    const double d = NAN,
+    const double w = NAN );
   void connect_from_device_( Node& s,
     Node& r,
-    index s_gid,
-    thread tid,
-    index syn_id,
-    DictionaryDatum& p,
-    double d = NAN,
-    double w = NAN );
+    const index s_gid,
+    const thread tid,
+    const synindex syn_id,
+    const DictionaryDatum& p,
+    const double d = NAN,
+    const double w = NAN );
 
   /** A structure to hold the Connector objects which in turn hold the
    * connection information. Corresponds to a three dimensional

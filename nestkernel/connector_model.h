@@ -61,16 +61,16 @@ public:
   virtual void add_connection_5g( Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,
-    synindex syn_id,
-    double delay = NAN,
-    double weight = NAN ) = 0;
+    const synindex syn_id,
+    const double delay = NAN,
+    const double weight = NAN ) = 0;
   virtual void add_connection_5g( Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,
-    synindex syn_id,
-    DictionaryDatum& d,
-    double delay = NAN,
-    double weight = NAN ) = 0;
+    const synindex syn_id,
+    const DictionaryDatum& d,
+    const double delay = NAN,
+    const double weight = NAN ) = 0;
 
   virtual void reserve_connections( std::vector< ConnectorBase* >* hetconn,
     const synindex syn_id,
@@ -162,16 +162,16 @@ public:
   void add_connection_5g( Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,
-    synindex syn_id,
-    double delay,
-    double weight );
+    const synindex syn_id,
+    const double delay,
+    const double weight );
   void add_connection_5g( Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,
-    synindex syn_id,
-    DictionaryDatum& d,
-    double delay,
-    double weight );
+    const synindex syn_id,
+    const DictionaryDatum& d,
+    const double delay,
+    const double weight );
 
   ConnectorModel* clone( std::string ) const;
 
@@ -220,9 +220,9 @@ private:
   void add_connection_5g_( Node& src,
     Node& tgt,
     std::vector< ConnectorBase* >* hetconn,
-    synindex syn_id,
+    const synindex syn_id,
     ConnectionT& c,
-    rport receptor_type );
+    const rport receptor_type );
 
 }; // GenericConnectorModel
 

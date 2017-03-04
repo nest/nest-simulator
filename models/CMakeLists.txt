@@ -70,6 +70,7 @@ set( models_sources
     music_message_in_proxy.h music_message_in_proxy.cpp
     noise_generator.h noise_generator.cpp
     parrot_neuron.h parrot_neuron.cpp
+    inh_poisson_generator.h inh_poisson_generator.cpp
     poisson_generator.h poisson_generator.cpp
     pp_psc_delta.h pp_psc_delta.cpp
     pp_pop_psc_delta.h pp_pop_psc_delta.cpp

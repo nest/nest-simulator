@@ -268,6 +268,8 @@ const Name q_rr( "q_rr" );
 const Name q_sfa( "q_sfa" );
 const Name q_stc( "q_stc" );
 
+const Name rate_times( "rate_times" );
+const Name rate_values( "rate_values" );
 const Name rate( "rate" );
 const Name receptor_type( "receptor_type" );
 const Name receptor_types( "receptor_types" );

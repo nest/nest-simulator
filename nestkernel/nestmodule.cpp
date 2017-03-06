@@ -482,10 +482,15 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
 
    Description: Simulate the network for n milliseconds.
    Call prepare before, and cleanup after.
-   n simulate = prepare n/m run ... m times... cleanup
+   t m mul Simulate = Prepare m { t Run } repeat Cleanup
 
+   Note: Run must only be used after Prepare is called, and
+   before Cleanup to finalize state (close files, etc).
+   Any changes made between Prepare and Cleanup may cause
+   undefined failures (the famed nose-inhabiting monkeys of
+   internet lore).
 
-   SeeAlso: simulate, resume, unit_conversion, prepare, cleanup
+   SeeAlso: Simulate, resume, unit_conversion, Prepare, Cleanup
 */
 void
 NestModule::RunFunction::execute( SLIInterpreter* i ) const
@@ -510,7 +515,13 @@ NestModule::RunFunction::execute( SLIInterpreter* i ) const
    Description: sets up network calibration before run is called
    any number of times
 
-   SeeAlso: run, cleanup, simulate
+   Note: Run must only be used after Prepare is called, and
+   before Cleanup to finalize state (close files, etc).
+   Any changes made between Prepare and Cleanup may cause
+   undefined failures (the famed nose-inhabiting monkeys of
+   internet lore).
+
+   SeeAlso: Run, Cleanup, Simulate
 */
 void
 NestModule::PrepareFunction::execute( SLIInterpreter* i ) const
@@ -528,7 +539,13 @@ NestModule::PrepareFunction::execute( SLIInterpreter* i ) const
    Description: tears down a network after run is called
    any number of times
 
-   SeeAlso: run, prepare, simulate
+   Note: Run must only be used after Prepare is called, and
+   before Cleanup to finalize state (close files, etc).
+   Any changes made between Prepare and Cleanup may cause
+   undefined failures (the famed nose-inhabiting monkeys of
+   internet lore).
+
+   SeeAlso: Run, Prepare, Simulate
 */
 void
 NestModule::CleanupFunction::execute( SLIInterpreter* i ) const

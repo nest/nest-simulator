@@ -81,7 +81,12 @@ def RunManager():
     """ContextManager for Run.
 
     Calls Prepare() before a series of Run() calls,
-    and  adds a Cleanup() at end
+    and  adds a Cleanup() at end.
+
+    So:
+    with RunManager():
+    	for i in range(10):
+    	    Run()
     """
 
     Prepare()

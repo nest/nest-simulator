@@ -58,6 +58,7 @@ NodeManager::NodeManager()
   , wfr_nodes_vec_()
   , wfr_is_used_( false )
   , nodes_vec_network_size_( 0 ) // zero to force update
+  , num_active_nodes_( 0 )
 {
 }
 
@@ -740,21 +741,21 @@ NodeManager::prepare_node_( Node* n )
   n->calibrate();
 }
 
-size_t
+void
 NodeManager::prepare_nodes()
 {
   assert( kernel().is_initialized() );
 
   /* We initialize the buffers of each node and calibrate it. */
 
-  size_t num_active_nodes = 0;     // counts nodes that will be updated
+  num_active_nodes_ = 0;           // counts nodes that will be updated
   size_t num_active_wfr_nodes = 0; // counts nodes that use waveform relaxation
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
     kernel().vp_manager.get_num_threads() );
 
 #ifdef _OPENMP
-#pragma omp parallel reduction( + : num_active_nodes, num_active_wfr_nodes )
+#pragma omp parallel reduction( + : num_active_nodes_, num_active_wfr_nodes )
   {
     size_t t = kernel().vp_manager.get_thread_id();
 #else
@@ -773,7 +774,7 @@ NodeManager::prepare_nodes()
         prepare_node_( *it );
         if ( not( *it )->is_frozen() )
         {
-          ++num_active_nodes;
+          ++num_active_nodes_;
           if ( ( *it )->node_uses_wfr() )
             ++num_active_wfr_nodes;
         }
@@ -794,8 +795,8 @@ NodeManager::prepare_nodes()
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
 
   std::ostringstream os;
-  std::string tmp_str = num_active_nodes == 1 ? " node" : " nodes";
-  os << "Preparing " << num_active_nodes << tmp_str << " for simulation.";
+  std::string tmp_str = num_active_nodes_ == 1 ? " node" : " nodes";
+  os << "Preparing " << num_active_nodes_ << tmp_str << " for simulation.";
 
   if ( num_active_wfr_nodes != 0 )
   {
@@ -805,8 +806,6 @@ NodeManager::prepare_nodes()
   }
 
   LOG( M_INFO, "NodeManager::prepare_nodes", os.str() );
-
-  return num_active_nodes;
 }
 
 /**

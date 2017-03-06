@@ -51,25 +51,40 @@ public:
   virtual void set_status( const DictionaryDatum& );
   virtual void get_status( DictionaryDatum& );
 
-  // check for errors in time before run
-  void check_run( Time const& );
-
   /**
+      check for errors in time before run
+      @throws KernelException if illegal time passed
+  */
+  void assert_valid_simtime( Time const& );
+
+  /*
      Simulate can be broken up into .. prepare... run.. run.. cleanup..
      instead of calling simulate multiple times, and thus reduplicating
      effort in prepare, cleanup many times.
   */
+
+  /**
+     initialize simulation for a set of run calls.
+     Must be called before a sequence of runs, and again after cleanup.
+  */
   void prepare();
+  /**
+     run a simulation for another `Time`. Can be repeated ad infinitum with
+     calls to get_status(), but any changes to the network are undefined,
+     leading
+     to serious health risks from flying monkeys.
+  */
   void run( Time const& );
+  /**
+     closes a set of runs, doing finalizations such as file closures.
+     After cleanup() is called, no more run()s can be called before another
+     prepare() call.
+  */
   void cleanup();
 
   /**
    * Simulate for the given time .
-   * This function performs the following steps
-   * 1. set the new simulation time
-   * 2. call prepare_simulation()
-   * 3. call resume()
-   * 4. call finalize_simulation()
+   * calls prepare(); run(Time&); cleanup();
    */
   void simulate( Time const& );
 
@@ -141,8 +156,8 @@ public:
   delay get_to_step() const;
 
 private:
-  void start_updating_(); //!< actually run simulation; TODO: review
-  void update_();         //! actually perform simulation
+  void call_update_(); //!< actually run simulation, aka wrap update_
+  void update_();      //! actually perform simulation
   bool wfr_update_( Node* );
   void advance_time_();   //!< Update time to next time step
   void print_progress_(); //!< TODO: Remove, replace by logging!
@@ -173,7 +188,6 @@ private:
                             //!< relaxation
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
-  size_t num_active_nodes_;        //!< number of nodes return by prepare_nodes
 };
 
 inline Time const&

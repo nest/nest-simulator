@@ -85,8 +85,8 @@ def RunManager():
 
     So:
     with RunManager():
-    	for i in range(10):
-    	    Run()
+        for i in range(10):
+            Run()
     """
 
     Prepare()

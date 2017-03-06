@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_split.py
+# test_split_simulation.py
 #
 # This file is part of NEST.
 #

@@ -232,7 +232,9 @@ TopologyModule::create_parameter( const Token& t )
   // parameters
   ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
   if ( pd )
+  {
     return *pd;
+  }
 
   // If t is a DoubleDatum, create a ConstantParameter with this value
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
@@ -304,14 +306,18 @@ create_doughnut( const DictionaryDatum& d )
   // The doughnut (actually an annulus) is created using a DifferenceMask
   Position< 2 > center( 0, 0 );
   if ( d->known( names::anchor ) )
+  {
     center = getValue< std::vector< double > >( d, names::anchor );
+  }
 
   const double outer = getValue< double >( d, names::outer_radius );
   const double inner = getValue< double >( d, names::inner_radius );
   if ( inner >= outer )
+  {
     throw BadProperty(
       "topology::create_doughnut: "
       "inner_radius < outer_radius required." );
+  }
 
   BallMask< 2 > outer_circle( center, outer );
   BallMask< 2 > inner_circle( center, inner );
@@ -954,7 +960,7 @@ TopologyModule::GetGlobalChildren_i_M_aFunction::execute(
 
   tgt_dictionary CreateLayer /tgt Set
 
-  <<	/connection_type (convergent)
+  <<  /connection_type (convergent)
       /mask << /grid << /rows 2 /columns 3 >>
                /anchor << /row 4 /column 2 >> >>
       /weights 2.3
@@ -1266,10 +1272,10 @@ TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
 
   if ( dim == 2 )
   {
-    Layer< 2 >* l = dynamic_cast< Layer< 2 >* >(
+    Layer< 2 >* layer = dynamic_cast< Layer< 2 >* >(
       kernel().node_manager.get_node( layer_gid ) );
 
-    MaskedLayer< 2 > ml = MaskedLayer< 2 >( *l, Selector(), mask, true, false );
+    MaskedLayer< 2 > ml = MaskedLayer< 2 >( *layer, Selector(), mask, true, false );
 
     for ( Ntree< 2, index >::masked_iterator it =
             ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
@@ -1281,10 +1287,10 @@ TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
   }
   else
   {
-    Layer< 3 >* l = dynamic_cast< Layer< 3 >* >(
+    Layer< 3 >* layer = dynamic_cast< Layer< 3 >* >(
       kernel().node_manager.get_node( layer_gid ) );
 
-    MaskedLayer< 3 > ml = MaskedLayer< 3 >( *l, Selector(), mask, true, false );
+    MaskedLayer< 3 > ml = MaskedLayer< 3 >( *layer, Selector(), mask, true, false );
 
     for ( Ntree< 3, index >::masked_iterator it =
             ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );

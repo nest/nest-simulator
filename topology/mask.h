@@ -655,9 +655,11 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
   lower_left_ = getValue< std::vector< double > >( d, names::lower_left );
   upper_right_ = getValue< std::vector< double > >( d, names::upper_right );
   if ( not( lower_left_ < upper_right_ ) )
+  {
     throw BadProperty(
       "topology::BoxMask<D>: "
       "Upper right must be strictly to the right and above lower left." );
+  }
 }
 
 template < int D >
@@ -687,9 +689,11 @@ BallMask< D >::BallMask( const DictionaryDatum& d )
 {
   radius_ = getValue< double >( d, names::radius );
   if ( radius_ <= 0 )
+  {
     throw BadProperty(
       "topology::BallMask<D>: "
       "radius > 0 required." );
+  }
 
   if ( d->known( names::anchor ) )
   {
@@ -737,9 +741,11 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
     intermediate_axis_ = getValue< double >( d, names::intermediate_axis );
 
     if ( intermediate_axis_ < 0 )
+    {
       throw BadProperty(
         "topology::EllipseMask<D>: "
         "All axis > 0 required." );
+    }
 
     z_dividend_ = 1.0 / ( intermediate_axis_ * intermediate_axis_ );
   }

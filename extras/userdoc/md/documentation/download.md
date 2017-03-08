@@ -13,31 +13,42 @@ For details about how to contribute to the development of NEST, see the [develop
 
 ## Citing NEST
 
-Please cite NEST in any of your work which is based on NEST.
+Please cite NEST if you use it in your work.
 
-If you use this version of NEST, please cite it as
-**Bos, Hannah et al. (2015). NEST 2.10.0. Zenodo. 10.5281/zenodo.44222**.
-The full citation is available in different formats on
-[Zenodo](http://dx.doi.org/10.5281/zenodo.44222).
+If you use NEST 2.12.0, please cite it as **Kunkel, Susanne et al. (2017).
+NEST 2.12.0. Zenodo. 10.5281/zenodo.259534**. The full citation is available
+in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.259534).
 
-For all other versions below NEST v2.8.0 use: Gewaltig M-O & Diesmann M (2007)
-[NEST (Neural Simulation Tool)](http://www.scholarpedia.org/article/NEST_(Neural_Simulation_Tool))
-*Scholarpedia* 2(4):1430.
+If you use NEST v2.10.0, please cite it as **Bos, Hannah et al. (2015).
+NEST 2.10.0. Zenodo. 10.5281/zenodo.44222**. The full citation is available
+in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.44222).
+
+If you use NEST v2.8.0, please cite it as **Eppler, Jochen Martin et al. (2015).
+NEST 2.8.0. Zenodo. 10.5281/zenodo.32969**. The full citation is available
+in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.32969).
+
+For all versions below NEST v2.8.0 and for citing NEST without referring to a
+specific version, please use: [Gewaltig M-O & Diesmann M (2007) NEST (Neural
+Simulation Tool) Scholarpedia
+2(4):1430](http://www.scholarpedia.org/article/NEST_(Neural_Simulation_Tool)).
 
 Here is a suitable BibTeX entry:
 
-    @ARTICLE{Gewaltig:NEST,
-      author = {Marc-Oliver Gewaltig and Markus Diesmann},
-      title = {NEST (NEural Simulation Tool)},
-      journal = {Scholarpedia},
-      year = {2007},
-      volume = {2},
-      pages = {1430},
-      number = {4}
-    }
+```latex
+@ARTICLE{Gewaltig:NEST,
+  author  = {Marc-Oliver Gewaltig and Markus Diesmann},
+  title   = {NEST (NEural Simulation Tool)},
+  journal = {Scholarpedia},
+  year    = {2007},
+  volume  = {2},
+  pages   = {1430},
+  number  = {4}
+}
+```
 
-If you tell us about your publications that used NEST, we will add it to our
-publication list, thus making it visible to potential readers.
+Please get in touch with us about your publications that used NEST, we will
+add them to our [publication list](publications.md), thus making them visible
+to potential readers.
 
 ## Ubuntu 15.10 Live Media with NEST 2.8.0
 

@@ -2069,6 +2069,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
     import matplotlib
     import matplotlib.pyplot as plt
     import numpy as np
+    from math import pi
 
     # minimal checks for ax having been created by PlotKernel
     if ax and not isinstance(ax, matplotlib.axes.Axes):
@@ -2098,6 +2099,21 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
         ax.add_patch(
             plt.Rectangle(srcpos + ll + offs, ur[0] - ll[0], ur[1] - ll[1],
                           zorder=-1000, fc='none', ec=mask_color, lw=3))
+    elif 'elliptical' in mask:
+        width = 2*mask['elliptical']['major_axis']
+        height = 2*mask['elliptical']['minor_axis']
+        if 'angle' in mask['elliptical']:
+            angle = mask['elliptical']['angle']*180/pi
+        else:
+            angle = 0.0
+        if 'anchor' in mask['elliptical']:
+            anchor = mask['elliptical']['anchor']
+        else:
+            anchor = [0., 0.]
+        ax.add_patch(
+            matplotlib.patches.Ellipse(srcpos + offs + anchor, width, height,
+                                       angle=angle, zorder=-1000, fc='none',
+                                       ec=mask_color, lw=3))
     else:
         raise ValueError(
             'Mask type cannot be plotted with this version of PyTopology.')
@@ -2117,32 +2133,31 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
     plt.draw()
 
 
-def SelectNodesByMask(layer, xpos, ypos, mask_obj):
+def SelectNodesByMask(layer, anchor, mask_obj):
     """
     Obtain GIDs inside a specified area.
 
     Parameters
     ----------
     layer : tuple/list of int
-        List containing the single layer to get GIDs from.
-    xpos : double
-        Double value specifying x-coordinate of where we start to search. Can
-        for instance be center of layer.
-    ypos : double
-        Double value specifying y-coordinate of where we start to search. Can
-        for instance be center of layer.
+        List containing the single layer to select nodes from.
+    anchor : tuple/list of double
+        List containing center position of the layer. This is the point from
+        where we start to search.
     mask_obj: object
         Mask object specifying chosen area.
 
     Returns
     -------
     out : list of int(s)
-        GID(s) of neurons inside the specified area.
+        GID(s) of neurons inside the mask.
     """
+    
+    if len(layer) != 1:
+        raise ValueError("layer must contain exactly one GID.")
 
     mask_datum = mask_obj._datum
 
-    gid_list = topology_func('SelectNodesByMask', ypos, xpos, mask_datum,
-                             layer[0])
+    gid_list = topology_func('SelectNodesByMask', layer[0], anchor, mask_datum)
 
     return gid_list

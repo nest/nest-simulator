@@ -250,14 +250,16 @@ BallMask< D >::get_dict() const
   return d;
 }
 
-
 template < int D >
 bool
 EllipseMask< D >::inside( const Position< D >& p ) const
 {
-  // EllipseMask currently only works in 2 dimensions.
-  return std::pow( p[ 0 ] - center_[ 0 ], 2 ) / ( x_side_ * x_side_ )
-    + std::pow( p[ 1 ] - center_[ 1 ], 2 ) / ( y_side_ * y_side_ )
+  double new_x = ( p[ 0 ] - center_[ 0 ] ) * cosine_value_ + ( p[ 1 ] - center_[ 1 ] ) * sine_value_;
+  double new_y = ( p[ 0 ] - center_[ 0 ] ) * sine_value_ - ( p[ 1 ] - center_[ 1 ] ) * cosine_value_;
+  double new_z = ( p[ 2 ] - center_[ 2 ] );
+  return std::pow(new_x, 2 ) * x_dividend_
+    + std::pow( new_y, 2 ) * y_dividend_
+	+ std::pow( new_z, 2 ) * z_dividend_
     <= 1;
 }
 
@@ -269,16 +271,16 @@ EllipseMask< 2 >::inside( const Box< 2 >& b ) const
 
   // Test if all corners are inside ellipse
   if ( !inside( p ) )
-    return false; // (0,0)
+    return false; // lower left corner not inside ellipse
   p[ 0 ] = b.upper_right[ 0 ];
   if ( !inside( p ) )
-    return false; // (0,1)
+    return false; // upper left corner not inside ellipse
   p[ 1 ] = b.upper_right[ 1 ];
   if ( !inside( p ) )
-    return false; // (1,1)
+    return false; // upper right corner not inside ellipse
   p[ 0 ] = b.lower_left[ 0 ];
   if ( !inside( p ) )
-    return false; // (1,0)
+    return false; // lower right corner not inside ellipse
 
   return true;
 }
@@ -287,7 +289,34 @@ template <>
 bool
 EllipseMask< 3 >::inside( const Box< 3 >& b ) const
 {
-  throw NotImplemented( "" );
+  Position< 3 > p = b.lower_left;
+
+  // Test if all corners are inside ellipsoid
+  if ( !inside( p ) )
+    return false; // first lower left corner not inside ellipsoid
+  p[ 0 ] = b.upper_right[ 0 ];
+  if ( !inside( p ) )
+    return false; // second lower left corner not inside ellipsoid
+  p[ 1 ] = b.upper_right[ 1 ];
+  if ( !inside( p ) )
+    return false; // second lower right corner not inside ellipsoid
+  p[ 0 ] = b.lower_left[ 0 ];
+  if ( !inside( p ) )
+    return false; // first lower right corner not inside ellipsoid
+  p[ 2 ] = b.upper_right[ 2 ];
+  if ( !inside( p ) )
+    return false; // first upper right corner not inside ellipsoid
+  p[ 0 ] = b.upper_right[ 0 ];
+  if ( !inside( p ) )
+    return false; // second upper right corner not inside ellipsoid
+  p[ 1 ] = b.lower_left[ 1 ];
+  if ( !inside( p ) )
+    return false; // second upper left corner not inside ellipsoid
+  p[ 0 ] = b.lower_left[ 0 ];
+  if ( !inside( p ) )
+    return false; // first upper left corner not inside ellipsoid
+
+  return true;
 }
 
 template < int D >
@@ -297,14 +326,27 @@ EllipseMask< D >::outside( const Box< D >& b ) const
   // Currently only checks if the box is outside the bounding box of
   // the ellipse. This could be made more refined.
 
-  // Also, this only works in 2 dimensions.
-
-  if ( ( b.upper_right[ 0 ] < center_[ 0 ] - x_side_ )
-    || ( b.lower_left[ 0 ] > center_[ 0 ] + x_side_ )
-    || ( b.upper_right[ 1 ] < center_[ 1 ] - y_side_ )
-    || ( b.lower_left[ 1 ] > center_[ 1 ] + y_side_ ) )
+  std::vector < double > radii;
+  if ( angle_ == 0.0 )
   {
-    return true;
+	radii.push_back( major_axis_ );
+	radii.push_back( minor_axis_ );
+  }
+  else
+  {
+	// This is a simplification and can be more refined
+    radii.push_back( std::abs( major_axis_));
+	radii.push_back( std::abs( major_axis_));
+  }
+  radii.push_back( intermediate_axis_ );
+
+  for ( int i = 0; i < D; ++i )
+  {
+    if ( ( b.upper_right[ i ] < center_[ i ] - radii[ i ] )
+	  || ( b.lower_left[ i ] > center_[ i ] + radii[ i ] ) )
+    {
+	  return true;
+    }
   }
   return false;
 }
@@ -313,13 +355,27 @@ template < int D >
 Box< D >
 EllipseMask< D >::get_bbox() const
 {
-  // EllipseMask currently only works in 2 dimensions.
   Box< D > bb( center_, center_ );
 
-  bb.lower_left[ 0 ] -= x_side_;
-  bb.upper_right[ 0 ] += x_side_;
-  bb.lower_left[ 1 ] -= y_side_;
-  bb.upper_right[ 1 ] += y_side_;
+  std::vector < double > radii;
+  if ( angle_ == 0.0 )
+  {
+	radii.push_back( major_axis_ );
+    radii.push_back( minor_axis_ );
+  }
+  else
+  {
+	// This is a simplification and can be more refined
+    radii.push_back( std::abs( major_axis_ ));
+    radii.push_back( std::abs( major_axis_));;
+  }
+  radii.push_back( intermediate_axis_ );
+
+  for ( int i = 0; i < D; ++i )
+  {
+  	bb.lower_left[ i ] -= radii[ i ];
+  	bb.upper_right[ i ] += radii[ i ];
+  }
   return bb;
 }
 
@@ -337,9 +393,11 @@ EllipseMask< D >::get_dict() const
   DictionaryDatum d( new Dictionary );
   DictionaryDatum maskd( new Dictionary );
   def< DictionaryDatum >( d, get_name(), maskd );
-  def< double >( maskd, "x_side", x_side_ );
-  def< double >( maskd, "y_side", y_side_ );
+  def< double >( maskd, names::major_axis, major_axis_ );
+  def< double >( maskd, names::minor_axis, minor_axis_ );
+  def< double >( maskd, names::intermediate_axis, intermediate_axis_ );
   def< std::vector< double > >( maskd, names::anchor, center_ );
+  def< double >( maskd, names::angle, angle_);
   return d;
 }
 

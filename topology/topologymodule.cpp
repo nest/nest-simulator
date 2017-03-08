@@ -369,7 +369,7 @@ TopologyModule::init( SLIInterpreter* i )
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
 
   i->createcommand(
-    "SelectNodesByMask_L_M_d_d", &selectnodesbymask_L_M_d_dfunction );
+    "SelectNodesByMask_L_a_M", &selectnodesbymask_L_a_Mfunction );
 
   kernel().model_manager.register_node_model< FreeLayer< 2 > >(
     "topology_layer_free" );
@@ -1245,32 +1245,48 @@ TopologyModule::Cvdict_MFunction::execute( SLIInterpreter* i ) const
 
 
 void
-TopologyModule::SelectNodesByMask_L_M_d_dFunction::execute(
+TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
   SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 4 );
+  i->assert_stack_load( 3 );
 
-  const index& layer_gid = getValue< long >( i->OStack.pick( 0 ) );
-  MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 1 ) );
-  double xpos = getValue< double >( i->OStack.pick( 2 ) );
-  double ypos = getValue< double >( i->OStack.pick( 3 ) );
-
-  Layer< 2 >* l =
-    dynamic_cast< Layer< 2 >* >( kernel().node_manager.get_node( layer_gid ) );
+  const index& layer_gid = getValue< long >( i->OStack.pick( 2 ) );
+  std::vector< double > anchor = getValue< std::vector< double> >( i->OStack.pick( 1 ) );
+  MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 0 ) );
 
   std::vector< index > mask_gids;
 
-  MaskedLayer< 2 > ml = MaskedLayer< 2 >( *l, Selector(), mask, true, false );
+  const int dim = anchor.size();
 
-  for ( Ntree< 2, index >::masked_iterator it =
-          ml.begin( Position< 2 >( xpos, ypos ) );
-        it != ml.end();
-        ++it )
+  if ( dim != 2 and dim != 3)
   {
-    mask_gids.push_back( it->second );
+	throw BadProperty( "Center must be 2- or 3-dimensional." );
   }
 
-  i->OStack.pop( 4 );
+  if ( dim == 2 )
+  {
+	Layer< 2 >* l = dynamic_cast< Layer< 2 >* >( kernel().node_manager.get_node( layer_gid ) );
+
+	MaskedLayer< 2 > ml = MaskedLayer< 2 >( *l, Selector(), mask, true, false );
+
+    for ( Ntree< 2, index >::masked_iterator it = ml.begin( Position< 2 >( anchor[0], anchor[1] ) ); it != ml.end(); ++it )
+	{
+	  mask_gids.push_back( it->second );
+	}
+  }
+  else
+  {
+    Layer< 3 >* l = dynamic_cast< Layer< 3 >* >( kernel().node_manager.get_node( layer_gid ) );
+
+	MaskedLayer< 3 > ml = MaskedLayer< 3 >( *l, Selector(), mask, true, false );
+
+    for ( Ntree< 3, index >::masked_iterator it = ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) ); it != ml.end(); ++it )
+	{
+	  mask_gids.push_back( it->second );
+	}
+  }
+
+  i->OStack.pop( 3 );
   i->OStack.push( mask_gids );
   i->EStack.pop();
 }

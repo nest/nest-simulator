@@ -320,20 +320,31 @@ class EllipseMask : public Mask< D >
 public:
   /**
    * @param center Center of ellipse
-   * @param x_side Length between center and x vertex
-   * @param y_side Length between center and y vertex
+   * @param major_axis Length between center and vertex on major axis
+   * @param minor_axis Length between center and vertex on minor axis
+   * @param intermediate_axis Length between center and vertex on z-axis
+   * @param angle Angle between x-axis and major axis of the ellipse
    */
-  EllipseMask( Position< D > center, double x_side, double y_side )
+  EllipseMask( Position< D > center, double major_axis, double minor_axis, double intermediate_axis, double angle)
     : center_( center )
-    , x_side_( x_side )
-    , y_side_( y_side )
+    , major_axis_( major_axis )
+    , minor_axis_( minor_axis )
+	, intermediate_axis_( intermediate_axis )
+	, angle_ ( angle )
   {
+	x_dividend_ = 1.0 / ( major_axis_ * major_axis_ );
+	y_dividend_ = 1.0 / ( minor_axis_ * minor_axis_ );
+	z_dividend_ = 1.0 / ( intermediate_axis_ * intermediate_axis_ );
+
+	cosine_value_ = cos(angle_);
+	sine_value_ = sin(angle_);
   }
 
   /**
    * Creates an EllipseMask from a Dictionary which should contain the keys
-   * "x_side" and "y_side" with double values, and optionally the key "anchor"
-   * (the center position) with an array of doubles.
+   * "major_axis" and "minor_axis" with double values, and optionally the keys
+   * "intermediate_axis", "anchor" (the center position), or "angle" with a
+   * double, an array of doubles and a double, respectively.
    */
   EllipseMask( const DictionaryDatum& );
 
@@ -369,10 +380,19 @@ public:
    */
   static Name get_name();
 
-protected:
+private:
   Position< D > center_;
-  double x_side_;
-  double y_side_;
+  double major_axis_;
+  double minor_axis_;
+  double intermediate_axis_;
+  double angle_;
+
+  double x_dividend_;
+  double y_dividend_;
+  double z_dividend_;
+
+  double cosine_value_;
+  double sine_value_;
 };
 
 /**
@@ -677,35 +697,67 @@ template <>
 inline Name
 EllipseMask< 2 >::get_name()
 {
-  return "ellipse";
+  return names::elliptical;
 }
 
 template <>
 inline Name
 EllipseMask< 3 >::get_name()
 {
-  return "ellipsoid";
+  return names::ellipsoidal;
 }
 
 template < int D >
 EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
 {
-  // Currently EllipseMask only works in 2 dimensions.
-  if ( D != 2 )
+  major_axis_ = getValue< double >( d, names::major_axis );
+  minor_axis_ = getValue< double >( d, names::minor_axis );
+  if ( major_axis_ <= 0 or minor_axis_ <= 0 )
   {
-    throw NotImplemented( "" );
-  }
-  x_side_ = getValue< double >( d, "x_side" );
-  y_side_ = getValue< double >( d, "y_side" );
-  if ( x_side_ <= 0 or y_side_ <= 0 )
     throw BadProperty(
       "topology::EllipseMask<D>: "
-      "side > 0 required." );
+      "All axis > 0 required." );
+  }
+  if ( major_axis_ < minor_axis_ )
+  {
+	throw BadProperty( "topology::EllipseMask<D>: "
+			"major_axis greater than minor_axis required." );
+  }
+
+  x_dividend_ = 1.0 / ( major_axis_ * major_axis_ );
+  y_dividend_ = 1.0 / ( minor_axis_ * minor_axis_ );
+
+  if ( d->known( names::intermediate_axis ))
+  {
+	intermediate_axis_ = getValue< double >( d, names::intermediate_axis );
+
+	if ( intermediate_axis_ < 0 )
+	    throw BadProperty(
+	      "topology::EllipseMask<D>: "
+	      "All axis > 0 required." );
+
+	z_dividend_ = 1.0 / ( intermediate_axis_ * intermediate_axis_ );
+  }
+  else
+  {
+	z_dividend_ = 0.0;
+  }
 
   if ( d->known( names::anchor ) )
   {
     center_ = getValue< std::vector< double > >( d, names::anchor );
   }
+
+  if ( d->known( names::angle ) )
+  {
+	angle_ = getValue< double >( d, names::angle );
+  }
+  else
+  {
+	angle_ = 0.0;
+  }
+  cosine_value_ = cos(angle_);
+  sine_value_ = sin(angle_);
 }
 
 } // namespace nest

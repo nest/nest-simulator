@@ -1,5 +1,8 @@
 #!/usr/bin/tclsh
 # This profile includes all the rules for checking NEST
+#
+# Do not apply T011 (curly braces), since that can get confused
+# by conditional code inclusion.
 
 set rules {
   F001
@@ -16,7 +19,6 @@ set rules {
   T006
   T007
   T010
-  T011
   T012
   T013
   T017

@@ -559,9 +559,10 @@ bool Scanner::operator()( Token& t )
     // get() is not picky.  --- HEP 2001-08-09
     //     in->get(c);
     c = in->get();
-
-    if ( col++ == 0 )
-      ++line;
+if ( col++ == 0 )
+{
+  ++line;
+}
 
     if ( c == '\0' || in->bad() )
       c = endof;
@@ -570,9 +571,10 @@ bool Scanner::operator()( Token& t )
       c = endof;
     else
       assert( in->good() );
-
-    if ( c != endof )
-      context += c;
+if ( c != endof )
+{
+  context += c;
+}
 
     if ( c == endoln )
     {

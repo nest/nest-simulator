@@ -209,10 +209,12 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
             it != synapse_params_.end();
             ++it )
       {
-        if ( it->first == names::receptor_type
+if ( it->first == names::receptor_type
           || it->first == names::music_channel
           || it->first == names::synapse_label )
-          ( *param_dicts_[ t ] )[ it->first ] = Token( new IntegerDatum( 0 ) );
+{
+  ( *param_dicts_[ t ] )[ it->first ] = Token( new IntegerDatum( 0 ) );
+}
         else
           ( *param_dicts_[ t ] )[ it->first ] = Token( new DoubleDatum( 0.0 ) );
       }
@@ -415,10 +417,12 @@ nest::ConnBuilder::connect()
 
   if ( use_structural_plasticity_() )
   {
-    if ( make_symmetric_ )
-      throw NotImplemented(
+if ( make_symmetric_ )
+{
+  throw NotImplemented(
         "Symmetric connections are not supported in combination with "
         "structural plasticity." );
+}
     sp_connect_();
   }
   else
@@ -427,10 +431,14 @@ nest::ConnBuilder::connect()
     if ( make_symmetric_ )
     {
       // call reset on all parameters
-      if ( weight_ )
-        weight_->reset();
-      if ( delay_ )
-        delay_->reset();
+if ( weight_ )
+{
+  weight_->reset();
+}
+if ( delay_ )
+{
+  delay_->reset();
+}
       for ( ConnParameterMap::const_iterator it = synapse_params_.begin();
             it != synapse_params_.end();
             ++it )
@@ -1299,9 +1307,10 @@ nest::FixedInDegreeBuilder::inner_connect_( const int tid,
       sgid = ( *sources_ )[ s_id ];
     } while ( ( not autapses_ and sgid == tgid )
       || ( not multapses_ and ch_ids.find( s_id ) != ch_ids.end() ) );
-
-    if ( not multapses_ )
-      ch_ids.insert( s_id );
+if ( not multapses_ )
+{
+  ch_ids.insert( s_id );
+}
 
     single_connect_( sgid, *target, target_thread, rng );
   }
@@ -1379,9 +1388,10 @@ nest::FixedOutDegreeBuilder::connect_()
         tgid = ( *targets_ )[ t_id ];
       } while ( ( not autapses_ and tgid == *sgid )
         or ( not multapses_ and ch_ids.find( t_id ) != ch_ids.end() ) );
-
-      if ( not multapses_ )
-        ch_ids.insert( t_id );
+if ( not multapses_ )
+{
+  ch_ids.insert( t_id );
+}
 
       tgt_ids_.push_back( tgid );
     }
@@ -1463,10 +1473,12 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder(
   // TODO: Implement option for multapses_ = False, where already existing
   // connections are stored in
   // a bitmap
-  if ( not multapses_ )
-    throw NotImplemented(
+if ( not multapses_ )
+{
+  throw NotImplemented(
       "Connect doesn't support the suppression of multapses in the "
       "FixedTotalNumber connector." );
+}
 }
 
 void
@@ -1687,8 +1699,10 @@ nest::BernoulliBuilder::inner_connect_( const int tid,
   const thread target_thread = target->get_thread();
 
   // check whether the target is on our thread
-  if ( tid != target_thread )
-    return;
+if ( tid != target_thread )
+{
+  return;
+}
 
   // It is not possible to create multapses with this type of BernoulliBuilder,
   // hence leave out corresponding checks.
@@ -1697,8 +1711,10 @@ nest::BernoulliBuilder::inner_connect_( const int tid,
         sgid != sources_->end();
         ++sgid )
   {
-    if ( not autapses_ and *sgid == tgid )
-      continue;
+if ( not autapses_ and *sgid == tgid )
+{
+  continue;
+}
 
     if ( rng->drand() >= p_ )
       continue;
@@ -1795,9 +1811,10 @@ nest::SPBuilder::connect_( GIDCollection sources, GIDCollection targets )
             ++tgid, ++sgid )
       {
         assert( sgid != sources.end() );
-
-        if ( *sgid == *tgid and not autapses_ )
-          continue;
+if ( *sgid == *tgid and not autapses_ )
+{
+  continue;
+}
 
         if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
         {

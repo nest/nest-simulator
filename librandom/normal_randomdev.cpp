@@ -87,9 +87,10 @@ double librandom::NormalRandomDev::operator()( RngPtr r ) const
     V2 = 2 * r->drand() - 1;
     S = V1 * V1 + V2 * V2;
   } while ( S >= 1 );
-
-  if ( S != 0 )
-    S = V1 * std::sqrt( -2 * std::log( S ) / S );
+if ( S != 0 )
+{
+  S = V1 * std::sqrt( -2 * std::log( S ) / S );
+}
 
   return mu_ + sigma_ * S;
 }

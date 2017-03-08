@@ -290,9 +290,10 @@ nest::aeif_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& )
   updateValue< double >( d, names::I_syn_ex, y_[ I_EXC ] );
   updateValue< double >( d, names::I_syn_in, y_[ I_INH ] );
   updateValue< double >( d, names::w, y_[ W ] );
-
-  if ( y_[ I_EXC ] < 0 || y_[ I_INH ] < 0 )
-    throw BadProperty( "Conductances must not be negative." );
+if ( y_[ I_EXC ] < 0 || y_[ I_INH ] < 0 )
+{
+  throw BadProperty( "Conductances must not be negative." );
+}
 }
 
 nest::aeif_psc_exp::Buffers_::Buffers_( aeif_psc_exp& n )
@@ -455,9 +456,10 @@ nest::aeif_psc_exp::update( const Time& origin, const long from, const long to )
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y_ );              // neuronal state
-
-      if ( status != GSL_SUCCESS )
-        throw GSLSolverFailure( get_name(), status );
+if ( status != GSL_SUCCESS )
+{
+  throw GSLSolverFailure( get_name(), status );
+}
 
       // check for unreasonable values; we allow V_M to explode
       if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6

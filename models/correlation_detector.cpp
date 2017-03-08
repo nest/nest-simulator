@@ -152,9 +152,10 @@ nest::correlation_detector::State_::set( const DictionaryDatum& d,
     else
       throw BadProperty( "/n_events can only be set to [0 0]." );
   }
-
-  if ( reset_required )
-    reset( p );
+if ( reset_required )
+{
+  reset( p );
+}
 }
 
 void

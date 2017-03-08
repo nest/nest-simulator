@@ -222,18 +222,22 @@ nest::iaf_cond_alpha::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_in, tau_synI );
 
   updateValue< double >( d, names::I_e, I_e );
-
-  if ( V_reset >= V_th )
-    throw BadProperty( "Reset potential must be smaller than threshold." );
-
-  if ( C_m <= 0 )
-    throw BadProperty( "Capacitance must be strictly positive." );
-
-  if ( t_ref < 0 )
-    throw BadProperty( "Refractory time cannot be negative." );
-
-  if ( tau_synE <= 0 || tau_synI <= 0 )
-    throw BadProperty( "All time constants must be strictly positive." );
+if ( V_reset >= V_th )
+{
+  throw BadProperty( "Reset potential must be smaller than threshold." );
+}
+if ( C_m <= 0 )
+{
+  throw BadProperty( "Capacitance must be strictly positive." );
+}
+if ( t_ref < 0 )
+{
+  throw BadProperty( "Refractory time cannot be negative." );
+}
+if ( tau_synE <= 0 || tau_synI <= 0 )
+{
+  throw BadProperty( "All time constants must be strictly positive." );
+}
 }
 
 void
@@ -386,10 +390,10 @@ nest::iaf_cond_alpha::update( Time const& origin,
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y );               // neuronal state
-
-
-      if ( status != GSL_SUCCESS )
-        throw GSLSolverFailure( get_name(), status );
+if ( status != GSL_SUCCESS )
+{
+  throw GSLSolverFailure( get_name(), status );
+}
     }
 
     // refractoriness and spike generation

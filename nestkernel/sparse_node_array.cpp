@@ -77,9 +77,11 @@ nest::SparseNodeArray::add_local_node( Node& node )
   max_gid_ = gid;
 
   // implies nodes_.size() > 1
-  if ( local_max_gid_ > local_min_gid_ )
-    gid_idx_scale_ = static_cast< double >( nodes_.size() - 2 ) // -1 for root
+if ( local_max_gid_ > local_min_gid_ )
+{
+  gid_idx_scale_ = static_cast< double >( nodes_.size() - 2 ) // -1 for root
       / ( local_max_gid_ - local_min_gid_ );
+}
   assert( gid_idx_scale_ > 0. );
   assert( gid_idx_scale_ <= 1. );
 }
@@ -102,9 +104,10 @@ nest::SparseNodeArray::get_node_by_gid( index gid ) const
 
   // local_max_gid_ cannot be larger than max_gid_
   assert( local_max_gid_ <= max_gid_ );
-
-  if ( gid > max_gid_ )
-    throw UnknownNode();
+if ( gid > max_gid_ )
+{
+  throw UnknownNode();
+}
 
   // handle root node requests first
   if ( gid == 0 )

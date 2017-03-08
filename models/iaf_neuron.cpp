@@ -126,15 +126,18 @@ nest::iaf_neuron::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_m, Tau_ );
   updateValue< double >( d, names::tau_syn, tau_syn_ );
   updateValue< double >( d, names::t_ref, TauR_ );
-
-  if ( V_reset_ >= Theta_ )
-    throw BadProperty( "Reset potential must be smaller than threshold." );
-
-  if ( C_ <= 0 )
-    throw BadProperty( "Capacitance must be strictly positive." );
-
-  if ( Tau_ <= 0 || tau_syn_ <= 0 || TauR_ <= 0 )
-    throw BadProperty( "All time constants must be strictly positive." );
+if ( V_reset_ >= Theta_ )
+{
+  throw BadProperty( "Reset potential must be smaller than threshold." );
+}
+if ( C_ <= 0 )
+{
+  throw BadProperty( "Capacitance must be strictly positive." );
+}
+if ( Tau_ <= 0 || tau_syn_ <= 0 || TauR_ <= 0 )
+{
+  throw BadProperty( "All time constants must be strictly positive." );
+}
 
   return delta_EL;
 }

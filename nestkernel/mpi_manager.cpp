@@ -157,10 +157,12 @@ nest::MPIManager::set_num_rec_processes( int nrp, bool called_by_reset )
   if ( kernel().node_manager.size() > 1 and not called_by_reset )
     throw KernelException(
       "Global spike detection mode must be enabled before nodes are created." );
-  if ( nrp >= num_processes_ )
-    throw KernelException(
+if ( nrp >= num_processes_ )
+{
+  throw KernelException(
       "Number of processes used for recording must be smaller than total "
       "number of processes." );
+}
   n_rec_procs_ = nrp;
   n_sim_procs_ = num_processes_ - n_rec_procs_;
 
@@ -682,8 +684,10 @@ nest::MPIManager::test_links()
 {
   for ( int i = 0; i < get_num_processes(); ++i )
     for ( int j = 0; j < get_num_processes(); ++j )
-      if ( i != j )
-        test_link( i, j );
+if ( i != j )
+{
+  test_link( i, j );
+}
   // std::cerr << "all links are working" << std::endl;
 }
 
@@ -745,8 +749,10 @@ nest::MPIManager::time_communicate( int num_bytes, int samples )
   if ( get_num_processes() == 1 )
     return 0.0;
   unsigned int packet_length = num_bytes / sizeof( unsigned int );
-  if ( packet_length < 1 )
-    packet_length = 1;
+if ( packet_length < 1 )
+{
+  packet_length = 1;
+}
   std::vector< unsigned int > test_send_buffer( packet_length );
   std::vector< unsigned int > test_recv_buffer(
     packet_length * get_num_processes() );
@@ -773,8 +779,10 @@ nest::MPIManager::time_communicatev( int num_bytes, int samples )
   if ( get_num_processes() == 1 )
     return 0.0;
   unsigned int packet_length = num_bytes / sizeof( unsigned int );
-  if ( packet_length < 1 )
-    packet_length = 1;
+if ( packet_length < 1 )
+{
+  packet_length = 1;
+}
   std::vector< unsigned int > test_send_buffer( packet_length );
   std::vector< unsigned int > test_recv_buffer(
     packet_length * get_num_processes() );
@@ -803,8 +811,10 @@ nest::MPIManager::time_communicate_offgrid( int num_bytes, int samples )
   if ( get_num_processes() == 1 )
     return 0.0;
   unsigned int packet_length = num_bytes / sizeof( OffGridSpike );
-  if ( packet_length < 1 )
-    packet_length = 1;
+if ( packet_length < 1 )
+{
+  packet_length = 1;
+}
   std::vector< OffGridSpike > test_send_buffer( packet_length );
   std::vector< OffGridSpike > test_recv_buffer(
     packet_length * get_num_processes() );
@@ -834,8 +844,10 @@ nest::MPIManager::time_communicate_alltoall( int num_bytes, int samples )
     / sizeof( unsigned int ); // this size should be sent to each process
   unsigned int total_packet_length = packet_length
     * get_num_processes(); // total size of send and receive buffers
-  if ( total_packet_length < 1 )
-    total_packet_length = 1;
+if ( total_packet_length < 1 )
+{
+  total_packet_length = 1;
+}
   std::vector< unsigned int > test_send_buffer( total_packet_length );
   std::vector< unsigned int > test_recv_buffer( total_packet_length );
   // start time measurement here
@@ -866,8 +878,10 @@ nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
     / sizeof( unsigned int ); // this size should be sent to each process
   unsigned int total_packet_length = packet_length
     * get_num_processes(); // total size of send and receive buffers
-  if ( total_packet_length < 1 )
-    total_packet_length = 1;
+if ( total_packet_length < 1 )
+{
+  total_packet_length = 1;
+}
   std::vector< unsigned int > test_send_buffer( total_packet_length );
   std::vector< unsigned int > test_recv_buffer( total_packet_length );
   std::vector< int > n_nodes( get_num_processes(), packet_length );

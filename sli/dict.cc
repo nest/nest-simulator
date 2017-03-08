@@ -61,8 +61,10 @@ Dictionary::clear()
     Token* tok = &i->second;
     Datum* datum = tok->datum();
     DictionaryDatum* d = dynamic_cast< DictionaryDatum* >( datum );
-    if ( not d )
-      continue;
+if ( not d )
+{
+  continue;
+}
 
     Dictionary* dt = d->get();
     d->unlock();

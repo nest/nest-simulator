@@ -139,18 +139,21 @@ nest::mat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
     omega_ -= E_L_;
   else
     omega_ -= delta_EL;
-
-  if ( C_ <= 0 )
-    throw BadProperty( "Capacitance must be strictly positive." );
-
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0
+if ( C_ <= 0 )
+{
+  throw BadProperty( "Capacitance must be strictly positive." );
+}
+if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0
     || tau_2_ <= 0 )
-    throw BadProperty( "All time constants must be strictly positive." );
-
-  if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
-    throw BadProperty(
+{
+  throw BadProperty( "All time constants must be strictly positive." );
+}
+if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
+{
+  throw BadProperty(
       "Membrane and synapse time constant(s) must differ."
       "See note in documentation." );
+}
 
   return delta_EL;
 }

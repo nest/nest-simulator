@@ -64,8 +64,10 @@ parrot_neuron_ps::update( Time const& origin, long const from, long const to )
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
-  if ( from == 0 )
-    B_.events_.prepare_delivery();
+if ( from == 0 )
+{
+  B_.events_.prepare_delivery();
+}
 
   for ( long lag = from; lag < to; ++lag )
   {

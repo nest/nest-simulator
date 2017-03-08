@@ -87,8 +87,10 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
   for ( size_t n = 0; n < n_spikes; ++n )
   {
     times_ms->push_back( spike_stamps_[ n ].get_ms() );
-    if ( precise_times_ )
-      ( *times_ms )[ n ] -= spike_offsets_[ n ];
+if ( precise_times_ )
+{
+  ( *times_ms )[ n ] -= spike_offsets_[ n ];
+}
   }
   ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
   ( *d )[ "spike_weights" ] =
@@ -110,8 +112,10 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_(
     throw BadProperty( "spike time cannot be set to 0." );
 
   Time t_spike;
-  if ( precise_times_ )
-    t_spike = Time::ms_stamp( t );
+if ( precise_times_ )
+{
+  t_spike = Time::ms_stamp( t );
+}
   else
   {
     // In this case, we need to force the spike time to the grid
@@ -136,9 +140,10 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_(
     }
 
     assert( t_spike.is_grid_time() );
-
-    if ( origin + t_spike == now && shift_now_spikes_ )
-      t_spike.advance();
+if ( origin + t_spike == now && shift_now_spikes_ )
+{
+  t_spike.advance();
+}
   }
   // t_spike is now the correct time stamp given the chosen options
 
@@ -181,7 +186,7 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
       "allow_offgrid_spikes or shift_now_spikes is set to true." );
 
   const bool updated_spike_times = d->known( names::spike_times );
-  if ( flags_changed && !( updated_spike_times || spike_stamps_.empty() ) )
+  if ( flags_changed && not ( updated_spike_times || spike_stamps_.empty() ) )
     throw BadProperty(
       "Options can only be set together with spike times or if no "
       "spike times have been set." );
@@ -194,8 +199,10 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
     spike_stamps_.clear();
     spike_stamps_.reserve( n_spikes );
     spike_offsets_.clear();
-    if ( precise_times_ )
-      spike_offsets_.reserve( n_spikes );
+if ( precise_times_ )
+{
+  spike_offsets_.reserve( n_spikes );
+}
 
     // Check spike times for ordering and grid compatibility and insert them
     if ( not d_times.empty() )
@@ -208,9 +215,11 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
       for ( std::vector< double >::const_iterator next = prev + 1;
             next != d_times.end();
             ++next, ++prev )
-        if ( *prev > *next )
-          throw BadProperty(
+if ( *prev > *next )
+{
+  throw BadProperty(
             "Spike times must be sorted in non-descending order." );
+}
         else
           assert_valid_spike_time_and_insert_( *next, origin, now );
     }
@@ -346,9 +355,10 @@ nest::spike_generator::update( Time const& sliceT0,
       ++S_.position_;
       continue;
     }
-
-    if ( tnext_stamp > tstop )
-      break;
+if ( tnext_stamp > tstop )
+{
+  break;
+}
 
     if ( device_.is_active( tnext_stamp ) )
     {

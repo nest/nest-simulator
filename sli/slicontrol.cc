@@ -168,7 +168,7 @@ ExitFunction::execute( SLIInterpreter* i ) const
 
   size_t n = 1;
   size_t l = i->EStack.load();
-  while ( ( l > n ) && !( i->EStack.pick( n++ ) == mark ) )
+  while ( ( l > n ) && not ( i->EStack.pick( n++ ) == mark ) )
     ;
   if ( n >= l )
   {
@@ -205,8 +205,10 @@ IfFunction::execute( SLIInterpreter* i ) const
   {
     i->EStack.pop();
     test = dynamic_cast< BoolDatum* >( i->OStack.pick( 1 ).datum() );
-    if ( not test )
-      throw TypeMismatch( "booltype", "something else" );
+if ( not test )
+{
+  throw TypeMismatch( "booltype", "something else" );
+}
 
     if ( test->get() )
     {
@@ -255,8 +257,10 @@ IfelseFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 
   test = dynamic_cast< BoolDatum* >( i->OStack.pick( 2 ).datum() );
-  if ( not test )
-    throw TypeMismatch( "booltype", "something else" );
+if ( not test )
+{
+  throw TypeMismatch( "booltype", "something else" );
+}
 
   if ( test->get() )
   {
@@ -315,8 +319,10 @@ RepeatFunction::execute( SLIInterpreter* i ) const
     {
       IntegerDatum* id =
         dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-      if ( id == 0 )
-        throw ArgumentType( 1 );
+if ( id == 0 )
+{
+  throw ArgumentType( 1 );
+}
 
       i->EStack.push_by_ref( i->baselookup( i->mark_name ) );
       i->EStack.push_move( i->OStack.pick( 1 ) );
@@ -399,7 +405,7 @@ StopFunction::execute( SLIInterpreter* i ) const
   bool found = false;
   size_t n = 1;
 
-  while ( ( l > n ) && !( found ) )
+  while ( ( l > n ) && not ( found ) )
     found = i->EStack.pick( n++ ).contains( istopped );
 
   if ( i->catch_errors() && not found )
@@ -427,9 +433,10 @@ StopFunction::execute( SLIInterpreter* i ) const
         return;
     }
   }
-
-  if ( found )
-    i->OStack.push( true );
+if ( found )
+{
+  i->OStack.push( true );
+}
   else
   {
     i->message( 30, "stop", "No stopped context was found! \n" );
@@ -453,7 +460,7 @@ CloseinputFunction::execute( SLIInterpreter* i ) const
   bool found = false;
   size_t n = 1;
 
-  while ( ( l > n ) && !( found ) )
+  while ( ( l > n ) && not ( found ) )
     found = i->EStack.pick( n++ )->isoftype( SLIInterpreter::XIstreamtype );
 
 
@@ -626,8 +633,10 @@ DefFunction::execute( SLIInterpreter* i ) const
 
   LiteralDatum* nd =
     dynamic_cast< LiteralDatum* >( i->OStack.pick( 1 ).datum() );
-  if ( not nd )
-    throw ArgumentType( 1 );
+if ( not nd )
+{
+  throw ArgumentType( 1 );
+}
 
   // if(nd->writeable())
   // {
@@ -675,8 +684,10 @@ SetFunction::execute( SLIInterpreter* i ) const
     throw StackUnderflow( 2, i->OStack.load() );
 
   LiteralDatum* nd = dynamic_cast< LiteralDatum* >( i->OStack.top().datum() );
-  if ( not nd )
-    throw ArgumentType( 0 );
+if ( not nd )
+{
+  throw ArgumentType( 0 );
+}
 
   // if(nd->writeable())
   //   {
@@ -1311,9 +1322,10 @@ SwitchFunction::execute( SLIInterpreter* i ) const
 
   unsigned long depth = i->OStack.load();
   unsigned long pos = 0;
-
-  if ( depth == 0 )
-    throw TypeMismatch( "At least 1 argument.", "Nothing." );
+if ( depth == 0 )
+{
+  throw TypeMismatch( "At least 1 argument.", "Nothing." );
+}
 
   bool found = ( i->OStack.pick( pos ) == mark_token );
 
@@ -1322,9 +1334,10 @@ SwitchFunction::execute( SLIInterpreter* i ) const
     i->EStack.push_move( i->OStack.pick( pos ) );
     found = ( i->OStack.pick( ++pos ) == mark_token );
   }
-
-  if ( found )
-    i->OStack.pop( pos + 1 );
+if ( found )
+{
+  i->OStack.pop( pos + 1 );
+}
   else
     i->raiseerror( myname, Name( "UnmatchedMark" ) );
 }
@@ -1349,9 +1362,10 @@ SwitchdefaultFunction::execute( SLIInterpreter* i ) const
 
   unsigned long depth = i->OStack.load();
   unsigned long pos = 0;
-
-  if ( depth == 0 )
-    throw TypeMismatch( "At least 1 argument.", "Nothing." );
+if ( depth == 0 )
+{
+  throw TypeMismatch( "At least 1 argument.", "Nothing." );
+}
 
   if ( depth > 1 && i->OStack.pick( 1 ) != mark_token // default action
     && i->OStack.pick( 0 ) != mark_token )            // is not the only one
@@ -1365,9 +1379,10 @@ SwitchdefaultFunction::execute( SLIInterpreter* i ) const
     i->EStack.push_move( i->OStack.pick( pos ) );
     found = ( i->OStack.pick( ++pos ) == mark_token );
   }
-
-  if ( found )
-    i->OStack.pop( pos + 1 );
+if ( found )
+{
+  i->OStack.pop( pos + 1 );
+}
   else
     i->raiseerror( myname, Name( "UnmatchedMark" ) );
 }
@@ -1626,9 +1641,10 @@ Sleep_iFunction::execute( SLIInterpreter* i ) const
   const long sec = static_cast< long >( i->OStack.pick( 0 ) );
   const long usec = 0;
   struct timeval tv = { sec, usec };
-
-  if ( sec > 0 )
-    select( 0, 0, 0, 0, &tv );
+if ( sec > 0 )
+{
+  select( 0, 0, 0, 0, &tv );
+}
 
   i->OStack.pop();
   i->EStack.pop();
@@ -1652,9 +1668,10 @@ Sleep_dFunction::execute( SLIInterpreter* i ) const
     static_cast< double >( i->OStack.pick( 0 ) ) * 1000000. );
 
   struct timeval tv = { sec, usec };
-
-  if ( usec > 0 )
-    select( 0, 0, 0, 0, &tv );
+if ( usec > 0 )
+{
+  select( 0, 0, 0, 0, &tv );
+}
 
   i->OStack.pop();
   i->EStack.pop();
@@ -1714,9 +1731,10 @@ Token_isFunction::execute( SLIInterpreter* i ) const
   i->EStack.pop();
 
   IstreamDatum* sd = dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
-
-  if ( not sd )
-    throw TypeMismatch( "istream", "something else" );
+if ( not sd )
+{
+  throw TypeMismatch( "istream", "something else" );
+}
 
   Token t;
   i->parse->readToken( **sd, t );

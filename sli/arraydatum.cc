@@ -117,8 +117,10 @@ AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::list(
 
   while ( i != this->end() )
   {
-    if ( lc != line )
-      ( *i )->list( out, prefix, -1 );
+if ( lc != line )
+{
+  ( *i )->list( out, prefix, -1 );
+}
     else
       ( *i )->list( out, prefix, 0 );
     out << std::endl;

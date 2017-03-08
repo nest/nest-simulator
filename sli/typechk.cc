@@ -174,8 +174,10 @@ TypeTrie::getalternative( TypeTrie::TypeNode* pos, const Name& type )
 
   while ( type != pos->type )
   {
-    if ( pos->alt == NULL )
-      pos->alt = new TypeNode( type );
+if ( pos->alt == NULL )
+{
+  pos->alt = new TypeNode( type );
+}
 
     if ( pos->type == sli::any )
     {
@@ -242,9 +244,10 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
   {
 
     pos = getalternative( pos, a[ level ] );
-
-    if ( pos->next == NULL )
-      pos->next = new TypeNode( empty );
+if ( pos->next == NULL )
+{
+  pos->next = new TypeNode( empty );
+}
     pos = pos->next;
   }
 
@@ -274,8 +277,10 @@ void
 TypeTrie::toTokenArray( TokenArray& a ) const
 {
   a.clear();
-  if ( root != NULL )
-    root->toTokenArray( a );
+if ( root != NULL )
+{
+  root->toTokenArray( a );
+}
 }
 
 void
@@ -283,7 +288,8 @@ TypeTrie::info( std::ostream& out ) const
 {
   std::vector< TypeNode const* > tl;
   tl.reserve( 5 );
-
-  if ( root != NULL )
-    root->info( out, tl );
+if ( root != NULL )
+{
+  root->info( out, tl );
+}
 }

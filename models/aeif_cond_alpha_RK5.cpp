@@ -262,9 +262,10 @@ nest::aeif_cond_alpha_RK5::State_::set( const DictionaryDatum& d,
   updateValue< double >( d, names::g_in, y_[ G_INH ] );
   updateValue< double >( d, names::dg_in, y_[ DG_INH ] );
   updateValue< double >( d, names::w, y_[ W ] );
-
-  if ( y_[ G_EXC ] < 0 || y_[ G_INH ] < 0 )
-    throw BadProperty( "Conductances must not be negative." );
+if ( y_[ G_EXC ] < 0 || y_[ G_INH ] < 0 )
+{
+  throw BadProperty( "Conductances must not be negative." );
+}
 }
 
 nest::aeif_cond_alpha_RK5::Buffers_::Buffers_( aeif_cond_alpha_RK5& n )

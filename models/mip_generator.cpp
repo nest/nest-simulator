@@ -73,12 +73,14 @@ nest::mip_generator::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::rate, rate_ );
   updateValue< double >( d, names::p_copy, p_copy_ );
-
-  if ( rate_ < 0 )
-    throw BadProperty( "Rate must be non-negative." );
-
-  if ( p_copy_ < 0 || p_copy_ > 1 )
-    throw BadProperty( "Copy probability must be in [0, 1]." );
+if ( rate_ < 0 )
+{
+  throw BadProperty( "Rate must be non-negative." );
+}
+if ( p_copy_ < 0 || p_copy_ > 1 )
+{
+  throw BadProperty( "Copy probability must be in [0, 1]." );
+}
 
   bool reset_rng =
     updateValue< librandom::RngPtr >( d, names::mother_rng, rng_ );
@@ -86,9 +88,10 @@ nest::mip_generator::Parameters_::set( const DictionaryDatum& d )
   // order important to avoid short-circuitung
   reset_rng =
     updateValue< long >( d, names::mother_seed, mother_seed_ ) || reset_rng;
-
-  if ( reset_rng )
-    rng_->seed( mother_seed_ );
+if ( reset_rng )
+{
+  rng_->seed( mother_seed_ );
+}
 }
 
 /* ----------------------------------------------------------------

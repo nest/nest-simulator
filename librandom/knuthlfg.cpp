@@ -96,8 +96,10 @@ librandom::KnuthLFG::ran_start_( long seed )
   {
     x[ j ] = ss; /* bootstrap the buffer */
     ss <<= 1;
-    if ( ss >= MM_ )
-      ss -= MM_ - 2; /* cyclic shift 29 bits */
+if ( ss >= MM_ )
+{
+  ss -= MM_ - 2;
+} /* cyclic shift 29 bits */
   }
   x[ 1 ]++; /* make x[1] (and only x[1]) odd */
   for ( ss = seed & ( MM_ - 1 ), t = TT_ - 1; t; )
@@ -114,8 +116,10 @@ librandom::KnuthLFG::ran_start_( long seed )
       x[ 0 ] = x[ KK_ ]; /* shift the buffer cyclically */
       x[ LL_ ] = mod_diff_( x[ LL_ ], x[ KK_ ] );
     }
-    if ( ss )
-      ss >>= 1;
+if ( ss )
+{
+  ss >>= 1;
+}
     else
       t--;
   }

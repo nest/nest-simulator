@@ -129,15 +129,23 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
     ( *d )[ names::to_accumulator ] = to_accumulator_;
 
   ArrayDatum ad;
-  if ( to_file_ )
-    ad.push_back( LiteralDatum( names::file ) );
-  if ( to_memory_ )
-    ad.push_back( LiteralDatum( names::memory ) );
-  if ( to_screen_ )
-    ad.push_back( LiteralDatum( names::screen ) );
+if ( to_file_ )
+{
+  ad.push_back( LiteralDatum( names::file ) );
+}
+if ( to_memory_ )
+{
+  ad.push_back( LiteralDatum( names::memory ) );
+}
+if ( to_screen_ )
+{
+  ad.push_back( LiteralDatum( names::screen ) );
+}
   if ( rd.mode_ == RecordingDevice::MULTIMETER )
-    if ( to_accumulator_ )
-      ad.push_back( LiteralDatum( names::accumulator ) );
+if ( to_accumulator_ )
+{
+  ad.push_back( LiteralDatum( names::accumulator ) );
+}
   ( *d )[ names::record_to ] = ad;
 
   ( *d )[ names::file_extension ] = file_ext_;
@@ -194,8 +202,10 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   long fbuffer_size;
   if ( updateValue< long >( d, names::fbuffer_size, fbuffer_size ) )
   {
-    if ( fbuffer_size < 0 )
-      throw BadProperty( "/fbuffer_size must be <= 0" );
+if ( fbuffer_size < 0 )
+{
+  throw BadProperty( "/fbuffer_size must be <= 0" );
+}
     else
     {
       fbuffer_size_old_ = fbuffer_size_;
@@ -231,9 +241,12 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
     // check for flags present in array, could be far more elegant ...
     ArrayDatum ad = getValue< ArrayDatum >( d, names::record_to );
     for ( Token* t = ad.begin(); t != ad.end(); ++t )
+    {
       if ( *t == LiteralDatum( names::file )
         || *t == Token( names::file.toString() ) )
+      {
         to_file_ = true;
+      }
       else if ( *t == LiteralDatum( names::memory )
         || *t == Token( names::memory.toString() ) )
         to_memory_ = true;
@@ -255,6 +268,7 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
             "/to_record must be array, allowed entries: /file, /memory, "
             "/screen." );
       }
+    }
   }
 
   if ( ( rec_change || have_record_to ) && to_file_ && to_memory_ )
@@ -381,8 +395,10 @@ nest::RecordingDevice::State_::set( const DictionaryDatum& d )
   long ne = 0;
   if ( updateValue< long >( d, names::n_events, ne ) )
   {
-    if ( ne == 0 )
-      events_ = 0;
+if ( ne == 0 )
+{
+  events_ = 0;
+}
     else
       throw BadProperty( "n_events can only be set to 0." );
   }
@@ -672,8 +688,10 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
     print_rport_( std::cout, rport );
     print_time_( std::cout, stamp, offset );
     print_weight_( std::cout, weight );
-    if ( endrecord )
-      std::cout << '\n';
+if ( endrecord )
+{
+  std::cout << '\n';
+}
   }
 
   if ( P_.to_file_ )

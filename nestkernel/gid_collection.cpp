@@ -54,8 +54,10 @@ void
 GIDCollection::print_me( std::ostream& out ) const
 {
   out << "[[is_range=" << is_range_ << ",size=" << size() << ",";
-  if ( is_range_ )
-    out << "(" << gid_range_.first << ".." << gid_range_.second << ")";
+if ( is_range_ )
+{
+  out << "(" << gid_range_.first << ".." << gid_range_.second << ")";
+}
   else
     out << "(" << gid_array_[ 0 ] << ".." << gid_array_[ gid_array_.size() - 1 ]
         << ")";

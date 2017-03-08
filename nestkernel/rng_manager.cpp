@@ -72,8 +72,10 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     // this array contains pre-seeded RNGs, so they can be used
     // directly, no seeding required
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( ( *d )[ "rngs" ].datum() );
-    if ( ad == 0 )
-      throw BadProperty();
+if ( ad == 0 )
+{
+  throw BadProperty();
+}
 
     // n_threads_ is the new value after a change of the number of
     // threads
@@ -112,8 +114,10 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
   {
     ArrayDatum* ad =
       dynamic_cast< ArrayDatum* >( ( *d )[ "rng_seeds" ].datum() );
-    if ( ad == 0 )
-      throw BadProperty();
+if ( ad == 0 )
+{
+  throw BadProperty();
+}
 
     if ( ad->size()
       != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
@@ -180,8 +184,10 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     {
       ArrayDatum* ad_rngseeds =
         dynamic_cast< ArrayDatum* >( ( *d )[ "rng_seeds" ].datum() );
-      if ( ad_rngseeds == 0 )
-        throw BadProperty();
+if ( ad_rngseeds == 0 )
+{
+  throw BadProperty();
+}
       for ( index i = 0; i < ad_rngseeds->size(); ++i )
       {
         const long vpseed = ( *ad_rngseeds )[ i ]; // SLI has no ulong tokens

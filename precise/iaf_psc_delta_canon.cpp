@@ -133,22 +133,26 @@ nest::iaf_psc_delta_canon::Parameters_::set( const DictionaryDatum& d )
     U_reset_ -= E_L_;
   else
     U_reset_ -= delta_EL;
-
-  if ( U_reset_ >= U_th_ )
-    throw BadProperty( "Reset potential must be smaller than threshold." );
-
-  if ( U_reset_ < U_min_ )
-    throw BadProperty(
+if ( U_reset_ >= U_th_ )
+{
+  throw BadProperty( "Reset potential must be smaller than threshold." );
+}
+if ( U_reset_ < U_min_ )
+{
+  throw BadProperty(
       "Reset potential must be greater equal minimum potential." );
-
-  if ( c_m_ <= 0 )
-    throw BadProperty( "Capacitance must be strictly positive." );
+}
+if ( c_m_ <= 0 )
+{
+  throw BadProperty( "Capacitance must be strictly positive." );
+}
 
   if ( Time( Time::ms( t_ref_ ) ).get_steps() < 1 )
     throw BadProperty( "Refractory time must be at least one time step." );
-
-  if ( tau_m_ <= 0 )
-    throw BadProperty( "All time constants must be strictly positive." );
+if ( tau_m_ <= 0 )
+{
+  throw BadProperty( "All time constants must be strictly positive." );
+}
 
   return delta_EL;
 }
@@ -258,8 +262,10 @@ iaf_psc_delta_canon::update( Time const& origin,
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
-  if ( from == 0 )
-    B_.events_.prepare_delivery();
+if ( from == 0 )
+{
+  B_.events_.prepare_delivery();
+}
 
   /*
     The psc_delta neuron can fire only

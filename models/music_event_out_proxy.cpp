@@ -144,8 +144,10 @@ nest::music_event_out_proxy::calibrate()
   if ( not S_.published_ )
   {
     MUSIC::Setup* s = kernel().music_manager.get_music_setup();
-    if ( s == 0 )
-      throw MUSICSimulationHasRun( get_name() );
+if ( s == 0 )
+{
+  throw MUSICSimulationHasRun( get_name() );
+}
 
     V_.MP_ = s->publishEventOutput( P_.port_name_ );
 

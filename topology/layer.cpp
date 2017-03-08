@@ -184,8 +184,10 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 std::vector< Node* >::iterator
 AbstractLayer::local_begin( int depth )
 {
-  if ( depth >= depth_ )
-    throw BadProperty( "Selected depth out of range" );
+if ( depth >= depth_ )
+{
+  throw BadProperty( "Selected depth out of range" );
+}
   index min_nodes_per_layer = local_size() / depth_;
   index first_gid_at_depth = gids_[ depth * ( global_size() / depth_ ) ];
   std::vector< Node* >::iterator iter = local_begin();
@@ -200,8 +202,10 @@ AbstractLayer::local_begin( int depth )
 std::vector< Node* >::iterator
 AbstractLayer::local_end( int depth )
 {
-  if ( depth >= depth_ )
-    throw BadProperty( "Selected depth out of range" );
+if ( depth >= depth_ )
+{
+  throw BadProperty( "Selected depth out of range" );
+}
   index min_nodes_per_layer = local_size() / depth_;
   index last_gid_at_depth =
     gids_[ ( depth + 1 ) * ( global_size() / depth_ ) - 1 ];
@@ -218,8 +222,10 @@ AbstractLayer::local_end( int depth )
 std::vector< Node* >::const_iterator
 AbstractLayer::local_begin( int depth ) const
 {
-  if ( depth >= depth_ )
-    throw BadProperty( "Selected depth out of range" );
+if ( depth >= depth_ )
+{
+  throw BadProperty( "Selected depth out of range" );
+}
   index min_nodes_per_layer = local_size() / depth_;
   index first_gid_at_depth = gids_[ depth * ( global_size() / depth_ ) ];
   std::vector< Node* >::const_iterator iter = local_begin();
@@ -234,8 +240,10 @@ AbstractLayer::local_begin( int depth ) const
 std::vector< Node* >::const_iterator
 AbstractLayer::local_end( int depth ) const
 {
-  if ( depth >= depth_ )
-    throw BadProperty( "Selected depth out of range" );
+if ( depth >= depth_ )
+{
+  throw BadProperty( "Selected depth out of range" );
+}
   index min_nodes_per_layer = local_size() / depth_;
   index last_gid_at_depth =
     gids_[ ( depth + 1 ) * ( global_size() / depth_ ) - 1 ];

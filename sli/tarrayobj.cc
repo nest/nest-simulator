@@ -67,8 +67,10 @@ TokenArrayObj::TokenArrayObj( const TokenArrayObj& a )
 
 TokenArrayObj::~TokenArrayObj()
 {
-  if ( p )
-    delete[] p;
+if ( p )
+{
+  delete[] p;
+}
 }
 
 void
@@ -237,8 +239,10 @@ TokenArrayObj::rotate( Token* first, Token* middle, Token* last )
 
       if ( first == middle )
       {
-        if ( i == last )
-          return;
+if ( i == last )
+{
+  return;
+}
         middle = i;
       }
       else if ( i == last )
@@ -258,8 +262,10 @@ TokenArrayObj::erase( Token* first, Token* last )
 
   while ( from < end )
   {
-    if ( to->p )
-      to->p->removeReference(); // deleting NULL pointer is safe in ISO C++
+if ( to->p )
+{
+  to->p->removeReference();
+} // deleting NULL pointer is safe in ISO C++
     to->p = from->p;            // move
     from->p = NULL;             // might be overwritten or not
     ++from;
@@ -269,8 +275,10 @@ TokenArrayObj::erase( Token* first, Token* last )
   while ( last > to ) // if sequence we have to erase is
   {                   // longer than the sequence to the
     --last;           // right of it, we explicitly delete the
-    if ( last->p )
-      last->p->removeReference(); // elements which are still intact
+if ( last->p )
+{
+  last->p->removeReference();
+} // elements which are still intact
     last->p = NULL;               // after the move above.
   }
 
@@ -291,8 +299,10 @@ TokenArrayObj::erase( size_t i, size_t n )
 void
 TokenArrayObj::clear( void )
 {
-  if ( p )
-    delete[] p;
+if ( p )
+{
+  delete[] p;
+}
   p = begin_of_free_storage = end_of_free_storage = NULL;
   alloc_block_size = 1;
 }
@@ -512,8 +522,10 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
 
     while ( from < end )
     {
-      if ( to->p )
-        to->p->removeReference(); // deleting NULL pointer is safe in ISO C++
+if ( to->p )
+{
+  to->p->removeReference();
+} // deleting NULL pointer is safe in ISO C++
       to->p = from->p;            // move
       from->p = NULL;             // might be overwritten or not
       ++from;
@@ -523,8 +535,10 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
     while ( last > to ) // if sequence we have to erase is
     {                   // longer than a plus the sequence to the
       --last;           // right of it, we explicitly delete the
-      if ( last->p )
-        last->p->removeReference(); // elements which are still intact
+if ( last->p )
+{
+  last->p->removeReference();
+} // elements which are still intact
       last->p = NULL;               // after the move above.
     }
   }
@@ -539,8 +553,10 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
 
   while ( from < end )
   {
-    if ( to->p )
-      to->p->removeReference(); // delete target before
+if ( to->p )
+{
+  to->p->removeReference();
+} // delete target before
     to->p = from->p;            // movement, it is typically
     from->p = NULL;             // not the NULL pointer
     ++from;
@@ -591,7 +607,7 @@ bool TokenArrayObj::operator==( const TokenArrayObj& a ) const
 
   Token* i = begin(), * j = a.begin();
   while ( i < end() )
-    if ( !( *i++ == *j++ ) )
+    if ( not ( *i++ == *j++ ) )
       return false;
   return true;
 }

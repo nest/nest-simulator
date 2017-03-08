@@ -65,9 +65,10 @@ nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d )
 {
 
   updateValue< double >( d, names::dead_time, dead_time_ );
-
-  if ( dead_time_ < 0 )
-    throw BadProperty( "The dead time cannot be negative." );
+if ( dead_time_ < 0 )
+{
+  throw BadProperty( "The dead time cannot be negative." );
+}
 
   updateValue< double >( d, names::rate, rate_ );
 

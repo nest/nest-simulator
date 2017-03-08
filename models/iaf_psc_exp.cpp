@@ -133,19 +133,23 @@ nest::iaf_psc_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_ex, tau_ex_ );
   updateValue< double >( d, names::tau_syn_in, tau_in_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
-
-  if ( V_reset_ >= Theta_ )
-    throw BadProperty( "Reset potential must be smaller than threshold." );
-
-  if ( C_ <= 0 )
-    throw BadProperty( "Capacitance must be strictly positive." );
-
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
-    throw BadProperty(
+if ( V_reset_ >= Theta_ )
+{
+  throw BadProperty( "Reset potential must be smaller than threshold." );
+}
+if ( C_ <= 0 )
+{
+  throw BadProperty( "Capacitance must be strictly positive." );
+}
+if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
+{
+  throw BadProperty(
       "Membrane and synapse time constants must be strictly positive." );
-
-  if ( t_ref_ < 0 )
-    throw BadProperty( "Refractory time must not be negative." );
+}
+if ( t_ref_ < 0 )
+{
+  throw BadProperty( "Refractory time must not be negative." );
+}
 
   return delta_EL;
 }

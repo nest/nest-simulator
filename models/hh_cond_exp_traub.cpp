@@ -269,9 +269,10 @@ nest::hh_cond_exp_traub::State_::set( const DictionaryDatum& d,
   updateValue< double >( d, names::Act_m, y_[ HH_M ] );
   updateValue< double >( d, names::Act_h, y_[ HH_H ] );
   updateValue< double >( d, names::Inact_n, y_[ HH_N ] );
-
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
-    throw BadProperty( "All (in)activation variables must be non-negative." );
+if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
+{
+  throw BadProperty( "All (in)activation variables must be non-negative." );
+}
 }
 
 nest::hh_cond_exp_traub::Buffers_::Buffers_( hh_cond_exp_traub& n )
@@ -414,9 +415,10 @@ nest::hh_cond_exp_traub::update( Time const& origin,
         B_.step_,             // ...to t=t+h
         &B_.IntegrationStep_, // integration window (written on!)
         S_.y_ );              // neuron state
-
-      if ( status != GSL_SUCCESS )
-        throw GSLSolverFailure( get_name(), status );
+if ( status != GSL_SUCCESS )
+{
+  throw GSLSolverFailure( get_name(), status );
+}
     }
 
     S_.y_[ State_::G_EXC ] += B_.spike_exc_.get_value( lag );

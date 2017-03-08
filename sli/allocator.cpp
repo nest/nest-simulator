@@ -96,8 +96,10 @@ sli::pool::~pool()
 
 sli::pool& sli::pool::operator=( const sli::pool& p )
 {
-  if ( &p == this )
-    return *this;
+if ( &p == this )
+{
+  return *this;
+}
 
   initial_block_size = p.initial_block_size;
   growth_factor = p.growth_factor;
@@ -141,8 +143,10 @@ void
 sli::pool::reserve_additional( size_t n )
 {
   const size_t capacity = total - instantiations;
-  if ( capacity < n )
-    grow( ( ( n - capacity ) / block_size + 1 ) * block_size );
+if ( capacity < n )
+{
+  grow( ( ( n - capacity ) / block_size + 1 ) * block_size );
+}
 }
 
 
@@ -180,8 +184,10 @@ PoorMansAllocator::destruct()
 void*
 PoorMansAllocator::alloc( size_t obj_size )
 {
-  if ( obj_size > capacity_ )
-    new_chunk();
+if ( obj_size > capacity_ )
+{
+  new_chunk();
+}
   char* ptr = head_;
   head_ += obj_size; // Advance pointer to next free location.
                      // This works, because sizeof(head*) == 1

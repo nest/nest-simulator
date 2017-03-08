@@ -232,8 +232,10 @@ TopologyModule::create_parameter( const Token& t )
   // constant value for this parameter, or a Dictionary containing
   // parameters
   ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
-  if ( pd )
-    return *pd;
+if ( pd )
+{
+  return *pd;
+}
 
   // If t is a DoubleDatum, create a ConstantParameter with this value
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
@@ -309,10 +311,12 @@ create_doughnut( const DictionaryDatum& d )
 
   const double outer = getValue< double >( d, names::outer_radius );
   const double inner = getValue< double >( d, names::inner_radius );
-  if ( inner >= outer )
-    throw BadProperty(
+if ( inner >= outer )
+{
+  throw BadProperty(
       "topology::create_doughnut: "
       "inner_radius < outer_radius required." );
+}
 
   BallMask< 2 > outer_circle( center, outer );
   BallMask< 2 > inner_circle( center, inner );

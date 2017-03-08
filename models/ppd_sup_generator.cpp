@@ -137,8 +137,10 @@ nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d )
 {
 
   updateValue< double >( d, names::dead_time, dead_time_ );
-  if ( dead_time_ < 0 )
-    throw BadProperty( "The dead time cannot be negative." );
+if ( dead_time_ < 0 )
+{
+  throw BadProperty( "The dead time cannot be negative." );
+}
 
   updateValue< double >( d, names::rate, rate_ );
   if ( 1000.0 / rate_ <= dead_time_ )
@@ -147,9 +149,11 @@ nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d )
 
   long n_proc_l = n_proc_;
   updateValue< long >( d, names::n_proc, n_proc_l );
-  if ( n_proc_l < 1 )
-    throw BadProperty(
+if ( n_proc_l < 1 )
+{
+  throw BadProperty(
       "The number of component processes cannot be smaller than one" );
+}
   else
     n_proc_ = static_cast< unsigned long >( n_proc_l );
 

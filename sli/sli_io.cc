@@ -567,8 +567,10 @@ PrintFunction::execute( SLIInterpreter* i ) const
   if ( ( *ostreamdatum )->good() )
   {
     i->OStack.top()->print( **ostreamdatum );
-    if ( SLIsignalflag != 0 )
-      ( *ostreamdatum )->clear();
+if ( SLIsignalflag != 0 )
+{
+  ( *ostreamdatum )->clear();
+}
 
     i->OStack.pop();
     i->EStack.pop();
@@ -614,8 +616,10 @@ PrettyprintFunction::execute( SLIInterpreter* i ) const
   if ( ( *ostreamdatum )->good() )
   {
     i->OStack.top()->pprint( **ostreamdatum );
-    if ( SLIsignalflag != 0 )
-      ( *ostreamdatum )->clear();
+if ( SLIsignalflag != 0 )
+{
+  ( *ostreamdatum )->clear();
+}
     i->OStack.pop();
     i->EStack.pop();
   }
@@ -739,7 +743,7 @@ EatwhiteFunction::execute( SLIInterpreter* i ) const
 
   if ( ( *istreamdatum )->good() )
   {
-    if ( !( *istreamdatum )->eof() )
+    if ( not ( *istreamdatum )->eof() )
       ( **istreamdatum ) >> ws;
     i->EStack.pop();
   }
@@ -1423,11 +1427,11 @@ GetlineFunction::execute( SLIInterpreter* i ) const
       d.gettypename().toString(), t.datum()->gettypename().toString() );
   }
 
-  if ( ( *istreamdatum )->good() && !( *istreamdatum )->eof() )
+  if ( ( *istreamdatum )->good() && not ( *istreamdatum )->eof() )
   {
     string s;
     getline( **istreamdatum, s );
-    if ( !( *istreamdatum )->good() )
+    if ( not ( *istreamdatum )->good() )
     {
       if ( SLIsignalflag == 0 )
       {

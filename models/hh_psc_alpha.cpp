@@ -229,18 +229,22 @@ nest::hh_psc_alpha::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_in, tau_synI );
 
   updateValue< double >( d, names::I_e, I_e );
-
-  if ( C_m <= 0 )
-    throw BadProperty( "Capacitance must be strictly positive." );
-
-  if ( t_ref_ < 0 )
-    throw BadProperty( "Refractory time cannot be negative." );
-
-  if ( tau_synE <= 0 || tau_synI <= 0 )
-    throw BadProperty( "All time constants must be strictly positive." );
-
-  if ( g_K < 0 || g_Na < 0 || g_L < 0 )
-    throw BadProperty( "All conductances must be non-negative." );
+if ( C_m <= 0 )
+{
+  throw BadProperty( "Capacitance must be strictly positive." );
+}
+if ( t_ref_ < 0 )
+{
+  throw BadProperty( "Refractory time cannot be negative." );
+}
+if ( tau_synE <= 0 || tau_synI <= 0 )
+{
+  throw BadProperty( "All time constants must be strictly positive." );
+}
+if ( g_K < 0 || g_Na < 0 || g_L < 0 )
+{
+  throw BadProperty( "All conductances must be non-negative." );
+}
 }
 
 void
@@ -259,9 +263,10 @@ nest::hh_psc_alpha::State_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::Act_m, y_[ HH_M ] );
   updateValue< double >( d, names::Act_h, y_[ HH_H ] );
   updateValue< double >( d, names::Inact_n, y_[ HH_N ] );
-
-  if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
-    throw BadProperty( "All (in)activation variables must be non-negative." );
+if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 )
+{
+  throw BadProperty( "All (in)activation variables must be non-negative." );
+}
 }
 
 nest::hh_psc_alpha::Buffers_::Buffers_( hh_psc_alpha& n )
@@ -417,9 +422,10 @@ nest::hh_psc_alpha::update( Time const& origin, const long from, const long to )
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y_ );              // neuronal state
-
-      if ( status != GSL_SUCCESS )
-        throw GSLSolverFailure( get_name(), status );
+if ( status != GSL_SUCCESS )
+{
+  throw GSLSolverFailure( get_name(), status );
+}
     }
 
     S_.y_[ State_::DI_EXC ] +=

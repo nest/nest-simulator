@@ -164,8 +164,10 @@ nest::spin_detector::handle( SpikeEvent& e )
     if ( kernel()
            .modelrange_manager.get_model_of_gid( e.get_sender_gid() )
            ->has_proxies() )
+{
       // events from central queue
       dest_buffer = kernel().event_delivery_manager.read_toggle();
+}
     else
       // locally delivered events
       dest_buffer = kernel().event_delivery_manager.write_toggle();

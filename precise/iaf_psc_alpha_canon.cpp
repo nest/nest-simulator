@@ -143,29 +143,35 @@ nest::iaf_psc_alpha_canon::Parameters_::set( const DictionaryDatum& d )
   long tmp;
   if ( updateValue< long >( d, names::Interpol_Order, tmp ) )
   {
-    if ( NO_INTERPOL <= tmp && tmp < END_INTERP_ORDER )
-      Interpol_ = static_cast< interpOrder >( tmp );
+if ( NO_INTERPOL <= tmp && tmp < END_INTERP_ORDER )
+{
+  Interpol_ = static_cast< interpOrder >( tmp );
+}
     else
       throw BadProperty(
         "Invalid interpolation order. "
         "Valid orders are 0, 1, 2, 3." );
   }
-
-  if ( U_reset_ >= U_th_ )
-    throw BadProperty( "Reset potential must be smaller than threshold." );
-
-  if ( U_reset_ < U_min_ )
-    throw BadProperty(
+if ( U_reset_ >= U_th_ )
+{
+  throw BadProperty( "Reset potential must be smaller than threshold." );
+}
+if ( U_reset_ < U_min_ )
+{
+  throw BadProperty(
       "Reset potential must be greater equal minimum potential." );
-
-  if ( c_m_ <= 0 )
-    throw BadProperty( "Capacitance must be strictly positive." );
+}
+if ( c_m_ <= 0 )
+{
+  throw BadProperty( "Capacitance must be strictly positive." );
+}
 
   if ( Time( Time::ms( t_ref_ ) ).get_steps() < 1 )
     throw BadProperty( "Refractory time must be at least one time step." );
-
-  if ( tau_m_ <= 0 || tau_syn_ <= 0 )
-    throw BadProperty( "All time constants must be strictly positive." );
+if ( tau_m_ <= 0 || tau_syn_ <= 0 )
+{
+  throw BadProperty( "All time constants must be strictly positive." );
+}
 
   return delta_EL;
 }
@@ -293,8 +299,10 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
-  if ( from == 0 )
-    B_.events_.prepare_delivery();
+if ( from == 0 )
+{
+  B_.events_.prepare_delivery();
+}
 
   /* Neurons may have been initialized to superthreshold potentials.
      We need to check for this here and issue spikes at the beginning of
@@ -377,8 +385,10 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
           emit_spike_( origin, lag, V_.h_ms_ - last_offset, ministep );
 
         // handle event
-        if ( end_of_refract )
-          S_.is_refractory_ = false; // return from refractoriness
+if ( end_of_refract )
+{
+  S_.is_refractory_ = false;
+} // return from refractoriness
         else
           S_.y1_ += V_.PSCInitialValue_ * ev_weight; // spike input
 
@@ -576,9 +586,10 @@ nest::iaf_psc_alpha_canon::thresh_find2_( double const dt ) const
   const double sqr_ = std::sqrt( b * b - 4 * a * c + 4 * a * P_.U_th_ );
   const double tau1 = ( -b + sqr_ ) / ( 2 * a );
   const double tau2 = ( -b - sqr_ ) / ( 2 * a );
-
-  if ( tau1 >= 0 )
-    return tau1;
+if ( tau1 >= 0 )
+{
+  return tau1;
+}
   else if ( tau2 >= 0 )
     return tau2;
   else

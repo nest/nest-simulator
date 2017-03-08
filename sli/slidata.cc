@@ -128,7 +128,7 @@ Get_a_aFunction::execute( SLIInterpreter* i ) const
       continue;
     }
 
-    if ( !( ( id->get() >= 0 ) && ( ( size_t ) id->get() < obj->size() ) ) )
+    if ( not ( ( id->get() >= 0 ) && ( ( size_t ) id->get() < obj->size() ) ) )
     {
       std::ostringstream sout;
       sout << "At position " << ( size_t )( t - idx->begin() ) << "."

@@ -84,12 +84,14 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d,
   // prematurely. Therefore, neednewpulse must be second arg on second line.
   bool neednewpulse = updateValue< long >( d, "activity", a_ );
   neednewpulse = updateValue< double >( d, "sdev", sdev_ ) || neednewpulse;
-
-  if ( a_ < 0 )
-    throw BadProperty( "The activity cannot be negative." );
-
-  if ( sdev_ < 0 )
-    throw BadProperty( "The standard deviation cannot be negative." );
+if ( a_ < 0 )
+{
+  throw BadProperty( "The activity cannot be negative." );
+}
+if ( sdev_ < 0 )
+{
+  throw BadProperty( "The standard deviation cannot be negative." );
+}
 
 
   if ( updateValue< std::vector< double > >( d, "pulse_times", pulse_times_ )
@@ -209,9 +211,10 @@ nest::pulsepacket_generator::update( Time const& T,
       needtosort = true;
       V_.start_center_idx_++;
     }
-
-    if ( needtosort )
-      std::sort( B_.spiketimes_.begin(), B_.spiketimes_.end() );
+if ( needtosort )
+{
+  std::sort( B_.spiketimes_.begin(), B_.spiketimes_.end() );
+}
   }
 
   int n_spikes = 0;

@@ -217,18 +217,22 @@ nest::iaf_cond_exp_sfa_rr::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, "q_rr", q_rr );
   updateValue< double >( d, "tau_sfa", tau_sfa );
   updateValue< double >( d, "tau_rr", tau_rr );
-
-  if ( V_reset_ >= V_th_ )
-    throw BadProperty( "Reset potential must be smaller than threshold." );
-
-  if ( C_m <= 0 )
-    throw BadProperty( "Capacitance must be strictly positive." );
-
-  if ( t_ref_ < 0 )
-    throw BadProperty( "Refractory time cannot be negative." );
-
-  if ( tau_synE <= 0 || tau_synI <= 0 || tau_sfa <= 0 || tau_rr <= 0 )
-    throw BadProperty( "All time constants must be strictly positive." );
+if ( V_reset_ >= V_th_ )
+{
+  throw BadProperty( "Reset potential must be smaller than threshold." );
+}
+if ( C_m <= 0 )
+{
+  throw BadProperty( "Capacitance must be strictly positive." );
+}
+if ( t_ref_ < 0 )
+{
+  throw BadProperty( "Refractory time cannot be negative." );
+}
+if ( tau_synE <= 0 || tau_synI <= 0 || tau_sfa <= 0 || tau_rr <= 0 )
+{
+  throw BadProperty( "All time constants must be strictly positive." );
+}
 }
 
 void
@@ -405,9 +409,10 @@ nest::iaf_cond_exp_sfa_rr::update( Time const& origin,
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y_ );              // neuronal state
-
-      if ( status != GSL_SUCCESS )
-        throw GSLSolverFailure( get_name(), status );
+if ( status != GSL_SUCCESS )
+{
+  throw GSLSolverFailure( get_name(), status );
+}
     }
 
     S_.y_[ State_::G_EXC ] += B_.spike_exc_.get_value( lag );

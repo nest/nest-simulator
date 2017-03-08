@@ -114,8 +114,10 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
       long stop = n2d->get();
 
       ad->erase();
-      if ( n > 0 )
-        ad->reserve( n );
+if ( n > 0 )
+{
+  ad->reserve( n );
+}
 
       for ( long j = start; j <= stop; ++j )
       {
@@ -136,8 +138,10 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
         double stop = n2d->get();
 
         ad->erase();
-        if ( n > 0 )
-          ad->reserve( n );
+if ( n > 0 )
+{
+  ad->reserve( n );
+}
 
         for ( double j = start; j <= stop; ++j )
         {
@@ -279,8 +283,10 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
       const long start = n1d->get();
       const long stop = n2d->get();
       long n = 1 + stop - start;
-      if ( n < 0 )
-        n = 0;
+if ( n < 0 )
+{
+  n = 0;
+}
       IntVectorDatum* result =
         new IntVectorDatum( new std::vector< long >( n ) );
 
@@ -302,8 +308,10 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
         double start = n1d->get();
         double stop = n2d->get();
         long n = 1 + static_cast< long >( stop - start );
-        if ( n < 0 )
-          n = 0;
+if ( n < 0 )
+{
+  n = 0;
+}
 
         DoubleVectorDatum* result =
           new DoubleVectorDatum( new std::vector< double >( n ) );
@@ -437,8 +445,10 @@ SLIArrayModule::FlattenFunction::execute( SLIInterpreter* i ) const
   for ( Token const* t = ad->begin(); t != ad->end(); ++t )
   {
     ArrayDatum* ad1 = dynamic_cast< ArrayDatum* >( t->datum() );
-    if ( ad1 != NULL )
-      size += ad1->size();
+if ( ad1 != NULL )
+{
+  size += ad1->size();
+}
     else
       ++size;
   }
@@ -475,10 +485,12 @@ SLIArrayModule::FlattenFunction::execute( SLIInterpreter* i ) const
     {
       ArrayDatum* ad1 = dynamic_cast< ArrayDatum* >( t->datum() );
       if ( ad1 != NULL )
+      {
         for ( Token const* t1 = ad1->begin(); t1 != ad1->end(); ++t1 )
         {
           ta->push_back( *t1 );
         }
+      }
       else
         ta->push_back( *t );
     }

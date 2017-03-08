@@ -134,21 +134,25 @@ nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_in, tau_in_ );
   updateValue< double >( d, names::t_ref_abs, tau_ref_abs_ );
   updateValue< double >( d, names::t_ref_tot, tau_ref_tot_ );
-
-  if ( V_reset_ >= Theta_ )
-    throw BadProperty( "Reset potential must be smaller than threshold." );
-
-  if ( tau_ref_abs_ > tau_ref_tot_ )
-    throw BadProperty(
+if ( V_reset_ >= Theta_ )
+{
+  throw BadProperty( "Reset potential must be smaller than threshold." );
+}
+if ( tau_ref_abs_ > tau_ref_tot_ )
+{
+  throw BadProperty(
       "Total refractory period must be larger or equal than absolute "
       "refractory time." );
-
-  if ( C_ <= 0 )
-    throw BadProperty( "Capacitance must be strictly positive." );
-
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_tot_ <= 0
+}
+if ( C_ <= 0 )
+{
+  throw BadProperty( "Capacitance must be strictly positive." );
+}
+if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_tot_ <= 0
     || tau_ref_abs_ <= 0 )
-    throw BadProperty( "All time constants must be strictly positive." );
+{
+  throw BadProperty( "All time constants must be strictly positive." );
+}
 
   return delta_EL;
 }

@@ -70,7 +70,7 @@ struct sDynModule
   // generate it automatically from operator==
   bool operator!=( const sDynModule& rhs ) const
   {
-    return !( *this == rhs );
+    return not ( *this == rhs );
   }
 };
 
@@ -178,9 +178,11 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   {
     char* errstr = ( char* ) lt_dlerror();
     std::string msg = "Module '" + new_module.name + "' could not be opened.";
-    if ( errstr )
-      msg += "\nThe dynamic loader returned the following error: '"
+if ( errstr )
+{
+  msg += "\nThe dynamic loader returned the following error: '"
         + std::string( errstr ) + "'.";
+}
     msg += "\n\nPlease check LD_LIBRARY_PATH (OSX: DYLD_LIBRARY_PATH)!";
     throw DynamicModuleManagementError( msg );
   }
@@ -275,10 +277,12 @@ DynamicLoaderModule::init( SLIInterpreter* i )
       LOG( M_DEBUG, "DynamicLoaderModule::init", path );
 
       dl_error = lt_dlsetsearchpath( path );
-      if ( dl_error )
-        LOG( M_ERROR,
+if ( dl_error )
+{
+  LOG( M_ERROR,
           "DynamicLoaderModule::init",
           "Could not set dynamic module path." );
+}
     }
   }
   else

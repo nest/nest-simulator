@@ -126,8 +126,10 @@ std::string
 SLIStartup::getenv( const std::string& v ) const
 {
   char* s = ::getenv( v.c_str() );
-  if ( not s )
-    return std::string();
+if ( not s )
+{
+  return std::string();
+}
   else
     return std::string( s );
 }
@@ -196,10 +198,12 @@ SLIStartup::checkenvpath( std::string const& envvar,
         "SLIStartup",
         String::compose( "%1 is not usable:", envvar ).c_str() );
       i->message( SLIInterpreter::M_ERROR, "SLIStartup", msg.c_str() );
-      if ( defaultval != "" )
-        i->message( SLIInterpreter::M_ERROR,
+if ( defaultval != "" )
+{
+  i->message( SLIInterpreter::M_ERROR,
           "SLIStartup",
           String::compose( "I'm using the default: %1", defaultval ).c_str() );
+}
     }
   }
   return std::string();
@@ -444,9 +448,10 @@ SLIStartup::init( SLIInterpreter* i )
 #ifdef IS_K
   platform = "k";
 #endif
-
-  if ( platform == "" )
-    platform = "default";
+if ( platform == "" )
+{
+  platform = "default";
+}
 
   statusdict->insert( platform_name, Token( new StringDatum( platform ) ) );
 
@@ -457,9 +462,10 @@ SLIStartup::init( SLIInterpreter* i )
 #ifdef _OPENMP
   threading += "openmp";
 #endif
-
-  if ( threading == "" )
-    threading = "no";
+if ( threading == "" )
+{
+  threading = "no";
+}
 
   statusdict->insert( threading_name, Token( new StringDatum( threading ) ) );
 

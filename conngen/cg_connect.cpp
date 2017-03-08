@@ -61,10 +61,12 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else if ( num_parameters == 2 )
   {
-    if ( not params_map->known( names::weight )
-      || not params_map->known( names::delay ) )
+if ( not params_map->known( names::weight )
+{
+  || not params_map->known( names::delay ) )
       throw BadProperty(
         "The parameter map has to contain the indices of weight and delay." );
+}
 
     long w_idx = ( *params_map )[ names::weight ];
     long d_idx = ( *params_map )[ names::delay ];
@@ -126,10 +128,12 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else if ( num_parameters == 2 )
   {
-    if ( not params_map->known( names::weight )
-      || not params_map->known( names::delay ) )
+if ( not params_map->known( names::weight )
+{
+  || not params_map->known( names::delay ) )
       throw BadProperty(
         "The parameter map has to contain the indices of weight and delay." );
+}
 
     long w_idx = ( *params_map )[ names::weight ];
     long d_idx = ( *params_map )[ names::delay ];
@@ -336,8 +340,10 @@ cg_get_right_border( index left, size_t step, std::vector< long >& gids )
 
     // Reduce the search interval by half its size if it is > 1.
     // This adaptation is the basis of the binary search.
-    if ( step != 1 )
-      step /= 2;
+if ( step != 1 )
+{
+  step /= 2;
+}
   }
 
   // The border should always be found and returned during the while

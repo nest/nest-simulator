@@ -236,12 +236,14 @@ nest::iaf_chxk_2008::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::E_ahp, E_ahp );
   updateValue< double >( d, names::g_ahp, g_ahp );
   updateValue< bool >( d, "ahp_bug", ahp_bug );
-
-  if ( C_m <= 0 )
-    throw BadProperty( "Capacitance must be strictly positive." );
-
-  if ( tau_synE <= 0 || tau_synI <= 0 || tau_ahp <= 0 )
-    throw BadProperty( "All time constants must be strictly positive." );
+if ( C_m <= 0 )
+{
+  throw BadProperty( "Capacitance must be strictly positive." );
+}
+if ( tau_synE <= 0 || tau_synI <= 0 || tau_ahp <= 0 )
+{
+  throw BadProperty( "All time constants must be strictly positive." );
+}
 }
 
 void
@@ -392,10 +394,10 @@ nest::iaf_chxk_2008::update( Time const& origin,
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y );               // neuronal state
-
-
-      if ( status != GSL_SUCCESS )
-        throw GSLSolverFailure( get_name(), status );
+if ( status != GSL_SUCCESS )
+{
+  throw GSLSolverFailure( get_name(), status );
+}
     }
     // neuron should spike on threshold crossing only.
     if ( vm_prev < P_.V_th && S_.y[ State_::V_M ] >= P_.V_th )

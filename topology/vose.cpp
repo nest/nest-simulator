@@ -51,8 +51,10 @@ Vose::Vose( std::vector< double > dist )
   for ( std::vector< double >::iterator it = dist.begin(); it != dist.end();
         ++it )
   {
-    if ( *it <= sum / n )
-      *small++ = BiasedCoin( i++, 0, ( *it ) * n / sum );
+if ( *it <= sum / n )
+{
+  *small++ = BiasedCoin( i++, 0, ( *it ) * n / sum );
+}
     else
       *--large = BiasedCoin( i++, 0, ( *it ) * n / sum );
   }

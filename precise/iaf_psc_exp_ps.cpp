@@ -148,22 +148,26 @@ nest::iaf_psc_exp_ps::Parameters_::set( const DictionaryDatum& d )
     U_reset_ -= E_L_;
   else
     U_reset_ -= delta_EL;
-
-  if ( U_reset_ >= U_th_ )
-    throw BadProperty( "Reset potential must be smaller than threshold." );
-
-  if ( U_reset_ < U_min_ )
-    throw BadProperty(
+if ( U_reset_ >= U_th_ )
+{
+  throw BadProperty( "Reset potential must be smaller than threshold." );
+}
+if ( U_reset_ < U_min_ )
+{
+  throw BadProperty(
       "Reset potential must be greater equal minimum potential." );
-
-  if ( c_m_ <= 0 )
-    throw BadProperty( "Capacitance must be strictly positive." );
+}
+if ( c_m_ <= 0 )
+{
+  throw BadProperty( "Capacitance must be strictly positive." );
+}
 
   if ( Time( Time::ms( t_ref_ ) ).get_steps() < 1 )
     throw BadProperty( "Refractory time must be at least one time step." );
-
-  if ( tau_m_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
-    throw BadProperty( "All time constants must be strictly positive." );
+if ( tau_m_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
+{
+  throw BadProperty( "All time constants must be strictly positive." );
+}
 
   return delta_EL;
 }
@@ -268,8 +272,10 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
-  if ( from == 0 )
-    B_.events_.prepare_delivery();
+if ( from == 0 )
+{
+  B_.events_.prepare_delivery();
+}
 
   /* Neurons may have been initialized to superthreshold potentials.
      We need to check for this here and issue spikes at the beginning of
@@ -354,8 +360,10 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
           emit_spike_( origin, lag, V_.h_ms_ - last_offset, ministep );
 
         // handle event
-        if ( end_of_refract )
-          S_.is_refractory_ = false; // return from refractoriness
+if ( end_of_refract )
+{
+  S_.is_refractory_ = false;
+} // return from refractoriness
         else
         {
           if ( ev_weight >= 0.0 )

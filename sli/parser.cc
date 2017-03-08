@@ -83,8 +83,10 @@ bool Parser::operator()( Token& t )
 
   do
   {
-    if ( result == scancontinue )
-      ok = ( *s )( t );
+if ( result == scancontinue )
+{
+  ok = ( *s )( t );
+}
     else
       ok = true;
 

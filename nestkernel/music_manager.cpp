@@ -104,9 +104,10 @@ MUSICManager::enter_runtime( double h_min_delay )
   // MUSIC needs the step size in seconds
   // std::cout << "nest::MPIManager::enter_runtime\n";
   // std::cout << "timestep = " << h_min_delay*1e-3 << std::endl;
-
-  if ( music_runtime == 0 )
-    music_runtime = new MUSIC::Runtime( music_setup, h_min_delay * 1e-3 );
+if ( music_runtime == 0 )
+{
+  music_runtime = new MUSIC::Runtime( music_setup, h_min_delay * 1e-3 );
+}
 #endif
 }
 
@@ -166,8 +167,10 @@ MUSICManager::register_music_in_port( std::string portname, bool pristine )
     music_in_portlist_[ portname ].n_input_proxies++;
 
   // pristine is true if we are building up the initial portlist
-  if ( pristine )
-    pristine_music_in_portlist_[ portname ] = music_in_portlist_[ portname ];
+if ( pristine )
+{
+  pristine_music_in_portlist_[ portname ] = music_in_portlist_[ portname ];
+}
 }
 
 void

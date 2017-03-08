@@ -152,9 +152,10 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
 
   if ( TauR_ < 0.0 )
     throw BadProperty( "The refractory time t_ref can't be negative." );
-
-  if ( V_reset_ >= Theta_ )
-    throw BadProperty( "Reset potential must be smaller than threshold." );
+if ( V_reset_ >= Theta_ )
+{
+  throw BadProperty( "Reset potential must be smaller than threshold." );
+}
 
   return delta_EL;
 }

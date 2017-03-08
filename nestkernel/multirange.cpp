@@ -31,8 +31,10 @@ nest::index nest::Multirange::operator[]( index n ) const
         iter != ranges_.end();
         ++iter )
   {
-    if ( n <= iter->second - iter->first )
-      return iter->first + n;
+if ( n <= iter->second - iter->first )
+{
+  return iter->first + n;
+}
 
     n -= 1 + iter->second - iter->first;
   }

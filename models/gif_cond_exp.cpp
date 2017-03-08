@@ -266,32 +266,42 @@ nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d )
       "tau_stc: %1\nSize of q_stc: %2",
       tau_stc_.size(),
       q_stc_.size() ) );
-
-  if ( g_L_ <= 0 )
-    throw BadProperty( "Membrane conductance must be strictly positive." );
-
-  if ( Delta_V_ <= 0 )
-    throw BadProperty( "Delta_V must be strictly positive." );
-
-  if ( c_m_ <= 0 )
-    throw BadProperty( "Capacitance must be strictly positive." );
-
-  if ( t_ref_ < 0 )
-    throw BadProperty( "Refractory time must not be negative." );
-
-  if ( lambda_0_ < 0 )
-    throw BadProperty( "lambda_0 must not be negative." );
+if ( g_L_ <= 0 )
+{
+  throw BadProperty( "Membrane conductance must be strictly positive." );
+}
+if ( Delta_V_ <= 0 )
+{
+  throw BadProperty( "Delta_V must be strictly positive." );
+}
+if ( c_m_ <= 0 )
+{
+  throw BadProperty( "Capacitance must be strictly positive." );
+}
+if ( t_ref_ < 0 )
+{
+  throw BadProperty( "Refractory time must not be negative." );
+}
+if ( lambda_0_ < 0 )
+{
+  throw BadProperty( "lambda_0 must not be negative." );
+}
 
   for ( size_t i = 0; i < tau_sfa_.size(); i++ )
-    if ( tau_sfa_[ i ] <= 0 )
-      throw BadProperty( "All time constants must be strictly positive." );
+if ( tau_sfa_[ i ] <= 0 )
+{
+  throw BadProperty( "All time constants must be strictly positive." );
+}
 
   for ( size_t i = 0; i < tau_stc_.size(); i++ )
-    if ( tau_stc_[ i ] <= 0 )
-      throw BadProperty( "All time constants must be strictly positive." );
-
-  if ( tau_synE_ <= 0 || tau_synI_ <= 0 )
-    throw BadProperty( "Synapse time constants must be strictly positive." );
+if ( tau_stc_[ i ] <= 0 )
+{
+  throw BadProperty( "All time constants must be strictly positive." );
+}
+if ( tau_synE_ <= 0 || tau_synI_ <= 0 )
+{
+  throw BadProperty( "Synapse time constants must be strictly positive." );
+}
 }
 
 void
@@ -491,9 +501,10 @@ nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.neuron_state_ );   // neuronal state
-
-      if ( status != GSL_SUCCESS )
-        throw GSLSolverFailure( get_name(), status );
+if ( status != GSL_SUCCESS )
+{
+  throw GSLSolverFailure( get_name(), status );
+}
     }
 
     S_.neuron_state_[ State_::G_EXC ] += B_.spike_exc_.get_value( lag );

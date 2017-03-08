@@ -384,23 +384,28 @@ nest::iaf_cond_alpha_mc::Parameters_::set( const DictionaryDatum& d )
       updateValue< double >( dd, names::tau_syn_in, tau_synI[ n ] );
       updateValue< double >( dd, names::I_e, I_e[ n ] );
     }
-
-  if ( V_reset >= V_th )
-    throw BadProperty( "Reset potential must be smaller than threshold." );
-
-  if ( t_ref < 0 )
-    throw BadProperty( "Refractory time cannot be negative." );
+if ( V_reset >= V_th )
+{
+  throw BadProperty( "Reset potential must be smaller than threshold." );
+}
+if ( t_ref < 0 )
+{
+  throw BadProperty( "Refractory time cannot be negative." );
+}
 
   // apply checks compartment-wise
   for ( size_t n = 0; n < NCOMP; ++n )
   {
-    if ( C_m[ n ] <= 0 )
-      throw BadProperty( "Capacitance (" + comp_names_[ n ].toString()
+if ( C_m[ n ] <= 0 )
+{
+  throw BadProperty( "Capacitance (" + comp_names_[ n ].toString()
         + ") must be strictly positive." );
-
-    if ( tau_synE[ n ] <= 0 || tau_synI[ n ] <= 0 )
-      throw BadProperty( "All time constants (" + comp_names_[ n ].toString()
+}
+if ( tau_synE[ n ] <= 0 || tau_synI[ n ] <= 0 )
+{
+  throw BadProperty( "All time constants (" + comp_names_[ n ].toString()
         + ") must be strictly positive." );
+}
   }
 }
 
@@ -583,9 +588,10 @@ nest::iaf_cond_alpha_mc::update( Time const& origin,
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y_ );              // neuronal state
-
-      if ( status != GSL_SUCCESS )
-        throw GSLSolverFailure( get_name(), status );
+if ( status != GSL_SUCCESS )
+{
+  throw GSLSolverFailure( get_name(), status );
+}
     }
 
     // add incoming spikes at end of interval

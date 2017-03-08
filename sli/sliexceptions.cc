@@ -35,8 +35,10 @@ WrappedThreadException::WrappedThreadException( const std::exception& exc )
   : SLIException( exc.what() )
 {
   SLIException const* se = dynamic_cast< SLIException const* >( &exc );
-  if ( se )
-    message_ = se->message();
+if ( se )
+{
+  message_ = se->message();
+}
   else
     message_ = std::string( "C++ exception: " ) + exc.what();
 }
@@ -86,8 +88,10 @@ ArgumentType::message() const
   if ( where )
   {
     out << " the ";
-    if ( where == 1 )
-      out << "first";
+if ( where == 1 )
+{
+  out << "first";
+}
     else if ( where == 2 )
       out << "second";
     else if ( where == 3 )
@@ -130,15 +134,19 @@ StackUnderflow::message() const
   if ( needed )
   {
     out << "Command needs (at least) " << needed << " argument(s)";
-    if ( given )
-      out << ", but the stack has only " << given;
+if ( given )
+{
+  out << ", but the stack has only " << given;
+}
     out << ".";
   }
   else
   {
     out << "Command needs more arguments";
-    if ( given )
-      out << "than " << given;
+if ( given )
+{
+  out << "than " << given;
+}
     out << ".";
   }
 

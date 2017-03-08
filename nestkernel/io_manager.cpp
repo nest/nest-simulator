@@ -84,8 +84,10 @@ nest::IOManager::set_data_path_prefix_( const DictionaryDatum& d )
     if ( tmp.find( '/' ) == std::string::npos )
       data_prefix_ = tmp;
     else
+    {
       LOG(
         M_ERROR, "SetStatus", "Data prefix must not contain path elements." );
+    }
   }
 }
 
@@ -95,15 +97,15 @@ nest::IOManager::initialize()
   // data_path and data_prefix can be set via environment variables
   DictionaryDatum dict( new Dictionary );
   char* data_path = std::getenv( "NEST_DATA_PATH" );
-if ( data_path )
-{
-  ( *dict )[ "data_path" ] = std::string( data_path );
-}
+  if ( data_path )
+  {
+    ( *dict )[ "data_path" ] = std::string( data_path );
+  }
   char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
-if ( data_prefix )
-{
-  ( *dict )[ "data_prefix" ] = std::string( data_prefix );
-}
+  if ( data_prefix )
+  {
+    ( *dict )[ "data_prefix" ] = std::string( data_prefix );
+  }
   if ( not dict->empty() )
     set_data_path_prefix_( dict );
 }

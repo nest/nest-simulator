@@ -260,7 +260,9 @@ Div_iiFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->DivisionByZeroError );
+  }
 }
 
 //-----------------------------------------------------
@@ -297,7 +299,9 @@ Mod_iiFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->DivisionByZeroError );
+  }
 }
 
 void
@@ -315,7 +319,9 @@ Div_ddFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->DivisionByZeroError );
+  }
 }
 
 void
@@ -334,7 +340,9 @@ Div_diFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->DivisionByZeroError );
+  }
 }
 
 void
@@ -354,7 +362,9 @@ Div_idFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->DivisionByZeroError );
+  }
 }
 
 /* BeginDocumentation
@@ -501,7 +511,9 @@ Log_dFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 /* BeginDocumentation
@@ -525,7 +537,9 @@ Ln_dFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 /*BeginDocumentation
@@ -564,7 +578,9 @@ Sqrt_dFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 /*BeginDocumentation
@@ -591,7 +607,9 @@ Pow_ddFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 
   return;
 }
@@ -605,7 +623,7 @@ Pow_diFunction::execute( SLIInterpreter* i ) const
   IntegerDatum* op2 =
     static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   // can raise anything to an integer power, except zero to neg power
-  if ( not ( op1->get() == 0.0 && op2->get() < 0 ) )
+  if ( not( op1->get() == 0.0 && op2->get() < 0 ) )
   {
     // cast explicitly to double to avoid overloading ambiguity
     *op1 = std::pow( op1->get(), static_cast< double >( op2->get() ) );
@@ -613,7 +631,9 @@ Pow_diFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 
   return;
 }
@@ -1159,7 +1179,7 @@ XorFunction::execute( SLIInterpreter* i ) const
   BoolDatum* op1 = static_cast< BoolDatum* >( i->OStack.pick( 1 ).datum() );
   BoolDatum* op2 = static_cast< BoolDatum* >( i->OStack.pick( 0 ).datum() );
 
-  op1->get() = ( ( *op1 || *op2 ) && not ( *op1 && *op2 ) );
+  op1->get() = ( ( *op1 || *op2 ) && not( *op1 && *op2 ) );
 
   i->OStack.pop();
 }
@@ -1437,12 +1457,14 @@ UnitStep_dFunction::execute( SLIInterpreter* i ) const
 
   i->EStack.pop();
   i->OStack.pop();
-if ( result )
-{
-  i->OStack.push_by_pointer( new DoubleDatum( 1.0 ) );
-}
+  if ( result )
+  {
+    i->OStack.push_by_pointer( new DoubleDatum( 1.0 ) );
+  }
   else
+  {
     i->OStack.push_by_pointer( new DoubleDatum( 0.0 ) );
+  }
 }
 
 // Documentation can be found in file synod2/lib/sli/mathematica.sli
@@ -1459,12 +1481,14 @@ UnitStep_iFunction::execute( SLIInterpreter* i ) const
 
   i->EStack.pop();
   i->OStack.pop();
-if ( result )
-{
-  i->OStack.push_by_pointer( new IntegerDatum( 1.0 ) );
-}
+  if ( result )
+  {
+    i->OStack.push_by_pointer( new IntegerDatum( 1.0 ) );
+  }
   else
+  {
     i->OStack.push_by_pointer( new IntegerDatum( 0.0 ) );
+  }
 }
 
 // Documentation can be found in file synod2/lib/sli/mathematica.sli
@@ -1491,12 +1515,14 @@ UnitStep_daFunction::execute( SLIInterpreter* i ) const
 
   i->EStack.pop();
   i->OStack.pop();
-if ( result )
-{
-  i->OStack.push_by_pointer( new DoubleDatum( 1.0 ) );
-}
+  if ( result )
+  {
+    i->OStack.push_by_pointer( new DoubleDatum( 1.0 ) );
+  }
   else
+  {
     i->OStack.push_by_pointer( new DoubleDatum( 0.0 ) );
+  }
 }
 
 // Documentation can be found in file synod2/lib/sli/mathematica.sli
@@ -1523,12 +1549,14 @@ UnitStep_iaFunction::execute( SLIInterpreter* i ) const
 
   i->EStack.pop();
   i->OStack.pop();
-if ( result )
-{
-  i->OStack.push_by_pointer( new IntegerDatum( 1.0 ) );
-}
+  if ( result )
+  {
+    i->OStack.push_by_pointer( new IntegerDatum( 1.0 ) );
+  }
   else
+  {
     i->OStack.push_by_pointer( new IntegerDatum( 0.0 ) );
+  }
 }
 
 // round to the nearest integer

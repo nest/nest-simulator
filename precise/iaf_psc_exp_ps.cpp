@@ -137,37 +137,43 @@ nest::iaf_psc_exp_ps::Parameters_::set( const DictionaryDatum& d )
   if ( updateValue< double >( d, names::V_th, U_th_ ) )
     U_th_ -= E_L_;
   else
+  {
     U_th_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_min, U_min_ ) )
     U_min_ -= E_L_;
   else
+  {
     U_min_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_reset, U_reset_ ) )
     U_reset_ -= E_L_;
   else
+  {
     U_reset_ -= delta_EL;
-if ( U_reset_ >= U_th_ )
-{
-  throw BadProperty( "Reset potential must be smaller than threshold." );
-}
-if ( U_reset_ < U_min_ )
-{
-  throw BadProperty(
+  }
+  if ( U_reset_ >= U_th_ )
+  {
+    throw BadProperty( "Reset potential must be smaller than threshold." );
+  }
+  if ( U_reset_ < U_min_ )
+  {
+    throw BadProperty(
       "Reset potential must be greater equal minimum potential." );
-}
-if ( c_m_ <= 0 )
-{
-  throw BadProperty( "Capacitance must be strictly positive." );
-}
+  }
+  if ( c_m_ <= 0 )
+  {
+    throw BadProperty( "Capacitance must be strictly positive." );
+  }
 
   if ( Time( Time::ms( t_ref_ ) ).get_steps() < 1 )
     throw BadProperty( "Refractory time must be at least one time step." );
-if ( tau_m_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
-{
-  throw BadProperty( "All time constants must be strictly positive." );
-}
+  if ( tau_m_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
+  {
+    throw BadProperty( "All time constants must be strictly positive." );
+  }
 
   return delta_EL;
 }
@@ -188,7 +194,9 @@ nest::iaf_psc_exp_ps::State_::set( const DictionaryDatum& d,
   if ( updateValue< double >( d, names::V_m, y2_ ) )
     y2_ -= p.E_L_;
   else
+  {
     y2_ -= delta_EL;
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -272,10 +280,10 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
   assert( from < to );
 
   // at start of slice, tell input queue to prepare for delivery
-if ( from == 0 )
-{
-  B_.events_.prepare_delivery();
-}
+  if ( from == 0 )
+  {
+    B_.events_.prepare_delivery();
+  }
 
   /* Neurons may have been initialized to superthreshold potentials.
      We need to check for this here and issue spikes at the beginning of
@@ -308,7 +316,8 @@ if ( from == 0 )
     double ev_weight;
     bool end_of_refract;
 
-    if ( not B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) )
+    if ( not B_.events_.get_next_spike(
+           T, ev_offset, ev_weight, end_of_refract ) )
     {
       // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
@@ -360,16 +369,18 @@ if ( from == 0 )
           emit_spike_( origin, lag, V_.h_ms_ - last_offset, ministep );
 
         // handle event
-if ( end_of_refract )
-{
-  S_.is_refractory_ = false;
-} // return from refractoriness
+        if ( end_of_refract )
+        {
+          S_.is_refractory_ = false;
+        } // return from refractoriness
         else
         {
           if ( ev_weight >= 0.0 )
             S_.y1_ex_ += ev_weight; // exc. spike input
           else
-            S_.y1_in_ += ev_weight; // inh. spike input
+          {
+            S_.y1_in_ += ev_weight;
+          } // inh. spike input
         }
 
         // store state
@@ -527,7 +538,9 @@ nest::iaf_psc_exp_ps::bisectioning_( const double dt ) const
     if ( y2_root > P_.U_th_ )
       root -= dt / div;
     else
+    {
       root += dt / div;
+    }
 
     div *= 2.0;
 

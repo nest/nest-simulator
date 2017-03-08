@@ -51,12 +51,14 @@ Vose::Vose( std::vector< double > dist )
   for ( std::vector< double >::iterator it = dist.begin(); it != dist.end();
         ++it )
   {
-if ( *it <= sum / n )
-{
-  *small++ = BiasedCoin( i++, 0, ( *it ) * n / sum );
-}
+    if ( *it <= sum / n )
+    {
+      *small++ = BiasedCoin( i++, 0, ( *it ) * n / sum );
+    }
     else
+    {
       *--large = BiasedCoin( i++, 0, ( *it ) * n / sum );
+    }
   }
 
   // Generate aliases
@@ -99,7 +101,9 @@ Vose::get_random_id( librandom::RngPtr rng ) const
   if ( r < dist_[ i ].probability )
     return dist_[ i ].heads;
   else
+  {
     return dist_[ i ].tails;
+  }
 }
 
 } // namespace nest

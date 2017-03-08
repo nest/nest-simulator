@@ -63,10 +63,10 @@ void
 nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::p_copy, p_copy_ );
-if ( p_copy_ < 0 || p_copy_ > 1 )
-{
-  throw BadProperty( "Copy probability must be in [0, 1]." );
-}
+  if ( p_copy_ < 0 || p_copy_ > 1 )
+  {
+    throw BadProperty( "Copy probability must be in [0, 1]." );
+  }
 }
 
 /* ----------------------------------------------------------------

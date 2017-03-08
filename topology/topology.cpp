@@ -71,10 +71,10 @@ get_position( const index node_gid )
 
   AbstractLayer* const layer =
     dynamic_cast< AbstractLayer* >( node->get_parent() );
-if ( not layer )
-{
-  throw LayerExpected();
-}
+  if ( not layer )
+  {
+    throw LayerExpected();
+  }
 
   return layer->get_position_vector( node->get_subnet_index() );
 }
@@ -90,10 +90,10 @@ displacement( const std::vector< double >& point, const index node_gid )
 
   AbstractLayer* const layer =
     dynamic_cast< AbstractLayer* >( node->get_parent() );
-if ( not layer )
-{
-  throw LayerExpected();
-}
+  if ( not layer )
+  {
+    throw LayerExpected();
+  }
 
   return layer->compute_displacement( point, node->get_lid() );
 }
@@ -109,10 +109,10 @@ distance( const std::vector< double >& point, const index node_gid )
 
   AbstractLayer* const layer =
     dynamic_cast< AbstractLayer* >( node->get_parent() );
-if ( not layer )
-{
-  throw LayerExpected();
-}
+  if ( not layer )
+  {
+    throw LayerExpected();
+  }
 
   return layer->compute_distance( point, node->get_lid() );
 }
@@ -185,10 +185,10 @@ get_global_children( const index gid,
 {
   AbstractLayer* layer =
     dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( gid ) );
-if ( layer == NULL )
-{
-  throw LayerExpected();
-}
+  if ( layer == NULL )
+  {
+    throw LayerExpected();
+  }
 
   std::vector< index > gids = layer->get_global_nodes( maskd, anchor, false );
 
@@ -263,10 +263,10 @@ dump_layer_connections( const Token& syn_model,
 
   AbstractLayer* const layer = dynamic_cast< AbstractLayer* >(
     kernel().node_manager.get_node( layer_gid ) );
-if ( layer == NULL )
-{
-  throw TypeMismatch( "any layer type", "something else" );
-}
+  if ( layer == NULL )
+  {
+    throw TypeMismatch( "any layer type", "something else" );
+  }
 
   layer->dump_connections( out, syn_model );
 }

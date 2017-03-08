@@ -114,10 +114,10 @@ SLIArrayModule::RangeFunction::execute( SLIInterpreter* i ) const
       long stop = n2d->get();
 
       ad->erase();
-if ( n > 0 )
-{
-  ad->reserve( n );
-}
+      if ( n > 0 )
+      {
+        ad->reserve( n );
+      }
 
       for ( long j = start; j <= stop; ++j )
       {
@@ -138,10 +138,10 @@ if ( n > 0 )
         double stop = n2d->get();
 
         ad->erase();
-if ( n > 0 )
-{
-  ad->reserve( n );
-}
+        if ( n > 0 )
+        {
+          ad->reserve( n );
+        }
 
         for ( double j = start; j <= stop; ++j )
         {
@@ -151,7 +151,9 @@ if ( n > 0 )
         i->EStack.pop();
       }
       else
+      {
         i->raiseerror( i->ArgumentTypeError );
+      }
     }
   }
   else if ( ad->size() == 3 ) // [n1 n2 dn]
@@ -181,7 +183,9 @@ if ( n > 0 )
         i->EStack.pop();
       }
       else
+      {
         i->raiseerror( i->DivisionByZeroError );
+      }
     }
     else
     {
@@ -210,14 +214,20 @@ if ( n > 0 )
           i->EStack.pop();
         }
         else
+        {
           i->raiseerror( i->DivisionByZeroError );
+        }
       }
       else
+      {
         i->raiseerror( i->ArgumentTypeError );
+      }
     }
   }
   else
+  {
     i->raiseerror( i->ArgumentTypeError );
+  }
 }
 
 
@@ -283,10 +293,10 @@ SLIArrayModule::ArangeFunction::execute( SLIInterpreter* i ) const
       const long start = n1d->get();
       const long stop = n2d->get();
       long n = 1 + stop - start;
-if ( n < 0 )
-{
-  n = 0;
-}
+      if ( n < 0 )
+      {
+        n = 0;
+      }
       IntVectorDatum* result =
         new IntVectorDatum( new std::vector< long >( n ) );
 
@@ -308,10 +318,10 @@ if ( n < 0 )
         double start = n1d->get();
         double stop = n2d->get();
         long n = 1 + static_cast< long >( stop - start );
-if ( n < 0 )
-{
-  n = 0;
-}
+        if ( n < 0 )
+        {
+          n = 0;
+        }
 
         DoubleVectorDatum* result =
           new DoubleVectorDatum( new std::vector< double >( n ) );
@@ -358,7 +368,9 @@ if ( n < 0 )
         return;
       }
       else
+      {
         i->raiseerror( i->DivisionByZeroError );
+      }
     }
     else
     {
@@ -391,14 +403,20 @@ if ( n < 0 )
           return;
         }
         else
+        {
           i->raiseerror( i->DivisionByZeroError );
+        }
       }
       else
+      {
         i->raiseerror( i->ArgumentTypeError );
+      }
     }
   }
   else
+  {
     i->raiseerror( i->ArgumentTypeError );
+  }
 }
 
 
@@ -445,12 +463,14 @@ SLIArrayModule::FlattenFunction::execute( SLIInterpreter* i ) const
   for ( Token const* t = ad->begin(); t != ad->end(); ++t )
   {
     ArrayDatum* ad1 = dynamic_cast< ArrayDatum* >( t->datum() );
-if ( ad1 != NULL )
-{
-  size += ad1->size();
-}
+    if ( ad1 != NULL )
+    {
+      size += ad1->size();
+    }
     else
+    {
       ++size;
+    }
   }
   ta->reserve( size );
 
@@ -472,11 +492,15 @@ if ( ad1 != NULL )
           for ( Token* t1 = ad1->begin(); t1 != ad1->end(); ++t1 )
             ta->push_back( *t1 );
         else
+        {
           for ( Token* t1 = ad1->begin(); t1 != ad1->end(); ++t1 )
             ta->push_back_move( *t1 );
+        }
       }
       else
+      {
         ta->push_back_move( *t );
+      }
     }
   }
   else
@@ -492,7 +516,9 @@ if ( ad1 != NULL )
         }
       }
       else
+      {
         ta->push_back( *t );
+      }
     }
   }
 
@@ -732,10 +758,14 @@ SLIArrayModule::PartitionFunction::execute( SLIInterpreter* i ) const
       i->OStack.push( target );
     }
     else
+    {
       i->raiseerror( "RangeError" );
+    }
   }
   else
+  {
     i->raiseerror( "RangeError" );
+  }
 }
 
 /*
@@ -781,8 +811,10 @@ SLIArrayModule::ArrayloadFunction::execute( SLIInterpreter* i ) const
     for ( Token* ti = ad->begin(); ti != ad->end(); ++ti )
       i->OStack.push_move( *ti );
   else
+  {
     for ( Token* ti = ad->begin(); ti != ad->end(); ++ti )
       i->OStack.push( *ti );
+  }
 
   i->OStack.push( arraysize );
 }
@@ -839,10 +871,14 @@ SLIArrayModule::ArraystoreFunction::execute( SLIInterpreter* i ) const
       i->EStack.pop();
     }
     else
+    {
       i->raiseerror( i->StackUnderflowError );
+    }
   }
   else
+  {
     i->raiseerror( i->RangeCheckError );
+  }
 }
 
 void
@@ -1004,7 +1040,9 @@ SLIArrayModule::IMapFunction::execute( SLIInterpreter* i ) const
           }
         }
         else
+        {
           break;
+        }
       } while ( true );
     }
   }
@@ -1153,7 +1191,9 @@ SLIArrayModule::IMap_ivFunction::execute( SLIInterpreter* i ) const
           }
         }
         else
+        {
           break;
+        }
       } while ( true );
     }
   }
@@ -1298,7 +1338,9 @@ SLIArrayModule::IMap_dvFunction::execute( SLIInterpreter* i ) const
           }
         }
         else
+        {
           break;
+        }
       } while ( true );
     }
   }
@@ -1393,7 +1435,9 @@ SLIArrayModule::MapFunction::execute( SLIInterpreter* i ) const
   else if ( dynamic_cast< DoubleVectorDatum* >( i->EStack.pick( 4 ).datum() ) )
     i->EStack.push( i->baselookup( sli::imap_dv ) );
   else
+  {
     i->EStack.push( i->baselookup( sli::imap ) );
+  }
   i->inc_call_depth();
   i->OStack.pop( 2 );
 }
@@ -1530,7 +1574,9 @@ SLIArrayModule::IMapIndexedFunction::execute( SLIInterpreter* i ) const
           }
         }
         else
+        {
           break;
+        }
       } while ( true );
     }
   }
@@ -1710,7 +1756,9 @@ SLIArrayModule::IMapThreadFunction::execute( SLIInterpreter* i ) const
           }
         }
         else
+        {
           break;
+        }
       } while ( true );
     }
   }

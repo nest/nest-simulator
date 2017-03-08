@@ -114,15 +114,15 @@ librandom::PoissonRandomDev::set_status( const DictionaryDatum& d )
 
   if ( updateValue< double >( d, "lambda", new_mu ) )
   {
-if ( new_mu < 0 )
-{
-  throw BadParameterValue( "Poisson RDV: lambda >= 0 required." );
-}
-if ( new_mu > MU_MAX )
-{
-  throw BadParameterValue(
+    if ( new_mu < 0 )
+    {
+      throw BadParameterValue( "Poisson RDV: lambda >= 0 required." );
+    }
+    if ( new_mu > MU_MAX )
+    {
+      throw BadParameterValue(
         String::compose( "Poisson RDV: lambda < %1 required.", MU_MAX ) );
-}
+    }
     set_lambda( new_mu );
   }
 }

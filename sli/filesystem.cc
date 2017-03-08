@@ -94,7 +94,9 @@ FilesystemModule::FileNamesFunction::execute( SLIInterpreter* i ) const
     i->OStack.push_move( array_token );
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -139,10 +141,10 @@ FilesystemModule::DirectoryFunction::execute( SLIInterpreter* i ) const
   char* path_buffer = new char[ size ];
   while ( getcwd( path_buffer, size - 1 ) == NULL )
   { // try again with a bigger buffer!
-if ( errno != ERANGE )
-{
-  i->raiseerror( i->BadIOError );
-} // size wasn't reason
+    if ( errno != ERANGE )
+    {
+      i->raiseerror( i->BadIOError );
+    } // size wasn't reason
     delete[] path_buffer;
     size += SIZE;
     path_buffer = new char[ size ];
@@ -313,10 +315,10 @@ FilesystemModule::TmpNamFunction::execute( SLIInterpreter* i ) const
   static unsigned int seed = std::time( 0 );
   char* env = getenv( "TMPDIR" );
   std::string tmpdir( "/tmp" );
-if ( env )
-{
-  tmpdir = std::string( env );
-}
+  if ( env )
+  {
+    tmpdir = std::string( env );
+  }
 
   std::string tempfile;
   do
@@ -358,7 +360,7 @@ FilesystemModule::CompareFilesFunction::execute( SLIInterpreter* i ) const
   std::ifstream as( flA->c_str(), std::ifstream::in | std::ifstream::binary );
   std::ifstream bs( flB->c_str(), std::ifstream::in | std::ifstream::binary );
 
-  if ( not ( as.good() && bs.good() ) )
+  if ( not( as.good() && bs.good() ) )
   {
     as.close();
     bs.close();
@@ -371,7 +373,7 @@ FilesystemModule::CompareFilesFunction::execute( SLIInterpreter* i ) const
     const int ac = as.get();
     const int bc = bs.get();
 
-    if ( not ( as.fail() || bs.fail() ) )
+    if ( not( as.fail() || bs.fail() ) )
       equal = ac == bc;
   }
 
@@ -382,12 +384,14 @@ FilesystemModule::CompareFilesFunction::execute( SLIInterpreter* i ) const
   bs.close();
 
   i->OStack.pop( 2 );
-if ( equal )
-{
-  i->OStack.push( i->baselookup( i->true_name ) );
-}
+  if ( equal )
+  {
+    i->OStack.push( i->baselookup( i->true_name ) );
+  }
   else
+  {
     i->OStack.push( i->baselookup( i->false_name ) );
+  }
 
   i->EStack.pop();
 }

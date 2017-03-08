@@ -195,7 +195,7 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
     if ( std::string( magic ) == std::string( "P2" ) ) // ASCII PGM
     {
       int tmp;
-      while ( ( *in >> tmp ) && not ( in->eof() ) )
+      while ( ( *in >> tmp ) && not( in->eof() ) )
       {
         image.push_back( ( long ) tmp );
       }
@@ -212,7 +212,7 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
       in->read( &tmp, 1 ); // throw away LF after maxval
       // TODO: Protect this from reading too much data like trailing
       // newlines: use for instead of while
-      while ( in->read( &tmp, 1 ) && not ( in->eof() ) )
+      while ( in->read( &tmp, 1 ) && not( in->eof() ) )
       {
         tmp2 = ( unsigned char ) tmp;
         image.push_back( ( long ) tmp2 );
@@ -319,14 +319,18 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
         if ( ( i + 1 ) % 20 == 0 )
           *out << std::endl;
         else
+        {
           *out << " ";
+        }
       }
       else
       {
         if ( ( i + 1 ) % width == 0 )
           *out << std::endl;
         else
+        {
           *out << " ";
+        }
       }
     }
 

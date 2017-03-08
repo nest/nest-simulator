@@ -122,17 +122,23 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
     V_reset_ -= E_L_;
   else
+  {
     V_reset_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
     Theta_ -= E_L_;
   else
+  {
     Theta_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_min, LowerBound_ ) )
     LowerBound_ -= E_L_;
   else
+  {
     LowerBound_ -= delta_EL;
+  }
 
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, C_ );
@@ -152,10 +158,10 @@ iaf_psc_alpha::Parameters_::set( const DictionaryDatum& d )
 
   if ( TauR_ < 0.0 )
     throw BadProperty( "The refractory time t_ref can't be negative." );
-if ( V_reset_ >= Theta_ )
-{
-  throw BadProperty( "Reset potential must be smaller than threshold." );
-}
+  if ( V_reset_ >= Theta_ )
+  {
+    throw BadProperty( "Reset potential must be smaller than threshold." );
+  }
 
   return delta_EL;
 }
@@ -174,7 +180,9 @@ iaf_psc_alpha::State_::set( const DictionaryDatum& d,
   if ( updateValue< double >( d, names::V_m, y3_ ) )
     y3_ -= p.E_L_;
   else
+  {
     y3_ -= delta_EL;
+  }
 }
 
 iaf_psc_alpha::Buffers_::Buffers_( iaf_psc_alpha& n )
@@ -366,9 +374,11 @@ iaf_psc_alpha::handle( SpikeEvent& e )
                                kernel().simulation_manager.get_slice_origin() ),
       s );
   else
+  {
     B_.in_spikes_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       s );
+  }
 }
 
 void

@@ -114,15 +114,21 @@ get_double_in_range( const DictionaryDatum& d,
   {
   case 0:
     if ( min < x and x < max )
+    {
       return x;
+    }
     break;
   case 1:
     if ( min <= x and x < max )
+    {
       return x;
+    }
     break;
   case 2:
     if ( min <= x and x <= max )
+    {
       return x;
+    }
     break;
   default:
     return x;
@@ -176,15 +182,21 @@ get_long_in_range( const DictionaryDatum& d,
   {
   case 0:
     if ( min < x and x < max )
+    {
       return x;
+    }
     break;
   case 1:
     if ( min <= x and x < max )
+    {
       return x;
+    }
     break;
   case 2:
     if ( min <= x and x <= max )
+    {
       return x;
+    }
     break;
   default:
     return x;

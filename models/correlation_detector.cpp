@@ -150,12 +150,14 @@ nest::correlation_detector::State_::set( const DictionaryDatum& d,
     if ( nev.size() == 2 && nev[ 0 ] == 0 && nev[ 1 ] == 0 )
       reset_required = true;
     else
+    {
       throw BadProperty( "/n_events can only be set to [0 0]." );
+    }
   }
-if ( reset_required )
-{
-  reset( p );
-}
+  if ( reset_required )
+  {
+    reset( p );
+  }
 }
 
 void

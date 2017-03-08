@@ -317,7 +317,9 @@ nest::correlospinmatrix_detector::set_status( const DictionaryDatum& d )
   device_.set_status( d );
   P_ = ptmp;
   if ( reset_required == true )
+  {
     S_.reset( P_ );
+  }
 }
 
 

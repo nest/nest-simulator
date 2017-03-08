@@ -61,7 +61,9 @@ update_value_int( const DictionaryDatum& d, Name propname, int& prop )
       return true;
     }
     else
+    {
       throw TypeMismatch();
+    }
   }
 
   return false;

@@ -106,20 +106,20 @@ nest::noise_generator::Parameters_::set( const DictionaryDatum& d,
   double dt;
   if ( updateValue< double >( d, names::dt, dt ) )
     dt_ = Time::ms( dt );
-if ( std_ < 0 )
-{
-  throw BadProperty( "The standard deviation cannot be negative." );
-}
-if ( std_mod_ < 0 )
-{
-  throw BadProperty( "The standard deviation cannot be negative." );
-}
-if ( std_mod_ > std_ )
-{
-  throw BadProperty(
+  if ( std_ < 0 )
+  {
+    throw BadProperty( "The standard deviation cannot be negative." );
+  }
+  if ( std_mod_ < 0 )
+  {
+    throw BadProperty( "The standard deviation cannot be negative." );
+  }
+  if ( std_mod_ > std_ )
+  {
+    throw BadProperty(
       "The modulation apmlitude must be smaller or equal to the baseline "
       "amplitude." );
-}
+  }
 
   if ( not dt_.is_step() )
     throw StepMultipleRequired( n.get_name(), names::dt, dt_ );

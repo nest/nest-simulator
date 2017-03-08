@@ -48,10 +48,10 @@ void
 SLIType::deletetypename( void )
 {
   assert( count > 0 );
-if ( count == 1 )
-{
-  delete name;
-}
+  if ( count == 1 )
+  {
+    delete name;
+  }
   --count;
 }
 
@@ -59,10 +59,12 @@ if ( count == 1 )
 void
 SLIType::setdefaultaction( SLIFunction& c )
 {
-if ( defaultaction == NULL )
-{
-  defaultaction = &c;
-}
+  if ( defaultaction == NULL )
+  {
+    defaultaction = &c;
+  }
   else
+  {
     assert( &c == defaultaction );
+  }
 }

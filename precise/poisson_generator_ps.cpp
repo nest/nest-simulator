@@ -65,10 +65,10 @@ nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d )
 {
 
   updateValue< double >( d, names::dead_time, dead_time_ );
-if ( dead_time_ < 0 )
-{
-  throw BadProperty( "The dead time cannot be negative." );
-}
+  if ( dead_time_ < 0 )
+  {
+    throw BadProperty( "The dead time cannot be negative." );
+  }
 
   updateValue< double >( d, names::rate, rate_ );
 
@@ -131,7 +131,9 @@ nest::poisson_generator_ps::calibrate()
   if ( P_.rate_ > 0 )
     V_.inv_rate_ms_ = 1000.0 / P_.rate_ - P_.dead_time_;
   else
+  {
     V_.inv_rate_ms_ = std::numeric_limits< double >::infinity();
+  }
 
   /* The user may have set Device::start and/or origin to a later time
      during a simulation break. We can handle this in two ways:

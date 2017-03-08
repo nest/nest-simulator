@@ -887,7 +887,9 @@ nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
       if ( not synmodel.empty() )
         syn_id = static_cast< size_t >( synmodel );
       else
+      {
         throw UnknownModelName( synmodel_name );
+      }
     }
     Node* source_node = kernel().node_manager.get_node( source_gid );
     connect_( *source_node, *target_node, source_gid, thr, syn_id, cd );
@@ -989,8 +991,10 @@ nest::ConnectionManager::send_secondary( thread t, SecondaryEvent& e )
             p->send( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
         }
         else
+        {
           p->send_secondary(
             e, t, kernel().model_manager.get_synapse_prototypes( t ) );
+        }
       }
     }
   }
@@ -1062,7 +1066,9 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
     if ( not synmodel.empty() )
       syn_id = static_cast< size_t >( synmodel );
     else
+    {
       throw UnknownModelName( synmodel_name.toString() );
+    }
     get_connections( connectome, source_a, target_a, syn_id, synapse_label );
   }
   else

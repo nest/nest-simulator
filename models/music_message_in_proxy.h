@@ -238,9 +238,13 @@ music_message_in_proxy::set_status( const DictionaryDatum& d )
   if ( updateValue< long >( d, "n_messages", nm ) )
   {
     if ( nm == 0 )
+    {
       B_.message_handler_.clear();
+    }
     else
+    {
       throw BadProperty( "n_messaged can only be set to 0." );
+    }
   }
 
   // if we get here, temporaries contain consistent set of properties

@@ -126,7 +126,9 @@ protected:
     {
       int size = ::read( m_fd, m_inbuf, s_bufsiz );
       if ( size < 1 )
+      {
         return traits_type::eof();
+      }
       setg( m_inbuf, m_inbuf, m_inbuf + size );
     }
     return traits_type::to_int_type( *gptr() );

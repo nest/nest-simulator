@@ -86,7 +86,9 @@ void
 nest::UniversalDataLogger< HostNode >::DataLogger_::init()
 {
   if ( num_vars_ < 1 )
-    return; // not recording anything
+  {
+    return;
+  } // not recording anything
 
   // Next recording step is in current slice or beyond, indicates that
   // buffer is properly initialized.
@@ -131,7 +133,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::record_data(
   long step )
 {
   if ( num_vars_ < 1 || step < next_rec_step_ )
+  {
     return;
+  }
 
   const size_t wt = kernel().event_delivery_manager.write_toggle();
 
@@ -154,7 +158,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::record_data(
 
   // obtain data through access functions, calling via pointer-to-member
   for ( size_t j = 0; j < num_vars_; ++j )
+  {
     dest.data[ j ] = ( ( host ).*( node_access_[ j ] ) )();
+  }
 
   next_rec_step_ += rec_int_steps_;
 
@@ -172,7 +178,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host,
   const DataLoggingRequest& request )
 {
   if ( num_vars_ < 1 )
-    return; // nothing to do
+  {
+    return;
+  } // nothing to do
 
   // The following assertions will fire if the user forgot to call init()
   // on the data logger.

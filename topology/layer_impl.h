@@ -376,7 +376,9 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
         // Happens if target does not belong to layer, eg spike_detector.
         // We then print NaNs for the displacement.
         for ( int n = 0; n < D; ++n )
+        {
           out << " NaN";
+        }
       }
       else
       {
@@ -420,14 +422,17 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
     {
       bool oversize = false;
       for ( int i = 0; i < D; ++i )
+      {
         oversize |= layer.get_periodic_mask()[ i ]
           and ( grid_mask.get_lower_right()[ i ]
                 - grid_mask.get_upper_left()[ i ] ) > ( int ) dims[ i ];
-
+      }
       if ( oversize )
+      {
         throw BadProperty(
           "Mask size must not exceed layer size; set allow_oversized_mask to "
           "override." );
+      }
     }
 
     Position< D > lower_left =
@@ -455,14 +460,17 @@ MaskedLayer< D >::check_mask_( Layer< D >& layer, bool allow_oversized )
         const Box< D > bb = mask.get_bbox();
         bool oversize = false;
         for ( int i = 0; i < D; ++i )
+        {
           oversize |= layer.get_periodic_mask()[ i ]
             and ( bb.upper_right[ i ] - bb.lower_left[ i ] )
               > layer.get_extent()[ i ];
-
+        }
         if ( oversize )
+        {
           throw BadProperty(
             "Mask size must not exceed layer size; set allow_oversized_mask to "
             "override." );
+        }
       }
     }
     catch ( std::bad_cast& )

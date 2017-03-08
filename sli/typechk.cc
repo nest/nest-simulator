@@ -174,10 +174,10 @@ TypeTrie::getalternative( TypeTrie::TypeNode* pos, const Name& type )
 
   while ( type != pos->type )
   {
-if ( pos->alt == NULL )
-{
-  pos->alt = new TypeNode( type );
-}
+    if ( pos->alt == NULL )
+    {
+      pos->alt = new TypeNode( type );
+    }
 
     if ( pos->type == sli::any )
     {
@@ -200,7 +200,9 @@ if ( pos->alt == NULL )
       // pos->type==type by asignment.
     }
     else
-      pos = pos->alt; // pos->alt is always defined here.
+    {
+      pos = pos->alt;
+    } // pos->alt is always defined here.
   }
 
   return pos;
@@ -244,10 +246,10 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
   {
 
     pos = getalternative( pos, a[ level ] );
-if ( pos->next == NULL )
-{
-  pos->next = new TypeNode( empty );
-}
+    if ( pos->next == NULL )
+    {
+      pos->next = new TypeNode( empty );
+    }
     pos = pos->next;
   }
 
@@ -263,11 +265,13 @@ if ( pos->next == NULL )
     pos->func.move( f );
   }
   else
+  {
     std::cout << "Method 'TypeTrie::InsertFunction'" << std::endl
               << "Warning! Ambigous Function Definition ." << std::endl
               << "A function with longer, but identical initial parameter "
               << "list is already present!" << std::endl
               << "Nothing was changed." << std::endl;
+  }
 }
 
 /*_____ end InsertFunction() _____________________________________*/
@@ -277,10 +281,10 @@ void
 TypeTrie::toTokenArray( TokenArray& a ) const
 {
   a.clear();
-if ( root != NULL )
-{
-  root->toTokenArray( a );
-}
+  if ( root != NULL )
+  {
+    root->toTokenArray( a );
+  }
 }
 
 void
@@ -288,8 +292,8 @@ TypeTrie::info( std::ostream& out ) const
 {
   std::vector< TypeNode const* > tl;
   tl.reserve( 5 );
-if ( root != NULL )
-{
-  root->info( out, tl );
-}
+  if ( root != NULL )
+  {
+    root->info( out, tl );
+  }
 }

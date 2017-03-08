@@ -144,10 +144,10 @@ nest::music_message_in_proxy::calibrate()
   if ( not S_.published_ )
   {
     MUSIC::Setup* s = kernel().music_manager.get_music_setup();
-if ( s == 0 )
-{
-  throw MUSICSimulationHasRun( get_name() );
-}
+    if ( s == 0 )
+    {
+      throw MUSICSimulationHasRun( get_name() );
+    }
 
     V_.MP_ = s->publishMessageInput( P_.port_name_ );
 

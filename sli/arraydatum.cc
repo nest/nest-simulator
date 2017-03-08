@@ -117,12 +117,14 @@ AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::list(
 
   while ( i != this->end() )
   {
-if ( lc != line )
-{
-  ( *i )->list( out, prefix, -1 );
-}
+    if ( lc != line )
+    {
+      ( *i )->list( out, prefix, -1 );
+    }
     else
+    {
       ( *i )->list( out, prefix, 0 );
+    }
     out << std::endl;
     ++lc;
     ++i;
@@ -203,7 +205,9 @@ lockPTRDatum< std::vector< long >, &SLIInterpreter::IntVectortype >::pprint(
   else
   {
     for ( size_t i = 0; i < 30; ++i )
+    {
       out << ( *v )[ i ] << " ";
+    }
     out << "... ";
   }
 
@@ -228,7 +232,9 @@ lockPTRDatum< std::vector< double >,
   else
   {
     for ( size_t i = 0; i < 30; ++i )
+    {
       out << ( *v )[ i ] << " ";
+    }
     out << "... ";
   }
   out << ".>";

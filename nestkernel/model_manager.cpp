@@ -67,10 +67,10 @@ ModelManager::~ModelManager()
   // Now we can delete the clean model prototypes
   std::vector< ConnectorModel* >::iterator i;
   for ( i = pristine_prototypes_.begin(); i != pristine_prototypes_.end(); ++i )
-if ( *i != 0 )
-{
-  delete *i;
-}
+    if ( *i != 0 )
+    {
+      delete *i;
+    }
 
   std::vector< std::pair< Model*, bool > >::iterator j;
   for ( j = pristine_models_.begin(); j != pristine_models_.end(); ++j )
@@ -216,7 +216,9 @@ ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
     set_synapse_defaults_( new_id, params );
   }
   else
+  {
     throw UnknownModelName( old_name );
+  }
 
   return new_id;
 }
@@ -246,10 +248,10 @@ ModelManager::register_node_model_( Model* model, bool private_model )
     newnode->set_model_id( id );
     proxy_nodes_[ t ].push_back( newnode );
   }
-if ( not private_model )
-{
-  modeldict_->insert( name, id );
-}
+  if ( not private_model )
+  {
+    modeldict_->insert( name, id );
+  }
 
   return id;
 }
@@ -333,7 +335,9 @@ ModelManager::set_model_defaults( Name name, DictionaryDatum params )
     set_synapse_defaults_( id, params );
   }
   else
+  {
     throw UnknownModelName( name );
+  }
 
   model_defaults_modified_ = true;
 }
@@ -446,22 +450,22 @@ void
 ModelManager::clear_models_( bool called_from_destructor )
 {
   // no message on destructor call, may come after MPI_Finalize()
-if ( not called_from_destructor )
-{
-  LOG( M_INFO,
+  if ( not called_from_destructor )
+  {
+    LOG( M_INFO,
       "ModelManager::clear_models_",
       "Models will be cleared and parameters reset." );
-}
+  }
 
   // We delete all models, which will also delete all nodes. The
   // built-in models will be recovered from the pristine_models_ in
   // init()
   for ( std::vector< Model* >::iterator m = models_.begin(); m != models_.end();
         ++m )
-if ( *m != 0 )
-{
-  delete *m;
-}
+    if ( *m != 0 )
+    {
+      delete *m;
+    }
 
   models_.clear();
   proxy_nodes_.clear();
@@ -483,10 +487,10 @@ ModelManager::clear_prototypes_()
     for ( std::vector< ConnectorModel* >::iterator pt = it->begin();
           pt != it->end();
           ++pt )
-if ( *pt != 0 )
-{
-  delete *pt;
-}
+      if ( *pt != 0 )
+      {
+        delete *pt;
+      }
     it->clear();
   }
   prototypes_.clear();
@@ -502,10 +506,10 @@ ModelManager::calibrate( const TimeConverter& tc )
       std::vector< ConnectorModel* >::iterator pt = prototypes_[ t ].begin();
       pt != prototypes_[ t ].end();
       ++pt )
-if ( *pt != 0 )
-{
-  ( *pt )->calibrate( tc );
-}
+      if ( *pt != 0 )
+      {
+        ( *pt )->calibrate( tc );
+      }
 }
 
 //!< Functor to compare Models by their name.

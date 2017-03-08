@@ -543,7 +543,9 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
           conn = 0;
         }
         if ( conn != 0 )
+        {
           conn = pack_pointer( conn, is_primary_, !is_primary_ );
+        }
         found = true;
         break;
       }

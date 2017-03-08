@@ -62,7 +62,9 @@ ModelRangeManager::add_range( index model, index first_gid, index last_gid )
     if ( model == modelranges_.back().get_model_id() )
       modelranges_.back().extend_range( last_gid );
     else
+    {
       modelranges_.push_back( modelrange( model, first_gid, last_gid ) );
+    }
   }
   else
   {

@@ -84,14 +84,14 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d,
   // prematurely. Therefore, neednewpulse must be second arg on second line.
   bool neednewpulse = updateValue< long >( d, "activity", a_ );
   neednewpulse = updateValue< double >( d, "sdev", sdev_ ) || neednewpulse;
-if ( a_ < 0 )
-{
-  throw BadProperty( "The activity cannot be negative." );
-}
-if ( sdev_ < 0 )
-{
-  throw BadProperty( "The standard deviation cannot be negative." );
-}
+  if ( a_ < 0 )
+  {
+    throw BadProperty( "The activity cannot be negative." );
+  }
+  if ( sdev_ < 0 )
+  {
+    throw BadProperty( "The standard deviation cannot be negative." );
+  }
 
 
   if ( updateValue< std::vector< double > >( d, "pulse_times", pulse_times_ )
@@ -148,7 +148,9 @@ nest::pulsepacket_generator::calibrate()
   if ( P_.sdev_ > 0.0 )
     V_.tolerance = P_.sdev_ * P_.sdev_tolerance_;
   else
+  {
     V_.tolerance = 1.0;
+  }
 
   const double now = ( kernel().simulation_manager.get_time() ).get_ms();
 
@@ -211,18 +213,18 @@ nest::pulsepacket_generator::update( Time const& T,
       needtosort = true;
       V_.start_center_idx_++;
     }
-if ( needtosort )
-{
-  std::sort( B_.spiketimes_.begin(), B_.spiketimes_.end() );
-}
+    if ( needtosort )
+    {
+      std::sort( B_.spiketimes_.begin(), B_.spiketimes_.end() );
+    }
   }
 
   int n_spikes = 0;
 
   // Since we have an ordered list of spiketimes,
   // we can compute the histogram on the fly.
-  while (
-    not B_.spiketimes_.empty() && B_.spiketimes_.front() < ( T.get_steps() + to ) )
+  while ( not B_.spiketimes_.empty()
+    && B_.spiketimes_.front() < ( T.get_steps() + to ) )
   {
     n_spikes++;
     long prev_spike = B_.spiketimes_.front();

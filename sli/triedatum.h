@@ -143,7 +143,9 @@ public:
   static void operator delete( void* p, size_t size )
   {
     if ( p == NULL )
+    {
       return;
+    }
     if ( size != memory.size_of() )
     {
       ::operator delete( p );

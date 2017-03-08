@@ -50,10 +50,10 @@ double
 librandom::GammaRandomDev::unscaled_gamma( RngPtr r ) const
 {
   // algorithm depends on order a
-if ( a == 1 )
-{
-  return -std::log( r->drandpos() );
-}
+  if ( a == 1 )
+  {
+    return -std::log( r->drandpos() );
+  }
   else if ( a < 1 )
   {
     // Johnk's rejection algorithm, see [1], p. 418
@@ -66,12 +66,14 @@ if ( a == 1 )
       Y = std::pow( r->drand(), jv );
       S = X + Y;
     } while ( S > 1 );
-if ( X > 0 )
-{
-  return -std::log( r->drandpos() ) * X / S;
-}
+    if ( X > 0 )
+    {
+      return -std::log( r->drandpos() ) * X / S;
+    }
     else
+    {
       return 0;
+    }
   }
   else
   {
@@ -81,10 +83,10 @@ if ( X > 0 )
     do
     {
       const double U = r->drand();
-if ( U == 0 || U == 1 )
-{
-  continue;
-} // accept guaranteed false
+      if ( U == 0 || U == 1 )
+      {
+        continue;
+      } // accept guaranteed false
       const double V = r->drand();
       const double W = U * ( 1 - U ); // != 0
       const double Y = std::sqrt( bc / W ) * ( U - 0.5 );
@@ -93,10 +95,10 @@ if ( U == 0 || U == 1 )
       {
         const double Z = 64 * W * W * W * V * V;
         accept = Z <= 1 - 2 * Y * Y / X;
-if ( not accept )
-{
-  accept = std::log( Z ) <= 2 * ( bb * std::log( X / bb ) - Y );
-}
+        if ( not accept )
+        {
+          accept = std::log( Z ) <= 2 * ( bb * std::log( X / bb ) - Y );
+        }
       }
     } while ( not accept );
 

@@ -418,7 +418,7 @@ EventDeliveryManager::collocate_buffers_( bool done )
       for ( it = offgrid_spike_register_.begin();
             it != offgrid_spike_register_.end();
             ++it )
-        {
+      {
         for ( jt = it->begin(); jt != it->end(); ++jt )
         {
           pos = std::copy( jt->begin(), jt->end(), pos );
@@ -536,10 +536,10 @@ EventDeliveryManager::deliver_events( thread t )
         // index written into the buffer and read out of it
         synindex synid;
         read_from_comm_buffer( synid, readpos );
-if ( synid == invalid_synindex )
-{
-  break;
-}
+        if ( synid == invalid_synindex )
+        {
+          break;
+        }
         --readpos;
 
         kernel().model_manager.assert_valid_syn_id( synid );

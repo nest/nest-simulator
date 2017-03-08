@@ -124,9 +124,10 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
     communicate( n_nodes );
     // Set up displacements vector.
     std::vector< int > displacements( np, 0 );
-
     for ( size_t i = 1; i < np; ++i )
+    {
       displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+    }
 
     // Calculate total number of node data items to be gathered.
     size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
@@ -140,8 +141,10 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 
       // Create unflattened vector
       for ( size_t i = 0; i < n_globals - 2; i += 3 )
+      {
         all_nodes.push_back( NodeAddressingData(
           globalnodes[ i ], globalnodes[ i + 1 ], globalnodes[ i + 2 ] ) );
+      }
 
       // get rid of any multiple entries
       std::sort( all_nodes.begin(), all_nodes.end() );
@@ -226,9 +229,10 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 
     // Set up displacements vector.
     std::vector< int > displacements( np, 0 );
-
     for ( size_t i = 1; i < np; ++i )
+    {
       displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+    }
 
     // Calculate sum of global connections.
     size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
@@ -242,8 +246,10 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 
       // Create unflattened vector
       for ( size_t i = 0; i < n_globals - 2; i += 3 )
+      {
         all_nodes.push_back( NodeAddressingData(
           globalnodes[ i ], globalnodes[ i + 1 ], globalnodes[ i + 2 ] ) );
+      }
 
       // get rid of any multiple entries
       std::sort( all_nodes.begin(), all_nodes.end() );
@@ -288,9 +294,11 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
           }
         }
         if ( match )
+        {
           all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
             ( ( *n )->get_parent() )->get_gid(),
             ( *n )->get_vp() ) );
+        }
       }
     }
     std::sort( all_nodes.begin(), all_nodes.end() );
@@ -356,9 +364,11 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
         }
       }
       if ( match )
+      {
         all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
           ( ( *n )->get_parent() )->get_gid(),
           ( *n )->get_vp() ) );
+      }
     }
   }
   std::sort( all_nodes.begin(), all_nodes.end() );

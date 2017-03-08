@@ -219,25 +219,25 @@ librandom::BinomialRandomDev::set_status( const DictionaryDatum& d )
 
   if ( p_new < 0. || 1. < p_new )
     throw BadParameterValue( "Binomial RDV: 0 <= p <= 1 required." );
-if ( n_new < 1 )
-{
-  throw BadParameterValue( "Binomial RDV: n >= 1 required." );
-}
+  if ( n_new < 1 )
+  {
+    throw BadParameterValue( "Binomial RDV: n >= 1 required." );
+  }
 
   // Binomial numbers are generated from Poisson numbers.
   // To avoid an infinite loop, we limit n to slightly less than
   // the maximum possible value for Poisson numbers
   const long N_MAX =
     static_cast< long >( 0.998 * std::numeric_limits< long >::max() );
-if ( n_new > N_MAX )
-{
-  throw BadParameterValue( String::compose(
+  if ( n_new > N_MAX )
+  {
+    throw BadParameterValue( String::compose(
       "Binomial RDV: N < %1 required.", static_cast< double >( N_MAX ) ) );
-}
-if ( n_updated || p_updated )
-{
-  set_p_n( p_new, n_new );
-}
+  }
+  if ( n_updated || p_updated )
+  {
+    set_p_n( p_new, n_new );
+  }
 }
 
 void

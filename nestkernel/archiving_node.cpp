@@ -185,7 +185,9 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
         history_.pop_front();
       }
       else
+      {
         break;
+      }
     }
     // update spiking history
     Kminus_ =

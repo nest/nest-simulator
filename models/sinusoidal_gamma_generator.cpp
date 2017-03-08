@@ -88,10 +88,10 @@ nest::sinusoidal_gamma_generator::Parameters_&
   nest::sinusoidal_gamma_generator::Parameters_::
   operator=( const Parameters_& p )
 {
-if ( this == &p )
-{
-  return *this;
-}
+  if ( this == &p )
+  {
+    return *this;
+  }
 
   om_ = p.om_;
   phi_ = p.phi_;
@@ -164,12 +164,14 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
          d, names::individual_spike_trains, individual_spike_trains_ ) )
   {
     // this can happen only on model prototypes
-if ( individual_spike_trains_ )
-{
-  num_trains_ = 0;
-} // will be counted up as connections are made
+    if ( individual_spike_trains_ )
+    {
+      num_trains_ = 0;
+    } // will be counted up as connections are made
     else
-      num_trains_ = 1; // fixed
+    {
+      num_trains_ = 1;
+    } // fixed
   }
 
   if ( updateValue< double >( d, names::frequency, om_ ) )
@@ -257,10 +259,10 @@ nest::sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p,
   double t_a,
   double t_b ) const
 {
-if ( t_a == t_b )
-{
-  return 0.0;
-}
+  if ( t_a == t_b )
+  {
+    return 0.0;
+  }
 
   double deltaLambda = p.order_ * p.rate_ * ( t_b - t_a );
   if ( std::abs( p.amplitude_ ) > 0 && std::abs( p.om_ ) > 0 )

@@ -110,25 +110,25 @@ mynest::pif_psc_alpha::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::V_th, V_th );
   updateValue< double >( d, names::V_reset, V_reset );
   updateValue< double >( d, names::t_ref, t_ref );
-if ( C_m <= 0 )
-{
-  throw nest::BadProperty(
+  if ( C_m <= 0 )
+  {
+    throw nest::BadProperty(
       "The membrane capacitance must be strictly positive." );
-}
-if ( tau_syn <= 0 )
-{
-  throw nest::BadProperty(
+  }
+  if ( tau_syn <= 0 )
+  {
+    throw nest::BadProperty(
       "The synaptic time constant must be strictly positive." );
-}
-if ( V_reset >= V_th )
-{
-  throw nest::BadProperty( "The reset potential must be below threshold." );
-}
-if ( t_ref < 0 )
-{
-  throw nest::BadProperty(
+  }
+  if ( V_reset >= V_th )
+  {
+    throw nest::BadProperty( "The reset potential must be below threshold." );
+  }
+  if ( t_ref < 0 )
+  {
+    throw nest::BadProperty(
       "The refractory time must be at least one simulation step." );
-}
+  }
 }
 
 void
@@ -247,7 +247,9 @@ mynest::pif_psc_alpha::update( Time const& slice_origin,
       S_.V_m +=
         V_.P30 * ( S_.I_ext + P_.I_e ) + V_.P31 * S_.dI_syn + V_.P32 * S_.I_syn;
     else
-      --S_.refr_count; // count down refractory time
+    {
+      --S_.refr_count;
+    } // count down refractory time
 
     // update synaptic currents
     S_.I_syn = V_.P21 * S_.dI_syn + V_.P22 * S_.I_syn;

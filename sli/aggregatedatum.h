@@ -97,9 +97,10 @@ public:
 
     const AggregateDatum< C, slt >* ddc =
       dynamic_cast< AggregateDatum< C, slt >* >( const_cast< Datum* >( dat ) );
-
     if ( ddc == NULL )
+    {
       return false;
+    }
 
     return static_cast< C >( *ddc ) == static_cast< C >( *this );
   }
@@ -114,7 +115,9 @@ public:
   static void operator delete( void* p, size_t size )
   {
     if ( p == NULL )
+    {
       return;
+    }
     if ( size != memory.size_of() )
     {
       ::operator delete( p );
@@ -161,9 +164,13 @@ AggregateDatum< C, slt >::list( std::ostream& out,
   int l ) const
 {
   if ( l == 0 )
+  {
     prefix = "-->" + prefix;
+  }
   else
+  {
     prefix = "   " + prefix;
+  }
 
   out << prefix;
   print( out );

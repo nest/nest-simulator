@@ -56,10 +56,10 @@ void
 nest::poisson_generator::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::rate, rate_ );
-if ( rate_ < 0 )
-{
-  throw BadProperty( "The rate cannot be negative." );
-}
+  if ( rate_ < 0 )
+  {
+    throw BadProperty( "The rate cannot be negative." );
+  }
 }
 
 

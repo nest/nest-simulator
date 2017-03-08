@@ -123,17 +123,17 @@ nest::iaf_chs_2007::Parameters_::set( const DictionaryDatum& d, State_& s )
         throw BadProperty("Noise amplitude larger than zero while noise signal "
                           "is missing.");
   */
-if ( U_epsp_ < 0 )
-{
-  throw BadProperty( "EPSP cannot be negative." );
-}
+  if ( U_epsp_ < 0 )
+  {
+    throw BadProperty( "EPSP cannot be negative." );
+  }
 
   if ( U_reset_ < 0 ) // sign switched above
     throw BadProperty( "Reset potential cannot be negative." );
-if ( tau_epsp_ <= 0 || tau_reset_ <= 0 )
-{
-  throw BadProperty( "All time constants must be strictly positive." );
-}
+  if ( tau_epsp_ <= 0 || tau_reset_ <= 0 )
+  {
+    throw BadProperty( "All time constants must be strictly positive." );
+  }
 }
 
 void

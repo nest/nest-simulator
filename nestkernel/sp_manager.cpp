@@ -332,8 +332,10 @@ SPManager::disconnect( GIDCollection& sources,
     }
   }
   else
+  {
     cb = kernel().connection_manager.get_conn_builder(
       rule_name, sources, targets, conn_spec, syn_spec );
+  }
   assert( cb != 0 );
 
   // at this point, all entries in conn_spec and syn_spec have been checked

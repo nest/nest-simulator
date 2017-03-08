@@ -77,7 +77,9 @@ private:
       return true;
     }
     else
+    {
       return false;
+    }
   }
 
   bool
@@ -90,7 +92,9 @@ private:
       return true;
     }
     else
+    {
       return false;
+    }
   }
 
 protected:
@@ -300,7 +304,9 @@ public:
     if ( a.references() == 1 )
       data->assign_move( *( a.data ), i, n );
     else
+    {
       data->assign( *( a.data ), i, n );
+    }
   }
 
   void insert_move( size_t i, TokenArray& a ) // 8.4.98 Diesmann

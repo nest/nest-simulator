@@ -175,7 +175,9 @@ nest::IllegalConnection::message() const
   if ( msg_.empty() )
     return "Creation of connection is not possible.";
   else
+  {
     return "Creation of connection is not possible because:\n" + msg_;
+  }
 }
 
 std::string
@@ -184,7 +186,9 @@ nest::InexistentConnection::message() const
   if ( msg_.empty() )
     return "Deletion of connection is not possible.";
   else
+  {
     return "Deletion of connection is not possible because:\n" + msg_;
+  }
 }
 
 std::string

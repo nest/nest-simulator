@@ -135,7 +135,9 @@ XIfstreamFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( true );
   }
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -179,7 +181,9 @@ IfstreamFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( true );
   }
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -226,7 +230,9 @@ OfstreamFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( true );
   }
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -301,7 +307,9 @@ OfsopenFunction::execute( SLIInterpreter* i ) const
       i->OStack.push( true );
     }
     else
+    {
       i->OStack.push( false );
+    }
   }
 
   i->EStack.pop();
@@ -346,7 +354,9 @@ IsstreamFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( true );
   }
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -382,7 +392,9 @@ OsstreamFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( true );
   }
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -433,10 +445,14 @@ StrSStreamFunction::execute( SLIInterpreter* i ) const
       i->EStack.pop();
     }
     else
-      i->raiseerror( i->BadIOError ); // new style more throw like
+    {
+      i->raiseerror( i->BadIOError );
+    } // new style more throw like
   }
   else
+  {
     i->raiseerror( i->StringStreamExpectedError );
+  }
 }
 
 #else
@@ -470,7 +486,9 @@ OstrstreamFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( true );
   }
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -522,10 +540,14 @@ StrFunction::execute( SLIInterpreter* i ) const
       i->EStack.pop();
     }
     else
-      i->raiseerror( i->BadIOError ); // new style more throw like
+    {
+      i->raiseerror( i->BadIOError );
+    } // new style more throw like
   }
   else
+  {
     i->raiseerror( i->StringStreamExpectedError );
+  }
 }
 
 #endif
@@ -567,16 +589,18 @@ PrintFunction::execute( SLIInterpreter* i ) const
   if ( ( *ostreamdatum )->good() )
   {
     i->OStack.top()->print( **ostreamdatum );
-if ( SLIsignalflag != 0 )
-{
-  ( *ostreamdatum )->clear();
-}
+    if ( SLIsignalflag != 0 )
+    {
+      ( *ostreamdatum )->clear();
+    }
 
     i->OStack.pop();
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 /*BeginDocumentation
@@ -616,15 +640,17 @@ PrettyprintFunction::execute( SLIInterpreter* i ) const
   if ( ( *ostreamdatum )->good() )
   {
     i->OStack.top()->pprint( **ostreamdatum );
-if ( SLIsignalflag != 0 )
-{
-  ( *ostreamdatum )->clear();
-}
+    if ( SLIsignalflag != 0 )
+    {
+      ( *ostreamdatum )->clear();
+    }
     i->OStack.pop();
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 /*BeginDocumentation
@@ -654,7 +680,9 @@ FlushFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 /*BeginDocumentation
@@ -694,7 +722,9 @@ EndlFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -722,7 +752,9 @@ EndsFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -743,12 +775,14 @@ EatwhiteFunction::execute( SLIInterpreter* i ) const
 
   if ( ( *istreamdatum )->good() )
   {
-    if ( not ( *istreamdatum )->eof() )
+    if ( not( *istreamdatum )->eof() )
       ( **istreamdatum ) >> ws;
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 
@@ -786,10 +820,14 @@ CloseistreamFunction::execute( SLIInterpreter* i ) const
       i->EStack.pop();
     }
     else
+    {
       i->raiseerror( i->ArgumentTypeError );
+    }
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 
@@ -831,10 +869,14 @@ CloseostreamFunction::execute( SLIInterpreter* i ) const
       i->EStack.pop();
     }
     else
+    {
       i->raiseerror( i->ArgumentTypeError );
+    }
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -872,7 +914,9 @@ SetwFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 /* BeginDocumentation
@@ -924,7 +968,9 @@ SetprecisionFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -952,7 +998,9 @@ IOSFixedFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -980,7 +1028,9 @@ IOSScientificFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1008,7 +1058,9 @@ IOSDefaultFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1035,7 +1087,9 @@ IOSShowpointFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1062,7 +1116,9 @@ IOSNoshowpointFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 
@@ -1090,7 +1146,9 @@ IOSOctFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1117,7 +1175,9 @@ IOSHexFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1144,7 +1204,9 @@ IOSDecFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1171,7 +1233,9 @@ IOSShowbaseFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1198,7 +1262,9 @@ IOSNoshowbaseFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1227,7 +1293,9 @@ IOSLeftFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1256,7 +1324,9 @@ IOSRightFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1285,7 +1355,9 @@ IOSInternalFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 /* BeginDocumentation
@@ -1335,7 +1407,9 @@ GetcFunction::execute( SLIInterpreter* i ) const
       i->EStack.pop();
     }
     else
+    {
       i->raiseerror( i->BadIOError );
+    }
   }
 }
 
@@ -1427,11 +1501,11 @@ GetlineFunction::execute( SLIInterpreter* i ) const
       d.gettypename().toString(), t.datum()->gettypename().toString() );
   }
 
-  if ( ( *istreamdatum )->good() && not ( *istreamdatum )->eof() )
+  if ( ( *istreamdatum )->good() && not( *istreamdatum )->eof() )
   {
     string s;
     getline( **istreamdatum, s );
-    if ( not ( *istreamdatum )->good() )
+    if ( not( *istreamdatum )->good() )
     {
       if ( SLIsignalflag == 0 )
       {
@@ -1453,7 +1527,9 @@ GetlineFunction::execute( SLIInterpreter* i ) const
     }
   }
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -1493,7 +1569,9 @@ IGoodFunction::execute( SLIInterpreter* i ) const
   if ( ( *istreamdatum )->good() )
     i->OStack.push( true );
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -1605,7 +1683,9 @@ IFailFunction::execute( SLIInterpreter* i ) const
   if ( ( *istreamdatum )->fail() )
     i->OStack.push( true );
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -1645,7 +1725,9 @@ OGoodFunction::execute( SLIInterpreter* i ) const
   if ( ( *ostreamdatum )->good() )
     i->OStack.push( true );
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -1684,7 +1766,9 @@ IEofFunction::execute( SLIInterpreter* i ) const
   if ( ( *istreamdatum )->eof() )
     i->OStack.push( true );
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -1724,7 +1808,9 @@ OEofFunction::execute( SLIInterpreter* i ) const
   if ( ( *ostreamdatum )->eof() )
     i->OStack.push( true );
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -1827,7 +1913,9 @@ ReadDoubleFunction::execute( SLIInterpreter* i ) const
     }
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1877,7 +1965,9 @@ ReadIntFunction::execute( SLIInterpreter* i ) const
     }
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 

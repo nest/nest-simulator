@@ -278,10 +278,10 @@ getValue< std::vector< double > >( const Token& t )
 {
   // try DoubleVectorDatum first
   DoubleVectorDatum* dvd = dynamic_cast< DoubleVectorDatum* >( t.datum() );
-if ( dvd )
-{
-  return **dvd;
-}
+  if ( dvd )
+  {
+    return **dvd;
+  }
 
   // ok, try ArrayDatum
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( t.datum() );
@@ -338,10 +338,10 @@ getValue< std::vector< long > >( const Token& t )
 {
   // try IntVectorDatum first
   IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( t.datum() );
-if ( ivd )
-{
-  return **ivd;
-}
+  if ( ivd )
+  {
+    return **ivd;
+  }
 
   // ok, try ArrayDatum
   ArrayDatum* ad = dynamic_cast< ArrayDatum* >( t.datum() );

@@ -61,10 +61,14 @@ EventDeliveryManager::send< SpikeEvent >( Node& source,
     if ( source.is_off_grid() )
       send_offgrid_remote( t, e, lag );
     else
+    {
       send_remote( t, e, lag );
+    }
   }
   else
+  {
     send_local( t, source, e );
+  }
 }
 
 template <>

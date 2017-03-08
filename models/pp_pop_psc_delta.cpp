@@ -140,34 +140,34 @@ nest::pp_pop_psc_delta::Parameters_::set( const DictionaryDatum& d )
       "tau_eta: %1\nSize of val_eta: %2",
       tau_eta_.size(),
       val_eta_.size() ) );
-if ( c_m_ <= 0 )
-{
-  throw BadProperty( "Capacitance must be strictly positive." );
-}
-if ( tau_m_ <= 0 )
-{
-  throw BadProperty( "The time constants must be strictly positive." );
-}
+  if ( c_m_ <= 0 )
+  {
+    throw BadProperty( "Capacitance must be strictly positive." );
+  }
+  if ( tau_m_ <= 0 )
+  {
+    throw BadProperty( "The time constants must be strictly positive." );
+  }
 
   for ( unsigned int i = 0; i < tau_eta_.size(); i++ )
   {
-if ( tau_eta_[ i ] <= 0 )
-{
-  throw BadProperty( "All time constants must be strictly positive." );
-}
+    if ( tau_eta_[ i ] <= 0 )
+    {
+      throw BadProperty( "All time constants must be strictly positive." );
+    }
   }
-if ( N_ <= 0 )
-{
-  throw BadProperty( "Number of neurons must be positive." );
-}
-if ( rho_0_ < 0 )
-{
-  throw BadProperty( "Rho_0 cannot be negative." );
-}
-if ( delta_u_ <= 0 )
-{
-  throw BadProperty( "Delta_u must be positive." );
-}
+  if ( N_ <= 0 )
+  {
+    throw BadProperty( "Number of neurons must be positive." );
+  }
+  if ( rho_0_ < 0 )
+  {
+    throw BadProperty( "Rho_0 cannot be negative." );
+  }
+  if ( delta_u_ <= 0 )
+  {
+    throw BadProperty( "Delta_u must be positive." );
+  }
 }
 
 void
@@ -391,7 +391,9 @@ nest::pp_pop_psc_delta::update( Time const& origin,
         }
       }
       else
+      {
         S_.n_spikes_ages_[ i ] = 0;
+      }
     }
 
 

@@ -146,9 +146,10 @@ public:
   clear_cache()
   {
     const size_t cache_size = cache_.size();
-
     for ( size_t i = 0; i < cache_size; ++i )
+    {
       cache_[ i ] = 0;
+    }
   }
 
 #endif
@@ -175,7 +176,9 @@ public:
     {
       const Token* result = cache_[ key ];
       if ( result )
+      {
         return *result;
+      }
     }
 #endif
 
@@ -208,7 +211,9 @@ public:
     {
       const Token* result = basecache_[ key ];
       if ( result )
+      {
         return *result;
+      }
     }
 #endif
     TokenMap::const_iterator where = base_->find( n );
@@ -222,7 +227,9 @@ public:
       return where->second;
     }
     else
+    {
       return VoidToken;
+    }
   }
 
   /** Test for a name searching all dictionaries on the stack.
@@ -236,7 +243,9 @@ public:
     {
       const Token* result = cache_[ key ];
       if ( result )
+      {
         return true;
+      }
     }
 #endif
     std::list< DictionaryDatum >::const_iterator i( d.begin() );
@@ -266,7 +275,9 @@ public:
     {
       const Token* result = basecache_[ key ];
       if ( result )
+      {
         return true;
+      }
     }
 #endif
     TokenMap::const_iterator where = base_->find( n );

@@ -277,7 +277,9 @@ Multimeter::add_data_( DictionaryDatum& d ) const
     if ( device_.to_accumulator() && not dv.empty() )
       accumulate_property( d, P_.record_from_[ v ], dv );
     else
+    {
       append_property( d, P_.record_from_[ v ], dv );
+    }
   }
 }
 

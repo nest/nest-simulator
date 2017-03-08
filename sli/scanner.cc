@@ -111,10 +111,13 @@ Scanner::Scanner( std::istream* is )
   , // interaction: Non-terminal symbols
   EndSymbol( "/EndSymbol" )
 {
-
   for ( size_t s = start; s < lastscanstate; ++s )
+  {
     for ( size_t c = invalid; c < lastcode; ++c )
+    {
       trans[ s ][ c ] = error;
+    }
+  }
 
   code[ space ] = whitespace;
   code[ tab ] = whitespace;
@@ -559,10 +562,10 @@ bool Scanner::operator()( Token& t )
     // get() is not picky.  --- HEP 2001-08-09
     //     in->get(c);
     c = in->get();
-if ( col++ == 0 )
-{
-  ++line;
-}
+    if ( col++ == 0 )
+    {
+      ++line;
+    }
 
     if ( c == '\0' || in->bad() )
       c = endof;
@@ -570,11 +573,13 @@ if ( col++ == 0 )
     if ( in->eof() )
       c = endof;
     else
+    {
       assert( in->good() );
-if ( c != endof )
-{
-  context += c;
-}
+    }
+    if ( c != endof )
+    {
+      context += c;
+    }
 
     if ( c == endoln )
     {

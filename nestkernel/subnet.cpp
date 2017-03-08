@@ -115,10 +115,10 @@ nest::Subnet::print_network( int max_depth, int level, std::string prefix )
   // When the function is first called, we have to have a single
   // space as prefix, otherwise everything will by slightly out of
   // format.
-if ( prefix == "" )
-{
-  prefix = " ";
-}
+  if ( prefix == "" )
+  {
+    prefix = " ";
+  }
 
   std::ostringstream out;
   if ( get_parent() )
@@ -128,7 +128,9 @@ if ( prefix == "" )
     if ( get_label() != "" )
       out << get_label();
     else
+    {
       out << get_name();
+    }
   }
   else
   {
@@ -137,7 +139,9 @@ if ( prefix == "" )
     if ( get_label() != "" )
       out << get_label();
     else
+    {
       out << "root";
+    }
   }
 
   std::vector< int > dim;
@@ -147,10 +151,10 @@ if ( prefix == "" )
   for ( size_t k = 0; k < dim.size() - 1; ++k )
     out << dim[ k ] << " ";
   out << dim[ dim.size() - 1 ] << "]" << std::endl;
-if ( max_depth <= level )
-{
-  return out.str();
-}
+  if ( max_depth <= level )
+  {
+    return out.str();
+  }
 
   if ( nodes_.empty() )
     return out.str();
@@ -188,8 +192,10 @@ if ( max_depth <= level )
         out << prefix
             << nodes_[ i ]->print_network( max_depth, level + 1, prefix + " " );
       else
+      {
         out << prefix
             << nodes_[ i ]->print_network( max_depth, level + 1, prefix + "|" );
+      }
 
       first = next;
       continue;

@@ -296,6 +296,15 @@ public:
    */
   virtual GIDCollectionMetadataPTR get_metadata() const = 0;
 
+  virtual bool is_range() const = 0;
+
+  /**
+   * Returns index of node with given GID in GIDCollection.
+   *
+   * @return Index of node with given GID; -1 if node not in GIDCollection.
+   */
+  virtual long find( const index ) const = 0;
+
 private:
   std::clock_t fingerprint_; //!< Unique identity of the kernel that created the
                              //!< GIDCollection
@@ -389,6 +398,10 @@ public:
   void set_metadata( GIDCollectionMetadataPTR );
 
   GIDCollectionMetadataPTR get_metadata() const;
+
+  bool is_range() const;
+
+  long find( const index ) const;
 
   /**
    * Checks if GIDs in another primitive is a continuation of GIDs in this
@@ -513,6 +526,10 @@ public:
   GIDCollectionPTR slice( size_t start, size_t stop, size_t step = 1 ) const;
 
   GIDCollectionMetadataPTR get_metadata() const;
+
+  bool is_range() const;
+
+  long find( const index ) const;
 };
 
 inline bool GIDCollection::operator!=( GIDCollectionPTR rhs ) const
@@ -533,7 +550,7 @@ inline GIDPair gc_const_iterator::operator*() const
     gp.gid = primitive_collection_->first_ + element_idx_;
     if ( gp.gid > primitive_collection_->last_ )
     {
-      throw KernelException( "Invalid GIDCollection iterator " );
+      throw KernelException( "Invalid GIDCollection iterator" );
     }
     gp.model_id = primitive_collection_->model_id_;
   }
@@ -548,13 +565,13 @@ inline GIDPair gc_const_iterator::operator*() const
              or ( part_idx_ == composite_collection_->stop_part_
                   and element_idx_ < composite_collection_->stop_offset_ ) ) )
       {
-        throw KernelException( "Invalid GIDCollection iterator " );
+        throw KernelException( "Invalid GIDCollection iterator" );
       }
     }
     else if ( part_idx_ >= composite_collection_->parts_.size()
       or element_idx_ >= composite_collection_->parts_[ part_idx_ ].size() )
     {
-      throw KernelException( "Invalid GIDCollection iterator " );
+      throw KernelException( "Invalid GIDCollection iterator" );
     }
 
     gp.gid = composite_collection_->parts_[ part_idx_ ][ element_idx_ ];
@@ -696,6 +713,24 @@ GIDCollectionPrimitive::get_metadata() const
   return metadata_;
 }
 
+inline bool
+GIDCollectionPrimitive::is_range() const
+{
+  return true;
+}
+
+inline long
+GIDCollectionPrimitive::find( const index neuron_id ) const
+{
+  if ( neuron_id > last_ )
+  {
+    return -1;
+  }
+  else
+  {
+    return neuron_id - first_;
+  }
+}
 
 inline index GIDCollectionComposite::operator[]( const size_t i ) const
 {
@@ -800,6 +835,39 @@ GIDCollectionComposite::get_metadata() const
 {
   return parts_[ 0 ].get_metadata();
 }
+
+inline bool
+GIDCollectionComposite::is_range() const
+{
+  return false;
+}
+
+inline long
+GIDCollectionComposite::find( const index neuron_id ) const
+{
+  // using the same algorithm as contains(), but returns the GID if found.
+  long lower = 0;
+  long upper = parts_.size() - 1;
+  while ( lower <= upper )
+  {
+    size_t middle = floor( ( lower + upper ) / 2.0 );
+    if ( ( *( parts_[ middle ].begin() + ( parts_[ middle ].size() - 1 ) ) ).gid
+      < neuron_id )
+    {
+      lower = middle + 1;
+    }
+    else if ( neuron_id < ( *( parts_[ middle ].begin() ) ).gid )
+    {
+      upper = middle - 1;
+    }
+    else
+    {
+      return parts_[ middle ].find( neuron_id );
+    }
+  }
+  return -1;
+}
+
 
 } // namespace nest
 

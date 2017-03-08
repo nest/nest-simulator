@@ -29,6 +29,7 @@
 #include <cassert>
 #include <cmath>
 #include <set>
+#include <vector>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -78,7 +79,12 @@ nest::ConnectionManager::ConnectionManager()
 
 nest::ConnectionManager::~ConnectionManager()
 {
-  delete_connections_();
+  // Memory leak on purpose!
+  // The ConnectionManager is deleted, when the network is deleted, and
+  // this happens only, when main() is finished and we give the allocated memory
+  // back to the system anyway. Hence, why bother cleaning up our highly
+  // scattered connection infrastructure? They do not have any open files, which
+  // need to be closed or similar.
 }
 
 void
@@ -195,37 +201,39 @@ nest::ConnectionManager::set_synapse_status( index gid,
 void
 nest::ConnectionManager::delete_connections_()
 {
-  for ( tVSConnector::iterator it = connections_.begin();
-        it != connections_.end();
-        ++it )
+#ifdef _OPENMP
+#pragma omp parallel
   {
-    for ( tSConnector::nonempty_iterator iit = it->nonempty_begin();
-          iit != it->nonempty_end();
-          ++iit )
+#pragma omp for schedule( static, 1 )
+#endif
+    for ( size_t t = 0; t < connections_.size(); ++t )
     {
+      for (
+        tSConnector::nonempty_iterator iit = connections_[ t ].nonempty_begin();
+        iit != connections_[ t ].nonempty_end();
+        ++iit )
+      {
 #ifdef USE_PMA
-      validate_pointer( *iit )->~ConnectorBase();
+        validate_pointer( *iit )->~ConnectorBase();
 #else
       delete validate_pointer( *iit );
 #endif
+      }
+      connections_[ t ].clear();
     }
-    it->clear();
-  }
 
 #if defined _OPENMP && defined USE_PMA
 #ifdef IS_K
-#pragma omp parallel
-  {
     poormansallocpool[ kernel().vp_manager.get_thread_id() ].destruct();
     poormansallocpool[ kernel().vp_manager.get_thread_id() ].init();
-  }
 #else
-#pragma omp parallel
-  {
     poormansallocpool.destruct();
     poormansallocpool.init();
-  }
 #endif
+#endif
+
+#ifdef _OPENMP
+  }
 #endif
 }
 
@@ -295,12 +303,12 @@ nest::ConnectionManager::connect( GIDCollectionPTR sources,
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 
-  if ( !conn_spec->known( names::rule ) )
+  if ( not conn_spec->known( names::rule ) )
     throw BadProperty( "Connectivity spec must contain connectivity rule." );
   const Name rule_name =
     static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
 
-  if ( !connruledict_->known( rule_name ) )
+  if ( not connruledict_->known( rule_name ) )
     throw BadProperty(
       String::compose( "Unknown connectivity rule: %1", rule_name ) );
   const long rule_id = ( *connruledict_ )[ rule_name ];
@@ -483,7 +491,7 @@ nest::ConnectionManager::connect( index sgid,
   const thread tid = kernel().vp_manager.get_thread_id();
 
   // make sure target is on this MPI rank
-  if ( !kernel().node_manager.is_local_gid( tgid ) )
+  if ( not kernel().node_manager.is_local_gid( tgid ) )
   {
     return false;
   }
@@ -633,13 +641,38 @@ nest::ConnectionManager::disconnect( Node& target,
 
   if ( kernel().node_manager.is_local_gid( target.get_gid() ) )
   {
-    // get the ConnectorBase corresponding to the source
-    ConnectorBase* conn =
-      validate_pointer( validate_source_entry_( target_thread, sgid, syn_id ) );
+    // We check that a connection actually exists between target and source
+    // This is to properly handle the case when structural plasticity is not
+    // enabled but the user wants to delete a connection between a target and
+    // a source which are not connected
+    if ( validate_source_entry_( target_thread, sgid, syn_id ) == 0 )
+    {
+      throw InexistentConnection();
+    }
+    DictionaryDatum data = DictionaryDatum( new Dictionary );
+    std::vector< index > target_array( 1 );
+    std::vector< index > source_array( 1 );
+    target_array[ 0 ] = target.get_gid();
+    source_array[ 0 ] = sgid;
+    def< GIDCollectionDatum >( data,
+      names::target,
+      GIDCollectionDatum( GIDCollection::create( target_array ) ) );
+    def< GIDCollectionDatum >( data,
+      names::source,
+      GIDCollectionDatum( GIDCollection::create( source_array ) ) );
+    ArrayDatum conns = kernel().connection_manager.get_connections( data );
+
+    if ( conns.numReferences() == 0 )
+    {
+      throw InexistentConnection();
+    }
     ConnectorBase* c =
       kernel()
         .model_manager.get_synapse_prototype( syn_id, target_thread )
-        .delete_connection( target, target_thread, conn, syn_id );
+        .delete_connection( target,
+          target_thread,
+          validate_source_entry_( target_thread, sgid, syn_id ),
+          syn_id );
     if ( c == 0 )
     {
       connections_[ target_thread ].erase( sgid );
@@ -654,15 +687,10 @@ nest::ConnectionManager::disconnect( Node& target,
 
 // -----------------------------------------------------------------------------
 
-/**
- * Divergent connection routine for use by DataConnect.
- *
- * @note This method is used only by DataConnect.
- */
 void
-nest::ConnectionManager::divergent_connect( index source_id,
+nest::ConnectionManager::data_connect_single( const index source_id,
   DictionaryDatum pars,
-  index syn )
+  const index syn )
 {
   // We extract the parameters from the dictionary explicitly since getValue()
   // for DoubleVectorDatum
@@ -691,10 +719,8 @@ nest::ConnectionManager::divergent_connect( index source_id,
       std::string msg = String::compose(
         "Parameter '%1' must be a DoubleVectorArray or numpy.array. ",
         di_s->first.toString() );
-      LOG( M_DEBUG, "DivergentConnect", msg );
-      LOG( M_DEBUG,
-        "DivergentConnect",
-        "Trying to convert, but this takes time." );
+      LOG( M_DEBUG, "DataConnect", msg );
+      LOG( M_DEBUG, "DataConnect", "Trying to convert, but this takes time." );
 
       if ( tmpint )
       {
@@ -737,10 +763,10 @@ nest::ConnectionManager::divergent_connect( index source_id,
   bool complete_wd_lists = ( ( *ptarget_ids )->size() == ( *pweights )->size()
     && ( *pweights )->size() == ( *pdelays )->size() );
   // check if we have consistent lists for weights and delays
-  if ( !complete_wd_lists )
+  if ( not complete_wd_lists )
   {
     LOG( M_ERROR,
-      "DivergentConnect",
+      "DataConnect",
       "All lists in the parameter dictionary must be of equal size." );
     throw DimensionMismatch();
   }
@@ -750,10 +776,9 @@ nest::ConnectionManager::divergent_connect( index source_id,
   Subnet* source_comp = dynamic_cast< Subnet* >( source );
   if ( source_comp != 0 )
   {
-    LOG(
-      M_INFO, "DivergentConnect", "Source ID is a subnet; I will iterate it." );
+    LOG( M_INFO, "DataConnect", "Source ID is a subnet; I will iterate it." );
 
-    // collect all leaves in source subnet, then divergent-connect each leaf
+    // collect all leaves in source subnet, then data-connect each leaf
     LocalLeafList local_sources( *source_comp );
     std::vector< MPIManager::NodeAddressingData > global_sources;
     kernel().mpi_manager.communicate( local_sources, global_sources );
@@ -761,7 +786,7 @@ nest::ConnectionManager::divergent_connect( index source_id,
             global_sources.begin();
           src != global_sources.end();
           ++src )
-      divergent_connect( src->get_gid(), pars, syn );
+      data_connect_single( src->get_gid(), pars, syn );
 
     return;
   }
@@ -785,9 +810,9 @@ nest::ConnectionManager::divergent_connect( index source_id,
           "Target with ID %1 does not exist. "
           "The connection will be ignored.",
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
           msg += "\nDetails: " + e.message();
-        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
 
@@ -798,7 +823,6 @@ nest::ConnectionManager::divergent_connect( index source_id,
 
       // here we fill a parameter dictionary with the values of the current loop
       // index.
-      par_i->clear();
       for ( di_s = ( *pars ).begin(); di_s != ( *pars ).end(); ++di_s )
       {
         DoubleVectorDatum const* tmp =
@@ -817,9 +841,9 @@ nest::ConnectionManager::divergent_connect( index source_id,
           "Target with ID %1 does not support the connection. "
           "The connection will be ignored.",
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
           msg += "\nDetails: " + e.message();
-        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
       catch ( IllegalConnection& e )
@@ -828,9 +852,9 @@ nest::ConnectionManager::divergent_connect( index source_id,
           "Target with ID %1 does not support the connection. "
           "The connection will be ignored.",
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
           msg += "\nDetails: " + e.message();
-        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
       catch ( UnknownReceptorType& e )
@@ -841,35 +865,19 @@ nest::ConnectionManager::divergent_connect( index source_id,
           "The connection will be ignored",
           source_id,
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
           msg += "\nDetails: " + e.message();
-        LOG( M_WARNING, "DivergentConnect", msg.c_str() );
+        LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
     }
   }
 }
 
-/**
- * Connect, using a dictionary with arrays.
- * The connection rule is based on the details of the dictionary entries source
- * and target.
- * If source and target are both either a GID or a list of GIDs with equal size,
- * then source and target are connected one-to-one.
- * If source is a gid and target is a list of GIDs then the sources is
- * connected to all targets.
- * If source is a list of GIDs and target is a GID, then all sources are
- * connected to the target.
- * At this stage, the task of connect is to separate the dictionary into one
- * for each thread and then to forward the connect call to the connectors who
- * can then deal with the details of the connection.
- *
- * @note This method is used only by DataConnect.
- */
 bool
-nest::ConnectionManager::connect( ArrayDatum& conns )
+nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
 {
-  for ( Token* ct = conns.begin(); ct != conns.end(); ++ct )
+  for ( Token* ct = connectome.begin(); ct != connectome.end(); ++ct )
   {
     DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
     index target_gid = static_cast< size_t >( ( *cd )[ names::target ] );
@@ -880,12 +888,12 @@ nest::ConnectionManager::connect( ArrayDatum& conns )
     index source_gid = ( *cd )[ names::source ];
 
     Token synmodel = cd->lookup( names::synapse_model );
-    if ( !synmodel.empty() )
+    if ( not synmodel.empty() )
     {
       std::string synmodel_name = getValue< std::string >( synmodel );
       synmodel =
         kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-      if ( !synmodel.empty() )
+      if ( not synmodel.empty() )
         syn_id = static_cast< size_t >( synmodel );
       else
         throw UnknownModelName( synmodel_name );
@@ -897,12 +905,18 @@ nest::ConnectionManager::connect( ArrayDatum& conns )
 }
 
 nest::ConnectorBase*
-nest::ConnectionManager::validate_source_entry_( thread tid,
-  index s_gid,
-  synindex syn_id )
+nest::ConnectionManager::validate_source_entry_( const thread tid,
+  const index s_gid,
+  const synindex syn_id )
 {
   kernel().model_manager.assert_valid_syn_id( syn_id );
+  return validate_source_entry_( tid, s_gid );
+}
 
+nest::ConnectorBase*
+nest::ConnectionManager::validate_source_entry_( const thread tid,
+  const index s_gid )
+{
   // resize sparsetable to full network size
   if ( connections_[ tid ].size() < kernel().node_manager.size() )
     connections_[ tid ].resize( kernel().node_manager.size() );
@@ -910,9 +924,13 @@ nest::ConnectionManager::validate_source_entry_( thread tid,
   // check, if entry exists
   // if not put in zero pointer
   if ( connections_[ tid ].test( s_gid ) )
+  {
     return connections_[ tid ].get( s_gid );
+  }
   else
+  {
     return 0; // if non-existing
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -1064,7 +1082,7 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
     Name synmodel_name = getValue< Name >( syn_model_t );
     const Token synmodel =
       kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-    if ( !synmodel.empty() )
+    if ( not synmodel.empty() )
       syn_id = static_cast< size_t >( synmodel );
     else
       throw UnknownModelName( synmodel_name.toString() );
@@ -1094,8 +1112,8 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
 
 // Helper method, implemented as operator<<(), that removes ConnectionIDs from
 // input deque and appends them to output deque.
-static inline std::deque< nest::ConnectionID >& operator<<(
-  std::deque< nest::ConnectionID >& out,
+static inline std::deque< nest::ConnectionID >&
+extend_connectome( std::deque< nest::ConnectionID >& out,
   std::deque< nest::ConnectionID >& in )
 {
   while ( not in.empty() )
@@ -1145,7 +1163,7 @@ nest::ConnectionManager::get_connections(
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        connectome << conns_in_thread;
+        extend_connectome( connectome, conns_in_thread );
       }
     }
 
@@ -1187,7 +1205,7 @@ nest::ConnectionManager::get_connections(
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        connectome << conns_in_thread;
+        extend_connectome( connectome, conns_in_thread );
       }
     }
     return;
@@ -1239,7 +1257,7 @@ nest::ConnectionManager::get_connections(
 #ifdef _OPENMP
 #pragma omp critical( get_connections )
 #endif
-        connectome << conns_in_thread;
+        extend_connectome( connectome, conns_in_thread );
       }
     }
     return;
@@ -1296,35 +1314,32 @@ nest::ConnectionManager::get_sources( std::vector< index > targets,
 }
 
 void
-nest::ConnectionManager::get_targets( std::vector< index > sources,
+nest::ConnectionManager::get_targets( const std::vector< index >& sources,
   std::vector< std::vector< index > >& targets,
-  index synapse_model )
+  const index synapse_model,
+  const std::string& post_synaptic_element )
 {
-  thread thread_id;
-  std::vector< index >::iterator source_it;
-  std::vector< std::vector< index > >::iterator target_it;
-  targets.resize( sources.size() );
-  for ( std::vector< std::vector< index > >::iterator i = targets.begin();
-        i != targets.end();
-        i++ )
-  {
-    ( *i ).clear();
-  }
+  // Clear targets vector and resize to sources size
+  std::vector< std::vector< index > >( sources.size() ).swap( targets );
 
-  for ( tVSConnector::iterator it = connections_.begin();
-        it != connections_.end();
-        ++it )
+  // We go through the connections data structure to retrieve all
+  // targets which have an specific post synaptic element for each
+  // source.
+  for ( thread tid = 0;
+        static_cast< unsigned int >( tid ) < connections_.size();
+        ++tid )
   {
-    thread_id = it - connections_.begin();
     // loop over the targets/sources
-    source_it = sources.begin();
-    target_it = targets.begin();
-    for ( ; source_it != sources.end(); source_it++, target_it++ )
+    std::vector< index >::const_iterator sources_it = sources.begin();
+    std::vector< std::vector< index > >::iterator targets_it = targets.begin();
+    for ( ; sources_it != sources.end(); ++sources_it, ++targets_it )
     {
-      if ( ( *it ).get( *source_it ) != 0 )
+      ConnectorBase* connector = validate_source_entry_( tid, *sources_it );
+      if ( connector != 0 )
       {
-        validate_pointer( ( *it ).get( *source_it ) )
-          ->get_target_gids( ( *target_it ), thread_id, synapse_model );
+        validate_pointer( connector )
+          ->get_target_gids(
+            *targets_it, tid, synapse_model, post_synaptic_element );
       }
     }
   }

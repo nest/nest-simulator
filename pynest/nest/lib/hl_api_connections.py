@@ -215,10 +215,10 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     any distribution-specific parameters (e.g. 'mu' and 'sigma').
 
     To see all available distributions, run:
-    nest.slirun(’rdevdict info’)
+    nest.slirun('rdevdict info')
 
     To get information on a particular distribution, e.g. 'binomial', run:
-    nest.help(’rdevdict::binomial’)
+    nest.help('rdevdict::binomial')
 
     Most common available distributions and associated parameters
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -369,6 +369,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
 
 
 @check_stack
+@deprecated('', 'DataConnect is deprecated and will be removed in NEST 3.0.\
+Use Connect() with one_to_one rule instead.')
 def DataConnect(pre, params=None, model="static_synapse"):
     """Connect neurons from lists of connection data.
 
@@ -468,7 +470,10 @@ def _is_subnet_instance(gids):
     """
 
     try:
-        GetChildren(gids)
+        # Turn off deprecation warning to avoid confusing users with
+        # internals.
+        with SuppressedDeprecationWarning(['GetChildren']):
+            GetChildren(gids)
         return True
     except kernel.NESTError:
         return False
@@ -512,6 +517,7 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
         parameter_map = {}
 
     if _is_subnet_instance(pre[:1]):
+
         if not _is_subnet_instance(post[:1]):
             raise kernel.NESTError(
                 "if pre is a subnet, post also has to be a subnet")
@@ -623,9 +629,9 @@ def Disconnect(pre, post, conn_spec, syn_spec):
 
     Parameters
     ----------
-    pre : list
+    pre : GIDCollection
         Presynaptic nodes, given as list of GIDs
-    post : list
+    post : GIDCollection
         Postsynaptic nodes, given as list of GIDs
     conn_spec : str or dict
         Disconnection rule, see below
@@ -672,9 +678,7 @@ def Disconnect(pre, post, conn_spec, syn_spec):
     """
 
     sps(pre)
-    sr('cvgidcollection')
     sps(post)
-    sr('cvgidcollection')
 
     if conn_spec is not None:
         sps(conn_spec)

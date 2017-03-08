@@ -34,7 +34,7 @@ nest.set_verbosity("M_ERROR")
 meip = nest.Create('music_event_in_proxy')
 nest.SetStatus(meip, {'port_name': 'spikes_in', 'music_channel': 0})
 
-n = nest.Create('iaf_neuron')
+n = nest.Create('iaf_psc_alpha')
 
 nest.Connect(meip, n, 'one_to_one', {'weight': 750.0})
 

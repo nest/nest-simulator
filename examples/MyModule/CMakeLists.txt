@@ -268,17 +268,32 @@ install( FILES ${MODULE_HEADER} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR} )
 install( DIRECTORY sli DESTINATION ${CMAKE_INSTALL_DATADIR} )
 
 # Install help.
-set( HELPDIRS "${PROJECT_SOURCE_DIR}:${PROJECT_SOURCE_DIR}/sli" )
-install( CODE
-    "execute_process(COMMAND ${CMAKE_COMMAND}
-          -DDOC_DIR='${CMAKE_INSTALL_FULL_DOCDIR}'
-          -DDATA_DIR='${CMAKE_INSTALL_FULL_DATADIR}'
-          -DHELPDIRS='${HELPDIRS}'
-          -DINSTALL_DIR='${CMAKE_INSTALL_PREFIX}'
-          -P ${CMAKE_INSTALL_FULL_DOCDIR}/generate_help.cmake
-        WORKING_DIRECTORY \"${PROJECT_BINARY_DIR}\"
-      )"
+if ( NOT CMAKE_CROSSCOMPILING )
+  add_custom_target( generate_help ALL )
+  # Extract help from all source files in the source code, put them in
+  # doc/help and generate a local help index in the build directory containing 
+  # links to the help files.
+  add_custom_command( TARGET generate_help POST_BUILD
+    COMMAND python -B generate_help.py "${PROJECT_SOURCE_DIR}" "${PROJECT_BINARY_DIR}"
+    COMMAND python -B generate_helpindex.py "${PROJECT_BINARY_DIR}/doc"
+    WORKING_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${NEST_DATADIR}/help_generator"
+    COMMENT "Extracting help information; this may take a litte while."
     )
+  # Copy the local doc/help directory to the global installation
+  # directory for documentation.
+  install( DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc/help"
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}"
+    )
+  # Update the global help index to contain all help files that are
+  # located in the global installation directory for documentation.
+  install( CODE
+    "execute_process(
+      COMMAND python -B generate_helpindex.py \"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}\"
+      WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/${NEST_DATADIR}/help_generator\"
+    )"
+    )
+endif ()
+
 
 message( "" )
 message( "-------------------------------------------------------" )
@@ -294,9 +309,16 @@ message( "NEST libraries flags : ${NEST_LIBS}" )
 message( "" )
 message( "-------------------------------------------------------" )
 message( "" )
-message( "You can build and install ${MODULE_NAME} now, using" )
+message( "You can now build and install '${MODULE_NAME}' using" )
 message( "  make" )
 message( "  make install" )
 message( "" )
-message( "${MODULE_NAME} will be installed to: ${CMAKE_INSTALL_FULL_LIBDIR}" )
+message( "The library file lib${MODULE_NAME}.so will be installed to" )
+message( "  ${CMAKE_INSTALL_FULL_LIBDIR}" )
+message( "Help files will be installed to" )
+message( "  ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DOCDIR}" )
+message( "" )
+message( "The module can be loaded into NEST using" )
+message( "  (${MODULE_NAME}) Install       (in SLI)" )
+message( "  nest.Install(${MODULE_NAME})   (in PyNEST)" )
 message( "" )

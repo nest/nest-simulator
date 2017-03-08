@@ -183,7 +183,7 @@ public:
 
   /**
    * Return class name.
-   * Returns name of node model (e.g. "iaf_neuron") as string.
+   * Returns name of node model (e.g. "iaf_psc_alpha") as string.
    * This name is identical to the name that is used to identify
    * the model in the interpreter's model dictionary.
    */

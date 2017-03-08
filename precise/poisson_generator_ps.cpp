@@ -140,7 +140,7 @@ nest::poisson_generator_ps::calibrate()
      consistent across targets, all targets are reset even if a
      single one has a spike time before origin+start.
   */
-  if ( !B_.next_spike_.empty() )
+  if ( not B_.next_spike_.empty() )
   {
     // find minimum time stamp, offset does not matter here
     Time min_time = B_.next_spike_.begin()->first;

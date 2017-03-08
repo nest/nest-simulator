@@ -28,7 +28,7 @@ the basis of the network used in
 
 Brunel N, Dynamics of Sparsely Connected Networks of Excitatory and
 Inhibitory Spiking Neurons, Journal of Computational Neuroscience 8,
-183–208 (2000).
+183-208 (2000).
 
 In contrast to brunel-alpha-nest.py, this variant uses NumPy to draw
 the random connections instead of NEST's builtin connection routines.
@@ -273,8 +273,8 @@ running from 1,...,NE for the excitatory neurons and from
 
 numpy.random.seed(1234)
 
-sources_ex = numpy.random.random_integers(1, NE, (N_neurons, CE))
-sources_in = numpy.random.random_integers(NE + 1, N_neurons, (N_neurons, CI))
+sources_ex = numpy.random.randint(1, NE + 1, (N_neurons, CE))
+sources_in = numpy.random.randint(NE + 1, N_neurons + 1, (N_neurons, CI))
 
 '''
 We now iterate over all neuron IDs, and connect the neuron to the

@@ -126,7 +126,7 @@ std::string
 SLIStartup::getenv( const std::string& v ) const
 {
   char* s = ::getenv( v.c_str() );
-  if ( !s )
+  if ( not s )
     return std::string();
   else
     return std::string( s );
@@ -294,6 +294,11 @@ SLIStartup::SLIStartup( int argc, char** argv )
       verbosity_ = SLIInterpreter::M_INFO;
       continue;
     }
+    if ( *sd == "--verbosity=DEPRECATED" )
+    {
+      verbosity_ = SLIInterpreter::M_DEPRECATED;
+      continue;
+    }
     if ( *sd == "--verbosity=WARNING" )
     {
       verbosity_ = SLIInterpreter::M_WARNING;
@@ -358,7 +363,7 @@ SLIStartup::init( SLIInterpreter* i )
       String::compose( "Using NEST_INSTALL_DIR=%1", sliprefix ).c_str() );
   }
 
-  if ( !checkpath( slihomepath, fname ) )
+  if ( not checkpath( slihomepath, fname ) )
   {
     i->message( SLIInterpreter::M_FATAL,
       "SLIStartup",
@@ -564,7 +569,7 @@ SLIStartup::init( SLIInterpreter* i )
 
   i->def( statusdict_name, statusdict );
 
-  if ( !fname.empty() )
+  if ( not fname.empty() )
   {
     std::ifstream* input = new std::ifstream( fname.c_str() );
     Token input_token( new XIstreamDatum( input ) );

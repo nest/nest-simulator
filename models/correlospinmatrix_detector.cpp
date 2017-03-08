@@ -170,12 +170,12 @@ nest::correlospinmatrix_detector::Parameters_::set( const DictionaryDatum& d,
     }
   }
 
-  if ( !delta_tau_.is_step() )
+  if ( not delta_tau_.is_step() )
   {
     throw StepMultipleRequired( n.get_name(), names::delta_tau, delta_tau_ );
   }
 
-  if ( !tau_max_.is_multiple_of( delta_tau_ ) )
+  if ( not tau_max_.is_multiple_of( delta_tau_ ) )
   {
     throw TimeMultipleRequired(
       n.get_name(), names::tau_max, tau_max_, names::delta_tau, delta_tau_ );
@@ -232,7 +232,7 @@ nest::correlospinmatrix_detector::correlospinmatrix_detector()
   , P_()
   , S_()
 {
-  if ( !P_.delta_tau_.is_step() )
+  if ( not P_.delta_tau_.is_step() )
   {
     throw InvalidDefaultResolution(
       get_name(), names::delta_tau, P_.delta_tau_ );
@@ -246,7 +246,7 @@ nest::correlospinmatrix_detector::correlospinmatrix_detector(
   , P_( n.P_ )
   , S_()
 {
-  if ( !P_.delta_tau_.is_step() )
+  if ( not P_.delta_tau_.is_step() )
   {
     throw InvalidTimeInModel( get_name(), names::delta_tau, P_.delta_tau_ );
   }
@@ -395,7 +395,7 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
         P_.tau_max_.get_steps() + P_.delta_tau_.get_steps();
 
       const delay min_delay = kernel().connection_manager.get_min_delay();
-      while ( !otherPulses.empty()
+      while ( not otherPulses.empty()
         && ( t_min_on - otherPulses.front().t_off_ ) >= tau_edge + min_delay )
         otherPulses.pop_front();
 

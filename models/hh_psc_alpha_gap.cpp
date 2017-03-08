@@ -611,7 +611,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
 
   } // end for-loop
 
-  // if !wfr_update perform constant extrapolation and reset last_y_values
+  // if not wfr_update perform constant extrapolation and reset last_y_values
   if ( not wfr_update )
   {
     for ( long temp = from; temp < to; ++temp )

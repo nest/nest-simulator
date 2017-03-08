@@ -87,7 +87,7 @@ References:
 [1] Papoulis A (1991) **Probability, Random Variables, and
 Stochastic Processes**, *McGraw-Hill*
 [2] Siegert AJ (1951) **On the first passage time probability problem**,
-*Phys Rev 81: 617–623*
+*Phys Rev 81: 617-623*
 '''
 for rate, weight in zip(rates, weights):
 

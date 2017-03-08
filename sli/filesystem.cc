@@ -105,7 +105,7 @@ FilesystemModule::SetDirectoryFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = chdir( sd->c_str() );
   i->OStack.pop();
-  if ( !s )
+  if ( not s )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
@@ -163,7 +163,7 @@ FilesystemModule::MoveFileFunction::execute( SLIInterpreter* i ) const
   assert( src != NULL );
   assert( dst != NULL );
   int s = link( src->c_str(), dst->c_str() );
-  if ( !s )
+  if ( not s )
   {
     s = unlink( src->c_str() );
     if ( s ) // failed to remove old link: undo everything
@@ -173,7 +173,7 @@ FilesystemModule::MoveFileFunction::execute( SLIInterpreter* i ) const
     };
   };
   i->OStack.pop( 2 );
-  if ( !s )
+  if ( not s )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
@@ -196,7 +196,7 @@ FilesystemModule::CopyFileFunction::execute( SLIInterpreter* i ) const
   assert( dst != NULL );
 
   std::ofstream deststream( dst->c_str() );
-  if ( !deststream )
+  if ( not deststream )
   {
     i->message( SLIInterpreter::M_ERROR,
       "CopyFile",
@@ -206,7 +206,7 @@ FilesystemModule::CopyFileFunction::execute( SLIInterpreter* i ) const
   }
 
   std::ifstream sourcestream( src->c_str() );
-  if ( !sourcestream )
+  if ( not sourcestream )
   {
     i->message(
       SLIInterpreter::M_ERROR, "CopyFile", "Could not open source file." );
@@ -217,7 +217,7 @@ FilesystemModule::CopyFileFunction::execute( SLIInterpreter* i ) const
   // copy while file in one call (see Josuttis chap 13.9 (File Access), p. 631)
   deststream << sourcestream.rdbuf();
 
-  if ( !deststream )
+  if ( not deststream )
   {
     i->message( SLIInterpreter::M_ERROR, "CopyFile", "Error copying file." );
     i->raiseerror( i->BadIOError );
@@ -238,7 +238,7 @@ FilesystemModule::DeleteFileFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = unlink( sd->c_str() );
   i->OStack.pop();
-  if ( !s )
+  if ( not s )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
@@ -257,7 +257,7 @@ FilesystemModule::MakeDirectoryFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = mkdir( sd->c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP );
   i->OStack.pop();
-  if ( !s )
+  if ( not s )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
@@ -276,7 +276,7 @@ FilesystemModule::RemoveDirectoryFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = rmdir( sd->c_str() );
   i->OStack.pop();
-  if ( !s )
+  if ( not s )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }

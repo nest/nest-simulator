@@ -393,7 +393,7 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
     // The numerical integration of the model equations is performed by
     // a Dormand-Prince method (5th order Runge-Kutta method with
     // adaptive stepsize control) as desribed in William H. Press et
-    // al., “Adaptive Stepsize Control for Runge-Kutta”, Chapter 17.2
+    // al., "Adaptive Stepsize Control for Runge-Kutta", Chapter 17.2
     // in Numerical Recipes (3rd edition, 2007), 910-914.  The solver
     // itself performs only a single NUMERICAL integration step,
     // starting from t and of size B_.IntegrationStep_ (bounded by

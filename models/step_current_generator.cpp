@@ -71,7 +71,7 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d,
     throw BadProperty( "Amplitude times and values have to be the same size." );
 
   // ensure amp times are strictly monotonically increasing
-  if ( !amp_times_.empty() )
+  if ( not amp_times_.empty() )
   {
     std::vector< double >::const_iterator prev = amp_times_.begin();
     for ( std::vector< double >::const_iterator next = prev + 1;

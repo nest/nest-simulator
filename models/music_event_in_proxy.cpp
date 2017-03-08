@@ -78,7 +78,7 @@ void
 nest::music_event_in_proxy::Parameters_::set( const DictionaryDatum& d,
   State_& s )
 {
-  if ( !s.registered_ )
+  if ( not s.registered_ )
   {
     updateValue< long >( d, names::music_channel, channel_ );
     updateValue< string >( d, names::port_name, port_name_ );
@@ -140,7 +140,7 @@ void
 nest::music_event_in_proxy::calibrate()
 {
   // register my port and my channel at the scheduler
-  if ( !S_.registered_ )
+  if ( not S_.registered_ )
   {
     kernel().music_manager.register_music_event_in_proxy(
       P_.port_name_, P_.channel_, this );

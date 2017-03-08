@@ -297,7 +297,7 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
   {
     out = new ofdstream( filename->c_str() );
 
-    if ( !out->good() )
+    if ( not out->good() )
       throw std::string( "Error when opening file for writing." );
 
     if ( ( long ) image->size() != width * height )

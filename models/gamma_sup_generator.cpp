@@ -241,7 +241,7 @@ nest::gamma_sup_generator::update( Time const& T,
   {
     Time t = T + Time::step( lag );
 
-    if ( !device_.is_active( t ) )
+    if ( not device_.is_active( t ) )
       continue; // no spike at this lag
 
     DSSpikeEvent se;

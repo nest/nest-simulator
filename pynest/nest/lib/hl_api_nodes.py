@@ -191,6 +191,8 @@ def Create(model, n=1, params=None):
         Object representing global IDs of created nodes
     """
 
+    model_deprecation_warning(model)
+
     if isinstance(params, dict):
         cmd = "/%s 3 1 roll exch Create" % model
         sps(params)
@@ -215,6 +217,8 @@ def Create(model, n=1, params=None):
 
 
 @check_stack
+@deprecated('', 'GetLID is deprecated and will be removed in NEST 3.0. Use \
+index into GIDCollection instead.')
 def GetLID(gid):
     """Return the local id of a node with the global ID gid.
 

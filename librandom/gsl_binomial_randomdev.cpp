@@ -45,7 +45,7 @@ librandom::GSL_BinomialRandomDev::GSL_BinomialRandomDev( RngPtr r_s,
   , n_( n_s )
 {
   GslRandomGen* gsr_rng = dynamic_cast< GslRandomGen* >( &( *r_s ) );
-  if ( !gsr_rng )
+  if ( not gsr_rng )
     throw UnsuitableRNG(
       "The gsl_binomial RDV can only be used with GSL RNGs." );
   rng_ = gsr_rng->rng_;
@@ -69,7 +69,7 @@ long
 librandom::GSL_BinomialRandomDev::ldev( RngPtr rng ) const
 {
   GslRandomGen* gsr_rng = dynamic_cast< GslRandomGen* >( &( *rng ) );
-  if ( !gsr_rng )
+  if ( not gsr_rng )
     throw UnsuitableRNG(
       "The gsl_binomial RDV can only be used with GSL RNGs." );
   return gsl_ran_binomial( gsr_rng->rng_, p_, n_ );

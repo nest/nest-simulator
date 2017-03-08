@@ -702,7 +702,7 @@ BeginDocumentation
              int  /key known -> bool
 
    Examples:
-   modeldict /iaf_neuron known -> true
+   modeldict /iaf_psc_alpha known -> true
    modeldict /parkinson_neuron known -> false
    /iaf_psc_alpha_presc Create /Interpol_Order know -> true
 
@@ -918,7 +918,7 @@ KeysFunction::execute( SLIInterpreter* i ) const
         ++t )
   {
     Token nt( new LiteralDatum( ( *t ).first ) );
-    assert( !nt.empty() );
+    assert( not nt.empty() );
     ad->push_back_move( nt );
   }
   i->OStack.pop();

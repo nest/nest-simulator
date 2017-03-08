@@ -61,8 +61,8 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else if ( num_parameters == 2 )
   {
-    if ( !params_map->known( names::weight )
-      || !params_map->known( names::delay ) )
+    if ( not params_map->known( names::weight )
+      || not params_map->known( names::delay ) )
       throw BadProperty(
         "The parameter map has to contain the indices of weight and delay." );
 
@@ -126,8 +126,8 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else if ( num_parameters == 2 )
   {
-    if ( !params_map->known( names::weight )
-      || !params_map->known( names::delay ) )
+    if ( not params_map->known( names::weight )
+      || not params_map->known( names::delay ) )
       throw BadProperty(
         "The parameter map has to contain the indices of weight and delay." );
 

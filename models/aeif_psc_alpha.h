@@ -99,7 +99,7 @@ Integration parameters
                           GSL integrator. Reduce it if NEST complains about
                           numerical instabilities.
 
-Author: adapted from aeif_cond_alpha by Tanguy Fardet
+Author: Tanguy Fardet
 
 Sends: SpikeEvent
 

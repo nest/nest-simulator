@@ -76,6 +76,7 @@ const int SLIInterpreter::M_DEBUG = 5;
 const int SLIInterpreter::M_STATUS = 7;
 const int SLIInterpreter::M_INFO = 10;
 const int SLIInterpreter::M_PROGRESS = 15;
+const int SLIInterpreter::M_DEPRECATED = 18;
 const int SLIInterpreter::M_WARNING = 20;
 const int SLIInterpreter::M_ERROR = 30;
 const int SLIInterpreter::M_FATAL = 40;
@@ -86,6 +87,7 @@ const char* const SLIInterpreter::M_DEBUG_NAME = "Debug";
 const char* const SLIInterpreter::M_STATUS_NAME = "Status";
 const char* const SLIInterpreter::M_INFO_NAME = "Info";
 const char* const SLIInterpreter::M_PROGRESS_NAME = "Progress";
+const char* const SLIInterpreter::M_DEPRECATED_NAME = "Deprecated";
 const char* const SLIInterpreter::M_WARNING_NAME = "Warning";
 const char* const SLIInterpreter::M_ERROR_NAME = "Error";
 const char* const SLIInterpreter::M_FATAL_NAME = "Fatal";
@@ -257,13 +259,15 @@ SLIInterpreter::initexternals( void )
 FunctionDatum*
 SLIInterpreter::Ilookup( void ) const
 {
-  return new FunctionDatum( ilookup_name, &SLIInterpreter::ilookupfunction );
+  return new FunctionDatum(
+    ilookup_name, &SLIInterpreter::ilookupfunction, "" );
 }
 
 FunctionDatum*
 SLIInterpreter::Iiterate( void ) const
 {
-  return new FunctionDatum( iiterate_name, &SLIInterpreter::iiteratefunction );
+  return new FunctionDatum(
+    iiterate_name, &SLIInterpreter::iiteratefunction, "" );
 }
 
 void
@@ -281,14 +285,16 @@ SLIInterpreter::createdouble( Name const& n, double d )
  *  exists.
  */
 void
-SLIInterpreter::createcommand( Name const& n, SLIFunction const* fn )
+SLIInterpreter::createcommand( Name const& n,
+  SLIFunction const* fn,
+  std::string deprecation_info )
 {
   if ( DStack->known( n ) )
     throw NamingConflict("A function called '" + std::string(n.toString()) 
 			   + "' exists already.\n"
 			   "Please choose a different name!");
 
-  Token t( new FunctionDatum( n, fn ) );
+  Token t( new FunctionDatum( n, fn, deprecation_info ) );
   DStack->def_move( n, t );
 }
 
@@ -304,34 +310,6 @@ SLIInterpreter::createconstant( Name const& n, Token const& val )
 {
   Token t( val );
   DStack->def_move( n, t );
-}
-
-/** Define a function inside a "namespace" (bottom level dictionary).
- *  This function may be used to group SLI commands in some kind of
- *  "name spaces" that are implemented using dictionaries.
- *  It defines the SLI function inside a dictionary of
- *  the given Name, which is known in systemdict.
- *  If a dictionary of the given Name is not yet known inside
- *  systemdict, it is created.
- *  Note that you may also pass strings as the first arguments, as
- *  there is an implicit type conversion operator from string to Name.
- *  Use the Name when name objects already exist.
- */
-void
-SLIInterpreter::createcommand( Name const& dictn,
-  Name const& n,
-  SLIFunction const* fn )
-{
-  if ( !( baseknown( dictn ) ) )
-  {
-    Dictionary* d = new Dictionary; // get a new dictionary from the heap
-    basedef( dictn, new DictionaryDatum( d ) );
-  }
-  Token dt = baselookup( dictn );
-  DictionaryDatum* dd = dynamic_cast< DictionaryDatum* >( dt.datum() );
-  DStack->push( *dd );
-  createcommand( n, fn );
-  DStack->pop();
 }
 
 const Token&
@@ -786,7 +764,7 @@ SLIInterpreter::raiseagain( void )
   if ( errordict->known( commandname_name ) )
   {
     Token cmd_t = errordict->lookup( commandname_name );
-    assert( !cmd_t.empty() );
+    assert( not cmd_t.empty() );
     errordict->insert( newerror_name, baselookup( true_name ) );
     OStack.push_move( cmd_t );
     EStack.push( baselookup( stop_name ) );
@@ -852,6 +830,8 @@ SLIInterpreter::message( int level,
         message( std::cout, M_ERROR_NAME, from, text, errorname );
       else if ( level >= M_WARNING )
         message( std::cout, M_WARNING_NAME, from, text, errorname );
+      else if ( level >= M_DEPRECATED )
+        message( std::cout, M_DEPRECATED_NAME, from, text, errorname );
       else if ( level >= M_PROGRESS )
         message( std::cout, M_PROGRESS_NAME, from, text, errorname );
       else if ( level >= M_INFO )
@@ -997,7 +977,7 @@ SLIInterpreter::removecycleguard( void )
 void
 SLIInterpreter::toggle_stack_display()
 {
-  show_stack_ = !show_stack_;
+  show_stack_ = not show_stack_;
   std::string msg =
     std::string( "Stack display is now " ) + ( show_stack_ ? "On" : "Off" );
   message( M_INFO, "SLIInterpreter", msg.c_str() );
@@ -1157,25 +1137,25 @@ SLIInterpreter::debug_commandline( Token& next )
       tty >> arg;
       if ( arg == "backtrace" )
       {
-        show_backtrace_ = !show_backtrace_;
+        show_backtrace_ = not show_backtrace_;
         std::cerr << "Stack backtrace is now "
                   << ( show_backtrace_ ? " On." : "Off." ) << std::endl;
       }
       else if ( arg == "stack" )
       {
-        show_stack_ = !show_stack_;
+        show_stack_ = not show_stack_;
         std::cerr << "Stack display is now "
                   << ( show_stack_ ? " On." : "Off." ) << std::endl;
       }
       else if ( arg == "catch" )
       {
-        catch_errors_ = !catch_errors_;
+        catch_errors_ = not catch_errors_;
         std::cerr << "Catch error mode is now "
                   << ( catch_errors_ ? " On." : "Off." ) << std::endl;
       }
       else if ( arg == "tailrecursion" || arg == "tail" )
       {
-        opt_tailrecursion_ = !opt_tailrecursion_;
+        opt_tailrecursion_ = not opt_tailrecursion_;
         std::cerr << "Tail-recursion optimization is now "
                   << ( opt_tailrecursion_ ? " On." : "Off." ) << std::endl;
       }
@@ -1258,7 +1238,7 @@ SLIInterpreter::startup()
   static bool is_initialized = false;
   int exitcode = EXIT_SUCCESS;
 
-  if ( !is_initialized && EStack.load() > 0 )
+  if ( not is_initialized && EStack.load() > 0 )
   {
     exitcode = execute_(); // run the interpreter
     is_initialized = true;
@@ -1386,7 +1366,7 @@ SLIInterpreter::execute_( size_t exitlevel )
     { // loop1  this double loop to keep the try/catch outside the inner loop
       try
       {
-        while ( !SLIsignalflag and ( EStack.load() > exitlevel ) ) // loop 2
+        while ( not SLIsignalflag and ( EStack.load() > exitlevel ) ) // loop 2
         {
           ++cycle_count;
           EStack.top()->execute( this );

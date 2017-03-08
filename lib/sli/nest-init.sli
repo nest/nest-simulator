@@ -263,7 +263,6 @@ def
 
 /forall [/gidcollectiontype /proceduretype]
 {
-  << >> begin
   /func Set
   dup 
   :beginiterator_g /iter Set
@@ -277,8 +276,13 @@ def
   }
   loop
 
-  end
-} def
+  % Delete local variables; we do not use a local dictionary
+  % here in case func should change variables.
+  currentdict /func undef
+  currentdict /iter undef
+  currentdict /enditer undef
+
+} bind def
 
 /Map [/gidcollectiontype /proceduretype]
 {
@@ -301,7 +305,7 @@ def
   exch pop
 
   end
-} def
+} bind def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -928,7 +932,7 @@ def
      /target
      /weight
      /delay
-     /synapsemodel
+     /synapse_model
      
      Example:
      
@@ -974,8 +978,8 @@ def
    the supplied status dictionary.
 
    Examples:
-   iaf_neuron [10 10] LayoutNetwork
-   Creates a two dimensional layer of 10 by 10 neurons of type iaf_neuron.
+   iaf_psc_alpha [10 10] LayoutNetwork
+   Creates a two dimensional layer of 10 by 10 neurons of type iaf_psc_alpha.
 
    Author: Marc-Oliver Gewaltig
    FirstVersion: 20.6.02
@@ -983,9 +987,18 @@ def
    SeeAlso: Create, LayoutArray
 */
 
+/LayoutNetwork
+<< /deprecation_warning true >>
+Options
+
 /LayoutNetwork_l_a_dict
 {
   << >> begin
+  /LayoutNetwork /deprecation_warning GetOption true eq
+  {
+    (SLI function LayoutNetwork is deprecated in NEST 3.0.) M_DEPRECATED message
+    /LayoutNetwork << /deprecation_warning false >> SetOptions
+  } if
              /val   Set
   size       /n_dim Set
    dup 0 get /n     Set
@@ -1026,6 +1039,11 @@ def
 /LayoutNetwork_l_a
 {
   << >> begin
+  /LayoutNetwork /deprecation_warning GetOption true eq
+  {
+    (SLI function LayoutNetwork is deprecated in NEST 3.0.) M_DEPRECATED message
+    /LayoutNetwork << /deprecation_warning false >> SetOptions
+  } if
   size       /n_dim Set
    dup 0 get /n     Set
              /dim   Set
@@ -1473,8 +1491,41 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+/* BeginDocumentation
+Name: GetNetwork - Return a nested list with the IDs of nodes in a multi-dimensional subnet.
+Synpsis: ID n GetNetwork -> [ ]
+Description:
+
+GetNetwork takes the id of a subnet and an integer parameter
+n. GetNetwork then recursively calls GetChildren down to level n.
+The result is a nested list whicht contains the ids of all nodes.
+The first element of each list is the id of the subnet itself.
+
+Example:
+SLI ] /iaf_psc_alpha Create ;
+SLI ] /iaf_psc_alpha [2 2] LayoutNetwork ;
+SLI ] /iaf_psc_alpha Create ;
+SLI ] 0 3 GetNetwork ==
+[0 1 [2 [3 4 5] [6 7 8]] 9]
+
+Remarks:
+In parallel simulations, this function collects data across all processes
+and can thus take a lot of time and consume huge amounts of memory.
+
+SeeAlso: GetGlobalNodes, GetLocalNodes, GetGlobalLeaves, GetLocalLeaves, GetGlobalChildren, GetLocalChildren
+*/
+
+/GetNetwork
+<< /deprecation_warning true >>
+Options
+
 /GetNetwork_i_i {
   << >> begin
+  /GetNetwork /deprecation_warning GetOption true eq
+  {
+    (SLI function GetNetwork is deprecated in NEST 3.0.) M_DEPRECATED message
+    /GetNetwork << /deprecation_warning false >> SetOptions
+  } if
   /depth Set
   dup
   GetStatus /model get % id model
@@ -1489,29 +1540,6 @@ def
   end
 } def
 
-/* BeginDocumentation
-Name: GetNetwork - Return a nested list with the IDs of nodes in a multi-dimensional subnet.
-Synpsis: ID n GetNetwork -> [ ]
-Description:
-
-GetNetwork takes the id of a subnet and an integer parameter
-n. GetNetwork then recursively calls GetChildren down to level n.
-The result is a nested list whicht contains the ids of all nodes.
-The first element of each list is the id of the subnet itself.
-
-Example:
-SLI ] /iaf_neuron Create ;
-SLI ] /iaf_neuron [2 2] LayoutNetwork ;
-SLI ] /iaf_neuron Create ;
-SLI ] 0 3 GetNetwork ==
-[0 1 [2 [3 4 5] [6 7 8]] 9]
-
-Remarks:
-In parallel simulations, this function collects data across all processes
-and can thus take a lot of time and consume huge amounts of memory.
-
-SeeAlso: GetGlobalNodes, GetLocalNodes, GetGlobalLeaves, GetLocalLeaves, GetGlobalChildren, GetLocalChildren
-*/
 /GetNetwork trie
 [/integertype /integertype] /GetNetwork_i_i load addtotrie
 def

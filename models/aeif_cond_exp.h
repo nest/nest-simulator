@@ -106,7 +106,8 @@ Integration parameters
                           GSL integrator. Reduce it if NEST complains about
                           numerical instabilities.
 
-Author: Adapted from aeif_cond_alpha by Lyle Muller
+Author: Adapted from aeif_cond_alpha by Lyle Muller; full revision by Tanguy
+Fardet on December 2016
 
 Sends: SpikeEvent
 
@@ -284,6 +285,7 @@ public:
     gsl_odeiv_step* s_;    //!< stepping function
     gsl_odeiv_control* c_; //!< adaptive stepsize control function
     gsl_odeiv_evolve* e_;  //!< evolution function
+    gsl_odeiv_system sys_; //!< struct describing the GSL system
 
     // IntergrationStep_ should be reset with the neuron on ResetNetwork,
     // but remain unchanged during calibration. Since it is initialized with
@@ -314,8 +316,6 @@ public:
      * P.V_th if Delta_T == 0.
      */
     double V_peak;
-
-    gsl_odeiv_system sys_; //!< struct describing the GSL system
 
     unsigned int refractory_counts_;
   };

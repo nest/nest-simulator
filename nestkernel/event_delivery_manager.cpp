@@ -136,7 +136,7 @@ EventDeliveryManager::configure_spike_buffers()
 
 
   // send_buffer must be >= 2 as the 'overflow' signal takes up 2 spaces
-  // plus the fiunal marker and the done flag for iterations
+  // plus the final marker and the done flag for iterations
   // + 1 for the final markers of each thread (invalid_synindex) of secondary
   // events
   // + 1 for the done flag (true) of each process
@@ -304,7 +304,7 @@ EventDeliveryManager::collocate_buffers_( bool done )
   num_spikes =
     num_grid_spikes + num_offgrid_spikes + uintsize_secondary_events + 2;
 
-  if ( !off_grid_spiking_ ) // on grid spiking
+  if ( not off_grid_spiking_ ) // on grid spiking
   {
     // make sure buffers are correctly sized
     if ( global_grid_spikes_.size()
@@ -475,7 +475,7 @@ EventDeliveryManager::deliver_events( thread t )
 
   std::vector< int > pos( displacements_ );
 
-  if ( !off_grid_spiking_ ) // on_grid_spiking
+  if ( not off_grid_spiking_ ) // on_grid_spiking
   {
     // prepare Time objects for every possible time stamp within min_delay_
     std::vector< Time > prepared_timestamps(

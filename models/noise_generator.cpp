@@ -118,7 +118,7 @@ nest::noise_generator::Parameters_::set( const DictionaryDatum& d,
       "The modulation apmlitude must be smaller or equal to the baseline "
       "amplitude." );
 
-  if ( !dt_.is_step() )
+  if ( not dt_.is_step() )
     throw StepMultipleRequired( n.get_name(), names::dt, dt_ );
 }
 
@@ -132,7 +132,7 @@ nest::noise_generator::noise_generator()
   , device_()
   , P_()
 {
-  if ( !P_.dt_.is_step() )
+  if ( not P_.dt_.is_step() )
     throw InvalidDefaultResolution( get_name(), names::dt, P_.dt_ );
 }
 
@@ -141,7 +141,7 @@ nest::noise_generator::noise_generator( const noise_generator& n )
   , device_( n.device_ )
   , P_( n.P_ )
 {
-  if ( !P_.dt_.is_step() )
+  if ( not P_.dt_.is_step() )
     throw InvalidTimeInModel( get_name(), names::dt, P_.dt_ );
 }
 
@@ -244,7 +244,7 @@ nest::noise_generator::update( Time const& origin,
   {
     const long now = start + offs;
 
-    if ( !device_.is_active( Time::step( now ) ) )
+    if ( not device_.is_active( Time::step( now ) ) )
       continue;
 
     if ( P_.std_mod_ != 0. )

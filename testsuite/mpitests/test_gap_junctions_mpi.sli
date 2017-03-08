@@ -79,14 +79,20 @@ if
                            /withtime true 
                         >> Create def
   
-  neuron1 0 get neuron2 0 get << /weight 10.0 >> /gap_junction Connect
-  neuron2 0 get neuron1 0 get << /weight 10.0 >> /gap_junction Connect
+  neuron1 neuron2
+  << /rule /one_to_one /make_symmetric true >> 
+  << /model /gap_junction /weight 10.0 >> 
+  Connect
   
-  neuron1 0 get neuron3 0 get << /weight  8.0 >> /gap_junction Connect
-  neuron3 0 get neuron1 0 get << /weight  8.0 >> /gap_junction Connect
+  neuron1 neuron3
+  << /rule /one_to_one /make_symmetric true >> 
+  << /model /gap_junction /weight 8.0 >> 
+  Connect
   
-  neuron1 0 get neuron4 0 get << /weight 12.0 >> /gap_junction Connect
-  neuron4 0 get neuron1 0 get << /weight 12.0 >> /gap_junction Connect
+  neuron1 neuron4
+  << /rule /one_to_one /make_symmetric true >> 
+  << /model /gap_junction /weight 12.0 >> 
+  Connect
   
   neuron1 sd Connect
   neuron2 sd Connect

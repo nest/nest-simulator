@@ -89,7 +89,7 @@ MusicEventHandler::register_channel( int channel, nest::Node* mp )
 void
 MusicEventHandler::publish_port()
 {
-  if ( !published_ )
+  if ( not published_ )
   {
     music_port_ =
       kernel().music_manager.get_music_setup()->publishEventInput( portname_ );
@@ -97,10 +97,10 @@ MusicEventHandler::publish_port()
     // MUSIC wants seconds, NEST has miliseconds
     const double acceptable_latency_s = 0.001 * acceptable_latency_;
 
-    if ( !music_port_->isConnected() )
+    if ( not music_port_->isConnected() )
       throw MUSICPortUnconnected( "MusicEventHandler", portname_ );
 
-    if ( !music_port_->hasWidth() )
+    if ( not music_port_->hasWidth() )
       throw MUSICPortHasNoWidth( "MusicEventHandler", portname_ );
 
     unsigned int music_port_width = music_port_->width();
@@ -144,7 +144,7 @@ MusicEventHandler::update( Time const& origin, const long from, const long to )
 {
   for ( size_t channel = 0; channel < channelmap_.size(); ++channel )
     if ( channelmap_[ channel ] != 0 )
-      while ( !eventqueue_[ channel ].empty() )
+      while ( not eventqueue_[ channel ].empty() )
       {
         Time T = Time::ms( eventqueue_[ channel ].top() );
 

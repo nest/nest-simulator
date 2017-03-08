@@ -87,10 +87,10 @@ librandom::GammaRandomDev::unscaled_gamma( RngPtr r ) const
       {
         const double Z = 64 * W * W * W * V * V;
         accept = Z <= 1 - 2 * Y * Y / X;
-        if ( !accept )
+        if ( not accept )
           accept = std::log( Z ) <= 2 * ( bb * std::log( X / bb ) - Y );
       }
-    } while ( !accept );
+    } while ( not accept );
 
     return X;
   }

@@ -152,7 +152,7 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
   ( *d )[ names::flush_records ] = flush_records_;
   ( *d )[ names::close_on_reset ] = close_on_reset_;
 
-  if ( to_file_ && !filename_.empty() )
+  if ( to_file_ && not filename_.empty() )
   {
     initialize_property_array( d, names::filenames );
     append_property( d, names::filenames, filename_ );
@@ -288,7 +288,7 @@ nest::RecordingDevice::State_::get( DictionaryDatum& d,
   DictionaryDatum dict;
 
   // if we already have the events dict, we use it, otherwise we create it
-  if ( !d->known( names::events ) )
+  if ( not d->known( names::events ) )
     dict = DictionaryDatum( new Dictionary );
   else
     dict = getValue< DictionaryDatum >( d, names::events );
@@ -469,7 +469,7 @@ nest::RecordingDevice::calibrate()
     // do we need to (re-)open the file
     bool newfile = false;
 
-    if ( !B_.fs_.is_open() )
+    if ( not B_.fs_.is_open() )
     {
       newfile = true; // no file from before
       P_.filename_ = build_filename_();
@@ -491,7 +491,7 @@ nest::RecordingDevice::calibrate()
 
     if ( newfile )
     {
-      assert( !B_.fs_.is_open() );
+      assert( not B_.fs_.is_open() );
 
       if ( kernel().io_manager.overwrite_files() )
       {
@@ -540,7 +540,7 @@ nest::RecordingDevice::calibrate()
       }
     }
 
-    if ( !B_.fs_.good() )
+    if ( not B_.fs_.good() )
     {
       std::string msg = String::compose(
         "I/O error while opening file '%1'. "
@@ -594,7 +594,7 @@ nest::RecordingDevice::finalize()
     if ( P_.flush_after_simulate_ )
       B_.fs_.flush();
 
-    if ( !B_.fs_.good() )
+    if ( not B_.fs_.good() )
     {
       std::string msg =
         String::compose( "I/O error while opening file '%1'", P_.filename_ );
@@ -627,7 +627,7 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  if ( !P_.to_file_ && B_.fs_.is_open() )
+  if ( not P_.to_file_ && B_.fs_.is_open() )
   {
     B_.fs_.close();
     P_.filename_.clear();
@@ -710,7 +710,7 @@ nest::RecordingDevice::print_time_( std::ostream& os,
   const Time& t,
   double offs )
 {
-  if ( !P_.withtime_ )
+  if ( not P_.withtime_ )
     return;
 
   if ( P_.time_in_steps_ )
@@ -806,12 +806,12 @@ nest::RecordingDevice::build_filename_() const
 
   std::ostringstream basename;
   const std::string& path = kernel().io_manager.get_data_path();
-  if ( !path.empty() )
+  if ( not path.empty() )
     basename << path << '/';
   basename << kernel().io_manager.get_data_prefix();
 
 
-  if ( !P_.label_.empty() )
+  if ( not P_.label_.empty() )
     basename << P_.label_;
   else
     basename << node_.get_name();

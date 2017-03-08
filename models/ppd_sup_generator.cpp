@@ -94,7 +94,7 @@ nest::ppd_sup_generator::Age_distribution_::update( double hazard_step,
     n_spikes = 0;
   }
 
-  if ( !occ_refractory_.empty() )
+  if ( not occ_refractory_.empty() )
   {
     occ_active_ += occ_refractory_[ activate_ ] - n_spikes;
     occ_refractory_[ activate_ ] = n_spikes;
@@ -247,7 +247,7 @@ nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
   {
     Time t = T + Time::step( lag );
 
-    if ( !device_.is_active( t ) )
+    if ( not device_.is_active( t ) )
       continue; // no spike at this lag
 
     // get current (time-dependent) hazard rate and store it.

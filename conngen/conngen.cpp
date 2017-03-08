@@ -51,7 +51,7 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
     LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "sources must be a subnet." );
     throw SubnetExpected();
   }
-  if ( !sources->is_homogeneous() )
+  if ( not sources->is_homogeneous() )
   {
     LOG( M_ERROR,
       "CGConnect_cg_i_i_D_l",
@@ -73,7 +73,7 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
     LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "targets must be a subnet." );
     throw SubnetExpected();
   }
-  if ( !targets->is_homogeneous() )
+  if ( not targets->is_homogeneous() )
   {
     LOG( M_ERROR,
       "CGConnect_cg_i_i_D_l",

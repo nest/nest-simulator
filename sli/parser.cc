@@ -111,7 +111,7 @@ bool Parser::operator()( Token& t )
       }
       else if ( t.contains( s->EndProcedureSymbol ) )
       {
-        if ( !ParseStack.empty() )
+        if ( not ParseStack.empty() )
         {
           ParseStack.pop_move( pt );
           if ( pt->isoftype( SLIInterpreter::Litproceduretype ) )
@@ -132,7 +132,7 @@ bool Parser::operator()( Token& t )
         t.move( ob );
         result = tokencontinue;
 #else
-        if ( !ParseStack.empty() )
+        if ( not ParseStack.empty() )
         {
           ParseStack.pop_move( pt );
           if ( pt->isoftype( SLIInterpreter::Arraytype ) )
@@ -149,7 +149,7 @@ bool Parser::operator()( Token& t )
       }
       else if ( t.contains( s->EndSymbol ) )
       {
-        if ( !ParseStack.empty() )
+        if ( not ParseStack.empty() )
         {
           result = unexpectedeof;
           ParseStack.clear();
@@ -160,8 +160,8 @@ bool Parser::operator()( Token& t )
       else
       {
         // Now we should be left with a "simple" Token
-        assert( !t->isoftype( SLIInterpreter::Symboltype ) );
-        if ( !ParseStack.empty() )
+        assert( not t->isoftype( SLIInterpreter::Symboltype ) );
+        if ( not ParseStack.empty() )
         {
           // append token to array on stack
           ParseStack.pop_move( pt );

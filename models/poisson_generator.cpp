@@ -125,7 +125,7 @@ nest::poisson_generator::update( Time const& T, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( !device_.is_active( T + Time::step( lag ) ) )
+    if ( not device_.is_active( T + Time::step( lag ) ) )
       continue; // no spike at this lag
 
     DSSpikeEvent se;

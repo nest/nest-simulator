@@ -762,7 +762,7 @@ SLIInterpreter::raiseagain( void )
   if ( errordict->known( commandname_name ) )
   {
     Token cmd_t = errordict->lookup( commandname_name );
-    assert( !cmd_t.empty() );
+    assert( not cmd_t.empty() );
     errordict->insert( newerror_name, baselookup( true_name ) );
     OStack.push_move( cmd_t );
     EStack.push( baselookup( stop_name ) );
@@ -973,7 +973,7 @@ SLIInterpreter::removecycleguard( void )
 void
 SLIInterpreter::toggle_stack_display()
 {
-  show_stack_ = !show_stack_;
+  show_stack_ = not show_stack_;
   std::string msg =
     std::string( "Stack display is now " ) + ( show_stack_ ? "On" : "Off" );
   message( M_INFO, "SLIInterpreter", msg.c_str() );
@@ -1133,25 +1133,25 @@ SLIInterpreter::debug_commandline( Token& next )
       tty >> arg;
       if ( arg == "backtrace" )
       {
-        show_backtrace_ = !show_backtrace_;
+        show_backtrace_ = not show_backtrace_;
         std::cerr << "Stack backtrace is now "
                   << ( show_backtrace_ ? " On." : "Off." ) << std::endl;
       }
       else if ( arg == "stack" )
       {
-        show_stack_ = !show_stack_;
+        show_stack_ = not show_stack_;
         std::cerr << "Stack display is now "
                   << ( show_stack_ ? " On." : "Off." ) << std::endl;
       }
       else if ( arg == "catch" )
       {
-        catch_errors_ = !catch_errors_;
+        catch_errors_ = not catch_errors_;
         std::cerr << "Catch error mode is now "
                   << ( catch_errors_ ? " On." : "Off." ) << std::endl;
       }
       else if ( arg == "tailrecursion" || arg == "tail" )
       {
-        opt_tailrecursion_ = !opt_tailrecursion_;
+        opt_tailrecursion_ = not opt_tailrecursion_;
         std::cerr << "Tail-recursion optimization is now "
                   << ( opt_tailrecursion_ ? " On." : "Off." ) << std::endl;
       }
@@ -1234,7 +1234,7 @@ SLIInterpreter::startup()
   static bool is_initialized = false;
   int exitcode = EXIT_SUCCESS;
 
-  if ( !is_initialized && EStack.load() > 0 )
+  if ( not is_initialized && EStack.load() > 0 )
   {
     exitcode = execute_(); // run the interpreter
     is_initialized = true;
@@ -1362,7 +1362,7 @@ SLIInterpreter::execute_( size_t exitlevel )
     { // loop1  this double loop to keep the try/catch outside the inner loop
       try
       {
-        while ( !SLIsignalflag and ( EStack.load() > exitlevel ) ) // loop 2
+        while ( not SLIsignalflag and ( EStack.load() > exitlevel ) ) // loop 2
         {
           ++cycle_count;
           EStack.top()->execute( this );

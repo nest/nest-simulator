@@ -177,7 +177,7 @@ Multimeter::update( Time const& origin, const long from, const long )
   //
   // Note that not all nodes receiving the request will necessarily answer.
   V_.new_request_ =
-    B_.has_targets_ && !P_.record_from_.empty(); // no targets, no request
+    B_.has_targets_ && not P_.record_from_.empty(); // no targets, no request
   DataLoggingRequest req;
   kernel().event_delivery_manager.send( *this, req );
 }
@@ -202,7 +202,7 @@ Multimeter::handle( DataLoggingReply& reply )
     if ( not info[ j ].timestamp.is_finite() )
       break;
 
-    if ( !is_active( info[ j ].timestamp ) )
+    if ( not is_active( info[ j ].timestamp ) )
     {
       ++inactive_skipped;
       continue;
@@ -213,10 +213,10 @@ Multimeter::handle( DataLoggingReply& reply )
 
     // record sender and time information; in accumulator mode only for first
     // Reply in slice
-    if ( !device_.to_accumulator() || V_.new_request_ )
+    if ( not device_.to_accumulator() || V_.new_request_ )
       device_.record_event( reply, false ); // false: more data to come
 
-    if ( !device_.to_accumulator() )
+    if ( not device_.to_accumulator() )
     {
       // "print" actual data, but not in accumulator mode
       print_value_( info[ j ].data );

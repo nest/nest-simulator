@@ -302,14 +302,14 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
     double ev_weight;
     bool end_of_refract;
 
-    if ( !B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) )
+    if ( not B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) )
     {
       // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
       // if there are many steps without input spikes.
 
       // update membrane potential
-      if ( !S_.is_refractory_ )
+      if ( not S_.is_refractory_ )
       {
         S_.y2_ = V_.P20_ * ( P_.I_e_ + S_.y0_ ) + V_.P21_ex_ * S_.y1_ex_
           + V_.P21_in_ * S_.y1_in_ + V_.expm1_tau_m_ * S_.y2_ + S_.y2_;
@@ -441,7 +441,7 @@ nest::iaf_psc_exp_ps::propagate_( const double dt )
   const double expm1_tau_ex = numerics::expm1( -dt / P_.tau_ex_ );
   const double expm1_tau_in = numerics::expm1( -dt / P_.tau_in_ );
 
-  if ( !S_.is_refractory_ )
+  if ( not S_.is_refractory_ )
   {
     const double expm1_tau_m = numerics::expm1( -dt / P_.tau_m_ );
 

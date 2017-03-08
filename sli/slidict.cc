@@ -918,7 +918,7 @@ KeysFunction::execute( SLIInterpreter* i ) const
         ++t )
   {
     Token nt( new LiteralDatum( ( *t ).first ) );
-    assert( !nt.empty() );
+    assert( not nt.empty() );
     ad->push_back_move( nt );
   }
   i->OStack.pop();

@@ -263,7 +263,7 @@ nest::pp_pop_psc_delta::calibrate()
   V_.P30_ = 1 / P_.c_m_ * ( 1 - V_.P33_ ) * P_.tau_m_;
 
   // initializing internal state
-  if ( !S_.initialized_ )
+  if ( not S_.initialized_ )
   {
 
     V_.len_eta_ = tau_eta_max * ( P_.len_kernel_ / V_.h_ );

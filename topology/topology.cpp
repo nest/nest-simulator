@@ -71,7 +71,7 @@ get_position( const index node_gid )
 
   AbstractLayer* const layer =
     dynamic_cast< AbstractLayer* >( node->get_parent() );
-  if ( !layer )
+  if ( not layer )
     throw LayerExpected();
 
   return layer->get_position_vector( node->get_subnet_index() );
@@ -88,7 +88,7 @@ displacement( const std::vector< double >& point, const index node_gid )
 
   AbstractLayer* const layer =
     dynamic_cast< AbstractLayer* >( node->get_parent() );
-  if ( !layer )
+  if ( not layer )
     throw LayerExpected();
 
   return layer->compute_displacement( point, node->get_lid() );
@@ -105,7 +105,7 @@ distance( const std::vector< double >& point, const index node_gid )
 
   AbstractLayer* const layer =
     dynamic_cast< AbstractLayer* >( node->get_parent() );
-  if ( !layer )
+  if ( not layer )
     throw LayerExpected();
 
   return layer->compute_distance( point, node->get_lid() );

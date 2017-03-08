@@ -114,7 +114,7 @@ ModelManager::initialize()
       pristine_models_[ i ].first->set_threads();
       std::string name = pristine_models_[ i ].first->get_name();
       models_.push_back( pristine_models_[ i ].first->clone( name ) );
-      if ( !pristine_models_[ i ].second )
+      if ( not pristine_models_[ i ].second )
         modeldict_->insert( name, i );
     }
   }
@@ -201,13 +201,13 @@ ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
   const Token oldsynmodel = synapsedict_->lookup( old_name );
 
   index new_id;
-  if ( !oldnodemodel.empty() )
+  if ( not oldnodemodel.empty() )
   {
     index old_id = static_cast< index >( oldnodemodel );
     new_id = copy_node_model_( old_id, new_name );
     set_node_defaults_( new_id, params );
   }
-  else if ( !oldsynmodel.empty() )
+  else if ( not oldsynmodel.empty() )
   {
     index old_id = static_cast< index >( oldsynmodel );
     new_id = copy_synapse_model_( old_id, new_name );
@@ -245,7 +245,7 @@ ModelManager::register_node_model_( Model* model, bool private_model )
     proxy_nodes_[ t ].push_back( newnode );
   }
 
-  if ( !private_model )
+  if ( not private_model )
     modeldict_->insert( name, id );
 
   return id;
@@ -319,12 +319,12 @@ ModelManager::set_model_defaults( Name name, DictionaryDatum params )
   const Token synmodel = synapsedict_->lookup( name );
 
   index id;
-  if ( !nodemodel.empty() )
+  if ( not nodemodel.empty() )
   {
     id = static_cast< index >( nodemodel );
     set_node_defaults_( id, params );
   }
-  else if ( !synmodel.empty() )
+  else if ( not synmodel.empty() )
   {
     id = static_cast< index >( synmodel );
     set_synapse_defaults_( id, params );

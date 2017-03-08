@@ -98,9 +98,9 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   // All synapse models have the possibility to set the delay (see
   // SynIdDelay), but some have homogeneous weights, hence it should
   // be possible to set the delay without the weight.
-  default_weight_ = !syn_spec->known( names::weight );
+  default_weight_ = not syn_spec->known( names::weight );
 
-  default_delay_ = !syn_spec->known( names::delay );
+  default_delay_ = not syn_spec->known( names::delay );
 
   // If neither weight nor delay are given in the dict, we handle this
   // separately. Important for hom_w synapses, on which weight cannot
@@ -114,7 +114,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   ( *syn_defaults )[ names::music_channel ] = 0;
 #endif
 
-  if ( !default_weight_and_delay_ )
+  if ( not default_weight_and_delay_ )
   {
     weight_ = syn_spec->known( names::weight )
       ? ConnParameter::create( ( *syn_spec )[ names::weight ],

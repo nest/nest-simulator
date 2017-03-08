@@ -236,7 +236,7 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
 
   // Functions with no parameters are possible, but useless in trie
   // structures, so it is best to forbid them!
-  assert( !a.empty() );
+  assert( not a.empty() );
 
   for ( unsigned int level = 0; level < a.size(); ++level )
   {

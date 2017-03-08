@@ -174,7 +174,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   // try to open the module
   const lt_dlhandle hModule = lt_dlopenext( new_module.name.c_str() );
 
-  if ( !hModule )
+  if ( not hModule )
   {
     char* errstr = ( char* ) lt_dlerror();
     std::string msg = "Module '" + new_module.name + "' could not be opened.";
@@ -246,7 +246,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
   ( *moduledict_ )[ new_module.name ] = moduleid;
 
   // now we can run the module initializer, after we have cleared the EStack
-  if ( !pModule->commandstring().empty() )
+  if ( not pModule->commandstring().empty() )
   {
     Token t = new StringDatum( pModule->commandstring() );
     i->OStack.push_move( t );
@@ -266,7 +266,7 @@ DynamicLoaderModule::init( SLIInterpreter* i )
 
   int dl_error = lt_dlinit();
 
-  if ( !dl_error )
+  if ( not dl_error )
   {
     const char* path = getenv( "NEST_MODULE_PATH" );
     if ( path != NULL )

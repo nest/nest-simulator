@@ -161,7 +161,7 @@ Token::info( std::ostream& out ) const
 void
 Token::pprint( std::ostream& out ) const
 {
-  if ( !p )
+  if ( not p )
     out << "<Null token>";
   else
     p->pprint( out );
@@ -169,7 +169,7 @@ Token::pprint( std::ostream& out ) const
 
 std::ostream& operator<<( std::ostream& o, const Token& c )
 {
-  if ( !c )
+  if ( not c )
     o << "<Null token>";
   else
     c->print( o );

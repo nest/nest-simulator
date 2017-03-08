@@ -697,7 +697,9 @@ NodeManager::ensure_valid_thread_local_ids()
             nodes_vec_[ t ].push_back( node );
 
             if ( node->node_uses_wfr() )
+            {
               wfr_nodes_vec_[ t ].push_back( node );
+            }
           }
         }
       } // end of for threads
@@ -750,7 +752,7 @@ NodeManager::set_status_single_node_( Node& target,
   bool clear_flags )
 {
   // proxies have no properties
-  if ( !target.is_proxy() )
+  if ( not target.is_proxy() )
   {
     if ( clear_flags )
     {
@@ -805,7 +807,7 @@ NodeManager::prepare_nodes()
             ++it )
       {
         prepare_node_( *it );
-        if ( not ( *it )->is_frozen() )
+        if ( not( *it )->is_frozen() )
         {
           ++num_active_nodes;
           if ( ( *it )->node_uses_wfr() )
@@ -963,7 +965,7 @@ NodeManager::set_status( const DictionaryDatum& d )
 {
   std::string tmp;
   // proceed only if there are unaccessed items left
-  if ( !d->all_accessed( tmp ) )
+  if ( not d->all_accessed( tmp ) )
   {
     // Fetch the target pointer here. We cannot do it above, since
     // Network::set_status() may modify the root compound if the number
@@ -1020,5 +1022,4 @@ NodeManager::reset_nodes_state()
     }
   }
 }
-
 }

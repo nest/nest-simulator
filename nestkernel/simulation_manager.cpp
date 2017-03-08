@@ -390,7 +390,9 @@ nest::SimulationManager::simulate( Time const& t )
   t_slice_end_ = timeval();
 
   if ( t == Time::ms( 0.0 ) )
+  {
     return;
+  }
 
   if ( t < Time::step( 1 ) )
   {
@@ -553,7 +555,7 @@ nest::SimulationManager::prepare_simulation_()
   // have been consumed on the SLI level.
   if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
-    if ( !kernel().mpi_manager.grng_synchrony(
+    if ( not kernel().mpi_manager.grng_synchrony(
            kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
       LOG( M_ERROR,
@@ -565,7 +567,7 @@ nest::SimulationManager::prepare_simulation_()
   }
 
   // if at the beginning of a simulation, set up spike buffers
-  if ( !simulated_ )
+  if ( not simulated_ )
   {
     kernel().event_delivery_manager.configure_spike_buffers();
   }
@@ -581,7 +583,7 @@ nest::SimulationManager::prepare_simulation_()
   // we have to do enter_runtime after prepre_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
   // before enter_runtime
-  if ( !simulated_ ) // only enter the runtime mode once
+  if ( not simulated_ ) // only enter the runtime mode once
   {
     double tick = Time::get_resolution().get_ms()
       * kernel().connection_manager.get_min_delay();
@@ -781,7 +783,9 @@ nest::SimulationManager::update_()
         try
         {
           if ( not( *node )->is_frozen() )
+          {
             ( *node )->update( clock_, from_step_, to_step_ );
+          }
         }
         catch ( std::exception& e )
         {
@@ -861,13 +865,13 @@ nest::SimulationManager::finalize_simulation_()
   // Check for synchronicity of global rngs over processes
   // TODO: This seems double up, there is such a test at end of simulate()
   if ( kernel().mpi_manager.get_num_processes() > 1
-       and !kernel().mpi_manager.grng_synchrony(
-           kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
+    and not kernel().mpi_manager.grng_synchrony(
+          kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
   {
     throw KernelException(
-    		"In SimulationManager::simulate(): "
-    		"Global Random Number Generators are not "
-    		"in sync at end of simulation." );
+      "In SimulationManager::simulate(): "
+      "Global Random Number Generators are not "
+      "in sync at end of simulation." );
   }
 
   kernel().node_manager.finalize_nodes();

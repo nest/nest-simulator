@@ -2152,7 +2152,7 @@ def SelectNodesByMask(layer, anchor, mask_obj):
     out : list of int(s)
         GID(s) of neurons inside the mask.
     """
-    
+
     if len(layer) != 1:
         raise ValueError("layer must contain exactly one GID.")
 

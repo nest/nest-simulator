@@ -36,39 +36,39 @@ class ConnectWithEllipticalMask(unittest.TestCase):
 
     def test_ConnectEllipticalMask(self):
         """Test connection with simple elliptical mask.
-        
+
         We have: major_axis = 1.5
                  minor_axis = 1.0
-        
+
         Each source node should then connect to:
             - The node in the same position in target layer
             - The node to the left and right of that position
             - The nodes above and belove.
-            
+
         So, if we have
-        
+
         sources:                    targets:
         2  7  12  17  22            28  33  38  43  48
         3  8  13  18  23            29  34  39  44  49
         4  9  14  19  24            30  35  40  45  50
         5  10 15  20  25            31  36  41  46  51
         6  11 16  21  26            32  37  42  47  52
-        
+
         some example connections will be:
-        
+
         2  -> 28  33
               29
-             
+
                   39
         14 -> 35  40  45
                   41
         """
         source = topo.CreateLayer({'rows': 5, 'columns': 5,
-                                  'extent': [5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+                                   'extent': [5., 5.],
+                                   'elements': 'iaf_psc_alpha'})
         target = topo.CreateLayer({'rows': 5, 'columns': 5,
-                                  'extent': [5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+                                   'extent': [5., 5.],
+                                   'elements': 'iaf_psc_alpha'})
 
         conndict = {'connection_type': 'divergent',
                     'mask': {'elliptical': {'major_axis': 1.5,
@@ -80,19 +80,19 @@ class ConnectWithEllipticalMask(unittest.TestCase):
                [4, 29], [4, 30], [4, 31], [4, 35], [5, 30], [5, 31], [5, 32],
                [5, 36], [6, 31], [6, 32], [6, 37], [7, 28], [7, 33], [7, 34],
                [7, 38], [8, 29], [8, 33], [8, 34], [8, 35], [8, 39], [9, 30],
-               [9, 34], [9, 35], [9, 36], [9, 40], [10, 31], [10, 35], [10, 36],
-               [10, 37], [10, 41], [11, 32], [11, 36], [11, 37], [11, 42],
-               [12, 33], [12, 38], [12, 39], [12, 43], [13, 34], [13, 38],
-               [13, 39], [13, 40], [13, 44], [14, 35], [14, 39], [14, 40],
-               [14, 41], [14, 45], [15, 36], [15, 40], [15, 41], [15, 42],
-               [15, 46], [16, 37], [16, 41], [16, 42], [16, 47], [17, 38],
-               [17, 43], [17, 44], [17, 48], [18, 39], [18, 43], [18, 44],
-               [18, 45], [18, 49], [19, 40], [19, 44], [19, 45], [19, 46],
-               [19, 50], [20, 41], [20, 45], [20, 46], [20, 47], [20, 51],
-               [21, 42], [21, 46], [21, 47], [21, 52], [22, 43], [22, 48],
-               [22, 49], [23, 44], [23, 48], [23, 49], [23, 50], [24, 45],
-               [24, 49], [24, 50], [24, 51], [25, 46], [25, 50], [25, 51],
-               [25, 52], [26, 47], [26, 51], [26, 52]]
+               [9, 34], [9, 35], [9, 36], [9, 40], [10, 31], [10, 35],
+               [10, 36], [10, 37], [10, 41], [11, 32], [11, 36], [11, 37],
+               [11, 42], [12, 33], [12, 38], [12, 39], [12, 43], [13, 34],
+               [13, 38], [13, 39], [13, 40], [13, 44], [14, 35], [14, 39],
+               [14, 40], [14, 41], [14, 45], [15, 36], [15, 40], [15, 41],
+               [15, 42], [15, 46], [16, 37], [16, 41], [16, 42], [16, 47],
+               [17, 38], [17, 43], [17, 44], [17, 48], [18, 39], [18, 43],
+               [18, 44], [18, 45], [18, 49], [19, 40], [19, 44], [19, 45],
+               [19, 46], [19, 50], [20, 41], [20, 45], [20, 46], [20, 47],
+               [20, 51], [21, 42], [21, 46], [21, 47], [21, 52], [22, 43],
+               [22, 48], [22, 49], [23, 44], [23, 48], [23, 49], [23, 50],
+               [24, 45], [24, 49], [24, 50], [24, 51], [25, 46], [25, 50],
+               [25, 51], [25, 52], [26, 47], [26, 51], [26, 52]]
 
         connections = nest.GetConnections()
 
@@ -102,39 +102,39 @@ class ConnectWithEllipticalMask(unittest.TestCase):
 
     def test_ConnectTiltedEllipticalMask(self):
         """Test connection with tilted elliptical mask.
-        
+
         We have: major_axis = 1.5
                  minor_axis = 0.5
                  angle = pi/4
-        
+
         Each source node should then connect to:
             - The node in the same position in target layer
             - The node above the node to the right of that position
             - The node below the node to the left of the position.
-            
+
         So, if we have
-        
+
         sources:                    targets:
         2  7  12  17  22            28  33  38  43  48
         3  8  13  18  23            29  34  39  44  49
         4  9  14  19  24            30  35  40  45  50
         5  10 15  20  25            31  36  41  46  51
         6  11 16  21  26            32  37  42  47  52
-        
+
         some example connections will be:
-        
+
         2  -> 28
-             
+
                       44
         14 ->     40
               36
         """
         source = topo.CreateLayer({'rows': 5, 'columns': 5,
-                                  'extent': [5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+                                   'extent': [5., 5.],
+                                   'elements': 'iaf_psc_alpha'})
         target = topo.CreateLayer({'rows': 5, 'columns': 5,
-                                  'extent': [5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+                                   'extent': [5., 5.],
+                                   'elements': 'iaf_psc_alpha'})
 
         conndict = {'connection_type': 'divergent',
                     'mask': {'elliptical': {'major_axis': 1.5,
@@ -162,40 +162,40 @@ class ConnectWithEllipticalMask(unittest.TestCase):
 
     def test_ConnectAnchoredEllipticalMask(self):
         """Test connection with anchored elliptical mask.
-        
+
         We have: major_axis = 1.5
                  minor_axis = 1.0
                  anchor = [1.0, 0.0] (right edge of mask aligned with source)
-        
+
         Each source node should then connect to:
             - The node in the same position in target layer
             - The two nodes to the ight of that position
             - The nodes above and belove the node to the right of the position.
-            
+
         So, if we have
-        
+
         sources:                    targets:
         2  7  12  17  22            28  33  38  43  48
         3  8  13  18  23            29  34  39  44  49
         4  9  14  19  24            30  35  40  45  50
         5  10 15  20  25            31  36  41  46  51
         6  11 16  21  26            32  37  42  47  52
-        
+
         some example connections will be:
-        
+
         2  -> 28  33  38
                   34
-             
+
                   44
         14 -> 40  45  50
                   46
         """
         source = topo.CreateLayer({'rows': 5, 'columns': 5,
-                                  'extent': [5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+                                   'extent': [5., 5.],
+                                   'elements': 'iaf_psc_alpha'})
         target = topo.CreateLayer({'rows': 5, 'columns': 5,
-                                  'extent': [5., 5.],
-                                  'elements': 'iaf_psc_alpha'})
+                                   'extent': [5., 5.],
+                                   'elements': 'iaf_psc_alpha'})
 
         conndict = {'connection_type': 'divergent',
                     'mask': {'elliptical': {'major_axis': 1.5,
@@ -228,44 +228,44 @@ class ConnectWithEllipticalMask(unittest.TestCase):
 
     def test_ConnectEllipticalMaskWithPeriodicBoundary(self):
         """Test connection with simple elliptical mask.
-        
+
         We have: major_axis = 1.5
                  minor_axis = 1.0
-        
+
         Each source node should then connect to:
             - The node in the same position in target layer
             - The node to the left and right of that position
             - The nodes above and belove
             - Nodes on the edges have connections on the other, corresponding
               edges.
-            
+
         So, if we have
-        
+
         sources:                    targets:
         2  7  12  17  22            28  33  38  43  48
         3  8  13  18  23            29  34  39  44  49
         4  9  14  19  24            30  35  40  45  50
         5  10 15  20  25            31  36  41  46  51
         6  11 16  21  26            32  37  42  47  52
-        
+
         some example connections will be:
-        
+
                   6
         2  -> 48  28  33
                   29
-             
+
                   39
         14 -> 35  40  45
                   41
         """
         source = topo.CreateLayer({'rows': 5, 'columns': 5,
-                                  'extent': [5., 5.],
-                                  'elements': 'iaf_psc_alpha',
-                                  'edge_wrap': True})
+                                   'extent': [5., 5.],
+                                   'elements': 'iaf_psc_alpha',
+                                   'edge_wrap': True})
         target = topo.CreateLayer({'rows': 5, 'columns': 5,
-                                  'extent': [5., 5.],
-                                  'elements': 'iaf_psc_alpha',
-                                  'edge_wrap': True})
+                                   'extent': [5., 5.],
+                                   'elements': 'iaf_psc_alpha',
+                                   'edge_wrap': True})
 
         conndict = {'connection_type': 'divergent',
                     'mask': {'elliptical': {'major_axis': 1.5,
@@ -273,23 +273,26 @@ class ConnectWithEllipticalMask(unittest.TestCase):
 
         topo.ConnectLayers(source, target, conndict)
 
-        ref = [[2, 28], [2, 29], [2, 32], [2, 33], [2, 48], [3, 28], [3, 29], [3, 30], [3, 34], [3, 49],
-               [4, 29], [4, 30], [4, 31], [4, 35], [4, 50], [5, 30], [5, 31], [5, 32],
-               [5, 36], [5, 51], [6, 28], [6, 31], [6, 32], [6, 37], [6, 52], [7, 28], [7, 33], [7, 34], [7, 37],
-               [7, 38], [8, 29], [8, 33], [8, 34], [8, 35], [8, 39], [9, 30],
-               [9, 34], [9, 35], [9, 36], [9, 40], [10, 31], [10, 35], [10, 36],
-               [10, 37], [10, 41], [11, 32], [11, 33], [11, 36], [11, 37], [11, 42],
-               [12, 33], [12, 38], [12, 39], [12, 42], [12, 43], [13, 34], [13, 38],
-               [13, 39], [13, 40], [13, 44], [14, 35], [14, 39], [14, 40],
-               [14, 41], [14, 45], [15, 36], [15, 40], [15, 41], [15, 42],
-               [15, 46], [16, 37], [16, 38], [16, 41], [16, 42], [16, 47], [17, 38],
-               [17, 43], [17, 44], [17, 47], [17, 48], [18, 39], [18, 43], [18, 44],
-               [18, 45], [18, 49], [19, 40], [19, 44], [19, 45], [19, 46],
-               [19, 50], [20, 41], [20, 45], [20, 46], [20, 47], [20, 51],
-               [21, 42], [21, 43], [21, 46], [21, 47], [21, 52], [22, 28], [22, 43], [22, 48],
-               [22, 49], [22, 52], [23, 29], [23, 44], [23, 48], [23, 49], [23, 50], [24, 30], [24, 45],
-               [24, 49], [24, 50], [24, 51], [25, 31], [25, 46], [25, 50], [25, 51],
-               [25, 52], [26, 32], [26, 47], [26, 48], [26, 51], [26, 52]]
+        ref = [[2, 28], [2, 29], [2, 32], [2, 33], [2, 48], [3, 28], [3, 29],
+               [3, 30], [3, 34], [3, 49], [4, 29], [4, 30], [4, 31], [4, 35],
+               [4, 50], [5, 30], [5, 31], [5, 32], [5, 36], [5, 51], [6, 28],
+               [6, 31], [6, 32], [6, 37], [6, 52], [7, 28], [7, 33], [7, 34],
+               [7, 37], [7, 38], [8, 29], [8, 33], [8, 34], [8, 35], [8, 39],
+               [9, 30], [9, 34], [9, 35], [9, 36], [9, 40], [10, 31], [10, 35],
+               [10, 36], [10, 37], [10, 41], [11, 32], [11, 33], [11, 36],
+               [11, 37], [11, 42], [12, 33], [12, 38], [12, 39], [12, 42],
+               [12, 43], [13, 34], [13, 38], [13, 39], [13, 40], [13, 44],
+               [14, 35], [14, 39], [14, 40], [14, 41], [14, 45], [15, 36],
+               [15, 40], [15, 41], [15, 42], [15, 46], [16, 37], [16, 38],
+               [16, 41], [16, 42], [16, 47], [17, 38], [17, 43], [17, 44],
+               [17, 47], [17, 48], [18, 39], [18, 43], [18, 44], [18, 45],
+               [18, 49], [19, 40], [19, 44], [19, 45], [19, 46], [19, 50],
+               [20, 41], [20, 45], [20, 46], [20, 47], [20, 51], [21, 42],
+               [21, 43], [21, 46], [21, 47], [21, 52], [22, 28], [22, 43],
+               [22, 48], [22, 49], [22, 52], [23, 29], [23, 44], [23, 48],
+               [23, 49], [23, 50], [24, 30], [24, 45], [24, 49], [24, 50],
+               [24, 51], [25, 31], [25, 46], [25, 50], [25, 51], [25, 52],
+               [26, 32], [26, 47], [26, 48], [26, 51], [26, 52]]
 
         connections = nest.GetConnections()
 

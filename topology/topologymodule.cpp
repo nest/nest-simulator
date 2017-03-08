@@ -1251,39 +1251,48 @@ TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
   i->assert_stack_load( 3 );
 
   const index& layer_gid = getValue< long >( i->OStack.pick( 2 ) );
-  std::vector< double > anchor = getValue< std::vector< double> >( i->OStack.pick( 1 ) );
+  std::vector< double > anchor =
+    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
   MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 0 ) );
 
   std::vector< index > mask_gids;
 
   const int dim = anchor.size();
 
-  if ( dim != 2 and dim != 3)
+  if ( dim != 2 and dim != 3 )
   {
-	throw BadProperty( "Center must be 2- or 3-dimensional." );
+    throw BadProperty( "Center must be 2- or 3-dimensional." );
   }
 
   if ( dim == 2 )
   {
-	Layer< 2 >* l = dynamic_cast< Layer< 2 >* >( kernel().node_manager.get_node( layer_gid ) );
+    Layer< 2 >* l = dynamic_cast< Layer< 2 >* >(
+      kernel().node_manager.get_node( layer_gid ) );
 
-	MaskedLayer< 2 > ml = MaskedLayer< 2 >( *l, Selector(), mask, true, false );
+    MaskedLayer< 2 > ml = MaskedLayer< 2 >( *l, Selector(), mask, true, false );
 
-    for ( Ntree< 2, index >::masked_iterator it = ml.begin( Position< 2 >( anchor[0], anchor[1] ) ); it != ml.end(); ++it )
-	{
-	  mask_gids.push_back( it->second );
-	}
+    for ( Ntree< 2, index >::masked_iterator it =
+            ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
+          it != ml.end();
+          ++it )
+    {
+      mask_gids.push_back( it->second );
+    }
   }
   else
   {
-    Layer< 3 >* l = dynamic_cast< Layer< 3 >* >( kernel().node_manager.get_node( layer_gid ) );
+    Layer< 3 >* l = dynamic_cast< Layer< 3 >* >(
+      kernel().node_manager.get_node( layer_gid ) );
 
-	MaskedLayer< 3 > ml = MaskedLayer< 3 >( *l, Selector(), mask, true, false );
+    MaskedLayer< 3 > ml = MaskedLayer< 3 >( *l, Selector(), mask, true, false );
 
-    for ( Ntree< 3, index >::masked_iterator it = ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) ); it != ml.end(); ++it )
-	{
-	  mask_gids.push_back( it->second );
-	}
+    for ( Ntree< 3, index >::masked_iterator it =
+            ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
+          it != ml.end();
+          ++it )
+    {
+      mask_gids.push_back( it->second );
+    }
   }
 
   i->OStack.pop( 3 );

@@ -325,19 +325,23 @@ public:
    * @param intermediate_axis Length between center and vertex on z-axis
    * @param angle Angle between x-axis and major axis of the ellipse
    */
-  EllipseMask( Position< D > center, double major_axis, double minor_axis, double intermediate_axis, double angle)
+  EllipseMask( Position< D > center,
+    double major_axis,
+    double minor_axis,
+    double intermediate_axis,
+    double angle )
     : center_( center )
     , major_axis_( major_axis )
     , minor_axis_( minor_axis )
-	, intermediate_axis_( intermediate_axis )
-	, angle_ ( angle )
+    , intermediate_axis_( intermediate_axis )
+    , angle_( angle )
   {
-	x_dividend_ = 1.0 / ( major_axis_ * major_axis_ );
-	y_dividend_ = 1.0 / ( minor_axis_ * minor_axis_ );
-	z_dividend_ = 1.0 / ( intermediate_axis_ * intermediate_axis_ );
+    x_dividend_ = 1.0 / ( major_axis_ * major_axis_ );
+    y_dividend_ = 1.0 / ( minor_axis_ * minor_axis_ );
+    z_dividend_ = 1.0 / ( intermediate_axis_ * intermediate_axis_ );
 
-	cosine_value_ = cos(angle_);
-	sine_value_ = sin(angle_);
+    cosine_value_ = cos( angle_ );
+    sine_value_ = sin( angle_ );
   }
 
   /**
@@ -720,27 +724,28 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
   }
   if ( major_axis_ < minor_axis_ )
   {
-	throw BadProperty( "topology::EllipseMask<D>: "
-			"major_axis greater than minor_axis required." );
+    throw BadProperty(
+      "topology::EllipseMask<D>: "
+      "major_axis greater than minor_axis required." );
   }
 
   x_dividend_ = 1.0 / ( major_axis_ * major_axis_ );
   y_dividend_ = 1.0 / ( minor_axis_ * minor_axis_ );
 
-  if ( d->known( names::intermediate_axis ))
+  if ( d->known( names::intermediate_axis ) )
   {
-	intermediate_axis_ = getValue< double >( d, names::intermediate_axis );
+    intermediate_axis_ = getValue< double >( d, names::intermediate_axis );
 
-	if ( intermediate_axis_ < 0 )
-	    throw BadProperty(
-	      "topology::EllipseMask<D>: "
-	      "All axis > 0 required." );
+    if ( intermediate_axis_ < 0 )
+      throw BadProperty(
+        "topology::EllipseMask<D>: "
+        "All axis > 0 required." );
 
-	z_dividend_ = 1.0 / ( intermediate_axis_ * intermediate_axis_ );
+    z_dividend_ = 1.0 / ( intermediate_axis_ * intermediate_axis_ );
   }
   else
   {
-	z_dividend_ = 0.0;
+    z_dividend_ = 0.0;
   }
 
   if ( d->known( names::anchor ) )
@@ -750,14 +755,14 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
 
   if ( d->known( names::angle ) )
   {
-	angle_ = getValue< double >( d, names::angle );
+    angle_ = getValue< double >( d, names::angle );
   }
   else
   {
-	angle_ = 0.0;
+    angle_ = 0.0;
   }
-  cosine_value_ = cos(angle_);
-  sine_value_ = sin(angle_);
+  cosine_value_ = cos( angle_ );
+  sine_value_ = sin( angle_ );
 }
 
 } // namespace nest

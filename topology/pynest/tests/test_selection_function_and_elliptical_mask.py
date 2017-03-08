@@ -266,7 +266,8 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         conndict = {'connection_type': 'divergent',
                     'mask': {'elliptical': {'major_axis': 3.,
                                             'minor_axis': 1.5,
-                                            'angle': pi/4, 'anchor':[3., 3.]}}}
+                                            'angle': pi/4,
+                                            'anchor': [3., 3.]}}}
 
         topo.ConnectLayers(layer, layer, conndict)
 

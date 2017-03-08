@@ -254,12 +254,13 @@ template < int D >
 bool
 EllipseMask< D >::inside( const Position< D >& p ) const
 {
-  double new_x = ( p[ 0 ] - center_[ 0 ] ) * cosine_value_ + ( p[ 1 ] - center_[ 1 ] ) * sine_value_;
-  double new_y = ( p[ 0 ] - center_[ 0 ] ) * sine_value_ - ( p[ 1 ] - center_[ 1 ] ) * cosine_value_;
+  double new_x = ( p[ 0 ] - center_[ 0 ] ) * cosine_value_
+    + ( p[ 1 ] - center_[ 1 ] ) * sine_value_;
+  double new_y = ( p[ 0 ] - center_[ 0 ] ) * sine_value_
+    - ( p[ 1 ] - center_[ 1 ] ) * cosine_value_;
   double new_z = ( p[ 2 ] - center_[ 2 ] );
-  return std::pow(new_x, 2 ) * x_dividend_
-    + std::pow( new_y, 2 ) * y_dividend_
-	+ std::pow( new_z, 2 ) * z_dividend_
+  return std::pow( new_x, 2 ) * x_dividend_ + std::pow( new_y, 2 ) * y_dividend_
+    + std::pow( new_z, 2 ) * z_dividend_
     <= 1;
 }
 
@@ -326,26 +327,26 @@ EllipseMask< D >::outside( const Box< D >& b ) const
   // Currently only checks if the box is outside the bounding box of
   // the ellipse. This could be made more refined.
 
-  std::vector < double > radii;
+  std::vector< double > radii;
   if ( angle_ == 0.0 )
   {
-	radii.push_back( major_axis_ );
-	radii.push_back( minor_axis_ );
+    radii.push_back( major_axis_ );
+    radii.push_back( minor_axis_ );
   }
   else
   {
-	// This is a simplification and can be more refined
-    radii.push_back( std::abs( major_axis_));
-	radii.push_back( std::abs( major_axis_));
+    // This is a simplification and can be more refined
+    radii.push_back( std::abs( major_axis_ ) );
+    radii.push_back( std::abs( major_axis_ ) );
   }
   radii.push_back( intermediate_axis_ );
 
   for ( int i = 0; i < D; ++i )
   {
     if ( ( b.upper_right[ i ] < center_[ i ] - radii[ i ] )
-	  || ( b.lower_left[ i ] > center_[ i ] + radii[ i ] ) )
+      || ( b.lower_left[ i ] > center_[ i ] + radii[ i ] ) )
     {
-	  return true;
+      return true;
     }
   }
   return false;
@@ -357,24 +358,25 @@ EllipseMask< D >::get_bbox() const
 {
   Box< D > bb( center_, center_ );
 
-  std::vector < double > radii;
+  std::vector< double > radii;
   if ( angle_ == 0.0 )
   {
-	radii.push_back( major_axis_ );
+    radii.push_back( major_axis_ );
     radii.push_back( minor_axis_ );
   }
   else
   {
-	// This is a simplification and can be more refined
-    radii.push_back( std::abs( major_axis_ ));
-    radii.push_back( std::abs( major_axis_));;
+    // This is a simplification and can be more refined
+    radii.push_back( std::abs( major_axis_ ) );
+    radii.push_back( std::abs( major_axis_ ) );
+    ;
   }
   radii.push_back( intermediate_axis_ );
 
   for ( int i = 0; i < D; ++i )
   {
-  	bb.lower_left[ i ] -= radii[ i ];
-  	bb.upper_right[ i ] += radii[ i ];
+    bb.lower_left[ i ] -= radii[ i ];
+    bb.upper_right[ i ] += radii[ i ];
   }
   return bb;
 }
@@ -397,7 +399,7 @@ EllipseMask< D >::get_dict() const
   def< double >( maskd, names::minor_axis, minor_axis_ );
   def< double >( maskd, names::intermediate_axis, intermediate_axis_ );
   def< std::vector< double > >( maskd, names::anchor, center_ );
-  def< double >( maskd, names::angle, angle_);
+  def< double >( maskd, names::angle, angle_ );
   return d;
 }
 

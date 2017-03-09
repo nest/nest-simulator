@@ -367,3 +367,175 @@ nest::SourceTable::resize_sources( const thread tid )
     }
   }
 }
+
+bool
+nest::SourceTable::get_next_target_data( const thread tid,
+  const thread rank_start,
+  const thread rank_end,
+  thread& target_rank,
+  TargetData& next_target_data )
+{
+  SourceTablePosition& current_position = *current_positions_[ tid ];
+  // we stay in this loop either until we can return a valid
+  // TargetData object or we have reached the end of the sources table
+  while ( true )
+  {
+    // check for validity of indices and update if necessary
+    if ( current_position.lcid < 0 )
+    {
+      --current_position.syn_id;
+      if ( current_position.syn_id >= 0 )
+      {
+        current_position.lcid =
+          ( *sources_[ current_position.tid ] )[ current_position.syn_id ]
+            ->size() - 1;
+        continue;
+      }
+      else
+      {
+        --current_position.tid;
+        if ( current_position.tid >= 0 )
+        {
+          current_position.syn_id =
+            ( *sources_[ current_position.tid ] ).size() - 1;
+          if ( current_position.syn_id >= 0 )
+          {
+            current_position.lcid =
+              ( *sources_[ current_position.tid ] )[ current_position
+                                                       .syn_id ]->size() - 1;
+          }
+          continue;
+        }
+        else
+        {
+          assert( current_position.tid < 0 );
+          assert( current_position.syn_id < 0 );
+          assert( current_position.lcid < 0 );
+          return false; // reached the end of the sources table
+        }
+      }
+    }
+
+    if ( current_position.lcid
+        < static_cast< long >(
+            ( *last_sorted_source_[ current_position.tid ] )[ current_position
+                                                                .syn_id ] )
+      && ( *last_sorted_source_[ current_position.tid ] )[ current_position
+                                                             .syn_id ]
+        < ( *( *sources_[ current_position.tid ] )[ current_position
+                                                      .syn_id ] ).size() )
+    {
+      return false;
+    }
+
+    // the current position contains an entry, so we retrieve it
+    const Source& const_current_source =
+      ( *( *sources_[ current_position.tid ] )[ current_position.syn_id ] )
+        [ current_position.lcid ];
+    if ( const_current_source.is_processed() || const_current_source.is_disabled() )
+    {
+      // looks like we've processed this already, let's
+      // continue
+      --current_position.lcid;
+      continue;
+    }
+
+    // TODO@5g: this really is the source rank, isn't it? rename?
+    target_rank =
+      kernel().node_manager.get_process_id_of_gid( const_current_source.get_gid() );
+    // now we need to determine whether this thread is
+    // responsible for this part of the MPI buffer; if not we
+    // just continue with the next iteration of the loop
+    if ( target_rank < rank_start || target_rank >= rank_end )
+    {
+      --current_position.lcid;
+      if ( target_rank < rank_start )
+      {
+        current_position.lcid = -1;
+      }
+      continue;
+    }
+
+    Source& current_source =
+      ( *( *sources_[ current_position.tid ] )[ current_position.syn_id ] )
+          [ current_position.lcid ];
+
+    // we have found a valid entry, so mark it as processed
+    current_source.set_processed( true );
+
+    // we need to set the marker whether the entry following this
+    // entry, if existent, has the same source
+    kernel().connection_manager.set_has_source_subsequent_targets(
+      current_position.tid,
+      current_position.syn_id,
+      current_position.lcid,
+      false );
+    if ( ( current_position.lcid + 1
+             < static_cast< long >(
+                 ( *sources_[ current_position.tid ] )[ current_position
+                                                          .syn_id ]->size() )
+           && ( *( *sources_[ current_position.tid ] )
+                  [ current_position.syn_id ] )[ current_position.lcid + 1 ]
+                .get_gid() == current_source.get_gid() ) )
+    {
+      kernel().connection_manager.set_has_source_subsequent_targets(
+        current_position.tid,
+        current_position.syn_id,
+        current_position.lcid,
+        true );
+    }
+
+    // we decrease the counter without returning a TargetData if the
+    // entry preceeding this entry has the same source, but only if it
+    // was not processed yet
+    if ( current_position.lcid - 1 > -1
+      && ( *( *sources_[ current_position.tid ] )
+             [ current_position.syn_id ] )[ current_position.lcid - 1 ].get_gid()
+        == current_source.get_gid()
+      && not( *( *sources_[ current_position.tid ] )
+                [ current_position.syn_id ] )[ current_position.lcid - 1 ]
+              .is_processed() )
+    {
+      --current_position.lcid;
+      continue;
+    }
+
+    // otherwise we return a valid TargetData
+    else
+    {
+      // set values of next_target_data
+      next_target_data.set_lid(
+        kernel().vp_manager.gid_to_lid( current_source.get_gid() ) );
+      next_target_data.set_tid( kernel().vp_manager.vp_to_thread(
+        kernel().vp_manager.suggest_vp( current_source.get_gid() ) ) );
+      if ( current_source.is_primary() )
+      {
+        next_target_data.is_primary( true );
+        // we store the thread index of the sources table, not our own tid
+        next_target_data.get_target().set_tid( current_position.tid );
+        next_target_data.get_target().set_rank(
+          kernel().mpi_manager.get_rank() );
+        next_target_data.get_target().set_processed( false );
+        next_target_data.get_target().set_syn_id(
+          current_position.syn_id );
+        next_target_data.get_target().set_lcid( current_position.lcid );
+      }
+      else
+      {
+        next_target_data.is_primary( false );
+        const size_t recv_buffer_pos =
+          kernel().connection_manager.get_secondary_recv_buffer_position(
+            current_position.tid,
+            current_position.syn_id,
+            current_position.lcid );
+        const size_t send_buffer_pos =
+          kernel().mpi_manager.get_rank() * kernel().mpi_manager.get_chunk_size_secondary_events()
+          + ( recv_buffer_pos - target_rank * kernel().mpi_manager.get_chunk_size_secondary_events() );
+        reinterpret_cast< SecondaryTargetData* >( &next_target_data )
+          ->set_send_buffer_pos( send_buffer_pos );
+      }
+      --current_position.lcid;
+      return true; // found a valid entry
+    }
+  }
+}

@@ -85,8 +85,8 @@ set( nestkernel_sources
     target_table.h target_table.cpp
     target_table_devices.h target_table_devices.cpp target_table_devices_impl.h
     target.h target_data.h
-    source_table.h source_table.cpp source_table_impl.h
     source.h
+    source_table.h source_table.cpp
     source_table_position.h
     spike_data.h
     )

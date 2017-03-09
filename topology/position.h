@@ -300,9 +300,9 @@ struct Box
   Box()
   {
   }
-  Box( const Position< D >& ll, const Position< D >& ur )
-    : lower_left( ll )
-    , upper_right( ur )
+  Box( const Position< D >& lower_left, const Position< D >& upper_right )
+    : lower_left( lower_left )
+    , upper_right( upper_right )
   {
   }
 
@@ -331,10 +331,11 @@ public:
   {
   }
 
-  MultiIndex( const Position< D, int >& ll, const Position< D, int >& ur )
-    : Position< D, int >( ll )
-    , lower_left_( ll )
-    , upper_right_( ur )
+  MultiIndex( const Position< D, int >& lower_left,
+    const Position< D, int >& upper_right )
+    : Position< D, int >( lower_left )
+    , lower_left_( lower_left )
+    , upper_right_( upper_right )
   {
   }
 
@@ -657,7 +658,9 @@ inline bool Position< D, T >::operator==( const Position< D, T >& y ) const
   for ( int i = 0; i < D; ++i )
   {
     if ( x_[ i ] != y.x_[ i ] )
+    {
       return false;
+    }
   }
   return true;
 }
@@ -668,7 +671,9 @@ inline bool Position< D, T >::operator!=( const Position< D, T >& y ) const
   for ( int i = 0; i < D; ++i )
   {
     if ( x_[ i ] != y.x_[ i ] )
+    {
       return true;
+    }
   }
   return false;
 }
@@ -679,7 +684,9 @@ inline bool Position< D, T >::operator<( const Position< D, T >& y ) const
   for ( int i = 0; i < D; ++i )
   {
     if ( x_[ i ] >= y.x_[ i ] )
+    {
       return false;
+    }
   }
   return true;
 }
@@ -690,7 +697,9 @@ inline bool Position< D, T >::operator>( const Position< D, T >& y ) const
   for ( int i = 0; i < D; ++i )
   {
     if ( x_[ i ] <= y.x_[ i ] )
+    {
       return false;
+    }
   }
   return true;
 }
@@ -701,7 +710,9 @@ inline bool Position< D, T >::operator<=( const Position< D, T >& y ) const
   for ( int i = 0; i < D; ++i )
   {
     if ( x_[ i ] > y.x_[ i ] )
+    {
       return false;
+    }
   }
   return true;
 }
@@ -712,7 +723,9 @@ inline bool Position< D, T >::operator>=( const Position< D, T >& y ) const
   for ( int i = 0; i < D; ++i )
   {
     if ( x_[ i ] < y.x_[ i ] )
+    {
       return false;
+    }
   }
   return true;
 }

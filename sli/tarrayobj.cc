@@ -68,7 +68,9 @@ TokenArrayObj::TokenArrayObj( const TokenArrayObj& a )
 TokenArrayObj::~TokenArrayObj()
 {
   if ( p )
+  {
     delete[] p;
+  }
 }
 
 void
@@ -92,7 +94,9 @@ TokenArrayObj::allocate( size_t new_s,
 
   if ( t != Token() )
     for ( Token* hi = h; hi < h + new_c; ++hi )
+    {
       ( *hi ) = t;
+    }
 
   end_of_free_storage = h + new_c; // [,) convention
   begin_of_free_storage = h + new_s;
@@ -238,11 +242,15 @@ TokenArrayObj::rotate( Token* first, Token* middle, Token* last )
       if ( first == middle )
       {
         if ( i == last )
+        {
           return;
+        }
         middle = i;
       }
       else if ( i == last )
+      {
         i = middle;
+      }
     }
 }
 
@@ -259,9 +267,11 @@ TokenArrayObj::erase( Token* first, Token* last )
   while ( from < end )
   {
     if ( to->p )
-      to->p->removeReference(); // deleting NULL pointer is safe in ISO C++
-    to->p = from->p;            // move
-    from->p = NULL;             // might be overwritten or not
+    {
+      to->p->removeReference();
+    }                // deleting NULL pointer is safe in ISO C++
+    to->p = from->p; // move
+    from->p = NULL;  // might be overwritten or not
     ++from;
     ++to;
   }
@@ -270,8 +280,10 @@ TokenArrayObj::erase( Token* first, Token* last )
   {                   // longer than the sequence to the
     --last;           // right of it, we explicitly delete the
     if ( last->p )
-      last->p->removeReference(); // elements which are still intact
-    last->p = NULL;               // after the move above.
+    {
+      last->p->removeReference();
+    }               // elements which are still intact
+    last->p = NULL; // after the move above.
   }
 
   begin_of_free_storage = to;
@@ -285,14 +297,18 @@ TokenArrayObj::erase( size_t i, size_t n )
   if ( i + n < size() )
     erase( p + i, p + i + n );
   else
+  {
     erase( p + ( i ), p + size() );
+  }
 }
 
 void
 TokenArrayObj::clear( void )
 {
   if ( p )
+  {
     delete[] p;
+  }
   p = begin_of_free_storage = end_of_free_storage = NULL;
   alloc_block_size = 1;
 }
@@ -322,7 +338,9 @@ TokenArrayObj::reduce( Token* first, Token* last )
     assert( l == last );
   }
   else
+  {
     i = last;
+  }
 
   assert( i == p + ( last - first ) );
 
@@ -343,7 +361,9 @@ TokenArrayObj::reduce( size_t i, size_t n )
   if ( i + n < size() )
     reduce( p + i, p + i + n );
   else
+  {
     reduce( p + ( i ), p + size() );
+  }
 }
 
 void
@@ -513,9 +533,11 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
     while ( from < end )
     {
       if ( to->p )
-        to->p->removeReference(); // deleting NULL pointer is safe in ISO C++
-      to->p = from->p;            // move
-      from->p = NULL;             // might be overwritten or not
+      {
+        to->p->removeReference();
+      }                // deleting NULL pointer is safe in ISO C++
+      to->p = from->p; // move
+      from->p = NULL;  // might be overwritten or not
       ++from;
       ++to;
     }
@@ -524,8 +546,10 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
     {                   // longer than a plus the sequence to the
       --last;           // right of it, we explicitly delete the
       if ( last->p )
-        last->p->removeReference(); // elements which are still intact
-      last->p = NULL;               // after the move above.
+      {
+        last->p->removeReference();
+      }               // elements which are still intact
+      last->p = NULL; // after the move above.
     }
   }
 
@@ -540,9 +564,11 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
   while ( from < end )
   {
     if ( to->p )
-      to->p->removeReference(); // delete target before
-    to->p = from->p;            // movement, it is typically
-    from->p = NULL;             // not the NULL pointer
+    {
+      to->p->removeReference();
+    }                // delete target before
+    to->p = from->p; // movement, it is typically
+    from->p = NULL;  // not the NULL pointer
     ++from;
     ++to;
   }
@@ -591,7 +617,7 @@ bool TokenArrayObj::operator==( const TokenArrayObj& a ) const
 
   Token* i = begin(), * j = a.begin();
   while ( i < end() )
-    if ( !( *i++ == *j++ ) )
+    if ( not( *i++ == *j++ ) )
       return false;
   return true;
 }

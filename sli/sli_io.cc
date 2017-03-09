@@ -135,7 +135,9 @@ XIfstreamFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( true );
   }
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -179,7 +181,9 @@ IfstreamFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( true );
   }
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -226,7 +230,9 @@ OfstreamFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( true );
   }
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -301,7 +307,9 @@ OfsopenFunction::execute( SLIInterpreter* i ) const
       i->OStack.push( true );
     }
     else
+    {
       i->OStack.push( false );
+    }
   }
 
   i->EStack.pop();
@@ -346,7 +354,9 @@ IsstreamFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( true );
   }
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -382,7 +392,9 @@ OsstreamFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( true );
   }
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -433,10 +445,14 @@ StrSStreamFunction::execute( SLIInterpreter* i ) const
       i->EStack.pop();
     }
     else
-      i->raiseerror( i->BadIOError ); // new style more throw like
+    {
+      i->raiseerror( i->BadIOError );
+    } // new style more throw like
   }
   else
+  {
     i->raiseerror( i->StringStreamExpectedError );
+  }
 }
 
 #else
@@ -470,7 +486,9 @@ OstrstreamFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( true );
   }
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -522,10 +540,14 @@ StrFunction::execute( SLIInterpreter* i ) const
       i->EStack.pop();
     }
     else
-      i->raiseerror( i->BadIOError ); // new style more throw like
+    {
+      i->raiseerror( i->BadIOError );
+    } // new style more throw like
   }
   else
+  {
     i->raiseerror( i->StringStreamExpectedError );
+  }
 }
 
 #endif
@@ -568,13 +590,17 @@ PrintFunction::execute( SLIInterpreter* i ) const
   {
     i->OStack.top()->print( **ostreamdatum );
     if ( SLIsignalflag != 0 )
+    {
       ( *ostreamdatum )->clear();
+    }
 
     i->OStack.pop();
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 /*BeginDocumentation
@@ -603,7 +629,7 @@ PrettyprintFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 1 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.pick( 1 );
@@ -615,12 +641,16 @@ PrettyprintFunction::execute( SLIInterpreter* i ) const
   {
     i->OStack.top()->pprint( **ostreamdatum );
     if ( SLIsignalflag != 0 )
+    {
       ( *ostreamdatum )->clear();
+    }
     i->OStack.pop();
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 /*BeginDocumentation
@@ -636,7 +666,7 @@ FlushFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.top().datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -650,7 +680,9 @@ FlushFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 /*BeginDocumentation
@@ -676,7 +708,7 @@ EndlFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.top().datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -690,7 +722,9 @@ EndlFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -704,7 +738,7 @@ EndsFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 1 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.pick( 1 );
@@ -718,7 +752,9 @@ EndsFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -729,7 +765,7 @@ EatwhiteFunction::execute( SLIInterpreter* i ) const
   IstreamDatum* istreamdatum =
     dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
 
-  if ( istreamdatum == NULL || !istreamdatum->valid() )
+  if ( istreamdatum == NULL || not istreamdatum->valid() )
   {
     IstreamDatum const d;
     Token t = i->OStack.top();
@@ -739,12 +775,14 @@ EatwhiteFunction::execute( SLIInterpreter* i ) const
 
   if ( ( *istreamdatum )->good() )
   {
-    if ( !( *istreamdatum )->eof() )
+    if ( not( *istreamdatum )->eof() )
       ( **istreamdatum ) >> ws;
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 
@@ -758,7 +796,7 @@ CloseistreamFunction::execute( SLIInterpreter* i ) const
   IstreamDatum* istreamdatum =
     dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
 
-  if ( istreamdatum == NULL || !istreamdatum->valid() )
+  if ( istreamdatum == NULL || not istreamdatum->valid() )
   {
     IstreamDatum const d;
     Token t = i->OStack.top();
@@ -782,10 +820,14 @@ CloseistreamFunction::execute( SLIInterpreter* i ) const
       i->EStack.pop();
     }
     else
+    {
       i->raiseerror( i->ArgumentTypeError );
+    }
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 
@@ -827,10 +869,14 @@ CloseostreamFunction::execute( SLIInterpreter* i ) const
       i->EStack.pop();
     }
     else
+    {
       i->raiseerror( i->ArgumentTypeError );
+    }
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -843,7 +889,7 @@ SetwFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 1 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.pick( 1 );
@@ -868,7 +914,9 @@ SetwFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 /* BeginDocumentation
@@ -895,7 +943,7 @@ SetprecisionFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 1 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.pick( 1 );
@@ -920,7 +968,9 @@ SetprecisionFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -933,7 +983,7 @@ IOSFixedFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.pick( 1 );
@@ -948,7 +998,9 @@ IOSFixedFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -961,7 +1013,7 @@ IOSScientificFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -976,7 +1028,9 @@ IOSScientificFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -989,7 +1043,7 @@ IOSDefaultFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -1004,7 +1058,9 @@ IOSDefaultFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1017,7 +1073,7 @@ IOSShowpointFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -1031,7 +1087,9 @@ IOSShowpointFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1044,7 +1102,7 @@ IOSNoshowpointFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -1058,7 +1116,9 @@ IOSNoshowpointFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 
@@ -1072,7 +1132,7 @@ IOSOctFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -1086,7 +1146,9 @@ IOSOctFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1099,7 +1161,7 @@ IOSHexFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -1113,7 +1175,9 @@ IOSHexFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1126,7 +1190,7 @@ IOSDecFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -1140,7 +1204,9 @@ IOSDecFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1153,7 +1219,7 @@ IOSShowbaseFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -1167,7 +1233,9 @@ IOSShowbaseFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1180,7 +1248,7 @@ IOSNoshowbaseFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -1194,7 +1262,9 @@ IOSNoshowbaseFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1207,7 +1277,7 @@ IOSLeftFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -1223,7 +1293,9 @@ IOSLeftFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1236,7 +1308,7 @@ IOSRightFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -1252,7 +1324,9 @@ IOSRightFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1265,7 +1339,7 @@ IOSInternalFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.pick( 0 ).datum() );
 
-  if ( ostreamdatum == NULL || !ostreamdatum->valid() )
+  if ( ostreamdatum == NULL || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -1281,7 +1355,9 @@ IOSInternalFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 /* BeginDocumentation
@@ -1306,7 +1382,7 @@ GetcFunction::execute( SLIInterpreter* i ) const
   IstreamDatum* istreamdatum =
     dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
 
-  if ( istreamdatum == NULL || !istreamdatum->valid() )
+  if ( istreamdatum == NULL || not istreamdatum->valid() )
   {
     IstreamDatum const d;
     Token t = i->OStack.top();
@@ -1331,7 +1407,9 @@ GetcFunction::execute( SLIInterpreter* i ) const
       i->EStack.pop();
     }
     else
+    {
       i->raiseerror( i->BadIOError );
+    }
   }
 }
 
@@ -1355,7 +1433,7 @@ GetsFunction::execute( SLIInterpreter* i ) const
   IstreamDatum* istreamdatum =
     dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
 
-  if ( istreamdatum == 0 || !istreamdatum->valid() )
+  if ( istreamdatum == 0 || not istreamdatum->valid() )
   {
     IstreamDatum const d;
     Token t = i->OStack.top();
@@ -1415,7 +1493,7 @@ GetlineFunction::execute( SLIInterpreter* i ) const
   IstreamDatum* istreamdatum =
     dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
 
-  if ( istreamdatum == 0 || !istreamdatum->valid() )
+  if ( istreamdatum == 0 || not istreamdatum->valid() )
   {
     IstreamDatum const d;
     Token t = i->OStack.top();
@@ -1423,11 +1501,11 @@ GetlineFunction::execute( SLIInterpreter* i ) const
       d.gettypename().toString(), t.datum()->gettypename().toString() );
   }
 
-  if ( ( *istreamdatum )->good() && !( *istreamdatum )->eof() )
+  if ( ( *istreamdatum )->good() && not( *istreamdatum )->eof() )
   {
     string s;
     getline( **istreamdatum, s );
-    if ( !( *istreamdatum )->good() )
+    if ( not( *istreamdatum )->good() )
     {
       if ( SLIsignalflag == 0 )
       {
@@ -1449,7 +1527,9 @@ GetlineFunction::execute( SLIInterpreter* i ) const
     }
   }
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -1478,7 +1558,7 @@ IGoodFunction::execute( SLIInterpreter* i ) const
   IstreamDatum* istreamdatum =
     dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
 
-  if ( istreamdatum == 0 || !istreamdatum->valid() )
+  if ( istreamdatum == 0 || not istreamdatum->valid() )
   {
     IstreamDatum const d;
     Token t = i->OStack.top();
@@ -1489,7 +1569,9 @@ IGoodFunction::execute( SLIInterpreter* i ) const
   if ( ( *istreamdatum )->good() )
     i->OStack.push( true );
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -1517,7 +1599,7 @@ IClearFunction::execute( SLIInterpreter* i ) const
   IstreamDatum* istreamdatum =
     dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
 
-  if ( istreamdatum == 0 || !istreamdatum->valid() )
+  if ( istreamdatum == 0 || not istreamdatum->valid() )
   {
     IstreamDatum const d;
     Token t = i->OStack.top();
@@ -1553,7 +1635,7 @@ OClearFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.top().datum() );
 
-  if ( ostreamdatum == 0 || !ostreamdatum->valid() )
+  if ( ostreamdatum == 0 || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -1590,7 +1672,7 @@ IFailFunction::execute( SLIInterpreter* i ) const
   IstreamDatum* istreamdatum =
     dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
 
-  if ( istreamdatum == 0 || !istreamdatum->valid() )
+  if ( istreamdatum == 0 || not istreamdatum->valid() )
   {
     IstreamDatum const d;
     Token t = i->OStack.top();
@@ -1601,7 +1683,9 @@ IFailFunction::execute( SLIInterpreter* i ) const
   if ( ( *istreamdatum )->fail() )
     i->OStack.push( true );
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -1630,7 +1714,7 @@ OGoodFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.top().datum() );
 
-  if ( ostreamdatum == 0 || !ostreamdatum->valid() )
+  if ( ostreamdatum == 0 || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -1641,7 +1725,9 @@ OGoodFunction::execute( SLIInterpreter* i ) const
   if ( ( *ostreamdatum )->good() )
     i->OStack.push( true );
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -1669,7 +1755,7 @@ IEofFunction::execute( SLIInterpreter* i ) const
   IstreamDatum* istreamdatum =
     dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
 
-  if ( istreamdatum == 0 || !istreamdatum->valid() )
+  if ( istreamdatum == 0 || not istreamdatum->valid() )
   {
     IstreamDatum const d;
     Token t = i->OStack.top();
@@ -1680,7 +1766,9 @@ IEofFunction::execute( SLIInterpreter* i ) const
   if ( ( *istreamdatum )->eof() )
     i->OStack.push( true );
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -1709,7 +1797,7 @@ OEofFunction::execute( SLIInterpreter* i ) const
   OstreamDatum* ostreamdatum =
     dynamic_cast< OstreamDatum* >( i->OStack.top().datum() );
 
-  if ( ostreamdatum == 0 || !ostreamdatum->valid() )
+  if ( ostreamdatum == 0 || not ostreamdatum->valid() )
   {
     OstreamDatum const d;
     Token t = i->OStack.top();
@@ -1720,7 +1808,9 @@ OEofFunction::execute( SLIInterpreter* i ) const
   if ( ( *ostreamdatum )->eof() )
     i->OStack.push( true );
   else
+  {
     i->OStack.push( false );
+  }
 
   i->EStack.pop();
 }
@@ -1762,7 +1852,7 @@ In_AvailFunction::execute( SLIInterpreter* i ) const
   IstreamDatum* istreamdatum =
     dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
 
-  if ( istreamdatum == 0 || !istreamdatum->valid() )
+  if ( istreamdatum == 0 || not istreamdatum->valid() )
   {
     IstreamDatum const d;
     Token t = i->OStack.top();
@@ -1823,7 +1913,9 @@ ReadDoubleFunction::execute( SLIInterpreter* i ) const
     }
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -1873,7 +1965,9 @@ ReadIntFunction::execute( SLIInterpreter* i ) const
     }
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 
@@ -1897,7 +1991,7 @@ ReadWordFunction::execute( SLIInterpreter* i ) const
   IstreamDatum* istreamdatum =
     dynamic_cast< IstreamDatum* >( i->OStack.top().datum() );
 
-  if ( istreamdatum == 0 || !istreamdatum->valid() )
+  if ( istreamdatum == 0 || not istreamdatum->valid() )
   {
     IstreamDatum const d;
     Token t = i->OStack.top();

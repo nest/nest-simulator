@@ -65,9 +65,10 @@ nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d )
 {
 
   updateValue< double >( d, names::dead_time, dead_time_ );
-
   if ( dead_time_ < 0 )
+  {
     throw BadProperty( "The dead time cannot be negative." );
+  }
 
   updateValue< double >( d, names::rate, rate_ );
 
@@ -130,7 +131,9 @@ nest::poisson_generator_ps::calibrate()
   if ( P_.rate_ > 0 )
     V_.inv_rate_ms_ = 1000.0 / P_.rate_ - P_.dead_time_;
   else
+  {
     V_.inv_rate_ms_ = std::numeric_limits< double >::infinity();
+  }
 
   /* The user may have set Device::start and/or origin to a later time
      during a simulation break. We can handle this in two ways:
@@ -140,7 +143,7 @@ nest::poisson_generator_ps::calibrate()
      consistent across targets, all targets are reset even if a
      single one has a spike time before origin+start.
   */
-  if ( !B_.next_spike_.empty() )
+  if ( not B_.next_spike_.empty() )
   {
     // find minimum time stamp, offset does not matter here
     Time min_time = B_.next_spike_.begin()->first;

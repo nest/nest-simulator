@@ -107,7 +107,9 @@ public:
   {
     --reference_count_;
     if ( reference_count_ == 0 )
+    {
       delete this;
+    }
   }
 
   size_t
@@ -141,9 +143,13 @@ public:
   list( std::ostream& o, std::string prefix, int l ) const
   {
     if ( l == 0 )
+    {
       prefix = "-->" + prefix;
+    }
     else
+    {
       prefix = "   " + prefix;
+    }
     o << prefix;
     print( o );
   }

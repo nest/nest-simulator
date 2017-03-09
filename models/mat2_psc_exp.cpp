@@ -138,19 +138,24 @@ nest::mat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
   if ( updateValue< double >( d, names::omega, omega_ ) )
     omega_ -= E_L_;
   else
+  {
     omega_ -= delta_EL;
-
+  }
   if ( C_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0
     || tau_2_ <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
-
+  }
   if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
+  {
     throw BadProperty(
       "Membrane and synapse time constant(s) must differ."
       "See note in documentation." );
+  }
 
   return delta_EL;
 }
@@ -175,7 +180,9 @@ nest::mat2_psc_exp::State_::set( const DictionaryDatum& d,
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
     V_m_ -= p.E_L_;
   else
+  {
     V_m_ -= delta_EL;
+  }
 
   updateValue< double >( d, names::V_th_alpha_1, V_th_1_ );
   updateValue< double >( d, names::V_th_alpha_2, V_th_2_ );
@@ -348,7 +355,9 @@ nest::mat2_psc_exp::update( Time const& origin, const long from, const long to )
       }
     }
     else
-      --S_.r_; // neuron is totally refractory (cannot generate spikes)
+    {
+      --S_.r_;
+    } // neuron is totally refractory (cannot generate spikes)
 
     // set new input current
     S_.i_0_ = B_.currents_.get_value( lag );
@@ -369,9 +378,11 @@ nest::mat2_psc_exp::handle( SpikeEvent& e )
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
+  {
     B_.spikes_in_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
 }
 
 void

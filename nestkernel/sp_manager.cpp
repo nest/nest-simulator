@@ -122,7 +122,7 @@ SPManager::set_status( const DictionaryDatum& d )
     updateValue< long >( d,
       names::structural_plasticity_update_interval,
       structural_plasticity_update_interval_ );
-  if ( !d->known( names::structural_plasticity_synapses ) )
+  if ( not d->known( names::structural_plasticity_synapses ) )
     return;
   /*
    * Configure synapses model updated during the simulation.
@@ -270,7 +270,7 @@ SPManager::disconnect( index sgid,
   else // globally receiving devices iterate over all target threads
   {
     // we do not allow to connect a device to a global receiver at the moment
-    if ( !source->has_proxies() )
+    if ( not source->has_proxies() )
       return;
     const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread t = 0; t < n_threads; t++ )
@@ -302,7 +302,7 @@ SPManager::disconnect( GIDCollection& sources,
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 
-  if ( !conn_spec->known( names::rule ) )
+  if ( not conn_spec->known( names::rule ) )
     throw BadProperty( "Disconnection spec must contain disconnection rule." );
   const std::string rule_name = ( *conn_spec )[ names::rule ];
 
@@ -332,8 +332,10 @@ SPManager::disconnect( GIDCollection& sources,
     }
   }
   else
+  {
     cb = kernel().connection_manager.get_conn_builder(
       rule_name, sources, targets, conn_spec, syn_spec );
+  }
   assert( cb != 0 );
 
   // at this point, all entries in conn_spec and syn_spec have been checked

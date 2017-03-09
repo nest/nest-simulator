@@ -30,7 +30,7 @@ namespace nest
 {
 Vose::Vose( std::vector< double > dist )
 {
-  assert( !dist.empty() );
+  assert( not dist.empty() );
 
   const index n = dist.size();
 
@@ -52,9 +52,13 @@ Vose::Vose( std::vector< double > dist )
         ++it )
   {
     if ( *it <= sum / n )
+    {
       *small++ = BiasedCoin( i++, 0, ( *it ) * n / sum );
+    }
     else
+    {
       *--large = BiasedCoin( i++, 0, ( *it ) * n / sum );
+    }
   }
 
   // Generate aliases
@@ -97,7 +101,9 @@ Vose::get_random_id( librandom::RngPtr rng ) const
   if ( r < dist_[ i ].probability )
     return dist_[ i ].heads;
   else
+  {
     return dist_[ i ].tails;
+  }
 }
 
 } // namespace nest

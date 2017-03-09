@@ -124,7 +124,7 @@ mynest::StepPatternBuilder::connect_()
             skip_conn_parameter_( tid );
             continue;
           }
-          if ( !change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
+          if ( not change_connected_synaptic_elements( *sgid, *tgid, tid, 1 ) )
           {
             for ( nest::GIDCollection::const_iterator sgid = sources_->begin();
                   sgid != sources_->end();

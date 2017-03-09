@@ -198,7 +198,9 @@ SliceRingBuffer::get_next_spike( const long req_stamp,
       return true;
     }
     else
+    {
       return false;
+    }
   else if ( deliver_->back().stamp_ == req_stamp )
   {
     // we have an event to deliver, register its offset

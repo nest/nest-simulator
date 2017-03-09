@@ -346,14 +346,18 @@ public:
     {
       this->x_[ i ]++;
       if ( this->x_[ i ] < upper_right_[ i ] )
+      {
         return *this;
+      }
       this->x_[ i ] = lower_left_[ i ];
     }
     // If we reach this point, we are outside of bounds. The upper
     // right point is used as a marker to show that we have reached the
     // end.
     for ( int i = 0; i < D; ++i )
+    {
       this->x_[ i ] = upper_right_[ i ];
+    }
     return *this;
   }
 
@@ -385,7 +389,9 @@ template < int D, class T >
 inline Position< D, T >::Position()
 {
   for ( int i = 0; i < D; ++i )
+  {
     x_[ i ] = 0;
+  }
 }
 
 template < int D, class T >
@@ -409,7 +415,9 @@ template < int D, class T >
 inline Position< D, T >::Position( const T* const y )
 {
   for ( int i = 0; i < D; ++i )
+  {
     x_[ i ] = y[ i ];
+  }
 }
 
 template < int D, class T >
@@ -427,7 +435,9 @@ template < int D, class T >
 inline Position< D, T >::Position( const Position< D, T >& other )
 {
   for ( int i = 0; i < D; ++i )
+  {
     x_[ i ] = other.x_[ i ];
+  }
 }
 
 template < int D, class T >
@@ -435,16 +445,19 @@ template < class U >
 inline Position< D, T >::Position( const Position< D, U >& other )
 {
   for ( int i = 0; i < D; ++i )
+  {
     x_[ i ] = other.x_[ i ];
+  }
 }
 
 template < int D, class T >
 Position< D, T >::operator std::vector< T >() const
 {
   std::vector< double > result;
-
   for ( int i = 0; i < D; ++i )
+  {
     result.push_back( x_[ i ] );
+  }
 
   return result;
 }
@@ -556,7 +569,9 @@ inline Position< D, T >& Position< D, T >::operator+=(
   const Position< D, OT >& other )
 {
   for ( int i = 0; i < D; ++i )
+  {
     x_[ i ] += other.x_[ i ];
+  }
   return *this;
 }
 
@@ -566,7 +581,9 @@ inline Position< D, T >& Position< D, T >::operator-=(
   const Position< D, OT >& other )
 {
   for ( int i = 0; i < D; ++i )
+  {
     x_[ i ] -= other.x_[ i ];
+  }
   return *this;
 }
 
@@ -576,7 +593,9 @@ inline Position< D, T >& Position< D, T >::operator*=(
   const Position< D, OT >& other )
 {
   for ( int i = 0; i < D; ++i )
+  {
     x_[ i ] *= other.x_[ i ];
+  }
   return *this;
 }
 
@@ -586,7 +605,9 @@ inline Position< D, T >& Position< D, T >::operator/=(
   const Position< D, OT >& other )
 {
   for ( int i = 0; i < D; ++i )
+  {
     x_[ i ] /= other.x_[ i ];
+  }
   return *this;
 }
 
@@ -594,7 +615,9 @@ template < int D, class T >
 inline Position< D, T >& Position< D, T >::operator+=( const T& a )
 {
   for ( int i = 0; i < D; ++i )
+  {
     x_[ i ] += a;
+  }
   return *this;
 }
 
@@ -602,7 +625,9 @@ template < int D, class T >
 inline Position< D, T >& Position< D, T >::operator-=( const T& a )
 {
   for ( int i = 0; i < D; ++i )
+  {
     x_[ i ] -= a;
+  }
   return *this;
 }
 
@@ -610,7 +635,9 @@ template < int D, class T >
 inline Position< D, T >& Position< D, T >::operator*=( const T& a )
 {
   for ( int i = 0; i < D; ++i )
+  {
     x_[ i ] *= a;
+  }
   return *this;
 }
 
@@ -618,7 +645,9 @@ template < int D, class T >
 inline Position< D, T >& Position< D, T >::operator/=( const T& a )
 {
   for ( int i = 0; i < D; ++i )
+  {
     x_[ i ] /= a;
+  }
   return *this;
 }
 
@@ -694,7 +723,9 @@ Position< D, T >::length() const
 {
   T lensq = 0;
   for ( int i = 0; i < D; ++i )
+  {
     lensq += x_[ i ] * x_[ i ];
+  }
   return std::sqrt( lensq );
 }
 
@@ -712,7 +743,9 @@ Position< D, T >::print( std::ostream& out, char sep ) const
 {
   out << x_[ 0 ];
   for ( int i = 1; i < D; ++i )
+  {
     out << sep << x_[ i ];
+  }
 }
 
 template < int D, class T >
@@ -720,9 +753,13 @@ std::ostream& operator<<( std::ostream& os, const Position< D, T >& pos )
 {
   os << "(";
   if ( D > 0 )
+  {
     os << pos.x_[ 0 ];
+  }
   for ( int i = 1; i < D; ++i )
+  {
     os << ", " << pos.x_[ i ];
+  }
   os << ")";
   return os;
 }

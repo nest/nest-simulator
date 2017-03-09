@@ -47,7 +47,9 @@ Ntree< D, T, max_capacity, max_depth >::iterator::iterator( Ntree& q )
 
     next_leaf_();
     if ( ntree_ == 0 )
+    {
       break;
+    }
   }
 }
 
@@ -64,9 +66,10 @@ typename Ntree< D, T, max_capacity, max_depth >::iterator&
     next_leaf_();
 
     node_ = 0;
-
     if ( ntree_ == 0 )
+    {
       break;
+    }
   }
 
   return *this;
@@ -107,7 +110,9 @@ mod( double x, double p )
 {
   x = std::fmod( x, p );
   if ( x < 0 )
+  {
     x += p;
+  }
   return x;
 }
 
@@ -368,9 +373,10 @@ typename Ntree< D, T, max_capacity, max_depth >::masked_iterator&
     next_leaf_();
 
     node_ = 0;
-
     if ( ntree_ == 0 )
+    {
       break;
+    }
 
     if ( allin_top_ == 0 )
     {
@@ -391,8 +397,10 @@ Ntree< D, T, max_capacity, max_depth >::subquad_( const Position< D >& pos )
 {
   int r = 0;
   for ( int i = 0; i < D; ++i )
+  {
     r +=
       ( 1 << i ) * ( pos[ i ] < lower_left_[ i ] + extent_[ i ] / 2 ? 0 : 1 );
+  }
 
   return r;
 }
@@ -409,7 +417,9 @@ Ntree< D, T, max_capacity, max_depth >::append_nodes_(
   else
   {
     for ( int i = 0; i < N; ++i )
+    {
       children_[ i ]->append_nodes_( v );
+    }
   }
 }
 
@@ -442,9 +452,10 @@ Ntree< D, T, max_capacity, max_depth >::append_nodes_(
   }
   else
   {
-
     for ( int i = 0; i < N; ++i )
+    {
       children_[ i ]->append_nodes_( v, mask, anchor );
+    }
   }
 }
 
@@ -466,7 +477,9 @@ Ntree< D, T, max_capacity, max_depth >::insert( Position< D > pos,
         pos[ i ] = lower_left_[ i ]
           + std::fmod( pos[ i ] - lower_left_[ i ], extent_[ i ] );
         if ( pos[ i ] < lower_left_[ i ] )
+        {
           pos[ i ] += extent_[ i ];
+        }
       }
     }
   }

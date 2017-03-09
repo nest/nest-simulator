@@ -304,7 +304,7 @@ EventDeliveryManager::collocate_buffers_( bool done )
   num_spikes =
     num_grid_spikes + num_offgrid_spikes + uintsize_secondary_events + 2;
 
-  if ( !off_grid_spiking_ ) // on grid spiking
+  if ( not off_grid_spiking_ ) // on grid spiking
   {
     // make sure buffers are correctly sized
     if ( global_grid_spikes_.size()
@@ -414,15 +414,19 @@ EventDeliveryManager::collocate_buffers_( bool done )
     // collocate the entries of spike_registers into local_offgrid_spikes__
     std::vector< OffGridSpike >::iterator pos = local_offgrid_spikes_.begin();
     if ( num_grid_spikes == 0 )
+    {
       for ( it = offgrid_spike_register_.begin();
             it != offgrid_spike_register_.end();
             ++it )
+      {
         for ( jt = it->begin(); jt != it->end(); ++jt )
         {
           pos = std::copy( jt->begin(), jt->end(), pos );
           pos->set_gid( comm_marker_ );
           ++pos;
         }
+      }
+    }
     else
     {
       std::vector< unsigned int >::iterator n;
@@ -475,7 +479,7 @@ EventDeliveryManager::deliver_events( thread t )
 
   std::vector< int > pos( displacements_ );
 
-  if ( !off_grid_spiking_ ) // on_grid_spiking
+  if ( not off_grid_spiking_ ) // on_grid_spiking
   {
     // prepare Time objects for every possible time stamp within min_delay_
     std::vector< Time > prepared_timestamps(
@@ -532,9 +536,10 @@ EventDeliveryManager::deliver_events( thread t )
         // index written into the buffer and read out of it
         synindex synid;
         read_from_comm_buffer( synid, readpos );
-
         if ( synid == invalid_synindex )
+        {
           break;
+        }
         --readpos;
 
         kernel().model_manager.assert_valid_syn_id( synid );

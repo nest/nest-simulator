@@ -543,9 +543,13 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
   : mask_( maskd )
 {
   if ( include_global )
+  {
     ntree_ = layer.get_global_positions_ntree( filter );
+  }
   else
+  {
     ntree_ = layer.get_local_positions_ntree( filter );
+  }
 
   check_mask_( layer, allow_oversized );
 }
@@ -560,10 +564,12 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
   : mask_( maskd )
 {
   if ( include_global )
+  {
     ntree_ = layer.get_global_positions_ntree( filter,
       target.get_periodic_mask(),
       target.get_lower_left(),
       target.get_extent() );
+  }
   // else
   //  ntree_ = layer.get_local_positions_ntree(filter,
   //  target.get_periodic_mask(),
@@ -687,7 +693,9 @@ inline void
 Layer< D >::clear_vector_cache_() const
 {
   if ( cached_vector_ != 0 )
+  {
     delete cached_vector_;
+  }
   cached_vector_ = 0;
   cached_vector_layer_ = -1;
 }

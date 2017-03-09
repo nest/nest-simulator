@@ -87,9 +87,10 @@ void
 binary_neuron< TGainfunction >::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::tau_m, tau_m_ );
-
   if ( tau_m_ <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 }
 
 template < class TGainfunction >

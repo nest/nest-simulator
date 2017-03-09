@@ -50,9 +50,10 @@ DictionaryStack::undef( const Name& n )
   for ( std::list< DictionaryDatum >::iterator it = d.begin(); it != d.end();
         ++it )
     num_erased += ( *it )->erase( n );
-
   if ( num_erased == 0 )
+  {
     throw UndefinedName( n.toString() );
+  }
 #ifdef DICTSTACK_CACHE
   clear_token_from_cache( n );
   clear_token_from_basecache( n );

@@ -68,7 +68,9 @@ ModelManager::~ModelManager()
   std::vector< ConnectorModel* >::iterator i;
   for ( i = pristine_prototypes_.begin(); i != pristine_prototypes_.end(); ++i )
     if ( *i != 0 )
+    {
       delete *i;
+    }
 
   std::vector< std::pair< Model*, bool > >::iterator j;
   for ( j = pristine_models_.begin(); j != pristine_models_.end(); ++j )
@@ -114,7 +116,7 @@ ModelManager::initialize()
       pristine_models_[ i ].first->set_threads();
       std::string name = pristine_models_[ i ].first->get_name();
       models_.push_back( pristine_models_[ i ].first->clone( name ) );
-      if ( !pristine_models_[ i ].second )
+      if ( not pristine_models_[ i ].second )
         modeldict_->insert( name, i );
     }
   }
@@ -201,20 +203,22 @@ ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
   const Token oldsynmodel = synapsedict_->lookup( old_name );
 
   index new_id;
-  if ( !oldnodemodel.empty() )
+  if ( not oldnodemodel.empty() )
   {
     index old_id = static_cast< index >( oldnodemodel );
     new_id = copy_node_model_( old_id, new_name );
     set_node_defaults_( new_id, params );
   }
-  else if ( !oldsynmodel.empty() )
+  else if ( not oldsynmodel.empty() )
   {
     index old_id = static_cast< index >( oldsynmodel );
     new_id = copy_synapse_model_( old_id, new_name );
     set_synapse_defaults_( new_id, params );
   }
   else
+  {
     throw UnknownModelName( old_name );
+  }
 
   return new_id;
 }
@@ -244,9 +248,10 @@ ModelManager::register_node_model_( Model* model, bool private_model )
     newnode->set_model_id( id );
     proxy_nodes_[ t ].push_back( newnode );
   }
-
-  if ( !private_model )
+  if ( not private_model )
+  {
     modeldict_->insert( name, id );
+  }
 
   return id;
 }
@@ -319,18 +324,20 @@ ModelManager::set_model_defaults( Name name, DictionaryDatum params )
   const Token synmodel = synapsedict_->lookup( name );
 
   index id;
-  if ( !nodemodel.empty() )
+  if ( not nodemodel.empty() )
   {
     id = static_cast< index >( nodemodel );
     set_node_defaults_( id, params );
   }
-  else if ( !synmodel.empty() )
+  else if ( not synmodel.empty() )
   {
     id = static_cast< index >( synmodel );
     set_synapse_defaults_( id, params );
   }
   else
+  {
     throw UnknownModelName( name );
+  }
 
   model_defaults_modified_ = true;
 }
@@ -444,9 +451,11 @@ ModelManager::clear_models_( bool called_from_destructor )
 {
   // no message on destructor call, may come after MPI_Finalize()
   if ( not called_from_destructor )
+  {
     LOG( M_INFO,
       "ModelManager::clear_models_",
       "Models will be cleared and parameters reset." );
+  }
 
   // We delete all models, which will also delete all nodes. The
   // built-in models will be recovered from the pristine_models_ in
@@ -454,7 +463,9 @@ ModelManager::clear_models_( bool called_from_destructor )
   for ( std::vector< Model* >::iterator m = models_.begin(); m != models_.end();
         ++m )
     if ( *m != 0 )
+    {
       delete *m;
+    }
 
   models_.clear();
   proxy_nodes_.clear();
@@ -477,7 +488,9 @@ ModelManager::clear_prototypes_()
           pt != it->end();
           ++pt )
       if ( *pt != 0 )
+      {
         delete *pt;
+      }
     it->clear();
   }
   prototypes_.clear();
@@ -494,7 +507,9 @@ ModelManager::calibrate( const TimeConverter& tc )
       pt != prototypes_[ t ].end();
       ++pt )
       if ( *pt != 0 )
+      {
         ( *pt )->calibrate( tc );
+      }
 }
 
 //!< Functor to compare Models by their name.

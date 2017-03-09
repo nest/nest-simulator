@@ -85,7 +85,9 @@ nest::sinusoidal_poisson_generator::Parameters_&
   operator=( const Parameters_& p )
 {
   if ( this == &p )
+  {
     return *this;
+  }
 
   rate_ = p.rate_;
   om_ = p.om_;

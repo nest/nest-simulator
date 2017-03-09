@@ -122,33 +122,43 @@ nest::iaf_psc_delta_canon::Parameters_::set( const DictionaryDatum& d )
   if ( updateValue< double >( d, names::V_th, U_th_ ) )
     U_th_ -= E_L_;
   else
+  {
     U_th_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_min, U_min_ ) )
     U_min_ -= E_L_;
   else
+  {
     U_min_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_reset, U_reset_ ) )
     U_reset_ -= E_L_;
   else
+  {
     U_reset_ -= delta_EL;
-
+  }
   if ( U_reset_ >= U_th_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
-
+  }
   if ( U_reset_ < U_min_ )
+  {
     throw BadProperty(
       "Reset potential must be greater equal minimum potential." );
-
+  }
   if ( c_m_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
+  }
 
   if ( Time( Time::ms( t_ref_ ) ).get_steps() < 1 )
     throw BadProperty( "Refractory time must be at least one time step." );
-
   if ( tau_m_ <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 
   return delta_EL;
 }
@@ -170,7 +180,9 @@ nest::iaf_psc_delta_canon::State_::set( const DictionaryDatum& d,
   if ( updateValue< double >( d, names::V_m, U_ ) )
     U_ -= p.E_L_;
   else
+  {
     U_ -= delta_EL;
+  }
 }
 
 nest::iaf_psc_delta_canon::Buffers_::Buffers_( iaf_psc_delta_canon& n )
@@ -259,7 +271,9 @@ iaf_psc_delta_canon::update( Time const& origin,
 
   // at start of slice, tell input queue to prepare for delivery
   if ( from == 0 )
+  {
     B_.events_.prepare_delivery();
+  }
 
   /*
     The psc_delta neuron can fire only
@@ -305,13 +319,14 @@ iaf_psc_delta_canon::update( Time const& origin,
     double ev_weight;
     bool end_of_refract;
 
-    if ( !B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) )
+    if ( not B_.events_.get_next_spike(
+           T, ev_offset, ev_weight, end_of_refract ) )
     { // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
       // if there are many steps without input spikes.
 
       // update membrane potential
-      if ( !S_.is_refractory_ )
+      if ( not S_.is_refractory_ )
       {
         /* The following way of updating U_ is numerically more precise
            than the more natural approach
@@ -355,7 +370,7 @@ iaf_psc_delta_canon::update( Time const& origin,
           t = ev_offset;
 
           // normal spikes need to be accumulated
-          if ( !end_of_refract )
+          if ( not end_of_refract )
           {
             if ( S_.with_refr_input_ )
               V_.refr_spikes_buffer_ += ev_weight
@@ -415,7 +430,7 @@ iaf_psc_delta_canon::update( Time const& origin,
 
       // no events remaining, plain update step across remainder
       // of interval
-      if ( !S_.is_refractory_ && t > 0 ) // not at end of step, do remainder
+      if ( not S_.is_refractory_ && t > 0 ) // not at end of step, do remainder
       {
         propagate_( t );
         if ( S_.U_ >= P_.U_th_ )
@@ -434,8 +449,8 @@ iaf_psc_delta_canon::update( Time const& origin,
 void
 nest::iaf_psc_delta_canon::propagate_( const double dt )
 {
-  assert( !S_.is_refractory_ ); // should not be called if neuron is
-                                // refractory
+  assert( not S_.is_refractory_ ); // should not be called if neuron is
+                                   // refractory
 
   // see comment on regular update above
   const double expm1_dt = numerics::expm1( -dt / P_.tau_m_ );

@@ -62,10 +62,13 @@ MusicEventHandler::~MusicEventHandler()
   if ( published_ )
   {
     if ( music_perm_ind_ != 0 )
+    {
       delete music_perm_ind_;
-
+    }
     if ( music_port_ != 0 )
+    {
       delete music_port_;
+    }
   }
 }
 
@@ -78,9 +81,10 @@ MusicEventHandler::register_channel( int channel, nest::Node* mp )
     channelmap_.resize( channel + 1, 0 );
     eventqueue_.resize( channel + 1 );
   }
-
   if ( channelmap_[ channel ] != 0 )
+  {
     throw MUSICChannelAlreadyMapped( "MusicEventHandler", portname_, channel );
+  }
 
   channelmap_[ channel ] = mp;
   indexmap_.push_back( channel );
@@ -89,7 +93,7 @@ MusicEventHandler::register_channel( int channel, nest::Node* mp )
 void
 MusicEventHandler::publish_port()
 {
-  if ( !published_ )
+  if ( not published_ )
   {
     music_port_ =
       kernel().music_manager.get_music_setup()->publishEventInput( portname_ );
@@ -97,10 +101,10 @@ MusicEventHandler::publish_port()
     // MUSIC wants seconds, NEST has miliseconds
     const double acceptable_latency_s = 0.001 * acceptable_latency_;
 
-    if ( !music_port_->isConnected() )
+    if ( not music_port_->isConnected() )
       throw MUSICPortUnconnected( "MusicEventHandler", portname_ );
 
-    if ( !music_port_->hasWidth() )
+    if ( not music_port_->hasWidth() )
       throw MUSICPortHasNoWidth( "MusicEventHandler", portname_ );
 
     unsigned int music_port_width = music_port_->width();
@@ -116,10 +120,14 @@ MusicEventHandler::publish_port()
       new MUSIC::PermutationIndex( &indexmap_.front(), indexmap_.size() );
     // map the port
     if ( max_buffered_ >= 0 )
+    {
       music_port_->map(
         music_perm_ind_, this, acceptable_latency_s, max_buffered_ );
+    }
     else
+    {
       music_port_->map( music_perm_ind_, this, acceptable_latency_s );
+    }
 
     std::string msg = String::compose(
       "Mapping MUSIC input port '%1' with width=%2 , acceptable latency=%3 ms",
@@ -127,7 +135,9 @@ MusicEventHandler::publish_port()
       music_port_width,
       acceptable_latency_ );
     if ( max_buffered_ > 0 )
+    {
       msg += String::compose( " and max buffered=%1 ticks", max_buffered_ );
+    }
     msg += ".";
     LOG( M_INFO, "MusicEventHandler::publish_port()", msg.c_str() );
   }
@@ -144,7 +154,7 @@ MusicEventHandler::update( Time const& origin, const long from, const long to )
 {
   for ( size_t channel = 0; channel < channelmap_.size(); ++channel )
     if ( channelmap_[ channel ] != 0 )
-      while ( !eventqueue_[ channel ].empty() )
+      while ( not eventqueue_[ channel ].empty() )
       {
         Time T = Time::ms( eventqueue_[ channel ].top() );
 
@@ -161,7 +171,9 @@ MusicEventHandler::update( Time const& origin, const long from, const long to )
           eventqueue_[ channel ].pop(); // remove the sent event from the queue
         }
         else
+        {
           break;
+        }
       }
 }
 

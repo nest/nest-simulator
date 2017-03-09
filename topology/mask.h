@@ -599,9 +599,11 @@ BallMask< D >::BallMask( const DictionaryDatum& d )
 {
   radius_ = getValue< double >( d, names::radius );
   if ( radius_ <= 0 )
+  {
     throw BadProperty(
       "topology::BallMask<D>: "
       "radius > 0 required." );
+  }
 
   if ( d->known( names::anchor ) )
   {

@@ -126,13 +126,19 @@ DictputFunction::execute( SLIInterpreter* i ) const
         return;
       }
       else
+      {
         throw ArgumentType( 1 );
+      }
     }
     else
+    {
       throw ArgumentType( 2 );
+    }
   }
   else
+  {
     throw StackUnderflow( 3, i->OStack.load() );
+  }
 }
 
 /*
@@ -186,13 +192,19 @@ DictgetFunction::execute( SLIInterpreter* i ) const
         return;
       }
       else
+      {
         throw ArgumentType( 0 );
+      }
     }
     else
+    {
       throw ArgumentType( 1 );
+    }
   }
   else
+  {
     throw StackUnderflow( 2, i->OStack.load() );
+  }
 }
 /*
 BeginDocumentation
@@ -479,10 +491,14 @@ DictbeginFunction::execute( SLIInterpreter* i ) const
       return;
     }
     else
+    {
       i->raiseerror( i->ArgumentTypeError );
+    }
   }
   else
+  {
     i->raiseerror( i->StackUnderflowError );
+  }
 }
 
 /*
@@ -513,7 +529,9 @@ DictendFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
   }
   else
+  {
     i->raiseerror( "DictStackUnderflow" );
+  }
 }
 
 /*
@@ -581,13 +599,19 @@ UndefFunction::execute( SLIInterpreter* i ) const
         return;
       }
       else
+      {
         throw ArgumentType( 0 );
+      }
     }
     else
+    {
       throw ArgumentType( 1 );
+    }
   }
   else
+  {
     throw StackUnderflow( 2, i->OStack.load() );
+  }
 }
 
 /*
@@ -643,9 +667,10 @@ DictconstructFunction::execute( SLIInterpreter* i ) const
   // call: mark key1 val1 ... keyn valn -> dict
 
   size_t l = i->OStack.load();
-
   if ( l == 0 )
+  {
     throw StackUnderflow( 1, 0 );
+  }
 
   DictionaryDatum* dictd = new DictionaryDatum( new Dictionary );
   Token dict( dictd );
@@ -654,7 +679,7 @@ DictconstructFunction::execute( SLIInterpreter* i ) const
   static Token mark = i->baselookup( i->mark_name );
 
   size_t n = 0; //!< pick(1) is the first literal, then we count in steps of 2
-  while ( ( n < l ) && !( i->OStack.pick( n ) == mark ) )
+  while ( ( n < l ) && not( i->OStack.pick( n ) == mark ) )
   {
     Token& val = ( i->OStack.pick( n ) );
     key = dynamic_cast< LiteralDatum* >( i->OStack.pick( n + 1 ).datum() );
@@ -918,7 +943,7 @@ KeysFunction::execute( SLIInterpreter* i ) const
         ++t )
   {
     Token nt( new LiteralDatum( ( *t ).first ) );
-    assert( !nt.empty() );
+    assert( not nt.empty() );
     ad->push_back_move( nt );
   }
   i->OStack.pop();

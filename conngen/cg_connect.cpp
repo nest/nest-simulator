@@ -61,10 +61,12 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else if ( num_parameters == 2 )
   {
-    if ( !params_map->known( names::weight )
-      || !params_map->known( names::delay ) )
+if ( not params_map->known( names::weight )
+{
+  || not params_map->known( names::delay ) )
       throw BadProperty(
         "The parameter map has to contain the indices of weight and delay." );
+}
 
     long w_idx = ( *params_map )[ names::weight ];
     long d_idx = ( *params_map )[ names::delay ];
@@ -73,18 +75,18 @@ cg_connect( ConnectionGeneratorDatum& cg,
     // connect source to target with weight and delay
     while ( cg->next( source, target, &params[ 0 ] ) )
     {
-      if ( kernel().node_manager.is_local_gid( target + target_offset ) )
-      {
-        Node* const target_node =
-          kernel().node_manager.get_node( target + target_offset );
-        const thread target_thread = target_node->get_thread();
-        kernel().connection_manager.connect( source + source_offset,
-          target_node,
-          target_thread,
-          syn,
-          params[ d_idx ],
-          params[ w_idx ] );
-      }
+  if ( kernel().node_manager.is_local_gid( target + target_offset ) )
+  {
+    Node* const target_node =
+      kernel().node_manager.get_node( target + target_offset );
+    const thread target_thread = target_node->get_thread();
+    kernel().connection_manager.connect( source + source_offset,
+      target_node,
+      target_thread,
+      syn,
+      params[ d_idx ],
+      params[ w_idx ] );
+  }
     }
   }
   else
@@ -126,10 +128,12 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else if ( num_parameters == 2 )
   {
-    if ( !params_map->known( names::weight )
-      || !params_map->known( names::delay ) )
+if ( not params_map->known( names::weight )
+{
+  || not params_map->known( names::delay ) )
       throw BadProperty(
         "The parameter map has to contain the indices of weight and delay." );
+}
 
     long w_idx = ( *params_map )[ names::weight ];
     long d_idx = ( *params_map )[ names::delay ];
@@ -138,18 +142,18 @@ cg_connect( ConnectionGeneratorDatum& cg,
     // connect source to target with weight and delay
     while ( cg->next( source, target, &params[ 0 ] ) )
     {
-      if ( kernel().node_manager.is_local_gid( target_gids.at( target ) ) )
-      {
-        Node* const target_node =
-          kernel().node_manager.get_node( target_gids.at( target ) );
-        const thread target_thread = target_node->get_thread();
-        kernel().connection_manager.connect( source_gids.at( source ),
-          target_node,
-          target_thread,
-          syn,
-          params[ d_idx ],
-          params[ w_idx ] );
-      }
+  if ( kernel().node_manager.is_local_gid( target_gids.at( target ) ) )
+  {
+    Node* const target_node =
+      kernel().node_manager.get_node( target_gids.at( target ) );
+    const thread target_thread = target_node->get_thread();
+    kernel().connection_manager.connect( source_gids.at( source ),
+      target_node,
+      target_thread,
+      syn,
+      params[ d_idx ],
+      params[ w_idx ] );
+  }
     }
   }
   else
@@ -337,7 +341,9 @@ cg_get_right_border( index left, size_t step, std::vector< long >& gids )
     // Reduce the search interval by half its size if it is > 1.
     // This adaptation is the basis of the binary search.
     if ( step != 1 )
+    {
       step /= 2;
+    }
   }
 
   // The border should always be found and returned during the while
@@ -372,7 +378,9 @@ cg_get_ranges( RangeSet& ranges, std::vector< long >& gids )
     if ( right == gids.size() - 1 ) // We're at the end of gids and stop
       break;
     else
-      left = right + 1; // The new left border is one after the old right
+    {
+      left = right + 1;
+    } // The new left border is one after the old right
   }
 }
 

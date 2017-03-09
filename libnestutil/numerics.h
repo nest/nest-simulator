@@ -60,7 +60,9 @@ expm1( double x )
   // compute using Taylor series, see GSL
   // e^x-1 = x + x^2/2! + x^3/3! + ...
   if ( x == 0 )
+  {
     return 0;
+  }
   if ( std::abs( x ) > std::log( 2.0 ) )
     return std::exp( x ) - 1;
   else

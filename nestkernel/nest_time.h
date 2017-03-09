@@ -601,7 +601,9 @@ inline Time operator*( const long factor, const Time& t )
   if ( ( t.tics > 0 && factor > 0 ) || ( t.tics < 0 && factor < 0 ) )
     return Time( Time::LIM_POS_INF.tics );
   else
+  {
     return Time( Time::LIM_NEG_INF.tics );
+  }
 }
 
 inline Time operator*( const Time& t, long factor )

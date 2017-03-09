@@ -190,9 +190,13 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
   Position< D, index > new_dims = dims_;
   updateValue< long >( d, names::columns, new_dims[ 0 ] );
   if ( D >= 2 )
+  {
     updateValue< long >( d, names::rows, new_dims[ 1 ] );
+  }
   if ( D >= 3 )
+  {
     updateValue< long >( d, names::layers, new_dims[ 2 ] );
+  }
 
   index new_size = this->depth_;
   for ( int i = 0; i < D; ++i )
@@ -221,9 +225,13 @@ GridLayer< D >::get_status( DictionaryDatum& d ) const
 
   ( *topology_dict )[ names::columns ] = dims_[ 0 ];
   if ( D >= 2 )
+  {
     ( *topology_dict )[ names::rows ] = dims_[ 1 ];
+  }
   if ( D >= 3 )
+  {
     ( *topology_dict )[ names::layers ] = dims_[ 2 ];
+  }
 }
 
 template < int D >
@@ -277,7 +285,9 @@ GridLayer< D >::gridpos_to_lid( Position< D, int > pos ) const
     {
       pos[ i ] %= int( dims_[ i ] );
       if ( pos[ i ] < 0 )
+      {
         pos[ i ] += dims_[ i ];
+      }
     }
   }
 
@@ -359,7 +369,9 @@ GridLayer< D >::insert_global_positions_( Ins iter, const Selector& filter )
   Multirange::iterator gi = this->gids_.begin();
   // Advance iterator to first gid at selected depth
   for ( index j = 0; j < i; ++j )
+  {
     ++gi;
+  }
 
   for ( ; ( gi != this->gids_.end() ) && ( i < lid_end ); ++gi, ++i )
   {
@@ -462,7 +474,9 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
   if ( filter_.select_depth() )
     depth_ = filter_.depth;
   else
+  {
     depth_ = 0;
+  }
 
   if ( ( not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) )
     or ( filter_.select_model() && ( kernel().modelrange_manager.get_model_id(
@@ -485,7 +499,9 @@ typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::
 operator++()
 {
   if ( depth_ == -1 )
-    return *this; // Invalid (end) iterator
+  {
+    return *this;
+  } // Invalid (end) iterator
 
   if ( not filter_.select_depth() )
   {
@@ -501,7 +517,9 @@ operator++()
                                        != index( filter_.model ) ) )
         return operator++();
       else
+      {
         return *this;
+      }
     }
   }
 

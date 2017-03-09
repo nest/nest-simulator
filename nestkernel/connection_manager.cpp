@@ -303,12 +303,12 @@ nest::ConnectionManager::connect( const GIDCollection& sources,
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 
-  if ( !conn_spec->known( names::rule ) )
+  if ( not conn_spec->known( names::rule ) )
     throw BadProperty( "Connectivity spec must contain connectivity rule." );
   const Name rule_name =
     static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
 
-  if ( !connruledict_->known( rule_name ) )
+  if ( not connruledict_->known( rule_name ) )
     throw BadProperty(
       String::compose( "Unknown connectivity rule: %1", rule_name ) );
   const long rule_id = ( *connruledict_ )[ rule_name ];
@@ -491,7 +491,7 @@ nest::ConnectionManager::connect( index sgid,
   const thread tid = kernel().vp_manager.get_thread_id();
 
   // make sure target is on this MPI rank
-  if ( !kernel().node_manager.is_local_gid( tgid ) )
+  if ( not kernel().node_manager.is_local_gid( tgid ) )
   {
     return false;
   }
@@ -754,7 +754,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
   bool complete_wd_lists = ( ( *ptarget_ids )->size() == ( *pweights )->size()
     && ( *pweights )->size() == ( *pdelays )->size() );
   // check if we have consistent lists for weights and delays
-  if ( !complete_wd_lists )
+  if ( not complete_wd_lists )
   {
     LOG( M_ERROR,
       "DataConnect",
@@ -801,7 +801,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           "Target with ID %1 does not exist. "
           "The connection will be ignored.",
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
           msg += "\nDetails: " + e.message();
         LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
@@ -832,7 +832,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           "Target with ID %1 does not support the connection. "
           "The connection will be ignored.",
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
           msg += "\nDetails: " + e.message();
         LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
@@ -843,7 +843,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           "Target with ID %1 does not support the connection. "
           "The connection will be ignored.",
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
           msg += "\nDetails: " + e.message();
         LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
@@ -856,7 +856,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           "The connection will be ignored",
           source_id,
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
           msg += "\nDetails: " + e.message();
         LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
@@ -879,15 +879,17 @@ nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
     index source_gid = ( *cd )[ names::source ];
 
     Token synmodel = cd->lookup( names::synapse_model );
-    if ( !synmodel.empty() )
+    if ( not synmodel.empty() )
     {
       std::string synmodel_name = getValue< std::string >( synmodel );
       synmodel =
         kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-      if ( !synmodel.empty() )
+      if ( not synmodel.empty() )
         syn_id = static_cast< size_t >( synmodel );
       else
+      {
         throw UnknownModelName( synmodel_name );
+      }
     }
     Node* source_node = kernel().node_manager.get_node( source_gid );
     connect_( *source_node, *target_node, source_gid, thr, syn_id, cd );
@@ -989,8 +991,10 @@ nest::ConnectionManager::send_secondary( thread t, SecondaryEvent& e )
             p->send( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
         }
         else
+        {
           p->send_secondary(
             e, t, kernel().model_manager.get_synapse_prototypes( t ) );
+        }
       }
     }
   }
@@ -1059,10 +1063,12 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
     Name synmodel_name = getValue< Name >( syn_model_t );
     const Token synmodel =
       kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-    if ( !synmodel.empty() )
+    if ( not synmodel.empty() )
       syn_id = static_cast< size_t >( synmodel );
     else
+    {
       throw UnknownModelName( synmodel_name.toString() );
+    }
     get_connections( connectome, source_a, target_a, syn_id, synapse_label );
   }
   else

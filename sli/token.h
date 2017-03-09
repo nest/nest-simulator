@@ -87,7 +87,9 @@ public:
   ~Token()
   {
     if ( p )
+    {
       p->removeReference();
+    }
     p = 0;
   }
 
@@ -153,7 +155,9 @@ public:
   move( Token& c )
   {
     if ( p )
+    {
       p->removeReference();
+    }
     p = c.p;
     c.p = NULL;
   }
@@ -221,7 +225,9 @@ public:
     if ( p != rhs.p )
     {
       if ( p )
+      {
         p->removeReference();
+      }
       p = rhs.p->get_ptr();
     }
   }
@@ -232,7 +238,9 @@ public:
     assert( rhs != NULL );
     rhs->addReference();
     if ( p )
+    {
       p->removeReference();
+    }
     p = rhs;
   }
 
@@ -247,7 +255,9 @@ public:
   clear( void )
   {
     if ( p )
+    {
       p->removeReference();
+    }
     p = NULL;
   }
 
@@ -313,9 +323,10 @@ public:
       clear();
       return *this;
     }
-
     if ( p )
+    {
       p->removeReference();
+    }
     p = c_s.p->get_ptr();
 
     return *this;
@@ -326,7 +337,9 @@ public:
     if ( p != p_s )
     {
       if ( p )
+      {
         p->removeReference();
+      }
       p = p_s;
     }
 

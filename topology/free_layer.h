@@ -144,10 +144,11 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 
       Position< D > point = getValue< std::vector< double > >(
         pos[ ( *i )->get_lid() % nodes_per_depth ] );
-
       if ( not( ( point >= this->lower_left_ )
              and ( point < this->lower_left_ + this->extent_ ) ) )
+      {
         throw BadProperty( "Node position outside of layer" );
+      }
 
       positions_.push_back( point );
     }
@@ -224,8 +225,10 @@ FreeLayer< D >::communicate_positions_( Ins iter, const Selector& filter )
     local_gid_pos.push_back( ( *node_it )->get_gid() );
     // Push coordinates one by one
     for ( int j = 0; j < D; ++j )
+    {
       local_gid_pos.push_back( positions_[ ( *node_it )->get_subnet_index()
         % positions_.size() ][ j ] );
+    }
   }
 
   // This array will be filled with GID,pos_x,pos_y[,pos_z] for global nodes:

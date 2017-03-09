@@ -160,7 +160,9 @@ public:
   static void* operator new( size_t size )
   {
     if ( size != sizeof( FunctionDatum ) )
+    {
       return ::operator new( size );
+    }
     return memory.alloc();
   }
 

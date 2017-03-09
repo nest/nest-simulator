@@ -1093,7 +1093,9 @@ Empty_aFunction::execute( SLIInterpreter* i ) const
   assert( ad != NULL );
 
   if ( ad->empty() )
+  {
     i->OStack.push( i->baselookup( i->true_name ) );
+  }
   else
   {
     i->OStack.push( i->baselookup( i->false_name ) );
@@ -1135,7 +1137,9 @@ Shrink_aFunction::execute( SLIInterpreter* i ) const
   assert( ad != NULL );
 
   if ( ad->shrink() )
+  {
     i->OStack.push( i->baselookup( i->true_name ) );
+  }
   else
   {
     i->OStack.push( i->baselookup( i->false_name ) );
@@ -1233,7 +1237,9 @@ Empty_sFunction::execute( SLIInterpreter* i ) const
   assert( ad != NULL );
 
   if ( ad->empty() )
+  {
     i->OStack.push( i->baselookup( i->true_name ) );
+  }
   else
   {
     i->OStack.push( i->baselookup( i->false_name ) );

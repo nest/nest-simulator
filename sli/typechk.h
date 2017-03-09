@@ -231,7 +231,8 @@ TypeTrie::lookup( const TokenStack& st ) const
     // Step 1: find the type at the current stack level in the
     // list of alternatives. Unfortunately, this search is O(n).
 
-    while ( !equals( find_type, pos->type ) )
+    while ( not equals( find_type, pos->type ) )
+    {
       if ( pos->alt != NULL )
       {
         pos = pos->alt;
@@ -240,6 +241,7 @@ TypeTrie::lookup( const TokenStack& st ) const
       {
         throw ArgumentType( level );
       }
+    }
 
     // Now go to the next argument.
     pos = pos->next;

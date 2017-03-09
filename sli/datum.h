@@ -140,9 +140,9 @@ public:
   virtual void pprint( std::ostream& ) const = 0;
 
   virtual void
-  list( std::ostream& o, std::string prefix, int l ) const
+  list( std::ostream& out, std::string prefix, int length ) const
   {
-    if ( l == 0 )
+    if ( length == 0 )
     {
       prefix = "-->" + prefix;
     }
@@ -150,14 +150,14 @@ public:
     {
       prefix = "   " + prefix;
     }
-    o << prefix;
-    print( o );
+    out << prefix;
+    print( out );
   }
 
   virtual void
-  input_form( std::ostream& o ) const
+  input_form( std::ostream& out ) const
   {
-    pprint( o );
+    pprint( out );
   }
 
   virtual bool

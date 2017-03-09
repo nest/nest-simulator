@@ -288,9 +288,11 @@ SLIInterpreter::createcommand( Name const& n,
   std::string deprecation_info )
 {
   if ( DStack->known( n ) )
-    throw NamingConflict("A function called '" + std::string(n.toString()) 
-			   + "' exists already.\n"
-			   "Please choose a different name!");
+  {
+    throw NamingConflict("A function called '" + std::string(n.toString())
+                         + "' exists already.\n"
+                         "Please choose a different name!");
+  }
 
   Token t( new FunctionDatum( n, fn, deprecation_info ) );
   DStack->def_move( n, t );
@@ -508,11 +510,17 @@ SLIInterpreter::SLIInterpreter( void )
   // ISO C signal function. It is defined in psignal.{h,cc}
 
   if ( posix_signal( SIGINT, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN )
+  {
     posix_signal( SIGINT, ( Sigfunc* ) SLISignalHandler );
+  }
   if ( posix_signal( SIGUSR1, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN )
+  {
     posix_signal( SIGUSR1, ( Sigfunc* ) SLISignalHandler );
+  }
   if ( posix_signal( SIGUSR2, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN )
+  {
     posix_signal( SIGUSR2, ( Sigfunc* ) SLISignalHandler );
+  }
 #endif
 
   errordict->insert( quitbyerror_name, baselookup( false_name ) );
@@ -784,9 +792,9 @@ SLIInterpreter::raisesignal( int sig )
 }
 
 void
-SLIInterpreter::verbosity( int l )
+SLIInterpreter::verbosity( int level )
 {
-  verbositylevel = l;
+  verbositylevel = level;
 }
 
 int
@@ -1037,7 +1045,9 @@ SLIInterpreter::stack_backtrace( int n )
   for ( int p = n - 1; p >= 0; --p )
   {
     if ( ( size_t ) p > EStack.load() )
+    {
       continue;
+    }
 
     FunctionDatum* fd =
       dynamic_cast< FunctionDatum* >( EStack.pick( p ).datum() );

@@ -489,12 +489,18 @@ SLIArrayModule::FlattenFunction::execute( SLIInterpreter* i ) const
       if ( ad1 != NULL )
       {
         if ( ad1->references() > 1 )
+        {
           for ( Token* t1 = ad1->begin(); t1 != ad1->end(); ++t1 )
+          {
             ta->push_back( *t1 );
+          }
+        }
         else
         {
           for ( Token* t1 = ad1->begin(); t1 != ad1->end(); ++t1 )
+          {
             ta->push_back_move( *t1 );
+          }
         }
       }
       else
@@ -560,7 +566,7 @@ SLIArrayModule::SortFunction::execute( SLIInterpreter* i ) const
   }
   catch ( TypeMismatch )
   {
-    ;
+    // do nothing
   }
 
   try
@@ -575,7 +581,7 @@ SLIArrayModule::SortFunction::execute( SLIInterpreter* i ) const
   }
   catch ( TypeMismatch )
   {
-    ;
+    // do nothing
   }
 
   try
@@ -596,7 +602,7 @@ SLIArrayModule::SortFunction::execute( SLIInterpreter* i ) const
   }
   catch ( TypeMismatch )
   {
-    ;
+    // do nothing
   }
 
   i->message( SLIInterpreter::M_ERROR,
@@ -808,12 +814,18 @@ SLIArrayModule::ArrayloadFunction::execute( SLIInterpreter* i ) const
   i->OStack.reserve_token( arraysize );
 
   if ( ad->references() == 1 )
+  {
     for ( Token* ti = ad->begin(); ti != ad->end(); ++ti )
+    {
       i->OStack.push_move( *ti );
+    }
+  }
   else
   {
     for ( Token* ti = ad->begin(); ti != ad->end(); ++ti )
+    {
       i->OStack.push( *ti );
+    }
   }
 
   i->OStack.push( arraysize );
@@ -864,8 +876,10 @@ SLIArrayModule::ArraystoreFunction::execute( SLIInterpreter* i ) const
       ArrayDatum* ad = new ArrayDatum();
       ad->reserve( n );
       Token at( ad );
-      for ( long l = 1; l <= n; ++l )
-        ad->push_back_move( i->OStack.pick( n - l ) );
+      for ( long j = 1; j <= n; ++j )
+      {
+        ad->push_back_move( i->OStack.pick( n - j ) );
+      }
       i->OStack.pop( n );
       i->OStack.push_move( at );
       i->EStack.pop();
@@ -909,8 +923,10 @@ SLIArrayModule::ArraycreateFunction::execute( SLIInterpreter* i ) const
     ArrayDatum* ad = new ArrayDatum();
     ad->reserve( n - 1 );
     Token at( ad );
-    for ( size_t l = 2; l <= n; ++l )
-      ad->push_back_move( i->OStack.pick( n - l ) );
+    for ( size_t j = 2; j <= n; ++j )
+    {
+      ad->push_back_move( i->OStack.pick( n - j ) );
+    }
     i->OStack.pop( n );
     i->OStack.push_move( at );
     i->EStack.pop();
@@ -1047,7 +1063,9 @@ SLIArrayModule::IMapFunction::execute( SLIInterpreter* i ) const
     }
   }
   if ( ( size_t ) procc->get() >= proclimit )
+  {
     ( *procc ) = 0;
+  }
 }
 void
 SLIArrayModule::IMap_ivFunction::backtrace( SLIInterpreter* i, int p ) const
@@ -1198,7 +1216,9 @@ SLIArrayModule::IMap_ivFunction::execute( SLIInterpreter* i ) const
     }
   }
   if ( ( size_t ) procc->get() >= proclimit )
+  {
     ( *procc ) = 0;
+  }
 }
 
 void
@@ -1345,7 +1365,9 @@ SLIArrayModule::IMap_dvFunction::execute( SLIInterpreter* i ) const
     }
   }
   if ( ( size_t ) procc->get() >= proclimit )
+  {
     ( *procc ) = 0;
+  }
 }
 
 /********************************/
@@ -1431,9 +1453,13 @@ SLIArrayModule::MapFunction::execute( SLIInterpreter* i ) const
   i->EStack.push_move( i->OStack.pick( 0 ) );         // push procedure
 
   if ( dynamic_cast< IntVectorDatum* >( i->EStack.pick( 4 ).datum() ) )
+  {
     i->EStack.push( i->baselookup( sli::imap_iv ) );
+  }
   else if ( dynamic_cast< DoubleVectorDatum* >( i->EStack.pick( 4 ).datum() ) )
+  {
     i->EStack.push( i->baselookup( sli::imap_dv ) );
+  }
   else
   {
     i->EStack.push( i->baselookup( sli::imap ) );
@@ -1581,7 +1607,9 @@ SLIArrayModule::IMapIndexedFunction::execute( SLIInterpreter* i ) const
     }
   }
   if ( ( size_t ) procc->get() >= proclimit )
+  {
     ( *procc ) = 0;
+  }
 }
 
 
@@ -1763,7 +1791,9 @@ SLIArrayModule::IMapThreadFunction::execute( SLIInterpreter* i ) const
     }
   }
   if ( ( size_t ) proccountd->get() >= proclimit )
+  {
     ( *proccountd ) = 0;
+  }
 }
 
 /* BeginDocumentation
@@ -2692,7 +2722,9 @@ SLIArrayModule::GetMaxFunction::execute( SLIInterpreter* i ) const
       return;
     }
     if ( tmp->get() < tmp2->get() )
+    {
       tmp = tmp2;
+    }
     ++pos;
   }
   Token result( *tmp );
@@ -2755,7 +2787,9 @@ SLIArrayModule::GetMinFunction::execute( SLIInterpreter* i ) const
       return;
     }
     if ( tmp->get() > tmp2->get() )
+    {
       tmp = tmp2;
+    }
     ++pos;
   }
   Token result( *tmp );
@@ -3082,7 +3116,9 @@ SLIArrayModule::Add_iv_ivFunction::execute( SLIInterpreter* i ) const
     new IntVectorDatum( new std::vector< long >( **ivd1 ) );
   const size_t length = ( **ivd1 ).size();
   for ( size_t j = 0; j < length; ++j )
+  {
     ( **result )[ j ] += ( **ivd2 )[ j ];
+  }
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -3117,7 +3153,9 @@ SLIArrayModule::Add_i_ivFunction::execute( SLIInterpreter* i ) const
   const size_t length = ( **ivd ).size();
   const long value = id->get();
   for ( size_t j = 0; j < length; ++j )
+  {
     ( **result )[ j ] += value;
+  }
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -3144,7 +3182,9 @@ SLIArrayModule::Neg_ivFunction::execute( SLIInterpreter* i ) const
   IntVectorDatum* result =
     new IntVectorDatum( new std::vector< long >( length ) );
   for ( size_t j = 0; j < length; ++j )
+  {
     ( **result )[ j ] = -( **ivd )[ j ];
+  }
 
   i->OStack.pop();
   i->OStack.push( result );
@@ -3185,7 +3225,9 @@ SLIArrayModule::Sub_iv_ivFunction::execute( SLIInterpreter* i ) const
     new IntVectorDatum( new std::vector< long >( **ivd1 ) );
   const size_t length = ( **ivd1 ).size();
   for ( size_t j = 0; j < length; ++j )
+  {
     ( **result )[ j ] -= ( **ivd2 )[ j ];
+  }
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -3226,7 +3268,9 @@ SLIArrayModule::Mul_iv_ivFunction::execute( SLIInterpreter* i ) const
     new IntVectorDatum( new std::vector< long >( **ivd1 ) );
   const size_t length = ( **ivd1 ).size();
   for ( size_t j = 0; j < length; ++j )
+  {
     ( **result )[ j ] *= ( **ivd2 )[ j ];
+  }
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -3262,7 +3306,9 @@ SLIArrayModule::Mul_i_ivFunction::execute( SLIInterpreter* i ) const
   const size_t length = ( **ivd ).size();
   const long factor = id->get();
   for ( size_t j = 0; j < length; ++j )
+  {
     ( **result )[ j ] *= factor;
+  }
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -3296,7 +3342,9 @@ SLIArrayModule::Mul_d_ivFunction::execute( SLIInterpreter* i ) const
     new DoubleVectorDatum( new std::vector< double >( length ) );
   const double factor = dd->get();
   for ( size_t j = 0; j < length; ++j )
+  {
     ( **result )[ j ] = factor * static_cast< double >( ( **ivd )[ j ] );
+  }
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -3413,7 +3461,9 @@ SLIArrayModule::Add_dv_dvFunction::execute( SLIInterpreter* i ) const
     new DoubleVectorDatum( new std::vector< double >( **dvd1 ) );
   const size_t length = ( **dvd1 ).size();
   for ( size_t j = 0; j < length; ++j )
+  {
     ( **result )[ j ] += ( **dvd2 )[ j ];
+  }
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -3454,7 +3504,9 @@ SLIArrayModule::Sub_dv_dvFunction::execute( SLIInterpreter* i ) const
     new DoubleVectorDatum( new std::vector< double >( **dvd1 ) );
   const size_t length = ( **dvd1 ).size();
   for ( size_t j = 0; j < length; ++j )
+  {
     ( **result )[ j ] -= ( **dvd2 )[ j ];
+  }
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -3489,7 +3541,9 @@ SLIArrayModule::Add_d_dvFunction::execute( SLIInterpreter* i ) const
   const double value = ( *dd ).get();
 
   for ( size_t j = 0; j < length; ++j )
+  {
     ( **result )[ j ] += value;
+  }
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -3525,7 +3579,9 @@ SLIArrayModule::Mul_d_dvFunction::execute( SLIInterpreter* i ) const
   const double value = ( *dd ).get();
 
   for ( size_t j = 0; j < length; ++j )
+  {
     ( **result )[ j ] *= value;
+  }
 
   i->OStack.pop( 2 );
   i->OStack.push( result );
@@ -3553,7 +3609,9 @@ SLIArrayModule::Neg_dvFunction::execute( SLIInterpreter* i ) const
   DoubleVectorDatum* result =
     new DoubleVectorDatum( new std::vector< double >( length ) );
   for ( size_t j = 0; j < length; ++j )
+  {
     ( **result )[ j ] = -( **dvd )[ j ];
+  }
 
   i->OStack.pop();
   i->OStack.push( result );
@@ -3634,7 +3692,9 @@ SLIArrayModule::Mul_dv_dvFunction::execute( SLIInterpreter* i ) const
     new DoubleVectorDatum( new std::vector< double >( **dvd1 ) );
   const size_t length = ( **dvd1 ).size();
   for ( size_t j = 0; j < length; ++j )
+  {
     ( **result )[ j ] *= ( **dvd2 )[ j ];
+  }
 
   i->OStack.pop( 2 );
   i->OStack.push( result );

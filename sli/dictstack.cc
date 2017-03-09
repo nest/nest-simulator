@@ -39,7 +39,9 @@ DictionaryStack::~DictionaryStack()
   // dictionary references will prevent proper deletion.
   for ( std::list< DictionaryDatum >::iterator i = d.begin(); i != d.end();
         ++i )
+  {
     ( *i )->clear();
+  }
 }
 
 void
@@ -49,7 +51,9 @@ DictionaryStack::undef( const Name& n )
   size_t num_erased = 0;
   for ( std::list< DictionaryDatum >::iterator it = d.begin(); it != d.end();
         ++it )
+  {
     num_erased += ( *it )->erase( n );
+  }
   if ( num_erased == 0 )
   {
     throw UndefinedName( n.toString() );

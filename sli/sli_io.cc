@@ -287,9 +287,13 @@ OfsopenFunction::execute( SLIInterpreter* i ) const
   std::ostream* out = NULL;
 
   if ( static_cast< string >( *md ) == "w" )
+  {
     out = new ofdstream( sd->c_str(), ios::out );
+  }
   else if ( static_cast< string >( *md ) == "a" )
+  {
     out = new ofdstream( sd->c_str(), ios::out | ios::app );
+  }
   else
   {
     i->raiseerror( Name( "UnknownFileOpenMode" ) );
@@ -776,7 +780,9 @@ EatwhiteFunction::execute( SLIInterpreter* i ) const
   if ( ( *istreamdatum )->good() )
   {
     if ( not( *istreamdatum )->eof() )
+    {
       ( **istreamdatum ) >> ws;
+    }
     i->EStack.pop();
   }
   else
@@ -1567,7 +1573,9 @@ IGoodFunction::execute( SLIInterpreter* i ) const
   }
 
   if ( ( *istreamdatum )->good() )
+  {
     i->OStack.push( true );
+  }
   else
   {
     i->OStack.push( false );
@@ -1681,7 +1689,9 @@ IFailFunction::execute( SLIInterpreter* i ) const
   }
 
   if ( ( *istreamdatum )->fail() )
+  {
     i->OStack.push( true );
+  }
   else
   {
     i->OStack.push( false );
@@ -1723,7 +1733,9 @@ OGoodFunction::execute( SLIInterpreter* i ) const
   }
 
   if ( ( *ostreamdatum )->good() )
+  {
     i->OStack.push( true );
+  }
   else
   {
     i->OStack.push( false );
@@ -1764,7 +1776,9 @@ IEofFunction::execute( SLIInterpreter* i ) const
   }
 
   if ( ( *istreamdatum )->eof() )
+  {
     i->OStack.push( true );
+  }
   else
   {
     i->OStack.push( false );
@@ -1806,7 +1820,9 @@ OEofFunction::execute( SLIInterpreter* i ) const
   }
 
   if ( ( *ostreamdatum )->eof() )
+  {
     i->OStack.push( true );
+  }
   else
   {
     i->OStack.push( false );

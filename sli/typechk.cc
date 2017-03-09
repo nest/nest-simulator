@@ -220,7 +220,7 @@ TypeTrie::insert_move( const TypeArray& a, Token& f )
              Insert will overwrite a function with identical parameter
              list which might be already in the trie.
 
-  Bugs:	   If a represents a parameter-list which is already
+  Bugs:      If a represents a parameter-list which is already
              present, nothing happens, just a warning is
              issued.
 

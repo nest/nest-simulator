@@ -67,7 +67,7 @@
 /*                                                                       */
 /* History:                                                              */
 /*         (7) 080505, Diesmann. minusst can now be followed by minus    */
-/*	       to enable right arrows like -->                           */
+/*             to enable right arrows like -->                           */
 /*         (6) 071002, Diesmann. Replaced own conversion to double by    */
 /*             library function std::atof(). Now compatible with cvd.    */
 /*         (5) 8.4.1997, Adaption debuged. Special explicit start entr   */
@@ -537,7 +537,7 @@ bool Scanner::operator()( Token& t )
   unsigned char c = '\0';
   unsigned char sgc = '\0';
 
-  long l = 0L;
+  long lng = 0L;
   double d = 0.0;
   int sg = 1;
   int e = 0;
@@ -568,10 +568,14 @@ bool Scanner::operator()( Token& t )
     }
 
     if ( c == '\0' || in->bad() )
+    {
       c = endof;
+    }
 
     if ( in->eof() )
+    {
       c = endof;
+    }
     else
     {
       assert( in->good() );
@@ -593,16 +597,14 @@ bool Scanner::operator()( Token& t )
 
     switch ( state )
     {
-    //	  case start        :
-    //            break;
     case intdgtst:
-      l = sg * ( std::labs( l ) * base + digval( c ) );
+      lng = sg * ( std::labs( lng ) * base + digval( c ) );
       ds.push_back( c );
       break;
 
     case aheadintst:
     {
-      IntegerDatum id( l );
+      IntegerDatum id( lng );
       t = id;
       if ( c != endoln && c != endof )
       {
@@ -621,13 +623,13 @@ bool Scanner::operator()( Token& t )
       break;
 
     case intexpst:
-      d = ( double ) l;
+      d = ( double ) lng;
       ds.push_back( 'e' );
       state = expntlst;
       break;
 
     case decpointst:
-      d = ( double ) l;
+      d = ( double ) lng;
       ds.push_back( '.' );
       break;
 
@@ -674,7 +676,6 @@ bool Scanner::operator()( Token& t )
       break;
 
     case mnexpst:
-      //	es=-1;
       ds.push_back( '-' );
       break;
 

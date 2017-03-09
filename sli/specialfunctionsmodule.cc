@@ -375,7 +375,9 @@ SpecialFunctionsModule::GaussDiskConvFunction::execute(
     }
 
     if ( C <= 1.0 )
+    {
       result = C;
+    }
     else
     {
       result = 1.0;

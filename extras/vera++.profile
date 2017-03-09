@@ -3,19 +3,19 @@
 #
 # Do not apply T011 (curly braces), since that can get confused
 # by conditional code inclusion.
-
-parameter=max-dirname-length=63
-parameter=max-filename-length=63
-parameter=max-path-length=1023
-parameter=max-file-length=8192  
+#
+# Do not apply F002 (file name length limits), since some benign model file
+# names then become illegal; Vera++ 1.2.1 does not support parameters in
+# profile files, so we cannot extend file name length limits here. 
+#
+# Do not apply L006 (limit on file length), since some legacy sli code 
+# is too long; see also F002.
 
 rule=F001
-rule=F002
 rule=L001
 rule=L002
 rule=L003
 rule=L005
-rule=L006
 rule=T001
 rule=T002
 rule=T004

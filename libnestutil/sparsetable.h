@@ -752,9 +752,7 @@ public:
       if ( row_current != row_end ) // col is irrelevant at end
         col_current = row_current->TWOD_BEGIN_();
       else
-      {
-        break;
-      } // don't go past row_end
+        break; // don't go past row_end
     }
   }
 
@@ -889,9 +887,7 @@ public:
       if ( row_current != row_end ) // col is irrelevant at end
         col_current = row_current->TWOD_BEGIN_();
       else
-      {
-        break;
-      } // don't go past row_end
+        break; // don't go past row_end
     }
   }
   iterator& operator++()
@@ -1005,9 +1001,7 @@ public:
       if ( row_current != row_end ) // col is irrelevant at end
         col_current = row_current->TWOD_BEGIN_();
       else
-      {
-        break;
-      } // don't go past row_end
+        break; // don't go past row_end
     }
   }
 
@@ -1251,14 +1245,10 @@ private:
   free_group()
   {
     if ( !group )
-    {
       return;
-    }
     pointer end_it = group + settings.num_buckets;
     for ( pointer p = group; p != end_it; ++p )
-    {
       p->~value_type();
-    }
     settings.deallocate( group, settings.num_buckets );
     group = NULL;
   }
@@ -1630,9 +1620,7 @@ public:
   sparsegroup& operator=( const sparsegroup& x )
   {
     if ( &x == this )
-    {
-      return *this;
-    } // x = x
+      return *this; // x = x
     if ( x.settings.num_buckets == 0 )
     {
       free_group();
@@ -1702,9 +1690,7 @@ public:
     if ( bmtest( i ) ) // bucket i is occupied
       return group[ pos_to_offset( bitmap, i ) ];
     else
-    {
-      return default_value();
-    } // return the default reference
+      return default_value(); // return the default reference
   }
 
   // TODO(csilvers): make protected + friend
@@ -1901,9 +1887,7 @@ public:
     // This could be more efficient, but to do so we'd need to make
     // bmclear() clear a range of indices.  Doesn't seem worth it.
     for ( ; start_it != end_it; ++start_it )
-    {
       erase( start_it );
-    }
   }
 
 
@@ -2504,9 +2488,7 @@ public:
     // This could be more efficient, but then we'd need to figure
     // out if we spanned groups or not.  Doesn't seem worth it.
     for ( ; start_it != end_it; ++start_it )
-    {
       erase( start_it );
-    }
   }
 
 

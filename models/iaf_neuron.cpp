@@ -289,8 +289,11 @@ nest::iaf_neuron::update( Time const& origin, const long from, const long to )
       S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P31_ * S_.y1_
         + V_.P32_ * S_.y2_ + V_.P33_ * S_.y3_;
     }
-    else // neuron is absolute refractory
+    else
+    {
+      // neuron is absolute refractory
       --S_.r_;
+    }
 
     // alpha shape PSCs
     S_.y2_ = V_.P21_ * S_.y1_ + V_.P22_ * S_.y2_;

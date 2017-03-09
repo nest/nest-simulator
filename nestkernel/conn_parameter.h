@@ -241,7 +241,9 @@ public:
   skip( thread tid, size_t n_skip ) const
   {
     if ( next_[ tid ] < values_->end() )
+    {
       next_[ tid ] += n_skip;
+    }
     else
     {
       throw KernelException( "Parameter values exhausted." );
@@ -258,7 +260,9 @@ public:
   value_double( thread tid, librandom::RngPtr& ) const
   {
     if ( next_[ tid ] != values_->end() )
+    {
       return *next_[ tid ]++;
+    }
     else
     {
       throw KernelException( "Parameter values exhausted." );
@@ -324,7 +328,9 @@ public:
   skip( thread tid, size_t n_skip ) const
   {
     if ( next_[ tid ] < values_->end() )
+    {
       next_[ tid ] += n_skip;
+    }
     else
     {
       throw KernelException( "Parameter values exhausted." );
@@ -341,7 +347,9 @@ public:
   value_int( thread tid, librandom::RngPtr& ) const
   {
     if ( next_[ tid ] != values_->end() )
+    {
       return *next_[ tid ]++;
+    }
     else
     {
       throw KernelException( "Parameter values exhausted." );
@@ -352,7 +360,9 @@ public:
   value_double( thread tid, librandom::RngPtr& ) const
   {
     if ( next_[ tid ] != values_->end() )
+    {
       return static_cast< double >( *next_[ tid ]++ );
+    }
     else
     {
       throw KernelException( "Parameter values exhausted." );

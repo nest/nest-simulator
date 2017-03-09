@@ -36,13 +36,12 @@ nest::UnknownModelName::message() const
 {
   std::ostringstream msg;
   msg << "/" << n_.toString() + " is not a known model name. "
-    "Please check the modeldict for a list of available models."
+    "Please check the modeldict for a list of available models.";
 #ifndef HAVE_GSL
-    " A frequent cause for this error is that NEST was compiled "
-    "without the GNU Scientific Library, which is required for "
-    "the conductance-based neuron models."
+  msg << " A frequent cause for this error is that NEST was compiled "
+         "without the GNU Scientific Library, which is required for "
+         "the conductance-based neuron models.";
 #endif
-    ;
   return msg.str();
 }
 

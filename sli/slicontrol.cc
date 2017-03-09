@@ -1419,7 +1419,7 @@ SwitchdefaultFunction::execute( SLIInterpreter* i ) const
   if ( depth > 1 && i->OStack.pick( 1 ) != mark_token // default action
     && i->OStack.pick( 0 ) != mark_token )            // is not the only one
   {
-    i->OStack.pop();                                  // thus pop it!
+    i->OStack.pop(); // thus pop it!
   }
 
   bool found = ( i->OStack.pick( pos ) == mark_token );

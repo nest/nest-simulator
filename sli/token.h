@@ -275,7 +275,7 @@ public:
     return p == NULL;
   }
 
-  bool operator!( void ) const
+  bool operator not( void ) const
   {
     return p == NULL;
   }
@@ -364,7 +364,7 @@ public:
   // define != explicitly --- HEP 2001-08-09
   bool operator!=( const Token& t ) const
   {
-    return not ( *this == t );
+    return not( *this == t );
   }
 
   void info( std::ostream& ) const;

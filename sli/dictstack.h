@@ -35,25 +35,22 @@
 #include "sliexceptions.h"
 
 
-/***************************************************************
+/*************************************************************
 
 Problems:
 
-- is ist better to uses dictionaries as references to common
+- is it better to uses dictionaries as references to common
   objects like in PS. What is the exact meaning of undef and
   where in our current situation (read RedBook).
 - more efficient implementation exploiting
   the name ids (documented elsewhere).
 
-
-
-    History:
-            (1) using list<Dictionary>
-               MD, 23.6.1, Freiburg
-            (0) first version (single dictionary)
-               MOG, MD, June 1997, Freiburg
-***************************************************************
-*/
+  History:
+    (1) using list<Dictionary>
+        MD, 23.6.1, Freiburg
+    (0) first version (single dictionary)
+        MOG, MD, June 1997, Freiburg
+**************************************************************/
 
 /**
  * The macro DICTSTACK_CACHE switches on two caches:

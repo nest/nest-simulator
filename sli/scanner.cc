@@ -67,7 +67,7 @@
 /*                                                                       */
 /* History:                                                              */
 /*         (7) 080505, Diesmann. minusst can now be followed by minus    */
-/*	       to enable right arrows like -->                           */
+/*             to enable right arrows like -->                           */
 /*         (6) 071002, Diesmann. Replaced own conversion to double by    */
 /*             library function std::atof(). Now compatible with cvd.    */
 /*         (5) 8.4.1997, Adaption debuged. Special explicit start entr   */
@@ -597,8 +597,6 @@ bool Scanner::operator()( Token& t )
 
     switch ( state )
     {
-    //	  case start        :
-    //            break;
     case intdgtst:
       lng = sg * ( std::labs( lng ) * base + digval( c ) );
       ds.push_back( c );
@@ -678,7 +676,6 @@ bool Scanner::operator()( Token& t )
       break;
 
     case mnexpst:
-      //	es=-1;
       ds.push_back( '-' );
       break;
 

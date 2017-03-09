@@ -177,7 +177,6 @@ public:
     }
 
     ( begin_of_free_storage++ )->init_move( t );
-    //      ++begin_of_free_storage;
   }
 
   /**

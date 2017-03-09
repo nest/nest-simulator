@@ -126,7 +126,9 @@ nest::spike_dilutor::update( Time const& T, const long from, const long to )
   for ( long lag = from; lag < to; ++lag )
   {
     if ( not device_.is_active( T ) )
+    {
       return; // no spikes to be repeated
+    }
 
     // generate spikes of mother process for each time slice
     unsigned long n_mother_spikes =
@@ -163,7 +165,9 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
   for ( unsigned long n = 0; n < n_mother_spikes; n++ )
   {
     if ( rng->drand() < P_.p_copy_ )
+    {
       n_spikes++;
+    }
   }
 
   if ( n_spikes > 0 )

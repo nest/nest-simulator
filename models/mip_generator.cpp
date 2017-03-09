@@ -156,7 +156,9 @@ nest::mip_generator::update( Time const& T, const long from, const long to )
   for ( long lag = from; lag < to; ++lag )
   {
     if ( not device_.is_active( T ) || P_.rate_ <= 0 )
+    {
       return; // no spikes to be generated
+    }
 
     // generate spikes of mother process for each time slice
     long n_mother_spikes = V_.poisson_dev_.ldev( P_.rng_ );
@@ -192,7 +194,9 @@ nest::mip_generator::event_hook( DSSpikeEvent& e )
   for ( unsigned long n = 0; n < n_mother_spikes; n++ )
   {
     if ( rng->drand() < P_.p_copy_ )
+    {
       n_spikes++;
+    }
   }
 
   if ( n_spikes > 0 )

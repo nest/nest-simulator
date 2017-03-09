@@ -375,7 +375,9 @@ iaf_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
     return 0;
   }
   else if ( receptor_type == 1 )
+  {
     return 1;
+  }
   else
   {
     throw UnknownReceptorType( receptor_type, get_name() );

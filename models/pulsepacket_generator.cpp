@@ -146,7 +146,9 @@ nest::pulsepacket_generator::calibrate()
   assert( V_.start_center_idx_ <= V_.stop_center_idx_ );
 
   if ( P_.sdev_ > 0.0 )
+  {
     V_.tolerance = P_.sdev_ * P_.sdev_tolerance_;
+  }
   else
   {
     V_.tolerance = 1.0;
@@ -165,7 +167,9 @@ nest::pulsepacket_generator::calibrate()
   {
     if ( std::abs( P_.pulse_times_.at( V_.stop_center_idx_ ) - now )
       > V_.tolerance )
+    {
       V_.start_center_idx_++;
+    }
     V_.stop_center_idx_++;
   }
 }
@@ -181,7 +185,9 @@ nest::pulsepacket_generator::update( Time const& T,
 
   if ( ( V_.start_center_idx_ == P_.pulse_times_.size()
          && B_.spiketimes_.empty() ) || ( not device_.is_active( T ) ) )
+  {
     return; // nothing left to do
+  }
 
   // determine next pulse-center times (around sdev*tolerance window)
   if ( V_.stop_center_idx_ < P_.pulse_times_.size() )
@@ -208,7 +214,9 @@ nest::pulsepacket_generator::update( Time const& T,
         double x = P_.sdev_ * V_.norm_dev_( rng )
           + P_.pulse_times_.at( V_.start_center_idx_ );
         if ( Time( Time::ms( x ) ) >= T )
+        {
           B_.spiketimes_.push_back( Time( Time::ms( x ) ).get_steps() );
+        }
       }
       needtosort = true;
       V_.start_center_idx_++;

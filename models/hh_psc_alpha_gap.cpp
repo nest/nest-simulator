@@ -377,11 +377,17 @@ nest::hh_psc_alpha_gap::~hh_psc_alpha_gap()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
+  {
     gsl_odeiv_step_free( B_.s_ );
+  }
   if ( B_.c_ )
+  {
     gsl_odeiv_control_free( B_.c_ );
+  }
   if ( B_.e_ )
+  {
     gsl_odeiv_evolve_free( B_.e_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -429,22 +435,28 @@ nest::hh_psc_alpha_gap::init_buffers_()
   B_.IntegrationStep_ = B_.step_;
 
   if ( B_.s_ == 0 )
+  {
     B_.s_ =
       gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  }
   else
   {
     gsl_odeiv_step_reset( B_.s_ );
   }
 
   if ( B_.c_ == 0 )
+  {
     B_.c_ = gsl_odeiv_control_y_new( 1e-6, 0.0 );
+  }
   else
   {
     gsl_odeiv_control_init( B_.c_, 1e-6, 0.0, 1.0, 0.0 );
   }
 
   if ( B_.e_ == 0 )
+  {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
+  }
   else
   {
     gsl_odeiv_evolve_reset( B_.e_ );
@@ -560,7 +572,9 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
       // maximum...
       // refractory?
       if ( S_.r_ > 0 )
+      {
         --S_.r_;
+      }
       else
         // (    threshold    &&     maximum       )
         if ( S_.y_[ State_::V_M ] >= 0 && U_old > S_.y_[ State_::V_M ] )
@@ -659,9 +673,11 @@ nest::hh_psc_alpha_gap::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
+  {
     B_.spike_exc_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
   {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps(

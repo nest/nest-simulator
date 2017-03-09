@@ -290,7 +290,9 @@ inline port
 correlomatrix_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type < 0 || receptor_type > P_.N_channels_ - 1 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return receptor_type;
 }
 

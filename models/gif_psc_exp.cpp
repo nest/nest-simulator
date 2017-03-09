@@ -158,18 +158,22 @@ nest::gif_psc_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< std::vector< double > >( d, names::q_stc, q_stc_ );
 
   if ( tau_sfa_.size() != q_sfa_.size() )
+  {
     throw BadProperty( String::compose(
       "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
       "tau_sfa: %1\nSize of q_sfa: %2",
       tau_sfa_.size(),
       q_sfa_.size() ) );
+  }
 
   if ( tau_stc_.size() != q_stc_.size() )
+  {
     throw BadProperty( String::compose(
       "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
       "tau_stc: %1\nSize of q_stc: %2",
       tau_stc_.size(),
       q_stc_.size() ) );
+  }
   if ( g_L_ <= 0 )
   {
     throw BadProperty( "Membrane conductance must be strictly positive." );
@@ -192,16 +196,20 @@ nest::gif_psc_exp::Parameters_::set( const DictionaryDatum& d )
   }
 
   for ( size_t i = 0; i < tau_sfa_.size(); i++ )
+  {
     if ( tau_sfa_[ i ] <= 0 )
     {
       throw BadProperty( "All time constants must be strictly positive." );
     }
+  }
 
   for ( size_t i = 0; i < tau_stc_.size(); i++ )
+  {
     if ( tau_stc_[ i ] <= 0 )
     {
       throw BadProperty( "All time constants must be strictly positive." );
     }
+  }
   if ( tau_ex_ <= 0 || tau_in_ <= 0 )
   {
     throw BadProperty( "Synapse time constants must be strictly positive." );
@@ -416,9 +424,11 @@ nest::gif_psc_exp::handle( SpikeEvent& e )
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
   if ( e.get_weight() >= 0.0 )
+  {
     B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
   {
     B_.spikes_in_.add_value( e.get_rel_delivery_steps(

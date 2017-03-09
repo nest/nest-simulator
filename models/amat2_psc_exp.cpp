@@ -148,7 +148,9 @@ nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_v, tau_v_ );
 
   if ( updateValue< double >( d, names::omega, omega_ ) )
+  {
     omega_ -= E_L_;
+  }
   else
   {
     omega_ -= delta_EL;
@@ -172,9 +174,11 @@ nest::amat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
 
   if ( tau_v_ == tau_ex_
     || tau_v_ == tau_in_ ) // tau_v_ == tau_m_  checked above
+  {
     throw BadProperty(
       "tau_v must differ from tau_syn_ex, tau_syn_in and tau_m. "
       "See note in documentation." );
+  }
 
   return delta_EL;
 }
@@ -198,7 +202,9 @@ nest::amat2_psc_exp::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
+  {
     V_m_ -= p.E_L_;
+  }
   else
   {
     V_m_ -= delta_EL;
@@ -377,8 +383,10 @@ nest::amat2_psc_exp::calibrate()
   V_.RefractoryCountsTot_ = Time( Time::ms( P_.tau_ref_ ) ).get_steps();
 
   if ( V_.RefractoryCountsTot_ < 1 )
+  {
     throw BadProperty(
       "Total refractory time must be at least one time step." );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -462,9 +470,11 @@ nest::amat2_psc_exp::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
+  {
     B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
   {
     B_.spikes_in_.add_value( e.get_rel_delivery_steps(

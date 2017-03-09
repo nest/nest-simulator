@@ -369,7 +369,9 @@ gif_psc_exp_multisynapse::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type <= 0
     || receptor_type > static_cast< port >( P_.n_receptors_() ) )
+  {
     throw IncompatibleReceptorType( receptor_type, get_name(), "SpikeEvent" );
+  }
 
   P_.has_connections_ = true;
   return receptor_type;

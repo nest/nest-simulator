@@ -179,7 +179,9 @@ binary_neuron< TGainfunction >::calibrate()
   // draw next time of update for the neuron from exponential distribution
   // only if not yet initialized
   if ( S_.t_next_.is_neg_inf() )
+  {
     S_.t_next_ = Time::ms( V_.exp_dev_( V_.rng_ ) * P_.tau_m_ );
+  }
 }
 
 

@@ -155,11 +155,15 @@ nest::gif_cond_exp::State_::State_( const State_& s )
 {
   sfa_elems_.resize( s.sfa_elems_.size(), 0.0 );
   for ( size_t i = 0; i < sfa_elems_.size(); ++i )
+  {
     sfa_elems_[ i ] = s.sfa_elems_[ i ];
+  }
 
   stc_elems_.resize( s.stc_elems_.size(), 0.0 );
   for ( size_t i = 0; i < stc_elems_.size(); ++i )
+  {
     stc_elems_[ i ] = s.stc_elems_[ i ];
+  }
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
   {
     neuron_state_[ i ] = s.neuron_state_[ i ];
@@ -177,11 +181,15 @@ nest::gif_cond_exp::State_& nest::gif_cond_exp::State_::operator=(
 
   sfa_elems_.resize( s.sfa_elems_.size(), 0.0 );
   for ( size_t i = 0; i < sfa_elems_.size(); ++i )
+  {
     sfa_elems_[ i ] = s.sfa_elems_[ i ];
+  }
 
   stc_elems_.resize( s.stc_elems_.size(), 0.0 );
   for ( size_t i = 0; i < stc_elems_.size(); ++i )
+  {
     stc_elems_[ i ] = s.stc_elems_[ i ];
+  }
 
   I_stim_ = s.I_stim_;
   sfa_ = s.sfa_;
@@ -256,18 +264,22 @@ nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< std::vector< double > >( d, names::q_stc, q_stc_ );
 
   if ( tau_sfa_.size() != q_sfa_.size() )
+  {
     throw BadProperty( String::compose(
       "'tau_sfa' and 'q_sfa' need to have the same dimensions.\nSize of "
       "tau_sfa: %1\nSize of q_sfa: %2",
       tau_sfa_.size(),
       q_sfa_.size() ) );
+  }
 
   if ( tau_stc_.size() != q_stc_.size() )
+  {
     throw BadProperty( String::compose(
       "'tau_stc' and 'q_stc' need to have the same dimensions.\nSize of "
       "tau_stc: %1\nSize of q_stc: %2",
       tau_stc_.size(),
       q_stc_.size() ) );
+  }
   if ( g_L_ <= 0 )
   {
     throw BadProperty( "Membrane conductance must be strictly positive." );
@@ -290,16 +302,20 @@ nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d )
   }
 
   for ( size_t i = 0; i < tau_sfa_.size(); i++ )
+  {
     if ( tau_sfa_[ i ] <= 0 )
     {
       throw BadProperty( "All time constants must be strictly positive." );
     }
+  }
 
   for ( size_t i = 0; i < tau_stc_.size(); i++ )
+  {
     if ( tau_stc_[ i ] <= 0 )
     {
       throw BadProperty( "All time constants must be strictly positive." );
     }
+  }
   if ( tau_synE_ <= 0 || tau_synI_ <= 0 )
   {
     throw BadProperty( "Synapse time constants must be strictly positive." );
@@ -367,11 +383,17 @@ nest::gif_cond_exp::~gif_cond_exp()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
+  {
     gsl_odeiv_step_free( B_.s_ );
+  }
   if ( B_.c_ )
+  {
     gsl_odeiv_control_free( B_.c_ );
+  }
   if ( B_.e_ )
+  {
     gsl_odeiv_evolve_free( B_.e_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -398,22 +420,28 @@ nest::gif_cond_exp::init_buffers_()
   B_.IntegrationStep_ = B_.step_;
 
   if ( B_.s_ == 0 )
+  {
     B_.s_ =
       gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  }
   else
   {
     gsl_odeiv_step_reset( B_.s_ );
   }
 
   if ( B_.c_ == 0 )
+  {
     B_.c_ = gsl_odeiv_control_y_new( P_.gsl_error_tol, 0.0 );
+  }
   else
   {
     gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, 0.0, 1.0, 0.0 );
   }
 
   if ( B_.e_ == 0 )
+  {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
+  }
   else
   {
     gsl_odeiv_evolve_reset( B_.e_ );
@@ -577,9 +605,11 @@ nest::gif_cond_exp::handle( SpikeEvent& e )
   //     the update cycle.  The way it is done here works, but
   //     is clumsy and should be improved.
   if ( e.get_weight() >= 0.0 )
+  {
     B_.spike_exc_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
   {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps(

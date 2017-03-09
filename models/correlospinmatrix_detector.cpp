@@ -397,7 +397,9 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
       const delay min_delay = kernel().connection_manager.get_min_delay();
       while ( not otherPulses.empty()
         && ( t_min_on - otherPulses.front().t_off_ ) >= tau_edge + min_delay )
+      {
         otherPulses.pop_front();
+      }
 
 
       // insert new event into history
@@ -437,25 +439,25 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
 
         // zero time lag covariance
 
-        long l = std::min( t_i_off, t_j_off ) - std::max( t_i_on, t_j_on );
-        if ( l > 0 )
+        long lag = std::min( t_i_off, t_j_off ) - std::max( t_i_on, t_j_on );
+        if ( lag > 0 )
         {
-          S_.count_covariance_[ i ][ j ][ t0 ] += l;
+          S_.count_covariance_[ i ][ j ][ t0 ] += lag;
           if ( i != j )
           {
-            S_.count_covariance_[ j ][ i ][ t0 ] += l;
+            S_.count_covariance_[ j ][ i ][ t0 ] += lag;
           }
         }
 
         // non-zero time lag covariance
         for ( long Delta = Delta_ij_min / dt; Delta < 0; Delta++ )
         {
-          long l = std::min( t_i_off, t_j_off - Delta * dt )
+          long lag = std::min( t_i_off, t_j_off - Delta * dt )
             - std::max( t_i_on, t_j_on - Delta * dt );
-          if ( l > 0 )
+          if ( lag > 0 )
           {
-            S_.count_covariance_[ i ][ j ][ t0 - Delta ] += l;
-            S_.count_covariance_[ j ][ i ][ t0 + Delta ] += l;
+            S_.count_covariance_[ i ][ j ][ t0 - Delta ] += lag;
+            S_.count_covariance_[ j ][ i ][ t0 + Delta ] += lag;
           }
         }
 
@@ -463,12 +465,12 @@ nest::correlospinmatrix_detector::handle( SpikeEvent& e )
         {
           for ( long Delta = 1; Delta <= Delta_ij_max / dt; Delta++ )
           {
-            long l = std::min( t_i_off, t_j_off - Delta * dt )
+            long lag = std::min( t_i_off, t_j_off - Delta * dt )
               - std::max( t_i_on, t_j_on - Delta * dt );
-            if ( l > 0 )
+            if ( lag > 0 )
             {
-              S_.count_covariance_[ i ][ j ][ t0 - Delta ] += l;
-              S_.count_covariance_[ j ][ i ][ t0 + Delta ] += l;
+              S_.count_covariance_[ i ][ j ][ t0 - Delta ] += lag;
+              S_.count_covariance_[ j ][ i ][ t0 + Delta ] += lag;
             }
           }
         }

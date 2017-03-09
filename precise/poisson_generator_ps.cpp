@@ -73,11 +73,15 @@ nest::poisson_generator_ps::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::rate, rate_ );
 
   if ( rate_ < 0.0 )
+  {
     throw BadProperty( "The rate cannot be negative." );
+  }
 
   if ( 1000.0 / rate_ < dead_time_ )
+  {
     throw BadProperty(
       "The inverse rate cannot be smaller than the dead time." );
+  }
 }
 
 
@@ -129,7 +133,9 @@ nest::poisson_generator_ps::calibrate()
 {
   device_.calibrate();
   if ( P_.rate_ > 0 )
+  {
     V_.inv_rate_ms_ = 1000.0 / P_.rate_ - P_.dead_time_;
+  }
   else
   {
     V_.inv_rate_ms_ = std::numeric_limits< double >::infinity();
@@ -152,18 +158,24 @@ nest::poisson_generator_ps::calibrate()
             B_.next_spike_.begin() + 1;
           it != B_.next_spike_.end();
           ++it )
+    {
       min_time = std::min( min_time, it->first );
+    }
 
     if ( min_time < device_.get_origin() + device_.get_start() )
+    {
       B_.next_spike_.clear(); // will be resized with neg_infs below
+    }
   }
 
   // If new targets have been added during a simulation break, we
   // initialize the new elements in next_spike_ with -1. The existing
   // elements are unchanged.
   if ( B_.next_spike_.size() == 0 )
+  {
     B_.next_spike_.resize(
       P_.num_targets_, Buffers_::SpikeTime( Time::neg_inf(), 0 ) );
+  }
 }
 
 
@@ -181,7 +193,9 @@ nest::poisson_generator_ps::update( Time const& T,
   assert( from < to );
 
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
+  {
     return;
+  }
 
   /* Limits of device activity.
    * The (excluded) lower boundary is the left edge of the slice, T + from.
@@ -267,8 +281,10 @@ nest::poisson_generator_ps::event_hook( DSSpikeEvent& e )
     const double new_offset =
       -nextspk.second + V_.inv_rate_ms_ * V_.exp_dev_( rng ) + P_.dead_time_;
 
-    if ( new_offset < 0 )           // still in same stamp
+    if ( new_offset < 0 ) // still in same stamp
+    {
       nextspk.second = -new_offset; // stamps always 0 < stamp <= h
+    }
     else
     {
       // split into stamp and offset, then add to old stamp

@@ -218,7 +218,7 @@ public:
   /**
    * Copy constructor.
    */
-  Layer( const Layer& l );
+  Layer( const Layer& other_layer );
 
   /**
    * Virtual destructor
@@ -618,11 +618,11 @@ inline Layer< D >::Layer()
 }
 
 template < int D >
-inline Layer< D >::Layer( const Layer& l )
-  : AbstractLayer( l )
-  , lower_left_( l.lower_left_ )
-  , extent_( l.extent_ )
-  , periodic_( l.periodic_ )
+inline Layer< D >::Layer( const Layer& other_layer )
+  : AbstractLayer( other_layer )
+  , lower_left_( other_layer.lower_left_ )
+  , extent_( other_layer.extent_ )
+  , periodic_( other_layer.periodic_ )
 {
 }
 

@@ -126,21 +126,27 @@ nest::iaf_psc_alpha_canon::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::I_e, I_e_ );
 
   if ( updateValue< double >( d, names::V_th, U_th_ ) )
+  {
     U_th_ -= E_L_;
+  }
   else
   {
     U_th_ -= delta_EL;
   }
 
   if ( updateValue< double >( d, names::V_min, U_min_ ) )
+  {
     U_min_ -= E_L_;
+  }
   else
   {
     U_min_ -= delta_EL;
   }
 
   if ( updateValue< double >( d, names::V_reset, U_reset_ ) )
+  {
     U_reset_ -= E_L_;
+  }
   else
   {
     U_reset_ -= delta_EL;
@@ -175,7 +181,9 @@ nest::iaf_psc_alpha_canon::Parameters_::set( const DictionaryDatum& d )
   }
 
   if ( Time( Time::ms( t_ref_ ) ).get_steps() < 1 )
+  {
     throw BadProperty( "Refractory time must be at least one time step." );
+  }
   if ( tau_m_ <= 0 || tau_syn_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
@@ -200,7 +208,9 @@ nest::iaf_psc_alpha_canon::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
+  {
     y3_ -= p.E_L_;
+  }
   else
   {
     y3_ -= delta_EL;
@@ -319,9 +329,11 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
      the interval.
   */
   if ( S_.y3_ >= P_.U_th_ )
+  {
     emit_instant_spike_( origin,
       from,
       V_.h_ms_ * ( 1 - std::numeric_limits< double >::epsilon() ) );
+  }
 
   for ( long lag = from; lag < to; ++lag )
   {
@@ -331,7 +343,9 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
     // pseudo-event in queue to mark end of refractory period
     if ( S_.is_refractory_
       && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
+    }
 
     // save state at beginning of interval for spike-time interpolation
     V_.y0_before_ = S_.y0_;
@@ -370,7 +384,9 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
          interval.
       */
       if ( S_.y3_ >= P_.U_th_ )
+      {
         emit_spike_( origin, lag, 0, V_.h_ms_ );
+      }
     }
     else
     {
@@ -393,7 +409,9 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
         // this must be done before adding the input, since
         // interpolation requires continuity
         if ( S_.y3_ >= P_.U_th_ )
+        {
           emit_spike_( origin, lag, V_.h_ms_ - last_offset, ministep );
+        }
 
         // handle event
         if ( end_of_refract )
@@ -419,7 +437,9 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
       {
         propagate_( last_offset );
         if ( S_.y3_ >= P_.U_th_ )
+        {
           emit_spike_( origin, lag, V_.h_ms_ - last_offset, last_offset );
+        }
       }
     } // else
 
@@ -679,8 +699,12 @@ nest::iaf_psc_alpha_canon::thresh_find3_( double const dt ) const
 
   double tau = ( tau1 >= 0 ) ? tau1 : 2 * h_ms;
   if ( ( tau2 >= 0 ) && ( tau2 < tau ) )
+  {
     tau = tau2;
+  }
   if ( ( tau3 >= 0 ) && ( tau3 < tau ) )
+  {
     tau = tau3;
+  }
   return ( tau <= V_.h_ms_ ) ? tau : thresh_find2_( dt );
 }

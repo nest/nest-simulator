@@ -40,8 +40,9 @@ Vose::Vose( std::vector< double > dist )
   double sum = 0.0;
   for ( std::vector< double >::iterator it = dist.begin(); it != dist.end();
         ++it )
+  {
     sum += *it;
-
+  }
   // Partition distribution into small (<=1/n) and large (>1/n) probabilities
   std::vector< BiasedCoin >::iterator small = dist_.begin();
   std::vector< BiasedCoin >::iterator large = dist_.end();
@@ -74,16 +75,21 @@ Vose::Vose( std::vector< double > dist )
     large->probability = ( large->probability + small->probability ) - 1.0;
 
     if ( large->probability <= 1.0 )
+    {
       ++large;
+    }
   }
 
   // Since floating point calculation is not perfect, there may be
   // probabilities left over, which should be very close to 1.0.
   while ( small != large )
+  {
     ( small++ )->probability = 1.0;
-
+  }
   while ( large != dist_.end() )
+  {
     ( large++ )->probability = 1.0;
+  }
 }
 
 index
@@ -99,7 +105,9 @@ Vose::get_random_id( librandom::RngPtr rng ) const
   r -= i;
 
   if ( r < dist_[ i ].probability )
+  {
     return dist_[ i ].heads;
+  }
   else
   {
     return dist_[ i ].tails;

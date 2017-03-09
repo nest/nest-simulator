@@ -158,9 +158,11 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
     for ( typename NodeListType::iterator n = local_nodes.begin();
           n != local_nodes.end();
           ++n )
+    {
       all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
         ( ( *n )->get_parent() )->get_gid(),
         ( *n )->get_vp() ) );
+    }
     std::sort( all_nodes.begin(), all_nodes.end() );
   }
 }
@@ -265,9 +267,11 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
       for ( typename NodeListType::iterator n = local_nodes.begin();
             n != local_nodes.end();
             ++n )
+      {
         all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
           ( ( *n )->get_parent() )->get_gid(),
           ( *n )->get_vp() ) );
+      }
     }
     else
     {
@@ -317,9 +321,11 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
   for ( typename NodeListType::iterator n = local_nodes.begin();
         n != local_nodes.end();
         ++n )
+  {
     all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
       ( ( *n )->get_parent() )->get_gid(),
       ( *n )->get_vp() ) );
+  }
   std::sort( all_nodes.begin(), all_nodes.end() );
 }
 
@@ -336,9 +342,11 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
     for ( typename NodeListType::iterator n = local_nodes.begin();
           n != local_nodes.end();
           ++n )
+    {
       all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
         ( ( *n )->get_parent() )->get_gid(),
         ( *n )->get_vp() ) );
+    }
   }
   else
   {

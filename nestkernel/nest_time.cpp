@@ -78,10 +78,13 @@ Time::compute_max()
 
   tic_t tics;
   if ( lmax < tmax / Range::TICS_PER_STEP ) // step size is limiting factor
+  {
     tics = Range::TICS_PER_STEP * ( lmax / Range::INF_MARGIN );
+  }
   else // tic size is limiting factor
+  {
     tics = tmax / Range::INF_MARGIN;
-  // make sure that tics and steps match so that we can have simple range
+  } // make sure that tics and steps match so that we can have simple range
   // checking when going back and forth, regardless of limiting factor
   return tics - ( tics % Range::TICS_PER_STEP );
 }
@@ -157,10 +160,13 @@ tic_t
 Time::fromstamp( Time::ms_stamp t )
 {
   if ( t.t > LIM_MAX.ms )
+  {
     return LIM_POS_INF.tics;
+  }
   else if ( t.t < LIM_MIN.ms )
+  {
     return LIM_NEG_INF.tics;
-
+  }
   // why not just fmod STEPS_PER_MS? This gives different
   // results in corner cases --- and I don't think the
   // intended ones.
@@ -169,8 +175,9 @@ Time::fromstamp( Time::ms_stamp t )
   long s = n / Range::TICS_PER_STEP;
   double ms = s * Range::MS_PER_STEP;
   if ( ms < t.t )
+  {
     n += Range::TICS_PER_STEP;
-
+  }
   return n;
 }
 
@@ -192,9 +199,13 @@ Time::reset_to_defaults()
 std::ostream& operator<<( std::ostream& strm, const Time& t )
 {
   if ( t.tics == Time::LIM_NEG_INF.tics )
+  {
     strm << "-INF";
+  }
   else if ( t.tics == Time::LIM_POS_INF.tics )
+  {
     strm << "+INF";
+  }
   else
   {
     strm << t.get_ms() << " ms (= " << t.get_tics()

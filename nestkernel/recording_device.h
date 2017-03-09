@@ -638,7 +638,9 @@ RecordingDevice::set_status( const DictionaryDatum& d, DataT& data )
 
   // if n_events is 0, also clear event data
   if ( S_.events_ == 0 )
+  {
     data.clear();
+  }
 }
 
 } // namespace

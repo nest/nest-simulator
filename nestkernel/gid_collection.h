@@ -90,7 +90,9 @@ GIDCollection::find( const index neuron_id ) const
   if ( is_range_ )
   {
     if ( neuron_id > gid_range_.second )
+    {
       return -1;
+    }
     else
     {
       return neuron_id - gid_range_.first;
@@ -136,8 +138,10 @@ inline bool GIDCollection::const_iterator::operator!=(
 inline index GIDCollection::operator[]( const size_t pos ) const
 {
   if ( ( is_range_ && pos + gid_range_.first > gid_range_.second )
-    || ( !is_range_ && pos >= gid_array_.size() ) )
+    || ( not is_range_ && pos >= gid_array_.size() ) )
+  {
     throw std::out_of_range( "pos points outside of the GIDCollection" );
+  }
   if ( is_range_ )
   {
     return gid_range_.first + pos;

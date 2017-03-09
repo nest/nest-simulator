@@ -72,7 +72,9 @@ nest::SparseNodeArray::add_local_node( Node& node )
   // all is consistent, register node and update auxiliary variables
   nodes_.push_back( NodeEntry( node, gid ) );
   if ( local_min_gid_ == 0 ) // only first non-zero
+  {
     local_min_gid_ = gid;
+  }
   local_max_gid_ = gid;
   max_gid_ = gid;
 
@@ -128,14 +130,18 @@ nest::SparseNodeArray::get_node_by_gid( index gid ) const
 
   // search left if necessary
   while ( 0 < idx && gid < nodes_[ idx ].gid_ )
+  {
     --idx;
-
+  }
   // search right if necessary
   while ( idx < nodes_.size() && nodes_[ idx ].gid_ < gid )
+  {
     ++idx;
-
+  }
   if ( idx < nodes_.size() && nodes_[ idx ].gid_ == gid )
+  {
     return nodes_[ idx ].node_;
+  }
   else
   {
     return 0;

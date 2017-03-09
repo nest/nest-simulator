@@ -82,7 +82,9 @@ nest::IOManager::set_data_path_prefix_( const DictionaryDatum& d )
   if ( updateValue< std::string >( d, "data_prefix", tmp ) )
   {
     if ( tmp.find( '/' ) == std::string::npos )
+    {
       data_prefix_ = tmp;
+    }
     else
     {
       LOG(
@@ -107,7 +109,9 @@ nest::IOManager::initialize()
     ( *dict )[ "data_prefix" ] = std::string( data_prefix );
   }
   if ( not dict->empty() )
+  {
     set_data_path_prefix_( dict );
+  }
 }
 
 void

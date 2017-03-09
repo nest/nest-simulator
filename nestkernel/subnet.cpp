@@ -82,7 +82,9 @@ nest::Subnet::get_dimensions_( std::vector< int >& dim ) const
 {
   dim.push_back( gids_.size() );
   if ( nodes_.empty() )
+  {
     return;
+  }
   if ( homogeneous_ && ( dynamic_cast< Subnet* >( nodes_.at( 0 ) ) != NULL ) )
   {
     bool homog = true;
@@ -126,7 +128,9 @@ nest::Subnet::print_network( int max_depth, int level, std::string prefix )
     out << "+-[" << get_lid() + 1 << "] ";
 
     if ( get_label() != "" )
+    {
       out << get_label();
+    }
     else
     {
       out << get_name();
@@ -137,7 +141,9 @@ nest::Subnet::print_network( int max_depth, int level, std::string prefix )
     out << "+-"
         << "[0] ";
     if ( get_label() != "" )
+    {
       out << get_label();
+    }
     else
     {
       out << "root";
@@ -149,7 +155,9 @@ nest::Subnet::print_network( int max_depth, int level, std::string prefix )
 
   out << " dim=[";
   for ( size_t k = 0; k < dim.size() - 1; ++k )
+  {
     out << dim[ k ] << " ";
+  }
   out << dim[ dim.size() - 1 ] << "]" << std::endl;
   if ( max_depth <= level )
   {
@@ -157,8 +165,9 @@ nest::Subnet::print_network( int max_depth, int level, std::string prefix )
   }
 
   if ( nodes_.empty() )
+  {
     return out.str();
-
+  }
   prefix += "  ";
   out << prefix << "|" << std::endl;
 
@@ -172,7 +181,9 @@ nest::Subnet::print_network( int max_depth, int level, std::string prefix )
       out << prefix << "+-NULL" << std::endl;
       // Print extra line, if we are at the end of a subnet.
       if ( next == nodes_.size() )
+      {
         out << prefix << std::endl;
+      }
       first = i + 1;
       continue;
     }
@@ -189,8 +200,10 @@ nest::Subnet::print_network( int max_depth, int level, std::string prefix )
       // we must not print the continuation line '|', so we distinguish
       // this case.
       if ( next == nodes_.size() )
+      {
         out << prefix
             << nodes_[ i ]->print_network( max_depth, level + 1, prefix + " " );
+      }
       else
       {
         out << prefix
@@ -234,7 +247,9 @@ nest::Subnet::print_network( int max_depth, int level, std::string prefix )
           << nodes_[ first ]->get_name() << std::endl;
       // Print extra line, if we are at the end of a subnet.
       if ( next == nodes_.size() )
+      {
         out << prefix << std::endl;
+      }
       first = next;
       continue;
     }
@@ -247,14 +262,16 @@ nest::Subnet::print_network( int max_depth, int level, std::string prefix )
 
     // Print extra line, if we are at the end of a subnet.
     if ( next == nodes_.size() )
+    {
       out << prefix << std::endl;
+    }
     first = next;
   }
   return out.str();
 }
 
 void
-nest::Subnet::set_label( std::string const l )
+nest::Subnet::set_label( std::string const label )
 {
   // set the new label on all sibling threads
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
@@ -262,7 +279,7 @@ nest::Subnet::set_label( std::string const l )
     Node* n = kernel().node_manager.get_node( get_gid(), t );
     Subnet* c = dynamic_cast< Subnet* >( n );
     assert( c );
-    c->label_ = l;
+    c->label_ = label;
   }
 }
 

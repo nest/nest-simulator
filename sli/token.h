@@ -291,7 +291,7 @@ public:
   bool
   valid() const
   {
-    return !empty();
+    return not empty();
   }
 
   Datum* operator->() const
@@ -364,7 +364,7 @@ public:
   // define != explicitly --- HEP 2001-08-09
   bool operator!=( const Token& t ) const
   {
-    return !( *this == t );
+    return not ( *this == t );
   }
 
   void info( std::ostream& ) const;

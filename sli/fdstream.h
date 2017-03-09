@@ -143,7 +143,7 @@ protected:
       return traits_type::eof();
     }
 
-    if ( !traits_type::eq_int_type( c, traits_type::eof() ) )
+    if ( not traits_type::eq_int_type( c, traits_type::eof() ) )
     {
       *pptr() = traits_type::to_char_type( c );
       pbump( 1 );

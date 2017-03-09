@@ -372,7 +372,7 @@ public:
   void
   erase( void )
   {
-    if ( !detach() )
+    if ( not detach() )
     {
       erase( begin(), end() );
     }

@@ -161,7 +161,9 @@ SLIgraphics::ReadPGMFunction::initRead( std::istream* in,
     // otherwise, >> gets confused about the newline before the numbers
     char trash;
     while ( std::isspace( trash = in->get() ) )
+    {
       continue;
+    }
     in->putback( trash );
     // skip comments
     do
@@ -298,10 +300,14 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
     out = new ofdstream( filename->c_str() );
 
     if ( not out->good() )
+    {
       throw std::string( "Error when opening file for writing." );
+    }
 
     if ( ( long ) image->size() != width * height )
+    {
       throw std::string( "Array size does not match given dimensions." );
+    }
 
     // Plain ASCII PGM format
     *out << "P2" << std::endl; // Magic Number
@@ -317,7 +323,9 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
       if ( width > 20 )
       {
         if ( ( i + 1 ) % 20 == 0 )
+        {
           *out << std::endl;
+        }
         else
         {
           *out << " ";
@@ -326,7 +334,9 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
       else
       {
         if ( ( i + 1 ) % width == 0 )
+        {
           *out << std::endl;
+        }
         else
         {
           *out << " ";

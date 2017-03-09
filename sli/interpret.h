@@ -910,7 +910,9 @@ inline void
 SLIInterpreter::assert_stack_load( size_t n )
 {
   if ( OStack.load() < n )
+  {
     throw StackUnderflow( n, OStack.load() );
+  }
 }
 
 

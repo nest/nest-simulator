@@ -70,7 +70,9 @@ AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::pprint(
     ( *i )->pprint( out );
     ++i;
     if ( i != this->end() )
+    {
       out << ' ';
+    }
   }
   out << ']';
 }
@@ -95,7 +97,9 @@ AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::pprint(
     ( *i )->pprint( out );
     ++i;
     if ( i != this->end() )
+    {
       out << ' ';
+    }
   }
   out << '}';
 }
@@ -152,7 +156,9 @@ AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::pprint(
     ( *i )->pprint( out );
     ++i;
     if ( i != this->end() )
+    {
       out << ' ';
+    }
   }
   out << '}';
 }
@@ -168,9 +174,13 @@ AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::list(
   Token* i = this->begin();
 
   if ( line == 0 )
+  {
     out << "-->" << prefix << '{' << std::endl;
+  }
   else
+  {
     out << "   " << prefix << '{' << std::endl;
+  }
   prefix = "   " + prefix;
 
   while ( i != this->end() )
@@ -200,7 +210,9 @@ lockPTRDatum< std::vector< long >, &SLIInterpreter::IntVectortype >::pprint(
   if ( v->size() < 30 )
   {
     for ( size_t i = 0; i < v->size(); ++i )
+    {
       out << ( *v )[ i ] << " ";
+    }
   }
   else
   {
@@ -227,7 +239,9 @@ lockPTRDatum< std::vector< double >,
   if ( v->size() < 30 )
   {
     for ( size_t i = 0; i < v->size(); ++i )
+    {
       out << ( *v )[ i ] << " ";
+    }
   }
   else
   {

@@ -97,7 +97,9 @@ public:
     : p( NULL )
   {
     if ( c_s.p )
+    {
       p = c_s.p->get_ptr();
+    }
   }
 
 
@@ -316,7 +318,9 @@ public:
   Token& operator=( const Token& c_s )
   {
     if ( c_s.p == p )
+    {
       return *this;
+    }
 
     if ( c_s.p == NULL )
     {
@@ -350,7 +354,9 @@ public:
   bool operator==( const Token& t ) const
   {
     if ( p == t.p )
+    {
       return true;
+    }
 
     return p and p->equals( t.p );
   }

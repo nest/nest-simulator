@@ -82,7 +82,9 @@ public:
   static void* operator new( size_t size )
   {
     if ( size != memory.size_of() )
+    {
       return ::operator new( size );
+    }
     return memory.alloc();
   }
 

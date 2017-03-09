@@ -252,7 +252,9 @@ updateValue( DictionaryDatum const& d, Name const n, VT& value )
   const Token& t = d->lookup( n );
 
   if ( t.empty() )
+  {
     return false;
+  }
 
   value = getValue< FT >( t );
   return true;

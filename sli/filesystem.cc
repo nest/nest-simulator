@@ -374,11 +374,15 @@ FilesystemModule::CompareFilesFunction::execute( SLIInterpreter* i ) const
     const int bc = bs.get();
 
     if ( not( as.fail() || bs.fail() ) )
+    {
       equal = ac == bc;
+    }
   }
 
   if ( as.fail() != bs.fail() )
+  {
     equal = false; // different lengths
+  }
 
   as.close();
   bs.close();

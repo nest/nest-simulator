@@ -1609,7 +1609,9 @@ Max_i_iFunction::execute( SLIInterpreter* i ) const
     static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op1->get() < op2->get() )
+  {
     i->OStack.swap();
+  }
 
   i->OStack.pop();
 }
@@ -1624,7 +1626,9 @@ Max_i_dFunction::execute( SLIInterpreter* i ) const
   DoubleDatum* op2 = static_cast< DoubleDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op1->get() < op2->get() )
+  {
     i->OStack.swap();
+  }
 
   i->OStack.pop();
 }
@@ -1639,7 +1643,9 @@ Max_d_iFunction::execute( SLIInterpreter* i ) const
     static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op1->get() < op2->get() )
+  {
     i->OStack.swap();
+  }
 
   i->OStack.pop();
 }
@@ -1653,7 +1659,9 @@ Max_d_dFunction::execute( SLIInterpreter* i ) const
   DoubleDatum* op2 = static_cast< DoubleDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op1->get() < op2->get() )
+  {
     i->OStack.swap();
+  }
 
   i->OStack.pop();
 }
@@ -1672,7 +1680,9 @@ Min_i_iFunction::execute( SLIInterpreter* i ) const
     static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op1->get() > op2->get() )
+  {
     i->OStack.swap();
+  }
 
   i->OStack.pop();
 }
@@ -1687,7 +1697,9 @@ Min_i_dFunction::execute( SLIInterpreter* i ) const
   DoubleDatum* op2 = static_cast< DoubleDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op1->get() > op2->get() )
+  {
     i->OStack.swap();
+  }
 
   i->OStack.pop();
 }
@@ -1702,7 +1714,9 @@ Min_d_iFunction::execute( SLIInterpreter* i ) const
     static_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op1->get() > op2->get() )
+  {
     i->OStack.swap();
+  }
 
   i->OStack.pop();
 }
@@ -1716,7 +1730,9 @@ Min_d_dFunction::execute( SLIInterpreter* i ) const
   DoubleDatum* op2 = static_cast< DoubleDatum* >( i->OStack.pick( 0 ).datum() );
 
   if ( op1->get() > op2->get() )
+  {
     i->OStack.swap();
+  }
 
   i->OStack.pop();
 }

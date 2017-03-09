@@ -119,7 +119,9 @@ DictputFunction::execute( SLIInterpreter* i ) const
         ( *dict )->insert_move( *key, i->OStack.top() );
 #ifdef DICTSTACK_CACHE
         if ( ( *dict )->is_on_dictstack() )
+        {
           i->DStack->clear_token_from_cache( *key );
+        }
 #endif
         i->OStack.pop( 3 );
         i->EStack.pop(); // never forget me
@@ -383,7 +385,9 @@ CleardictstackFunction::execute( SLIInterpreter* i ) const
   // Pop all non-permanent dictionaries
   i->EStack.pop();
   while ( i->DStack->size() > 2 )
+  {
     i->DStack->pop();
+  }
 }
 
 /*
@@ -592,7 +596,9 @@ UndefFunction::execute( SLIInterpreter* i ) const
         i->EStack.pop();
 #ifdef DICTSTACK_CACHE
         if ( ( *dict )->is_on_dictstack() )
+        {
           i->DStack->clear_token_from_cache( *key );
+        }
 #endif
         ( *dict )->erase( *key );
         i->OStack.pop( 2 );
@@ -771,7 +777,9 @@ CleardictFunction::execute( SLIInterpreter* i ) const
   assert( dict != NULL );
 #ifdef DICTSTACK_CACHE
   if ( ( *dict )->is_on_dictstack() )
+  {
     i->DStack->clear_dict_from_cache( *dict );
+  }
 #endif
   ( *dict )->clear();
   i->EStack.pop(); // never forget me

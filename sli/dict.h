@@ -268,7 +268,9 @@ Dictionary::lookup( const Name& n ) const
 {
   TokenMap::const_iterator where = find( n );
   if ( where != end() )
+  {
     return ( *where ).second;
+  }
   else
   {
     return Dictionary::VoidToken;
@@ -280,7 +282,9 @@ Dictionary::lookup2( const Name& n ) const
 {
   TokenMap::const_iterator where = find( n );
   if ( where != end() )
+  {
     return ( *where ).second;
+  }
   else
   {
     throw UndefinedName( n.toString() );
@@ -292,7 +296,9 @@ Dictionary::known( const Name& n ) const
 {
   TokenMap::const_iterator where = find( n );
   if ( where != end() )
+  {
     return true;
+  }
   else
   {
     return false;
@@ -304,7 +310,9 @@ Dictionary::known_but_not_accessed( const Name& n ) const
 {
   TokenMap::const_iterator where = find( n );
   if ( where != end() )
+  {
     return not where->second.accessed();
+  }
   else
   {
     return false;
@@ -322,7 +330,9 @@ inline const Token& Dictionary::operator[]( const Name& n ) const
 {
   TokenMap::const_iterator where = find( n );
   if ( where != end() )
+  {
     return ( *where ).second;
+  }
   else
   {
     throw UndefinedName( n.toString() );

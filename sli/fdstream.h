@@ -157,7 +157,9 @@ protected:
   {
     std::streamsize size = pptr() - pbase();
     if ( size > 0 && ::write( m_fd, m_outbuf, size ) != size )
+    {
       return -1;
+    }
     setp( m_outbuf, m_outbuf + s_bufsiz );
     return 0;
   }

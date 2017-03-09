@@ -97,7 +97,9 @@ public:
   {
     Name::handle_t key = n.toIndex();
     if ( key >= cache_.size() )
+    {
       cache_.resize( Name::num_handles() + 100, 0 );
+    }
     cache_[ key ] = result;
   }
 
@@ -106,7 +108,9 @@ public:
   {
     Name::handle_t key = n.toIndex();
     if ( key >= basecache_.size() )
+    {
       basecache_.resize( Name::num_handles() + 100, 0 );
+    }
     basecache_[ key ] = result;
   }
 
@@ -119,7 +123,9 @@ public:
   {
     Name::handle_t key = n.toIndex();
     if ( key < cache_.size() )
+    {
       cache_[ key ] = 0;
+    }
   }
 
   void
@@ -127,14 +133,18 @@ public:
   {
     Name::handle_t key = n.toIndex();
     if ( key < basecache_.size() )
+    {
       basecache_[ key ] = 0;
+    }
   }
 
   void
   clear_dict_from_cache( DictionaryDatum d )
   {
     for ( TokenMap::iterator i = d->begin(); i != d->end(); ++i )
+    {
       clear_token_from_cache( i->first );
+    }
   }
 
 

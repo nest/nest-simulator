@@ -67,7 +67,9 @@ BoolDatum::print( std::ostream& out ) const
 void* BoolDatum::operator new( size_t size )
 {
   if ( size != memory.size_of() )
+  {
     return ::operator new( size );
+  }
   return memory.alloc();
 }
 

@@ -568,10 +568,14 @@ bool Scanner::operator()( Token& t )
     }
 
     if ( c == '\0' || in->bad() )
+    {
       c = endof;
+    }
 
     if ( in->eof() )
+    {
       c = endof;
+    }
     else
     {
       assert( in->good() );

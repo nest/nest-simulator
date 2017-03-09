@@ -120,21 +120,27 @@ nest::iaf_psc_delta_canon::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::I_e, I_e_ );
 
   if ( updateValue< double >( d, names::V_th, U_th_ ) )
+  {
     U_th_ -= E_L_;
+  }
   else
   {
     U_th_ -= delta_EL;
   }
 
   if ( updateValue< double >( d, names::V_min, U_min_ ) )
+  {
     U_min_ -= E_L_;
+  }
   else
   {
     U_min_ -= delta_EL;
   }
 
   if ( updateValue< double >( d, names::V_reset, U_reset_ ) )
+  {
     U_reset_ -= E_L_;
+  }
   else
   {
     U_reset_ -= delta_EL;
@@ -154,7 +160,9 @@ nest::iaf_psc_delta_canon::Parameters_::set( const DictionaryDatum& d )
   }
 
   if ( Time( Time::ms( t_ref_ ) ).get_steps() < 1 )
+  {
     throw BadProperty( "Refractory time must be at least one time step." );
+  }
   if ( tau_m_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
@@ -178,7 +186,9 @@ nest::iaf_psc_delta_canon::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, U_ ) )
+  {
     U_ -= p.E_L_;
+  }
   else
   {
     U_ -= delta_EL;
@@ -296,9 +306,11 @@ iaf_psc_delta_canon::update( Time const& origin,
 
   // check for super-threshold at beginning
   if ( S_.U_ >= P_.U_th_ )
+  {
     emit_instant_spike_( origin,
       from,
       V_.h_ms_ * ( 1 - std::numeric_limits< double >::epsilon() ) );
+  }
 
   for ( long lag = from; lag < to; ++lag )
   {
@@ -312,7 +324,9 @@ iaf_psc_delta_canon::update( Time const& origin,
     // place pseudo-event in queue to mark end of refractory period
     if ( S_.is_refractory_
       && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
+    }
 
     // get first event
     double ev_offset;
@@ -345,7 +359,9 @@ iaf_psc_delta_canon::update( Time const& origin,
         S_.U_ =
           S_.U_ < P_.U_min_ ? P_.U_min_ : S_.U_; // lower bound on potential
         if ( S_.U_ >= P_.U_th_ )
+        {
           emit_spike_( origin, lag, 0 ); // offset is zero at end of step
+        }
 
         // We exploit here that the refractory period must be at least
         // one time step long. So even if the spike had happened at the
@@ -373,10 +389,12 @@ iaf_psc_delta_canon::update( Time const& origin,
           if ( not end_of_refract )
           {
             if ( S_.with_refr_input_ )
+            {
               V_.refr_spikes_buffer_ += ev_weight
                 * std::exp( -( ( S_.last_spike_step_ - T - 1 ) * V_.h_ms_
                               - ( S_.last_spike_offset_ - ev_offset )
                               + P_.t_ref_ ) / P_.tau_m_ );
+            }
           }
           else
           {
@@ -391,7 +409,9 @@ iaf_psc_delta_canon::update( Time const& origin,
 
             // check if buffered spikes cause new spike
             if ( S_.U_ >= P_.U_th_ )
+            {
               emit_instant_spike_( origin, lag, t );
+            }
           }
 
           // nothing more to do in this loop iteration
@@ -423,7 +443,9 @@ iaf_psc_delta_canon::update( Time const& origin,
         // spike
         S_.U_ += ev_weight;
         if ( S_.U_ >= P_.U_th_ )
+        {
           emit_instant_spike_( origin, lag, t );
+        }
 
       } while (
         B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) );
@@ -434,7 +456,9 @@ iaf_psc_delta_canon::update( Time const& origin,
       {
         propagate_( t );
         if ( S_.U_ >= P_.U_th_ )
+        {
           emit_spike_( origin, lag, 0 );
+        }
       }
 
     } // else

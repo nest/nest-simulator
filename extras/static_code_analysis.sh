@@ -50,6 +50,9 @@ PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
 PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
 PEP8_IGNORES_TOPO_MANUAL="${PEP8_IGNORES_EXAMPLES},E265"
 
+# Drop files that should not be checked (space-separated list).
+FILES_TO_IGNORE="libnestutil/sparsetable.h"
+
 # Print a message.
 # The format of the message depends on whether the script is executed on Travis CI or runs local.
 # print_msg "string1" "string2"
@@ -87,6 +90,10 @@ c_files_with_errors=""
 python_files_with_errors=""
 for f in $FILE_NAMES; do
 
+  if [[ $FILES_TO_IGNORE =~ .*$f.* ]]; then
+    print_msg "MSGBLD0110: " "$f is explicitly ignored."
+    continue
+  fi   
   if [ ! -f "$f" ]; then
     print_msg "MSGBLD0110: " "$f is not a file or does not exist anymore."
     continue

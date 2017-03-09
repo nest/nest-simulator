@@ -537,7 +537,7 @@ bool Scanner::operator()( Token& t )
   unsigned char c = '\0';
   unsigned char sgc = '\0';
 
-  long l = 0L;
+  long lng = 0L;
   double d = 0.0;
   int sg = 1;
   int e = 0;
@@ -600,13 +600,13 @@ bool Scanner::operator()( Token& t )
     //	  case start        :
     //            break;
     case intdgtst:
-      l = sg * ( std::labs( l ) * base + digval( c ) );
+      lng = sg * ( std::labs( lng ) * base + digval( c ) );
       ds.push_back( c );
       break;
 
     case aheadintst:
     {
-      IntegerDatum id( l );
+      IntegerDatum id( lng );
       t = id;
       if ( c != endoln && c != endof )
       {
@@ -625,13 +625,13 @@ bool Scanner::operator()( Token& t )
       break;
 
     case intexpst:
-      d = ( double ) l;
+      d = ( double ) lng;
       ds.push_back( 'e' );
       state = expntlst;
       break;
 
     case decpointst:
-      d = ( double ) l;
+      d = ( double ) lng;
       ds.push_back( '.' );
       break;
 

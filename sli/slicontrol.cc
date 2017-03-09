@@ -167,12 +167,12 @@ ExitFunction::execute( SLIInterpreter* i ) const
   static Token mark = i->baselookup( i->mark_name );
 
   size_t n = 1;
-  size_t l = i->EStack.load();
-  while ( ( l > n ) && not( i->EStack.pick( n++ ) == mark ) )
+  size_t load = i->EStack.load();
+  while ( ( load > n ) && not( i->EStack.pick( n++ ) == mark ) )
   {
-    ;
+    // do nothing
   }
-  if ( n >= l )
+  if ( n >= load )
   {
     i->raiseerror( "EStackUnderflow" );
     return;
@@ -411,13 +411,13 @@ void
 StopFunction::execute( SLIInterpreter* i ) const
 {
 
-  size_t l = i->EStack.load();
+  size_t load = i->EStack.load();
   NameDatum istopped( i->istopped_name );
 
   bool found = false;
   size_t n = 1;
 
-  while ( ( l > n ) && not( found ) )
+  while ( ( load > n ) && not( found ) )
   {
     found = i->EStack.pick( n++ ).contains( istopped );
   }
@@ -431,7 +431,7 @@ StopFunction::execute( SLIInterpreter* i ) const
   {
     if ( i->show_backtrace() || not found )
     {
-      i->stack_backtrace( l - 1 );
+      i->stack_backtrace( load - 1 );
     }
 
     std::cerr << "In stop: An error or stop was raised."
@@ -475,12 +475,12 @@ FirstVersion: 25 Jul 2005, Gewaltig
 void
 CloseinputFunction::execute( SLIInterpreter* i ) const
 {
-  size_t l = i->EStack.load();
+  size_t load = i->EStack.load();
 
   bool found = false;
   size_t n = 1;
 
-  while ( ( l > n ) && not( found ) )
+  while ( ( load > n ) && not( found ) )
   {
     found = i->EStack.pick( n++ )->isoftype( SLIInterpreter::XIstreamtype );
   }
@@ -563,19 +563,19 @@ CurrentnameFunction::execute( SLIInterpreter* i ) const
 {
   i->EStack.pop();
   size_t n = 0; // skip my own name
-  size_t l = i->EStack.load();
+  size_t load = i->EStack.load();
 
   // top level %%lookup must belong to currentname, so
   // remove it and the name.
   if ( i->EStack.top() == i->baselookup( i->ilookup_name ) )
   {
-    assert( l > 2 );
+    assert( load > 2 );
     n += 2;
   }
 
   bool found = false;
 
-  while ( ( l > n ) && not found )
+  while ( ( load > n ) && not found )
   {
     found = i->EStack.pick( n++ ) == i->baselookup( i->ilookup_name );
   }

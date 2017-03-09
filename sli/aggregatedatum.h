@@ -130,7 +130,7 @@ public:
 
   virtual void print( std::ostream& out ) const;
   virtual void pprint( std::ostream& out ) const;
-  virtual void list( std::ostream& out, std::string prefix, int l ) const;
+  virtual void list( std::ostream& out, std::string prefix, int length ) const;
 
   virtual void
   input_form( std::ostream& out ) const
@@ -163,9 +163,9 @@ template < class C, SLIType* slt >
 void
 AggregateDatum< C, slt >::list( std::ostream& out,
   std::string prefix,
-  int l ) const
+  int length ) const
 {
-  if ( l == 0 )
+  if ( length == 0 )
   {
     prefix = "-->" + prefix;
   }

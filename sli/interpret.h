@@ -384,9 +384,9 @@ public:
    * calls during debugging.
    */
   void
-  set_call_depth( int l )
+  set_call_depth( int depth )
   {
-    call_depth_ = l;
+    call_depth_ = depth;
   }
 
   /**

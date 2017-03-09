@@ -792,9 +792,9 @@ SLIInterpreter::raisesignal( int sig )
 }
 
 void
-SLIInterpreter::verbosity( int l )
+SLIInterpreter::verbosity( int level )
 {
-  verbositylevel = l;
+  verbositylevel = level;
 }
 
 int

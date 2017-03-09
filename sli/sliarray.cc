@@ -876,9 +876,9 @@ SLIArrayModule::ArraystoreFunction::execute( SLIInterpreter* i ) const
       ArrayDatum* ad = new ArrayDatum();
       ad->reserve( n );
       Token at( ad );
-      for ( long l = 1; l <= n; ++l )
+      for ( long j = 1; j <= n; ++j )
       {
-        ad->push_back_move( i->OStack.pick( n - l ) );
+        ad->push_back_move( i->OStack.pick( n - j ) );
       }
       i->OStack.pop( n );
       i->OStack.push_move( at );
@@ -923,9 +923,9 @@ SLIArrayModule::ArraycreateFunction::execute( SLIInterpreter* i ) const
     ArrayDatum* ad = new ArrayDatum();
     ad->reserve( n - 1 );
     Token at( ad );
-    for ( size_t l = 2; l <= n; ++l )
+    for ( size_t j = 2; j <= n; ++j )
     {
-      ad->push_back_move( i->OStack.pick( n - l ) );
+      ad->push_back_move( i->OStack.pick( n - j ) );
     }
     i->OStack.pop( n );
     i->OStack.push_move( at );

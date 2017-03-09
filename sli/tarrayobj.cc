@@ -340,17 +340,17 @@ TokenArrayObj::reduce( Token* first, Token* last )
 
   // First step: shift all elements to the begin of
   // the array.
-  Token* i = p, * l = first;
+  Token* i = p, * j = first;
 
   if ( first > begin() )
   {
-    while ( l < last )
+    while ( j < last )
     {
-      i->move( *l );
+      i->move( *j );
       i++;
-      l++;
+      j++;
     }
-    assert( l == last );
+    assert( j == last );
   }
   else
   {

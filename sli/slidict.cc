@@ -672,8 +672,8 @@ DictconstructFunction::execute( SLIInterpreter* i ) const
 {
   // call: mark key1 val1 ... keyn valn -> dict
 
-  size_t l = i->OStack.load();
-  if ( l == 0 )
+  size_t load = i->OStack.load();
+  if ( load == 0 )
   {
     throw StackUnderflow( 1, 0 );
   }
@@ -685,7 +685,7 @@ DictconstructFunction::execute( SLIInterpreter* i ) const
   static Token mark = i->baselookup( i->mark_name );
 
   size_t n = 0; //!< pick(1) is the first literal, then we count in steps of 2
-  while ( ( n < l ) && not( i->OStack.pick( n ) == mark ) )
+  while ( ( n < load ) && not( i->OStack.pick( n ) == mark ) )
   {
     Token& val = ( i->OStack.pick( n ) );
     key = dynamic_cast< LiteralDatum* >( i->OStack.pick( n + 1 ).datum() );
@@ -702,7 +702,7 @@ DictconstructFunction::execute( SLIInterpreter* i ) const
     n += 2; // count number of elements
   }
 
-  if ( n == l )
+  if ( n == load )
   {
     i->message( 30, "DictConstruct", "<< expected." );
     i->raiseerror( i->ArgumentTypeError );

@@ -58,7 +58,9 @@ Layer< D >::compute_displacement( const Position< D >& from_pos,
       displ[ i ] = -0.5 * extent_[ i ]
         + std::fmod( displ[ i ] + 0.5 * extent_[ i ], extent_[ i ] );
       if ( displ[ i ] < -0.5 * extent_[ i ] )
+      {
         displ[ i ] += extent_[ i ];
+      }
     }
   }
   return displ;
@@ -104,10 +106,13 @@ Layer< D >::get_status( DictionaryDatum& d ) const
     std::vector< double >( lower_left_ + extent_ / 2 );
 
   if ( periodic_.none() )
+  {
     ( *topology_dict )[ names::edge_wrap ] = BoolDatum( false );
+  }
   else if ( periodic_.count() == D )
+  {
     ( *topology_dict )[ names::edge_wrap ] = true;
-
+  }
   ( *d )[ names::topology ] = topology_dict;
 }
 

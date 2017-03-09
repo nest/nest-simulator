@@ -567,9 +567,11 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
   lower_left_ = getValue< std::vector< double > >( d, names::lower_left );
   upper_right_ = getValue< std::vector< double > >( d, names::upper_right );
   if ( not( lower_left_ < upper_right_ ) )
+  {
     throw BadProperty(
       "topology::BoxMask<D>: "
       "Upper right must be strictly to the right and above lower left." );
+  }
 }
 
 template < int D >

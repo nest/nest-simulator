@@ -729,7 +729,7 @@ void
 nest::RecordingDevice::print_weight_( std::ostream& os, double weight )
 {
   if ( P_.withweight_ )
-    os << weight << '\t';
+    os << weight;
 }
 
 void

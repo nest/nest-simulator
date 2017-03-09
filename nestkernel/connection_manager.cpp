@@ -1688,6 +1688,5 @@ nest::ConnectionManager::resize_connections()
   {
     connections_5g_[ tid ]->resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
     source_table_.resize_sources( tid );
-    target_table_devices_.resize_connections( tid );
   }
 }

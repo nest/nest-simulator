@@ -53,9 +53,9 @@ class TargetTableDevices
 {
 private:
   //! 3d structure storing connections from neurons to devices
-  std::vector< std::vector< std::vector< ConnectorBase* >* >* > target_to_devices_;
+  std::vector< std::vector< std::vector< ConnectorBase* > >* > target_to_devices_;
   //! 3d structure storing connections from devices to neurons
-  std::vector< std::vector< std::vector< ConnectorBase* >* >* > target_from_devices_;
+  std::vector< std::vector< std::vector< ConnectorBase* > >* > target_from_devices_;
   //! 3d structure storing gids of sending devices (necessary for
   //get_connections)
   std::vector< std::vector< index >* > sending_devices_gids_;
@@ -158,7 +158,6 @@ public:
     ConnectorModel& cm,
     const DictionaryDatum& d,
     const port p );
-  void resize_connections( const thread tid );
 };
 
 } // namespace nest

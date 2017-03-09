@@ -510,8 +510,8 @@ ModelManager::clear_prototypes_()
       {
         delete *pt;
       }
-      it->clear();
     }
+    it->clear();
   }
   prototypes_.clear();
 }

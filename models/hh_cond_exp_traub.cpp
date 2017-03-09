@@ -325,11 +325,17 @@ nest::hh_cond_exp_traub::~hh_cond_exp_traub()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
+  {
     gsl_odeiv_step_free( B_.s_ );
+  }
   if ( B_.c_ )
+  {
     gsl_odeiv_control_free( B_.c_ );
+  }
   if ( B_.e_ )
+  {
     gsl_odeiv_evolve_free( B_.e_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -359,22 +365,28 @@ nest::hh_cond_exp_traub::init_buffers_()
   B_.I_stim_ = 0.0;
 
   if ( B_.s_ == 0 )
+  {
     B_.s_ =
       gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  }
   else
   {
     gsl_odeiv_step_reset( B_.s_ );
   }
 
   if ( B_.c_ == 0 )
+  {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
+  }
   else
   {
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
   }
 
   if ( B_.e_ == 0 )
+  {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
+  }
   else
   {
     gsl_odeiv_evolve_reset( B_.e_ );

@@ -892,7 +892,9 @@ ht_neuron::update( Time const& origin, const long from, const long to )
     }
 
     if ( S_.ref_steps_ > 0 )
+    {
       --S_.ref_steps_;
+    }
 
     /* Add arriving spikes.
      *

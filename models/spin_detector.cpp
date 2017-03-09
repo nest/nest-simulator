@@ -136,7 +136,9 @@ nest::spin_detector::get_status( DictionaryDatum& d ) const
     std::vector< Node* >::const_iterator sibling;
     for ( sibling = siblings->begin() + 1; sibling != siblings->end();
           ++sibling )
+    {
       ( *sibling )->get_status( d );
+    }
   }
 }
 
@@ -144,7 +146,9 @@ void
 nest::spin_detector::set_status( const DictionaryDatum& d )
 {
   if ( d->known( names::precise_times ) )
+  {
     user_set_precise_times_ = true;
+  }
 
   device_.set_status( d );
 }

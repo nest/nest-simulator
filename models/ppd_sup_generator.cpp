@@ -144,8 +144,10 @@ nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double >( d, names::rate, rate_ );
   if ( 1000.0 / rate_ <= dead_time_ )
+  {
     throw BadProperty(
       "The inverse rate has to be larger than the dead time." );
+  }
 
   long n_proc_l = n_proc_;
   updateValue< long >( d, names::n_proc, n_proc_l );
@@ -163,8 +165,10 @@ nest::ppd_sup_generator::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double >( d, names::relative_amplitude, amplitude_ );
   if ( amplitude_ > 1.0 or amplitude_ < 0.0 )
+  {
     throw BadProperty(
       "The relative amplitude of the rate modulation must be in [0,1]." );
+  }
 }
 
 
@@ -247,14 +251,18 @@ nest::ppd_sup_generator::update( Time const& T, const long from, const long to )
   assert( from < to );
 
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
+  {
     return;
+  }
 
   for ( long lag = from; lag < to; ++lag )
   {
     Time t = T + Time::step( lag );
 
     if ( not device_.is_active( t ) )
+    {
       continue; // no spike at this lag
+    }
 
     // get current (time-dependent) hazard rate and store it.
     if ( P_.amplitude_ > 0.0 && ( P_.frequency_ > 0.0 || P_.frequency_ < 0.0 ) )

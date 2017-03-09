@@ -113,21 +113,27 @@ nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d )
   const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  {
     V_reset_ -= E_L_;
+  }
   else
   {
     V_reset_ -= delta_EL;
   }
 
   if ( updateValue< double >( d, names::V_th, V_th_ ) )
+  {
     V_th_ -= E_L_;
+  }
   else
   {
     V_th_ -= delta_EL;
   }
 
   if ( updateValue< double >( d, names::V_min, V_min_ ) )
+  {
     V_min_ -= E_L_;
+  }
   else
   {
     V_min_ -= delta_EL;
@@ -172,7 +178,9 @@ nest::iaf_psc_delta::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
+  {
     y3_ -= p.E_L_;
+  }
   else
   {
     y3_ -= delta_EL;
@@ -305,8 +313,10 @@ nest::iaf_psc_delta::update( Time const& origin,
       // read spikes from buffer and accumulate them, discounting
       // for decay until end of refractory period
       if ( P_.with_refr_input_ )
+      {
         S_.refr_spikes_buffer_ +=
           B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / P_.tau_m_ );
+      }
       else
       {
         B_.spikes_.get_value( lag );

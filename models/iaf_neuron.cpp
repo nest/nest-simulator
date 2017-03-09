@@ -112,14 +112,18 @@ nest::iaf_neuron::Parameters_::set( const DictionaryDatum& d )
   const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  {
     V_reset_ -= E_L_; // here we use the new E_L_, no need for adjustments
+  }
   else
   {
     V_reset_ -= delta_EL;
   } // express relative to new E_L_
 
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
+  {
     Theta_ -= E_L_;
+  }
   else
   {
     Theta_ -= delta_EL;
@@ -158,7 +162,9 @@ nest::iaf_neuron::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
+  {
     y3_ -= p.E_L_;
+  }
   else
   {
     y3_ -= delta_EL;

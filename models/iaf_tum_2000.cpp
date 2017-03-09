@@ -118,14 +118,18 @@ nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d )
   const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  {
     V_reset_ -= E_L_;
+  }
   else
   {
     V_reset_ -= delta_EL;
   }
 
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
+  {
     Theta_ -= E_L_;
+  }
   else
   {
     Theta_ -= delta_EL;
@@ -174,7 +178,9 @@ nest::iaf_tum_2000::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
+  {
     V_m_ -= p.E_L_;
+  }
   else
   {
     V_m_ -= delta_EL;
@@ -288,12 +294,16 @@ nest::iaf_tum_2000::calibrate()
   V_.RefractoryCountsTot_ = Time( Time::ms( P_.tau_ref_tot_ ) ).get_steps();
 
   if ( V_.RefractoryCountsAbs_ < 1 )
+  {
     throw BadProperty(
       "Absolute refractory time must be at least one time step." );
+  }
 
   if ( V_.RefractoryCountsTot_ < 1 )
+  {
     throw BadProperty(
       "Total refractory time must be at least one time step." );
+  }
 }
 
 void
@@ -308,8 +318,10 @@ nest::iaf_tum_2000::update( Time const& origin, const long from, const long to )
   {
 
     if ( S_.r_abs_ == 0 ) // neuron not refractory, so evolve V
+    {
       S_.V_m_ = S_.V_m_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_
         + S_.i_syn_in_ * V_.P21in_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
+    }
     else
     {
       --S_.r_abs_;
@@ -357,9 +369,11 @@ nest::iaf_tum_2000::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
+  {
     B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
   {
     B_.spikes_in_.add_value( e.get_rel_delivery_steps(

@@ -69,7 +69,9 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d,
   }
 
   if ( amp_times_.size() != amp_values_.size() )
+  {
     throw BadProperty( "Amplitude times and values have to be the same size." );
+  }
 
   // ensure amp times are strictly monotonically increasing
   if ( not amp_times_.empty() )
@@ -78,10 +80,12 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d,
     for ( std::vector< double >::const_iterator next = prev + 1;
           next != amp_times_.end();
           ++next, ++prev )
+    {
       if ( *prev >= *next )
       {
         throw BadProperty( "Amplitude times must strictly increasing." );
       }
+    }
   }
   if ( ut && uv )
   {
@@ -157,7 +161,9 @@ nest::step_current_generator::update( Time const& origin,
   const long first = t0 + from;
   while ( B_.idx_ < P_.amp_times_.size()
     && Time( Time::ms( P_.amp_times_[ B_.idx_ ] ) ).get_steps() <= first )
+  {
     ++B_.idx_;
+  }
 
   for ( long offs = from; offs < to; ++offs )
   {

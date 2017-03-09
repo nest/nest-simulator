@@ -218,7 +218,9 @@ librandom::BinomialRandomDev::set_status( const DictionaryDatum& d )
   const bool n_updated = updateValue< long >( d, "n", n_new );
 
   if ( p_new < 0. || 1. < p_new )
+  {
     throw BadParameterValue( "Binomial RDV: 0 <= p <= 1 required." );
+  }
   if ( n_new < 1 )
   {
     throw BadParameterValue( "Binomial RDV: n >= 1 required." );

@@ -58,7 +58,9 @@ librandom::NormalRandomDev::set_status( const DictionaryDatum& d )
   updateValue< double >( d, "sigma", new_sigma );
 
   if ( new_sigma < 0. )
+  {
     throw BadParameterValue( "Normal RDV: sigma >= 0 required." );
+  }
 
   mu_ = new_mu;
   sigma_ = new_sigma;

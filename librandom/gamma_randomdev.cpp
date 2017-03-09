@@ -116,10 +116,14 @@ librandom::GammaRandomDev::set_status( const DictionaryDatum& d )
   updateValue< double >( d, "scale", b_new );
 
   if ( a_new <= 0. )
+  {
     throw BadParameterValue( "Gamma RDV: order > 0 required." );
+  }
 
   if ( b_new <= 0. )
+  {
     throw BadParameterValue( "Gamma RDV: scale > 0 required." );
+  }
 
   set_order( a_new );
   b_ = b_new;

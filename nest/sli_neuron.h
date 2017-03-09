@@ -172,7 +172,9 @@ private:
   {
     double vm = 0.0;
     if ( state_->known( names::V_m ) )
+    {
       vm = getValue< double >( state_, names::V_m );
+    }
 
     return vm;
   }

@@ -109,7 +109,9 @@ librandom::GSL_BinomialRandomDev::set_status( const DictionaryDatum& d )
   const bool n_updated = updateValue< long >( d, "n", n_new );
 
   if ( p_new < 0. || 1. < p_new )
+  {
     throw BadParameterValue( "gsl_binomial RDV: 0 <= p <= 1 required." );
+  }
   if ( n_new < 1 )
   {
     throw BadParameterValue( "gsl_binomial RDV: n >= 1 required." );

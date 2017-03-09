@@ -244,8 +244,10 @@ mynest::pif_psc_alpha::update( Time const& slice_origin,
 
     // update membrane potential
     if ( S_.refr_count == 0 ) // neuron absolute not refractory
+    {
       S_.V_m +=
         V_.P30 * ( S_.I_ext + P_.I_e ) + V_.P31 * S_.dI_syn + V_.P32 * S_.I_syn;
+    }
     else
     {
       --S_.refr_count;

@@ -126,21 +126,27 @@ nest::iaf_psc_alpha_presc::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::I_e, I_e_ );
 
   if ( updateValue< double >( d, names::V_th, U_th_ ) )
+  {
     U_th_ -= E_L_;
+  }
   else
   {
     U_th_ -= delta_EL;
   }
 
   if ( updateValue< double >( d, names::V_min, U_min_ ) )
+  {
     U_min_ -= E_L_;
+  }
   else
   {
     U_min_ -= delta_EL;
   }
 
   if ( updateValue< double >( d, names::V_reset, U_reset_ ) )
+  {
     U_reset_ -= E_L_;
+  }
   else
   {
     U_reset_ -= delta_EL;
@@ -198,7 +204,9 @@ nest::iaf_psc_alpha_presc::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
+  {
     y3_ -= p.E_L_;
+  }
   else
   {
     y3_ -= delta_EL;
@@ -637,8 +645,12 @@ nest::iaf_psc_alpha_presc::thresh_find3_( double const dt ) const
 
   double tau = ( tau1 >= 0 ) ? tau1 : 2 * h_ms_;
   if ( ( tau2 >= 0 ) && ( tau2 < tau ) )
+  {
     tau = tau2;
+  }
   if ( ( tau3 >= 0 ) && ( tau3 < tau ) )
+  {
     tau = tau3;
+  }
   return ( tau <= h_ms_ ) ? tau : thresh_find2_( dt );
 }

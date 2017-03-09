@@ -566,7 +566,7 @@ SLIArrayModule::SortFunction::execute( SLIInterpreter* i ) const
   }
   catch ( TypeMismatch )
   {
-    ;
+    // do nothing
   }
 
   try
@@ -581,7 +581,7 @@ SLIArrayModule::SortFunction::execute( SLIInterpreter* i ) const
   }
   catch ( TypeMismatch )
   {
-    ;
+    // do nothing
   }
 
   try
@@ -602,7 +602,7 @@ SLIArrayModule::SortFunction::execute( SLIInterpreter* i ) const
   }
   catch ( TypeMismatch )
   {
-    ;
+    // do nothing
   }
 
   i->message( SLIInterpreter::M_ERROR,

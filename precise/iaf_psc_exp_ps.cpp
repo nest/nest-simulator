@@ -135,21 +135,27 @@ nest::iaf_psc_exp_ps::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::I_e, I_e_ );
 
   if ( updateValue< double >( d, names::V_th, U_th_ ) )
+  {
     U_th_ -= E_L_;
+  }
   else
   {
     U_th_ -= delta_EL;
   }
 
   if ( updateValue< double >( d, names::V_min, U_min_ ) )
+  {
     U_min_ -= E_L_;
+  }
   else
   {
     U_min_ -= delta_EL;
   }
 
   if ( updateValue< double >( d, names::V_reset, U_reset_ ) )
+  {
     U_reset_ -= E_L_;
+  }
   else
   {
     U_reset_ -= delta_EL;
@@ -169,7 +175,9 @@ nest::iaf_psc_exp_ps::Parameters_::set( const DictionaryDatum& d )
   }
 
   if ( Time( Time::ms( t_ref_ ) ).get_steps() < 1 )
+  {
     throw BadProperty( "Refractory time must be at least one time step." );
+  }
   if ( tau_m_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
@@ -192,7 +200,9 @@ nest::iaf_psc_exp_ps::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y2_ ) )
+  {
     y2_ -= p.E_L_;
+  }
   else
   {
     y2_ -= delta_EL;
@@ -290,9 +300,11 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
      the interval.
   */
   if ( S_.y2_ >= P_.U_th_ )
+  {
     emit_instant_spike_( origin,
       from,
       V_.h_ms_ * ( 1.0 - std::numeric_limits< double >::epsilon() ) );
+  }
 
   for ( long lag = from; lag < to; ++lag )
   {
@@ -303,7 +315,9 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
     // pseudo-event in queue to mark end of refractory period
     if ( S_.is_refractory_
       && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
+    }
 
     // save state at beginning of interval for spike-time approximation
     V_.y0_before_ = S_.y0_;
@@ -343,7 +357,9 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
          interval.
       */
       if ( S_.y2_ >= P_.U_th_ )
+      {
         emit_spike_( origin, lag, 0, V_.h_ms_ );
+      }
     }
     else
     {
@@ -366,7 +382,9 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
         // this must be done before adding the input, since
         // interpolation requires continuity
         if ( S_.y2_ >= P_.U_th_ )
+        {
           emit_spike_( origin, lag, V_.h_ms_ - last_offset, ministep );
+        }
 
         // handle event
         if ( end_of_refract )
@@ -376,7 +394,9 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
         else
         {
           if ( ev_weight >= 0.0 )
+          {
             S_.y1_ex_ += ev_weight; // exc. spike input
+          }
           else
           {
             S_.y1_in_ += ev_weight;
@@ -397,7 +417,9 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
       {
         propagate_( last_offset );
         if ( S_.y2_ >= P_.U_th_ )
+        {
           emit_spike_( origin, lag, V_.h_ms_ - last_offset, last_offset );
+        }
       }
     } // else
 
@@ -536,7 +558,9 @@ nest::iaf_psc_exp_ps::bisectioning_( const double dt ) const
   while ( fabs( P_.U_th_ - y2_root ) > 1e-14 )
   {
     if ( y2_root > P_.U_th_ )
+    {
       root -= dt / div;
+    }
     else
     {
       root += dt / div;

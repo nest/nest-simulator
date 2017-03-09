@@ -11,20 +11,22 @@
 # Do not apply L006 (limit on file length), since some legacy sli code 
 # is too long; see also F002.
 
-rule=F001
-rule=L001
-rule=L002
-rule=L003
-rule=L005
-rule=T001
-rule=T002
-rule=T004
-rule=T005
-rule=T006
-rule=T007
-rule=T010
-rule=T012
-rule=T013
-rule=T017
-rule=T018
-rule=T019
+set rules {
+  F001
+  L001
+  L002
+  L003
+  L005
+  T001
+  T002
+  T004
+  T005
+  T006
+  T007
+  T010
+  T012
+  T013
+  T017
+  T018
+  T019
+}

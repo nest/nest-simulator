@@ -119,24 +119,31 @@ void
 SPManager::set_status( const DictionaryDatum& d )
 {
   if ( d->known( names::structural_plasticity_update_interval ) )
+  {
     updateValue< long >( d,
       names::structural_plasticity_update_interval,
       structural_plasticity_update_interval_ );
+  }
   if ( not d->known( names::structural_plasticity_synapses ) )
+  {
     return;
-  /*
-   * Configure synapses model updated during the simulation.
-   */
+  } /*
+    * Configure synapses model updated during the simulation.
+    */
   Token synmodel;
   DictionaryDatum syn_specs, syn_spec;
   DictionaryDatum conn_spec = DictionaryDatum( new Dictionary() );
 
   if ( d->known( names::autapses ) )
+  {
     def< bool >(
       conn_spec, names::autapses, getValue< bool >( d, names::autapses ) );
+  }
   if ( d->known( names::multapses ) )
+  {
     def< bool >(
       conn_spec, names::multapses, getValue< bool >( d, names::multapses ) );
+  }
   GIDCollection sources = GIDCollection();
   GIDCollection targets = GIDCollection();
 
@@ -257,7 +264,9 @@ SPManager::disconnect( index sgid,
   else if ( target->local_receiver() ) // normal devices
   {
     if ( source->is_proxy() )
+    {
       return;
+    }
     if ( ( source->get_thread() != target_thread )
       && ( source->has_proxies() ) )
     {
@@ -271,7 +280,9 @@ SPManager::disconnect( index sgid,
   {
     // we do not allow to connect a device to a global receiver at the moment
     if ( not source->has_proxies() )
+    {
       return;
+    }
     const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread t = 0; t < n_threads; t++ )
     {
@@ -303,11 +314,15 @@ SPManager::disconnect( GIDCollection& sources,
   syn_spec->clear_access_flags();
 
   if ( not conn_spec->known( names::rule ) )
+  {
     throw BadProperty( "Disconnection spec must contain disconnection rule." );
+  }
   const std::string rule_name = ( *conn_spec )[ names::rule ];
 
   if ( not kernel().connection_manager.get_connruledict()->known( rule_name ) )
+  {
     throw BadProperty( "Unknown connectivty rule: " + rule_name );
+  }
 
   if ( not sp_conn_builders_.empty() )
   { // Implement a getter for sp_conn_builders_
@@ -556,7 +571,9 @@ SPManager::delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
     // shuffle only the first n items, n is the number of deleted synaptic
     // elements
     if ( -( *n_it ) > static_cast< int >( global_targets.size() ) )
+    {
       *n_it = -global_targets.size();
+    }
     global_shuffle( global_targets, -( *n_it ) );
 
     for ( int i = 0; i < -( *n_it ); i++ ) // n is negative
@@ -661,7 +678,9 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
     // shuffle only the first n items, n is the number of deleted synaptic
     // elements
     if ( -( *n_it ) > static_cast< int >( global_sources.size() ) )
+    {
       *n_it = -global_sources.size();
+    }
     global_shuffle( global_sources, -( *n_it ) );
 
     for ( int i = 0; i < -( *n_it ); i++ ) // n is negative

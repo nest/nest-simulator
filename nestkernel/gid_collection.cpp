@@ -47,7 +47,9 @@ GIDCollection::GIDCollection( TokenArray gids )
 {
   gid_array_.resize( gids.size() );
   for ( size_t i = 0; i < gids.size(); ++i )
+  {
     gid_array_[ i ] = gids[ i ];
+  }
 }
 
 void

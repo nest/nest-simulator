@@ -44,7 +44,9 @@ void
 nest::UniversalDataLogger< HostNode >::reset()
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
+  {
     it->reset();
+  }
 }
 
 template < typename HostNode >
@@ -52,7 +54,9 @@ void
 nest::UniversalDataLogger< HostNode >::init()
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
+  {
     it->init();
+  }
 }
 
 template < typename HostNode >
@@ -60,7 +64,9 @@ void
 nest::UniversalDataLogger< HostNode >::record_data( long step )
 {
   for ( DLiter_ it = data_loggers_.begin(); it != data_loggers_.end(); ++it )
+  {
     it->record_data( host_, step );
+  }
 }
 
 template < typename HostNode >
@@ -94,7 +100,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
   // buffer is properly initialized.
   if ( next_rec_step_
     >= kernel().simulation_manager.get_slice_origin().get_steps() )
+  {
     return;
+  }
 
   // If we get here, the buffer has either never been initialized or has
   // been dormant during a period when the host node was frozen. We then
@@ -208,8 +216,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host,
   // Applying this mark here is less work than initializing all time stamps
   // to -infinity after each call to this function.
   if ( next_rec_[ rt ] < data_[ rt ].size() )
+  {
     data_[ rt ][ next_rec_[ rt ] ].timestamp = Time::neg_inf();
-
+  }
   // now create reply event and rigg it
   DataLoggingReply reply( data_[ rt ] );
 

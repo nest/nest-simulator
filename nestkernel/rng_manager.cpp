@@ -98,9 +98,13 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     // upated
     rng_.clear();
     for ( index i = 0; i < ad->size(); ++i )
+    {
       if ( kernel().vp_manager.is_local_vp( i ) )
+      {
         rng_.push_back( getValue< librandom::RngDatum >(
           ( *ad )[ kernel().vp_manager.suggest_vp( i ) ] ) );
+      }
+    }
   }
   else if ( n_threads_updated && kernel().node_manager.size() == 0 )
   {
@@ -151,8 +155,10 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
       long s = ( *ad )[ i ];
 
       if ( kernel().vp_manager.is_local_vp( i ) )
+      {
         rng_[ kernel().vp_manager.vp_to_thread(
                 kernel().vp_manager.suggest_vp( i ) ) ]->seed( s );
+      }
 
       rng_seeds_[ i ] = s;
     }

@@ -64,9 +64,10 @@ std::vector< double >
 get_position( const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
+  {
     throw KernelException(
       "GetPosition is currently implemented for local nodes only." );
-
+  }
   Node const* const node = kernel().node_manager.get_node( node_gid );
 
   AbstractLayer* const layer =
@@ -83,9 +84,10 @@ std::vector< double >
 displacement( const std::vector< double >& point, const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
+  {
     throw KernelException(
       "Displacement is currently implemented for local nodes only." );
-
+  }
   Node const* const node = kernel().node_manager.get_node( node_gid );
 
   AbstractLayer* const layer =
@@ -102,9 +104,10 @@ double
 distance( const std::vector< double >& point, const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
+  {
     throw KernelException(
       "Distance is currently implemented for local nodes only." );
-
+  }
   Node const* const node = kernel().node_manager.get_node( node_gid );
 
   AbstractLayer* const layer =
@@ -196,8 +199,9 @@ get_global_children( const index gid,
   result.reserve( gids.size() );
   for ( std::vector< index >::iterator it = gids.begin(); it != gids.end();
         ++it )
+  {
     result.push_back( new IntegerDatum( *it ) );
-
+  }
   return result;
 }
 
@@ -212,8 +216,9 @@ connect_layers( const index source_gid,
     kernel().node_manager.get_node( target_gid ) );
 
   if ( ( source == NULL ) || ( target == NULL ) )
+  {
     throw LayerExpected();
-
+  }
   connection_dict->clear_access_flags();
 
   ConnectionCreator connector( connection_dict );
@@ -251,7 +256,9 @@ dump_layer_nodes( const index layer_gid, OstreamDatum& out )
     kernel().node_manager.get_node( layer_gid ) );
 
   if ( layer != 0 && out->good() )
+  {
     layer->dump_nodes( *out );
+  }
 }
 
 void

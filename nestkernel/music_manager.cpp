@@ -162,7 +162,9 @@ MUSICManager::register_music_in_port( std::string portname, bool pristine )
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
   if ( it == music_in_portlist_.end() )
+  {
     music_in_portlist_[ portname ] = MusicPortData( 1, 0.0, -1 );
+  }
   else
   {
     music_in_portlist_[ portname ].n_input_proxies++;
@@ -181,14 +183,18 @@ MUSICManager::unregister_music_in_port( std::string portname )
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
   if ( it == music_in_portlist_.end() )
+  {
     throw MUSICPortUnknown( portname );
+  }
   else
   {
     music_in_portlist_[ portname ].n_input_proxies--;
   }
 
   if ( music_in_portlist_[ portname ].n_input_proxies == 0 )
+  {
     music_in_portlist_.erase( it );
+  }
 }
 
 void
@@ -219,7 +225,9 @@ MUSICManager::set_music_in_port_acceptable_latency( std::string portname,
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
   if ( it == music_in_portlist_.end() )
+  {
     throw MUSICPortUnknown( portname );
+  }
   else
   {
     music_in_portlist_[ portname ].acceptable_latency = latency;
@@ -233,7 +241,9 @@ MUSICManager::set_music_in_port_max_buffered( std::string portname,
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
   if ( it == music_in_portlist_.end() )
+  {
     throw MUSICPortUnknown( portname );
+  }
   else
   {
     music_in_portlist_[ portname ].max_buffered = maxbuffered;
@@ -245,7 +255,9 @@ MUSICManager::publish_music_in_ports_()
 {
   std::map< std::string, MusicEventHandler >::iterator it;
   for ( it = music_in_portmap_.begin(); it != music_in_portmap_.end(); ++it )
+  {
     it->second.publish_port();
+  }
 }
 
 void
@@ -255,7 +267,9 @@ MUSICManager::update_music_event_handlers( Time const& origin,
 {
   std::map< std::string, MusicEventHandler >::iterator it;
   for ( it = music_in_portmap_.begin(); it != music_in_portmap_.end(); ++it )
+  {
     it->second.update( origin, from, to );
+  }
 }
 #endif
 }

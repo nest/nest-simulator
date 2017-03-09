@@ -155,8 +155,11 @@ void
 nest::MPIManager::set_num_rec_processes( int nrp, bool called_by_reset )
 {
   if ( kernel().node_manager.size() > 1 and not called_by_reset )
+  {
     throw KernelException(
       "Global spike detection mode must be enabled before nodes are created." );
+  }
+
   if ( nrp >= num_processes_ )
   {
     throw KernelException(
@@ -333,6 +336,7 @@ nest::MPIManager::communicate_Allgather( std::vector< T >& send_buffer,
 
   // attempt Allgather
   if ( send_buffer.size() == static_cast< unsigned int >( send_buffer_size_ ) )
+  {
     MPI_Allgather( &send_buffer[ 0 ],
       send_buffer_size_,
       MPI_Type< T >::type,
@@ -340,6 +344,7 @@ nest::MPIManager::communicate_Allgather( std::vector< T >& send_buffer,
       send_buffer_size_,
       MPI_Type< T >::type,
       comm );
+  }
   else
   {
     // DEC cxx required 0U literal, HEP 2007-03-26
@@ -367,7 +372,9 @@ nest::MPIManager::communicate_Allgather( std::vector< T >& send_buffer,
       overflow = true;
       recv_counts[ pid ] = recv_buffer[ block_disp + 1 ];
       if ( static_cast< unsigned int >( recv_counts[ pid ] ) > max_recv_count )
+      {
         max_recv_count = recv_counts[ pid ];
+      }
     }
     disp += recv_counts[ pid ];
   }
@@ -420,6 +427,7 @@ nest::MPIManager::communicate_Allgather(
   std::vector< int > recv_counts( get_num_processes(), send_buffer_size_ );
   // attempt Allgather
   if ( send_buffer.size() == static_cast< unsigned int >( send_buffer_size_ ) )
+  {
     MPI_Allgather( &send_buffer[ 0 ],
       send_buffer_size_,
       MPI_OFFGRID_SPIKE,
@@ -427,6 +435,7 @@ nest::MPIManager::communicate_Allgather(
       send_buffer_size_,
       MPI_OFFGRID_SPIKE,
       comm );
+  }
   else
   {
     std::vector< OffGridSpike > overflow_buffer( send_buffer_size_ );
@@ -454,7 +463,9 @@ nest::MPIManager::communicate_Allgather(
       overflow = true;
       recv_counts[ pid ] = ( recv_buffer[ block_disp + 1 ] ).get_gid();
       if ( static_cast< unsigned int >( recv_counts[ pid ] ) > max_recv_count )
+      {
         max_recv_count = recv_counts[ pid ];
+      }
     }
     disp += recv_counts[ pid ];
   }
@@ -488,7 +499,9 @@ nest::MPIManager::communicate( std::vector< double >& send_buffer,
   // Set up displacements vector.
   displacements.resize( get_num_processes(), 0 );
   for ( int i = 1; i < get_num_processes(); ++i )
+  {
     displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+  }
 
   // Calculate total number of node data items to be gathered.
   size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
@@ -673,12 +686,12 @@ nest::MPIManager::test_link( int sender, int receiver )
     MPI_Status status;
 
     if ( get_rank() == sender )
+    {
       MPI_Ssend( &dummy, 1, MPI_LONG, receiver, 0, comm );
+    }
     else if ( get_rank() == receiver )
     {
       MPI_Recv( &dummy, 1, MPI_LONG, sender, 0, comm, &status );
-      // std::cerr << "link between " << sender << " and " << receiver << "
-      // works" << std::endl;
     }
   }
 }
@@ -687,12 +700,15 @@ void
 nest::MPIManager::test_links()
 {
   for ( int i = 0; i < get_num_processes(); ++i )
+  {
     for ( int j = 0; j < get_num_processes(); ++j )
+    {
       if ( i != j )
       {
         test_link( i, j );
       }
-  // std::cerr << "all links are working" << std::endl;
+    }
+  }
 }
 
 // grng_synchrony: called at the beginning of each simulate
@@ -727,7 +743,9 @@ bool
 nest::MPIManager::any_true( const bool my_bool )
 {
   if ( get_num_processes() == 1 )
+  {
     return my_bool;
+  }
 
   // since there is no MPI_BOOL we first convert to int
   int my_int = my_bool;
@@ -751,7 +769,9 @@ double
 nest::MPIManager::time_communicate( int num_bytes, int samples )
 {
   if ( get_num_processes() == 1 )
+  {
     return 0.0;
+  }
   unsigned int packet_length = num_bytes / sizeof( unsigned int );
   if ( packet_length < 1 )
   {
@@ -783,7 +803,9 @@ double
 nest::MPIManager::time_communicatev( int num_bytes, int samples )
 {
   if ( get_num_processes() == 1 )
+  {
     return 0.0;
+  }
   unsigned int packet_length = num_bytes / sizeof( unsigned int );
   if ( packet_length < 1 )
   {
@@ -796,7 +818,9 @@ nest::MPIManager::time_communicatev( int num_bytes, int samples )
   std::vector< int > displacements( get_num_processes(), 0 );
 
   for ( int i = 1; i < get_num_processes(); ++i )
+  {
     displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+  }
 
   // start time measurement here
   Stopwatch foo;
@@ -817,7 +841,9 @@ double
 nest::MPIManager::time_communicate_offgrid( int num_bytes, int samples )
 {
   if ( get_num_processes() == 1 )
+  {
     return 0.0;
+  }
   unsigned int packet_length = num_bytes / sizeof( OffGridSpike );
   if ( packet_length < 1 )
   {
@@ -849,7 +875,9 @@ double
 nest::MPIManager::time_communicate_alltoall( int num_bytes, int samples )
 {
   if ( get_num_processes() == 1 )
+  {
     return 0.0;
+  }
   unsigned int packet_length = num_bytes
     / sizeof( unsigned int ); // this size should be sent to each process
   unsigned int total_packet_length = packet_length
@@ -883,7 +911,9 @@ double
 nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
 {
   if ( get_num_processes() == 1 )
+  {
     return 0.0;
+  }
   unsigned int packet_length = num_bytes
     / sizeof( unsigned int ); // this size should be sent to each process
   unsigned int total_packet_length = packet_length
@@ -898,7 +928,9 @@ nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
   std::vector< int > displacements( get_num_processes(), 0 );
 
   for ( int i = 1; i < get_num_processes(); ++i )
+  {
     displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+  }
 
   // start time measurement here
   Stopwatch foo;
@@ -949,8 +981,10 @@ nest::MPIManager::communicate_connector_properties( DictionaryDatum& dict )
     std::vector< int > displacements( get_num_processes(), 0 );
 
     for ( size_t i = 1; i < num_connections.size(); ++i )
+    {
       displacements.at( i ) =
         displacements.at( i - 1 ) + num_connections.at( i - 1 );
+    }
 
     // Calculate sum of global connections.
     int num_connections_sum =

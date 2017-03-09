@@ -275,6 +275,12 @@ nest::ConnectionManager::delete_connections_5g_()
         it != connections_5g_.end();
         ++it )
   {
+    for ( std::vector< ConnectorBase* >::iterator iit =  ( *it )->begin();
+          iit != ( *it )->end();
+          ++iit )
+      {
+        delete *iit;
+      }
     delete *it;
   }
   connections_5g_.clear();

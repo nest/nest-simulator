@@ -60,6 +60,12 @@ class ConnectorBase
 {
 
 public:
+
+   // destructor needs to be declared virtual to avoid undefined
+   // behaviour, avoid possible memory leak and needs to be defined to
+   // avoid linker error, see, e.g., Meyers, S. (2005) p40ff
+  virtual ~ConnectorBase(){};
+
   /** Adds status of synapse of type syn_id at position lcid to
    * dictionary d.
    */
@@ -228,6 +234,7 @@ public:
 
   ~Connector()
   {
+    C_.clear();
   }
 
   void

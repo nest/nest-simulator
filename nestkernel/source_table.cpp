@@ -449,10 +449,6 @@ nest::SourceTable::get_next_target_data( const thread tid,
     if ( target_rank < rank_start || target_rank >= rank_end )
     {
       --current_position.lcid;
-      if ( target_rank < rank_start )
-      {
-        current_position.lcid = -1;
-      }
       continue;
     }
 

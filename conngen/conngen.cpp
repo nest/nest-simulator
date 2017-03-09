@@ -91,7 +91,9 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
   const Token synmodel =
     kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
+  {
     throw UnknownSynapseType( synmodel_name.toString() );
+  }
   const index synmodel_id = static_cast< index >( synmodel );
 
   const modelrange source_range =
@@ -129,7 +131,9 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
   const Token synmodel =
     kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
+  {
     throw UnknownSynapseType( synmodel_name.toString() );
+  }
   const index synmodel_id = static_cast< index >( synmodel );
 
   RangeSet source_ranges;

@@ -64,7 +64,9 @@ expm1( double x )
     return 0;
   }
   if ( std::abs( x ) > std::log( 2.0 ) )
+  {
     return std::exp( x ) - 1;
+  }
   else
   {
     double sum = x;

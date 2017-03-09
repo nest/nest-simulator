@@ -3,15 +3,20 @@
 #
 # Do not apply T011 (curly braces), since that can get confused
 # by conditional code inclusion.
+#
+# Do not apply F002 (file name length limits), since some benign model file
+# names then become illegal; Vera++ 1.2.1 does not support parameters in
+# profile files, so we cannot extend file name length limits here. 
+#
+# Do not apply L006 (limit on file length), since some legacy sli code 
+# is too long; see also F002.
 
 set rules {
   F001
-  F002
   L001
   L002
   L003
   L005
-  L006
   T001
   T002
   T004

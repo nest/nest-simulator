@@ -183,8 +183,10 @@ librandom::PoissonRandomDev::init_()
     // ensure table ends with 1.0
     P_[ n_tab_ - 1 ] = 1.0;
   }
-  else             // mu == 0.0
+  else // mu == 0.0
+  {
     P_[ 0 ] = 1.0; // just for safety
+  }
 }
 
 long
@@ -198,7 +200,9 @@ librandom::PoissonRandomDev::ldev( RngPtr r ) const
   // added the following two lines of code
   // Diesmann, 26.7.2002
   if ( mu_ == 0.0 )
+  {
     return 0;
+  }
 
   unsigned long K = 0; // candidate
 
@@ -210,7 +214,9 @@ librandom::PoissonRandomDev::ldev( RngPtr r ) const
 
     K = 0; // be defensive
     while ( U > P_[ K ] && K != n_tab_ )
+    {
       ++K;
+    }
 
     return K; // maximum value: K == n_tab_ == 46
   }

@@ -61,12 +61,12 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else if ( num_parameters == 2 )
   {
-if ( not params_map->known( names::weight )
-{
-  || not params_map->known( names::delay ) )
+    if ( not params_map->known( names::weight )
+      || not params_map->known( names::delay ) )
+    {
       throw BadProperty(
         "The parameter map has to contain the indices of weight and delay." );
-}
+    }
 
     long w_idx = ( *params_map )[ names::weight ];
     long d_idx = ( *params_map )[ names::delay ];
@@ -75,18 +75,18 @@ if ( not params_map->known( names::weight )
     // connect source to target with weight and delay
     while ( cg->next( source, target, &params[ 0 ] ) )
     {
-  if ( kernel().node_manager.is_local_gid( target + target_offset ) )
-  {
-    Node* const target_node =
-      kernel().node_manager.get_node( target + target_offset );
-    const thread target_thread = target_node->get_thread();
-    kernel().connection_manager.connect( source + source_offset,
-      target_node,
-      target_thread,
-      syn,
-      params[ d_idx ],
-      params[ w_idx ] );
-  }
+      if ( kernel().node_manager.is_local_gid( target + target_offset ) )
+      {
+        Node* const target_node =
+          kernel().node_manager.get_node( target + target_offset );
+        const thread target_thread = target_node->get_thread();
+        kernel().connection_manager.connect( source + source_offset,
+          target_node,
+          target_thread,
+          syn,
+          params[ d_idx ],
+          params[ w_idx ] );
+      }
     }
   }
   else
@@ -128,12 +128,12 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else if ( num_parameters == 2 )
   {
-if ( not params_map->known( names::weight )
-{
-  || not params_map->known( names::delay ) )
+    if ( not params_map->known( names::weight )
+      || not params_map->known( names::delay ) )
+    {
       throw BadProperty(
         "The parameter map has to contain the indices of weight and delay." );
-}
+    }
 
     long w_idx = ( *params_map )[ names::weight ];
     long d_idx = ( *params_map )[ names::delay ];
@@ -142,18 +142,18 @@ if ( not params_map->known( names::weight )
     // connect source to target with weight and delay
     while ( cg->next( source, target, &params[ 0 ] ) )
     {
-  if ( kernel().node_manager.is_local_gid( target_gids.at( target ) ) )
-  {
-    Node* const target_node =
-      kernel().node_manager.get_node( target_gids.at( target ) );
-    const thread target_thread = target_node->get_thread();
-    kernel().connection_manager.connect( source_gids.at( source ),
-      target_node,
-      target_thread,
-      syn,
-      params[ d_idx ],
-      params[ w_idx ] );
-  }
+      if ( kernel().node_manager.is_local_gid( target_gids.at( target ) ) )
+      {
+        Node* const target_node =
+          kernel().node_manager.get_node( target_gids.at( target ) );
+        const thread target_thread = target_node->get_thread();
+        kernel().connection_manager.connect( source_gids.at( source ),
+          target_node,
+          target_thread,
+          syn,
+          params[ d_idx ],
+          params[ w_idx ] );
+      }
     }
   }
   else
@@ -238,7 +238,9 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
     for ( size_t proc = 0; proc
             < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
           ++proc )
+    {
       ( *masks )[ proc ].sources.insert( cg_idx_left, right );
+    }
     cg_idx_left += num_elements + 1;
   }
 
@@ -300,7 +302,9 @@ cg_get_right_border( index left, size_t step, std::vector< long >& gids )
   // Check if left is already the index of the last element in
   // gids. If yes, return left as the right border
   if ( left == gids.size() - 1 )
+  {
     return left;
+  }
 
   // leftmost_r is the leftmost right border during the search
   long leftmost_r = -1;
@@ -320,7 +324,9 @@ cg_get_right_border( index left, size_t step, std::vector< long >& gids )
     if ( ( i == static_cast< long >( gids.size() ) - 1
            && gids[ i ] - gids[ left ] == i - static_cast< long >( left ) )
       || i == leftmost_r )
+    {
       return last_i;
+    }
 
     // Store the current value of i in last_i. This is the current
     // candidate for the right border of the range.
@@ -331,7 +337,9 @@ cg_get_right_border( index left, size_t step, std::vector< long >& gids )
     // for leftmost_r to the current i (i.e. the known leftmost
     // position) and set i to the left by step steps.
     if ( gids[ i ] - gids[ left ] == i - static_cast< long >( left ) )
+    {
       i += step;
+    }
     else
     {
       leftmost_r = i;
@@ -376,7 +384,9 @@ cg_get_ranges( RangeSet& ranges, std::vector< long >& gids )
     right = cg_get_right_border( left, ( gids.size() - left ) / 2, gids );
     ranges.push_back( Range( gids[ left ], gids[ right ] ) );
     if ( right == gids.size() - 1 ) // We're at the end of gids and stop
+    {
       break;
+    }
     else
     {
       left = right + 1;

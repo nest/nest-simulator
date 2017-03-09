@@ -123,7 +123,9 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     positions_.reserve( this->local_size() );
 
     if ( this->local_size() == 0 )
+    {
       return; // nothing more to do
+    }
 
     const index nodes_per_depth = this->global_size() / this->depth_;
     const index first_lid = this->nodes_[ 0 ]->get_lid();
@@ -219,7 +221,9 @@ FreeLayer< D >::communicate_positions_( Ins iter, const Selector& filter )
 
     if ( filter.select_model()
       && ( ( *node_it )->get_model_id() != filter.model ) )
+    {
       continue;
+    }
 
     // Push GID into array to communicate
     local_gid_pos.push_back( ( *node_it )->get_gid() );
@@ -295,7 +299,9 @@ FreeLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
 
     if ( filter.select_model()
       && ( ( *node_it )->get_model_id() != filter.model ) )
+    {
       continue;
+    }
 
     tree.insert( std::pair< Position< D >, index >(
       positions_[ ( *node_it )->get_subnet_index() % positions_.size() ],

@@ -252,7 +252,9 @@ nest::ConnBuilder::~ConnBuilder()
   for ( std::map< Name, ConnParameter* >::iterator it = synapse_params_.begin();
         it != synapse_params_.end();
         ++it )
+  {
     delete it->second;
+  }
 }
 
 void
@@ -263,9 +265,11 @@ nest::ConnBuilder::check_synapse_params_( std::string syn_name,
   if ( syn_name == "static_synapse_hom_w" )
   {
     if ( syn_spec->known( names::weight ) )
+    {
       throw BadProperty(
         "Weight cannot be specified since it needs to be equal "
         "for all connections when static_synapse_hom_w is used." );
+    }
     return;
   }
 
@@ -275,13 +279,17 @@ nest::ConnBuilder::check_synapse_params_( std::string syn_name,
   if ( syn_name == "quantal_stp_synapse" )
   {
     if ( syn_spec->known( names::n ) )
+    {
       throw NotImplemented(
         "Connect doesn't support the setting of parameter "
         "n in quantal_stp_synapse. Use SetDefaults() or CopyModel()." );
+    }
     if ( syn_spec->known( names::a ) )
+    {
       throw NotImplemented(
         "Connect doesn't support the setting of parameter "
         "a in quantal_stp_synapse. Use SetDefaults() or CopyModel()." );
+    }
     return;
   }
 
@@ -289,11 +297,13 @@ nest::ConnBuilder::check_synapse_params_( std::string syn_name,
   if ( syn_name == "cont_delay_synapse" )
   {
     if ( syn_spec->known( names::delay ) )
+    {
       LOG( M_WARNING,
         "Connect",
         "The delay will be rounded to the next multiple of the time step. "
         "To use a more precise time delay it needs to be defined within "
         "the synapse, e.g. with CopyModel()." );
+    }
     return;
   }
 
@@ -302,26 +312,32 @@ nest::ConnBuilder::check_synapse_params_( std::string syn_name,
   if ( syn_name == "stdp_dopamine_synapse" )
   {
     if ( syn_spec->known( "vt" ) )
+    {
       throw NotImplemented(
         "Connect doesn't support the direct specification of the "
         "volume transmitter of stdp_dopamine_synapse in syn_spec."
         "Use SetDefaults() or CopyModel()." );
+    }
     // setting of parameter c and n not thread save
     if ( kernel().vp_manager.get_num_threads() > 1 )
     {
       if ( syn_spec->known( names::c ) )
+      {
         throw NotImplemented(
           "For multi-threading Connect doesn't support the setting "
           "of parameter c in stdp_dopamine_synapse. "
           "Use SetDefaults() or CopyModel()." );
+      }
       if ( syn_spec->known( names::n ) )
+      {
         throw NotImplemented(
           "For multi-threading Connect doesn't support the setting "
           "of parameter n in stdp_dopamine_synapse. "
           "Use SetDefaults() or CopyModel()." );
+      }
     }
     std::string param_arr[] = {
-      "A_minus", "A_plus", "Wmax", "Wmin", "b", "tau_c", "tau_n", "tau_plus"
+      " A_minus", "A_plus", "Wmax", "Wmin", "b", "tau_c", "tau_n", "tau_plus"
     };
     std::vector< std::string > param_vec( param_arr, param_arr + 8 );
     for ( std::vector< std::string >::iterator it = param_vec.begin();
@@ -329,9 +345,11 @@ nest::ConnBuilder::check_synapse_params_( std::string syn_name,
           it++ )
     {
       if ( syn_spec->known( *it ) )
+      {
         throw NotImplemented(
           "Connect doesn't support the setting of parameter " + *it
           + " in stdp_dopamine_synapse. Use SetDefaults() or CopyModel()." );
+      }
     }
     return;
   }
@@ -456,8 +474,12 @@ nest::ConnBuilder::connect()
 
   // check if any exceptions have been raised
   for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  {
     if ( exceptions_raised_.at( thr ).valid() )
+    {
       throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+    }
+  }
 }
 
 /**
@@ -477,8 +499,12 @@ nest::ConnBuilder::disconnect()
 
   // check if any exceptions have been raised
   for ( index thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  {
     if ( exceptions_raised_.at( thr ).valid() )
+    {
       throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+    }
+  }
 }
 
 void
@@ -746,7 +772,9 @@ nest::OneToOneBuilder::connect_()
           const index tgid = ( *it ).get_gid();
           const int idx = targets_->find( tgid );
           if ( idx < 0 ) // Is local node in target list?
+          {
             continue;
+          }
 
           // one-to-one, thus we can use target idx for source as well
           const index sgid = ( *sources_ )[ idx ];
@@ -966,7 +994,9 @@ nest::AllToAllBuilder::connect_()
 
           // Is the local node in the targets list?
           if ( targets_->find( tgid ) < 0 )
+          {
             continue;
+          }
 
           inner_connect_( tid, rng, target, tgid, false );
         }
@@ -1259,7 +1289,9 @@ nest::FixedInDegreeBuilder::connect_()
 
           // Is the local node in the targets list?
           if ( targets_->find( tgid ) < 0 )
+          {
             continue;
+          }
 
           inner_connect_( tid, rng, target, tgid, false );
         }
@@ -1461,9 +1493,11 @@ nest::FixedTotalNumberBuilder::FixedTotalNumberBuilder(
   if ( not multapses_ )
   {
     if ( ( N_ > static_cast< long >( sources_->size() * targets_->size() ) ) )
+    {
       throw BadProperty(
         "Total number of connections cannot exceed product "
         "of source and targer population sizes." );
+    }
   }
 
   if ( N_ < 0 )
@@ -1579,7 +1613,9 @@ nest::FixedTotalNumberBuilder::connect_()
               ++it )
         {
           if ( kernel().vp_manager.suggest_vp( *it ) == vp_id )
+          {
             thread_local_targets.push_back( *it );
+          }
         }
         assert(
           thread_local_targets.size() == number_of_targets_on_vp[ vp_id ] );
@@ -1656,7 +1692,9 @@ nest::BernoulliBuilder::connect_()
         {
           // check whether the target is on this mpi machine
           if ( not kernel().node_manager.is_local_gid( *tgid ) )
+          {
             continue;
+          }
 
           Node* const target = kernel().node_manager.get_node( *tgid, tid );
 
@@ -1676,7 +1714,9 @@ nest::BernoulliBuilder::connect_()
 
           // Is the local node in the targets list?
           if ( targets_->find( tgid ) < 0 )
+          {
             continue;
+          }
 
           inner_connect_( tid, rng, target, tgid );
         }
@@ -1719,7 +1759,9 @@ nest::BernoulliBuilder::inner_connect_( const int tid,
     }
 
     if ( rng->drand() >= p_ )
+    {
       continue;
+    }
 
     single_connect_( *sgid, *target, target_thread, rng );
   }
@@ -1767,8 +1809,12 @@ nest::SPBuilder::sp_connect( GIDCollection sources, GIDCollection targets )
 
   // check if any exceptions have been raised
   for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  {
     if ( exceptions_raised_.at( thr ).valid() )
+    {
       throw WrappedThreadException( *( exceptions_raised_.at( thr ) ) );
+    }
+  }
 }
 
 void

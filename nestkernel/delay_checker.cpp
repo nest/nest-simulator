@@ -127,8 +127,10 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
   const double new_delay_ms = Time::delay_steps_to_ms( new_delay );
 
   if ( new_delay < Time::get_resolution().get_steps() )
+  {
     throw BadDelay(
       new_delay_ms, "Delay must be greater than or equal to resolution" );
+  }
 
   // if already simulated, the new delay has to be checked against the
   // min_delay and the max_delay which have been used during simulation
@@ -192,8 +194,10 @@ nest::DelayChecker::assert_two_valid_delays_steps( delay new_delay1,
   const delay hdelay = std::max( new_delay1, new_delay2 );
 
   if ( ldelay < Time::get_resolution().get_steps() )
+  {
     throw BadDelay( Time::delay_steps_to_ms( ldelay ),
       "Delay must be greater than or equal to resolution" );
+  }
 
   if ( kernel().simulation_manager.has_been_simulated() )
   {

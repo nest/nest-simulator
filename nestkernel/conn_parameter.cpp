@@ -85,12 +85,16 @@ nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec,
   : rdv_( 0 )
 {
   if ( not rdv_spec->known( names::distribution ) )
+  {
     throw BadProperty(
       "Random distribution spec must contain distribution name." );
+  }
 
   const std::string rdv_name = ( *rdv_spec )[ names::distribution ];
   if ( not RandomNumbers::get_rdvdict().known( rdv_name ) )
+  {
     throw BadProperty( "Unknown random deviate: " + rdv_name );
+  }
 
   librandom::RdvFactoryDatum factory = getValue< librandom::RdvFactoryDatum >(
     RandomNumbers::get_rdvdict()[ rdv_name ] );

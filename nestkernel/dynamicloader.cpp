@@ -159,15 +159,19 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
 
   new_module.name = getValue< std::string >( i->OStack.top() );
   if ( new_module.name.empty() )
+  {
     throw DynamicModuleManagementError( "Module name must not be empty." );
+  }
 
   // check if module already loaded
   // this check can happen here, since we are comparing dynamically loaded
   // modules based on the name given to the Install command
   if ( std::find( dyn_modules_.begin(), dyn_modules_.end(), new_module )
     != dyn_modules_.end() )
+  {
     throw DynamicModuleManagementError(
       "Module '" + new_module.name + "' is loaded already." );
+  }
 
   // call lt_dlerror() to reset any error messages hanging around
   lt_dlerror();
@@ -196,7 +200,7 @@ DynamicLoaderModule::LoadModuleFunction::execute( SLIInterpreter* i ) const
     lt_dlerror();          // remove any error caused by lt_dlclose()
     throw DynamicModuleManagementError(
             "Module '" + new_module.name + "' could not be loaded.\n"
-            "The dynamic loader returned the following error: '" 
+            "The dynamic loader returned the following error: '"
             + std::string(errstr) + "'.");
   }
 

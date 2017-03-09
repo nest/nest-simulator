@@ -292,9 +292,11 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     }
 
     if ( p->known( names::delay ) )
+    {
       throw BadParameter(
         "Parameter dictionary must not contain delay if delay is given "
         "explicitly." );
+    }
   }
   else
   {
@@ -329,9 +331,11 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
   }
 
   if ( !p->empty() )
+  {
     c.set_status( p, *this ); // reference to connector model needed here to
                               // check delay (maybe this
                               // could be done one level above?)
+  }
 
   // We must use a local variable here to hold the actual value of the
   // receptor type. We must not change the receptor_type_ data member, because
@@ -481,7 +485,9 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
         }
       }            // of for
       if ( found ) // we need to create a new entry for this type of connection
+      {
         conn = pack_pointer( hc, b_has_primary, b_has_secondary );
+      }
       else
       {
         vector_like< ConnectionT >* vc =
@@ -536,7 +542,9 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
       if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
       {
         if ( vc->get_num_connections() > 1 )
+        {
           conn = &vc->erase( i );
+        }
         else
         {
           delete vc;

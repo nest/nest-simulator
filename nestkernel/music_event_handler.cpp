@@ -102,18 +102,24 @@ MusicEventHandler::publish_port()
     const double acceptable_latency_s = 0.001 * acceptable_latency_;
 
     if ( not music_port_->isConnected() )
+    {
       throw MUSICPortUnconnected( "MusicEventHandler", portname_ );
+    }
 
     if ( not music_port_->hasWidth() )
+    {
       throw MUSICPortHasNoWidth( "MusicEventHandler", portname_ );
+    }
 
     unsigned int music_port_width = music_port_->width();
 
     // check, if all mappings are within the valid range of port width
     // the maximum channel mapped - 1 == size of channelmap
     if ( channelmap_.size() > music_port_width )
+    {
       throw MUSICChannelUnknown(
         "MusicEventHandler", portname_, channelmap_.size() - 1 );
+    }
 
     // create the permutation index mapping
     music_perm_ind_ =
@@ -153,7 +159,9 @@ void
 MusicEventHandler::update( Time const& origin, const long from, const long to )
 {
   for ( size_t channel = 0; channel < channelmap_.size(); ++channel )
+  {
     if ( channelmap_[ channel ] != 0 )
+    {
       while ( not eventqueue_[ channel ].empty() )
       {
         Time T = Time::ms( eventqueue_[ channel ].top() );
@@ -175,6 +183,8 @@ MusicEventHandler::update( Time const& origin, const long from, const long to )
           break;
         }
       }
+    }
+  }
 }
 
 } // namespace nest

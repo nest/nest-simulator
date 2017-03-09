@@ -57,8 +57,9 @@ Selector::Selector( const DictionaryDatum& d )
       kernel().model_manager.get_modeldict()->lookup( modelname );
 
     if ( model_token.empty() )
+    {
       throw UnknownModelName( modelname );
-
+    }
     model = static_cast< long >( model_token );
   }
 }

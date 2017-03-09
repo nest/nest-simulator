@@ -417,9 +417,9 @@ nest::aeif_cond_alpha::init_buffers_()
   }
 
   if ( B_.c_ == 0 )
-    {
-      B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
-    }
+  {
+    B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
+  }
   else
   {
     gsl_odeiv_control_init(

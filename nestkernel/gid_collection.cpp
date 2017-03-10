@@ -38,6 +38,12 @@ struct PrimitiveSortObject
   {
     return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
   }
+  
+  bool operator()( const GIDCollectionPrimitive& primitive_lhs,
+    const GIDCollectionPrimitive& primitive_rhs )
+  {
+    return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
+  }
 } primitiveSort;
 
 
@@ -705,7 +711,7 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
     size_t previous_part = 4294967295; // initializing as large number (for now)
     index primitive_last = 0;
 
-    size_t primitive_size;
+    size_t primitive_size = 0;
     GIDPair pair;
 
     std::vector< std::string > string_vector;

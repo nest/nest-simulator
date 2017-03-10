@@ -71,7 +71,7 @@ struct is_floating_point;
 template < class T >
 struct is_pointer;
 // MSVC can't compile this correctly, and neither can gcc 3.3.5 (at least)
-#if !defined( _MSC_VER ) && !( defined( __GNUC__ ) && __GNUC__ <= 3 )
+#if not defined( _MSC_VER ) && not( defined( __GNUC__ ) && __GNUC__ <= 3 )
 // is_enum uses is_convertible, which is not available on MSVC.
 template < class T >
 struct is_enum;
@@ -102,7 +102,7 @@ template < class T >
 struct remove_pointer;
 template < class T, class U >
 struct is_same;
-#if !defined( _MSC_VER ) && !( defined( __GNUC__ ) && __GNUC__ <= 3 )
+#if not defined( _MSC_VER ) && not( defined( __GNUC__ ) && __GNUC__ <= 3 )
 template < class From, class To >
 struct is_convertible;
 #endif
@@ -245,7 +245,7 @@ struct is_pointer< const volatile T > : is_pointer< T >
 {
 };
 
-#if !defined( _MSC_VER ) && !( defined( __GNUC__ ) && __GNUC__ <= 3 )
+#if not defined( _MSC_VER ) && not( defined( __GNUC__ ) && __GNUC__ <= 3 )
 
 namespace internal
 {
@@ -331,7 +331,7 @@ struct is_reference< T& > : true_type
 template < class T >
 struct is_pod : integral_constant< bool,
                   ( is_integral< T >::value || is_floating_point< T >::value ||
-#if !defined( _MSC_VER ) && !( defined( __GNUC__ ) && __GNUC__ <= 3 )
+#if not defined( _MSC_VER ) && not( defined( __GNUC__ ) && __GNUC__ <= 3 )
                                      // is_enum is not available on MSVC.
                                      is_enum< T >::value ||
 #endif
@@ -535,7 +535,7 @@ struct is_same< T, T > : public true_type
 };
 
 // Specified by TR1 [4.6] Relationships between types
-#if !defined( _MSC_VER ) && !( defined( __GNUC__ ) && __GNUC__ <= 3 )
+#if not defined( _MSC_VER ) && not( defined( __GNUC__ ) && __GNUC__ <= 3 )
 namespace internal
 {
 

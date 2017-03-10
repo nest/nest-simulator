@@ -195,8 +195,10 @@ read_bigendian_number( INPUT* fp, IntType* value, size_t length )
     serializing_int_requires_an_unsigned_type );
   for ( size_t i = 0; i < length; ++i )
   {
-    if ( !read_data( fp, &byte, sizeof( byte ) ) )
+    if ( not read_data( fp, &byte, sizeof( byte ) ) )
+    {
       return false;
+    }
     *value |= static_cast< IntType >( byte ) << ( ( length - 1 - i ) * 8 );
   }
   return true;
@@ -217,8 +219,10 @@ write_bigendian_number( OUTPUT* fp, IntType value, size_t length )
       ? 0
       : static_cast< unsigned char >(
           ( value >> ( ( length - 1 - i ) * 8 ) ) & 255 );
-    if ( !write_data( fp, &byte, sizeof( byte ) ) )
+    if ( not write_data( fp, &byte, sizeof( byte ) ) )
+    {
       return false;
+    }
   }
   return true;
 }
@@ -406,7 +410,9 @@ public:
     assert( shrink >= 0.0 );
     assert( grow <= 1.0 );
     if ( shrink > grow / 2.0f )
+    {
       shrink = grow / 2.0f; // otherwise we thrash hashtable size
+    }
     set_shrink_factor( shrink );
     set_enlarge_factor( grow );
   }

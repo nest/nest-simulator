@@ -80,7 +80,9 @@ Mask< D >::outside( const Box< D >& b ) const
   {
     if ( ( b.upper_right[ i ] < bb.lower_left[ i ] )
       || ( b.lower_left[ i ] > bb.upper_right[ i ] ) )
+    {
       return true;
+    }
   }
   return false;
 }
@@ -107,7 +109,9 @@ BoxMask< D >::outside( const Box< D >& b ) const
   {
     if ( ( b.upper_right[ i ] < lower_left_[ i ] )
       || ( b.lower_left[ i ] > upper_right_[ i ] ) )
+    {
       return true;
+    }
   }
   return false;
 }
@@ -153,17 +157,25 @@ BallMask< 2 >::inside( const Box< 2 >& b ) const
 
   // Test if all corners are inside circle
 
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (0,0)
+  }
   p[ 0 ] = b.upper_right[ 0 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (0,1)
+  }
   p[ 1 ] = b.upper_right[ 1 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (1,1)
+  }
   p[ 0 ] = b.lower_left[ 0 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (1,0)
+  }
 
   return true;
 }
@@ -176,29 +188,45 @@ BallMask< 3 >::inside( const Box< 3 >& b ) const
 
   // Test if all corners are inside sphere
 
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (0,0,0)
+  }
   p[ 0 ] = b.upper_right[ 0 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (0,0,1)
+  }
   p[ 1 ] = b.upper_right[ 1 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (0,1,1)
+  }
   p[ 0 ] = b.lower_left[ 0 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (0,1,0)
+  }
   p[ 2 ] = b.upper_right[ 2 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (1,1,0)
+  }
   p[ 0 ] = b.upper_right[ 0 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (1,1,1)
+  }
   p[ 1 ] = b.lower_left[ 1 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (1,0,1)
+  }
   p[ 0 ] = b.lower_left[ 0 ];
-  if ( !inside( p ) )
+  if ( not inside( p ) )
+  {
     return false; // (1,0,0)
+  }
 
   return true;
 }
@@ -213,7 +241,9 @@ BallMask< D >::outside( const Box< D >& b ) const
   {
     if ( ( b.upper_right[ i ] < center_[ i ] - radius_ )
       || ( b.lower_left[ i ] > center_[ i ] + radius_ ) )
+    {
       return true;
+    }
   }
   return false;
 }
@@ -280,9 +310,13 @@ IntersectionMask< D >::get_bbox() const
   for ( int i = 0; i < D; ++i )
   {
     if ( bb2.lower_left[ i ] > bb.lower_left[ i ] )
+    {
       bb.lower_left[ i ] = bb2.lower_left[ i ];
+    }
     if ( bb2.upper_right[ i ] < bb.upper_right[ i ] )
+    {
       bb.upper_right[ i ] = bb2.upper_right[ i ];
+    }
   }
   return bb;
 }
@@ -324,9 +358,13 @@ UnionMask< D >::get_bbox() const
   for ( int i = 0; i < D; ++i )
   {
     if ( bb2.lower_left[ i ] < bb.lower_left[ i ] )
+    {
       bb.lower_left[ i ] = bb2.lower_left[ i ];
+    }
     if ( bb2.upper_right[ i ] > bb.upper_right[ i ] )
+    {
       bb.upper_right[ i ] = bb2.upper_right[ i ];
+    }
   }
   return bb;
 }
@@ -342,7 +380,7 @@ template < int D >
 bool
 DifferenceMask< D >::inside( const Position< D >& p ) const
 {
-  return mask1_->inside( p ) && !mask2_->inside( p );
+  return mask1_->inside( p ) && not mask2_->inside( p );
 }
 
 template < int D >

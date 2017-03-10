@@ -43,7 +43,7 @@ ModelManager::register_node_model( const Name& name,
   bool private_model,
   std::string deprecation_info )
 {
-  if ( !private_model && modeldict_->known( name ) )
+  if ( not private_model && modeldict_->known( name ) )
   {
     std::string msg = String::compose(
       "A model called '%1' already exists.\n"
@@ -64,7 +64,7 @@ ModelManager::register_preconf_node_model( const Name& name,
   bool private_model,
   std::string deprecation_info )
 {
-  if ( !private_model && modeldict_->known( name ) )
+  if ( not private_model && modeldict_->known( name ) )
   {
     std::string msg = String::compose(
       "A model called '%1' already exists.\n"
@@ -121,7 +121,9 @@ ModelManager::register_secondary_connection_model( const std::string& name,
   // otherwise when number of threads is increased no way to get further
   // elements
   if ( secondary_connector_models_.size() < synid + ( unsigned int ) 1 )
+  {
     secondary_connector_models_.resize( synid + 1, NULL );
+  }
 
   secondary_connector_models_[ synid ] = cm;
 
@@ -137,7 +139,9 @@ ModelManager::register_secondary_connection_model( const std::string& name,
   // otherwise when number of threads is increased no way to get further
   // elements
   if ( secondary_connector_models_.size() < synid + ( unsigned int ) 1 )
+  {
     secondary_connector_models_.resize( synid + 1, NULL );
+  }
 
   secondary_connector_models_[ synid ] = cm;
 

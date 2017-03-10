@@ -42,6 +42,8 @@ statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
 (unittest) run
 /unittest using
 
+exit_test_gracefully  % TODO480 (uses Topology)
+
 M_INFO setverbosity
 
 % the following the functions expect that the following variables

@@ -38,6 +38,8 @@ SeeAlso:
 (unittest) run
 /unittest using
 
+exit_test_gracefully  % TODO480 (uses Topology)
+
 is_threaded not { exit_test_gracefully } if
 
 % First set of tests: Single generator to neuron layer

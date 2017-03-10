@@ -97,11 +97,7 @@ def
     /recvars [ /g_in ] def
     /N 100 def
 
-        /nnet /subnet Create def
-        nnet 0 get ChangeSubnet
-	/iaf_cond_alpha N Create ;
-        0 ChangeSubnet
-        /nrns nnet 0 get GetGlobalLeaves def
+        /nrns /iaf_cond_alpha N Create def
 
         /multimeter << /record_from recvars /withgid false /withtime true 
                        /interval 0.7 /start 4.8 /stop 233.1 /time_in_steps true >> SetDefaults
@@ -164,11 +160,7 @@ def
     0 << /local_num_threads n_threads >> SetStatus
 
     % actual neurons, placed in subnet
-    /nnet /subnet Create def
-    nnet 0 get ChangeSubnet
-    /iaf_cond_alpha N << /I_e 40. >> Create ;
-    0 ChangeSubnet
-    /nrns nnet 0 get GetGlobalLeaves def
+    /nrns /iaf_cond_alpha N << /I_e 40. >> Create def
     nrns { dup /global_id get 1 sub 30. N div mul -90. add 
                /foo << >> def foo exch /V_m exch put foo SetStatus } forall
 

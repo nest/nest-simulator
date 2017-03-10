@@ -545,9 +545,9 @@ tp.ConnectLayers(l, l, cdict_i2p)
 # ----------------------------
 
 #{ conn9 #}
-nrns = tp.CreateLayer({'rows': 20,
-                       'columns': 20,
-                       'elements': 'iaf_psc_alpha'})
+nrn_layer = tp.CreateLayer({'rows': 20,
+                            'columns': 20,
+                            'elements': 'iaf_psc_alpha'})
 
 stim = tp.CreateLayer({'rows': 1,
                        'columns': 1,
@@ -557,7 +557,7 @@ cdict_stim = {'connection_type': 'divergent',
               'mask': {'circular': {'radius': 0.1},
                        'anchor': [0.2, 0.2]}}
 
-tp.ConnectLayers(stim, nrns, cdict_stim)
+tp.ConnectLayers(stim, nrn_layer, cdict_stim)
 #{ end #}
 
 
@@ -572,5 +572,13 @@ cdict_rec = {'connection_type': 'convergent',
              'mask': {'circular': {'radius': 0.1},
                       'anchor': [-0.2, 0.2]}}
 
-tp.ConnectLayers(nrns, rec, cdict_rec)
+tp.ConnectLayers(nrn_layer, rec, cdict_rec)
+#{ end #}
+
+# ----------------------------
+
+#{ conn11 #}
+rec = nest.Create('spike_detector')
+nrns = nest.GetLeaves(nrn_layer, local_only=True)[0]
+nest.Connect(nrns, rec)
 #{ end #}

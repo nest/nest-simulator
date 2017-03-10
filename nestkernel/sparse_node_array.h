@@ -148,7 +148,6 @@ private:
   index local_min_gid_;                       //!< smallest local GID
   index local_max_gid_;                       //!< largest local GID
   double gid_idx_scale_;                      //!< interpolation factor
-  mutable std::map< long, size_t > step_ctr_; //!< for analysis, measure misses
 };
 
 } // namespace nest
@@ -179,7 +178,6 @@ nest::SparseNodeArray::clear()
   local_min_gid_ = 0;
   local_max_gid_ = 0;
   gid_idx_scale_ = 1.;
-  step_ctr_.clear();
 }
 
 inline size_t
@@ -199,12 +197,6 @@ inline nest::index
 nest::SparseNodeArray::get_max_gid() const
 {
   return max_gid_;
-}
-
-inline std::map< long, size_t >
-nest::SparseNodeArray::get_step_ctr() const
-{
-  return step_ctr_;
 }
 
 inline nest::Node*

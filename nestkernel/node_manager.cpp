@@ -769,41 +769,11 @@ void
 NodeManager::get_status( DictionaryDatum& d )
 {
   def< long >( d, "network_size", size() );
-
-  std::map< long, size_t > sna_cts = local_nodes_.get_step_ctr();
-  DictionaryDatum cdict( new Dictionary );
-  for ( std::map< long, size_t >::const_iterator cit = sna_cts.begin();
-        cit != sna_cts.end();
-        ++cit )
-  {
-    std::stringstream s;
-    s << cit->first;
-    ( *cdict )[ s.str() ] = cit->second;
-  }
 }
 
 void
 NodeManager::set_status( const DictionaryDatum& d )
 {
-  std::string tmp;
-  // proceed only if there are unaccessed items left
-  if ( not d->all_accessed( tmp ) )
-  {
-    // Fetch the target pointer here. We cannot do it above, since
-    // Network::set_status() may modify the root compound if the number
-    // of threads changes. HEP, 2008-10-20
-    Node* target = local_nodes_.get_node_by_gid( 0 );
-    assert( target != 0 );
-
-    for ( size_t t = 0; t < target->num_thread_siblings(); ++t )
-    {
-      // Root container for per-thread subnets. We must prevent clearing of
-      // access flags before each compound's properties are set by passing false
-      // as last arg we iterate over all threads
-      assert( target->get_thread_sibling( t ) != 0 );
-      set_status_single_node_( *( target->get_thread_sibling( t ) ), d, false );
-    }
-  }
 }
 
 void

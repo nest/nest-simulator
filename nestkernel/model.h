@@ -98,7 +98,7 @@ public:
 
   /**
    * Reserve memory for at least n additional Nodes.
-   * A number of memory managers work more efficently if they have
+   * A number of memory managers work more efficiently if they have
    * an idea about the number of Nodes to be allocated.
    * This function prepares the memory manager for the subsequent
    * allocation of n additional Nodes.

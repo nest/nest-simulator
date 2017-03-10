@@ -85,13 +85,13 @@ ModelManager::initialize()
     siblingcontainer_model_ =
       new GenericModel< SiblingContainer >( std::string( "siblingcontainer" ),
         /* deprecation_info */ "" );
-    siblingcontainer_model_->set_type_id( 1 );
+    siblingcontainer_model_->set_type_id( 0 );
     pristine_models_.push_back(
       std::pair< Model*, bool >( siblingcontainer_model_, true ) );
 
     proxynode_model_ =
       new GenericModel< proxynode >( "proxynode", /* deprecation_info */ "" );
-    proxynode_model_->set_type_id( 2 );
+    proxynode_model_->set_type_id( 1 );
     pristine_models_.push_back(
       std::pair< Model*, bool >( proxynode_model_, true ) );
   }
@@ -99,14 +99,15 @@ ModelManager::initialize()
   // Re-create the model list from the clean prototypes
   for ( index i = 0; i < pristine_models_.size(); ++i )
   {
-    if ( pristine_models_[ i ].first != 0 )
+    assert( pristine_models_[ i ].first != 0 );
+
+    // set the number of threads for the number of sli pools
+    pristine_models_[ i ].first->set_threads();
+    std::string name = pristine_models_[ i ].first->get_name();
+    models_.push_back( pristine_models_[ i ].first->clone( name ) );
+    if ( not pristine_models_[ i ].second )
     {
-      // set the num of threads for the number of sli pools
-      pristine_models_[ i ].first->set_threads();
-      std::string name = pristine_models_[ i ].first->get_name();
-      models_.push_back( pristine_models_[ i ].first->clone( name ) );
-      if ( not pristine_models_[ i ].second )
-        modeldict_->insert( name, i );
+	  modeldict_->insert( name, i );
     }
   }
 
@@ -119,12 +120,10 @@ ModelManager::initialize()
   {
     for ( index i = 0; i < pristine_models_.size(); ++i )
     {
-      if ( pristine_models_[ i ].first != 0 )
-      {
-        Node* newnode = proxynode_model_->allocate( t );
-        newnode->set_model_id( i );
-        proxy_nodes_[ t ].push_back( newnode );
-      }
+      assert( pristine_models_[ i ].first != 0 );
+      Node* newnode = proxynode_model_->allocate( t );
+      newnode->set_model_id( i );
+      proxy_nodes_[ t ].push_back( newnode );
     }
     Node* newnode = proxynode_model_->allocate( t );
     newnode->set_model_id( proxy_model_id );

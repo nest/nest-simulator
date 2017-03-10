@@ -310,8 +310,8 @@ extern const Name q_rr;  //!< Other adaptation
 extern const Name q_sfa; //!< Other adaptation
 extern const Name q_stc; //!< Specific to gif models
 
-extern const Name rate_times;   //!< Inhibitory Poisson Generator
-extern const Name rate_values;  //!< Inhibitory Poisson Generator
+extern const Name rate_times;  //!< Inhibitory Poisson Generator
+extern const Name rate_values; //!< Inhibitory Poisson Generator
 extern const Name
   rate; //!< Specific to ppd_sup_generator and gamma_sup_generator
 extern const Name receptor_type;  //!< Connection parameter

@@ -208,7 +208,7 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< spike_generator >(
     "spike_generator" );
   kernel().model_manager.register_node_model< inh_poisson_generator >(
-      "inh_poisson_generator" );
+    "inh_poisson_generator" );
   kernel().model_manager.register_node_model< poisson_generator >(
     "poisson_generator" );
   kernel().model_manager.register_node_model< pulsepacket_generator >(

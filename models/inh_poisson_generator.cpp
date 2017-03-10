@@ -54,34 +54,49 @@ nest::inh_poisson_generator::Parameters_::Parameters_()
 void
 nest::inh_poisson_generator::Parameters_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ names::rate_times ]  = DoubleVectorDatum( new std::vector< double_t >( rate_times_ ) );
-  ( *d )[ names::rate_values ] = DoubleVectorDatum( new std::vector< double_t >( rate_values_ ) );
+  ( *d )[ names::rate_times ] =
+    DoubleVectorDatum( new std::vector< double_t >( rate_times_ ) );
+  ( *d )[ names::rate_values ] =
+    DoubleVectorDatum( new std::vector< double_t >( rate_values_ ) );
 }
 
 void
-nest::inh_poisson_generator::Parameters_::set( const DictionaryDatum& d, Buffers_& b )
+nest::inh_poisson_generator::Parameters_::set( const DictionaryDatum& d,
+  Buffers_& b )
 {
-  const bool ut = updateValue< std::vector< double_t > >( d, names::rate_times, rate_times_ );
-  const bool uv = updateValue< std::vector< double_t > >( d, names::rate_values, rate_values_ );
+  const bool ut =
+    updateValue< std::vector< double_t > >( d, names::rate_times, rate_times_ );
+  const bool uv = updateValue< std::vector< double_t > >(
+    d, names::rate_values, rate_values_ );
 
   if ( ut xor uv )
+  {
     throw BadProperty( "Rate times and values must be reset together." );
+  }
 
   if ( rate_times_.size() != rate_values_.size() )
+  {
     throw BadProperty( "Rate times and values have to be the same size." );
+  }
 
   // ensure amp times are strictly monotonically increasing
-  if ( !rate_times_.empty() )
+  if ( rate_times_.empty() == false )
   {
     std::vector< double_t >::const_iterator prev = rate_times_.begin();
-    for ( std::vector< double_t >::const_iterator next = prev + 1; next != rate_times_.end();
-          ++next, ++prev )
+    std::vector< double_t >::const_iterator next = prev + 1;
+    for ( ; next != rate_times_.end(); ++next, ++prev )
+    {
       if ( *prev >= *next )
+      {
         throw BadProperty( "Rate times must strictly increasing." );
+      }
+    }
   }
 
   if ( ut && uv )
+  {
     b.idx_ = 0; // reset if we got new data
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -95,7 +110,8 @@ nest::inh_poisson_generator::inh_poisson_generator()
 {
 }
 
-nest::inh_poisson_generator::inh_poisson_generator( const inh_poisson_generator& n )
+nest::inh_poisson_generator::inh_poisson_generator(
+  const inh_poisson_generator& n )
   : Node( n )
   , device_( n.device_ )
   , P_( n.P_ )
@@ -134,9 +150,12 @@ nest::inh_poisson_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::inh_poisson_generator::update( Time const& origin, const long from, const long to )
+nest::inh_poisson_generator::update( Time const& origin,
+  const long from,
+  const long to )
 {
-  assert(to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( P_.rate_times_.size() == P_.rate_values_.size() );
 
@@ -151,7 +170,9 @@ nest::inh_poisson_generator::update( Time const& origin, const long from, const 
   const long first = t0 + from;
   while ( B_.idx_ < P_.rate_times_.size()
     && Time( Time::ms( P_.rate_times_[ B_.idx_ ] ) ).get_steps() <= first )
+  {
     ++B_.idx_;
+  }
 
   for ( long offs = from; offs < to; ++offs )
   {
@@ -160,19 +181,20 @@ nest::inh_poisson_generator::update( Time const& origin, const long from, const 
     // Keep the amplitude up-to-date at all times.
     // We need to change the amplitude one step ahead of time, see comment
     // on class SimulatingDevice.
-      if ( B_.idx_ < P_.rate_times_.size()
-        && curr_time + 1 == Time( Time::ms( P_.rate_times_[ B_.idx_ ] ) ).get_steps() )
-      {
-        B_.rate_ = P_.rate_values_[ B_.idx_ ] / 1000.0; // scale the rate to ms^-1
-        B_.idx_++;
-      }
+    if ( B_.idx_ < P_.rate_times_.size()
+      && curr_time + 1
+        == Time( Time::ms( P_.rate_times_[ B_.idx_ ] ) ).get_steps() )
+    {
+      B_.rate_ = P_.rate_values_[ B_.idx_ ] / 1000.0; // scale the rate to ms^-1
+      B_.idx_++;
+    }
 
-      // create spikes
-      if ( B_.rate_ > 0 && device_.is_active( Time::step( t0 + offs ) ) )
-      {
-          DSSpikeEvent se;
-          kernel().event_delivery_manager.send( *this, se, offs );
-      }
+    // create spikes
+    if ( B_.rate_ > 0 && device_.is_active( Time::step( t0 + offs ) ) )
+    {
+      DSSpikeEvent se;
+      kernel().event_delivery_manager.send( *this, se, offs );
+    }
   }
 }
 
@@ -189,4 +211,3 @@ nest::inh_poisson_generator::event_hook( DSSpikeEvent& e )
     e.get_receiver().handle( e );
   }
 }
-

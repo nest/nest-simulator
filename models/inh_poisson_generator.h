@@ -22,10 +22,12 @@
 
 
 /*BeginDocumentation
-  Name: inh_poisson_generator - provides Poisson spike trains at a piecewise constant rate 
+  Name: inh_poisson_generator - provides Poisson spike trains at a piecewise
+ constant rate
 
   Description:
-  The inhomogeneous Poisson generator provides Poisson spike trains at a piecewise constant rate 
+  The inhomogeneous Poisson generator provides Poisson spike trains at a
+ piecewise constant rate
   to the connected node(s).  The rate of the process is changed at the
   specified times. The unit of the instantaneous rate is spikes/s.
   By default, each target of the generator will receive a different spike train.
@@ -41,14 +43,19 @@
     /inh_poisson_generator Create /sc Set
     sc << /rate_times [0.2 0.5] /rate_values [2.0 4.0] >> SetStatus
 
-    The average firing rate of each realization of the Poisson process will be 0.0 
-    in the time interval [0, 0.2), 2.0 in the interval [0.2, 0.5) and 4.0 from then on.
+    The average firing rate of each realization of the Poisson process will be
+ 0.0
+    in the time interval [0, 0.2), 2.0 in the interval [0.2, 0.5) and 4.0 from
+ then on.
 
   Remarks:
      - Individual spike trains vs single spike train:
-     By default, the generator sends a different spike train to each of its targets.
-     If /individual_spike_trains is set to false using either SetDefaults or CopyModel
-     before a generator node is created, the generator will send the same spike train
+     By default, the generator sends a different spike train to each of its
+ targets.
+     If /individual_spike_trains is set to false using either SetDefaults or
+ CopyModel
+     before a generator node is created, the generator will send the same spike
+ train
      to all of its targets.
 
   Receives: DataLoggingRequest
@@ -57,7 +64,8 @@
 
   Authors: Renato Duarte, Barna Zajzon
 
-  SeeAlso: sinusoidal_poisson_generator, step_current_generator, Device, StimulatingDevice
+  SeeAlso: sinusoidal_poisson_generator, step_current_generator, Device,
+ StimulatingDevice
 */
 #ifndef INH_POISSON_GENERATOR_H
 #define INH_POISSON_GENERATOR_H
@@ -93,15 +101,16 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
-  //using Node::handle;
-  //using Node::handles_test_event;
+  // using Node::handle;
+  // using Node::handles_test_event;
   using Node::event_hook;
 
-  //void handle( DataLoggingRequest& );
+  // void handle( DataLoggingRequest& );
 
-  //port handles_test_event( DataLoggingRequest&, rport );
+  // port handles_test_event( DataLoggingRequest&, rport );
 
   port send_test_event( Node&, rport, synindex, bool );
 
@@ -140,10 +149,11 @@ private:
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_&, Buffers_& );
-    //Parameters_& operator=( const Parameters_& p ); // Copy constructor EN
+    // Parameters_& operator=( const Parameters_& p ); // Copy constructor EN
 
-    void get( DictionaryDatum& ) const;            //!< Store current values in dictionary
-    void set( const DictionaryDatum&, Buffers_& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    void set( const DictionaryDatum&,
+      Buffers_& ); //!< Set values from dicitonary
   };
 
   // ------------------------------------------------------------
@@ -159,7 +169,7 @@ private:
   struct Variables_
   {
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    double_t h_;   //! time resolution (ms)
+    double_t h_;                              //! time resolution (ms)
   };
 
   // ------------------------------------------------------------
@@ -173,7 +183,9 @@ private:
 
 inline port
 inh_poisson_generator::send_test_event( Node& target,
-  rport receptor_type, synindex syn_id, bool dummy_target )
+  rport receptor_type,
+  synindex syn_id,
+  bool dummy_target )
 {
   device_.enforce_single_syn_type( syn_id );
 
@@ -219,10 +231,3 @@ inh_poisson_generator::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // INH_POISSON_GENERATOR_H
-
-
-
-
-
-
-

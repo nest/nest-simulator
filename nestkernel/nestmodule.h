@@ -149,7 +149,7 @@ public:
     void execute( SLIInterpreter* ) const;
   } getstatus_afunction;
 
-  class GetKernelStatus_Function : public SLIFunction      // ***GTR
+  class GetKernelStatus_Function : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
@@ -167,7 +167,7 @@ public:
     void execute( SLIInterpreter* ) const;
   } setstatus_CDfunction;
 
-  class SetKernelStatus_DFunction : public SLIFunction       // ***GTR
+  class SetKernelStatus_DFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;

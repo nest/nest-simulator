@@ -131,6 +131,7 @@ public:
 
   //@{
 
+/*
   class ChangeSubnet_iFunction : public SLIFunction
   {
   public:
@@ -160,7 +161,7 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } getchildren_i_D_bfunction;
-
+*/
   class GetStatus_iFunction : public SLIFunction
   {
   public:

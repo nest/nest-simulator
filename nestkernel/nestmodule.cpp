@@ -114,7 +114,7 @@ NestModule::commandstring( void ) const
 
    SeeAlso: CurrentSubnet
 */
-
+/*
 void
 NestModule::ChangeSubnet_iFunction::execute( SLIInterpreter* i ) const
 {
@@ -127,7 +127,7 @@ NestModule::ChangeSubnet_iFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
   i->EStack.pop();
 }
-
+*/
 /* BeginDocumentation
    Name: CurrentSubnet - return the gid of the current network node.
 
@@ -139,6 +139,7 @@ NestModule::ChangeSubnet_iFunction::execute( SLIInterpreter* i ) const
    SeeAlso: ChangeSubnet
    Author: Marc-Oliver Gewaltig
 */
+/*
 void
 NestModule::CurrentSubnetFunction::execute( SLIInterpreter* i ) const
 {
@@ -147,7 +148,7 @@ NestModule::CurrentSubnetFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( current );
   i->EStack.pop();
 }
-
+*/
 /* BeginDocumentation
    Name: SetStatus - sets the value of properties of a node, connection, random
    deviate generator or object
@@ -177,6 +178,7 @@ NestModule::CurrentSubnetFunction::execute( SLIInterpreter* i ) const
    SeeAlso: ShowStatus, GetStatus, info, modeldict, Set, SetStatus_v,
    SetStatus_dict
 */
+
 void
 NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
 {
@@ -567,7 +569,7 @@ NestModule::RestoreNodes_aFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
   i->EStack.pop();
 }
-
+/*
 void
 NestModule::GetNodes_i_D_b_bFunction::execute( SLIInterpreter* i ) const
 {
@@ -620,7 +622,7 @@ NestModule::GetLeaves_i_D_bFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( result );
   i->EStack.pop();
 }
-
+*/
 
 /* BeginDocumentation
    Name: ResetKernel - Put the simulation kernel back to its initial state.
@@ -1876,12 +1878,12 @@ NestModule::init( SLIInterpreter* i )
     SLIInterpreter::datatypefunction );
 
   // register interface functions with interpreter
-  i->createcommand( "ChangeSubnet", &changesubnet_ifunction, "NEST 3.0" );
-  i->createcommand( "CurrentSubnet", &currentsubnetfunction, "NEST 3.0" );
-  i->createcommand( "GetNodes_i_D_b_b", &getnodes_i_D_b_bfunction, "NEST 3.0" );
-  i->createcommand( "GetLeaves_i_D_b", &getleaves_i_D_bfunction, "NEST 3.0" );
-  i->createcommand(
-    "GetChildren_i_D_b", &getchildren_i_D_bfunction, "NEST 3.0" );
+ // i->createcommand( "ChangeSubnet", &changesubnet_ifunction, "NEST 3.0" );
+ // i->createcommand( "CurrentSubnet", &currentsubnetfunction, "NEST 3.0" );
+ // i->createcommand( "GetNodes_i_D_b_b", &getnodes_i_D_b_bfunction, "NEST 3.0" );
+ // i->createcommand( "GetLeaves_i_D_b", &getleaves_i_D_bfunction, "NEST 3.0" );
+ // i->createcommand(
+ //   "GetChildren_i_D_b", &getchildren_i_D_bfunction, "NEST 3.0" );
 
   i->createcommand( "RestoreNodes_a", &restorenodes_afunction );
 

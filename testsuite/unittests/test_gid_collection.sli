@@ -478,7 +478,7 @@ pop pop
 
   /iaf_psc_alpha 10 Create [1 10 2] Take
   /iaf_psc_exp 15 Create pop
-  /aeif_cond_alpha 30 Create
+  /iaf_psc_delta 30 Create
   join
   10 Take /gc Set
   

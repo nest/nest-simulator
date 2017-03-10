@@ -38,6 +38,10 @@ allow for querying the number of created synapses. Using spike
 detectors the average firing rates of the neurons in the populations
 are established. The building as well as the simulation time of the
 network are recorded.
+
+This example uses the function DataConnect, which is deprecated. A deprecation
+warning is therefore issued. For details about deprecated functions, see
+documentation.
 '''
 
 '''
@@ -282,11 +286,19 @@ sources from our array. The first loop connects the excitatory neurons
 and the second loop the inhibitory neurons.
 '''
 
-for n, gid in enumerate(nodes_ex + nodes_in):
-    nest.Connect(list(sources_ex[n, :]), [gid], syn_spec="excitatory")
+for n in range(N_neurons):
+    node_list = list(sources_ex[n])
+    params = [{'target': [n + 1.0], 'weight': [J_ex], 'delay': [delay]} for x in node_list]
+    # Using DataConnect is a work-around until NEST 3.0 is released. It will
+    # issue a deprecation warning
+    nest.DataConnect(node_list, params, model='excitatory')
 
-for n, gid in enumerate(nodes_ex + nodes_in):
-    nest.Connect(list(sources_in[n, :]), [gid], syn_spec="inhibitory")
+for n in range(N_neurons):
+    node_list = list(sources_in[n])
+    params = [{'target': [n + 1.0], 'weight': [J_in], 'delay': [delay]} for x in node_list]
+    # Using DataConnect is a work-around until NEST 3.0 is released. It will
+    # issue a deprecation warning
+    nest.DataConnect(node_list, params, model='inhibitory')
 
 '''
 Storage of the time point after the buildup of the network in a

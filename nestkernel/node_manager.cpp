@@ -748,7 +748,7 @@ NodeManager::prepare_nodes()
 
   /* We initialize the buffers of each node and calibrate it. */
 
-  size_t num_active_nodes = 0;           // counts nodes that will be updated
+  size_t num_active_nodes = 0;     // counts nodes that will be updated
   size_t num_active_wfr_nodes = 0; // counts nodes that use waveform relaxation
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(

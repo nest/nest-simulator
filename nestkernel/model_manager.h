@@ -58,7 +58,7 @@ public:
   virtual void finalize();
 
 
-  // TODO: register subnet, proxynode and siblingcontainer in the
+  // TODO: register proxynode and siblingcontainer in the
   // constructor and provide three getters for them. See L130 and
   // following in network.cpp. Also make sure that the ModelManager is
   // initialized before the NodeManager is.
@@ -83,11 +83,6 @@ public:
    *
    */
   virtual void get_status( DictionaryDatum& );
-
-  /**
-   *
-   */
-  Model* get_subnet_model();
 
   /**
    *
@@ -354,7 +349,7 @@ private:
    Name: modeldict - dictionary containing all devices and models of NEST
    Description:
    'modeldict info' shows the contents of the dictionary
-   SeeAlso: info, Device, RecordingDevice, subnet
+   SeeAlso: info, Device, RecordingDevice
    */
   DictionaryDatum modeldict_; //!< Dictionary of all models
 
@@ -373,7 +368,6 @@ private:
    */
   DictionaryDatum synapsedict_; //!< Dictionary of all synapse models
 
-  Model* subnet_model_;
   Model* siblingcontainer_model_;
   Model* proxynode_model_;
 
@@ -393,12 +387,6 @@ ModelManager::get_model( index m ) const
     throw UnknownModelID( m );
 
   return models_[ m ];
-}
-
-inline Model*
-ModelManager::get_subnet_model()
-{
-  return subnet_model_;
 }
 
 inline Model*

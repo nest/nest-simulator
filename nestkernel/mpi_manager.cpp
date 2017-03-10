@@ -35,7 +35,6 @@
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "nest_types.h"
-#include "nodelist.h"
 
 // Includes from sli:
 #include "dictutils.h"

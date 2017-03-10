@@ -225,7 +225,7 @@ add_subdirectory( nest )
 add_subdirectory( nestkernel )
 add_subdirectory( precise )
 add_subdirectory( testsuite )
-add_subdirectory( topology )
+# add_subdirectory( topology )
 if ( HAVE_PYTHON )
   add_subdirectory( pynest )
 endif ()
@@ -287,7 +287,7 @@ set( ALL_INCLUDES_tmp
   "${PROJECT_BINARY_DIR}/libnestutil"
   "${PROJECT_SOURCE_DIR}/librandom"
   "${PROJECT_SOURCE_DIR}/sli"
-  "${PROJECT_SOURCE_DIR}/topology"
+  #"${PROJECT_SOURCE_DIR}/topology"
   "${PROJECT_SOURCE_DIR}/nestkernel"
   "${PROJECT_SOURCE_DIR}/nest"
   "${LTDL_INCLUDE_DIRS}"
@@ -327,10 +327,10 @@ configure_file(
     "${PROJECT_BINARY_DIR}/pynest/do_tests.py" @ONLY
 )
 
-configure_file(
-    "${PROJECT_SOURCE_DIR}/topology/setup.py.in"
-    "${PROJECT_BINARY_DIR}/topology/setup.py" @ONLY
-)
+#configure_file(
+#    "${PROJECT_SOURCE_DIR}/topology/setup.py.in"
+#    "${PROJECT_BINARY_DIR}/topology/setup.py" @ONLY
+#)
 
 configure_file(
     "${PROJECT_SOURCE_DIR}/testsuite/do_tests.sh.in"

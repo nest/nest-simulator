@@ -50,7 +50,6 @@ class ConnectorBase;
 class GenericConnBuilderFactory;
 class spikecounter;
 class Node;
-class Subnet;
 class Event;
 class SecondaryEvent;
 class DelayChecker;
@@ -169,8 +168,6 @@ public:
 
   void
   disconnect( Node& target, index sgid, thread target_thread, index syn_id );
-
-  void subnet_connect( Subnet&, Subnet&, int, index syn );
 
   /**
    * Connect, using a dictionary with arrays.

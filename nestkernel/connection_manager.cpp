@@ -47,8 +47,6 @@
 #include "mpi_manager_impl.h"
 #include "nest_names.h"
 #include "node.h"
-#include "nodelist.h"
-#include "subnet.h"
 #include "vp_manager_impl.h"
 
 // Includes from sli:
@@ -769,26 +767,6 @@ nest::ConnectionManager::data_connect_single( const index source_id,
       "DataConnect",
       "All lists in the parameter dictionary must be of equal size." );
     throw DimensionMismatch();
-  }
-
-  Node* source = kernel().node_manager.get_node( source_id );
-
-  Subnet* source_comp = dynamic_cast< Subnet* >( source );
-  if ( source_comp != 0 )
-  {
-    LOG( M_INFO, "DataConnect", "Source ID is a subnet; I will iterate it." );
-
-    // collect all leaves in source subnet, then data-connect each leaf
-    LocalLeafList local_sources( *source_comp );
-    std::vector< MPIManager::NodeAddressingData > global_sources;
-    kernel().mpi_manager.communicate( local_sources, global_sources );
-    for ( std::vector< MPIManager::NodeAddressingData >::iterator src =
-            global_sources.begin();
-          src != global_sources.end();
-          ++src )
-      data_connect_single( src->get_gid(), pars, syn );
-
-    return;
   }
 
 #pragma omp parallel private( di_s )

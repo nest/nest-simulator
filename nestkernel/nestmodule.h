@@ -131,36 +131,6 @@ public:
 
   //@{
 
-  class ChangeSubnet_iFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } changesubnet_ifunction;
-
-  class CurrentSubnetFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } currentsubnetfunction;
-
-  class GetNodes_i_D_b_bFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } getnodes_i_D_b_bfunction;
-
-  class GetLeaves_i_D_bFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } getleaves_i_D_bfunction;
-
-  class GetChildren_i_D_bFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } getchildren_i_D_bfunction;
-
   class GetStatus_iFunction : public SLIFunction
   {
   public:

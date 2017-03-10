@@ -29,7 +29,6 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "subnet.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -41,10 +40,8 @@ namespace nest
 
 Node::Node()
   : gid_( 0 )
-  , lid_( 0 )
   , thread_lid_( invalid_index )
   , model_id_( -1 )
-  , parent_( 0 )
   , thread_( 0 )
   , vp_( invalid_thread_ )
   , frozen_( false )
@@ -55,10 +52,8 @@ Node::Node()
 
 Node::Node( const Node& n )
   : gid_( 0 )
-  , lid_( 0 )
   , thread_lid_( n.thread_lid_ )
   , model_id_( n.model_id_ )
-  , parent_( n.parent_ )
   , thread_( n.thread_ )
   , vp_( n.vp_ )
   , frozen_( n.frozen_ )
@@ -140,15 +135,6 @@ Node::get_status_base()
     ( *dict )[ names::node_uses_wfr ] = node_uses_wfr();
     ( *dict )[ names::thread ] = get_thread();
     ( *dict )[ names::vp ] = get_vp();
-    if ( parent_ )
-    {
-      ( *dict )[ names::parent ] = parent_->get_gid();
-
-      // LIDs are only sensible for nodes with parents.
-      // Add 1 as we count lids internally from 0, but from
-      // 1 in the user interface.
-      ( *dict )[ names::local_id ] = get_lid() + 1;
-    }
   }
 
   ( *dict )[ names::thread_local_id ] = get_thread_lid();
@@ -393,12 +379,6 @@ void
 Node::event_hook( DSCurrentEvent& e )
 {
   e.get_receiver().handle( e );
-}
-
-bool
-Node::is_subnet() const
-{
-  return false;
 }
 
 } // namespace

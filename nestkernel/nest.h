@@ -55,7 +55,7 @@ void reset_network();
 void enable_dryrun_mode( const index n_procs );
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
-void print_network( index gid, index depth, std::ostream& out = std::cout );
+void print_network( std::ostream& out = std::cout );
 
 librandom::RngPtr get_vp_rng_of_gid( index target );
 librandom::RngPtr get_vp_rng( thread tid );
@@ -91,22 +91,6 @@ void set_model_defaults( const Name& model_name, const DictionaryDatum& );
 DictionaryDatum get_model_defaults( const Name& model_name );
 
 void set_num_rec_processes( const index n_rec_procs );
-
-void change_subnet( const index node_gid );
-index current_subnet();
-
-ArrayDatum get_nodes( const index subnet_id,
-  const DictionaryDatum& params,
-  const bool include_remotes,
-  const bool return_gids_only );
-
-ArrayDatum get_leaves( const index subnet_id,
-  const DictionaryDatum& params,
-  const bool include_remotes );
-
-ArrayDatum get_children( const index subnet_id,
-  const DictionaryDatum& params,
-  const bool include_remotes );
 
 void restore_nodes( const ArrayDatum& node_list );
 }

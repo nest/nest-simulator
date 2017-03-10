@@ -120,8 +120,8 @@ NestModule::commandstring( void ) const
 
    Author: docu by Sirko Straube
 
-   SeeAlso: ShowStatus, GetStatus, info, modeldict, Set, SetStatus_v,
-   SetStatus_dict
+   SeeAlso: ShowStatus, GetStatus, GetKernelStatus, info, modeldict, Set, 
+   SetStatus_v, SetStatus_dict
 */
 void
 NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
@@ -131,16 +131,7 @@ NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
   index node_id = getValue< long >( i->OStack.pick( 1 ) );
 
-  // Network::set_status() performs entry access checks for each
-  // target and throws UnaccessedDictionaryEntry where necessary
-  if ( node_id == 0 )
-  {
-    set_kernel_status( dict );
-  }
-  else
-  {
-    set_node_status( node_id, dict );
-  }
+  set_node_status( node_id, dict );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -157,6 +148,19 @@ NestModule::SetStatus_CDFunction::execute( SLIInterpreter* i ) const
   set_connection_status( conn, dict );
 
   i->OStack.pop( 2 );
+  i->EStack.pop();
+}
+
+void
+NestModule::SetKernelStatus_DFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
+
+  set_kernel_status( dict );
+
+  i->OStack.pop();
   i->EStack.pop();
 }
 
@@ -272,7 +276,8 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
 
    Author: Marc-Oliver Gewaltig
    Availability: NEST
-   SeeAlso: ShowStatus, info, SetStatus, get, GetStatus_v, GetStatus_dict
+   SeeAlso: ShowStatus, info, SetStatus, get, GetStatus_v, GetStatus_dict,
+   GetKernelStatus
 */
 void
 NestModule::GetStatus_iFunction::execute( SLIInterpreter* i ) const
@@ -280,15 +285,7 @@ NestModule::GetStatus_iFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   index node_id = getValue< long >( i->OStack.pick( 0 ) );
-  DictionaryDatum dict;
-  if ( node_id == 0 )
-  {
-    dict = get_kernel_status();
-  }
-  else
-  {
-    dict = get_node_status( node_id );
-  }
+  DictionaryDatum dict = get_node_status( node_id );
 
   i->OStack.pop();
   i->OStack.push( dict );
@@ -338,6 +335,15 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop();
   i->OStack.push( result );
+  i->EStack.pop();
+}
+
+void
+NestModule::GetKernelStatus_Function::execute( SLIInterpreter* i ) const
+{
+  DictionaryDatum dict = get_kernel_status();
+ 
+  i->OStack.push( dict );
   i->EStack.pop();
 }
 
@@ -1641,10 +1647,13 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "SetStatus_id", &setstatus_idfunction );
   i->createcommand( "SetStatus_CD", &setstatus_CDfunction );
   i->createcommand( "SetStatus_aa", &setstatus_aafunction );
+  i->createcommand( "SetKernelStatus", &setkernelstatus_Dfunction );
 
   i->createcommand( "GetStatus_i", &getstatus_ifunction );
   i->createcommand( "GetStatus_C", &getstatus_Cfunction );
   i->createcommand( "GetStatus_a", &getstatus_afunction );
+  i->createcommand( "GetKernelStatus", &getkernelstatus_function );
+
 
   i->createcommand( "GetConnections_D", &getconnections_Dfunction );
   i->createcommand( "cva_C", &cva_cfunction );

@@ -132,7 +132,7 @@ get_kernel_status()
 {
   assert( kernel().is_initialized() );
 
-  DictionaryDatum d;
+  DictionaryDatum d( new Dictionary );
   kernel().get_status( d );
 
   return d;

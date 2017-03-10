@@ -168,7 +168,7 @@ class GIDCollection(object):
         return nest.sli_func('size', self._datum)
 
     def __str__(self):
-        return ''.format(nest.sli_func('==only', self._datum))
+        return ''.format(nest.sli_func('==', self._datum))
 
 
 @check_stack

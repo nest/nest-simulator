@@ -117,7 +117,8 @@ Sends: DataLoggingRequest
 
 FirstVersion: 2009-04-01
 
-Author: Hans Ekkehard Plesser
+Author: Hans Ekkehard Plesser, Barna Zajzon (added offset support March 2017)
+
 
 SeeAlso: Device, RecordingDevice
 */
@@ -138,9 +139,9 @@ namespace nest
  * with a given time stamp.
  *
  * Start and stop are handled as follows: the first recorded
- * data is with time stamp origin+start+1, the last recorded one
- * that with time stamp origin+stop. Only such times are recorded
- * for which (T-(origin+start)) mod interval is zero.
+ * data is with time stamp offset+start+1, the last recorded one
+ * that with time stamp offset+stop. Only such times are recorded
+ * for which (T-(offset+start)) mod interval is zero.
  *
  * The recording interval defaults to 1ms; this entails that
  * the simulation resolution cannot be set to larger values than
@@ -238,6 +239,7 @@ private:
   struct Parameters_
   {
     Time interval_;                   //!< recording interval, in ms
+    Time offset_;                     //!< offset relative to which interval is calculated
     std::vector< Name > record_from_; //!< which data to record
 
     Parameters_();
@@ -323,9 +325,10 @@ nest::Multimeter::get_status( DictionaryDatum& d ) const
     const SiblingContainer* siblings =
       kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end();
-          ++sibling )
+    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
+    {
       ( *sibling )->get_status( d );
+    }
   }
 
   P_.get( d );
@@ -337,7 +340,9 @@ nest::Multimeter::set_status( const DictionaryDatum& d )
   // protect Multimeter from being frozen
   bool freeze = false;
   if ( updateValue< bool >( d, names::frozen, freeze ) && freeze )
+  {
     throw BadProperty( "Multimeter cannot be frozen." );
+  }
 
   Parameters_ ptmp = P_;
   ptmp.set( d, B_ );

@@ -1,0 +1,115 @@
+/*
+ *  test_multimeter_offset.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/* BeginDocumentation
+Name: testsuite::test_multimeter_offset - Test if offset attribute works properly
+ 
+Synopsis: (test_multimeter_offset) run -> NEST exits if test fails
+
+Description:
+  This test checks if the offset attribute of multimeter works as expected.
+ 
+  For each model with a "recordables" property, it creates an instance with a 
+  predefined offset, connects a multimeter to them requesting all properties, 
+  simulates briefly and checks that the recorded times are relative to the offset.
+ 
+Author: Barna Zajzon, 2017-03-10 
+ */
+
+(unittest) run
+/unittest using
+
+% use power-of-two resolution to avoid roundof problems
+/res -3 dexp def
+
+% simulation time
+/simtime 15. def
+
+% offset time --- different from default to check setting works
+/recoffs 5. def
+
+% recording interval --- different from default to check setting works
+/recint 3. def
+
+% offset data 
+/refdata [8. 11. 14.] def
+
+
+{
+  modeldict keys
+  {
+    /model Set
+
+    % some logging information to make failure localization easier
+    (Testing model: ) model cvs join ==
+
+    ResetKernel
+    0 << /resolution res >> SetStatus
+
+    % get recordables, if none, return true
+    model GetDefaults dup /recordables known
+    {
+      % set up for simulation and simulate
+      /recordables get /recs Set
+      /n model Create def
+      
+      /mm /multimeter << /withtime true /interval recint /offset recoffs /record_from recs >> 
+          Create def
+
+      mm n Connect
+      simtime Simulate
+
+      % check results
+      /result mm /events get def
+      result /times get cva 
+
+      % compare to reference data
+      refdata eq
+    }   
+    { ; true }
+    ifelse
+  }
+  Map
+
+  % see if all entries are true
+  true exch { and } Fold
+
+}
+assert_or_die
+
+% make sure offset cannot be changed after connecting to a node
+{
+  ResetKernel
+  
+  % create multimeter and node
+  /mm /multimeter Create def
+  /neuron /iaf_psc_exp Create def
+
+  % connect
+  mm neuron Connect
+
+  % changing offset should fail
+  mm << /offset 5. >> SetStatus
+}
+fail_or_die
+
+endusing

@@ -107,9 +107,8 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
   // left of update intervals, and we want time stamps at right end of
   // update interval to be multiples of recording interval
   next_rec_step_ =
-    ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 )
-      * rec_int_steps_
-    - 1 + recording_origin_.get_steps();
+    ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 ) * rec_int_steps_
+    - 1 + recording_offset_.get_steps();
 
   // number of data points per slice
   const long recs_per_slice =

@@ -157,6 +157,7 @@ nest::ac_generator::update( Time const& origin, const long from, const long to )
 
   CurrentEvent ce;
   for ( long lag = from; lag < to; ++lag )
+  {
     if ( device_.is_active( Time::step( start + lag ) ) )
     {
       const double y_0 = S_.y_0_;
@@ -165,4 +166,5 @@ nest::ac_generator::update( Time const& origin, const long from, const long to )
       ce.set_current( S_.y_1_ + P_.offset_ );
       kernel().event_delivery_manager.send( *this, ce, lag );
     }
+  }
 }

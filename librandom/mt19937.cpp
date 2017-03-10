@@ -105,8 +105,10 @@ librandom::MT19937::genrand_int32()
   { /* generate N words at one time */
     int kk;
 
-    if ( mti == N + 1 )       /* if init_genrand() has not been called, */
+    if ( mti == N + 1 ) /* if init_genrand() has not been called, */
+    {
       init_genrand( 5489UL ); /* a default initial seed is used */
+    }
 
     for ( kk = 0; static_cast< unsigned int >( kk ) < N - M; kk++ )
     {

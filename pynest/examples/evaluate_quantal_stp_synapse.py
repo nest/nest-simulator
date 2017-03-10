@@ -115,12 +115,14 @@ neuron = nest.Create("iaf_psc_exp", 3)
 '''
 The connection from neuron 1 to neuron 2 is a deterministic synapse.
 '''
-nest.Connect([neuron[0]], [neuron[1]], syn_spec="tsodyks2_synapse")
+nest.Connect(nest.GIDCollection([neuron[0]]), nest.GIDCollection([neuron[1]]),
+             syn_spec="tsodyks2_synapse")
 
 '''
 The connection from neuron 1 to neuron 3 has a stochastic quantal_stp_synapse.
 '''
-nest.Connect([neuron[0]], [neuron[2]], syn_spec="quantal_stp_synapse")
+nest.Connect(nest.GIDCollection([neuron[0]]), nest.GIDCollection([neuron[2]]),
+             syn_spec="quantal_stp_synapse")
 
 '''
 The voltmeter will show us the synaptic responses in neurons 2 and 3.
@@ -142,8 +144,10 @@ nest.Simulate(1000.0)
 '''
 Only now do we connect the voltmeter to the neurons.
 '''
-nest.Connect([voltmeter[0]], [neuron[1]])
-nest.Connect([voltmeter[1]], [neuron[2]])
+nest.Connect(nest.GIDCollection([voltmeter[0]]),
+             nest.GIDCollection([neuron[1]]))
+nest.Connect(nest.GIDCollection([voltmeter[1]]),
+             nest.GIDCollection([neuron[2]]))
 
 
 '''
@@ -176,7 +180,7 @@ Now compute the mean of all trials and plot agains trials and references.
 '''
 vm_mean = numpy.array([numpy.mean(vm[:, i]) for (i, j) in enumerate(vm[0, :])])
 vm_ref_mean = numpy.array([numpy.mean(vm_reference[:, i])
-                          for (i, j) in enumerate(vm_reference[0, :])])
+                           for (i, j) in enumerate(vm_reference[0, :])])
 pylab.plot(vm_mean)
 pylab.plot(vm_ref_mean)
 

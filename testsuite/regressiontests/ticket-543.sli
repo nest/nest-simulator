@@ -44,34 +44,34 @@ M_ERROR setverbosity
 
 /conn_test {
   ResetKernel
-  { /subnet Create ChangeSubnet } repeat
+  { /subnet Create 0 get ChangeSubnet } repeat
   /source_neuron /iaf_neuron Create def
   0 ChangeSubnet
   /target_neuron /iaf_neuron Create def
-  [source_neuron] [target_neuron] Connect
-  << /source [source_neuron] >> GetConnections { /target get } Map
+  source_neuron target_neuron Connect
+  << /source source_neuron >> GetConnections { /target get } Map
 } def
 
 /fod_conn_test {
   /num_conns Set
   ResetKernel
-  { /subnet Create ChangeSubnet } repeat
+  { /subnet Create 0 get ChangeSubnet } repeat
   /source_neuron /iaf_neuron Create def
   0 ChangeSubnet
   /target_neuron /iaf_neuron Create def
-  [source_neuron] [target_neuron] << /rule /fixed_outdegree /outdegree num_conns >> Connect
-  << /source [source_neuron] >> GetConnections { /target get } Map
+  source_neuron target_neuron << /rule /fixed_outdegree /outdegree num_conns >> Connect
+  << /source source_neuron >> GetConnections { /target get } Map
 } def
 
 /fid_conn_test {
   /num_conns Set  
   ResetKernel
-  { /subnet Create ChangeSubnet } repeat  
+  { /subnet Create 0 get ChangeSubnet } repeat  
   /target_neuron /iaf_neuron Create def
   0 ChangeSubnet
   /source_neuron /iaf_neuron Create def
-  [source_neuron] [target_neuron] << /rule /fixed_indegree /indegree num_conns >> Connect
-  << /source [source_neuron] >> GetConnections { /target get } Map
+  source_neuron target_neuron << /rule /fixed_indegree /indegree num_conns >> Connect
+  << /source source_neuron >> GetConnections { /target get } Map
 } def
 
  % first test: connect

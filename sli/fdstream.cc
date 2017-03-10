@@ -96,7 +96,7 @@ fdbuf::open( const char* s, std::ios_base::openmode mode )
 fdbuf*
 fdbuf::close()
 {
-  if ( !is_open() )
+  if ( not is_open() )
   {
     // std::cerr<<"File was not open."<<std::endl;
     return NULL;

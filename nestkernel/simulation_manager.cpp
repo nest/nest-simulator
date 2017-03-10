@@ -390,7 +390,7 @@ nest::SimulationManager::simulate( Time const& t )
   if ( t.is_finite() )
   {
     Time time1 = clock_ + t;
-    if ( !time1.is_finite() )
+    if ( not time1.is_finite() )
     {
       std::string msg = String::compose(
         "A clock overflow will occur after %1 of %2 ms. Please reset network "
@@ -529,7 +529,7 @@ nest::SimulationManager::prepare_simulation_()
   // have been consumed on the SLI level.
   if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
-    if ( !kernel().mpi_manager.grng_synchrony(
+    if ( not kernel().mpi_manager.grng_synchrony(
            kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
       LOG( M_ERROR,
@@ -541,7 +541,7 @@ nest::SimulationManager::prepare_simulation_()
   }
 
   // if at the beginning of a simulation, set up spike buffers
-  if ( !simulated_ )
+  if ( not simulated_ )
     kernel().event_delivery_manager.configure_spike_buffers();
 
   kernel().node_manager.ensure_valid_thread_local_ids();
@@ -555,7 +555,7 @@ nest::SimulationManager::prepare_simulation_()
   // we have to do enter_runtime after prepre_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
   // before enter_runtime
-  if ( !simulated_ ) // only enter the runtime mode once
+  if ( not simulated_ ) // only enter the runtime mode once
   {
     double tick = Time::get_resolution().get_ms()
       * kernel().connection_manager.get_min_delay();
@@ -821,7 +821,7 @@ nest::SimulationManager::finalize_simulation_()
   // Check for synchronicity of global rngs over processes
   // TODO: This seems double up, there is such a test at end of simulate()
   if ( kernel().mpi_manager.get_num_processes() > 1 )
-    if ( !kernel().mpi_manager.grng_synchrony(
+    if ( not kernel().mpi_manager.grng_synchrony(
            kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
       throw KernelException(

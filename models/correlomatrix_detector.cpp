@@ -163,10 +163,10 @@ nest::correlomatrix_detector::Parameters_::set( const DictionaryDatum& d,
     reset = true;
   }
 
-  if ( !delta_tau_.is_step() )
+  if ( not delta_tau_.is_step() )
     throw StepMultipleRequired( n.get_name(), names::delta_tau, delta_tau_ );
 
-  if ( !tau_max_.is_multiple_of( delta_tau_ ) )
+  if ( not tau_max_.is_multiple_of( delta_tau_ ) )
     throw TimeMultipleRequired(
       n.get_name(), names::tau_max, tau_max_, names::delta_tau, delta_tau_ );
 
@@ -223,7 +223,7 @@ nest::correlomatrix_detector::correlomatrix_detector()
   , P_()
   , S_()
 {
-  if ( !P_.delta_tau_.is_step() )
+  if ( not P_.delta_tau_.is_step() )
     throw InvalidDefaultResolution(
       get_name(), names::delta_tau, P_.delta_tau_ );
 }
@@ -235,7 +235,7 @@ nest::correlomatrix_detector::correlomatrix_detector(
   , P_( n.P_ )
   , S_()
 {
-  if ( !P_.delta_tau_.is_step() )
+  if ( not P_.delta_tau_.is_step() )
     throw InvalidTimeInModel( get_name(), names::delta_tau, P_.delta_tau_ );
 }
 
@@ -314,7 +314,7 @@ nest::correlomatrix_detector::handle( SpikeEvent& e )
     // throw away all spikes which are too old to
     // enter the correlation window
     const delay min_delay = kernel().connection_manager.get_min_delay();
-    while ( !otherSpikes.empty()
+    while ( not otherSpikes.empty()
       && ( spike_i - otherSpikes.front().timestep_ ) >= tau_edge + min_delay )
       otherSpikes.pop_front();
     // all remaining spike times in the queue are >= spike_i - tau_edge -

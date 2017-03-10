@@ -42,9 +42,9 @@
 /iaf_psc_alpha 10 Create /n2 Set
 /iaf_psc_delta 10 Create /n3 Set
 
-/set1 [n1 ] Range def
-/set2 [n1 1 add n2 ] Range def
-/set3 [n2 1 add n3 ] Range def
+/set1 n1 cva def
+/set2 n2 cva def
+/set3 n3 cva def
 
 0 << /model /iaf_neuron >> GetGlobalNodes
 set1 eq assert_or_die

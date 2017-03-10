@@ -100,7 +100,7 @@ nest::IOManager::initialize()
   char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
   if ( data_prefix )
     ( *dict )[ "data_prefix" ] = std::string( data_prefix );
-  if ( !dict->empty() )
+  if ( not dict->empty() )
     set_data_path_prefix_( dict );
 }
 

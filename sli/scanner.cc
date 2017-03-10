@@ -547,7 +547,7 @@ bool Scanner::operator()( Token& t )
   do
   {
 
-    if ( !in->eof() && !in->good() )
+    if ( not in->eof() && not in->good() )
     {
       std::cout << "I/O Error in scanner input stream." << std::endl;
       state = error;

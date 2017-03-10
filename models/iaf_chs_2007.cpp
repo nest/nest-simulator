@@ -253,7 +253,7 @@ nest::iaf_chs_2007::update( const Time& origin, const long from, const long to )
     // exponentially decaying ahp
     S_.V_spike_ *= V_.P30_;
 
-    double noise_term = P_.U_noise_ > 0.0 && !P_.noise_.empty()
+    double noise_term = P_.U_noise_ > 0.0 && not P_.noise_.empty()
       ? P_.U_noise_ * P_.noise_[ S_.position_++ ]
       : 0.0;
 

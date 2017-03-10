@@ -239,15 +239,15 @@ def
   % lists from the subnetworks
 
   % obtain array with GIDs of all excitatory neurons
-  /E_neurons E_net GetLocalNodes def
+  /E_neurons E_net 0 get GetLocalNodes cvgidcollection def
 
   % obtain array with GIDs of all inhibitory neurons
-  /I_neurons I_net GetLocalNodes def
+  /I_neurons I_net 0 get GetLocalNodes cvgidcollection def
 
   % all neurons
   /allNeurons E_neurons I_neurons join def
 
-  /N allNeurons length def
+  /N allNeurons size def
 
   /CE NE epsilon mul iround def %number of incoming excitatory connections
   /CI NI epsilon mul iround def %number of incomining inhibitory connections
@@ -278,8 +278,8 @@ def
   (Connecting stimulus generators.) message
 
   % Connect Poisson generator to neuron
-  [E_stimulus] E_neurons << /rule /all_to_all >> << /model /syn_ex >> Connect
-  [I_stimulus] I_neurons << /rule /all_to_all >> << /model /syn_ex >> Connect
+  E_stimulus E_neurons << /rule /all_to_all >> << /model /syn_ex >> Connect
+  I_stimulus I_neurons << /rule /all_to_all >> << /model /syn_ex >> Connect
 
   M_INFO (BuildNetwork)
   (Connecting excitatory -> excitatory population.) message
@@ -304,8 +304,8 @@ def
   M_INFO (BuildNetwork)
   (Connecting spike detectors.) message
 
-  E_neurons Nrec Take [E_detector] Connect
-  I_neurons Nrec Take [I_detector] Connect
+  E_neurons Nrec Take E_detector Connect
+  I_neurons Nrec Take I_detector Connect
 
   % read out time used for building
   toc /BuildCPUTime Set

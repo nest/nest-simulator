@@ -48,6 +48,7 @@ First, we have import all necessary modules.
 
 
 class StructralPlasticityExample:
+
     def __init__(self):
         '''
         We define general simulation parameters

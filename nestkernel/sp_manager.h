@@ -113,8 +113,8 @@ public:
    * \param connectivityParams connectivity Dictionary
    * \param synapseParams synapse parameters Dictionary
    */
-  void disconnect( GIDCollection&,
-    GIDCollection&,
+  void disconnect( GIDCollectionPTR,
+    GIDCollectionPTR,
     DictionaryDatum&,
     DictionaryDatum& );
 

@@ -77,9 +77,8 @@ is_threaded not { exit_test_gracefully } if
                          /withtime true 
                       >> Create def
   /pnet [ nodes ] { ; /parrot_neuron Create } Table def
-
   [ gens pnet ] { Connect } ScanThread
-  pnet [sd] Connect
+  pnet {sd Connect} forall
   
   10. Simulate
 

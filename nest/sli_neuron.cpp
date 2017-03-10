@@ -127,7 +127,7 @@ nest::sli_neuron::calibrate()
 
   bool terminate = false;
 
-  if ( !state_->known( names::calibrate ) )
+  if ( not state_->known( names::calibrate ) )
   {
     std::string msg = String::compose(
       "Node %1 has no /calibrate function in its status dictionary.",
@@ -135,7 +135,7 @@ nest::sli_neuron::calibrate()
     throw BadProperty( msg );
   }
 
-  if ( !state_->known( names::update ) )
+  if ( not state_->known( names::update ) )
   {
     std::string msg = String::compose(
       "Node %1 has no /update function in its status dictionary", get_gid() );

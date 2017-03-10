@@ -325,13 +325,13 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
     double ev_weight;
     bool end_of_refract;
 
-    if ( !B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) )
+    if ( not B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) )
     { // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
       // if there are many steps without input spikes.
 
       // update membrane potential
-      if ( !S_.is_refractory_ )
+      if ( not S_.is_refractory_ )
       {
         S_.y3_ = V_.P30_ * ( P_.I_e_ + S_.y0_ ) + V_.P31_ * S_.y1_
           + V_.P32_ * S_.y2_ + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
@@ -461,7 +461,7 @@ nest::iaf_psc_alpha_canon::propagate_( const double dt )
   const double ps_e_TauSyn = numerics::expm1( -dt / P_.tau_syn_ );
 
   // y3_ remains unchanged at 0.0 while neuron is refractory
-  if ( !S_.is_refractory_ )
+  if ( not S_.is_refractory_ )
   {
     const double ps_e_Tau = numerics::expm1( -dt / P_.tau_m_ );
     const double ps_P30 = -P_.tau_m_ / P_.c_m_ * ps_e_Tau;

@@ -24,6 +24,7 @@ Functions to get information on NEST.
 """
 
 from .hl_api_helper import *
+import nest
 
 
 @check_stack
@@ -150,8 +151,8 @@ def SetStatus(nodes, params, val=None):
 
     Parameters
     ----------
-    nodes : list or tuple
-        Either a list of global ids of nodes, or a tuple of connection
+    nodes : GIDCollection or tuple
+        Either a GIDCollection representing nodes, or a tuple of connection
         handles as returned by GetConnections()
     params : str or dict or list
         Dictionary of parameters or list of dictionaries of parameters of
@@ -166,8 +167,13 @@ def SetStatus(nodes, params, val=None):
         Description
     """
 
-    if not is_coercible_to_sli_array(nodes):
-        raise TypeError("nodes must be a list of nodes or synapses")
+    if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, tuple)):
+        try:
+            nodes = nest.GIDCollection(nodes)
+        except nest.NESTError:
+            raise TypeError("The first input (nodes) must be GIDCollection, "
+                            "convertible to GIDCollection or a tuple of "
+                            "connection handles ")
 
     # This was added to ensure that the function is a nop (instead of,
     # for instance, raising an exception) when applied to an empty list,
@@ -183,20 +189,29 @@ def SetStatus(nodes, params, val=None):
         else:
             params = {params: val}
 
-    params = broadcast(params, len(nodes), (dict,), "params")
-    if len(nodes) != len(params):
+    if (isinstance(params, list) and len(nodes) != len(params)):
         raise TypeError(
-            "status dict must be a dict, or list of dicts of length 1 "
-            "or len(nodes)")
+            "status dict must be a dict, or a list of dicts of length "
+            "len(nodes)")
 
     if is_sequence_of_connections(nodes):
-        pcd(nodes)
-    else:
-        sps(nodes)
+        params = broadcast(params, len(nodes), (dict,), "params")
 
-    sps(params)
-    sr('2 arraystore')
-    sr('Transpose { arrayload pop SetStatus } forall')
+        pcd(nodes)
+        sps(params)
+
+        sr('2 arraystore')
+        sr('Transpose { arrayload pop SetStatus } forall')
+    else:
+        if isinstance(nodes, tuple):
+            # Tuple is only allowed if they come from GetConnections()
+            try:
+                nodes = nest.GIDCollection(nodes)
+            except nest.NESTError:
+                raise TypeError("The first input (nodes) must be "
+                                "GIDCollection, or convertible to "
+                                "GIDCollection handles.")
+        sli_func('SetStatus', nodes, params)
 
 
 @check_stack
@@ -208,8 +223,8 @@ def GetStatus(nodes, keys=None):
 
     Parameters
     ----------
-    nodes : list or tuple
-        Either a list of global ids of nodes, or a tuple of connection
+    nodes : GIDCollection or tuple
+        Either a GIDCollection representing nodes, or a tuple of connection
         handles as returned by GetConnections()
     keys : str or list, optional
         String or a list of strings naming model properties. GetDefaults then
@@ -232,8 +247,13 @@ def GetStatus(nodes, keys=None):
         Description
     """
 
-    if not is_coercible_to_sli_array(nodes):
-        raise TypeError("nodes must be a list of nodes or synapses")
+    if not (isinstance(nodes, nest.GIDCollection) or isinstance(nodes, tuple)):
+        try:
+            nodes = nest.GIDCollection(nodes)
+        except nest.NESTError:
+            raise TypeError("The first input (nodes) must be GIDCollection, "
+                            "convertible to GIDCollection or a tuple of "
+                            "connection handles ")
 
     if len(nodes) == 0:
         return nodes

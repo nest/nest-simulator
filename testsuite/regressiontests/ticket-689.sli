@@ -47,7 +47,7 @@ M_ERROR setverbosity
 1 2 /stdp_pl_synapse_hom_hpc Connect
 
 {
-  <<  /target [2] >> GetConnections Flatten length 1 eq
+  <<  /target [2] cvgidcollection >> GetConnections Flatten length 1 eq
 } assert_or_die
 
 endusing

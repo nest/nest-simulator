@@ -282,11 +282,11 @@ sources from our array. The first loop connects the excitatory neurons
 and the second loop the inhibitory neurons.
 '''
 
-for n in range(N_neurons):
-    nest.Connect(list(sources_ex[n]), [n + 1], syn_spec="excitatory")
+for n, gid in enumerate(nodes_ex + nodes_in):
+    nest.Connect(list(sources_ex[n, :]), [gid], syn_spec="excitatory")
 
-for n in range(N_neurons):
-    nest.Connect(list(sources_in[n]), [n + 1], syn_spec="inhibitory")
+for n, gid in enumerate(nodes_ex + nodes_in):
+    nest.Connect(list(sources_in[n, :]), [gid], syn_spec="inhibitory")
 
 '''
 Storage of the time point after the buildup of the network in a

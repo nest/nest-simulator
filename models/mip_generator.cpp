@@ -152,7 +152,7 @@ nest::mip_generator::update( Time const& T, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( !device_.is_active( T ) || P_.rate_ <= 0 )
+    if ( not device_.is_active( T ) || P_.rate_ <= 0 )
       return; // no spikes to be generated
 
     // generate spikes of mother process for each time slice

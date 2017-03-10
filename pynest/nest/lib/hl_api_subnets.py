@@ -28,6 +28,7 @@ from .hl_api_nodes import Create
 from .hl_api_info import GetStatus, SetStatus
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 def PrintNetwork(depth=1, subnet=None):
     """Print the network tree up to depth, starting at subnet.
@@ -57,6 +58,7 @@ def PrintNetwork(depth=1, subnet=None):
     sr("%i PrintNetwork" % depth)
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 @deprecated('', 'CurrentSubnet is deprecated and will be removed in NEST 3.0.')
 def CurrentSubnet():
@@ -72,6 +74,7 @@ def CurrentSubnet():
     return (spp(), )
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 @deprecated('', 'ChangeSubnet is deprecated and will be removed in NEST 3.0.')
 def ChangeSubnet(subnet):
@@ -94,6 +97,7 @@ def ChangeSubnet(subnet):
     sr("ChangeSubnet")
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 @deprecated('', 'GetLeaves is deprecated and will be removed in NEST 3.0. Use \
 GIDCollection instead.')
@@ -135,6 +139,7 @@ def GetLeaves(subnets, properties=None, local_only=False):
                     litconv=True)
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 @deprecated('', 'GetNodes is deprecated and will be removed in NEST 3.0. Use \
 GIDCollection instead.')
@@ -174,6 +179,7 @@ def GetNodes(subnets, properties=None, local_only=False):
                     litconv=True)
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 @deprecated('',
             'GetChilden is deprecated and will be removed in NEST 3.0. Use GIDCollection instead.')  # noqa
@@ -213,6 +219,7 @@ def GetChildren(subnets, properties=None, local_only=False):
                     litconv=True)
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 @deprecated('', 'GetNetwork is deprecated and will be removed in Nest 3.0.\
 Script is responsible for retaining structure information if needed')
@@ -247,6 +254,7 @@ def GetNetwork(gid, depth):
     return spp()
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 @deprecated('', 'BeginSubnet is deprecated and will be removed in NEST 3.0. \
 Use GIDCollection instead.')
@@ -269,6 +277,7 @@ def BeginSubnet(label=None, params=None):
     ChangeSubnet(sn)
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 @deprecated('', 'EndSubnet is deprecated and will be removed in NEST 3.0. Use \
 GIDCollection instead.')
@@ -292,6 +301,7 @@ def EndSubnet():
             "Unexpected EndSubnet(). Cannot go higher than the root node.")
 
 
+@deprecated('', text='Subnets are to be removed, see documentation.')
 @check_stack
 @deprecated('', 'LayoutNetwork is deprecated and will be removed in NEST 3.0. \
 Use Create(<model>, n=<number>) instead.')

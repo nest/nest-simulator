@@ -112,7 +112,7 @@ Node::get_model_() const
 bool
 Node::is_local() const
 {
-  return !is_proxy();
+  return not is_proxy();
 }
 
 DictionaryDatum

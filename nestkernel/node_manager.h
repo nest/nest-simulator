@@ -31,6 +31,7 @@
 
 // Includes from nestkernel:
 #include "conn_builder.h"
+#include "gid_collection.h"
 #include "nest_types.h"
 #include "sparse_node_array.h"
 
@@ -81,9 +82,11 @@ public:
    * @param m valid Model ID.
    * @param n Number of Nodes to be created. Defaults to 1 if not
    * specified.
+   * @returns GIDCollection as lock pointer
    * @throws nest::UnknownModelID
    */
-  index add_node( index m, long n = 1 );
+  GIDCollectionPTR add_node( index m, long n = 1 );
+
 
   /**
    * Restore nodes from an array of status dictionaries.

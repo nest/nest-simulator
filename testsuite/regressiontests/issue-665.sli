@@ -60,9 +60,9 @@ is_threaded not { exit_test_gracefully } if
   
   pgl nnl connspec ConnectLayers
   
-  /src pgl GetGlobalLeaves 1 Take def
+  /src pgl GetGlobalLeaves 1 Take cvgidcollection def
   /tgts nnl GetGlobalLeaves Sort def
-    
+
   /conns << /source src >> GetConnections def
   /ctgts conns { cva 1 get } Map Sort def
     
@@ -118,7 +118,7 @@ assert_or_die
     
   nnl sdl connspec ConnectLayers
   
-  /tgt sdl GetGlobalLeaves 1 Take def
+  /tgt sdl GetGlobalLeaves 1 Take cvgidcollection def
   /srcs nnl GetGlobalLeaves Sort def
     
   /conns << /target tgt >> GetConnections def

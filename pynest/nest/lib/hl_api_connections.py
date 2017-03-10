@@ -24,10 +24,11 @@ Functions for connection handling
 """
 
 from .hl_api_helper import *
-from .hl_api_nodes import Create
+from .hl_api_nodes import Create, GIDCollection
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
 from .hl_api_subnets import GetChildren
+import nest
 import numpy
 
 
@@ -41,10 +42,10 @@ def GetConnections(source=None, target=None, synapse_model=None,
 
     Parameters
     ----------
-    source : list, optional
+    source : GIDCOllection or list, optional
         Source GIDs, only connections from these
         pre-synaptic neurons are returned
-    target : list, optional
+    target : GIDCollection or list, optional
         Target GIDs, only connections to these
         post-synaptic neurons are returned
     synapse_model : str, optional
@@ -73,14 +74,24 @@ def GetConnections(source=None, target=None, synapse_model=None,
     params = {}
 
     if source is not None:
-        if not is_coercible_to_sli_array(source):
-            raise TypeError("source must be a list of GIDs")
-        params['source'] = source
+        if isinstance(source, GIDCollection):
+            params['source'] = source
+        else:
+            try:
+                params['source'] = nest.GIDCollection(source)
+            except nest.NESTError:
+                raise TypeError("source must be GIDCollection or convertible"
+                                " to GIDCollection")
 
     if target is not None:
-        if not is_coercible_to_sli_array(target):
-            raise TypeError("target must be a list of GIDs")
-        params['target'] = target
+        if isinstance(target, GIDCollection):
+            params['target'] = target
+        else:
+            try:
+                params['target'] = nest.GIDCollection(target)
+            except nest.NESTError:
+                raise TypeError("target must be GIDCollection or convertible"
+                                " to GIDCollection")
 
     if synapse_model is not None:
         params['synapse_model'] = kernel.SLILiteral(synapse_model)
@@ -105,10 +116,10 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
 
     Parameters
     ----------
-    pre : list
-        Presynaptic nodes, as list of GIDs
-    post : list
-        Postsynaptic nodes, as list of GIDs
+    pre : GIDCollection
+        Presynaptic nodes, as object representing the global IDs of the nodes
+    post : GIDCollection
+        Postsynaptic nodes, as object representing the global IDs of the nodes
     conn_spec : str or dict, optional
         Specifies connectivity rule, see below
     syn_spec : str or dict, optional
@@ -246,6 +257,13 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
         raise kernel.NESTError(
             "'model' is an alias for 'syn_spec' and cannot "
             "be used together with 'syn_spec'.")
+
+    if not isinstance(pre, GIDCollection):
+        raise TypeError("Not implemented, presynaptic nodes must be a "
+                        "GIDCollection")
+    if not isinstance(post, GIDCollection):
+        raise TypeError("Not implemented, postsynaptic nodes must be a "
+                        "GIDCollection")
 
     sps(pre)
     sps(post)
@@ -611,9 +629,9 @@ def Disconnect(pre, post, conn_spec, syn_spec):
 
     Parameters
     ----------
-    pre : list
+    pre : GIDCollection
         Presynaptic nodes, given as list of GIDs
-    post : list
+    post : GIDCollection
         Postsynaptic nodes, given as list of GIDs
     conn_spec : str or dict
         Disconnection rule, see below
@@ -660,9 +678,7 @@ def Disconnect(pre, post, conn_spec, syn_spec):
     """
 
     sps(pre)
-    sr('cvgidcollection')
     sps(post)
-    sr('cvgidcollection')
 
     if conn_spec is not None:
         sps(conn_spec)

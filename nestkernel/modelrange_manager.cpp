@@ -56,7 +56,7 @@ ModelRangeManager::finalize()
 void
 ModelRangeManager::add_range( index model, index first_gid, index last_gid )
 {
-  if ( !modelranges_.empty() )
+  if ( not modelranges_.empty() )
   {
     assert( first_gid == last_gid_ + 1 );
     if ( model == modelranges_.back().get_model_id() )
@@ -85,7 +85,7 @@ ModelRangeManager::get_model_id( index gid ) const
 
   // to ensure thread-safety, use local range_idx
   size_t range_idx = right / 2; // start in center
-  while ( !modelranges_[ range_idx ].is_in_range( gid ) )
+  while ( not modelranges_[ range_idx ].is_in_range( gid ) )
   {
     if ( gid > modelranges_[ range_idx ].get_last_gid() )
     {
@@ -129,7 +129,7 @@ ModelRangeManager::model_in_use( index i ) const
 const modelrange&
 ModelRangeManager::get_contiguous_gid_range( index gid ) const
 {
-  if ( !is_in_range( gid ) )
+  if ( not is_in_range( gid ) )
     throw UnknownNode( gid );
 
   for ( std::vector< modelrange >::const_iterator it = modelranges_.begin();

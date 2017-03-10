@@ -245,8 +245,8 @@ end
       % lists from the subnetworks
 
       % obtain array with GIDs of all excitatory/inhibitory neurons
-      /E_neurons E_net GetGlobalNodes def
-      /I_neurons I_net GetGlobalNodes def
+      /E_neurons E_net 0 get GetGlobalNodes cvgidcollection def
+      /I_neurons I_net 0 get GetGlobalNodes cvgidcollection def
 
       % list of all neurons
       /allNeurons E_neurons I_neurons join def
@@ -296,7 +296,7 @@ end
 
 
       % Connect Poisson generator to neurons
-      [expoisson] E_neurons /all_to_all /syn_ex Connect
+      expoisson E_neurons /all_to_all /syn_ex Connect
 
       % E -> E connections
       % the following is a single call to fixed_indegree connect
@@ -314,7 +314,7 @@ end
 
       % ... as above, just written more compact
 
-      [inpoisson] I_neurons /all_to_all /syn_ex Connect
+      inpoisson I_neurons /all_to_all /syn_ex Connect
 
       E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
 
@@ -326,8 +326,8 @@ end
       % from each population
       (Connecting spike detectors.) =
 
-      E_neurons Nrec Take [exsd] Connect  % pick the first 500 neurons
-      I_neurons Nrec Take [insd] Connect
+      E_neurons Nrec Take exsd Connect  % pick the first 500 neurons
+      I_neurons Nrec Take insd Connect
 
       toc /BuildCPUTime Set
       (Building time     : ) =only BuildCPUTime =only ( s) =

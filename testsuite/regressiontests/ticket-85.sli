@@ -53,8 +53,8 @@ precise_models
   /model Set
   model ==
   {
-    model Create
-    model Create
+    model Create 0 get
+    model Create 0 get
     /stdp_synapse Connect
   } pass_or_die
 } forall
@@ -107,11 +107,11 @@ precise_models
     
     /ini_weight 1000. def
     pg n1 Connect
-    n1 n2 ini_weight 1.0 /stdp_synapse Connect
+    n1 0 get n2 0 get ini_weight 1.0 /stdp_synapse Connect
     
     100. Simulate
     
-    << /source [ n1 ] >> GetConnections 
+    << /source n1 >> GetConnections 
     0 get GetStatus 
     /weight get
     ini_weight neq

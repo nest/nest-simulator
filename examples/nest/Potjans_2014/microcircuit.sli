@@ -231,29 +231,29 @@
         0 1 n_pops_per_layer 1 sub
         {
             /population_index Set
-	    layer_subnet ChangeSubnet
+	    layer_subnet 0 get ChangeSubnet
             /subnet Create /population_subnet Set
-            population_subnet ChangeSubnet
+            population_subnet 0 get ChangeSubnet
 	    % create neurons
 	    /subnet Create /neuron_subnet Set
-	    neuron_subnet ChangeSubnet
+	    neuron_subnet 0 get ChangeSubnet
 	    neuron_subnet_GIDs [layer_index population_index] neuron_subnet put
             /neuron_subnet_GIDs Set
             neuron_model n_neurons layer_index get population_index get
             Create ;
 
             % initialize membrane potentials
-            neuron_subnet GetLocalNodes
+            neuron_subnet 0 get GetLocalNodes
             {
                dup /vp get /node_vp Set
 	        << /V_m normal_rdvs node_vp get Random Vm0_std mul Vm0_mean add
                 >> SetStatus
 	    } forall
 	    
-	    population_subnet ChangeSubnet
+	    population_subnet 0 get ChangeSubnet
 	    % create and configure stimulus and recording devices
 	    /subnet Create /device_subnet Set
-	    device_subnet ChangeSubnet
+	    device_subnet 0 get ChangeSubnet
             /spike_detector Create /this_spike_detector Set
 	    this_spike_detector
 	    <<
@@ -300,13 +300,13 @@
     n_thal 0 gt
     {
         /subnet Create /th_subnet Set 
-        th_subnet ChangeSubnet
+        th_subnet 0 get ChangeSubnet
 	/subnet Create /th_neuron_subnet_GID Set
-	th_neuron_subnet_GID ChangeSubnet
+	th_neuron_subnet_GID 0 get ChangeSubnet
         /parrot_neuron n_thal Create ;
-        th_subnet ChangeSubnet
+        th_subnet 0 get ChangeSubnet
 	/subnet Create /th_device_subnet Set
-	th_device_subnet ChangeSubnet
+	th_device_subnet 0 get ChangeSubnet
         /poisson_generator Create /th_poisson_GID Set
         th_poisson_GID 
         << 
@@ -349,7 +349,7 @@
     } if   
     neuron_subnet_GIDs Flatten
     {
-        GetGlobalNodes /GIDs Set    
+        0 get GetGlobalNodes /GIDs Set    
         Rank 0 eq
         {
             GIDs Min <- (\t) <- GIDs Max <- (\n) <-
@@ -375,8 +375,8 @@
             % get neuron IDs
 
             neuron_subnet_GIDs target_layer get target_pop get 
-	    dup GetGlobalNodes /target_nodes Set
-            GetLocalNodes /local_target_nodes Set	  
+	    dup 0 get GetGlobalNodes /target_nodes Set
+            0 get GetLocalNodes /local_target_nodes Set	  
 
             /n_targets n_neurons target_layer get target_pop get def
             /full_scale_n_targets full_scale_n_neurons target_layer get
@@ -393,7 +393,7 @@
 		   
 		    % get neuron IDs
                     neuron_subnet_GIDs source_layer get source_pop get
-                    GetGlobalNodes 
+                    0 get GetGlobalNodes 
                     /source_nodes Set
 		   
                     /n_sources n_neurons source_layer get source_pop get def
@@ -536,34 +536,30 @@
             % record from a continuous range of IDs
             % (appropriate for networks without topology)
             n_neurons_rec_spikes target_layer get target_pop get
-            Take
+            Take cvgidcollection
             spike_detector_GIDs target_layer get target_pop get
-            1 arraystore
             /all_to_all
             Connect
 
             % Connect to the voltmeter
             voltmeter_GIDs target_layer get target_pop get
-	        1 arraystore
             target_nodes
             % record from a continuous range of IDs
             n_neurons_rec_voltage target_layer get target_pop get
-            Take
+            Take cvgidcollection
             /all_to_all
             Connect
 
             % Connect to the Poisson generators
             poisson_GIDs target_layer get target_pop get
-	        1 arraystore
-            target_nodes
+            target_nodes cvgidcollection
             /all_to_all 
             << /weight PSC_ext /delay delays 0 get >>
             Connect            
 
             % Connect to the DC generators
             dc_GIDs target_layer get target_pop get
-   	        1 arraystore
-            target_nodes
+            target_nodes cvgidcollection
             /all_to_all
             Connect
 

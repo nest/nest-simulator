@@ -30,7 +30,7 @@ namespace nest
 {
 Vose::Vose( std::vector< double > dist )
 {
-  assert( !dist.empty() );
+  assert( not dist.empty() );
 
   const index n = dist.size();
 

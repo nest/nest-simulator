@@ -54,6 +54,8 @@ nest.SetDefaults("tsodyks2_synapse", t1_params)
 nest.SetDefaults("quantal_stp_synapse", t2_params)
 nest.SetDefaults("iaf_psc_exp", {"tau_syn_ex": 3., 'tau_m': 70.})
 
+parrot = nest.Create('parrot_neuron')
+
 source = nest.Create('spike_generator')
 nest.SetStatus(source, {'spike_times':
                         [30., 60., 90., 120., 150., 180., 210., 240., 270.,
@@ -81,8 +83,8 @@ nest.Simulate(t_tot)
 '''
 Now we connect the voltmeters
 '''
-nest.Connect([voltmeter[0]], [neuron[0]])
-nest.Connect([voltmeter[1]], [neuron[1]])
+nest.Connect(voltmeter[:1], neuron[:1])
+nest.Connect(voltmeter[1:], neuron[1:])
 
 '''
 WE now run the specified number of trials in a loop.

@@ -833,7 +833,8 @@ for name, loc, population, model in [('TpRelay', 1, Tp, 'TpRelay'),
     population_leaves = nest.GetLeaves(population)[0]
     tgts = [nd for nd in population_leaves
             if nest.GetStatus([nd], 'model')[0] == model]
-    nest.Connect(recorders[name][0], tgts)  # one recorder to all targets
+    # one recorder to all targetss
+    nest.Connect(recorders[name][0], nest.GIDCollection(tgts))
 
 # ! Example simulation
 # ! ====================
@@ -845,7 +846,7 @@ for name, loc, population, model in [('TpRelay', 1, Tp, 'TpRelay'),
 # ! plots.
 
 # ! show time during simulation
-nest.SetStatus([0], {'print_time': True})
+nest.SetKernelStatus({'print_time': True})
 
 # ! lower and upper limits for color scale, for each of the four
 # ! populations recorded.

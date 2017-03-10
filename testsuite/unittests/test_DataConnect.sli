@@ -89,7 +89,7 @@ normdv_d
 
 % Check for one source neuron
 /nrn 5 def
- << /source [nrn] /synapse_model /static_synapse >> GetConnections /conn Set
+ << /source [nrn] cvgidcollection /synapse_model /static_synapse >> GetConnections /conn Set
  conn {GetStatus} Map /syn5 Set
 
  syn5 { /weight get } Map /weights Set
@@ -97,7 +97,7 @@ normdv_d
  syn5 { /target get cvd } Map /targets Set
 
  synapses nrn 1 sub get /target get doublevector2array
- targets  eq assert_or_die
+ targets eq assert_or_die
 
 % Now the second variant of dataconnect which takes a list of status dicts.
 
@@ -118,7 +118,7 @@ connectome DataConnect
 
 % Step 5: Check for one source neuron
 /nrn 5 def
- << /source [nrn] /synapse_model /static_synapse >> GetConnections /conn Set
+ << /source [nrn] cvgidcollection /synapse_model /static_synapse >> GetConnections /conn Set
  conn {GetStatus} Map /syn5 Set
 
  syn5 { /weight get } Map /weights Set

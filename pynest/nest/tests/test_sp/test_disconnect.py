@@ -64,24 +64,27 @@ class TestDisconnectSingle(unittest.TestCase):
                         'total_num_virtual_procs': self.num_procs
                     }
                 )
-                neurons = nest.Create('iaf_neuron', 4)
+                neurons = [nest.Create('iaf_neuron', 1),
+                           nest.Create('iaf_neuron', 1),
+                           nest.Create('iaf_neuron', 1),
+                           nest.Create('iaf_neuron', 1)]
                 syn_dict = {'model': syn_model}
 
-                nest.Connect([neurons[0]], [neurons[2]],
+                nest.Connect(neurons[0], neurons[2],
                              "one_to_one", syn_dict)
-                nest.Connect([neurons[1]], [neurons[3]],
+                nest.Connect(neurons[1], neurons[3],
                              "one_to_one", syn_dict)
                 # Delete existent connection
                 conns = nest.GetConnections(
-                    [neurons[0]], [neurons[2]], syn_model)
+                    neurons[0], neurons[2], syn_model)
                 if mpi_test:
                     connstotal = None
                     conns = self.comm.allgather(conns, connstotal)
                     conns = filter(None, conns)
                 assert len(conns) == 1
-                nest.DisconnectOneToOne(neurons[0], neurons[2], syn_dict)
+                nest.DisconnectOneToOne(neurons[0][0], neurons[2][0], syn_dict)
                 conns = nest.GetConnections(
-                    [neurons[0]], [neurons[2]], syn_model)
+                    neurons[0], neurons[2], syn_model)
                 if mpi_test:
                     connstotal = None
                     conns = self.comm.allgather(conns, connstotal)
@@ -90,7 +93,7 @@ class TestDisconnectSingle(unittest.TestCase):
 
                 # Assert that one can not delete a non existent connection
                 conns1 = nest.GetConnections(
-                    [neurons[0]], [neurons[1]], syn_model)
+                    neurons[0], neurons[1], syn_model)
                 if mpi_test:
                     connstotal1 = None
                     conns1 = self.comm.allgather(conns1, connstotal1)

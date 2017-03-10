@@ -119,7 +119,7 @@ delays length 1 arraystore Range /synapses_idx exch def
 	/W exch def
 	/delay exch def
 	% connect spike generator to each port
-	[sg] [multisynapse_neuron] /one_to_one <<
+	sg multisynapse_neuron /one_to_one <<
 	/model /static_synapse
 	/delay delay
 	/weight W
@@ -128,7 +128,7 @@ delays length 1 arraystore Range /synapses_idx exch def
 } ScanThread
 
 % connects voltmeter
-vm multisynapse_neuron 1. 8. /static_synapse Connect
+vm 0 get multisynapse_neuron 0 get 1. 8. /static_synapse Connect
 
 simulation_t ms Simulate % run simulation
 

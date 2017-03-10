@@ -46,7 +46,8 @@ nest::KernelManager::destroy_kernel_manager()
 }
 
 nest::KernelManager::KernelManager()
-  : logging_manager()
+  : fingerprint_( 0 )
+  , logging_manager()
   , io_manager()
   , mpi_manager()
   , vp_manager()
@@ -102,6 +103,8 @@ nest::KernelManager::initialize()
   //   - model_manager for pristine models
   //   - vp_manager for number of threads
   node_manager.initialize(); // must come last
+
+  fingerprint_ = std::clock();
 
   initialized_ = true;
 }

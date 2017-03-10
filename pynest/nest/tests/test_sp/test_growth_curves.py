@@ -299,17 +299,17 @@ class TestGrowthCurve(unittest.TestCase):
     def simulate(self):
         self.sim_steps = numpy.arange(0, self.sim_time, self.sim_step)
         self.ca_nest = numpy.zeros(
-            (len(self.local_nodes), len(self.sim_steps)))
+            (len(self.pop), len(self.sim_steps)))
         self.ca_python = numpy.zeros(
             (len(self.se_integrator), len(self.sim_steps)))
         self.se_nest = numpy.zeros(
-            (len(self.local_nodes), len(self.sim_steps)))
+            (len(self.pop), len(self.sim_steps)))
         self.se_python = numpy.zeros(
             (len(self.se_integrator), len(self.sim_steps)))
 
         start = time.clock()
         for t_i, t in enumerate(self.sim_steps):
-            for n_i, n in enumerate(self.local_nodes):
+            for n_i, n in enumerate(self.pop):
                 self.ca_nest[n_i][t_i], synaptic_elements = nest.GetStatus(
                     [n], ('Ca', 'synaptic_elements'))[0]
                 self.se_nest[n_i][t_i] = synaptic_elements['se']['z']
@@ -319,7 +319,7 @@ class TestGrowthCurve(unittest.TestCase):
         tmp = nest.GetStatus(self.spike_detector, 'events')[0]
         spikes_all = tmp['times']
         senders_all = tmp['senders']
-        for n_i, n in enumerate(self.local_nodes):
+        for n_i, n in enumerate(self.pop):
             spikes = spikes_all[senders_all == n]
             [sei.reset() for sei in self.se_integrator]
             spike_i = 0
@@ -362,7 +362,7 @@ class TestGrowthCurve(unittest.TestCase):
         growth_rate = 0.0001
         eps = 0.10
         nest.SetStatus(
-            self.local_nodes,
+            self.pop,
             {
                 'beta_Ca': beta_ca,
                 'tau_Ca': tau_ca,
@@ -391,11 +391,12 @@ class TestGrowthCurve(unittest.TestCase):
             0.08378699, 0.08376784, 0.08369779, 0.08374215, 0.08370484
         ])
 
+        pop_as_list = list(self.pop)
         for n in self.pop:
-            if n in self.local_nodes:
+            if n in self.pop:
                 testing.assert_almost_equal(
-                    self.se_nest[self.local_nodes.index(n), 10], expected[
-                        self.pop.index(n)],
+                    self.se_nest[pop_as_list.index(n), 10], expected[
+                        pop_as_list.index(n)],
                     decimal=8)
 
     def test_gaussian_growth_curve(self):
@@ -405,7 +406,7 @@ class TestGrowthCurve(unittest.TestCase):
         eta = 0.05
         eps = 0.10
         nest.SetStatus(
-            self.local_nodes,
+            self.pop,
             {
                 'beta_Ca': beta_ca,
                 'tau_Ca': tau_ca,
@@ -431,11 +432,12 @@ class TestGrowthCurve(unittest.TestCase):
             0.10031755, 0.10032216, 0.10040191, 0.10058179, 0.10068598
         ])
 
+        pop_as_list = list(self.pop)
         for n in self.pop:
-            if n in self.local_nodes:
+            if n in self.pop:
                 testing.assert_almost_equal(
-                    self.se_nest[self.local_nodes.index(n), 30], expected[
-                        self.pop.index(n)],
+                    self.se_nest[pop_as_list.index(n), 30], expected[
+                        pop_as_list.index(n)],
                     decimal=5)
 
     def test_sigmoid_growth_curve(self):
@@ -471,11 +473,14 @@ class TestGrowthCurve(unittest.TestCase):
             0.07805961,  0.07808139,  0.07794451,  0.07799474,  0.07794458
         ])
 
+        pop_as_list = list(self.pop)
         for n in self.pop:
             if n in self.local_nodes:
+                loc = self.se_nest[self.local_nodes.index(n), 30]
+                ex = expected[pop_as_list.index(n)]
                 testing.assert_almost_equal(
                     self.se_nest[self.local_nodes.index(n), 30], expected[
-                        self.pop.index(n)],
+                        pop_as_list.index(n)],
                     decimal=5)
 
     def tearDown(self):

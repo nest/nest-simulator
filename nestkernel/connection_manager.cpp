@@ -275,8 +275,8 @@ nest::ConnectionManager::get_user_set_delay_extrema() const
 
 nest::ConnBuilder*
 nest::ConnectionManager::get_conn_builder( const std::string& name,
-  const GIDCollection& sources,
-  const GIDCollection& targets,
+  GIDCollectionPTR sources,
+  GIDCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
 {
@@ -295,20 +295,20 @@ nest::ConnectionManager::calibrate( const TimeConverter& tc )
 }
 
 void
-nest::ConnectionManager::connect( const GIDCollection& sources,
-  const GIDCollection& targets,
+nest::ConnectionManager::connect( GIDCollectionPTR sources,
+  GIDCollectionPTR targets,
   const DictionaryDatum& conn_spec,
   const DictionaryDatum& syn_spec )
 {
   conn_spec->clear_access_flags();
   syn_spec->clear_access_flags();
 
-  if ( !conn_spec->known( names::rule ) )
+  if ( not conn_spec->known( names::rule ) )
     throw BadProperty( "Connectivity spec must contain connectivity rule." );
   const Name rule_name =
     static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
 
-  if ( !connruledict_->known( rule_name ) )
+  if ( not connruledict_->known( rule_name ) )
     throw BadProperty(
       String::compose( "Unknown connectivity rule: %1", rule_name ) );
   const long rule_id = ( *connruledict_ )[ rule_name ];
@@ -491,7 +491,7 @@ nest::ConnectionManager::connect( index sgid,
   const thread tid = kernel().vp_manager.get_thread_id();
 
   // make sure target is on this MPI rank
-  if ( !kernel().node_manager.is_local_gid( tgid ) )
+  if ( not kernel().node_manager.is_local_gid( tgid ) )
   {
     return false;
   }
@@ -650,9 +650,18 @@ nest::ConnectionManager::disconnect( Node& target,
       throw InexistentConnection();
     }
     DictionaryDatum data = DictionaryDatum( new Dictionary );
-    def< index >( data, names::target, target.get_gid() );
-    def< index >( data, names::source, sgid );
+    std::vector< index > target_array( 1 );
+    std::vector< index > source_array( 1 );
+    target_array[ 0 ] = target.get_gid();
+    source_array[ 0 ] = sgid;
+    def< GIDCollectionDatum >( data,
+      names::target,
+      GIDCollectionDatum( GIDCollection::create( target_array ) ) );
+    def< GIDCollectionDatum >( data,
+      names::source,
+      GIDCollectionDatum( GIDCollection::create( source_array ) ) );
     ArrayDatum conns = kernel().connection_manager.get_connections( data );
+
     if ( conns.numReferences() == 0 )
     {
       throw InexistentConnection();
@@ -754,7 +763,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
   bool complete_wd_lists = ( ( *ptarget_ids )->size() == ( *pweights )->size()
     && ( *pweights )->size() == ( *pdelays )->size() );
   // check if we have consistent lists for weights and delays
-  if ( !complete_wd_lists )
+  if ( not complete_wd_lists )
   {
     LOG( M_ERROR,
       "DataConnect",
@@ -801,7 +810,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           "Target with ID %1 does not exist. "
           "The connection will be ignored.",
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
           msg += "\nDetails: " + e.message();
         LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
@@ -832,7 +841,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           "Target with ID %1 does not support the connection. "
           "The connection will be ignored.",
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
           msg += "\nDetails: " + e.message();
         LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
@@ -843,7 +852,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           "Target with ID %1 does not support the connection. "
           "The connection will be ignored.",
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
           msg += "\nDetails: " + e.message();
         LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
@@ -856,7 +865,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           "The connection will be ignored",
           source_id,
           target_ids[ i ] );
-        if ( !e.message().empty() )
+        if ( not e.message().empty() )
           msg += "\nDetails: " + e.message();
         LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
@@ -879,12 +888,12 @@ nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
     index source_gid = ( *cd )[ names::source ];
 
     Token synmodel = cd->lookup( names::synapse_model );
-    if ( !synmodel.empty() )
+    if ( not synmodel.empty() )
     {
       std::string synmodel_name = getValue< std::string >( synmodel );
       synmodel =
         kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-      if ( !synmodel.empty() )
+      if ( not synmodel.empty() )
         syn_id = static_cast< size_t >( synmodel );
       else
         throw UnknownModelName( synmodel_name );
@@ -1028,19 +1037,33 @@ ArrayDatum
 nest::ConnectionManager::get_connections( DictionaryDatum params ) const
 {
   std::deque< ConnectionID > connectome;
-
   const Token& source_t = params->lookup( names::source );
   const Token& target_t = params->lookup( names::target );
   const Token& syn_model_t = params->lookup( names::synapse_model );
-  const TokenArray* source_a = 0;
-  const TokenArray* target_a = 0;
+  GIDCollectionPTR source_a = GIDCollectionPTR( 0 );
+  GIDCollectionPTR target_a = GIDCollectionPTR( 0 );
+
   long synapse_label = UNLABELED_CONNECTION;
   updateValue< long >( params, names::synapse_label, synapse_label );
 
   if ( not source_t.empty() )
-    source_a = dynamic_cast< TokenArray const* >( source_t.datum() );
+  {
+    source_a = getValue< GIDCollectionDatum >( source_t );
+    if ( not source_a->valid() )
+    {
+      throw KernelException(
+        "GetConnection requires valid source GIDCollection." );
+    }
+  }
   if ( not target_t.empty() )
-    target_a = dynamic_cast< TokenArray const* >( target_t.datum() );
+  {
+    target_a = getValue< GIDCollectionDatum >( target_t );
+    if ( not target_a->valid() )
+    {
+      throw KernelException(
+        "GetConnection requires valid target GIDCollection." );
+    }
+  }
 
   size_t syn_id = 0;
 
@@ -1059,7 +1082,7 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
     Name synmodel_name = getValue< Name >( syn_model_t );
     const Token synmodel =
       kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
-    if ( !synmodel.empty() )
+    if ( not synmodel.empty() )
       syn_id = static_cast< size_t >( synmodel );
     else
       throw UnknownModelName( synmodel_name.toString() );
@@ -1105,8 +1128,8 @@ extend_connectome( std::deque< nest::ConnectionID >& out,
 void
 nest::ConnectionManager::get_connections(
   std::deque< ConnectionID >& connectome,
-  TokenArray const* source,
-  TokenArray const* target,
+  GIDCollectionPTR source,
+  GIDCollectionPTR target,
   size_t syn_id,
   long synapse_label ) const
 {
@@ -1115,7 +1138,7 @@ nest::ConnectionManager::get_connections(
     return;
   }
 
-  if ( source == 0 and target == 0 )
+  if ( not source.valid() and not target.valid() )
   {
 #ifdef _OPENMP
 #pragma omp parallel
@@ -1146,7 +1169,7 @@ nest::ConnectionManager::get_connections(
 
     return;
   }
-  else if ( source == 0 and target != 0 )
+  else if ( not source.valid() and target.valid() )
   {
 #ifdef _OPENMP
 #pragma omp parallel
@@ -1163,9 +1186,10 @@ nest::ConnectionManager::get_connections(
       {
         if ( validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
         {
-          for ( index t_id = 0; t_id < target->size(); ++t_id )
+          GIDCollection::const_iterator t_id = target->begin();
+          for ( ; t_id != target->end(); ++t_id )
           {
-            size_t target_id = target->get( t_id );
+            size_t target_id = ( *t_id ).gid;
             validate_pointer( connections_[ t ].get( source_id ) )
               ->get_connections( source_id,
                 target_id,
@@ -1186,7 +1210,7 @@ nest::ConnectionManager::get_connections(
     }
     return;
   }
-  else if ( source != 0 )
+  else if ( source.valid() )
   {
 #ifdef _OPENMP
 #pragma omp parallel
@@ -1198,13 +1222,14 @@ nest::ConnectionManager::get_connections(
 #endif
       std::deque< ConnectionID > conns_in_thread;
 
-      for ( index s = 0; s < source->size(); ++s )
+      GIDCollection::const_iterator s = source->begin();
+      for ( ; s != source->end(); ++s )
       {
-        size_t source_id = source->get( s );
+        size_t source_id = ( *s ).gid;
         if ( source_id < connections_[ t ].size()
           && validate_pointer( connections_[ t ].get( source_id ) ) != 0 )
         {
-          if ( target == 0 )
+          if ( not target.valid() )
           {
             validate_pointer( connections_[ t ].get( source_id ) )
               ->get_connections(
@@ -1212,9 +1237,10 @@ nest::ConnectionManager::get_connections(
           }
           else
           {
-            for ( index t_id = 0; t_id < target->size(); ++t_id )
+            GIDCollection::const_iterator t_id = target->begin();
+            for ( ; t_id != target->end(); ++t_id )
             {
-              size_t target_id = target->get( t_id );
+              size_t target_id = ( *t_id ).gid;
               validate_pointer( connections_[ t ].get( source_id ) )
                 ->get_connections( source_id,
                   target_id,
@@ -1226,7 +1252,6 @@ nest::ConnectionManager::get_connections(
           }
         }
       }
-
       if ( conns_in_thread.size() > 0 )
       {
 #ifdef _OPENMP

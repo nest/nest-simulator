@@ -176,7 +176,7 @@ nest::pulsepacket_generator::update( Time const& T,
   assert( ( to - from ) <= kernel().connection_manager.get_min_delay() );
 
   if ( ( V_.start_center_idx_ == P_.pulse_times_.size()
-         && B_.spiketimes_.empty() ) || ( !device_.is_active( T ) ) )
+         && B_.spiketimes_.empty() ) || ( not device_.is_active( T ) ) )
     return; // nothing left to do
 
   // determine next pulse-center times (around sdev*tolerance window)
@@ -219,7 +219,7 @@ nest::pulsepacket_generator::update( Time const& T,
   // Since we have an ordered list of spiketimes,
   // we can compute the histogram on the fly.
   while (
-    !B_.spiketimes_.empty() && B_.spiketimes_.front() < ( T.get_steps() + to ) )
+    not B_.spiketimes_.empty() && B_.spiketimes_.front() < ( T.get_steps() + to ) )
   {
     n_spikes++;
     long prev_spike = B_.spiketimes_.front();

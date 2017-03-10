@@ -850,7 +850,7 @@ SLIArrayModule::ArraycreateFunction::execute( SLIInterpreter* i ) const
   const Token mark_token( new LiteralDatum( i->mark_name ) );
   bool found = false;
 
-  while ( ( n < depth ) && !found )
+  while ( ( n < depth ) && not found )
   {
     found = ( i->OStack.pick( n ) == mark_token );
     ++n;
@@ -4225,14 +4225,14 @@ eq_execute( SLIInterpreter* i )
   }
 
   T* op1 = dynamic_cast< T* >( i->OStack.pick( 1 ).datum() );
-  if ( !op1 )
+  if ( not op1 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;
   }
 
   T* op2 = dynamic_cast< T* >( i->OStack.pick( 0 ).datum() );
-  if ( !op2 )
+  if ( not op2 )
   {
     i->raiseerror( i->ArgumentTypeError );
     return;

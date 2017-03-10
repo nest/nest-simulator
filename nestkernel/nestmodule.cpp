@@ -62,6 +62,7 @@ namespace nest
 {
 SLIType NestModule::ConnectionType;
 SLIType NestModule::GIDCollectionType;
+SLIType NestModule::GIDCollectionIteratorType;
 
 // At the time when NestModule is constructed, the SLI Interpreter
 // must already be initialized. NestModule relies on the presence of
@@ -78,6 +79,7 @@ NestModule::~NestModule()
 
   ConnectionType.deletetypename();
   GIDCollectionType.deletetypename();
+  GIDCollectionIteratorType.deletetypename();
 }
 
 // The following concerns the new module:
@@ -509,16 +511,21 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
 
 /* BeginDocumentation
    Name: Create - create a number of equal nodes in the current subnet
+
    Synopsis:
-   /model          Create -> gid
-   /model n        Create -> gid
-   /model   params Create -> gid
-   /model n params Create -> gid
+   /model          Create -> gids
+   /model n        Create -> gids
+   /model   params Create -> gids
+   /model n params Create -> gids
+
    Parameters:
    /model - literal naming the modeltype (entry in modeldict)
    n      - the desired number of nodes
    params - parameters for the newly created node(s)
-   gid    - gid of last created node
+
+   Returns:
+   gids   - GIDCollection representing nodes created
+
    Description:
    Create generates n new network objects of the supplied model
    type. If n is not given, a single node is created. The objects
@@ -542,10 +549,10 @@ NestModule::Create_l_iFunction::execute( SLIInterpreter* i ) const
 
   const std::string modname = getValue< std::string >( i->OStack.pick( 1 ) );
 
-  const long last_node_id = create( modname, n_nodes );
+  GIDCollectionDatum nodes_created = create( modname, n_nodes );
 
   i->OStack.pop( 2 );
-  i->OStack.push( last_node_id );
+  i->OStack.push( nodes_created );
   i->EStack.pop();
 }
 
@@ -683,7 +690,7 @@ NestModule::ResetNetworkFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::Disconnect_i_i_lFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 3 );
+  i->assert_stack_load( 3 ); // 3
 
   index source = getValue< long >( i->OStack.pick( 2 ) );
   index target = getValue< long >( i->OStack.pick( 1 ) );
@@ -693,8 +700,11 @@ NestModule::Disconnect_i_i_lFunction::execute( SLIInterpreter* i ) const
   // check whether the target is on this process
   if ( kernel().node_manager.is_local_gid( target ) )
   {
+
     Node* const target_node = kernel().node_manager.get_node( target );
+
     const thread target_thread = target_node->get_thread();
+
     kernel().sp_manager.disconnect_single(
       source, target_node, target_thread, synapse_params );
   }
@@ -829,12 +839,12 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 
     % assume a connected network
 
-    << >> GetConnections Flatten /conns Set % Get all connections
-    conns { GetStatus } Map      /syns  Set % retrieve their synapse status
+    << >> GetConnections    /conns Set % Get all connections
+    conns { GetStatus } Map /syns  Set % retrieve their synapse status
 
-    ResetKernel                             % clear everything
+    ResetKernel                        % clear everything
     % rebuild neurons
-    syns DataConnect                        % restore the connecions
+    syns DataConnect                   % restore the connecions
 
 
     Author: Marc-Oliver Gewaltig
@@ -1447,7 +1457,8 @@ NestModule::Cvgidcollection_i_iFunction::execute( SLIInterpreter* i ) const
 
   const long first = getValue< long >( i->OStack.pick( 1 ) );
   const long last = getValue< long >( i->OStack.pick( 0 ) );
-  GIDCollectionDatum gidcoll = GIDCollection( first, last );
+
+  GIDCollectionDatum gidcoll = new GIDCollectionPrimitive( first, last );
 
   i->OStack.pop( 2 );
   i->OStack.push( gidcoll );
@@ -1460,7 +1471,8 @@ NestModule::Cvgidcollection_iaFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   TokenArray gids = getValue< TokenArray >( i->OStack.pick( 0 ) );
-  GIDCollectionDatum gidcoll = GIDCollection( gids );
+
+  GIDCollectionDatum gidcoll( GIDCollection::create( gids ) );
 
   i->OStack.pop();
   i->OStack.push( gidcoll );
@@ -1473,10 +1485,23 @@ NestModule::Cvgidcollection_ivFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   IntVectorDatum gids = getValue< IntVectorDatum >( i->OStack.pick( 0 ) );
-  GIDCollectionDatum gidcoll = GIDCollection( gids );
+  GIDCollectionDatum gidcoll( GIDCollection::create( gids ) );
 
   i->OStack.pop();
   i->OStack.push( gidcoll );
+  i->EStack.pop();
+}
+
+void
+NestModule::Cva_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  GIDCollectionDatum gidcoll =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+  ArrayDatum gids = gidcoll->to_array();
+
+  i->OStack.pop();
+  i->OStack.push( gids );
   i->EStack.pop();
 }
 
@@ -1488,9 +1513,234 @@ NestModule::Size_gFunction::execute( SLIInterpreter* i ) const
     getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
   i->OStack.pop();
-  i->OStack.push( gidcoll.size() );
+  i->OStack.push( gidcoll->size() );
   i->EStack.pop();
 }
+
+void
+NestModule::ValidQ_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  GIDCollectionDatum gidcoll =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+
+  i->OStack.pop();
+  i->OStack.push( gidcoll->valid() );
+  i->EStack.pop();
+}
+
+void
+NestModule::Join_g_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+  GIDCollectionDatum left =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  GIDCollectionDatum right =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+
+  GIDCollectionDatum combined = left + right;
+
+  i->OStack.pop( 2 );
+  i->OStack.push( combined );
+  i->EStack.pop();
+}
+
+void
+NestModule::MemberQ_g_iFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+  GIDCollectionDatum gidcoll =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  const long gid = getValue< long >( i->OStack.pick( 0 ) );
+
+  const bool res = gidcoll->contains( gid );
+  i->OStack.pop( 2 );
+  i->OStack.push( res );
+  i->EStack.pop();
+}
+
+void
+NestModule::BeginIterator_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  GIDCollectionDatum gidcoll =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+
+  GIDCollectionIteratorDatum it =
+    new gc_const_iterator( gidcoll->begin( gidcoll ) );
+
+  i->OStack.pop();
+  i->OStack.push( it );
+  i->EStack.pop();
+}
+
+void
+NestModule::EndIterator_gFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  GIDCollectionDatum gidcoll =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
+
+  GIDCollectionIteratorDatum it =
+    new gc_const_iterator( gidcoll->end( gidcoll ) );
+
+  i->OStack.pop();
+  i->OStack.push( it );
+  i->EStack.pop();
+}
+
+void
+NestModule::GetGID_qFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  GIDCollectionIteratorDatum it =
+    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+
+  index gid = ( **it ).gid;
+
+  i->OStack.pop();
+  i->OStack.push( gid );
+  i->EStack.pop();
+}
+
+void
+NestModule::GetGIDModelID_qFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  GIDCollectionIteratorDatum it =
+    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+
+  ArrayDatum gm_pair;
+  const GIDPair& gp = **it;
+  gm_pair.push_back( gp.gid );
+  gm_pair.push_back( gp.model_id );
+
+  i->OStack.pop();
+  i->OStack.push( gm_pair );
+  i->EStack.pop();
+}
+
+void
+NestModule::Next_qFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+  GIDCollectionIteratorDatum it =
+    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+
+  ++( *it );
+
+  // leave iterator on stack
+  i->EStack.pop();
+}
+
+void
+NestModule::Eq_q_qFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+  GIDCollectionIteratorDatum it_l =
+    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 1 ) );
+  GIDCollectionIteratorDatum it_r =
+    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+
+  const bool res = not it_l->operator!=( *it_r );
+
+  // leave iterator on stack
+  i->OStack.pop( 2 );
+  i->OStack.push( res );
+  i->EStack.pop();
+}
+
+void
+NestModule::Lt_q_qFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+  GIDCollectionIteratorDatum it_l =
+    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 1 ) );
+  GIDCollectionIteratorDatum it_r =
+    getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
+
+  const bool res = it_l->operator<( *it_r );
+
+  // leave iterator on stack
+  i->OStack.pop( 2 );
+  i->OStack.push( res );
+  i->EStack.pop();
+}
+
+void
+NestModule::Get_g_iFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+  GIDCollectionDatum gidcoll =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  long idx = getValue< long >( i->OStack.pick( 0 ) );
+
+  const size_t g_size = gidcoll->size();
+  if ( idx < 0 )
+  {
+    idx = g_size + idx;
+  }
+  if ( not( 0 <= idx and idx < static_cast< long >( g_size ) ) )
+  {
+    throw RangeCheck();
+  }
+
+  const index gid = ( *gidcoll )[ idx ];
+
+  i->OStack.pop( 2 );
+  i->OStack.push( gid );
+  i->EStack.pop();
+}
+
+void
+NestModule::Take_g_aFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 2 );
+  GIDCollectionDatum gidcoll =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
+  TokenArray slice = getValue< TokenArray >( i->OStack.pick( 0 ) );
+
+  if ( slice.size() != 3 )
+  {
+    throw DimensionMismatch( 3, slice.size() );
+  }
+
+  const size_t g_size = gidcoll->size();
+  long start = slice[ 0 ];
+  long stop = slice[ 1 ];
+  long step = slice[ 2 ];
+
+  if ( step < 1 )
+  {
+    throw BadParameter( "Slicing step must be strictly positive." );
+  }
+
+  if ( start >= 0 )
+  {
+    start -= 1; // adjust from 1-based to 0-based indexing
+  }
+  else
+  {
+    start += g_size; // automatically correct for 0-based indexing
+  }
+
+  if ( stop >= 0 )
+  {
+    // no adjustment necessary: adjustment from 1- to 0- based indexing
+    // and adjustment from last- to stop-based logic cancel
+  }
+  else
+  {
+    stop += g_size + 1; // adjust from 0- to 1- based indexin
+  }
+
+  GIDCollectionDatum sliced_gc = gidcoll->slice( start, stop, step );
+
+  i->OStack.pop( 2 );
+  i->OStack.push( sliced_gc );
+  i->EStack.pop();
+}
+
 
 #ifdef HAVE_MUSIC
 /* BeginDocumentation
@@ -1621,6 +1871,10 @@ NestModule::init( SLIInterpreter* i )
   GIDCollectionType.settypename( "gidcollectiontype" );
   GIDCollectionType.setdefaultaction( SLIInterpreter::datatypefunction );
 
+  GIDCollectionIteratorType.settypename( "gidcollectioniteratortype" );
+  GIDCollectionIteratorType.setdefaultaction(
+    SLIInterpreter::datatypefunction );
+
   // register interface functions with interpreter
   i->createcommand( "ChangeSubnet", &changesubnet_ifunction, "NEST 3.0" );
   i->createcommand( "CurrentSubnet", &currentsubnetfunction, "NEST 3.0" );
@@ -1688,7 +1942,20 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "cvgidcollection_i_i", &cvgidcollection_i_ifunction );
   i->createcommand( "cvgidcollection_ia", &cvgidcollection_iafunction );
   i->createcommand( "cvgidcollection_iv", &cvgidcollection_ivfunction );
+  i->createcommand( "cva_g", &cva_gfunction );
   i->createcommand( "size_g", &size_gfunction );
+  i->createcommand( "ValidQ_g", &validq_gfunction );
+  i->createcommand( "join_g_g", &join_g_gfunction );
+  i->createcommand( "MemberQ_g_i", &memberq_g_ifunction );
+  i->createcommand( ":beginiterator_g", &beginiterator_gfunction );
+  i->createcommand( ":enditerator_g", &enditerator_gfunction );
+  i->createcommand( ":getgid_q", &getgid_qfunction );
+  i->createcommand( ":getgidmodelid_q", &getgidmodelid_qfunction );
+  i->createcommand( ":next_q", &next_qfunction );
+  i->createcommand( ":eq_q_q", &eq_q_qfunction );
+  i->createcommand( ":lt_q_q", &lt_q_qfunction );
+  i->createcommand( "get_g_i", &get_g_ifunction );
+  i->createcommand( "Take_g_a", &take_g_afunction );
 
 #ifdef HAVE_MUSIC
   i->createcommand( "SetAcceptableLatency", &setacceptablelatency_l_dfunction );

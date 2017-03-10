@@ -53,54 +53,6 @@ HAVE_LIBNEUROSIM = nest.sli_pop()
 class CSATestCase(unittest.TestCase):
     """CSA tests"""
 
-    def test_CSA_OneToOne_subnet_1d(self):
-        """One-to-one connectivity with 1-dim subnets"""
-
-        nest.ResetKernel()
-
-        n = 4  # number of neurons
-
-        pop0 = nest.LayoutNetwork("iaf_neuron", [n])
-        pop1 = nest.LayoutNetwork("iaf_neuron", [n])
-
-        cg = csa.cset(csa.oneToOne)
-
-        pop0_list = [x for x in nest.GIDCollection(pop0[0])]
-        pop1_list = [x for x in nest.GIDCollection(pop1[0])]
-
-        sources = nest.GetLeaves(pop0_list)[0]
-        targets = nest.GetLeaves(pop1_list)[0]
-
-        nest.CGConnect(nest.GIDCollection(pop0[0]),
-                       nest.GIDCollection(pop1[0]),
-                       cg)
-
-        for i in range(n):
-            conns = nest.GetStatus(
-                nest.GetConnections([sources[i]]), 'target')
-            self.assertEqual(len(conns), 1)
-            self.assertEqual(conns[0], targets[i])
-
-            conns = nest.GetStatus(
-                nest.GetConnections([targets[i]]), 'target')
-            self.assertEqual(len(conns), 0)
-
-    def test_CSA_OneToOne_subnet_nd(self):
-        """One-to-one connectivity with n-dim subnets"""
-
-        nest.ResetKernel()
-
-        n = 2  # number of neurons per dimension
-
-        pop0 = nest.LayoutNetwork("iaf_neuron", [n, n])
-        pop1 = nest.LayoutNetwork("iaf_neuron", [n, n])
-
-        cg = csa.cset(csa.oneToOne)
-
-        self.assertRaisesRegex(nest.NESTError, "BadProperty",
-                               nest.CGConnect, nest.GIDCollection(pop0[0]),
-                               nest.GIDCollection(pop1[0]), cg)
-
     def test_CSA_OneToOne_idrange(self):
         """One-to-one connectivity with id ranges"""
 
@@ -131,34 +83,6 @@ class CSATestCase(unittest.TestCase):
         nest.ResetKernel()
 
         n = 4  # number of neurons
-
-        pop0 = nest.LayoutNetwork("iaf_neuron", [n])
-        pop1 = nest.LayoutNetwork("iaf_neuron", [n])
-
-        cs = csa.cset(csa.oneToOne, 10000.0, 1.0)
-
-        pop0_list = [x for x in nest.GIDCollection(pop0[0])]
-        pop1_list = [x for x in nest.GIDCollection(pop1[0])]
-
-        sources = nest.GetLeaves(pop0_list)[0]
-        targets = nest.GetLeaves(pop1_list)[0]
-
-        nest.CGConnect(nest.GIDCollection(pop0[0]),
-                       nest.GIDCollection(pop1[0]),
-                       cs,
-                       {"weight": 0, "delay": 1})
-
-        for i in range(n):
-            conns = nest.GetStatus(
-                nest.GetConnections([sources[i]]), 'target')
-            self.assertEqual(len(conns), 1)
-            self.assertEqual(conns[0], targets[i])
-
-            conns = nest.GetStatus(
-                nest.GetConnections([targets[i]]), 'target')
-            self.assertEqual(len(conns), 0)
-
-        nest.ResetKernel()
 
         sources = nest.Create('iaf_psc_alpha', n)
         targets = nest.Create('iaf_psc_alpha', n)

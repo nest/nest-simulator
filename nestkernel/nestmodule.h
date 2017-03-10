@@ -149,6 +149,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } getstatus_afunction;
 
+  class GetKernelStatus_Function : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getkernelstatus_function;
+
   class SetStatus_idFunction : public SLIFunction
   {
   public:
@@ -160,6 +166,12 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } setstatus_CDfunction;
+
+  class SetKernelStatus_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } setkernelstatus_Dfunction;
 
   class Cva_CFunction : public SLIFunction
   {

@@ -487,7 +487,7 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
    Note: Run must only be used after Prepare is called, and
    before Cleanup to finalize state (close files, etc).
    Any changes made between Prepare and Cleanup may cause
-   undefined failures (the famed nose-inhabiting monkeys of
+   undefined behavior (the famed nose-inhabiting monkeys of
    internet lore).
 
    SeeAlso: Simulate, resume, unit_conversion, Prepare, Cleanup
@@ -518,7 +518,7 @@ NestModule::RunFunction::execute( SLIInterpreter* i ) const
    Note: Run must only be used after Prepare is called, and
    before Cleanup to finalize state (close files, etc).
    Any changes made between Prepare and Cleanup may cause
-   undefined failures (the famed nose-inhabiting monkeys of
+   undefined behavior (the famed nose-inhabiting monkeys of
    internet lore).
 
    SeeAlso: Run, Cleanup, Simulate
@@ -542,7 +542,7 @@ NestModule::PrepareFunction::execute( SLIInterpreter* i ) const
    Note: Run must only be used after Prepare is called, and
    before Cleanup to finalize state (close files, etc).
    Any changes made between Prepare and Cleanup may cause
-   undefined failures (the famed nose-inhabiting monkeys of
+   undefined behavior (the famed nose-inhabiting monkeys of
    internet lore).
 
    SeeAlso: Run, Prepare, Simulate

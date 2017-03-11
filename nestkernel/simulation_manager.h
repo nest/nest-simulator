@@ -64,19 +64,18 @@ public:
   */
 
   /**
-     initialize simulation for a set of run calls.
+     Initialize simulation for a set of run calls.
      Must be called before a sequence of runs, and again after cleanup.
   */
   void prepare();
   /**
-     run a simulation for another `Time`. Can be repeated ad infinitum with
+     Run a simulation for another `Time`. Can be repeated ad infinitum with
      calls to get_status(), but any changes to the network are undefined,
-     leading
-     to serious health risks from flying monkeys.
+     leading serious risk of incorrect results.
   */
   void run( Time const& );
   /**
-     closes a set of runs, doing finalizations such as file closures.
+     Closes a set of runs, doing finalizations such as file closures.
      After cleanup() is called, no more run()s can be called before another
      prepare() call.
   */

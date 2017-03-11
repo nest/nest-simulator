@@ -54,9 +54,10 @@ def Run(t):
     with RunManager: clause
     Simulate(t): t' = t/m; Prepare(); for _ in range(m): Run(t'); Cleanup()
     Prepare() must be called before to calibrate, etc; Cleanup() afterward to
-    close files, cleanup handles and so on. After Cleanup(), Prepare() can and must
-    be called before more Run() calls.
-    Any calls to set_status between Prepare() and Cleanup() have undefined behavior.
+    close files, cleanup handles and so on. After Cleanup(), Prepare() can and
+    must be called before more Run() calls.
+    Any calls to set_status between Prepare() and Cleanup() have undefined
+    behavior.
     """
 
     sps(float(t))
@@ -66,9 +67,9 @@ def Run(t):
 @check_stack
 def Prepare():
     """Prepares network before a Run call. Not needed for Simulate.
-    
-    See Run(t), Cleanup(). Call before any sequence of Runs(). Do all set_status calls
-    before Prepare().
+
+    See Run(t), Cleanup(). Call before any sequence of Runs(). Do all
+    set_status calls before Prepare().
     """
 
     sr('Prepare')

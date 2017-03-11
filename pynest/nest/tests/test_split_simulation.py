@@ -68,7 +68,7 @@ class TestSplit(unittest.TestCase):
 
         return [
             (s, t)
-            for s, t in self.runner(time*steps, nest.Simulate)
+            for s, t in self.runner(time * steps, nest.Simulate)
         ]
 
     def test_split_match(self):

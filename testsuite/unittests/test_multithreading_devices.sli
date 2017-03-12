@@ -56,9 +56,9 @@ is_threaded not { exit_test_gracefully } if
     
     /threads Set
 
-    0 << /local_num_threads threads
+    << /local_num_threads threads
 	   /overwrite_files true
-      >> SetStatus
+      >> SetKernelStatus
 
     /iaf_psc_alpha Create /n1 Set
     /iaf_psc_alpha Create /n2 Set
@@ -106,7 +106,7 @@ is_threaded not { exit_test_gracefully } if
 % %
 % 
 % ResetKernel
-% 0 << /local_num_threads 4 >>  SetStatus
+% << /local_num_threads 4 >>  SetKernelStatus
 % 
 % /multimeter  << /record_to [ /memory ] /record_from [ /V_m ] /withgid true /interval 1.0 >> Create /mm Set
 % 

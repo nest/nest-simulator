@@ -64,7 +64,7 @@ if
 
 ResetKernel
 
-0 << 
+<< 
       /local_num_threads 1 
       /resolution h
       /use_wfr true
@@ -72,7 +72,7 @@ ResetKernel
       /wfr_interpolation_order 3
       /wfr_max_iterations 10
       /wfr_comm_interval 1.0
-    >> SetStatus
+    >> SetKernelStatus
     
 /hh_psc_alpha_gap Create /neuron1 Set
 /hh_psc_alpha_gap Create /neuron2 Set

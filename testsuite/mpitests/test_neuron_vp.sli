@@ -45,7 +45,7 @@ is_threaded not { exit_test_gracefully } if
 {
   ResetKernel
 
-  0 << /total_num_virtual_procs 4 >> SetStatus
+  << /total_num_virtual_procs 4 >> SetKernelStatus
 
   /subnet Create /net Set
   net 0 get ChangeSubnet

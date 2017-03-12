@@ -116,10 +116,9 @@
 
 cuba_ps_params using % here we activate the definitions in the dictionary
 
-0
   <<
      /off_grid_spiking true
-  >> SetStatus
+  >> SetKernelStatus
 
 /parameters_set true def
 statusdict/argv :: size 1 gt { 1 get dirname (/) join } { () } ifelse

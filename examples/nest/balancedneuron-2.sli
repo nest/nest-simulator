@@ -49,9 +49,9 @@ ResetKernel
 
  M_INFO 1 add setverbosity                 % suppress output from Simulate
 
- 0 <<
+ <<
    /data_path (/tmp)
- >> SetStatus
+ >> SetKernelStatus
 
  /iaf_psc_alpha     Create /neuron Set % target neuron
  /poisson_generator Create /ex_pop Set % excitatory population

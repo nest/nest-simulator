@@ -50,10 +50,9 @@ statusdict/have_gsl :: not
 }
 if
 
-0
 << 
     /overwrite_files true
->> SetStatus
+>> SetKernelStatus
 
 /tolerance   	2e-3 def %mV
 /simulation_t	1500 def %ms

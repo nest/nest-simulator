@@ -66,7 +66,7 @@ SeeAlso: testsuite::test_iaf_i0, testsuite::test_getrng_neuron
 {
  ResetKernel
 
- 0 << /resolution h  >> SetStatus
+ << /resolution h  >> SetKernelStatus
 
  /iaf_neuron n Create ;
  1 << /I_e 1450.0 >>  SetStatus

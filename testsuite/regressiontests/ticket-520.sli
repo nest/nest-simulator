@@ -42,7 +42,7 @@ M_ERROR setverbosity
 {
   ResetKernel
 
-  0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
+  << /total_num_virtual_procs 2 /local_num_threads 2 >> SetKernelStatus
   
   /n1 /iaf_neuron << /I_e 100. >> Create def
   /n2 /iaf_neuron << /I_e 100. >> Create def
@@ -65,7 +65,7 @@ assert_or_die
 {
   ResetKernel
 
-  0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
+  << /total_num_virtual_procs 2 /local_num_threads 2 >> SetKernelStatus
   
   /n1 /iaf_neuron Create def
   /n2 /iaf_neuron Create def
@@ -89,7 +89,7 @@ assert_or_die
 {
   ResetKernel
 
-  0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
+  << /total_num_virtual_procs 2 /local_num_threads 2 >> SetKernelStatus
   
   /n1 /iaf_neuron << /I_e 100. >> Create def
   /n2 /iaf_neuron << /I_e 100. >> Create def
@@ -120,7 +120,7 @@ assert_or_die
 {
   ResetKernel
 
-  0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
+  << /total_num_virtual_procs 2 /local_num_threads 2 >> SetKernelStatus
   
   /n1 /iaf_neuron Create def
   /n2 /iaf_neuron Create def
@@ -153,7 +153,7 @@ assert_or_die
 {
   ResetKernel
 
-  0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
+  << /total_num_virtual_procs 2 /local_num_threads 2 >> SetKernelStatus
   
   /n1 /iaf_neuron << /I_e 100. >> Create def
   /n2 /iaf_neuron << /I_e 100. >> Create def
@@ -176,7 +176,7 @@ assert_or_die
 {
   ResetKernel
 
-  0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
+  << /total_num_virtual_procs 2 /local_num_threads 2 >> SetKernelStatus
   
   /n1 /iaf_neuron Create def
   /n2 /iaf_neuron Create def
@@ -200,7 +200,7 @@ assert_or_die
 {
   ResetKernel
 
-  0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
+  << /total_num_virtual_procs 2 /local_num_threads 2 >> SetKernelStatus
   
   /n1 /iaf_neuron << /I_e 100. >> Create def
   /n2 /iaf_neuron << /I_e 100. >> Create def
@@ -231,7 +231,7 @@ assert_or_die
 {
   ResetKernel
 
-  0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
+  << /total_num_virtual_procs 2 /local_num_threads 2 >> SetKernelStatus
   
   /n1 /iaf_neuron Create def
   /n2 /iaf_neuron Create def

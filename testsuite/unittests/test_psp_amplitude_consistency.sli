@@ -86,7 +86,7 @@ M_ERROR setverbosity
   /tau_syn Set
 
   ResetKernel
-  0 << /dict_miss_is_error false >> SetStatus
+  << /dict_miss_is_error false >> SetKernelStatus
   /spike_generator Create /sg Set
   sg <<
      /origin 50.0            % in ms

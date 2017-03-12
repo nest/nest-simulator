@@ -50,9 +50,9 @@ is_threaded not { exit_test_gracefully } if
 
 ResetKernel
 
-0 <<
+<<
   /local_num_threads 2
->> SetStatus
+>> SetKernelStatus
 
 /gid1 N 1 add def            % gid1 = N + 1
 /gid2 N 2 mul def            % gid2 = N * 2

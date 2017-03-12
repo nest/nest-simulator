@@ -46,7 +46,7 @@ is_threaded not { exit_test_gracefully } if
 {                                                  % 4 is max because of the number of neurons
  ResetKernel
 
- 0 << /total_num_virtual_procs 4 >> SetStatus
+ << /total_num_virtual_procs 4 >> SetKernelStatus
 
  /iaf_neuron Create /n1 Set
  /iaf_neuron Create /n2 Set

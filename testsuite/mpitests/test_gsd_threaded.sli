@@ -51,10 +51,10 @@ is_threaded not { exit_test_gracefully } if
     }
     if
     
-    0 <<
+    <<
     	/total_num_virtual_procs num_mpi_procs 2 mul
 	/rng_seeds [1 0 num_mpi_procs 2 mul add] Range
-    >> SetStatus
+    >> SetKernelStatus
     
     /parrot_neuron 4 Create pop
     /spike_detector 1 Create /sd Set

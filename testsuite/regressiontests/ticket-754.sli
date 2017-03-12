@@ -45,7 +45,7 @@ M_ERROR setverbosity
   /pseed base_seed [ 1 num_procs ] add Range def
   /gseed pseed [-1] Take 1 add def
 
-  0 << /total_num_virtual_procs num_procs >> SetStatus
+  << /total_num_virtual_procs num_procs >> SetKernelStatus
 
   0 /rng_seeds get [ num_procs ] Range eq 
   0 /grng_seed get 0 eq
@@ -60,11 +60,11 @@ M_ERROR setverbosity
   /pseed base_seed [ 1 num_procs ] add Range def
   /gseed pseed [-1] Take 1 add def
 
-  0 << /total_num_virtual_procs num_procs >> SetStatus
-  0 << /rng_seeds pseed 
-       /grng_seed gseed 
-    >>
-  SetStatus
+  << /total_num_virtual_procs num_procs >> SetKernelStatus
+  << /rng_seeds pseed 
+     /grng_seed gseed 
+  >>
+  SetKernelStatus
 
   0 /rng_seeds get pseed eq 
   0 /grng_seed get gseed eq
@@ -79,11 +79,11 @@ M_ERROR setverbosity
   /pseed base_seed [ 1 num_procs ] add Range def
   /gseed pseed [-1] Take 1 add def
 
-  0 << /total_num_virtual_procs num_procs 
+  << /total_num_virtual_procs num_procs 
        /rng_seeds pseed 
        /grng_seed gseed 
-    >>
-  SetStatus
+  >>
+  SetKernelStatus
 
   0 /rng_seeds get pseed eq 
   0 /grng_seed get gseed eq
@@ -99,10 +99,10 @@ M_ERROR setverbosity
   /pseed base_seed [ 1 num_procs ] add Range def
   /gseed pseed [-1] Take 1 add def
 
-  0 << /total_num_virtual_procs num_procs 
+  << /total_num_virtual_procs num_procs 
        /grng_seed gseed 
-    >>
-  SetStatus
+  >>
+  SetKernelStatus
 
   0 /rng_seeds get [ num_procs ] Range eq 
   0 /grng_seed get gseed eq
@@ -118,11 +118,11 @@ M_ERROR setverbosity
   /pseed base_seed [ 1 num_procs ] add Range def
   /gseed pseed [-1] Take 1 add def
 
-  0 << /local_num_threads num_procs 
+  << /local_num_threads num_procs 
        /rng_seeds pseed 
        /grng_seed gseed 
-    >>
-  SetStatus
+  >>
+  SetKernelStatus
 
   0 /rng_seeds get pseed eq 
   0 /grng_seed get gseed eq

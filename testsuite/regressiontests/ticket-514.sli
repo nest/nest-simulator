@@ -40,7 +40,7 @@
   << >> begin
     /h Set
     ResetKernel
-    0 << /resolution h >> SetStatus
+    << /resolution h >> SetKernelStatus
   
     /poisson_generator_ps Create /pg Set
     pg << /rate 1000. >> SetStatus

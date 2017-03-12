@@ -128,11 +128,10 @@ def % brunel_setup
   brunel_setup
   /brunel using
     % set resolution and total/local number of threads
-    0
     <<
       /resolution  dt
       /total_num_virtual_procs total_num_virtual_procs
-    >> SetStatus
+    >> SetKernelStatus
 
     /E_net /subnet Create def            % create subnet
     E_net 0 get ChangeSubnet                   % enter subnet

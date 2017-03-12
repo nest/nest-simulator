@@ -46,7 +46,7 @@ ResetKernel
 >> /neuron_params Set
 
 
-0 << /resolution 0.1 >> SetStatus
+<< /resolution 0.1 >> SetKernelStatus
 
 /iaf_psc_delta        Create /plain Set
 /iaf_psc_delta_canon  Create /canon Set

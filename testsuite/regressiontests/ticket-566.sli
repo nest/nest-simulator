@@ -39,7 +39,7 @@ Author: Susanne Kunkel, 2012-12-04
 M_ERROR setverbosity
 
 { 
-  0 << /num_procs 777 >> SetStatus
+  << /num_procs 777 >> SetKernelStatus
 }
 fail_or_die
 

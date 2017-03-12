@@ -50,7 +50,7 @@ is_threaded_with_openmp not { exit_test_gracefully } if
 
 dup /threads Set
 ResetKernel
-0 << /local_num_threads threads >> SetStatus
+<< /local_num_threads threads >> SetKernelStatus
 
 /dc_generator 1 << /amplitude 1500.0 >> Create /stim1 Set
 /dc_generator 1 << /amplitude 1000.0 >> Create /stim2 Set

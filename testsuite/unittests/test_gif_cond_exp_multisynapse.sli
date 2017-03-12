@@ -64,12 +64,12 @@ statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
   /params Set 
 
   ResetKernel
-  0 << 
+  << 
       /local_num_threads 1 
       /resolution 0.1
       /grng_seed 1
       /rng_seeds [1]
-  >> SetStatus
+  >> SetKernelStatus
 
   /gif_cond_exp_multisynapse Create /neuron Set
 

@@ -161,7 +161,7 @@ def
   
     ResetKernel
     0 /num_processes get 1 eq assert % distributed setting not covered
-    0 << /local_num_threads n_threads >> SetStatus
+    << /local_num_threads n_threads >> SetKernelStatus
 
     % actual neurons, placed in subnet
     /nnet /subnet Create def

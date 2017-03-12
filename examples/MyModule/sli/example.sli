@@ -20,7 +20,7 @@
  *
  */
 (mymodule) Install ;
-0 << /overwrite_files true >> SetStatus
+<< /overwrite_files true >> SetKernelStatus
 /pif_psc_alpha Create /a Set
 /pif_psc_alpha Create /b Set
 a b /drop_odd_synapse Connect

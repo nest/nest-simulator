@@ -47,12 +47,12 @@ M_ERROR setverbosity
 
   ResetKernel
 
-  0 <<
+  <<
     /resolution     0.1
     /print_time     false
     /rng_seeds      [ 123 ]
     /overwrite_files true
-  >> SetStatus
+  >> SetKernelStatus
 
   /poisson_generator << /rate 10000. >> SetDefaults
   /background /poisson_generator Create def
@@ -116,7 +116,7 @@ M_ERROR setverbosity
   /run_simulation {
     /label Set
     ResetNetwork
-    0 << /time 0.0 /rng_seeds [ 123 ] >> SetStatus
+    << /time 0.0 /rng_seeds [ 123 ] >> SetKernelStatus
     meter << /n_events 0 /label label >> SetStatus
     500 Simulate 
     /results meter GetStatus def

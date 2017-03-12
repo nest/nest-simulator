@@ -172,7 +172,7 @@ M_ERROR setverbosity
   /individual Set
 
   ResetKernel
-  0 << /local_num_threads num_threads >> SetStatus
+  << /local_num_threads num_threads >> SetKernelStatus
 
   /sinusoidal_poisson_generator 
   << 
@@ -252,7 +252,7 @@ M_ERROR setverbosity
   /individual Set
 
   ResetKernel
-  0 << /local_num_threads num_threads >> SetStatus
+  << /local_num_threads num_threads >> SetKernelStatus
 
   /sinusoidal_poisson_generator 
   << 

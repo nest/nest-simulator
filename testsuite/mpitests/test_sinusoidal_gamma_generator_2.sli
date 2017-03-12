@@ -53,11 +53,10 @@ is_threaded not { exit_test_gracefully } if
   /nodes total_vps 2 mul def  
 
   % set resolution and total/local number of threads
-  0
   <<
   /resolution  0.1
   /total_num_virtual_procs total_vps
-  >> SetStatus
+  >> SetKernelStatus
 
   /sinusoidal_gamma_generator
   << 

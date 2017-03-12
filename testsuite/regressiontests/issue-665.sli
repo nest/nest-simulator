@@ -46,7 +46,7 @@ is_threaded not { exit_test_gracefully } if
   /connspec Set
   
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   
   /pgl 
   << /elements /poisson_generator 
@@ -104,7 +104,7 @@ assert_or_die
   /connspec Set
   
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   
   /nnl
   << /elements /iaf_psc_alpha 

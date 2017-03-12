@@ -64,7 +64,7 @@ M_ERROR setverbosity
 
  /dt -3 dexp def  % 0.125 ms
  /Vref -70.0 def
- 0 << /tics_per_ms 1.0 dt div round /resolution dt >> SetStatus
+ << /tics_per_ms 1.0 dt div round /resolution dt >> SetKernelStatus
 
  model << /V_m Vref /E_L Vref /V_th 1e10 /I_e 0.0  >> Create /n1 Set
  model << /V_m Vref /E_L Vref /V_th 1e10 /I_e 0.0  >> Create /n2 Set

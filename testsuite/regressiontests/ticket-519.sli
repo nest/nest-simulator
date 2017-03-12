@@ -43,7 +43,7 @@ M_ERROR setverbosity
 {
   ResetKernel
 
-  0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
+  << /total_num_virtual_procs 2 /local_num_threads 2 >> SetKernelStatus
   
   /n1 /iaf_neuron Create def
   /n2 /iaf_neuron Create def
@@ -65,7 +65,7 @@ pass_or_die
 {
   ResetKernel
 
-  0 << /total_num_virtual_procs 2 /local_num_threads 2 >> SetStatus
+  << /total_num_virtual_procs 2 /local_num_threads 2 >> SetKernelStatus
   
   /n1 /iaf_neuron Create def
   /n2 /iaf_neuron Create def

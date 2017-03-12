@@ -209,11 +209,11 @@ statusdict/userargs :: size 1 geq
 } ifelse
 
 % set resolution and total/local number of threads
-0 << 
+<< 
     /resolution  dt 
     /local_num_threads local_num_threads
     /overwrite_files true
->> SetStatus
+>> SetKernelStatus
 
  tic % start timer on construction
 

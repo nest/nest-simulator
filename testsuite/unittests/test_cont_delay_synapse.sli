@@ -43,7 +43,7 @@ M_ERROR setverbosity
 % Case 1: Delay compatible with resolution, same result as with normal synapse expected
 {
   ResetKernel
-  0 << /resolution 1.0 >> SetStatus
+  << /resolution 1.0 >> SetKernelStatus
   
   /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create def
   /n  /iaf_psc_delta_canon Create def
@@ -63,7 +63,7 @@ assert_or_die
 % Case 2: Delay not compatible with resolution, set delay as default
 {
   ResetKernel
-  0 << /resolution 1.0 >> SetStatus
+  << /resolution 1.0 >> SetKernelStatus
   
   /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create def
   /n  /iaf_psc_delta_canon Create def
@@ -84,7 +84,7 @@ assert_or_die
 % Case 3: Delay not compatible with resolution, explicitly set delay
 {
   ResetKernel
-  0 << /resolution 1.0 >> SetStatus
+  << /resolution 1.0 >> SetKernelStatus
   
   /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create def
   /n  /iaf_psc_delta_canon Create def
@@ -108,7 +108,7 @@ assert_or_die
 % Case 4: Ensure NEST prohibits delays shorter than resolution
 {
   ResetKernel
-  0 << /resolution 1.0 >> SetStatus
+  << /resolution 1.0 >> SetKernelStatus
   
   /sg /spike_generator << /precise_times true /spike_times [ 2.0 5.5 ] >> Create def
   /n  /iaf_psc_delta_canon Create def

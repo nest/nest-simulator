@@ -50,7 +50,7 @@ is_threaded not { exit_test_gracefully } if
  % Method 1
  ResetKernel
 
- 0 << /total_num_virtual_procs 4 >> SetStatus
+ << /total_num_virtual_procs 4 >> SetKernelStatus
 
  % obtain global RNG 
  /rng GetGlobalRNG def
@@ -71,7 +71,7 @@ is_threaded not { exit_test_gracefully } if
  % Method 2
  ResetKernel
 
- 0 << /total_num_virtual_procs 4 >> SetStatus
+ << /total_num_virtual_procs 4 >> SetKernelStatus
 
  /n /iaf_neuron 4 Create def
 

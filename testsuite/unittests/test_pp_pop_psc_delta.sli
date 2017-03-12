@@ -53,9 +53,9 @@ SeeAlso: pp_pop_psc_delta, testsuite::test_pp_psc_delta
 {
    
     ResetKernel
-    0 << 
+    << 
        /resolution 1.0
-     >> SetStatus
+     >> SetKernelStatus
 
     /pp_pop_psc_delta Create /node Set
 
@@ -102,9 +102,9 @@ SeeAlso: pp_pop_psc_delta, testsuite::test_pp_psc_delta
 {
    
     ResetKernel
-    0 << 
+    << 
        /resolution 1.0
-     >> SetStatus
+     >> SetKernelStatus
 
     /pp_pop_psc_delta Create /node Set
 
@@ -151,9 +151,9 @@ SeeAlso: pp_pop_psc_delta, testsuite::test_pp_psc_delta
 {
    
     ResetKernel
-    0 << 
+    << 
        /resolution 1.0
-     >> SetStatus
+     >> SetKernelStatus
 
     /pp_pop_psc_delta Create /node Set
 

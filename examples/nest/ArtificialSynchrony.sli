@@ -152,14 +152,13 @@ modeldict begin
 
   %set resolution and limits on delays
        % limits must be set BEFORE connecting any elements
-       0
        <<
          /resolution h                  % time steps in ms
          /tics_per_ms tics_per_ms       % low-level time resolution
          /off_grid_spiking true         % precise neuron model
          /rngs [myrng]                  % set rnd seed
          /overwrite_files true          % overwrite previous output
-       >> SetStatus
+       >> SetKernelStatus
 
   sim 1 eq { /iaf_psc_alpha_canon nr Create pop }
            { /iaf_psc_alpha nr Create pop } ifelse

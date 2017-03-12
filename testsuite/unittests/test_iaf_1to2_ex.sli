@@ -89,12 +89,12 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_al
 
 
  
-  0 << 
+  << 
     /local_num_threads 1   
     /resolution h
     /min_delay min_delay
     /max_delay delay
-  >> SetStatus
+  >> SetKernelStatus
 
   /iaf_neuron Create /neuron1 Set
   /iaf_neuron Create /neuron2 Set

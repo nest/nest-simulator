@@ -1665,7 +1665,7 @@ Description:
  << >> begin
   /models Set
   GetKernelStatus /dict_miss_is_error get /dict_err Set
-  0 << /dict_miss_is_error false >> SetStatus
+  << /dict_miss_is_error false >> SetKernelStatus
   /old_verbosity verbosity def
   M_ERROR setverbosity
   /restoremodel
@@ -1689,7 +1689,7 @@ Description:
     restoremodel
   } forall
   old_verbosity setverbosity
-  0 << /dict_miss_is_error dict_err >> SetStatus
+  << /dict_miss_is_error dict_err >> SetKernelStatus
   end
 } def
 

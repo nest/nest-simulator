@@ -57,7 +57,7 @@ SeeAlso: iaf_neuron, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, 
 
   ResetKernel
 
-  0 << /local_num_threads 1 /resolution h >> SetStatus
+  << /local_num_threads 1 /resolution h >> SetKernelStatus
 
   /iaf_neuron Create 
   /iaf_neuron Create 

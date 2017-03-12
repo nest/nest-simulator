@@ -52,8 +52,8 @@ M_ERROR setverbosity
   ResetKernel
   /new_res 0 /resolution get 2 mul def
   /new_threads 0 /local_num_threads get 2 mul def
-  0 << /resolution new_res >> SetStatus
-  0 << /local_num_threads new_threads >> SetStatus
+  << /resolution new_res >> SetKernelStatus
+  << /local_num_threads new_threads >> SetKernelStatus
 } fail_or_die
 
 % test against changing total_num_virtual_procs
@@ -61,8 +61,8 @@ M_ERROR setverbosity
   ResetKernel
   /new_res 0 /resolution get 2 mul def
   /new_procs 0 /total_num_virtual_procs get 2 mul def
-  0 << /resolution new_res >> SetStatus
-  0 << /total_num_virtual_procs new_procs >> SetStatus
+  << /resolution new_res >> SetKernelStatus
+  << /total_num_virtual_procs new_procs >> SetKernelStatus
 } fail_or_die
 
 
@@ -79,8 +79,8 @@ is_threaded not { exit_test_gracefully } if
   ResetKernel
   /new_res 0 /resolution get 2 mul def
   /new_threads 0 /local_num_threads get 2 mul def
-  0 << /local_num_threads new_threads >> SetStatus
-  0 << /resolution new_res >> SetStatus
+  << /local_num_threads new_threads >> SetKernelStatus
+  << /resolution new_res >> SetKernelStatus
   0 /resolution get new_res eq
   0 /local_num_threads get new_threads eq
   and
@@ -90,8 +90,8 @@ is_threaded not { exit_test_gracefully } if
   ResetKernel
   /new_res 0 /resolution get 2 mul def
   /new_procs 0 /total_num_virtual_procs get 2 mul def
-  0 << /total_num_virtual_procs new_procs >> SetStatus
-  0 << /resolution new_res >> SetStatus
+  << /total_num_virtual_procs new_procs >> SetKernelStatus
+  << /resolution new_res >> SetKernelStatus
   0 /resolution get new_res eq
   0 /total_num_virtual_procs get new_procs eq
   and
@@ -102,8 +102,8 @@ is_threaded not { exit_test_gracefully } if
   ResetKernel
   /new_res 0 /resolution get 2 mul def
   /new_threads 0 /local_num_threads get 2 mul def
-  0 << /local_num_threads new_threads
-       /resolution new_res >> SetStatus
+  << /local_num_threads new_threads
+       /resolution new_res >> SetKernelStatus
   0 /resolution get new_res eq
   0 /local_num_threads get new_threads eq
   and
@@ -113,8 +113,8 @@ is_threaded not { exit_test_gracefully } if
   ResetKernel
   /new_res 0 /resolution get 2 mul def
   /new_procs 0 /total_num_virtual_procs get 2 mul def
-  0 << /total_num_virtual_procs new_procs 
-       /resolution new_res >> SetStatus
+  << /total_num_virtual_procs new_procs 
+       /resolution new_res >> SetKernelStatus
   0 /resolution get new_res eq
   0 /total_num_virtual_procs get new_procs eq
   and

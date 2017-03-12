@@ -44,11 +44,10 @@ is_threaded not { exit_test_gracefully } if
 [1 2 4]
 {
   % set resolution and total/local number of threads
-  0
   <<
   /resolution  0.1
   /total_num_virtual_procs total_vps
-  >> SetStatus
+  >> SetKernelStatus
 
   /pg /poisson_generator << /rate 1000. >> Create def
   /sd /spike_detector << /record_to [/memory] 

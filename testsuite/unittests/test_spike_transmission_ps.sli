@@ -77,9 +77,9 @@ for the kernel.
 
   ResetKernel
 
-  0 <<  
+  <<  
        /resolution h
-      >> SetStatus
+      >> SetKernelStatus
 
   % build and connect first
   /spike_detector Create /sp Set  

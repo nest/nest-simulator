@@ -46,9 +46,9 @@
 
 ResetKernel
 
-0 << 
+<< 
      /resolution h
-  >> SetStatus
+  >> SetKernelStatus
 
 /spk_tms [0.1 5.0 5.3 5.33 5.4 5.9 6.0 ] def
 /spike_generator Create /sg Set

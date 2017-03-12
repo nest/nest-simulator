@@ -29,7 +29,7 @@ statusdict/have_music :: not {statusdict/exitcodes/success :: quit_i} if
 % data: 2008-10-16
 
 21.0 /T Set % total simulation time
-0 << /resolution 0.1 >> SetStatus
+<< /resolution 0.1 >> SetKernelStatus
 
 10 /N Set % number of spike generators
 

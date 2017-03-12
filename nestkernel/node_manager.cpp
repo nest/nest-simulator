@@ -512,7 +512,7 @@ NodeManager::ensure_valid_thread_local_ids()
         // network, which is never updated.
         size_t num_thread_local_nodes = 0;
         size_t num_thread_local_wfr_nodes = 0;
-        for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
+        for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
         {
           Node* node = local_nodes_.get_node_by_index( idx );
           if ( static_cast< index >( node->get_thread() ) == t
@@ -526,7 +526,7 @@ NodeManager::ensure_valid_thread_local_ids()
         nodes_vec_[ t ].reserve( num_thread_local_nodes );
         wfr_nodes_vec_[ t ].reserve( num_thread_local_wfr_nodes );
 
-        for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
+        for ( size_t idx = 0 ; idx < local_nodes_.size(); ++idx )
         {
           Node* node = local_nodes_.get_node_by_index( idx );
 

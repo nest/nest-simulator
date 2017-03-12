@@ -288,7 +288,7 @@ private:
 inline index
 NodeManager::size() const
 {
-  return local_nodes_.get_max_gid() + 1;
+  return local_nodes_.get_max_gid();
 }
 
 inline bool

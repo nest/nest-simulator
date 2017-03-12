@@ -42,7 +42,7 @@
     /e_max_d Set
     /e_min_d Set
 
-    0 GetStatus begin
+    GetKernelStatus begin
     { min_delay e_min_d eq max_delay e_max_d eq and } assert_or_die
     end
 

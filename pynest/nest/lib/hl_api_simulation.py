@@ -109,7 +109,7 @@ def GetKernelStatus(keys=None):
     TypeError
     """
 
-    sr('0 GetStatus')
+    sr('GetKernelStatus')
     status_root = spp()
 
     sr('/subnet GetDefaults')

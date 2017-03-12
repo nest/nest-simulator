@@ -132,7 +132,7 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_al
   {First test_times exch MemberQ } Select    % those with reference 
 
  d eq                                        % compare data
- 0 GetStatus /min_delay get min_delay eq   % compare kernel setting
+ GetKernelStatus /min_delay get min_delay eq   % compare kernel setting
  and
 
 end

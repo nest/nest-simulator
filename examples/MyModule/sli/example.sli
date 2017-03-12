@@ -26,7 +26,7 @@
 a b /drop_odd_synapse Connect
 /dc_generator Create /dc Set
 dc << /amplitude 100.0 >> SetStatus
-0 /resolution get /h Set
+GetKernelStatus /resolution get /h Set
 /voltmeter Create /vm Set vm << /interval h /precision 10 /scientific true /record_to [/file] /withgid true /withtime true >> SetStatus
 vm a Connect
 vm b Connect

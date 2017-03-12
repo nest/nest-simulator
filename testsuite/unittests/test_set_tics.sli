@@ -63,10 +63,10 @@ SeeAlso: get, dexp
 
 
 {
- 0 /tics_per_ms   get    14 dexp       eq
- 0 /resolution    get    -4 dexp       eq and
- 0 /tics_per_step get    10 dexp cvi   eq and
- 0 /ms_per_tic    get   -14 dexp       eq and
+ GetKernelStatus /tics_per_ms get    14 dexp       eq
+ GetKernelStatus /resolution get    -4 dexp       eq and
+ GetKernelStatus /tics_per_step get    10 dexp cvi   eq and
+ GetKernelStatus /ms_per_tic get   -14 dexp       eq and
 }
 assert_or_die
 

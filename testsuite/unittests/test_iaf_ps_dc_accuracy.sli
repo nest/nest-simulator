@@ -99,7 +99,7 @@ M_ERROR setverbosity
 >> SetKernelStatus
 
 
-0 /ms_per_tic get frexp
+GetKernelStatus /ms_per_tic get frexp
 
 exch
 {0.5 eq} assert_or_die                  % base 2 tic size?

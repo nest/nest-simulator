@@ -58,7 +58,7 @@ M_ERROR setverbosity
     /local_nodes net 0 get GetLocalNodes def
     nodes local_nodes << /rule /fixed_indegree /indegree C >> Connect
 
-    0 /num_connections get dup ==
+    GetKernelStatus /num_connections get dup ==
   } Table
   dup ==
   true exch { ConnExpected eq and } Fold

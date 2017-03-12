@@ -47,8 +47,8 @@ M_ERROR setverbosity
 
   << /total_num_virtual_procs num_procs >> SetKernelStatus
 
-  0 /rng_seeds get [ num_procs ] Range eq 
-  0 /grng_seed get 0 eq
+  GetKernelStatus /rng_seeds get [ num_procs ] Range eq 
+  GetKernelStatus /grng_seed get 0 eq
   and
 } assert_or_die
 
@@ -66,8 +66,8 @@ M_ERROR setverbosity
   >>
   SetKernelStatus
 
-  0 /rng_seeds get pseed eq 
-  0 /grng_seed get gseed eq
+  GetKernelStatus /rng_seeds get pseed eq 
+  GetKernelStatus /grng_seed get gseed eq
   and
 } assert_or_die
 
@@ -85,8 +85,8 @@ M_ERROR setverbosity
   >>
   SetKernelStatus
 
-  0 /rng_seeds get pseed eq 
-  0 /grng_seed get gseed eq
+  GetKernelStatus /rng_seeds get pseed eq 
+  GetKernelStatus /grng_seed get gseed eq
   and
 
 } assert_or_die
@@ -104,8 +104,8 @@ M_ERROR setverbosity
   >>
   SetKernelStatus
 
-  0 /rng_seeds get [ num_procs ] Range eq 
-  0 /grng_seed get gseed eq
+  GetKernelStatus /rng_seeds get [ num_procs ] Range eq 
+  GetKernelStatus /grng_seed get gseed eq
   and
 
 } assert_or_die
@@ -124,8 +124,8 @@ M_ERROR setverbosity
   >>
   SetKernelStatus
 
-  0 /rng_seeds get pseed eq 
-  0 /grng_seed get gseed eq
+  GetKernelStatus /rng_seeds get pseed eq 
+  GetKernelStatus /grng_seed get gseed eq
   and
 
 } assert_or_die

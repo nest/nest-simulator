@@ -222,7 +222,7 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
       M_INFO (BuildNetwork)
       (Randomzing membrane potentials.) message
 
-      GetKernelStatus /rng_seeds get Last 1 add 0 /vp get add
+      GetKernelStatus /rng_seeds get Last 1 add GetKernelStatus /vp get add
       rngdict/MT19937 :: exch CreateRNG
       rdevdict/normal :: CreateRDV /normal Set
 

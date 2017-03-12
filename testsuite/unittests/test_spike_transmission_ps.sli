@@ -97,7 +97,7 @@ for the kernel.
   pn sp 1.0 delay Connect
 
   % check in-delay condition
-  /mindel 0 /min_delay get def
+  /mindel GetKernelStatus /min_delay get def
   Tstop T mindel sub leq assert
 
   % simulate

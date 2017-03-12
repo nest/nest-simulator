@@ -280,14 +280,14 @@ def
   (Building time     : ) =only BuildCPUTime =only ( s) =    
   (Simulation time   : ) =only SimCPUTime   =only ( s\n) = 
   (MPI Processes     : ) =only NumProcesses =
-  (VPs               : ) =only 0 /total_num_virtual_procs get =
-  (Off grid          : ) =only 0 /off_grid_spiking get =
+  (VPs               : ) =only GetKernelStatus /total_num_virtual_procs get =
+  (Off grid          : ) =only GetKernelStatus /off_grid_spiking get =
   (Model             : ) =only cuba_params/model :: cvs =
 
   
   %  file name:   model_offgrid_numvps_nummpi_rank.dat
-  /fname cuba_params/model :: cvs (_) join 0 /off_grid_spiking get cvs join (_) join
-       0 /total_num_virtual_procs get cvs join (_) join NumProcesses cvs join (_) join
+  /fname cuba_params/model :: cvs (_) join GetKernelStatus /off_grid_spiking get cvs join (_) join
+       GetKernelStatus /total_num_virtual_procs get cvs join (_) join NumProcesses cvs join (_) join
        Rank cvs join (.dat) join def
   (Voltage dump      : ) =only fname ==
 

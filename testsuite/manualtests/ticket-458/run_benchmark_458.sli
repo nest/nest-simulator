@@ -267,8 +267,8 @@ def
   (Building time     : ) =only BuildCPUTime =only ( s) =    
   (Simulation time   : ) =only SimCPUTime   =only ( s\n) = 
   (MPI Processes     : ) =only NumProcesses =
-  (VPs               : ) =only 0 /total_num_virtual_procs get =
-  (Off grid          : ) =only 0 /off_grid_spiking get =
+  (VPs               : ) =only GetKernelStatus /total_num_virtual_procs get =
+  (Off grid          : ) =only GetKernelStatus /off_grid_spiking get =
   (Model             : ) =only cuba_params/model :: cvs =
 } def
 

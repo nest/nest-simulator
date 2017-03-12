@@ -896,11 +896,12 @@ nest::ConnectionManager::validate_source_entry_( const thread tid,
   const index s_gid )
 {
   // resize sparsetable to full network size
-  if ( connections_[ tid ].size() < kernel().node_manager.size() )
-    connections_[ tid ].resize( kernel().node_manager.size() );
+  // +1 because GIDs run from 1, dummy entry for unused GID-value 0.
+  const size_t required_sparsetable_size = kernel().node_manager.size() + 1;
+  if ( connections_[ tid ].size() < required_sparsetable_size )
+    connections_[ tid ].resize( required_sparsetable_size );
 
-  // check, if entry exists
-  // if not put in zero pointer
+  // return entry or zero pointer
   if ( connections_[ tid ].test( s_gid ) )
   {
     return connections_[ tid ].get( s_gid );

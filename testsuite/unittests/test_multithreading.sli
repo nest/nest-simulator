@@ -51,11 +51,11 @@ is_threaded not { exit_test_gracefully } if
 
 % check if setting the number of threads works
 << /local_num_threads threads >> SetKernelStatus
-0 [ /local_num_threads ] get threads eq assert_or_die
+GetKernelStatus /local_num_threads get threads eq assert_or_die
 
 % check ResetKernel
 ResetKernel
-0 [ /local_num_threads ] get 1 eq assert_or_die
+GetKernelStatus /local_num_threads get 1 eq assert_or_die
 
 % use 4 threads again
 << /local_num_threads threads >> SetKernelStatus

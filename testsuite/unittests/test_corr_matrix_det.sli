@@ -140,7 +140,7 @@ ResetKernel
     } Table /sgens Set
 
     % simulate to max spike time plus 2 min_delay
-    st Flatten Max 0 [/min_delay] get 2 mul add Simulate
+    st Flatten Max GetKernelStatus /min_delay get 2 mul add Simulate
     
     % get spike counts and histogram
     cdt [ /covariance ] get cva [1] Part [2] Part

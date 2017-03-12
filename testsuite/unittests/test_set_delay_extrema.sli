@@ -71,6 +71,6 @@
 0.1 AlignedImpact
 
 
-{0 [[/max_delay /min_delay]] get [bigdelay 2 mul h] eq } assert_or_die
+{ GetKernelStatus [[/max_delay /min_delay]] get [bigdelay 2 mul h] eq } assert_or_die
 
 

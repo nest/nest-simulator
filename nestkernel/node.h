@@ -186,15 +186,16 @@ public:
    * Return global Network ID.
    * Returns the global network ID of the Node.
    * Each node has a unique network ID which can be used to access
-   * the Node comparable to a pointer. By definition, the top-level
-   * subnet has ID=0.
+   * the Node comparable to a pointer.
+   *
+   * The smallest valid GID is 1.
    */
   index get_gid() const;
 
   /**
    * Return model ID of the node.
    * Returns the model ID of the model for this node.
-   * Model IDs start with 0, Subnet always having ID 0.
+   * Model IDs start with 0.
    * @note The model ID is not stored in the model prototype instance.
    *       It is only set when actual nodes are created from a prototype.
    */
@@ -812,7 +813,12 @@ protected:
   const ConcreteNode& downcast( const Node& );
 
 private:
-  index gid_;          //!< Global element id (within network).
+  /**
+   * Global Element ID (GID).
+   *
+   * The GID is unique within the network. The smallest valid GID is 1.
+   */
+  index gid_;
 
   /**
    * Local id of this node in the thread-local vector of nodes.

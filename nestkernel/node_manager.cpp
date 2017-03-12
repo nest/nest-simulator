@@ -124,7 +124,6 @@ NodeManager::reinit_nodes()
 DictionaryDatum
 NodeManager::get_status( index idx )
 {
-  assert( idx != 0 );
   Node* target = get_node( idx );
   assert( target != 0 );
 
@@ -745,28 +744,23 @@ NodeManager::print( std::ostream& ) const
 void
 NodeManager::set_status( index gid, const DictionaryDatum& d )
 {
-
-  assert( gid > 0 or "This function cannot be called for the root node." );
-  if ( gid > 0 )
-  {
-    // we first handle normal nodes, except the root (GID 0)
     Node* target = local_nodes_.get_node_by_gid( gid );
     if ( target != 0 )
     {
       // node is local
       if ( target->num_thread_siblings() == 0 )
+      {
         set_status_single_node_( *target, d );
+      }
       else
         for ( size_t t = 0; t < target->num_thread_siblings(); ++t )
         {
-          // non-root container for devices without proxies and subnets
+          // non-root container for devices without proxies
           // we iterate over all threads
           assert( target->get_thread_sibling( t ) != 0 );
           set_status_single_node_( *( target->get_thread_sibling( t ) ), d );
         }
     }
-    return;
-  }
 }
 
 void

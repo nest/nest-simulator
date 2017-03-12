@@ -53,6 +53,9 @@ nest::SparseNodeArray::add_local_node( Node& node )
 {
   const index gid = node.get_gid();
 
+  // protect against GID 0
+  assert( gid > 0 );
+
   // local_min_gid_ can only be 0 if no node has been stored
   assert( local_min_gid_ > 0 or nodes_.empty() );
 
@@ -83,6 +86,7 @@ nest::SparseNodeArray::add_local_node( Node& node )
 void
 nest::SparseNodeArray::add_remote_node( index gid )
 {
+  assert( gid > 0 );        // minimum GID is 1
   assert( gid > max_gid_ ); // root is never remote
   max_gid_ = gid;
 }
@@ -96,7 +100,7 @@ nest::SparseNodeArray::get_node_by_gid( index gid ) const
   // local_max_gid_ cannot be larger than max_gid_
   assert( local_max_gid_ <= max_gid_ );
 
-  if ( gid > max_gid_ )
+  if ( gid < 1 or max_gid_ < gid )
     throw UnknownNode();
 
   // handle gids below or above range

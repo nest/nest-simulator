@@ -19,10 +19,10 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = 'naveau'
-
 import nest
 import unittest
+
+__author__ = 'naveau'
 
 try:
     from mpi4py import MPI
@@ -103,7 +103,7 @@ class TestDisconnectSingle(unittest.TestCase):
                     nest.DisconnectOneToOne(neurons[0], neurons[1], syn_dict)
                     assertFail()
                 except:
-                    print ("Synapse deletion ok: " + syn_model)
+                    print("Synapse deletion ok: " + syn_model)
 
 
 def suite():

@@ -761,7 +761,7 @@ public:
   }
 
 private:
-  void set_gid_( index );      //!< Set global node id
+  void set_gid_( index ); //!< Set global node id
 
   /** Return a new dictionary datum .
    *

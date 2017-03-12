@@ -325,7 +325,8 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
     double ev_weight;
     bool end_of_refract;
 
-    if ( not B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) )
+    if ( not B_.events_.get_next_spike(
+           T, ev_offset, ev_weight, end_of_refract ) )
     { // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
       // if there are many steps without input spikes.

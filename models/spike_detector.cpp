@@ -135,7 +135,7 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
 
   if ( is_model_prototype() )
   {
-	return;  // no data to collect
+    return; // no data to collect
   }
 
   // if we are the device on thread 0, also get the data from the

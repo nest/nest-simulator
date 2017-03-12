@@ -519,7 +519,7 @@ NodeManager::ensure_valid_thread_local_ids()
         {
           Node* node = local_nodes_.get_node_by_index( idx );
           if ( static_cast< index >( node->get_thread() ) == t
-               or node->num_thread_siblings() > 0 )
+            or node->num_thread_siblings() > 0 )
           {
             num_thread_local_nodes++;
             if ( node->node_uses_wfr() )
@@ -529,7 +529,7 @@ NodeManager::ensure_valid_thread_local_ids()
         nodes_vec_[ t ].reserve( num_thread_local_nodes );
         wfr_nodes_vec_[ t ].reserve( num_thread_local_wfr_nodes );
 
-        for ( size_t idx = 0 ; idx < local_nodes_.size(); ++idx )
+        for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
         {
           Node* node = local_nodes_.get_node_by_index( idx );
 
@@ -737,30 +737,30 @@ void
 NodeManager::print( std::ostream& ) const
 {
   // TODO480
-  throw KernelException("PrintNetwork is currently not supported.");
+  throw KernelException( "PrintNetwork is currently not supported." );
 }
 
 
 void
 NodeManager::set_status( index gid, const DictionaryDatum& d )
 {
-    Node* target = local_nodes_.get_node_by_gid( gid );
-    if ( target != 0 )
+  Node* target = local_nodes_.get_node_by_gid( gid );
+  if ( target != 0 )
+  {
+    // node is local
+    if ( target->num_thread_siblings() == 0 )
     {
-      // node is local
-      if ( target->num_thread_siblings() == 0 )
-      {
-        set_status_single_node_( *target, d );
-      }
-      else
-        for ( size_t t = 0; t < target->num_thread_siblings(); ++t )
-        {
-          // non-root container for devices without proxies
-          // we iterate over all threads
-          assert( target->get_thread_sibling( t ) != 0 );
-          set_status_single_node_( *( target->get_thread_sibling( t ) ), d );
-        }
+      set_status_single_node_( *target, d );
     }
+    else
+      for ( size_t t = 0; t < target->num_thread_siblings(); ++t )
+      {
+        // non-root container for devices without proxies
+        // we iterate over all threads
+        assert( target->get_thread_sibling( t ) != 0 );
+        set_status_single_node_( *( target->get_thread_sibling( t ) ), d );
+      }
+  }
 }
 
 void

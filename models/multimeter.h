@@ -314,7 +314,7 @@ nest::Multimeter::get_status( DictionaryDatum& d ) const
 
   if ( is_model_prototype() )
   {
-	return;  // no data to collect
+    return; // no data to collect
   }
 
   // we need to add analog data to the events dictionary

@@ -143,11 +143,11 @@ public:
   std::map< long, size_t > get_step_ctr() const;
 
 private:
-  std::vector< NodeEntry > nodes_;            //!< stores local node information
-  index max_gid_;                             //!< largest GID in network
-  index local_min_gid_;                       //!< smallest local GID
-  index local_max_gid_;                       //!< largest local GID
-  double gid_idx_scale_;                      //!< interpolation factor
+  std::vector< NodeEntry > nodes_; //!< stores local node information
+  index max_gid_;                  //!< largest GID in network
+  index local_min_gid_;            //!< smallest local GID
+  index local_max_gid_;            //!< largest local GID
+  double gid_idx_scale_;           //!< interpolation factor
 };
 
 } // namespace nest

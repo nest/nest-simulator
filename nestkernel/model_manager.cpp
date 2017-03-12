@@ -107,7 +107,7 @@ ModelManager::initialize()
     models_.push_back( pristine_models_[ i ].first->clone( name ) );
     if ( not pristine_models_[ i ].second )
     {
-	  modeldict_->insert( name, i );
+      modeldict_->insert( name, i );
     }
   }
 

@@ -120,7 +120,7 @@ NestModule::commandstring( void ) const
 
    Author: docu by Sirko Straube
 
-   SeeAlso: ShowStatus, GetStatus, GetKernelStatus, info, modeldict, Set, 
+   SeeAlso: ShowStatus, GetStatus, GetKernelStatus, info, modeldict, Set,
    SetStatus_v, SetStatus_dict
 */
 void
@@ -342,7 +342,7 @@ void
 NestModule::GetKernelStatus_Function::execute( SLIInterpreter* i ) const
 {
   DictionaryDatum dict = get_kernel_status();
- 
+
   i->OStack.push( dict );
   i->EStack.pop();
 }
@@ -791,7 +791,7 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::PrintNetworkFunction::execute( SLIInterpreter* i ) const
 {
-  print_network( );
+  print_network();
   i->EStack.pop();
 }
 

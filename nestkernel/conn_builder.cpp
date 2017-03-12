@@ -1659,9 +1659,10 @@ nest::BernoulliBuilder::connect_()
           if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
             continue;
 
-          Node* const target = kernel().node_manager.get_node( (*tgid).gid, tid );
+          Node* const target =
+            kernel().node_manager.get_node( ( *tgid ).gid, tid );
 
-          inner_connect_( tid, rng, target, (*tgid).gid );
+          inner_connect_( tid, rng, target, ( *tgid ).gid );
         }
       }
 

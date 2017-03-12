@@ -125,6 +125,8 @@ set_kernel_status( const DictionaryDatum& dict )
 {
   dict->clear_access_flags();
   kernel().set_status( dict );
+  ALL_ENTRIES_ACCESSED(
+    *dict, "SetKernelStatus", "Unread dictionary entries: " );
 }
 
 DictionaryDatum

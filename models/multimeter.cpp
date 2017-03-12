@@ -94,13 +94,16 @@ nest::Multimeter::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b )
+nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
+  const Buffers_& b )
 {
-  if ( b.has_targets_ && ( d->known( names::interval )
-                           || d->known( names::offset ) || d->known( names::record_from ) ) )
+  if ( b.has_targets_
+    && ( d->known( names::interval ) || d->known( names::offset )
+         || d->known( names::record_from ) ) )
   {
     throw BadProperty(
-      "The recording interval, the interval offset and the list of properties to record "
+      "The recording interval, the interval offset and the list of properties "
+      "to record "
       "cannot be changed after the multimeter has been connected to nodes." );
   }
 
@@ -110,15 +113,18 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b 
     if ( Time( Time::ms( v ) ) < Time::get_resolution() )
     {
       throw BadProperty(
-          "The sampling interval must be at least as long as the simulation resolution." );
+        "The sampling interval must be at least as long as the simulation "
+        "resolution." );
     }
 
     // see if we can represent interval as multiple of step
     interval_ = Time::step( Time( Time::ms( v ) ).get_steps() );
-    if ( std::abs( 1 - interval_.get_ms() / v ) > 10 * std::numeric_limits< double >::epsilon() )
+    if ( std::abs( 1 - interval_.get_ms() / v ) > 10
+        * std::numeric_limits< double >::epsilon() )
     {
       throw BadProperty(
-          "The sampling interval must be a multiple of the simulation resolution" );
+        "The sampling interval must be a multiple of the simulation "
+        "resolution" );
     }
   }
 
@@ -128,15 +134,18 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d, const Buffers_& b 
     if ( Time( Time::ms( v ) ) < Time::get_resolution() && v > 0. )
     {
       throw BadProperty(
-          "The offset for the sampling interval must be at least as long as the simulation resolution." );
+        "The offset for the sampling interval must be at least as long as the "
+        "simulation resolution." );
     }
 
     // see if we can represent offset as multiple of step
     offset_ = Time::step( Time( Time::ms( v ) ).get_steps() );
-    if ( std::abs( 1 - offset_.get_ms() / v ) > 10 * std::numeric_limits< double >::epsilon() )
+    if ( std::abs( 1 - offset_.get_ms() / v ) > 10
+        * std::numeric_limits< double >::epsilon() )
     {
       throw BadProperty(
-          "The offset for the sampling interval must be a multiple of the simulation resolution" );
+        "The offset for the sampling interval must be a multiple of the "
+        "simulation resolution" );
     }
   }
 
@@ -206,7 +215,8 @@ Multimeter::update( Time const& origin, const long from, const long )
   // following Reply data is then added.
   //
   // Note that not all nodes receiving the request will necessarily answer.
-  V_.new_request_ = B_.has_targets_ && !P_.record_from_.empty(); // no targets, no request
+  V_.new_request_ = B_.has_targets_
+    && P_.record_from_.empty() == false; // no targets, no request
   DataLoggingRequest req;
   kernel().event_delivery_manager.send( *this, req );
 }
@@ -235,7 +245,7 @@ Multimeter::handle( DataLoggingReply& reply )
       break;
     }
 
-    if ( !is_active( info[ j ].timestamp ) )
+    if ( is_active( info[ j ].timestamp ) == false )
     {
       ++inactive_skipped;
       continue;
@@ -246,32 +256,34 @@ Multimeter::handle( DataLoggingReply& reply )
 
     // record sender and time information; in accumulator mode only for first
     // Reply in slice
-    if ( !device_.to_accumulator() || V_.new_request_ )
+    if ( device_.to_accumulator() == false || V_.new_request_ )
     {
       device_.record_event( reply, false ); // false: more data to come
     }
 
-    if ( !device_.to_accumulator() )
+    if ( device_.to_accumulator() == false )
     {
       // "print" actual data, but not in accumulator mode
       print_value_( info[ j ].data );
 
       if ( device_.to_memory() )
       {
-        S_.data_.push_back( info[j].data );
+        S_.data_.push_back( info[ j ].data );
       }
     }
     else
     {
-      if ( V_.new_request_ ) // first reply in slice, push back to create new time points
+      if ( V_.new_request_ ) // first reply in slice, push back to create new
+                             // time points
       {
-        S_.data_.push_back( info[j].data );
+        S_.data_.push_back( info[ j ].data );
       }
       else
       { // add data; offset j from current_request_data_start_, but inactive
         // skipped entries subtracted
         assert( j >= inactive_skipped );
-        assert( V_.current_request_data_start_ + j - inactive_skipped < S_.data_.size() );
+        assert( V_.current_request_data_start_ + j - inactive_skipped
+          < S_.data_.size() );
         assert( S_.data_[ V_.current_request_data_start_ + j
                      - inactive_skipped ].size() == info[ j ].data.size() );
 

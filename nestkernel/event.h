@@ -564,7 +564,7 @@ public:
   /** Access to stored time interval.*/
   const Time& get_recording_interval() const;
 
-    /** Access to stored offset.*/
+  /** Access to stored offset.*/
   const Time& get_recording_offset() const;
 
   /** Access to vector of recordables. */
@@ -587,7 +587,7 @@ private:
 inline DataLoggingRequest::DataLoggingRequest()
   : Event()
   , recording_interval_( Time::neg_inf() )
-  , recording_offset_ ( Time::ms(0.) )
+  , recording_offset_( Time::ms( 0. ) )
   , record_from_( 0 )
 {
 }

@@ -67,6 +67,10 @@ NodeManager::~NodeManager()
 void
 NodeManager::initialize()
 {
+  siblingcontainer_model_ = kernel().model_manager.get_model( 0 );
+  assert( siblingcontainer_model_ != 0 );
+  assert( siblingcontainer_model_->get_name() == "siblingcontainer" );
+
   // explicitly force construction of nodes_vec_ to ensure consistent state
   nodes_vec_network_size_ = 0;
   ensure_valid_thread_local_ids();

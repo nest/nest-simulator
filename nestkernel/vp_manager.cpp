@@ -74,7 +74,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     updateValue< long >( d, "local_num_threads", n_threads );
   if ( n_threads_updated )
   {
-    if ( kernel().node_manager.size() > 1 )
+    if ( kernel().node_manager.size() > 0 )
       throw KernelException(
         "Nodes exist: Thread/process number cannot be changed." );
     if ( kernel().model_manager.has_user_models() )
@@ -121,7 +121,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
     updateValue< long >( d, "total_num_virtual_procs", n_vps );
   if ( n_vps_updated )
   {
-    if ( kernel().node_manager.size() > 1 )
+    if ( kernel().node_manager.size() > 0 )
       throw KernelException(
         "Nodes exist: Thread/process number cannot be changed." );
     if ( kernel().model_manager.has_user_models() )

@@ -2100,10 +2100,10 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
             plt.Rectangle(srcpos + ll + offs, ur[0] - ll[0], ur[1] - ll[1],
                           zorder=-1000, fc='none', ec=mask_color, lw=3))
     elif 'elliptical' in mask:
-        width = 2*mask['elliptical']['major_axis']
-        height = 2*mask['elliptical']['minor_axis']
-        if 'angle' in mask['elliptical']:
-            angle = mask['elliptical']['angle']*180/pi
+        width = mask['elliptical']['major_axis']
+        height = mask['elliptical']['minor_axis']
+        if 'azimuth_angle' in mask['elliptical']:
+            angle = mask['elliptical']['azimuth_angle']*180/pi
         else:
             angle = 0.0
         if 'anchor' in mask['elliptical']:

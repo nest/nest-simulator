@@ -37,8 +37,8 @@ class ConnectWithEllipticalMask(unittest.TestCase):
     def test_ConnectEllipticalMask(self):
         """Test connection with simple elliptical mask.
 
-        We have: major_axis = 1.5
-                 minor_axis = 1.0
+        We have: major_axis = 3.0
+                 minor_axis = 2.0
 
         Each source node should then connect to:
             - The node in the same position in target layer
@@ -71,8 +71,8 @@ class ConnectWithEllipticalMask(unittest.TestCase):
                                    'elements': 'iaf_psc_alpha'})
 
         conndict = {'connection_type': 'divergent',
-                    'mask': {'elliptical': {'major_axis': 1.5,
-                                            'minor_axis': 1.}}}
+                    'mask': {'elliptical': {'major_axis': 3.0,
+                                            'minor_axis': 2.0}}}
 
         topo.ConnectLayers(source, target, conndict)
 
@@ -103,9 +103,9 @@ class ConnectWithEllipticalMask(unittest.TestCase):
     def test_ConnectTiltedEllipticalMask(self):
         """Test connection with tilted elliptical mask.
 
-        We have: major_axis = 1.5
-                 minor_axis = 0.5
-                 angle = pi/4
+        We have: major_axis = 3.0
+                 minor_axis = 1.0
+                 azimuth_angle = pi/4
 
         Each source node should then connect to:
             - The node in the same position in target layer
@@ -137,9 +137,9 @@ class ConnectWithEllipticalMask(unittest.TestCase):
                                    'elements': 'iaf_psc_alpha'})
 
         conndict = {'connection_type': 'divergent',
-                    'mask': {'elliptical': {'major_axis': 1.5,
-                                            'minor_axis': 0.5,
-                                            'angle': pi/4}}}
+                    'mask': {'elliptical': {'major_axis': 3.0,
+                                            'minor_axis': 1.0,
+                                            'azimuth_angle': pi/4}}}
 
         topo.ConnectLayers(source, target, conndict)
 
@@ -163,8 +163,8 @@ class ConnectWithEllipticalMask(unittest.TestCase):
     def test_ConnectAnchoredEllipticalMask(self):
         """Test connection with anchored elliptical mask.
 
-        We have: major_axis = 1.5
-                 minor_axis = 1.0
+        We have: major_axis = 3.0
+                 minor_axis = 2.0
                  anchor = [1.0, 0.0] (right edge of mask aligned with source)
 
         Each source node should then connect to:
@@ -198,8 +198,8 @@ class ConnectWithEllipticalMask(unittest.TestCase):
                                    'elements': 'iaf_psc_alpha'})
 
         conndict = {'connection_type': 'divergent',
-                    'mask': {'elliptical': {'major_axis': 1.5,
-                                            'minor_axis': 1.,
+                    'mask': {'elliptical': {'major_axis': 3.,
+                                            'minor_axis': 2.,
                                             'anchor': [1., 0.]}}}
 
         topo.ConnectLayers(source, target, conndict)
@@ -229,8 +229,8 @@ class ConnectWithEllipticalMask(unittest.TestCase):
     def test_ConnectEllipticalMaskWithPeriodicBoundary(self):
         """Test connection with simple elliptical mask.
 
-        We have: major_axis = 1.5
-                 minor_axis = 1.0
+        We have: major_axis = 3.0
+                 minor_axis = 2.0
 
         Each source node should then connect to:
             - The node in the same position in target layer
@@ -268,8 +268,8 @@ class ConnectWithEllipticalMask(unittest.TestCase):
                                    'edge_wrap': True})
 
         conndict = {'connection_type': 'divergent',
-                    'mask': {'elliptical': {'major_axis': 1.5,
-                                            'minor_axis': 1.}}}
+                    'mask': {'elliptical': {'major_axis': 3.,
+                                            'minor_axis': 2.}}}
 
         topo.ConnectLayers(source, target, conndict)
 

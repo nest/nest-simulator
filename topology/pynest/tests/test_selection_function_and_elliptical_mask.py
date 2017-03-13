@@ -87,7 +87,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
     def test_CreateEllipticalMask2D(self):
         """Creates simple elliptical mask"""
-        mask_dict = {'major_axis': 3.0, 'minor_axis': 1.5}
+        mask_dict = {'major_axis': 6.0, 'minor_axis': 3.0}
         mask = topo.CreateMask('elliptical', mask_dict)
 
         self.assertTrue(mask.Inside([0.0, 0.0]))
@@ -98,7 +98,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         layer = topo.CreateLayer({'rows': 11, 'columns': 11,
                                   'extent': [11., 11.],
                                   'elements': 'iaf_psc_alpha'})
-        maskdict = {'major_axis': 1.0, 'minor_axis': 0.5}
+        maskdict = {'major_axis': 2.0, 'minor_axis': 1.0}
         mask = topo.CreateMask('elliptical', maskdict)
 
         cntr = [0.0, 0.0]
@@ -107,7 +107,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         self.assertEqual(gid_list, (51, 62, 73,))
 
-        maskdict = {'major_axis': 3.0, 'minor_axis': 1.5}
+        maskdict = {'major_axis': 6.0, 'minor_axis': 3.0}
         mask = topo.CreateMask('elliptical', maskdict)
 
         gid_list = topo.SelectNodesByMask(layer, cntr, mask)
@@ -123,7 +123,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         layer = topo.CreateLayer({'rows': 11, 'columns': 11,
                                   'extent': [11., 11.],
                                   'elements': 'iaf_psc_alpha'})
-        maskdict = {'major_axis': 3.0, 'minor_axis': 1.5, 'anchor': [-2., -2.]}
+        maskdict = {'major_axis': 6.0, 'minor_axis': 3.0, 'anchor': [-2., -2.]}
         mask = topo.CreateMask('elliptical', maskdict)
 
         cntr = [0.0, 0.0]
@@ -140,8 +140,8 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         layer = topo.CreateLayer({'rows': 11, 'columns': 11,
                                   'extent': [11., 11.],
                                   'elements': 'iaf_psc_alpha'})
-        maskdict = {'major_axis': 1.5, 'minor_axis': 0.5,
-                    'anchor': [3., 3.], 'angle': pi/4}
+        maskdict = {'major_axis': 3.0, 'minor_axis': 1.0,
+                    'anchor': [3., 3.], 'azimuth_angle': pi/4}
         mask = topo.CreateMask('elliptical', maskdict)
 
         cntr = [0.0, 0.0]
@@ -150,8 +150,8 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         self.assertEqual(gid_list, (82, 92, 102,))
 
-        maskdict = {'major_axis': 3.0, 'minor_axis': 1.5,
-                    'anchor': [-1.5, 1.], 'angle': 3*pi/4}
+        maskdict = {'major_axis': 6.0, 'minor_axis': 3.0,
+                    'anchor': [-1.5, 1.], 'azimuth_angle': 3*pi/4}
         mask = topo.CreateMask('elliptical', maskdict)
 
         gid_list = topo.SelectNodesByMask(layer, cntr, mask)
@@ -161,8 +161,8 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
                          [26, 27, 28, 37, 38, 39, 40, 49, 50, 51, 52, 61, 62,
                           63])
 
-        maskdict = {'major_axis': 4.0, 'minor_axis': 1.5,
-                    'anchor': [0., 1.], 'angle': pi/2}
+        maskdict = {'major_axis': 8.0, 'minor_axis': 3.0,
+                    'anchor': [0., 1.], 'azimuth_angle': pi/2}
         mask = topo.CreateMask('elliptical', maskdict)
 
         gid_list = topo.SelectNodesByMask(layer, cntr, mask)
@@ -181,14 +181,14 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         layer = topo.CreateLayer({'rows': 5, 'columns': 5,
                                   'extent': [5., 5.], 'center': cntr,
                                   'elements': 'iaf_psc_alpha'})
-        maskdict = {'major_axis': 1.5, 'minor_axis': 0.5}
+        maskdict = {'major_axis': 3.0, 'minor_axis': 1.0}
         mask = topo.CreateMask('elliptical', maskdict)
 
         gid_list = topo.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (9, 14, 19,))
 
-        maskdict = {'major_axis': 1.5, 'minor_axis': 0.5, 'anchor': [1., 1.]}
+        maskdict = {'major_axis': 3.0, 'minor_axis': 1.0, 'anchor': [1., 1.]}
         mask = topo.CreateMask('elliptical', maskdict)
 
         gid_list = topo.SelectNodesByMask(layer, cntr, mask)
@@ -204,8 +204,8 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         layer = topo.CreateLayer({'positions': pos, 'extent': [11., 11., 11.],
                                   'elements': 'iaf_psc_alpha'})
 
-        maskdict = {'major_axis': 1.5, 'minor_axis': 0.5,
-                    'intermediate_axis': 0.5}
+        maskdict = {'major_axis': 3.0, 'minor_axis': 1.0,
+                    'polar_axis': 1.0}
         mask = topo.CreateMask('ellipsoidal', maskdict)
 
         cntr = [0., 0., 0.]
@@ -214,8 +214,8 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         self.assertEqual(gid_list, (546, 667, 788,))
 
-        maskdict = {'major_axis': 1.5, 'minor_axis': 0.5,
-                    'intermediate_axis': 0.5, 'angle': pi/2}
+        maskdict = {'major_axis': 3.0, 'minor_axis': 1.0,
+                    'polar_axis': 1.0, 'azimuth_angle': pi/2}
         mask = topo.CreateMask('ellipsoidal', maskdict)
 
         cntr = [0., 0., 0.]
@@ -233,8 +233,8 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         layer = topo.CreateLayer({'positions': pos, 'extent': [11., 11., 11.],
                                   'elements': 'iaf_psc_alpha'})
 
-        maskdict = {'major_axis': 2.0, 'minor_axis': 0.5,
-                    'intermediate_axis': 0.5, 'anchor': [-5., -5., -4.]}
+        maskdict = {'major_axis': 4.0, 'minor_axis': 1.0,
+                    'polar_axis': 1.0, 'anchor': [-5., -5., -4.]}
         mask = topo.CreateMask('ellipsoidal', maskdict)
 
         cntr = [0., 0., 0.]
@@ -243,9 +243,9 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         self.assertEqual(gid_list, (3, 124, 245,))
 
-        maskdict = {'major_axis': 2., 'minor_axis': 0.5,
-                    'intermediate_axis': 0.5, 'anchor': [-4., -4., -4.],
-                    'angle': pi/4}
+        maskdict = {'major_axis': 4., 'minor_axis': 1.,
+                    'polar_axis': 1., 'anchor': [-4., -4., -4.],
+                    'azimuth_angle': pi/4}
         mask = topo.CreateMask('ellipsoidal', maskdict)
 
         cntr = [0., 0., 0.]
@@ -264,9 +264,9 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         self.assertTrue(True)
 
         conndict = {'connection_type': 'divergent',
-                    'mask': {'elliptical': {'major_axis': 3.,
-                                            'minor_axis': 1.5,
-                                            'angle': pi/4,
+                    'mask': {'elliptical': {'major_axis': 6.,
+                                            'minor_axis': 3.,
+                                            'azimuth_angle': pi/4,
                                             'anchor': [3., 3.]}}}
 
         topo.ConnectLayers(layer, layer, conndict)

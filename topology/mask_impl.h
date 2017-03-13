@@ -290,17 +290,32 @@ BallMask< D >::get_dict() const
   return d;
 }
 
-template < int D >
+template <>
 bool
-EllipseMask< D >::inside( const Position< D >& p ) const
+EllipseMask< 2 >::inside( const Position< 2 >& p ) const
 {
-  double new_x = ( p[ 0 ] - center_[ 0 ] ) * cosine_value_
-    + ( p[ 1 ] - center_[ 1 ] ) * sine_value_;
-  double new_y = ( p[ 0 ] - center_[ 0 ] ) * sine_value_
-    - ( p[ 1 ] - center_[ 1 ] ) * cosine_value_;
-  double new_z = ( p[ 2 ] - center_[ 2 ] );
-  return std::pow( new_x, 2 ) * x_dividend_ + std::pow( new_y, 2 ) * y_dividend_
-    + std::pow( new_z, 2 ) * z_dividend_
+  const double new_x = ( p[ 0 ] - center_[ 0 ] ) * azimuth_cos_value_
+    + ( p[ 1 ] - center_[ 1 ] ) * azimuth_sin_value_;
+  const double new_y = ( p[ 0 ] - center_[ 0 ] ) * azimuth_sin_value_
+    - ( p[ 1 ] - center_[ 1 ] ) * azimuth_cos_value_;
+
+  return std::pow( new_x, 2 ) * x_scale_ + std::pow( new_y, 2 ) * y_scale_ <= 1;
+}
+
+template <>
+bool
+EllipseMask< 3 >::inside( const Position< 3 >& p ) const
+{
+  const double new_x = ( p[ 0 ] - center_[ 0 ] ) * azimuth_cos_value_
+    + ( p[ 1 ] - center_[ 1 ] ) * azimuth_sin_value_;
+
+  const double new_y = ( p[ 0 ] - center_[ 0 ] ) * azimuth_sin_value_
+    - ( p[ 1 ] - center_[ 1 ] ) * azimuth_cos_value_;
+
+  const double new_z = p[ 2 ] - center_[ 2 ];
+
+  return std::pow( new_x, 2 ) * x_scale_ + std::pow( new_y, 2 ) * y_scale_
+    + std::pow( new_z, 2 ) * z_scale_
     <= 1;
 }
 
@@ -395,30 +410,51 @@ EllipseMask< 3 >::inside( const Box< 3 >& b ) const
 }
 
 template < int D >
+void
+EllipseMask< D >::create_bbox()
+{
+  // Currently assumes 3D when constructing the radius vector. This could be
+  // avoided with more if tests, but the vector is only made once and is not
+  // big. The construction of the box is done in accordance with the actual
+  // dimensions.
+  std::vector< double > radii( 3 );
+  if ( azimuth_angle_ == 0.0 and polar_angle_ == 0.0 )
+  {
+    radii[ 0 ] = major_axis_ / 2.0;
+    radii[ 1 ] = minor_axis_ / 2.0;
+    radii[ 2 ] = polar_axis_ / 2.0;
+  }
+  else
+  {
+    // If the ellipse or ellipsoid is tilted, we make the boundary box
+    // quadratic, with the length of the sides equal to the axis with greatest
+    // length. This could be more refined.
+    double greatest_semi_axis = std::max( major_axis_, polar_axis_ ) / 2.0;
+    radii[ 0 ] = greatest_semi_axis;
+    radii[ 1 ] = greatest_semi_axis;
+    radii[ 2 ] = greatest_semi_axis;
+  }
+
+  for ( int i = 0; i < D; ++i )
+  {
+    bbox_.lower_left[ i ] = center_[ i ] - radii[ i ];
+    bbox_.upper_right[ i ] = center_[ i ] + radii[ i ];
+  }
+}
+
+template < int D >
 bool
 EllipseMask< D >::outside( const Box< D >& b ) const
 {
   // Currently only checks if the box is outside the bounding box of
   // the ellipse. This could be made more refined.
 
-  std::vector< double > radii;
-  if ( angle_ == 0.0 )
-  {
-    radii.push_back( major_axis_ );
-    radii.push_back( minor_axis_ );
-  }
-  else
-  {
-    // This is a simplification and can be more refined
-    radii.push_back( std::abs( major_axis_ ) );
-    radii.push_back( std::abs( major_axis_ ) );
-  }
-  radii.push_back( intermediate_axis_ );
+  Box< D > bb = bbox_;
 
   for ( int i = 0; i < D; ++i )
   {
-    if ( ( b.upper_right[ i ] < center_[ i ] - radii[ i ] )
-      || ( b.lower_left[ i ] > center_[ i ] + radii[ i ] ) )
+    if ( ( b.upper_right[ i ] < bb.lower_left[ i ] )
+      || ( b.lower_left[ i ] > bb.upper_right[ i ] ) )
     {
       return true;
     }
@@ -430,28 +466,7 @@ template < int D >
 Box< D >
 EllipseMask< D >::get_bbox() const
 {
-  Box< D > bb( center_, center_ );
-
-  std::vector< double > radii;
-  if ( angle_ == 0.0 )
-  {
-    radii.push_back( major_axis_ );
-    radii.push_back( minor_axis_ );
-  }
-  else
-  {
-    // This is a simplification and can be more refined
-    radii.push_back( std::abs( major_axis_ ) );
-    radii.push_back( std::abs( major_axis_ ) );
-  }
-  radii.push_back( intermediate_axis_ );
-
-  for ( int i = 0; i < D; ++i )
-  {
-    bb.lower_left[ i ] -= radii[ i ];
-    bb.upper_right[ i ] += radii[ i ];
-  }
-  return bb;
+  return bbox_;
 }
 
 template < int D >
@@ -470,9 +485,10 @@ EllipseMask< D >::get_dict() const
   def< DictionaryDatum >( d, get_name(), maskd );
   def< double >( maskd, names::major_axis, major_axis_ );
   def< double >( maskd, names::minor_axis, minor_axis_ );
-  def< double >( maskd, names::intermediate_axis, intermediate_axis_ );
+  def< double >( maskd, names::polar_axis, polar_axis_ );
   def< std::vector< double > >( maskd, names::anchor, center_ );
-  def< double >( maskd, names::angle, angle_ );
+  def< double >( maskd, names::azimuth_angle, azimuth_angle_ );
+  def< double >( maskd, names::polar_angle, polar_angle_ );
   return d;
 }
 

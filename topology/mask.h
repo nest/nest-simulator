@@ -312,7 +312,7 @@ protected:
 };
 
 /**
- * Mask defining a elliptical region. Only 2D is implemented
+ * Mask defining an elliptical or ellipsoidal region.
  */
 template < int D >
 class EllipseMask : public Mask< D >
@@ -320,35 +320,40 @@ class EllipseMask : public Mask< D >
 public:
   /**
    * @param center Center of ellipse
-   * @param major_axis Length between center and vertex on major axis
-   * @param minor_axis Length between center and vertex on minor axis
-   * @param intermediate_axis Length between center and vertex on z-axis
-   * @param angle Angle between x-axis and major axis of the ellipse
+   * @param major_axis Length of major axis of ellipse or ellipsoid
+   * @param minor_axis Length of minor axis of ellipse or ellipsoid
+   * @param polar_axis Length of polar axis of ellipsoid
+   * @param azimuth_angle Angle between x-axis and major axis of the ellipse or
+   *        ellipsoid
+   * @param polar_angle Angle between z-axis and polar axis of the ellipsoid
    */
   EllipseMask( Position< D > center,
     double major_axis,
     double minor_axis,
-    double intermediate_axis,
-    double angle )
+    double polar_axis,
+    double azimuth_angle,
+    double polar_angle )
     : center_( center )
     , major_axis_( major_axis )
     , minor_axis_( minor_axis )
-    , intermediate_axis_( intermediate_axis )
-    , angle_( angle )
+    , polar_axis_( polar_axis )
+    , azimuth_angle_( azimuth_angle )
+    , polar_angle_( polar_angle )
+    , x_scale_( 4.0 / ( major_axis_ * major_axis_ ) )
+    , y_scale_( 4.0 / ( minor_axis_ * minor_axis_ ) )
+    , z_scale_( 4.0 / ( polar_axis_ * polar_axis_ ) )
+    , azimuth_cos_value_( cos( azimuth_angle_ ) )
+    , azimuth_sin_value_( sin( azimuth_angle_ ) )
   {
-    x_dividend_ = 1.0 / ( major_axis_ * major_axis_ );
-    y_dividend_ = 1.0 / ( minor_axis_ * minor_axis_ );
-    z_dividend_ = 1.0 / ( intermediate_axis_ * intermediate_axis_ );
-
-    cosine_value_ = cos( angle_ );
-    sine_value_ = sin( angle_ );
+    create_bbox();
   }
 
   /**
    * Creates an EllipseMask from a Dictionary which should contain the keys
    * "major_axis" and "minor_axis" with double values, and optionally the keys
-   * "intermediate_axis", "anchor" (the center position), or "angle" with a
-   * double, an array of doubles and a double, respectively.
+   * "polar_axis", "anchor" (the center position), "azimuth_angle" or
+   * "polar_angle" with a double, an array of doubles, a double and a double,
+   * respectively.
    */
   EllipseMask( const DictionaryDatum& );
 
@@ -388,15 +393,22 @@ private:
   Position< D > center_;
   double major_axis_;
   double minor_axis_;
-  double intermediate_axis_;
-  double angle_;
+  double polar_axis_;
+  double azimuth_angle_;
+  double polar_angle_;
 
-  double x_dividend_;
-  double y_dividend_;
-  double z_dividend_;
+  double x_scale_;
+  double y_scale_;
+  double z_scale_;
 
-  double cosine_value_;
-  double sine_value_;
+  double azimuth_cos_value_;
+  double azimuth_sin_value_;
+
+  /*
+   * @returns boundary box of ellipse/ellipsoid.
+   */
+  void create_bbox();
+  Box< D > bbox_;
 };
 
 /**
@@ -733,25 +745,31 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
       "major_axis greater than minor_axis required." );
   }
 
-  x_dividend_ = 1.0 / ( major_axis_ * major_axis_ );
-  y_dividend_ = 1.0 / ( minor_axis_ * minor_axis_ );
+  x_scale_ = 4.0 / ( major_axis_ * major_axis_ );
+  y_scale_ = 4.0 / ( minor_axis_ * minor_axis_ );
 
-  if ( d->known( names::intermediate_axis ) )
+  if ( d->known( names::polar_axis ) )
   {
-    intermediate_axis_ = getValue< double >( d, names::intermediate_axis );
+    if ( D == 2 )
+    {
+      throw BadProperty(
+        "topology::EllipseMask<D>: "
+        "polar_axis not defined in 2D." );
+    }
+    polar_axis_ = getValue< double >( d, names::polar_axis );
 
-    if ( intermediate_axis_ < 0 )
+    if ( polar_axis_ <= 0 )
     {
       throw BadProperty(
         "topology::EllipseMask<D>: "
         "All axis > 0 required." );
     }
 
-    z_dividend_ = 1.0 / ( intermediate_axis_ * intermediate_axis_ );
+    z_scale_ = 4.0 / ( polar_axis_ * polar_axis_ );
   }
   else
   {
-    z_dividend_ = 0.0;
+    z_scale_ = 0.0;
   }
 
   if ( d->known( names::anchor ) )
@@ -759,16 +777,36 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
     center_ = getValue< std::vector< double > >( d, names::anchor );
   }
 
-  if ( d->known( names::angle ) )
+  if ( d->known( names::azimuth_angle ) )
   {
-    angle_ = getValue< double >( d, names::angle );
+    azimuth_angle_ = getValue< double >( d, names::azimuth_angle );
   }
   else
   {
-    angle_ = 0.0;
+    azimuth_angle_ = 0.0;
   }
-  cosine_value_ = cos( angle_ );
-  sine_value_ = sin( angle_ );
+  if ( d->known( names::polar_angle ) )
+  {
+    if ( D == 2 )
+    {
+      throw BadProperty(
+        "topology::EllipseMask<D>: "
+        "polar_angle not defined in 2D." );
+    }
+    // Tilting in z-direction is not yet implemented
+    throw NotImplemented(
+      "topology::EllipseMask<D>: "
+      "polar_angle currently not implemented." );
+    // polar_angle_ = getValue< double >( d, names::polar_angle );
+  }
+  else
+  {
+    polar_angle_ = 0.0;
+  }
+  azimuth_cos_value_ = cos( azimuth_angle_ );
+  azimuth_sin_value_ = sin( azimuth_angle_ );
+
+  create_bbox();
 }
 
 } // namespace nest

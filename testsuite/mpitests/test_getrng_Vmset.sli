@@ -42,7 +42,7 @@ SeeAlso:
 (unittest) run
 /unittest using
 
-exit_test_gracefully  # TODO480 (Select needs implementation for GC)
+exit_test_gracefully  % TODO480 (Select needs implementation for GC)
 
 is_threaded not { exit_test_gracefully } if
 

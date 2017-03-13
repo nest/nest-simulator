@@ -14,7 +14,7 @@ have worked through this material, you will know how to:
 For more information on the usage of PyNEST, please see the other sections of
 this primer: 
 
--   [Part 1: Neurons and simple neural networkss](part-1-neurons-and-simple-neural-networks.md)
+-   [Part 1: Neurons and simple neural networks](part-1-neurons-and-simple-neural-networks.md)
 -   [Part 2: Populations of neurons](part-2-populations-of-neurons.md)
 -   [Part 4: Topologically structured networks](part-4-topologically-structured-networks.md)
 
@@ -83,6 +83,11 @@ associated with the distribution can be set (for example `mu`). Here we show
 an example where the parameters `alpha` and `weight` of the stdp synapse are 
 uniformly distributed.
 
+    alpha_min = 0.1
+    alpha_max = 2.
+    w_min = 0.5 
+    w_max = 5.
+    
     syn_dict = {"model": "stdp_synapse", 
                 "alpha": {"distribution": "uniform", "low": alpha_min, "high": alpha_max},
                 "weight": {"distribution": "uniform", "low": w_min, "high": w_max},

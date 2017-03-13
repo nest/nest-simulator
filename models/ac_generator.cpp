@@ -75,7 +75,9 @@ nest::ac_generator::Parameters_& nest::ac_generator::Parameters_::
 operator=( const Parameters_& p )
 {
   if ( this == &p )
+  {
     return *this;
+  }
 
   amp_ = p.amp_;
   offset_ = p.offset_;

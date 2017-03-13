@@ -63,7 +63,9 @@ nest::dc_generator::Parameters_& nest::dc_generator::Parameters_::
 operator=( const Parameters_& p )
 {
   if ( this == &p )
+  {
     return *this;
+  }
 
   amp_ = p.amp_;
 

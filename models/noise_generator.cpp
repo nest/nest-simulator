@@ -82,7 +82,9 @@ nest::noise_generator::Parameters_& nest::noise_generator::Parameters_::
 operator=( const Parameters_& p )
 {
   if ( this == &p )
+  {
     return *this;
+  }
 
   mean_ = p.mean_;
   std_ = p.std_;
@@ -145,21 +147,31 @@ nest::noise_generator::Parameters_::set( const DictionaryDatum& d,
   updateValue< double >( d, names::phase, phi_deg_ );
   double dt;
   if ( updateValue< double >( d, names::dt, dt ) )
+  {
     dt_ = Time::ms( dt );
+  }
 
   if ( std_ < 0 )
+  {
     throw BadProperty( "The standard deviation cannot be negative." );
+  }
 
   if ( std_mod_ < 0 )
+  {
     throw BadProperty( "The standard deviation cannot be negative." );
+  }
 
   if ( std_mod_ > std_ )
+  {
     throw BadProperty(
       "The modulation apmlitude must be smaller or equal to the baseline "
       "amplitude." );
+  }
 
-  if ( !dt_.is_step() )
+  if ( not dt_.is_step() )
+  {
     throw StepMultipleRequired( n.get_name(), names::dt, dt_ );
+  }
 }
 
 
@@ -175,8 +187,10 @@ nest::noise_generator::noise_generator()
   , B_( *this )
 {
   recordablesMap_.create();
-  if ( !P_.dt_.is_step() )
+  if ( not P_.dt_.is_step() )
+  {
     throw InvalidDefaultResolution( get_name(), names::dt, P_.dt_ );
+  }
 }
 
 nest::noise_generator::noise_generator( const noise_generator& n )
@@ -186,8 +200,10 @@ nest::noise_generator::noise_generator( const noise_generator& n )
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
-  if ( !P_.dt_.is_step() )
+  if ( not P_.dt_.is_step() )
+  {
     throw InvalidTimeInModel( get_name(), names::dt, P_.dt_ );
+  }
 }
 
 
@@ -273,7 +289,9 @@ nest::noise_generator::send_test_event( Node& target,
     e.set_sender( *this );
     const port p = target.handles_test_event( e, receptor_type );
     if ( p != invalid_port_ and not is_model_prototype() )
+    {
       ++P_.num_targets_;
+    }
     return p;
   }
 }
@@ -299,8 +317,10 @@ nest::noise_generator::update( Time const& origin,
 
     const long now = start + offs;
 
-    if ( !device_.is_active( Time::step( now ) ) )
+    if ( not device_.is_active( Time::step( now ) ) )
+    {
       continue;
+    }
 
     if ( P_.std_mod_ != 0. )
     {
@@ -319,8 +339,9 @@ nest::noise_generator::update( Time const& origin,
         *it = P_.mean_
           + std::sqrt( P_.std_ * P_.std_ + S_.y_1_ * P_.std_mod_ * P_.std_mod_ )
             * V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
-        S_.I_ = *it;
+        S_.I_ += *it;
       }
+      S_.I_ /= B_.amps_.size();
 
       // use now as reference, in case we woke up from inactive period
       B_.next_step_ = now + V_.dt_steps_;

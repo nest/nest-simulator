@@ -131,7 +131,7 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
   if ( updateValue< double >( d, names::offset, v ) )
   {
     // only throw error if given offset is > 0., otherwise it's not an error
-    if ( Time( Time::ms( v ) ) < Time::get_resolution() && v > 0. )
+    if ( v > 0 && Time( Time::ms( v ) ) < Time::get_resolution() )
     {
       throw BadProperty(
         "The offset for the sampling interval must be at least as long as the "
@@ -215,8 +215,9 @@ Multimeter::update( Time const& origin, const long from, const long )
   // following Reply data is then added.
   //
   // Note that not all nodes receiving the request will necessarily answer.
-  V_.new_request_ = B_.has_targets_
-    && P_.record_from_.empty() == false; // no targets, no request
+
+  // no targets or no recordables means no request
+  V_.new_request_ = B_.has_targets_ and not P_.record_from_.empty();
   DataLoggingRequest req;
   kernel().event_delivery_manager.send( *this, req );
 }
@@ -245,7 +246,7 @@ Multimeter::handle( DataLoggingReply& reply )
       break;
     }
 
-    if ( is_active( info[ j ].timestamp ) == false )
+    if ( not is_active( info[ j ].timestamp ) )
     {
       ++inactive_skipped;
       continue;
@@ -256,12 +257,12 @@ Multimeter::handle( DataLoggingReply& reply )
 
     // record sender and time information; in accumulator mode only for first
     // Reply in slice
-    if ( device_.to_accumulator() == false || V_.new_request_ )
+    if ( not device_.to_accumulator() || V_.new_request_ )
     {
       device_.record_event( reply, false ); // false: more data to come
     }
 
-    if ( device_.to_accumulator() == false )
+    if ( not device_.to_accumulator() )
     {
       // "print" actual data, but not in accumulator mode
       print_value_( info[ j ].data );

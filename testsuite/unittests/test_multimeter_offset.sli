@@ -26,12 +26,13 @@ Name: testsuite::test_multimeter_offset - Test if offset attribute works properl
 Synopsis: (test_multimeter_offset) run -> NEST exits if test fails
 
 Description:
-  This test checks if the offset attribute of multimeter works as expected.
- 
-  For each model with a "recordables" property, it creates an instance with a 
-  predefined offset, connects a multimeter to them requesting all properties, 
-  simulates briefly and checks that the recorded times are relative to the offset.
- 
+  This test checks if the offset attribute of multimeter works as expected;
+  contains 3 tests:
+
+  1) checks if recorded times are indeed relative to an offset
+  2) ensures offset can only be set before the multimeter is connected to nodes
+  3) ensures offset works correctly even if origin, start and stop are modified
+
 Author: Barna Zajzon, 2017-03-10 
  */
 
@@ -41,61 +42,40 @@ Author: Barna Zajzon, 2017-03-10
 % use power-of-two resolution to avoid roundof problems
 /res -3 dexp def
 
-% simulation time
-/simtime 15. def
 
-% offset time --- different from default to check setting works
-/recoffs 5. def
-
-% recording interval --- different from default to check setting works
-/recint 3. def
-
-% offset data 
-/refdata [8. 11. 14.] def
-
-
+% Test 1
+% checks if recorded times are indeed relative to an offset
 {
-  modeldict keys
-  {
-    /model Set
+  /simtime 15. def % simulation time
+  /recoffs 5.  def % offset time --- different from default
+  /recint  3.  def % recording interval --- different from default
 
-    % some logging information to make failure localization easier
-    (Testing model: ) model cvs join ==
+  /recs    [/V_m]       def % recording devices
+  /refdata [8. 11. 14.] def % offset data
 
-    ResetKernel
-    0 << /resolution res >> SetStatus
+  ResetKernel
+  0 << /resolution res >> SetStatus
 
-    % get recordables, if none, return true
-    model GetDefaults dup /recordables known
-    {
-      % set up for simulation and simulate
-      /recordables get /recs Set
-      /n model Create def
-      
-      /mm /multimeter << /withtime true /interval recint /offset recoffs /record_from recs >> 
-          Create def
+  /n /iaf_psc_alpha Create def
 
-      mm n Connect
-      simtime Simulate
+  /mm /multimeter << /withtime true /interval recint /offset recoffs /record_from recs >>
+    Create def
 
-      % check results
-      /result mm /events get def
-      result /times get cva 
+  % connect and simulate
+  mm n Connect
+  simtime Simulate
 
-      % compare to reference data
-      refdata eq
-    }   
-    { ; true }
-    ifelse
-  }
-  Map
+  % check results
+  /result mm /events get def
+  result /times get cva
 
-  % see if all entries are true
-  true exch { and } Fold
-
+  % compare to reference data
+  refdata eq
 }
 assert_or_die
 
+
+% Test 2
 % make sure offset cannot be changed after connecting to a node
 {
   ResetKernel
@@ -111,5 +91,53 @@ assert_or_die
   mm << /offset 5. >> SetStatus
 }
 fail_or_die
+
+
+% Test 3
+% ensure offset behaves correctly with respect to origin / start / stop; set start and stop
+% different from their initial values, simulate, check recordings. Then modify origin,
+% simulate again, and check for consistency.
+{
+  /recint  3. def
+  /recoffs 5. def
+  /start   3. def
+  /stop    15. def
+  /origin  20. def
+  /simtime 20. def
+
+  /recs    [/V_m] def
+  /times_1 [8. 11. 14.] def
+  /times_2 [8. 11. 14. 26. 29. 32. 35.] def
+
+  ResetKernel
+  0 << /resolution res >> SetStatus
+
+  % create multimeter and node
+  /mm /multimeter
+    << /withtime true /interval recint /offset recoffs /start start /stop stop /record_from recs >>
+    Create def
+  /neuron /iaf_psc_exp Create def
+
+  % connect and simulate
+  mm neuron Connect
+  simtime Simulate
+
+  % check results
+  /result mm /events get /times get cva
+
+  % compare to first reference data
+  times_1 eq
+
+  % change origin; this shouldn't affect the offset but only shift start-stop window
+  mm << /origin origin >> SetStatus
+  simtime Simulate
+
+  % check results
+  /result mm /events get /times get cva
+
+  % compare to extended reference
+  times_2 eq
+}
+assert_or_die
 
 endusing

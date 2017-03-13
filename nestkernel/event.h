@@ -554,7 +554,8 @@ public:
   /** Create empty request for use during simulation. */
   DataLoggingRequest();
 
-  /** Create event for given time stamp and vector of recordables. */
+  /** Create event for given time interval, offset for interval start,
+   *  and vector of recordables. */
   DataLoggingRequest( const Time&, const Time&, const std::vector< Name >& );
 
   DataLoggingRequest* clone() const;

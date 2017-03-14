@@ -23,6 +23,9 @@
 #ifndef MASK_H
 #define MASK_H
 
+// Includes from libnestutil:
+#include "numerics.h"
+
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_types.h"
@@ -340,14 +343,13 @@ public:
     , polar_axis_( polar_axis )
     , azimuth_angle_( azimuth_angle )
     , polar_angle_( polar_angle )
-    , pi_( 3.141592653589793 )
     , x_scale_( 4.0 / ( major_axis_ * major_axis_ ) )
     , y_scale_( 4.0 / ( minor_axis_ * minor_axis_ ) )
     , z_scale_( 4.0 / ( polar_axis_ * polar_axis_ ) )
-    , azimuth_cos_( std::cos( azimuth_angle_ * pi_ / 180 ) )
-    , azimuth_sin_( std::sin( azimuth_angle_ * pi_ / 180 ) )
-    , polar_cos_( std::cos( polar_angle_ * pi_ / 180 ) )
-    , polar_sin_( std::sin( polar_angle_ * pi_ / 180 ) )
+    , azimuth_cos_( std::cos( azimuth_angle_ * numerics::pi / 180. ) )
+    , azimuth_sin_( std::sin( azimuth_angle_ * numerics::pi / 180. ) )
+    , polar_cos_( std::cos( polar_angle_ * numerics::pi / 180. ) )
+    , polar_sin_( std::sin( polar_angle_ * numerics::pi / 180. ) )
   {
     if ( major_axis_ <= 0 or minor_axis_ <= 0 or polar_axis_ <= 0 )
     {
@@ -421,8 +423,6 @@ private:
   double polar_axis_;
   double azimuth_angle_;
   double polar_angle_;
-
-  double pi_;
 
   double x_scale_;
   double y_scale_;
@@ -827,12 +827,10 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
     polar_angle_ = 0.0;
   }
 
-  pi_ = 3.141592653589793;
-
-  azimuth_cos_ = std::cos( azimuth_angle_ * pi_ / 180 );
-  azimuth_sin_ = std::sin( azimuth_angle_ * pi_ / 180 );
-  polar_cos_ = std::cos( polar_angle_ * pi_ / 180 );
-  polar_sin_ = std::sin( polar_angle_ * pi_ / 180 );
+  azimuth_cos_ = std::cos( azimuth_angle_ * numerics::pi / 180. );
+  azimuth_sin_ = std::sin( azimuth_angle_ * numerics::pi / 180. );
+  polar_cos_ = std::cos( polar_angle_ * numerics::pi / 180. );
+  polar_sin_ = std::sin( polar_angle_ * numerics::pi / 180. );
 
   create_bbox_();
 }

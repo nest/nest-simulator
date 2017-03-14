@@ -306,8 +306,14 @@ template <>
 bool
 EllipseMask< 3 >::inside( const Position< 3 >& p ) const
 {
-  // xx = (x-x_c)*cos(azimuth) + (y-y_c)*sin(azimuth) tilts x-y plane
-  // xx*cos(polar) - (z - z_c)*sin(polar) tilts with respect to z-axis
+  // The new x, y, z values are calculated using rotation matrices:
+  // [new_x, new_y, new_z] =
+  //       R_y(-polar)*R_z(azimuth)*[x - x_c, y - y_c, z - z_c]
+  // where R_z(t) = [cos(t) sin(t) 0; sin(t) -cos(t) 0; 0 0 1] and
+  //       R_y(-t) = [cos(t) 0 -sin(t); 0 1 0; sin(t) 0 cos(t)]
+
+  // See https://en.wikipedia.org/wiki/Rotation_matrix for more.
+
   const double new_x =
     ( ( p[ 0 ] - center_[ 0 ] ) * azimuth_cos_
       + ( p[ 1 ] - center_[ 1 ] ) * azimuth_sin_ ) * polar_cos_
@@ -474,8 +480,7 @@ template < int D >
 Box< D >
 EllipseMask< D >::get_bbox() const
 {
-  const Box< D >& bb = bbox_;
-  return bb;
+  return bbox_;
 }
 
 template < int D >

@@ -190,7 +190,8 @@ step_current_generator::send_test_event( Node& target,
 }
 
 inline port
-step_current_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+step_current_generator::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

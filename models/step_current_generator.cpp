@@ -35,7 +35,8 @@
 
 namespace nest
 {
-RecordablesMap< step_current_generator > step_current_generator::recordablesMap_;
+RecordablesMap< step_current_generator >
+  step_current_generator::recordablesMap_;
 
 template <>
 void
@@ -61,8 +62,9 @@ nest::step_current_generator::Parameters_::Parameters_( const Parameters_& p )
 {
 }
 
-nest::step_current_generator::Parameters_& nest::step_current_generator::Parameters_::
-operator=( const Parameters_& p )
+nest::step_current_generator::Parameters_&
+  nest::step_current_generator::Parameters_::
+  operator=( const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -76,7 +78,7 @@ operator=( const Parameters_& p )
 }
 
 nest::step_current_generator::State_::State_()
-  : I_( 0.0 )   // pA
+  : I_( 0.0 ) // pA
 {
 }
 
@@ -124,7 +126,7 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d,
   }
 
   // ensure amp times are strictly monotonically increasing
-  if ( !amp_times_.empty() )
+  if ( not amp_times_.empty() )
   {
     std::vector< double >::const_iterator prev = amp_times_.begin();
     for ( std::vector< double >::const_iterator next = prev + 1;

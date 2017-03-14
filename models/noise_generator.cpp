@@ -108,8 +108,7 @@ nest::noise_generator::Buffers_::Buffers_( noise_generator& n )
 {
 }
 
-nest::noise_generator::Buffers_::Buffers_( const Buffers_&,
-  noise_generator& n )
+nest::noise_generator::Buffers_::Buffers_( const Buffers_&, noise_generator& n )
   : logger_( n )
 {
 }

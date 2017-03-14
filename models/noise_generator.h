@@ -258,7 +258,8 @@ private:
 };
 
 inline port
-noise_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+noise_generator::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
   {

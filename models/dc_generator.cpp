@@ -59,8 +59,8 @@ nest::dc_generator::Parameters_::Parameters_( const Parameters_& p )
 {
 }
 
-nest::dc_generator::Parameters_& nest::dc_generator::Parameters_::
-operator=( const Parameters_& p )
+nest::dc_generator::Parameters_& nest::dc_generator::Parameters_::operator=(
+  const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -73,7 +73,7 @@ operator=( const Parameters_& p )
 }
 
 nest::dc_generator::State_::State_()
-  : I_( 0.0 )   // pA
+  : I_( 0.0 ) // pA
 {
 }
 
@@ -83,8 +83,7 @@ nest::dc_generator::Buffers_::Buffers_( dc_generator& n )
 {
 }
 
-nest::dc_generator::Buffers_::Buffers_( const Buffers_&,
-  dc_generator& n )
+nest::dc_generator::Buffers_::Buffers_( const Buffers_&, dc_generator& n )
   : logger_( n )
 {
 }

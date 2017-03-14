@@ -71,8 +71,8 @@ nest::ac_generator::Parameters_::Parameters_( const Parameters_& p )
 {
 }
 
-nest::ac_generator::Parameters_& nest::ac_generator::Parameters_::
-operator=( const Parameters_& p )
+nest::ac_generator::Parameters_& nest::ac_generator::Parameters_::operator=(
+  const Parameters_& p )
 {
   if ( this == &p )
   {
@@ -99,8 +99,7 @@ nest::ac_generator::Buffers_::Buffers_( ac_generator& n )
 {
 }
 
-nest::ac_generator::Buffers_::Buffers_( const Buffers_&,
-  ac_generator& n )
+nest::ac_generator::Buffers_::Buffers_( const Buffers_&, ac_generator& n )
   : logger_( n )
 {
 }

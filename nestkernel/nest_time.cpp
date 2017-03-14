@@ -138,11 +138,15 @@ Time::ms::fromtoken( const Token& t )
 {
   IntegerDatum* idat = dynamic_cast< IntegerDatum* >( t.datum() );
   if ( idat )
+  {
     return static_cast< double >( idat->get() );
+  }
 
   DoubleDatum* ddat = dynamic_cast< DoubleDatum* >( t.datum() );
   if ( ddat )
+  {
     return ddat->get();
+  }
 
   throw TypeMismatch( IntegerDatum().gettypename().toString() + " or "
       + DoubleDatum().gettypename().toString(),
@@ -192,9 +196,11 @@ std::ostream& operator<<( std::ostream& strm, const Time& t )
   else if ( t.tics == Time::LIM_POS_INF.tics )
     strm << "+INF";
   else
+  {
     strm << t.get_ms() << " ms (= " << t.get_tics()
          << " tics = " << t.get_steps()
          << ( t.get_steps() != 1 ? " steps)" : " step)" );
+  }
 
   return strm;
 }

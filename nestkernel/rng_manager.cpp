@@ -73,7 +73,9 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     // directly, no seeding required
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( ( *d )[ "rngs" ].datum() );
     if ( ad == 0 )
+    {
       throw BadProperty();
+    }
 
     // n_threads_ is the new value after a change of the number of
     // threads
@@ -113,7 +115,9 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     ArrayDatum* ad =
       dynamic_cast< ArrayDatum* >( ( *d )[ "rng_seeds" ].datum() );
     if ( ad == 0 )
+    {
       throw BadProperty();
+    }
 
     if ( ad->size()
       != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
@@ -132,7 +136,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     for ( index i = 0; i < ad->size(); ++i )
     {
       long s = ( *ad )[ i ]; // SLI has no ulong tokens
-      if ( !seedset.insert( s ).second )
+      if ( not seedset.insert( s ).second )
       {
         LOG( M_WARNING,
           "RNGManager::set_status",
@@ -181,11 +185,13 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
       ArrayDatum* ad_rngseeds =
         dynamic_cast< ArrayDatum* >( ( *d )[ "rng_seeds" ].datum() );
       if ( ad_rngseeds == 0 )
+      {
         throw BadProperty();
+      }
       for ( index i = 0; i < ad_rngseeds->size(); ++i )
       {
         const long vpseed = ( *ad_rngseeds )[ i ]; // SLI has no ulong tokens
-        if ( !seedset.insert( vpseed ).second )
+        if ( not seedset.insert( vpseed ).second )
         {
           LOG( M_WARNING,
             "RNGManager::set_status",
@@ -214,7 +220,7 @@ nest::RNGManager::create_rngs_()
 {
   // if old generators exist, remove them; since rng_ contains
   // lockPTRs, we don't have to worry about deletion
-  if ( !rng_.empty() )
+  if ( not rng_.empty() )
   {
     LOG( M_INFO,
       "Network::create_rngs_",
@@ -251,7 +257,7 @@ nest::RNGManager::create_rngs_()
       librandom::RngPtr rng = librandom::RandomGen::create_knuthlfg_rng( s );
 #endif
 
-      if ( !rng )
+      if ( not rng )
       {
         LOG( M_ERROR, "Network::create_rngs_", "Error initializing knuthlfg" );
 
@@ -280,7 +286,7 @@ nest::RNGManager::create_grng_()
     librandom::RandomGen::DefaultSeed );
 #endif
 
-  if ( !grng_ )
+  if ( not grng_ )
   {
     LOG( M_ERROR, "Network::create_grng_", "Error initializing knuthlfg" );
 

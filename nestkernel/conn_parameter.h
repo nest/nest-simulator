@@ -243,7 +243,9 @@ public:
     if ( next_[ tid ] < values_->end() )
       next_[ tid ] += n_skip;
     else
+    {
       throw KernelException( "Parameter values exhausted." );
+    }
   }
 
   size_t
@@ -258,7 +260,9 @@ public:
     if ( next_[ tid ] != values_->end() )
       return *next_[ tid ]++;
     else
+    {
       throw KernelException( "Parameter values exhausted." );
+    }
   }
 
   long
@@ -322,7 +326,9 @@ public:
     if ( next_[ tid ] < values_->end() )
       next_[ tid ] += n_skip;
     else
+    {
       throw KernelException( "Parameter values exhausted." );
+    }
   }
 
   size_t
@@ -337,7 +343,9 @@ public:
     if ( next_[ tid ] != values_->end() )
       return *next_[ tid ]++;
     else
+    {
       throw KernelException( "Parameter values exhausted." );
+    }
   }
 
   double
@@ -346,7 +354,9 @@ public:
     if ( next_[ tid ] != values_->end() )
       return static_cast< double >( *next_[ tid ]++ );
     else
+    {
       throw KernelException( "Parameter values exhausted." );
+    }
   }
 
   inline bool

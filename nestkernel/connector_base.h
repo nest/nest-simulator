@@ -264,7 +264,9 @@ public:
   Connector( const Connector< K - 1, ConnectionT >& Cm1, const ConnectionT& c )
   {
     for ( size_t i = 0; i < K - 1; i++ )
+    {
       C_[ i ] = Cm1.get_C()[ i ];
+    }
     C_[ K - 1 ] = c;
   }
 
@@ -333,7 +335,9 @@ public:
     if ( syn_id == get_syn_id() )
       return K;
     else
+    {
       return 0;
+    }
   }
 
   /**
@@ -414,6 +418,7 @@ public:
     std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < K; i++ )
+    {
       if ( get_syn_id() == synapse_id )
         if ( synapse_label == UNLABELED_CONNECTION
           || C_[ i ].get_label() == synapse_label )
@@ -422,6 +427,7 @@ public:
             thrd,
             synapse_id,
             i ) );
+    }
   }
 
   void
@@ -433,12 +439,14 @@ public:
     std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < K; i++ )
+    {
       if ( get_syn_id() == synapse_id )
         if ( synapse_label == UNLABELED_CONNECTION
           || C_[ i ].get_label() == synapse_label )
           if ( C_[ i ].get_target( thrd )->get_gid() == target_gid )
             conns.push_back(
               ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) );
+    }
   }
 
   /**
@@ -492,14 +500,18 @@ public:
   {
     synindex syn_id = C_[ 0 ].get_syn_id();
     for ( size_t i = 0; i < K; i++ )
+    {
       if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
              ->get_common_properties()
              .get_vt_gid() == vt_gid )
+      {
         C_[ i ].trigger_update_weight( t,
           dopa_spikes,
           t_trig,
           static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
             ->get_common_properties() );
+      }
+    }
   }
 
   synindex
@@ -594,7 +606,9 @@ public:
     if ( syn_id == get_syn_id() )
       return 1;
     else
+    {
       return 0;
+    }
   }
 
   size_t
@@ -723,11 +737,13 @@ public:
     if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
            ->get_common_properties()
            .get_vt_gid() == vt_gid )
+    {
       C_[ 0 ].trigger_update_weight( t,
         dopa_spikes,
         t_trig,
         static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
           ->get_common_properties() );
+    }
   }
 
   synindex
@@ -764,7 +780,9 @@ public:
     : C_( K_CUTOFF ) //, syn_id_(C.get_syn_id())
   {
     for ( size_t i = 0; i < K_CUTOFF - 1; i++ )
+    {
       C_[ i ] = C.get_C()[ i ];
+    }
     C_[ K_CUTOFF - 1 ] = c;
   };
 
@@ -833,7 +851,9 @@ public:
     if ( syn_id == get_syn_id() )
       return C_.size();
     else
+    {
       return 0;
+    }
   }
 
   size_t
@@ -969,11 +989,13 @@ public:
       if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
              ->get_common_properties()
              .get_vt_gid() == vt_gid )
+      {
         C_[ i ].trigger_update_weight( t,
           dopa_spikes,
           t_trig,
           static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
             ->get_common_properties() );
+      }
   }
 
   synindex
@@ -1114,7 +1136,9 @@ public:
   {
     // for all primary connections delegate send to homogeneous connectors
     for ( size_t i = 0; i < primary_end_; i++ )
+    {
       at( i )->send( e, t, cm );
+    }
   }
 
   void

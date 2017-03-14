@@ -160,18 +160,20 @@ nest::gif_cond_exp::State_::State_( const State_& s )
   stc_elems_.resize( s.stc_elems_.size(), 0.0 );
   for ( size_t i = 0; i < stc_elems_.size(); ++i )
     stc_elems_[ i ] = s.stc_elems_[ i ];
-
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     neuron_state_[ i ] = s.neuron_state_[ i ];
+  }
 }
 
 nest::gif_cond_exp::State_& nest::gif_cond_exp::State_::operator=(
   const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
-
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     neuron_state_[ i ] = s.neuron_state_[ i ];
+  }
 
   sfa_elems_.resize( s.sfa_elems_.size(), 0.0 );
   for ( size_t i = 0; i < sfa_elems_.size(); ++i )
@@ -266,32 +268,42 @@ nest::gif_cond_exp::Parameters_::set( const DictionaryDatum& d )
       "tau_stc: %1\nSize of q_stc: %2",
       tau_stc_.size(),
       q_stc_.size() ) );
-
   if ( g_L_ <= 0 )
+  {
     throw BadProperty( "Membrane conductance must be strictly positive." );
-
+  }
   if ( Delta_V_ <= 0 )
+  {
     throw BadProperty( "Delta_V must be strictly positive." );
-
+  }
   if ( c_m_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time must not be negative." );
-
+  }
   if ( lambda_0_ < 0 )
+  {
     throw BadProperty( "lambda_0 must not be negative." );
+  }
 
   for ( size_t i = 0; i < tau_sfa_.size(); i++ )
     if ( tau_sfa_[ i ] <= 0 )
+    {
       throw BadProperty( "All time constants must be strictly positive." );
+    }
 
   for ( size_t i = 0; i < tau_stc_.size(); i++ )
     if ( tau_stc_[ i ] <= 0 )
+    {
       throw BadProperty( "All time constants must be strictly positive." );
-
+    }
   if ( tau_synE_ <= 0 || tau_synI_ <= 0 )
+  {
     throw BadProperty( "Synapse time constants must be strictly positive." );
+  }
 }
 
 void
@@ -389,17 +401,23 @@ nest::gif_cond_exp::init_buffers_()
     B_.s_ =
       gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
   else
+  {
     gsl_odeiv_step_reset( B_.s_ );
+  }
 
   if ( B_.c_ == 0 )
     B_.c_ = gsl_odeiv_control_y_new( P_.gsl_error_tol, 0.0 );
   else
+  {
     gsl_odeiv_control_init( B_.c_, P_.gsl_error_tol, 0.0, 1.0, 0.0 );
+  }
 
   if ( B_.e_ == 0 )
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
   else
+  {
     gsl_odeiv_evolve_reset( B_.e_ );
+  }
 
   B_.sys_.function = gif_cond_exp_dynamics;
   B_.sys_.jacobian = NULL;
@@ -491,9 +509,10 @@ nest::gif_cond_exp::update( Time const& origin, const long from, const long to )
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.neuron_state_ );   // neuronal state
-
       if ( status != GSL_SUCCESS )
+      {
         throw GSLSolverFailure( get_name(), status );
+      }
     }
 
     S_.neuron_state_[ State_::G_EXC ] += B_.spike_exc_.get_value( lag );
@@ -562,9 +581,11 @@ nest::gif_cond_exp::handle( SpikeEvent& e )
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
   else
+  {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
 }
 
 void

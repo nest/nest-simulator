@@ -233,7 +233,9 @@ TopologyModule::create_parameter( const Token& t )
   // parameters
   ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
   if ( pd )
+  {
     return *pd;
+  }
 
   // If t is a DoubleDatum, create a ConstantParameter with this value
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
@@ -305,14 +307,17 @@ create_doughnut( const DictionaryDatum& d )
   // The doughnut (actually an annulus) is created using a DifferenceMask
   Position< 2 > center( 0, 0 );
   if ( d->known( names::anchor ) )
+  {
     center = getValue< std::vector< double > >( d, names::anchor );
-
+  }
   const double outer = getValue< double >( d, names::outer_radius );
   const double inner = getValue< double >( d, names::inner_radius );
   if ( inner >= outer )
+  {
     throw BadProperty(
       "topology::create_doughnut: "
       "inner_radius < outer_radius required." );
+  }
 
   BallMask< 2 > outer_circle( center, outer );
   BallMask< 2 > inner_circle( center, inner );
@@ -950,7 +955,7 @@ TopologyModule::GetGlobalChildren_i_M_aFunction::execute(
 
   tgt_dictionary CreateLayer /tgt Set
 
-  <<	/connection_type (convergent)
+  <<  /connection_type (convergent)
       /mask << /grid << /rows 2 /columns 3 >>
                /anchor << /row 4 /column 2 >> >>
       /weights 2.3

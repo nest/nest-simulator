@@ -138,11 +138,12 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
       new_delay < kernel().connection_manager.get_min_delay();
     const bool bad_max_delay =
       new_delay > kernel().connection_manager.get_max_delay();
-
     if ( bad_min_delay || bad_max_delay )
+    {
       throw BadDelay( new_delay_ms,
         "Minimum and maximum delay cannot be changed "
         "after Simulate has been called." );
+    }
   }
 
   const bool new_min_delay = new_delay < min_delay_.get_steps();
@@ -159,7 +160,9 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
     else
     {
       if ( not freeze_delay_update_ )
+      {
         min_delay_ = Time( Time::step( new_delay ) );
+      }
     }
   }
 
@@ -174,7 +177,9 @@ nest::DelayChecker::assert_valid_delay_ms( double requested_new_delay )
     else
     {
       if ( not freeze_delay_update_ )
+      {
         max_delay_ = Time( Time::step( new_delay ) );
+      }
     }
   }
 }
@@ -196,14 +201,16 @@ nest::DelayChecker::assert_two_valid_delays_steps( delay new_delay1,
       ldelay < kernel().connection_manager.get_min_delay();
     const bool bad_max_delay =
       hdelay > kernel().connection_manager.get_max_delay();
-
     if ( bad_min_delay )
+    {
       throw BadDelay( Time::delay_steps_to_ms( ldelay ),
         "Minimum delay cannot be changed after Simulate has been called." );
-
+    }
     if ( bad_max_delay )
+    {
       throw BadDelay( Time::delay_steps_to_ms( hdelay ),
         "Maximum delay cannot be changed after Simulate has been called." );
+    }
   }
 
   const bool new_min_delay = ldelay < min_delay_.get_steps();
@@ -220,7 +227,9 @@ nest::DelayChecker::assert_two_valid_delays_steps( delay new_delay1,
     else
     {
       if ( not freeze_delay_update_ )
+      {
         min_delay_ = Time( Time::step( ldelay ) );
+      }
     }
   }
 
@@ -235,7 +244,9 @@ nest::DelayChecker::assert_two_valid_delays_steps( delay new_delay1,
     else
     {
       if ( not freeze_delay_update_ )
+      {
         max_delay_ = Time( Time::step( hdelay ) );
+      }
     }
   }
 }

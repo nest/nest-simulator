@@ -224,9 +224,11 @@ nest::UniversalDataLogger< HostNode >::connect_logging_device(
   while ( j < n_loggers && data_loggers_[ j ].get_mm_gid() != mm_gid )
     ++j;
   if ( j < n_loggers )
+  {
     throw IllegalConnection(
       "UniversalDataLogger::connect_logging_device(): "
       "Each multimeter can only be connected once to a given node." );
+  }
 
   // we now know that we have no DataLogger_ for the given multimeter, so we
   // create one and push it

@@ -107,7 +107,9 @@ LocalNodeListIterator LocalNodeListIterator::operator++()
     return *this;
   }
   else if ( current_node_ == list_end_ )
-    return *this; // we are at end of subnet
+  {
+    return *this;
+  } // we are at end of subnet
 
   // If we get here, current_node_ is equal to the sentinel at the end of
   // the current_subnet nodelist. Since it is different from list_end_, we

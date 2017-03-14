@@ -63,26 +63,30 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d,
     updateValue< std::vector< double > >( d, "amplitude_times", amp_times_ );
   const bool uv =
     updateValue< std::vector< double > >( d, "amplitude_values", amp_values_ );
-
   if ( ut xor uv )
+  {
     throw BadProperty( "Amplitude times and values must be reset together." );
+  }
 
   if ( amp_times_.size() != amp_values_.size() )
     throw BadProperty( "Amplitude times and values have to be the same size." );
 
   // ensure amp times are strictly monotonically increasing
-  if ( !amp_times_.empty() )
+  if ( not amp_times_.empty() )
   {
     std::vector< double >::const_iterator prev = amp_times_.begin();
     for ( std::vector< double >::const_iterator next = prev + 1;
           next != amp_times_.end();
           ++next, ++prev )
       if ( *prev >= *next )
+      {
         throw BadProperty( "Amplitude times must strictly increasing." );
+      }
   }
-
   if ( ut && uv )
-    b.idx_ = 0; // reset if we got new data
+  {
+    b.idx_ = 0;
+  } // reset if we got new data
 }
 
 

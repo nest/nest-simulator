@@ -144,9 +144,13 @@ inline long
 STDPDopaCommonProperties::get_vt_gid() const
 {
   if ( vt_ != 0 )
+  {
     return vt_->get_gid();
+  }
   else
+  {
     return -1;
+  }
 }
 
 /**

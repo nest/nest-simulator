@@ -294,10 +294,10 @@ template <>
 bool
 EllipseMask< 2 >::inside( const Position< 2 >& p ) const
 {
-  const double new_x = ( p[ 0 ] - center_[ 0 ] ) * azimuth_cos_value_
-    + ( p[ 1 ] - center_[ 1 ] ) * azimuth_sin_value_;
-  const double new_y = ( p[ 0 ] - center_[ 0 ] ) * azimuth_sin_value_
-    - ( p[ 1 ] - center_[ 1 ] ) * azimuth_cos_value_;
+  const double new_x = ( p[ 0 ] - center_[ 0 ] ) * azimuth_cos_
+    + ( p[ 1 ] - center_[ 1 ] ) * azimuth_sin_;
+  const double new_y = ( p[ 0 ] - center_[ 0 ] ) * azimuth_sin_
+    - ( p[ 1 ] - center_[ 1 ] ) * azimuth_cos_;
 
   return std::pow( new_x, 2 ) * x_scale_ + std::pow( new_y, 2 ) * y_scale_ <= 1;
 }
@@ -306,13 +306,20 @@ template <>
 bool
 EllipseMask< 3 >::inside( const Position< 3 >& p ) const
 {
-  const double new_x = ( p[ 0 ] - center_[ 0 ] ) * azimuth_cos_value_
-    + ( p[ 1 ] - center_[ 1 ] ) * azimuth_sin_value_;
+  // xx = (x-x_c)*cos(azimuth) + (y-y_c)*sin(azimuth) tilts x-y plane
+  // xx*cos(polar) - (z - z_c)*sin(polar) tilts with respect to z-axis
+  const double new_x =
+    ( ( p[ 0 ] - center_[ 0 ] ) * azimuth_cos_
+      + ( p[ 1 ] - center_[ 1 ] ) * azimuth_sin_ ) * polar_cos_
+    - ( p[ 2 ] - center_[ 2 ] ) * polar_sin_;
 
-  const double new_y = ( p[ 0 ] - center_[ 0 ] ) * azimuth_sin_value_
-    - ( p[ 1 ] - center_[ 1 ] ) * azimuth_cos_value_;
+  const double new_y = ( ( p[ 0 ] - center_[ 0 ] ) * azimuth_sin_
+    - ( p[ 1 ] - center_[ 1 ] ) * azimuth_cos_ );
 
-  const double new_z = p[ 2 ] - center_[ 2 ];
+  const double new_z =
+    ( ( p[ 0 ] - center_[ 0 ] ) * azimuth_cos_
+      + ( p[ 1 ] - center_[ 1 ] ) * azimuth_sin_ ) * polar_sin_
+    + ( p[ 2 ] - center_[ 2 ] ) * polar_cos_;
 
   return std::pow( new_x, 2 ) * x_scale_ + std::pow( new_y, 2 ) * y_scale_
     + std::pow( new_z, 2 ) * z_scale_
@@ -411,7 +418,7 @@ EllipseMask< 3 >::inside( const Box< 3 >& b ) const
 
 template < int D >
 void
-EllipseMask< D >::create_bbox()
+EllipseMask< D >::create_bbox_()
 {
   // Currently assumes 3D when constructing the radius vector. This could be
   // avoided with more if tests, but the vector is only made once and is not
@@ -429,7 +436,8 @@ EllipseMask< D >::create_bbox()
     // If the ellipse or ellipsoid is tilted, we make the boundary box
     // quadratic, with the length of the sides equal to the axis with greatest
     // length. This could be more refined.
-    double greatest_semi_axis = std::max( major_axis_, polar_axis_ ) / 2.0;
+    const double greatest_semi_axis =
+      std::max( major_axis_, polar_axis_ ) / 2.0;
     radii[ 0 ] = greatest_semi_axis;
     radii[ 1 ] = greatest_semi_axis;
     radii[ 2 ] = greatest_semi_axis;
@@ -449,7 +457,7 @@ EllipseMask< D >::outside( const Box< D >& b ) const
   // Currently only checks if the box is outside the bounding box of
   // the ellipse. This could be made more refined.
 
-  Box< D > bb = bbox_;
+  const Box< D >& bb = bbox_;
 
   for ( int i = 0; i < D; ++i )
   {
@@ -466,7 +474,8 @@ template < int D >
 Box< D >
 EllipseMask< D >::get_bbox() const
 {
-  return bbox_;
+  const Box< D >& bb = bbox_;
+  return bb;
 }
 
 template < int D >

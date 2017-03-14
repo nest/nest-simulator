@@ -2069,7 +2069,6 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
     import matplotlib
     import matplotlib.pyplot as plt
     import numpy as np
-    from math import pi
 
     # minimal checks for ax having been created by PlotKernel
     if ax and not isinstance(ax, matplotlib.axes.Axes):
@@ -2103,7 +2102,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
         width = mask['elliptical']['major_axis']
         height = mask['elliptical']['minor_axis']
         if 'azimuth_angle' in mask['elliptical']:
-            angle = mask['elliptical']['azimuth_angle']*180/pi
+            angle = mask['elliptical']['azimuth_angle']
         else:
             angle = 0.0
         if 'anchor' in mask['elliptical']:

@@ -323,9 +323,10 @@ public:
    * @param major_axis Length of major axis of ellipse or ellipsoid
    * @param minor_axis Length of minor axis of ellipse or ellipsoid
    * @param polar_axis Length of polar axis of ellipsoid
-   * @param azimuth_angle Angle between x-axis and major axis of the ellipse or
+   * @param azimuth_angle Angle in degrees between x-axis and major axis of the
+   *        ellipse or ellipsoid
+   * @param polar_angle Angle in degrees between z-axis and polar axis of the
    *        ellipsoid
-   * @param polar_angle Angle between z-axis and polar axis of the ellipsoid
    */
   EllipseMask( Position< D > center,
     double major_axis,
@@ -339,13 +340,35 @@ public:
     , polar_axis_( polar_axis )
     , azimuth_angle_( azimuth_angle )
     , polar_angle_( polar_angle )
+    , pi_( 3.141592653589793 )
     , x_scale_( 4.0 / ( major_axis_ * major_axis_ ) )
     , y_scale_( 4.0 / ( minor_axis_ * minor_axis_ ) )
     , z_scale_( 4.0 / ( polar_axis_ * polar_axis_ ) )
-    , azimuth_cos_value_( cos( azimuth_angle_ ) )
-    , azimuth_sin_value_( sin( azimuth_angle_ ) )
+    , azimuth_cos_( std::cos( azimuth_angle_ * pi_ / 180 ) )
+    , azimuth_sin_( std::sin( azimuth_angle_ * pi_ / 180 ) )
+    , polar_cos_( std::cos( polar_angle_ * pi_ / 180 ) )
+    , polar_sin_( std::sin( polar_angle_ * pi_ / 180 ) )
   {
-    create_bbox();
+    if ( major_axis_ <= 0 or minor_axis_ <= 0 or polar_axis_ <= 0 )
+    {
+      throw BadProperty(
+        "topology::EllipseMask<D>: "
+        "All axis > 0 required." );
+    }
+    if ( major_axis_ < minor_axis_ )
+    {
+      throw BadProperty(
+        "topology::EllipseMask<D>: "
+        "major_axis greater than minor_axis required." );
+    }
+    if ( D == 2 and not( polar_angle_ == 0.0 ) )
+    {
+      throw BadProperty(
+        "topology::EllipseMask<D>: "
+        "polar_angle not defined in 2D." );
+    }
+
+    create_bbox_();
   }
 
   /**
@@ -390,6 +413,8 @@ public:
   static Name get_name();
 
 private:
+  void create_bbox_();
+
   Position< D > center_;
   double major_axis_;
   double minor_axis_;
@@ -397,17 +422,17 @@ private:
   double azimuth_angle_;
   double polar_angle_;
 
+  double pi_;
+
   double x_scale_;
   double y_scale_;
   double z_scale_;
 
-  double azimuth_cos_value_;
-  double azimuth_sin_value_;
+  double azimuth_cos_;
+  double azimuth_sin_;
+  double polar_cos_;
+  double polar_sin_;
 
-  /*
-   * @returns boundary box of ellipse/ellipsoid.
-   */
-  void create_bbox();
   Box< D > bbox_;
 };
 
@@ -769,6 +794,7 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
   }
   else
   {
+    polar_axis_ = 0.0;
     z_scale_ = 0.0;
   }
 
@@ -785,6 +811,7 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
   {
     azimuth_angle_ = 0.0;
   }
+
   if ( d->known( names::polar_angle ) )
   {
     if ( D == 2 )
@@ -793,20 +820,21 @@ EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
         "topology::EllipseMask<D>: "
         "polar_angle not defined in 2D." );
     }
-    // Tilting in z-direction is not yet implemented
-    throw NotImplemented(
-      "topology::EllipseMask<D>: "
-      "polar_angle currently not implemented." );
-    // polar_angle_ = getValue< double >( d, names::polar_angle );
+    polar_angle_ = getValue< double >( d, names::polar_angle );
   }
   else
   {
     polar_angle_ = 0.0;
   }
-  azimuth_cos_value_ = cos( azimuth_angle_ );
-  azimuth_sin_value_ = sin( azimuth_angle_ );
 
-  create_bbox();
+  pi_ = 3.141592653589793;
+
+  azimuth_cos_ = std::cos( azimuth_angle_ * pi_ / 180 );
+  azimuth_sin_ = std::sin( azimuth_angle_ * pi_ / 180 );
+  polar_cos_ = std::cos( polar_angle_ * pi_ / 180 );
+  polar_sin_ = std::sin( polar_angle_ * pi_ / 180 );
+
+  create_bbox_();
 }
 
 } // namespace nest

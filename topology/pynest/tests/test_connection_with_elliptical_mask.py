@@ -26,7 +26,6 @@ Tests ConnectLayer with elliptical mask.
 import unittest
 import nest
 import nest.topology as topo
-from math import pi
 
 
 class ConnectWithEllipticalMask(unittest.TestCase):
@@ -105,7 +104,7 @@ class ConnectWithEllipticalMask(unittest.TestCase):
 
         We have: major_axis = 3.0
                  minor_axis = 1.0
-                 azimuth_angle = pi/4
+                 azimuth_angle = 45 degrees
 
         Each source node should then connect to:
             - The node in the same position in target layer
@@ -139,7 +138,7 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         conndict = {'connection_type': 'divergent',
                     'mask': {'elliptical': {'major_axis': 3.0,
                                             'minor_axis': 1.0,
-                                            'azimuth_angle': pi/4}}}
+                                            'azimuth_angle': 45.}}}
 
         topo.ConnectLayers(source, target, conndict)
 

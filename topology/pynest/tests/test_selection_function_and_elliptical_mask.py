@@ -26,7 +26,6 @@ Tests selection function and elliptical mask.
 import unittest
 import nest
 import nest.topology as topo
-from math import pi
 
 
 class SelectionFunctionAndEllipticalMask(unittest.TestCase):
@@ -141,7 +140,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
                                   'extent': [11., 11.],
                                   'elements': 'iaf_psc_alpha'})
         maskdict = {'major_axis': 3.0, 'minor_axis': 1.0,
-                    'anchor': [3., 3.], 'azimuth_angle': pi/4}
+                    'anchor': [3., 3.], 'azimuth_angle': 45.}
         mask = topo.CreateMask('elliptical', maskdict)
 
         cntr = [0.0, 0.0]
@@ -151,7 +150,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         self.assertEqual(gid_list, (82, 92, 102,))
 
         maskdict = {'major_axis': 6.0, 'minor_axis': 3.0,
-                    'anchor': [-1.5, 1.], 'azimuth_angle': 3*pi/4}
+                    'anchor': [-1.5, 1.], 'azimuth_angle': 135.}
         mask = topo.CreateMask('elliptical', maskdict)
 
         gid_list = topo.SelectNodesByMask(layer, cntr, mask)
@@ -162,7 +161,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
                           63])
 
         maskdict = {'major_axis': 8.0, 'minor_axis': 3.0,
-                    'anchor': [0., 1.], 'azimuth_angle': pi/2}
+                    'anchor': [0., 1.], 'azimuth_angle': 90.}
         mask = topo.CreateMask('elliptical', maskdict)
 
         gid_list = topo.SelectNodesByMask(layer, cntr, mask)
@@ -215,7 +214,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         self.assertEqual(gid_list, (546, 667, 788,))
 
         maskdict = {'major_axis': 3.0, 'minor_axis': 1.0,
-                    'polar_axis': 1.0, 'azimuth_angle': pi/2}
+                    'polar_axis': 1.0, 'azimuth_angle': 90.}
         mask = topo.CreateMask('ellipsoidal', maskdict)
 
         cntr = [0., 0., 0.]
@@ -223,6 +222,106 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         gid_list = topo.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (656, 667, 678,))
+
+    def test_TiltedEllipsoidalMask(self):
+        """"Ellipsoidal mask contains correct GIDs when tilted with respect to
+        x-axis and z-axis"""
+
+        pos = [[x*1., y*1., z*1.] for x in range(-2, 3)
+               for y in range(-2, 3)
+               for z in range(-2, 3)]
+
+        layer = topo.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
+                                  'elements': 'iaf_psc_alpha'})
+
+        maskdict = {'major_axis': 3.0, 'minor_axis': 1.0,
+                    'polar_axis': 1.0,
+                    'polar_angle': 90.}
+        mask = topo.CreateMask('ellipsoidal', maskdict)
+
+        cntr = [0., 0., 0.]
+
+        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+
+        self.assertEqual(gid_list, (63, 64, 65,))
+
+        nest.ResetKernel()
+
+        pos = [[x*1., y*1., z*1.] for x in range(-2, 3)
+               for y in range(-2, 3)
+               for z in range(-2, 3)]
+
+        layer = topo.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
+                                  'elements': 'iaf_psc_alpha'})
+
+        maskdict = {'major_axis': 4.0, 'minor_axis': 1.,
+                    'polar_axis': 1.5,
+                    'azimuth_angle': 45.,
+                    'polar_angle': 45.}
+        mask = topo.CreateMask('ellipsoidal', maskdict)
+
+        cntr = [0., 0., 0.]
+
+        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+
+        sorted_gid_list = sorted(gid_list)
+
+        self.assertEqual(sorted_gid_list, [35, 64, 93])
+
+        nest.ResetKernel()
+
+        layer = topo.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
+                                  'elements': 'iaf_psc_alpha'})
+
+        maskdict = {'major_axis': 3.0, 'minor_axis': 2.,
+                    'polar_axis': 1.0,
+                    'polar_angle': 45.}
+        mask = topo.CreateMask('ellipsoidal', maskdict)
+
+        cntr = [0., 0., 0.]
+
+        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+
+        sorted_gid_list = sorted(gid_list)
+
+        self.assertEqual(sorted_gid_list, [40, 59, 64, 69, 88])
+
+        nest.ResetKernel()
+
+        layer = topo.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
+                                  'elements': 'iaf_psc_alpha'})
+
+        maskdict = {'major_axis': 4.0, 'minor_axis': 1.,
+                    'polar_axis': 1.5,
+                    'polar_angle': 30.}
+        mask = topo.CreateMask('ellipsoidal', maskdict)
+
+        cntr = [0., 0., 0.]
+
+        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+
+        sorted_gid_list = sorted(gid_list)
+
+        self.assertEqual(sorted_gid_list, [39, 40, 64, 88, 89])
+
+        nest.ResetKernel()
+
+        layer = topo.CreateLayer({'positions': pos, 'extent': [5., 5., 5.],
+                                  'elements': 'iaf_psc_alpha'})
+
+        maskdict = {'major_axis': 4.0, 'minor_axis': 2.5,
+                    'polar_axis': 1.0,
+                    'azimuth_angle': 45.,
+                    'polar_angle': 30.}
+        mask = topo.CreateMask('ellipsoidal', maskdict)
+
+        cntr = [0., 0., 0.]
+
+        gid_list = topo.SelectNodesByMask(layer, cntr, mask)
+
+        sorted_gid_list = sorted(gid_list)
+
+        self.assertEqual(sorted_gid_list, [35, 39, 59, 64, 69, 89, 93])
 
     def test_TiltedEllipsoidalMask3DWithAnchor(self):
         """Tilted and anchored ellipsoidal mask contains the correct GIDs"""
@@ -245,7 +344,7 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
 
         maskdict = {'major_axis': 4., 'minor_axis': 1.,
                     'polar_axis': 1., 'anchor': [-4., -4., -4.],
-                    'azimuth_angle': pi/4}
+                    'azimuth_angle': 45.}
         mask = topo.CreateMask('ellipsoidal', maskdict)
 
         cntr = [0., 0., 0.]
@@ -253,28 +352,6 @@ class SelectionFunctionAndEllipticalMask(unittest.TestCase):
         gid_list = topo.SelectNodesByMask(layer, cntr, mask)
 
         self.assertEqual(gid_list, (3, 135, 267,))
-
-    def test_PlotEllipticalMask(self):
-        """Test that elliptical masks can be plotted"""
-        layer = topo.CreateLayer({'rows': 11, 'columns': 11,
-                                  'extent': [11., 11.],
-                                  'elements': 'iaf_psc_alpha'})
-        topo.PlotLayer(layer)
-
-        self.assertTrue(True)
-
-        conndict = {'connection_type': 'divergent',
-                    'mask': {'elliptical': {'major_axis': 6.,
-                                            'minor_axis': 3.,
-                                            'azimuth_angle': pi/4,
-                                            'anchor': [3., 3.]}}}
-
-        topo.ConnectLayers(layer, layer, conndict)
-
-        ctr = topo.FindCenterElement(layer)
-        topo.PlotTargets(ctr, layer, mask=conndict['mask'], tgt_color='red')
-
-        self.assertTrue(True)
 
 
 def suite():
@@ -284,6 +361,3 @@ def suite():
 if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
-
-    import matplotlib.pyplot as plt
-    plt.close()

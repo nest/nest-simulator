@@ -77,7 +77,9 @@ private:
       return true;
     }
     else
+    {
       return false;
+    }
   }
 
   bool
@@ -90,7 +92,9 @@ private:
       return true;
     }
     else
+    {
       return false;
+    }
   }
 
 protected:
@@ -298,9 +302,13 @@ public:
     // This is slightly inefficient, because if a has references,
     // cloning is more expensive than just copying the desired range.
     if ( a.references() == 1 )
+    {
       data->assign_move( *( a.data ), i, n );
+    }
     else
+    {
       data->assign( *( a.data ), i, n );
+    }
   }
 
   void insert_move( size_t i, TokenArray& a ) // 8.4.98 Diesmann
@@ -364,8 +372,10 @@ public:
   void
   erase( void )
   {
-    if ( !detach() )
+    if ( not detach() )
+    {
       erase( begin(), end() );
+    }
   }
 
 
@@ -448,7 +458,9 @@ inline void
 TokenArray::reverse()
 {
   if ( size() == 0 )
+  {
     return;
+  }
   clone();
   Token* b = begin();
   Token* e = end() - 1;
@@ -464,7 +476,9 @@ inline void
 TokenArray::rotate( long n = 1 )
 {
   if ( size() == 0 || n == 0 )
+  {
     return;
+  }
 
   clone();
   long rot = n % static_cast< long >( size() );

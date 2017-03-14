@@ -455,7 +455,9 @@ public:
   range()
   {
     if ( time_abs( tics ) < LIM_MAX.tics )
+    {
       return;
+    }
     tics = ( tics < 0 ) ? LIM_NEG_INF.tics : LIM_POS_INF.tics;
   }
 
@@ -500,9 +502,13 @@ public:
   get_ms() const
   {
     if ( tics == LIM_POS_INF.tics )
+    {
       return LIM_POS_INF_ms;
+    }
     if ( tics == LIM_NEG_INF.tics )
+    {
       return LIM_NEG_INF_ms;
+    }
     return Range::MS_PER_TIC * tics;
   }
 
@@ -510,9 +516,13 @@ public:
   get_steps() const
   {
     if ( tics == LIM_POS_INF.tics )
+    {
       return LIM_POS_INF.steps;
+    }
     if ( tics == LIM_NEG_INF.tics )
+    {
       return LIM_NEG_INF.steps;
+    }
 
     // round tics up to nearest step
     // by adding TICS_PER_STEP-1 before division
@@ -596,12 +606,17 @@ inline Time operator*( const long factor, const Time& t )
   const tic_t n = factor * t.tics;
   // if no overflow:
   if ( t.tics == 0 || n / t.tics == factor )
+  {
     return Time::tic( n ); // check range
-
+  }
   if ( ( t.tics > 0 && factor > 0 ) || ( t.tics < 0 && factor < 0 ) )
+  {
     return Time( Time::LIM_POS_INF.tics );
+  }
   else
+  {
     return Time( Time::LIM_NEG_INF.tics );
+  }
 }
 
 inline Time operator*( const Time& t, long factor )

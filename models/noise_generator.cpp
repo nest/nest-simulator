@@ -105,21 +105,28 @@ nest::noise_generator::Parameters_::set( const DictionaryDatum& d,
   updateValue< double >( d, names::phase, phi_deg_ );
   double dt;
   if ( updateValue< double >( d, names::dt, dt ) )
+  {
     dt_ = Time::ms( dt );
-
+  }
   if ( std_ < 0 )
+  {
     throw BadProperty( "The standard deviation cannot be negative." );
-
+  }
   if ( std_mod_ < 0 )
+  {
     throw BadProperty( "The standard deviation cannot be negative." );
-
+  }
   if ( std_mod_ > std_ )
+  {
     throw BadProperty(
       "The modulation apmlitude must be smaller or equal to the baseline "
       "amplitude." );
+  }
 
-  if ( !dt_.is_step() )
+  if ( not dt_.is_step() )
+  {
     throw StepMultipleRequired( n.get_name(), names::dt, dt_ );
+  }
 }
 
 
@@ -132,8 +139,10 @@ nest::noise_generator::noise_generator()
   , device_()
   , P_()
 {
-  if ( !P_.dt_.is_step() )
+  if ( not P_.dt_.is_step() )
+  {
     throw InvalidDefaultResolution( get_name(), names::dt, P_.dt_ );
+  }
 }
 
 nest::noise_generator::noise_generator( const noise_generator& n )
@@ -141,8 +150,10 @@ nest::noise_generator::noise_generator( const noise_generator& n )
   , device_( n.device_ )
   , P_( n.P_ )
 {
-  if ( !P_.dt_.is_step() )
+  if ( not P_.dt_.is_step() )
+  {
     throw InvalidTimeInModel( get_name(), names::dt, P_.dt_ );
+  }
 }
 
 
@@ -225,7 +236,9 @@ nest::noise_generator::send_test_event( Node& target,
     e.set_sender( *this );
     const port p = target.handles_test_event( e, receptor_type );
     if ( p != invalid_port_ and not is_model_prototype() )
+    {
       ++P_.num_targets_;
+    }
     return p;
   }
 }
@@ -244,8 +257,10 @@ nest::noise_generator::update( Time const& origin,
   {
     const long now = start + offs;
 
-    if ( !device_.is_active( Time::step( now ) ) )
+    if ( not device_.is_active( Time::step( now ) ) )
+    {
       continue;
+    }
 
     if ( P_.std_mod_ != 0. )
     {

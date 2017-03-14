@@ -614,14 +614,18 @@ RecordingDevice::print_value( const ValueT& value, bool endrecord )
   {
     std::cout << value << '\t';
     if ( endrecord )
+    {
       std::cout << '\n';
+    }
   }
 
   if ( P_.to_file_ )
   {
     B_.fs_ << value << '\t';
     if ( endrecord )
+    {
       B_.fs_ << '\n';
+    }
   }
 }
 
@@ -634,7 +638,9 @@ RecordingDevice::set_status( const DictionaryDatum& d, DataT& data )
 
   // if n_events is 0, also clear event data
   if ( S_.events_ == 0 )
+  {
     data.clear();
+  }
 }
 
 } // namespace

@@ -118,14 +118,22 @@ nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d )
   const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  {
     V_reset_ -= E_L_;
+  }
   else
+  {
     V_reset_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
+  {
     Theta_ -= E_L_;
+  }
   else
+  {
     Theta_ -= delta_EL;
+  }
 
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, C_ );
@@ -134,21 +142,25 @@ nest::iaf_tum_2000::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_in, tau_in_ );
   updateValue< double >( d, names::t_ref_abs, tau_ref_abs_ );
   updateValue< double >( d, names::t_ref_tot, tau_ref_tot_ );
-
   if ( V_reset_ >= Theta_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
-
+  }
   if ( tau_ref_abs_ > tau_ref_tot_ )
+  {
     throw BadProperty(
       "Total refractory period must be larger or equal than absolute "
       "refractory time." );
-
+  }
   if ( C_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_tot_ <= 0
     || tau_ref_abs_ <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 
   return delta_EL;
 }
@@ -166,9 +178,13 @@ nest::iaf_tum_2000::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
+  {
     V_m_ -= p.E_L_;
+  }
   else
+  {
     V_m_ -= delta_EL;
+  }
 }
 
 nest::iaf_tum_2000::Buffers_::Buffers_( iaf_tum_2000& n )
@@ -278,12 +294,16 @@ nest::iaf_tum_2000::calibrate()
   V_.RefractoryCountsTot_ = Time( Time::ms( P_.tau_ref_tot_ ) ).get_steps();
 
   if ( V_.RefractoryCountsAbs_ < 1 )
+  {
     throw BadProperty(
       "Absolute refractory time must be at least one time step." );
+  }
 
   if ( V_.RefractoryCountsTot_ < 1 )
+  {
     throw BadProperty(
       "Total refractory time must be at least one time step." );
+  }
 }
 
 void
@@ -298,10 +318,14 @@ nest::iaf_tum_2000::update( Time const& origin, const long from, const long to )
   {
 
     if ( S_.r_abs_ == 0 ) // neuron not refractory, so evolve V
+    {
       S_.V_m_ = S_.V_m_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_
         + S_.i_syn_in_ * V_.P21in_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
+    }
     else
-      --S_.r_abs_; // neuron is absolute refractory
+    {
+      --S_.r_abs_;
+    } // neuron is absolute refractory
 
     // exponential decaying PSCs
     S_.i_syn_ex_ *= V_.P11ex_;
@@ -326,7 +350,9 @@ nest::iaf_tum_2000::update( Time const& origin, const long from, const long to )
       }
     }
     else
-      --S_.r_tot_; // neuron is totally refractory (cannot generate spikes)
+    {
+      --S_.r_tot_;
+    } // neuron is totally refractory (cannot generate spikes)
 
 
     // set new input current
@@ -343,13 +369,17 @@ nest::iaf_tum_2000::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
+  {
     B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
+  {
     B_.spikes_in_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
 }
 
 void

@@ -172,7 +172,7 @@ def CreateMask(masktype, specs, anchor=None):
     Parameters
     ----------
     masktype : str, ['rectangular' | 'circular' | 'doughnut' | 'elliptical']
-        for 2D masks, \ ['box' | 'spherical' | 'elliptical] for 3D masks,
+        for 2D masks, \ ['box' | 'spherical' | 'ellipsoidal] for 3D masks,
         ['grid'] only for grid-based layers in 2D
         The mask name corresponds to the geometrical shape of the mask. There
         are different types for 2- and 3-dimensional layers.

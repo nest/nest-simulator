@@ -355,7 +355,7 @@ public:
 
   void restore_source_table_entry_point( const thread tid );
 
-  void add_target( const thread tid, const TargetData& target_data );
+  void add_target( const thread tid, const thread target_rank, const TargetData& target_data );
 
   /**
    * Sorts connections in the presynaptic infrastructure by increasing
@@ -733,9 +733,9 @@ ConnectionManager::set_have_connections_changed( const bool changed )
 }
 
 inline void
-ConnectionManager::add_target( const thread tid, const TargetData& target_data )
+ConnectionManager::add_target( const thread tid, const thread target_rank, const TargetData& target_data )
 {
-  target_table_.add_target( tid, target_data );
+  target_table_.add_target( tid, target_rank, target_data );
 }
 
 inline bool

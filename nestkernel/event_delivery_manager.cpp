@@ -928,7 +928,7 @@ nest::EventDeliveryManager::distribute_target_data_buffers_( const thread tid )
         recv_buffer_target_data_[ rank * send_recv_count_target_data_per_rank_ + i ];
       if ( target_data.get_tid() == tid )
       {
-        kernel().connection_manager.add_target( tid, target_data );
+        kernel().connection_manager.add_target( tid, rank, target_data );
       }
 
       // is this the last target from this rank?

@@ -70,7 +70,7 @@ public:
   void prepare( const thread tid );
   // void reserve( thread, synindex, index );
   //! add entry to target table
-  void add_target( const thread tid, const TargetData& target_data );
+  void add_target( const thread tid, const thread target_rank, const TargetData& target_data );
   //! returns all targets of a neuron. used to fill spike_register_5g_
   //! in event_delivery_manager
   const std::vector< Target >& get_targets( const thread tid,
@@ -89,7 +89,7 @@ public:
 };
 
 inline void
-TargetTable::add_target( const thread tid, const TargetData& target_data )
+TargetTable::add_target( const thread tid, const thread target_rank, const TargetData& target_data )
 {
   const index lid = target_data.get_lid();
 
@@ -103,7 +103,7 @@ TargetTable::add_target( const thread tid, const TargetData& target_data )
   if ( target_data.is_primary() )
   {
     ( *targets_[ tid ] )[ lid ].push_back(
-      target_data.get_target() );
+      Target( target_data.get_target_tid(), target_rank, target_data.get_syn_id(), target_data.get_lcid() ) );
   }
   else
   {

@@ -508,13 +508,10 @@ nest::SourceTable::get_next_target_data( const thread tid,
       {
         next_target_data.is_primary( true );
         // we store the thread index of the sources table, not our own tid
-        next_target_data.get_target().set_tid( current_position.tid );
-        next_target_data.get_target().set_rank(
-          kernel().mpi_manager.get_rank() );
-        next_target_data.get_target().set_processed( false );
-        next_target_data.get_target().set_syn_id(
+        next_target_data.set_target_tid( current_position.tid );
+        next_target_data.set_syn_id(
           current_position.syn_id );
-        next_target_data.get_target().set_lcid( current_position.lcid );
+        next_target_data.set_lcid( current_position.lcid );
       }
       else
       {

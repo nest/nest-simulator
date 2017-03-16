@@ -42,7 +42,7 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         Each source node should then connect to:
             - The node in the same position in target layer
             - The node to the left and right of that position
-            - The nodes above and belove.
+            - The nodes above and below.
 
         So, if we have
 
@@ -168,8 +168,8 @@ class ConnectWithEllipticalMask(unittest.TestCase):
 
         Each source node should then connect to:
             - The node in the same position in target layer
-            - The two nodes to the ight of that position
-            - The nodes above and belove the node to the right of the position.
+            - The two nodes to the right of that position
+            - The nodes above and below the node to the right of the position.
 
         So, if we have
 
@@ -234,7 +234,7 @@ class ConnectWithEllipticalMask(unittest.TestCase):
         Each source node should then connect to:
             - The node in the same position in target layer
             - The node to the left and right of that position
-            - The nodes above and belove
+            - The nodes above and below
             - Nodes on the edges have connections on the other, corresponding
               edges.
 

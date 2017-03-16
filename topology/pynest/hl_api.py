@@ -171,8 +171,9 @@ def CreateMask(masktype, specs, anchor=None):
 
     Parameters
     ----------
-    masktype : str, ['rectangular' | 'circular' | 'doughnut'] for 2D masks, \
-['box' | 'spherical'] for 3D masks, ['grid'] only for grid-based layers in 2D
+    masktype : str, ['rectangular' | 'circular' | 'doughnut' | 'elliptical']
+        for 2D masks, \ ['box' | 'spherical' | 'elliptical] for 3D masks,
+        ['grid'] only for grid-based layers in 2D
         The mask name corresponds to the geometrical shape of the mask. There
         are different types for 2- and 3-dimensional layers.
     specs : dict
@@ -220,6 +221,12 @@ def CreateMask(masktype, specs, anchor=None):
             'doughnut' :
                 {'inner_radius' : float,
                  'outer_radius' : float}
+            #or
+            'elliptical' :
+                {'major_axis' : float,
+                 'minor_axis' : float,
+                 'azimuth_angle' : float,   # default: 0.0,
+                 'anchor' : [float, float], # default: [0.0, 0.0]}
 
 
     * 3D free and grid-based layers
@@ -231,6 +238,14 @@ def CreateMask(masktype, specs, anchor=None):
             #or
             'spherical' :
                 {'radius' : float}
+            #or
+            'ellipsoidal' :
+                {'major_axis' : float,
+                 'minor_axis' : float,
+                 'polar_axis' : float
+                 'azimuth_angle' : float,   # default: 0.0,
+                 'polar_angle' : float,     # default: 0.0,
+                 'anchor' : [float, float, float], # default: [0.0, 0.0, 0.0]}}
 
 
     * 2D grid-based layers only
@@ -2134,7 +2149,11 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
 
 def SelectNodesByMask(layer, anchor, mask_obj):
     """
-    Obtain GIDs inside a specified area.
+    Obtain the GIDs inside a masked area of a topology layer.
+
+    The function finds and returns all the GIDs inside a given mask of a single
+    layer. It works on both 2-dimensional and 3-dimensional masks and layers.
+    All mask types are allowed, including combined masks.
 
     Parameters
     ----------
@@ -2149,7 +2168,7 @@ def SelectNodesByMask(layer, anchor, mask_obj):
     Returns
     -------
     out : list of int(s)
-        GID(s) of neurons inside the mask.
+        GID(s) of nodes/elements inside the mask.
     """
 
     if len(layer) != 1:

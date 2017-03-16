@@ -101,15 +101,15 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         vm_reference = numpy.array(nest.GetStatus(
             [voltmeter[0]], 'events')[0]['V_m'])
 
-        vm.shape = (n_trials, t_tot)
-        vm_reference.shape = (n_trials, t_tot)
+        vm.shape = (int(n_trials), int(t_tot))
+        vm_reference.shape = (int(n_trials), int(t_tot))
 
         vm_mean = numpy.array([numpy.mean(vm[:, i])
                                for i in range(int(t_tot))])
         vm_ref_mean = numpy.array(
             [numpy.mean(vm_reference[:, i]) for i in range(int(t_tot))])
 
-        error = numpy.sqrt((vm_ref_mean[:t_plot] - vm_mean[:t_plot])**2)
+        error = numpy.sqrt((vm_ref_mean[:int(t_plot)] - vm_mean[:int(t_plot)])**2)
         self.assertTrue(numpy.max(error) < 4.0e-4)
 
 

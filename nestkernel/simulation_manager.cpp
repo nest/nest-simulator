@@ -102,7 +102,9 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   if ( updateValue< double >( d, "time", time ) )
   {
     if ( time != 0.0 )
+    {
       throw BadProperty( "The simulation time can only be set to 0.0." );
+    }
 
     if ( clock_ > TimeZero )
     {
@@ -304,11 +306,15 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   if ( updateValue< double >( d, "wfr_tol", tol ) )
   {
     if ( tol < 0.0 )
+    {
       LOG( M_ERROR,
         "SimulationManager::set_status",
         "Tolerance must be zero or positive" );
+    }
     else
+    {
       wfr_tol_ = tol;
+    }
   }
 
   // set the maximal number of iterations for the waveform relaxation method
@@ -316,12 +322,16 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   if ( updateValue< long >( d, "wfr_max_iterations", max_iter ) )
   {
     if ( max_iter <= 0 )
+    {
       LOG( M_ERROR,
         "SimulationManager::set_status",
         "Maximal number of iterations  for the waveform relaxation must be "
         "positive. To disable waveform relaxation set use_wfr instead." );
+    }
     else
+    {
       wfr_max_iterations_ = max_iter;
+    }
   }
 
   // set the interpolation order for the waveform relaxation method
@@ -329,11 +339,15 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   if ( updateValue< long >( d, "wfr_interpolation_order", interp_order ) )
   {
     if ( ( interp_order < 0 ) || ( interp_order == 2 ) || ( interp_order > 3 ) )
+    {
       LOG( M_ERROR,
         "SimulationManager::set_status",
         "Interpolation order must be 0, 1, or 3." );
+    }
     else
+    {
       wfr_interpolation_order_ = interp_order;
+    }
   }
 }
 
@@ -385,7 +399,7 @@ nest::SimulationManager::prepare()
   // have been consumed on the SLI level.
   if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
-    if ( !kernel().mpi_manager.grng_synchrony(
+    if ( not kernel().mpi_manager.grng_synchrony(
            kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
       LOG( M_ERROR,
@@ -397,8 +411,10 @@ nest::SimulationManager::prepare()
   }
 
   // if at the beginning of a simulation, set up spike buffers
-  if ( !simulated_ )
+  if ( not simulated_ )
+  {
     kernel().event_delivery_manager.configure_spike_buffers();
+  }
 
   kernel().node_manager.ensure_valid_thread_local_ids();
   kernel().node_manager.prepare_nodes();
@@ -408,7 +424,7 @@ nest::SimulationManager::prepare()
   // we have to do enter_runtime after prepare_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
   // before enter_runtime
-  if ( !simulated_ ) // only enter the runtime mode once
+  if ( not simulated_ ) // only enter the runtime mode once
   {
     double tick = Time::get_resolution().get_ms()
       * kernel().connection_manager.get_min_delay();
@@ -428,7 +444,9 @@ void
 nest::SimulationManager::assert_valid_simtime( Time const& t )
 {
   if ( t == Time::ms( 0.0 ) )
+  {
     return;
+  }
 
   if ( t < Time::step( 1 ) )
   {
@@ -442,7 +460,7 @@ nest::SimulationManager::assert_valid_simtime( Time const& t )
   if ( t.is_finite() )
   {
     Time time1 = clock_ + t;
-    if ( !time1.is_finite() )
+    if ( not time1.is_finite() )
     {
       std::string msg = String::compose(
         "A clock overflow will occur after %1 of %2 ms. Please reset network "
@@ -486,17 +504,22 @@ nest::SimulationManager::run( Time const& t )
 
   delay end_sim = from_step_ + to_do_;
   if ( kernel().connection_manager.get_min_delay() < end_sim )
+  {
     to_step_ =
       kernel()
         .connection_manager.get_min_delay(); // update to end of time slice
+  }
   else
+  {
     to_step_ = end_sim; // update to end of simulation time
+  }
 
   // Warn about possible inconsistencies, see #504.
   // This test cannot come any earlier, because we first need to compute
   // min_delay_
   // above.
   if ( t.get_steps() % kernel().connection_manager.get_min_delay() != 0 )
+  {
     LOG( M_WARNING,
       "SimulationManager::run",
       "The requested simulation time is not an integer multiple of the minimal "
@@ -505,6 +528,7 @@ nest::SimulationManager::run( Time const& t )
       "randomness, e.g., two different poisson_generators, and (ii) Simulate "
       "is called repeatedly with simulation times that are not multiples of "
       "the minimal delay." );
+  }
 
   call_update_();
 }
@@ -513,11 +537,14 @@ void
 nest::SimulationManager::cleanup()
 {
   if ( not simulated_ )
+  {
     return;
+  }
 
   // Check for synchronicity of global rngs over processes
   if ( kernel().mpi_manager.get_num_processes() > 1 )
-    if ( !kernel().mpi_manager.grng_synchrony(
+  {
+    if ( not kernel().mpi_manager.grng_synchrony(
            kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
     {
       throw KernelException(
@@ -525,6 +552,7 @@ nest::SimulationManager::cleanup()
         "Global Random Number Generators are not "
         "in sync at end of simulation." );
     }
+  }
 
   kernel().node_manager.finalize_nodes();
 }
@@ -561,7 +589,9 @@ nest::SimulationManager::call_update_()
 
 
   if ( to_do_ == 0 )
+  {
     return;
+  }
 
   if ( print_time_ )
   {
@@ -578,7 +608,9 @@ nest::SimulationManager::call_update_()
   simulating_ = false;
 
   if ( print_time_ )
+  {
     std::cout << std::endl;
+  }
 
   kernel().mpi_manager.synchronize();
 
@@ -618,7 +650,9 @@ nest::SimulationManager::update_()
     do
     {
       if ( print_time_ )
+      {
         gettimeofday( &t_slice_begin_, NULL );
+      }
 
       if ( kernel().sp_manager.is_structural_plasticity_enabled()
         && ( clock_.get_steps() + from_step_ )
@@ -669,7 +703,9 @@ nest::SimulationManager::update_()
           // music_event_out_proxy::handle(), which hands the spikes over to
           // MUSIC *before* MUSIC time is advanced
           if ( slice_ > 0 )
+          {
             kernel().music_manager.advance_music_time();
+          }
 
           // the following could be made thread-safe
           kernel().music_manager.update_music_event_handlers(
@@ -693,7 +729,9 @@ nest::SimulationManager::update_()
           // variable
           old_to_step = to_step_;
           if ( to_step_ < kernel().connection_manager.get_min_delay() )
+          {
             to_step_ = kernel().connection_manager.get_min_delay();
+          }
         }
 
         bool max_iterations_reached = true;
@@ -709,7 +747,9 @@ nest::SimulationManager::update_()
                   thread_local_wfr_nodes.begin();
                 i != thread_local_wfr_nodes.end();
                 ++i )
+          {
             done_p = wfr_update_( *i ) && done_p;
+          }
 
 // add done value of thread p to done vector
 #pragma omp critical
@@ -723,7 +763,9 @@ nest::SimulationManager::update_()
           {
             // set done_all
             for ( size_t i = 0; i < done.size(); i++ )
+            {
               done_all = done[ i ] && done_all;
+            }
 
             // gather SecondaryEvents (e.g. GapJunctionEvents)
             kernel().event_delivery_manager.gather_events( done_all );
@@ -773,7 +815,9 @@ nest::SimulationManager::update_()
         try
         {
           if ( not( *node )->is_frozen() )
+          {
             ( *node )->update( clock_, from_step_, to_step_ );
+          }
         }
         catch ( std::exception& e )
         {
@@ -792,7 +836,9 @@ nest::SimulationManager::update_()
       {
         // gather only at end of slice
         if ( to_step_ == kernel().connection_manager.get_min_delay() )
+        {
           kernel().event_delivery_manager.gather_events( true );
+        }
 
         advance_time_();
 
@@ -844,7 +890,9 @@ void
 nest::SimulationManager::reset_network()
 {
   if ( not has_been_simulated() )
+  {
     return; // nothing to do
+  }
 
   kernel().event_delivery_manager.clear_pending_spikes();
 
@@ -872,15 +920,21 @@ nest::SimulationManager::advance_time_()
     from_step_ = 0;
   }
   else
+  {
     from_step_ = to_step_;
+  }
 
   long end_sim = from_step_ + to_do_;
 
   if ( kernel().connection_manager.get_min_delay() < ( delay ) end_sim )
+  {
     // update to end of time slice
     to_step_ = kernel().connection_manager.get_min_delay();
+  }
   else
+  {
     to_step_ = end_sim; // update to end of simulation time
+  }
 
   assert( to_step_ - from_step_
     <= ( long ) kernel().connection_manager.get_min_delay() );

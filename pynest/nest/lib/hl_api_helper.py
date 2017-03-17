@@ -28,6 +28,9 @@ import warnings
 import inspect
 import functools
 import textwrap
+import subprocess
+import os
+import re
 
 # These variables MUST be set by __init__.py right after importing.
 # There is no safety net, whatsoever.
@@ -111,7 +114,6 @@ def deprecated(alt_func_name, text=None):
     function:
         Decorator function
     """
-
     def deprecated_decorator(func):
         _deprecation_warning[func.__name__] = True
 
@@ -171,6 +173,7 @@ def is_string(obj):
         True if obj is a unicode string
     """
     return isinstance(obj, uni_str)
+
 
 __debug = False
 
@@ -389,7 +392,7 @@ def broadcast(item, length, allowed_types, name="item"):
     """
 
     if isinstance(item, allowed_types):
-        return length * (item, )
+        return length * (item,)
     elif len(item) == 1:
         return length * item
     elif len(item) != length:
@@ -398,6 +401,58 @@ def broadcast(item, length, allowed_types, name="item"):
                         % (name, length))
 
     return item
+
+
+
+def pdoc(obj, ppager):
+    """Output of doc in python with pager or print
+
+    Parameters
+    ----------
+    obj : object
+        Object to display
+    ppager: str, optional
+        pager to use, NO if you explicity do not want to use a pager
+
+    @author graber
+    """
+    # environment 'jupyter', 'ipython n' or plain python
+    jptk = re.findall(r'.*jupyter.*', os.environ['_'])
+    iptk = re.findall(r'.*ipython.*', os.environ['_'])
+
+    # reading ~/.nestrc, try to find pager
+    if not ppager:
+        rc = open(os.environ['HOME'] + '/.nestrc', 'r')
+        for line in rc:
+            rctst = re.match(r'^\s?\%', line)
+            if rctst is None:
+                ppagers = re.findall(
+                    r'\s?\/page\s?<<\s?\/command\s?\((.*)\).*', line)
+                if ppagers:
+                    rcppager = ppagers[0]
+                    break
+        rc.close()
+    if not rcppager:
+        rcppager = "less"
+
+    helpdir = os.environ['NEST_INSTALL_DIR'] + "/share/doc/nest/help/"
+    objname = obj + '.hlp'
+    ishelp = ""
+    for dirpath, dirnames, files in os.walk(helpdir):
+        for hlp in files:
+            if hlp == objname:
+                ishelp = True
+                objf = os.path.join(dirpath, objname)
+                fhlp = open(objf, 'r')
+                hlptxt = fhlp.read()
+                fhlp.close()
+                if jptk or iptk:
+                    print(hlptxt)
+                else:
+                    if not ppager or ppager == "NO":
+                        print(hlptxt)
+                    else:
+                        subprocess.call([rcppager, objf])
 
 
 @check_stack
@@ -430,6 +485,7 @@ def set_verbosity(level):
     # Defined in hl_api_helper to avoid circular inclusion problem with
     # hl_api_info.py
     sr("%s setverbosity" % level)
+
 
 
 def model_deprecation_warning(model):

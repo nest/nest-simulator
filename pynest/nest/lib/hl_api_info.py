@@ -24,6 +24,10 @@ Functions to get information on NEST.
 """
 
 from .hl_api_helper import *
+import os
+import re
+import subprocess
+import webbrowser
 
 
 @check_stack
@@ -55,19 +59,19 @@ def authors():
 
 
 @check_stack
-def helpdesk(browser="firefox"):
+def helpdesk():
     """Open the NEST helpdesk in the given browser.
 
-    The default browser is firefox.
+    The system default browser.
 
-    Parameters
-    ----------
-    browser : str, optional
-        Name of the browser to use
+    @author graber
     """
 
-    sr("/helpdesk << /command (%s) >> SetOptions" % browser)
-    sr("helpdesk")
+    # sr("/helpdesk << /command (%s) >> SetOptions" % browser)
+    # sr("helpdesk")
+
+    url = os.environ['NEST_INSTALL_DIR'] + "/share/doc/nest/help/helpindex.html"
+    webbrowser.open_new(url)
 
 
 @check_stack
@@ -82,11 +86,45 @@ def help(obj=None, pager="less"):
         Object to display help for
     pager : str, optional
         Pager to use
+
+
     """
 
     if obj is not None:
-        sr("/page << /command (%s) >> SetOptions" % pager)
-        sr("/%s help" % obj)
+        # sr("/page << /command (%s) >> SetOptions" % pager)
+        # sr("/%s help" % obj)
+
+        # print('HALLO')
+        # @author graber
+        helpdir = os.environ['NEST_INSTALL_DIR'] + "/share/doc/nest/help/"
+        objname = obj + '.hlp'
+        jptk = re.findall(r'.*jupyter.*', os.environ['_'])
+        iptk = re.findall(r'.*ipython.*', os.environ['_'])
+
+        # reading ~/.nestrc
+        pypager = 'less'
+        rc = open(os.environ['HOME'] + '/.nestrc', 'r')
+        for line in rc:
+            rctst = re.match(r'^\s?\%', line)
+            if rctst is None:
+                pypagers = re.findall(
+                    r'\s?\/page\s?<<\s?\/command\s?\((.*)\).*', line)
+                if pypagers:
+                    pypager = pypagers[0]
+                    break
+        rc.close()
+
+        for dirpath, dirnames, files in os.walk(helpdir):
+            for hlp in files:
+                if hlp == objname:
+                    objf = os.path.join(dirpath, objname)
+                    fhlp = open(objf, 'r')
+                    hlptxt = fhlp.read()
+                    fhlp.close()
+                    if jptk or iptk:
+                        print(hlptxt)
+                    else:
+                        subprocess.call([pypager, objf])
     else:
         print("Type 'nest.helpdesk()' to access the online documentation "
               "in a browser.")

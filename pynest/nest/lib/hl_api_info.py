@@ -60,9 +60,10 @@ def authors():
 
 @check_stack
 def helpdesk():
-    """Open the NEST helpdesk in the given browser.
+    """Open the NEST helpdesk in browser.
 
     The system default browser.
+    /helpdesk << /command (firefox) >> SetOptions in ~/.nestrc is now obsolete
 
     @author graber
     """
@@ -87,7 +88,7 @@ def help(obj=None, pager="less"):
     pager : str, optional
         Pager to use
 
-
+    @author graber
     """
 
     if obj is not None:
@@ -95,13 +96,13 @@ def help(obj=None, pager="less"):
         # sr("/%s help" % obj)
 
         # print('HALLO')
-        # @author graber
+        #
         helpdir = os.environ['NEST_INSTALL_DIR'] + "/share/doc/nest/help/"
         objname = obj + '.hlp'
         jptk = re.findall(r'.*jupyter.*', os.environ['_'])
         iptk = re.findall(r'.*ipython.*', os.environ['_'])
 
-        # reading ~/.nestrc
+        # reading ~/.nestrc lookink for pager to use.
         pypager = 'less'
         rc = open(os.environ['HOME'] + '/.nestrc', 'r')
         for line in rc:
@@ -121,10 +122,12 @@ def help(obj=None, pager="less"):
                     fhlp = open(objf, 'r')
                     hlptxt = fhlp.read()
                     fhlp.close()
-                    if jptk or iptk:
-                        print(hlptxt)
-                    else:
-                        subprocess.call([pypager, objf])
+                    # @ graber
+                    # @ todo try it
+                    # if jptk or iptk:
+                    #     print(hlptxt)
+                    # else:
+                    subprocess.call([pypager, objf])
     else:
         print("Type 'nest.helpdesk()' to access the online documentation "
               "in a browser.")

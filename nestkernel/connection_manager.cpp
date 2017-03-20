@@ -66,6 +66,7 @@ nest::ConnectionManager::ConnectionManager()
   , max_delay_( 1 )
   , keep_source_table_( true )
   , have_connections_changed_( true )
+  , sort_connections_by_source_( true )
 {
 }
 
@@ -150,6 +151,8 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
     throw KernelException(
       "Structural plasticity can not be enabled if source table is not kept." );
   }
+
+  updateValue< bool >( d, "sort_connections_by_source", sort_connections_by_source_ );
 }
 
 nest::DelayChecker&
@@ -168,6 +171,7 @@ nest::ConnectionManager::get_status( DictionaryDatum& d )
   size_t n = get_num_connections();
   def< long >( d, "num_connections", n );
   def< bool >( d, "keep_source_table", keep_source_table_ );
+  def< bool >( d, "sort_connections_by_source", sort_connections_by_source_ );
 }
 
 DictionaryDatum nest::ConnectionManager::get_synapse_status(
@@ -1501,16 +1505,19 @@ void
 nest::ConnectionManager::sort_connections( const thread tid )
 {
   assert( not source_table_.is_cleared() );
-  for ( synindex syn_id = 0; syn_id < ( *connections_5g_[ tid ] ).size(); ++syn_id )
+  if ( sort_connections_by_source_ )
   {
-    if ( ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
+    for ( synindex syn_id = 0; syn_id < ( *connections_5g_[ tid ] ).size(); ++syn_id )
     {
-      ( *( *connections_5g_[ tid ] )[ syn_id ] )
-        .sort_connections( *source_table_.get_thread_local_sources( tid )[ syn_id ] );
+      if ( ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
+      {
+        ( *( *connections_5g_[ tid ] )[ syn_id ] )
+          .sort_connections( *source_table_.get_thread_local_sources( tid )[ syn_id ] );
+      }
     }
+    remove_disabled_connections( tid );
+    source_table_.update_last_sorted_source( tid );
   }
-  remove_disabled_connections( tid );
-  source_table_.update_last_sorted_source( tid );
 }
 
 void

@@ -618,6 +618,8 @@ private:
 
   bool have_connections_changed_; //!< true if new connections have been created
                                   //!< since startup or last call to simulate
+
+  bool sort_connections_by_source_; //!< Whether to sort connections by source gid
 };
 
 inline DictionaryDatum&

@@ -83,24 +83,32 @@ ModelManager::register_preconf_node_model( const Name& name,
   return register_node_model_( model, private_model );
 }
 
-template < class ConnectionT >
+template < class ConnectionT, template<class> class ConnectorModelT >
 void
 ModelManager::register_connection_model( const std::string& name,
   bool requires_symmetric )
 {
-  ConnectorModel* cf = new GenericConnectorModel< ConnectionT >(
+  ConnectorModel* cf = new ConnectorModelT< ConnectionT >(
     name, /*is_primary=*/true, /*has_delay=*/true, requires_symmetric );
   register_connection_model_( cf );
 
   if ( not ends_with( name, "_hpc" ) )
   {
-    cf = new GenericConnectorModel< ConnectionLabel< ConnectionT > >(
+    cf = new ConnectorModelT< ConnectionLabel< ConnectionT > >(
       name + "_lbl",
       /*is_primary=*/true,
       /*has_delay=*/true,
       requires_symmetric );
     register_connection_model_( cf );
   }
+}
+
+template < class ConnectionT >
+void
+ModelManager::register_connection_model( const std::string& name,
+  bool requires_symmetric )
+{
+  register_connection_model< ConnectionT, GenericConnectorModel >( name, requires_symmetric );
 }
 
 /**

@@ -77,21 +77,6 @@ nest::spin_detector::init_buffers_()
 void
 nest::spin_detector::calibrate()
 {
-  if ( !user_set_precise_times_
-    && kernel().event_delivery_manager.get_off_grid_communication() )
-  {
-    //device_.set_precise( true ); //FIXME
-
-    LOG( M_INFO,
-      "spin_detector::calibrate",
-      String::compose(
-           "Precise neuron models exist: the property precise_times "
-           "of the %1 with gid %2 has been set to true, precision has "
-           "been set to 15.",
-           get_name(),
-           get_gid() ) );
-  }
-
   //device_.calibrate(); //FIXME
 }
 

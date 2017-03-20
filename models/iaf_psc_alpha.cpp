@@ -58,8 +58,8 @@ RecordablesMap< iaf_psc_alpha >::create()
   insert_( names::V_m, &iaf_psc_alpha::get_V_m_ );
   insert_( names::weighted_spikes_ex, &iaf_psc_alpha::get_weighted_spikes_ex_ );
   insert_( names::weighted_spikes_in, &iaf_psc_alpha::get_weighted_spikes_in_ );
-  insert_( names::input_currents_ex, &iaf_psc_alpha::get_input_currents_ex_ );
-  insert_( names::input_currents_in, &iaf_psc_alpha::get_input_currents_in_ );
+  insert_( names::I_syn_ex, &iaf_psc_alpha::get_I_syn_ex_ );
+  insert_( names::I_syn_in, &iaf_psc_alpha::get_I_syn_in_ );
 }
 
 /* ----------------------------------------------------------------
@@ -82,10 +82,10 @@ iaf_psc_alpha::Parameters_::Parameters_()
 
 iaf_psc_alpha::State_::State_()
   : y0_( 0.0 )
-  , y1_ex_( 0.0 )
-  , y2_ex_( 0.0 )
-  , y1_in_( 0.0 )
-  , y2_in_( 0.0 )
+  , dI_ex_( 0.0 )
+  , I_ex_( 0.0 )
+  , dI_in_( 0.0 )
+  , I_in_( 0.0 )
   , y3_( 0.0 )
   , r_( 0 )
 {
@@ -302,9 +302,9 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
     if ( S_.r_ == 0 )
     {
       // neuron not refractory
-      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P31_ex_ * S_.y1_ex_
-        + V_.P32_ex_ * S_.y2_ex_ + V_.P31_in_ * S_.y1_in_
-        + V_.P32_in_ * S_.y2_in_ + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
+      S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P31_ex_ * S_.dI_ex_
+        + V_.P32_ex_ * S_.I_ex_ + V_.P31_in_ * S_.dI_in_ + V_.P32_in_ * S_.I_in_
+        + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
 
       // lower bound of membrane potential
       S_.y3_ = ( S_.y3_ < P_.LowerBound_ ? P_.LowerBound_ : S_.y3_ );
@@ -313,22 +313,22 @@ iaf_psc_alpha::update( Time const& origin, const long from, const long to )
       --S_.r_;
 
     // alpha shape EPSCs
-    S_.y2_ex_ = V_.P21_ex_ * S_.y1_ex_ + V_.P22_ex_ * S_.y2_ex_;
-    S_.y1_ex_ *= V_.P11_ex_;
+    S_.I_ex_ = V_.P21_ex_ * S_.dI_ex_ + V_.P22_ex_ * S_.I_ex_;
+    S_.dI_ex_ *= V_.P11_ex_;
 
     // Apply spikes delivered in this step; spikes arriving at T+1 have
     // an immediate effect on the state of the neuron
     V_.weighted_spikes_ex_ = B_.ex_spikes_.get_value( lag );
-    S_.y1_ex_ += V_.EPSCInitialValue_ * V_.weighted_spikes_ex_;
+    S_.dI_ex_ += V_.EPSCInitialValue_ * V_.weighted_spikes_ex_;
 
     // alpha shape EPSCs
-    S_.y2_in_ = V_.P21_in_ * S_.y1_in_ + V_.P22_in_ * S_.y2_in_;
-    S_.y1_in_ *= V_.P11_in_;
+    S_.I_in_ = V_.P21_in_ * S_.dI_in_ + V_.P22_in_ * S_.I_in_;
+    S_.dI_in_ *= V_.P11_in_;
 
     // Apply spikes delivered in this step; spikes arriving at T+1 have
     // an immediate effect on the state of the neuron
     V_.weighted_spikes_in_ = B_.in_spikes_.get_value( lag );
-    S_.y1_in_ += V_.IPSCInitialValue_ * V_.weighted_spikes_in_;
+    S_.dI_in_ += V_.IPSCInitialValue_ * V_.weighted_spikes_in_;
 
     // threshold crossing
     if ( S_.y3_ >= P_.Theta_ )

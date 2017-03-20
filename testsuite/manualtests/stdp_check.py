@@ -64,7 +64,7 @@ def stdp(w_init, w_max, pre_spikes, post_spikes, alpha, mu_plus, mu_minus,
             else:
                 w = 0.
 
-            print "pre\t%.16f\t%.16f" % (pre_spikes[i], w)
+            print("pre\t%.16f\t%.16f" % (pre_spikes[i], w))
 
             K_plus += 1.
             last_t = pre_spikes[i]  # time evolved until here
@@ -86,7 +86,7 @@ def stdp(w_init, w_max, pre_spikes, post_spikes, alpha, mu_plus, mu_minus,
                 w *= w_max
             else:
                 w = w_max
-            print "post\t%.16f\t%.16f" % (post_spikes[j] - delay, w)
+            print("post\t%.16f\t%.16f" % (post_spikes[j] - delay, w))
 
             # depression
             w = w / w_max - lmbd * alpha * (w / w_max) ** mu_minus * K_minus
@@ -94,7 +94,7 @@ def stdp(w_init, w_max, pre_spikes, post_spikes, alpha, mu_plus, mu_minus,
                 w *= w_max
             else:
                 w = 0.
-            print "pre\t%.16f\t%.16f" % (pre_spikes[i], w)
+            print("pre\t%.16f\t%.16f" % (pre_spikes[i], w))
 
             K_plus += 1.
             K_minus += 1.
@@ -121,7 +121,7 @@ def stdp(w_init, w_max, pre_spikes, post_spikes, alpha, mu_plus, mu_minus,
             else:
                 w = w_max
 
-            print "post\t%.16f\t%.16f" % (post_spikes[j] - delay, w)
+            print("post\t%.16f\t%.16f" % (post_spikes[j] - delay, w))
 
             K_minus += 1.
             last_t = post_spikes[j]  # time evolved until here

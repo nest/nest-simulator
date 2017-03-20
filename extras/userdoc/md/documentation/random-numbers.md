@@ -166,7 +166,7 @@ Here, we just summarize a few basics.
     information, you need to check if a node is local:
 
 
-    n = nest.Create('iaf_neuron')
+    n = nest.Create('iaf_psc_alpha')
     if nest.GetStatus(n, 'local')[0]:       # GetStatus() returns list, pick element
         print nest.GetStatus(n, 'vp')       # virtual process "owning" node
         print nest.GetStatus(n, 'thread')   # thread in calling process "owning" node

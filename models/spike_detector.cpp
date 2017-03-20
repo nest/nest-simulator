@@ -42,15 +42,13 @@
 #include "integerdatum.h"
 
 nest::spike_detector::spike_detector()
-  : user_set_precise_times_( false )
-  , has_proxies_( false )
+  : has_proxies_( false )
   , local_receiver_( true )
 {
 }
 
 nest::spike_detector::spike_detector( const spike_detector& n )
-  : user_set_precise_times_( n.user_set_precise_times_ )
-  , has_proxies_( false )
+  : has_proxies_( false )
   , local_receiver_( true )
 {
 }
@@ -72,23 +70,7 @@ nest::spike_detector::init_buffers_()
 void
 nest::spike_detector::calibrate()
 {
-  if ( !user_set_precise_times_
-    && kernel().event_delivery_manager.get_off_grid_communication() )
-  {
-    // device_.set_precise( true ); FIXME: is this required?
-
-    LOG( M_INFO,
-      "spike_detector::calibrate",
-      String::compose(
-           "Precise neuron models exist: the property precise_times "
-           "of the %1 with gid %2 has been set to true, precision has "
-           "been set to 15.",
-           get_name(),
-           get_gid() ) );
-  }
-
   RecordingDevice::calibrate();
-
   kernel().io_manager.get_backend()->enroll( *this );
 }
 
@@ -135,15 +117,6 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
           ++sibling )
       ( *sibling )->get_status( d );
   }
-}
-
-void
-nest::spike_detector::set_status( const DictionaryDatum& d )
-{
-  if ( d->known( names::precise_times ) )
-    user_set_precise_times_ = true;
-
-  RecordingDevice::set_status( d );
 }
 
 void

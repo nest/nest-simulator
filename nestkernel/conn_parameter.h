@@ -77,10 +77,17 @@ public:
    */
   virtual double value_double( thread, librandom::RngPtr& ) const = 0;
   virtual long value_int( thread, librandom::RngPtr& ) const = 0;
-  virtual void skip( thread ) const
+  virtual void
+  skip( thread, size_t n_skip ) const
   {
   }
   virtual bool is_array() const = 0;
+
+  virtual bool
+  is_scalar() const
+  {
+    return false;
+  }
 
   virtual void
   reset() const
@@ -147,6 +154,13 @@ public:
   {
   }
 
+  bool
+  is_scalar() const
+  {
+    return true;
+  }
+
+
 private:
   double value_;
 };
@@ -187,6 +201,12 @@ public:
   {
   }
 
+  bool
+  is_scalar() const
+  {
+    return true;
+  }
+
 private:
   long value_;
 };
@@ -218,10 +238,10 @@ public:
   }
 
   void
-  skip( thread tid ) const
+  skip( thread tid, size_t n_skip ) const
   {
-    if ( next_[ tid ] != values_->end() )
-      *next_[ tid ]++;
+    if ( next_[ tid ] < values_->end() )
+      next_[ tid ] += n_skip;
     else
       throw KernelException( "Parameter values exhausted." );
   }
@@ -297,10 +317,10 @@ public:
   }
 
   void
-  skip( thread tid ) const
+  skip( thread tid, size_t n_skip ) const
   {
-    if ( next_[ tid ] != values_->end() )
-      *next_[ tid ]++;
+    if ( next_[ tid ] < values_->end() )
+      next_[ tid ] += n_skip;
     else
       throw KernelException( "Parameter values exhausted." );
   }

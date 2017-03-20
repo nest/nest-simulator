@@ -55,42 +55,40 @@ void SpikeEvent::operator()()
   receiver_->handle( *this );
 }
 
+void WeightRecorderEvent::operator()()
+{
+  receiver_->handle( *this );
+}
 
 void DSSpikeEvent::operator()()
 {
   sender_->event_hook( *this );
 }
 
-
 void RateEvent::operator()()
 {
   receiver_->handle( *this );
 }
-
 
 void CurrentEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-
 void DSCurrentEvent::operator()()
 {
   sender_->event_hook( *this );
 }
-
 
 void ConductanceEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-
 void DoubleDataEvent::operator()()
 {
   receiver_->handle( *this );
 }
-
 
 void DataLoggingRequest::operator()()
 {
@@ -109,4 +107,11 @@ void GapJunctionEvent::operator()()
 
 std::vector< synindex > GapJunctionEvent::supported_syn_ids_;
 size_t GapJunctionEvent::coeff_length_ = 0;
+}
+
+
+nest::index
+nest::Event::get_receiver_gid( void ) const
+{
+  return receiver_->get_gid();
 }

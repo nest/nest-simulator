@@ -140,7 +140,9 @@ GenericConnectorModel< ConnectionT >::get_status( DictionaryDatum& d ) const
   default_connection_.get_status( d );
 
   ( *d )[ names::receptor_type ] = receptor_type_;
-  ( *d )[ "synapsemodel" ] = LiteralDatum( name_ );
+  ( *d )[ names::synapse_model ] = LiteralDatum( name_ );
+  ( *d )[ names::requires_symmetric ] = requires_symmetric_;
+  ( *d )[ names::has_delay ] = has_delay_;
 }
 
 template < typename ConnectionT >
@@ -581,9 +583,12 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
               // case.
               if ( hc->size() == 1 )
               {
-                conn =
-                  static_cast< vector_like< ConnectionT >* >( ( *hc )[ 0 ] );
-                conn = pack_pointer( conn, b_has_primary, b_has_secondary );
+                conn = ( *hc )[ 0 ];
+                const bool is_primary =
+                  kernel()
+                    .model_manager.get_synapse_prototype( conn->get_syn_id() )
+                    .is_primary();
+                conn = pack_pointer( conn, is_primary, not is_primary );
               }
               else
               {

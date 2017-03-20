@@ -73,16 +73,34 @@ def SetNumRecProcesses(nrp):
 
 
 @check_stack
-def SetAcceptableLatency(port, latency):
+def SetAcceptableLatency(port_name, latency):
     """Set the acceptable latency (in ms) for a MUSIC port.
 
     Parameters
     ----------
-    port : object
+    port_name : str
         MUSIC port to set latency for
     latency : float
         Latency in ms
     """
 
+    sps(kernel.SLILiteral(port_name))
     sps(latency)
-    sr("/%s exch SetAcceptableLatency" % port)
+    sr("SetAcceptableLatency")
+
+
+@check_stack
+def SetMaxBuffered(port_name, size):
+    """Set the maximum buffer size for a MUSIC port.
+
+    Parameters
+    ----------
+    port_name : str
+        MUSIC port to set buffer size for
+    size : int
+        Buffer size
+    """
+
+    sps(kernel.SLILiteral(port_name))
+    sps(size)
+    sr("SetMaxBuffered")

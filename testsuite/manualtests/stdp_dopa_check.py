@@ -82,7 +82,7 @@ def stdp_dopa(w_init, pre_spikes, post_spikes, dopa_spikes, tau_e, tau_d,
             if w > w_max:
                 w = w_max
 
-            print "pre\t%.4f\t%.4f" % (pre_spikes[i], w)
+            print("pre\t%.4f\t%.4f" % (pre_spikes[i], w))
 
             last_w_update = pre_spikes[i]
 
@@ -113,7 +113,7 @@ def stdp_dopa(w_init, pre_spikes, post_spikes, dopa_spikes, tau_e, tau_d,
             if w > w_max:
                 w = w_max
 
-            print "post\t%.4f\t%.4f" % (post_spikes[j], w)
+            print("post\t%.4f\t%.4f" % (post_spikes[j], w))
             last_w_update = post_spikes[j]
             Etrace = (Etrace * exp((last_e_update - post_spikes[j]) / tau_e) +
                       A_plus * exp(-dt / tau_plus))
@@ -140,7 +140,7 @@ def stdp_dopa(w_init, pre_spikes, post_spikes, dopa_spikes, tau_e, tau_d,
             if w > w_max:
                 w = w_max
 
-            print "dopa\t%.4f\t%.4f" % (dopa_spikes[k], w)
+            print("dopa\t%.4f\t%.4f" % (dopa_spikes[k], w))
             last_w_update = dopa_spikes[k]
             Dtrace = (Dtrace *
                       exp((last_dopa_spike - dopa_spikes[k]) / tau_d) +
@@ -188,7 +188,7 @@ def stdp_dopa(w_init, pre_spikes, post_spikes, dopa_spikes, tau_e, tau_d,
             if w > w_max:
                 w = w_max
 
-            print "pre\t%.4f\t%.4f" % (pre_spikes[i], w)
+            print("pre\t%.4f\t%.4f" % (pre_spikes[i], w))
             last_w_update = pre_spikes[i]
             Etrace = (Etrace * exp((last_e_update - pre_spikes[i]) / tau_e) -
                       A_minus * exp(-dt / tau_minus))
@@ -224,7 +224,7 @@ def stdp_dopa(w_init, pre_spikes, post_spikes, dopa_spikes, tau_e, tau_d,
             if w > w_max:
                 w = w_max
 
-            print "post\t%.4f\t%.4f" % (post_spikes[j], w)
+            print("post\t%.4f\t%.4f" % (post_spikes[j], w))
             last_w_update = post_spikes[j]
             Etrace = (Etrace * exp((last_e_update - post_spikes[j]) / tau_e) +
                       A_plus * exp(-dt / tau_plus))
@@ -259,7 +259,7 @@ def stdp_dopa(w_init, pre_spikes, post_spikes, dopa_spikes, tau_e, tau_d,
             if w > w_max:
                 w = w_max
 
-            print "dopa\t%.4f\t%.4f" % (dopa_spikes[k], w)
+            print("dopa\t%.4f\t%.4f" % (dopa_spikes[k], w))
             last_w_update = dopa_spikes[k]
             Dtrace = (Dtrace *
                       exp((last_dopa_spike - dopa_spikes[k]) / tau_d) +
@@ -304,4 +304,4 @@ dopa_spikes = spikes[find(spikes[:, 0] == 6), 1] + delay_d
 # calculate development of stdp weight
 w = stdp_dopa(w_init, pre_spikes, post_spikes, dopa_spikes, tau_e, tau_d,
               A_minus, A_plus, tau_plus, tau_minus, dendritic_delay, delay_d)
-print w
+print(w)

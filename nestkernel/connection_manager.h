@@ -177,11 +177,7 @@ public:
     const index sgid,
     const index tgid );
 
-  void
-  print_source_table( const thread tid ) const
-  {
-    source_table_.print_sources( tid, 0 );
-  }
+  void print_source_table( const thread tid ) const;
 
   void print_connections( const thread tid ) const;
 

@@ -1681,6 +1681,12 @@ nest::ConnectionManager::print_send_buffer_pos( const thread tid ) const
 }
 
 void
+nest::ConnectionManager::print_source_table( const thread tid ) const
+{
+  source_table_.print_sources( tid, 47 );
+}
+
+void
 nest::ConnectionManager::resize_connections()
 {
   assert( kernel().vp_manager.get_thread_id() == 0 );

@@ -91,6 +91,7 @@ public:
 
   // data members common to all connections
   double tau_plus_;
+  double tau_plus_inv_;
   double lambda_;
   double alpha_;
   double mu_;
@@ -261,7 +262,7 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e,
       continue;
     }
     weight_ =
-      facilitate_( weight_, Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
+      facilitate_( weight_, Kplus_ * std::exp( minus_dt * cp.tau_plus_inv_ ), cp );
   }
 
   // depression due to new pre-synaptic spike
@@ -274,7 +275,7 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e,
   e.set_rport( get_rport() );
   e();
 
-  Kplus_ = Kplus_ * std::exp( ( t_lastspike - t_spike ) / cp.tau_plus_ ) + 1.0;
+  Kplus_ = Kplus_ * std::exp( ( t_lastspike - t_spike ) * cp.tau_plus_inv_ ) + 1.0;
 }
 
 template < typename targetidentifierT >

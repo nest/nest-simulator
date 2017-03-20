@@ -45,6 +45,7 @@ STDPPLHomCommonProperties::STDPPLHomCommonProperties()
   , alpha_( 1.0 )
   , mu_( 0.4 )
 {
+  tau_plus_inv_ = 1. / tau_plus_;
 }
 
 void
@@ -65,6 +66,7 @@ STDPPLHomCommonProperties::set_status( const DictionaryDatum& d,
   CommonSynapseProperties::set_status( d, cm );
 
   updateValue< double >( d, names::tau_plus, tau_plus_ );
+  tau_plus_inv_ = 1. / tau_plus_;
   updateValue< double >( d, names::lambda, lambda_ );
   updateValue< double >( d, names::alpha, alpha_ );
   updateValue< double >( d, names::mu, mu_ );

@@ -50,6 +50,8 @@ nest::Archiving_Node::Archiving_Node()
   , beta_Ca_( 0.001 )
   , synaptic_elements_map_()
 {
+  tau_minus_inv_ = 1. / tau_minus_;
+  tau_minus_triplet_inv_ = 1. / tau_minus_triplet_;
 }
 
 nest::Archiving_Node::Archiving_Node( const Archiving_Node& n )
@@ -66,6 +68,8 @@ nest::Archiving_Node::Archiving_Node( const Archiving_Node& n )
   , beta_Ca_( n.beta_Ca_ )
   , synaptic_elements_map_( n.synaptic_elements_map_ )
 {
+  tau_minus_inv_ = 1. / tau_minus_;
+  tau_minus_triplet_inv_ = 1. / tau_minus_triplet_;
 }
 
 void
@@ -99,7 +103,7 @@ nest::Archiving_Node::get_K_value( double t )
     if ( t > history_[ i ].t_ )
     {
       return ( history_[ i ].Kminus_
-        * std::exp( ( history_[ i ].t_ - t ) / tau_minus_ ) );
+        * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
     }
     i--;
   }
@@ -125,9 +129,9 @@ nest::Archiving_Node::get_K_values( double t,
     if ( t > history_[ i ].t_ )
     {
       triplet_K_value = ( history_[ i ].triplet_Kminus_
-        * std::exp( ( history_[ i ].t_ - t ) / tau_minus_triplet_ ) );
+        * std::exp( ( history_[ i ].t_ - t ) * tau_minus_triplet_inv_ ) );
       K_value = ( history_[ i ].Kminus_
-        * std::exp( ( history_[ i ].t_ - t ) / tau_minus_ ) );
+        * std::exp( ( history_[ i ].t_ - t ) * tau_minus_inv_ ) );
       return;
     }
     i--;
@@ -193,9 +197,9 @@ nest::Archiving_Node::set_spiketime( Time const& t_sp, double offset )
     }
     // update spiking history
     Kminus_ =
-      Kminus_ * std::exp( ( last_spike_ - t_sp_ms ) / tau_minus_ ) + 1.0;
+      Kminus_ * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_inv_ ) + 1.0;
     triplet_Kminus_ = triplet_Kminus_
-        * std::exp( ( last_spike_ - t_sp_ms ) / tau_minus_triplet_ )
+        * std::exp( ( last_spike_ - t_sp_ms ) * tau_minus_triplet_inv_ )
       + 1.0;
     last_spike_ = t_sp_ms;
     history_.push_back( histentry( last_spike_, Kminus_, triplet_Kminus_, 0 ) );
@@ -256,6 +260,8 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
 
   tau_minus_ = new_tau_minus;
   tau_minus_triplet_ = new_tau_minus_triplet;
+  tau_minus_inv_ = 1. / tau_minus_;
+  tau_minus_triplet_inv_ = 1. / tau_minus_triplet_;
 
   if ( new_tau_Ca <= 0.0 )
   {

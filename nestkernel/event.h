@@ -309,6 +309,8 @@ protected:
    */
   Time stamp_;
 
+  unsigned long steps_;
+
   /**
    * Offset for precise spike times.
    * offset_ specifies a correction to the creation time.
@@ -1144,6 +1146,7 @@ inline void
 Event::set_stamp( Time const& s )
 {
   stamp_ = s;
+  steps_ = stamp_.get_steps();
 }
 
 inline delay
@@ -1155,7 +1158,7 @@ Event::get_delay() const
 inline long
 Event::get_rel_delivery_steps( const Time& t ) const
 {
-  return stamp_.get_steps() + d_ - 1 - t.get_steps();
+  return steps_ + d_ - 1 - t.get_steps();
 }
 
 inline void

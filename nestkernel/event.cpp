@@ -47,6 +47,7 @@ Event::Event()
   , offset_( 0.0 )
   , w_( 0.0 )
 {
+  steps_ = stamp_.get_steps();
 }
 
 

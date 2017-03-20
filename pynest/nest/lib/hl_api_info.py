@@ -101,11 +101,11 @@ def help(obj=None, pager="less"):
         objname = obj + '.hlp'
         jptk = re.findall(r'.*jupyter.*', os.environ['_'])
         iptk = re.findall(r'.*ipython.*', os.environ['_'])
+        # @todo is there a way to recognize 'ipython notebook'? Do it.
 
         # reading ~/.nestrc lookink for pager to use.
-
         if pager is None:
-
+            # open ~/.nestrc
             rc = open(os.environ['HOME'] + '/.nestrc', 'r')
             for line in rc:
                 rctst = re.match(r'^\s?\%', line)
@@ -125,11 +125,13 @@ def help(obj=None, pager="less"):
                     fhlp = open(objf, 'r')
                     hlptxt = fhlp.read()
                     fhlp.close()
-                    if jptk or iptk:
-
+                    # only for jupyter notebook
+                    if jptk:
+                        # @todo more pager
                         consolepager = ['less', 'more', 'vi', 'vim', 'nano',
                                         'emacs -nw', 'ed', 'editor']
                         if pager in consolepager:
+                            # only in notebook
                             print('---\n\n')
                             print('Use: help(obj=None, pager=YOURPAGER).\n')
                             print('For YOURPAGER do not use console editors!\n')

@@ -39,10 +39,10 @@ namespace nest
 class TargetDataBase
 {
 private:
-  index lid_ : 20;  //!< local id of presynaptic neuron
-  thread tid_ : 10; //!< thread index of presynaptic neuron
+  unsigned int lid_ : 19;  //!< local id of presynaptic neuron
+  unsigned int tid_ : 10; //!< thread index of presynaptic neuron
   unsigned int marker_ : 2;
-  bool is_primary_;
+  bool is_primary_ : 1;
   static const unsigned int complete_marker_ = 1;
   static const unsigned int end_marker_ = 2;
   static const unsigned int invalid_marker_ = 3;
@@ -162,36 +162,69 @@ TargetDataBase::is_primary() const
 class TargetData : public TargetDataBase
 {
 private:
-  Target target_;
+  unsigned int lcid_ : 27;
+  // do not use just tid_ here as this variable is already declared in base class
+  unsigned int target_tid_ : 10;
+  unsigned int syn_id_ : 6;
 
 public:
   TargetData();
-  const Target& get_target() const;
-  Target& get_target();
+  void set_lcid( const index lcid );
+  index get_lcid() const;
+  void set_target_tid( const thread tid );
+  thread get_target_tid() const;
+  void set_syn_id( const synindex syn_id );
+  synindex get_syn_id() const;
 };
 
 inline TargetData::TargetData()
   : TargetDataBase()
-  , target_( Target() )
+  , lcid_( 0 )
+  , target_tid_( 0 )
+  , syn_id_( 0 )
 {
 }
 
-inline const Target&
-TargetData::get_target() const
+inline void
+TargetData::set_lcid( const index lcid )
 {
-  return target_;
+  lcid_ = lcid;
 }
 
-inline Target&
-TargetData::get_target()
+inline index
+TargetData::get_lcid() const
 {
-  return target_;
+  return lcid_;
+}
+
+inline void
+TargetData::set_target_tid( const thread tid )
+{
+  target_tid_ = tid;
+}
+
+inline thread
+TargetData::get_target_tid() const
+{
+  return target_tid_;
+}
+
+inline void
+TargetData::set_syn_id( const synindex syn_id )
+{
+  syn_id_ = syn_id;
+}
+
+inline synindex
+TargetData::get_syn_id() const
+{
+  return syn_id_;
 }
 
 class SecondaryTargetData : public TargetDataBase
 {
 private:
-  size_t send_buffer_pos_;
+  unsigned int send_buffer_pos_;
 
 public:
   SecondaryTargetData();
@@ -201,13 +234,14 @@ public:
 
 inline SecondaryTargetData::SecondaryTargetData()
   : TargetDataBase()
-  , send_buffer_pos_( invalid_index )
+  , send_buffer_pos_( 4294967296 - 1 )
 {
 }
 
 inline void
 SecondaryTargetData::set_send_buffer_pos( const size_t pos )
 {
+  assert( pos < 4294967296 );
   send_buffer_pos_ = pos;
 }
 

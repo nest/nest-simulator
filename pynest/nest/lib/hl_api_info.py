@@ -103,17 +103,20 @@ def help(obj=None, pager="less"):
         iptk = re.findall(r'.*ipython.*', os.environ['_'])
 
         # reading ~/.nestrc lookink for pager to use.
-        pypager = 'less'
-        rc = open(os.environ['HOME'] + '/.nestrc', 'r')
-        for line in rc:
-            rctst = re.match(r'^\s?\%', line)
-            if rctst is None:
-                pypagers = re.findall(
-                    r'\s?\/page\s?<<\s?\/command\s?\((.*)\).*', line)
-                if pypagers:
-                    pypager = pypagers[0]
-                    break
-        rc.close()
+
+        if pager is None:
+
+            rc = open(os.environ['HOME'] + '/.nestrc', 'r')
+            for line in rc:
+                rctst = re.match(r'^\s?\%', line)
+                if rctst is None:
+                    pypagers = re.findall(
+                        r'\s?\/page\s?<<\s?\/command\s?\((.*)\).*', line)
+                    if pypagers:
+                        pager = pypagers[0]
+                        break
+                    else: pager = 'less'
+            rc.close()
 
         for dirpath, dirnames, files in os.walk(helpdir):
             for hlp in files:
@@ -122,12 +125,19 @@ def help(obj=None, pager="less"):
                     fhlp = open(objf, 'r')
                     hlptxt = fhlp.read()
                     fhlp.close()
-                    # @ graber
-                    # @ todo try it
-                    # if jptk or iptk:
-                    #     print(hlptxt)
-                    # else:
-                    subprocess.call([pypager, objf])
+                    if jptk or iptk:
+
+                        consolepager = ['less', 'more', 'vi', 'vim', 'nano',
+                                        'emacs -nw', 'ed', 'editor']
+                        if pager in consolepager:
+                            print('---\n\n')
+                            print('Use: help(obj=None, pager=YOURPAGER).\n')
+                            print('For YOURPAGER do not use console editors!\n')
+                            print('---\n\n')
+                            print(hlptxt)
+                        else: subprocess.call([pager, objf])
+                    else:
+                        subprocess.call([pager, objf])
     else:
         print("Type 'nest.helpdesk()' to access the online documentation "
               "in a browser.")

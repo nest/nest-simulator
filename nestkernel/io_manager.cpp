@@ -135,6 +135,9 @@ nest::IOManager::set_status( const DictionaryDatum& d )
   if ( updateValue< Name >( d, names::recording_backend, recording_backend ) )
     set_backend( recording_backend );
 
+  DictionaryDatum recording_backend_status;
+  if ( updateValue< DictionaryDatum >( d, names::recording_backend_status, recording_backend_status ) )
+    backend_->set_status( recording_backend_status );
 }
 
 void
@@ -144,6 +147,10 @@ nest::IOManager::get_status( DictionaryDatum& d )
   ( *d )[ "data_prefix" ] = data_prefix_;
   ( *d )[ "overwrite_files" ] = overwrite_files_;
   ( *d )[ names::recording_backend ] = LiteralDatum( backend_name_ );
+
+  DictionaryDatum recording_backend_status = DictionaryDatum( new Dictionary );
+  backend_->get_status( recording_backend_status );
+  ( *d )[ names::recording_backend_status ] = recording_backend_status;
 }
 
 bool

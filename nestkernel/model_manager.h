@@ -188,7 +188,7 @@ public:
   template < class ConnectionT >
   void register_connection_model( const std::string& name,
     bool requires_symmetric = false );
-    
+
   /**
    * Register a synape model with a costom Connector model and without any
    * common properties.

@@ -430,8 +430,9 @@ const Name z_connected( "z_connected" );
 const Name recording( "recording" );
 const Name recording_backend( "recording_backend" );
 const Name recording_backend_status( "recording_backend_status" );
-const Name RecordingBackendScreen( "screen" );
 const Name RecordingBackendASCII( "ascii" );
+const Name RecordingBackendMemory( "memory" );
+const Name RecordingBackendScreen( "screen" );
 const Name RecordingBackendSIONlib( "sionlib" );
 }
 }

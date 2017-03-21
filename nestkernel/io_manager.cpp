@@ -39,8 +39,9 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "recording_backend_screen.h"
 #include "recording_backend_ascii.h"
+#include "recording_backend_memory.h"
+#include "recording_backend_screen.h"
 #ifdef HAVE_SIONLIB
   #include "recording_backend_sionlib.h"
 #endif
@@ -156,21 +157,29 @@ nest::IOManager::get_status( DictionaryDatum& d )
 bool
 nest::IOManager::set_backend( Name name )
 {
-  if ( name == names::RecordingBackendScreen )
-  {
-    if ( backend_ != 0 )
-    {
-      delete backend_;
-    }
-    backend_ = new RecordingBackendScreen();
-  }
-  else if ( name == names::RecordingBackendASCII )
+  if ( name == names::RecordingBackendASCII )
   {
     if ( backend_ != 0 )
     {
       delete backend_;
     }
     backend_ = new RecordingBackendASCII();
+  }
+  else if ( name == names::RecordingBackendMemory )
+  {
+    if ( backend_ != 0 )
+    {
+      delete backend_;
+    }
+    backend_ = new RecordingBackendMemory();
+  }
+  else if ( name == names::RecordingBackendScreen )
+  {
+    if ( backend_ != 0 )
+    {
+      delete backend_;
+    }
+    backend_ = new RecordingBackendScreen();
   }
 #ifdef HAVE_SIONLIB
   else if ( name == names::RecordingBackendSIONlib )

@@ -96,18 +96,17 @@ def help(obj=None, pager=None):
 
         pdoc(obj, pager)
 
-
     else:
-        print("\nType 'nest.helpdesk()' to access the online documentation "
-              "in a browser.\n")
+        print("Type 'nest.helpdesk()' to access the online documentation "
+              "in a browser.")
         print("Type 'nest.help(object)' to get help on a NEST object or "
               "command.\n")
         print("Type 'nest.Models()' to see a list of available models "
               "in NEST.\n")
         print("Type 'nest.authors()' for information about the makers "
-              "of NEST.\n")
+              "of NEST.")
         print("Type 'nest.sysinfo()' to see details on the system "
-              "configuration.\n")
+              "configuration.")
         print("Type 'nest.version()' for information about the NEST "
               "version.\n")
         print("For more information visit http://www.nest-simulator.org.")

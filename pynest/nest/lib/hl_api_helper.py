@@ -26,6 +26,7 @@ API of the PyNEST wrapper.
 
 import warnings
 import inspect
+import json
 import functools
 import textwrap
 import subprocess
@@ -406,35 +407,67 @@ def broadcast(item, length, allowed_types, name="item"):
 def check_nb():
     """Check if is notebook or not
 
+    Parameters
+    ----------
+       
+
     To know a little bit more about the environment use:
 
         jptk = re.findall(r'.*jupyter.*', os.environ['_'])
         iptk = re.findall(r'.*ipython.*', os.environ['_'])
 
+    @author graber
     """
+    # test if notebook in ipython
     try:
         cfg = get_ipython().config
-        if cfg['IPKernelApp']['connection_file']:
-            return True
-        else:
-            return False
+        iptnk = cfg['IPKernelApp']['parent_appname']
     except NameError:
+        iptnk = ''
+    # test if jupyther notebook
+    jpnk = re.findall(r'.*jupyter.*', os.environ['_'])
+    if iptnk == 'ipython-notebook':
+        return True
+    elif jpnk:
+        return True
+    else:
         return False
 
-@check_stack
-def open_window():
-    js = '''
-        <script>
-        var  myWindow = window.open("", "MsgWindow", "width=200,height=100");
-        myWindow.document.write( "
-        <p>This is . I am 200px wide and 100px tall!</p>
-         ");
-        </script>
-        '''
-    print(js)
+
+def open_window(objname, hlptxt):
+    """Open modal window with help text
+
+    Parameters
+    ----------
+    objname :   str
+            filename
+    hlptxt  :   str
+            Full text
+
+    @author graber
+    """
+    hlptxt = json.dumps(hlptxt)
+    style = "<style>.modal-body p { display: block;unicode-bidi: embed; " \
+            "font-family: monospace; white-space: pre; }</style>"
+
+    from IPython.display import HTML, Javascript, display
+    display(HTML(style))
+    display(Javascript("""
+    require(
+        ["base/js/dialog"],
+        function(dialog) {
+            dialog.modal({
+                title: '%s',
+                body: %s,
+                buttons: {
+                    'close': {}
+                }
+            });
+        }
+    );
+    """ % (objname, hlptxt)))
 
 
-@check_stack
 def pdoc(obj, pager):
     """Output of doc in python with pager or print
 
@@ -449,16 +482,20 @@ def pdoc(obj, pager):
     """
     helpdir = os.environ['NEST_INSTALL_DIR'] + "/share/doc/nest/help/"
     objname = obj + '.hlp'
+    htmlname = obj + '.html'
+    # @todo more pager
+    consolepager = ['less', 'more', 'vi', 'vim', 'nano', 'emacs -nw',
+                    'ed', 'editor']
 
     # reading ~/.nestrc lookink for pager to use.
     if pager is None:
         # open ~/.nestrc
         rc = open(os.environ['HOME'] + '/.nestrc', 'r')
         for line in rc:
-            rctst = re.match(r'^\s?\%', line)
+            rctst = re.match(r'^\s?%', line)
             if rctst is None:
                 pypagers = re.findall(
-                    r'\s?\/page\s?<<\s?\/command\s?\((.*)\).*', line)
+                    r'\s?/page\s?<<\s?/command\s?\((.*)\).*', line)
                 if pypagers:
                     pager = pypagers[0]
                     break
@@ -475,20 +512,24 @@ def pdoc(obj, pager):
                 fhlp.close()
                 # only for notebook
                 if check_nb():
-                    # @todo more pager
-                    consolepager = ['less', 'more', 'vi', 'vim', 'nano',
-                                    'emacs -nw', 'ed', 'editor']
                     if pager in consolepager:
-                        # only in notebook
-                        print('---\n')
-                        print('Use: help(obj=None, pager=YOURPAGER).\n')
-                        print('For YOURPAGER do not use console editors!\n')
-                        print('---\n\n')
-                        print(hlptxt)
+                        htf = os.path.join(dirpath, htmlname)
+                        fht = open(htf, 'r')
+                        htmltxt = fht.read()
+                        fht.close()
+                        # only in notebook open modal window
+                        open_window(objname, hlptxt)
+                        break
                     else:
-                        subprocess.call([pager, objf])
+                        proc = subprocess.Popen([pager, objf])
+                        break
                 else:
-                    subprocess.call([pager, objf])
+                    if pager in consolepager:
+                        subprocess.call([pager, objf])
+                        break
+                    else:
+                        proc = subprocess.Popen([pager, objf])
+                        break
 
 
 @check_stack

@@ -71,12 +71,12 @@ def helpdesk():
     # sr("/helpdesk << /command (%s) >> SetOptions" % browser)
     # sr("helpdesk")
 
-    url = os.environ['NEST_INSTALL_DIR'] + "/share/doc/nest/help/helpindex.html"
+    url = os.environ['NEST_DOC_DIR'] + "/help/helpindex.html"
     webbrowser.open_new(url)
 
 
 @check_stack
-def help(obj=None, pager="less"):
+def help(obj=None, pager=None):
     """Show the help page for the given object using the given pager.
 
     The default pager is less.
@@ -90,67 +90,24 @@ def help(obj=None, pager="less"):
 
     @author graber
     """
-
     if obj is not None:
         # sr("/page << /command (%s) >> SetOptions" % pager)
         # sr("/%s help" % obj)
 
-        # print('HALLO')
-        #
-        helpdir = os.environ['NEST_INSTALL_DIR'] + "/share/doc/nest/help/"
-        objname = obj + '.hlp'
-        jptk = re.findall(r'.*jupyter.*', os.environ['_'])
-        iptk = re.findall(r'.*ipython.*', os.environ['_'])
-        # @todo is there a way to recognize 'ipython notebook'? Do it.
+        pdoc(obj, pager)
 
-        # reading ~/.nestrc lookink for pager to use.
-        if pager is None:
-            # open ~/.nestrc
-            rc = open(os.environ['HOME'] + '/.nestrc', 'r')
-            for line in rc:
-                rctst = re.match(r'^\s?\%', line)
-                if rctst is None:
-                    pypagers = re.findall(
-                        r'\s?\/page\s?<<\s?\/command\s?\((.*)\).*', line)
-                    if pypagers:
-                        pager = pypagers[0]
-                        break
-                    else: pager = 'less'
-            rc.close()
 
-        for dirpath, dirnames, files in os.walk(helpdir):
-            for hlp in files:
-                if hlp == objname:
-                    objf = os.path.join(dirpath, objname)
-                    fhlp = open(objf, 'r')
-                    hlptxt = fhlp.read()
-                    fhlp.close()
-                    # only for jupyter notebook
-                    if jptk:
-                        # @todo more pager
-                        consolepager = ['less', 'more', 'vi', 'vim', 'nano',
-                                        'emacs -nw', 'ed', 'editor']
-                        if pager in consolepager:
-                            # only in notebook
-                            print('---\n\n')
-                            print('Use: help(obj=None, pager=YOURPAGER).\n')
-                            print('For YOURPAGER do not use console editors!\n')
-                            print('---\n\n')
-                            print(hlptxt)
-                        else: subprocess.call([pager, objf])
-                    else:
-                        subprocess.call([pager, objf])
     else:
-        print("Type 'nest.helpdesk()' to access the online documentation "
-              "in a browser.")
+        print("\nType 'nest.helpdesk()' to access the online documentation "
+              "in a browser.\n")
         print("Type 'nest.help(object)' to get help on a NEST object or "
               "command.\n")
         print("Type 'nest.Models()' to see a list of available models "
               "in NEST.\n")
         print("Type 'nest.authors()' for information about the makers "
-              "of NEST.")
+              "of NEST.\n")
         print("Type 'nest.sysinfo()' to see details on the system "
-              "configuration.")
+              "configuration.\n")
         print("Type 'nest.version()' for information about the NEST "
               "version.\n")
         print("For more information visit http://www.nest-simulator.org.")

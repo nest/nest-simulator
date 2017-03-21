@@ -403,8 +403,39 @@ def broadcast(item, length, allowed_types, name="item"):
     return item
 
 
+def check_nb():
+    """Check if is notebook or not
 
-def pdoc(obj, ppager):
+    To know a little bit more about the environment use:
+
+        jptk = re.findall(r'.*jupyter.*', os.environ['_'])
+        iptk = re.findall(r'.*ipython.*', os.environ['_'])
+
+    """
+    try:
+        cfg = get_ipython().config
+        if cfg['IPKernelApp']['connection_file']:
+            return True
+        else:
+            return False
+    except NameError:
+        return False
+
+@check_stack
+def open_window():
+    js = '''
+        <script>
+        var  myWindow = window.open("", "MsgWindow", "width=200,height=100");
+        myWindow.document.write( "
+        <p>This is . I am 200px wide and 100px tall!</p>
+         ");
+        </script>
+        '''
+    print(js)
+
+
+@check_stack
+def pdoc(obj, pager):
     """Output of doc in python with pager or print
 
     Parameters
@@ -416,43 +447,48 @@ def pdoc(obj, ppager):
 
     @author graber
     """
-    # environment 'jupyter', 'ipython n' or plain python
-    jptk = re.findall(r'.*jupyter.*', os.environ['_'])
-    iptk = re.findall(r'.*ipython.*', os.environ['_'])
+    helpdir = os.environ['NEST_INSTALL_DIR'] + "/share/doc/nest/help/"
+    objname = obj + '.hlp'
 
-    # reading ~/.nestrc, try to find pager
-    if not ppager:
+    # reading ~/.nestrc lookink for pager to use.
+    if pager is None:
+        # open ~/.nestrc
         rc = open(os.environ['HOME'] + '/.nestrc', 'r')
         for line in rc:
             rctst = re.match(r'^\s?\%', line)
             if rctst is None:
-                ppagers = re.findall(
+                pypagers = re.findall(
                     r'\s?\/page\s?<<\s?\/command\s?\((.*)\).*', line)
-                if ppagers:
-                    rcppager = ppagers[0]
+                if pypagers:
+                    pager = pypagers[0]
                     break
+                else:
+                    pager = 'less'
         rc.close()
-    if not rcppager:
-        rcppager = "less"
 
-    helpdir = os.environ['NEST_INSTALL_DIR'] + "/share/doc/nest/help/"
-    objname = obj + '.hlp'
-    ishelp = ""
     for dirpath, dirnames, files in os.walk(helpdir):
         for hlp in files:
             if hlp == objname:
-                ishelp = True
                 objf = os.path.join(dirpath, objname)
                 fhlp = open(objf, 'r')
                 hlptxt = fhlp.read()
                 fhlp.close()
-                if jptk or iptk:
-                    print(hlptxt)
-                else:
-                    if not ppager or ppager == "NO":
+                # only for notebook
+                if check_nb():
+                    # @todo more pager
+                    consolepager = ['less', 'more', 'vi', 'vim', 'nano',
+                                    'emacs -nw', 'ed', 'editor']
+                    if pager in consolepager:
+                        # only in notebook
+                        print('---\n')
+                        print('Use: help(obj=None, pager=YOURPAGER).\n')
+                        print('For YOURPAGER do not use console editors!\n')
+                        print('---\n\n')
                         print(hlptxt)
                     else:
-                        subprocess.call([rcppager, objf])
+                        subprocess.call([pager, objf])
+                else:
+                    subprocess.call([pager, objf])
 
 
 @check_stack
@@ -485,7 +521,6 @@ def set_verbosity(level):
     # Defined in hl_api_helper to avoid circular inclusion problem with
     # hl_api_info.py
     sr("%s setverbosity" % level)
-
 
 
 def model_deprecation_warning(model):

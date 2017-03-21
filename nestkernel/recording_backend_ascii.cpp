@@ -20,19 +20,14 @@
  *
  */
 
-#include <cassert>
-#include <iostream>
-#include <iomanip>
-#include <cmath>
-#include <sstream>
-
-#include "kernel_manager.h"
-#include "recording_device.h"
-#include "recording_backend_ascii.h"
-#include "vp_manager_impl.h"
+// Includes from libnestutil:
 #include "compose.hpp"
 
-#include "dictutils.h"
+// Includes from nestkernel:
+#include "recording_device.h"
+#include "vp_manager_impl.h"
+
+#include "recording_backend_ascii.h"
 
 void
 nest::RecordingBackendASCII::enroll( RecordingDevice& device )

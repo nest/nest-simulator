@@ -23,16 +23,11 @@
 #ifndef RECORDING_BACKEND_SIONLIB_H
 #define RECORDING_BACKEND_SIONLIB_H
 
-#include <string.h>
-#include <iostream>
-#include <fstream>
-#include <algorithm>
-#include <map>
+// C includes:
+#include <mpi.h>
+#include <sion.h>
 
 #include "recording_backend.h"
-
-#include "mpi.h"
-#include "sion.h"
 
 namespace nest
 {

@@ -23,14 +23,14 @@
 #ifndef RECORDING_BACKEND_H
 #define RECORDING_BACKEND_H
 
+// C++ includes:
 #include <vector>
-
-#include "event.h"
 
 namespace nest
 {
 
 class RecordingDevice;
+class Event;
 
 class RecordingBackend
 {

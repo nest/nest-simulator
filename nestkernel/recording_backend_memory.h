@@ -23,9 +23,6 @@
 #ifndef RECORDING_BACKEND_MEMORY_H
 #define RECORDING_BACKEND_MEMORY_H
 
-#include <map>
-#include <fstream>
-
 #include "recording_backend.h"
 
 namespace nest

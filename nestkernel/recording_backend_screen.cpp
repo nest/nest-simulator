@@ -20,10 +20,12 @@
  *
  */
 
+// C++ includes:
 #include <iostream>
-#include <iomanip>
 
+// Includes from nestkernel:
 #include "recording_device.h"
+
 #include "recording_backend_screen.h"
 
 void

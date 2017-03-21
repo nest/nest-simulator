@@ -26,21 +26,14 @@
 #include <mpix.h>
 #endif // BG_MULTIFILE
 
-// C++ includes:
-#include <map>
-#include <sstream>
-
 // Includes from libnestutil:
 #include "compose.hpp"
 
 // Includes from nestkernel:
-#include "kernel_manager.h"
 #include "recording_device.h"
 #include "vp_manager_impl.h"
 
-
 #include "recording_backend_sionlib.h"
-
 
 void
 nest::RecordingBackendSIONlib::enroll( RecordingDevice& device )

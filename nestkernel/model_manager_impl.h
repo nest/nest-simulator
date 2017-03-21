@@ -83,7 +83,7 @@ ModelManager::register_preconf_node_model( const Name& name,
   return register_node_model_( model, private_model );
 }
 
-template < class ConnectionT, template<class> class ConnectorModelT >
+template < class ConnectionT, template < class > class ConnectorModelT >
 void
 ModelManager::register_connection_model( const std::string& name,
   bool requires_symmetric )
@@ -108,7 +108,8 @@ void
 ModelManager::register_connection_model( const std::string& name,
   bool requires_symmetric )
 {
-  register_connection_model< ConnectionT, GenericConnectorModel >( name, requires_symmetric );
+  register_connection_model< ConnectionT, GenericConnectorModel >(
+    name, requires_symmetric );
 }
 
 /**

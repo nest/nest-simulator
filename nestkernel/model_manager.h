@@ -194,7 +194,7 @@ public:
    * common properties.
    * @param name The name under which the ConnectorModel will be registered.
    */
-  template < class ConnectionT, template<class> class ConnectorModelT >
+  template < class ConnectionT, template < class > class ConnectorModelT >
   void register_connection_model( const std::string& name,
     bool requires_symmetric = false );
 

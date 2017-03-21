@@ -30,11 +30,14 @@ namespace nest
 
 /**
  * ASCII specialization of the RecordingBackend interface.
- * Recorded data is written to plain text files on a per-device-per-thread basis.
- * Some formatting options are available to allow some compatibility to legacy NEST output files.
  *
- * RecordingBackendASCII maintains a data structure mapping one file stream to every recording device instance
- * on every thread. Files are opened and inserted into the map during the initialize() call and
+ * Recorded data is written to plain text files on a
+ * per-device-per-thread basis.  The formatting options are available
+ * to allow some compatibility to legacy NEST output files.
+ *
+ * RecordingBackendASCII maintains a data structure mapping one file
+ * stream to every recording device instance on every thread. Files
+ * are opened and inserted into the map during the enroll() call and
  * closed in finalize().
  */
 class RecordingBackendASCII : public RecordingBackend
@@ -55,31 +58,30 @@ public:
    */
   ~RecordingBackendASCII() throw()
   {
-    // remaining files are not closed here but should be handled gracefully on NEST shutdown.
+    // remaining files are not closed here but should be handled
+    // gracefully on NEST shutdown.
   }
 
   /**
    * Functions called by all instantiated recording devices to register themselves with their
-   * metadata.
+   * metadata. Here, files are opened.
    */
   void enroll( RecordingDevice& device );
   void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
 
   /**
-   * Initialize the RecordingBackendASCII during simulation preparation. Here, files are opened for all
-   * previously enrolled devices.
+   * Initialize the RecordingBackendASCII during simulation preparation.
    */
   void initialize();
 
   /**
-   * Finalize the RecordingBackendASCII after the simulation has finished. Files are flushed and/or closed
-   * according to `close_after_simulate` and `flush_after_simulate` parameters.
+   * Finalize the RecordingBackendASCII after the simulation has finished.
    */
   void finalize();
 
   /**
-   * Trivial synchronization function. The RecordingBackendASCII does not need explicit synchronization after
-   * each time step.
+   * Trivial synchronization function. The RecordingBackendASCII does
+   * not need explicit synchronization after each time step.
    */
   void synchronize();
 
@@ -95,21 +97,18 @@ public:
 private:
   /**
    * Build filename from parts.
-   * The filename consists of the data path set in IOManager, the devices' labels (or names as a
-   * fallback if no label is given), the device GID, and the virtual process ID, all separated by
+   *
+   * The filename consists of the data path set in IOManager, the
+   * devices' labels (or names as a fallback if no label is given),
+   * the device GID, and the virtual process ID, all separated by
    * dashes.
    */
   const std::string build_filename_( const RecordingDevice& device ) const;
 
   struct Parameters_
   {
-    long precision_;
-
-    std::string file_ext_;      //!< the file name extension to use, without .
-    long fbuffer_size_;         //!< the buffer size to use when writing to file
-    long fbuffer_size_old_;     //!< the buffer size to use when writing to file (old)
-    bool close_after_simulate_; //!< if true, finalize() shall close the stream
-    bool flush_after_simulate_; //!< if true, finalize() shall flush the stream
+    long precision_;            //!< Number of decimal places to use for values
+    std::string file_ext_;      //!< File name extension to use, without leading "."
 
     Parameters_();
 
@@ -119,10 +118,14 @@ private:
 
   Parameters_ P_;
 
-  // one map for each virtual process,
-  // in turn containing one ostream for everydevice
-  // vp -> (gid -> [device, filestream])
-  typedef std::map< int, std::map< int, std::pair< RecordingDevice*, std::ofstream* > > > file_map;
+  /** 
+   * A map for the data files.  We have a vector with one map per
+   * local thread. The map associates the gid of a device on a given
+   * thread with the file name and a pointer to the file stream
+   *
+   * vp -> ( gid -> [file_name, file_stream] )
+  */
+  typedef std::vector< std::map< int, std::pair< std::string, std::ofstream* > > > file_map;
   file_map files_;
 };
 

@@ -416,8 +416,6 @@ nest::RecordingBackendASCII::Parameters_::set( const RecordingBackendASCII& , co
 void
 nest::RecordingBackendASCII::set_status( const DictionaryDatum& d )
 {
-  d->info(std::cout);
-  
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( *this, d );  // throws if BadProperty
 

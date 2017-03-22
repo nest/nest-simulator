@@ -50,7 +50,7 @@ M_ERROR setverbosity
 
  ResetKernel
                                     % 0.125 ms
- 0 << /tics_per_ms 3 dexp  /resolution -3 dexp >> SetStatus
+ << /tics_per_ms 3 dexp  /resolution -3 dexp >> SetKernelStatus
 
  model << /I_e 500.0  >> Create /n Set
  

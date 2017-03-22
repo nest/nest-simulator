@@ -37,7 +37,7 @@ ResetKernel
 
 script run % defines parameters
 
-userdict /resolution known { 0 << /resolution resolution >> SetStatus } if
+userdict /resolution known { << /resolution resolution >> SetKernelStatus } if
 
 /sources src_layer CreateLayer def
 /targets tgt_layer CreateLayer def

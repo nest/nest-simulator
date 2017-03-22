@@ -63,9 +63,9 @@ is_threaded not { exit_test_gracefully } if
 
 ResetKernel
 
-0 <<
+<<
   /local_num_threads 2
->> SetStatus
+>> SetKernelStatus
 
 write_file{
         /filename (proc_) Rank cvs join (.tmp) join def

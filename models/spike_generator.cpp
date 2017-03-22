@@ -324,8 +324,8 @@ nest::spike_generator::update( Time const& sliceT0,
   if ( P_.spike_stamps_.empty() )
     return;
 
-  assert(
-    not P_.precise_times_ || P_.spike_stamps_.size() == P_.spike_offsets_.size() );
+  assert( not P_.precise_times_
+    || P_.spike_stamps_.size() == P_.spike_offsets_.size() );
   assert( P_.spike_weights_.empty()
     || P_.spike_stamps_.size() == P_.spike_weights_.size() );
   assert( P_.spike_multiplicities_.empty()

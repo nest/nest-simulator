@@ -218,8 +218,8 @@ nest::pulsepacket_generator::update( Time const& T,
 
   // Since we have an ordered list of spiketimes,
   // we can compute the histogram on the fly.
-  while (
-    not B_.spiketimes_.empty() && B_.spiketimes_.front() < ( T.get_steps() + to ) )
+  while ( not B_.spiketimes_.empty()
+    && B_.spiketimes_.front() < ( T.get_steps() + to ) )
   {
     n_spikes++;
     long prev_spike = B_.spiketimes_.front();

@@ -49,7 +49,7 @@
       /model Set
 
       ResetKernel
-      0 << /resolution res >> SetStatus
+      << /resolution res >> SetKernelStatus
       model Create /n Set
 
       % see if we have V_m and V_th, otherwise return true

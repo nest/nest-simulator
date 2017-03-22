@@ -42,7 +42,7 @@ is_threaded not { exit_test_gracefully } if
 M_ERROR setverbosity
 
 ResetKernel
-0 << /total_num_virtual_procs 2 >> SetStatus
+<< /total_num_virtual_procs 2 >> SetKernelStatus
 
 % create nodes
 /n1 /iaf_psc_delta Create def

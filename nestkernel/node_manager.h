@@ -44,7 +44,6 @@ namespace nest
 
 class SiblingContainer;
 class Node;
-class Subnet;
 class Model;
 
 class NodeManager : public ManagerInterface
@@ -118,21 +117,13 @@ public:
 
   /**
    * Return total number of network nodes.
-   * The size also includes all Subnet objects.
    */
   index size() const;
 
-  Subnet* get_root() const; ///< return root subnet.
-  Subnet* get_cwn() const;  ///< current working node.
-
   /**
-   * Change current working node. The specified node must
-   * exist and be a subnet.
-   * @throws nest::IllegalOperation Target is no subnet.
+   * Print network information.
    */
-  void go_to( index );
-
-  void print( index, int );
+  void print( std::ostream& ) const;
 
   /**
    * Return true, if the given Node is on the local machine
@@ -268,8 +259,6 @@ private:
 
 private:
   SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
-  Subnet* root_;                //!< Root node.
-  Subnet* current_;             //!< Current working node (for insertion).
 
   Model* siblingcontainer_model_; //!< The model for the SiblingContainer class
 
@@ -280,8 +269,7 @@ private:
    * Data structure holding node pointers per thread.
    *
    * The outer dimension of indexes threads. Each per-thread vector
-   * contains all nodes on that thread, except subnets, since these
-   * are never updated.
+   * contains all nodes on that thread.
    *
    * @note Frozen nodes are included, so that we do not need to regenerate
    * these vectors when the frozen status on nodes is changed (which is
@@ -300,19 +288,7 @@ private:
 inline index
 NodeManager::size() const
 {
-  return local_nodes_.get_max_gid() + 1;
-}
-
-inline Subnet*
-NodeManager::get_root() const
-{
-  return root_;
-}
-
-inline Subnet*
-NodeManager::get_cwn( void ) const
-{
-  return current_;
+  return local_nodes_.get_max_gid();
 }
 
 inline bool

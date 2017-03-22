@@ -57,7 +57,7 @@ clear
 % Test 1: We can still inspect the kernel after an exception
 {  
   % this calls get_time() and triggers assertion prior to fix for #311
-  0 GetStatus ;
+  GetKernelStatus ;
 } pass_or_die
 
 % Test 2: We cannot continue simulation after an exception

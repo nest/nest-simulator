@@ -29,9 +29,9 @@
 
 ResetKernel
 
-0 << 
+<< 
       /resolution h
-     >> SetStatus
+     >> SetKernelStatus
 
 /iaf_neuron Create /n Set
 /poisson_generator_ps Create /p Set

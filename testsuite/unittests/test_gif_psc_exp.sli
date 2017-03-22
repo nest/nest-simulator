@@ -58,12 +58,12 @@ SeeAlso: gif_psc_exp, testsuite::test_gif_psc_exp_multisynapse
   /params Set 
 
   ResetKernel
-  0 << 
+  << 
       /local_num_threads 1 
       /resolution 0.1
       /grng_seed 1
       /rng_seeds [1]
-  >> SetStatus
+  >> SetKernelStatus
 
   /gif_psc_exp Create /neuron Set
   neuron params SetStatus

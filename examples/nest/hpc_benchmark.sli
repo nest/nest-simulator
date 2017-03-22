@@ -198,12 +198,11 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
   
   tic % start timer on construction
   % set global kernel parameters
-  0
   <<
      /total_num_virtual_procs nvp
      /resolution  dt
      /overwrite_files true
-  >> SetStatus
+  >> SetKernelStatus
 
   /iaf_psc_alpha    model_params    SetDefaults
   M_INFO (BuildNetwork)
@@ -223,7 +222,7 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
       M_INFO (BuildNetwork)
       (Randomzing membrane potentials.) message
 
-      0 GetStatus /rng_seeds get Last 1 add 0 /vp get add
+      GetKernelStatus /rng_seeds get Last 1 add GetKernelStatus /vp get add
       rngdict/MT19937 :: exch CreateRNG
       rdevdict/normal :: CreateRDV /normal Set
 

@@ -47,7 +47,7 @@ is_threaded not { exit_test_gracefully } if
 {
   ResetKernel
 
-  0 << /total_num_virtual_procs 4 >> SetStatus
+  << /total_num_virtual_procs 4 >> SetKernelStatus
 
   /nodes /iaf_psc_alpha 4 Create def
 

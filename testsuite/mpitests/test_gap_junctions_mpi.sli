@@ -54,7 +54,7 @@ if
 {
   0.1 /h Set
   
-  0 << 
+  << 
         /total_num_virtual_procs total_vps 
         /resolution h
         /use_wfr true
@@ -62,7 +62,7 @@ if
         /wfr_interpolation_order 3
         /wfr_max_iterations 10
         /wfr_comm_interval 1.0
-    >> SetStatus
+    >> SetKernelStatus
       
   /hh_psc_alpha_gap Create /neuron1 Set
   /hh_psc_alpha_gap Create /neuron2 Set

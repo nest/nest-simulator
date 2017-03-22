@@ -43,7 +43,7 @@ SeeAlso: unittest::distributed_collect_assert_or_die
   /n /iaf_neuron Create def
   n n /one_to_one << /model /static_synapse /delay 0.5 >> Connect
   n n /one_to_one << /model /static_synapse /delay 2.5 >> Connect
-  0 [[/min_delay /max_delay]] get [0.5 2.5] pstack eq
+  GetKernelStatus [[/min_delay /max_delay]] get [0.5 2.5] pstack eq
 }
 distributed_collect_assert_or_die   
 

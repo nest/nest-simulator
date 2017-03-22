@@ -132,9 +132,9 @@ u  f mul /w Set
 ResetKernel
 
 
-0 << 
+<< 
     /resolution h
-  >> SetStatus
+  >> SetKernelStatus
 
 
 /spike_generator Create /sg Set

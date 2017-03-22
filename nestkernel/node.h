@@ -48,7 +48,6 @@
 namespace nest
 {
 class Model;
-class Subnet;
 class Archiving_Node;
 
 
@@ -75,7 +74,6 @@ class Archiving_Node;
  * to direcly subclass from base class Node.
  *
  * @see class Event
- * @see Subnet
  * @ingroup user_interface
  */
 
@@ -85,9 +83,7 @@ class Archiving_Node;
    frozen     booltype    - Whether the node is updated during simulation
    global_id  integertype - The global id of the node (cf. local_id)
    local      booltype    - Whether the node is available on the local process
-   local_id   integertype - The id of the node in the current  (cf. global_id)
    model      literaltype - The model type the node was created from
-   parent     integertype - The global id of the parent subnet
    state      integertype - The state of the node (see the help on elementstates
                             for details)
    thread     integertype - The id of the thread the node is assigned to (valid
@@ -100,7 +96,6 @@ class Archiving_Node;
 class Node
 {
   friend class NodeManager;
-  friend class Subnet;
   friend class proxynode;
   friend class Synapse;
   friend class Model;
@@ -171,9 +166,7 @@ public:
    * used to discriminate between different types of nodes, when adding
    * new nodes to the network.
    */
-
   virtual bool is_off_grid() const;
-
 
   /**
    * Returns true if the node is a proxy node. This is implemented because
@@ -193,42 +186,20 @@ public:
    * Return global Network ID.
    * Returns the global network ID of the Node.
    * Each node has a unique network ID which can be used to access
-   * the Node comparable to a pointer. By definition, the top-level
-   * subnet has ID=0.
+   * the Node comparable to a pointer.
+   *
+   * The smallest valid GID is 1.
    */
   index get_gid() const;
 
   /**
-   * Return local node ID.
-   * Returns the ID of the node within the parent subject.
-   * Local IDs start with 0.
-   */
-  index get_lid() const;
-
-  /**
-   * Return the index to the node in the node array of the parent subnet.
-   * @note Since subnets no longer store non-local nodes, LIDs are no
-   *       longer identical to these indices.
-   */
-  index get_subnet_index() const;
-
-  /**
    * Return model ID of the node.
    * Returns the model ID of the model for this node.
-   * Model IDs start with 0, Subnet always having ID 0.
+   * Model IDs start with 0.
    * @note The model ID is not stored in the model prototype instance.
    *       It is only set when actual nodes are created from a prototype.
    */
   int get_model_id() const;
-
-  /**
-   * Return pointer to parent subnet.
-   * Each node is member of a subnet whose pointer can be accessed
-   * through this function.
-   * This pointer must be non NULL for all Nodes which are not the
-   * top-level subnet. Only the top-level subnet returns NULL.
-   */
-  Subnet* get_parent() const;
 
   /**
    * Prints out one line of the tree view of the network.
@@ -691,11 +662,6 @@ public:
   void set_model_id( int );
 
   /**
-   * @returns true if node is a subnet.
-   */
-  virtual bool is_subnet() const;
-
-  /**
    * @returns type of signal this node produces
    * used in check_connection to only connect neurons which send / receive
    * compatible information
@@ -795,10 +761,7 @@ public:
   }
 
 private:
-  void set_lid_( index );      //!< Set local id, relative to the parent subnet
-  void set_parent_( Subnet* ); //!< Set pointer to parent subnet.
-  void set_gid_( index );      //!< Set global node id
-  void set_subnet_index_( index ); //!< Index into node array in subnet
+  void set_gid_( index ); //!< Set global node id
 
   /** Return a new dictionary datum .
    *
@@ -850,9 +813,12 @@ protected:
   const ConcreteNode& downcast( const Node& );
 
 private:
-  index gid_;          //!< Global element id (within network).
-  index lid_;          //!< Local element id (within parent).
-  index subnet_index_; //!< Index of node in parent's node array
+  /**
+   * Global Element ID (GID).
+   *
+   * The GID is unique within the network. The smallest valid GID is 1.
+   */
+  index gid_;
 
   /**
    * Local id of this node in the thread-local vector of nodes.
@@ -866,7 +832,6 @@ private:
    * @see get_model_id(), set_model_id()
    */
   int model_id_;
-  Subnet* parent_;           //!< Pointer to parent.
   thread thread_;            //!< thread node is assigned to
   thread vp_;                //!< virtual process node is assigned to
   bool frozen_;              //!< node shall not be updated if true
@@ -929,39 +894,15 @@ Node::is_proxy() const
 }
 
 inline index
-Node::get_lid() const
-{
-  return lid_;
-}
-
-inline index
 Node::get_gid() const
 {
   return gid_;
-}
-
-inline index
-Node::get_subnet_index() const
-{
-  return subnet_index_;
 }
 
 inline void
 Node::set_gid_( index i )
 {
   gid_ = i;
-}
-
-inline void
-Node::set_lid_( index i )
-{
-  lid_ = i;
-}
-
-inline void
-Node::set_subnet_index_( index i )
-{
-  subnet_index_ = i;
 }
 
 inline int
@@ -980,18 +921,6 @@ inline bool
 Node::is_model_prototype() const
 {
   return vp_ == invalid_thread_;
-}
-
-inline Subnet*
-Node::get_parent() const
-{
-  return parent_;
-}
-
-inline void
-Node::set_parent_( Subnet* c )
-{
-  parent_ = c;
 }
 
 inline void

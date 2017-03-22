@@ -35,7 +35,6 @@
 #include "kernel_manager.h"
 #include "mpi_manager_impl.h"
 #include "nest_types.h"
-#include "nodelist.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -154,7 +153,7 @@ nest::MPIManager::get_status( DictionaryDatum& d )
 void
 nest::MPIManager::set_num_rec_processes( int nrp, bool called_by_reset )
 {
-  if ( kernel().node_manager.size() > 1 and not called_by_reset )
+  if ( kernel().node_manager.size() > 0 and not called_by_reset )
     throw KernelException(
       "Global spike detection mode must be enabled before nodes are created." );
   if ( nrp >= num_processes_ )

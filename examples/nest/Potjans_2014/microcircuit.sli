@@ -105,7 +105,6 @@
     ResetKernel
   
     % set global kernel parameters
-    0
     <<
        /resolution dt
        /total_num_virtual_procs n_vp
@@ -116,7 +115,7 @@
        {
            /data_path output_path
        } if
-    >> SetStatus
+    >> SetKernelStatus
 
     /seed_offset master_seed n_vp add def
     /script_rngs [ n_vp ] 

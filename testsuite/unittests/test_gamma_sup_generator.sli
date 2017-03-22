@@ -86,7 +86,7 @@ SeeAlso: gamma_sup_generator, testsuite::test_ppd_sup_generator
       /resolution  h
     >> /kernelparams Set
     
-    0 kernelparams SetStatus 
+    kernelparams SetKernelStatus 
     
     /gamma_sup_generator Create /psg Set
 
@@ -179,7 +179,7 @@ SeeAlso: gamma_sup_generator, testsuite::test_ppd_sup_generator
       /resolution  h
     >> /kernelparams Set
     
-    0 kernelparams SetStatus 
+    kernelparams SetKernelStatus 
     
     /gamma_sup_generator Create /psg Set
 
@@ -274,7 +274,7 @@ SeeAlso: gamma_sup_generator, testsuite::test_ppd_sup_generator
       /resolution  h
     >> /kernelparams Set
     
-    0 kernelparams SetStatus 
+    kernelparams SetKernelStatus 
     
     /gamma_sup_generator Create /psg Set
 

@@ -398,7 +398,7 @@ def
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /GetResolution {
-    0 GetStatus /resolution get
+    GetKernelStatus /resolution get
 } def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1689,8 +1689,8 @@ Description:
 {
  << >> begin
   /models Set
-  0 GetStatus /dict_miss_is_error get /dict_err Set
-  0 << /dict_miss_is_error false >> SetStatus
+  GetKernelStatus /dict_miss_is_error get /dict_err Set
+  << /dict_miss_is_error false >> SetKernelStatus
   /old_verbosity verbosity def
   M_ERROR setverbosity
   /restoremodel
@@ -1714,7 +1714,7 @@ Description:
     restoremodel
   } forall
   old_verbosity setverbosity
-  0 << /dict_miss_is_error dict_err >> SetStatus
+  << /dict_miss_is_error dict_err >> SetKernelStatus
   end
 } def
 

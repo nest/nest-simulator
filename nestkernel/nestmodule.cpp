@@ -42,9 +42,7 @@
 #include "nest_datums.h"
 #include "nest_types.h"
 #include "node.h"
-#include "nodelist.h"
 #include "sp_manager_impl.h"
-#include "subnet.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -96,59 +94,6 @@ NestModule::commandstring( void ) const
   return std::string( "(nest-init) run" );
 }
 
-
-/* BeginDocumentation
-   Name: ChangeSubnet - change the current working subnet.
-   Synopsis:
-   gid   ChangeSubnet -> -
-   Parameters:
-   gid - The GID of the new current subnet.
-   Description:
-   Change the current subnet to the one given as argument. Create
-   will place newly created nodes in the current working subnet.
-   ChangeSubnet is not allowed for layer subnets used in the
-   topology module.
-
-   This function can be used to change the working subnet to a new
-   location, similar to the UNIX command cd.
-
-   SeeAlso: CurrentSubnet
-*/
-
-void
-NestModule::ChangeSubnet_iFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-
-  index node_gid = getValue< long >( i->OStack.pick( 0 ) );
-
-  change_subnet( node_gid );
-
-  i->OStack.pop();
-  i->EStack.pop();
-}
-
-/* BeginDocumentation
-   Name: CurrentSubnet - return the gid of the current network node.
-
-   Synopsis: CurrentSubnet -> gid
-   Description:
-   CurrentSubnet returns the gid of the current working subnet in form
-   of an integer number
-   Availability: NEST
-   SeeAlso: ChangeSubnet
-   Author: Marc-Oliver Gewaltig
-*/
-
-void
-NestModule::CurrentSubnetFunction::execute( SLIInterpreter* i ) const
-{
-  index current = current_subnet();
-
-  i->OStack.push( current );
-  i->EStack.pop();
-}
-
 /* BeginDocumentation
    Name: SetStatus - sets the value of properties of a node, connection, random
    deviate generator or object
@@ -175,10 +120,9 @@ NestModule::CurrentSubnetFunction::execute( SLIInterpreter* i ) const
 
    Author: docu by Sirko Straube
 
-   SeeAlso: ShowStatus, GetStatus, info, modeldict, Set, SetStatus_v,
-   SetStatus_dict
+   SeeAlso: ShowStatus, GetStatus, GetKernelStatus, info, modeldict, Set,
+   SetStatus_v, SetStatus_dict
 */
-
 void
 NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
 {
@@ -187,16 +131,7 @@ NestModule::SetStatus_idFunction::execute( SLIInterpreter* i ) const
   DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
   index node_id = getValue< long >( i->OStack.pick( 1 ) );
 
-  // Network::set_status() performs entry access checks for each
-  // target and throws UnaccessedDictionaryEntry where necessary
-  if ( node_id == 0 )
-  {
-    set_kernel_status( dict );
-  }
-  else
-  {
-    set_node_status( node_id, dict );
-  }
+  set_node_status( node_id, dict );
 
   i->OStack.pop( 2 );
   i->EStack.pop();
@@ -213,6 +148,19 @@ NestModule::SetStatus_CDFunction::execute( SLIInterpreter* i ) const
   set_connection_status( conn, dict );
 
   i->OStack.pop( 2 );
+  i->EStack.pop();
+}
+
+void
+NestModule::SetKernelStatus_DFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  DictionaryDatum dict = getValue< DictionaryDatum >( i->OStack.top() );
+
+  set_kernel_status( dict );
+
+  i->OStack.pop();
   i->EStack.pop();
 }
 
@@ -328,7 +276,8 @@ NestModule::SetStatus_aaFunction::execute( SLIInterpreter* i ) const
 
    Author: Marc-Oliver Gewaltig
    Availability: NEST
-   SeeAlso: ShowStatus, info, SetStatus, get, GetStatus_v, GetStatus_dict
+   SeeAlso: ShowStatus, info, SetStatus, get, GetStatus_v, GetStatus_dict,
+   GetKernelStatus
 */
 void
 NestModule::GetStatus_iFunction::execute( SLIInterpreter* i ) const
@@ -336,15 +285,7 @@ NestModule::GetStatus_iFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 1 );
 
   index node_id = getValue< long >( i->OStack.pick( 0 ) );
-  DictionaryDatum dict;
-  if ( node_id == 0 )
-  {
-    dict = get_kernel_status();
-  }
-  else
-  {
-    dict = get_node_status( node_id );
-  }
+  DictionaryDatum dict = get_node_status( node_id );
 
   i->OStack.pop();
   i->OStack.push( dict );
@@ -394,6 +335,15 @@ NestModule::GetStatus_aFunction::execute( SLIInterpreter* i ) const
 
   i->OStack.pop();
   i->OStack.push( result );
+  i->EStack.pop();
+}
+
+void
+NestModule::GetKernelStatus_Function::execute( SLIInterpreter* i ) const
+{
+  DictionaryDatum dict = get_kernel_status();
+
+  i->OStack.push( dict );
   i->EStack.pop();
 }
 
@@ -567,59 +517,6 @@ NestModule::RestoreNodes_aFunction::execute( SLIInterpreter* i ) const
   restore_nodes( node_list );
 
   i->OStack.pop();
-  i->EStack.pop();
-}
-
-void
-NestModule::GetNodes_i_D_b_bFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 4 );
-
-  const bool return_gids_only = getValue< bool >( i->OStack.pick( 0 ) );
-  const bool include_remote = not getValue< bool >( i->OStack.pick( 1 ) );
-  const DictionaryDatum params =
-    getValue< DictionaryDatum >( i->OStack.pick( 2 ) );
-  const index node_id = getValue< long >( i->OStack.pick( 3 ) );
-
-  ArrayDatum result =
-    get_nodes( node_id, params, include_remote, return_gids_only );
-
-  i->OStack.pop( 4 );
-  i->OStack.push( result );
-  i->EStack.pop();
-}
-
-void
-NestModule::GetChildren_i_D_bFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 3 );
-
-  const bool include_remote = not getValue< bool >( i->OStack.pick( 0 ) );
-  const DictionaryDatum params =
-    getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  const index node_id = getValue< long >( i->OStack.pick( 2 ) );
-
-  ArrayDatum result = get_children( node_id, params, include_remote );
-
-  i->OStack.pop( 3 );
-  i->OStack.push( result );
-  i->EStack.pop();
-}
-
-void
-NestModule::GetLeaves_i_D_bFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 3 );
-
-  const bool include_remote = not getValue< bool >( i->OStack.pick( 0 ) );
-  const DictionaryDatum params =
-    getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  const index node_id = getValue< long >( i->OStack.pick( 2 ) );
-
-  ArrayDatum result = get_leaves( node_id, params, include_remote );
-
-  i->OStack.pop( 3 );
-  i->OStack.push( result );
   i->EStack.pop();
 }
 
@@ -885,148 +782,16 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
 }
 
 /* BeginDocumentation
-   Name: PrintNetwork - Print network tree in readable form.
+   Name: PrintNetwork - Print network information.
    Synopsis:
-   gid depth  PrintNetwork -> -
-   Parameters:
-   gid        - Global ID of the subnet to start tree printout.
-   depth      - Integer, specifies down to which level the network is printed.
-   Description:
-   This function prints the network structure in a concise tree-like format
-   according to the following rules:
-   - Each Node is shown on a separate line, showing its model name followed
-   by its in global id in brackets.
+   -  PrintNetwork -> -
 
-   +-[0] Subnet Dim=[1]
-   |
-   +- iaf_psc_alpha [1]
-
-   - Consecutive Nodes of the same model are summarised in a list.
-   The list shows the model name, the global id of the first node in the
-   sequence, then the number of consecutive nodes, then the global id of
-   the last node in the sequence.
-
-   +-[0] Subnet Dim=[1]
-   |
-   +- iaf_psc_alpha [1]..(2)..[2]
-
-   - If a node is a subnet, its global id is printed first, followed by the
-   model name or its label (if it is defined). Next, the dimension is shown.
-   If the current recursion level is less than the specified depth, the printout
-   descends to the children of the subnet.
-   After the header, a new line is printed, followed by the list of children
-   at the next indentation level.
-   After the last child, a new line is printed and the printout of the parent
-   subnet is continued.
-
-   Example:
-   SLI ] /iaf_psc_alpha Create
-   SLI [1] /iaf_cond_alpha 10 Create
-   SLI [2] /dc_generator [2 5 6] LayoutNetwork
-   SLI [3] 0 1 PrintNetwork
-   +-[0] root dim=[12]
-   SLI [3] 0 2 PrintNetwork
-   +-[0] root dim=[12]
-      |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
-   SLI [3] 0 3 PrintNetwork
-   +-[0] root dim=[12]
-      |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
-          |
-          +-[1] subnet dim=[5 6]
-          +-[2] subnet dim=[5 6]
-   SLI [3] 0 4 PrintNetwork
-   +-[0] root dim=[12]
-      |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
-          |
-          +-[1] subnet dim=[5 6]
-          |  |
-          |  +-[1] subnet dim=[6]
-          |  +-[2] subnet dim=[6]
-          |  +-[3] subnet dim=[6]
-          |  +-[4] subnet dim=[6]
-          |  +-[5] subnet dim=[6]
-          +-[2] subnet dim=[5 6]
-             |
-             +-[1] subnet dim=[6]
-             +-[2] subnet dim=[6]
-             +-[3] subnet dim=[6]
-             +-[4] subnet dim=[6]
-             +-[5] subnet dim=[6]
-   SLI [3] 0 5 PrintNetwork
-   +-[0] root dim=[12]
-      |
-      +- [1] iaf_psc_alpha
-      +- [2]...[11] iaf_cond_alpha
-      +- [12] subnet dim=[2 5 6]
-          |
-          +-[1] subnet dim=[5 6]
-          |  |
-          |  +-[1] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[2] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[3] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[4] subnet dim=[6]
-          |  |  |
-          |  |  +- [1]...[6] dc_generator
-          |  |
-          |  +-[5] subnet dim=[6]
-          |     |
-          |     +- [1]...[6] dc_generator
-          |
-          +-[2] subnet dim=[5 6]
-             |
-             +-[1] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[2] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[3] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[4] subnet dim=[6]
-             |  |
-             |  +- [1]...[6] dc_generator
-             |
-             +-[5] subnet dim=[6]
-                |
-                +- [1]...[6] dc_generator
-
-
-   Availability: NEST
-   Author: Marc-Oliver Gewaltig, Jochen Martin Eppler
+   Description: CURRENTLY NOT IMPLEMENTED; SHOULD ACCEPT OUTSTREAM
 */
 void
 NestModule::PrintNetworkFunction::execute( SLIInterpreter* i ) const
 {
-  i->assert_stack_load( 2 );
-
-  long gid = getValue< long >( i->OStack.pick( 1 ) );
-  long depth = getValue< long >( i->OStack.pick( 0 ) );
-
-  print_network( gid, depth - 1 );
-
-  i->OStack.pop( 2 );
+  print_network();
   i->EStack.pop();
 }
 
@@ -1877,22 +1642,18 @@ NestModule::init( SLIInterpreter* i )
     SLIInterpreter::datatypefunction );
 
   // register interface functions with interpreter
- // i->createcommand( "ChangeSubnet", &changesubnet_ifunction, "NEST 3.0" );
- // i->createcommand( "CurrentSubnet", &currentsubnetfunction, "NEST 3.0" );
- // i->createcommand( "GetNodes_i_D_b_b", &getnodes_i_D_b_bfunction, "NEST 3.0" );
- // i->createcommand( "GetLeaves_i_D_b", &getleaves_i_D_bfunction, "NEST 3.0" );
- // i->createcommand(
- //   "GetChildren_i_D_b", &getchildren_i_D_bfunction, "NEST 3.0" );
-
   i->createcommand( "RestoreNodes_a", &restorenodes_afunction );
 
   i->createcommand( "SetStatus_id", &setstatus_idfunction );
   i->createcommand( "SetStatus_CD", &setstatus_CDfunction );
   i->createcommand( "SetStatus_aa", &setstatus_aafunction );
+  i->createcommand( "SetKernelStatus", &setkernelstatus_Dfunction );
 
   i->createcommand( "GetStatus_i", &getstatus_ifunction );
   i->createcommand( "GetStatus_C", &getstatus_Cfunction );
   i->createcommand( "GetStatus_a", &getstatus_afunction );
+  i->createcommand( "GetKernelStatus", &getkernelstatus_function );
+
 
   i->createcommand( "GetConnections_D", &getconnections_Dfunction );
   i->createcommand( "cva_C", &cva_cfunction );

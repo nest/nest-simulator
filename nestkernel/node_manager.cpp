@@ -38,7 +38,6 @@
 #include "model_manager_impl.h"
 #include "node.h"
 #include "sibling_container.h"
-#include "subnet.h"
 #include "vp_manager.h"
 #include "vp_manager_impl.h"
 
@@ -50,8 +49,6 @@ namespace nest
 
 NodeManager::NodeManager()
   : local_nodes_()
-  , root_( 0 )
-  , current_( 0 )
   , siblingcontainer_model_( 0 )
   , n_gsd_( 0 )
   , nodes_vec_()
@@ -70,55 +67,9 @@ NodeManager::~NodeManager()
 void
 NodeManager::initialize()
 {
-  /*
-   * TODO The code until the "END" comment below adds the root subnet.
-   *      I am not sure this code should be here, it should certainly
-   *      go into a properly named function.
-   *
-   * TODO It depends on ModelrangeManager being properly initialized.
-   * TODO It depends on Base Models such as siblingcontainer are properly set
-   *      up.
-   *
-   * We initialise the network with one subnet that is the root of the tree.
-   * Note that we MUST NOT call add_node(), since it expects a properly
-   * initialized network.
-   */
-  local_nodes_.reserve( 1 );
-  kernel().modelrange_manager.add_range( 0, 0, 0 );
-
-  // TODO The access to the base models below is maximally bad,
-  //      and should be done in some elegant way vs ModelManager.
-  // TODO formerly used pristine_models_ here - hope the models_ works to
-  assert( kernel().model_manager.get_num_node_models() > 1 );
-
-  Model* rootmodel = kernel().model_manager.get_model( 0 );
-  assert( rootmodel != 0 );
-  assert( rootmodel->get_name() == "subnet" );
-
-  siblingcontainer_model_ = kernel().model_manager.get_model( 1 );
+  siblingcontainer_model_ = kernel().model_manager.get_model( 0 );
   assert( siblingcontainer_model_ != 0 );
   assert( siblingcontainer_model_->get_name() == "siblingcontainer" );
-
-  SiblingContainer* root_container =
-    static_cast< SiblingContainer* >( siblingcontainer_model_->allocate( 0 ) );
-  local_nodes_.add_local_node( *root_container );
-  root_container->reserve( kernel().vp_manager.get_num_threads() );
-  root_container->set_model_id( -1 );
-
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-    Node* newnode = rootmodel->allocate( t );
-    newnode->set_gid_( 0 );
-    newnode->set_model_id( 0 );
-    newnode->set_thread( t );
-    newnode->set_vp( kernel().vp_manager.thread_to_vp( t ) );
-    root_container->push_back( newnode );
-  }
-
-  current_ = root_ =
-    static_cast< Subnet* >( ( *root_container ).get_thread_sibling( 0 ) );
-
-  /* END of code adding the root subnet. */
 
   // explicitly force construction of nodes_vec_ to ensure consistent state
   nodes_vec_network_size_ = 0;
@@ -173,7 +124,6 @@ NodeManager::reinit_nodes()
 DictionaryDatum
 NodeManager::get_status( index idx )
 {
-  assert( idx != 0 );
   Node* target = get_node( idx );
   assert( target != 0 );
 
@@ -185,9 +135,6 @@ NodeManager::get_status( index idx )
 GIDCollectionPTR
 NodeManager::add_node( index mod, long n )
 {
-  assert( current_ != 0 );
-  assert( root_ != 0 );
-
   if ( mod >= kernel().model_manager.get_num_node_models() )
     throw UnknownModelID( mod );
 
@@ -205,25 +152,10 @@ NodeManager::add_node( index mod, long n )
 
   model->deprecation_warning( "Create" );
 
-  /* current_ points to the instance of the current subnet on thread 0.
-     The following code makes subnet a pointer to the wrapper container
-     containing the instances of the current subnet on all threads.
-   */
-  const index subnet_gid = current_->get_gid();
-  Node* subnet_node = local_nodes_.get_node_by_gid( subnet_gid );
-  assert( subnet_node != 0 );
-
-  SiblingContainer* subnet_container =
-    dynamic_cast< SiblingContainer* >( subnet_node );
-  assert( subnet_container != 0 );
-  assert( subnet_container->num_thread_siblings()
-    == static_cast< size_t >( n_threads ) );
-  assert( subnet_container->get_thread_sibling( 0 ) == current_ );
-
   if ( max_gid > local_nodes_.max_size() || max_gid < min_gid )
   {
     LOG( M_ERROR,
-      "NodeManager::add:node",
+      "NodeManager::add_node",
       "Requested number of nodes will overflow the memory." );
     LOG( M_ERROR, "NodeManager::add:node", "No nodes were created." );
     throw KernelException( "OutOfMemory" );
@@ -268,13 +200,10 @@ NodeManager::add_node( index mod, long n )
         newnode->set_local_receiver( false );
 
         local_nodes_.add_local_node( *newnode ); // put into local nodes list
-
-        current_->add_node( newnode ); // and into current subnet, thread 0.
       }
       else
       {
         local_nodes_.add_remote_node( gid ); // ensures max_gid is correct
-        current_->add_remote_node( gid, mod );
       }
       increment_n_gsd();
     }
@@ -293,7 +222,7 @@ NodeManager::add_node( index mod, long n )
       < kernel().mpi_manager.get_num_sim_processes() )
     {
       // TODO: This will work reasonably for round-robin. The extra 50 entries
-      //       are for subnets and devices.
+      //       are for devices.
       local_nodes_.reserve(
         std::ceil( static_cast< double >( max_gid )
           / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
@@ -315,14 +244,6 @@ NodeManager::add_node( index mod, long n )
     {
       gid = next_local_gid_( min_gid );
     }
-    size_t next_lid = current_->global_size() + gid - min_gid;
-    // The next loop will not visit every node, if more than one rank is
-    // present.
-    // Since we already know what range of gids will be created, we can tell the
-    // current subnet the range and subsequent calls to
-    // `current_->add_remote_node()`
-    // become irrelevant.
-    current_->add_gid_range( min_gid, max_gid - 1 );
 
     // min_gid is first valid gid i should create, hence ask for the first local
     // gid after min_gid-1
@@ -340,27 +261,20 @@ NodeManager::add_node( index mod, long n )
         newnode->set_vp( vp );
 
         local_nodes_.add_local_node( *newnode ); // put into local nodes list
-        current_->add_node( newnode ); // and into current subnet, thread 0.
 
-        // lid setting is wrong, if a range is set, as the subnet already
-        // assumes,
-        // the nodes are available.
-        newnode->set_lid_( next_lid );
-        const size_t next_gid = next_local_gid_( gid );
-        next_lid += next_gid - gid;
-        gid = next_gid;
+        gid = next_local_gid_( gid );
       }
       else
       {
-        ++gid; // brutal fix, next_lid has been set in if-branch
+        ++gid;
       }
     }
+
     // if last gid is not on this process, we need to add it as a remote node
     if ( not kernel().vp_manager.is_local_vp(
            kernel().vp_manager.suggest_vp( max_gid - 1 ) ) )
     {
       local_nodes_.add_remote_node( max_gid - 1 ); // ensures max_gid is correct
-      current_->add_remote_node( max_gid - 1, mod );
     }
   }
   else if ( not model->one_node_per_process() )
@@ -396,8 +310,6 @@ NodeManager::add_node( index mod, long n )
     {
       model->reserve_additional( t, n );
       siblingcontainer_model_->reserve_additional( t, container_per_thread );
-      static_cast< Subnet* >( subnet_container->get_thread_sibling( t ) )
-        ->reserve( n );
     }
 
     // The following loop creates n nodes. For each node, a wrapper is created
@@ -432,10 +344,6 @@ NodeManager::add_node( index mod, long n )
         // Register instance with wrapper
         // container has one entry for each thread
         container->push_back( newnode );
-
-        // Register instance with per-thread instance of enclosing subnet.
-        static_cast< Subnet* >( subnet_container->get_thread_sibling( t ) )
-          ->add_node( newnode );
       }
     }
   }
@@ -455,9 +363,6 @@ NodeManager::add_node( index mod, long n )
 
       // Register instance
       local_nodes_.add_local_node( *newnode );
-
-      // and into current subnet, thread 0.
-      current_->add_node( newnode );
     }
   }
 
@@ -480,37 +385,22 @@ NodeManager::add_node( index mod, long n )
 void
 NodeManager::restore_nodes( const ArrayDatum& node_list )
 {
-  Subnet* root = get_cwn();
-  const index gid_offset = size() - 1;
   Token* first = node_list.begin();
   const Token* end = node_list.end();
   if ( first == end )
     return;
-
-  // We need to know the first and hopefully smallest GID to identify
-  // if a parent is in or outside the range of restored nodes.
-  // So we retrieve it here, from the first element of the node_list, assuming
-  // that the node GIDs are in ascending order.
-  DictionaryDatum node_props = getValue< DictionaryDatum >( *first );
-  const index min_gid = ( *node_props )[ names::global_id ];
 
   for ( Token* node_t = first; node_t != end; ++node_t )
   {
     DictionaryDatum node_props = getValue< DictionaryDatum >( *node_t );
     std::string model_name = ( *node_props )[ names::model ];
     index model_id = kernel().model_manager.get_model_id( model_name.c_str() );
-    index parent_gid = ( *node_props )[ names::parent ];
-    index local_parent_gid = parent_gid;
-    if ( parent_gid >= min_gid ) // if the parent is one of the restored nodes
-      local_parent_gid += gid_offset; // we must add the gid_offset
-    go_to( local_parent_gid );
     GIDCollectionPTR node = add_node( model_id );
     Node* node_ptr = get_node( ( *node->begin() ).gid );
     // we call directly set_status on the node
     // to bypass checking of unused dictionary items.
     node_ptr->set_status_base( node_props );
   }
-  current_ = root;
 }
 
 void
@@ -553,15 +443,6 @@ NodeManager::next_local_gid_( index curr_gid ) const
     // make modulo positive and difference of my proc an curr_gid proc
     return curr_gid + ( sim_procs + rank - proc_of_curr_gid ) % sim_procs;
   }
-}
-
-void
-NodeManager::go_to( index n )
-{
-  if ( Subnet* target = dynamic_cast< Subnet* >( get_node( n ) ) )
-    current_ = target;
-  else
-    throw SubnetExpected();
 }
 
 Node* NodeManager::get_node( index n, thread thr ) // no_p
@@ -634,12 +515,11 @@ NodeManager::ensure_valid_thread_local_ids()
         // network, which is never updated.
         size_t num_thread_local_nodes = 0;
         size_t num_thread_local_wfr_nodes = 0;
-        for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
+        for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
         {
           Node* node = local_nodes_.get_node_by_index( idx );
-          if ( not node->is_subnet()
-            && ( static_cast< index >( node->get_thread() ) == t
-                 || node->num_thread_siblings() > 0 ) )
+          if ( static_cast< index >( node->get_thread() ) == t
+            or node->num_thread_siblings() > 0 )
           {
             num_thread_local_nodes++;
             if ( node->node_uses_wfr() )
@@ -649,13 +529,9 @@ NodeManager::ensure_valid_thread_local_ids()
         nodes_vec_[ t ].reserve( num_thread_local_nodes );
         wfr_nodes_vec_[ t ].reserve( num_thread_local_wfr_nodes );
 
-        for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
+        for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
         {
           Node* node = local_nodes_.get_node_by_index( idx );
-
-          // Subnets are never updated and therefore not included.
-          if ( node->is_subnet() )
-            continue;
 
           // If a node has thread siblings, it is a sibling container, and we
           // need to add the replica for the current thread. Otherwise, we have
@@ -858,40 +734,32 @@ NodeManager::check_wfr_use()
 }
 
 void
-NodeManager::print( index p, int depth )
+NodeManager::print( std::ostream& ) const
 {
-  Subnet* target = dynamic_cast< Subnet* >( get_node( p ) );
-  if ( target != NULL )
-    std::cout << target->print_network( depth + 1, 0 );
-  else
-    throw SubnetExpected();
+  // TODO480
+  throw KernelException( "PrintNetwork is currently not supported." );
 }
 
 
 void
 NodeManager::set_status( index gid, const DictionaryDatum& d )
 {
-
-  assert( gid > 0 or "This function cannot be called for the root node." );
-  if ( gid > 0 )
+  Node* target = local_nodes_.get_node_by_gid( gid );
+  if ( target != 0 )
   {
-    // we first handle normal nodes, except the root (GID 0)
-    Node* target = local_nodes_.get_node_by_gid( gid );
-    if ( target != 0 )
+    // node is local
+    if ( target->num_thread_siblings() == 0 )
     {
-      // node is local
-      if ( target->num_thread_siblings() == 0 )
-        set_status_single_node_( *target, d );
-      else
-        for ( size_t t = 0; t < target->num_thread_siblings(); ++t )
-        {
-          // non-root container for devices without proxies and subnets
-          // we iterate over all threads
-          assert( target->get_thread_sibling( t ) != 0 );
-          set_status_single_node_( *( target->get_thread_sibling( t ) ), d );
-        }
+      set_status_single_node_( *target, d );
     }
-    return;
+    else
+      for ( size_t t = 0; t < target->num_thread_siblings(); ++t )
+      {
+        // non-root container for devices without proxies
+        // we iterate over all threads
+        assert( target->get_thread_sibling( t ) != 0 );
+        set_status_single_node_( *( target->get_thread_sibling( t ) ), d );
+      }
   }
 }
 
@@ -899,41 +767,11 @@ void
 NodeManager::get_status( DictionaryDatum& d )
 {
   def< long >( d, "network_size", size() );
-
-  std::map< long, size_t > sna_cts = local_nodes_.get_step_ctr();
-  DictionaryDatum cdict( new Dictionary );
-  for ( std::map< long, size_t >::const_iterator cit = sna_cts.begin();
-        cit != sna_cts.end();
-        ++cit )
-  {
-    std::stringstream s;
-    s << cit->first;
-    ( *cdict )[ s.str() ] = cit->second;
-  }
 }
 
 void
 NodeManager::set_status( const DictionaryDatum& d )
 {
-  std::string tmp;
-  // proceed only if there are unaccessed items left
-  if ( not d->all_accessed( tmp ) )
-  {
-    // Fetch the target pointer here. We cannot do it above, since
-    // Network::set_status() may modify the root compound if the number
-    // of threads changes. HEP, 2008-10-20
-    Node* target = local_nodes_.get_node_by_gid( 0 );
-    assert( target != 0 );
-
-    for ( size_t t = 0; t < target->num_thread_siblings(); ++t )
-    {
-      // Root container for per-thread subnets. We must prevent clearing of
-      // access flags before each compound's properties are set by passing false
-      // as last arg we iterate over all threads
-      assert( target->get_thread_sibling( t ) != 0 );
-      set_status_single_node_( *( target->get_thread_sibling( t ) ), d, false );
-    }
-  }
 }
 
 void

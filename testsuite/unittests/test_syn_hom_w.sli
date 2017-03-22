@@ -45,10 +45,10 @@ Author: Moritz Helias, Susanne Kunkel
 
 ResetKernel
 
-0 <<
+<<
        /local_num_threads 1
        /resolution h
-     >> SetStatus
+     >> SetKernelStatus
 
 /spike_generator Create /sg Set
 

@@ -63,7 +63,7 @@ ResetKernel
 % Second test: error if uncommensurable delta_tau
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 0.25 >> SetDefaults
 } fail_or_die
 
@@ -71,7 +71,7 @@ ResetKernel
 % Third test: error if uncommensurable tau_max
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 1.0 /tau_max 2.5 >> SetDefaults
 } fail_or_die
 
@@ -79,9 +79,9 @@ ResetKernel
 % Fourth test: error if uncommensurable change of resolution
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 0.1 >> SetDefaults
-  0 << /resolution 1.0 >> SetStatus
+  << /resolution 1.0 >> SetKernelStatus
   /correlation_detector Create % cannot create now with delta_tau==0.1
 } fail_or_die  
 
@@ -89,9 +89,9 @@ ResetKernel
 % Fifth test: proper number of histogram bins under resolution changes
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
-  0 << /resolution 0.2 >> SetStatus
+  << /resolution 0.2 >> SetKernelStatus
   /correlation_detector Create 
   1 Simulate % must simulate to force creation of histogram
   [/histogram] get cva length
@@ -119,7 +119,7 @@ ResetKernel
     } Table /sgens Set
 
     % simulate to max spike time plus 2 min_delay
-    st Flatten Max 0 [/min_delay] get 2 mul add Simulate
+    st Flatten Max GetKernelStatus /min_delay get 2 mul add Simulate
     
     % get spike counts and histogram
     cdt [ /histogram ] get cva
@@ -154,7 +154,7 @@ def
 {
   ResetKernel
 
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
 
   [ 1.0 2.0     6.0 ]       % input 0
@@ -166,7 +166,7 @@ def
 % Seventh test: correlation histogram for time differences at bin edges
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
 
   [                 6.0                  ]  % input 0
@@ -185,7 +185,7 @@ def
 {
   ResetKernel
 
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlation_detector << /delta_tau 1.0 /tau_max 5.0 >> SetDefaults
 
   % expected histogram: [ 0 1 0 1 0 1 1 1 1 0 0] 

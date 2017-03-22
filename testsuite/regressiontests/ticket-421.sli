@@ -64,7 +64,7 @@ M_WARNING setverbosity
     /model Set
 
     ResetKernel
-    0 << /resolution res >> SetStatus
+    << /resolution res >> SetKernelStatus
 
     % check if model has V_m, if none or excluded return true
     false exclude_models { model eq or } Fold not

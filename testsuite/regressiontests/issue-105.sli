@@ -42,7 +42,7 @@ M_ERROR setverbosity
 {
   ResetKernel
   
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   
   /n /iaf_neuron Create def
   
@@ -58,7 +58,7 @@ M_ERROR setverbosity
   dup true exch { 0.8 eq and } Fold
   exch
   0 get 
-  0 /min_delay get 
+  GetKernelStatus /min_delay get 
   eq 
   and
 } assert_or_die
@@ -67,7 +67,7 @@ M_ERROR setverbosity
 {
   ResetKernel
   
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   
   /n /iaf_neuron Create def
   
@@ -89,7 +89,7 @@ M_ERROR setverbosity
   dup true exch { 0.8 eq and } Fold
   exch
   0 get 
-  0 /min_delay get 
+  GetKernelStatus /min_delay get 
   eq 
   and
 } assert_or_die
@@ -98,7 +98,7 @@ M_ERROR setverbosity
 {
   ResetKernel
   
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   
   /n /iaf_neuron Create def
   
@@ -114,7 +114,7 @@ M_ERROR setverbosity
   dup true exch { 0.9 eq and } Fold
   exch
   0 get 
-  0 /max_delay get 
+  GetKernelStatus /max_delay get 
   eq 
   and
 } assert_or_die
@@ -123,7 +123,7 @@ M_ERROR setverbosity
 {
   ResetKernel
   
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   
   /n /iaf_neuron Create def
   
@@ -147,7 +147,7 @@ M_ERROR setverbosity
   dup true exch { 2.0 eq and } Fold
   exch
   0 get 
-  0 /max_delay get 
+  GetKernelStatus /max_delay get 
   eq 
   and
 } assert_or_die
@@ -163,15 +163,15 @@ M_ERROR setverbosity
   /min_delay 0.81 def  % rounded to 0.8
   /max_delay 1.49 def  % rounded to 1.5
 
-  0 << /min_delay min_delay /max_delay max_delay >> SetStatus
+  << /min_delay min_delay /max_delay max_delay >> SetKernelStatus
   
   /n /iaf_neuron Create def
   
   n dup /one_to_one << /delay min_delay >> Connect
   n dup /one_to_one << /delay max_delay >> Connect
   
-  0 /min_delay get 0.8 eq
-  0 /max_delay get 1.5 eq
+  GetKernelStatus /min_delay get 0.8 eq
+  GetKernelStatus /max_delay get 1.5 eq
   and
 } assert_or_die
 
@@ -181,14 +181,14 @@ M_ERROR setverbosity
   /min_delay 0.89 def  % rounded to 0.8
   /max_delay 1.41 def  % rounded to 1.5
   
-  0 << /min_delay min_delay /max_delay max_delay >> SetStatus
+  << /min_delay min_delay /max_delay max_delay >> SetKernelStatus
   
   /n /iaf_neuron Create def
   
   n dup /one_to_one << /delay min_delay >> Connect
   n dup /one_to_one << /delay max_delay >> Connect
   
-  0 /min_delay get 0.8 eq
-  0 /max_delay get 1.5 eq
+  GetKernelStatus /min_delay get 0.8 eq
+  GetKernelStatus /max_delay get 1.5 eq
   and
 } assert_or_die

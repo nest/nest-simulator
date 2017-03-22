@@ -90,7 +90,7 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
       /resolution  h
     >> /kernelparams Set
     
-    0 kernelparams SetStatus 
+    kernelparams SetKernelStatus 
     
     /ppd_sup_generator Create /psg Set
 
@@ -183,7 +183,7 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
       /resolution  h
     >> /kernelparams Set
     
-    0 kernelparams SetStatus 
+    kernelparams SetKernelStatus 
     
     /ppd_sup_generator Create /psg Set
 
@@ -272,7 +272,7 @@ SeeAlso: ppd_sup_generator, testsuite::test_pp_psc_delta, testsuite::test_poisso
       /resolution  h
     >> /kernelparams Set
     
-    0 kernelparams SetStatus 
+    kernelparams SetKernelStatus 
     
     /ppd_sup_generator Create /psg Set
 

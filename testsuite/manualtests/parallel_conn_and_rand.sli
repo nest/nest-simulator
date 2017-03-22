@@ -75,11 +75,11 @@ M_WARNING setverbosity
 
 
 % set resolution and total/local number of threads
-0 << 
+<< 
     /resolution  dt 
     /total_num_virtual_procs num_vps
     /overwrite_files true
->> SetStatus
+>> SetKernelStatus
 
 tic % start timer on construction
 
@@ -133,6 +133,6 @@ simtime Simulate
 (Number of MPI procs: ) =only NumProcesses =
 (Number of VPs      : ) =only num_vps =
 (Number of Neurons  : ) =only num_neurons =
-(Number of Synapses : ) =only 0 GetStatus /num_connections get =
+(Number of Synapses : ) =only GetKernelStatus /num_connections get =
 (Building time     : ) =only BuildCPUTime =only ( s\n) =
 

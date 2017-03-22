@@ -100,6 +100,7 @@ nest::MPIManager::communicate_Allgatherv( std::vector< T >& send_buffer,
     comm );
 }
 
+/* TODO480
 template < typename NodeListType >
 void
 nest::MPIManager::communicate( const NodeListType& local_nodes,
@@ -161,8 +162,9 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
     std::sort( all_nodes.begin(), all_nodes.end() );
   }
 }
+*/
 
-
+/* TODO480
 template < typename NodeListType >
 void
 nest::MPIManager::communicate( const NodeListType& local_nodes,
@@ -296,10 +298,11 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
     std::sort( all_nodes.begin(), all_nodes.end() );
   }
 }
-
+*/
 
 #else // HAVE_MPI
 
+/* TODO480
 template < typename NodeListType >
 void
 nest::MPIManager::communicate( const NodeListType& local_nodes,
@@ -314,7 +317,9 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
       ( *n )->get_vp() ) );
   std::sort( all_nodes.begin(), all_nodes.end() );
 }
+*/
 
+/* TODO480
 template < typename NodeListType >
 void
 nest::MPIManager::communicate( const NodeListType& local_nodes,
@@ -363,6 +368,7 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
   }
   std::sort( all_nodes.begin(), all_nodes.end() );
 }
+*/
 
 #endif
 

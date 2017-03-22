@@ -135,7 +135,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 
   if ( tics_per_ms_updated || res_updated )
   {
-    if ( kernel().node_manager.size() > 1 ) // root always exists
+    if ( kernel().node_manager.size() > 0 )
     {
       LOG( M_ERROR,
         "SimulationManager::set_status",
@@ -240,7 +240,7 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
   bool wfr;
   if ( updateValue< bool >( d, "use_wfr", wfr ) )
   {
-    if ( kernel().node_manager.size() > 1 )
+    if ( kernel().node_manager.size() > 0 )
     {
       LOG( M_ERROR,
         "SimulationManager::set_status",

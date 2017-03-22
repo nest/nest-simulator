@@ -207,7 +207,7 @@
 {
   << >> begin
     ResetKernel
-    0 << /local_num_threads 4 >> SetStatus
+    << /local_num_threads 4 >> SetKernelStatus
     build_net
 
     % NB: relative ordering of data from threads is random under OpenMP  

@@ -61,10 +61,9 @@
 (unittest) run
 /unittest using
 
-0
 << 
     /overwrite_files true
->> SetStatus
+>> SetKernelStatus
 
 % This test should only run if we have GSL
 statusdict/have_gsl :: not
@@ -195,7 +194,7 @@ d /times get cva /ts Set % get times
   /res 0.1 def
   /V_reset -111. def
   
-  0 << /resolution res >> SetStatus
+  << /resolution res >> SetKernelStatus
   /nrn /aeif_cond_beta_multisynapse 
     << /w 0. /a 0. /b 0. /Delta_T 0. /t_ref 0. /I_e 1000.
        /V_reset V_reset >>
@@ -228,7 +227,7 @@ d /times get cva /ts Set % get times
   /res 0.1 def
   /V_reset -111. def
   
-  0 << /resolution res >> SetStatus
+  << /resolution res >> SetKernelStatus
   /nrn /aeif_cond_beta_multisynapse 
     << /w 0. /a 0. /b 0. /Delta_T 0. /t_ref res /I_e 1000.
        /V_reset V_reset >>
@@ -273,7 +272,7 @@ d /times get cva /ts Set % get times
   /b 100. def
   /tau_w 1.0 def
   
-  0 << /resolution res >> SetStatus
+  << /resolution res >> SetKernelStatus
   /nrn /aeif_cond_beta_multisynapse 
     << /w 0. /a a /b b /tau_w tau_w /Delta_T 0. /t_ref t_ref /I_e 1000.
        /E_L E_L /V_reset V_reset >>

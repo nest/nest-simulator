@@ -93,13 +93,13 @@ M_ERROR setverbosity
 %
 % Check if kernel accepts high precision
 %
-0 << 
+<< 
  /tics_per_ms min_exponent neg dexp 
  /resolution 0 dexp                   % 1 ms default 
->> SetStatus
+>> SetKernelStatus
 
 
-0 /ms_per_tic get frexp
+GetKernelStatus /ms_per_tic get frexp
 
 exch
 {0.5 eq} assert_or_die                  % base 2 tic size?
@@ -134,7 +134,7 @@ params begin userdict begin
  dexp /h Set
 
  ResetKernel          % resets tic base and computation time step
- 0 << /tics_per_ms min_exponent neg dexp /resolution h >> SetStatus
+ << /tics_per_ms min_exponent neg dexp /resolution h >> SetKernelStatus
 
 
  [

@@ -38,7 +38,7 @@ struct PrimitiveSortObject
   {
     return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
   }
-  
+
   bool operator()( const GIDCollectionPrimitive& primitive_lhs,
     const GIDCollectionPrimitive& primitive_rhs )
   {

@@ -52,7 +52,7 @@ M_ERROR setverbosity
   ResetKernel
 
   2.0 /wfr_comm Set
-  0 << /wfr_comm_interval wfr_comm >> SetStatus
+  << /wfr_comm_interval wfr_comm >> SetKernelStatus
 
   /iaf_neuron Create /neuron_no_gap Set
   /hh_psc_alpha_gap Create /neuron_gap Set
@@ -141,8 +141,8 @@ M_ERROR setverbosity
   % First create one connection to change min_delay, max_delay... 
   neuron_no_gap neuron_no_gap 3.0 3.0 Connect
 
-  0 /max_delay get /old_max Set
-  0 /min_delay get /old_min Set
+  GetKernelStatus /max_delay get /old_max Set
+  GetKernelStatus /min_delay get /old_min Set
 
   % ... then create a gap-junction connection
   neuron_gap neuron_gap
@@ -150,8 +150,8 @@ M_ERROR setverbosity
   << /model /gap_junction >> 
   Connect
 
-  0 /max_delay get /new_max Set
-  0 /min_delay get /new_min Set
+  GetKernelStatus /max_delay get /new_max Set
+  GetKernelStatus /min_delay get /new_min Set
 
   % now check for correct min_delay and max_delay
   old_min wfr_comm leq 
@@ -178,8 +178,8 @@ M_ERROR setverbosity
   % First create one connection to change min_delay, max_delay... 
   neuron_no_gap neuron_no_gap 1.0 1.0 Connect
 
-  0 /max_delay get /old_max Set
-  0 /min_delay get /old_min Set
+  GetKernelStatus /max_delay get /old_max Set
+  GetKernelStatus /min_delay get /old_min Set
 
   % ... then create a gap-junction connection
   neuron_gap neuron_gap
@@ -187,8 +187,8 @@ M_ERROR setverbosity
   << /model /gap_junction >> 
   Connect
 
-  0 /max_delay get /new_max Set
-  0 /min_delay get /new_min Set
+  GetKernelStatus /max_delay get /new_max Set
+  GetKernelStatus /min_delay get /new_min Set
 
   % now check for correct min_delay and max_delay
   old_min wfr_comm leq 

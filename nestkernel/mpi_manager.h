@@ -171,6 +171,7 @@ public:
    * The NodeListType should be one of LocalNodeList, LocalLeafList,
    * LocalChildList.
    */
+  /* TODO480
   template < typename NodeListType >
   void communicate( const NodeListType& local_nodes,
     std::vector< NodeAddressingData >& all_nodes,
@@ -181,6 +182,7 @@ public:
     std::vector< NodeAddressingData >& all_nodes,
     DictionaryDatum params,
     bool remote = false );
+  */
 
   // TODO: not used...
   void communicate_connector_properties( DictionaryDatum& dict );

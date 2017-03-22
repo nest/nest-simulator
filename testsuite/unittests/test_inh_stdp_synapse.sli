@@ -45,7 +45,7 @@ Based on: Kunkel, Nov 2010
 ResetKernel
 
 /resolution 0.1 def %1.0 def %2.0 -4 pow def  % simulation step size
-0 << /resolution resolution >> SetStatus %/tics_per_ms 10000.0 >> SetStatus
+<< /resolution resolution >> SetKernelStatus
 
 
 %%% input parameters %%%

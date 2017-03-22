@@ -76,11 +76,10 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson
   /n Set
 
   % set resolution and total/local number of threads
-  0
   <<
   /resolution  0.1
   /total_num_virtual_procs total_vps
-  >> SetStatus
+  >> SetKernelStatus
 
   /sinusoidal_poisson_generator 
   << 

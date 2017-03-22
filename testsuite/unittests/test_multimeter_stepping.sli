@@ -68,7 +68,7 @@ M_ERROR setverbosity
     mm n Connect
     /pg /poisson_generator << /rate 1e4 >> Create def
     pg n Connect
-    /minDelay 0 /min_delay get def
+    /minDelay GetKernelStatus /min_delay get def
     continuous
     { 
       50 minDelay mul Simulate

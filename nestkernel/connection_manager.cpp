@@ -47,8 +47,6 @@
 #include "mpi_manager_impl.h"
 #include "nest_names.h"
 #include "node.h"
-#include "nodelist.h"
-#include "subnet.h"
 #include "vp_manager_impl.h"
 
 // Includes from sli:
@@ -771,26 +769,6 @@ nest::ConnectionManager::data_connect_single( const index source_id,
     throw DimensionMismatch();
   }
 
-  Node* source = kernel().node_manager.get_node( source_id );
-
-  Subnet* source_comp = dynamic_cast< Subnet* >( source );
-  if ( source_comp != 0 )
-  {
-    LOG( M_INFO, "DataConnect", "Source ID is a subnet; I will iterate it." );
-
-    // collect all leaves in source subnet, then data-connect each leaf
-    LocalLeafList local_sources( *source_comp );
-    std::vector< MPIManager::NodeAddressingData > global_sources;
-    kernel().mpi_manager.communicate( local_sources, global_sources );
-    for ( std::vector< MPIManager::NodeAddressingData >::iterator src =
-            global_sources.begin();
-          src != global_sources.end();
-          ++src )
-      data_connect_single( src->get_gid(), pars, syn );
-
-    return;
-  }
-
 #pragma omp parallel private( di_s )
   {
     thread tid = kernel().vp_manager.get_thread_id();
@@ -918,11 +896,12 @@ nest::ConnectionManager::validate_source_entry_( const thread tid,
   const index s_gid )
 {
   // resize sparsetable to full network size
-  if ( connections_[ tid ].size() < kernel().node_manager.size() )
-    connections_[ tid ].resize( kernel().node_manager.size() );
+  // +1 because GIDs run from 1, dummy entry for unused GID-value 0.
+  const size_t required_sparsetable_size = kernel().node_manager.size() + 1;
+  if ( connections_[ tid ].size() < required_sparsetable_size )
+    connections_[ tid ].resize( required_sparsetable_size );
 
-  // check, if entry exists
-  // if not put in zero pointer
+  // return entry or zero pointer
   if ( connections_[ tid ].test( s_gid ) )
   {
     return connections_[ tid ].get( s_gid );

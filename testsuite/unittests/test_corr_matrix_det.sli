@@ -76,7 +76,7 @@ ResetKernel
 % Third test: error if uncommensurable delta_tau
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlomatrix_detector << /delta_tau 0.25 >> SetDefaults
 } fail_or_die
 
@@ -84,7 +84,7 @@ ResetKernel
 % Fourth test: error if delta_tau even multiple of resolution
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlomatrix_detector << /delta_tau 1.0 >> SetDefaults
 } fail_or_die
 
@@ -92,7 +92,7 @@ ResetKernel
 % Fifth test: error if uncommensurable tau_max
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlomatrix_detector << /delta_tau 1.1 /tau_max 2.5 >> SetDefaults
 } fail_or_die
 
@@ -100,9 +100,9 @@ ResetKernel
 % Sixth test: error if uncommensurable change of resolution
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlomatrix_detector << /delta_tau 0.1 >> SetDefaults
-  0 << /resolution 1.0 >> SetStatus
+  << /resolution 1.0 >> SetKernelStatus
   /correlomatrix_detector Create % cannot create now with delta_tau==0.1
 } fail_or_die  
 
@@ -110,9 +110,9 @@ ResetKernel
 % Seventh test: proper number of histogram bins under resolution changes
 {
   ResetKernel
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlomatrix_detector << /delta_tau 0.5 /tau_max 2.5 >> SetDefaults
-  0 << /resolution 0.5 >> SetStatus
+  << /resolution 0.5 >> SetKernelStatus
   /correlomatrix_detector Create 
   1 Simulate % must simulate to force creation of histogram
   [/covariance] get cva [1] Part [1] Part length
@@ -140,7 +140,7 @@ ResetKernel
     } Table /sgens Set
 
     % simulate to max spike time plus 2 min_delay
-    st Flatten Max 0 [/min_delay] get 2 mul add Simulate
+    st Flatten Max GetKernelStatus /min_delay get 2 mul add Simulate
     
     % get spike counts and histogram
     cdt [ /covariance ] get cva [1] Part [2] Part
@@ -176,7 +176,7 @@ def
 {
   ResetKernel
   
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlomatrix_detector << /delta_tau 0.5 /tau_max 2.0 /N_channels 2 >> SetDefaults
 
   [     1.5 2.5 4.5 ]       % input 0
@@ -190,7 +190,7 @@ def
 {
   ResetKernel
 
-  0 << /resolution 0.1 >> SetStatus
+  << /resolution 0.1 >> SetKernelStatus
   /correlomatrix_detector << /delta_tau .5 /tau_max 5.0 /N_channels N_ch >> SetDefaults
 
   % expected histogram: [ 1 0 0 0 1 ] 

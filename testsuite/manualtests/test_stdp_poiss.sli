@@ -46,12 +46,11 @@ userdict begin
 
  0.1 /h Set	     % simulation timestep [ms]
 
- 0
     <<
        /resolution h
        /total_num_virtual_procs  1
        /overwrite_files true
-    >> SetStatus
+    >> SetKernelStatus
 
 
 /delay 1.0 def	     % dendritic delay [ms]

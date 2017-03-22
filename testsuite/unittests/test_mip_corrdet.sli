@@ -63,13 +63,12 @@ ResetKernel
 
 userdict begin
 
-0
 << 
     /local_num_threads 1
     /resolution h
     /overwrite_files true
     /grng_seed 0 % because test data was produced for seed = 0
->> SetStatus
+>> SetKernelStatus
 
 % check, if we can set another rng
 /mip_generator << /mother_rng rngdict/MT19937 :: 101 CreateRNG >> SetDefaults

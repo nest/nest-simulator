@@ -42,8 +42,6 @@ SeeAlso:
 (unittest) run
 /unittest using
 
-exit_test_gracefully  % TODO480 (Select needs implementation for GC)
-
 is_threaded not { exit_test_gracefully } if
 
 [1 2 4]
@@ -52,7 +50,7 @@ is_threaded not { exit_test_gracefully } if
  % Method 1
  ResetKernel
 
- 0 << /total_num_virtual_procs 4 >> SetStatus
+ << /total_num_virtual_procs 4 >> SetKernelStatus
 
  % obtain global RNG 
  /rng GetGlobalRNG def
@@ -73,7 +71,7 @@ is_threaded not { exit_test_gracefully } if
  % Method 2
  ResetKernel
 
- 0 << /total_num_virtual_procs 4 >> SetStatus
+ << /total_num_virtual_procs 4 >> SetKernelStatus
 
  /n /iaf_psc_alpha 4 Create def
 

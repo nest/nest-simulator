@@ -133,6 +133,11 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
   // get the data from the device
   device_.get_status( d );
 
+  if ( is_model_prototype() )
+  {
+    return; // no data to collect
+  }
+
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
   if ( local_receiver_ && get_thread() == 0 )

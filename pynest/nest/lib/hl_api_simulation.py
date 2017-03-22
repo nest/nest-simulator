@@ -81,9 +81,8 @@ def SetKernelStatus(params):
     GetKernelStatus
     """
 
-    sps(0)
     sps(params)
-    sr('SetStatus')
+    sr('SetKernelStatus')
 
 
 @check_stack
@@ -109,20 +108,15 @@ def GetKernelStatus(keys=None):
     TypeError
     """
 
-    sr('0 GetStatus')
+    sr('GetKernelStatus')
     status_root = spp()
 
-    sr('/subnet GetDefaults')
-    status_subnet = spp()
-
-    d = dict((k, v) for k, v in status_root.items() if k not in status_subnet)
-
     if keys is None:
-        return d
+        return status_root
     elif is_literal(keys):
-        return d[keys]
+        return status_root[keys]
     elif is_iterable(keys):
-        return tuple(d[k] for k in keys)
+        return tuple(status_root[k] for k in keys)
     else:
         raise TypeError("keys should be either a string or an iterable")
 

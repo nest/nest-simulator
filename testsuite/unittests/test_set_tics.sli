@@ -53,9 +53,9 @@ SeeAlso: get, dexp
 (unittest) run
 /unittest using
 
-0 << /tics_per_ms 14 dexp /resolution -4 dexp  >> SetStatus
+<< /tics_per_ms 14 dexp /resolution -4 dexp  >> SetKernelStatus
 % this is equivalent to:
-%    0 << /tics_per_ms 16384. /resolution 0.625  >> SetStatus
+%    << /tics_per_ms 16384. /resolution 0.625  >> SetKernelStatus
 %
 % with the conversion of units:
 %  tics/ms * ms/step = tics/step
@@ -63,10 +63,10 @@ SeeAlso: get, dexp
 
 
 {
- 0 /tics_per_ms   get    14 dexp       eq
- 0 /resolution    get    -4 dexp       eq and
- 0 /tics_per_step get    10 dexp cvi   eq and
- 0 /ms_per_tic    get   -14 dexp       eq and
+ GetKernelStatus /tics_per_ms get    14 dexp       eq
+ GetKernelStatus /resolution get    -4 dexp       eq and
+ GetKernelStatus /tics_per_step get    10 dexp cvi   eq and
+ GetKernelStatus /ms_per_tic get   -14 dexp       eq and
 }
 assert_or_die
 

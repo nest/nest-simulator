@@ -194,12 +194,11 @@ def
 
   tic % start timer on construction
   % set global kernel parameters
-  0
   <<
      /resolution  dt
      /total_num_virtual_procs virtual_processes
      /overwrite_files true
-  >> SetStatus
+  >> SetKernelStatus
 
 
   model    model_params    SetDefaults

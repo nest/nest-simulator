@@ -47,7 +47,7 @@
 /run_model {
    
    ResetKernel
-   0 << /overwrite_files true >> SetStatus
+   << /overwrite_files true >> SetKernelStatus
 
    % expect boolean flag, if true init model, else init node
    % leave voltmeter potential trace and node status dict on stack

@@ -94,7 +94,7 @@ M_ERROR setverbosity
   /syn Set
   
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
 
   % we connect via a parrot neuron, so we can test plastic synapses, too 
   /sg /spike_generator << /spike_times [ 5.0 ] >> Create def
@@ -127,7 +127,7 @@ hpcwithpartner
 {
   /syn Set
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
   /pn /parrot_neuron Create def
   /iaf_neuron 2 << /V_th 100000. >> Create ;
@@ -155,7 +155,7 @@ hpcwithpartner
   /syn Set
   
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
   /pn /parrot_neuron Create def
 
@@ -183,7 +183,7 @@ hpcwithpartner
   /syn Set
   
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
   /pn /parrot_neuron Create def
 
@@ -208,7 +208,7 @@ hpcwithpartner
   /syn Set
   
   ResetKernel
-  0 << /local_num_threads 4 >> SetStatus
+  << /local_num_threads 4 >> SetKernelStatus
   /sg /spike_generator << /spike_times [ 1.0 ] >> Create def
   /pn /parrot_neuron Create def
 

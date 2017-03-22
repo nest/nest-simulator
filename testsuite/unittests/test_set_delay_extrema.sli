@@ -47,12 +47,12 @@
 
   ResetKernel
 
-  0 <<
+  <<
     /resolution h
                                % settings not required but respected:
     /min_delay h               % smallest delay expected by user 
     /max_delay bigdelay 2 mul  % biggest delay expected by user
-  >> SetStatus
+  >> SetKernelStatus
 
   /iaf_neuron Create /neuron1 Set
   neuron1 << /I_e 1450.0 >> SetStatus
@@ -71,6 +71,6 @@
 0.1 AlignedImpact
 
 
-{0 [[/max_delay /min_delay]] get [bigdelay 2 mul h] eq } assert_or_die
+{ GetKernelStatus [[/max_delay /min_delay]] get [bigdelay 2 mul h] eq } assert_or_die
 
 

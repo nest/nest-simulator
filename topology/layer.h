@@ -31,7 +31,6 @@
 // Includes from nestkernel:
 #include "kernel_manager.h"
 #include "nest_types.h"
-#include "subnet.h"
 
 // Includes from sli:
 #include "dictutils.h"

@@ -90,11 +90,12 @@ def help(obj=None, pager=None):
 
     @author graber
     """
-    if obj is not None:
+    hlpobj = obj
+    if hlpobj is not None:
         # sr("/page << /command (%s) >> SetOptions" % pager)
         # sr("/%s help" % obj)
 
-        pdoc(obj, pager)
+        pdoc(hlpobj, pager)
 
     else:
         print("Type 'nest.helpdesk()' to access the online documentation "
@@ -102,7 +103,7 @@ def help(obj=None, pager=None):
         print("Type 'nest.help(object)' to get help on a NEST object or "
               "command.\n")
         print("Type 'nest.Models()' to see a list of available models "
-              "in NEST.\n")
+              "in NEST.")
         print("Type 'nest.authors()' for information about the makers "
               "of NEST.")
         print("Type 'nest.sysinfo()' to see details on the system "

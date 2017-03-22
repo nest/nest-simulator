@@ -426,9 +426,12 @@ def check_nb():
         iptnk = ''
     # test if jupyther notebook
     jpnk = re.findall(r'.*jupyter.*', os.environ['_'])
+    ipjptk = re.findall(r'.*ipython.*', os.environ['_'])
     if iptnk == 'ipython-notebook':
         return True
     elif jpnk:
+        return True
+    elif ipjptk:
         return True
     else:
         return False
@@ -468,7 +471,7 @@ def open_window(objname, hlptxt):
     """ % (objname, hlptxt)))
 
 
-def pdoc(obj, pager):
+def pdoc(hlpobj, pager):
     """Output of doc in python with pager or print
 
     Parameters
@@ -481,8 +484,8 @@ def pdoc(obj, pager):
     @author graber
     """
     helpdir = os.environ['NEST_INSTALL_DIR'] + "/share/doc/nest/help/"
-    objname = obj + '.hlp'
-    htmlname = obj + '.html'
+    objname = hlpobj + '.hlp'
+    htmlname = hlpobj + '.html'
     # @todo more pager
     consolepager = ['less', 'more', 'vi', 'vim', 'nano', 'emacs -nw',
                     'ed', 'editor']

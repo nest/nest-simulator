@@ -406,19 +406,8 @@ def broadcast(item, length, allowed_types, name="item"):
 
 def check_nb():
     """Check if is notebook or not
-
-    Parameters
-    ----------
-       
-
-    To know a little bit more about the environment use:
-
-        jptk = re.findall(r'.*jupyter.*', os.environ['_'])
-        iptk = re.findall(r'.*ipython.*', os.environ['_'])
-
-    @author graber
     """
-    # test if notebook in ipython
+
     try:
         cfg = get_ipython().config
         iptnk = cfg['IPKernelApp']['parent_appname']
@@ -446,9 +435,8 @@ def open_window(objname, hlptxt):
             filename
     hlptxt  :   str
             Full text
-
-    @author graber
     """
+
     hlptxt = json.dumps(hlptxt)
     style = "<style>.modal-body p { display: block;unicode-bidi: embed; " \
             "font-family: monospace; white-space: pre; }</style>"
@@ -476,13 +464,12 @@ def pdoc(hlpobj, pager):
 
     Parameters
     ----------
-    obj : object
+    hlpobj : object
         Object to display
-    ppager: str, optional
+    pager: str, optional
         pager to use, NO if you explicity do not want to use a pager
-
-    @author graber
     """
+
     helpdir = os.environ['NEST_INSTALL_DIR'] + "/share/doc/nest/help/"
     objname = hlpobj + '.hlp'
     htmlname = hlpobj + '.html'

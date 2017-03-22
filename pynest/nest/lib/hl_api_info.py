@@ -68,9 +68,6 @@ def helpdesk():
     @author graber
     """
 
-    # sr("/helpdesk << /command (%s) >> SetOptions" % browser)
-    # sr("helpdesk")
-
     url = os.environ['NEST_DOC_DIR'] + "/help/helpindex.html"
     webbrowser.open_new(url)
 
@@ -87,14 +84,9 @@ def help(obj=None, pager=None):
         Object to display help for
     pager : str, optional
         Pager to use
-
-    @author graber
     """
     hlpobj = obj
     if hlpobj is not None:
-        # sr("/page << /command (%s) >> SetOptions" % pager)
-        # sr("/%s help" % obj)
-
         pdoc(hlpobj, pager)
 
     else:
@@ -125,6 +117,7 @@ def get_argv():
     tuple:
         Argv, as seen by NEST.
     """
+
     sr('statusdict')
     statusdict = spp()
     return statusdict['argv']

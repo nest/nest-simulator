@@ -39,12 +39,11 @@ public:
     , initialized_( false )
   {
   }
-  
+
   RecordingBackendSIONlib( std::string file_ext,
-    long buffer_size,
-    long sion_chunksize,
-    bool sion_collective,
-    bool close_after_simulate )
+			   long buffer_size,
+			   long sion_chunksize,
+			   bool sion_collective)
     : files_()
     , initialized_( false )
   {
@@ -52,7 +51,6 @@ public:
     P_.buffer_size_ = buffer_size;
     P_.sion_chunksize_ = sion_chunksize;
     P_.sion_collective_ = sion_collective;
-    P_.close_after_simulate_ = close_after_simulate;
   }
 
   ~RecordingBackendSIONlib() throw()
@@ -88,11 +86,11 @@ private:
     SIONBuffer();
     SIONBuffer( size_t size );
     ~SIONBuffer();
-    
+
     void reserve( size_t size );
     void ensure_space( size_t size );
     void write( const char* v, size_t n );
-    
+
     size_t get_capacity() {return max_size;};
     size_t get_size() {return ptr;};
     size_t get_free() {return max_size - ptr;};
@@ -146,10 +144,9 @@ private:
   struct Parameters_
   {
     std::string file_ext_;      //!< the file name extension to use, without .
-    bool close_after_simulate_; //!< if true, finalize() shall close the stream
-    bool sion_collective_;      //!< use SIONlib's collective mode .
-    long sion_chunksize_;       //!< the size of SIONlib's buffer .
-    long buffer_size_;          //!< the size of the internal buffer .
+    bool sion_collective_;      //!< use SIONlib's collective mode.
+    long sion_chunksize_;       //!< the size of SIONlib's buffer.
+    long buffer_size_;          //!< the size of the internal buffer.
 
     Parameters_();
 

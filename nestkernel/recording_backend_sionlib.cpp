@@ -183,8 +183,7 @@ nest::RecordingBackendSIONlib::initialize()
 void
 nest::RecordingBackendSIONlib::finalize()
 {
-  if ( P_.close_after_simulate_ )
-    close_files_();
+  close_files_();
 }
 
 void
@@ -545,7 +544,6 @@ nest::RecordingBackendSIONlib::SIONBuffer::operator<<( const T data )
 
 nest::RecordingBackendSIONlib::Parameters_::Parameters_()
   : file_ext_( "sion" )
-  , close_after_simulate_( true )
   , sion_collective_( false )
   , sion_chunksize_( 1 << 18 )
   , buffer_size_( 1024 )
@@ -559,7 +557,6 @@ nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib& 
   ( *d )[ names::buffer_size ] = buffer_size_;
   ( *d )[ names::sion_chunksize ] = sion_chunksize_;
   ( *d )[ names::sion_collective ] = sion_collective_;
-  ( *d )[ names::close_after_simulate ] = close_after_simulate_;
 }
 
 void
@@ -569,7 +566,6 @@ nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib& 
   updateValue< long >( d, names::buffer_size, buffer_size_ );
   updateValue< long >( d, names::sion_chunksize, sion_chunksize_ );
   updateValue< bool >( d, names::sion_collective, sion_collective_ );
-  updateValue< bool >( d, names::close_after_simulate, close_after_simulate_ );
 }
 
 void

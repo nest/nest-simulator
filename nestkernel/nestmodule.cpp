@@ -114,7 +114,7 @@ NestModule::commandstring( void ) const
 
    SeeAlso: CurrentSubnet
 */
-/*
+
 void
 NestModule::ChangeSubnet_iFunction::execute( SLIInterpreter* i ) const
 {
@@ -127,7 +127,7 @@ NestModule::ChangeSubnet_iFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
   i->EStack.pop();
 }
-*/
+
 /* BeginDocumentation
    Name: CurrentSubnet - return the gid of the current network node.
 
@@ -139,7 +139,7 @@ NestModule::ChangeSubnet_iFunction::execute( SLIInterpreter* i ) const
    SeeAlso: ChangeSubnet
    Author: Marc-Oliver Gewaltig
 */
-/*
+
 void
 NestModule::CurrentSubnetFunction::execute( SLIInterpreter* i ) const
 {
@@ -148,7 +148,7 @@ NestModule::CurrentSubnetFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( current );
   i->EStack.pop();
 }
-*/
+
 /* BeginDocumentation
    Name: SetStatus - sets the value of properties of a node, connection, random
    deviate generator or object
@@ -569,7 +569,7 @@ NestModule::RestoreNodes_aFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop();
   i->EStack.pop();
 }
-/*
+
 void
 NestModule::GetNodes_i_D_b_bFunction::execute( SLIInterpreter* i ) const
 {
@@ -622,7 +622,6 @@ NestModule::GetLeaves_i_D_bFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( result );
   i->EStack.pop();
 }
-*/
 
 /* BeginDocumentation
    Name: ResetKernel - Put the simulation kernel back to its initial state.

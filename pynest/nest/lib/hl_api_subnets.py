@@ -213,10 +213,10 @@ def GetChildren(subnets, properties=None, local_only=False):
                     litconv=True)
 
 
-#@check_stack
-#@deprecated('', 'GetNetwork is deprecated and will be removed in Nest 3.0.\
-#Script is responsible for retaining structure information if needed')
-#def GetNetwork(gid, depth):
+@check_stack
+@deprecated('', 'GetNetwork is deprecated and will be removed in Nest 3.0.\
+Script is responsible for retaining structure information if needed')
+def GetNetwork(gid, depth):
     """Return a nested list with the children of subnet id at level
     depth.
 
@@ -237,7 +237,7 @@ def GetChildren(subnets, properties=None, local_only=False):
     ------
     NESTError
     """
-    """
+
     if len(gid) > 1:
         raise NESTError("GetNetwork() expects exactly one GID.")
 
@@ -246,11 +246,10 @@ def GetChildren(subnets, properties=None, local_only=False):
     sr("GetNetwork")
     return spp()
 
-    """
-#@check_stack
-#@deprecated('', 'BeginSubnet is deprecated and will be removed in NEST 3.0. \
-#Use GIDCollection instead.')
-#def BeginSubnet(label=None, params=None):
+@check_stack
+@deprecated('', 'BeginSubnet is deprecated and will be removed in NEST 3.0. \
+Use GIDCollection instead.')
+def BeginSubnet(label=None, params=None):
     """Create a new subnet and change into it.
 
     Parameters
@@ -260,19 +259,18 @@ def GetChildren(subnets, properties=None, local_only=False):
     params : dict, optional
         The customdict of the new subnet
     """
-    """
+
     sn = Create("subnet")
     if label is not None:
         SetStatus(sn, "label", label)
     if params is not None:
         SetStatus(sn, "customdict", params)
     ChangeSubnet(sn)
-    """
 
-#@check_stack
-#@deprecated('', 'EndSubnet is deprecated and will be removed in NEST 3.0. Use \
-#GIDCollection instead.')
-#def EndSubnet():
+@check_stack
+@deprecated('', 'EndSubnet is deprecated and will be removed in NEST 3.0. Use \
+GIDCollection instead.')
+def EndSubnet():
     """Change to the parent subnet and return the gid of the current.
 
     Raises
@@ -280,7 +278,7 @@ def GetChildren(subnets, properties=None, local_only=False):
     NESTError
         Description
     """
-    """
+
     csn = CurrentSubnet()
     parent = GetStatus(csn, "parent")
 
@@ -290,12 +288,12 @@ def GetChildren(subnets, properties=None, local_only=False):
     else:
         raise NESTError(
             "Unexpected EndSubnet(). Cannot go higher than the root node.")
-    """
 
-#@check_stack
-#@deprecated('', 'LayoutNetwork is deprecated and will be removed in NEST 3.0. \
-#Use Create(<model>, n=<number>) instead.')
-#def LayoutNetwork(model, dim, label=None, params=None):
+
+@check_stack
+@deprecated('', 'LayoutNetwork is deprecated and will be removed in NEST 3.0. \
+Use Create(<model>, n=<number>) instead.')
+def LayoutNetwork(model, dim, label=None, params=None):
     """Create a subnetwork of dimension dim with nodes of type model and
     return a list of ids.
 
@@ -319,7 +317,7 @@ def GetChildren(subnets, properties=None, local_only=False):
     ValueError
         Description
     """
-    """
+
     if is_literal(model):
         sps(dim)
         sr('/%s exch LayoutNetwork' % model)
@@ -340,4 +338,3 @@ def GetChildren(subnets, properties=None, local_only=False):
         return gid
     else:
         raise ValueError("model must be a string or a function")
-    """

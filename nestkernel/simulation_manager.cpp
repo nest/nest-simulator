@@ -374,7 +374,7 @@ nest::SimulationManager::get_status( DictionaryDatum& d )
 }
 
 void
-nest::SimulationManager::simulate( Time const& t )
+nest::SimulationManager::prepare()
 {
   assert( kernel().is_initialized() );
 
@@ -386,9 +386,63 @@ nest::SimulationManager::simulate( Time const& t )
   }
 
   t_real_ = 0;
-  t_slice_begin_ = timeval();
-  t_slice_end_ = timeval();
+  t_slice_begin_ = timeval(); // set to timeval{0, 0} as unset flag
+  t_slice_end_ = timeval();   // set to timeval{0, 0} as unset flag
 
+  // find shortest and longest delay across all MPI processes
+  // this call sets the member variables
+  kernel().connection_manager.update_delay_extrema_();
+  kernel().event_delivery_manager.init_moduli();
+
+  // Check for synchronicity of global rngs over processes.
+  // We need to do this ahead of any simulation in case random numbers
+  // have been consumed on the SLI level.
+  if ( kernel().mpi_manager.get_num_processes() > 1 )
+  {
+    if ( not kernel().mpi_manager.grng_synchrony(
+           kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
+    {
+      LOG( M_ERROR,
+        "SimulationManager::prepare",
+        "Global Random Number Generators are not synchronized prior to "
+        "simulation." );
+      throw KernelException();
+    }
+  }
+
+  // if at the beginning of a simulation, set up spike buffers
+  if ( not simulated_ )
+  {
+    kernel().event_delivery_manager.configure_spike_buffers();
+  }
+
+  kernel().node_manager.ensure_valid_thread_local_ids();
+  kernel().node_manager.prepare_nodes();
+
+  kernel().model_manager.create_secondary_events_prototypes();
+
+  // we have to do enter_runtime after prepare_nodes, since we use
+  // calibrate to map the ports of MUSIC devices, which has to be done
+  // before enter_runtime
+  if ( not simulated_ ) // only enter the runtime mode once
+  {
+    double tick = Time::get_resolution().get_ms()
+      * kernel().connection_manager.get_min_delay();
+    kernel().music_manager.enter_runtime( tick );
+  }
+}
+
+void
+nest::SimulationManager::simulate( Time const& t )
+{
+  prepare();
+  run( t );
+  cleanup();
+}
+
+void
+nest::SimulationManager::assert_valid_simtime( Time const& t )
+{
   if ( t == Time::ms( 0.0 ) )
   {
     return;
@@ -397,7 +451,7 @@ nest::SimulationManager::simulate( Time const& t )
   if ( t < Time::step( 1 ) )
   {
     LOG( M_ERROR,
-      "SimulationManager::simulate",
+      "SimulationManager::run",
       String::compose( "Simulation time must be >= %1 ms (one time step).",
            Time::get_resolution().get_ms() ) );
     throw KernelException();
@@ -413,7 +467,7 @@ nest::SimulationManager::simulate( Time const& t )
         "clock first!",
         ( Time::max() - clock_ ).get_ms(),
         t.get_ms() );
-      LOG( M_ERROR, "SimulationManager::simulate", msg );
+      LOG( M_ERROR, "SimulationManager::run", msg );
       throw KernelException();
     }
   }
@@ -423,14 +477,25 @@ nest::SimulationManager::simulate( Time const& t )
       "The requested simulation time exceeds the largest time NEST can handle "
       "(T_max = %1 ms). Please use a shorter time!",
       Time::max().get_ms() );
-    LOG( M_ERROR, "SimulationManager::simulate", msg );
+    LOG( M_ERROR, "SimulationManager::run", msg );
     throw KernelException();
   }
+}
+
+void
+nest::SimulationManager::run( Time const& t )
+{
+  assert_valid_simtime( t );
 
   to_do_ += t.get_steps();
   to_do_total_ = to_do_;
+  assert( to_do_ != 0 );
 
-  const size_t num_active_nodes = prepare_simulation_();
+  // Reset profiling timers and counters within event_delivery_manager
+  kernel().event_delivery_manager.reset_timers_counters();
+
+  // Check whether waveform relaxation is used on any MPI process
+  kernel().node_manager.check_wfr_use();
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If
@@ -456,7 +521,7 @@ nest::SimulationManager::simulate( Time const& t )
   if ( t.get_steps() % kernel().connection_manager.get_min_delay() != 0 )
   {
     LOG( M_WARNING,
-      "SimulationManager::simulate",
+      "SimulationManager::run",
       "The requested simulation time is not an integer multiple of the minimal "
       "delay in the network. This may result in inconsistent results under the "
       "following conditions: (i) A network contains more than one source of "
@@ -465,19 +530,42 @@ nest::SimulationManager::simulate( Time const& t )
       "the minimal delay." );
   }
 
-  resume_( num_active_nodes );
-
-  finalize_simulation_();
+  call_update_();
 }
 
 void
-nest::SimulationManager::resume_( size_t num_active_nodes )
+nest::SimulationManager::cleanup()
+{
+  if ( not simulated_ )
+  {
+    return;
+  }
+
+  // Check for synchronicity of global rngs over processes
+  if ( kernel().mpi_manager.get_num_processes() > 1 )
+  {
+    if ( not kernel().mpi_manager.grng_synchrony(
+           kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
+    {
+      throw KernelException(
+        "In SimulationManager::cleanup(): "
+        "Global Random Number Generators are not "
+        "in sync at end of simulation." );
+    }
+  }
+
+  kernel().node_manager.finalize_nodes();
+}
+
+void
+nest::SimulationManager::call_update_()
 {
   assert( kernel().is_initialized() and not inconsistent_state_ );
 
   std::ostringstream os;
   double t_sim = to_do_ * Time::get_resolution().get_ms();
 
+  size_t num_active_nodes = kernel().node_manager.get_num_active_nodes();
   os << "Number of local nodes: " << num_active_nodes << std::endl;
   os << "Simulaton time (ms): " << t_sim;
 
@@ -497,7 +585,7 @@ nest::SimulationManager::resume_( size_t num_active_nodes )
      << "Not using MPI";
 #endif
 
-  LOG( M_INFO, "SimulationManager::resume", os.str() );
+  LOG( M_INFO, "SimulationManager::start_updating_", os.str() );
 
 
   if ( to_do_ == 0 )
@@ -535,62 +623,6 @@ nest::SimulationManager::resume_( size_t num_active_nodes )
   }
 
   LOG( M_INFO, "SimulationManager::resume", "Simulation finished." );
-}
-
-size_t
-nest::SimulationManager::prepare_simulation_()
-{
-  assert( to_do_ != 0 ); // This is checked in simulate()
-
-  // Reset profiling timers and counters within event_delivery_manager
-  kernel().event_delivery_manager.reset_timers_counters();
-
-  // find shortest and longest delay across all MPI processes
-  // this call sets the member variables
-  kernel().connection_manager.update_delay_extrema_();
-  kernel().event_delivery_manager.init_moduli();
-
-  // Check for synchronicity of global rngs over processes.
-  // We need to do this ahead of any simulation in case random numbers
-  // have been consumed on the SLI level.
-  if ( kernel().mpi_manager.get_num_processes() > 1 )
-  {
-    if ( not kernel().mpi_manager.grng_synchrony(
-           kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
-    {
-      LOG( M_ERROR,
-        "SimulationManager::simulate",
-        "Global Random Number Generators are not synchronized prior to "
-        "simulation." );
-      throw KernelException();
-    }
-  }
-
-  // if at the beginning of a simulation, set up spike buffers
-  if ( not simulated_ )
-  {
-    kernel().event_delivery_manager.configure_spike_buffers();
-  }
-
-  kernel().node_manager.ensure_valid_thread_local_ids();
-  const size_t num_active_nodes = kernel().node_manager.prepare_nodes();
-
-  kernel().model_manager.create_secondary_events_prototypes();
-
-  // Check whether waveform relaxation is used on any MPI process
-  kernel().node_manager.check_wfr_use();
-
-  // we have to do enter_runtime after prepre_nodes, since we use
-  // calibrate to map the ports of MUSIC devices, which has to be done
-  // before enter_runtime
-  if ( not simulated_ ) // only enter the runtime mode once
-  {
-    double tick = Time::get_resolution().get_ms()
-      * kernel().connection_manager.get_min_delay();
-    kernel().music_manager.enter_runtime( tick );
-  }
-
-  return num_active_nodes;
 }
 
 bool
@@ -852,29 +884,6 @@ nest::SimulationManager::update_()
       throw WrappedThreadException( *( exceptions_raised.at( thrd ) ) );
     }
   }
-}
-
-void
-nest::SimulationManager::finalize_simulation_()
-{
-  if ( not simulated_ )
-  {
-    return;
-  }
-
-  // Check for synchronicity of global rngs over processes
-  // TODO: This seems double up, there is such a test at end of simulate()
-  if ( kernel().mpi_manager.get_num_processes() > 1
-    and not kernel().mpi_manager.grng_synchrony(
-          kernel().rng_manager.get_grng()->ulrand( 100000 ) ) )
-  {
-    throw KernelException(
-      "In SimulationManager::simulate(): "
-      "Global Random Number Generators are not "
-      "in sync at end of simulation." );
-  }
-
-  kernel().node_manager.finalize_nodes();
 }
 
 void

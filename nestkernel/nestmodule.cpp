@@ -475,6 +475,83 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
 }
 
 /* BeginDocumentation
+   Name: Run - simulate n milliseconds
+
+   Synopsis:
+   n(int) Run -> -
+
+   Description: Simulate the network for n milliseconds.
+   Call prepare before, and cleanup after.
+   t m mul Simulate = Prepare m { t Run } repeat Cleanup
+
+   Note: Run must only be used after Prepare is called, and
+   before Cleanup to finalize state (close files, etc).
+   Any changes made between Prepare and Cleanup may cause
+   undefined behavior and incorrect results.
+
+   SeeAlso: Simulate, resume, unit_conversion, Prepare, Cleanup
+*/
+void
+NestModule::RunFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  const double time = i->OStack.top();
+
+  run( time );
+
+  i->OStack.pop();
+  i->EStack.pop();
+}
+
+
+/* BeginDocumentation
+   Name: Prepare - prepare the network for a simulation
+
+   Synopsis:
+   Prepare -> -
+
+   Description: sets up network calibration before run is called
+   any number of times
+
+   Note: Run must only be used after Prepare is called, and
+   before Cleanup to finalize state (close files, etc).
+   Any changes made between Prepare and Cleanup may cause
+   undefined behavior and incorrect results.
+
+   SeeAlso: Run, Cleanup, Simulate
+*/
+void
+NestModule::PrepareFunction::execute( SLIInterpreter* i ) const
+{
+  prepare();
+  i->EStack.pop();
+}
+
+/* BeginDocumentation
+   Name: Cleanup - cleanup the network after a simulation
+
+   Synopsis:
+   Cleanup -> -
+
+   Description: tears down a network after run is called
+   any number of times
+
+   Note: Run must only be used after Prepare is called, and
+   before Cleanup to finalize state (close files, etc).
+   Any changes made between Prepare and Cleanup may cause
+   undefined behavior and incorrect results.
+
+   SeeAlso: Run, Prepare, Simulate
+*/
+void
+NestModule::CleanupFunction::execute( SLIInterpreter* i ) const
+{
+  cleanup();
+  i->EStack.pop();
+}
+
+/* BeginDocumentation
    Name: CopyModel - copy a model to a new name, set parameters for copy, if
    given
    Synopsis:
@@ -1643,6 +1720,9 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "cva_C", &cva_cfunction );
 
   i->createcommand( "Simulate_d", &simulatefunction );
+  i->createcommand( "Run_d", &runfunction );
+  i->createcommand( "Prepare", &preparefunction );
+  i->createcommand( "Cleanup", &cleanupfunction );
 
   i->createcommand( "CopyModel_l_l_D", &copymodel_l_l_Dfunction );
   i->createcommand( "SetDefaults_l_D", &setdefaults_l_Dfunction );

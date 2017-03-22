@@ -58,6 +58,7 @@ NodeManager::NodeManager()
   , wfr_nodes_vec_()
   , wfr_is_used_( false )
   , nodes_vec_network_size_( 0 ) // zero to force update
+  , num_active_nodes_( 0 )
 {
 }
 
@@ -776,7 +777,7 @@ NodeManager::prepare_node_( Node* n )
   n->calibrate();
 }
 
-size_t
+void
 NodeManager::prepare_nodes()
 {
   assert( kernel().is_initialized() );
@@ -846,9 +847,8 @@ NodeManager::prepare_nodes()
        << "iterative solution techniques.";
   }
 
+  num_active_nodes_ = num_active_nodes;
   LOG( M_INFO, "NodeManager::prepare_nodes", os.str() );
-
-  return num_active_nodes;
 }
 
 /**

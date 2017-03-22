@@ -28,8 +28,8 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "nodelist.h"
 #include "mpi_manager_impl.h"
+#include "nodelist.h"
 #include "subnet.h"
 
 // Includes from sli:
@@ -259,6 +259,41 @@ simulate( const double& time )
   }
 
   kernel().simulation_manager.simulate( t_sim );
+}
+
+void
+run( const double& time )
+{
+  const Time t_sim = Time::ms( time );
+
+  if ( time < 0 )
+  {
+    throw BadParameter( "The simulation time cannot be negative." );
+  }
+  if ( not t_sim.is_finite() )
+  {
+    throw BadParameter( "The simulation time must be finite." );
+  }
+  if ( not t_sim.is_grid_time() )
+  {
+    throw BadParameter(
+      "The simulation time must be a multiple "
+      "of the simulation resolution." );
+  }
+
+  kernel().simulation_manager.run( t_sim );
+}
+
+void
+prepare()
+{
+  kernel().simulation_manager.prepare();
+}
+
+void
+cleanup()
+{
+  kernel().simulation_manager.cleanup();
 }
 
 void

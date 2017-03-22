@@ -139,6 +139,8 @@ private:
   typedef std::map< thread, FileEntry > file_map;
   file_map files_;
 
+  std::string filename_;
+			   
   double t_start_; // simulation start time for storing
 
   struct Parameters_
@@ -163,6 +165,8 @@ inline void
 RecordingBackendSIONlib::get_status( DictionaryDatum& d ) const
 {
   P_.get( *this, d );
+
+  ( *d )[ names::filename ] = filename_;
 }
 
 } // namespace

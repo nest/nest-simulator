@@ -155,13 +155,7 @@ nest::RecordingBackendSIONlib::initialize()
       file.buffer.reserve( P_.buffer_size_ );
       file.buffer.clear();
 
-      for ( device_map::mapped_type::iterator it = devices_[ task ].begin();
-            it != devices_[ task ].end();
-            ++it )
-      {
-        RecordingDevice& device = it->second.device;
-        device.set_filename( filename );
-      }
+      filename_ = filename;
     }
     catch ( std::exception& e )
     {

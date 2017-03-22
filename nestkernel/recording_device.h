@@ -98,25 +98,12 @@ public:
     return P_.label_;
   }
 
-  const std::string&
-  get_filename() const
-  {
-    return P_.filename_;
-  }
-
-  void
-  set_filename( const std::string& filename )
-  {
-    P_.filename_ = filename;
-  }
-
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
 
 private:
   struct Parameters_
   {
-    std::string filename_; //!< the filename, if recording to a file (read-only)
     std::string label_;    //!< a user-defined label for symbolic device names.
 
     Parameters_();

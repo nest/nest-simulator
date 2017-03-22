@@ -552,6 +552,45 @@ pop pop
 
 {
   << >> begin
+  (Test select all) M_PROGRESS message
+  ResetKernel
+  
+  /iaf_psc_alpha 10 Create
+  { pop true } Select
+  [ 10 ] Range eq
+}
+assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Test select none) M_PROGRESS message
+  ResetKernel
+  
+  /iaf_psc_alpha 10 Create
+  { 50 gt } Select
+  [ ] eq
+}
+assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Test select some) M_PROGRESS message
+  ResetKernel
+  
+  /iaf_psc_alpha 10 Create
+  { 2 mod 0 eq } Select
+  [ 2 4 6 8 10 ] eq
+}
+assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
   (Element membership) M_PROGRESS message
   ResetKernel
 

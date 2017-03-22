@@ -195,9 +195,19 @@ public:
    * Prepare nodes for simulation and register nodes in node_list.
    * Calls prepare_node_() for each pertaining Node.
    * @see prepare_node_()
-   * @returns number of nodes that will be simulated.
    */
-  size_t prepare_nodes();
+  void prepare_nodes();
+
+  /**
+   * Get the number of nodes created by last prepare_nodes() call
+   * @see prepare_nodes()
+   * @return number of active nodes
+   */
+  size_t
+  get_num_active_nodes()
+  {
+    return num_active_nodes_;
+  };
 
   /**
    * Invoke finalize() on nodes registered for finalization.
@@ -292,6 +302,7 @@ private:
                      //!< waveform relaxation
   //! Network size when nodes_vec_ was last updated
   index nodes_vec_network_size_;
+  size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
 };
 
 inline index

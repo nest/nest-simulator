@@ -52,7 +52,7 @@ Here is a suitable BibTeX entry:
 ```
 
 Please get in touch with us about your publications that used NEST, we will
-add them to our [publication list](publications.md), thus making them visible
+add them to our [publication list](http://www.nest-simulator.org/publications/), thus making them visible
 to potential readers.
 
 ## **NEW** Ubuntu 16.04 Live Media with NEST 2.12.0

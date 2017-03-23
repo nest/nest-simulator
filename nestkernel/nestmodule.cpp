@@ -791,7 +791,27 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::PrintNetworkFunction::execute( SLIInterpreter* i ) const
 {
+  // TODO480 Should this be deprecated?
   print_network();
+  std::cout << std::endl;
+  i->EStack.pop();
+}
+
+void
+NestModule::PrintNodesFunction::execute( SLIInterpreter* i ) const
+{
+  print_network();
+  std::cout << std::endl;
+  i->EStack.pop();
+}
+
+void
+NestModule::PrintNodesToStreamFunction::execute( SLIInterpreter* i ) const
+{
+  std::stringstream out;
+  print_network(out);
+
+  i->OStack.push(out.str());
   i->EStack.pop();
 }
 
@@ -1678,6 +1698,8 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "MemoryInfo", &memoryinfofunction );
 
   i->createcommand( "PrintNetwork", &printnetworkfunction );
+  i->createcommand( "PrintNodes", &printnodesfunction );
+  i->createcommand( "PrintNodesToStream", &printnodestostreamfunction );
 
   i->createcommand( "Rank", &rankfunction );
   i->createcommand( "NumProcesses", &numprocessesfunction );

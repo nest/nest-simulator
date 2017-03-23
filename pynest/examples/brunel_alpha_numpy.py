@@ -288,14 +288,16 @@ and the second loop the inhibitory neurons.
 
 for n in range(N_neurons):
     node_list = list(sources_ex[n])
-    params = [{'target': [n + 1.0], 'weight': [J_ex], 'delay': [delay]} for x in node_list]
+    params = [{'target': [n + 1.0],
+               'weight': [J_ex], 'delay': [delay]} for x in node_list]
     # Using DataConnect is a work-around until NEST 3.0 is released. It will
     # issue a deprecation warning
     nest.DataConnect(node_list, params, model='excitatory')
 
 for n in range(N_neurons):
     node_list = list(sources_in[n])
-    params = [{'target': [n + 1.0], 'weight': [J_in], 'delay': [delay]} for x in node_list]
+    params = [{'target': [n + 1.0],
+               'weight': [J_in], 'delay': [delay]} for x in node_list]
     # Using DataConnect is a work-around until NEST 3.0 is released. It will
     # issue a deprecation warning
     nest.DataConnect(node_list, params, model='inhibitory')

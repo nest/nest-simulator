@@ -279,6 +279,16 @@ public:
     void execute( SLIInterpreter* ) const;
   } printnetworkfunction;
 
+  class PrintNodesFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } printnodesfunction;
+
+  class PrintNodesToStreamFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } printnodestostreamfunction;
+
   class RankFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;

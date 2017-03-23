@@ -217,6 +217,14 @@ def Create(model, n=1, params=None):
 
 
 @check_stack
+def PrintNodes():
+    """Print the nodes in the network."""
+
+    sr("PrintNodesToStream")
+    print(spp())
+
+
+@check_stack
 @deprecated('', 'GetLID is deprecated and will be removed in NEST 3.0. Use \
 index into GIDCollection instead.')
 def GetLID(gid):

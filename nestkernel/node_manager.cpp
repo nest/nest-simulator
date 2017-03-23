@@ -734,10 +734,43 @@ NodeManager::check_wfr_use()
 }
 
 void
-NodeManager::print( std::ostream& ) const
+NodeManager::print( std::ostream& out ) const
 {
-  // TODO480
-  throw KernelException( "PrintNetwork is currently not supported." );
+  SparseNodeArray::const_iterator it = local_nodes_.begin();
+
+  index max_gid = size();
+  double max_spaces = std::floor( std::log10( max_gid ) );
+
+  while ( it != local_nodes_.end() )
+  {
+    index first_gid = it->get_gid();
+    modelrange gid_range =
+      kernel().modelrange_manager.get_contiguous_gid_range( first_gid );
+    Model* mod = kernel().modelrange_manager.get_model_of_gid( first_gid );
+    index last_gid = gid_range.get_last_gid();
+
+    std::string beg_spaces(
+      max_spaces - std::floor( std::log10( first_gid ) ), ' ' );
+    if ( last_gid == first_gid )
+    {
+      // ' .. ' = 4 spaces
+      std::string end_spaces( 6 + max_spaces, ' ' );
+      out << beg_spaces << first_gid << end_spaces << mod->get_name();
+    }
+    else
+    {
+      std::string end_spaces(
+        max_spaces - std::floor( std::log10( last_gid ) ) + 1, ' ' );
+      out << beg_spaces << first_gid << " .. " << last_gid << end_spaces
+          << mod->get_name();
+    }
+
+    it += last_gid - first_gid + 1;
+    if ( it != local_nodes_.end() )
+    {
+      out << std::endl;
+    }
+  }
 }
 
 

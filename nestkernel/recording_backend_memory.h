@@ -83,6 +83,11 @@ public:
   void synchronize();
 
   /**
+   * Clear the recorded data for the given RecordingDevice.
+   */
+  void clear( const RecordingDevice& );
+
+  /**
    * Functions to write data to memory.
    */
   void write( const RecordingDevice& device, const Event& event );
@@ -126,9 +131,19 @@ private:
       ( *dd )[ names::times ] = DoubleVectorDatum( new std::vector< double >( times_ ) );
       for ( size_t i = 0; i < extra_data_.size(); ++i )
       {
-        ( *dd )[ extra_data_names_[ i ] ] = DoubleVectorDatum( new std::vector< double >( extra_data_[ i ] ) );;
+        ( *dd )[ extra_data_names_[ i ] ] = DoubleVectorDatum( new std::vector< double >( extra_data_[ i ] ) );
       }
       ( *d )[ names::events ] = dd;
+    }
+
+    void clear()
+    {
+      senders_.clear();
+      times_.clear();
+      for ( size_t i = 0; i < extra_data_.size(); ++i )
+      {
+        extra_data_[ i ].clear();
+      }
     }
 
   private:

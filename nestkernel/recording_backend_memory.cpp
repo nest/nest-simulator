@@ -82,6 +82,17 @@ nest::RecordingBackendMemory::synchronize()
 }
 
 void
+nest::RecordingBackendMemory::clear( const RecordingDevice& device)
+{
+  const thread t = device.get_thread();
+  const index gid = device.get_gid();
+
+  data_map::value_type::const_iterator device_data = data_[ t ].find( gid );
+  assert( device_data != data_[ t ].end() );
+  device_data->second->clear();
+}
+
+void
 nest::RecordingBackendMemory::write( const RecordingDevice& device, const Event& event )
 {
   const thread t = device.get_thread();

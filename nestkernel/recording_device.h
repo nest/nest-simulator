@@ -62,7 +62,6 @@ public:
     //S_ = pr.S_; // TODO: do we need state?
   }
 
-
   void init_buffers()
   {
     Device::init_buffers();

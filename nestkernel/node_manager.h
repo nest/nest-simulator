@@ -210,7 +210,7 @@ public:
   };
 
   /**
-   * Invoke finalize() on nodes registered for finalization.
+   * Invoke finalize() on all nodes.
    */
   void finalize_nodes();
 

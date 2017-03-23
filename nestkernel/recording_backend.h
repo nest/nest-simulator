@@ -51,6 +51,7 @@ public:
     initialized_ = true;
   }
 
+  virtual void post_run_cleanup() {}
   virtual void finalize() = 0;
   virtual void synchronize() = 0;
 

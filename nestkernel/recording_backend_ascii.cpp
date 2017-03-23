@@ -88,6 +88,19 @@ nest::RecordingBackendASCII::initialize_()
 }
 
 void
+nest::RecordingBackendASCII::post_run_cleanup()
+{
+  for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
+    file_map::value_type& inner = files_[t];
+    for ( file_map::value_type::iterator f = inner.begin(); f != inner.end(); ++f )
+    {
+      f->second.second->flush();
+    }
+  }
+}
+
+void
 nest::RecordingBackendASCII::finalize()
 {
   for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )

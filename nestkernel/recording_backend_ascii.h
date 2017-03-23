@@ -70,6 +70,11 @@ public:
   void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
 
   /**
+   * Flush files after a single call to Run
+   */
+  void post_run_cleanup();
+
+  /**
    * Finalize the RecordingBackendASCII after the simulation has finished.
    */
   void finalize();

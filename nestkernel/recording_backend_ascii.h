@@ -70,11 +70,6 @@ public:
   void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
 
   /**
-   * Initialize the RecordingBackendASCII during simulation preparation.
-   */
-  void initialize();
-
-  /**
    * Finalize the RecordingBackendASCII after the simulation has finished.
    */
   void finalize();
@@ -93,6 +88,12 @@ public:
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
+
+protected:
+  /**
+   * Initialize the RecordingBackendASCII during simulation preparation.
+   */
+  void initialize_();
 
 private:
   /**

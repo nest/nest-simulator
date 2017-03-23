@@ -36,6 +36,7 @@ class RecordingBackend
 {
 public:
   RecordingBackend()
+      : initialized_(false)
   {
   }
 
@@ -44,7 +45,12 @@ public:
   virtual void enroll( RecordingDevice& device ) = 0;
   virtual void enroll( RecordingDevice& device, const std::vector< Name >& value_names ) = 0;
 
-  virtual void initialize() = 0;
+  void initialize()
+  {
+    initialize_();
+    initialized_ = true;
+  }
+
   virtual void finalize() = 0;
   virtual void synchronize() = 0;
 
@@ -54,6 +60,10 @@ public:
 
   virtual void set_status( const DictionaryDatum& ) = 0;
   virtual void get_status( DictionaryDatum& ) const = 0;
+protected:
+  virtual void initialize_() = 0;
+
+  bool initialized_;
 };
 
 } // namespace

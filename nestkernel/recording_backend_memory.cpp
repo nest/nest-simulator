@@ -62,7 +62,7 @@ nest::RecordingBackendMemory::enroll( RecordingDevice& device, const std::vector
 }
 
 void
-nest::RecordingBackendMemory::initialize()
+nest::RecordingBackendMemory::initialize_()
 {
 //  // we need to delay the throwing of exceptions to the end of the parallel section
 //  WrappedThreadException* we = NULL;

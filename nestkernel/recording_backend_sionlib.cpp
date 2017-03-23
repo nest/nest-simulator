@@ -80,7 +80,7 @@ nest::RecordingBackendSIONlib::enroll( RecordingDevice& device, const std::vecto
 }
 
 void
-nest::RecordingBackendSIONlib::initialize()
+nest::RecordingBackendSIONlib::initialize_()
 {
   int rank = kernel().mpi_manager.get_rank();
 
@@ -178,6 +178,7 @@ void
 nest::RecordingBackendSIONlib::finalize()
 {
   close_files_();
+  initialized_ = false;
 }
 
 void

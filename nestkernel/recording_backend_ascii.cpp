@@ -81,7 +81,7 @@ nest::RecordingBackendASCII::enroll( RecordingDevice& device, const std::vector<
 }
 
 void
-nest::RecordingBackendASCII::initialize()
+nest::RecordingBackendASCII::initialize_()
 {
   file_map tmp( kernel().vp_manager.get_num_threads() );
   files_.swap( tmp );
@@ -99,6 +99,8 @@ nest::RecordingBackendASCII::finalize()
       delete f->second.second;
     }
   }
+
+  initialized_ = false;
 }
 
 void

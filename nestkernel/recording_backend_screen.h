@@ -59,14 +59,10 @@ public:
   void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
 
   /**
-   * Initialization function. In this case, only floating point precision of the standard output
-   * stream is configured according to the parameters.
-   */
-  void initialize();
-  /**
    * Finalization function. Nothing has to be finalized in case of the RecordingBackendScreen.
    */
   void finalize();
+
   /**
    * Synchronization function called at the end of each time step.
    * Again, the RecordingBackendScreen is not doing anything in this function.
@@ -81,6 +77,13 @@ public:
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
+
+protected:
+  /**
+   * Initialization function. In this case, only floating point precision of the standard output
+   * stream is configured according to the parameters.
+   */
+  void initialize_();
 
 private:
   struct Parameters_

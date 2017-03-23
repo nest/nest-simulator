@@ -36,7 +36,6 @@ class RecordingBackendSIONlib : public RecordingBackend
 public:
   RecordingBackendSIONlib()
     : files_()
-    , initialized_( false )
   {
   }
 
@@ -45,7 +44,6 @@ public:
 			   long sion_chunksize,
 			   bool sion_collective)
     : files_()
-    , initialized_( false )
   {
     P_.file_ext_ = file_ext;
     P_.buffer_size_ = buffer_size;
@@ -60,7 +58,6 @@ public:
   void enroll( RecordingDevice& device );
   void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
 
-  void initialize();
   void finalize();
   void synchronize();
 
@@ -69,6 +66,9 @@ public:
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
+
+protected:
+  void initialize_();
 
 private:
   void close_files_();
@@ -157,8 +157,6 @@ private:
   };
 
   Parameters_ P_;
-
-  bool initialized_;
 };
 
 inline void

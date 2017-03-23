@@ -65,11 +65,6 @@ public:
   void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
 
   /**
-   * Initialize the RecordingBackendMemory during simulation preparation.
-   */
-  void initialize();
-
-  /**
    * Finalize the RecordingBackendMemory after the simulation has finished.
    */
   void finalize();
@@ -85,6 +80,12 @@ public:
    */
   void write( const RecordingDevice& device, const Event& event );
   void write( const RecordingDevice& device, const Event& event, const std::vector< double >& );
+
+protected:
+  /**
+   * Initialize the RecordingBackendMemory during simulation preparation.
+   */
+  void initialize_();
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;

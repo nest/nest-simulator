@@ -40,7 +40,7 @@ public:
   {
   }
 
-  virtual ~RecordingBackend() throw(){};
+  virtual ~RecordingBackend() throw() {}
 
   virtual void enroll( RecordingDevice& device ) = 0;
   virtual void enroll( RecordingDevice& device, const std::vector< Name >& value_names ) = 0;

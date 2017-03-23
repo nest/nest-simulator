@@ -415,6 +415,8 @@ def check_nb():
         iptnk = ''
     # test if jupyther notebook
     jpnk = re.findall(r'.*jupyter.*', os.environ['_'])
+
+    # todo
     ipjptk = re.findall(r'.*ipython.*', os.environ['_'])
     if iptnk == 'ipython-notebook':
         return True
@@ -423,6 +425,13 @@ def check_nb():
     elif ipjptk:
         return True
     else:
+        return False
+
+
+def check_nb():
+    try:
+        return get_ipython().__class__.__name__.startswith('ZMQ')
+    except NameError:
         return False
 
 

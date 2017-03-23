@@ -83,10 +83,10 @@ librandom::GammaRandomDev::unscaled_gamma( RngPtr r ) const
     do
     {
       const double U = r->drand();
-      if ( U == 0 || U == 1 )
+      if ( U == 0 or U == 1 )
       {
-        continue;
-      } // accept guaranteed false
+        continue;  // accept guaranteed false
+      }
       const double V = r->drand();
       const double W = U * ( 1 - U ); // != 0
       const double Y = std::sqrt( bc / W ) * ( U - 0.5 );

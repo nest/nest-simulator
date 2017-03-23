@@ -33,6 +33,8 @@ import subprocess
 import os
 import re
 
+from string import Template
+
 # These variables MUST be set by __init__.py right after importing.
 # There is no safety net, whatsoever.
 sps = spp = sr = pcd = kernel = None
@@ -233,11 +235,11 @@ def stack_checker(f):
         if not get_debug():
             return f(*args, **kwargs)
         else:
-            sr('count')
-            stackload_before = spp()
+            sr
+            stackload_before = spp
             result = f(*args, **kwargs)
-            sr('count')
-            num_leftover_elements = spp() - stackload_before
+            sr
+            num_leftover_elements = spp - stackload_before
             if num_leftover_elements != 0:
                 eargs = (f.__name__, num_leftover_elements)
                 etext = "Function '%s' left %i elements on the stack."
@@ -397,45 +399,21 @@ def broadcast(item, length, allowed_types, name="item"):
     elif len(item) == 1:
         return length * item
     elif len(item) != length:
-        raise TypeError("'%s' must be a single value, a list with " +
-                        "one element or a list with %i elements."
-                        % (name, length))
-
+        raise TypeError("'{0}' must be a single value, a list with " +
+                        "one element or a list with {1} elements.".format(
+                            name, length))
     return item
 
 
-def check_nb():
-    """Check if is notebook or not
-    """
-
-    try:
-        cfg = get_ipython().config
-        iptnk = cfg['IPKernelApp']['parent_appname']
-    except NameError:
-        iptnk = ''
-    # test if jupyther notebook
-    jpnk = re.findall(r'.*jupyter.*', os.environ['_'])
-
-    # todo
-    ipjptk = re.findall(r'.*ipython.*', os.environ['_'])
-    if iptnk == 'ipython-notebook':
-        return True
-    elif jpnk:
-        return True
-    elif ipjptk:
-        return True
-    else:
-        return False
-
-
-def check_nb():
+def __check_nb():
+    """Return true if called from a Jupyter notebook."""
     try:
         return get_ipython().__class__.__name__.startswith('ZMQ')
     except NameError:
         return False
 
 
-def open_window(objname, hlptxt):
+def __show_help_in_modal_window(objname, hlptxt):
     """Open modal window with help text
 
     Parameters
@@ -449,26 +427,28 @@ def open_window(objname, hlptxt):
     hlptxt = json.dumps(hlptxt)
     style = "<style>.modal-body p { display: block;unicode-bidi: embed; " \
             "font-family: monospace; white-space: pre; }</style>"
+    s = Template("""
+       require(
+           ["base/js/dialog"],
+           function(dialog) {
+               dialog.modal({
+                   title: '$jstitle',
+                   body: $jstext,
+                   buttons: {
+                       'close': {}
+                   }
+               });
+           }
+       );
+       """)
 
     from IPython.display import HTML, Javascript, display
     display(HTML(style))
-    display(Javascript("""
-    require(
-        ["base/js/dialog"],
-        function(dialog) {
-            dialog.modal({
-                title: '%s',
-                body: %s,
-                buttons: {
-                    'close': {}
-                }
-            });
-        }
-    );
-    """ % (objname, hlptxt)))
+
+    display(Javascript(s.substitute(jstitle=objname, jstext=hlptxt)))
 
 
-def pdoc(hlpobj, pager):
+def show_help_with_pager(hlpobj, pager):
     """Output of doc in python with pager or print
 
     Parameters
@@ -481,7 +461,6 @@ def pdoc(hlpobj, pager):
 
     helpdir = os.environ['NEST_INSTALL_DIR'] + "/share/doc/nest/help/"
     objname = hlpobj + '.hlp'
-    htmlname = hlpobj + '.html'
     # @todo more pager
     consolepager = ['less', 'more', 'vi', 'vim', 'nano', 'emacs -nw',
                     'ed', 'editor']
@@ -508,16 +487,11 @@ def pdoc(hlpobj, pager):
                 objf = os.path.join(dirpath, objname)
                 fhlp = open(objf, 'r')
                 hlptxt = fhlp.read()
-                fhlp.close()
                 # only for notebook
-                if check_nb():
+                if __check_nb():
                     if pager in consolepager:
-                        htf = os.path.join(dirpath, htmlname)
-                        fht = open(htf, 'r')
-                        htmltxt = fht.read()
-                        fht.close()
                         # only in notebook open modal window
-                        open_window(objname, hlptxt)
+                        __show_help_in_modal_window(objname, hlptxt)
                         break
                     else:
                         proc = subprocess.Popen([pager, objf])
@@ -543,8 +517,8 @@ def get_verbosity():
 
     # Defined in hl_api_helper to avoid circular inclusion problem with
     # hl_api_info.py
-    sr('verbosity')
-    return spp()
+    sr
+    return spp
 
 
 @check_stack
@@ -560,7 +534,7 @@ def set_verbosity(level):
 
     # Defined in hl_api_helper to avoid circular inclusion problem with
     # hl_api_info.py
-    sr("%s setverbosity" % level)
+    sr
 
 
 def model_deprecation_warning(model):

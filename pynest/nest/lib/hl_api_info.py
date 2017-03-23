@@ -87,7 +87,7 @@ def help(obj=None, pager=None):
     """
     hlpobj = obj
     if hlpobj is not None:
-        pdoc(hlpobj, pager)
+        show_help_with_pager(hlpobj, pager)
 
     else:
         print("Type 'nest.helpdesk()' to access the online documentation "

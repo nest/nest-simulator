@@ -1,26 +1,4 @@
 /*
- *  knuthlfg.cpp
- *
- *  This file is part of NEST.
- *
- *  Copyright (C) 2004 The NEST Initiative
- *
- *  NEST is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  NEST is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
-
-/*
  *  Built-in implementation of Knuth's LFG generator.
  *  This code is a C++ adaptation of the code published by Knuth on his
  *  website, http://www-cs-faculty.stanford.edu/~knuth/programs/rng.c,
@@ -106,16 +84,16 @@ librandom::KnuthLFG::ran_start_( long seed )
     ss <<= 1;
     if ( ss >= MM_ )
     {
-      ss -= MM_ - 2;
-    } /* cyclic shift 29 bits */
+      ss -= MM_ - 2;  /* cyclic shift 29 bits */
+    }
   }
   x[ 1 ]++; /* make x[1] (and only x[1]) odd */
   for ( ss = seed & ( MM_ - 1 ), t = TT_ - 1; t; )
   {
     for ( j = KK_ - 1; j > 0; j-- )
     {
-      x[ j + j ] = x[ j ], x[ j + j - 1 ] = 0;
-    } /* "square" */
+      x[ j + j ] = x[ j ], x[ j + j - 1 ] = 0;   /* "square" */
+    }
     for ( j = KK_ + KK_ - 2; j >= KK_; j-- )
     {
       x[ j - ( KK_ - LL_ ) ] = mod_diff_( x[ j - ( KK_ - LL_ ) ], x[ j ] ),
@@ -149,8 +127,8 @@ librandom::KnuthLFG::ran_start_( long seed )
   }
   for ( j = 0; j < 10; j++ )
   {
-    ran_array_( x );
-  } /* warm things up */
+    ran_array_( x );  /* warm things up */
+  }
 
   // mark as needing refill
   next_ = end_;

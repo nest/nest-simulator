@@ -23,6 +23,9 @@
 #ifndef RECORDING_BACKEND_MEMORY_H
 #define RECORDING_BACKEND_MEMORY_H
 
+// Includes from sli:
+#include "arraydatum.h"
+
 #include "recording_backend.h"
 
 namespace nest
@@ -30,12 +33,17 @@ namespace nest
 
 /**
  * Memory specialization of the RecordingBackend interface.
- * Recorded data is written to plain text files on a per-device-per-thread basis.
- * Some formatting options are available to allow some compatibility to legacy NEST output files.
  *
- * RecordingBackendMemory maintains a data structure mapping one file stream to every recording device instance
- * on every thread. Files are opened and inserted into the map during the initialize() call and
- * closed in finalize().
+ * Recorded data is stored in memory on a per-device-per-thread
+ * basis. Setting the /num_events in the status dictionary of an
+ * individual device will wipe the data for that device from memory.
+ *
+ * RecordingBackendMemory maintains a data structure mapping the data
+ * vectors to every recording device instance on every thread. The
+ * basic data structure is initialized during the initialize() call
+ * and closed in finalize(). The concrete data vectors are added to
+ * the basic data structure during the call to enroll(), when the
+ * exact fields are known.
  */
 class RecordingBackendMemory : public RecordingBackend
 {
@@ -52,10 +60,7 @@ public:
   /**
    * RecordingBackendMemory descructor.
    */
-  ~RecordingBackendMemory() throw()
-  {
-    // remaining files are not closed here but should be handled gracefully on NEST shutdown.
-  }
+  ~RecordingBackendMemory() throw();
 
   /**
    * Functions called by all instantiated recording devices to register themselves with their
@@ -69,17 +74,19 @@ public:
    */
   void finalize();
 
+  void get_device_status_( const RecordingDevice& device, DictionaryDatum& ) const;
+
   /**
-   * Trivial synchronization function. The RecordingBackendMemory does not need explicit synchronization after
-   * each time step.
+   * Trivial synchronization function. The RecordingBackendMemory does
+   * not need explicit synchronization after each time step.
    */
   void synchronize();
 
   /**
-   * Functions to write data to file.
+   * Functions to write data to memory.
    */
   void write( const RecordingDevice& device, const Event& event );
-  void write( const RecordingDevice& device, const Event& event, const std::vector< double >& );
+  void write( const RecordingDevice& device, const Event& event, const std::vector< double >& values);
 
 protected:
   /**
@@ -90,10 +97,55 @@ protected:
 
 private:
 
-  // one map for each virtual process,
-  // in turn containing one ostream for everydevice
-  // vp -> (gid -> [device, filestream])
-  typedef std::map< int, std::map< int, std::pair< RecordingDevice*, std::vector< double > > > > data_map;
+  class Recordings {
+  public:
+    Recordings(const std::vector< Name >& extra_data_names)
+	: extra_data_names_(extra_data_names)
+    {
+    }
+
+    void push_back(index sender, double time)
+    {
+      senders_.push_back( sender );
+      times_.push_back( time );
+    }
+
+    void push_back(index sender, double time, const std::vector< double >& values)
+    {
+      push_back( sender, time );
+      for ( size_t i = 0; i < values.size(); ++i )
+      {
+        extra_data_[ i ].push_back( values[ i ] );
+      }
+    }
+
+    void get_status( DictionaryDatum& d ) const
+    {
+      DictionaryDatum dd( new Dictionary() );
+      ( *dd )[ names::senders ] = IntVectorDatum( new std::vector< long >( senders_ ) );
+      ( *dd )[ names::times ] = DoubleVectorDatum( new std::vector< double >( times_ ) );
+      for ( size_t i = 0; i < extra_data_.size(); ++i )
+      {
+        ( *dd )[ extra_data_names_[ i ] ] = DoubleVectorDatum( new std::vector< double >( extra_data_[ i ] ) );;
+      }
+      ( *d )[ names::events ] = dd;
+    }
+
+  private:
+    Recordings();
+
+    std::vector< long > senders_;     //!< the gids of the senders of the data
+    std::vector< double > times_;      //!< the
+    std::vector< std::vector< double > > extra_data_;
+    std::vector< Name > extra_data_names_;
+  };
+
+  /**
+   * A map for the data. We have a vector with one map per
+   * local thread. The map associates the gid of a device on a given
+   * thread with its recordings.
+  */
+  typedef std::vector< std::map< size_t, Recordings* > > data_map;
   data_map data_;
 };
 

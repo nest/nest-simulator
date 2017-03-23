@@ -29,6 +29,20 @@
 
 #include "recording_backend_memory.h"
 
+
+nest::RecordingBackendMemory::~RecordingBackendMemory() throw()
+{
+  for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
+    data_map::value_type& inner = data_[t];
+    for ( data_map::value_type::iterator d = inner.begin(); d != inner.end(); ++d )
+    {
+      delete d->second;
+    }
+  }
+}
+
+
 void
 nest::RecordingBackendMemory::enroll( RecordingDevice& device )
 {
@@ -37,258 +51,29 @@ nest::RecordingBackendMemory::enroll( RecordingDevice& device )
 }
 
 void
-nest::RecordingBackendMemory::enroll( RecordingDevice& device, const std::vector< Name >&  )
+nest::RecordingBackendMemory::enroll( RecordingDevice& device, const std::vector< Name >& value_names )
 {
-//  const int task = device.get_vp();
-//  const int gid = device.get_gid();
-//
-//#pragma omp critical
-//  {
-//    // Check if the map already contains a submap for the task the device is instantiated on. Create
-//    // it if that is not the case.
-//    if ( files_.find( task ) == files_.end() )
-//    {
-//      files_.insert( std::make_pair( task, file_map::mapped_type() ) );
-//    }
-//  }
-//
-//  // Insert the device with a newly created file stream into the thread-local map.
-//  // Devices can not be enrolled more than once.
-//  //assert( files_[ task ].find( gid ) == files_[ task ].end() );
-//  if ( files_[ task ].find( gid ) == files_[ task ].end() )
-//  {
-//    files_[ task ].insert( std::make_pair( gid, std::make_pair( &device, new std::ofstream() ) ) );
-//  }
+  const int t = device.get_thread();
+  const int gid = device.get_gid();
+
+  // Ensure that a device is only enrolled once.
+  assert(data_[ t ].find( gid ) == data_[ t ].end() );
+
+  data_[ t ].insert( std::make_pair( gid, new Recordings( value_names ) ) );
 }
 
 void
 nest::RecordingBackendMemory::initialize_()
 {
-//  // we need to delay the throwing of exceptions to the end of the parallel section
-//  WrappedThreadException* we = NULL;
-//
-//#pragma omp parallel
-//  {
-//    thread t = kernel().vp_manager.get_thread_id();
-//    thread task = kernel().vp_manager.thread_to_vp( t );
-//
-//    try
-//    {
-//#pragma omp critical
-//      {
-//        // Insert an empty map to guarantee its existance and allow simpler handling at later
-//        // points.
-//        if ( files_.find( task ) == files_.end() )
-//        {
-//          files_.insert( std::make_pair( task, file_map::mapped_type() ) );
-//        }
-//      }
-//#pragma omp barrier
-//
-//      // extract the inner map (containing the registered devices) for the specific VP
-//      typedef file_map::mapped_type inner_map;
-//      inner_map inner = files_.find( task )->second;
-//
-//      // iterate over registed devices and their corresponding file streams
-//      for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )
-//      {
-//        //int gid = jj->first;
-//        std::ofstream& file = *( jj->second.second );
-//        RecordingDevice& device = *( jj->second.first );
-//
-//        // initialize file according to parameters
-//        std::string filename;
-//
-//        // do we need to (re-)open the file
-//        bool newfile = false;
-//
-//        if ( !file.is_open() )
-//        {
-//          newfile = true; // no file from before
-//          filename = build_filename_( device );
-//          device.set_filename( filename );
-//        }
-//        else
-//        {
-//          std::string newname = build_filename_( device );
-//          if ( newname != device.get_filename() )
-//          {
-//#ifndef NESTIO
-//            std::string msg = String::compose(
-//              "Closing file '%1', opening file '%2'", device.get_filename(), newname );
-//            LOG( M_INFO, "RecordingDevice::calibrate()", msg );
-//#endif // NESTIO
-//
-//            file.close(); // close old file
-//            device.set_filename( newname );
-//            newfile = true;
-//          }
-//        }
-//
-//        if ( newfile )
-//        {
-//          assert( !file.is_open() );
-//          if ( kernel().io_manager.overwrite_files() )
-//          {
-//            file.open( filename.c_str() );
-//          }
-//          else
-//          {
-//            // try opening for reading
-//            std::ifstream test( filename.c_str() );
-//            if ( test.good() )
-//            {
-//#ifndef NESTIO
-//              std::string msg = String::compose(
-//                "The device file '%1' exists already and will not be overwritten. "
-//                "Please change data_path, data_prefix or label, or set /overwrite_files "
-//                "to true in the root node.",
-//                filename );
-//              LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
-//#endif // NESTIO
-//              throw IOError();
-//            }
-//            else
-//              test.close();
-//
-//            // file does not exist, so we can open
-//            file.open( filename.c_str() );
-//          }
-//
-//          if ( P_.fbuffer_size_ != P_.fbuffer_size_old_ )
-//          {
-//            if ( P_.fbuffer_size_ == 0 )
-//              file.rdbuf()->pubsetbuf( 0, 0 );
-//            else
-//            {
-//              std::vector< char >* buffer = new std::vector< char >( P_.fbuffer_size_ );
-//              file.rdbuf()->pubsetbuf(
-//                reinterpret_cast< char* >( &buffer[ 0 ] ), P_.fbuffer_size_ );
-//            }
-//
-//            P_.fbuffer_size_old_ = P_.fbuffer_size_;
-//          }
-//        }
-//
-//        if ( !file.good() )
-//        {
-//#ifndef NESTIO
-//          std::string msg = String::compose(
-//            "I/O error while opening file '%1'. "
-//            "This may be caused by too many open files in networks "
-//            "with many recording devices and threads.",
-//            filename );
-//          LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
-//#endif // NESTIO
-//
-//          if ( file.is_open() )
-//            file.close();
-//          filename.clear();
-//          throw IOError();
-//        }
-//
-//        /* Set formatting */
-//        file << std::fixed;
-//        file << std::setprecision( P_.precision_ );
-//
-//        if ( P_.fbuffer_size_ != P_.fbuffer_size_old_ )
-//        {
-//#ifndef NESTIO
-//          std::string msg = String::compose(
-//            "Cannot set file buffer size, as the file is already "
-//            "openeded with a buffer size of %1. Please close the "
-//            "file first.",
-//            P_.fbuffer_size_old_ );
-//          LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
-//#endif // NESTIO
-//          throw IOError();
-//        }
-//      }
-//    }
-//    catch ( std::exception& e )
-//    {
-//#pragma omp critical
-//      if ( !we )
-//        we = new WrappedThreadException( e );
-//    }
-//  } // parallel
-//
-//  // check if any exceptions have been raised
-//  if ( we )
-//  {
-//    WrappedThreadException wec( *we );
-//    delete we;
-//    throw wec;
-//  }
+  data_map tmp( kernel().vp_manager.get_num_threads() );
+  data_.swap( tmp );
 }
 
 void
 nest::RecordingBackendMemory::finalize()
 {
-//  // we need to delay the throwing of exceptions to the end of the parallel section
-//  WrappedThreadException* we = NULL;
-//
-//#pragma omp parallel
-//  {
-//    thread t = kernel().vp_manager.get_thread_id();
-//    thread task = kernel().vp_manager.thread_to_vp( t );
-//
-//    try
-//    {
-//      // guarantee that we have initialized the inner map
-//      assert( ( files_.find( task ) != files_.end() ) && "initialize() has not been called" );
-//
-//      // extract the inner map (containing the registered devices) for the specific VP
-//      typedef file_map::mapped_type inner_map;
-//      inner_map inner = files_[ task ];
-//      // iterate over registed devices and their corresponding file streams
-//      for ( inner_map::iterator jj = inner.begin(); jj != inner.end(); ++jj )
-//      {
-//        //int gid = jj->first;
-//        std::ofstream& file = *( jj->second.second );
-//        RecordingDevice& device = *( jj->second.first );
-//
-//        if ( file.is_open() )
-//        {
-//          if ( P_.close_after_simulate_ )
-//          {
-//            file.close();
-//          }
-//          else
-//          {
-//            if ( P_.flush_after_simulate_ )
-//              file.flush();
-//
-//            // FIXME: can this ever happen / does the message make sense?
-//            if ( !file.good() )
-//            {
-//#ifndef NESTIO
-//              std::string msg =
-//                String::compose( "I/O error while closing file '%1'", device.get_filename() );
-//              LOG( M_ERROR, "RecordingDevice::finalize()", msg );
-//#endif // NESTIO
-//
-//              throw IOError();
-//            }
-//          }
-//        }
-//      }
-//    }
-//    catch ( std::exception& e )
-//    {
-//#pragma omp critical
-//      if ( !we )
-//        we = new WrappedThreadException( e );
-//    }
-//  } // parallel
-//
-//  // check if any exceptions have been raised
-//  if ( we )
-//  {
-//    WrappedThreadException wec( *we );
-//    delete we;
-//    throw wec;
-//  }
+  // don't set initialized_ to false here, as collected data is still valid until
+  // the next run of Simulate()
 }
 
 void
@@ -299,15 +84,14 @@ nest::RecordingBackendMemory::synchronize()
 void
 nest::RecordingBackendMemory::write( const RecordingDevice& device, const Event& event )
 {
-//  int vp = device.get_vp();
-//  int id = device.get_gid();
-//
-//  const index sender = event.get_sender_gid();
-//  const Time stamp = event.get_stamp();
-//  const double offset = event.get_offset();
-//
-//  std::ofstream& file = *( files_[ vp ][ id ].second );
-//  file << sender << "\t" << stamp.get_ms() - offset << "\n";
+  const thread t = device.get_thread();
+  const index gid = device.get_gid();
+
+  const index sender = event.get_sender_gid();
+  const Time stamp = event.get_stamp();
+  const double offset = event.get_offset();
+
+  data_[ t ][ gid ]->push_back(sender, stamp.get_ms() - offset);
 }
 
 void
@@ -315,30 +99,24 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& values )
 {
-//  int vp = device.get_vp();
-//  int id = device.get_gid();
-//
-//  const index sender = event.get_sender_gid();
-//  const Time stamp = event.get_stamp();
-//  const double offset = event.get_offset();
-//
-//  std::ofstream& file = *( files_[ vp ][ id ].second );
-//  file << sender << "\t" << stamp.get_ms() - offset;
-//
-//  for ( std::vector< double >::const_iterator val = values.begin(); val != values.end(); ++val )
-//  {
-//    file << "\t" << *val;
-//  }
-//
-//  file << "\n";
+  const thread t = device.get_thread();
+  const index gid = device.get_gid();
+
+  const index sender = event.get_sender_gid();
+  const Time stamp = event.get_stamp();
+  const double offset = event.get_offset();
+
+  data_[ t ][ gid ]->push_back(sender, stamp.get_ms() - offset, values);
 }
 
+
 void
-nest::RecordingBackendMemory::set_status( const DictionaryDatum& d )
+nest::RecordingBackendMemory::get_device_status_( const RecordingDevice& device, DictionaryDatum& d ) const
 {
-//  Parameters_ ptmp = P_; // temporary copy in case of errors
-//  ptmp.set( *this, d );  // throws if BadProperty
-//
-//  // if we get here, temporaries contain consistent set of properties
-//  P_ = ptmp;
+  const thread t = device.get_thread();
+  const index gid = device.get_gid();
+
+  data_map::value_type::const_iterator device_data = data_[ t ].find( gid );
+  assert( device_data != data_[ t ].end() );
+  device_data->second->get_status(d);
 }

@@ -177,3 +177,52 @@ ResetKernel
   Last /target get 6 eq assert_or_die
 
 } forall
+
+(Running Connect tests with illegal combinations) =
+ResetKernel
+/generator /poisson_generator Create def
+/multimeter /multimeter Create def
+/recordable /iaf_psc_alpha Create def
+
+{
+  generator generator Connect
+} fail_or_die
+
+% removing items on stack
+pop pop pop pop
+
+{
+  generator multimeter Connect
+} fail_or_die
+
+% removing items on stack
+pop pop pop pop
+
+{
+  % recordable -> multimeter 
+  recordable multimeter Connect
+} fail_or_die
+
+% removing items on stack
+pop pop pop pop
+
+{
+  recordable generator Connect
+} fail_or_die
+
+% removing items on stack
+pop pop pop pop
+
+{
+  multimeter multimeter Connect
+} fail_or_die
+
+% removing items on stack
+pop pop pop pop
+
+{
+  multimeter generator Connect
+} fail_or_die
+
+% removing items on stack
+pop pop pop pop

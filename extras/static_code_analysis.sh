@@ -51,7 +51,7 @@ PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
 PEP8_IGNORES_TOPO_MANUAL="${PEP8_IGNORES_EXAMPLES},E265"
 
 # Drop files that should not be checked (space-separated list).
-FILES_TO_IGNORE="libnestutil/sparsetable.h"
+FILES_TO_IGNORE="libnestutil/compose.hpp libnestutil/hashtable-common.h libnestutil/libc_allocator_with_realloc.h libnestutil/sparseconfig.h libnestutil/sparsetable.h libnestutil/template_util.h libnestutil/type_traits.h"
 
 # Print a message.
 # The format of the message depends on whether the script is executed on Travis CI or runs local.

@@ -71,7 +71,7 @@ struct is_floating_point;
 template < class T >
 struct is_pointer;
 // MSVC can't compile this correctly, and neither can gcc 3.3.5 (at least)
-#if not defined( _MSC_VER ) && not( defined( __GNUC__ ) && __GNUC__ <= 3 )
+#if !defined( _MSC_VER ) && !( defined( __GNUC__ ) && __GNUC__ <= 3 )
 // is_enum uses is_convertible, which is not available on MSVC.
 template < class T >
 struct is_enum;
@@ -102,7 +102,7 @@ template < class T >
 struct remove_pointer;
 template < class T, class U >
 struct is_same;
-#if not defined( _MSC_VER ) && not( defined( __GNUC__ ) && __GNUC__ <= 3 )
+#if !defined( _MSC_VER ) && !( defined( __GNUC__ ) && __GNUC__ <= 3 )
 template < class From, class To >
 struct is_convertible;
 #endif
@@ -245,7 +245,7 @@ struct is_pointer< const volatile T > : is_pointer< T >
 {
 };
 
-#if not defined( _MSC_VER ) && not( defined( __GNUC__ ) && __GNUC__ <= 3 )
+#if !defined( _MSC_VER ) && !( defined( __GNUC__ ) && __GNUC__ <= 3 )
 
 namespace internal
 {
@@ -290,11 +290,10 @@ struct is_enum_impl< true, T > : false_type
 // because it can't be used with some types (e.g. void or classes with
 // inaccessible conversion operators).
 template < class T >
-struct is_enum
-  : internal::is_enum_impl< is_same< T, void >::value || is_integral< T >::value
-        || is_floating_point< T >::value || is_reference< T >::value
-        || internal::is_class_or_union< T >::value,
-      T >
+struct is_enum : internal::is_enum_impl< is_same< T, void >::value || is_integral< T >::value
+                     || is_floating_point< T >::value || is_reference< T >::value
+                     || internal::is_class_or_union< T >::value,
+                   T >
 {
 };
 
@@ -331,7 +330,7 @@ struct is_reference< T& > : true_type
 template < class T >
 struct is_pod : integral_constant< bool,
                   ( is_integral< T >::value || is_floating_point< T >::value ||
-#if not defined( _MSC_VER ) && not( defined( __GNUC__ ) && __GNUC__ <= 3 )
+#if !defined( _MSC_VER ) && !( defined( __GNUC__ ) && __GNUC__ <= 3 )
                                      // is_enum is not available on MSVC.
                                      is_enum< T >::value ||
 #endif
@@ -364,8 +363,7 @@ struct has_trivial_constructor : is_pod< T >
 template < class T, class U >
 struct has_trivial_constructor< std::pair< T, U > >
   : integral_constant< bool,
-      ( has_trivial_constructor< T >::value
-                         && has_trivial_constructor< U >::value ) >
+      ( has_trivial_constructor< T >::value && has_trivial_constructor< U >::value ) >
 {
 };
 template < class A, int N >
@@ -388,8 +386,7 @@ struct has_trivial_copy : is_pod< T >
 };
 template < class T, class U >
 struct has_trivial_copy< std::pair< T, U > >
-  : integral_constant< bool,
-      ( has_trivial_copy< T >::value && has_trivial_copy< U >::value ) >
+  : integral_constant< bool, ( has_trivial_copy< T >::value && has_trivial_copy< U >::value ) >
 {
 };
 template < class A, int N >
@@ -411,8 +408,7 @@ struct has_trivial_assign : is_pod< T >
 };
 template < class T, class U >
 struct has_trivial_assign< std::pair< T, U > >
-  : integral_constant< bool,
-      ( has_trivial_assign< T >::value && has_trivial_assign< U >::value ) >
+  : integral_constant< bool, ( has_trivial_assign< T >::value && has_trivial_assign< U >::value ) >
 {
 };
 template < class A, int N >
@@ -432,8 +428,7 @@ struct has_trivial_destructor : is_pod< T >
 template < class T, class U >
 struct has_trivial_destructor< std::pair< T, U > >
   : integral_constant< bool,
-      ( has_trivial_destructor< T >::value
-                         && has_trivial_destructor< U >::value ) >
+      ( has_trivial_destructor< T >::value && has_trivial_destructor< U >::value ) >
 {
 };
 template < class A, int N >
@@ -469,8 +464,7 @@ struct remove_volatile< T volatile >
 template < typename T >
 struct remove_cv
 {
-  typedef
-    typename remove_const< typename remove_volatile< T >::type >::type type;
+  typedef typename remove_const< typename remove_volatile< T >::type >::type type;
 };
 
 
@@ -535,7 +529,7 @@ struct is_same< T, T > : public true_type
 };
 
 // Specified by TR1 [4.6] Relationships between types
-#if not defined( _MSC_VER ) && not( defined( __GNUC__ ) && __GNUC__ <= 3 )
+#if !defined( _MSC_VER ) && !( defined( __GNUC__ ) && __GNUC__ <= 3 )
 namespace internal
 {
 
@@ -559,10 +553,9 @@ struct ConvertHelper
 
 // Inherits from true_type if From is convertible to To, false_type otherwise.
 template < typename From, typename To >
-struct is_convertible
-  : integral_constant< bool,
-      sizeof( internal::ConvertHelper< From, To >::Test(
-        internal::ConvertHelper< From, To >::Create() ) ) == sizeof( small_ ) >
+struct is_convertible : integral_constant< bool,
+                          sizeof( internal::ConvertHelper< From, To >::Test(
+                            internal::ConvertHelper< From, To >::Create() ) ) == sizeof( small_ ) >
 {
 };
 #endif

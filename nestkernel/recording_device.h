@@ -304,6 +304,11 @@ public:
   /**
    * Flush output stream if requested.
    */
+  void post_run_cleanup();
+  
+  /**
+   * Close output stream if requested.
+   */
   void finalize();
 
   /**
@@ -502,7 +507,7 @@ private:
     std::string file_ext_; //!< the file name extension to use, without .
     std::string filename_; //!< the filename, if recording to a file (read-only)
     bool close_after_simulate_; //!< if true, finalize() shall close the stream
-    bool flush_after_simulate_; //!< if true, finalize() shall flush the stream
+    bool flush_after_simulate_; //!< if true, post_run_cleanup() shall flush the stream
     bool flush_records_;        //!< if true, flush stream after each output
     bool close_on_reset_;       //!< if true, close stream in init_buffers()
 

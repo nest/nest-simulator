@@ -84,7 +84,7 @@ register_logger_client( const deliver_logging_event_ptr client_callback )
 }
 
 void
-print_network( std::ostream& ostr )
+print_nodes_to_stream( std::ostream& ostr )
 {
   kernel().node_manager.print( ostr );
 }

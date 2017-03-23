@@ -792,7 +792,7 @@ void
 NestModule::PrintNetworkFunction::execute( SLIInterpreter* i ) const
 {
   // TODO480 Should this be deprecated?
-  print_network();
+  print_nodes_to_stream();
   std::cout << std::endl;
   i->EStack.pop();
 }
@@ -800,7 +800,7 @@ NestModule::PrintNetworkFunction::execute( SLIInterpreter* i ) const
 void
 NestModule::PrintNodesFunction::execute( SLIInterpreter* i ) const
 {
-  print_network();
+  print_nodes_to_stream();
   std::cout << std::endl;
   i->EStack.pop();
 }
@@ -809,7 +809,7 @@ void
 NestModule::PrintNodesToStreamFunction::execute( SLIInterpreter* i ) const
 {
   std::stringstream out;
-  print_network(out);
+  print_nodes_to_stream(out);
 
   i->OStack.push(out.str());
   i->EStack.pop();

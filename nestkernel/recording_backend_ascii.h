@@ -126,7 +126,7 @@ private:
    *
    * vp -> ( gid -> [file_name, file_stream] )
   */
-  typedef std::vector< std::map< int, std::pair< std::string, std::ofstream* > > > file_map;
+  typedef std::vector< std::map< size_t, std::pair< std::string, std::ofstream* > > > file_map;
   file_map files_;
 };
 

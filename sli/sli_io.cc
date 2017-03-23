@@ -545,7 +545,7 @@ StrFunction::execute( SLIInterpreter* i ) const
     }
     else
     {
-      i->raiseerror( i->BadIOError );  // new style more throw like
+      i->raiseerror( i->BadIOError ); // new style more throw like
     }
   }
   else

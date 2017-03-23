@@ -84,7 +84,7 @@ librandom::KnuthLFG::ran_start_( long seed )
     ss <<= 1;
     if ( ss >= MM_ )
     {
-      ss -= MM_ - 2;  /* cyclic shift 29 bits */
+      ss -= MM_ - 2; /* cyclic shift 29 bits */
     }
   }
   x[ 1 ]++; /* make x[1] (and only x[1]) odd */
@@ -92,7 +92,7 @@ librandom::KnuthLFG::ran_start_( long seed )
   {
     for ( j = KK_ - 1; j > 0; j-- )
     {
-      x[ j + j ] = x[ j ], x[ j + j - 1 ] = 0;   /* "square" */
+      x[ j + j ] = x[ j ], x[ j + j - 1 ] = 0; /* "square" */
     }
     for ( j = KK_ + KK_ - 2; j >= KK_; j-- )
     {
@@ -127,7 +127,7 @@ librandom::KnuthLFG::ran_start_( long seed )
   }
   for ( j = 0; j < 10; j++ )
   {
-    ran_array_( x );  /* warm things up */
+    ran_array_( x ); /* warm things up */
   }
 
   // mark as needing refill

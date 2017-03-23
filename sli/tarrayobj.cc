@@ -552,7 +552,7 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
     {
       if ( to->p )
       {
-    	// deleting NULL pointer is safe in ISO C++
+        // deleting NULL pointer is safe in ISO C++
         to->p->removeReference();
       }
       to->p = from->p; // move
@@ -566,7 +566,7 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
       --last;           // right of it, we explicitly delete the
       if ( last->p )
       {
-    	// elements which are still intact
+        // elements which are still intact
         last->p->removeReference();
       }
       last->p = NULL; // after the move above.

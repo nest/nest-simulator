@@ -907,17 +907,17 @@ Processes::SetNonblockFunction::execute( SLIInterpreter* i ) const
   int flags = fcntl( fd, F_GETFL );
   if ( flags == -1 )
   {
-    i->raiseerror( systemerror( i ) );  // an error occured!
+    i->raiseerror( systemerror( i ) ); // an error occured!
   }
 
   // modify flags to the new value:
   if ( *newflag_d )
   {
-    flags |= O_NONBLOCK;  // set the flag
+    flags |= O_NONBLOCK; // set the flag
   }
   else
   {
-    flags &= ~O_NONBLOCK;  // erase the flag
+    flags &= ~O_NONBLOCK; // erase the flag
   }
 
   // Set new filestatus-flags:

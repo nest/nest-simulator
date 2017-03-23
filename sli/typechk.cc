@@ -201,7 +201,7 @@ TypeTrie::getalternative( TypeTrie::TypeNode* pos, const Name& type )
     }
     else
     {
-      pos = pos->alt;  // pos->alt is always defined here.
+      pos = pos->alt; // pos->alt is always defined here.
     }
   }
 

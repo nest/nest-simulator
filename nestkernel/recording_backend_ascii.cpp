@@ -109,14 +109,14 @@ nest::RecordingBackendASCII::synchronize()
 void
 nest::RecordingBackendASCII::write( const RecordingDevice& device, const Event& event )
 {
-  int vp = device.get_vp();
-  int id = device.get_gid();
+  int t = device.get_thread();
+  int gid = device.get_gid();
 
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
 
-  std::ofstream& file = *( files_[ vp ][ id ].second );
+  std::ofstream& file = *( files_[ t ][ gid ].second );
   file << sender << "\t" << stamp.get_ms() - offset << "\n";
 }
 
@@ -125,14 +125,14 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& values )
 {
-  int vp = device.get_vp();
-  int id = device.get_gid();
+  int t = device.get_thread();
+  int gid = device.get_gid();
 
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
 
-  std::ofstream& file = *( files_[ vp ][ id ].second );
+  std::ofstream& file = *( files_[ t ][ gid ].second );
   file << sender << "\t" << stamp.get_ms() - offset;
 
   for ( std::vector< double >::const_iterator val = values.begin(); val != values.end(); ++val )

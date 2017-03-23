@@ -87,8 +87,6 @@ protected:
    */
   void initialize_();
 
-  void set_status( const DictionaryDatum& );
-  void get_status( DictionaryDatum& ) const;
 
 private:
 
@@ -98,12 +96,6 @@ private:
   typedef std::map< int, std::map< int, std::pair< RecordingDevice*, std::vector< double > > > > data_map;
   data_map data_;
 };
-
-inline void
-RecordingBackendMemory::get_status( DictionaryDatum& d ) const
-{
-//  P_.get( *this, d );
-}
 
 } // namespace
 

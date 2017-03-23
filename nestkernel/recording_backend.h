@@ -61,8 +61,26 @@ public:
   virtual void set_status( const DictionaryDatum& ) {};
   virtual void get_status( DictionaryDatum& ) const {};
 
+  void set_device_status( const RecordingDevice& device, const DictionaryDatum& d)
+  {
+    if (initialized_)
+    {
+      set_device_status_(device, d);
+    }
+  }
+
+  void get_device_status( const RecordingDevice& device, DictionaryDatum& d) const
+  {
+    if (initialized_)
+    {
+      get_device_status_(device, d);
+    }
+  }
+
 protected:
   virtual void initialize_() = 0;
+  virtual void set_device_status_( const RecordingDevice& device, const DictionaryDatum& ) {}
+  virtual void get_device_status_( const RecordingDevice& device, DictionaryDatum& ) const {}
 
   bool initialized_;
 };

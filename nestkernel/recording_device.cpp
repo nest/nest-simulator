@@ -22,15 +22,19 @@
 
 #include "recording_device.h"
 
+#include "kernel_manager.h"
+
 nest::RecordingDevice::Parameters_::Parameters_()
   : label_()
 {
 }
 
 void
-nest::RecordingDevice::Parameters_::get( const RecordingDevice&, DictionaryDatum& d ) const
+nest::RecordingDevice::Parameters_::get( const RecordingDevice& device, DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
+
+  kernel().io_manager.get_backend()->get_device_status(device, d);
 }
 
 void

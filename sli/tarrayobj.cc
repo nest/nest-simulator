@@ -281,8 +281,9 @@ TokenArrayObj::erase( Token* first, Token* last )
   {
     if ( to->p )
     {
+      // deleting NULL pointer is safe in ISO C++
       to->p->removeReference();
-    }                // deleting NULL pointer is safe in ISO C++
+    }
     to->p = from->p; // move
     from->p = NULL;  // might be overwritten or not
     ++from;
@@ -294,8 +295,9 @@ TokenArrayObj::erase( Token* first, Token* last )
     --last;           // right of it, we explicitly delete the
     if ( last->p )
     {
+      // elements which are still intact
       last->p->removeReference();
-    }               // elements which are still intact
+    }
     last->p = NULL; // after the move above.
   }
 
@@ -550,8 +552,9 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
     {
       if ( to->p )
       {
+    	// deleting NULL pointer is safe in ISO C++
         to->p->removeReference();
-      }                // deleting NULL pointer is safe in ISO C++
+      }
       to->p = from->p; // move
       from->p = NULL;  // might be overwritten or not
       ++from;
@@ -563,8 +566,9 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
       --last;           // right of it, we explicitly delete the
       if ( last->p )
       {
+    	// elements which are still intact
         last->p->removeReference();
-      }               // elements which are still intact
+      }
       last->p = NULL; // after the move above.
     }
   }
@@ -581,8 +585,9 @@ TokenArrayObj::replace_move( size_t i, size_t n, TokenArrayObj& a )
   {
     if ( to->p )
     {
+      // delete target before
       to->p->removeReference();
-    }                // delete target before
+    }
     to->p = from->p; // movement, it is typically
     from->p = NULL;  // not the NULL pointer
     ++from;

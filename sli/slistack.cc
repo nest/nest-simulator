@@ -209,9 +209,9 @@ CopyFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop();
     for ( size_t p = 0; p < n; ++p )
     {
+      //  Since the stack is growing, the argument to index is constant.
       i->OStack.index( n - 1 );
-    } //  Since the stack is growing, the argument to
-      //  index is constant.
+    }
   }
   else
   {

@@ -143,8 +143,8 @@ FilesystemModule::DirectoryFunction::execute( SLIInterpreter* i ) const
   { // try again with a bigger buffer!
     if ( errno != ERANGE )
     {
-      i->raiseerror( i->BadIOError );
-    } // size wasn't reason
+      i->raiseerror( i->BadIOError ); // size wasn't reason
+    }
     delete[] path_buffer;
     size += SIZE;
     path_buffer = new char[ size ];

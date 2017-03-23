@@ -29,35 +29,6 @@ from .hl_api_info import GetStatus, SetStatus
 
 
 @check_stack
-def PrintNetwork(depth=1, subnet=None):
-    """Print the network tree up to depth, starting at subnet.
-
-    If subnet is omitted, the current subnet is used instead.
-
-    Parameters
-    ----------
-    depth : int, optional
-        Depth to print to
-    subnet : TYPE, optional
-        Subnet to start at
-
-    Raises
-    ------
-    NESTError
-    """
-
-    if subnet is None:
-        # Avoid confusing user by deprecation warning
-        with SuppressedDeprecationWarning('CurrentSubnet'):
-            subnet = CurrentSubnet()
-    elif len(subnet) > 1:
-        raise NESTError("PrintNetwork() expects exactly one GID.")
-
-    sps(subnet[0])
-    sr("%i PrintNetwork" % depth)
-
-
-@check_stack
 @deprecated('', 'CurrentSubnet is deprecated and will be removed in NEST 3.0.')
 def CurrentSubnet():
     """Returns the global id of the current subnet.

@@ -782,20 +782,10 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
 }
 
 /* BeginDocumentation
-   Name: PrintNetwork - Print network information.
+   Name: PrintNodes - Print nodes in the network.
    Synopsis:
-   -  PrintNetwork -> -
-
-   Description: CURRENTLY NOT IMPLEMENTED; SHOULD ACCEPT OUTSTREAM
+   -  PrintNodes -> -
 */
-void
-NestModule::PrintNetworkFunction::execute( SLIInterpreter* i ) const
-{
-  // TODO480 Should this be deprecated?
-  print_nodes_to_stream();
-  std::cout << std::endl;
-  i->EStack.pop();
-}
 
 void
 NestModule::PrintNodesFunction::execute( SLIInterpreter* i ) const
@@ -804,6 +794,14 @@ NestModule::PrintNodesFunction::execute( SLIInterpreter* i ) const
   std::cout << std::endl;
   i->EStack.pop();
 }
+
+/* BeginDocumentation
+   Name: PrintNodesToStream - Redirect printing of nodes in the network.
+   Synopsis:
+   -  PrintNodesToStream -> -
+   Description:
+   Returns string output that can be used to print the nodes in the network.
+*/
 
 void
 NestModule::PrintNodesToStreamFunction::execute( SLIInterpreter* i ) const
@@ -1697,7 +1695,6 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "MemoryInfo", &memoryinfofunction );
 
-  i->createcommand( "PrintNetwork", &printnetworkfunction );
   i->createcommand( "PrintNodes", &printnodesfunction );
   i->createcommand( "PrintNodesToStream", &printnodestostreamfunction );
 

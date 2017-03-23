@@ -274,11 +274,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } memoryinfofunction;
 
-  class PrintNetworkFunction : public SLIFunction
-  {
-    void execute( SLIInterpreter* ) const;
-  } printnetworkfunction;
-
   class PrintNodesFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;

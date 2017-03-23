@@ -48,11 +48,7 @@ ctx = topo.CreateLayer({'columns': 4, 'rows': 3,
                         'extent': [2.0, 1.5],
                         'elements': ['pyr', 'in']})
 
-nest.PrintNetwork()
-
-nest.PrintNetwork(2)
-
-nest.PrintNetwork(2, ctx)
+nest.PrintNodes()
 
 # ctx_leaves is a work-around until NEST 3.0 is released
 ctx_leaves = nest.GetLeaves(ctx)[0]

@@ -178,7 +178,6 @@ protected:
   void init_state_( Node const& );
   void init_buffers_();
   void calibrate();
-  void finalize();
 
   /**
    * Collect and output membrane potential information.

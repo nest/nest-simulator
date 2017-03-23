@@ -560,7 +560,6 @@ nest::SimulationManager::cleanup()
   }
 
   kernel().io_manager.get_backend()->finalize();
-  kernel().node_manager.finalize_nodes();
 }
 
 void

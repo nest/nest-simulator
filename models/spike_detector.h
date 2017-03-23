@@ -144,7 +144,6 @@ private:
   void init_state_( Node const& );
   void init_buffers_();
   void calibrate();
-  void finalize();
 
   /**
    * Update detector by recording spikes.
@@ -206,11 +205,6 @@ spike_detector::handles_test_event( SpikeEvent&, rport receptor_type )
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
   return 0;
-}
-
-inline void
-spike_detector::finalize()
-{
 }
 
 inline SignalType

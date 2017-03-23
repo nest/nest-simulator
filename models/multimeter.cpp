@@ -140,12 +140,6 @@ Multimeter::calibrate()
 }
 
 void
-Multimeter::finalize()
-{
-  RecordingDevice::finalize();
-}
-
-void
 Multimeter::update( Time const& origin, const long from, const long )
 {
   /* There is nothing to request during the first time slice.

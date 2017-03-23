@@ -73,11 +73,6 @@ public:
     Device::calibrate();
   }
 
-  void
-  finalize()
-  {
-  }
-
   bool is_active( Time const& T ) const;
 
   /**

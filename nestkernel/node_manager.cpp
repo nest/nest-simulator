@@ -851,6 +851,38 @@ NodeManager::prepare_nodes()
   LOG( M_INFO, "NodeManager::prepare_nodes", os.str() );
 }
 
+void
+NodeManager::post_run_cleanup()
+{
+#ifdef _OPENMP
+#pragma omp parallel
+  {
+    index t = kernel().vp_manager.get_thread_id();
+#else // clang-format off
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
+#endif // clang-format on
+    for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
+    {
+      Node* node = local_nodes_.get_node_by_index( idx );
+      if ( node != 0 )
+      {
+        if ( node->num_thread_siblings() > 0 )
+        {
+          node->get_thread_sibling( t )->post_run_cleanup();
+        }
+        else
+        {
+          if ( static_cast< index >( node->get_thread() ) == t )
+          {
+            node->post_run_cleanup();
+          }
+        }
+      }
+    }
+  }
+}
+
 /**
  * This function is called only if the thread data structures are properly set
  * up.

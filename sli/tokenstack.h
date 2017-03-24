@@ -161,8 +161,8 @@ public:
   {
     if ( n < 2 || k == 0 )
     {
-      return;
-    } // nothing to do
+      return; // nothing to do
+    }
 
     if ( k > 0 )
     {

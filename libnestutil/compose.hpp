@@ -33,11 +33,10 @@
 #ifndef STRING_COMPOSE_H
 #define STRING_COMPOSE_H
 
-// C++ includes:
-#include <list>
-#include <map> // for multimap
 #include <sstream>
 #include <string>
+#include <list>
+#include <map> // for multimap
 
 namespace StringPrivate
 {
@@ -136,7 +135,7 @@ Composition::arg( const T& obj )
 
   std::string rep = os.str();
 
-  if ( not rep.empty() )
+  if ( !rep.empty() )
   { // manipulators don't produce output
     for ( specification_map::const_iterator i = specs.lower_bound( arg_no ),
                                             end = specs.upper_bound( arg_no );
@@ -206,9 +205,7 @@ inline Composition::Composition( std::string fmt )
   }
 
   if ( i - b > 0 ) // add the rest of the string
-  {
     output.push_back( fmt.substr( b, i - b ) );
-  }
 }
 
 inline std::string
@@ -217,12 +214,8 @@ Composition::str() const
   // assemble string
   std::string str;
 
-  for ( output_list::const_iterator i = output.begin(), end = output.end();
-        i != end;
-        ++i )
-  {
+  for ( output_list::const_iterator i = output.begin(), end = output.end(); i != end; ++i )
     str += *i;
-  }
 
   return str;
 }
@@ -263,11 +256,7 @@ compose( const std::string& fmt, const T1& o1, const T2& o2, const T3& o3 )
 
 template < typename T1, typename T2, typename T3, typename T4 >
 inline std::string
-compose( const std::string& fmt,
-  const T1& o1,
-  const T2& o2,
-  const T3& o3,
-  const T4& o4 )
+compose( const std::string& fmt, const T1& o1, const T2& o2, const T3& o3, const T4& o4 )
 {
   StringPrivate::Composition c( fmt );
   c.arg( o1 ).arg( o2 ).arg( o3 ).arg( o4 );
@@ -288,12 +277,7 @@ compose( const std::string& fmt,
   return c.str();
 }
 
-template < typename T1,
-  typename T2,
-  typename T3,
-  typename T4,
-  typename T5,
-  typename T6 >
+template < typename T1, typename T2, typename T3, typename T4, typename T5, typename T6 >
 inline std::string
 compose( const std::string& fmt,
   const T1& o1,
@@ -350,8 +334,7 @@ compose( const std::string& fmt,
   const T8& o8 )
 {
   StringPrivate::Composition c( fmt );
-  c.arg( o1 ).arg( o2 ).arg( o3 ).arg( o4 ).arg( o5 ).arg( o6 ).arg( o7 ).arg(
-    o8 );
+  c.arg( o1 ).arg( o2 ).arg( o3 ).arg( o4 ).arg( o5 ).arg( o6 ).arg( o7 ).arg( o8 );
   return c.str();
 }
 
@@ -377,15 +360,7 @@ compose( const std::string& fmt,
   const T9& o9 )
 {
   StringPrivate::Composition c( fmt );
-  c.arg( o1 )
-    .arg( o2 )
-    .arg( o3 )
-    .arg( o4 )
-    .arg( o5 )
-    .arg( o6 )
-    .arg( o7 )
-    .arg( o8 )
-    .arg( o9 );
+  c.arg( o1 ).arg( o2 ).arg( o3 ).arg( o4 ).arg( o5 ).arg( o6 ).arg( o7 ).arg( o8 ).arg( o9 );
   return c.str();
 }
 
@@ -413,16 +388,8 @@ compose( const std::string& fmt,
   const T10& o10 )
 {
   StringPrivate::Composition c( fmt );
-  c.arg( o1 )
-    .arg( o2 )
-    .arg( o3 )
-    .arg( o4 )
-    .arg( o5 )
-    .arg( o6 )
-    .arg( o7 )
-    .arg( o8 )
-    .arg( o9 )
-    .arg( o10 );
+  c.arg( o1 ).arg( o2 ).arg( o3 ).arg( o4 ).arg( o5 ).arg( o6 ).arg( o7 ).arg( o8 ).arg( o9 ).arg(
+    o10 );
   return c.str();
 }
 

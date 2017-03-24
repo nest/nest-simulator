@@ -197,12 +197,12 @@ TypeTrie::getalternative( TypeTrie::TypeNode* pos, const Name& type )
       pos->next = NULL;
 
       // this  while() cycle will terminate, as
-      // pos->type==type by asignment.
+      // pos->type==type by assignment.
     }
     else
     {
-      pos = pos->alt;
-    } // pos->alt is always defined here.
+      pos = pos->alt; // pos->alt is always defined here.
+    }
   }
 
   return pos;

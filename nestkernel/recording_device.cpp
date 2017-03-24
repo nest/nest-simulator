@@ -34,7 +34,7 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& device, Dictiona
 {
   ( *d )[ names::label ] = label_;
 
-  kernel().io_manager.get_backend()->get_device_status(device, d);
+  kernel().io_manager.get_recording_backend()->get_device_status(device, d);
 }
 
 void

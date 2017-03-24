@@ -496,13 +496,9 @@ extern const Name z; //!< Number of available synaptic elements per node
 extern const Name z_connected; //!< Number of connected synaptic elements
                                //!< per node
 
-extern const Name recording;
 extern const Name recording_backend;
+extern const Name recording_backends;
 extern const Name recording_backend_status;
-extern const Name RecordingBackendASCII;
-extern const Name RecordingBackendMemory;
-extern const Name RecordingBackendScreen;
-extern const Name RecordingBackendSIONlib;
 }
 }
 

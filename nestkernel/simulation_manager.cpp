@@ -417,7 +417,7 @@ nest::SimulationManager::prepare()
   }
 
   // initialize recording backend
-  kernel().io_manager.get_backend()->initialize();
+  kernel().io_manager.get_recording_backend()->initialize();
 
   kernel().node_manager.ensure_valid_thread_local_ids();
   kernel().node_manager.prepare_nodes();
@@ -535,7 +535,7 @@ nest::SimulationManager::run( Time const& t )
 
   call_update_();
 
-  kernel().io_manager.get_backend()->post_run_cleanup();
+  kernel().io_manager.get_recording_backend()->post_run_cleanup();
 }
 
 void
@@ -559,7 +559,7 @@ nest::SimulationManager::cleanup()
     }
   }
 
-  kernel().io_manager.get_backend()->finalize();
+  kernel().io_manager.get_recording_backend()->finalize();
 }
 
 void
@@ -862,7 +862,7 @@ nest::SimulationManager::update_()
         }
       }
 
-      kernel().io_manager.get_backend()->synchronize();
+      kernel().io_manager.get_recording_backend()->synchronize();
 
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier

@@ -59,7 +59,7 @@ nest::spike_detector::State_::set( const DictionaryDatum& d, const spike_detecto
   updateValue< long >( d, names::n_events, n_events );
   if ( n_events == 0 )
   {
-    kernel().io_manager.get_backend()->clear( sd );
+    kernel().io_manager.get_recording_backend()->clear( sd );
     n_events_ = n_events;
   }
   else
@@ -99,7 +99,7 @@ void
 nest::spike_detector::calibrate()
 {
   RecordingDevice::calibrate();
-  kernel().io_manager.get_backend()->enroll( *this );
+  kernel().io_manager.get_recording_backend()->enroll( *this );
 }
 
 void
@@ -113,7 +113,7 @@ nest::spike_detector::update( Time const&, const long, const long )
     assert( *e != 0 );
 
     ++S_.n_events_;
-    kernel().io_manager.get_backend()->write( *this, **e );
+    kernel().io_manager.get_recording_backend()->write( *this, **e );
     delete *e;
   }
 

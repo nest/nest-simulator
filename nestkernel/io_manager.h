@@ -29,9 +29,6 @@
 // Includes from libnestutil:
 #include "manager_interface.h"
 
-// Includes from sli:
-//#include "dictdatum.h"
-
 #include "recording_backend.h"
 
 namespace nest
@@ -77,16 +74,16 @@ public:
    */
   bool overwrite_files() const;
 
-  bool set_backend( Name name );
-  RecordingBackend* get_backend();
+  void set_recording_backend( Name name );
+  RecordingBackend* get_recording_backend();
 
 private:
   std::string data_path_;     //!< Path for all files written by devices
   std::string data_prefix_;   //!< Prefix for all files written by devices
   bool overwrite_files_;      //!< If true, overwrite existing data files.
 
-  RecordingBackend* backend_; //<! A pointer to the recording backend
-  Name backend_name_;         //!< The name of the recording backend
+  std::map< Name, RecordingBackend* > recording_backends_; //<! A map of all registered recording backends
+  std::pair< const Name, RecordingBackend* >* recording_backend_; //<! A pointer to the current recording backend
 };
 }
 
@@ -110,9 +107,9 @@ nest::IOManager::overwrite_files() const
 }
 
 inline nest::RecordingBackend*
-nest::IOManager::get_backend()
+nest::IOManager::get_recording_backend()
 {
-  return backend_;
+  return recording_backend_->second;
 }
 
 #endif /* IO_MANAGER_H */

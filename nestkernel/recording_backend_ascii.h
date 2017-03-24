@@ -124,7 +124,7 @@ private:
 
   Parameters_ P_;
 
-  /** 
+  /**
    * A map for the data files.  We have a vector with one map per
    * local thread. The map associates the gid of a device on a given
    * thread with the file name and a pointer to the file stream

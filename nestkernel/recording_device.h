@@ -384,6 +384,7 @@ public:
     return P_.to_accumulator_;
   }
 
+
   inline void set_precise_times( bool precise_times );
 
   inline void set_precision( long precision );
@@ -395,7 +396,36 @@ public:
   inline bool is_precise_times_user_set() const;
 
 
+#ifdef HAVE_MUSIC
+    void set_virtual_channel_width( const unsigned long );
+
+    void send_music( unsigned long start_channel, const std::vector< double >& data );
+
+    void send_music( unsigned long channel, const double value );
+
+	unsigned long
+	get_virtual_channel_width() const
+	{
+		return P_.virtual_channel_width_;
+	}
+
+	bool
+	is_published() const
+	{
+		return S_.published_;
+	}
+
+  bool
+  to_music() const
+  {
+	return P_.to_music_;
+  }
+#endif
+
+
 private:
+
+  struct State_; //!< Forward declarations
   /**
    * Print the time-stamp according to the recorder's flags.
    *
@@ -467,6 +497,7 @@ private:
   struct Buffers_
   {
     std::ofstream fs_; //!< the file to write the recorded data to
+	std::vector< double >* music_port_data_;
   };
 
   // ------------------------------------------------------------------
@@ -506,6 +537,12 @@ private:
     bool flush_records_;        //!< if true, flush stream after each output
     bool close_on_reset_;       //!< if true, close stream in init_buffers()
 
+#ifdef HAVE_MUSIC
+	bool to_music_;
+	std::string port_name_;
+	unsigned long virtual_channel_width_;
+	int max_buffered_;
+#endif
     /**
      * Set default parameter values.
      * @param Default file name extension, excluding ".".
@@ -521,7 +558,7 @@ private:
     //! Store current values in dictionary
     void get( const RecordingDevice&, DictionaryDatum& ) const;
     //! Set values from dictionary
-    void set( const RecordingDevice&, const Buffers_&, const DictionaryDatum& );
+    void set( const RecordingDevice&, const Buffers_&, const State_&, const DictionaryDatum& );
   };
 
   // ------------------------------------------------------------------
@@ -538,6 +575,11 @@ private:
     //! List of event time offsets
     std::vector< double > event_times_offsets_;
     std::vector< double > event_weights_; //!< List of event weights
+
+#ifdef HAVE_MUSIC
+	bool published_;
+	long port_width_;
+#endif
 
     State_(); //!< Sets default parameter values
 
@@ -637,6 +679,24 @@ RecordingDevice::set_status( const DictionaryDatum& d, DataT& data )
     data.clear();
 }
 
-} // namespace
 
+#ifdef HAVE_MUSIC
+inline void
+RecordingDevice::set_virtual_channel_width( const unsigned long virtual_channel_width )
+{
+	if ( S_.published_ )
+	{
+      throw MUSICPortAlreadyPublished( node_.get_name() , P_.port_name_ );
+	}
+
+  if ( P_.virtual_channel_width_ == 0 )
+  {
+	throw BadProperty( "The value of property 'virtual_channel_width' must be greater than zero" );
+  }
+
+	P_.virtual_channel_width_ = virtual_channel_width;
+}
+#endif
+
+} // namespace
 #endif // RECORDING_DEVICE_H

@@ -24,6 +24,9 @@
 
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
+#include <string>
+#include "compose.hpp"
+#include "logging.h"
 
 namespace nest
 {
@@ -123,6 +126,7 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
     for ( Token* t = ad.begin(); t != ad.end(); ++t )
       record_from_.push_back( Name( getValue< std::string >( *t ) ) );
   }
+
 }
 
 void
@@ -142,6 +146,11 @@ Multimeter::init_buffers_()
 void
 Multimeter::calibrate()
 {
+#
+  if ( !device_.is_published() )
+  {
+    device_.set_virtual_channel_width( P_.record_from_.size() );
+  }
   device_.calibrate();
   V_.new_request_ = false;
   V_.current_request_data_start_ = 0;
@@ -188,64 +197,72 @@ Multimeter::handle( DataLoggingReply& reply )
   // easy access to relevant information
   DataLoggingReply::Container const& info = reply.get_info();
 
-  // If this is the first Reply arriving, we need to mark the beginning of the
-  // data for this round of replies
-  if ( V_.new_request_ )
-    V_.current_request_data_start_ = S_.data_.size();
-
-  // count records that have been skipped during inactivity
-  size_t inactive_skipped = 0;
-
-  // record all data, time point by time point
-  for ( size_t j = 0; j < info.size(); ++j )
+  if ( device_.to_music() )
   {
-    if ( not info[ j ].timestamp.is_finite() )
-      break;
-
-    if ( !is_active( info[ j ].timestamp ) )
-    {
-      ++inactive_skipped;
-      continue;
-    }
-
-    // store stamp for current data set in event for logging
-    reply.set_stamp( info[ j ].timestamp );
-
-    // record sender and time information; in accumulator mode only for first
-    // Reply in slice
-    if ( !device_.to_accumulator() || V_.new_request_ )
-      device_.record_event( reply, false ); // false: more data to come
-
-    if ( !device_.to_accumulator() )
-    {
-      // "print" actual data, but not in accumulator mode
-      print_value_( info[ j ].data );
-
-      if ( device_.to_memory() )
-        S_.data_.push_back( info[ j ].data );
-    }
-    else
-    {
-      if ( V_.new_request_ ) // first reply in slice, push back to create new
-                             // time points
-        S_.data_.push_back( info[ j ].data );
-      else
-      { // add data; offset j from current_request_data_start_, but inactive
-        // skipped entries subtracted
-        assert( j >= inactive_skipped );
-        assert( V_.current_request_data_start_ + j - inactive_skipped
-          < S_.data_.size() );
-        assert( S_.data_[ V_.current_request_data_start_ + j
-                     - inactive_skipped ].size() == info[ j ].data.size() );
-        for ( size_t k = 0; k < info[ j ].data.size(); ++k )
-          S_.data_[ V_.current_request_data_start_ + j
-            - inactive_skipped ][ k ] += info[ j ].data[ k ];
-      }
-    }
+	  device_.record_event( reply, false ); // false: more data to come
   }
+  else
+  {
 
-  // correct either we are done with the first reply or any later one
-  V_.new_request_ = false;
+	  // If this is the first Reply arriving, we need to mark the beginning of the
+	  // data for this round of replies
+	  if ( V_.new_request_ )
+		V_.current_request_data_start_ = S_.data_.size();
+
+	  // count records that have been skipped during inactivity
+	  size_t inactive_skipped = 0;
+
+	  // record all data, time point by time point
+	  for ( size_t j = 0; j < info.size(); ++j )
+	  {
+		if ( not info[ j ].timestamp.is_finite() )
+		  break;
+
+		if ( !is_active( info[ j ].timestamp ) )
+		{
+		  ++inactive_skipped;
+		  continue;
+		}
+
+		// store stamp for current data set in event for logging
+		reply.set_stamp( info[ j ].timestamp );
+
+		// record sender and time information; in accumulator mode only for first
+		// Reply in slice
+		if ( !device_.to_accumulator() || V_.new_request_ )
+		  device_.record_event( reply, false ); // false: more data to come
+
+		if ( !device_.to_accumulator() )
+		{
+		  // "print" actual data, but not in accumulator mode
+		  print_value_( info[ j ].data );
+
+		  if ( device_.to_memory() )
+			S_.data_.push_back( info[ j ].data );
+		}
+		else
+		{
+		  if ( V_.new_request_ ) // first reply in slice, push back to create new
+								 // time points
+			S_.data_.push_back( info[ j ].data );
+		  else
+		  { // add data; offset j from current_request_data_start_, but inactive
+			// skipped entries subtracted
+			assert( j >= inactive_skipped );
+			assert( V_.current_request_data_start_ + j - inactive_skipped
+			  < S_.data_.size() );
+			assert( S_.data_[ V_.current_request_data_start_ + j
+						 - inactive_skipped ].size() == info[ j ].data.size() );
+			for ( size_t k = 0; k < info[ j ].data.size(); ++k )
+			  S_.data_[ V_.current_request_data_start_ + j
+				- inactive_skipped ][ k ] += info[ j ].data[ k ];
+		  }
+		}
+	  }
+
+	  // correct either we are done with the first reply or any later one
+	  V_.new_request_ = false;
+  }
 }
 
 void

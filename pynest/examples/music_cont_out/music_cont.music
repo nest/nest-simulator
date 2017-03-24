@@ -1,0 +1,14 @@
+timestep = 0.1
+stoptime = 2
+cont_portwidth = 40
+
+[simulator_node]
+np = 2
+binary = ./music_example.py
+args = nest
+
+[compute_node]
+np = 1
+binary = ./compute_node.py
+
+simulator_node.cont_out -> compute_node.cont_in [40]

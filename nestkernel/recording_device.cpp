@@ -34,9 +34,11 @@
 #include "logging.h"
 
 // Includes from nestkernel:
+#include "connection_label.h"
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "vp_manager_impl.h"
+#include "music_manager.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -81,6 +83,12 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   , flush_after_simulate_( true )
   , flush_records_( false )
   , close_on_reset_( true )
+#ifdef HAVE_MUSIC
+  , to_music_( false )
+  , port_name_( "cont_out" )
+  , virtual_channel_width_( 1 )
+  , max_buffered_( 1 )
+#endif
 {
 }
 
@@ -93,6 +101,10 @@ nest::RecordingDevice::State_::State_()
   , event_times_ms_()
   , event_times_steps_()
   , event_times_offsets_()
+#ifdef HAVE_MUSIC
+  , published_( false )
+  , port_width_( 0 )
+#endif
 {
 }
 
@@ -124,6 +136,13 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
   // the new /record_to feature is not working in Pynest.
   ( *d )[ names::to_screen ] = to_screen_;
   ( *d )[ names::to_memory ] = to_memory_;
+
+#ifdef HAVE_MUSIC
+  ( *d )[ names::port_name ] = port_name_;
+  ( *d )[ names::to_music ] = to_music_;
+  ( *d )[ names::max_buffered ] = max_buffered_;
+#endif
+
   ( *d )[ names::to_file ] = to_file_;
   if ( rd.mode_ == RecordingDevice::MULTIMETER )
     ( *d )[ names::to_accumulator ] = to_accumulator_;
@@ -135,6 +154,10 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
     ad.push_back( LiteralDatum( names::memory ) );
   if ( to_screen_ )
     ad.push_back( LiteralDatum( names::screen ) );
+#ifdef HAVE_MUSIC
+  if ( to_music_ )
+	ad.push_back( LiteralDatum( names::music ) );
+#endif
   if ( rd.mode_ == RecordingDevice::MULTIMETER )
     if ( to_accumulator_ )
       ad.push_back( LiteralDatum( names::accumulator ) );
@@ -162,6 +185,7 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
 void
 nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   const Buffers_&,
+  const State_& s,
   const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::label, label_ );
@@ -244,6 +268,11 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
         && ( *t == LiteralDatum( names::accumulator )
                   || *t == Token( names::accumulator.toString() ) ) )
         to_accumulator_ = true;
+#ifdef HAVE_MUSIC
+	  else if ( *t == LiteralDatum( names::music )
+			  || *t == Token( names::music.toString() ) )
+		to_music_ = true;
+#endif
       else
       {
         if ( rd.mode_ == RecordingDevice::MULTIMETER )
@@ -272,6 +301,29 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
       "(to_file, to_screen, to_memory, withgid, withweight) "
       "have been set to false." );
   }
+
+#ifdef HAVE_MUSIC
+  if ( d->known( names::to_music ) &&  ( to_file_ || to_accumulator_ || to_memory_ || to_screen_ ) )
+  {
+	if ( getValue< bool >( d, names::to_music ) )
+	{
+		throw BadProperty(
+				"Combinations of MUSIC output streaming and other channels are currently not supported.");
+	}
+  }
+
+
+  if ( s.published_ == true && ( d->known( names::port_name ) || d->known( names::to_music ) ) )
+  {
+	  // We cannot change any of these parameters after publishing
+      throw MUSICPortAlreadyPublished( rd.node_.get_name() , port_name_ );
+  }
+  else
+  {
+		updateValue< std::string >( d, names::port_name, port_name_);
+		updateValue< bool >( d, names::to_music, to_music_ );
+  }
+#endif
 }
 
 void
@@ -372,6 +424,11 @@ nest::RecordingDevice::State_::get( DictionaryDatum& d,
     }
   }
 
+#ifdef HAVE_MUSIC
+  ( *d )[ names::published ] = published_;
+  ( *d )[ names::port_width ] = port_width_;
+#endif
+
   ( *d )[ names::events ] = dict;
 }
 
@@ -457,6 +514,12 @@ nest::RecordingDevice::init_buffers()
     B_.fs_.close();
     P_.filename_.clear(); // filename_ only visible while file open
   }
+#ifdef HAVE_MUSIC
+  if ( P_.to_music_ && S_.published_ )
+  {
+	  B_.music_port_data_ = kernel().music_manager.get_music_cont_out_buffer( P_.port_name_ );
+  }
+#endif
 }
 
 void
@@ -578,6 +641,60 @@ nest::RecordingDevice::calibrate()
       throw IOError();
     }
   }
+
+#ifdef HAVE_MUSIC
+  // only publish the output port once,
+  if ( S_.published_ == false && P_.to_music_ )
+  {
+	// Collect outbound connections
+	/* std::vector< long > target_gids; */
+    std::vector< MUSIC::GlobalIndex > music_index_map;
+    std::deque< ConnectionID > outbound_connections;
+	std::vector< long > source_gid;
+	source_gid.push_back( node_.get_gid() );
+    long synapse_label = UNLABELED_CONNECTION;
+    const TokenArray* source_a = new TokenArray( source_gid );
+    const TokenArray* target_a = 0;
+	size_t syn_id;
+
+    const Token synmodel =
+      kernel().model_manager.get_synapsedict()->lookup( "music_synapse" );
+    if ( !synmodel.empty() )
+      syn_id = static_cast< size_t >( synmodel );
+    else
+      throw UnknownModelName( "music_synapse" );
+    kernel().connection_manager.get_connections( outbound_connections, source_a, target_a, syn_id, synapse_label );
+
+	// Get music_channels from outbound connections
+	long music_channel = 0;
+	for ( std::deque< ConnectionID >::iterator it = outbound_connections.begin(); it != outbound_connections.end(); it++ )
+	{
+  		DictionaryDatum d = kernel().connection_manager.get_synapse_status( it->get_source_gid(), it->get_synapse_model_id(), it->get_port(), it->get_target_thread() );
+		if ( !d->known( names::music_channel ) )
+		{
+		  throw IllegalConnection(
+			"Only valid music_connectors can be used to stream data to MUSIC. In particular the synapse must contain a property 'music_channel'" );
+		}
+		updateValue< long >( d, names::music_channel, music_channel );
+		for ( unsigned long j = 0; j < P_.virtual_channel_width_; ++j )
+		{
+			music_index_map.push_back( (music_channel * P_.virtual_channel_width_)  + j );
+		}
+	}
+	// Eventhough we are already at calibrate(), the simulation_manager ensures
+	// that nodes are calibrated before entering the MUSIC runtime. Thus,
+	// registration of ports is legal at this point.
+	kernel().music_manager.register_music_cont_out_port( P_.port_name_,
+			music_index_map,
+			P_.max_buffered_ );
+	B_.music_port_data_ = kernel().music_manager.get_music_cont_out_buffer( P_.port_name_ );
+
+    S_.published_ = true;
+
+	std::string msg = String::compose( "virtual_channel_width_ =  '%1'", P_.virtual_channel_width_); LOG( M_INFO, "recording_device::calibrate()", msg.c_str() );
+
+  }
+#endif
 }
 
 void
@@ -613,7 +730,7 @@ void
 nest::RecordingDevice::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_;    // temporary copy in case of errors
-  ptmp.set( *this, B_, d ); // throws if BadProperty
+  ptmp.set( *this, B_, S_, d ); // throws if BadProperty
   State_ stmp = S_;
   stmp.set( d );
 
@@ -696,6 +813,26 @@ nest::RecordingDevice::record_event( const Event& event, bool endrecord )
   // that multimeter will call us only once per accumulation step
   if ( P_.to_memory_ || P_.to_accumulator_ )
     store_data_( sender, stamp, offset, weight, target, port, rport );
+
+  if ( P_.to_music_ )
+  {
+	  const DataLoggingReply* dl_e =
+		  dynamic_cast< const DataLoggingReply* >( &event );
+    if ( dl_e != 0 )
+    {
+		  DataLoggingReply::Container const& info = dl_e->get_info();
+
+		  if ( info[ info.size() - 1 ].timestamp.is_finite() )
+		  {
+			  send_music( dl_e->get_port(), info[ info.size() -1 ].data );
+		  }
+    }
+    else
+    {
+		send_music( event.get_port(), weight );
+    }
+  }
+
 }
 
 void
@@ -752,6 +889,30 @@ nest::RecordingDevice::print_rport_( std::ostream& os, long rport )
   if ( P_.withrport_ )
     os << rport << '\t';
 }
+
+#ifdef HAVE_MUSIC
+inline void
+nest::RecordingDevice::send_music( unsigned long local_index, const std::vector< double >& data )
+{
+	if ( P_.to_music_ )
+	{
+		const unsigned long offset = local_index * P_.virtual_channel_width_;
+		for ( size_t i = 0; i < data.size(); ++i )
+		{
+			(*B_.music_port_data_)[ offset + i ] = data[ i ];
+		}
+	}
+}
+
+inline void
+nest::RecordingDevice::send_music( unsigned long local_index, const double value )
+{
+	if ( P_.to_music_ )
+	{
+		(*B_.music_port_data_)[ local_index * P_.virtual_channel_width_ ] = value;
+	}
+}
+#endif
 
 void
 nest::RecordingDevice::store_data_( index sender,

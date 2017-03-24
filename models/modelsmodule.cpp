@@ -142,6 +142,7 @@
 #include "music_event_out_proxy.h"
 #include "music_cont_in_proxy.h"
 #include "music_message_in_proxy.h"
+#include "music_connection.h"
 #endif
 
 namespace nest
@@ -388,6 +389,13 @@ ModelsModule::init( SLIInterpreter* )
 
      SeeAlso: synapsedict, static_synapse
   */
+#ifdef HAVE_MUSIC
+  kernel()
+    .model_manager
+    .register_connection_model< MusicConnection< TargetIdentifierPtrRport > >(
+      "music_synapse" );
+#endif
+
   kernel()
     .model_manager
     .register_connection_model< StaticConnection< TargetIdentifierPtrRport > >(

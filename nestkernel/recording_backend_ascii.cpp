@@ -39,8 +39,8 @@ nest::RecordingBackendASCII::enroll( RecordingDevice& device )
 void
 nest::RecordingBackendASCII::enroll( RecordingDevice& device, const std::vector< Name >& /* value_names */ )
 {
-  const int t = device.get_thread();
-  const int gid = device.get_gid();
+  const thread t = device.get_thread();
+  const index gid = device.get_gid();
 
   // Ensure that a device is only enrolled once.
   assert(files_[ t ].find( gid ) == files_[ t ].end() );
@@ -124,8 +124,8 @@ nest::RecordingBackendASCII::synchronize()
 void
 nest::RecordingBackendASCII::write( const RecordingDevice& device, const Event& event )
 {
-  int t = device.get_thread();
-  int gid = device.get_gid();
+  const thread t = device.get_thread();
+  const index gid = device.get_gid();
 
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
@@ -140,8 +140,8 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& values )
 {
-  int t = device.get_thread();
-  int gid = device.get_gid();
+  const thread t = device.get_thread();
+  const index gid = device.get_gid();
 
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();

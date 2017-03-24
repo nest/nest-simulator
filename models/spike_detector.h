@@ -212,7 +212,7 @@ spike_detector::handles_test_event( SpikeEvent&, rport receptor_type )
 inline void
 spike_detector::post_run_cleanup()
 {
-  device_.post_run_cleanup();  
+  device_.post_run_cleanup();
 }
 
 

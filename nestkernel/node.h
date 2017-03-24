@@ -308,7 +308,7 @@ public:
   post_run_cleanup()
   {
   }
-  
+
   /**
    * Finalize node.
    * Override this function if a node needs to "wrap up" things after a

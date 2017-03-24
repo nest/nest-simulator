@@ -213,7 +213,7 @@ public:
    * Invoke post_run_cleanup() on all nodes.
    */
   void post_run_cleanup();
-  
+
   /**
    * Invoke finalize() on all nodes.
    */

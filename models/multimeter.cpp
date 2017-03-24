@@ -152,7 +152,7 @@ Multimeter::post_run_cleanup()
 {
   device_.post_run_cleanup();
 }
-    
+
 void
 Multimeter::finalize()
 {

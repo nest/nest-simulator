@@ -785,6 +785,9 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
    Name: PrintNodes - Print nodes in the network.
    Synopsis:
    -  PrintNodes -> -
+   Description:
+   Print GID ranges and model names of the nodes in the network. Print the
+   information directly to screen.
 */
 
 void
@@ -800,7 +803,9 @@ NestModule::PrintNodesFunction::execute( SLIInterpreter* i ) const
    Synopsis:
    -  PrintNodesToStream -> -
    Description:
-   Returns string output that can be used to print the nodes in the network.
+   Returns string output that can be used to print information about the nodes
+   in the network.
+   The string is the information directly printed by PrintNodes.
 */
 
 void

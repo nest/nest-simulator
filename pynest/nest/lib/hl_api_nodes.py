@@ -218,7 +218,7 @@ def Create(model, n=1, params=None):
 
 @check_stack
 def PrintNodes():
-    """Print the nodes in the network."""
+    """Print the GID ranges and model names of the nodes in the network."""
 
     sr("PrintNodesToStream")
     print(spp())

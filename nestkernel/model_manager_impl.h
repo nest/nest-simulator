@@ -83,7 +83,7 @@ ModelManager::register_preconf_node_model( const Name& name,
   return register_node_model_( model, private_model );
 }
 
-template < class ConnectionT, template < class > class ConnectorModelT >
+template < typename ConnectionT, template < typename > class ConnectorModelT >
 void
 ModelManager::register_connection_model( const std::string& name,
   bool requires_symmetric )
@@ -102,7 +102,7 @@ ModelManager::register_connection_model( const std::string& name,
   }
 }
 
-template < class ConnectionT >
+template < typename ConnectionT >
 void
 ModelManager::register_connection_model( const std::string& name,
   bool requires_symmetric )
@@ -114,7 +114,7 @@ ModelManager::register_connection_model( const std::string& name,
 /**
  * Register a synape with default Connector and without any common properties.
  */
-template < class ConnectionT >
+template < typename ConnectionT >
 void
 ModelManager::register_secondary_connection_model( const std::string& name,
   bool has_delay,

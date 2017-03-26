@@ -185,20 +185,20 @@ public:
    * GenericConnectorModel.
    * @param name The name under which the ConnectorModel will be registered.
    */
-  template < class ConnectionT >
+  template < typename ConnectionT >
   void register_connection_model( const std::string& name,
     bool requires_symmetric = false );
 
   /**
-   * Register a synape model with a costom Connector model and without any
+   * Register a synape model with a custom Connector model and without any
    * common properties.
    * @param name The name under which the ConnectorModel will be registered.
    */
-  template < class ConnectionT, template < class > class ConnectorModelT >
+  template < typename ConnectionT, template < typename > class ConnectorModelT >
   void register_connection_model( const std::string& name,
     bool requires_symmetric = false );
 
-  template < class ConnectionT >
+  template < typename ConnectionT >
   void register_secondary_connection_model( const std::string& name,
     bool has_delay = true,
     bool requires_symmetric = false );

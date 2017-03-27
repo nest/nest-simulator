@@ -29,7 +29,8 @@ namespace nest
 {
 
 /**
- * A simple recording backend implementation that prints all recorded data to screen.
+ * A simple recording backend implementation that prints all recorded data to
+ * screen.
  */
 class RecordingBackendScreen : public RecordingBackend
 {
@@ -51,15 +52,19 @@ public:
   }
 
   /**
-   * Functions called by all instantiated recording devices to register themselves with their
+   * Functions called by all instantiated recording devices to register
+   * themselves with their
    * metadata.
-   * Both functions are implemented trivially, since the RecordingBackendScreen does not handle metadata.
+   * Both functions are implemented trivially, since the RecordingBackendScreen
+   * does not handle metadata.
    */
   void enroll( RecordingDevice& device );
-  void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
+  void enroll( RecordingDevice& device,
+    const std::vector< Name >& value_names );
 
   /**
-   * Finalization function. Nothing has to be finalized in case of the RecordingBackendScreen.
+   * Finalization function. Nothing has to be finalized in case of the
+   * RecordingBackendScreen.
    */
   void finalize();
 
@@ -73,14 +78,17 @@ public:
    * Write functions simply dumping all recorded data to standard output.
    */
   void write( const RecordingDevice& device, const Event& event );
-  void write( const RecordingDevice& device, const Event& event, const std::vector< double >& );
+  void write( const RecordingDevice& device,
+    const Event& event,
+    const std::vector< double >& );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
 
 protected:
   /**
-   * Initialization function. In this case, only floating point precision of the standard output
+   * Initialization function. In this case, only floating point precision of the
+   * standard output
    * stream is configured according to the parameters.
    */
   void initialize_();

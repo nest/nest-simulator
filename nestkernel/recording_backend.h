@@ -36,54 +36,81 @@ class RecordingBackend
 {
 public:
   RecordingBackend()
-      : initialized_(false)
+    : initialized_( false )
   {
   }
 
-  virtual ~RecordingBackend() throw() {}
+  virtual ~RecordingBackend() throw()
+  {
+  }
 
   virtual void enroll( RecordingDevice& device ) = 0;
-  virtual void enroll( RecordingDevice& device, const std::vector< Name >& value_names ) = 0;
+  virtual void enroll( RecordingDevice& device,
+    const std::vector< Name >& value_names ) = 0;
 
-  void initialize()
+  void
+  initialize()
   {
     initialize_();
     initialized_ = true;
   }
 
-  virtual void post_run_cleanup() {}
+  virtual void
+  post_run_cleanup()
+  {
+  }
   virtual void finalize() = 0;
   virtual void synchronize() = 0;
 
-  virtual void clear( const RecordingDevice& ) {}
+  virtual void
+  clear( const RecordingDevice& )
+  {
+  }
 
   virtual void write( const RecordingDevice& device, const Event& event ) = 0;
+  virtual void write( const RecordingDevice& device,
+    const Event& event,
+    const std::vector< double >& ) = 0;
+
   virtual void
-  write( const RecordingDevice& device, const Event& event, const std::vector< double >& ) = 0;
-
-  virtual void set_status( const DictionaryDatum& ) {};
-  virtual void get_status( DictionaryDatum& ) const {};
-
-  void set_device_status( const RecordingDevice& device, const DictionaryDatum& d)
+  set_status( const DictionaryDatum& )
   {
-    if (initialized_)
+  }
+  virtual void
+  get_status( DictionaryDatum& ) const
+  {
+  }
+
+  void
+  set_device_status( const RecordingDevice& device, const DictionaryDatum& d )
+  {
+    if ( initialized_ )
     {
-      set_device_status_(device, d);
+      set_device_status_( device, d );
     }
   }
 
-  void get_device_status( const RecordingDevice& device, DictionaryDatum& d) const
+  void
+  get_device_status( const RecordingDevice& device, DictionaryDatum& d ) const
   {
-    if (initialized_)
+    if ( initialized_ )
     {
-      get_device_status_(device, d);
+      get_device_status_( device, d );
     }
   }
 
 protected:
   virtual void initialize_() = 0;
-  virtual void set_device_status_( const RecordingDevice& device, const DictionaryDatum& ) {}
-  virtual void get_device_status_( const RecordingDevice& device, DictionaryDatum& ) const {}
+
+  virtual void
+  set_device_status_( const RecordingDevice& device, const DictionaryDatum& )
+  {
+  }
+
+  virtual void
+  get_device_status_( const RecordingDevice& device, DictionaryDatum& ) const
+  {
+  }
 
   bool initialized_;
 };

@@ -42,7 +42,7 @@
 #include "integerdatum.h"
 
 nest::spike_detector::State_::State_()
-    : n_events_(0)
+  : n_events_( 0 )
 {
 }
 
@@ -53,7 +53,8 @@ nest::spike_detector::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::spike_detector::State_::set( const DictionaryDatum& d, const spike_detector& sd )
+nest::spike_detector::State_::set( const DictionaryDatum& d,
+  const spike_detector& sd )
 {
   long n_events = n_events_;
   updateValue< long >( d, names::n_events, n_events );
@@ -64,8 +65,8 @@ nest::spike_detector::State_::set( const DictionaryDatum& d, const spike_detecto
   }
   else
   {
-    throw BadProperty( "Property n_events can only be set to 0 "
-		       "(which clears all stored events)." );
+    throw BadProperty( "Property n_events can only be set "
+      "to 0 (which clears all stored events)." );
   }
 }
 
@@ -84,7 +85,6 @@ nest::spike_detector::spike_detector( const spike_detector& n )
 void
 nest::spike_detector::init_state_( const Node& )
 {
-  //const spike_detector& sd = dynamic_cast< const spike_detector& >( np );
   init_buffers_();
 }
 

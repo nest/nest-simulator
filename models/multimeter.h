@@ -169,7 +169,7 @@ public:
   void handle( DataLoggingReply& );
 
   Type get_type() const;
- 
+
   SignalType sends_signal() const;
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );

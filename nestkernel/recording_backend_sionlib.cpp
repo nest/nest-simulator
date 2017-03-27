@@ -43,7 +43,8 @@ nest::RecordingBackendSIONlib::enroll( RecordingDevice& device )
 }
 
 void
-nest::RecordingBackendSIONlib::enroll( RecordingDevice& device, const std::vector< Name >& value_names )
+nest::RecordingBackendSIONlib::enroll( RecordingDevice& device,
+  const std::vector< Name >& value_names )
 {
   const thread task = device.get_vp();
   const thread gid = device.get_gid();
@@ -69,7 +70,8 @@ nest::RecordingBackendSIONlib::enroll( RecordingDevice& device, const std::vecto
     info.label = device.get_label();
 
     info.value_names.reserve( value_names.size() );
-    for ( std::vector< Name >::const_iterator it = value_names.begin(); it != value_names.end();
+    for ( std::vector< Name >::const_iterator it = value_names.begin();
+          it != value_names.end();
           ++it )
     {
       info.value_names.push_back( it->toString() );
@@ -89,14 +91,16 @@ nest::RecordingBackendSIONlib::initialize_()
   MPIX_Pset_same_comm_create( &local_comm );
 #endif // BG_MULTIFILE
 
-  // we need to delay the throwing of exceptions to the end of the parallel section
+  // we need to delay the throwing of exceptions to the end of the parallel
+  // section
   WrappedThreadException* we = NULL;
 
 #pragma omp parallel
   {
     const thread t = kernel().vp_manager.get_thread_id();
     const thread task = kernel().vp_manager.thread_to_vp( t );
-    if (! task) {
+    if ( !task )
+    {
       t_start_ = kernel().simulation_manager.get_time().get_ms();
     }
 
@@ -203,8 +207,10 @@ nest::RecordingBackendSIONlib::close_files_()
 
 #pragma omp master
     {
-      // This is potentially dangerous, since we assume that the same set of devices exists on every
-      // MPI rank. This should be safe in most situations, excluding e.g. the global spike detector.
+      // This is potentially dangerous, since we assume that the same set of
+      // devices exists on every
+      // MPI rank. This should be safe in most situations, excluding e.g. the
+      // global spike detector.
       for ( device_map::mapped_type::iterator it = devices_[ task ].begin();
             it != devices_[ task ].end();
             ++it )
@@ -212,13 +218,20 @@ nest::RecordingBackendSIONlib::close_files_()
         const index gid = it->first;
         sion_uint64 n_rec = 0;
 
-        for ( device_map::iterator jj = devices_.begin(); jj != devices_.end(); ++jj )
+        for ( device_map::iterator jj = devices_.begin(); jj != devices_.end();
+              ++jj )
         {
           n_rec += jj->second.find( gid )->second.info.n_rec;
         }
 
         unsigned long n_rec_total = 0;
-        MPI_Reduce( &n_rec, &n_rec_total, 1, MPI_UNSIGNED_LONG, MPI_SUM, 0, MPI_COMM_WORLD );
+        MPI_Reduce( &n_rec,
+          &n_rec_total,
+          1,
+          MPI_UNSIGNED_LONG,
+          MPI_SUM,
+          0,
+          MPI_COMM_WORLD );
         assert( sizeof( unsigned long ) <= sizeof( sion_uint64 ) );
         it->second.info.n_rec = static_cast< sion_uint64 >( n_rec_total );
       }
@@ -230,13 +243,14 @@ nest::RecordingBackendSIONlib::close_files_()
       sion_int64* cs = NULL;
       int info_blk; // here int, other place sion_int64 due to sion api
       sion_int64 info_pos;
-      
+
       sion_get_current_location( file.sid, &info_blk, &info_pos, &mc, &cs );
-      struct {
-	sion_int64 info_blk;
-	sion_int64 info_pos;
-      } data_end = {info_blk, info_pos};
-      
+      struct
+      {
+        sion_int64 info_blk;
+        sion_int64 info_pos;
+      } data_end = { info_blk, info_pos };
+
       double t_end = kernel().simulation_manager.get_time().get_ms();
       double resolution = Time::get_resolution().get_ms();
 
@@ -245,7 +259,8 @@ nest::RecordingBackendSIONlib::close_files_()
       sion_fwrite( &resolution, sizeof( double ), 1, file.sid );
 
       // write device info
-      const sion_uint64 n_dev = static_cast< sion_uint64 >( devices_[ task ].size() );
+      const sion_uint64 n_dev =
+        static_cast< sion_uint64 >( devices_[ task ].size() );
       sion_fwrite( &n_dev, sizeof( sion_uint64 ), 1, file.sid );
 
       sion_uint64 gid;
@@ -281,7 +296,8 @@ nest::RecordingBackendSIONlib::close_files_()
         n_val = static_cast< sion_uint32 >( dev_info.value_names.size() );
         sion_fwrite( &n_val, sizeof( sion_uint32 ), 1, file.sid );
 
-        for ( std::vector< std::string >::iterator it = dev_info.value_names.begin();
+        for ( std::vector< std::string >::iterator it =
+                dev_info.value_names.begin();
               it != dev_info.value_names.end();
               ++it )
         {
@@ -317,7 +333,8 @@ nest::RecordingBackendSIONlib::synchronize()
 }
 
 void
-nest::RecordingBackendSIONlib::write( const RecordingDevice& device, const Event& event )
+nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
+  const Event& event )
 {
   const thread task = device.get_vp();
   const index device_gid = device.get_gid();
@@ -330,15 +347,17 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device, const Event
   FileEntry& file = files_[ task ];
   SIONBuffer& buffer = file.buffer;
 
-  // increase number of recored entries for the device in question on the corresponding thread
+  // increase number of recored entries for the device in question on the
+  // corresponding thread
   devices_.find( task )->second.find( device_gid )->second.info.n_rec++;
 
   const sion_int64 step = static_cast< sion_int64 >( steps );
   const sion_uint32 n_values = 0;
 
-  // 2 * GID (device, source) + time in steps + offset (double) + number of values
-  const unsigned int required_space =
-    2 * sizeof( sion_uint64 ) + sizeof( sion_int64 ) + sizeof( double ) + sizeof( sion_uint32 );
+  // 2 * GID (device, source) + time in steps + offset (double) + number of
+  // values
+  const unsigned int required_space = 2 * sizeof( sion_uint64 )
+    + sizeof( sion_int64 ) + sizeof( double ) + sizeof( sion_uint32 );
 
   if ( P_.sion_collective_ )
   {
@@ -383,7 +402,8 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
   const thread task = device.get_vp();
   const sion_uint64 device_gid = static_cast< sion_uint64 >( device.get_gid() );
 
-  const sion_uint64 sender_gid = static_cast< sion_uint64 >( event.get_sender_gid() );
+  const sion_uint64 sender_gid =
+    static_cast< sion_uint64 >( event.get_sender_gid() );
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
 
@@ -395,14 +415,17 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
   const sion_int64 step = static_cast< sion_int64 >( stamp.get_steps() );
   const sion_uint32 n_values = static_cast< sion_uint32 >( values.size() );
 
-  const unsigned int required_space = 2 * sizeof( sion_uint64 ) + sizeof( sion_int64 )
-    + ( 1 + n_values ) * sizeof( double ) + sizeof( sion_uint32 );
+  const unsigned int required_space = 2 * sizeof( sion_uint64 )
+    + sizeof( sion_int64 ) + ( 1 + n_values ) * sizeof( double )
+    + sizeof( sion_uint32 );
 
   if ( P_.sion_collective_ )
   {
     buffer.ensure_space( required_space );
     buffer << device_gid << sender_gid << step << offset << n_values;
-    for ( std::vector< double >::const_iterator val = values.begin(); val != values.end(); ++val )
+    for ( std::vector< double >::const_iterator val = values.begin();
+          val != values.end();
+          ++val )
     {
       buffer << *val;
     }
@@ -418,7 +441,9 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
     }
 
     buffer << device_gid << sender_gid << step << offset << n_values;
-    for ( std::vector< double >::const_iterator val = values.begin(); val != values.end(); ++val )
+    for ( std::vector< double >::const_iterator val = values.begin();
+          val != values.end();
+          ++val )
     {
       buffer << *val;
     }
@@ -437,7 +462,9 @@ nest::RecordingBackendSIONlib::write( const RecordingDevice& device,
     sion_fwrite( &offset, sizeof( double ), 1, file.sid );
     sion_fwrite( &n_values, sizeof( sion_uint32 ), 1, file.sid );
 
-    for ( std::vector< double >::const_iterator val = values.begin(); val != values.end(); ++val )
+    for ( std::vector< double >::const_iterator val = values.begin();
+          val != values.end();
+          ++val )
     {
       double value = *val;
       sion_fwrite( &value, sizeof( double ), 1, file.sid );
@@ -519,7 +546,7 @@ nest::RecordingBackendSIONlib::SIONBuffer::write( const char* v, size_t n )
   }
   else
   {
-	// TODO: use NEST logging framework here
+    // TODO: use NEST logging framework here
     std::cerr << "SIONBuffer: buffer overflow: ptr=" << ptr << " n=" << n
               << " max_size=" << max_size << std::endl;
   }
@@ -527,7 +554,8 @@ nest::RecordingBackendSIONlib::SIONBuffer::write( const char* v, size_t n )
 
 template < typename T >
 nest::RecordingBackendSIONlib::SIONBuffer&
-nest::RecordingBackendSIONlib::SIONBuffer::operator<<( const T data )
+  nest::RecordingBackendSIONlib::SIONBuffer::
+  operator<<( const T data )
 {
   write( ( const char* ) &data, sizeof( T ) );
   return *this;
@@ -546,7 +574,9 @@ nest::RecordingBackendSIONlib::Parameters_::Parameters_()
 }
 
 void
-nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib& al, DictionaryDatum& d ) const
+nest::RecordingBackendSIONlib::Parameters_::get(
+  const RecordingBackendSIONlib& al,
+  DictionaryDatum& d ) const
 {
   ( *d )[ names::file_extension ] = file_ext_;
   ( *d )[ names::buffer_size ] = buffer_size_;
@@ -555,7 +585,9 @@ nest::RecordingBackendSIONlib::Parameters_::get( const RecordingBackendSIONlib& 
 }
 
 void
-nest::RecordingBackendSIONlib::Parameters_::set( const RecordingBackendSIONlib& al, const DictionaryDatum& d )
+nest::RecordingBackendSIONlib::Parameters_::set(
+  const RecordingBackendSIONlib& al,
+  const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::file_extension, file_ext_ );
   updateValue< long >( d, names::buffer_size, buffer_size_ );

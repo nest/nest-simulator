@@ -63,18 +63,20 @@ public:
   ~RecordingBackendMemory() throw();
 
   /**
-   * Functions called by all instantiated recording devices to register themselves with their
-   * metadata.
+   * Functions called by all instantiated recording devices to register
+   * themselves with their metadata.
    */
   void enroll( RecordingDevice& device );
-  void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
+  void enroll( RecordingDevice& device,
+    const std::vector< Name >& value_names );
 
   /**
    * Finalize the RecordingBackendMemory after the simulation has finished.
    */
   void finalize();
 
-  void get_device_status_( const RecordingDevice& device, DictionaryDatum& ) const;
+  void get_device_status_( const RecordingDevice& device,
+    DictionaryDatum& ) const;
 
   /**
    * Trivial synchronization function. The RecordingBackendMemory does
@@ -91,7 +93,9 @@ public:
    * Functions to write data to memory.
    */
   void write( const RecordingDevice& device, const Event& event );
-  void write( const RecordingDevice& device, const Event& event, const std::vector< double >& values);
+  void write( const RecordingDevice& device,
+    const Event& event,
+    const std::vector< double >& values );
 
 protected:
   /**
@@ -101,21 +105,23 @@ protected:
 
 
 private:
-
-  class Recordings {
+  class Recordings
+  {
   public:
-    Recordings(const std::vector< Name >& extra_data_names)
-	: extra_data_names_(extra_data_names)
+    Recordings( const std::vector< Name >& extra_data_names )
+      : extra_data_names_( extra_data_names )
     {
     }
 
-    void push_back(index sender, double time)
+    void
+    push_back( index sender, double time )
     {
       senders_.push_back( sender );
       times_.push_back( time );
     }
 
-    void push_back(index sender, double time, const std::vector< double >& values)
+    void
+    push_back( index sender, double time, const std::vector< double >& values )
     {
       push_back( sender, time );
       for ( size_t i = 0; i < values.size(); ++i )
@@ -124,19 +130,24 @@ private:
       }
     }
 
-    void get_status( DictionaryDatum& d ) const
+    void
+    get_status( DictionaryDatum& d ) const
     {
       DictionaryDatum dd( new Dictionary() );
-      ( *dd )[ names::senders ] = IntVectorDatum( new std::vector< long >( senders_ ) );
-      ( *dd )[ names::times ] = DoubleVectorDatum( new std::vector< double >( times_ ) );
+      ( *dd )[ names::senders ] =
+        IntVectorDatum( new std::vector< long >( senders_ ) );
+      ( *dd )[ names::times ] =
+        DoubleVectorDatum( new std::vector< double >( times_ ) );
       for ( size_t i = 0; i < extra_data_.size(); ++i )
       {
-        ( *dd )[ extra_data_names_[ i ] ] = DoubleVectorDatum( new std::vector< double >( extra_data_[ i ] ) );
+        ( *dd )[ extra_data_names_[ i ] ] =
+          DoubleVectorDatum( new std::vector< double >( extra_data_[ i ] ) );
       }
       ( *d )[ names::events ] = dd;
     }
 
-    void clear()
+    void
+    clear()
     {
       senders_.clear();
       times_.clear();
@@ -149,16 +160,16 @@ private:
   private:
     Recordings();
 
-    std::vector< long > senders_;     //!< the gids of the senders of the data
-    std::vector< double > times_;      //!< the
+    std::vector< long > senders_; //!< the gids of the senders of the events
+    std::vector< double > times_; //!< the times of the registered events
     std::vector< std::vector< double > > extra_data_;
     std::vector< Name > extra_data_names_;
   };
 
   /**
-   * A map for the data. We have a vector with one map per
-   * local thread. The map associates the gid of a device on a given
-   * thread with its recordings.
+   * A map for the data. We have a vector with one map per local
+   * thread. The map associates the gid of a device on a given thread
+   * with its recordings.
   */
   typedef std::vector< std::map< size_t, Recordings* > > data_map;
   data_map data_;

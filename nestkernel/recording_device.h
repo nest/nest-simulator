@@ -59,10 +59,11 @@ public:
   init_state( const RecordingDevice& pr )
   {
     Device::init_state( pr );
-    //S_ = pr.S_; // TODO: do we need state?
+    // S_ = pr.S_; // TODO: do we need state?
   }
 
-  void init_buffers()
+  void
+  init_buffers()
   {
     Device::init_buffers();
   }
@@ -98,7 +99,7 @@ public:
 private:
   struct Parameters_
   {
-    std::string label_;    //!< a user-defined label for symbolic device names.
+    std::string label_; //!< a user-defined label for symbolic device names.
 
     Parameters_();
 

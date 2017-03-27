@@ -34,8 +34,9 @@ nest::RecordingBackendMemory::~RecordingBackendMemory() throw()
 {
   for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
-    data_map::value_type& inner = data_[t];
-    for ( data_map::value_type::iterator d = inner.begin(); d != inner.end(); ++d )
+    data_map::value_type& inner = data_[ t ];
+    for ( data_map::value_type::iterator d = inner.begin(); d != inner.end();
+          ++d )
     {
       delete d->second;
     }
@@ -51,13 +52,14 @@ nest::RecordingBackendMemory::enroll( RecordingDevice& device )
 }
 
 void
-nest::RecordingBackendMemory::enroll( RecordingDevice& device, const std::vector< Name >& value_names )
+nest::RecordingBackendMemory::enroll( RecordingDevice& device,
+  const std::vector< Name >& value_names )
 {
   const int t = device.get_thread();
   const int gid = device.get_gid();
 
   // Ensure that a device is only enrolled once.
-  assert(data_[ t ].find( gid ) == data_[ t ].end() );
+  assert( data_[ t ].find( gid ) == data_[ t ].end() );
 
   data_[ t ].insert( std::make_pair( gid, new Recordings( value_names ) ) );
 }
@@ -72,8 +74,8 @@ nest::RecordingBackendMemory::initialize_()
 void
 nest::RecordingBackendMemory::finalize()
 {
-  // don't set initialized_ to false here, as collected data is still valid until
-  // the next run of Simulate()
+  // don't set initialized_ to false here, as collected data is still valid
+  // until the next run of Simulate()
 }
 
 void
@@ -82,7 +84,7 @@ nest::RecordingBackendMemory::synchronize()
 }
 
 void
-nest::RecordingBackendMemory::clear( const RecordingDevice& device)
+nest::RecordingBackendMemory::clear( const RecordingDevice& device )
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
@@ -93,7 +95,8 @@ nest::RecordingBackendMemory::clear( const RecordingDevice& device)
 }
 
 void
-nest::RecordingBackendMemory::write( const RecordingDevice& device, const Event& event )
+nest::RecordingBackendMemory::write( const RecordingDevice& device,
+  const Event& event )
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
@@ -102,7 +105,7 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device, const Event&
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
 
-  data_[ t ][ gid ]->push_back(sender, stamp.get_ms() - offset);
+  data_[ t ][ gid ]->push_back( sender, stamp.get_ms() - offset );
 }
 
 void
@@ -117,17 +120,18 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
 
-  data_[ t ][ gid ]->push_back(sender, stamp.get_ms() - offset, values);
+  data_[ t ][ gid ]->push_back( sender, stamp.get_ms() - offset, values );
 }
 
 
 void
-nest::RecordingBackendMemory::get_device_status_( const RecordingDevice& device, DictionaryDatum& d ) const
+nest::RecordingBackendMemory::get_device_status_( const RecordingDevice& device,
+  DictionaryDatum& d ) const
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
 
   data_map::value_type::const_iterator device_data = data_[ t ].find( gid );
   assert( device_data != data_[ t ].end() );
-  device_data->second->get_status(d);
+  device_data->second->get_status( d );
 }

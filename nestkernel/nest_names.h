@@ -67,13 +67,12 @@ extern const Name c_2;       //!< Specific to stochastic neuron pp_psc_delta
 extern const Name c_3;       //!< Specific to stochastic neuron pp_psc_delta
 extern const Name C_m;       //!< Membrane capacitance
 extern const Name Ca;        //!< Calcium concentration
-extern const Name calibrate; //!< Command to calibrate the neuron (sli_neuron)
-extern const Name
-  calibrate_node;        //!< Command to calibrate the neuron (sli_neuron)
+extern const Name calibrate; //!< Command to calibrate the neuron
+extern const Name calibrate_node;       //!< Command to calibrate the neuron
 extern const Name clear; //!< used for ArchivingNode
 extern const Name close_after_simulate; //!< Recorder parameter
 extern const Name close_on_reset;       //!< Recorder parameter
-extern const Name
+extern const Name 
   coeff_ex; //!< tau_lcm=coeff_ex*tau_ex (precise timing neurons (Brette 2007))
 extern const Name
   coeff_in; //!< tau_lcm=coeff_in*tau_in (precise timing neurons (Brette 2007))
@@ -139,11 +138,10 @@ extern const Name element_type; //!< Node type
 extern const Name epoch;
 extern const Name eps;         //!< MSP growth curve parameter
 extern const Name equilibrate; //!< specific to ht_neuron
-extern const Name error;       //!< Indicates an error (sli_neuron)
+extern const Name error;       //!< Indicates an error
 extern const Name eta;         //!< MSP growth curve parameter
 extern const Name events;      //!< Recorder parameter
-extern const Name
-  ex_spikes; //!< Number of arriving excitatory spikes (sli_neuron)
+extern const Name ex_spikes; //!< Number of arriving excitatory spikes
 
 extern const Name F_lower;
 extern const Name F_mean;
@@ -153,8 +151,7 @@ extern const Name fbuffer_size;   //!< Recorder parameter
 extern const Name file;           //!< Recorder parameter
 extern const Name file_extension; //!< Recorder parameter
 extern const Name filename;       //!< Recorder parameter
-extern const Name
-  filenames; //!< Recorder parameter---keep, will disappear with NESTIO
+extern const Name filenames; //!< Recorder parameter--- remove with NESTIO
 extern const Name flush_after_simulate; //!< Recorder parameter
 extern const Name flush_records;        //!< Recorder parameter
 extern const Name frequency;            //!< Signal modulation frequency
@@ -337,17 +334,16 @@ extern const Name rports; //!< Recorder parameter
 extern const Name rule;   //!< Connectivity-related
 
 extern const Name S; //!< Binary state (output) of neuron (Ginzburg neuron)
-extern const Name S_act_NMDA;  //!< specific to Hill & Tononi 2005
-extern const Name scientific;  //!< Recorder parameter
-extern const Name screen;      //!< Recorder parameter
-extern const Name senders;     //!< Recorder parameter
+extern const Name S_act_NMDA;      //!< specific to Hill & Tononi 2005
+extern const Name scientific;      //!< Recorder parameter
+extern const Name screen;          //!< Recorder parameter
+extern const Name senders;         //!< Recorder parameter
 extern const Name sion_chunksize;  //!< RecordingBackendSIONlib parameter
 extern const Name sion_collective; //!< RecordingBackendSIONlib parameter
-extern const Name sigmoid;     //!< Sigmoid MSP growth curve
-extern const Name size_of;     //!< Connection parameters
-extern const Name source;      //!< Connection parameters
+extern const Name sigmoid;         //!< Sigmoid MSP growth curve
+extern const Name size_of;         //!< Connection parameters
+extern const Name source;          //!< Connection parameters
 extern const Name spike;       //!< true if the neuron spikes and false if not.
-                               //!< (sli_neuron)
 extern const Name spike_times; //!< Recorder parameter
 extern const Name start;       //!< Device parameters
 extern const Name state;       //!< Node parameter

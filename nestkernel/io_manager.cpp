@@ -43,7 +43,7 @@
 #include "recording_backend_memory.h"
 #include "recording_backend_screen.h"
 #ifdef HAVE_SIONLIB
-  #include "recording_backend_sionlib.h"
+#include "recording_backend_sionlib.h"
 #endif
 
 // Includes from sli:
@@ -113,11 +113,15 @@ nest::IOManager::initialize()
   if ( !dict->empty() )
     set_data_path_prefix_( dict );
 
-  recording_backends_.insert( std::make_pair( "ascii", new RecordingBackendASCII() ) );
-  recording_backends_.insert( std::make_pair( "memory", new RecordingBackendMemory() ) );
-  recording_backends_.insert( std::make_pair( "screen", new RecordingBackendScreen() ) );
+  recording_backends_.insert(
+    std::make_pair( "ascii", new RecordingBackendASCII() ) );
+  recording_backends_.insert(
+    std::make_pair( "memory", new RecordingBackendMemory() ) );
+  recording_backends_.insert(
+    std::make_pair( "screen", new RecordingBackendScreen() ) );
 #ifdef HAVE_SIONLIB
-  recording_backends_.insert( std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
+  recording_backends_.insert(
+    std::make_pair( "sionlib", new RecordingBackendSIONlib() ) );
 #endif
 
   set_recording_backend( "memory" );
@@ -145,7 +149,8 @@ nest::IOManager::set_status( const DictionaryDatum& d )
     set_recording_backend( recording_backend );
 
   DictionaryDatum recording_backend_status;
-  if ( updateValue< DictionaryDatum >( d, names::recording_backend_status, recording_backend_status ) )
+  if ( updateValue< DictionaryDatum >(
+         d, names::recording_backend_status, recording_backend_status ) )
     recording_backend_->second->set_status( recording_backend_status );
 }
 
@@ -156,7 +161,8 @@ nest::IOManager::get_status( DictionaryDatum& d )
   ( *d )[ "data_prefix" ] = data_prefix_;
   ( *d )[ "overwrite_files" ] = overwrite_files_;
 
-  ( *d )[ names::recording_backend ] = LiteralDatum( recording_backend_->first );
+  ( *d )[ names::recording_backend ] =
+    LiteralDatum( recording_backend_->first );
 
   DictionaryDatum recording_backend_status = DictionaryDatum( new Dictionary );
   recording_backend_->second->get_status( recording_backend_status );
@@ -164,7 +170,8 @@ nest::IOManager::get_status( DictionaryDatum& d )
 
   ArrayDatum recording_backends;
   std::map< Name, RecordingBackend* >::const_iterator it;
-  for(it = recording_backends_.begin(); it != recording_backends_.end(); ++it)
+  for ( it = recording_backends_.begin(); it != recording_backends_.end();
+        ++it )
   {
     recording_backends.push_back( new LiteralDatum( it->first ) );
   }
@@ -174,14 +181,16 @@ nest::IOManager::get_status( DictionaryDatum& d )
 void
 nest::IOManager::set_recording_backend( Name name )
 {
-  std::map< Name, RecordingBackend* >::iterator rb = recording_backends_.find( name );
+  std::map< Name, RecordingBackend* >::iterator rb =
+    recording_backends_.find( name );
   if ( rb != recording_backends_.end() )
   {
-    recording_backend_ = &(*rb);
+    recording_backend_ = &( *rb );
   }
   else
   {
-    std::string msg = String::compose( "Recording backend is not known: '%1'", name );
+    std::string msg =
+      String::compose( "Recording backend is not known: '%1'", name );
     throw BadProperty( msg );
   }
 }

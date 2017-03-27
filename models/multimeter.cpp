@@ -166,8 +166,9 @@ Multimeter::handle( DataLoggingReply& reply )
 {
   // easy access to relevant information
   DataLoggingReply::Container const& info = reply.get_info();
-
-  size_t inactive_skipped = 0; // count records that have been skipped during inactivity
+  
+  // count records that have been skipped during inactivity
+  size_t inactive_skipped = 0;
 
   // record all data, time point by time point
   for ( size_t j = 0; j < info.size(); ++j )
@@ -185,11 +186,12 @@ Multimeter::handle( DataLoggingReply& reply )
     // ++S_.events_;
 
     reply.set_stamp( info[ j ].timestamp );
-    //const index sender = reply.get_sender_gid();
-    //const Time stamp = reply.get_stamp();
-    //const double offset = reply.get_offset();
+    // const index sender = reply.get_sender_gid();
+    // const Time stamp = reply.get_stamp();
+    // const double offset = reply.get_offset();
 
-    kernel().io_manager.get_recording_backend()->write( *this, reply, info[ j ].data );
+    kernel().io_manager.get_recording_backend()->write(
+      *this, reply, info[ j ].data );
 
     S_.data_.push_back( info[ j ].data );
   }

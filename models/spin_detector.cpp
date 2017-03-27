@@ -60,15 +60,15 @@ nest::spin_detector::spin_detector( const spin_detector& n )
 void
 nest::spin_detector::init_state_( const Node& np )
 {
-  //const spin_detector& sd = dynamic_cast< const spin_detector& >( np );
-  //device_.init_state( sd.device_ ); // FIXME (??)
+  // const spin_detector& sd = dynamic_cast< const spin_detector& >( np );
+  // device_.init_state( sd.device_ ); // FIXME (??)
   init_buffers_();
 }
 
 void
 nest::spin_detector::init_buffers_()
 {
-  //device_.init_buffers();
+  // device_.init_buffers();
 
   std::vector< std::vector< Event* > > tmp( 2, std::vector< Event* >() );
   B_.spikes_.swap( tmp );
@@ -77,7 +77,7 @@ nest::spin_detector::init_buffers_()
 void
 nest::spin_detector::calibrate()
 {
-  //device_.calibrate(); //FIXME
+  // device_.calibrate(); //FIXME
 }
 
 void
@@ -89,7 +89,7 @@ nest::spin_detector::update( Time const&, const long, const long )
         ++e )
   {
     assert( *e != 0 );
-    //device_.write( **e ); //FIXME
+    // device_.write( **e ); //FIXME
     delete *e;
   }
 
@@ -102,7 +102,7 @@ void
 nest::spin_detector::get_status( DictionaryDatum& d ) const
 {
   // get the data from the device
-  //device_.get_status( d ); //FIXME
+  // device_.get_status( d ); //FIXME
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
@@ -123,7 +123,7 @@ nest::spin_detector::set_status( const DictionaryDatum& d )
   if ( d->known( names::precise_times ) )
     user_set_precise_times_ = true;
 
-  //device_.set_status( d ); //FIXME
+  // device_.set_status( d ); //FIXME
 }
 
 

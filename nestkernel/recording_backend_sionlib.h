@@ -40,9 +40,9 @@ public:
   }
 
   RecordingBackendSIONlib( std::string file_ext,
-			   long buffer_size,
-			   long sion_chunksize,
-			   bool sion_collective)
+    long buffer_size,
+    long sion_chunksize,
+    bool sion_collective )
     : files_()
   {
     P_.file_ext_ = file_ext;
@@ -56,13 +56,16 @@ public:
   }
 
   void enroll( RecordingDevice& device );
-  void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
+  void enroll( RecordingDevice& device,
+    const std::vector< Name >& value_names );
 
   void finalize();
   void synchronize();
 
   void write( const RecordingDevice& device, const Event& event );
-  void write( const RecordingDevice& device, const Event& event, const std::vector< double >& );
+  void write( const RecordingDevice& device,
+    const Event& event,
+    const std::vector< double >& );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
@@ -77,7 +80,7 @@ private:
   class SIONBuffer
   {
   private:
-	// TODO: add underscores
+    // TODO: add underscores
     char* buffer;
     size_t ptr;
     size_t max_size;
@@ -91,11 +94,31 @@ private:
     void ensure_space( size_t size );
     void write( const char* v, size_t n );
 
-    size_t get_capacity() {return max_size;};
-    size_t get_size() {return ptr;};
-    size_t get_free() {return max_size - ptr;};
-    void clear() {ptr = 0;};
-    char* read() {return buffer;};
+    size_t
+    get_capacity()
+    {
+      return max_size;
+    };
+    size_t
+    get_size()
+    {
+      return ptr;
+    };
+    size_t
+    get_free()
+    {
+      return max_size - ptr;
+    };
+    void
+    clear()
+    {
+      ptr = 0;
+    };
+    char*
+    read()
+    {
+      return buffer;
+    };
     template < typename T >
     SIONBuffer& operator<<( const T data );
   };
@@ -140,15 +163,15 @@ private:
   file_map files_;
 
   std::string filename_;
-			   
+
   double t_start_; // simulation start time for storing
 
   struct Parameters_
   {
-    std::string file_ext_;      //!< the file name extension to use, without .
-    bool sion_collective_;      //!< use SIONlib's collective mode.
-    long sion_chunksize_;       //!< the size of SIONlib's buffer.
-    long buffer_size_;          //!< the size of the internal buffer.
+    std::string file_ext_; //!< the file name extension to use, without .
+    bool sion_collective_; //!< use SIONlib's collective mode.
+    long sion_chunksize_;  //!< the size of SIONlib's buffer.
+    long buffer_size_;     //!< the size of the internal buffer.
 
     Parameters_();
 

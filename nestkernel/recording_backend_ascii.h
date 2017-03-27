@@ -63,11 +63,13 @@ public:
   }
 
   /**
-   * Functions called by all instantiated recording devices to register themselves with their
+   * Functions called by all instantiated recording devices to register
+   * themselves with their
    * metadata. Here, files are opened.
    */
   void enroll( RecordingDevice& device );
-  void enroll( RecordingDevice& device, const std::vector< Name >& value_names );
+  void enroll( RecordingDevice& device,
+    const std::vector< Name >& value_names );
 
   /**
    * Flush files after a single call to Run
@@ -89,7 +91,9 @@ public:
    * Functions to write data to file.
    */
   void write( const RecordingDevice& device, const Event& event );
-  void write( const RecordingDevice& device, const Event& event, const std::vector< double >& );
+  void write( const RecordingDevice& device,
+    const Event& event,
+    const std::vector< double >& );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
@@ -113,8 +117,8 @@ private:
 
   struct Parameters_
   {
-    long precision_;            //!< Number of decimal places to use for values
-    std::string file_ext_;      //!< File name extension to use, without leading "."
+    long precision_;       //!< Number of decimal places to use for values
+    std::string file_ext_; //!< File name extension to use, without leading "."
 
     Parameters_();
 
@@ -129,9 +133,10 @@ private:
    * local thread. The map associates the gid of a device on a given
    * thread with the file name and a pointer to the file stream
    *
-   * vp -> ( gid -> [file_name, file_stream] )
+   * vp -> ( gid -> [ file_name, file_stream ] )
   */
-  typedef std::vector< std::map< size_t, std::pair< std::string, std::ofstream* > > > file_map;
+  typedef std::vector< std::map< size_t,
+    std::pair< std::string, std::ofstream* > > > file_map;
   file_map files_;
 };
 

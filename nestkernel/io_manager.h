@@ -78,12 +78,20 @@ public:
   RecordingBackend* get_recording_backend();
 
 private:
-  std::string data_path_;     //!< Path for all files written by devices
-  std::string data_prefix_;   //!< Prefix for all files written by devices
-  bool overwrite_files_;      //!< If true, overwrite existing data files.
+  std::string data_path_;   //!< Path for all files written by devices
+  std::string data_prefix_; //!< Prefix for all files written by devices
+  bool overwrite_files_;    //!< If true, overwrite existing data files.
 
-  std::map< Name, RecordingBackend* > recording_backends_; //<! A map of all registered recording backends
-  std::pair< const Name, RecordingBackend* >* recording_backend_; //<! A pointer to the current recording backend
+  /**
+   * A mapping from names to registered recording backends.
+   */
+  std::map< Name, RecordingBackend* > recording_backends_;
+
+  /**
+   * A pointer to the current recording backend stored as a
+   * std::pair of name and pointer to the actual backend.
+   */
+  std::pair< const Name, RecordingBackend* >* recording_backend_;
 };
 }
 

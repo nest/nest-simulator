@@ -644,10 +644,7 @@ nest::SimulationManager::update_()
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
     kernel().vp_manager.get_num_threads() );
-// parallel section begins
-#pragma omp parallel
-  {
-    const int thrd = kernel().vp_manager.get_thread_id();
+  NEST_PARALLEL_FOR_THREAD(thrd)
 
     do
     {
@@ -874,7 +871,8 @@ nest::SimulationManager::update_()
         Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     }
 
-  } // end of #pragma parallel omp
+  // end of #pragma parallel omp
+  NEST_PARALLEL_END
 
   // check if any exceptions have been raised
   for ( index thrd = 0; thrd < kernel().vp_manager.get_num_threads(); ++thrd )

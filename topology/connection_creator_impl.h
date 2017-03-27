@@ -223,11 +223,9 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   }
 
 // sharing specs on next line commented out because gcc 4.2 cannot handle them
-#pragma omp parallel // default(none) shared(source, target, masked_layer,
+// previously pragma  parallel // default(none) shared(source, target, masked_layer,
                      // target_begin, target_end)
-  {
-    const int thread_id = kernel().vp_manager.get_thread_id();
-
+  NEST_PARALLEL_FOR_THREAD(thread_id)
     for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
           tgt_it != target_end;
           ++tgt_it )
@@ -266,7 +264,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
           pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
       }
     } // for target_begin
-  }   // omp parallel
+  NEST_PARALLEL_END
 }
 
 

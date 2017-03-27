@@ -32,6 +32,18 @@
 // Generated includes:
 #include "config.h"
 
+#ifdef _OPENMP
+  #define NEST_PARALLEL_FOR_THREAD(t) \
+    _Pragma("omp parallel") \
+    { \
+      size_t t = kernel().vp_manager.get_thread_id();
+#else
+  #define NEST_PARALLEL_FOR_THREAD(t) \
+    for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t ) {
+#endif
+
+#define NEST_PARALLEL_END }
+
 /**
  * @mainpage NEST: Neural Simulation Tool
  *

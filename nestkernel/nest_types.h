@@ -39,7 +39,8 @@
       size_t t = kernel().vp_manager.get_thread_id();
 #else
   #define NEST_PARALLEL_FOR_THREAD(t) \
-    for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t ) {
+    { \
+      size_t t = 0;
 #endif
 
 #define NEST_PARALLEL_END }

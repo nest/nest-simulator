@@ -118,14 +118,8 @@ public:
   {
   }
 
-  /** Set internal variables, including opening files. */
+  /** Set internal variables before calls to SimulationManager::run() */
   virtual void calibrate();
-
-  /** Housekeeping at end of simulation, eg close files. */
-  virtual void
-  finalize()
-  {
-  }
 
   virtual void get_status( DictionaryDatum& ) const;
   virtual void set_status( const DictionaryDatum& );

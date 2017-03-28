@@ -210,11 +210,6 @@ public:
   };
 
   /**
-   * Invoke finalize() on nodes registered for finalization.
-   */
-  void finalize_nodes();
-
-  /**
    * Returns whether any node uses waveform relaxation
    */
   bool wfr_is_used() const;

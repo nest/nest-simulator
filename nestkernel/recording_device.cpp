@@ -22,26 +22,25 @@
 
 #include "recording_device.h"
 
+#include "kernel_manager.h"
+
 nest::RecordingDevice::Parameters_::Parameters_()
-  : filename_()
-  , label_()
+  : label_()
 {
 }
 
 void
-nest::RecordingDevice::Parameters_::get( const RecordingDevice&, DictionaryDatum& d ) const
+nest::RecordingDevice::Parameters_::get( const RecordingDevice& device,
+  DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
 
-  if ( !filename_.empty() )
-  {
-    initialize_property_array( d, names::filenames );
-    append_property( d, names::filenames, filename_ );
-  }
+  kernel().io_manager.get_recording_backend()->get_device_status( device, d );
 }
 
 void
-nest::RecordingDevice::Parameters_::set( const RecordingDevice&, const DictionaryDatum& d )
+nest::RecordingDevice::Parameters_::set( const RecordingDevice&,
+  const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::label, label_ );
 }
@@ -56,7 +55,4 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
-
-  // if ( P_.to_file_ && B_.fs_.is_open() ) // TODO: check if this is neccessary
-  P_.filename_.clear();
 }

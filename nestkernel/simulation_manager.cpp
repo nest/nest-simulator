@@ -416,13 +416,13 @@ nest::SimulationManager::prepare()
     kernel().event_delivery_manager.configure_spike_buffers();
   }
 
+  // initialize recording backend
+  kernel().io_manager.get_recording_backend()->initialize();
+
   kernel().node_manager.ensure_valid_thread_local_ids();
   kernel().node_manager.prepare_nodes();
 
   kernel().model_manager.create_secondary_events_prototypes();
-
-  // initialize abstract IO backend
-  kernel().io_manager.get_backend()->initialize();
 
   // we have to do enter_runtime after prepare_nodes, since we use
   // calibrate to map the ports of MUSIC devices, which has to be done
@@ -534,6 +534,8 @@ nest::SimulationManager::run( Time const& t )
   }
 
   call_update_();
+
+  kernel().io_manager.get_recording_backend()->post_run_cleanup();
 }
 
 void
@@ -557,8 +559,7 @@ nest::SimulationManager::cleanup()
     }
   }
 
-  kernel().io_manager.get_backend()->finalize();
-  kernel().node_manager.finalize_nodes();
+  kernel().io_manager.get_recording_backend()->finalize();
 }
 
 void
@@ -861,7 +862,7 @@ nest::SimulationManager::update_()
         }
       }
 
-      kernel().io_manager.get_backend()->synchronize();
+      kernel().io_manager.get_recording_backend()->synchronize();
 
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier

@@ -20,10 +20,12 @@
  *
  */
 
+// C++ includes:
 #include <iostream>
-#include <iomanip>
 
+// Includes from nestkernel:
 #include "recording_device.h"
+
 #include "recording_backend_screen.h"
 
 void
@@ -32,12 +34,13 @@ nest::RecordingBackendScreen::enroll( RecordingDevice& )
 }
 
 void
-nest::RecordingBackendScreen::enroll( RecordingDevice&, const std::vector< Name >& )
+nest::RecordingBackendScreen::enroll( RecordingDevice&,
+  const std::vector< Name >& )
 {
 }
 
 void
-nest::RecordingBackendScreen::initialize()
+nest::RecordingBackendScreen::initialize_()
 {
   std::cout << std::fixed;
   std::cout << std::setprecision( P_.precision_ );
@@ -46,6 +49,7 @@ nest::RecordingBackendScreen::initialize()
 void
 nest::RecordingBackendScreen::finalize()
 {
+  initialized_ = false;
 }
 
 void
@@ -54,7 +58,8 @@ nest::RecordingBackendScreen::synchronize()
 }
 
 void
-nest::RecordingBackendScreen::write( const RecordingDevice& , const Event& event )
+nest::RecordingBackendScreen::write( const RecordingDevice&,
+  const Event& event )
 {
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
@@ -67,7 +72,7 @@ nest::RecordingBackendScreen::write( const RecordingDevice& , const Event& event
 void
 nest::RecordingBackendScreen::write( const RecordingDevice&,
   const Event& event,
-  const std::vector< double_t >& values )
+  const std::vector< double >& values )
 {
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
@@ -77,7 +82,9 @@ nest::RecordingBackendScreen::write( const RecordingDevice&,
   {
     std::cout << sender << "\t" << stamp.get_ms() - offset;
 
-    for ( std::vector< double_t >::const_iterator val = values.begin(); val != values.end(); ++val )
+    for ( std::vector< double >::const_iterator val = values.begin();
+          val != values.end();
+          ++val )
     {
       std::cout << "\t" << *val;
     }
@@ -96,13 +103,15 @@ nest::RecordingBackendScreen::Parameters_::Parameters_()
 }
 
 void
-nest::RecordingBackendScreen::Parameters_::get( const RecordingBackendScreen& , DictionaryDatum& d ) const
+nest::RecordingBackendScreen::Parameters_::get( const RecordingBackendScreen&,
+  DictionaryDatum& d ) const
 {
   ( *d )[ names::precision ] = precision_;
 }
 
 void
-nest::RecordingBackendScreen::Parameters_::set( const RecordingBackendScreen& , const DictionaryDatum& d )
+nest::RecordingBackendScreen::Parameters_::set( const RecordingBackendScreen&,
+  const DictionaryDatum& d )
 {
   if ( updateValue< long >( d, names::precision, precision_ ) )
   {

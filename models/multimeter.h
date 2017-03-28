@@ -169,7 +169,7 @@ public:
   void handle( DataLoggingReply& );
 
   Type get_type() const;
- 
+
   SignalType sends_signal() const;
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -178,7 +178,6 @@ protected:
   void init_state_( Node const& );
   void init_buffers_();
   void calibrate();
-  void finalize();
 
   /**
    * Collect and output membrane potential information.

@@ -299,18 +299,6 @@ public:
   virtual void calibrate() = 0;
 
   /**
-   * Finalize node.
-   * Override this function if a node needs to "wrap up" things after a
-   * simulation, i.e., before Network::get_network().resume() returns. Typical
-   * use-cases are devices that need to flush buffers or disconnect from
-   * external files or pipes.
-   */
-  virtual void
-  finalize()
-  {
-  }
-
-  /**
    * Bring the node from state $t$ to $t+n*dt$.
    *
    * n->update(T, from, to) performs the update steps beginning

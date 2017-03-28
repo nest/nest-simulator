@@ -26,10 +26,6 @@ pynest microcircuit network
 Main file for the microcircuit.
 
 Hendrik Rothe, Hannah Bos, Sacha van Albada; May 2016
-
-This example uses the function GetNodes, which is deprecated. A deprecation
-warning is therefore issued. For details about deprecated functions, see
-documentation.
 '''
 
 import nest
@@ -202,23 +198,22 @@ class Network:
             self.pops.append(population)
             pop_file.write('%d  %d \n' % (population[0], population[-1]))
         pop_file.close()
-        for thread in np.arange(nest.GetKernelStatus('local_num_threads')):
-            # Using GetNodes is a work-around until NEST 3.0 is released. It
-            # will issue a deprecation warning.
-            local_nodes = nest.GetNodes(
-                [0], {
-                    'model': self.net_dict['neuron_model'],
-                    'thread': thread
-                    }, local_only=True
-                )[0]
-            vp = nest.GetStatus(local_nodes)[0]['vp']
-            # vp is the same for all local nodes on the same thread
-            nest.SetStatus(
-                local_nodes, 'V_m', self.pyrngs[vp].normal(
+
+        # Set random membrane potential
+        no_vps = nest.GetKernelStatus('local_num_threads')
+        vp_lists = [[] for x in range(no_vps)]
+        for gids in self.pops:
+            node_info = nest.GetStatus(gids)
+            for info in node_info:
+                if info['local']:
+                    vp = info['vp']
+                    vp_lists[vp].append(info['global_id'])
+
+        for vp, vps_gids in enumerate(vp_lists):
+            nest.SetStatus(vps_gids, params='V_m', val=self.pyrngs[vp].normal(
                     self.net_dict['neuron_params']['V0_mean'],
                     self.net_dict['neuron_params']['V0_sd'],
-                    len(local_nodes))
-                    )
+                    len(vps_gids)))
 
     def create_devices(self):
         """ Creates the recording devices.

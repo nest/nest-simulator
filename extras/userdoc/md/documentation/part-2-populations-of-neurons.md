@@ -79,9 +79,9 @@ populations and will also be returned by the function `Models()`.
     ipop1 = nest.Create("inh_iaf_neuron", 30)
     ipop2 = nest.Create("inh_iaf_neuron", 30)
 
-Once you have set up your populations of neurons, the function `PrintNetwork()`
-gives you a simple text output of the network that can help you to check whether
-you have done what you intended to.
+Once you have set up your populations of neurons, the function `PrintNodes()`
+gives an output of the the GID ranges and models in the network, and can help
+you check whether you have done what you intended to.
 
 ## Setting parameters for populations of neurons
 
@@ -230,9 +230,8 @@ These are the new functions we introduced for the examples in this handout.
 
 ### Getting information about NEST
 
-`PrintNetwork(depth=1, subnet=None)`:  
-Print the network tree up to `depth`, starting at `subnet`. If `subnet` is
-omitted, the current sub-network is used instead.
+`PrintNodes()`:  
+Print the GID ranges and model names of the nodes in the network.
 
 ### Models
 

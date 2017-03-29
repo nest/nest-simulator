@@ -108,7 +108,7 @@ public:
    * -# Functions which expect a model or synapse type as argument,
    *    must be given this argument as a literal, e.g.,
         @verbatim
-        /iaf_neuron 6 Create
+        /iaf_psc_alpha 6 Create
         @endverbatim
    *    Literals will be looked up in the corresponding dictionaries
    *    (modeldict, synapsedict).
@@ -230,6 +230,24 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } simulatefunction;
+
+  class PrepareFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } preparefunction;
+
+  class RunFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } runfunction;
+
+  class CleanupFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } cleanupfunction;
 
   class Create_l_iFunction : public SLIFunction
   {

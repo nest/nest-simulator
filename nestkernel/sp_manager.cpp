@@ -92,20 +92,6 @@ SPManager::finalize()
 }
 
 /*
- * Enable structural plasticity
- */
-void
-SPManager::enable_structural_plasticity()
-{
-  if ( not kernel().connection_manager.get_keep_source_table() )
-  {
-    throw KernelException(
-      "Structural plasticity can not be enabled if source table is not kept." );
-  }
-  structural_plasticity_enabled_ = true;
-}
-
-/*
  * Methods to retrieve data regarding structural plasticity variables
  */
 void
@@ -254,6 +240,7 @@ SPManager::disconnect_single( index sgid,
     }
   }
 
+  // Disconnect if Structural plasticity is activated
   if ( syn->known( names::pre_synaptic_element )
     && syn->known( names::post_synaptic_element ) )
   {
@@ -434,13 +421,6 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
     pre_deleted_id,
     pre_deleted_n );
 
-  // Get post synaptic elements data from local nodes
-  get_synaptic_elements( sp_builder->get_post_synaptic_element_name(),
-    post_vacant_id,
-    post_vacant_n,
-    post_deleted_id,
-    post_deleted_n );
-
   // Communicate the number of deleted pre-synaptic elements
   kernel().mpi_manager.communicate(
     pre_deleted_id, pre_deleted_id_global, displacements );
@@ -460,13 +440,13 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
       pre_vacant_n,
       pre_deleted_id,
       pre_deleted_n );
-    get_synaptic_elements( sp_builder->get_post_synaptic_element_name(),
-      post_vacant_id,
-      post_vacant_n,
-      post_deleted_id,
-      post_deleted_n );
   }
-
+  // Get post synaptic elements data from local nodes
+  get_synaptic_elements( sp_builder->get_post_synaptic_element_name(),
+    post_vacant_id,
+    post_vacant_n,
+    post_deleted_id,
+    post_deleted_n );
   // Communicate the number of deleted post-synaptic elements
   kernel().mpi_manager.communicate(
     post_deleted_id, post_deleted_id_global, displacements );
@@ -815,7 +795,7 @@ void
 nest::SPManager::global_shuffle( std::vector< index >& v, size_t n )
 {
   assert( n <= v.size() );
-  std::sort( v.begin(), v.end() );
+  std::sort( v.begin(), v.end() ); // TODO@5g: remove
 
   // shuffle res using the global random number generator
   uint N = v.size();
@@ -833,6 +813,35 @@ nest::SPManager::global_shuffle( std::vector< index >& v, size_t n )
     v.erase( rndi + rnd );
   }
   v = v2;
+}
+
+
+/*
+ * Enable structural plasticity
+ */
+void
+nest::SPManager::enable_structural_plasticity()
+{
+  if ( kernel().vp_manager.get_num_threads() > 1 )
+  {
+    throw KernelException(
+      "Structural plasticity can not be used with multiple threads" );
+  }
+  if ( not kernel().connection_manager.get_keep_source_table() )
+  {
+    throw KernelException(
+      "Structural plasticity can not be enabled if source table is not kept." );
+  }
+  structural_plasticity_enabled_ = true;
+}
+
+/*
+ Disable  structural plasticity
+ */
+void
+nest::SPManager::disable_structural_plasticity()
+{
+  structural_plasticity_enabled_ = false;
 }
 
 } // namespace nest

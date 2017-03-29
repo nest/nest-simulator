@@ -110,9 +110,8 @@ VPManager::thread_to_vp( thread t ) const
 inline bool
 VPManager::is_vp_local( const index gid ) const
 {
-  return ( static_cast< long >( gid )
-      % ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() )
-    == get_vp() );
+  return ( gid % ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() )
+           == static_cast< index >( get_vp() ) );
 }
 
 inline index

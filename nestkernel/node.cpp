@@ -196,8 +196,6 @@ Node::set_status_base( const DictionaryDatum& dict )
   }
 
   updateValue< bool >( dict, names::frozen, frozen_ );
-
-  updateValue< bool >( dict, names::node_uses_wfr, node_uses_wfr_ );
 }
 
 /**

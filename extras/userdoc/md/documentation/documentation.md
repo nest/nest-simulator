@@ -14,6 +14,7 @@
 -   [Parallel Computing](parallel-computing.md)
 -   [Scheduling and simulation flow](scheduling-and-simulation-flow.md)
 -   [Simulations with precise spike times](simulations-with-precise-spike-times.md)
+-   [Simulations with gap junctions](simulations-with-gap-junctions.md)
 -   [Using NEST with MUSIC](using-nest-with-music.md)
 -   [Using NEST with the SLI interpreter](an-introduction-to-sli.md)
 -   [NEST/SLI Quick Reference](quickref.md)
@@ -56,6 +57,8 @@
 -   [brunel_alpha_numpy](py_samples/brunel_alpha_numpy.md)
 -   [if_curve](py_samples/if_curve.md)
 -   [sinusoidal_gamma_generator](py_samples/sinusoidal_gamma_generator.md)
+-   [gap_junctions_two_neurons](py_samples/gap_junctions_two_neurons.md)
+-   [gap_junctions_inhibitory_network](py_samples/gap_junctions_inhibitory_network.md)
 
 ## Further Reading
 

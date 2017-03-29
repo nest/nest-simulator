@@ -203,8 +203,6 @@ public:
   void global_shuffle( std::vector< index >& v );
   void global_shuffle( std::vector< index >& v, size_t n );
 
-  // void test( const thread tid );
-
 private:
   /**
    * Time interval for structural plasticity update (creation/deletion of
@@ -255,15 +253,6 @@ inline long
 SPManager::get_structural_plasticity_update_interval() const
 {
   return structural_plasticity_update_interval_;
-}
-
-/*
- Disable  structural plasticity
- */
-inline void
-SPManager::disable_structural_plasticity()
-{
-  structural_plasticity_enabled_ = false;
 }
 }
 #endif /* SP_MANAGER_H */

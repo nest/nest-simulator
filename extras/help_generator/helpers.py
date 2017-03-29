@@ -38,23 +38,23 @@ def cut_it(separator, text):
 
 
 def check_ifdef(item, filetext, docstring):
-        """
-        Check the 'ifdef' context
-        -------------------------
+    """
+    Check the 'ifdef' context
+    -------------------------
 
-        If there is an 'ifdef' requirement write it to the data.
-        """
-        ifdefstring = r'(\#ifdef((.*?)\n(.*?)\n*))\#endif'
-        require_reg = re.compile('HAVE\_((.*?)*)\n')
-        # every doc in an #ifdef
-        ifdefs = re.findall(ifdefstring, filetext, re.DOTALL)
-        for ifitem in ifdefs:
-            for str_ifdef in ifitem:
-                initems = re.findall(docstring, str_ifdef, re.DOTALL)
-                for initem in initems:
-                    if item == initem:
-                        features = require_reg.search(str_ifdef)
-                        return features.group()
+    If there is an 'ifdef' requirement write it to the data.
+    """
+    ifdefstring = r'(\#ifdef((.*?)\n(.*?)\n*))\#endif'
+    require_reg = re.compile('HAVE\_((.*?)*)\n')
+    # every doc in an #ifdef
+    ifdefs = re.findall(ifdefstring, filetext, re.DOTALL)
+    for ifitem in ifdefs:
+        for str_ifdef in ifitem:
+            initems = re.findall(docstring, str_ifdef, re.DOTALL)
+            for initem in initems:
+                if item == initem:
+                    features = require_reg.search(str_ifdef)
+                    return features.group()
 
 
 def makedirs(path):
@@ -67,7 +67,7 @@ def makedirs(path):
     try:
         os.makedirs(path)
     except OSError as exc:
-        if exc.errno != errno.EEXIST or os.path.isdir(path):
+        if exc.errno != errno.EEXIST or not os.path.isdir(path):
             raise
 
 
@@ -75,6 +75,5 @@ def create_helpdirs(path):
     """
     Create the directories for the help files.
     """
-
     makedirs(os.path.join(path, 'sli'))
     makedirs(os.path.join(path, 'cc'))

@@ -81,6 +81,27 @@ spike files and `dat` for analog recordings from the `multimeter`.
 The `label` and `file_extension` of a recording device can be set like any other
 parameter of a node using `SetStatus`.
 
+### Spike exchange and synapse updates
+
+Spike exchange in NEST takes different routes depending on the type of the 
+sending and receiving node. There are two distinct cases.
+
+Spikes between neurons are always exchanged through the global spike exchange 
+mechanism. Neuron update and spike generation in the source neuron and spike 
+delivery to the target neuron may be handled by different virtual process in 
+this case. Spike delivery is always handled by the virtual process to which 
+the *target* neuron is assigned (see property `vp` in the status dictionary).
+
+Spike exchange to or from neurons over connections that either originate or 
+terminate at a device (e.g., `spike_generator -> neuron` or `neuron -> spike_detector`)
+differs in that it bypasses the global spike exchange mechanism. Instead, 
+spikes are delivered locally within the virtual process from or to a replica 
+of the device. In this case, both the pre- and postsynaptic nodes are handled 
+by the virtual process to which the neuron is assigned.
+
+For synapse models supporting plasticity, synapse dynamics in the `Connection` 
+object are always handled by the virtual process of the target node.
+
 ## Using multiple threads
 
 Thread-parallelism is compiled into NEST by default and should work on all MacOS
@@ -190,7 +211,7 @@ files.
     from nest import *
     SetKernelStatus({"total_num_virtual_procs": 4})
     pg = Create("poisson_generator", params={"rate": 50000.0})
-    n = Create("iaf_neuron", 4)
+    n = Create("iaf_psc_alpha", 4)
     sd = Create("spike_detector", params={"to_file": True})
     Connect(pg, [n[0]], syn_spec={'weight': 1000.0, 'delay': 1.0})
     Connect([n[0]], [n[1]], syn_spec={'weight': 1000.0, 'delay': 1.0})

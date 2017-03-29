@@ -132,24 +132,14 @@ nest::sli_neuron::calibrate()
     std::string msg = String::compose(
       "Node %1 has no /calibrate function in its status dictionary.",
       get_gid() );
-    LOG( M_ERROR, "sli_neuron::calibrate", msg.c_str() );
-    terminate = true;
+    throw BadProperty( msg );
   }
 
   if ( !state_->known( names::update ) )
   {
     std::string msg = String::compose(
-      "Node %1 has no /update function in its status dictionary. Terminating.",
-      get_gid() );
-    LOG( M_ERROR, "sli_neuron::calibrate", msg.c_str() );
-    terminate = true;
-  }
-
-  if ( terminate )
-  {
-    kernel().simulation_manager.terminate();
-    LOG( M_ERROR, "sli_neuron::calibrate", "Terminating." );
-    return;
+      "Node %1 has no /update function in its status dictionary", get_gid() );
+    throw BadProperty( msg );
   }
 
 #pragma omp critical( sli_neuron )
@@ -174,12 +164,7 @@ nest::sli_neuron::update( Time const& origin, const long from, const long to )
   {
     std::string msg =
       String::compose( "Node %1 still has its error state set.", get_gid() );
-    LOG( M_ERROR, "sli_neuron::update", msg.c_str() );
-    LOG( M_ERROR,
-      "sli_neuron::update",
-      "Please check /calibrate and /update for errors" );
-    kernel().simulation_manager.terminate();
-    return;
+    throw KernelException( msg );
   }
 
   for ( long lag = from; lag < to; ++lag )
@@ -234,16 +219,11 @@ nest::sli_neuron::execute_sli_protected( DictionaryDatum state, Name cmd )
     std::string model = getValue< std::string >( ( *state )[ names::model ] );
     std::string msg =
       String::compose( "Error in %1 with global id %2.", model, g_id );
-
-    LOG( M_ERROR, cmd.toString().c_str(), msg.c_str() );
-    LOG( M_ERROR, "execute_sli_protected", "Terminating." );
-
-    kernel().simulation_manager.terminate();
+    throw KernelException( msg );
   }
 
   return result;
 }
-
 
 void
 nest::sli_neuron::handle( SpikeEvent& e )

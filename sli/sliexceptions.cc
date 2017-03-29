@@ -31,10 +31,10 @@
 // Includes from sli:
 #include "interpret.h"
 
-WrappedThreadException::WrappedThreadException( std::exception& exc )
+WrappedThreadException::WrappedThreadException( const std::exception& exc )
   : SLIException( exc.what() )
 {
-  SLIException* se = dynamic_cast< SLIException* >( &exc );
+  SLIException const* se = dynamic_cast< SLIException const* >( &exc );
   if ( se )
     message_ = se->message();
   else
@@ -42,13 +42,13 @@ WrappedThreadException::WrappedThreadException( std::exception& exc )
 }
 
 std::string
-DivisionByZero::message()
+DivisionByZero::message() const
 {
   return "You cannot divide by zero.";
 }
 
 std::string
-TypeMismatch::message()
+TypeMismatch::message() const
 {
   if ( !provided_.empty() && !expected_.empty() )
     return "Expected datatype: " + expected_ + "\nProvided datatype: "
@@ -60,7 +60,7 @@ TypeMismatch::message()
 }
 
 std::string
-RangeCheck::message()
+RangeCheck::message() const
 {
   if ( size_ > 0 )
   {
@@ -78,7 +78,7 @@ RangeCheck::message()
 }
 
 std::string
-ArgumentType::message()
+ArgumentType::message() const
 {
   std::ostringstream out;
 
@@ -104,27 +104,27 @@ ArgumentType::message()
 }
 
 std::string
-BadParameterValue::message()
+BadParameterValue::message() const
 {
   return msg_;
 }
 
 
 std::string
-UndefinedName::message()
+UndefinedName::message() const
 {
   return "Key '/" + name_ + "' does not exist in dictionary.";
 }
 
 std::string
-EntryTypeMismatch::message()
+EntryTypeMismatch::message() const
 {
   return "Expected datatype: " + expected_ + "\nProvided datatype: "
     + provided_;
 }
 
 std::string
-StackUnderflow::message()
+StackUnderflow::message() const
 {
   std::ostringstream out;
   if ( needed )
@@ -146,13 +146,13 @@ StackUnderflow::message()
 }
 
 std::string
-IOError::message()
+IOError::message() const
 {
   return std::string();
 }
 
 std::string
-SystemSignal::message()
+SystemSignal::message() const
 {
   std::ostringstream out;
   out << "The operation was interrupted by the system signal " << signal_
@@ -161,13 +161,13 @@ SystemSignal::message()
 }
 
 std::string
-UnaccessedDictionaryEntry::message()
+UnaccessedDictionaryEntry::message() const
 {
   return "Unused dictionary items: " + msg_;
 }
 
 std::string
-DynamicModuleManagementError::message()
+DynamicModuleManagementError::message() const
 {
   if ( msg_.empty() )
   {
@@ -180,13 +180,13 @@ DynamicModuleManagementError::message()
 }
 
 std::string
-NamingConflict::message()
+NamingConflict::message() const
 {
   return msg_;
 }
 
 std::string
-NotImplemented::message()
+NotImplemented::message() const
 {
   return msg_;
 }

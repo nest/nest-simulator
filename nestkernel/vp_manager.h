@@ -144,6 +144,11 @@ public:
   int get_num_virtual_processes() const;
 
   /**
+   * Fails if NEST is in thread-parallel section.
+   */
+  static void assert_single_threaded();
+
+  /**
    * Returns the number of processes that are taken care of by a single thread
    * while processing MPI buffers in a multithreaded environment
    */
@@ -164,7 +169,7 @@ public:
 
 private:
   const bool force_singlethreading_;
-  thread n_threads_; //!< Number of threads per process.
+  index n_threads_; //!< Number of threads per process.
 };
 }
 

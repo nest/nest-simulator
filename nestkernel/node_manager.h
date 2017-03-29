@@ -85,7 +85,6 @@ public:
    */
   index add_node( index m, long n = 1 );
 
-
   /**
    * Restore nodes from an array of status dictionaries.
    * The following entries must be present in each dictionary:
@@ -211,19 +210,39 @@ public:
    * Prepare nodes for simulation and register nodes in node_list.
    * Calls prepare_node_() for each pertaining Node.
    * @see prepare_node_()
-   * @returns number of nodes that will be simulated.
    */
-  size_t prepare_nodes();
+  void prepare_nodes();
 
   /**
-   * Invoke finalize() on nodes registered for finalization.
+   * Get the number of nodes created by last prepare_nodes() call
+   * @see prepare_nodes()
+   * @return number of active nodes
+   */
+  size_t
+  get_num_active_nodes()
+  {
+    return num_active_nodes_;
+  };
+
+  /**
+   * Invoke post_run_cleanup() on all nodes.
+   */
+  void post_run_cleanup();
+
+  /**
+   * Invoke finalize() on all nodes.
    */
   void finalize_nodes();
 
   /**
-   *
+   * Returns whether any node uses waveform relaxation
    */
-  bool any_node_uses_wfr() const;
+  bool wfr_is_used() const;
+
+  /**
+   * Checks whether waveform relaxation is used by any node
+   */
+  void check_wfr_use();
 
   /**
    * Iterator pointing to beginning of process-local nodes.
@@ -299,12 +318,13 @@ private:
    */
   std::vector< std::vector< Node* > > nodes_vec_;
   std::vector< std::vector< Node* > >
-    wfr_nodes_vec_;        //!< Nodelists for unfrozen nodes that
-                           //!< use the waveform relaxation method
-  bool any_node_uses_wfr_; //!< there is at least one neuron model that uses
-                           //!< waveform relaxation
+    wfr_nodes_vec_;  //!< Nodelists for unfrozen nodes that
+                     //!< use the waveform relaxation method
+  bool wfr_is_used_; //!< there is at least one node that uses
+                     //!< waveform relaxation
   //! Network size when nodes_vec_ was last updated
   index nodes_vec_network_size_;
+  size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
 
   index num_local_devices_; //!< stores number of local devices
 
@@ -367,9 +387,9 @@ NodeManager::get_wfr_nodes_on_thread( thread t ) const
 }
 
 inline bool
-NodeManager::any_node_uses_wfr() const
+NodeManager::wfr_is_used() const
 {
-  return any_node_uses_wfr_;
+  return wfr_is_used_;
 }
 
 inline SparseNodeArray::const_iterator

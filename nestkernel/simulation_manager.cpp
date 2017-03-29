@@ -428,6 +428,9 @@ nest::SimulationManager::prepare()
   kernel().node_manager.ensure_valid_thread_local_ids();
   kernel().node_manager.prepare_nodes();
 
+  // Check whether waveform relaxation is used on any MPI process
+  kernel().node_manager.check_wfr_use();
+
   kernel().model_manager.create_secondary_events_prototypes();
 
   // we have to do enter_runtime after prepre_nodes, since we use
@@ -532,9 +535,6 @@ nest::SimulationManager::run( Time const& t )
 
   // Reset profiling timers and counters within event_delivery_manager
   kernel().event_delivery_manager.reset_timers_counters();
-
-  // Check whether waveform relaxation is used on any MPI process
-  kernel().node_manager.check_wfr_use();
 
   // from_step_ is not touched here.  If we are at the beginning
   // of a simulation, it has been reset properly elsewhere.  If

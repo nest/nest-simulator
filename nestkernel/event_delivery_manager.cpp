@@ -331,6 +331,7 @@ EventDeliveryManager::gather_secondary_events( const bool done )
     send_buffer_secondary_events_[ ( rank + 1 ) * chunk_size - 1 ] = done;
   }
 
+  kernel().mpi_manager.synchronize(); // to get an accurate time measurement across ranks
   sw_communicate_secondary_events.start();
   kernel().mpi_manager.communicate_secondary_events_Alltoall(
     &send_buffer_secondary_events_[ 0 ], &recv_buffer_secondary_events_[ 0 ] );
@@ -454,6 +455,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
 #pragma omp single
     {
       ++comm_rounds_spike_data;
+      kernel().mpi_manager.synchronize(); // to get an accurate time measurement across ranks
       sw_communicate_spike_data.start();
       unsigned int* send_buffer_int =
         reinterpret_cast< unsigned int* >( &send_buffer[ 0 ] );
@@ -751,6 +753,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
 #pragma omp single
     {
       ++comm_rounds_target_data;
+      kernel().mpi_manager.synchronize(); // to get an accurate time measurement across ranks
       sw_communicate_target_data.start();
       unsigned int* send_buffer_int =
         reinterpret_cast< unsigned int* >( &send_buffer_target_data_[ 0 ] );

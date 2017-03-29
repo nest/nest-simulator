@@ -67,7 +67,7 @@
        temporal information by activity-dependent synapses. Journal of
        neurophysiology, 87(1), 140-8.
    [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers.
-       Neural networks, 15(2), 155–61.
+       Neural networks, 15(2), 155-61.
 
   Transmits: SpikeEvent
 

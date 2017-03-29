@@ -94,9 +94,9 @@ GenericConnectorModel< ConnectionT >::get_status( DictionaryDatum& d ) const
   default_connection_.get_status( d );
 
   ( *d )[ names::receptor_type ] = receptor_type_;
-  ( *d )[ "synapsemodel" ] = LiteralDatum( name_ );
-  ( *d )[ "requires_symmetric" ] = requires_symmetric_;
-  ( *d )[ "has_delay" ] = has_delay_;
+  ( *d )[ names::synapse_model ] = LiteralDatum( name_ );
+  ( *d )[ names::requires_symmetric ] = requires_symmetric_;
+  ( *d )[ names::has_delay ] = has_delay_;
 }
 
 template < typename ConnectionT >
@@ -180,10 +180,11 @@ GenericConnectorModel< ConnectionT >::set_syn_id( synindex syn_id )
 }
 
 /**
- * delay and weight have the default value NAN.
- * NAN is a special value in cmath, which describes double values that
+ * delay and weight have the default value numerics::nan.
+ * numerics::nan is a special value, which describes double values that
  * are not a number. If delay or weight is omitted in an add_connection call,
- * NAN indicates this and weight/delay are set only, if they are valid.
+ * numerics::nan indicates this and weight/delay are set only, if they are
+ * valid.
  */
 template < typename ConnectionT >
 void
@@ -194,9 +195,11 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   const double delay,
   const double weight )
 {
-  if ( !numerics::is_nan( delay ) )
+  if ( not numerics::is_nan( delay ) && has_delay_ )
+  {
     kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
       delay );
+  }
 
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
@@ -217,10 +220,11 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
 }
 
 /**
- * delay and weight have the default value NAN.
- * NAN is a special value in cmath, which describes double values that
+ * delay and weight have the default value numerics::nan.
+ * numerics::nan is a special value, which describes double values that
  * are not a number. If delay or weight is omitted in an add_connection call,
- * NAN indicates this and weight/delay are set only, if they are valid.
+ * numerics::nan indicates this and weight/delay are set only, if they are
+ * valid.
  */
 template < typename ConnectionT >
 void
@@ -232,10 +236,13 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
   const double delay,
   const double weight )
 {
-  if ( !numerics::is_nan( delay ) )
+  if ( not numerics::is_nan( delay ) )
   {
-    kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-      delay );
+    if ( has_delay_ )
+    {
+      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+        delay );
+    }
 
     if ( p->known( names::delay ) )
       throw BadParameter(
@@ -248,29 +255,37 @@ GenericConnectorModel< ConnectionT >::add_connection_5g( Node& src,
     double delay = 0.0;
 
     if ( updateValue< double >( p, names::delay, delay ) )
-      kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
-        delay );
+    {
+      if ( has_delay_ )
+      {
+        kernel().connection_manager.get_delay_checker().assert_valid_delay_ms(
+          delay );
+      }
+    }
     else
+    {
       used_default_delay();
+    }
   }
-
 
   // create a new instance of the default connection
   ConnectionT c = ConnectionT( default_connection_ );
-  
-  if ( !numerics::is_nan( weight ) )
+
+  if ( not numerics::is_nan( weight ) )
   {
     c.set_weight( weight );
   }
-  if ( !numerics::is_nan( delay ) )
+
+  if ( not numerics::is_nan( delay ) )
   {
     c.set_delay( delay );
   }
+
   if ( !p->empty() )
     c.set_status( p, *this ); // reference to connector model needed here to
                               // check delay (maybe this
                               // could be done one level above?)
-  
+
   // We must use a local variable here to hold the actual value of the
   // receptor type. We must not change the receptor_type_ data member, because
   // that represents the *default* value. See #921.

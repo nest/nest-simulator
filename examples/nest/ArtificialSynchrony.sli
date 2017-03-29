@@ -67,7 +67,9 @@ AH 09) =
 %%%%%%%%%%%%%%%%% Simulation parameter  %%%%%%%%%%%%%%%%%%%%%%%%%
 (Set Simulation Parameters ) =only
 /nr 128 def                     % number of neurons in the network
-/h 0.03125 def                  % simulation resolution h=2^-5
+
+/h 2. -5 pow def                % simulation resolution h=2^-5
+/tics_per_ms 2 5 pow def        % low-level time resolution in tics
 
 /C_m 250.0 def                  % membrane capacitance
 /E_L 0.0 def                    % leaky potential
@@ -77,9 +79,7 @@ AH 09) =
 /V_th  20.0 def                 % threshold potential
 /t_refra 0.25 def               % refractory time
 /tau_syn_ex 1.648 def           % syn. time constant 3/2ln3
-%/tau_syn_in 1.648 def
 /INTERPOL 3 def                 % cubic interpolation (canonical model)
-
 
 /gamma 0.5 def                  % parameter determining the degree of synchrony at the beginning
 
@@ -155,6 +155,7 @@ modeldict begin
        0
        <<
          /resolution h                  % time steps in ms
+         /tics_per_ms tics_per_ms       % low-level time resolution
          /off_grid_spiking true         % precise neuron model
          /rngs [myrng]                  % set rnd seed
          /overwrite_files true          % overwrite previous output

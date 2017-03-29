@@ -180,6 +180,13 @@ public:
   virtual void set_model_id( int ) = 0;
 
   /**
+   * Issue deprecation warning on first call if model is deprecated.
+   *
+   * @param calling function
+   */
+  virtual void deprecation_warning( const std::string& ) = 0;
+
+  /**
    * Set the model id on the prototype.
    */
   void

@@ -55,7 +55,7 @@ NodeManager::NodeManager()
   , n_gsd_( 0 )
   , nodes_vec_()
   , wfr_nodes_vec_()
-  , any_node_uses_wfr_( false )
+  , wfr_is_used_( false )
   , nodes_vec_network_size_( 0 ) // zero to force update
   , have_nodes_changed_( true )
 {
@@ -192,10 +192,14 @@ index NodeManager::add_node( index mod, long n ) // no_p
   assert( root_ != 0 );
 
   if ( mod >= kernel().model_manager.get_num_node_models() )
+  {
     throw UnknownModelID( mod );
+  }
 
   if ( n < 1 )
+  {
     throw BadProperty();
+  }
 
   const thread n_threads = kernel().vp_manager.get_num_threads();
   assert( n_threads > 0 );
@@ -205,6 +209,8 @@ index NodeManager::add_node( index mod, long n ) // no_p
 
   Model* model = kernel().model_manager.get_model( mod );
   assert( model != 0 );
+
+  model->deprecation_warning( "Create" );
 
   /* current_ points to the instance of the current subnet on thread 0.
      The following code makes subnet a pointer to the wrapper container
@@ -364,7 +370,7 @@ index NodeManager::add_node( index mod, long n ) // no_p
       current_->add_remote_node( max_gid - 1, mod );
     }
   }
-  else if ( !model->one_node_per_process() )
+  else if ( not model->one_node_per_process() )
   {
     // We allocate space for n containers which will hold the threads
     // sorted. We use SiblingContainers to store the instances for
@@ -493,7 +499,9 @@ NodeManager::restore_nodes( const ArrayDatum& node_list )
   Token* first = node_list.begin();
   const Token* end = node_list.end();
   if ( first == end )
+  {
     return;
+  }
 
   // We need to know the first and hopefully smallest GID to identify
   // if a parent is in or outside the range of restored nodes.
@@ -510,7 +518,9 @@ NodeManager::restore_nodes( const ArrayDatum& node_list )
     index parent_gid = ( *node_props )[ names::parent ];
     index local_parent_gid = parent_gid;
     if ( parent_gid >= min_gid ) // if the parent is one of the restored nodes
+    {
       local_parent_gid += gid_offset; // we must add the gid_offset
+    }
     go_to( local_parent_gid );
     index node_gid = add_node( model_id );
     Node* node_ptr = get_node( node_gid );
@@ -526,7 +536,9 @@ NodeManager::init_state( index GID )
 {
   Node* n = get_node( GID );
   if ( n == 0 )
+  {
     throw UnknownNode( GID );
+  }
 
   n->init_state();
 }
@@ -580,9 +592,13 @@ void
 NodeManager::go_to( index n )
 {
   if ( Subnet* target = dynamic_cast< Subnet* >( get_node( n ) ) )
+  {
     current_ = target;
+  }
   else
+  {
     throw SubnetExpected();
+  }
 }
 
 Node* NodeManager::get_node( index n, thread tid ) // no_p
@@ -594,10 +610,14 @@ Node* NodeManager::get_node( index n, thread tid ) // no_p
   }
 
   if ( node->num_thread_siblings() == 0 )
+  {
     return node; // plain node
+  }
 
   if ( tid < 0 || tid >= static_cast< thread >( node->num_thread_siblings() ) )
+  {
     throw UnknownNode();
+  }
 
   return node->get_thread_sibling( tid );
 }
@@ -607,7 +627,9 @@ NodeManager::get_thread_siblings( index n ) const
 {
   Node* node = local_nodes_.get_node_by_gid( n );
   if ( node->num_thread_siblings() == 0 )
+  {
     throw NoThreadSiblingsAvailable( n );
+  }
   const SiblingContainer* siblings = dynamic_cast< SiblingContainer* >( node );
   assert( siblings != 0 );
 
@@ -622,7 +644,9 @@ NodeManager::ensure_valid_thread_local_ids()
   // test also covers that case that nodes have been deleted
   // by reset.
   if ( size() == nodes_vec_network_size_ )
+  {
     return;
+  }
 
 #ifdef _OPENMP
 #pragma omp critical( update_nodes_vec )
@@ -658,12 +682,14 @@ NodeManager::ensure_valid_thread_local_ids()
         for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
         {
           Node* node = local_nodes_.get_node_by_index( idx );
-          if ( !node->is_subnet() && ( node->get_thread() == tid
+          if (  not node->is_subnet() && ( node->get_thread() == tid
                                        || node->num_thread_siblings() > 0 ) )
           {
             num_thread_local_nodes++;
             if ( node->node_uses_wfr() )
+            {
               num_thread_local_wfr_nodes++;
+            }
           }
         }
         nodes_vec_[ tid ].reserve( num_thread_local_nodes );
@@ -675,7 +701,9 @@ NodeManager::ensure_valid_thread_local_ids()
 
           // Subnets are never updated and therefore not included.
           if ( node->is_subnet() )
+          {
             continue;
+          }
 
           // If a node has thread siblings, it is a sibling container, and we
           // need to add the replica for the current thread. Otherwise, we have
@@ -693,22 +721,28 @@ NodeManager::ensure_valid_thread_local_ids()
             nodes_vec_[ tid ].push_back( node );
 
             if ( node->node_uses_wfr() )
+            {
               wfr_nodes_vec_[ tid ].push_back( node );
+            }
           }
         }
       } // end of for threads
 
       nodes_vec_network_size_ = size();
 
-      any_node_uses_wfr_ = false;
-      // any_node_uses_wfr_ indicates, whether at least one
+      wfr_is_used_ = false;
+      // wfr_is_used_ indicates, whether at least one
       // of the threads has a neuron that uses waveform relaxtion
       // all threads then need to perform a wfr_update
       // step, because gather_events() has to be done in a
       // openmp single section
       for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+      {
         if ( wfr_nodes_vec_[ tid ].size() > 0 )
-          any_node_uses_wfr_ = true;
+        {
+          wfr_is_used_ = true;
+        }
+      }
     }
 #ifdef _OPENMP
   } // end of omp critical region
@@ -727,7 +761,9 @@ NodeManager::destruct_nodes_()
     Node* node = local_nodes_.get_node_by_index( n );
     assert( node != 0 );
     for ( size_t t = 0; t < node->num_thread_siblings(); ++t )
+    {
       node->get_thread_sibling( t )->~Node();
+    }
     node->~Node();
   }
 
@@ -740,10 +776,12 @@ NodeManager::set_status_single_node_( Node& target,
   bool clear_flags )
 {
   // proxies have no properties
-  if ( !target.is_proxy() )
+  if ( not target.is_proxy() )
   {
     if ( clear_flags )
+    {
       d->clear_access_flags();
+    }
     target.set_status_base( d );
 
     // TODO: Not sure this check should be at single neuron level; advantage is
@@ -762,7 +800,7 @@ NodeManager::prepare_node_( Node* n )
   n->calibrate();
 }
 
-size_t
+void
 NodeManager::prepare_nodes()
 {
   assert( kernel().is_initialized() );
@@ -797,7 +835,9 @@ NodeManager::prepare_nodes()
         {
           ++num_active_nodes;
           if ( ( *it )->node_uses_wfr() )
+          {
             ++num_active_wfr_nodes;
+          }
         }
       }
     }
@@ -812,8 +852,12 @@ NodeManager::prepare_nodes()
 
   // check if any exceptions have been raised
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
+  {
     if ( exceptions_raised.at( tid ).valid() )
+    {
       throw WrappedThreadException( *( exceptions_raised.at( tid ) ) );
+    }
+  }
 
   std::ostringstream os;
   std::string tmp_str = num_active_nodes == 1 ? " node" : " nodes";
@@ -826,9 +870,40 @@ NodeManager::prepare_nodes()
        << "iterative solution techniques.";
   }
 
+  num_active_nodes_ = num_active_nodes;
   LOG( M_INFO, "NodeManager::prepare_nodes", os.str() );
+}
 
-  return num_active_nodes;
+void
+NodeManager::post_run_cleanup()
+{
+#ifdef _OPENMP
+#pragma omp parallel
+  {
+    index t = kernel().vp_manager.get_thread_id();
+#else // clang-format off
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
+#endif // clang-format on
+    for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
+    {
+      Node* node = local_nodes_.get_node_by_index( idx );
+      if ( node != 0 )
+      {
+        if ( node->num_thread_siblings() > 0 )
+        {
+          node->get_thread_sibling( t )->post_run_cleanup();
+        }
+        else
+        {
+          if ( static_cast< index >( node->get_thread() ) == t )
+          {
+            node->post_run_cleanup();
+          }
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -868,13 +943,27 @@ NodeManager::finalize_nodes()
 }
 
 void
+NodeManager::check_wfr_use()
+{
+  wfr_is_used_ = kernel().mpi_manager.any_true( wfr_is_used_ );
+
+  GapJunctionEvent::set_coeff_length(
+    kernel().connection_manager.get_min_delay()
+    * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 ) );
+}
+
+void
 NodeManager::print( index p, int depth )
 {
   Subnet* target = dynamic_cast< Subnet* >( get_node( p ) );
   if ( target != NULL )
+  {
     std::cout << target->print_network( depth + 1, 0 );
+  }
   else
+  {
     throw SubnetExpected();
+  }
 }
 
 
@@ -891,8 +980,11 @@ NodeManager::set_status( index gid, const DictionaryDatum& d )
     {
       // node is local
       if ( target->num_thread_siblings() == 0 )
+      {
         set_status_single_node_( *target, d );
+      }
       else
+      {
         for ( size_t t = 0; t < target->num_thread_siblings(); ++t )
         {
           // non-root container for devices without proxies and subnets
@@ -900,6 +992,7 @@ NodeManager::set_status( index gid, const DictionaryDatum& d )
           assert( target->get_thread_sibling( t ) != 0 );
           set_status_single_node_( *( target->get_thread_sibling( t ) ), d );
         }
+      }
     }
     return;
   }
@@ -927,7 +1020,7 @@ NodeManager::set_status( const DictionaryDatum& d )
 {
   std::string tmp;
   // proceed only if there are unaccessed items left
-  if ( !d->all_accessed( tmp ) )
+  if ( not d->all_accessed( tmp ) )
   {
     // Fetch the target pointer here. We cannot do it above, since
     // Network::set_status() may modify the root compound if the number

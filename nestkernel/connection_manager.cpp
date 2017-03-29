@@ -30,6 +30,7 @@
 #include <cmath>
 #include <set>
 #include <algorithm>
+#include <vector>
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -506,11 +507,13 @@ nest::ConnectionManager::connect( const index sgid,
   // normal nodes and devices with proxies -> normal devices
   else if ( source->has_proxies() && not target->has_proxies() and target->local_receiver() )
   {
+    // make sure source is on this MPI rank
     if ( source->is_proxy() )
     {
       return;
     }
 
+    // make sure connections are only created on the thread of the device
     if ( ( source->get_thread() != target_thread )
       && ( source->has_proxies() ) )
     {
@@ -574,12 +577,12 @@ nest::ConnectionManager::connect( const index sgid,
   thread tid = kernel().vp_manager.get_thread_id();
 
   if ( !kernel().node_manager.is_local_gid( tgid ) )
+  {
     return false;
+  }
 
   Node* target = kernel().node_manager.get_node( tgid, tid );
-
   thread target_thread = target->get_thread();
-
   Node* source = kernel().node_manager.get_node( sgid, target_thread );
 
   // normal nodes and devices with proxies -> normal nodes and devices with
@@ -591,11 +594,13 @@ nest::ConnectionManager::connect( const index sgid,
   // normal nodes and devices with proxies -> normal devices
   else if ( source->has_proxies() && not target->has_proxies() and target->local_receiver() )
   {
+    // make sure source is on this MPI rank
     if ( source->is_proxy() )
     {
       return false;
     }
 
+    // make sure connections are only created on the thread of the device
     if ( ( source->get_thread() != target_thread )
       && ( source->has_proxies() ) )
     {
@@ -943,7 +948,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
     LOG(
       M_INFO, "DataConnect", "Source ID is a subnet; I will iterate it." );
 
-    // collect all leaves in source subnet, then divergent-connect each leaf
+    // collect all leaves in source subnet, then data-connect each leaf
     LocalLeafList local_sources( *source_comp );
     std::vector< MPIManager::NodeAddressingData > global_sources;
     kernel().mpi_manager.communicate( local_sources, global_sources );
@@ -988,7 +993,6 @@ nest::ConnectionManager::data_connect_single( const index source_id,
 
       // here we fill a parameter dictionary with the values of the current loop
       // index.
-      par_i->clear();
       for ( di_s = ( *pars ).begin(); di_s != ( *pars ).end(); ++di_s )
       {
         DoubleVectorDatum const* tmp =
@@ -1057,9 +1061,9 @@ nest::ConnectionManager::data_connect_single( const index source_id,
  * @note This method is used only by DataConnect.
  */
 bool
-nest::ConnectionManager::data_connect_connectome( const ArrayDatum& conns )
+nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
 {
-  for ( Token* ct = conns.begin(); ct != conns.end(); ++ct )
+  for ( Token* ct = connectome.begin(); ct != connectome.end(); ++ct )
   {
     DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
     index target_gid = static_cast< size_t >( ( *cd )[ names::target ] );
@@ -1476,7 +1480,7 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
   targets.resize( sources.size() );
   for ( std::vector< std::vector< index > >::iterator i = targets.begin();
         i != targets.end();
-        ++i )
+        i++ )
   {
     ( *i ).clear();
   }

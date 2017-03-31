@@ -1,5 +1,5 @@
 /*
- *  aeif_psc_alpha.h
+ *  aeif_psc_delta.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AEIF_PSC_ALPHA_H
-#define AEIF_PSC_ALPHA_H
+#ifndef AEIF_PSC_delta_H
+#define AEIF_PSC_delta_H
 
 // Generated includes:
 #include "config.h"
@@ -43,16 +43,19 @@
 #include "universal_data_logger.h"
 
 /* BeginDocumentation
-Name: aeif_psc_alpha -  Current-based exponential integrate-and-fire neuron
-                         model according to Brette and Gerstner (2005).
+Name: aeif_psc_delta - Current-based adaptive exponential integrate-and-fire
+neuron
+                      model according to Brette and Gerstner (2005) with delta
+synapse.
 
 Description:
-aeif_psc_alpha is the adaptive exponential integrate and fire neuron according
-to Brette and Gerstner (2005).
-Synaptic currents are modelled as alpha-functions.
 
-This implementation uses the embedded 4th order Runge-Kutta-Fehlberg solver with
-adaptive step size to integrate the differential equation.
+aeif_psc_delta is the adaptive exponential integrate and fire neuron
+according to Brette and Gerstner (2005), with post-synaptic currents
+in the form of delta spikes.
+
+This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
+solver with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
 C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)+I_ex(t)+I_in(t)+I_e
@@ -61,15 +64,17 @@ and
 
 tau_w * dw/dt= a(V-E_L) -W
 
+I_x(t) = J_x Sum_k delta(t - t^x_k),
+
+where x = (ex, in), delta is the dirac delta function and k indexes incoming
+spikes. This is implemented such that V_m will be incremented/decremented by
+the value of J_x after a spike.
+
 Parameters:
 The following parameters can be set in the status dictionary.
 
 Dynamic state variables:
   V_m        double - Membrane potential in mV
-  I_ex       double - Excitatory synaptic current in pA.
-  dI_ex      double - First derivative of I_ex in pA/ms
-  I_in       double - Inhibitory synaptic current in pA.
-  dI_in      double - First derivative of I_in in pA/ms.
   w          double - Spike-adaptation current in pA.
 
 Membrane Parameters:
@@ -88,28 +93,22 @@ Spike adaptation parameters:
   V_th       double - Spike initiation threshold in mV
   V_peak     double - Spike detection threshold in mV.
 
-Synaptic parameters
-  tau_syn_ex double - Rise time of excitatory synaptic current in ms (alpha
-                      function).
-  tau_syn_in double - Rise time of the inhibitory synaptic current in ms (alpha
-                      function).
-
 Integration parameters
   gsl_error_tol  double - This parameter controls the admissible error of the
                           GSL integrator. Reduce it if NEST complains about
                           numerical instabilities.
 
-Author: Tanguy Fardet
+Author: Mikkel Elle Lepperød adapted from aeif_psc_exp and iaf_psc_delta
 
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 References: Brette R and Gerstner W (2005) Adaptive Exponential
-            Integrate-and-Fire Model as an Effective Description of Neuronal
-            Activity. J Neurophysiol 94:3637-3642
+            Integrate-and-Fire Model as an Effective Description of
+            Neuronal Activity. J Neurophysiol 94:3637-3642
 
-SeeAlso: iaf_psc_alpha, aeif_cond_exp
+SeeAlso: iaf_psc_delta, aeif_cond_exp, aeif_psc_exp
 */
 
 namespace nest
@@ -124,15 +123,15 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int aeif_psc_alpha_dynamics( double, const double*, double*, void* );
+extern "C" int aeif_psc_delta_dynamics( double, const double*, double*, void* );
 
-class aeif_psc_alpha : public Archiving_Node
+class aeif_psc_delta : public Archiving_Node
 {
 
 public:
-  aeif_psc_alpha();
-  aeif_psc_alpha( const aeif_psc_alpha& );
-  ~aeif_psc_alpha();
+  aeif_psc_delta();
+  aeif_psc_delta( const aeif_psc_delta& );
+  ~aeif_psc_delta();
 
   /**
    * Import sets of overloaded virtual functions.
@@ -159,18 +158,18 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-  void update( Time const&, const long, const long );
+  void update( const Time&, const long, const long );
 
   // END Boilerplate function declarations ----------------------------
 
   // Friends --------------------------------------------------------
 
   // make dynamics function quasi-member
-  friend int aeif_psc_alpha_dynamics( double, const double*, double*, void* );
+  friend int aeif_psc_delta_dynamics( double, const double*, double*, void* );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< aeif_psc_alpha >;
-  friend class UniversalDataLogger< aeif_psc_alpha >;
+  friend class RecordablesMap< aeif_psc_delta >;
+  friend class UniversalDataLogger< aeif_psc_delta >;
 
 private:
   // ----------------------------------------------------------------
@@ -178,9 +177,12 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double V_peak_;  //!< Spike detection threshold in mV
-    double V_reset_; //!< Reset Potential in mV
-    double t_ref_;   //!< Refractory period in ms
+    double V_peak_;        //!< Spike detection threshold in mV
+    double V_reset_;       //!< Reset Potential in mV
+    bool with_refr_input_; //!< spikes arriving during refractory period are
+                           //!< counted
+
+    double t_ref_; //!< Refractory period in ms
 
     double g_L;     //!< Leak Conductance in nS
     double C_m;     //!< Membrane Capacitance in pF
@@ -191,9 +193,7 @@ private:
     double b;       //!< Spike-triggered adaptation in pA
     double V_th;    //!< Spike threshold in mV.
     double t_ref;   //!< Refractory period in ms.
-    double tau_syn_ex; //!< Excitatory synaptic rise time.
-    double tau_syn_in; //!< Excitatory synaptic rise time.
-    double I_e;        //!< Intrinsic current in pA.
+    double I_e;     //!< Intrinsic current in pA.
 
     double gsl_error_tol; //!< error bound for GSL integrator
 
@@ -213,6 +213,10 @@ public:
    */
   struct State_
   {
+    /** Accumulate spikes arriving during refractory period, discounted for
+        decay until end of refractory period.
+    */
+    double refr_spikes_buffer_;
     /**
      * Enumeration identifying elements in state array State_::y_.
      * The state vector must be passed to GSL as a C array. This enum
@@ -222,17 +226,13 @@ public:
     enum StateVecElems
     {
       V_M = 0,
-      DI_EXC, // 1
-      I_EXC,  // 2
-      DI_INH, // 3
-      I_INH,  // 4
-      W,      // 5
+      W,
       STATE_VEC_SIZE
     };
 
-    double y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for
-                                 //!< GSL solver
-    unsigned int r_;             //!< number of refractory steps remaining
+    //! neuron state, must be C-array for GSL solver
+    double y_[ STATE_VEC_SIZE ];
+    unsigned int r_; //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -249,15 +249,14 @@ public:
    */
   struct Buffers_
   {
-    Buffers_( aeif_psc_alpha& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, aeif_psc_alpha& ); //!<Sets buffer pointers to 0
+    Buffers_( aeif_psc_delta& );                  //!<Sets buffer pointers to 0
+    Buffers_( const Buffers_&, aeif_psc_delta& ); //!<Sets buffer pointers to 0
 
     //! Logger for all analog data
-    UniversalDataLogger< aeif_psc_alpha > logger_;
+    UniversalDataLogger< aeif_psc_delta > logger_;
 
     /** buffers and sums up incoming spikes/currents */
-    RingBuffer spike_exc_;
-    RingBuffer spike_inh_;
+    RingBuffer spikes_;
     RingBuffer currents_;
 
     /** GSL ODE stuff */
@@ -290,12 +289,6 @@ public:
    */
   struct Variables_
   {
-    /** initial value to normalise excitatory synaptic current */
-    double i0_ex_;
-
-    /** initial value to normalise inhibitory synaptic current */
-    double i0_in_;
-
     /**
      * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
      * P.V_th if Delta_T == 0.
@@ -323,11 +316,11 @@ public:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< aeif_psc_alpha > recordablesMap_;
+  static RecordablesMap< aeif_psc_delta > recordablesMap_;
 };
 
 inline port
-aeif_psc_alpha::send_test_event( Node& target,
+aeif_psc_delta::send_test_event( Node& target,
   rport receptor_type,
   synindex,
   bool )
@@ -339,7 +332,7 @@ aeif_psc_alpha::send_test_event( Node& target,
 }
 
 inline port
-aeif_psc_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
+aeif_psc_delta::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -347,7 +340,7 @@ aeif_psc_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
 }
 
 inline port
-aeif_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
+aeif_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
     throw UnknownReceptorType( receptor_type, get_name() );
@@ -355,7 +348,7 @@ aeif_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 }
 
 inline port
-aeif_psc_alpha::handles_test_event( DataLoggingRequest& dlr,
+aeif_psc_delta::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
@@ -364,7 +357,7 @@ aeif_psc_alpha::handles_test_event( DataLoggingRequest& dlr,
 }
 
 inline void
-aeif_psc_alpha::get_status( DictionaryDatum& d ) const
+aeif_psc_delta::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
@@ -374,7 +367,7 @@ aeif_psc_alpha::get_status( DictionaryDatum& d ) const
 }
 
 inline void
-aeif_psc_alpha::set_status( const DictionaryDatum& d )
+aeif_psc_delta::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
@@ -395,4 +388,4 @@ aeif_psc_alpha::set_status( const DictionaryDatum& d )
 } // namespace
 
 #endif // HAVE_GSL
-#endif // AEIF_PSC_ALPHA_H
+#endif // AEIF_PSC_delta_H

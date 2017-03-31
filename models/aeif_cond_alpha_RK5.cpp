@@ -348,12 +348,12 @@ nest::aeif_cond_alpha_RK5::calibrate()
   // set model dynamics depending on the value of Delta_T
   if ( P_.Delta_T > 0. )
   {
-    V_.V_peak = P_.V_peak_;
+    V_.V_peak_ = P_.V_peak_;
     V_.model_dynamics = &aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics;
   }
   else
   {
-    V_.V_peak = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
+    V_.V_peak_ = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
     V_.model_dynamics = &aeif_cond_alpha_RK5::aeif_cond_alpha_RK5_dynamics_DT0;
   }
 
@@ -524,8 +524,8 @@ void nest::aeif_cond_alpha_RK5::update( Time const& origin,
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
       if ( S_.r_ > 0 ) // if neuron is still in refractory period
-        S_.y_[ State_::V_M ] = P_.V_reset_;         // clamp it to V_reset
-      else if ( S_.y_[ State_::V_M ] >= V_.V_peak ) // V_m >= V_peak: spike
+        S_.y_[ State_::V_M ] = P_.V_reset_;          // clamp it to V_reset
+      else if ( S_.y_[ State_::V_M ] >= V_.V_peak_ ) // V_m >= V_peak: spike
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b;    // spike-driven adaptation

@@ -294,7 +294,7 @@ public:
      * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
      * P.V_th if Delta_T == 0.
      */
-    double V_peak;
+    double V_peak_;
 
     /** pointer to the rhs function giving the dynamics to the ODE solver **/
     func_ptr model_dynamics;

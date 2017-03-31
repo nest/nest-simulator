@@ -1,5 +1,5 @@
 /*
- *  aeif_cond_alpha.cpp
+ *  aeif_psc_delta.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,7 +20,7 @@
  *
  */
 
-#include "aeif_cond_alpha.h"
+#include "aeif_psc_delta.h"
 
 #ifdef HAVE_GSL
 
@@ -50,42 +50,43 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_cond_alpha >
-  nest::aeif_cond_alpha::recordablesMap_;
+nest::RecordablesMap< nest::aeif_psc_delta >
+  nest::aeif_psc_delta::recordablesMap_;
 
-namespace nest // template specialization must be placed in namespace
+namespace nest
 {
-// Override the create() method with one call to RecordablesMap::insert_()
-// for each quantity to be recorded.
+/*
+ * template specialization must be placed in namespace
+ *
+ * Override the create() method with one call to RecordablesMap::insert_()
+ * for each quantity to be recorded.
+ */
 template <>
 void
-RecordablesMap< aeif_cond_alpha >::create()
+RecordablesMap< aeif_psc_delta >::create()
 {
   // use standard names whereever you can for consistency!
   insert_(
-    names::V_m, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::V_M > );
-  insert_( names::g_ex,
-    &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::G_EXC > );
-  insert_( names::g_in,
-    &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::G_INH > );
+    names::V_m, &aeif_psc_delta::get_y_elem_< aeif_psc_delta::State_::V_M > );
   insert_(
-    names::w, &aeif_cond_alpha::get_y_elem_< aeif_cond_alpha::State_::W > );
+    names::w, &aeif_psc_delta::get_y_elem_< aeif_psc_delta::State_::W > );
 }
 }
 
+
 extern "C" int
-nest::aeif_cond_alpha_dynamics( double,
+nest::aeif_psc_delta_dynamics( double,
   const double y[],
   double f[],
   void* pnode )
 {
   // a shorthand
-  typedef nest::aeif_cond_alpha::State_ S;
+  typedef nest::aeif_psc_delta::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::aeif_cond_alpha& node =
-    *( reinterpret_cast< nest::aeif_cond_alpha* >( pnode ) );
+  const nest::aeif_psc_delta& node =
+    *( reinterpret_cast< nest::aeif_psc_delta* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
@@ -94,113 +95,51 @@ nest::aeif_cond_alpha_dynamics( double,
   // good compiler will optimize the verbosity away ...
 
   // shorthand for state variables
-  const double V = std::min( y[ S::V_M ], node.P_.V_peak_ ); // bound V
-  const double& dg_ex = y[ S::DG_EXC ];
-  const double& g_ex = y[ S::G_EXC ];
-  const double& dg_in = y[ S::DG_INH ];
-  const double& g_in = y[ S::G_INH ];
+  const bool is_refractory = node.S_.r_ > 0;
+
+  const double V = is_refractory
+    ? node.P_.V_reset_
+    : std::min( y[ S::V_M ], node.P_.V_peak_ ); // bind V to the
+  // USER DEFINED V_peak_ value in Parameters.
   const double& w = y[ S::W ];
 
-  const double I_syn_exc = g_ex * ( V - node.P_.E_ex );
-  const double I_syn_inh = g_in * ( V - node.P_.E_in );
-  const double I_spike =
-    node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
+  const double I_spike = node.P_.Delta_T == 0. ? 0. : node.P_.g_L
+      * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
 
   // dv/dt
-  f[ S::V_M ] =
-    ( -node.P_.g_L * ( ( V - node.P_.E_L ) - I_spike ) - I_syn_exc - I_syn_inh
-      - w + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
-
-  f[ S::DG_EXC ] = -dg_ex / node.P_.tau_syn_ex;
-  // Synaptic Conductance (nS)
-  f[ S::G_EXC ] = dg_ex - g_ex / node.P_.tau_syn_ex;
-
-  f[ S::DG_INH ] = -dg_in / node.P_.tau_syn_in;
-  // Synaptic Conductance (nS)
-  f[ S::G_INH ] = dg_in - g_in / node.P_.tau_syn_in;
+  f[ S::V_M ] = is_refractory
+          ? 0.0
+          : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w + node.P_.I_e
+                  + node.B_.I_stim_ ) / node.P_.C_m;
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
 
   return GSL_SUCCESS;
 }
-
-extern "C" int
-nest::aeif_cond_alpha_dynamics_DT0( double,
-  const double y[],
-  double f[],
-  void* pnode )
-{
-  // a shorthand
-  typedef nest::aeif_cond_alpha::State_ S;
-
-  // get access to node so we can almost work as in a member function
-  assert( pnode );
-  const nest::aeif_cond_alpha& node =
-    *( reinterpret_cast< nest::aeif_cond_alpha* >( pnode ) );
-
-  // y[] here is---and must be---the state vector supplied by the integrator,
-  // not the state vector in the node, node.S_.y[].
-
-  // The following code is verbose for the sake of clarity. We assume that a
-  // good compiler will optimize the verbosity away ...
-
-  // shorthand for state variables
-  const double& V = y[ S::V_M ];
-  const double& dg_ex = y[ S::DG_EXC ];
-  const double& g_ex = y[ S::G_EXC ];
-  const double& dg_in = y[ S::DG_INH ];
-  const double& g_in = y[ S::G_INH ];
-  const double& w = y[ S::W ];
-
-  const double I_syn_exc = g_ex * ( V - node.P_.E_ex );
-  const double I_syn_inh = g_in * ( V - node.P_.E_in );
-
-  // dv/dt
-  f[ S::V_M ] = ( -node.P_.g_L * ( V - node.P_.E_L ) - I_syn_exc - I_syn_inh - w
-                  + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
-
-  f[ S::DG_EXC ] = -dg_ex / node.P_.tau_syn_ex;
-  // Synaptic Conductance (nS)
-  f[ S::G_EXC ] = dg_ex - g_ex / node.P_.tau_syn_ex;
-
-  f[ S::DG_INH ] = -dg_in / node.P_.tau_syn_in;
-  // Synaptic Conductance (nS)
-  f[ S::G_INH ] = dg_in - g_in / node.P_.tau_syn_in;
-
-  // Adaptation current w.
-  f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
-
-  return GSL_SUCCESS;
-}
-
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-nest::aeif_cond_alpha::Parameters_::Parameters_()
+nest::aeif_psc_delta::Parameters_::Parameters_()
   : V_peak_( 0.0 )    // mV
   , V_reset_( -60.0 ) // mV
   , t_ref_( 0.0 )     // ms
   , g_L( 30.0 )       // nS
   , C_m( 281.0 )      // pF
-  , E_ex( 0.0 )       // mV
-  , E_in( -85.0 )     // mV
   , E_L( -70.6 )      // mV
   , Delta_T( 2.0 )    // mV
   , tau_w( 144.0 )    // ms
   , a( 4.0 )          // nS
   , b( 80.5 )         // pA
   , V_th( -50.4 )     // mV
-  , tau_syn_ex( 0.2 ) // ms
-  , tau_syn_in( 2.0 ) // ms
   , I_e( 0.0 )        // pA
   , gsl_error_tol( 1e-6 )
 {
 }
 
-nest::aeif_cond_alpha::State_::State_( const Parameters_& p )
+nest::aeif_psc_delta::State_::State_( const Parameters_& p )
   : r_( 0 )
 {
   y_[ 0 ] = p.E_L;
@@ -208,14 +147,14 @@ nest::aeif_cond_alpha::State_::State_( const Parameters_& p )
     y_[ i ] = 0;
 }
 
-nest::aeif_cond_alpha::State_::State_( const State_& s )
+nest::aeif_psc_delta::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
     y_[ i ] = s.y_[ i ];
 }
 
-nest::aeif_cond_alpha::State_& nest::aeif_cond_alpha::State_::operator=(
+nest::aeif_psc_delta::State_& nest::aeif_psc_delta::State_::operator=(
   const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
@@ -227,11 +166,11 @@ nest::aeif_cond_alpha::State_& nest::aeif_cond_alpha::State_::operator=(
 }
 
 /* ----------------------------------------------------------------
- * Parameter and state extractions and manipulation functions
+ * Paramater and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha::Parameters_::get( DictionaryDatum& d ) const
+nest::aeif_psc_delta::Parameters_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::C_m, C_m );
   def< double >( d, names::V_th, V_th );
@@ -239,10 +178,6 @@ nest::aeif_cond_alpha::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::g_L, g_L );
   def< double >( d, names::E_L, E_L );
   def< double >( d, names::V_reset, V_reset_ );
-  def< double >( d, names::E_ex, E_ex );
-  def< double >( d, names::E_in, E_in );
-  def< double >( d, names::tau_syn_ex, tau_syn_ex );
-  def< double >( d, names::tau_syn_in, tau_syn_in );
   def< double >( d, names::a, a );
   def< double >( d, names::b, b );
   def< double >( d, names::Delta_T, Delta_T );
@@ -253,21 +188,16 @@ nest::aeif_cond_alpha::Parameters_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
+nest::aeif_psc_delta::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::V_th, V_th );
   updateValue< double >( d, names::V_peak, V_peak_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
   updateValue< double >( d, names::E_L, E_L );
   updateValue< double >( d, names::V_reset, V_reset_ );
-  updateValue< double >( d, names::E_ex, E_ex );
-  updateValue< double >( d, names::E_in, E_in );
 
   updateValue< double >( d, names::C_m, C_m );
   updateValue< double >( d, names::g_L, g_L );
-
-  updateValue< double >( d, names::tau_syn_ex, tau_syn_ex );
-  updateValue< double >( d, names::tau_syn_in, tau_syn_in );
 
   updateValue< double >( d, names::a, a );
   updateValue< double >( d, names::b, b );
@@ -280,7 +210,7 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
 
   if ( V_reset_ >= V_peak_ )
   {
-    throw BadProperty( "Ensure that: V_reset < V_peak ." );
+    throw BadProperty( "Ensure that V_reset < V_peak ." );
   }
 
   if ( Delta_T < 0. )
@@ -291,9 +221,9 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
   {
     // check for possible numerical overflow with the exponential divergence at
     // spike time, keep a 1e20 margin for the subsequent calculations
-    const double max_exp_arg =
+    const double max_delta_arg =
       std::log( std::numeric_limits< double >::max() / 1e20 );
-    if ( ( V_peak_ - V_th ) / Delta_T >= max_exp_arg )
+    if ( ( V_peak_ - V_th ) / Delta_T >= max_delta_arg )
     {
       throw BadProperty(
         "The current combination of V_peak, V_th and Delta_T"
@@ -310,15 +240,15 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
 
   if ( C_m <= 0 )
   {
-    throw BadProperty( "Capacitance must be strictly positive." );
+    throw BadProperty( "Ensure that C_m > 0" );
   }
 
   if ( t_ref_ < 0 )
   {
-    throw BadProperty( "Refractory time cannot be negative." );
+    throw BadProperty( "Ensure that t_ref >= 0" );
   }
 
-  if ( tau_syn_ex <= 0 || tau_syn_in <= 0 || tau_w <= 0 )
+  if ( tau_w <= 0 )
   {
     throw BadProperty( "All time constants must be strictly positive." );
   }
@@ -330,32 +260,21 @@ nest::aeif_cond_alpha::Parameters_::set( const DictionaryDatum& d )
 }
 
 void
-nest::aeif_cond_alpha::State_::get( DictionaryDatum& d ) const
+nest::aeif_psc_delta::State_::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::V_m, y_[ V_M ] );
-  def< double >( d, names::g_ex, y_[ G_EXC ] );
-  def< double >( d, names::dg_ex, y_[ DG_EXC ] );
-  def< double >( d, names::g_in, y_[ G_INH ] );
-  def< double >( d, names::dg_in, y_[ DG_INH ] );
   def< double >( d, names::w, y_[ W ] );
 }
 
 void
-nest::aeif_cond_alpha::State_::set( const DictionaryDatum& d,
+nest::aeif_psc_delta::State_::set( const DictionaryDatum& d,
   const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
-  updateValue< double >( d, names::g_ex, y_[ G_EXC ] );
-  updateValue< double >( d, names::dg_ex, y_[ DG_EXC ] );
-  updateValue< double >( d, names::g_in, y_[ G_INH ] );
-  updateValue< double >( d, names::dg_in, y_[ DG_INH ] );
   updateValue< double >( d, names::w, y_[ W ] );
-
-  if ( y_[ G_EXC ] < 0 || y_[ G_INH ] < 0 )
-    throw BadProperty( "Conductances must not be negative." );
 }
 
-nest::aeif_cond_alpha::Buffers_::Buffers_( aeif_cond_alpha& n )
+nest::aeif_psc_delta::Buffers_::Buffers_( aeif_psc_delta& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -365,7 +284,7 @@ nest::aeif_cond_alpha::Buffers_::Buffers_( aeif_cond_alpha& n )
   // init_buffers_().
 }
 
-nest::aeif_cond_alpha::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha& n )
+nest::aeif_psc_delta::Buffers_::Buffers_( const Buffers_&, aeif_psc_delta& n )
   : logger_( n )
   , s_( 0 )
   , c_( 0 )
@@ -379,7 +298,7 @@ nest::aeif_cond_alpha::Buffers_::Buffers_( const Buffers_&, aeif_cond_alpha& n )
  * Default and copy constructor for node, and destructor
  * ---------------------------------------------------------------- */
 
-nest::aeif_cond_alpha::aeif_cond_alpha()
+nest::aeif_psc_delta::aeif_psc_delta()
   : Archiving_Node()
   , P_()
   , S_( P_ )
@@ -388,7 +307,7 @@ nest::aeif_cond_alpha::aeif_cond_alpha()
   recordablesMap_.create();
 }
 
-nest::aeif_cond_alpha::aeif_cond_alpha( const aeif_cond_alpha& n )
+nest::aeif_psc_delta::aeif_psc_delta( const aeif_psc_delta& n )
   : Archiving_Node( n )
   , P_( n.P_ )
   , S_( n.S_ )
@@ -396,7 +315,7 @@ nest::aeif_cond_alpha::aeif_cond_alpha( const aeif_cond_alpha& n )
 {
 }
 
-nest::aeif_cond_alpha::~aeif_cond_alpha()
+nest::aeif_psc_delta::~aeif_psc_delta()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
@@ -412,18 +331,17 @@ nest::aeif_cond_alpha::~aeif_cond_alpha()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha::init_state_( const Node& proto )
+nest::aeif_psc_delta::init_state_( const Node& proto )
 {
-  const aeif_cond_alpha& pr = downcast< aeif_cond_alpha >( proto );
+  const aeif_psc_delta& pr = downcast< aeif_psc_delta >( proto );
   S_ = pr.S_;
 }
 
 void
-nest::aeif_cond_alpha::init_buffers_()
+nest::aeif_psc_delta::init_buffers_()
 {
-  B_.spike_exc_.clear(); // includes resize
-  B_.spike_inh_.clear(); // includes resize
-  B_.currents_.clear();  // includes resize
+  B_.spikes_.clear();   // includes resize
+  B_.currents_.clear(); // includes resize
   Archiving_Node::clear_history();
 
   B_.logger_.reset();
@@ -450,36 +368,33 @@ nest::aeif_cond_alpha::init_buffers_()
   else
     gsl_odeiv_evolve_reset( B_.e_ );
 
+  B_.sys_.jacobian = NULL;
+  B_.sys_.dimension = State_::STATE_VEC_SIZE;
+  B_.sys_.params = reinterpret_cast< void* >( this );
+  B_.sys_.function = aeif_psc_delta_dynamics;
+
   B_.I_stim_ = 0.0;
 }
 
 void
-nest::aeif_cond_alpha::calibrate()
+nest::aeif_psc_delta::calibrate()
 {
   // ensures initialization in case mm connected after Simulate
   B_.logger_.init();
-
-  V_.sys_.jacobian = NULL;
-  V_.sys_.dimension = State_::STATE_VEC_SIZE;
-  V_.sys_.params = reinterpret_cast< void* >( this );
 
   // set the right threshold and GSL function depending on Delta_T
   if ( P_.Delta_T > 0. )
   {
     V_.V_peak_ = P_.V_peak_;
-    V_.sys_.function = aeif_cond_alpha_dynamics;
   }
   else
   {
     V_.V_peak_ = P_.V_th; // same as IAF dynamics for spikes if Delta_T == 0.
-    V_.sys_.function = aeif_cond_alpha_dynamics_DT0;
   }
 
-  V_.g0_ex_ = 1.0 * numerics::e / P_.tau_syn_ex;
-  V_.g0_in_ = 1.0 * numerics::e / P_.tau_syn_in;
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
-  assert( V_.refractory_counts_
-    >= 0 ); // since t_ref_ >= 0, this can only fail in error
+  // since t_ref_ >= 0, this can only fail in error
+  assert( V_.refractory_counts_ >= 0 );
 }
 
 /* ----------------------------------------------------------------
@@ -487,7 +402,7 @@ nest::aeif_cond_alpha::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::aeif_cond_alpha::update( Time const& origin,
+nest::aeif_psc_delta::update( const Time& origin,
   const long from,
   const long to )
 {
@@ -495,13 +410,11 @@ nest::aeif_cond_alpha::update( Time const& origin,
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
   assert( State_::V_M == 0 );
-
+  const double h = Time::get_resolution().get_ms();
+  const double tau_m_ = P_.C_m / P_.g_L;
   for ( long lag = from; lag < to; ++lag )
   {
     double t = 0.0;
-
-    if ( S_.r_ > 0 )
-      --S_.r_;
 
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
@@ -512,46 +425,76 @@ nest::aeif_cond_alpha::update( Time const& origin,
     // to a small integration step size;
     // note that (t+IntegrationStep > step) leads to integration over
     // (t, step] and afterwards setting t to step, but it does not
-    // enforce setting IntegrationStep to step-t; this is of advantage
-    // for a consistent and efficient integration across subsequent
-    // simulation intervals
-
+    // enforce setting IntegrationStep to step-t
     while ( t < B_.step_ )
     {
       const int status = gsl_odeiv_evolve_apply( B_.e_,
         B_.c_,
         B_.s_,
-        &V_.sys_,             // system of ODE
+        &B_.sys_,             // system of ODE
         &t,                   // from t
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y_ );              // neuronal state
 
       if ( status != GSL_SUCCESS )
+      {
         throw GSLSolverFailure( get_name(), status );
-
+      }
       // check for unreasonable values; we allow V_M to explode
       if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
         || S_.y_[ State_::W ] > 1e6 )
+      {
         throw NumericalInstability( get_name() );
+      }
 
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
-      if ( S_.r_ > 0 )
-        S_.y_[ State_::V_M ] = P_.V_reset_;
-      else if ( S_.y_[ State_::V_M ] >= V_.V_peak_ )
+      if ( S_.r_ == 0 )
+      {
+        // neuron not refractory
+        S_.y_[ State_::V_M ] =
+          S_.y_[ State_::V_M ] + B_.spikes_.get_value( lag );
+
+        // if we have accumulated spikes from refractory period,
+        // add and reset accumulator
+        if ( P_.with_refr_input_ && S_.refr_spikes_buffer_ != 0.0 )
+        {
+          S_.y_[ State_::V_M ] += S_.refr_spikes_buffer_;
+          S_.refr_spikes_buffer_ = 0.0;
+        }
+      }
+      else // neuron is absolute refractory
+      {
+        S_.y_[ State_::V_M ] = P_.V_reset_; // clamp it to V_reset
+
+        // read spikes from buffer and accumulate them, discounting
+        // for decay until end of refractory period
+        if ( P_.with_refr_input_ )
+        {
+          S_.refr_spikes_buffer_ +=
+            B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / tau_m_ );
+        }
+        else
+        {
+          B_.spikes_.get_value( lag ); // clear buffer entry, ignore spike
+        }
+      }
+      if ( S_.r_ == 0 and S_.y_[ State_::V_M ] >= V_.V_peak_ )
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
+        // add 1 to compensate for count-down right after loop
+        S_.r_ = V_.refractory_counts_ > 0 ? V_.refractory_counts_ + 1 : 0;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
-        S_.r_ = V_.refractory_counts_;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
         kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
-    S_.y_[ State_::DG_EXC ] += B_.spike_exc_.get_value( lag ) * V_.g0_ex_;
-    S_.y_[ State_::DG_INH ] += B_.spike_inh_.get_value( lag ) * V_.g0_in_;
+
+    if ( S_.r_ > 0 )
+      --S_.r_;
 
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );
@@ -562,22 +505,17 @@ nest::aeif_cond_alpha::update( Time const& origin,
 }
 
 void
-nest::aeif_cond_alpha::handle( SpikeEvent& e )
+nest::aeif_psc_delta::handle( SpikeEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  if ( e.get_weight() > 0.0 )
-    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
-      e.get_weight() * e.get_multiplicity() );
-  else
-    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
-                               kernel().simulation_manager.get_slice_origin() ),
-      -e.get_weight() * e.get_multiplicity() ); // keep conductances positive
+  B_.spikes_.add_value(
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    e.get_weight() * e.get_multiplicity() );
 }
 
 void
-nest::aeif_cond_alpha::handle( CurrentEvent& e )
+nest::aeif_psc_delta::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
@@ -591,7 +529,7 @@ nest::aeif_cond_alpha::handle( CurrentEvent& e )
 }
 
 void
-nest::aeif_cond_alpha::handle( DataLoggingRequest& e )
+nest::aeif_psc_delta::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }

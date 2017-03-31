@@ -270,9 +270,12 @@ public:
   virtual void reset_timers_counters();
 
   Stopwatch sw_communicate_secondary_events;
+  Stopwatch sw_collocate_spike_data;
   Stopwatch sw_communicate_spike_data;
   Stopwatch sw_deliver_spike_data;
+  Stopwatch sw_collocate_target_data;
   Stopwatch sw_communicate_target_data;
+  Stopwatch sw_distribute_target_data;
 
   unsigned int comm_steps_target_data;
   unsigned int comm_rounds_target_data;

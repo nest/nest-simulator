@@ -458,8 +458,12 @@ nest::SimulationManager::prepare()
     sw_prepare.stop();
     sw_prepare.print( "0] PrepareSimulation time: " );
 
+    kernel().event_delivery_manager.sw_collocate_target_data.print(
+      "0] GatherTargetData::collocate time: " );
     kernel().event_delivery_manager.sw_communicate_target_data.print(
       "0] GatherTargetData::communicate time: " );
+    kernel().event_delivery_manager.sw_distribute_target_data.print(
+      "0] GatherTargetData::distribute time: " );
     std::cout << "0] CommSteps(Rounds)TargetData: "
               << kernel().event_delivery_manager.comm_steps_target_data << " ("
               << kernel().event_delivery_manager.comm_rounds_target_data << ")"
@@ -675,9 +679,31 @@ nest::SimulationManager::call_update_()
 void
 nest::SimulationManager::update_connection_infrastructure( const thread tid )
 {
+  Stopwatch sw_restructure;
+  Stopwatch sw_sort;
+
+  if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
+  {
+    sw_restructure.start();
+  }
   kernel().connection_manager.restructure_connection_tables( tid );
+  if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
+  {
+    sw_restructure.stop();
+    sw_restructure.print( "0] Restructure time: " );
+  }
+
+  if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
+  {
+    sw_sort.start();
+  }
   kernel().connection_manager.sort_connections(
     tid ); // TODO@5g: move into restructure_
+  if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
+  {
+    sw_sort.stop();
+    sw_sort.print( "0] Sort time: " );
+  }
 
 #pragma omp single
   {
@@ -735,7 +761,7 @@ nest::SimulationManager::update_()
     Stopwatch sw_total;
     Stopwatch sw_update;
 
-    if ( kernel().mpi_manager.get_rank() < 30 )
+    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
     {
       sw_total.start();
     }
@@ -897,7 +923,7 @@ nest::SimulationManager::update_()
       } // of if(wfr_is_used)
       // end of preliminary update
 
-      if ( kernel().mpi_manager.get_rank() < 30 )
+      if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
       {
         sw_update.start();
       }
@@ -927,7 +953,7 @@ nest::SimulationManager::update_()
 
 // parallel section ends, wait until all threads are done -> synchronize
 #pragma omp barrier
-      if ( kernel().mpi_manager.get_rank() < 30 )
+      if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
       {
         sw_update.stop();
       }
@@ -988,10 +1014,11 @@ nest::SimulationManager::update_()
     //     Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     // }
 
-    if ( tid == 0 && kernel().mpi_manager.get_rank() < 30 )
+    if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
     {
       sw_total.stop();
       sw_update.print( "0] Update time: " );
+      kernel().event_delivery_manager.sw_collocate_spike_data.print( "0] GatherSpikeData::collocate time: " );
       kernel().event_delivery_manager.sw_communicate_spike_data.print( "0] GatherSpikeData::communicate time: " );
       kernel().event_delivery_manager.sw_deliver_spike_data.print( "0] GatherSpikeData::deliver time: " );
       kernel().event_delivery_manager.sw_communicate_secondary_events.print( "0] GatherSecondaryData::communicate time: " );

@@ -404,6 +404,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
         resize_send_recv_buffers_spike_data_();
         buffer_size_spike_data_has_changed_ = false;
       }
+      sw_collocate_spike_data.start();
     } // of omp single; implicit barrier
 
     // need to get new positions in case buffer size has changed
@@ -454,6 +455,7 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     // communicate spikes using a single thread
 #pragma omp single
     {
+      sw_collocate_spike_data.stop();
       ++comm_rounds_spike_data;
       kernel().mpi_manager.synchronize(); // to get an accurate time measurement across ranks
       sw_communicate_spike_data.start();
@@ -465,26 +467,23 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
                                                  recv_buffer_int,
                                                  send_recv_count_in_int );
       sw_communicate_spike_data.stop();
-    } // of omp single; implicit barrier
-
-    // deliver spikes from receive buffer to ring buffers
-#pragma omp single
-    {
       sw_deliver_spike_data.start();
     } // of omp single; implicit barrier
 
+    // deliver spikes from receive buffer to ring buffers
     others_completed_tid = deliver_events_5g_( tid, recv_buffer );
 #pragma omp atomic
     completed_count += others_completed_tid;
 
-#pragma omp single
+    // exit gather loop if all local threads and remote processes are
+    // done
+#pragma omp barrier
+
+    #pragma omp single
     {
       sw_deliver_spike_data.stop();
     } // of omp single; implicit barrier
 
-    // exit gather loop if all local threads and remote processes are
-    // done
-#pragma omp barrier
     if ( completed_count == max_completed_count )
     {
       done = true;
@@ -732,6 +731,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
       {
         configure_target_data_buffers();
       }
+      sw_collocate_target_data.start();
     } // of omp single; implicit barrier
     kernel().connection_manager.restore_source_table_entry_point( tid );
 
@@ -752,6 +752,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
     kernel().connection_manager.clean_source_table( tid );
 #pragma omp single
     {
+      sw_collocate_target_data.stop();
       ++comm_rounds_target_data;
       kernel().mpi_manager.synchronize(); // to get an accurate time measurement across ranks
       sw_communicate_target_data.start();
@@ -763,6 +764,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
         recv_buffer_int,
         send_recv_count_target_data_in_int_per_rank_ );
       sw_communicate_target_data.stop();
+      sw_distribute_target_data.start();
     } // of omp single
 
     others_completed_tid = distribute_target_data_buffers_(
@@ -771,6 +773,12 @@ EventDeliveryManager::gather_target_data( const thread tid )
 #pragma omp atomic
     completed_count += others_completed_tid;
 #pragma omp barrier
+
+#pragma omp single
+    {
+      sw_distribute_target_data.stop();
+    } // of omp single; implicit barrier
+
     if ( completed_count == max_completed_count )
     {
       done = true;

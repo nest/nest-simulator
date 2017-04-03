@@ -458,8 +458,14 @@ def show_help_with_pager(hlpobj, pager):
     pager: str, optional
         pager to use, NO if you explicity do not want to use a pager
     """
+    if 'NEST_INSTALL_DIR' not in os.environ:
+        print(
+            'NEST help needs to know where NEST is installed.'
+            'Please source nest_vars.sh or define NEST_INSTALL_DIR manually.')
+        return
 
-    helpdir = os.environ['NEST_INSTALL_DIR'] + "/share/doc/nest/help/"
+    helpdir = os.path.join(os.environ['NEST_INSTALL_DIR'],
+                           "/share/doc/nest/help/")
     objname = hlpobj + '.hlp'
     # @todo more pager
     consolepager = ['less', 'more', 'vi', 'vim', 'nano', 'emacs -nw',
@@ -494,14 +500,14 @@ def show_help_with_pager(hlpobj, pager):
                         __show_help_in_modal_window(objname, hlptxt)
                         break
                     else:
-                        proc = subprocess.Popen([pager, objf])
+                        subprocess.Popen([pager, objf])
                         break
                 else:
                     if pager in consolepager:
                         subprocess.call([pager, objf])
                         break
                     else:
-                        proc = subprocess.Popen([pager, objf])
+                        subprocess.Popen([pager, objf])
                         break
 
 

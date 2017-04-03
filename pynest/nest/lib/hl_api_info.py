@@ -25,8 +25,6 @@ Functions to get information on NEST.
 
 from .hl_api_helper import *
 import os
-import re
-import subprocess
 import webbrowser
 
 

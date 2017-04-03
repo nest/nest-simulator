@@ -130,8 +130,9 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
 
   if ( updateValue< double >( d, names::offset, v ) )
   {
-    // only throw error if given offset is > 0., otherwise it's not an error
-    if ( v > 0 && Time( Time::ms( v ) ) < Time::get_resolution() )
+    // if offset is different from the default value (0), it must be at least
+    // as large as the resolution
+    if ( v != 0 && Time( Time::ms( v ) ) < Time::get_resolution() )
     {
       throw BadProperty(
         "The offset for the sampling interval must be at least as long as the "

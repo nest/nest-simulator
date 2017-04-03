@@ -56,7 +56,7 @@ def is_message_pair_in_logfile(log_filename, msg_start_of_section,
             if not pair_found and is_message(line, msg_end_of_section):
                 pair_found = True
 
-    return(pair_found)
+    return pair_found
 
 
 def is_message_in_logfile(log_filename, msg_number):
@@ -76,9 +76,9 @@ def is_message_in_logfile(log_filename, msg_number):
     with open(log_filename) as fh:
         for line in fh:
             if is_message(line, msg_number):
-                return(True)
+                return True
 
-    return(False)
+    return False
 
 
 def is_message(line, msg_number):
@@ -95,9 +95,9 @@ def is_message(line, msg_number):
     """
 
     if msg_number in line:
-        return(True)
+        return True
 
-    return(False)
+    return False
 
 
 def list_of_changed_files(log_filename, msg_changed_files_section_start,
@@ -121,7 +121,7 @@ def list_of_changed_files(log_filename, msg_changed_files_section_start,
     if not is_message_pair_in_logfile(log_filename,
                                       msg_changed_files_section_start,
                                       msg_changed_files_section_end):
-        return(changed_files)
+        return changed_files
 
     in_changed_files_section = False
     with open(log_filename) as fh:
@@ -139,9 +139,9 @@ def list_of_changed_files(log_filename, msg_changed_files_section_start,
                 if is_message(line, msg_changed_files_section_end):
                     # The log file contains only one 'changed-files-section'.
                     # Stop reading the log file.
-                    return(changed_files)
+                    return changed_files
 
-    return(changed_files)
+    return changed_files
 
 
 def msg_summary_vera(log_filename, msg_vera_section_start,
@@ -162,7 +162,7 @@ def msg_summary_vera(log_filename, msg_vera_section_start,
     None or a dictionary of dictionaries of VERA++ messages per file.
     """
 
-    all_vera_msgs = None
+    vera_msgs = None
     in_a_vera_section = False
     with open(log_filename) as fh:
         for line in fh:
@@ -171,9 +171,9 @@ def msg_summary_vera(log_filename, msg_vera_section_start,
                 in_a_vera_section = True
                 source_filename = line.split(' ')[-1].strip()
                 single_file_vera_msgs = {}
-                if all_vera_msgs is None:
-                    all_vera_msgs = {}
-                all_vera_msgs.update({source_filename: single_file_vera_msgs})
+                if vera_msgs is None:
+                    vera_msgs = {}
+                vera_msgs.update({source_filename: single_file_vera_msgs})
                 continue
 
             if in_a_vera_section:
@@ -187,7 +187,7 @@ def msg_summary_vera(log_filename, msg_vera_section_start,
                 if is_message(line, msg_vera_section_end):
                     in_a_vera_section = False
 
-    return(all_vera_msgs)
+    return vera_msgs
 
 
 def msg_summary_cppcheck(log_filename, msg_cppcheck_section_start,
@@ -208,7 +208,7 @@ def msg_summary_cppcheck(log_filename, msg_cppcheck_section_start,
     None or a dictionary of dictionaries of cppcheck messages per file.
     """
 
-    all_cppcheck_msgs = None
+    cppcheck_msgs = None
     in_a_cppcheck_section = False
     with open(log_filename) as fh:
         for line in fh:
@@ -217,10 +217,10 @@ def msg_summary_cppcheck(log_filename, msg_cppcheck_section_start,
                 in_a_cppcheck_section = True
                 source_filename = line.split(' ')[-1].strip()
                 single_file_cppcheck_msgs = {}
-                if all_cppcheck_msgs is None:
-                    all_cppcheck_msgs = {}
-                all_cppcheck_msgs.update({source_filename:
-                                          single_file_cppcheck_msgs})
+                if cppcheck_msgs is None:
+                    cppcheck_msgs = {}
+                cppcheck_msgs.update({source_filename:
+                                      single_file_cppcheck_msgs})
                 continue
 
             if in_a_cppcheck_section:
@@ -240,7 +240,7 @@ def msg_summary_cppcheck(log_filename, msg_cppcheck_section_start,
                 if is_message(line, msg_cppcheck_section_end):
                     in_a_cppcheck_section = False
 
-    return(all_cppcheck_msgs)
+    return cppcheck_msgs
 
 
 def msg_summary_format(log_filename, msg_format_section_start,
@@ -262,7 +262,7 @@ def msg_summary_format(log_filename, msg_format_section_start,
     file.
     """
 
-    all_format_msgs = None
+    format_msgs = None
     in_a_format_section = False
     with open(log_filename) as fh:
         for line in fh:
@@ -270,9 +270,9 @@ def msg_summary_format(log_filename, msg_format_section_start,
                 in_a_format_section = True
                 source_filename = line.split(' ')[-1].strip()
                 single_file_format_msgs = {}
-                if all_format_msgs is None:
-                    all_format_msgs = {}
-                all_format_msgs.update({source_filename: single_file_format_msgs})      # noqa
+                if format_msgs is None:
+                    format_msgs = {}
+                format_msgs.update({source_filename: single_file_format_msgs})      # noqa
                 continue
 
             if in_a_format_section:
@@ -286,7 +286,7 @@ def msg_summary_format(log_filename, msg_format_section_start,
                 if is_message(line, msg_format_section_end):
                     in_a_format_section = False
 
-    return(all_format_msgs)
+    return format_msgs
 
 
 def msg_summary_pep8(log_filename, msg_pep8_section_start,
@@ -307,7 +307,7 @@ def msg_summary_pep8(log_filename, msg_pep8_section_start,
     None or a dictionary of dictionaries of PEP8 messages per file.
     """
 
-    all_pep8_msgs = None
+    pep8_msgs = None
     in_a_pep8_section = False
     with open(log_filename) as fh:
         for line in fh:
@@ -315,9 +315,9 @@ def msg_summary_pep8(log_filename, msg_pep8_section_start,
                 in_a_pep8_section = True
                 source_filename = line.split(' ')[-1].strip()
                 single_file_pep8_msgs = {}
-                if all_pep8_msgs is None:
-                    all_pep8_msgs = {}
-                all_pep8_msgs.update({source_filename: single_file_pep8_msgs})
+                if pep8_msgs is None:
+                    pep8_msgs = {}
+                pep8_msgs.update({source_filename: single_file_pep8_msgs})
                 continue
 
             if in_a_pep8_section:
@@ -331,7 +331,7 @@ def msg_summary_pep8(log_filename, msg_pep8_section_start,
                 if is_message(line, msg_pep8_section_end):
                     in_a_pep8_section = False
 
-    return(all_pep8_msgs)
+    return pep8_msgs
 
 
 def makebuild_summary(log_filename, msg_make_section_start,
@@ -393,10 +393,10 @@ def makebuild_summary(log_filename, msg_make_section_start,
 
     if in_make_section:
         # 'make' was not completed.
-        return(False, None, None, None, None)
+        return False, None, None, None, None
     else:
         # There is no 'make' section at all.
-        return(None, None, None, None, None)
+        return None, None, None, None, None
 
 
 def testsuite_results(log_filename, msg_testsuite_section_start,
@@ -451,7 +451,7 @@ def testsuite_results(log_filename, msg_testsuite_section_start,
                     # section. Stop reading the log file.
                     break
 
-    return(status_tests, total_number_of_tests, number_of_tests_failed)
+    return status_tests, total_number_of_tests, number_of_tests_failed
 
 
 def convert_bool_value_to_status_string(value):
@@ -467,11 +467,11 @@ def convert_bool_value_to_status_string(value):
     String "Passed Successfully", "Skipped" or "Failed" (default).
     """
     if value:
-        return("Passed successfully")
+        return "Passed successfully"
     if value is None:
-        return("Skipped")
+        return "Skipped"
 
-    return("Failed")
+    return "Failed"
 
 
 def convert_bool_value_to_yes_no_string(value):
@@ -488,9 +488,9 @@ def convert_bool_value_to_yes_no_string(value):
     """
 
     if value:
-        return("Yes")
+        return "Yes"
 
-    return("No")
+    return "No"
 
 
 def convert_summary_to_status_string(summary):
@@ -509,16 +509,16 @@ def convert_summary_to_status_string(summary):
     if summary is None:
         value = None
     else:
-        number_of_messages = number_of_msgs_in_summary(summary)
-        if number_of_messages == 0:
+        num_msgs = get_num_msgs(summary)
+        if num_msgs == 0:
             value = True
         else:
             value = False
 
-    return(convert_bool_value_to_status_string(value))
+    return convert_bool_value_to_status_string(value)
 
 
-def number_of_msgs_in_summary(summary):
+def get_num_msgs(summary):
     """Return the number of messages of any static code analysis.
 
     Parameters
@@ -531,16 +531,16 @@ def number_of_msgs_in_summary(summary):
     The total number of messages contained in the dictionary.
     """
 
-    number_of_msgs = 0
+    num_msgs = 0
     if summary is not None:
         for file_name in summary.keys():
-            number_of_msgs += \
-                number_of_msgs_for_file_in_summary(file_name, summary)
+            num_msgs += \
+                get_num_msgs_for_file(file_name, summary)
 
-    return(number_of_msgs)
+    return num_msgs
 
 
-def number_of_msgs_for_file_in_summary(file_name, summary):
+def get_num_msgs_for_file(file_name, summary):
     """Return the number of messages of any static code analysis for a
     particular source file.
 
@@ -555,12 +555,12 @@ def number_of_msgs_for_file_in_summary(file_name, summary):
     The number of messages for the source file contained in the dictionary.
     """
 
-    number_of_messages = 0
+    num_msgs = 0
     if summary is not None:
         for message, occurrences in summary[file_name].iteritems():
-            number_of_messages += occurrences
+            num_msgs += occurrences
 
-    return(number_of_messages)
+    return num_msgs
 
 
 def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
@@ -597,30 +597,27 @@ def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
         for file in summary_format.keys():
             file_table = ''
 
-            number_of_vera_messages = \
-                number_of_msgs_for_file_in_summary(file, summary_vera)
-            number_of_cppcheck_messages = \
-                number_of_msgs_for_file_in_summary(file, summary_cppcheck)
-            number_of_format_messages = \
-                number_of_msgs_for_file_in_summary(file, summary_format)
+            num_msgs_vera = get_num_msgs_for_file(file, summary_vera)
+            num_msgs_cppcheck = get_num_msgs_for_file(file, summary_cppcheck)
+            num_msgs_format = get_num_msgs_for_file(file, summary_format)
 
-            if number_of_vera_messages > 0 or \
-               number_of_cppcheck_messages > 0 or \
-               number_of_format_messages > 0:
+            if num_msgs_vera > 0 or \
+               num_msgs_cppcheck > 0 or \
+               num_msgs_format > 0:
 
                 file_table = [['+ + + ' + file + ' + + +', '']]
 
-                if number_of_vera_messages > 0:
+                if num_msgs_vera > 0:
                     file_table.append(['VERA++ (MSGBLD0135):', 'Count'])
                     for message, count in summary_vera[file].iteritems():
                         file_table.append([str(message), str(count)])
 
-                if number_of_cppcheck_messages > 0:
+                if num_msgs_cppcheck > 0:
                     file_table.append(['Cppcheck (MSGBLD0155):', 'Count'])
                     for message, count in summary_cppcheck[file].iteritems():
                         file_table.append([str(message), str(count)])
 
-                if number_of_format_messages > 0:
+                if num_msgs_format > 0:
                     file_table.append(['clang-format (MSGBLD0175):', 'Count'])
                     for message, count in summary_format[file].iteritems():
                         file_table.append([str(message), str(count)])
@@ -636,7 +633,7 @@ def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
         for file in summary_pep8.keys():
             file_table = ''
 
-            if number_of_msgs_for_file_in_summary(file, summary_pep8) > 0:
+            if get_num_msgs_for_file(file, summary_pep8) > 0:
 
                 file_table = [['+ + + ' + file + ' + + +', '']]
 
@@ -650,7 +647,7 @@ def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
 
             all_tables += file_table
 
-    return(all_tables)
+    return all_tables
 
 
 def warnings_table(summary):
@@ -674,7 +671,7 @@ def warnings_table(summary):
     table = AsciiTable(file_table)
     table.inner_row_border = True
 
-    return(table.table + '\n')
+    return table.table + '\n'
 
 
 def errors_table(summary):
@@ -698,7 +695,7 @@ def errors_table(summary):
     table = AsciiTable(file_table)
     table.inner_row_border = True
 
-    return(table.table + '\n')
+    return table.table + '\n'
 
 
 def printable_summary(list_of_changed_files,
@@ -769,10 +766,10 @@ def printable_summary(list_of_changed_files,
 
     build_summary = header
 
-    if number_of_msgs_in_summary(summary_vera) > 0 or \
-       number_of_msgs_in_summary(summary_cppcheck) > 0 or \
-       number_of_msgs_in_summary(summary_format) > 0 or \
-       number_of_msgs_in_summary(summary_pep8) > 0:
+    if get_num_msgs(summary_vera) > 0 or \
+       get_num_msgs(summary_cppcheck) > 0 or \
+       get_num_msgs(summary_format) > 0 or \
+       get_num_msgs(summary_pep8) > 0:
 
         build_summary += '  S T A T I C   C O D E   A N A L Y S I S\n'
 
@@ -805,17 +802,17 @@ def printable_summary(list_of_changed_files,
         ['Static Code Analysis :', ''],
         ['VERA++', convert_summary_to_status_string(summary_vera) +
          '\n' + '\nNumber of messages (MSGBLD0135): ' +
-         str(number_of_msgs_in_summary(summary_vera))],
+         str(get_num_msgs(summary_vera))],
         ['Cppcheck (DEACTIVATED)',
          convert_summary_to_status_string(summary_cppcheck) +
          '\n' + '\nNumber of messages (MSGBLD0155): ' +
-         str(number_of_msgs_in_summary(summary_cppcheck))],
+         str(get_num_msgs(summary_cppcheck))],
         ['clang-format', convert_summary_to_status_string(summary_format) +
          '\n' + '\nNumber of messages (MSGBLD0175): ' +
-         str(number_of_msgs_in_summary(summary_format))],
+         str(get_num_msgs(summary_format))],
         ['PEP8', convert_summary_to_status_string(summary_pep8) + '\n' +
          '\nNumber of messages (MSGBLD0195): ' +
-         str(number_of_msgs_in_summary(summary_pep8))],
+         str(get_num_msgs(summary_pep8))],
         ['NEST Build :', ''],
         ['CMake configure',
          convert_bool_value_to_status_string(status_cmake_configure)],
@@ -845,7 +842,7 @@ def printable_summary(list_of_changed_files,
     else:
         build_summary += '\nBUILD FAILED'
 
-    return(build_summary)
+    return build_summary
 
 
 def build_return_code(status_vera_init,
@@ -896,7 +893,7 @@ def build_return_code(status_vera_init,
     #       cppcheck in the summary_table above.
     #
     #       (status_cppcheck_init is None or status_cppcheck_init) and \
-    #       (number_of_msgs_in_summary(summary_cppcheck) == 0) and \
+    #       (get_num_msgs(summary_cppcheck) == 0) and \
 
     if (status_vera_init is None or status_vera_init) and \
        (status_format_init is None or status_format_init) and \
@@ -904,13 +901,13 @@ def build_return_code(status_vera_init,
        (status_make) and \
        (status_make_install) and \
        (status_tests) and \
-       (number_of_msgs_in_summary(summary_vera) == 0) and \
-       (number_of_msgs_in_summary(summary_format) == 0) and \
-       (number_of_msgs_in_summary(summary_pep8) == 0):
+       (get_num_msgs(summary_vera) == 0) and \
+       (get_num_msgs(summary_format) == 0) and \
+       (get_num_msgs(summary_pep8) == 0):
 
-        return(0)
+        return 0
     else:
-        return(1)
+        return 1
 
 
 if __name__ == '__main__':

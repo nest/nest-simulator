@@ -281,7 +281,7 @@ sources_ex = numpy.random.randint(1, NE + 1, (N_neurons, CE))
 sources_in = numpy.random.randint(NE + 1, N_neurons + 1, (N_neurons, CI))
 
 # Find the targets corresponding to each source GIDs
-target_list = [[] for _ in range(N_neurons)] 
+target_list = [[] for _ in range(N_neurons)]
 
 for tgid in range(1, N_neurons + 1):
     ex_tsrc = sources_ex[tgid-1, :]
@@ -289,7 +289,7 @@ for tgid in range(1, N_neurons + 1):
     for sgid in ex_tsrc:
         target_list[sgid-1].append(tgid*1.0)
     for sgid in in_tsrc:
-        target_list[sgid-1].append(tgid*1.0)      
+        target_list[sgid-1].append(tgid*1.0)
 
 '''
 We now iterate over all neuron IDs, and connect the neuron to the

@@ -280,27 +280,42 @@ numpy.random.seed(1234)
 sources_ex = numpy.random.randint(1, NE + 1, (N_neurons, CE))
 sources_in = numpy.random.randint(NE + 1, N_neurons + 1, (N_neurons, CI))
 
+# Find the targets corresponding to each source GIDs
+target_list = [[] for _ in range(N_neurons)] 
+
+for tgid in range(1, N_neurons + 1):
+    ex_tsrc = sources_ex[tgid-1, :]
+    in_tsrc = sources_in[tgid-1, :]
+    for sgid in ex_tsrc:
+        target_list[sgid-1].append(tgid*1.0)
+    for sgid in in_tsrc:
+        target_list[sgid-1].append(tgid*1.0)      
+
 '''
 We now iterate over all neuron IDs, and connect the neuron to the
 sources from our array. The first loop connects the excitatory neurons
 and the second loop the inhibitory neurons.
 '''
 
-for n in range(N_neurons):
-    node_list = list(sources_ex[n])
-    params = [{'target': [n + 1.0],
-               'weight': [J_ex], 'delay': [delay]} for x in node_list]
+for n in range(NE):
+    weight_list = [J_ex for _ in range(len(target_list[n]))]
+    delay_list = [delay for _ in range(len(target_list[n]))]
+    params = [{'target': target_list[n],
+               'weight': weight_list,
+               'delay': delay_list}]
     # Using DataConnect is a work-around until NEST 3.0 is released. It will
     # issue a deprecation warning
-    nest.DataConnect(node_list, params, model='excitatory')
+    nest.DataConnect([n + 1], params, model='excitatory')
 
-for n in range(N_neurons):
-    node_list = list(sources_in[n])
-    params = [{'target': [n + 1.0],
-               'weight': [J_in], 'delay': [delay]} for x in node_list]
+for n in range(NE, N_neurons):
+    weight_list = [J_in for _ in range(len(target_list[n]))]
+    delay_list = [delay for _ in range(len(target_list[n]))]
+    params = [{'target': target_list[n],
+               'weight': weight_list,
+               'delay': delay_list}]
     # Using DataConnect is a work-around until NEST 3.0 is released. It will
     # issue a deprecation warning
-    nest.DataConnect(node_list, params, model='inhibitory')
+    nest.DataConnect([n + 1], params, model='inhibitory')
 
 '''
 Storage of the time point after the buildup of the network in a

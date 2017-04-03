@@ -146,18 +146,26 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
   echo "MSGBLD0100: Retrieving changed files completed."
   echo
 
+
+  # Set the command line arguments for the static code analysis script and call it.
+
   sudo chmod +x ./extras/static_code_analysis.sh
 
-  RUNS_ON_TRAVIS=true
-  INCREMENTAL=false
-  VERA=vera++
+  # The names of the static code analysis tools executables.
+  VERA=vera++                   
   CPPCHECK=cppcheck
   CLANG_FORMAT=clang-format
   PEP8=pep8
+
+  # Perform or skip a certain analysis.
   PERFORM_VERA=true
   PERFORM_CPPCHECK=true
   PERFORM_CLANG_FORMAT=true
   PERFORM_PEP8=true
+
+  # The script is called within the Travis CI environment and cannot be run incremental.
+  RUNS_ON_TRAVIS=true
+  INCREMENTAL=false
 
   ./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
   "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8"

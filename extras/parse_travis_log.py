@@ -382,16 +382,21 @@ def makebuild_summary(log_filename, msg_make_section_start,
                     warning_summary[file_name] += 1
                     number_of_warning_msgs += 1
 
-            if is_message(line, msg_make_section_end):
-                # The log file contains only one 'make' section, return.
-                if number_of_error_msgs == 0:
-                    return(True, number_of_error_msgs, error_summary,
-                           number_of_warning_msgs, warning_summary)
-                else:
-                    return(False, number_of_error_msgs, error_summary,
-                           number_of_warning_msgs, warning_summary)
+                if is_message(line, msg_make_section_end):
+                    # The log file contains only one 'make' section, return.
+                    if number_of_error_msgs == 0:
+                        return(True, number_of_error_msgs, error_summary,
+                               number_of_warning_msgs, warning_summary)
+                    else:
+                        return(False, number_of_error_msgs, error_summary,
+                               number_of_warning_msgs, warning_summary)
 
-    return(None, None, None, None, None)
+    if in_make_section:
+        # 'make' was not completed.
+        return(False, None, None, None, None)
+    else:
+        # There is no 'make' section at all.
+        return(None, None, None, None, None)
 
 
 def testsuite_results(log_filename, msg_testsuite_section_start,

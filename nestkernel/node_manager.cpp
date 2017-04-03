@@ -753,7 +753,7 @@ NodeManager::print( std::ostream& out ) const
     gid_range_strs << std::setw( max_gid_width + 1 ) << first_gid;
     if ( last_gid != first_gid )
     {
-      gid_range_strs << " .. " << last_gid;
+      gid_range_strs << " .. " << std::setw( max_gid_width + 1 ) << last_gid;
     }
     out << std::setw( gid_range_width ) << std::left << gid_range_strs.str()
         << " " << mod->get_name();

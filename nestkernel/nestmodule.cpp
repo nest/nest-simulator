@@ -812,9 +812,9 @@ void
 NestModule::PrintNodesToStreamFunction::execute( SLIInterpreter* i ) const
 {
   std::stringstream out;
-  print_nodes_to_stream(out);
+  print_nodes_to_stream( out );
 
-  i->OStack.push(out.str());
+  i->OStack.push( out.str() );
   i->EStack.pop();
 }
 

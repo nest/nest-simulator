@@ -736,37 +736,29 @@ NodeManager::check_wfr_use()
 void
 NodeManager::print( std::ostream& out ) const
 {
-  SparseNodeArray::const_iterator it = local_nodes_.begin();
+  const index max_gid = size();
+  const double max_gid_width = std::floor( std::log10( max_gid ) );
+  const double gid_range_width = 6 + 2 * max_gid_width;
 
-  index max_gid = size();
-  double max_spaces = std::floor( std::log10( max_gid ) );
-
-  while ( it != local_nodes_.end() )
+  for ( std::vector< modelrange >::const_iterator it =
+          kernel().modelrange_manager.begin();
+        it != kernel().modelrange_manager.end();
+        ++it )
   {
-    index first_gid = it->get_gid();
-    modelrange gid_range =
-      kernel().modelrange_manager.get_contiguous_gid_range( first_gid );
-    Model* mod = kernel().modelrange_manager.get_model_of_gid( first_gid );
-    index last_gid = gid_range.get_last_gid();
+    const index first_gid = it->get_first_gid();
+    const index last_gid = it->get_last_gid();
+    const Model* mod = kernel().model_manager.get_model( it->get_model_id() );
 
-    std::string beg_spaces(
-      max_spaces - std::floor( std::log10( first_gid ) ), ' ' );
-    if ( last_gid == first_gid )
+    std::stringstream gid_range_strs;
+    gid_range_strs << std::setw( max_gid_width + 1 ) << first_gid;
+    if ( last_gid != first_gid )
     {
-      // ' .. ' = 4 spaces
-      std::string end_spaces( 6 + max_spaces, ' ' );
-      out << beg_spaces << first_gid << end_spaces << mod->get_name();
+      gid_range_strs << " .. " << std::setw( max_gid_width + 1 ) << last_gid;
     }
-    else
-    {
-      std::string end_spaces(
-        max_spaces - std::floor( std::log10( last_gid ) ) + 1, ' ' );
-      out << beg_spaces << first_gid << " .. " << last_gid << end_spaces
-          << mod->get_name();
-    }
+    out << std::setw( gid_range_width ) << std::left << gid_range_strs.str()
+        << " " << mod->get_name();
 
-    it += last_gid - first_gid + 1;
-    if ( it != local_nodes_.end() )
+    if ( it + 1 != kernel().modelrange_manager.end() )
     {
       out << std::endl;
     }

@@ -72,6 +72,12 @@
  off_grid_spiking         booltype    - Whether to transmit precise spike times in MPI
                                         communication (read only)
 
+ Connector configuration
+ init_connector_capacity  integertype - When a connector is first created, it starts with this
+                                        capacity (if >= connector_cutoff)
+ large_connector_limit    integertype - Capacity doubling is used up to this limit
+ large_connector_growth   doubletype  - Capacity growth factor to use beyond the limit
+
  Random number generators
  grng_seed                integertype - Seed for global random number generator used
                                         synchronously by all virtual processes to

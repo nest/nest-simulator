@@ -123,8 +123,6 @@ suicide( Told* connector )
 // can be specified via cmake flag -Dconnector_cutoff=value
 #define K_CUTOFF CONFIG_CONNECTOR_CUTOFF
 
-// when to use 1.5x grow strategy for connection vector
-#define K_SLOW_GROWING 6
 
 namespace nest
 {
@@ -765,11 +763,13 @@ class Connector< K_CUTOFF, ConnectionT > : public vector_like< ConnectionT >
 public:
   Connector( const Connector< K_CUTOFF - 1, ConnectionT >& C,
     const ConnectionT& c )
-    : C_( K_CUTOFF ) //, syn_id_(C.get_syn_id())
   {
+    C_.reserve( kernel().connection_manager.get_init_conn_capacity() );
+
     for ( size_t i = 0; i < K_CUTOFF - 1; i++ )
-      C_[ i ] = C.get_C()[ i ];
-    C_[ K_CUTOFF - 1 ] = c;
+      C_.push_back( C.get_C()[ i ] );
+
+    C_.push_back( c );
   };
 
   /**
@@ -861,14 +861,18 @@ public:
   ConnectorBase&
   push_back( const ConnectionT& c )
   {
-    // Replace default vector grow strategy that is quite bad for our case.
-    // Use vector grow strategy 1.5 when size >= K_SLOW_GROWING.
+    // Replace default (doubling) vector grow strategy.
+    // Use specific vector grow strategy when size >= large_connector_limit.
     // Call vector::reserve() manually if size() == capacity().
     const size_t sz = C_.size();
 
-    if ( sz == C_.capacity() and sz >= K_SLOW_GROWING )
+    if ( sz == C_.capacity() and
+        sz >= kernel().connection_manager.get_large_conn_limit() )
     {
-      C_.reserve( ( sz * 3 + 1 ) / 2 );
+      const size_t cap = static_cast<double>( sz ) *
+          kernel().connection_manager.get_large_conn_growth();
+
+      C_.reserve( cap > sz ? cap : sz + 1 );
     }
 
     C_.push_back( c );

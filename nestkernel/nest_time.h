@@ -259,7 +259,6 @@ public:
   struct ms
   {
     double t;
-
     explicit ms( double t )
       : t( t )
     {

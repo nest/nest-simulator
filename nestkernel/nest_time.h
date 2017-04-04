@@ -264,10 +264,6 @@ public:
       : t( t )
     {
     }
-    explicit ms( long t )
-      : t( static_cast< double >( t ) )
-    {
-    }
 
     static double fromtoken( const Token& t );
     explicit ms( const Token& t )
@@ -279,10 +275,6 @@ public:
     double t;
     explicit ms_stamp( double t )
       : t( t )
-    {
-    }
-    explicit ms_stamp( long t )
-      : t( static_cast< double >( t ) )
     {
     }
   };

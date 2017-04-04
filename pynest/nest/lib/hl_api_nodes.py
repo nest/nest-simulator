@@ -222,33 +222,3 @@ def PrintNodes():
 
     sr("PrintNodesToStream")
     print(spp())
-
-
-@check_stack
-@deprecated('', 'GetLID is deprecated and will be removed in NEST 3.0. Use \
-index into GIDCollection instead.')
-def GetLID(gid):
-    """Return the local id of a node with the global ID gid.
-
-    Parameters
-    ----------
-    gid : int
-        Global id of node
-
-    Returns
-    -------
-    int:
-        Local id of node
-
-    Raises
-    ------
-    NESTError
-    """
-
-    if len(gid) > 1:
-        raise NESTError("GetLID() expects exactly one GID.")
-
-    sps(gid[0])
-    sr("GetLID")
-
-    return spp()

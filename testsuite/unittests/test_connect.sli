@@ -180,49 +180,38 @@ ResetKernel
 
 (Running Connect tests with illegal combinations) =
 ResetKernel
-/generator /poisson_generator Create def
-/multimeter /multimeter Create def
-/recordable /iaf_psc_alpha Create def
 
+/n_connections 0 def
+modeldict
 {
-  generator generator Connect
-} fail_or_die
+  pop  % remove model id
+  /model_a Set
+  /type_a model_a GetDefaults /element_type get def 
+  /m_a model_a Create def
+  modeldict
+  {
+    pop  % remove model id
+    /model_b Set
+    /type_b model_b GetDefaults /element_type get def 
+    /m_b model_b Create def
 
-% removing items on stack
-pop pop pop pop
+    % try to connect model_a and model_b
+    {
+      m_a m_b Connect
+    } stopped not
+    {  % if there is no error, check that a connection has been made
+      {
+        n_connections 1 add 
+        0 GetStatus /num_connections get 
+        eq
+      } assert_or_die
+      /n_connections n_connections 1 add def
+    }
+    {
+      5 npop 
+    } ifelse
+  } forall
 
-{
-  generator multimeter Connect
-} fail_or_die
+} forall
+(All illegal connections throw an error) =
 
-% removing items on stack
-pop pop pop pop
-
-{
-  % recordable -> multimeter 
-  recordable multimeter Connect
-} fail_or_die
-
-% removing items on stack
-pop pop pop pop
-
-{
-  recordable generator Connect
-} fail_or_die
-
-% removing items on stack
-pop pop pop pop
-
-{
-  multimeter multimeter Connect
-} fail_or_die
-
-% removing items on stack
-pop pop pop pop
-
-{
-  multimeter generator Connect
-} fail_or_die
-
-% removing items on stack
-pop pop pop pop

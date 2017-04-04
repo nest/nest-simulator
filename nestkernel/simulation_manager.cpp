@@ -389,7 +389,7 @@ nest::SimulationManager::prepare()
   }
 
   Stopwatch sw_prepare;
-  if ( kernel().mpi_manager.get_num_processes() < 30 )
+  if ( kernel().mpi_manager.get_rank() < 30 )
   {
     sw_prepare.start();
   }    

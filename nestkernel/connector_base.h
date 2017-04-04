@@ -866,11 +866,11 @@ public:
     // Call vector::reserve() manually if size() == capacity().
     const size_t sz = C_.size();
 
-    if ( sz == C_.capacity() and
-        sz >= kernel().connection_manager.get_large_conn_limit() )
+    if ( sz == C_.capacity()
+      and sz >= kernel().connection_manager.get_large_conn_limit() )
     {
-      const size_t cap = static_cast<double>( sz ) *
-          kernel().connection_manager.get_large_conn_growth();
+      const size_t cap = static_cast<double>( sz )
+        * kernel().connection_manager.get_large_conn_growth();
 
       C_.reserve( cap > sz ? cap : sz + 1 );
     }

@@ -74,9 +74,9 @@ nest::ConnectionManager::ConnectionManager()
   , connbuilder_factories_()
   , min_delay_( 1 )
   , max_delay_( 1 )
-  , init_conn_capacity_(CONFIG_CONNECTOR_CUTOFF)
-  , large_conn_limit_(CONFIG_CONNECTOR_CUTOFF * 2)
-  , large_conn_growth_(1.5)
+  , init_conn_capacity_( CONFIG_CONNECTOR_CUTOFF )
+  , large_conn_limit_( CONFIG_CONNECTOR_CUTOFF * 2 )
+  , large_conn_growth_( 1.5 )
 {
 }
 
@@ -140,7 +140,7 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
     {
       throw KernelException(
         "The initial connector capacity should be higher or equal to "
-        "connector_cutoff value specified via cmake flag [default 3]");
+        "connector_cutoff value specified via cmake flag [default 3]" );
     }
 
     init_conn_capacity_ = init_cap;
@@ -153,7 +153,7 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
     {
       throw KernelException(
         "The large connector limit should be higher or equal to "
-        "connector_cutoff value specified via cmake flag [default 3]");
+        "connector_cutoff value specified via cmake flag [default 3]" );
     }
 
     large_conn_limit_ = large_lim;
@@ -166,7 +166,7 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
     {
       throw KernelException(
         "The large connector capacity growth factor should be higher than "
-        "1.0");
+        "1.0" );
     }
 
     large_conn_growth_ = large_growth;

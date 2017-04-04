@@ -869,7 +869,7 @@ public:
     if ( sz == C_.capacity()
       and sz >= kernel().connection_manager.get_large_conn_limit() )
     {
-      const size_t cap = static_cast<double>( sz )
+      const size_t cap = static_cast< double >( sz )
         * kernel().connection_manager.get_large_conn_growth();
 
       C_.reserve( cap > sz ? cap : sz + 1 );

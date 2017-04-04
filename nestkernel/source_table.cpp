@@ -160,15 +160,15 @@ nest::SourceTable::clean( const thread tid )
         if ( max_position.syn_id == syn_id )
         {
           std::vector< Source >& sources = *( *sources_[ tid ] )[ syn_id ];
-          // we need to add 1 to max_position.lcid since
-          // max_position.lcid can contain a valid entry which we do not
-          // want to delete.
-          if ( max_position.lcid + 1 < static_cast< long >( sources.size() ) )
+          // we need to add 2 to max_position.lcid since
+          // max_position.lcid + 1 can contain a valid entry which we
+          // do not want to delete.
+          if ( max_position.lcid + 2 < static_cast< long >( sources.size() ) )
           {
             const size_t deleted_elements =
-              sources.end() - ( sources.begin() + max_position.lcid + 1 );
+              sources.end() - ( sources.begin() + max_position.lcid + 2 );
             sources.erase(
-              sources.begin() + max_position.lcid + 1, sources.end() );
+              sources.begin() + max_position.lcid + 2, sources.end() );
             if ( deleted_elements > min_deleted_elements_ )
             {
               std::vector< Source >( sources.begin(), sources.end() )

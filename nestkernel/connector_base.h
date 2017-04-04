@@ -120,7 +120,8 @@ suicide( Told* connector )
 }
 
 // when to truncate the recursive instantiation
-#define K_CUTOFF 3
+// can be specified via cmake flag -Dconnector_cutoff=value
+#define K_CUTOFF CONFIG_CONNECTOR_CUTOFF
 
 // when to use 1.5x grow strategy for connection vector
 #define K_SLOW_GROWING 6

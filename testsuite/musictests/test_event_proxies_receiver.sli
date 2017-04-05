@@ -32,7 +32,7 @@ meip << /port_name (spikes_in) /music_channel 0 >> SetStatus
 
 /iaf_neuron Create /n Set
 
-meip 0 get n 0 get << /weight 750.0 >> Connect
+meip n /one_to_one << /weight 750.0 >> Connect
 
 /voltmeter Create /vm Set
 vm << /label (receiver) /record_to [ /file ] >> SetStatus

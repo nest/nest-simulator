@@ -212,9 +212,9 @@ nest::ac_generator::update( Time const& origin, const long from, const long to )
 
   long start = origin.get_steps();
 
+  CurrentEvent ce;
   for ( long lag = from; lag < to; ++lag )
   {
-    B_.logger_.record_data( origin.get_steps() + lag );
     S_.I_ = 0.0;
 
     if ( device_.is_active( Time::step( start + lag ) ) )
@@ -224,10 +224,10 @@ nest::ac_generator::update( Time const& origin, const long from, const long to )
       S_.y_1_ = V_.A_10_ * y_0 + V_.A_11_ * S_.y_1_;
       S_.I_ = S_.y_1_ + P_.offset_;
 
-      CurrentEvent ce;
-      ce.set_current( S_.y_1_ + P_.offset_ );
+      ce.set_current( S_.I_ );
       kernel().event_delivery_manager.send( *this, ce, lag );
     }
+    B_.logger_.record_data( origin.get_steps() + lag );
   }
 }
 

@@ -176,7 +176,6 @@ nest::dc_generator::update( Time const& origin, const long from, const long to )
 
   for ( long offs = from; offs < to; ++offs )
   {
-    B_.logger_.record_data( origin.get_steps() + offs );
     S_.I_ = 0.0;
 
     if ( device_.is_active( Time::step( start + offs ) ) )
@@ -184,6 +183,7 @@ nest::dc_generator::update( Time const& origin, const long from, const long to )
       S_.I_ = P_.amp_;
       kernel().event_delivery_manager.send( *this, ce, offs );
     }
+    B_.logger_.record_data( origin.get_steps() + offs );
   }
 }
 

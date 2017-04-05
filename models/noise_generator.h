@@ -96,6 +96,10 @@ Remarks:
 
    To obtain comparable results for different values of dt, you must
    adapt std.
+ - As The noise generator provides a different current for each of its targets,
+   the current recorded represents the instantaneous average of all the
+   currents computed. When there exists only a single target, this would be
+   equivalent to the actual current provided to that target.
 
 Sends: CurrentEvent
 
@@ -188,7 +192,7 @@ private:
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );
-    Parameters_& operator=( const Parameters_& p ); // Copy constructor EN
+    Parameters_& operator=( const Parameters_& p );
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
@@ -201,7 +205,8 @@ private:
   {
     double y_0_;
     double y_1_;
-    double I_;
+    double I_avg_; //!< Average of instantaneous currents computed
+                   //!< Used for recording current
 
     State_(); //!< Sets default parameter values
 
@@ -210,7 +215,7 @@ private:
 
   // ------------------------------------------------------------
 
-  // These friend declarations must be precisely here.
+  // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< noise_generator >;
   friend class UniversalDataLogger< noise_generator >;
 
@@ -242,9 +247,9 @@ private:
   };
 
   double
-  get_I_() const
+  get_I_avg_() const
   {
-    return S_.I_;
+    return S_.I_avg_;
   }
 
   // ------------------------------------------------------------

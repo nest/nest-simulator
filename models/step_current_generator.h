@@ -120,7 +120,7 @@ private:
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_&, Buffers_& );
     Parameters_( const Parameters_& );
-    Parameters_& operator=( const Parameters_& p ); // Copy constructor EN
+    Parameters_& operator=( const Parameters_& p );
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
@@ -131,9 +131,7 @@ private:
 
   struct State_
   {
-    double y_0_;
-    double y_1_;
-    double I_;
+    double I_;  //!< Instantaneous current value; used for recording current
 
     State_(); //!< Sets default parameter values
 
@@ -142,7 +140,7 @@ private:
 
   // ------------------------------------------------------------
 
-  // These friend declarations must be precisely here.
+  // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< step_current_generator >;
   friend class UniversalDataLogger< step_current_generator >;
 

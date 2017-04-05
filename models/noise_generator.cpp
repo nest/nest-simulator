@@ -45,7 +45,7 @@ template <>
 void
 RecordablesMap< noise_generator >::create()
 {
-  insert_( Name( names::I ), &noise_generator::get_I_ );
+  insert_( Name( names::I ), &noise_generator::get_I_avg_ );
 }
 }
 
@@ -99,7 +99,7 @@ operator=( const Parameters_& p )
 nest::noise_generator::State_::State_()
   : y_0_( 0.0 )
   , y_1_( 0.0 ) // pA
-  , I_( 0.0 )   // pA
+  , I_avg_( 0.0 )   // pA
 {
 }
 
@@ -311,13 +311,13 @@ nest::noise_generator::update( Time const& origin,
 
   for ( long offs = from; offs < to; ++offs )
   {
-    B_.logger_.record_data( origin.get_steps() + offs );
-    S_.I_ = 0.0;
+    S_.I_avg_ = 0.0;
 
     const long now = start + offs;
 
     if ( not device_.is_active( Time::step( now ) ) )
     {
+      B_.logger_.record_data( origin.get_steps() + offs );
       continue;
     }
 
@@ -338,9 +338,10 @@ nest::noise_generator::update( Time const& origin,
         *it = P_.mean_
           + std::sqrt( P_.std_ * P_.std_ + S_.y_1_ * P_.std_mod_ * P_.std_mod_ )
             * V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
-        S_.I_ += *it;
+        S_.I_avg_ += *it;
       }
-      S_.I_ /= B_.amps_.size();
+      S_.I_avg_ /= B_.amps_.size();
+      B_.logger_.record_data( origin.get_steps() + offs );
 
       // use now as reference, in case we woke up from inactive period
       B_.next_step_ = now + V_.dt_steps_;

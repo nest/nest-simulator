@@ -234,7 +234,6 @@ nest::step_current_generator::update( Time const& origin,
   {
     const long curr_time = t0 + offs;
 
-    B_.logger_.record_data( origin.get_steps() + offs );
     S_.I_ = 0.0;
 
     // Keep the amplitude up-to-date at all times.
@@ -256,6 +255,7 @@ nest::step_current_generator::update( Time const& origin,
       S_.I_ = B_.amp_;
       kernel().event_delivery_manager.send( *this, ce, offs );
     }
+    B_.logger_.record_data( origin.get_steps() + offs );
   }
 }
 

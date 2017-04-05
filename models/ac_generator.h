@@ -113,10 +113,10 @@ private:
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );
-    Parameters_& operator=( const Parameters_& p ); // Copy constructor EN
+    Parameters_& operator=( const Parameters_& p );
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
-    void set( const DictionaryDatum& ); //!< Set values from dicitonary
+    void set( const DictionaryDatum& ); //!< Set values from dictionary
   };
 
   // ------------------------------------------------------------
@@ -125,7 +125,8 @@ private:
   {
     double y_0_;
     double y_1_;
-    double I_;
+    double I_; //!< Instantaneous current value; used for recording current
+               //!< Required to handle current values when device is inactive
 
     State_(); //!< Sets default parameter values
 
@@ -134,7 +135,7 @@ private:
 
   // ------------------------------------------------------------
 
-  // These friend declarations must be precisely here.
+  // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< ac_generator >;
   friend class UniversalDataLogger< ac_generator >;
 

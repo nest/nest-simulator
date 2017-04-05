@@ -269,7 +269,7 @@ if $PERFORM_CPPCHECK; then
   fi
 fi
 
-# Verify the CLNAG-FORMAT installation. CLANG-FORMAT version 3.6 and only 3.6 is required.
+# Verify the CLANG-FORMAT installation. CLANG-FORMAT version 3.6 and only 3.6 is required.
 # The CLANG-FORMAT versions up to and including 3.5 do not support all configuration options required for NEST. 
 # Version 3.7 introduced a different formatting. NEST relies on the formatting of version 3.6.
 if $PERFORM_CLANG_FORMAT; then

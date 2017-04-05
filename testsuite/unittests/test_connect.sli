@@ -184,20 +184,14 @@ ResetKernel
 /n_connections 0 def
 modeldict
 {
-  pop  % remove model id
-  /model_a Set
-  /type_a model_a GetDefaults /element_type get def 
-  /m_a model_a Create def
+  pop Create /node_a Set
   modeldict
   {
-    pop  % remove model id
-    /model_b Set
-    /type_b model_b GetDefaults /element_type get def 
-    /m_b model_b Create def
+    pop Create /node_b Set
 
-    % try to connect model_a and model_b
+    % try to connect node_a and node_b
     {
-      m_a m_b Connect
+      node_a node_b Connect
     } stopped not
     {  % if there is no error, check that a connection has been made
       {
@@ -213,5 +207,4 @@ modeldict
   } forall
 
 } forall
-(All illegal connections throw an error) =
 

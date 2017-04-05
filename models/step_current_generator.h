@@ -131,7 +131,7 @@ private:
 
   struct State_
   {
-    double I_;  //!< Instantaneous current value; used for recording current
+    double I_; //!< Instantaneous current value; used for recording current
 
     State_(); //!< Sets default parameter values
 

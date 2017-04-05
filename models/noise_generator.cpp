@@ -98,8 +98,8 @@ operator=( const Parameters_& p )
 
 nest::noise_generator::State_::State_()
   : y_0_( 0.0 )
-  , y_1_( 0.0 ) // pA
-  , I_avg_( 0.0 )   // pA
+  , y_1_( 0.0 )   // pA
+  , I_avg_( 0.0 ) // pA
 {
 }
 

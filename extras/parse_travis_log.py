@@ -493,17 +493,20 @@ def convert_bool_value_to_yes_no_string(value):
     return "No"
 
 
-def convert_summary_to_status_string(summary):
+def convert_summary_to_status_string(summary, ignore):
     """Determine the status of any performed static code analysis and
-    return a string representation of that status.
+    return a string representation of that status. By setting the ignore
+    flag, "Ignored" instead of "Failed" is returned.
 
     Parameters
     ----------
     summary: A dictionary containing per file dictionaries of static code
              analysis messages.
+    ignore:  Boolean value, True or False
+
     Returns
     -------
-    String "Passed Successfully", "Skipped" or "Failed".
+    String "Passed Successfully", "Skipped", "Failed" or "Ignored".
     """
 
     if summary is None:
@@ -514,6 +517,9 @@ def convert_summary_to_status_string(summary):
             value = True
         else:
             value = False
+
+    if ignore and value is False:  # 'not value' doesn't work here.
+        return "Ignored"           # value can also be None.
 
     return convert_bool_value_to_status_string(value)
 
@@ -717,6 +723,10 @@ def printable_summary(list_of_changed_files,
                       number_of_warnings,
                       number_of_tests_total,
                       number_of_tests_failed,
+                      ignore_vera,
+                      ignore_cppcheck,
+                      ignore_format,
+                      ignore_pep8,
                       exit_code):
     """Create an overall build summary in a printable format.
 
@@ -795,23 +805,26 @@ def printable_summary(list_of_changed_files,
         ['', 'No files have been changed.'],
         ['Tools Initialization :', ''],
         ['VERA++', convert_bool_value_to_status_string(status_vera_init)],
-        ['Cppcheck (DEACTIVATED)',
+        ['Cppcheck',
          convert_bool_value_to_status_string(status_cppcheck_init)],
         ['clang-format',
          convert_bool_value_to_status_string(status_format_init)],
         ['Static Code Analysis :', ''],
-        ['VERA++', convert_summary_to_status_string(summary_vera) +
+        ['VERA++',
+         convert_summary_to_status_string(summary_vera, ignore_vera) +
          '\n' + '\nNumber of messages (MSGBLD0135): ' +
          str(get_num_msgs(summary_vera))],
-        ['Cppcheck (DEACTIVATED)',
-         convert_summary_to_status_string(summary_cppcheck) +
+        ['Cppcheck',
+         convert_summary_to_status_string(summary_cppcheck, ignore_cppcheck) +
          '\n' + '\nNumber of messages (MSGBLD0155): ' +
          str(get_num_msgs(summary_cppcheck))],
-        ['clang-format', convert_summary_to_status_string(summary_format) +
+        ['clang-format',
+         convert_summary_to_status_string(summary_format, ignore_format) +
          '\n' + '\nNumber of messages (MSGBLD0175): ' +
          str(get_num_msgs(summary_format))],
-        ['PEP8', convert_summary_to_status_string(summary_pep8) + '\n' +
-         '\nNumber of messages (MSGBLD0195): ' +
+        ['PEP8',
+         convert_summary_to_status_string(summary_pep8, ignore_pep8) +
+         '\n' + '\nNumber of messages (MSGBLD0195): ' +
          str(get_num_msgs(summary_pep8))],
         ['NEST Build :', ''],
         ['CMake configure',
@@ -855,7 +868,11 @@ def build_return_code(status_vera_init,
                       summary_vera,
                       summary_cppcheck,
                       summary_format,
-                      summary_pep8):
+                      summary_pep8,
+                      ignore_vera,
+                      ignore_cppcheck,
+                      ignore_format,
+                      ignore_pep8):
     """Depending in the build results, create a return code.
 
     Parameters
@@ -879,31 +896,30 @@ def build_return_code(status_vera_init,
                             per file.
     summary_pep8:           Dictionary of dictionaries of PEP8 messages per
                             file.
+    ignore_vera:            VERA++ messages will not cause the build to
+                            fail: True, False
+    ignore_cppcheck:        CPPCHECK messages will not cause the build to
+                            fail: True, False
+    ignore_format:          CLANG-FORMAT messages will not cause the build to
+                            fail: True, False
+    ignore_pep8:            PEP8 messages will not cause the build to
+                            fail: True, False
 
     Returns
     -------
     0 (success) or 1.
     """
-    # Note: cppcheck is deactivated !
-    #       It may cause false positives. Even though cppcheck is executed
-    #       and all its messages can be found in the log, cppcheck messages
-    #       will not cause the build to fail.
-    #       To activate cppcheck, add following lines to the if statement
-    #       below. Remove also the two strings '(DEACTIVATED)' behind
-    #       cppcheck in the summary_table above.
-    #
-    #       (status_cppcheck_init is None or status_cppcheck_init) and \
-    #       (get_num_msgs(summary_cppcheck) == 0) and \
-
-    if (status_vera_init is None or status_vera_init) and \
-       (status_format_init is None or status_format_init) and \
-       (status_cmake_configure) and \
-       (status_make) and \
-       (status_make_install) and \
-       (status_tests) and \
-       (get_num_msgs(summary_vera) == 0) and \
-       (get_num_msgs(summary_format) == 0) and \
-       (get_num_msgs(summary_pep8) == 0):
+    if ((status_vera_init is None or status_vera_init) and
+       (status_cppcheck_init is None or status_cppcheck_init) and
+       (status_format_init is None or status_format_init) and
+       (status_cmake_configure) and
+       (status_make) and
+       (status_make_install) and
+       (status_tests) and
+       (ignore_vera or get_num_msgs(summary_vera) == 0) and
+       (ignore_cppcheck or get_num_msgs(summary_cppcheck) == 0) and
+       (ignore_format or get_num_msgs(summary_format) == 0) and
+       (ignore_pep8 or get_num_msgs(summary_pep8) == 0)):
 
         return 0
     else:
@@ -943,6 +959,11 @@ if __name__ == '__main__':
     status_amazon_s3_upload = \
         not is_message_in_logfile(log_filename, "MSGBLD0330")
 
+    ignore_vera = is_message_in_logfile(log_filename, "MSGBLD1010")
+    ignore_cppcheck = is_message_in_logfile(log_filename, "MSGBLD1020")
+    ignore_format = is_message_in_logfile(log_filename, "MSGBLD1030")
+    ignore_pep8 = is_message_in_logfile(log_filename, "MSGBLD1040")
+
     # Summarize the per file results from the static code analysis.
     summary_vera = msg_summary_vera(log_filename, "MSGBLD0130",
                                     "MSGBLD0140", "MSGBLD0135")
@@ -975,7 +996,11 @@ if __name__ == '__main__':
                                   summary_vera,
                                   summary_cppcheck,
                                   summary_format,
-                                  summary_pep8)
+                                  summary_pep8,
+                                  ignore_vera,
+                                  ignore_cppcheck,
+                                  ignore_format,
+                                  ignore_pep8)
 
     print(printable_summary(changed_files,
                             status_vera_init,
@@ -996,6 +1021,10 @@ if __name__ == '__main__':
                             number_of_warnings,
                             number_of_tests_total,
                             number_of_tests_failed,
+                            ignore_vera,
+                            ignore_cppcheck,
+                            ignore_format,
+                            ignore_pep8,
                             exit_code))
 
     exit(exit_code)

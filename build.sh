@@ -147,9 +147,7 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
   echo
 
 
-  # Set the command line arguments for the static code analysis script and call it.
-
-  sudo chmod +x ./extras/static_code_analysis.sh
+  # Set the command line arguments for the static code analysis script and execute it.
 
   # The names of the static code analysis tools executables.
   VERA=vera++                   
@@ -163,12 +161,23 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
   PERFORM_CLANG_FORMAT=true
   PERFORM_PEP8=true
 
+  # The following command line parameters indicate whether static code analysis error messages
+  # will cause the Travis CI build to fail or are ignored.
+  IGNORE_MSG_VERA=false
+  IGNORE_MSG_CPPCHECK=true
+  IGNORE_MSG_CLANG_FORMAT=false
+  IGNORE_MSG_PEP8=false
+
   # The script is called within the Travis CI environment and cannot be run incremental.
   RUNS_ON_TRAVIS=true
   INCREMENTAL=false
 
-  ./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
-  "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8"
+  sudo chmod +x ./extras/static_code_analysis.sh
+  ./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
+  "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
+  "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
+  "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"
+
 fi   # Static code analysis.
 
 

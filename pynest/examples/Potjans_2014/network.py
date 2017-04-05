@@ -202,7 +202,7 @@ class Network:
         # Set random membrane potential
         no_vps = nest.GetKernelStatus('local_num_threads')
         # Create nested list where the elements in the outer list represents
-        # the vp's, and each vp will have a list of the GIDs in that vp. 
+        # the vp's, and each vp will have a list of the GIDs in that vp.
         vp_lists = [[] for x in range(no_vps)]
         # Go through all populations
         for gids in self.pops:

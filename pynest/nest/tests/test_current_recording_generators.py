@@ -97,11 +97,11 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
         nest.Connect(m_dc, self.dc)
 
         m_step = nest.Create('multimeter',
-                           params={'record_from': ['I'], 'interval': 0.1})
+                             params={'record_from': ['I'], 'interval': 0.1})
         nest.Connect(m_step, self.step)
 
         m_noise = nest.Create('multimeter',
-                           params={'record_from': ['I'], 'interval': 0.1})
+                              params={'record_from': ['I'], 'interval': 0.1})
         nest.Connect(m_noise, self.noise)
 
         # run simulation

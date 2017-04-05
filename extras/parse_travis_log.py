@@ -956,9 +956,6 @@ if __name__ == '__main__':
     status_make_install = \
         is_message_pair_in_logfile(log_filename, "MSGBLD0270", "MSGBLD0280")
 
-    status_amazon_s3_upload = \
-        not is_message_in_logfile(log_filename, "MSGBLD0330")
-
     ignore_vera = is_message_in_logfile(log_filename, "MSGBLD1010")
     ignore_cppcheck = is_message_in_logfile(log_filename, "MSGBLD1020")
     ignore_format = is_message_in_logfile(log_filename, "MSGBLD1030")
@@ -986,6 +983,8 @@ if __name__ == '__main__':
     status_tests, number_of_tests_total, number_of_tests_failed = \
         testsuite_results(log_filename, "MSGBLD0290", "MSGBLD0300")
 
+    # Determine the build result to tell Travis CI whether the build was
+    # successful or not.
     exit_code = build_return_code(status_vera_init,
                                   status_cppcheck_init,
                                   status_format_init,
@@ -1001,6 +1000,13 @@ if __name__ == '__main__':
                                   ignore_cppcheck,
                                   ignore_format,
                                   ignore_pep8)
+
+    # Only after a successful build, Travis CI will upload the build artifacts
+    # to Amazon S3.
+    status_amazon_s3_upload = \
+        (not is_message_in_logfile(log_filename, "MSGBLD0330") and
+         is_message_in_logfile(log_filename, "MSGBLD0340") and
+         exit_code == 0)
 
     print(printable_summary(changed_files,
                             status_vera_init,

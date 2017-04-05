@@ -228,11 +228,13 @@ make installcheck
 echo "MSGBLD0300: Make installcheck completed."
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-  echo "MSGBLD0310: This build was triggered by a pull request." >&2
-  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3." >&2
+  echo "MSGBLD0310: This build was triggered by a pull request."
+  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3."
 fi
 
 if [ "$TRAVIS_REPO_SLUG" != "nest/nest-simulator" ] ; then
-  echo "MSGBLD0320: This build was from a forked repository and not from nest/nest-simulator." >&2
-  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3." >&2
+  echo "MSGBLD0320: This build was from a forked repository and not from nest/nest-simulator."
+  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3."
 fi
+
+echo "MSGBLD0340: Build completed."

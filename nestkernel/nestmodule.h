@@ -328,11 +328,6 @@ public:
     void execute( SLIInterpreter* ) const;
   } setfakenumprocesses_ifunction;
 
-  class SetNumRecProcesses_iFunction : public SLIFunction
-  {
-    void execute( SLIInterpreter* ) const;
-  } setnumrecprocesses_ifunction;
-
   class SyncProcessesFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;

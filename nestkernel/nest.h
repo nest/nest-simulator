@@ -131,8 +131,6 @@ void copy_model( const Name& oldmodname,
 void set_model_defaults( const Name& model_name, const DictionaryDatum& );
 DictionaryDatum get_model_defaults( const Name& model_name );
 
-void set_num_rec_processes( const index n_rec_procs );
-
 void change_subnet( const index node_gid );
 index current_subnet();
 

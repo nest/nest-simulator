@@ -74,6 +74,9 @@ nest::ConnectionManager::ConnectionManager()
   , connbuilder_factories_()
   , min_delay_( 1 )
   , max_delay_( 1 )
+  , init_conn_capacity_( CONFIG_CONNECTOR_CUTOFF )
+  , large_conn_limit_( CONFIG_CONNECTOR_CUTOFF * 2 )
+  , large_conn_growth_( 1.5 )
 {
 }
 
@@ -130,6 +133,45 @@ nest::ConnectionManager::finalize()
 void
 nest::ConnectionManager::set_status( const DictionaryDatum& d )
 {
+  long init_cap = init_conn_capacity_;
+  if ( updateValue< long >( d, "init_connector_capacity", init_cap ) )
+  {
+    if ( init_cap < CONFIG_CONNECTOR_CUTOFF )
+    {
+      throw KernelException(
+        "The initial connector capacity should be higher or equal to "
+        "connector_cutoff value specified via cmake flag [default 3]" );
+    }
+
+    init_conn_capacity_ = init_cap;
+  }
+
+  long large_lim = large_conn_limit_;
+  if ( updateValue< long >( d, "large_connector_limit", large_lim ) )
+  {
+    if ( large_lim < CONFIG_CONNECTOR_CUTOFF )
+    {
+      throw KernelException(
+        "The large connector limit should be higher or equal to "
+        "connector_cutoff value specified via cmake flag [default 3]" );
+    }
+
+    large_conn_limit_ = large_lim;
+  }
+
+  double large_growth = large_conn_growth_;
+  if ( updateValue< double >( d, "large_connector_growth", large_growth ) )
+  {
+    if ( large_growth <= 1.0 )
+    {
+      throw KernelException(
+        "The large connector capacity growth factor should be higher than "
+        "1.0" );
+    }
+
+    large_conn_growth_ = large_growth;
+  }
+
   for ( size_t i = 0; i < delay_checkers_.size(); ++i )
   {
     delay_checkers_[ i ].set_status( d );
@@ -148,6 +190,10 @@ nest::ConnectionManager::get_status( DictionaryDatum& d )
   update_delay_extrema_();
   def< double >( d, "min_delay", Time( Time::step( min_delay_ ) ).get_ms() );
   def< double >( d, "max_delay", Time( Time::step( max_delay_ ) ).get_ms() );
+
+  def< long >( d, "init_connector_capacity", init_conn_capacity_ );
+  def< long >( d, "large_connector_limit", large_conn_limit_ );
+  def< double >( d, "large_connector_growth", large_conn_growth_ );
 
   size_t n = get_num_connections();
   def< long >( d, "num_connections", n );

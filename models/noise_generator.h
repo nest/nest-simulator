@@ -96,7 +96,7 @@ Remarks:
 
    To obtain comparable results for different values of dt, you must
    adapt std.
- - As The noise generator provides a different current for each of its targets,
+ - As the noise generator provides a different current for each of its targets,
    the current recorded represents the instantaneous average of all the
    currents computed. When there exists only a single target, this would be
    equivalent to the actual current provided to that target.

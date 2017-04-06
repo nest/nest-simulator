@@ -115,8 +115,11 @@ nest::dc_generator::update( Time const& origin, const long from, const long to )
 
   CurrentEvent ce;
   ce.set_current( P_.amp_ );
-
   for ( long offs = from; offs < to; ++offs )
+  {
     if ( device_.is_active( Time::step( start + offs ) ) )
+    {
       kernel().event_delivery_manager.send( *this, ce, offs );
+    }
+  }
 }

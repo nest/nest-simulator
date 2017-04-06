@@ -85,7 +85,9 @@ nest::sinusoidal_poisson_generator::Parameters_&
   operator=( const Parameters_& p )
 {
   if ( this == &p )
+  {
     return *this;
+  }
 
   rate_ = p.rate_;
   om_ = p.om_;
@@ -142,24 +144,34 @@ nest::sinusoidal_poisson_generator::Parameters_::set( const DictionaryDatum& d,
 {
   if ( not n.is_model_prototype()
     && d->known( names::individual_spike_trains ) )
+  {
     throw BadProperty(
       "The individual_spike_trains property can only be set as"
       " a model default using SetDefaults or upon CopyModel." );
+  }
 
   updateValue< bool >(
     d, names::individual_spike_trains, individual_spike_trains_ );
 
   if ( updateValue< double >( d, names::rate, rate_ ) )
+  {
     rate_ /= 1000.0; // scale to ms^-1
+  }
 
   if ( updateValue< double >( d, names::frequency, om_ ) )
+  {
     om_ *= 2.0 * numerics::pi / 1000.0;
+  }
 
   if ( updateValue< double >( d, names::phase, phi_ ) )
+  {
     phi_ *= numerics::pi / 180.0;
+  }
 
   if ( updateValue< double >( d, names::amplitude, amplitude_ ) )
+  {
     amplitude_ /= 1000.0;
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -262,7 +274,9 @@ nest::sinusoidal_poisson_generator::update( Time const& origin,
     S_.rate_ += S_.y_1_;
 
     if ( S_.rate_ < 0 )
+    {
       S_.rate_ = 0;
+    }
 
     // store rate in Hz
     B_.logger_.record_data( origin.get_steps() + lag );

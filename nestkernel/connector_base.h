@@ -264,7 +264,9 @@ public:
   Connector( const Connector< K - 1, ConnectionT >& Cm1, const ConnectionT& c )
   {
     for ( size_t i = 0; i < K - 1; i++ )
+    {
       C_[ i ] = Cm1.get_C()[ i ];
+    }
     C_[ K - 1 ] = c;
   }
 
@@ -331,9 +333,13 @@ public:
   get_num_connections( synindex syn_id )
   {
     if ( syn_id == get_syn_id() )
+    {
       return K;
+    }
     else
+    {
       return 0;
+    }
   }
 
   /**
@@ -414,14 +420,20 @@ public:
     std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < K; i++ )
+    {
       if ( get_syn_id() == synapse_id )
+      {
         if ( synapse_label == UNLABELED_CONNECTION
           || C_[ i ].get_label() == synapse_label )
+        {
           conns.push_back( ConnectionID( source_gid,
             C_[ i ].get_target( thrd )->get_gid(),
             thrd,
             synapse_id,
             i ) );
+        }
+      }
+    }
   }
 
   void
@@ -433,12 +445,20 @@ public:
     std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < K; i++ )
+    {
       if ( get_syn_id() == synapse_id )
+      {
         if ( synapse_label == UNLABELED_CONNECTION
           || C_[ i ].get_label() == synapse_label )
+        {
           if ( C_[ i ].get_target( thrd )->get_gid() == target_gid )
+          {
             conns.push_back(
               ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) );
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -492,14 +512,18 @@ public:
   {
     synindex syn_id = C_[ 0 ].get_syn_id();
     for ( size_t i = 0; i < K; i++ )
+    {
       if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
              ->get_common_properties()
              .get_vt_gid() == vt_gid )
+      {
         C_[ i ].trigger_update_weight( t,
           dopa_spikes,
           t_trig,
           static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
             ->get_common_properties() );
+      }
+    }
   }
 
   synindex
@@ -592,9 +616,13 @@ public:
   get_num_connections( synindex syn_id )
   {
     if ( syn_id == get_syn_id() )
+    {
       return 1;
+    }
     else
+    {
       return 0;
+    }
   }
 
   size_t
@@ -679,8 +707,10 @@ public:
         || C_[ 0 ].get_label() == synapse_label )
       {
         if ( C_[ 0 ].get_target( thrd )->get_gid() == target_gid )
+        {
           conns.push_back(
             ConnectionID( source_gid, target_gid, thrd, synapse_id, 0 ) );
+        }
       }
     }
   }
@@ -695,7 +725,9 @@ public:
     {
       if ( C_[ 0 ].get_target( thrd )->get_synaptic_elements(
              post_synaptic_element ) != 0.0 )
+      {
         target_gids.push_back( C_[ 0 ].get_target( thrd )->get_gid() );
+      }
     }
   }
 
@@ -723,11 +755,13 @@ public:
     if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
            ->get_common_properties()
            .get_vt_gid() == vt_gid )
+    {
       C_[ 0 ].trigger_update_weight( t,
         dopa_spikes,
         t_trig,
         static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
           ->get_common_properties() );
+    }
   }
 
   synindex
@@ -764,7 +798,9 @@ public:
     : C_( K_CUTOFF ) //, syn_id_(C.get_syn_id())
   {
     for ( size_t i = 0; i < K_CUTOFF - 1; i++ )
+    {
       C_[ i ] = C.get_C()[ i ];
+    }
     C_[ K_CUTOFF - 1 ] = c;
   };
 
@@ -831,9 +867,13 @@ public:
   get_num_connections( synindex syn_id )
   {
     if ( syn_id == get_syn_id() )
+    {
       return C_.size();
+    }
     else
+    {
       return 0;
+    }
   }
 
   size_t
@@ -880,8 +920,10 @@ public:
   at( size_t i )
   {
     if ( i >= C_.size() || i < 0 )
+    {
       throw std::out_of_range( String::compose(
         "Invalid attempt to access a connection: index %1 out of range.", i ) );
+    }
     return C_[ i ];
   }
 
@@ -893,14 +935,20 @@ public:
     std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < C_.size(); i++ )
+    {
       if ( get_syn_id() == synapse_id )
+      {
         if ( synapse_label == UNLABELED_CONNECTION
           || C_[ i ].get_label() == synapse_label )
+        {
           conns.push_back( ConnectionID( source_gid,
             C_[ i ].get_target( thrd )->get_gid(),
             thrd,
             synapse_id,
             i ) );
+        }
+      }
+    }
   }
 
   void
@@ -912,12 +960,20 @@ public:
     std::deque< ConnectionID >& conns ) const
   {
     if ( get_syn_id() == synapse_id )
+    {
       for ( size_t i = 0; i < C_.size(); i++ )
+      {
         if ( synapse_label == UNLABELED_CONNECTION
           || C_[ i ].get_label() == synapse_label )
+        {
           if ( C_[ i ].get_target( thrd )->get_gid() == target_gid )
+          {
             conns.push_back(
               ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) );
+          }
+        }
+      }
+    }
   }
 
   void
@@ -966,14 +1022,18 @@ public:
   {
     synindex syn_id = C_[ 0 ].get_syn_id();
     for ( size_t i = 0; i < C_.size(); i++ )
+    {
       if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
              ->get_common_properties()
              .get_vt_gid() == vt_gid )
+      {
         C_[ i ].trigger_update_weight( t,
           dopa_spikes,
           t_trig,
           static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
             ->get_common_properties() );
+      }
+    }
   }
 
   synindex
@@ -1010,18 +1070,22 @@ public:
   virtual ~HetConnector()
   {
     for ( size_t i = 0; i < size(); i++ )
+    {
 #ifdef USE_PMA
       at( i )->~ConnectorBase();
 #else
       delete at( i );
 #endif
+    }
   }
 
   void
   get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
   {
     for ( size_t i = 0; i < size(); i++ )
+    {
       at( i )->get_synapse_status( syn_id, d, p );
+    }
   }
 
   void
@@ -1031,7 +1095,9 @@ public:
     port p )
   {
     for ( size_t i = 0; i < size(); i++ )
+    {
       at( i )->set_synapse_status( syn_id, cm, d, p );
+    }
   }
 
   size_t
@@ -1049,8 +1115,12 @@ public:
   get_num_connections( synindex syn_id )
   {
     for ( size_t i = 0; i < size(); i++ )
+    {
       if ( syn_id == at( i )->get_syn_id() )
+      {
         return at( i )->get_num_connections();
+      }
+    }
     return 0;
   }
 
@@ -1075,8 +1145,10 @@ public:
     std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < size(); i++ )
+    {
       at( i )->get_connections(
         source_gid, thrd, synapse_id, synapse_label, conns );
+    }
   }
 
   void
@@ -1088,8 +1160,10 @@ public:
     std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < size(); i++ )
+    {
       at( i )->get_connections(
         source_gid, target_gid, thrd, synapse_id, synapse_label, conns );
+    }
   }
 
 
@@ -1114,7 +1188,9 @@ public:
   {
     // for all primary connections delegate send to homogeneous connectors
     for ( size_t i = 0; i < primary_end_; i++ )
+    {
       at( i )->send( e, t, cm );
+    }
   }
 
   void
@@ -1125,7 +1201,9 @@ public:
     const std::vector< ConnectorModel* >& cm )
   {
     for ( size_t i = 0; i < size(); i++ )
+    {
       at( i )->trigger_update_weight( vt_gid, t, dopa_spikes, t_trig, cm );
+    }
   }
 
   void
@@ -1136,11 +1214,13 @@ public:
     // for all secondary connections delegate send to the matching homogeneous
     // connector only
     for ( size_t i = primary_end_; i < size(); i++ )
+    {
       if ( e.supports_syn_id( at( i )->get_syn_id() ) )
       {
         at( i )->send( e, t, cm );
         break;
       }
+    }
   }
 
   // returns id of synapse type

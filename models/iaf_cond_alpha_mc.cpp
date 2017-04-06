@@ -231,7 +231,9 @@ nest::iaf_cond_alpha_mc::Parameters_::Parameters_( const Parameters_& p )
 {
   // copy C-arrays
   for ( size_t n = 0; n < NCOMP - 1; ++n )
+  {
     g_conn[ n ] = p.g_conn[ n ];
+  }
 
   for ( size_t n = 0; n < NCOMP; ++n )
   {
@@ -257,7 +259,9 @@ operator=( const Parameters_& p )
 
   // copy C-arrays
   for ( size_t n = 0; n < NCOMP - 1; ++n )
+  {
     g_conn[ n ] = p.g_conn[ n ];
+  }
 
   for ( size_t n = 0; n < NCOMP; ++n )
   {
@@ -281,26 +285,32 @@ nest::iaf_cond_alpha_mc::State_::State_( const Parameters_& p )
   // for simplicity, we first initialize all values to 0,
   // then set the membrane potentials for each compartment
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = 0;
-
+  }
   for ( size_t n = 0; n < NCOMP; ++n )
+  {
     y_[ idx( n, V_M ) ] = p.E_L[ n ];
+  }
 }
 
 nest::iaf_cond_alpha_mc::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
 }
 
 nest::iaf_cond_alpha_mc::State_& nest::iaf_cond_alpha_mc::State_::operator=(
   const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
-
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
   r_ = s.r_;
   return *this;
 }
@@ -371,6 +381,7 @@ nest::iaf_cond_alpha_mc::Parameters_::set( const DictionaryDatum& d )
 
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
+  {
     if ( d->known( comp_names_[ n ] ) )
     {
       DictionaryDatum dd = getValue< DictionaryDatum >( d, comp_names_[ n ] );
@@ -384,23 +395,29 @@ nest::iaf_cond_alpha_mc::Parameters_::set( const DictionaryDatum& d )
       updateValue< double >( dd, names::tau_syn_in, tau_synI[ n ] );
       updateValue< double >( dd, names::I_e, I_e[ n ] );
     }
-
+  }
   if ( V_reset >= V_th )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
-
+  }
   if ( t_ref < 0 )
+  {
     throw BadProperty( "Refractory time cannot be negative." );
+  }
 
   // apply checks compartment-wise
   for ( size_t n = 0; n < NCOMP; ++n )
   {
     if ( C_m[ n ] <= 0 )
+    {
       throw BadProperty( "Capacitance (" + comp_names_[ n ].toString()
         + ") must be strictly positive." );
-
+    }
     if ( tau_synE[ n ] <= 0 || tau_synI[ n ] <= 0 )
+    {
       throw BadProperty( "All time constants (" + comp_names_[ n ].toString()
         + ") must be strictly positive." );
+    }
   }
 }
 
@@ -424,11 +441,13 @@ nest::iaf_cond_alpha_mc::State_::set( const DictionaryDatum& d,
 {
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )
+  {
     if ( d->known( comp_names_[ n ] ) )
     {
       DictionaryDatum dd = getValue< DictionaryDatum >( d, comp_names_[ n ] );
       updateValue< double >( dd, names::V_m, y_[ idx( n, V_M ) ] );
     }
+  }
 }
 
 
@@ -463,11 +482,17 @@ nest::iaf_cond_alpha_mc::~iaf_cond_alpha_mc()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
+  {
     gsl_odeiv_step_free( B_.s_ );
+  }
   if ( B_.c_ )
+  {
     gsl_odeiv_control_free( B_.c_ );
+  }
   if ( B_.e_ )
+  {
     gsl_odeiv_evolve_free( B_.e_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -486,11 +511,15 @@ nest::iaf_cond_alpha_mc::init_buffers_()
 {
   B_.spikes_.resize( NUM_SPIKE_RECEPTORS );
   for ( size_t n = 0; n < NUM_SPIKE_RECEPTORS; ++n )
-    B_.spikes_[ n ].clear(); // includes resize
+  {
+    B_.spikes_[ n ].clear();
+  } // includes resize
 
   B_.currents_.resize( NUM_CURR_RECEPTORS );
   for ( size_t n = 0; n < NUM_CURR_RECEPTORS; ++n )
-    B_.currents_[ n ].clear(); // includes resize
+  {
+    B_.currents_[ n ].clear();
+  } // includes resize
 
   B_.logger_.reset();
   Archiving_Node::clear_history();
@@ -499,28 +528,41 @@ nest::iaf_cond_alpha_mc::init_buffers_()
   B_.IntegrationStep_ = B_.step_;
 
   if ( B_.s_ == 0 )
+  {
     B_.s_ =
       gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_step_reset( B_.s_ );
+  }
 
   if ( B_.c_ == 0 )
+  {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
+  }
   else
+  {
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
+  }
 
   if ( B_.e_ == 0 )
+  {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_evolve_reset( B_.e_ );
+  }
 
   B_.sys_.function = iaf_cond_alpha_mc_dynamics;
   B_.sys_.jacobian = NULL;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
   B_.sys_.params = reinterpret_cast< void* >( this );
-
   for ( size_t n = 0; n < NCOMP; ++n )
+  {
     B_.I_stim_[ n ] = 0.0;
+  }
 }
 
 void
@@ -583,9 +625,10 @@ nest::iaf_cond_alpha_mc::update( Time const& origin,
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y_ );              // neuronal state
-
       if ( status != GSL_SUCCESS )
+      {
         throw GSLSolverFailure( get_name(), status );
+      }
     }
 
     // add incoming spikes at end of interval
@@ -619,7 +662,9 @@ nest::iaf_cond_alpha_mc::update( Time const& origin,
 
     // set new input currents
     for ( size_t n = 0; n < NCOMP; ++n )
+    {
       B_.I_stim_[ n ] = B_.currents_[ n ].get_value( lag );
+    }
 
     // log state data
     B_.logger_.record_data( origin.get_steps() + lag );

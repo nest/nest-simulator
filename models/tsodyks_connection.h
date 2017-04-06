@@ -327,7 +327,9 @@ TsodyksConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   updateValue< double >( d, "y", y );
 
   if ( x + y > 1.0 )
+  {
     throw BadProperty( "x + y must be <= 1.0." );
+  }
 
   x_ = x;
   y_ = y;
@@ -337,19 +339,27 @@ TsodyksConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
 
   updateValue< double >( d, "U", U_ );
   if ( U_ > 1.0 || U_ < 0.0 )
+  {
     throw BadProperty( "U must be in [0,1]." );
+  }
 
   updateValue< double >( d, "tau_psc", tau_psc_ );
   if ( tau_psc_ <= 0.0 )
+  {
     throw BadProperty( "tau_psc must be > 0." );
+  }
 
   updateValue< double >( d, "tau_rec", tau_rec_ );
   if ( tau_rec_ <= 0.0 )
+  {
     throw BadProperty( "tau_rec must be > 0." );
+  }
 
   updateValue< double >( d, "tau_fac", tau_fac_ );
   if ( tau_fac_ < 0.0 )
+  {
     throw BadProperty( "tau_fac must be >= 0." );
+  }
 
   updateValue< double >( d, "u", u_ );
 }

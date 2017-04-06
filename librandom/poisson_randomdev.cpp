@@ -115,10 +115,14 @@ librandom::PoissonRandomDev::set_status( const DictionaryDatum& d )
   if ( updateValue< double >( d, "lambda", new_mu ) )
   {
     if ( new_mu < 0 )
+    {
       throw BadParameterValue( "Poisson RDV: lambda >= 0 required." );
+    }
     if ( new_mu > MU_MAX )
+    {
       throw BadParameterValue(
         String::compose( "Poisson RDV: lambda < %1 required.", MU_MAX ) );
+    }
     set_lambda( new_mu );
   }
 }
@@ -179,8 +183,10 @@ librandom::PoissonRandomDev::init_()
     // ensure table ends with 1.0
     P_[ n_tab_ - 1 ] = 1.0;
   }
-  else             // mu == 0.0
+  else // mu == 0.0
+  {
     P_[ 0 ] = 1.0; // just for safety
+  }
 }
 
 long
@@ -194,7 +200,9 @@ librandom::PoissonRandomDev::ldev( RngPtr r ) const
   // added the following two lines of code
   // Diesmann, 26.7.2002
   if ( mu_ == 0.0 )
+  {
     return 0;
+  }
 
   unsigned long K = 0; // candidate
 
@@ -206,7 +214,9 @@ librandom::PoissonRandomDev::ldev( RngPtr r ) const
 
     K = 0; // be defensive
     while ( U > P_[ K ] && K != n_tab_ )
+    {
       ++K;
+    }
 
     return K; // maximum value: K == n_tab_ == 46
   }

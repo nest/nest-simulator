@@ -71,14 +71,14 @@ librandom::UniformIntRandomDev::set_status( const DictionaryDatum& d )
   // new_nmax = n+, new_nmin = n-
   //
   //   a) n+ >= n-:
-  // 	   1) n- >= 0: 0 <= n+ - n- <= max
+  //       1) n- >= 0: 0 <= n+ - n- <= max
   //       2) n- <  0: 0 <= n+ - n-
-  // 	     must confirm that n+ - n- <= max
+  //         must confirm that n+ - n- <= max
   //
   //   b) n+ < n-:
-  // 	   1) n- <= 0: 0 > n+ - n- >= min
+  //       1) n- <= 0: 0 > n+ - n- >= min
   //       2) n- >  0: 0 > n+ - n-
-  // 	     must confirm that n+ - n- >= min
+  //         must confirm that n+ - n- >= min
   //
   //  Case b) is eliminated by the first test above.
   //  Case a) is checked by confirming that

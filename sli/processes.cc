@@ -298,7 +298,9 @@ Processes::ForkFunction::execute( SLIInterpreter* i ) const
   pid_t pid;
   pid = fork();
   if ( pid < 0 )
-    i->raiseerror( systemerror( i ) ); // ehemals:i->raiseerror ("CannotFork");
+  {
+    i->raiseerror( systemerror( i ) );
+  }
   else
   {
     if ( pid != 0 )
@@ -407,9 +409,10 @@ Processes::WaitPIDFunction::execute( SLIInterpreter* i ) const
   // call waitpid()
   int stat_value;
   int options = 0;
-
   if ( *nohangflag_d )
+  {
     options = WNOHANG;
+  }
   pid_t pidout = waitpid( pidin_d->get(), &stat_value, options );
 
   // Check for error
@@ -659,7 +662,7 @@ Processes::AvailableFunction::execute( SLIInterpreter* i ) const
   assert( istreamdatum != 0 );
   assert( istreamdatum->valid() );
 
-  if ( !( **istreamdatum ).good() )
+  if ( not( **istreamdatum ).good() )
   { // istream not good. Do nothing. Return false.
     i->EStack.pop();
     i->OStack.push( false );
@@ -728,7 +731,7 @@ Processes::AvailableFunction::execute( SLIInterpreter* i ) const
     // ------------------------------
 
     bool result;
-    if ( !( **istreamdatum ).good() )
+    if ( not( **istreamdatum ).good() )
     { // an error occured. No data can be read.
       // no data is currently available
       result = false;             // no data is available
@@ -755,7 +758,9 @@ Processes::GetPIDFunction::execute( SLIInterpreter* i ) const
   pid_t pid;
   pid = getpid();
   if ( pid < 0 )
-    i->raiseerror( systemerror( i ) ); // ehemals:i->raiseerror ("CannotFork");
+  {
+    i->raiseerror( systemerror( i ) );
+  }
   else
   {
     i->EStack.pop(); // Don't forget to pop yourself...
@@ -774,7 +779,9 @@ Processes::GetPPIDFunction::execute( SLIInterpreter* i ) const
   pid_t ppid;
   ppid = getppid();
   if ( ppid < 0 )
-    i->raiseerror( systemerror( i ) ); // ehemals:i->raiseerror ("CannotFork");
+  {
+    i->raiseerror( systemerror( i ) );
+  }
   else
   {
     i->EStack.pop(); // Don't forget to pop yourself...
@@ -794,7 +801,9 @@ Processes::GetPGRPFunction::execute( SLIInterpreter* i ) const
   pid_t pgrp;
   pgrp = getpgrp();
   if ( pgrp < 0 )
-    i->raiseerror( systemerror( i ) ); // ehemals:i->raiseerror ("CannotFork");
+  {
+    i->raiseerror( systemerror( i ) );
+  }
   else
   {
     i->EStack.pop(); // Don't forget to pop yourself...
@@ -897,13 +906,19 @@ Processes::SetNonblockFunction::execute( SLIInterpreter* i ) const
   // Get filestatus-flags on this fd:
   int flags = fcntl( fd, F_GETFL );
   if ( flags == -1 )
+  {
     i->raiseerror( systemerror( i ) ); // an error occured!
+  }
 
   // modify flags to the new value:
   if ( *newflag_d )
+  {
     flags |= O_NONBLOCK; // set the flag
+  }
   else
+  {
     flags &= ~O_NONBLOCK; // erase the flag
+  }
 
   // Set new filestatus-flags:
   int result = fcntl( fd, F_SETFL, flags );

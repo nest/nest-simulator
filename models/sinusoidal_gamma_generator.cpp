@@ -89,7 +89,9 @@ nest::sinusoidal_gamma_generator::Parameters_&
   operator=( const Parameters_& p )
 {
   if ( this == &p )
+  {
     return *this;
+  }
 
   om_ = p.om_;
   phi_ = p.phi_;
@@ -154,30 +156,42 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
 {
   if ( not n.is_model_prototype()
     && d->known( names::individual_spike_trains ) )
+  {
     throw BadProperty(
       "The individual_spike_trains property can only be set as"
       " a model default using SetDefaults or upon CopyModel." );
+  }
 
   if ( updateValue< bool >(
          d, names::individual_spike_trains, individual_spike_trains_ ) )
   {
     // this can happen only on model prototypes
     if ( individual_spike_trains_ )
-      num_trains_ = 0; // will be counted up as connections are made
+    {
+      num_trains_ = 0;
+    } // will be counted up as connections are made
     else
-      num_trains_ = 1; // fixed
+    {
+      num_trains_ = 1;
+    } // fixed
   }
 
   if ( updateValue< double >( d, names::frequency, om_ ) )
+  {
     om_ *= 2.0 * numerics::pi / 1000.0;
+  }
 
   if ( updateValue< double >( d, names::phase, phi_ ) )
+  {
     phi_ *= numerics::pi / 180.0;
+  }
 
   if ( updateValue< double >( d, names::order, order_ ) )
   {
     if ( order_ < 1.0 )
+    {
       throw BadProperty( "The gamma order must be at least 1." );
+    }
   }
 
   /* The *_unscaled variables here are introduced to avoid spurious
@@ -185,14 +199,20 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
   */
   double dc_unscaled = 1e3 * rate_;
   if ( updateValue< double >( d, names::rate, dc_unscaled ) )
+  {
     rate_ = 1e-3 * dc_unscaled; // scale to 1/ms
+  }
 
   double ac_unscaled = 1e3 * amplitude_;
   if ( updateValue< double >( d, names::amplitude, ac_unscaled ) )
+  {
     amplitude_ = 1e-3 * ac_unscaled; // scale to 1/ms
+  }
 
   if ( not( 0.0 <= ac_unscaled and ac_unscaled <= dc_unscaled ) )
+  {
     throw BadProperty( "Rate parameters must fulfill 0 <= amplitude <= rate." );
+  }
 }
 
 
@@ -254,12 +274,16 @@ nest::sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p,
   double t_b ) const
 {
   if ( t_a == t_b )
+  {
     return 0.0;
+  }
 
   double deltaLambda = p.order_ * p.rate_ * ( t_b - t_a );
   if ( std::abs( p.amplitude_ ) > 0 && std::abs( p.om_ ) > 0 )
+  {
     deltaLambda += -p.order_ * p.amplitude_ / p.om_
       * ( std::cos( p.om_ * t_b + p.phi_ ) - std::cos( p.om_ * t_a + p.phi_ ) );
+  }
   return deltaLambda;
 }
 

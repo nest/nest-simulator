@@ -151,13 +151,13 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
                 and numpy.all(i_ac[t_stop_ind:]) == 0), \
             "Current not zero when AC generator inactive"
         self.assertAlmostEqual(numpy.amax(i_ac[t_start_ind:t_stop_ind]),
-                                self.i_amp + self.i_off,
-                                msg=("Current not correct "
-                                     "when AC generator active"))
+                               self.i_amp + self.i_off,
+                               msg=("Current not correct "
+                                    "when AC generator active"))
         self.assertAlmostEqual(numpy.amin(i_ac[t_start_ind:t_stop_ind]),
-                                -self.i_amp + self.i_off,
-                                msg=("Current not correct "
-                                     "when AC generator active"))
+                               -self.i_amp + self.i_off,
+                               msg=("Current not correct "
+                                    "when AC generator active"))
 
         t_start_ind = numpy.where(t_dc == self.t_start+self.t_origin)[0][0]
         t_stop_ind = numpy.where(t_dc == self.t_stop+self.t_origin)[0][0]

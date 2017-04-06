@@ -27,29 +27,33 @@ import numpy
 import unittest
 import nest
 
-
 @nest.check_stack
 class CurrentRecordingGeneratorTestCase(unittest.TestCase):
     """
-    Test if currents from generators are being recorded properly. Specifically:
-    1) Length of current vector should be one less than length of membrane
+    Test if currents from generators are recorded properly. Specifically:
+    1) Length of current vector should be equal to length of membrane
        potential vector
     2) Value of current should be equal to zero when device is inactive
+    3) Check if value of current recorded as expected during active period
     """
 
     def setUp(self):
         nest.set_verbosity('M_WARNING')
         nest.ResetKernel()
 
-        #setting up the neuron and the generators
-        self.neuron = nest.Create('iaf_cond_alpha', params={'V_reset': -65.0})
+        # setting up the neuron and the generators
+        self.neuron = nest.Create('iaf_psc_alpha', params={'V_reset': -65.0})
 
         self.t_origin = 5.0
         self.t_start = 2.5
         self.t_stop = 40.0
+        self.t_next = 25.0
+        self.i_amp = 500.0
+        self.i_off = 50.0
 
         self.ac = nest.Create('ac_generator', 1,
-                              params={'amplitude': 500.0, 'offset': 50.0,
+                              params={'amplitude': self.i_amp,
+                                      'offset': self.i_off,
                                       'frequency': 50.0, 'phase': 45.0,
                                       'origin': self.t_origin,
                                       'start': self.t_start,
@@ -57,14 +61,14 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
         nest.Connect(self.ac, self.neuron)
 
         self.dc = nest.Create('dc_generator', 1,
-                              params={'amplitude': 500.0,
+                              params={'amplitude': self.i_amp,
                                       'origin': self.t_origin,
                                       'start': self.t_start,
                                       'stop': self.t_stop})
         nest.Connect(self.dc, self.neuron)
 
-        times = [0.0, 25.0, 50.0]
-        currents = [400.0, 250.0, 500.0]
+        times = [self.t_start, self.t_next]
+        currents = [self.i_amp/4, self.i_amp/2]
         params = {'amplitude_times': times, 'amplitude_values': currents,
                   'origin': self.t_origin, 'start': self.t_start,
                   'stop': self.t_stop}
@@ -72,8 +76,8 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
         nest.Connect(self.step, self.neuron)
 
         self.noise = nest.Create('noise_generator', 1,
-                                 params={'mean': 450.0, 'std': 50.0,
-                                         'dt': 0.1, 'std_mod': 25.0,
+                                 params={'mean': self.i_amp, 'std': 0.0,
+                                         'dt': 0.1, 'std_mod': 0.0,
                                          'phase': 45.0, 'frequency': 50.0,
                                          'origin': self.t_origin,
                                          'start': self.t_start,
@@ -128,7 +132,7 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
         t_noise = events_noise['times']
         i_noise = events_noise['I']
 
-        # Test the length of current vectors
+        # test the length of current vectors
         assert len(i_ac) == len(v_Vm), \
             "Incorrect current vector length for AC generator"
         assert len(i_dc) == len(v_Vm), \
@@ -138,35 +142,52 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
         assert len(i_noise) == len(v_Vm), \
             "Incorrect current vector length for noise generator"
 
-        # Test to ensure current=0 when device is inactive
+        # test to ensure current = 0 when device is inactive
+        # and also to check current recorded when device is active
         t_start_ind = numpy.where(t_ac == self.t_start+self.t_origin)[0][0]
         t_stop_ind = numpy.where(t_ac == self.t_stop+self.t_origin)[0][0]
         assert (numpy.all(i_ac[:t_start_ind]) == 0
                 and numpy.all(i_ac[t_stop_ind:]) == 0), \
             "Current not zero when AC generator inactive"
+        self.assertAlmostEqual (numpy.amax(i_ac[t_start_ind:t_stop_ind]),
+                                self.i_amp + self.i_off, msg= ("Current not"
+                                " correct when AC generator active"))
+        self.assertAlmostEqual (numpy.amin(i_ac[t_start_ind:t_stop_ind]),
+                                -self.i_amp + self.i_off, msg= ("Current not"
+                                " correct when AC generator active"))
 
         t_start_ind = numpy.where(t_dc == self.t_start+self.t_origin)[0][0]
         t_stop_ind = numpy.where(t_dc == self.t_stop+self.t_origin)[0][0]
         assert (numpy.all(i_dc[:t_start_ind]) == 0
                 and numpy.all(i_dc[t_stop_ind:]) == 0), \
             "Current not zero when DC generator inactive"
+        assert (numpy.allclose(i_dc[t_start_ind:t_stop_ind], self.i_amp)), \
+            "Current not correct when DC generator active"
 
         t_start_ind = numpy.where(t_step == self.t_start+self.t_origin)[0][0]
         t_stop_ind = numpy.where(t_step == self.t_stop+self.t_origin)[0][0]
+        t_next_ind = numpy.where(t_step == self.t_next)[0][0]
         assert (numpy.all(i_step[:t_start_ind]) == 0
                 and numpy.all(i_step[t_stop_ind:]) == 0), \
             "Current not zero when step current generator inactive"
+        assert (numpy.allclose(i_step[t_start_ind:t_next_ind],
+                               self.i_amp/4) and
+                numpy.allclose(i_step[t_next_ind:t_stop_ind],
+                               self.i_amp/2)), \
+            "Current not correct when step current generator active"
 
         t_start_ind = numpy.where(t_noise == self.t_start+self.t_origin)[0][0]
         t_stop_ind = numpy.where(t_noise == self.t_stop+self.t_origin)[0][0]
         assert (numpy.all(i_noise[:t_start_ind]) == 0
                 and numpy.all(i_noise[t_stop_ind:]) == 0), \
             "Current not zero when noise generator inactive"
+        assert (numpy.allclose(i_noise[t_start_ind:t_stop_ind],
+                               self.i_amp)), \
+            "Current not correct when noise generator active"
 
 
 def suite():
     return unittest.makeSuite(CurrentRecordingGeneratorTestCase, "test")
-
 
 def run():
     runner = unittest.TextTestRunner(verbosity=2)

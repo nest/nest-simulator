@@ -55,7 +55,7 @@ void reset_network();
 void enable_dryrun_mode( const index n_procs );
 
 void register_logger_client( const deliver_logging_event_ptr client_callback );
-void print_network( std::ostream& out = std::cout );
+void print_nodes_to_stream( std::ostream& out = std::cout );
 
 librandom::RngPtr get_vp_rng_of_gid( index target );
 librandom::RngPtr get_vp_rng( thread tid );

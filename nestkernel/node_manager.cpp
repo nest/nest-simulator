@@ -734,10 +734,35 @@ NodeManager::check_wfr_use()
 }
 
 void
-NodeManager::print( std::ostream& ) const
+NodeManager::print( std::ostream& out ) const
 {
-  // TODO480
-  throw KernelException( "PrintNetwork is currently not supported." );
+  const index max_gid = size();
+  const double max_gid_width = std::floor( std::log10( max_gid ) );
+  const double gid_range_width = 6 + 2 * max_gid_width;
+
+  for ( std::vector< modelrange >::const_iterator it =
+          kernel().modelrange_manager.begin();
+        it != kernel().modelrange_manager.end();
+        ++it )
+  {
+    const index first_gid = it->get_first_gid();
+    const index last_gid = it->get_last_gid();
+    const Model* mod = kernel().model_manager.get_model( it->get_model_id() );
+
+    std::stringstream gid_range_strs;
+    gid_range_strs << std::setw( max_gid_width + 1 ) << first_gid;
+    if ( last_gid != first_gid )
+    {
+      gid_range_strs << " .. " << std::setw( max_gid_width + 1 ) << last_gid;
+    }
+    out << std::setw( gid_range_width ) << std::left << gid_range_strs.str()
+        << " " << mod->get_name();
+
+    if ( it + 1 != kernel().modelrange_manager.end() )
+    {
+      out << std::endl;
+    }
+  }
 }
 
 

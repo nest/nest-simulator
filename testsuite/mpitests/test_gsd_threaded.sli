@@ -66,7 +66,7 @@ is_threaded not { exit_test_gracefully } if
 
     pg [1 2 3 4] cvgidcollection Connect
     [1 2 3 4] cvgidcollection sd Connect
-    Rank =only 0 GetLocalNodes ==
+
     100. Simulate
     sd GetStatus /local get %%% Necessary because a spike detector does not have an events entry in its status dict if it is not local
     {

@@ -56,15 +56,15 @@ is_threaded not { exit_test_gracefully } if
  /rng GetGlobalRNG def
 
  % create four neurons
- /n /iaf_neuron 4 Create def
+ /n /iaf_psc_alpha 4 Create def
 
  % initialize membrane potential randomly from global RNG.
  % The SetStatus is ignored for non-local neurons but still the random number are drawn.
  % Therefore, each neuron receives a well defined random number.
- 0 GetGlobalLeaves { << /V_m rng drand >> SetStatus } forall
+ n { << /V_m rng drand >> SetStatus } forall
 
  % get membrane potential of the local nodes
- 0 GetGlobalLeaves  { /local get } Select  
+ n { /local get } Select  
      { [[/global_id /V_m]] get } Map  Transpose
 
 
@@ -73,16 +73,15 @@ is_threaded not { exit_test_gracefully } if
 
  << /total_num_virtual_procs 4 >> SetKernelStatus
 
- /n /iaf_neuron 4 Create def
+ /n /iaf_psc_alpha 4 Create def
 
  % initialize membrane potential using the RNG assigned to the virtual process the 
  % neuron lives on. Also with this method each neuron receives a well defined random
  % number.
- 0 GetGlobalLeaves 
-    { dup /local get { dup GetVpRNG /rng Set << /V_m rng drand >> SetStatus } {pop} ifelse } forall
+ n { dup /local get { dup GetVpRNG /rng Set << /V_m rng drand >> SetStatus } {pop} ifelse } forall
 
  % get membrane potential of the local nodes
- 0 GetGlobalLeaves  { /local get } Select  
+ n { /local get } Select
      { [[/global_id /V_m]] get } Map Transpose
 
 

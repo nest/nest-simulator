@@ -163,6 +163,31 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Return array containing only those GIDs for which procedure returns true
+%
+% Note: 
+% Returns array so that we can return an empty array if no node matches. 
+/Select [/gidcollectiontype /proceduretype]
+{
+  /predicate Set
+  mark exch
+  {
+    dup 
+    predicate not  
+    {
+      pop
+    }
+    if
+  }
+  forall
+  counttomark
+  arraystore
+  exch pop
+  currentdict /predicate undef
+} bind def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 /Simulate trie
 [/integertype] {cvd Simulate} addtotrie
 [/doubletype]  /Simulate_d load addtotrie

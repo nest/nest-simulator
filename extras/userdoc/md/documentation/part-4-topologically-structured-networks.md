@@ -66,7 +66,7 @@ which will be explained in the subsequent sections in more detail:
     connected to itself.
 
 4.  **Auxillary**, in which we visualise the results of the above steps either
-    by `nest.PrintNetwork()` or visualization functions included in the topology
+    by `nest.PrintNodes()` or visualization functions included in the topology
     module and query the connections for further analysis.
 
 ## Defining layers
@@ -269,7 +269,11 @@ times and connect to the same layer:
 There are two main methods that we can use for checking that our network was
 built correctly:
 
--   **nest.PrintNetworks(depth=1)** which prints out all the neurons and
+-   **nest.PrintNodes()** which prints GID ranges and model names of
+    the nodes in the network. This is a good way to inspect that the network
+    contains the desired nodes;
+
+all the neurons and
     subnetworks within the network in text form. This is a good manner in which
     to inspect the hierarchy of composite layers;
 

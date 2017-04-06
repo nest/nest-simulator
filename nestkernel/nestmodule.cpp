@@ -782,16 +782,39 @@ NestModule::MemoryInfoFunction::execute( SLIInterpreter* i ) const
 }
 
 /* BeginDocumentation
-   Name: PrintNetwork - Print network information.
+   Name: PrintNodes - Print nodes in the network.
    Synopsis:
-   -  PrintNetwork -> -
-
-   Description: CURRENTLY NOT IMPLEMENTED; SHOULD ACCEPT OUTSTREAM
+   -  PrintNodes -> -
+   Description:
+   Print GID ranges and model names of the nodes in the network. Print the
+   information directly to screen.
 */
+
 void
-NestModule::PrintNetworkFunction::execute( SLIInterpreter* i ) const
+NestModule::PrintNodesFunction::execute( SLIInterpreter* i ) const
 {
-  print_network();
+  print_nodes_to_stream();
+  std::cout << std::endl;
+  i->EStack.pop();
+}
+
+/* BeginDocumentation
+   Name: PrintNodesToStream - Redirect printing of nodes in the network.
+   Synopsis:
+   -  PrintNodesToStream -> -
+   Description:
+   Returns string output that can be used to print information about the nodes
+   in the network.
+   The string is the information directly printed by PrintNodes.
+*/
+
+void
+NestModule::PrintNodesToStreamFunction::execute( SLIInterpreter* i ) const
+{
+  std::stringstream out;
+  print_nodes_to_stream( out );
+
+  i->OStack.push( out.str() );
   i->EStack.pop();
 }
 
@@ -1677,7 +1700,8 @@ NestModule::init( SLIInterpreter* i )
 
   i->createcommand( "MemoryInfo", &memoryinfofunction );
 
-  i->createcommand( "PrintNetwork", &printnetworkfunction );
+  i->createcommand( "PrintNodes", &printnodesfunction );
+  i->createcommand( "PrintNodesToStream", &printnodestostreamfunction );
 
   i->createcommand( "Rank", &rankfunction );
   i->createcommand( "NumProcesses", &numprocessesfunction );

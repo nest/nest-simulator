@@ -53,10 +53,8 @@ M_ERROR setverbosity
     ResetKernel    
     << /total_num_virtual_procs N_VP >> SetKernelStatus
 
-    /net /iaf_neuron [ N ] LayoutNetwork def
-    /nodes net 0 get GetGlobalNodes def
-    /local_nodes net 0 get GetLocalNodes def
-    nodes local_nodes << /rule /fixed_indegree /indegree C >> Connect
+    /nodes /iaf_neuron N Create def
+    nodes nodes << /rule /fixed_indegree /indegree C >> Connect
 
     GetKernelStatus /num_connections get dup ==
   } Table

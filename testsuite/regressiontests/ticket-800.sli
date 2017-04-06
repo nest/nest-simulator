@@ -36,6 +36,8 @@ Author: Hans Ekkehard Plesser, 2014-12-13
 (unittest) run
 /unittest using
 
+exit_test_gracefully  % TODO480 (uses Topology)
+
 M_ERROR setverbosity
 
 /good_random_parameters

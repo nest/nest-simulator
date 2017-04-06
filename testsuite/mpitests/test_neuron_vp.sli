@@ -39,6 +39,8 @@
 (unittest) run
 /unittest using
 
+exit_test_gracefully  % TODO480 (Needs GIDs and cp from non-local processes)
+
 is_threaded not { exit_test_gracefully } if
 
 [1 2 4]
@@ -47,15 +49,7 @@ is_threaded not { exit_test_gracefully } if
 
   << /total_num_virtual_procs 4 >> SetKernelStatus
 
-  /subnet Create /net Set
-  net 0 get ChangeSubnet
-    /iaf_neuron Create /n1 Set
-    /iaf_neuron Create /n2 Set
-    /iaf_neuron Create /n3 Set
-    /iaf_neuron Create /n4 Set
-  0 ChangeSubnet
-
-  net 0 get GetGlobalNodesInfo /nodes Set
+  /nodes /iaf_psc_alpha 4 Create def
 
  Rank 0 eq
  {
@@ -66,9 +60,15 @@ is_threaded not { exit_test_gracefully } if
   ()
   nodes 
   { 
-    /d Set
-    d /global_id get cvs  (   ) join d /vp get cvs join  ( |  ) join join
+    GetStatus /d Set
+    d info
+    d /local get
+    {
+      d /global_id get cvs  (   ) join d /vp get cvs join  ( |  ) join join
+    } if
+    
   } forall
+  (OUT) =
   dup =
 
   } if

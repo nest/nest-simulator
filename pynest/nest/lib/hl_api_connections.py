@@ -27,7 +27,6 @@ from .hl_api_helper import *
 from .hl_api_nodes import Create, GIDCollection
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
-from .hl_api_subnets import GetChildren
 import nest
 import numpy
 

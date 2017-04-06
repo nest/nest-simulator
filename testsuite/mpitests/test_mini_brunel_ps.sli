@@ -133,17 +133,9 @@ def % brunel_setup
       /total_num_virtual_procs total_num_virtual_procs
     >> SetKernelStatus
 
-    /E_net /subnet Create def            % create subnet
-    E_net 0 get ChangeSubnet                   % enter subnet
-    /iaf_psc_alpha_canon NE Create       % create neurons in subnet
-    ;                                    % pop gids returned by Create
-    0 ChangeSubnet                       % return to full network
-
-    /I_net /subnet Create def            % create subnet
-    I_net 0 get ChangeSubnet                   % enter subnet
-    /iaf_psc_alpha_canon NI Create       % create neurons in subnet
-    ;                                    % pop gids returned by Create
-    0 ChangeSubnet                       % return to full network
+    /E_neurons /iaf_psc_alpha_canon NE Create def  % create excitatory neurons
+    /I_neurons /iaf_psc_alpha_canon NI Create def  % create inhibitory neurons
+    /allNeurons E_neurons I_neurons join def
 
     /expoisson /poisson_generator_ps Create def
     expoisson
@@ -165,10 +157,6 @@ def % brunel_setup
     /precise_times true
     /time_in_steps true    
     >> SetStatus
-
-    /E_neurons E_net 0 get GetGlobalNodes cvgidcollection def
-    /I_neurons I_net 0 get GetGlobalNodes cvgidcollection def
-    /allNeurons E_neurons I_neurons join def
 
     allNeurons
     {

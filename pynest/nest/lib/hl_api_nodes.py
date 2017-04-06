@@ -217,30 +217,8 @@ def Create(model, n=1, params=None):
 
 
 @check_stack
-@deprecated('', 'GetLID is deprecated and will be removed in NEST 3.0. Use \
-index into GIDCollection instead.')
-def GetLID(gid):
-    """Return the local id of a node with the global ID gid.
+def PrintNodes():
+    """Print the GID ranges and model names of the nodes in the network."""
 
-    Parameters
-    ----------
-    gid : int
-        Global id of node
-
-    Returns
-    -------
-    int:
-        Local id of node
-
-    Raises
-    ------
-    NESTError
-    """
-
-    if len(gid) > 1:
-        raise NESTError("GetLID() expects exactly one GID.")
-
-    sps(gid[0])
-    sr("GetLID")
-
-    return spp()
+    sr("PrintNodesToStream")
+    print(spp())

@@ -288,8 +288,8 @@ class TestGrowthCurve(unittest.TestCase):
         self.se_python = None
 
         # build
-        self.pop = nest.Create('iaf_neuron', 10)
-        self.local_nodes = nest.GetNodes([0], {'model': 'iaf_neuron'}, True)[0]
+        self.pop = nest.Create('iaf_psc_alpha', 10)
+        self.local_nodes = self.pop
         self.spike_detector = nest.Create('spike_detector')
         nest.Connect(self.pop, self.spike_detector, 'all_to_all')
         noise = nest.Create('poisson_generator')
@@ -393,11 +393,10 @@ class TestGrowthCurve(unittest.TestCase):
 
         pop_as_list = list(self.pop)
         for n in self.pop:
-            if n in self.pop:
-                testing.assert_almost_equal(
-                    self.se_nest[pop_as_list.index(n), 10], expected[
-                        pop_as_list.index(n)],
-                    decimal=8)
+            testing.assert_almost_equal(
+                self.se_nest[pop_as_list.index(n), 10], expected[
+                    pop_as_list.index(n)],
+                decimal=8)
 
     def test_gaussian_growth_curve(self):
         beta_ca = 0.0001
@@ -434,11 +433,10 @@ class TestGrowthCurve(unittest.TestCase):
 
         pop_as_list = list(self.pop)
         for n in self.pop:
-            if n in self.pop:
-                testing.assert_almost_equal(
-                    self.se_nest[pop_as_list.index(n), 30], expected[
-                        pop_as_list.index(n)],
-                    decimal=5)
+            testing.assert_almost_equal(
+                self.se_nest[pop_as_list.index(n), 30], expected[
+                    pop_as_list.index(n)],
+                decimal=5)
 
     def test_sigmoid_growth_curve(self):
         beta_ca = 0.0001
@@ -474,14 +472,14 @@ class TestGrowthCurve(unittest.TestCase):
         ])
 
         pop_as_list = list(self.pop)
+        local_nodes_as_list = list(self.local_nodes)
         for n in self.pop:
-            if n in self.local_nodes:
-                loc = self.se_nest[self.local_nodes.index(n), 30]
-                ex = expected[pop_as_list.index(n)]
-                testing.assert_almost_equal(
-                    self.se_nest[self.local_nodes.index(n), 30], expected[
-                        pop_as_list.index(n)],
-                    decimal=5)
+            loc = self.se_nest[local_nodes_as_list.index(n), 30]
+            ex = expected[pop_as_list.index(n)]
+            testing.assert_almost_equal(
+                self.se_nest[local_nodes_as_list.index(n), 30], expected[
+                    pop_as_list.index(n)],
+                decimal=5)
 
     def tearDown(self):
         # uncomment this line if you want to plot values

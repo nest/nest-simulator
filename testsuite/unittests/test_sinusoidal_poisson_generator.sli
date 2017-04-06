@@ -113,23 +113,15 @@ M_ERROR setverbosity
 /build_simple_net
 {
   /n Set
-  /pnet /subnet Create def
-  pnet 0 get ChangeSubnet
-  /parrot_neuron n Create ;
-  0 ChangeSubnet
-  /parrots pnet 0 get GetLocalLeaves def
-  
-  /snet /subnet Create def
-  snet 0 get ChangeSubnet  
-  /spike_detector n << /withtime true /withgid false >> Create ;
-  0 ChangeSubnet
-  /sdets snet 0 get GetLocalLeaves def
+  /parrots /parrot_neuron n Create def
+
+  /sdets /spike_detector n << /withtime true /withgid false >> Create def
 
   /gen /sinusoidal_poisson_generator Create def
 
   gen parrots cvgidcollection Connect
 
-  [parrots sdets] { Connect } ScanThread
+  parrots sdets /one_to_one Connect
 
   sdets
 } def
@@ -228,11 +220,7 @@ M_ERROR setverbosity
 /build_mm_net
 {
   /n Set
-  /pnet /subnet Create def
-  pnet 0 get ChangeSubnet
-  /parrot_neuron n Create ;
-  0 ChangeSubnet
-  /parrots pnet 0 get GetLocalLeaves def
+  /parrots /parrot_neuron n Create def
   
   /gen /sinusoidal_poisson_generator Create def
   /mm /multimeter << /record_from [ /rate ] >> Create def

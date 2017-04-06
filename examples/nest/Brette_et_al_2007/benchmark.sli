@@ -125,10 +125,10 @@ def
   model    model_params    SetDefaults
 
   (Creating excitatory population.) =  % show message
-  /E_net model [ NE ] LayoutNetwork def
+  /E_neurons model NE Create def
 
   (Creating inhibitory population.) =  % show message
-  /I_net model [ NI ] LayoutNetwork def
+  /I_neurons model NI Create def
 
   (Creating excitatory stimulus generator.) =
   /E_stimulus stimulus Create def
@@ -149,12 +149,6 @@ def
   % some connecting functions need lists (arrays) over all
   % neurons they should work on, so we need to extract these
   % lists from the subnetworks
-
-  % obtain array with GIDs of all excitatory neurons
-  /E_neurons E_net 0 get GetLocalNodes cvgidcollection def
-
-  % obtain array with GIDs of all inhibitory neurons
-  /I_neurons I_net 0 get GetLocalNodes cvgidcollection def
 
   % all neurons
   /allNeurons E_neurons I_neurons join def

@@ -75,13 +75,11 @@ systemdict /GNUReadline known not {
 	/CyclicValue_d_d_d /DataConnect_a /DataConnect_i_D_s /Displacement_a_i
 	/Distance_a_i /DumpLayerConnections_os_i_l
 	/DumpLayerNodes_os_i /FileNames_r /FileNames_s /FixedPoint__p
-	/FixedPoint__p_i /Flatten_a /Flatten_a_i /GetChildren_i_D_b
+	/FixedPoint__p_i /Flatten_a /Flatten_a_i
 	/GetConnections_D /GetDefaults_l /GetElement_i_ia
-	/GetGlobalChildren_i_M_a /GetLeaves_i_D_b /GetNetwork_i_i
-	/GetNodes_i_D_b_b /GetPosition_i /GetStatus_C /GetStatus_a
+	/GetPosition_i /GetStatus_C /GetStatus_a
 	/GetStatus_dict /GetStatus_i /GetStatus_v /GetValue_a_P /Inside_a_M
-	/JoinTo_ald /JoinTo_cont /JoinTo_d /LayoutNetwork_l_a
-	/LayoutNetwork_l_a_dict /MapIndexed_a /MapIndexed_s /MapThread_a
+	/JoinTo_ald /JoinTo_cont /JoinTo_d /MapIndexed_a /MapIndexed_s /MapThread_a
 	/Map_iter /Map_s /MathematicaToSliIndex_a /MathematicaToSliIndex_i
 	/Part_a /Partition_a_i_i /RandomArray_v_i
 	/Random_i /RangeIterator_a /RestoreNodes_a /SetDefaults_l_D

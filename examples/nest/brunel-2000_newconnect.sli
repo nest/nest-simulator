@@ -220,16 +220,8 @@ statusdict/userargs :: size 1 geq
 
       (Creating the network.) =  % show message
 
-      /iaf_psc_alpha [NE] LayoutNetwork /E_net Set
-      /iaf_psc_alpha [NI] LayoutNetwork /I_net Set
-
-      % some connecting functions need lists (arrays) over all
-      % neurons they should work on, so we need to extract these
-      % lists from the subnetworks
-
-      % obtain array with GIDs of all excitatory/inhibitory neurons
-      /E_neurons E_net 0 get GetGlobalNodes cvgidcollection def
-      /I_neurons I_net 0 get GetGlobalNodes cvgidcollection def
+      /E_neurons /iaf_psc_alpha NE Create def
+      /I_neurons /iaf_psc_alpha NI Create def
 
       % list of all neurons
       /allNeurons E_neurons I_neurons join def
@@ -277,29 +269,15 @@ statusdict/userargs :: size 1 geq
       (Connecting excitatory neurons.) =
       expoisson E_neurons /all_to_all /syn_ex Connect
 
-      /target_ids E_net 0 get GetLocalNodes def
-      /ns [ target_ids length ] { pop CE } Table def
-      /empty [ target_ids length ] { pop [] } Table def
-      /source_ids E_net 0 get GetGlobalNodes def
       E_neurons E_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
 
-      /ns [ target_ids length ] { pop CI } Table def
-      /source_ids I_net 0 get GetGlobalNodes def
       I_neurons E_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
 
       (Connecting inhibitory population.) =
       inpoisson I_neurons /all_to_all /syn_ex Connect
 
-
-      /target_ids I_net 0 get GetLocalNodes def
-      /ns [ target_ids length ] { pop CE } Table def
-      /empty [ target_ids length ] { pop [] } Table def
-      /source_ids E_net 0 get GetGlobalNodes def
       E_neurons I_neurons << /rule /fixed_indegree /indegree CE >> << /model /syn_ex >> Connect
       
-
-      /ns [ target_ids length ] { pop CI } Table def
-      /source_ids I_net 0 get GetGlobalNodes def
       I_neurons I_neurons << /rule /fixed_indegree /indegree CI >> << /model /syn_in >> Connect
 
       % Spike detectors are connected to the first Nrec neurons in each

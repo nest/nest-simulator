@@ -235,17 +235,9 @@ end
       (Configuring neuron parameters.) =
 
       (Creating the network.) =  % show message
-
-      /sli_neuron [NE] LayoutNetwork /E_net Set
-      /sli_neuron [NI] LayoutNetwork /I_net Set
-
-      % some connecting functions need lists (arrays) over all
-      % neurons they should work on, so we need to extract these
-      % lists from the subnetworks
-
-      % obtain array with GIDs of all excitatory/inhibitory neurons
-      /E_neurons E_net 0 get GetGlobalNodes cvgidcollection def
-      /I_neurons I_net 0 get GetGlobalNodes cvgidcollection def
+      
+      /E_neurons /sli_neuron NE Create def
+      /I_neurons /sli_neuron NI Create def
 
       % list of all neurons
       /allNeurons E_neurons I_neurons join def

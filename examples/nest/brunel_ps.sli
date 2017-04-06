@@ -194,19 +194,14 @@ ResetKernel      % clear all existing network elements
 tic % start timer on construction
 
   (Creating excitatory population.) =  % show message
-  /E_net /subnet Create def            % create subnet
-  E_net 0 get ChangeSubnet                   % enter subnet
-  /iaf_psc_alpha_canon NE Create       % create neurons in subnet
-  ;                                    % pop gids returned by Create
-  0 ChangeSubnet                     % return to full network
+  /E_neurons /iaf_psc_alpha_canon NE Create def
 
   (Creating inhibitory population.) =  % show message
-  /I_net /subnet Create def            % create subnet
-  I_net 0 get ChangeSubnet                   % enter subnet
-  /iaf_psc_alpha_canon NI Create       % create neurons in subnet
-  ;                                    % pop gids returned by Create
-  0 ChangeSubnet                     % return to full network
+  /I_neurons /iaf_psc_alpha_canon NI Create def
 
+  % all neurons
+  /allNeurons E_neurons I_neurons join def
+  
   (Creating excitatory Poisson generator.) =
   /expoisson /poisson_generator_ps Create def
   expoisson
@@ -243,19 +238,6 @@ tic % start timer on construction
     /to_file true
     /precise_times true
   >> SetStatus
-
-  % some connecting functions need lists (arrays) over all
-  % neurons they should work on, so we need to extract these
-  % lists from the subnetworks
-
-  % obtain array with GIDs of all excitatory neurons
-  /E_neurons E_net 0 get GetGlobalNodes cvgidcollection def
-
-  % obtain array with GIDs of all inhibitory neurons
-  /I_neurons I_net 0 get GetGlobalNodes cvgidcollection def
-
-  % all neurons
-  /allNeurons E_neurons I_neurons join def
 
   % Setting neuron parameters after creation is deprecated in NEST 2.0.
   % You should set parameters using SetDefaults before creating neurons,

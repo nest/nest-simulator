@@ -484,7 +484,7 @@ NestModule::CopyModel_l_l_DFunction::execute( SLIInterpreter* i ) const
    are added as children of the current working node. params is a
    dictsionary with parameters for the new nodes.
 
-   SeeAlso: modeldict, ChangeSubnet
+   SeeAlso: modeldict
 */
 void
 NestModule::Create_l_iFunction::execute( SLIInterpreter* i ) const

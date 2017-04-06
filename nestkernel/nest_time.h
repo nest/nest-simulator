@@ -259,13 +259,8 @@ public:
   struct ms
   {
     double t;
-
     explicit ms( double t )
       : t( t )
-    {
-    }
-    explicit ms( long t )
-      : t( static_cast< double >( t ) )
     {
     }
 
@@ -279,10 +274,6 @@ public:
     double t;
     explicit ms_stamp( double t )
       : t( t )
-    {
-    }
-    explicit ms_stamp( long t )
-      : t( static_cast< double >( t ) )
     {
     }
   };

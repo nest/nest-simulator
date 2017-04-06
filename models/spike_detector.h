@@ -143,6 +143,7 @@ private:
   void init_state_( Node const& );
   void init_buffers_();
   void calibrate();
+  void post_run_cleanup();
   void finalize();
 
   /**
@@ -209,6 +210,13 @@ spike_detector::handles_test_event( SpikeEvent&, rport receptor_type )
   }
   return 0;
 }
+
+inline void
+spike_detector::post_run_cleanup()
+{
+  device_.post_run_cleanup();
+}
+
 
 inline void
 spike_detector::finalize()

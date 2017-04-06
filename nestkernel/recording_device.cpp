@@ -656,6 +656,25 @@ nest::RecordingDevice::calibrate()
 }
 
 void
+nest::RecordingDevice::post_run_cleanup()
+{
+  if ( B_.fs_.is_open() )
+  {
+    if ( P_.flush_after_simulate_ )
+      B_.fs_.flush();
+
+    if ( !B_.fs_.good() )
+    {
+      std::string msg =
+        String::compose( "I/O error while opening file '%1'", P_.filename_ );
+      LOG( M_ERROR, "RecordingDevice::post_run_cleanup()", msg );
+
+      throw IOError();
+    }
+  }
+}
+
+void
 nest::RecordingDevice::finalize()
 {
   if ( B_.fs_.is_open() )

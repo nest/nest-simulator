@@ -47,7 +47,7 @@ is_threaded_with_openmp not { exit_test_gracefully } if
 */
 /exit_test_gracefully
 {
-  statusdict/exitcodes/success :: quit_i
+  statusdict/exitcodes/skipped :: quit_i
 } def
 
 

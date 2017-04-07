@@ -99,6 +99,7 @@ public:
 
   Name exitcodes_name;
   Name exitcode_success_name;
+  Name exitcode_skipped_name;
   Name exitcode_scripterror_name;
   Name exitcode_abort_name;
   Name exitcode_userabort_name;

@@ -256,6 +256,7 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , ndebug_name( "ndebug" )
   , exitcodes_name( "exitcodes" )
   , exitcode_success_name( "success" )
+  , exitcode_skipped_name( "skipped" )
   , exitcode_scripterror_name( "scripterror" )
   , exitcode_abort_name( "abort" )
   , exitcode_userabort_name( "userabort" )
@@ -538,6 +539,7 @@ SLIStartup::init( SLIInterpreter* i )
 
   exitcodes->insert(
     exitcode_success_name, Token( new IntegerDatum( EXIT_SUCCESS ) ) );
+  exitcodes->insert( exitcode_skipped_name, Token( new IntegerDatum( 200 ) ) );
   exitcodes->insert(
     exitcode_scripterror_name, Token( new IntegerDatum( 126 ) ) );
   exitcodes->insert(

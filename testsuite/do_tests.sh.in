@@ -523,8 +523,10 @@ echo "--------------------------------"
 junit_open 'core.phase_3'
 
 for test_ext in sli py ; do
-    for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
-        run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}"
+    for test_dir in "unittests/" "topology/unittests/" ; do
+        for test_name in $(ls "${TEST_BASEDIR}/${test_dir}" | grep ".*\.${test_ext}\$") ; do
+            run_test "${test_dir}${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}"
+        done
     done
 done
 
@@ -566,8 +568,10 @@ if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then
     CODES_SUCCESS=${SAVE_CODES_SUCCESS}
     CODES_FAILURE=${SAVE_CODES_FAILURE}
 
-    for test_name in $(ls "${TEST_BASEDIR}/mpitests/" | grep '.*\.sli$') ; do
-        run_test "mpitests/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}"
+    for test_dir in "mpitests/" "topology/mpitests/" ; do
+        for test_name in $(ls "${TEST_BASEDIR}/${test_dir}" | grep '.*\.sli$') ; do
+            run_test "${test_dir}${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}"
+        done
     done
 
     junit_close
@@ -686,7 +690,7 @@ if test "x${TEST_PYNEST}" = xtrue ; then
         echo "  Using nosetests."
         echo
 
-        nosetests -v --with-xunit --xunit-file=${TEST_OUTDIR}/pynest_tests.xml ${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests 2>&1 \
+        nosetests -v --with-xunit --xunit-file=${TEST_OUTDIR}/pynest_tests.xml ${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/tests ${NEST_PYTHON_PREFIX:-@CMAKE_INSTALL_PREFIX@/@PYEXECDIR@}/nest/topology/tests 2>&1 \
             | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
 
         PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"

@@ -83,7 +83,15 @@ if ( HAVE_PYTHON )
   install( FILES ${topo_examples}
       DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/topology
       )
-  install( DIRECTORY testsuite
-      DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology
+  # install( DIRECTORY testsuite
+  #    DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology
+  #    )
+  file( GLOB topo_unittests "testsuite/unittests/*" )
+  install( FILES ${topo_unittests}
+      DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology/unittests
+      )
+  file( GLOB topo_mpitests "testsuite/mpitests/*" )
+  install( FILES ${topo_mpitests}
+      DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology/mpitests
       )
 endif ()

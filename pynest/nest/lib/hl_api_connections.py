@@ -454,30 +454,6 @@ def DataConnect(pre, params=None, model="static_synapse"):
         SetKernelStatus({'dict_miss_is_error': dict_miss})
 
 
-def _is_subnet_instance(gids):
-    """Returns true if all gids point to subnet or derived type.
-
-    Parameters
-    ----------
-    gids : TYPE
-        Description
-
-    Returns
-    -------
-    bool:
-        true if all gids point to subnet or derived type
-    """
-
-    try:
-        # Turn off deprecation warning to avoid confusing users with
-        # internals.
-        with SuppressedDeprecationWarning(['GetChildren']):
-            GetChildren(gids)
-        return True
-    except kernel.NESTError:
-        return False
-
-
 @check_stack
 def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
     """
@@ -512,26 +488,8 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
             "NEST was not compiled with support for libneurosim: " +
             "CGConnect is not available.")
 
-    if parameter_map is None:
-        parameter_map = {}
-
-    if _is_subnet_instance(pre[:1]):
-
-        if not _is_subnet_instance(post[:1]):
-            raise kernel.NESTError(
-                "if pre is a subnet, post also has to be a subnet")
-
-        if len(pre) > 1 or len(post) > 1:
-            raise kernel.NESTError(
-                "the length of pre and post has to be 1 if subnets " +
-                "are given")
-
-        sli_func('CGConnect', cg, pre[0], post[0],
-                 parameter_map, '/' + model, litconv=True)
-
-    else:
-        sli_func('CGConnect', cg, pre, post,
-                 parameter_map, '/' + model, litconv=True)
+    sli_func('CGConnect', cg, pre, post,
+             parameter_map, '/' + model, litconv=True)
 
 
 @check_stack

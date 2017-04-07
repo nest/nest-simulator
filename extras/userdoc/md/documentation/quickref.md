@@ -169,8 +169,6 @@ Dictionary with NEST model objects.
 
 [Create](../helpindex/cmds/Create.md) Create network elements in the
 current subnet.
-[LayoutNetwork](../helpindex/cmds/LayoutNetwork.md)
-Create a nested multi-dimensional network structure in the current subnet.
 
 ### Neuron Models
 

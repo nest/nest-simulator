@@ -285,12 +285,10 @@ all the neurons and
 Other useful functions that may be of help, in addition to those already
 listed in NTUM Section 4.1, are:
 
-| Function                         | Description                                                                               |
-|----------------------------------|-------------------------------------------------------------------------------------------|
-| nest.GetNodes(layer)             | Returns GIDs of layer elements: either nodes or top-level subnets (for composite)         |
-| nest.GetLeaves(layer)            | Returns GIDs of leaves of a structure, which is always going to be neurons rather subnets |
-| topp.GetPosition(gids)           | Returns position of elements specified in input                                           |
-| nest.GetStatus(layer,“topology”) | Returns the layer dictionary for a layer                                                  |
+| Function                         | Description                                     |
+|----------------------------------|-------------------------------------------------|
+| topp.GetPosition(gids)           | Returns position of elements specified in input |
+| nest.GetStatus(layer,“topology”) | Returns the layer dictionary for a layer        |
 
 ## References
 

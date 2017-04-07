@@ -91,15 +91,14 @@ tic % start timer on construction
 /receptor_max tau_syns length def
 /iaf_psc_alpha_multisynapse << /tau_syn tau_syns >> SetDefaults
 
-/iaf_psc_alpha_multisynapse [ num_neurons ] LayoutNetwork
-GetGlobalLeaves /population Set
+/population /iaf_psc_alpha_multisynapse num_neurons Create def
 
 
 (Connecting neurons.) =
 population population connspec
 << /model /stdp_synapse
    /delay << /distribution /uniform /low 0.5 /high 1.5 >>
-   /weight << /distribution /normal /mu 10.0 /sigma 5.0 >>
+   /weight << /distribution /normal /mu 10.0 /sigma 1.0 >>
    /receptor_type << /distribution /uniform_int /low receptor_min /high receptor_max >>  
    /alpha << /distribution /uniform /low 0.1 /high 2.3 >> 
    /tau_plus << /distribution /uniform /low 1.5 /high 5.0 >>

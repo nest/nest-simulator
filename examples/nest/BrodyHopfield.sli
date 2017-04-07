@@ -52,12 +52,7 @@ ResetKernel
 /noise_generator Create /noise Set
 /spike_detector  Create /sd    Set
 
-/subnet Create /net Set
-net 0 get ChangeSubnet
-model N Create ;
-
-0 ChangeSubnet
-net 0 get GetGlobalNodes /neurons Set
+/neurons model N Create def
 
 sd << /to_file true /withgid true >> SetStatus
 

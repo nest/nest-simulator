@@ -790,15 +790,7 @@ NodeManager::prepare_nodes()
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
     kernel().vp_manager.get_num_threads() );
 
-#ifdef _OPENMP
-#pragma omp parallel reduction( + : num_active_nodes, num_active_wfr_nodes )
-  {
-    size_t t = kernel().vp_manager.get_thread_id();
-#else
-    for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
-#endif
-
+  NEST_PARALLEL_FOR_THREAD(t)
     // We prepare nodes in a parallel region. Therefore, we need to catch
     // exceptions here and then handle them after the parallel region.
     try
@@ -825,7 +817,7 @@ NodeManager::prepare_nodes()
         lockPTR< WrappedThreadException >( new WrappedThreadException( e ) );
     }
 
-  } // end of parallel section / end of for threads
+  NEST_PARALLEL_END
 
   // check if any exceptions have been raised
   for ( index thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
@@ -854,14 +846,7 @@ NodeManager::prepare_nodes()
 void
 NodeManager::post_run_cleanup()
 {
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    index t = kernel().vp_manager.get_thread_id();
-#else // clang-format off
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-#endif // clang-format on
+  NEST_PARALLEL_FOR_THREAD(t)
     for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
     {
       Node* node = local_nodes_.get_node_by_index( idx );
@@ -880,7 +865,7 @@ NodeManager::post_run_cleanup()
         }
       }
     }
-  }
+  NEST_PARALLEL_END
 }
 
 /**
@@ -890,14 +875,7 @@ NodeManager::post_run_cleanup()
 void
 NodeManager::finalize_nodes()
 {
-#ifdef _OPENMP
-#pragma omp parallel
-  {
-    index t = kernel().vp_manager.get_thread_id();
-#else // clang-format off
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-#endif // clang-format on
+  NEST_PARALLEL_FOR_THREAD(t)
     for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
     {
       Node* node = local_nodes_.get_node_by_index( idx );
@@ -916,7 +894,7 @@ NodeManager::finalize_nodes()
         }
       }
     }
-  }
+  NEST_PARALLEL_END
 }
 
 void

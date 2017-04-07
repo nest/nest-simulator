@@ -111,11 +111,13 @@ nest::ConnectionManager::initialize()
   assert( n_threads <= MAX_THREAD
     && "MAX_THREAD is a constant defined in allocator.h" );
 
-#pragma omp parallel
-  poormansallocpool[ kernel().vp_manager.get_thread_id() ].init();
+  NEST_PARALLEL_FOR_THREAD(t)
+    poormansallocpool[ t ].init();
+  NEST_PARALLEL_END
 #else
-#pragma omp parallel
-  poormansallocpool.init();
+  NEST_PARALLEL_FOR_THREAD(t)
+    poormansallocpool.init();
+  NEST_PARALLEL_END
 #endif
 #endif
 #endif
@@ -799,9 +801,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
     return;
   }
 
-#pragma omp parallel private( di_s )
-  {
-    thread tid = kernel().vp_manager.get_thread_id();
+  NEST_PARALLEL_FOR_THREAD(tid)
     DictionaryDatum par_i( new Dictionary() );
 
     size_t n_targets = target_ids.size();
@@ -887,7 +887,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
         continue;
       }
     }
-  }
+  NEST_PARALLEL_END
 }
 
 bool
@@ -1166,14 +1166,7 @@ nest::ConnectionManager::get_connections(
 
   if ( source == 0 and target == 0 )
   {
-#ifdef _OPENMP
-#pragma omp parallel
-    {
-      thread t = kernel().vp_manager.get_thread_id();
-#else
-    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
-#endif
+    NEST_PARALLEL_FOR_THREAD(t)
       std::deque< ConnectionID > conns_in_thread;
 
       for ( index source_id = 1; source_id < connections_[ t ].size();
@@ -1193,20 +1186,13 @@ nest::ConnectionManager::get_connections(
 #endif
         extend_connectome( connectome, conns_in_thread );
       }
-    }
+    NEST_PARALLEL_END
 
     return;
   }
   else if ( source == 0 and target != 0 )
   {
-#ifdef _OPENMP
-#pragma omp parallel
-    {
-      thread t = kernel().vp_manager.get_thread_id();
-#else
-    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
-#endif
+    NEST_PARALLEL_FOR_THREAD(t)
       std::deque< ConnectionID > conns_in_thread;
 
       for ( index source_id = 1; source_id < connections_[ t ].size();
@@ -1234,19 +1220,12 @@ nest::ConnectionManager::get_connections(
 #endif
         extend_connectome( connectome, conns_in_thread );
       }
-    }
+    NEST_PARALLEL_END
     return;
   }
   else if ( source != 0 )
   {
-#ifdef _OPENMP
-#pragma omp parallel
-    {
-      size_t t = kernel().vp_manager.get_thread_id();
-#else
-    for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
-#endif
+    NEST_PARALLEL_FOR_THREAD(t)
       std::deque< ConnectionID > conns_in_thread;
 
       for ( index s = 0; s < source->size(); ++s )
@@ -1285,7 +1264,7 @@ nest::ConnectionManager::get_connections(
 #endif
         extend_connectome( connectome, conns_in_thread );
       }
-    }
+    NEST_PARALLEL_END
     return;
   } // else
 }

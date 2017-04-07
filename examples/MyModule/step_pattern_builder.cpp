@@ -101,10 +101,7 @@ mynest::StepPatternBuilder::connect_()
 // This code is based on AllToAllBuilder, except that we step
 // by source_step_ and target_step_ except for stepping by 1.
 
-#pragma omp parallel
-  {
-    // get thread id
-    const int tid = nest::kernel().vp_manager.get_thread_id();
+  NEST_PARALLEL_FOR_THREAD(tid)
     try
 
     {
@@ -148,7 +145,7 @@ mynest::StepPatternBuilder::connect_()
       exceptions_raised_.at( tid ) =
         lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
     }
-  }
+  NEST_PARALLEL_END
 }
 
 nest::GIDCollection::const_iterator&

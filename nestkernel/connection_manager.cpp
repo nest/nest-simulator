@@ -399,7 +399,7 @@ nest::ConnectionManager::connect( index sgid,
 
     if ( target->one_node_per_process() )
     {
-      // music proxy connection or similar device with one node per process.
+      // connection to music proxy or similar device with one node per process.
       connect_( *source, *target, sgid, target_thread, syn, d, w );
       return;
     }
@@ -468,7 +468,7 @@ nest::ConnectionManager::connect( index sgid,
 
     if ( target->one_node_per_process() )
     {
-      // music proxy connection or similar device with one node per process.
+      // connection to music proxy or similar device with one node per process.
       connect_( *source, *target, sgid, target_thread, syn, params, d, w );
       return;
     }
@@ -543,7 +543,7 @@ nest::ConnectionManager::connect( index sgid,
 
     if ( target->one_node_per_process() )
     {
-      // music proxy connection or similar device with one node per process.
+      // connection to music proxy or similar device with one node per process.
       connect_( *source, *target, sgid, target_thread, syn, params );
       return true;
     }

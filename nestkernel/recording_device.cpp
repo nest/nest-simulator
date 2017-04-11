@@ -74,6 +74,7 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   , user_set_precision_( false )
   , binary_( false )
   , fbuffer_size_( BUFSIZ ) // default buffer size as defined in <cstdio>
+  , fbuffer_size_old_( BUFSIZ ) // default buffer size as defined in <cstdio>
   , label_()
   , file_ext_( file_ext )
   , filename_()

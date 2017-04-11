@@ -59,6 +59,7 @@ EventDeliveryManager::EventDeliveryManager()
   , time_collocate_( 0.0 )
   , time_communicate_( 0.0 )
   , local_spike_counter_( std::vector< unsigned long >() )
+  , send_buffer_target_data_( NULL )
   , buffer_size_target_data_has_changed_( false )
   , buffer_size_spike_data_has_changed_( false )
 {

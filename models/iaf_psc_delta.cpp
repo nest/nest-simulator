@@ -113,36 +113,52 @@ nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d )
   const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  {
     V_reset_ -= E_L_;
+  }
   else
+  {
     V_reset_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_th, V_th_ ) )
+  {
     V_th_ -= E_L_;
+  }
   else
+  {
     V_th_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_min, V_min_ ) )
+  {
     V_min_ -= E_L_;
+  }
   else
+  {
     V_min_ -= delta_EL;
+  }
 
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, c_m_ );
   updateValue< double >( d, names::tau_m, tau_m_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
-
   if ( V_reset_ >= V_th_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
-
+  }
   if ( c_m_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be >0." );
-
+  }
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time must not be negative." );
-
+  }
   if ( tau_m_ <= 0 )
+  {
     throw BadProperty( "Membrane time constant must be > 0." );
+  }
 
   updateValue< bool >( d, "refractory_input", with_refr_input_ );
 
@@ -162,9 +178,13 @@ nest::iaf_psc_delta::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
+  {
     y3_ -= p.E_L_;
+  }
   else
+  {
     y3_ -= delta_EL;
+  }
 }
 
 nest::iaf_psc_delta::Buffers_::Buffers_( iaf_psc_delta& n )
@@ -293,10 +313,14 @@ nest::iaf_psc_delta::update( Time const& origin,
       // read spikes from buffer and accumulate them, discounting
       // for decay until end of refractory period
       if ( P_.with_refr_input_ )
+      {
         S_.refr_spikes_buffer_ +=
           B_.spikes_.get_value( lag ) * std::exp( -S_.r_ * h / P_.tau_m_ );
+      }
       else
-        B_.spikes_.get_value( lag ); // clear buffer entry, ignore spike
+      {
+        B_.spikes_.get_value( lag );
+      } // clear buffer entry, ignore spike
 
       --S_.r_;
     }

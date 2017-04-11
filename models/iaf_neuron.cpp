@@ -112,29 +112,40 @@ nest::iaf_neuron::Parameters_::set( const DictionaryDatum& d )
   const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  {
     V_reset_ -= E_L_; // here we use the new E_L_, no need for adjustments
+  }
   else
-    V_reset_ -= delta_EL; // express relative to new E_L_
+  {
+    V_reset_ -= delta_EL;
+  } // express relative to new E_L_
 
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
+  {
     Theta_ -= E_L_;
+  }
   else
-    Theta_ -= delta_EL; // express relative to new E_L_
+  {
+    Theta_ -= delta_EL;
+  } // express relative to new E_L_
 
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, C_ );
   updateValue< double >( d, names::tau_m, Tau_ );
   updateValue< double >( d, names::tau_syn, tau_syn_ );
   updateValue< double >( d, names::t_ref, TauR_ );
-
   if ( V_reset_ >= Theta_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
-
+  }
   if ( C_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( Tau_ <= 0 || tau_syn_ <= 0 || TauR_ <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 
   return delta_EL;
 }
@@ -151,9 +162,13 @@ nest::iaf_neuron::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
+  {
     y3_ -= p.E_L_;
+  }
   else
+  {
     y3_ -= delta_EL;
+  }
 }
 
 nest::iaf_neuron::Buffers_::Buffers_( iaf_neuron& n )
@@ -274,8 +289,11 @@ nest::iaf_neuron::update( Time const& origin, const long from, const long to )
       S_.y3_ = V_.P30_ * ( S_.y0_ + P_.I_e_ ) + V_.P31_ * S_.y1_
         + V_.P32_ * S_.y2_ + V_.P33_ * S_.y3_;
     }
-    else // neuron is absolute refractory
+    else
+    {
+      // neuron is absolute refractory
       --S_.r_;
+    }
 
     // alpha shape PSCs
     S_.y2_ = V_.P21_ * S_.y1_ + V_.P22_ * S_.y2_;

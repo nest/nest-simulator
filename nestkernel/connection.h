@@ -288,8 +288,10 @@ Connection< targetidentifierT >::check_connection_( Node& dummy_target,
   // interpreted in target?
   // note that we here use a bitwise and operation (&), because we interpret
   // each bit in the signal type as a collection of individual flags
-  if ( !( source.sends_signal() & target.receives_signal() ) )
+  if ( not( source.sends_signal() & target.receives_signal() ) )
+  {
     throw IllegalConnection();
+  }
 
   target_.set_target( &target );
 }
@@ -325,7 +327,9 @@ Connection< targetidentifierT >::calibrate( const TimeConverter& tc )
   syn_id_delay_.delay = t.get_steps();
 
   if ( syn_id_delay_.delay == 0 )
+  {
     syn_id_delay_.delay = 1;
+  }
 }
 
 template < typename targetidentifierT >

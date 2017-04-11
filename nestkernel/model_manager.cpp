@@ -67,13 +67,21 @@ ModelManager::~ModelManager()
   // Now we can delete the clean model prototypes
   std::vector< ConnectorModel* >::iterator i;
   for ( i = pristine_prototypes_.begin(); i != pristine_prototypes_.end(); ++i )
+  {
     if ( *i != 0 )
+    {
       delete *i;
+    }
+  }
 
   std::vector< std::pair< Model*, bool > >::iterator j;
   for ( j = pristine_models_.begin(); j != pristine_models_.end(); ++j )
+  {
     if ( ( *j ).first != 0 )
+    {
       delete ( *j ).first;
+    }
+  }
 }
 
 void
@@ -114,8 +122,10 @@ ModelManager::initialize()
       pristine_models_[ i ].first->set_threads();
       std::string name = pristine_models_[ i ].first->get_name();
       models_.push_back( pristine_models_[ i ].first->clone( name ) );
-      if ( !pristine_models_[ i ].second )
+      if ( not pristine_models_[ i ].second )
+      {
         modeldict_->insert( name, i );
+      }
     }
   }
 
@@ -159,7 +169,9 @@ ModelManager::initialize()
       for ( thread t = 0;
             t < static_cast< thread >( kernel().vp_manager.get_num_threads() );
             ++t )
+      {
         prototypes_[ t ].push_back( ( *i )->clone( name ) );
+      }
       synapsedict_->insert( name, prototypes_[ 0 ].size() - 1 );
     }
   }
@@ -195,26 +207,30 @@ index
 ModelManager::copy_model( Name old_name, Name new_name, DictionaryDatum params )
 {
   if ( modeldict_->known( new_name ) || synapsedict_->known( new_name ) )
+  {
     throw NewModelNameExists( new_name );
+  }
 
   const Token oldnodemodel = modeldict_->lookup( old_name );
   const Token oldsynmodel = synapsedict_->lookup( old_name );
 
   index new_id;
-  if ( !oldnodemodel.empty() )
+  if ( not oldnodemodel.empty() )
   {
     index old_id = static_cast< index >( oldnodemodel );
     new_id = copy_node_model_( old_id, new_name );
     set_node_defaults_( new_id, params );
   }
-  else if ( !oldsynmodel.empty() )
+  else if ( not oldsynmodel.empty() )
   {
     index old_id = static_cast< index >( oldsynmodel );
     new_id = copy_synapse_model_( old_id, new_name );
     set_synapse_defaults_( new_id, params );
   }
   else
+  {
     throw UnknownModelName( old_name );
+  }
 
   return new_id;
 }
@@ -244,9 +260,10 @@ ModelManager::register_node_model_( Model* model, bool private_model )
     newnode->set_model_id( id );
     proxy_nodes_[ t ].push_back( newnode );
   }
-
-  if ( !private_model )
+  if ( not private_model )
+  {
     modeldict_->insert( name, id );
+  }
 
   return id;
 }
@@ -319,18 +336,20 @@ ModelManager::set_model_defaults( Name name, DictionaryDatum params )
   const Token synmodel = synapsedict_->lookup( name );
 
   index id;
-  if ( !nodemodel.empty() )
+  if ( not nodemodel.empty() )
   {
     id = static_cast< index >( nodemodel );
     set_node_defaults_( id, params );
   }
-  else if ( !synmodel.empty() )
+  else if ( not synmodel.empty() )
   {
     id = static_cast< index >( synmodel );
     set_synapse_defaults_( id, params );
   }
   else
+  {
     throw UnknownModelName( name );
+  }
 
   model_defaults_modified_ = true;
 }
@@ -356,7 +375,8 @@ ModelManager::set_synapse_defaults_( index model_id,
   params->clear_access_flags();
   assert_valid_syn_id( model_id );
 
-  BadProperty* tmp_exception = NULL;
+  std::vector< lockPTR< WrappedThreadException > > exceptions_raised_(
+    kernel().vp_manager.get_num_threads() );
 #ifdef _OPENMP
 #pragma omp parallel
   {
@@ -365,30 +385,25 @@ ModelManager::set_synapse_defaults_( index model_id,
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
 #endif // clang-format on
-#pragma omp critical
+    try
     {
-      try
-      {
-        prototypes_[ t ][ model_id ]->set_status( params );
-      }
-      catch ( BadProperty& e )
-      {
-        if ( tmp_exception == NULL )
-        {
-          tmp_exception = new BadProperty(
-            String::compose( "Setting status of prototype '%1': %2",
-              prototypes_[ t ][ model_id ]->get_name(),
-              e.message() ) );
-        }
-      }
+      prototypes_[ t ][ model_id ]->set_status( params );
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( t ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
 
-  if ( tmp_exception != NULL )
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
-    BadProperty e = *tmp_exception;
-    delete tmp_exception;
-    throw e;
+    if ( exceptions_raised_.at( t ).valid() )
+    {
+      throw WrappedThreadException( *( exceptions_raised_.at( t ) ) );
+    }
   }
 
   ALL_ENTRIES_ACCESSED( *params,
@@ -406,7 +421,9 @@ ModelManager::get_model_id( const Name name ) const
   {
     assert( models_[ i ] != NULL );
     if ( model_name == models_[ i ]->get_name() )
+    {
       return i;
+    }
   }
   return -1;
 }
@@ -422,8 +439,10 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
   for ( thread t = 0;
         t < static_cast< thread >( kernel().vp_manager.get_num_threads() );
         ++t )
-    prototypes_[ t ][ syn_id ]->get_status(
-      dict ); // each call adds to num_connections
+  {
+    // each call adds to num_connections
+    prototypes_[ t ][ syn_id ]->get_status( dict );
+  }
 
   ( *dict )[ "num_connections" ] =
     kernel().connection_manager.get_num_connections( syn_id );
@@ -444,17 +463,23 @@ ModelManager::clear_models_( bool called_from_destructor )
 {
   // no message on destructor call, may come after MPI_Finalize()
   if ( not called_from_destructor )
+  {
     LOG( M_INFO,
       "ModelManager::clear_models_",
       "Models will be cleared and parameters reset." );
+  }
 
   // We delete all models, which will also delete all nodes. The
   // built-in models will be recovered from the pristine_models_ in
   // init()
   for ( std::vector< Model* >::iterator m = models_.begin(); m != models_.end();
         ++m )
+  {
     if ( *m != 0 )
+    {
       delete *m;
+    }
+  }
 
   models_.clear();
   proxy_nodes_.clear();
@@ -476,8 +501,12 @@ ModelManager::clear_prototypes_()
     for ( std::vector< ConnectorModel* >::iterator pt = it->begin();
           pt != it->end();
           ++pt )
+    {
       if ( *pt != 0 )
+      {
         delete *pt;
+      }
+    }
     it->clear();
   }
   prototypes_.clear();
@@ -489,12 +518,18 @@ ModelManager::calibrate( const TimeConverter& tc )
   for ( thread t = 0;
         t < static_cast< thread >( kernel().vp_manager.get_num_threads() );
         ++t )
+  {
     for (
       std::vector< ConnectorModel* >::iterator pt = prototypes_[ t ].begin();
       pt != prototypes_[ t ].end();
       ++pt )
+    {
       if ( *pt != 0 )
+      {
         ( *pt )->calibrate( tc );
+      }
+    }
+  }
 }
 
 //!< Functor to compare Models by their name.
@@ -512,9 +547,10 @@ ModelManager::memory_info() const
   std::cout.setf( std::ios::left );
   std::vector< index > idx( get_num_node_models() );
 
-
   for ( index i = 0; i < get_num_node_models(); ++i )
+  {
     idx[ i ] = i;
+  }
 
   std::sort( idx.begin(), idx.end(), compare_model_by_id_ );
 
@@ -529,10 +565,12 @@ ModelManager::memory_info() const
   {
     Model* mod = models_[ idx[ i ] ];
     if ( mod->mem_capacity() != 0 )
+    {
       std::cout << std::setw( 25 ) << mod->get_name() << std::setw( 13 )
                 << mod->mem_capacity() * mod->get_element_size()
                 << std::setw( 13 )
                 << mod->mem_available() * mod->get_element_size() << std::endl;
+    }
   }
 
   std::cout << sep << std::endl;
@@ -551,7 +589,6 @@ ModelManager::create_secondary_events_prototypes()
     secondary_events_prototypes_.resize(
       kernel().vp_manager.get_num_threads(), prototype );
 
-
     for ( size_t i = 0; i < secondary_connector_models_.size(); i++ )
     {
       if ( secondary_connector_models_[ i ] != NULL )
@@ -559,7 +596,9 @@ ModelManager::create_secondary_events_prototypes()
         prototype = secondary_connector_models_[ i ]->create_event(
           kernel().vp_manager.get_num_threads() );
         for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
+        {
           secondary_events_prototypes_[ j ][ i ] = prototype[ j ];
+        }
       }
     }
   }

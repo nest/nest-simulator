@@ -17,7 +17,8 @@ Following are the basic steps to compile and install NEST from source code:
 1.  Create a build directory: `mkdir nest-x.y.z-build`
 1.  Change to the build directory: `cd nest-x.y.z-build`
 1.  Configure NEST: `cmake -DCMAKE_INSTALL_PREFIX:PATH=</install/path> </path/to/NEST/src>` with
-additional `cmake` options as needed (see `INSTALL` file)
+additional `cmake` options as needed (see `INSTALL` file; `/install/path` should be an
+absolute path)
 1.  Compile by running `make`
 1.  Install by running `make install`
 1.  Run tests by running `make installcheck`

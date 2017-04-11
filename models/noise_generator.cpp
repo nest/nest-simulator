@@ -149,17 +149,14 @@ nest::noise_generator::Parameters_::set( const DictionaryDatum& d,
   {
     dt_ = Time::ms( dt );
   }
-
   if ( std_ < 0 )
   {
     throw BadProperty( "The standard deviation cannot be negative." );
   }
-
   if ( std_mod_ < 0 )
   {
     throw BadProperty( "The standard deviation cannot be negative." );
   }
-
   if ( std_mod_ > std_ )
   {
     throw BadProperty(

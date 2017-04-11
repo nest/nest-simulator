@@ -341,7 +341,9 @@ TsodyksConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   updateValue< double >( d, "y", y );
 
   if ( x + y > 1.0 )
+  {
     throw BadProperty( "x + y must be <= 1.0." );
+  }
 
   x_ = x;
   y_ = y;

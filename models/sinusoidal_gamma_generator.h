@@ -324,7 +324,9 @@ sinusoidal_gamma_generator::send_test_event( Node& target,
       e.set_sender( *this );
       const rport r = target.handles_test_event( e, receptor_type );
       if ( r != invalid_port_ and not is_model_prototype() )
+      {
         ++P_.num_trains_;
+      }
       return r;
     }
   }
@@ -343,7 +345,9 @@ sinusoidal_gamma_generator::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

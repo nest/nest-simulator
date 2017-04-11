@@ -303,7 +303,9 @@ STDPConnectionHom< targetidentifierT >::send( Event& e,
     minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
     ++start;
     if ( minus_dt == 0 )
+    {
       continue;
+    }
     weight_ =
       facilitate_( weight_, Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
   }

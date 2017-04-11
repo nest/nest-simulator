@@ -129,12 +129,16 @@ nest::correlation_detector::Parameters_::set( const DictionaryDatum& d,
     reset = true;
   }
 
-  if ( !delta_tau_.is_step() )
+  if ( not delta_tau_.is_step() )
+  {
     throw StepMultipleRequired( n.get_name(), names::delta_tau, delta_tau_ );
+  }
 
-  if ( !tau_max_.is_multiple_of( delta_tau_ ) )
+  if ( not tau_max_.is_multiple_of( delta_tau_ ) )
+  {
     throw TimeMultipleRequired(
       n.get_name(), names::tau_max, tau_max_, names::delta_tau, delta_tau_ );
+  }
 
   return reset;
 }
@@ -148,13 +152,18 @@ nest::correlation_detector::State_::set( const DictionaryDatum& d,
   if ( updateValue< std::vector< long > >( d, names::n_events, nev ) )
   {
     if ( nev.size() == 2 && nev[ 0 ] == 0 && nev[ 1 ] == 0 )
+    {
       reset_required = true;
+    }
     else
+    {
       throw BadProperty( "/n_events can only be set to [0 0]." );
+    }
   }
-
   if ( reset_required )
+  {
     reset( p );
+  }
 }
 
 void
@@ -190,9 +199,11 @@ nest::correlation_detector::correlation_detector()
   , P_()
   , S_()
 {
-  if ( !P_.delta_tau_.is_step() )
+  if ( not P_.delta_tau_.is_step() )
+  {
     throw InvalidDefaultResolution(
       get_name(), names::delta_tau, P_.delta_tau_ );
+  }
 }
 
 nest::correlation_detector::correlation_detector(
@@ -202,8 +213,10 @@ nest::correlation_detector::correlation_detector(
   , P_( n.P_ )
   , S_()
 {
-  if ( !P_.delta_tau_.is_step() )
+  if ( not P_.delta_tau_.is_step() )
+  {
     throw InvalidTimeInModel( get_name(), names::delta_tau, P_.delta_tau_ );
+  }
 }
 
 
@@ -270,9 +283,11 @@ nest::correlation_detector::handle( SpikeEvent& e )
     // throw away all spikes of the other neuron which are too old to
     // enter the correlation window
     // subtract 0.5*other to make left interval closed, keep right interval open
-    while ( !otherSpikes.empty()
+    while ( not otherSpikes.empty()
       && ( spike_i - otherSpikes.front().timestep_ ) - 0.5 * other >= tau_edge )
+    {
       otherSpikes.pop_front();
+    }
     // all remaining spike times in the queue are
     //     >= spike_i - tau_edge, if sender = 0
     // all remaining spike times in the queue are

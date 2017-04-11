@@ -529,10 +529,8 @@ nest::gif_cond_exp_multisynapse::calibrate()
     0.0 );
 
   S_.size_neuron_state_ = S_.y_.size();
-  ;
 
   B_.sys_.dimension = S_.y_.size();
-  ;
 
   B_.logger_.init();
 

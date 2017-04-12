@@ -484,6 +484,8 @@ private:
   bool buffer_size_spike_data_has_changed_;  //!< whether size of MPI buffer for
                                              //communication of spikes was
                                              //changed
+
+  std::vector< unsigned int > completed_count_;
 };
 
 inline void

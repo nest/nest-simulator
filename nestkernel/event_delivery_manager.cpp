@@ -62,6 +62,7 @@ EventDeliveryManager::EventDeliveryManager()
   , send_buffer_target_data_( NULL )
   , buffer_size_target_data_has_changed_( false )
   , buffer_size_spike_data_has_changed_( false )
+  , completed_count_( std::vector< unsigned int >() )
 {
 }
 
@@ -79,6 +80,7 @@ EventDeliveryManager::initialize()
   reset_timers_counters();
   spike_register_5g_.resize( num_threads, 0 );
   off_grid_spike_register_5g_.resize( num_threads, 0 );
+  completed_count_.resize( num_threads, 0 );
 
 #pragma omp parallel
   {
@@ -710,7 +712,7 @@ EventDeliveryManager::gather_target_data( const thread tid )
   // by 1 in each case. only if all threads are done AND all threads
   // detect all remote ranks are done, we are allowed to stop
   // communication.
-  static unsigned int completed_count;
+  unsigned int completed_count;
   const unsigned int half_completed_count =
     kernel().vp_manager.get_num_threads();
   const unsigned int max_completed_count = 2 * half_completed_count;
@@ -724,9 +726,9 @@ EventDeliveryManager::gather_target_data( const thread tid )
   bool done = false;
   while ( not done )
   {
+    completed_count_[ tid ] = 0;
 #pragma omp single
     {
-      completed_count = 0;
       if ( kernel().mpi_manager.adaptive_target_buffers()
         && buffer_size_target_data_has_changed_ )
       {
@@ -738,9 +740,10 @@ EventDeliveryManager::gather_target_data( const thread tid )
 
     me_completed_tid = collocate_target_data_buffers_(
       tid );
-#pragma omp atomic
-    completed_count += me_completed_tid;
+    completed_count_[ tid ] += me_completed_tid;
 #pragma omp barrier
+
+    completed_count = std::accumulate( completed_count_.begin(), completed_count_.end(), 0 );
 
    if ( completed_count == half_completed_count )
     {
@@ -770,15 +773,15 @@ EventDeliveryManager::gather_target_data( const thread tid )
 
     others_completed_tid = distribute_target_data_buffers_(
       tid );
-
-#pragma omp atomic
-    completed_count += others_completed_tid;
+    completed_count_[ tid ] += others_completed_tid;
 #pragma omp barrier
 
 #pragma omp single
     {
       sw_distribute_target_data.stop();
     } // of omp single; implicit barrier
+
+    completed_count = std::accumulate( completed_count_.begin(), completed_count_.end(), 0 );
 
     if ( completed_count == max_completed_count )
     {

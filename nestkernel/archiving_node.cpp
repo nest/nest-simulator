@@ -42,7 +42,9 @@ nest::Archiving_Node::Archiving_Node()
   , Kminus_( 0.0 )
   , triplet_Kminus_( 0.0 )
   , tau_minus_( 20.0 )
+  , tau_minus_inv_( 1. / tau_minus_ )
   , tau_minus_triplet_( 110.0 )
+  , tau_minus_triplet_inv_( 1. / tau_minus_triplet_ )
   , last_spike_( -1.0 )
   , Ca_t_( 0.0 )
   , Ca_minus_( 0.0 )
@@ -50,8 +52,6 @@ nest::Archiving_Node::Archiving_Node()
   , beta_Ca_( 0.001 )
   , synaptic_elements_map_()
 {
-  tau_minus_inv_ = 1. / tau_minus_;
-  tau_minus_triplet_inv_ = 1. / tau_minus_triplet_;
 }
 
 nest::Archiving_Node::Archiving_Node( const Archiving_Node& n )
@@ -60,7 +60,9 @@ nest::Archiving_Node::Archiving_Node( const Archiving_Node& n )
   , Kminus_( n.Kminus_ )
   , triplet_Kminus_( n.triplet_Kminus_ )
   , tau_minus_( n.tau_minus_ )
+  , tau_minus_inv_( n.tau_minus_inv_  )
   , tau_minus_triplet_( n.tau_minus_triplet_ )
+  , tau_minus_triplet_inv_( n.tau_minus_inv_  )
   , last_spike_( n.last_spike_ )
   , Ca_t_( n.Ca_t_ )
   , Ca_minus_( n.Ca_minus_ )
@@ -68,8 +70,6 @@ nest::Archiving_Node::Archiving_Node( const Archiving_Node& n )
   , beta_Ca_( n.beta_Ca_ )
   , synaptic_elements_map_( n.synaptic_elements_map_ )
 {
-  tau_minus_inv_ = 1. / tau_minus_;
-  tau_minus_triplet_inv_ = 1. / tau_minus_triplet_;
 }
 
 void

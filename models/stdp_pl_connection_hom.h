@@ -91,7 +91,7 @@ public:
 
   // data members common to all connections
   double tau_plus_;
-  double tau_plus_inv_;
+  double tau_plus_inv_; //!< 1 / tau_plus for efficiency
   double lambda_;
   double alpha_;
   double mu_;

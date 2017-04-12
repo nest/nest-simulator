@@ -32,6 +32,7 @@ assert proxy.isConnected()
 
 spike_buffers = [[] for _ in range(proxy.width())]
 
+
 def collect_spike(time, _, index):
     print("Received spike from neuron {}: {}".format(index, time))
     spike_buffers[index].append(time)
@@ -42,6 +43,6 @@ for time in itertools.takewhile(lambda t: t < 1.0, setup.runtime(0.01)):
     pass
 
 for spike_buffer in spike_buffers:
-    expected_times = [ (t + 0.1) * 1e-3 for t in [0.1, 0.2, 0.3] ]
-    assert np.isclose(spike_buffer, expected_times).all(), "{} vs {}".format(spike_buffer, expected_times)
-
+    expected_times = [(t + 0.1) * 1e-3 for t in [0.1, 0.2, 0.3]]
+    msg = "{} vs {}".format(spike_buffer, expected_times)
+    assert np.isclose(spike_buffer, expected_times).all(), msg

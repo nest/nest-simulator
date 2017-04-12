@@ -176,8 +176,7 @@ Time::fromstamp( Time::ms_stamp t )
   // intended ones.
   tic_t n = static_cast< tic_t >( t.t * Range::TICS_PER_MS );
   n -= ( n % Range::TICS_PER_STEP );
-  long s = n * Range::TICS_PER_STEP_INV;
-  double ms = s * Range::MS_PER_STEP;
+  const double ms = n * Range::TICS_PER_STEP_INV * Range::MS_PER_STEP;
   if ( ms < t.t )
   {
     n += Range::TICS_PER_STEP;
@@ -203,11 +202,11 @@ Time::reset_to_defaults()
 
 std::ostream& operator<<( std::ostream& strm, const Time& t )
 {
-  if ( t.tics == Time::LIM_NEG_INF.tics )
+  if ( t.is_neg_inf() )
   {
     strm << "-INF";
   }
-  else if ( t.tics == Time::LIM_POS_INF.tics )
+  else if ( t.is_pos_inf() )
   {
     strm << "+INF";
   }

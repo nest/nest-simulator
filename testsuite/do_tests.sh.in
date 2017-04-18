@@ -249,8 +249,8 @@ run_test ()
 
     param_script="$1"
     param_success="$2"
-    param_failure="$3"
-    param_skipped="$4"
+    param_skipped="$3"
+    param_failure="$4"
 
     msg_error=
 
@@ -289,12 +289,14 @@ run_test ()
     sed 's/^/   > /g' "${TEST_OUTFILE}" >> "${TEST_LOGFILE}"
 
     msg_dirty=${param_success##* ${exit_code} }
+    msg_dirty_skip=${param_skipped##* ${exit_code} }
     msg_clean=${msg_dirty%%,*}
     if test "${msg_dirty}" != "${param_success}" ; then
         TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
         explanation="${msg_clean}"
         junit_failure=
-    elif test "${msg_dirty}" != "${param_skipped}" ; then
+    elif test "${msg_dirty_skip}" != "${param_skipped}" ; then
+        TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
         msg_dirty=${param_skipped##* ${exit_code} }
         msg_clean=${msg_dirty%%,*}
         explanation="${msg_clean}"
@@ -318,8 +320,8 @@ run_test ()
         junit_failure="${exit_code} (${explanation})"
     fi
 
-    echo "${explanation} \033[0;31m${exit_code}\033[0m"
-    
+    echo "${explanation}"
+
     if test "x${msg_error}" != x ; then
         echo
         echo "${msg_error}"
@@ -429,13 +431,13 @@ junit_open 'core.phase_1'
 CODES_SUCCESS=' 0 Success'
 CODES_FAILURE=
 for test_name in test_pass.sli test_goodhandler.sli test_lazyhandler.sli ; do
-    run_test "selftests/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURe}" "${CODES_SKIPPED}"
+    run_test "selftests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 done
 
 CODES_SUCCESS=' 126 Success'
 CODES_FAILURE=
 for test_name in test_fail.sli test_stop.sli test_badhandler.sli ; do
-    run_test "selftests/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}" "${CODES_SKIPPED}"
+    run_test "selftests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 done
 
 junit_close
@@ -457,15 +459,15 @@ junit_open 'core.phase_2'
 CODES_SUCCESS=' 2 Success'
 CODES_FAILURE=' 126 Failed: error in test script'
 
-run_test selftests/test_pass_or_die.sli "${CODES_SUCCESS}" "${CODES_FAILURE}" "${CODES_SKIPPED}"
+run_test selftests/test_pass_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 
 CODES_SUCCESS=' 1 Success'
 CODES_FAILURE=\
 ' 2 Failed: error in tested code block,'\
 ' 126 Failed: error in test script,'
 
-run_test selftests/test_assert_or_die_b.sli "${CODES_SUCCESS}" "${CODES_FAILURE}" "${CODES_SKIPPED}"
-run_test selftests/test_assert_or_die_p.sli "${CODES_SUCCESS}" "${CODES_FAILURE}" "${CODES_SKIPPED}"
+run_test selftests/test_assert_or_die_b.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+run_test selftests/test_assert_or_die_p.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 
 CODES_SUCCESS=' 3 Success'
 CODES_FAILURE=\
@@ -473,7 +475,7 @@ CODES_FAILURE=\
 ' 2 Failed: error in tested code block,'\
 ' 126 Failed: error in test script,'
 
-run_test selftests/test_fail_or_die.sli "${CODES_SUCCESS}" "${CODES_FAILURE}" "${CODES_SKIPPED}"
+run_test selftests/test_fail_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 
 CODES_SUCCESS=' 3 Success'
 CODES_FAILURE=\
@@ -481,7 +483,7 @@ CODES_FAILURE=\
 ' 2 Failed: error in tested code block,'\
 ' 126 Failed: error in test script,'
 
-run_test selftests/test_crash_or_die.sli "${CODES_SUCCESS}" "${CODES_FAILURE}" "${CODES_SKIPPED}"
+run_test selftests/test_crash_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 
 CODES_SUCCESS=' 3 Success'
 CODES_FAILURE=\
@@ -489,8 +491,8 @@ CODES_FAILURE=\
 ' 2 Failed: error in tested code block,'\
 ' 126 Failed: error in test script,'
 
-run_test selftests/test_failbutnocrash_or_die_crash.sli "${CODES_SUCCESS}" "${CODES_FAILURE}" "${CODES_SKIPPED}"
-run_test selftests/test_failbutnocrash_or_die_pass.sli "${CODES_SUCCESS}" "${CODES_FAILURE}" "${CODES_SKIPPED}"
+run_test selftests/test_failbutnocrash_or_die_crash.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
+run_test selftests/test_failbutnocrash_or_die_pass.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 
 CODES_SUCCESS=' 3 Success'
 CODES_FAILURE=\
@@ -498,7 +500,7 @@ CODES_FAILURE=\
 ' 2 Failed: error in tested code block,'\
 ' 126 Failed: error in test script,'
 
-run_test selftests/test_passorfailbutnocrash_or_die.sli "${CODES_SUCCESS}" "${CODES_FAILURE}" "${CODES_SKIPPED}"
+run_test selftests/test_passorfailbutnocrash_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 
 junit_close
 
@@ -532,7 +534,7 @@ junit_open 'core.phase_3'
 
 for test_ext in sli py ; do
     for test_name in $(ls "${TEST_BASEDIR}/unittests/" | grep ".*\.${test_ext}\$") ; do
-        run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}" "${CODES_SKIPPED}"
+        run_test "unittests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
 done
 
@@ -546,7 +548,7 @@ junit_open 'core.phase_4'
 
 for test_ext in sli py ; do
     for test_name in $(ls "${TEST_BASEDIR}/regressiontests/" | grep ".*\.${test_ext}$") ; do
-        run_test "regressiontests/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}" "${CODES_SKIPPED}"
+        run_test "regressiontests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
 done
 
@@ -560,7 +562,7 @@ if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then
 
     NEST_BINARY=nest_indirect
     for test_name in $(ls "${TEST_BASEDIR}/mpi_selftests/pass" | grep '.*\.sli$') ; do
-        run_test "mpi_selftests/pass/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}" "${CODES_SKIPPED}"
+        run_test "mpi_selftests/pass/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
 
     # tests meant to fail
@@ -569,13 +571,13 @@ if test "x$(sli -c 'statusdict/have_mpi :: =')" = xtrue ; then
     CODES_SUCCESS=' 1 Success (expected failure)'
     CODES_FAILURE=' 0 Failed: Unittest failed to detect error.'
     for test_name in $(ls "${TEST_BASEDIR}/mpi_selftests/fail" | grep '.*\.sli$') ; do
-        run_test "mpi_selftests/fail/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}" "${CODES_SKIPPED}"
+        run_test "mpi_selftests/fail/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
     CODES_SUCCESS=${SAVE_CODES_SUCCESS}
     CODES_FAILURE=${SAVE_CODES_FAILURE}
 
     for test_name in $(ls "${TEST_BASEDIR}/mpitests/" | grep '.*\.sli$') ; do
-        run_test "mpitests/${test_name}" "${CODES_SUCCESS}" "${CODES_FAILURE}" "${CODES_SKIPPED}"
+        run_test "mpitests/${test_name}" "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
     done
 
     junit_close

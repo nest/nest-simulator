@@ -26,7 +26,7 @@
   args=test_event_out_proxy_multithreading_issue-696_sender.sli
 
 [receiver]
-  binary=./test_event_out_proxy_multithreading_issue-696_receiver.py
+  binary=test_event_out_proxy_multithreading_issue-696_receiver.py
   np=1
 
 sender.out -> receiver.in [11]

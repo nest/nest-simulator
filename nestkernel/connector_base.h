@@ -1212,13 +1212,12 @@ public:
     const std::vector< ConnectorModel* >& cm )
   {
     // for all secondary connections delegate send to the matching homogeneous
-    // connector only
+    // connectors only
     for ( size_t i = primary_end_; i < size(); i++ )
     {
       if ( e.supports_syn_id( at( i )->get_syn_id() ) )
       {
         at( i )->send( e, t, cm );
-        break;
       }
     }
   }

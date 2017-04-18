@@ -344,7 +344,6 @@ nest::sinusoidal_gamma_generator::update( Time const& origin,
 
     S_.rate_ =
       P_.rate_ + P_.amplitude_ * std::sin( P_.om_ * V_.t_ms_ + P_.phi_ );
-    B_.logger_.record_data( origin.get_steps() + lag );
 
     // t_steps_-1 since t_steps is end of interval, while activity det by start
     if ( P_.num_trains_ > 0 && S_.rate_ > 0
@@ -366,6 +365,7 @@ nest::sinusoidal_gamma_generator::update( Time const& origin,
         }
       }
     }
+    B_.logger_.record_data( origin.get_steps() + lag );
   }
 }
 

@@ -587,6 +587,11 @@ EventDeliveryManager::deliver_events( thread t )
         kernel().model_manager.get_secondary_event_prototype( synid, t )
           << readpos;
 
+        // set time stamp (used by weight_recorder)
+        kernel()
+          .model_manager.get_secondary_event_prototype( synid, t )
+          .set_stamp( kernel().simulation_manager.get_clock() );
+
         kernel().connection_manager.send_secondary(
           t, kernel().model_manager.get_secondary_event_prototype( synid, t ) );
       } // of while (true)

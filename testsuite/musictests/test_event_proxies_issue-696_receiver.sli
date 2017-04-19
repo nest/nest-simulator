@@ -1,5 +1,5 @@
 /*
- *  test_event_out_proxy_multithreading_issue-696_sender.sli
+ *  test_event_proxies_issue-696_receiver.sli
  *
  *  This file is part of NEST.
  *
@@ -27,38 +27,26 @@ statusdict/have_music :: not { exit_test_gracefully } if
 
 M_ERROR setverbosity
 
-10 /N_THREADS Set
 11 /N_NEURONS Set
 
-0 << /local_num_threads N_THREADS /resolution 0.1 >> SetStatus
-
-/subnet Create /SNG Set
-SNG ChangeSubnet
-/spike_generator N_NEURONS Create pop
+/subnet Create /NG Set
+NG ChangeSubnet
+/iaf_neuron N_NEURONS Create pop
 0 ChangeSubnet
-SNG GetGlobalNodes /generators Set
+NG GetGlobalNodes /neurons Set
 
-/subnet Create /PNG Set
-PNG ChangeSubnet
-/parrot_neuron N_NEURONS Create pop
+/subnet Create /INP Set
+INP ChangeSubnet
+/music_event_in_proxy N_NEURONS Create pop
 0 ChangeSubnet
-PNG GetGlobalNodes /neurons Set
-generators
-{
-    /i Set /sg Set
-    sg << /spike_times [0.1 0.2 0.3] >> SetStatus
-    sg neurons i get << /delay 0.1 >> Connect
-}
-forallindexed
+INP GetGlobalNodes /inputs Set
 
-/music_event_out_proxy Create /meop Set
-meop << /port_name (out) >> SetStatus
-
-neurons
+inputs
 {
     /channel Set
     /n Set
-    n meop << /music_channel channel >> Connect
+    n << /port_name (in) /music_channel channel >> SetStatus
+    n neurons channel get << /weight 750.0 >> Connect
 }
 forallindexed
 

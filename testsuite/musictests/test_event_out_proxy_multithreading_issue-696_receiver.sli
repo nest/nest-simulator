@@ -1,5 +1,5 @@
 /*
- *  test_event_out_proxy_multithreading_issue-696_sender.sli
+ *  test_event_out_proxy_multithreading_issue-696_receiver.sli
  *
  *  This file is part of NEST.
  *

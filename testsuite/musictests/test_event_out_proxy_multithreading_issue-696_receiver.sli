@@ -1,5 +1,5 @@
 /*
- *  test_event_out_proxy_multithreading_issue-696.music
+ *  test_event_out_proxy_multithreading_issue-696_sender.sli
  *
  *  This file is part of NEST.
  *
@@ -20,14 +20,34 @@
  *
  */
 
-[sender]
-  binary=nest
-  np=1
-  args=test_event_out_proxy_multithreading_issue-696_sender.sli
+(unittest) run
+/unittest using
 
-[receiver]
-  binary=nest
-  args=test_event_out_proxy_multithreading_issue-696_receiver.sli
-  np=1
+statusdict/have_music :: not { exit_test_gracefully } if
 
-sender.out -> receiver.in [11]
+M_ERROR setverbosity
+
+11 /N_NEURONS Set
+
+/subnet Create /NG Set
+NG ChangeSubnet
+/iaf_neuron N_NEURONS Create pop
+0 ChangeSubnet
+NG GetGlobalNodes /neurons Set
+
+/subnet Create /INP Set
+INP ChangeSubnet
+/music_event_in_proxy N_NEURONS Create pop
+0 ChangeSubnet
+INP GetGlobalNodes /inputs Set
+
+inputs
+{
+    /channel Set
+    /n Set
+    n << /port_name (in) /music_channel channel >> SetStatus
+    n neurons channel get << /weight 750.0 >> Connect
+}
+forallindexed
+
+1 Simulate

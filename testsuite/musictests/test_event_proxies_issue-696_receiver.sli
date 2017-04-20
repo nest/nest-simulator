@@ -31,7 +31,7 @@ M_ERROR setverbosity
 
 /subnet Create /NG Set
 NG ChangeSubnet
-/iaf_neuron N_NEURONS Create pop
+/iaf_psc_alpha N_NEURONS Create pop
 0 ChangeSubnet
 NG GetGlobalNodes /neurons Set
 

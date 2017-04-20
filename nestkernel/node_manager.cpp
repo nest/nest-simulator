@@ -578,8 +578,9 @@ NodeManager::next_local_gid_( index curr_gid ) const
 index
 NodeManager::get_max_num_local_nodes() const
 {
-  return ceil(
-    float( size() ) / kernel().vp_manager.get_num_virtual_processes() );
+  return static_cast< index >(
+    ceil( static_cast< double >(
+            size() ) / kernel().vp_manager.get_num_virtual_processes() ) );
 }
 
 index

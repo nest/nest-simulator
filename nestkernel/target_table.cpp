@@ -78,7 +78,9 @@ nest::TargetTable::finalize()
 void
 nest::TargetTable::prepare( const thread tid )
 {
-  targets_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes(),
+  // add one to max_num_local_nodes to avoid overflow in case of
+  // rounding errors
+  targets_[ tid ]->resize( kernel().node_manager.get_max_num_local_nodes() + 1,
     std::vector< Target >( 0, Target() ) );
   secondary_send_buffer_pos_[ tid ]->resize(
     kernel().node_manager.get_max_num_local_nodes(),
@@ -136,5 +138,32 @@ nest::TargetTable::compress_secondary_send_buffer_pos( const thread tid )
     std::sort( it->begin(), it->end() );
     const std::vector< size_t >::iterator new_it = std::unique( it->begin(), it->end() );
     it->resize( std::distance( it->begin(), new_it) );
+  }
+}
+
+void
+nest::TargetTable::add_target( const thread tid, const thread target_rank, const TargetData& target_data )
+{
+  const index lid = target_data.get_lid();
+
+  // use 1.5 growth strategy (see, e.g.,
+  // https://github.com/facebook/folly/blob/master/folly/docs/FBVector.md)
+  if ( ( *targets_[ tid ] )[ lid ].size() == ( *targets_[ tid ] )[ lid ].capacity() )
+  {
+    ( *targets_[ tid ] )[ lid ].reserve( ( ( *targets_[ tid ] )[ lid ].size() * 3 + 1 ) / 2 );
+  }
+
+  if ( target_data.is_primary() )
+  {
+    ( *targets_[ tid ] )[ lid ].push_back(
+      Target( target_data.get_target_tid(), target_rank, target_data.get_syn_id(), target_data.get_lcid() ) );
+  }
+  else
+  {
+    const size_t send_buffer_pos =
+      reinterpret_cast< const SecondaryTargetData* >( &target_data )
+        ->get_send_buffer_pos();
+    ( *secondary_send_buffer_pos_[ tid ] )[ lid ].push_back(
+      send_buffer_pos );
   }
 }

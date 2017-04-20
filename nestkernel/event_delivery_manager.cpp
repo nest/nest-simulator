@@ -60,6 +60,7 @@ EventDeliveryManager::EventDeliveryManager()
   , time_communicate_( 0.0 )
   , local_spike_counter_( std::vector< unsigned long >() )
   , send_buffer_target_data_( NULL )
+  , recv_buffer_target_data_( NULL )
   , buffer_size_target_data_has_changed_( false )
   , buffer_size_spike_data_has_changed_( false )
   , completed_count_( std::vector< unsigned int >() )
@@ -162,12 +163,18 @@ EventDeliveryManager::configure_target_data_buffers()
   if ( send_buffer_target_data_ != NULL )
   {
     free( send_buffer_target_data_ );
-    free( recv_buffer_target_data_ );
+    send_buffer_target_data_ = NULL;
   }
 
-  send_recv_count_target_data_per_rank_ =
-    floor( kernel().mpi_manager.get_buffer_size_target_data()
-           / kernel().mpi_manager.get_num_processes() );
+  if ( recv_buffer_target_data_ != NULL )
+  {
+    free( recv_buffer_target_data_ );
+    recv_buffer_target_data_ = NULL;
+  }
+
+  send_recv_count_target_data_per_rank_ = static_cast< size_t >(
+    floor( static_cast< double >( kernel().mpi_manager.get_buffer_size_target_data() )
+           / static_cast< double >( kernel().mpi_manager.get_num_processes() ) ) );
   send_recv_count_target_data_in_int_per_rank_ = sizeof( TargetData )
     / sizeof( unsigned int ) * send_recv_count_target_data_per_rank_;
 
@@ -177,6 +184,10 @@ EventDeliveryManager::configure_target_data_buffers()
   recv_buffer_target_data_ = static_cast< TargetData* >(
     malloc( kernel().mpi_manager.get_buffer_size_target_data()
             * sizeof( TargetData ) ) );
+
+  assert( send_buffer_target_data_ != NULL );
+  assert( recv_buffer_target_data_ != NULL );
+  assert( send_recv_count_target_data_per_rank_ * kernel().mpi_manager.get_num_processes() <= kernel().mpi_manager.get_buffer_size_target_data() );
 }
 
 void
@@ -738,9 +749,8 @@ EventDeliveryManager::gather_target_data( const thread tid )
     } // of omp single; implicit barrier
     kernel().connection_manager.restore_source_table_entry_point( tid );
 
-    me_completed_tid = collocate_target_data_buffers_(
-      tid );
-    completed_count_[ tid ] += me_completed_tid;
+    me_completed_tid = collocate_target_data_buffers_( tid );
+    completed_count_[ tid ] += static_cast< unsigned int >( me_completed_tid );
 #pragma omp barrier
 
     completed_count = std::accumulate( completed_count_.begin(), completed_count_.end(), 0 );
@@ -771,9 +781,8 @@ EventDeliveryManager::gather_target_data( const thread tid )
       sw_distribute_target_data.start();
     } // of omp single
 
-    others_completed_tid = distribute_target_data_buffers_(
-      tid );
-    completed_count_[ tid ] += others_completed_tid;
+    others_completed_tid = distribute_target_data_buffers_( tid );
+    completed_count_[ tid ] += static_cast< unsigned int >( others_completed_tid );
 #pragma omp barrier
 
 #pragma omp single

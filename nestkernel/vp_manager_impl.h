@@ -117,7 +117,7 @@ VPManager::is_vp_local( const index gid ) const
 inline index
 VPManager::gid_to_lid( const index gid ) const
 {
-  return gid / ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() );
+  return floor( static_cast< double >( gid ) / ( n_threads_ * kernel().mpi_manager.get_num_sim_processes() ) );
 }
 
 inline index

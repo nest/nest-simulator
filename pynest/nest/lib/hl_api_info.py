@@ -24,6 +24,7 @@ Functions to get information on NEST.
 """
 
 from .hl_api_helper import *
+import sys
 import os
 import webbrowser
 
@@ -62,12 +63,14 @@ def helpdesk():
 
     The system default browser.
     /helpdesk << /command (firefox) >> SetOptions in ~/.nestrc is now obsolete
-
-    @author graber
     """
-
-    url = os.environ['NEST_DOC_DIR'] + "/help/helpindex.html"
-    webbrowser.open_new(url)
+    url = os.path.join(os.environ['NEST_DOC_DIR'] + "help", "helpindex.html")
+    if sys.platform[:3] == "win":
+        os.startfile(url)
+    if sys.platform[:3] == "dar":
+        webbrowser.get('safari').open_new(url)
+    else:
+        webbrowser.open_new(url)
 
 
 @check_stack

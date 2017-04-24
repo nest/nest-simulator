@@ -111,6 +111,7 @@ def deprecated(alt_func_name, text=None):
     function:
         Decorator function
     """
+
     def deprecated_decorator(func):
         _deprecation_warning[func.__name__] = True
 
@@ -170,7 +171,6 @@ def is_string(obj):
         True if obj is a unicode string
     """
     return isinstance(obj, uni_str)
-
 
 __debug = False
 
@@ -389,7 +389,7 @@ def broadcast(item, length, allowed_types, name="item"):
     """
 
     if isinstance(item, allowed_types):
-        return length * (item,)
+        return length * (item, )
     elif len(item) == 1:
         return length * item
     elif len(item) != length:
@@ -398,3 +398,99 @@ def broadcast(item, length, allowed_types, name="item"):
                         % (name, length))
 
     return item
+
+
+@check_stack
+def get_verbosity():
+    """Return verbosity level of NEST's messages.
+
+    Returns
+    -------
+    int:
+        The current verbosity level
+    """
+
+    # Defined in hl_api_helper to avoid circular inclusion problem with
+    # hl_api_info.py
+    sr('verbosity')
+    return spp()
+
+
+@check_stack
+def set_verbosity(level):
+    """Change verbosity level for NEST's messages.
+
+    Parameters
+    ----------
+    level : str
+        Can be one of 'M_FATAL', 'M_ERROR', 'M_WARNING', 'M_DEPRECATED',
+        'M_INFO' or 'M_ALL'.
+    """
+
+    # Defined in hl_api_helper to avoid circular inclusion problem with
+    # hl_api_info.py
+    sr("%s setverbosity" % level)
+
+
+def model_deprecation_warning(model):
+    """Checks whether the model is to be removed in a future verstion of NEST.
+    If so, a deprecation warning is issued.
+
+    Parameters
+    ----------
+    model: str
+        Name of model
+    """
+
+    deprecated_models = {'subnet': 'GIDCollection',
+                         'aeif_cond_alpha_RK5': 'aeif_cond_alpha',
+                         'iaf_neuron': 'iaf_psc_alpha'}
+
+    if model in deprecated_models:
+        text = "The {0} model is deprecated and will be removed in a \
+        future version of NEST, use {1} instead.\
+        ".format(model, deprecated_models[model])
+        text = get_wrapped_text(text)
+        warnings.warn('\n' + text)
+
+
+class SuppressedDeprecationWarning(object):
+    """
+    Context manager turning off deprecation warnings for given methods.
+
+    Think thoroughly before use. This context should only be used as a way to
+    make sure examples do not display deprecation warnings, that is, used in
+    functions called from examples, and not as a way to make tedious
+    deprecation warnings dissapear.
+    """
+
+    def __init__(self, no_dep_funcs):
+        """
+        Parameters
+        ----------
+        no_dep_funcs: Function name (string) or iterable of function names
+                      for which to suppress deprecation warnings
+        """
+
+        self._no_dep_funcs = (no_dep_funcs if not is_string(no_dep_funcs)
+                              else (no_dep_funcs, ))
+        self._deprecation_status = {}
+        self._verbosity_level = get_verbosity()
+
+    def __enter__(self):
+
+        for func_name in self._no_dep_funcs:
+            self._deprecation_status[func_name] = _deprecation_warning[func_name]  # noqa
+            _deprecation_warning[func_name] = False
+
+            # Suppress only if verbosity level is deprecated or lower
+            if self._verbosity_level <= sli_func('M_DEPRECATED'):
+                set_verbosity(sli_func('M_WARNING'))
+
+    def __exit__(self, *args):
+
+        # Reset the verbosity level and deprecation warning status
+        set_verbosity(self._verbosity_level)
+
+        for func_name, deprec_status in self._deprecation_status.items():
+            _deprecation_warning[func_name] = deprec_status

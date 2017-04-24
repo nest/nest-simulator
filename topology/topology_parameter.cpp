@@ -56,15 +56,18 @@ Gaussian2DParameter::Gaussian2DParameter( const DictionaryDatum& d )
   updateValue< double >( d, names::mean_y, mean_y_ );
   updateValue< double >( d, names::sigma_y, sigma_y_ );
   updateValue< double >( d, names::rho, rho_ );
-
   if ( rho_ >= 1 || rho_ <= -1 )
+  {
     throw BadProperty(
       "topology::Gaussian2DParameter: "
       "-1 < rho < 1 required." );
+  }
   if ( sigma_x_ <= 0 || sigma_y_ <= 0 )
+  {
     throw BadProperty(
       "topology::Gaussian2DParameter: "
       "sigma_x > 0 and sigma_y > 0 required." );
+  }
 }
 
 } // namespace nest

@@ -213,20 +213,25 @@ nest::UniversalDataLogger< HostNode >::connect_logging_device(
   // rports are assigned consecutively, the caller may not request specific
   // rports.
   if ( req.get_rport() != 0 )
+  {
     throw IllegalConnection(
       "UniversalDataLogger::connect_logging_device(): "
       "Connections from multimeter to node must request rport 0." );
-
+  }
   // ensure that we have not connected this multimeter before
   const index mm_gid = req.get_sender().get_gid();
   const size_t n_loggers = data_loggers_.size();
   size_t j = 0;
   while ( j < n_loggers && data_loggers_[ j ].get_mm_gid() != mm_gid )
+  {
     ++j;
+  }
   if ( j < n_loggers )
+  {
     throw IllegalConnection(
       "UniversalDataLogger::connect_logging_device(): "
       "Each multimeter can only be connected once to a given node." );
+  }
 
   // we now know that we have no DataLogger_ for the given multimeter, so we
   // create one and push it
@@ -273,10 +278,11 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_(
   num_vars_ = node_access_.size();
 
   if ( num_vars_ > 0 && req.get_recording_interval() < Time::step( 1 ) )
+  {
     throw IllegalConnection(
       "UniversalDataLogger::connect_logging_device(): "
       "recording interval must be >= resolution." );
-
+  }
   recording_interval_ = req.get_recording_interval();
 }
 }

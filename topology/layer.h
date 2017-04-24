@@ -218,7 +218,7 @@ public:
   /**
    * Copy constructor.
    */
-  Layer( const Layer& l );
+  Layer( const Layer& other_layer );
 
   /**
    * Virtual destructor
@@ -543,9 +543,13 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
   : mask_( maskd )
 {
   if ( include_global )
+  {
     ntree_ = layer.get_global_positions_ntree( filter );
+  }
   else
+  {
     ntree_ = layer.get_local_positions_ntree( filter );
+  }
 
   check_mask_( layer, allow_oversized );
 }
@@ -560,10 +564,12 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
   : mask_( maskd )
 {
   if ( include_global )
+  {
     ntree_ = layer.get_global_positions_ntree( filter,
       target.get_periodic_mask(),
       target.get_lower_left(),
       target.get_extent() );
+  }
   // else
   //  ntree_ = layer.get_local_positions_ntree(filter,
   //  target.get_periodic_mask(),
@@ -612,11 +618,11 @@ inline Layer< D >::Layer()
 }
 
 template < int D >
-inline Layer< D >::Layer( const Layer& l )
-  : AbstractLayer( l )
-  , lower_left_( l.lower_left_ )
-  , extent_( l.extent_ )
-  , periodic_( l.periodic_ )
+inline Layer< D >::Layer( const Layer& other_layer )
+  : AbstractLayer( other_layer )
+  , lower_left_( other_layer.lower_left_ )
+  , extent_( other_layer.extent_ )
+  , periodic_( other_layer.periodic_ )
 {
 }
 
@@ -687,7 +693,9 @@ inline void
 Layer< D >::clear_vector_cache_() const
 {
   if ( cached_vector_ != 0 )
+  {
     delete cached_vector_;
+  }
   cached_vector_ = 0;
   cached_vector_layer_ = -1;
 }

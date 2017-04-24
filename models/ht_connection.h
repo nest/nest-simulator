@@ -31,9 +31,11 @@
 
   Description:
   This synapse implements the depression model described in [1, p 1678].
+  See docs/model_details/HillTononi.ipynb for details.
+
   Synaptic dynamics are given by
 
-  P'(t) = ( 1 - P ) / tau_p
+  P'(t) = ( 1 - P ) / tau_P
   P(T+) = (1 - delta_P) P(T-)   for T : time of a spike
   P(t=0) = 1
 
@@ -41,13 +43,10 @@
 
   Parameters:
      The following parameters can be set in the status dictionary:
-     tauP     double - synaptic vesicle pool recovery time constant [ms]
+     tau_P    double - synaptic vesicle pool recovery time constant [ms]
      delta_P  double - fractional change in vesicle pool on incoming spikes
                        [unitless]
      P        double - current size of the vesicle pool [unitless, 0 <= P <= 1]
-
-  Warning:
-  THIS SYNAPSE MODEL HAS NOT BEEN TESTED EXTENSIVELY!
 
   References:
    [1] S Hill and G Tononi (2005). J Neurophysiol 93:1671-1698.
@@ -61,7 +60,7 @@
 
 /**
  * Class representing a synapse with Hill short term plasticity.  A
- * suitale Connector containing these connections can be obtained from
+ * suitable Connector containing these connections can be obtained from
  * the template GenericConnector.
  */
 
@@ -178,15 +177,12 @@ HTConnection< targetidentifierT >::send( Event& e,
   double t_lastspike,
   const CommonSynapseProperties& )
 {
-  double h = e.get_stamp().get_ms() - t_lastspike;
-  Node* target = get_target( t );
-  // t_lastspike_ = 0 initially
-
   // propagation t_lastspike -> t_spike, t_lastspike_ = 0 initially, p_ = 1
+  const double h = e.get_stamp().get_ms() - t_lastspike;
   p_ = 1 - ( 1 - p_ ) * std::exp( -h / tau_P_ );
 
   // send the spike to the target
-  e.set_receiver( *target );
+  e.set_receiver( *get_target( t ) );
   e.set_weight( weight_ * p_ );
   e.set_delay( get_delay_steps() );
   e.set_rport( get_rport() );
@@ -200,8 +196,8 @@ template < typename targetidentifierT >
 HTConnection< targetidentifierT >::HTConnection()
   : ConnectionBase()
   , weight_( 1.0 )
-  , tau_P_( 50.0 )
-  , delta_P_( 0.2 )
+  , tau_P_( 500.0 )
+  , delta_P_( 0.125 )
   , p_( 1.0 )
 {
 }
@@ -222,9 +218,9 @@ HTConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
-  def< double >( d, "tau_P", tau_P_ );
-  def< double >( d, "delta_P", delta_P_ );
-  def< double >( d, "P", p_ );
+  def< double >( d, names::tau_P, tau_P_ );
+  def< double >( d, names::delta_P, delta_P_ );
+  def< double >( d, names::P, p_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 }
 
@@ -236,18 +232,24 @@ HTConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectionBase::set_status( d, cm );
 
   updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, "tau_P", tau_P_ );
-  updateValue< double >( d, "delta_P", delta_P_ );
-  updateValue< double >( d, "P", p_ );
+  updateValue< double >( d, names::tau_P, tau_P_ );
+  updateValue< double >( d, names::delta_P, delta_P_ );
+  updateValue< double >( d, names::P, p_ );
 
   if ( tau_P_ <= 0.0 )
-    throw BadProperty( "tau_P >= 0 required." );
+  {
+    throw BadProperty( "tau_P > 0 required." );
+  }
 
   if ( delta_P_ < 0.0 || delta_P_ > 1.0 )
+  {
     throw BadProperty( "0 <= delta_P <= 1 required." );
+  }
 
   if ( p_ < 0.0 || p_ > 1.0 )
+  {
     throw BadProperty( "0 <= P <= 1 required." );
+  }
 }
 
 } // namespace

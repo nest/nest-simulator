@@ -434,25 +434,37 @@ STDPFACETSHWConnectionHom< targetidentifierT >::send( Event& e,
     {
       discrete_weight_ = lookup_( discrete_weight_, cp.lookuptable_0_ );
       if ( cp.reset_pattern_[ 0 ] )
+      {
         a_causal_ = 0;
+      }
       if ( cp.reset_pattern_[ 1 ] )
+      {
         a_acausal_ = 0;
+      }
     }
     else if ( eval_0 == false && eval_1 == true )
     {
       discrete_weight_ = lookup_( discrete_weight_, cp.lookuptable_1_ );
       if ( cp.reset_pattern_[ 2 ] )
+      {
         a_causal_ = 0;
+      }
       if ( cp.reset_pattern_[ 3 ] )
+      {
         a_acausal_ = 0;
+      }
     }
     else if ( eval_0 == true && eval_1 == true )
     {
       discrete_weight_ = lookup_( discrete_weight_, cp.lookuptable_2_ );
       if ( cp.reset_pattern_[ 4 ] )
+      {
         a_causal_ = 0;
+      }
       if ( cp.reset_pattern_[ 5 ] )
+      {
         a_acausal_ = 0;
+      }
     }
     // do nothing, if eval_0 == false and eval_1 == false
 

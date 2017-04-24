@@ -61,10 +61,12 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else if ( num_parameters == 2 )
   {
-    if ( !params_map->known( names::weight )
-      || !params_map->known( names::delay ) )
+    if ( not params_map->known( names::weight )
+      || not params_map->known( names::delay ) )
+    {
       throw BadProperty(
         "The parameter map has to contain the indices of weight and delay." );
+    }
 
     long w_idx = ( *params_map )[ names::weight ];
     long d_idx = ( *params_map )[ names::delay ];
@@ -126,10 +128,12 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else if ( num_parameters == 2 )
   {
-    if ( !params_map->known( names::weight )
-      || !params_map->known( names::delay ) )
+    if ( not params_map->known( names::weight )
+      || not params_map->known( names::delay ) )
+    {
       throw BadProperty(
         "The parameter map has to contain the indices of weight and delay." );
+    }
 
     long w_idx = ( *params_map )[ names::weight ];
     long d_idx = ( *params_map )[ names::delay ];
@@ -234,7 +238,9 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
     for ( size_t proc = 0; proc
             < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
           ++proc )
+    {
       ( *masks )[ proc ].sources.insert( cg_idx_left, right );
+    }
     cg_idx_left += num_elements + 1;
   }
 
@@ -296,7 +302,9 @@ cg_get_right_border( index left, size_t step, std::vector< long >& gids )
   // Check if left is already the index of the last element in
   // gids. If yes, return left as the right border
   if ( left == gids.size() - 1 )
+  {
     return left;
+  }
 
   // leftmost_r is the leftmost right border during the search
   long leftmost_r = -1;
@@ -316,7 +324,9 @@ cg_get_right_border( index left, size_t step, std::vector< long >& gids )
     if ( ( i == static_cast< long >( gids.size() ) - 1
            && gids[ i ] - gids[ left ] == i - static_cast< long >( left ) )
       || i == leftmost_r )
+    {
       return last_i;
+    }
 
     // Store the current value of i in last_i. This is the current
     // candidate for the right border of the range.
@@ -327,7 +337,9 @@ cg_get_right_border( index left, size_t step, std::vector< long >& gids )
     // for leftmost_r to the current i (i.e. the known leftmost
     // position) and set i to the left by step steps.
     if ( gids[ i ] - gids[ left ] == i - static_cast< long >( left ) )
+    {
       i += step;
+    }
     else
     {
       leftmost_r = i;
@@ -337,7 +349,9 @@ cg_get_right_border( index left, size_t step, std::vector< long >& gids )
     // Reduce the search interval by half its size if it is > 1.
     // This adaptation is the basis of the binary search.
     if ( step != 1 )
+    {
       step /= 2;
+    }
   }
 
   // The border should always be found and returned during the while
@@ -370,9 +384,13 @@ cg_get_ranges( RangeSet& ranges, std::vector< long >& gids )
     right = cg_get_right_border( left, ( gids.size() - left ) / 2, gids );
     ranges.push_back( Range( gids[ left ], gids[ right ] ) );
     if ( right == gids.size() - 1 ) // We're at the end of gids and stop
+    {
       break;
+    }
     else
-      left = right + 1; // The new left border is one after the old right
+    {
+      left = right + 1;
+    } // The new left border is one after the old right
   }
 }
 

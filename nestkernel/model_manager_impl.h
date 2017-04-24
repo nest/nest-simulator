@@ -39,9 +39,11 @@ namespace nest
 
 template < class ModelT >
 index
-ModelManager::register_node_model( const Name& name, bool private_model )
+ModelManager::register_node_model( const Name& name,
+  bool private_model,
+  std::string deprecation_info )
 {
-  if ( !private_model && modeldict_->known( name ) )
+  if ( not private_model && modeldict_->known( name ) )
   {
     std::string msg = String::compose(
       "A model called '%1' already exists.\n"
@@ -50,7 +52,8 @@ ModelManager::register_node_model( const Name& name, bool private_model )
     throw NamingConflict( msg );
   }
 
-  Model* model = new GenericModel< ModelT >( name.toString() );
+  Model* model =
+    new GenericModel< ModelT >( name.toString(), deprecation_info );
   return register_node_model_( model, private_model );
 }
 
@@ -58,9 +61,10 @@ template < class ModelT >
 index
 ModelManager::register_preconf_node_model( const Name& name,
   DictionaryDatum& conf,
-  bool private_model )
+  bool private_model,
+  std::string deprecation_info )
 {
-  if ( !private_model && modeldict_->known( name ) )
+  if ( not private_model && modeldict_->known( name ) )
   {
     std::string msg = String::compose(
       "A model called '%1' already exists.\n"
@@ -69,7 +73,8 @@ ModelManager::register_preconf_node_model( const Name& name,
     throw NamingConflict( msg );
   }
 
-  Model* model = new GenericModel< ModelT >( name.toString() );
+  Model* model =
+    new GenericModel< ModelT >( name.toString(), deprecation_info );
   conf->clear_access_flags();
   model->set_status( conf );
   std::string missed;
@@ -78,32 +83,45 @@ ModelManager::register_preconf_node_model( const Name& name,
   return register_node_model_( model, private_model );
 }
 
-template < class ConnectionT >
+template < typename ConnectionT, template < typename > class ConnectorModelT >
 void
-ModelManager::register_connection_model( const std::string& name )
+ModelManager::register_connection_model( const std::string& name,
+  bool requires_symmetric )
 {
-  ConnectorModel* cf = new GenericConnectorModel< ConnectionT >(
-    name, /*is_primary=*/true, /*has_delay=*/true );
+  ConnectorModel* cf = new ConnectorModelT< ConnectionT >(
+    name, /*is_primary=*/true, /*has_delay=*/true, requires_symmetric );
   register_connection_model_( cf );
 
   if ( not ends_with( name, "_hpc" ) )
   {
-    cf = new GenericConnectorModel< ConnectionLabel< ConnectionT > >(
-      name + "_lbl", /*is_primary=*/true, /*has_delay=*/true );
+    cf = new ConnectorModelT< ConnectionLabel< ConnectionT > >( name + "_lbl",
+      /*is_primary=*/true,
+      /*has_delay=*/true,
+      requires_symmetric );
     register_connection_model_( cf );
   }
+}
+
+template < typename ConnectionT >
+void
+ModelManager::register_connection_model( const std::string& name,
+  bool requires_symmetric )
+{
+  register_connection_model< ConnectionT, GenericConnectorModel >(
+    name, requires_symmetric );
 }
 
 /**
  * Register a synape with default Connector and without any common properties.
  */
-template < class ConnectionT >
+template < typename ConnectionT >
 void
 ModelManager::register_secondary_connection_model( const std::string& name,
-  bool has_delay )
+  bool has_delay,
+  bool requires_symmetric )
 {
-  ConnectorModel* cm =
-    new GenericSecondaryConnectorModel< ConnectionT >( name, has_delay );
+  ConnectorModel* cm = new GenericSecondaryConnectorModel< ConnectionT >(
+    name, has_delay, requires_symmetric );
 
   synindex synid = register_connection_model_( cm );
 
@@ -111,7 +129,9 @@ ModelManager::register_secondary_connection_model( const std::string& name,
   // otherwise when number of threads is increased no way to get further
   // elements
   if ( secondary_connector_models_.size() < synid + ( unsigned int ) 1 )
+  {
     secondary_connector_models_.resize( synid + 1, NULL );
+  }
 
   secondary_connector_models_[ synid ] = cm;
 
@@ -119,7 +139,7 @@ ModelManager::register_secondary_connection_model( const std::string& name,
 
   // create labeled secondary event connection model
   cm = new GenericSecondaryConnectorModel< ConnectionLabel< ConnectionT > >(
-    name + "_lbl", has_delay );
+    name + "_lbl", has_delay, requires_symmetric );
 
   synid = register_connection_model_( cm );
 
@@ -127,7 +147,9 @@ ModelManager::register_secondary_connection_model( const std::string& name,
   // otherwise when number of threads is increased no way to get further
   // elements
   if ( secondary_connector_models_.size() < synid + ( unsigned int ) 1 )
+  {
     secondary_connector_models_.resize( synid + 1, NULL );
+  }
 
   secondary_connector_models_[ synid ] = cm;
 

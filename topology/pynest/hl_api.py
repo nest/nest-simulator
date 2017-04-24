@@ -64,6 +64,7 @@ using the same dictionary to specify both connections.
 """
 
 import nest
+import nest.lib.hl_api_helper as hlh
 
 
 def topology_func(slifunc, *args):
@@ -170,8 +171,9 @@ def CreateMask(masktype, specs, anchor=None):
 
     Parameters
     ----------
-    masktype : str, ['rectangular' | 'circular' | 'doughnut'] for 2D masks, \
-['box' | 'spherical'] for 3D masks, ['grid'] only for grid-based layers in 2D
+    masktype : str, ['rectangular' | 'circular' | 'doughnut' | 'elliptical']
+        for 2D masks, \ ['box' | 'spherical' | 'ellipsoidal] for 3D masks,
+        ['grid'] only for grid-based layers in 2D
         The mask name corresponds to the geometrical shape of the mask. There
         are different types for 2- and 3-dimensional layers.
     specs : dict
@@ -219,6 +221,12 @@ def CreateMask(masktype, specs, anchor=None):
             'doughnut' :
                 {'inner_radius' : float,
                  'outer_radius' : float}
+            #or
+            'elliptical' :
+                {'major_axis' : float,
+                 'minor_axis' : float,
+                 'azimuth_angle' : float,   # default: 0.0,
+                 'anchor' : [float, float], # default: [0.0, 0.0]}
 
 
     * 3D free and grid-based layers
@@ -230,6 +238,14 @@ def CreateMask(masktype, specs, anchor=None):
             #or
             'spherical' :
                 {'radius' : float}
+            #or
+            'ellipsoidal' :
+                {'major_axis' : float,
+                 'minor_axis' : float,
+                 'polar_axis' : float
+                 'azimuth_angle' : float,   # default: 0.0,
+                 'polar_angle' : float,     # default: 0.0,
+                 'anchor' : [float, float, float], # default: [0.0, 0.0, 0.0]}}
 
 
     * 2D grid-based layers only
@@ -257,7 +273,7 @@ def CreateMask(masktype, specs, anchor=None):
             # create a grid-based layer
             l = tp.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
 
             # create a circular mask
             m = tp.CreateMask('circular', {'radius': 0.2})
@@ -489,7 +505,7 @@ def CreateParameter(parametertype, specs):
             # create a grid-based layer
             l = tp.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
 
             # parameter for delay with linear distance dependency
             d = tp.CreateParameter('linear', {'a': 0.2,
@@ -572,7 +588,7 @@ def CreateLayer(specs):
         Explicit specification of the positions of all elements.
         The coordinates have a length 2 or 3 dependent on the number of
         dimensions.
-        All element positions must be within the layer’s extent.
+        All element positions must be within the layer's extent.
         Mutually exclusive with 'rows' and 'columns'.
     rows : int, obligatory for grid-based layers
         Number of rows.
@@ -593,14 +609,14 @@ def CreateLayer(specs):
             # grid-based layer
             gl = tp.CreateLayer({'rows'      : 5,
                                  'columns'   : 5,
-                                 'elements'  : 'iaf_neuron'})
+                                 'elements'  : 'iaf_psc_alpha'})
 
             # free layer
             import numpy as np
             pos = [[np.random.uniform(-0.5, 0.5), np.random.uniform(-0.5,0.5)]
                     for i in range(50)]
             fl = tp.CreateLayer({'positions' : pos,
-                                 'elements'  : 'iaf_neuron'})
+                                 'elements'  : 'iaf_psc_alpha'})
 
             # extent, center and edge_wrap
             el = tp.CreateLayer({'rows'      : 5,
@@ -608,7 +624,7 @@ def CreateLayer(specs):
                                  'extent'    : [2.0, 3.0],
                                  'center'    : [1.0, 1.5],
                                  'edge_wrap' : True,
-                                 'elements'  : 'iaf_neuron'})
+                                 'elements'  : 'iaf_psc_alpha'})
 
             # composite layer with several nodes of the same type
             cl = tp.CreateLayer({'rows'      : 1,
@@ -626,6 +642,14 @@ def CreateLayer(specs):
         specs = (specs, )
     elif not all(isinstance(spec, dict) for spec in specs):
         raise TypeError("specs must be a dictionary or a list of dictionaries")
+
+    for dicts in specs:
+        elements = dicts['elements']
+        if isinstance(elements, list):
+            for elem in elements:
+                hlh.model_deprecation_warning(elem)
+        else:
+            hlh.model_deprecation_warning(elements)
 
     return topology_func('{ CreateLayer } Map', specs)
 
@@ -758,7 +782,7 @@ def ConnectLayers(pre, post, projections):
             l = tp.CreateLayer({'rows'      : 11,
                                 'columns'   : 11,
                                 'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
 
             # connectivity specifications with a mask
             conndict1 = {'connection_type': 'divergent',
@@ -851,7 +875,7 @@ def GetPosition(nodes):
             # create a layer
             l = tp.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
 
             # retrieve positions of all (local) nodes belonging to the layer
             gids = nest.GetNodes(l, {'local_only': True})[0]
@@ -900,7 +924,7 @@ def GetLayer(nodes):
             # create a layer
             l = tp.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
 
             # get layer GID of nodes in layer
             tp.GetLayer(nest.GetNodes(l)[0])
@@ -968,7 +992,7 @@ def GetElement(layers, locations):
             # create a layer
             l = tp.CreateLayer({'rows'      : 5,
                                 'columns'   : 4,
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
 
             # get GID of element in last row and column
             tp.GetElement(l, [3, 4])
@@ -1085,7 +1109,7 @@ def FindNearestElement(layers, locations, find_all=False):
             # create a layer
             l = tp.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
 
             # get GID of element closest to some location
             tp.FindNearestElement(l, [3.0, 4.0], True)
@@ -1238,13 +1262,13 @@ def Displacement(from_arg, to_arg):
             # create a layer
             l = tp.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
 
             # displacement between node 2 and 3
-            print tp.Displacement([2], [3])
+            print(tp.Displacement([2], [3]))
 
             # displacment between the position (0.0., 0.0) and node 2
-            print tp.Displacement([(0.0, 0.0)], [2])
+            print(tp.Displacement([(0.0, 0.0)], [2]))
     """
 
     from_arg, to_arg = _check_displacement_args(from_arg, to_arg,
@@ -1309,13 +1333,13 @@ def Distance(from_arg, to_arg):
             # create a layer
             l = tp.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
 
             # distance between node 2 and 3
-            print tp.Distance([2], [3])
+            print(tp.Distance([2], [3]))
 
             # distance between the position (0.0., 0.0) and node 2
-            print tp.Distance([(0.0, 0.0)], [2])
+            print(tp.Distance([(0.0, 0.0)], [2]))
 
     """
 
@@ -1389,7 +1413,7 @@ def DumpLayerNodes(layers, outname):
             # create a layer
             l = tp.CreateLayer({'rows'     : 5,
                                 'columns'  : 5,
-                                'elements' : 'iaf_neuron'})
+                                'elements' : 'iaf_psc_alpha'})
 
             # write layer node positions to file
             tp.DumpLayerNodes(l, 'positions.txt')
@@ -1459,7 +1483,7 @@ def DumpLayerConnections(layers, synapse_model, outname):
             # create a layer
             l = tp.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
             tp.ConnectLayers(l,l, {'connection_type': 'divergent',
                                    'synapse_model': 'static_synapse'})
 
@@ -1518,7 +1542,7 @@ def FindCenterElement(layers):
             # create a layer
             l = tp.CreateLayer({'rows'      : 5,
                                 'columns'   : 5,
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
 
             # get GID of the element closest to the center of the layer
             tp.FindCenterElement(l)
@@ -1586,7 +1610,7 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
             l = tp.CreateLayer({'rows'      : 11,
                                 'columns'   : 11,
                                 'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
 
             # connectivity specifications with a mask
             conndict = {'connection_type': 'divergent',
@@ -1610,11 +1634,12 @@ def GetTargetNodes(sources, tgt_layer, tgt_model=None, syn_model=None):
     if len(tgt_layer) != 1:
         raise nest.NESTError("tgt_layer must be a one-element list")
 
-    # obtain local nodes in target layer, to pass to GetConnections
-    tgt_nodes = nest.GetLeaves(tgt_layer,
-                               properties={
-                                   'model': tgt_model} if tgt_model else None,
-                               local_only=True)[0]
+    with nest.SuppressedDeprecationWarning('GetLeaves'):
+        # obtain local nodes in target layer, to pass to GetConnections
+        tgt_nodes = nest.GetLeaves(tgt_layer,
+                                   properties={'model': tgt_model}
+                                   if tgt_model else None,
+                                   local_only=True)[0]
 
     conns = nest.GetConnections(sources, tgt_nodes, synapse_model=syn_model)
 
@@ -1678,7 +1703,7 @@ def GetTargetPositions(sources, tgt_layer, tgt_model=None, syn_model=None):
             l = tp.CreateLayer({'rows'      : 11,
                                 'columns'   : 11,
                                 'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
 
             # connectivity specifications with a mask
             conndict1 = {'connection_type': 'divergent',
@@ -1764,7 +1789,7 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
             l = tp.CreateLayer({'rows'      : 11,
                                 'columns'   : 11,
                                 'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
 
             # plot layer with all its nodes
             tp.PlotLayer(l)
@@ -1786,8 +1811,9 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         xext, yext = ext
         xctr, yctr = nest.GetStatus(layer, 'topology')[0]['center']
 
-        # extract position information, transpose to list of x and y positions
-        xpos, ypos = zip(*GetPosition(nest.GetChildren(layer)[0]))
+        with nest.SuppressedDeprecationWarning('GetChildren'):
+            # extract position information, transpose to list of x and y pos
+            xpos, ypos = zip(*GetPosition(nest.GetChildren(layer)[0]))
 
         if fig is None:
             fig = plt.figure()
@@ -1803,8 +1829,9 @@ def PlotLayer(layer, fig=None, nodecolor='b', nodesize=20):
         # 3D layer
         from mpl_toolkits.mplot3d import Axes3D
 
-        # extract position information, transpose to list of x,y,z positions
-        pos = zip(*GetPosition(nest.GetChildren(layer)[0]))
+        with nest.SuppressedDeprecationWarning('GetChildren'):
+            # extract position information, transpose to list of x,y,z pos
+            pos = zip(*GetPosition(nest.GetChildren(layer)[0]))
 
         if fig is None:
             fig = plt.figure()
@@ -1890,7 +1917,7 @@ def PlotTargets(src_nrn, tgt_layer, tgt_model=None, syn_type=None, fig=None,
             l = tp.CreateLayer({'rows'      : 11,
                                 'columns'   : 11,
                                 'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
 
             # connectivity specifications with a mask
             conndict = {'connection_type': 'divergent',
@@ -2026,7 +2053,7 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
             l = tp.CreateLayer({'rows'      : 11,
                                 'columns'   : 11,
                                 'extent'    : [11.0, 11.0],
-                                'elements'  : 'iaf_neuron'})
+                                'elements'  : 'iaf_psc_alpha'})
 
             # connectivity specifications
             mask_dict = {'rectangular': {'lower_left'  : [-2.0, -1.0],
@@ -2086,6 +2113,21 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
         ax.add_patch(
             plt.Rectangle(srcpos + ll + offs, ur[0] - ll[0], ur[1] - ll[1],
                           zorder=-1000, fc='none', ec=mask_color, lw=3))
+    elif 'elliptical' in mask:
+        width = mask['elliptical']['major_axis']
+        height = mask['elliptical']['minor_axis']
+        if 'azimuth_angle' in mask['elliptical']:
+            angle = mask['elliptical']['azimuth_angle']
+        else:
+            angle = 0.0
+        if 'anchor' in mask['elliptical']:
+            anchor = mask['elliptical']['anchor']
+        else:
+            anchor = [0., 0.]
+        ax.add_patch(
+            matplotlib.patches.Ellipse(srcpos + offs + anchor, width, height,
+                                       angle=angle, zorder=-1000, fc='none',
+                                       ec=mask_color, lw=3))
     else:
         raise ValueError(
             'Mask type cannot be plotted with this version of PyTopology.')
@@ -2103,3 +2145,37 @@ def PlotKernel(ax, src_nrn, mask, kern=None, mask_color='red',
                              'version of PyTopology')
 
     plt.draw()
+
+
+def SelectNodesByMask(layer, anchor, mask_obj):
+    """
+    Obtain the GIDs inside a masked area of a topology layer.
+
+    The function finds and returns all the GIDs inside a given mask of a single
+    layer. It works on both 2-dimensional and 3-dimensional masks and layers.
+    All mask types are allowed, including combined masks.
+
+    Parameters
+    ----------
+    layer : tuple/list of int
+        List containing the single layer to select nodes from.
+    anchor : tuple/list of double
+        List containing center position of the layer. This is the point from
+        where we start to search.
+    mask_obj: object
+        Mask object specifying chosen area.
+
+    Returns
+    -------
+    out : list of int(s)
+        GID(s) of nodes/elements inside the mask.
+    """
+
+    if len(layer) != 1:
+        raise ValueError("layer must contain exactly one GID.")
+
+    mask_datum = mask_obj._datum
+
+    gid_list = topology_func('SelectNodesByMask', layer[0], anchor, mask_datum)
+
+    return gid_list

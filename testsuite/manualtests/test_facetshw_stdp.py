@@ -137,9 +137,4 @@ for i in range(len(weightTrace) - 1):
                         np.exp(-(timeBetweenPairs - 2 * delay) / tau),
                         atol=1e-6))  # TODO: global params
 
-print 'test successful'
-
-# ids = nest.GetStatus(recorder)[0]['events']['senders']
-# times = nest.GetStatus(recorder)[0]['events']['times']
-# spikes = np.vstack((ids, times)).T
-# print spikes[spikes[:,0] == neuronB] - spikes[spikes[:,0] == neuronA]
+print('test successful')

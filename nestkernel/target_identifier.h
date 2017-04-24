@@ -131,7 +131,7 @@ public:
     if ( target_ != invalid_targetindex )
     {
       def< long >( d, names::rport, 0 );
-      def< long >( d, names::target, target_ );
+      def< long >( d, names::thread_local_target, target_ );
     }
   }
 

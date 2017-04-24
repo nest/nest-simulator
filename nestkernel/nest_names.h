@@ -342,11 +342,12 @@ extern const Name t_ref;           //!< Refractory period
 extern const Name t_ref_abs;       //!< Absolute refractory period
 extern const Name t_ref_remaining; //!< Time remaining till end of
                                    //!< refractory state
-extern const Name t_ref_tot;       //!< Total refractory period
-extern const Name t_spike;         //!< Time of last spike
-extern const Name target;          //!< Connection parameters
-extern const Name target_thread;   //!< Connection parameters
-extern const Name targets;         //!< Connection parameters
+extern const Name t_ref_tot;              //!< Total refractory period
+extern const Name t_spike;                //!< Time of last spike
+extern const Name target;                 //!< Connection parameters
+extern const Name thread_local_target;    //!< Connection parameters
+extern const Name target_thread;          //!< Connection parameters
+extern const Name targets;                //!< Connection parameters
 extern const Name tau_1;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name tau_2;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name tau_ahp;   //!< Specific to iaf_chxk_2008 neuron

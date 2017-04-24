@@ -75,32 +75,46 @@ nest::VPManager::set_status( const DictionaryDatum& d )
   if ( n_threads_updated )
   {
     if ( kernel().node_manager.size() > 1 )
+    {
       throw KernelException(
         "Nodes exist: Thread/process number cannot be changed." );
+    }
     if ( kernel().model_manager.has_user_models() )
+    {
       throw KernelException(
         "Custom neuron models exist: Thread/process number cannot be "
         "changed." );
+    }
     if ( kernel().model_manager.has_user_prototypes() )
+    {
       throw KernelException(
         "Custom synapse types exist: Thread/process number cannot be "
         "changed." );
+    }
     if ( kernel().connection_manager.get_user_set_delay_extrema() )
+    {
       throw KernelException(
         "Delay extrema have been set: Thread/process number cannot be "
         "changed." );
+    }
     if ( kernel().simulation_manager.has_been_simulated() )
+    {
       throw KernelException(
         "The network has been simulated: Thread/process number cannot be "
         "changed." );
+    }
     if ( not Time::resolution_is_default() )
+    {
       throw KernelException(
         "The resolution has been set: Thread/process number cannot be "
         "changed." );
+    }
     if ( kernel().model_manager.are_model_defaults_modified() )
+    {
       throw KernelException(
         "Model defaults have been modified: Thread/process number cannot be "
         "changed." );
+    }
 
     if ( n_threads > 1 && force_singlethreading_ )
     {
@@ -122,37 +136,53 @@ nest::VPManager::set_status( const DictionaryDatum& d )
   if ( n_vps_updated )
   {
     if ( kernel().node_manager.size() > 1 )
+    {
       throw KernelException(
         "Nodes exist: Thread/process number cannot be changed." );
+    }
     if ( kernel().model_manager.has_user_models() )
+    {
       throw KernelException(
         "Custom neuron models exist: Thread/process number cannot be "
         "changed." );
+    }
     if ( kernel().model_manager.has_user_prototypes() )
+    {
       throw KernelException(
         "Custom synapse types exist: Thread/process number cannot be "
         "changed." );
+    }
     if ( kernel().connection_manager.get_user_set_delay_extrema() )
+    {
       throw KernelException(
         "Delay extrema have been set: Thread/process number cannot be "
         "changed." );
+    }
     if ( kernel().simulation_manager.has_been_simulated() )
+    {
       throw KernelException(
         "The network has been simulated: Thread/process number cannot be "
         "changed." );
+    }
     if ( not Time::resolution_is_default() )
+    {
       throw KernelException(
         "The resolution has been set: Thread/process number cannot be "
         "changed." );
+    }
     if ( kernel().model_manager.are_model_defaults_modified() )
+    {
       throw KernelException(
         "Model defaults have been modified: Thread/process number cannot be "
         "changed." );
+    }
 
     if ( n_vps % kernel().mpi_manager.get_num_processes() != 0 )
+    {
       throw BadProperty(
         "Number of virtual processes (threads*processes) must be an integer "
         "multiple of the number of processes. Value unchanged." );
+    }
 
     long n_threads = n_vps / kernel().mpi_manager.get_num_processes();
     if ( ( n_threads > 1 ) && ( force_singlethreading_ ) )
@@ -180,9 +210,23 @@ nest::VPManager::get_status( DictionaryDatum& d )
 void
 nest::VPManager::set_num_threads( nest::thread n_threads )
 {
+  if ( kernel().sp_manager.is_structural_plasticity_enabled()
+    && ( n_threads > 1 ) )
+  {
+    throw KernelException(
+      "Multiple threads can not be used if structural plasticity is enabled" );
+  }
   n_threads_ = n_threads;
 
 #ifdef _OPENMP
   omp_set_num_threads( n_threads_ );
+#endif
+}
+
+void
+nest::VPManager::assert_single_threaded()
+{
+#ifdef _OPENMP
+  assert( omp_get_num_threads() == 1 );
 #endif
 }

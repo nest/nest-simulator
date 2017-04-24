@@ -296,29 +296,32 @@ private:
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the real membrane potential
-  double
+  inline double
   get_V_m_() const
   {
     return S_.V_m_ + P_.E_L_;
   }
 
-  double
+  inline double
   get_weighted_spikes_ex_() const
   {
     return V_.weighted_spikes_ex_;
   }
-  double
+
+  inline double
   get_weighted_spikes_in_() const
   {
     return V_.weighted_spikes_in_;
   }
-  double
-  get_input_currents_ex_() const
+
+  inline double
+  get_I_syn_ex_() const
   {
     return S_.i_syn_ex_;
   }
-  double
-  get_input_currents_in_() const
+
+  inline double
+  get_I_syn_in_() const
   {
     return S_.i_syn_in_;
   }
@@ -358,7 +361,9 @@ inline port
 iaf_psc_exp::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -366,18 +371,26 @@ inline port
 iaf_psc_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type == 0 )
+  {
     return 0;
+  }
   else if ( receptor_type == 1 )
+  {
     return 1;
+  }
   else
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
 }
 
 inline port
 iaf_psc_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

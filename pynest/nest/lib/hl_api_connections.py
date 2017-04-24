@@ -27,6 +27,7 @@ from .hl_api_helper import *
 from .hl_api_nodes import Create
 from .hl_api_info import GetStatus
 from .hl_api_simulation import GetKernelStatus, SetKernelStatus
+from .hl_api_subnets import GetChildren
 import numpy
 
 
@@ -180,23 +181,33 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     In the case of scalar parameters, all keys must be doubles
     except for 'receptor_type' which must be initialised with an integer.
 
-    Parameter arrays are only available for the rules 'one_to_one' and
-    'all_to_all':
+    Parameter arrays are available for the rules 'one_to_one',
+    'all_to_all', 'fixed_indegree' and 'fixed_outdegree':
     - For 'one_to_one' the array has to be a one-dimensional
       NumPy array with length len(pre).
     - For 'all_to_all' the array has to be a two-dimensional NumPy array
       with shape (len(post), len(pre)), therefore the rows describe the
       target and the columns the source neurons.
+    - For 'fixed_indegree' the array has to be a two-dimensional NumPy array
+      with shape (len(post), indegree), where indegree is the number of
+      incoming connections per target neuron, therefore the rows describe the
+      target and the columns the connections converging to the target neuron,
+      regardless of the identity of the source neurons.
+    - For 'fixed_outdegree' the array has to be a two-dimensional NumPy array
+      with shape (len(pre), outdegree), where outdegree is the number of
+      outgoing connections per source neuron, therefore the rows describe the
+      source and the columns the connections starting from the source neuron
+      regardless of the identity of the target neuron.
 
     Any distributed parameter must be initialised with a further dictionary
     specifying the distribution type ('distribution', e.g. 'normal') and
     any distribution-specific parameters (e.g. 'mu' and 'sigma').
 
     To see all available distributions, run:
-    nest.slirun(’rdevdict info’)
+    nest.slirun('rdevdict info')
 
     To get information on a particular distribution, e.g. 'binomial', run:
-    nest.help(’rdevdict::binomial’)
+    nest.help('rdevdict::binomial')
 
     Most common available distributions and associated parameters
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -300,12 +311,37 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
                                     "a scalar or a dictionary.")
                             else:
                                 syn_spec[key] = value.flatten()
+                        elif rule == 'fixed_indegree':
+                            indegree = conn_spec['indegree']
+                            if value.shape[0] != len(post) or \
+                                    value.shape[1] != indegree:
+                                raise kernel.NESTError(
+                                    "'" + key + "' has to be an array of "
+                                    "dimension " + str(len(post)) + "x" +
+                                    str(indegree) +
+                                    " (n_target x indegree), " +
+                                    "a scalar or a dictionary.")
+                            else:
+                                syn_spec[key] = value.flatten()
+                        elif rule == 'fixed_outdegree':
+                            outdegree = conn_spec['outdegree']
+                            if value.shape[0] != len(pre) or \
+                                    value.shape[1] != outdegree:
+                                raise kernel.NESTError(
+                                    "'" + key + "' has to be an array of "
+                                    "dimension " + str(len(pre)) + "x" +
+                                    str(outdegree) +
+                                    " (n_sources x outdegree), " +
+                                    "a scalar or a dictionary.")
+                            else:
+                                syn_spec[key] = value.flatten()
                         else:
                             raise kernel.NESTError(
                                 "'" + key + "' has the wrong type. "
                                 "Two-dimensional parameter arrays can "
-                                "only be used in conjunction with rule "
-                                "'all_to_all'.")
+                                "only be used in conjunction with rules "
+                                "'all_to_all', 'fixed_indegree' or "
+                                "'fixed_outdegree'.")
             sps(syn_spec)
         else:
             raise kernel.NESTError(
@@ -315,6 +351,8 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
 
 
 @check_stack
+@deprecated('', 'DataConnect is deprecated and will be removed in NEST 3.0.\
+Use Connect() with one_to_one rule instead.')
 def DataConnect(pre, params=None, model="static_synapse"):
     """Connect neurons from lists of connection data.
 
@@ -414,7 +452,10 @@ def _is_subnet_instance(gids):
     """
 
     try:
-        GetChildren(gids)
+        # Turn off deprecation warning to avoid confusing users with
+        # internals.
+        with SuppressedDeprecationWarning(['GetChildren']):
+            GetChildren(gids)
         return True
     except kernel.NESTError:
         return False
@@ -469,11 +510,11 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
                 "are given")
 
         sli_func('CGConnect', cg, pre[0], post[0],
-                 parameter_map, '/'+model, litconv=True)
+                 parameter_map, '/' + model, litconv=True)
 
     else:
         sli_func('CGConnect', cg, pre, post,
-                 parameter_map, '/'+model, litconv=True)
+                 parameter_map, '/' + model, litconv=True)
 
 
 @check_stack

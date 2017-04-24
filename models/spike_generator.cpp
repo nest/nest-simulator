@@ -79,7 +79,7 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
   const size_t n_offsets = spike_offsets_.size();
 
   assert( ( precise_times_ && n_offsets == n_spikes )
-    || ( !precise_times_ && n_offsets == 0 ) );
+    || ( not precise_times_ && n_offsets == 0 ) );
 
 
   std::vector< double >* times_ms = new std::vector< double >();
@@ -88,7 +88,9 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
   {
     times_ms->push_back( spike_stamps_[ n ].get_ms() );
     if ( precise_times_ )
+    {
       ( *times_ms )[ n ] -= spike_offsets_[ n ];
+    }
   }
   ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
   ( *d )[ "spike_weights" ] =
@@ -106,12 +108,16 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_(
   const Time& origin,
   const Time& now )
 {
-  if ( t == 0.0 && !shift_now_spikes_ )
+  if ( t == 0.0 && not shift_now_spikes_ )
+  {
     throw BadProperty( "spike time cannot be set to 0." );
+  }
 
   Time t_spike;
   if ( precise_times_ )
+  {
     t_spike = Time::ms_stamp( t );
+  }
   else
   {
     // In this case, we need to force the spike time to the grid
@@ -136,9 +142,10 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_(
     }
 
     assert( t_spike.is_grid_time() );
-
     if ( origin + t_spike == now && shift_now_spikes_ )
+    {
       t_spike.advance();
+    }
   }
   // t_spike is now the correct time stamp given the chosen options
 
@@ -176,15 +183,19 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
     || updateValue< bool >( d, "allow_offgrid_spikes", allow_offgrid_spikes_ )
     || updateValue< bool >( d, "shift_now_spikes", shift_now_spikes_ );
   if ( precise_times_ && ( allow_offgrid_spikes_ || shift_now_spikes_ ) )
+  {
     throw BadProperty(
       "Option precise_times cannot be set to true when either "
       "allow_offgrid_spikes or shift_now_spikes is set to true." );
+  }
 
   const bool updated_spike_times = d->known( names::spike_times );
-  if ( flags_changed && !( updated_spike_times || spike_stamps_.empty() ) )
+  if ( flags_changed && not( updated_spike_times || spike_stamps_.empty() ) )
+  {
     throw BadProperty(
       "Options can only be set together with spike times or if no "
       "spike times have been set." );
+  }
 
   if ( updated_spike_times )
   {
@@ -195,10 +206,12 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
     spike_stamps_.reserve( n_spikes );
     spike_offsets_.clear();
     if ( precise_times_ )
+    {
       spike_offsets_.reserve( n_spikes );
+    }
 
     // Check spike times for ordering and grid compatibility and insert them
-    if ( !d_times.empty() )
+    if ( not d_times.empty() )
     {
       // handle first spike time, no predecessor to compare with
       std::vector< double >::const_iterator prev = d_times.begin();
@@ -208,11 +221,17 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
       for ( std::vector< double >::const_iterator next = prev + 1;
             next != d_times.end();
             ++next, ++prev )
+      {
         if ( *prev > *next )
+        {
           throw BadProperty(
             "Spike times must be sorted in non-descending order." );
+        }
         else
+        {
           assert_valid_spike_time_and_insert_( *next, origin, now );
+        }
+      }
     }
   }
 
@@ -225,13 +244,17 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
       getValue< std::vector< double > >( d->lookup( "spike_weights" ) );
 
     if ( spike_weights.empty() )
+    {
       spike_weights_.clear();
+    }
     else
     {
       if ( spike_weights.size() != spike_stamps_.size() )
+      {
         throw BadProperty(
           "spike_weights must have the same number of elements as spike_times,"
           " or 0 elements to clear the property." );
+      }
 
       spike_weights_.swap( spike_weights );
     }
@@ -246,13 +269,17 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
       getValue< std::vector< long > >( d->lookup( "spike_multiplicities" ) );
 
     if ( spike_multiplicities.empty() )
+    {
       spike_multiplicities_.clear();
+    }
     else
     {
       if ( spike_multiplicities.size() != spike_stamps_.size() )
+      {
         throw BadProperty(
           "spike_multiplicities must have the same number of elements as "
           "spike_times or 0 elements to clear the property." );
+      }
 
       spike_multiplicities_.swap( spike_multiplicities );
     }
@@ -261,7 +288,9 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   // Set position to start if something changed
   if ( updated_spike_times || updated_spike_weights
     || updated_spike_multiplicities || d->known( names::origin ) )
+  {
     s.position_ = 0;
+  }
 }
 
 
@@ -322,10 +351,12 @@ nest::spike_generator::update( Time const& sliceT0,
   const long to )
 {
   if ( P_.spike_stamps_.empty() )
+  {
     return;
+  }
 
-  assert(
-    !P_.precise_times_ || P_.spike_stamps_.size() == P_.spike_offsets_.size() );
+  assert( not P_.precise_times_
+    || P_.spike_stamps_.size() == P_.spike_offsets_.size() );
   assert( P_.spike_weights_.empty()
     || P_.spike_stamps_.size() == P_.spike_weights_.size() );
   assert( P_.spike_multiplicities_.empty()
@@ -346,9 +377,10 @@ nest::spike_generator::update( Time const& sliceT0,
       ++S_.position_;
       continue;
     }
-
     if ( tnext_stamp > tstop )
+    {
       break;
+    }
 
     if ( device_.is_active( tnext_stamp ) )
     {
@@ -357,16 +389,24 @@ nest::spike_generator::update( Time const& sliceT0,
       // if we have to deliver weighted spikes, we need to get the
       // event back to set its weight according to the entry in
       // spike_weights_, so we use a DSSpike event and event_hook()
-      if ( !P_.spike_weights_.empty() )
+      if ( not P_.spike_weights_.empty() )
+      {
         se = new DSSpikeEvent;
+      }
       else
+      {
         se = new SpikeEvent;
+      }
 
       if ( P_.precise_times_ )
+      {
         se->set_offset( P_.spike_offsets_[ S_.position_ ] );
+      }
 
-      if ( !P_.spike_multiplicities_.empty() )
+      if ( not P_.spike_multiplicities_.empty() )
+      {
         se->set_multiplicity( P_.spike_multiplicities_[ S_.position_ ] );
+      }
 
       // we need to subtract one from stamp which is added again in send()
       long lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
@@ -398,9 +438,13 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   Time origin;
   double v;
   if ( updateValue< double >( d, names::origin, v ) )
+  {
     origin = Time::ms( v );
+  }
   else
+  {
     origin = device_.get_origin();
+  }
 
   // throws if BadProperty
   ptmp.set( d, S_, origin, kernel().simulation_manager.get_time() );

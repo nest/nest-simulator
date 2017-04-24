@@ -93,7 +93,7 @@ nest::Device::Parameters_::update_( const DictionaryDatum& d,
     if ( t.is_finite() && not t.is_grid_time() )
     {
       throw BadProperty( name.toString() +  " must be a multiple "
-			              "of the simulation resolution." );
+                                 "of the simulation resolution." );
     }
     value = t;
   }

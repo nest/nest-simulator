@@ -88,7 +88,9 @@ Name::insert( const std::string& s )
     return newhandle;
   }
   else
+  {
     return ( ( *where ).second );
+  }
 }
 
 void

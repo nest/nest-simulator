@@ -38,7 +38,7 @@
 
 ResetKernel
 
-[0] << 
+0 << 
       /local_num_threads 1 
       /resolution h
     >> SetStatus
@@ -115,7 +115,7 @@ neuron sp_det Connect
 vm [/events [/times /V_m]] get cva   % array of recorded data
 6 ToUnitTestPrecision Transpose ==                    % to precision of reference
 
-cm [/events [/times /exc_conductance /inh_conductance]] get cva   % array of recorded data
+cm [/events [/times /g_exc /g_inh]] get cva   % array of recorded data
 6 ToUnitTestPrecision Transpose ==                    % to precision of reference
 
 %% What about spike detector, is that included in the voltmeter output????

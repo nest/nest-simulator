@@ -105,6 +105,14 @@ public:
   index add_remote_node( index gid, index mid );
 
   /**
+   * Add a gid range to the subnet.
+   * If a subsequent node is added via `add_node` or `add_remote_node`
+   * the calls to `gid_.push_back()` are ignored, if the gid of the
+   * node is already in the range.
+   */
+  void add_gid_range( index start_gid, index end_gid );
+
+  /**
    * Return iterator to the first local child node.
    */
   std::vector< Node* >::iterator local_begin();
@@ -235,8 +243,12 @@ Subnet::add_node( Node* n )
   const index lid = gids_.size();
   const index mid = n->get_model_id();
   if ( ( homogeneous_ ) && ( lid > 0 ) )
+  {
     if ( mid != last_mid_ )
+    {
       homogeneous_ = false;
+    }
+  }
   n->set_lid_( lid );
   n->set_subnet_index_( nodes_.size() );
   nodes_.push_back( n );
@@ -254,11 +266,21 @@ Subnet::add_remote_node( index gid, index mid )
 {
   const index lid = gids_.size();
   if ( ( homogeneous_ ) && ( lid > 0 ) )
+  {
     if ( mid != last_mid_ )
+    {
       homogeneous_ = false;
+    }
+  }
   last_mid_ = mid;
   gids_.push_back( gid );
   return lid;
+}
+
+inline void
+Subnet::add_gid_range( index start_gid, index end_gid )
+{
+  gids_.add_range( start_gid, end_gid );
 }
 
 inline std::vector< Node* >::iterator
@@ -316,8 +338,9 @@ Subnet::at_lid( index lid ) const
   assert( local_size() == global_size() );
 
   if ( lid >= nodes_.size() )
+  {
     throw UnknownNode();
-
+  }
   return nodes_[ lid ];
 }
 

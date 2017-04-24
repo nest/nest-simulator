@@ -114,15 +114,21 @@ get_double_in_range( const DictionaryDatum& d,
   {
   case 0:
     if ( min < x and x < max )
+    {
       return x;
+    }
     break;
   case 1:
     if ( min <= x and x < max )
+    {
       return x;
+    }
     break;
   case 2:
     if ( min <= x and x <= max )
+    {
       return x;
+    }
     break;
   default:
     return x;
@@ -176,15 +182,21 @@ get_long_in_range( const DictionaryDatum& d,
   {
   case 0:
     if ( min < x and x < max )
+    {
       return x;
+    }
     break;
   case 1:
     if ( min <= x and x < max )
+    {
       return x;
+    }
     break;
   case 2:
     if ( min <= x and x <= max )
+    {
       return x;
+    }
     break;
   default:
     return x;
@@ -240,7 +252,9 @@ updateValue( DictionaryDatum const& d, Name const n, VT& value )
   const Token& t = d->lookup( n );
 
   if ( t.empty() )
+  {
     return false;
+  }
 
   value = getValue< FT >( t );
   return true;
@@ -296,7 +310,7 @@ inline void
 append_property( DictionaryDatum& d, Name propname, const PropT& prop )
 {
   Token t = d->lookup( propname );
-  assert( !t.empty() );
+  assert( not t.empty() );
 
   ArrayDatum* arrd = dynamic_cast< ArrayDatum* >( t.datum() );
   assert( arrd != 0 );
@@ -316,7 +330,7 @@ append_property< std::vector< double > >( DictionaryDatum& d,
   const std::vector< double >& prop )
 {
   Token t = d->lookup( propname );
-  assert( !t.empty() );
+  assert( not t.empty() );
 
   DoubleVectorDatum* arrd = dynamic_cast< DoubleVectorDatum* >( t.datum() );
   assert( arrd != 0 );
@@ -336,7 +350,7 @@ append_property< std::vector< long > >( DictionaryDatum& d,
   const std::vector< long >& prop )
 {
   Token t = d->lookup( propname );
-  assert( !t.empty() );
+  assert( not t.empty() );
 
   IntVectorDatum* arrd = dynamic_cast< IntVectorDatum* >( t.datum() );
   assert( arrd != 0 );

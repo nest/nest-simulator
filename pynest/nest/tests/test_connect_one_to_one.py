@@ -50,7 +50,7 @@ class TestOneToOne(TestParams):
 
     def testSymmetricFlag(self):
         conn_dict_symmetric = self.conn_dict.copy()
-        conn_dict_symmetric['symmetric'] = True
+        conn_dict_symmetric['make_symmetric'] = True
         self.setUpNetwork(conn_dict_symmetric)
         M1 = hf.get_connectivity_matrix(self.pop1, self.pop2)
         M2 = hf.get_connectivity_matrix(self.pop2, self.pop1)

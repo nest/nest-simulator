@@ -130,9 +130,11 @@ nest::volume_transmitter::update( const Time&, const long from, const long to )
         Time::step( kernel().simulation_manager.get_slice_origin().get_steps()
           + to ) ).get_ms();
 
-    if ( !B_.spikecounter_.empty() )
+    if ( not B_.spikecounter_.empty() )
+    {
       kernel().connection_manager.trigger_update_weight(
         get_gid(), B_.spikecounter_, t_trig );
+    }
 
     // clear spikecounter
     B_.spikecounter_.clear();

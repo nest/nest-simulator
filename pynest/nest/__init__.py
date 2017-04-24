@@ -39,20 +39,33 @@ try:
 except:
     pass
 
-# This is a workaround to make MPI-enabled NEST import properly. The
-# underlying problem is that the shared object pynestkernel
-# dynamically opens other libraries that open other libraries...
+# Make MPI-enabled NEST import properly. The underlying problem is that the
+# shared object pynestkernel dynamically opens other libraries that open
+# yet other libraries.
 try:
+    # Python 3.3 and later has flags in os
+    sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
+except AttributeError:
+    # Python 2.6 and 2.7 have flags in ctypes, but RTLD_NOW may only
+    # be available in dl or DLFCN and is required at least under
+    # Ubuntu 14.04. The latter two are not available under OSX,
+    # but OSX does not have and does not need RTLD_NOW. We therefore
+    # first try dl and DLFCN, then ctypes just for OSX.
     try:
         import dl
-    except:
-        import DLFCN as dl
-    sys.setdlopenflags(dl.RTLD_NOW | dl.RTLD_GLOBAL)
-except:
-    # this is a hack for Python 2.6 on Mac, where RTDL_NOW is nowhere
-    # to be found. See trac ticket #397
-    import ctypes
-    sys.setdlopenflags(ctypes.RTLD_GLOBAL)
+        sys.setdlopenflags(dl.RTLD_GLOBAL | dl.RTLD_NOW)
+    except (ImportError, AttributeError):
+        try:
+            import DLFCN
+            sys.setdlopenflags(DLFCN.RTLD_GLOBAL | DLFCN.RTLD_NOW)
+        except (ImportError, AttributeError):
+            import ctypes
+            try:
+                sys.setdlopenflags(ctypes.RTLD_GLOBAL | ctypes.RTLD_NOW)
+            except AttributeError:
+                # We must test this last, since it is the only case without
+                # RTLD_NOW (OSX)
+                sys.setdlopenflags(ctypes.RTLD_GLOBAL)
 
 from . import pynestkernel as _kernel      # noqa
 from .lib import hl_api_helper as hl_api   # noqa
@@ -81,14 +94,27 @@ def catching_sli_run(cmd):
         SLI errors are bubbled to the Python API as NESTErrors.
     """
 
-    engine.run('{%s} runprotected' % cmd)
+    if sys.version_info >= (3, ):
+        def encode(s):
+            return s
+
+        def decode(s):
+            return s
+    else:
+        def encode(s):
+            return s.encode('utf-8')
+
+        def decode(s):
+            return s.decode('utf-8')
+
+    engine.run('{%s} runprotected' % decode(cmd))
     if not sli_pop():
         errorname = sli_pop()
         message = sli_pop()
         commandname = sli_pop()
         engine.run('clear')
-        raise _kernel.NESTError("{0} in {1}{2}".format(
-            errorname, commandname, message))
+        errorstring = '%s in %s%s' % (errorname, commandname, message)
+        raise _kernel.NESTError(encode(errorstring))
 
 sli_run = hl_api.sr = catching_sli_run
 
@@ -146,7 +172,6 @@ def sli_func(s, *args, **kwargs):
 
     if len(r) != 0:
         return r
-
 
 hl_api.sli_func = sli_func
 

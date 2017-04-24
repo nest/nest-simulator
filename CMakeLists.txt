@@ -28,7 +28,7 @@ set( NEST_USER_EMAIL "nest_user@nest-initiative.org" )
 
 # VERSION exported to libnestutil/config.h, extras/create_release.sh
 set( NEST_VERSION_MAJOR 2 )
-set( NEST_VERSION_MINOR 11 )
+set( NEST_VERSION_MINOR 12 )
 set( NEST_VERSION_PATCHLEVEL 0 )
 
 set( NEST_VERSION_VERSION "${NEST_VERSION_MAJOR}.${NEST_VERSION_MINOR}.${NEST_VERSION_PATCHLEVEL}" )
@@ -287,6 +287,7 @@ set( ALL_INCLUDES_tmp
   "${PROJECT_BINARY_DIR}/libnestutil"
   "${PROJECT_SOURCE_DIR}/librandom"
   "${PROJECT_SOURCE_DIR}/sli"
+  "${PROJECT_SOURCE_DIR}/topology"
   "${PROJECT_SOURCE_DIR}/nestkernel"
   "${PROJECT_SOURCE_DIR}/nest"
   "${LTDL_INCLUDE_DIRS}"

@@ -64,15 +64,18 @@ std::vector< double >
 get_position( const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
+  {
     throw KernelException(
       "GetPosition is currently implemented for local nodes only." );
-
+  }
   Node const* const node = kernel().node_manager.get_node( node_gid );
 
   AbstractLayer* const layer =
     dynamic_cast< AbstractLayer* >( node->get_parent() );
-  if ( !layer )
+  if ( not layer )
+  {
     throw LayerExpected();
+  }
 
   return layer->get_position_vector( node->get_subnet_index() );
 }
@@ -81,15 +84,18 @@ std::vector< double >
 displacement( const std::vector< double >& point, const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
+  {
     throw KernelException(
       "Displacement is currently implemented for local nodes only." );
-
+  }
   Node const* const node = kernel().node_manager.get_node( node_gid );
 
   AbstractLayer* const layer =
     dynamic_cast< AbstractLayer* >( node->get_parent() );
-  if ( !layer )
+  if ( not layer )
+  {
     throw LayerExpected();
+  }
 
   return layer->compute_displacement( point, node->get_lid() );
 }
@@ -98,15 +104,18 @@ double
 distance( const std::vector< double >& point, const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
+  {
     throw KernelException(
       "Distance is currently implemented for local nodes only." );
-
+  }
   Node const* const node = kernel().node_manager.get_node( node_gid );
 
   AbstractLayer* const layer =
     dynamic_cast< AbstractLayer* >( node->get_parent() );
-  if ( !layer )
+  if ( not layer )
+  {
     throw LayerExpected();
+  }
 
   return layer->compute_distance( point, node->get_lid() );
 }
@@ -180,7 +189,9 @@ get_global_children( const index gid,
   AbstractLayer* layer =
     dynamic_cast< AbstractLayer* >( kernel().node_manager.get_node( gid ) );
   if ( layer == NULL )
+  {
     throw LayerExpected();
+  }
 
   std::vector< index > gids = layer->get_global_nodes( maskd, anchor, false );
 
@@ -188,8 +199,9 @@ get_global_children( const index gid,
   result.reserve( gids.size() );
   for ( std::vector< index >::iterator it = gids.begin(); it != gids.end();
         ++it )
+  {
     result.push_back( new IntegerDatum( *it ) );
-
+  }
   return result;
 }
 
@@ -204,8 +216,9 @@ connect_layers( const index source_gid,
     kernel().node_manager.get_node( target_gid ) );
 
   if ( ( source == NULL ) || ( target == NULL ) )
+  {
     throw LayerExpected();
-
+  }
   connection_dict->clear_access_flags();
 
   ConnectionCreator connector( connection_dict );
@@ -243,7 +256,9 @@ dump_layer_nodes( const index layer_gid, OstreamDatum& out )
     kernel().node_manager.get_node( layer_gid ) );
 
   if ( layer != 0 && out->good() )
+  {
     layer->dump_nodes( *out );
+  }
 }
 
 void
@@ -256,7 +271,9 @@ dump_layer_connections( const Token& syn_model,
   AbstractLayer* const layer = dynamic_cast< AbstractLayer* >(
     kernel().node_manager.get_node( layer_gid ) );
   if ( layer == NULL )
+  {
     throw TypeMismatch( "any layer type", "something else" );
+  }
 
   layer->dump_connections( out, syn_model );
 }

@@ -151,9 +151,10 @@ ClippedRedrawContinuousRandomDev< BaseRDV >::set_status(
 
   updateValue< double >( d, "low", new_min );
   updateValue< double >( d, "high", new_max );
-
   if ( new_min >= new_max )
+  {
     throw BadParameterValue( "Clipped RDVs require low < high." );
+  }
 
   min_ = new_min;
   max_ = new_max;
@@ -267,9 +268,10 @@ ClippedRedrawDiscreteRandomDev< BaseRDV >::set_status(
 
   updateValue< long >( d, "low", new_min );
   updateValue< long >( d, "high", new_max );
-
   if ( new_min >= new_max )
+  {
     throw BadParameterValue( "Clipped RDVs require low < high." );
+  }
 
   min_ = new_min;
   max_ = new_max;
@@ -402,9 +404,10 @@ ClippedToBoundaryContinuousRandomDev< BaseRDV >::set_status(
 
   updateValue< double >( d, "low", new_min );
   updateValue< double >( d, "high", new_max );
-
   if ( new_min >= new_max )
+  {
     throw BadParameterValue( "Clipped RDVs require low < high." );
+  }
 
   min_ = new_min;
   max_ = new_max;
@@ -434,9 +437,13 @@ inline double ClippedToBoundaryContinuousRandomDev< BaseRDV >::operator()(
 {
   const double value = BaseRDV::operator()( r );
   if ( value < min_ )
+  {
     return min_;
+  }
   if ( value > max_ )
+  {
     return max_;
+  }
   return value;
 }
 
@@ -522,9 +529,10 @@ ClippedToBoundaryDiscreteRandomDev< BaseRDV >::set_status(
 
   updateValue< long >( d, "low", new_min );
   updateValue< long >( d, "high", new_max );
-
   if ( new_min >= new_max )
+  {
     throw BadParameterValue( "Clipped RDVs require low < high." );
+  }
 
   min_ = new_min;
   max_ = new_max;
@@ -553,9 +561,13 @@ inline double ClippedToBoundaryDiscreteRandomDev< BaseRDV >::operator()(
 {
   const double value = BaseRDV::operator()( r );
   if ( value < min_ )
+  {
     return min_;
+  }
   if ( value > max_ )
+  {
     return max_;
+  }
   return value;
 }
 
@@ -572,9 +584,13 @@ ClippedToBoundaryDiscreteRandomDev< BaseRDV >::ldev( RngPtr r ) const
 {
   const long value = BaseRDV::ldev( r );
   if ( value < min_ )
+  {
     return min_;
+  }
   if ( value > max_ )
+  {
     return max_;
+  }
   return value;
 }
 

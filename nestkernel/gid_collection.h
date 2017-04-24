@@ -75,12 +75,47 @@ public:
 
   index operator[]( const size_t pos ) const;
   bool operator==( const GIDCollection& rhs ) const;
+  int find( const index ) const;
+  bool is_range() const;
 
   const_iterator begin() const;
   const_iterator end() const;
 
   size_t size() const;
 };
+
+inline int
+GIDCollection::find( const index neuron_id ) const
+{
+  if ( is_range_ )
+  {
+    if ( neuron_id > gid_range_.second )
+    {
+      return -1;
+    }
+    else
+    {
+      return neuron_id - gid_range_.first;
+    }
+  }
+  else
+  {
+    for ( size_t i = 0; i < gid_array_.size(); ++i )
+    {
+      if ( neuron_id == gid_array_[ i ] )
+      {
+        return i;
+      }
+    }
+    return -1;
+  }
+}
+
+inline bool
+GIDCollection::is_range() const
+{
+  return is_range_;
+}
 
 inline index GIDCollection::const_iterator::operator*() const
 {
@@ -103,21 +138,30 @@ inline bool GIDCollection::const_iterator::operator!=(
 inline index GIDCollection::operator[]( const size_t pos ) const
 {
   if ( ( is_range_ && pos + gid_range_.first > gid_range_.second )
-    || ( !is_range_ && pos >= gid_array_.size() ) )
+    || ( not is_range_ && pos >= gid_array_.size() ) )
+  {
     throw std::out_of_range( "pos points outside of the GIDCollection" );
-
+  }
   if ( is_range_ )
+  {
     return gid_range_.first + pos;
+  }
   else
+  {
     return gid_array_[ pos ];
+  }
 }
 
 inline bool GIDCollection::operator==( const GIDCollection& rhs ) const
 {
   if ( is_range_ )
+  {
     return gid_range_ == rhs.gid_range_;
+  }
   else
+  {
     return gid_array_ == rhs.gid_array_;
+  }
 }
 
 inline GIDCollection::const_iterator
@@ -136,9 +180,13 @@ inline size_t
 GIDCollection::size() const
 {
   if ( is_range_ )
+  {
     return gid_range_.second - gid_range_.first + 1;
+  }
   else
+  {
     return gid_array_.size();
+  }
 }
 
 } // namespace nest

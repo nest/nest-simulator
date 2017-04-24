@@ -87,9 +87,10 @@ void
 binary_neuron< TGainfunction >::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::tau_m, tau_m_ );
-
   if ( tau_m_ <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 }
 
 template < class TGainfunction >
@@ -178,7 +179,9 @@ binary_neuron< TGainfunction >::calibrate()
   // draw next time of update for the neuron from exponential distribution
   // only if not yet initialized
   if ( S_.t_next_.is_neg_inf() )
+  {
     S_.t_next_ = Time::ms( V_.exp_dev_( V_.rng_ ) * P_.tau_m_ );
+  }
 }
 
 

@@ -58,7 +58,9 @@ librandom::LognormalRandomDev::set_status( const DictionaryDatum& d )
   updateValue< double >( d, "sigma", new_sigma );
 
   if ( new_sigma < 0. )
+  {
     throw BadParameterValue( "Lognormal RDV: sigma >= 0 required." );
+  }
 
   mu_ = new_mu;
   sigma_ = new_sigma;
@@ -91,9 +93,10 @@ double librandom::LognormalRandomDev::operator()( RngPtr r ) const
     V2 = 2 * r->drand() - 1;
     S = V1 * V1 + V2 * V2;
   } while ( S >= 1 );
-
   if ( S != 0 )
+  {
     S = V1 * std::sqrt( -2 * std::log( S ) / S );
+  }
 
   return std::exp( mu_ + sigma_ * S );
 }

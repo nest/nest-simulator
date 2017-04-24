@@ -215,16 +215,14 @@ cdef class NESTEngine(object):
 
         if self.pEngine is NULL:
             raise NESTError("engine uninitialized")
-
-        cdef string cmd_bytes = cmd.encode()
-
+        cdef string cmd_bytes
+        cmd_bytes = cmd.encode('utf-8')
         self.pEngine.execute(cmd_bytes)
 
     def push(self, obj):
 
         if self.pEngine is NULL:
             raise NESTError("engine uninitialized")
-
         self.pEngine.OStack.push(python_object_to_datum(obj))
 
     def pop(self):
@@ -402,7 +400,7 @@ cdef inline object sli_datum_to_object(Datum* dat):
     elif datum_type == SLI_TYPE_DOUBLE:
         ret = (<DoubleDatum*> dat).get()
     elif datum_type == SLI_TYPE_STRING:
-         ret = (<string> deref_str(<StringDatum*> dat)).decode()
+         ret = (<string> deref_str(<StringDatum*> dat)).decode('utf-8')
     elif datum_type == SLI_TYPE_LITERAL:
         obj_str = (<LiteralDatum*> dat).toString()
         ret = SLILiteral(obj_str.decode())

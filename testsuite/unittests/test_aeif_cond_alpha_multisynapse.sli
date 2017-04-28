@@ -46,7 +46,7 @@
 % This test should only run if we have GSL
 statusdict/have_gsl :: not
 {
-  exit_test_gracefully
+  (no_gsl) exit_test_gracefully_reason
 }
 if
 

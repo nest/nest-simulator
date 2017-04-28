@@ -23,7 +23,7 @@
 (unittest) run
 /unittest using
 
-statusdict/have_music :: not { exit_test_gracefully } if
+statusdict/have_music :: not { (no_music) exit_test_gracefully_reason } if
 
 M_ERROR setverbosity
 

@@ -37,7 +37,7 @@ See: brunel_ps.sli
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+is_threaded not { (no_openmp) exit_test_gracefully_reason } if
 
 /brunel_setup {
 /brunel << >> def

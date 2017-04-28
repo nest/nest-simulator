@@ -257,6 +257,11 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , exitcodes_name( "exitcodes" )
   , exitcode_success_name( "success" )
   , exitcode_skipped_name( "skipped" )
+  , exitcode_skipped_no_mpi_name( "skipped_no_mpi" )
+  , exitcode_skipped_have_mpi_name( "skipped_have_mpi" )
+  , exitcode_skipped_no_openmp_name( "skipped_no_openmp" )
+  , exitcode_skipped_no_gsl_name( "skipped_no_gsl" )
+  , exitcode_skipped_no_music_name( "skipped_no_music" )
   , exitcode_scripterror_name( "scripterror" )
   , exitcode_abort_name( "abort" )
   , exitcode_userabort_name( "userabort" )
@@ -539,7 +544,18 @@ SLIStartup::init( SLIInterpreter* i )
 
   exitcodes->insert(
     exitcode_success_name, Token( new IntegerDatum( EXIT_SUCCESS ) ) );
-  exitcodes->insert( exitcode_skipped_name, Token( new IntegerDatum( 200 ) ) );
+  exitcodes->insert(
+    exitcode_skipped_name, Token( new IntegerDatum( NEST_EXITCODE_SKIPPED ) ) );
+  exitcodes->insert( exitcode_skipped_no_mpi_name,
+    Token( new IntegerDatum( NEST_EXITCODE_SKIPPED_NO_MPI ) ) );
+  exitcodes->insert( exitcode_skipped_have_mpi_name,
+    Token( new IntegerDatum( NEST_EXITCODE_SKIPPED_HAVE_MPI ) ) );
+  exitcodes->insert( exitcode_skipped_no_openmp_name,
+    Token( new IntegerDatum( NEST_EXITCODE_SKIPPED_NO_OPENMP ) ) );
+  exitcodes->insert( exitcode_skipped_no_gsl_name,
+    Token( new IntegerDatum( NEST_EXITCODE_SKIPPED_NO_GSL ) ) );
+  exitcodes->insert( exitcode_skipped_no_music_name,
+    Token( new IntegerDatum( NEST_EXITCODE_SKIPPED_NO_MUSIC ) ) );
   exitcodes->insert(
     exitcode_scripterror_name, Token( new IntegerDatum( 126 ) ) );
   exitcodes->insert(

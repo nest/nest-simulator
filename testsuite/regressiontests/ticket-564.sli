@@ -37,7 +37,7 @@ Author: Hans Ekkehard Plesser, 2012-05-27
 (unittest) run
 /unittest using
 
-is_threaded_with_openmp not { exit_test_gracefully } if
+is_threaded_with_openmp not { (no_openmp) exit_test_gracefully_reason } if
 
 M_ERROR setverbosity
 

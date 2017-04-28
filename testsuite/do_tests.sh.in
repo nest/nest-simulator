@@ -420,7 +420,13 @@ echo >  "${TEST_LOGFILE}" "NEST v. @NEST_VERSION_VERSION@ testsuite log"
 echo >> "${TEST_LOGFILE}" "======================"
 echo >> "${TEST_LOGFILE}" "Running tests from ${TEST_BASEDIR}"
 
-CODES_SKIPPED=' 200 Skipped'
+CODES_SKIPPED=\
+' 200 Skipped,'\
+' 201 Skipped (MPI required),'\
+' 202 Skipped (build with-mpi=OFF required),'\
+' 203 Skipped (OpenMP required),'\
+' 204 Skipped (GSL required),'\
+' 205 Skipped (MUSIC required),'
 
 echo
 echo 'Phase 1: Testing if SLI can execute scripts and report errors'

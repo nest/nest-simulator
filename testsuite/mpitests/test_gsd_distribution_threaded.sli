@@ -38,7 +38,7 @@ FirstVersion: April 2014
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+is_threaded not { (no_openmp) exit_test_gracefully_reason } if
 
 
 [2 3]

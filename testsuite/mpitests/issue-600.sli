@@ -40,13 +40,8 @@
 
 % The following test needs the model hh_psc_alpha_gap, so
 % this test should only run if we have GSL
-is_threaded not 
-statusdict/have_gsl :: not
-or 
-{ 
-  exit_test_gracefully
-} 
-if
+is_threaded not {(no_openmp) exit_test_gracefully_reason} if
+statusdict/have_gsl :: not {(no_gsl) exit_test_gracefully_reason} if
 
 /total_vps 4 def
 

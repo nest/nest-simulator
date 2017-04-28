@@ -40,6 +40,15 @@
 #include "slimodule.h"
 #include "token.h"
 
+// Exit codes
+#define NEST_EXITCODE_SKIPPED 200
+#define NEST_EXITCODE_SKIPPED_NO_MPI 201
+#define NEST_EXITCODE_SKIPPED_HAVE_MPI 202
+#define NEST_EXITCODE_SKIPPED_NO_OPENMP 203
+#define NEST_EXITCODE_SKIPPED_NO_GSL 204
+#define NEST_EXITCODE_SKIPPED_NO_MUSIC 205
+
+
 class SLIStartup : public SLIModule
 {
   const std::string startupfilename;
@@ -100,6 +109,11 @@ public:
   Name exitcodes_name;
   Name exitcode_success_name;
   Name exitcode_skipped_name;
+  Name exitcode_skipped_no_mpi_name;
+  Name exitcode_skipped_have_mpi_name;
+  Name exitcode_skipped_no_openmp_name;
+  Name exitcode_skipped_no_gsl_name;
+  Name exitcode_skipped_no_music_name;
   Name exitcode_scripterror_name;
   Name exitcode_abort_name;
   Name exitcode_userabort_name;

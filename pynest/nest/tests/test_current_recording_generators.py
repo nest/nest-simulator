@@ -85,6 +85,37 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
                                          'stop': self.t_stop})
         nest.Connect(self.noise, self.neuron)
 
+    def test_GetRecordables(self):
+        """Check get recordables"""
+
+        try:
+            val = nest.GetDefaults('step_current_generator')['recordables'][0]
+            assert val == 'I', \
+                "Incorrect recordables ( %r ) for step current generator" % val
+        except:
+            raise
+
+        try:
+            val = nest.GetDefaults('ac_generator')['recordables'][0]
+            assert val == 'I', \
+                "Incorrect recordables ( %r ) for ac generator" % val
+        except:
+            raise
+
+        try:
+            val = nest.GetDefaults('dc_generator')['recordables'][0]
+            assert val == 'I', \
+                "Incorrect recordables ( %r ) for dc generator" % val
+        except:
+            raise
+
+        try:
+            val = nest.GetDefaults('noise_generator')['recordables'][0]
+            assert val == 'I', \
+                "Incorrect recordables ( %r ) for noise generator" % val
+        except:
+            raise
+
     def test_RecordedCurrentVectors(self):
         """Check the length and contents of recorded current vectors"""
 

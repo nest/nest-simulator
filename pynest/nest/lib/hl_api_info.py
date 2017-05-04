@@ -64,7 +64,7 @@ def helpdesk():
     The system default browser.
     /helpdesk << /command (firefox) >> SetOptions in ~/.nestrc is now obsolete
     """
-    url = os.path.join(os.environ['NEST_DOC_DIR'] + "help", "helpindex.html")
+    url = os.path.join(os.environ['NEST_DOC_DIR'] + "/help", "helpindex.html")
     if sys.platform[:3] == "win":
         os.startfile(url)
     if sys.platform[:3] == "dar":

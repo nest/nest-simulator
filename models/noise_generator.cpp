@@ -339,16 +339,15 @@ nest::noise_generator::update( Time const& origin,
       // use now as reference, in case we woke up from inactive period
       B_.next_step_ = now + V_.dt_steps_;
     }
-    
+
     // record values
-    for ( AmpVec_::iterator it = B_.amps_.begin(); it != B_.amps_.end();
-          ++it )
+    for ( AmpVec_::iterator it = B_.amps_.begin(); it != B_.amps_.end(); ++it )
     {
       S_.I_avg_ += *it;
     }
     S_.I_avg_ /= B_.amps_.size();
     B_.logger_.record_data( origin.get_steps() + offs );
-    
+
     DSCurrentEvent ce;
     kernel().event_delivery_manager.send( *this, ce, offs );
   }

@@ -78,6 +78,7 @@ set( models_sources
     quantal_stp_connection.h quantal_stp_connection_impl.h
     sinusoidal_poisson_generator.h sinusoidal_poisson_generator.cpp
     sinusoidal_gamma_generator.h sinusoidal_gamma_generator.cpp
+    lowpassfilter_spike_detector.h lowpassfilter_spike_detector.cpp
     spike_detector.h spike_detector.cpp
     spike_generator.h spike_generator.cpp
     spin_detector.h spin_detector.cpp

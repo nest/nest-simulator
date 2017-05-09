@@ -154,10 +154,15 @@ extern const Name file_extension; //!< Recorder parameter
 extern const Name filename;       //!< Recorder parameter
 extern const Name
   filenames; //!< Recorder parameter---keep, will disappear with NESTIO
-extern const Name flush_after_simulate; //!< Recorder parameter
-extern const Name flush_records;        //!< Recorder parameter
-extern const Name frequency;            //!< Signal modulation frequency
-extern const Name frozen;               //!< Node parameter
+extern const Name filter_events; //!< Filter events for filtering device
+extern const Name filter_values; //!< Interval for filtering device
+extern const Name filter_report_interval; //!< Interval for filtering device
+extern const Name filter_start_times;     //!< Start times for filtering device
+extern const Name filter_stop_times;      //!< Stop times for filtering device
+extern const Name flush_after_simulate;   //!< Recorder parameter
+extern const Name flush_records;          //!< Recorder parameter
+extern const Name frequency;              //!< Signal modulation frequency
+extern const Name frozen;                 //!< Node parameter
 
 extern const Name g;             //!< Conductance
 extern const Name g_AMPA;        //!< specific to Hill & Tononi 2005
@@ -315,6 +320,7 @@ extern const Name
 extern const Name receptor_type;  //!< Connection parameter
 extern const Name receptor_types; //!< Publishing available types
 extern const Name record_from;    //!< Recorder parameter
+extern const Name record_spikes;  //!< Recorder parameter
 extern const Name record_to;      //!< Recorder parameter
 extern const Name
   recordables; //!< List of recordable state data (Device parameters)
@@ -394,6 +400,7 @@ extern const Name tau_eta; //!< Specific to population point process model
                            //!< (pp_pop_psc_delta)
 extern const Name
   tau_fac; //!< facilitation time constant (ms) (Tsodyks2_connection)
+extern const Name tau_filter; //!< filtering time constant (ms)
 extern const Name
   tau_lcm;               //!< Least common multiple of tau_m, tau_ex and tau_in
                          //!< (precise timing neurons (Brette 2007))

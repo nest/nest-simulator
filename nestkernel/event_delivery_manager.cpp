@@ -69,6 +69,8 @@ EventDeliveryManager::~EventDeliveryManager()
 void
 EventDeliveryManager::initialize()
 {
+  // ensures that ResetKernel resets off_grid_spiking_
+  off_grid_spiking_ = false;
   init_moduli();
   reset_timers_counters();
 }

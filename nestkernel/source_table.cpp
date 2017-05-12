@@ -20,13 +20,15 @@
  *
  */
 
+// C++ includes:
+#include <iostream>
+
 // Includes from nestkernel:
 #include "connection_manager_impl.h"
-#include "node_manager_impl.h"
 #include "kernel_manager.h"
+#include "mpi_manager_impl.h"
 #include "source_table.h"
 #include "vp_manager_impl.h"
-#include <iostream>
 
 nest::SourceTable::SourceTable()
 {
@@ -41,7 +43,7 @@ nest::SourceTable::initialize()
 {
   assert( sizeof( Source ) == 8 );
   const thread num_threads = kernel().vp_manager.get_num_threads();
-   sources_.resize( num_threads );
+  sources_.resize( num_threads );
   is_cleared_.resize( num_threads );
   saved_entry_point_.resize( num_threads );
   current_positions_.resize( num_threads );
@@ -322,7 +324,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
       const size_t event_size = kernel()
         .model_manager.get_secondary_event_prototype( cit->second, tid )
         .prototype_size();
-      uint_count_per_rank[ kernel().node_manager.get_process_id_of_gid( cit->first ) ] += event_size;
+      uint_count_per_rank[ kernel().mpi_manager.get_process_id_of_gid( cit->first ) ] += event_size;
     }
 
     // determine maximal chunksize across all MPI ranks
@@ -344,7 +346,7 @@ nest::SourceTable::compute_buffer_pos_for_unique_secondary_sources( const thread
     for ( std::set< std::pair< index, size_t > >::const_iterator cit = unique_secondary_source_gid_syn_id_.begin();
           cit != unique_secondary_source_gid_syn_id_.end(); ++cit )
     {
-      const thread source_rank = kernel().node_manager.get_process_id_of_gid( cit->first );
+      const thread source_rank = kernel().mpi_manager.get_process_id_of_gid( cit->first );
       const size_t event_size = kernel()
         .model_manager.get_secondary_event_prototype( cit->second, tid )
         .prototype_size();
@@ -442,7 +444,7 @@ nest::SourceTable::get_next_target_data( const thread tid,
 
     // TODO@5g: this really is the source rank, isn't it? rename?
     target_rank =
-      kernel().node_manager.get_process_id_of_gid( const_current_source.get_gid() );
+          kernel().mpi_manager.get_process_id_of_gid( const_current_source.get_gid() );
     // now we need to determine whether this thread is
     // responsible for this part of the MPI buffer; if not we
     // just continue with the next iteration of the loop

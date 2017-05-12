@@ -162,11 +162,6 @@ public:
    */
   Node* get_node( index, thread thr = 0 );
 
-  /*
-   * Return the process id of the node with gid
-   */
-  thread get_process_id_of_gid( index gid ) const;
-
   /**
    * Return the Subnet that contains the thread siblings.
    * @param i Index of the specified Node.

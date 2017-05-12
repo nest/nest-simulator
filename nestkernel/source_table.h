@@ -33,6 +33,7 @@
 
 // Includes from nestkernel:
 #include "nest_types.h"
+#include "mpi_manager.h"
 #include "source.h"
 #include "source_table_position.h"
 

@@ -35,7 +35,6 @@
 #include "mpi_manager_impl.h"
 #include "vp_manager.h"
 #include "vp_manager_impl.h"
-#include "node_manager_impl.h"
 #include "connection_manager.h"
 #include "connection_manager_impl.h"
 #include "event_delivery_manager_impl.h"

@@ -39,7 +39,7 @@
 #include "kernel_manager.h"
 
 inline nest::thread
-nest::MPIManager::get_process_id( nest::thread vp ) const
+nest::MPIManager::get_process_id( const thread vp ) const
 {
   if ( vp
     >= static_cast< thread >( n_sim_procs_
@@ -297,6 +297,12 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
   }
 }
 
+inline nest::thread
+nest::MPIManager::get_process_id_of_gid( const index gid ) const
+{
+  return gid % ( kernel().vp_manager.get_num_virtual_processes() )
+    % n_sim_procs_;
+}
 
 #else // HAVE_MPI
 
@@ -365,10 +371,9 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 }
 
 inline nest::thread
-nest::MPIManager::get_process_id_of_gid( index gid ) const
+nest::MPIManager::get_process_id_of_gid( const index gid ) const
 {
-  return gid % ( kernel().vp_manager.get_num_virtual_processes() )
-    % n_sim_procs_;
+  return 0;
 }
 
 #endif

@@ -120,7 +120,12 @@ public:
    * of a virtual process is defined by the relation: p = (vp mod P), where
    * P is the total number of processes.
    */
-  thread get_process_id( thread vp ) const;
+  thread get_process_id( const thread vp ) const;
+
+  /*
+   * Return the process id of the node with gid.
+   */
+  thread get_process_id_of_gid( const index gid ) const;
 
   /**
    * Finalize MPI communication (needs to be separate from MPIManager::finalize

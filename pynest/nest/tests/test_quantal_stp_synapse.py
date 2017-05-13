@@ -78,7 +78,7 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
 
         voltmeter = nest.Create("voltmeter", 2)
         nest.SetStatus(voltmeter, {"withgid": False, "withtime": True})
-        t_plot = 1000.
+        t_plot = 1000
         t_tot = 1500.
 
         # the following is a dry run trial so that the synapse dynamics is
@@ -101,8 +101,8 @@ class QuantalSTPSynapseTestCase(unittest.TestCase):
         vm_reference = numpy.array(nest.GetStatus([voltmeter[0]],
                                                   'events')[0]['V_m'])
 
-        vm.shape = (n_trials, t_tot)
-        vm_reference.shape = (n_trials, t_tot)
+        vm.shape = (n_trials, int(t_tot))
+        vm_reference.shape = (n_trials, int(t_tot))
 
         vm_mean = numpy.array([numpy.mean(vm[:, i])
                                for i in range(int(t_tot))])

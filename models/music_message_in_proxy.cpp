@@ -145,15 +145,21 @@ nest::music_message_in_proxy::calibrate()
   {
     MUSIC::Setup* s = kernel().music_manager.get_music_setup();
     if ( s == 0 )
+    {
       throw MUSICSimulationHasRun( get_name() );
+    }
 
     V_.MP_ = s->publishMessageInput( P_.port_name_ );
 
     if ( not V_.MP_->isConnected() )
+    {
       throw MUSICPortUnconnected( get_name(), P_.port_name_ );
+    }
 
     if ( not V_.MP_->hasWidth() )
+    {
       throw MUSICPortHasNoWidth( get_name(), P_.port_name_ );
+    }
 
     S_.port_width_ = V_.MP_->width();
 

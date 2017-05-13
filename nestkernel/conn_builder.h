@@ -432,7 +432,9 @@ ConnBuilder::skip_conn_parameter_( thread target_thread, size_t n_skip )
           parameters_requiring_skipping_.begin();
         it != parameters_requiring_skipping_.end();
         ++it )
+  {
     ( *it )->skip( target_thread, n_skip );
+  }
 }
 
 } // namespace nest

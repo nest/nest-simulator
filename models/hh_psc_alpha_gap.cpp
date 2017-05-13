@@ -203,9 +203,10 @@ nest::hh_psc_alpha_gap::State_::State_( const Parameters_& )
   y_[ 0 ] = -69.60401191631222; // p.E_L;
   //'Inact_n': 0.0005741576228359798, 'Inact_p': 0.00025113182271506364
   //'Act_h': 0.8684620412943986,
-
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = 0;
+  }
 
   // equilibrium values for (in)activation variables
   const double alpha_m =
@@ -231,16 +232,19 @@ nest::hh_psc_alpha_gap::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
 }
 
 nest::hh_psc_alpha_gap::State_& nest::hh_psc_alpha_gap::State_::operator=(
   const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
-
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
   r_ = s.r_;
   return *this;
 }
@@ -283,18 +287,22 @@ nest::hh_psc_alpha_gap::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_in, tau_synI );
 
   updateValue< double >( d, names::I_e, I_e );
-
   if ( C_m <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time cannot be negative." );
-
+  }
   if ( tau_synE <= 0 || tau_synI <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
-
+  }
   if ( g_Kv1 < 0 || g_Kv3 < 0 || g_Na < 0 || g_L < 0 )
+  {
     throw BadProperty( "All conductances must be non-negative." );
+  }
 }
 
 void
@@ -315,9 +323,10 @@ nest::hh_psc_alpha_gap::State_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::Act_h, y_[ HH_H ] );
   updateValue< double >( d, names::Inact_n, y_[ HH_N ] );
   updateValue< double >( d, names::Inact_p, y_[ HH_P ] );
-
   if ( y_[ HH_M ] < 0 || y_[ HH_H ] < 0 || y_[ HH_N ] < 0 || y_[ HH_P ] < 0 )
+  {
     throw BadProperty( "All (in)activation variables must be non-negative." );
+  }
 }
 
 nest::hh_psc_alpha_gap::Buffers_::Buffers_( hh_psc_alpha_gap& n )
@@ -368,11 +377,17 @@ nest::hh_psc_alpha_gap::~hh_psc_alpha_gap()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
+  {
     gsl_odeiv_step_free( B_.s_ );
+  }
   if ( B_.c_ )
+  {
     gsl_odeiv_control_free( B_.c_ );
+  }
   if ( B_.e_ )
+  {
     gsl_odeiv_evolve_free( B_.e_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -420,20 +435,32 @@ nest::hh_psc_alpha_gap::init_buffers_()
   B_.IntegrationStep_ = B_.step_;
 
   if ( B_.s_ == 0 )
+  {
     B_.s_ =
       gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_step_reset( B_.s_ );
+  }
 
   if ( B_.c_ == 0 )
+  {
     B_.c_ = gsl_odeiv_control_y_new( 1e-6, 0.0 );
+  }
   else
+  {
     gsl_odeiv_control_init( B_.c_, 1e-6, 0.0, 1.0, 0.0 );
+  }
 
   if ( B_.e_ == 0 )
+  {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_evolve_reset( B_.e_ );
+  }
 
   B_.sys_.function = hh_psc_alpha_gap_dynamics;
   B_.sys_.jacobian = NULL;
@@ -529,9 +556,10 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y_ );              // neuronal state
-
       if ( status != GSL_SUCCESS )
+      {
         throw GSLSolverFailure( get_name(), status );
+      }
     }
 
     if ( not wfr_update )
@@ -544,7 +572,9 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
       // maximum...
       // refractory?
       if ( S_.r_ > 0 )
+      {
         --S_.r_;
+      }
       else
         // (    threshold    &&     maximum       )
         if ( S_.y_[ State_::V_M ] >= 0 && U_old > S_.y_[ State_::V_M ] )
@@ -615,8 +645,10 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
   if ( not wfr_update )
   {
     for ( long temp = from; temp < to; ++temp )
+    {
       new_coefficients[ temp * ( interpolation_order + 1 ) + 0 ] =
         S_.y_[ State_::V_M ];
+    }
 
     B_.last_y_values.clear();
     B_.last_y_values.resize( kernel().connection_manager.get_min_delay(), 0.0 );
@@ -641,14 +673,17 @@ nest::hh_psc_alpha_gap::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
+  {
     B_.spike_exc_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
+  {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
-      e.get_weight()
-        * e.get_multiplicity() ); // current input, keep negative weight
+      e.get_weight() * e.get_multiplicity() );
+  } // current input, keep negative weight
 }
 
 void

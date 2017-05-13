@@ -69,8 +69,9 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
         kernel().model_manager.get_modeldict()->lookup( element_name );
 
       if ( element_model.empty() )
+      {
         throw UnknownModelName( element_name );
-
+      }
       // Creates several nodes if the next element in
       // the elements variable is a number.
       if ( ( tp + 1 != ad->end() )
@@ -78,9 +79,10 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
       {
         // Select how many nodes that should be created.
         const long number = getValue< long >( *( ++tp ) );
-
         for ( long i = 0; i < number; ++i )
+        {
           element_ids.push_back( static_cast< long >( element_model ) );
+        }
       }
       else
       {
@@ -96,8 +98,9 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
       kernel().model_manager.get_modeldict()->lookup( element_name );
 
     if ( element_model.empty() )
+    {
       throw UnknownModelName( element_name );
-
+    }
     element_ids.push_back( static_cast< long >( element_model ) );
   }
 
@@ -105,9 +108,10 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   {
     if ( layer_dict->known( names::rows ) or layer_dict->known( names::columns )
       or layer_dict->known( names::layers ) )
+    {
       throw BadProperty(
         "Can not specify both positions and rows or columns." );
-
+    }
     TokenArray positions =
       getValue< TokenArray >( layer_dict, names::positions );
 
@@ -119,11 +123,17 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     std::vector< double > pos =
       getValue< std::vector< double > >( positions[ 0 ] );
     if ( pos.size() == 2 )
+    {
       layer_model_name = "topology_layer_free";
+    }
     else if ( pos.size() == 3 )
+    {
       layer_model_name = "topology_layer_free_3d";
+    }
     else
+    {
       throw BadProperty( "Positions must have 2 or 3 coordinates." );
+    }
 
     length = positions.size();
   }
@@ -157,7 +167,9 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   Token layer_model =
     kernel().model_manager.get_modeldict()->lookup( layer_model_name );
   if ( layer_model.empty() )
+  {
     throw UnknownModelName( layer_model_name );
+  }
   const index layer_model_id = static_cast< index >( layer_model );
 
   GIDCollectionPTR layer_gc = kernel().node_manager.add_node( layer_model_id );
@@ -170,8 +182,9 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 
   // Create layer nodes.
   for ( size_t i = 0; i < element_ids.size(); ++i )
+  {
     kernel().node_manager.add_node( element_ids[ i ], length );
-
+  }
   // Return to original subnet
   kernel().node_manager.go_to( cwnode );
 
@@ -188,14 +201,18 @@ std::vector< Node* >::iterator
 AbstractLayer::local_begin( int depth )
 {
   if ( depth >= depth_ )
+  {
     throw BadProperty( "Selected depth out of range" );
+  }
   index min_nodes_per_layer = local_size() / depth_;
   index first_gid_at_depth = gids_[ depth * ( global_size() / depth_ ) ];
   std::vector< Node* >::iterator iter = local_begin();
   for ( iter += depth * min_nodes_per_layer; iter != local_end(); ++iter )
   {
     if ( ( *iter )->get_gid() >= first_gid_at_depth )
+    {
       break;
+    }
   }
   return iter;
 }
@@ -204,7 +221,9 @@ std::vector< Node* >::iterator
 AbstractLayer::local_end( int depth )
 {
   if ( depth >= depth_ )
+  {
     throw BadProperty( "Selected depth out of range" );
+  }
   index min_nodes_per_layer = local_size() / depth_;
   index last_gid_at_depth =
     gids_[ ( depth + 1 ) * ( global_size() / depth_ ) - 1 ];
@@ -213,7 +232,9 @@ AbstractLayer::local_end( int depth )
         ++iter )
   {
     if ( ( *iter )->get_gid() > last_gid_at_depth )
+    {
       break;
+    }
   }
   return iter;
 }
@@ -222,14 +243,18 @@ std::vector< Node* >::const_iterator
 AbstractLayer::local_begin( int depth ) const
 {
   if ( depth >= depth_ )
+  {
     throw BadProperty( "Selected depth out of range" );
+  }
   index min_nodes_per_layer = local_size() / depth_;
   index first_gid_at_depth = gids_[ depth * ( global_size() / depth_ ) ];
   std::vector< Node* >::const_iterator iter = local_begin();
   for ( iter += depth * min_nodes_per_layer; iter != local_end(); ++iter )
   {
     if ( ( *iter )->get_gid() >= first_gid_at_depth )
+    {
       break;
+    }
   }
   return iter;
 }
@@ -238,7 +263,9 @@ std::vector< Node* >::const_iterator
 AbstractLayer::local_end( int depth ) const
 {
   if ( depth >= depth_ )
+  {
     throw BadProperty( "Selected depth out of range" );
+  }
   index min_nodes_per_layer = local_size() / depth_;
   index last_gid_at_depth =
     gids_[ ( depth + 1 ) * ( global_size() / depth_ ) - 1 ];
@@ -247,7 +274,9 @@ AbstractLayer::local_end( int depth ) const
         ++iter )
   {
     if ( ( *iter )->get_gid() > last_gid_at_depth )
+    {
       break;
+    }
   }
   return iter;
 }

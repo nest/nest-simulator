@@ -84,9 +84,13 @@ bool Parser::operator()( Token& t )
   do
   {
     if ( result == scancontinue )
+    {
       ok = ( *s )( t );
+    }
     else
+    {
       ok = true;
+    }
 
 
     if ( ok )
@@ -120,10 +124,14 @@ bool Parser::operator()( Token& t )
             result = tokencontinue;
           }
           else
+          {
             result = endarrayexpected;
+          }
         }
         else
+        {
           result = noopenproc;
+        }
       }
       else if ( t.contains( s->EndArraySymbol ) )
       {
@@ -141,10 +149,14 @@ bool Parser::operator()( Token& t )
             result = tokencontinue;
           }
           else
+          {
             result = endprocexpected;
+          }
         }
         else
+        {
           result = noopenarray;
+        }
 #endif
       }
       else if ( t.contains( s->EndSymbol ) )
@@ -155,7 +167,9 @@ bool Parser::operator()( Token& t )
           ParseStack.clear();
         }
         else
+        {
           result = tokencompleted;
+        }
       }
       else
       {
@@ -183,7 +197,9 @@ bool Parser::operator()( Token& t )
           result = scancontinue;
         }
         else
+        {
           result = tokencompleted;
+        }
       }
 
     } // if(ok)

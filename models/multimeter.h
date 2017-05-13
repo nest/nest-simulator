@@ -192,6 +192,7 @@ protected:
   void init_state_( Node const& );
   void init_buffers_();
   void calibrate();
+  void post_run_cleanup();
   void finalize();
 
   /**
@@ -330,7 +331,9 @@ nest::Multimeter::get_status( DictionaryDatum& d ) const
     std::vector< Node* >::const_iterator sibling;
     for ( sibling = siblings->begin() + 1; sibling != siblings->end();
           ++sibling )
+    {
       ( *sibling )->get_status( d );
+    }
   }
 }
 
@@ -340,7 +343,9 @@ nest::Multimeter::set_status( const DictionaryDatum& d )
   // protect Multimeter from being frozen
   bool freeze = false;
   if ( updateValue< bool >( d, names::frozen, freeze ) && freeze )
+  {
     throw BadProperty( "Multimeter cannot be frozen." );
+  }
 
   Parameters_ ptmp = P_;
   ptmp.set( d, B_ );

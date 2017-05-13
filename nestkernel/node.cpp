@@ -79,7 +79,9 @@ void
 Node::init_buffers()
 {
   if ( buffers_initialized_ )
+  {
     return;
+  }
 
   init_buffers_();
 
@@ -90,7 +92,9 @@ std::string
 Node::get_name() const
 {
   if ( model_id_ < 0 )
+  {
     return std::string( "UnknownNode" );
+  }
 
   return kernel().model_manager.get_model( model_id_ )->get_name();
 }
@@ -99,7 +103,9 @@ Model&
 Node::get_model_() const
 {
   if ( model_id_ < 0 )
+  {
     throw UnknownModelID( model_id_ );
+  }
 
   return *kernel().model_manager.get_model( model_id_ );
 }

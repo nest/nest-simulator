@@ -97,9 +97,13 @@ public:
   {
     double val = raw_value( p, rng );
     if ( val < cutoff_ )
+    {
       return 0.0;
+    }
     else
+    {
       return val;
+    }
   }
 
   /**
@@ -110,9 +114,13 @@ public:
   {
     double val = raw_value( p, rng );
     if ( val < cutoff_ )
+    {
       return 0.0;
+    }
     else
+    {
       return val;
+    }
   }
 
   /**
@@ -322,9 +330,11 @@ public:
     updateValue< double >( d, names::c, c_ );
     updateValue< double >( d, names::tau, tau_ );
     if ( tau_ <= 0 )
+    {
       throw BadProperty(
         "topology::ExponentialParameter: "
         "tau > 0 required." );
+    }
   }
 
   double
@@ -369,9 +379,11 @@ public:
     updateValue< double >( d, names::mean, mean_ );
     updateValue< double >( d, names::sigma, sigma_ );
     if ( sigma_ <= 0 )
+    {
       throw BadProperty(
         "topology::GaussianParameter: "
         "sigma > 0 required." );
+    }
   }
 
   double
@@ -465,11 +477,12 @@ public:
   {
     updateValue< double >( d, names::min, lower_ );
     updateValue< double >( d, names::max, range_ );
-
     if ( lower_ >= range_ )
+    {
       throw BadProperty(
         "topology::UniformParameter: "
         "min < max required." );
+    }
 
     range_ -= lower_;
   }
@@ -524,15 +537,18 @@ public:
     updateValue< double >( d, names::sigma, sigma_ );
     updateValue< double >( d, names::min, min_ );
     updateValue< double >( d, names::max, max_ );
-
     if ( sigma_ <= 0 )
+    {
       throw BadProperty(
         "topology::NormalParameter: "
         "sigma > 0 required." );
+    }
     if ( min_ >= max_ )
+    {
       throw BadProperty(
         "topology::NormalParameter: "
         "min < max required." );
+    }
   }
 
   double
@@ -597,15 +613,18 @@ public:
     updateValue< double >( d, names::sigma, sigma_ );
     updateValue< double >( d, names::min, min_ );
     updateValue< double >( d, names::max, max_ );
-
     if ( sigma_ <= 0 )
+    {
       throw BadProperty(
         "topology::LognormalParameter: "
         "sigma > 0 required." );
+    }
     if ( min_ >= max_ )
+    {
       throw BadProperty(
         "topology::LognormalParameter: "
         "min < max required." );
+    }
   }
 
   double

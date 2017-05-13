@@ -141,7 +141,9 @@ nest::spin_detector::get_status( DictionaryDatum& d ) const
     std::vector< Node* >::const_iterator sibling;
     for ( sibling = siblings->begin() + 1; sibling != siblings->end();
           ++sibling )
+    {
       ( *sibling )->get_status( d );
+    }
   }
 }
 
@@ -149,7 +151,9 @@ void
 nest::spin_detector::set_status( const DictionaryDatum& d )
 {
   if ( d->known( names::precise_times ) )
+  {
     user_set_precise_times_ = true;
+  }
 
   device_.set_status( d );
 }
@@ -169,11 +173,15 @@ nest::spin_detector::handle( SpikeEvent& e )
     if ( kernel()
            .modelrange_manager.get_model_of_gid( e.get_sender_gid() )
            ->has_proxies() )
+    {
       // events from central queue
       dest_buffer = kernel().event_delivery_manager.read_toggle();
+    }
     else
+    {
       // locally delivered events
       dest_buffer = kernel().event_delivery_manager.write_toggle();
+    }
 
 
     // The following logic implements the decoding

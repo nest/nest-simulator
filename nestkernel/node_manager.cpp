@@ -55,6 +55,7 @@ NodeManager::NodeManager()
   , wfr_nodes_vec_()
   , wfr_is_used_( false )
   , nodes_vec_network_size_( 0 ) // zero to force update
+  , num_active_nodes_( 0 )
 {
 }
 
@@ -136,10 +137,14 @@ GIDCollectionPTR
 NodeManager::add_node( index mod, long n )
 {
   if ( mod >= kernel().model_manager.get_num_node_models() )
+  {
     throw UnknownModelID( mod );
+  }
 
   if ( n < 1 )
+  {
     throw BadProperty();
+  }
 
   const thread n_threads = kernel().vp_manager.get_num_threads();
   assert( n_threads > 0 );
@@ -388,7 +393,9 @@ NodeManager::restore_nodes( const ArrayDatum& node_list )
   Token* first = node_list.begin();
   const Token* end = node_list.end();
   if ( first == end )
+  {
     return;
+  }
 
   for ( Token* node_t = first; node_t != end; ++node_t )
   {
@@ -408,7 +415,9 @@ NodeManager::init_state( index GID )
 {
   Node* n = get_node( GID );
   if ( n == 0 )
+  {
     throw UnknownNode( GID );
+  }
 
   n->init_state();
 }
@@ -454,10 +463,14 @@ Node* NodeManager::get_node( index n, thread thr ) // no_p
   }
 
   if ( node->num_thread_siblings() == 0 )
+  {
     return node; // plain node
+  }
 
   if ( thr < 0 || thr >= static_cast< thread >( node->num_thread_siblings() ) )
+  {
     throw UnknownNode();
+  }
 
   return node->get_thread_sibling( thr );
 }
@@ -467,7 +480,9 @@ NodeManager::get_thread_siblings( index n ) const
 {
   Node* node = local_nodes_.get_node_by_gid( n );
   if ( node->num_thread_siblings() == 0 )
+  {
     throw NoThreadSiblingsAvailable( n );
+  }
   const SiblingContainer* siblings = dynamic_cast< SiblingContainer* >( node );
   assert( siblings != 0 );
 
@@ -482,7 +497,9 @@ NodeManager::ensure_valid_thread_local_ids()
   // test also covers that case that nodes have been deleted
   // by reset.
   if ( size() == nodes_vec_network_size_ )
+  {
     return;
+  }
 
 #ifdef _OPENMP
 #pragma omp critical( update_nodes_vec )
@@ -523,7 +540,9 @@ NodeManager::ensure_valid_thread_local_ids()
           {
             num_thread_local_nodes++;
             if ( node->node_uses_wfr() )
+            {
               num_thread_local_wfr_nodes++;
+            }
           }
         }
         nodes_vec_[ t ].reserve( num_thread_local_nodes );
@@ -549,7 +568,9 @@ NodeManager::ensure_valid_thread_local_ids()
             nodes_vec_[ t ].push_back( node );
 
             if ( node->node_uses_wfr() )
+            {
               wfr_nodes_vec_[ t ].push_back( node );
+            }
           }
         }
       } // end of for threads
@@ -563,8 +584,12 @@ NodeManager::ensure_valid_thread_local_ids()
       // step, because gather_events() has to be done in a
       // openmp single section
       for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+      {
         if ( wfr_nodes_vec_[ t ].size() > 0 )
+        {
           wfr_is_used_ = true;
+        }
+      }
     }
 #ifdef _OPENMP
   } // end of omp critical region
@@ -583,7 +608,9 @@ NodeManager::destruct_nodes_()
     Node* node = local_nodes_.get_node_by_index( n );
     assert( node != 0 );
     for ( size_t t = 0; t < node->num_thread_siblings(); ++t )
+    {
       node->get_thread_sibling( t )->~Node();
+    }
     node->~Node();
   }
 
@@ -599,7 +626,9 @@ NodeManager::set_status_single_node_( Node& target,
   if ( not target.is_proxy() )
   {
     if ( clear_flags )
+    {
       d->clear_access_flags();
+    }
     target.set_status_base( d );
 
     // TODO: Not sure this check should be at single neuron level; advantage is
@@ -618,7 +647,7 @@ NodeManager::prepare_node_( Node* n )
   n->calibrate();
 }
 
-size_t
+void
 NodeManager::prepare_nodes()
 {
   assert( kernel().is_initialized() );
@@ -653,7 +682,9 @@ NodeManager::prepare_nodes()
         {
           ++num_active_nodes;
           if ( ( *it )->node_uses_wfr() )
+          {
             ++num_active_wfr_nodes;
+          }
         }
       }
     }
@@ -668,8 +699,12 @@ NodeManager::prepare_nodes()
 
   // check if any exceptions have been raised
   for ( index thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  {
     if ( exceptions_raised.at( thr ).valid() )
+    {
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
+    }
+  }
 
   std::ostringstream os;
   std::string tmp_str = num_active_nodes == 1 ? " node" : " nodes";
@@ -682,9 +717,40 @@ NodeManager::prepare_nodes()
        << "iterative solution techniques.";
   }
 
+  num_active_nodes_ = num_active_nodes;
   LOG( M_INFO, "NodeManager::prepare_nodes", os.str() );
+}
 
-  return num_active_nodes;
+void
+NodeManager::post_run_cleanup()
+{
+#ifdef _OPENMP
+#pragma omp parallel
+  {
+    index t = kernel().vp_manager.get_thread_id();
+#else // clang-format off
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
+#endif // clang-format on
+    for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
+    {
+      Node* node = local_nodes_.get_node_by_index( idx );
+      if ( node != 0 )
+      {
+        if ( node->num_thread_siblings() > 0 )
+        {
+          node->get_thread_sibling( t )->post_run_cleanup();
+        }
+        else
+        {
+          if ( static_cast< index >( node->get_thread() ) == t )
+          {
+            node->post_run_cleanup();
+          }
+        }
+      }
+    }
+  }
 }
 
 /**

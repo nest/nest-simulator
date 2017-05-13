@@ -95,12 +95,16 @@ get_vp_rng_of_gid( index target )
   Node* target_node = kernel().node_manager.get_node( target );
 
   if ( not kernel().node_manager.is_local_node( target_node ) )
+  {
     throw LocalNodeExpected( target );
+  }
 
   // Only nodes with proxies have a well-defined VP and thus thread.
   // Asking for the VP of, e.g., a subnet or spike_detector is meaningless.
   if ( not target_node->has_proxies() )
+  {
     throw NodeWithProxiesExpected( target );
+  }
 
   return kernel().rng_manager.get_rng( target_node->get_thread() );
 }
@@ -198,7 +202,9 @@ create( const Name& model_name, const index n_nodes )
   const Token model =
     kernel().model_manager.get_modeldict()->lookup( model_name );
   if ( model.empty() )
+  {
     throw UnknownModelName( model_name );
+  }
 
   // create
   const index model_id = static_cast< index >( model );
@@ -250,6 +256,41 @@ simulate( const double& time )
   }
 
   kernel().simulation_manager.simulate( t_sim );
+}
+
+void
+run( const double& time )
+{
+  const Time t_sim = Time::ms( time );
+
+  if ( time < 0 )
+  {
+    throw BadParameter( "The simulation time cannot be negative." );
+  }
+  if ( not t_sim.is_finite() )
+  {
+    throw BadParameter( "The simulation time must be finite." );
+  }
+  if ( not t_sim.is_grid_time() )
+  {
+    throw BadParameter(
+      "The simulation time must be a multiple "
+      "of the simulation resolution." );
+  }
+
+  kernel().simulation_manager.run( t_sim );
+}
+
+void
+prepare()
+{
+  kernel().simulation_manager.prepare();
+}
+
+void
+cleanup()
+{
+  kernel().simulation_manager.cleanup();
 }
 
 void

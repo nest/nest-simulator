@@ -50,7 +50,9 @@ librandom::set_status( const DictionaryDatum& dict, RdvDatum& rdv )
   rdv->set_status( dict );
   std::string missed;
   if ( not dict->all_accessed( missed ) )
+  {
     throw UnaccessedDictionaryEntry( missed );
+  }
 }
 
 DictionaryDatum

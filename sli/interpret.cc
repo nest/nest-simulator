@@ -290,9 +290,11 @@ SLIInterpreter::createcommand( Name const& n,
   std::string deprecation_info )
 {
   if ( DStack->known( n ) )
-    throw NamingConflict("A function called '" + std::string(n.toString()) 
-			   + "' exists already.\n"
-			   "Please choose a different name!");
+  {
+    throw NamingConflict("A function called '" + std::string(n.toString())
+                         + "' exists already.\n"
+                         "Please choose a different name!");
+  }
 
   Token t( new FunctionDatum( n, fn, deprecation_info ) );
   DStack->def_move( n, t );
@@ -510,11 +512,17 @@ SLIInterpreter::SLIInterpreter( void )
   // ISO C signal function. It is defined in psignal.{h,cc}
 
   if ( posix_signal( SIGINT, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN )
+  {
     posix_signal( SIGINT, ( Sigfunc* ) SLISignalHandler );
+  }
   if ( posix_signal( SIGUSR1, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN )
+  {
     posix_signal( SIGUSR1, ( Sigfunc* ) SLISignalHandler );
+  }
   if ( posix_signal( SIGUSR2, ( Sigfunc* ) SIG_IGN ) != ( Sigfunc* ) SIG_IGN )
+  {
     posix_signal( SIGUSR2, ( Sigfunc* ) SLISignalHandler );
+  }
 #endif
 
   errordict->insert( quitbyerror_name, baselookup( false_name ) );
@@ -557,7 +565,7 @@ SLIInterpreter::addmodule( SLIModule* m )
 
   // Add commandstring to list of module initializers. They will be executed
   // by sli-init.sli once all C++ stuff is loaded.
-  if ( !( m->commandstring().empty() ) )
+  if ( not( m->commandstring().empty() ) )
   {
     ArrayDatum* ad =
       dynamic_cast< ArrayDatum* >( baselookup( commandstring_name ).datum() );
@@ -573,7 +581,7 @@ SLIInterpreter::addlinkedusermodule( SLIModule* m )
 
   // Add commandstring to list of module initializers. They will be executed
   // by sli-init.sli once all C++ stuff is loaded.
-  if ( !( m->commandstring().empty() ) )
+  if ( not( m->commandstring().empty() ) )
   {
     ArrayDatum* ad =
       dynamic_cast< ArrayDatum* >( baselookup( commandstring_name ).datum() );
@@ -770,7 +778,9 @@ SLIInterpreter::raiseagain( void )
     EStack.push( baselookup( stop_name ) );
   }
   else
+  {
     raiseerror( Name( "raiseagain" ), BadErrorHandler );
+  }
 }
 
 void
@@ -784,9 +794,9 @@ SLIInterpreter::raisesignal( int sig )
 }
 
 void
-SLIInterpreter::verbosity( int l )
+SLIInterpreter::verbosity( int level )
 {
-  verbositylevel = l;
+  verbositylevel = level;
 }
 
 int
@@ -825,23 +835,41 @@ SLIInterpreter::message( int level,
     if ( level >= verbositylevel )
     {
       if ( level >= M_FATAL )
+      {
         message( std::cout, M_FATAL_NAME, from, text, errorname );
+      }
       else if ( level >= M_ERROR )
+      {
         message( std::cout, M_ERROR_NAME, from, text, errorname );
+      }
       else if ( level >= M_WARNING )
+      {
         message( std::cout, M_WARNING_NAME, from, text, errorname );
+      }
       else if ( level >= M_DEPRECATED )
+      {
         message( std::cout, M_DEPRECATED_NAME, from, text, errorname );
+      }
       else if ( level >= M_PROGRESS )
+      {
         message( std::cout, M_PROGRESS_NAME, from, text, errorname );
+      }
       else if ( level >= M_INFO )
+      {
         message( std::cout, M_INFO_NAME, from, text, errorname );
+      }
       else if ( level >= M_STATUS )
+      {
         message( std::cout, M_STATUS_NAME, from, text, errorname );
+      }
       else if ( level >= M_DEBUG )
+      {
         message( std::cout, M_DEBUG_NAME, from, text, errorname );
+      }
       else
+      {
         message( std::cout, M_ALL_NAME, from, text, errorname );
+      }
     }
 
 #ifdef _OPENMP
@@ -881,9 +909,13 @@ SLIInterpreter::message( std::ostream& out,
   char const* const columns = std::getenv( "COLUMNS" );
   size_t max_width = 78;
   if ( columns )
+  {
     max_width = std::atoi( columns );
+  }
   if ( max_width < 3 * indent )
+  {
     max_width = 3 * indent;
+  }
   const size_t width = max_width - indent;
 
   // convert char* to string to be able to use the string functions
@@ -937,7 +969,7 @@ SLIInterpreter::message( std::ostream& out,
 
       // Only print character if we're not at the end of the
       // line and the last character is a space.
-      if ( !( width - pos == 0 && text_str.at( i ) == ' ' ) )
+      if ( not( width - pos == 0 && text_str.at( i ) == ' ' ) )
       {
         // Print the actual character.
         out << text_str.at( i );
@@ -954,10 +986,14 @@ SLIInterpreter::getcurrentname( void ) const
 {
   FunctionDatum* func = dynamic_cast< FunctionDatum* >( EStack.top().datum() );
   if ( func != NULL )
+  {
     return ( func->getname() );
+  }
   TrieDatum* trie = dynamic_cast< TrieDatum* >( EStack.top().datum() );
   if ( trie != NULL )
+  {
     return ( trie->getname() );
+  }
   return interpreter_name;
 }
 
@@ -1015,7 +1051,9 @@ SLIInterpreter::stack_backtrace( int n )
   for ( int p = n - 1; p >= 0; --p )
   {
     if ( ( size_t ) p > EStack.load() )
+    {
       continue;
+    }
 
     FunctionDatum* fd =
       dynamic_cast< FunctionDatum* >( EStack.pick( p ).datum() );
@@ -1083,9 +1121,10 @@ SLIInterpreter::debug_commandline( Token& next )
   // with CTRL-D. If std::cin is closed with ctrl-D we cannot re-open it again
   // and the debugger would be dysfunctional for the remainder of the session.
   std::ifstream tty( "/dev/tty" );
-
   if ( show_stack_ )
+  {
     OStack.dump( std::cerr );
+  }
   std::cerr << "Next token: ";
   next.pprint( std::cerr );
   std::cerr << std::endl;
@@ -1114,11 +1153,17 @@ SLIInterpreter::debug_commandline( Token& next )
     {
       tty >> arg;
       if ( arg == "stack" )
+      {
         OStack.dump( std::cerr );
+      }
       else if ( arg == "estack" )
+      {
         EStack.dump( std::cerr );
+      }
       else if ( arg == "backtrace" )
+      {
         stack_backtrace( EStack.load() );
+      }
       else if ( arg == "next" || arg == "n" )
       {
         std::cerr << "Next token: ";
@@ -1251,7 +1296,9 @@ SLIInterpreter::execute( const std::string& cmdline )
 {
   int exitcode = startup();
   if ( exitcode != EXIT_SUCCESS )
+  {
     return -1;
+  }
 
   OStack.push( new StringDatum( cmdline ) );
   EStack.push( new NameDatum( "::evalstring" ) );
@@ -1263,7 +1310,9 @@ SLIInterpreter::execute( const Token& cmd )
 {
   int exitcode = startup();
   if ( exitcode != EXIT_SUCCESS )
+  {
     return -1;
+  }
 
   EStack.push( cmd );
   return execute_(); // run the interpreter
@@ -1339,9 +1388,10 @@ SLIInterpreter::execute_debug_( size_t exitlevel )
 
   assert( statusdict->known( "exitcode" ) );
   exitcode = getValue< long >( *statusdict, "exitcode" );
-
   if ( exitcode != 0 )
+  {
     errordict->insert( quitbyerror_name, baselookup( true_name ) );
+  }
 
   return exitcode;
 }
@@ -1403,9 +1453,10 @@ SLIInterpreter::execute_( size_t exitlevel )
 
   assert( statusdict->known( "exitcode" ) );
   exitcode = getValue< long >( *statusdict, "exitcode" );
-
   if ( exitcode != 0 )
+  {
     errordict->insert( quitbyerror_name, baselookup( true_name ) );
+  }
 
   return exitcode;
 }

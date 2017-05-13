@@ -60,9 +60,13 @@ ModelRangeManager::add_range( index model, index first_gid, index last_gid )
   {
     assert( first_gid == last_gid_ + 1 );
     if ( model == modelranges_.back().get_model_id() )
+    {
       modelranges_.back().extend_range( last_gid );
+    }
     else
+    {
       modelranges_.push_back( modelrange( model, first_gid, last_gid ) );
+    }
   }
   else
   {
@@ -77,7 +81,9 @@ index
 ModelRangeManager::get_model_id( index gid ) const
 {
   if ( not is_in_range( gid ) )
+  {
     throw UnknownNode( gid );
+  }
 
   int left = -1;
   int right = modelranges_.size();
@@ -117,11 +123,13 @@ ModelRangeManager::model_in_use( index i ) const
   for ( std::vector< modelrange >::const_iterator it = modelranges_.begin();
         it != modelranges_.end();
         ++it )
+  {
     if ( it->get_model_id() == i )
     {
       found = true;
       break;
     }
+  }
 
   return found;
 }
@@ -130,13 +138,19 @@ const modelrange&
 ModelRangeManager::get_contiguous_gid_range( index gid ) const
 {
   if ( not is_in_range( gid ) )
+  {
     throw UnknownNode( gid );
+  }
 
   for ( std::vector< modelrange >::const_iterator it = modelranges_.begin();
         it != modelranges_.end();
         ++it )
+  {
     if ( it->is_in_range( gid ) )
+    {
       return ( *it );
+    }
+  }
 
   throw UnknownNode( gid );
 }

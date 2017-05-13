@@ -193,6 +193,11 @@ def
 [/doubletype]  /Simulate_d load addtotrie
 def
 
+/Run trie
+[/integertype] {cvd Run} addtotrie
+[/doubletype]  /Run_d load addtotrie
+def
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -284,7 +289,7 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% forall and Map for gid collections --- brutal implementation
+% forall, forallindexed and Map for gid collections --- brutal implementations
 
 /forall [/gidcollectiontype /proceduretype]
 {
@@ -306,6 +311,33 @@ def
   currentdict /func undef
   currentdict /iter undef
   currentdict /enditer undef
+
+} bind def
+
+/forallindexed [/gidcollectiontype /proceduretype]
+{
+  /func Set
+  dup
+  :beginiterator_g /iter Set
+  :enditerator_g /enditer Set
+
+  /:n 0 def
+  {
+    iter :getgid_q
+    :n
+    func
+    iter :next_q
+    /:n :n 1 add def
+    enditer :lt_q_q not { exit } if
+  }
+  loop
+
+  % Delete local variables; we do not use a local dictionary
+  % here in case func should change variables.
+  currentdict /func undef
+  currentdict /iter undef
+  currentdict /enditer undef
+  currentdict /:n undef
 
 } bind def
 

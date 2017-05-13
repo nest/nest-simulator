@@ -1,0 +1,33 @@
+/*
+ *  test_event_proxies_issue-696.music
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+[sender]
+  binary=nest
+  np=1
+  args=test_event_proxies_issue-696_sender.sli
+
+[receiver]
+  binary=nest
+  np=1
+  args=test_event_proxies_issue-696_receiver.sli
+
+sender.out -> receiver.in [11]

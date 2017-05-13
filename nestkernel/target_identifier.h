@@ -157,10 +157,12 @@ public:
   set_rport( rport rprt )
   {
     if ( rprt != 0 )
+    {
       throw IllegalConnection(
         "Only rport==0 allowed for HPC synpases. Use normal synapse models "
         "instead. See Kunkel et al, Front Neuroinform 8:78 (2014), Sec "
         "3.3.2." );
+    }
   }
 
 private:
@@ -174,10 +176,12 @@ TargetIdentifierIndex::set_target( Node* target )
 
   index target_lid = target->get_thread_lid();
   if ( target_lid > max_targetindex )
+  {
     throw IllegalConnection( String::compose(
       "HPC synapses support at most %1 nodes per thread. "
       "See Kunkel et al, Front Neuroinform 8:78 (2014), Sec 3.3.2.",
       max_targetindex ) );
+  }
   target_ = target_lid;
 }
 

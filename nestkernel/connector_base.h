@@ -135,8 +135,10 @@ class ConnectorBase
 public:
   ConnectorBase();
 
-  virtual void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const = 0;
+  virtual void get_synapse_status( synindex syn_id,
+    DictionaryDatum& d,
+    port p,
+    const thread tid ) const = 0;
   virtual void set_synapse_status( synindex syn_id,
     ConnectorModel& cm,
     const DictionaryDatum& d,
@@ -300,12 +302,17 @@ public:
   }
 
   void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
+  get_synapse_status( synindex syn_id,
+    DictionaryDatum& d,
+    port p,
+    const thread tid ) const
   {
     if ( syn_id == C_[ 0 ].get_syn_id() )
     {
       assert( p >= 0 && static_cast< size_t >( p ) < K );
       C_[ p ].get_status( d );
+      // set target gid here, where tid is available
+      def< long >( d, names::target, C_[ p ].get_target( tid )->get_gid() );
     }
   }
 
@@ -583,12 +590,17 @@ public:
   }
 
   void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
+  get_synapse_status( synindex syn_id,
+    DictionaryDatum& d,
+    port p,
+    const thread tid ) const
   {
     if ( syn_id == C_[ 0 ].get_syn_id() )
     {
       assert( static_cast< size_t >( p ) == 0 );
       C_[ 0 ].get_status( d );
+      // set target gid here, where tid is available
+      def< long >( d, names::target, C_[ 0 ].get_target( tid )->get_gid() );
     }
   }
 
@@ -834,12 +846,17 @@ public:
   }
 
   void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
+  get_synapse_status( synindex syn_id,
+    DictionaryDatum& d,
+    port p,
+    const thread tid ) const
   {
     if ( syn_id == C_[ 0 ].get_syn_id() )
     {
       assert( p >= 0 && static_cast< size_t >( p ) < C_.size() );
       C_[ p ].get_status( d );
+      // set target gid here, where tid is available
+      def< long >( d, names::target, C_[ p ].get_target( tid )->get_gid() );
     }
   }
 
@@ -1080,11 +1097,14 @@ public:
   }
 
   void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
+  get_synapse_status( synindex syn_id,
+    DictionaryDatum& d,
+    port p,
+    const thread tid ) const
   {
     for ( size_t i = 0; i < size(); i++ )
     {
-      at( i )->get_synapse_status( syn_id, d, p );
+      at( i )->get_synapse_status( syn_id, d, p, tid );
     }
   }
 

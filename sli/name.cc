@@ -23,8 +23,10 @@
 #include "name.h"
 
 // C++ includes:
+#include <cassert>
 #include <iomanip>
 #include <iostream>
+#include <omp.h>
 
 
 std::size_t
@@ -73,6 +75,10 @@ Name::toString( void ) const
 unsigned int
 Name::insert( const std::string& s )
 {
+#ifdef _OPENMP
+  assert( !omp_in_parallel() );
+#endif
+
   Name::HandleMap_& map = Name::handleMapInstance_();
   Name::HandleMap_::const_iterator where = map.find( s );
 

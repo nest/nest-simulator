@@ -69,6 +69,6 @@ librandom::UniformRandomDev::get_status( DictionaryDatum& d ) const
 {
   RandomDev::get_status( d );
 
-  def< double >( d, "low", low_ );
-  def< double >( d, "high", high_ );
+  def< double >( d, names::low, low_ );
+  def< double >( d, names::high, high_ );
 }

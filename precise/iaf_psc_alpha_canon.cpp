@@ -197,8 +197,8 @@ nest::iaf_psc_alpha_canon::State_::get( DictionaryDatum& d,
   const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y3_ + p.E_L_ ); // Membrane potential
-  def< double >( d, "y1", y1_ );                // y1 state
-  def< double >( d, "y2", y2_ );                // y2 state
+  def< double >( d, names::y1, y1_ );                // y1 state
+  def< double >( d, names::y2, y2_ );                // y2 state
   def< bool >( d, names::is_refractory, is_refractory_ );
 }
 

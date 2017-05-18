@@ -100,7 +100,7 @@ nest::iaf_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::C_m, c_m_ );
   def< double >( d, names::tau_m, tau_m_ );
   def< double >( d, names::t_ref, t_ref_ );
-  def< bool >( d, "refractory_input", with_refr_input_ );
+  def< bool >( d, names::refractory_input, with_refr_input_ );
 }
 
 double

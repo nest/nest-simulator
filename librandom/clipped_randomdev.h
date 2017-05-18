@@ -167,8 +167,8 @@ ClippedRedrawContinuousRandomDev< BaseRDV >::get_status(
 {
   BaseRDV::get_status( d );
 
-  def< double >( d, "low", min_ );
-  def< double >( d, "high", max_ );
+  def< double >( d, names::low, min_ );
+  def< double >( d, names::high, max_ );
 }
 
 template < typename BaseRDV >
@@ -284,8 +284,8 @@ ClippedRedrawDiscreteRandomDev< BaseRDV >::get_status(
 {
   BaseRDV::get_status( d );
 
-  def< long >( d, "low", min_ );
-  def< long >( d, "high", max_ );
+  def< long >( d, names::low, min_ );
+  def< long >( d, names::high, max_ );
 }
 
 template < typename BaseRDV >
@@ -420,8 +420,8 @@ ClippedToBoundaryContinuousRandomDev< BaseRDV >::get_status(
 {
   BaseRDV::get_status( d );
 
-  def< double >( d, "low", min_ );
-  def< double >( d, "high", max_ );
+  def< double >( d, names::low, min_ );
+  def< double >( d, names::high, max_ );
 }
 
 template < typename BaseRDV >
@@ -545,8 +545,8 @@ ClippedToBoundaryDiscreteRandomDev< BaseRDV >::get_status(
 {
   BaseRDV::get_status( d );
 
-  def< long >( d, "low", min_ );
-  def< long >( d, "high", max_ );
+  def< long >( d, names::low, min_ );
+  def< long >( d, names::high, max_ );
 }
 
 template < typename BaseRDV >

@@ -57,21 +57,21 @@ STDPDopaCommonProperties::get_status( DictionaryDatum& d ) const
   CommonSynapseProperties::get_status( d );
   if ( vt_ != 0 )
   {
-    def< long >( d, "vt", vt_->get_gid() );
+    def< long >( d, names::vt, vt_->get_gid() );
   }
   else
   {
-    def< long >( d, "vt", -1 );
+    def< long >( d, names::vt, -1 );
   }
 
-  def< double >( d, "A_plus", A_plus_ );
-  def< double >( d, "A_minus", A_minus_ );
-  def< double >( d, "tau_plus", tau_plus_ );
-  def< double >( d, "tau_c", tau_c_ );
-  def< double >( d, "tau_n", tau_n_ );
-  def< double >( d, "b", b_ );
-  def< double >( d, "Wmin", Wmin_ );
-  def< double >( d, "Wmax", Wmax_ );
+  def< double >( d, names::A_plus, A_plus_ );
+  def< double >( d, names::A_minus, A_minus_ );
+  def< double >( d, names::tau_plus, tau_plus_ );
+  def< double >( d, names::tau_c, tau_c_ );
+  def< double >( d, names::tau_n, tau_n_ );
+  def< double >( d, names::b, b_ );
+  def< double >( d, names::Wmin, Wmin_ );
+  def< double >( d, names::Wmax, Wmax_ );
 }
 
 void

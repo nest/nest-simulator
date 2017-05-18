@@ -71,8 +71,8 @@ librandom::NormalRandomDev::get_status( DictionaryDatum& d ) const
 {
   RandomDev::get_status( d );
 
-  def< double >( d, "mu", mu_ );
-  def< double >( d, "sigma", sigma_ );
+  def< double >( d, names::mu, mu_ );
+  def< double >( d, names::sigma, sigma_ );
 }
 
 double librandom::NormalRandomDev::operator()( RngPtr r ) const

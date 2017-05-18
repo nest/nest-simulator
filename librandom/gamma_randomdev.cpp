@@ -134,6 +134,6 @@ librandom::GammaRandomDev::get_status( DictionaryDatum& d ) const
 {
   RandomDev::get_status( d );
 
-  def< double >( d, "order", a );
-  def< double >( d, "scale", b_ );
+  def< double >( d, names::order, a );
+  def< double >( d, names::scale, b_ );
 }

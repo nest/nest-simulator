@@ -139,15 +139,15 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::get_status(
 {
   CommonSynapseProperties::get_status( d );
 
-  def< double >( d, "tau_plus", tau_plus_ );
-  def< double >( d, "tau_minus_stdp", tau_minus_ );
-  def< double >( d, "Wmax", Wmax_ );
-  def< double >( d, "weight_per_lut_entry", weight_per_lut_entry_ );
+  def< double >( d, names::tau_plus, tau_plus_ );
+  def< double >( d, names::tau_minus_stdp, tau_minus_ );
+  def< double >( d, names::Wmax, Wmax_ );
+  def< double >( d, names::weight_per_lut_entry, weight_per_lut_entry_ );
 
-  def< long >( d, "no_synapses", no_synapses_ );
-  def< long >( d, "synapses_per_driver", synapses_per_driver_ );
-  def< double >( d, "driver_readout_time", driver_readout_time_ );
-  def< double >( d, "readout_cycle_duration", readout_cycle_duration_ );
+  def< long >( d, names::no_synapses, no_synapses_ );
+  def< long >( d, names::synapses_per_driver, synapses_per_driver_ );
+  def< double >( d, names::driver_readout_time, driver_readout_time_ );
+  def< double >( d, names::readout_cycle_duration, readout_cycle_duration_ );
 
   ( *d )[ "lookuptable_0" ] =
     IntVectorDatum( new std::vector< long >( lookuptable_0_ ) );
@@ -332,14 +332,14 @@ STDPFACETSHWConnectionHom< targetidentifierT >::get_status(
   def< double >( d, names::weight, weight_ );
 
   // own properties, different for individual synapse
-  def< double >( d, "a_causal", a_causal_ );
-  def< double >( d, "a_acausal", a_acausal_ );
-  def< double >( d, "a_thresh_th", a_thresh_th_ );
-  def< double >( d, "a_thresh_tl", a_thresh_tl_ );
+  def< double >( d, names::a_causal, a_causal_ );
+  def< double >( d, names::a_acausal, a_acausal_ );
+  def< double >( d, names::a_thresh_th, a_thresh_th_ );
+  def< double >( d, names::a_thresh_tl, a_thresh_tl_ );
 
-  def< bool >( d, "init_flag", init_flag_ );
-  def< long >( d, "synapse_id", synapse_id_ );
-  def< double >( d, "next_readout_time", next_readout_time_ );
+  def< bool >( d, names::init_flag, init_flag_ );
+  def< long >( d, names::synapse_id, synapse_id_ );
+  def< double >( d, names::next_readout_time, next_readout_time_ );
   // useful to get conversion before activity, but weight_per_lut_entry_ not
   // known here
   // def<unsigned int>(d, "discrete_weight",

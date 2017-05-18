@@ -304,7 +304,7 @@ STDPPLConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) const
   def< double >( d, names::weight, weight_ );
 
   // own properties, different for individual synapse
-  def< double >( d, "Kplus", Kplus_ );
+  def< double >( d, names::Kplus, Kplus_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 }
 

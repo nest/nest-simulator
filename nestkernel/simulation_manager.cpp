@@ -354,23 +354,23 @@ nest::SimulationManager::set_status( const DictionaryDatum& d )
 void
 nest::SimulationManager::get_status( DictionaryDatum& d )
 {
-  def< double >( d, "ms_per_tic", Time::get_ms_per_tic() );
-  def< double >( d, "tics_per_ms", Time::get_tics_per_ms() );
-  def< long >( d, "tics_per_step", Time::get_tics_per_step() );
-  def< double >( d, "resolution", Time::get_resolution().get_ms() );
+  def< double >( d, names::ms_per_tic, Time::get_ms_per_tic() );
+  def< double >( d, names::tics_per_ms, Time::get_tics_per_ms() );
+  def< long >( d, names::tics_per_step, Time::get_tics_per_step() );
+  def< double >( d, names::resolution, Time::get_resolution().get_ms() );
 
-  def< double >( d, "T_min", Time::min().get_ms() );
-  def< double >( d, "T_max", Time::max().get_ms() );
+  def< double >( d, names::T_min, Time::min().get_ms() );
+  def< double >( d, names::T_max, Time::max().get_ms() );
 
-  def< double >( d, "time", get_time().get_ms() );
-  def< long >( d, "to_do", to_do_ );
-  def< bool >( d, "print_time", print_time_ );
+  def< double >( d, names::time, get_time().get_ms() );
+  def< long >( d, names::to_do, to_do_ );
+  def< bool >( d, names::print_time, print_time_ );
 
-  def< bool >( d, "use_wfr", use_wfr_ );
-  def< double >( d, "wfr_comm_interval", wfr_comm_interval_ );
-  def< double >( d, "wfr_tol", wfr_tol_ );
-  def< long >( d, "wfr_max_iterations", wfr_max_iterations_ );
-  def< long >( d, "wfr_interpolation_order", wfr_interpolation_order_ );
+  def< bool >( d, names::use_wfr, use_wfr_ );
+  def< double >( d, names::wfr_comm_interval, wfr_comm_interval_ );
+  def< double >( d, names::wfr_tol, wfr_tol_ );
+  def< long >( d, names::wfr_max_iterations, wfr_max_iterations_ );
+  def< long >( d, names::wfr_interpolation_order, wfr_interpolation_order_ );
 }
 
 void

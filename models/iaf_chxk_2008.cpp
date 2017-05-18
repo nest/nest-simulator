@@ -223,7 +223,7 @@ nest::iaf_chxk_2008::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_ahp, tau_ahp );
   def< double >( d, names::E_ahp, E_ahp );
   def< double >( d, names::g_ahp, g_ahp );
-  def< bool >( d, "ahp_bug", ahp_bug );
+  def< bool >( d, names::ahp_bug, ahp_bug );
 }
 
 void

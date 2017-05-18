@@ -334,8 +334,8 @@ STDPDopaConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
   def< double >( d, names::weight, weight_ );
 
   // own properties, different for individual synapse
-  def< double >( d, "c", c_ );
-  def< double >( d, "n", n_ );
+  def< double >( d, names::c, c_ );
+  def< double >( d, names::n, n_ );
 }
 
 template < typename targetidentifierT >

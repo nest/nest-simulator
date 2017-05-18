@@ -323,9 +323,9 @@ TsodyksConnectionHom< targetidentifierT >::get_status(
 {
   ConnectionBase::get_status( d );
 
-  def< double >( d, "x", x_ );
-  def< double >( d, "y", y_ );
-  def< double >( d, "u", u_ );
+  def< double >( d, names::x, x_ );
+  def< double >( d, names::y, y_ );
+  def< double >( d, names::u, u_ );
 }
 
 template < typename targetidentifierT >

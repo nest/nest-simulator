@@ -137,8 +137,8 @@ librandom::GSL_BinomialRandomDev::get_status( DictionaryDatum& d ) const
 {
   RandomDev::get_status( d );
 
-  def< double >( d, "p", p_ );
-  def< long >( d, "n", n_ );
+  def< double >( d, names::p, p_ );
+  def< long >( d, names::n, n_ );
 }
 
 #endif

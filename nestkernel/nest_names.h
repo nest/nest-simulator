@@ -41,16 +41,28 @@ namespace names
 extern const Name a; //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name A_lower;
 extern const Name A_mean;
+extern const Name A_minus;     //!< Used by stdp_dopa_connection
+extern const Name A_plus;      //!< Used by stdp_dopa_connection
 extern const Name A_std;
 extern const Name A_upper;
+extern const Name a_acausal;   //!< Used by stdp_connection_facetshw_hom
+extern const Name a_causal;    //!< Used by stdp_connection_facetshw_hom
+extern const Name a_thresh_th; //!< Used by stdp_connection_facetshw_hom
+extern const Name a_thresh_tl; //!< Used by stdp_connection_facetshw_hom
 extern const Name accumulator; //!< Recorder parameter
 extern const Name Act_h;       //!< Specific to Hodgkin Huxley models
 extern const Name Act_m;       //!< Specific to Hodgkin Huxley models
 extern const Name address;     //!< Node parameter
+extern const Name ahp_bug;     //!< Used in iaf_chxk_2008
+extern const Name alpha;       //!< stdp_synapse parameter
 extern const Name alpha_1;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name alpha_2;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
+extern const Name Aminus;      //!< Used by stdp_connection_facetshw_hom
+extern const Name Aminus_triplet;  //!< Used by stdp_connection_facetshw_hom
 extern const Name AMPA;
 extern const Name amplitude;       //!< Signal modulation amplitude
+extern const Name Aplus;       //!< Used by stdp_connection_facetshw_hom
+extern const Name Aplus_triplet;   //!< Used by stdp_connection_facetshw_hom
 extern const Name archiver_length; //!< used for ArchivingNode
 extern const Name autapses;        //!< Connectivity-related
 
@@ -99,6 +111,7 @@ extern const Name dead_time_shape;  //!< Shape parameter of the dead time
 //!< distribution (stochastic neuron pp_psc_delta)
 extern const Name delay;   //!< Connection parameters
 extern const Name delays;  //!< Connection parameters
+extern const Name deliver_interval; //!< Used by volume_transmitter
 extern const Name delta_P; //!< specific to Hill & Tononi 2005
 extern const Name Delta_T; //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name delta_tau; //!< Specific to correlation_and correlomatrix
@@ -112,6 +125,7 @@ extern const Name dg_in;     //!< Derivative of the inhibitory conductance
 extern const Name dI_syn_ex; //!< Derivative of the excitatory synaptic current
 extern const Name dI_syn_in; //!< Derivative of the inhibitory synaptic current
 extern const Name distribution; //!< Connectivity-related
+extern const Name driver_readout_time; //!< Used by stdp_connection_facetshw_hom
 extern const Name dt;           //!< Miscellaneous parameters
 extern const Name
   dU; //!< Unit increment of the utilization for a facilitating synapse [0...1]
@@ -191,6 +205,7 @@ extern const Name gamma_shape;   //!< Specific to ppd_sup_generator and
                                  //!< gamma_sup_generator
 extern const Name gaussian;      //!< Parameter for MSP growth curves
 extern const Name global_id;     //!< Node parameter
+extern const Name grng_seed;     //!< Seed
 extern const Name growth_curve;  //!< Growth curve for MSP dynamics
 extern const Name growth_rate;   //!< Parameter of the growth curve for MSP
                                  //!< dynamics
@@ -234,19 +249,25 @@ extern const Name indegree;                //!< In FixedInDegreeBuilder
 extern const Name index_map;               //!< Parameters for MUSIC devices
 extern const Name individual_spike_trains; //!< Generator parameters
 extern const Name inh_conductance;         //!< Recorder parameter
+extern const Name init_flag; //!< Used by stdp_connection_facetshw_hom
 extern const Name instant_unblock_NMDA;    //!< specific to Hill-Tononi
 extern const Name
   Interpol_Order;           //!< Interpolation order (precise timing neurons)
 extern const Name interval; //!< Recorder parameter
 extern const Name is_refractory; //!< Neuron is in refractory period (debugging)
 
+extern const Name Kplus;         //!< Used by stdp_connection_facetshw_hom
+extern const Name Kplus_triplet; //!< Used by stdp_connection_facetshw_hom
+
 extern const Name label;      //!< Miscellaneous parameters
+extern const Name lambda;     //!< stdp_synapse parameter
 extern const Name lambda_0;   //!< Specific to gif models
 extern const Name len_kernel; //!< Specific to population point process model
                               //!< (pp_pop_psc_delta)
 extern const Name linear;     //!< Parameter for MSP growth curves
 extern const Name local;      //!< Node parameter
 extern const Name local_id;   //!< Node
+extern const Name local_num_threads; //!< Local number of threads
 
 extern const Name make_symmetric; //!< Connectivity-related
 extern const Name max_delay;      //!< In ConnBuilder
@@ -258,6 +279,10 @@ extern const Name min_delay;     //!< In ConnBuilder
 extern const Name model;         //!< Node parameter
 extern const Name mother_rng;    //!< Specific to mip_generator
 extern const Name mother_seed;   //!< Specific to mip_generator
+extern const Name ms_per_tic;    //!< Simulation-related
+extern const Name mu;            //!< Used by stdp_dopa_connection
+extern const Name mu_minus;      //!< stdp_synapse parameter
+extern const Name mu_plus;      //!< stdp_synapse parameter
 extern const Name multapses;     //!< Connectivity-related
 extern const Name music_channel; //!< Parameters for MUSIC devices
 
@@ -272,10 +297,14 @@ extern const Name
 extern const Name n_receptors; //!< number of receptor ports
 extern const Name n_synapses;
 extern const Name neuron; //!< Node type
+extern const Name network_size;    //!< Network size
+extern const Name next_readout_time; //!< Used by stdp_connection_facetshw_hom
 extern const Name NMDA;
 extern const Name node_uses_wfr;   //!< Node parameter
 extern const Name noise;           //!< Specific to iaf_chs_2008 neuron
+extern const Name no_synapses;     //!< Used by stdp_connection_facetshw_hom
 extern const Name num_connections; //!< In ConnBuilder
+extern const Name num_processes;   //!< Nuber of processes
 
 extern const Name offset;    //!< Miscellaneous parameters
 extern const Name offsets;   //!< Recorder parameter
@@ -301,6 +330,7 @@ extern const Name potentials;            //!< Recorder parameter
 extern const Name pre_synaptic_element;  //!< Pre synaptic elements
 extern const Name precise_times;         //!< Recorder parameter
 extern const Name precision;             //!< Recorder parameter
+extern const Name print_time;            //!< Simulation-related
 extern const Name PSC_adapt_step;     //!< PSC increment (current homeostasis)
 extern const Name PSC_Unit_amplitude; //!< Scaling of PSC (current homeostasis)
 extern const Name psi;       //!< Width parameter for sigmoid growth curve
@@ -312,6 +342,9 @@ extern const Name q_stc; //!< Specific to gif models
 
 extern const Name
   rate; //!< Specific to ppd_sup_generator and gamma_sup_generator
+extern const Name readout_cycle_duration; //!< Used by
+                                          //!< stdp_connection_facetshw_hom
+extern const Name receive_buffer_size; //!< mpi-related
 extern const Name receptor_type;  //!< Connection parameter
 extern const Name receptor_types; //!< Publishing available types
 extern const Name record_from;    //!< Recorder parameter
@@ -325,6 +358,7 @@ extern const Name
 extern const Name registered; //!< Parameters for MUSIC devices
 extern const Name
   relative_amplitude; //!< Signal modulation amplitude relative to mean
+extern const Name resolution;    //!< Time resolution
 extern const Name requires_symmetric; //!< Used in connector_model_impl
 extern const Name rho_0; //!< Specific to population point process model
                          //!< (pp_pop_psc_delta)
@@ -339,6 +373,7 @@ extern const Name S; //!< Binary state (output) of neuron (Ginzburg neuron)
 extern const Name S_act_NMDA;  //!< specific to Hill & Tononi 2005
 extern const Name scientific;  //!< Recorder parameter
 extern const Name screen;      //!< Recorder parameter
+extern const Name send_buffer_size; //!< mpi-related
 extern const Name senders;     //!< Recorder parameter
 extern const Name sigmoid;     //!< Sigmoid MSP growth curve
 extern const Name size_of;     //!< Connection parameters
@@ -362,13 +397,17 @@ extern const Name success;
 extern const Name supports_precise_spikes; //!< true if model supports precise
                                            //!< spikes
 extern const Name synapse;                 //!< Node type
+extern const Name synapse_id;          //!< Used by stdp_connection_facetshw_hom
 extern const Name synapse_label;           //!< Label id of synapses with labels
 extern const Name synapse_model;           //!< Connection parameters
 extern const Name synapse_modelid;         //!< Connection parameters
+extern const Name synapses_per_driver; //!< Used by stdp_connection_facetshw_hom
 extern const Name synaptic_elements; //!< Synaptic elements used in structural
                                      //!< plasticity
 
 extern const Name t_lag;     //!< Lag within a time slice
+extern const Name T_min;     //!< Minimum time
+extern const Name T_max;     //!< Maximum time
 extern const Name t_origin;  //!< Origin of a time-slice
 extern const Name t_ref;     //!< Refractory period
 extern const Name t_ref_abs; //!< Absolute refractory period, iaf_tum_2000
@@ -379,10 +418,12 @@ extern const Name t_spike;   //!< Time of last spike
 extern const Name target;    //!< Connection parameters
 extern const Name target_thread; //!< Connection parameters
 extern const Name targets;       //!< Connection parameters
+extern const Name tau;       //!< Used by stdp_connection_facetshw_hom
 extern const Name tau_1;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name tau_2;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name tau_ahp;   //!< Specific to iaf_chxk_2008 neuron
 extern const Name tau_Ca;    //!< Rate of loss of calcium concentration
+extern const Name tau_c;     //!< Used by stdp_dopa_connection
 extern const Name tau_D_KNa; //!< specific to Hill & Tononi 2005
 extern const Name tau_decay; //!< Synapse decay constant (beta fct decay)
 extern const Name tau_decay_AMPA;   //!< specific to Hill & Tononi 2005
@@ -403,8 +444,13 @@ extern const Name
 extern const Name tau_Mg_fast_NMDA;  //!< specific to Hill & Tononi 2005
 extern const Name tau_Mg_slow_NMDA;  //!< specific to Hill & Tononi 2005
 extern const Name tau_minus;         //!< used for ArchivingNode
+extern const Name tau_minus_stdp;    //!< Used by stdp_connection_facetshw_hom
 extern const Name tau_minus_triplet; //!< used for ArchivingNode
+extern const Name tau_n;             //!< Used by stdp_dopa_connection
 extern const Name tau_P;             //!< specific to Hill & Tononi 2005
+extern const Name tau_plus;          //!< stdp_synapse parameter
+extern const Name tau_plus_triplet;  //!< Used by stdp_connection_facetshw_hom
+extern const Name tau_psc;           //!< Used by stdp_connection_facetshw_hom
 extern const Name
   tau_rec; //!< time constant for recovery (ms) (Tsodyks2_connection)
 extern const Name tau_reset;       //!< Specific to iaf_chs_2008 neuron
@@ -429,17 +475,23 @@ extern const Name theta_eq;        //!< specific to Hill & Tononi 2005
 extern const Name thread;          //!< Node parameter
 extern const Name thread_local_id; //!< Thead-local ID of node,
                                    //!< see Kunkel et al 2014, Sec 3.3.2
+extern const Name tics_per_ms;     //!< Simulation-related
+extern const Name tics_per_step;   //!< Simulation-related
 extern const Name time_in_steps;   //!< Recorder parameter
+extern const Name time;            //!< Simulation-related
 extern const Name times;           //!< Recorder parameter
 extern const Name to_accumulator;  //!< Recorder parameter
+extern const Name to_do;           //!< Simulation-related
 extern const Name to_file;         //!< Recorder parameter
 extern const Name to_memory;       //!< Recorder parameter
 extern const Name to_screen;       //!< Recorder parameter
+extern const Name total_num_virtual_procs; //!< Total number virtual processes
 extern const Name Tstart;          //!< Specific to correlation and
                                    //!< correlomatrix detector
 extern const Name Tstop; //!< Specific to correlation and correlomatrix detector
 
 extern const Name u; //!< probability of release [0...1] (Tsodyks2_connection)
+extern const Name U; //!< Used by stdp_connection_facetshw_hom
 extern const Name U_lower;
 extern const Name U_m; //!< Specific to Izhikevich 2003
 extern const Name U_mean;
@@ -447,6 +499,7 @@ extern const Name U_std;
 extern const Name U_upper;
 extern const Name update;      //!< Command to execute the neuron (sli_neuron)
 extern const Name update_node; //!< Command to execute the neuron (sli_neuron)
+extern const Name use_wfr;     //!< Simulation-related
 
 extern const Name V_act_NMDA; //!< specific to Hill & Tononi 2005
 extern const Name V_epsp;     //!< Specific to iaf_chs_2008 neuron
@@ -457,6 +510,7 @@ extern const Name
   V_peak; //!< Spike detection threshold (Brette & Gerstner 2005)
 extern const Name V_reset;  //!< Reset potential
 extern const Name V_T_star; //!< Specific to gif models
+extern const Name V_T;      //!< Voltage offset
 extern const Name V_th;     //!< Threshold
 extern const Name
   V_th_alpha_1; //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
@@ -466,16 +520,23 @@ extern const Name V_th_v; //!< Specific to amat2_*
 extern const Name
   val_eta; //!< Specific to population point process model (pp_pop_psc_delta)
 extern const Name voltage_clamp; //!< Enforce voltage clamp
+extern const Name vt;            //!< Used by stdp_dopa_connection
 extern const Name vp;            //!< Node parameter
 
 extern const Name w;      //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name weight; //!< Connection parameters
+extern const Name weight_per_lut_entry; //!< Used by
+                                        //!< stdp_connection_facetshw_hom
 extern const Name weight_std; //!< Standard deviation/mean of noisy synapse.
 extern const Name weighted_spikes_ex; //!< Weighted incoming excitatory spikes
 extern const Name weighted_spikes_in; //!< Weighted incoming inhibitory spikes
 extern const Name weights;            //!< Connection parameters --- topology
 extern const Name weight_recorder;    //!< Device name
-extern const Name with_noise;
+extern const Name wfr_comm_interval;  //!< Simulation-related
+extern const Name wfr_interpolation_order; //!< Simulation-related
+extern const Name wfr_max_iterations; //!< Simulation-related
+extern const Name wfr_tol;            //!< Simulation-related
+extern const Name with_noise;         //!< Simulation-related
 extern const Name with_reset; //!< Shall the pp_neuron reset after each spike?
                               //!< (stochastic neuron pp_psc_delta)
 extern const Name withgid;    //!< Recorder parameter
@@ -485,9 +546,15 @@ extern const Name withrport;  //!< Recorder parameter
 extern const Name withtargetgid; //!< Recorder parameter
 extern const Name withtime;      //!< Recorder parameter
 extern const Name withweight;    //!< Recorder parameter
+extern const Name Wmax;          //!< stdp_synapse parameter
+extern const Name Wmin;          //!< Used by stdp_dopa_connection
 
 extern const Name x; //!< current scaling factor of the synaptic weight [0...1]
                      //!< (Tsodyks2_connection)
+
+extern const Name y;  //!< Used by stdp_connection_facetshw_hom
+extern const Name y1; //!< Used in iaf_psc_alpha_canon
+extern const Name y2; //!< Used in iaf_psc_alpha_canon
 
 extern const Name z; //!< Number of available synaptic elements per node
 extern const Name

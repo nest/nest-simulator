@@ -146,9 +146,9 @@ nest::MPIManager::set_status( const DictionaryDatum& )
 void
 nest::MPIManager::get_status( DictionaryDatum& d )
 {
-  def< long >( d, "num_processes", num_processes_ );
-  def< long >( d, "send_buffer_size", send_buffer_size_ );
-  def< long >( d, "receive_buffer_size", recv_buffer_size_ );
+  def< long >( d, names::num_processes, num_processes_ );
+  def< long >( d, names::send_buffer_size, send_buffer_size_ );
+  def< long >( d, names::receive_buffer_size, recv_buffer_size_ );
 }
 
 void

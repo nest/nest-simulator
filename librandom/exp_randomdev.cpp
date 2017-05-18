@@ -46,5 +46,5 @@ librandom::ExpRandomDev::get_status( DictionaryDatum& d ) const
 {
   RandomDev::get_status( d );
 
-  def< double >( d, "lambda", lambda_ );
+  def< double >( d, names::lambda, lambda_ );
 }

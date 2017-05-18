@@ -46,10 +46,10 @@ TsodyksHomCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonPropertiesHomW::get_status( d );
 
-  def< double >( d, "U", U_ );
-  def< double >( d, "tau_psc", tau_psc_ );
-  def< double >( d, "tau_rec", tau_rec_ );
-  def< double >( d, "tau_fac", tau_fac_ );
+  def< double >( d, names::U, U_ );
+  def< double >( d, names::tau_psc, tau_psc_ );
+  def< double >( d, names::tau_rec, tau_rec_ );
+  def< double >( d, names::tau_fac, tau_fac_ );
 }
 
 void

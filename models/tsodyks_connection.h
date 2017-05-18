@@ -303,13 +303,13 @@ TsodyksConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
 
-  def< double >( d, "U", U_ );
-  def< double >( d, "tau_psc", tau_psc_ );
-  def< double >( d, "tau_rec", tau_rec_ );
-  def< double >( d, "tau_fac", tau_fac_ );
-  def< double >( d, "x", x_ );
-  def< double >( d, "y", y_ );
-  def< double >( d, "u", u_ );
+  def< double >( d, names::U, U_ );
+  def< double >( d, names::tau_psc, tau_psc_ );
+  def< double >( d, names::tau_rec, tau_rec_ );
+  def< double >( d, names::tau_fac, tau_fac_ );
+  def< double >( d, names::x, x_ );
+  def< double >( d, names::y, y_ );
+  def< double >( d, names::u, u_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 }
 

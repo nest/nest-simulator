@@ -112,6 +112,6 @@ librandom::UniformIntRandomDev::get_status( DictionaryDatum& d ) const
 {
   RandomDev::get_status( d );
 
-  def< long >( d, "low", nmin_ );
-  def< long >( d, "high", nmax_ );
+  def< long >( d, names::low, nmin_ );
+  def< long >( d, names::high, nmax_ );
 }

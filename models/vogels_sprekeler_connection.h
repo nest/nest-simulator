@@ -276,11 +276,11 @@ VogelsSprekelerConnection< targetidentifierT >::get_status(
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
-  def< double >( d, "tau", tau_ );
-  def< double >( d, "alpha", alpha_ );
-  def< double >( d, "eta", eta_ );
-  def< double >( d, "Wmax", Wmax_ );
-  def< double >( d, "Kplus", Kplus_ );
+  def< double >( d, names::tau, tau_ );
+  def< double >( d, names::alpha, alpha_ );
+  def< double >( d, names::eta, eta_ );
+  def< double >( d, names::Wmax, Wmax_ );
+  def< double >( d, names::Kplus, Kplus_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 }
 

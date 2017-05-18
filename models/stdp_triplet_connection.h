@@ -328,15 +328,15 @@ STDPTripletConnection< targetidentifierT >::get_status(
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
-  def< double >( d, "tau_plus", tau_plus_ );
-  def< double >( d, "tau_plus_triplet", tau_plus_triplet_ );
-  def< double >( d, "Aplus", Aplus_ );
-  def< double >( d, "Aminus", Aminus_ );
-  def< double >( d, "Aplus_triplet", Aplus_triplet_ );
-  def< double >( d, "Aminus_triplet", Aminus_triplet_ );
-  def< double >( d, "Kplus", Kplus_ );
-  def< double >( d, "Kplus_triplet", Kplus_triplet_ );
-  def< double >( d, "Wmax", Wmax_ );
+  def< double >( d, names::tau_plus, tau_plus_ );
+  def< double >( d, names::tau_plus_triplet, tau_plus_triplet_ );
+  def< double >( d, names::Aplus, Aplus_ );
+  def< double >( d, names::Aminus, Aminus_ );
+  def< double >( d, names::Aplus_triplet, Aplus_triplet_ );
+  def< double >( d, names::Aminus_triplet, Aminus_triplet_ );
+  def< double >( d, names::Kplus, Kplus_ );
+  def< double >( d, names::Kplus_triplet, Kplus_triplet_ );
+  def< double >( d, names::Wmax, Wmax_ );
 }
 
 template < typename targetidentifierT >

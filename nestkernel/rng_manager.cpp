@@ -217,7 +217,7 @@ void
 nest::RNGManager::get_status( DictionaryDatum& d )
 {
   ( *d )[ "rng_seeds" ] = Token( rng_seeds_ );
-  def< long >( d, "grng_seed", grng_seed_ );
+  def< long >( d, names::grng_seed, grng_seed_ );
 }
 
 

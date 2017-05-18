@@ -129,7 +129,7 @@ void
 nest::IOManager::set_status( const DictionaryDatum& d )
 {
   set_data_path_prefix_( d );
-  updateValue< bool >( d, "overwrite_files", overwrite_files_ );
+  updateValue< bool >( d, names::overwrite_files, overwrite_files_ );
 }
 
 void

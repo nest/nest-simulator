@@ -216,8 +216,8 @@ nest::iaf_psc_alpha_canon::State_::set( const DictionaryDatum& d,
     y3_ -= delta_EL;
   }
 
-  updateValue< double >( d, "y1", y1_ );
-  updateValue< double >( d, "y2", y2_ );
+  updateValue< double >( d, names::y1, y1_ );
+  updateValue< double >( d, names::y2, y2_ );
 }
 
 nest::iaf_psc_alpha_canon::Buffers_::Buffers_( iaf_psc_alpha_canon& n )

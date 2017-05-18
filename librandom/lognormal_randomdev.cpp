@@ -54,8 +54,8 @@ librandom::LognormalRandomDev::set_status( const DictionaryDatum& d )
   double new_mu = mu_;
   double new_sigma = sigma_;
 
-  updateValue< double >( d, "mu", new_mu );
-  updateValue< double >( d, "sigma", new_sigma );
+  updateValue< double >( d, names::mu, new_mu );
+  updateValue< double >( d, names::sigma, new_sigma );
 
   if ( new_sigma < 0. )
   {

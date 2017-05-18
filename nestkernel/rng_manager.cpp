@@ -64,7 +64,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
   // have those two for later asking, whether threads have changed:
   long n_threads;
   bool n_threads_updated =
-    updateValue< long >( d, "local_num_threads", n_threads );
+    updateValue< long >( d, names::local_num_threads, n_threads );
 
   // set RNGs --- MUST come after n_threads_ is updated
   if ( d->known( "rngs" ) )

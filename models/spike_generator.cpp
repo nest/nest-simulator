@@ -180,8 +180,8 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
 {
   const bool flags_changed =
     updateValue< bool >( d, names::precise_times, precise_times_ )
-    || updateValue< bool >( d, "allow_offgrid_spikes", allow_offgrid_spikes_ )
-    || updateValue< bool >( d, "shift_now_spikes", shift_now_spikes_ );
+    || updateValue< bool >( d, names::allow_offgrid_spikes, allow_offgrid_spikes_ )
+    || updateValue< bool >( d, names::shift_now_spikes, shift_now_spikes_ );
   if ( precise_times_ && ( allow_offgrid_spikes_ || shift_now_spikes_ ) )
   {
     throw BadProperty(

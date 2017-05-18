@@ -31,7 +31,7 @@ librandom::ExpRandomDev::set_status( const DictionaryDatum& d )
 {
   double new_lambda = lambda_;
 
-  updateValue< double >( d, "lambda", new_lambda );
+  updateValue< double >( d, names::lambda, new_lambda );
 
   if ( new_lambda <= 0. )
   {

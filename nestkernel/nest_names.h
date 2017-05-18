@@ -52,8 +52,10 @@ extern const Name a_thresh_tl; //!< Used by stdp_connection_facetshw_hom
 extern const Name accumulator; //!< Recorder parameter
 extern const Name Act_h;       //!< Specific to Hodgkin Huxley models
 extern const Name Act_m;       //!< Specific to Hodgkin Huxley models
+extern const Name activity;    //!< Used in pulsepacket_generator
 extern const Name address;     //!< Node parameter
 extern const Name ahp_bug;     //!< Used in iaf_chxk_2008
+extern const Name allow_offgrid_spikes; //!< Used in spike_generator
 extern const Name alpha;       //!< stdp_synapse parameter
 extern const Name alpha_1;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name alpha_2;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
@@ -313,6 +315,7 @@ extern const Name order;     //!< Specific to sinusoidally modulated generators
 extern const Name origin;    //!< Device parameters
 extern const Name other;     //!< Node type
 extern const Name outdegree; //!< In FixedOutDegreeBuilder
+extern const Name overwrite_files; //!< Used in io_manager
 
 extern const Name P; //!< specific to Hill & Tononi 2005
 extern const Name p; //!< current release probability  (Tsodyks2_connection)
@@ -373,8 +376,10 @@ extern const Name S; //!< Binary state (output) of neuron (Ginzburg neuron)
 extern const Name S_act_NMDA;  //!< specific to Hill & Tononi 2005
 extern const Name scientific;  //!< Recorder parameter
 extern const Name screen;      //!< Recorder parameter
+extern const Name sdev;        //!< Used in pulsepacket_generator
 extern const Name send_buffer_size; //!< mpi-related
 extern const Name senders;     //!< Recorder parameter
+extern const Name shift_now_spikes; //!< Used by spike_generator
 extern const Name sigmoid;     //!< Sigmoid MSP growth curve
 extern const Name size_of;     //!< Connection parameters
 extern const Name source;      //!< Connection parameters

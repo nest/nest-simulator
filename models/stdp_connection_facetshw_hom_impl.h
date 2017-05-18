@@ -171,26 +171,26 @@ STDPFACETSHWHomCommonProperties< targetidentifierT >::set_status(
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  updateValue< double >( d, "tau_plus", tau_plus_ );
-  updateValue< double >( d, "tau_minus_stdp", tau_minus_ );
-  if ( updateValue< double >( d, "Wmax", Wmax_ ) )
+  updateValue< double >( d, names::tau_plus, tau_plus_ );
+  updateValue< double >( d, names::tau_minus_stdp, tau_minus_ );
+  if ( updateValue< double >( d, names::Wmax, Wmax_ ) )
   {
     weight_per_lut_entry_ = Wmax_ / ( lookuptable_0_.size() - 1 );
   }
 
   // TP: they should not be allowed to be changed! But needed for CopyModel ...
-  updateValue< double >( d, "weight_per_lut_entry", weight_per_lut_entry_ );
-  updateValue< double >( d, "readout_cycle_duration", readout_cycle_duration_ );
-  if ( updateValue< long >( d, "no_synapses", no_synapses_ ) )
+  updateValue< double >( d, names::weight_per_lut_entry, weight_per_lut_entry_ );
+  updateValue< double >( d, names::readout_cycle_duration, readout_cycle_duration_ );
+  if ( updateValue< long >( d, names::no_synapses, no_synapses_ ) )
   {
     calc_readout_cycle_duration_();
   }
 
-  if ( updateValue< long >( d, "synapses_per_driver", synapses_per_driver_ ) )
+  if ( updateValue< long >( d, names::synapses_per_driver, synapses_per_driver_ ) )
   {
     calc_readout_cycle_duration_();
   }
-  if ( updateValue< double >( d, "driver_readout_time", driver_readout_time_ ) )
+  if ( updateValue< double >( d, names::driver_readout_time, driver_readout_time_ ) )
   {
     calc_readout_cycle_duration_();
   }
@@ -357,16 +357,16 @@ STDPFACETSHWConnectionHom< targetidentifierT >::set_status(
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
 
-  updateValue< double >( d, "a_causal", a_causal_ );
-  updateValue< double >( d, "a_acausal", a_acausal_ );
-  updateValue< double >( d, "a_thresh_th", a_thresh_th_ );
-  updateValue< double >( d, "a_thresh_tl", a_thresh_tl_ );
+  updateValue< double >( d, names::a_causal, a_causal_ );
+  updateValue< double >( d, names::a_acausal, a_acausal_ );
+  updateValue< double >( d, names::a_thresh_th, a_thresh_th_ );
+  updateValue< double >( d, names::a_thresh_tl, a_thresh_tl_ );
 
-  updateValue< long >( d, "synapse_id", synapse_id_ );
+  updateValue< long >( d, names::synapse_id, synapse_id_ );
 
   // TP: they should not be allowed to be changed! But needed for CopyModel ...
-  updateValue< bool >( d, "init_flag", init_flag_ );
-  updateValue< double >( d, "next_readout_time", next_readout_time_ );
+  updateValue< bool >( d, names::init_flag, init_flag_ );
+  updateValue< double >( d, names::next_readout_time, next_readout_time_ );
 
   // setting discrete_weight_ does not make sense, is temporary variable
 }

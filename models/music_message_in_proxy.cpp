@@ -81,7 +81,7 @@ nest::music_message_in_proxy::Parameters_::set( const DictionaryDatum& d,
   if ( not s.published_ )
   {
     updateValue< string >( d, names::port_name, port_name_ );
-    updateValue< double >( d, "acceptable_latency", acceptable_latency_ );
+    updateValue< double >( d, names::acceptable_latency, acceptable_latency_ );
   }
 }
 

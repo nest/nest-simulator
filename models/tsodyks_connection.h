@@ -323,8 +323,8 @@ TsodyksConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   // in case of invalid parameter values
   double x = x_;
   double y = y_;
-  updateValue< double >( d, "x", x );
-  updateValue< double >( d, "y", y );
+  updateValue< double >( d, names::x, x );
+  updateValue< double >( d, names::y, y );
 
   if ( x + y > 1.0 )
   {
@@ -337,31 +337,31 @@ TsodyksConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
 
-  updateValue< double >( d, "U", U_ );
+  updateValue< double >( d, names::U, U_ );
   if ( U_ > 1.0 || U_ < 0.0 )
   {
     throw BadProperty( "U must be in [0,1]." );
   }
 
-  updateValue< double >( d, "tau_psc", tau_psc_ );
+  updateValue< double >( d, names::tau_psc, tau_psc_ );
   if ( tau_psc_ <= 0.0 )
   {
     throw BadProperty( "tau_psc must be > 0." );
   }
 
-  updateValue< double >( d, "tau_rec", tau_rec_ );
+  updateValue< double >( d, names::tau_rec, tau_rec_ );
   if ( tau_rec_ <= 0.0 )
   {
     throw BadProperty( "tau_rec must be > 0." );
   }
 
-  updateValue< double >( d, "tau_fac", tau_fac_ );
+  updateValue< double >( d, names::tau_fac, tau_fac_ );
   if ( tau_fac_ < 0.0 )
   {
     throw BadProperty( "tau_fac must be >= 0." );
   }
 
-  updateValue< double >( d, "u", u_ );
+  updateValue< double >( d, names::u, u_ );
 }
 
 } // namespace

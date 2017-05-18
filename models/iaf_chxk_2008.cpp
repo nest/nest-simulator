@@ -242,7 +242,7 @@ nest::iaf_chxk_2008::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_ahp, tau_ahp );
   updateValue< double >( d, names::E_ahp, E_ahp );
   updateValue< double >( d, names::g_ahp, g_ahp );
-  updateValue< bool >( d, "ahp_bug", ahp_bug );
+  updateValue< bool >( d, names::ahp_bug, ahp_bug );
   if ( C_m <= 0 )
   {
     throw BadProperty( "Capacitance must be strictly positive." );

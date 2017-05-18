@@ -149,8 +149,8 @@ ClippedRedrawContinuousRandomDev< BaseRDV >::set_status(
   double new_min = min_;
   double new_max = max_;
 
-  updateValue< double >( d, "low", new_min );
-  updateValue< double >( d, "high", new_max );
+  updateValue< double >( d, names::low, new_min );
+  updateValue< double >( d, names::high, new_max );
   if ( new_min >= new_max )
   {
     throw BadParameterValue( "Clipped RDVs require low < high." );
@@ -266,8 +266,8 @@ ClippedRedrawDiscreteRandomDev< BaseRDV >::set_status(
   long new_min = min_;
   long new_max = max_;
 
-  updateValue< long >( d, "low", new_min );
-  updateValue< long >( d, "high", new_max );
+  updateValue< long >( d, names::low, new_min );
+  updateValue< long >( d, names::high, new_max );
   if ( new_min >= new_max )
   {
     throw BadParameterValue( "Clipped RDVs require low < high." );
@@ -402,8 +402,8 @@ ClippedToBoundaryContinuousRandomDev< BaseRDV >::set_status(
   double new_min = min_;
   double new_max = max_;
 
-  updateValue< double >( d, "low", new_min );
-  updateValue< double >( d, "high", new_max );
+  updateValue< double >( d, names::low, new_min );
+  updateValue< double >( d, names::high, new_max );
   if ( new_min >= new_max )
   {
     throw BadParameterValue( "Clipped RDVs require low < high." );
@@ -527,8 +527,8 @@ ClippedToBoundaryDiscreteRandomDev< BaseRDV >::set_status(
   long new_min = min_;
   long new_max = max_;
 
-  updateValue< long >( d, "low", new_min );
-  updateValue< long >( d, "high", new_max );
+  updateValue< long >( d, names::low, new_min );
+  updateValue< long >( d, names::high, new_max );
   if ( new_min >= new_max )
   {
     throw BadParameterValue( "Clipped RDVs require low < high." );

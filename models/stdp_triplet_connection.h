@@ -347,15 +347,15 @@ STDPTripletConnection< targetidentifierT >::set_status(
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, "tau_plus", tau_plus_ );
-  updateValue< double >( d, "tau_plus_triplet", tau_plus_triplet_ );
-  updateValue< double >( d, "Aplus", Aplus_ );
-  updateValue< double >( d, "Aminus", Aminus_ );
-  updateValue< double >( d, "Aplus_triplet", Aplus_triplet_ );
-  updateValue< double >( d, "Aminus_triplet", Aminus_triplet_ );
-  updateValue< double >( d, "Kplus", Kplus_ );
-  updateValue< double >( d, "Kplus_triplet", Kplus_triplet_ );
-  updateValue< double >( d, "Wmax", Wmax_ );
+  updateValue< double >( d, names::tau_plus, tau_plus_ );
+  updateValue< double >( d, names::tau_plus_triplet, tau_plus_triplet_ );
+  updateValue< double >( d, names::Aplus, Aplus_ );
+  updateValue< double >( d, names::Aminus, Aminus_ );
+  updateValue< double >( d, names::Aplus_triplet, Aplus_triplet_ );
+  updateValue< double >( d, names::Aminus_triplet, Aminus_triplet_ );
+  updateValue< double >( d, names::Kplus, Kplus_ );
+  updateValue< double >( d, names::Kplus_triplet, Kplus_triplet_ );
+  updateValue< double >( d, names::Wmax, Wmax_ );
 
   // check if weight_ and Wmax_ has the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )

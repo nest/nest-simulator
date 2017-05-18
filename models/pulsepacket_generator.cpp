@@ -82,8 +82,8 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d,
 
   // We cannot use a single line here since short-circuiting may stop evaluation
   // prematurely. Therefore, neednewpulse must be second arg on second line.
-  bool neednewpulse = updateValue< long >( d, "activity", a_ );
-  neednewpulse = updateValue< double >( d, "sdev", sdev_ ) || neednewpulse;
+  bool neednewpulse = updateValue< long >( d, names::activity, a_ );
+  neednewpulse = updateValue< double >( d, names::sdev, sdev_ ) || neednewpulse;
   if ( a_ < 0 )
   {
     throw BadProperty( "The activity cannot be negative." );

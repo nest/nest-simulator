@@ -160,7 +160,7 @@ nest::iaf_psc_delta::Parameters_::set( const DictionaryDatum& d )
     throw BadProperty( "Membrane time constant must be > 0." );
   }
 
-  updateValue< bool >( d, "refractory_input", with_refr_input_ );
+  updateValue< bool >( d, names::refractory_input, with_refr_input_ );
 
   return delta_EL;
 }

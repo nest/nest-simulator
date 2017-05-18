@@ -346,7 +346,7 @@ STDPConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
 
-  updateValue< double >( d, "Kplus", Kplus_ );
+  updateValue< double >( d, names::Kplus, Kplus_ );
 }
 
 } // of namespace nest

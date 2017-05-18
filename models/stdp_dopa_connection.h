@@ -347,8 +347,8 @@ STDPDopaConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
 
-  updateValue< double >( d, "c", c_ );
-  updateValue< double >( d, "n", n_ );
+  updateValue< double >( d, names::c, c_ );
+  updateValue< double >( d, names::n, n_ );
 }
 
 template < typename targetidentifierT >

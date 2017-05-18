@@ -337,8 +337,8 @@ TsodyksConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   // synapse untouched in case of invalid parameter values
   double x = x_;
   double y = y_;
-  updateValue< double >( d, "x", x );
-  updateValue< double >( d, "y", y );
+  updateValue< double >( d, names::x, x );
+  updateValue< double >( d, names::y, y );
 
   if ( x + y > 1.0 )
   {
@@ -350,7 +350,7 @@ TsodyksConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
 
   ConnectionBase::set_status( d, cm );
 
-  updateValue< double >( d, "u", u_ );
+  updateValue< double >( d, names::u, u_ );
 }
 
 } // namespace

@@ -235,7 +235,7 @@ music_message_in_proxy::set_status( const DictionaryDatum& d )
   stmp.set( d, P_ ); // throws if BadProperty
 
   long nm = 0;
-  if ( updateValue< long >( d, "n_messages", nm ) )
+  if ( updateValue< long >( d, names::n_messages, nm ) )
   {
     if ( nm == 0 )
     {

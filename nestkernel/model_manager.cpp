@@ -378,6 +378,8 @@ ModelManager::set_synapse_defaults_( index model_id,
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised_(
     kernel().vp_manager.get_num_threads() );
 #ifdef _OPENMP
+// We have to run this in parallel to set the status on nodes that exist on each
+// thread, such as volume_transmitter.
 #pragma omp parallel
   {
     index t = kernel().vp_manager.get_thread_id();
@@ -385,16 +387,21 @@ ModelManager::set_synapse_defaults_( index model_id,
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
 #endif // clang-format on
-    try
+// This region has to be run one thread at the time to get the right node for
+// the thread.
+#pragma omp critical
     {
-      prototypes_[ t ][ model_id ]->set_status( params );
-    }
-    catch ( std::exception& err )
-    {
-      // We must create a new exception here, err's lifetime ends at
-      // the end of the catch block.
-      exceptions_raised_.at( t ) =
-        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+      try
+      {
+        prototypes_[ t ][ model_id ]->set_status( params );
+      }
+      catch ( std::exception& err )
+      {
+        // We must create a new exception here, err's lifetime ends at
+        // the end of the catch block.
+        exceptions_raised_.at( t ) = lockPTR< WrappedThreadException >(
+          new WrappedThreadException( err ) );
+      }
     }
   }
 

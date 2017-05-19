@@ -1,5 +1,5 @@
 /*
- *  exp_randomdev.cpp
+ *  librandom_names.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,31 +20,22 @@
  *
  */
 
-#include "exp_randomdev.h"
 
-// Includes from sli:
-#include "dictutils.h"
-#include "sliexceptions.h"
+#include "librandom_names.h"
 
-void
-librandom::ExpRandomDev::set_status( const DictionaryDatum& d )
+namespace librandom
 {
-  double new_lambda = lambda_;
-
-  updateValue< double >( d, names::lambda, new_lambda );
-
-  if ( new_lambda <= 0. )
-  {
-    throw BadParameterValue( "Exponential RDV: lambda > 0 required." );
-  }
-
-  lambda_ = new_lambda;
+namespace names
+{
+const Name high( "high" );
+const Name is_discrete( "is_discrete" );
+const Name lambda( "lambda" );
+const Name low( "low" );
+const Name mu( "mu" );
+const Name n( "n" );
+const Name order( "order" );
+const Name p( "p" );
+const Name scale( "scale" );
+const Name sigma( "sigma" );
 }
-
-void
-librandom::ExpRandomDev::get_status( DictionaryDatum& d ) const
-{
-  RandomDev::get_status( d );
-
-  def< double >( d, names::lambda, lambda_ );
 }

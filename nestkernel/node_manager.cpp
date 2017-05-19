@@ -978,7 +978,7 @@ NodeManager::set_status( index gid, const DictionaryDatum& d )
 void
 NodeManager::get_status( DictionaryDatum& d )
 {
-  def< long >( d, "network_size", size() );
+  def< long >( d, names::network_size, size() );
 
   std::map< long, size_t > sna_cts = local_nodes_.get_step_ctr();
   DictionaryDatum cdict( new Dictionary );

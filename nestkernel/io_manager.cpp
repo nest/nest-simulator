@@ -49,7 +49,7 @@ void
 nest::IOManager::set_data_path_prefix_( const DictionaryDatum& d )
 {
   std::string tmp;
-  if ( updateValue< std::string >( d, "data_path", tmp ) )
+  if ( updateValue< std::string >( d, names::data_path, tmp ) )
   {
     DIR* testdir = opendir( tmp.c_str() );
     if ( testdir != NULL )
@@ -79,7 +79,7 @@ nest::IOManager::set_data_path_prefix_( const DictionaryDatum& d )
     }
   }
 
-  if ( updateValue< std::string >( d, "data_prefix", tmp ) )
+  if ( updateValue< std::string >( d, names::data_prefix, tmp ) )
   {
     if ( tmp.find( '/' ) == std::string::npos )
     {
@@ -101,12 +101,12 @@ nest::IOManager::initialize()
   char* data_path = std::getenv( "NEST_DATA_PATH" );
   if ( data_path )
   {
-    ( *dict )[ "data_path" ] = std::string( data_path );
+    ( *dict )[ names::data_path ] = std::string( data_path );
   }
   char* data_prefix = std::getenv( "NEST_DATA_PREFIX" );
   if ( data_prefix )
   {
-    ( *dict )[ "data_prefix" ] = std::string( data_prefix );
+    ( *dict )[ names::data_prefix ] = std::string( data_prefix );
   }
   if ( not dict->empty() )
   {
@@ -129,13 +129,13 @@ void
 nest::IOManager::set_status( const DictionaryDatum& d )
 {
   set_data_path_prefix_( d );
-  updateValue< bool >( d, "overwrite_files", overwrite_files_ );
+  updateValue< bool >( d, names::overwrite_files, overwrite_files_ );
 }
 
 void
 nest::IOManager::get_status( DictionaryDatum& d )
 {
-  ( *d )[ "data_path" ] = data_path_;
-  ( *d )[ "data_prefix" ] = data_prefix_;
-  ( *d )[ "overwrite_files" ] = overwrite_files_;
+  ( *d )[ names::data_path ] = data_path_;
+  ( *d )[ names::data_prefix ] = data_prefix_;
+  ( *d )[ names::overwrite_files ] = overwrite_files_;
 }

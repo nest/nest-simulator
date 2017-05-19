@@ -54,8 +54,8 @@ librandom::LognormalRandomDev::set_status( const DictionaryDatum& d )
   double new_mu = mu_;
   double new_sigma = sigma_;
 
-  updateValue< double >( d, "mu", new_mu );
-  updateValue< double >( d, "sigma", new_sigma );
+  updateValue< double >( d, names::mu, new_mu );
+  updateValue< double >( d, names::sigma, new_sigma );
 
   if ( new_sigma < 0. )
   {
@@ -71,8 +71,8 @@ librandom::LognormalRandomDev::get_status( DictionaryDatum& d ) const
 {
   RandomDev::get_status( d );
 
-  def< double >( d, "mu", mu_ );
-  def< double >( d, "sigma", sigma_ );
+  def< double >( d, names::mu, mu_ );
+  def< double >( d, names::sigma, sigma_ );
 }
 
 double librandom::LognormalRandomDev::operator()( RngPtr r ) const

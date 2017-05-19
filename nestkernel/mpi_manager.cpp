@@ -1015,10 +1015,10 @@ nest::MPIManager::communicate_connector_properties( DictionaryDatum& dict )
         delays, delays_result, displacements, num_connections );
 
       // Save global values in input dictionary.
-      ( *dict )[ "targets" ] = targets_result;
-      ( *dict )[ "receptors" ] = receptors_result;
-      ( *dict )[ "weights" ] = weights_result;
-      ( *dict )[ "delays" ] = delays_result;
+      ( *dict )[ names::targets ] = targets_result;
+      ( *dict )[ names::receptors ] = receptors_result;
+      ( *dict )[ names::weights ] = weights_result;
+      ( *dict )[ names::delays ] = delays_result;
     }
   }
 }

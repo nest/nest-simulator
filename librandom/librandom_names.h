@@ -36,6 +36,7 @@ namespace names
 {
 
 extern const Name high;
+extern const Name is_discrete;
 extern const Name lambda;
 extern const Name low;
 extern const Name mu;

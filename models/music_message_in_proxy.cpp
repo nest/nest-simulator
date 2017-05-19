@@ -71,7 +71,7 @@ void
 nest::music_message_in_proxy::Parameters_::get( DictionaryDatum& d ) const
 {
   ( *d )[ names::port_name ] = port_name_;
-  ( *d )[ "acceptable_latency" ] = acceptable_latency_;
+  ( *d )[ names::acceptable_latency ] = acceptable_latency_;
 }
 
 void
@@ -88,8 +88,8 @@ nest::music_message_in_proxy::Parameters_::set( const DictionaryDatum& d,
 void
 nest::music_message_in_proxy::State_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ "published" ] = published_;
-  ( *d )[ "port_width" ] = port_width_;
+  ( *d )[ names::published ] = published_;
+  ( *d )[ names::port_width ] = port_width_;
 }
 
 void

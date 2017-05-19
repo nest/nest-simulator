@@ -71,9 +71,9 @@ RecordablesMap< iaf_chxk_2008 >::create()
   insert_(
     names::g_ahp, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::G_AHP > );
 
-  insert_( "I_syn_exc", &iaf_chxk_2008::get_I_syn_exc_ );
-  insert_( "I_syn_inh", &iaf_chxk_2008::get_I_syn_inh_ );
-  insert_( "I_ahp", &iaf_chxk_2008::get_I_ahp_ );
+  insert_( names::I_syn_ex, &iaf_chxk_2008::get_I_syn_exc_ );
+  insert_( names::I_syn_in, &iaf_chxk_2008::get_I_syn_inh_ );
+  insert_( names::I_ahp, &iaf_chxk_2008::get_I_ahp_ );
 }
 }
 

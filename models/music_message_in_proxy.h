@@ -109,11 +109,11 @@ public:
   get_status( DictionaryDatum& d ) const
   {
     DictionaryDatum dict( new Dictionary );
-    ( *dict )[ "messages" ] = messages;
-    ( *dict )[ "message_times" ] =
+    ( *dict )[ names::messages ] = messages;
+    ( *dict )[ names::message_times ] =
       DoubleVectorDatum( new std::vector< double >( message_times ) );
-    ( *d )[ "n_messages" ] = messages.size();
-    ( *d )[ "data" ] = dict;
+    ( *d )[ names::n_messages ] = messages.size();
+    ( *d )[ names::data ] = dict;
   }
 
   void

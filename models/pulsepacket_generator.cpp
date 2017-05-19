@@ -69,10 +69,10 @@ nest::pulsepacket_generator::Variables_::Variables_()
 void
 nest::pulsepacket_generator::Parameters_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ "pulse_times" ] =
+  ( *d )[ names::pulse_times ] =
     DoubleVectorDatum( new std::vector< double >( pulse_times_ ) );
-  ( *d )[ "activity" ] = a_;
-  ( *d )[ "sdev" ] = sdev_;
+  ( *d )[ names::activity ] = a_;
+  ( *d )[ names::sdev ] = sdev_;
 }
 
 void

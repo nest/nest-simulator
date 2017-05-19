@@ -168,7 +168,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
   if ( d->known( "grng" ) )
   {
     // pre-seeded grng that can be used directly, no seeding required
-    updateValue< librandom::RngDatum >( d, "grng", grng_ );
+    updateValue< librandom::RngDatum >( d, names::grng, grng_ );
   }
   else if ( n_threads_updated && kernel().node_manager.size() == 0 )
   {
@@ -180,7 +180,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
 
   if ( d->known( "grng_seed" ) )
   {
-    const long gseed = getValue< long >( d, "grng_seed" );
+    const long gseed = getValue< long >( d, names::grng_seed );
 
     // check if grng seed is unique with respect to rng seeds
     // if grng_seed and rng_seeds given in one SetStatus call
@@ -216,7 +216,7 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
 void
 nest::RNGManager::get_status( DictionaryDatum& d )
 {
-  ( *d )[ "rng_seeds" ] = Token( rng_seeds_ );
+  ( *d )[ names::rng_seeds ] = Token( rng_seeds_ );
   def< long >( d, names::grng_seed, grng_seed_ );
 }
 

@@ -444,7 +444,7 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
     prototypes_[ t ][ syn_id ]->get_status( dict );
   }
 
-  ( *dict )[ "num_connections" ] =
+  ( *dict )[ names::num_connections ] =
     kernel().connection_manager.get_num_connections( syn_id );
 
   return dict;

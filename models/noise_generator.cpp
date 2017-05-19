@@ -131,8 +131,8 @@ nest::noise_generator::Parameters_::get( DictionaryDatum& d ) const
 void
 nest::noise_generator::State_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ "y_0" ] = y_0_;
-  ( *d )[ "y_1" ] = y_1_;
+  ( *d )[ names::y_0 ] = y_0_;
+  ( *d )[ names::y_1 ] = y_1_;
 }
 
 void

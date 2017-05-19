@@ -75,15 +75,14 @@ Name::toString( void ) const
 unsigned int
 Name::insert( const std::string& s )
 {
-#ifdef _OPENMP
-  assert( !omp_in_parallel() );
-#endif
-
   Name::HandleMap_& map = Name::handleMapInstance_();
   Name::HandleMap_::const_iterator where = map.find( s );
 
   if ( where == map.end() )
   {
+#ifdef _OPENMP
+    assert( not omp_in_parallel() );
+#endif
     // The following is more comlex code than a simple
     // handleMap_[s] = Handle(s), but it avoids the creation
     // of spurious Handle objects. HEP 2007-05-24

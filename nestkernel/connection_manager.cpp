@@ -146,8 +146,10 @@ void
 nest::ConnectionManager::get_status( DictionaryDatum& d )
 {
   update_delay_extrema_();
-  def< double >( d, names::min_delay, Time( Time::step( min_delay_ ) ).get_ms() );
-  def< double >( d, names::max_delay, Time( Time::step( max_delay_ ) ).get_ms() );
+  def< double >(
+    d, names::min_delay, Time( Time::step( min_delay_ ) ).get_ms() );
+  def< double >(
+    d, names::max_delay, Time( Time::step( max_delay_ ) ).get_ms() );
 
   size_t n = get_num_connections();
   def< long >( d, names::num_connections, n );

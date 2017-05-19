@@ -100,9 +100,9 @@ nest::step_current_generator::Buffers_::Buffers_( const Buffers_&,
 void
 nest::step_current_generator::Parameters_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ "amplitude_times" ] =
+  ( *d )[ names::amplitude_times ] =
     DoubleVectorDatum( new std::vector< double >( amp_times_ ) );
-  ( *d )[ "amplitude_values" ] =
+  ( *d )[ names::amplitude_values ] =
     DoubleVectorDatum( new std::vector< double >( amp_values_ ) );
 }
 

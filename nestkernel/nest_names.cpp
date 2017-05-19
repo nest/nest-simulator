@@ -26,16 +26,16 @@ namespace nest
 namespace names
 {
 const Name a( "a" );
+const Name a_acausal( "a_acausal" );
+const Name a_causal( "a_causal" );
 const Name A_lower( "A_lower" );
 const Name A_mean( "A_mean" );
 const Name A_minus( "A_minus" );
 const Name A_plus( "A_plus" );
 const Name A_std( "A_std" );
-const Name A_upper( "A_upper" );
-const Name a_acausal( "a_acausal" );
-const Name a_causal( "a_causal" );
 const Name a_thresh_th( "a_thresh_th" );
 const Name a_thresh_tl( "a_thresh_tl" );
+const Name A_upper( "A_upper" );
 const Name acceptable_latency( "acceptable_latency" );
 const Name accumulator( "accumulator" );
 const Name Act_h( "Act_h" );
@@ -95,9 +95,9 @@ const Name D_lower( "D_lower" );
 const Name D_mean( "D_mean" );
 const Name D_std( "D_std" );
 const Name D_upper( "D_upper" );
+const Name data( "data" );
 const Name data_path( "data_path" );
 const Name data_prefix( "data_prefix" );
-const Name data( "data" );
 const Name dead_time( "dead_time" );
 const Name dead_time_random( "dead_time_random" );
 const Name dead_time_shape( "dead_time_shape" );

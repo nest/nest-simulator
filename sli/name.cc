@@ -83,7 +83,7 @@ Name::insert( const std::string& s )
   if ( where == map.end() )
   {
 #ifdef _OPENMP
-    // An assertion is made to protect the global name table.  We do not
+    // This assertion protects the global name table.  We do not
     // protect by pragma omp critical since that could lead to hard-to-find
     // performance problems due to serialization.
     assert( not omp_in_parallel() );

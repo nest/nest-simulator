@@ -34,7 +34,6 @@ namespace librandom
  */
 namespace names
 {
-
 extern const Name high;
 extern const Name is_discrete;
 extern const Name lambda;

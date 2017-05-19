@@ -45,16 +45,17 @@ extern const Name A_minus; //!< Used by stdp_dopa_connection
 extern const Name A_plus;  //!< Used by stdp_dopa_connection
 extern const Name A_std;
 extern const Name A_upper;
-extern const Name a_acausal;   //!< Used by stdp_connection_facetshw_hom
-extern const Name a_causal;    //!< Used by stdp_connection_facetshw_hom
-extern const Name a_thresh_th; //!< Used by stdp_connection_facetshw_hom
-extern const Name a_thresh_tl; //!< Used by stdp_connection_facetshw_hom
-extern const Name accumulator; //!< Recorder parameter
-extern const Name Act_h;       //!< Specific to Hodgkin Huxley models
-extern const Name Act_m;       //!< Specific to Hodgkin Huxley models
-extern const Name activity;    //!< Used in pulsepacket_generator
-extern const Name address;     //!< Node parameter
-extern const Name ahp_bug;     //!< Used in iaf_chxk_2008
+extern const Name a_acausal;          //!< Used by stdp_connection_facetshw_hom
+extern const Name a_causal;           //!< Used by stdp_connection_facetshw_hom
+extern const Name a_thresh_th;        //!< Used by stdp_connection_facetshw_hom
+extern const Name a_thresh_tl;        //!< Used by stdp_connection_facetshw_hom
+extern const Name acceptable_latency; //!< Used in music_message_in_proxy
+extern const Name accumulator;        //!< Recorder parameter
+extern const Name Act_h;              //!< Specific to Hodgkin Huxley models
+extern const Name Act_m;              //!< Specific to Hodgkin Huxley models
+extern const Name activity;           //!< Used in pulsepacket_generator
+extern const Name address;            //!< Node parameter
+extern const Name ahp_bug;            //!< Used in iaf_chxk_2008
 extern const Name allow_offgrid_spikes; //!< Used in spike_generator
 extern const Name alpha;                //!< stdp_synapse parameter
 extern const Name alpha_1; //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
@@ -114,6 +115,7 @@ extern const Name D_std;
 extern const Name D_upper;
 extern const Name data_path;   //!< Data path, used by io_manager
 extern const Name data_prefix; //!< Data prefix, used by io_manager
+extern const Name data;        //!< Used in music_message_in_proxy
 extern const Name
   dead_time; //!< Specific to ppd_sup_generator and gamma_sup_generator
 extern const Name dead_time_random; //!< Random dead time or fixed dead time
@@ -300,6 +302,8 @@ extern const Name MAXERR; //!< Largest permissible error for adaptive stepsize
                           //!< (Brette & Gerstner 2005)
 extern const Name mean;   //!< Miscellaneous parameters
 extern const Name memory; //!< Recorder parameter
+extern const Name message_times; //!< Used in music_message_in_proxy
+extern const Name messages;      //!< Used in music_message_in_proxy
 extern const Name min_delay;     //!< In ConnBuilder
 extern const Name model;         //!< Node parameter
 extern const Name mother_rng;    //!< Specific to mip_generator
@@ -317,6 +321,7 @@ extern const Name N;          //!< Specific to population point process model
                               //!< (pp_pop_psc_delta)
 extern const Name N_channels; //!< Specific to correlomatrix_detector
 extern const Name n_events;   //!< Recorder parameter
+extern const Name n_messages; //!< Used in music_message_in_proxy
 extern const Name
   n_proc; //!< Number of component processes of ppd_sup_/gamma_sup_generator
 extern const Name n_receptors; //!< number of receptor ports
@@ -379,6 +384,7 @@ extern const Name readout_cycle_duration; //!< Used by
 extern const Name receive_buffer_size;    //!< mpi-related
 extern const Name receptor_type;          //!< Connection parameter
 extern const Name receptor_types;         //!< Publishing available types
+extern const Name receptors;              //!< Used in mpi_manager
 extern const Name record_from;            //!< Recorder parameter
 extern const Name record_to;              //!< Recorder parameter
 extern const Name

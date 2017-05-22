@@ -215,15 +215,16 @@ nest::ac_generator::update( Time const& origin, const long from, const long to )
   CurrentEvent ce;
   for ( long lag = from; lag < to; ++lag )
   {
-    S_.I_ = 0.0;
+    // We need to iterate the oscillator throughout all steps, even when the
+    // device is not active, since inactivity only windows the oscillator.
+    const double y_0 = S_.y_0_;
+    S_.y_0_ = V_.A_00_ * y_0 + V_.A_01_ * S_.y_1_;
+    S_.y_1_ = V_.A_10_ * y_0 + V_.A_11_ * S_.y_1_;
 
+    S_.I_ = 0.0;
     if ( device_.is_active( Time::step( start + lag ) ) )
     {
-      const double y_0 = S_.y_0_;
-      S_.y_0_ = V_.A_00_ * y_0 + V_.A_01_ * S_.y_1_;
-      S_.y_1_ = V_.A_10_ * y_0 + V_.A_11_ * S_.y_1_;
       S_.I_ = S_.y_1_ + P_.offset_;
-
       ce.set_current( S_.I_ );
       kernel().event_delivery_manager.send( *this, ce, lag );
     }

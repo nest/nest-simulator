@@ -311,7 +311,7 @@ nest::ConnBuilder::check_synapse_params_( std::string syn_name,
   // that need to be introduced via CopyModel or SetDefaults
   if ( syn_name == "stdp_dopamine_synapse" )
   {
-    if ( syn_spec->known( "vt" ) )
+    if ( syn_spec->known( names::vt ) )
     {
       throw NotImplemented(
         "Connect doesn't support the direct specification of the "

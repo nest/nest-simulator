@@ -213,7 +213,7 @@ nest::hh_cond_exp_traub::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::E_Na, E_Na );
   def< double >( d, names::E_K, E_K );
   def< double >( d, names::E_L, E_L );
-  def< double >( d, "V_T", V_T );
+  def< double >( d, names::V_T, V_T );
   def< double >( d, names::E_ex, E_ex );
   def< double >( d, names::E_in, E_in );
   def< double >( d, names::tau_syn_ex, tau_synE );
@@ -232,7 +232,7 @@ nest::hh_cond_exp_traub::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::E_Na, E_Na );
   updateValue< double >( d, names::E_K, E_K );
   updateValue< double >( d, names::E_L, E_L );
-  updateValue< double >( d, "V_T", V_T );
+  updateValue< double >( d, names::V_T, V_T );
   updateValue< double >( d, names::E_ex, E_ex );
   updateValue< double >( d, names::E_in, E_in );
   updateValue< double >( d, names::tau_syn_ex, tau_synE );

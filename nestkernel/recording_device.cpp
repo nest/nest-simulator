@@ -496,7 +496,7 @@ nest::RecordingDevice::RecordingDevice( const Node& n,
   , mode_( d.mode_ )
   , P_( d.P_ )
   , S_( d.S_ )
-  , B_() // no not copy
+  , B_() // do not copy
 {
 }
 

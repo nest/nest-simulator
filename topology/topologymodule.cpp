@@ -57,9 +57,9 @@
 // clang under OSX. This must be outside namespace NEST, since the template
 // is defined in the global namespace.
 template class lockPTRDatum< nest::TopologyParameter,
-                             &nest::TopologyModule::ParameterType >;
+  &nest::TopologyModule::ParameterType >;
 template class lockPTRDatum< nest::AbstractMask,
-                             &nest::TopologyModule::MaskType >;
+  &nest::TopologyModule::MaskType >;
 
 namespace nest
 {

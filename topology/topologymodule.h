@@ -318,7 +318,7 @@ private:
 
 typedef lockPTRDatum< AbstractMask, &TopologyModule::MaskType > MaskDatum;
 typedef lockPTRDatum< TopologyParameter, &TopologyModule::ParameterType >
-          ParameterDatum;
+  ParameterDatum;
 
 /**
  * Exception to be thrown if the wrong argument type

@@ -45,8 +45,6 @@
 
 namespace nest
 {
-class TopologyModule;
-
 /**
  * Abstract base class for parameters
  */
@@ -182,9 +180,6 @@ public:
 private:
   double cutoff_;
 };
-
-typedef lockPTRDatum< TopologyParameter, &TopologyModule::ParameterType >
-  ParameterDatum;
 
 /**
  * Parameter with constant value.

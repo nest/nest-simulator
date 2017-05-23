@@ -67,7 +67,6 @@ const Name mean_x( "mean_x" );
 const Name mean_y( "mean_y" );
 const Name min( "min" );
 const Name minor_axis( "minor_axis" );
-const Name mu( "mu" );
 const Name number_of_connections( "number_of_connections" );
 const Name outer_radius( "outer_radius" );
 const Name p_center( "p_center" );
@@ -85,11 +84,8 @@ const Name sigma_x( "sigma_x" );
 const Name sigma_y( "sigma_y" );
 const Name sources( "sources" );
 const Name spherical( "spherical" );
-const Name tau( "tau" );
 const Name topology( "topology" );
 const Name upper_right( "upper_right" );
 const Name volume( "volume" );
-// const Name x("x");
-const Name y( "y" );
 }
 }

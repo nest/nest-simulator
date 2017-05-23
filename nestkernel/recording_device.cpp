@@ -73,7 +73,7 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   , user_set_precise_times_( false )
   , user_set_precision_( false )
   , binary_( false )
-  , fbuffer_size_( BUFSIZ ) // default buffer size as defined in <cstdio>
+  , fbuffer_size_( -1 ) // -1 marks use of default buffer
   , label_()
   , file_ext_( file_ext )
   , filename_()
@@ -204,16 +204,19 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
 
   updateValue< bool >( d, names::binary, binary_ );
 
-  long fbuffer_size;
+  long fbuffer_size = -1;
   if ( updateValue< long >( d, names::fbuffer_size, fbuffer_size ) )
   {
     if ( B.fs_.is_open() )
     {
       throw BadProperty( "fbuffer_size cannot be set on open files." );
     }
-    if ( fbuffer_size < 0 )
+
+    // prohibit negative sizes but allow Create_l_i_D to reset -1 on prototype
+    if ( fbuffer_size < 0
+    	 and not ( rd.node_.get_vp() == -1 and fbuffer_size == -1 ) )
     {
-      throw BadProperty( "fbuffer_size must be >= 0" );
+      throw BadProperty( "fbuffer_size must be >= 0." );
     }
     fbuffer_size_ = fbuffer_size;
   }
@@ -448,7 +451,7 @@ nest::RecordingDevice::State_::set( const DictionaryDatum& d )
 nest::RecordingDevice::Buffers_::Buffers_()
   : fs_()
   , fbuffer_( 0 )
-  , fbuffer_size_( 0 )
+  , fbuffer_size_( -1 )
 {
 }
 
@@ -569,30 +572,35 @@ nest::RecordingDevice::calibrate()
     {
       assert( not B_.fs_.is_open() );
 
-      // fbuffer should be set before opening file
-      if (
-        // still using default buffer, changing to non-default size
-        ( B_.fbuffer_ == 0 and P_.fbuffer_size_ != BUFSIZ )
-        // manual buffer, changing size
-        or ( B_.fbuffer_ != 0 and P_.fbuffer_size_ != B_.fbuffer_size_ ) )
+      // pubsetbuf() must be called before the opening file: otherwise, it has
+      // no effect (libstdc++) or may lead to undefined behavior (libc++), see
+      // http://en.cppreference.com/w/cpp/io/basic_filebuf/setbuf.
+      if ( P_.fbuffer_size_ >= 0 )
       {
         if ( B_.fbuffer_ )
         {
           delete[] B_.fbuffer_;
           B_.fbuffer_ = 0;
         }
+        // invariant: B_.fbuffer_ == 0
+
         if ( P_.fbuffer_size_ > 0 )
         {
           B_.fbuffer_ = new char[ P_.fbuffer_size_ ];
         }
+        // invariant: ( P_.fbuffer_size_ == 0 and B_.fbuffer_ == 0 )
+        //            or
+        //            ( P_.fbuffer_size_ > 0 and B_.fbuffer_ != 0 )
+
         B_.fbuffer_size_ = P_.fbuffer_size_;
+
         std::basic_streambuf< char >* res =
           B_.fs_.rdbuf()->pubsetbuf( B_.fbuffer_, B_.fbuffer_size_ );
+
         if ( res == 0 )
         {
           LOG( M_ERROR,
-            "RecordingDevice::calibrate()",
-            "Failed to set file buffer." );
+            "RecordingDevice::calibrate()", "Failed to set file buffer." );
           throw IOError();
         }
       }

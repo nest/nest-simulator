@@ -174,10 +174,12 @@ namespace nest
   /binary        - if set to true, data is written in binary mode to files
                    instead of ASCII. This setting affects file output only, not
                    screen output (default: false)
-  /fbuffer_size  - the size of the buffer to use for writing to files. The
-                   default size is determined by the implementation of the C++
-                   standard library. To obtain an unbuffered file stream, use a
-                   buffer size of 0.
+  /fbuffer_size  - the size of the buffer to use for writing to files. Setting
+                   this value to 0 will reduce buffering to a system-dependent
+                   minimum. Set /flush_after_simulate to true to ensure that all
+                   pending data is written to file before Simulate returns. A
+                   value of -1 shows that the system default is in use. This
+                   value can only be changed before Simulate is called.
 
   Data recorded in memory is available through the following parameter:
   /n_events      - Number of events collected or sampled. n_events can be set to
@@ -476,11 +478,11 @@ private:
     /**
      * Manually managed output buffer.
      *
-     * This pointer is zero unless the user explicitly sets fbuffer_size
+     * This pointer is zero unless the user explicitly sets fbuffer_size_
      * to a value greater than zero.
      */
     char* fbuffer_;
-    size_t fbuffer_size_; //!< size of fbuffer_
+    long fbuffer_size_; //!< size of fbuffer_; -1: not yet set
 
     Buffers_();
     ~Buffers_();
@@ -511,7 +513,7 @@ private:
     bool user_set_precision_;     //!< true if user set precision
 
     bool binary_; //!< true if to write files in binary mode instead of ASCII
-    size_t fbuffer_size_; //!< the buffer size to use when writing to file
+    long fbuffer_size_; //!< output buffer size; -1 until set by user
 
     std::string label_;    //!< a user-defined label for symbolic device names.
     std::string file_ext_; //!< the file name extension to use, without .

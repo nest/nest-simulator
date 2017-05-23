@@ -472,6 +472,18 @@ private:
   struct Buffers_
   {
     std::ofstream fs_; //!< the file to write the recorded data to
+
+    /**
+     * Manually managed output buffer.
+     *
+     * This pointer is zero unless the user explicitly sets fbuffer_size
+     * to a value greater than zero.
+     */
+    char* fbuffer_;
+    size_t fbuffer_size_; //!< size of fbuffer_
+
+    Buffers_();
+    ~Buffers_();
   };
 
   // ------------------------------------------------------------------
@@ -499,9 +511,7 @@ private:
     bool user_set_precision_;     //!< true if user set precision
 
     bool binary_; //!< true if to write files in binary mode instead of ASCII
-    long fbuffer_size_;     //!< the buffer size to use when writing to file
-    long fbuffer_size_old_; //!< the buffer size to use when writing
-                            //!< to file (old)
+    size_t fbuffer_size_; //!< the buffer size to use when writing to file
 
     std::string label_;    //!< a user-defined label for symbolic device names.
     std::string file_ext_; //!< the file name extension to use, without .
@@ -559,7 +569,6 @@ private:
   Parameters_ P_;
   State_ S_;
   Buffers_ B_;
-  Buffers_ V_;
 };
 
 inline bool

@@ -214,7 +214,7 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
 
     // prohibit negative sizes but allow Create_l_i_D to reset -1 on prototype
     if ( fbuffer_size < 0
-    	 and not ( rd.node_.get_vp() == -1 and fbuffer_size == -1 ) )
+      and not( rd.node_.get_vp() == -1 and fbuffer_size == -1 ) )
     {
       throw BadProperty( "fbuffer_size must be >= 0." );
     }
@@ -600,7 +600,8 @@ nest::RecordingDevice::calibrate()
         if ( res == 0 )
         {
           LOG( M_ERROR,
-            "RecordingDevice::calibrate()", "Failed to set file buffer." );
+            "RecordingDevice::calibrate()",
+            "Failed to set file buffer." );
           throw IOError();
         }
       }

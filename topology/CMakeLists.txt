@@ -34,6 +34,7 @@ set( topo_sources
     grid_layer.h
     mask.h
     mask_impl.h
+    mask.cpp
     grid_mask.h
     ntree.h
     ntree_impl.h

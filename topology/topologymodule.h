@@ -316,9 +316,6 @@ private:
   static ParameterFactory& parameter_factory_();
 };
 
-typedef lockPTRDatum< AbstractMask, &TopologyModule::MaskType > MaskDatum;
-typedef lockPTRDatum< TopologyParameter, &TopologyModule::ParameterType >
-  ParameterDatum;
 
 /**
  * Exception to be thrown if the wrong argument type

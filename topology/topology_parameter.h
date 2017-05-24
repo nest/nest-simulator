@@ -45,6 +45,10 @@
 
 namespace nest
 {
+class TopologyParameter;
+typedef lockPTRDatum< TopologyParameter, &TopologyModule::ParameterType >
+  ParameterDatum;
+
 /**
  * Abstract base class for parameters
  */

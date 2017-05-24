@@ -39,7 +39,6 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 #include "iostreamdatum.h"
-#include "lockptrdatum_impl.h"
 
 // Includes from topology:
 #include "connection_creator_impl.h"
@@ -53,13 +52,6 @@
 #include "topology.h"
 #include "topology_parameter.h"
 
-// Explicit definition required to ensure visibility when compiling with
-// clang under OSX. This must be outside namespace NEST, since the template
-// is defined in the global namespace.
-template class lockPTRDatum< nest::TopologyParameter,
-  &nest::TopologyModule::ParameterType >;
-template class lockPTRDatum< nest::AbstractMask,
-  &nest::TopologyModule::MaskType >;
 
 namespace nest
 {

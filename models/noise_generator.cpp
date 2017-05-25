@@ -345,7 +345,7 @@ nest::noise_generator::update( Time const& origin,
     {
       S_.I_avg_ += *it;
     }
-    S_.I_avg_ /= std::max( 1, int(B_.amps_.size()) );
+    S_.I_avg_ /= std::max( 1, int( B_.amps_.size() ) );
     B_.logger_.record_data( origin.get_steps() + offs );
 
     DSCurrentEvent ce;

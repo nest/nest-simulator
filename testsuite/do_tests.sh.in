@@ -305,8 +305,8 @@ run_test ()
         explanation="${msg_clean}"
         junit_failure=
     elif test "${msg_dirty_skip}" != "${param_skipped}" ; then
-        TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
-        msg_dirty=${param_skipped##* ${exit_code} }
+        TEST_SKIPPED=$(( ${TEST_SKIPPED} + 1 ))
+        msg_dirty=${msg_dirty_skip}
         msg_clean=${msg_dirty%%,*}
         explanation="${msg_clean}"
         junit_failure=
@@ -420,6 +420,7 @@ fi
 
 TEST_TOTAL=0
 TEST_PASSED=0
+TEST_SKIPPED=0
 TEST_FAILED=0
 
 TIME_TOTAL=0
@@ -666,6 +667,9 @@ if test "x$(sli -c 'statusdict/have_music :: =')" = xtrue ; then
             if test $exit_code -eq 0 ; then
                 echo "Success"
                 TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
+            elif test $exit_code -ge 200 && $exit_code -le 215; then
+                echo "Skipped"
+                TEST_SKIPPED=$(( ${TEST_SKIPPED} + 1 ))
             else
                 echo "Failure"
                 TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
@@ -674,6 +678,9 @@ if test "x$(sli -c 'statusdict/have_music :: =')" = xtrue ; then
             if test $exit_code -ne 0 ; then
                 echo "Success (expected failure)"
                 TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
+            elif test $exit_code -ge 200 && $exit_code -le 215; then
+                echo "Skipped"
+                TEST_SKIPPED=$(( ${TEST_SKIPPED} + 1 ))
             else
                 echo "Failure (test failed to fail)"
                 TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
@@ -715,6 +722,7 @@ if test "x${TEST_PYNEST}" = xtrue ; then
             | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
 
         PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"
+        PYNEST_TEST_SKIPPED="$(  tail -n 1 ${TEST_LOGFILE} | sed -r 's/.*SKIP=([0-9]+).*/\1/')"
         PYNEST_TEST_FAILURES="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*failures=([0-9]+).*/\1/' )"
         PYNEST_TEST_ERRORS="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*errors=([0-9]+).*/\1/' )"
 
@@ -731,8 +739,14 @@ if test "x${TEST_PYNEST}" = xtrue ; then
         else
           PYNEST_TEST_ERRORS=0
         fi
+        if test ${PYNEST_TEST_SKIPPED} -eq ${PYNEST_TEST_SKIPPED} 2>/dev/null ; then
+          # PYNEST_TEST_SKIPPED is a valid number
+          :
+        else
+          PYNEST_TEST_SKIPPED=0
+        fi
         PYNEST_TEST_FAILED=$(($PYNEST_TEST_ERRORS + $PYNEST_TEST_FAILURES))
-        PYNEST_TEST_PASSED=$(($PYNEST_TEST_TOTAL - $PYNEST_TEST_FAILED))
+        PYNEST_TEST_PASSED=$(($PYNEST_TEST_TOTAL - $PYNEST_TEST_SKIPPED - $PYNEST_TEST_FAILED))
 
     else
 
@@ -754,12 +768,15 @@ if test "x${TEST_PYNEST}" = xtrue ; then
     echo
     echo "  PyNEST tests: ${PYNEST_TEST_TOTAL}"
     echo "     Passed: ${PYNEST_TEST_PASSED}"
+    echo "     Skipped: ${PYNEST_TEST_SKIPPED}"
     echo "     Failed: ${PYNEST_TEST_FAILED}"
 
+    PYNEST_TEST_SKIPPED_TEXT="(${PYNEST_TEST_SKIPPED} PyNEST)"
     PYNEST_TEST_FAILED_TEXT="(${PYNEST_TEST_FAILED} PyNEST)"
 
     TEST_TOTAL=$(( $TEST_TOTAL + $PYNEST_TEST_TOTAL ))
     TEST_PASSED=$(( $TEST_PASSED + $PYNEST_TEST_PASSED ))
+    TEST_SKIPPED=$(( $TEST_SKIPPED + $PYNEST_TEST_SKIPPED ))
     TEST_FAILED=$(( $TEST_FAILED + $PYNEST_TEST_FAILED ))
 else
     echo
@@ -776,6 +793,7 @@ echo "  NEST Executable: $(which nest)"
 echo "  SLI Executable : $(which sli)"
 echo "  Total number of tests: ${TEST_TOTAL}"
 echo "     Passed: ${TEST_PASSED}"
+echo "     Skipped: ${TEST_SKIPPED} ${PYNEST_TEST_SKIPPED_TEXT:-}"
 echo "     Failed: ${TEST_FAILED} ${PYNEST_TEST_FAILED_TEXT:-}"
 echo
 

@@ -88,33 +88,21 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
     def test_GetRecordables(self):
         """Check get recordables"""
 
-        try:
-            val = nest.GetDefaults('step_current_generator')['recordables'][0]
-            assert val == 'I', \
-                "Incorrect recordables ( %r ) for step current generator" % val
-        except:
-            raise
+        val = nest.GetDefaults('step_current_generator')['recordables'][0]            
+        self.assertEqual(val, 'I',
+                         'Incorrect recordables ({}) for step current generator'.format(val))
 
-        try:
-            val = nest.GetDefaults('ac_generator')['recordables'][0]
-            assert val == 'I', \
-                "Incorrect recordables ( %r ) for ac generator" % val
-        except:
-            raise
+        val = nest.GetDefaults('ac_generator')['recordables'][0]            
+        self.assertEqual(val, 'I',
+                         'Incorrect recordables ({}) for ac generator'.format(val))
 
-        try:
-            val = nest.GetDefaults('dc_generator')['recordables'][0]
-            assert val == 'I', \
-                "Incorrect recordables ( %r ) for dc generator" % val
-        except:
-            raise
+        val = nest.GetDefaults('dc_generator')['recordables'][0]            
+        self.assertEqual(val, 'I',
+                         'Incorrect recordables ({}) for dc generator'.format(val))
 
-        try:
-            val = nest.GetDefaults('noise_generator')['recordables'][0]
-            assert val == 'I', \
-                "Incorrect recordables ( %r ) for noise generator" % val
-        except:
-            raise
+        val = nest.GetDefaults('noise_generator')['recordables'][0]            
+        self.assertEqual(val, 'I',
+                         'Incorrect recordables ({}) for noise generator'.format(val))     
 
     def test_RecordedCurrentVectors(self):
         """Check the length and contents of recorded current vectors"""

@@ -43,22 +43,18 @@ This function will terminate NEST/SLI with a return code signaling success.
 It should be used to leave test scripts that have special prerequisites.
 Example:
 /unittest using
-is_threaded_with_openmp not { exit_test_gracefully } if
+is_threaded not { /skipped_no_openmp exit_test_gracefully } if
 */
-/exit_test_gracefully
+/exit_test_gracefully[/literaltype]
 {
-  statusdict/exitcodes/skipped :: quit_i
-} def
-
-/exit_test_gracefully_reason[/stringtype]
-{
-  dup (no_mpi) eq {statusdict/exitcodes/skipped_no_mpi :: quit_i} if
-  dup (have_mpi) eq {statusdict/exitcodes/skipped_have_mpi :: quit_i} if
-  dup (no_openmp) eq {statusdict/exitcodes/skipped_no_openmp :: quit_i} if
-  dup (no_gsl) eq {statusdict/exitcodes/skipped_no_gsl :: quit_i} if
-  dup (no_music) eq {statusdict/exitcodes/skipped_no_music :: quit_i} if
-  statusdict/exitcodes/scripterror :: quit_i
+  statusdict/exitcodes :: exch get quit_i
 } bind def
+
+/skip_if_no_mpi { statusdict/is_mpi :: not { /skipped_no_mpi exit_test_gracefully } if } def
+/skip_if_have_mpi { statusdict/is_mpi :: { /skipped_have_mpi exit_test_gracefully } if } def
+/skip_if_not_threaded { is_threaded not { /skipped_no_threading exit_test_gracefully } if } def
+/skip_if_without_gsl { statusdict/have_gsl :: not { /skipped_no_gsl exit_test_gracefully } if } def
+/skip_if_without_music { statusdict/have_music :: not { /skipped_no_music exit_test_gracefully } if } def
 
 
 /* BeginDocumentation

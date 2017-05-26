@@ -25,12 +25,26 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
 
 // Includes from sli:
 #include "dict.h"
 #include "dictutils.h"
 #include "doubledatum.h"
 #include "integerdatum.h"
+
+namespace nest
+{
+RecordablesMap< step_current_generator >
+  step_current_generator::recordablesMap_;
+
+template <>
+void
+RecordablesMap< step_current_generator >::create()
+{
+  insert_( Name( names::I ), &step_current_generator::get_I_ );
+}
+}
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameter
@@ -42,6 +56,43 @@ nest::step_current_generator::Parameters_::Parameters_()
 {
 }
 
+nest::step_current_generator::Parameters_::Parameters_( const Parameters_& p )
+  : amp_times_( p.amp_times_ )
+  , amp_values_( p.amp_values_ )
+{
+}
+
+nest::step_current_generator::Parameters_&
+  nest::step_current_generator::Parameters_::
+  operator=( const Parameters_& p )
+{
+  if ( this == &p )
+  {
+    return *this;
+  }
+
+  amp_times_ = p.amp_times_;
+  amp_values_ = p.amp_values_;
+
+  return *this;
+}
+
+nest::step_current_generator::State_::State_()
+  : I_( 0.0 ) // pA
+{
+}
+
+nest::step_current_generator::Buffers_::Buffers_( step_current_generator& n )
+  : logger_( n )
+{
+}
+
+nest::step_current_generator::Buffers_::Buffers_( const Buffers_&,
+  step_current_generator& n )
+  : logger_( n )
+{
+}
+
 /* ----------------------------------------------------------------
  * Parameter extraction and manipulation functions
  * ---------------------------------------------------------------- */
@@ -49,9 +100,9 @@ nest::step_current_generator::Parameters_::Parameters_()
 void
 nest::step_current_generator::Parameters_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ "amplitude_times" ] =
+  ( *d )[ names::amplitude_times ] =
     DoubleVectorDatum( new std::vector< double >( amp_times_ ) );
-  ( *d )[ "amplitude_values" ] =
+  ( *d )[ names::amplitude_values ] =
     DoubleVectorDatum( new std::vector< double >( amp_values_ ) );
 }
 
@@ -102,7 +153,10 @@ nest::step_current_generator::step_current_generator()
   : Node()
   , device_()
   , P_()
+  , S_()
+  , B_( *this )
 {
+  recordablesMap_.create();
 }
 
 nest::step_current_generator::step_current_generator(
@@ -110,6 +164,8 @@ nest::step_current_generator::step_current_generator(
   : Node( n )
   , device_( n.device_ )
   , P_( n.P_ )
+  , S_( n.S_ )
+  , B_( n.B_, *this )
 {
 }
 
@@ -131,6 +187,7 @@ void
 nest::step_current_generator::init_buffers_()
 {
   device_.init_buffers();
+  B_.logger_.reset();
 
   B_.idx_ = 0;
   B_.amp_ = 0;
@@ -139,6 +196,8 @@ nest::step_current_generator::init_buffers_()
 void
 nest::step_current_generator::calibrate()
 {
+  B_.logger_.init();
+
   device_.calibrate();
 }
 
@@ -152,6 +211,10 @@ nest::step_current_generator::update( Time const& origin,
   const long from,
   const long to )
 {
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( from < to );
+
   assert( P_.amp_times_.size() == P_.amp_values_.size() );
 
   const long t0 = origin.get_steps();
@@ -169,6 +232,8 @@ nest::step_current_generator::update( Time const& origin,
   {
     const long curr_time = t0 + offs;
 
+    S_.I_ = 0.0;
+
     // Keep the amplitude up-to-date at all times.
     // We need to change the amplitude one step ahead of time, see comment
     // on class SimulatingDevice.
@@ -185,7 +250,15 @@ nest::step_current_generator::update( Time const& origin,
     {
       CurrentEvent ce;
       ce.set_current( B_.amp_ );
+      S_.I_ = B_.amp_;
       kernel().event_delivery_manager.send( *this, ce, offs );
     }
+    B_.logger_.record_data( origin.get_steps() + offs );
   }
+}
+
+void
+nest::step_current_generator::handle( DataLoggingRequest& e )
+{
+  B_.logger_.handle( e );
 }

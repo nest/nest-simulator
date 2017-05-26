@@ -1,5 +1,5 @@
 /*
- *  exp_randomdev.cpp
+ *  test_event_proxies_issue-696.music
  *
  *  This file is part of NEST.
  *
@@ -20,31 +20,14 @@
  *
  */
 
-#include "exp_randomdev.h"
+[sender]
+  binary=nest
+  np=1
+  args=test_event_proxies_issue-696_sender.sli
 
-// Includes from sli:
-#include "dictutils.h"
-#include "sliexceptions.h"
+[receiver]
+  binary=nest
+  np=1
+  args=test_event_proxies_issue-696_receiver.sli
 
-void
-librandom::ExpRandomDev::set_status( const DictionaryDatum& d )
-{
-  double new_lambda = lambda_;
-
-  updateValue< double >( d, names::lambda, new_lambda );
-
-  if ( new_lambda <= 0. )
-  {
-    throw BadParameterValue( "Exponential RDV: lambda > 0 required." );
-  }
-
-  lambda_ = new_lambda;
-}
-
-void
-librandom::ExpRandomDev::get_status( DictionaryDatum& d ) const
-{
-  RandomDev::get_status( d );
-
-  def< double >( d, names::lambda, lambda_ );
-}
+sender.out -> receiver.in [11]

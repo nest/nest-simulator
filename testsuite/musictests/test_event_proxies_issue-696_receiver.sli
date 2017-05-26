@@ -1,5 +1,5 @@
 /*
- *  exp_randomdev.cpp
+ *  test_event_proxies_issue-696_receiver.sli
  *
  *  This file is part of NEST.
  *
@@ -20,31 +20,34 @@
  *
  */
 
-#include "exp_randomdev.h"
+(unittest) run
+/unittest using
 
-// Includes from sli:
-#include "dictutils.h"
-#include "sliexceptions.h"
+statusdict/have_music :: not { exit_test_gracefully } if
 
-void
-librandom::ExpRandomDev::set_status( const DictionaryDatum& d )
+M_ERROR setverbosity
+
+11 /N_NEURONS Set
+
+/subnet Create /NG Set
+NG ChangeSubnet
+/iaf_psc_alpha N_NEURONS Create pop
+0 ChangeSubnet
+NG GetGlobalNodes /neurons Set
+
+/subnet Create /INP Set
+INP ChangeSubnet
+/music_event_in_proxy N_NEURONS Create pop
+0 ChangeSubnet
+INP GetGlobalNodes /inputs Set
+
+inputs
 {
-  double new_lambda = lambda_;
-
-  updateValue< double >( d, names::lambda, new_lambda );
-
-  if ( new_lambda <= 0. )
-  {
-    throw BadParameterValue( "Exponential RDV: lambda > 0 required." );
-  }
-
-  lambda_ = new_lambda;
+    /channel Set
+    /n Set
+    n << /port_name (in) /music_channel channel >> SetStatus
+    n neurons channel get << /weight 750.0 >> Connect
 }
+forallindexed
 
-void
-librandom::ExpRandomDev::get_status( DictionaryDatum& d ) const
-{
-  RandomDev::get_status( d );
-
-  def< double >( d, names::lambda, lambda_ );
-}
+1 Simulate

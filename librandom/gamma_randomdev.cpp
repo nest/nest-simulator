@@ -112,8 +112,8 @@ librandom::GammaRandomDev::set_status( const DictionaryDatum& d )
   double a_new = a;
   double b_new = b_;
 
-  updateValue< double >( d, "order", a_new );
-  updateValue< double >( d, "scale", b_new );
+  updateValue< double >( d, names::order, a_new );
+  updateValue< double >( d, names::scale, b_new );
 
   if ( a_new <= 0. )
   {
@@ -134,6 +134,6 @@ librandom::GammaRandomDev::get_status( DictionaryDatum& d ) const
 {
   RandomDev::get_status( d );
 
-  def< double >( d, "order", a );
-  def< double >( d, "scale", b_ );
+  def< double >( d, names::order, a );
+  def< double >( d, names::scale, b_ );
 }

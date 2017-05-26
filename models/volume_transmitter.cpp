@@ -54,12 +54,12 @@ nest::volume_transmitter::Parameters_::Parameters_()
 void
 nest::volume_transmitter::Parameters_::get( DictionaryDatum& d ) const
 {
-  def< long >( d, "deliver_interval", deliver_interval_ );
+  def< long >( d, names::deliver_interval, deliver_interval_ );
 }
 
 void ::nest::volume_transmitter::Parameters_::set( const DictionaryDatum& d )
 {
-  updateValue< long >( d, "deliver_interval", deliver_interval_ );
+  updateValue< long >( d, names::deliver_interval, deliver_interval_ );
 }
 
 /* ----------------------------------------------------------------

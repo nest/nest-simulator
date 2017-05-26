@@ -188,12 +188,12 @@ nest::iaf_cond_exp_sfa_rr::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_syn_in, tau_synI );
   def< double >( d, names::I_e, I_e );
 
-  def< double >( d, "tau_sfa", tau_sfa );
-  def< double >( d, "tau_rr", tau_rr );
-  def< double >( d, "E_sfa", E_sfa );
-  def< double >( d, "E_rr", E_rr );
-  def< double >( d, "q_sfa", q_sfa );
-  def< double >( d, "q_rr", q_rr );
+  def< double >( d, names::tau_sfa, tau_sfa );
+  def< double >( d, names::tau_rr, tau_rr );
+  def< double >( d, names::E_sfa, E_sfa );
+  def< double >( d, names::E_rr, E_rr );
+  def< double >( d, names::q_sfa, q_sfa );
+  def< double >( d, names::q_rr, q_rr );
 }
 
 void
@@ -216,12 +216,12 @@ nest::iaf_cond_exp_sfa_rr::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double >( d, names::I_e, I_e );
 
-  updateValue< double >( d, "E_sfa", E_sfa );
-  updateValue< double >( d, "E_rr", E_rr );
-  updateValue< double >( d, "q_sfa", q_sfa );
-  updateValue< double >( d, "q_rr", q_rr );
-  updateValue< double >( d, "tau_sfa", tau_sfa );
-  updateValue< double >( d, "tau_rr", tau_rr );
+  updateValue< double >( d, names::E_sfa, E_sfa );
+  updateValue< double >( d, names::E_rr, E_rr );
+  updateValue< double >( d, names::q_sfa, q_sfa );
+  updateValue< double >( d, names::q_rr, q_rr );
+  updateValue< double >( d, names::tau_sfa, tau_sfa );
+  updateValue< double >( d, names::tau_rr, tau_rr );
   if ( V_reset_ >= V_th_ )
   {
     throw BadProperty( "Reset potential must be smaller than threshold." );

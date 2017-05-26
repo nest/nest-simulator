@@ -27,6 +27,7 @@
 #include "exceptions.h"
 
 // Includes from sli:
+#include "lockptr.h"
 #include "slimodule.h"
 
 // Includes from topology:
@@ -36,9 +37,9 @@
 
 namespace nest
 {
-class TopologyParameter;
-class AbstractMask;
 class AbstractLayer;
+class AbstractMask;
+class TopologyParameter;
 
 template < int D >
 class Layer;
@@ -314,6 +315,7 @@ private:
    */
   static ParameterFactory& parameter_factory_();
 };
+
 
 /**
  * Exception to be thrown if the wrong argument type

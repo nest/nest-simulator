@@ -71,9 +71,9 @@ RecordablesMap< iaf_chxk_2008 >::create()
   insert_(
     names::g_ahp, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::G_AHP > );
 
-  insert_( "I_syn_exc", &iaf_chxk_2008::get_I_syn_exc_ );
-  insert_( "I_syn_inh", &iaf_chxk_2008::get_I_syn_inh_ );
-  insert_( "I_ahp", &iaf_chxk_2008::get_I_ahp_ );
+  insert_( names::I_syn_ex, &iaf_chxk_2008::get_I_syn_exc_ );
+  insert_( names::I_syn_in, &iaf_chxk_2008::get_I_syn_inh_ );
+  insert_( names::I_ahp, &iaf_chxk_2008::get_I_ahp_ );
 }
 }
 
@@ -223,7 +223,7 @@ nest::iaf_chxk_2008::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_ahp, tau_ahp );
   def< double >( d, names::E_ahp, E_ahp );
   def< double >( d, names::g_ahp, g_ahp );
-  def< bool >( d, "ahp_bug", ahp_bug );
+  def< bool >( d, names::ahp_bug, ahp_bug );
 }
 
 void
@@ -242,7 +242,7 @@ nest::iaf_chxk_2008::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_ahp, tau_ahp );
   updateValue< double >( d, names::E_ahp, E_ahp );
   updateValue< double >( d, names::g_ahp, g_ahp );
-  updateValue< bool >( d, "ahp_bug", ahp_bug );
+  updateValue< bool >( d, names::ahp_bug, ahp_bug );
   if ( C_m <= 0 )
   {
     throw BadProperty( "Capacitance must be strictly positive." );

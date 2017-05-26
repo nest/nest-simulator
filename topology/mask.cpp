@@ -1,5 +1,5 @@
 /*
- *  exp_randomdev.cpp
+ *  mask.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,31 +20,13 @@
  *
  */
 
-#include "exp_randomdev.h"
+#include "mask.h"
 
-// Includes from sli:
-#include "dictutils.h"
-#include "sliexceptions.h"
+// includes from sli
+#include "lockptrdatum_impl.h"
 
-void
-librandom::ExpRandomDev::set_status( const DictionaryDatum& d )
-{
-  double new_lambda = lambda_;
-
-  updateValue< double >( d, names::lambda, new_lambda );
-
-  if ( new_lambda <= 0. )
-  {
-    throw BadParameterValue( "Exponential RDV: lambda > 0 required." );
-  }
-
-  lambda_ = new_lambda;
-}
-
-void
-librandom::ExpRandomDev::get_status( DictionaryDatum& d ) const
-{
-  RandomDev::get_status( d );
-
-  def< double >( d, names::lambda, lambda_ );
-}
+// Explicit definition required to ensure visibility when compiling with
+// clang under OSX. This must be outside namespace NEST, since the template
+// is defined in the global namespace.
+template class lockPTRDatum< nest::AbstractMask,
+  &nest::TopologyModule::MaskType >;

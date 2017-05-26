@@ -278,9 +278,6 @@ nest::sinusoidal_poisson_generator::update( Time const& origin,
       S_.rate_ = 0;
     }
 
-    // store rate in Hz
-    B_.logger_.record_data( origin.get_steps() + lag );
-
     // create spikes
     if ( S_.rate_ > 0 && device_.is_active( Time::step( start + lag ) ) )
     {
@@ -298,6 +295,8 @@ nest::sinusoidal_poisson_generator::update( Time const& origin,
         kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
+    // store rate in Hz
+    B_.logger_.record_data( origin.get_steps() + lag );
   }
 }
 

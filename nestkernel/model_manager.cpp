@@ -375,8 +375,11 @@ ModelManager::set_synapse_defaults_( index model_id,
   params->clear_access_flags();
   assert_valid_syn_id( model_id );
 
-  BadProperty* tmp_exception = NULL;
+  std::vector< lockPTR< WrappedThreadException > > exceptions_raised_(
+    kernel().vp_manager.get_num_threads() );
 #ifdef _OPENMP
+// We have to run this in parallel to set the status on nodes that exist on each
+// thread, such as volume_transmitter.
 #pragma omp parallel
   {
     index t = kernel().vp_manager.get_thread_id();
@@ -384,30 +387,25 @@ ModelManager::set_synapse_defaults_( index model_id,
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
 #endif // clang-format on
-#pragma omp critical
+    try
     {
-      try
-      {
-        prototypes_[ t ][ model_id ]->set_status( params );
-      }
-      catch ( BadProperty& e )
-      {
-        if ( tmp_exception == NULL )
-        {
-          tmp_exception = new BadProperty(
-            String::compose( "Setting status of prototype '%1': %2",
-              prototypes_[ t ][ model_id ]->get_name(),
-              e.message() ) );
-        }
-      }
+      prototypes_[ t ][ model_id ]->set_status( params );
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( t ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
 
-  if ( tmp_exception != NULL )
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
-    BadProperty e = *tmp_exception;
-    delete tmp_exception;
-    throw e;
+    if ( exceptions_raised_.at( t ).valid() )
+    {
+      throw WrappedThreadException( *( exceptions_raised_.at( t ) ) );
+    }
   }
 
   ALL_ENTRIES_ACCESSED( *params,
@@ -448,7 +446,7 @@ ModelManager::get_connector_defaults( synindex syn_id ) const
     prototypes_[ t ][ syn_id ]->get_status( dict );
   }
 
-  ( *dict )[ "num_connections" ] =
+  ( *dict )[ names::num_connections ] =
     kernel().connection_manager.get_num_connections( syn_id );
 
   return dict;

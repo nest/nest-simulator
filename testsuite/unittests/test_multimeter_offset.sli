@@ -29,7 +29,8 @@ Description:
   This test checks if the offset attribute of multimeter works as expected;
   contains 3 tests:
 
-  1) checks if recorded times are indeed relative to an offset
+  1) checks if recorded times are indeed relative to an offset, and the first
+     sampled time point is the offset itself
   2) ensures offset can only be set before the multimeter is connected to nodes
   3) ensures offset works correctly even if origin, start and stop are modified
 
@@ -51,7 +52,7 @@ Author: Barna Zajzon, 2017-03-10
   /recint  3.  def % recording interval --- different from default
 
   /recs    [/V_m]       def % recording devices
-  /refdata [8. 11. 14.] def % offset data
+  /refdata [5. 8. 11. 14.] def % offset data
 
   ResetKernel
   0 << /resolution res >> SetStatus
@@ -106,8 +107,8 @@ fail_or_die
   /simtime 20. def
 
   /recs    [/V_m] def
-  /times_1 [8. 11. 14.] def
-  /times_2 [8. 11. 14. 26. 29. 32. 35.] def
+  /times_1 [5. 8. 11. 14.] def
+  /times_2 [5. 8. 11. 14. 26. 29. 32. 35.] def
 
   ResetKernel
   0 << /resolution res >> SetStatus

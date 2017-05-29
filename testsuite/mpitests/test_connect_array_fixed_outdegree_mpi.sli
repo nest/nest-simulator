@@ -53,7 +53,7 @@
 %/write_file true def
 
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 [2 3] % check for 2, 3 processes
 {

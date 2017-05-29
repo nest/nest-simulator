@@ -72,7 +72,7 @@ M_ERROR setverbosity
 % of threads/VPs is set.
 % These tests can therefore only run if NEST is threaded.
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 % check that we can change either way before setting resolution
 { 

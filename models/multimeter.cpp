@@ -103,8 +103,8 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
   {
     throw BadProperty(
       "The recording interval, the interval offset and the list of properties "
-      "to record "
-      "cannot be changed after the multimeter has been connected to nodes." );
+      "to record cannot be changed after the multimeter has been connected "
+      "to nodes." );
   }
 
   double v;
@@ -113,18 +113,17 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
     if ( Time( Time::ms( v ) ) < Time::get_resolution() )
     {
       throw BadProperty(
-        "The sampling interval must be at least as long as the simulation "
-        "resolution." );
+        "The sampling interval must be at least as long "
+        "as the simulation resolution." );
     }
 
     // see if we can represent interval as multiple of step
     interval_ = Time::step( Time( Time::ms( v ) ).get_steps() );
-    if ( std::abs( 1 - interval_.get_ms() / v ) > 10
-        * std::numeric_limits< double >::epsilon() )
+    if ( not interval_.is_multiple_of( Time::get_resolution() ) )
     {
       throw BadProperty(
-        "The sampling interval must be a multiple of the simulation "
-        "resolution" );
+        "The sampling interval must be a multiple of "
+        "the simulation resolution" );
     }
   }
 
@@ -141,8 +140,7 @@ nest::Multimeter::Parameters_::set( const DictionaryDatum& d,
 
     // see if we can represent offset as multiple of step
     offset_ = Time::step( Time( Time::ms( v ) ).get_steps() );
-    if ( std::abs( 1 - offset_.get_ms() / v ) > 10
-        * std::numeric_limits< double >::epsilon() )
+    if ( not offset_.is_multiple_of( Time::get_resolution() ) )
     {
       throw BadProperty(
         "The offset for the sampling interval must be a multiple of the "
@@ -186,6 +184,12 @@ Multimeter::calibrate()
 }
 
 void
+Multimeter::post_run_cleanup()
+{
+  device_.post_run_cleanup();
+}
+
+void
 Multimeter::finalize()
 {
   device_.finalize();
@@ -216,9 +220,8 @@ Multimeter::update( Time const& origin, const long from, const long )
   // following Reply data is then added.
   //
   // Note that not all nodes receiving the request will necessarily answer.
-
-  // no targets or no recordables means no request
-  V_.new_request_ = B_.has_targets_ and not P_.record_from_.empty();
+  V_.new_request_ =
+    B_.has_targets_ && not P_.record_from_.empty(); // no targets, no request
   DataLoggingRequest req;
   kernel().event_delivery_manager.send( *this, req );
 }

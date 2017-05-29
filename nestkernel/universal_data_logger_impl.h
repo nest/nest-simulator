@@ -93,8 +93,8 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
 {
   if ( num_vars_ < 1 )
   {
-    return; // not recording anything
-  }
+    return;
+  } // not recording anything
 
   // Next recording step is in current slice or beyond, indicates that
   // buffer is properly initialized.
@@ -116,10 +116,18 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
   // beyond current time, shifted one to left, since rec_step marks
   // left of update intervals, and we want time stamps at right end of
   // update interval to be multiples of recording interval
-  next_rec_step_ =
-    ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 )
-      * rec_int_steps_
-    - 1 + recording_offset_.get_steps();
+  if ( recording_offset_.get_steps() != 0 )
+  {
+    next_rec_step_ = kernel().simulation_manager.get_time().get_steps()
+      + recording_offset_.get_steps() - 1;
+  }
+  else
+  {
+    next_rec_step_ =
+      ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_
+        + 1 ) * rec_int_steps_
+      - 1;
+  }
 
   // number of data points per slice
   const long recs_per_slice =
@@ -187,8 +195,8 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host,
 {
   if ( num_vars_ < 1 )
   {
-    return; // nothing to do
-  }
+    return;
+  } // nothing to do
 
   // The following assertions will fire if the user forgot to call init()
   // on the data logger.

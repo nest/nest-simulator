@@ -644,6 +644,8 @@ nest::SimulationManager::update_()
 
   std::vector< lockPTR< WrappedThreadException > > exceptions_raised(
     kernel().vp_manager.get_num_threads() );
+  bool exception_raised = false; // none raised on any thread
+
 // parallel section begins
 #pragma omp parallel
   {
@@ -836,6 +838,17 @@ nest::SimulationManager::update_()
 // the other threads are enforced to wait at the end of the block
 #pragma omp master
       {
+        // check if any thread in parallel section raised an exception
+        for ( index thrd = 0; thrd < kernel().vp_manager.get_num_threads();
+              ++thrd )
+        {
+          if ( exceptions_raised.at( thrd ).valid() )
+          {
+            exception_raised = true;
+            break;
+          }
+        }
+
         // gather only at end of slice
         if ( to_step_ == kernel().connection_manager.get_min_delay() )
         {
@@ -861,8 +874,8 @@ nest::SimulationManager::update_()
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier
 
-    } while ( to_do_ > 0 and not exit_on_user_signal_
-      and not exceptions_raised.at( thrd ) );
+    } while (
+      to_do_ > 0 and not exit_on_user_signal_ and not exception_raised );
 
     // End of the slice, we update the number of synaptic elements
     for ( std::vector< Node* >::const_iterator i =

@@ -44,12 +44,16 @@ dup /threads Set
 ResetKernel
 0 << /local_num_threads threads >> SetStatus
 
+
+% create set of neurons
 /iaf_neuron 20 Create
 
-13 GetStatus /target_dict Set
-
+% connect two neurons (prime number to increase variations of thread placement)
 5 13 /static_synapse Connect
 5 13 /static_synapse_hpc Connect
+
+% store info from target neuron for comparison 
+13 GetStatus /target_dict Set
 
 << >> GetConnections 0 get GetStatus /conn_dict Set
 << >> GetConnections 1 get GetStatus /conn_hpc_dict Set
@@ -58,9 +62,9 @@ ResetKernel
 /* normal connection should contain global_id as target */
 conn_dict /target get target_dict /global_id get eq assert_or_die
 
-/* hpc connection should contain local_thread_target */
-target_dict /local_id get 1 sub threads div /expected_thread_local_target Set
-conn_hpc_dict /thread_local_target get expected_thread_local_target eq assert_or_die
+/* same for hpc connection */
+conn_hpc_dict /target get target_dict /global_id get eq assert_or_die
+
 
 } def
 

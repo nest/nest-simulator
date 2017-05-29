@@ -335,14 +335,18 @@ nest::noise_generator::update( Time const& origin,
         *it = P_.mean_
           + std::sqrt( P_.std_ * P_.std_ + S_.y_1_ * P_.std_mod_ * P_.std_mod_ )
             * V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
-        S_.I_avg_ += *it;
       }
-      S_.I_avg_ /= B_.amps_.size();
-      B_.logger_.record_data( origin.get_steps() + offs );
-
       // use now as reference, in case we woke up from inactive period
       B_.next_step_ = now + V_.dt_steps_;
     }
+
+    // record values
+    for ( AmpVec_::iterator it = B_.amps_.begin(); it != B_.amps_.end(); ++it )
+    {
+      S_.I_avg_ += *it;
+    }
+    S_.I_avg_ /= std::max( 1, int( B_.amps_.size() ) );
+    B_.logger_.record_data( origin.get_steps() + offs );
 
     DSCurrentEvent ce;
     kernel().event_delivery_manager.send( *this, ce, offs );

@@ -51,7 +51,7 @@ SeeAlso:
   n n /stdp_dopamine_synapse Connect
  
   << >> GetConnections 0 get 
-  << pname 1.0 >> SetStatus
+  << pname 1.0 /weight 2.0 >> SetStatus
 }
 def
 
@@ -68,7 +68,7 @@ def
   n n /mysyn Connect
  
   << >> GetConnections 0 get 
-  << pname 1.0 >> SetStatus
+  << pname 1.0 /weight 2.0 >> SetStatus
 }
 def
 

@@ -336,6 +336,21 @@ nest::ConnBuilder::check_synapse_params_( std::string syn_name,
           "Use SetDefaults() or CopyModel()." );
       }
     }
+
+    const std::string param_arr[] = {
+      "A_minus", "A_plus", "Wmax", "Wmin", "b", "tau_c", "tau_n", "tau_plus"
+    };
+    const size_t n_param = sizeof( param_arr ) / sizeof( std::string );
+    for ( size_t n = 0; n < n_param; ++n )
+    {
+      if ( syn_spec->known( param_arr[ n ] ) )
+      {
+        throw NotImplemented(
+          "Connect doesn't support the setting of parameter " + param_arr[ n ]
+          + " in stdp_dopamine_synapse. Use SetDefaults() or CopyModel()." );
+      }
+    }
+
     return;
   }
 }

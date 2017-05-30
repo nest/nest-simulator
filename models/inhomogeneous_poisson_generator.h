@@ -1,5 +1,5 @@
 /*
- *  inh_poisson_generator.h
+ *  inhomogeneous_poisson_generator.h
  *
  *  This file is part of NEST.
  *
@@ -22,15 +22,15 @@
 
 
 /*BeginDocumentation
-  Name: inh_poisson_generator - provides Poisson spike trains at a piecewise
- constant rate
+  Name: inhomogeneous_poisson_generator - provides Poisson spike trains
+        at a piecewise constant rate
 
   Description:
   The inhomogeneous Poisson generator provides Poisson spike trains at a
- piecewise constant rate
-  to the connected node(s).  The rate of the process is changed at the
-  specified times. The unit of the instantaneous rate is spikes/s.
-  By default, each target of the generator will receive a different spike train.
+  piecewise constant rate to the connected node(s). The rate of the process
+  is changed at the specified times. The unit of the instantaneous rate
+  is spikes/s. By default, each target of the generator will receive
+  a different spike train.
 
  Parameters:
      The following parameters can be set in the status dictionary:
@@ -40,7 +40,7 @@
 
   Examples:
     The current can be altered in the following way:
-    /inh_poisson_generator Create /sc Set
+    /inhomogeneous_poisson_generator Create /sc Set
     sc << /rate_times [0.2 0.5] /rate_values [2.0 4.0] >> SetStatus
 
     The average firing rate of each realization of the Poisson process will be
@@ -67,8 +67,8 @@
   SeeAlso: sinusoidal_poisson_generator, step_current_generator, Device,
  StimulatingDevice
 */
-#ifndef INH_POISSON_GENERATOR_H
-#define INH_POISSON_GENERATOR_H
+#ifndef INHOMOGENEOUS_POISSON_GENERATOR_H
+#define INHOMOGENEOUS_POISSON_GENERATOR_H
 
 #include "poisson_randomdev.h"
 
@@ -86,12 +86,12 @@
 namespace nest
 {
 
-class inh_poisson_generator : public Node
+class inhomogeneous_poisson_generator : public Node
 {
 
 public:
-  inh_poisson_generator();
-  inh_poisson_generator( const inh_poisson_generator& );
+  inhomogeneous_poisson_generator();
+  inhomogeneous_poisson_generator( const inhomogeneous_poisson_generator& );
 
   bool
   has_proxies() const
@@ -104,13 +104,7 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
-  // using Node::handle;
-  // using Node::handles_test_event;
   using Node::event_hook;
-
-  // void handle( DataLoggingRequest& );
-
-  // port handles_test_event( DataLoggingRequest&, rport );
 
   port send_test_event( Node&, rport, synindex, bool );
 
@@ -129,17 +123,6 @@ private:
   struct Buffers_;
 
   /*
-   * Buffers of the model.
-
-  struct Buffers_
-  {
-    Buffers_( inh_poisson_generator& );
-    Buffers_( const Buffers_&, inh_poisson_generator& );
-    UniversalDataLogger< inh_poisson_generator > logger_;
-  };
-  */
-
-  /*
    * Store independent parameters of the model.
    */
   struct Parameters_
@@ -149,7 +132,6 @@ private:
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_&, Buffers_& );
-    // Parameters_& operator=( const Parameters_& p ); // Copy constructor EN
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     void set( const DictionaryDatum&,
@@ -182,7 +164,7 @@ private:
 };
 
 inline port
-inh_poisson_generator::send_test_event( Node& target,
+inhomogeneous_poisson_generator::send_test_event( Node& target,
   rport receptor_type,
   synindex syn_id,
   bool dummy_target )
@@ -207,14 +189,14 @@ inh_poisson_generator::send_test_event( Node& target,
 
 
 inline void
-inh_poisson_generator::get_status( DictionaryDatum& d ) const
+inhomogeneous_poisson_generator::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   device_.get_status( d );
 }
 
 inline void
-inh_poisson_generator::set_status( const DictionaryDatum& d )
+inhomogeneous_poisson_generator::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
 
@@ -230,4 +212,4 @@ inh_poisson_generator::set_status( const DictionaryDatum& d )
 
 } // namespace
 
-#endif // INH_POISSON_GENERATOR_H
+#endif // INHOMOGENEOUS_POISSON_GENERATOR_H

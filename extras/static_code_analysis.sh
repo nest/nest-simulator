@@ -252,7 +252,7 @@ if [ "x$c_files_with_errors" != "x" ] || [ "x$python_files_with_errors" != "x" ]
 else
   print_msg "" ""
   print_msg "MSGBLD0220: " "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-  print_msg "MSGBLD0220: " "+               STATIC CODE ANALYSIS TERMINATED SUCESSFULLY !                 +"
+  print_msg "MSGBLD0220: " "+               STATIC CODE ANALYSIS TERMINATED SUCCESSFULLY !                +"
   print_msg "MSGBLD0220: " "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
   print_msg "" ""  
 fi

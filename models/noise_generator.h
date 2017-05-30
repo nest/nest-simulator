@@ -254,12 +254,13 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< CurrentEvent > device_;
   static RecordablesMap< noise_generator > recordablesMap_;
+
+  StimulatingDevice< CurrentEvent > device_;
   Parameters_ P_;
+  State_ S_;
   Variables_ V_;
   Buffers_ B_;
-  State_ S_;
 };
 
 inline port

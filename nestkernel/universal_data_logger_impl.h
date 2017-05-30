@@ -118,8 +118,9 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
   // update interval to be multiples of recording interval. Need to add
   // +1 because the division result is rounded down.
   next_rec_step_ =
-    ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_
-      + 1 ) * rec_int_steps_ - 1;
+    ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 )
+      * rec_int_steps_
+    - 1;
 
   // if offset is not 0, adjust next recording step to account for it by
   // going one interval step back and adding the offset

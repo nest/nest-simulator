@@ -11,6 +11,11 @@ To find out more about NEST, see the [list of features](features.md)
 and the [user documentation](documentation.md).
 For details about how to contribute to the development of NEST, see the [developer space](http://nest.github.io/nest-simulator).
 
+-   [Download Current release (NEST 2.12.0)](http://www.nest-simulator.org/download/#releases)
+-   [Previous release (NEST 2.10.0)](https://github.com/nest/nest-simulator/releases/tag/v2.10.0)
+-   [All NEST Releases](https://github.com/nest/nest-simulator/tags) 
+-   [Current developer version](https://github.com/nest/nest-simulator)
+
 ## Citing NEST
 
 Please cite NEST if you use it in your work.
@@ -47,18 +52,38 @@ Here is a suitable BibTeX entry:
 ```
 
 Please get in touch with us about your publications that used NEST, we will
-add them to our [publication list](publications.md), thus making them visible
+add them to our [publication list](http://www.nest-simulator.org/publications/), thus making them visible
 to potential readers.
 
-## Ubuntu 15.10 Live Media with NEST 2.8.0
+## **NEW** Ubuntu 16.04 Live Media with NEST 2.12.0
 
-**[Download](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-15.10_nest-2.8.0.ova)** (OVA, ~2.3G)          **[Checksum](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-15.10_nest-2.8.0.ova.sha512sum)** (sha512sum)
+**[Download](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.12.0.ova)**
+(OVA, 3.2G)
 
-Username and password are both set to "nest". Please change the password.
- Including Brian, LFPy, MUSIC, NEST, NEURON, PyNN.
+**[Checksum](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.12.0.ova.sha512sum)**
+(sha512sum)
 
 Live media is available in the OVA format, suitable, for example, for importing
 into VirtualBox. Useful for trying out NEST without installing it on your
 computer, especially for Windows and Mac OS X users.
 
 [NEST Live Media setup and first steps.](http://www.nest-simulator.org/wp-content/uploads/2015/10/nest_setup.pdf)
+
+## Older Live Media
+
+-   Ubuntu 16.04 Live Media with NEST 2.10.0
+    
+    - [Download](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.10.0.ova)
+      (OVA, ~3.7G) 
+                
+    - [Checksum](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.10.0.ova.sha512sum)
+      (sha512sum)
+
+-   Ubuntu 15.10 Live Media with NEST 2.8.0
+    
+    - [Download](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-15.10_nest-2.8.0.ova)
+      (OVA, ~2.5G)   
+          
+    - [Checksum](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-15.10_nest-2.8.0.ova.sha512sum)
+      (sha512sum)
+    

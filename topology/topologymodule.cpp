@@ -39,7 +39,6 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 #include "iostreamdatum.h"
-#include "lockptrdatum_impl.h"
 
 // Includes from topology:
 #include "connection_creator_impl.h"
@@ -52,6 +51,7 @@
 #include "mask_impl.h"
 #include "topology.h"
 #include "topology_parameter.h"
+
 
 namespace nest
 {
@@ -141,7 +141,6 @@ TopologyModule::create_mask( const Token& t )
           throw BadProperty(
             "Mask definition dictionary contains extraneous items." );
         }
-
         mask =
           create_mask( dit->first, getValue< DictionaryDatum >( dit->second ) );
       }
@@ -233,7 +232,9 @@ TopologyModule::create_parameter( const Token& t )
   // parameters
   ParameterDatum* pd = dynamic_cast< ParameterDatum* >( t.datum() );
   if ( pd )
+  {
     return *pd;
+  }
 
   // If t is a DoubleDatum, create a ConstantParameter with this value
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
@@ -305,14 +306,18 @@ create_doughnut( const DictionaryDatum& d )
   // The doughnut (actually an annulus) is created using a DifferenceMask
   Position< 2 > center( 0, 0 );
   if ( d->known( names::anchor ) )
+  {
     center = getValue< std::vector< double > >( d, names::anchor );
+  }
 
   const double outer = getValue< double >( d, names::outer_radius );
   const double inner = getValue< double >( d, names::inner_radius );
   if ( inner >= outer )
+  {
     throw BadProperty(
       "topology::create_doughnut: "
       "inner_radius < outer_radius required." );
+  }
 
   BallMask< 2 > outer_circle( center, outer );
   BallMask< 2 > inner_circle( center, inner );
@@ -369,6 +374,9 @@ TopologyModule::init( SLIInterpreter* i )
 
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
 
+  i->createcommand(
+    "SelectNodesByMask_L_a_M", &selectnodesbymask_L_a_Mfunction );
+
   kernel().model_manager.register_node_model< FreeLayer< 2 > >(
     "topology_layer_free" );
   kernel().model_manager.register_node_model< FreeLayer< 3 > >(
@@ -381,6 +389,8 @@ TopologyModule::init( SLIInterpreter* i )
   // Register mask types
   register_mask< BallMask< 2 > >();
   register_mask< BallMask< 3 > >();
+  register_mask< EllipseMask< 2 > >();
+  register_mask< EllipseMask< 3 > >();
   register_mask< BoxMask< 2 > >();
   register_mask< BoxMask< 3 > >();
   register_mask< BoxMask< 3 > >( "volume" ); // For compatibility with topo 2.0
@@ -950,7 +960,7 @@ TopologyModule::GetGlobalChildren_i_M_aFunction::execute(
 
   tgt_dictionary CreateLayer /tgt Set
 
-  <<	/connection_type (convergent)
+  <<  /connection_type (convergent)
       /mask << /grid << /rows 2 /columns 3 >>
                /anchor << /row 4 /column 2 >> >>
       /weights 2.3
@@ -1238,6 +1248,66 @@ TopologyModule::Cvdict_MFunction::execute( SLIInterpreter* i ) const
   i->OStack.push( dict );
   i->EStack.pop();
 }
+
+
+void
+TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
+  SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 3 );
+
+  const index& layer_gid = getValue< long >( i->OStack.pick( 2 ) );
+  std::vector< double > anchor =
+    getValue< std::vector< double > >( i->OStack.pick( 1 ) );
+  MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 0 ) );
+
+  std::vector< index > mask_gids;
+
+  const int dim = anchor.size();
+
+  if ( dim != 2 and dim != 3 )
+  {
+    throw BadProperty( "Center must be 2- or 3-dimensional." );
+  }
+
+  if ( dim == 2 )
+  {
+    Layer< 2 >* layer = dynamic_cast< Layer< 2 >* >(
+      kernel().node_manager.get_node( layer_gid ) );
+
+    MaskedLayer< 2 > ml =
+      MaskedLayer< 2 >( *layer, Selector(), mask, true, false );
+
+    for ( Ntree< 2, index >::masked_iterator it =
+            ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
+          it != ml.end();
+          ++it )
+    {
+      mask_gids.push_back( it->second );
+    }
+  }
+  else
+  {
+    Layer< 3 >* layer = dynamic_cast< Layer< 3 >* >(
+      kernel().node_manager.get_node( layer_gid ) );
+
+    MaskedLayer< 3 > ml =
+      MaskedLayer< 3 >( *layer, Selector(), mask, true, false );
+
+    for ( Ntree< 3, index >::masked_iterator it =
+            ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
+          it != ml.end();
+          ++it )
+    {
+      mask_gids.push_back( it->second );
+    }
+  }
+
+  i->OStack.pop( 3 );
+  i->OStack.push( mask_gids );
+  i->EStack.pop();
+}
+
 
 std::string
 LayerExpected::message() const

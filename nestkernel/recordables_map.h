@@ -93,7 +93,9 @@ public:
     ArrayDatum recordables;
     for ( typename Base_::const_iterator it = this->begin(); it != this->end();
           ++it )
+    {
       recordables.push_back( new LiteralDatum( it->first ) );
+    }
     return recordables;
 
     // the entire function should just be

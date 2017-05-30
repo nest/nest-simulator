@@ -58,9 +58,9 @@ template < bool >
 struct SparsehashCompileAssert
 {
 };
-#define SPARSEHASH_COMPILE_ASSERT( expr, msg )        \
-  typedef SparsehashCompileAssert< ( bool( expr ) ) > \
-    msg[ bool( expr ) ? 1 : -1 ] __attribute__( ( unused ) )
+#define SPARSEHASH_COMPILE_ASSERT( expr, msg )                                     \
+  typedef SparsehashCompileAssert< ( bool( expr ) ) > msg[ bool( expr ) ? 1 : -1 ] \
+    __attribute__( ( unused ) )
 
 namespace sparsehash_internal
 {
@@ -134,10 +134,7 @@ write_data_internal_for_ostream( OSTREAM* fp, const void* data, size_t length )
 }
 template < typename Ignored >
 inline bool
-write_data_internal( Ignored*,
-  std::ostream* fp,
-  const void* data,
-  size_t length )
+write_data_internal( Ignored*, std::ostream* fp, const void* data, size_t length )
 {
   return write_data_internal_for_ostream( fp, data, length );
 }
@@ -190,8 +187,7 @@ read_bigendian_number( INPUT* fp, IntType* value, size_t length )
   *value = 0;
   unsigned char byte;
   // We require IntType to be unsigned or else the shifting gets all screwy.
-  SPARSEHASH_COMPILE_ASSERT(
-    static_cast< IntType >( -1 ) > static_cast< IntType >( 0 ),
+  SPARSEHASH_COMPILE_ASSERT( static_cast< IntType >( -1 ) > static_cast< IntType >( 0 ),
     serializing_int_requires_an_unsigned_type );
   for ( size_t i = 0; i < length; ++i )
   {
@@ -208,15 +204,13 @@ write_bigendian_number( OUTPUT* fp, IntType value, size_t length )
 {
   unsigned char byte;
   // We require IntType to be unsigned or else the shifting gets all screwy.
-  SPARSEHASH_COMPILE_ASSERT(
-    static_cast< IntType >( -1 ) > static_cast< IntType >( 0 ),
+  SPARSEHASH_COMPILE_ASSERT( static_cast< IntType >( -1 ) > static_cast< IntType >( 0 ),
     serializing_int_requires_an_unsigned_type );
   for ( size_t i = 0; i < length; ++i )
   {
     byte = ( sizeof( value ) <= length - 1 - i )
       ? 0
-      : static_cast< unsigned char >(
-          ( value >> ( ( length - 1 - i ) * 8 ) ) & 255 );
+      : static_cast< unsigned char >( ( value >> ( ( length - 1 - i ) * 8 ) ) & 255 );
     if ( !write_data( fp, &byte, sizeof( byte ) ) )
       return false;
   }
@@ -257,10 +251,7 @@ struct pod_serializer
 // for sure that the hash is the identity hash.  If it's not, this
 // is needless work (and possibly, though not likely, harmful).
 
-template < typename Key,
-  typename HashFunc,
-  typename SizeType,
-  int HT_MIN_BUCKETS >
+template < typename Key, typename HashFunc, typename SizeType, int HT_MIN_BUCKETS >
 class sh_hashtable_settings : public HashFunc
 {
 public:
@@ -269,9 +260,7 @@ public:
   typedef SizeType size_type;
 
 public:
-  sh_hashtable_settings( const hasher& hf,
-    const float ht_occupancy_flt,
-    const float ht_empty_flt )
+  sh_hashtable_settings( const hasher& hf, const float ht_occupancy_flt, const float ht_empty_flt )
     : hasher( hf )
     , enlarge_threshold_( 0 )
     , shrink_threshold_( 0 )
@@ -418,15 +407,13 @@ public:
   {
     float enlarge = enlarge_factor();
     size_type sz = HT_MIN_BUCKETS; // min buckets allowed
-    while ( sz < min_buckets_wanted
-      || num_elts >= static_cast< size_type >( sz * enlarge ) )
+    while ( sz < min_buckets_wanted || num_elts >= static_cast< size_type >( sz * enlarge ) )
     {
       // This just prevents overflowing size_type, since sz can exceed
       // max_size() here.
       if ( static_cast< size_type >( sz * 2 ) < sz )
       {
-        throw std::length_error(
-          "resize overflow" ); // protect against overflow
+        throw std::length_error( "resize overflow" ); // protect against overflow
       }
       sz *= 2;
     }

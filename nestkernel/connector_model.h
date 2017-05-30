@@ -333,7 +333,9 @@ public:
   {
     std::vector< SecondaryEvent* > prototype_events( n, NULL );
     for ( size_t i = 0; i < n; i++ )
+    {
       prototype_events[ i ] = new typename ConnectionT::EventType();
+    }
 
     return prototype_events;
   }
@@ -342,7 +344,9 @@ public:
   ~GenericSecondaryConnectorModel()
   {
     if ( pev_ != 0 )
+    {
       delete pev_;
+    }
   }
 
   typename ConnectionT::EventType*

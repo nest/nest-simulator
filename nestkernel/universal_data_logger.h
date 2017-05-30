@@ -166,8 +166,9 @@ private:
     size_t num_vars_;  //!< number of variables recorded
 
     Time recording_interval_; //!< interval between two recordings
-    long rec_int_steps_;      //!< interval in steps
-    long next_rec_step_;      //!< next time step at which to record
+    Time recording_offset_; //!< offset relative to which interval is calculated
+    long rec_int_steps_;    //!< interval in steps
+    long next_rec_step_;    //!< next time step at which to record
 
     /** Vector of pointers to member functions for data access. */
     std::vector< typename RecordablesMap< HostNode >::DataAccessFct >
@@ -213,20 +214,26 @@ nest::UniversalDataLogger< HostNode >::connect_logging_device(
   // rports are assigned consecutively, the caller may not request specific
   // rports.
   if ( req.get_rport() != 0 )
+  {
     throw IllegalConnection(
       "UniversalDataLogger::connect_logging_device(): "
       "Connections from multimeter to node must request rport 0." );
+  }
 
   // ensure that we have not connected this multimeter before
   const index mm_gid = req.get_sender().get_gid();
   const size_t n_loggers = data_loggers_.size();
   size_t j = 0;
   while ( j < n_loggers && data_loggers_[ j ].get_mm_gid() != mm_gid )
+  {
     ++j;
+  }
   if ( j < n_loggers )
+  {
     throw IllegalConnection(
       "UniversalDataLogger::connect_logging_device(): "
       "Each multimeter can only be connected once to a given node." );
+  }
 
   // we now know that we have no DataLogger_ for the given multimeter, so we
   // create one and push it
@@ -243,6 +250,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_(
   : multimeter_( req.get_sender().get_gid() )
   , num_vars_( 0 )
   , recording_interval_( Time::neg_inf() )
+  , recording_offset_( Time::ms( 0. ) )
   , rec_int_steps_( 0 )
   , next_rec_step_( -1 )
   , // flag as uninitialized
@@ -273,11 +281,14 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_(
   num_vars_ = node_access_.size();
 
   if ( num_vars_ > 0 && req.get_recording_interval() < Time::step( 1 ) )
+  {
     throw IllegalConnection(
       "UniversalDataLogger::connect_logging_device(): "
       "recording interval must be >= resolution." );
+  }
 
   recording_interval_ = req.get_recording_interval();
+  recording_offset_ = req.get_recording_offset();
 }
 }
 

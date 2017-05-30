@@ -45,21 +45,33 @@ fdbuf::open( const char* s, std::ios_base::openmode mode )
 
   // the corresponding O_*-flags are as described in Josuttis Chap. 13 (p.632)
   if ( open_mode == std::ios_base::out ) // corresponds to "w"
+  {
     oflag = ( O_WRONLY | O_TRUNC | O_CREAT );
+  }
   else if ( open_mode
     == ( std::ios_base::out | std::ios_base::app ) ) // corresponds to "a"
+  {
     oflag = ( O_WRONLY | O_APPEND | O_CREAT );
+  }
   else if ( open_mode
     == ( std::ios_base::out | std::ios_base::trunc ) ) // corresponds to "w"
+  {
     oflag = ( O_WRONLY | O_TRUNC | O_CREAT );
+  }
   else if ( open_mode == std::ios_base::in ) // corresponds to "r"
+  {
     oflag = O_RDONLY;
+  }
   else if ( open_mode
     == ( std::ios_base::in | std::ios_base::out ) ) // corresponds to "r+"
+  {
     oflag = O_RDWR;
+  }
   else if ( open_mode == ( std::ios_base::in | std::ios_base::out
                            | std::ios_base::trunc ) ) // corresponds to "w+"
+  {
     oflag = ( O_RDWR | O_TRUNC | O_CREAT );
+  }
   else
   {
     // std::cerr<<"bad flags!"<<std::endl;
@@ -96,7 +108,7 @@ fdbuf::open( const char* s, std::ios_base::openmode mode )
 fdbuf*
 fdbuf::close()
 {
-  if ( !is_open() )
+  if ( not is_open() )
   {
     // std::cerr<<"File was not open."<<std::endl;
     return NULL;

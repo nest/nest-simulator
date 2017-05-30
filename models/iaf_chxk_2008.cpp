@@ -71,9 +71,9 @@ RecordablesMap< iaf_chxk_2008 >::create()
   insert_(
     names::g_ahp, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::G_AHP > );
 
-  insert_( "I_syn_exc", &iaf_chxk_2008::get_I_syn_exc_ );
-  insert_( "I_syn_inh", &iaf_chxk_2008::get_I_syn_inh_ );
-  insert_( "I_ahp", &iaf_chxk_2008::get_I_ahp_ );
+  insert_( names::I_syn_ex, &iaf_chxk_2008::get_I_syn_exc_ );
+  insert_( names::I_syn_in, &iaf_chxk_2008::get_I_syn_inh_ );
+  insert_( names::I_ahp, &iaf_chxk_2008::get_I_ahp_ );
 }
 }
 
@@ -154,24 +154,31 @@ nest::iaf_chxk_2008::State_::State_( const Parameters_& p )
 {
   y[ V_M ] = p.E_L; // initialize to reversal potential
   for ( size_t i = 2; i < STATE_VEC_SIZE; ++i )
+  {
     y[ i ] = 0;
+  }
 }
 
 nest::iaf_chxk_2008::State_::State_( const State_& s )
   : r( s.r )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y[ i ] = s.y[ i ];
+  }
 }
 
 nest::iaf_chxk_2008::State_& nest::iaf_chxk_2008::State_::operator=(
   const State_& s )
 {
   if ( this == &s ) // avoid assignment to self
+  {
     return *this;
-
+  }
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y[ i ] = s.y[ i ];
+  }
 
   r = s.r;
   return *this;
@@ -216,7 +223,7 @@ nest::iaf_chxk_2008::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_ahp, tau_ahp );
   def< double >( d, names::E_ahp, E_ahp );
   def< double >( d, names::g_ahp, g_ahp );
-  def< bool >( d, "ahp_bug", ahp_bug );
+  def< bool >( d, names::ahp_bug, ahp_bug );
 }
 
 void
@@ -235,13 +242,15 @@ nest::iaf_chxk_2008::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_ahp, tau_ahp );
   updateValue< double >( d, names::E_ahp, E_ahp );
   updateValue< double >( d, names::g_ahp, g_ahp );
-  updateValue< bool >( d, "ahp_bug", ahp_bug );
-
+  updateValue< bool >( d, names::ahp_bug, ahp_bug );
   if ( C_m <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( tau_synE <= 0 || tau_synI <= 0 || tau_ahp <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 }
 
 void
@@ -280,11 +289,17 @@ nest::iaf_chxk_2008::~iaf_chxk_2008()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
+  {
     gsl_odeiv_step_free( B_.s_ );
+  }
   if ( B_.c_ )
+  {
     gsl_odeiv_control_free( B_.c_ );
+  }
   if ( B_.e_ )
+  {
     gsl_odeiv_evolve_free( B_.e_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -313,20 +328,32 @@ nest::iaf_chxk_2008::init_buffers_()
   B_.IntegrationStep_ = B_.step_;
 
   if ( B_.s_ == 0 )
+  {
     B_.s_ =
       gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_step_reset( B_.s_ );
+  }
 
   if ( B_.c_ == 0 )
+  {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
+  }
   else
+  {
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
+  }
 
   if ( B_.e_ == 0 )
+  {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_evolve_reset( B_.e_ );
+  }
 
   B_.sys_.function = iaf_chxk_2008_dynamics;
   B_.sys_.jacobian = NULL;
@@ -392,10 +419,10 @@ nest::iaf_chxk_2008::update( Time const& origin,
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y );               // neuronal state
-
-
       if ( status != GSL_SUCCESS )
+      {
         throw GSLSolverFailure( get_name(), status );
+      }
     }
     // neuron should spike on threshold crossing only.
     if ( vm_prev < P_.V_th && S_.y[ State_::V_M ] >= P_.V_th )
@@ -449,14 +476,17 @@ nest::iaf_chxk_2008::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
+  {
     B_.spike_exc_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
+  {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
-      -e.get_weight()
-        * e.get_multiplicity() ); // ensure conductance is positive
+      -e.get_weight() * e.get_multiplicity() );
+  } // ensure conductance is positive
 }
 
 void

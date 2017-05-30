@@ -31,8 +31,9 @@ Description:
 
   1) checks if recorded times are indeed relative to an offset, and the first
      sampled time point is the offset itself
-  2) ensures offset can only be set before the multimeter is connected to nodes
-  3) ensures offset works correctly even if origin, start and stop are modified
+  2) check if data logger is initialized correctly
+  3) ensures offset can only be set before the multimeter is connected to nodes
+  4) ensures offset works correctly even if origin, start and stop are modified
 
 Author: Barna Zajzon, 2017-03-10 
  */
@@ -77,6 +78,56 @@ assert_or_die
 
 
 % Test 2
+% check if data logger is initialized correctly
+{
+  /simtimeinit  10. def % initial simulation time
+  /simtime      20. def % second simulation time
+  /recoffs      5.  def % offset time --- different from default
+  /recint       3.  def % recording interval --- different from default
+  /recstart     20. def % start of recording window
+  /recstop      30. def % end of recording window
+
+  /recs    [/V_m]        def % recording devices
+  /refdata [23. 26. 29.] def % offset data
+
+  ResetKernel
+  0 << /resolution res >> SetStatus
+
+  /n /iaf_psc_alpha Create def
+
+  /mm /multimeter << /withtime true /start recstart /stop recstop
+    /interval recint /offset recoffs /record_from recs >> Create def
+
+  % connect and simulate
+  mm n Connect
+  simtimeinit Simulate
+
+  % create second multimeter
+  /mmtwo /multimeter << /withtime true /start recstart /stop recstop
+    /interval recint /offset recoffs /record_from recs >> Create def
+
+  % connect second multimeter and simulate further
+  mmtwo n Connect
+  simtime Simulate
+
+  % check results
+  /result mm /events get def
+  result /times get cva
+
+  % compare first multimeter to reference data
+  refdata eq
+
+  % extract results for second multimeter
+  /resulttwo mmtwo /events get def
+  resulttwo /times get cva
+
+  % compare second multimeter to reference data
+  refdata eq
+}
+assert_or_die
+
+
+% Test 3
 % make sure offset cannot be changed after connecting to a node
 {
   ResetKernel
@@ -94,7 +145,7 @@ assert_or_die
 fail_or_die
 
 
-% Test 3
+% Test 4
 % ensure offset behaves correctly with respect to origin / start / stop; set start and stop
 % different from their initial values, simulate, check recordings. Then modify origin,
 % simulate again, and check for consistency.

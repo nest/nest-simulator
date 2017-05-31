@@ -61,12 +61,25 @@ def authors():
 def helpdesk():
     """Open the NEST helpdesk in browser.
 
-    The system default browser.
-    /helpdesk << /command (firefox) >> SetOptions in ~/.nestrc is now obsolete
+    Use the system default browser.
     """
+    if 'NEST_DOC_DIR' not in os.environ:
+        print(
+            'NEST help needs to know where NEST is installed.'
+            'Please source nest_vars.sh or define NEST_DOC_DIR manually.')
+        return
+
     url = os.path.join(os.environ['NEST_DOC_DIR'] + "/help", "helpindex.html")
+    """
+    Under Windows systems webbrowser.open is incomplete 
+    <https://bugs.python.org/issue8232>
+    """
     if sys.platform[:3] == "win":
         os.startfile(url)
+    """
+    Under MacOs we need to ask for the browser explicitly. 
+    See <https://bugs.python.org/issue30392>.
+    """
     if sys.platform[:3] == "dar":
         webbrowser.get('safari').open_new(url)
     else:

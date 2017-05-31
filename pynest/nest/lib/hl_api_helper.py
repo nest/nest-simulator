@@ -472,19 +472,24 @@ def show_help_with_pager(hlpobj, pager):
 
     # reading ~/.nestrc lookink for pager to use.
     if pager is None:
-        # open ~/.nestrc
-        rc = open(os.environ['HOME'] + '/.nestrc', 'r')
-        for line in rc:
-            rctst = re.match(r'^\s?%', line)
-            if rctst is None:
-                pypagers = re.findall(
-                    r'\s?/page\s?<<\s?/command\s?\((.*)\).*', line)
-                if pypagers:
-                    pager = pypagers[0]
-                    break
-                else:
-                    pager = 'more'
-        rc.close()
+        # check if .netsrc exist
+        rc_file = Path(os.environ['HOME'] + '/.nestrc')
+        if os.path.isfile(rc_file):
+            # open ~/.nestrc
+            rc = open(os.environ['HOME'] + '/.nestrc', 'r')
+            for line in rc:
+                rctst = re.match(r'^\s?%', line)
+                if rctst is None:
+                    pypagers = re.findall(
+                        r'^\s?/page\s?<<\s?/command\s?\((\S*)', line)
+                    if pypagers:
+                        pager = pypagers[0]
+                        break
+                    else:
+                        pager = 'more'
+            rc.close()
+        else:
+            pager = 'more'
 
     for dirpath, dirnames, files in os.walk(helpdir):
         for hlp in files:

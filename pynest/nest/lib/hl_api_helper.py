@@ -483,7 +483,7 @@ def show_help_with_pager(hlpobj, pager):
                     pager = pypagers[0]
                     break
                 else:
-                    pager = 'less'
+                    pager = 'more'
         rc.close()
 
     for dirpath, dirnames, files in os.walk(helpdir):

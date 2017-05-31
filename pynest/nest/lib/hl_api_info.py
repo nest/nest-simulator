@@ -90,7 +90,7 @@ def helpdesk():
 def help(obj=None, pager=None):
     """Show the help page for the given object using the given pager.
 
-    The default pager is less.
+    The default pager is more.
 
     Parameters
     ----------

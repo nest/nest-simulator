@@ -467,7 +467,6 @@ def show_help_with_pager(hlpobj, pager):
     helpdir = os.path.join(os.environ['NEST_INSTALL_DIR'], "share", "doc",
                            "nest", "help")
     objname = hlpobj + '.hlp'
-    # @todo more pager
     consolepager = ['less', 'more', 'vi', 'vim', 'nano', 'emacs -nw',
                     'ed', 'editor']
 

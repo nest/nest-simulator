@@ -169,7 +169,7 @@ inline void
 nest::Stopwatch::start()
 {
 #ifndef DISABLE_TIMING
-  if ( !isRunning() )
+  if ( not isRunning() )
   {
     _prev_elapsed += _end - _beg;  // store prev. time, if we resume
     _end = _beg = get_timestamp(); // invariant: _end >= _beg

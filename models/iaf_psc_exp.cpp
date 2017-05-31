@@ -118,14 +118,22 @@ nest::iaf_psc_exp::Parameters_::set( const DictionaryDatum& d )
   const double delta_EL = E_L_ - ELold;
 
   if ( updateValue< double >( d, names::V_reset, V_reset_ ) )
+  {
     V_reset_ -= E_L_;
+  }
   else
+  {
     V_reset_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_th, Theta_ ) )
+  {
     Theta_ -= E_L_;
+  }
   else
+  {
     Theta_ -= delta_EL;
+  }
 
   updateValue< double >( d, names::I_e, I_e_ );
   updateValue< double >( d, names::C_m, C_ );
@@ -133,19 +141,23 @@ nest::iaf_psc_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_ex, tau_ex_ );
   updateValue< double >( d, names::tau_syn_in, tau_in_ );
   updateValue< double >( d, names::t_ref, t_ref_ );
-
   if ( V_reset_ >= Theta_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
-
+  }
   if ( C_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 )
+  {
     throw BadProperty(
       "Membrane and synapse time constants must be strictly positive." );
-
+  }
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time must not be negative." );
+  }
 
   return delta_EL;
 }
@@ -162,9 +174,13 @@ nest::iaf_psc_exp::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
+  {
     V_m_ -= p.E_L_;
+  }
   else
+  {
     V_m_ -= delta_EL;
+  }
 }
 
 nest::iaf_psc_exp::Buffers_::Buffers_( iaf_psc_exp& n )
@@ -286,10 +302,14 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
   for ( long lag = from; lag < to; ++lag )
   {
     if ( S_.r_ref_ == 0 ) // neuron not refractory, so evolve V
+    {
       S_.V_m_ = S_.V_m_ * V_.P22_ + S_.i_syn_ex_ * V_.P21ex_
         + S_.i_syn_in_ * V_.P21in_ + ( P_.I_e_ + S_.i_0_ ) * V_.P20_;
+    }
     else
-      --S_.r_ref_; // neuron is absolute refractory
+    {
+      --S_.r_ref_;
+    } // neuron is absolute refractory
 
     // exponential decaying PSCs
     S_.i_syn_ex_ *= V_.P11ex_;
@@ -333,13 +353,17 @@ nest::iaf_psc_exp::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
+  {
     B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
+  {
     B_.spikes_in_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
 }
 
 void

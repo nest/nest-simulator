@@ -210,7 +210,12 @@ public:
   };
 
   /**
-   * Invoke finalize() on nodes registered for finalization.
+   * Invoke post_run_cleanup() on all nodes.
+   */
+  void post_run_cleanup();
+
+  /**
+   * Invoke finalize() on all nodes.
    */
   void finalize_nodes();
 

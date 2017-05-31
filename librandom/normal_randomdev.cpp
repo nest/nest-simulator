@@ -54,11 +54,13 @@ librandom::NormalRandomDev::set_status( const DictionaryDatum& d )
   double new_mu = mu_;
   double new_sigma = sigma_;
 
-  updateValue< double >( d, "mu", new_mu );
-  updateValue< double >( d, "sigma", new_sigma );
+  updateValue< double >( d, names::mu, new_mu );
+  updateValue< double >( d, names::sigma, new_sigma );
 
   if ( new_sigma < 0. )
+  {
     throw BadParameterValue( "Normal RDV: sigma >= 0 required." );
+  }
 
   mu_ = new_mu;
   sigma_ = new_sigma;
@@ -69,8 +71,8 @@ librandom::NormalRandomDev::get_status( DictionaryDatum& d ) const
 {
   RandomDev::get_status( d );
 
-  def< double >( d, "mu", mu_ );
-  def< double >( d, "sigma", sigma_ );
+  def< double >( d, names::mu, mu_ );
+  def< double >( d, names::sigma, sigma_ );
 }
 
 double librandom::NormalRandomDev::operator()( RngPtr r ) const
@@ -87,9 +89,10 @@ double librandom::NormalRandomDev::operator()( RngPtr r ) const
     V2 = 2 * r->drand() - 1;
     S = V1 * V1 + V2 * V2;
   } while ( S >= 1 );
-
   if ( S != 0 )
+  {
     S = V1 * std::sqrt( -2 * std::log( S ) / S );
+  }
 
   return mu_ + sigma_ * S;
 }

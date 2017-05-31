@@ -144,9 +144,13 @@ inline long
 STDPDopaCommonProperties::get_vt_gid() const
 {
   if ( vt_ != 0 )
+  {
     return vt_->get_gid();
+  }
   else
+  {
     return -1;
+  }
 }
 
 /**
@@ -240,8 +244,10 @@ public:
     const CommonPropertiesType& cp )
   {
     if ( cp.vt_ == 0 )
+    {
       throw BadProperty(
         "No volume transmitter has been assigned to the dopamine synapse." );
+    }
 
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
@@ -328,8 +334,8 @@ STDPDopaConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
   def< double >( d, names::weight, weight_ );
 
   // own properties, different for individual synapse
-  def< double >( d, "c", c_ );
-  def< double >( d, "n", n_ );
+  def< double >( d, names::c, c_ );
+  def< double >( d, names::n, n_ );
 }
 
 template < typename targetidentifierT >
@@ -341,8 +347,8 @@ STDPDopaConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
 
-  updateValue< double >( d, "c", c_ );
-  updateValue< double >( d, "n", n_ );
+  updateValue< double >( d, names::c, c_ );
+  updateValue< double >( d, names::n, n_ );
 }
 
 template < typename targetidentifierT >
@@ -371,9 +377,13 @@ STDPDopaConnection< targetidentifierT >::update_weight_( double c0,
              - cp.b_ * cp.tau_c_ * numerics::expm1( minus_dt / cp.tau_c_ ) );
 
   if ( weight_ < cp.Wmin_ )
+  {
     weight_ = cp.Wmin_;
+  }
   if ( weight_ > cp.Wmax_ )
+  {
     weight_ = cp.Wmax_;
+  }
 }
 
 template < typename targetidentifierT >
@@ -502,7 +512,9 @@ STDPDopaConnection< targetidentifierT >::send( Event& e,
     minus_dt = t_last_update_ - t0;
     if ( start->t_ < t_spike ) // only depression if pre- and postsyn. spike
                                // occur at the same time
+    {
       facilitate_( Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
+    }
     ++start;
   }
 

@@ -299,11 +299,21 @@ public:
   virtual void calibrate() = 0;
 
   /**
+   * Cleanup node after Run. Override this function if a node needs to
+   * "wrap up" things after a call to Run, i.e., before
+   * SimulationManager::run() returns. Typical use-cases are devices
+   * that need to flush buffers.
+   */
+  virtual void
+  post_run_cleanup()
+  {
+  }
+
+  /**
    * Finalize node.
    * Override this function if a node needs to "wrap up" things after a
-   * simulation, i.e., before Network::get_network().resume() returns. Typical
-   * use-cases are devices that need to flush buffers or disconnect from
-   * external files or pipes.
+   * full simulation, i.e., a cycle of Prepare, Run, Cleanup. Typical
+   * use-cases are devices that need to close files.
    */
   virtual void
   finalize()

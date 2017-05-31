@@ -104,9 +104,10 @@ MUSICManager::enter_runtime( double h_min_delay )
   // MUSIC needs the step size in seconds
   // std::cout << "nest::MPIManager::enter_runtime\n";
   // std::cout << "timestep = " << h_min_delay*1e-3 << std::endl;
-
   if ( music_runtime == 0 )
+  {
     music_runtime = new MUSIC::Runtime( music_setup, h_min_delay * 1e-3 );
+  }
 #endif
 }
 
@@ -161,13 +162,19 @@ MUSICManager::register_music_in_port( std::string portname, bool pristine )
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
   if ( it == music_in_portlist_.end() )
+  {
     music_in_portlist_[ portname ] = MusicPortData( 1, 0.0, -1 );
+  }
   else
+  {
     music_in_portlist_[ portname ].n_input_proxies++;
+  }
 
   // pristine is true if we are building up the initial portlist
   if ( pristine )
+  {
     pristine_music_in_portlist_[ portname ] = music_in_portlist_[ portname ];
+  }
 }
 
 void
@@ -176,12 +183,18 @@ MUSICManager::unregister_music_in_port( std::string portname )
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
   if ( it == music_in_portlist_.end() )
+  {
     throw MUSICPortUnknown( portname );
+  }
   else
+  {
     music_in_portlist_[ portname ].n_input_proxies--;
+  }
 
   if ( music_in_portlist_[ portname ].n_input_proxies == 0 )
+  {
     music_in_portlist_.erase( it );
+  }
 }
 
 void
@@ -200,7 +213,9 @@ MUSICManager::register_music_event_in_proxy( std::string portname,
     music_in_portmap_[ portname ] = tmp;
   }
   else
+  {
     it->second.register_channel( channel, mp );
+  }
 }
 
 void
@@ -210,9 +225,13 @@ MUSICManager::set_music_in_port_acceptable_latency( std::string portname,
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
   if ( it == music_in_portlist_.end() )
+  {
     throw MUSICPortUnknown( portname );
+  }
   else
+  {
     music_in_portlist_[ portname ].acceptable_latency = latency;
+  }
 }
 
 void
@@ -222,9 +241,13 @@ MUSICManager::set_music_in_port_max_buffered( std::string portname,
   std::map< std::string, MusicPortData >::iterator it;
   it = music_in_portlist_.find( portname );
   if ( it == music_in_portlist_.end() )
+  {
     throw MUSICPortUnknown( portname );
+  }
   else
+  {
     music_in_portlist_[ portname ].max_buffered = maxbuffered;
+  }
 }
 
 void
@@ -232,7 +255,9 @@ MUSICManager::publish_music_in_ports_()
 {
   std::map< std::string, MusicEventHandler >::iterator it;
   for ( it = music_in_portmap_.begin(); it != music_in_portmap_.end(); ++it )
+  {
     it->second.publish_port();
+  }
 }
 
 void
@@ -242,7 +267,9 @@ MUSICManager::update_music_event_handlers( Time const& origin,
 {
   std::map< std::string, MusicEventHandler >::iterator it;
   for ( it = music_in_portmap_.begin(); it != music_in_portmap_.end(); ++it )
+  {
     it->second.update( origin, from, to );
+  }
 }
 #endif
 }

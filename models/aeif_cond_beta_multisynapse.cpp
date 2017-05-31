@@ -228,7 +228,7 @@ aeif_cond_beta_multisynapse::Parameters_::set( const DictionaryDatum& d )
   { // receptor arrays have been modified
     if ( ( E_rev.size() != old_n_receptors || tau_rise.size() != old_n_receptors
            || tau_decay.size() != old_n_receptors )
-      && ( !Erev_flag || !taur_flag || !taud_flag ) )
+      && ( not Erev_flag || not taur_flag || not taud_flag ) )
     {
       throw BadProperty(
         "If the number of receptor ports is changed, all three arrays "

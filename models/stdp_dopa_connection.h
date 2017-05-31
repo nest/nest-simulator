@@ -197,6 +197,12 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   /**
+   * Check syn_spec dictionary for parameters that are not allowed for this
+   * connection. Will issue warning or throw error if a parameter is found.
+   */
+  void check_synapse_params( const DictionaryDatum& d ) const;
+
+  /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
@@ -349,6 +355,53 @@ STDPDopaConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
 
   updateValue< double >( d, names::c, c_ );
   updateValue< double >( d, names::n, n_ );
+}
+
+template < typename targetidentifierT >
+void
+STDPDopaConnection< targetidentifierT >::check_synapse_params(
+  const DictionaryDatum& syn_spec ) const
+{
+  if ( syn_spec->known( names::vt ) )
+  {
+    throw NotImplemented(
+      "Connect doesn't support the direct specification of the "
+      "volume transmitter of stdp_dopamine_synapse in syn_spec."
+      "Use SetDefaults() or CopyModel()." );
+  }
+  // setting of parameter c and n not thread save
+  if ( kernel().vp_manager.get_num_threads() > 1 )
+  {
+    if ( syn_spec->known( names::c ) )
+    {
+      throw NotImplemented(
+        "For multi-threading Connect doesn't support the setting "
+        "of parameter c in stdp_dopamine_synapse. "
+        "Use SetDefaults() or CopyModel()." );
+    }
+    if ( syn_spec->known( names::n ) )
+    {
+      throw NotImplemented(
+        "For multi-threading Connect doesn't support the setting "
+        "of parameter n in stdp_dopamine_synapse. "
+        "Use SetDefaults() or CopyModel()." );
+    }
+  }
+  std::string param_arr[] = {
+    "A_minus", "A_plus", "Wmax", "Wmin", "b", "tau_c", "tau_n", "tau_plus"
+  };
+  std::vector< std::string > param_vec( param_arr, param_arr + 8 );
+  for ( std::vector< std::string >::iterator it = param_vec.begin();
+        it != param_vec.end();
+        it++ )
+  {
+    if ( syn_spec->known( *it ) )
+    {
+      throw NotImplemented( "Connect doesn't support the setting of parameter "
+        + *it
+        + " in stdp_dopamine_synapse. Use SetDefaults() or CopyModel()." );
+    }
+  }
 }
 
 template < typename targetidentifierT >

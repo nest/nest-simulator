@@ -143,6 +143,21 @@ public:
   }
 
   /**
+   * Check syn_spec dictionary for parameters that are not allowed for this
+   * connection. Will issue warning or throw error if a parameter is found.
+   */
+  void
+  check_synapse_params( const DictionaryDatum& syn_spec ) const
+  {
+    if ( syn_spec->known( names::weight ) )
+    {
+      throw BadProperty(
+        "Weight cannot be specified since it needs to be equal "
+        "for all connections when static_synapse_hom_w is used." );
+    }
+  }
+
+  /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
    * \param p The port under which this connection is stored in the Connector.

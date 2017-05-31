@@ -83,14 +83,13 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
     throw UnknownSynapseType( syn_name );
   }
 
-  // if another synapse than static_synapse is defined we need to make
-  // sure that Connect can process all parameter specified
-  if ( syn_name != "static_synapse" )
-  {
-    check_synapse_params_( syn_name, syn_spec );
-  }
-
   synapse_model_ = kernel().model_manager.get_synapsedict()->lookup( syn_name );
+
+  // We need to make sure that Connect can process all synapse parameters
+  // specified.
+  ConnectorModel& syn_mod =
+    kernel().model_manager.get_synapse_prototype( synapse_model_, 0 );
+  syn_mod.check_synapse_params( syn_spec );
 
   DictionaryDatum syn_defaults =
     kernel().model_manager.get_connector_defaults( synapse_model_ );
@@ -257,103 +256,6 @@ nest::ConnBuilder::~ConnBuilder()
   }
 }
 
-void
-nest::ConnBuilder::check_synapse_params_( std::string syn_name,
-  const DictionaryDatum& syn_spec )
-{
-  // throw error if weight is specified with static_synapse_hom_w
-  if ( syn_name == "static_synapse_hom_w" )
-  {
-    if ( syn_spec->known( names::weight ) )
-    {
-      throw BadProperty(
-        "Weight cannot be specified since it needs to be equal "
-        "for all connections when static_synapse_hom_w is used." );
-    }
-    return;
-  }
-
-
-  // throw error if n or a are set in quantal_stp_synapse, Connect cannot handle
-  // them since they are integer
-  if ( syn_name == "quantal_stp_synapse" )
-  {
-    if ( syn_spec->known( names::n ) )
-    {
-      throw NotImplemented(
-        "Connect doesn't support the setting of parameter "
-        "n in quantal_stp_synapse. Use SetDefaults() or CopyModel()." );
-    }
-    if ( syn_spec->known( names::a ) )
-    {
-      throw NotImplemented(
-        "Connect doesn't support the setting of parameter "
-        "a in quantal_stp_synapse. Use SetDefaults() or CopyModel()." );
-    }
-    return;
-  }
-
-  // print warning if delay is specified outside cont_delay_synapse
-  if ( syn_name == "cont_delay_synapse" )
-  {
-    if ( syn_spec->known( names::delay ) )
-    {
-      LOG( M_WARNING,
-        "Connect",
-        "The delay will be rounded to the next multiple of the time step. "
-        "To use a more precise time delay it needs to be defined within "
-        "the synapse, e.g. with CopyModel()." );
-    }
-    return;
-  }
-
-  // throw error if no volume transmitter is defined or parameters are specified
-  // that need to be introduced via CopyModel or SetDefaults
-  if ( syn_name == "stdp_dopamine_synapse" )
-  {
-    if ( syn_spec->known( names::vt ) )
-    {
-      throw NotImplemented(
-        "Connect doesn't support the direct specification of the "
-        "volume transmitter of stdp_dopamine_synapse in syn_spec."
-        "Use SetDefaults() or CopyModel()." );
-    }
-    // setting of parameter c and n not thread save
-    if ( kernel().vp_manager.get_num_threads() > 1 )
-    {
-      if ( syn_spec->known( names::c ) )
-      {
-        throw NotImplemented(
-          "For multi-threading Connect doesn't support the setting "
-          "of parameter c in stdp_dopamine_synapse. "
-          "Use SetDefaults() or CopyModel()." );
-      }
-      if ( syn_spec->known( names::n ) )
-      {
-        throw NotImplemented(
-          "For multi-threading Connect doesn't support the setting "
-          "of parameter n in stdp_dopamine_synapse. "
-          "Use SetDefaults() or CopyModel()." );
-      }
-    }
-    std::string param_arr[] = {
-      " A_minus", "A_plus", "Wmax", "Wmin", "b", "tau_c", "tau_n", "tau_plus"
-    };
-    std::vector< std::string > param_vec( param_arr, param_arr + 8 );
-    for ( std::vector< std::string >::iterator it = param_vec.begin();
-          it != param_vec.end();
-          it++ )
-    {
-      if ( syn_spec->known( *it ) )
-      {
-        throw NotImplemented(
-          "Connect doesn't support the setting of parameter " + *it
-          + " in stdp_dopamine_synapse. Use SetDefaults() or CopyModel()." );
-      }
-    }
-    return;
-  }
-}
 /**
  * Updates the number of connected synaptic elements in the
  * target and the source.

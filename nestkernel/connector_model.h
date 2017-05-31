@@ -150,6 +150,8 @@ public:
 
   virtual const CommonSynapseProperties& get_common_properties() const = 0;
 
+  virtual void check_synapse_params( const DictionaryDatum& ) const = 0;
+
   virtual SecondaryEvent* get_event() const = 0;
 
   virtual void set_syn_id( synindex syn_id ) = 0;
@@ -249,6 +251,12 @@ public:
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
+
+  void
+  check_synapse_params( const DictionaryDatum& syn_spec ) const
+  {
+    default_connection_.check_synapse_params( syn_spec );
+  }
 
   typename ConnectionT::CommonPropertiesType const&
   get_common_properties() const

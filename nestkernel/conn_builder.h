@@ -235,13 +235,6 @@ private:
    */
   void register_parameters_requiring_skipping_( ConnParameter& param );
 
-  // check for synapse specific errors or warnings
-  // This is a temporary function which should be removed once all parameter
-  // types work with Connect.
-  // The remaining error and warnings should then be handled within the synapse
-  // model.
-  void check_synapse_params_( std::string, const DictionaryDatum& );
-
 protected:
   //! pointers to connection parameters specified as arrays
   std::vector< ConnParameter* > parameters_requiring_skipping_;

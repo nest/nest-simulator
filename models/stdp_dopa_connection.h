@@ -390,16 +390,15 @@ STDPDopaConnection< targetidentifierT >::check_synapse_params(
   std::string param_arr[] = {
     "A_minus", "A_plus", "Wmax", "Wmin", "b", "tau_c", "tau_n", "tau_plus"
   };
-  std::vector< std::string > param_vec( param_arr, param_arr + 8 );
-  for ( std::vector< std::string >::iterator it = param_vec.begin();
-        it != param_vec.end();
-        it++ )
+
+  const size_t n_param = sizeof( param_arr ) / sizeof( std::string );
+  for ( size_t n = 0; n < n_param; ++n )
   {
-    if ( syn_spec->known( *it ) )
+    if ( syn_spec->known( param_arr[ n ] ) )
     {
-      throw NotImplemented( "Connect doesn't support the setting of parameter "
-        + *it
-        + " in stdp_dopamine_synapse. Use SetDefaults() or CopyModel()." );
+      throw NotImplemented(
+          "Connect doesn't support the setting of parameter param_arr[ n ]"
+          "in stdp_dopamine_synapse. Use SetDefaults() or CopyModel()." );
     }
   }
 }

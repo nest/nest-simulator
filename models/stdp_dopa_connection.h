@@ -369,7 +369,7 @@ STDPDopaConnection< targetidentifierT >::check_synapse_params(
       "volume transmitter of stdp_dopamine_synapse in syn_spec."
       "Use SetDefaults() or CopyModel()." );
   }
-  // setting of parameter c and n not thread save
+  // Setting of parameter c and n not thread safe.
   if ( kernel().vp_manager.get_num_threads() > 1 )
   {
     if ( syn_spec->known( names::c ) )

@@ -135,8 +135,8 @@ void
 Quantal_StpConnection< targetidentifierT >::check_synapse_params(
   const DictionaryDatum& syn_spec ) const
 {
-  // throw error if n or a are set in quantal_stp_synapse, Connect cannot handle
-  // them since they are integer
+  // Throw error if n or a are set in quantal_stp_synapse, Connect cannot handle
+  // them since they are integers.
   if ( syn_spec->known( names::n ) )
   {
     throw NotImplemented(
@@ -150,7 +150,6 @@ Quantal_StpConnection< targetidentifierT >::check_synapse_params(
       "a in quantal_stp_synapse. Use SetDefaults() or CopyModel()." );
   }
 }
-
 
 } // of namespace nest
 

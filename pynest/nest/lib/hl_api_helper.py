@@ -473,7 +473,7 @@ def show_help_with_pager(hlpobj, pager):
     # reading ~/.nestrc lookink for pager to use.
     if pager is None:
         # check if .netsrc exist
-        rc_file = Path(os.environ['HOME'] + '/.nestrc')
+        rc_file = os.environ['HOME'] + '/.nestrc'
         if os.path.isfile(rc_file):
             # open ~/.nestrc
             rc = open(os.environ['HOME'] + '/.nestrc', 'r')
@@ -481,19 +481,24 @@ def show_help_with_pager(hlpobj, pager):
                 rctst = re.match(r'^\s?%', line)
                 if rctst is None:
                     pypagers = re.findall(
-                        r'^\s?/page\s?<<\s?/command\s?\((\S*)', line)
+                        r'^\s?/page\s?<<\s?/command\s?\((\w*)', line)
                     if pypagers:
-                        pager = pypagers[0]
+                        for pa in pypagers:
+                            if pa:
+                                pager = pa
+                            else:
+                                pager = 'more'
                         break
                     else:
                         pager = 'more'
             rc.close()
         else:
             pager = 'more'
-
+    hlperror = True
     for dirpath, dirnames, files in os.walk(helpdir):
         for hlp in files:
             if hlp == objname:
+                hlperror = False
                 objf = os.path.join(dirpath, objname)
                 fhlp = open(objf, 'r')
                 hlptxt = fhlp.read()
@@ -502,17 +507,23 @@ def show_help_with_pager(hlpobj, pager):
                     if pager in consolepager:
                         # only in notebook open modal window
                         __show_help_in_modal_window(objname, hlptxt)
+                        fhlp.close()
                         break
                     else:
                         subprocess.call([pager, objf])
+                        fhlp.close()
                         break
                 else:
                     if pager in consolepager:
                         subprocess.call([pager, objf])
+                        fhlp.close()
                         break
                     else:
                         subprocess.call([pager, objf])
+                        fhlp.close()
                         break
+    if hlperror == True:
+        print("Sorry, there is no help for '" + hlpobj + "'!")
 
 
 @check_stack

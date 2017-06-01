@@ -70,16 +70,14 @@ def helpdesk():
         return
 
     url = os.path.join(os.environ['NEST_DOC_DIR'] + "/help", "helpindex.html")
-    """
-    Under Windows systems webbrowser.open is incomplete 
-    <https://bugs.python.org/issue8232>
-    """
+
+    # Under Windows systems webbrowser.open is incomplete
+    # See <https://bugs.python.org/issue8232>
     if sys.platform[:3] == "win":
         os.startfile(url)
-    """
-    Under MacOs we need to ask for the browser explicitly. 
-    See <https://bugs.python.org/issue30392>.
-    """
+
+    # Under MacOs we need to ask for the browser explicitly.
+    # See <https://bugs.python.org/issue30392>.
     if sys.platform[:3] == "dar":
         webbrowser.get('safari').open_new(url)
     else:

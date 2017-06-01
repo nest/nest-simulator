@@ -522,7 +522,7 @@ def show_help_with_pager(hlpobj, pager):
                         subprocess.call([pager, objf])
                         fhlp.close()
                         break
-    if hlperror == True:
+    if hlperror is True:
         print("Sorry, there is no help for '" + hlpobj + "'!")
 
 

@@ -197,8 +197,11 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   /**
-   * Check syn_spec dictionary for parameters that are not allowed for this
-   * connection. Will issue warning or throw error if a parameter is found.
+   * Checks to see if illegal parameters are given in syn_spec.
+   *
+   * The illegal parameters are: vt, A_minus, A_plus, Wmax, Wmin, b, tau_c,
+   * tau_n, tau_plus, c and n. The last two only apply if we have more than one
+   * thread.
    */
   void check_synapse_params( const DictionaryDatum& d ) const;
 

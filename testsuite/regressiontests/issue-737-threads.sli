@@ -41,7 +41,7 @@ SeeAlso: testsuite::issue-735, testsuite::issue-737
 
 skip_if_not_threaded
 
-% Test multithreded c in syn_spec for stdp_dopamine_synapse model
+% Test multithreaded c in syn_spec for stdp_dopamine_synapse model
 {
   ResetKernel
   
@@ -67,7 +67,7 @@ skip_if_not_threaded
 
 } fail_or_die
 
-% Test multithreded c in syn_spec for CopyModel of stdp_dopamine_synapse model
+% Test multithreaded c in syn_spec for CopyModel of stdp_dopamine_synapse model
 {
   ResetKernel
   

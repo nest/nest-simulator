@@ -91,7 +91,7 @@ public:
   index
   get_synapse_model() const
   {
-    return synapse_model_;
+    return synapse_model_id_;
   }
 
   bool
@@ -205,7 +205,7 @@ protected:
 private:
   typedef std::map< Name, ConnParameter* > ConnParameterMap;
 
-  index synapse_model_;
+  index synapse_model_id_;
 
   //! indicate that weight and delay should not be set per synapse
   bool default_weight_and_delay_;

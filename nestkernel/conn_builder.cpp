@@ -58,7 +58,7 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
   , multapses_( true )
   , make_symmetric_( false )
   , exceptions_raised_( kernel().vp_manager.get_num_threads() )
-  , synapse_model_( kernel().model_manager.get_synapsedict()->lookup(
+  , synapse_model_id_( kernel().model_manager.get_synapsedict()->lookup(
       "static_synapse" ) )
   , weight_( 0 )
   , delay_( 0 )
@@ -83,16 +83,17 @@ nest::ConnBuilder::ConnBuilder( const GIDCollection& sources,
     throw UnknownSynapseType( syn_name );
   }
 
-  synapse_model_ = kernel().model_manager.get_synapsedict()->lookup( syn_name );
+  synapse_model_id_ =
+    kernel().model_manager.get_synapsedict()->lookup( syn_name );
 
   // We need to make sure that Connect can process all synapse parameters
   // specified.
-  ConnectorModel& syn_mod =
-    kernel().model_manager.get_synapse_prototype( synapse_model_, 0 );
-  syn_mod.check_synapse_params( syn_spec );
+  const ConnectorModel& synapse_model =
+    kernel().model_manager.get_synapse_prototype( synapse_model_id_, 0 );
+  synapse_model.check_synapse_params( syn_spec );
 
   DictionaryDatum syn_defaults =
-    kernel().model_manager.get_connector_defaults( synapse_model_ );
+    kernel().model_manager.get_connector_defaults( synapse_model_id_ );
 
   // All synapse models have the possibility to set the delay (see
   // SynIdDelay), but some have homogeneous weights, hence it should
@@ -321,7 +322,7 @@ nest::ConnBuilder::connect()
 {
   // We test here, and not in the ConnBuilder constructor, so the derived
   // classes are fully constructed when the test is executed
-  if ( kernel().model_manager.connector_requires_symmetric( synapse_model_ )
+  if ( kernel().model_manager.connector_requires_symmetric( synapse_model_id_ )
     and not( is_symmetric() or make_symmetric_ ) )
   {
     throw BadProperty(
@@ -427,14 +428,14 @@ nest::ConnBuilder::single_connect_( index sgid,
     if ( default_weight_and_delay_ )
     {
       kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_ );
+        sgid, &target, target_thread, synapse_model_id_ );
     }
     else if ( default_weight_ )
     {
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
-        synapse_model_,
+        synapse_model_id_,
         delay_->value_double( target_thread, rng ) );
     }
     else if ( default_delay_ )
@@ -442,7 +443,7 @@ nest::ConnBuilder::single_connect_( index sgid,
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
-        synapse_model_,
+        synapse_model_id_,
         numerics::nan,
         weight_->value_double( target_thread, rng ) );
     }
@@ -451,7 +452,7 @@ nest::ConnBuilder::single_connect_( index sgid,
       double delay = delay_->value_double( target_thread, rng );
       double weight = weight_->value_double( target_thread, rng );
       kernel().connection_manager.connect(
-        sgid, &target, target_thread, synapse_model_, delay, weight );
+        sgid, &target, target_thread, synapse_model_id_, delay, weight );
     }
   }
   else
@@ -503,7 +504,7 @@ nest::ConnBuilder::single_connect_( index sgid,
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
-        synapse_model_,
+        synapse_model_id_,
         param_dicts_[ target_thread ] );
     }
     else if ( default_weight_ )
@@ -511,7 +512,7 @@ nest::ConnBuilder::single_connect_( index sgid,
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
-        synapse_model_,
+        synapse_model_id_,
         param_dicts_[ target_thread ],
         delay_->value_double( target_thread, rng ) );
     }
@@ -520,7 +521,7 @@ nest::ConnBuilder::single_connect_( index sgid,
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
-        synapse_model_,
+        synapse_model_id_,
         param_dicts_[ target_thread ],
         numerics::nan,
         weight_->value_double( target_thread, rng ) );
@@ -532,7 +533,7 @@ nest::ConnBuilder::single_connect_( index sgid,
       kernel().connection_manager.connect( sgid,
         &target,
         target_thread,
-        synapse_model_,
+        synapse_model_id_,
         param_dicts_[ target_thread ],
         delay,
         weight );

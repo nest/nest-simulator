@@ -150,6 +150,9 @@ public:
 
   virtual const CommonSynapseProperties& get_common_properties() const = 0;
 
+  /**
+   * Checks to see if illegal parameters are given in syn_spec.
+   */
   virtual void check_synapse_params( const DictionaryDatum& ) const = 0;
 
   virtual SecondaryEvent* get_event() const = 0;

@@ -141,8 +141,7 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   /**
-   * Check syn_spec dictionary for parameters that are not allowed for this
-   * connection. Will issue warning or throw error if a parameter is found.
+   * Checks to see if delay is given in syn_spec.
    */
   void check_synapse_params( const DictionaryDatum& d ) const;
 

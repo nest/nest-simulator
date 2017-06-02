@@ -52,10 +52,10 @@ STDPPLHomCommonProperties::get_status( DictionaryDatum& d ) const
 {
   CommonSynapseProperties::get_status( d );
 
-  def< double >( d, "tau_plus", tau_plus_ );
-  def< double >( d, "lambda", lambda_ );
-  def< double >( d, "alpha", alpha_ );
-  def< double >( d, "mu", mu_ );
+  def< double >( d, names::tau_plus, tau_plus_ );
+  def< double >( d, names::lambda, lambda_ );
+  def< double >( d, names::alpha, alpha_ );
+  def< double >( d, names::mu, mu_ );
 }
 
 void
@@ -64,10 +64,10 @@ STDPPLHomCommonProperties::set_status( const DictionaryDatum& d,
 {
   CommonSynapseProperties::set_status( d, cm );
 
-  updateValue< double >( d, "tau_plus", tau_plus_ );
-  updateValue< double >( d, "lambda", lambda_ );
-  updateValue< double >( d, "alpha", alpha_ );
-  updateValue< double >( d, "mu", mu_ );
+  updateValue< double >( d, names::tau_plus, tau_plus_ );
+  updateValue< double >( d, names::lambda, lambda_ );
+  updateValue< double >( d, names::alpha, alpha_ );
+  updateValue< double >( d, names::mu, mu_ );
 }
 
 } // of namespace nest

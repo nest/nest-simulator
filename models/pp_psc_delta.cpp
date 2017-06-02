@@ -432,7 +432,9 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
                       .get_steps();
           }
           else
+          {
             S_.r_ = V_.DeadTimeCounts_;
+          }
 
 
           for ( unsigned int i = 0; i < S_.q_elems_.size(); i++ )

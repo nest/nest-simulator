@@ -507,7 +507,6 @@ ModelManager::delete_secondary_events_prototypes()
   {
     secondary_events_prototypes_[ j ].clear();
   }
-
   secondary_events_prototypes_.clear();
 }
 

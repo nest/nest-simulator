@@ -199,7 +199,9 @@ public:
   {
     z_connected_ += n;
     if ( z_connected_ > floor( z_ ) )
+    {
       z_ = z_connected_ + ( z_ - floor( z_ ) );
+    }
   }
 
   /*

@@ -146,21 +146,26 @@ nest::MPIManager::set_status( const DictionaryDatum& )
 void
 nest::MPIManager::get_status( DictionaryDatum& d )
 {
-  def< long >( d, "num_processes", num_processes_ );
-  def< long >( d, "send_buffer_size", send_buffer_size_ );
-  def< long >( d, "receive_buffer_size", recv_buffer_size_ );
+  def< long >( d, names::num_processes, num_processes_ );
+  def< long >( d, names::send_buffer_size, send_buffer_size_ );
+  def< long >( d, names::receive_buffer_size, recv_buffer_size_ );
 }
 
 void
 nest::MPIManager::set_num_rec_processes( int nrp, bool called_by_reset )
 {
   if ( kernel().node_manager.size() > 1 and not called_by_reset )
+  {
     throw KernelException(
       "Global spike detection mode must be enabled before nodes are created." );
+  }
+
   if ( nrp >= num_processes_ )
+  {
     throw KernelException(
       "Number of processes used for recording must be smaller than total "
       "number of processes." );
+  }
   n_rec_procs_ = nrp;
   n_sim_procs_ = num_processes_ - n_rec_procs_;
 
@@ -331,6 +336,7 @@ nest::MPIManager::communicate_Allgather( std::vector< T >& send_buffer,
 
   // attempt Allgather
   if ( send_buffer.size() == static_cast< unsigned int >( send_buffer_size_ ) )
+  {
     MPI_Allgather( &send_buffer[ 0 ],
       send_buffer_size_,
       MPI_Type< T >::type,
@@ -338,6 +344,7 @@ nest::MPIManager::communicate_Allgather( std::vector< T >& send_buffer,
       send_buffer_size_,
       MPI_Type< T >::type,
       comm );
+  }
   else
   {
     // DEC cxx required 0U literal, HEP 2007-03-26
@@ -365,7 +372,9 @@ nest::MPIManager::communicate_Allgather( std::vector< T >& send_buffer,
       overflow = true;
       recv_counts[ pid ] = recv_buffer[ block_disp + 1 ];
       if ( static_cast< unsigned int >( recv_counts[ pid ] ) > max_recv_count )
+      {
         max_recv_count = recv_counts[ pid ];
+      }
     }
     disp += recv_counts[ pid ];
   }
@@ -418,6 +427,7 @@ nest::MPIManager::communicate_Allgather(
   std::vector< int > recv_counts( get_num_processes(), send_buffer_size_ );
   // attempt Allgather
   if ( send_buffer.size() == static_cast< unsigned int >( send_buffer_size_ ) )
+  {
     MPI_Allgather( &send_buffer[ 0 ],
       send_buffer_size_,
       MPI_OFFGRID_SPIKE,
@@ -425,6 +435,7 @@ nest::MPIManager::communicate_Allgather(
       send_buffer_size_,
       MPI_OFFGRID_SPIKE,
       comm );
+  }
   else
   {
     std::vector< OffGridSpike > overflow_buffer( send_buffer_size_ );
@@ -452,7 +463,9 @@ nest::MPIManager::communicate_Allgather(
       overflow = true;
       recv_counts[ pid ] = ( recv_buffer[ block_disp + 1 ] ).get_gid();
       if ( static_cast< unsigned int >( recv_counts[ pid ] ) > max_recv_count )
+      {
         max_recv_count = recv_counts[ pid ];
+      }
     }
     disp += recv_counts[ pid ];
   }
@@ -486,7 +499,9 @@ nest::MPIManager::communicate( std::vector< double >& send_buffer,
   // Set up displacements vector.
   displacements.resize( get_num_processes(), 0 );
   for ( int i = 1; i < get_num_processes(); ++i )
+  {
     displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+  }
 
   // Calculate total number of node data items to be gathered.
   size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
@@ -514,7 +529,9 @@ nest::MPIManager::communicate( std::vector< unsigned long >& send_buffer,
   // Set up displacements vector.
   displacements.resize( num_processes_, 0 );
   for ( int i = 1; i < num_processes_; ++i )
+  {
     displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+  }
 
   // Calculate total number of node data items to be gathered.
   size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
@@ -542,7 +559,9 @@ nest::MPIManager::communicate( std::vector< int >& send_buffer,
   // Set up displacements vector.
   displacements.resize( num_processes_, 0 );
   for ( int i = 1; i < num_processes_; ++i )
+  {
     displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+  }
 
   // Calculate total number of node data items to be gathered.
   size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
@@ -667,12 +686,12 @@ nest::MPIManager::test_link( int sender, int receiver )
     MPI_Status status;
 
     if ( get_rank() == sender )
+    {
       MPI_Ssend( &dummy, 1, MPI_LONG, receiver, 0, comm );
+    }
     else if ( get_rank() == receiver )
     {
       MPI_Recv( &dummy, 1, MPI_LONG, sender, 0, comm, &status );
-      // std::cerr << "link between " << sender << " and " << receiver << "
-      // works" << std::endl;
     }
   }
 }
@@ -681,10 +700,15 @@ void
 nest::MPIManager::test_links()
 {
   for ( int i = 0; i < get_num_processes(); ++i )
+  {
     for ( int j = 0; j < get_num_processes(); ++j )
+    {
       if ( i != j )
+      {
         test_link( i, j );
-  // std::cerr << "all links are working" << std::endl;
+      }
+    }
+  }
 }
 
 // grng_synchrony: called at the beginning of each simulate
@@ -719,7 +743,9 @@ bool
 nest::MPIManager::any_true( const bool my_bool )
 {
   if ( get_num_processes() == 1 )
+  {
     return my_bool;
+  }
 
   // since there is no MPI_BOOL we first convert to int
   int my_int = my_bool;
@@ -743,10 +769,14 @@ double
 nest::MPIManager::time_communicate( int num_bytes, int samples )
 {
   if ( get_num_processes() == 1 )
+  {
     return 0.0;
+  }
   unsigned int packet_length = num_bytes / sizeof( unsigned int );
   if ( packet_length < 1 )
+  {
     packet_length = 1;
+  }
   std::vector< unsigned int > test_send_buffer( packet_length );
   std::vector< unsigned int > test_recv_buffer(
     packet_length * get_num_processes() );
@@ -754,6 +784,7 @@ nest::MPIManager::time_communicate( int num_bytes, int samples )
   Stopwatch foo;
   foo.start();
   for ( int i = 0; i < samples; ++i )
+  {
     MPI_Allgather( &test_send_buffer[ 0 ],
       packet_length,
       MPI_UNSIGNED,
@@ -761,6 +792,7 @@ nest::MPIManager::time_communicate( int num_bytes, int samples )
       packet_length,
       MPI_UNSIGNED,
       MPI_COMM_WORLD );
+  }
   // finish time measurement here
   foo.stop();
   return foo.elapsed() / samples;
@@ -771,10 +803,14 @@ double
 nest::MPIManager::time_communicatev( int num_bytes, int samples )
 {
   if ( get_num_processes() == 1 )
+  {
     return 0.0;
+  }
   unsigned int packet_length = num_bytes / sizeof( unsigned int );
   if ( packet_length < 1 )
+  {
     packet_length = 1;
+  }
   std::vector< unsigned int > test_send_buffer( packet_length );
   std::vector< unsigned int > test_recv_buffer(
     packet_length * get_num_processes() );
@@ -782,14 +818,18 @@ nest::MPIManager::time_communicatev( int num_bytes, int samples )
   std::vector< int > displacements( get_num_processes(), 0 );
 
   for ( int i = 1; i < get_num_processes(); ++i )
+  {
     displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+  }
 
   // start time measurement here
   Stopwatch foo;
   foo.start();
   for ( int i = 0; i < samples; ++i )
+  {
     communicate_Allgatherv(
       test_send_buffer, test_recv_buffer, displacements, n_nodes );
+  }
 
   // finish time measurement here
   foo.stop();
@@ -801,10 +841,14 @@ double
 nest::MPIManager::time_communicate_offgrid( int num_bytes, int samples )
 {
   if ( get_num_processes() == 1 )
+  {
     return 0.0;
+  }
   unsigned int packet_length = num_bytes / sizeof( OffGridSpike );
   if ( packet_length < 1 )
+  {
     packet_length = 1;
+  }
   std::vector< OffGridSpike > test_send_buffer( packet_length );
   std::vector< OffGridSpike > test_recv_buffer(
     packet_length * get_num_processes() );
@@ -812,6 +856,7 @@ nest::MPIManager::time_communicate_offgrid( int num_bytes, int samples )
   Stopwatch foo;
   foo.start();
   for ( int i = 0; i < samples; ++i )
+  {
     MPI_Allgather( &test_send_buffer[ 0 ],
       packet_length,
       MPI_OFFGRID_SPIKE,
@@ -819,6 +864,7 @@ nest::MPIManager::time_communicate_offgrid( int num_bytes, int samples )
       packet_length,
       MPI_OFFGRID_SPIKE,
       MPI_COMM_WORLD );
+  }
   // finish time measurement here
   foo.stop();
   return foo.elapsed() / samples;
@@ -829,13 +875,17 @@ double
 nest::MPIManager::time_communicate_alltoall( int num_bytes, int samples )
 {
   if ( get_num_processes() == 1 )
+  {
     return 0.0;
+  }
   unsigned int packet_length = num_bytes
     / sizeof( unsigned int ); // this size should be sent to each process
   unsigned int total_packet_length = packet_length
     * get_num_processes(); // total size of send and receive buffers
   if ( total_packet_length < 1 )
+  {
     total_packet_length = 1;
+  }
   std::vector< unsigned int > test_send_buffer( total_packet_length );
   std::vector< unsigned int > test_recv_buffer( total_packet_length );
   // start time measurement here
@@ -861,20 +911,26 @@ double
 nest::MPIManager::time_communicate_alltoallv( int num_bytes, int samples )
 {
   if ( get_num_processes() == 1 )
+  {
     return 0.0;
+  }
   unsigned int packet_length = num_bytes
     / sizeof( unsigned int ); // this size should be sent to each process
   unsigned int total_packet_length = packet_length
     * get_num_processes(); // total size of send and receive buffers
   if ( total_packet_length < 1 )
+  {
     total_packet_length = 1;
+  }
   std::vector< unsigned int > test_send_buffer( total_packet_length );
   std::vector< unsigned int > test_recv_buffer( total_packet_length );
   std::vector< int > n_nodes( get_num_processes(), packet_length );
   std::vector< int > displacements( get_num_processes(), 0 );
 
   for ( int i = 1; i < get_num_processes(); ++i )
+  {
     displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+  }
 
   // start time measurement here
   Stopwatch foo;
@@ -925,8 +981,10 @@ nest::MPIManager::communicate_connector_properties( DictionaryDatum& dict )
     std::vector< int > displacements( get_num_processes(), 0 );
 
     for ( size_t i = 1; i < num_connections.size(); ++i )
+    {
       displacements.at( i ) =
         displacements.at( i - 1 ) + num_connections.at( i - 1 );
+    }
 
     // Calculate sum of global connections.
     int num_connections_sum =
@@ -957,10 +1015,10 @@ nest::MPIManager::communicate_connector_properties( DictionaryDatum& dict )
         delays, delays_result, displacements, num_connections );
 
       // Save global values in input dictionary.
-      ( *dict )[ "targets" ] = targets_result;
-      ( *dict )[ "receptors" ] = receptors_result;
-      ( *dict )[ "weights" ] = weights_result;
-      ( *dict )[ "delays" ] = delays_result;
+      ( *dict )[ names::targets ] = targets_result;
+      ( *dict )[ names::receptors ] = receptors_result;
+      ( *dict )[ names::weights ] = weights_result;
+      ( *dict )[ names::delays ] = delays_result;
     }
   }
 }

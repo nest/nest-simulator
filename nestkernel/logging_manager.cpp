@@ -55,13 +55,13 @@ nest::LoggingManager::finalize()
 void
 nest::LoggingManager::set_status( const DictionaryDatum& dict )
 {
-  updateValue< bool >( dict, "dict_miss_is_error", dict_miss_is_error_ );
+  updateValue< bool >( dict, names::dict_miss_is_error, dict_miss_is_error_ );
 }
 
 void
 nest::LoggingManager::get_status( DictionaryDatum& dict )
 {
-  ( *dict )[ "dict_miss_is_error" ] = dict_miss_is_error_;
+  ( *dict )[ names::dict_miss_is_error ] = dict_miss_is_error_;
 }
 
 

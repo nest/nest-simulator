@@ -186,6 +186,7 @@ SliceRingBuffer::get_next_spike( const long req_stamp,
 {
   end_of_refract = false;
   if ( deliver_->empty() || refract_ <= deliver_->back() )
+  {
     if ( refract_.stamp_ == req_stamp )
     { // if relies on stamp_==long::max() if not refractory
       // return from refractoriness
@@ -198,7 +199,10 @@ SliceRingBuffer::get_next_spike( const long req_stamp,
       return true;
     }
     else
+    {
       return false;
+    }
+  }
   else if ( deliver_->back().stamp_ == req_stamp )
   {
     // we have an event to deliver, register its offset
@@ -207,7 +211,7 @@ SliceRingBuffer::get_next_spike( const long req_stamp,
     // accumulate weights of all spikes with same stamp
     // AND offset
     weight = 0.0; // accumulate weights of all
-    while ( !deliver_->empty() && deliver_->back().ps_offset_ == ps_offset
+    while ( not deliver_->empty() && deliver_->back().ps_offset_ == ps_offset
       && deliver_->back().stamp_ == req_stamp )
     {
       weight += deliver_->back().weight_;
@@ -240,7 +244,7 @@ inline bool SliceRingBuffer::SpikeInfo::operator<( const SpikeInfo& b ) const
 
 inline bool SliceRingBuffer::SpikeInfo::operator<=( const SpikeInfo& b ) const
 {
-  return !( *this > b );
+  return not( *this > b );
 }
 
 inline bool SliceRingBuffer::SpikeInfo::operator>( const SpikeInfo& b ) const

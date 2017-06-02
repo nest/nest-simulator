@@ -127,7 +127,7 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   /**
-   * Checks to see if n or a are given in syn_spec.
+   * Throws exception if n or a are given in syn_spec.
    */
   void check_synapse_params( const DictionaryDatum& d ) const;
 

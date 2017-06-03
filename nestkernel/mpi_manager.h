@@ -167,6 +167,16 @@ public:
     std::vector< double >& recv_buffer );
 
   /**
+   * Determines minimum across all ranks.
+   */
+  void communicate_Allreduce_min_in_place( std::vector< long >& buffer );
+
+  /**
+   * Determines maximum across all ranks.
+   */
+  void communicate_Allreduce_max_in_place( std::vector< long >& buffer );
+
+  /**
    * Collect GIDs for all nodes in a given node list across processes.
    * The NodeListType should be one of LocalNodeList, LocalLeafList,
    * LocalChildList.

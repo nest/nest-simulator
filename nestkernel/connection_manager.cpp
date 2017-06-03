@@ -357,15 +357,13 @@ nest::ConnectionManager::update_delay_extrema_()
 
   if ( kernel().mpi_manager.get_num_processes() > 1 )
   {
-    std::vector< delay > min_delays( kernel().mpi_manager.get_num_processes() );
-    min_delays[ kernel().mpi_manager.get_rank() ] = min_delay_;
-    kernel().mpi_manager.communicate( min_delays );
-    min_delay_ = *std::min_element( min_delays.begin(), min_delays.end() );
+    std::vector< delay > min_delay( 1, min_delay_ );
+    kernel().mpi_manager.communicate_Allreduce_min_in_place( min_delay );
+    min_delay_ = min_delay[ 0 ];
 
-    std::vector< delay > max_delays( kernel().mpi_manager.get_num_processes() );
-    max_delays[ kernel().mpi_manager.get_rank() ] = max_delay_;
-    kernel().mpi_manager.communicate( max_delays );
-    max_delay_ = *std::max_element( max_delays.begin(), max_delays.end() );
+    std::vector< delay > max_delay( 1, max_delay_ );
+    kernel().mpi_manager.communicate_Allreduce_max_in_place( max_delay );
+    max_delay_ = max_delay[ 0 ];
   }
 
   if ( min_delay_ == Time::pos_inf().get_steps() )

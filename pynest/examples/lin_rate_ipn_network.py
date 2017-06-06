@@ -23,15 +23,10 @@
 ----------------------------------------
 
 This script simulates an excitatory and an inhibitory population
-of lin_rate_ipn neurons with delayed excitatory and instantaneous 
+of lin_rate_ipn neurons with delayed excitatory and instantaneous
 inhibitory connections. The rate of all neurons is recorded using
 a multimeter. The resulting rate for one excitatory and one
 inhibitory neuron is plotted.
-'''
-
-
-'''
-Import all necessary modules for simulation, analysis and plotting.
 '''
 
 import nest
@@ -66,17 +61,22 @@ w = 0.1/numpy.sqrt(N)  # excitatory connection strength
 KE = int(epsilon * NE)  # number of excitatory synapses per neuron (outdegree)
 KI = int(epsilon * NI)  # number of inhibitory synapses per neuron (outdegree)
 K_tot = int(KI + KE)  # total number of synapses per neuron
-connection_rule = 'fixed_outdegree' # connection rule
+connection_rule = 'fixed_outdegree'  # connection rule
 
 '''
 Definition of the neuron model and its neuron parameters
 '''
 
 neuron_model = 'lin_rate_ipn'  # neuron model
-neuron_params = { 'linear_summation': True,  # type of non-linearity (not affecting linear rate models)
-                  'tau': 10.0,               # time constant of neuronal dynamics in ms
-                  'mean':2.0,                # mean of Gaussian white noise input
-                  'std': 5.,}              # standard deviation of Gaussian white noise input
+neuron_params = {'linear_summation': True,
+                 # type of non-linearity (not affecting linear rate models)
+                 'tau': 10.0,
+                 # time constant of neuronal dynamics in ms
+                 'mean': 2.0,
+                 # mean of Gaussian white noise input
+                 'std': 5.
+                 # standard deviation of Gaussian white noise input
+                 }
 
 
 '''
@@ -113,18 +113,21 @@ parameter `record_from` is set to `'rate'` as well as the recording
 interval to `dt`
 '''
 
-mm = nest.Create('multimeter', params={'record_from': ['rate'], 'interval': dt})
+mm = nest.Create('multimeter', params={'record_from': ['rate'],
+                                       'interval': dt})
 
 '''
 Specify synapse and connection dictionaries:
-Connections originating from excitatory neurons are associatated with a delay d (delay_rate_connection).
-Connections originating from inhibitory neurons are not associatated with a delay (rate_connection).
+Connections originating from excitatory neurons are associatated
+with a delay d (delay_rate_connection).
+Connections originating from inhibitory neurons are not associatated
+with a delay (rate_connection).
 '''
 
-syn_e = {'weight': w,'delay': d_e, 'model': 'delay_rate_connection'}
+syn_e = {'weight': w, 'delay': d_e, 'model': 'delay_rate_connection'}
 syn_i = {'weight': -g*w, 'model': 'rate_connection'}
-conn_e = {'rule':connection_rule,'outdegree':KE}
-conn_i = {'rule':connection_rule,'outdegree':KI}
+conn_e = {'rule': connection_rule, 'outdegree': KE}
+conn_i = {'rule': connection_rule, 'outdegree': KI}
 
 '''
 Connect rate units
@@ -138,7 +141,7 @@ nest.Connect(n_i, n_e, conn_e, syn_i)
 '''
 Connect recording device to rate units
 '''
-nest.Connect(mm,n_e+n_i)
+nest.Connect(mm, n_e+n_i)
 
 '''
 Simulate the network
@@ -156,8 +159,7 @@ rate_in = data['rate'][numpy.where(data['senders'] == n_i[0])]
 times = data['times'][numpy.where(data['senders'] == n_e[0])]
 
 pylab.figure()
-pylab.plot(times,rate_ex,label='excitatory')
-pylab.plot(times,rate_in,label='inhibitory')
+pylab.plot(times, rate_ex, label='excitatory')
+pylab.plot(times, rate_in, label='inhibitory')
 pylab.xlabel('time (ms)')
 pylab.ylabel('rate (a.u.)')
-

@@ -34,13 +34,17 @@ simulated here. The asymptotic rates, i.e., the fixed points of the
 dynamics (eq.30), are the prediction for the population and
 time-averaged from the spiking simulation.
 
-[1] Hahne, TODO
-[2] Schuecker, TODO
+[1] Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
+ Bolten, M., Helias, M. and Diesmann, M. (2017).
+ Integration of Continuous-Time Dynamics in a
+ Spiking Neural Network Simulator.
+ Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
 
-'''
-
-'''
-Import all necessary modules for simulation, analysis and plotting.
+[2] Schuecker, J., Schmidt, M., van Albada, S.J., Diesmann, M.
+and Helias, M. (2017). Fundamental Activity Constraints Lead
+to Specific Interpretations of the Connectome.
+PLOS Computational Biology 13(2): e1005179.
+https://doi.org/10.1371/journal.pcbi.1005179
 '''
 
 import nest
@@ -167,7 +171,8 @@ Connections originating from the driving neuron
 '''
 
 syn_dict = {'drift_factor': drift_factor_ext,
-            'diffusion_factor': diffusion_factor_ext, 'model': 'diffusion_connection'}
+            'diffusion_factor': diffusion_factor_ext,
+            'model': 'diffusion_connection'}
 
 nest.Connect(
     siegert_drive, siegert_ex + siegert_in, 'all_to_all', syn_dict)

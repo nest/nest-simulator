@@ -39,6 +39,10 @@
 (unittest) run
 /unittest using
 
+% The following test needs the model siegert_neuron, so
+% this test should only run if we have GSL
+skip_if_without_gsl
+
 M_ERROR setverbosity
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

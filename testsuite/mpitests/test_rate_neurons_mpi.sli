@@ -38,15 +38,10 @@
 (unittest) run
 /unittest using
 
-% The following test needs the model hh_psc_alpha_gap, so
+% The following test needs the model siegert_neuron, so
 % this test should only run if we have GSL
-is_threaded not 
-statusdict/have_gsl :: not
-or 
-{ 
-  exit_test_gracefully
-} 
-if
+skip_if_not_threaded
+skip_if_without_gsl
 
 /total_vps 4 def
 

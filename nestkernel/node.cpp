@@ -354,6 +354,63 @@ Node::sends_secondary_event( GapJunctionEvent& )
   throw IllegalConnection();
 }
 
+void
+Node::handle( RateNeuronEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+void
+Node::handle( DiffusionEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+void
+Node::handle( DelayRateNeuronEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+port
+Node::handles_test_event( RateNeuronEvent&, rport )
+{
+  throw IllegalConnection();
+  return invalid_port_;
+}
+
+port
+Node::handles_test_event( DiffusionEvent&, rport )
+{
+  throw IllegalConnection();
+  return invalid_port_;
+}
+
+port
+Node::handles_test_event( DelayRateNeuronEvent&, rport )
+{
+  throw IllegalConnection();
+  return invalid_port_;
+}
+
+void
+Node::sends_secondary_event( RateNeuronEvent& )
+{
+  throw IllegalConnection();
+}
+
+void
+Node::sends_secondary_event( DiffusionEvent& )
+{
+  throw IllegalConnection();
+}
+
+void
+Node::sends_secondary_event( DelayRateNeuronEvent& )
+{
+  throw IllegalConnection();
+}
+
 
 double
 Node::get_K_value( double )

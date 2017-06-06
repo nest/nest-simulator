@@ -927,6 +927,12 @@ NodeManager::check_wfr_use()
   GapJunctionEvent::set_coeff_length(
     kernel().connection_manager.get_min_delay()
     * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 ) );
+  RateNeuronEvent::set_coeff_length(
+    kernel().connection_manager.get_min_delay() );
+  DelayRateNeuronEvent::set_coeff_length(
+    kernel().connection_manager.get_min_delay() );
+  DiffusionEvent::set_coeff_length(
+    kernel().connection_manager.get_min_delay() );
 }
 
 void

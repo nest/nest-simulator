@@ -1,0 +1,246 @@
+/*
+ *  test_rate_connections.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+  /* BeginDocumentation
+
+    Name: testsuite::test_rate_connections - This test ensures that rate connections (rate_connection, delay_rate_connection, diffusion_connection) work properly.
+
+    Synopsis: (test_rate_connections) run -> NEST exits if test fails
+
+    Description:
+    The test ensures that legal rate connections can be created and that an exception 
+    is thrown if one tries to create illegal rate connections. 
+    Furthermore it is checked that the delay cannot be set for rate_connection connections and
+    that delay and weight cannot be set for diffusion_connection connections.
+
+    Author: Jan Hahne
+    SeeAlso: rate_connection, delay_rate_connection, diffusion_connection
+  */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Checks for rate_connection %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/supported
+[ /lin_rate_ipn 
+  /lin_rate_opn
+  /thresholdlin_rate_ipn
+  /thresholdlin_rate_opn
+  /tanh_rate_ipn
+  /tanh_rate_opn ]
+def
+
+/not_supported
+[ /hh_psc_alpha_gap
+  /siegert_neuron
+  /iaf_psc_neuron]
+def
+
+supported
+{
+ /model_supported Set
+ not_supported
+ {
+    /model_not_supported Set
+    
+    % check that legal connections can be created
+    {
+      ResetKernel
+      model_supported Create /neuron_supported Set
+      [neuron_supported] [neuron_supported]
+      << /rule /one_to_one >> 
+      << /model /rate_connection >> 
+      Connect
+    }
+    pass_or_die
+    
+    %check that illegal connection cannot be created
+    {
+      ResetKernel
+      model_supported Create /neuron_supported Set
+      model_not_supported Create /neuron_not_supported Set
+      [neuron_supported] [neuron_not_supported]
+      << /rule /one_to_one >> 
+      << /model /rate_connection >> 
+      Connect
+    }
+    fail_or_die
+    
+  }
+  forall
+}
+forall
+
+% Check that delay cannot be set for rate_connection connections
+{
+  ResetKernel
+  /lin_rate_ipn Create /neuron_supported Set
+  [neuron_supported] [neuron_supported]
+  << /rule /all_to_all >> 
+  << /model /rate_connection /delay 2.0 >> 
+  Connect
+} fail_or_die
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Checks for delay_rate_connection %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/supported
+[ /lin_rate_ipn 
+  /lin_rate_opn
+  /thresholdlin_rate_ipn
+  /thresholdlin_rate_opn
+  /tanh_rate_ipn
+  /tanh_rate_opn ]
+def
+
+/not_supported
+[ /hh_psc_alpha_gap
+  /siegert_neuron
+  /iaf_psc_neuron]
+def
+
+supported
+{
+ /model_supported Set
+ not_supported
+ {
+    /model_not_supported Set
+    
+    % check that legal connections can be created
+    {
+      ResetKernel
+      model_supported Create /neuron_supported Set
+      [neuron_supported] [neuron_supported]
+      << /rule /one_to_one >> 
+      << /model /delay_rate_connection >> 
+      Connect
+    }
+    pass_or_die
+    
+    %check that illegal connection cannot be created
+    {
+      ResetKernel
+      model_supported Create /neuron_supported Set
+      model_not_supported Create /neuron_not_supported Set
+      [neuron_supported] [neuron_not_supported]
+      << /rule /one_to_one >> 
+      << /model /delay_rate_connection >> 
+      Connect
+    }
+    fail_or_die
+    
+  }
+  forall
+}
+forall
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Checks for diffusion_connection %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/supported
+[ /siegert_neuron ]
+def
+
+/not_supported
+[ /hh_psc_alpha_gap
+  /iaf_psc_neuron
+  /lin_rate_ipn 
+  /lin_rate_opn
+  /thresholdlin_rate_ipn
+  /thresholdlin_rate_opn
+  /tanh_rate_ipn
+  /tanh_rate_opn ]
+def
+
+supported
+{
+ /model_supported Set
+ not_supported
+ {
+    /model_not_supported Set
+    
+    % check that legal connections can be created
+    {
+      ResetKernel
+      model_supported Create /neuron_supported Set
+      [neuron_supported] [neuron_supported]
+      << /rule /one_to_one >> 
+      << /model /diffusion_connection >> 
+      Connect
+    }
+    pass_or_die
+    
+    %check that illegal connection cannot be created
+    {
+      ResetKernel
+      model_supported Create /neuron_supported Set
+      model_not_supported Create /neuron_not_supported Set
+      [neuron_supported] [neuron_not_supported]
+      << /rule /one_to_one >> 
+      << /model /diffusion_connection >> 
+      Connect
+    }
+    fail_or_die
+    
+  }
+  forall
+}
+forall
+
+% Check that delay cannot be set for diffusion_connection connections
+{
+  ResetKernel
+  /siegert_neuron Create /neuron_supported Set
+  [neuron_supported] [neuron_supported]
+  << /rule /all_to_all >> 
+  << /model /diffusion_connection /delay 2.0 >> 
+  Connect
+} fail_or_die
+
+% Check that weight cannot be set for diffusion_connection connections
+{
+  ResetKernel
+  /siegert_neuron Create /neuron_supported Set
+  [neuron_supported] [neuron_supported]
+  << /rule /all_to_all >> 
+  << /model /diffusion_connection /weight 2.0 >> 
+  Connect
+} fail_or_die
+
+% Check that diffusion_factor and drift_factor can be set
+{
+  ResetKernel
+  /siegert_neuron Create /neuron_supported Set
+  [neuron_supported] [neuron_supported]
+  << /rule /all_to_all >> 
+  << /model /diffusion_connection /diffusion_factor 2.0 /drift_factor 2.0 >> 
+  Connect
+} pass_or_die
+
+endusing

@@ -248,6 +248,7 @@ public:
   enum Mode
   {
     SPIKE_DETECTOR,
+    RATE_DETECTOR,
     MULTIMETER,
     SPIN_DETECTOR,
     WEIGHT_RECORDER

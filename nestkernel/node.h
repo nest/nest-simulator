@@ -444,6 +444,9 @@ public:
   virtual port handles_test_event( DSSpikeEvent&, rport receptor_type );
   virtual port handles_test_event( DSCurrentEvent&, rport receptor_type );
   virtual port handles_test_event( GapJunctionEvent&, rport receptor_type );
+  virtual port handles_test_event( RateNeuronEvent&, rport receptor_type );
+  virtual port handles_test_event( DiffusionEvent&, rport receptor_type );
+  virtual port handles_test_event( DelayRateNeuronEvent&, rport receptor_type );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -453,6 +456,33 @@ public:
    * @throws IllegalConnection
    */
   virtual void sends_secondary_event( GapJunctionEvent& ge );
+
+  /**
+   * Required to check, if source neuron may send a SecondaryEvent.
+   * This base class implementation throws IllegalConnection
+   * and needs to be overwritten in the derived class.
+   * @ingroup event_interface
+   * @throws IllegalConnection
+   */
+  virtual void sends_secondary_event( RateNeuronEvent& re );
+
+  /**
+   * Required to check, if source neuron may send a SecondaryEvent.
+   * This base class implementation throws IllegalConnection
+   * and needs to be overwritten in the derived class.
+   * @ingroup event_interface
+   * @throws IllegalConnection
+   */
+  virtual void sends_secondary_event( DiffusionEvent& de );
+
+  /**
+   * Required to check, if source neuron may send a SecondaryEvent.
+   * This base class implementation throws IllegalConnection
+   * and needs to be overwritten in the derived class.
+   * @ingroup event_interface
+   * @throws IllegalConnection
+   */
+  virtual void sends_secondary_event( DelayRateNeuronEvent& re );
 
   /**
    * Register a STDP connection
@@ -543,6 +573,30 @@ public:
    * @throws UnexpectedEvent
    */
   virtual void handle( GapJunctionEvent& e );
+
+  /**
+   * Handler for rate neuron events.
+   * @see handle(thread, RateNeuronEvent&)
+   * @ingroup event_interface
+   * @throws UnexpectedEvent
+   */
+  virtual void handle( RateNeuronEvent& e );
+
+  /**
+   * Handler for rate neuron events.
+   * @see handle(thread, RateNeuronEvent&)
+   * @ingroup event_interface
+   * @throws UnexpectedEvent
+   */
+  virtual void handle( DiffusionEvent& e );
+
+  /**
+   * Handler for delay rate neuron events.
+   * @see handle(thread, DelayRateNeuronEvent&)
+   * @ingroup event_interface
+   * @throws UnexpectedEvent
+   */
+  virtual void handle( DelayRateNeuronEvent& e );
 
   /**
    * @defgroup SP_functions Structural Plasticity in NEST.

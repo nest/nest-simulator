@@ -80,6 +80,12 @@ public:
 
   SignalType sends_signal() const;
 
+  void sends_secondary_event( RateNeuronEvent& );
+
+  void sends_secondary_event( DiffusionEvent& );
+
+  void sends_secondary_event( DelayRateNeuronEvent& );
+
   void
   handle( SpikeEvent& )
   {

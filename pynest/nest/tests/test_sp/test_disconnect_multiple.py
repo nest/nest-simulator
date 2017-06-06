@@ -36,7 +36,13 @@ class TestDisconnect(unittest.TestCase):
             'stdp_dopamine_synapse_hpc',
             'stdp_dopamine_synapse_hpc_lbl',
             'gap_junction',
-            'gap_junction_lbl'
+            'gap_junction_lbl',
+            'diffusion_connection',
+            'diffusion_connection_lbl',
+            'rate_connection',
+            'rate_connection_lbl',
+            'delay_rate_connection',
+            'delay_rate_connection_lbl'
         ]
 
     def test_multiple_synapse_deletion_all_to_all(self):

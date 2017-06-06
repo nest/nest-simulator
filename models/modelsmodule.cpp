@@ -70,11 +70,15 @@
 #include "iaf_psc_exp_multisynapse.h"
 #include "iaf_tum_2000.h"
 #include "izhikevich.h"
+#include "lin_rate.h"
+#include "tanh_rate.h"
+#include "thresholdlin_rate.h"
 #include "mat2_psc_exp.h"
 #include "mcculloch_pitts_neuron.h"
 #include "parrot_neuron.h"
 #include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
+#include "siegert_neuron.h"
 #include "gif_psc_exp.h"
 #include "gif_psc_exp_multisynapse.h"
 #include "gif_cond_exp.h"
@@ -99,6 +103,7 @@
 #include "correlomatrix_detector.h"
 #include "correlospinmatrix_detector.h"
 #include "multimeter.h"
+//#include "rate_detector.h"
 #include "spike_detector.h"
 #include "spin_detector.h"
 #include "weight_recorder.h"
@@ -127,6 +132,9 @@
 #include "tsodyks_connection.h"
 #include "tsodyks_connection_hom.h"
 #include "vogels_sprekeler_connection.h"
+#include "rate_connection.h"
+#include "delay_rate_connection.h"
+#include "diffusion_connection.h"
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
@@ -176,6 +184,16 @@ ModelsModule::commandstring( void ) const
 void
 ModelsModule::init( SLIInterpreter* )
 {
+  kernel().model_manager.register_node_model< lin_rate_opn >( "lin_rate_opn" );
+  kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
+  kernel().model_manager.register_node_model< tanh_rate_opn >(
+    "tanh_rate_opn" );
+  kernel().model_manager.register_node_model< tanh_rate_ipn >(
+    "tanh_rate_ipn" );
+  kernel().model_manager.register_node_model< thresholdlin_rate_opn >(
+    "thresholdlin_rate_opn" );
+  kernel().model_manager.register_node_model< thresholdlin_rate_ipn >(
+    "thresholdlin_rate_ipn" );
   kernel().model_manager.register_node_model< iaf_neuron >( "iaf_neuron",
     /* private_model */ false,
     /* deprecation_info */ "NEST 3.0" );
@@ -198,6 +216,8 @@ ModelsModule::init( SLIInterpreter* )
   kernel().model_manager.register_node_model< pp_psc_delta >( "pp_psc_delta" );
   kernel().model_manager.register_node_model< pp_pop_psc_delta >(
     "pp_pop_psc_delta" );
+  kernel().model_manager.register_node_model< siegert_neuron >(
+    "siegert_neuron" );
   kernel().model_manager.register_node_model< gif_psc_exp >( "gif_psc_exp" );
   kernel().model_manager.register_node_model< gif_psc_exp_multisynapse >(
     "gif_psc_exp_multisynapse" );
@@ -420,6 +440,18 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
       "gap_junction", /*has_delay=*/false, /*requires_symmetric=*/true );
+  kernel()
+    .model_manager
+    .register_secondary_connection_model< RateConnection< TargetIdentifierPtrRport > >(
+      "rate_connection", /*has_delay=*/false );
+  kernel()
+    .model_manager
+    .register_secondary_connection_model< DelayRateConnection< TargetIdentifierPtrRport > >(
+      "delay_rate_connection" );
+  kernel()
+    .model_manager
+    .register_secondary_connection_model< DiffusionConnection< TargetIdentifierPtrRport > >(
+      "diffusion_connection", /*has_delay=*/false );
 
 
   /* BeginDocumentation

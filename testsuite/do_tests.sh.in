@@ -722,7 +722,7 @@ if test "x${TEST_PYNEST}" = xtrue ; then
             | tee -a "${TEST_LOGFILE}" | grep -i --line-buffered "\.\.\. ok\|fail\|skip\|error" | sed 's/^/  /'
 
         PYNEST_TEST_TOTAL="$(  tail -n 3 ${TEST_LOGFILE} | grep Ran | cut -d' ' -f2 )"
-        PYNEST_TEST_SKIPPED="$(  tail -n 1 ${TEST_LOGFILE} | sed -r 's/.*SKIP=([0-9]+).*/\1/')"
+        PYNEST_TEST_SKIPPED="$(  tail -n 1 ${TEST_LOGFILE} | sed -$EXTENDED_REGEX_PARAM 's/.*SKIP=([0-9]+).*/\1/')"
         PYNEST_TEST_FAILURES="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*failures=([0-9]+).*/\1/' )"
         PYNEST_TEST_ERRORS="$( tail -n 3 ${TEST_LOGFILE} | grep \( | sed -$EXTENDED_REGEX_PARAM 's/^[a-zA-Z]+ \((.*)\)/\1/' | sed -$EXTENDED_REGEX_PARAM 's/.*errors=([0-9]+).*/\1/' )"
 

@@ -1,0 +1,386 @@
+/*
+ *  rate_neuron_opn_impl.h
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef RATE_NEURON_OPN_IMPL_H
+#define RATE_NEURON_OPN_IMPL_H
+
+#include "rate_neuron_opn.h"
+
+// C++ includes:
+#include <cmath> // in case we need isnan() // fabs
+#include <cstdio>
+#include <iomanip>
+#include <iostream>
+#include <limits>
+#include <string>
+
+// Includes from libnestutil:
+#include "numerics.h"
+
+// Includes from nestkernel:
+#include "exceptions.h"
+#include "kernel_manager.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
+#include "dict.h"
+#include "dictutils.h"
+#include "doubledatum.h"
+#include "integerdatum.h"
+
+namespace nest
+{
+
+/* ----------------------------------------------------------------
+ * Recordables map
+ * ---------------------------------------------------------------- */
+
+template < class TGainfunction >
+RecordablesMap< rate_neuron_opn< TGainfunction > >
+  rate_neuron_opn< TGainfunction >::recordablesMap_;
+
+
+/* ----------------------------------------------------------------
+ * Default constructors defining default parameters and state
+ * ---------------------------------------------------------------- */
+
+template < class TGainfunction >
+nest::rate_neuron_opn< TGainfunction >::Parameters_::Parameters_()
+  : tau_( 10.0 ) // ms
+  , std_( 1.0 )
+  , mean_( 0.0 )
+  , linear_summation_( true )
+{
+  recordablesMap_.create();
+}
+
+template < class TGainfunction >
+nest::rate_neuron_opn< TGainfunction >::State_::State_()
+  : r_( 0.0 )
+  , x_( 0.0 )
+  , y_( 0.0 )
+{
+}
+
+/* ----------------------------------------------------------------
+ * Parameter and state extractions and manipulation functions
+ * ---------------------------------------------------------------- */
+
+template < class TGainfunction >
+void
+nest::rate_neuron_opn< TGainfunction >::Parameters_::get(
+  DictionaryDatum& d ) const
+{
+  def< double >( d, names::tau, tau_ );
+  def< double >( d, names::std, std_ );
+  def< double >( d, names::mean, mean_ );
+  def< bool >( d, names::linear_summation, linear_summation_ );
+}
+
+template < class TGainfunction >
+void
+nest::rate_neuron_opn< TGainfunction >::Parameters_::set(
+  const DictionaryDatum& d )
+{
+  updateValue< double >( d, names::tau, tau_ );
+  updateValue< double >( d, names::mean, mean_ );
+  updateValue< double >( d, names::std, std_ );
+  updateValue< bool >( d, names::linear_summation, linear_summation_ );
+
+  if ( tau_ <= 0 )
+    throw BadProperty( "Time constant must be > 0." );
+  if ( std_ < 0 )
+    throw BadProperty( "Standard deviation of noise must not be negative." );
+}
+
+template < class TGainfunction >
+void
+nest::rate_neuron_opn< TGainfunction >::State_::get( DictionaryDatum& d ) const
+{
+  def< double >( d, names::rate, r_ );       // Rate
+  def< double >( d, names::noise, x_ );      // Noise
+  def< double >( d, names::noisy_rate, y_ ); // Noisy rate
+}
+
+template < class TGainfunction >
+void
+nest::rate_neuron_opn< TGainfunction >::State_::set( const DictionaryDatum& d )
+{
+  updateValue< double >( d, names::rate, r_ ); // Rate
+}
+
+template < class TGainfunction >
+nest::rate_neuron_opn< TGainfunction >::Buffers_::Buffers_(
+  rate_neuron_opn< TGainfunction >& n )
+  : logger_( n )
+{
+}
+
+template < class TGainfunction >
+nest::rate_neuron_opn< TGainfunction >::Buffers_::Buffers_( const Buffers_&,
+  rate_neuron_opn< TGainfunction >& n )
+  : logger_( n )
+{
+}
+
+/* ----------------------------------------------------------------
+ * Default and copy constructor for node
+ * ---------------------------------------------------------------- */
+
+template < class TGainfunction >
+nest::rate_neuron_opn< TGainfunction >::rate_neuron_opn()
+  : Archiving_Node()
+  , P_()
+  , S_()
+  , B_( *this )
+{
+  recordablesMap_.create();
+  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+}
+
+template < class TGainfunction >
+nest::rate_neuron_opn< TGainfunction >::rate_neuron_opn(
+  const rate_neuron_opn& n )
+  : Archiving_Node( n )
+  , P_( n.P_ )
+  , S_( n.S_ )
+  , B_( n.B_, *this )
+{
+  Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
+}
+
+/* ----------------------------------------------------------------
+ * Node initialization functions
+ * ---------------------------------------------------------------- */
+
+template < class TGainfunction >
+void
+nest::rate_neuron_opn< TGainfunction >::init_state_( const Node& proto )
+{
+  const rate_neuron_opn& pr = downcast< rate_neuron_opn >( proto );
+  S_ = pr.S_;
+}
+
+template < class TGainfunction >
+void
+nest::rate_neuron_opn< TGainfunction >::init_buffers_()
+{
+  B_.delayed_rates_.clear(); // includes resize
+
+  // resize buffers
+  const size_t quantity = kernel().connection_manager.get_min_delay();
+  B_.instant_rates_.resize( quantity, 0.0 );
+  B_.last_y_values.resize( quantity, 0.0 );
+  B_.random_numbers.resize( quantity, numerics::nan );
+
+  // initialize random numbers
+  for ( unsigned int i = 0; i < quantity; i++ )
+  {
+    B_.random_numbers[ i ] =
+      V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
+  }
+
+  B_.logger_.reset(); // includes resize
+  Archiving_Node::clear_history();
+}
+
+template < class TGainfunction >
+void
+nest::rate_neuron_opn< TGainfunction >::calibrate()
+{
+  B_.logger_
+    .init(); // ensures initialization in case mm connected after Simulate
+
+  const double h = Time::get_resolution().get_ms();
+
+  // propagators
+  V_.P1_ = std::exp( -h / P_.tau_ );
+  V_.P2_ = -numerics::expm1( -h / P_.tau_ );
+  V_.output_noise_factor_ = std::sqrt( P_.tau_
+    / h ); // Gaussian white noise approximated by piecewise constant value
+}
+
+/* ----------------------------------------------------------------
+ * Update and event handling functions
+ */
+
+template < class TGainfunction >
+bool
+nest::rate_neuron_opn< TGainfunction >::update_( Time const& origin,
+  const long from,
+  const long to,
+  const bool wfr_update )
+{
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
+  assert( from < to );
+
+  bool done = true;
+  const size_t quantity = kernel().connection_manager.get_min_delay();
+  const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
+
+  // allocate memory to store rates to be sent by rate events
+  std::vector< double > new_rates( quantity, 0.0 );
+
+  for ( long lag = from; lag < to; ++lag )
+  {
+    // get noise
+    S_.x_ = P_.std_ * B_.random_numbers[ lag ];
+    // the noise is added to the noisy_rate variable
+    S_.y_ = S_.r_ + V_.output_noise_factor_ * S_.x_;
+    // store rate
+    new_rates[ lag ] = S_.y_;
+    // propagate rate to new time step (exponential integration)
+    S_.r_ = V_.P1_ * S_.r_ + V_.P2_ * P_.mean_;
+
+    if ( wfr_update ) // use get_value_wfr_update to keep values in buffer
+    {
+      if ( P_.linear_summation_ )
+      {
+        S_.r_ += V_.P2_ * gain_( B_.delayed_rates_.get_value_wfr_update( lag )
+                            + B_.instant_rates_[ lag ] );
+      }
+      else
+      {
+        S_.r_ += V_.P2_ * ( B_.delayed_rates_.get_value_wfr_update( lag )
+                            + B_.instant_rates_[ lag ] );
+      }
+    }
+    else // use get_value to clear values in buffer after reading
+    {
+      if ( P_.linear_summation_ )
+      {
+        S_.r_ += V_.P2_ * gain_( B_.delayed_rates_.get_value( lag )
+                            + B_.instant_rates_[ lag ] );
+      }
+      else
+      {
+        S_.r_ += V_.P2_
+          * ( B_.delayed_rates_.get_value( lag ) + B_.instant_rates_[ lag ] );
+      }
+      // rate logging
+      B_.logger_.record_data( origin.get_steps() + lag );
+    }
+
+    if ( wfr_update ) // check convergence of waveform relaxation
+    {
+      done = ( fabs( S_.r_ - B_.last_y_values[ lag ] ) <= wfr_tol ) && done;
+      // update last_y_values for next wfr iteration
+      B_.last_y_values[ lag ] = S_.r_;
+    }
+  }
+
+  if ( not wfr_update )
+  {
+    // Send delay-rate-neuron-event. This only happens in the final iteration
+    // to avoid accumulation in the buffers of the receiving neurons.
+    DelayRateNeuronEvent drve;
+    drve.set_coeffarray( new_rates );
+    kernel().event_delivery_manager.send_secondary( *this, drve );
+
+    // clear last_y_values
+    B_.last_y_values.clear();
+    B_.last_y_values.resize( quantity, 0.0 );
+
+    // modifiy new_rates for rate-neuron-event as proxy for next min_delay
+    for ( long temp = from; temp < to; ++temp )
+      new_rates[ temp ] = S_.y_;
+
+    // create new random numbers
+    B_.random_numbers.resize( quantity, numerics::nan );
+    for ( unsigned int i = 0; i < quantity; i++ )
+    {
+      B_.random_numbers[ i ] =
+        V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
+    }
+  }
+
+  // Send rate-neuron-event
+  RateNeuronEvent rve;
+  rve.set_coeffarray( new_rates );
+  kernel().event_delivery_manager.send_secondary( *this, rve );
+
+  // Reset variables
+  B_.instant_rates_.clear();
+  B_.instant_rates_.resize( quantity, 0.0 );
+
+  return done;
+}
+
+
+template < class TGainfunction >
+void
+nest::rate_neuron_opn< TGainfunction >::handle( RateNeuronEvent& e )
+{
+  size_t i = 0;
+  std::vector< unsigned int >::iterator it = e.begin();
+  // The call to get_coeffvalue( it ) in this loop also advances the iterator it
+  while ( it != e.end() )
+  {
+    if ( P_.linear_summation_ )
+    {
+      B_.instant_rates_[ i ] += e.get_weight() * e.get_coeffvalue( it );
+    }
+    else
+    {
+      B_.instant_rates_[ i ] +=
+        e.get_weight() * gain_( e.get_coeffvalue( it ) );
+    }
+    i++;
+  }
+}
+
+template < class TGainfunction >
+void
+nest::rate_neuron_opn< TGainfunction >::handle( DelayRateNeuronEvent& e )
+{
+  size_t i = 0;
+  std::vector< unsigned int >::iterator it = e.begin();
+  // The call to get_coeffvalue( it ) in this loop also advances the iterator it
+  while ( it != e.end() )
+  {
+    if ( P_.linear_summation_ )
+    {
+      B_.delayed_rates_.add_value(
+        e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+        e.get_weight() * e.get_coeffvalue( it ) );
+    }
+    else
+    {
+      B_.delayed_rates_.add_value(
+        e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+        e.get_weight() * gain_( e.get_coeffvalue( it ) ) );
+    }
+    i++;
+  }
+}
+
+template < class TGainfunction >
+void
+nest::rate_neuron_opn< TGainfunction >::handle( DataLoggingRequest& e )
+{
+  B_.logger_.handle( e );
+}
+
+} // namespace
+
+#endif /* #ifndef RATE_NEURON_OPN_IMPL_H */

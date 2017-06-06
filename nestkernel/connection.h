@@ -150,6 +150,18 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   /**
+   * Check syn_spec dictionary for parameters that are not allowed with the
+   * given connection.
+   *
+   * Will issue warning or throw error if an illegal parameter is found. The
+   * method does nothing if no illegal parameter is found.
+   *
+   * @note Classes requiring checks need to override the function with their own
+   * implementation, as this base class implementation does not do anything.
+   */
+  void check_synapse_params( const DictionaryDatum& d ) const;
+
+  /**
    * Calibrate the delay of this connection to the desired resolution.
    */
   void calibrate( const TimeConverter& );
@@ -317,6 +329,13 @@ Connection< targetidentifierT >::set_status( const DictionaryDatum& d,
     syn_id_delay_.set_delay_ms( delay );
   }
   // no call to target_.set_status() because target and rport cannot be changed
+}
+
+template < typename targetidentifierT >
+inline void
+Connection< targetidentifierT >::check_synapse_params(
+  const DictionaryDatum& d ) const
+{
 }
 
 template < typename targetidentifierT >

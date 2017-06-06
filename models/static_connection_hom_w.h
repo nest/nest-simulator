@@ -143,6 +143,20 @@ public:
   }
 
   /**
+   * Checks to see if weight is given in syn_spec.
+   */
+  void
+  check_synapse_params( const DictionaryDatum& syn_spec ) const
+  {
+    if ( syn_spec->known( names::weight ) )
+    {
+      throw BadProperty(
+        "Weight cannot be specified since it needs to be equal "
+        "for all connections when static_synapse_hom_w is used." );
+    }
+  }
+
+  /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
    * \param p The port under which this connection is stored in the Connector.

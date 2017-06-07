@@ -92,6 +92,7 @@ Parameters:
                      function in ms.
  tau_syn_in double - Time constant of the inhibitory synaptic exponential
                      function in ms.
+ t_ref      double - Duration of refractory period in ms.
  E_ex       double - Excitatory synaptic reversal potential in mV.
  E_in       double - Inhibitory synaptic reversal potential in mV.
  E_Na       double - Sodium reversal potential in mV.
@@ -186,6 +187,7 @@ private:
     double E_in;     //!< Inhibitory reversal Potential in mV
     double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
     double tau_synI; //!< Synaptic Time Constant Inhibitory Synapse in ms
+    double t_ref_;   //!< Refractory time in ms
     double I_e;      //!< External Current in pA
 
     Parameters_();
@@ -235,7 +237,7 @@ public:
    */
   struct Variables_
   {
-    int RefractoryCounts_;
+    int refractory_counts_;
     double U_old_; // for spike-detection
   };
 
@@ -317,7 +319,9 @@ inline port
 hh_cond_exp_traub::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -325,7 +329,9 @@ inline port
 hh_cond_exp_traub::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -334,7 +340,9 @@ hh_cond_exp_traub::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

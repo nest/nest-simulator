@@ -183,7 +183,7 @@ public:
 
   /**
    * Return class name.
-   * Returns name of node model (e.g. "iaf_neuron") as string.
+   * Returns name of node model (e.g. "iaf_psc_alpha") as string.
    * This name is identical to the name that is used to identify
    * the model in the interpreter's model dictionary.
    */
@@ -299,11 +299,21 @@ public:
   virtual void calibrate() = 0;
 
   /**
+   * Cleanup node after Run. Override this function if a node needs to
+   * "wrap up" things after a call to Run, i.e., before
+   * SimulationManager::run() returns. Typical use-cases are devices
+   * that need to flush buffers.
+   */
+  virtual void
+  post_run_cleanup()
+  {
+  }
+
+  /**
    * Finalize node.
    * Override this function if a node needs to "wrap up" things after a
-   * simulation, i.e., before Network::get_network().resume() returns. Typical
-   * use-cases are devices that need to flush buffers or disconnect from
-   * external files or pipes.
+   * full simulation, i.e., a cycle of Prepare, Run, Cleanup. Typical
+   * use-cases are devices that need to close files.
    */
   virtual void
   finalize()

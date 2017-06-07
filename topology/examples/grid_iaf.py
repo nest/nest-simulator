@@ -22,7 +22,7 @@
 '''
 NEST Topology Module Example
 
-Create layer of 4x3 iaf_neurons, visualize
+Create layer of 4x3 iaf_psc_alpha neurons, visualize
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
@@ -38,7 +38,7 @@ nest.ResetKernel()
 
 l1 = topo.CreateLayer({'columns': 4, 'rows': 3,
                        'extent': [2.0, 1.5],
-                       'elements': 'iaf_neuron'})
+                       'elements': 'iaf_psc_alpha'})
 
 nest.PrintNetwork()
 nest.PrintNetwork(2)

@@ -1,0 +1,104 @@
+/*
+ *  issue-600.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+    Name: testsuite::issue-600 - Checks that waveform relaxation works with MPI
+
+    Synopsis: (issue-600) run -> - 
+
+    Description:
+    issue-600.sli ensures that the iterative solution scheme in NEST still works when
+    neurons that use waveform relaxation are only present on a subset of all available
+    MPI processes. The test is a slightly changed version of test_gap_junctions_mpi.sli.
+    
+    Author:  Jan Hahne, Hans Ekkehard Plesser
+    SeeAlso: testsuite::test_gap_junctions_mpi, hh_psc_alpha_gap, gap_junction
+*/
+
+(unittest) run
+/unittest using
+
+% The following test needs the model hh_psc_alpha_gap, so
+% this test should only run if we have GSL
+skip_if_not_threaded
+skip_if_without_gsl
+
+/total_vps 4 def
+
+[1 2 4]
+{
+  0.1 /h Set
+  
+  0 << 
+        /total_num_virtual_procs total_vps 
+        /resolution h
+        /use_wfr true
+        /wfr_tol 0.0001
+        /wfr_interpolation_order 3
+        /wfr_max_iterations 10
+        /wfr_comm_interval 1.0
+    >> SetStatus
+      
+  /hh_psc_alpha_gap Create /neuron1 Set
+  /iaf_psc_alpha Create /neuron2 Set
+  /hh_psc_alpha_gap  Create /neuron3 Set
+  /iaf_psc_alpha Create /neuron4 Set
+  
+  neuron1
+  << 
+    /I_e 400.
+  >> SetStatus
+  
+  /sd /spike_detector << /record_to [/memory] 
+                           /withgid true 
+                           /withtime true 
+                        >> Create def
+  
+  [neuron1] [neuron3]
+  << /rule /one_to_one /make_symmetric true >> 
+  << /model /gap_junction /weight 10.0 >> 
+  Connect
+  
+  [neuron1] [neuron2]
+  << /rule /one_to_one >> 
+  << /model /static_synapse /weight 8.0 >> 
+  Connect
+  
+  [neuron1] [neuron4]
+  << /rule /one_to_one >> 
+  << /model /static_synapse /weight 12.0 >> 
+  Connect
+  
+  neuron1 sd Connect
+  neuron2 sd Connect
+  neuron3 sd Connect
+  neuron4 sd Connect
+  
+  50 Simulate
+
+  % get events, replace vectors with SLI arrays    
+  /ev sd /events get def
+  ev keys { /k Set ev dup k get cva k exch put } forall
+  ev 
+
+} distributed_process_invariant_events_assert_or_die

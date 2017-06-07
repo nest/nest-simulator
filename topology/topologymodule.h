@@ -27,6 +27,7 @@
 #include "exceptions.h"
 
 // Includes from sli:
+#include "lockptr.h"
 #include "slimodule.h"
 
 // Includes from topology:
@@ -36,9 +37,9 @@
 
 namespace nest
 {
-class TopologyParameter;
-class AbstractMask;
 class AbstractLayer;
+class AbstractMask;
+class TopologyParameter;
 
 template < int D >
 class Layer;
@@ -190,6 +191,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } cvdict_Mfunction;
 
+  class SelectNodesByMask_L_a_MFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } selectnodesbymask_L_a_Mfunction;
+
   typedef GenericFactory< AbstractMask > MaskFactory;
   typedef GenericFactory< AbstractMask >::CreatorFunction MaskCreatorFunction;
 
@@ -309,6 +316,7 @@ private:
   static ParameterFactory& parameter_factory_();
 };
 
+
 /**
  * Exception to be thrown if the wrong argument type
  * is given to a function
@@ -325,7 +333,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 template < class T >

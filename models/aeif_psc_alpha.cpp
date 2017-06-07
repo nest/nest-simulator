@@ -87,15 +87,20 @@ nest::aeif_psc_alpha_dynamics( double,
   const nest::aeif_psc_alpha& node =
     *( reinterpret_cast< nest::aeif_psc_alpha* >( pnode ) );
 
+  const bool is_refractory = node.S_.r_ > 0;
+
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
 
-  // shorthand for state variables
+  // Clamp membrane potential to V_reset while refractory, otherwise bound
+  // it to V_peak. Do not use V_.V_peak_ here, since that is set to V_th if
+  // Delta_T == 0.
   const double& V =
-    std::min( y[ S::V_M ], node.P_.V_peak_ ); // enforce upper limit on V_m
+    is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_peak_ );
+  // shorthand for the other state variables
   const double& dI_syn_ex = y[ S::DI_EXC ];
   const double& I_syn_ex = y[ S::I_EXC ];
   const double& dI_syn_in = y[ S::DI_INH ];
@@ -108,9 +113,10 @@ nest::aeif_psc_alpha_dynamics( double,
         * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T ) );
 
   // dv/dt
-  f[ S::V_M ] =
-    ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn_ex - I_syn_in - w
-      + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+  f[ S::V_M ] = is_refractory
+    ? 0.
+    : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike + I_syn_ex - I_syn_in - w
+        + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
 
   f[ S::DI_EXC ] = -dI_syn_ex / node.P_.tau_syn_ex;
   // Exc. synaptic current (pA)
@@ -154,23 +160,28 @@ nest::aeif_psc_alpha::State_::State_( const Parameters_& p )
 {
   y_[ 0 ] = p.E_L;
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = 0;
+  }
 }
 
 nest::aeif_psc_alpha::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
 }
 
 nest::aeif_psc_alpha::State_& nest::aeif_psc_alpha::State_::operator=(
   const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
-
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
   r_ = s.r_;
   return *this;
 }
@@ -295,9 +306,10 @@ nest::aeif_psc_alpha::State_::set( const DictionaryDatum& d,
   updateValue< double >( d, names::I_syn_in, y_[ I_INH ] );
   updateValue< double >( d, names::dI_syn_in, y_[ DI_INH ] );
   updateValue< double >( d, names::w, y_[ W ] );
-
   if ( y_[ I_EXC ] < 0 || y_[ I_INH ] < 0 )
+  {
     throw BadProperty( "Conductances must not be negative." );
+  }
 }
 
 nest::aeif_psc_alpha::Buffers_::Buffers_( aeif_psc_alpha& n )
@@ -345,11 +357,17 @@ nest::aeif_psc_alpha::~aeif_psc_alpha()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
+  {
     gsl_odeiv_step_free( B_.s_ );
+  }
   if ( B_.c_ )
+  {
     gsl_odeiv_control_free( B_.c_ );
+  }
   if ( B_.e_ )
+  {
     gsl_odeiv_evolve_free( B_.e_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -379,21 +397,33 @@ nest::aeif_psc_alpha::init_buffers_()
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
   if ( B_.s_ == 0 )
+  {
     B_.s_ =
       gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_step_reset( B_.s_ );
+  }
 
   if ( B_.c_ == 0 )
+  {
     B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
+  }
   else
+  {
     gsl_odeiv_control_init(
       B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
+  }
 
   if ( B_.e_ == 0 )
+  {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_evolve_reset( B_.e_ );
+  }
 
   B_.sys_.jacobian = NULL;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
@@ -444,9 +474,6 @@ nest::aeif_psc_alpha::update( Time const& origin,
   {
     double t = 0.0;
 
-    if ( S_.r_ > 0 )
-      --S_.r_;
-
     // numerical integration with adaptive step size control:
     // ------------------------------------------------------
     // gsl_odeiv_evolve_apply performs only a single numerical
@@ -470,30 +497,50 @@ nest::aeif_psc_alpha::update( Time const& origin,
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y_ );              // neuronal state
-
       if ( status != GSL_SUCCESS )
+      {
         throw GSLSolverFailure( get_name(), status );
+      }
 
       // check for unreasonable values; we allow V_M to explode
       if ( S_.y_[ State_::V_M ] < -1e3 || S_.y_[ State_::W ] < -1e6
         || S_.y_[ State_::W ] > 1e6 )
+      {
         throw NumericalInstability( get_name() );
+      }
 
       // spikes are handled inside the while-loop
       // due to spike-driven adaptation
       if ( S_.r_ > 0 )
+      {
         S_.y_[ State_::V_M ] = P_.V_reset_;
+      }
       else if ( S_.y_[ State_::V_M ] >= V_.V_peak )
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
-        S_.r_ = V_.refractory_counts_;
+
+        /* Initialize refractory step counter.
+         * - We need to add 1 to compensate for count-down immediately after
+         *   while loop.
+         * - If neuron has no refractory time, set to 0 to avoid refractory
+         *   artifact inside while loop.
+         */
+        S_.r_ = V_.refractory_counts_ > 0 ? V_.refractory_counts_ + 1 : 0;
 
         set_spiketime( Time::step( origin.get_steps() + lag + 1 ) );
         SpikeEvent se;
         kernel().event_delivery_manager.send( *this, se, lag );
       }
     }
+
+    // decrement refractory count
+    if ( S_.r_ > 0 )
+    {
+      --S_.r_;
+    }
+
+    // apply spikes
     S_.y_[ State_::DI_EXC ] += B_.spike_exc_.get_value( lag ) * V_.i0_ex_;
     S_.y_[ State_::DI_INH ] += B_.spike_inh_.get_value( lag ) * V_.i0_in_;
 
@@ -511,13 +558,17 @@ nest::aeif_psc_alpha::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
+  {
     B_.spike_exc_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
+  {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
-      -e.get_weight() * e.get_multiplicity() ); // keep conductances positive
+      -e.get_weight() * e.get_multiplicity() );
+  } // keep conductances positive
 }
 
 void

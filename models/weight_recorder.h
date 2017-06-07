@@ -47,7 +47,7 @@ By default, source GID, target GID, time and weight of each spike is recorded.
 
 In order to record only from a subset of connected synapses, the
 weight_recorder accepts the parameters 'senders' and 'targets', with which the
-recorded data is limited to the synapses with the correspondig source or target
+recorded data is limited to the synapses with the corresponding source or target
 gid.
 
 The weight recorder can also record weights with full precision
@@ -121,6 +121,7 @@ private:
   void init_state_( Node const& );
   void init_buffers_();
   void calibrate();
+  void post_run_cleanup();
   void finalize();
   void update( Time const&, const long, const long );
 
@@ -166,8 +167,16 @@ inline port
 weight_recorder::handles_test_event( WeightRecorderEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
+}
+
+inline void
+weight_recorder::post_run_cleanup()
+{
+  device_.post_run_cleanup();
 }
 
 inline void

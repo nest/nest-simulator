@@ -26,6 +26,7 @@ Test of events
 import unittest
 import nest
 import numpy as np
+HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 
 
 @nest.check_stack
@@ -244,6 +245,7 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         self.assertEqual(sorted(unique_ids), sorted(connections))
 
+    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def testRPorts(self):
         """Weight Recorder rports"""
 
@@ -265,7 +267,8 @@ class WeightRecorderTestCase(unittest.TestCase):
 
         pre = nest.Create("parrot_neuron", 5)
         post = nest.Create("aeif_cond_alpha_multisynapse", 5,
-                           {"V_th": -69.9, 'taus_syn': [20., 30.]})
+                           {"V_th": -69.9, 'tau_syn': [20., 30.],
+                            'E_rev': [0., 0.]})
 
         nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec_0")
         nest.Connect(pre, post, 'one_to_one', syn_spec="stdp_synapse_rec_1")

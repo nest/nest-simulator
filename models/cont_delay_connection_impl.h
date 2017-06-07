@@ -106,6 +106,21 @@ ContDelayConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   }
 }
 
+template < typename targetidentifierT >
+void
+ContDelayConnection< targetidentifierT >::check_synapse_params(
+  const DictionaryDatum& syn_spec ) const
+{
+  if ( syn_spec->known( names::delay ) )
+  {
+    LOG( M_WARNING,
+      "Connect",
+      "The delay will be rounded to the next multiple of the time step. "
+      "To use a more precise time delay it needs to be defined within "
+      "the synapse, e.g. with CopyModel()." );
+  }
+}
+
 } // of namespace nest
 
 #endif // #ifndef CONT_DELAY_CONNECTION_IMPL_H

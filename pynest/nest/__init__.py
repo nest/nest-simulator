@@ -25,6 +25,7 @@ Initializer of PyNEST.
 
 import sys
 import os
+import re
 
 # This is a workaround for readline import errors encountered with Anaconda
 # Python running on Ubuntu, when invoked from the terminal
@@ -206,6 +207,9 @@ def init(argv):
         if not quiet:
             engine.run("pywelcome")
 
+        expand_sli_path()
+        load_modules()
+
         # Dirty hack to get tab-completion for models in IPython.
         try:
             __IPYTHON__
@@ -220,6 +224,40 @@ def init(argv):
 
     else:
         _kernel.NESTError("Initiatization of NEST failed.")
+
+
+def expand_sli_path():
+    """ Add paths defined in SLI_PATH to searchpath. """
+
+    sli_paths = [path for path in
+                 os.environ.get("SLI_PATH", "").split(os.path.pathsep)
+                 if path != ""]
+
+    assert_sli_valid(sli_paths)
+
+    for path in sli_paths:
+        sli_run("({}) addpath".format(path))
+
+
+def assert_sli_valid(names):
+    for n in names:
+        if re.search(r"[\(\)\\]", n):
+            raise _kernel.NESTError("Path or Module names must not contain "
+                "parentheses or backslashes.")
+
+
+
+def load_modules():
+    """ Load a list of modules that are specified via NEST_MODULES. """
+
+    modules = [module for module in
+               os.environ.get("NEST_MODULES", "").split(os.path.pathsep)
+               if module != ""]
+
+    assert_sli_valid(modules)
+
+    for module in modules:
+        sli_run("({}) Install".format(module))
 
 
 def test():

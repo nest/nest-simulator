@@ -476,10 +476,17 @@ def show_help_with_pager(hlpobj, pager):
         rc_file = os.environ['HOME'] + '/.nestrc'
         if os.path.isfile(rc_file):
             # open ~/.nestrc
-            rc = open(os.environ['HOME'] + '/.nestrc', 'r')
+            rc = open(rc_file, 'r')
+            # The loop goes through the .nestrc line by line and checks
+            # it for the definition of a pager. Whether a pager is
+            # found or not, this pager is used or the standard pager 'more'.
             for line in rc:
+                # the re checks if there are lines beginning with '%'
                 rctst = re.match(r'^\s?%', line)
                 if rctst is None:
+                    # the next re checks for a sth. like
+                    # '/page << /command (more)'
+                    # and returns the given pager.
                     pypagers = re.findall(
                         r'^\s?/page\s?<<\s?/command\s?\((\w*)', line)
                     if pypagers:
@@ -495,6 +502,8 @@ def show_help_with_pager(hlpobj, pager):
         else:
             pager = 'more'
     hlperror = True
+    # Searching the given object in all helpfiles, check the environment
+    # and display the helptext in the pager.
     for dirpath, dirnames, files in os.walk(helpdir):
         for hlp in files:
             if hlp == objname:
@@ -522,7 +531,7 @@ def show_help_with_pager(hlpobj, pager):
                         subprocess.call([pager, objf])
                         fhlp.close()
                         break
-    if hlperror is True:
+    if hlperror:
         print("Sorry, there is no help for '" + hlpobj + "'!")
 
 

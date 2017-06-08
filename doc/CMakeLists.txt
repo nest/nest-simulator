@@ -20,8 +20,15 @@
 if ( NOT CMAKE_CROSSCOMPILING )
   add_custom_target( generate_help ALL )
 
+    # Python is needed to generate the help. If Python does not exist, there are
+    # problems with the following.
+    # See https://github.com/nest/nest-simulator/issues/678.
     find_package( PythonInterp )
     if ( PYTHONINTERP_FOUND )
+
+      # Because of problems of help generation with the implementation of 're'
+      # in Python older than 2.7.8, the production of the help is skipped
+      # completely for these versions.
       if(${PYTHON_VERSION_STRING} VERSION_GREATER "2.7.7")
           # Extract help from all source files in the source code, put them in
           # doc/help and generate a local help index in the build directory containing
@@ -47,6 +54,7 @@ if ( NOT CMAKE_CROSSCOMPILING )
             )"
             )
       endif ()
+
     endif ()
 
 endif ()

@@ -830,6 +830,14 @@ def printable_summary(list_of_changed_files,
     table = AsciiTable(summary_table)
     table.inner_row_border = True
     max_width = table.column_max_width(1)
+
+    # Bypass Travis issue:  ValueError: invalid width -29 (must be > 0)
+    #                       (in the wrap() below max_width must be > 0)
+    # The calculation of column_max_width is based on the returned terminal
+    # width which sometimes seems to be zero resulting in a negative value.
+    if max_width < 0:
+        max_width = 70
+
     table.table_data[1][1] = '\n'.join(wrap(', '.join(list_of_changed_files),
                                             max_width))
 

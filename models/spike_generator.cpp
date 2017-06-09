@@ -93,13 +93,13 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
     }
   }
   ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
-  ( *d )[ "spike_weights" ] =
+  ( *d )[ names::spike_weights ] =
     DoubleVectorDatum( new std::vector< double >( spike_weights_ ) );
-  ( *d )[ "spike_multiplicities" ] =
+  ( *d )[ names::spike_multiplicities ] =
     IntVectorDatum( new std::vector< long >( spike_multiplicities_ ) );
   ( *d )[ names::precise_times ] = BoolDatum( precise_times_ );
-  ( *d )[ "allow_offgrid_spikes" ] = BoolDatum( allow_offgrid_spikes_ );
-  ( *d )[ "shift_now_spikes" ] = BoolDatum( shift_now_spikes_ );
+  ( *d )[ names::allow_offgrid_spikes ] = BoolDatum( allow_offgrid_spikes_ );
+  ( *d )[ names::shift_now_spikes ] = BoolDatum( shift_now_spikes_ );
 }
 
 void
@@ -180,8 +180,9 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
 {
   const bool flags_changed =
     updateValue< bool >( d, names::precise_times, precise_times_ )
-    || updateValue< bool >( d, "allow_offgrid_spikes", allow_offgrid_spikes_ )
-    || updateValue< bool >( d, "shift_now_spikes", shift_now_spikes_ );
+    || updateValue< bool >(
+         d, names::allow_offgrid_spikes, allow_offgrid_spikes_ )
+    || updateValue< bool >( d, names::shift_now_spikes, shift_now_spikes_ );
   if ( precise_times_ && ( allow_offgrid_spikes_ || shift_now_spikes_ ) )
   {
     throw BadProperty(
@@ -237,11 +238,11 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
 
   // spike_weights can be the same size as spike_times, or can be of size 0 to
   // only use the spike_times array
-  bool updated_spike_weights = d->known( "spike_weights" );
+  bool updated_spike_weights = d->known( names::spike_weights );
   if ( updated_spike_weights )
   {
     std::vector< double > spike_weights =
-      getValue< std::vector< double > >( d->lookup( "spike_weights" ) );
+      getValue< std::vector< double > >( d->lookup( names::spike_weights ) );
 
     if ( spike_weights.empty() )
     {
@@ -262,11 +263,11 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
 
   // spike_multiplicities can be the same size as spike_times,
   // or can be of size 0 to only use the spike_times array
-  bool updated_spike_multiplicities = d->known( "spike_multiplicities" );
+  bool updated_spike_multiplicities = d->known( names::spike_multiplicities );
   if ( updated_spike_multiplicities )
   {
-    std::vector< long > spike_multiplicities =
-      getValue< std::vector< long > >( d->lookup( "spike_multiplicities" ) );
+    std::vector< long > spike_multiplicities = getValue< std::vector< long > >(
+      d->lookup( names::spike_multiplicities ) );
 
     if ( spike_multiplicities.empty() )
     {

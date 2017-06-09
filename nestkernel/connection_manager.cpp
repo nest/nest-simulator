@@ -146,11 +146,13 @@ void
 nest::ConnectionManager::get_status( DictionaryDatum& d )
 {
   update_delay_extrema_();
-  def< double >( d, "min_delay", Time( Time::step( min_delay_ ) ).get_ms() );
-  def< double >( d, "max_delay", Time( Time::step( max_delay_ ) ).get_ms() );
+  def< double >(
+    d, names::min_delay, Time( Time::step( min_delay_ ) ).get_ms() );
+  def< double >(
+    d, names::max_delay, Time( Time::step( max_delay_ ) ).get_ms() );
 
   size_t n = get_num_connections();
-  def< long >( d, "num_connections", n );
+  def< long >( d, names::num_connections, n );
 }
 
 DictionaryDatum
@@ -397,6 +399,13 @@ nest::ConnectionManager::connect( index sgid,
       return;
     }
 
+    if ( target->one_node_per_process() )
+    {
+      // connection to music proxy or similar device with one node per process.
+      connect_( *source, *target, sgid, target_thread, syn, d, w );
+      return;
+    }
+
     // make sure connections are only created on the thread of the device
     if ( ( source->get_thread() != target_thread )
       && ( source->has_proxies() ) )
@@ -456,6 +465,13 @@ nest::ConnectionManager::connect( index sgid,
     // make sure source is on this MPI rank
     if ( source->is_proxy() )
     {
+      return;
+    }
+
+    if ( target->one_node_per_process() )
+    {
+      // connection to music proxy or similar device with one node per process.
+      connect_( *source, *target, sgid, target_thread, syn, params, d, w );
       return;
     }
 
@@ -525,6 +541,13 @@ nest::ConnectionManager::connect( index sgid,
     if ( source->is_proxy() )
     {
       return false;
+    }
+
+    if ( target->one_node_per_process() )
+    {
+      // connection to music proxy or similar device with one node per process.
+      connect_( *source, *target, sgid, target_thread, syn, params );
+      return true;
     }
 
     // make sure connections are only created on the thread of the device

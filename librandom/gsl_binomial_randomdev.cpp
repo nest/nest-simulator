@@ -103,10 +103,10 @@ void
 librandom::GSL_BinomialRandomDev::set_status( const DictionaryDatum& d )
 {
   double p_new = p_;
-  const bool p_updated = updateValue< double >( d, "p", p_new );
+  const bool p_updated = updateValue< double >( d, names::p, p_new );
 
   long n_new = n_;
-  const bool n_updated = updateValue< long >( d, "n", n_new );
+  const bool n_updated = updateValue< long >( d, names::n, n_new );
 
   if ( p_new < 0. || 1. < p_new )
   {
@@ -137,8 +137,8 @@ librandom::GSL_BinomialRandomDev::get_status( DictionaryDatum& d ) const
 {
   RandomDev::get_status( d );
 
-  def< double >( d, "p", p_ );
-  def< long >( d, "n", n_ );
+  def< double >( d, names::p, p_ );
+  def< long >( d, names::n, n_ );
 }
 
 #endif

@@ -146,9 +146,9 @@ nest::MPIManager::set_status( const DictionaryDatum& )
 void
 nest::MPIManager::get_status( DictionaryDatum& d )
 {
-  def< long >( d, "num_processes", num_processes_ );
-  def< long >( d, "send_buffer_size", send_buffer_size_ );
-  def< long >( d, "receive_buffer_size", recv_buffer_size_ );
+  def< long >( d, names::num_processes, num_processes_ );
+  def< long >( d, names::send_buffer_size, send_buffer_size_ );
+  def< long >( d, names::receive_buffer_size, recv_buffer_size_ );
 }
 
 void
@@ -1015,10 +1015,10 @@ nest::MPIManager::communicate_connector_properties( DictionaryDatum& dict )
         delays, delays_result, displacements, num_connections );
 
       // Save global values in input dictionary.
-      ( *dict )[ "targets" ] = targets_result;
-      ( *dict )[ "receptors" ] = receptors_result;
-      ( *dict )[ "weights" ] = weights_result;
-      ( *dict )[ "delays" ] = delays_result;
+      ( *dict )[ names::targets ] = targets_result;
+      ( *dict )[ names::receptors ] = receptors_result;
+      ( *dict )[ names::weights ] = weights_result;
+      ( *dict )[ names::delays ] = delays_result;
     }
   }
 }

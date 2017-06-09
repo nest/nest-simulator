@@ -37,16 +37,25 @@
    Name: ac_generator - provides AC input current
    Description:
 
-   This device produce an ac-current which are sent by a current event.
+   This device produce an ac-current which are sent by a CurrentEvent. The
+   current is given by
+
+           I(t) = offset + amplitude * sin ( om * t + phi )
+
+   where
+
+       om  = 2 * pi * frequency
+       phi = phase / 180 * pi
+
    The parameters are
+
    amplitude   double -  Amplitude of sine current in pA
    offset      double -  Constant amplitude offset in pA
-   phase       double -  Phase of sine current (0-360 deg)
    frequency   double -  Frequency in Hz
-   4) The
+   phase       double -  Phase of sine current (0-360 deg)
 
-   The currents are updated every time step by exact integration schemes from
-   [1]
+   Setting start and stop (see StimulatingDevice) only windows the current
+   as defined above. It does not shift the time axis.
 
    References:
    [1] S. Rotter and M. Diesmann, Exact digital simulation of time-
@@ -57,7 +66,7 @@
 
    Author: Johan Hake, Spring 2003
 
-   SeeAlso: Device, StimulatingDevice, dc_generator
+   SeeAlso: Device, StimulatingDevice, dc_generator, step_current_generator
 */
 
 namespace nest
@@ -211,6 +220,8 @@ ac_generator::get_status( DictionaryDatum& d ) const
   P_.get( d );
   S_.get( d );
   device_.get_status( d );
+
+  ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

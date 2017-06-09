@@ -112,7 +112,7 @@ librandom::PoissonRandomDev::set_status( const DictionaryDatum& d )
 
   double new_mu = mu_;
 
-  if ( updateValue< double >( d, "lambda", new_mu ) )
+  if ( updateValue< double >( d, names::lambda, new_mu ) )
   {
     if ( new_mu < 0 )
     {
@@ -132,7 +132,7 @@ librandom::PoissonRandomDev::get_status( DictionaryDatum& d ) const
 {
   RandomDev::get_status( d );
 
-  def< double >( d, "lambda", mu_ );
+  def< double >( d, names::lambda, mu_ );
 }
 
 void

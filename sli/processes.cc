@@ -940,8 +940,12 @@ Processes::SetNonblockFunction::execute( SLIInterpreter* i ) const
 void
 Processes::CtermidFunction::execute( SLIInterpreter* i ) const
 {
-  char term[] = "\0";
-  std::string termid = ctermid( term );
+  // ensure term buffer is sufficiently large and safely initialized
+  assert( L_ctermid > 0 );
+  char term[ L_ctermid ];
+  term[ 0 ] = '\0';
+
+  const std::string termid = ctermid( term );
 
   i->OStack.push( Token( termid ) );
   i->EStack.pop();

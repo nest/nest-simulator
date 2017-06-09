@@ -109,11 +109,11 @@ public:
   get_status( DictionaryDatum& d ) const
   {
     DictionaryDatum dict( new Dictionary );
-    ( *dict )[ "messages" ] = messages;
-    ( *dict )[ "message_times" ] =
+    ( *dict )[ names::messages ] = messages;
+    ( *dict )[ names::message_times ] =
       DoubleVectorDatum( new std::vector< double >( message_times ) );
-    ( *d )[ "n_messages" ] = messages.size();
-    ( *d )[ "data" ] = dict;
+    ( *d )[ names::n_messages ] = messages.size();
+    ( *d )[ names::data ] = dict;
   }
 
   void
@@ -235,7 +235,7 @@ music_message_in_proxy::set_status( const DictionaryDatum& d )
   stmp.set( d, P_ ); // throws if BadProperty
 
   long nm = 0;
-  if ( updateValue< long >( d, "n_messages", nm ) )
+  if ( updateValue< long >( d, names::n_messages, nm ) )
   {
     if ( nm == 0 )
     {

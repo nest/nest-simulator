@@ -125,8 +125,6 @@ nest::sli_neuron::calibrate()
 {
   B_.logger_.init();
 
-  bool terminate = false;
-
   if ( not state_->known( names::calibrate ) )
   {
     std::string msg = String::compose(

@@ -28,8 +28,11 @@
    the parameters target, weight, transmission probability, delay and 
    receiver port for each connection.
 
+  Parameters:
+   p_transmit double - Transmission probability, must be between 0 and 1
+
   FirstVersion: June 2017
-  Author: Maximilian Schmidt, Milena Menezes Carvalho
+  Author: Susanne Kunkel, Maximilian Schmidt, Milena Menezes Carvalho
 
   Transmits: SpikeEvent, RateEvent, CurrentEvent, ConductanceEvent,
   DoubleDataEvent, DataLoggingRequest

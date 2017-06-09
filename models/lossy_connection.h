@@ -168,7 +168,9 @@ public:
     for ( ulong n = 0; n < n_spikes_in; n++ )
     {
       if ( rng->drand() < p_transmit_ )
+      {
         n_spikes_out++;
+      }
     }
 
     if ( n_spikes_out > 0 ) 
@@ -222,7 +224,9 @@ LossyConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   updateValue< double >( d, names::p_transmit, p_transmit_);
 
   if ( p_transmit_ < 0 || p_transmit_ > 1 )
+  {
     throw BadProperty("Spike transmission probability must be in [0, 1].");
+  }
 }
 
 } // namespace

@@ -473,7 +473,7 @@ def show_help_with_pager(hlpobj, pager):
     # reading ~/.nestrc lookink for pager to use.
     if pager is None:
         # check if .netsrc exist
-        rc_file = os.environ['HOME'] + '/.nestrc'
+        rc_file = os.path.join(os.environ['HOME'], '.nestrc')
         if os.path.isfile(rc_file):
             # open ~/.nestrc
             rc = open(rc_file, 'r')

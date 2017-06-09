@@ -69,19 +69,20 @@ def helpdesk():
             'Please source nest_vars.sh or define NEST_DOC_DIR manually.')
         return
 
-    url = os.path.join(os.environ['NEST_DOC_DIR'] + "/help", "helpindex.html")
+    helpfile = os.path.join(os.environ['NEST_DOC_DIR'], 'help',
+                            'helpindex.html')
 
     # Under Windows systems webbrowser.open is incomplete
     # See <https://bugs.python.org/issue8232>
     if sys.platform[:3] == "win":
-        os.startfile(url)
+        os.startfile(helpfile)
 
     # Under MacOs we need to ask for the browser explicitly.
     # See <https://bugs.python.org/issue30392>.
     if sys.platform[:3] == "dar":
-        webbrowser.get('safari').open_new(url)
+        webbrowser.get('safari').open_new(helpfile)
     else:
-        webbrowser.open_new(url)
+        webbrowser.open_new(helpfile)
 
 
 @check_stack

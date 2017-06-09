@@ -59,6 +59,7 @@ set( models_sources
     iaf_psc_exp.h iaf_psc_exp.cpp
     iaf_tum_2000.h iaf_tum_2000.cpp
     izhikevich.h izhikevich.cpp
+    lossy_connection.h
     mat2_psc_exp.h mat2_psc_exp.cpp
     mcculloch_pitts_neuron.h mcculloch_pitts_neuron.cpp
     mip_generator.h mip_generator.cpp

@@ -111,6 +111,7 @@
 #include "cont_delay_connection_impl.h"
 #include "gap_junction.h"
 #include "ht_connection.h"
+#include "lossy_connection.h"
 #include "quantal_stp_connection.h"
 #include "quantal_stp_connection_impl.h"
 #include "spike_dilutor.h"
@@ -614,6 +615,15 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< VogelsSprekelerConnection< TargetIdentifierIndex > >(
       "vogels_sprekeler_synapse_hpc" );
+
+  /* BeginDocumentation
+     Name: lossy_synapse - Static synapse with stochastic transmission
+     SeeAlso: synapsedict, static_synapse, static_synapse_hom_w
+  */
+  kernel()
+    .model_manager
+    .register_connection_model< LossyConnection< TargetIdentifierPtrRport > >(
+      "lossy_synapse" );
 }
 
 } // namespace nest

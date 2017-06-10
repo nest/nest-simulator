@@ -61,28 +61,29 @@ def
 /not_supported
 [ /hh_psc_alpha_gap
   /siegert_neuron
-  /iaf_psc_neuron]
+  /iaf_psc_alpha]
 def
 
 supported
 {
  /model_supported Set
+
+ % check that legal connections can be created
+ {
+   ResetKernel
+   model_supported Create /neuron_supported Set
+  [neuron_supported] [neuron_supported]
+   << /rule /one_to_one >> 
+   << /model /rate_connection >> 
+   Connect
+ }
+ pass_or_die
+
  not_supported
  {
     /model_not_supported Set
-    
-    % check that legal connections can be created
-    {
-      ResetKernel
-      model_supported Create /neuron_supported Set
-      [neuron_supported] [neuron_supported]
-      << /rule /one_to_one >> 
-      << /model /rate_connection >> 
-      Connect
-    }
-    pass_or_die
-    
-    %check that illegal connection cannot be created
+
+    % check that illegal connection cannot be created
     {
       ResetKernel
       model_supported Create /neuron_supported Set
@@ -93,7 +94,6 @@ supported
       Connect
     }
     fail_or_die
-    
   }
   forall
 }
@@ -125,28 +125,29 @@ def
 /not_supported
 [ /hh_psc_alpha_gap
   /siegert_neuron
-  /iaf_psc_neuron]
+  /iaf_psc_alpha]
 def
 
 supported
 {
  /model_supported Set
+
+ % check that legal connections can be created
+ {
+   ResetKernel
+   model_supported Create /neuron_supported Set
+   [neuron_supported] [neuron_supported]
+   << /rule /one_to_one >> 
+   << /model /delay_rate_connection >> 
+   Connect
+ }
+ pass_or_die
+
  not_supported
  {
     /model_not_supported Set
-    
-    % check that legal connections can be created
-    {
-      ResetKernel
-      model_supported Create /neuron_supported Set
-      [neuron_supported] [neuron_supported]
-      << /rule /one_to_one >> 
-      << /model /delay_rate_connection >> 
-      Connect
-    }
-    pass_or_die
-    
-    %check that illegal connection cannot be created
+
+    % check that illegal connection cannot be created
     {
       ResetKernel
       model_supported Create /neuron_supported Set
@@ -156,8 +157,7 @@ supported
       << /model /delay_rate_connection >> 
       Connect
     }
-    fail_or_die
-    
+    fail_or_die    
   }
   forall
 }
@@ -173,7 +173,7 @@ def
 
 /not_supported
 [ /hh_psc_alpha_gap
-  /iaf_psc_neuron
+  /iaf_psc_alpha
   /lin_rate_ipn 
   /lin_rate_opn
   /thresholdlin_rate_ipn
@@ -185,22 +185,23 @@ def
 supported
 {
  /model_supported Set
+
+ % check that legal connections can be created
+ {
+   ResetKernel
+   model_supported Create /neuron_supported Set
+   [neuron_supported] [neuron_supported]
+   << /rule /one_to_one >> 
+   << /model /diffusion_connection >> 
+   Connect
+ }
+ pass_or_die
+
  not_supported
  {
     /model_not_supported Set
-    
-    % check that legal connections can be created
-    {
-      ResetKernel
-      model_supported Create /neuron_supported Set
-      [neuron_supported] [neuron_supported]
-      << /rule /one_to_one >> 
-      << /model /diffusion_connection >> 
-      Connect
-    }
-    pass_or_die
-    
-    %check that illegal connection cannot be created
+
+    % check that illegal connection cannot be created
     {
       ResetKernel
       model_supported Create /neuron_supported Set
@@ -211,7 +212,6 @@ supported
       Connect
     }
     fail_or_die
-    
   }
   forall
 }

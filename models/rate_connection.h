@@ -140,7 +140,7 @@ public:
   set_delay( double )
   {
     throw BadProperty(
-      "rate_connection has no delay. Please use delay_rate_connection" );
+      "rate_connection has no delay. Please use delay_rate_connection." );
   }
 };
 
@@ -161,7 +161,7 @@ RateConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
     throw BadProperty(
-      "rate_connection has no delay. Please use delay_rate_connection" );
+      "rate_connection has no delay. Please use delay_rate_connection." );
 
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );

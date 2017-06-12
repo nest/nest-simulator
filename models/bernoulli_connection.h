@@ -84,7 +84,6 @@ class BernoulliConnection : public Connection< targetidentifierT >
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
-
   typedef Connection< targetidentifierT > ConnectionBase;
 
   /**
@@ -129,41 +128,6 @@ public:
     {
       return invalid_port_;
     }
-    port
-    handles_test_event( RateEvent&, rport )
-    {
-      return invalid_port_;
-    }
-    port
-    handles_test_event( DataLoggingRequest&, rport )
-    {
-      return invalid_port_;
-    }
-    port
-    handles_test_event( CurrentEvent&, rport )
-    {
-      return invalid_port_;
-    }
-    port
-    handles_test_event( ConductanceEvent&, rport )
-    {
-      return invalid_port_;
-    }
-    port
-    handles_test_event( DoubleDataEvent&, rport )
-    {
-      return invalid_port_;
-    }
-    port
-    handles_test_event( DSSpikeEvent&, rport )
-    {
-      return invalid_port_;
-    }
-    port
-    handles_test_event( DSCurrentEvent&, rport )
-    {
-      return invalid_port_;
-    }
   };
 
   void
@@ -183,20 +147,20 @@ public:
     SpikeEvent e_spike = static_cast<SpikeEvent &>(e);
 
     librandom::RngPtr rng = kernel().rng_manager.get_rng( t );
-    ulong n_spikes_in = e_spike.get_multiplicity();
-    ulong n_spikes_out = 0;
+    const unsigned long n_spikes_in = e_spike.get_multiplicity();
+    unsigned long n_spikes_out = 0;
 
-    for ( ulong n = 0; n < n_spikes_in; n++ )
+    for ( unsigned long n = 0; n < n_spikes_in; ++n )
     {
       if ( rng->drand() < p_transmit_ )
       {
-        n_spikes_out++;
+        ++n_spikes_out;
       }
     }
 
-    if ( n_spikes_out > 0 ) 
+    if ( n_spikes_out > 0 )
     {
-      e_spike.set_multiplicity(n_spikes_out);
+      e_spike.set_multiplicity( n_spikes_out );
       e.set_weight( weight_ );
       e.set_delay( get_delay_steps() );
       e.set_receiver( *get_target( t ) );
@@ -221,14 +185,12 @@ public:
 private:
   double weight_;
   double p_transmit_;
-
 };
 
 template < typename targetidentifierT >
 void
 BernoulliConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
-
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
   def< double >( d, names::p_transmit, p_transmit_ );

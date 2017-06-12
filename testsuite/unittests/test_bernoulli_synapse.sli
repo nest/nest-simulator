@@ -41,9 +41,12 @@
 /unittest using
 
 % test parameters -------------------------------------------------
-/N_spikes 1000 def                                    % number of spikes send via the bernoulli synapse to each parrot neuron
-/p 0.25 def                                           % transmission probability of the bernoulli synapse
-/margin N_spikes p mul 1 p sub mul sqrt 3 mul def     % allowed absolute deviation: three standard deviations of the binomial distribution with (N_spikes, p)
+% number of spikes send via the bernoulli synapse to each parrot neuron
+/N_spikes 1000 def
+% transmission probability of the bernoulli synapse
+/p 0.25 def
+% allowed absolute deviation: three standard deviations of the binomial distribution with (N_spikes, p)
+/margin N_spikes p mul 1 p sub mul sqrt 3 mul def
 % test routine ----------------------------------------------------
 
 /test_bernoulli_run

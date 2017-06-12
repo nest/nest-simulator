@@ -416,12 +416,14 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
         // handle event
         if ( end_of_refract )
         {
+          // return from refractoriness
           S_.is_refractory_ = false;
-        } // return from refractoriness
+        }
         else
         {
+          // spike input
           S_.y1_ += V_.PSCInitialValue_ * ev_weight;
-        } // spike input
+        }
 
         // store state
         V_.y2_before_ = S_.y2_;

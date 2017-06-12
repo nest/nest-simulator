@@ -510,8 +510,9 @@ operator++()
 {
   if ( depth_ == -1 )
   {
+    // Invalid (end) iterator
     return *this;
-  } // Invalid (end) iterator
+  }
 
   if ( not filter_.select_depth() )
   {

@@ -318,8 +318,9 @@ public:
   }
   operator value_type()
   {
+    // we look like a value
     return table->get( pos );
-  } // we look like a value
+  }
   pointer operator&()
   {
     return &table->mutating_get( pos );

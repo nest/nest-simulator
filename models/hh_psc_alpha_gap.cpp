@@ -676,14 +676,14 @@ nest::hh_psc_alpha_gap::handle( SpikeEvent& e )
   {
     B_.spike_exc_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
-      e.get_weight() * e.get_multiplicity() );
+			     e.get_weight() * e.get_multiplicity() );
   }
   else
   {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
-      e.get_weight() * e.get_multiplicity() );
-  } // current input, keep negative weight
+			     e.get_weight() * e.get_multiplicity() );
+  }
 }
 
 void
@@ -694,7 +694,6 @@ nest::hh_psc_alpha_gap::handle( CurrentEvent& e )
   const double c = e.get_current();
   const double w = e.get_weight();
 
-  // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
     e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
     w * c );

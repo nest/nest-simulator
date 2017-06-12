@@ -512,14 +512,16 @@ nest::iaf_cond_alpha_mc::init_buffers_()
   B_.spikes_.resize( NUM_SPIKE_RECEPTORS );
   for ( size_t n = 0; n < NUM_SPIKE_RECEPTORS; ++n )
   {
+    // includes resize
     B_.spikes_[ n ].clear();
-  } // includes resize
+  }
 
   B_.currents_.resize( NUM_CURR_RECEPTORS );
   for ( size_t n = 0; n < NUM_CURR_RECEPTORS; ++n )
   {
+    // includes resize
     B_.currents_[ n ].clear();
-  } // includes resize
+  }
 
   B_.logger_.reset();
   Archiving_Node::clear_history();

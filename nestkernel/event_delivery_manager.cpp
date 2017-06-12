@@ -290,6 +290,8 @@ EventDeliveryManager::collocate_buffers_( bool done )
   }
   std::vector< std::vector< std::vector< OffGridSpike > > >::iterator it;
   std::vector< std::vector< OffGridSpike > >::iterator jt;
+
+  // accumulate number of generated spikes in the local spike counter
   for ( it = offgrid_spike_register_.begin();
         it != offgrid_spike_register_.end();
         ++it )
@@ -298,7 +300,7 @@ EventDeliveryManager::collocate_buffers_( bool done )
     {
       num_offgrid_spikes += jt->size();
     }
-  } // accumulate number of generated spikes in the local spike counter
+  }
   local_spike_counter_ += num_grid_spikes + num_offgrid_spikes;
 
   // here we need to count the secondary events and take them

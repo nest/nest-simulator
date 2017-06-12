@@ -483,7 +483,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
           ( *hc )[ i ] = &vc->push_back( c );
           found = true;
         }
-      }            // of for
+      } // of for
       if ( found ) // we need to create a new entry for this type of connection
       {
         conn = pack_pointer( hc, b_has_primary, b_has_secondary );
@@ -604,8 +604,8 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
               {
                 conn = pack_pointer( hc, b_has_primary, b_has_secondary );
               }
-            } // Otherwise, just remove the desired connection
-            else
+            }
+            else // Otherwise, just remove the desired connection
             {
               ( *hc )[ i ] = &vc->erase( j );
               conn = pack_pointer( hc, b_has_primary, b_has_secondary );

@@ -389,8 +389,9 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
         // handle event
         if ( end_of_refract )
         {
+          // return from refractoriness
           S_.is_refractory_ = false;
-        } // return from refractoriness
+        }
         else
         {
           if ( ev_weight >= 0.0 )
@@ -399,8 +400,9 @@ nest::iaf_psc_exp_ps::update( const Time& origin,
           }
           else
           {
+            // inh. spike input
             S_.y1_in_ += ev_weight;
-          } // inh. spike input
+          }
         }
 
         // store state

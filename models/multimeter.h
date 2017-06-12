@@ -365,6 +365,6 @@ nest::Multimeter::sends_signal() const
   return ALL;
 }
 
-} // Namespace
+} // namespace
 
 #endif

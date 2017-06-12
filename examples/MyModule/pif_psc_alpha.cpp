@@ -250,8 +250,9 @@ mynest::pif_psc_alpha::update( Time const& slice_origin,
     }
     else
     {
+      // count down refractory time
       --S_.refr_count;
-    } // count down refractory time
+    }
 
     // update synaptic currents
     S_.I_syn = V_.P21 * S_.dI_syn + V_.P22 * S_.I_syn;

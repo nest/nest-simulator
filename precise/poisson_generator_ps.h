@@ -88,11 +88,12 @@ public:
   {
     return false;
   }
+
   bool
   is_off_grid() const
   {
     return true;
-  } // uses off_grid events
+  }
 
   using Node::event_hook;
 

@@ -127,7 +127,7 @@ public:
   is_off_grid() const
   {
     return true;
-  } // uses off_grid events
+  }
 
   port handles_test_event( SpikeEvent&, rport );
   port handles_test_event( CurrentEvent&, rport );

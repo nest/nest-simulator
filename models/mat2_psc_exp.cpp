@@ -362,8 +362,9 @@ nest::mat2_psc_exp::update( Time const& origin, const long from, const long to )
     }
     else
     {
+      // neuron is totally refractory (cannot generate spikes)
       --S_.r_;
-    } // neuron is totally refractory (cannot generate spikes)
+    }
 
     // set new input current
     S_.i_0_ = B_.currents_.get_value( lag );

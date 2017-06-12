@@ -308,8 +308,9 @@ nest::iaf_psc_exp::update( const Time& origin, const long from, const long to )
     }
     else
     {
+      // neuron is absolute refractory
       --S_.r_ref_;
-    } // neuron is absolute refractory
+    }
 
     // exponential decaying PSCs
     S_.i_syn_ex_ *= V_.P11ex_;

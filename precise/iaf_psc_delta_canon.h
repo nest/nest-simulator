@@ -194,7 +194,7 @@ public:
   is_off_grid() const
   {
     return true;
-  } // uses off_grid events
+  }
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );

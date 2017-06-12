@@ -32,7 +32,6 @@
 #include "exceptions.h"
 #include "kernel_manager.h"
 #include "modelrange.h"
-#include "nest_datums.h"
 
 // Includes from sli:
 #include "token.h"

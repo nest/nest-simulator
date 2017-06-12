@@ -319,8 +319,9 @@ nest::iaf_psc_delta::update( Time const& origin,
       }
       else
       {
+        // clear buffer entry, ignore spike
         B_.spikes_.get_value( lag );
-      } // clear buffer entry, ignore spike
+      }
 
       --S_.r_;
     }

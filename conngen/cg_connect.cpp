@@ -389,8 +389,9 @@ cg_get_ranges( RangeSet& ranges, std::vector< long >& gids )
     }
     else
     {
+      // The new left border is one after the old right
       left = right + 1;
-    } // The new left border is one after the old right
+    }
   }
 }
 

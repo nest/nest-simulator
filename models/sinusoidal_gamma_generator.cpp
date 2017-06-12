@@ -168,12 +168,14 @@ nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
     // this can happen only on model prototypes
     if ( individual_spike_trains_ )
     {
+      // will be counted up as connections are made
       num_trains_ = 0;
-    } // will be counted up as connections are made
+    }
     else
     {
+      // fixed
       num_trains_ = 1;
-    } // fixed
+    }
   }
 
   if ( updateValue< double >( d, names::frequency, om_ ) )

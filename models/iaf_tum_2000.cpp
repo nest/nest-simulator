@@ -324,8 +324,9 @@ nest::iaf_tum_2000::update( Time const& origin, const long from, const long to )
     }
     else
     {
+      // neuron is absolute refractory
       --S_.r_abs_;
-    } // neuron is absolute refractory
+    }
 
     // exponential decaying PSCs
     S_.i_syn_ex_ *= V_.P11ex_;
@@ -351,8 +352,9 @@ nest::iaf_tum_2000::update( Time const& origin, const long from, const long to )
     }
     else
     {
+      // neuron is totally refractory (cannot generate spikes)
       --S_.r_tot_;
-    } // neuron is totally refractory (cannot generate spikes)
+    }
 
 
     // set new input current

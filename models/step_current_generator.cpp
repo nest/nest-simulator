@@ -140,8 +140,9 @@ nest::step_current_generator::Parameters_::set( const DictionaryDatum& d,
   }
   if ( ut && uv )
   {
+    // reset if we got new data
     b.idx_ = 0;
-  } // reset if we got new data
+  }
 }
 
 

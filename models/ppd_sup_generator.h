@@ -100,11 +100,12 @@ public:
   {
     return false;
   }
+
   bool
   is_off_grid() const
   {
     return false;
-  } // does not use off_grid events
+  }
 
   /**
    * Import sets of overloaded virtual functions.

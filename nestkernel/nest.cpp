@@ -337,12 +337,6 @@ get_model_defaults( const Name& modelname )
 }
 
 void
-set_num_rec_processes( const index n_rec_procs )
-{
-  kernel().mpi_manager.set_num_rec_processes( n_rec_procs, false );
-}
-
-void
 restore_nodes( const ArrayDatum& node_list )
 {
   kernel().node_manager.restore_nodes( node_list );

@@ -54,8 +54,6 @@ nest::weight_recorder::weight_recorder()
       true,
       true )
   , user_set_precise_times_( false )
-  , has_proxies_( false )
-  , local_receiver_( true )
   , P_()
 {
 }
@@ -64,8 +62,6 @@ nest::weight_recorder::weight_recorder( const weight_recorder& n )
   : Node( n )
   , device_( *this, n.device_ )
   , user_set_precise_times_( n.user_set_precise_times_ )
-  , has_proxies_( false )
-  , local_receiver_( true )
   , P_( n.P_ )
 {
 }
@@ -228,7 +224,7 @@ nest::weight_recorder::get_status( DictionaryDatum& d ) const
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
-  if ( local_receiver_ && get_thread() == 0 )
+  if ( get_thread() == 0 )
   {
     const SiblingContainer* siblings =
       kernel().node_manager.get_thread_siblings( get_gid() );

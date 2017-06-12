@@ -254,12 +254,13 @@ private:
 
   // ------------------------------------------------------------
 
-  StimulatingDevice< CurrentEvent > device_;
   static RecordablesMap< noise_generator > recordablesMap_;
+
+  StimulatingDevice< CurrentEvent > device_;
   Parameters_ P_;
-  Variables_ V_;
   State_ S_;
   Buffers_ B_;
+  Variables_ V_;
 };
 
 inline port
@@ -279,6 +280,8 @@ noise_generator::get_status( DictionaryDatum& d ) const
   P_.get( d );
   S_.get( d );
   device_.get_status( d );
+
+  ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

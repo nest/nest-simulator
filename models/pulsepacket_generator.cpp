@@ -69,10 +69,10 @@ nest::pulsepacket_generator::Variables_::Variables_()
 void
 nest::pulsepacket_generator::Parameters_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ "pulse_times" ] =
+  ( *d )[ names::pulse_times ] =
     DoubleVectorDatum( new std::vector< double >( pulse_times_ ) );
-  ( *d )[ "activity" ] = a_;
-  ( *d )[ "sdev" ] = sdev_;
+  ( *d )[ names::activity ] = a_;
+  ( *d )[ names::sdev ] = sdev_;
 }
 
 void
@@ -82,8 +82,8 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d,
 
   // We cannot use a single line here since short-circuiting may stop evaluation
   // prematurely. Therefore, neednewpulse must be second arg on second line.
-  bool neednewpulse = updateValue< long >( d, "activity", a_ );
-  neednewpulse = updateValue< double >( d, "sdev", sdev_ ) || neednewpulse;
+  bool neednewpulse = updateValue< long >( d, names::activity, a_ );
+  neednewpulse = updateValue< double >( d, names::sdev, sdev_ ) || neednewpulse;
   if ( a_ < 0 )
   {
     throw BadProperty( "The activity cannot be negative." );

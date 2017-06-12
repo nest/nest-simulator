@@ -56,8 +56,8 @@ librandom::UniformIntRandomDev::set_status( const DictionaryDatum& d )
   long new_nmin = nmin_;
   long new_nmax = nmax_;
 
-  updateValue< long >( d, "low", new_nmin );
-  updateValue< long >( d, "high", new_nmax );
+  updateValue< long >( d, names::low, new_nmin );
+  updateValue< long >( d, names::high, new_nmax );
 
   if ( new_nmax < new_nmin )
   {
@@ -112,6 +112,6 @@ librandom::UniformIntRandomDev::get_status( DictionaryDatum& d ) const
 {
   RandomDev::get_status( d );
 
-  def< long >( d, "low", nmin_ );
-  def< long >( d, "high", nmax_ );
+  def< long >( d, names::low, nmin_ );
+  def< long >( d, names::high, nmax_ );
 }

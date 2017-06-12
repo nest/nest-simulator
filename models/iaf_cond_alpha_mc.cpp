@@ -347,8 +347,8 @@ nest::iaf_cond_alpha_mc::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_reset, V_reset );
   def< double >( d, names::t_ref, t_ref );
 
-  def< double >( d, Name( "g_sp" ), g_conn[ SOMA ] );
-  def< double >( d, Name( "g_pd" ), g_conn[ PROX ] );
+  def< double >( d, names::g_sp, g_conn[ SOMA ] );
+  def< double >( d, names::g_pd, g_conn[ PROX ] );
 
   // create subdictionaries for per-compartment parameters
   for ( size_t n = 0; n < NCOMP; ++n )
@@ -376,8 +376,8 @@ nest::iaf_cond_alpha_mc::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::V_reset, V_reset );
   updateValue< double >( d, names::t_ref, t_ref );
 
-  updateValue< double >( d, Name( "g_sp" ), g_conn[ SOMA ] );
-  updateValue< double >( d, Name( "g_pd" ), g_conn[ PROX ] );
+  updateValue< double >( d, Name( names::g_sp ), g_conn[ SOMA ] );
+  updateValue< double >( d, Name( names::g_pd ), g_conn[ PROX ] );
 
   // extract from sub-dictionaries
   for ( size_t n = 0; n < NCOMP; ++n )

@@ -43,7 +43,7 @@ statusdict/have_gsl :: not {statusdict/exitcodes/success :: quit_i} if
 
 M_ERROR setverbosity
 
-is_threaded_with_openmp not { exit_test_gracefully } if
+skip_if_not_threaded
 
 /sim_weight_in_dopa_syn
 {

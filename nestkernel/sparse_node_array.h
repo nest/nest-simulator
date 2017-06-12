@@ -140,8 +140,6 @@ public:
    */
   index get_max_gid() const;
 
-  std::map< long, size_t > get_step_ctr() const;
-
 private:
   std::vector< NodeEntry > nodes_; //!< stores local node information
   index max_gid_;                  //!< largest GID in network

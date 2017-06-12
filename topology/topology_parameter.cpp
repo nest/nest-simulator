@@ -22,6 +22,15 @@
 
 #include "topology_parameter.h"
 
+// includes from sli
+#include "lockptrdatum_impl.h"
+
+// Explicit definition required to ensure visibility when compiling with
+// clang under OSX. This must be outside namespace NEST, since the template
+// is defined in the global namespace.
+template class lockPTRDatum< nest::TopologyParameter,
+  &nest::TopologyModule::ParameterType >;
+
 namespace nest
 {
 

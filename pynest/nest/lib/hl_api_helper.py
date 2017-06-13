@@ -32,6 +32,7 @@ import textwrap
 import subprocess
 import os
 import re
+import sys
 
 from string import Template
 
@@ -458,6 +459,10 @@ def show_help_with_pager(hlpobj, pager):
     pager: str, optional
         pager to use, NO if you explicity do not want to use a pager
     """
+    if sys.version_info < (2, 7, 8):
+        print("NEST help is only available with Python 2.7.8 or later. \n")
+        return
+
     if 'NEST_INSTALL_DIR' not in os.environ:
         print(
             'NEST help needs to know where NEST is installed.'

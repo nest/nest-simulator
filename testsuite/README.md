@@ -39,25 +39,22 @@ When writing tests, please adhere to the following guidelines:
 
       @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
   
-* Tests that need threading need to be protected in case NEST was compiled
-  without threading support by the following command at the beginning of the
-  test script (after loading `unittest`):
-  
-      skip_if_not_threaded
-
-  `test_threads.py` shows how to skip PyNEST tests that require threading. 
-
-* It is also possible to skip tests based on other criteria, using one of the
-  following commands:
+* Tests that require certain features, such as threads, MPI or GSL, need to be
+  skipped in the case where NEST was compiled without support for this feature.
+  This can be done by placing one of the following commands at the beginning of
+  the test script (after loading `unittest`):
   
       skip_if_no_mpi
       skip_if_have_mpi
+      skip_if_not_threaded
       skip_if_without_gsl
       skip_if_without_music
 
   or skipping for an unspecified reason, with the following:
 
       /skipped exit_test_gracefully
+
+  `test_threads.py` shows how to skip PyNEST tests that require threading. 
 
 * For more specific guidelines regarding tests in one of the different phases,
   see the README.md file in the corresponding directory.

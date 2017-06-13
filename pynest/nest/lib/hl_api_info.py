@@ -63,6 +63,10 @@ def helpdesk():
 
     Use the system default browser.
     """
+    if sys.version_info < (2, 7, 8):
+        print("You need python 2.7.8 or later to run this scrip.\n")
+        return
+
     if 'NEST_DOC_DIR' not in os.environ:
         print(
             'NEST help needs to know where NEST is installed.'

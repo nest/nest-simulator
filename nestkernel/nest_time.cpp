@@ -54,7 +54,8 @@ const double Time::Range::TICS_PER_MS_DEFAULT = CONFIG_TICS_PER_MS;
 const tic_t Time::Range::TICS_PER_STEP_DEFAULT = CONFIG_TICS_PER_STEP;
 
 tic_t Time::Range::TICS_PER_STEP = Time::Range::TICS_PER_STEP_DEFAULT;
-double Time::Range::TICS_PER_STEP_INV = 1. / static_cast< double >( Time::Range::TICS_PER_STEP );
+double Time::Range::TICS_PER_STEP_INV =
+  1. / static_cast< double >( Time::Range::TICS_PER_STEP );
 tic_t Time::Range::TICS_PER_STEP_RND = Time::Range::TICS_PER_STEP - 1;
 
 double Time::Range::TICS_PER_MS = Time::Range::TICS_PER_MS_DEFAULT;

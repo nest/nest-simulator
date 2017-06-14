@@ -57,12 +57,6 @@ public:
    */
   virtual void finalize();
 
-
-  // TODO: register proxynode and siblingcontainer in the
-  // constructor and provide three getters for them. See L130 and
-  // following in network.cpp. Also make sure that the ModelManager is
-  // initialized before the NodeManager is.
-
   /**
    * Resize the structures for the Connector objects if necessary.
    * This function should be called after number of threads, min_delay,
@@ -73,7 +67,6 @@ public:
    */
   void calibrate( const TimeConverter& );
 
-
   /**
    *
    */
@@ -83,11 +76,6 @@ public:
    *
    */
   virtual void get_status( DictionaryDatum& );
-
-  /**
-   *
-   */
-  Model* get_siblingcontainer_model();
 
   /**
    *
@@ -378,7 +366,6 @@ private:
    */
   DictionaryDatum synapsedict_; //!< Dictionary of all synapse models
 
-  Model* siblingcontainer_model_;
   Model* proxynode_model_;
 
   //! Placeholders for remote nodes, one per thread
@@ -399,12 +386,6 @@ ModelManager::get_model( index m ) const
   }
 
   return models_[ m ];
-}
-
-inline Model*
-ModelManager::get_siblingcontainer_model()
-{
-  return siblingcontainer_model_;
 }
 
 inline Node*

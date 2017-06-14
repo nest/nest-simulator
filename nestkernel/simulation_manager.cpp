@@ -33,7 +33,6 @@
 
 // Includes from nestkernel:
 #include "kernel_manager.h"
-#include "sibling_container.h"
 
 // Includes from sli:
 #include "dictutils.h"
@@ -911,7 +910,7 @@ nest::SimulationManager::reset_network()
 
   kernel().event_delivery_manager.clear_pending_spikes();
 
-  kernel().node_manager.reset_nodes_state();
+  kernel().node_manager.reinit_nodes();
 
   // ConnectionManager doesn't support resetting dynamic synapses yet
   LOG( M_WARNING,

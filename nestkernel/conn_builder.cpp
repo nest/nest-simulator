@@ -596,7 +596,7 @@ nest::ConnBuilder::all_parameters_scalar_() const
 bool
 nest::ConnBuilder::loop_over_targets_() const
 {
-  return targets_->size() < kernel().node_manager.local_nodes_size()
+  return targets_->size() < kernel().node_manager.size()
     or not targets_->is_range() or parameters_requiring_skipping_.size() > 0;
 }
 
@@ -664,13 +664,13 @@ nest::OneToOneBuilder::connect_()
       }
       else
       {
-        for ( SparseNodeArray::const_iterator it =
-                kernel().node_manager.local_nodes_begin();
-              it != kernel().node_manager.local_nodes_end();
-              ++it )
-        {
-          Node* const target = ( *it ).get_node();
-          const thread target_thread = target->get_thread();
+        const SparseNodeArray& local_nodes =
+	  kernel().node_manager.get_local_nodes( tid );
+	SparseNodeArray::const_iterator n;
+	for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+	{
+	  Node* target = n->get_node();
+	  const thread target_thread = target->get_thread();
 
           if ( tid != target_thread )
           {
@@ -679,7 +679,7 @@ nest::OneToOneBuilder::connect_()
             continue;
           }
 
-          const index tgid = ( *it ).get_gid();
+          const index tgid = n->get_gid();
           const int idx = targets_->find( tgid );
           if ( idx < 0 ) // Is local node in target list?
           {
@@ -896,13 +896,12 @@ nest::AllToAllBuilder::connect_()
       }
       else
       {
-        for ( SparseNodeArray::const_iterator it =
-                kernel().node_manager.local_nodes_begin();
-              it != kernel().node_manager.local_nodes_end();
-              ++it )
-        {
-          Node* const target = ( *it ).get_node();
-          const index tgid = ( *it ).get_gid();
+        const SparseNodeArray& local_nodes =
+	  kernel().node_manager.get_local_nodes( tid );
+	SparseNodeArray::const_iterator n;
+	for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+	{
+          const index tgid = n->get_gid();
 
           // Is the local node in the targets list?
           if ( targets_->find( tgid ) < 0 )
@@ -910,7 +909,7 @@ nest::AllToAllBuilder::connect_()
             continue;
           }
 
-          inner_connect_( tid, rng, target, tgid, false );
+          inner_connect_( tid, rng, n->get_node(), tgid, false );
         }
       }
     }
@@ -1198,13 +1197,12 @@ nest::FixedInDegreeBuilder::connect_()
       }
       else
       {
-        for ( SparseNodeArray::const_iterator it =
-                kernel().node_manager.local_nodes_begin();
-              it != kernel().node_manager.local_nodes_end();
-              ++it )
-        {
-          Node* const target = ( *it ).get_node();
-          const index tgid = ( *it ).get_gid();
+        const SparseNodeArray& local_nodes =
+	  kernel().node_manager.get_local_nodes( tid );
+	SparseNodeArray::const_iterator n;
+	for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+	{
+          const index tgid = n->get_gid();
 
           // Is the local node in the targets list?
           if ( targets_->find( tgid ) < 0 )
@@ -1212,7 +1210,7 @@ nest::FixedInDegreeBuilder::connect_()
             continue;
           }
 
-          inner_connect_( tid, rng, target, tgid, false );
+          inner_connect_( tid, rng, n->get_node(), tgid, false );
         }
       }
     }
@@ -1623,13 +1621,12 @@ nest::BernoulliBuilder::connect_()
 
       else
       {
-        for ( SparseNodeArray::const_iterator it =
-                kernel().node_manager.local_nodes_begin();
-              it != kernel().node_manager.local_nodes_end();
-              ++it )
-        {
-          Node* const target = ( *it ).get_node();
-          const index tgid = ( *it ).get_gid();
+        const SparseNodeArray& local_nodes =
+	  kernel().node_manager.get_local_nodes( tid );
+	SparseNodeArray::const_iterator n;
+	for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+	{
+          const index tgid = n->get_gid();
 
           // Is the local node in the targets list?
           if ( targets_->find( tgid ) < 0 )
@@ -1637,7 +1634,7 @@ nest::BernoulliBuilder::connect_()
             continue;
           }
 
-          inner_connect_( tid, rng, target, tgid );
+          inner_connect_( tid, rng, n->get_node(), tgid );
         }
       }
     }

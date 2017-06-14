@@ -83,6 +83,8 @@ public:
 
   void set_model_id( int );
 
+  int get_model_id();
+
   void deprecation_warning( const std::string& );
 
 private:
@@ -243,5 +245,14 @@ GenericModel< ElementT >::set_model_id( int i )
 {
   proto_.set_model_id( i );
 }
+
+template < typename ElementT >
+int
+GenericModel< ElementT >::get_model_id()
+{
+  return proto_.get_model_id();
 }
+
+}
+
 #endif

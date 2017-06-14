@@ -22,7 +22,6 @@ set( nestkernel_sources
     recordables_map.h
     archiving_node.h archiving_node.cpp
     common_synapse_properties.h common_synapse_properties.cpp
-    sibling_container.h sibling_container.cpp
     connection.h
     connection_label.h
     common_properties_hom_w.h

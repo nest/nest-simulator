@@ -42,7 +42,6 @@
 namespace nest
 {
 
-class SiblingContainer;
 class Node;
 class Model;
 
@@ -102,14 +101,6 @@ public:
   void restore_nodes( const ArrayDatum& );
 
   /**
-   * Reset state of nodes.
-   *
-   * Reset the state (but no other properties) of nodes. This is
-   * required for ResetNetwork, which affects states but not parameters.
-   */
-  void reset_nodes_state();
-
-  /**
    * Set the state (observable dynamic variables) of a node to model defaults.
    * @see Node::init_state()
    */
@@ -147,14 +138,14 @@ public:
   Node* get_node( index, thread thr = 0 );
 
   /**
-   * Return the Subnet that contains the thread siblings.
+   * Return a vector that contains the thread siblings.
    * @param i Index of the specified Node.
    *
    * @throws nest::NoThreadSiblingsAvailable Node does not have thread siblings.
    *
    * @ingroup net_access
    */
-  const SiblingContainer* get_thread_siblings( index n ) const;
+  std::vector< Node* > get_thread_siblings( index n ) const;
 
   /**
    * Ensure that all nodes in the network have valid thread-local IDs.
@@ -214,19 +205,9 @@ public:
   void check_wfr_use();
 
   /**
-   * Iterator pointing to beginning of process-local nodes.
+   * Return a reference to the thread-local nodes of thread t.
    */
-  SparseNodeArray::const_iterator local_nodes_begin() const;
-
-  /**
-   * Iterator pointing to end of process-local nodes.
-   */
-  SparseNodeArray::const_iterator local_nodes_end() const;
-
-  /**
-   * Number of process-local nodes.
-   */
-  size_t local_nodes_size() const;
+  const SparseNodeArray& get_local_nodes( thread ) const;
 
 private:
   /**
@@ -256,16 +237,17 @@ private:
   void prepare_node_( Node* );
 
   /**
-   * Returns the next local gid after curr_gid (in round robin fashion).
-   * In the case of GSD, there might be no valid gids, hence you should still
-   * check, if it returns a local gid.
+   * Returns the next vp-local gid after the given gid. gids are
+   * distributed onto vps in a round-robin fashion.
    */
-  index next_local_gid_( index curr_gid ) const;
+  index next_vp_local_gid_( index gid, thread vp ) const;
 
 private:
-  SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
-
-  Model* siblingcontainer_model_; //!< The model for the SiblingContainer class
+  /**
+   * The network as sparse array of local nodes. One entry per thread,
+   * which contains only the thread-local nodes.
+  */
+  std::vector< SparseNodeArray > local_nodes_;
 
   /**
    * Data structure holding node pointers per thread.
@@ -291,13 +273,7 @@ private:
 inline index
 NodeManager::size() const
 {
-  return local_nodes_.get_max_gid();
-}
-
-inline bool
-NodeManager::is_local_gid( index gid ) const
-{
-  return local_nodes_.get_node_by_gid( gid ) != 0;
+  return local_nodes_[ 0 ].get_max_gid();
 }
 
 inline Node*
@@ -324,22 +300,10 @@ NodeManager::wfr_is_used() const
   return wfr_is_used_;
 }
 
-inline SparseNodeArray::const_iterator
-NodeManager::local_nodes_begin() const
+inline const SparseNodeArray&
+NodeManager::get_local_nodes( thread t ) const
 {
-  return local_nodes_.begin();
-}
-
-inline SparseNodeArray::const_iterator
-NodeManager::local_nodes_end() const
-{
-  return local_nodes_.end();
-}
-
-inline size_t
-NodeManager::local_nodes_size() const
-{
-  return local_nodes_.size();
+  return local_nodes_[ t ];
 }
 
 } // namespace

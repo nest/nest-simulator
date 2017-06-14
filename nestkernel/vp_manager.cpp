@@ -124,10 +124,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
       n_threads = 1;
     }
 
-    // it is essential to call reset() here to adapt memory pools and more
-    // to the new number of threads and VPs.
-    set_num_threads( n_threads );
-    kernel().num_threads_changed_reset();
+    kernel().change_number_of_threads( n_threads );
   }
 
   long n_vps = get_num_virtual_processes();
@@ -193,10 +190,7 @@ nest::VPManager::set_status( const DictionaryDatum& d )
       n_threads = 1;
     }
 
-    // it is essential to call reset() here to adapt memory pools and more
-    // to the new number of threads and VPs
-    set_num_threads( n_threads );
-    kernel().num_threads_changed_reset();
+    kernel().change_number_of_threads( n_threads );
   }
 }
 

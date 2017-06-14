@@ -130,6 +130,9 @@ nest::TargetTableDevices::get_num_connections_to_devices_( const thread tid,
   size_t num_connections = 0;
   for ( size_t lid = 0; lid < ( *target_to_devices_[ tid ] ).size(); ++lid )
   {
+    // make sure this device has support for all synapse types
+    ( *target_to_devices_[ tid ] )[ lid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
+
     if ( ( *target_to_devices_[ tid ] )[ lid ].size() > 0 )
     {
       num_connections += ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_num_connections( syn_id );
@@ -145,6 +148,9 @@ nest::TargetTableDevices::get_num_connections_from_devices_( const thread tid,
   size_t num_connections = 0;
   for ( size_t ldid = 0; ldid < ( *target_to_devices_[ tid ] ).size(); ++ldid )
   {
+    // make sure this device has support for all synapse types
+    ( *target_from_devices_[ tid ] )[ ldid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
+
     if ( ( *target_from_devices_[ tid ] )[ ldid ].size() > 0 )
     {
       num_connections += ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->get_num_connections( syn_id );
@@ -164,6 +170,9 @@ nest::TargetTableDevices::get_connections_to_devices_(
 {
   for ( size_t lid = 0; lid < target_to_devices_[ tid ]->size(); ++lid )
   {
+    // make sure this device has support for all synapse types
+    ( *target_to_devices_[ tid ] )[ lid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
+
     if ( ( *target_to_devices_[ tid ] )[ lid ].size() > 0 )
     {
       const index source_gid = kernel().vp_manager.lid_to_gid( lid );
@@ -203,6 +212,10 @@ nest::TargetTableDevices::get_connections_from_devices_(
     if ( source_gid > 0 )
     {
       const index ldid = source->get_local_device_id();
+
+      // make sure this device has support for all synapse types
+      ( *target_from_devices_[ tid ] )[ ldid ].resize( kernel().model_manager.get_num_synapse_prototypes(), NULL );
+
       if ( ( *target_from_devices_[ tid ] )[ ldid ].size() > 0 )
       {
         if ( requested_source_gid == source_gid || requested_source_gid == 0 )

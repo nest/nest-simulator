@@ -179,6 +179,11 @@ public:
   virtual void set_model_id( int ) = 0;
 
   /**
+   * Get the model id from the prototype.
+   */
+  virtual int get_model_id() = 0;
+
+  /**
    * Issue deprecation warning on first call if model is deprecated.
    *
    * @param calling function

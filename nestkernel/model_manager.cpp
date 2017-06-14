@@ -35,7 +35,6 @@
 #include "kernel_manager.h"
 #include "model_manager_impl.h"
 #include "proxynode.h"
-#include "sibling_container.h"
 
 
 namespace nest
@@ -48,7 +47,6 @@ ModelManager::ModelManager()
   , prototypes_()
   , modeldict_( new Dictionary )
   , synapsedict_( new Dictionary )
-  , siblingcontainer_model_( 0 )
   , proxynode_model_( 0 )
   , proxy_nodes_()
   , dummy_spike_sources_()
@@ -85,18 +83,8 @@ ModelManager::~ModelManager()
 void
 ModelManager::initialize()
 {
-  if ( siblingcontainer_model_ == 0 && proxynode_model_ == 0 )
+  if ( proxynode_model_ == 0 )
   {
-    // initialize these models only once outside of the constructor
-    // as the node model asks for the # of threads to setup slipools
-    // but during construction of ModelManager, the KernelManager is not created
-    siblingcontainer_model_ =
-      new GenericModel< SiblingContainer >( std::string( "siblingcontainer" ),
-        /* deprecation_info */ "" );
-    siblingcontainer_model_->set_type_id( 0 );
-    pristine_models_.push_back(
-      std::pair< Model*, bool >( siblingcontainer_model_, true ) );
-
     proxynode_model_ =
       new GenericModel< proxynode >( "proxynode", /* deprecation_info */ "" );
     proxynode_model_->set_type_id( 1 );
@@ -236,7 +224,6 @@ ModelManager::register_node_model_( Model* model, bool private_model )
     std::pair< Model*, bool >( model, private_model ) );
   models_.push_back( model->clone( name ) );
   int proxy_model_id = get_model_id( "proxynode" );
-  assert( proxy_model_id > 0 );
   Model* proxy_model = models_[ proxy_model_id ];
   assert( proxy_model != 0 );
 

@@ -82,8 +82,8 @@ public:
    */
   size_t size() const;
 
-  //! Reserve space for given number of elements
-  void reserve( size_t );
+  //! Reserve additional space for the given number of elements
+  void reserve_additional( size_t );
 
   //! Clear the array
   void clear();
@@ -108,12 +108,9 @@ public:
    *  Lookup node based on GID
    *
    *  Returns 0 if GID is not local.
-   *  For local nodes with siblings, it returns the pointer
-   *  to the sibling container.
-   *  The caller is responsible for (i) providing proper
-   *  proxy node pointers for non-local nodes and (ii)
-   *  selecting the correct sibling for a given thread for
-   *  nodes that are sibling containers.
+   *
+   *  The caller is responsible for providing proper
+   *  proxy node pointers for non-local nodes
    *
    *  @see get_node_by_index()
    */

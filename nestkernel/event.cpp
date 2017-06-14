@@ -44,6 +44,7 @@ Event::Event()
   , rp_( 0 )
   , d_( 1 )
   , stamp_( Time::step( 0 ) )
+  , stamp_steps_( 0 )
   , offset_( 0.0 )
   , w_( 0.0 )
 {

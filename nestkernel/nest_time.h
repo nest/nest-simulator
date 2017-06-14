@@ -152,6 +152,7 @@ protected:
   struct Range
   {
     static tic_t TICS_PER_STEP;
+    static double TICS_PER_STEP_INV;
     static tic_t TICS_PER_STEP_RND;
 
     static double TICS_PER_MS;
@@ -517,7 +518,7 @@ public:
 
     // round tics up to nearest step
     // by adding TICS_PER_STEP-1 before division
-    return ( tics + Range::TICS_PER_STEP_RND ) / Range::TICS_PER_STEP;
+    return ( tics + Range::TICS_PER_STEP_RND ) * Range::TICS_PER_STEP_INV;
   }
 
   /**

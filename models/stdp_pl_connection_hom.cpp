@@ -41,6 +41,7 @@ namespace nest
 STDPPLHomCommonProperties::STDPPLHomCommonProperties()
   : CommonSynapseProperties()
   , tau_plus_( 20.0 )
+  , tau_plus_inv_( 1. / tau_plus_ )
   , lambda_( 0.1 )
   , alpha_( 1.0 )
   , mu_( 0.4 )
@@ -65,6 +66,14 @@ STDPPLHomCommonProperties::set_status( const DictionaryDatum& d,
   CommonSynapseProperties::set_status( d, cm );
 
   updateValue< double >( d, names::tau_plus, tau_plus_ );
+  if ( tau_plus_ > 0. )
+  {
+    tau_plus_inv_ = 1. / tau_plus_;
+  }
+  else
+  {
+    throw BadProperty( "tau_plus > 0. required." );
+  }
   updateValue< double >( d, names::lambda, lambda_ );
   updateValue< double >( d, names::alpha, alpha_ );
   updateValue< double >( d, names::mu, mu_ );

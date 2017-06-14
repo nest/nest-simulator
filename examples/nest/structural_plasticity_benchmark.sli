@@ -59,25 +59,22 @@
 /sp_update_interval 100 def % update interval of structural plasticity in simulation steps
 /sp_record_interval 1000 def  % recording of structural plasticity status (Ca, #Axons) (ms)
 
-/rate_factor 100 def
-/eta_factor 0.1 def
-
 % Growth curves for synaptic elements of excitatory neurons
 % Excitatory synaptic elements
 /growth_curve_e_e <<
                       /growth_curve /gaussian
-                      /growth_rate rate_factor 0.0001 mul
+                      /growth_rate 0.0001
                       /continuous false
-                      /eta 0.0 eta_factor add 
+                      /eta 0.0
                       /eps 0.05
                   >> def
 
 % Inhibitory synaptic elements
 /growth_curve_e_i <<
                       /growth_curve /gaussian
-                      /growth_rate rate_factor 0.0001 mul
+                      /growth_rate 0.0001
                       /continuous false
-                      /eta 0.0 eta_factor add
+                      /eta 0.0
                       /eps growth_curve_e_e /eps get
                   >> def
 
@@ -85,18 +82,18 @@
 % Excitatory synaptic elements
 /growth_curve_i_e <<
                       /growth_curve /gaussian
-                      /growth_rate rate_factor 0.0004 mul
+                      /growth_rate 0.0004
                       /continuous false
-                      /eta 0.0 eta_factor add
+                      /eta 0.0
                       /eps 0.2
                   >> def
 
 % Inhibitory synaptic elements
 /growth_curve_i_i <<
                       /growth_curve /gaussian
-                      /growth_rate rate_factor 0.0001 mul
+                      /growth_rate 0.0001
                       /continuous false
-                      /eta 0.0 eta_factor add
+                      /eta 0.0
                       /eps growth_curve_i_e /eps get
                   >> def
 
@@ -185,6 +182,7 @@
 
 >> def
 
+% calculates the psc amplitude from the psp amplitude for alpha synapses
 /derive_psc_parameters
 {
     model_params using
@@ -212,6 +210,7 @@
     /n_neurons_i n_neurons n_neurons_e sub def
 } def
 
+% sets kernel configuration and structural plasticity settings
 /prepare_kernel
 {
     % open log file
@@ -255,6 +254,7 @@
 
 } def
 
+% create neurons
 /create_nodes
 {
     /min_gid_neurons_e 1 def
@@ -278,6 +278,7 @@
     /nodes_i min_gid_neurons_i max_gid_neurons_i cvgidcollection def
 } def
 
+% connects simulation and recording devices
 /connect_stim_and_recording
 {
     /poisson_generator 1 << /rate bg_rate >> Create dup cvgidcollection /noise Set
@@ -291,6 +292,7 @@
     } if
 } def
 
+% records the current Ca concentration for excitatory and inhibitory neurons
 /record_local_ca_concentration
 {
     /t Set
@@ -320,6 +322,7 @@
     t cvs ( ) join ca_i cvs join ( # Ca concentration in) join logger /log call
 } def
 
+% records the current number of axonal synaptic elements for excitatory and inhibitory neurons
 /record_local_number_of_axons
 {
     /t Set
@@ -349,6 +352,7 @@
     t cvs ( ) join syn_i cvs join ( # Axon count in) join logger /log call
 } def
 
+% records the total number of spikes generated locally
 /record_local_number_of_spikes
 {
     /t Set
@@ -364,14 +368,16 @@ prepare_kernel
 create_nodes
 connect_stim_and_recording
 
-/runtime 0. def % keeps track of how long the simulation was run
+/runtime 0. def % keeps track of simulation time
 
+% simulate for a short time to separate initial transients
 tic
 presimtime Simulate
 toc /presim_duration Set
 runtime presimtime add /runtime Set
 runtime cvs ( ) join presim_duration cvs join ( # presim_time) join logger /log call
 
+% simulate in multiple steps to allow for recording of network status at particular intervals
 /sim_duration 0. def % keeps track of wallclock time
 {
     tic

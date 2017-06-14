@@ -61,10 +61,9 @@ nest::RNGManager::finalize()
 void
 nest::RNGManager::set_status( const DictionaryDatum& d )
 {
-  // have those two for later asking, whether threads have changed:
-  long n_threads;
-  bool n_threads_updated =
-    updateValue< long >( d, names::local_num_threads, n_threads );
+  // Any changes in number of threads will be handled by VPManager::set_status(),
+  // which will force re-initialization of RNGManager if necessary. This method
+  // will only be called *after* such a reset.
 
   // set RNGs --- MUST come after n_threads_ is updated
   if ( d->known( "rngs" ) )
@@ -105,13 +104,6 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
           ( *ad )[ kernel().vp_manager.suggest_vp( i ) ] ) );
       }
     }
-  }
-  else if ( n_threads_updated && kernel().node_manager.size() == 0 )
-  {
-    LOG( M_WARNING,
-      "RNGManager::set_status",
-      "Equipping threads with new default RNGs" );
-    create_rngs_();
   }
 
   if ( d->known( "rng_seeds" ) )
@@ -169,13 +161,6 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
   {
     // pre-seeded grng that can be used directly, no seeding required
     updateValue< librandom::RngDatum >( d, names::grng, grng_ );
-  }
-  else if ( n_threads_updated && kernel().node_manager.size() == 0 )
-  {
-    LOG( M_WARNING,
-      "RNGManager::set_status",
-      "Equipping threads with new default GRNG" );
-    create_grng_();
   }
 
   if ( d->known( "grng_seed" ) )

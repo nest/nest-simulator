@@ -393,7 +393,7 @@ nest::SimulationManager::prepare()
   kernel().connection_manager.update_delay_extrema_();
   kernel().event_delivery_manager.init_moduli();
 
-  // Check for synchronicity of global rngs over processes.
+  // Check for synchrony of global rngs over processes.
   // We need to do this ahead of any simulation in case random numbers
   // have been consumed on the SLI level.
   if ( kernel().mpi_manager.get_num_processes() > 1 )

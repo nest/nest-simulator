@@ -140,8 +140,6 @@ NodeManager::add_node( index model_id, long n )
     throw KernelException( "OutOfMemory" );
   }
 
-  std::cout << "min_gid: " << min_gid << ", max_gid: " << max_gid << std::endl;
-  
   kernel().modelrange_manager.add_range( model_id, min_gid, max_gid - 1 );
 
   // Nodes are created in parallel by all threads. The algorithm is
@@ -345,6 +343,9 @@ NodeManager::is_local_node( Node* n ) const
   return kernel().vp_manager.is_local_vp( n->get_vp() );
 }
 
+// TODO480: I wonder if the need to loop over threads can be a performance
+// bottleneck. BUT: I think we only need to check whether the node is local
+// TO THE THREAD, and then we do not need to loop.
 bool
 NodeManager::is_local_gid( index gid ) const
 {
@@ -359,12 +360,7 @@ NodeManager::is_local_gid( index gid ) const
 
 Node* NodeManager::get_node( index gid, thread t )
 {
-  bool valid_thread = t >= 0 and t < kernel().vp_manager.get_num_threads();
-  bool valid_gid = gid >= 1 and gid < size();
-  if ( not valid_thread or not valid_gid )
-  {
-    throw UnknownNode();
-  }
+  assert( 0 <= t and t < kernel().vp_manager.get_num_threads() );
 
   Node* node = local_nodes_[ t ].get_node_by_gid( gid );
   if ( node == 0 )
@@ -435,33 +431,33 @@ NodeManager::ensure_valid_thread_local_ids()
 
         size_t num_thread_local_nodes = 0;
         size_t num_thread_local_wfr_nodes = 0;
-        for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
+        for ( size_t idx = 0; idx < local_nodes_[ t ].size(); ++idx )
         {
           Node* node = local_nodes_[ t ].get_node_by_index( idx );
-	  if ( node != 0 )
-	  {
-            num_thread_local_nodes++;
+	      if ( node != 0 )
+	      {
+            ++num_thread_local_nodes;
             if ( node->node_uses_wfr() )
             {
-              num_thread_local_wfr_nodes++;
+              ++num_thread_local_wfr_nodes;
             }
           }
         }
         nodes_vec_[ t ].reserve( num_thread_local_nodes );
         wfr_nodes_vec_[ t ].reserve( num_thread_local_wfr_nodes );
 
-        for ( size_t idx = 1; idx < local_nodes_.size(); ++idx )
+        for ( size_t idx = 0; idx < local_nodes_[ t ].size(); ++idx )
         {
           Node* node = local_nodes_[ t ].get_node_by_index( idx );
-	  if ( node != 0 )
-	  {
+	      if ( node != 0 )
+	      {
             node->set_thread_lid( nodes_vec_[ t ].size() );
             nodes_vec_[ t ].push_back( node );
             if ( node->node_uses_wfr() )
             {
               wfr_nodes_vec_[ t ].push_back( node );
             }
-	  }
+	      }
         }
       } // end of for threads
 
@@ -498,7 +494,6 @@ NodeManager::destruct_nodes_()
   {
 #endif // clang-format on
 
-      std::cout << "lns: " << local_nodes_[t].size() << std::endl;
     SparseNodeArray::const_iterator n;
     for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
     {

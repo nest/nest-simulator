@@ -89,10 +89,10 @@ nest::SparseNodeArray::add_local_node( Node& node )
 }
 
 void
-nest::SparseNodeArray::add_remote_node( index gid )
+nest::SparseNodeArray::update_max_gid( index gid )
 {
   assert( gid > 0 );        // minimum GID is 1
-  assert( gid > max_gid_ );
+  assert( gid >= max_gid_ );
   max_gid_ = gid;
 }
 

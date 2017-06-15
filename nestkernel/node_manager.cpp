@@ -345,6 +345,9 @@ NodeManager::is_local_node( Node* n ) const
   return kernel().vp_manager.is_local_vp( n->get_vp() );
 }
 
+// TODO480: I wonder if the need to loop over threads can be a performance
+// bottleneck. BUT: I think we only need to check whether the node is local
+// TO THE THREAD, and then we do not need to loop.
 bool
 NodeManager::is_local_gid( index gid ) const
 {
@@ -359,12 +362,7 @@ NodeManager::is_local_gid( index gid ) const
 
 Node* NodeManager::get_node( index gid, thread t )
 {
-  bool valid_thread = t >= 0 and t < kernel().vp_manager.get_num_threads();
-  bool valid_gid = gid >= 1 and gid < size();
-  if ( not valid_thread or not valid_gid )
-  {
-    throw UnknownNode();
-  }
+  assert( 0 <= t and t < kernel().vp_manager.get_num_threads() );
 
   Node* node = local_nodes_[ t ].get_node_by_gid( gid );
   if ( node == 0 )

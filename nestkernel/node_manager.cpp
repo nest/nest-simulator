@@ -123,15 +123,16 @@ NodeManager::add_node( index model_id, long n )
     throw BadProperty();
   }
 
-  const index min_gid = local_nodes_[ 0 ].get_max_gid() + 1;
-  const index max_gid = min_gid + n;
-
   Model* model = kernel().model_manager.get_model( model_id );
   assert( model != 0 );
-
   model->deprecation_warning( "Create" );
 
-  if ( max_gid > local_nodes_[ 0 ].max_size() || max_gid < min_gid )
+  // TODO480: We should reconsider if it is really smart that max_gid is
+  // the largest new gid PLUS ONE. This leads to -1 in several places below
+  // and is a bit confusing.
+  const index min_gid = local_nodes_.at( 0 ).get_max_gid() + 1;
+  const index max_gid = min_gid + n;
+  if ( max_gid > local_nodes_.at( 0 ).max_size() or max_gid < min_gid )
   {
     LOG( M_ERROR,"NodeManager::add_node",
 	 "Requested number of nodes will overflow the memory. "
@@ -174,25 +175,30 @@ NodeManager::add_node( index model_id, long n )
   {
     // add_node_neurons_( model, min_gid, max_gid );
 
-    thread num_threads = kernel().vp_manager.get_num_threads();
-    size_t num_procs = kernel().mpi_manager.get_num_processes();
-    int n_per_thread = ( max_gid - min_gid ) / num_procs / num_threads + 1;
+	// upper limit for number of neurons per thread; in practice, either
+	// max_new_per_thread-1 or max_new_per_thread nodes will be created
+    const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
+    const size_t max_new_per_thread = static_cast< size_t >( std::ceil(
+    		static_cast< double >( max_gid - min_gid ) / num_vps ) );
 
 #ifdef _OPENMP
 #pragma omp parallel
+#endif
     {
-      index t = kernel().vp_manager.get_thread_id();
-#else // clang-format off
-    for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
-#endif // clang-format on
-      local_nodes_[ t ].reserve_additional( n_per_thread );
-      model->reserve_additional( t, n_per_thread );
+      const index t = kernel().vp_manager.get_thread_id();
+      // TODO480: We should move more of the reservation logic into the
+      // SparseNodeArray. We should tell SNA only max_gid-1 and whether the model
+      // needs local replicas or not. Then SNA can manage memory. This can reduce
+      // bloat due to round-up when using many Create calls for >1 thread
+      local_nodes_.at( t ).reserve_additional( max_new_per_thread );
+      model->reserve_additional( t, max_new_per_thread );
 
-      thread vp = kernel().vp_manager.thread_to_vp( t );
+      const thread vp = kernel().vp_manager.thread_to_vp( t );
       index gid = min_gid;
-      thread vp_of_gid = kernel().vp_manager.suggest_vp( gid );
+      const thread vp_of_gid = kernel().vp_manager.suggest_vp( gid );
 
+      // TODO480: Refactor next_vp_local_gid_ so that we can initialize gid as
+      //          index gid = next_vp_local_gid_( min_gid, vp );
       if ( vp != vp_of_gid )
       {
         gid = next_vp_local_gid_( gid, vp );
@@ -207,7 +213,7 @@ NodeManager::add_node( index model_id, long n )
         node->set_vp( vp );
 
         local_nodes_[ t ].add_local_node( *node );
-	gid = next_vp_local_gid_( gid, vp );
+	    gid = next_vp_local_gid_( gid, vp );
       }
     }
   }
@@ -258,13 +264,10 @@ NodeManager::add_node( index model_id, long n )
   
 #ifdef _OPENMP
 #pragma omp parallel
+#endif
   {
-    index t = kernel().vp_manager.get_thread_id();
-#else // clang-format off
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-  {
-#endif // clang-format on
-    local_nodes_[ t ].add_remote_node( max_gid );
+    const size_t t = kernel().vp_manager.get_thread_id();
+    local_nodes_.at( t ).update_max_gid( max_gid-1 );
   }
 
   // set off-grid spike communication if necessary

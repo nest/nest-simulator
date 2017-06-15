@@ -97,12 +97,12 @@ public:
   void add_local_node( Node& );
 
   /**
-   * Register non-local node.
+   * Set max gid to max in network.
    *
    * Ensures that array knows about non-local nodes
    * with GIDs higher than highest local GID.
    */
-  void add_remote_node( index );
+  void update_max_gid( index );
 
   /**
    *  Lookup node based on GID

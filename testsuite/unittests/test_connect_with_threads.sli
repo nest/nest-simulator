@@ -185,7 +185,7 @@ forall
 }
 forall
 
-('pairwise bernoulli: ') ==
+('fixed total number: ') ==
 
 [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25]
 {
@@ -209,7 +209,7 @@ forall
   % Define connection and synapse dictionaries
   /syn_dict << /model /static_synapse >> def
   %/syn_dict << /model /static_synapse /weight Warr >> def
-  /conn_dict << /rule /pairwise_bernoulli /p 0.1 >> def
+  /conn_dict << /rule /fixed_total_number /N 5 >> def
   
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
   
@@ -217,7 +217,7 @@ forall
   num_conn =
   %<< >> GetConnections ==
   
-  10 num_conn eq assert_or_die % 
+  5 num_conn eq assert_or_die % 
 }
 forall
 

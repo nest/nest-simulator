@@ -122,7 +122,8 @@ public:
   virtual void get_target_gids( const thread tid,
     const synindex syn_id,
     const index start_lcid,
-    std::vector< index >& target_gids ) const = 0;
+    std::vector< index >& target_gids,
+    const std::string post_synaptic_element) const = 0;
 
   /** For a given lcid, returns the gid of the corresponding target.
    */
@@ -373,12 +374,14 @@ public:
   get_target_gids( const thread tid,
     const synindex,
     const index start_lcid,
-    std::vector< index >& target_gids ) const
+    std::vector< index >& target_gids,
+    const std::string post_synaptic_element ) const
   {
     index lcid = start_lcid;
     while ( true )
     {
-      if ( not C_[ lcid ].is_disabled() )
+      if ( C_[ lcid ].get_target( tid )->get_synaptic_elements(
+             post_synaptic_element ) != 0.0 and not C_[ lcid ].is_disabled() )
       {
         target_gids.push_back( C_[ lcid ].get_target( tid )->get_gid() );
       }

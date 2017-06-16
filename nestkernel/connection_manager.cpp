@@ -1475,7 +1475,7 @@ nest::ConnectionManager::get_sources( const std::vector< index >& targets,
 void
 nest::ConnectionManager::get_targets( const std::vector< index >& sources,
   std::vector< std::vector< index > >& targets,
-  const index syn_id )
+  const index syn_id, const std::string& post_synaptic_element )
 {
   targets.resize( sources.size() );
   for ( std::vector< std::vector< index > >::iterator i = targets.begin();
@@ -1495,7 +1495,8 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
       if ( start_lcid != invalid_index )
       {
         ( *( *connections_5g_[ tid ] )[ syn_id ] )
-          .get_target_gids( tid, syn_id, start_lcid, targets[ i ] );
+          .get_target_gids( tid, syn_id, start_lcid, targets[ i ],
+                            post_synaptic_element );
       }
 
       // find targets in unsorted part of connections

@@ -261,7 +261,7 @@ public:
     const index syn_id );
   void get_targets( const std::vector< index >& sources,
     std::vector< std::vector< index > >& targets,
-    const index syn_id );
+    const index syn_id, const std::string& post_synaptic_element );
 
   const std::vector< Target >& get_targets( const thread tid,
     const index lid ) const;

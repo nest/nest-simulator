@@ -431,8 +431,6 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
 
   if ( pre_deleted_id_global.size() > 0 )
   {
-    // assert( false );
-
     delete_synapses_from_pre( pre_deleted_id_global,
       pre_deleted_n_global,
       sp_builder->get_synapse_model(),
@@ -459,8 +457,6 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
 
   if ( post_deleted_id_global.size() > 0 )
   {
-    // assert( false );
-
     delete_synapses_from_post( post_deleted_id_global,
       post_deleted_n_global,
       sp_builder->get_synapse_model(),
@@ -477,9 +473,6 @@ SPManager::update_structural_plasticity( SPBuilder* sp_builder )
       post_deleted_id,
       post_deleted_n );
   }
-
-  std::cout << "DEL " << pre_deleted_id_global.size() << " " << post_deleted_id_global.size() << std::endl;
-  print_vector( pre_deleted_id_global );
 
   // Communicate vacant elements
   kernel().mpi_manager.communicate(

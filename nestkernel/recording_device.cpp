@@ -174,7 +174,7 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
 
 void
 nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
-  const Buffers_& B,
+  Buffers_& B,
   const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::label, label_ );

@@ -538,7 +538,7 @@ private:
     //! Store current values in dictionary
     void get( const RecordingDevice&, DictionaryDatum& ) const;
     //! Set values from dictionary
-    void set( const RecordingDevice&, const Buffers_&, const DictionaryDatum& );
+    void set( const RecordingDevice&, Buffers_&, const DictionaryDatum& );
   };
 
   // ------------------------------------------------------------------

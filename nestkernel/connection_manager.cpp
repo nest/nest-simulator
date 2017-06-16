@@ -1680,7 +1680,14 @@ nest::ConnectionManager::remove_disabled_connections( const thread tid )
 void
 nest::ConnectionManager::print_connections( const thread tid ) const
 {
-  ( *( *connections_5g_[ tid ] )[ 0 ] ).print_connections( tid, 0 );
+  for ( synindex syn_id = 0; syn_id < ( *connections_5g_[ tid ] ).size();
+        ++syn_id )
+  {
+    if ( ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
+    {
+      ( *( *connections_5g_[ tid ] )[ syn_id ] ).print_connections( tid, 0 );
+    }
+  }
 }
 
 void
@@ -1698,7 +1705,15 @@ nest::ConnectionManager::print_send_buffer_pos( const thread tid ) const
 void
 nest::ConnectionManager::print_source_table( const thread tid ) const
 {
-  source_table_.print_sources( tid, 47 );
+  for ( synindex syn_id = 0; syn_id < ( *connections_5g_[ tid ] ).size();
+        ++syn_id )
+  {
+    if ( ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
+    {
+
+      source_table_.print_sources( tid, syn_id );
+    }
+  }
 }
 
 void

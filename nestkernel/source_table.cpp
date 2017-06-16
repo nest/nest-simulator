@@ -259,11 +259,6 @@ void
 nest::SourceTable::print_sources( const thread tid,
   const synindex syn_id ) const
 {
-  if ( syn_id >= ( *sources_[ tid ] ).size() )
-  {
-    return;
-  }
-
   index prev_gid = 0;
   std::cout << "-------------SOURCES-------------------\n";
   for ( std::vector< Source >::const_iterator it =

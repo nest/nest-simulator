@@ -871,7 +871,7 @@ nest::AllToAllBuilder::connect_()
 
           if ( target == 0 )
           {
-            skip_conn_parameter_( tid );
+            skip_conn_parameter_( tid, sources_->size() );
             continue;
           }
 
@@ -1173,7 +1173,7 @@ nest::FixedInDegreeBuilder::connect_()
           if ( target == 0 )
           {
             // skip array parameters handled in other virtual processes
-            skip_conn_parameter_( tid );
+            skip_conn_parameter_( tid, indegree_ );
             continue;
           }
 

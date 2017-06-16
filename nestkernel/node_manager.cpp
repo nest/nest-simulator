@@ -104,10 +104,15 @@ NodeManager::get_status( index idx )
 {
   // TODO480: This runs on thread 0. We need to make sure that we find the
   // actual node for nodes with proxies!
-  Node* target = get_node( idx );
+  //Node* target = get_node( idx );
+
+  Node* target = get_node_indp_thread( idx );
+
   assert( target != 0 );
 
   DictionaryDatum d = target->get_status_base();
+
+
 
   return d;
 }
@@ -392,6 +397,16 @@ Node* NodeManager::get_node( index gid, thread t )
   {
     return kernel().model_manager.get_proxy_node( t, gid );
   }
+
+  return node;
+}
+
+Node* NodeManager::get_node_indp_thread( index gid )
+{
+  thread num_threads = kernel().vp_manager.get_num_threads();
+  thread t = gid % num_threads;
+
+  Node* node = local_nodes_[ t ].get_node_by_gid( gid );
 
   return node;
 }

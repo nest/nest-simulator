@@ -651,44 +651,16 @@ nest::OneToOneBuilder::connect_()
           }
 
           single_connect_( ( *sgid ).gid, *target, tid, rng );
-
-    /*
-          // check whether the target is on this mpi machine
-          if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
-          {
-            skip_conn_parameter_( tid );
-            continue;
-          }
-
-          Node* const target =
-            kernel().node_manager.get_node( ( *tgid ).gid, tid );
-          const thread target_thread = target->get_thread();
-
-          // check whether the target is on our thread
-          if ( tid != target_thread )
-          {
-            skip_conn_parameter_( tid );
-            continue;
-          }
-          single_connect_( ( *sgid ).gid, *target, target_thread, rng );*/
         }
       }
       else
       {
         const SparseNodeArray& local_nodes =
-	  kernel().node_manager.get_local_nodes( tid );
-	SparseNodeArray::const_iterator n;
-	for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-	{
-	  Node* target = n->get_node();
-	  const thread target_thread = target->get_thread();
-
-          if ( tid != target_thread )
-          {
-            // no skipping required / possible,
-            // as we iterate only over local nodes
-            continue;
-          }
+          kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
+          Node* target = n->get_node();
 
           const index tgid = n->get_gid();
           const int idx = targets_->find( tgid );
@@ -705,7 +677,7 @@ nest::OneToOneBuilder::connect_()
             // as we iterate only over local nodes
             continue;
           }
-          single_connect_( sgid, *target, target_thread, rng );
+          single_connect_( sgid, *target, tid, rng );
         }
       }
     }
@@ -894,14 +866,14 @@ nest::AllToAllBuilder::connect_()
               tgid < targets_->end();
               ++tgid )
         {
-          // check whether the target is on this mpi machine
-          if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
+          Node* const target =
+                      kernel().node_manager.get_local_thread_node( ( *tgid ).gid, tid );
+
+          if ( target == 0 )
           {
-            skip_conn_parameter_( tid, sources_->size() );
+            skip_conn_parameter_( tid );
             continue;
           }
-          Node* const target =
-            kernel().node_manager.get_node( ( *tgid ).gid, tid );
 
           inner_connect_( tid, rng, target, ( *tgid ).gid, true );
         }
@@ -909,10 +881,10 @@ nest::AllToAllBuilder::connect_()
       else
       {
         const SparseNodeArray& local_nodes =
-	  kernel().node_manager.get_local_nodes( tid );
-	SparseNodeArray::const_iterator n;
-	for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-	{
+          kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
           const index tgid = n->get_gid();
 
           // Is the local node in the targets list?
@@ -1195,15 +1167,15 @@ nest::FixedInDegreeBuilder::connect_()
               tgid < targets_->end();
               ++tgid )
         {
-          // check whether the target is on this mpi machine
-          if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
+          Node* const target =
+              kernel().node_manager.get_local_thread_node( ( *tgid ).gid, tid );
+
+          if ( target == 0 )
           {
             // skip array parameters handled in other virtual processes
-            skip_conn_parameter_( tid, indegree_ );
+            skip_conn_parameter_( tid );
             continue;
           }
-
-          Node* target = kernel().node_manager.get_node( ( *tgid ).gid, tid );
 
           inner_connect_( tid, rng, target, ( *tgid ).gid, true );
         }
@@ -1211,10 +1183,10 @@ nest::FixedInDegreeBuilder::connect_()
       else
       {
         const SparseNodeArray& local_nodes =
-	  kernel().node_manager.get_local_nodes( tid );
-	SparseNodeArray::const_iterator n;
-	for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-	{
+          kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
           const index tgid = n->get_gid();
 
           // Is the local node in the targets list?

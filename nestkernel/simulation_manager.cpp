@@ -1003,16 +1003,15 @@ nest::SimulationManager::update_()
     } while ( to_do_ > 0 and not exit_on_user_signal_
       and not exceptions_raised.at( tid ) );
 
-    // TODO@5g: implement SP
-    // End of the slice, we update the number of synaptic element
-    // for ( std::vector< Node* >::const_iterator i =
-    //         kernel().node_manager.get_nodes_on_thread( tid ).begin();
-    //       i != kernel().node_manager.get_nodes_on_thread( tid ).end();
-    //       ++i )
-    // {
-    //   ( *i )->update_synaptic_elements(
-    //     Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
-    // }
+    // End of the slice, we update the number of synaptic elements
+    for ( std::vector< Node* >::const_iterator i =
+            kernel().node_manager.get_nodes_on_thread( tid ).begin();
+          i != kernel().node_manager.get_nodes_on_thread( tid ).end();
+          ++i )
+    {
+      ( *i )->update_synaptic_elements(
+        Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
+    }
 
     if ( tid == 0 and kernel().mpi_manager.get_rank() < 30 )
     {

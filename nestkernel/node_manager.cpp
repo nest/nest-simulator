@@ -371,6 +371,13 @@ Node* NodeManager::get_node( index gid, thread t )
   return node;
 }
 
+Node* NodeManager::get_local_thread_node( index gid, thread t )
+{
+  Node* node = local_nodes_[ t ].get_node_by_gid( gid );
+
+  return node;
+}
+
 std::vector< Node* >
 NodeManager::get_thread_siblings( index gid ) const
 {

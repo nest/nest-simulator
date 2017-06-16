@@ -381,7 +381,6 @@ nest::ConnBuilder::connect()
       std::swap( sources_, targets_ ); // re-establish original state
     }
   }
-
   // check if any exceptions have been raised
   for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
   {
@@ -642,6 +641,18 @@ nest::OneToOneBuilder::connect_()
             continue;
           }
 
+          Node* const target =
+                      kernel().node_manager.get_local_thread_node( ( *tgid ).gid, tid );
+
+          if ( target == 0 )
+          {
+            skip_conn_parameter_( tid );
+            continue;
+          }
+
+          single_connect_( ( *sgid ).gid, *target, tid, rng );
+
+    /*
           // check whether the target is on this mpi machine
           if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
           {
@@ -659,7 +670,7 @@ nest::OneToOneBuilder::connect_()
             skip_conn_parameter_( tid );
             continue;
           }
-          single_connect_( ( *sgid ).gid, *target, target_thread, rng );
+          single_connect_( ( *sgid ).gid, *target, target_thread, rng );*/
         }
       }
       else
@@ -891,6 +902,7 @@ nest::AllToAllBuilder::connect_()
           }
           Node* const target =
             kernel().node_manager.get_node( ( *tgid ).gid, tid );
+
           inner_connect_( tid, rng, target, ( *tgid ).gid, true );
         }
       }
@@ -1166,6 +1178,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( GIDCollectionPTR sources,
 void
 nest::FixedInDegreeBuilder::connect_()
 {
+
 #pragma omp parallel
   {
     // get thread id
@@ -1360,6 +1373,7 @@ nest::FixedOutDegreeBuilder::connect_()
               tgid != tgt_ids_.end();
               ++tgid )
         {
+
           // check whether the target is on this mpi machine
           if ( not kernel().node_manager.is_local_gid( *tgid ) )
           {

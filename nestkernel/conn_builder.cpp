@@ -642,7 +642,7 @@ nest::OneToOneBuilder::connect_()
           }
 
           Node* const target =
-                      kernel().node_manager.get_local_thread_node( ( *tgid ).gid, tid );
+                      kernel().node_manager.get_thread_local_node( ( *tgid ).gid, tid );
 
           if ( target == 0 )
           {
@@ -867,7 +867,7 @@ nest::AllToAllBuilder::connect_()
               ++tgid )
         {
           Node* const target =
-                      kernel().node_manager.get_local_thread_node( ( *tgid ).gid, tid );
+                      kernel().node_manager.get_thread_local_node( ( *tgid ).gid, tid );
 
           if ( target == 0 )
           {
@@ -1168,7 +1168,7 @@ nest::FixedInDegreeBuilder::connect_()
               ++tgid )
         {
           Node* const target =
-              kernel().node_manager.get_local_thread_node( ( *tgid ).gid, tid );
+              kernel().node_manager.get_thread_local_node( ( *tgid ).gid, tid );
 
           if ( target == 0 )
           {
@@ -1346,7 +1346,7 @@ nest::FixedOutDegreeBuilder::connect_()
               ++tgid )
         {
           Node* const target =
-              kernel().node_manager.get_local_thread_node( *tgid, tid );
+              kernel().node_manager.get_thread_local_node( *tgid, tid );
 
           if ( target == 0 )
           {
@@ -1583,7 +1583,7 @@ nest::BernoulliBuilder::connect_()
               ++tgid )
         {
           Node* const target =
-              kernel().node_manager.get_local_thread_node( ( *tgid ).gid, tid );
+              kernel().node_manager.get_thread_local_node( ( *tgid ).gid, tid );
 
           if ( target == 0 )
           {

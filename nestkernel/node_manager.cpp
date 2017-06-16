@@ -112,8 +112,6 @@ NodeManager::get_status( index idx )
 
   DictionaryDatum d = target->get_status_base();
 
-
-
   return d;
 }
 
@@ -411,7 +409,7 @@ Node* NodeManager::get_node_indp_thread( index gid )
   return node;
 }
 
-Node* NodeManager::get_local_thread_node( index gid, thread t )
+Node* NodeManager::get_thread_local_node( index gid, thread t )
 {
   Node* node = local_nodes_[ t ].get_node_by_gid( gid );
 

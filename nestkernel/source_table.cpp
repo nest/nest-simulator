@@ -237,7 +237,9 @@ nest::SourceTable::remove_disabled_sources( const thread tid,
   {
     --i;
   }
-  ++i;
+  ++i; // i marks first disabled source, but the while loop only exits
+       // if i points at a not disabled element, hence we need to
+       // increase it by one again
 
   ( *( *sources_[ tid ] )[ syn_id ] )
     .erase( ( *( *sources_[ tid ] )[ syn_id ] ).begin() + i,

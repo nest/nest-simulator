@@ -362,7 +362,7 @@ public:
     for ( index lcid = 0; lcid < C_.size(); ++lcid )
     {
       const index current_target_gid = C_[ lcid ].get_target( tid )->get_gid();
-      if ( current_target_gid == target_gid )
+      if ( current_target_gid == target_gid and not C_[ lcid ].is_disabled() )
       {
         source_lcids.push_back( lcid );
       }
@@ -378,7 +378,10 @@ public:
     index lcid = start_lcid;
     while ( true )
     {
-      target_gids.push_back( C_[ lcid ].get_target( tid )->get_gid() );
+      if ( not C_[ lcid ].is_disabled() )
+      {
+        target_gids.push_back( C_[ lcid ].get_target( tid )->get_gid() );
+      }
 
       if ( not C_[ lcid ].has_source_subsequent_targets() )
       {
@@ -403,6 +406,7 @@ public:
     for ( size_t i = 0; i < C_.size(); ++i )
     {
       e.set_port( i ); // TODO@5g: does this make sense?
+      assert( not C_[ i ].is_disabled() );
       C_[ i ].send( e,
         tid,
         static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id_ ] )
@@ -487,7 +491,7 @@ public:
     index lcid = start_lcid;
     while ( true )
     {
-      if ( C_[ lcid ].get_target( tid )->get_gid() == target_gid )
+      if ( C_[ lcid ].get_target( tid )->get_gid() == target_gid and not C_[ lcid ].is_disabled() )
       {
         return lcid;
       }
@@ -521,6 +525,7 @@ public:
   void
   disable_connection( const synindex, const index lcid )
   {
+    assert( not C_[ lcid ].is_disabled() );
     C_[ lcid ].disable();
   }
 

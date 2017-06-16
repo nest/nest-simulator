@@ -1489,6 +1489,7 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
   {
     for ( size_t i = 0; i < sources.size(); ++i )
     {
+      // find targets in sorted part of connections
       const index start_lcid =
         source_table_.find_first_source( tid, syn_id, sources[ i ] );
       if ( start_lcid != invalid_index )
@@ -1496,9 +1497,12 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
         ( *( *connections_5g_[ tid ] )[ syn_id ] )
           .get_target_gids( tid, syn_id, start_lcid, targets[ i ] );
       }
+
+      // find targets in unsorted part of connections
       std::vector< index > matching_lcids;
       source_table_.find_all_sources(
         tid, sources[ i ], syn_id, matching_lcids );
+
       // TODO@5g: search in unsorted, needs to be implemented when sorting does not happen on every SP update
       assert( matching_lcids.size() == 0 );
     }

@@ -356,10 +356,15 @@ SourceTable::find_first_source( const thread tid, const synindex syn_id, const i
     begin + ( *last_sorted_source_[ tid ] )[ syn_id ];
   std::vector< Source >::const_iterator it =
     std::lower_bound( begin, end_of_sorted, Source( sgid, true ) );
-  if ( it != end_of_sorted && it->get_gid() == sgid )
+
+  while ( it != end_of_sorted )
   {
-    index lcid = it - begin;
-    return lcid;
+    if ( it->get_gid() == sgid and not it->is_disabled() )
+    {
+      index lcid = it - begin;
+      return lcid;
+    }
+    ++it;
   }
 
   return invalid_index;
@@ -382,8 +387,7 @@ SourceTable::find_all_sources( const thread tid,
   {
     if ( it->get_gid() == sgid )
     {
-      index lcid = it - begin;
-      matching_lcids.push_back( lcid );
+      matching_lcids.push_back( it - begin );
     }
   }
 }
@@ -400,6 +404,7 @@ SourceTable::disable_connection( const thread tid,
   {
     ( *last_sorted_source_[ tid ] )[ syn_id ] = lcid;
   }
+  assert( not ( *( *sources_[ tid ] )[ syn_id ] )[ lcid ].is_disabled() );
   ( *( *sources_[ tid ] )[ syn_id ] )[ lcid ].disable();
 }
 

@@ -537,7 +537,13 @@ private:
 
     //! Store current values in dictionary
     void get( const RecordingDevice&, DictionaryDatum& ) const;
-    //! Set values from dictionary
+
+    /**
+     * Set values from dictionary.
+     *
+     * @note `Buffers_&` cannot be `const` because `basic_ofstream::is_open()`
+     * is not `const` in C++98  (cf C++ Standard §27.8.1.10).
+     */
     void set( const RecordingDevice&, Buffers_&, const DictionaryDatum& );
   };
 

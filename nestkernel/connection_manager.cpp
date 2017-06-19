@@ -798,7 +798,7 @@ nest::ConnectionManager::find_connection_sorted( const thread tid,
   // lcid will hold the position of the /first/ connection from node
   // sgid to node tgid or be invalid
   lcid =
-    ( *( *connections_5g_[ tid ] )[ syn_id ] ).find_first_target( tid, syn_id, lcid, tgid );
+    ( *( *connections_5g_[ tid ] )[ syn_id ] ).find_first_target( tid, lcid, tgid );
   if ( lcid != invalid_index )
   {
     return lcid;
@@ -820,7 +820,7 @@ nest::ConnectionManager::find_connection_unsorted( const thread tid,
   {
     const index lcid =
       ( *( *connections_5g_[ tid ] )[ syn_id ] )
-      .find_matching_target( tid, syn_id, matching_lcids, tgid );
+      .find_matching_target( tid, matching_lcids, tgid );
     if ( lcid != invalid_index )
     {
       return lcid;
@@ -848,7 +848,7 @@ nest::ConnectionManager::disconnect_5g( const thread tid,
   assert( lcid != invalid_index ); // this function should only be
                                    // called with a valid connection
 
-  ( *( *connections_5g_[ tid ] )[ syn_id ] ).disable_connection( syn_id, lcid );
+  ( *( *connections_5g_[ tid ] )[ syn_id ] ).disable_connection( lcid );
   source_table_.disable_connection( tid, syn_id, lcid );
 
   --vv_num_connections_[ tid ][ syn_id ];
@@ -1321,7 +1321,7 @@ nest::ConnectionManager::get_connections(
           const index target_gid = target->get( t_id );
 
           std::vector< index > source_lcids;
-          connections->get_source_lcids( tid, syn_id, target_gid, source_lcids );
+          connections->get_source_lcids( tid, target_gid, source_lcids );
 
           for ( size_t i = 0; i < source_lcids.size(); ++i )
           {
@@ -1446,7 +1446,7 @@ nest::ConnectionManager::get_source_gids_( const thread tid,
 {
   std::vector< index > source_lcids;
   ( *( *connections_5g_[ tid ] )[ syn_id ] )
-    .get_source_lcids( tid, syn_id, tgid, source_lcids );
+    .get_source_lcids( tid, tgid, source_lcids );
   source_table_.get_source_gids( tid, syn_id, source_lcids, sources );
 }
 
@@ -1495,7 +1495,7 @@ nest::ConnectionManager::get_targets( const std::vector< index >& sources,
       if ( start_lcid != invalid_index )
       {
         ( *( *connections_5g_[ tid ] )[ syn_id ] )
-          .get_target_gids( tid, syn_id, start_lcid, targets[ i ],
+          .get_target_gids( tid, start_lcid, targets[ i ],
                             post_synaptic_element );
       }
 
@@ -1672,7 +1672,7 @@ nest::ConnectionManager::remove_disabled_connections( const thread tid )
       if ( first_disabled_index != invalid_index )
       {
         ( *( *connections_5g_[ tid ] )[ syn_id ] )
-          .remove_disabled_connections( syn_id, first_disabled_index );
+          .remove_disabled_connections( first_disabled_index );
       }
     }
   }
@@ -1686,7 +1686,7 @@ nest::ConnectionManager::print_connections( const thread tid ) const
   {
     if ( ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
     {
-      ( *( *connections_5g_[ tid ] )[ syn_id ] ).print_connections( tid, 0 );
+      ( *( *connections_5g_[ tid ] )[ syn_id ] ).print_connections( tid );
     }
   }
 }

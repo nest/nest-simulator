@@ -112,7 +112,6 @@ public:
    * source_lcids.
    */
   virtual void get_source_lcids( const thread tid,
-    const synindex syn_id,
     const index target_gid,
     std::vector< index >& source_lcids ) const = 0;
 
@@ -120,7 +119,6 @@ public:
    * that belong to the same source.
    */
   virtual void get_target_gids( const thread tid,
-    const synindex syn_id,
     const index start_lcid,
     std::vector< index >& target_gids,
     const std::string post_synaptic_element) const = 0;
@@ -128,7 +126,6 @@ public:
   /** For a given lcid, returns the gid of the corresponding target.
    */
   virtual index get_target_gid( const thread tid,
-    const synindex syn_id,
     const unsigned int lcid ) const = 0;
 
   /** Sends an event to all connections.
@@ -185,7 +182,6 @@ public:
    */
   virtual index
   find_first_target( const thread tid,
-    const synindex syn_id,
     const index start_lcid,
     const index target_gid ) const = 0;
 
@@ -194,7 +190,6 @@ public:
    */
   virtual index
   find_matching_target( const thread tid,
-    const synindex syn_id,
     const std::vector< index >& matching_lcids,
     const index target_gid ) const = 0;
 
@@ -202,16 +197,15 @@ public:
    * afterwards.
    */
   virtual void
-  disable_connection( const synindex syn_id, const index lcid ) = 0;
+  disable_connection( const index lcid ) = 0;
 
   /** Removes disabled connections from the connector.
    */
   virtual void
-  remove_disabled_connections( const synindex syn_id,
-    const index first_disabled_index ) = 0;
+  remove_disabled_connections( const index first_disabled_index ) = 0;
 
   virtual void
-  print_connections( const thread tid, const synindex syn_id ) const = 0;
+  print_connections( const thread tid ) const = 0;
 
   /** Returns the number of connections in this Connector.
    */
@@ -356,7 +350,6 @@ public:
 
   void
   get_source_lcids( const thread tid,
-    const synindex,
     const index target_gid,
     std::vector< index >& source_lcids ) const
   {
@@ -372,7 +365,6 @@ public:
 
   void
   get_target_gids( const thread tid,
-    const synindex,
     const index start_lcid,
     std::vector< index >& target_gids,
     const std::string post_synaptic_element ) const
@@ -397,7 +389,6 @@ public:
 
   index
   get_target_gid( const thread tid,
-    const synindex,
     const unsigned int lcid ) const
   {
     return C_[ lcid ].get_target( tid )->get_gid();
@@ -487,7 +478,6 @@ public:
 
   index
   find_first_target( const thread tid,
-    const synindex,
     const index start_lcid,
     const index target_gid ) const
   {
@@ -510,7 +500,6 @@ public:
 
   index
   find_matching_target( const thread tid,
-    const synindex,
     const std::vector< index >& matching_lcids,
     const index target_gid ) const
   {
@@ -526,21 +515,21 @@ public:
   }
 
   void
-  disable_connection( const synindex, const index lcid )
+  disable_connection( const index lcid )
   {
     assert( not C_[ lcid ].is_disabled() );
     C_[ lcid ].disable();
   }
 
   void
-  remove_disabled_connections( const synindex, const index first_disabled_index )
+  remove_disabled_connections( const index first_disabled_index )
   {
     assert( C_[ first_disabled_index ].is_disabled() );
     C_.erase( C_.begin() + first_disabled_index, C_.end() );
   }
 
   void
-  print_connections( const thread tid, const synindex ) const
+  print_connections( const thread tid ) const
   {
     std::cout << "---------------------------------------\n";
     for ( typename std::vector< ConnectionT >::const_iterator cit = C_.begin();

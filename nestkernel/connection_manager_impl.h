@@ -55,7 +55,7 @@ ConnectionManager::get_target_gid( const thread tid,
   const synindex syn_id,
   const index lcid ) const
 {
-  return ( *connections_5g_[ tid ] )[ syn_id ]->get_target_gid( tid, syn_id, lcid );
+  return ( *connections_5g_[ tid ] )[ syn_id ]->get_target_gid( tid, lcid );
 }
 
 inline void

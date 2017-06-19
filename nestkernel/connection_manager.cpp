@@ -192,7 +192,7 @@ DictionaryDatum nest::ConnectionManager::get_synapse_status(
   const Node* source = kernel().node_manager.get_node( source_gid, tid );
   const Node* target = kernel().node_manager.get_node( target_gid, tid );
 
-  if ( source->has_proxies() and target->has_proxies() )
+  if ( source->has_proxies() and target->has_proxies() and ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
   {
     ( *connections_5g_[ tid ] )[ syn_id ]->get_synapse_status( syn_id, dict, p );
   }
@@ -230,7 +230,7 @@ nest::ConnectionManager::set_synapse_status( const index source_gid,
 
   try
   {
-    if ( source->has_proxies() and target->has_proxies() )
+    if ( source->has_proxies() and target->has_proxies() and ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
     {
       ( *connections_5g_[ tid ] )[ syn_id ]->set_synapse_status( syn_id,
         kernel().model_manager.get_synapse_prototype( syn_id, tid ),
@@ -1445,9 +1445,12 @@ nest::ConnectionManager::get_source_gids_( const thread tid,
   std::vector< index >& sources )
 {
   std::vector< index > source_lcids;
-  ( *( *connections_5g_[ tid ] )[ syn_id ] )
-    .get_source_lcids( tid, tgid, source_lcids );
-  source_table_.get_source_gids( tid, syn_id, source_lcids, sources );
+  if ( ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
+  {
+    ( *( *connections_5g_[ tid ] )[ syn_id ] )
+      .get_source_lcids( tid, tgid, source_lcids );
+    source_table_.get_source_gids( tid, syn_id, source_lcids, sources );
+  }
 }
 
 void

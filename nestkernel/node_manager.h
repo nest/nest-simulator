@@ -136,6 +136,9 @@ public:
    * @ingroup net_access
    */
   Node* get_node( index, thread thr = 0 );
+  Node* get_node_indp_thread( index );
+
+  Node* get_thread_local_node( index, thread );
 
   /**
    * Return a vector that contains the thread siblings.

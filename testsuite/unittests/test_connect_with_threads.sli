@@ -1,0 +1,200 @@
+/*
+ *  test_connect_with_threads.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /* BeginDocumentation
+Name: 
+
+Synopsis: (test_connect_with_threads) run -> NEST exits if test fails
+
+Description:
+
+
+Author: Stine B. Vennemo
+FirstVersion: June 2018
+SeeAlso:
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+% Early test, should get num_threads and conn_spec into one.
+
+% one_to_one:
+
+[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25]
+{
+  /num_threads Set
+
+  ResetKernel
+  
+  << /total_num_virtual_procs num_threads >> SetKernelStatus
+  
+  % NB! Must do something about num of targets and num threads when changing so loop_over_targets() not always true
+  % Create source and target neurons
+  /net1 /iaf_psc_alpha 10 Create def
+  /net2 /iaf_psc_alpha 10 Create def
+  
+  % Define connection and synapse dictionaries
+  /syn_dict << /model /static_synapse >> def
+  /conn_dict << /rule /one_to_one >> def
+  
+  net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
+  
+  /num_conn GetKernelStatus /num_connections get def
+  
+  10 num_conn eq assert_or_die
+}
+forall
+
+% all_to_all:
+
+[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25]
+{
+  /num_threads Set
+
+  ResetKernel
+  
+  << /total_num_virtual_procs num_threads >> SetKernelStatus
+  
+  % Create source and target neurons
+  /net1 /iaf_psc_alpha 10 Create def
+  /net2 /iaf_psc_alpha 10 Create def
+  
+  /syn_dict << /model /static_synapse >> def
+  /conn_dict << /rule /all_to_all >> def
+  
+  net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
+  
+  /num_conn GetKernelStatus /num_connections get def
+  100 num_conn eq assert_or_die
+}
+forall
+
+% fixed indegree:
+
+[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25]
+{
+  /num_threads Set
+
+  ResetKernel
+  
+  << /total_num_virtual_procs num_threads >> SetKernelStatus
+  
+  % Create source and target neurons
+  /net1 /iaf_psc_alpha 10 Create def
+  /net2 /iaf_psc_alpha 10 Create def
+  
+  % Define connection and synapse dictionaries
+  /syn_dict << /model /static_synapse >> def
+  /conn_dict << /rule /fixed_indegree /indegree 5 >> def
+  
+  net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
+  
+  /num_conn GetKernelStatus /num_connections get def
+  50 num_conn eq assert_or_die % 
+}
+forall
+
+% fixed outdegree:
+
+[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25]
+{
+  /num_threads Set
+
+  ResetKernel
+  
+  << /total_num_virtual_procs num_threads >> SetKernelStatus
+  
+  % Create source and target neurons
+  /net1 /iaf_psc_alpha 10 Create def
+  /net2 /iaf_psc_alpha 10 Create def
+  
+  % Define connection and synapse dictionaries
+  /syn_dict << /model /static_synapse >> def
+  /conn_dict << /rule /fixed_outdegree /outdegree 5 >> def
+  
+  net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
+  
+  /num_conn GetKernelStatus /num_connections get def
+  50 num_conn eq assert_or_die % 
+}
+forall
+
+% fixed total number:
+
+[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25]
+{
+  /num_threads Set
+
+  ResetKernel
+  
+  << /total_num_virtual_procs num_threads >> SetKernelStatus
+  
+  % Create source and target neurons
+  /net1 /iaf_psc_alpha 10 Create def
+  /net2 /iaf_psc_alpha 10 Create def
+  
+  % Define connection and synapse dictionaries
+  /syn_dict << /model /static_synapse >> def
+  /conn_dict << /rule /fixed_total_number /N 5 >> def
+  
+  net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
+  
+  /num_conn GetKernelStatus /num_connections get def
+  5 num_conn eq assert_or_die % 
+}
+forall
+
+('pairwise_bernoulli: ') ==
+
+[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25]
+{
+  /num_threads Set
+  num_threads ==
+
+  ResetKernel
+  
+  << /total_num_virtual_procs num_threads >> SetKernelStatus
+  
+  % Create source and target neurons
+  /net1 /iaf_psc_alpha 10 Create def
+  /net2 /iaf_psc_alpha 10 Create def
+  
+  % Define connection and synapse dictionaries
+  /syn_dict << /model /static_synapse >> def
+  /conn_dict << /rule /pairwise_bernoulli /p 0.1 >> def
+  
+  net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
+  
+  /num_conn GetKernelStatus /num_connections get def
+  num_conn =
+  
+  10 num_conn eq assert_or_die % 
+}
+forall
+
+endusing
+
+

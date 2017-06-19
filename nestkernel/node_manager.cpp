@@ -102,7 +102,11 @@ NodeManager::reinit_nodes()
 DictionaryDatum
 NodeManager::get_status( index idx )
 {
-  Node* target = get_node( idx );
+  // TODO480: This runs on thread 0. We need to make sure that we find the
+  // actual node for nodes with proxies!
+
+  Node* target = get_node_indp_thread( idx );
+
   assert( target != 0 );
 
   DictionaryDatum d = target->get_status_base();
@@ -191,16 +195,31 @@ NodeManager::add_node( index model_id, long n )
       local_nodes_.at( t ).reserve_additional( max_new_per_thread );
       model->reserve_additional( t, max_new_per_thread );
 
-      const thread vp = kernel().vp_manager.thread_to_vp( t );
-      index gid = min_gid;
-      const thread vp_of_gid = kernel().vp_manager.suggest_vp( gid );
+      // TODO480: temporal manual implementation to sort out logic
+      // Need to find smallest gid with:
+      //   - gid local to this thread
+      //   - gid >= min_gid
+      const size_t vp = kernel().vp_manager.thread_to_vp( t );
+      const size_t min_gid_vp = kernel().vp_manager.suggest_vp( min_gid );
 
+      size_t gid = 0;
+      if ( min_gid_vp == vp )
+      {
+    	gid = min_gid;
+      }
+      else
+      {
+    	gid = ( min_gid / num_vps ) * num_vps + vp;
+    	// bad hack, need to improve ...
+    	if ( gid < min_gid )
+    		gid += num_vps;
+      }
       // TODO480: Refactor next_vp_local_gid_ so that we can initialize gid as
       //          index gid = next_vp_local_gid_( min_gid, vp );
-      if ( vp != vp_of_gid )
-      {
-        gid = next_vp_local_gid_( gid, vp );
-      }
+      //if ( vp != vp_of_gid )
+      //{
+      //  gid = next_vp_local_gid_( gid, vp );
+      //}
 
       while ( gid < max_gid )
       {
@@ -211,7 +230,9 @@ NodeManager::add_node( index model_id, long n )
         node->set_vp( vp );
 
         local_nodes_[ t ].add_local_node( *node );
-	    gid = next_vp_local_gid_( gid, vp );
+        // TODO480: temp fix
+        gid += num_vps;
+	    // gid = next_vp_local_gid_( gid, vp );
       }
     }
   }
@@ -345,7 +366,10 @@ NodeManager::is_local_node( Node* n ) const
 
 // TODO480: I wonder if the need to loop over threads can be a performance
 // bottleneck. BUT: I think we only need to check whether the node is local
-// TO THE THREAD, and then we do not need to loop.
+// TO THE THREAD, and then we do not need to loop. Also, if we need to check
+// if a node is local to our MPI process, we can do this just by computation,
+// possibly followed by a test (assertion should suffice)  that the node is
+// really there.
 bool
 NodeManager::is_local_gid( index gid ) const
 {
@@ -358,6 +382,9 @@ NodeManager::is_local_gid( index gid ) const
   return is_local;
 }
 
+// TODO480: We need a variant that returns the proper node independent of
+// which thread it is on, as long as the node is on the MPI process; is needed
+// eg for get_status().
 Node* NodeManager::get_node( index gid, thread t )
 {
   assert( 0 <= t and t < kernel().vp_manager.get_num_threads() );
@@ -367,6 +394,30 @@ Node* NodeManager::get_node( index gid, thread t )
   {
     return kernel().model_manager.get_proxy_node( t, gid );
   }
+
+  return node;
+}
+
+Node* NodeManager::get_node_indp_thread( index gid )
+{
+  //thread num_threads = kernel().vp_manager.get_num_threads();
+  //thread t = gid % num_threads;
+
+  thread t = kernel().vp_manager.suggest_vp( gid );
+
+  Node* node = local_nodes_[ t ].get_node_by_gid( gid );
+
+  if ( not node->has_proxies() )
+  {
+    node = local_nodes_[ 0 ].get_node_by_gid( gid );
+  }
+
+  return node;
+}
+
+Node* NodeManager::get_thread_local_node( index gid, thread t )
+{
+  Node* node = local_nodes_[ t ].get_node_by_gid( gid );
 
   return node;
 }

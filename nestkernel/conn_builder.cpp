@@ -381,7 +381,6 @@ nest::ConnBuilder::connect()
       std::swap( sources_, targets_ ); // re-establish original state
     }
   }
-
   // check if any exceptions have been raised
   for ( size_t thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
   {
@@ -642,42 +641,26 @@ nest::OneToOneBuilder::connect_()
             continue;
           }
 
-          // check whether the target is on this mpi machine
-          if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
-          {
-            skip_conn_parameter_( tid );
-            continue;
-          }
-
           Node* const target =
-            kernel().node_manager.get_node( ( *tgid ).gid, tid );
-          const thread target_thread = target->get_thread();
+                      kernel().node_manager.get_thread_local_node( ( *tgid ).gid, tid );
 
-          // check whether the target is on our thread
-          if ( tid != target_thread )
+          if ( target == 0 )
           {
             skip_conn_parameter_( tid );
             continue;
           }
-          single_connect_( ( *sgid ).gid, *target, target_thread, rng );
+
+          single_connect_( ( *sgid ).gid, *target, tid, rng );
         }
       }
       else
       {
         const SparseNodeArray& local_nodes =
-	  kernel().node_manager.get_local_nodes( tid );
-	SparseNodeArray::const_iterator n;
-	for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-	{
-	  Node* target = n->get_node();
-	  const thread target_thread = target->get_thread();
-
-          if ( tid != target_thread )
-          {
-            // no skipping required / possible,
-            // as we iterate only over local nodes
-            continue;
-          }
+          kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
+          Node* target = n->get_node();
 
           const index tgid = n->get_gid();
           const int idx = targets_->find( tgid );
@@ -694,7 +677,7 @@ nest::OneToOneBuilder::connect_()
             // as we iterate only over local nodes
             continue;
           }
-          single_connect_( sgid, *target, target_thread, rng );
+          single_connect_( sgid, *target, tid, rng );
         }
       }
     }
@@ -883,24 +866,25 @@ nest::AllToAllBuilder::connect_()
               tgid < targets_->end();
               ++tgid )
         {
-          // check whether the target is on this mpi machine
-          if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
+          Node* const target =
+                      kernel().node_manager.get_thread_local_node( ( *tgid ).gid, tid );
+
+          if ( target == 0 )
           {
             skip_conn_parameter_( tid, sources_->size() );
             continue;
           }
-          Node* const target =
-            kernel().node_manager.get_node( ( *tgid ).gid, tid );
+
           inner_connect_( tid, rng, target, ( *tgid ).gid, true );
         }
       }
       else
       {
         const SparseNodeArray& local_nodes =
-	  kernel().node_manager.get_local_nodes( tid );
-	SparseNodeArray::const_iterator n;
-	for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-	{
+          kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
           const index tgid = n->get_gid();
 
           // Is the local node in the targets list?
@@ -1166,6 +1150,7 @@ nest::FixedInDegreeBuilder::FixedInDegreeBuilder( GIDCollectionPTR sources,
 void
 nest::FixedInDegreeBuilder::connect_()
 {
+
 #pragma omp parallel
   {
     // get thread id
@@ -1182,15 +1167,15 @@ nest::FixedInDegreeBuilder::connect_()
               tgid < targets_->end();
               ++tgid )
         {
-          // check whether the target is on this mpi machine
-          if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
+          Node* const target =
+              kernel().node_manager.get_thread_local_node( ( *tgid ).gid, tid );
+
+          if ( target == 0 )
           {
             // skip array parameters handled in other virtual processes
             skip_conn_parameter_( tid, indegree_ );
             continue;
           }
-
-          Node* target = kernel().node_manager.get_node( ( *tgid ).gid, tid );
 
           inner_connect_( tid, rng, target, ( *tgid ).gid, true );
         }
@@ -1198,10 +1183,10 @@ nest::FixedInDegreeBuilder::connect_()
       else
       {
         const SparseNodeArray& local_nodes =
-	  kernel().node_manager.get_local_nodes( tid );
-	SparseNodeArray::const_iterator n;
-	for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-	{
+          kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
           const index tgid = n->get_gid();
 
           // Is the local node in the targets list?
@@ -1360,26 +1345,17 @@ nest::FixedOutDegreeBuilder::connect_()
               tgid != tgt_ids_.end();
               ++tgid )
         {
-          // check whether the target is on this mpi machine
-          if ( not kernel().node_manager.is_local_gid( *tgid ) )
+          Node* const target =
+              kernel().node_manager.get_thread_local_node( *tgid, tid );
+
+          if ( target == 0 )
           {
             // skip array parameters handled in other virtual processes
             skip_conn_parameter_( tid );
             continue;
           }
 
-          Node* const target = kernel().node_manager.get_node( *tgid, tid );
-          const thread target_thread = target->get_thread();
-
-          // check whether the target is on our thread
-          if ( tid != target_thread )
-          {
-            // skip array parameters handled in other virtual processes
-            skip_conn_parameter_( tid );
-            continue;
-          }
-
-          single_connect_( ( *sgid ).gid, *target, target_thread, rng );
+          single_connect_( ( *sgid ).gid, *target, tid, rng );
         }
       }
       catch ( std::exception& err )
@@ -1606,14 +1582,15 @@ nest::BernoulliBuilder::connect_()
               tgid < targets_->end();
               ++tgid )
         {
-          // check whether the target is on this mpi machine
-          if ( not kernel().node_manager.is_local_gid( ( *tgid ).gid ) )
+          Node* const target =
+              kernel().node_manager.get_thread_local_node( ( *tgid ).gid, tid );
+
+          if ( target == 0 )
           {
+            // skip array parameters handled in other virtual processes
+            skip_conn_parameter_( tid );
             continue;
           }
-
-          Node* const target =
-            kernel().node_manager.get_node( ( *tgid ).gid, tid );
 
           inner_connect_( tid, rng, target, ( *tgid ).gid );
         }
@@ -1622,10 +1599,10 @@ nest::BernoulliBuilder::connect_()
       else
       {
         const SparseNodeArray& local_nodes =
-	  kernel().node_manager.get_local_nodes( tid );
-	SparseNodeArray::const_iterator n;
-	for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
-	{
+          kernel().node_manager.get_local_nodes( tid );
+        SparseNodeArray::const_iterator n;
+        for ( n = local_nodes.begin(); n != local_nodes.end(); ++n )
+        {
           const index tgid = n->get_gid();
 
           // Is the local node in the targets list?

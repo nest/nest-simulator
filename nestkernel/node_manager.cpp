@@ -104,7 +104,7 @@ NodeManager::get_status( index idx )
 {
   // TODO480: This runs on thread 0. We need to make sure that we find the
   // actual node for nodes with proxies!
-  //Node* target = get_node( idx );
+  // Node* target = get_node( idx );
 
   Node* target = get_node_indp_thread( idx );
 
@@ -405,6 +405,11 @@ Node* NodeManager::get_node_indp_thread( index gid )
   thread t = gid % num_threads;
 
   Node* node = local_nodes_[ t ].get_node_by_gid( gid );
+
+  if ( not node->has_proxies() )
+  {
+    node = local_nodes_[ 0 ].get_node_by_gid( gid );
+  }
 
   return node;
 }

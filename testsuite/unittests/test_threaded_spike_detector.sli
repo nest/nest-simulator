@@ -55,12 +55,6 @@ M_ERROR setverbosity
     /sd  /spike_detector Create def
     sd << /withgid true /withtime true /to_memory true >> SetStatus 
     
-    % poisson_generator
-    %/pg /poisson_generator Create def
-    %pg <<
-    %  /rate 80000.
-    % >> SetStatus
-    
     %pg nrns Connect
     nrns sd Connect
 
@@ -74,13 +68,14 @@ def
 
 {
   << >> begin
- 1 run_sd == ==
- 3 run_sd == ==
+  1 run_sd /r1s Set /r1t Set
+  3 run_sd /r3s Set /r3t Set
+ 
+  r1t Sort r3t Sort eq
+  r1s Sort r3s Sort eq
  
   end
 } assert_or_die
-
-
 
 
 endusing

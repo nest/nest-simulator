@@ -68,19 +68,11 @@ def
 
 {
   << >> begin
- ('thread = 1') ==
  1 run_multimeter /r1s Set /r1V Set
- ('thread = 3') ==
  3 run_multimeter /r3s Set /r3V Set
- 
- ('------------') ==
- r1s ==
- r1V ==
- r3s ==
- r3V ==
- 
- r1V r3V eq
- r1s r3s eq
+
+ r1V Sort r3V Sort eq
+ r1s Sort r3s Sort eq
  
   end
 } assert_or_die

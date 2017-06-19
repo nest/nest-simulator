@@ -78,7 +78,6 @@ forall
   
   << /total_num_virtual_procs num_threads >> SetKernelStatus
   
-  % NB! Must do something about num of targets and num threads when changing so loop_over_targets() not always true
   % Create source and target neurons
   /net1 /iaf_psc_alpha 10 Create def
   /net2 /iaf_psc_alpha 10 Create def
@@ -103,7 +102,6 @@ forall
   
   << /total_num_virtual_procs num_threads >> SetKernelStatus
   
-  % NB! Must do something about num of targets and num threads when changing so loop_over_targets() not always true
   % Create source and target neurons
   /net1 /iaf_psc_alpha 10 Create def
   /net2 /iaf_psc_alpha 10 Create def
@@ -129,7 +127,6 @@ forall
   
   << /total_num_virtual_procs num_threads >> SetKernelStatus
   
-  % NB! Must do something about num of targets and num threads when changing so loop_over_targets() not always true
   % Create source and target neurons
   /net1 /iaf_psc_alpha 10 Create def
   /net2 /iaf_psc_alpha 10 Create def
@@ -155,7 +152,6 @@ forall
   
   << /total_num_virtual_procs num_threads >> SetKernelStatus
   
-  % NB! Must do something about num of targets and num threads when changing so loop_over_targets() not always true
   % Create source and target neurons
   /net1 /iaf_psc_alpha 10 Create def
   /net2 /iaf_psc_alpha 10 Create def
@@ -182,7 +178,6 @@ forall
   
   << /total_num_virtual_procs num_threads >> SetKernelStatus
   
-  % NB! Must do something about num of targets and num threads when changing so loop_over_targets() not always true
   % Create source and target neurons
   /net1 /iaf_psc_alpha 10 Create def
   /net2 /iaf_psc_alpha 10 Create def

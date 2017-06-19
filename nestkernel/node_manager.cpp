@@ -53,6 +53,7 @@ NodeManager::NodeManager()
   , wfr_is_used_( false )
   , nodes_vec_network_size_( 0 ) // zero to force update
   , num_active_nodes_( 0 )
+  , exceptions_raised_()  // cannot call kernel(), not complete yet
 {
 }
 
@@ -131,12 +132,9 @@ NodeManager::add_node( index model_id, long n )
   assert( model != 0 );
   model->deprecation_warning( "Create" );
 
-  // TODO480: We should reconsider if it is really smart that max_gid is
-  // the largest new gid PLUS ONE. This leads to -1 in several places below
-  // and is a bit confusing.
   const index min_gid = local_nodes_.at( 0 ).get_max_gid() + 1;
-  const index max_gid = min_gid + n;
-  if ( max_gid > local_nodes_.at( 0 ).max_size() or max_gid < min_gid )
+  const index max_gid = min_gid + n - 1;
+  if ( max_gid >= local_nodes_.at( 0 ).max_size() or max_gid < min_gid )
   {
     LOG( M_ERROR,"NodeManager::add_node",
 	 "Requested number of nodes will overflow the memory. "
@@ -144,152 +142,35 @@ NodeManager::add_node( index model_id, long n )
     throw KernelException( "OutOfMemory" );
   }
 
-  kernel().modelrange_manager.add_range( model_id, min_gid, max_gid - 1 );
+  kernel().modelrange_manager.add_range( model_id, min_gid, max_gid );
 
-  // Nodes are created in parallel by all threads. The algorithm is
-  // the same for all types of nodes:
-  // 1. reserve additional space in the thread-local SparseNodeArray
-  // 2. reserve additional space in the corresponding thread-local
-  //    model pool
-  // 3. create the node and set its properties
-  // 4. register the new node in the thread-local SparseNodeArray
-  //
-  // In order to guarantee a consistent representation, we set the new
-  // maximum gid on all SparseNodeArrays.
-  //
-  // We need to distinguish three cases for the creation:
-  // 1. For nodes having proxies (usually neurons), we only create
-  //    a node on the thread responsible for the node. On all other
-  //    threads, we just do nothing. get_node() will take care of
-  //    returning the corresponding proxy for non-existing nodes.
-  // 2. For nodes without proxies and with replicas on each threads
-  //    (normal devices) we create a node on each thread.
-  // 3. For nodes without proxies and only one instance per process
-  //    (MUSIC proxies) we create a node only on thread 0.
-
-  // TODO: put the code in the blocks below in three functions with the
-  //       following signatures in node_manager.h:
-  // void add_node_neurons_( Model* model, index min_gid, index max_gid );
-  // void add_node_devices_( Model* model, index min_gid, index max_gid );
-  // void add_node_music_( Model* model, index min_gid, index max_gid );
+  // clear any exceptions from previous call
+  std::vector< lockPTR< WrappedThreadException > >(  kernel().vp_manager.get_num_threads() ).swap( exceptions_raised_ );
 
   if ( model->has_proxies() )
   {
-    // add_node_neurons_( model, min_gid, max_gid );
-
-	// upper limit for number of neurons per thread; in practice, either
-	// max_new_per_thread-1 or max_new_per_thread nodes will be created
-    const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
-    const size_t max_new_per_thread = static_cast< size_t >( std::ceil(
-    		static_cast< double >( max_gid - min_gid ) / num_vps ) );
-
-#ifdef _OPENMP
-#pragma omp parallel
-#endif
-    {
-      const index t = kernel().vp_manager.get_thread_id();
-      // TODO480: We should move more of the reservation logic into the
-      // SparseNodeArray. We should tell SNA only max_gid-1 and whether the model
-      // needs local replicas or not. Then SNA can manage memory. This can reduce
-      // bloat due to round-up when using many Create calls for >1 thread
-      local_nodes_.at( t ).reserve_additional( max_new_per_thread );
-      model->reserve_additional( t, max_new_per_thread );
-
-      // TODO480: temporal manual implementation to sort out logic
-      // Need to find smallest gid with:
-      //   - gid local to this thread
-      //   - gid >= min_gid
-      const size_t vp = kernel().vp_manager.thread_to_vp( t );
-      const size_t min_gid_vp = kernel().vp_manager.suggest_vp( min_gid );
-
-      size_t gid = 0;
-      if ( min_gid_vp == vp )
-      {
-    	gid = min_gid;
-      }
-      else
-      {
-    	gid = ( min_gid / num_vps ) * num_vps + vp;
-    	// bad hack, need to improve ...
-    	if ( gid < min_gid )
-    		gid += num_vps;
-      }
-      // TODO480: Refactor next_vp_local_gid_ so that we can initialize gid as
-      //          index gid = next_vp_local_gid_( min_gid, vp );
-      //if ( vp != vp_of_gid )
-      //{
-      //  gid = next_vp_local_gid_( gid, vp );
-      //}
-
-      while ( gid < max_gid )
-      {
-        Node* node = model->allocate( t );
-        node->set_gid_( gid );
-        node->set_model_id( model->get_model_id() );
-        node->set_thread( t );
-        node->set_vp( vp );
-
-        local_nodes_[ t ].add_local_node( *node );
-        // TODO480: temp fix
-        gid += num_vps;
-	    // gid = next_vp_local_gid_( gid, vp );
-      }
-    }
+    add_neurons_( *model, min_gid, max_gid );
   }
   else if ( not model->one_node_per_process() )
   {
-    // add_node_devices_( model, min_gid, max_gid );
-
-    int n_per_thread = ( max_gid - min_gid ) + 1;
-
-#ifdef _OPENMP
-#pragma omp parallel
-    {
-      index t = kernel().vp_manager.get_thread_id();
-#else // clang-format off
-    for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
-    {
-#endif // clang-format on
-      local_nodes_[ t ].reserve_additional( n_per_thread );
-      model->reserve_additional( t, n_per_thread );
-
-      for ( index gid = min_gid; gid < max_gid; ++gid )
-      {
-        Node* node = model->allocate( t );
-        node->set_gid_( gid );
-        node->set_model_id( model->get_model_id() );
-        node->set_thread( t );
-        node->set_vp( kernel().vp_manager.thread_to_vp( t ) );
-
-        local_nodes_[ t ].add_local_node( *node );
-      }
-    }
+    add_devices_( *model, min_gid, max_gid );
   }
   else
   {
-    // add_node_music_( model, min_gid, max_gid );
+    add_music_nodes_( *model, min_gid, max_gid );
+  }
 
-    for ( index gid = min_gid; gid < max_gid; ++gid )
+  // check if any exceptions have been raised
+  for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
+    if ( exceptions_raised_.at( t ).valid() )
     {
-      Node* node = model->allocate( 0 );
-      node->set_gid_( gid );
-      node->set_model_id( model->get_model_id() );
-      node->set_thread( 0 );
-      node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
-
-      local_nodes_[ 0 ].add_local_node( *node );
+      throw WrappedThreadException( *( exceptions_raised_.at( t ) ) );
     }
   }
-  
-#ifdef _OPENMP
-#pragma omp parallel
-#endif
-  {
-    const size_t t = kernel().vp_manager.get_thread_id();
-    local_nodes_.at( t ).update_max_gid( max_gid-1 );
-  }
 
-  // set off-grid spike communication if necessary
+  // activate off-grid communication only after nodes have been created
+  // successfully
   if ( model->is_off_grid() )
   {
     kernel().event_delivery_manager.set_off_grid_communication( true );
@@ -302,26 +183,145 @@ NodeManager::add_node( index model_id, long n )
   }
 
   return GIDCollectionPTR(
-    new GIDCollectionPrimitive( min_gid, max_gid - 1, model_id ) );
+    new GIDCollectionPrimitive( min_gid, max_gid, model_id ) );
 }
 
-inline index
-NodeManager::next_vp_local_gid_( index gid, thread vp ) const
+
+void
+NodeManager::add_neurons_( Model& model, index min_gid, index max_gid )
 {
-  thread vp_of_gid = kernel().vp_manager.suggest_vp( gid );
-  thread num_vp = kernel().vp_manager.get_num_virtual_processes();
+  // upper limit for number of neurons per thread; in practice, either
+  // max_new_per_thread-1 or max_new_per_thread nodes will be created
+  const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
+  const size_t max_new_per_thread = static_cast< size_t >(
+    std::ceil( static_cast< double >( max_gid - min_gid + 1 ) / num_vps ) );
 
-  if ( vp < vp_of_gid )
+  #pragma omp parallel
   {
-    return gid + num_vp - vp_of_gid;
+    const index t = kernel().vp_manager.get_thread_id();
+
+    try
+    {
+      // TODO480: We should move more of the reservation logic into the
+      // SparseNodeArray. We should tell SNA only max_gid-1 and whether the
+      // model
+      // needs local replicas or not. Then SNA can manage memory. This can
+      // reduce
+      // bloat due to round-up when using many Create calls for >1 thread
+      local_nodes_.at( t ).reserve_additional( max_new_per_thread );
+      model.reserve_additional( t, max_new_per_thread );
+
+      // TODO480: temporal manual implementation to sort out logic
+      // Need to find smallest gid with:
+      //   - gid local to this thread
+      //   - gid >= min_gid
+      const size_t vp = kernel().vp_manager.thread_to_vp( t );
+      const size_t min_gid_vp = kernel().vp_manager.suggest_vp( min_gid );
+
+      size_t gid = 0;
+      if ( min_gid_vp == vp )
+      {
+        gid = min_gid;
+      }
+      else
+      {
+        gid = ( min_gid / num_vps ) * num_vps + vp;
+        // bad hack, need to improve ...
+        if ( gid < min_gid )
+          gid += num_vps;
+      }
+
+      while ( gid <= max_gid )
+      {
+        Node* node = model.allocate( t );
+        node->set_gid_( gid );
+        node->set_model_id( model.get_model_id() );
+        node->set_thread( t );
+        node->set_vp( vp );
+
+        local_nodes_[ t ].add_local_node( *node );
+        gid += num_vps;
+      }
+      local_nodes_[ t ].update_max_gid( max_gid );
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( t ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
   }
-  if ( vp > vp_of_gid )
+}
+
+void
+NodeManager::add_devices_( Model& model, index min_gid, index max_gid )
+{
+  const size_t n_per_thread = max_gid - min_gid + 1;
+
+  #pragma omp parallel
   {
-    return gid + vp - vp_of_gid;
+    const index t = kernel().vp_manager.get_thread_id();
+    try
+    {
+      local_nodes_[ t ].reserve_additional( n_per_thread );
+      model.reserve_additional( t, n_per_thread );
+
+      for ( index gid = min_gid; gid <= max_gid; ++gid )
+      {
+        Node* node = model.allocate( t );
+        node->set_gid_( gid );
+        node->set_model_id( model.get_model_id() );
+        node->set_thread( t );
+        node->set_vp( kernel().vp_manager.thread_to_vp( t ) );
+
+        local_nodes_[ t ].add_local_node( *node );
+      }
+      local_nodes_[ t ].update_max_gid( max_gid );
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( t ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
   }
 
-  return gid + num_vp;
- }
+}
+
+void
+NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid )
+{
+  #pragma omp parallel
+  {
+	const size_t t = kernel().vp_manager.get_thread_id();
+
+	try
+	{
+	  if ( t == 0 )
+	  {
+		for ( index gid = min_gid; gid <= max_gid; ++gid )
+	    {
+		  Node* node = model.allocate( 0 );
+		  node->set_gid_( gid );
+		  node->set_model_id( model.get_model_id() );
+		  node->set_thread( 0 );
+		  node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
+  		  local_nodes_[ 0 ].add_local_node( *node );
+	    }
+	  }
+	  local_nodes_.at( t ).update_max_gid( max_gid );
+	}
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( t ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
 
 void
 NodeManager::restore_nodes( const ArrayDatum& node_list )
@@ -406,6 +406,7 @@ Node* NodeManager::get_node_indp_thread( index gid )
   thread t = kernel().vp_manager.suggest_vp( gid );
 
   Node* node = local_nodes_[ t ].get_node_by_gid( gid );
+  assert( node != 0 );
 
   if ( not node->has_proxies() )
   {

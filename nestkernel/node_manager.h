@@ -240,10 +240,40 @@ private:
   void prepare_node_( Node* );
 
   /**
-   * Returns the next vp-local gid after the given gid. gids are
-   * distributed onto vps in a round-robin fashion.
+   * Add normal neurons.
+   *
+   * Each neuron is added to exactly one virtual process. On all other
+   * VPs, it is represented by a proxy.
+   *
+   * @param model Model of neuron to create.
+   * @param min_gid GID of first neuron to create.
+   * @param max_gid GID of last neuron to create (inclusive).
    */
-  index next_vp_local_gid_( index gid, thread vp ) const;
+  void add_neurons_( Model& model, index min_gid, index max_gid );
+
+  /**
+   * Add device nodes.
+   *
+   * For device nodes, a clone of the node is added to every virtual process.
+   *
+   * @param model Model of neuron to create.
+   * @param min_gid GID of first neuron to create.
+   * @param max_gid GID of last neuron to create (inclusive).
+   */
+  void add_devices_( Model& model, index min_gid, index max_gid );
+
+  /**
+   * Add MUSIC nodes.
+   *
+   * Nodes for MUSIC communication are added once per MPI process and are
+   * always placed on thread 0.
+   *
+   * @param model Model of neuron to create.
+   * @param min_gid GID of first neuron to create.
+   * @param max_gid GID of last neuron to create (inclusive).
+   */
+  void add_music_nodes_( Model& model, index min_gid, index max_gid );
+
 
 private:
   /**
@@ -271,6 +301,9 @@ private:
   //! Network size when nodes_vec_ was last updated
   index nodes_vec_network_size_;
   size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
+
+  //! Store exceptions raised in thread-parallel sections for later handling
+  std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;
 };
 
 inline index

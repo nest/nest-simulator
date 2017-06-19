@@ -45,6 +45,7 @@ SeeAlso: correlomatrix_detector
 /N_ch       8 def
 
 % First test: parameter setting on model and instance
+(Test 1) ==
 {
   ResetKernel
   /cd1 /correlomatrix_detector Create def
@@ -62,6 +63,7 @@ ResetKernel
 
 
 % Second test: error if trying to set invalid channel number
+(Test 2) ==
 {
   ResetKernel
   /correlomatrix_detector << /N_channels 0 >> SetDefaults
@@ -74,6 +76,7 @@ ResetKernel
 
 
 % Third test: error if uncommensurable delta_tau
+(Test 3) ==
 {
   ResetKernel
   << /resolution 0.1 >> SetKernelStatus
@@ -82,6 +85,7 @@ ResetKernel
 
 
 % Fourth test: error if delta_tau even multiple of resolution
+(Test 4) ==
 {
   ResetKernel
   << /resolution 0.1 >> SetKernelStatus
@@ -90,6 +94,7 @@ ResetKernel
 
 
 % Fifth test: error if uncommensurable tau_max
+(Test 5) ==
 {
   ResetKernel
   << /resolution 0.1 >> SetKernelStatus
@@ -98,6 +103,7 @@ ResetKernel
 
 
 % Sixth test: error if uncommensurable change of resolution
+(Test 6) ==
 {
   ResetKernel
   << /resolution 0.1 >> SetKernelStatus
@@ -108,6 +114,7 @@ ResetKernel
 
 
 % Seventh test: proper number of histogram bins under resolution changes
+(Test 7) ==
 {
   ResetKernel
   << /resolution 0.1 >> SetKernelStatus
@@ -173,6 +180,7 @@ def
 
 
 % Eighth test: correlation histogram for time differences in bin centers
+(Test 8) ==
 {
   ResetKernel
   
@@ -187,6 +195,7 @@ def
 
 
 % Ninth test: test that reset works
+(Test 9) ==
 {
   ResetKernel
 

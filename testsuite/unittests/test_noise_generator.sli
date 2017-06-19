@@ -38,6 +38,7 @@ SeeAlso: noise_generator
 /unittest using
 
 % First test: parameter setting on model and instance
+(Test 1) ==
 {
     ResetKernel
     /tdict << /mean 10.5 /std 0.23 /dt 0.5 >> def
@@ -56,6 +57,7 @@ clear
 ResetKernel
 
 % Second test: error if uncommensurable delta_tau
+(Test 2) ==
 {
   ResetKernel
   << /resolution 0.1 >> SetKernelStatus
@@ -63,6 +65,7 @@ ResetKernel
 } fail_or_die  
 
 % Third test: error if uncommensurable change of resolution
+(Test 3) ==
 {
   ResetKernel
   << /resolution 0.1 >> SetKernelStatus
@@ -72,6 +75,7 @@ ResetKernel
 } fail_or_die  
 
 % Fourth test: recording at two different dt
+(Test 4) ==
 /vb verbosity def
 M_ERROR setverbosity  % suppress warning from time reset
 {

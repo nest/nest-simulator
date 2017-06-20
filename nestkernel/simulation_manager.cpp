@@ -662,12 +662,13 @@ nest::SimulationManager::update_()
             % kernel().sp_manager.get_structural_plasticity_update_interval()
           == 0 )
       {
-        for ( std::vector< Node* >::const_iterator i =
-                kernel().node_manager.get_nodes_on_thread( thrd ).begin();
-              i != kernel().node_manager.get_nodes_on_thread( thrd ).end();
+        for ( SparseNodeArray::const_iterator i =
+                kernel().node_manager.get_local_nodes( thrd ).begin();
+              i != kernel().node_manager.get_local_nodes( thrd ).end();
               ++i )
         {
-          ( *i )->update_synaptic_elements(
+          Node* node = i->get_node();
+          node->update_synaptic_elements(
             Time( Time::step( clock_.get_steps() + from_step_ ) ).get_ms() );
         }
 #pragma omp barrier
@@ -676,12 +677,13 @@ nest::SimulationManager::update_()
           kernel().sp_manager.update_structural_plasticity();
         }
         // Remove 10% of the vacant elements
-        for ( std::vector< Node* >::const_iterator i =
-                kernel().node_manager.get_nodes_on_thread( thrd ).begin();
-              i != kernel().node_manager.get_nodes_on_thread( thrd ).end();
+        for ( SparseNodeArray::const_iterator i =
+                kernel().node_manager.get_local_nodes( thrd ).begin();
+              i != kernel().node_manager.get_local_nodes( thrd ).end();
               ++i )
         {
-          ( *i )->decay_synaptic_elements_vacant();
+          Node* node = i->get_node();
+          node->decay_synaptic_elements_vacant();
         }
       }
 
@@ -806,20 +808,20 @@ nest::SimulationManager::update_()
       } // of if(wfr_is_used)
       // end of preliminary update
 
-      const std::vector< Node* >& thread_local_nodes =
-        kernel().node_manager.get_nodes_on_thread( thrd );
+      const SparseNodeArray& thread_local_nodes = kernel().node_manager.get_local_nodes( thrd );
       for (
-        std::vector< Node* >::const_iterator node = thread_local_nodes.begin();
-        node != thread_local_nodes.end();
-        ++node )
+        SparseNodeArray::const_iterator n = thread_local_nodes.begin();
+        n != thread_local_nodes.end();
+        ++n )
       {
         // We update in a parallel region. Therefore, we need to catch
         // exceptions here and then handle them after the parallel region.
         try
         {
-          if ( not( *node )->is_frozen() )
+          Node* node = n->get_node();
+          if ( not( node )->is_frozen() )
           {
-            ( *node )->update( clock_, from_step_, to_step_ );
+            ( node )->update( clock_, from_step_, to_step_ );
           }
         }
         catch ( std::exception& e )
@@ -877,12 +879,13 @@ nest::SimulationManager::update_()
       to_do_ > 0 and not exit_on_user_signal_ and not exception_raised );
 
     // End of the slice, we update the number of synaptic elements
-    for ( std::vector< Node* >::const_iterator i =
-            kernel().node_manager.get_nodes_on_thread( thrd ).begin();
-          i != kernel().node_manager.get_nodes_on_thread( thrd ).end();
+    for ( SparseNodeArray::const_iterator i =
+            kernel().node_manager.get_local_nodes( thrd ).begin();
+          i != kernel().node_manager.get_local_nodes( thrd ).end();
           ++i )
     {
-      ( *i )->update_synaptic_elements(
+      Node* node = i->get_node();
+      node->update_synaptic_elements(
         Time( Time::step( clock_.get_steps() + to_step_ ) ).get_ms() );
     }
 

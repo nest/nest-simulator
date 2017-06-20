@@ -136,8 +136,22 @@ public:
    * @ingroup net_access
    */
   Node* get_node( index, thread thr = 0 );
+
+  /*
+   * Return Node on the thread we are on.
+   *
+   * If the node has proxies, it returns the node on the first thread (used by
+   * recorders).
+   *
+   * @params gid Index of the Node.
+   */
   Node* get_node_indp_thread( index );
 
+  /*
+   * Return local Node on thread given by specified gid.
+   * @param gid Index of the Node.
+   * @param t Thread index of the Node.
+   */
   Node* get_thread_local_node( index, thread );
 
   /**
@@ -158,11 +172,6 @@ public:
   void ensure_valid_thread_local_ids();
 
   Node* thread_lid_to_node( thread t, targetindex thread_local_id ) const;
-
-  /**
-   * Get list of nodes on given thread.
-   */
-  const std::vector< Node* >& get_nodes_on_thread( thread ) const;
 
   /**
    * Get list of nodes on given thread.
@@ -240,10 +249,40 @@ private:
   void prepare_node_( Node* );
 
   /**
-   * Returns the next vp-local gid after the given gid. gids are
-   * distributed onto vps in a round-robin fashion.
+   * Add normal neurons.
+   *
+   * Each neuron is added to exactly one virtual process. On all other
+   * VPs, it is represented by a proxy.
+   *
+   * @param model Model of neuron to create.
+   * @param min_gid GID of first neuron to create.
+   * @param max_gid GID of last neuron to create (inclusive).
    */
-  index next_vp_local_gid_( index gid, thread vp ) const;
+  void add_neurons_( Model& model, index min_gid, index max_gid );
+
+  /**
+   * Add device nodes.
+   *
+   * For device nodes, a clone of the node is added to every virtual process.
+   *
+   * @param model Model of neuron to create.
+   * @param min_gid GID of first neuron to create.
+   * @param max_gid GID of last neuron to create (inclusive).
+   */
+  void add_devices_( Model& model, index min_gid, index max_gid );
+
+  /**
+   * Add MUSIC nodes.
+   *
+   * Nodes for MUSIC communication are added once per MPI process and are
+   * always placed on thread 0.
+   *
+   * @param model Model of neuron to create.
+   * @param min_gid GID of first neuron to create.
+   * @param max_gid GID of last neuron to create (inclusive).
+   */
+  void add_music_nodes_( Model& model, index min_gid, index max_gid );
+
 
 private:
   /**
@@ -252,25 +291,17 @@ private:
   */
   std::vector< SparseNodeArray > local_nodes_;
 
-  /**
-   * Data structure holding node pointers per thread.
-   *
-   * The outer dimension of indexes threads. Each per-thread vector
-   * contains all nodes on that thread.
-   *
-   * @note Frozen nodes are included, so that we do not need to regenerate
-   * these vectors when the frozen status on nodes is changed (which is
-   * essentially undetectable).
-   */
-  std::vector< std::vector< Node* > > nodes_vec_;
   std::vector< std::vector< Node* > >
     wfr_nodes_vec_;  //!< Nodelists for unfrozen nodes that
                      //!< use the waveform relaxation method
   bool wfr_is_used_; //!< there is at least one node that uses
                      //!< waveform relaxation
-  //! Network size when nodes_vec_ was last updated
-  index nodes_vec_network_size_;
+  //! Network size when wfr_nodes_vec_ was last updated
+  index wfr_network_size_;
   size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
+
+  //! Store exceptions raised in thread-parallel sections for later handling
+  std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;
 };
 
 inline index
@@ -282,13 +313,8 @@ NodeManager::size() const
 inline Node*
 NodeManager::thread_lid_to_node( thread t, targetindex thread_local_id ) const
 {
-  return nodes_vec_[ t ][ thread_local_id ];
-}
-
-inline const std::vector< Node* >&
-NodeManager::get_nodes_on_thread( thread t ) const
-{
-  return nodes_vec_.at( t );
+  return local_nodes_[ t ].get_node_by_index( thread_local_id );
+  //return nodes_vec_[ t ][ thread_local_id ];
 }
 
 inline const std::vector< Node* >&

@@ -718,16 +718,17 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
   std::vector< int >::iterator vacant_n_it = se_vacant_n.begin();
   std::vector< index >::iterator deleted_id_it = se_deleted_id.begin();
   std::vector< int >::iterator deleted_n_it = se_deleted_n.begin();
-  std::vector< Node* >::const_iterator node_it;
+  SparseNodeArray::const_iterator node_it;
 
   for ( size_t thrd = 0; thrd < kernel().vp_manager.get_num_threads(); ++thrd )
   {
-    for ( node_it = kernel().node_manager.get_nodes_on_thread( thrd ).begin();
-          node_it < kernel().node_manager.get_nodes_on_thread( thrd ).end();
+    for ( node_it = kernel().node_manager.get_local_nodes( thrd ).begin();
+          node_it < kernel().node_manager.get_local_nodes( thrd ).end();
           node_it++ )
     {
-      gid = ( *node_it )->get_gid();
-      n = ( *node_it )->get_synaptic_elements_vacant( se_name );
+      gid = node_it->get_gid();
+      Node* node = node_it->get_node();
+      n = node->get_synaptic_elements_vacant( se_name );
       if ( n > 0 )
       {
         ( *vacant_id_it ) = gid;

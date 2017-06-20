@@ -21,17 +21,20 @@
  */
 
 
- /* BeginDocumentation
-Name: 
-
-Synopsis: (test_connect_with_threads) run -> NEST exits if test fails
-
-Description:
-
-
-Author: Stine B. Vennemo
-FirstVersion: June 2018
-SeeAlso:
+/* BeginDocumentation
+   Name: testsuite::test_connect_with_threads
+    
+   Synopsis: (test_connect_with_threads) run -> NEST exits if test fails
+    
+   Description:
+   This test goes through all the connection rules and test connectivity for
+   a range of threads with the given rule. For each rule, we check that 
+   connectivity works when total number of threads ranges from 1 to 25. We should
+   have more threads than targets after a while.
+    
+   Author: Stine B. Vennemo
+   FirstVersion: June 2018
+   SeeAlso:
 */
 
 (unittest) run
@@ -39,19 +42,16 @@ SeeAlso:
 
 M_ERROR setverbosity
 
-% Early test, should get num_threads and conn_spec into one.
-
 % one_to_one:
 
-[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25]
+[25] Range
 {
   /num_threads Set
 
   ResetKernel
   
   << /total_num_virtual_procs num_threads >> SetKernelStatus
-  
-  % NB! Must do something about num of targets and num threads when changing so loop_over_targets() not always true
+
   % Create source and target neurons
   /net1 /iaf_psc_alpha 10 Create def
   /net2 /iaf_psc_alpha 10 Create def
@@ -62,6 +62,7 @@ M_ERROR setverbosity
   
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
   
+  % Check to see if we have correct number of connections
   /num_conn GetKernelStatus /num_connections get def
   
   10 num_conn eq assert_or_die
@@ -70,7 +71,7 @@ forall
 
 % all_to_all:
 
-[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25]
+[25] Range
 {
   /num_threads Set
 
@@ -87,14 +88,15 @@ forall
   
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
   
+  % Check to see if we have correct number og connections
   /num_conn GetKernelStatus /num_connections get def
   100 num_conn eq assert_or_die
 }
 forall
 
-% fixed indegree:
+% fixed_indegree:
 
-[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25]
+[25] Range
 {
   /num_threads Set
 
@@ -112,14 +114,15 @@ forall
   
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
   
+  % Check to see if we have correct number of connections
   /num_conn GetKernelStatus /num_connections get def
-  50 num_conn eq assert_or_die % 
+  50 num_conn eq assert_or_die
 }
 forall
 
-% fixed outdegree:
+% fixed_outdegree:
 
-[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25]
+[25] Range
 {
   /num_threads Set
 
@@ -137,14 +140,15 @@ forall
   
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
   
+  % Check to see if we have correct number of connections
   /num_conn GetKernelStatus /num_connections get def
-  50 num_conn eq assert_or_die % 
+  50 num_conn eq assert_or_die
 }
 forall
 
-% fixed total number:
+% fixed_total_number:
 
-[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25]
+[25] Range
 {
   /num_threads Set
 
@@ -162,21 +166,30 @@ forall
   
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
   
+  % Check to see if we have currect number of connections
   /num_conn GetKernelStatus /num_connections get def
-  5 num_conn eq assert_or_die % 
+  5 num_conn eq assert_or_die 
 }
 forall
 
-('pairwise_bernoulli: ') ==
+% pairwise_bernoulli
 
-[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25]
+[25] Range
 {
   /num_threads Set
-  num_threads ==
 
   ResetKernel
   
-  << /total_num_virtual_procs num_threads >> SetKernelStatus
+  % Need to set seed depending on number of threads
+  /seed_start 100 num_threads mul def
+  /seed_end seed_start num_threads add 1 sub def
+  
+  /seed_array [seed_start seed_end] Range def
+  
+  << 
+      /total_num_virtual_procs num_threads
+      /rng_seeds seed_array
+  >> SetKernelStatus
   
   % Create source and target neurons
   /net1 /iaf_psc_alpha 10 Create def
@@ -189,12 +202,14 @@ forall
   net1 net2 conn_dict syn_dict Connect % Connect source to target neurons
   
   /num_conn GetKernelStatus /num_connections get def
-  num_conn =
   
-  10 num_conn eq assert_or_die % 
+  % Check to see if number of connections are within convergence interval
+  num_conn 10 sub abs /std Set
+  num_conn 10 std add leq /less_than Set
+  num_conn 10 std sub geq /greater_than Set
+  
+  less_than greater_than and assert_or_die
 }
 forall
 
 endusing
-
-

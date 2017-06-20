@@ -48,10 +48,9 @@ namespace nest
 
 NodeManager::NodeManager()
   : local_nodes_( 1 )
-  , nodes_vec_()
   , wfr_nodes_vec_()
   , wfr_is_used_( false )
-  , nodes_vec_network_size_( 0 ) // zero to force update
+  , wfr_network_size_( 0 ) // zero to force update
   , num_active_nodes_( 0 )
   , exceptions_raised_()  // cannot call kernel(), not complete yet
 {
@@ -66,8 +65,8 @@ NodeManager::~NodeManager()
 void
 NodeManager::initialize()
 {
-  // explicitly force construction of nodes_vec_ to ensure consistent state
-  nodes_vec_network_size_ = 0;
+  // explicitly force construction of wfr_nodes_vec_ to ensure consistent state
+  wfr_network_size_ = 0;
   local_nodes_.resize( kernel().vp_manager.get_num_threads() );
   ensure_valid_thread_local_ids();
 }
@@ -103,9 +102,6 @@ NodeManager::reinit_nodes()
 DictionaryDatum
 NodeManager::get_status( index idx )
 {
-  // TODO480: This runs on thread 0. We need to make sure that we find the
-  // actual node for nodes with proxies!
-
   Node* target = get_node_indp_thread( idx );
 
   assert( target != 0 );
@@ -301,15 +297,15 @@ NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid )
 	{
 	  if ( t == 0 )
 	  {
-		for ( index gid = min_gid; gid <= max_gid; ++gid )
-	    {
-		  Node* node = model.allocate( 0 );
-		  node->set_gid_( gid );
-		  node->set_model_id( model.get_model_id() );
-		  node->set_thread( 0 );
-		  node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
-  		  local_nodes_[ 0 ].add_local_node( *node );
-	    }
+      for ( index gid = min_gid; gid <= max_gid; ++gid )
+      {
+        Node* node = model.allocate( 0 );
+        node->set_gid_( gid );
+        node->set_model_id( model.get_model_id() );
+        node->set_thread( 0 );
+        node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
+        local_nodes_[ 0 ].add_local_node( *node );
+      }
 	  }
 	  local_nodes_.at( t ).update_max_gid( max_gid );
 	}
@@ -400,9 +396,6 @@ Node* NodeManager::get_node( index gid, thread t )
 
 Node* NodeManager::get_node_indp_thread( index gid )
 {
-  //thread num_threads = kernel().vp_manager.get_num_threads();
-  //thread t = gid % num_threads;
-
   thread t = kernel().vp_manager.suggest_vp( gid );
 
   Node* node = local_nodes_[ t ].get_node_by_gid( gid );
@@ -449,71 +442,62 @@ NodeManager::ensure_valid_thread_local_ids()
   // the critical region if it is not necessary. Note that this
   // test also covers that case that nodes have been deleted
   // by reset.
-  if ( size() == nodes_vec_network_size_ )
+  if ( size() == wfr_network_size_ )
   {
     return;
   }
 
 #ifdef _OPENMP
-#pragma omp critical( update_nodes_vec )
+#pragma omp critical( update_wfr_nodes_vec )
   {
 // This code may be called from a thread-parallel context, when it is
 // invoked by TargetIdentifierIndex::set_target() during parallel
 // wiring. Nested OpenMP parallelism is problematic, therefore, we
 // enforce single threading here. This should be unproblematic wrt
-// performance, because the nodes_vec_ is rebuilt only once after
+// performance, because the wfr_nodes_vec_ is rebuilt only once after
 // changes in network size.
 #endif
 
     // Check again, if the network size changed, since a previous thread
-    // can have updated nodes_vec_ before.
-    if ( size() != nodes_vec_network_size_ )
+    // can have updated wfr_nodes_vec_ before.
+    if ( size() != wfr_network_size_ )
     {
 
-      /* We clear the existing nodes_vec_ and then rebuild it. */
-      nodes_vec_.clear();
-      nodes_vec_.resize( kernel().vp_manager.get_num_threads() );
+      /* We clear the existing wfr_nodes_vec_ and then rebuild it. */
       wfr_nodes_vec_.clear();
       wfr_nodes_vec_.resize( kernel().vp_manager.get_num_threads() );
 
       for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
       {
-        nodes_vec_[ t ].clear();
         wfr_nodes_vec_[ t ].clear();
 
-        size_t num_thread_local_nodes = 0;
         size_t num_thread_local_wfr_nodes = 0;
         for ( size_t idx = 0; idx < local_nodes_[ t ].size(); ++idx )
         {
           Node* node = local_nodes_[ t ].get_node_by_index( idx );
-	      if ( node != 0 )
-	      {
-            ++num_thread_local_nodes;
-            if ( node->node_uses_wfr() )
-            {
-              ++num_thread_local_wfr_nodes;
-            }
+          if ( node != 0 and node->node_uses_wfr_ )
+          {
+            ++num_thread_local_wfr_nodes;
           }
         }
-        nodes_vec_[ t ].reserve( num_thread_local_nodes );
         wfr_nodes_vec_[ t ].reserve( num_thread_local_wfr_nodes );
 
         for ( size_t idx = 0; idx < local_nodes_[ t ].size(); ++idx )
         {
           Node* node = local_nodes_[ t ].get_node_by_index( idx );
-	      if ( node != 0 )
-	      {
-            node->set_thread_lid( nodes_vec_[ t ].size() );
-            nodes_vec_[ t ].push_back( node );
-            if ( node->node_uses_wfr() )
+
+          if ( node != 0 )
+          {
+            node->set_thread_lid( idx );
+            if ( node->node_uses_wfr_ )
             {
               wfr_nodes_vec_[ t ].push_back( node );
             }
-	      }
+          }
         }
       } // end of for threads
 
-      nodes_vec_network_size_ = size();
+      wfr_network_size_ = size();
 
       // wfr_is_used_ indicates, whether at least one
       // of the threads has a neuron that uses waveform relaxtion
@@ -616,15 +600,15 @@ NodeManager::prepare_nodes()
     // exceptions here and then handle them after the parallel region.
     try
     {
-      for ( std::vector< Node* >::iterator it = nodes_vec_[ t ].begin();
-            it != nodes_vec_[ t ].end();
+      for ( SparseNodeArray::const_iterator it = local_nodes_[ t ].begin();
+            it != local_nodes_[ t ].end();
             ++it )
       {
-        prepare_node_( *it );
-        if ( not( *it )->is_frozen() )
+        prepare_node_( ( it )->get_node() );
+        if ( not( it->get_node() )->is_frozen() )
         {
           ++num_active_nodes;
-          if ( ( *it )->node_uses_wfr() )
+          if ( ( it->get_node() )->node_uses_wfr() )
           {
             ++num_active_wfr_nodes;
           }

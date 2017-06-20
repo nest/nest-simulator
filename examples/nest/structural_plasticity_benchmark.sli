@@ -41,9 +41,9 @@
 /n_neurons 6000 def     % total number of neurons
 /gamma 0.8 def          % relative size of excitatory population
 
-/PSP_e 1.0 def          % PSP of synapses created between neurons in the network (mV)
+/psp_e 1.0 def          % PSP of synapses created between neurons in the network (mV)
 /g -1.0 def             % IPSP amplitude relative to EPSP amplitude
-/PSP_ext 0.0106 def     % mean EPSP amplitude for external input (mV)
+/psp_ext 0.0106 def     % mean EPSP amplitude for external input (mV)
 /bg_rate 10000.0 def    % rate of background Poisson input at each external input synapse (spikes/s)
 /delay 1. def           % delay of all connections (ms)
 
@@ -196,9 +196,9 @@
     /psc_e_over_psp_e 1. 1. C_m div tau_m mul tau_syn_ex mul de div re tau_m de div pow re tau_syn_ex de div pow sub mul div def
     /psc_i_over_psp_i 1. 1. C_m div tau_m mul tau_syn_in mul de div ri tau_m di div pow ri tau_syn_in di div pow sub mul div def
 
-    /psc_e psc_e_over_psp_e PSP_e mul def
-    /psc_i psc_e_over_psp_e PSP_e g mul mul def
-    /psc_ext psc_e_over_psp_e PSP_ext mul def
+    /psc_e psc_e_over_psp_e psp_e mul def
+    /psc_i psc_e_over_psp_e psp_e g mul mul def
+    /psc_ext psc_e_over_psp_e psp_ext mul def
 
     endusing
 
@@ -229,8 +229,6 @@
 
     EnableStructuralPlasticity
 
-    % << 
-
     /static_synapse /synapse_ex CopyModel
     /synapse_ex << /weight psc_e /delay delay >> SetDefaults
     /static_synapse /synapse_in CopyModel
@@ -241,13 +239,13 @@
         /structural_plasticity_synapses <<
                                             /synapse_ex <<
                                                             /model /synapse_ex
-                                                            /post_synaptic_element /Den_ex
-                                                            /pre_synaptic_element /Axon_ex
+                                                            /post_synaptic_element /den_ex
+                                                            /pre_synaptic_element /axon_ex
                                                         >>
                                             /synapse_in <<
                                                             /model /synapse_in
-                                                            /post_synaptic_element /Den_in
-                                                            /pre_synaptic_element /Axon_in
+                                                            /post_synaptic_element /den_in
+                                                            /pre_synaptic_element /axon_in
                                                         >>
                                         >>
     >> SetStructuralPlasticityStatus
@@ -260,9 +258,9 @@
     /min_gid_neurons_e 1 def
     /iaf_psc_alpha n_neurons_e <<
                                    /synaptic_elements <<
-                                                          /Den_ex growth_curve_e_e
-                                                          /Den_in growth_curve_e_i
-                                                          /Axon_ex growth_curve_e_e
+                                                          /den_ex growth_curve_e_e
+                                                          /den_in growth_curve_e_i
+                                                          /axon_ex growth_curve_e_e
                                                       >>
                                >> Create /max_gid_neurons_e Set
     /nodes_e min_gid_neurons_e max_gid_neurons_e cvgidcollection def
@@ -270,9 +268,9 @@
     /min_gid_neurons_i max_gid_neurons_e 1 add def
     /iaf_psc_alpha n_neurons_i <<
                                    /synaptic_elements <<
-                                                          /Den_ex growth_curve_i_e
-                                                          /Den_in growth_curve_i_i
-                                                          /Axon_in growth_curve_i_i
+                                                          /den_ex growth_curve_i_e
+                                                          /den_in growth_curve_i_i
+                                                          /axon_in growth_curve_i_i
                                                       >>
                                >> Create /max_gid_neurons_i Set
     /nodes_i min_gid_neurons_i max_gid_neurons_i cvgidcollection def
@@ -332,7 +330,7 @@
         /gid Set
         gid min_gid_neurons_e gt gid max_gid_neurons_e lt and
         {
-            gid GetStatus /synaptic_elements get /Axon_ex get /z_connected get syn_e add
+            gid GetStatus /synaptic_elements get /axon_ex get /z_connected get syn_e add
             /syn_e Set
         } if
     } forall
@@ -343,13 +341,13 @@
         /gid Set
         gid min_gid_neurons_i gt gid max_gid_neurons_i lt and
         {
-            gid GetStatus /synaptic_elements get /Axon_in get /z_connected get syn_i add
+            gid GetStatus /synaptic_elements get /axon_in get /z_connected get syn_i add
             /syn_i Set
         } if
     } forall
 
-    t cvs ( ) join syn_e cvs join ( # Axon count ex) join logger /log call
-    t cvs ( ) join syn_i cvs join ( # Axon count in) join logger /log call
+    t cvs ( ) join syn_e cvs join ( # axon count ex) join logger /log call
+    t cvs ( ) join syn_i cvs join ( # axon count in) join logger /log call
 } def
 
 % records the total number of spikes generated locally

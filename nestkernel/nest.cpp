@@ -92,7 +92,7 @@ print_nodes_to_stream( std::ostream& ostr )
 librandom::RngPtr
 get_vp_rng_of_gid( index target )
 {
-  Node* target_node = kernel().node_manager.get_node( target );
+  Node* target_node = kernel().node_manager.get_node_indp_thread( target );
 
   if ( not kernel().node_manager.is_local_node( target_node ) )
   {

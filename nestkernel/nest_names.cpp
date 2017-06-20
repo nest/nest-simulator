@@ -484,6 +484,7 @@ const Name U_std( "U_std" );
 const Name U_upper( "U_upper" );
 const Name update( "update" );
 const Name update_node( "update_node" );
+const Name use_gid( "use_gid" );
 const Name use_wfr( "use_wfr" );
 
 const Name V_act_NMDA( "V_act_NMDA" );

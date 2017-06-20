@@ -523,6 +523,8 @@ private:
     bool flush_records_;        //!< if true, flush stream after each output
     bool close_on_reset_;       //!< if true, close stream in init_buffers()
 
+    bool use_gid_;
+
     /**
      * Set default parameter values.
      * @param Default file name extension, excluding ".".

@@ -81,6 +81,7 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   , flush_after_simulate_( true )
   , flush_records_( false )
   , close_on_reset_( true )
+  , use_gid_( true )
 {
 }
 
@@ -165,6 +166,8 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
   ( *d )[ names::flush_records ] = flush_records_;
   ( *d )[ names::close_on_reset ] = close_on_reset_;
 
+  ( *d )[ names::use_gid ] = use_gid_;
+
   if ( to_file_ && not filename_.empty() )
   {
     initialize_property_array( d, names::filenames );
@@ -225,6 +228,8 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   updateValue< bool >( d, names::flush_after_simulate, flush_after_simulate_ );
   updateValue< bool >( d, names::flush_records, flush_records_ );
   updateValue< bool >( d, names::close_on_reset, close_on_reset_ );
+
+  updateValue< bool >( d, names::use_gid, use_gid_ );
 
   // In Pynest we cannot use /record_to, because we have no way to pass
   // values as LiteralDatum. Thus, we must keep the boolean flags.
@@ -984,9 +989,17 @@ nest::RecordingDevice::build_filename_() const
     basename << node_.get_name();
   }
 
-  basename << "-" << std::setfill( '0' ) << std::setw( gidigits )
-           << node_.get_gid() << "-" << std::setfill( '0' )
-           << std::setw( vpdigits ) << node_.get_vp();
+  if ( P_.use_gid_ and not P_.label_.empty() )
+  {
+    basename << "-" << std::setfill( '0' ) << std::setw( gidigits )
+             << node_.get_gid() << "-" << std::setfill( '0' )
+             << std::setw( vpdigits ) << node_.get_vp();
+  }
+  else
+  {
+    basename << "-" << std::setfill( '0' ) << std::setw( vpdigits )
+             << node_.get_vp();
+  }
   return basename.str() + '.' + P_.file_ext_;
 }
 

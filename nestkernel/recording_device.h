@@ -84,9 +84,10 @@ public:
    */
   enum Type
   {
-    SPIKE_DETECTOR,
     MULTIMETER,
-    SPIN_DETECTOR
+    SPIKE_DETECTOR,
+    SPIN_DETECTOR,
+    WEIGHT_RECORDER
   };
   virtual Type get_type() const = 0;
 

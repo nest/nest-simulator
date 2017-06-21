@@ -93,11 +93,7 @@ sg << /spike_times [spike_time] >> SetStatus % generates a single peak
 
 % Creates a voltmeter
 /voltmeter Create /vm Set
-vm << /withtime true
-/time_in_steps true
-/interval dt
-/to_file true
-/precision 5 >> SetStatus
+vm << /time_in_steps true /interval dt >> SetStatus
 
 % Creates one aeif_conf_beta_multisynapse neuron
 /aeif_cond_beta_multisynapse Create /multisynapse_neuron Set
@@ -203,8 +199,7 @@ d /times get cva /ts Set % get times
   def
   
   /sd /spike_detector << /time_in_steps true >> Create def
-  /vm /voltmeter << /withtime true /time_in_steps true
-                    /interval res >> Create def
+  /vm /voltmeter << /time_in_steps true /interval res >> Create def
   
   nrn sd Connect
   vm nrn Connect
@@ -236,8 +231,7 @@ d /times get cva /ts Set % get times
   def
   
   /sd /spike_detector << /time_in_steps true >> Create def
-  /vm /voltmeter << /withtime true /time_in_steps true
-                    /interval res >> Create def
+  /vm /voltmeter << /time_in_steps true /interval res >> Create def
   
   nrn sd Connect
   vm nrn Connect
@@ -281,8 +275,7 @@ d /times get cva /ts Set % get times
   def
   
   /sd /spike_detector << /time_in_steps true >> Create def
-  /vm /multimeter << /withtime true /time_in_steps true
-                     /interval res /record_from [ /V_m /w ] >> Create def
+  /vm /multimeter << /time_in_steps true /interval res /record_from [ /V_m /w ] >> Create def
   
   nrn sd Connect
   vm nrn Connect

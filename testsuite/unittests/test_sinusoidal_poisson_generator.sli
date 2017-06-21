@@ -121,7 +121,7 @@ M_ERROR setverbosity
   
   /snet /subnet Create def
   snet ChangeSubnet  
-  /spike_detector n << /withtime true /withgid false >> Create ;
+  /spike_detector n Create ;
   0 ChangeSubnet
   /sdets snet GetLocalLeaves def
 

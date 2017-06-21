@@ -86,11 +86,7 @@ for the kernel.
   /poisson_generator_ps Create /pn Set
  
   % now configure
-  sp  << /record_to [ /memory ]
-         /precise_times true
-         /stop Tstop
-      >> 
-  SetStatus
+  sp  << /stop Tstop >> SetStatus
 
   pn << /rate prate >> SetStatus
 

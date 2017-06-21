@@ -104,12 +104,6 @@ M_ERROR setverbosity
   Connect
 
   /meter /spike_detector Create def
-  meter <<
-    /withgid    true
-    /withtime   true
-    /to_file    false
-    /to_memory  true
-  >> SetStatus
 
   neurons [meter] Connect
 

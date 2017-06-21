@@ -45,7 +45,6 @@ SeeAlso: spike_detector
   sg << /precise_times false /spike_times [ 10. 200. 10. ] Range >> SetStatus
 
   /spike_detector Create /sd Set
-  sd << /record_to [/memory] /withtime true /withgid true >> SetStatus
 
   sg sd Connect
 

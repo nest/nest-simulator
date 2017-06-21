@@ -52,7 +52,7 @@ M_ERROR setverbosity
 
   sg nrn 15.0 1.0 Connect
 
-  /spike_detector << /withgid false >>  Create /sd Set
+  /spike_detector Create /sd Set
 
   nrn sd Connect
 

@@ -60,9 +60,7 @@ nest.SetStatus(pg_in, {"rate": K_in * nu_in})
 sd = nest.Create("spike_detector")
 nest.SetStatus(sd, {
     "label": "spikes",
-    "withtime": True,
-    "withgid": True,
-    "to_file": True,
+    "record_to": ["ascii"],
 })
 
 neuron1 = nest.Create("iaf_psc_alpha")

@@ -64,7 +64,7 @@ ResetKernel
 	pn << /rate 16384.0 >> SetStatus
 
 /spike_detector Create /sp Set  
-sp  << /withgid false  /withtime true  /time_in_steps true /precise_times true >> SetStatus
+sp  << /time_in_steps true >> SetStatus
  
 
 

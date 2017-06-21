@@ -71,7 +71,7 @@ is_threaded not { exit_test_gracefully } if
     /multimeter       Create /mm Set
 
     [sd mm] {
-        << /withgid true /withtime true /to_file true >> SetStatus
+        << /record_to [ /ascii /memory ] >> SetStatus
     } forall	
 
     mm << /record_from [/V_m] >> SetStatus
@@ -108,7 +108,7 @@ is_threaded not { exit_test_gracefully } if
 % ResetKernel
 % 0 << /local_num_threads 4 >>  SetStatus
 % 
-% /multimeter  << /record_to [ /memory ] /record_from [ /V_m ] /withgid true /interval 1.0 >> Create /mm Set
+% /multimeter  << /record_to [ /memory ] /record_from [ /V_m ] /interval 1.0 >> Create /mm Set
 % 
 % 0 1 3 {
 %   cvd /x Set

@@ -66,7 +66,6 @@ M_ERROR setverbosity
 
 
 /spike_detector Create /sp Set
-sp  << /precise_times true >> SetStatus
 
 
 /poisson_generator_ps Create /pn Set

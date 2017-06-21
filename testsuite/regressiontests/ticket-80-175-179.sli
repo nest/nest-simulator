@@ -50,18 +50,14 @@ M_ERROR setverbosity
   /start   0.0 
   /stop  100.0 
   /interval resolution
-  /to_memory true
-  /withtime true
 >> def 
 
 /sd_params <<
   /origin 0.0
   /start  0.0 
   /stop  100.0 
-  /to_memory     true
-  /precise_times false
   /time_in_steps true
-  /to_file true
+  /record_to [ /ascii /memory ]
 >> def
 
 /sg_params <<

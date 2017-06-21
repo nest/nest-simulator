@@ -170,8 +170,7 @@ def from_device(detec, neurons=None, title=None, grayscale=False,
         times, voltages = _from_memory(detec)
 
         if not len(times):
-            raise nest.NESTError("No events recorded! Make sure that \
-                withtime and withgid are set to True.")
+            raise nest.NESTError("No events recorded!")
 
         if neurons is None:
             neurons = voltages.keys()

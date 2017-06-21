@@ -33,7 +33,6 @@ class TestSplit(unittest.TestCase):
 
     def setup(self):
         nest.ResetKernel()
-        nest.SetDefaults('spike_detector', {'withtime': True})
 
         n1 = nest.Create("iaf_psc_alpha")
         nest.SetStatus(n1, {"I_e": 376.0})

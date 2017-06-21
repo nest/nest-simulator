@@ -226,7 +226,7 @@ class RefractoryTestCase(unittest.TestCase):
         name_Vm = "V_m.s" if model == "iaf_cond_alpha_mc" else "V_m"
         vm_params = {"interval": resolution, "record_from": [name_Vm]}
         vm = nest.Create("voltmeter", params=vm_params)
-        sd = nest.Create("spike_detector", params={'precise_times': True})
+        sd = nest.Create("spike_detector")
         cg = nest.Create("dc_generator", params={"amplitude": 900.})
         # for models that do not clamp V_m, use very large current to trigger
         # almost immediate spiking => t_ref almost equals interspike

@@ -70,8 +70,7 @@ public:
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
 
-protected:
-  void initialize_();
+  void initialize();
 
 private:
   void close_files_();

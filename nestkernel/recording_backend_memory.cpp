@@ -65,7 +65,7 @@ nest::RecordingBackendMemory::enroll( RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendMemory::initialize_()
+nest::RecordingBackendMemory::initialize()
 {
   data_map tmp( kernel().vp_manager.get_num_threads() );
   data_.swap( tmp );
@@ -74,8 +74,6 @@ nest::RecordingBackendMemory::initialize_()
 void
 nest::RecordingBackendMemory::finalize()
 {
-  // don't set initialized_ to false here, as collected data is still valid
-  // until the next run of Simulate()
 }
 
 void
@@ -123,10 +121,9 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
   data_[ t ][ gid ]->push_back( sender, stamp.get_ms() - offset, values );
 }
 
-
 void
-nest::RecordingBackendMemory::get_device_status_( const RecordingDevice& device,
-  DictionaryDatum& d ) const
+nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device,
+						 DictionaryDatum& d ) const
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
@@ -134,4 +131,18 @@ nest::RecordingBackendMemory::get_device_status_( const RecordingDevice& device,
   data_map::value_type::const_iterator device_data = data_[ t ].find( gid );
   assert( device_data != data_[ t ].end() );
   device_data->second->get_status( d );
+}
+
+void
+nest::RecordingBackendMemory::set_device_status( const RecordingDevice& device,
+						 const DictionaryDatum& d )
+{
+  const int t = device.get_thread();
+  const int gid = device.get_gid();
+
+  if ( data_[ t ].find( gid ) != data_[ t ].end() )
+  {
+    bool time_in_steps = device.get_time_in_steps();
+    data_[ t ].find( gid )->second->set_time_in_steps( time_in_steps );
+  }
 }

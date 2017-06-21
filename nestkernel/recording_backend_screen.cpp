@@ -40,7 +40,7 @@ nest::RecordingBackendScreen::enroll( RecordingDevice&,
 }
 
 void
-nest::RecordingBackendScreen::initialize_()
+nest::RecordingBackendScreen::initialize()
 {
   std::cout << std::fixed;
   std::cout << std::setprecision( P_.precision_ );
@@ -49,7 +49,6 @@ nest::RecordingBackendScreen::initialize_()
 void
 nest::RecordingBackendScreen::finalize()
 {
-  initialized_ = false;
 }
 
 void

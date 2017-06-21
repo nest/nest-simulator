@@ -75,9 +75,6 @@ public:
    */
   void finalize();
 
-  void get_device_status_( const RecordingDevice& device,
-    DictionaryDatum& ) const;
-
   /**
    * Trivial synchronization function. The RecordingBackendMemory does
    * not need explicit synchronization after each time step.
@@ -97,12 +94,16 @@ public:
     const Event& event,
     const std::vector< double >& values );
 
-protected:
   /**
    * Initialize the RecordingBackendMemory during simulation preparation.
    */
-  void initialize_();
+  void initialize();
 
+  void get_device_status( const RecordingDevice& device,
+			  DictionaryDatum& ) const;
+
+  void set_device_status( const RecordingDevice& device,
+			  const DictionaryDatum& );
 
 private:
   class Recordings

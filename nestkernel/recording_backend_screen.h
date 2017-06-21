@@ -85,13 +85,10 @@ public:
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
 
-protected:
   /**
-   * Initialization function. In this case, only floating point precision of the
-   * standard output
-   * stream is configured according to the parameters.
+   * Initialization function.
    */
-  void initialize_();
+  void initialize();
 
 private:
   struct Parameters_

@@ -416,9 +416,6 @@ nest::SimulationManager::prepare()
     kernel().event_delivery_manager.configure_spike_buffers();
   }
 
-  // initialize recording backend
-  kernel().io_manager.get_recording_backend()->initialize();
-
   kernel().node_manager.ensure_valid_thread_local_ids();
   kernel().node_manager.prepare_nodes();
 

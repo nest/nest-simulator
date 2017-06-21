@@ -77,6 +77,9 @@ public:
   void set_recording_backend( Name name );
   RecordingBackend* get_recording_backend();
 
+  void get_recording_device_status( const RecordingDevice&, DictionaryDatum& );
+  void set_recording_device_status( const RecordingDevice&, const DictionaryDatum& );
+
 private:
   std::string data_path_;   //!< Path for all files written by devices
   std::string data_prefix_; //!< Prefix for all files written by devices

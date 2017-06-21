@@ -27,6 +27,9 @@
 #include "recording_device.h"
 #include "vp_manager_impl.h"
 
+//includes from sli:
+#include "dictutils.h"
+
 #include "recording_backend_ascii.h"
 
 void
@@ -85,7 +88,7 @@ nest::RecordingBackendASCII::enroll( RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendASCII::initialize_()
+nest::RecordingBackendASCII::initialize()
 {
   file_map tmp( kernel().vp_manager.get_num_threads() );
   files_.swap( tmp );
@@ -118,8 +121,6 @@ nest::RecordingBackendASCII::finalize()
       delete f->second.second;
     }
   }
-
-  initialized_ = false;
 }
 
 void
@@ -254,4 +255,20 @@ nest::RecordingBackendASCII::set_status( const DictionaryDatum& d )
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
+}
+
+void
+nest::RecordingBackendASCII::get_device_status( const RecordingDevice& device,
+  DictionaryDatum& d ) const
+{
+  const thread t = device.get_thread();
+  const index gid = device.get_gid();
+
+  file_map::value_type::const_iterator device_file =  files_[ t ].find( gid );
+
+  if ( device_file != files_[ t ].end() )
+  {
+    initialize_property_array( d, names::filenames );
+    append_property( d, names::filenames, device_file->second.first );
+  }
 }

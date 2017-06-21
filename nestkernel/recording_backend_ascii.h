@@ -58,8 +58,8 @@ public:
    */
   ~RecordingBackendASCII() throw()
   {
-    // remaining files are not closed here but should be handled
-    // gracefully on NEST shutdown.
+    // remaining files are not closed here but handled gracefully on
+    // NEST shutdown.
   }
 
   /**
@@ -98,11 +98,13 @@ public:
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
 
-protected:
   /**
    * Initialize the RecordingBackendASCII during simulation preparation.
    */
-  void initialize_();
+  void initialize();
+
+  void get_device_status( const RecordingDevice& device,
+			  DictionaryDatum& ) const;
 
 private:
   /**

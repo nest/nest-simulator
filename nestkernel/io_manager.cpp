@@ -184,13 +184,25 @@ nest::IOManager::set_recording_backend( Name name )
   std::map< Name, RecordingBackend* >::iterator rb =
     recording_backends_.find( name );
   if ( rb != recording_backends_.end() )
+
+void
+nest::IOManager::get_recording_device_status( const RecordingDevice& device,
+					      DictionaryDatum& d )
+{
+  std::map< Name, RecordingBackend* >::const_iterator it;
+  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
   {
-    recording_backend_ = &( *rb );
+    it->second->get_device_status( device, d );
   }
-  else
+}
+
+void
+nest::IOManager::set_recording_device_status( const RecordingDevice& device,
+					      const DictionaryDatum& d )
+{
+  std::map< Name, RecordingBackend* >::const_iterator it;
+  for ( it = recording_backends_.begin(); it != recording_backends_.end(); ++it )
   {
-    std::string msg =
-      String::compose( "Recording backend is not known: '%1'", name );
-    throw BadProperty( msg );
+    it->second->set_device_status( device, d );
   }
 }

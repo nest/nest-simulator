@@ -82,7 +82,7 @@ nest::RecordingBackendSIONlib::enroll( RecordingDevice& device,
 }
 
 void
-nest::RecordingBackendSIONlib::initialize_()
+nest::RecordingBackendSIONlib::initialize()
 {
   int rank = kernel().mpi_manager.get_rank();
 
@@ -182,7 +182,6 @@ void
 nest::RecordingBackendSIONlib::finalize()
 {
   close_files_();
-  initialized_ = false;
 }
 
 void

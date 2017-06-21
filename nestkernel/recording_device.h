@@ -131,8 +131,9 @@ RecordingDevice::get_status( DictionaryDatum& d ) const
   Device::get_status( d );
 
   ( *d )[ names::element_type ] = LiteralDatum( names::recorder );
-}
 
+  kernel().io_manager.get_recording_device_status( *this, d );
+}
 
 inline bool
 RecordingDevice::is_active( Time const& T ) const

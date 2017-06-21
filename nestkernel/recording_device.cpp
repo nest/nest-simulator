@@ -39,8 +39,6 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& device,
   ( *d )[ names::label ] = label_;
   ( *d )[ names::time_in_steps ] = time_in_steps_;
   ( *d )[ names::record_to ] = record_to_;
-
-  kernel().io_manager.get_recording_backend()->get_device_status( device, d );
 }
 
 void
@@ -109,6 +107,7 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
   ptmp.set( *this, d, stmp.n_events_ ); // throws if BadProperty
 
   Device::set_status( d );
+  kernel().io_manager.set_recording_device_status( *this, d );
 
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;

@@ -23,8 +23,10 @@
 
 namespace nest
 {
+
 namespace names
 {
+
 const Name a( "a" );
 const Name A_lower( "A_lower" );
 const Name A_mean( "A_mean" );
@@ -430,5 +432,7 @@ const Name z_connected( "z_connected" );
 const Name recording_backend( "recording_backend" );
 const Name recording_backends( "recording_backends" );
 const Name recording_backend_status( "recording_backend_status" );
-}
-}
+
+} // namespace names
+
+} // namespace nest

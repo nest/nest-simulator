@@ -38,6 +38,7 @@ namespace nest
  */
 namespace names
 {
+
 extern const Name a; //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name A_lower;
 extern const Name A_mean;
@@ -495,7 +496,9 @@ extern const Name z_connected; //!< Number of connected synaptic elements
 extern const Name recording_backend;
 extern const Name recording_backends;
 extern const Name recording_backend_status;
-}
-}
 
-#endif
+} // namespace names
+
+} // namespace nest
+
+#endif /* #ifndef NEST_NAMES_H */

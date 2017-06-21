@@ -25,12 +25,12 @@
 
   Description:
     Spikes are transmitted by bernoulli_synapse following a Bernoulli trial with
-    success probability p_transmit. This synaptic mechanism was inspired by the 
-    results described in [1] of greater transmission probability for stronger 
+    success probability p_transmit. This synaptic mechanism was inspired by the
+    results described in [1] of greater transmission probability for stronger
     excitatory connections and it was previously applied in [2] and [3].
 
     bernoulli_synapse does not support any kind of plasticity. It simply stores
-    the parameters target, weight, transmission probability, delay and 
+    the parameters target, weight, transmission probability, delay and
     receiver port for each connection.
 
   Parameters:
@@ -46,18 +46,18 @@
 
   References:
 
-    [1] Sandrine Lefort, Christian Tomm, J.-C. Floyd Sarria, Carl C.H. Petersen, 
-  The Excitatory Neuronal Network of the C2 Barrel Column in Mouse Primary 
-  Somatosensory Cortex, Neuron, Volume 61, Issue 2, 29 January 2009, Pages 
+    [1] Sandrine Lefort, Christian Tomm, J.-C. Floyd Sarria, Carl C.H. Petersen,
+  The Excitatory Neuronal Network of the C2 Barrel Column in Mouse Primary
+  Somatosensory Cortex, Neuron, Volume 61, Issue 2, 29 January 2009, Pages
   301-316, DOI: 10.1016/j.neuron.2008.12.020.
 
-    [2] Jun-nosuke Teramae, Yasuhiro Tsubo & Tomoki Fukai, Optimal spike-based 
-  communication in excitable networks with strong-sparse and weak-dense links, 
+    [2] Jun-nosuke Teramae, Yasuhiro Tsubo & Tomoki Fukai, Optimal spike-based
+  communication in excitable networks with strong-sparse and weak-dense links,
   Scientific Reports 2, Article number: 485 (2012), DOI: 10.1038/srep00485
 
-    [3] Yoshiyuki Omura, Milena M. Carvalho, Kaoru Inokuchi, Tomoki Fukai, A 
-  Lognormal Recurrent Network Model for Burst Generation during Hippocampal 
-  Sharp Waves, Journal of Neuroscience 28 October 2015, 35 (43) 14585-14601, 
+    [3] Yoshiyuki Omura, Milena M. Carvalho, Kaoru Inokuchi, Tomoki Fukai, A
+  Lognormal Recurrent Network Model for Burst Generation during Hippocampal
+  Sharp Waves, Journal of Neuroscience 28 October 2015, 35 (43) 14585-14601,
   DOI: 10.1523/JNEUROSCI.4944-14.2015
 */
 
@@ -73,7 +73,7 @@ namespace nest
 
 /**
  * Class representing a Bernoulli connection. A Bernoulli connection has the
- * properties weight, transmission probability, delay and receiver port. 
+ * properties weight, transmission probability, delay and receiver port.
  * A suitable Connector containing these connections can be obtained from
  * the template GenericConnector.
  */
@@ -93,7 +93,7 @@ public:
   BernoulliConnection()
     : ConnectionBase()
     , weight_( 1.0 )
-    , p_transmit_(1.0)
+    , p_transmit_( 1.0 )
   {
   }
 
@@ -144,7 +144,7 @@ public:
   void
   send( Event& e, thread t, double, const CommonSynapseProperties& )
   {
-    SpikeEvent e_spike = static_cast<SpikeEvent &>(e);
+    SpikeEvent e_spike = static_cast< SpikeEvent& >( e );
 
     librandom::RngPtr rng = kernel().rng_manager.get_rng( t );
     const unsigned long n_spikes_in = e_spike.get_multiplicity();
@@ -169,7 +169,7 @@ public:
     }
 
     // Resets multiplicity for consistency
-    e_spike.set_multiplicity( n_spikes_in );  
+    e_spike.set_multiplicity( n_spikes_in );
   }
 
   void get_status( DictionaryDatum& d ) const;
@@ -204,11 +204,11 @@ BernoulliConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, names::p_transmit, p_transmit_);
+  updateValue< double >( d, names::p_transmit, p_transmit_ );
 
   if ( p_transmit_ < 0 || p_transmit_ > 1 )
   {
-    throw BadProperty("Spike transmission probability must be in [0, 1].");
+    throw BadProperty( "Spike transmission probability must be in [0, 1]." );
   }
 }
 

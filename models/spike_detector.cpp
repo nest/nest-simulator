@@ -121,6 +121,7 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
 void
 nest::spike_detector::set_status( const DictionaryDatum& d )
 {
+  RecordingDevice::set_status( d );
 }
 
 void

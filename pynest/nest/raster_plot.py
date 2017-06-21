@@ -24,7 +24,7 @@
 import nest
 import numpy
 import pylab
-
+import uuid
 
 def extract_events(data, time=None, sel=None):
     """Extract all events within a given time interval.
@@ -360,3 +360,14 @@ def show():
     See also: http://matplotlib.sourceforge.net/faq/howto_faq.html#use-show
     """
     pylab.show()
+
+def savefig(fname=str(uuid.uuid4()), **kwargs):
+    """
+    Save figures.
+
+    Call pylab.savefig(), if filename is not provided generate a unique filename. 
+    
+    See also: https://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.savefig
+    """
+    
+    pylab.savefig(fname, **kwargs)

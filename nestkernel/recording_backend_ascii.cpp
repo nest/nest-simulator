@@ -139,7 +139,16 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
   const double offset = event.get_offset();
 
   std::ofstream& file = *( files_[ t ][ gid ].second );
-  file << sender << "\t" << stamp.get_ms() - offset << "\n";
+  file << sender << "\t";
+  if ( device.get_time_in_steps() )
+  {
+    file << stamp.get_steps() << "\t" << offset;
+  }
+  else
+  {
+    file << stamp.get_ms() - offset;
+  }
+  file << "\n";
 }
 
 void
@@ -155,15 +164,20 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
   const double offset = event.get_offset();
 
   std::ofstream& file = *( files_[ t ][ gid ].second );
-  file << sender << "\t" << stamp.get_ms() - offset;
-
-  for ( std::vector< double >::const_iterator val = values.begin();
-        val != values.end();
-        ++val )
+  file << sender << "\t";
+  if ( device.get_time_in_steps() )
+  {
+    file << stamp.get_steps() << "\t" << offset;
+  }
+  else
+  {
+    file << stamp.get_ms() - offset;
+  }
+  std::vector< double >::const_iterator val;
+  for ( val = values.begin(); val != values.end(); ++val )
   {
     file << "\t" << *val;
   }
-
   file << "\n";
 }
 

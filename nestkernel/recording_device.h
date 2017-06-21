@@ -76,6 +76,8 @@ public:
 
   bool is_active( Time const& T ) const;
 
+  bool get_time_in_steps() const;
+
   /**
    * Device type.
    */
@@ -99,12 +101,12 @@ public:
 private:
   struct Parameters_
   {
-    std::string label_; //!< a user-defined label for symbolic device names.
+    std::string label_;    //!< A user-defined label for symbolic device names.
+    bool time_in_steps_;   //!< Flag indicating if time is recorded in steps or ms
 
     Parameters_();
-
     void get( const RecordingDevice&, DictionaryDatum& ) const;
-    void set( const RecordingDevice&, const DictionaryDatum& );
+    void set( const RecordingDevice&, const DictionaryDatum&, long );
   };
 
   struct State_
@@ -138,6 +140,12 @@ RecordingDevice::is_active( Time const& T ) const
   const long stamp = T.get_steps();
 
   return get_t_min_() < stamp && stamp <= get_t_max_();
+}
+
+inline bool
+RecordingDevice::get_time_in_steps() const
+{
+  return P_.time_in_steps_;
 }
 
 } // namespace

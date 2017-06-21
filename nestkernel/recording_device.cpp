@@ -28,6 +28,7 @@
 
 nest::RecordingDevice::Parameters_::Parameters_()
   : label_()
+  , time_in_steps_( false )
 {
 }
 
@@ -36,15 +37,28 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& device,
   DictionaryDatum& d ) const
 {
   ( *d )[ names::label ] = label_;
+  ( *d )[ names::time_in_steps ] = time_in_steps_;
+  ( *d )[ names::record_to ] = record_to_;
 
   kernel().io_manager.get_recording_backend()->get_device_status( device, d );
 }
 
 void
 nest::RecordingDevice::Parameters_::set( const RecordingDevice&,
-  const DictionaryDatum& d )
+					 const DictionaryDatum& d,
+					 long n_events )
 {
   updateValue< std::string >( d, names::label, label_ );
+
+  bool time_in_steps = time_in_steps_;
+  updateValue< bool >( d, names::time_in_steps, time_in_steps );
+  if ( time_in_steps != time_in_steps_ and n_events != 0 )
+  {
+    throw BadProperty("Property /time_in_steps cannot be set if recordings exist. "
+		      "Please clear the events first by setting /n_events to 0.");
+  }
+  time_in_steps_ = time_in_steps;
+}
 
 nest::RecordingDevice::State_::State_()
   : n_events_( 0 )
@@ -91,8 +105,8 @@ nest::RecordingDevice::set_status( const DictionaryDatum& d )
 {
   State_ stmp = S_;         // temporary copy in case of errors
   stmp.set( d, *this );     // throws if BadProperty
-  Parameters_ ptmp = P_; // temporary copy in case of errors
-  ptmp.set( *this, d );  // throws if BadProperty
+  Parameters_ ptmp = P_;    // temporary copy in case of errors
+  ptmp.set( *this, d, stmp.n_events_ ); // throws if BadProperty
 
   Device::set_status( d );
 

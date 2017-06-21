@@ -675,8 +675,7 @@ NestModule::Disconnect_i_i_lFunction::execute( SLIInterpreter* i ) const
   // check whether the target is on this process
   if ( kernel().node_manager.is_local_gid( target ) )
   {
-
-    Node* const target_node = kernel().node_manager.get_node( target );
+    Node* const target_node = kernel().node_manager.get_node_indp_thread( target );
 
     const thread target_thread = target_node->get_thread();
 

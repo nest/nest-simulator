@@ -314,7 +314,6 @@ inline Node*
 NodeManager::thread_lid_to_node( thread t, targetindex thread_local_id ) const
 {
   return local_nodes_[ t ].get_node_by_index( thread_local_id );
-  //return nodes_vec_[ t ][ thread_local_id ];
 }
 
 inline const std::vector< Node* >&

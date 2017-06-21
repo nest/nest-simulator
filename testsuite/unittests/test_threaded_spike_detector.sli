@@ -22,18 +22,22 @@
 
 
 /* BeginDocumentation
-Name: testsuite::test_threaded_spike_detector - test support for spike_detector
+   Name: testsuite::test_threaded_spike_detector - test support for spike_detector
 
-Synopsis: (test_threaded_spike_detector.sli) run -> dies if assertion fails
+   Synopsis: (test_threaded_spike_detector.sli) run -> dies if assertion fails
 
-Description:
+   Description:
+   Tests that spike_detector works when we use threads.
 
-Author: Stine B. Vennemo
-FirstVersion: June 2017
+   Author: Stine B. Vennemo
+   FirstVersion: June 2017
+   SeeAlso: test_threaded_multimeter.sli
 */
 
 (unittest) run
 /unittest using
+
+skip_if_not_threaded
 
 M_ERROR setverbosity
 
@@ -54,8 +58,7 @@ M_ERROR setverbosity
     % spike_detector
     /sd  /spike_detector Create def
     sd << /withgid true /withtime true /to_memory true >> SetStatus 
-    
-    %pg nrns Connect
+
     nrns sd Connect
 
     200. Simulate

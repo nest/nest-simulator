@@ -22,18 +22,22 @@
 
 
 /* BeginDocumentation
-Name: testsuite::test_threaded_multimeter - test support for multimeter
-
-Synopsis: (test_threaded_multimeter.sli) run -> dies if assertion fails
-
-Description:
-
-Author: Stine B. Vennemo
-FirstVersion: June 2017
+   Name: testsuite::test_threaded_multimeter - test support for multimeter
+    
+   Synopsis: (test_threaded_multimeter.sli) run -> dies if assertion fails
+    
+   Description:
+   Tests that multimeter works when we use threads.
+    
+   Author: Stine B. Vennemo
+   FirstVersion: June 2017
+   SeeAlso: test_treaded_spike_detector.sli
 */
 
 (unittest) run
 /unittest using
+
+skip_if_not_threaded
 
 M_ERROR setverbosity
 
@@ -55,7 +59,8 @@ M_ERROR setverbosity
 
     % multimeter
     /ac /multimeter << /record_from [ /V_m ] /withgid true /interval 1.
-                       /to_memory true /to_accumulator false >> Create def  
+                       /to_memory true /to_accumulator false >> Create def
+                       
     ac nrns cvgidcollection Connect
 
     5. Simulate

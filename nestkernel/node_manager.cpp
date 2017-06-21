@@ -396,11 +396,14 @@ Node* NodeManager::get_node( index gid, thread t )
 
 Node* NodeManager::get_node_indp_thread( index gid )
 {
-  thread t = kernel().vp_manager.suggest_vp( gid );
+  thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
 
   Node* node = local_nodes_[ t ].get_node_by_gid( gid );
-  assert( node != 0 );
 
+  if ( node == 0 )
+  {
+    return kernel().model_manager.get_proxy_node( t, gid );
+  }
   if ( not node->has_proxies() )
   {
     node = local_nodes_[ 0 ].get_node_by_gid( gid );

@@ -20,9 +20,11 @@
  *
  */
 
-#include "recording_device.h"
-
+// Includes from libnestutil:
+#include "compose.hpp"
 #include "kernel_manager.h"
+
+#include "recording_device.h"
 
 nest::RecordingDevice::Parameters_::Parameters_()
   : label_()

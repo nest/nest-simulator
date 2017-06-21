@@ -33,14 +33,14 @@
 #include "recording_backend_ascii.h"
 
 void
-nest::RecordingBackendASCII::enroll( RecordingDevice& device )
+nest::RecordingBackendASCII::enroll( const RecordingDevice& device )
 {
   std::vector< Name > value_names;
   enroll( device, value_names );
 }
 
 void
-nest::RecordingBackendASCII::enroll( RecordingDevice& device,
+nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
   const std::vector< Name >& /* value_names */ )
 {
   const thread t = device.get_thread();
@@ -83,6 +83,10 @@ nest::RecordingBackendASCII::enroll( RecordingDevice& device,
       "to true in the root node.",
       filename );
     LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
+
+    files_[ t ].insert( std::make_pair( gid,
+      std::make_pair( filename, static_cast< std::ofstream* >( NULL ) ) ) );
+
     throw IOError();
   }
 }
@@ -114,11 +118,15 @@ nest::RecordingBackendASCII::finalize()
   for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
     file_map::value_type& inner = files_[ t ];
-    for ( file_map::value_type::iterator f = inner.begin(); f != inner.end();
-          ++f )
+    file_map::value_type::iterator f;
+    for ( f = inner.begin(); f != inner.end(); ++f )
     {
-      f->second.second->close();
-      delete f->second.second;
+      std::ofstream* stream = f->second.second;
+      if ( stream != NULL )
+      {
+	stream->close();
+	delete f->second.second;
+      }
     }
   }
 }
@@ -134,6 +142,11 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
+
+  if ( files_[ t ].find( gid ) == files_[ t ].end() )
+  {
+    return;
+  }
 
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
@@ -159,6 +172,11 @@ nest::RecordingBackendASCII::write( const RecordingDevice& device,
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
+
+  if ( files_[ t ].find( gid ) == files_[ t ].end() )
+  {
+    return;
+  }
 
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();

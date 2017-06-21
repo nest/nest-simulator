@@ -35,6 +35,7 @@
 #include "device.h"
 #include "recording_backend.h"
 #include "nest_types.h"
+#include "kernel_manager.h"
 
 // Includes from sli:
 #include "dictdatum.h"
@@ -98,11 +99,18 @@ public:
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
 
+protected:
+  void write( const Event& );
+  void write( const Event&, const std::vector< double >& );
+  void enroll();
+  void enroll( const std::vector< Name >& );
+
 private:
   struct Parameters_
   {
     std::string label_;    //!< A user-defined label for symbolic device names.
     bool time_in_steps_;   //!< Flag indicating if time is recorded in steps or ms
+    ArrayDatum record_to_; //!< Array of recording backends to use
 
     Parameters_();
     void get( const RecordingDevice&, DictionaryDatum& ) const;
@@ -147,6 +155,42 @@ inline bool
 RecordingDevice::get_time_in_steps() const
 {
   return P_.time_in_steps_;
+}
+
+inline void
+RecordingDevice::write( const Event& event )
+{
+  ++S_.n_events_;
+  kernel().io_manager.write( *this, event );
+}
+
+inline void
+RecordingDevice::write( const Event& event, const std::vector< double >& data)
+{
+  ++S_.n_events_;
+  kernel().io_manager.write( *this, event, data );
+}
+
+inline void
+RecordingDevice::enroll()
+{
+  //JME: also handle disenroll
+  for ( Token* t = P_.record_to_.begin(); t != P_.record_to_.end(); ++t )
+  {
+    Name backend_name( getValue< std::string >( *t ) );
+    kernel().io_manager.enroll_recorder( backend_name, *this );
+  }
+}
+
+inline void
+RecordingDevice::enroll( const std::vector< Name >& value_names )
+{
+  //JME: also handle disenroll
+  for ( Token* t = P_.record_to_.begin(); t != P_.record_to_.end(); ++t )
+  {
+    Name backend_name( getValue< std::string >( *t ) );
+    kernel().io_manager.enroll_recorder( backend_name, *this, value_names );
+  }
 }
 
 } // namespace

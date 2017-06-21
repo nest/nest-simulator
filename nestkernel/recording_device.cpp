@@ -30,6 +30,7 @@ nest::RecordingDevice::Parameters_::Parameters_()
   : label_()
   , time_in_steps_( false )
 {
+  record_to_.push_back( LiteralDatum( Name( "memory" ) ) );
 }
 
 void
@@ -56,6 +57,23 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice&,
 		      "Please clear the events first by setting /n_events to 0.");
   }
   time_in_steps_ = time_in_steps;
+
+  ArrayDatum record_to;
+  if ( updateValue< ArrayDatum >( d, names::record_to, record_to ) )
+  {
+    record_to_.clear();
+    for ( Token* t = record_to.begin(); t != record_to.end(); ++t )
+    {
+      Name backend_name( getValue< std::string >( *t ) );
+      if ( not kernel().io_manager.is_valid_recording_backend( backend_name ) )
+      {
+        std::string msg = String::compose( "Unknown recording backend '%1'",
+                                           backend_name.toString() );
+        throw BadProperty( msg );
+      }
+      record_to_.push_back( LiteralDatum( backend_name ) );
+    }
+  }
 }
 
 nest::RecordingDevice::State_::State_()

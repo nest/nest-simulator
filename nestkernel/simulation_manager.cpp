@@ -532,7 +532,7 @@ nest::SimulationManager::run( Time const& t )
 
   call_update_();
 
-  kernel().io_manager.get_recording_backend()->post_run_cleanup();
+  kernel().io_manager.post_run_cleanup();
 }
 
 void
@@ -556,7 +556,7 @@ nest::SimulationManager::cleanup()
     }
   }
 
-  kernel().io_manager.get_recording_backend()->finalize();
+  kernel().io_manager.cleanup();
 }
 
 void
@@ -859,7 +859,7 @@ nest::SimulationManager::update_()
         }
       }
 
-      kernel().io_manager.get_recording_backend()->synchronize();
+      kernel().io_manager.synchronize();
 
 // end of master section, all threads have to synchronize at this point
 #pragma omp barrier

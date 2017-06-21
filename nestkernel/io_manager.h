@@ -74,8 +74,40 @@ public:
    */
   bool overwrite_files() const;
 
-  void set_recording_backend( Name name );
-  RecordingBackend* get_recording_backend();
+  /**
+   * Re-initialize all registered recording backends by calling their
+   * initialize() functions
+   */
+  void num_threads_changed_reset();
+
+  /**
+   * Clean up in all registered recording backends after a single call to run by
+   * calling the backends' post_run_cleanup() functions
+   */
+  void post_run_cleanup();
+
+  /**
+   * Finalize all registered recording backends after a call to
+   * SimulationManager::simulate() or SimulationManager::cleanup() by
+   * calling the backends' finalize() functions
+   */
+  void cleanup();
+
+  /**
+   * Force a synchronization in all registered recording backends by
+   * calling the backends' synchronize() functions
+   */
+  void synchronize();
+
+  bool is_valid_recording_backend( Name );
+
+  void clear_recording_backends( const RecordingDevice& );
+
+  void write( const RecordingDevice&, const Event& );
+  void write( const RecordingDevice&, const Event&, const std::vector< double >& );
+
+  void enroll_recorder( Name, const RecordingDevice& );
+  void enroll_recorder( Name, const RecordingDevice&, const std::vector< Name >& );
 
   void get_recording_device_status( const RecordingDevice&, DictionaryDatum& );
   void set_recording_device_status( const RecordingDevice&, const DictionaryDatum& );
@@ -91,13 +123,16 @@ private:
   std::map< Name, RecordingBackend* > recording_backends_;
 
   /**
-   * A pointer to the current recording backend stored as a
-   * std::pair of name and pointer to the actual backend.
+   * Return the recording backend stored under the given name.  This
+   * function assumes and asserts that the backend actually exists and
+   * expects the caller to have called is_valid_recording_backend()
+   * previously.
+   * @return a pointer to the recording backend.
    */
-  std::pair< const Name, RecordingBackend* >* recording_backend_;
+  RecordingBackend* get_recording_backend_( Name );
 };
-}
 
+} // namespace nest
 
 inline const std::string&
 nest::IOManager::get_data_path() const
@@ -115,12 +150,6 @@ inline bool
 nest::IOManager::overwrite_files() const
 {
   return overwrite_files_;
-}
-
-inline nest::RecordingBackend*
-nest::IOManager::get_recording_backend()
-{
-  return recording_backend_->second;
 }
 
 #endif /* IO_MANAGER_H */

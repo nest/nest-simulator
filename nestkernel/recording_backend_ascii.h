@@ -48,7 +48,6 @@ public:
    * The actual setup is done in initialize().
    */
   RecordingBackendASCII()
-    : files_()
   {
   }
 
@@ -67,8 +66,8 @@ public:
    * themselves with their
    * metadata. Here, files are opened.
    */
-  void enroll( RecordingDevice& device );
-  void enroll( RecordingDevice& device,
+  void enroll( const RecordingDevice& device );
+  void enroll( const RecordingDevice& device,
     const std::vector< Name >& value_names );
 
   /**

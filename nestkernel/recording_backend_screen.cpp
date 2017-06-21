@@ -29,21 +29,27 @@
 #include "recording_backend_screen.h"
 
 void
-nest::RecordingBackendScreen::enroll( RecordingDevice& )
+nest::RecordingBackendScreen::enroll( const RecordingDevice& device)
 {
+  std::vector< Name > value_names;
+  enroll( device, value_names );
 }
 
 void
-nest::RecordingBackendScreen::enroll( RecordingDevice&,
+nest::RecordingBackendScreen::enroll( const RecordingDevice& device,
   const std::vector< Name >& )
 {
+  const index gid = device.get_gid();
+  const thread t = device.get_thread();
+
+  enrolled_devices_[ t ].insert( gid );
 }
 
 void
 nest::RecordingBackendScreen::initialize()
 {
-  std::cout << std::fixed;
-  std::cout << std::setprecision( P_.precision_ );
+  enrollment_map tmp( kernel().vp_manager.get_num_threads() );
+  enrolled_devices_.swap( tmp );
 }
 
 void
@@ -57,38 +63,77 @@ nest::RecordingBackendScreen::synchronize()
 }
 
 void
-nest::RecordingBackendScreen::write( const RecordingDevice&,
+nest::RecordingBackendScreen::write( const RecordingDevice& device,
   const Event& event )
 {
-  const index sender = event.get_sender_gid();
-  const Time stamp = event.get_stamp();
-  const double offset = event.get_offset();
+  const thread t = device.get_thread();
+  const index gid = device.get_gid();
 
-#pragma omp critical
-  std::cout << sender << "\t" << stamp.get_ms() - offset << std::endl;
-}
+  if ( enrolled_devices_[ t ].find( gid ) == enrolled_devices_[ t ].end() )
+  {
+    return;
+  }
 
-void
-nest::RecordingBackendScreen::write( const RecordingDevice&,
-  const Event& event,
-  const std::vector< double >& values )
-{
   const index sender = event.get_sender_gid();
   const Time stamp = event.get_stamp();
   const double offset = event.get_offset();
 
 #pragma omp critical
   {
-    std::cout << sender << "\t" << stamp.get_ms() - offset;
+    prepare_cout_();
 
-    for ( std::vector< double >::const_iterator val = values.begin();
-          val != values.end();
-          ++val )
+    std::cout << sender << "\t";
+    if ( device.get_time_in_steps() )
+    {
+      std::cout << stamp.get_steps() << "\t" << offset << std::endl;
+    }
+    else
+    {
+      std::cout << stamp.get_ms() - offset << std::endl;
+    }
+
+    restore_cout_();
+  }
+}
+
+void
+nest::RecordingBackendScreen::write( const RecordingDevice& device,
+  const Event& event,
+  const std::vector< double >& values )
+{
+  const thread t = device.get_thread();
+  const index gid = device.get_gid();
+
+  if ( enrolled_devices_[ t ].find( gid ) == enrolled_devices_[ t ].end() )
+  {
+    return;
+  }
+
+  const index sender = event.get_sender_gid();
+  const Time stamp = event.get_stamp();
+  const double offset = event.get_offset();
+
+#pragma omp critical
+  {
+    prepare_cout_();
+
+    std::cout << sender << "\t";
+    if ( device.get_time_in_steps() )
+    {
+      std::cout	<< stamp.get_steps() << "\t" << offset;
+    }
+    else
+    {
+      std::cout	<< stamp.get_ms() - offset;
+    }
+    std::vector< double >::const_iterator val;
+    for ( val = values.begin(); val != values.end(); ++val )
     {
       std::cout << "\t" << *val;
     }
-
     std::cout << std::endl;
+
+    restore_cout_();
   }
 }
 

@@ -55,8 +55,8 @@ public:
   {
   }
 
-  void enroll( RecordingDevice& device );
-  void enroll( RecordingDevice& device,
+  void enroll( const RecordingDevice& device );
+  void enroll( const RecordingDevice& device,
     const std::vector< Name >& value_names );
 
   void finalize();

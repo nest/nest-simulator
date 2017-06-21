@@ -36,14 +36,14 @@
 #include "recording_backend_sionlib.h"
 
 void
-nest::RecordingBackendSIONlib::enroll( RecordingDevice& device )
+nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device )
 {
   std::vector< Name > value_names;
   nest::RecordingBackendSIONlib::enroll( device, value_names );
 }
 
 void
-nest::RecordingBackendSIONlib::enroll( RecordingDevice& device,
+nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device,
   const std::vector< Name >& value_names )
 {
   const thread task = device.get_vp();

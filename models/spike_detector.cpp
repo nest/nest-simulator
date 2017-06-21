@@ -48,7 +48,8 @@ nest::spike_detector::spike_detector()
 }
 
 nest::spike_detector::spike_detector( const spike_detector& n )
-  : has_proxies_( false )
+  : RecordingDevice( n )
+  , has_proxies_( false )
   , local_receiver_( true )
 {
 }

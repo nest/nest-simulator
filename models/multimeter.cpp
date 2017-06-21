@@ -35,7 +35,8 @@ Multimeter::Multimeter()
 }
 
 Multimeter::Multimeter( const Multimeter& n )
-  : P_( n.P_ )
+  : RecordingDevice( n )
+  , P_( n.P_ )
   , S_()
   , B_()
 {

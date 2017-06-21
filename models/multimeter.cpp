@@ -182,9 +182,6 @@ Multimeter::handle( DataLoggingReply& reply )
       continue;
     }
 
-    // TODO:
-    // ++S_.events_;
-
     reply.set_stamp( info[ j ].timestamp );
     // const index sender = reply.get_sender_gid();
     // const Time stamp = reply.get_stamp();

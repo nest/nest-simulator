@@ -52,14 +52,14 @@ public:
     Device::init_parameters( pr );
 
     P_ = pr.P_;
-    // S_ = pr.S_; // TODO: do we need state?
+    S_ = pr.S_;
   }
 
   void
   init_state( const RecordingDevice& pr )
   {
     Device::init_state( pr );
-    // S_ = pr.S_; // TODO: do we need state?
+    S_ = pr.S_;
   }
 
   void
@@ -107,13 +107,25 @@ private:
     void set( const RecordingDevice&, const DictionaryDatum& );
   };
 
+  struct State_
+  {
+    size_t n_events_;
+
+    State_();
+    void get( DictionaryDatum& ) const;
+    void set( const DictionaryDatum&, const RecordingDevice& );
+  };
+
   Parameters_ P_;
+  State_ S_;
 };
 
 inline void
 RecordingDevice::get_status( DictionaryDatum& d ) const
 {
   P_.get( *this, d );
+  S_.get( d );
+
   Device::get_status( d );
 
   ( *d )[ names::element_type ] = LiteralDatum( names::recorder );

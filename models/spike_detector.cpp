@@ -41,35 +41,6 @@
 #include "doubledatum.h"
 #include "integerdatum.h"
 
-nest::spike_detector::State_::State_()
-  : n_events_( 0 )
-{
-}
-
-void
-nest::spike_detector::State_::get( DictionaryDatum& d ) const
-{
-  def< long >( d, names::n_events, n_events_ );
-}
-
-void
-nest::spike_detector::State_::set( const DictionaryDatum& d,
-  const spike_detector& sd )
-{
-  long n_events = n_events_;
-  updateValue< long >( d, names::n_events, n_events );
-  if ( n_events == 0 )
-  {
-    kernel().io_manager.get_recording_backend()->clear( sd );
-    n_events_ = n_events;
-  }
-  else
-  {
-    throw BadProperty( "Property n_events can only be set "
-      "to 0 (which clears all stored events)." );
-  }
-}
-
 nest::spike_detector::spike_detector()
   : has_proxies_( false )
   , local_receiver_( true )
@@ -112,7 +83,6 @@ nest::spike_detector::update( Time const&, const long, const long )
   {
     assert( *e != 0 );
 
-    ++S_.n_events_;
     kernel().io_manager.get_recording_backend()->write( *this, **e );
     delete *e;
   }
@@ -134,8 +104,6 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
   // get the data from the device
   RecordingDevice::get_status( d );
 
-  S_.get( d );
-
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
   if ( local_receiver_ && get_thread() == 0 )
@@ -152,7 +120,6 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
 void
 nest::spike_detector::set_status( const DictionaryDatum& d )
 {
-  S_.set( d, *this );
 }
 
 void

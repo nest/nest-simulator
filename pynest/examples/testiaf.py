@@ -54,8 +54,6 @@ def build_network(dt):
     nest.SetStatus(neuron, "I_e", 376.0)
 
     vm = nest.Create('voltmeter')
-    nest.SetStatus(vm, "withtime", True)
-
     sd = nest.Create('spike_detector')
 
     nest.Connect(vm, neuron)
@@ -69,10 +67,8 @@ First the Kernel is reset and the number of threads is set to zero as
 well as the resolution to the specified value dt.  The iaf_psc_alpha is
 created and the handle is stored in the variable neuron The status of
 the neuron is changed so it receives an external current.  Next the
-voltmeter is created and the handle stored in vm and the option
-'withtime' is set, therefore times are given in the times vector in
-events. Now the spike_detecor is created and its handle is stored in
-sd.
+voltmeter is created and the handle stored in vm. Now the spike_detector
+is created and its handle is stored in sd.
 
 Voltmeter and spikedetector are then connected to the neuron.  The
 connect function takes the handles as input.  The Voltmeter is

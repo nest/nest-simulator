@@ -81,16 +81,15 @@ voltmeter = nest.Create("voltmeter")
 spikedetector = nest.Create("spike_detector")
 
 '''
-Fourth, the excitatory `poisson_generator` (``noise[0]``) and the
-`voltmeter` are configured using `SetStatus`, which expects a list of
-node handles and a list of parameter dictionaries. The rate of the
-inhibitory Poisson generator is set later. Note that we need not set
-parameters for the neuron and the spike detector, since they have
-satisfactory defaults.
+Fourth, the excitatory `poisson_generator` (``noise[0]``) is
+configured using `SetStatus`, which expects a list of node handles
+and a list of parameter dictionaries. The rate of the inhibitory
+Poisson generator is set later. Note that we need not set
+parameters for the neuron, the voltmeter and the spike detector,
+since they have satisfactory defaults.
 '''
 
 nest.SetStatus(noise, [{"rate": n_ex * r_ex}, {"rate": n_in * r_in}])
-nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
 '''
 Fifth, the `iaf_psc_alpha` is connected to the `spike_detector` and the

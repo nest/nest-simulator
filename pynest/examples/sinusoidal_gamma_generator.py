@@ -225,7 +225,7 @@ spikes = step(t, n,
               {'rate': 50.0, },
               seed=123, dt=dt)
 plot_hist(spikes)
-exp = np.ones(steps)
+exp = np.ones(int(steps))
 exp[:int(steps / 2)] *= 20
 exp[int(steps / 2):] *= 50
 plt.plot(exp, 'r')
@@ -246,7 +246,7 @@ spikes = step(t, n,
                'frequency': 0., 'phase': 0.},
               seed=123, dt=dt)
 plot_hist(spikes)
-exp = np.ones(steps)
+exp = np.ones(int(steps))
 exp[:int(steps / 2)] *= 80
 exp[int(steps / 2):] *= 40
 plt.plot(exp, 'r')
@@ -316,7 +316,7 @@ spikes = step(t, n,
               seed=123, dt=1.)
 plot_hist(spikes)
 exp = np.zeros(int(steps))
-exp[:int(steps / 2)] = 40. * np.ones(steps / 2)
+exp[:int(steps / 2)] = 40. * np.ones(int(steps / 2))
 exp[int(steps / 2):] = (40. + 40. * np.sin(np.arange(0, t / 1000. * np.pi * 20,
                                                      t / 1000. * np.pi * 20. /
                                                      (steps / 2))))

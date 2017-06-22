@@ -160,17 +160,16 @@ modeldict begin
          /overwrite_files true          % overwrite previous output
        >> SetKernelStatus
 
-  sim 1 eq { /iaf_psc_alpha_canon nr Create pop }
-           { /iaf_psc_alpha nr Create pop } ifelse
-  /neurons 0 GetGlobalNodes def
+  sim 1 eq { /neurons /iaf_psc_alpha_canon nr Create def }
+           { /neurons /iaf_psc_alpha nr Create def } ifelse
 
   % connect neurons all to all
-  neurons {
-   /ii Set
+  neurons cva {
+   /ii Set   
    neurons {
-        dup
+        %dup
         /ii2 Set
-        ii
+        %ii
         %   neq {                       % uncomment to  avoid self connections
                     ii ii2 strength delay Connect
         %   } if
@@ -219,8 +218,6 @@ modeldict begin
   %  detec  << /to_file tofile /withgid true /interval 0.1 >> SetStatus
   /voltmeter Create /volt Set
 
-
-
   volt  << /to_file tofile              % write to file
          /to_memory false               % not to memory
          /withgid true                  % important to know which neuron
@@ -235,7 +232,7 @@ modeldict begin
   neurons {
    dup
    %  detec 1.0 h Connect               % connect spike_detector
-   volt exch 1.0 h Connect              % connect voltmeter
+   volt 0 get exch 1.0 h Connect              % connect voltmeter
   } forall
 
   10000 Simulate                        % simulate for 10s

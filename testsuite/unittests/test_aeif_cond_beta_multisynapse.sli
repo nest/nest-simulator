@@ -67,30 +67,25 @@
 >> SetStatus
 
 % This test should only run if we have GSL
-statusdict/have_gsl :: not
-{
-  exit_test_gracefully
-}
-if
+skip_if_without_gsl
 
-/tolerance   	5e-2 def %mV
-/simulation_t	2500 def %ms
-/V_peak			0. def
-/a 				4. def
-/b 				80.5 def
-/taus_decay		[400.0 200.0 200.0] def % synaptic decay times  
-/taus_rise		[200.0 100.0 100.0] def % synaptic rise times  
-/weights		[0.1 0.1 -0.1] def % synaptic weights
-/delays     	[1. 1000. 1500.] def % ms - synaptic delays
+/tolerance   	1e-2 def %mV
+/simulation_t	300 def %ms
+/V_peak		0. def
+/a 		4. def
+/b 		80.5 def
+/E_rev		[20.0 0.0 -85.0] def % synaptic reversal potentials  
+/tau_decay     [40.0 20.0 30.0] def % synaptic decay times  
+/tau_rise	[20.0 10.0 5.0] def % synaptic rise times  
+/weights	[0.1 0.2 0.15] def % synaptic weights
+/delays     	[1. 100. 130.] def % ms - synaptic delays
 /spike_time 	10. def
 /dt         	0.1 def % time step
-/Vrest -70.6 def % resting potential
-/g_L 30.0 def
-/E_in -85.0 def
+/Vrest          -70.6 def % resting potential
+/g_L            300.0 def
 
 /spike_generator Create /sg Set
 sg << /spike_times [spike_time] >> SetStatus % generates a single peak
-
 
 % Creates a voltmeter
 /voltmeter Create /vm Set
@@ -102,14 +97,14 @@ vm << /withtime true
 
 % Creates one aeif_conf_beta_multisynapse neuron
 /aeif_cond_beta_multisynapse Create /multisynapse_neuron Set
-multisynapse_neuron << /taus_decay taus_decay >> SetStatus
-multisynapse_neuron << /taus_rise taus_rise >> SetStatus
-multisynapse_neuron << /V_peak V_peak >> SetStatus
-multisynapse_neuron << /a a >> SetStatus
-multisynapse_neuron << /b b >> SetStatus
-multisynapse_neuron << /E_L Vrest >> SetStatus
-multisynapse_neuron << /g_L g_L >> SetStatus
-multisynapse_neuron << /E_in E_in >> SetStatus
+multisynapse_neuron << /E_rev E_rev
+                       /tau_decay tau_decay
+                       /tau_rise tau_rise
+                       /V_peak V_peak
+                       /a a
+                       /b b
+                       /E_L Vrest
+                       /g_L g_L >> SetStatus
 
 % creates an array of synaptic indexes 
 delays length 1 arraystore Range /synapses_idx exch def
@@ -143,17 +138,17 @@ d /times get cva /ts Set % get times
 {
 	Vrest sub /V_cur exch def % subtracts resting potential from V 
 	dt mul /t_cur exch def % current time in ms
-	[taus_rise taus_decay weights delays] % loop on connections
+	[E_rev tau_rise tau_decay weights delays] % loop on connections
 	{
 		/delay exch def % synaptic delay
 		/W exch def % synaptic weight
 		/td exch def % synaptic decay time
 		/tr exch def % synaptic rise time
+                /Er exch def % synaptic reversal potential
 
 		spike_time delay add /t0 exch def % peak starting time
-		% checks if connection is excitatory or inhibitory
-		% and evaluates the driving force		
-		W 0. gt {Vrest neg} {Vrest E_in sub} ifelse
+		% Evaluates the driving force		
+		Er Vrest sub
 		/Vforce exch def
 		% coefficient for approximate linear relationship
 		% between V(t) and g(t)
@@ -181,5 +176,146 @@ d /times get cva /ts Set % get times
 	V_cur Vtheor sub abs /Vdiff exch def % absolute value of the difference
 	Vdiff tolerance lt true eq assert_or_die % compare with tolerance
 } ScanThread
+
+% ---------------------------
+
+% The following tests address #547
+% - Test that t_ref == 0 shows no refractoriness
+% - Test that t_ref == h shows 1 step refractoriness
+% - Test that w-dynamics during refractoriness is based on V==V_reset
+
+% test for t_ref == 0
+{ 
+  << >> begin
+  ResetKernel
+  /res 0.1 def
+  /V_reset -111. def
+  
+  0 << /resolution res >> SetStatus
+  /nrn /aeif_cond_beta_multisynapse 
+    << /w 0. /a 0. /b 0. /Delta_T 0. /t_ref 0. /I_e 1000.
+       /V_reset V_reset >>
+    Create
+  def
+  
+  /sd /spike_detector << /time_in_steps true >> Create def
+  /vm /voltmeter << /withtime true /time_in_steps true
+                    /interval res >> Create def
+  
+  nrn sd Connect
+  vm nrn Connect
+  
+  10 Simulate
+  /stime sd /events get /times get cva 0 get def
+  [ vm /events get dup /times get cva exch /V_m get cva ] Transpose dup
+  { First stime eq } Select First  % time/voltage at spike
+  Last V_reset eq  % V_m == V_reset at spike time
+  exch
+  { First stime 1 add eq } Select First % time/voltage step after spike
+  Last V_reset gt   % V_m > V_reset one step after spike
+  and
+  end
+} assert_or_die
+     
+% test for t_ref == resolution
+{ 
+  << >> begin
+  ResetKernel
+  /res 0.1 def
+  /V_reset -111. def
+  
+  0 << /resolution res >> SetStatus
+  /nrn /aeif_cond_beta_multisynapse 
+    << /w 0. /a 0. /b 0. /Delta_T 0. /t_ref res /I_e 1000.
+       /V_reset V_reset >>
+    Create
+  def
+  
+  /sd /spike_detector << /time_in_steps true >> Create def
+  /vm /voltmeter << /withtime true /time_in_steps true
+                    /interval res >> Create def
+  
+  nrn sd Connect
+  vm nrn Connect
+  
+  10 Simulate
+  /stime sd /events get /times get cva 0 get def
+  [ vm /events get dup /times get cva exch /V_m get cva ] Transpose
+  /result Set
+  
+  result { First stime eq } Select First  % time/voltage at spike
+  Last V_reset eq  % V_m == V_reset at spike time
+
+  result { First stime 1 add eq } Select First % time/voltage step after spike
+  Last V_reset eq   % V_m == V_reset one step after spike
+
+  result { First stime 2 add eq } Select First % time/voltage two steps after spike
+  Last V_reset gt   % V_m > V_reset two steps after spike
+ 
+  and and
+
+  end
+} assert_or_die
+
+% test w-dynamics based on clamped V
+{ 
+  << >> begin
+  ResetKernel
+  /res 1.0 def
+  /V_reset -111. def
+  /E_L -70. def
+  /t_ref 100. def
+  /a 10. def
+  /b 100. def
+  /tau_w 1.0 def
+  
+  0 << /resolution res >> SetStatus
+  /nrn /aeif_cond_beta_multisynapse 
+    << /w 0. /a a /b b /tau_w tau_w /Delta_T 0. /t_ref t_ref /I_e 1000.
+       /E_L E_L /V_reset V_reset >>
+    Create
+  def
+  
+  /sd /spike_detector << /time_in_steps true >> Create def
+  /vm /multimeter << /withtime true /time_in_steps true
+                     /interval res /record_from [ /V_m /w ] >> Create def
+  
+  nrn sd Connect
+  vm nrn Connect
+  
+  50 Simulate
+  /stime sd /events get /times get cva 0 get def
+  /mme vm /events get def
+  [ mme /times get cva mme /V_m get cva mme /w get cva] Transpose
+  /result Set
+  
+  result { First stime eq } Select First  % time/voltage/w at spike
+  arrayload ; 
+  /w0 Set
+  /V0 Set
+  /t0 Set
+  
+  result { First stime 20 add eq } Select First % time/voltage 20 steps after spike
+  arrayload ;
+  /w1 Set
+  /V1 Set
+  /t1 Set
+  /dt t1 t0 sub res mul def
+  dt t_ref lt   % still refractory
+  V0 V1 eq V0 V_reset eq and   % V_m clamped
+ 
+  % expected w
+  /w_theory
+     w0 dt tau_w div neg exp mul 
+     V_reset E_L sub a mul 1 dt tau_w div neg exp sub mul
+     add
+  def
+  
+  w1 w_theory div 8 ToUnitTestPrecision 1 eq
+  
+  and
+
+  end
+} assert_or_die
 
 endusing

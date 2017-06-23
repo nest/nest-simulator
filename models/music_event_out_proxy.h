@@ -67,7 +67,7 @@ published      - A bool indicating if the port has been already published
 The parameter port_name can be set using SetStatus.
 
 Examples:
-/iaf_neuron Create /n Set
+/iaf_psc_alpha Create /n Set
 /music_event_out_proxy Create /meop Set
 n meop << /music_channel 2 >> Connect
 
@@ -184,10 +184,14 @@ music_event_out_proxy::handles_test_event( SpikeEvent&, rport receptor_type )
   // number to the local index of this connection the local index
   // equals the number of connection
 
-  if ( !S_.published_ )
+  if ( not S_.published_ )
+  {
     V_.index_map_.push_back( static_cast< int >( receptor_type ) );
+  }
   else
+  {
     throw MUSICPortAlreadyPublished( get_name(), P_.port_name_ );
+  }
 
   return receptor_type;
 }

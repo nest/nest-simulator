@@ -60,7 +60,7 @@ namespace nest
    where h(t) is the input potential (synaptic delta currents convolved with
    an exponential kernel with time constant tau_m), eta(t) models the effect
    of refractoriness and adaptation (the neuron's own spike train convolved with
-   a sum of exponential kernels with time constants taus_eta), and delta_u
+   a sum of exponential kernels with time constants tau_eta), and delta_u
    sets the scale of the voltages.
 
    To represent a (homogeneous) population of N inhomogeneous renewal process
@@ -117,12 +117,12 @@ namespace nest
    rho_0             double - Base firing rate in 1/s.
    delta_u           double - Voltage scale parameter in mV.
    I_e               double - Constant input current in pA.
-   taus_eta          list of doubles - time constants of post-spike kernel
+   tau_eta           list of doubles - time constants of post-spike kernel
                                        in ms.
-   vals_eta          list of doubles - amplitudes of exponentials in
+   val_eta           list of doubles - amplitudes of exponentials in
                                        post-spike-kernel in mV.
    len_kernel        double - post-spike kernel eta is truncated after
-                              max(taus_eta) * len_kernel.
+                              max(tau_eta) * len_kernel.
 
 
    The parameters correspond to the ones of pp_psc_delta as follows.
@@ -130,8 +130,8 @@ namespace nest
       c_1              =  0.0
       c_2              =  rho_0
       c_3              =  1/delta_u
-      q_sfa            =  vals_eta
-      tau_sfa          =  taus_eta
+      q_sfa            =  val_eta
+      tau_sfa          =  tau_eta
       I_e              =  I_e
 
       dead_time        =  simulation resolution
@@ -223,10 +223,10 @@ private:
     double I_e_;
 
     /** Array of time constants */
-    std::vector< double > taus_eta_;
+    std::vector< double > tau_eta_;
 
     /** -------------- */
-    std::vector< double > vals_eta_;
+    std::vector< double > val_eta_;
 
     Parameters_();                      //!< Sets default parameter values
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
@@ -359,7 +359,9 @@ inline port
 pp_pop_psc_delta::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -367,7 +369,9 @@ inline port
 pp_pop_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -376,7 +380,9 @@ pp_pop_psc_delta::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

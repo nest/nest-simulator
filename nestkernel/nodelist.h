@@ -234,7 +234,9 @@ private:
     : base_it_( node, list_end )
   {
     while ( not base_it_.is_end_() && not is_leaf_( *base_it_ ) )
+    {
       ++base_it_;
+    }
   }
 
 public:

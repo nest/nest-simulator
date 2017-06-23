@@ -44,7 +44,7 @@ Author: Hans Ekkehard Plesser, 2010-09-29, 2012-02-16, 2012-02-27, 2012-05-22
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 
 [1 2 4]

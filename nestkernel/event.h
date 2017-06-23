@@ -36,6 +36,7 @@
 #include "exceptions.h"
 #include "nest_time.h"
 #include "nest_types.h"
+#include "vp_manager.h"
 
 // Includes from sli:
 #include "name.h"
@@ -115,6 +116,11 @@ public:
   Node& get_receiver() const;
 
   /**
+   * Return GID of receiving Node.
+   */
+  index get_receiver_gid() const;
+
+  /**
    * Return reference to sending Node.
    */
   Node& get_sender() const;
@@ -142,6 +148,7 @@ public:
    * If this resolution is not fine enough, the creation time
    * can be corrected by using the time attribute.
    */
+
   Time const& get_stamp() const;
 
   /**
@@ -303,6 +310,14 @@ protected:
   Time stamp_;
 
   /**
+   * Time stamp in steps.
+   * Caches the value of stamp in steps for efficiency.
+   * Needs to be declared mutable since it is modified
+   * by a const function (get_rel_delivery_steps).
+   */
+  mutable long stamp_steps_;
+
+  /**
    * Offset for precise spike times.
    * offset_ specifies a correction to the creation time.
    * If the resolution of stamp is not sufficiently precise,
@@ -319,7 +334,6 @@ protected:
 
 
 // Built-in event types
-
 /**
  * Event for spike information.
  * Used to send a spike from one node to the next.
@@ -333,6 +347,7 @@ public:
 
   void set_multiplicity( int );
   int get_multiplicity() const;
+
 
 protected:
   int multiplicity_;
@@ -359,6 +374,55 @@ inline int
 SpikeEvent::get_multiplicity() const
 {
   return multiplicity_;
+}
+
+
+/**
+ * Event for recording the weight of a spike.
+ */
+class WeightRecorderEvent : public Event
+{
+public:
+  WeightRecorderEvent();
+  WeightRecorderEvent* clone() const;
+  void operator()();
+
+  /**
+   * Return GID of receiving Node.
+   */
+  index get_receiver_gid() const;
+
+  /**
+   * Change GID of receiving Node.
+   */
+
+  void set_receiver_gid( index );
+
+protected:
+  index receiver_gid_; //!< GID of receiver or -1.
+};
+
+inline WeightRecorderEvent::WeightRecorderEvent()
+  : receiver_gid_( -1 )
+{
+}
+
+inline WeightRecorderEvent*
+WeightRecorderEvent::clone() const
+{
+  return new WeightRecorderEvent( *this );
+}
+
+inline void
+WeightRecorderEvent::set_receiver_gid( index gid )
+{
+  receiver_gid_ = gid;
+}
+
+inline index
+WeightRecorderEvent::get_receiver_gid( void ) const
+{
+  return receiver_gid_;
 }
 
 
@@ -498,8 +562,9 @@ public:
   /** Create empty request for use during simulation. */
   DataLoggingRequest();
 
-  /** Create event for given time stamp and vector of recordables. */
-  DataLoggingRequest( const Time&, const std::vector< Name >& );
+  /** Create event for given time interval, offset for interval start,
+   *  and vector of recordables. */
+  DataLoggingRequest( const Time&, const Time&, const std::vector< Name >& );
 
   DataLoggingRequest* clone() const;
 
@@ -508,6 +573,9 @@ public:
   /** Access to stored time interval.*/
   const Time& get_recording_interval() const;
 
+  /** Access to stored offset.*/
+  const Time& get_recording_offset() const;
+
   /** Access to vector of recordables. */
   const std::vector< Name >& record_from() const;
 
@@ -515,6 +583,8 @@ private:
   //! Interval between two recordings, first is step 1
   Time recording_interval_;
 
+  //! Offset relative to which the intervals are computed
+  Time recording_offset_;
   /**
    * Names of properties to record from.
    * @note This pointer shall be NULL unless the event is sent by a connection
@@ -526,17 +596,21 @@ private:
 inline DataLoggingRequest::DataLoggingRequest()
   : Event()
   , recording_interval_( Time::neg_inf() )
+  , recording_offset_( Time::ms( 0. ) )
   , record_from_( 0 )
 {
 }
 
 inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int,
+  const Time& rec_offset,
   const std::vector< Name >& recs )
   : Event()
   , recording_interval_( rec_int )
+  , recording_offset_( rec_offset )
   , record_from_( &recs )
 {
 }
+
 
 inline DataLoggingRequest*
 DataLoggingRequest::clone() const
@@ -552,6 +626,13 @@ DataLoggingRequest::get_recording_interval() const
   assert( recording_interval_.is_finite() );
 
   return recording_interval_;
+}
+
+inline const Time&
+DataLoggingRequest::get_recording_offset() const
+{
+  assert( recording_offset_.is_finite() );
+  return recording_offset_;
 }
 
 inline const std::vector< Name >&
@@ -881,6 +962,7 @@ public:
   static void
   set_syn_id( const synindex synid )
   {
+    VPManager::assert_single_threaded();
     supported_syn_ids_.push_back( synid );
   }
 
@@ -894,7 +976,15 @@ public:
   add_syn_id( const synindex synid )
   {
     assert( not supports_syn_id( synid ) );
+    VPManager::assert_single_threaded();
     supported_syn_ids_.push_back( synid );
+  }
+
+  static void
+  set_coeff_length( const size_t coeff_length )
+  {
+    VPManager::assert_single_threaded();
+    coeff_length_ = coeff_length;
   }
 
   bool
@@ -910,7 +1000,7 @@ public:
   {
     coeffarray_as_doubles_begin_ = ca.begin();
     coeffarray_as_doubles_end_ = ca.end();
-    coeff_length_ = ca.size();
+    assert( coeff_length_ == ca.size() );
   }
 
   /**
@@ -1062,6 +1152,10 @@ inline void
 Event::set_stamp( Time const& s )
 {
   stamp_ = s;
+  stamp_steps_ = 0; // setting stamp_steps to zero indicates
+                    // stamp_steps needs to be recalculated from
+                    // stamp_ next time it is needed (e.g., in
+                    // get_rel_delivery_steps)
 }
 
 inline delay
@@ -1073,7 +1167,11 @@ Event::get_delay() const
 inline long
 Event::get_rel_delivery_steps( const Time& t ) const
 {
-  return stamp_.get_steps() + d_ - 1 - t.get_steps();
+  if ( stamp_steps_ == 0 )
+  {
+    stamp_steps_ = stamp_.get_steps();
+  }
+  return stamp_steps_ + d_ - 1 - t.get_steps();
 }
 
 inline void

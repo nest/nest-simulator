@@ -83,7 +83,9 @@ NpopFunction::execute( SLIInterpreter* i ) const
     i->OStack.pop( n + 1 ); // pop one more and also remove the argument
   }
   else
+  {
     i->raiseerror( i->StackUnderflowError );
+  }
 }
 
 /*BeginDocumentation
@@ -174,7 +176,9 @@ IndexFunction::execute( SLIInterpreter* i ) const
     i->OStack.index( pos );
   }
   else
+  {
     i->raiseerror( i->StackUnderflowError );
+  }
 }
 
 /* BeginDocumentation
@@ -204,11 +208,15 @@ CopyFunction::execute( SLIInterpreter* i ) const
     i->EStack.pop();
     i->OStack.pop();
     for ( size_t p = 0; p < n; ++p )
-      i->OStack.index( n - 1 ); //  Since the stack is growing, the argument to
-                                //  index is constant.
+    {
+      //  Since the stack is growing, the argument to index is constant.
+      i->OStack.index( n - 1 );
+    }
   }
   else
+  {
     i->raiseerror( i->StackUnderflowError );
+  }
 }
 
 /*BeginDocumentation
@@ -240,16 +248,22 @@ RollFunction::execute( SLIInterpreter* i ) const
 {
   const size_t load = i->OStack.load();
   if ( load < 2 )
+  {
     throw StackUnderflow( 2, load );
+  }
 
   IntegerDatum* idn =
     dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
   if ( idn == NULL )
+  {
     throw ArgumentType( 1 );
+  }
 
   IntegerDatum* idk = dynamic_cast< IntegerDatum* >( i->OStack.top().datum() );
   if ( idk == NULL )
+  {
     throw ArgumentType( 0 );
+  }
 
   long& n = idn->get();
   if ( n < 0 )

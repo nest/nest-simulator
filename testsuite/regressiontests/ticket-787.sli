@@ -50,8 +50,7 @@ M_ERROR setverbosity
 % preparatory work for proper test code in case NEST is complied with MPI support
 % For now we just ignore this test, this will later be replaced 
 % by a restart of NEST with a serial binary.
-statusdict/is_mpi :: {statusdict/exitcodes/success :: quit_i} if
-
+skip_if_have_mpi
 
 % entries to skip
 
@@ -111,7 +110,7 @@ systemdict /GNUReadline known not {
 	/join_d /join_p /join_s /kill_i_i /kill_i_l /ldexp_di /length_a
 	/length_d /length_dv /length_iv /length_lp /length_p /length_s /leq_dd
 	/leq_di /leq_id /leq_ii /ln_d /log_d /lt_dd /lt_di /lt_id /lt_ii
-	/lt_ss /makehelp_s /max_d_d /max_d_i /max_i_d /max_i_i /min_d_d
+	/lt_ss /max_d_d /max_d_i /max_i_d /max_i_i /min_d_d
 	/min_d_i /min_i_d /min_i_i /mkfifo_s /modf_d /mul_P_P /mul_a_a
 	/mul_a_i /mul_d_dv /mul_d_iv /mul_dd /mul_di /mul_dv_dv /mul_i_a
 	/mul_i_iv /mul_id /mul_ii /mul_iv_iv /neg_d /neg_dv /neg_i /neg_iv

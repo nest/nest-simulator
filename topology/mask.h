@@ -23,6 +23,9 @@
 #ifndef MASK_H
 #define MASK_H
 
+// Includes from libnestutil:
+#include "numerics.h"
+
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "nest_types.h"
@@ -38,7 +41,10 @@
 
 namespace nest
 {
-class TopologyModule;
+class AbstractMask;
+
+typedef lockPTRDatum< AbstractMask, &TopologyModule::MaskType > MaskDatum;
+
 
 /**
  * Abstract base class for masks with unspecified dimension.
@@ -88,8 +94,6 @@ public:
    */
   virtual AbstractMask* minus_mask( const AbstractMask& other ) const = 0;
 };
-
-typedef lockPTRDatum< AbstractMask, &TopologyModule::MaskType > MaskDatum;
 
 /**
  * Abstract base class for masks with given dimension.
@@ -309,6 +313,128 @@ public:
 protected:
   Position< D > center_;
   double radius_;
+};
+
+/**
+ * Mask defining an elliptical or ellipsoidal region.
+ */
+template < int D >
+class EllipseMask : public Mask< D >
+{
+public:
+  /**
+   * @param center Center of ellipse
+   * @param major_axis Length of major axis of ellipse or ellipsoid
+   * @param minor_axis Length of minor axis of ellipse or ellipsoid
+   * @param polar_axis Length of polar axis of ellipsoid
+   * @param azimuth_angle Angle in degrees between x-axis and major axis of the
+   *        ellipse or ellipsoid
+   * @param polar_angle Angle in degrees between z-axis and polar axis of the
+   *        ellipsoid
+   */
+  EllipseMask( Position< D > center,
+    double major_axis,
+    double minor_axis,
+    double polar_axis,
+    double azimuth_angle,
+    double polar_angle )
+    : center_( center )
+    , major_axis_( major_axis )
+    , minor_axis_( minor_axis )
+    , polar_axis_( polar_axis )
+    , azimuth_angle_( azimuth_angle )
+    , polar_angle_( polar_angle )
+    , x_scale_( 4.0 / ( major_axis_ * major_axis_ ) )
+    , y_scale_( 4.0 / ( minor_axis_ * minor_axis_ ) )
+    , z_scale_( 4.0 / ( polar_axis_ * polar_axis_ ) )
+    , azimuth_cos_( std::cos( azimuth_angle_ * numerics::pi / 180. ) )
+    , azimuth_sin_( std::sin( azimuth_angle_ * numerics::pi / 180. ) )
+    , polar_cos_( std::cos( polar_angle_ * numerics::pi / 180. ) )
+    , polar_sin_( std::sin( polar_angle_ * numerics::pi / 180. ) )
+  {
+    if ( major_axis_ <= 0 or minor_axis_ <= 0 or polar_axis_ <= 0 )
+    {
+      throw BadProperty(
+        "topology::EllipseMask<D>: "
+        "All axis > 0 required." );
+    }
+    if ( major_axis_ < minor_axis_ )
+    {
+      throw BadProperty(
+        "topology::EllipseMask<D>: "
+        "major_axis greater than minor_axis required." );
+    }
+    if ( D == 2 and not( polar_angle_ == 0.0 ) )
+    {
+      throw BadProperty(
+        "topology::EllipseMask<D>: "
+        "polar_angle not defined in 2D." );
+    }
+
+    create_bbox_();
+  }
+
+  /**
+   * Creates an EllipseMask from a Dictionary which should contain the keys
+   * "major_axis" and "minor_axis" with double values, and optionally the keys
+   * "polar_axis", "anchor" (the center position), "azimuth_angle" or
+   * "polar_angle" with a double, an array of doubles, a double and a double,
+   * respectively.
+   */
+  EllipseMask( const DictionaryDatum& );
+
+  ~EllipseMask()
+  {
+  }
+
+  using Mask< D >::inside;
+
+  /**
+   * @returns true if point is inside the ellipse
+   */
+  bool inside( const Position< D >& p ) const;
+
+  /**
+   * @returns true if the whole box is inside the ellipse
+   */
+  bool inside( const Box< D >& ) const;
+
+  /**
+   * @returns true if the whole box is outside the ellipse
+   */
+  bool outside( const Box< D >& b ) const;
+
+  Box< D > get_bbox() const;
+
+  DictionaryDatum get_dict() const;
+
+  Mask< D >* clone() const;
+
+  /**
+   * @returns the name of this mask type.
+   */
+  static Name get_name();
+
+private:
+  void create_bbox_();
+
+  Position< D > center_;
+  double major_axis_;
+  double minor_axis_;
+  double polar_axis_;
+  double azimuth_angle_;
+  double polar_angle_;
+
+  double x_scale_;
+  double y_scale_;
+  double z_scale_;
+
+  double azimuth_cos_;
+  double azimuth_sin_;
+  double polar_cos_;
+  double polar_sin_;
+
+  Box< D > bbox_;
 };
 
 /**
@@ -567,9 +693,11 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
   lower_left_ = getValue< std::vector< double > >( d, names::lower_left );
   upper_right_ = getValue< std::vector< double > >( d, names::upper_right );
   if ( not( lower_left_ < upper_right_ ) )
+  {
     throw BadProperty(
       "topology::BoxMask<D>: "
       "Upper right must be strictly to the right and above lower left." );
+  }
 }
 
 template < int D >
@@ -599,14 +727,113 @@ BallMask< D >::BallMask( const DictionaryDatum& d )
 {
   radius_ = getValue< double >( d, names::radius );
   if ( radius_ <= 0 )
+  {
     throw BadProperty(
       "topology::BallMask<D>: "
       "radius > 0 required." );
+  }
 
   if ( d->known( names::anchor ) )
   {
     center_ = getValue< std::vector< double > >( d, names::anchor );
   }
+}
+
+template <>
+inline Name
+EllipseMask< 2 >::get_name()
+{
+  return names::elliptical;
+}
+
+template <>
+inline Name
+EllipseMask< 3 >::get_name()
+{
+  return names::ellipsoidal;
+}
+
+template < int D >
+EllipseMask< D >::EllipseMask( const DictionaryDatum& d )
+{
+  major_axis_ = getValue< double >( d, names::major_axis );
+  minor_axis_ = getValue< double >( d, names::minor_axis );
+  if ( major_axis_ <= 0 or minor_axis_ <= 0 )
+  {
+    throw BadProperty(
+      "topology::EllipseMask<D>: "
+      "All axis > 0 required." );
+  }
+  if ( major_axis_ < minor_axis_ )
+  {
+    throw BadProperty(
+      "topology::EllipseMask<D>: "
+      "major_axis greater than minor_axis required." );
+  }
+
+  x_scale_ = 4.0 / ( major_axis_ * major_axis_ );
+  y_scale_ = 4.0 / ( minor_axis_ * minor_axis_ );
+
+  if ( d->known( names::polar_axis ) )
+  {
+    if ( D == 2 )
+    {
+      throw BadProperty(
+        "topology::EllipseMask<D>: "
+        "polar_axis not defined in 2D." );
+    }
+    polar_axis_ = getValue< double >( d, names::polar_axis );
+
+    if ( polar_axis_ <= 0 )
+    {
+      throw BadProperty(
+        "topology::EllipseMask<D>: "
+        "All axis > 0 required." );
+    }
+
+    z_scale_ = 4.0 / ( polar_axis_ * polar_axis_ );
+  }
+  else
+  {
+    polar_axis_ = 0.0;
+    z_scale_ = 0.0;
+  }
+
+  if ( d->known( names::anchor ) )
+  {
+    center_ = getValue< std::vector< double > >( d, names::anchor );
+  }
+
+  if ( d->known( names::azimuth_angle ) )
+  {
+    azimuth_angle_ = getValue< double >( d, names::azimuth_angle );
+  }
+  else
+  {
+    azimuth_angle_ = 0.0;
+  }
+
+  if ( d->known( names::polar_angle ) )
+  {
+    if ( D == 2 )
+    {
+      throw BadProperty(
+        "topology::EllipseMask<D>: "
+        "polar_angle not defined in 2D." );
+    }
+    polar_angle_ = getValue< double >( d, names::polar_angle );
+  }
+  else
+  {
+    polar_angle_ = 0.0;
+  }
+
+  azimuth_cos_ = std::cos( azimuth_angle_ * numerics::pi / 180. );
+  azimuth_sin_ = std::sin( azimuth_angle_ * numerics::pi / 180. );
+  polar_cos_ = std::cos( polar_angle_ * numerics::pi / 180. );
+  polar_sin_ = std::sin( polar_angle_ * numerics::pi / 180. );
+
+  create_bbox_();
 }
 
 } // namespace nest

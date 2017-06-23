@@ -172,7 +172,9 @@ GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d,
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
+  {
     throw BadProperty( "gap_junction connection has no delay" );
+  }
 
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );

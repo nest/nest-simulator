@@ -24,6 +24,9 @@ Functions to get information on NEST.
 """
 
 from .hl_api_helper import *
+import sys
+import os
+import webbrowser
 
 
 @check_stack
@@ -55,26 +58,43 @@ def authors():
 
 
 @check_stack
-def helpdesk(browser="firefox"):
-    """Open the NEST helpdesk in the given browser.
+def helpdesk():
+    """Open the NEST helpdesk in browser.
 
-    The default browser is firefox.
-
-    Parameters
-    ----------
-    browser : str, optional
-        Name of the browser to use
+    Use the system default browser.
     """
+    if sys.version_info < (2, 7, 8):
+        print("The NEST Helpdesk is only available with Python 2.7.8 or "
+              "later. \n")
+        return
 
-    sr("/helpdesk << /command (%s) >> SetOptions" % browser)
-    sr("helpdesk")
+    if 'NEST_DOC_DIR' not in os.environ:
+        print(
+            'NEST help needs to know where NEST is installed.'
+            'Please source nest_vars.sh or define NEST_DOC_DIR manually.')
+        return
+
+    helpfile = os.path.join(os.environ['NEST_DOC_DIR'], 'help',
+                            'helpindex.html')
+
+    # Under Windows systems webbrowser.open is incomplete
+    # See <https://bugs.python.org/issue8232>
+    if sys.platform[:3] == "win":
+        os.startfile(helpfile)
+
+    # Under MacOs we need to ask for the browser explicitly.
+    # See <https://bugs.python.org/issue30392>.
+    if sys.platform[:3] == "dar":
+        webbrowser.get('safari').open_new(helpfile)
+    else:
+        webbrowser.open_new(helpfile)
 
 
 @check_stack
-def help(obj=None, pager="less"):
+def help(obj=None, pager=None):
     """Show the help page for the given object using the given pager.
 
-    The default pager is less.
+    The default pager is more.
 
     Parameters
     ----------
@@ -83,17 +103,17 @@ def help(obj=None, pager="less"):
     pager : str, optional
         Pager to use
     """
+    hlpobj = obj
+    if hlpobj is not None:
+        show_help_with_pager(hlpobj, pager)
 
-    if obj is not None:
-        sr("/page << /command (%s) >> SetOptions" % pager)
-        sr("/%s help" % obj)
     else:
         print("Type 'nest.helpdesk()' to access the online documentation "
               "in a browser.")
         print("Type 'nest.help(object)' to get help on a NEST object or "
               "command.\n")
         print("Type 'nest.Models()' to see a list of available models "
-              "in NEST.\n")
+              "in NEST.")
         print("Type 'nest.authors()' for information about the makers "
               "of NEST.")
         print("Type 'nest.sysinfo()' to see details on the system "
@@ -101,33 +121,6 @@ def help(obj=None, pager="less"):
         print("Type 'nest.version()' for information about the NEST "
               "version.\n")
         print("For more information visit http://www.nest-simulator.org.")
-
-
-@check_stack
-def get_verbosity():
-    """Return verbosity level of NEST's messages.
-
-    Returns
-    -------
-    int:
-        The current verbosity level
-    """
-
-    sr('verbosity')
-    return spp()
-
-
-@check_stack
-def set_verbosity(level):
-    """Change verbosity level for NEST's messages.
-
-    Parameters
-    ----------
-    level : str
-        Can be one of 'M_FATAL', 'M_ERROR', 'M_WARNING', or 'M_INFO'.
-    """
-
-    sr("%s setverbosity" % level)
 
 
 @check_stack
@@ -142,6 +135,7 @@ def get_argv():
     tuple:
         Argv, as seen by NEST.
     """
+
     sr('statusdict')
     statusdict = spp()
     return statusdict['argv']

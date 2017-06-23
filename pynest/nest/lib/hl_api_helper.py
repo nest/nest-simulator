@@ -235,11 +235,11 @@ def stack_checker(f):
         if not get_debug():
             return f(*args, **kwargs)
         else:
-            sr
-            stackload_before = spp
+            sr('count')
+            stackload_before = spp()
             result = f(*args, **kwargs)
-            sr
-            num_leftover_elements = spp - stackload_before
+            sr('count')
+            num_leftover_elements = spp() - stackload_before
             if num_leftover_elements != 0:
                 eargs = (f.__name__, num_leftover_elements)
                 etext = "Function '%s' left %i elements on the stack."
@@ -547,8 +547,8 @@ def get_verbosity():
 
     # Defined in hl_api_helper to avoid circular inclusion problem with
     # hl_api_info.py
-    sr
-    return spp
+    sr('verbosity')
+    return spp()
 
 
 @check_stack
@@ -564,7 +564,7 @@ def set_verbosity(level):
 
     # Defined in hl_api_helper to avoid circular inclusion problem with
     # hl_api_info.py
-    sr
+    sr("%s setverbosity" % level)
 
 
 def model_deprecation_warning(model):

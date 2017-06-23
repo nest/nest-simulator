@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# test_verbosity.py
+# test_helper_functions.py
 #
 # This file is part of NEST.
 #

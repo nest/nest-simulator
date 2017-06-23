@@ -35,7 +35,7 @@ namespace nest
  * Memory specialization of the RecordingBackend interface.
  *
  * Recorded data is stored in memory on a per-device-per-thread
- * basis. Setting the /num_events in the status dictionary of an
+ * basis. Setting the /n_events in the status dictionary of an
  * individual device will wipe the data for that device from memory.
  *
  * RecordingBackendMemory maintains a data structure mapping the data

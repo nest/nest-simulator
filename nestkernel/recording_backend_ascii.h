@@ -32,34 +32,21 @@ namespace nest
  * ASCII specialization of the RecordingBackend interface.
  *
  * Recorded data is written to plain text files on a
- * per-device-per-thread basis.  The formatting options are available
- * to allow some compatibility to legacy NEST output files.
+ * per-device-per-thread basis.
  *
  * RecordingBackendASCII maintains a data structure mapping one file
  * stream to every recording device instance on every thread. Files
- * are opened and inserted into the map during the enroll() call and
- * closed in finalize().
+ * are opened and inserted into the map during the enroll() call
+ * (issued by the recorder's calibrate() function) and closed in
+ * finalize(), which is called on all registered recording backends by
+ * IOManager::cleanup().
  */
 class RecordingBackendASCII : public RecordingBackend
 {
 public:
-  /**
-   * RecordingBackendASCII constructor.
-   * The actual setup is done in initialize().
-   */
-  RecordingBackendASCII()
-  {
-  }
+  RecordingBackendASCII();
 
-  /**
-   * RecordingBackendASCII descructor.
-   * File handling is done in finalize().
-   */
-  ~RecordingBackendASCII() throw()
-  {
-    // remaining files are not closed here but handled gracefully on
-    // NEST shutdown.
-  }
+  ~RecordingBackendASCII() throw();
 
   /**
    * Functions called by all instantiated recording devices to register
@@ -107,12 +94,11 @@ public:
 
 private:
   /**
-   * Build filename from parts.
-   *
+   * Build device filename.
    * The filename consists of the data path set in IOManager, the
-   * devices' labels (or names as a fallback if no label is given),
+   * device's label (or name as a fallback if no label is given),
    * the device GID, and the virtual process ID, all separated by
-   * dashes.
+   * dashes, followed by the filename extension file_ext.
    */
   const std::string build_filename_( const RecordingDevice& device ) const;
 

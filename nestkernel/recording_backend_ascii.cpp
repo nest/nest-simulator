@@ -32,6 +32,15 @@
 
 #include "recording_backend_ascii.h"
 
+nest::RecordingBackendASCII::RecordingBackendASCII()
+{
+}
+
+nest::RecordingBackendASCII::~RecordingBackendASCII() throw()
+{
+  finalize();
+}
+
 void
 nest::RecordingBackendASCII::enroll( const RecordingDevice& device )
 {
@@ -46,42 +55,21 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
   const thread t = device.get_thread();
   const index gid = device.get_gid();
 
-  // Ensure that a device is only enrolled once.
-  assert( files_[ t ].find( gid ) == files_[ t ].end() );
+  file_map::value_type::const_iterator file_it = files_[ t ].find( gid );
+  if ( file_it != files_[ t ].end() ) // already enrolled
+  {
+    files_[ t ].erase(file_it); 
+  }
 
   std::string filename = build_filename_( device );
-
+  
   std::ifstream test( filename.c_str() );
-  if ( ( test.good() && kernel().io_manager.overwrite_files() )
-    || not test.good() )
-  {
-    test.close();
-    std::ofstream* file = new std::ofstream( filename.c_str() );
-
-    if ( not file->good() )
-    {
-      std::string msg = String::compose(
-        "I/O error while opening file '%1'. "
-        "This may be caused by too many open files in networks "
-        "with many recording devices and threads.",
-        filename );
-      LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
-      throw IOError();
-    }
-
-    ( *file ) << std::fixed;
-    ( *file ) << std::setprecision( P_.precision_ );
-
-    files_[ t ].insert(
-      std::make_pair( gid, std::make_pair( filename, file ) ) );
-  }
-  else
+  if ( test.good() && not kernel().io_manager.overwrite_files() )
   {
     std::string msg = String::compose(
       "The device file '%1' exists already and will not be overwritten. "
       "Please change data_path, data_prefix or label, or set /overwrite_files "
-      "to true in the root node.",
-      filename );
+      "to true in the root node.", filename );
     LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
 
     files_[ t ].insert( std::make_pair( gid,
@@ -89,6 +77,27 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
 
     throw IOError();
   }
+  test.close();
+  
+  std::ofstream* file = new std::ofstream( filename.c_str() );
+  ( *file ) << std::fixed << std::setprecision( P_.precision_ );
+
+  if ( not file->good() )
+  {
+    std::string msg = String::compose(
+      "I/O error while opening file '%1'. "
+      "This may be caused by too many open files in networks "
+      "with many recording devices and threads.", filename );
+    LOG( M_ERROR, "RecordingDevice::calibrate()", msg );
+
+    files_[ t ].insert( std::make_pair( gid,
+      std::make_pair( filename, static_cast< std::ofstream* >( NULL ) ) ) );
+
+    throw IOError();
+  }
+  
+  //enroll the device
+  files_[ t ].insert( std::make_pair( gid, std::make_pair( filename, file ) ) );
 }
 
 void
@@ -233,8 +242,8 @@ nest::RecordingBackendASCII::build_filename_(
   int vp = device.get_vp();
   int gid = device.get_gid();
 
-  basename << "-" << std::setfill( '0' ) << std::setw( giddigits ) << gid << "-"
-           << std::setfill( '0' ) << std::setw( vpdigits ) << vp;
+  basename << "-" << std::setfill( '0' ) << std::setw( giddigits ) << gid
+	   << "-" << std::setfill( '0' ) << std::setw( vpdigits ) << vp;
 
   return basename.str() + '.' + P_.file_ext_;
 }
@@ -282,11 +291,10 @@ nest::RecordingBackendASCII::get_device_status( const RecordingDevice& device,
   const thread t = device.get_thread();
   const index gid = device.get_gid();
 
-  file_map::value_type::const_iterator device_file =  files_[ t ].find( gid );
-
-  if ( device_file != files_[ t ].end() )
+  file_map::value_type::const_iterator file = files_[ t ].find( gid );
+  if ( file != files_[ t ].end() )
   {
     initialize_property_array( d, names::filenames );
-    append_property( d, names::filenames, device_file->second.first );
+    append_property( d, names::filenames, file->second.first );
   }
 }

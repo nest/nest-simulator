@@ -39,23 +39,23 @@ namespace nest
 namespace names
 {
 extern const Name a; //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
-extern const Name a_acausal;          //!< Used by stdp_connection_facetshw_hom
-extern const Name a_causal;           //!< Used by stdp_connection_facetshw_hom
+extern const Name a_acausal; //!< Used by stdp_connection_facetshw_hom
+extern const Name a_causal;  //!< Used by stdp_connection_facetshw_hom
 extern const Name A_lower;
 extern const Name A_mean;
 extern const Name A_minus; //!< Used by stdp_dopa_connection
 extern const Name A_plus;  //!< Used by stdp_dopa_connection
 extern const Name A_std;
-extern const Name a_thresh_th;        //!< Used by stdp_connection_facetshw_hom
-extern const Name a_thresh_tl;        //!< Used by stdp_connection_facetshw_hom
+extern const Name a_thresh_th; //!< Used by stdp_connection_facetshw_hom
+extern const Name a_thresh_tl; //!< Used by stdp_connection_facetshw_hom
 extern const Name A_upper;
-extern const Name acceptable_latency; //!< Used in music_message_in_proxy
-extern const Name accumulator;        //!< Recorder parameter
-extern const Name Act_h;              //!< Specific to Hodgkin Huxley models
-extern const Name Act_m;              //!< Specific to Hodgkin Huxley models
-extern const Name activity;           //!< Used in pulsepacket_generator
-extern const Name address;            //!< Node parameter
-extern const Name ahp_bug;            //!< Used in iaf_chxk_2008
+extern const Name acceptable_latency;   //!< Used in music_message_in_proxy
+extern const Name accumulator;          //!< Recorder parameter
+extern const Name Act_h;                //!< Specific to Hodgkin Huxley models
+extern const Name Act_m;                //!< Specific to Hodgkin Huxley models
+extern const Name activity;             //!< Used in pulsepacket_generator
+extern const Name address;              //!< Node parameter
+extern const Name ahp_bug;              //!< Used in iaf_chxk_2008
 extern const Name allow_offgrid_spikes; //!< Used in spike_generator
 extern const Name alpha;                //!< stdp_synapse parameter
 extern const Name alpha_1; //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
@@ -350,6 +350,7 @@ extern const Name overwrite_files; //!< Used in io_manager
 extern const Name P; //!< specific to Hill & Tononi 2005
 extern const Name p; //!< current release probability  (Tsodyks2_connection)
 extern const Name p_copy;                //!< Specific to mip_generator
+extern const Name p_transmit;            //!< Specific to bernoulli_synapse
 extern const Name parent;                //!< Node parameter
 extern const Name phase;                 //!< Signal phase in degrees
 extern const Name phi;                   //!< Specific to mirollo_strogatz_ps

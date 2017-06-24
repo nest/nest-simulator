@@ -59,7 +59,7 @@ nest::RecordingBackendSIONlib::enroll( const RecordingDevice& device,
   const thread t = device.get_thread();
   const thread gid = device.get_gid();
 
-  device_map::value_type::const_iterator device_it = devices_[ t ].find( gid );
+  device_map::value_type::iterator device_it = devices_[ t ].find( gid );
   if ( device_it  != devices_[ t ].end() )
   {
     devices_[ t ].erase( device_it );
@@ -109,75 +109,78 @@ nest::RecordingBackendSIONlib::open_files_()
   // section
   WrappedThreadException* we = NULL;
 
-#pragma omp parallel
+  // This code is executed in a parallel region (opened in NodeManager::prepare_nodes())!
+  const thread t = kernel().vp_manager.get_thread_id();
+  const thread task = kernel().vp_manager.thread_to_vp( t );
+  if ( !task )
   {
-    const thread t = kernel().vp_manager.get_thread_id();
-    const thread task = kernel().vp_manager.thread_to_vp( t );
-    if ( !task )
-    {
-      t_start_ = kernel().simulation_manager.get_time().get_ms();
-    }
+    t_start_ = kernel().simulation_manager.get_time().get_ms();
+  }
 
-    try
-    {
+  try
+  {
 #pragma omp critical
+    {
+      if ( files_.find( task ) == files_.end() )
       {
-        if ( files_.find( task ) == files_.end() )
-        {
-          files_.insert( std::make_pair( task, FileEntry() ) );
-        }
+        files_.insert( std::make_pair( task, FileEntry() ) );
       }
+    }
 #pragma omp barrier
 
-      FileEntry& file = files_[ task ];
-      std::string filename = build_filename_();
+    FileEntry& file = files_[ task ];
+    std::string filename = build_filename_();
 
-      std::ifstream test( filename.c_str() );
-      if ( test.good() & !kernel().io_manager.overwrite_files() )
-      {
-        std::string msg = String::compose(
-          "The device file '%1' exists already and will not be overwritten. "
-          "Please change data_path, or data_prefix, or set /overwrite_files "
-          "to true in the root node.", filename );
-        LOG( M_ERROR, "RecordingBackendSIONlib::open_files_()", msg );
-        throw IOError();
-      }
-      test.close();
+    std::ifstream test( filename.c_str() );
+    if ( test.good() & !kernel().io_manager.overwrite_files() )
+    {
+      std::string msg = String::compose(
+        "The device file '%1' exists already and will not be overwritten. "
+        "Please change data_path, or data_prefix, or set /overwrite_files "
+        "to true in the root node.", filename );
+      LOG( M_ERROR, "RecordingBackendSIONlib::open_files_()", msg );
+      throw IOError();
+    }
+    test.close();
 
 #ifdef BG_MULTIFILE
-      int n_files = -1;
+    int n_files = -1;
 #else
-      int n_files = 1;
+    int n_files = 1;
 #endif // BG_MULTIFILE
-      sion_int32 fs_block_size = -1;
-      sion_int64 sion_chunksize = P_.sion_chunksize_;
-      int rank = kernel().mpi_manager.get_rank();
+    sion_int32 fs_block_size = -1;
+    sion_int64 sion_chunksize = P_.sion_chunksize_;
+    int rank = kernel().mpi_manager.get_rank();
 
-      file.sid = sion_paropen_ompi( filename.c_str(),
-        P_.sion_collective_ ? "bw,cmerge" : "bw",
-        &n_files,
-        MPI_COMM_WORLD,
-        &local_comm,
-        &sion_chunksize,
-        &fs_block_size,
-        &rank,
-        NULL,
-        NULL );
+    file.sid = sion_paropen_ompi( filename.c_str(),
+      P_.sion_collective_ ? "bw,cmerge" : "bw",
+      &n_files,
+      MPI_COMM_WORLD,
+      &local_comm,
+      &sion_chunksize,
+      &fs_block_size,
+      &rank,
+      NULL,
+      NULL );
 
-      file.buffer.reserve( P_.buffer_size_ );
-      file.buffer.clear();
-
-      filename_ = filename;
-    }
-    catch ( std::exception& e )
-    {
 #pragma omp critical
-      if ( !we )
-      {
-        we = new WrappedThreadException( e );
-      }
+    {
+      printf( ">>>>>>>> I got: %u (%u)\n", file.sid, task );
     }
-  } // omp parallel
+
+    file.buffer.reserve( P_.buffer_size_ );
+    file.buffer.clear();
+
+    filename_ = filename;
+  }
+  catch ( std::exception& e )
+  {
+#pragma omp critical
+    if ( !we )
+    {
+      we = new WrappedThreadException( e );
+    }
+  }
 
   // check if any exceptions have been raised
   if ( we )

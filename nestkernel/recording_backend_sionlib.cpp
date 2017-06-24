@@ -163,11 +163,6 @@ nest::RecordingBackendSIONlib::open_files_()
       NULL,
       NULL );
 
-#pragma omp critical
-    {
-      printf( ">>>>>>>> I got: %u (%u)\n", file.sid, task );
-    }
-
     file.buffer.reserve( P_.buffer_size_ );
     file.buffer.clear();
 

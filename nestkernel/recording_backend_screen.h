@@ -24,6 +24,7 @@
 #define RECORDING_BACKEND_SCREEN_H
 
 #include "recording_backend.h"
+#include <set>
 
 namespace nest
 {

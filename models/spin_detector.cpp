@@ -84,33 +84,33 @@ nest::spin_detector::calibrate()
 {
 
   if ( kernel().event_delivery_manager.get_off_grid_communication()
-  and not device_.is_precise_times_user_set() )
-{
-  device_.set_precise_times( true );
-  std::string msg = String::compose(
-    "Precise neuron models exist: the property precise_times "
-    "of the %1 with gid %2 has been set to true",
-    get_name(),
-    get_gid() );
-
-  if ( device_.is_precision_user_set() )
+    and not device_.is_precise_times_user_set() )
   {
-    // if user explicitly set the precision, there is no need to do anything.
-    msg += ".";
+    device_.set_precise_times( true );
+    std::string msg = String::compose(
+      "Precise neuron models exist: the property precise_times "
+      "of the %1 with gid %2 has been set to true",
+      get_name(),
+      get_gid() );
+
+    if ( device_.is_precision_user_set() )
+    {
+      // if user explicitly set the precision, there is no need to do anything.
+      msg += ".";
+    }
+
+    else
+    {
+      // it makes sense to increase the precision if precise models are used.
+      device_.set_precision( 15 );
+      msg += ", precision has been set to 15.";
+    }
+
+    LOG( M_INFO, "spin_detector::calibrate", msg );
   }
 
-  else
-  {
-    // it makes sense to increase the precision if precise models are used.
-    device_.set_precision( 15 );
-    msg += ", precision has been set to 15.";
-  }
 
-  LOG( M_INFO, "spin_detector::calibrate", msg );
-}
-
-
-device_.calibrate();
+  device_.calibrate();
 }
 
 void

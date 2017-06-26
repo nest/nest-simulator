@@ -114,9 +114,9 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
   ( *d )[ names::withrport ] = withrport_;
 
   ( *d )[ names::time_in_steps ] = time_in_steps_;
-  if ( rd.mode_ == RecordingDevice::WEIGHT_RECORDER or
-       rd.mode_ == RecordingDevice::SPIKE_DETECTOR or
-       rd.mode_ == RecordingDevice::SPIN_DETECTOR )
+  if ( rd.mode_ == RecordingDevice::WEIGHT_RECORDER
+    or rd.mode_ == RecordingDevice::SPIKE_DETECTOR
+    or rd.mode_ == RecordingDevice::SPIN_DETECTOR )
   {
     ( *d )[ names::precise_times ] = precise_times_;
   }
@@ -184,7 +184,7 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   updateValue< bool >( d, names::withrport, withrport_ );
   updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
   if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR
-    or rd.mode_ == RecordingDevice::WEIGHT_RECORDER 
+    or rd.mode_ == RecordingDevice::WEIGHT_RECORDER
     or rd.mode_ == RecordingDevice::SPIN_DETECTOR )
   {
     if ( d->known( names::precise_times ) )

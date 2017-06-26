@@ -85,11 +85,11 @@ pg_in << /rate K_in nu_in mul >> SetStatus
 
 
 /spike_detector Create /sd Set
-sd << /withtime true /withgid true  /to_file true >> SetStatus
+sd << /record_to [ /ascii ] >> SetStatus
 
 
 /voltmeter Create /vm Set
-vm << /withtime true /withgid true  /to_file true >> SetStatus
+vm << /record_to [ /ascii ] >> SetStatus
 
       
             

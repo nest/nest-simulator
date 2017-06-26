@@ -153,6 +153,8 @@ nest::KernelManager::num_threads_changed_reset()
   model_manager.initialize();
   music_manager.initialize();
   node_manager.initialize();
+
+  io_manager.num_threads_changed_reset();
 }
 
 void

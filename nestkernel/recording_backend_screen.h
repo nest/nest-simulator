@@ -24,6 +24,7 @@
 #define RECORDING_BACKEND_SCREEN_H
 
 #include "recording_backend.h"
+#include <set>
 
 namespace nest
 {
@@ -58,8 +59,8 @@ public:
    * Both functions are implemented trivially, since the RecordingBackendScreen
    * does not handle metadata.
    */
-  void enroll( RecordingDevice& device );
-  void enroll( RecordingDevice& device,
+  void enroll( const RecordingDevice& device );
+  void enroll( const RecordingDevice& device,
     const std::vector< Name >& value_names );
 
   /**
@@ -85,13 +86,10 @@ public:
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
 
-protected:
   /**
-   * Initialization function. In this case, only floating point precision of the
-   * standard output
-   * stream is configured according to the parameters.
+   * Initialization function.
    */
-  void initialize_();
+  void initialize();
 
 private:
   struct Parameters_
@@ -105,12 +103,41 @@ private:
   };
 
   Parameters_ P_;
+
+  /**
+   * A map for the enrolled devices. We have a vector with one map per local
+   * thread. The map associates the gid of a device on a given thread
+   * with its recordings.
+  */
+  typedef std::vector< std::set< index > > enrollment_map;
+  enrollment_map enrolled_devices_;
+
+  void prepare_cout_();
+  void restore_cout_();
+
+  std::ios::fmtflags old_fmtflags_;
+  long old_precision_;
 };
 
 inline void
 RecordingBackendScreen::get_status( DictionaryDatum& d ) const
 {
   P_.get( *this, d );
+}
+
+
+inline void
+RecordingBackendScreen::prepare_cout_()
+{
+  old_fmtflags_ = std::cout.flags( std::ios::fixed );
+  old_precision_ = std::cout.precision( P_.precision_ );
+}
+
+inline void
+RecordingBackendScreen::restore_cout_()
+{
+  std::cout.flags( old_fmtflags_ );
+  std::cout.precision( old_precision_ );
 }
 
 } // namespace

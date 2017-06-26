@@ -35,7 +35,7 @@ namespace nest
  * Memory specialization of the RecordingBackend interface.
  *
  * Recorded data is stored in memory on a per-device-per-thread
- * basis. Setting the /num_events in the status dictionary of an
+ * basis. Setting the /n_events in the status dictionary of an
  * individual device will wipe the data for that device from memory.
  *
  * RecordingBackendMemory maintains a data structure mapping the data
@@ -48,14 +48,12 @@ namespace nest
 class RecordingBackendMemory : public RecordingBackend
 {
 public:
+
   /**
    * RecordingBackendMemory constructor.
    * The actual setup is done in initialize().
    */
-  RecordingBackendMemory()
-    : data_()
-  {
-  }
+  RecordingBackendMemory();
 
   /**
    * RecordingBackendMemory descructor.
@@ -66,17 +64,14 @@ public:
    * Functions called by all instantiated recording devices to register
    * themselves with their metadata.
    */
-  void enroll( RecordingDevice& device );
-  void enroll( RecordingDevice& device,
+  void enroll( const RecordingDevice& device );
+  void enroll( const RecordingDevice& device,
     const std::vector< Name >& value_names );
 
   /**
    * Finalize the RecordingBackendMemory after the simulation has finished.
    */
   void finalize();
-
-  void get_device_status_( const RecordingDevice& device,
-    DictionaryDatum& ) const;
 
   /**
    * Trivial synchronization function. The RecordingBackendMemory does
@@ -97,33 +92,51 @@ public:
     const Event& event,
     const std::vector< double >& values );
 
-protected:
   /**
    * Initialize the RecordingBackendMemory during simulation preparation.
    */
-  void initialize_();
+  void initialize();
 
+  void get_device_status( const RecordingDevice& device,
+			  DictionaryDatum& ) const;
+
+  void set_device_status( const RecordingDevice& device,
+			  const DictionaryDatum& );
 
 private:
   class Recordings
   {
   public:
-    Recordings( const std::vector< Name >& extra_data_names )
+    Recordings( const std::vector< Name >& extra_data_names)
       : extra_data_names_( extra_data_names )
+      , time_in_steps_( false )
     {
+      extra_data_.resize( extra_data_names.size() );
     }
 
     void
-    push_back( index sender, double time )
+    push_back( index sender, const Event& event )
     {
+      const Time stamp = event.get_stamp();
+      const double offset = event.get_offset();
+
       senders_.push_back( sender );
-      times_.push_back( time );
+
+      if ( time_in_steps_ )
+      {
+        times_steps_.push_back( stamp.get_steps() );
+        times_offset_.push_back( offset );
+      }
+      else
+      {
+        times_ms_.push_back( stamp.get_ms() - offset );
+      }
     }
 
     void
-    push_back( index sender, double time, const std::vector< double >& values )
+    push_back( index sender, const Event& event, const std::vector< double >& values )
     {
-      push_back( sender, time );
+      push_back( sender, event );
       for ( size_t i = 0; i < values.size(); ++i )
       {
         extra_data_[ i ].push_back( values[ i ] );
@@ -133,24 +146,56 @@ private:
     void
     get_status( DictionaryDatum& d ) const
     {
-      DictionaryDatum dd( new Dictionary() );
-      ( *dd )[ names::senders ] =
-        IntVectorDatum( new std::vector< long >( senders_ ) );
-      ( *dd )[ names::times ] =
-        DoubleVectorDatum( new std::vector< double >( times_ ) );
+      DictionaryDatum events;
+
+      if ( not d->known( names::events ) )
+      {
+	events = DictionaryDatum( new Dictionary );
+	( *d )[ names::events ] = events;
+      }
+      else
+      {
+	events = getValue< DictionaryDatum >( d, names::events );
+      }
+
+      initialize_property_intvector( events, names::senders );
+      append_property( events, names::senders, senders_ );
+
+      if ( time_in_steps_ )
+      {
+        initialize_property_intvector( events, names::times );
+        append_property( events,  names::times, times_steps_ );
+
+        initialize_property_doublevector( events, names::offsets );
+        append_property( events,  names::offsets, times_offset_ );
+      }
+      else
+      {
+        initialize_property_doublevector( events, names::times );
+        append_property( events,  names::times, times_ms_ );
+      }
+
       for ( size_t i = 0; i < extra_data_.size(); ++i )
       {
-        ( *dd )[ extra_data_names_[ i ] ] =
-          DoubleVectorDatum( new std::vector< double >( extra_data_[ i ] ) );
+        initialize_property_doublevector( events, extra_data_names_[ i ] );
+        append_property( events,  extra_data_names_[ i ], extra_data_ [ i ] );
       }
-      ( *d )[ names::events ] = dd;
+    }
+
+    void
+    set_time_in_steps( bool time_in_steps )
+    {
+      time_in_steps_ = time_in_steps;
     }
 
     void
     clear()
     {
       senders_.clear();
-      times_.clear();
+      times_ms_.clear();
+      times_steps_.clear();
+      times_offset_.clear();
+
       for ( size_t i = 0; i < extra_data_.size(); ++i )
       {
         extra_data_[ i ].clear();
@@ -160,10 +205,13 @@ private:
   private:
     Recordings();
 
-    std::vector< long > senders_; //!< the gids of the senders of the events
-    std::vector< double > times_; //!< the times of the registered events
+    std::vector< long > senders_; //!< sender gids of the events
+    std::vector< double > times_ms_; //!< times of registered events in ms
+    std::vector< long > times_steps_; //!< times of registered events in steps
+    std::vector< double > times_offset_; //!< offsets of registered events if time_in_steps_
     std::vector< std::vector< double > > extra_data_;
     std::vector< Name > extra_data_names_;
+    bool time_in_steps_;
   };
 
   /**
@@ -173,6 +221,8 @@ private:
   */
   typedef std::vector< std::map< size_t, Recordings* > > data_map;
   data_map data_;
+
+  void delete_data_();
 };
 
 } // namespace

@@ -60,8 +60,8 @@ M_ERROR setverbosity
   ResetKernel
   /pg1 /poisson_generator_ps << /rate 1000. >> Create def
   /pg2 /poisson_generator_ps << /rate 1000. >> Create def
-  /sd1 /spike_detector << /precise_times true >> Create def
-  /sd2 /spike_detector << /precise_times true >> Create def
+  /sd1 /spike_detector Create def
+  /sd2 /spike_detector Create def
   pg1 sd1 Connect
   pg2 sd2 Connect
 

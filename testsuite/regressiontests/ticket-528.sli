@@ -45,11 +45,7 @@ M_ERROR setverbosity
 
 /resolution 0.1 def
 
-/sd_params <<
-  /to_memory     true
-  /precise_times true
-  /time_in_steps true
->> def
+/sd_params << /time_in_steps true >> def
 
 /spike_steps [ 48 116 184 252 320 388 456 524
                  592 660 728 796 864 932 1000] def
@@ -61,7 +57,6 @@ M_ERROR setverbosity
 
 /simtime 200.0 def
 
-ResetKernel
 0 << /resolution resolution >> SetStatus
   
 /spike_detector sd_params Create /sd Set

@@ -79,10 +79,8 @@ dictionary of parameters to overwrite the default values of the model.
 
   In addition, more parameters can be modified for writing to file:
 
-  - `withgid` is set to True to record the global id of the observed node(s).
-    (default: False).
-  - `to_file` indicates whether to write the recordings to file and is set
-    to True.
+  - `record_to` indicates where to put recorded data. All possible values are
+    available by typing `nest.GetKernelStatus("recording_backends").keys()`.
   - `label` specifies an arbitrary label for the device. It is used instead of
     the name of the model in the output file name.
 
@@ -96,8 +94,7 @@ n = nest.Create("iaf_cond_alpha",
 m = nest.Create("multimeter",
                 params={"interval": 0.1,
                         "record_from": ["V_m", "g_ex", "g_in"],
-                        "withgid": True,
-                        "to_file": True,
+                        "record_to": ["ascii"],
                         "label": "my_multimeter"})
 
 s_ex = nest.Create("spike_generator",
@@ -126,9 +123,7 @@ nest.Simulate(100.)
 '''
 After the simulation, the recordings are obtained from the multimeter via the
 key `events` of the status dictionary accessed by `GetStatus`. `times`
-indicates the recording times stored for each data point. They are recorded
-if the parameter `withtime` of the multimeter is set to True which is the
-default case.
+indicates the recording times stored for each data point.
 '''
 
 events = nest.GetStatus(m)[0]["events"]

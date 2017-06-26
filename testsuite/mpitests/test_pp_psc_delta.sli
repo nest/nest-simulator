@@ -54,10 +54,7 @@ is_threaded not { exit_test_gracefully } if
     ;
     /pp_psc_delta << /I_e 1000. >> Create
   } Table def
-  /sd /spike_detector << /record_to [/memory] 
-                         /withgid true 
-                         /withtime true 
-                      >> Create def
+  /sd /spike_detector Create def
   /pnet [ total_vps ] { ; /parrot_neuron Create } Table def
 
   [ gens pnet ] { Connect } ScanThread

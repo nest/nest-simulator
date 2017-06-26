@@ -181,17 +181,7 @@ private:
     std::vector< std::vector< Event* > > spikes_;
   };
 
-  struct State_
-  {
-    State_();
-    void get( DictionaryDatum& ) const;
-    void set( const DictionaryDatum&, const spike_detector& );
-
-    size_t n_events_;
-  };
-
   Buffers_ B_;
-  State_ S_;
 
   bool has_proxies_;
   bool local_receiver_;

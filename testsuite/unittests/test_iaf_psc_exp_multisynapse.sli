@@ -66,7 +66,7 @@ npost GetStatus /tau_syn get
 taus eq assert_or_die
 
 /voltmeter Create /vm Set
-vm << /withtime true  /time_in_steps true /interval h /to_screen false >> SetStatus
+vm << /time_in_steps true /interval h >> SetStatus
    
 /spike_generator Create /sg Set
 sg << /spike_times [spike_time] >> SetStatus

@@ -110,8 +110,6 @@ ResetKernel
          /sdev         stddev
       >> SetStatus
 
-  sd << /record_to [/memory] /time_in_steps false >> SetStatus
-
   ppg sd Connect
 
   300 Simulate

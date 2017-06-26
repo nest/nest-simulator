@@ -38,6 +38,7 @@ namespace nest
  */
 namespace names
 {
+
 extern const Name a; //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name A_lower;
 extern const Name A_mean;
@@ -70,8 +71,6 @@ extern const Name Ca;        //!< Calcium concentration
 extern const Name calibrate; //!< Command to calibrate the neuron
 extern const Name calibrate_node;       //!< Command to calibrate the neuron
 extern const Name clear; //!< used for ArchivingNode
-extern const Name close_after_simulate; //!< Recorder parameter
-extern const Name close_on_reset;       //!< Recorder parameter
 extern const Name 
   coeff_ex; //!< tau_lcm=coeff_ex*tau_ex (precise timing neurons (Brette 2007))
 extern const Name
@@ -151,9 +150,7 @@ extern const Name fbuffer_size;   //!< Recorder parameter
 extern const Name file;           //!< Recorder parameter
 extern const Name file_extension; //!< Recorder parameter
 extern const Name filename;       //!< Recorder parameter
-extern const Name filenames; //!< Recorder parameter--- remove with NESTIO
-extern const Name flush_after_simulate; //!< Recorder parameter
-extern const Name flush_records;        //!< Recorder parameter
+extern const Name filenames;      //!< Recorder parameter
 extern const Name frequency;            //!< Signal modulation frequency
 extern const Name frozen;               //!< Node parameter
 
@@ -297,7 +294,7 @@ extern const Name port_width;            //!< Parameters for MUSIC devices
 extern const Name post_synaptic_element; //!< Post synaptic elements
 extern const Name potentials;            //!< Recorder parameter
 extern const Name pre_synaptic_element;  //!< Pre synaptic elements
-extern const Name precise_times;         //!< Recorder parameter
+extern const Name precise_times;         //!< Generator parameter
 extern const Name precision;             //!< Recorder parameter
 extern const Name PSC_adapt_step;     //!< PSC increment (current homeostasis)
 extern const Name PSC_Unit_amplitude; //!< Scaling of PSC (current homeostasis)
@@ -477,13 +474,8 @@ extern const Name weight_recorder;    //!< Device name
 extern const Name with_noise;
 extern const Name with_reset; //!< Shall the pp_neuron reset after each spike?
                               //!< (stochastic neuron pp_psc_delta)
-extern const Name withgid;    //!< Recorder parameter
-extern const Name withpath;   //!< Recorder parameter
-extern const Name withport;   //!< Recorder parameter
-extern const Name withrport;  //!< Recorder parameter
-extern const Name withtargetgid; //!< Recorder parameter
-extern const Name withtime;      //!< Recorder parameter
-extern const Name withweight;    //!< Recorder parameter
+extern const Name withport;   //!< weight_recorder parameter
+extern const Name withrport;  //!< weight_recorder parameter
 
 extern const Name x; //!< current scaling factor of the synaptic weight [0...1]
                      //!< (Tsodyks2_connection)
@@ -492,10 +484,10 @@ extern const Name z; //!< Number of available synaptic elements per node
 extern const Name z_connected; //!< Number of connected synaptic elements
                                //!< per node
 
-extern const Name recording_backend;
 extern const Name recording_backends;
-extern const Name recording_backend_status;
-}
-}
 
-#endif
+} // namespace names
+
+} // namespace nest
+
+#endif /* #ifndef NEST_NAMES_H */

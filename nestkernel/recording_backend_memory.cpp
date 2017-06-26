@@ -29,14 +29,55 @@
 
 #include "recording_backend_memory.h"
 
+nest::RecordingBackendMemory::RecordingBackendMemory()
+{
+}
 
 nest::RecordingBackendMemory::~RecordingBackendMemory() throw()
 {
-  for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  delete_data_();
+}
+
+void
+nest::RecordingBackendMemory::enroll( const RecordingDevice& device )
+{
+  std::vector< Name > value_names;
+  enroll( device, value_names );
+}
+
+void
+nest::RecordingBackendMemory::enroll( const RecordingDevice& device,
+  const std::vector< Name >& value_names )
+{
+  thread t = device.get_thread();
+  index gid = device.get_gid();
+
+  // If the device is not already enrolled, enroll it
+  if ( data_[ t ].find( gid ) == data_[ t ].end() )
+  {
+    data_[ t ].insert( std::make_pair( gid, new Recordings( value_names ) ) );
+  }
+
+  bool time_in_steps = device.get_time_in_steps();
+  data_[ t ].find( gid )->second->set_time_in_steps( time_in_steps );
+}
+
+void
+nest::RecordingBackendMemory::initialize()
+{
+  delete_data_();
+  data_map tmp( kernel().vp_manager.get_num_threads() );
+  data_.swap( tmp );
+}
+
+void
+nest::RecordingBackendMemory::delete_data_()
+{
+  for ( size_t t = 0; t < data_.size(); ++t )
   {
     data_map::value_type& inner = data_[ t ];
-    for ( data_map::value_type::iterator d = inner.begin(); d != inner.end();
-          ++d )
+    data_map::value_type::iterator d;
+    for ( d = inner.begin(); d != inner.end(); ++d )
     {
       delete d->second;
     }
@@ -45,37 +86,8 @@ nest::RecordingBackendMemory::~RecordingBackendMemory() throw()
 
 
 void
-nest::RecordingBackendMemory::enroll( RecordingDevice& device )
-{
-  std::vector< Name > value_names;
-  enroll( device, value_names );
-}
-
-void
-nest::RecordingBackendMemory::enroll( RecordingDevice& device,
-  const std::vector< Name >& value_names )
-{
-  const int t = device.get_thread();
-  const int gid = device.get_gid();
-
-  // Ensure that a device is only enrolled once.
-  assert( data_[ t ].find( gid ) == data_[ t ].end() );
-
-  data_[ t ].insert( std::make_pair( gid, new Recordings( value_names ) ) );
-}
-
-void
-nest::RecordingBackendMemory::initialize_()
-{
-  data_map tmp( kernel().vp_manager.get_num_threads() );
-  data_.swap( tmp );
-}
-
-void
 nest::RecordingBackendMemory::finalize()
 {
-  // don't set initialized_ to false here, as collected data is still valid
-  // until the next run of Simulate()
 }
 
 void
@@ -86,26 +98,33 @@ nest::RecordingBackendMemory::synchronize()
 void
 nest::RecordingBackendMemory::clear( const RecordingDevice& device )
 {
-  const thread t = device.get_thread();
-  const index gid = device.get_gid();
+  if ( data_.size() != 0 )
+  {
+    const thread t = device.get_thread();
+    const index gid = device.get_gid();
 
-  data_map::value_type::const_iterator device_data = data_[ t ].find( gid );
-  assert( device_data != data_[ t ].end() );
-  device_data->second->clear();
+    data_map::value_type::const_iterator device_data = data_[ t ].find( gid );
+    if ( device_data != data_[ t ].end() )
+    {
+      device_data->second->clear();
+    }
+  }
 }
 
 void
 nest::RecordingBackendMemory::write( const RecordingDevice& device,
   const Event& event )
 {
-  const thread t = device.get_thread();
-  const index gid = device.get_gid();
+  thread t = device.get_thread();
+  index gid = device.get_gid();
 
-  const index sender = event.get_sender_gid();
-  const Time stamp = event.get_stamp();
-  const double offset = event.get_offset();
+  if ( data_[ t ].find( gid ) == data_[ t ].end() )
+  {
+    return;
+  }
 
-  data_[ t ][ gid ]->push_back( sender, stamp.get_ms() - offset );
+  index sender = event.get_sender_gid();
+  data_[ t ][ gid ]->push_back( sender, event );
 }
 
 void
@@ -113,25 +132,42 @@ nest::RecordingBackendMemory::write( const RecordingDevice& device,
   const Event& event,
   const std::vector< double >& values )
 {
-  const thread t = device.get_thread();
-  const index gid = device.get_gid();
+  thread t = device.get_thread();
+  index gid = device.get_gid();
 
-  const index sender = event.get_sender_gid();
-  const Time stamp = event.get_stamp();
-  const double offset = event.get_offset();
+  if ( data_[ t ].find( gid ) == data_[ t ].end() )
+  {
+    return;
+  }
 
-  data_[ t ][ gid ]->push_back( sender, stamp.get_ms() - offset, values );
+  index sender = event.get_sender_gid();
+  data_[ t ][ gid ]->push_back( sender, event, values );
 }
 
-
 void
-nest::RecordingBackendMemory::get_device_status_( const RecordingDevice& device,
-  DictionaryDatum& d ) const
+nest::RecordingBackendMemory::get_device_status( const RecordingDevice& device,
+						 DictionaryDatum& d ) const
 {
   const thread t = device.get_thread();
   const index gid = device.get_gid();
 
   data_map::value_type::const_iterator device_data = data_[ t ].find( gid );
-  assert( device_data != data_[ t ].end() );
-  device_data->second->get_status( d );
+  if ( device_data != data_[ t ].end() )
+  {
+    device_data->second->get_status( d );
+  }
+}
+
+void
+nest::RecordingBackendMemory::set_device_status( const RecordingDevice& device,
+						 const DictionaryDatum& d )
+{
+  const int t = device.get_thread();
+  const int gid = device.get_gid();
+
+  if ( data_[ t ].find( gid ) != data_[ t ].end() )
+  {
+    bool time_in_steps = device.get_time_in_steps();
+    data_[ t ].find( gid )->second->set_time_in_steps( time_in_steps );
+  }
 }

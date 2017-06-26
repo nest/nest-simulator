@@ -92,7 +92,7 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson
 
   /parrots [ n ] { ; /parrot_neuron Create } Table def
   /sdets   [ n ] 
-    { ;   /spike_detector n << /withtime true /withgid false >> Create } 
+    { ;   /spike_detector n Create } 
     Table def  
 
   /gen /sinusoidal_poisson_generator Create def

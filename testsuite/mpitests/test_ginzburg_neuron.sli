@@ -55,10 +55,7 @@ is_threaded not { exit_test_gracefully } if
     ;
     /ginzburg_neuron << /tau_m 1.0 >> Create
   } Table def
-  /sd /spike_detector << /record_to [/memory] 
-                         /withgid true 
-                         /withtime true 
-                      >> Create def
+  /sd /spike_detector Create def
   /pnet [ total_vps ] { ; /parrot_neuron Create } Table def
 
   [sg] gens Connect

@@ -23,8 +23,10 @@
 
 namespace nest
 {
+
 namespace names
 {
+
 const Name a( "a" );
 const Name A_lower( "A_lower" );
 const Name A_mean( "A_mean" );
@@ -56,8 +58,6 @@ const Name Ca( "Ca" );
 const Name calibrate( "calibrate" );
 const Name calibrate_node( "calibrate_node" );
 const Name clear( "clear" );
-const Name close_after_simulate( "close_after_simulate" );
-const Name close_on_reset( "close_on_reset" );
 const Name coeff_ex( "coeff_ex" );
 const Name coeff_in( "coeff_in" );
 const Name coeff_m( "coeff_m" );
@@ -129,8 +129,6 @@ const Name file( "file" );
 const Name file_extension( "file_extension" );
 const Name filename( "filename" );
 const Name filenames( "filenames" );
-const Name flush_after_simulate( "flush_after_simulate" );
-const Name flush_records( "flush_records" );
 const Name frequency( "frequency" );
 const Name frozen( "frozen" );
 
@@ -414,21 +412,16 @@ const Name weight_recorder( "weight_recorder" );
 const Name weights( "weights" );
 const Name with_noise( "with_noise" );
 const Name with_reset( "with_reset" );
-const Name withgid( "withgid" );
-const Name withpath( "withpath" );
 const Name withport( "withport" );
 const Name withrport( "withrport" );
-const Name withtargetgid( "withtargetgid" );
-const Name withtime( "withtime" );
-const Name withweight( "withweight" );
 
 const Name x( "x" );
 
 const Name z( "z" );
 const Name z_connected( "z_connected" );
 
-const Name recording_backend( "recording_backend" );
 const Name recording_backends( "recording_backends" );
-const Name recording_backend_status( "recording_backend_status" );
-}
-}
+
+} // namespace names
+
+} // namespace nest

@@ -87,11 +87,9 @@ min_exponent dexp /h_min Set
 
  0 <<  /tics_per_ms min_exponent neg dexp  /resolution h >>  SetStatus
 
- /spike_detector  
-   << /withgid false  /withtime true /to_memory true  /time_in_steps true /precise_times true >> 
- Create /sp Set
+ /spike_detector << /time_in_steps true >> Create /sp Set
 
- /poisson_generator_ps << /rate 16384.0 >>  Create /pn Set
+ /poisson_generator_ps << /rate 16384.0 >> Create /pn Set
 
  pn sp Connect
 

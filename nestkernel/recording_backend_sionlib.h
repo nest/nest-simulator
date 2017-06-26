@@ -31,32 +31,16 @@
 
 namespace nest
 {
+
 class RecordingBackendSIONlib : public RecordingBackend
 {
 public:
-  RecordingBackendSIONlib()
-    : files_()
-  {
-  }
+  RecordingBackendSIONlib();
 
-  RecordingBackendSIONlib( std::string file_ext,
-    long buffer_size,
-    long sion_chunksize,
-    bool sion_collective )
-    : files_()
-  {
-    P_.file_ext_ = file_ext;
-    P_.buffer_size_ = buffer_size;
-    P_.sion_chunksize_ = sion_chunksize;
-    P_.sion_collective_ = sion_collective;
-  }
+  ~RecordingBackendSIONlib() throw();
 
-  ~RecordingBackendSIONlib() throw()
-  {
-  }
-
-  void enroll( RecordingDevice& device );
-  void enroll( RecordingDevice& device,
+  void enroll( const RecordingDevice& device );
+  void enroll( const RecordingDevice& device,
     const std::vector< Name >& value_names );
 
   void finalize();
@@ -70,20 +54,22 @@ public:
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& ) const;
 
-protected:
-  void initialize_();
+  void initialize();
+  void calibrate();
 
 private:
+  void open_files_();
   void close_files_();
   const std::string build_filename_() const;
+
+  bool files_opened_;
 
   class SIONBuffer
   {
   private:
-    // TODO: add underscores
-    char* buffer;
-    size_t ptr;
-    size_t max_size;
+    char* buffer_;
+    size_t ptr_;
+    size_t max_size_;
 
   public:
     SIONBuffer();
@@ -97,28 +83,33 @@ private:
     size_t
     get_capacity()
     {
-      return max_size;
+      return max_size_;
     };
+
     size_t
     get_size()
     {
-      return ptr;
+      return ptr_;
     };
+
     size_t
     get_free()
     {
-      return max_size - ptr;
+      return max_size_ - ptr_;
     };
+
     void
     clear()
     {
-      ptr = 0;
+      ptr_ = 0;
     };
+
     char*
     read()
     {
-      return buffer;
+      return buffer_;
     };
+
     template < typename T >
     SIONBuffer& operator<<( const T data );
   };
@@ -140,13 +131,13 @@ private:
 
   struct DeviceEntry
   {
-    DeviceEntry( RecordingDevice& device )
+    DeviceEntry( const RecordingDevice& device )
       : device( device )
       , info()
     {
     }
 
-    RecordingDevice& device;
+    const RecordingDevice& device;
     DeviceInfo info;
   };
 
@@ -156,7 +147,7 @@ private:
     SIONBuffer buffer;
   };
 
-  typedef std::map< thread, std::map< index, DeviceEntry > > device_map;
+  typedef std::vector< std::map< index, DeviceEntry > > device_map;
   device_map devices_;
 
   typedef std::map< thread, FileEntry > file_map;

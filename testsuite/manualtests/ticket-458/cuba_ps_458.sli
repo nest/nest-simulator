@@ -95,12 +95,7 @@
 
   /detector /spike_detector
   /detector_params
-  << 
-   /withtime true 
-   /withgid true
-   /to_file false
-   /label (cuba_ps)
-  >>
+  << /label (cuba_ps) >>
 
   % number of neurons per population to record from
   /Nrec 500 

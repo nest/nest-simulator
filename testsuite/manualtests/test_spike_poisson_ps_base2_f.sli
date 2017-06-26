@@ -96,7 +96,7 @@ Transmission = Function(
   SetStatus(0, << 'tics_per_ms : 2^-min_exponent, 'resolution :  h >>)
 
   sp = Create('spike_detector,  
-   << 'withgid : false, 'to_memory : true, 'withtime : true, 'time_in_steps : true, 'precise_times : true >> 
+   << 'time_in_steps : true >> 
   );
 
   pn = Create('poisson_generator_ps, << 'rate : 16384.0 >>);

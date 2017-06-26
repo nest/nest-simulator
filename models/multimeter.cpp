@@ -35,7 +35,8 @@ Multimeter::Multimeter()
 }
 
 Multimeter::Multimeter( const Multimeter& n )
-  : P_( n.P_ )
+  : RecordingDevice( n )
+  , P_( n.P_ )
   , S_()
   , B_()
 {
@@ -135,8 +136,8 @@ Multimeter::init_buffers_()
 void
 Multimeter::calibrate()
 {
-  kernel().io_manager.get_recording_backend()->enroll( *this, P_.record_from_ );
   RecordingDevice::calibrate();
+  RecordingDevice::enroll( P_.record_from_ );
 }
 
 void
@@ -182,16 +183,12 @@ Multimeter::handle( DataLoggingReply& reply )
       continue;
     }
 
-    // TODO:
-    // ++S_.events_;
-
     reply.set_stamp( info[ j ].timestamp );
     // const index sender = reply.get_sender_gid();
     // const Time stamp = reply.get_stamp();
     // const double offset = reply.get_offset();
 
-    kernel().io_manager.get_recording_backend()->write(
-      *this, reply, info[ j ].data );
+    RecordingDevice::write( reply, info[ j ].data );
 
     S_.data_.push_back( info[ j ].data );
   }

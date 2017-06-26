@@ -51,10 +51,7 @@ is_threaded not { exit_test_gracefully } if
   >> SetStatus
 
   /pg /noise_generator << /mean 1000. /std 500. /dt 1.0 >> Create def
-  /sd /spike_detector << /record_to [/memory] 
-                         /withgid true 
-                         /withtime true 
-                      >> Create def
+  /sd /spike_detector Create def
   /pnet [ total_vps ] { ; /iaf_neuron Create } Table def
 
   [pg] pnet Connect

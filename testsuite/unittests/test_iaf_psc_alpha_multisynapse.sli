@@ -57,12 +57,7 @@ taus eq assert_or_die
 /multimeter Create /mm Set
 mm <<
     /record_from [/currents]
-    /withgid false
-    /withtime false
-    /to_file false
-    /to_memory true
-    /interval 0.1
-    /precision 5 >> SetStatus
+    /interval 0.1 >> SetStatus
     
 /spike_generator Create /sg Set
 sg << /spike_times [spike_time] >> SetStatus

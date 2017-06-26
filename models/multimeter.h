@@ -264,7 +264,6 @@ nest::Multimeter::get_status( DictionaryDatum& d ) const
 {
   // get the data from the device
   RecordingDevice::get_status( d );
-  Device::get_status( d );
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
@@ -292,8 +291,6 @@ nest::Multimeter::set_status( const DictionaryDatum& d )
   Parameters_ ptmp = P_;
   ptmp.set( d, B_ );
 
-  // Set properties in device. As a side effect, this will clear data_,
-  // if /clear_events set in d
   RecordingDevice::set_status( d );
 
   P_ = ptmp;

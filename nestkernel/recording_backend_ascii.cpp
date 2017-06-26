@@ -55,7 +55,7 @@ nest::RecordingBackendASCII::enroll( const RecordingDevice& device,
   const thread t = device.get_thread();
   const index gid = device.get_gid();
 
-  file_map::value_type::const_iterator file_it = files_[ t ].find( gid );
+  file_map::value_type::iterator file_it = files_[ t ].find( gid );
   if ( file_it != files_[ t ].end() ) // already enrolled
   {
     files_[ t ].erase(file_it); 

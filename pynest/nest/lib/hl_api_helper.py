@@ -564,7 +564,7 @@ def set_verbosity(level):
 
     # Defined in hl_api_helper to avoid circular inclusion problem with
     # hl_api_info.py
-    sr("%s setverbosity" % level)
+    sr("{} setverbosity".format(level))
 
 
 def model_deprecation_warning(model):

@@ -493,7 +493,8 @@ CODES_FAILURE=\
 
 run_test selftests/test_fail_or_die.sli "${CODES_SUCCESS}" "${CODES_SKIPPED}" "${CODES_FAILURE}"
 
-CODES_SUCCESS=' 3 Success'
+CODES_SUCCESS=' 3 Success,'\
+' 200 Skipped,'
 CODES_FAILURE=\
 ' 1 Failed: missed assertion,'\
 ' 2 Failed: error in tested code block,'\

@@ -335,7 +335,7 @@ NodeManager::restore_nodes( const ArrayDatum& node_list )
     std::string model_name = ( *node_props )[ names::model ];
     index model_id = kernel().model_manager.get_model_id( model_name.c_str() );
     GIDCollectionPTR node = add_node( model_id );
-    Node* node_ptr = get_node_or_proxy( ( *node->begin() ).gid, kernel().vp_manager.get_thread_id() );
+    Node* node_ptr = get_node_or_proxy( ( *node->begin() ).gid );
     // we call directly set_status on the node
     // to bypass checking of unused dictionary items.
     node_ptr->set_status_base( node_props );
@@ -345,7 +345,7 @@ NodeManager::restore_nodes( const ArrayDatum& node_list )
 void
 NodeManager::init_state( index GID )
 {
-  Node* n = get_node_or_proxy( GID, kernel().vp_manager.get_thread_id() );
+  Node* n = get_node_or_proxy( GID );
   if ( n == 0 )
   {
     throw UnknownNode( GID );

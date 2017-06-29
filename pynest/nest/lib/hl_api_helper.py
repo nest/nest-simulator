@@ -41,12 +41,6 @@ from string import Template
 sps = spp = sr = pcd = kernel = None
 
 
-# Monkeypatch warnings.showwarning() to just print the warning without
-# the code line it was emitted by.
-def _warning(msg, cat=UserWarning, fname='', lineno=-1):
-    print('{0}:{1}: {2}: {3}'.format(fname, lineno, cat.__name__, msg))
-warnings.showwarning = _warning
-
 # These flags are used to print deprecation warnings only once. The
 # corresponding functions will be removed in the 2.6 release of NEST.
 _deprecation_warning = {'BackwardCompatibilityConnect': True}

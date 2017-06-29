@@ -102,7 +102,7 @@ NodeManager::reinit_nodes()
 DictionaryDatum
 NodeManager::get_status( index idx )
 {
-  Node* target = get_node_indp_thread( idx );
+  Node* target = get_mpi_local_node_or_device_head( idx );
 
   assert( target != 0 );
 
@@ -335,7 +335,7 @@ NodeManager::restore_nodes( const ArrayDatum& node_list )
     std::string model_name = ( *node_props )[ names::model ];
     index model_id = kernel().model_manager.get_model_id( model_name.c_str() );
     GIDCollectionPTR node = add_node( model_id );
-    Node* node_ptr = get_node( ( *node->begin() ).gid );
+    Node* node_ptr = get_node_or_proxy( ( *node->begin() ).gid, kernel().vp_manager.get_thread_id() );
     // we call directly set_status on the node
     // to bypass checking of unused dictionary items.
     node_ptr->set_status_base( node_props );
@@ -345,7 +345,7 @@ NodeManager::restore_nodes( const ArrayDatum& node_list )
 void
 NodeManager::init_state( index GID )
 {
-  Node* n = get_node( GID );
+  Node* n = get_node_or_proxy( GID, kernel().vp_manager.get_thread_id() );
   if ( n == 0 )
   {
     throw UnknownNode( GID );
@@ -378,14 +378,11 @@ NodeManager::is_local_gid( index gid ) const
   return is_local;
 }
 
-// TODO480: We need a variant that returns the proper node independent of
-// which thread it is on, as long as the node is on the MPI process; is needed
-// eg for get_status().
-Node* NodeManager::get_node( index gid, thread t )
+Node* NodeManager::get_node_or_proxy( index gid, thread t )
 {
   assert( 0 <= t and t < kernel().vp_manager.get_num_threads() );
 
-  Node* node = local_nodes_[ t ].get_node_by_gid( gid );
+  Node* node = get_thread_local_node( gid, t );
   if ( node == 0 )
   {
     return kernel().model_manager.get_proxy_node( t, gid );
@@ -394,11 +391,19 @@ Node* NodeManager::get_node( index gid, thread t )
   return node;
 }
 
-Node* NodeManager::get_node_indp_thread( index gid )
+Node* NodeManager::get_node_or_proxy( index gid )
+{
+  thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
+  Node* node = get_node_or_proxy( gid, t );
+
+  return node;
+}
+
+Node* NodeManager::get_mpi_local_node_or_device_head( index gid )
 {
   thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
 
-  Node* node = local_nodes_[ t ].get_node_by_gid( gid );
+  Node* node = get_thread_local_node( gid, t );
 
   if ( node == 0 )
   {

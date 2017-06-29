@@ -287,7 +287,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
   // check whether the source is on this mpi machine
   if ( kernel().node_manager.is_local_gid( sgid ) )
   {
-    Node* const source = kernel().node_manager.get_node( sgid, tid );
+    Node* const source = kernel().node_manager.get_node_or_proxy( sgid, tid );
     const thread source_thread = source->get_thread();
 
     // check whether the source is on our thread
@@ -305,7 +305,7 @@ nest::ConnBuilder::change_connected_synaptic_elements( index sgid,
   }
   else
   {
-    Node* const target = kernel().node_manager.get_node( tgid, tid );
+    Node* const target = kernel().node_manager.get_node_or_proxy( tgid, tid );
     const thread target_thread = target->get_thread();
     // check whether the target is on our thread
     if ( tid != target_thread )
@@ -723,7 +723,7 @@ nest::OneToOneBuilder::disconnect_()
         }
 
         Node* const target =
-          kernel().node_manager.get_node( ( *tgid ).gid, tid );
+          kernel().node_manager.get_node_or_proxy( ( *tgid ).gid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -784,7 +784,7 @@ nest::OneToOneBuilder::sp_connect_()
           continue;
         }
         Node* const target =
-          kernel().node_manager.get_node( ( *tgid ).gid, tid );
+          kernel().node_manager.get_node_or_proxy( ( *tgid ).gid, tid );
         const thread target_thread = target->get_thread();
 
         single_connect_( ( *sgid ).gid, *target, target_thread, rng );
@@ -830,7 +830,7 @@ nest::OneToOneBuilder::sp_disconnect_()
           continue;
         }
         Node* const target =
-          kernel().node_manager.get_node( ( *tgid ).gid, tid );
+          kernel().node_manager.get_node_or_proxy( ( *tgid ).gid, tid );
         const thread target_thread = target->get_thread();
 
         single_disconnect_( ( *sgid ).gid, *target, target_thread );
@@ -981,7 +981,7 @@ nest::AllToAllBuilder::sp_connect_()
             continue;
           }
           Node* const target =
-            kernel().node_manager.get_node( ( *tgid ).gid, tid );
+            kernel().node_manager.get_node_or_proxy( ( *tgid ).gid, tid );
           const thread target_thread = target->get_thread();
           single_connect_( ( *sgid ).gid, *target, target_thread, rng );
         }
@@ -1025,7 +1025,7 @@ nest::AllToAllBuilder::disconnect_()
         }
 
         Node* const target =
-          kernel().node_manager.get_node( ( *tgid ).gid, tid );
+          kernel().node_manager.get_node_or_proxy( ( *tgid ).gid, tid );
         const thread target_thread = target->get_thread();
 
         // check whether the target is on our thread
@@ -1085,7 +1085,7 @@ nest::AllToAllBuilder::sp_disconnect_()
             continue;
           }
           Node* const target =
-            kernel().node_manager.get_node( ( *tgid ).gid, tid );
+            kernel().node_manager.get_node_or_proxy( ( *tgid ).gid, tid );
           const thread target_thread = target->get_thread();
           single_disconnect_( ( *sgid ).gid, *target, target_thread );
         }
@@ -1527,7 +1527,7 @@ nest::FixedTotalNumberBuilder::connect_()
           // targets_on_vp vector
           const long tgid = thread_local_targets[ t_index ];
 
-          Node* const target = kernel().node_manager.get_node( tgid, tid );
+          Node* const target = kernel().node_manager.get_node_or_proxy( tgid, tid );
           const thread target_thread = target->get_thread();
 
           if ( autapses_ or sgid != tgid )
@@ -1772,7 +1772,7 @@ nest::SPBuilder::connect_( const std::vector< index >& sources,
           skip_conn_parameter_( tid );
           continue;
         }
-        Node* const target = kernel().node_manager.get_node( *tgid, tid );
+        Node* const target = kernel().node_manager.get_node_or_proxy( *tgid, tid );
         const thread target_thread = target->get_thread();
 
         single_connect_( *sgid, *target, target_thread, rng );

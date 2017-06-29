@@ -225,7 +225,7 @@ ConnectorBase::send_weight_event( const CommonSynapseProperties& cp,
     wr_e.set_delay( e.get_delay() );
     // set weight_recorder as receiver
     index wr_gid = cp.get_weight_recorder();
-    Node* wr_node = kernel().node_manager.get_node( wr_gid, t );
+    Node* wr_node = kernel().node_manager.get_node_or_proxy( wr_gid, t );
     wr_e.set_receiver( *wr_node );
     // but the gid of the postsynaptic node as receiver gid
     wr_e.set_receiver_gid( e.get_receiver().get_gid() );

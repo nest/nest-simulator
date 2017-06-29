@@ -83,7 +83,7 @@ STDPDopaCommonProperties::set_status( const DictionaryDatum& d,
   long vtgid;
   if ( updateValue< long >( d, names::vt, vtgid ) )
   {
-    vt_ = dynamic_cast< volume_transmitter* >( kernel().node_manager.get_node(
+    vt_ = dynamic_cast< volume_transmitter* >( kernel().node_manager.get_node_or_proxy(
       vtgid, kernel().vp_manager.get_thread_id() ) );
     if ( vt_ == 0 )
     {

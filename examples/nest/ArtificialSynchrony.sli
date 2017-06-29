@@ -164,17 +164,8 @@ modeldict begin
            { /neurons /iaf_psc_alpha nr Create def } ifelse
 
   % connect neurons all to all
-  neurons cva {
-   /ii Set   
-   neurons {
-        %dup
-        /ii2 Set
-        %ii
-        %   neq {                       % uncomment to  avoid self connections
-                    ii ii2 strength delay Connect
-        %   } if
-        } forall
-  } forall
+  /autapses_bool true def         % Change to false to avoid self connections
+  neurons neurons << /rule /all_to_all /autapses autapses_bool >> << /weight strength /delay delay >> Connect
 
   /*                                    % uncomment to verify connections
   %% Readout if everything works

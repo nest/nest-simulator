@@ -989,16 +989,16 @@ nest::RecordingDevice::build_filename_() const
     basename << node_.get_name();
   }
 
-  if ( P_.use_gid_ and not P_.label_.empty() )
+  if ( not P_.use_gid_ and not P_.label_.empty() )
+  {
+    basename << "-" << std::setfill( '0' ) << std::setw( vpdigits )
+             << node_.get_vp();
+  }
+  else
   {
     basename << "-" << std::setfill( '0' ) << std::setw( gidigits )
              << node_.get_gid() << "-" << std::setfill( '0' )
              << std::setw( vpdigits ) << node_.get_vp();
-  }
-  else
-  {
-    basename << "-" << std::setfill( '0' ) << std::setw( vpdigits )
-             << node_.get_vp();
   }
   return basename.str() + '.' + P_.file_ext_;
 }

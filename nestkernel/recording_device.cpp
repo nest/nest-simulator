@@ -229,7 +229,8 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   updateValue< bool >( d, names::flush_records, flush_records_ );
   updateValue< bool >( d, names::close_on_reset, close_on_reset_ );
 
-  updateValue< bool >( d, names::use_gid, use_gid_ );
+  bool tmp_use_gid = true;
+  updateValue< bool >( d, names::use_gid, tmp_use_gid );
 
   // In Pynest we cannot use /record_to, because we have no way to pass
   // values as LiteralDatum. Thus, we must keep the boolean flags.
@@ -312,6 +313,16 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
       "Accumulator mode selected. All incompatible properties "
       "(to_file, to_screen, to_memory, withgid, withweight) "
       "have been set to false." );
+  }
+
+  if ( not tmp_use_gid and label_.empty() )
+  {
+    throw BadProperty(
+      "If /use_gid_in_filename is false, /label must be specified." );
+  }
+  else
+  {
+    use_gid_ = tmp_use_gid;
   }
 }
 

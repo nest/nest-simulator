@@ -25,6 +25,7 @@
 
 import unittest
 import nest
+import numpy as np
 
 
 # 1) check for reasonable firing rate
@@ -74,9 +75,7 @@ class PpPscDeltaTestCase(unittest.TestCase):
         self.assertLess(0.5, ratio)
         self.assertLess(ratio, 1.5)
 
-        isi = []
-        for i in xrange(1, len(spikes)):
-            isi.append(spikes[i] - spikes[i - 1])
+        isi = np.diff(spikes)
 
         self.assertGreaterEqual(min(isi), d)
 
@@ -124,19 +123,12 @@ class PpPscDeltaTestCase(unittest.TestCase):
         self.assertLess(0.5, ratio)
         self.assertLess(ratio, 1.5)
 
-        isi = []
-        for i in xrange(1, len(spikes)):
-            isi.append(spikes[i] - spikes[i - 1])
+        isi = np.diff(spikes)
 
         # compute moments of ISI to get mean and variance
-        isi_m1 = 0.
-        isi_m2 = 0.
-        for t in isi:
-            isi_m1 += t
-            isi_m2 += t ** 2
+        isi_mean = np.mean(isi)
+        isi_var = np.var(isi)
 
-        isi_mean = isi_m1 / len(isi)
-        isi_var = isi_m2 / len(isi) - isi_mean ** 2
         ratio_mean = isi_mean / d
         self.assertLessEqual(0.5, ratio_mean)
         self.assertLessEqual(ratio_mean, 1.5)
@@ -184,21 +176,11 @@ class PpPscDeltaTestCase(unittest.TestCase):
         # then it should always do so, since the random numbers are
         # reproducible in NEST. Adaptive threshold changes rate, thus
         # the ratio is not asserted here.
-        isi = []
-        for i in xrange(1, len(spikes)):
-            isi.append(spikes[i] - spikes[i - 1])
+        isi = np.diff(spikes)
 
-        # compute moments of ISI to get mean and variance
-        isi_m1 = isi[-1]
-        isi_m2 = isi[-1] ** 2
-        isi_12 = 0.
-        for t, t1 in zip(isi[:-1], isi[1:]):
-            isi_m1 += t
-            isi_m2 += t ** 2
-            isi_12 += t * t1
-
-        isi_mean = isi_m1 / len(isi)
-        isi_var = (isi_m2 - isi_m1) ** 2 / len(isi)
+        isi_mean = np.mean(isi)
+        isi_var = np.var(isi)
+        isi_12 = np.sum(np.multiply(isi[:-1], isi[1:]))
         isi_corr = (isi_12 / (len(isi) - 1) - isi_mean ** 2) / isi_var
 
         self.assertLessEqual(-1.0, isi_corr)

@@ -83,7 +83,6 @@ class FacetsTestCase(unittest.TestCase):
         stim = nest.Create('spike_generator')
         neuronA = nest.Create('parrot_neuron')
         neuronB = nest.Create('parrot_neuron')
-        # recorder = nest.Create('spike_detector')
         nest.SetStatus(stim, [{'spike_times': spikesIn}])
 
         nest.SetDefaults(modelName, synapseDict)
@@ -98,8 +97,6 @@ class FacetsTestCase(unittest.TestCase):
         nest.Connect(neuronA, neuronB, syn_spec={
             'weight': float(startWeight) / 15.0 * Wmax,
             'delay': delay, 'model': modelName})
-        # nest.Connect(neuronA, recorder)
-        # nest.Connect(neuronB, recorder)
 
         nest.Simulate(50.0)
         weightTrace = []
@@ -121,7 +118,9 @@ class FacetsTestCase(unittest.TestCase):
 
         # just before theoretical updates
         weightTraceMod36pre = weightTrace[35::36]
-        weightTraceMod36 = weightTrace[::36]  # just after theoretical updates
+
+        # just after theoretical updates
+        weightTraceMod36 = weightTrace[::36]
 
         weightIndex = int(startWeight)
         for i in range(len(weightTraceMod36pre)):

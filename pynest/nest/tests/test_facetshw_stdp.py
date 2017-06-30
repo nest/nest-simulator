@@ -29,6 +29,7 @@ import nest
 import numpy as np
 import unittest
 
+
 class FacetsTestCase(unittest.TestCase):
 
     def test_facetshw_stdp(self):
@@ -39,7 +40,8 @@ class FacetsTestCase(unittest.TestCase):
         # parameters #
         # homogen parameters for all synapses #
         Wmax = 100.0
-        # see *.cpp file of synapse model and Pfeil et al. 2012 for LUT configuration
+        # see *.cpp file of synapse model and Pfeil et al. 2012 for LUT
+        # configuration
         lut_0 = [2, 3, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 14, 15]
         lut_1 = [0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 11, 12, 13]
         lut_2 = range(16)  # identity
@@ -48,7 +50,8 @@ class FacetsTestCase(unittest.TestCase):
         reset_pattern = 6 * [1]  # reset all
 
         # individual parameters for each synapse #
-        lut_th_causal = 21.835  # reached every 36 runs (e^(-10/20)=21.83510375)
+        # reached every 36 runs (e^(-10/20)=21.83510375)
+        lut_th_causal = 21.835
         lut_th_acausal = lut_th_causal
 
         # other parameters #
@@ -56,7 +59,8 @@ class FacetsTestCase(unittest.TestCase):
         tau = 20.0
 
         timeBetweenPairs = 100.0
-        delay = 5.0  # frequency_of_pairs=10Hz => delta_t(+)=10ms, delta_t(-)=90ms
+        # frequency_of_pairs=10Hz => delta_t(+)=10ms, delta_t(-)=90ms
+        delay = 5.0
         spikesIn = np.arange(10.0, 60000.0, timeBetweenPairs)
 
         synapseDict = {'tau_plus': tau,
@@ -87,7 +91,8 @@ class FacetsTestCase(unittest.TestCase):
         # check if Get returns same values as have been Set
         synapseDictGet = nest.GetDefaults(modelName)
         for key in synapseDict.keys():
-            self.assertTrue(all(np.atleast_1d(synapseDictGet[key] == synapseDict[key])))
+            self.assertTrue(
+                all(np.atleast_1d(synapseDictGet[key] == synapseDict[key])))
 
         nest.Connect(stim, neuronA)
         nest.Connect(neuronA, neuronB, syn_spec={
@@ -103,7 +108,8 @@ class FacetsTestCase(unittest.TestCase):
 
             connections = nest.GetConnections(neuronA)
             for i in range(len(connections)):
-                if nest.GetStatus([connections[i]])[0]['synapse_model'] == modelName:
+                if (nest.GetStatus([connections[i]])[0]['synapse_model'] ==
+                        modelName):
                     weightTrace.append(
                         [run, nest.GetStatus([connections[i]])[0]['weight'],
                          nest.GetStatus([connections[i]])[0]['a_causal'],
@@ -113,35 +119,39 @@ class FacetsTestCase(unittest.TestCase):
         # analysis #
         weightTrace = np.array(weightTrace)
 
-        weightTraceMod36pre = weightTrace[35::36]  # just before theoretical updates
+        # just before theoretical updates
+        weightTraceMod36pre = weightTrace[35::36]
         weightTraceMod36 = weightTrace[::36]  # just after theoretical updates
 
         weightIndex = int(startWeight)
         for i in range(len(weightTraceMod36pre)):
-            # check weight value before update (after spike pair w index 35, 71, ...)
+            # check weight value before update (after spike pair w index 35,
+            # 71, ...)
             self.assertTrue(np.allclose(weightTraceMod36pre[i][1],
-                                1.0 / 15.0 * weightIndex * Wmax,
-                                atol=1e-6))
+                                        1.0 / 15.0 * weightIndex * Wmax,
+                                        atol=1e-6))
             weightIndex = lut_0[weightIndex]
 
         weightIndex = int(startWeight)
         for i in range(len(weightTraceMod36)):
-            # check weight value after update (after spike pair w index 0, 36, 72, ...)
+            # check weight value after update (after spike pair w index 0, 36,
+            # 72, ...)
             self.assertTrue(np.allclose(weightTraceMod36[i][1],
-                                1.0 / 15.0 * weightIndex * Wmax,
-                                atol=1e-6))
+                                        1.0 / 15.0 * weightIndex * Wmax,
+                                        atol=1e-6))
             # check charge on causal capacitor
             self.assertTrue(np.allclose(weightTraceMod36[i][2],
-                                np.ones_like(weightTraceMod36[i][2]) *
-                                np.exp(-2 * delay / tau), atol=1e-6))
+                                        np.ones_like(weightTraceMod36[i][2]) *
+                                        np.exp(-2 * delay / tau), atol=1e-6))
             weightIndex = lut_0[weightIndex]
 
         # check charge on anti-causal capacitor after each pair
         for i in range(len(weightTrace) - 1):
             # TODO: global params
             self.assertTrue(np.allclose(weightTrace[i, 3], ((i % 36) + 1) *
-                        np.exp(-(timeBetweenPairs - 2 * delay) / tau),
-                        atol=1e-6))
+                                        np.exp(-(timeBetweenPairs -
+                                                 2 * delay) / tau),
+                                        atol=1e-6))
 
 
 def suite():
@@ -153,6 +163,6 @@ def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
 
+
 if __name__ == "__main__":
     run()
-

@@ -20,7 +20,6 @@
  *
  */
 
-% to be run before run_test.sli
 
 % this tests checks if weights and delays can be set to
 % arbitrary values within the limits set by resolution

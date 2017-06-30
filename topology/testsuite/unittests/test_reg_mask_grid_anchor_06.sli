@@ -294,7 +294,7 @@ def
 
 ResetKernel
 
-userdict /resolution known { 0 << /resolution resolution >> SetStatus } if
+
 
 /sources src_layer CreateLayer def
 /targets tgt_layer CreateLayer def

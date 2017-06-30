@@ -20,7 +20,6 @@
  *
  */
 
-% to be run before run_test.sli
 
 % Circular mask, radius 0.25
 %
@@ -267,7 +266,7 @@ def
 
 ResetKernel
 
-userdict /resolution known { 0 << /resolution resolution >> SetStatus } if
+
 
 /sources src_layer CreateLayer def
 /targets tgt_layer CreateLayer def

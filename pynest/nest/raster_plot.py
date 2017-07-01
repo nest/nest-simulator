@@ -24,7 +24,7 @@
 import nest
 import numpy
 import pylab
-import uuid
+from pylab import show, savefig
 
 def extract_events(data, time=None, sel=None):
     """Extract all events within a given time interval.
@@ -347,27 +347,3 @@ def _histogram(a, bins=10, bin_range=None, normed=False):
         return 1.0 / (a.size * db) * n, bins
     else:
         return n, bins
-
-
-def show():
-    """
-    Show figures.
-
-    Call pylab.show() to show all figures and enter the GUI main loop.
-    Python will block until all figure windows are closed again.
-    You should call this function only once at the end of a script.
-
-    See also: http://matplotlib.sourceforge.net/faq/howto_faq.html#use-show
-    """
-    pylab.show()
-
-def savefig(fname=str(uuid.uuid4()), **kwargs):
-    """
-    Save figures.
-
-    Call pylab.savefig(), if filename is not provided generate a unique filename. 
-    
-    See also: https://matplotlib.org/api/pyplot_api.html#matplotlib.pyplot.savefig
-    """
-    
-    pylab.savefig(fname, **kwargs)

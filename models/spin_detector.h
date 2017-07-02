@@ -161,13 +161,14 @@ private:
    * update() always reads from spikes_[Network::get_network().read_toggle()]
    * and deletes all events that have been read.
    *
-   * Decoded events arriving from locally sending nodes, i.e., devices without
-   * proxies, are stored in spikes_[Network::get_network().write_toggle()], to
-   * ensure order-independent results.
+   * Events arriving from locally sending nodes, i.e., devices without
+   * proxies, are first decoded and then stored in
+   * spikes_[Network::get_network().write_toggle()], to ensure order-independent
+   * results.
    *
-   * Decoded events arriving from globally sending nodes are delivered from the
+   * Events arriving from globally sending nodes are delivered from the
    * global event queue by Network::deliver_events() at the beginning
-   * of the time slice. They are therefore written to
+   * of the time slice. They are therefore first decoded and then written to
    * spikes_[Network::get_network().read_toggle()]
    * so that they can be recorded by the subsequent call to update().
    * This does not violate order-independence, since all spikes are delivered

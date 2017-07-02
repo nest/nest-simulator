@@ -45,8 +45,9 @@ neurons at once. A single spike signals the 0 state, two spikes at the same time
 signal the 1 state. If a neuron is in the 0 or 1 state and emits the spiking
 activity corresponding to the same state, the same state is recorded again.
 Therefore, it is not only the transitions that are recorded. Data is recorded
-in memory or to file as for all RecordingDevices. By default, GID and time of
-each decoded state is recorded.
+in memory or to file as for all RecordingDevices. By default, GID, time, and
+binary state (0 or 1) for each decoded state is recorded. The state can be
+accessed from ['events']['weight'].
 
 The spin detector can also record binary state times with full precision
 from neurons emitting precisely timed spikes. Set /precise_times to
@@ -153,18 +154,18 @@ private:
   void update( Time const&, const long, const long );
 
   /**
-   * Buffer for incoming spikes.
+   * Buffer for binary states.
    *
-   * This data structure buffers all incoming spikes until they are
+   * This is a buffer for all binary states from decoded spikes until they are
    * passed to the RecordingDevice for storage or output during update().
    * update() always reads from spikes_[Network::get_network().read_toggle()]
    * and deletes all events that have been read.
    *
-   * Events arriving from locally sending nodes, i.e., devices without
+   * Decoded events arriving from locally sending nodes, i.e., devices without
    * proxies, are stored in spikes_[Network::get_network().write_toggle()], to
    * ensure order-independent results.
    *
-   * Events arriving from globally sending nodes are delivered from the
+   * Decoded events arriving from globally sending nodes are delivered from the
    * global event queue by Network::deliver_events() at the beginning
    * of the time slice. They are therefore written to
    * spikes_[Network::get_network().read_toggle()]

@@ -28,13 +28,10 @@
     Description:
     Test, whether the communication mechanism for binary neurons
     works and whether the spin detector correctly decodes binary transitions.
+    Finally, setting the precision is tested.
 
-    First Version: March 2013
-    Author: Mortiz Helias
-
-    Second Version: June 2017
-    Description: added more tests
-    Author: Sepehr Mahmoudian
+    FirstVersion: March 2013
+    Author: Mortiz Helias, Sepehr Mahmoudian
 */
 
 (unittest) run

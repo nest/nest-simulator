@@ -185,8 +185,8 @@ nest::spin_detector::handle( SpikeEvent& e )
 
 
     // The following logic implements the decoding
-    // A single spike signals a transition to 0 state, two spikes in same time
-    // step signal the transition to 1 state.
+    // A single spike signals a transition to "0" state, two spikes at the
+    // same time step signal a transition to "1" state.
     //
     // Remember the global id of the sender of the last spike being received
     // this assumes that several spikes being sent by the same neuron in the

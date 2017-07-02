@@ -234,9 +234,14 @@ def SetStructuralPlasticityStatus(params):
 
 
 @check_stack
-def GetStructuralPlasticityStatus(keys = None):
+def GetStructuralPlasticityStatus(keys=None):
     """Get the current structural plasticity parameters for the network
     simulation.
+    
+    Parameters
+    ---------
+    keys : str or list, optional
+        Keys indicating the values of interest to be retrieved by the get call
     """
 
     sps({})
@@ -246,8 +251,10 @@ def GetStructuralPlasticityStatus(keys = None):
         return d
     elif is_literal(keys):
         return d[keys]
+    elif is_iterable(keys):
+        return tuple(d[k] for k in keys)
     else:
-        raise TypeError("keys should be either empty or a string")
+        raise TypeError("keys must be either empty, a string or a list of strings")
 
 
 @check_stack

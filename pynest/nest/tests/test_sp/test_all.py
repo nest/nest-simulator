@@ -62,7 +62,7 @@ def suite():
     test_suite.addTest(test_growth_curves.suite())
     test_suite.addTest(test_sp_manager.suite())
     test_suite.addTest(test_synaptic_elements.suite())
-    #test_suite.addTest(test_disconnect.suite())
+    test_suite.addTest(test_disconnect.suite())
     test_suite.addTest(test_disconnect_multiple.suite())
     test_suite.addTest(test_enable_multithread.suite())
     test_suite.addTest(test_get_sp_status.suite())

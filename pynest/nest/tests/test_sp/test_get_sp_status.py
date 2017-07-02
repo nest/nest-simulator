@@ -22,7 +22,8 @@
 '''
 Structural Plasticity GetStatus Test
 -----------------------
-This test shows how to use the GetStructuralPlasticityStatus function
+This test the functionality of the GetStructuralPlasticityStatus
+function
 '''
 
 
@@ -70,12 +71,17 @@ class TestGetStructuralPlasticityStatus(unittest.TestCase):
 	all = nest.GetStructuralPlasticityStatus()
 	print (all)
         assert('structural_plasticity_synapses' in all)
+        assert('syn1' in all['structural_plasticity_synapses'])
         assert('structural_plasticity_update_interval' in all)
+	assert(all['structural_plasticity_update_interval'] == 1000)
 
 	sp_synapses = nest.GetStructuralPlasticityStatus('structural_plasticity_synapses')
 	print (sp_synapses)
-        assert('pre_synaptic_element' in sp_synapses['syn1'])
-        assert('post_synaptic_element' in sp_synapses['syn1'])
+        syn = sp_synapses['syn1']
+        assert('pre_synaptic_element' in syn)
+        assert('post_synaptic_element' in syn)
+        assert(syn['pre_synaptic_element'] == 'Axon_ex')
+        assert(syn['post_synaptic_element'] == 'Den_ex')
 
 	sp_interval = nest.GetStructuralPlasticityStatus('structural_plasticity_update_interval')
 	print (sp_interval)

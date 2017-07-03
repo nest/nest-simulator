@@ -180,7 +180,7 @@ class PpPscDeltaTestCase(unittest.TestCase):
 
         isi_mean = np.mean(isi)
         isi_var = np.var(isi)
-        isi_12 = np.sum(np.multiply(isi[:-1], isi[1:]))
+        isi_12 = np.sum(isi[:-1] * isi[1:])
         isi_corr = (isi_12 / (len(isi) - 1) - isi_mean ** 2) / isi_var
 
         self.assertLessEqual(-1.0, isi_corr)

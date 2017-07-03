@@ -237,7 +237,7 @@ def SetStructuralPlasticityStatus(params):
 def GetStructuralPlasticityStatus(keys=None):
     """Get the current structural plasticity parameters for the network
     simulation.
-    
+
     Parameters
     ---------
     keys : str or list, optional
@@ -254,7 +254,7 @@ def GetStructuralPlasticityStatus(keys=None):
     elif is_iterable(keys):
         return tuple(d[k] for k in keys)
     else:
-        raise TypeError("keys must be either empty, a string or a list of strings")
+        raise TypeError("keys must be either empty, a string or a list")
 
 
 @check_stack

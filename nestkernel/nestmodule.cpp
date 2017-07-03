@@ -866,8 +866,7 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 
   if ( kernel().vp_manager.get_num_threads() > 1 )
   {
-    throw KernelException(
-      "DataConnect can not be used with multiple threads" );
+    throw KernelException( "DataConnect cannot be used with multiple threads" );
   }
 
   const index source = getValue< long >( i->OStack.pick( 2 ) );
@@ -931,8 +930,7 @@ NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
 
   if ( kernel().vp_manager.get_num_threads() > 1 )
   {
-    throw KernelException(
-      "DataConnect can not be used with multiple threads" );
+    throw KernelException( "DataConnect cannot be used with multiple threads" );
   }
 
   const ArrayDatum connectome = getValue< ArrayDatum >( i->OStack.top() );

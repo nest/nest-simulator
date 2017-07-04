@@ -22,7 +22,7 @@
 """
 Structural Plasticity GetStatus Test
 -----------------------
-This test the functionality of the GetStructuralPlasticityStatus
+This tests the functionality of the GetStructuralPlasticityStatus
 function
 """
 

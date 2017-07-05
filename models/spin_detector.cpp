@@ -185,21 +185,23 @@ nest::spin_detector::handle( SpikeEvent& e )
 
 
     // The following logic implements the decoding
-    // A single spike signals a transition to "0" state, two spikes at the
-    // same time step signal a transition to "1" state.
+    // A single spike signals a transition to the 0 state, two
+    // spikes at the same time step signal a transition to the 1
+    // state.
     //
-    // Remember the global id of the sender of the last spike being received
-    // this assumes that several spikes being sent by the same neuron in the
-    // same time step are received consecutively or are conveyed by setting the
-    // multiplicity accordingly.
+    // Remember the global id of the sender of the last spike being
+    // received this assumes that several spikes being sent by the
+    // same neuron in the same time step are received consecutively or
+    // are conveyed by setting the multiplicity accordingly.
 
     long m = e.get_multiplicity();
     index gid = e.get_sender_gid();
     const Time& t_spike = e.get_stamp();
 
     if ( m == 1 )
-    { // multiplicity == 1, either a single 1->0 event or the first or second of
-      // a pair of 0->1 events
+    {
+      // multiplicity == 1, either a single 1->0 event or the first or
+      // second of a pair of 0->1 events
       if ( gid == last_in_gid_ && t_spike == t_last_in_spike_ )
       {
         // received twice the same gid, so transition 0->1
@@ -211,7 +213,7 @@ nest::spin_detector::handle( SpikeEvent& e )
         // count this event negatively, assuming it comes as single event
         // transition 1->0
         Event* event = e.clone();
-        // assume it will stay alone, so meaning a down transition
+        // assume it will stay alone, so meaning a 1->0 transition
         event->set_weight( 0 );
         B_.spikes_[ dest_buffer ].push_back( event );
       }

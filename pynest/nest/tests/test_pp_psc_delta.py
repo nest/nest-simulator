@@ -19,22 +19,17 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-#
-# tests for pp_psc_delta
-#
-
 import unittest
 import nest
 import numpy as np
 
 
-# 1) check for reasonable firing rate
-# 2) check if fixed dead-time is respected
-
-
 class PpPscDeltaTestCase(unittest.TestCase):
+    """Tests for pp_psc_delta"""
 
     def test_rate_and_fixed_dead_time(self):
+        """Check for reasonable firing rate and if fixed dead-time is respected"""
+
         # test parameters
         d = 25.0
         lam = 10.0
@@ -79,9 +74,9 @@ class PpPscDeltaTestCase(unittest.TestCase):
 
         self.assertGreaterEqual(min(isi), d)
 
-    # 3) check if random dead-time moments are respected
-
     def test_random_dead_time(self):
+        """Check if random dead-time moments are respected."""
+
         # test parameters
         d = 50.0
         n = 10
@@ -138,9 +133,11 @@ class PpPscDeltaTestCase(unittest.TestCase):
         self.assertLessEqual(0.5, ratio_var)
         self.assertLessEqual(ratio_var, 1.5)
 
-    # 4) check if threshold adaptation works by looking for negative
-    # serial correlation of ISI.
     def test_adapting_threshold(self):
+        """Check if threshold adaptation works by looking for negative serial
+        correlation of ISI."""
+
+        
         # test parameters
         d = 1e-8
         lam = 30.0

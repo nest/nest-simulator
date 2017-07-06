@@ -19,27 +19,27 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# author: Thomas Pfeil
-# date of 1st version: 21.01.2013
-
-# This script is testing the accumulation of spike pairs and
-# the weight update mechanism as implemented in the FACETS hardware
-
 import nest
 import numpy as np
 import unittest
 
 
 class FacetsTestCase(unittest.TestCase):
+    """
+    This script is testing the accumulation of spike pairs and
+    the weight update mechanism as implemented in the FACETS hardware.
+
+    Author: Thomas Pfeil
+    Date of first version: 21.01.2013
+    """
 
     def test_facetshw_stdp(self):
 
         modelName = 'stdp_facetshw_synapse_hom'
 
-        ##############
-        # parameters #
-        # homogen parameters for all synapses #
+        # homogeneous parameters for all synapses
         Wmax = 100.0
+        
         # see *.cpp file of synapse model and Pfeil et al. 2012 for LUT
         # configuration
         lut_0 = [2, 3, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 14, 15]
@@ -49,17 +49,17 @@ class FacetsTestCase(unittest.TestCase):
         config_1 = [0, 1, 0, 0]
         reset_pattern = 6 * [1]  # reset all
 
-        # individual parameters for each synapse #
-        # reached every 36 runs (e^(-10/20)=21.83510375)
+        # individual parameters for each synapse
+        # reached every 36 runs (e^(-10/20) = 21.83510375)
         lut_th_causal = 21.835
         lut_th_acausal = lut_th_causal
 
-        # other parameters #
-        startWeight = 0  # as digital value [0,1,...,15]
+        # other parameters
+        startWeight = 0  # as digital value [0, 1, ..., 15]
         tau = 20.0
 
         timeBetweenPairs = 100.0
-        # frequency_of_pairs=10Hz => delta_t(+)=10ms, delta_t(-)=90ms
+        # frequency_of_pairs = 10Hz => delta_t(+) = 10ms, delta_t(-) = 90ms
         delay = 5.0
         spikesIn = np.arange(10.0, 60000.0, timeBetweenPairs)
 
@@ -78,8 +78,7 @@ class FacetsTestCase(unittest.TestCase):
                        'a_thresh_th': lut_th_causal,
                        'a_thresh_tl': lut_th_acausal}
 
-        #################
-        # build network #
+        # build network
         stim = nest.Create('spike_generator')
         neuronA = nest.Create('parrot_neuron')
         neuronB = nest.Create('parrot_neuron')
@@ -87,7 +86,7 @@ class FacetsTestCase(unittest.TestCase):
 
         nest.SetDefaults(modelName, synapseDict)
 
-        # check if Get returns same values as have been Set
+        # check if GetDefaults returns same values as have been set
         synapseDictGet = nest.GetDefaults(modelName)
         for key in synapseDict.keys():
             self.assertTrue(
@@ -112,8 +111,7 @@ class FacetsTestCase(unittest.TestCase):
                          nest.GetStatus([connections[i]])[0]['a_causal'],
                          nest.GetStatus([connections[i]])[0]['a_acausal']])
 
-        ############
-        # analysis #
+        # analysis
         weightTrace = np.array(weightTrace)
 
         # just before theoretical updates
@@ -124,8 +122,8 @@ class FacetsTestCase(unittest.TestCase):
 
         weightIndex = int(startWeight)
         for i in range(len(weightTraceMod36pre)):
-            # check weight value before update (after spike pair w index 35,
-            # 71, ...)
+            # check weight value before update
+            # (after spike pair with index 35, 71, ...)
             self.assertTrue(np.allclose(weightTraceMod36pre[i][1],
                                         1.0 / 15.0 * weightIndex * Wmax,
                                         atol=1e-6))
@@ -133,8 +131,8 @@ class FacetsTestCase(unittest.TestCase):
 
         weightIndex = int(startWeight)
         for i in range(len(weightTraceMod36)):
-            # check weight value after update (after spike pair w index 0, 36,
-            # 72, ...)
+            # check weight value after update
+            # (after spike pair with index 0, 36, 72, ...)
             self.assertTrue(np.allclose(weightTraceMod36[i][1],
                                         1.0 / 15.0 * weightIndex * Wmax,
                                         atol=1e-6))

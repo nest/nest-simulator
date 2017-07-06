@@ -39,7 +39,7 @@ class FacetsTestCase(unittest.TestCase):
 
         # homogeneous parameters for all synapses
         Wmax = 100.0
-        
+
         # see *.cpp file of synapse model and Pfeil et al. 2012 for LUT
         # configuration
         lut_0 = [2, 3, 4, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 14, 15]

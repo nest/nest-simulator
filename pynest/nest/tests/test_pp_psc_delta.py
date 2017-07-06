@@ -137,7 +137,6 @@ class PpPscDeltaTestCase(unittest.TestCase):
         """Check if threshold adaptation works by looking for negative serial
         correlation of ISI."""
 
-        
         # test parameters
         d = 1e-8
         lam = 30.0

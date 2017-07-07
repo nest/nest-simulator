@@ -115,11 +115,20 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::init()
   // set next recording step to first multiple of rec_int_steps_
   // beyond current time, shifted one to left, since rec_step marks
   // left of update intervals, and we want time stamps at right end of
-  // update interval to be multiples of recording interval
+  // update interval to be multiples of recording interval. Need to add
+  // +1 because the division result is rounded down.
   next_rec_step_ =
     ( kernel().simulation_manager.get_time().get_steps() / rec_int_steps_ + 1 )
       * rec_int_steps_
     - 1;
+
+  // if offset is not 0, adjust next recording step to account for it by
+  // going one interval step back and adding the offset
+  if ( recording_offset_.get_steps() != 0 )
+  {
+    next_rec_step_ =
+      next_rec_step_ - rec_int_steps_ + recording_offset_.get_steps();
+  }
 
   // number of data points per slice
   const long recs_per_slice =
@@ -219,6 +228,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::handle( HostNode& host,
   {
     data_[ rt ][ next_rec_[ rt ] ].timestamp = Time::neg_inf();
   }
+
   // now create reply event and rigg it
   DataLoggingReply reply( data_[ rt ] );
 

@@ -144,29 +144,40 @@ if [ "$xSTATIC_ANALYSIS" = "1" ] ; then
     done
   done
   echo "MSGBLD0100: Retrieving changed files completed."
-
-  printf '%s\n' "$file_names" | while IFS= read -r line
-  do
-    echo "MSGBLD0095: File changed: $line"
-  done
-  echo "MSGBLD0100: Retrieving changed files completed."
   echo
 
-  sudo chmod +x ./extras/static_code_analysis.sh
 
-  RUNS_ON_TRAVIS=true
-  INCREMENTAL=false
-  VERA=vera++
+  # Set the command line arguments for the static code analysis script and execute it.
+
+  # The names of the static code analysis tools executables.
+  VERA=vera++                   
   CPPCHECK=cppcheck
   CLANG_FORMAT=clang-format
   PEP8=pep8
-  PERFORM_VERA=false
-  PERFORM_CPPCHECK=false
+
+  # Perform or skip a certain analysis.
+  PERFORM_VERA=true
+  PERFORM_CPPCHECK=true
   PERFORM_CLANG_FORMAT=true
   PERFORM_PEP8=true
 
-  ./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
-  "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8"
+  # The following command line parameters indicate whether static code analysis error messages
+  # will cause the Travis CI build to fail or are ignored.
+  IGNORE_MSG_VERA=true
+  IGNORE_MSG_CPPCHECK=true
+  IGNORE_MSG_CLANG_FORMAT=false
+  IGNORE_MSG_PEP8=false
+
+  # The script is called within the Travis CI environment and cannot be run incremental.
+  RUNS_ON_TRAVIS=true
+  INCREMENTAL=false
+
+  sudo chmod +x ./extras/static_code_analysis.sh
+  ./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
+  "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
+  "$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
+  "$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"
+
 fi   # Static code analysis.
 
 
@@ -217,11 +228,13 @@ make installcheck
 echo "MSGBLD0300: Make installcheck completed."
 
 if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
-  echo "MSGBLD0310: This build was triggered by a pull request." >&2
-  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3." >&2
+  echo "MSGBLD0310: This build was triggered by a pull request."
+  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3."
 fi
 
 if [ "$TRAVIS_REPO_SLUG" != "nest/nest-simulator" ] ; then
-  echo "MSGBLD0320: This build was from a forked repository and not from nest/nest-simulator." >&2
-  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3." >&2
+  echo "MSGBLD0320: This build was from a forked repository and not from nest/nest-simulator."
+  echo "MSGBLD0330: (WARNING) Build artifacts not uploaded to Amazon S3."
 fi
+
+echo "MSGBLD0340: Build completed."

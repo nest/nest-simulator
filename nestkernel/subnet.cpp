@@ -64,16 +64,16 @@ nest::Subnet::Subnet( const Subnet& c )
 void
 nest::Subnet::set_status( const DictionaryDatum& dict )
 {
-  updateValue< std::string >( dict, "label", label_ );
-  updateValue< DictionaryDatum >( dict, "customdict", customdict_ );
+  updateValue< std::string >( dict, names::label, label_ );
+  updateValue< DictionaryDatum >( dict, names::customdict, customdict_ );
 }
 
 void
 nest::Subnet::get_status( DictionaryDatum& dict ) const
 {
-  ( *dict )[ "number_of_children" ] = global_size();
-  ( *dict )[ "label" ] = label_;
-  ( *dict )[ "customdict" ] = customdict_;
+  ( *dict )[ names::number_of_children ] = global_size();
+  ( *dict )[ names::label ] = label_;
+  ( *dict )[ names::customdict ] = customdict_;
   ( *dict )[ names::element_type ] = LiteralDatum( names::structure );
 }
 

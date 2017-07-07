@@ -40,7 +40,7 @@ SeeAlso: unittest::distributed_assert_or_die
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 [1 2 4]                                            % list of different numbers of distributed jobs
 {                                                  % 4 is max because of the number of neurons

@@ -540,17 +540,17 @@ iaf_cond_alpha_mc::get_status( DictionaryDatum& d ) const
    * a seg fault on exit, see #328
    */
   DictionaryDatum receptor_dict_ = new Dictionary();
-  ( *receptor_dict_ )[ Name( "soma_exc" ) ] = SOMA_EXC;
-  ( *receptor_dict_ )[ Name( "soma_inh" ) ] = SOMA_INH;
-  ( *receptor_dict_ )[ Name( "soma_curr" ) ] = I_SOMA;
+  ( *receptor_dict_ )[ names::soma_exc ] = SOMA_EXC;
+  ( *receptor_dict_ )[ names::soma_inh ] = SOMA_INH;
+  ( *receptor_dict_ )[ names::soma_curr ] = I_SOMA;
 
-  ( *receptor_dict_ )[ Name( "proximal_exc" ) ] = PROX_EXC;
-  ( *receptor_dict_ )[ Name( "proximal_inh" ) ] = PROX_INH;
-  ( *receptor_dict_ )[ Name( "proximal_curr" ) ] = I_PROX;
+  ( *receptor_dict_ )[ names::proximal_exc ] = PROX_EXC;
+  ( *receptor_dict_ )[ names::proximal_inh ] = PROX_INH;
+  ( *receptor_dict_ )[ names::proximal_curr ] = I_PROX;
 
-  ( *receptor_dict_ )[ Name( "distal_exc" ) ] = DIST_EXC;
-  ( *receptor_dict_ )[ Name( "distal_inh" ) ] = DIST_INH;
-  ( *receptor_dict_ )[ Name( "distal_curr" ) ] = I_DIST;
+  ( *receptor_dict_ )[ names::distal_exc ] = DIST_EXC;
+  ( *receptor_dict_ )[ names::distal_inh ] = DIST_INH;
+  ( *receptor_dict_ )[ names::distal_curr ] = I_DIST;
 
   ( *d )[ names::receptor_types ] = receptor_dict_;
 }

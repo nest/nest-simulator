@@ -85,11 +85,11 @@ pg_in <<
 
 
 /spike_detector Create /sd Set
-sd << /withtime true /withgid true  /to_file true >> SetStatus
+sd << /withtime true /withgid true >> SetStatus
 
 
 /voltmeter Create /vm Set
-vm << /withtime true /withgid true  /to_file true >> SetStatus
+vm << /withtime true /withgid true >> SetStatus
 
       
             
@@ -131,17 +131,9 @@ neuron1 neuron2 /stdp_synapse Connect
 
 
 
-neuron2 GetStatus /local get
-{
- (weight.gdf) (w) file /f_weight Set
-} if
-
-
-
-
 40000.0 /T Set
 
-100.0 /dt Set
+%100.0 /dt Set
 %76.0 /dt Set
 50.0 /dt Set
 %10000.0 /dt Set
@@ -155,13 +147,13 @@ neuron2 GetStatus /local get
  neuron2 GetStatus /local get
  {
      % we are on the machine where neuron2 resides
-     << /source neuron1 /synapse_model /stdp_synapse >> GetConnections
+     << /source [neuron1] /synapse_model /stdp_synapse >> GetConnections
      0 get GetStatus /weight get
      /w Set  %we know that there is only a single synapse
 
   w ==
   
-  f_weight t <- (\t) <- w <- endl pop
+  %f_weight t <- (\t) <- w <- endl pop
   
  } if
 

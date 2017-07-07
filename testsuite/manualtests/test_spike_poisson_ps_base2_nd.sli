@@ -45,11 +45,12 @@ precision of a tic.
 
 M_ERROR setverbosity
 
-0 /min_exponent Set
+-2 /min_exponent Set
 
 /Transmission
 {
 dexp /h Set
+(res = ) h cvs join =
 
 /T 4.0 def 
 
@@ -81,8 +82,10 @@ sp [/events [/times /offsets]] get cva dup ==
 
 [0 min_exponent -2] Range
  { Transmission } Map
-
-% dup Rest exch First {sub} exch prepend % Map
-
+0 get
+(########) =
+pstack (OOOOOOOOO) =
+dup Rest pstack (xxxxxxx) = exch First {sub} exch prepend pstack (IIIIIIII) = Map
+pstack
 %Flatten { 0.0 neq } Select [] eq  % comment these two last lines to see the 
 %assert_or_die                     % minimal differences causing the failure

@@ -35,8 +35,9 @@
 import nest
 from matplotlib import pyplot as plt
 
-amplitude =  100. # Set externally applied current amplitude in pA
-dt = 0.1 # simulation step length [ms]
+
+amplitude = 100.  # Set externally applied current amplitude in pA
+dt = 0.1  # simulation step length [ms]
 
 nest.ResetKernel()
 nest.set_verbosity('M_ERROR')
@@ -50,13 +51,13 @@ nest.Simulate(1000)
 m_eq = nest.GetStatus(neuron)[0]['Act_m']
 h_eq = nest.GetStatus(neuron)[0]['Act_h']
 
-nest.SetStatus(neuron, {'I_e': amplitude}) # Apply external current
+nest.SetStatus(neuron, {'I_e': amplitude})  # Apply external current
 
 # Scan state space
 print('Scanning phase space')
 
-V_new_vec = [];
-n_new_vec = [];
+V_new_vec = []
+n_new_vec = []
 # x will contain the phase-plane data as a vector field
 x = []
 count = 0
@@ -70,19 +71,19 @@ for V in range(-100, 42, 2):
         # Find state
         V_m = nest.GetStatus(neuron)[0]['V_m']
         Inact_n = nest.GetStatus(neuron)[0]['Inact_n']
-        
+
         # Simulate a short while
         nest.Simulate(dt)
-        
+
         # Find difference between new state and old state
         V_m_new = nest.GetStatus(neuron)[0]['V_m'] - V*1.0
         Inact_n_new = nest.GetStatus(neuron)[0]['Inact_n'] - n/100.0
-        
+
         # Store in vector for later analysis
         n_V.append(abs(V_m_new))
         n_n.append(abs(Inact_n_new))
         x.append([V_m, Inact_n, V_m_new, Inact_n_new])
-        
+
         if count % 10 == 0:
             # Write updated state next to old state
             print('')
@@ -90,13 +91,12 @@ for V in range(-100, 42, 2):
             print('new Vm:\t', V_m_new)
             print('Inact_n:', Inact_n)
             print('new Inact_n:', Inact_n_new)
-        
+
         count += 1
     # Store in vector for later analysis
     V_new_vec.append(n_V)
     n_new_vec.append(n_n)
 
-        
 # Set state for AP generation
 nest.SetStatus(neuron, {'V_m': -34., 'Inact_n': 0.2,
                         'Act_m': m_eq, 'Act_h': h_eq})
@@ -110,7 +110,7 @@ for i in range(1, 1001):
     # Find state
     V_m = nest.GetStatus(neuron)[0]['V_m']
     Inact_n = nest.GetStatus(neuron)[0]['Inact_n']
-    
+
     if i % 10 == 0:
         # Write new state next to old state
         print('Vm: \t', V_m)
@@ -120,7 +120,7 @@ for i in range(1, 1001):
     # Simulate again
     nest.SetStatus(neuron, {'Act_m': m_eq, 'Act_h': h_eq})
     nest.Simulate(dt)
-    
+
 # Make analysis
 print('')
 print('Plot analysis')
@@ -134,11 +134,11 @@ nullcline_V = []
 nullcline_n = []
 
 print('Searching nullclines')
-for i in range(0, len(V_vec)):    
+for i in range(0, len(V_vec)):
     index = V_matrix[:][i].index(min(V_matrix[:][i]))
     if index != 0 and index != len(n_vec):
         nullcline_V.append([V_vec[i], n_vec[index]])
-        
+
     index = n_matrix[:][i].index(min(n_matrix[:][i]))
     if index != 0 and index != len(n_vec):
         nullcline_n.append([V_vec[i], n_vec[index]])

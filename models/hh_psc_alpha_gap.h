@@ -134,7 +134,6 @@ Receives: SpikeEvent, GapJunctionEvent, CurrentEvent, DataLoggingRequest
 Author: Jan Hahne, Moritz Helias, Susanne Kunkel
 SeeAlso: hh_psc_alpha, hh_cond_exp_traub, gap_junction
 */
-
 class hh_psc_alpha_gap : public Archiving_Node
 {
 
@@ -155,7 +154,6 @@ public:
   using Node::sends_secondary_event;
 
   port send_test_event( Node& target, rport receptor_type, synindex, bool );
-
 
   void handle( SpikeEvent& );
   void handle( CurrentEvent& );
@@ -382,9 +380,8 @@ hh_psc_alpha_gap::wfr_update( Time const& origin,
   const long from,
   const long to )
 {
-  bool done = false;
   State_ old_state = S_; // save state before wfr_update
-  done = update_( origin, from, to, true );
+  const bool done = update_( origin, from, to, true );
   S_ = old_state; // restore old state
 
   return done;

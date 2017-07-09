@@ -56,7 +56,6 @@ struct my_params
 /* ----------------------------------------------------------------
  * Siegert implementation
  * ---------------------------------------------------------------- */
-
 double
 integrand1( double x, void* p )
 {
@@ -354,10 +353,10 @@ void
 nest::siegert_neuron::init_buffers_()
 {
   // resize buffers
-  const size_t quantity = kernel().connection_manager.get_min_delay();
-  B_.drift_input_.resize( quantity, 0.0 );
-  B_.diffusion_input_.resize( quantity, 0.0 );
-  B_.last_y_values.resize( quantity, 0.0 );
+  const size_t buffer_size = kernel().connection_manager.get_min_delay();
+  B_.drift_input_.resize( buffer_size, 0.0 );
+  B_.diffusion_input_.resize( buffer_size, 0.0 );
+  B_.last_y_values.resize( buffer_size, 0.0 );
 
   B_.logger_.reset(); // includes resize
   Archiving_Node::clear_history();
@@ -391,11 +390,11 @@ nest::siegert_neuron::update_( Time const& origin,
   assert( from < to );
 
   bool done = true;
-  const size_t quantity = kernel().connection_manager.get_min_delay();
+  const size_t buffer_size = kernel().connection_manager.get_min_delay();
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
 
   // allocate memory to store rates to be sent by rate events
-  std::vector< double > new_rates( quantity, 0.0 );
+  std::vector< double > new_rates( buffer_size, 0.0 );
 
   for ( long lag = from; lag < to; ++lag )
   {
@@ -417,8 +416,7 @@ nest::siegert_neuron::update_( Time const& origin,
       // rate logging
       B_.logger_.record_data( origin.get_steps() + lag );
     }
-
-    if ( wfr_update ) // check convergence of waveform relaxation
+    else // check convergence of waveform relaxation
     {
       done = ( fabs( S_.r_ - B_.last_y_values[ lag ] ) <= wfr_tol ) && done;
       // update last_y_values for next wfr_update iteration
@@ -430,7 +428,7 @@ nest::siegert_neuron::update_( Time const& origin,
   {
     // clear last_y_values
     B_.last_y_values.clear();
-    B_.last_y_values.resize( quantity, 0.0 );
+    B_.last_y_values.resize( buffer_size, 0.0 );
 
     // modifiy new_rates for diffusion-event as proxy for next min_delay
     for ( long temp = from; temp < to; ++temp )
@@ -444,10 +442,9 @@ nest::siegert_neuron::update_( Time const& origin,
 
   // Reset variables
   B_.drift_input_.clear();
-  B_.drift_input_.resize( quantity, 0.0 );
+  B_.drift_input_.resize( buffer_size, 0.0 );
   B_.diffusion_input_.clear();
-  B_.diffusion_input_.resize( quantity, 0.0 );
-
+  B_.diffusion_input_.resize( buffer_size, 0.0 );
 
   return done;
 }
@@ -463,7 +460,7 @@ nest::siegert_neuron::handle( DiffusionEvent& e )
     double value = e.get_coeffvalue( it );
     B_.drift_input_[ i ] += e.get_drift_factor() * value;
     B_.diffusion_input_[ i ] += e.get_diffusion_factor() * value;
-    i++;
+    ++i;
   }
 }
 
@@ -472,7 +469,6 @@ nest::siegert_neuron::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }
-
 
 } // namespace
 

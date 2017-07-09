@@ -40,6 +40,7 @@
 
 namespace nest
 {
+
 /**
  * Base class for rate model with input noise.
  *
@@ -55,7 +56,6 @@ namespace nest
  *
  * @see lin_rate, tanh_rate, thresholdlin_rate
  */
-
 template < class TGainfunction >
 class rate_neuron_ipn : public Archiving_Node
 {
@@ -90,7 +90,6 @@ public:
   sends_secondary_event( DelayRateNeuronEvent& )
   {
   }
-
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -173,20 +172,18 @@ private:
     Buffers_( rate_neuron_ipn& );
     Buffers_( const Buffers_&, rate_neuron_ipn& );
 
-    // buffer for rate vector received by DelayRateConnection
-    RingBuffer delayed_rates_;
-
-    // buffer for rate vector received by RateConnection
-    std::vector< double > instant_rates_;
-
-    // remembers y_values from last wfr_update
-    std::vector< double > last_y_values;
-
-    // remembers the random_numbers
-    std::vector< double > random_numbers;
-
-    //! Logger for all analog data
-    UniversalDataLogger< rate_neuron_ipn > logger_;
+    RingBuffer delayed_rates_; //!< buffer for rate vector received by
+    // DelayRateConnection
+    std::vector< double >
+      instant_rates_; //!< buffer for rate vector received by RateConnection
+    std::vector< double >
+      last_y_values; //!< remembers y_values from last wfr_update
+    std::vector< double > random_numbers; //!< remembers the random_numbers in
+    // order to apply the same random
+    // numbers in each iteration when wfr
+    // is used
+    UniversalDataLogger< rate_neuron_ipn >
+      logger_; //!< Logger for all analog data
   };
 
   // ----------------------------------------------------------------
@@ -249,9 +246,8 @@ rate_neuron_ipn< TGainfunction >::wfr_update( Time const& origin,
   const long from,
   const long to )
 {
-  bool done = false;
   State_ old_state = S_; // save state before wfr update
-  done = update_( origin, from, to, true );
+  const bool done = update_( origin, from, to, true );
   S_ = old_state; // restore old state
 
   return done;

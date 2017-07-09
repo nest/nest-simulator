@@ -45,7 +45,6 @@
 namespace nest
 {
 
-
 /* BeginDocumentation
 Name: siegert_neuron
 
@@ -107,7 +106,6 @@ Receives: DiffusionEvent, DataLoggingRequest
 Author: Jannis Schuecker, David Dahmen, Jan Hahne
 SeeAlso: diffusion_connection
 */
-
 class siegert_neuron : public Archiving_Node
 {
 
@@ -212,17 +210,14 @@ private:
     Buffers_( siegert_neuron& );
     Buffers_( const Buffers_&, siegert_neuron& );
 
-    // buffer for drift term received by DiffusionConnection
-    std::vector< double > drift_input_;
-
-    // buffer for diffusion term received by DiffusionConnection
-    std::vector< double > diffusion_input_;
-
-    // remembers y_values from last prelim_update
-    std::vector< double > last_y_values;
-
-    //! Logger for all analog data
-    UniversalDataLogger< siegert_neuron > logger_;
+    std::vector< double >
+      drift_input_; //!< buffer for drift term received by DiffusionConnection
+    std::vector< double > diffusion_input_; //!< buffer for diffusion term
+    // received by DiffusionConnection
+    std::vector< double >
+      last_y_values; //!< remembers y_values from last wfr_update
+    UniversalDataLogger< siegert_neuron >
+      logger_; //!< Logger for all analog data
   };
 
   // ----------------------------------------------------------------
@@ -265,9 +260,8 @@ siegert_neuron::update( Time const& origin, const long from, const long to )
 inline bool
 siegert_neuron::wfr_update( Time const& origin, const long from, const long to )
 {
-  bool done = false;
   State_ old_state = S_; // save state before wfr update
-  done = update_( origin, from, to, true );
+  const bool done = update_( origin, from, to, true );
   S_ = old_state; // restore old state
 
   return done;

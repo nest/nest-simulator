@@ -187,13 +187,13 @@ nest::rate_neuron_opn< TGainfunction >::init_buffers_()
   B_.delayed_rates_.clear(); // includes resize
 
   // resize buffers
-  const size_t quantity = kernel().connection_manager.get_min_delay();
-  B_.instant_rates_.resize( quantity, 0.0 );
-  B_.last_y_values.resize( quantity, 0.0 );
-  B_.random_numbers.resize( quantity, numerics::nan );
+  const size_t buffer_size = kernel().connection_manager.get_min_delay();
+  B_.instant_rates_.resize( buffer_size, 0.0 );
+  B_.last_y_values.resize( buffer_size, 0.0 );
+  B_.random_numbers.resize( buffer_size, numerics::nan );
 
   // initialize random numbers
-  for ( unsigned int i = 0; i < quantity; i++ )
+  for ( unsigned int i = 0; i < buffer_size; i++ )
   {
     B_.random_numbers[ i ] =
       V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
@@ -235,11 +235,11 @@ nest::rate_neuron_opn< TGainfunction >::update_( Time const& origin,
   assert( from < to );
 
   bool done = true;
-  const size_t quantity = kernel().connection_manager.get_min_delay();
+  const size_t buffer_size = kernel().connection_manager.get_min_delay();
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
 
   // allocate memory to store rates to be sent by rate events
-  std::vector< double > new_rates( quantity, 0.0 );
+  std::vector< double > new_rates( buffer_size, 0.0 );
 
   for ( long lag = from; lag < to; ++lag )
   {
@@ -299,15 +299,15 @@ nest::rate_neuron_opn< TGainfunction >::update_( Time const& origin,
 
     // clear last_y_values
     B_.last_y_values.clear();
-    B_.last_y_values.resize( quantity, 0.0 );
+    B_.last_y_values.resize( buffer_size, 0.0 );
 
     // modifiy new_rates for rate-neuron-event as proxy for next min_delay
     for ( long temp = from; temp < to; ++temp )
       new_rates[ temp ] = S_.y_;
 
     // create new random numbers
-    B_.random_numbers.resize( quantity, numerics::nan );
-    for ( unsigned int i = 0; i < quantity; i++ )
+    B_.random_numbers.resize( buffer_size, numerics::nan );
+    for ( unsigned int i = 0; i < buffer_size; i++ )
     {
       B_.random_numbers[ i ] =
         V_.normal_dev_( kernel().rng_manager.get_rng( get_thread() ) );
@@ -321,7 +321,7 @@ nest::rate_neuron_opn< TGainfunction >::update_( Time const& origin,
 
   // Reset variables
   B_.instant_rates_.clear();
-  B_.instant_rates_.resize( quantity, 0.0 );
+  B_.instant_rates_.resize( buffer_size, 0.0 );
 
   return done;
 }
@@ -370,7 +370,7 @@ nest::rate_neuron_opn< TGainfunction >::handle( DelayRateNeuronEvent& e )
         e.get_delay() - kernel().connection_manager.get_min_delay() + i,
         e.get_weight() * gain_( e.get_coeffvalue( it ) ) );
     }
-    i++;
+    ++i;
   }
 }
 

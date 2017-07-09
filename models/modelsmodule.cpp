@@ -103,7 +103,6 @@
 #include "correlomatrix_detector.h"
 #include "correlospinmatrix_detector.h"
 #include "multimeter.h"
-//#include "rate_detector.h"
 #include "spike_detector.h"
 #include "spin_detector.h"
 #include "weight_recorder.h"

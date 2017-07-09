@@ -58,19 +58,13 @@ SeeAlso: siegert_neuron, rate_connection,
 
 namespace nest
 {
-
 /**
- * Class representing a rate connection. A rate connection
- * has the properties weight, delay and receiver port.
+ * Class representing a diffusion connection. A diffusion connection
+ * has the properties drift_factor, diffusion_factor and receiver port.
  */
-
 template < typename targetidentifierT >
 class DiffusionConnection : public Connection< targetidentifierT >
 {
-
-  double weight_;
-  double drift_factor_;
-  double diffusion_factor_;
 
 public:
   // this line determines which common properties to use
@@ -78,19 +72,16 @@ public:
   typedef Connection< targetidentifierT > ConnectionBase;
   typedef DiffusionEvent EventType;
 
-
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
   DiffusionConnection()
     : ConnectionBase()
-    , weight_( 1.0 )
     , drift_factor_( 1.0 )
     , diffusion_factor_( 1.0 )
   {
   }
-
 
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
@@ -101,7 +92,6 @@ public:
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
-
 
   void
   check_connection( Node& s,
@@ -128,7 +118,6 @@ public:
   void
   send( Event& e, thread t, double, const CommonSynapseProperties& )
   {
-    e.set_weight( weight_ );
     e.set_drift_factor( drift_factor_ );
     e.set_diffusion_factor( diffusion_factor_ );
     e.set_receiver( *get_target( t ) );
@@ -141,17 +130,23 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   void
-  set_weight( double w )
+  set_weight( double )
   {
     throw BadProperty(
-      "Please use the parameters \"drift_factor\" and "
-      "\"diffusion_factor\" to specifiy the weights." );
+      "Please use the parameters drift_factor and "
+      "diffusion_factor to specifiy the weights." );
   }
+
   void
   set_delay( double )
   {
     throw BadProperty( "diffusion_connection has no delay." );
   }
+
+private:
+  double weight_;
+  double drift_factor_;
+  double diffusion_factor_;
 };
 
 template < typename targetidentifierT >
@@ -176,8 +171,8 @@ DiffusionConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   // If the parameter weight is set, we throw a BadProperty
   if ( d->known( names::weight ) )
     throw BadProperty(
-      "Please use the parameters \"drift_factor\" and "
-      "\"diffusion_factor\" to specifiy the weights." );
+      "Please use the parameters drift_factor and "
+      "diffusion_factor to specifiy the weights." );
 
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::drift_factor, drift_factor_ );

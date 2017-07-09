@@ -69,24 +69,19 @@ SeeAlso: synapsedict, hh_psc_alpha_gap
 
 namespace nest
 {
-
 /**
  * Class representing a gap-junction connection. A gap-junction connection
  * has the properties weight, delay and receiver port.
  */
-
 template < typename targetidentifierT >
 class GapJunction : public Connection< targetidentifierT >
 {
-
-  double weight_;
 
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
   typedef GapJunctionEvent EventType;
-
 
   /**
    * Default Constructor.
@@ -98,7 +93,6 @@ public:
   {
   }
 
-
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase. This avoids explicit name prefixes in all places these
   // functions are used. Since ConnectionBase depends on the template parameter,
@@ -106,7 +100,6 @@ public:
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
-
 
   void
   check_connection( Node& s,
@@ -154,6 +147,9 @@ public:
   {
     throw BadProperty( "gap_junction connection has no delay" );
   }
+
+private:
+  double weight_; //!< connection weight
 };
 
 template < typename targetidentifierT >

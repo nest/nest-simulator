@@ -54,24 +54,19 @@ SeeAlso: delay_rate_connection, rate_neuron_ipn, rate_neuron_opn
 
 namespace nest
 {
-
 /**
  * Class representing a rate connection. A rate connection
- * has the properties weight, delay and receiver port.
+ * has the properties weight and receiver port.
  */
-
 template < typename targetidentifierT >
 class RateConnection : public Connection< targetidentifierT >
 {
-
-  double weight_;
 
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
   typedef RateNeuronEvent EventType;
-
 
   /**
    * Default Constructor.
@@ -83,7 +78,6 @@ public:
   {
   }
 
-
   // Explicitly declare all methods inherited from the dependent base
   // ConnectionBase.
   // This avoids explicit name prefixes in all places these functions are used.
@@ -93,7 +87,6 @@ public:
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
-
 
   void
   check_connection( Node& s,
@@ -142,6 +135,9 @@ public:
     throw BadProperty(
       "rate_connection has no delay. Please use delay_rate_connection." );
   }
+
+private:
+  double weight_; //!< connection weight
 };
 
 template < typename targetidentifierT >

@@ -165,7 +165,7 @@ nest::ConnectionManager::get_synapse_status( index gid,
 
   DictionaryDatum dict( new Dictionary );
   validate_pointer( connections_[ tid ].get( gid ) )
-    ->get_synapse_status( syn_id, dict, p );
+    ->get_synapse_status( syn_id, dict, p, tid );
   ( *dict )[ names::source ] = gid;
   ( *dict )[ names::synapse_model ] = LiteralDatum(
     kernel().model_manager.get_synapse_prototype( syn_id ).get_name() );

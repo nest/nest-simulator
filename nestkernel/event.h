@@ -323,6 +323,14 @@ protected:
   Time stamp_;
 
   /**
+   * Time stamp in steps.
+   * Caches the value of stamp in steps for efficiency.
+   * Needs to be declared mutable since it is modified
+   * by a const function (get_rel_delivery_steps).
+   */
+  mutable long stamp_steps_;
+
+  /**
    * Offset for precise spike times.
    * offset_ specifies a correction to the creation time.
    * If the resolution of stamp is not sufficiently precise,
@@ -1656,6 +1664,10 @@ inline void
 Event::set_stamp( Time const& s )
 {
   stamp_ = s;
+  stamp_steps_ = 0; // setting stamp_steps to zero indicates
+                    // stamp_steps needs to be recalculated from
+                    // stamp_ next time it is needed (e.g., in
+                    // get_rel_delivery_steps)
 }
 
 inline delay
@@ -1667,7 +1679,11 @@ Event::get_delay() const
 inline long
 Event::get_rel_delivery_steps( const Time& t ) const
 {
-  return stamp_.get_steps() + d_ - 1 - t.get_steps();
+  if ( stamp_steps_ == 0 )
+  {
+    stamp_steps_ = stamp_.get_steps();
+  }
+  return stamp_steps_ + d_ - 1 - t.get_steps();
 }
 
 inline void

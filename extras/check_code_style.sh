@@ -302,8 +302,16 @@ if [ ! -x ./extras/static_code_analysis.sh ]; then
   sudo chmod +x ./extras/static_code_analysis.sh
 fi
 
-RUNS_ON_TRAVIS=false
-unset NEST_VPATH
 
-./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
-"$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8"
+RUNS_ON_TRAVIS=false
+
+unset NEST_VPATH               # These command line arguments are placeholders and not required here.
+IGNORE_MSG_VERA=false          # They are needed when running the static code analysis script within
+IGNORE_MSG_CPPCHECK=false      # the Travis CI build environment.
+IGNORE_MSG_CLANG_FORMAT=false
+IGNORE_MSG_PEP8=false
+
+./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
+"$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
+"$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
+"$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"

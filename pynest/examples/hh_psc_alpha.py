@@ -64,7 +64,7 @@ for i, amp in enumerate(range(dcfrom, dcto, dcstep)):
     print("Simulating with current I={} pA".format(amp))
     nest.Simulate(1000)  # one second warm-up time for equilibrium state
     nest.SetStatus(sd, {'n_events': 0})  # then reset spike counts
-    nest.Simulate(simtime)  # another simulation call to record neuron's 'clean' firing rate
+    nest.Simulate(simtime)  # another simulation call to record firing rate
 
     n_events = nest.GetStatus(sd, keys={'n_events'})[0][0]
     amplitudes[i] = amp

@@ -44,9 +44,7 @@
 
 /* BeginDocumentation
 Name: aeif_psc_delta - Current-based adaptive exponential integrate-and-fire
-neuron
-                      model according to Brette and Gerstner (2005) with delta
-synapse.
+neuron model according to Brette and Gerstner (2005) with delta synapse.
 
 Description:
 
@@ -58,17 +56,17 @@ This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
 solver with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
-C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)+I_ex(t)+I_in(t)+I_e
+C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)+I(t)+I_e
 
 and
 
 tau_w * dw/dt= a(V-E_L) -W
 
-I_x(t) = J_x Sum_k delta(t - t^x_k),
+I(t) = J Sum_k delta(t - t^k).
 
-where x = (ex, in), delta is the dirac delta function and k indexes incoming
+Here delta is the dirac delta function and k indexes incoming
 spikes. This is implemented such that V_m will be incremented/decremented by
-the value of J_x after a spike.
+the value of J after a spike.
 
 Parameters:
 The following parameters can be set in the status dictionary.
@@ -296,6 +294,12 @@ public:
     double V_peak_;
 
     unsigned int refractory_counts_;
+
+    double Delta_T_inv_;
+
+    double C_m_inv_;
+
+    double tau_w_inv_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------

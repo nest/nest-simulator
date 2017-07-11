@@ -97,22 +97,22 @@ nest::aeif_psc_delta_dynamics( double,
   // shorthand for state variables
   const bool is_refractory = node.S_.r_ > 0;
 
+  // bind V to the USER DEFINED V_peak_ value in Parameters.
   const double V = is_refractory
     ? node.P_.V_reset_
-    : std::min( y[ S::V_M ], node.P_.V_peak_ ); // bind V to the
-  // USER DEFINED V_peak_ value in Parameters.
+    : std::min( y[ S::V_M ], node.P_.V_peak_ );
   const double& w = y[ S::W ];
 
   const double I_spike = node.P_.Delta_T == 0. ? 0. : node.P_.g_L
-      * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) / node.P_.Delta_T );
+      * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) * node.V_.Delta_T_inv_ );
 
   // dv/dt
   f[ S::V_M ] =
     is_refractory ? 0.0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w
-                            + node.P_.I_e + node.B_.I_stim_ ) / node.P_.C_m;
+                            + node.P_.I_e + node.B_.I_stim_ ) * node.V_.C_m_inv_;
 
   // Adaptation current w.
-  f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) / node.P_.tau_w;
+  f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) * node.V_.tau_w_inv_;
 
   return GSL_SUCCESS;
 }
@@ -394,6 +394,10 @@ nest::aeif_psc_delta::calibrate()
   V_.refractory_counts_ = Time( Time::ms( P_.t_ref_ ) ).get_steps();
   // since t_ref_ >= 0, this can only fail in error
   assert( V_.refractory_counts_ >= 0 );
+  // make inverse to speed up division
+  V_.Delta_T_inv_ = 1. / P_.Delta_T;
+  V_.C_m_inv_ = 1. / P_.C_m;
+  V_.tau_w_inv_ = 1. / P_.tau_w;
 }
 
 /* ----------------------------------------------------------------
@@ -482,7 +486,12 @@ nest::aeif_psc_delta::update( const Time& origin,
       if ( S_.r_ == 0 and S_.y_[ State_::V_M ] >= V_.V_peak_ )
       {
         S_.y_[ State_::V_M ] = P_.V_reset_;
-        // add 1 to compensate for count-down right after loop
+        /* Initialize refractory step counter.
+         * - We need to add 1 to compensate for count-down immediately after
+         *   while loop.
+         * - If neuron has no refractory time, set to 0 to avoid refractory
+         *   artifact inside while loop.
+         */
         S_.r_ = V_.refractory_counts_ > 0 ? V_.refractory_counts_ + 1 : 0;
         S_.y_[ State_::W ] += P_.b; // spike-driven adaptation
 

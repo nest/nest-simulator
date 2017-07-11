@@ -310,6 +310,14 @@ protected:
   Time stamp_;
 
   /**
+   * Time stamp in steps.
+   * Caches the value of stamp in steps for efficiency.
+   * Needs to be declared mutable since it is modified
+   * by a const function (get_rel_delivery_steps).
+   */
+  mutable long stamp_steps_;
+
+  /**
    * Offset for precise spike times.
    * offset_ specifies a correction to the creation time.
    * If the resolution of stamp is not sufficiently precise,
@@ -554,8 +562,9 @@ public:
   /** Create empty request for use during simulation. */
   DataLoggingRequest();
 
-  /** Create event for given time stamp and vector of recordables. */
-  DataLoggingRequest( const Time&, const std::vector< Name >& );
+  /** Create event for given time interval, offset for interval start,
+   *  and vector of recordables. */
+  DataLoggingRequest( const Time&, const Time&, const std::vector< Name >& );
 
   DataLoggingRequest* clone() const;
 
@@ -564,6 +573,9 @@ public:
   /** Access to stored time interval.*/
   const Time& get_recording_interval() const;
 
+  /** Access to stored offset.*/
+  const Time& get_recording_offset() const;
+
   /** Access to vector of recordables. */
   const std::vector< Name >& record_from() const;
 
@@ -571,6 +583,8 @@ private:
   //! Interval between two recordings, first is step 1
   Time recording_interval_;
 
+  //! Offset relative to which the intervals are computed
+  Time recording_offset_;
   /**
    * Names of properties to record from.
    * @note This pointer shall be NULL unless the event is sent by a connection
@@ -582,17 +596,21 @@ private:
 inline DataLoggingRequest::DataLoggingRequest()
   : Event()
   , recording_interval_( Time::neg_inf() )
+  , recording_offset_( Time::ms( 0. ) )
   , record_from_( 0 )
 {
 }
 
 inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int,
+  const Time& rec_offset,
   const std::vector< Name >& recs )
   : Event()
   , recording_interval_( rec_int )
+  , recording_offset_( rec_offset )
   , record_from_( &recs )
 {
 }
+
 
 inline DataLoggingRequest*
 DataLoggingRequest::clone() const
@@ -608,6 +626,13 @@ DataLoggingRequest::get_recording_interval() const
   assert( recording_interval_.is_finite() );
 
   return recording_interval_;
+}
+
+inline const Time&
+DataLoggingRequest::get_recording_offset() const
+{
+  assert( recording_offset_.is_finite() );
+  return recording_offset_;
 }
 
 inline const std::vector< Name >&
@@ -1127,6 +1152,10 @@ inline void
 Event::set_stamp( Time const& s )
 {
   stamp_ = s;
+  stamp_steps_ = 0; // setting stamp_steps to zero indicates
+                    // stamp_steps needs to be recalculated from
+                    // stamp_ next time it is needed (e.g., in
+                    // get_rel_delivery_steps)
 }
 
 inline delay
@@ -1138,7 +1167,11 @@ Event::get_delay() const
 inline long
 Event::get_rel_delivery_steps( const Time& t ) const
 {
-  return stamp_.get_steps() + d_ - 1 - t.get_steps();
+  if ( stamp_steps_ == 0 )
+  {
+    stamp_steps_ = stamp_.get_steps();
+  }
+  return stamp_steps_ + d_ - 1 - t.get_steps();
 }
 
 inline void

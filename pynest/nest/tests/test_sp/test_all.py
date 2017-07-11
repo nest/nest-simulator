@@ -29,6 +29,8 @@ from . import test_sp_manager
 from . import test_disconnect
 from . import test_disconnect_multiple
 from . import test_enable_multithread
+from . import test_get_sp_status
+
 HAVE_MPI = nest.sli_func("statusdict/have_mpi ::")
 if HAVE_MPI:
     print ("Testing with MPI")
@@ -63,6 +65,7 @@ def suite():
     test_suite.addTest(test_disconnect.suite())
     test_suite.addTest(test_disconnect_multiple.suite())
     test_suite.addTest(test_enable_multithread.suite())
+    test_suite.addTest(test_get_sp_status.suite())
 
     return test_suite
 

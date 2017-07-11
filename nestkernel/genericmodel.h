@@ -227,7 +227,7 @@ DictionaryDatum
 GenericModel< ElementT >::get_status_()
 {
   DictionaryDatum d = proto_.get_status_base();
-  ( *d )[ "elementsize" ] = sizeof( ElementT );
+  ( *d )[ names::elementsize ] = sizeof( ElementT );
   return d;
 }
 

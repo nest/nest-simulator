@@ -177,3 +177,34 @@ ResetKernel
   Last /target get 6 eq assert_or_die
 
 } forall
+
+(Running Connect tests with illegal combinations) =
+ResetKernel
+
+/n_connections 0 def
+modeldict
+{
+  pop Create /node_a Set
+  modeldict
+  {
+    pop Create /node_b Set
+
+    % try to connect node_a and node_b
+    {
+      node_a node_b Connect
+    } stopped not
+    {  % if there is no error, check that a connection has been made
+      {
+        n_connections 1 add 
+        0 GetStatus /num_connections get 
+        eq
+      } assert_or_die
+      /n_connections n_connections 1 add def
+    }
+    {
+      5 npop 
+    } ifelse
+  } forall
+
+} forall
+

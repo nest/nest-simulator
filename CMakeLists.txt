@@ -28,7 +28,7 @@ set( NEST_USER_EMAIL "nest_user@nest-initiative.org" )
 
 # VERSION exported to libnestutil/config.h, extras/create_release.sh
 set( NEST_VERSION_MAJOR 2 )
-set( NEST_VERSION_MINOR 11 )
+set( NEST_VERSION_MINOR 12 )
 set( NEST_VERSION_PATCHLEVEL 0 )
 
 set( NEST_VERSION_VERSION "${NEST_VERSION_MAJOR}.${NEST_VERSION_MINOR}.${NEST_VERSION_PATCHLEVEL}" )
@@ -108,7 +108,6 @@ find_program( SED NAMES sed gsed )
 ################################################################################
 ##################   CPack, checks, ... in external modules   ##################
 ################################################################################
-include(GenerateHelp)
 
 # This include checks the symbols, etc.
 include( CheckIncludesSymbols )
@@ -173,7 +172,6 @@ nest_check_have_stl_vector_capacity_doubling()
 nest_check_have_xlc_ice_on_using()
 nest_check_have_std_nan()
 nest_check_have_std_isnan()
-nest_generate_help()
 
 ################################################################################
 ##################         Enable Testing Targets             ##################

@@ -126,7 +126,9 @@ protected:
     {
       int size = ::read( m_fd, m_inbuf, s_bufsiz );
       if ( size < 1 )
+      {
         return traits_type::eof();
+      }
       setg( m_inbuf, m_inbuf, m_inbuf + size );
     }
     return traits_type::to_int_type( *gptr() );
@@ -141,7 +143,7 @@ protected:
       return traits_type::eof();
     }
 
-    if ( !traits_type::eq_int_type( c, traits_type::eof() ) )
+    if ( not traits_type::eq_int_type( c, traits_type::eof() ) )
     {
       *pptr() = traits_type::to_char_type( c );
       pbump( 1 );
@@ -155,7 +157,9 @@ protected:
   {
     std::streamsize size = pptr() - pbase();
     if ( size > 0 && ::write( m_fd, m_outbuf, size ) != size )
+    {
       return -1;
+    }
     setp( m_outbuf, m_outbuf + s_bufsiz );
     return 0;
   }

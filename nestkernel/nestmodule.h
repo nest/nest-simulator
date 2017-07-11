@@ -231,6 +231,24 @@ public:
     void execute( SLIInterpreter* ) const;
   } simulatefunction;
 
+  class PrepareFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } preparefunction;
+
+  class RunFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } runfunction;
+
+  class CleanupFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } cleanupfunction;
+
   class Create_l_iFunction : public SLIFunction
   {
   public:

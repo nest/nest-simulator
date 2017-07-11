@@ -1095,11 +1095,25 @@ For connecting the device layer to a neuron layer, an appropriate mask
 needs to be specified and optionally also an anchor for shifting the
 center of the mask.
 As demonstrated in the following example, stimulation devices require the
-divergent and recording devices the convergent connection type:
+divergent connection type
 \lstinputlisting[linerange=conn9-end]{user_manual_scripts/connections.py}
+while recording devices require the convergent connection type (see also
+Sec.~\ref{sec:rec_dev}):
 \lstinputlisting[linerange=conn10-end]{user_manual_scripts/connections.py}
 
+\section{Layers and recording devices}\label{sec:rec_dev}
 
+Generally, one should not create a layer of recording devices, especially
+spike detectors, to record from a topology layer. Instead, create a single 
+spike detector, and connect all neurons in the layer to that spike detector
+using a normal connect command:
+\lstinputlisting[linerange=conn11-end]{user_manual_scripts/connections.py}
+
+Connections to a layer of recording devices as described in 
+Sec.~\ref{sec:dev_subregions}, such as spike detectors, are
+only possible using the convergent connection type without a fixed number
+of connections. Note that voltmeter and multimeter are not suffering from
+this restriction, since they are connected as sources, not as targets. 
 
 \chapter{Inspecting Layers}\label{sec:inspection}
 

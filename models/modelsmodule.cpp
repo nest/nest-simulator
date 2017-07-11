@@ -105,6 +105,7 @@
 #include "volume_transmitter.h"
 
 // Prototypes for synapses
+#include "bernoulli_connection.h"
 #include "common_synapse_properties.h"
 #include "cont_delay_connection.h"
 #include "cont_delay_connection_impl.h"
@@ -610,6 +611,15 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< VogelsSprekelerConnection< TargetIdentifierIndex > >(
       "vogels_sprekeler_synapse_hpc" );
+
+  /* BeginDocumentation
+     Name: bernoulli_synapse - Static synapse with stochastic transmission
+     SeeAlso: synapsedict, static_synapse, static_synapse_hom_w
+  */
+  kernel()
+    .model_manager
+    .register_connection_model< BernoulliConnection< TargetIdentifierPtrRport > >(
+      "bernoulli_synapse" );
 }
 
 } // namespace nest

@@ -150,6 +150,11 @@ public:
 
   virtual const CommonSynapseProperties& get_common_properties() const = 0;
 
+  /**
+   * Checks to see if illegal parameters are given in syn_spec.
+   */
+  virtual void check_synapse_params( const DictionaryDatum& ) const = 0;
+
   virtual SecondaryEvent* get_event() const = 0;
 
   virtual void set_syn_id( synindex syn_id ) = 0;
@@ -250,6 +255,12 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  void
+  check_synapse_params( const DictionaryDatum& syn_spec ) const
+  {
+    default_connection_.check_synapse_params( syn_spec );
+  }
+
   typename ConnectionT::CommonPropertiesType const&
   get_common_properties() const
   {
@@ -333,7 +344,9 @@ public:
   {
     std::vector< SecondaryEvent* > prototype_events( n, NULL );
     for ( size_t i = 0; i < n; i++ )
+    {
       prototype_events[ i ] = new typename ConnectionT::EventType();
+    }
 
     return prototype_events;
   }
@@ -342,7 +355,9 @@ public:
   ~GenericSecondaryConnectorModel()
   {
     if ( pev_ != 0 )
+    {
       delete pev_;
+    }
   }
 
   typename ConnectionT::EventType*

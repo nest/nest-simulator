@@ -550,9 +550,10 @@ extern const Name U_std;
 extern const Name U_upper;
 extern const Name update;      //!< Command to execute the neuron (sli_neuron)
 extern const Name update_node; //!< Command to execute the neuron (sli_neuron)
+extern const Name update_synaptic_elements; //!< Command to update parameters
+                                            //!< of synaptic elements
+extern const Name use_wfr;                  //!< Simulation-related
 extern const Name use_gid_in_filename; //!< use gid in the filename
-extern const Name use_wfr;             //!< Simulation-related
-extern const Name update_synaptic_elements;
 
 extern const Name V_act_NMDA; //!< specific to Hill & Tononi 2005
 extern const Name V_epsp;     //!< Specific to iaf_chs_2008 neuron

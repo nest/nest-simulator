@@ -80,11 +80,11 @@ public:
 
   SignalType sends_signal() const;
 
-  void sends_secondary_event( RateNeuronEvent& re );
+  void sends_secondary_event( InstantaneousRateConnectionEvent& re );
 
-  void sends_secondary_event( DiffusionEvent& de );
+  void sends_secondary_event( DiffusionConnectionEvent& de );
 
-  void sends_secondary_event( DelayRateNeuronEvent& re );
+  void sends_secondary_event( DelayedRateConnectionEvent& re );
 
   Node const& get_prototype() const;
 
@@ -216,21 +216,23 @@ GenericModel< ElementT >::sends_secondary_event( GapJunctionEvent& ge )
 
 template < typename ElementT >
 inline void
-GenericModel< ElementT >::sends_secondary_event( RateNeuronEvent& re )
+GenericModel< ElementT >::sends_secondary_event(
+  InstantaneousRateConnectionEvent& re )
 {
   return proto_.sends_secondary_event( re );
 }
 
 template < typename ElementT >
 inline void
-GenericModel< ElementT >::sends_secondary_event( DiffusionEvent& de )
+GenericModel< ElementT >::sends_secondary_event( DiffusionConnectionEvent& de )
 {
   return proto_.sends_secondary_event( de );
 }
 
 template < typename ElementT >
 inline void
-GenericModel< ElementT >::sends_secondary_event( DelayRateNeuronEvent& re )
+GenericModel< ElementT >::sends_secondary_event(
+  DelayedRateConnectionEvent& re )
 {
   return proto_.sends_secondary_event( re );
 }

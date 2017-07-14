@@ -33,7 +33,7 @@ Description:
  this type. To create rate connections with delay please use
  the synapse type rate_connection_delayed.
 
-Transmits: RateNeuronEvent
+Transmits: InstantaneousRateConnectionEvent
 
 References:
 
@@ -67,7 +67,7 @@ public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
-  typedef RateNeuronEvent EventType;
+  typedef InstantaneousRateConnectionEvent EventType;
 
   /**
    * Default Constructor.

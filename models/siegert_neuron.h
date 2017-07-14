@@ -99,9 +99,9 @@ References:
  in distributed neuronal network simulations.
  Front. Neuroinform. 9:22. doi: 10.3389/fninf.2015.00022
 
-Sends: DiffusionEvent
+Sends: DiffusionConnectionEvent
 
-Receives: DiffusionEvent, DataLoggingRequest
+Receives: DiffusionConnectionEvent, DataLoggingRequest
 
 Author: Jannis Schuecker, David Dahmen, Jan Hahne
 SeeAlso: diffusion_connection
@@ -123,14 +123,14 @@ public:
   using Node::handle;
   using Node::sends_secondary_event;
 
-  void handle( DiffusionEvent& );
+  void handle( DiffusionConnectionEvent& );
   void handle( DataLoggingRequest& );
 
-  port handles_test_event( DiffusionEvent&, rport );
+  port handles_test_event( DiffusionConnectionEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
 
   void
-  sends_secondary_event( DiffusionEvent& )
+  sends_secondary_event( DiffusionConnectionEvent& )
   {
   }
 
@@ -268,7 +268,8 @@ siegert_neuron::wfr_update( Time const& origin, const long from, const long to )
 }
 
 inline port
-siegert_neuron::handles_test_event( DiffusionEvent&, rport receptor_type )
+siegert_neuron::handles_test_event( DiffusionConnectionEvent&,
+  rport receptor_type )
 {
   if ( receptor_type == 0 )
     return 0;

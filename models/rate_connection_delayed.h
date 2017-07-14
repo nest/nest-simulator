@@ -31,7 +31,7 @@ Description:
  To create instantaneous rate connections please use
  the synapse type rate_connection_instantaneous.
 
-Transmits: DelayRateNeuronEvent
+Transmits: DelayedRateConnectionEvent
 
 References:
 
@@ -65,7 +65,7 @@ public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
-  typedef DelayRateNeuronEvent EventType;
+  typedef DelayedRateConnectionEvent EventType;
 
   /**
    * Default Constructor.

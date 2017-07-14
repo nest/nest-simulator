@@ -106,17 +106,17 @@ void GapJunctionEvent::operator()()
   receiver_->handle( *this );
 }
 
-void RateNeuronEvent::operator()()
+void InstantaneousRateConnectionEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void DelayRateNeuronEvent::operator()()
+void DelayedRateConnectionEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-void DiffusionEvent::operator()()
+void DiffusionConnectionEvent::operator()()
 {
   receiver_->handle( *this );
 }
@@ -124,14 +124,14 @@ void DiffusionEvent::operator()()
 std::vector< synindex > GapJunctionEvent::supported_syn_ids_;
 size_t GapJunctionEvent::coeff_length_ = 0;
 
-std::vector< synindex > RateNeuronEvent::supported_syn_ids_;
-size_t RateNeuronEvent::coeff_length_ = 0;
+std::vector< synindex > InstantaneousRateConnectionEvent::supported_syn_ids_;
+size_t InstantaneousRateConnectionEvent::coeff_length_ = 0;
 
-std::vector< synindex > DelayRateNeuronEvent::supported_syn_ids_;
-size_t DelayRateNeuronEvent::coeff_length_ = 0;
+std::vector< synindex > DelayedRateConnectionEvent::supported_syn_ids_;
+size_t DelayedRateConnectionEvent::coeff_length_ = 0;
 
-std::vector< synindex > DiffusionEvent::supported_syn_ids_;
-size_t DiffusionEvent::coeff_length_ = 0;
+std::vector< synindex > DiffusionConnectionEvent::supported_syn_ids_;
+size_t DiffusionConnectionEvent::coeff_length_ = 0;
 }
 
 

@@ -355,58 +355,58 @@ Node::sends_secondary_event( GapJunctionEvent& )
 }
 
 void
-Node::handle( RateNeuronEvent& )
+Node::handle( InstantaneousRateConnectionEvent& )
 {
   throw UnexpectedEvent();
 }
 
 void
-Node::handle( DiffusionEvent& )
+Node::handle( DiffusionConnectionEvent& )
 {
   throw UnexpectedEvent();
 }
 
 void
-Node::handle( DelayRateNeuronEvent& )
+Node::handle( DelayedRateConnectionEvent& )
 {
   throw UnexpectedEvent();
 }
 
 port
-Node::handles_test_event( RateNeuronEvent&, rport )
+Node::handles_test_event( InstantaneousRateConnectionEvent&, rport )
 {
   throw IllegalConnection();
   return invalid_port_;
 }
 
 port
-Node::handles_test_event( DiffusionEvent&, rport )
+Node::handles_test_event( DiffusionConnectionEvent&, rport )
 {
   throw IllegalConnection();
   return invalid_port_;
 }
 
 port
-Node::handles_test_event( DelayRateNeuronEvent&, rport )
+Node::handles_test_event( DelayedRateConnectionEvent&, rport )
 {
   throw IllegalConnection();
   return invalid_port_;
 }
 
 void
-Node::sends_secondary_event( RateNeuronEvent& )
+Node::sends_secondary_event( InstantaneousRateConnectionEvent& )
 {
   throw IllegalConnection();
 }
 
 void
-Node::sends_secondary_event( DiffusionEvent& )
+Node::sends_secondary_event( DiffusionConnectionEvent& )
 {
   throw IllegalConnection();
 }
 
 void
-Node::sends_secondary_event( DelayRateNeuronEvent& )
+Node::sends_secondary_event( DelayedRateConnectionEvent& )
 {
   throw IllegalConnection();
 }

@@ -71,9 +71,10 @@ References:
  in distributed neuronal network simulations.
  Front. Neuroinform. 9:22. doi: 10.3389/fninf.2015.00022
 
-Sends: RateNeuronEvent, DelayRateNeuronEvent
+Sends: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent
 
-Receives: RateNeuronEvent, DelayRateNeuronEvent, DataLoggingRequest
+Receives: InstantaneousRateConnectionEvent, DelayedRateConnectionEvent,
+DataLoggingRequest
 
 Author: David Dahmen, Jan Hahne, Jannis Schuecker
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed

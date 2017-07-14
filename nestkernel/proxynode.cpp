@@ -67,7 +67,7 @@ proxynode::sends_secondary_event( GapJunctionEvent& ge )
 }
 
 void
-proxynode::sends_secondary_event( RateNeuronEvent& re )
+proxynode::sends_secondary_event( InstantaneousRateConnectionEvent& re )
 {
   kernel()
     .model_manager.get_model( get_model_id() )
@@ -75,7 +75,7 @@ proxynode::sends_secondary_event( RateNeuronEvent& re )
 }
 
 void
-proxynode::sends_secondary_event( DiffusionEvent& de )
+proxynode::sends_secondary_event( DiffusionConnectionEvent& de )
 {
   kernel()
     .model_manager.get_model( get_model_id() )
@@ -83,7 +83,7 @@ proxynode::sends_secondary_event( DiffusionEvent& de )
 }
 
 void
-proxynode::sends_secondary_event( DelayRateNeuronEvent& re )
+proxynode::sends_secondary_event( DelayedRateConnectionEvent& re )
 {
   kernel()
     .model_manager.get_model( get_model_id() )

@@ -438,7 +438,7 @@ nest::siegert_neuron::update_( Time const& origin,
   }
 
   // Send diffusion-event
-  DiffusionEvent rve;
+  DiffusionConnectionEvent rve;
   rve.set_coeffarray( new_rates );
   kernel().event_delivery_manager.send_secondary( *this, rve );
 
@@ -452,7 +452,7 @@ nest::siegert_neuron::update_( Time const& origin,
 }
 
 void
-nest::siegert_neuron::handle( DiffusionEvent& e )
+nest::siegert_neuron::handle( DiffusionConnectionEvent& e )
 {
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();

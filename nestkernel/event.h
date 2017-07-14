@@ -79,9 +79,9 @@ class Node;
  * @see CurrentEvent
  * @see ConductanceEvent
  * @see GapJunctionEvent
- * @see RateNeuronEvent
- * @see DelayRateNeuronEvent
- * @see DiffusionEvent
+ * @see InstantaneousRateConnectionEvent
+ * @see DelayedRateConnectionEvent
+ * @see DiffusionConnectionEvent
  * @ingroup event_interface
  */
 
@@ -250,12 +250,12 @@ public:
   void set_weight( weight t );
 
   /**
-   * Set drift_factor of the event (see DiffusionEvent).
+   * Set drift_factor of the event (see DiffusionConnectionEvent).
    */
   virtual void set_drift_factor( weight t ){};
 
   /**
-   * Set diffusion_factor of the event (see DiffusionEvent).
+   * Set diffusion_factor of the event (see DiffusionConnectionEvent).
    */
   virtual void set_diffusion_factor( weight t ){};
 
@@ -1086,7 +1086,7 @@ public:
 /**
  * Event for rate model connections without delay.
  */
-class RateNeuronEvent : public SecondaryEvent
+class InstantaneousRateConnectionEvent : public SecondaryEvent
 {
 private:
   // we chose std::vector over std::set because we expect this always to be
@@ -1100,12 +1100,12 @@ private:
   std::vector< unsigned int >::iterator coeffarray_as_uints_end_;
 
 public:
-  RateNeuronEvent()
+  InstantaneousRateConnectionEvent()
   {
   }
 
   void operator()();
-  RateNeuronEvent* clone() const;
+  InstantaneousRateConnectionEvent* clone() const;
 
   /**
    * This function is needed to set the synid on model registration.
@@ -1159,7 +1159,8 @@ public:
 
   /**
    * The following operator is used to read the information
-   * of the RateNeuronEvent from the buffer in Scheduler::deliver_events_
+   * of the InstantaneousRateConnectionEvent from the buffer in
+   * Scheduler::deliver_events_
    */
   std::vector< unsigned int >::iterator& operator<<(
     std::vector< unsigned int >::iterator& pos )
@@ -1181,8 +1182,8 @@ public:
 
   /**
    * The following operator is used to write the information
-   * of the RateNeuronEvent into the secondary_events_buffer_
-   * All RateNeuronEvents are identified by the synid of the
+   * of the InstantaneousRateConnectionEvent into the secondary_events_buffer_
+   * All InstantaneousRateConnectionEvents are identified by the synid of the
    * first element in supported_syn_ids_
    */
   std::vector< unsigned int >::iterator& operator>>(
@@ -1227,7 +1228,7 @@ public:
 /**
  * Event for diffusion connections.
  */
-class DiffusionEvent : public SecondaryEvent
+class DiffusionConnectionEvent : public SecondaryEvent
 {
 private:
   // we chose std::vector over std::set because we expect this always to be
@@ -1246,12 +1247,12 @@ private:
   weight diffusion_factor_;
 
 public:
-  DiffusionEvent()
+  DiffusionConnectionEvent()
   {
   }
 
   void operator()();
-  DiffusionEvent* clone() const;
+  DiffusionConnectionEvent* clone() const;
 
   /**
    * This function is needed to set the synid on model registration.
@@ -1305,7 +1306,8 @@ public:
 
   /**
    * The following operator is used to read the information
-   * of the DiffusionEvent from the buffer in Scheduler::deliver_events_
+   * of the DiffusionConnectionEvent from the buffer in
+   * Scheduler::deliver_events_
    */
   std::vector< unsigned int >::iterator& operator<<(
     std::vector< unsigned int >::iterator& pos )
@@ -1327,8 +1329,8 @@ public:
 
   /**
    * The following operator is used to write the information
-   * of the DiffusionEvent into the secondary_events_buffer_
-   * All DiffusionEvents are identified by the synid of the
+   * of the DiffusionConnectionEvent into the secondary_events_buffer_
+   * All DiffusionConnectionEvents are identified by the synid of the
    * first element in supported_syn_ids_
    */
   std::vector< unsigned int >::iterator& operator>>(
@@ -1389,7 +1391,7 @@ public:
 /**
  * Event for rate model connections with delay.
  */
-class DelayRateNeuronEvent : public SecondaryEvent
+class DelayedRateConnectionEvent : public SecondaryEvent
 {
 private:
   // we chose std::vector over std::set because we expect this always to be
@@ -1403,12 +1405,12 @@ private:
   std::vector< unsigned int >::iterator coeffarray_as_uints_end_;
 
 public:
-  DelayRateNeuronEvent()
+  DelayedRateConnectionEvent()
   {
   }
 
   void operator()();
-  DelayRateNeuronEvent* clone() const;
+  DelayedRateConnectionEvent* clone() const;
 
   /**
    * This function is needed to set the synid on model registration.
@@ -1462,7 +1464,8 @@ public:
 
   /**
    * The following operator is used to read the information
-   * of the DelayRateNeuronEvent from the buffer in Scheduler::deliver_events_
+   * of the DelayedRateConnectionEvent from the buffer in
+   * Scheduler::deliver_events_
    */
   std::vector< unsigned int >::iterator& operator<<(
     std::vector< unsigned int >::iterator& pos )
@@ -1484,8 +1487,8 @@ public:
 
   /**
    * The following operator is used to write the information
-   * of the DelayRateNeuronEvent into the secondary_events_buffer_
-   * All DelayRateNeuronEvents are identified by the synid of the
+   * of the DelayedRateConnectionEvent into the secondary_events_buffer_
+   * All DelayedRateConnectionEvents are identified by the synid of the
    * first element in supported_syn_ids_
    */
   std::vector< unsigned int >::iterator& operator>>(
@@ -1542,35 +1545,7 @@ GapJunctionEvent::clone() const
 }
 
 inline double
-RateNeuronEvent::get_coeffvalue( std::vector< unsigned int >::iterator& pos )
-{
-  double elem = 0.0;
-  read_from_comm_buffer( elem, pos );
-  return elem;
-}
-
-inline RateNeuronEvent*
-RateNeuronEvent::clone() const
-{
-  return new RateNeuronEvent( *this );
-}
-
-inline double
-DiffusionEvent::get_coeffvalue( std::vector< unsigned int >::iterator& pos )
-{
-  double elem = 0.0;
-  read_from_comm_buffer( elem, pos );
-  return elem;
-}
-
-inline DiffusionEvent*
-DiffusionEvent::clone() const
-{
-  return new DiffusionEvent( *this );
-}
-
-inline double
-DelayRateNeuronEvent::get_coeffvalue(
+InstantaneousRateConnectionEvent::get_coeffvalue(
   std::vector< unsigned int >::iterator& pos )
 {
   double elem = 0.0;
@@ -1578,20 +1553,50 @@ DelayRateNeuronEvent::get_coeffvalue(
   return elem;
 }
 
-inline DelayRateNeuronEvent*
-DelayRateNeuronEvent::clone() const
+inline InstantaneousRateConnectionEvent*
+InstantaneousRateConnectionEvent::clone() const
 {
-  return new DelayRateNeuronEvent( *this );
+  return new InstantaneousRateConnectionEvent( *this );
+}
+
+inline double
+DiffusionConnectionEvent::get_coeffvalue(
+  std::vector< unsigned int >::iterator& pos )
+{
+  double elem = 0.0;
+  read_from_comm_buffer( elem, pos );
+  return elem;
+}
+
+inline DiffusionConnectionEvent*
+DiffusionConnectionEvent::clone() const
+{
+  return new DiffusionConnectionEvent( *this );
+}
+
+inline double
+DelayedRateConnectionEvent::get_coeffvalue(
+  std::vector< unsigned int >::iterator& pos )
+{
+  double elem = 0.0;
+  read_from_comm_buffer( elem, pos );
+  return elem;
+}
+
+inline DelayedRateConnectionEvent*
+DelayedRateConnectionEvent::clone() const
+{
+  return new DelayedRateConnectionEvent( *this );
 }
 
 inline weight
-DiffusionEvent::get_drift_factor() const
+DiffusionConnectionEvent::get_drift_factor() const
 {
   return drift_factor_;
 }
 
 inline weight
-DiffusionEvent::get_diffusion_factor() const
+DiffusionConnectionEvent::get_diffusion_factor() const
 {
   return diffusion_factor_;
 }

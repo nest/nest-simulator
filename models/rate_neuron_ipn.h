@@ -74,20 +74,20 @@ public:
   using Node::handle;
   using Node::sends_secondary_event;
 
-  void handle( RateNeuronEvent& );
-  void handle( DelayRateNeuronEvent& );
+  void handle( InstantaneousRateConnectionEvent& );
+  void handle( DelayedRateConnectionEvent& );
   void handle( DataLoggingRequest& );
 
-  port handles_test_event( RateNeuronEvent&, rport );
-  port handles_test_event( DelayRateNeuronEvent&, rport );
+  port handles_test_event( InstantaneousRateConnectionEvent&, rport );
+  port handles_test_event( DelayedRateConnectionEvent&, rport );
   port handles_test_event( DataLoggingRequest&, rport );
 
   void
-  sends_secondary_event( RateNeuronEvent& )
+  sends_secondary_event( InstantaneousRateConnectionEvent& )
   {
   }
   void
-  sends_secondary_event( DelayRateNeuronEvent& )
+  sends_secondary_event( DelayedRateConnectionEvent& )
   {
   }
 
@@ -255,7 +255,8 @@ rate_neuron_ipn< TGainfunction >::wfr_update( Time const& origin,
 
 template < class TGainfunction >
 inline port
-rate_neuron_ipn< TGainfunction >::handles_test_event( RateNeuronEvent&,
+rate_neuron_ipn< TGainfunction >::handles_test_event(
+  InstantaneousRateConnectionEvent&,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
@@ -265,7 +266,8 @@ rate_neuron_ipn< TGainfunction >::handles_test_event( RateNeuronEvent&,
 
 template < class TGainfunction >
 inline port
-rate_neuron_ipn< TGainfunction >::handles_test_event( DelayRateNeuronEvent&,
+rate_neuron_ipn< TGainfunction >::handles_test_event(
+  DelayedRateConnectionEvent&,
   rport receptor_type )
 {
   if ( receptor_type != 0 )

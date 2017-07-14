@@ -290,7 +290,7 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
   {
     // Send delay-rate-neuron-event. This only happens in the final iteration
     // to avoid accumulation in the buffers of the receiving neurons.
-    DelayRateNeuronEvent drve;
+    DelayedRateConnectionEvent drve;
     drve.set_coeffarray( new_rates );
     kernel().event_delivery_manager.send_secondary( *this, drve );
 
@@ -312,7 +312,7 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
   }
 
   // Send rate-neuron-event
-  RateNeuronEvent rve;
+  InstantaneousRateConnectionEvent rve;
   rve.set_coeffarray( new_rates );
   kernel().event_delivery_manager.send_secondary( *this, rve );
 
@@ -326,7 +326,8 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
 
 template < class TGainfunction >
 void
-nest::rate_neuron_ipn< TGainfunction >::handle( RateNeuronEvent& e )
+nest::rate_neuron_ipn< TGainfunction >::handle(
+  InstantaneousRateConnectionEvent& e )
 {
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
@@ -348,7 +349,7 @@ nest::rate_neuron_ipn< TGainfunction >::handle( RateNeuronEvent& e )
 
 template < class TGainfunction >
 void
-nest::rate_neuron_ipn< TGainfunction >::handle( DelayRateNeuronEvent& e )
+nest::rate_neuron_ipn< TGainfunction >::handle( DelayedRateConnectionEvent& e )
 {
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();

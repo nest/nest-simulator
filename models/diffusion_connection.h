@@ -36,7 +36,7 @@ Description:
  The values of the parameters delay and weight are ignored for
  connections of this type.
 
-Transmits: DiffusionEvent
+Transmits: DiffusionConnectionEvent
 
 References:
 
@@ -70,7 +70,7 @@ public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
-  typedef DiffusionEvent EventType;
+  typedef DiffusionConnectionEvent EventType;
 
   /**
    * Default Constructor.

@@ -228,7 +228,7 @@ bool
 nest::rate_neuron_opn< TGainfunction >::update_( Time const& origin,
   const long from,
   const long to,
-  const bool wfr_update )
+  const bool called_from_wfr_update )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
@@ -252,7 +252,8 @@ nest::rate_neuron_opn< TGainfunction >::update_( Time const& origin,
     // propagate rate to new time step (exponential integration)
     S_.r_ = V_.P1_ * S_.r_ + V_.P2_ * P_.mean_;
 
-    if ( wfr_update ) // use get_value_wfr_update to keep values in buffer
+    if ( called_from_wfr_update ) // use get_value_wfr_update to keep values in
+                                  // buffer
     {
       if ( P_.linear_summation_ )
       {
@@ -288,7 +289,7 @@ nest::rate_neuron_opn< TGainfunction >::update_( Time const& origin,
     }
   }
 
-  if ( not wfr_update )
+  if ( not called_from_wfr_update )
   {
     // Send delay-rate-neuron-event. This only happens in the final iteration
     // to avoid accumulation in the buffers of the receiving neurons.

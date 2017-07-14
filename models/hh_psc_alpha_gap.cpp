@@ -491,7 +491,7 @@ bool
 nest::hh_psc_alpha_gap::update_( Time const& origin,
   const long from,
   const long to,
-  const bool wfr_update )
+  const bool called_from_wfr_update )
 {
 
   assert(
@@ -520,7 +520,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
     // determine the current section
     B_.lag_ = lag;
 
-    if ( wfr_update )
+    if ( called_from_wfr_update )
     {
       y_i = S_.y_[ State_::V_M ];
       if ( interpolation_order == 3 )
@@ -562,7 +562,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
       }
     }
 
-    if ( not wfr_update )
+    if ( not called_from_wfr_update )
     {
       S_.y_[ State_::DI_EXC ] +=
         B_.spike_exc_.get_value( lag ) * V_.PSCurrInit_E_;
@@ -593,7 +593,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
       // set new input current
       B_.I_stim_ = B_.currents_.get_value( lag );
     }
-    else // if(wfr_update)
+    else // if(called_from_wfr_update)
     {
       S_.y_[ State_::DI_EXC ] +=
         B_.spike_exc_.get_value_wfr_update( lag ) * V_.PSCurrInit_E_;
@@ -641,8 +641,9 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
 
   } // end for-loop
 
-  // if not wfr_update perform constant extrapolation and reset last_y_values
-  if ( not wfr_update )
+  // if not called_from_wfr_update perform constant extrapolation
+  // and reset last_y_values
+  if ( not called_from_wfr_update )
   {
     for ( long temp = from; temp < to; ++temp )
     {

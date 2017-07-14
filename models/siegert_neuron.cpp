@@ -383,7 +383,7 @@ bool
 nest::siegert_neuron::update_( Time const& origin,
   const long from,
   const long to,
-  const bool wfr_update )
+  const bool called_from_wfr_update )
 {
   assert(
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
@@ -411,7 +411,7 @@ nest::siegert_neuron::update_( Time const& origin,
       std::sqrt( B_.diffusion_input_[ lag ] ) );
     S_.r_ = V_.P1_ * ( S_.r_ ) + ( 1 - V_.P1_ ) * P_.mean_ + V_.P2_ * drive;
 
-    if ( not wfr_update )
+    if ( not called_from_wfr_update )
     {
       // rate logging
       B_.logger_.record_data( origin.get_steps() + lag );
@@ -426,7 +426,7 @@ nest::siegert_neuron::update_( Time const& origin,
     }
   }
 
-  if ( not wfr_update )
+  if ( not called_from_wfr_update )
   {
     // clear last_y_values
     B_.last_y_values.clear();

@@ -389,9 +389,9 @@ nest::siegert_neuron::update_( Time const& origin,
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  bool done = true;
   const size_t buffer_size = kernel().connection_manager.get_min_delay();
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
+  bool wfr_tol_exceeded = false;
 
   // allocate memory to store rates to be sent by rate events
   std::vector< double > new_rates( buffer_size, 0.0 );
@@ -418,7 +418,9 @@ nest::siegert_neuron::update_( Time const& origin,
     }
     else // check convergence of waveform relaxation
     {
-      done = ( fabs( S_.r_ - B_.last_y_values[ lag ] ) <= wfr_tol ) && done;
+      // check if deviation from last iteration exceeds wfr_tol
+      wfr_tol_exceeded =
+        wfr_tol_exceeded or fabs( S_.r_ - B_.last_y_values[ lag ] ) > wfr_tol;
       // update last_y_values for next wfr_update iteration
       B_.last_y_values[ lag ] = S_.r_;
     }
@@ -446,7 +448,7 @@ nest::siegert_neuron::update_( Time const& origin,
   B_.diffusion_input_.clear();
   B_.diffusion_input_.resize( buffer_size, 0.0 );
 
-  return done;
+  return wfr_tol_exceeded;
 }
 
 void

@@ -257,10 +257,10 @@ rate_neuron_opn< TGainfunction >::wfr_update( Time const& origin,
   const long to )
 {
   State_ old_state = S_; // save state before wfr update
-  const bool done = update_( origin, from, to, true );
+  const bool wfr_tol_exceeded = update_( origin, from, to, true );
   S_ = old_state; // restore old state
 
-  return done;
+  return not wfr_tol_exceeded;
 }
 
 template < class TGainfunction >

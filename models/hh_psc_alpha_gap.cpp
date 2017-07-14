@@ -498,10 +498,10 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
     to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  bool done = true;
   const size_t interpolation_order =
     kernel().simulation_manager.get_wfr_interpolation_order();
   const double wfr_tol = kernel().simulation_manager.get_wfr_tol();
+  bool wfr_tol_exceeded = false;
 
   // allocate memory to store the new interpolation coefficients
   // to be sent by gap event
@@ -599,9 +599,9 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
         B_.spike_exc_.get_value_wfr_update( lag ) * V_.PSCurrInit_E_;
       S_.y_[ State_::DI_INH ] +=
         B_.spike_inh_.get_value_wfr_update( lag ) * V_.PSCurrInit_I_;
-      // check deviation from last iteration
-      done = ( fabs( S_.y_[ State_::V_M ] - B_.last_y_values[ lag ] )
-               <= wfr_tol ) && done;
+      // check if deviation from last iteration exceeds wfr_tol
+      wfr_tol_exceeded = wfr_tol_exceeded
+        or fabs( S_.y_[ State_::V_M ] - B_.last_y_values[ lag ] ) > wfr_tol;
       B_.last_y_values[ lag ] = S_.y_[ State_::V_M ];
 
       // update different interpolations
@@ -664,7 +664,7 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
   B_.interpolation_coefficients.clear();
   B_.interpolation_coefficients.resize( buffer_size, 0.0 );
 
-  return done;
+  return wfr_tol_exceeded;
 }
 
 void

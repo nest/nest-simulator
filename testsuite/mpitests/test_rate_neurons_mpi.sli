@@ -28,11 +28,11 @@
 
     Description:
     test_rate_neurons_mpi.sli checks if simulations with rate neurons
-    (lin_rate_ipn, siegert_neuron) and rate connections (rate_connection,
-    diffusion_connection) work in parallel.
+    (lin_rate_ipn, siegert_neuron) and rate connections
+    (rate_connection_instantaneous, diffusion_connection) work in parallel.
     
     Author:  Jan Hahne
-    SeeAlso: lin_rate_ipn, rate_connection, siegert_neuron, diffusion_connection
+    SeeAlso: lin_rate_ipn, rate_connection_instantaneous, siegert_neuron, diffusion_connection
 */
 
 (unittest) run
@@ -77,7 +77,7 @@ skip_if_without_gsl
   
   [lin_neuron1] [lin_neuron2]
   << /rule /one_to_one >> 
-  << /model /rate_connection /weight 5.0 >> 
+  << /model /rate_connection_instantaneous /weight 5.0 >> 
   Connect
   
   [siegert_neuron1] [siegert_neuron2]

@@ -78,16 +78,16 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
             self.multimeter, self.neurons, 'all_to_all', {'delay': 10.})
 
         nest.Connect(self.rate_neuron_drive, self.rate_neuron_1,
-                     'all_to_all', {'model': 'delay_rate_connection',
+                     'all_to_all', {'model': 'rate_connection_delayed',
                                     'delay': self.delay,
                                     'weight': self.weight})
 
         nest.Connect(self.rate_neuron_drive, self.rate_neuron_2,
-                     'all_to_all', {'model': 'rate_connection',
+                     'all_to_all', {'model': 'rate_connection_instantaneous',
                                     'weight': self.weight})
 
         nest.Connect(self.rate_neuron_drive, self.rate_neuron_3,
-                     'all_to_all', {'model': 'rate_connection',
+                     'all_to_all', {'model': 'rate_connection_instantaneous',
                                     'weight': self.weight})
 
     def test_RateNeuronDelay(self):

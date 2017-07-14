@@ -22,18 +22,19 @@
 
   /* BeginDocumentation
 
-    Name: testsuite::test_rate_connections - This test ensures that rate connections (rate_connection, delay_rate_connection, diffusion_connection) work properly.
+    Name: testsuite::test_rate_connections - This test ensures that rate connections
+    (rate_connection_instantaneous, rate_connection_delayed, diffusion_connection) work properly.
 
     Synopsis: (test_rate_connections) run -> NEST exits if test fails
 
     Description:
     The test ensures that legal rate connections can be created and that an exception 
     is thrown if one tries to create illegal rate connections. 
-    Furthermore it is checked that the delay cannot be set for rate_connection connections and
+    Furthermore it is checked that the delay cannot be set for rate_connection_instantaneous connections and
     that delay and weight cannot be set for diffusion_connection connections.
 
     Author: Jan Hahne
-    SeeAlso: rate_connection, delay_rate_connection, diffusion_connection
+    SeeAlso: rate_connection_instantaneous, rate_connection_delayed, diffusion_connection
   */
 
 (unittest) run
@@ -46,7 +47,7 @@ skip_if_without_gsl
 M_ERROR setverbosity
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Checks for rate_connection %
+% Checks for rate_connection_instantaneous %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /supported
@@ -74,7 +75,7 @@ supported
    model_supported Create /neuron_supported Set
   [neuron_supported] [neuron_supported]
    << /rule /one_to_one >> 
-   << /model /rate_connection >> 
+   << /model /rate_connection_instantaneous >> 
    Connect
  }
  pass_or_die
@@ -90,7 +91,7 @@ supported
       model_not_supported Create /neuron_not_supported Set
       [neuron_supported] [neuron_not_supported]
       << /rule /one_to_one >> 
-      << /model /rate_connection >> 
+      << /model /rate_connection_instantaneous >> 
       Connect
     }
     fail_or_die
@@ -99,18 +100,18 @@ supported
 }
 forall
 
-% Check that delay cannot be set for rate_connection connections
+% Check that delay cannot be set for rate_connection_instantaneous connections
 {
   ResetKernel
   /lin_rate_ipn Create /neuron_supported Set
   [neuron_supported] [neuron_supported]
   << /rule /all_to_all >> 
-  << /model /rate_connection /delay 2.0 >> 
+  << /model /rate_connection_instantaneous /delay 2.0 >> 
   Connect
 } fail_or_die
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Checks for delay_rate_connection %
+% Checks for rate_connection_delayed %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /supported
@@ -138,7 +139,7 @@ supported
    model_supported Create /neuron_supported Set
    [neuron_supported] [neuron_supported]
    << /rule /one_to_one >> 
-   << /model /delay_rate_connection >> 
+   << /model /rate_connection_delayed >> 
    Connect
  }
  pass_or_die
@@ -154,7 +155,7 @@ supported
       model_not_supported Create /neuron_not_supported Set
       [neuron_supported] [neuron_not_supported]
       << /rule /one_to_one >> 
-      << /model /delay_rate_connection >> 
+      << /model /rate_connection_delayed >> 
       Connect
     }
     fail_or_die    

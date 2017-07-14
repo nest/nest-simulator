@@ -114,10 +114,13 @@
 #include "common_synapse_properties.h"
 #include "cont_delay_connection.h"
 #include "cont_delay_connection_impl.h"
+#include "diffusion_connection.h"
 #include "gap_junction.h"
 #include "ht_connection.h"
 #include "quantal_stp_connection.h"
 #include "quantal_stp_connection_impl.h"
+#include "rate_connection_instantaneous.h"
+#include "rate_connection_delayed.h"
 #include "spike_dilutor.h"
 #include "static_connection.h"
 #include "static_connection_hom_w.h"
@@ -132,9 +135,6 @@
 #include "tsodyks_connection.h"
 #include "tsodyks_connection_hom.h"
 #include "vogels_sprekeler_connection.h"
-#include "rate_connection.h"
-#include "delay_rate_connection.h"
-#include "diffusion_connection.h"
 
 // Includes from nestkernel:
 #include "common_synapse_properties.h"
@@ -442,12 +442,12 @@ ModelsModule::init( SLIInterpreter* )
       "gap_junction", /*has_delay=*/false, /*requires_symmetric=*/true );
   kernel()
     .model_manager
-    .register_secondary_connection_model< RateConnection< TargetIdentifierPtrRport > >(
-      "rate_connection", /*has_delay=*/false );
+    .register_secondary_connection_model< RateConnectionInstantaneous< TargetIdentifierPtrRport > >(
+      "rate_connection_instantaneous", /*has_delay=*/false );
   kernel()
     .model_manager
-    .register_secondary_connection_model< DelayRateConnection< TargetIdentifierPtrRport > >(
-      "delay_rate_connection" );
+    .register_secondary_connection_model< RateConnectionDelayed< TargetIdentifierPtrRport > >(
+      "rate_connection_delayed" );
   kernel()
     .model_manager
     .register_secondary_connection_model< DiffusionConnection< TargetIdentifierPtrRport > >(

@@ -1,5 +1,5 @@
 /*
- *  delay_rate_connection.h
+ *  rate_connection_delayed.h
  *
  *  This file is part of NEST.
  *
@@ -22,14 +22,14 @@
 
 
 /* BeginDocumentation
-Name: delay_rate_connection - Synapse type for rate connections with delay.
+Name: rate_connection_delayed - Synapse type for rate connections with delay.
 
 Description:
- delay_rate_connection is a connector to create connections with delay
+ rate_connection_delayed is a connector to create connections with delay
  between rate model neurons.
 
  To create instantaneous rate connections please use
- the synapse type rate_connection.
+ the synapse type rate_connection_instantaneous.
 
 Transmits: DelayRateNeuronEvent
 
@@ -42,23 +42,23 @@ References:
  Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
 
 Author: David Dahmen, Jan Hahne, Jannis Schuecker
-SeeAlso: rate_connection, rate_neuron_ipn, rate_neuron_opn
+SeeAlso: rate_connection_instantaneous, rate_neuron_ipn, rate_neuron_opn
 */
 
 
-#ifndef DELAY_RATE_CONNECTION_H
-#define DELAY_RATE_CONNECTION_H
+#ifndef RATE_CONNECTION_DELAYED_H
+#define RATE_CONNECTION_DELAYED_H
 
 #include "connection.h"
 
 namespace nest
 {
 /**
- * Class representing a delayed rate connection. A delay_rate_connection
+ * Class representing a delayed rate connection. A rate_connection_delayed
  * has the properties weight, delay and receiver port.
  */
 template < typename targetidentifierT >
-class DelayRateConnection : public Connection< targetidentifierT >
+class RateConnectionDelayed : public Connection< targetidentifierT >
 {
 
 public:
@@ -71,7 +71,7 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  DelayRateConnection()
+  RateConnectionDelayed()
     : ConnectionBase()
     , weight_( 1.0 )
   {
@@ -135,7 +135,8 @@ private:
 
 template < typename targetidentifierT >
 void
-DelayRateConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+RateConnectionDelayed< targetidentifierT >::get_status(
+  DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -144,7 +145,8 @@ DelayRateConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-DelayRateConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
+RateConnectionDelayed< targetidentifierT >::set_status(
+  const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
@@ -153,4 +155,4 @@ DelayRateConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
 
 } // namespace
 
-#endif /* #ifndef DELAY_RATE_CONNECTION_H */
+#endif /* #ifndef RATE_CONNECTION_DELAYED_H */

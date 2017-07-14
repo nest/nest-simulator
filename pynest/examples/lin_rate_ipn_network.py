@@ -119,13 +119,13 @@ mm = nest.Create('multimeter', params={'record_from': ['rate'],
 '''
 Specify synapse and connection dictionaries:
 Connections originating from excitatory neurons are associatated
-with a delay d (delay_rate_connection).
+with a delay d (rate_connection_delayed).
 Connections originating from inhibitory neurons are not associatated
-with a delay (rate_connection).
+with a delay (rate_connection_instantaneous).
 '''
 
-syn_e = {'weight': w, 'delay': d_e, 'model': 'delay_rate_connection'}
-syn_i = {'weight': -g*w, 'model': 'rate_connection'}
+syn_e = {'weight': w, 'delay': d_e, 'model': 'rate_connection_delayed'}
+syn_i = {'weight': -g*w, 'model': 'rate_connection_instantaneous'}
 conn_e = {'rule': connection_rule, 'outdegree': KE}
 conn_i = {'rule': connection_rule, 'outdegree': KI}
 

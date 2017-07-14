@@ -79,7 +79,7 @@ Sends: RateNeuronEvent, DelayRateNeuronEvent
 Receives: RateNeuronEvent, DelayRateNeuronEvent, DataLoggingRequest
 
 Author: David Dahmen, Jan Hahne, Jannis Schuecker
-SeeAlso: rate_connection, delay_rate_connection
+SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
 
 class gainfunction_thresholdlin_rate

@@ -173,9 +173,9 @@ private:
     Buffers_( const Buffers_&, rate_neuron_ipn& );
 
     RingBuffer delayed_rates_; //!< buffer for rate vector received by
-    // DelayRateConnection
-    std::vector< double >
-      instant_rates_; //!< buffer for rate vector received by RateConnection
+    // RateConnectionDelayed
+    std::vector< double > instant_rates_; //!< buffer for rate vector received
+    // by RateConnectionInstantaneous
     std::vector< double >
       last_y_values; //!< remembers y_values from last wfr_update
     std::vector< double > random_numbers; //!< remembers the random_numbers in

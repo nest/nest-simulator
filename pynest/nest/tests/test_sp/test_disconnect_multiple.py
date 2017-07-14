@@ -39,10 +39,10 @@ class TestDisconnect(unittest.TestCase):
             'gap_junction_lbl',
             'diffusion_connection',
             'diffusion_connection_lbl',
-            'rate_connection',
-            'rate_connection_lbl',
-            'delay_rate_connection',
-            'delay_rate_connection_lbl'
+            'rate_connection_instantaneous',
+            'rate_connection_instantaneous_lbl',
+            'rate_connection_delayed',
+            'rate_connection_delayed_lbl'
         ]
 
     def test_multiple_synapse_deletion_all_to_all(self):

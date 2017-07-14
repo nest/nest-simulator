@@ -43,10 +43,10 @@ class LabeledSynapsesTestCase(unittest.TestCase):
         nest.SetDefaults('stdp_dopamine_synapse_hpc', {'vt': vol[2]})
 
         self.rate_model_connections = [
-            'rate_connection',
-            'rate_connection_lbl',
-            'delay_rate_connection',
-            'delay_rate_connection_lbl'
+            'rate_connection_instantaneous',
+            'rate_connection_instantaneous_lbl',
+            'rate_connection_delayed',
+            'rate_connection_delayed_lbl'
         ]
 
         self.siegert_connections = [
@@ -160,7 +160,7 @@ class LabeledSynapsesTestCase(unittest.TestCase):
             # some more connections
             synapse_type = "static_synapse"
             if syn in self.rate_model_connections:
-                synapse_type = "rate_connection"
+                synapse_type = "rate_connection_instantaneous"
             if syn in self.siegert_connections:
                 synapse_type = "diffusion_connection"
             nest.Connect(a, a, {"rule": "one_to_one"},

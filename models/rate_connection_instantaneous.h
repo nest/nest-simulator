@@ -1,5 +1,5 @@
 /*
- *  rate_connection.h
+ *  rate_connection_instantaneous.h
  *
  *  This file is part of NEST.
  *
@@ -22,15 +22,16 @@
 
 
 /* BeginDocumentation
-Name: rate_connection - Synapse type for instantaneous rate connections.
+Name: rate_connection_instantaneous - Synapse type for instantaneous rate
+connections.
 
 Description:
- rate_connection is a connector to create instantaneous connections
- between rate model neurons.
+ rate_connection_instantaneous is a connector to create
+ instantaneous connections between rate model neurons.
 
- The value of the parameter "delay" is ignored for connections of
+ The value of the parameter delay is ignored for connections of
  this type. To create rate connections with delay please use
- the synapse type delay_rate_connection.
+ the synapse type rate_connection_delayed.
 
 Transmits: RateNeuronEvent
 
@@ -43,12 +44,12 @@ References:
  Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
 
 Author: David Dahmen, Jan Hahne, Jannis Schuecker
-SeeAlso: delay_rate_connection, rate_neuron_ipn, rate_neuron_opn
+SeeAlso: rate_connection_delayed, rate_neuron_ipn, rate_neuron_opn
 */
 
 
-#ifndef RATE_CONNECTION_H
-#define RATE_CONNECTION_H
+#ifndef RATE_CONNECTION_INSTANTANEOUS_H
+#define RATE_CONNECTION_INSTANTANEOUS_H
 
 #include "connection.h"
 
@@ -59,7 +60,7 @@ namespace nest
  * has the properties weight and receiver port.
  */
 template < typename targetidentifierT >
-class RateConnection : public Connection< targetidentifierT >
+class RateConnectionInstantaneous : public Connection< targetidentifierT >
 {
 
 public:
@@ -72,7 +73,7 @@ public:
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  RateConnection()
+  RateConnectionInstantaneous()
     : ConnectionBase()
     , weight_( 1.0 )
   {
@@ -133,7 +134,8 @@ public:
   set_delay( double )
   {
     throw BadProperty(
-      "rate_connection has no delay. Please use delay_rate_connection." );
+      "rate_connection_instantaneous has no delay. Please use "
+      "rate_connection_delayed." );
   }
 
 private:
@@ -142,7 +144,8 @@ private:
 
 template < typename targetidentifierT >
 void
-RateConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
+RateConnectionInstantaneous< targetidentifierT >::get_status(
+  DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
@@ -151,13 +154,15 @@ RateConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-RateConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
+RateConnectionInstantaneous< targetidentifierT >::set_status(
+  const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
     throw BadProperty(
-      "rate_connection has no delay. Please use delay_rate_connection." );
+      "rate_connection_instantaneous has no delay. Please use "
+      "rate_connection_delayed." );
 
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -165,4 +170,4 @@ RateConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
 
 } // namespace
 
-#endif /* #ifndef RATE_CONNECTION_H */
+#endif /* #ifndef RATE_CONNECTION_INSTANTANEOUS_H */

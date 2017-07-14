@@ -34,7 +34,6 @@ set( models_sources
     correlomatrix_detector.h correlomatrix_detector.cpp
     correlospinmatrix_detector.h correlospinmatrix_detector.cpp
     dc_generator.h dc_generator.cpp
-    delay_rate_connection.h
     diffusion_connection.h
     gamma_sup_generator.h gamma_sup_generator.cpp
     gap_junction.h
@@ -80,7 +79,8 @@ set( models_sources
     ppd_sup_generator.h ppd_sup_generator.cpp
     pulsepacket_generator.h pulsepacket_generator.cpp
     quantal_stp_connection.h quantal_stp_connection_impl.h
-    rate_connection.h
+    rate_connection_delayed.h
+    rate_connection_instantaneous.h
     rate_neuron_opn.h rate_neuron_opn_impl.h
     rate_neuron_ipn.h rate_neuron_ipn_impl.h
     siegert_neuron.h siegert_neuron.cpp

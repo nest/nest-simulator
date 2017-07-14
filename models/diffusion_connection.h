@@ -29,11 +29,11 @@ between neurons of type siegert_neuron.
 Description:
  diffusion_connection is a connector to create instantaneous connections
  between neurons of type siegert_neuron. The connection type is identical to
- type rate_connection for instantaneous rate connections except for the two
- parameters "drift_factor" and "diffusion_factor" substituting the
- parameter "weight".
+ type rate_connection_instantaneous for instantaneous rate connections except
+ for the two parameters drift_factor and diffusion_factor substituting the
+ parameter weight.
 
- The values of the parameters "delay" and "weight" are ignored for
+ The values of the parameters delay and weight are ignored for
  connections of this type.
 
 Transmits: DiffusionEvent
@@ -47,7 +47,7 @@ References:
  Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
 
 Author: David Dahmen, Jan Hahne, Jannis Schuecker
-SeeAlso: siegert_neuron, rate_connection,
+SeeAlso: siegert_neuron, rate_connection_instantaneous
 */
 
 

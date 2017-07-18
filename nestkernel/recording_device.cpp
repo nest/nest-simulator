@@ -81,7 +81,7 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   , flush_after_simulate_( true )
   , flush_records_( false )
   , close_on_reset_( true )
-  , use_gid_( true )
+  , use_gid_in_filename_( true )
 {
 }
 
@@ -166,7 +166,7 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
   ( *d )[ names::flush_records ] = flush_records_;
   ( *d )[ names::close_on_reset ] = close_on_reset_;
 
-  ( *d )[ names::use_gid ] = use_gid_;
+  ( *d )[ names::use_gid_in_filename ] = use_gid_in_filename_;
 
   if ( to_file_ && not filename_.empty() )
   {
@@ -229,8 +229,8 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   updateValue< bool >( d, names::flush_records, flush_records_ );
   updateValue< bool >( d, names::close_on_reset, close_on_reset_ );
 
-  bool tmp_use_gid = true;
-  updateValue< bool >( d, names::use_gid, tmp_use_gid );
+  bool tmp_use_gid_in_filename = true;
+  updateValue< bool >( d, names::use_gid_in_filename, tmp_use_gid_in_filename );
 
   // In Pynest we cannot use /record_to, because we have no way to pass
   // values as LiteralDatum. Thus, we must keep the boolean flags.
@@ -315,14 +315,14 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
       "have been set to false." );
   }
 
-  if ( not tmp_use_gid and label_.empty() )
+  if ( not tmp_use_gid_in_filename and label_.empty() )
   {
     throw BadProperty(
       "If /use_gid_in_filename is false, /label must be specified." );
   }
   else
   {
-    use_gid_ = tmp_use_gid;
+    use_gid_in_filename_ = tmp_use_gid_in_filename;
   }
 }
 
@@ -1000,7 +1000,7 @@ nest::RecordingDevice::build_filename_() const
     basename << node_.get_name();
   }
 
-  if ( not P_.use_gid_ and not P_.label_.empty() )
+  if ( not P_.use_gid_in_filename_ and not P_.label_.empty() )
   {
     basename << "-" << std::setfill( '0' ) << std::setw( vpdigits )
              << node_.get_vp();

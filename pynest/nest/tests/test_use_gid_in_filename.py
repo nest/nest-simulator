@@ -37,12 +37,14 @@ class UseGidInFilenameTestCase(unittest.TestCase):
 
         nest.ResetKernel()
         sg = nest.Create("poisson_generator", 1, {"rate": 100.})
-        sd = nest.Create("spike_detector", 1, {"to_file": True, "label": "sd", "use_gid_in_filename": True})
+        sd = nest.Create("spike_detector", 1, {"to_file": True,
+                         "label": "sd", "use_gid_in_filename": True})
         nest.Connect(sg, sd)
 
         nest.Simulate(100)
 
-        self.assertTrue(os.path.exists(os.environ["NEST_DATA_PATH"] + "/sd-2-0.gdf"))
+        self.assertTrue(os.path.exists(os.environ["NEST_DATA_PATH"] +
+                                       "/sd-2-0.gdf"))
 
     def test_NoGid(self):
         """Without GID"""
@@ -50,12 +52,14 @@ class UseGidInFilenameTestCase(unittest.TestCase):
         nest.ResetKernel()
 
         sg = nest.Create("poisson_generator", 1, {"rate": 100.})
-        sd = nest.Create("spike_detector", 1, {"to_file": True, "label": "sd", "use_gid_in_filename": False})
+        sd = nest.Create("spike_detector", 1, {"to_file": True,
+                         "label": "sd", "use_gid_in_filename": False})
         nest.Connect(sg, sd)
 
         nest.Simulate(100)
 
-        self.assertTrue(os.path.exists(os.environ["NEST_DATA_PATH"] + "/sd-0.gdf"))
+        self.assertTrue(os.path.exists(os.environ["NEST_DATA_PATH"] +
+                                       "/sd-0.gdf"))
 
 
 def suite():

@@ -19,10 +19,11 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-__author__ = 'naveau'
-
 import nest
 import unittest
+import numpy as np
+
+__author__ = 'naveau'
 
 try:
     from mpi4py import MPI
@@ -32,6 +33,7 @@ except ImportError:
 else:
     # Test with MPI
     mpi_test = 1
+mpi_test = nest.sli_func("statusdict/have_mpi ::") & mpi_test
 
 
 class TestDisconnectSingle(unittest.TestCase):
@@ -75,16 +77,14 @@ class TestDisconnectSingle(unittest.TestCase):
                 conns = nest.GetConnections(
                     [neurons[0]], [neurons[2]], syn_model)
                 if mpi_test:
-                    connstotal = None
-                    conns = self.comm.allgather(conns, connstotal)
+                    conns = self.comm.allgather(conns)
                     conns = filter(None, conns)
                 assert len(conns) == 1
                 nest.DisconnectOneToOne(neurons[0], neurons[2], syn_dict)
                 conns = nest.GetConnections(
                     [neurons[0]], [neurons[2]], syn_model)
                 if mpi_test:
-                    connstotal = None
-                    conns = self.comm.allgather(conns, connstotal)
+                    conns = self.comm.allgather(conns)
                     conns = filter(None, conns)
                 assert len(conns) == 0
 
@@ -92,8 +92,7 @@ class TestDisconnectSingle(unittest.TestCase):
                 conns1 = nest.GetConnections(
                     [neurons[0]], [neurons[1]], syn_model)
                 if mpi_test:
-                    connstotal1 = None
-                    conns1 = self.comm.allgather(conns1, connstotal1)
+                    conns1 = self.comm.allgather(conns1)
                     conns1 = filter(None, conns1)
                 assert len(conns1) == 0
                 try:

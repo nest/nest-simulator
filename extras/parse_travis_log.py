@@ -705,9 +705,6 @@ def errors_table(summary):
 
 
 def printable_summary(list_of_changed_files,
-                      status_vera_init,
-                      status_cppcheck_init,
-                      status_format_init,
                       status_cmake_configure,
                       status_make,
                       status_make_install,
@@ -733,12 +730,7 @@ def printable_summary(list_of_changed_files,
     Parameters
     ----------
     list_of_changed_files:   List of changed source files.
-    status_vera_init:        Status of the VERA++ initialization: True, False
-                             or None
-    status_cppcheck_init:    Status of the cppcheck initialization: True, False
-                             or None
-    status_format_init:      Status of the clang-format initialization: True,
-                             False or None
+    
     status_cmake_configure:  Status of the 'CMake configure': True, False or
                              None
     status_make:             Status of the 'make': True, False or None
@@ -803,12 +795,6 @@ def printable_summary(list_of_changed_files,
     summary_table = [
         ['Changed Files :', ''],
         ['', 'No files have been changed.'],
-        ['Tools Initialization :', ''],
-        ['VERA++', convert_bool_value_to_status_string(status_vera_init)],
-        ['Cppcheck',
-         convert_bool_value_to_status_string(status_cppcheck_init)],
-        ['clang-format',
-         convert_bool_value_to_status_string(status_format_init)],
         ['Static Code Analysis :', ''],
         ['VERA++',
          convert_summary_to_status_string(summary_vera, ignore_vera) +
@@ -866,10 +852,7 @@ def printable_summary(list_of_changed_files,
     return build_summary
 
 
-def build_return_code(status_vera_init,
-                      status_cppcheck_init,
-                      status_format_init,
-                      status_cmake_configure,
+def build_return_code(status_cmake_configure,
                       status_make,
                       status_make_install,
                       status_tests,
@@ -885,12 +868,6 @@ def build_return_code(status_vera_init,
 
     Parameters
     ----------
-    status_vera_init:       Status of the VERA++ initialization: True, False
-                            or None
-    status_cppcheck_init:   Status of the cppcheck initialization: True, False
-                            or None
-    status_format_init:     Status of the clang-format initialization: True,
-                            False or None
     status_cmake_configure: Status of the 'CMake configure': True, False
                             or None
     status_make:            Status of the 'make': True, False or None
@@ -917,10 +894,7 @@ def build_return_code(status_vera_init,
     -------
     0 (success) or 1.
     """
-    if ((status_vera_init is None or status_vera_init) and
-       (status_cppcheck_init is None or status_cppcheck_init) and
-       (status_format_init is None or status_format_init) and
-       (status_cmake_configure) and
+    if ((status_cmake_configure) and
        (status_make) and
        (status_make_install) and
        (status_tests) and
@@ -949,15 +923,6 @@ if __name__ == '__main__':
     # Each section is enclosed in a start- and an end-message.
     # By checking these message-pairs it can be verified whether a section
     # passed through successfully, failed or was skipped.
-    status_vera_init = \
-        is_message_pair_in_logfile(log_filename, "MSGBLD0010", "MSGBLD0020")
-
-    status_cppcheck_init = \
-        is_message_pair_in_logfile(log_filename, "MSGBLD0030", "MSGBLD0040")
-
-    status_format_init = \
-        is_message_pair_in_logfile(log_filename, "MSGBLD0050", "MSGBLD0060")
-
     status_cmake_configure = \
         is_message_pair_in_logfile(log_filename, "MSGBLD0230", "MSGBLD0240")
 
@@ -993,10 +958,7 @@ if __name__ == '__main__':
 
     # Determine the build result to tell Travis CI whether the build was
     # successful or not.
-    exit_code = build_return_code(status_vera_init,
-                                  status_cppcheck_init,
-                                  status_format_init,
-                                  status_cmake_configure,
+    exit_code = build_return_code(status_cmake_configure,
                                   status_make,
                                   status_make_install,
                                   status_tests,
@@ -1017,9 +979,6 @@ if __name__ == '__main__':
          exit_code == 0)
 
     print(printable_summary(changed_files,
-                            status_vera_init,
-                            status_cppcheck_init,
-                            status_format_init,
                             status_cmake_configure,
                             status_make,
                             status_make_install,

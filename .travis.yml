@@ -20,14 +20,18 @@
 
 # This is the Travis CI top-level script to setup and run the NEST build and test environment. 
 
+language: python
 
-language: minimal
-
-# Required for Ubuntu Trusty (14.04 LTS).
+# Using the container infrastructure for Ubuntu Trusty (14.04 LTS).
 sudo: required
 dist: trusty
+
 #https://blog.travis-ci.com/2017-06-19-trusty-updates-2017-Q2
-group: edge
+group: deprecated-2017Q2
+
+python:
+   - "2.7.13"
+   - "3.4.4"
 env:
   matrix:
     # We don't have to run a full matrix here, because most of the options are
@@ -40,94 +44,120 @@ env:
     - xTHREADING=0 xMPI=1 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & MPI
     - xTHREADING=0 xMPI=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only Python
     - xTHREADING=1 xMPI=1 xGSL=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full
+  
 matrix:
-  # Do notify immediately about it when a job of a build fails.
+  # Notify immediately when a build job fails.
   fast_finish: true
+
+addons:
+   apt:
+    sources:
+     - r-packages-trusty
+    packages:
+     - build-essential
+     - cmake
+     - libltdl-dev
+     - libreadline6-dev
+     - libncurses5-dev 
+     - libgsl0-dev
+     - python-all-dev
+     - python-numpy
+     - python-scipy 
+     - python-matplotlib
+     - ipython
+     - cython
+     - pkg-config
+     - openmpi-bin
+     - libopenmpi-dev
+     - python-nose
+     - libpcre3
+     - libpcre3-dev
+     - python-mpi4py
+     - llvm-3.6-dev
+     - jq
+     - cppcheck
+     - vera++
+     - pep8
 cache:
-  directory:
-    - $HOME/.cache
+   directory:
+     - $HOME/.cache
 
 before_install:
-  - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-  - echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
-  - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-  - export SOURCEDIR=$PWD
-  - cd $HOME/build
-  - echo $PATH
-
-  # Update package repository status (-qq is more quiet).
-  - sudo rm -rf /var/lib/apt/lists/*
-  - ls /etc/apt/sources.list.d/
-  - sudo apt-get update -qq
-
-  # Remove automatically all unused packages.
-  - sudo apt-get autoremove
-
+   - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+   - echo "+         P R E P A R E   N E S T   B U I L D   E N V I R O N M E N T         +"
+   - echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
+   - export SOURCEDIR=$PWD
+   - echo $PWD
+   - cp music_install.sh $HOME
+   - cd $HOME/build
+   - echo $PATH
+   - ls ~/virtualenv/python*.*.*/lib/python*.*
+   - ls ~/virtualenv/python*.*/include/python*.*
+  # - ls /home/travis/virtualenv/python3.6.0/lib/python3.6/config-3.6m-x86_64-linux-gnu
+  # Upgrade pip and setuptools
+   - pip install -U pip
+   - pip install -U setuptools
+  
   # Install packages required by NEST.
   # (Please see also: http://www.nest-simulator.org/installation/#standard-configuration)
-  - sudo apt-get install -y build-essential cmake libltdl7-dev libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy python-matplotlib ipython
-
-  # Install pip and Cython.
-  - wget https://bootstrap.pypa.io/get-pip.py
-  - sudo python get-pip.py
-  - sudo pip install -U setuptools
-  - pip install --user cython==0.23.4
-
+   - pip install scipy matplotlib
   # Install package terminaltables required by parse_travis_log.py to create the build summary.
-  - sudo pip install terminaltables
-
-  # Install OpenMPI.
-  - sudo apt-get install -y openmpi-bin libopenmpi-dev
-
+   - pip install terminaltables
   # Install nose framework for the Python testsuite.
-  - sudo apt-get install -y python-nose
+  # - pip install nose
 
   # Install VERA++ and pep8 for static code analysis.
-  - sudo apt-get install -y vera++ pep8
+  # - sudo apt-get install -y vera++
+  # - pip install pep8
 
   # Required for building cppcheck-1.69.
-  - sudo apt-get install -y libpcre3 libpcre3-dev
+ # - sudo apt-get install -y libpcre3 libpcre3-dev
+
+  # Build cppcheck version 1.79
+  # - git clone https://github.com/danmar/cppcheck.git
+  # - cd cppcheck
+  # - git checkout tags/1.79
+  # - mkdir -p install
+  # - make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
+  # - cd ..
+ 
+  # Remove these directories, otherwise the copyright-header check will complain.
+  # - rm -rf ./cppcheck
+  
+  # Ensure that the cppcheck and clang-format installation can be found.
+   - export PATH=$HOME/.cache/bin:$PATH
 
   # Install jq to process JSON output from GitHub API.
-  - sudo apt-get install -y jq
-
-  # Install current MUSIC version.
-  - sudo apt-get install -y python-mpi4py
-  - git clone https://github.com/INCF/MUSIC.git music
-  - cd music
-  - ./autogen.sh
-  - ./configure --prefix=$HOME/.cache/music.install
-  - make
-  - make install
-  - cd $HOME/build
-
-  # Change directory back to the NEST source code directory.
-  - cd $SOURCEDIR
+  # - pip install jq
+   - pip install mpi4py
 
 install:
-  - which cython
-  - cython --version
-  - which python
-  - python --version
-  - which pip
-  - which cmake
-  - cmake --version
+ #  - cd $HOME
+#   - chmod +x music_install.sh
+#   - ./music_install.sh
+   - which cython
+   - cython --version
+   - which python
+   - python --version
+   - which pip
+   - which cmake
+   - cmake --version
 
 before_script:
-  - chmod +x build.sh
-
+   - cd $SOURCEDIR
+   - chmod +x build.sh
 script:
-  - set -o pipefail
-  - ./build.sh 2>&1 | tee build.sh.log
-  - python extras/parse_travis_log.py build.sh.log
+   - set -o pipefail
+   - ./build.sh 2>&1 | tee build.sh.log
+   - python extras/parse_travis_log.py build.sh.log
 
 before_deploy:
-  - cd $TRAVIS_BUILD_DIR/build
-  - tar -zcvf reports.tar.gz ./reports
-  - tar -zcvf docs.tar.gz $TRAVIS_BUILD_DIR/result/share/doc/nest/*.*
-  - mkdir -p $TRAVIS_BUILD_DIR/build/artefacts_upload
-  - mv docs.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
-  - mv reports.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
+   - cd $TRAVIS_BUILD_DIR/build
+   - tar -zcvf reports.tar.gz ./reports
+   - tar -zcvf docs.tar.gz $TRAVIS_BUILD_DIR/result/share/doc/nest/*.*
+   - mkdir -p $TRAVIS_BUILD_DIR/build/artefacts_upload
+   - mv docs.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
+   - mv reports.tar.gz $TRAVIS_BUILD_DIR/build/artefacts_upload
 
 # S3 Deployment (Uploading the Travis CI build artefacts to Amazon S3).
 deploy:

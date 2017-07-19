@@ -43,7 +43,7 @@ env:
    - xTHREADING=1 xMPI=1 xGSL=1 xLTDL=1 xREADLINE=1 xPYTHON=1 xMUSIC=1 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # full
 python:
   - 2.7.13
-  - 3.5.2
+  - 3.4.4
 matrix:
     exclude:
     - env: xTHREADING=0 xMPI=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal

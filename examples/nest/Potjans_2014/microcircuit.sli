@@ -209,6 +209,8 @@
 % th_spike_detector_GID
 /CreateNetworkNodes
 {
+    % TODO480. This example still contains subnets, I don't have enough
+    % knowledge of the model to remove.
     % create and configure neurons
     neuron_model model_params SetDefaults
     % arrays of GIDs:

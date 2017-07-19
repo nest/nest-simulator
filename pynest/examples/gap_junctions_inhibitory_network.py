@@ -127,12 +127,15 @@ and connecting the neurons using the `make_symmetric` flag for
 `one_to_one` connections.
 """
 n_connection = int(n_neuron * gap_per_neuron / 2)
+neuron_list = [ n for n in neurons]
 connections = numpy.transpose(
-    [random.sample(neurons, 2) for _ in range(n_connection)])
+    [random.sample(neuron_list, 2) for _ in range(n_connection)])
 
-nest.Connect(connections[0], connections[1],
-             {'rule': 'one_to_one', 'make_symmetric': True},
-             {'model': 'gap_junction', 'weight': gap_weight})
+for indx in range(n_connection):
+    nest.Connect(nest.GIDCollection([connections[0][indx]]),
+                 nest.GIDCollection([connections[1][indx]]),
+                 {'rule': 'one_to_one', 'make_symmetric': True},
+                 {'model': 'gap_junction', 'weight': gap_weight})
 
 """
 In the end we start the simulation and plot the spike pattern.

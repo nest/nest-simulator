@@ -256,7 +256,7 @@ SPManager::disconnect( index sgid,
   thread target_thread,
   index syn )
 {
-  Node* const source = kernel().node_manager.get_node( sgid );
+  Node* const source = kernel().node_manager.get_node_or_proxy( sgid );
   // normal nodes and devices with proxies
   if ( target->has_proxies() )
   {
@@ -272,7 +272,7 @@ SPManager::disconnect( index sgid,
       && ( source->has_proxies() ) )
     {
       target_thread = source->get_thread();
-      target = kernel().node_manager.get_node( target->get_gid(), sgid );
+      target = kernel().node_manager.get_node_or_proxy( target->get_gid(), target_thread );
     }
     // thread target_thread = target->get_thread();
 
@@ -288,7 +288,7 @@ SPManager::disconnect( index sgid,
     const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread t = 0; t < n_threads; t++ )
     {
-      target = kernel().node_manager.get_node( target->get_gid(), t );
+      target = kernel().node_manager.get_node_or_proxy( target->get_gid(), t );
       target_thread = target->get_thread();
       kernel().connection_manager.disconnect(
         *target, sgid, target_thread, syn ); // tgid
@@ -606,7 +606,7 @@ SPManager::delete_synapse( index sgid,
   const int tid = kernel().vp_manager.get_thread_id();
   if ( kernel().node_manager.is_local_gid( sgid ) )
   {
-    Node* const source = kernel().node_manager.get_node( sgid );
+    Node* const source = kernel().node_manager.get_node_or_proxy( sgid );
     const thread source_thread = source->get_thread();
     if ( tid == source_thread )
     {
@@ -616,7 +616,7 @@ SPManager::delete_synapse( index sgid,
 
   if ( kernel().node_manager.is_local_gid( tgid ) )
   {
-    Node* const target = kernel().node_manager.get_node( tgid );
+    Node* const target = kernel().node_manager.get_node_or_proxy( tgid );
     thread target_thread = target->get_thread();
     if ( tid == target_thread )
     {

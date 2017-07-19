@@ -173,7 +173,7 @@ GIDCollection::create_( const std::vector< index >& gids )
   index current_first = gids[ 0 ];
   index current_last = current_first;
   index current_model =
-    kernel().node_manager.get_node( gids[ 0 ] )->get_model_id();
+    kernel().node_manager.get_node_or_proxy( gids[ 0 ] )->get_model_id();
 
   std::vector< GIDCollectionPrimitive > parts;
 
@@ -181,7 +181,7 @@ GIDCollection::create_( const std::vector< index >& gids )
         gid != gids.end();
         ++gid )
   {
-    index next_model = kernel().node_manager.get_node( *gid )->get_model_id();
+    index next_model = kernel().node_manager.get_node_or_proxy( *gid )->get_model_id();
 
     if ( next_model == current_model and *gid == ( current_last + 1 ) )
     {
@@ -251,10 +251,10 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last )
   assert( first_ <= last_ );
 
   // find the model_id
-  const int model_id = kernel().node_manager.get_node( first )->get_model_id();
+  const int model_id = kernel().node_manager.get_node_or_proxy( first )->get_model_id();
   for ( index gid = ++first; gid <= last; ++gid )
   {
-    if ( model_id != kernel().node_manager.get_node( gid )->get_model_id() )
+    if ( model_id != kernel().node_manager.get_node_or_proxy( gid )->get_model_id() )
     {
       throw BadProperty( "model ids does not match" );
     }

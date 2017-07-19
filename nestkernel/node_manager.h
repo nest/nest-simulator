@@ -135,20 +135,29 @@ public:
    *
    * @ingroup net_access
    */
-  Node* get_node( index, thread thr = 0 );
+  Node* get_node_or_proxy( index, thread );
+
+  /**
+   * Return pointer of the specified Node.
+   * @param i Index of the specified Node.
+   */
+  Node* get_node_or_proxy( index );
 
   /*
-   * Return Node on the thread we are on.
+   * Return pointer of Node on the thread we are on.
    *
    * If the node has proxies, it returns the node on the first thread (used by
    * recorders).
    *
    * @params gid Index of the Node.
    */
-  Node* get_node_indp_thread( index );
+  Node* get_mpi_local_node_or_device_head( index );
 
   /*
-   * Return local Node on thread given by specified gid.
+   * Return pointer of Node.
+   *
+   * If the Node is not on the given thread, the function returns 0.
+   *
    * @param gid Index of the Node.
    * @param t Thread index of the Node.
    */

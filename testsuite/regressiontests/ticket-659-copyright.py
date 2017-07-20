@@ -42,6 +42,7 @@ exclude_dirs = [
     'libltdl',
     '.git',
     'CMakeFiles',
+    'music',
 ]
 
 # match all file names against these regular expressions. if a match
@@ -128,7 +129,7 @@ for dirpath, _, fnames in os.walk(source_dir):
                 if line_src != line_exp:
                     print("Incorrect copyright header in '{0}':".format(tested_file))           # noqa
                     print("    expected -> '{0}', actual -> '{1}'\n".format(line_exp.strip(),   # noqa
-                                                                            encode('utf-8').line_src.strip()))  # noqa
+                                                                            line_src.strip()))  # noqa
                     total_errors += 1
                     break
 

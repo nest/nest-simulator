@@ -563,7 +563,7 @@ def get_num_msgs_for_file(file_name, summary):
 
     num_msgs = 0
     if summary is not None:
-        for message, occurrences in summary[file_name].iteritems():
+        for message, occurrences in summary[file_name].items():
             num_msgs += occurrences
 
     return num_msgs
@@ -615,17 +615,17 @@ def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
 
                 if num_msgs_vera > 0:
                     file_table.append(['VERA++ (MSGBLD0135):', 'Count'])
-                    for message, count in summary_vera[file].iteritems():
+                    for message, count in summary_vera[file].items():
                         file_table.append([str(message), str(count)])
 
                 if num_msgs_cppcheck > 0:
                     file_table.append(['Cppcheck (MSGBLD0155):', 'Count'])
-                    for message, count in summary_cppcheck[file].iteritems():
+                    for message, count in summary_cppcheck[file].items():
                         file_table.append([str(message), str(count)])
 
                 if num_msgs_format > 0:
                     file_table.append(['clang-format (MSGBLD0175):', 'Count'])
-                    for message, count in summary_format[file].iteritems():
+                    for message, count in summary_format[file].items():
                         file_table.append([str(message), str(count)])
 
                 table = AsciiTable(file_table)
@@ -644,7 +644,7 @@ def code_analysis_per_file_tables(summary_vera, summary_cppcheck,
                 file_table = [['+ + + ' + file + ' + + +', '']]
 
                 file_table.append(['PEP8 (MSGBLD0195):', 'Count'])
-                for message, count in summary_pep8[file].iteritems():
+                for message, count in summary_pep8[file].items():
                     file_table.append([str(message), str(count)])
 
                 table = AsciiTable(file_table)
@@ -730,7 +730,6 @@ def printable_summary(list_of_changed_files,
     Parameters
     ----------
     list_of_changed_files:   List of changed source files.
-    
     status_cmake_configure:  Status of the 'CMake configure': True, False or
                              None
     status_make:             Status of the 'make': True, False or None

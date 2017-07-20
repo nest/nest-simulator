@@ -47,21 +47,20 @@ python:
 matrix:
     exclude:
     - env: xTHREADING=0 xMPI=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # minimal
-      python: 3.5.2
+      python: 3.4.4
     - env: xTHREADING=0 xMPI=1 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only MPI
-      python: 3.5.2
+      python: 3.4.4
     - env: xTHREADING=1 xMPI=0 xGSL=0 xLTDL=1 xREADLINE=1 xPYTHON=0 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only threading
-      python: 3.5.2
+      python: 3.4.4
     - env: xTHREADING=1 xMPI=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & Threading
-      python: 3.5.2
+      python: 3.4.4
     - env: xTHREADING=0 xMPI=1 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # Python & MPI
-      python: 3.5.2
+      python: 3.4.4
     - env: xTHREADING=0 xMPI=0 xGSL=0 xLTDL=0 xREADLINE=0 xPYTHON=1 xMUSIC=0 xSTATIC_ANALYSIS=1 CACHE_NAME=JOB   # only Python
-      python: 3.5.2
-        
-matrix:
-  # Notify immediately when a build job fails.
-  fast_finish: true
+      python: 3.4.4
+
+    # Notify immediately when a build job fails.
+    fast_finish: true
 addons:
    apt:
     sources:
@@ -104,55 +103,22 @@ before_install:
    - cp music_install.sh $HOME
    - cd $HOME/build
    - echo $PATH
-   - ls ~/virtualenv/python*.*.*/lib/python*.*
-   - ls ~/virtualenv/python*.*/include/python*.*
-  # - ls /home/travis/virtualenv/python3.6.0/lib/python3.6/config-3.6m-x86_64-linux-gnu
   # Upgrade pip and setuptools
    - pip install -U pip
    - pip install -U setuptools
   
   # Install packages required by NEST.
   # (Please see also: http://www.nest-simulator.org/installation/#standard-configuration)
-   - pip install cython scipy matplotlib
-  # Install package terminaltables required by parse_travis_log.py to create the build summary.
-   - pip install terminaltables
-  # Install nose framework for the Python testsuite.
-  # - pip install nose
-
-  # Install VERA++ and pep8 for static code analysis.
-  # - sudo apt-get install -y vera++
-  # - pip install pep8
-
-  # Required for building cppcheck-1.69.
- # - sudo apt-get install -y libpcre3 libpcre3-dev
-
-  # Build cppcheck version 1.79
-  # - git clone https://github.com/danmar/cppcheck.git
-  # - cd cppcheck
-  # - git checkout tags/1.79
-  # - mkdir -p install
-  # - make PREFIX=$HOME/.cache CFGDIR=$HOME/.cache/cfg HAVE_RULES=yes install
-  # - cd ..
- 
-  # Remove these directories, otherwise the copyright-header check will complain.
-  # - rm -rf ./cppcheck
-  
+  # terminaltables is required by parse_travis_log.py to create the build summary.
+   - pip install cython scipy matplotlib terminaltables mpi4py
+    
   # Ensure that the cppcheck and clang-format installation can be found.
-   - export PATH=$HOME/.cache/bin:$PATH
-
-  # Install jq to process JSON output from GitHub API.
-  # - pip install jq
-   - pip install mpi4py
+  # - export PATH=$HOME/.cache/bin:$PATH
 
 install:
- #  - cd $HOME
-#   - chmod +x music_install.sh
-#   - ./music_install.sh
    - which cython
    - cython --version
    - which python
-   - python --version
-   - which pip
    - which cmake
    - cmake --version
 

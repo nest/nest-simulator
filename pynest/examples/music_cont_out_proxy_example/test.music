@@ -1,0 +1,9 @@
+stoptime=0.2
+timestep=0.001
+[from]
+    np=2
+    binary=./nest_script.py
+[to]
+    np=1
+    binary=./receiver_script.py
+from.out -> to.in [2]

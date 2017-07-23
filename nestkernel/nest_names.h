@@ -452,6 +452,8 @@ extern const Name synapse_modelid;     //!< Connection parameters
 extern const Name synapses_per_driver; //!< Used by stdp_connection_facetshw_hom
 extern const Name synaptic_elements;   //!< Synaptic elements used in structural
                                        //!< plasticity
+extern const Name synaptic_elements_param; //!< Used to update parameters
+                                           //!< of synaptic elements
 
 extern const Name t_lag;     //!< Lag within a time slice
 extern const Name T_min;     //!< Minimum time
@@ -550,8 +552,6 @@ extern const Name U_std;
 extern const Name U_upper;
 extern const Name update;      //!< Command to execute the neuron (sli_neuron)
 extern const Name update_node; //!< Command to execute the neuron (sli_neuron)
-extern const Name update_synaptic_elements; //!< Command to update parameters
-                                            //!< of synaptic elements
 extern const Name use_wfr;                  //!< Simulation-related
 extern const Name use_gid_in_filename; //!< use gid in the filename
 

@@ -396,6 +396,7 @@ const Name synapse_label( "synapse_label" );
 const Name synapse_model( "synapse_model" );
 const Name synapse_modelid( "synapse_modelid" );
 const Name synaptic_elements( "synaptic_elements" );
+const Name synaptic_elements_param( "synaptic_elements_param" );
 
 const Name t_lag( "t_lag" );
 const Name T_min( "T_min" );

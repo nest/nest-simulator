@@ -285,7 +285,6 @@ nest::Archiving_Node::set_status( const DictionaryDatum& d )
     clear_history();
   }
 
-
   if ( d->known( names::synaptic_elements_param ) )
   {
     const DictionaryDatum synaptic_elements_dict =

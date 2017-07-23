@@ -67,7 +67,7 @@ class TestUpdateSynapticElements(unittest.TestCase):
             structural_p_elements[u'Den_ex'], neuron_synaptic_elements[u'Den_ex'])
 
         # Update Axon elements
-        nest.SetStatus(neuron, 'update_synaptic_elements', elements_to_update)
+        nest.SetStatus(neuron, 'synaptic_elements_param', elements_to_update)
         neuron_synaptic_elements = nest.GetStatus(
             neuron, 'synaptic_elements')[0]
         self.assertIn('Den_ex', neuron_synaptic_elements)

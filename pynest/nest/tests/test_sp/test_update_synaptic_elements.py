@@ -62,9 +62,11 @@ class TestUpdateSynapticElements(unittest.TestCase):
         self.assertIn('Axon', neuron_synaptic_elements)
 
         self.assertDictContainsSubset(
-            structural_p_elements[u'Axon'], neuron_synaptic_elements[u'Axon'])
+            structural_p_elements[u'Axon'],
+            neuron_synaptic_elements[u'Axon'])
         self.assertDictContainsSubset(
-            structural_p_elements[u'Den_ex'], neuron_synaptic_elements[u'Den_ex'])
+            structural_p_elements[u'Den_ex'],
+            neuron_synaptic_elements[u'Den_ex'])
 
         # Update Axon elements
         nest.SetStatus(neuron, 'synaptic_elements_param', elements_to_update)
@@ -78,7 +80,8 @@ class TestUpdateSynapticElements(unittest.TestCase):
             elements_to_update[u'Axon'], neuron_synaptic_elements[u'Axon'])
         # Should be unchanged
         self.assertDictContainsSubset(
-            structural_p_elements[u'Den_ex'], neuron_synaptic_elements[u'Den_ex'])
+            structural_p_elements[u'Den_ex'],
+            neuron_synaptic_elements[u'Den_ex'])
 
 
 def suite():

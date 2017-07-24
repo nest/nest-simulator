@@ -80,10 +80,10 @@ class TestUpdateSynapticElements(unittest.TestCase):
         self.assertDictContainsSubset(
             structural_p_elements[u'Den_ex'], neuron_synaptic_elements[u'Den_ex'])
 
+
 def suite():
     test_suite = unittest.makeSuite(TestUpdateSynapticElements, 'test')
     return test_suite
 
 if __name__ == '__main__':
     unittest.main()
-

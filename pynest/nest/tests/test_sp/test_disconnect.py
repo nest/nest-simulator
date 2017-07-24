@@ -78,7 +78,6 @@ class TestDisconnectSingle(unittest.TestCase):
                     [neurons[0]], [neurons[2]], syn_model)
                 if mpi_test:
                     conns = self.comm.allgather(conns)
-                   # conns = filter(None, conns)
                     conns = list(filter(None, conns))
                 assert len(conns) == 1
                 nest.DisconnectOneToOne(neurons[0], neurons[2], syn_dict)
@@ -86,7 +85,6 @@ class TestDisconnectSingle(unittest.TestCase):
                     [neurons[0]], [neurons[2]], syn_model)
                 if mpi_test:
                     conns = self.comm.allgather(conns)
-                   # conns = filter(None, conns)
                     conns = list(filter(None, conns))
                 assert len(conns) == 0
 
@@ -95,7 +93,6 @@ class TestDisconnectSingle(unittest.TestCase):
                     [neurons[0]], [neurons[1]], syn_model)
                 if mpi_test:
                     conns1 = self.comm.allgather(conns1)
-                    #conns1 = filter(None, conns1)
                     conns1 = list(filter(None, conns1))
                 assert len(conns1) == 0
                 try:

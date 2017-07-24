@@ -74,17 +74,13 @@ addons:
      - libgsl0-dev
      - python-all-dev
      - python-numpy
-     - python-scipy 
-     - python-matplotlib
      - ipython
-     - cython
      - pkg-config
      - openmpi-bin
      - libopenmpi-dev
      - python-nose
      - libpcre3
      - libpcre3-dev
-     - python-mpi4py
      - llvm-3.6-dev
      - jq
      - cppcheck
@@ -112,9 +108,6 @@ before_install:
   # terminaltables is required by parse_travis_log.py to create the build summary.
    - pip install cython scipy matplotlib terminaltables mpi4py
     
-  # Ensure that the cppcheck and clang-format installation can be found.
-  # - export PATH=$HOME/.cache/bin:$PATH
-
 install:
    - which cython
    - cython --version

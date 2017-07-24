@@ -7,3 +7,5 @@ cd music
 ./configure --prefix=$HOME/.cache/music.install
 make
 make install
+cd ..
+rm -rf music

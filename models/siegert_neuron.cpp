@@ -221,14 +221,16 @@ nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
  * ---------------------------------------------------------------- */
 
 double
-nest::siegert_neuron::siegert1( 
+nest::siegert_neuron::siegert1(
+  double theta_shift,
+  double V_reset_shift,
   double mu,
   double sigma )
 {
   double y_th;
-  y_th = ( P_.theta_ - mu ) / sigma;
+  y_th = ( theta_shift - mu ) / sigma;
   double y_r;
-  y_r = ( P_.V_reset_ - mu ) / sigma;
+  y_r = ( V_reset_shift - mu ) / sigma;
 
   gsl_integration_workspace* w = gsl_integration_workspace_alloc( 1000 );
 
@@ -273,13 +275,15 @@ nest::siegert_neuron::siegert1(
 
 double
 nest::siegert_neuron::siegert2(
+  double theta_shift,
+  double V_reset_shift,
   double mu,
   double sigma )
 {
   double y_th;
-  y_th = ( P_.theta_ - mu ) / sigma;
+  y_th = ( theta_shift - mu ) / sigma;
   double y_r;
-  y_r = ( P_.V_reset_ - mu ) / sigma;
+  y_r = ( V_reset_shift - mu ) / sigma;
 
   gsl_integration_workspace* w = gsl_integration_workspace_alloc( 1000 );
 
@@ -324,22 +328,22 @@ nest::siegert_neuron::siegert(
   // function (Fourcaud & Brunel, 2002)
   double alpha = 2.0652531522312172;  
 
-  double theta = P_.theta_;
-  theta += sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
-  double V_r = P_.V_reset_;
-  V_r += sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
+  double theta_shift = P_.theta_;
+  theta_shift += sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
+  double V_r_shift = P_.V_reset_;
+  V_r_shift += sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
 
   if ( abs( mu - 0. ) < 1e-12 )
   {
     return 0.;
   }
-  if ( mu <= theta - 0.05 * abs( theta ) )
+  if ( mu <= theta_shift - 0.05 * abs( theta_shift ) )
   {
-    return siegert1( mu, sigma );
+    return siegert1( theta_shift, V_r_shift, mu, sigma );
   }
   else
   {
-    return siegert2( mu, sigma );
+    return siegert2( theta_shift, V_r_shift, mu, sigma );
   }
 }
 

@@ -152,8 +152,8 @@ private:
 
   // siegert functions and helpers
   double siegert( double, double );
-  double siegert1( double, double );
-  double siegert2( double, double );
+  double siegert1( double, double, double, double );
+  double siegert2( double, double, double, double );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< siegert_neuron >;

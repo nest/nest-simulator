@@ -54,8 +54,9 @@ struct my_params
 };
 
 /* ----------------------------------------------------------------
- * Siegert implementation
+ * Integrands for evaluation of siegert formula
  * ---------------------------------------------------------------- */
+
 double
 integrand1( double x, void* p )
 {
@@ -88,138 +89,6 @@ integrand2( double x, void* p )
     return ( exp( 2 * y_th * x - x * x ) - exp( 2 * y_r * x - x * x ) ) / x;
   }
 }
-
-double
-siegert1( double tau_m,
-  double tau_r,
-  double theta,
-  double V_r,
-  double mu,
-  double sigma )
-{
-  double y_th;
-  y_th = ( theta - mu ) / sigma;
-  double y_r;
-  y_r = ( V_r - mu ) / sigma;
-
-  gsl_integration_workspace* w = gsl_integration_workspace_alloc( 1000 );
-
-  double result, error;
-
-  gsl_function F;
-  F.function = &integrand1;
-
-  struct my_params alpha = { y_th, y_r };
-  F.params = &alpha;
-
-  double lower_bound = y_th;
-  double err = 1.;
-  while ( err >= 1e-12 )
-  {
-    err = integrand1( lower_bound, &alpha );
-    if ( err > 1e-12 )
-    {
-      lower_bound /= 2.;
-    }
-  }
-
-  double upper_bound = y_th;
-  err = 1.;
-  while ( err >= 1e-12 )
-  {
-    err = integrand1( upper_bound, &alpha );
-    if ( err > 1e-12 )
-    {
-      upper_bound *= 2.;
-    }
-  }
-
-  gsl_integration_qags(
-    &F, lower_bound, upper_bound, 0.1, 0.1, 1000, w, &result, &error );
-
-  gsl_integration_workspace_free( w );
-
-  // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
-  return 1e3 * 1. / ( tau_r + exp( y_th * y_th ) * result * tau_m );
-}
-
-double
-siegert2( double tau_m,
-  double tau_r,
-  double theta,
-  double V_r,
-  double mu,
-  double sigma )
-{
-  double y_th;
-  y_th = ( theta - mu ) / sigma;
-  double y_r;
-  y_r = ( V_r - mu ) / sigma;
-
-  gsl_integration_workspace* w = gsl_integration_workspace_alloc( 1000 );
-
-  double result, error;
-
-  gsl_function F;
-  F.function = &integrand2;
-
-  struct my_params alpha = { y_th, y_r };
-  F.params = &alpha;
-
-  double lower_bound = 0.;
-  double upper_bound = 1.;
-  double err = 1.;
-  while ( err >= 1e-12 )
-  {
-    err = integrand2( upper_bound, &alpha );
-    if ( err > 1e-12 )
-    {
-      upper_bound *= 2.;
-    }
-  }
-
-  gsl_integration_qags(
-    &F, lower_bound, upper_bound, 0.1, 0.1, 1000, w, &result, &error );
-
-  gsl_integration_workspace_free( w );
-
-  // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
-  return 1e3 * 1. / ( tau_r + result * tau_m );
-}
-
-double
-siegert( double tau_m,
-  double tau_syn,
-  double tau_r,
-  double theta,
-  double V_r,
-  double mu,
-  double sigma_square )
-{
-  double sigma = std::sqrt(sigma_square);
-
-  // Effective shift of threshold and reset due to colored noise:
-  // alpha = |zeta(1/2)|/sqrt(2) with zeta being the Riemann zeta
-  // function (Fourcaud & Brunel, 2002)
-  double alpha = 2.0652531522312172;  
-
-  theta += sigma * alpha / 2. * sqrt( tau_syn / tau_m );
-  V_r += sigma * alpha / 2. * sqrt( tau_syn / tau_m );
-
-  if ( abs( mu - 0. ) < 1e-12 )
-  {
-    return 0.;
-  }
-  if ( mu <= theta - 0.05 * abs( theta ) )
-  {
-    return siegert1( tau_m, tau_r, theta, V_r, mu, sigma );
-  }
-  else
-  {
-    return siegert2( tau_m, tau_r, theta, V_r, mu, sigma );
-  }
-}
-
 
 namespace nest
 {
@@ -258,6 +127,7 @@ nest::siegert_neuron::State_::State_()
   : r_( 0.0 )
 {
 }
+
 
 /* ----------------------------------------------------------------
  * Parameter and state extractions and manipulation functions
@@ -346,6 +216,137 @@ nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
 }
 
 /* ----------------------------------------------------------------
+ * Siegert function and helpers
+ * ---------------------------------------------------------------- */
+
+double
+nest::siegert_neuron::siegert1(
+  double theta_shift,
+  double V_reset_shift,
+  double mu,
+  double sigma )
+{
+  double y_th;
+  y_th = ( theta_shift - mu ) / sigma;
+  double y_r;
+  y_r = ( V_reset_shift - mu ) / sigma;
+
+  gsl_integration_workspace* w = gsl_integration_workspace_alloc( 1000 );
+
+  double result, error;
+
+  gsl_function F;
+  F.function = &integrand1;
+
+  struct my_params alpha = { y_th, y_r };
+  F.params = &alpha;
+
+  double lower_bound = y_th;
+  double err = 1.;
+  while ( err >= 1e-12 )
+  {
+    err = integrand1( lower_bound, &alpha );
+    if ( err > 1e-12 )
+    {
+      lower_bound /= 2.;
+    }
+  }
+
+  double upper_bound = y_th;
+  err = 1.;
+  while ( err >= 1e-12 )
+  {
+    err = integrand1( upper_bound, &alpha );
+    if ( err > 1e-12 )
+    {
+      upper_bound *= 2.;
+    }
+  }
+
+  gsl_integration_qags(
+    &F, lower_bound, upper_bound, 0.1, 0.1, 1000, w, &result, &error );
+
+  gsl_integration_workspace_free( w );
+
+  // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
+  return 1e3 * 1. / ( P_.t_ref_ + exp( y_th * y_th ) * result * P_.tau_m_ );
+}
+
+double
+nest::siegert_neuron::siegert2(
+  double theta_shift,
+  double V_reset_shift,
+  double mu,
+  double sigma )
+{
+  double y_th;
+  y_th = ( theta_shift - mu ) / sigma;
+  double y_r;
+  y_r = ( V_reset_shift - mu ) / sigma;
+
+  gsl_integration_workspace* w = gsl_integration_workspace_alloc( 1000 );
+
+  double result, error;
+
+  gsl_function F;
+  F.function = &integrand2;
+
+  struct my_params alpha = { y_th, y_r };
+  F.params = &alpha;
+
+  double lower_bound = 0.;
+  double upper_bound = 1.;
+  double err = 1.;
+  while ( err >= 1e-12 )
+  {
+    err = integrand2( upper_bound, &alpha );
+    if ( err > 1e-12 )
+    {
+      upper_bound *= 2.;
+    }
+  }
+
+  gsl_integration_qags(
+    &F, lower_bound, upper_bound, 0.1, 0.1, 1000, w, &result, &error );
+
+  gsl_integration_workspace_free( w );
+
+  // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
+  return 1e3 * 1. / ( P_.t_ref_ + result * P_.tau_m_ );
+}
+
+double 
+nest::siegert_neuron::siegert( 
+  double mu,
+  double sigma_square )
+{
+  double sigma = std::sqrt(sigma_square);
+
+  // Effective shift of threshold and reset due to colored noise:
+  // alpha = |zeta(1/2)|/sqrt(2) with zeta being the Riemann zeta
+  // function (Fourcaud & Brunel, 2002)
+  double alpha = 2.0652531522312172;  
+
+  double theta_shift = P_.theta_;
+  theta_shift += sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
+  double V_r_shift = P_.V_reset_;
+  V_r_shift += sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
+
+  if ( abs( mu - 0. ) < 1e-12 )
+  {
+    return 0.;
+  }
+  if ( mu <= theta_shift - 0.05 * abs( theta_shift ) )
+  {
+    return siegert1( theta_shift, V_r_shift, mu, sigma );
+  }
+  else
+  {
+    return siegert2( theta_shift, V_r_shift, mu, sigma );
+  }
+}
+
+/* ----------------------------------------------------------------
  * Node initialization functions
  * ---------------------------------------------------------------- */
 
@@ -409,11 +410,7 @@ nest::siegert_neuron::update_( Time const& origin,
     new_rates[ lag ] = S_.r_;
 
     // propagate rate to new time step (exponential integration)
-    double drive = siegert( P_.tau_m_,
-      P_.tau_syn_,
-      P_.t_ref_,
-      P_.theta_,
-      P_.V_reset_,
+    double drive = siegert( 
       B_.drift_input_[ lag ],
       B_.diffusion_input_[ lag ] );
     S_.r_ = V_.P1_ * ( S_.r_ ) + ( 1 - V_.P1_ ) * P_.mean_ + V_.P2_ * drive;

@@ -54,11 +54,6 @@ Parameters:
  mean                double - Mean of Gaussian white noise.
  std                 double - Standard deviation of Gaussian white noise.
  g                   double - Gain parameter
- linear summation    boolean - specifies type of non-linearity
-
-Notes:
-The boolean parameter linear_summation does not have any
-effect in this linear model.
 
 References:
 

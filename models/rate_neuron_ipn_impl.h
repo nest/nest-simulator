@@ -74,8 +74,8 @@ nest::rate_neuron_ipn< TGainfunction >::Parameters_::Parameters_()
 
 template < class TGainfunction >
 nest::rate_neuron_ipn< TGainfunction >::State_::State_()
-  : r_( 0.0 )
-  , x_( 0.0 )
+  : rate_( 0.0 )
+  , noise_( 0.0 )
 {
 }
 
@@ -115,15 +115,15 @@ template < class TGainfunction >
 void
 nest::rate_neuron_ipn< TGainfunction >::State_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::rate, r_ );  // Rate
-  def< double >( d, names::noise, x_ ); // Noise
+  def< double >( d, names::rate, rate_ );  // Rate
+  def< double >( d, names::noise, noise_ ); // Noise
 }
 
 template < class TGainfunction >
 void
 nest::rate_neuron_ipn< TGainfunction >::State_::set( const DictionaryDatum& d )
 {
-  updateValue< double >( d, names::rate, r_ ); // Rate
+  updateValue< double >( d, names::rate, rate_ ); // Rate
 }
 
 template < class TGainfunction >
@@ -243,42 +243,42 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
   for ( long lag = from; lag < to; ++lag )
   {
     // store rate
-    new_rates[ lag ] = S_.r_;
+    new_rates[ lag ] = S_.rate_;
     // get noise
-    S_.x_ = P_.std_ * B_.random_numbers[ lag ];
+    S_.noise_ = P_.std_ * B_.random_numbers[ lag ];
     // propagate rate to new time step (exponential integration)
-    S_.r_ = V_.P1_ * S_.r_ + V_.P2_ * P_.mean_ + V_.input_noise_factor_ * S_.x_;
+    S_.rate_ = V_.P1_ * S_.rate_ + V_.P2_ * P_.mean_ + V_.input_noise_factor_ * S_.noise_;
 
     if ( called_from_wfr_update ) // use get_value_wfr_update to keep values in
                                   // buffer
     {
       if ( P_.linear_summation_ )
       {
-        S_.r_ += V_.P2_ * gain_( B_.delayed_rates_.get_value_wfr_update( lag )
+        S_.rate_ += V_.P2_ * gain_( B_.delayed_rates_.get_value_wfr_update( lag )
                             + B_.instant_rates_[ lag ] );
       }
       else
       {
-        S_.r_ += V_.P2_ * ( B_.delayed_rates_.get_value_wfr_update( lag )
+        S_.rate_ += V_.P2_ * ( B_.delayed_rates_.get_value_wfr_update( lag )
                             + B_.instant_rates_[ lag ] );
       }
 
       // check if deviation from last iteration exceeds wfr_tol
       wfr_tol_exceeded =
-        wfr_tol_exceeded or fabs( S_.r_ - B_.last_y_values[ lag ] ) > wfr_tol;
+        wfr_tol_exceeded or fabs( S_.rate_ - B_.last_y_values[ lag ] ) > wfr_tol;
       // update last_y_values for next wfr iteration
-      B_.last_y_values[ lag ] = S_.r_;
+      B_.last_y_values[ lag ] = S_.rate_;
     }
     else // use get_value to clear values in buffer after reading
     {
       if ( P_.linear_summation_ )
       {
-        S_.r_ += V_.P2_ * gain_( B_.delayed_rates_.get_value( lag )
+        S_.rate_ += V_.P2_ * gain_( B_.delayed_rates_.get_value( lag )
                             + B_.instant_rates_[ lag ] );
       }
       else
       {
-        S_.r_ += V_.P2_
+        S_.rate_ += V_.P2_
           * ( B_.delayed_rates_.get_value( lag ) + B_.instant_rates_[ lag ] );
       }
       // rate logging
@@ -300,7 +300,7 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
 
     // modifiy new_rates for rate-neuron-event as proxy for next min_delay
     for ( long temp = from; temp < to; ++temp )
-      new_rates[ temp ] = S_.r_;
+      new_rates[ temp ] = S_.rate_;
 
     // create new random numbers
     B_.random_numbers.resize( buffer_size, numerics::nan );

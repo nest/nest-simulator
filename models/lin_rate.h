@@ -50,15 +50,10 @@ Parameters:
  The following parameters can be set in the status dictionary.
 
  rate                double - Rate (unitless)
- tau                 double - Time constant in ms.
+ tau                 double - Time constant of rate dynamics in ms.
  mean                double - Mean of Gaussian white noise.
  std                 double - Standard deviation of Gaussian white noise.
  g                   double - Gain parameter
- linear summation    boolean - specifies type of non-linearity
-
-Notes:
-The boolean parameter linear_summation does not have any
-effect in this linear model.
 
 References:
 

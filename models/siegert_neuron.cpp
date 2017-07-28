@@ -90,7 +90,6 @@ integrand2( double x, void* p )
   }
 }
 
-
 namespace nest
 {
 

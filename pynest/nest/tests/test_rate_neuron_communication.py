@@ -19,7 +19,8 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# This script tests the rate_neuron in NEST.
+# This test checks interactions between rate neurons, i.e.
+# the delay, weight and nonlinearities of rate neurons.
 
 import nest
 import unittest

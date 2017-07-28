@@ -197,10 +197,14 @@ siegert( double tau_m,
   double sigma_square )
 {
   double sigma = std::sqrt(sigma_square);
-  double alpha = 2.0652531522312172;
+
+  // Effective shift of threshold and reset due to colored noise:
+  // alpha = |zeta(1/2)|/sqrt(2) with zeta being the Riemann zeta
+  // function (Fourcaud & Brunel, 2002)
+  double alpha = 2.0652531522312172;  
+
   theta += sigma * alpha / 2. * sqrt( tau_syn / tau_m );
   V_r += sigma * alpha / 2. * sqrt( tau_syn / tau_m );
-
 
   if ( abs( mu - 0. ) < 1e-12 )
   {

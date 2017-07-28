@@ -147,9 +147,9 @@ private:
    */
   struct State_
   {
-    double r_; //!< Rate
-    double x_; //!< Noise
-    double y_; //!< Noisy rate, i.e. rate +noise
+    double rate_; //!< Rate
+    double noise_; //!< Noise
+    double noisy_rate_; //!< Noisy rate, i.e. rate +noise
 
     State_(); //!< Default initialization
 
@@ -212,21 +212,21 @@ private:
   double
   get_rate_() const
   {
-    return S_.r_;
+    return S_.rate_;
   }
 
   //! Read out the noise
   double
   get_noise_() const
   {
-    return S_.x_;
+    return S_.noise_;
   }
 
   //! Read out the noisy rate
   double
   get_noisy_rate_() const
   {
-    return S_.y_;
+    return S_.noisy_rate_;
   }
 
   // ----------------------------------------------------------------

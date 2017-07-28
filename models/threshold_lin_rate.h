@@ -53,12 +53,19 @@ Parameters:
  The following parameters can be set in the status dictionary.
 
  rate                double - Rate (unitless)
- tau                 double - Time constant in ms.
+ tau                 double - Time constant of rate dynamics in ms.
  mean                double - Mean of Gaussian white noise.
  std                 double - Standard deviation of Gaussian white noise.
  g                   double - Gain parameter
  theta               double - Threshold
- linear summation    boolean - specifies type of non-linearity (see above)
+ linear_summation    boolean - specifies type of non-linearity (see above)
+
+Note: 
+The boolean parameter linear_summation determines whether the
+input from different presynaptic neurons is first summed linearly and
+then transformed by a nonlinearity (true), or if the input from
+individual presynaptic neurons is first nonlinearly transformed and
+then summed up (false). Default is true.
 
 References:
 

@@ -327,10 +327,8 @@ nest::siegert_neuron::siegert(
   // function (Fourcaud & Brunel, 2002)
   double alpha = 2.0652531522312172;  
 
-  double theta_shift = P_.theta_;
-  theta_shift += sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
-  double V_r_shift = P_.V_reset_;
-  V_r_shift += sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
+  double theta_shift = P_.theta_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
+  double V_r_shift = P_.V_reset_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
 
   if ( abs( mu - 0. ) < 1e-12 )
   {

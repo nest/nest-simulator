@@ -39,8 +39,8 @@ Description:
 
  tanh_rate is an implementation of a non-linear rate model with either
  input (tanh_rate_ipn) or output noise (tanh_rate_opn) and gain function
- Phi(h) = tanh(g * h) and Psi(h) = h for linear_summation = True
- Phi(h) = h and Psi(h) = tanh(g * h) for linear_summation = False.
+ Phi(h) = tanh(g * (h-theta)) and Psi(h) = h for linear_summation = True
+ Phi(h) = h and Psi(h) = tanh(g * (h-theta)) for linear_summation = False.
 
  The model supports connections to other rate models with either zero or
  non-zero delay, and uses the secondary_event concept introduced with

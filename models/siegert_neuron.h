@@ -150,6 +150,11 @@ private:
   void update( Time const&, const long, const long );
   bool wfr_update( Time const&, const long, const long );
 
+  // siegert functions and helpers
+  double siegert( double, double );
+  double siegert1( double, double );
+  double siegert2( double, double );
+
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< siegert_neuron >;
   friend class UniversalDataLogger< siegert_neuron >;

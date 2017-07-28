@@ -19,7 +19,11 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-# This script tests the rate_neuron in NEST.
+# This script tests the rate_neuron in NEST. For input noise we test
+# the mean and variance of the rate as well as the standard deviation of
+# the input noise. For output noise we test the mean of the rate and the
+# standard deviation of the output noise, which already determines the variance
+# of the rate.
 
 import nest
 import unittest
@@ -39,7 +43,7 @@ class RateNeuronTestCase(unittest.TestCase):
         self.neuron_params = {'mean': 1.5, 'std': 0.5, 'tau': 5.}
 
         # simulation parameters
-        self.simtime = 1000.
+        self.simtime = 10000.
         self.dt = 0.1
         self.tstart = 10. * self.neuron_params['tau']
 
@@ -49,51 +53,72 @@ class RateNeuronTestCase(unittest.TestCase):
             {'resolution': self.dt, 'use_wfr': False, 'print_time': True})
 
         # set up rate neuron and devices
-        self.rate_neuron = nest.Create(
+        self.rate_neuron_ipn = nest.Create(
             'lin_rate_ipn', params=self.neuron_params)
+        self.rate_neuron_opn = nest.Create(
+            'lin_rate_opn', params=self.neuron_params)
         self.multimeter = nest.Create(
             "multimeter", params={'record_from': ['rate', 'noise'],
                                   'interval': self.dt, 'start': self.tstart})
 
         # record rates and noise
-        nest.Connect(self.multimeter, self.rate_neuron)
+        nest.Connect(
+            self.multimeter, self.rate_neuron_ipn + self.rate_neuron_opn)
 
     def test_RateNeuronMean(self):
-        """Check the mean value of the rate_neuron"""
+        """Check the mean value of the rate_neurons"""
 
         # simulate
         nest.Simulate(self.simtime)
 
-        # get noise from rate neuron
+        # get noise from rate neurons
         events = nest.GetStatus(self.multimeter)[0]["events"]
-        mean_rate = np.mean(events['rate'])
+        senders = events['senders']
+        senders_ipn = np.where(senders == self.rate_neuron_ipn)[0]
+        senders_opn = np.where(senders == self.rate_neuron_opn)[0]
+
+        mean_rate_ipn = np.mean(events['rate'][senders_ipn])
+        mean_rate_opn = np.mean(events['rate'][senders_opn])
 
         self.assertTrue(
-            np.isclose(mean_rate, self.neuron_params['mean'], rtol=self.rtol))
+            np.isclose(mean_rate_ipn, self.neuron_params['mean'], rtol=self.rtol))
+        self.assertTrue(
+            np.isclose(mean_rate_opn, self.neuron_params['mean'], rtol=self.rtol))
 
     def test_RateNeuronNoise(self):
-        """Check the input noise of the rate_neuron"""
+        """Check noise of the rate_neurons"""
 
         # simulate
         nest.Simulate(self.simtime)
 
-        # get noise from rate neuron
+        # get noise from rate neurons
         events = nest.GetStatus(self.multimeter)[0]["events"]
-        noise = events['noise']
-        std_noise = np.std(noise)
+        senders = events['senders']
+        senders_ipn = np.where(senders == self.rate_neuron_ipn)[0]
+        senders_opn = np.where(senders == self.rate_neuron_opn)[0]
+
+        noise_ipn = events['noise'][senders_ipn]
+        std_noise_ipn = np.std(noise_ipn)
+        noise_opn = events['noise'][senders_opn]
+        std_noise_opn = np.std(noise_opn)
 
         self.assertTrue(
-            np.isclose(std_noise, self.neuron_params['std'], rtol=self.rtol))
+            np.isclose(std_noise_ipn, self.neuron_params['std'], rtol=self.rtol))
+        self.assertTrue(
+            np.isclose(std_noise_opn, self.neuron_params['std'], rtol=self.rtol))
 
     def test_RateNeuronVariance(self):
-        """Check the variance of the rate of the rate_neuron"""
+        """Check the variance of the rate of the rate_neuron for input noise"""
 
         # simulate
         nest.Simulate(self.simtime)
 
-        # get variance from rate neuron output
+        # get variance of the rate
         events = nest.GetStatus(self.multimeter)[0]["events"]
-        rate = events['rate']
+        senders = events['senders']
+        senders_ipn = np.where(senders == self.rate_neuron_ipn)[0]
+
+        rate = events['rate'][senders_ipn]
         var_rate = np.var(rate)
 
         # expected variance

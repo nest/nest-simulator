@@ -139,7 +139,8 @@ siegert1( double tau_m,
 
   gsl_integration_workspace_free( w );
 
-  return 1. / ( tau_r + exp( y_th * y_th ) * result * tau_m );
+  // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
+  return 1e3 * 1. / ( tau_r + exp( y_th * y_th ) * result * tau_m );
 }
 
 double
@@ -182,7 +183,8 @@ siegert2( double tau_m,
 
   gsl_integration_workspace_free( w );
 
-  return 1. / ( tau_r + result * tau_m );
+  // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
+  return 1e3 * 1. / ( tau_r + result * tau_m );
 }
 
 double
@@ -402,9 +404,9 @@ nest::siegert_neuron::update_( Time const& origin,
     new_rates[ lag ] = S_.r_;
 
     // propagate rate to new time step (exponential integration)
-    double drive = siegert( P_.tau_m_ * 1e-3,
-      P_.tau_syn_ * 1e-3,
-      P_.t_ref_ * 1e-3,
+    double drive = siegert( P_.tau_m_,
+      P_.tau_syn_,
+      P_.t_ref_,
       P_.theta_,
       P_.V_reset_,
       B_.drift_input_[ lag ],

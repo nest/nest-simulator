@@ -31,7 +31,7 @@ Description: diffusion_connection is a connector to create
  connection type is identical to type rate_connection_instantaneous
  for instantaneous rate connections except for the two parameters
  drift_factor and diffusion_factor substituting the parameter weight.
- 
+
  These two factor origin from the mean-field reduction of networks of
  leaky-integrate-and-fire neurons. In this reduction the input to the
  neurons is characterized by its mean and its variance. The mean is

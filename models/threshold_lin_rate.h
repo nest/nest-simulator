@@ -38,7 +38,8 @@ Name: threshold_lin_rate - rate model with threshold-linear gain function
 Description:
 
  threshold_lin_rate is an implementation of a non-linear rate model with either
- input (threshold_lin_rate_ipn) or output noise (threshold_lin_rate_opn) and gain
+ input (threshold_lin_rate_ipn) or output noise (threshold_lin_rate_opn) and
+gain
  function
  Phi(h) = g * (h-theta) * H(h-theta) and Psi(h) = h for linear_summation = True
  Phi(h) = h and Psi(h) = g * (h-theta) * H(h-theta) for linear_summation = False
@@ -60,7 +61,7 @@ Parameters:
  theta               double - Threshold
  linear_summation    boolean - specifies type of non-linearity (see above)
 
-Note: 
+Note:
 The boolean parameter linear_summation determines whether the
 input from different presynaptic neurons is first summed linearly and
 then transformed by a nonlinearity (true), or if the input from

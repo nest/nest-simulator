@@ -81,9 +81,11 @@ class RateNeuronTestCase(unittest.TestCase):
         mean_rate_opn = np.mean(events['rate'][senders_opn])
 
         self.assertTrue(
-            np.isclose(mean_rate_ipn, self.neuron_params['mean'], rtol=self.rtol))
+            np.isclose(mean_rate_ipn, self.neuron_params['mean'],
+                       rtol=self.rtol))
         self.assertTrue(
-            np.isclose(mean_rate_opn, self.neuron_params['mean'], rtol=self.rtol))
+            np.isclose(mean_rate_opn, self.neuron_params['mean'],
+                       rtol=self.rtol))
 
     def test_RateNeuronNoise(self):
         """Check noise of the rate_neurons"""
@@ -103,9 +105,11 @@ class RateNeuronTestCase(unittest.TestCase):
         std_noise_opn = np.std(noise_opn)
 
         self.assertTrue(
-            np.isclose(std_noise_ipn, self.neuron_params['std'], rtol=self.rtol))
+            np.isclose(std_noise_ipn, self.neuron_params['std'],
+                       rtol=self.rtol))
         self.assertTrue(
-            np.isclose(std_noise_opn, self.neuron_params['std'], rtol=self.rtol))
+            np.isclose(std_noise_opn, self.neuron_params['std'],
+                       rtol=self.rtol))
 
     def test_RateNeuronVariance(self):
         """Check the variance of the rate of the rate_neuron for input noise"""

@@ -115,7 +115,7 @@ template < class TGainfunction >
 void
 nest::rate_neuron_ipn< TGainfunction >::State_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::rate, rate_ );  // Rate
+  def< double >( d, names::rate, rate_ );   // Rate
   def< double >( d, names::noise, noise_ ); // Noise
 }
 
@@ -247,25 +247,26 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
     // get noise
     S_.noise_ = P_.std_ * B_.random_numbers[ lag ];
     // propagate rate to new time step (exponential integration)
-    S_.rate_ = V_.P1_ * S_.rate_ + V_.P2_ * P_.mean_ + V_.input_noise_factor_ * S_.noise_;
+    S_.rate_ = V_.P1_ * S_.rate_ + V_.P2_ * P_.mean_
+      + V_.input_noise_factor_ * S_.noise_;
 
     if ( called_from_wfr_update ) // use get_value_wfr_update to keep values in
                                   // buffer
     {
       if ( P_.linear_summation_ )
       {
-        S_.rate_ += V_.P2_ * gain_( B_.delayed_rates_.get_value_wfr_update( lag )
-                            + B_.instant_rates_[ lag ] );
+        S_.rate_ += V_.P2_ * gain_( B_.delayed_rates_.get_value_wfr_update(
+                                      lag ) + B_.instant_rates_[ lag ] );
       }
       else
       {
         S_.rate_ += V_.P2_ * ( B_.delayed_rates_.get_value_wfr_update( lag )
-                            + B_.instant_rates_[ lag ] );
+                               + B_.instant_rates_[ lag ] );
       }
 
       // check if deviation from last iteration exceeds wfr_tol
-      wfr_tol_exceeded =
-        wfr_tol_exceeded or fabs( S_.rate_ - B_.last_y_values[ lag ] ) > wfr_tol;
+      wfr_tol_exceeded = wfr_tol_exceeded
+        or fabs( S_.rate_ - B_.last_y_values[ lag ] ) > wfr_tol;
       // update last_y_values for next wfr iteration
       B_.last_y_values[ lag ] = S_.rate_;
     }
@@ -274,7 +275,7 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
       if ( P_.linear_summation_ )
       {
         S_.rate_ += V_.P2_ * gain_( B_.delayed_rates_.get_value( lag )
-                            + B_.instant_rates_[ lag ] );
+                               + B_.instant_rates_[ lag ] );
       }
       else
       {

@@ -147,8 +147,8 @@ private:
    */
   struct State_
   {
-    double rate_; //!< Rate
-    double noise_; //!< Noise
+    double rate_;       //!< Rate
+    double noise_;      //!< Noise
     double noisy_rate_; //!< Noisy rate, i.e. rate +noise
 
     State_(); //!< Default initialization

@@ -116,8 +116,8 @@ template < class TGainfunction >
 void
 nest::rate_neuron_opn< TGainfunction >::State_::get( DictionaryDatum& d ) const
 {
-  def< double >( d, names::rate, rate_ );       // Rate
-  def< double >( d, names::noise, noise_ );      // Noise
+  def< double >( d, names::rate, rate_ );             // Rate
+  def< double >( d, names::noise, noise_ );           // Noise
   def< double >( d, names::noisy_rate, noisy_rate_ ); // Noisy rate
 }
 
@@ -257,18 +257,18 @@ nest::rate_neuron_opn< TGainfunction >::update_( Time const& origin,
     {
       if ( P_.linear_summation_ )
       {
-        S_.rate_ += V_.P2_ * gain_( B_.delayed_rates_.get_value_wfr_update( lag )
-                            + B_.instant_rates_[ lag ] );
+        S_.rate_ += V_.P2_ * gain_( B_.delayed_rates_.get_value_wfr_update(
+                                      lag ) + B_.instant_rates_[ lag ] );
       }
       else
       {
         S_.rate_ += V_.P2_ * ( B_.delayed_rates_.get_value_wfr_update( lag )
-                            + B_.instant_rates_[ lag ] );
+                               + B_.instant_rates_[ lag ] );
       }
 
       // check if deviation from last iteration exceeds wfr_tol
-      wfr_tol_exceeded =
-        wfr_tol_exceeded or fabs( S_.rate_ - B_.last_y_values[ lag ] ) > wfr_tol;
+      wfr_tol_exceeded = wfr_tol_exceeded
+        or fabs( S_.rate_ - B_.last_y_values[ lag ] ) > wfr_tol;
       // update last_y_values for next wfr iteration
       B_.last_y_values[ lag ] = S_.rate_;
     }
@@ -277,7 +277,7 @@ nest::rate_neuron_opn< TGainfunction >::update_( Time const& origin,
       if ( P_.linear_summation_ )
       {
         S_.rate_ += V_.P2_ * gain_( B_.delayed_rates_.get_value( lag )
-                            + B_.instant_rates_[ lag ] );
+                               + B_.instant_rates_[ lag ] );
       }
       else
       {

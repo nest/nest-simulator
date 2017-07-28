@@ -220,8 +220,7 @@ nest::siegert_neuron::siegert_neuron( const siegert_neuron& n )
  * ---------------------------------------------------------------- */
 
 double
-nest::siegert_neuron::siegert1(
-  double theta_shift,
+nest::siegert_neuron::siegert1( double theta_shift,
   double V_reset_shift,
   double mu,
   double sigma )
@@ -273,8 +272,7 @@ nest::siegert_neuron::siegert1(
 }
 
 double
-nest::siegert_neuron::siegert2(
-  double theta_shift,
+nest::siegert_neuron::siegert2( double theta_shift,
   double V_reset_shift,
   double mu,
   double sigma )
@@ -315,20 +313,20 @@ nest::siegert_neuron::siegert2(
   return 1e3 * 1. / ( P_.t_ref_ + result * P_.tau_m_ );
 }
 
-double 
-nest::siegert_neuron::siegert( 
-  double mu,
-  double sigma_square )
+double
+nest::siegert_neuron::siegert( double mu, double sigma_square )
 {
-  double sigma = std::sqrt(sigma_square);
+  double sigma = std::sqrt( sigma_square );
 
   // Effective shift of threshold and reset due to colored noise:
   // alpha = |zeta(1/2)|/sqrt(2) with zeta being the Riemann zeta
   // function (Fourcaud & Brunel, 2002)
-  double alpha = 2.0652531522312172;  
+  double alpha = 2.0652531522312172;
 
-  double theta_shift = P_.theta_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
-  double V_r_shift = P_.V_reset_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
+  double theta_shift =
+    P_.theta_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
+  double V_r_shift =
+    P_.V_reset_ + sigma * alpha / 2. * sqrt( P_.tau_syn_ / P_.tau_m_ );
 
   if ( abs( mu - 0. ) < 1e-12 )
   {
@@ -408,9 +406,8 @@ nest::siegert_neuron::update_( Time const& origin,
     new_rates[ lag ] = S_.r_;
 
     // propagate rate to new time step (exponential integration)
-    double drive = siegert( 
-      B_.drift_input_[ lag ],
-      B_.diffusion_input_[ lag ] );
+    double drive =
+      siegert( B_.drift_input_[ lag ], B_.diffusion_input_[ lag ] );
     S_.r_ = V_.P1_ * ( S_.r_ ) + ( 1 - V_.P1_ ) * P_.mean_ + V_.P2_ * drive;
 
     if ( not called_from_wfr_update )

@@ -58,7 +58,7 @@ Parameters:
  theta               double - Inflection point
  linear_summation    boolean - specifies type of non-linearity (see above)
 
-Note: 
+Note:
 The boolean parameter linear_summation determines whether the
 input from different presynaptic neurons is first summed linearly and
 then transformed by a nonlinearity (true), or if the input from

@@ -194,8 +194,9 @@ siegert( double tau_m,
   double theta,
   double V_r,
   double mu,
-  double sigma )
+  double sigma_square )
 {
+  double sigma = std::sqrt(sigma_square);
   double alpha = 2.0652531522312172;
   theta += sigma * alpha / 2. * sqrt( tau_syn / tau_m );
   V_r += sigma * alpha / 2. * sqrt( tau_syn / tau_m );
@@ -410,7 +411,7 @@ nest::siegert_neuron::update_( Time const& origin,
       P_.theta_,
       P_.V_reset_,
       B_.drift_input_[ lag ],
-      std::sqrt( B_.diffusion_input_[ lag ] ) );
+      B_.diffusion_input_[ lag ] );
     S_.r_ = V_.P1_ * ( S_.r_ ) + ( 1 - V_.P1_ ) * P_.mean_ + V_.P2_ * drive;
 
     if ( not called_from_wfr_update )

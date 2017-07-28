@@ -1,5 +1,5 @@
 /*
- *  thresholdlin_rate.h
+ *  threshold_lin_rate.h
  *
  *  This file is part of NEST.
  *
@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef THRESHOLDLIN_RATE_H
-#define THRESHOLDLIN_RATE_H
+#ifndef THRESHOLD_LIN_RATE_H
+#define THRESHOLD_LIN_RATE_H
 
 // Includes from models:
 #include "rate_neuron_ipn.h"
@@ -33,12 +33,12 @@
 namespace nest
 {
 /* BeginDocumentation
-Name: thresholdlin_rate - rate model with threshold-linear gain function
+Name: threshold_lin_rate - rate model with threshold-linear gain function
 
 Description:
 
- thresholdlin_rate is an implementation of a non-linear rate model with either
- input (thresholdlin_rate_ipn) or output noise (thresholdlin_rate_opn) and gain
+ threshold_lin_rate is an implementation of a non-linear rate model with either
+ input (threshold_lin_rate_ipn) or output noise (threshold_lin_rate_opn) and gain
  function
  Phi(h) = g * (h-theta) * H(h-theta) and Psi(h) = h for linear_summation = True
  Phi(h) = h and Psi(h) = g * (h-theta) * H(h-theta) for linear_summation = False
@@ -83,7 +83,7 @@ Author: David Dahmen, Jan Hahne, Jannis Schuecker
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
 
-class gainfunction_thresholdlin_rate
+class gainfunction_threshold_lin_rate
 {
 private:
   /** gain factor of gain function */
@@ -94,7 +94,7 @@ private:
 
 public:
   /** sets default parameters */
-  gainfunction_thresholdlin_rate()
+  gainfunction_threshold_lin_rate()
     : g_( 1.0 )
     , theta_( 0.0 )
   {
@@ -106,7 +106,7 @@ public:
   double operator()( double h ); // non-linearity
 };
 
-inline double gainfunction_thresholdlin_rate::operator()( double h )
+inline double gainfunction_threshold_lin_rate::operator()( double h )
 {
   if ( h > theta_ )
   {
@@ -115,17 +115,17 @@ inline double gainfunction_thresholdlin_rate::operator()( double h )
   return 0.0;
 }
 
-typedef rate_neuron_ipn< nest::gainfunction_thresholdlin_rate >
-  thresholdlin_rate_ipn;
-typedef rate_neuron_opn< nest::gainfunction_thresholdlin_rate >
-  thresholdlin_rate_opn;
+typedef rate_neuron_ipn< nest::gainfunction_threshold_lin_rate >
+  threshold_lin_rate_ipn;
+typedef rate_neuron_opn< nest::gainfunction_threshold_lin_rate >
+  threshold_lin_rate_opn;
 
 template <>
-void RecordablesMap< thresholdlin_rate_ipn >::create();
+void RecordablesMap< threshold_lin_rate_ipn >::create();
 template <>
-void RecordablesMap< thresholdlin_rate_opn >::create();
+void RecordablesMap< threshold_lin_rate_opn >::create();
 
 } // namespace nest
 
 
-#endif /* #ifndef THRESHOLDLIN_RATE_H */
+#endif /* #ifndef THRESHOLD_LIN_RATE_H */

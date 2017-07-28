@@ -100,7 +100,7 @@ set( models_sources
     stdp_triplet_connection.h
     step_current_generator.h step_current_generator.cpp
     tanh_rate.h tanh_rate.cpp
-    thresholdlin_rate.h thresholdlin_rate.cpp
+    threshold_lin_rate.h threshold_lin_rate.cpp
     tsodyks2_connection.h
     tsodyks_connection.h
     tsodyks_connection_hom.h tsodyks_connection_hom.cpp

@@ -72,7 +72,7 @@
 #include "izhikevich.h"
 #include "lin_rate.h"
 #include "tanh_rate.h"
-#include "thresholdlin_rate.h"
+#include "threshold_lin_rate.h"
 #include "mat2_psc_exp.h"
 #include "mcculloch_pitts_neuron.h"
 #include "parrot_neuron.h"
@@ -190,10 +190,10 @@ ModelsModule::init( SLIInterpreter* )
     "tanh_rate_opn" );
   kernel().model_manager.register_node_model< tanh_rate_ipn >(
     "tanh_rate_ipn" );
-  kernel().model_manager.register_node_model< thresholdlin_rate_opn >(
-    "thresholdlin_rate_opn" );
-  kernel().model_manager.register_node_model< thresholdlin_rate_ipn >(
-    "thresholdlin_rate_ipn" );
+  kernel().model_manager.register_node_model< threshold_lin_rate_opn >(
+    "threshold_lin_rate_opn" );
+  kernel().model_manager.register_node_model< threshold_lin_rate_ipn >(
+    "threshold_lin_rate_ipn" );
   kernel().model_manager.register_node_model< iaf_neuron >( "iaf_neuron",
     /* private_model */ false,
     /* deprecation_info */ "NEST 3.0" );

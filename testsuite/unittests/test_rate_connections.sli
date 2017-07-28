@@ -53,8 +53,8 @@ M_ERROR setverbosity
 /supported
 [ /lin_rate_ipn 
   /lin_rate_opn
-  /thresholdlin_rate_ipn
-  /thresholdlin_rate_opn
+  /threshold_lin_rate_ipn
+  /threshold_lin_rate_opn
   /tanh_rate_ipn
   /tanh_rate_opn ]
 def
@@ -117,8 +117,8 @@ forall
 /supported
 [ /lin_rate_ipn 
   /lin_rate_opn
-  /thresholdlin_rate_ipn
-  /thresholdlin_rate_opn
+  /threshold_lin_rate_ipn
+  /threshold_lin_rate_opn
   /tanh_rate_ipn
   /tanh_rate_opn ]
 def
@@ -177,8 +177,8 @@ def
   /iaf_psc_alpha
   /lin_rate_ipn 
   /lin_rate_opn
-  /thresholdlin_rate_ipn
-  /thresholdlin_rate_opn
+  /threshold_lin_rate_ipn
+  /threshold_lin_rate_opn
   /tanh_rate_ipn
   /tanh_rate_opn ]
 def

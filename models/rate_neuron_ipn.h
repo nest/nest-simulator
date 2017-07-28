@@ -54,7 +54,7 @@ namespace nest
  * Spiking Neural Network Simulator.
  * Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
  *
- * @see lin_rate, tanh_rate, thresholdlin_rate
+ * @see lin_rate, tanh_rate, threshold_lin_rate
  */
 template < class TGainfunction >
 class rate_neuron_ipn : public Archiving_Node

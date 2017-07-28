@@ -23,12 +23,12 @@
 
 import nest
 import unittest
-import math
 import numpy as np
 
 
 @nest.check_stack
 class RateNeuronTestCase(unittest.TestCase):
+
     """Check rate_neuron"""
 
     def setUp(self):

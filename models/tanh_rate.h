@@ -55,6 +55,7 @@ Parameters:
  mean                double - Mean of Gaussian white noise.
  std                 double - Standard deviation of Gaussian white noise.
  g                   double - Gain parameter
+ theta               double - Inflection point
  linear summation    boolean - specifies type of non-linearity (see above)
 
 References:
@@ -86,10 +87,14 @@ private:
   /** gain factor of gain function */
   double g_;
 
+  /** inflection point of gain function */
+  double theta_;
+
 public:
   /** sets default parameters */
   gainfunction_tanh_rate()
     : g_( 1.0 )
+    , theta_( 0.0 )
   {
   }
 
@@ -101,7 +106,7 @@ public:
 
 inline double gainfunction_tanh_rate::operator()( double h )
 {
-  return tanh( g_ * h );
+  return tanh( g_ * ( h - theta_ ) );
 }
 
 typedef rate_neuron_ipn< nest::gainfunction_tanh_rate > tanh_rate_ipn;

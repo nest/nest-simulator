@@ -139,7 +139,8 @@ siegert1( double tau_m,
 
   gsl_integration_workspace_free( w );
 
-  return 1. / ( tau_r + exp( y_th * y_th ) * result * tau_m );
+  // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
+  return 1e3 * 1. / ( tau_r + exp( y_th * y_th ) * result * tau_m );
 }
 
 double
@@ -182,7 +183,8 @@ siegert2( double tau_m,
 
   gsl_integration_workspace_free( w );
 
-  return 1. / ( tau_r + result * tau_m );
+  // factor 1e3 due to conversion from kHz to Hz, as time constant in ms.
+  return 1e3 * 1. / ( tau_r + result * tau_m );
 }
 
 double
@@ -192,8 +194,10 @@ siegert( double tau_m,
   double theta,
   double V_r,
   double mu,
-  double sigma )
+  double sigma_square )
 {
+  double sigma = std::sqrt(sigma_square);
+
   // Effective shift of threshold and reset due to colored noise:
   // alpha = |zeta(1/2)|/sqrt(2) with zeta being the Riemann zeta
   // function (Fourcaud & Brunel, 2002)
@@ -405,13 +409,13 @@ nest::siegert_neuron::update_( Time const& origin,
     new_rates[ lag ] = S_.r_;
 
     // propagate rate to new time step (exponential integration)
-    double drive = siegert( P_.tau_m_ * 1e-3,
-      P_.tau_syn_ * 1e-3,
-      P_.t_ref_ * 1e-3,
+    double drive = siegert( P_.tau_m_,
+      P_.tau_syn_,
+      P_.t_ref_,
       P_.theta_,
       P_.V_reset_,
       B_.drift_input_[ lag ],
-      std::sqrt( B_.diffusion_input_[ lag ] ) );
+      B_.diffusion_input_[ lag ] );
     S_.r_ = V_.P1_ * ( S_.r_ ) + ( 1 - V_.P1_ ) * P_.mean_ + V_.P2_ * drive;
 
     if ( not called_from_wfr_update )

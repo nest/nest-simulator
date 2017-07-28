@@ -53,8 +53,8 @@ Description:
  siegert_neuron is an implementation of a rate model with the
  non-linearity given by the gain function of the
  leaky-integrate-and-fire neuron with delta or exponentially decaying
- synapses. The model can be used for a mean-field analysis of spiking
- networks.
+ synapses [2] and [3, their eq. 25]. The model can be used for a
+ mean-field analysis of spiking networks.
 
  The model supports connections to other rate models with zero
  delay, and uses the secondary_event concept introduced with the
@@ -89,11 +89,15 @@ References:
  Spiking Neural Network Simulator.
  Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
 
- [2] Schuecker, J., Diesmann, M. and Helias, M. (2015).
+ [2] Fourcaud, N and Brunel, N. (2002). Dynamics of the firing
+ probability of noisy integrate-and-fire neurons, Neural computation,
+ 14:9, pp 2057--2110
+
+ [3] Schuecker, J., Diesmann, M. and Helias, M. (2015).
  Modulated escape from a metastable state driven by colored noise.
  Physical Review E 92:052119
 
- [3] Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
+ [4] Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
  Bolten, M., Frommer, A. and Diesmann, M. (2015).
  A unified framework for spiking and gap-junction interactions
  in distributed neuronal network simulations.

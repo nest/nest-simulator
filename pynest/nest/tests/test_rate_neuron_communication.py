@@ -34,6 +34,7 @@ def H(x):
 
 @nest.check_stack
 class RateNeuronCommunicationTestCase(unittest.TestCase):
+
     """Check rate_neuron"""
 
     def setUp(self):
@@ -65,7 +66,7 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         self.rate_neuron_2 = nest.Create(
             'tanh_rate_ipn', params=self.neuron_params)
         self.rate_neuron_3 = nest.Create(
-            'thresholdlin_rate_ipn', params=self.neuron_params)
+            'threshold_lin_rate_ipn', params=self.neuron_params)
 
         self.multimeter = nest.Create("multimeter",
                                       params={'record_from': ['rate'],

@@ -98,18 +98,18 @@ nest::aeif_psc_delta_dynamics( double,
   const bool is_refractory = node.S_.r_ > 0;
 
   // bind V to the USER DEFINED V_peak_ value in Parameters.
-  const double V = is_refractory
-    ? node.P_.V_reset_
-    : std::min( y[ S::V_M ], node.P_.V_peak_ );
+  const double V =
+    is_refractory ? node.P_.V_reset_ : std::min( y[ S::V_M ], node.P_.V_peak_ );
   const double& w = y[ S::W ];
 
   const double I_spike = node.P_.Delta_T == 0. ? 0. : node.P_.g_L
-      * node.P_.Delta_T * std::exp( ( V - node.P_.V_th ) * node.V_.Delta_T_inv_ );
+      * node.P_.Delta_T
+      * std::exp( ( V - node.P_.V_th ) * node.V_.Delta_T_inv_ );
 
   // dv/dt
-  f[ S::V_M ] =
-    is_refractory ? 0.0 : ( -node.P_.g_L * ( V - node.P_.E_L ) + I_spike - w
-                            + node.P_.I_e + node.B_.I_stim_ ) * node.V_.C_m_inv_;
+  f[ S::V_M ] = is_refractory ? 0.0 : ( -node.P_.g_L * ( V - node.P_.E_L )
+                                        + I_spike - w + node.P_.I_e
+                                        + node.B_.I_stim_ ) * node.V_.C_m_inv_;
 
   // Adaptation current w.
   f[ S::W ] = ( node.P_.a * ( V - node.P_.E_L ) - w ) * node.V_.tau_w_inv_;
@@ -143,14 +143,18 @@ nest::aeif_psc_delta::State_::State_( const Parameters_& p )
 {
   y_[ 0 ] = p.E_L;
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = 0;
+  }
 }
 
 nest::aeif_psc_delta::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
 }
 
 nest::aeif_psc_delta::State_& nest::aeif_psc_delta::State_::operator=(
@@ -159,7 +163,9 @@ nest::aeif_psc_delta::State_& nest::aeif_psc_delta::State_::operator=(
   assert( this != &s ); // would be bad logical error in program
 
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
   r_ = s.r_;
   return *this;
 }
@@ -318,11 +324,17 @@ nest::aeif_psc_delta::~aeif_psc_delta()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
+  {
     gsl_odeiv_step_free( B_.s_ );
+  }
   if ( B_.c_ )
+  {
     gsl_odeiv_control_free( B_.c_ );
+  }
   if ( B_.e_ )
+  {
     gsl_odeiv_evolve_free( B_.e_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -351,21 +363,32 @@ nest::aeif_psc_delta::init_buffers_()
   B_.IntegrationStep_ = std::min( 0.01, B_.step_ );
 
   if ( B_.s_ == 0 )
+  {
     B_.s_ =
       gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_step_reset( B_.s_ );
-
+  }
   if ( B_.c_ == 0 )
+  {
     B_.c_ = gsl_odeiv_control_yp_new( P_.gsl_error_tol, P_.gsl_error_tol );
+  }
   else
+  {
     gsl_odeiv_control_init(
       B_.c_, P_.gsl_error_tol, P_.gsl_error_tol, 0.0, 1.0 );
+  }
 
   if ( B_.e_ == 0 )
+  {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_evolve_reset( B_.e_ );
+  }
 
   B_.sys_.jacobian = NULL;
   B_.sys_.dimension = State_::STATE_VEC_SIZE;
@@ -502,7 +525,9 @@ nest::aeif_psc_delta::update( const Time& origin,
     }
 
     if ( S_.r_ > 0 )
+    {
       --S_.r_;
+    }
 
     // set new input current
     B_.I_stim_ = B_.currents_.get_value( lag );

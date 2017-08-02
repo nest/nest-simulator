@@ -1,0 +1,72 @@
+/*
+ *  test_cont_proxy_receiver.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+(unittest) run
+/unittest using
+
+skip_if_without_music
+
+M_ERROR setverbosity
+
+/music_cont_in_proxy Create /mciproxy Set
+mciproxy << /port_name (voltage_in) >> SetStatus
+
+/ReceiveDataPacket
+{
+  1 Simulate mciproxy [/data] get cva
+} def
+
+[-57.07186 -60.00000]
+[-57.42151 -55.86229]
+[-57.79526 -57.36946]
+[-58.19478 -58.98053]
+[-58.62184 -60.00000]
+[-59.07834 -60.00000]
+[-59.56631 -55.42939]
+[-60.08793 -56.90671]
+[-60.64550 -58.48588]
+[-61.24151 -60.00000]
+[-61.87861 -60.00000]
+[-62.55964 -55.11927]
+[-63.28761 -56.57521]
+[-64.06576 -58.13153]
+[-64.89757 -59.79513]
+[-65.78671 -61.57342]
+[-66.73715 -63.47431]
+[-67.75312 -65.50624]
+[-68.83913 -67.67825]
+[ 00.00000  00.00000]
+
+20 {
+  arrayload pop
+  7 ToUnitTestPrecision cvs /RefValueChannelA Set
+  7 ToUnitTestPrecision cvs /RefValueChannelB Set
+  
+  ReceiveDataPacket
+
+  arrayload pop
+  7 ToUnitTestPrecision cvs /RecValueChannelA Set
+  7 ToUnitTestPrecision cvs /RecValueChannelB Set
+
+  { RefValueChannelA RecValueChannelA eq } assert_or_die
+  { RefValueChannelB RecValueChannelB eq } assert_or_die
+} repeat

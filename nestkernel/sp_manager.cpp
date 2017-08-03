@@ -85,8 +85,6 @@ SPManager::get_status( DictionaryDatum& d )
 {
   DictionaryDatum sp_synapses = DictionaryDatum( new Dictionary() );
   DictionaryDatum sp_synapse;
-
-
   def< DictionaryDatum >(
     d, names::structural_plasticity_synapses, sp_synapses );
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin();

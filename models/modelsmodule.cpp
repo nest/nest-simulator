@@ -142,6 +142,7 @@
 #include "music_event_in_proxy.h"
 #include "music_event_out_proxy.h"
 #include "music_cont_in_proxy.h"
+#include "music_cont_out_proxy.h"
 #include "music_message_in_proxy.h"
 #endif
 
@@ -371,6 +372,8 @@ ModelsModule::init( SLIInterpreter* )
     "music_event_out_proxy" );
   kernel().model_manager.register_node_model< music_cont_in_proxy >(
     "music_cont_in_proxy" );
+  kernel().model_manager.register_node_model< music_cont_out_proxy >(
+    "music_cont_out_proxy" );
   kernel().model_manager.register_node_model< music_message_in_proxy >(
     "music_message_in_proxy" );
 #endif

@@ -453,6 +453,31 @@ extern const Name synapses_per_driver; //!< Used by stdp_connection_facetshw_hom
 extern const Name synaptic_elements;   //!< Synaptic elements used in structural
                                        //!< plasticity
 
+// names specific to structural plasticity model stdp_spl_synapse
+extern const Name tau_slow;
+extern const Name tau;
+extern const Name A2_corr;
+extern const Name A4_post;
+extern const Name A4_corr;
+extern const Name alpha;
+extern const Name lambda;
+extern const Name w0;
+extern const Name wmax;
+extern const Name p_fail;
+extern const Name t_cache;
+extern const Name t_grace_period;
+extern const Name safe_mode;
+extern const Name sleep_mode;
+extern const Name n_pot_conns;
+extern const Name n_create;
+extern const Name n_delete;
+extern const Name w_jk;
+extern const Name r_post_jk;
+extern const Name R_post_jk;
+extern const Name c_jk;
+extern const Name r_jk;
+extern const Name w_create_steps;
+
 extern const Name t_lag;     //!< Lag within a time slice
 extern const Name T_min;     //!< Minimum time
 extern const Name T_max;     //!< Maximum time

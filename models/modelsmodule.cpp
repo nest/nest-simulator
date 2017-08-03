@@ -121,6 +121,7 @@
 #include "stdp_connection_facetshw_hom.h"
 #include "stdp_connection_facetshw_hom_impl.h"
 #include "stdp_connection_hom.h"
+#include "stdp_structpl_connection_hom.h"
 #include "stdp_triplet_connection.h"
 #include "stdp_dopa_connection.h"
 #include "stdp_pl_connection_hom.h"
@@ -451,6 +452,21 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_connection_model< STDPPLConnectionHom< TargetIdentifierIndex > >(
       "stdp_pl_synapse_hom_hpc" );
+
+
+  /* BeginDocumentation
+     Name: stdp_structpl_synapse_hom_hpc - Variant of stdp_structpl_synapse_hom
+     with low memory consumption.
+     SeeAlso: synapsedict, stdp_structpl_synapse_hom, static_synapse_hom_hpc
+  */
+  kernel()
+    .model_manager
+    .register_connection_model< STDPStructplConnectionHom< TargetIdentifierPtrRport > >(
+      "stdp_structpl_synapse_hom" );
+  kernel()
+    .model_manager
+    .register_connection_model< STDPStructplConnectionHom< TargetIdentifierIndex > >(
+      "stdp_structpl_synapse_hom_hpc" );
 
 
   /* BeginDocumentation

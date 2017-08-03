@@ -101,6 +101,9 @@ private:
 
   TGainfunction gain_;
 
+  /** This is the actual update function. The additional boolean parameter
+   * determines if the function is called by update (false) or wfr_update (true)
+   */
   bool update_( Time const&, const long, const long, const bool );
 
   void update( Time const&, const long, const long );

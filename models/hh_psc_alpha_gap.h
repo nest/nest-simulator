@@ -197,7 +197,12 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
+
+  /** This is the actual update function. The additional boolean parameter
+   * determines if the function is called by update (false) or wfr_update (true)
+   */
   bool update_( Time const&, const long, const long, const bool );
+
   void update( Time const&, const long, const long );
   bool wfr_update( Time const&, const long, const long );
 

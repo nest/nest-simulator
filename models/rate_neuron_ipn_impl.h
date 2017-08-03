@@ -296,8 +296,7 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
     kernel().event_delivery_manager.send_secondary( *this, drve );
 
     // clear last_y_values
-    B_.last_y_values.clear();
-    B_.last_y_values.resize( buffer_size, 0.0 );
+    std::vector< double >( buffer_size, 0.0 ).swap( B_.last_y_values );
 
     // modifiy new_rates for rate-neuron-event as proxy for next min_delay
     for ( long temp = from; temp < to; ++temp )
@@ -318,8 +317,7 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
   kernel().event_delivery_manager.send_secondary( *this, rve );
 
   // Reset variables
-  B_.instant_rates_.clear();
-  B_.instant_rates_.resize( buffer_size, 0.0 );
+  std::vector< double >( buffer_size, 0.0 ).swap( B_.instant_rates_ );
 
   return wfr_tol_exceeded;
 }

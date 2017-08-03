@@ -651,8 +651,8 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
         S_.y_[ State_::V_M ];
     }
 
-    B_.last_y_values.clear();
-    B_.last_y_values.resize( kernel().connection_manager.get_min_delay(), 0.0 );
+    std::vector< double >( kernel().connection_manager.get_min_delay(), 0.0 )
+      .swap( B_.last_y_values );
   }
 
   // Send gap-event
@@ -662,8 +662,8 @@ nest::hh_psc_alpha_gap::update_( Time const& origin,
 
   // Reset variables
   B_.sumj_g_ij_ = 0.0;
-  B_.interpolation_coefficients.clear();
-  B_.interpolation_coefficients.resize( buffer_size, 0.0 );
+  std::vector< double >( buffer_size, 0.0 )
+    .swap( B_.interpolation_coefficients );
 
   return wfr_tol_exceeded;
 }

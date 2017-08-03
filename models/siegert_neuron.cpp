@@ -428,8 +428,7 @@ nest::siegert_neuron::update_( Time const& origin,
   if ( not called_from_wfr_update )
   {
     // clear last_y_values
-    B_.last_y_values.clear();
-    B_.last_y_values.resize( buffer_size, 0.0 );
+    std::vector< double >( buffer_size, 0.0 ).swap( B_.last_y_values );
 
     // modifiy new_rates for diffusion-event as proxy for next min_delay
     for ( long temp = from; temp < to; ++temp )
@@ -442,10 +441,8 @@ nest::siegert_neuron::update_( Time const& origin,
   kernel().event_delivery_manager.send_secondary( *this, rve );
 
   // Reset variables
-  B_.drift_input_.clear();
-  B_.drift_input_.resize( buffer_size, 0.0 );
-  B_.diffusion_input_.clear();
-  B_.diffusion_input_.resize( buffer_size, 0.0 );
+  std::vector< double >( buffer_size, 0.0 ).swap( B_.drift_input_ );
+  std::vector< double >( buffer_size, 0.0 ).swap( B_.diffusion_input_ );
 
   return wfr_tol_exceeded;
 }

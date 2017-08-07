@@ -100,10 +100,8 @@ class ErfcNeuronTheoryTestCase(unittest.TestCase):
             for theta in self.theta:
                 self.build_and_connect_nodes(sigma, theta)
                 nest.Simulate(self.T)
-                mean_activity = np.round(
-                    get_mean_activity(self.detector, self.T), 5)
-                mean_activity_theory = np.round(
-                    activation_function_theory(sigma, theta), 5)
+                mean_activity = get_mean_activity(self.detector, self.T)
+                mean_activity_theory = activation_function_theory(sigma, theta)
                 delta = np.max([2e-1 * mean_activity_theory *
                                 (1. -
                                  mean_activity_theory),

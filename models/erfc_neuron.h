@@ -35,7 +35,7 @@ namespace nest
 
    Description:
    The erfc_neuron is an implementation of a binary neuron that
-   is irregularly updated as Poisson time points. At each update
+   is irregularly updated at Poisson time points. At each update
    point the total synaptic input h into the neuron is summed up,
    passed through a gain function g whose output is interpreted as
    the probability of the neuron to be in the active (1) state.

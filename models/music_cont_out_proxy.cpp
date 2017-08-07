@@ -326,7 +326,6 @@ nest::music_cont_out_proxy::calibrate()
         MPI::DOUBLE,
         music_perm_ind );
 
-
     // Setup an array map
     MP->map( dmap );
 
@@ -372,11 +371,10 @@ nest::music_cont_out_proxy::update( Time const& origin,
   const long from,
   const long )
 {
-  /* There is nothing to request during the first time slice.
-     For each subsequent slice, we collect all data generated during the
-     previous
-     slice if we are called at the beginning of the slice. Otherwise, we do
-     nothing.
+  /* There is nothing to request during the first time slice. For
+     each subsequent slice, we collect all data generated during
+     the previous slice if we are called at the beginning of the
+     slice. Otherwise, we do nothing.
    */
   if ( origin.get_steps() == 0 || from != 0 )
   {

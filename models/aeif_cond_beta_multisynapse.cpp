@@ -45,8 +45,8 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::aeif_cond_beta_multisynapse >
-  nest::aeif_cond_beta_multisynapse::recordablesMap_;
+//~ nest::RecordablesMap< nest::aeif_cond_beta_multisynapse >
+  //~ nest::aeif_cond_beta_multisynapse::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -54,16 +54,20 @@ namespace nest // template specialization must be placed in namespace
 // for each quantity to be recorded.
 template <>
 void
-RecordablesMap< aeif_cond_beta_multisynapse >::create()
+DynamicRecordablesMap< aeif_cond_beta_multisynapse >::create( const aeif_cond_beta_multisynapse& host)
 {
   // use standard names wherever you can for consistency!
-  insert_( names::V_m,
-    &aeif_cond_beta_multisynapse::
-      get_y_elem_< aeif_cond_beta_multisynapse::State_::V_M > );
+  insert( names::V_m,
+    aeif_cond_beta_multisynapse::DataAccessFunctor( host,
+      aeif_cond_beta_multisynapse::State_::V_M );
 
-  insert_( names::w,
-    &aeif_cond_beta_multisynapse::
-      get_y_elem_< aeif_cond_beta_multisynapse::State_::W > );
+  insert( names::w,
+    aeif_cond_beta_multisynapse::DataAccessFunctor( host,
+      aeif_cond_beta_multisynapse::State_::W );
+  
+  insert( Name("g1"),
+    aeif_cond_beta_multisynapse::DataAccessFunctor( host,
+      aeif_cond_beta_multisynapse::State_::G );
 }
 
 /* ----------------------------------------------------------------

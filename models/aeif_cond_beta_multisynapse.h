@@ -24,6 +24,7 @@
 #define AEIF_COND_BETA_MULTISYNAPSE_H
 
 // Generated includes:
+#include <sstream>
 #include "config.h"
 
 #ifdef HAVE_GSL
@@ -370,12 +371,26 @@ private:
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out state vector elements, used by UniversalDataLogger
-  template < State_::StateVecElems elem >
-  double
-  get_y_elem_() const
+  class DataAccessFunctor
   {
-    return S_.y_[ elem ];
-  }
+  aeif_cond_beta_multisynapse* parent;
+  size_t elem_;
+  public:
+    DataAccessFunctor(const Node2& n, size_t elem)
+    : elem_(elem)
+    {
+      parent = &n;
+    };
+    DataAccessFunctor(const Node2* n, size_t elem)
+    : elem_(elem)
+    {
+      parent = n;
+    };
+    double operator()() const
+    {
+      parent.S_.y_[ elem ];
+    };
+  };
 
   // Data members -----------------------------------------------------------
 
@@ -393,7 +408,7 @@ private:
   /** @} */
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< aeif_cond_beta_multisynapse > recordablesMap_;
+  DynamicRecordablesMap< aeif_cond_beta_multisynapse > recordablesMap_;
 };
 
 inline port
@@ -454,9 +469,37 @@ aeif_cond_beta_multisynapse::set_status( const DictionaryDatum& d )
   // consistent.
   Archiving_Node::set_status( d );
 
+  /**
+   * Here is where we must update the recordablesMap_ if new receptors
+   * are added!
+   */
+  DynamicRecordablesMap< aeif_cond_beta_multisynapse > rtmp = recordablesMap_; // temporary copy in case of errors
+  if (stmp.E_rev.size()>S_.E_rev.size()) // Number of receptors increased
+  {
+    for (size_t receptor = S_.E_rev.size(); receptor<stmp.E_rev.size(); ++receptor)
+    {
+      std::stringstream receptor_name;
+      receptor_name<<"g"<<receptor+1;
+      size_t elem = aeif_cond_beta_multisynapse::State_::G
+                    + receptor * aeif_cond_beta_multisynapse::State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+      rtmp.insert( Name( receptor_name.str() ) ,
+                   aeif_cond_beta_multisynapse::DataAccessFunctor( this , elem ) );
+    }
+  }
+  else if (stmp.E_rev.size()<S_.E_rev.size()) // Number of receptors decreased
+  {
+    for (size_t receptor = stmp.E_rev.size(); receptor<S_.E_rev.size(); ++receptor)
+    {
+      std::stringstream receptor_name;
+      receptor_name<<"g"<<receptor+1;
+      rtmp.erase( Name( receptor_name.str() ) );
+    }
+  }
+  
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
+  recordablesMap_ = rtmp;
 }
 
 } // namespace

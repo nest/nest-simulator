@@ -123,13 +123,99 @@ private:
   // ArrayDatum recordables_;
 };
 
-
 template < typename HostNode >
 void
 RecordablesMap< HostNode >::create()
 {
   assert( false );
 }
+
+
+/**
+ * Map names of recordables to data access functors.
+ *
+ * This map identifies the data access functors for recordable
+ * state variables in multisynapse model neurons.
+ * As the number of synapse receptors is can be modified at runtime,
+ * each neuron shall have its own instance of DynamicRecordablesMap.
+ *
+ * @see multimeter, UniversalDataLogger
+ * @ingroup Devices
+ */
+template < typename HostNode >
+class DynamicRecordablesMap : public std::map< Name, const typename HostNode::DataAccessFunctor >
+{
+  typedef std::map< Name, const typename HostNode::DataAccessFunctor > Base_;
+
+public:
+  virtual ~DynamicRecordablesMap()
+  {
+  }
+  
+  //! Datatype for access callable
+  typedef const typename HostNode::DataAccessFunctor& DataAccessFct;
+
+  /**
+   * Create the map.
+   * This function must be specialized for each class instance owning a
+   * Recordables map and must fill the map. This should happen
+   * as part of the original constructor for the Node.
+   */
+  void create(const HostNode& n);
+
+  /**
+   * Obtain SLI list of all recordables, for use by get_status().
+   * @todo This fct should return the recordables_ entry, but since
+   *       filling recordables_ leads to seg fault on exit, we just
+   *       build the list every time, even though that beats the
+   *       goal of being more efficient ...
+   */
+  ArrayDatum
+  get_list() const
+  {
+    ArrayDatum recordables;
+    for ( typename Base_::const_iterator it = this->begin(); it != this->end();
+          ++it )
+    {
+      recordables.push_back( new LiteralDatum( it->first ) );
+    }
+    return recordables;
+  }
+  
+  //! Insertion functions to be used in create(), adds entry to map and list
+  void
+  insert( const Name& n, const DataAccessFct f )
+  {
+    Base_::insert( std::make_pair( n, f ) );
+  }
+  
+  //! Erase functions to be used when setting state, removes entry from map and list
+  void
+  erase( const Name& n )
+  {
+    // .toString() required as work-around for #339, remove when #348 is solved.
+    typename DynamicRecordablesMap< HostNode >::const_iterator it =
+      this->find( n.toString() );
+    // If the Name is not in the map, throw an error
+    if (it == this->end() )
+    {
+      throw UnknownReceptorType(
+      "DynamicRecordablesMap::erase( const Name& n ): "
+      "Name "+ n.toString() +" was not in the DynamicRecordablesMap." );
+    }
+    
+    Base_::erase(it);
+  }
+};
+
+template < typename HostNode >
+void
+DynamicRecordablesMap< HostNode >::create(const HostNode& n)
+{
+  assert( false );
+}
+
+
 }
 
 #endif

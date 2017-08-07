@@ -107,6 +107,8 @@ public:
    */
   port connect_logging_device( const DataLoggingRequest&,
     const RecordablesMap< HostNode >& );
+  port connect_logging_device( const DataLoggingRequest&,
+    const DynamicRecordablesMap< HostNode >& );
 
   /**
    * Answer DataLoggingRequest.
@@ -151,6 +153,7 @@ private:
   {
   public:
     DataLogger_( const DataLoggingRequest&, const RecordablesMap< HostNode >& );
+    DataLogger_( const DataLoggingRequest&, const DynamicRecordablesMap< HostNode >& );
     index
     get_mm_gid() const
     {
@@ -162,6 +165,7 @@ private:
     void init();
 
   private:
+    bool constructed_by_dynamic_map;
     index multimeter_; //!< GID of multimeter for which the logger works
     size_t num_vars_;  //!< number of variables recorded
 
@@ -173,6 +177,11 @@ private:
     /** Vector of pointers to member functions for data access. */
     std::vector< typename RecordablesMap< HostNode >::DataAccessFct >
       node_access_;
+    
+    template < typename HostNode,
+      typename = typename std::enable_if < std::__not_< std::is_class < typename HostNode::DataAccessFunctor >::value >::value ,
+                                           std::vector< typename DynamicRecordablesMap< HostNode >::DataAccessFct > >::type >
+        node_access_dynamic_;
 
     /**
      * Buffer for data.
@@ -258,6 +267,7 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_(
   , data_()
   , next_rec_( 2, 0 )
 {
+  constructed_by_dynamic_map = false;
   const std::vector< Name >& recvars = req.record_from();
   for ( size_t j = 0; j < recvars.size(); ++j )
   {
@@ -279,6 +289,96 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_(
   }
 
   num_vars_ = node_access_.size();
+
+  if ( num_vars_ > 0 && req.get_recording_interval() < Time::step( 1 ) )
+  {
+    throw IllegalConnection(
+      "UniversalDataLogger::connect_logging_device(): "
+      "recording interval must be >= resolution." );
+  }
+
+  recording_interval_ = req.get_recording_interval();
+  recording_offset_ = req.get_recording_offset();
+}
+
+
+// must be defined in this file, since it is required by check_connection(),
+// which typically is in h-files.
+template < typename HostNode >
+port
+nest::UniversalDataLogger< HostNode >::connect_logging_device(
+  const DataLoggingRequest& req,
+  const DynamicRecordablesMap< HostNode >& rmap )
+{
+  // rports are assigned consecutively, the caller may not request specific
+  // rports.
+  if ( req.get_rport() != 0 )
+  {
+    throw IllegalConnection(
+      "UniversalDataLogger::connect_logging_device(): "
+      "Connections from multimeter to node must request rport 0." );
+  }
+
+  // ensure that we have not connected this multimeter before
+  const index mm_gid = req.get_sender().get_gid();
+  const size_t n_loggers = data_loggers_.size();
+  size_t j = 0;
+  while ( j < n_loggers && data_loggers_[ j ].get_mm_gid() != mm_gid )
+  {
+    ++j;
+  }
+  if ( j < n_loggers )
+  {
+    throw IllegalConnection(
+      "UniversalDataLogger::connect_logging_device(): "
+      "Each multimeter can only be connected once to a given node." );
+  }
+
+  // we now know that we have no DataLogger_ for the given multimeter, so we
+  // create one and push it
+  data_loggers_.push_back( DataLogger_( req, rmap ) );
+
+  // rport is index plus one, i.e., size
+  return data_loggers_.size();
+}
+
+template < typename HostNode >
+nest::UniversalDataLogger< HostNode >::DataLogger_::DataLogger_(
+  const DataLoggingRequest& req,
+  const DynamicRecordablesMap< HostNode >& rmap )
+  : multimeter_( req.get_sender().get_gid() )
+  , num_vars_( 0 )
+  , recording_interval_( Time::neg_inf() )
+  , recording_offset_( Time::ms( 0. ) )
+  , rec_int_steps_( 0 )
+  , next_rec_step_( -1 )
+  , // flag as uninitialized
+  node_access_dynamic_()
+  , data_()
+  , next_rec_( 2, 0 )
+{
+  constructed_by_dynamic_map = true;
+  const std::vector< Name >& recvars = req.record_from();
+  for ( size_t j = 0; j < recvars.size(); ++j )
+  {
+    // .toString() required as work-around for #339, remove when #348 is solved.
+    typename DynamicRecordablesMap< HostNode >::const_iterator rec =
+      rmap.find( recvars[ j ].toString() );
+
+    if ( rec == rmap.end() )
+    {
+      // delete all access information again: the connect either succeeds
+      // for all entries in recvars, or it fails, leaving the logger untouched
+      node_access_dynamic_.clear();
+      throw IllegalConnection(
+        "UniversalDataLogger::connect_logging_device(): "
+        "Unknown recordable " + recvars[ j ].toString() );
+    }
+
+    node_access_dynamic_.push_back( rec->second );
+  }
+
+  num_vars_ = node_access_dynamic_.size();
 
   if ( num_vars_ > 0 && req.get_recording_interval() < Time::step( 1 ) )
   {

@@ -176,7 +176,14 @@ nest::UniversalDataLogger< HostNode >::DataLogger_::record_data(
   // obtain data through access functions, calling via pointer-to-member
   for ( size_t j = 0; j < num_vars_; ++j )
   {
-    dest.data[ j ] = ( ( host ).*( node_access_[ j ] ) )();
+    if (constructed_by_dynamic_map)
+    {
+      dest.data[ j ] = ( node_access_dynamic_[ j ] )();
+    }
+    else
+    {
+      dest.data[ j ] = ( ( host ).*( node_access_[ j ] ) )();
+    }
   }
 
   next_rec_step_ += rec_int_steps_;

@@ -396,6 +396,7 @@ const Name synapse_label( "synapse_label" );
 const Name synapse_model( "synapse_model" );
 const Name synapse_modelid( "synapse_modelid" );
 const Name synaptic_elements( "synaptic_elements" );
+const Name synaptic_elements_param( "synaptic_elements_param" );
 
 const Name t_lag( "t_lag" );
 const Name T_min( "T_min" );
@@ -487,6 +488,7 @@ const Name update( "update" );
 const Name update_node( "update_node" );
 const Name use_gid_in_filename( "use_gid_in_filename" );
 const Name use_wfr( "use_wfr" );
+const Name update_synaptic_elements( "update_synaptic_elements" );
 
 const Name V_act_NMDA( "V_act_NMDA" );
 const Name V_epsp( "V_epsp" );

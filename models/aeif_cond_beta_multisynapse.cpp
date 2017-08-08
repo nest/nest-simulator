@@ -45,29 +45,40 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-//~ nest::RecordablesMap< nest::aeif_cond_beta_multisynapse >
-  //~ nest::aeif_cond_beta_multisynapse::recordablesMap_;
-
 namespace nest // template specialization must be placed in namespace
 {
 // Override the create() method with one call to RecordablesMap::insert_()
 // for each quantity to be recorded.
 template <>
 void
-DynamicRecordablesMap< aeif_cond_beta_multisynapse >::create( const aeif_cond_beta_multisynapse& host)
+DynamicRecordablesMap< aeif_cond_beta_multisynapse >::create(
+  aeif_cond_beta_multisynapse& host )
 {
   // use standard names wherever you can for consistency!
   insert( names::V_m,
-    aeif_cond_beta_multisynapse::DataAccessFunctor( host,
-      aeif_cond_beta_multisynapse::State_::V_M );
+    aeif_cond_beta_multisynapse::DataAccessFunctor(
+            host, aeif_cond_beta_multisynapse::State_::V_M ) );
 
   insert( names::w,
-    aeif_cond_beta_multisynapse::DataAccessFunctor( host,
-      aeif_cond_beta_multisynapse::State_::W );
-  
-  insert( Name("g1"),
-    aeif_cond_beta_multisynapse::DataAccessFunctor( host,
-      aeif_cond_beta_multisynapse::State_::G );
+    aeif_cond_beta_multisynapse::DataAccessFunctor(
+            host, aeif_cond_beta_multisynapse::State_::W ) );
+
+  host.insert_conductance_recordables();
+}
+
+inline void
+aeif_cond_beta_multisynapse::insert_conductance_recordables( size_t first )
+{
+  for ( size_t receptor = first; receptor < P_.E_rev.size(); ++receptor )
+  {
+    std::stringstream receptor_name;
+    receptor_name << "g" << receptor + 1;
+    size_t elem = aeif_cond_beta_multisynapse::State_::G
+      + receptor * aeif_cond_beta_multisynapse::State_::
+                     NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+    recordablesMap_.insert( Name( receptor_name.str() ),
+      aeif_cond_beta_multisynapse::DataAccessFunctor( this, elem ) );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -392,7 +403,7 @@ aeif_cond_beta_multisynapse::aeif_cond_beta_multisynapse()
   , S_( P_ )
   , B_( *this )
 {
-  recordablesMap_.create();
+  recordablesMap_.create( *this );
 }
 
 aeif_cond_beta_multisynapse::aeif_cond_beta_multisynapse(
@@ -402,6 +413,7 @@ aeif_cond_beta_multisynapse::aeif_cond_beta_multisynapse(
   , S_( n.S_ )
   , B_( n.B_, *this )
 {
+  recordablesMap_.create( *this );
 }
 
 aeif_cond_beta_multisynapse::~aeif_cond_beta_multisynapse()

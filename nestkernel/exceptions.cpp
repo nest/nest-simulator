@@ -408,3 +408,12 @@ nest::NumericalInstability::message() const
       << "updating " << model_ << ".";
   return msg.str();
 }
+
+std::string
+nest::NoEntryToMap::message() const
+{
+  std::ostringstream msg;
+  msg << "DynamicRecordablesMap::erase( const Name& n ): "
+      << "Name " << n_.toString() << " was not in the DynamicRecordablesMap.";
+  return msg.str();
+}

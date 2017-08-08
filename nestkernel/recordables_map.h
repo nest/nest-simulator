@@ -143,17 +143,17 @@ RecordablesMap< HostNode >::create()
  * @ingroup Devices
  */
 template < typename HostNode >
-class DynamicRecordablesMap : public std::map< Name, const typename HostNode::DataAccessFunctor >
+class DynamicRecordablesMap
+  : public std::map< Name, const typename HostNode::DataAccessFunctor >
 {
-  typedef std::map< Name, const typename HostNode::DataAccessFunctor > Base_;
-
 public:
+  typedef std::map< Name, const typename HostNode::DataAccessFunctor > Base_;
   virtual ~DynamicRecordablesMap()
   {
   }
-  
+
   //! Datatype for access callable
-  typedef const typename HostNode::DataAccessFunctor& DataAccessFct;
+  typedef typename HostNode::DataAccessFunctor DataAccessFct;
 
   /**
    * Create the map.
@@ -161,7 +161,7 @@ public:
    * Recordables map and must fill the map. This should happen
    * as part of the original constructor for the Node.
    */
-  void create(const HostNode& n);
+  void create( HostNode& n );
 
   /**
    * Obtain SLI list of all recordables, for use by get_status().
@@ -181,41 +181,38 @@ public:
     }
     return recordables;
   }
-  
+
   //! Insertion functions to be used in create(), adds entry to map and list
   void
-  insert( const Name& n, const DataAccessFct f )
+  insert( const Name& n, const DataAccessFct& f )
   {
     Base_::insert( std::make_pair( n, f ) );
   }
-  
-  //! Erase functions to be used when setting state, removes entry from map and list
+
+  //! Erase functions to be used when setting state, removes entry from map and
+  //! list
   void
   erase( const Name& n )
   {
     // .toString() required as work-around for #339, remove when #348 is solved.
-    typename DynamicRecordablesMap< HostNode >::const_iterator it =
+    typename DynamicRecordablesMap< HostNode >::iterator it =
       this->find( n.toString() );
     // If the Name is not in the map, throw an error
-    if (it == this->end() )
+    if ( it == this->end() )
     {
-      throw UnknownReceptorType(
-      "DynamicRecordablesMap::erase( const Name& n ): "
-      "Name "+ n.toString() +" was not in the DynamicRecordablesMap." );
+      throw NoEntryToMap( n );
     }
-    
-    Base_::erase(it);
+
+    Base_::erase( it );
   }
 };
 
 template < typename HostNode >
 void
-DynamicRecordablesMap< HostNode >::create(const HostNode& n)
+DynamicRecordablesMap< HostNode >::create( HostNode& n )
 {
   assert( false );
 }
-
-
 }
 
 #endif

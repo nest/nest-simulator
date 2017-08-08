@@ -24,8 +24,8 @@
 #define AEIF_COND_BETA_MULTISYNAPSE_H
 
 // Generated includes:
-#include <sstream>
 #include "config.h"
+#include <sstream>
 
 #ifdef HAVE_GSL
 
@@ -209,6 +209,46 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  //! Class that reads out state vector elements, used by UniversalDataLogger
+  class DataAccessFunctor
+  {
+    aeif_cond_beta_multisynapse* parent_;
+    size_t elem_;
+
+  public:
+    DataAccessFunctor( aeif_cond_beta_multisynapse& n, size_t elem )
+      : elem_( elem )
+    {
+      set_parent( &n );
+    };
+
+    DataAccessFunctor( aeif_cond_beta_multisynapse* n, size_t elem )
+      : elem_( elem )
+    {
+      set_parent( n );
+    };
+
+    void
+    set_parent( aeif_cond_beta_multisynapse* parent )
+    {
+      parent_ = parent;
+    };
+
+    double operator()() const
+    {
+      return parent_->S_.y_[ elem_ ];
+    };
+
+    DataAccessFunctor& operator=(
+      const aeif_cond_beta_multisynapse::DataAccessFunctor& other )
+    {
+      this->elem_ = other.elem_;
+      this->parent_ = other.parent_;
+      return *this;
+    }
+    friend class DynamicRecordablesMap< aeif_cond_beta_multisynapse >;
+  };
+
 private:
   void init_state_( const Node& proto );
   void init_buffers_();
@@ -216,7 +256,7 @@ private:
   void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< aeif_cond_beta_multisynapse >;
+  friend class DynamicRecordablesMap< aeif_cond_beta_multisynapse >;
   friend class UniversalDataLogger< aeif_cond_beta_multisynapse >;
 
   // ----------------------------------------------------------------
@@ -318,7 +358,7 @@ private:
     Buffers_( const Buffers_&, aeif_cond_beta_multisynapse& );
 
     //! Logger for all analog data
-    UniversalDataLogger< aeif_cond_beta_multisynapse > logger_;
+    DynamicUniversalDataLogger< aeif_cond_beta_multisynapse > logger_;
 
     /** buffers and sums up incoming spikes/currents */
     std::vector< RingBuffer > spikes_;
@@ -368,30 +408,6 @@ private:
     unsigned int refractory_counts_;
   };
 
-  // Access functions for UniversalDataLogger -------------------------------
-
-  //! Read out state vector elements, used by UniversalDataLogger
-  class DataAccessFunctor
-  {
-  aeif_cond_beta_multisynapse* parent;
-  size_t elem_;
-  public:
-    DataAccessFunctor(const Node2& n, size_t elem)
-    : elem_(elem)
-    {
-      parent = &n;
-    };
-    DataAccessFunctor(const Node2* n, size_t elem)
-    : elem_(elem)
-    {
-      parent = n;
-    };
-    double operator()() const
-    {
-      parent.S_.y_[ elem ];
-    };
-  };
-
   // Data members -----------------------------------------------------------
 
   /**
@@ -407,8 +423,15 @@ private:
   Buffers_ B_;
   /** @} */
 
+
+  // Access functions for UniversalDataLogger -------------------------------
+
   //! Mapping of recordables names to access functions
   DynamicRecordablesMap< aeif_cond_beta_multisynapse > recordablesMap_;
+
+  // Utility function that inserts the synaptic conductances to the
+  // recordables map
+  inline void insert_conductance_recordables( size_t first = 0 );
 };
 
 inline port
@@ -473,29 +496,34 @@ aeif_cond_beta_multisynapse::set_status( const DictionaryDatum& d )
    * Here is where we must update the recordablesMap_ if new receptors
    * are added!
    */
-  DynamicRecordablesMap< aeif_cond_beta_multisynapse > rtmp = recordablesMap_; // temporary copy in case of errors
-  if (stmp.E_rev.size()>S_.E_rev.size()) // Number of receptors increased
+  DynamicRecordablesMap< aeif_cond_beta_multisynapse > rtmp =
+    recordablesMap_;                         // temporary copy in case of errors
+  if ( ptmp.E_rev.size() > P_.E_rev.size() ) // Number of receptors increased
   {
-    for (size_t receptor = S_.E_rev.size(); receptor<stmp.E_rev.size(); ++receptor)
+    for ( size_t receptor = P_.E_rev.size(); receptor < ptmp.E_rev.size();
+          ++receptor )
     {
       std::stringstream receptor_name;
-      receptor_name<<"g"<<receptor+1;
+      receptor_name << "g" << receptor + 1;
       size_t elem = aeif_cond_beta_multisynapse::State_::G
-                    + receptor * aeif_cond_beta_multisynapse::State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-      rtmp.insert( Name( receptor_name.str() ) ,
-                   aeif_cond_beta_multisynapse::DataAccessFunctor( this , elem ) );
+        + receptor * aeif_cond_beta_multisynapse::State_::
+                       NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
+      rtmp.insert( Name( receptor_name.str() ),
+        aeif_cond_beta_multisynapse::DataAccessFunctor( this, elem ) );
     }
   }
-  else if (stmp.E_rev.size()<S_.E_rev.size()) // Number of receptors decreased
+  else if ( ptmp.E_rev.size()
+    < P_.E_rev.size() ) // Number of receptors decreased
   {
-    for (size_t receptor = stmp.E_rev.size(); receptor<S_.E_rev.size(); ++receptor)
+    for ( size_t receptor = ptmp.E_rev.size(); receptor < P_.E_rev.size();
+          ++receptor )
     {
       std::stringstream receptor_name;
-      receptor_name<<"g"<<receptor+1;
+      receptor_name << "g" << receptor + 1;
       rtmp.erase( Name( receptor_name.str() ) );
     }
   }
-  
+
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;

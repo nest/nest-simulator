@@ -911,6 +911,29 @@ private:
   const std::string model_;
 };
 
+/**
+ * Exception to be thrown if when trying to delete an entry from
+ * DynamicRecordablesMap that does not exist.
+ * @ingroup KernelExceptions
+ */
+class NoEntryToMap : public KernelException
+{
+  const Name n_;
+
+public:
+  NoEntryToMap( const Name& n )
+    : KernelException( "NoEntryToMap" )
+    , n_( n )
+  {
+  }
+
+  ~NoEntryToMap() throw()
+  {
+  }
+  std::string message() const;
+};
+
+
 #ifdef HAVE_MUSIC
 /**
  * Exception to be thrown if a music_event_out_proxy is generated, but the music

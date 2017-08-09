@@ -1,5 +1,5 @@
 /*
- *  gap_junction.h
+ *  rate_connection_instantaneous.h
  *
  *  This file is part of NEST.
  *
@@ -22,81 +22,69 @@
 
 
 /* BeginDocumentation
-Name: gap_junction - Synapse type for gap-junction connections.
+Name: rate_connection_instantaneous - Synapse type for instantaneous rate
+connections.
 
 Description:
- gap_junction is a connector to create gap junctions between pairs
- of neurons. Gap junctions are bidirectional connections.
- In order to create one accurate gap-junction connection between
- neurons i and j two NEST connections are required: For each created
- connection a second connection with the exact same parameters in
- the opposite direction is required. NEST provides the possibility
- to create both connections with a single call to Connect via
- the make_symmetric flag:
+ rate_connection_instantaneous is a connector to create
+ instantaneous connections between rate model neurons.
 
- i j << /rule /one_to_one /make_symmetric true >> /gap_junction Connect
+ The value of the parameter delay is ignored for connections of
+ this type. To create rate connections with delay please use
+ the synapse type rate_connection_delayed.
 
- The value of the parameter "delay" is ignored for connections of
- type gap_junction.
-
-Transmits: GapJunctionEvent
+Transmits: InstantaneousRateConnectionEvent
 
 References:
 
- Hahne, J., Helias, M., Kunkel, S., Igarashi, J.,
- Bolten, M., Frommer, A. and Diesmann, M.,
- A unified framework for spiking and gap-junction interactions
- in distributed neuronal network simulations,
- Front. Neuroinform. 9:22. (2015),
- doi: 10.3389/fninf.2015.00022
+ Hahne, J., Dahmen, D., Schuecker, J., Frommer, A.,
+ Bolten, M., Helias, M. and Diesmann, M. (2017).
+ Integration of Continuous-Time Dynamics in a
+ Spiking Neural Network Simulator.
+ Front. Neuroinform. 11:34. doi: 10.3389/fninf.2017.00034
 
- Mancilla, J. G., Lewis, T. J., Pinto, D. J.,
- Rinzel, J., and Connors, B. W.,
- Synchronization of electrically coupled pairs
- of inhibitory interneurons in neocortex,
- J. Neurosci. 27, 2058-2073 (2007),
- doi: 10.1523/JNEUROSCI.2715-06.2007
-
-Author: Jan Hahne, Moritz Helias, Susanne Kunkel
-SeeAlso: synapsedict, hh_psc_alpha_gap
+Author: David Dahmen, Jan Hahne, Jannis Schuecker
+SeeAlso: rate_connection_delayed, rate_neuron_ipn, rate_neuron_opn
 */
 
 
-#ifndef GAP_JUNCTION_H
-#define GAP_JUNCTION_H
+#ifndef RATE_CONNECTION_INSTANTANEOUS_H
+#define RATE_CONNECTION_INSTANTANEOUS_H
 
 #include "connection.h"
 
 namespace nest
 {
 /**
- * Class representing a gap-junction connection. A gap-junction connection
- * has the properties weight, delay and receiver port.
+ * Class representing a rate connection. A rate connection
+ * has the properties weight and receiver port.
  */
 template < typename targetidentifierT >
-class GapJunction : public Connection< targetidentifierT >
+class RateConnectionInstantaneous : public Connection< targetidentifierT >
 {
 
 public:
   // this line determines which common properties to use
   typedef CommonSynapseProperties CommonPropertiesType;
   typedef Connection< targetidentifierT > ConnectionBase;
-  typedef GapJunctionEvent EventType;
+  typedef InstantaneousRateConnectionEvent EventType;
 
   /**
    * Default Constructor.
    * Sets default values for all parameters. Needed by GenericConnectorModel.
    */
-  GapJunction()
+  RateConnectionInstantaneous()
     : ConnectionBase()
     , weight_( 1.0 )
   {
   }
 
   // Explicitly declare all methods inherited from the dependent base
-  // ConnectionBase. This avoids explicit name prefixes in all places these
-  // functions are used. Since ConnectionBase depends on the template parameter,
-  // they are not automatically found in the base class.
+  // ConnectionBase.
+  // This avoids explicit name prefixes in all places these functions are used.
+  // Since ConnectionBase depends on the template parameter, they are not
+  // automatically
+  // found in the base class.
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_rport;
   using ConnectionBase::get_target;
@@ -145,7 +133,9 @@ public:
   void
   set_delay( double )
   {
-    throw BadProperty( "gap_junction connection has no delay" );
+    throw BadProperty(
+      "rate_connection_instantaneous has no delay. Please use "
+      "rate_connection_delayed." );
   }
 
 private:
@@ -154,11 +144,9 @@ private:
 
 template < typename targetidentifierT >
 void
-GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
+RateConnectionInstantaneous< targetidentifierT >::get_status(
+  DictionaryDatum& d ) const
 {
-  // We have to include the delay here to prevent
-  // errors due to internal calls of
-  // this function in SLI/pyNEST
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
   def< long >( d, names::size_of, sizeof( *this ) );
@@ -166,14 +154,15 @@ GapJunction< targetidentifierT >::get_status( DictionaryDatum& d ) const
 
 template < typename targetidentifierT >
 void
-GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d,
+RateConnectionInstantaneous< targetidentifierT >::set_status(
+  const DictionaryDatum& d,
   ConnectorModel& cm )
 {
   // If the delay is set, we throw a BadProperty
   if ( d->known( names::delay ) )
-  {
-    throw BadProperty( "gap_junction connection has no delay" );
-  }
+    throw BadProperty(
+      "rate_connection_instantaneous has no delay. Please use "
+      "rate_connection_delayed." );
 
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
@@ -181,4 +170,4 @@ GapJunction< targetidentifierT >::set_status( const DictionaryDatum& d,
 
 } // namespace
 
-#endif /* #ifndef GAP_JUNCTION_H */
+#endif /* #ifndef RATE_CONNECTION_INSTANTANEOUS_H */

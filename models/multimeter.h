@@ -108,6 +108,7 @@ senders                  intvectortype       <intvectortype>
 times                    doublevectortype    <doublevectortype>
 t_ref_remaining          doublevectortype    <doublevectortype>
 V_m                      doublevectortype    <doublevectortype>
+rate                     doublevectortype    <doublevectortype>
 --------------------------------------------------
 Total number of entries: 6
 

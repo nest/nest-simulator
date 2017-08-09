@@ -41,10 +41,12 @@ namespace nest
    the probability of the neuron to be in the active (1) state.
 
    The gain function g used here is
+
    g(h) = 0.5 * erfc (( h - theta_ ) / ( sqrt( 2. ) * sigma)).
+
    This corresponds to a McCulloch-Pitts neuron receiving additional
-   Gaussian noise with mean 0 and standard deviation sigma
-   The time constant tau_m is defined as the mean
+   Gaussian noise with mean 0 and standard deviation sigma.
+   The time constant tau_m is defined as the mean of the
    inter-update-interval that is drawn from an exponential
    distribution with this parameter. Using this neuron to reproduce
    simulations with asynchronous update (similar to [1,2]), the time
@@ -83,17 +85,13 @@ namespace nest
 
    References:
    [1] Iris Ginzburg, Haim Sompolinsky. Theory of correlations in stochastic
-   neural networks (1994).
-   PRE 50(4) p. 3171
+   neural networks (1994). PRE 50(4) p. 3171
    [2] W. McCulloch und W. Pitts (1943). A logical calculus of the ideas
-   immanent in nervous
-   activity. Bulletin of Mathematical Biophysics, 5:115-133.
+   immanent in nervous activity. Bulletin of Mathematical Biophysics, 5:115-133.
    [3] Abigail Morrison, Markus Diesmann. Maintaining Causality in Discrete Time
-   Neuronal
-   Simulations.
-   In: Lectures in Supercomputational Neuroscience, p. 267. Peter beim Graben,
-   Changsong Zhou, Marco
-   Thiel, Juergen Kurths (Eds.), Springer 2008.
+   Neuronal Simulations. In: Lectures in Supercomputational Neuroscience, 
+   p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths (Eds.), 
+   Springer 2008.
 
    Sends: SpikeEvent
    Receives: SpikeEvent, PotentialRequest

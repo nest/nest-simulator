@@ -73,7 +73,7 @@ supported
  {
    ResetKernel
    model_supported Create /neuron_supported Set
-  [neuron_supported] [neuron_supported]
+   neuron_supported neuron_supported
    << /rule /one_to_one >> 
    << /model /rate_connection_instantaneous >> 
    Connect
@@ -89,7 +89,7 @@ supported
       ResetKernel
       model_supported Create /neuron_supported Set
       model_not_supported Create /neuron_not_supported Set
-      [neuron_supported] [neuron_not_supported]
+      neuron_supported neuron_not_supported
       << /rule /one_to_one >> 
       << /model /rate_connection_instantaneous >> 
       Connect
@@ -104,7 +104,7 @@ forall
 {
   ResetKernel
   /lin_rate_ipn Create /neuron_supported Set
-  [neuron_supported] [neuron_supported]
+  neuron_supported neuron_supported
   << /rule /all_to_all >> 
   << /model /rate_connection_instantaneous /delay 2.0 >> 
   Connect
@@ -137,7 +137,7 @@ supported
  {
    ResetKernel
    model_supported Create /neuron_supported Set
-   [neuron_supported] [neuron_supported]
+   neuron_supported neuron_supported
    << /rule /one_to_one >> 
    << /model /rate_connection_delayed >> 
    Connect
@@ -153,7 +153,7 @@ supported
       ResetKernel
       model_supported Create /neuron_supported Set
       model_not_supported Create /neuron_not_supported Set
-      [neuron_supported] [neuron_not_supported]
+      neuron_supported neuron_not_supported
       << /rule /one_to_one >> 
       << /model /rate_connection_delayed >> 
       Connect
@@ -191,7 +191,7 @@ supported
  {
    ResetKernel
    model_supported Create /neuron_supported Set
-   [neuron_supported] [neuron_supported]
+   neuron_supported neuron_supported
    << /rule /one_to_one >> 
    << /model /diffusion_connection >> 
    Connect
@@ -207,7 +207,7 @@ supported
       ResetKernel
       model_supported Create /neuron_supported Set
       model_not_supported Create /neuron_not_supported Set
-      [neuron_supported] [neuron_not_supported]
+      neuron_supported neuron_not_supported
       << /rule /one_to_one >> 
       << /model /diffusion_connection >> 
       Connect
@@ -222,7 +222,7 @@ forall
 {
   ResetKernel
   /siegert_neuron Create /neuron_supported Set
-  [neuron_supported] [neuron_supported]
+  neuron_supported neuron_supported
   << /rule /all_to_all >> 
   << /model /diffusion_connection /delay 2.0 >> 
   Connect
@@ -232,7 +232,7 @@ forall
 {
   ResetKernel
   /siegert_neuron Create /neuron_supported Set
-  [neuron_supported] [neuron_supported]
+  neuron_supported neuron_supported
   << /rule /all_to_all >> 
   << /model /diffusion_connection /weight 2.0 >> 
   Connect
@@ -242,7 +242,7 @@ forall
 {
   ResetKernel
   /siegert_neuron Create /neuron_supported Set
-  [neuron_supported] [neuron_supported]
+  neuron_supported neuron_supported
   << /rule /all_to_all >> 
   << /model /diffusion_connection /diffusion_factor 2.0 /drift_factor 2.0 >> 
   Connect

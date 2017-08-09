@@ -70,11 +70,15 @@
 #include "iaf_psc_exp_multisynapse.h"
 #include "iaf_tum_2000.h"
 #include "izhikevich.h"
+#include "lin_rate.h"
+#include "tanh_rate.h"
+#include "threshold_lin_rate.h"
 #include "mat2_psc_exp.h"
 #include "mcculloch_pitts_neuron.h"
 #include "parrot_neuron.h"
 #include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
+#include "siegert_neuron.h"
 #include "gif_psc_exp.h"
 #include "gif_psc_exp_multisynapse.h"
 #include "gif_cond_exp.h"
@@ -110,10 +114,13 @@
 #include "common_synapse_properties.h"
 #include "cont_delay_connection.h"
 #include "cont_delay_connection_impl.h"
+#include "diffusion_connection.h"
 #include "gap_junction.h"
 #include "ht_connection.h"
 #include "quantal_stp_connection.h"
 #include "quantal_stp_connection_impl.h"
+#include "rate_connection_instantaneous.h"
+#include "rate_connection_delayed.h"
 #include "spike_dilutor.h"
 #include "static_connection.h"
 #include "static_connection_hom_w.h"
@@ -177,6 +184,16 @@ ModelsModule::commandstring( void ) const
 void
 ModelsModule::init( SLIInterpreter* )
 {
+  kernel().model_manager.register_node_model< lin_rate_opn >( "lin_rate_opn" );
+  kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
+  kernel().model_manager.register_node_model< tanh_rate_opn >(
+    "tanh_rate_opn" );
+  kernel().model_manager.register_node_model< tanh_rate_ipn >(
+    "tanh_rate_ipn" );
+  kernel().model_manager.register_node_model< threshold_lin_rate_opn >(
+    "threshold_lin_rate_opn" );
+  kernel().model_manager.register_node_model< threshold_lin_rate_ipn >(
+    "threshold_lin_rate_ipn" );
   kernel().model_manager.register_node_model< iaf_neuron >( "iaf_neuron",
     /* private_model */ false,
     /* deprecation_info */ "NEST 3.0" );
@@ -355,6 +372,8 @@ ModelsModule::init( SLIInterpreter* )
     "aeif_cond_beta_multisynapse" );
   kernel().model_manager.register_node_model< aeif_cond_alpha_multisynapse >(
     "aeif_cond_alpha_multisynapse" );
+  kernel().model_manager.register_node_model< siegert_neuron >(
+    "siegert_neuron" );
 #endif
 
   // This version of the AdEx model does not depend on GSL.
@@ -421,6 +440,18 @@ ModelsModule::init( SLIInterpreter* )
     .model_manager
     .register_secondary_connection_model< GapJunction< TargetIdentifierPtrRport > >(
       "gap_junction", /*has_delay=*/false, /*requires_symmetric=*/true );
+  kernel()
+    .model_manager
+    .register_secondary_connection_model< RateConnectionInstantaneous< TargetIdentifierPtrRport > >(
+      "rate_connection_instantaneous", /*has_delay=*/false );
+  kernel()
+    .model_manager
+    .register_secondary_connection_model< RateConnectionDelayed< TargetIdentifierPtrRport > >(
+      "rate_connection_delayed" );
+  kernel()
+    .model_manager
+    .register_secondary_connection_model< DiffusionConnection< TargetIdentifierPtrRport > >(
+      "diffusion_connection", /*has_delay=*/false );
 
 
   /* BeginDocumentation

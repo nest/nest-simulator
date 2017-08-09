@@ -209,6 +209,14 @@ public:
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
+  static inline Name
+  get_g_receptor_name( size_t receptor )
+  {
+    std::stringstream receptor_name;
+    receptor_name << "g_" << receptor + 1;
+    return Name( receptor_name.str() );
+  };
+
   //! Class that reads out state vector elements, used by UniversalDataLogger
   class DataAccessFunctor
   {
@@ -503,12 +511,10 @@ aeif_cond_beta_multisynapse::set_status( const DictionaryDatum& d )
     for ( size_t receptor = P_.E_rev.size(); receptor < ptmp.E_rev.size();
           ++receptor )
     {
-      std::stringstream receptor_name;
-      receptor_name << "g" << receptor + 1;
       size_t elem = aeif_cond_beta_multisynapse::State_::G
         + receptor * aeif_cond_beta_multisynapse::State_::
                        NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-      rtmp.insert( Name( receptor_name.str() ),
+      rtmp.insert( get_g_receptor_name( receptor ),
         aeif_cond_beta_multisynapse::DataAccessFunctor( this, elem ) );
     }
   }
@@ -518,9 +524,7 @@ aeif_cond_beta_multisynapse::set_status( const DictionaryDatum& d )
     for ( size_t receptor = ptmp.E_rev.size(); receptor < P_.E_rev.size();
           ++receptor )
     {
-      std::stringstream receptor_name;
-      receptor_name << "g" << receptor + 1;
-      rtmp.erase( Name( receptor_name.str() ) );
+      rtmp.erase( get_g_receptor_name( receptor ) );
     }
   }
 

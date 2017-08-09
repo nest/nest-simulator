@@ -318,4 +318,124 @@ d /times get cva /ts Set % get times
   end
 } assert_or_die
 
+% ---------------------------
+
+% The following tests address #800
+% - Test that the default aeif_cond_beta_multisynapse neuron has the
+%   recordable synaptic conductance g_1
+% - Test that the multimeter can record from the synaptic conductance.
+%   Compare with the beta function for a single input spike to each
+%   receptor.
+
+% test default recordables include g_1
+{
+  << >> begin
+  ResetKernel
+  
+  /nrn /aeif_cond_beta_multisynapse Create def
+  
+  
+  /vm /multimeter << /withtime true /time_in_steps true
+                     /interval res /record_from [ /V_m /w /g_1 ] >> Create def
+  
+  vm nrn Connect
+} assert_or_die
+
+% test resize recordables
+{
+  << >> begin
+  ResetKernel
+  
+  /E_rev1        [0.0  0.0  -85.0]
+  /E_rev2        [0.0  0.0]
+  /E_rev3        [0.0  0.0  -85.0 0.]
+  /tau_rise1     [5.0  1.0  25.0]
+  /tau_rise2     [5.0  1.0]
+  /tau_rise3     [5.0  1.0  25.0 50.]
+  /tau_decay1    [20.0  10.0  85.0]
+  /tau_decay2    [20.0  10.0]
+  /tau_decay3    [20.0  10.0  85.0 100.]
+  
+  /nrn /aeif_cond_beta_multisynapse <<
+    /E_rev E_rev1 /tau_rise tau_rise1 /tau_decay tau_decay1
+      >> Create def
+  /len1 1 GetStatus /recordables get length
+  
+  1 SetStatus <<
+    /E_rev E_rev2 /tau_rise tau_rise2 /tau_decay tau_decay2
+      >>
+  /len2 1 GetStatus /recordables get length
+  
+  1 SetStatus <<
+    /E_rev E_rev3 /tau_rise tau_rise3 /tau_decay tau_decay3
+      >>
+  /len3 1 GetStatus /recordables get length
+  
+  /len1 5 neq {/ResizeRecordables /KernelError raiseerror} if
+  /len2 4 neq {/ResizeRecordables /KernelError raiseerror} if
+  /len3 6 neq {/ResizeRecordables /KernelError raiseerror} if
+  
+} assert_or_die
+
+% test recording of g
+% {
+%  << >> begin
+%  ResetKernel
+ % /res         0.1 def
+ % /E_rev       [0.0  0.0  -85.0] def % synaptic reversal potentials  
+%  /tau_decay   [40.0 20.0  30.0] def % synaptic decay times  
+%  /tau_rise    [20.0 10.0  5.0 ] def % synaptic rise times  
+%  /weights     [1.0  1.0   1.0 ] def % synaptic weights
+% /delays      [1.0  1.0   1.0 ] def % ms - synaptic delays
+%  /spike_time  10. def
+%  /dt          0.1 def % time step
+%  /total_t     300. def % total simulation time
+%  
+%  % Create a spike generator that generates a single spike
+%  /spike_generator Create /sg Set
+%  sg << /spike_times [spike_time] >> SetStatus % generates a single peak
+%  
+%  0 << /resolution res >> SetStatus
+%  
+%  /nrn /aeif_cond_beta_multisynapse
+%    << /w 0. /a 0. /b 0. /Delta_T 0. /t_ref 0. /I_e 0.
+%       /E_rev E_rev /tau_decay tau_decay /tau_rise tau_rise
+%    >> Create
+%  def
+%  
+  % creates an array of synaptic indexes 
+%  delays length 1 arraystore Range /synapses_idx exch def
+%
+%  [delays weights synapses_idx] % loop on synaptic receptor ports
+%  {
+%    /syn_id exch def
+%    /W exch def
+%    /delay exch def
+%    % connect spike generator to each port
+%    [sg] [multisynapse_neuron] /one_to_one <<
+%      /model /static_synapse
+%      /delay delay
+ %     /weight W
+ %     /receptor_type syn_id >>
+%%    Connect
+%    
+%  } ScanThread
+%  
+%  
+%  /vm /multimeter << /withtime true /time_in_steps true
+%                     /interval res /record_from [ /g_1 /g_2 /g_3 ] >> Create def
+ % 
+%  
+ % vm nrn Connect
+%
+%  
+%  0 << /resolution res >> SetStatus
+%  
+%  total_t Simulate
+%  /mme vm /events get def
+%  [ mme /times get cva mme /g_1 get cva mme /g_2 get cva mme /g_3 get cva] Transpose
+%  /result Set
+ % 
+%} assert_or_die
+
 endusing

@@ -71,12 +71,10 @@ aeif_cond_beta_multisynapse::insert_conductance_recordables( size_t first )
 {
   for ( size_t receptor = first; receptor < P_.E_rev.size(); ++receptor )
   {
-    std::stringstream receptor_name;
-    receptor_name << "g" << receptor + 1;
     size_t elem = aeif_cond_beta_multisynapse::State_::G
       + receptor * aeif_cond_beta_multisynapse::State_::
                      NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR;
-    recordablesMap_.insert( Name( receptor_name.str() ),
+    recordablesMap_.insert( get_g_receptor_name( receptor ),
       aeif_cond_beta_multisynapse::DataAccessFunctor( this, elem ) );
   }
 }

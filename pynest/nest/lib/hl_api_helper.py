@@ -32,6 +32,7 @@ import textwrap
 import subprocess
 import os
 import re
+import sys
 
 from string import Template
 
@@ -39,12 +40,6 @@ from string import Template
 # There is no safety net, whatsoever.
 sps = spp = sr = pcd = kernel = None
 
-
-# Monkeypatch warnings.showwarning() to just print the warning without
-# the code line it was emitted by.
-def _warning(msg, cat=UserWarning, fname='', lineno=-1):
-    print('{0}:{1}: {2}: {3}'.format(fname, lineno, cat.__name__, msg))
-warnings.showwarning = _warning
 
 # These flags are used to print deprecation warnings only once. The
 # corresponding functions will be removed in the 2.6 release of NEST.
@@ -235,11 +230,11 @@ def stack_checker(f):
         if not get_debug():
             return f(*args, **kwargs)
         else:
-            sr
-            stackload_before = spp
+            sr('count')
+            stackload_before = spp()
             result = f(*args, **kwargs)
-            sr
-            num_leftover_elements = spp - stackload_before
+            sr('count')
+            num_leftover_elements = spp() - stackload_before
             if num_leftover_elements != 0:
                 eargs = (f.__name__, num_leftover_elements)
                 etext = "Function '%s' left %i elements on the stack."
@@ -458,6 +453,10 @@ def show_help_with_pager(hlpobj, pager):
     pager: str, optional
         pager to use, NO if you explicity do not want to use a pager
     """
+    if sys.version_info < (2, 7, 8):
+        print("NEST help is only available with Python 2.7.8 or later. \n")
+        return
+
     if 'NEST_INSTALL_DIR' not in os.environ:
         print(
             'NEST help needs to know where NEST is installed.'
@@ -547,8 +546,8 @@ def get_verbosity():
 
     # Defined in hl_api_helper to avoid circular inclusion problem with
     # hl_api_info.py
-    sr
-    return spp
+    sr('verbosity')
+    return spp()
 
 
 @check_stack
@@ -564,7 +563,7 @@ def set_verbosity(level):
 
     # Defined in hl_api_helper to avoid circular inclusion problem with
     # hl_api_info.py
-    sr
+    sr("{} setverbosity".format(level))
 
 
 def model_deprecation_warning(model):

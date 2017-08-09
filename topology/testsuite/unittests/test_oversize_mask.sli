@@ -27,18 +27,19 @@
 
 /make_grid_layer
 {
-  << /rows 1 /columns 1 /elements /iaf_neuron /edge_wrap true >> CreateLayer
+  << /rows 1 /columns 1 /elements /iaf_psc_alpha /edge_wrap true >> CreateLayer
 } 
 def
 
 /make_free_layer
 {
-  << /positions [[0. 0.]] /elements /iaf_neuron /edge_wrap true >> CreateLayer
+  << /positions [[0. 0.]] /elements /iaf_psc_alpha /edge_wrap true >> CreateLayer
 } 
 def
 
 % correct, grid-based
 {
+  ResetKernel
   make_grid_layer dup 
   << /connection_type (divergent)
      /mask << /grid << /rows 1 /columns 1 >> >>
@@ -48,6 +49,7 @@ def
 
 % incorrect, grid-based, too wide
 {
+  ResetKernel
   make_grid_layer dup 
   << /connection_type (divergent)
      /mask << /grid << /rows 1 /columns 2 >> >>
@@ -57,6 +59,7 @@ def
 
 % incorrect, grid-based, too tall
 {
+  ResetKernel
   make_grid_layer dup 
   << /connection_type (divergent)
      /mask << /grid << /rows 2 /columns 1 >> >>
@@ -66,6 +69,7 @@ def
 
 % incorrect, grid-based, too wide and tall
 {
+  ResetKernel
   make_grid_layer dup 
   << /connection_type (divergent)
      /mask << /grid << /rows 2 /columns 2 >> >>
@@ -75,6 +79,7 @@ def
 
 % correct, grid-based, too wide and tall, but oversized allowed
 {
+  ResetKernel
   make_grid_layer dup 
   << /connection_type (divergent)
      /mask << /grid << /rows 2 /columns 2 >> >>
@@ -87,6 +92,7 @@ def
 
 % correct, circular
 {
+  ResetKernel
   make_free_layer dup
   << /connection_type (divergent)
       /mask << /circular << /radius 0.5 >> >>
@@ -96,6 +102,7 @@ def
 
 % incorrect, circular, too wide
 {
+  ResetKernel
   make_free_layer dup
   << /connection_type (divergent)
       /mask << /circular << /radius 0.51 >> >>
@@ -105,6 +112,7 @@ def
 
 % correct, circular, too wide but allowed
 {
+  ResetKernel
   make_free_layer dup
   << /connection_type (divergent)
       /mask << /circular << /radius 0.51 >> >>
@@ -117,6 +125,7 @@ def
 
 % correct, doughnut
 {
+  ResetKernel
   make_free_layer dup
   << /connection_type (divergent)
       /mask << /doughnut << /inner_radius 0.2 /outer_radius 0.5 >> >>
@@ -126,6 +135,7 @@ def
 
 % incorrect, doughnut, too wide
 {
+  ResetKernel
   make_free_layer dup
   << /connection_type (divergent)
       /mask << /doughnut << /inner_radius 0.2 /outer_radius 0.51 >> >>
@@ -135,6 +145,7 @@ def
 
 % correct, doughnut, too wide but allowed
 {
+  ResetKernel
   make_free_layer dup
   << /connection_type (divergent)
       /mask << /doughnut << /inner_radius 0.2 /outer_radius 0.51 >> >>
@@ -147,6 +158,7 @@ def
 
 % correct, rectangular
 {
+  ResetKernel
   make_free_layer dup
   << /connection_type (divergent)
       /mask << /rectangular << /lower_left [-0.5 -0.5] /upper_right [0.5 0.5] >> >>
@@ -156,6 +168,7 @@ def
 
 % incorrect, rectangular, too wide
 {
+  ResetKernel
   make_free_layer dup
   << /connection_type (divergent)
       /mask << /rectangular << /lower_left [-0.5 -0.5] /upper_right [0.51 0.5] >> >>
@@ -165,6 +178,7 @@ def
 
 % correct, rectangular, too wide but allowed
 {
+  ResetKernel
   make_free_layer dup
   << /connection_type (divergent)
       /mask << /rectangular << /lower_left [-0.5 -0.5] /upper_right [0.51 0.5] >> >>

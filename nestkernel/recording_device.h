@@ -147,6 +147,8 @@ namespace nest
                     contents. If set to false, the file will remain open after
                     ResetNetwork, so you can record continuously. NB:
                     the file is always closed upon ResetKernel. (Default: true).
+  /use_gid_in_filename - Determines if the GID is used in the file name of the
+  recording device. Setting this to false can lead to conflicting file names.
 
   The following parameters control how output is formatted:
   /withtime      - boolean value which specifies whether the network time should
@@ -523,6 +525,8 @@ private:
     bool flush_records_;        //!< if true, flush stream after each output
     bool close_on_reset_;       //!< if true, close stream in init_buffers()
 
+    bool use_gid_in_filename_;
+
     /**
      * Set default parameter values.
      * @param Default file name extension, excluding ".".
@@ -537,8 +541,14 @@ private:
 
     //! Store current values in dictionary
     void get( const RecordingDevice&, DictionaryDatum& ) const;
-    //! Set values from dictionary
-    void set( const RecordingDevice&, const Buffers_&, const DictionaryDatum& );
+
+    /**
+     * Set values from dictionary.
+     *
+     * @note `Buffers_&` cannot be `const` because `basic_ofstream::is_open()`
+     * is not `const` in C++98  (cf C++ Standard §27.8.1.10).
+     */
+    void set( const RecordingDevice&, Buffers_&, const DictionaryDatum& );
   };
 
   // ------------------------------------------------------------------

@@ -81,6 +81,7 @@ nest::RecordingDevice::Parameters_::Parameters_( const std::string& file_ext,
   , flush_after_simulate_( true )
   , flush_records_( false )
   , close_on_reset_( true )
+  , use_gid_in_filename_( true )
 {
 }
 
@@ -114,11 +115,9 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
   ( *d )[ names::withrport ] = withrport_;
 
   ( *d )[ names::time_in_steps ] = time_in_steps_;
-  if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR )
-  {
-    ( *d )[ names::precise_times ] = precise_times_;
-  }
-  if ( rd.mode_ == RecordingDevice::WEIGHT_RECORDER )
+  if ( rd.mode_ == RecordingDevice::WEIGHT_RECORDER
+    or rd.mode_ == RecordingDevice::SPIKE_DETECTOR
+    or rd.mode_ == RecordingDevice::SPIN_DETECTOR )
   {
     ( *d )[ names::precise_times ] = precise_times_;
   }
@@ -165,6 +164,8 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
   ( *d )[ names::flush_records ] = flush_records_;
   ( *d )[ names::close_on_reset ] = close_on_reset_;
 
+  ( *d )[ names::use_gid_in_filename ] = use_gid_in_filename_;
+
   if ( to_file_ && not filename_.empty() )
   {
     initialize_property_array( d, names::filenames );
@@ -174,7 +175,7 @@ nest::RecordingDevice::Parameters_::get( const RecordingDevice& rd,
 
 void
 nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
-  const Buffers_& B,
+  Buffers_& B,
   const DictionaryDatum& d )
 {
   updateValue< std::string >( d, names::label, label_ );
@@ -186,7 +187,8 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   updateValue< bool >( d, names::withrport, withrport_ );
   updateValue< bool >( d, names::time_in_steps, time_in_steps_ );
   if ( rd.mode_ == RecordingDevice::SPIKE_DETECTOR
-    or rd.mode_ == RecordingDevice::WEIGHT_RECORDER )
+    or rd.mode_ == RecordingDevice::WEIGHT_RECORDER
+    or rd.mode_ == RecordingDevice::SPIN_DETECTOR )
   {
     if ( d->known( names::precise_times ) )
     {
@@ -225,6 +227,9 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
   updateValue< bool >( d, names::flush_after_simulate, flush_after_simulate_ );
   updateValue< bool >( d, names::flush_records, flush_records_ );
   updateValue< bool >( d, names::close_on_reset, close_on_reset_ );
+
+  bool tmp_use_gid_in_filename = true;
+  updateValue< bool >( d, names::use_gid_in_filename, tmp_use_gid_in_filename );
 
   // In Pynest we cannot use /record_to, because we have no way to pass
   // values as LiteralDatum. Thus, we must keep the boolean flags.
@@ -307,6 +312,16 @@ nest::RecordingDevice::Parameters_::set( const RecordingDevice& rd,
       "Accumulator mode selected. All incompatible properties "
       "(to_file, to_screen, to_memory, withgid, withweight) "
       "have been set to false." );
+  }
+
+  if ( not tmp_use_gid_in_filename and label_.empty() )
+  {
+    throw BadProperty(
+      "If /use_gid_in_filename is false, /label must be specified." );
+  }
+  else
+  {
+    use_gid_in_filename_ = tmp_use_gid_in_filename;
   }
 }
 
@@ -984,9 +999,17 @@ nest::RecordingDevice::build_filename_() const
     basename << node_.get_name();
   }
 
-  basename << "-" << std::setfill( '0' ) << std::setw( gidigits )
-           << node_.get_gid() << "-" << std::setfill( '0' )
-           << std::setw( vpdigits ) << node_.get_vp();
+  if ( not P_.use_gid_in_filename_ and not P_.label_.empty() )
+  {
+    basename << "-" << std::setfill( '0' ) << std::setw( vpdigits )
+             << node_.get_vp();
+  }
+  else
+  {
+    basename << "-" << std::setfill( '0' ) << std::setw( gidigits )
+             << node_.get_gid() << "-" << std::setfill( '0' )
+             << std::setw( vpdigits ) << node_.get_vp();
+  }
   return basename.str() + '.' + P_.file_ext_;
 }
 

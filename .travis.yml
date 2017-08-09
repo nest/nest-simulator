@@ -21,12 +21,13 @@
 # This is the Travis CI top-level script to setup and run the NEST build and test environment. 
 
 
-language: generic
+language: minimal
 
 # Required for Ubuntu Trusty (14.04 LTS).
 sudo: required
 dist: trusty
-
+#https://blog.travis-ci.com/2017-06-19-trusty-updates-2017-Q2
+group: edge
 env:
   matrix:
     # We don't have to run a full matrix here, because most of the options are

@@ -92,7 +92,7 @@ print_nodes_to_stream( std::ostream& ostr )
 librandom::RngPtr
 get_vp_rng_of_gid( index target )
 {
-  Node* target_node = kernel().node_manager.get_node( target );
+  Node* target_node = kernel().node_manager.get_node_or_proxy( target );
 
   if ( not kernel().node_manager.is_local_node( target_node ) )
   {
@@ -165,7 +165,7 @@ set_connection_status( const ConnectionDatum& conn,
   long port = getValue< long >( conn_dict, nest::names::port );
   long gid = getValue< long >( conn_dict, nest::names::source );
   thread tid = getValue< long >( conn_dict, nest::names::target_thread );
-  kernel().node_manager.get_node( gid ); // Just to check if the node exists
+  kernel().node_manager.get_node_or_proxy( gid, tid ); // Just to check if the node exists
 
   dict->clear_access_flags();
 
@@ -183,7 +183,7 @@ DictionaryDatum
 get_connection_status( const ConnectionDatum& conn )
 {
   long gid = conn.get_source_gid();
-  kernel().node_manager.get_node( gid ); // Just to check if the node exists
+  kernel().node_manager.get_node_or_proxy( gid ); // Just to check if the node exists
 
   return kernel().connection_manager.get_synapse_status( gid,
     conn.get_synapse_model_id(),

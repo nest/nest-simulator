@@ -300,7 +300,7 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
 
   long gid = conn.get_source_gid();
-  kernel().node_manager.get_node( gid ); // Just to check if the node exists
+  kernel().node_manager.get_node_or_proxy( gid ); // Just to check if the node exists
 
   DictionaryDatum result_dict =
     kernel().connection_manager.get_synapse_status( gid,
@@ -675,8 +675,7 @@ NestModule::Disconnect_i_i_lFunction::execute( SLIInterpreter* i ) const
   // check whether the target is on this process
   if ( kernel().node_manager.is_local_gid( target ) )
   {
-
-    Node* const target_node = kernel().node_manager.get_node( target );
+    Node* const target_node = kernel().node_manager.get_node_or_proxy( target );
 
     const thread target_thread = target_node->get_thread();
 

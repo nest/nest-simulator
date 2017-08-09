@@ -382,7 +382,7 @@ nest::ConnectionManager::connect( index sgid,
   double w )
 {
   const thread tid = kernel().vp_manager.get_thread_id();
-  Node* source = kernel().node_manager.get_node( sgid, target_thread );
+  Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
 
   // target is a normal node or device with proxies
   if ( target->has_proxies() )
@@ -421,9 +421,9 @@ nest::ConnectionManager::connect( index sgid,
         kernel().vp_manager.suggest_vp( target->get_gid() ) );
       if ( target_thread == tid )
       {
-        source = kernel().node_manager.get_node( sgid, target_thread );
+        source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
         target =
-          kernel().node_manager.get_node( target->get_gid(), target_thread );
+          kernel().node_manager.get_node_or_proxy( target->get_gid(), target_thread );
         connect_( *source, *target, sgid, target_thread, syn, d, w );
       }
     }
@@ -451,7 +451,7 @@ nest::ConnectionManager::connect( index sgid,
   double w )
 {
   const thread tid = kernel().vp_manager.get_thread_id();
-  Node* source = kernel().node_manager.get_node( sgid, target_thread );
+  Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
 
   // target is a normal node or device with proxies
   if ( target->has_proxies() )
@@ -490,9 +490,9 @@ nest::ConnectionManager::connect( index sgid,
         kernel().vp_manager.suggest_vp( target->get_gid() ) );
       if ( target_thread == tid )
       {
-        source = kernel().node_manager.get_node( sgid, target_thread );
+        source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
         target =
-          kernel().node_manager.get_node( target->get_gid(), target_thread );
+          kernel().node_manager.get_node_or_proxy( target->get_gid(), target_thread );
         connect_( *source, *target, sgid, target_thread, syn, params, d, w );
       }
     }
@@ -524,9 +524,9 @@ nest::ConnectionManager::connect( index sgid,
     return false;
   }
 
-  Node* target = kernel().node_manager.get_node( tgid, tid );
+  Node* target = kernel().node_manager.get_node_or_proxy( tgid, tid );
   thread target_thread = target->get_thread();
-  Node* source = kernel().node_manager.get_node( sgid, target_thread );
+  Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
 
   // target is a normal node or device with proxies
   if ( target->has_proxies() )
@@ -565,9 +565,9 @@ nest::ConnectionManager::connect( index sgid,
         kernel().vp_manager.suggest_vp( target->get_gid() ) );
       if ( target_thread == tid )
       {
-        source = kernel().node_manager.get_node( sgid, target_thread );
+        source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
         target =
-          kernel().node_manager.get_node( target->get_gid(), target_thread );
+          kernel().node_manager.get_node_or_proxy( target->get_gid(), target_thread );
         connect_( *source, *target, sgid, target_thread, syn, params );
       }
     }
@@ -818,7 +818,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
       Node* target = 0;
       try
       {
-        target = kernel().node_manager.get_node( target_ids[ i ], tid );
+        target = kernel().node_manager.get_node_or_proxy( target_ids[ i ], tid );
       }
       catch ( UnknownNode& e )
       {
@@ -905,7 +905,7 @@ nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
   {
     DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
     index target_gid = static_cast< size_t >( ( *cd )[ names::target ] );
-    Node* target_node = kernel().node_manager.get_node( target_gid );
+    Node* target_node = kernel().node_manager.get_node_or_proxy( target_gid );
     size_t thr = target_node->get_thread();
 
     size_t syn_id = 0;
@@ -926,7 +926,7 @@ nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
         throw UnknownModelName( synmodel_name );
       }
     }
-    Node* source_node = kernel().node_manager.get_node( source_gid );
+    Node* source_node = kernel().node_manager.get_node_or_proxy( source_gid );
     connect_( *source_node, *target_node, source_gid, thr, syn_id, cd );
   }
   return true;

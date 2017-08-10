@@ -24,7 +24,6 @@
 
 #ifdef HAVE_MUSIC
 
-
 // Includes from C++:
 #include <numeric>
 #include <string>
@@ -131,7 +130,6 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
       "cannot be changed after the index_map has been set." );
   }
 
-
   double v;
   if ( updateValue< double >( d, names::interval, v ) )
   {
@@ -194,7 +192,6 @@ nest::music_cont_out_proxy::State_::get( DictionaryDatum& d ) const
   ( *d )[ names::port_width ] = port_width_;
 }
 
-
 /* ----------------------------------------------------------------
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
@@ -215,7 +212,6 @@ nest::music_cont_out_proxy::music_cont_out_proxy(
   , B_( n.B_ )
 {
 }
-
 
 void
 nest::music_cont_out_proxy::init_state_( const Node& /* np */ )

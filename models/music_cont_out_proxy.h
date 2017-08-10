@@ -68,7 +68,6 @@ record_from.size() + recordable_index ]
 For example:  target_gids = [ 2, 5, 4 ], record_from = ["V_m"] and
 we want to get "V_m" for neuron with GID 5: buffer[ 1*1 + 0 ]
 
-
 Parameters:
   The following properties are available in the status dictionary:
 
@@ -153,7 +152,6 @@ private:
   struct State_; //!< Forward declarations
 
   struct Buffers_;
-
 
   struct Parameters_
   {

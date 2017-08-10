@@ -44,11 +44,18 @@ PERFORM_VERA=${9}             # true or false, indicating whether VERA++ analysi
 PERFORM_CPPCHECK=${10}        # true or false, indicating whether CPPCHECK analysis is performed or not.
 PERFORM_CLANG_FORMAT=${11}    # true or false, indicating whether CLANG-FORMAT analysis is performed or not.
 PERFORM_PEP8=${12}            # true or false, indicating whether PEP8 analysis is performed or not.
+IGNORE_MSG_VERA=${13}         # true or false, indicating whether VERA++ messages should accout for the build result.
+IGNORE_MSG_CPPCHECK=${14}     # true or false, indicating whether CPPCHECK messages should accout for the build result.
+IGNORE_MSG_CLANG_FORMAT=${15} # true or false, indicating whether CLANG-FORMAT messages should accout for the build result.
+IGNORE_MSG_PEP8=${16}         # true or false, indicating whether PEP8 messages should accout for the build result.
 
 # PEP8 rules to ignore.
 PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
 PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
 PEP8_IGNORES_TOPO_MANUAL="${PEP8_IGNORES_EXAMPLES},E265"
+
+# Drop files that should not be checked (space-separated list).
+FILES_TO_IGNORE="libnestutil/compose.hpp libnestutil/hashtable-common.h libnestutil/libc_allocator_with_realloc.h libnestutil/sparseconfig.h libnestutil/sparsetable.h libnestutil/template_util.h libnestutil/type_traits.h librandom/knuthlfg.h librandom/knuthlfg.cpp"
 
 # Print a message.
 # The format of the message depends on whether the script is executed on Travis CI or runs local.
@@ -82,11 +89,32 @@ if $PERFORM_PEP8; then
 fi
 print_msg "" ""
 
+# The following messages report on the command line arguments IGNORE_MSG_xxx which indicate whether
+# static code analysis error messages will cause the Travis CI build to fail or are ignored.
+if $RUNS_ON_TRAVIS; then
+  if $IGNORE_MSG_VERA; then
+    print_msg "MSGBLD1010: " "IGNORE_MSG_VERA is set. VERA++ messages will not cause the build to fail."
+  fi
+  if $IGNORE_MSG_CPPCHECK; then
+    print_msg "MSGBLD1020: " "IGNORE_MSG_CPPCHECK is set. CPPCHECK messages will not cause the build to fail."
+  fi
+  if $IGNORE_MSG_CLANG_FORMAT; then
+    print_msg "MSGBLD1030: " "IGNORE_MSG_CLANG_FORMAT is set. CLANG_FORMAT messages will not cause the build to fail."
+  fi
+  if $RUNS_ON_TRAVIS && $IGNORE_MSG_PEP8; then
+    print_msg "MSGBLD1040: " "IGNORE_MSG_PEP8 is set. PEP8 messages will not cause the build to fail."
+  fi
+fi
+
 # Perfom static code analysis.
 c_files_with_errors=""
 python_files_with_errors=""
 for f in $FILE_NAMES; do
 
+  if [[ $FILES_TO_IGNORE =~ .*$f.* ]]; then
+    print_msg "MSGBLD0110: " "$f is explicitly ignored."
+    continue
+  fi   
   if [ ! -f "$f" ]; then
     print_msg "MSGBLD0110: " "$f is not a file or does not exist anymore."
     continue
@@ -245,7 +273,7 @@ if [ "x$c_files_with_errors" != "x" ] || [ "x$python_files_with_errors" != "x" ]
 else
   print_msg "" ""
   print_msg "MSGBLD0220: " "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
-  print_msg "MSGBLD0220: " "+               STATIC CODE ANALYSIS TERMINATED SUCESSFULLY !                 +"
+  print_msg "MSGBLD0220: " "+               STATIC CODE ANALYSIS TERMINATED SUCCESSFULLY !                +"
   print_msg "MSGBLD0220: " "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
   print_msg "" ""  
 fi

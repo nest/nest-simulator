@@ -99,7 +99,7 @@ public:
   has_proxies() const
   {
     return false;
-  } // a copy on each process
+  }
   bool
   one_node_per_process() const
   {

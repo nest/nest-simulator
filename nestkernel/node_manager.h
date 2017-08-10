@@ -42,7 +42,6 @@
 namespace nest
 {
 
-class SiblingContainer;
 class Node;
 class Model;
 
@@ -102,14 +101,6 @@ public:
   void restore_nodes( const ArrayDatum& );
 
   /**
-   * Reset state of nodes.
-   *
-   * Reset the state (but no other properties) of nodes. This is
-   * required for ResetNetwork, which affects states but not parameters.
-   */
-  void reset_nodes_state();
-
-  /**
    * Set the state (observable dynamic variables) of a node to model defaults.
    * @see Node::init_state()
    */
@@ -144,17 +135,43 @@ public:
    *
    * @ingroup net_access
    */
-  Node* get_node( index, thread thr = 0 );
+  Node* get_node_or_proxy( index, thread );
 
   /**
-   * Return the Subnet that contains the thread siblings.
+   * Return pointer of the specified Node.
+   * @param i Index of the specified Node.
+   */
+  Node* get_node_or_proxy( index );
+
+  /*
+   * Return pointer of Node on the thread we are on.
+   *
+   * If the node has proxies, it returns the node on the first thread (used by
+   * recorders).
+   *
+   * @params gid Index of the Node.
+   */
+  Node* get_mpi_local_node_or_device_head( index );
+
+  /*
+   * Return pointer of Node.
+   *
+   * If the Node is not on the given thread, the function returns 0.
+   *
+   * @param gid Index of the Node.
+   * @param t Thread index of the Node.
+   */
+  Node* get_thread_local_node( index, thread );
+
+  /**
+   * Return a vector that contains the thread siblings.
    * @param i Index of the specified Node.
    *
    * @throws nest::NoThreadSiblingsAvailable Node does not have thread siblings.
    *
    * @ingroup net_access
    */
-  const SiblingContainer* get_thread_siblings( index n ) const;
+  std::vector< Node* > get_thread_siblings( index n ) const;
 
   /**
    * Ensure that all nodes in the network have valid thread-local IDs.
@@ -166,21 +183,6 @@ public:
   Node* thread_lid_to_node( thread t, targetindex thread_local_id ) const;
 
   /**
-   * Increment total number of global spike detectors by 1
-   */
-  void increment_n_gsd();
-
-  /**
-   * Get total number of global spike detectors
-   */
-  index get_n_gsd();
-
-  /**
-   * Get list of nodes on given thread.
-   */
-  const std::vector< Node* >& get_nodes_on_thread( thread ) const;
-
-  /**
    * Get list of nodes on given thread.
    */
   const std::vector< Node* >& get_wfr_nodes_on_thread( thread ) const;
@@ -189,12 +191,27 @@ public:
    * Prepare nodes for simulation and register nodes in node_list.
    * Calls prepare_node_() for each pertaining Node.
    * @see prepare_node_()
-   * @returns number of nodes that will be simulated.
    */
-  size_t prepare_nodes();
+  void prepare_nodes();
 
   /**
-   * Invoke finalize() on nodes registered for finalization.
+   * Get the number of nodes created by last prepare_nodes() call
+   * @see prepare_nodes()
+   * @return number of active nodes
+   */
+  size_t
+  get_num_active_nodes()
+  {
+    return num_active_nodes_;
+  };
+
+  /**
+   * Invoke post_run_cleanup() on all nodes.
+   */
+  void post_run_cleanup();
+
+  /**
+   * Invoke finalize() on all nodes.
    */
   void finalize_nodes();
 
@@ -209,19 +226,9 @@ public:
   void check_wfr_use();
 
   /**
-   * Iterator pointing to beginning of process-local nodes.
+   * Return a reference to the thread-local nodes of thread t.
    */
-  SparseNodeArray::const_iterator local_nodes_begin() const;
-
-  /**
-   * Iterator pointing to end of process-local nodes.
-   */
-  SparseNodeArray::const_iterator local_nodes_end() const;
-
-  /**
-   * Number of process-local nodes.
-   */
-  size_t local_nodes_size() const;
+  const SparseNodeArray& get_local_nodes( thread ) const;
 
 private:
   /**
@@ -251,74 +258,71 @@ private:
   void prepare_node_( Node* );
 
   /**
-   * Returns the next local gid after curr_gid (in round robin fashion).
-   * In the case of GSD, there might be no valid gids, hence you should still
-   * check, if it returns a local gid.
+   * Add normal neurons.
+   *
+   * Each neuron is added to exactly one virtual process. On all other
+   * VPs, it is represented by a proxy.
+   *
+   * @param model Model of neuron to create.
+   * @param min_gid GID of first neuron to create.
+   * @param max_gid GID of last neuron to create (inclusive).
    */
-  index next_local_gid_( index curr_gid ) const;
-
-private:
-  SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
-
-  Model* siblingcontainer_model_; //!< The model for the SiblingContainer class
-
-  index n_gsd_; //!< Total number of global spike detectors, used for
-                //!< distributing them over recording processes
+  void add_neurons_( Model& model, index min_gid, index max_gid );
 
   /**
-   * Data structure holding node pointers per thread.
+   * Add device nodes.
    *
-   * The outer dimension of indexes threads. Each per-thread vector
-   * contains all nodes on that thread.
+   * For device nodes, a clone of the node is added to every virtual process.
    *
-   * @note Frozen nodes are included, so that we do not need to regenerate
-   * these vectors when the frozen status on nodes is changed (which is
-   * essentially undetectable).
+   * @param model Model of neuron to create.
+   * @param min_gid GID of first neuron to create.
+   * @param max_gid GID of last neuron to create (inclusive).
    */
-  std::vector< std::vector< Node* > > nodes_vec_;
+  void add_devices_( Model& model, index min_gid, index max_gid );
+
+  /**
+   * Add MUSIC nodes.
+   *
+   * Nodes for MUSIC communication are added once per MPI process and are
+   * always placed on thread 0.
+   *
+   * @param model Model of neuron to create.
+   * @param min_gid GID of first neuron to create.
+   * @param max_gid GID of last neuron to create (inclusive).
+   */
+  void add_music_nodes_( Model& model, index min_gid, index max_gid );
+
+
+private:
+  /**
+   * The network as sparse array of local nodes. One entry per thread,
+   * which contains only the thread-local nodes.
+  */
+  std::vector< SparseNodeArray > local_nodes_;
+
   std::vector< std::vector< Node* > >
     wfr_nodes_vec_;  //!< Nodelists for unfrozen nodes that
                      //!< use the waveform relaxation method
   bool wfr_is_used_; //!< there is at least one node that uses
                      //!< waveform relaxation
-  //! Network size when nodes_vec_ was last updated
-  index nodes_vec_network_size_;
+  //! Network size when wfr_nodes_vec_ was last updated
+  index wfr_network_size_;
+  size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
+
+  //! Store exceptions raised in thread-parallel sections for later handling
+  std::vector< lockPTR< WrappedThreadException > > exceptions_raised_;
 };
 
 inline index
 NodeManager::size() const
 {
-  return local_nodes_.get_max_gid();
-}
-
-inline bool
-NodeManager::is_local_gid( index gid ) const
-{
-  return local_nodes_.get_node_by_gid( gid ) != 0;
+  return local_nodes_[ 0 ].get_max_gid();
 }
 
 inline Node*
 NodeManager::thread_lid_to_node( thread t, targetindex thread_local_id ) const
 {
-  return nodes_vec_[ t ][ thread_local_id ];
-}
-
-inline void
-NodeManager::increment_n_gsd()
-{
-  ++n_gsd_;
-}
-
-inline index
-NodeManager::get_n_gsd()
-{
-  return n_gsd_;
-}
-
-inline const std::vector< Node* >&
-NodeManager::get_nodes_on_thread( thread t ) const
-{
-  return nodes_vec_.at( t );
+  return local_nodes_[ t ].get_node_by_index( thread_local_id );
 }
 
 inline const std::vector< Node* >&
@@ -333,22 +337,10 @@ NodeManager::wfr_is_used() const
   return wfr_is_used_;
 }
 
-inline SparseNodeArray::const_iterator
-NodeManager::local_nodes_begin() const
+inline const SparseNodeArray&
+NodeManager::get_local_nodes( thread t ) const
 {
-  return local_nodes_.begin();
-}
-
-inline SparseNodeArray::const_iterator
-NodeManager::local_nodes_end() const
-{
-  return local_nodes_.end();
-}
-
-inline size_t
-NodeManager::local_nodes_size() const
-{
-  return local_nodes_.size();
+  return local_nodes_[ t ];
 }
 
 } // namespace

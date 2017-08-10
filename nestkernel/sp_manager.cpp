@@ -85,8 +85,6 @@ SPManager::get_status( DictionaryDatum& d )
 {
   DictionaryDatum sp_synapses = DictionaryDatum( new Dictionary() );
   DictionaryDatum sp_synapse;
-
-
   def< DictionaryDatum >(
     d, names::structural_plasticity_synapses, sp_synapses );
   for ( std::vector< SPBuilder* >::const_iterator i = sp_conn_builders_.begin();
@@ -100,6 +98,11 @@ SPManager::get_status( DictionaryDatum& d )
     def< std::string >( sp_synapse,
       names::post_synaptic_element,
       ( *i )->get_post_synaptic_element_name() );
+    def< std::string >( sp_synapse,
+      names::model,
+      kernel()
+        .model_manager.get_synapse_prototype( ( *i )->get_synapse_model(), 0 )
+        .get_name() );
     std::stringstream syn_name;
     syn_name << "syn" << ( sp_conn_builders_.end() - i );
     def< DictionaryDatum >( sp_synapses, syn_name.str(), sp_synapse );
@@ -119,25 +122,31 @@ void
 SPManager::set_status( const DictionaryDatum& d )
 {
   if ( d->known( names::structural_plasticity_update_interval ) )
+  {
     updateValue< long >( d,
       names::structural_plasticity_update_interval,
       structural_plasticity_update_interval_ );
+  }
   if ( not d->known( names::structural_plasticity_synapses ) )
+  {
     return;
-  /*
-   * Configure synapses model updated during the simulation.
-   */
+  } /*
+    * Configure synapses model updated during the simulation.
+    */
   Token synmodel;
   DictionaryDatum syn_specs, syn_spec;
   DictionaryDatum conn_spec = DictionaryDatum( new Dictionary() );
 
   if ( d->known( names::autapses ) )
+  {
     def< bool >(
       conn_spec, names::autapses, getValue< bool >( d, names::autapses ) );
+  }
   if ( d->known( names::multapses ) )
+  {
     def< bool >(
       conn_spec, names::multapses, getValue< bool >( d, names::multapses ) );
-
+  }
   GIDCollectionPTR sources( new GIDCollectionPrimitive() );
   GIDCollectionPTR targets( new GIDCollectionPrimitive() );
 
@@ -250,7 +259,7 @@ SPManager::disconnect( index sgid,
   thread target_thread,
   index syn )
 {
-  Node* const source = kernel().node_manager.get_node( sgid );
+  Node* const source = kernel().node_manager.get_node_or_proxy( sgid );
   // normal nodes and devices with proxies
   if ( target->has_proxies() )
   {
@@ -259,12 +268,14 @@ SPManager::disconnect( index sgid,
   else if ( target->local_receiver() ) // normal devices
   {
     if ( source->is_proxy() )
+    {
       return;
+    }
     if ( ( source->get_thread() != target_thread )
       && ( source->has_proxies() ) )
     {
       target_thread = source->get_thread();
-      target = kernel().node_manager.get_node( target->get_gid(), sgid );
+      target = kernel().node_manager.get_node_or_proxy( target->get_gid(), target_thread );
     }
     // thread target_thread = target->get_thread();
 
@@ -274,11 +285,13 @@ SPManager::disconnect( index sgid,
   {
     // we do not allow to connect a device to a global receiver at the moment
     if ( not source->has_proxies() )
+    {
       return;
+    }
     const thread n_threads = kernel().vp_manager.get_num_threads();
     for ( thread t = 0; t < n_threads; t++ )
     {
-      target = kernel().node_manager.get_node( target->get_gid(), t );
+      target = kernel().node_manager.get_node_or_proxy( target->get_gid(), t );
       target_thread = target->get_thread();
       kernel().connection_manager.disconnect(
         *target, sgid, target_thread, syn ); // tgid
@@ -306,11 +319,16 @@ SPManager::disconnect( GIDCollectionPTR sources,
   syn_spec->clear_access_flags();
 
   if ( not conn_spec->known( names::rule ) )
+  {
     throw BadProperty( "Disconnection spec must contain disconnection rule." );
+  }
   const std::string rule_name = ( *conn_spec )[ names::rule ];
 
   if ( not kernel().connection_manager.get_connruledict()->known( rule_name ) )
+  {
     throw BadProperty( "Unknown connectivty rule: " + rule_name );
+  }
+
   if ( not sp_conn_builders_.empty() )
   { // Implement a getter for sp_conn_builders_
 
@@ -334,8 +352,10 @@ SPManager::disconnect( GIDCollectionPTR sources,
     }
   }
   else
+  {
     cb = kernel().connection_manager.get_conn_builder(
       rule_name, sources, targets, conn_spec, syn_spec );
+  }
   assert( cb != 0 );
 
   // at this point, all entries in conn_spec and syn_spec have been checked
@@ -554,7 +574,9 @@ SPManager::delete_synapses_from_pre( std::vector< index >& pre_deleted_id,
     // shuffle only the first n items, n is the number of deleted synaptic
     // elements
     if ( -( *n_it ) > static_cast< int >( global_targets.size() ) )
+    {
       *n_it = -global_targets.size();
+    }
     global_shuffle( global_targets, -( *n_it ) );
 
     for ( int i = 0; i < -( *n_it ); i++ ) // n is negative
@@ -587,7 +609,7 @@ SPManager::delete_synapse( index sgid,
   const int tid = kernel().vp_manager.get_thread_id();
   if ( kernel().node_manager.is_local_gid( sgid ) )
   {
-    Node* const source = kernel().node_manager.get_node( sgid );
+    Node* const source = kernel().node_manager.get_node_or_proxy( sgid );
     const thread source_thread = source->get_thread();
     if ( tid == source_thread )
     {
@@ -597,7 +619,7 @@ SPManager::delete_synapse( index sgid,
 
   if ( kernel().node_manager.is_local_gid( tgid ) )
   {
-    Node* const target = kernel().node_manager.get_node( tgid );
+    Node* const target = kernel().node_manager.get_node_or_proxy( tgid );
     thread target_thread = target->get_thread();
     if ( tid == target_thread )
     {
@@ -659,7 +681,9 @@ SPManager::delete_synapses_from_post( std::vector< index >& post_deleted_id,
     // shuffle only the first n items, n is the number of deleted synaptic
     // elements
     if ( -( *n_it ) > static_cast< int >( global_sources.size() ) )
+    {
       *n_it = -global_sources.size();
+    }
     global_shuffle( global_sources, -( *n_it ) );
 
     for ( int i = 0; i < -( *n_it ); i++ ) // n is negative
@@ -697,16 +721,17 @@ nest::SPManager::get_synaptic_elements( std::string se_name,
   std::vector< int >::iterator vacant_n_it = se_vacant_n.begin();
   std::vector< index >::iterator deleted_id_it = se_deleted_id.begin();
   std::vector< int >::iterator deleted_n_it = se_deleted_n.begin();
-  std::vector< Node* >::const_iterator node_it;
+  SparseNodeArray::const_iterator node_it;
 
   for ( size_t thrd = 0; thrd < kernel().vp_manager.get_num_threads(); ++thrd )
   {
-    for ( node_it = kernel().node_manager.get_nodes_on_thread( thrd ).begin();
-          node_it < kernel().node_manager.get_nodes_on_thread( thrd ).end();
+    for ( node_it = kernel().node_manager.get_local_nodes( thrd ).begin();
+          node_it < kernel().node_manager.get_local_nodes( thrd ).end();
           node_it++ )
     {
-      gid = ( *node_it )->get_gid();
-      n = ( *node_it )->get_synaptic_elements_vacant( se_name );
+      gid = node_it->get_gid();
+      Node* node = node_it->get_node();
+      n = node->get_synaptic_elements_vacant( se_name );
       if ( n > 0 )
       {
         ( *vacant_id_it ) = gid;

@@ -144,11 +144,13 @@ void
 nest::ConnectionManager::get_status( DictionaryDatum& d )
 {
   update_delay_extrema_();
-  def< double >( d, "min_delay", Time( Time::step( min_delay_ ) ).get_ms() );
-  def< double >( d, "max_delay", Time( Time::step( max_delay_ ) ).get_ms() );
+  def< double >(
+    d, names::min_delay, Time( Time::step( min_delay_ ) ).get_ms() );
+  def< double >(
+    d, names::max_delay, Time( Time::step( max_delay_ ) ).get_ms() );
 
   size_t n = get_num_connections();
-  def< long >( d, "num_connections", n );
+  def< long >( d, names::num_connections, n );
 }
 
 DictionaryDatum
@@ -161,7 +163,7 @@ nest::ConnectionManager::get_synapse_status( index gid,
 
   DictionaryDatum dict( new Dictionary );
   validate_pointer( connections_[ tid ].get( gid ) )
-    ->get_synapse_status( syn_id, dict, p );
+    ->get_synapse_status( syn_id, dict, p, tid );
   ( *dict )[ names::source ] = gid;
   ( *dict )[ names::synapse_model ] = LiteralDatum(
     kernel().model_manager.get_synapse_prototype( syn_id ).get_name() );
@@ -242,7 +244,9 @@ nest::ConnectionManager::get_min_delay_time_() const
 
   tVDelayChecker::const_iterator it;
   for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it )
+  {
     min_delay = std::min( min_delay, it->get_min_delay() );
+  }
 
   return min_delay;
 }
@@ -254,7 +258,9 @@ nest::ConnectionManager::get_max_delay_time_() const
 
   tVDelayChecker::const_iterator it;
   for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it )
+  {
     max_delay = std::max( max_delay, it->get_max_delay() );
+  }
 
   return max_delay;
 }
@@ -266,7 +272,9 @@ nest::ConnectionManager::get_user_set_delay_extrema() const
 
   tVDelayChecker::const_iterator it;
   for ( it = delay_checkers_.begin(); it != delay_checkers_.end(); ++it )
+  {
     user_set_delay_extrema |= it->get_user_set_delay_extrema();
+  }
 
   return user_set_delay_extrema;
 }
@@ -302,13 +310,17 @@ nest::ConnectionManager::connect( GIDCollectionPTR sources,
   syn_spec->clear_access_flags();
 
   if ( not conn_spec->known( names::rule ) )
+  {
     throw BadProperty( "Connectivity spec must contain connectivity rule." );
+  }
   const Name rule_name =
     static_cast< const std::string >( ( *conn_spec )[ names::rule ] );
 
   if ( not connruledict_->known( rule_name ) )
+  {
     throw BadProperty(
       String::compose( "Unknown connectivity rule: %1", rule_name ) );
+  }
   const long rule_id = ( *connruledict_ )[ rule_name ];
 
   ConnBuilder* cb = connbuilder_factories_.at( rule_id )->create(
@@ -355,7 +367,9 @@ nest::ConnectionManager::update_delay_extrema_()
   }
 
   if ( min_delay_ == Time::pos_inf().get_steps() )
+  {
     min_delay_ = Time::get_resolution().get_steps();
+  }
 }
 
 // gid node thread syn delay weight
@@ -368,7 +382,7 @@ nest::ConnectionManager::connect( index sgid,
   double w )
 {
   const thread tid = kernel().vp_manager.get_thread_id();
-  Node* source = kernel().node_manager.get_node( sgid, target_thread );
+  Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
 
   // target is a normal node or device with proxies
   if ( target->has_proxies() )
@@ -380,6 +394,13 @@ nest::ConnectionManager::connect( index sgid,
     // make sure source is on this MPI rank
     if ( source->is_proxy() )
     {
+      return;
+    }
+
+    if ( target->one_node_per_process() )
+    {
+      // connection to music proxy or similar device with one node per process.
+      connect_( *source, *target, sgid, target_thread, syn, d, w );
       return;
     }
 
@@ -400,9 +421,9 @@ nest::ConnectionManager::connect( index sgid,
         kernel().vp_manager.suggest_vp( target->get_gid() ) );
       if ( target_thread == tid )
       {
-        source = kernel().node_manager.get_node( sgid, target_thread );
+        source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
         target =
-          kernel().node_manager.get_node( target->get_gid(), target_thread );
+          kernel().node_manager.get_node_or_proxy( target->get_gid(), target_thread );
         connect_( *source, *target, sgid, target_thread, syn, d, w );
       }
     }
@@ -412,7 +433,8 @@ nest::ConnectionManager::connect( index sgid,
     // we do not allow to connect a device to a global receiver at the moment
     if ( not source->has_proxies() )
     {
-      return;
+      throw IllegalConnection( "The models " + target->get_name() + " and "
+        + source->get_name() + " cannot be connected." );
     }
     connect_( *source, *target, sgid, tid, syn, d, w );
   }
@@ -429,7 +451,7 @@ nest::ConnectionManager::connect( index sgid,
   double w )
 {
   const thread tid = kernel().vp_manager.get_thread_id();
-  Node* source = kernel().node_manager.get_node( sgid, target_thread );
+  Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
 
   // target is a normal node or device with proxies
   if ( target->has_proxies() )
@@ -441,6 +463,13 @@ nest::ConnectionManager::connect( index sgid,
     // make sure source is on this MPI rank
     if ( source->is_proxy() )
     {
+      return;
+    }
+
+    if ( target->one_node_per_process() )
+    {
+      // connection to music proxy or similar device with one node per process.
+      connect_( *source, *target, sgid, target_thread, syn, params, d, w );
       return;
     }
 
@@ -461,9 +490,9 @@ nest::ConnectionManager::connect( index sgid,
         kernel().vp_manager.suggest_vp( target->get_gid() ) );
       if ( target_thread == tid )
       {
-        source = kernel().node_manager.get_node( sgid, target_thread );
+        source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
         target =
-          kernel().node_manager.get_node( target->get_gid(), target_thread );
+          kernel().node_manager.get_node_or_proxy( target->get_gid(), target_thread );
         connect_( *source, *target, sgid, target_thread, syn, params, d, w );
       }
     }
@@ -473,7 +502,8 @@ nest::ConnectionManager::connect( index sgid,
     // we do not allow to connect a device to a global receiver at the moment
     if ( not source->has_proxies() )
     {
-      return;
+      throw IllegalConnection( "The models " + target->get_name() + " and "
+        + source->get_name() + " cannot be connected." );
     }
     connect_( *source, *target, sgid, tid, syn, params, d, w );
   }
@@ -494,9 +524,9 @@ nest::ConnectionManager::connect( index sgid,
     return false;
   }
 
-  Node* target = kernel().node_manager.get_node( tgid, tid );
+  Node* target = kernel().node_manager.get_node_or_proxy( tgid, tid );
   thread target_thread = target->get_thread();
-  Node* source = kernel().node_manager.get_node( sgid, target_thread );
+  Node* source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
 
   // target is a normal node or device with proxies
   if ( target->has_proxies() )
@@ -509,6 +539,13 @@ nest::ConnectionManager::connect( index sgid,
     if ( source->is_proxy() )
     {
       return false;
+    }
+
+    if ( target->one_node_per_process() )
+    {
+      // connection to music proxy or similar device with one node per process.
+      connect_( *source, *target, sgid, target_thread, syn, params );
+      return true;
     }
 
     // make sure connections are only created on the thread of the device
@@ -528,9 +565,9 @@ nest::ConnectionManager::connect( index sgid,
         kernel().vp_manager.suggest_vp( target->get_gid() ) );
       if ( target_thread == tid )
       {
-        source = kernel().node_manager.get_node( sgid, target_thread );
+        source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
         target =
-          kernel().node_manager.get_node( target->get_gid(), target_thread );
+          kernel().node_manager.get_node_or_proxy( target->get_gid(), target_thread );
         connect_( *source, *target, sgid, target_thread, syn, params );
       }
     }
@@ -540,7 +577,8 @@ nest::ConnectionManager::connect( index sgid,
     // we do not allow to connect a device to a global receiver at the moment
     if ( not source->has_proxies() )
     {
-      return false;
+      throw IllegalConnection( "The models " + target->get_name() + " and "
+        + source->get_name() + " cannot be connected." );
     }
     connect_( *source, *target, sgid, tid, syn, params );
   }
@@ -780,7 +818,7 @@ nest::ConnectionManager::data_connect_single( const index source_id,
       Node* target = 0;
       try
       {
-        target = kernel().node_manager.get_node( target_ids[ i ], tid );
+        target = kernel().node_manager.get_node_or_proxy( target_ids[ i ], tid );
       }
       catch ( UnknownNode& e )
       {
@@ -789,7 +827,9 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           "The connection will be ignored.",
           target_ids[ i ] );
         if ( not e.message().empty() )
+        {
           msg += "\nDetails: " + e.message();
+        }
         LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
@@ -820,7 +860,9 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           "The connection will be ignored.",
           target_ids[ i ] );
         if ( not e.message().empty() )
+        {
           msg += "\nDetails: " + e.message();
+        }
         LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
@@ -831,7 +873,9 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           "The connection will be ignored.",
           target_ids[ i ] );
         if ( not e.message().empty() )
+        {
           msg += "\nDetails: " + e.message();
+        }
         LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
@@ -844,7 +888,9 @@ nest::ConnectionManager::data_connect_single( const index source_id,
           source_id,
           target_ids[ i ] );
         if ( not e.message().empty() )
+        {
           msg += "\nDetails: " + e.message();
+        }
         LOG( M_WARNING, "DataConnect", msg.c_str() );
         continue;
       }
@@ -859,7 +905,7 @@ nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
   {
     DictionaryDatum cd = getValue< DictionaryDatum >( *ct );
     index target_gid = static_cast< size_t >( ( *cd )[ names::target ] );
-    Node* target_node = kernel().node_manager.get_node( target_gid );
+    Node* target_node = kernel().node_manager.get_node_or_proxy( target_gid );
     size_t thr = target_node->get_thread();
 
     size_t syn_id = 0;
@@ -872,11 +918,15 @@ nest::ConnectionManager::data_connect_connectome( const ArrayDatum& connectome )
       synmodel =
         kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
       if ( not synmodel.empty() )
+      {
         syn_id = static_cast< size_t >( synmodel );
+      }
       else
+      {
         throw UnknownModelName( synmodel_name );
+      }
     }
-    Node* source_node = kernel().node_manager.get_node( source_gid );
+    Node* source_node = kernel().node_manager.get_node_or_proxy( source_gid );
     connect_( *source_node, *target_node, source_gid, thr, syn_id, cd );
   }
   return true;
@@ -899,7 +949,9 @@ nest::ConnectionManager::validate_source_entry_( const thread tid,
   // +1 because GIDs run from 1, dummy entry for unused GID-value 0.
   const size_t required_sparsetable_size = kernel().node_manager.size() + 1;
   if ( connections_[ tid ].size() < required_sparsetable_size )
+  {
     connections_[ tid ].resize( required_sparsetable_size );
+  }
 
   // return entry or zero pointer
   if ( connections_[ tid ].test( s_gid ) )
@@ -924,11 +976,13 @@ nest::ConnectionManager::trigger_update_weight( const long vt_id,
           connections_[ t ].nonempty_begin();
         it != connections_[ t ].nonempty_end();
         ++it )
+  {
     validate_pointer( *it )->trigger_update_weight( vt_id,
       t,
       dopa_spikes,
       t_trig,
       kernel().model_manager.get_synapse_prototypes( t ) );
+  }
 }
 
 void
@@ -974,11 +1028,15 @@ nest::ConnectionManager::send_secondary( thread t, SecondaryEvent& e )
         if ( p->homogeneous_model() )
         {
           if ( e.supports_syn_id( p->get_syn_id() ) )
+          {
             p->send( e, t, kernel().model_manager.get_synapse_prototypes( t ) );
+          }
         }
         else
+        {
           p->send_secondary(
             e, t, kernel().model_manager.get_synapse_prototypes( t ) );
+        }
       }
     }
   }
@@ -990,8 +1048,12 @@ nest::ConnectionManager::get_num_connections() const
   size_t num_connections = 0;
   tVDelayChecker::const_iterator i;
   for ( index t = 0; t < vv_num_connections_.size(); ++t )
+  {
     for ( index s = 0; s < vv_num_connections_[ t ].size(); ++s )
+    {
       num_connections += vv_num_connections_[ t ][ s ];
+    }
+  }
 
   return num_connections;
 }
@@ -1062,9 +1124,13 @@ nest::ConnectionManager::get_connections( DictionaryDatum params ) const
     const Token synmodel =
       kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
     if ( not synmodel.empty() )
+    {
       syn_id = static_cast< size_t >( synmodel );
+    }
     else
+    {
       throw UnknownModelName( synmodel_name.toString() );
+    }
     get_connections( connectome, source_a, target_a, syn_id, synapse_label );
   }
   else
@@ -1133,9 +1199,11 @@ nest::ConnectionManager::get_connections(
             ++source_id )
       {
         if ( connections_[ t ].get( source_id ) != 0 )
+        {
           validate_pointer( connections_[ t ].get( source_id ) )
             ->get_connections(
               source_id, t, syn_id, synapse_label, conns_in_thread );
+        }
       }
       if ( conns_in_thread.size() > 0 )
       {

@@ -36,9 +36,13 @@ WrappedThreadException::WrappedThreadException( const std::exception& exc )
 {
   SLIException const* se = dynamic_cast< SLIException const* >( &exc );
   if ( se )
+  {
     message_ = se->message();
+  }
   else
+  {
     message_ = std::string( "C++ exception: " ) + exc.what();
+  }
 }
 
 std::string
@@ -51,12 +55,18 @@ std::string
 TypeMismatch::message() const
 {
   if ( not provided_.empty() && not expected_.empty() )
+  {
     return "Expected datatype: " + expected_ + "\nProvided datatype: "
       + provided_;
+  }
   else if ( not expected_.empty() )
+  {
     return "Expected datatype: " + expected_;
+  }
   else
+  {
     return "The expected datatype is unknown in the current context.";
+  }
 }
 
 std::string
@@ -87,17 +97,27 @@ ArgumentType::message() const
   {
     out << " the ";
     if ( where == 1 )
+    {
       out << "first";
+    }
     else if ( where == 2 )
+    {
       out << "second";
+    }
     else if ( where == 3 )
+    {
       out << "third";
+    }
     else
+    {
       out << where << "th";
+    }
     out << " parameter";
   }
   else
+  {
     out << " one or more parameters";
+  }
   out << " did not match the argument(s) of this function.";
 
   return out.str();
@@ -131,14 +151,18 @@ StackUnderflow::message() const
   {
     out << "Command needs (at least) " << needed << " argument(s)";
     if ( given )
+    {
       out << ", but the stack has only " << given;
+    }
     out << ".";
   }
   else
   {
     out << "Command needs more arguments";
     if ( given )
+    {
       out << "than " << given;
+    }
     out << ".";
   }
 

@@ -432,7 +432,9 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
                       .get_steps();
           }
           else
+          {
             S_.r_ = V_.DeadTimeCounts_;
+          }
 
 
           for ( unsigned int i = 0; i < S_.q_elems_.size(); i++ )
@@ -459,7 +461,7 @@ nest::pp_psc_delta::update( Time const& origin, const long from, const long to )
             S_.y3_ = 0.0;
           }
         } // S_.y3_ = P_.V_reset_;
-      }   // if (rate > 0.0)
+      } // if (rate > 0.0)
     }
     else // Neuron is within dead time
     {

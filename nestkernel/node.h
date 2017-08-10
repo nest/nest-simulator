@@ -128,24 +128,6 @@ public:
   virtual bool has_proxies() const;
 
   /**
-   * Returns true for potential global receivers (e.g. spike_detector) and false
-   * otherwise
-   */
-  virtual bool potential_global_receiver() const;
-
-  /**
-   * Sets has_proxies_ member variable (to switch to global spike detection
-   * mode)
-   */
-  virtual void set_has_proxies( const bool );
-
-  /**
-   * Sets local_receiver_ member variable (to switch to global spike detection
-   * mode)
-   */
-  virtual void set_local_receiver( const bool );
-
-  /**
    * Returns true if the node only receives events from nodes/devices
    * on the same thread.
    */
@@ -270,11 +252,21 @@ public:
   virtual void calibrate() = 0;
 
   /**
+   * Cleanup node after Run. Override this function if a node needs to
+   * "wrap up" things after a call to Run, i.e., before
+   * SimulationManager::run() returns. Typical use-cases are devices
+   * that need to flush buffers.
+   */
+  virtual void
+  post_run_cleanup()
+  {
+  }
+
+  /**
    * Finalize node.
    * Override this function if a node needs to "wrap up" things after a
-   * simulation, i.e., before Network::get_network().resume() returns. Typical
-   * use-cases are devices that need to flush buffers or disconnect from
-   * external files or pipes.
+   * full simulation, i.e., a cycle of Prepare, Run, Cleanup. Typical
+   * use-cases are devices that need to close files.
    */
   virtual void
   finalize()
@@ -405,6 +397,12 @@ public:
   virtual port handles_test_event( DSSpikeEvent&, rport receptor_type );
   virtual port handles_test_event( DSCurrentEvent&, rport receptor_type );
   virtual port handles_test_event( GapJunctionEvent&, rport receptor_type );
+  virtual port handles_test_event( InstantaneousRateConnectionEvent&,
+    rport receptor_type );
+  virtual port handles_test_event( DiffusionConnectionEvent&,
+    rport receptor_type );
+  virtual port handles_test_event( DelayedRateConnectionEvent&,
+    rport receptor_type );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -414,6 +412,33 @@ public:
    * @throws IllegalConnection
    */
   virtual void sends_secondary_event( GapJunctionEvent& ge );
+
+  /**
+   * Required to check, if source neuron may send a SecondaryEvent.
+   * This base class implementation throws IllegalConnection
+   * and needs to be overwritten in the derived class.
+   * @ingroup event_interface
+   * @throws IllegalConnection
+   */
+  virtual void sends_secondary_event( InstantaneousRateConnectionEvent& re );
+
+  /**
+   * Required to check, if source neuron may send a SecondaryEvent.
+   * This base class implementation throws IllegalConnection
+   * and needs to be overwritten in the derived class.
+   * @ingroup event_interface
+   * @throws IllegalConnection
+   */
+  virtual void sends_secondary_event( DiffusionConnectionEvent& de );
+
+  /**
+   * Required to check, if source neuron may send a SecondaryEvent.
+   * This base class implementation throws IllegalConnection
+   * and needs to be overwritten in the derived class.
+   * @ingroup event_interface
+   * @throws IllegalConnection
+   */
+  virtual void sends_secondary_event( DelayedRateConnectionEvent& re );
 
   /**
    * Register a STDP connection
@@ -504,6 +529,30 @@ public:
    * @throws UnexpectedEvent
    */
   virtual void handle( GapJunctionEvent& e );
+
+  /**
+   * Handler for rate neuron events.
+   * @see handle(thread, InstantaneousRateConnectionEvent&)
+   * @ingroup event_interface
+   * @throws UnexpectedEvent
+   */
+  virtual void handle( InstantaneousRateConnectionEvent& e );
+
+  /**
+   * Handler for rate neuron events.
+   * @see handle(thread, InstantaneousRateConnectionEvent&)
+   * @ingroup event_interface
+   * @throws UnexpectedEvent
+   */
+  virtual void handle( DiffusionConnectionEvent& e );
+
+  /**
+   * Handler for delay rate neuron events.
+   * @see handle(thread, DelayedRateConnectionEvent&)
+   * @ingroup event_interface
+   * @throws UnexpectedEvent
+   */
+  virtual void handle( DelayedRateConnectionEvent& e );
 
   /**
    * @defgroup SP_functions Structural Plasticity in NEST.
@@ -731,35 +780,6 @@ public:
     buffers_initialized_ = initialized;
   }
 
-  /**
-   * Return the number of thread siblings in SiblingContainer.
-   *
-   * This method is meaningful only for SiblingContainer, for which it
-   * returns the number of siblings in the container.
-   * For all other models (including Subnet), it returns 0, which is not
-   * wrong. By defining the method in this way, we avoid many dynamic casts.
-   */
-  virtual size_t
-  num_thread_siblings() const
-  {
-    return 0;
-  }
-
-  /**
-   * Return the specified member of a SiblingContainer.
-   *
-   * This method is meaningful only for SiblingContainer, for which it
-   * returns the pointer to the indexed node in the container.
-   * For all other models (including Subnet), it returns a null pointer
-   * and throws and assertion.By defining the method in this way, we avoid
-   * many dynamic casts.
-   */
-  virtual Node* get_thread_sibling( index ) const
-  {
-    assert( false );
-    return 0;
-  }
-
 private:
   void set_gid_( index ); //!< Set global node id
 
@@ -861,12 +881,6 @@ inline bool
 Node::has_proxies() const
 {
   return true;
-}
-
-inline bool
-Node::potential_global_receiver() const
-{
-  return false;
 }
 
 inline bool

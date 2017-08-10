@@ -32,7 +32,6 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
-#include "sibling_container.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -45,16 +44,12 @@ nest::spike_detector::spike_detector()
   : Node()
   // record time and gid
   , device_( *this, RecordingDevice::SPIKE_DETECTOR, "gdf", true, true )
-  , has_proxies_( false )
-  , local_receiver_( true )
 {
 }
 
 nest::spike_detector::spike_detector( const spike_detector& n )
   : Node( n )
   , device_( *this, n.device_ )
-  , has_proxies_( false )
-  , local_receiver_( true )
 {
 }
 
@@ -140,14 +135,15 @@ nest::spike_detector::get_status( DictionaryDatum& d ) const
 
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
-  if ( local_receiver_ && get_thread() == 0 )
+  if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings =
+    const std::vector< Node* > siblings =
       kernel().node_manager.get_thread_siblings( get_gid() );
-    std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end();
-          ++sibling )
-      ( *sibling )->get_status( d );
+    std::vector< Node* >::const_iterator s;
+    for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
+    {
+      ( *s )->get_status( d );
+    }
   }
 }
 
@@ -170,11 +166,15 @@ nest::spike_detector::handle( SpikeEvent& e )
     if ( kernel()
            .modelrange_manager.get_model_of_gid( e.get_sender_gid() )
            ->has_proxies() )
+    {
       // events from central queue
       dest_buffer = kernel().event_delivery_manager.read_toggle();
+    }
     else
+    {
       // locally delivered events
       dest_buffer = kernel().event_delivery_manager.write_toggle();
+    }
 
     for ( int i = 0; i < e.get_multiplicity(); ++i )
     {

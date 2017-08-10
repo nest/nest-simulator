@@ -375,9 +375,13 @@ SpecialFunctionsModule::GaussDiskConvFunction::execute(
     }
 
     if ( C <= 1.0 )
+    {
       result = C;
+    }
     else
+    {
       result = 1.0;
+    }
   }
 
   // return result value through argument object still on stack
@@ -395,11 +399,14 @@ SpecialFunctionsModule::GaussDiskConvFunction::f_( double r, void* params )
   gsl_sf_result X;
 
   status = gsl_sf_bessel_I0_scaled_e( 2.0 * r * r0, &X );
-
   if ( status )
+  {
     return GSL_NAN;
+  }
   else
+  {
     return 2.0 * r * exp( -( r - r0 ) * ( r - r0 ) ) * X.val;
+  }
 }
 
 // ---------------------------------------------------------------

@@ -300,7 +300,7 @@ NestModule::GetStatus_CFunction::execute( SLIInterpreter* i ) const
   ConnectionDatum conn = getValue< ConnectionDatum >( i->OStack.pick( 0 ) );
 
   long gid = conn.get_source_gid();
-  kernel().node_manager.get_node( gid ); // Just to check if the node exists
+  kernel().node_manager.get_node_or_proxy( gid ); // Just to check if the node exists
 
   DictionaryDatum result_dict =
     kernel().connection_manager.get_synapse_status( gid,
@@ -425,6 +425,83 @@ NestModule::SimulateFunction::execute( SLIInterpreter* i ) const
 
   // successful end of simulate
   i->OStack.pop();
+  i->EStack.pop();
+}
+
+/* BeginDocumentation
+   Name: Run - simulate n milliseconds
+
+   Synopsis:
+   n(int) Run -> -
+
+   Description: Simulate the network for n milliseconds.
+   Call prepare before, and cleanup after.
+   t m mul Simulate = Prepare m { t Run } repeat Cleanup
+
+   Note: Run must only be used after Prepare is called, and
+   before Cleanup to finalize state (close files, etc).
+   Any changes made between Prepare and Cleanup may cause
+   undefined behavior and incorrect results.
+
+   SeeAlso: Simulate, resume, unit_conversion, Prepare, Cleanup
+*/
+void
+NestModule::RunFunction::execute( SLIInterpreter* i ) const
+{
+  i->assert_stack_load( 1 );
+
+  const double time = i->OStack.top();
+
+  run( time );
+
+  i->OStack.pop();
+  i->EStack.pop();
+}
+
+
+/* BeginDocumentation
+   Name: Prepare - prepare the network for a simulation
+
+   Synopsis:
+   Prepare -> -
+
+   Description: sets up network calibration before run is called
+   any number of times
+
+   Note: Run must only be used after Prepare is called, and
+   before Cleanup to finalize state (close files, etc).
+   Any changes made between Prepare and Cleanup may cause
+   undefined behavior and incorrect results.
+
+   SeeAlso: Run, Cleanup, Simulate
+*/
+void
+NestModule::PrepareFunction::execute( SLIInterpreter* i ) const
+{
+  prepare();
+  i->EStack.pop();
+}
+
+/* BeginDocumentation
+   Name: Cleanup - cleanup the network after a simulation
+
+   Synopsis:
+   Cleanup -> -
+
+   Description: tears down a network after run is called
+   any number of times
+
+   Note: Run must only be used after Prepare is called, and
+   before Cleanup to finalize state (close files, etc).
+   Any changes made between Prepare and Cleanup may cause
+   undefined behavior and incorrect results.
+
+   SeeAlso: Run, Prepare, Simulate
+*/
+void
+NestModule::CleanupFunction::execute( SLIInterpreter* i ) const
+{
+  cleanup();
   i->EStack.pop();
 }
 
@@ -598,8 +675,7 @@ NestModule::Disconnect_i_i_lFunction::execute( SLIInterpreter* i ) const
   // check whether the target is on this process
   if ( kernel().node_manager.is_local_gid( target ) )
   {
-
-    Node* const target_node = kernel().node_manager.get_node( target );
+    Node* const target_node = kernel().node_manager.get_node_or_proxy( target );
 
     const thread target_thread = target_node->get_thread();
 
@@ -695,6 +771,11 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
+  if ( kernel().vp_manager.get_num_threads() > 1 )
+  {
+    throw KernelException( "DataConnect cannot be used with multiple threads" );
+  }
+
   const index source = getValue< long >( i->OStack.pick( 2 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
@@ -753,6 +834,12 @@ void
 NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
+
+  if ( kernel().vp_manager.get_num_threads() > 1 )
+  {
+    throw KernelException( "DataConnect cannot be used with multiple threads" );
+  }
+
   const ArrayDatum connectome = getValue< ArrayDatum >( i->OStack.top() );
 
   kernel().connection_manager.data_connect_connectome( connectome );
@@ -910,34 +997,6 @@ NestModule::SetFakeNumProcesses_iFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop( 1 );
   i->EStack.pop();
 }
-
-/* BeginDocumentation
-   Name: SetNumRecProcesses - Set the number of MPI processes dedicated to
-   recording spikes.
-   Synopsis: n_procs SetNumRecProcesses -> -
-   Description:
-   Sets the number of recording MPI processes to n_procs. Usually,
-   spike detectors are distributed over all processes and record
-   from local neurons only. If a number of processes is dedicated to
-   spike detection, each spike detector is hosted on one of these
-   processes and records globally from all simulating processes.
-   Availability: NEST 2.4
-   Authors: Susanne Kunkel, Maximilian Schmidt
-   FirstVersion: April 2014
-   SeeAlso: NumProcesses
-*/
-void
-NestModule::SetNumRecProcesses_iFunction::execute( SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 1 );
-  long n_rec_procs = getValue< long >( i->OStack.pick( 0 ) );
-
-  set_num_rec_processes( n_rec_procs );
-
-  i->OStack.pop( 1 );
-  i->EStack.pop();
-}
-
 
 /* BeginDocumentation
    Name: SyncProcesses - Synchronize all MPI processes.
@@ -1682,6 +1741,9 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "cva_C", &cva_cfunction );
 
   i->createcommand( "Simulate_d", &simulatefunction );
+  i->createcommand( "Run_d", &runfunction );
+  i->createcommand( "Prepare", &preparefunction );
+  i->createcommand( "Cleanup", &cleanupfunction );
 
   i->createcommand( "CopyModel_l_l_D", &copymodel_l_l_Dfunction );
   i->createcommand( "SetDefaults_l_D", &setdefaults_l_Dfunction );
@@ -1706,7 +1768,6 @@ NestModule::init( SLIInterpreter* i )
   i->createcommand( "Rank", &rankfunction );
   i->createcommand( "NumProcesses", &numprocessesfunction );
   i->createcommand( "SetFakeNumProcesses", &setfakenumprocesses_ifunction );
-  i->createcommand( "SetNumRecProcesses", &setnumrecprocesses_ifunction );
   i->createcommand( "SyncProcesses", &syncprocessesfunction );
   i->createcommand(
     "TimeCommunication_i_i_b", &timecommunication_i_i_bfunction );

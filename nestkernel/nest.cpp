@@ -92,15 +92,19 @@ print_nodes_to_stream( std::ostream& ostr )
 librandom::RngPtr
 get_vp_rng_of_gid( index target )
 {
-  Node* target_node = kernel().node_manager.get_node( target );
+  Node* target_node = kernel().node_manager.get_node_or_proxy( target );
 
   if ( not kernel().node_manager.is_local_node( target_node ) )
+  {
     throw LocalNodeExpected( target );
+  }
 
   // Only nodes with proxies have a well-defined VP and thus thread.
   // Asking for the VP of, e.g., a subnet or spike_detector is meaningless.
   if ( not target_node->has_proxies() )
+  {
     throw NodeWithProxiesExpected( target );
+  }
 
   return kernel().rng_manager.get_rng( target_node->get_thread() );
 }
@@ -161,7 +165,7 @@ set_connection_status( const ConnectionDatum& conn,
   long port = getValue< long >( conn_dict, nest::names::port );
   long gid = getValue< long >( conn_dict, nest::names::source );
   thread tid = getValue< long >( conn_dict, nest::names::target_thread );
-  kernel().node_manager.get_node( gid ); // Just to check if the node exists
+  kernel().node_manager.get_node_or_proxy( gid, tid ); // Just to check if the node exists
 
   dict->clear_access_flags();
 
@@ -179,7 +183,7 @@ DictionaryDatum
 get_connection_status( const ConnectionDatum& conn )
 {
   long gid = conn.get_source_gid();
-  kernel().node_manager.get_node( gid ); // Just to check if the node exists
+  kernel().node_manager.get_node_or_proxy( gid ); // Just to check if the node exists
 
   return kernel().connection_manager.get_synapse_status( gid,
     conn.get_synapse_model_id(),
@@ -198,7 +202,9 @@ create( const Name& model_name, const index n_nodes )
   const Token model =
     kernel().model_manager.get_modeldict()->lookup( model_name );
   if ( model.empty() )
+  {
     throw UnknownModelName( model_name );
+  }
 
   // create
   const index model_id = static_cast< index >( model );
@@ -253,6 +259,41 @@ simulate( const double& time )
 }
 
 void
+run( const double& time )
+{
+  const Time t_sim = Time::ms( time );
+
+  if ( time < 0 )
+  {
+    throw BadParameter( "The simulation time cannot be negative." );
+  }
+  if ( not t_sim.is_finite() )
+  {
+    throw BadParameter( "The simulation time must be finite." );
+  }
+  if ( not t_sim.is_grid_time() )
+  {
+    throw BadParameter(
+      "The simulation time must be a multiple "
+      "of the simulation resolution." );
+  }
+
+  kernel().simulation_manager.run( t_sim );
+}
+
+void
+prepare()
+{
+  kernel().simulation_manager.prepare();
+}
+
+void
+cleanup()
+{
+  kernel().simulation_manager.cleanup();
+}
+
+void
 copy_model( const Name& oldmodname,
   const Name& newmodname,
   const DictionaryDatum& dict )
@@ -293,12 +334,6 @@ get_model_defaults( const Name& modelname )
   }
 
   return dict;
-}
-
-void
-set_num_rec_processes( const index n_rec_procs )
-{
-  kernel().mpi_manager.set_num_rec_processes( n_rec_procs, false );
 }
 
 void

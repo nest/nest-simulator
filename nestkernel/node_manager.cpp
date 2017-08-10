@@ -37,7 +37,6 @@
 #include "model.h"
 #include "model_manager_impl.h"
 #include "node.h"
-#include "sibling_container.h"
 #include "vp_manager.h"
 #include "vp_manager_impl.h"
 
@@ -48,13 +47,12 @@ namespace nest
 {
 
 NodeManager::NodeManager()
-  : local_nodes_()
-  , siblingcontainer_model_( 0 )
-  , n_gsd_( 0 )
-  , nodes_vec_()
+  : local_nodes_( 1 )
   , wfr_nodes_vec_()
   , wfr_is_used_( false )
-  , nodes_vec_network_size_( 0 ) // zero to force update
+  , wfr_network_size_( 0 ) // zero to force update
+  , num_active_nodes_( 0 )
+  , exceptions_raised_()  // cannot call kernel(), not complete yet
 {
 }
 
@@ -67,12 +65,9 @@ NodeManager::~NodeManager()
 void
 NodeManager::initialize()
 {
-  siblingcontainer_model_ = kernel().model_manager.get_model( 0 );
-  assert( siblingcontainer_model_ != 0 );
-  assert( siblingcontainer_model_->get_name() == "siblingcontainer" );
-
-  // explicitly force construction of nodes_vec_ to ensure consistent state
-  nodes_vec_network_size_ = 0;
+  // explicitly force construction of wfr_nodes_vec_ to ensure consistent state
+  wfr_network_size_ = 0;
+  local_nodes_.resize( kernel().vp_manager.get_num_threads() );
   ensure_valid_thread_local_ids();
 }
 
@@ -85,38 +80,21 @@ NodeManager::finalize()
 void
 NodeManager::reinit_nodes()
 {
-  /* Reinitialize state on all nodes, force init_buffers() on next
-      call to simulate().
-      Finding all nodes is non-trivial:
-      - We iterate over local nodes only.
-      - Nodes without proxies are not registered in nodes_. Instead, a
-        SiblingContainer is created as container, and this container is
-        stored in nodes_. The container then contains the actual nodes,
-        which need to be reset.
-      Thus, we iterate nodes_; additionally, we iterate the content of
-      a Node if it's model id is -1, which indicates that it is a
-      container.  Subnets are not iterated, since their nodes are
-      registered in nodes_ directly.
-    */
-  for ( size_t n = 0; n < local_nodes_.size(); ++n )
+#ifdef _OPENMP
+#pragma omp parallel
   {
-    Node* node = local_nodes_.get_node_by_index( n );
-    assert( node != 0 );
-    if ( node->num_thread_siblings() == 0 ) // not a SiblingContainer
+    index t = kernel().vp_manager.get_thread_id();
+#else // clang-format off
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
+#endif // clang-format on
+    SparseNodeArray::const_iterator n;
+    for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
     {
-      node->init_state();
-      node->set_buffers_initialized( false );
-    }
-    else if ( node->get_model_id() == -1 )
-    {
-      SiblingContainer* const c = dynamic_cast< SiblingContainer* >( node );
-      assert( c );
-      for ( std::vector< Node* >::iterator it = c->begin(); it != c->end();
-            ++it )
-      {
-        ( *it )->init_state();
-        ( *it )->set_buffers_initialized( false );
-      }
+      // Reinitialize state on all nodes, forcing init_buffers() on
+      // next call to simulate().
+      n->get_node()->init_state();
+      n->get_node()->set_buffers_initialized( false );
     }
   }
 }
@@ -124,7 +102,8 @@ NodeManager::reinit_nodes()
 DictionaryDatum
 NodeManager::get_status( index idx )
 {
-  Node* target = get_node( idx );
+  Node* target = get_mpi_local_node_or_device_head( idx );
+
   assert( target != 0 );
 
   DictionaryDatum d = target->get_status_base();
@@ -133,240 +112,61 @@ NodeManager::get_status( index idx )
 }
 
 GIDCollectionPTR
-NodeManager::add_node( index mod, long n )
+NodeManager::add_node( index model_id, long n )
 {
-  if ( mod >= kernel().model_manager.get_num_node_models() )
-    throw UnknownModelID( mod );
+  if ( model_id >= kernel().model_manager.get_num_node_models() )
+  {
+    throw UnknownModelID( model_id );
+  }
 
   if ( n < 1 )
+  {
     throw BadProperty();
+  }
 
-  const thread n_threads = kernel().vp_manager.get_num_threads();
-  assert( n_threads > 0 );
-
-  const index min_gid = local_nodes_.get_max_gid() + 1;
-  const index max_gid = min_gid + n;
-
-  Model* model = kernel().model_manager.get_model( mod );
+  Model* model = kernel().model_manager.get_model( model_id );
   assert( model != 0 );
-
   model->deprecation_warning( "Create" );
 
-  if ( max_gid > local_nodes_.max_size() || max_gid < min_gid )
+  const index min_gid = local_nodes_.at( 0 ).get_max_gid() + 1;
+  const index max_gid = min_gid + n - 1;
+  if ( max_gid >= local_nodes_.at( 0 ).max_size() or max_gid < min_gid )
   {
-    LOG( M_ERROR,
-      "NodeManager::add_node",
-      "Requested number of nodes will overflow the memory." );
-    LOG( M_ERROR, "NodeManager::add:node", "No nodes were created." );
+    LOG( M_ERROR,"NodeManager::add_node",
+	 "Requested number of nodes will overflow the memory. "
+	 "No nodes were created");
     throw KernelException( "OutOfMemory" );
   }
-  kernel().modelrange_manager.add_range( mod, min_gid, max_gid - 1 );
 
-  if ( model->potential_global_receiver()
-    and kernel().mpi_manager.get_num_rec_processes() > 0 )
+  kernel().modelrange_manager.add_range( model_id, min_gid, max_gid );
+
+  // clear any exceptions from previous call
+  std::vector< lockPTR< WrappedThreadException > >(  kernel().vp_manager.get_num_threads() ).swap( exceptions_raised_ );
+
+  if ( model->has_proxies() )
   {
-    // In this branch we create nodes for global receivers
-    const int n_per_process = n / kernel().mpi_manager.get_num_rec_processes();
-    const int n_per_thread = n_per_process / n_threads + 1;
-
-    // We only need to reserve memory on the ranks on which we
-    // actually create nodes. In this if-branch ---> Only on recording
-    // processes
-    if ( kernel().mpi_manager.get_rank()
-      >= kernel().mpi_manager.get_num_sim_processes() )
-    {
-      local_nodes_.reserve( std::ceil( static_cast< double >( max_gid )
-        / kernel().mpi_manager.get_num_sim_processes() ) );
-      for ( thread t = 0; t < n_threads; ++t )
-      {
-        // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
-        model->reserve_additional( t, n_per_thread );
-      }
-    }
-
-    for ( size_t gid = min_gid; gid < max_gid; ++gid )
-    {
-      const thread vp = kernel().vp_manager.suggest_rec_vp( get_n_gsd() );
-      const thread t = kernel().vp_manager.vp_to_thread( vp );
-
-      if ( kernel().vp_manager.is_local_vp( vp ) )
-      {
-        Node* newnode = model->allocate( t );
-        newnode->set_gid_( gid );
-        newnode->set_model_id( mod );
-        newnode->set_thread( t );
-        newnode->set_vp( vp );
-        newnode->set_has_proxies( true );
-        newnode->set_local_receiver( false );
-
-        local_nodes_.add_local_node( *newnode ); // put into local nodes list
-      }
-      else
-      {
-        local_nodes_.add_remote_node( gid ); // ensures max_gid is correct
-      }
-      increment_n_gsd();
-    }
-  }
-
-  else if ( model->has_proxies() )
-  {
-    // In this branch we create nodes for all GIDs which are on a local thread
-    const int n_per_process = n / kernel().mpi_manager.get_num_sim_processes();
-    const int n_per_thread = n_per_process / n_threads + 1;
-
-    // We only need to reserve memory on the ranks on which we
-    // actually create nodes. In this if-branch ---> Only on
-    // simulation processes
-    if ( kernel().mpi_manager.get_rank()
-      < kernel().mpi_manager.get_num_sim_processes() )
-    {
-      // TODO: This will work reasonably for round-robin. The extra 50 entries
-      //       are for devices.
-      local_nodes_.reserve(
-        std::ceil( static_cast< double >( max_gid )
-          / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
-      for ( thread t = 0; t < n_threads; ++t )
-      {
-        // Model::reserve() reserves memory for n ADDITIONAL nodes on thread t
-        // reserves at least one entry on each thread, nobody knows why
-        model->reserve_additional( t, n_per_thread );
-      }
-    }
-
-    size_t gid;
-    if ( kernel().vp_manager.is_local_vp(
-           kernel().vp_manager.suggest_vp( min_gid ) ) )
-    {
-      gid = min_gid;
-    }
-    else
-    {
-      gid = next_local_gid_( min_gid );
-    }
-
-    // min_gid is first valid gid i should create, hence ask for the first local
-    // gid after min_gid-1
-    while ( gid < max_gid )
-    {
-      const thread vp = kernel().vp_manager.suggest_vp( gid );
-      const thread t = kernel().vp_manager.vp_to_thread( vp );
-
-      if ( kernel().vp_manager.is_local_vp( vp ) )
-      {
-        Node* newnode = model->allocate( t );
-        newnode->set_gid_( gid );
-        newnode->set_model_id( mod );
-        newnode->set_thread( t );
-        newnode->set_vp( vp );
-
-        local_nodes_.add_local_node( *newnode ); // put into local nodes list
-
-        gid = next_local_gid_( gid );
-      }
-      else
-      {
-        ++gid;
-      }
-    }
-
-    // if last gid is not on this process, we need to add it as a remote node
-    if ( not kernel().vp_manager.is_local_vp(
-           kernel().vp_manager.suggest_vp( max_gid - 1 ) ) )
-    {
-      local_nodes_.add_remote_node( max_gid - 1 ); // ensures max_gid is correct
-    }
+    add_neurons_( *model, min_gid, max_gid );
   }
   else if ( not model->one_node_per_process() )
   {
-    // We allocate space for n containers which will hold the threads
-    // sorted. We use SiblingContainers to store the instances for
-    // each thread to exploit the very efficient memory allocation for
-    // nodes.
-    //
-    // These containers are registered in the global nodes_ array to
-    // provide access to the instances both for manipulation by SLI
-    // functions and so that NodeManager::calibrate() can discover the
-    // instances and register them for updating.
-    //
-    // The instances are also registered with the instance of the
-    // current subnet for the thread to which the created instance
-    // belongs. This is mainly important so that the subnet structure
-    // is preserved on all VPs.  Node enumeration is done on by the
-    // registration with the per-thread instances.
-    //
-    // The wrapper container can be addressed under the GID assigned
-    // to no-proxy node created. If this no-proxy node is NOT a
-    // container (e.g. a device), then each instance can be retrieved
-    // by giving the respective thread-id to get_node(). Instances of
-    // SiblingContainers cannot be addressed individually.
-    //
-    // The allocation of the wrapper containers is spread over threads
-    // to balance memory load.
-    size_t container_per_thread = n / n_threads + 1;
-
-    // since we create the n nodes on each thread, we reserve the full load.
-    for ( thread t = 0; t < n_threads; ++t )
-    {
-      model->reserve_additional( t, n );
-      siblingcontainer_model_->reserve_additional( t, container_per_thread );
-    }
-
-    // The following loop creates n nodes. For each node, a wrapper is created
-    // and filled with one instance per thread, in total n * n_thread nodes in
-    // n wrappers.
-    local_nodes_.reserve(
-      std::ceil( static_cast< double >( max_gid )
-        / kernel().mpi_manager.get_num_sim_processes() ) + 50 );
-    for ( index gid = min_gid; gid < max_gid; ++gid )
-    {
-      thread thread_id = kernel().vp_manager.vp_to_thread(
-        kernel().vp_manager.suggest_vp( gid ) );
-
-      // Create wrapper and register with nodes_ array.
-      SiblingContainer* container = static_cast< SiblingContainer* >(
-        siblingcontainer_model_->allocate( thread_id ) );
-      container->set_model_id(
-        -1 ); // mark as pseudo-container wrapping replicas, see reset_network()
-      container->reserve( n_threads ); // space for one instance per thread
-      container->set_gid_( gid );
-      local_nodes_.add_local_node( *container );
-
-      // Generate one instance of desired model per thread
-      for ( thread t = 0; t < n_threads; ++t )
-      {
-        Node* newnode = model->allocate( t );
-        newnode->set_gid_( gid ); // all instances get the same global id.
-        newnode->set_model_id( mod );
-        newnode->set_thread( t );
-        newnode->set_vp( kernel().vp_manager.thread_to_vp( t ) );
-
-        // Register instance with wrapper
-        // container has one entry for each thread
-        container->push_back( newnode );
-      }
-    }
+    add_devices_( *model, min_gid, max_gid );
   }
   else
   {
-    // no proxies and one node per process
-    // this is used by MUSIC proxies
-    // Per r9700, this case is only relevant for music_*_proxy models,
-    // which have a single instance per MPI process.
-    for ( index gid = min_gid; gid < max_gid; ++gid )
-    {
-      Node* newnode = model->allocate( 0 );
-      newnode->set_gid_( gid );
-      newnode->set_model_id( mod );
-      newnode->set_thread( 0 );
-      newnode->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
+    add_music_nodes_( *model, min_gid, max_gid );
+  }
 
-      // Register instance
-      local_nodes_.add_local_node( *newnode );
+  // check if any exceptions have been raised
+  for ( size_t t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
+    if ( exceptions_raised_.at( t ).valid() )
+    {
+      throw WrappedThreadException( *( exceptions_raised_.at( t ) ) );
     }
   }
 
-  // set off-grid spike communication if necessary
+  // activate off-grid communication only after nodes have been created
+  // successfully
   if ( model->is_off_grid() )
   {
     kernel().event_delivery_manager.set_off_grid_communication( true );
@@ -379,7 +179,144 @@ NodeManager::add_node( index mod, long n )
   }
 
   return GIDCollectionPTR(
-    new GIDCollectionPrimitive( min_gid, max_gid - 1, mod ) );
+    new GIDCollectionPrimitive( min_gid, max_gid, model_id ) );
+}
+
+
+void
+NodeManager::add_neurons_( Model& model, index min_gid, index max_gid )
+{
+  // upper limit for number of neurons per thread; in practice, either
+  // max_new_per_thread-1 or max_new_per_thread nodes will be created
+  const size_t num_vps = kernel().vp_manager.get_num_virtual_processes();
+  const size_t max_new_per_thread = static_cast< size_t >(
+    std::ceil( static_cast< double >( max_gid - min_gid + 1 ) / num_vps ) );
+
+  #pragma omp parallel
+  {
+    const index t = kernel().vp_manager.get_thread_id();
+
+    try
+    {
+      // TODO480: We should move more of the reservation logic into the
+      // SparseNodeArray. We should tell SNA only max_gid-1 and whether the
+      // model
+      // needs local replicas or not. Then SNA can manage memory. This can
+      // reduce
+      // bloat due to round-up when using many Create calls for >1 thread
+      local_nodes_.at( t ).reserve_additional( max_new_per_thread );
+      model.reserve_additional( t, max_new_per_thread );
+
+      // TODO480: temporal manual implementation to sort out logic
+      // Need to find smallest gid with:
+      //   - gid local to this thread
+      //   - gid >= min_gid
+      const size_t vp = kernel().vp_manager.thread_to_vp( t );
+      const size_t min_gid_vp = kernel().vp_manager.suggest_vp( min_gid );
+
+      size_t gid = 0;
+      if ( min_gid_vp == vp )
+      {
+        gid = min_gid;
+      }
+      else
+      {
+        gid = ( min_gid / num_vps ) * num_vps + vp;
+        // bad hack, need to improve ...
+        if ( gid < min_gid )
+          gid += num_vps;
+      }
+
+      while ( gid <= max_gid )
+      {
+        Node* node = model.allocate( t );
+        node->set_gid_( gid );
+        node->set_model_id( model.get_model_id() );
+        node->set_thread( t );
+        node->set_vp( vp );
+
+        local_nodes_[ t ].add_local_node( *node );
+        gid += num_vps;
+      }
+      local_nodes_[ t ].update_max_gid( max_gid );
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( t ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+}
+
+void
+NodeManager::add_devices_( Model& model, index min_gid, index max_gid )
+{
+  const size_t n_per_thread = max_gid - min_gid + 1;
+
+  #pragma omp parallel
+  {
+    const index t = kernel().vp_manager.get_thread_id();
+    try
+    {
+      local_nodes_[ t ].reserve_additional( n_per_thread );
+      model.reserve_additional( t, n_per_thread );
+
+      for ( index gid = min_gid; gid <= max_gid; ++gid )
+      {
+        Node* node = model.allocate( t );
+        node->set_gid_( gid );
+        node->set_model_id( model.get_model_id() );
+        node->set_thread( t );
+        node->set_vp( kernel().vp_manager.thread_to_vp( t ) );
+
+        local_nodes_[ t ].add_local_node( *node );
+      }
+      local_nodes_[ t ].update_max_gid( max_gid );
+    }
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( t ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
+
+}
+
+void
+NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid )
+{
+  #pragma omp parallel
+  {
+	const size_t t = kernel().vp_manager.get_thread_id();
+
+	try
+	{
+	  if ( t == 0 )
+	  {
+      for ( index gid = min_gid; gid <= max_gid; ++gid )
+      {
+        Node* node = model.allocate( 0 );
+        node->set_gid_( gid );
+        node->set_model_id( model.get_model_id() );
+        node->set_thread( 0 );
+        node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
+        local_nodes_[ 0 ].add_local_node( *node );
+      }
+	  }
+	  local_nodes_.at( t ).update_max_gid( max_gid );
+	}
+    catch ( std::exception& err )
+    {
+      // We must create a new exception here, err's lifetime ends at
+      // the end of the catch block.
+      exceptions_raised_.at( t ) =
+        lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
+    }
+  }
 }
 
 void
@@ -388,7 +325,9 @@ NodeManager::restore_nodes( const ArrayDatum& node_list )
   Token* first = node_list.begin();
   const Token* end = node_list.end();
   if ( first == end )
+  {
     return;
+  }
 
   for ( Token* node_t = first; node_t != end; ++node_t )
   {
@@ -396,7 +335,7 @@ NodeManager::restore_nodes( const ArrayDatum& node_list )
     std::string model_name = ( *node_props )[ names::model ];
     index model_id = kernel().model_manager.get_model_id( model_name.c_str() );
     GIDCollectionPTR node = add_node( model_id );
-    Node* node_ptr = get_node( ( *node->begin() ).gid );
+    Node* node_ptr = get_node_or_proxy( ( *node->begin() ).gid );
     // we call directly set_status on the node
     // to bypass checking of unused dictionary items.
     node_ptr->set_status_base( node_props );
@@ -406,9 +345,11 @@ NodeManager::restore_nodes( const ArrayDatum& node_list )
 void
 NodeManager::init_state( index GID )
 {
-  Node* n = get_node( GID );
+  Node* n = get_node_or_proxy( GID );
   if ( n == 0 )
+  {
     throw UnknownNode( GID );
+  }
 
   n->init_state();
 }
@@ -419,57 +360,85 @@ NodeManager::is_local_node( Node* n ) const
   return kernel().vp_manager.is_local_vp( n->get_vp() );
 }
 
-inline index
-NodeManager::next_local_gid_( index curr_gid ) const
+// TODO480: I wonder if the need to loop over threads can be a performance
+// bottleneck. BUT: I think we only need to check whether the node is local
+// TO THE THREAD, and then we do not need to loop. Also, if we need to check
+// if a node is local to our MPI process, we can do this just by computation,
+// possibly followed by a test (assertion should suffice)  that the node is
+// really there.
+bool
+NodeManager::is_local_gid( index gid ) const
 {
-  index rank = kernel().mpi_manager.get_rank();
-  index sim_procs = kernel().mpi_manager.get_num_sim_processes();
-  if ( rank >= sim_procs )
+  bool is_local = false;
+  thread num_threads = kernel().vp_manager.get_num_threads();
+  for ( thread t = 0; t < num_threads; ++t )
   {
-    // i am a rec proc trying to add a non-gsd node => just iterate to next gid
-    return curr_gid + sim_procs;
+    is_local |= local_nodes_[ t ].get_node_by_gid( gid ) != 0;
   }
-  // responsible process for curr_gid
-  index proc_of_curr_gid = curr_gid % sim_procs;
-
-  if ( proc_of_curr_gid == rank )
-  {
-    // I am responsible for curr_gid, then add 'modulo'.
-    return curr_gid + sim_procs;
-  }
-  else
-  {
-    // else add difference
-    // make modulo positive and difference of my proc an curr_gid proc
-    return curr_gid + ( sim_procs + rank - proc_of_curr_gid ) % sim_procs;
-  }
+  return is_local;
 }
 
-Node* NodeManager::get_node( index n, thread thr ) // no_p
+Node* NodeManager::get_node_or_proxy( index gid, thread t )
 {
-  Node* node = local_nodes_.get_node_by_gid( n );
+  assert( 0 <= t and t < kernel().vp_manager.get_num_threads() );
+
+  Node* node = get_thread_local_node( gid, t );
   if ( node == 0 )
   {
-    return kernel().model_manager.get_proxy_node( thr, n );
+    return kernel().model_manager.get_proxy_node( t, gid );
   }
 
-  if ( node->num_thread_siblings() == 0 )
-    return node; // plain node
-
-  if ( thr < 0 || thr >= static_cast< thread >( node->num_thread_siblings() ) )
-    throw UnknownNode();
-
-  return node->get_thread_sibling( thr );
+  return node;
 }
 
-const SiblingContainer*
-NodeManager::get_thread_siblings( index n ) const
+Node* NodeManager::get_node_or_proxy( index gid )
 {
-  Node* node = local_nodes_.get_node_by_gid( n );
-  if ( node->num_thread_siblings() == 0 )
-    throw NoThreadSiblingsAvailable( n );
-  const SiblingContainer* siblings = dynamic_cast< SiblingContainer* >( node );
-  assert( siblings != 0 );
+  thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
+  Node* node = get_node_or_proxy( gid, t );
+
+  return node;
+}
+
+Node* NodeManager::get_mpi_local_node_or_device_head( index gid )
+{
+  thread t = kernel().vp_manager.vp_to_thread( kernel().vp_manager.suggest_vp( gid ) );
+
+  Node* node = get_thread_local_node( gid, t );
+
+  if ( node == 0 )
+  {
+    return kernel().model_manager.get_proxy_node( t, gid );
+  }
+  if ( not node->has_proxies() )
+  {
+    node = local_nodes_[ 0 ].get_node_by_gid( gid );
+  }
+
+  return node;
+}
+
+Node* NodeManager::get_thread_local_node( index gid, thread t )
+{
+  Node* node = local_nodes_[ t ].get_node_by_gid( gid );
+
+  return node;
+}
+
+std::vector< Node* >
+NodeManager::get_thread_siblings( index gid ) const
+{
+  thread num_threads =  kernel().vp_manager.get_num_threads();
+  std::vector< Node* > siblings( num_threads );
+  for ( size_t t = 0; t < num_threads; ++t )
+  {
+    Node* node = local_nodes_[ t ].get_node_by_gid( gid );
+    if ( node == 0 )
+    {
+      throw NoThreadSiblingsAvailable( gid );
+    }
+
+    siblings[ t ] = node;
+  }
 
   return siblings;
 }
@@ -481,90 +450,76 @@ NodeManager::ensure_valid_thread_local_ids()
   // the critical region if it is not necessary. Note that this
   // test also covers that case that nodes have been deleted
   // by reset.
-  if ( size() == nodes_vec_network_size_ )
+  if ( size() == wfr_network_size_ )
+  {
     return;
+  }
 
 #ifdef _OPENMP
-#pragma omp critical( update_nodes_vec )
+#pragma omp critical( update_wfr_nodes_vec )
   {
 // This code may be called from a thread-parallel context, when it is
 // invoked by TargetIdentifierIndex::set_target() during parallel
 // wiring. Nested OpenMP parallelism is problematic, therefore, we
 // enforce single threading here. This should be unproblematic wrt
-// performance, because the nodes_vec_ is rebuilt only once after
+// performance, because the wfr_nodes_vec_ is rebuilt only once after
 // changes in network size.
 #endif
 
     // Check again, if the network size changed, since a previous thread
-    // can have updated nodes_vec_ before.
-    if ( size() != nodes_vec_network_size_ )
+    // can have updated wfr_nodes_vec_ before.
+    if ( size() != wfr_network_size_ )
     {
 
-      /* We clear the existing nodes_vec_ and then rebuild it. */
-      nodes_vec_.clear();
-      nodes_vec_.resize( kernel().vp_manager.get_num_threads() );
+      /* We clear the existing wfr_nodes_vec_ and then rebuild it. */
       wfr_nodes_vec_.clear();
       wfr_nodes_vec_.resize( kernel().vp_manager.get_num_threads() );
 
       for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
       {
-        nodes_vec_[ t ].clear();
         wfr_nodes_vec_[ t ].clear();
 
-        // Loops below run from index 1, because index 0 is always the root
-        // network, which is never updated.
-        size_t num_thread_local_nodes = 0;
         size_t num_thread_local_wfr_nodes = 0;
-        for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
+        for ( size_t idx = 0; idx < local_nodes_[ t ].size(); ++idx )
         {
-          Node* node = local_nodes_.get_node_by_index( idx );
-          if ( static_cast< index >( node->get_thread() ) == t
-            or node->num_thread_siblings() > 0 )
+          Node* node = local_nodes_[ t ].get_node_by_index( idx );
+          if ( node != 0 and node->node_uses_wfr_ )
           {
-            num_thread_local_nodes++;
-            if ( node->node_uses_wfr() )
-              num_thread_local_wfr_nodes++;
+            ++num_thread_local_wfr_nodes;
           }
         }
-        nodes_vec_[ t ].reserve( num_thread_local_nodes );
         wfr_nodes_vec_[ t ].reserve( num_thread_local_wfr_nodes );
 
-        for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
+        for ( size_t idx = 0; idx < local_nodes_[ t ].size(); ++idx )
         {
-          Node* node = local_nodes_.get_node_by_index( idx );
+          Node* node = local_nodes_[ t ].get_node_by_index( idx );
 
-          // If a node has thread siblings, it is a sibling container, and we
-          // need to add the replica for the current thread. Otherwise, we have
-          // a normal node, which is added only on the thread it belongs to.
-          if ( node->num_thread_siblings() > 0 )
+          if ( node != 0 )
           {
-            node->get_thread_sibling( t )->set_thread_lid(
-              nodes_vec_[ t ].size() );
-            nodes_vec_[ t ].push_back( node->get_thread_sibling( t ) );
-          }
-          else if ( static_cast< index >( node->get_thread() ) == t )
-          {
-            // these nodes cannot be subnets
-            node->set_thread_lid( nodes_vec_[ t ].size() );
-            nodes_vec_[ t ].push_back( node );
-
-            if ( node->node_uses_wfr() )
+            node->set_thread_lid( idx );
+            if ( node->node_uses_wfr_ )
+            {
               wfr_nodes_vec_[ t ].push_back( node );
+            }
           }
         }
       } // end of for threads
 
-      nodes_vec_network_size_ = size();
+      wfr_network_size_ = size();
 
-      wfr_is_used_ = false;
       // wfr_is_used_ indicates, whether at least one
       // of the threads has a neuron that uses waveform relaxtion
       // all threads then need to perform a wfr_update
       // step, because gather_events() has to be done in a
       // openmp single section
+      wfr_is_used_ = false;
       for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+      {
         if ( wfr_nodes_vec_[ t ].size() > 0 )
+        {
           wfr_is_used_ = true;
+        }
+      }
     }
 #ifdef _OPENMP
   } // end of omp critical region
@@ -574,20 +529,27 @@ NodeManager::ensure_valid_thread_local_ids()
 void
 NodeManager::destruct_nodes_()
 {
-  // We call the destructor for each node excplicitly. This destroys
-  // the objects without releasing their memory. Since the Memory is
-  // owned by the Model objects, we must not call delete on the Node
-  // objects!
-  for ( size_t n = 0; n < local_nodes_.size(); ++n )
+#ifdef _OPENMP    
+#pragma omp parallel
   {
-    Node* node = local_nodes_.get_node_by_index( n );
-    assert( node != 0 );
-    for ( size_t t = 0; t < node->num_thread_siblings(); ++t )
-      node->get_thread_sibling( t )->~Node();
-    node->~Node();
-  }
+    index t = kernel().vp_manager.get_thread_id();
+#else // clang-format off
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
+#endif // clang-format on
 
-  local_nodes_.clear();
+    SparseNodeArray::const_iterator n;
+    for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
+    {
+      // We call the destructor for each node excplicitly. This
+      // destroys the objects without releasing their memory. Since
+      // the Memory is owned by the Model objects, we must not call
+      // delete on the Node objects!
+      n->get_node()->~Node();
+    }
+
+    local_nodes_[ t ].clear();
+  }
 }
 
 void
@@ -599,7 +561,9 @@ NodeManager::set_status_single_node_( Node& target,
   if ( not target.is_proxy() )
   {
     if ( clear_flags )
+    {
       d->clear_access_flags();
+    }
     target.set_status_base( d );
 
     // TODO: Not sure this check should be at single neuron level; advantage is
@@ -618,7 +582,7 @@ NodeManager::prepare_node_( Node* n )
   n->calibrate();
 }
 
-size_t
+void
 NodeManager::prepare_nodes()
 {
   assert( kernel().is_initialized() );
@@ -644,16 +608,18 @@ NodeManager::prepare_nodes()
     // exceptions here and then handle them after the parallel region.
     try
     {
-      for ( std::vector< Node* >::iterator it = nodes_vec_[ t ].begin();
-            it != nodes_vec_[ t ].end();
+      for ( SparseNodeArray::const_iterator it = local_nodes_[ t ].begin();
+            it != local_nodes_[ t ].end();
             ++it )
       {
-        prepare_node_( *it );
-        if ( not( *it )->is_frozen() )
+        prepare_node_( ( it )->get_node() );
+        if ( not( it->get_node() )->is_frozen() )
         {
           ++num_active_nodes;
-          if ( ( *it )->node_uses_wfr() )
+          if ( ( it->get_node() )->node_uses_wfr() )
+          {
             ++num_active_wfr_nodes;
+          }
         }
       }
     }
@@ -668,8 +634,12 @@ NodeManager::prepare_nodes()
 
   // check if any exceptions have been raised
   for ( index thr = 0; thr < kernel().vp_manager.get_num_threads(); ++thr )
+  {
     if ( exceptions_raised.at( thr ).valid() )
+    {
       throw WrappedThreadException( *( exceptions_raised.at( thr ) ) );
+    }
+  }
 
   std::ostringstream os;
   std::string tmp_str = num_active_nodes == 1 ? " node" : " nodes";
@@ -682,9 +652,27 @@ NodeManager::prepare_nodes()
        << "iterative solution techniques.";
   }
 
+  num_active_nodes_ = num_active_nodes;
   LOG( M_INFO, "NodeManager::prepare_nodes", os.str() );
+}
 
-  return num_active_nodes;
+void
+NodeManager::post_run_cleanup()
+{
+#ifdef _OPENMP
+#pragma omp parallel
+  {
+    index t = kernel().vp_manager.get_thread_id();
+#else // clang-format off
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  {
+#endif // clang-format on
+    SparseNodeArray::const_iterator n;
+    for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
+    {
+      n->get_node()->post_run_cleanup();
+    }
+  }
 }
 
 /**
@@ -702,23 +690,10 @@ NodeManager::finalize_nodes()
   for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
 #endif // clang-format on
-    for ( size_t idx = 0; idx < local_nodes_.size(); ++idx )
+    SparseNodeArray::const_iterator n;
+    for ( n = local_nodes_[ t ].begin(); n != local_nodes_[ t ].end(); ++n )
     {
-      Node* node = local_nodes_.get_node_by_index( idx );
-      if ( node != 0 )
-      {
-        if ( node->num_thread_siblings() > 0 )
-        {
-          node->get_thread_sibling( t )->finalize();
-        }
-        else
-        {
-          if ( static_cast< index >( node->get_thread() ) == t )
-          {
-            node->finalize();
-          }
-        }
-      }
+      n->get_node()->finalize();
     }
   }
 }
@@ -731,6 +706,12 @@ NodeManager::check_wfr_use()
   GapJunctionEvent::set_coeff_length(
     kernel().connection_manager.get_min_delay()
     * ( kernel().simulation_manager.get_wfr_interpolation_order() + 1 ) );
+  InstantaneousRateConnectionEvent::set_coeff_length(
+    kernel().connection_manager.get_min_delay() );
+  DelayedRateConnectionEvent::set_coeff_length(
+    kernel().connection_manager.get_min_delay() );
+  DiffusionConnectionEvent::set_coeff_length(
+    kernel().connection_manager.get_min_delay() );
 }
 
 void
@@ -765,33 +746,23 @@ NodeManager::print( std::ostream& out ) const
   }
 }
 
-
 void
 NodeManager::set_status( index gid, const DictionaryDatum& d )
 {
-  Node* target = local_nodes_.get_node_by_gid( gid );
-  if ( target != 0 )
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
-    // node is local
-    if ( target->num_thread_siblings() == 0 )
+    Node* node = local_nodes_[ t ].get_node_by_gid( gid );
+    if ( node != 0 )
     {
-      set_status_single_node_( *target, d );
+      set_status_single_node_( *node, d );
     }
-    else
-      for ( size_t t = 0; t < target->num_thread_siblings(); ++t )
-      {
-        // non-root container for devices without proxies
-        // we iterate over all threads
-        assert( target->get_thread_sibling( t ) != 0 );
-        set_status_single_node_( *( target->get_thread_sibling( t ) ), d );
-      }
   }
 }
 
 void
 NodeManager::get_status( DictionaryDatum& d )
 {
-  def< long >( d, "network_size", size() );
+  def< long >( d, names::network_size, size() );
 }
 
 void
@@ -799,42 +770,4 @@ NodeManager::set_status( const DictionaryDatum& d )
 {
 }
 
-void
-NodeManager::reset_nodes_state()
-{
-  /* Reinitialize state on all nodes, force init_buffers() on next
-     call to simulate().
-     Finding all nodes is non-trivial:
-     - We iterate over local nodes only.
-     - Nodes without proxies are not registered in nodes_. Instead, a
-       SiblingContainer is created as container, and this container is
-       stored in nodes_. The container then contains the actual nodes,
-       which need to be reset.
-     Thus, we iterate nodes_; additionally, we iterate the content of
-     a Node if it's model id is -1, which indicates that it is a
-     container.  Subnets are not iterated, since their nodes are
-     registered in nodes_ directly.
-   */
-  for ( size_t n = 0; n < local_nodes_.size(); ++n )
-  {
-    Node* node = local_nodes_.get_node_by_index( n );
-    assert( node != 0 );
-    if ( node->num_thread_siblings() == 0 ) // not a SiblingContainer
-    {
-      node->init_state();
-      node->set_buffers_initialized( false );
-    }
-    else if ( node->get_model_id() == -1 )
-    {
-      SiblingContainer* const c = dynamic_cast< SiblingContainer* >( node );
-      assert( c );
-      for ( std::vector< Node* >::iterator it = c->begin(); it != c->end();
-            ++it )
-      {
-        ( *it )->init_state();
-        ( *it )->set_buffers_initialized( false );
-      }
-    }
-  }
-}
 }

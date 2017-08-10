@@ -62,126 +62,153 @@ ResetKernel
 /weight get 2.0 eq assert_or_die
 /delay get 3.0 eq assert_or_die
 
-% We can run the tests for TokenArray, IntVectorDatum and
-% GIDCollectionDatum in a loop using arrayload
 
-  (Running Connect tests with argument type 'GIDCollection') =
+(Running Connect tests with argument type 'GIDCollection') =
 
-  (  Testing variant "GIDCollection GIDCollection") =
-  ResetKernel
-  /a /iaf_neuron 3 Create def
-  /b /iaf_neuron 3 Create def
-  a b Connect
-  << /source a >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
+(  Testing variant "GIDCollection GIDCollection") =
+ResetKernel
+/a /iaf_neuron 3 Create def
+/b /iaf_neuron 3 Create def
+a b Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-  (  Testing variant "GIDCollection GIDCollection literal") =
-  ResetKernel
-  /a /iaf_neuron 3 Create def
-  /b /iaf_neuron 3 Create def
-  a b /one_to_one Connect
-  << /source a >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
+(  Testing variant "GIDCollection GIDCollection literal") =
+ResetKernel
+/a /iaf_neuron 3 Create def
+/b /iaf_neuron 3 Create def
+a b /one_to_one Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-  (  Testing variant "GIDCollection GIDCollection dict") =
-  ResetKernel
-  /a /iaf_neuron 3 Create def
-  /b /iaf_neuron 3 Create def
-  a b << /rule /one_to_one >> Connect
-  << /source a >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
+(  Testing variant "GIDCollection GIDCollection dict") =
+ResetKernel
+/a /iaf_neuron 3 Create def
+/b /iaf_neuron 3 Create def
+a b << /rule /one_to_one >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-  (  Testing variant "GIDCollection GIDCollection empty_dict") =
-  ResetKernel
-  /a /iaf_neuron 3 Create def
-  /b /iaf_neuron 3 Create def
-  a b << >> Connect
-  << /source a >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
+(  Testing variant "GIDCollection GIDCollection empty_dict") =
+ResetKernel
+/a /iaf_neuron 3 Create def
+/b /iaf_neuron 3 Create def
+a b << >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-  (  Testing variant "GIDCollection GIDCollection literal literal") =
-  ResetKernel
-  /a /iaf_neuron 3 Create def
-  /b /iaf_neuron 3 Create def
-  a b /one_to_one /stdp_synapse Connect
-  << /source a >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
+(  Testing variant "GIDCollection GIDCollection literal literal") =
+ResetKernel
+/a /iaf_neuron 3 Create def
+/b /iaf_neuron 3 Create def
+a b /one_to_one /stdp_synapse Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-  (  Testing variant "GIDCollection GIDCollection dict literal") =
-  ResetKernel
-  /a /iaf_neuron 3 Create def
-  /b /iaf_neuron 3 Create def
-  a b << /rule /one_to_one >> /stdp_synapse Connect
-  << /source a >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
-  
-  (  Testing variant "GIDCollection GIDCollection empty_dict literal") =
-  ResetKernel
-  /a /iaf_neuron 3 Create def
-  /b /iaf_neuron 3 Create def
-  a b << >> /stdp_synapse Connect
-  << /source a >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
-  
-  (  Testing variant "GIDCollection GIDCollection literal dict") =
-  ResetKernel
-  /a /iaf_neuron 3 Create def
-  /b /iaf_neuron 3 Create def
-  a b /one_to_one << /model /stdp_synapse >> Connect
-  << /source a >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
-  
-  (  Testing variant "GIDCollection GIDCollection literal empty_dict") =
-  ResetKernel
-  /a /iaf_neuron 3 Create def
-  /b /iaf_neuron 3 Create def
-  a b /one_to_one << >> Connect
-  << /source a >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
-  
-  (  Testing variant "GIDCollection GIDCollection dict dict") =
-  ResetKernel
-  /a /iaf_neuron 3 Create def
-  /b /iaf_neuron 3 Create def
-  a b << /rule /one_to_one >> << /model /stdp_synapse >> Connect
-  << /source a >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
-  
-  (  Testing variant "GIDCollection GIDCollection empty_dict dict") =
-  ResetKernel
-  /a /iaf_neuron 3 Create def
-  /b /iaf_neuron 3 Create def
-  a b << >> << /model /stdp_synapse >> Connect
-  << /source a >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
-  
-  (  Testing variant "GIDCollection GIDCollection dict empty_dict") =
-  ResetKernel
-  /a /iaf_neuron 3 Create def
-  /b /iaf_neuron 3 Create def
-  a b << /rule /one_to_one >> << >> Connect
-  << /source a >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
-  
-  (  Testing variant "GIDCollection GIDCollection empty_dict empty_dict") =
-  ResetKernel
-  /a /iaf_neuron 3 Create def
-  /b /iaf_neuron 3 Create def
-  a b << >> << >> Connect
-  << /source a >> GetConnections dup
-  First /target get 4 eq assert_or_die
-  Last /target get 6 eq assert_or_die
+(  Testing variant "GIDCollection GIDCollection dict literal") =
+ResetKernel
+/a /iaf_neuron 3 Create def
+/b /iaf_neuron 3 Create def
+a b << /rule /one_to_one >> /stdp_synapse Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
 
-% } forall
+(  Testing variant "GIDCollection GIDCollection empty_dict literal") =
+ResetKernel
+/a /iaf_neuron 3 Create def
+/b /iaf_neuron 3 Create def
+a b << >> /stdp_synapse Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
+
+(  Testing variant "GIDCollection GIDCollection literal dict") =
+ResetKernel
+/a /iaf_neuron 3 Create def
+/b /iaf_neuron 3 Create def
+a b /one_to_one << /model /stdp_synapse >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
+
+(  Testing variant "GIDCollection GIDCollection literal empty_dict") =
+ResetKernel
+/a /iaf_neuron 3 Create def
+/b /iaf_neuron 3 Create def
+a b /one_to_one << >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
+
+(  Testing variant "GIDCollection GIDCollection dict dict") =
+ResetKernel
+/a /iaf_neuron 3 Create def
+/b /iaf_neuron 3 Create def
+a b << /rule /one_to_one >> << /model /stdp_synapse >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
+
+(  Testing variant "GIDCollection GIDCollection empty_dict dict") =
+ResetKernel
+/a /iaf_neuron 3 Create def
+/b /iaf_neuron 3 Create def
+a b << >> << /model /stdp_synapse >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
+
+(  Testing variant "GIDCollection GIDCollection dict empty_dict") =
+ResetKernel
+/a /iaf_neuron 3 Create def
+/b /iaf_neuron 3 Create def
+a b << /rule /one_to_one >> << >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
+
+(  Testing variant "GIDCollection GIDCollection empty_dict empty_dict") =
+ResetKernel
+/a /iaf_neuron 3 Create def
+/b /iaf_neuron 3 Create def
+a b << >> << >> Connect
+<< /source a >> GetConnections dup
+First /target get 4 eq assert_or_die
+Last /target get 6 eq assert_or_die
+
+
+(Running Connect tests with illegal combinations) =
+ResetKernel
+
+/n_connections 0 def
+modeldict
+{
+  pop Create /node_a Set
+  modeldict
+  {
+    pop Create /node_b Set
+
+    % try to connect node_a and node_b
+    {
+      node_a node_b Connect
+    } stopped not
+    {  % if there is no error, check that a connection has been made
+      {
+        n_connections 1 add 
+        GetKernelStatus /num_connections get 
+        eq
+      } assert_or_die
+      /n_connections n_connections 1 add def
+    }
+    {
+      5 npop 
+    } ifelse
+  } forall
+
+} forall

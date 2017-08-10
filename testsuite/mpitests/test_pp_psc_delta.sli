@@ -36,7 +36,7 @@ Author:  December 2012, Plesser, based on test_poisson_generator.sli
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 /total_vps 4 def
 

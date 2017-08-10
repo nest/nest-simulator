@@ -107,9 +107,13 @@ nest::gamma_sup_generator::Internal_states_::update( double transition_prob,
     {
       occ_[ i ] -= n_trans[ i ];
       if ( i == occ_.size() - 1 )
+      {
         occ_.front() += n_trans[ i ];
+      }
       else
+      {
         occ_[ i + 1 ] += n_trans[ i ];
+      }
     }
   }
   return n_trans.back();
@@ -145,19 +149,27 @@ nest::gamma_sup_generator::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< long >( d, names::gamma_shape, gamma_shape_ );
   if ( gamma_shape_ < 1 )
+  {
     throw BadProperty( "The shape must be larger or equal 1" );
+  }
 
   updateValue< double >( d, names::rate, rate_ );
   if ( rate_ < 0.0 )
+  {
     throw BadProperty( "The rate must be larger than 0." );
+  }
 
   long n_proc_l = n_proc_;
   updateValue< long >( d, names::n_proc, n_proc_l );
   if ( n_proc_l < 1 )
+  {
     throw BadProperty(
       "The number of component processes cannot be smaller than one" );
+  }
   else
+  {
     n_proc_ = static_cast< unsigned long >( n_proc_l );
+  }
 }
 
 
@@ -235,14 +247,18 @@ nest::gamma_sup_generator::update( Time const& T,
   assert( from < to );
 
   if ( P_.rate_ <= 0 || P_.num_targets_ == 0 )
+  {
     return;
+  }
 
   for ( long lag = from; lag < to; ++lag )
   {
     Time t = T + Time::step( lag );
 
     if ( not device_.is_active( t ) )
+    {
       continue; // no spike at this lag
+    }
 
     DSSpikeEvent se;
     kernel().event_delivery_manager.send( *this, se, lag );

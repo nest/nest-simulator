@@ -57,7 +57,6 @@ public:
   Model* clone( const std::string& ) const;
 
   bool has_proxies();
-  bool potential_global_receiver();
   bool one_node_per_process();
   bool is_off_grid();
   /**
@@ -80,9 +79,17 @@ public:
 
   SignalType sends_signal() const;
 
+  void sends_secondary_event( InstantaneousRateConnectionEvent& re );
+
+  void sends_secondary_event( DiffusionConnectionEvent& de );
+
+  void sends_secondary_event( DelayedRateConnectionEvent& re );
+
   Node const& get_prototype() const;
 
   void set_model_id( int );
+
+  int get_model_id();
 
   void deprecation_warning( const std::string& );
 
@@ -172,13 +179,6 @@ GenericModel< ElementT >::has_proxies()
 
 template < typename ElementT >
 inline bool
-GenericModel< ElementT >::potential_global_receiver()
-{
-  return proto_.potential_global_receiver();
-}
-
-template < typename ElementT >
-inline bool
 GenericModel< ElementT >::one_node_per_process()
 {
   return proto_.one_node_per_process();
@@ -209,6 +209,29 @@ GenericModel< ElementT >::sends_secondary_event( GapJunctionEvent& ge )
 }
 
 template < typename ElementT >
+inline void
+GenericModel< ElementT >::sends_secondary_event(
+  InstantaneousRateConnectionEvent& re )
+{
+  return proto_.sends_secondary_event( re );
+}
+
+template < typename ElementT >
+inline void
+GenericModel< ElementT >::sends_secondary_event( DiffusionConnectionEvent& de )
+{
+  return proto_.sends_secondary_event( de );
+}
+
+template < typename ElementT >
+inline void
+GenericModel< ElementT >::sends_secondary_event(
+  DelayedRateConnectionEvent& re )
+{
+  return proto_.sends_secondary_event( re );
+}
+
+template < typename ElementT >
 inline nest::SignalType
 GenericModel< ElementT >::sends_signal() const
 {
@@ -227,7 +250,7 @@ DictionaryDatum
 GenericModel< ElementT >::get_status_()
 {
   DictionaryDatum d = proto_.get_status_base();
-  ( *d )[ "elementsize" ] = sizeof( ElementT );
+  ( *d )[ names::elementsize ] = sizeof( ElementT );
   return d;
 }
 
@@ -251,5 +274,14 @@ GenericModel< ElementT >::set_model_id( int i )
 {
   proto_.set_model_id( i );
 }
+
+template < typename ElementT >
+int
+GenericModel< ElementT >::get_model_id()
+{
+  return proto_.get_model_id();
 }
+
+}
+
 #endif

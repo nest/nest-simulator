@@ -266,7 +266,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
           pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
       }
     } // for target_begin
-  }   // omp parallel
+  } // omp parallel
 }
 
 

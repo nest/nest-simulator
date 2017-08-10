@@ -61,10 +61,9 @@ nest::RNGManager::finalize()
 void
 nest::RNGManager::set_status( const DictionaryDatum& d )
 {
-  // have those two for later asking, whether threads have changed:
-  long n_threads;
-  bool n_threads_updated =
-    updateValue< long >( d, "local_num_threads", n_threads );
+  // Any changes in number of threads will be handled by VPManager::set_status(),
+  // which will force re-initialization of RNGManager if necessary. This method
+  // will only be called *after* such a reset.
 
   // set RNGs --- MUST come after n_threads_ is updated
   if ( d->known( "rngs" ) )
@@ -73,7 +72,9 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     // directly, no seeding required
     ArrayDatum* ad = dynamic_cast< ArrayDatum* >( ( *d )[ "rngs" ].datum() );
     if ( ad == 0 )
+    {
       throw BadProperty();
+    }
 
     // n_threads_ is the new value after a change of the number of
     // threads
@@ -96,16 +97,13 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     // upated
     rng_.clear();
     for ( index i = 0; i < ad->size(); ++i )
+    {
       if ( kernel().vp_manager.is_local_vp( i ) )
+      {
         rng_.push_back( getValue< librandom::RngDatum >(
           ( *ad )[ kernel().vp_manager.suggest_vp( i ) ] ) );
-  }
-  else if ( n_threads_updated && kernel().node_manager.size() == 0 )
-  {
-    LOG( M_WARNING,
-      "RNGManager::set_status",
-      "Equipping threads with new default RNGs" );
-    create_rngs_();
+      }
+    }
   }
 
   if ( d->known( "rng_seeds" ) )
@@ -113,7 +111,9 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
     ArrayDatum* ad =
       dynamic_cast< ArrayDatum* >( ( *d )[ "rng_seeds" ].datum() );
     if ( ad == 0 )
+    {
       throw BadProperty();
+    }
 
     if ( ad->size()
       != ( size_t )( kernel().vp_manager.get_num_virtual_processes() ) )
@@ -147,8 +147,10 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
       long s = ( *ad )[ i ];
 
       if ( kernel().vp_manager.is_local_vp( i ) )
+      {
         rng_[ kernel().vp_manager.vp_to_thread(
                 kernel().vp_manager.suggest_vp( i ) ) ]->seed( s );
+      }
 
       rng_seeds_[ i ] = s;
     }
@@ -158,19 +160,12 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
   if ( d->known( "grng" ) )
   {
     // pre-seeded grng that can be used directly, no seeding required
-    updateValue< librandom::RngDatum >( d, "grng", grng_ );
-  }
-  else if ( n_threads_updated && kernel().node_manager.size() == 0 )
-  {
-    LOG( M_WARNING,
-      "RNGManager::set_status",
-      "Equipping threads with new default GRNG" );
-    create_grng_();
+    updateValue< librandom::RngDatum >( d, names::grng, grng_ );
   }
 
   if ( d->known( "grng_seed" ) )
   {
-    const long gseed = getValue< long >( d, "grng_seed" );
+    const long gseed = getValue< long >( d, names::grng_seed );
 
     // check if grng seed is unique with respect to rng seeds
     // if grng_seed and rng_seeds given in one SetStatus call
@@ -181,7 +176,9 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
       ArrayDatum* ad_rngseeds =
         dynamic_cast< ArrayDatum* >( ( *d )[ "rng_seeds" ].datum() );
       if ( ad_rngseeds == 0 )
+      {
         throw BadProperty();
+      }
       for ( index i = 0; i < ad_rngseeds->size(); ++i )
       {
         const long vpseed = ( *ad_rngseeds )[ i ]; // SLI has no ulong tokens
@@ -204,8 +201,8 @@ nest::RNGManager::set_status( const DictionaryDatum& d )
 void
 nest::RNGManager::get_status( DictionaryDatum& d )
 {
-  ( *d )[ "rng_seeds" ] = Token( rng_seeds_ );
-  def< long >( d, "grng_seed", grng_seed_ );
+  ( *d )[ names::rng_seeds ] = Token( rng_seeds_ );
+  def< long >( d, names::grng_seed, grng_seed_ );
 }
 
 

@@ -37,7 +37,7 @@ Author: Hans Ekkehard Plesser
 (unittest) run
 /unittest using
 
-exit_test_gracefully  % TODO480 (uses Topology)
+/skipped exit_test_gracefully  % TODO480 (uses Topology)
 
 
 M_ERROR setverbosity

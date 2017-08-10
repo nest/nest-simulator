@@ -132,7 +132,6 @@ public:
   size_t mem_capacity();
 
   virtual bool has_proxies() = 0;
-  virtual bool potential_global_receiver() = 0;
   virtual bool one_node_per_process() = 0;
   virtual bool is_off_grid() = 0;
 
@@ -155,6 +154,10 @@ public:
   virtual port send_test_event( Node&, rport, synindex, bool ) = 0;
 
   virtual void sends_secondary_event( GapJunctionEvent& ge ) = 0;
+  virtual void sends_secondary_event(
+    InstantaneousRateConnectionEvent& re ) = 0;
+  virtual void sends_secondary_event( DiffusionConnectionEvent& de ) = 0;
+  virtual void sends_secondary_event( DelayedRateConnectionEvent& re ) = 0;
 
   /**
    * Check what type of signal this model is sending.
@@ -178,6 +181,11 @@ public:
    * Set the model id on the prototype.
    */
   virtual void set_model_id( int ) = 0;
+
+  /**
+   * Get the model id from the prototype.
+   */
+  virtual int get_model_id() = 0;
 
   /**
    * Issue deprecation warning on first call if model is deprecated.

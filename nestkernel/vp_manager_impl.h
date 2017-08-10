@@ -49,54 +49,20 @@ VPManager::is_local_vp( thread vp ) const
 inline thread
 VPManager::suggest_vp( index gid ) const
 {
-  return gid
-    % ( kernel().mpi_manager.get_num_sim_processes() * get_num_threads() );
-}
-
-inline thread
-VPManager::suggest_rec_vp( index gid ) const
-{
-  return gid
-    % ( kernel().mpi_manager.get_num_rec_processes() * get_num_threads() )
-    + kernel().mpi_manager.get_num_sim_processes() * get_num_threads();
+  return gid % ( get_num_virtual_processes() );
 }
 
 inline thread
 VPManager::vp_to_thread( thread vp ) const
 {
-  if ( vp >= static_cast< thread >( kernel().mpi_manager.get_num_sim_processes()
-               * get_num_threads() ) )
-  {
-    return ( vp
-             + kernel().mpi_manager.get_num_sim_processes()
-               * ( 1 - get_num_threads() )
-             - kernel().mpi_manager.get_rank() )
-      / kernel().mpi_manager.get_num_rec_processes();
-  }
-  else
-  {
-    return vp / kernel().mpi_manager.get_num_sim_processes();
-  }
+  return vp / kernel().mpi_manager.get_num_processes();
 }
 
 inline thread
 VPManager::thread_to_vp( thread t ) const
 {
-  if ( kernel().mpi_manager.get_rank()
-    >= static_cast< int >( kernel().mpi_manager.get_num_sim_processes() ) )
-  {
-    // Rank is a recording process
-    return t * kernel().mpi_manager.get_num_rec_processes()
-      + kernel().mpi_manager.get_rank()
-      - kernel().mpi_manager.get_num_sim_processes()
-      + kernel().mpi_manager.get_num_sim_processes() * get_num_threads();
-  }
-  else
-  {
-    // Rank is a simulating process
-    return t * kernel().mpi_manager.get_num_sim_processes()
-      + kernel().mpi_manager.get_rank();
-  }
+  return t * kernel().mpi_manager.get_num_processes()
+    + kernel().mpi_manager.get_rank();
 }
 
 } // namespace nest

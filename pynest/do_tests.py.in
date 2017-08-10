@@ -49,10 +49,13 @@ def _setup(arg):
 import nest
 nest.init(["--verbosity=WARNING", "--quiet"])
 
-import nest.topology
+#TODO480: remove comment from following line
+#import nest.topology
 
 import nest.tests
-import nest.topology.tests
+
+#TODO480: remove comment from following line
+#import nest.topology.tests
 
 import unittest
 
@@ -63,11 +66,18 @@ unittest.TestCase.setUp = _setup
 # The testsuite is initialized w/ stdout. That goes into the logfile.
 runner = unittest.TextTestRunner(verbosity=2, stream=sys.stdout)
 result = runner.run(nest.tests.suite())
-result_topo = runner.run(nest.topology.tests.suite())
+#TODO480: remove comment from following line
+#result_topo = runner.run(nest.topology.tests.suite())
+#TODO480: remove following two lines
+class dotdict(dict):  __getattr__ = dict.get
+result_topo = dotdict({"testsRun": 0, "failures": [], "errors": [], "skipped": 0})
+
+total = result.testsRun + result_topo.testsRun
+failed = len(result.failures) + len(result.errors) + len(result_topo.failures) + len(result_topo.errors)
+skipped = len(result.skipped) + len(result_topo.skipped)
+passed = total - failed - skipped
 
 # We return the numbers of tests via a temporaty file
 file_handle = open("pynest_test_numbers.log", "w")
-file_handle.write(str(result.testsRun + result_topo.testsRun) + " ")
-file_handle.write(str(len(result.failures)+len(result.errors) + len(result_topo.failures)+len(result_topo.errors)) + " ")
-file_handle.write(str(result.testsRun + result_topo.testsRun - len(result.failures) - len(result.errors) - len(result_topo.failures) - len(result_topo.errors)) + "\n")
+file_handle.write("{} {} {} {}\n".format(total, passed, skipped, failed))
 file_handle.close()

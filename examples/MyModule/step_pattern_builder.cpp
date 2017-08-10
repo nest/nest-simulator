@@ -129,7 +129,9 @@ mynest::StepPatternBuilder::connect_()
             for ( nest::GIDCollection::const_iterator sgid = sources_->begin();
                   sgid < sources_->end();
                   ++sgid )
+            {
               skip_conn_parameter_( tid );
+            }
             continue;
           }
           nest::Node* const target =

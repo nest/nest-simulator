@@ -336,7 +336,7 @@ d /times get cva /ts Set % get times
   
   
   /vm /multimeter << /withtime true /time_in_steps true
-                     /interval res /record_from [ /V_m /w /g_1 ] >> Create def
+                     /interval 1.0 /record_from [ /V_m /w /g_1 ] >> Create def
   
   vm nrn Connect
 } assert_or_die
@@ -346,35 +346,28 @@ d /times get cva /ts Set % get times
   << >> begin
   ResetKernel
   
-  /E_rev1        [0.0  0.0  -85.0]
-  /E_rev2        [0.0  0.0]
-  /E_rev3        [0.0  0.0  -85.0 0.]
-  /tau_rise1     [5.0  1.0  25.0]
-  /tau_rise2     [5.0  1.0]
-  /tau_rise3     [5.0  1.0  25.0 50.]
-  /tau_decay1    [20.0  10.0  85.0]
-  /tau_decay2    [20.0  10.0]
-  /tau_decay3    [20.0  10.0  85.0 100.]
+  /E_rev1        [0.0  0.0  -85.0] def
+  /E_rev2        [0.0  0.0] def
+  /E_rev3        [0.0  0.0  -85.0 0.] def
+  /tau_rise1     [5.0  1.0  25.0] def
+  /tau_rise2     [5.0  1.0] def
+  /tau_rise3     [5.0  1.0  25.0 50.] def
+  /tau_decay1    [20.0  10.0  85.0] def
+  /tau_decay2    [20.0  10.0] def
+  /tau_decay3    [20.0  10.0  85.0 100.] def
   
-  /nrn /aeif_cond_beta_multisynapse <<
+  /nrn /aeif_cond_beta_multisynapse <<  
     /E_rev E_rev1 /tau_rise tau_rise1 /tau_decay tau_decay1
       >> Create def
-  /len1 1 GetStatus /recordables get length
+  /len1 1 GetStatus /recordables get length def
   
-  1 SetStatus <<
-    /E_rev E_rev2 /tau_rise tau_rise2 /tau_decay tau_decay2
-      >>
-  /len2 1 GetStatus /recordables get length
+  1 << /E_rev E_rev2 /tau_rise tau_rise2 /tau_decay tau_decay2 >> SetStatus
+  /len2 1 GetStatus /recordables get length def
   
-  1 SetStatus <<
-    /E_rev E_rev3 /tau_rise tau_rise3 /tau_decay tau_decay3
-      >>
-  /len3 1 GetStatus /recordables get length
+  1 << /E_rev E_rev3 /tau_rise tau_rise3 /tau_decay tau_decay3 >> SetStatus
+  /len3 1 GetStatus /recordables get length def
   
-  /len1 5 neq {/ResizeRecordables /KernelError raiseerror} if
-  /len2 4 neq {/ResizeRecordables /KernelError raiseerror} if
-  /len3 6 neq {/ResizeRecordables /KernelError raiseerror} if
-  
+  len1 5 eq len2 4 eq and len3 6 eq and
 } assert_or_die
 
 % test recording of g

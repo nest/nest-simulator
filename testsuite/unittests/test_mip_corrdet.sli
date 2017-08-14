@@ -131,13 +131,13 @@ dup /histogram get cva /hist Set
 n1 T tau_max sub div 1000.0 mul /lmbd1 Set
 n2 T tau_max sub div 1000.0 mul /lmbd2 Set
 
-%cout
-%(rate 1=) <- lmbd1 <- (\n) <-
-%(rate 2=) <- lmbd2 <- (\n) <-
-%(background =) <- lmbd1 lmbd2 mul delta_tau 1000 div mul T tau_max sub 1000 div mul <- (\n) <- pop
+cout
+(rate 1=) <- lmbd1 <- (\n) <-
+(rate 2=) <- lmbd2 <- (\n) <-
+(background =) <- lmbd1 lmbd2 mul delta_tau 1000 div mul T tau_max sub 1000 div mul <- (\n) <- pop
 
-%hist ==
-%0 hist { add } forall ==
+hist ==
+0 hist { add } forall ==
 
 
 hist expected_hist eq

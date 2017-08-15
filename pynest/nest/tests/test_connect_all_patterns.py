@@ -30,7 +30,6 @@ class TestConnectAllPatterns(unittest.TestCase):
     def testWithMPI(self):
         directory = os.path.dirname(os.path.realpath(__file__))
         scripts = ["test_connect_all_to_all.py",
-                   "test_connect_parameters.py",
                    "test_connect_one_to_one.py",
                    "test_connect_fixed_indegree.py",
                    "test_connect_fixed_outdegree.py",

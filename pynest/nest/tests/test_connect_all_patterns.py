@@ -19,31 +19,41 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-import numpy as np
+import os
+import subprocess as sp
 import unittest
 import nest
 
-from . import test_connect_helpers as hf
 
-from .test_connect_parameters import TestParams
-from .test_connect_one_to_one import TestOneToOne
-from .test_connect_all_to_all import TestAllToAll
-from .test_connect_fixed_indegree import TestFixedInDegree
-from .test_connect_fixed_outdegree import TestFixedOutDegree
-from .test_connect_fixed_total_number import TestFixedTotalNumber
-from .test_connect_pairwise_bernoulli import TestPairwiseBernoulli
+class TestConnectAllPatterns(unittest.TestCase):
 
-nest.set_verbosity("M_WARNING")
+    def testWithMPI(self):
+        directory = os.path.dirname(os.path.realpath(__file__))
+        scripts = ["test_connect_all_to_all.py",
+                   "test_connect_parameters.py",
+                   "test_connect_one_to_one.py",
+                   "test_connect_fixed_indegree.py",
+                   "test_connect_fixed_outdegree.py",
+                   "test_connect_fixed_total_number.py",
+                   "test_connect_pairwise_bernoulli.py"
+                   ]
+        retcodes = []
+        for script in scripts:
+            test_script = directory + "/" + script
+            command = nest.sli_func("mpirun", 2, "nosetests",
+                                    test_script)
+            print("Executing test with command: " + command)
+            command = command.split()
+            retcodes.append(sp.call(command))
+        failed_tests = ''
+        for script, retcode in zip(scripts, retcodes):
+            if retcode != 0:
+                failed_tests += script + ' '
+        self.assertEqual(failed_tests, '',
+                         'Error using MPI with the following test(s): ' +
+                         failed_tests)
+
 
 if __name__ == '__main__':
-    suite = unittest.TestLoader().loadTestsFromTestCase(TestAllToAll)
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(TestOneToOne))
-    suite.addTest(
-        unittest.TestLoader().loadTestsFromTestCase(TestFixedInDegree))
-    suite.addTest(
-        unittest.TestLoader().loadTestsFromTestCase(TestFixedOutDegree))
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(
-        TestFixedTotalNumber))
-    suite.addTest(unittest.TestLoader().loadTestsFromTestCase(
-        TestPairwiseBernoulli))
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestConnectAllPatterns)
     unittest.TextTestRunner(verbosity=2).run(suite)

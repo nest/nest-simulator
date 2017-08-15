@@ -24,9 +24,12 @@ import subprocess as sp
 import unittest
 import nest
 
+HAVE_MPI = nest.sli_func("statusdict/have_mpi ::")
+
 
 class TestConnectAllPatterns(unittest.TestCase):
 
+    @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
     def testWithMPI(self):
         directory = os.path.dirname(os.path.realpath(__file__))
         scripts = ["test_connect_all_to_all.py",

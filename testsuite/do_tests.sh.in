@@ -760,10 +760,11 @@ if test "x${TEST_PYNEST}" = xtrue ; then
         echo
 
         "${PYTHON}" "${PYTHON_HARNESS}" >> "${TEST_LOGFILE}"
-    
+
         PYNEST_TEST_TOTAL="$(  cat pynest_test_numbers.log | cut -d' ' -f1 )"
-        PYNEST_TEST_PASSED="$( cat pynest_test_numbers.log | cut -d' ' -f3 )"
-        PYNEST_TEST_FAILED="$( cat pynest_test_numbers.log | cut -d' ' -f2 )"
+        PYNEST_TEST_PASSED="$( cat pynest_test_numbers.log | cut -d' ' -f2 )"
+        PYNEST_TEST_SKIPPED="$( cat pynest_test_numbers.log | cut -d' ' -f3 )"
+        PYNEST_TEST_FAILED="$( cat pynest_test_numbers.log | cut -d' ' -f4 )"
 
         rm -f "pynest_test_numbers.log"
 

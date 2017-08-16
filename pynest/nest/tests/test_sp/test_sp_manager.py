@@ -37,7 +37,13 @@ class TestStructuralPlasticityManager(unittest.TestCase):
             'stdp_dopamine_synapse_hpc',
             'stdp_dopamine_synapse_hpc_lbl',
             'gap_junction',
-            'gap_junction_lbl'
+            'gap_junction_lbl',
+            'diffusion_connection',
+            'diffusion_connection_lbl',
+            'rate_connection_instantaneous',
+            'rate_connection_instantaneous_lbl',
+            'rate_connection_delayed',
+            'rate_connection_delayed_lbl'
         ]
 
     def test_register_synapses(self):

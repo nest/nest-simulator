@@ -2,6 +2,11 @@
 
     
     
+Two neurons
+-----------
+
+
+    
     import pylab
     
     import nest

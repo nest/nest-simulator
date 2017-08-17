@@ -2,6 +2,11 @@
 
     
     
+One neuron with noise
+---------------------
+
+
+    
     import nest
     import nest.voltage_trace
     

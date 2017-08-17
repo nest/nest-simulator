@@ -19,8 +19,9 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-'''Mean-field theory for random balanced network
-----------------------------------------
+'''
+Mean-field theory for random balanced network
+---------------------------------------------
 
 This script performs a mean-field analysis of the spiking network of
 excitatory and an inhibitory population of leaky-integrate-and-fire

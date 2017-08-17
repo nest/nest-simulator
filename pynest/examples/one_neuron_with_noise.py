@@ -19,6 +19,12 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+'''
+One neuron with noise
+---------------------
+
+'''
+
 import nest
 import nest.voltage_trace
 

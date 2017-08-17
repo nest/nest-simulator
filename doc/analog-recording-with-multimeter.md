@@ -91,4 +91,4 @@ As an example, here is the multimeter.py example from the PyNEST examples set:
 
 Here is the result:
 
-![MultimeterExample](../../img/MultimeterExample.png)
+![MultimeterExample](./img/MultimeterExample.png)

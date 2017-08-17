@@ -258,6 +258,10 @@ def gen_examples():
     :return: pyfi - fill path to example file
     """
     for dirpath, dirnames, files in os.walk(html_):
+        if 'LeNovere_2012' in dirnames:
+            dirnames.remove('LeNovere_2012')
+        if 'Potjans_2014' in dirnames:
+            dirnames.remove('Potjans_2014')
         for pyfile in files:
             if pyfile.endswith(('.py')):
                 pyfi = os.path.join(dirpath, pyfile)
@@ -314,38 +318,38 @@ def gen_notebook(comblocks, codblocks, example):
     f.close()
 
 
-def write_docmd_to_html():
-    httplst = ''.join(open('templates/html.tpl.html').readlines())
-    for dirpath, dirnames, files in os.walk(doc_dir):
-        for mdfile in files:
-            mdsplit = os.path.splitext(mdfile)
-            if mdsplit[-1] == '.md':
-                mdfi = os.path.join(dirpath, mdfile)
-                hfi = html_dir + '/' + mdsplit[0]
-                makedirs(hfi)
-                mdcont = ''.join(open(mdfi).readlines())
-                mdcont = re.sub(']\(', '](../', mdcont)
-                mdcont = re.sub('..\/http', 'http', mdcont)
-                mdcont = re.sub('.md', '', mdcont)
-                mdcont = re.sub('py_samples', 'py_sample', mdcont)
-                newdoc = open(mdfi, 'w')
-                newdoc.write(mdcont)
-                newdoc.close()
-
-                subprocess.call(['pandoc', mdfi, '-o', hfi + '/index.html'])
-                ind = ''.join(open(hfi + '/index.html').readlines())
-                ind = re.sub('<pre><code>',
-                             '<pre class="prettyprint linenums"><code>',
-                             ind)
-                ind = re.sub('<code class="sourceCode python">',
-                             '<code class ="sourceCode python prettyprint linenums" >', ind)
-                ind = re.sub('../../img', '../assets/img', ind)
-
-                ffulltpl = Template(httplst)
-                ffull = ffulltpl.safe_substitute(full_site_content=ind)
-                fht = open(hfi + '/index.html', 'w')
-                fht.write(ffull)
-                fht.close()
+# def write_docmd_to_html():
+#     httplst = ''.join(open('templates/html.tpl.html').readlines())
+#     for dirpath, dirnames, files in os.walk(doc_dir):
+#         for mdfile in files:
+#             mdsplit = os.path.splitext(mdfile)
+#             if mdsplit[-1] == '.md':
+#                 mdfi = os.path.join(dirpath, mdfile)
+#                 hfi = html_dir + '/' + mdsplit[0]
+#                 makedirs(hfi)
+#                 mdcont = ''.join(open(mdfi).readlines())
+#                 mdcont = re.sub(']\(', '](../', mdcont)
+#                 mdcont = re.sub('..\/http', 'http', mdcont)
+#                 mdcont = re.sub('.md', '', mdcont)
+#                 mdcont = re.sub('py_samples', 'py_sample', mdcont)
+#                 newdoc = open(mdfi, 'w')
+#                 newdoc.write(mdcont)
+#                 newdoc.close()
+#
+#                 subprocess.call(['pandoc', mdfi, '-o', hfi + '/index.html'])
+#                 ind = ''.join(open(hfi + '/index.html').readlines())
+#                 ind = re.sub('<pre><code>',
+#                              '<pre class="prettyprint linenums"><code>',
+#                              ind)
+#                 ind = re.sub('<code class="sourceCode python">',
+#                              '<code class ="sourceCode python prettyprint linenums" >', ind)
+#                 ind = re.sub('../../img', '../assets/img', ind)
+#
+#                 ffulltpl = Template(httplst)
+#                 ffull = ffulltpl.safe_substitute(full_site_content=ind)
+#                 fht = open(hfi + '/index.html', 'w')
+#                 fht.write(ffull)
+#                 fht.close()
 
 
 # def write_ipynb_to_html(ipynbpath):

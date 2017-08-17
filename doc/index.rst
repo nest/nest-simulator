@@ -9,7 +9,7 @@ Welcome to NEST simulator's documentation!
 .. toctree::
    :maxdepth: 2
 
-   overview
+   Overview <overview>
    Download <download>
    features
    installation
@@ -21,6 +21,7 @@ Documentation
    :maxdepth: 2
    :caption: User Documentation
 
+   documentation
    getting-started
    frequently-asked-questions
 
@@ -39,6 +40,7 @@ Introduction to PyNest
 .. toctree::
    :maxdepth: 2
 
+   introduction-to-pynest
    analog-recording-with-multimeter
    connection-management
    random-numbers
@@ -74,6 +76,12 @@ Introduction to PyNest
    :caption: License
 
    license
+
+.. toctree::
+   :glob:
+   :caption: Examples
+
+   examples/*
 
 
 

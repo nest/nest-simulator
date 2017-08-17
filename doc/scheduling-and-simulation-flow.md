@@ -20,7 +20,7 @@ To speed up the simulation and allow the efficient use of computer clusters,
 NEST uses a [hybrid parallelization strategy](parallel-computing.md).
 The following figure shows the basic loop that is run upon a call to `Simulate`:
 
-![Simulation Loop](../../img/simulation_loop-241x300.png)
+![Simulation Loop](./img/simulation_loop-241x300.png)
 
 The simulation loop. Light gray boxes denote thread parallel parts, dark gray
 boxes denote MPI parallel parts. U(S<sub>t</sub>) is the update operator that
@@ -35,7 +35,7 @@ the largest delay in the network. From this definition follows that no node can
 influence another node during at least a time of *d<sub>min</sub>*, i.e. the
 elements are effectively decoupled for this interval.
 
-![Definitions of the minimimum delay and the simulation resolution.](../../img/time_definitions-300x61.png)
+![Definitions of the minimimum delay and the simulation resolution.](./img/time_definitions-300x61.png)
 
 Definitions of minimum delay (d<sub>min</sub>) and simulation resolution (h).
 

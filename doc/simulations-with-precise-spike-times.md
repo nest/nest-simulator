@@ -19,7 +19,7 @@ independently proceeds in steps of *h*: it retrieves the inputs that are due in
 the current time step from its spike buffers and updates its state variables
 such as the membrane potential.
 
-![Propagation of membrane potential in case of grid-constrained spiking. Filled dots indicate update of membrane potential; black cross indicates detection of threshold crossing. As visual guidance, dashed black curves indicate time course of membrane potential. For simplicity, d\_min=2h.](../../img//precise1-300x175.png)
+![Propagation of membrane potential in case of grid-constrained spiking. Filled dots indicate update of membrane potential; black cross indicates detection of threshold crossing. As visual guidance, dashed black curves indicate time course of membrane potential. For simplicity, d\_min=2h.](./img//precise1-300x175.png)
 Propagation of membrane potential in case of grid-constrained spiking. Filled
 dots indicate update of membrane potential; black cross indicates detection of
 threshold crossing. As visual guidance, dashed black curves indicate time course
@@ -35,7 +35,7 @@ an integer time stamp and a double precision offset. As the incoming spikes
 divide the *h*-steps into substeps, a neuron needs to update its state variables
 for each substep.
 
-![Propagation of membrane potential in case of off-grid spiking. Dashed red line indicates precise time of threshold crossing.](../../img//precise2-300x171.png)
+![Propagation of membrane potential in case of off-grid spiking. Dashed red line indicates precise time of threshold crossing.](./img//precise2-300x171.png)
 Propagation of membrane potential in case of off-grid spiking. Dashed red line
 indicates precise time of threshold crossing.
 

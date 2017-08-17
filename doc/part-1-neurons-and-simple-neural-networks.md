@@ -27,7 +27,7 @@ subdirectory: `pynest/examples/`.
 
 <table><tr>
 <td style="max-width: 400px;">
-<img src="../../img/python_interface.png" alt="Python Interface" title="Python 
+<img src="./img/python_interface.png" alt="Python Interface" title="Python 
 Interface"/>
 </td>
 <td></td>
@@ -187,13 +187,13 @@ form a small network.
 <table><tr>
 <td>
 A
-<img src="../../img/vm_one_neuron.pdf.png" alt="A Membrane potential of 
+<img src="./img/vm_one_neuron.pdf.png" alt="A Membrane potential of 
 integrate-and-fire neuron with constant input current." title="A Membrane 
 potential of integrate-and-fire neuron with constant input current.">
 </td>
 <td>
 B
-<img src="../../img/spikes_one_neuron.pdf.png" alt="B Spikes of the neuron." 
+<img src="./img/spikes_one_neuron.pdf.png" alt="B Spikes of the neuron." 
 title="B Spikes of the neuron.">
 </td>
 </tr></table>
@@ -333,13 +333,13 @@ to the synaptic model.
 <table><tr>
 <td style="max-width: 400px;">
  A
-<img src ="../../img/vm_one_neuron_noise.pdf.png" alt="Membrane potential of
+<img src ="./img/vm_one_neuron_noise.pdf.png" alt="Membrane potential of
 integrate-and-fire neuron with Poisson noise as input." title="Membrane 
 potential of integrate-and-fire neuron with Poisson noise as input.">
 </td>
 <td style="max-width: 400px;">
 B
-<img src ="../../img/spikes_one_neuron_noise.pdf.png" alt="Spikes of the 
+<img src ="./img/spikes_one_neuron_noise.pdf.png" alt="Spikes of the 
 neuron." title="Spikes of the neuron.">
 </td>
 </tr></table>
@@ -357,7 +357,7 @@ we will look at more methods for connecting many neurons at once.
 
 <table><tr>
 <td style="max-width: 400px;">
-<img src ="../../img/vm_psp_two_neurons.pdf-w400.png" alt="Postsynaptic 
+<img src ="./img/vm_psp_two_neurons.pdf-w400.png" alt="Postsynaptic 
 potentials in neuron2 evoked by the spikes of neuron1" title="Postsynaptic 
 potentials in neuron2 evoked by the spikes of neuron1">
 </td>

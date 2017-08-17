@@ -62,7 +62,7 @@ The i<sup>th</sup> node in `pre` is connected to the i<sup>th</sup> node in
 
 Example:
 
-![One\_to\_one](../../img/One_to_one.png)
+![One\_to\_one](./img/One_to_one.png)
 one-to-one connections
 
     n = 10
@@ -83,7 +83,7 @@ Example:
 
 ## all-to-all
 
-![all-to-all connections](../../img/All_to_all.png)
+![all-to-all connections](./img/All_to_all.png)
 all-to-all connections
 
 Each node in `pre` is connected to every node in `post`. Since 'all\_to\_all' is
@@ -98,7 +98,7 @@ Example:
 
 ### fixed-indegree
 
-![fixed-indegree connections](../../img/Fixed_indegree.png)
+![fixed-indegree connections](./img/Fixed_indegree.png)
 fixed-indegree connections
 
 The nodes in `pre` are randomly connected with the nodes in `post` such that
@@ -114,7 +114,7 @@ Example:
 
 #### fixed-outdegree
 
-![Fixed\_outdegree](../../img/Fixed_outdegree.png)
+![Fixed\_outdegree](./img/Fixed_outdegree.png)
 fixed-outdegree connections
 
 The nodes in `pre` are randomly connected with the nodes in `post` such that
@@ -345,7 +345,7 @@ the arrays.
 
 ### One-to-one connections
 
-![](../../img/One_to_one.png)
+![](./img/One_to_one.png)
 one-to-one connections
 
 `Connect(pre, post, params=None, delay=None, model='static_synapse')`: Make
@@ -387,7 +387,7 @@ Example new connection routine:
 
 ### Convergent connections
 
-![convergent connections](../../img/Convergent_connect.png)
+![convergent connections](./img/Convergent_connect.png)
 convergent connections
 
 `ConvergentConnect(pre, post, weight=None, delay=None, model='static_synapse')`:
@@ -427,7 +427,7 @@ Example new connection routine:
 
 ### Divergent connections
 
-![Divergent\_connect](../../img/Divergent_connect.png)
+![Divergent\_connect](./img/Divergent_connect.png)
 divergent connections
 
 `DivergentConnect(pre, post, weight=None, delay=None, model='static_synapse')`:
@@ -485,7 +485,7 @@ types, we give an example using standard integrate-and-fire neurons as
 presynaptic nodes and a multi-compartment integrate-and-fire neuron
 (`iaf_cond_alpha_mc`) as post-synaptic node.
 
-![Receptor types](../../img/Receptor_types.png)
+![Receptor types](./img/Receptor_types.png)
 Receptor types
 
     A1, A2, A3, A4 = Create("iaf_psc_alpha", 4)

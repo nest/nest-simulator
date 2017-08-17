@@ -103,13 +103,13 @@ to tell them where they should be located?".
 <tr>
 <td>
 A
-<img src="../../img/grid.png" alt="Example of (A) on-grid and (B) off-grid, 
+<img src="./img/grid.png" alt="Example of (A) on-grid and (B) off-grid, 
 in which the neurons are positioned as grid+jitter." title="Example of (A) 
 on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.">
 </td>
 <td>
 B
-<img src="../../img/free.png" alt="Example of (A) on-grid and (B) off-grid, 
+<img src="./img/free.png" alt="Example of (A) on-grid and (B) off-grid, 
 in which the neurons are positioned as grid+jitter." title="Example of (A) 
 on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.">
 </td>
@@ -212,14 +212,14 @@ the following table lists the parameters that can be used.
 <tr>
 <td style="max-width: 400px;">
  A
-<img src ="../../img/sample1_circgauss.png" alt="Examples of 
+<img src ="./img/sample1_circgauss.png" alt="Examples of 
 connectivity for each of the connectivity dictionaries mentioned in the 
 following Python code snippet." title="Examples of connectivity for each of 
 the connectivity dictionaries mentioned in the following Python code snippet.">
 </td>
 <td style="max-width: 400px;">
 B
-<img src ="../../img/sample2_rectanchor.png" alt="Examples of connectivity 
+<img src ="./img/sample2_rectanchor.png" alt="Examples of connectivity 
 for each of the connectivity dictionaries mentioned in the following Python 
 code snippet." title="Examples of connectivity for each of the connectivity 
 dictionaries mentioned in the following Python code snippet.">
@@ -228,14 +228,14 @@ dictionaries mentioned in the following Python code snippet.">
 <tr>
 <td style="max-width: 400px;">
  C
-<img src ="../../img/sample3_doughnutlinear.png" alt="Examples of 
+<img src ="./img/sample3_doughnutlinear.png" alt="Examples of 
 connectivity for each of the connectivity dictionaries mentioned in the 
 following Python code snippet." title="Examples of connectivity for each of 
 the connectivity dictionaries mentioned in the following Python code snippet.">
 </td>
 <td style="max-width: 400px;">
 D
-<img src ="../../img/sample4_gaussweights.png" alt="Examples of 
+<img src ="./img/sample4_gaussweights.png" alt="Examples of 
 connectivity for each of the connectivity dictionaries mentioned in the 
 following Python code snippet." title="Examples of connectivity for each of 
 dictionaries mentioned in the following Python code snippet.">

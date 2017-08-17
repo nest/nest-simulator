@@ -83,9 +83,8 @@ Introduction to PyNest
 
    examples/*
 
+.. toctree::
+   :glob:
+   :caption: Notebooks
 
-
-
-
-
-
+   model_details/*

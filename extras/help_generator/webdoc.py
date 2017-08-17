@@ -44,8 +44,8 @@ from string import Template
 from helpers import makedirs
 
 if len(sys.argv) != 5:
-    print("Usage: python examples.py <html_> <md_dir> <html_dir> "
-          "<nb_dir>")
+    print("Usage: python webdoc.py <html_> <md_dir> <html_dir> <nb_dir>")
+    # python webdoc.py ../../pynest/examples ~/000-md ~/000-html ~/000-nb
     sys.exit(1)
 
 html_, md_dir, html_dir, nb_dir = sys.argv[1:]
@@ -60,7 +60,7 @@ makedirs(html_dir + '/py_sample')
 makedirs(html_dir + '/ipynb')
 
 ipynbpath = '../../doc/model_details'
-doc_dir = '../userdoc/md/documentation'
+doc_dir = '../../doc'
 img_dir = '../userdoc/img'
 
 
@@ -75,15 +75,15 @@ def examples_to_md(example):
         """
         f = open(example, 'r')
         fi = ''.join(f.readlines())
-        # The following opening of and writing into the file is only a
+        # The following opening and writing into the file is only a
         # workaround. We need to be sure, that some documentation is there
         # at the beginning and the end.
         fi = '\n\n"""\n\n"""\n\n' + fi + '\n\n"""\n\n"""\n\n'
         f.close()
-        f = open(example + '.tmp', 'w')
+        f = open('%s/%s.tmp' % (md_dir, the_name ), 'w')
         f.write(fi)
         f.close()
-        f = open(example + '.tmp', 'r')
+        f = open('%s/%s.tmp' % (md_dir, the_name ), 'r')
         iscomment = False
         current = 0
         linenumber = 0
@@ -206,18 +206,26 @@ def examples_to_md(example):
             codeblocks[key] = code
 
         # all information for jyputer notebook
-        gen_notebook(commentblocks, codeblocks, example)
+        # gen_notebook(commentblocks, codeblocks, example)
         """
         All together
         """
         commentblocks.update(codeblocks)
         commentblocks[1] = ""
         f = open(mdfile, 'w+')
-        # f.write(header)
         for blocknr, comment in commentblocks.items():
             f.write(comment)
-        # f.write(footer)
         f.close()
+
+        """
+        Delete all temp files
+        """
+        for dirpath, dirnames, files in os.walk(md_dir):
+            for tfile in files:
+                if tfile.endswith(('.tmp')):
+                    tfi = os.path.join(dirpath, tfile)
+                    os.remove(tfi)
+
         """
         Create an index file
         """
@@ -225,34 +233,36 @@ def examples_to_md(example):
         return link
 
 
-def write_exmd_to_html():
-    for dirpath, dirnames, files in os.walk(md_dir):
-        httplst = ''.join(open('templates/sub.html.tpl.html').readlines())
-        for exfile in files:
-            exsplit = os.path.splitext(exfile)
-            exfi = os.path.join(dirpath, exfile)
-            exhfdir = html_dir + '/py_sample/' + exsplit[0]
-            makedirs(exhfdir)
-            subprocess.call(['pandoc', exfi, '-o', exhfdir + '/index.html'])
-            ind = ''.join(open(exhfdir + '/index.html').readlines())
-            ind = re.sub("<code>", '<code class="prettyprint linenums">', ind)
-            efulltpl = Template(httplst)
-            efull = efulltpl.safe_substitute(full_site_content=ind)
-            eht = open(exhfdir + '/index.html', 'w')
-            eht.write(efull)
-            eht.close()
+# def write_exmd_to_html():
+#     for dirpath, dirnames, files in os.walk(md_dir):
+#         httplst = ''.join(open('templates/sub.html.tpl.html').readlines())
+#         for exfile in files:
+#             exsplit = os.path.splitext(exfile)
+#             exfi = os.path.join(dirpath, exfile)
+#             exhfdir = html_dir + '/py_sample/' + exsplit[0]
+#             makedirs(exhfdir)
+#             subprocess.call(['pandoc', exfi, '-o', exhfdir + '/index.html'])
+#             ind = ''.join(open(exhfdir + '/index.html').readlines())
+#             ind = re.sub("<code>", '<code class="prettyprint linenums">', ind)
+#             efulltpl = Template(httplst)
+#             efull = efulltpl.safe_substitute(full_site_content=ind)
+#             eht = open(exhfdir + '/index.html', 'w')
+#             eht.write(efull)
+#             eht.close()
 
 
 def gen_examples():
     """
-    Find all examples.
+    Find all examples - .py files.
 
     :return: pyfi - fill path to example file
     """
     for dirpath, dirnames, files in os.walk(html_):
         for pyfile in files:
-            pyfi = os.path.join(dirpath, pyfile)
-            examples_to_md(pyfi)
+            if pyfile.endswith(('.py')):
+                pyfi = os.path.join(dirpath, pyfile)
+                print pyfi
+                examples_to_md(pyfi)
 
 
 def gen_notebook(comblocks, codblocks, example):
@@ -338,63 +348,63 @@ def write_docmd_to_html():
                 fht.close()
 
 
-def write_ipynb_to_html(ipynbpath):
-    print(ipynbpath)
-    httplst = ''.join(open('templates/sub.html.tpl.html').readlines())
-    note = ''.join(open('templates/ipy-note.tpl.html').readlines())
-    for dirpath, dirnames, files in os.walk(ipynbpath):
-        print(files)
-        for nbfile in files:
-            exsplit = os.path.splitext(nbfile)
-            nbfi = os.path.join(dirpath, nbfile)
-            print(nbfi)
-            if nbfi:
-                subprocess.call(['jupyter', 'nbconvert', '--template', 'basic',
-                                 nbfi])
-            newhtmlf = exsplit[0] + '.html'
-            ind = ''.join(open(newhtmlf).readlines())
-            glink = 'https://github.com/nest/nest-simulator/blob/master/doc' \
-                    '/model_details/' + nbfile
-
-            noticetpl = Template(note)
-            notice = noticetpl.safe_substitute(modelname=nbfile,
-                                               githublink=glink)
-            ind = notice + ind
-            efulltpl = Template(httplst)
-            efull = efulltpl.safe_substitute(full_site_content=ind)
-
-            exhfdir = html_dir + '/ipynb/' + exsplit[0]
-            makedirs(exhfdir)
-            eht = open(exhfdir + '/index.html', 'w')
-            eht.write(efull)
-            eht.close()
-
-            # subprocess.call(['jupyter', 'nbconvert', nbfi])
+# def write_ipynb_to_html(ipynbpath):
+#     print(ipynbpath)
+#     httplst = ''.join(open('templates/sub.html.tpl.html').readlines())
+#     note = ''.join(open('templates/ipy-note.tpl.html').readlines())
+#     for dirpath, dirnames, files in os.walk(ipynbpath):
+#         print(files)
+#         for nbfile in files:
+#             exsplit = os.path.splitext(nbfile)
+#             nbfi = os.path.join(dirpath, nbfile)
+#             print(nbfi)
+#             if nbfi:
+#                 subprocess.call(['jupyter', 'nbconvert', '--template', 'basic',
+#                                  nbfi])
+#             newhtmlf = exsplit[0] + '.html'
+#             ind = ''.join(open(newhtmlf).readlines())
+#             glink = 'https://github.com/nest/nest-simulator/blob/master/doc' \
+#                     '/model_details/' + nbfile
+#
+#             noticetpl = Template(note)
+#             notice = noticetpl.safe_substitute(modelname=nbfile,
+#                                                githublink=glink)
+#             ind = notice + ind
+#             efulltpl = Template(httplst)
+#             efull = efulltpl.safe_substitute(full_site_content=ind)
+#
+#             exhfdir = html_dir + '/ipynb/' + exsplit[0]
+#             makedirs(exhfdir)
+#             eht = open(exhfdir + '/index.html', 'w')
+#             eht.write(efull)
+#             eht.close()
+#
+#             # subprocess.call(['jupyter', 'nbconvert', nbfi])
 
 """
 ######################## N   E   W ############################################
 """
 
 
-def get_github_releases_md():
-
-    """
-    BETTER SORTINNG
-
-    So baue eine Liste von 'created_at' gehe die sortiert durxh
-
-    :return:
-    """
-    relmdfile = (doc_dir + '/releases.md')
-    js = requests.get(
-        'https://api.github.com/repos/nest/nest-simulator/releases')
-    lf = open(relmdfile, 'w+')
-    from operator import attrgetter
-    x = sorted(js.json(), key=attrgetter('created_at'))
-    for i in x:
-        lf.write('\n\n## [NEST ' + i['tag_name'] + '](' + i['url'] + ')\n')
-        lf.write(i['body'].encode('utf-8'))
-    lf.close()
+# def get_github_releases_md():
+#
+#     """
+#     BETTER SORTINNG
+#
+#     So baue eine Liste von 'created_at' gehe die sortiert durxh
+#
+#     :return:
+#     """
+#     relmdfile = (doc_dir + '/releases.md')
+#     js = requests.get(
+#         'https://api.github.com/repos/nest/nest-simulator/releases')
+#     lf = open(relmdfile, 'w+')
+#     from operator import attrgetter
+#     x = sorted(js.json(), key=attrgetter('created_at'))
+#     for i in x:
+#         lf.write('\n\n## [NEST ' + i['tag_name'] + '](' + i['url'] + ')\n')
+#         lf.write(i['body'].encode('utf-8'))
+#     lf.close()
 
 
 def get_osb_projects():
@@ -441,21 +451,23 @@ def get_osb_projects():
     hfile.write("\n".join(a))
     hfile.close()
 
-get_osb_projects()
+# get_osb_projects()
 gen_examples()
-write_exmd_to_html()
-# get_github_releases_md()
-write_docmd_to_html()
-# write_ipynb_to_html(ipynbpath)
+# write_exmd_to_html()
+# # get_github_releases_md()
+# write_docmd_to_html()
+# # write_ipynb_to_html(ipynbpath)
+#
+#
+# # images and assets
+# if os.path.exists(html_dir + '/assets'):
+#     # remove if exists
+#     shutil.rmtree(html_dir + '/assets')
+# shutil.copytree('./assets', html_dir + '/assets')
+# shutil.copytree(img_dir, html_dir + '/assets/img')
+#
+# if os.path.exists(html_dir + '/py_sample/notebook'):
+#     shutil.rmtree(html_dir + '/py_sample/notebook')
+# shutil.copytree(nb_dir, html_dir + '/py_sample/notebook')
 
 
-# images and assets
-if os.path.exists(html_dir + '/assets'):
-    # remove if exists
-    shutil.rmtree(html_dir + '/assets')
-shutil.copytree('./assets', html_dir + '/assets')
-shutil.copytree(img_dir, html_dir + '/assets/img')
-
-if os.path.exists(html_dir + '/py_sample/notebook'):
-    shutil.rmtree(html_dir + '/py_sample/notebook')
-shutil.copytree(nb_dir, html_dir + '/py_sample/notebook')

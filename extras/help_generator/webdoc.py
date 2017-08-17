@@ -206,7 +206,7 @@ def examples_to_md(example):
             codeblocks[key] = code
 
         # all information for jyputer notebook
-        # gen_notebook(commentblocks, codeblocks, example)
+        gen_notebook(commentblocks, codeblocks, example)
         """
         All together
         """

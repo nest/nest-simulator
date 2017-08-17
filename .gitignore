@@ -30,7 +30,6 @@ build/
 /topology/doc/Topology_UserManual.out
 /doc/doxygen/
 /doc/_build/
-/doc/examples/
 
 *.kdev4
 

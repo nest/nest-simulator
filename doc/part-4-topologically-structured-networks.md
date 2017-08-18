@@ -100,26 +100,26 @@ of our network be regularly and evenly placed within a 2D network, or do we need
 to tell them where they should be located?".
 
 <table>
+<tr><td>A</td><td>B</td></tr>
 <tr>
 <td>
-A
-<img src="./img/grid.png" alt="Example of (A) on-grid and (B) off-grid, 
-in which the neurons are positioned as grid+jitter." title="Example of (A) 
-on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.">
+
+![Example of (A) on-grid and (B) off-grid, 
+in which the neurons are positioned as grid+jitter.](img/grid.png)
+
 </td>
 <td>
-B
-<img src="./img/free.png" alt="Example of (A) on-grid and (B) off-grid, 
-in which the neurons are positioned as grid+jitter." title="Example of (A) 
-on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter.">
+
+![Example of (A) 
+on-grid and (B) off-grid, in which the neurons are positioned as grid+jitter
+.](img/free.png)
+
 </td>
 </tr>
 </table>
 
-
 Figure 1<a id="figure-1"></a>: Example of (A) on-grid and (B) off-grid, in 
 which the neurons are positioned as grid+jitter.
-
 
 ### 1 - On-grid
 
@@ -209,36 +209,43 @@ Here are some representative examples for setting up a connectivity profile, and
 the following table lists the parameters that can be used.
 
 <table>
+<tr><td>A</td><td>B</td></tr>
 <tr>
 <td style="max-width: 400px;">
- A
-<img src ="./img/sample1_circgauss.png" alt="Examples of 
+
+![Examples of 
 connectivity for each of the connectivity dictionaries mentioned in the 
 following Python code snippet." title="Examples of connectivity for each of 
-the connectivity dictionaries mentioned in the following Python code snippet.">
+the connectivity dictionaries mentioned in the following Python code snippet
+.](img/sample1_circgauss.png)
+
 </td>
 <td style="max-width: 400px;">
-B
-<img src ="./img/sample2_rectanchor.png" alt="Examples of connectivity 
+
+![Examples of connectivity 
 for each of the connectivity dictionaries mentioned in the following Python 
 code snippet." title="Examples of connectivity for each of the connectivity 
-dictionaries mentioned in the following Python code snippet.">
+dictionaries mentioned in the following Python code snippet.](img/sample2_rectanchor.png)
+
 </td>
 </tr>
+<tr><td>C</td><td>D</td></tr>
 <tr>
 <td style="max-width: 400px;">
- C
-<img src ="./img/sample3_doughnutlinear.png" alt="Examples of 
+
+![Examples of connectivity for each of the connectivity dictionaries 
+mentioned in the following Python code snippet." title="Examples of 
 connectivity for each of the connectivity dictionaries mentioned in the 
-following Python code snippet." title="Examples of connectivity for each of 
-the connectivity dictionaries mentioned in the following Python code snippet.">
+following Python code snippet.](img/sample3_doughnutlinear.png)
+
 </td>
 <td style="max-width: 400px;">
-D
-<img src ="./img/sample4_gaussweights.png" alt="Examples of 
+
+![Examples of 
 connectivity for each of the connectivity dictionaries mentioned in the 
 following Python code snippet." title="Examples of connectivity for each of 
-dictionaries mentioned in the following Python code snippet.">
+dictionaries mentioned in the following Python code snippet.](img/sample4_gaussweights.png)
+
 </td>
 </tr>
 </table>

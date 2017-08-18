@@ -374,7 +374,6 @@ we will look at more methods for connecting many neurons at once.
 potentials in neuron2 evoked by the spikes of neuron1](img/vm_psp_two_neurons.pdf-w400.png)
 
 </td>
-<td></td>
 </tr></table>
 
 Figure 4<a id="figure-4"></a>: Postsynaptic potentials in `neuron2` evoked by 

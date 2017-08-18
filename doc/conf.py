@@ -58,8 +58,6 @@ for dirpath, dirnames, files in os.walk(os.path.dirname(__file__)):
             # check_output(args)
             # check_output(args)
 
-
-
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -75,7 +73,8 @@ extensions = [
     'sphinx.ext.mathjax',
 ]
 
-mathjax_path="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+mathjax_path = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX" \
+              "-AMS-MML_HTMLorMML"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -99,7 +98,7 @@ author = u'steffengraber'
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
-## The short X.Y version.
+# The short X.Y version.
 version = '1.0.0'
 # The full version, including alpha/beta/rc tagss
 release = '1.0.0'

@@ -22,9 +22,9 @@
 import sys
 import os
 # import shlex
-# import recommonmark
+import recommonmark
 from recommonmark.parser import CommonMarkParser
-# from recommonmark.transform import AutoStructify
+from recommonmark.transform import AutoStructify
 from subprocess import check_output, CalledProcessError
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -146,6 +146,9 @@ todo_include_todos = False
 # Output file base name for HTML help builder.
 htmlhelp_basename = 'NESTsimulatordoc'
 
+html_show_sphinx = False
+html_show_copyright = False
+
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -198,11 +201,10 @@ texinfo_documents = [
 ]
 
 # -- Options for readthedocs ----------------------------------------------
-# app setup hook
 
 
-# def setup(app):
-#     app.add_config_value('recommonmark_config', {
-#         'enable_auto_doc_ref': True,
-#     }, True)
-#     app.add_transform(AutoStructify)
+def setup(app):
+    app.add_config_value('recommonmark_config', {
+        'enable_auto_doc_ref': True,
+    }, True)
+    app.add_transform(AutoStructify)

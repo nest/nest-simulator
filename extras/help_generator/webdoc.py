@@ -34,12 +34,8 @@ they are, but this is not a must.
 import json
 import os
 import re
-import requests
-# import datetime
-import subprocess
 import sys
 import textwrap
-import shutil
 from string import Template
 from helpers import makedirs
 from subprocess import check_output
@@ -75,10 +71,10 @@ def examples_to_md(example):
         # at the beginning and the end.
         fi = '\n\n"""\n\n"""\n\n' + fi + '\n\n"""\n\n"""\n\n'
         f.close()
-        f = open('{}/{}.tmp'.format(md_dir, the_name ), 'w')
+        f = open('{}/{}.tmp'.format(md_dir, the_name), 'w')
         f.write(fi)
         f.close()
-        f = open('{}/{}.tmp'.format(md_dir, the_name ), 'r')
+        f = open('{}/{}.tmp'.format(md_dir, the_name), 'r')
         iscomment = False
         current = 0
         linenumber = 0
@@ -217,7 +213,7 @@ def examples_to_md(example):
         """
         for dirpath, dirnames, files in os.walk(md_dir):
             for tfile in files:
-                if tfile.endswith(('.tmp')):
+                if tfile.endswith('.tmp'):
                     tfi = os.path.join(dirpath, tfile)
                     os.remove(tfi)
 
@@ -294,7 +290,6 @@ def gen_notebook(comblocks, codblocks, example):
     f.close()
 
 
-
 # def get_github_releases_md():
 #
 #     """
@@ -339,7 +334,7 @@ def gen_notebook(comblocks, codblocks, example):
 #         for project in osb.get_projects(min_curation_level="Low",
 #                                         limit=project_num):
 #             if project.nest_support > 1:
-#                 dump = ({'osb_id': project.id, 'osb_slug': project.identifier,
+#                 dump = ({'osb_id': project.id,'osb_slug': project.identifier,
 #                          'osb_title': project.name,
 #                          'osb_nest': project.nest_support})
 #                 attrdump.append(dump)
@@ -350,7 +345,8 @@ def gen_notebook(comblocks, codblocks, example):
 #                     project.id)
 #                 a.append('-   ' + '[' + title + '](' + link + ')')
 #                 # Pretty printing JSON
-#                 # print json.dumps(attrdump, sort_keys=True, indent=4, separators=(',', ': '))
+#                 # print json.dumps(attrdump, sort_keys=True, indent=4,
+#                 # separators=(',', ': '))
 #
 #     # append to index.md
 #     hfile = open(doc_dir + "/index.md", "a")
@@ -361,11 +357,11 @@ def gen_notebook(comblocks, codblocks, example):
 def convert_notebook_to_md(ipysdir):
     for dirpath, dirnames, files in os.walk(ipysdir):
         for ipyfile in files:
-            if ipyfile.endswith(('.ipynb')):
+            if ipyfile.endswith('.ipynb'):
                 # ipyfi = os.path.join(dirpath, ipyfile)
                 out = check_output(
-                ["jupyter-nbconvert", "{}/{}".format(ipynbpath, ipyfile),
-                 "--to", "markdown"])
+                  ["jupyter-nbconvert", "{}/{}".format(ipynbpath, ipyfile),
+                   "--to", "markdown"])
 
 
 # get_osb_projects()

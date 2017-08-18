@@ -25,13 +25,15 @@ subdirectory: `pynest/examples/`.
 
 ## PyNEST - an interface to the NEST simulator
 
-<table><tr>
-<td style="max-width: 400px;">
-<img src="./img/python_interface.png" alt="Python Interface" title="Python 
-Interface"/>
+<table>
+<tr>
+<td style="width: 400px;"> 
+
+![Python Interface](img/python_interface.png) 
+
 </td>
-<td></td>
-</tr></table>
+<tr>
+</table>
 
 Figure 1<a id="figure-1"></a>: The Python interpreter imports NEST as a 
 module 
@@ -184,17 +186,22 @@ form a small network.
     nest.Connect(multimeter, neuron)
     nest.Connect(neuron, spikedetector)
 
-<table><tr>
+<table>
+<tr><td>A</td><td>B</td></tr>
+<tr>
 <td>
-A
-<img src="./img/vm_one_neuron.pdf.png" alt="A Membrane potential of 
+
+![A Membrane potential of 
 integrate-and-fire neuron with constant input current." title="A Membrane 
-potential of integrate-and-fire neuron with constant input current.">
+potential of integrate-and-fire neuron with constant input current.](img/vm_one_neuron.pdf.png)
+
+
 </td>
 <td>
-B
-<img src="./img/spikes_one_neuron.pdf.png" alt="B Spikes of the neuron." 
-title="B Spikes of the neuron.">
+
+![B Spikes of the neuron." 
+title="B Spikes of the neuron.](img/spikes_one_neuron.pdf.png)
+
 </td>
 </tr></table>
 
@@ -330,17 +337,22 @@ to the synaptic model.
     nest.Connect([noise[0]], neuron, syn_spec=syn_dict_ex)
     nest.Connect([noise[1]], neuron, syn_spec=syn_dict_in)
 
-<table><tr>
+<table>
+<tr>
+<td>A</td><td>B</td>
+<tr>
 <td style="max-width: 400px;">
- A
-<img src ="./img/vm_one_neuron_noise.pdf.png" alt="Membrane potential of
+
+![Membrane potential of
 integrate-and-fire neuron with Poisson noise as input." title="Membrane 
-potential of integrate-and-fire neuron with Poisson noise as input.">
+potential of integrate-and-fire neuron with Poisson noise as input.](img/vm_one_neuron_noise.pdf.png)
+
 </td>
 <td style="max-width: 400px;">
-B
-<img src ="./img/spikes_one_neuron_noise.pdf.png" alt="Spikes of the 
-neuron." title="Spikes of the neuron.">
+
+![Spikes of the 
+neuron.](img/spikes_one_neuron_noise.pdf.png)
+
 </td>
 </tr></table>
 
@@ -357,9 +369,10 @@ we will look at more methods for connecting many neurons at once.
 
 <table><tr>
 <td style="max-width: 400px;">
-<img src ="./img/vm_psp_two_neurons.pdf-w400.png" alt="Postsynaptic 
-potentials in neuron2 evoked by the spikes of neuron1" title="Postsynaptic 
-potentials in neuron2 evoked by the spikes of neuron1">
+
+![Postsynaptic 
+potentials in neuron2 evoked by the spikes of neuron1](img/vm_psp_two_neurons.pdf-w400.png)
+
 </td>
 <td></td>
 </tr></table>

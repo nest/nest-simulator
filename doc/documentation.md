@@ -18,7 +18,6 @@
 -   [Using NEST with MUSIC](using-nest-with-music.md)
 -   [Using NEST with the SLI interpreter](an-introduction-to-sli.md)
 -   [NEST/SLI Quick Reference](quickref.md)
--   [NEST Command Index](helpindex.md)
 
 ## Example Networks
 

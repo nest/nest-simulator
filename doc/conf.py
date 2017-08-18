@@ -149,7 +149,6 @@ todo_include_todos = False
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ['_static']
 
-
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
@@ -161,10 +160,11 @@ html_show_copyright = False
 # This way works for ReadTheDocs
 # With this local 'make html' is broken!
 github_doc_root = ''
+
+
 def setup(app):
     app.add_stylesheet('css/my_styles.css')
     app.add_config_value('recommonmark_config', {
-            #'url_resolver': lambda url: github_doc_root + url,
             'auto_toc_tree_section': 'Contents',
             'enable_inline_math': True,
             'enable_auto_doc_ref': True,

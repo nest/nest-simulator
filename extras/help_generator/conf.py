@@ -19,6 +19,16 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
+"""
+Sphinx configuration file
+------------------------------
+
+Works only local.
+Use:
+sphinx-build -c ../extras/help_generator -b html . _build/html
+
+"""
+
 import sys
 import os
 # import shlex

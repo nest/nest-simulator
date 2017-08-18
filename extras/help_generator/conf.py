@@ -19,22 +19,12 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-"""
-Readthedocs configuration file
-------------------------------
-
-Do not work with local sphinx.
-Use:
-sphinx-build -c ../extras/help_generator -b html . _build/html
-
-"""
-
 import sys
 import os
 # import shlex
 import recommonmark
 from recommonmark.parser import CommonMarkParser
-from recommonmark.transform import AutoStructify
+# from recommonmark.transform import AutoStructify
 from subprocess import check_output, CalledProcessError
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -160,17 +150,17 @@ html_show_copyright = False
 
 # This way works for ReadTheDocs
 # With this local 'make html' is broken!
-github_doc_root = ''
-def setup(app):
-    app.add_stylesheet('css/my_styles.css')
-    app.add_config_value('recommonmark_config', {
-            #'url_resolver': lambda url: github_doc_root + url,
-            'auto_toc_tree_section': 'Contents',
-            'enable_inline_math': True,
-            'enable_auto_doc_ref': True,
-            'enable_eval_rst': True
-            }, True)
-    app.add_transform(AutoStructify)
+# github_doc_root = ''
+# def setup(app):
+#     app.add_stylesheet('css/my_styles.css')
+#     app.add_config_value('recommonmark_config', {
+#             #'url_resolver': lambda url: github_doc_root + url,
+#             'auto_toc_tree_section': 'Contents',
+#             'enable_inline_math': True,
+#             'enable_auto_doc_ref': True,
+#             'enable_eval_rst': True
+#             }, True)
+#     app.add_transform(AutoStructify)
 
 # -- Options for LaTeX output ---------------------------------------------
 

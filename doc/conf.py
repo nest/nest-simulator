@@ -37,14 +37,6 @@ source_parsers = {
 }
 source_suffix = ['.rst', '.md']
 
-
-def setup(app):
-    app.add_config_value('recommonmark_config', {
-            'url_resolver': lambda url: github_doc_root + url,
-            'auto_toc_tree_section': 'Contents',
-            }, True)
-    app.add_transform(AutoStructify)
-
 # -- Checking for pandoc --------------------------------------------------
 
 try:
@@ -156,6 +148,16 @@ htmlhelp_basename = 'NESTsimulatordoc'
 html_show_sphinx = False
 html_show_copyright = False
 
+# This way works for ReadTheDocs, to improve table styles
+github_doc_root = ''
+def setup(app):
+    app.add_stylesheet('css/my_styles.css')
+    app.add_config_value('recommonmark_config', {
+            #'url_resolver': lambda url: github_doc_root + url,
+            'auto_toc_tree_section': 'Contents',
+            'enable_eval_rst': True
+            }, True)
+    app.add_transform(AutoStructify)
 
 # -- Options for LaTeX output ---------------------------------------------
 

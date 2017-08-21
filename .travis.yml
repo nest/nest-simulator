@@ -80,7 +80,10 @@ before_install:
   - sudo apt-get install -y openmpi-bin libopenmpi-dev
 
   # Install nose framework for the Python testsuite.
+  # (Please note that the nose-capturestderr plugin is needed to suppress NEST output to stderr which may interfere 
+  #  with the nosetests output hindering correct log-parsing. stdout it captured by default.)
   - sudo apt-get install -y python-nose
+  - sudo pip install "nose-capturestderr==1.2"
 
   # Install VERA++ and pep8 for static code analysis.
   - sudo apt-get install -y vera++ pep8
@@ -110,6 +113,9 @@ install:
   - which python
   - python --version
   - which pip
+  - which nosetests
+  - nosetests --version
+  - nosetests --plugins
   - which cmake
   - cmake --version
 

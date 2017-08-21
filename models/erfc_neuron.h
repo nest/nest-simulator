@@ -25,7 +25,7 @@
 
 // Includes from models:
 #include "binary_neuron.h"
-#include "binary_neuron_impl.h"
+// #include "binary_neuron_impl.h"
 
 namespace nest
 {
@@ -90,8 +90,8 @@ namespace nest
    immanent in nervous activity. Bulletin of Mathematical Biophysics, 5:115-133.
    [3] Abigail Morrison, Markus Diesmann. Maintaining Causality in Discrete Time
    Neuronal Simulations. In: Lectures in Supercomputational Neuroscience, 
-   p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths (Eds.), 
-   Springer 2008.
+   p. 267. Peter beim Graben, Changsong Zhou, Marco Thiel, Juergen Kurths
+   (Eds.), Springer 2008.
 
    Sends: SpikeEvent
    Receives: SpikeEvent, PotentialRequest

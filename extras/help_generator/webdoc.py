@@ -20,12 +20,11 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 """
-Make HTML, markdown and notebook
+Make markdown and notebook
 ================================
 
-Parse documentation makrdown files and convert them to html.
 Parse the examples (python) and convert everthing to statik markdown and ipynb.
-Putting everything together to integrate in the website.
+Putting everything together to integrate in documentation.
 
 Note: the notebook files are generated for good reading. They could work as
 they are, but this is not a must.

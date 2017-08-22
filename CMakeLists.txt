@@ -76,6 +76,8 @@ set( with-defines OFF CACHE STRING "Additional defines, e.g. '-DXYZ=1'. Separate
 set( enable-bluegene OFF CACHE STRING "Configure for BlueGene." )
 option( k-computer "Enable K computer." OFF )
 
+set( disable-timing OFF CACHE BOOL "Disable measurements via Stopwatches. [default OFF]" )
+
 ################################################################################
 ##################      Project Directory variables           ##################
 ################################################################################
@@ -150,6 +152,7 @@ nest_process_with_openmp()
 nest_process_with_mpi()
 nest_process_with_libneurosim()
 nest_process_with_music()
+nest_process_disable_timing()
 
 nest_get_color_flags()
 set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )

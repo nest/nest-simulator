@@ -344,11 +344,15 @@ EventDeliveryManager::gather_secondary_events( const bool done )
     send_buffer_secondary_events_[ ( rank + 1 ) * chunk_size - 1 ] = done;
   }
 
+#ifndef DISABLE_TIMING
   kernel().mpi_manager.synchronize(); // to get an accurate time measurement across ranks
   sw_communicate_secondary_events.start();
+#endif
   kernel().mpi_manager.communicate_secondary_events_Alltoall(
     &send_buffer_secondary_events_[ 0 ], &recv_buffer_secondary_events_[ 0 ] );
+#ifndef DISABLE_TIMING
   sw_communicate_secondary_events.stop();
+#endif
 }
 
 bool
@@ -470,8 +474,10 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
     {
       sw_collocate_spike_data.stop();
       ++comm_rounds_spike_data;
+#ifndef DISABLE_TIMING
       kernel().mpi_manager.synchronize(); // to get an accurate time measurement across ranks
       sw_communicate_spike_data.start();
+#endif
       unsigned int* send_buffer_int =
         reinterpret_cast< unsigned int* >( &send_buffer[ 0 ] );
       unsigned int* recv_buffer_int =
@@ -479,7 +485,9 @@ EventDeliveryManager::gather_spike_data_( const thread tid,
       kernel().mpi_manager.communicate_Alltoall( send_buffer_int,
                                                  recv_buffer_int,
                                                  send_recv_count_in_int );
+#ifndef DISABLE_TIMING
       sw_communicate_spike_data.stop();
+#endif
       sw_deliver_spike_data.start();
     } // of omp single; implicit barrier
 
@@ -767,8 +775,10 @@ EventDeliveryManager::gather_target_data( const thread tid )
     {
       sw_collocate_target_data.stop();
       ++comm_rounds_target_data;
+#ifndef DISABLE_TIMING
       kernel().mpi_manager.synchronize(); // to get an accurate time measurement across ranks
       sw_communicate_target_data.start();
+#endif
       unsigned int* send_buffer_int =
         reinterpret_cast< unsigned int* >( &send_buffer_target_data_[ 0 ] );
       unsigned int* recv_buffer_int =
@@ -776,7 +786,9 @@ EventDeliveryManager::gather_target_data( const thread tid )
       kernel().mpi_manager.communicate_Alltoall( send_buffer_int,
         recv_buffer_int,
         send_recv_count_target_data_in_int_per_rank_ );
+#ifndef DISABLE_TIMING
       sw_communicate_target_data.stop();
+#endif
       sw_distribute_target_data.start();
     } // of omp single
 

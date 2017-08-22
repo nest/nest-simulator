@@ -66,6 +66,30 @@ proxynode::sends_secondary_event( GapJunctionEvent& ge )
     ->sends_secondary_event( ge );
 }
 
+void
+proxynode::sends_secondary_event( InstantaneousRateConnectionEvent& re )
+{
+  kernel()
+    .model_manager.get_model( get_model_id() )
+    ->sends_secondary_event( re );
+}
+
+void
+proxynode::sends_secondary_event( DiffusionConnectionEvent& de )
+{
+  kernel()
+    .model_manager.get_model( get_model_id() )
+    ->sends_secondary_event( de );
+}
+
+void
+proxynode::sends_secondary_event( DelayedRateConnectionEvent& re )
+{
+  kernel()
+    .model_manager.get_model( get_model_id() )
+    ->sends_secondary_event( re );
+}
+
 /**
  * @returns type of signal this node produces
  * used in check_connection to only connect neurons which send / receive

@@ -49,6 +49,9 @@ from . import test_parrot_neuron
 from . import test_stdp_triplet_synapse
 from . import test_weight_recorder
 from . import test_aeif_lsodar
+from . import test_rate_neuron
+from . import test_rate_neuron_communication
+from . import test_siegert_neuron
 from . import test_use_gid_in_filename
 
 
@@ -81,6 +84,9 @@ def suite():
     suite.addTest(test_stdp_triplet_synapse.suite())
     suite.addTest(test_weight_recorder.suite())
     suite.addTest(test_aeif_lsodar.suite())
+    suite.addTest(test_rate_neuron.suite())
+    suite.addTest(test_rate_neuron_communication.suite())
+    suite.addTest(test_siegert_neuron.suite())
     suite.addTest(test_use_gid_in_filename.suite())
 
     return suite

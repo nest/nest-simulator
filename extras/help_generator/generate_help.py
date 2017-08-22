@@ -51,7 +51,8 @@ for dirpath, dirnames, files in os.walk(source_dir):
         continue
 
     for f in files:
-        if f.endswith((".sli", ".cpp", ".cc", ".h", ".py")):
+        if f.endswith((".sli", ".cpp", ".cc", ".h", ".py")) and \
+           not f.startswith(".#"):
             allfiles.append(os.path.join(dirpath, f))
 
 num = 0

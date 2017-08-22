@@ -23,7 +23,8 @@
 Make markdown and notebook
 ================================
 
-Parse the examples (python) and convert everthing to statik markdown and ipynb.
+Parse the examples (python) and convert everything to static markdown and
+ipynb.
 Putting everything together to integrate in documentation.
 
 Note: the notebook files are generated for good reading. They could work as

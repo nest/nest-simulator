@@ -27,6 +27,7 @@ import numpy as np
 
 HAVE_GSL = nest.sli_func("statusdict/have_gsl ::")
 
+
 @nest.check_stack
 @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
 class SiegertNeuronTestCase(unittest.TestCase):
@@ -57,7 +58,6 @@ class SiegertNeuronTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus(
             {'resolution': self.dt, 'use_wfr': False, 'print_time': True})
-
         # set up driven iaf neuron
 
         self.iaf_neuron = nest.Create(
@@ -72,7 +72,6 @@ class SiegertNeuronTestCase(unittest.TestCase):
             "spike_detector", params={'start': self.start})
         nest.Connect(
             self.iaf_neuron, self.spike_detector)
-
         # set up driven siegert neuron
 
         neuron_status = nest.GetStatus(self.iaf_neuron)[0]
@@ -88,7 +87,7 @@ class SiegertNeuronTestCase(unittest.TestCase):
         self.siegert_drive = nest.Create(
             'siegert_neuron', 1, params={'mean': self.rate_ex})
         J_mu_ex = neuron_status['tau_m'] * 1e-3 * self.J
-        J_sigma_ex = neuron_status['tau_m'] * 1e-3 * self.J**2
+        J_sigma_ex = neuron_status['tau_m'] * 1e-3 * self.J ** 2
         syn_dict = {'drift_factor': J_mu_ex, 'diffusion_factor':
                     J_sigma_ex, 'model': 'diffusion_connection'}
         nest.Connect(

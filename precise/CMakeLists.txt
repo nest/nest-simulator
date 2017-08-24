@@ -25,7 +25,7 @@ set( precise_sources
     iaf_psc_exp_ps.cpp iaf_psc_exp_ps.h
     poisson_generator_ps.cpp poisson_generator_ps.h
     parrot_neuron_ps.cpp parrot_neuron_ps.h
-    iaf_psc_exp_ps_time_reversal.cpp iaf_psc_exp_ps_time_reversal.h
+    iaf_psc_exp_ps_lossless.cpp iaf_psc_exp_ps_lossless.h
     precisemodule.cpp precisemodule.h
     )
 

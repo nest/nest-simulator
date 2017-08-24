@@ -41,7 +41,7 @@ class TestConnectAllPatterns(unittest.TestCase):
                    ]
         retcodes = []
         for script in scripts:
-            test_script = directory + "/" + script
+            test_script = os.path.join(directory, script)
             command = nest.sli_func("mpirun", 2, "nosetests",
                                     test_script)
             print("Executing test with command: " + command)

@@ -38,11 +38,10 @@
 
 #include <vector>
 
-/*BeginDocumentation
+/*Begin Documentation
 Name: iaf_psc_exp_ps_lossless - Leaky integrate-and-fire neuron
 with exponential postsynaptic currents; precise implementation;
-applies state space analysis to predict exact number of spikes in a
-simulation for any given resolution.
+predicts exact number of spikes by applying state space analysis
 
 Description:
 iaf_psc_exp_ps_lossless is the precise state space implementation of the leaky

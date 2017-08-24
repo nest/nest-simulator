@@ -582,5 +582,52 @@ inline double nest::iaf_psc_exp_ps_lossless::bisectioning_(const double dt) cons
   return root;
 }
 
+/* Conventional spike detection algorithms propagate the initial state forwards in time and see whether it meets the threshold.
+This function implements a general method to solve the threshold-detection problem for an integrable, affine or linear
+time evolution by applying geometric analysis. The idea is to propagate the threshold backwards in time and see whether
+it meets the initial state. In state space spanned by voltage and current, this clearly separates the spiking region and 
+non-spiking region. is_spike_ takes argument dt which corresponds to the time window at which this spike prediction occurs.
+returns true, spike: if (V(t_{right}) > V_(\theta)); returns false: (V(t_{right} < V_(\theta) or initial conditions in no-spike region;
+returns true, spike: missed spike excursion, compute t_{max} = dt and find point of threshold crossing t_{\theta} using emit_spike_.
+inequalities are adjusted such that backward propagation (negative time) is already accounted for here */
+
+inline bool nest::iaf_psc_exp_ps_lossless::is_spike_(const double dt) 
+{
+  const double I_0   = V_.I_syn_ex_before_ + V_.I_syn_in_before_;
+  const double V_0   = V_.y2_before_; 
+  const double exp_tau_s = numerics::expm1(dt/P_.tau_ex_) ; 
+  const double exp_tau_m  = numerics::expm1(dt/P_.tau_m_) ; 
+  const double exp_tau_m_s = numerics::expm1(dt/P_.tau_m_ - dt/P_.tau_ex_);
+  
+  double g = ((P_.a1_ * I_0 * exp_tau_m_s + exp_tau_m * (P_.a3_ - P_.I_e_ * P_.a2_) + P_.a3_)/P_.a4_) ; 
+
+    //no-spike, NS_1
+    // intersecting line
+  if((V_0 <= (((I_0 + P_.I_e_)*(P_.b1_ * exp_tau_m + P_.b2_* exp_tau_s) + P_.b5_*(exp_tau_m - exp_tau_s))/( P_.b7_ * exp_tau_s)))
+    //continuation line       
+      &&  (V_0 < g))     
+    {
+      return false;
+    }
+  
+    //spike, S_1
+  else if (V_0 >= g )  
+    {
+      return true;
+    }
+  //no-spike, NS_2
+  else if(V_0 < (P_.c1_ * P_.I_e_ + P_.c2_ * I_0 + P_.c3_* pow(I_0, P_.c4_) * pow((P_.c5_ - P_.I_e_), P_.c6_)))
+    { 
+      return false;
+    }
+  else
+  //spike, S_2
+    {
+      V_.bisection_step = (P_.a1_ / P_.tau_m_ * P_.tau_ex_ ) * log ( P_.b1_ * I_0 / (P_.a2_ * P_.I_e_ - P_.a1_ * I_0 - P_.a4_ * V_0 ) );
+      return true;
+    }
+
+}
+
 
 

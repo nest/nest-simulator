@@ -260,30 +260,9 @@ namespace nest
 	  At threshold crossing, the membrane potential is reset to this value. 
 	  Relative to resting potential. */
       double U_reset_;
-
-      double a1_;
-      double a2_;
-      double a3_;
-      double a4_;
-      double b1_;
-      double b2_;
-      double b3_;
-      double b4_;
-      double b5_;
-      double b6_;
-      double b7_;
-      double c1_;
-      double c2_;
-      double c3_;
-      double c4_;
-      double c5_;
-      double c6_;
-      double d1_;
-      double d2_;
-      double d3_;
       
       Parameters_();  //!< Sets default parameter values
-      void calc_const_is_spike_();
+      // void calc_const_is_spike_();
 
       void get(DictionaryDatum &) const;  //!< Store current values in dictionary
       double set(const DictionaryDatum &);  //!< Set values from dicitonary
@@ -352,7 +331,28 @@ namespace nest
       double I_syn_ex_before_;      //!< y1_ at beginning of ministep
       double I_syn_in_before_;      //!< y1_ at beginning of ministep
       double y2_before_;         //!< y2_ at beginning of ministep
-      double bisection_step;
+      double bisection_step;     // if missed spike is detected, calculate time to emit spike
+
+      // The following are variables that are precomputed for the _is_spike function. 
+      // a1_, a2_, a3_, a4_ are constants that appear in the inequality V < g(h, I_e).
+      double a1_;
+      double a2_;
+      double a3_;
+      double a4_;
+
+      // b1_, b2_, b3_, b4_, in the line corresponding to the final timestep, V < f(h, I).
+      double b1_;
+      double b2_;
+      double b3_;
+      double b4_;
+
+      //c1_, c2_, c3_, c4_, c5_, c6_ in the envelope, V < b(I_e).
+      double c1_;
+      double c2_;
+      double c3_;
+      double c4_;
+      double c5_;
+      double c6_;
 	   };
     
     // Access functions for UniversalDataLogger -------------------------------

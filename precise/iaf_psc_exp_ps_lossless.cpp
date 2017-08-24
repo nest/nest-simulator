@@ -67,9 +67,7 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::Parameters_()
     U_th_   ( -55.0-E_L_),  // mV, rel to E_L_
     U_min_  (-std::numeric_limits<double>::infinity()),  // mV
     U_reset_( -70.0-E_L_)   // mV, rel to E_L_
-{
-  calc_const_is_spike_();
-}
+{}
 
 nest::iaf_psc_exp_ps_lossless::State_::State_()
   : y0_(0.0),
@@ -92,38 +90,6 @@ nest::iaf_psc_exp_ps_lossless::Buffers_::Buffers_(const Buffers_ &, iaf_psc_exp_
 /* ---------------------------------------------------------------- 
  * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
-
-
-// calc_const_is_spike_ precomputes constants for the system of inequalities 
-// in the _is_spike function. a1_, a2_, a3_, a4_ are constants that appear 
-// in inequality V < g(h, I_e). b1_, b2_, b3_, b4_, in the line corresponding 
-// to the final timestep, V < f(h, I). c1_, c2_, c3_, c4_, c5_, c6_
-// in the envelope, V < b(I_e).
-
-void nest::iaf_psc_exp_ps_lossless::Parameters_::calc_const_is_spike_()
-{
-
-  a1_ =tau_m_ * tau_ex_;
-  a2_ =tau_m_ * (tau_m_ - tau_ex_);
-  a3_ =c_m_ * U_th_ * (tau_m_ - tau_ex_);
-  a4_ =c_m_ * (tau_m_ - tau_ex_);
-
-  b1_ =-tau_m_ * tau_m_;
-  b2_ =tau_m_ * tau_ex_;
-  b3_ =tau_m_*(tau_m_ - tau_ex_)- tau_m_*tau_m_ + tau_m_* tau_ex_;
-  b4_ =-tau_m_*tau_m_; 
-  b5_ =tau_m_*c_m_*U_th_;
-  b6_ =tau_m_*(tau_m_- tau_ex_);
-  b7_ =-c_m_*(tau_m_ - tau_ex_);
-
-  c1_ =tau_m_/c_m_;
-  c2_ =(-tau_m_ * tau_ex_)/(c_m_*(tau_m_ - tau_ex_));
-  c3_ =(tau_m_ * tau_m_)/ (c_m_ * (tau_m_ - tau_ex_));
-  c4_ =tau_ex_/tau_m_;
-  c5_ =(c_m_ * U_th_)/tau_m_;
-  c6_ =1-(tau_ex_/tau_m_);
-}
-
 void nest::iaf_psc_exp_ps_lossless::Parameters_::get(DictionaryDatum & d) const
 {
   def<double>(d, names::E_L, E_L_);
@@ -197,8 +163,6 @@ double nest::iaf_psc_exp_ps_lossless::Parameters_::set(const DictionaryDatum & d
    if ( tau_m_ == tau_ex_ || tau_m_ == tau_in_ )
     throw BadProperty("Membrane and synapse time constant(s) must differ."
                       "See note in documentation.");
-
-   calc_const_is_spike_();
 
    return delta_EL;
 }
@@ -285,8 +249,25 @@ void nest::iaf_psc_exp_ps_lossless::calibrate()
   V_.P20_          = -P_.tau_m_ / P_.c_m_ * V_.expm1_tau_m_;
   V_.P21_ex_       = -P_.tau_m_*P_.tau_ex_ / (P_.tau_m_-P_.tau_ex_) / P_.c_m_ * (V_.expm1_tau_ex_-V_.expm1_tau_m_);
   V_.P21_in_       = -P_.tau_m_*P_.tau_in_ / (P_.tau_m_-P_.tau_in_) / P_.c_m_ * (V_.expm1_tau_in_-V_.expm1_tau_m_);
-  
   V_.refractory_steps_ = Time(Time::ms(P_.t_ref_)).get_steps();
+
+  V_.a1_ = P_.tau_m_ * P_.tau_ex_;
+  V_.a2_ = P_.tau_m_ * (P_.tau_m_ - P_.tau_ex_);
+  V_.a3_ = P_.c_m_ * P_.U_th_ * (P_.tau_m_ - P_.tau_ex_);
+  V_.a4_ = P_.c_m_ * (P_.tau_m_ - P_.tau_ex_);
+
+  V_.b1_ = -P_.tau_m_ * P_.tau_m_;
+  V_.b2_ = P_.tau_m_ * P_.tau_ex_;
+  V_.b3_ = P_.tau_m_*P_.c_m_*P_.U_th_;
+  V_.b4_ = -P_.c_m_*(P_.tau_m_ - P_.tau_ex_);
+
+  V_.c1_ = P_.tau_m_/P_.c_m_;
+  V_.c2_ = (-P_.tau_m_ * P_.tau_ex_)/(P_.c_m_*(P_.tau_m_ - P_.tau_ex_));
+  V_.c3_ = (P_.tau_m_ * P_.tau_m_)/ (P_.c_m_ * (P_.tau_m_ - P_.tau_ex_));
+  V_.c4_ = P_.tau_ex_/P_.tau_m_;
+  V_.c5_ = (P_.c_m_ * P_.U_th_)/P_.tau_m_;
+  V_.c6_ = 1-(P_.tau_ex_/P_.tau_m_);
+
   assert( V_.refractory_steps_ >= 0 );  // since t_ref_ >= 0, this can only fail in error
 }
 
@@ -609,10 +590,10 @@ inline bool nest::iaf_psc_exp_ps_lossless::is_spike_(const double dt)
   const double exp_tau_m  = numerics::expm1(dt/P_.tau_m_) ; 
   const double exp_tau_m_s = numerics::expm1(dt/P_.tau_m_ - dt/P_.tau_ex_);
   
-  double g = ((P_.a1_ * I_0 * exp_tau_m_s + exp_tau_m * (P_.a3_ - P_.I_e_ * P_.a2_) + P_.a3_)/P_.a4_) ; 
+  double g = ((V_.a1_ * I_0 * exp_tau_m_s + exp_tau_m * (V_.a3_ - P_.I_e_ * V_.a2_) + V_.a3_)/V_.a4_) ; 
 
     //no-spike
-  if((V_0 <= (((I_0 + P_.I_e_)*(P_.b1_ * exp_tau_m + P_.b2_* exp_tau_s) + P_.b5_*(exp_tau_m - exp_tau_s))/( P_.b7_ * exp_tau_s)))
+  if((V_0 <= (((I_0 + P_.I_e_)*(V_.b1_ * exp_tau_m + V_.b2_* exp_tau_s) + V_.b3_*(exp_tau_m - exp_tau_s))/( V_.b4_ * exp_tau_s)))
       &&  (V_0 < g))     
     {
       return false;
@@ -624,14 +605,14 @@ inline bool nest::iaf_psc_exp_ps_lossless::is_spike_(const double dt)
       return true;
     }
   //no-spike
-  else if(V_0 < (P_.c1_ * P_.I_e_ + P_.c2_ * I_0 + P_.c3_* pow(I_0, P_.c4_) * pow((P_.c5_ - P_.I_e_), P_.c6_)))
+  else if(V_0 < (V_.c1_ * P_.I_e_ + V_.c2_ * I_0 + V_.c3_* pow(I_0, V_.c4_) * pow((V_.c5_ - P_.I_e_), V_.c6_)))
     { 
       return false;
     }
   else
   //spike
     {
-      V_.bisection_step = (P_.a1_ / P_.tau_m_ * P_.tau_ex_ ) * log ( P_.b1_ * I_0 / (P_.a2_ * P_.I_e_ - P_.a1_ * I_0 - P_.a4_ * V_0 ) );
+      V_.bisection_step = (V_.a1_ / P_.tau_m_ * P_.tau_ex_ ) * log ( V_.b1_ * I_0 / (V_.a2_ * P_.I_e_ - V_.a1_ * I_0 - V_.a4_ * V_0 ) );
       return true;
     }
 

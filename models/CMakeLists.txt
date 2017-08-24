@@ -28,7 +28,7 @@ set( models_sources
     aeif_psc_exp.h aeif_psc_exp.cpp
     amat2_psc_exp.h amat2_psc_exp.cpp
     bernoulli_connection.h
-    binary_neuron.h binary_neuron_impl.h
+    binary_neuron.h
     cont_delay_connection.h cont_delay_connection_impl.h
     correlation_detector.h correlation_detector.cpp
     correlomatrix_detector.h correlomatrix_detector.cpp

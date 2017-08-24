@@ -65,7 +65,7 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::Parameters_()
     E_L_    (  0.0   ),  // mV
     I_e_    (  0.0     ),  // pA
     U_th_   ( -55.0-E_L_),  // mV, rel to E_L_
-    U_min_  (-std::numeric_limits<double_t>::infinity()),  // mV
+    U_min_  (-std::numeric_limits<double>::infinity()),  // mV
     U_reset_( -70.0-E_L_)   // mV, rel to E_L_
 {
   calc_const_spike_test_();
@@ -329,7 +329,7 @@ void nest::iaf_psc_exp_ps_lossless::update(const Time & origin,
 
   if ( S_.y2_ >= P_.U_th_ )
     emit_instant_spike_(origin, from, 
-      V_.h_ms_*(1.0-std::numeric_limits<double_t>::epsilon()));
+      V_.h_ms_*(1.0-std::numeric_limits<double>::epsilon()));
 
   for ( long lag = from; lag < to; ++lag )
   {
@@ -348,8 +348,8 @@ void nest::iaf_psc_exp_ps_lossless::update(const Time & origin,
     V_.y2_before_    = S_.y2_;
     
     // get first event
-    double_t ev_offset;
-    double_t ev_weight;
+    double ev_offset;
+    double ev_weight;
     bool     end_of_refract;
     
     if ( !B_.events_.get_next_spike(T, ev_offset, ev_weight, end_of_refract) )
@@ -395,12 +395,12 @@ void nest::iaf_psc_exp_ps_lossless::update(const Time & origin,
       
       // Time within step is measured by offsets, which are h at the beginning
       // and 0 at the end of the step.
-      double_t last_offset = V_.h_ms_;  // start of step
+      double last_offset = V_.h_ms_;  // start of step
       
       do
       {
 	// time is measured backward: inverse order in difference
-	const double_t ministep = last_offset - ev_offset;
+	const double ministep = last_offset - ev_offset;
 	
 	propagate_(ministep);
 	
@@ -484,8 +484,8 @@ void nest::iaf_psc_exp_ps_lossless::handle(CurrentEvent & e)
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(e.get_rel_delivery_steps(nest::kernel().simulation_manager.get_slice_origin() ), w * c);
@@ -504,18 +504,18 @@ void nest::iaf_psc_exp_ps_lossless::set_spiketime(const Time & now)
   S_.last_spike_step_ = now.get_steps();
 }
 
-void nest::iaf_psc_exp_ps_lossless::propagate_(const double_t dt)
+void nest::iaf_psc_exp_ps_lossless::propagate_(const double dt)
 {
-  const double_t expm1_tau_ex = numerics::expm1(-dt/P_.tau_ex_);
-  const double_t expm1_tau_in = numerics::expm1(-dt/P_.tau_in_);
+  const double expm1_tau_ex = numerics::expm1(-dt/P_.tau_ex_);
+  const double expm1_tau_in = numerics::expm1(-dt/P_.tau_in_);
 
   if ( !S_.is_refractory_ )
   {
-    const double_t expm1_tau_m  = numerics::expm1(-dt/P_.tau_m_);
+    const double expm1_tau_m  = numerics::expm1(-dt/P_.tau_m_);
     
-    const double_t P20    = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
-    const double_t P21_ex = -P_.tau_m_*P_.tau_ex_ / (P_.tau_m_-P_.tau_ex_) / P_.c_m_ * (expm1_tau_ex-expm1_tau_m);
-    const double_t P21_in = -P_.tau_m_*P_.tau_in_ / (P_.tau_m_-P_.tau_in_) / P_.c_m_ * (expm1_tau_in-expm1_tau_m);
+    const double P20    = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
+    const double P21_ex = -P_.tau_m_*P_.tau_ex_ / (P_.tau_m_-P_.tau_ex_) / P_.c_m_ * (expm1_tau_ex-expm1_tau_m);
+    const double P21_in = -P_.tau_m_*P_.tau_in_ / (P_.tau_m_-P_.tau_in_) / P_.c_m_ * (expm1_tau_in-expm1_tau_m);
     
     S_.y2_  = P20*(P_.I_e_+S_.y0_) + P21_ex*S_.I_syn_ex_ + P21_in*S_.I_syn_in_ + expm1_tau_m*S_.y2_ + S_.y2_;
   }
@@ -523,12 +523,12 @@ void nest::iaf_psc_exp_ps_lossless::propagate_(const double_t dt)
   S_.I_syn_in_ = S_.I_syn_in_*expm1_tau_in + S_.I_syn_in_;
 }
 
-void nest::iaf_psc_exp_ps_lossless::emit_spike_(const Time & origin, const long lag, const double_t t0,  const double_t dt)
+void nest::iaf_psc_exp_ps_lossless::emit_spike_(const Time & origin, const long lag, const double t0,  const double dt)
 {
   // we know that the potential is subthreshold at t0, super at t0+dt
   
   // compute spike time relative to beginning of step
-  const double_t spike_offset = V_.h_ms_ - (t0 + bisectioning_(dt));
+  const double spike_offset = V_.h_ms_ - (t0 + bisectioning_(dt));
   
   set_spiketime(Time::step(origin.get_steps() + lag + 1));
   S_.last_spike_offset_ = spike_offset;  
@@ -545,7 +545,7 @@ void nest::iaf_psc_exp_ps_lossless::emit_spike_(const Time & origin, const long 
 }
 
 void nest::iaf_psc_exp_ps_lossless::emit_instant_spike_(const Time & origin, const long lag,
-						      const double_t spike_offs) 
+						      const double spike_offs) 
 {
   assert( S_.y2_ >= P_.U_th_ );  // ensure we are superthreshold
   
@@ -567,11 +567,11 @@ void nest::iaf_psc_exp_ps_lossless::emit_instant_spike_(const Time & origin, con
 inline double nest::iaf_psc_exp_ps_lossless::bisectioning_(const double dt) const
 {
  
-  double_t root = 0.0;
+  double root = 0.0;
 
-  double_t y2_root = V_.y2_before_;
+  double y2_root = V_.y2_before_;
 
-  double_t div = 2.0;
+  double div = 2.0;
   while ( fabs(P_.U_th_-y2_root) > 1e-14 and (dt/div > 0.0) )
   {
     if ( y2_root > P_.U_th_ )
@@ -581,13 +581,13 @@ inline double nest::iaf_psc_exp_ps_lossless::bisectioning_(const double dt) cons
     
     div *= 2.0;
     
-    const double_t expm1_tau_ex = numerics::expm1(-root/P_.tau_ex_);
-    const double_t expm1_tau_in = numerics::expm1(-root/P_.tau_in_);
-    const double_t expm1_tau_m  = numerics::expm1(-root/P_.tau_m_);
+    const double expm1_tau_ex = numerics::expm1(-root/P_.tau_ex_);
+    const double expm1_tau_in = numerics::expm1(-root/P_.tau_in_);
+    const double expm1_tau_m  = numerics::expm1(-root/P_.tau_m_);
     
-    const double_t P20    = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
-    const double_t P21_ex = -P_.tau_m_*P_.tau_ex_ / (P_.tau_m_-P_.tau_ex_) / P_.c_m_ * (expm1_tau_ex-expm1_tau_m);
-    const double_t P21_in = -P_.tau_m_*P_.tau_in_ / (P_.tau_m_-P_.tau_in_) / P_.c_m_ * (expm1_tau_in-expm1_tau_m);
+    const double P20    = -P_.tau_m_ / P_.c_m_ * expm1_tau_m;
+    const double P21_ex = -P_.tau_m_*P_.tau_ex_ / (P_.tau_m_-P_.tau_ex_) / P_.c_m_ * (expm1_tau_ex-expm1_tau_m);
+    const double P21_in = -P_.tau_m_*P_.tau_in_ / (P_.tau_m_-P_.tau_in_) / P_.c_m_ * (expm1_tau_in-expm1_tau_m);
     
     y2_root = P20*(P_.I_e_+V_.y0_before_) + P21_ex*V_.I_syn_ex_before_ + P21_in*V_.I_syn_in_before_ + expm1_tau_m*V_.y2_before_ + V_.y2_before_;
   }

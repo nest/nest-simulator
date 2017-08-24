@@ -185,7 +185,7 @@ namespace nest
      * Propagate the neuron's state by dt.
      * @param dt Interval over which to propagate
      */
-    void propagate_(const double_t dt);
+    void propagate_(const double dt);
     
     /**
      * Emit a single spike caused by DC current in absence of spike input.
@@ -199,7 +199,7 @@ namespace nest
      * @param dt      Duration of mini-timestep
      */
     void emit_spike_(const Time & origin, const long lag, 
-		     const double_t t0, const double_t dt);
+		     const double t0, const double dt);
     
     /**
      * Emit a single spike at a precisely given time.
@@ -209,16 +209,16 @@ namespace nest
      * @param spike_offset  Time offset for spike
      */
     void emit_instant_spike_(const Time & origin, const long lag, 
-			     const double_t spike_offset);
+			     const double spike_offset);
     
     /**
      * Localize threshold crossing by bisectioning.
-     * @param   double_t length of interval since previous event
+     * @param   double length of interval since previous event
      * @returns time from previous event to threshold crossing
      */
-    double_t bisectioning_(const double_t dt) const;
+    double bisectioning_(const double dt) const;
 
-    bool is_spike_(const double_t);
+    bool is_spike_(const double);
 
     // ---------------------------------------------------------------- 
 
@@ -297,14 +297,14 @@ namespace nest
      */
     struct State_
     {
-      double_t y0_;  //!< External input current
-      double_t I_syn_ex_;  //!< Exc. exponetial current
-      double_t I_syn_in_;  //!< Inh. exponetial current
-      double_t y2_;  //!< Membrane potential (relative to resting potential)
+      double y0_;  //!< External input current
+      double I_syn_ex_;  //!< Exc. exponetial current
+      double I_syn_in_;  //!< Inh. exponetial current
+      double y2_;  //!< Membrane potential (relative to resting potential)
       
       bool is_refractory_;  //!< True while refractory
       long   last_spike_step_;  //!< Time stamp of most recent spike
-      double_t last_spike_offset_;  //!< Offset of most recent spike
+      double last_spike_offset_;  //!< Offset of most recent spike
 
       long dhaene_quick1;
       long dhaene_quick2;
@@ -356,28 +356,28 @@ namespace nest
      */
     struct Variables_
     { 
-      double_t h_ms_;              //!< Time resolution [ms]
+      double h_ms_;              //!< Time resolution [ms]
       long   refractory_steps_;  //!< Refractory time in steps
-      double_t expm1_tau_m_;       //!< exp(-h/tau_m) - 1
-      double_t expm1_tau_ex_;      //!< exp(-h/tau_ex) - 1
-      double_t expm1_tau_in_;      //!< exp(-h/tau_in) - 1
-      double_t P20_;               //!< Progagator matrix element, 2nd row
-      double_t P21_in_;            //!< Progagator matrix element, 2nd row
-      double_t P21_ex_;            //!< Progagator matrix element, 2nd row
-      double_t y0_before_;         //!< y0_ at beginning of ministep
-      double_t I_syn_ex_before_;      //!< y1_ at beginning of ministep
-      double_t I_syn_in_before_;      //!< y1_ at beginning of ministep
-      double_t y2_before_;         //!< y2_ at beginning of ministep
-      double_t bisection_step;
+      double expm1_tau_m_;       //!< exp(-h/tau_m) - 1
+      double expm1_tau_ex_;      //!< exp(-h/tau_ex) - 1
+      double expm1_tau_in_;      //!< exp(-h/tau_in) - 1
+      double P20_;               //!< Progagator matrix element, 2nd row
+      double P21_in_;            //!< Progagator matrix element, 2nd row
+      double P21_ex_;            //!< Progagator matrix element, 2nd row
+      double y0_before_;         //!< y0_ at beginning of ministep
+      double I_syn_ex_before_;      //!< y1_ at beginning of ministep
+      double I_syn_in_before_;      //!< y1_ at beginning of ministep
+      double y2_before_;         //!< y2_ at beginning of ministep
+      double bisection_step;
 	   };
     
     // Access functions for UniversalDataLogger -------------------------------
     
     //! Read out the real membrane potential
-    double_t get_V_m_() const { return S_.y2_ + P_.E_L_; }
-    double_t get_I_syn_() const { return S_.I_syn_ex_ + S_.I_syn_in_; }
-    double_t get_I_syn_ex_() const { return S_.I_syn_ex_; }
-    double_t get_I_syn_in_() const { return S_.I_syn_in_; }
+    double get_V_m_() const { return S_.y2_ + P_.E_L_; }
+    double get_I_syn_() const { return S_.I_syn_ex_ + S_.I_syn_in_; }
+    double get_I_syn_ex_() const { return S_.I_syn_ex_; }
+    double get_I_syn_in_() const { return S_.I_syn_in_; }
 
     
     // ---------------------------------------------------------------- 
@@ -447,7 +447,7 @@ inline
 void iaf_psc_exp_ps_lossless::set_status(const DictionaryDatum & d)
 {
   Parameters_ ptmp = P_;  // temporary copy in case of errors
-  double_t delta_EL = ptmp.set(d);            // throws if BadProperty
+  double delta_EL = ptmp.set(d);            // throws if BadProperty
   State_ stmp = S_;       // temporary copy in case of errors
   stmp.set(d, ptmp, delta_EL);      // throws if BadProperty
 
@@ -466,15 +466,15 @@ returns true, spike: missed spike excursion, compute t_{max} = dt and find point
 inequalities are adjusted such that backward propagation (negative time) is already accounted for here */
 
 inline
-bool iaf_psc_exp_ps_lossless::is_spike_(double_t dt)
+bool iaf_psc_exp_ps_lossless::is_spike_(double dt)
 {
-  double_t const I_0   = V_.I_syn_ex_before_ + V_.I_syn_in_before_;
-  double_t const V_0   = V_.y2_before_; 
-  const double_t exp_tau_s = numerics::expm1(dt/P_.tau_ex_) ; 
-  const double_t exp_tau_m  = numerics::expm1(dt/P_.tau_m_) ; 
-  const double_t exp_tau_m_s = numerics::expm1(dt/P_.tau_m_ - dt/P_.tau_ex_);
+  double const I_0   = V_.I_syn_ex_before_ + V_.I_syn_in_before_;
+  double const V_0   = V_.y2_before_; 
+  const double exp_tau_s = numerics::expm1(dt/P_.tau_ex_) ; 
+  const double exp_tau_m  = numerics::expm1(dt/P_.tau_m_) ; 
+  const double exp_tau_m_s = numerics::expm1(dt/P_.tau_m_ - dt/P_.tau_ex_);
   
-  double_t g = ((P_.a1_ * I_0 * exp_tau_m_s + exp_tau_m * (P_.a3_ - P_.I_e_ * P_.a2_) + P_.a3_)/P_.a4_) ; 
+  double g = ((P_.a1_ * I_0 * exp_tau_m_s + exp_tau_m * (P_.a3_ - P_.I_e_ * P_.a2_) + P_.a3_)/P_.a4_) ; 
 
     //no-spike, NS_1
     // intersecting line

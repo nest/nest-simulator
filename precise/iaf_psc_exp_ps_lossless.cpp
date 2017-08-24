@@ -94,38 +94,34 @@ nest::iaf_psc_exp_ps_lossless::Buffers_::Buffers_(const Buffers_ &, iaf_psc_exp_
  * ---------------------------------------------------------------- */
 
 
-//constants for time-reversal state space spike-detection algorithm
+// calc_const_is_spike_ precomputes constants for the system of inequalities 
+// in the _is_spike function. a1_, a2_, a3_, a4_ are constants that appear 
+// in inequality V < g(h, I_e). b1_, b2_, b3_, b4_, in the line corresponding 
+// to the final timestep, V < f(h, I). c1_, c2_, c3_, c4_, c5_, c6_
+// in the envelope, V < b(I_e).
 
 void nest::iaf_psc_exp_ps_lossless::Parameters_::calc_const_is_spike_()
 {
-  // line corresponding to the final timestep i.e t_right: continuation
-  // of the curved boundary: a + I*b
+
   a1_ =tau_m_ * tau_ex_;
   a2_ =tau_m_ * (tau_m_ - tau_ex_);
   a3_ =c_m_ * U_th_ * (tau_m_ - tau_ex_);
   a4_ =c_m_ * (tau_m_ - tau_ex_);
 
-  // line joining endpoints of the envelope: \alpha I + \beta
   b1_ =-tau_m_ * tau_m_;
   b2_ =tau_m_ * tau_ex_;
   b3_ =tau_m_*(tau_m_ - tau_ex_)- tau_m_*tau_m_ + tau_m_* tau_ex_;
-  b4_ =-tau_m_*tau_m_; //b1
+  b4_ =-tau_m_*tau_m_; 
   b5_ =tau_m_*c_m_*U_th_;
   b6_ =tau_m_*(tau_m_- tau_ex_);
   b7_ =-c_m_*(tau_m_ - tau_ex_);
 
-  // envelope or curved boundary
   c1_ =tau_m_/c_m_;
   c2_ =(-tau_m_ * tau_ex_)/(c_m_*(tau_m_ - tau_ex_));
   c3_ =(tau_m_ * tau_m_)/ (c_m_ * (tau_m_ - tau_ex_));
   c4_ =tau_ex_/tau_m_;
   c5_ =(c_m_ * U_th_)/tau_m_;
   c6_ =1-(tau_ex_/tau_m_);
-
-  // parallel line
-  d1_ = tau_m_ *  c_m_ ;
-  d2_ = tau_m_ * tau_ex_;
-  d3_ = c_m_ * (tau_m_ - tau_ex_);
 }
 
 void nest::iaf_psc_exp_ps_lossless::Parameters_::get(DictionaryDatum & d) const
@@ -582,14 +578,28 @@ inline double nest::iaf_psc_exp_ps_lossless::bisectioning_(const double dt) cons
   return root;
 }
 
-/* Conventional spike detection algorithms propagate the initial state forwards in time and see whether it meets the threshold.
-This function implements a general method to solve the threshold-detection problem for an integrable, affine or linear
-time evolution by applying geometric analysis. The idea is to propagate the threshold backwards in time and see whether
-it meets the initial state. In state space spanned by voltage and current, this clearly separates the spiking region and 
-non-spiking region. is_spike_ takes argument dt which corresponds to the time window at which this spike prediction occurs.
-returns true, spike: if (V(t_{right}) > V_(\theta)); returns false: (V(t_{right} < V_(\theta) or initial conditions in no-spike region;
-returns true, spike: missed spike excursion, compute t_{max} = dt and find point of threshold crossing t_{\theta} using emit_spike_.
-inequalities are adjusted such that backward propagation (negative time) is already accounted for here */
+/* Conventional spike detection algorithms propagate the initial state forwards in time 
+and see whether it meets the threshold.This function implements a general method to solve 
+the threshold-detection problem for an integrable, affine or lineartime evolution by 
+applying geometric analysis. The idea is to propagate the threshold backwards in time 
+and see whether it meets the initial state. In state space spanned by voltage and current, 
+this separates the spiking region and non-spiking region. is_spike_ takes argument dt 
+which corresponds to the time window at which this spike prediction occurs.
+
+returns true, spike: if (V(t_{right}) > V_(\theta)); returns false: (V(t_{right} < V_(\theta) 
+or initial conditions in no-spike region;
+returns true, spike: missed spike excursion, compute bisection_step, where t_{max} = dt and 
+find point of threshold crossing t_{\theta} using bisectioning method.
+Inequalities are adjusted such that backward propagation (negative time) is already accounted 
+for here.
+
+The state space spanning the non-spiking region is bound by the following system of inequalities: 
+threshold line V < \theta, envelope, V < b(I_e), line corresponding to the final timestep 
+V < f(h, I) (or) linear approximation of the envelope, V < g(h, I_e). 
+The state space spanning the spiking region is bound by the following system of inequalities: 
+threshold line V < \theta, envelope, V > b(I_e) and line corresponding to the final timestep 
+V > f(h, I) (or) linear approximation of the envelope, V < g(h, I_e). 
+*/
 
 inline bool nest::iaf_psc_exp_ps_lossless::is_spike_(const double dt)
 {
@@ -601,27 +611,25 @@ inline bool nest::iaf_psc_exp_ps_lossless::is_spike_(const double dt)
   
   double g = ((P_.a1_ * I_0 * exp_tau_m_s + exp_tau_m * (P_.a3_ - P_.I_e_ * P_.a2_) + P_.a3_)/P_.a4_) ; 
 
-    //no-spike, NS_1
-    // intersecting line
+    //no-spike
   if((V_0 <= (((I_0 + P_.I_e_)*(P_.b1_ * exp_tau_m + P_.b2_* exp_tau_s) + P_.b5_*(exp_tau_m - exp_tau_s))/( P_.b7_ * exp_tau_s)))
-    //continuation line       
       &&  (V_0 < g))     
     {
       return false;
     }
   
-    //spike, S_1
+    //spike
   else if (V_0 >= g )  
     {
       return true;
     }
-  //no-spike, NS_2
+  //no-spike
   else if(V_0 < (P_.c1_ * P_.I_e_ + P_.c2_ * I_0 + P_.c3_* pow(I_0, P_.c4_) * pow((P_.c5_ - P_.I_e_), P_.c6_)))
     { 
       return false;
     }
   else
-  //spike, S_2
+  //spike
     {
       V_.bisection_step = (P_.a1_ / P_.tau_m_ * P_.tau_ex_ ) * log ( P_.b1_ * I_0 / (P_.a2_ * P_.I_e_ - P_.a1_ * I_0 - P_.a4_ * V_0 ) );
       return true;

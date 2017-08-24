@@ -283,7 +283,7 @@ namespace nest
       double d3_;
       
       Parameters_();  //!< Sets default parameter values
-      void calc_const_spike_test_();
+      void calc_const_is_spike_();
 
       void get(DictionaryDatum &) const;  //!< Store current values in dictionary
       double set(const DictionaryDatum &);  //!< Set values from dicitonary
@@ -439,6 +439,8 @@ void iaf_psc_exp_ps_lossless::set_status(const DictionaryDatum & d)
   P_ = ptmp;
   S_ = stmp;
 }
+
+
   
 } // namespace
 

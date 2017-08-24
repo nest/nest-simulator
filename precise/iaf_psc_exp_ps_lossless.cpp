@@ -68,7 +68,7 @@ nest::iaf_psc_exp_ps_lossless::Parameters_::Parameters_()
     U_min_  (-std::numeric_limits<double>::infinity()),  // mV
     U_reset_( -70.0-E_L_)   // mV, rel to E_L_
 {
-  calc_const_spike_test_();
+  calc_const_is_spike_();
 }
 
 nest::iaf_psc_exp_ps_lossless::State_::State_()
@@ -96,7 +96,7 @@ nest::iaf_psc_exp_ps_lossless::Buffers_::Buffers_(const Buffers_ &, iaf_psc_exp_
 
 //constants for time-reversal state space spike-detection algorithm
 
-void nest::iaf_psc_exp_ps_lossless::Parameters_::calc_const_spike_test_()
+void nest::iaf_psc_exp_ps_lossless::Parameters_::calc_const_is_spike_()
 {
   // line corresponding to the final timestep i.e t_right: continuation
   // of the curved boundary: a + I*b
@@ -202,7 +202,7 @@ double nest::iaf_psc_exp_ps_lossless::Parameters_::set(const DictionaryDatum & d
     throw BadProperty("Membrane and synapse time constant(s) must differ."
                       "See note in documentation.");
 
-   calc_const_spike_test_();
+   calc_const_is_spike_();
 
    return delta_EL;
 }
@@ -591,7 +591,7 @@ returns true, spike: if (V(t_{right}) > V_(\theta)); returns false: (V(t_{right}
 returns true, spike: missed spike excursion, compute t_{max} = dt and find point of threshold crossing t_{\theta} using emit_spike_.
 inequalities are adjusted such that backward propagation (negative time) is already accounted for here */
 
-inline bool nest::iaf_psc_exp_ps_lossless::is_spike_(const double dt) 
+inline bool nest::iaf_psc_exp_ps_lossless::is_spike_(const double dt)
 {
   const double I_0   = V_.I_syn_ex_before_ + V_.I_syn_in_before_;
   const double V_0   = V_.y2_before_; 

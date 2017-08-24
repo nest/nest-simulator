@@ -1,5 +1,5 @@
 /*
- *  iaf_psc_exp_ps_time_reversal.cpp
+ *  iaf_psc_exp_ps_lossless.cpp
  *
  *  This file is part of NEST.
  *
@@ -19,7 +19,7 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-#include "iaf_psc_exp_ps_time_reversal.h"
+#include "iaf_psc_exp_ps_lossless.h"
 
 #include "exceptions.h"
 #include "dict.h"
@@ -35,20 +35,20 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap<nest::iaf_psc_exp_ps_time_reversal> nest::iaf_psc_exp_ps_time_reversal::recordablesMap_;
+nest::RecordablesMap<nest::iaf_psc_exp_ps_lossless> nest::iaf_psc_exp_ps_lossless::recordablesMap_;
 
 namespace nest
 {
   // Override the create() method with one call to RecordablesMap::insert_() 
   // for each quantity to be recorded.
   template <>
-  void RecordablesMap<iaf_psc_exp_ps_time_reversal>::create()
+  void RecordablesMap<iaf_psc_exp_ps_lossless>::create()
   {
     // use standard names whereever you can for consistency!
-    insert_(names::V_m, & iaf_psc_exp_ps_time_reversal::get_V_m_);
-    insert_(names::I_syn, & iaf_psc_exp_ps_time_reversal::get_I_syn_);
-    insert_(names::I_syn_ex, & iaf_psc_exp_ps_time_reversal::get_I_syn_ex_);
-    insert_(names::I_syn_in, &iaf_psc_exp_ps_time_reversal::get_I_syn_in_);
+    insert_(names::V_m, & iaf_psc_exp_ps_lossless::get_V_m_);
+    insert_(names::I_syn, & iaf_psc_exp_ps_lossless::get_I_syn_);
+    insert_(names::I_syn_ex, & iaf_psc_exp_ps_lossless::get_I_syn_ex_);
+    insert_(names::I_syn_in, &iaf_psc_exp_ps_lossless::get_I_syn_in_);
   }
 }
 
@@ -56,7 +56,7 @@ namespace nest
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
     
-nest::iaf_psc_exp_ps_time_reversal::Parameters_::Parameters_()
+nest::iaf_psc_exp_ps_lossless::Parameters_::Parameters_()
   : tau_m_  ( 10.0     ),  // ms
     tau_ex_ (  2.0     ),  // ms
     tau_in_ (  2.0     ),  // ms
@@ -71,7 +71,7 @@ nest::iaf_psc_exp_ps_time_reversal::Parameters_::Parameters_()
   calc_const_spike_test_();
 }
 
-nest::iaf_psc_exp_ps_time_reversal::State_::State_()
+nest::iaf_psc_exp_ps_lossless::State_::State_()
   : y0_(0.0),
     I_syn_ex_(0.0),
     I_syn_in_(0.0),
@@ -93,11 +93,11 @@ nest::iaf_psc_exp_ps_time_reversal::State_::State_()
     det_spikes(0)
 {}
 
-nest::iaf_psc_exp_ps_time_reversal::Buffers_::Buffers_(iaf_psc_exp_ps_time_reversal & n)
+nest::iaf_psc_exp_ps_lossless::Buffers_::Buffers_(iaf_psc_exp_ps_lossless & n)
   : logger_(n)
 {}
 
-nest::iaf_psc_exp_ps_time_reversal::Buffers_::Buffers_(const Buffers_ &, iaf_psc_exp_ps_time_reversal & n)
+nest::iaf_psc_exp_ps_lossless::Buffers_::Buffers_(const Buffers_ &, iaf_psc_exp_ps_lossless & n)
   : logger_(n)
 {}
 
@@ -108,7 +108,7 @@ nest::iaf_psc_exp_ps_time_reversal::Buffers_::Buffers_(const Buffers_ &, iaf_psc
 
 //constants for time-reversal state space spike-detection algorithm
 
-void nest::iaf_psc_exp_ps_time_reversal::Parameters_::calc_const_spike_test_()
+void nest::iaf_psc_exp_ps_lossless::Parameters_::calc_const_spike_test_()
 {
   // line corresponding to the final timestep i.e t_right: continuation
   // of the curved boundary: a + I*b
@@ -140,7 +140,7 @@ void nest::iaf_psc_exp_ps_time_reversal::Parameters_::calc_const_spike_test_()
   d3_ = c_m_ * (tau_m_ - tau_ex_);
 }
 
-void nest::iaf_psc_exp_ps_time_reversal::Parameters_::get(DictionaryDatum & d) const
+void nest::iaf_psc_exp_ps_lossless::Parameters_::get(DictionaryDatum & d) const
 {
   def<double>(d, names::E_L, E_L_);
   def<double>(d, names::I_e, I_e_);
@@ -154,7 +154,7 @@ void nest::iaf_psc_exp_ps_time_reversal::Parameters_::get(DictionaryDatum & d) c
   def<double>(d, names::t_ref, t_ref_);
 }
 
-double nest::iaf_psc_exp_ps_time_reversal::Parameters_::set(const DictionaryDatum & d)
+double nest::iaf_psc_exp_ps_lossless::Parameters_::set(const DictionaryDatum & d)
 {
   updateValue<double>(d, names::tau_m, tau_m_);
   updateValue<double>(d, names::tau_syn_ex, tau_ex_);
@@ -219,7 +219,7 @@ double nest::iaf_psc_exp_ps_time_reversal::Parameters_::set(const DictionaryDatu
    return delta_EL;
 }
 
-void nest::iaf_psc_exp_ps_time_reversal::State_::get(DictionaryDatum & d, 
+void nest::iaf_psc_exp_ps_lossless::State_::get(DictionaryDatum & d, 
                                        const Parameters_ & p) const
 {
   def<double>(d, names::V_m, y2_ + p.E_L_);  // Membrane potential
@@ -231,7 +231,7 @@ void nest::iaf_psc_exp_ps_time_reversal::State_::get(DictionaryDatum & d,
   def<double>(d, names::I_syn, I_syn_ex_ + I_syn_in_); 
 }
 
-void nest::iaf_psc_exp_ps_time_reversal::State_::set(const DictionaryDatum & d, const Parameters_ & p, double delta_EL)
+void nest::iaf_psc_exp_ps_lossless::State_::set(const DictionaryDatum & d, const Parameters_ & p, double delta_EL)
 {
   if ( updateValue<double>(d, names::V_m, y2_) )
     y2_ -= p.E_L_;
@@ -246,7 +246,7 @@ void nest::iaf_psc_exp_ps_time_reversal::State_::set(const DictionaryDatum & d, 
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-nest::iaf_psc_exp_ps_time_reversal::iaf_psc_exp_ps_time_reversal()
+nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless()
   : Node(),
     P_(),
     S_(),
@@ -255,7 +255,7 @@ nest::iaf_psc_exp_ps_time_reversal::iaf_psc_exp_ps_time_reversal()
   recordablesMap_.create();
 }
 
-nest::iaf_psc_exp_ps_time_reversal::iaf_psc_exp_ps_time_reversal(const iaf_psc_exp_ps_time_reversal & n)
+nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless(const iaf_psc_exp_ps_lossless & n)
   : Node(n),
     P_(n.P_),
     S_(n.S_),
@@ -266,22 +266,22 @@ nest::iaf_psc_exp_ps_time_reversal::iaf_psc_exp_ps_time_reversal(const iaf_psc_e
  * Node initialization functions
  * ---------------------------------------------------------------- */
 
-void nest::iaf_psc_exp_ps_time_reversal::init_node_(const Node & proto)
+void nest::iaf_psc_exp_ps_lossless::init_node_(const Node & proto)
 {
-  const iaf_psc_exp_ps_time_reversal & pr = downcast<iaf_psc_exp_ps_time_reversal>(proto);
+  const iaf_psc_exp_ps_lossless & pr = downcast<iaf_psc_exp_ps_lossless>(proto);
 
   P_ = pr.P_;
   S_ = pr.S_;
 }
 
-void nest::iaf_psc_exp_ps_time_reversal::init_state_(const Node & proto)
+void nest::iaf_psc_exp_ps_lossless::init_state_(const Node & proto)
 {
-  const iaf_psc_exp_ps_time_reversal & pr = downcast<iaf_psc_exp_ps_time_reversal>(proto);
+  const iaf_psc_exp_ps_lossless & pr = downcast<iaf_psc_exp_ps_lossless>(proto);
 
   S_ = pr.S_;
 }
 
-void nest::iaf_psc_exp_ps_time_reversal::init_buffers_()
+void nest::iaf_psc_exp_ps_lossless::init_buffers_()
 {
   B_.events_.resize();
   B_.events_.clear(); 
@@ -289,7 +289,7 @@ void nest::iaf_psc_exp_ps_time_reversal::init_buffers_()
   B_.logger_.reset();
 }
 
-void nest::iaf_psc_exp_ps_time_reversal::calibrate()
+void nest::iaf_psc_exp_ps_lossless::calibrate()
 {
   B_.logger_.init();  // ensures initialization in case mm connected after Simulate
   
@@ -310,7 +310,7 @@ void nest::iaf_psc_exp_ps_time_reversal::calibrate()
  * Update and spike handling functions
  * ---------------------------------------------------------------- */
 
-void nest::iaf_psc_exp_ps_time_reversal::update(const Time & origin, 
+void nest::iaf_psc_exp_ps_lossless::update(const Time & origin, 
 					 const long from, const long to)
 {
   assert ( to >= 0 );
@@ -466,7 +466,7 @@ void nest::iaf_psc_exp_ps_time_reversal::update(const Time & origin,
 }
 
 // function handles exact spike times
-void nest::iaf_psc_exp_ps_time_reversal::handle(SpikeEvent & e)
+void nest::iaf_psc_exp_ps_lossless::handle(SpikeEvent & e)
 {
   assert( e.get_delay() > 0 );
 
@@ -480,7 +480,7 @@ void nest::iaf_psc_exp_ps_time_reversal::handle(SpikeEvent & e)
 		       Tdeliver, e.get_offset(), e.get_weight() * e.get_multiplicity());
 }
 
-void nest::iaf_psc_exp_ps_time_reversal::handle(CurrentEvent & e)
+void nest::iaf_psc_exp_ps_lossless::handle(CurrentEvent & e)
 {
   assert( e.get_delay() > 0 );
 
@@ -491,7 +491,7 @@ void nest::iaf_psc_exp_ps_time_reversal::handle(CurrentEvent & e)
   B_.currents_.add_value(e.get_rel_delivery_steps(nest::kernel().simulation_manager.get_slice_origin() ), w * c);
 }
 
-void nest::iaf_psc_exp_ps_time_reversal::handle(DataLoggingRequest &e)
+void nest::iaf_psc_exp_ps_lossless::handle(DataLoggingRequest &e)
 {
   B_.logger_.handle(e);
 }
@@ -499,12 +499,12 @@ void nest::iaf_psc_exp_ps_time_reversal::handle(DataLoggingRequest &e)
 // auxiliary functions ---------------------------------------------
 
 inline 
-void nest::iaf_psc_exp_ps_time_reversal::set_spiketime(const Time & now)
+void nest::iaf_psc_exp_ps_lossless::set_spiketime(const Time & now)
 {
   S_.last_spike_step_ = now.get_steps();
 }
 
-void nest::iaf_psc_exp_ps_time_reversal::propagate_(const double_t dt)
+void nest::iaf_psc_exp_ps_lossless::propagate_(const double_t dt)
 {
   const double_t expm1_tau_ex = numerics::expm1(-dt/P_.tau_ex_);
   const double_t expm1_tau_in = numerics::expm1(-dt/P_.tau_in_);
@@ -523,7 +523,7 @@ void nest::iaf_psc_exp_ps_time_reversal::propagate_(const double_t dt)
   S_.I_syn_in_ = S_.I_syn_in_*expm1_tau_in + S_.I_syn_in_;
 }
 
-void nest::iaf_psc_exp_ps_time_reversal::emit_spike_(const Time & origin, const long lag, const double_t t0,  const double_t dt)
+void nest::iaf_psc_exp_ps_lossless::emit_spike_(const Time & origin, const long lag, const double_t t0,  const double_t dt)
 {
   // we know that the potential is subthreshold at t0, super at t0+dt
   
@@ -544,7 +544,7 @@ void nest::iaf_psc_exp_ps_time_reversal::emit_spike_(const Time & origin, const 
   kernel().event_delivery_manager.send(*this, se, lag);
 }
 
-void nest::iaf_psc_exp_ps_time_reversal::emit_instant_spike_(const Time & origin, const long lag,
+void nest::iaf_psc_exp_ps_lossless::emit_instant_spike_(const Time & origin, const long lag,
 						      const double_t spike_offs) 
 {
   assert( S_.y2_ >= P_.U_th_ );  // ensure we are superthreshold
@@ -564,7 +564,7 @@ void nest::iaf_psc_exp_ps_time_reversal::emit_instant_spike_(const Time & origin
   kernel().event_delivery_manager.send(*this, se, lag);
 }
 
-inline double nest::iaf_psc_exp_ps_time_reversal::bisectioning_(const double dt) const
+inline double nest::iaf_psc_exp_ps_lossless::bisectioning_(const double dt) const
 {
  
   double_t root = 0.0;

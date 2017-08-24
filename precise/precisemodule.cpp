@@ -53,7 +53,7 @@
 #include "iaf_psc_exp_ps.h"
 #include "parrot_neuron_ps.h"
 #include "poisson_generator_ps.h"
-#include "iaf_psc_exp_ps_time_reversal.h" 
+#include "iaf_psc_exp_ps_lossless.h" 
 
 namespace nest
 {
@@ -102,8 +102,8 @@ PreciseModule::init( SLIInterpreter* )
     "poisson_generator_ps" );
   kernel().model_manager.register_node_model< parrot_neuron_ps >(
     "parrot_neuron_ps" );
-  kernel().model_manager.register_node_model< iaf_psc_exp_ps_time_reversal >(
-    "iaf_psc_exp_ps_time_reversal" );
+  kernel().model_manager.register_node_model< iaf_psc_exp_ps_lossless >(
+    "iaf_psc_exp_ps_lossless" );
 } // PreciseModule::init()
 
 

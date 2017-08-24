@@ -1,5 +1,5 @@
 /*
- *  iaf_psc_exp_ps_time_reversal.h
+ *  iaf_psc_exp_ps_lossless.h
  *
  *  This file is part of NEST.
  *
@@ -21,8 +21,8 @@
  */
 
 
-#ifndef IAF_PSC_EXP_PS_TIME_REVERSAL_H
-#define IAF_PSC_EXP_PS_TIME_REVERSAL_H
+#ifndef IAF_PSC_EXP_PS_LOSSLESS_H
+#define IAF_PSC_EXP_PS_LOSSLESS_H
 
 #include "config.h"
 
@@ -45,7 +45,7 @@ applies state space analysis to predict exact number of spikes in a
 simulation for any given resolution.
 
 Description:
-iaf_psc_exp_ps_time_reversal is the precise state space implementation of the leaky
+iaf_psc_exp_ps_lossless is the precise state space implementation of the leaky
 integrate-and-fire model neuron with exponential postsynaptic currents
 that uses time reversal to detect spikes [1]. This is the most exact 
 implementation available.
@@ -92,7 +92,7 @@ namespace nest
    * from this one.
    * @todo Implement current input in consistent way.
    */
-  class iaf_psc_exp_ps_time_reversal : public Node
+  class iaf_psc_exp_ps_lossless : public Node
   {
     
     class Network;
@@ -103,7 +103,7 @@ namespace nest
         This constructor should only be used by GenericModel to create 
         model prototype instances.
     */
-    iaf_psc_exp_ps_time_reversal();
+    iaf_psc_exp_ps_lossless();
     
     /** Copy constructor.
 	GenericModel::allocate_() uses the copy constructor to clone
@@ -112,7 +112,7 @@ namespace nest
 	@note The copy constructor MUST NOT be used to create nodes based
 	on nodes that have been placed in the network.
     */ 
-    iaf_psc_exp_ps_time_reversal(const iaf_psc_exp_ps_time_reversal &);
+    iaf_psc_exp_ps_lossless(const iaf_psc_exp_ps_lossless &);
     
     /**
      * Import sets of overloaded virtual functions.
@@ -176,8 +176,8 @@ namespace nest
     //@}
     
     // The next two classes need to be friends to access the State_ class/member
-    friend class RecordablesMap<iaf_psc_exp_ps_time_reversal>;
-    friend class UniversalDataLogger<iaf_psc_exp_ps_time_reversal>;
+    friend class RecordablesMap<iaf_psc_exp_ps_lossless>;
+    friend class UniversalDataLogger<iaf_psc_exp_ps_lossless>;
     
     void set_spiketime(Time const &);
     
@@ -336,8 +336,8 @@ namespace nest
      */
     struct Buffers_
     {
-      Buffers_(iaf_psc_exp_ps_time_reversal &);
-      Buffers_(const Buffers_ &, iaf_psc_exp_ps_time_reversal &);
+      Buffers_(iaf_psc_exp_ps_lossless &);
+      Buffers_(const Buffers_ &, iaf_psc_exp_ps_lossless &);
 
       /**
        * Queue for incoming events.
@@ -347,7 +347,7 @@ namespace nest
       RingBuffer currents_; 
       
       //! Logger for all analog data
-      UniversalDataLogger<iaf_psc_exp_ps_time_reversal> logger_;
+      UniversalDataLogger<iaf_psc_exp_ps_lossless> logger_;
     };
 
     // ---------------------------------------------------------------- 
@@ -384,7 +384,7 @@ namespace nest
     // ---------------------------------------------------------------- 
     
     /**
-     * @defgroup iaf_psc_exp_ps_time_reversal_data
+     * @defgroup iaf_psc_exp_ps_lossless_data
      * Instances of private data structures for the different types
      * of data pertaining to the model.
      * @note The order of definitions is important for speed.
@@ -397,11 +397,11 @@ namespace nest
     /** @} */
     
     //! Mapping of recordables names to access functions
-    static RecordablesMap<iaf_psc_exp_ps_time_reversal> recordablesMap_;
+    static RecordablesMap<iaf_psc_exp_ps_lossless> recordablesMap_;
   };
   
 inline
-port iaf_psc_exp_ps_time_reversal::send_test_event( Node& target, rport receptor_type, synindex, bool )
+port iaf_psc_exp_ps_lossless::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
   SpikeEvent e;
   
@@ -411,7 +411,7 @@ port iaf_psc_exp_ps_time_reversal::send_test_event( Node& target, rport receptor
 }
 
 inline
-port iaf_psc_exp_ps_time_reversal::handles_test_event(SpikeEvent &, port receptor_type)
+port iaf_psc_exp_ps_lossless::handles_test_event(SpikeEvent &, port receptor_type)
 {
   if (receptor_type != 0)
     throw UnknownReceptorType(receptor_type, get_name());
@@ -419,7 +419,7 @@ port iaf_psc_exp_ps_time_reversal::handles_test_event(SpikeEvent &, port recepto
 }
 
 inline
-port iaf_psc_exp_ps_time_reversal::handles_test_event(CurrentEvent &, port receptor_type)
+port iaf_psc_exp_ps_lossless::handles_test_event(CurrentEvent &, port receptor_type)
 {
   if (receptor_type != 0)
     throw UnknownReceptorType(receptor_type, get_name());
@@ -427,7 +427,7 @@ port iaf_psc_exp_ps_time_reversal::handles_test_event(CurrentEvent &, port recep
 }
 
 inline
-port iaf_psc_exp_ps_time_reversal::handles_test_event(DataLoggingRequest & dlr, 
+port iaf_psc_exp_ps_lossless::handles_test_event(DataLoggingRequest & dlr, 
 				    port receptor_type)
 {
   if (receptor_type != 0)
@@ -436,7 +436,7 @@ port iaf_psc_exp_ps_time_reversal::handles_test_event(DataLoggingRequest & dlr,
 }
 
 inline
-void iaf_psc_exp_ps_time_reversal::get_status(DictionaryDatum & d) const
+void iaf_psc_exp_ps_lossless::get_status(DictionaryDatum & d) const
 {
   P_.get(d);
   S_.get(d, P_);
@@ -445,7 +445,7 @@ void iaf_psc_exp_ps_time_reversal::get_status(DictionaryDatum & d) const
 }
 
 inline
-void iaf_psc_exp_ps_time_reversal::set_status(const DictionaryDatum & d)
+void iaf_psc_exp_ps_lossless::set_status(const DictionaryDatum & d)
 {
   Parameters_ ptmp = P_;  // temporary copy in case of errors
   double_t delta_EL = ptmp.set(d);            // throws if BadProperty
@@ -467,7 +467,7 @@ returns true, spike: missed spike excursion, compute t_{max} = dt and find point
 inequalities are adjusted such that backward propagation (negative time) is already accounted for here */
 
 inline
-bool iaf_psc_exp_ps_time_reversal::is_spike_(double_t dt)
+bool iaf_psc_exp_ps_lossless::is_spike_(double_t dt)
 {
   double_t const I_0   = V_.I_syn_ex_before_ + V_.I_syn_in_before_;
   double_t const V_0   = V_.y2_before_; 
@@ -507,6 +507,6 @@ bool iaf_psc_exp_ps_time_reversal::is_spike_(double_t dt)
   
 } // namespace
 
-#endif // IAF_PSC_EXP_PS_TIME_REVERSAL_H
+#endif // IAF_PSC_EXP_PS_LOSSLESS_H
 
 

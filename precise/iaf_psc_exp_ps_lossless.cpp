@@ -78,19 +78,7 @@ nest::iaf_psc_exp_ps_lossless::State_::State_()
     y2_(0.0),
     is_refractory_(false),
     last_spike_step_(-1),
-    last_spike_offset_(0.0),
-    dhaene_quick1(0),
-    dhaene_quick2(0),
-    dhaene_tmax_lt_t1(0),
-    dhaene_max(0),
-    dhaene_det_spikes(0),
-    c0(0),
-    c1a(0),
-    c1b(0),
-    c3a(0),
-    c3b(0),
-    c4(0),
-    det_spikes(0)
+    last_spike_offset_(0.0)
 {}
 
 nest::iaf_psc_exp_ps_lossless::Buffers_::Buffers_(iaf_psc_exp_ps_lossless & n)

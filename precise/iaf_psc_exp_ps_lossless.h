@@ -306,22 +306,6 @@ namespace nest
       long   last_spike_step_;  //!< Time stamp of most recent spike
       double last_spike_offset_;  //!< Offset of most recent spike
 
-      long dhaene_quick1;
-      long dhaene_quick2;
-      long dhaene_tmax_lt_t1;
-      long dhaene_max;
-      long dhaene_det_spikes;
-
-      long c0;
-      long c1a;
-      long c1b;
-      long c2;
-      long c3a;
-      long c3b;
-      long c4;
-      long det_spikes;
-      long state_space_test_spikes;
-
       State_();  //!< Default initialization
       
       void get(DictionaryDatum &, const Parameters_ &) const;
@@ -468,8 +452,8 @@ inequalities are adjusted such that backward propagation (negative time) is alre
 inline
 bool iaf_psc_exp_ps_lossless::is_spike_(double dt)
 {
-  double const I_0   = V_.I_syn_ex_before_ + V_.I_syn_in_before_;
-  double const V_0   = V_.y2_before_; 
+  const double I_0   = V_.I_syn_ex_before_ + V_.I_syn_in_before_;
+  const double V_0   = V_.y2_before_; 
   const double exp_tau_s = numerics::expm1(dt/P_.tau_ex_) ; 
   const double exp_tau_m  = numerics::expm1(dt/P_.tau_m_) ; 
   const double exp_tau_m_s = numerics::expm1(dt/P_.tau_m_ - dt/P_.tau_ex_);

@@ -70,9 +70,9 @@ Parameters:
   V_reset       double - Reset value for the membrane potential.
  
 References:
-	[1] J.Krishnan, P.G.L.Porta Mana, M.Helias, M.Diesmann, E.Di.Napoli
-(2017) Perfect spike detection via time reversal (to be submitted to Front.
-Neuroinform.)
+[1] J.Krishnan, P.G.L.Porta Mana, M.Helias, M.Diesmann, E.Di.Napoli
+(2017) Perfect spike detection via time reversal, arXiv:1706.05702, 
+submitted to Front. Neuroinformatics.
 
 Author: Jeyashree Krishnan
 

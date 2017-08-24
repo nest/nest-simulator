@@ -273,7 +273,7 @@ fi
 # The CLANG-FORMAT versions up to and including 3.5 do not support all configuration options required for NEST. 
 # Version 3.7 introduced a different formatting. NEST relies on the formatting of version 3.6.
 if $PERFORM_CLANG_FORMAT; then
-  $CLANG_FORMAT -style=./.clang-format ./nest/main.cpp >/dev/null 2>&1 || erro_exit "Failed to verify the CLANG-FORMAT installation. Executable: $CLANG_FORMAT"
+  $CLANG_FORMAT -style=./.clang-format ./nest/main.cpp >/dev/null 2>&1 || error_exit "Failed to verify the CLANG-FORMAT installation. Executable: $CLANG_FORMAT"
   clang_format_version=`$CLANG_FORMAT --version | sed -${EXTENDED_REGEX_PARAM} 's/^.*([0-9]\.[0-9])\..*/\1/'`
   if [[ "x$clang_format_version" != "x3.6" ]]; then
     error_exit "Failed to verify the CLANG-FORMAT installation. Version 3.6 is requires. The executable '$CLANG_FORMAT' is of version $clang_format_version."

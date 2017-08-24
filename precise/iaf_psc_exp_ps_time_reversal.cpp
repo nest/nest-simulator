@@ -47,10 +47,8 @@ namespace nest
     // use standard names whereever you can for consistency!
     insert_(names::V_m, & iaf_psc_exp_ps_time_reversal::get_V_m_);
     insert_(names::I_syn, & iaf_psc_exp_ps_time_reversal::get_I_syn_);
-    insert_(names::y1_ex, & iaf_psc_exp_ps_time_reversal::get_y1_ex_);
-    insert_(names::y1_in, &iaf_psc_exp_ps_time_reversal::get_y1_in_);
-    insert_(names::y0, &iaf_psc_exp_ps_time_reversal::get_y0_);
-
+    insert_(names::I_syn_ex, & iaf_psc_exp_ps_time_reversal::get_I_syn_ex_);
+    insert_(names::I_syn_in, &iaf_psc_exp_ps_time_reversal::get_I_syn_in_);
   }
 }
 
@@ -75,8 +73,8 @@ nest::iaf_psc_exp_ps_time_reversal::Parameters_::Parameters_()
 
 nest::iaf_psc_exp_ps_time_reversal::State_::State_()
   : y0_(0.0),
-    y1_ex_(0.0),
-    y1_in_(0.0),
+    I_syn_ex_(0.0),
+    I_syn_in_(0.0),
     y2_(0.0),
     is_refractory_(false),
     last_spike_step_(-1),
@@ -112,35 +110,34 @@ nest::iaf_psc_exp_ps_time_reversal::Buffers_::Buffers_(const Buffers_ &, iaf_psc
 
 void nest::iaf_psc_exp_ps_time_reversal::Parameters_::calc_const_spike_test_()
 {
-  //line corresponding to the final timestep i.e t_right: continuation
+  // line corresponding to the final timestep i.e t_right: continuation
   // of the curved boundary: a + I*b
-    a1_ =tau_m_ * tau_ex_;
-    a2_ =tau_m_ * (tau_m_ - tau_ex_);
-    a3_ =c_m_ * U_th_ * (tau_m_ - tau_ex_);
-    a4_ =c_m_ * (tau_m_ - tau_ex_);
+  a1_ =tau_m_ * tau_ex_;
+  a2_ =tau_m_ * (tau_m_ - tau_ex_);
+  a3_ =c_m_ * U_th_ * (tau_m_ - tau_ex_);
+  a4_ =c_m_ * (tau_m_ - tau_ex_);
 
-    //line joining endpoints of the envelope: \alpha I + \beta
-    b1_ =-tau_m_ * tau_m_;
-    b2_ =tau_m_ * tau_ex_;
-    b3_ =tau_m_*(tau_m_ - tau_ex_)- tau_m_*tau_m_ + tau_m_* tau_ex_;
-    b4_ =-tau_m_*tau_m_; //b1
-    b5_ =tau_m_*c_m_*U_th_;
-    b6_ =tau_m_*(tau_m_- tau_ex_);
-    b7_ =-c_m_*(tau_m_ - tau_ex_);
+  // line joining endpoints of the envelope: \alpha I + \beta
+  b1_ =-tau_m_ * tau_m_;
+  b2_ =tau_m_ * tau_ex_;
+  b3_ =tau_m_*(tau_m_ - tau_ex_)- tau_m_*tau_m_ + tau_m_* tau_ex_;
+  b4_ =-tau_m_*tau_m_; //b1
+  b5_ =tau_m_*c_m_*U_th_;
+  b6_ =tau_m_*(tau_m_- tau_ex_);
+  b7_ =-c_m_*(tau_m_ - tau_ex_);
 
-    //envelope or curved boundary
-    c1_ =tau_m_/c_m_;
-    c2_ =(-tau_m_ * tau_ex_)/(c_m_*(tau_m_ - tau_ex_));
-    c3_ =(tau_m_ * tau_m_)/ (c_m_ * (tau_m_ - tau_ex_));
-    c4_ =tau_ex_/tau_m_;
-    c5_ =(c_m_ * U_th_)/tau_m_;
-    c6_ =1-(tau_ex_/tau_m_);
+  // envelope or curved boundary
+  c1_ =tau_m_/c_m_;
+  c2_ =(-tau_m_ * tau_ex_)/(c_m_*(tau_m_ - tau_ex_));
+  c3_ =(tau_m_ * tau_m_)/ (c_m_ * (tau_m_ - tau_ex_));
+  c4_ =tau_ex_/tau_m_;
+  c5_ =(c_m_ * U_th_)/tau_m_;
+  c6_ =1-(tau_ex_/tau_m_);
 
-    //parallel line
-
-    d1_ = tau_m_ *  c_m_ ;
-    d2_ = tau_m_ * tau_ex_;
-    d3_ = c_m_ * (tau_m_ - tau_ex_);
+  // parallel line
+  d1_ = tau_m_ *  c_m_ ;
+  d2_ = tau_m_ * tau_ex_;
+  d3_ = c_m_ * (tau_m_ - tau_ex_);
 }
 
 void nest::iaf_psc_exp_ps_time_reversal::Parameters_::get(DictionaryDatum & d) const
@@ -155,12 +152,10 @@ void nest::iaf_psc_exp_ps_time_reversal::Parameters_::get(DictionaryDatum & d) c
   def<double>(d, names::tau_syn_ex, tau_ex_);
   def<double>(d, names::tau_syn_in, tau_in_);
   def<double>(d, names::t_ref, t_ref_);
-
 }
 
 double nest::iaf_psc_exp_ps_time_reversal::Parameters_::set(const DictionaryDatum & d)
 {
-
   updateValue<double>(d, names::tau_m, tau_m_);
   updateValue<double>(d, names::tau_syn_ex, tau_ex_);
   updateValue<double>(d, names::tau_syn_in, tau_in_);
@@ -168,26 +163,37 @@ double nest::iaf_psc_exp_ps_time_reversal::Parameters_::set(const DictionaryDatu
   updateValue<double>(d, names::t_ref, t_ref_);
   updateValue<double>(d, names::I_e, I_e_);
 
-
   // if U0_ is changed, we need to adjust all variables defined relative to U0_
   const double ELold = E_L_;
   updateValue<double>(d, names::E_L, E_L_);
   const double delta_EL = E_L_ - ELold;
 
   if(updateValue<double>(d, names::V_reset, U_reset_))
+  {
     U_reset_ -= E_L_;
+  }
   else
+  {
     U_reset_ -= delta_EL;
+  }
 
   if (updateValue<double>(d, names::V_th, U_th_))
+  {
     U_th_ -= E_L_;
+  }
   else
+  {
     U_th_ -= delta_EL;
+  }
 
   if (updateValue<double>(d, names::V_min, U_min_))
+  {
     U_min_ -= E_L_;
+  }
   else
+  {
     U_min_ -= delta_EL;
+  }
   
   if ( U_reset_ >= U_th_ )
     throw BadProperty("Reset potential must be smaller than threshold.");
@@ -220,30 +226,9 @@ void nest::iaf_psc_exp_ps_time_reversal::State_::get(DictionaryDatum & d,
   def<bool>(d, names::is_refractory, is_refractory_);
   def<double>(d, names::t_spike, Time(Time::step(last_spike_step_)).get_ms());
   def<double>(d, names::offset, last_spike_offset_);
-  def<double>(d, names::y1_ex, y1_ex_);
-  def<double>(d, names::y1_in, y1_in_); // y1 state
-  def<double>(d, names::y2, y2_); // y2 state
-  def<double>(d, names::I_syn, y1_ex_ + y1_in_); 
-
-
-  // these entries will break ticket-459
-  // because they chane depending on E_L (which is correct)
-  // since they are only used for debugging we will comment them
-  // out for the time being
-  //def<long>(d, names::pot_spikes, c0);
-  //def<double>(d, names::dhaene_quick1, (dhaene_quick1*100.0/c0));
-  //def<double>(d, names::dhaene_quick2, (dhaene_quick2*100.0/c0));
-  //def<double>(d, names::dhaene_tmax_lt_t1, (dhaene_tmax_lt_t1*100.0/c0));
-  //def<double>(d, names::dhaene_max_geq_V_th, (dhaene_max*100.0/c0));
-  //def<double>(d, names::dhaene_det_spikes, (dhaene_det_spikes*100.0/c0));
-
-  //def<double>(d, names::eq7, (c1a*100.0/c0));
-  //def<double>(d, names::eq9, (c1b*100.0/c0));
-  //def<double>(d, names::eqs7and9, (c2*100.0/c0));
-  //def<double>(d, names::lin_left_geq_V_th, (c3a*100.0/c0));
-  //def<double>(d, names::lin_max_geq_V_th, (c3b*100.0/c0));
-  //def<double>(d, names::eq13, (c4*100.0/c0));
-  //def<double>(d, names::eq12, (det_spikes*100.0/c0));
+  def<double>(d, names::I_syn_ex, I_syn_ex_);
+  def<double>(d, names::I_syn_in, I_syn_in_); // y1 state
+  def<double>(d, names::I_syn, I_syn_ex_ + I_syn_in_); 
 }
 
 void nest::iaf_psc_exp_ps_time_reversal::State_::set(const DictionaryDatum & d, const Parameters_ & p, double delta_EL)
@@ -253,24 +238,8 @@ void nest::iaf_psc_exp_ps_time_reversal::State_::set(const DictionaryDatum & d, 
   else
     y2_ -= delta_EL;
 
-  //double_t dv;
-  //updateValue<double>(d, names::dhaene_quick1, dv);
-  //updateValue<double>(d, names::dhaene_quick2, dv);
-  //updateValue<double>(d, names::dhaene_tmax_lt_t1, dv);
-  //updateValue<double>(d, names::dhaene_max_geq_V_th, dv);
-  //updateValue<double>(d, names::dhaene_det_spikes, dv);
-  //updateValue<double>(d, names::eq7, dv);
-  //updateValue<double>(d, names::eq9, dv);
-  //updateValue<double>(d, names::eqs7and9, dv);
-  //updateValue<double>(d, names::lin_left_geq_V_th, dv);
-  //updateValue<double>(d, names::lin_max_geq_V_th, dv);
-  //updateValue<double>(d, names::eq13, dv);
-  //updateValue<double>(d, names::eq12, dv);
-  updateValue<double>(d, names::y1_ex, y1_ex_ );
-  updateValue<double>(d, names::y1_in, y1_in_);
-  updateValue<double>(d, names::y0, y0_);
-
-
+  updateValue<double>(d, names::I_syn_ex, I_syn_ex_ );
+  updateValue<double>(d, names::I_syn_in, I_syn_in_);
 }
 
 /* ---------------------------------------------------------------- 
@@ -295,7 +264,7 @@ nest::iaf_psc_exp_ps_time_reversal::iaf_psc_exp_ps_time_reversal(const iaf_psc_e
 
 /* ---------------------------------------------------------------- 
  * Node initialization functions
- * ---------------------------------------------------------------- 
+ * ---------------------------------------------------------------- */
 
 void nest::iaf_psc_exp_ps_time_reversal::init_node_(const Node & proto)
 {
@@ -303,7 +272,7 @@ void nest::iaf_psc_exp_ps_time_reversal::init_node_(const Node & proto)
 
   P_ = pr.P_;
   S_ = pr.S_;
-}*/
+}
 
 void nest::iaf_psc_exp_ps_time_reversal::init_state_(const Node & proto)
 {
@@ -374,8 +343,8 @@ void nest::iaf_psc_exp_ps_time_reversal::update(const Time & origin,
     
     // save state at beginning of interval for spike-time approximation
     V_.y0_before_    = S_.y0_;
-    V_.y1_ex_before_ = S_.y1_ex_;
-    V_.y1_in_before_ = S_.y1_in_;
+    V_.I_syn_ex_before_ = S_.I_syn_ex_;
+    V_.I_syn_in_before_ = S_.I_syn_in_;
     V_.y2_before_    = S_.y2_;
     
     // get first event
@@ -392,15 +361,15 @@ void nest::iaf_psc_exp_ps_time_reversal::update(const Time & origin,
       // update membrane potential
       if ( !S_.is_refractory_ )
       {
-	S_.y2_ = V_.P20_*(P_.I_e_+S_.y0_) + V_.P21_ex_*S_.y1_ex_ +  V_.P21_in_*S_.y1_in_ + V_.expm1_tau_m_*S_.y2_ + S_.y2_;
+	S_.y2_ = V_.P20_*(P_.I_e_+S_.y0_) + V_.P21_ex_*S_.I_syn_ex_ +  V_.P21_in_*S_.I_syn_in_ + V_.expm1_tau_m_*S_.y2_ + S_.y2_;
 	
 	// lower bound of membrane potential
 	S_.y2_ = ( S_.y2_ < P_.U_min_ ? P_.U_min_ : S_.y2_ ); 
       }
       
       // update synaptic currents
-      S_.y1_ex_ = S_.y1_ex_*V_.expm1_tau_ex_ + S_.y1_ex_;
-      S_.y1_in_ = S_.y1_in_*V_.expm1_tau_in_ + S_.y1_in_;
+      S_.I_syn_ex_ = S_.I_syn_ex_*V_.expm1_tau_ex_ + S_.I_syn_ex_;
+      S_.I_syn_in_ = S_.I_syn_in_*V_.expm1_tau_in_ + S_.I_syn_in_;
       
       /* The following must not be moved before the y1_, y2_ update,
 	 since the spike-time interpolation within emit_spike_ depends 
@@ -455,14 +424,14 @@ void nest::iaf_psc_exp_ps_time_reversal::update(const Time & origin,
 	else
 	{
 	  if ( ev_weight >= 0.0 )
-	    S_.y1_ex_ += ev_weight;  // exc. spike input
+	    S_.I_syn_ex_ += ev_weight;  // exc. spike input
 	  else
-	    S_.y1_in_ += ev_weight;  // inh. spike input
+	    S_.I_syn_in_ += ev_weight;  // inh. spike input
 	}
 	    
 	// store state
-	V_.y1_ex_before_ = S_.y1_ex_;
-	V_.y1_in_before_ = S_.y1_in_;
+	V_.I_syn_ex_before_ = S_.I_syn_ex_;
+	V_.I_syn_in_before_ = S_.I_syn_in_;
 	V_.y2_before_ = S_.y2_;
 	last_offset = ev_offset;
       }
@@ -548,10 +517,10 @@ void nest::iaf_psc_exp_ps_time_reversal::propagate_(const double_t dt)
     const double_t P21_ex = -P_.tau_m_*P_.tau_ex_ / (P_.tau_m_-P_.tau_ex_) / P_.c_m_ * (expm1_tau_ex-expm1_tau_m);
     const double_t P21_in = -P_.tau_m_*P_.tau_in_ / (P_.tau_m_-P_.tau_in_) / P_.c_m_ * (expm1_tau_in-expm1_tau_m);
     
-    S_.y2_  = P20*(P_.I_e_+S_.y0_) + P21_ex*S_.y1_ex_ + P21_in*S_.y1_in_ + expm1_tau_m*S_.y2_ + S_.y2_;
+    S_.y2_  = P20*(P_.I_e_+S_.y0_) + P21_ex*S_.I_syn_ex_ + P21_in*S_.I_syn_in_ + expm1_tau_m*S_.y2_ + S_.y2_;
   }
-  S_.y1_ex_ = S_.y1_ex_*expm1_tau_ex + S_.y1_ex_;
-  S_.y1_in_ = S_.y1_in_*expm1_tau_in + S_.y1_in_;
+  S_.I_syn_ex_ = S_.I_syn_ex_*expm1_tau_ex + S_.I_syn_ex_;
+  S_.I_syn_in_ = S_.I_syn_in_*expm1_tau_in + S_.I_syn_in_;
 }
 
 void nest::iaf_psc_exp_ps_time_reversal::emit_spike_(const Time & origin, const long lag, const double_t t0,  const double_t dt)
@@ -620,101 +589,10 @@ inline double nest::iaf_psc_exp_ps_time_reversal::bisectioning_(const double dt)
     const double_t P21_ex = -P_.tau_m_*P_.tau_ex_ / (P_.tau_m_-P_.tau_ex_) / P_.c_m_ * (expm1_tau_ex-expm1_tau_m);
     const double_t P21_in = -P_.tau_m_*P_.tau_in_ / (P_.tau_m_-P_.tau_in_) / P_.c_m_ * (expm1_tau_in-expm1_tau_m);
     
-    y2_root = P20*(P_.I_e_+V_.y0_before_) + P21_ex*V_.y1_ex_before_ + P21_in*V_.y1_in_before_ + expm1_tau_m*V_.y2_before_ + V_.y2_before_;
+    y2_root = P20*(P_.I_e_+V_.y0_before_) + P21_ex*V_.I_syn_ex_before_ + P21_in*V_.I_syn_in_before_ + expm1_tau_m*V_.y2_before_ + V_.y2_before_;
   }
   return root;
 }
 
-void nest::iaf_psc_exp_ps_time_reversal::spike_test_count_(const double_t t1)
-{
-  S_.c0++; // V(t1) < V_th
 
-  // we assume that P_.tau_ex_=P_.tau_in_
-  double_t const I_0   = V_.y1_ex_before_ + V_.y1_in_before_;
-  double_t const V_0   = V_.y2_before_;
-  double_t const I_t1  = S_.y1_ex_ + S_.y1_in_;
-  double_t const V_t1  = S_.y2_;
-  double_t const tau   = P_.tau_ex_;
-  double_t const tau_m = P_.tau_m_;
-  double_t const I_x   = P_.I_e_;
-  double_t const C_m   = P_.c_m_;
-  double_t const V_th  = P_.U_th_;
-
-  double_t const tauC_m = tau_m/C_m;
-
-  double_t const Vdot_0  = -V_0/tau_m + (I_0+I_x)/C_m;
-  double_t const Vdot_t1 = -V_t1/tau_m + (I_t1+I_x)/C_m;
-
-  // iaflossless tests
-  if ( Vdot_t1 < 0.0 )
-    S_.c1b++;
-  if ( Vdot_0 > 0.0 )
-  {
-    S_.c1a++;
-    if ( Vdot_t1 < 0.0 )
-    {
-      S_.c2++;
-
-      if ( Vdot_0*t1 + V_0 >= V_th )
-	S_.c3a++;
-      if ( V_0 + Vdot_0 * (V_0 - V_t1 + Vdot_t1*t1) / (Vdot_t1-Vdot_0) >= V_th )
-	S_.c3b++;
-
-      double_t const expm1_tau_syn = numerics::expm1(t1/tau);   // positive exponent!
-      double_t const expm1_tau_m   = numerics::expm1(t1/tau_m); // positive exponent!
-
-      double_t const V_0_bar     = V_0 - tauC_m*I_x;
-      //double_t const V_t1_bar    = V_t1 - tauC_m*I_x;
-      double_t const V_th_bar    = V_th - tauC_m*I_x;
-      double_t const V_right_bar = (tau_m*expm1_tau_m - tau*expm1_tau_syn) * V_th_bar / (tau_m-tau);
-      double_t const I_left      = V_th_bar/tauC_m;
-      double_t const m           = (V_right_bar - V_th_bar) / (expm1_tau_syn*I_left); // V_left_bar = V_th_bar
-
-      if ( V_0_bar >= m * (I_0 - I_left) + V_th )
-      {
-	S_.c4++;
-	  
-	double_t const y = V_th_bar/tauC_m / I_0;
-
-	if ( V_0 >= tau_m/(tau_m-tau) * (-tau/C_m * I_0 + V_th_bar * pow(y, (-tau/tau_m))) )
-	  S_.det_spikes++;
-      }
-    }
-  }
-
-  // D'Haene tests
-  double_t const minus_taus = -tau_m*tau / (tau_m-tau);
-  double_t const V_syn      = minus_taus / C_m * I_0;
-  double_t const V_m        = V_0 - tauC_m*I_x - V_syn;
-
-  if ( V_m > 0.0 && V_syn < 0.0 )
-  {
-    S_.dhaene_quick1++;
-
-    double_t const quot = -tau*V_m / (tau_m*V_syn);
-
-    if ( quot <= 1.0 )
-    {
-      S_.dhaene_quick2++;
-
-      double_t const t_max = minus_taus * log(quot);
-
-      if ( t_max < t1 )
-	S_.dhaene_tmax_lt_t1++;
-      
-      double_t const expm1_tau_syn = numerics::expm1(-t_max/tau);
-      double_t const expm1_tau_m   = numerics::expm1(-t_max/tau_m);
-      
-      double_t const P20 = -tau_m*expm1_tau_m / C_m;
-      double_t const P21 = minus_taus / C_m * (expm1_tau_syn-expm1_tau_m);
-      
-      if ( (P20*I_x + P21*I_0 + expm1_tau_m*V_0 + V_0) >= V_th )
-      {
-	S_.dhaene_max++;
-        if ( t_max <= t1 )
-	  S_.dhaene_det_spikes++;
-      }
-    }
-  }
-}
 

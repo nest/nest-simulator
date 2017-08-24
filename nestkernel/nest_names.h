@@ -440,15 +440,6 @@ extern const Name z; //!< Number of available synaptic elements per node
 extern const Name z_connected; //!< Number of connected synaptic elements
                                //!< per node
 
-//time-reversal state-space spike detection algorithm
-extern const Name y1_ex;
-extern const Name y1_in;
-extern const Name y0;
-extern const Name y2;
-
-
-
-
 }
 }
 

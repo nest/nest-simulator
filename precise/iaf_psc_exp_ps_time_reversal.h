@@ -39,7 +39,7 @@
 #include <vector>
 
 /*BeginDocumentation
-Name: iaf_psc_exp_ps_time_reversal - Leaky integrate-and-fire neuron
+Name: iaf_psc_exp_ps_lossless - Leaky integrate-and-fire neuron
 with exponential postsynaptic currents; precise implementation;
 applies state space analysis to predict exact number of spikes in a
 simulation for any given resolution.
@@ -75,7 +75,7 @@ References:
 (2017) Perfect spike detection via time reversal (to be submitted to Front.
 Neuroinform.)
 
-Author: Krishnan
+Author: Jeyashree Krishnan
 
 Sends: SpikeEvent
 
@@ -86,7 +86,6 @@ SeeAlso: iaf_psc_exp_ps
 
 namespace nest
 {
-
   /**
    * Leaky iaf neuron, exponential PSC synapses, canonical implementation.
    * @note Inherit privately from Node, so no classes can be derived
@@ -220,8 +219,6 @@ namespace nest
      */
     double_t bisectioning_(const double_t dt) const;
 
-    void spike_test_count_(const double_t);
-    void spike_test_(const double_t);
     bool is_spike_(const double_t);
 
     // ---------------------------------------------------------------- 
@@ -232,64 +229,59 @@ namespace nest
     struct Parameters_
     {
       /** Membrane time constant in ms. */
-      double_t tau_m_; 
+      double tau_m_; 
       
       /** Time constant of exc. synaptic current in ms. */
-      double_t tau_ex_;
+      double tau_ex_;
       
       /** Time constant of inh. synaptic current in ms. */
-      double_t tau_in_;
+      double tau_in_;
       
       /** Membrane capacitance in pF. */
-      double_t c_m_;
+      double c_m_;
       
       /** Refractory period in ms. */
-      double_t t_ref_;
+      double t_ref_;
       
       /** Resting potential in mV. */
-      double_t E_L_;
+      double E_L_;
       
       /** External DC current [pA] */
-      double_t I_e_;
+      double I_e_;
       
       /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
           I.e. the real threshold is U_th_ + E_L_. */
-      double_t U_th_;
+      double U_th_;
       
       /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).
           I.e. the real lower bound is U_min_+E_L_. */
-      double_t U_min_;
+      double U_min_;
       
       /** Reset potential. 
 	  At threshold crossing, the membrane potential is reset to this value. 
 	  Relative to resting potential. */
-      double_t U_reset_;
+      double U_reset_;
 
-      double_t a1_;
-      double_t a2_;
-      double_t a3_;
-      double_t a4_;
-
-      double_t b1_;
-      double_t b2_;
-      double_t b3_;
-      double_t b4_;
-      double_t b5_;
-      double_t b6_;
-      double_t b7_;
-
-      double_t c1_;
-      double_t c2_;
-      double_t c3_;
-      double_t c4_;
-      double_t c5_;
-      double_t c6_;
-
-
-      double_t d1_;
-      double_t d2_;
-      double_t d3_;
-
+      double a1_;
+      double a2_;
+      double a3_;
+      double a4_;
+      double b1_;
+      double b2_;
+      double b3_;
+      double b4_;
+      double b5_;
+      double b6_;
+      double b7_;
+      double c1_;
+      double c2_;
+      double c3_;
+      double c4_;
+      double c5_;
+      double c6_;
+      double d1_;
+      double d2_;
+      double d3_;
       
       Parameters_();  //!< Sets default parameter values
       void calc_const_spike_test_();
@@ -307,8 +299,8 @@ namespace nest
     struct State_
     {
       double_t y0_;  //!< External input current
-      double_t y1_ex_;  //!< Exc. exponetial current
-      double_t y1_in_;  //!< Inh. exponetial current
+      double_t I_syn_ex_;  //!< Exc. exponetial current
+      double_t I_syn_in_;  //!< Inh. exponetial current
       double_t y2_;  //!< Membrane potential (relative to resting potential)
       
       bool is_refractory_;  //!< True while refractory
@@ -335,11 +327,6 @@ namespace nest
       
       void get(DictionaryDatum &, const Parameters_ &) const;
       void set(const DictionaryDatum &, const Parameters_ &, double delta_EL);
-
-
-
-
-
     };
     
     // ---------------------------------------------------------------- 
@@ -379,20 +366,19 @@ namespace nest
       double_t P21_in_;            //!< Progagator matrix element, 2nd row
       double_t P21_ex_;            //!< Progagator matrix element, 2nd row
       double_t y0_before_;         //!< y0_ at beginning of ministep
-      double_t y1_ex_before_;      //!< y1_ at beginning of ministep
-      double_t y1_in_before_;      //!< y1_ at beginning of ministep
+      double_t I_syn_ex_before_;      //!< y1_ at beginning of ministep
+      double_t I_syn_in_before_;      //!< y1_ at beginning of ministep
       double_t y2_before_;         //!< y2_ at beginning of ministep
       double_t bisection_step;
-	};
+	   };
     
     // Access functions for UniversalDataLogger -------------------------------
     
     //! Read out the real membrane potential
     double_t get_V_m_() const { return S_.y2_ + P_.E_L_; }
-    double_t get_I_syn_() const { return S_.y1_ex_ + S_.y1_in_; }
-    double_t get_y1_ex_() const { return S_.y1_ex_; }
-    double_t get_y1_in_() const { return S_.y1_in_; }
-    double_t get_y0_() const {return S_.y0_;}
+    double_t get_I_syn_() const { return S_.I_syn_ex_ + S_.I_syn_in_; }
+    double_t get_I_syn_ex_() const { return S_.I_syn_ex_; }
+    double_t get_I_syn_in_() const { return S_.I_syn_in_; }
 
     
     // ---------------------------------------------------------------- 
@@ -471,69 +457,6 @@ void iaf_psc_exp_ps_time_reversal::set_status(const DictionaryDatum & d)
   S_ = stmp;
 }
 
-
-// inline
-// void iaf_psc_exp_ps_time_reversal::print_stopwatch()
-// {
-//   regime1.print("branch-1 (no-spike) took: ");
-//   regime2.print("branch-2 (no-spike) took: ");
-//   regime3.print("branch-3 (spike) took: ");
-
-// }
-
-inline
-void nest::iaf_psc_exp_ps_time_reversal::spike_test_(const double_t t1)
-{
-  // we assume that P_.tau_ex_=P_.tau_in_
-  double_t const I_0   = V_.y1_ex_before_ + V_.y1_in_before_;
-  double_t const V_0   = V_.y2_before_;
-  double_t const I_t1  = S_.y1_ex_ + S_.y1_in_;
-  double_t const V_t1  = S_.y2_;
-  double_t const tau   = P_.tau_ex_;
-  double_t const tau_m = P_.tau_m_;
-  double_t const I_x   = P_.I_e_;
-  double_t const C_m   = P_.c_m_;
-  double_t const V_th  = P_.U_th_;
-
-  double_t const tauC_m = tau_m/C_m;
-
-  double_t const Vdot_t1 = -V_t1/tau_m + (I_t1+I_x)/C_m;
-
-
-  // iaflossless tests
-  if ( Vdot_t1 < 0.0 )
-  {
-    double_t const Vdot_0  = -V_0/tau_m + (I_0+I_x)/C_m;
-
-    if ( Vdot_0 > 0.0 )
-    {
-      if ( Vdot_0*t1 + V_0 >= V_th )
-      {
-
-  	  // D'Haene tests
-  	  double_t const minus_taus = -tau_m*tau / (tau_m-tau);
-  	  double_t const V_syn      = minus_taus / C_m * I_0;
-  	  double_t const V_m        = V_0 - tauC_m*I_x - V_syn;
-  	  double_t const quot       = -tau*V_m / (tau_m*V_syn);
-
-  	  double_t const t_max = minus_taus * log(quot);
-
-  	  double_t const expm1_tau_syn = numerics::expm1(-t_max/tau);
-  	  double_t const expm1_tau_m   = numerics::expm1(-t_max/tau_m);
-      
-  	  double_t const P20 = -tau_m*expm1_tau_m / C_m;
-  	  double_t const P21 = minus_taus / C_m * (expm1_tau_syn-expm1_tau_m);
-      
-  	  if ( (P20*I_x + P21*I_0 + expm1_tau_m*V_0 + V_0) >= V_th )
-  	    S_.dhaene_det_spikes++;
-
-	  //}
-      }
-    }
-  }
-}
-
-
 /* Conventional spike detection algorithms propagate the initial state forwards in time and see whether it meets the threshold.
 This function implements a general method to solve the threshold-detection problem for an integrable, affine or linear
 time evolution by applying geometric analysis. The idea is to propagate the threshold backwards in time and see whether
@@ -546,7 +469,7 @@ inequalities are adjusted such that backward propagation (negative time) is alre
 inline
 bool iaf_psc_exp_ps_time_reversal::is_spike_(double_t dt)
 {
-  double_t const I_0   = V_.y1_ex_before_ + V_.y1_in_before_;
+  double_t const I_0   = V_.I_syn_ex_before_ + V_.I_syn_in_before_;
   double_t const V_0   = V_.y2_before_; 
   const double_t exp_tau_s = numerics::expm1(dt/P_.tau_ex_) ; 
   const double_t exp_tau_m  = numerics::expm1(dt/P_.tau_m_) ; 

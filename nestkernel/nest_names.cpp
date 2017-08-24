@@ -367,14 +367,6 @@ const Name xs( "xs" );
 const Name z( "z" );
 const Name z_connected( "z_connected" );
 
-//time-reversal state-space-spike detection algorithm for precise
-//neuron models
-
-const Name y1_ex("y1_ex");
-const Name y1_in("y1_in");
-const Name y0("y0");
-const Name y2("y2");
-
 
 }
 }

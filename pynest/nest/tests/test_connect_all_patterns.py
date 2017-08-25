@@ -39,21 +39,20 @@ class TestConnectAllPatterns(unittest.TestCase):
                    "test_connect_fixed_total_number.py",
                    "test_connect_pairwise_bernoulli.py"
                    ]
-        retcodes = []
+        failing_tests = []
         for script in scripts:
             test_script = os.path.join(directory, script)
             command = nest.sli_func("mpirun", 2, "nosetests",
                                     test_script)
-            print("Executing test with command: " + command)
             command = command.split()
-            retcodes.append(sp.call(command))
-        failed_tests = ''
-        for script, retcode in zip(scripts, retcodes):
+            process = sp.Popen(command, stdout=sp.PIPE, stderr=sp.PIPE)
+            stdout, stderr = process.communicate()
+            retcode = process.returncode
             if retcode != 0:
-                failed_tests += script + ' '
-        self.assertEqual(failed_tests, '',
-                         'Error using MPI with the following test(s): ' +
-                         failed_tests)
+                failing_tests.append(script)
+        self.assertTrue(not failing_tests, 'The following tests failed when ' +
+                        'executing with "mpirun -np 2 nosetests [script]": ' +
+                        ", ".join(failing_tests))
 
 
 if __name__ == '__main__':

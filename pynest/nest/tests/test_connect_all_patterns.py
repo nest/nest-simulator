@@ -31,6 +31,11 @@ class TestConnectAllPatterns(unittest.TestCase):
 
     @unittest.skipIf(not HAVE_MPI, 'NEST was compiled without MPI')
     def testWithMPI(self):
+        # Check that we can import mpi4py
+        try:
+            from mpi4py import MPI
+        except ImportError:
+            raise unittest.SkipTest("mpi4py required")
         directory = os.path.dirname(os.path.realpath(__file__))
         scripts = ["test_connect_all_to_all.py",
                    "test_connect_one_to_one.py",

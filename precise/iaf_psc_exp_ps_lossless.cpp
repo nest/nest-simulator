@@ -592,25 +592,25 @@ inline bool nest::iaf_psc_exp_ps_lossless::is_spike_(const double dt)
   
   double g = ((V_.a1_ * I_0 * exp_tau_m_s + exp_tau_m * (V_.a3_ - P_.I_e_ * V_.a2_) + V_.a3_)/V_.a4_) ; 
 
-    //no-spike
+    //no-spike, NS_1, (V <= f_h,I_e(I) and V < g_h,I_e(I))
   if((V_0 <= (((I_0 + P_.I_e_)*(V_.b1_ * exp_tau_m + V_.b2_* exp_tau_s) + V_.b3_*(exp_tau_m - exp_tau_s))/( V_.b4_ * exp_tau_s)))
       &&  (V_0 < g))     
     {
       return false;
     }
   
-    //spike
+    //spike, S_1, V >= g_h,I_e(I)
   else if (V_0 >= g )  
     {
       return true;
     }
-  //no-spike
+  //no-spike, NS_2, V < b(I)
   else if(V_0 < (V_.c1_ * P_.I_e_ + V_.c2_ * I_0 + V_.c3_* pow(I_0, V_.c4_) * pow((V_.c5_ - P_.I_e_), V_.c6_)))
     { 
       return false;
     }
   else
-  //spike
+  //missed spike detected, S_2
     {
       V_.bisection_step = (V_.a1_ / P_.tau_m_ * P_.tau_ex_ ) * log ( V_.b1_ * I_0 / (V_.a2_ * P_.I_e_ - V_.a1_ * I_0 - V_.a4_ * V_0 ) );
       return true;

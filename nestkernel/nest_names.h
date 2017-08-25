@@ -439,7 +439,6 @@ extern const Name xs; //!< current scaling factor of the synaptic weight [0...1]
 extern const Name z; //!< Number of available synaptic elements per node
 extern const Name z_connected; //!< Number of connected synaptic elements
                                //!< per node
-
 }
 }
 

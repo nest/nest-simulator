@@ -75,7 +75,7 @@ One such command is `nest.Models()`, which will return a list of all the
 available models you can use. If you want to obtain more information about a
 particular command, you may use Python’s standard help system.
 
-    nest.Models?
+    nest.Models() 
 
 This will return the help text (docstring) explaining the use of this particular
 function. There is a help system within NEST as well. You can open the help
@@ -377,7 +377,7 @@ current, and add a second neuron.
     nest.SetStatus(neuron1, {"I_e": 376.0})
     neuron2 = nest.Create("iaf_psc_alpha")
     multimeter = nest.Create("multimeter")
-    nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]}
+    nest.SetStatus(multimeter, {"withtime":True, "record_from":["V_m"]})
 
 We now connect `neuron1` to `neuron2`, and record the membrane potential from
 `neuron2` so we can observe the postsynaptic potentials caused by the spikes of

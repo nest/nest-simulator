@@ -126,9 +126,11 @@ nest::Time
 nest::step_current_generator::Parameters_::validate_time_( double t,
   const Time& t_previous )
 {
-  if ( t == 0.0 )
+  if ( t <= 0.0 )
   {
-    throw BadProperty( "Amplitude cannot be changed at 0." );
+    throw BadProperty(
+      "Amplitude can only be changed at strictly "
+      "positive times (t > 0)." );
   }
 
   // Force the amplitude change time to the grid

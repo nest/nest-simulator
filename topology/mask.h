@@ -217,7 +217,10 @@ public:
    */
   BoxMask( const DictionaryDatum& );
 
-  BoxMask( const Position< D >& lower_left, const Position< D >& upper_right, double azimuth_angle = 0.0, double polar_angle = 0.0 );
+  BoxMask( const Position< D >& lower_left,
+    const Position< D >& upper_right,
+    double azimuth_angle = 0.0,
+    double polar_angle = 0.0 );
 
   ~BoxMask()
   {
@@ -751,11 +754,13 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
 
 template < int D >
 inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
-  const Position< D >& upper_right, double azimuth_angle, double polar_angle )
+  const Position< D >& upper_right,
+  double azimuth_angle,
+  double polar_angle )
   : lower_left_( lower_left )
   , upper_right_( upper_right )
-  , azimuth_angle_ ( azimuth_angle )
-  , polar_angle_ ( polar_angle )
+  , azimuth_angle_( azimuth_angle )
+  , polar_angle_( polar_angle )
   , azimuth_cos_( std::cos( azimuth_angle_ * numerics::pi / 180. ) )
   , azimuth_sin_( std::sin( azimuth_angle_ * numerics::pi / 180. ) )
   , polar_cos_( std::cos( polar_angle_ * numerics::pi / 180. ) )

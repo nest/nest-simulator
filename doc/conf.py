@@ -99,8 +99,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'NEST simulator user documentation'
-copyright = u'2017, steffengraber'
-author = u'steffengraber'
+copyright = u'2017, nest-simulator'
+author = u'nest-simulator'
 
 
 # The version info for the project you're documenting, acts as replacement for

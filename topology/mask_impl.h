@@ -87,18 +87,70 @@ Mask< D >::outside( const Box< D >& b ) const
   return false;
 }
 
-template < int D >
+/*template < int D >
 bool
 BoxMask< D >::inside( const Position< D >& p ) const
 {
-  return ( p >= lower_left_ ) && ( p <= upper_right_ );
+  const double new_x = p[ 0 ] * azimuth_cos_ + p[ 1 ] * azimuth_sin_;
+  const double new_y = - p[ 0 ] * azimuth_sin_ + p[ 1 ] * azimuth_cos_;
+
+  Position< D > new_p;
+  new_p[ 0 ] = new_x;
+  new_p[ 1 ] = new_y;
+
+  if ( D == 3 )
+  {
+    new_p[ 2 ] = p[ 2 ];
+  }
+
+  return ( new_p >= lower_left_ ) && ( new_p <= upper_right_ );
+}*/
+
+template <>
+bool
+BoxMask< 2 >::inside( const Position< 2 >& p ) const
+{
+  const double cntr_x = ( upper_right_[ 0 ] + lower_left_[ 0 ] ) / 2;
+  const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) / 2;
+
+  const double new_x = ( p[ 0 ] - cntr_x ) * azimuth_cos_ + ( p[ 1 ] - cntr_y ) * azimuth_sin_ + cntr_x;
+  const double new_y = - ( p[ 0 ] - cntr_x ) * azimuth_sin_ + ( p[ 1 ] - cntr_y ) * azimuth_cos_ + cntr_y;
+
+  //const double new_x = ( p[ 0 ] ) * azimuth_cos_ + ( p[ 1 ] ) * azimuth_sin_;
+  //const double new_y = - ( p[ 0 ] ) * azimuth_sin_ + ( p[ 1 ] ) * azimuth_cos_;
+
+  Position< 2 > new_p( new_x, new_y );
+
+  const double x_length = upper_right_[ 0 ] - lower_left_[ 0 ];
+  const double y_length = upper_right_[ 1 ] - lower_left_[ 1 ];
+  Position< 2 > eps( x_length / 100, y_length / 100 );
+
+  return ( lower_left_ - eps <= new_p ) && ( new_p <= upper_right_ + eps );
+}
+
+template <>
+bool
+BoxMask< 3 >::inside( const Position< 3 >& p ) const
+{
+  const double cntr_x = ( upper_right_[ 0 ] + lower_left_[ 0 ] ) / 2;
+  const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) / 2;
+  const double cntr_z = ( upper_right_[ 2 ] + lower_left_[ 2 ] ) / 2;
+
+  const double new_x = ( ( p[ 0 ] - cntr_x ) * azimuth_cos_ + ( p[ 1 ] - cntr_y ) * azimuth_sin_ ) * polar_cos_ - ( ( p[ 2 ] - cntr_z ) * polar_sin_ ) + cntr_x;
+  const double new_y = - ( p[ 0 ] - cntr_x ) * azimuth_sin_ + ( p[ 1 ] - cntr_y ) * azimuth_cos_ + cntr_y;
+  const double new_z = ( ( p[ 0 ] - cntr_x ) * azimuth_cos_ + ( p[ 1 ] - cntr_y ) * azimuth_sin_ ) * polar_sin_ + ( ( p[ 2 ] - cntr_z ) * polar_cos_ ) + cntr_z;
+
+  Position< 3 > new_p(new_x, new_y, new_z);
+
+  return ( new_p >= lower_left_ ) && ( new_p <= upper_right_ );
 }
 
 template < int D >
 bool
 BoxMask< D >::inside( const Box< D >& b ) const
 {
-  return ( b.lower_left >= lower_left_ ) && ( b.upper_right <= upper_right_ );
+  //return ( b.lower_left >= lower_left_ ) && ( b.upper_right <= upper_right_ );
+  return ( inside( b.lower_left ) and inside( b.upper_right ) );
 }
 
 template < int D >
@@ -107,8 +159,13 @@ BoxMask< D >::outside( const Box< D >& b ) const
 {
   for ( int i = 0; i < D; ++i )
   {
-    if ( ( b.upper_right[ i ] < lower_left_[ i ] )
+    /*if ( ( b.upper_right[ i ] < lower_left_[ i ] )
       || ( b.lower_left[ i ] > upper_right_[ i ] ) )
+    {
+      return true;
+    }*/
+    if ( ( b.upper_right[ i ] < min_values_[ i ] )
+      || ( b.lower_left[ i ] > max_values_[ i ] ) )
     {
       return true;
     }
@@ -116,11 +173,129 @@ BoxMask< D >::outside( const Box< D >& b ) const
   return false;
 }
 
+template <>
+void
+BoxMask< 2 >::create_min_max_values_()
+{
+  const double cntr_x = ( upper_right_[ 0 ] + lower_left_[ 0 ] ) / 2;
+  const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) / 2;
+
+  Position<2> cntr( cntr_x, cntr_y );
+
+
+  Position< 2 > lower_left_cos = ( lower_left_ - cntr ) * azimuth_cos_;
+  Position< 2 > lower_left_sin = ( lower_left_ - cntr ) * azimuth_sin_;
+  Position< 2 > upper_right_cos = ( upper_right_ - cntr ) * azimuth_cos_;
+  Position< 2 > upper_right_sin = ( upper_right_ - cntr ) * azimuth_sin_;
+
+/*  Position< 2 > lower_left_cos = ( lower_left_ ) * azimuth_cos_;
+  Position< 2 > lower_left_sin = ( lower_left_ ) * azimuth_sin_;
+  Position< 2 > upper_right_cos = ( upper_right_ ) * azimuth_cos_;
+  Position< 2 > upper_right_sin = ( upper_right_ ) * azimuth_sin_;*/
+
+
+  /*double rotatedLLx = lower_left_cos[ 0 ] - lower_left_sin[ 1 ];
+  double rotatedLLy = lower_left_sin[ 0 ] + lower_left_cos[ 1 ];
+
+  double rotatedLRx = upper_right_cos[ 0 ] - lower_left_sin[ 1 ];
+  double rotatedLRy = upper_right_sin[ 0 ] + lower_left_cos[ 1 ];
+
+  double rotatedURx = upper_right_cos[ 0 ] - upper_right_sin[ 1 ];
+  double rotatedURy = upper_right_sin[ 0 ] + upper_right_cos[ 1 ];
+
+  double rotatedULx = lower_left_cos[ 0 ] - upper_right_sin[ 1 ];
+  double rotatedULy = lower_left_sin[ 0 ] + upper_right_cos[ 1 ];*/
+
+  double rotatedLLx = lower_left_cos[ 0 ] - lower_left_sin[ 1 ] + cntr_x;
+  double rotatedLLy = lower_left_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_y;
+
+  double rotatedLRx = upper_right_cos[ 0 ] - lower_left_sin[ 1 ] + cntr_x;
+  double rotatedLRy = upper_right_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_y;
+
+  double rotatedURx = upper_right_cos[ 0 ] - upper_right_sin[ 1 ] + cntr_x;
+  double rotatedURy = upper_right_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_y;
+
+  double rotatedULx = lower_left_cos[ 0 ] - upper_right_sin[ 1 ] + cntr_x;
+  double rotatedULy = lower_left_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_y;
+
+  min_values_[ 0 ] = std::min( rotatedLLx, std::min( rotatedLRx, std::min( rotatedURx, rotatedULx ) ) );
+  min_values_[ 1 ] = std::min( rotatedLLy, std::min( rotatedLRy, std::min( rotatedURy, rotatedULy ) ) );
+  max_values_[ 0 ] = std::max( rotatedLLx, std::max( rotatedLRx, std::max( rotatedURx, rotatedULx ) ) );
+  max_values_[ 1 ] = std::max( rotatedLLy, std::max( rotatedLRy, std::max( rotatedURy, rotatedULy ) ) );
+
+  //min_values_ = lower_left_;
+  //max_values_ = upper_right_;
+}
+
+template <>
+void
+BoxMask< 3 >::create_min_max_values_()
+{
+  /*
+   *        LLH      LHH
+   *       *--------*
+   *      /|       /|
+   *     / |LLL   / |LHL
+   *    *--*-----*--*
+   * HLH| /   HHH| /
+   *    |/       |/
+   *    *--------*
+   * HLL      HHL
+   *
+   */
+
+  Position< 3 > lower_left_cos = lower_left_ * azimuth_cos_;
+  Position< 3 > lower_left_sin = lower_left_ * azimuth_sin_;
+  Position< 3 > upper_right_cos = upper_right_ * azimuth_cos_;
+  Position< 3 > upper_right_sin = upper_right_ * azimuth_sin_;
+
+  // Need to rotate 8 corners in 3D
+  double rotatedLLLx = ( lower_left_cos[ 0 ] + lower_left_sin[ 1 ] ) * polar_cos_ - lower_left_[ 2 ] * polar_sin_;
+  double rotatedLLLy = -lower_left_sin[ 0 ] + lower_left_cos[ 1 ];
+  double rotatedLLLz = ( lower_left_cos[ 0 ] + lower_left_sin[ 1 ] ) * polar_sin_ + lower_left_[ 2 ] * polar_cos_;
+
+  double rotatedLLHx = ( lower_left_cos[ 0 ] + lower_left_sin[ 1 ] ) * polar_cos_ - upper_right_[ 2 ] * polar_sin_;
+  double rotatedLLHy = -lower_left_sin[ 0 ] + lower_left_cos[ 1 ];
+  double rotatedLLHz = ( lower_left_cos[ 0 ] + lower_left_sin[ 1 ] ) * polar_sin_ + upper_right_[ 2 ] * polar_cos_;
+
+  double rotatedHLLx = ( upper_right_cos[ 0 ] + lower_left_sin[ 1 ] ) * polar_cos_ - lower_left_[ 2 ] * polar_sin_;
+  double rotatedHLLy = -upper_right_sin[ 0 ] + lower_left_cos[ 1 ];
+  double rotatedHLLz = ( upper_right_cos[ 0 ] + lower_left_sin[ 1 ] ) * polar_sin_ + lower_left_[ 2 ] * polar_cos_;
+
+  double rotatedHLHx = ( upper_right_cos[ 0 ] + lower_left_sin[ 1 ] ) * polar_cos_ - upper_right_[ 2 ] * polar_sin_;
+  double rotatedHLHy = -upper_right_sin[ 0 ] + lower_left_cos[ 1 ];
+  double rotatedHLHz = ( upper_right_cos[ 0 ] + lower_left_sin[ 1 ] ) * polar_sin_ + upper_right_[ 2 ] * polar_cos_;
+
+  double rotatedHHHx = ( upper_right_cos[ 0 ] + upper_right_sin[ 1 ] ) * polar_cos_ - upper_right_[ 2 ] * polar_sin_;
+  double rotatedHHHy = -upper_right_sin[ 0 ] + upper_right_cos[ 1 ];
+  double rotatedHHHz = ( upper_right_cos[ 0 ] + upper_right_sin[ 1 ] ) * polar_sin_ + upper_right_[ 2 ] * polar_cos_;
+
+  double rotatedHHLx = ( upper_right_cos[ 0 ] + upper_right_sin[ 1 ] ) * polar_cos_ - lower_left_[ 2 ] * polar_sin_;
+  double rotatedHHLy = -upper_right_sin[ 0 ] + upper_right_cos[ 1 ];
+  double rotatedHHLz = ( upper_right_cos[ 0 ] + upper_right_sin[ 1 ] ) * polar_sin_ + lower_left_[ 2 ] * polar_cos_;
+
+  double rotatedLHHx = ( lower_left_cos[ 0 ] + upper_right_sin[ 1 ] ) * polar_cos_ - upper_right_[ 2 ] * polar_sin_;
+  double rotatedLHHy = -lower_left_sin[ 0 ] + upper_right_cos[ 1 ];
+  double rotatedLHHz = ( lower_left_cos[ 0 ] + upper_right_sin[ 1 ] ) * polar_sin_ + upper_right_[ 2 ] * polar_cos_;
+
+  double rotatedLHLx = ( lower_left_cos[ 0 ] + upper_right_sin[ 1 ] ) * polar_cos_ - lower_left_[ 2 ] * polar_sin_;
+  double rotatedLHLy = -lower_left_sin[ 0 ] + upper_right_cos[ 1 ];
+  double rotatedLHLz = ( lower_left_cos[ 0 ] + upper_right_sin[ 1 ] ) * polar_sin_ + lower_left_[ 2 ] * polar_cos_;
+
+  min_values_[ 0 ] = std::min( rotatedLLLx, std::min( rotatedLLHx, std::min( rotatedHLLx, std::min( rotatedHLHx, std::min( rotatedHHHx, std::min( rotatedHHLx, std::min(rotatedLHHx, rotatedLHLx ) ) ) ) ) ) );
+  min_values_[ 1 ] = std::min( rotatedLLLy, std::min( rotatedLLHy, std::min( rotatedHLLy, std::min( rotatedHLHy, std::min( rotatedHHHy, std::min( rotatedHHLy, std::min(rotatedLHHy, rotatedLHLy ) ) ) ) ) ) );
+  min_values_[ 2 ] = std::min( rotatedLLLz, std::min( rotatedLLHz, std::min( rotatedHLLz, std::min( rotatedHLHz, std::min( rotatedHHHz, std::min( rotatedHHLz, std::min(rotatedLHHz, rotatedLHLz ) ) ) ) ) ) );
+  max_values_[ 0 ] = std::max( rotatedLLLx, std::max( rotatedLLHx, std::max( rotatedHLLx, std::max( rotatedHLHx, std::max( rotatedHHHx, std::max( rotatedHHLx, std::max(rotatedLHHx, rotatedLHLx ) ) ) ) ) ) );
+  max_values_[ 1 ] = std::max( rotatedLLLy, std::max( rotatedLLHy, std::max( rotatedHLLy, std::max( rotatedHLHy, std::max( rotatedHHHy, std::max( rotatedHHLy, std::max(rotatedLHHy, rotatedLHLy ) ) ) ) ) ) );
+  max_values_[ 2 ] = std::max( rotatedLLLz, std::max( rotatedLLHz, std::max( rotatedHLLz, std::max( rotatedHLHz, std::max( rotatedHHHz, std::max( rotatedHHLz, std::max(rotatedLHHz, rotatedLHLz ) ) ) ) ) ) );
+}
+
 template < int D >
 Box< D >
 BoxMask< D >::get_bbox() const
 {
-  return Box< D >( lower_left_, upper_right_ );
+  return Box< D >( min_values_, max_values_ );
+  //return Box< D >( lower_left_, upper_right_ );
 }
 
 template < int D >
@@ -139,6 +314,7 @@ BoxMask< D >::get_dict() const
   def< DictionaryDatum >( d, get_name(), maskd );
   def< std::vector< double > >( maskd, names::lower_left, lower_left_ );
   def< std::vector< double > >( maskd, names::upper_right, upper_right_ );
+  def< double >( maskd, names::azimuth_angle, azimuth_angle_ );
   return d;
 }
 

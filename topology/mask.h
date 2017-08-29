@@ -210,12 +210,14 @@ class BoxMask : public Mask< D >
 public:
   /**
    * Parameters that should be in the dictionary:
-   * lower_left  - Position of lower left corner (array of doubles)
-   * upper_right - Position of upper right corner (array of doubles)
+   * lower_left    - Position of lower left corner (array of doubles)
+   * upper_right   - Position of upper right corner (array of doubles)
+   * azimuth_angle - Rotation angle in degrees from x-axis (double), optional
+   * polar_angle   - Rotation angle in degrees from z-axis (double), optional
    */
   BoxMask( const DictionaryDatum& );
 
-  BoxMask( const Position< D >& lower_left, const Position< D >& upper_right );
+  BoxMask( const Position< D >& lower_left, const Position< D >& upper_right, double azimuth_angle = 0.0, double polar_angle = 0.0 );
 
   ~BoxMask()
   {
@@ -250,8 +252,23 @@ public:
   static Name get_name();
 
 protected:
+  /**
+   *  Calculate the min/max x, y, z values in case of a rotated box.
+   */
+  void create_min_max_values_();
+
   Position< D > lower_left_;
   Position< D > upper_right_;
+
+  Position< D > min_values_;
+  Position< D > max_values_;
+
+  double azimuth_angle_;
+  double polar_angle_;
+  double azimuth_cos_;
+  double azimuth_sin_;
+  double polar_cos_;
+  double polar_sin_;
 };
 
 /**
@@ -692,20 +709,66 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
 {
   lower_left_ = getValue< std::vector< double > >( d, names::lower_left );
   upper_right_ = getValue< std::vector< double > >( d, names::upper_right );
+
   if ( not( lower_left_ < upper_right_ ) )
   {
     throw BadProperty(
       "topology::BoxMask<D>: "
       "Upper right must be strictly to the right and above lower left." );
   }
+
+  if ( d->known( names::azimuth_angle ) )
+  {
+    azimuth_angle_ = getValue< double >( d, names::azimuth_angle );
+  }
+  else
+  {
+    azimuth_angle_ = 0.0;
+  }
+
+  if ( d->known( names::polar_angle ) )
+  {
+    if ( D == 2 )
+    {
+      throw BadProperty(
+        "topology::BoxMask<D>: "
+        "polar_angle not defined in 2D." );
+    }
+    polar_angle_ = getValue< double >( d, names::polar_angle );
+  }
+  else
+  {
+    polar_angle_ = 0.0;
+  }
+
+  azimuth_cos_ = std::cos( azimuth_angle_ * numerics::pi / 180. );
+  azimuth_sin_ = std::sin( azimuth_angle_ * numerics::pi / 180. );
+  polar_cos_ = std::cos( polar_angle_ * numerics::pi / 180. );
+  polar_sin_ = std::sin( polar_angle_ * numerics::pi / 180. );
+
+  create_min_max_values_();
 }
 
 template < int D >
 inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
-  const Position< D >& upper_right )
+  const Position< D >& upper_right, double azimuth_angle, double polar_angle )
   : lower_left_( lower_left )
   , upper_right_( upper_right )
+  , azimuth_angle_ ( azimuth_angle )
+  , polar_angle_ ( polar_angle )
+  , azimuth_cos_( std::cos( azimuth_angle_ * numerics::pi / 180. ) )
+  , azimuth_sin_( std::sin( azimuth_angle_ * numerics::pi / 180. ) )
+  , polar_cos_( std::cos( polar_angle_ * numerics::pi / 180. ) )
+  , polar_sin_( std::sin( polar_angle_ * numerics::pi / 180. ) )
 {
+  if ( D == 2 and not( polar_angle_ == 0.0 ) )
+  {
+    throw BadProperty(
+      "topology::BoxMask<D>: "
+      "polar_angle not defined in 2D." );
+  }
+
+  create_min_max_values_();
 }
 
 template <>

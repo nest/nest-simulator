@@ -26,6 +26,7 @@ import numpy
 import pylab
 from pylab import show, savefig
 
+
 def extract_events(data, time=None, sel=None):
     """Extract all events within a given time interval.
 

@@ -35,11 +35,11 @@
      amplitude_values  list of doubles - Amplitudes of step current current in
                                          pA
      allow_offgrid_times  bool - Default false
-              If false, times will be rounded to the nearest step if they are
-              less than tic/2 from the step, otherwise NEST reports an error.
-              If true,  times are rounded to the nearest step if within tic/2
-              from the step, otherwise they are rounded up to the *end* of the
- step.
+       If false, times will be rounded to the nearest step if they are
+       less than tic/2 from the step, otherwise NEST reports an error.
+       If true,  times are rounded to the nearest step if within tic/2
+       from the step, otherwise they are rounded up to the *end* of the
+       step.
 
   Note:
     Times of amplitude changes must be strictly increasing after conversion

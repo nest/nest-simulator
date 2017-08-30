@@ -57,6 +57,7 @@ extern const Name activity;             //!< Used in pulsepacket_generator
 extern const Name address;              //!< Node parameter
 extern const Name ahp_bug;              //!< Used in iaf_chxk_2008
 extern const Name allow_offgrid_spikes; //!< Used in spike_generator
+extern const Name allow_offgrid_times;  //!< Used in step_current_generator
 extern const Name alpha;                //!< stdp_synapse parameter
 extern const Name alpha_1; //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name alpha_2; //!< Specific to Kobayashi, Tsubo, Shinomoto 2009

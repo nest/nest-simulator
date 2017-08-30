@@ -272,6 +272,8 @@ protected:
   double azimuth_sin_;
   double polar_cos_;
   double polar_sin_;
+
+  bool is_rotated_;
 };
 
 /**
@@ -749,6 +751,8 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
   polar_cos_ = std::cos( polar_angle_ * numerics::pi / 180. );
   polar_sin_ = std::sin( polar_angle_ * numerics::pi / 180. );
 
+  is_rotated_ = azimuth_angle_ or polar_angle_;
+
   create_min_max_values_();
 }
 
@@ -772,6 +776,8 @@ inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
       "topology::BoxMask<D>: "
       "polar_angle not defined in 2D." );
   }
+
+  is_rotated_ = azimuth_angle_ or polar_angle_;
 
   create_min_max_values_();
 }

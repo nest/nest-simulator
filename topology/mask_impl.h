@@ -91,8 +91,14 @@ template <>
 bool
 BoxMask< 2 >::inside( const Position< 2 >& p ) const
 {
-  // We rotate the point down to the unrotated box, and check if it is inside
-  // said unrotated box.
+  // If the box is not rotated we just check if the point is inside the box.
+  if ( not is_rotated_ )
+  {
+    return ( lower_left_ <= p ) && ( p <= upper_right_ );
+  }
+
+  // If we have a rotated box, We rotate the point down to the unrotated box,
+  // and check if it is inside said unrotated box.
 
   // The new x, y values are calculated using a rotation matrix:
   // [new_x, new_y] = R(-azimuth)*[x - x_c, y - y_c]
@@ -121,8 +127,14 @@ template <>
 bool
 BoxMask< 3 >::inside( const Position< 3 >& p ) const
 {
-  // We rotate the point down to the unrotated box, and check if it is inside
-  // said unrotated box.
+  // If the box is not rotated we just check if the point is inside the box.
+  if ( not is_rotated_ )
+  {
+    return ( lower_left_ <= p ) && ( p <= upper_right_ );
+  }
+
+  // If we have a rotated box, We rotate the point down to the unrotated box,
+  // and check if it is inside said unrotated box.
 
   // The new x, y, z values are calculated using rotation matrices:
   // [new_x, new_y, new_z] =
@@ -184,37 +196,47 @@ void
 BoxMask< 2 >::create_min_max_values_()
 {
   // Rotate the corners of the box to find the new minimum and maximum x and y
-  // values to define the bounding box of the rotated box.
+  // values to define the bounding box of the rotated box. If the box is not
+  // rotated, the min values corresponds to the lower_left values and the max
+  // values corresponds to the upper_right values.
 
-  const double cntr_x = ( upper_right_[ 0 ] + lower_left_[ 0 ] ) / 2;
-  const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) / 2;
-  const Position< 2 > cntr( cntr_x, cntr_y );
+  if ( not is_rotated_ )
+  {
+    min_values_ = lower_left_;
+    max_values_ = upper_right_;
+  }
+  else
+  {
+    const double cntr_x = ( upper_right_[ 0 ] + lower_left_[ 0 ] ) / 2;
+    const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) / 2;
+    const Position< 2 > cntr( cntr_x, cntr_y );
 
-  Position< 2 > lower_left_cos = ( lower_left_ - cntr ) * azimuth_cos_;
-  Position< 2 > lower_left_sin = ( lower_left_ - cntr ) * azimuth_sin_;
-  Position< 2 > upper_right_cos = ( upper_right_ - cntr ) * azimuth_cos_;
-  Position< 2 > upper_right_sin = ( upper_right_ - cntr ) * azimuth_sin_;
+    Position< 2 > lower_left_cos = ( lower_left_ - cntr ) * azimuth_cos_;
+    Position< 2 > lower_left_sin = ( lower_left_ - cntr ) * azimuth_sin_;
+    Position< 2 > upper_right_cos = ( upper_right_ - cntr ) * azimuth_cos_;
+    Position< 2 > upper_right_sin = ( upper_right_ - cntr ) * azimuth_sin_;
 
-  double rotatedLLx = lower_left_cos[ 0 ] - lower_left_sin[ 1 ] + cntr_x;
-  double rotatedLLy = lower_left_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_y;
+    double rotatedLLx = lower_left_cos[ 0 ] - lower_left_sin[ 1 ] + cntr_x;
+    double rotatedLLy = lower_left_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_y;
 
-  double rotatedLRx = upper_right_cos[ 0 ] - lower_left_sin[ 1 ] + cntr_x;
-  double rotatedLRy = upper_right_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_y;
+    double rotatedLRx = upper_right_cos[ 0 ] - lower_left_sin[ 1 ] + cntr_x;
+    double rotatedLRy = upper_right_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_y;
 
-  double rotatedURx = upper_right_cos[ 0 ] - upper_right_sin[ 1 ] + cntr_x;
-  double rotatedURy = upper_right_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_y;
+    double rotatedURx = upper_right_cos[ 0 ] - upper_right_sin[ 1 ] + cntr_x;
+    double rotatedURy = upper_right_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_y;
 
-  double rotatedULx = lower_left_cos[ 0 ] - upper_right_sin[ 1 ] + cntr_x;
-  double rotatedULy = lower_left_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_y;
+    double rotatedULx = lower_left_cos[ 0 ] - upper_right_sin[ 1 ] + cntr_x;
+    double rotatedULy = lower_left_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_y;
 
-  min_values_[ 0 ] = std::min(
-    rotatedLLx, std::min( rotatedLRx, std::min( rotatedURx, rotatedULx ) ) );
-  min_values_[ 1 ] = std::min(
-    rotatedLLy, std::min( rotatedLRy, std::min( rotatedURy, rotatedULy ) ) );
-  max_values_[ 0 ] = std::max(
-    rotatedLLx, std::max( rotatedLRx, std::max( rotatedURx, rotatedULx ) ) );
-  max_values_[ 1 ] = std::max(
-    rotatedLLy, std::max( rotatedLRy, std::max( rotatedURy, rotatedULy ) ) );
+    min_values_[ 0 ] = std::min(
+      rotatedLLx, std::min( rotatedLRx, std::min( rotatedURx, rotatedULx ) ) );
+    min_values_[ 1 ] = std::min(
+      rotatedLLy, std::min( rotatedLRy, std::min( rotatedURy, rotatedULy ) ) );
+    max_values_[ 0 ] = std::max(
+      rotatedLLx, std::max( rotatedLRx, std::max( rotatedURx, rotatedULx ) ) );
+    max_values_[ 1 ] = std::max(
+      rotatedLLy, std::max( rotatedLRy, std::max( rotatedURy, rotatedULy ) ) );
+  }
 }
 
 template <>
@@ -236,131 +258,141 @@ BoxMask< 3 >::create_min_max_values_()
 
   // Rotate the corners of the box to find the new minimum and maximum x, y and
   // z values to define the bounding box of the rotated box. We need to rotate
-  // all eight corners.
+  // all eight corners. If the box is not rotated, the min values corresponds
+  // to the lower_left values and the max values corresponds to the upper_right
+  // values.
 
-  const double cntr_x = ( upper_right_[ 0 ] + lower_left_[ 0 ] ) / 2;
-  const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) / 2;
-  const double cntr_z = ( upper_right_[ 2 ] + lower_left_[ 2 ] ) / 2;
+  if ( not is_rotated_ )
+  {
+    min_values_ = lower_left_;
+    max_values_ = upper_right_;
+  }
+  else
+  {
+    const double cntr_x = ( upper_right_[ 0 ] + lower_left_[ 0 ] ) / 2;
+    const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) / 2;
+    const double cntr_z = ( upper_right_[ 2 ] + lower_left_[ 2 ] ) / 2;
 
-  Position< 3 > cntr( cntr_x, cntr_y, cntr_z );
+    Position< 3 > cntr( cntr_x, cntr_y, cntr_z );
 
-  Position< 3 > lower_left_cos = ( lower_left_ - cntr ) * azimuth_cos_;
-  Position< 3 > lower_left_sin = ( lower_left_ - cntr ) * azimuth_sin_;
-  Position< 3 > upper_right_cos = ( upper_right_ - cntr ) * azimuth_cos_;
-  Position< 3 > upper_right_sin = ( upper_right_ - cntr ) * azimuth_sin_;
+    Position< 3 > lower_left_cos = ( lower_left_ - cntr ) * azimuth_cos_;
+    Position< 3 > lower_left_sin = ( lower_left_ - cntr ) * azimuth_sin_;
+    Position< 3 > upper_right_cos = ( upper_right_ - cntr ) * azimuth_cos_;
+    Position< 3 > upper_right_sin = ( upper_right_ - cntr ) * azimuth_sin_;
 
-  double rotatedLLLx =
-    ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_
-    - ( lower_left_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
-  double rotatedLLLy = lower_left_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_y;
-  double rotatedLLLz =
-    ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_
-    + ( lower_left_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
+    double rotatedLLLx =
+      ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_
+      - ( lower_left_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
+    double rotatedLLLy = lower_left_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_y;
+    double rotatedLLLz =
+      ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_
+      + ( lower_left_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
 
-  double rotatedLLHx =
-    ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_
-    - ( upper_right_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
-  double rotatedLLHy = lower_left_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_y;
-  double rotatedLLHz =
-    ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_
-    + ( upper_right_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
+    double rotatedLLHx =
+      ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_
+      - ( upper_right_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
+    double rotatedLLHy = lower_left_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_y;
+    double rotatedLLHz =
+      ( lower_left_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_
+      + ( upper_right_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
 
-  double rotatedHLLx =
-    ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_
-    - ( lower_left_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
-  double rotatedHLLy = upper_right_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_y;
-  double rotatedHLLz =
-    ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_
-    + ( lower_left_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
+    double rotatedHLLx =
+      ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_
+      - ( lower_left_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
+    double rotatedHLLy = upper_right_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_y;
+    double rotatedHLLz =
+      ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_
+      + ( lower_left_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
 
-  double rotatedHLHx =
-    ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_
-    - ( upper_right_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
-  double rotatedHLHy = upper_right_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_y;
-  double rotatedHLHz =
-    ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_
-    + ( upper_right_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
+    double rotatedHLHx =
+      ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_cos_
+      - ( upper_right_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
+    double rotatedHLHy = upper_right_sin[ 0 ] + lower_left_cos[ 1 ] + cntr_y;
+    double rotatedHLHz =
+      ( upper_right_cos[ 0 ] - lower_left_sin[ 1 ] ) * polar_sin_
+      + ( upper_right_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
 
-  double rotatedHHHx =
-    ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_
-    - ( upper_right_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
-  double rotatedHHHy = upper_right_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_y;
-  double rotatedHHHz =
-    ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_
-    + ( upper_right_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
+    double rotatedHHHx =
+      ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_
+      - ( upper_right_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
+    double rotatedHHHy = upper_right_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_y;
+    double rotatedHHHz =
+      ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_
+      + ( upper_right_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
 
-  double rotatedHHLx =
-    ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_
-    - ( lower_left_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
-  double rotatedHHLy = upper_right_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_y;
-  double rotatedHHLz =
-    ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_
-    + ( lower_left_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
+    double rotatedHHLx =
+      ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_
+      - ( lower_left_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
+    double rotatedHHLy = upper_right_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_y;
+    double rotatedHHLz =
+      ( upper_right_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_
+      + ( lower_left_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
 
-  double rotatedLHHx =
-    ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_
-    - ( upper_right_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
-  double rotatedLHHy = lower_left_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_y;
-  double rotatedLHHz =
-    ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_
-    + ( upper_right_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
+    double rotatedLHHx =
+      ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_
+      - ( upper_right_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
+    double rotatedLHHy = lower_left_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_y;
+    double rotatedLHHz =
+      ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_
+      + ( upper_right_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
 
-  double rotatedLHLx =
-    ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_
-    - ( lower_left_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
-  double rotatedLHLy = lower_left_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_y;
-  double rotatedLHLz =
-    ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_
-    + ( lower_left_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
+    double rotatedLHLx =
+      ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_cos_
+      - ( lower_left_[ 2 ] - cntr_z ) * polar_sin_ + cntr_x;
+    double rotatedLHLy = lower_left_sin[ 0 ] + upper_right_cos[ 1 ] + cntr_y;
+    double rotatedLHLz =
+      ( lower_left_cos[ 0 ] - upper_right_sin[ 1 ] ) * polar_sin_
+      + ( lower_left_[ 2 ] - cntr_z ) * polar_cos_ + cntr_z;
 
-  min_values_[ 0 ] = std::min(
-    rotatedLLLx,
-    std::min( rotatedLLHx,
-      std::min( rotatedHLLx,
-                std::min( rotatedHLHx,
-                  std::min( rotatedHHHx,
-                            std::min( rotatedHHLx,
-                              std::min( rotatedLHHx, rotatedLHLx ) ) ) ) ) ) );
-  min_values_[ 1 ] = std::min(
-    rotatedLLLy,
-    std::min( rotatedLLHy,
-      std::min( rotatedHLLy,
-                std::min( rotatedHLHy,
-                  std::min( rotatedHHHy,
-                            std::min( rotatedHHLy,
-                              std::min( rotatedLHHy, rotatedLHLy ) ) ) ) ) ) );
-  min_values_[ 2 ] = std::min(
-    rotatedLLLz,
-    std::min( rotatedLLHz,
-      std::min( rotatedHLLz,
-                std::min( rotatedHLHz,
-                  std::min( rotatedHHHz,
-                            std::min( rotatedHHLz,
-                              std::min( rotatedLHHz, rotatedLHLz ) ) ) ) ) ) );
-  max_values_[ 0 ] = std::max(
-    rotatedLLLx,
-    std::max( rotatedLLHx,
-      std::max( rotatedHLLx,
-                std::max( rotatedHLHx,
-                  std::max( rotatedHHHx,
-                            std::max( rotatedHHLx,
-                              std::max( rotatedLHHx, rotatedLHLx ) ) ) ) ) ) );
-  max_values_[ 1 ] = std::max(
-    rotatedLLLy,
-    std::max( rotatedLLHy,
-      std::max( rotatedHLLy,
-                std::max( rotatedHLHy,
-                  std::max( rotatedHHHy,
-                            std::max( rotatedHHLy,
-                              std::max( rotatedLHHy, rotatedLHLy ) ) ) ) ) ) );
-  max_values_[ 2 ] = std::max(
-    rotatedLLLz,
-    std::max( rotatedLLHz,
-      std::max( rotatedHLLz,
-                std::max( rotatedHLHz,
-                  std::max( rotatedHHHz,
-                            std::max( rotatedHHLz,
-                              std::max( rotatedLHHz, rotatedLHLz ) ) ) ) ) ) );
+    min_values_[ 0 ] = std::min(
+      rotatedLLLx,
+      std::min( rotatedLLHx,
+        std::min( rotatedHLLx,
+                  std::min( rotatedHLHx,
+                    std::min( rotatedHHHx,
+                              std::min( rotatedHHLx,
+                                std::min( rotatedLHHx, rotatedLHLx ) ) ) ) ) ) );
+    min_values_[ 1 ] = std::min(
+      rotatedLLLy,
+      std::min( rotatedLLHy,
+        std::min( rotatedHLLy,
+                  std::min( rotatedHLHy,
+                    std::min( rotatedHHHy,
+                              std::min( rotatedHHLy,
+                                std::min( rotatedLHHy, rotatedLHLy ) ) ) ) ) ) );
+    min_values_[ 2 ] = std::min(
+      rotatedLLLz,
+      std::min( rotatedLLHz,
+        std::min( rotatedHLLz,
+                  std::min( rotatedHLHz,
+                    std::min( rotatedHHHz,
+                              std::min( rotatedHHLz,
+                                std::min( rotatedLHHz, rotatedLHLz ) ) ) ) ) ) );
+    max_values_[ 0 ] = std::max(
+      rotatedLLLx,
+      std::max( rotatedLLHx,
+        std::max( rotatedHLLx,
+                  std::max( rotatedHLHx,
+                    std::max( rotatedHHHx,
+                              std::max( rotatedHHLx,
+                                std::max( rotatedLHHx, rotatedLHLx ) ) ) ) ) ) );
+    max_values_[ 1 ] = std::max(
+      rotatedLLLy,
+      std::max( rotatedLLHy,
+        std::max( rotatedHLLy,
+                  std::max( rotatedHLHy,
+                    std::max( rotatedHHHy,
+                              std::max( rotatedHHLy,
+                                std::max( rotatedLHHy, rotatedLHLy ) ) ) ) ) ) );
+    max_values_[ 2 ] = std::max(
+      rotatedLLLz,
+      std::max( rotatedLLHz,
+        std::max( rotatedHLLz,
+                  std::max( rotatedHLHz,
+                    std::max( rotatedHHHz,
+                              std::max( rotatedHHLz,
+                                std::max( rotatedLHHz, rotatedLHLz ) ) ) ) ) ) );
+  }
 }
 
 template < int D >

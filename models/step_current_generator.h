@@ -43,7 +43,9 @@
 
   Note:
     Times of amplitude changes must be strictly increasing after conversion
-    to simulation time steps.
+    to simulation time steps. The option allow_offgrid_times may be
+    useful, e.g., if you are using randomized times for current changes
+    which typically would not fall onto simulation time steps.
 
   Examples:
     The current can be altered in the following way:

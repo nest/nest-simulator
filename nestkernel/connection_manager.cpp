@@ -1559,11 +1559,20 @@ nest::ConnectionManager::compute_target_data_buffer_size()
   global_num_target_data[ kernel().mpi_manager.get_rank() ] = num_target_data;
   kernel().mpi_manager.communicate( global_num_target_data );
   num_target_data = *std::max_element( global_num_target_data.begin(), global_num_target_data.end() );
-  size_t min_num_target_data = 2 * kernel().mpi_manager.get_num_processes();
-  num_target_data = min_num_target_data < num_target_data ? num_target_data : min_num_target_data;
+
+  // MPI buffers should have at least two entries per process
+  const size_t min_num_target_data = 2 * kernel().mpi_manager.get_num_processes();
 
   // adjust target data buffers accordingly
-  kernel().mpi_manager.set_buffer_size_target_data( num_target_data * kernel().mpi_manager.get_num_processes() );
+  if ( min_num_target_data < num_target_data )
+  {
+    kernel().mpi_manager.set_buffer_size_target_data( num_target_data );
+  }
+  else
+  {
+    kernel().mpi_manager.set_buffer_size_target_data( min_num_target_data );
+
+  }
 }
 
 void

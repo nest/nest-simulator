@@ -106,8 +106,8 @@ BoxMask< 2 >::inside( const Position< 2 >& p ) const
 
   // See https://en.wikipedia.org/wiki/Rotation_matrix for more.
 
-  const double cntr_x = ( upper_right_[ 0 ] + lower_left_[ 0 ] ) / 2;
-  const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) / 2;
+  const double cntr_x = ( upper_right_[ 0 ] + lower_left_[ 0 ] ) * 0.5;
+  const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) * 0.5;
 
   const double new_x = ( p[ 0 ] - cntr_x ) * azimuth_cos_
     + ( p[ 1 ] - cntr_y ) * azimuth_sin_ + cntr_x;
@@ -118,7 +118,7 @@ BoxMask< 2 >::inside( const Position< 2 >& p ) const
   // We need to add a small epsilon in case of rounding errors.
   const double x_length = upper_right_[ 0 ] - lower_left_[ 0 ];
   const double y_length = upper_right_[ 1 ] - lower_left_[ 1 ];
-  const Position< 2 > eps( x_length / 1000000, y_length / 1000000 );
+  const Position< 2 > eps( x_length * 1e-12, y_length * 1e-12 );
 
   return ( lower_left_ - eps <= new_p ) && ( new_p <= upper_right_ + eps );
 }
@@ -144,9 +144,9 @@ BoxMask< 3 >::inside( const Position< 3 >& p ) const
 
   // See https://en.wikipedia.org/wiki/Rotation_matrix for more.
 
-  const double cntr_x = ( upper_right_[ 0 ] + lower_left_[ 0 ] ) / 2;
-  const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) / 2;
-  const double cntr_z = ( upper_right_[ 2 ] + lower_left_[ 2 ] ) / 2;
+  const double cntr_x = ( upper_right_[ 0 ] + lower_left_[ 0 ] ) * 0.5;
+  const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) * 0.5;
+  const double cntr_z = ( upper_right_[ 2 ] + lower_left_[ 2 ] ) * 0.5;
 
   const double new_x = ( ( p[ 0 ] - cntr_x ) * azimuth_cos_
                          + ( p[ 1 ] - cntr_y ) * azimuth_sin_ ) * polar_cos_
@@ -163,8 +163,8 @@ BoxMask< 3 >::inside( const Position< 3 >& p ) const
   const double x_length = upper_right_[ 0 ] - lower_left_[ 0 ];
   const double y_length = upper_right_[ 1 ] - lower_left_[ 1 ];
   const double z_length = upper_right_[ 2 ] - lower_left_[ 2 ];
-  const Position< 3 > eps( x_length / 1000000, y_length / 1000000,
-    z_length / 1000000 );
+  const Position< 3 > eps( x_length * 1e-12, y_length * 1e-12,
+    z_length * 1e-12 );
 
   return ( lower_left_ - eps <= new_p ) && ( new_p <= upper_right_ + eps );
 }
@@ -180,6 +180,12 @@ template < int D >
 bool
 BoxMask< D >::outside( const Box< D >& b ) const
 {
+  // Note: There could be some inconsistencies with the boundaries. For the
+  // inside() function we had to add an epsilon because of rounding errors that
+  // can occur if GIDs are on the boundary if we have rotation. This might lead
+  // to overlap of the inside and outside functions. None of the tests have
+  // picked up any problems with this potential overlap as of yet (autumn 2017),
+  // so we don't know if it is an actual problem.
   for ( int i = 0; i < D; ++i )
   {
     if ( ( b.upper_right[ i ] < min_values_[ i ] )
@@ -207,8 +213,8 @@ BoxMask< 2 >::create_min_max_values_()
   }
   else
   {
-    const double cntr_x = ( upper_right_[ 0 ] + lower_left_[ 0 ] ) / 2;
-    const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) / 2;
+    const double cntr_x = ( upper_right_[ 0 ] + lower_left_[ 0 ] ) * 0.5;
+    const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) * 0.5;
     const Position< 2 > cntr( cntr_x, cntr_y );
 
     Position< 2 > lower_left_cos = ( lower_left_ - cntr ) * azimuth_cos_;
@@ -269,9 +275,9 @@ BoxMask< 3 >::create_min_max_values_()
   }
   else
   {
-    const double cntr_x = ( upper_right_[ 0 ] + lower_left_[ 0 ] ) / 2;
-    const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) / 2;
-    const double cntr_z = ( upper_right_[ 2 ] + lower_left_[ 2 ] ) / 2;
+    const double cntr_x = ( upper_right_[ 0 ] + lower_left_[ 0 ] ) * 0.5;
+    const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) * 0.5;
+    const double cntr_z = ( upper_right_[ 2 ] + lower_left_[ 2 ] ) * 0.5;
 
     Position< 3 > cntr( cntr_x, cntr_y, cntr_z );
 

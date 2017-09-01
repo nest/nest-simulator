@@ -1547,14 +1547,17 @@ nest::ConnectionManager::reserve_connections( const thread tid,
 void
 nest::ConnectionManager::compute_target_data_buffer_size()
 {
-  // determine number of target data on this rank
+  // determine number of target data on this rank; since each thread
+  // has its own datastructures, we need to count connections on every
+  // thread separately to compute the total number of sources
   size_t num_target_data = 0;
   for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
     num_target_data += get_num_target_data( tid );
   }
 
-  // determine maximum number of target data across all ranks
+  // determine maximum number of target data across all ranks, because
+  // all ranks need identically sized buffers
   std::vector< long > global_num_target_data( kernel().mpi_manager.get_num_processes() );
   global_num_target_data[ kernel().mpi_manager.get_rank() ] = num_target_data;
   kernel().mpi_manager.communicate( global_num_target_data );

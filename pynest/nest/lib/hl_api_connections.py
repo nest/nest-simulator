@@ -67,7 +67,6 @@ def GetConnections(source=None, target=None, synapse_model=None,
     Raises
     ------
     TypeError
-        Description
     """
 
     params = {}
@@ -119,7 +118,6 @@ def Connect(pre, post, conn_spec=None, syn_spec=None, model=None):
     Raises
     ------
     kernel.NESTError
-        Description
 
     Notes
     -----
@@ -507,7 +505,6 @@ def CGParse(xml_filename):
     Raises
     ------
     kernel.NESTError
-        Description
     """
 
     sr("statusdict/have_libneurosim ::")
@@ -538,7 +535,6 @@ def CGSelectImplementation(tag, library):
     Raises
     ------
     kernel.NESTError
-        Description
     """
 
     sr("statusdict/have_libneurosim ::")

@@ -63,15 +63,22 @@ class CSATestCase(unittest.TestCase):
         sources = nest.Create("iaf_psc_alpha", n_neurons)
         targets = nest.Create("iaf_psc_alpha", n_neurons)
 
+        # Create a plain connection set
         cg = csa.cset(csa.oneToOne)
 
+        # Connect sources and targets using the connection set
+        # cs. This will internally call the variant of CGConnect that
+        # takes lists
         nest.CGConnect(sources, targets, cg)
 
         for i in range(n_neurons):
+            # We expect all connections from sources to have the
+            # correct targets
             conns = nest.GetStatus(nest.GetConnections([sources[i]]))
             self.assertEqual(len(conns), 1)
             self.assertEqual(conns[0]["target"], targets[i])
 
+            # We expect the targets to have no connections at all
             conns = nest.GetStatus(nest.GetConnections([targets[i]]))
             self.assertEqual(len(conns), 0)
 
@@ -86,15 +93,22 @@ class CSATestCase(unittest.TestCase):
         sources = nest.Create("iaf_psc_alpha", n_neurons)
         targets = nest.Create("iaf_psc_alpha", n_neurons)
 
+        # Create a plain connection set
         cg = csa.cset(csa.oneToOne)
 
+        # Connect sources and targets (both converted to NumPy arrays)
+        # using the connection set cs. This will internally call the
+        # variant of CGConnect that takes intvector instead of lists
         nest.CGConnect(numpy.array(sources), numpy.array(targets), cg)
 
         for i in range(n_neurons):
+            # We expect all connections from sources to have the
+            # correct targets
             conns = nest.GetStatus(nest.GetConnections([sources[i]]))
             self.assertEqual(len(conns), 1)
             self.assertEqual(conns[0]["target"], targets[i])
 
+            # We expect the targets to have no connections at all
             conns = nest.GetStatus(nest.GetConnections([targets[i]]))
             self.assertEqual(len(conns), 0)
 
@@ -110,17 +124,24 @@ class CSATestCase(unittest.TestCase):
         sources = nest.Create("iaf_psc_alpha", n_neurons)
         targets = nest.Create("iaf_psc_alpha", n_neurons)
 
+        # Create a connection set with values for weight and delay
         cs = csa.cset(csa.oneToOne, weight, delay)
 
+        # Connect sources and targets using the connection set cs and
+        # a parameter map mapping weight to position 0 in the value
+        # set and delay to position 1
         nest.CGConnect(sources, targets, cs, {"weight": 0, "delay": 1})
 
         for i in range(n_neurons):
+            # We expect all connections from sources to have the
+            # correct targets, weights and delays
             conns = nest.GetStatus(nest.GetConnections([sources[i]]))
             self.assertEqual(len(conns), 1)
             self.assertEqual(conns[0]["target"], targets[i])
             self.assertEqual(conns[0]["weight"], weight)
             self.assertEqual(conns[0]["delay"], delay)
 
+            # We expect the targets to have no connections at all
             conns = nest.GetStatus(nest.GetConnections([targets[i]]))
             self.assertEqual(len(conns), 0)
 
@@ -135,16 +156,21 @@ class CSATestCase(unittest.TestCase):
         sources = nest.Create("iaf_psc_alpha", n_neurons)
         targets = nest.Create("iaf_psc_alpha", n_neurons)
 
+        # Create a plain connection set
         cs = csa.cset(csa.oneToOne)
 
+        # Connect with a non-standard synapse model
         nest.CGConnect(sources, targets, cs, model=synmodel)
 
         for i in range(n_neurons):
+            # We expect all connections to have the correct targets
+            # and the non-standard synapse model set
             conns = nest.GetStatus(nest.GetConnections([sources[i]]))
             self.assertEqual(len(conns), 1)
             self.assertEqual(conns[0]["target"], targets[i])
             self.assertEqual(conns[0]["synapse_model"], synmodel)
 
+            # We expect the targets to have no connections at all
             conns = nest.GetStatus(nest.GetConnections([targets[i]]))
             self.assertEqual(len(conns), 0)
 
@@ -153,9 +179,13 @@ class CSATestCase(unittest.TestCase):
 
         nest.ResetKernel()
 
+        # Create a plain connection set
         cs = csa.cset(csa.oneToOne)
+
         nonnodes = [1, 2, 3]
 
+        # We expect CGConnect to fail with an UnknownNode exception if
+        # unknown nodes are given
         self.assertRaisesRegex(nest.NESTError, "UnknownNode",
                                nest.CGConnect, nonnodes, nonnodes, cs)
 
@@ -164,6 +194,8 @@ class CSATestCase(unittest.TestCase):
         sources = nest.Create("iaf_psc_alpha", n_neurons)
         targets = nest.Create("iaf_psc_alpha", n_neurons)
 
+        # We expect CGConnect to fail with an UnknownSynapseType
+        # exception if an unknown synapse model is given
         self.assertRaisesRegex(nest.NESTError, "UnknownSynapseType",
                                nest.CGConnect, sources, targets, cs,
                                model="nonexistent_synapse")

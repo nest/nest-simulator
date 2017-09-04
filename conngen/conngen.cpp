@@ -77,13 +77,13 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   else if ( num_parameters == 2 )
   {
-    if ( !params_map->known( names::weight )
-      or !params_map->known( names::delay ) )
+    if ( not params_map->known( names::weight )
+      or not params_map->known( names::delay ) )
     {
       throw BadProperty(
         "The parameter map has to contain the indices of weight and delay." );
     }
-    
+
     long w_idx = ( *params_map )[ names::weight ];
     long d_idx = ( *params_map )[ names::delay ];
     std::vector< double > params( 2 );
@@ -186,7 +186,9 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
     for ( size_t proc = 0; proc
             < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
           ++proc )
+    {
       ( *masks )[ proc ].sources.insert( cg_idx_left, right );
+    }
     cg_idx_left += num_elements;
   }
 

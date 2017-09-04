@@ -174,8 +174,8 @@ class CSATestCase(unittest.TestCase):
             conns = nest.GetStatus(nest.GetConnections([targets[i]]))
             self.assertEqual(len(conns), 0)
 
-    def test_CSA_error_handling(self):
-        """Error handling of CGConnect"""
+    def test_CSA_error_unknown_nodes(self):
+        """Error handling of CGConnect in case of unknown nodes"""
 
         nest.ResetKernel()
 
@@ -188,6 +188,14 @@ class CSATestCase(unittest.TestCase):
         # unknown nodes are given
         self.assertRaisesRegex(nest.NESTError, "UnknownNode",
                                nest.CGConnect, nonnodes, nonnodes, cs)
+
+    def test_CSA_error_unknown_synapse(self):
+        """Error handling of CGConnect in case of unknown synapse model"""
+
+        nest.ResetKernel()
+
+        # Create a plain connection set
+        cs = csa.cset(csa.oneToOne)
 
         n_neurons = 4
 

@@ -27,12 +27,14 @@ set( models_sources
     aeif_psc_alpha.h aeif_psc_alpha.cpp
     aeif_psc_exp.h aeif_psc_exp.cpp
     amat2_psc_exp.h amat2_psc_exp.cpp
-    binary_neuron.h binary_neuron_impl.h
+    bernoulli_connection.h
+    binary_neuron.h
     cont_delay_connection.h cont_delay_connection_impl.h
     correlation_detector.h correlation_detector.cpp
     correlomatrix_detector.h correlomatrix_detector.cpp
     correlospinmatrix_detector.h correlospinmatrix_detector.cpp
     dc_generator.h dc_generator.cpp
+    diffusion_connection.h
     gamma_sup_generator.h gamma_sup_generator.cpp
     gap_junction.h
     gif_psc_exp.h gif_psc_exp.cpp
@@ -59,6 +61,7 @@ set( models_sources
     iaf_psc_exp.h iaf_psc_exp.cpp
     iaf_tum_2000.h iaf_tum_2000.cpp
     izhikevich.h izhikevich.cpp
+    lin_rate.h lin_rate.cpp
     mat2_psc_exp.h mat2_psc_exp.cpp
     mcculloch_pitts_neuron.h mcculloch_pitts_neuron.cpp
     mip_generator.h mip_generator.cpp
@@ -76,6 +79,11 @@ set( models_sources
     ppd_sup_generator.h ppd_sup_generator.cpp
     pulsepacket_generator.h pulsepacket_generator.cpp
     quantal_stp_connection.h quantal_stp_connection_impl.h
+    rate_connection_delayed.h
+    rate_connection_instantaneous.h
+    rate_neuron_opn.h rate_neuron_opn_impl.h
+    rate_neuron_ipn.h rate_neuron_ipn_impl.h
+    siegert_neuron.h siegert_neuron.cpp
     sinusoidal_poisson_generator.h sinusoidal_poisson_generator.cpp
     sinusoidal_gamma_generator.h sinusoidal_gamma_generator.cpp
     spike_detector.h spike_detector.cpp
@@ -91,6 +99,8 @@ set( models_sources
     stdp_pl_connection_hom.h stdp_pl_connection_hom.cpp
     stdp_triplet_connection.h
     step_current_generator.h step_current_generator.cpp
+    tanh_rate.h tanh_rate.cpp
+    threshold_lin_rate.h threshold_lin_rate.cpp
     tsodyks2_connection.h
     tsodyks_connection.h
     tsodyks_connection_hom.h tsodyks_connection_hom.cpp

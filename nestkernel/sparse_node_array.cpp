@@ -72,14 +72,18 @@ nest::SparseNodeArray::add_local_node( Node& node )
   // all is consistent, register node and update auxiliary variables
   nodes_.push_back( NodeEntry( node, gid ) );
   if ( local_min_gid_ == 0 ) // only first non-zero
+  {
     local_min_gid_ = gid;
+  }
   local_max_gid_ = gid;
   max_gid_ = gid;
 
   // implies nodes_.size() > 1
   if ( local_max_gid_ > local_min_gid_ )
+  {
     gid_idx_scale_ = static_cast< double >( nodes_.size() - 2 ) // -1 for root
       / ( local_max_gid_ - local_min_gid_ );
+  }
   assert( gid_idx_scale_ > 0. );
   assert( gid_idx_scale_ <= 1. );
 }
@@ -102,9 +106,10 @@ nest::SparseNodeArray::get_node_by_gid( index gid ) const
 
   // local_max_gid_ cannot be larger than max_gid_
   assert( local_max_gid_ <= max_gid_ );
-
   if ( gid > max_gid_ )
+  {
     throw UnknownNode();
+  }
 
   // handle root node requests first
   if ( gid == 0 )
@@ -125,14 +130,20 @@ nest::SparseNodeArray::get_node_by_gid( index gid ) const
 
   // search left if necessary
   while ( 0 < idx && gid < nodes_[ idx ].gid_ )
+  {
     --idx;
-
+  }
   // search right if necessary
   while ( idx < nodes_.size() && nodes_[ idx ].gid_ < gid )
+  {
     ++idx;
-
+  }
   if ( idx < nodes_.size() && nodes_[ idx ].gid_ == gid )
+  {
     return nodes_[ idx ].node_;
+  }
   else
+  {
     return 0;
+  }
 }

@@ -66,7 +66,9 @@ provide_property( DictionaryDatum& d,
   assert( arrd != 0 );
 
   if ( ( *arrd )->empty() && not prop.empty() ) // not data from before, add
+  {
     ( *arrd )->insert( ( *arrd )->end(), prop.begin(), prop.end() );
+  }
 
   assert( prop.empty() || **arrd == prop ); // not testing for **arrd.empty()
                                             // since that implies prop.empty()
@@ -84,7 +86,9 @@ provide_property( DictionaryDatum& d,
   assert( arrd != 0 );
 
   if ( ( *arrd )->empty() && not prop.empty() ) // not data from before, add
+  {
     ( *arrd )->insert( ( *arrd )->end(), prop.begin(), prop.end() );
+  }
 
   assert( prop.empty() || **arrd == prop ); // not testing for **arrd.empty()
                                             // since that implies prop.empty()
@@ -101,7 +105,9 @@ accumulate_property( DictionaryDatum& d,
   assert( arrd != 0 );
 
   if ( ( *arrd )->empty() ) // first data, copy
+  {
     ( *arrd )->insert( ( *arrd )->end(), prop.begin(), prop.end() );
+  }
   else
   {
     assert( ( *arrd )->size() == prop.size() );

@@ -23,8 +23,12 @@
 #include "name.h"
 
 // C++ includes:
+#include <cassert>
 #include <iomanip>
 #include <iostream>
+#ifdef _OPENMP
+#include <omp.h>
+#endif
 
 
 std::size_t
@@ -78,6 +82,12 @@ Name::insert( const std::string& s )
 
   if ( where == map.end() )
   {
+#ifdef _OPENMP
+    // This assertion protects the global name table.  We do not
+    // protect by pragma omp critical since that could lead to hard-to-find
+    // performance problems due to serialization.
+    assert( not omp_in_parallel() );
+#endif
     // The following is more comlex code than a simple
     // handleMap_[s] = Handle(s), but it avoids the creation
     // of spurious Handle objects. HEP 2007-05-24
@@ -88,7 +98,9 @@ Name::insert( const std::string& s )
     return newhandle;
   }
   else
+  {
     return ( ( *where ).second );
+  }
 }
 
 void

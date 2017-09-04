@@ -251,7 +251,9 @@ STDPConnection< targetidentifierT >::send( Event& e,
     minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
     ++start;
     if ( minus_dt == 0 )
+    {
       continue;
+    }
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ) );
   }
 
@@ -306,12 +308,12 @@ STDPConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
   def< double >( d, names::weight, weight_ );
-  def< double >( d, "tau_plus", tau_plus_ );
-  def< double >( d, "lambda", lambda_ );
-  def< double >( d, "alpha", alpha_ );
-  def< double >( d, "mu_plus", mu_plus_ );
-  def< double >( d, "mu_minus", mu_minus_ );
-  def< double >( d, "Wmax", Wmax_ );
+  def< double >( d, names::tau_plus, tau_plus_ );
+  def< double >( d, names::lambda, lambda_ );
+  def< double >( d, names::alpha, alpha_ );
+  def< double >( d, names::mu_plus, mu_plus_ );
+  def< double >( d, names::mu_minus, mu_minus_ );
+  def< double >( d, names::Wmax, Wmax_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 }
 
@@ -322,12 +324,12 @@ STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
 {
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
-  updateValue< double >( d, "tau_plus", tau_plus_ );
-  updateValue< double >( d, "lambda", lambda_ );
-  updateValue< double >( d, "alpha", alpha_ );
-  updateValue< double >( d, "mu_plus", mu_plus_ );
-  updateValue< double >( d, "mu_minus", mu_minus_ );
-  updateValue< double >( d, "Wmax", Wmax_ );
+  updateValue< double >( d, names::tau_plus, tau_plus_ );
+  updateValue< double >( d, names::lambda, lambda_ );
+  updateValue< double >( d, names::alpha, alpha_ );
+  updateValue< double >( d, names::mu_plus, mu_plus_ );
+  updateValue< double >( d, names::mu_minus, mu_minus_ );
+  updateValue< double >( d, names::Wmax, Wmax_ );
 
   // check if weight_ and Wmax_ has the same sign
   if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )

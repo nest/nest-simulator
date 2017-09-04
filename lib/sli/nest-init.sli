@@ -86,6 +86,11 @@ def
 [/doubletype]  /Simulate_d load addtotrie
 def
 
+/Run trie
+[/integertype] {cvd Run} addtotrie
+[/doubletype]  /Run_d load addtotrie
+def
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 

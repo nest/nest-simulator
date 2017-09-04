@@ -237,13 +237,19 @@ HTConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
   updateValue< double >( d, names::P, p_ );
 
   if ( tau_P_ <= 0.0 )
+  {
     throw BadProperty( "tau_P > 0 required." );
+  }
 
   if ( delta_P_ < 0.0 || delta_P_ > 1.0 )
+  {
     throw BadProperty( "0 <= delta_P <= 1 required." );
+  }
 
   if ( p_ < 0.0 || p_ > 1.0 )
+  {
     throw BadProperty( "0 <= P <= 1 required." );
+  }
 }
 
 } // namespace

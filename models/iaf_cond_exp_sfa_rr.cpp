@@ -143,23 +143,28 @@ nest::iaf_cond_exp_sfa_rr::State_::State_( const Parameters_& p )
 {
   y_[ V_M ] = p.E_L;
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = 0;
+  }
 }
 
 nest::iaf_cond_exp_sfa_rr::State_::State_( const State_& s )
   : r_( s.r_ )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
 }
 
 nest::iaf_cond_exp_sfa_rr::State_& nest::iaf_cond_exp_sfa_rr::State_::operator=(
   const State_& s )
 {
   assert( this != &s ); // would be bad logical error in program
-
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y_[ i ] = s.y_[ i ];
+  }
   r_ = s.r_;
   return *this;
 }
@@ -183,12 +188,12 @@ nest::iaf_cond_exp_sfa_rr::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_syn_in, tau_synI );
   def< double >( d, names::I_e, I_e );
 
-  def< double >( d, "tau_sfa", tau_sfa );
-  def< double >( d, "tau_rr", tau_rr );
-  def< double >( d, "E_sfa", E_sfa );
-  def< double >( d, "E_rr", E_rr );
-  def< double >( d, "q_sfa", q_sfa );
-  def< double >( d, "q_rr", q_rr );
+  def< double >( d, names::tau_sfa, tau_sfa );
+  def< double >( d, names::tau_rr, tau_rr );
+  def< double >( d, names::E_sfa, E_sfa );
+  def< double >( d, names::E_rr, E_rr );
+  def< double >( d, names::q_sfa, q_sfa );
+  def< double >( d, names::q_rr, q_rr );
 }
 
 void
@@ -211,24 +216,28 @@ nest::iaf_cond_exp_sfa_rr::Parameters_::set( const DictionaryDatum& d )
 
   updateValue< double >( d, names::I_e, I_e );
 
-  updateValue< double >( d, "E_sfa", E_sfa );
-  updateValue< double >( d, "E_rr", E_rr );
-  updateValue< double >( d, "q_sfa", q_sfa );
-  updateValue< double >( d, "q_rr", q_rr );
-  updateValue< double >( d, "tau_sfa", tau_sfa );
-  updateValue< double >( d, "tau_rr", tau_rr );
-
+  updateValue< double >( d, names::E_sfa, E_sfa );
+  updateValue< double >( d, names::E_rr, E_rr );
+  updateValue< double >( d, names::q_sfa, q_sfa );
+  updateValue< double >( d, names::q_rr, q_rr );
+  updateValue< double >( d, names::tau_sfa, tau_sfa );
+  updateValue< double >( d, names::tau_rr, tau_rr );
   if ( V_reset_ >= V_th_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
-
+  }
   if ( C_m <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( t_ref_ < 0 )
+  {
     throw BadProperty( "Refractory time cannot be negative." );
-
+  }
   if ( tau_synE <= 0 || tau_synI <= 0 || tau_sfa <= 0 || tau_rr <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 }
 
 void
@@ -298,11 +307,17 @@ nest::iaf_cond_exp_sfa_rr::~iaf_cond_exp_sfa_rr()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
+  {
     gsl_odeiv_step_free( B_.s_ );
+  }
   if ( B_.c_ )
+  {
     gsl_odeiv_control_free( B_.c_ );
+  }
   if ( B_.e_ )
+  {
     gsl_odeiv_evolve_free( B_.e_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -330,20 +345,32 @@ nest::iaf_cond_exp_sfa_rr::init_buffers_()
   B_.IntegrationStep_ = B_.step_;
 
   if ( B_.s_ == 0 )
+  {
     B_.s_ =
       gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_step_reset( B_.s_ );
+  }
 
   if ( B_.c_ == 0 )
+  {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
+  }
   else
+  {
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
+  }
 
   if ( B_.e_ == 0 )
+  {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_evolve_reset( B_.e_ );
+  }
 
   B_.sys_.function = iaf_cond_exp_sfa_rr_dynamics;
   B_.sys_.jacobian = NULL;
@@ -405,9 +432,10 @@ nest::iaf_cond_exp_sfa_rr::update( Time const& origin,
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y_ );              // neuronal state
-
       if ( status != GSL_SUCCESS )
+      {
         throw GSLSolverFailure( get_name(), status );
+      }
     }
 
     S_.y_[ State_::G_EXC ] += B_.spike_exc_.get_value( lag );
@@ -449,14 +477,17 @@ nest::iaf_cond_exp_sfa_rr::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
+  {
     B_.spike_exc_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
+  {
     B_.spike_inh_.add_value( e.get_rel_delivery_steps(
                                kernel().simulation_manager.get_slice_origin() ),
-      -e.get_weight()
-        * e.get_multiplicity() ); // ensure conductance is positive
+      -e.get_weight() * e.get_multiplicity() );
+  } // ensure conductance is positive
 }
 
 void

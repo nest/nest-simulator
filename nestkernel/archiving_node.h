@@ -208,9 +208,11 @@ private:
   double triplet_Kminus_;
 
   double tau_minus_;
+  double tau_minus_inv_;
 
   // time constant for triplet low pass filtering of "post" spike train
   double tau_minus_triplet_;
+  double tau_minus_triplet_inv_;
 
   double last_spike_;
 

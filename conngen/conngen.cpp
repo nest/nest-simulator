@@ -47,7 +47,9 @@ cg_connect( ConnectionGeneratorDatum& cg,
   const Token synmodel =
     kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
+  {
     throw UnknownSynapseType( synmodel_name.toString() );
+  }
   const index synmodel_id = static_cast< index >( synmodel );
 
   RangeSet source_ranges, target_ranges;
@@ -76,10 +78,12 @@ cg_connect( ConnectionGeneratorDatum& cg,
   else if ( num_parameters == 2 )
   {
     if ( !params_map->known( names::weight )
-      || !params_map->known( names::delay ) )
+      or !params_map->known( names::delay ) )
+    {
       throw BadProperty(
         "The parameter map has to contain the indices of weight and delay." );
-
+    }
+    
     long w_idx = ( *params_map )[ names::weight ];
     long d_idx = ( *params_map )[ names::delay ];
     std::vector< double > params( 2 );
@@ -244,7 +248,9 @@ cg_get_right_border( index left, size_t step, const GIDCollection& gids )
   // Check if left is already the index of the last element in
   // gids. If yes, return left as the right border
   if ( left == gids.size() - 1 )
+  {
     return left;
+  }
 
   // leftmost_r is the leftmost right border during the search
   long leftmost_r = -1;
@@ -262,9 +268,11 @@ cg_get_right_border( index left, size_t step, const GIDCollection& gids )
     // (i.e. we're back at an already visited index), we found the
     // right border of the contiguous range (last_i) and return it.
     if ( ( i == static_cast< long >( gids.size() ) - 1
-           && gids[ i ] - gids[ left ] == i - static_cast< index >( left ) )
-      || i == leftmost_r )
+           and gids[ i ] - gids[ left ] == i - static_cast< index >( left ) )
+      or i == leftmost_r )
+    {
       return last_i;
+    }
 
     // Store the current value of i in last_i. This is the current
     // candidate for the right border of the range.
@@ -275,7 +283,9 @@ cg_get_right_border( index left, size_t step, const GIDCollection& gids )
     // for leftmost_r to the current i (i.e. the known leftmost
     // position) and set i to the left by step steps.
     if ( gids[ i ] - gids[ left ] == i - static_cast< index >( left ) )
+    {
       i += step;
+    }
     else
     {
       leftmost_r = i;
@@ -285,12 +295,14 @@ cg_get_right_border( index left, size_t step, const GIDCollection& gids )
     // Reduce the search interval by half its size if it is > 1.
     // This adaptation is the basis of the binary search.
     if ( step != 1 )
+    {
       step /= 2;
+    }
   }
 
   // The border should always be found and returned during the while
   // loop above. This should never be reached.
-  assert( false && "no right border found during search" );
+  assert( false and "no right border found during search" );
   return 0;
 }
 
@@ -318,9 +330,13 @@ cg_get_ranges( RangeSet& ranges, const GIDCollection& gids )
     right = cg_get_right_border( left, ( gids.size() - left ) / 2, gids );
     ranges.push_back( Range( gids[ left ], gids[ right ] ) );
     if ( right == gids.size() - 1 ) // We're at the end of gids and stop
+    {
       break;
+    }
     else
+    {
       left = right + 1; // The new left border is one behind the old right
+    }
   }
 }
 

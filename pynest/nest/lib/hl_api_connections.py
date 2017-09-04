@@ -493,7 +493,7 @@ def CGConnect(pre, post, cg, parameter_map=None, model="static_synapse"):
 
 @check_stack
 def CGParse(xml_filename):
-    """Parse an XML file and return the correcponding connection
+    """Parse an XML file and return the corresponding connection
     generator cg.
 
     The library to provide the parsing can be selected

@@ -436,6 +436,12 @@ extern const Name x;  //!< current scaling factor of the synaptic weight [0...1]
 extern const Name xs; //!< current scaling factor of the synaptic weight [0...1]
                       //(property arrays)
 
+extern const Name y;   //!< Used by stdp_connection_facetshw_hom
+extern const Name y_0; //!< Used by ac_generator
+extern const Name y_1; //!< Used by ac_generator
+extern const Name y1;  //!< Used in iaf_psc_alpha_canon
+extern const Name y2;  //!< Used in iaf_psc_alpha_canon
+
 extern const Name z; //!< Number of available synaptic elements per node
 extern const Name z_connected; //!< Number of connected synaptic elements
                                //!< per node

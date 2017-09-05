@@ -364,6 +364,12 @@ const Name withweight( "withweight" );
 const Name x( "x" );
 const Name xs( "xs" );
 
+const Name y( "y" );
+const Name y_0( "y_0" );
+const Name y_1( "y_1" );
+const Name y1( "y1" );
+const Name y2( "y2" );
+
 const Name z( "z" );
 const Name z_connected( "z_connected" );
 }

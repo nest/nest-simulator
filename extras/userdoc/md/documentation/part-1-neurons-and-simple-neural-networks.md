@@ -73,9 +73,9 @@ for.
 
 One such command is `nest.Models?`, which will return a list of all the
 available models you can use. If you want to obtain more information about a
-particular command, you may use iPython’s standard help system.
+particular command, you may use IPython’s standard help system.
 
-    nest.Models? 
+    nest.Models?
 
 This will return the help text (docstring) explaining the use of this particular
 function. There is a help system within NEST as well. You can open the help

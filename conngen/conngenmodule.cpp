@@ -360,13 +360,14 @@ ConnectionGeneratorModule::CGNext_cgFunction::execute( SLIInterpreter* i ) const
   ConnectionGeneratorDatum cgd =
     getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
 
-  int arity = cgd->arity();
+  const int arity = cgd->arity();
   double* tmp_values = new double[ arity ];
   std::vector< double > values( arity );
 
   i->OStack.pop( 1 );
 
-  int source_id, target_id;
+  int source_id;
+  int target_id;
   if ( cgd->next( source_id, target_id, tmp_values ) )
   {
     for ( int m = 0; m < arity; ++m )

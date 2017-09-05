@@ -55,7 +55,9 @@ cg_connect( ConnectionGeneratorDatum& cg,
   cg_set_masks( cg, source_gids, target_gids );
   cg->start();
 
-  int source, target, num_parameters = cg->arity();
+  int source;
+  int target;
+  const int num_parameters = cg->arity();
   if ( num_parameters == 0 )
   {
     // connect source to target
@@ -79,8 +81,8 @@ cg_connect( ConnectionGeneratorDatum& cg,
         "The parameter map has to contain the indices of weight and delay." );
     }
 
-    long w_idx = ( *params_map )[ names::weight ];
-    long d_idx = ( *params_map )[ names::delay ];
+    const size_t w_idx = ( *params_map )[ names::weight ];
+    const size_t d_idx = ( *params_map )[ names::delay ];
     std::vector< double > params( 2 );
 
     // connect source to target with weight and delay
@@ -121,7 +123,7 @@ cg_set_masks( ConnectionGeneratorDatum& cg,
   const GIDCollection& sources,
   const GIDCollection& targets )
 {
-  long np = kernel().mpi_manager.get_num_processes();
+  const size_t np = kernel().mpi_manager.get_num_processes();
   std::vector< ConnectionGenerator::Mask > masks(
     np, ConnectionGenerator::Mask( 1, np ) );
 
@@ -131,7 +133,7 @@ cg_set_masks( ConnectionGeneratorDatum& cg,
   RangeSet target_ranges;
   cg_get_ranges( target_ranges, targets );
 
-  cg_create_masks( &masks, source_ranges, target_ranges );
+  cg_create_masks( masks, source_ranges, target_ranges );
   cg->setMask( masks, kernel().mpi_manager.get_rank() );
 }
 
@@ -170,7 +172,7 @@ cg_set_masks( ConnectionGeneratorDatum& cg,
  * setup.
 */
 void
-cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
+cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks,
   RangeSet& sources,
   RangeSet& targets )
 {
@@ -182,13 +184,13 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
   for ( RangeSet::iterator source = sources.begin(); source != sources.end();
         ++source )
   {
-    size_t num_elements = source->last - source->first + 1;
-    size_t right = cg_idx_left + num_elements - 1;
+    const size_t num_elements = source->last - source->first + 1;
+    const size_t right = cg_idx_left + num_elements - 1;
     for ( size_t proc = 0; proc
             < static_cast< size_t >( kernel().mpi_manager.get_num_processes() );
           ++proc )
     {
-      ( *masks )[ proc ].sources.insert( cg_idx_left, right );
+      masks[ proc ].sources.insert( cg_idx_left, right );
     }
     cg_idx_left += num_elements;
   }
@@ -208,23 +210,23 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
       // Make sure that the range is only added on as many ranks as
       // there are elements in the range, or exactly on every rank,
       // if there are more elements in the range.
-      if ( proc <= num_elements - 1 )
+      if ( proc < num_elements )
       {
         // For the different ranks, left will take on the CG indices
         // of all first local nodes that are contained in the range.
         // The rank, where this mask is to be used is determined
         // below when inserting the mask.
-        size_t left = cg_idx_left + proc;
+        const size_t left = cg_idx_left + proc;
 
         // right is set to the CG index of the right border of the
         // range. This is the same for all ranks.
-        size_t right = cg_idx_left + num_elements - 1;
+        const size_t right = cg_idx_left + num_elements - 1;
 
         // We index the masks according to the modulo distribution
         // of neurons in NEST. This ensures that the mask is set for
         // the rank where left acutally is the first neuron fromt
         // the currently looked at range.
-        ( *masks )[ ( proc + target->first )
+        masks[ ( proc + target->first )
           % kernel().mpi_manager.get_num_processes() ].targets.insert( left,
           right );
       }

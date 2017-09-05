@@ -52,7 +52,7 @@ void cg_set_masks( ConnectionGeneratorDatum& cg,
   const GIDCollection& sources,
   const GIDCollection& targets );
 
-void cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
+void cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks,
   RangeSet& sources,
   RangeSet& targets );
 

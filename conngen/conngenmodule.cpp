@@ -337,9 +337,9 @@ ConnectionGeneratorModule::CGStart_cgFunction::execute(
    Description:
    Call the next() function on a given ConnectionGenerator cg
    to iterate cg's connections on the SLI level. This function
-   will return the source and the target of the connection, a
-   list containing the values for the connection (if there are
-   any), and true, or false, if cg cannot be iterated further.
+   will return the source and the target of the connection, the
+   values for the connection (if there are any), and true, or
+   false, if cg cannot be iterated further.
 
    Remarks:
    This function is part of the low-level access API for the

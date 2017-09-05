@@ -188,22 +188,22 @@ file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
 
 if ( HAVE_PYTHON )
   add_custom_target( installcheck
-      #COMMAND ${CMAKE_MAKE_PROGRAM} install
-      COMMAND export PATH="${CMAKE_INSTALL_FULL_BINDIR}:$ENV{PATH}" &&
-      export PYTHON="${PYTHON}" &&
-      export PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}:$ENV{PYTHONPATH}" &&
+    COMMAND ${CMAKE_COMMAND} -E env
+      NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
+      PYTHON="${PYTHON}"
+      NEST_PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}"
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
-      WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-      COMMENT "Execute NEST's testsuite...."
-      )
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+    COMMENT "Execute NEST's testsuite...."
+  )
 else ()
   add_custom_target( installcheck
-      #COMMAND ${CMAKE_MAKE_PROGRAM} install
-      COMMAND export PATH="${CMAKE_INSTALL_FULL_BINDIR}:$ENV{PATH}" &&
+    COMMAND ${CMAKE_COMMAND} -E env
+      NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --source-dir="${PROJECT_SOURCE_DIR}"
-      WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-      COMMENT "Execute NEST's testsuite...."
-      )
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+    COMMENT "Execute NEST's testsuite...."
+  )
 endif ()
 
 add_custom_target( check

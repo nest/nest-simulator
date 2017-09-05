@@ -328,7 +328,7 @@ void nest::iaf_psc_exp_ps_lossless::update(const Time & origin,
     double ev_weight;
     bool     end_of_refract;
     
-    if ( not B_.events_.get_next_spike(T, true, ev_offset, ev_weight, end_of_refract) )
+    if ( not B_.events_.get_next_spike(T, ev_offset, ev_weight, end_of_refract) )
     {
       // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly

@@ -19,17 +19,23 @@
  *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+
 #include "iaf_psc_exp_ps_lossless.h"
 
+// C++ includes:
+#include <limits>
+
+// Includes from nestkernel:
 #include "exceptions.h"
+#include "universal_data_logger_impl.h"
+
+// Includes from sli:
 #include "dict.h"
+#include "dictutils.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
-#include "dictutils.h"
-#include "universal_data_logger_impl.h"
 #include "arraydatum.h"
 
-#include <limits>
 
 /* ---------------------------------------------------------------- 
  * Recordables map
@@ -57,17 +63,18 @@ namespace nest
  * ---------------------------------------------------------------- */
     
 nest::iaf_psc_exp_ps_lossless::Parameters_::Parameters_()
-  : tau_m_  ( 10.0     ),  // ms
-    tau_ex_ (  2.0     ),  // ms
-    tau_in_ (  2.0     ),  // ms
-    c_m_    (250.0     ),  // pF
-    t_ref_  (  2.0     ),  // ms
-    E_L_    (  0.0   ),  // mV
-    I_e_    (  0.0     ),  // pA
-    U_th_   ( -55.0-E_L_),  // mV, rel to E_L_
-    U_min_  (-std::numeric_limits<double>::infinity()),  // mV
-    U_reset_( -70.0-E_L_)   // mV, rel to E_L_
-{}
+  : tau_m_( 10.0 )                                       // ms
+  , tau_ex_( 2.0 )                                       // ms
+  , tau_in_( 2.0 )                                       // ms
+  , c_m_( 250.0 )                                        // pF
+  , t_ref_( 2.0 )                                        // ms
+  , E_L_( 0.0 )                                        // mV
+  , I_e_( 0.0 )                                          // pA
+  , U_th_( -55.0 - E_L_ )                                // mV, rel to E_L_
+  , U_min_( -std::numeric_limits< double >::infinity() ) // mV
+  , U_reset_( -70.0 - E_L_ )                             // mV, rel to E_L_
+{
+}
 
 nest::iaf_psc_exp_ps_lossless::State_::State_()
   : y0_(0.0),
@@ -182,9 +189,13 @@ void nest::iaf_psc_exp_ps_lossless::State_::get(DictionaryDatum & d,
 void nest::iaf_psc_exp_ps_lossless::State_::set(const DictionaryDatum & d, const Parameters_ & p, double delta_EL)
 {
   if ( updateValue<double>(d, names::V_m, y2_) )
+  {
     y2_ -= p.E_L_;
+  }
   else
+  {
     y2_ -= delta_EL;
+  }
 
   updateValue<double>(d, names::I_syn_ex, I_syn_ex_ );
   updateValue<double>(d, names::I_syn_in, I_syn_in_);
@@ -214,7 +225,7 @@ nest::iaf_psc_exp_ps_lossless::iaf_psc_exp_ps_lossless(const iaf_psc_exp_ps_loss
  * Node initialization functions
  * ---------------------------------------------------------------- */
 
-void nest::iaf_psc_exp_ps_lossless::init_node_(const Node & proto)
+void nest::iaf_psc_exp_ps_lossless::init_node_(const Node& proto)
 {
   const iaf_psc_exp_ps_lossless & pr = downcast<iaf_psc_exp_ps_lossless>(proto);
 
@@ -222,7 +233,7 @@ void nest::iaf_psc_exp_ps_lossless::init_node_(const Node & proto)
   S_ = pr.S_;
 }
 
-void nest::iaf_psc_exp_ps_lossless::init_state_(const Node & proto)
+void nest::iaf_psc_exp_ps_lossless::init_state_(const Node& proto)
 {
   const iaf_psc_exp_ps_lossless & pr = downcast<iaf_psc_exp_ps_lossless>(proto);
 
@@ -250,6 +261,7 @@ void nest::iaf_psc_exp_ps_lossless::calibrate()
   V_.P21_ex_       = -P_.tau_m_*P_.tau_ex_ / (P_.tau_m_-P_.tau_ex_) / P_.c_m_ * (V_.expm1_tau_ex_-V_.expm1_tau_m_);
   V_.P21_in_       = -P_.tau_m_*P_.tau_in_ / (P_.tau_m_-P_.tau_in_) / P_.c_m_ * (V_.expm1_tau_in_-V_.expm1_tau_m_);
   V_.refractory_steps_ = Time(Time::ms(P_.t_ref_)).get_steps();
+  assert( V_.refractory_steps_ >= 0 );  // since t_ref_ >= 0, this can only fail in error
 
   V_.a1_ = P_.tau_m_ * P_.tau_ex_;
   V_.a2_ = P_.tau_m_ * (P_.tau_m_ - P_.tau_ex_);
@@ -267,8 +279,6 @@ void nest::iaf_psc_exp_ps_lossless::calibrate()
   V_.c4_ = P_.tau_ex_/P_.tau_m_;
   V_.c5_ = (P_.c_m_ * P_.U_th_)/P_.tau_m_;
   V_.c6_ = 1-(P_.tau_ex_/P_.tau_m_);
-
-  assert( V_.refractory_steps_ >= 0 );  // since t_ref_ >= 0, this can only fail in error
 }
 
 /* ---------------------------------------------------------------- 
@@ -291,10 +301,11 @@ void nest::iaf_psc_exp_ps_lossless::update(const Time & origin,
      We need to check for this here and issue spikes at the beginning of
      the interval.
   */
-
   if ( S_.y2_ >= P_.U_th_ )
+  {
     emit_instant_spike_(origin, from, 
       V_.h_ms_*(1.0-std::numeric_limits<double>::epsilon()));
+  }
 
   for ( long lag = from; lag < to; ++lag )
   {
@@ -317,7 +328,7 @@ void nest::iaf_psc_exp_ps_lossless::update(const Time & origin,
     double ev_weight;
     bool     end_of_refract;
     
-    if ( !B_.events_.get_next_spike(T, ev_offset, ev_weight, end_of_refract) )
+    if ( not B_.events_.get_next_spike(T, true, ev_offset, ev_weight, end_of_refract) )
     {
       // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
@@ -341,15 +352,13 @@ void nest::iaf_psc_exp_ps_lossless::update(const Time & origin,
 	 on all state variables having their values at the end of the
 	 interval. 
       */
-      //  the state space test takes argument dt and
-      //  returns true, spike: if (V(t_{right}) > V_(\theta));
-      //  returns false: ( (V(t_{right} < V_(\theta) or initial conditions in no-spike region);
-      //  returns true, spike: missed spike excursion, compute t_{max} = dt and find point of 
-      // threshold crossing t_{\theta} using emit_spike_.
-      V_.bisection_step = V_.h_ms_;
+
+      V_.bisection_step_ = V_.h_ms_;
 
       if (is_spike_(V_.h_ms_))
-        emit_spike_(origin, lag, 0, V_.bisection_step);
+      {
+        emit_spike_(origin, lag, 0, V_.bisection_step_);
+      }
 	
     }
     else
@@ -364,41 +373,44 @@ void nest::iaf_psc_exp_ps_lossless::update(const Time & origin,
       
       do
       {
-	// time is measured backward: inverse order in difference
-	const double ministep = last_offset - ev_offset;
-	
-	propagate_(ministep);
-	
-	// check for threshold crossing during ministep
-	// this must be done before adding the input, since
-	// interpolation requires continuity
+      	// time is measured backward: inverse order in difference
+      	const double ministep = last_offset - ev_offset;
+      	
+      	propagate_(ministep);
+      	
+      	// check for threshold crossing during ministep
+      	// this must be done before adding the input, since
+      	// interpolation requires continuity
 
-  V_.bisection_step = ministep;
-
- 
-	if (is_spike_(ministep))
-	{
-	  emit_spike_(origin, lag, V_.h_ms_-last_offset, V_.bisection_step);
-	}
-
-
-    
-	// handle event
-	if ( end_of_refract )
-	  S_.is_refractory_ = false;  // return from refractoriness
-	else
-	{
-	  if ( ev_weight >= 0.0 )
-	    S_.I_syn_ex_ += ev_weight;  // exc. spike input
-	  else
-	    S_.I_syn_in_ += ev_weight;  // inh. spike input
-	}
-	    
-	// store state
-	V_.I_syn_ex_before_ = S_.I_syn_ex_;
-	V_.I_syn_in_before_ = S_.I_syn_in_;
-	V_.y2_before_ = S_.y2_;
-	last_offset = ev_offset;
+        V_.bisection_step_ = ministep;
+       
+      	if (is_spike_(ministep))
+      	{
+      	  emit_spike_(origin, lag, V_.h_ms_-last_offset, V_.bisection_step_);
+      	}
+          
+      	// handle event
+      	if ( end_of_refract )
+        {
+      	  S_.is_refractory_ = false;  // return from refractoriness
+        }
+      	else
+      	{
+      	  if ( ev_weight >= 0.0 )
+          {
+      	    S_.I_syn_ex_ += ev_weight;  // exc. spike input
+          }
+      	  else
+          {
+      	    S_.I_syn_in_ += ev_weight;  // inh. spike input
+          }
+      	}
+      	    
+      	// store state
+      	V_.I_syn_ex_before_ = S_.I_syn_ex_;
+      	V_.I_syn_in_before_ = S_.I_syn_in_;
+      	V_.y2_before_ = S_.y2_;
+      	last_offset = ev_offset;
       }
       while ( B_.events_.get_next_spike(T, ev_offset, ev_weight, 
 					end_of_refract) );
@@ -407,16 +419,12 @@ void nest::iaf_psc_exp_ps_lossless::update(const Time & origin,
       // of interval
       if ( last_offset > 0 )  // not at end of step, do remainder
       {
-
-
-        V_.bisection_step = last_offset;
+        V_.bisection_step_ = last_offset;
 	      propagate_(last_offset);
-
-	      if (is_spike_(last_offset))	 
-          	emit_spike_(origin, lag, V_.h_ms_-last_offset, V_.bisection_step);
-
-
-	
+	      if (is_spike_(last_offset))
+          {	 
+          	emit_spike_(origin, lag, V_.h_ms_-last_offset, V_.bisection_step_);
+          }
       }
     }  // else
     
@@ -474,7 +482,7 @@ void nest::iaf_psc_exp_ps_lossless::propagate_(const double dt)
   const double expm1_tau_ex = numerics::expm1(-dt/P_.tau_ex_);
   const double expm1_tau_in = numerics::expm1(-dt/P_.tau_in_);
 
-  if ( !S_.is_refractory_ )
+  if ( not S_.is_refractory_ )
   {
     const double expm1_tau_m  = numerics::expm1(-dt/P_.tau_m_);
     
@@ -484,6 +492,7 @@ void nest::iaf_psc_exp_ps_lossless::propagate_(const double dt)
     
     S_.y2_  = P20*(P_.I_e_+S_.y0_) + P21_ex*S_.I_syn_ex_ + P21_in*S_.I_syn_in_ + expm1_tau_m*S_.y2_ + S_.y2_;
   }
+
   S_.I_syn_ex_ = S_.I_syn_ex_*expm1_tau_ex + S_.I_syn_ex_;
   S_.I_syn_in_ = S_.I_syn_in_*expm1_tau_in + S_.I_syn_in_;
 }
@@ -530,20 +539,21 @@ void nest::iaf_psc_exp_ps_lossless::emit_instant_spike_(const Time & origin, con
 }
 
 inline double nest::iaf_psc_exp_ps_lossless::bisectioning_(const double dt) const
-{
- 
+{ 
   double root = 0.0;
-
   double y2_root = V_.y2_before_;
-
   double div = 2.0;
   while ( fabs(P_.U_th_-y2_root) > 1e-14 and (dt/div > 0.0) )
   {
     if ( y2_root > P_.U_th_ )
+    {
       root -= dt/div;
+    }
     else
+    {
       root += dt/div;
-    
+    }
+
     div *= 2.0;
     
     const double expm1_tau_ex = numerics::expm1(-root/P_.tau_ex_);
@@ -559,29 +569,6 @@ inline double nest::iaf_psc_exp_ps_lossless::bisectioning_(const double dt) cons
   return root;
 }
 
-/* Conventional spike detection algorithms propagate the initial state forwards in time 
-and see whether it meets the threshold.This function implements a general method to solve 
-the threshold-detection problem for an integrable, affine or lineartime evolution by 
-applying geometric analysis. The idea is to propagate the threshold backwards in time 
-and see whether it meets the initial state. In state space spanned by voltage and current, 
-this separates the spiking region and non-spiking region. is_spike_ takes argument dt 
-which corresponds to the time window at which this spike prediction occurs.
-
-returns true, spike: if (V(t_{right}) > V_(\theta)); returns false: (V(t_{right} < V_(\theta) 
-or initial conditions in no-spike region;
-returns true, spike: missed spike excursion, compute bisection_step, where t_{max} = dt and 
-find point of threshold crossing t_{\theta} using bisectioning method.
-Inequalities are adjusted such that backward propagation (negative time) is already accounted 
-for here.
-
-The state space spanning the non-spiking region is bound by the following system of inequalities: 
-threshold line V < \theta, envelope, V < b(I_e), line corresponding to the final timestep 
-V < f(h, I) (or) linear approximation of the envelope, V < g(h, I_e). 
-The state space spanning the spiking region is bound by the following system of inequalities: 
-threshold line V < \theta, envelope, V > b(I_e) and line corresponding to the final timestep 
-V > f(h, I) (or) linear approximation of the envelope, V < g(h, I_e). 
-*/
-
 inline bool nest::iaf_psc_exp_ps_lossless::is_spike_(const double dt)
 {
   const double I_0   = V_.I_syn_ex_before_ + V_.I_syn_in_before_;
@@ -594,7 +581,7 @@ inline bool nest::iaf_psc_exp_ps_lossless::is_spike_(const double dt)
 
     //no-spike, NS_1, (V <= f_h,I_e(I) and V < g_h,I_e(I))
   if((V_0 <= (((I_0 + P_.I_e_)*(V_.b1_ * exp_tau_m + V_.b2_* exp_tau_s) + V_.b3_*(exp_tau_m - exp_tau_s))/( V_.b4_ * exp_tau_s)))
-      &&  (V_0 < g))     
+      and  (V_0 < g))     
     {
       return false;
     }
@@ -605,17 +592,16 @@ inline bool nest::iaf_psc_exp_ps_lossless::is_spike_(const double dt)
       return true;
     }
   //no-spike, NS_2, V < b(I)
-  else if(V_0 < (V_.c1_ * P_.I_e_ + V_.c2_ * I_0 + V_.c3_* pow(I_0, V_.c4_) * pow((V_.c5_ - P_.I_e_), V_.c6_)))
+  else if(V_0 < (V_.c1_ * P_.I_e_ + V_.c2_ * I_0 + V_.c3_* std::pow(I_0, V_.c4_) * std::pow((V_.c5_ - P_.I_e_), V_.c6_)))
     { 
       return false;
     }
   else
   //missed spike detected, S_2
     {
-      V_.bisection_step = (V_.a1_ / P_.tau_m_ * P_.tau_ex_ ) * log ( V_.b1_ * I_0 / (V_.a2_ * P_.I_e_ - V_.a1_ * I_0 - V_.a4_ * V_0 ) );
+      V_.bisection_step_ = (V_.a1_ / P_.tau_m_ * P_.tau_ex_ ) * std::log ( V_.b1_ * I_0 / (V_.a2_ * P_.I_e_ - V_.a1_ * I_0 - V_.a4_ * V_0 ) );
       return true;
     }
-
 }
 
 

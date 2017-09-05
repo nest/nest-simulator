@@ -366,7 +366,5 @@ const Name xs( "xs" );
 
 const Name z( "z" );
 const Name z_connected( "z_connected" );
-
-
 }
 }

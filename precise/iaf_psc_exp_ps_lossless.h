@@ -24,19 +24,25 @@
 #ifndef IAF_PSC_EXP_PS_LOSSLESS_H
 #define IAF_PSC_EXP_PS_LOSSLESS_H
 
+// C++ includes:
+#include <vector>
+
+// Generated includes:
 #include "config.h"
 
+// Includes from nestkernel:
 #include "archiving_node.h"
-#include "nest_types.h"
-#include "event.h"
-#include "ring_buffer.h"
-#include "slice_ring_buffer.h"
 #include "connection.h"
+#include "event.h"
+#include "nest_types.h"
+#include "ring_buffer.h"
 #include "universal_data_logger.h"
 #include "stopwatch.h"
 #include "arraydatum.h"
 
-#include <vector>
+// Includes from precise:
+#include "slice_ring_buffer.h"
+
 
 /*Begin Documentation
 Name: iaf_psc_exp_ps_lossless - Leaky integrate-and-fire neuron
@@ -71,8 +77,7 @@ Parameters:
  
 References:
 [1] J.Krishnan, P.G.L.Porta Mana, M.Helias, M.Diesmann, E.Di.Napoli
-(2017) Perfect spike detection via time reversal, arXiv:1706.05702, 
-submitted to Front. Neuroinformatics.
+(2017) Perfect spike detection via time reversal, arXiv:1706.05702.
 
 Author: Jeyashree Krishnan
 
@@ -218,6 +223,17 @@ namespace nest
      */
     double bisectioning_(const double dt) const;
 
+    /**
+     * Retrospective spike detection by state space analysis.
+     * The state space spanning the non-spiking region is bound by the following system of inequalities: 
+     * threshold line V < \theta, envelope, V < b(I_e), line corresponding to the final timestep 
+     * V < f(h, I) (or) linear approximation of the envelope, V < g(h, I_e). 
+     * The state space spanning the spiking region is bound by the following system of inequalities: 
+     * threshold line V < \theta, envelope, V > b(I_e) and line corresponding to the final timestep 
+     * V > f(h, I) (or) linear approximation of the envelope, V < g(h, I_e). 
+     * Propagate the neuron's state by dt.
+     * @returns time to emit spike.
+     */
     bool is_spike_(const double);
 
     // ---------------------------------------------------------------- 
@@ -262,11 +278,9 @@ namespace nest
       double U_reset_;
       
       Parameters_();  //!< Sets default parameter values
-      // void calc_const_is_spike_();
 
       void get(DictionaryDatum &) const;  //!< Store current values in dictionary
-      double set(const DictionaryDatum &);  //!< Set values from dicitonary
-    
+      double set(const DictionaryDatum &);  //!< Set values from dicitonary    
     };
     
     // ---------------------------------------------------------------- 
@@ -331,29 +345,40 @@ namespace nest
       double I_syn_ex_before_;      //!< y1_ at beginning of ministep
       double I_syn_in_before_;      //!< y1_ at beginning of ministep
       double y2_before_;         //!< y2_ at beginning of ministep
-      double bisection_step;     // if missed spike is detected, calculate time to emit spike
+      double bisection_step_;     //!< if missed spike is detected, calculate time to emit spike
 
-      // The following are variables that are precomputed for the _is_spike function. 
-      // a1_, a2_, a3_, a4_ are constants that appear in the inequality V < g(h, I_e).
+      /**
+       * Pre-computed constants for inequality V < g(h, I_e) 
+       */
+      //@{
       double a1_;
       double a2_;
       double a3_;
       double a4_;
+      //@}
 
-      // b1_, b2_, b3_, b4_, in the line corresponding to the final timestep, V < f(h, I).
+      /**
+       * Pre-computed constants for inequality V < f(h, I)
+       */
+      //@{
       double b1_;
       double b2_;
       double b3_;
       double b4_;
+      //@}
 
-      //c1_, c2_, c3_, c4_, c5_, c6_ in the envelope, V < b(I_e).
+      /**
+       * Pre-computed constants for inequality V < b(I_e)
+       */
+      //@{
       double c1_;
       double c2_;
       double c3_;
       double c4_;
       double c5_;
       double c6_;
-	   };
+      //@}
+	  };
     
     // Access functions for UniversalDataLogger -------------------------------
     
@@ -362,8 +387,6 @@ namespace nest
     double get_I_syn_() const { return S_.I_syn_ex_ + S_.I_syn_in_; }
     double get_I_syn_ex_() const { return S_.I_syn_ex_; }
     double get_I_syn_in_() const { return S_.I_syn_in_; }
-
-    
     // ---------------------------------------------------------------- 
     
     /**
@@ -386,10 +409,8 @@ namespace nest
 inline
 port iaf_psc_exp_ps_lossless::send_test_event( Node& target, rport receptor_type, synindex, bool )
 {
-  SpikeEvent e;
-  
+  SpikeEvent e;  
   e.set_sender(*this);
-  //c.check_event(e);
   return target.handles_test_event( e, receptor_type );
 }
 
@@ -424,7 +445,6 @@ void iaf_psc_exp_ps_lossless::get_status(DictionaryDatum & d) const
   P_.get(d);
   S_.get(d, P_);
   (*d)[names::recordables] = recordablesMap_.get_list();
-
 }
 
 inline
@@ -438,12 +458,8 @@ void iaf_psc_exp_ps_lossless::set_status(const DictionaryDatum & d)
   // if we get here, temporaries contain consistent set of properties
   P_ = ptmp;
   S_ = stmp;
-}
-
-
-  
+}  
 } // namespace
-
 #endif // IAF_PSC_EXP_PS_LOSSLESS_H
 
 

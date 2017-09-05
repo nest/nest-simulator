@@ -98,12 +98,12 @@ PreciseModule::init( SLIInterpreter* )
     "iaf_psc_alpha_presc" );
   kernel().model_manager.register_node_model< iaf_psc_exp_ps >(
     "iaf_psc_exp_ps" );
+  kernel().model_manager.register_node_model< iaf_psc_exp_ps_lossless >(
+    "iaf_psc_exp_ps_lossless" );
   kernel().model_manager.register_node_model< poisson_generator_ps >(
     "poisson_generator_ps" );
   kernel().model_manager.register_node_model< parrot_neuron_ps >(
     "parrot_neuron_ps" );
-  kernel().model_manager.register_node_model< iaf_psc_exp_ps_lossless >(
-    "iaf_psc_exp_ps_lossless" );
 } // PreciseModule::init()
 
 

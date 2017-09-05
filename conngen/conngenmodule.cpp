@@ -279,13 +279,7 @@ ConnectionGeneratorModule::CGSetMask_cg_g_gFunction::execute(
   GIDCollectionDatum targets =
     getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
-  RangeSet source_ranges;
-  cg_get_ranges( source_ranges, sources );
-
-  RangeSet target_ranges;
-  cg_get_ranges( target_ranges, targets );
-
-  cg_set_masks( cg, source_ranges, target_ranges );
+  cg_set_masks( cg, sources, targets );
 
   i->OStack.pop( 3 );
   i->EStack.pop();

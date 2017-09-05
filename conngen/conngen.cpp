@@ -52,12 +52,7 @@ cg_connect( ConnectionGeneratorDatum& cg,
   }
   const index synmodel_id = static_cast< index >( synmodel );
 
-  RangeSet source_ranges, target_ranges;
-
-  cg_get_ranges( source_ranges, source_gids );
-  cg_get_ranges( target_ranges, target_gids );
-  cg_set_masks( cg, source_ranges, target_ranges );
-
+  cg_set_masks( cg, source_gids, target_gids );
   cg->start();
 
   int source, target, num_parameters = cg->arity();
@@ -123,14 +118,20 @@ cg_connect( ConnectionGeneratorDatum& cg,
  */
 void
 cg_set_masks( ConnectionGeneratorDatum& cg,
-  RangeSet& sources,
-  RangeSet& targets )
+  const GIDCollection& sources,
+  const GIDCollection& targets )
 {
   long np = kernel().mpi_manager.get_num_processes();
   std::vector< ConnectionGenerator::Mask > masks(
     np, ConnectionGenerator::Mask( 1, np ) );
 
-  cg_create_masks( &masks, sources, targets );
+  RangeSet source_ranges;
+  cg_get_ranges( source_ranges, sources );
+
+  RangeSet target_ranges;
+  cg_get_ranges( target_ranges, targets );
+
+  cg_create_masks( &masks, source_ranges, target_ranges );
   cg->setMask( masks, kernel().mpi_manager.get_rank() );
 }
 

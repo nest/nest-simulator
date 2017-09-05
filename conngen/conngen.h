@@ -49,8 +49,8 @@ void cg_connect( ConnectionGeneratorDatum& cg,
   const Name& synmodel_name );
 
 void cg_set_masks( ConnectionGeneratorDatum& cg,
-  RangeSet& sources,
-  RangeSet& targets );
+  const GIDCollection& sources,
+  const GIDCollection& targets );
 
 void cg_create_masks( std::vector< ConnectionGenerator::Mask >* masks,
   RangeSet& sources,

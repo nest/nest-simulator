@@ -107,8 +107,7 @@ modeldict keys
       n1 GetStatus /V_m get /v1 Set
       n2 GetStatus /V_m get /v2 Set
       
-      % relative error 1e-14 allowed
-      v1 v2 sub abs v1 v2 add abs 1e-14 mul lt dup 
+      v1 v2 eq dup 
   	    {
   	      (pass) =
   	    }

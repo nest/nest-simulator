@@ -59,6 +59,7 @@ M_ERROR setverbosity
              /ginzburg_neuron             % binary neuron
              /mcculloch_pitts_neuron      % binary neuron
              /pp_pop_psc_delta            % population model, not suitable for STDP
+             /gif_pop_psc_exp             % population model, not suitable for STDP
              /music_event_out_proxy       % MUSIC port
              /music_event_in_proxy        % MUSIC port
              /music_message_in_proxy      % MUSIC port

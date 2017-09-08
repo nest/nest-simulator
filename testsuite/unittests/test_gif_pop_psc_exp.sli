@@ -1,0 +1,132 @@
+/*
+ *  test_gif_pop_psc_exp.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+/* BeginDocumentation
+Name: testsuite::test_pp_pop_psc_exp - sli script for test of pp_pop_psc_exp
+
+Synopsis: (test_pp_pop_psc_exp) run -> compare numbers of generated spikes of the model and a group of pp_psc_exp neurons
+
+Description:
+ 
+ This script simulates GIF population models and the corresponding single neurons 
+ with three different sets of parameters and compares the number of generated spikes. 
+ The parameters of gif_psc_exp neurons (including the number of neurons) are the same 
+ as represented in the population model gif_pop_psc_exp. 
+ The ratio of number of spikes must not be less than 1-err and greater than 1+err. 
+ This test was adapted from test_pp_pop_psc_delta.
+
+Author:  Oct 2016, Deger
+SeeAlso: gif_pop_psc_exp, gif_psc_exp, testsuite::test_pp_pop_psc_delta
+
+*/
+
+
+(unittest) run
+/unittest using
+
+
+0.05 /err Set       % relative error tolerance of spike count comparison
+1000.0 /T Set       % simulation time [ms]
+100 /N Set          % number of neurons in population
+
+
+% define parameter sets to be tested (DC currents)
+[500. 350. 650.]
+
+% now define the procedure to be run with the parameters
+{
+
+    % take amplitude from Stack
+    /amplitude Set
+
+    ResetKernel
+    0 << 
+       /resolution 0.2
+     >> SetStatus
+
+    % set default parameters for gif_psc_exp to gif_pop_psc_exp defaults
+    250. 20. div /g_L Set   % g_L = C_m / tau_m
+    /gif_psc_exp << 
+        /g_L          g_L
+        /C_m          250.
+        /t_ref          4.
+        /lambda_0      10.
+        /Delta_V        2.
+        /I_e            0.
+        /V_reset        0.
+        /V_T_star      15.
+        /E_L            0.
+        /tau_syn_ex     3.
+        /tau_syn_in     6.
+        /tau_sfa    [300. ]
+        /q_sfa      [ 0.5 ]
+        /tau_stc    [ 1.0 ]
+        /q_stc      [ 0.0 ]
+    >> SetDefaults
+
+    % create the population model
+    /gif_pop_psc_exp Create /node Set
+
+    % define non-default population parameters for pop and nrn
+    <<
+      /N N
+      /I_e amplitude
+    >> /params_pop Set
+
+    <<
+      /I_e amplitude
+    >> /params_nrn Set
+
+    % create spike detectors
+    /spike_detector Create /sdpop Set
+    /spike_detector Create /sdnrn Set
+
+    % set population parameters and connect pop to spike detector
+    node params_pop SetStatus
+    node sdpop Connect
+
+    % now set up the single neurons
+    [ N ] Range {
+    /gif_psc_exp Create
+    dup params_nrn SetStatus
+    dup sdnrn Connect
+    } forall /nrn Set
+    
+    % simulate
+    T Simulate
+
+    % extract spike numbers from detectors    
+    sdpop GetStatus /n_events get /npop Set
+    sdnrn GetStatus /n_events get /nnrn Set
+
+    % print spike numbers for debugging
+    %cerr [amplitude npop nnrn] pprint endl
+
+    npop cvd nnrn cvd div /ratio Set
+    1.0 err sub ratio lt
+    ratio 1.0 err add lt
+    and assert_or_die
+    
+} forall
+
+

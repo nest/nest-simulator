@@ -1,4 +1,4 @@
-# testsuite/CMakeLists.txt
+# testsuite/cpptests/CMakeLists.txt
 #
 # This file is part of NEST.
 #
@@ -17,29 +17,13 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set( TESTSUBDIRS
-    selftests
-    unittests
-    regressiontests
-    manualtests
-    mpitests
-    mpi_selftests
-    musictests )
+add_executable( run_all_cpptests run_all.cpp )
 
-# add sli tests
-add_subdirectory( selftests )
-add_subdirectory( unittests )
-add_subdirectory( regressiontests )
-add_subdirectory( mpi_selftests/fail )
-add_subdirectory( mpi_selftests/pass )
-add_subdirectory( mpitests )
-add_subdirectory( musictests )
-add_subdirectory( cpptests )
+target_link_libraries( run_all_cpptests ${BOOST_LIBRARIES} )
 
-install( DIRECTORY ${TESTSUBDIRS}
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}
+target_include_directories( run_all_cpptests PRIVATE
+    ${PROJECT_SOURCE_DIR}/libnestutil
     )
 
-install( PROGRAMS ${PROJECT_BINARY_DIR}/testsuite/do_tests.sh
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/extras
-    )
+install( TARGETS run_all_cpptests RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} )
+add_test( NAME cpptests COMMAND ${CMAKE_INSTALL_FULL_BINDIR}/run_all_cpptests )

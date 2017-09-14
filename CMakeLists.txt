@@ -49,6 +49,7 @@ set( external-modules OFF CACHE STRING "External NEST modules to be linked in, s
 # connect NEST with external projects
 set( with-libneurosim OFF CACHE STRING "Request the use of libneurosim. Optionally give the directory, where libneurosim is installed. [default=OFF]" )
 set( with-music OFF CACHE STRING "Request the use of MUSIC. Optionally give the directory, where MUSIC is installed. [default=OFF]" )
+set( with-boost OFF CACHE STRING "Request compilation with Boost, required for c++ testsuite. Optionally give directory with Boost installation. [default=OFF]" )
 
 # set parallelization scheme
 set( with-mpi OFF CACHE STRING "Request compilation with MPI. Optionally give directory with MPI installation. [default=OFF]" )
@@ -152,6 +153,7 @@ nest_process_with_openmp()
 nest_process_with_mpi()
 nest_process_with_libneurosim()
 nest_process_with_music()
+nest_process_with_boost()
 nest_process_disable_timing()
 
 nest_get_color_flags()

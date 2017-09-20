@@ -68,7 +68,7 @@ class PpPscDeltaSTDPTestCase(unittest.TestCase):
         w1.append(nest.GetStatus(conn1, keys=['weight'])[0][0])
         w2.append(nest.GetStatus(conn2, keys=['weight'])[0][0])
 
-        for i in xrange(nsteps):
+        for i in range(nsteps):
             nest.Simulate(Dt)
             t.append(i * Dt)
             w1.append(nest.GetStatus(conn1, keys=['weight'])[0][0])

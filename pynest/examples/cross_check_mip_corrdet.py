@@ -39,6 +39,8 @@ tbin:    bin size
 spike1:  first spike train [tspike...]
 spike2:  second spike train [tspike...]
 '''
+
+
 def corr_spikes_sorted(spike1, spike2, tbin, tau_max, h):
     tau_max_i = int(tau_max / h)
     tbin_i = int(tbin / h)
@@ -62,7 +64,7 @@ def corr_spikes_sorted(spike1, spike2, tbin, tau_max, h):
 
 nest.ResetKernel()
 
-h = 0.1             # Computation step size in ms 
+h = 0.1             # Computation step size in ms
 T = 100000.0        # Total duration
 delta_tau = 10.0
 tau_max = 100.0
@@ -104,8 +106,8 @@ n_events = nest.GetStatus(cd)[0]['n_events']
 n1 = n_events[0]
 n2 = n_events[1]
 
-lmbd1 = ( n1 / ( T - tau_max ) ) * 1000.0
-lmbd2 = ( n2 / ( T - tau_max ) ) * 1000.0        
+lmbd1 = (n1 / (T - tau_max)) * 1000.0
+lmbd2 = (n2 / (T - tau_max)) * 1000.0
 
 h = 0.1
 tau_max = 100.0  # ms correlation window

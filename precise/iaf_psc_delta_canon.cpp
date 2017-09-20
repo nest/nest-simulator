@@ -334,7 +334,7 @@ iaf_psc_delta_canon::update( Time const& origin,
     bool end_of_refract;
 
     if ( not B_.events_.get_next_spike(
-           T, ev_offset, ev_weight, end_of_refract ) )
+           T, true, ev_offset, ev_weight, end_of_refract ) )
     { // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
       // if there are many steps without input spikes.
@@ -447,8 +447,8 @@ iaf_psc_delta_canon::update( Time const& origin,
           emit_instant_spike_( origin, lag, t );
         }
 
-      } while (
-        B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) );
+      } while ( B_.events_.get_next_spike(
+        T, true, ev_offset, ev_weight, end_of_refract ) );
 
       // no events remaining, plain update step across remainder
       // of interval

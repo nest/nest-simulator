@@ -147,6 +147,8 @@ namespace nest
                     contents. If set to false, the file will remain open after
                     ResetNetwork, so you can record continuously. NB:
                     the file is always closed upon ResetKernel. (Default: true).
+  /use_gid_in_filename - Determines if the GID is used in the file name of the
+  recording device. Setting this to false can lead to conflicting file names.
 
   The following parameters control how output is formatted:
   /withtime      - boolean value which specifies whether the network time should
@@ -522,6 +524,8 @@ private:
     bool flush_after_simulate_; //!< if true, post_run_cleanup() flushes stream
     bool flush_records_;        //!< if true, flush stream after each output
     bool close_on_reset_;       //!< if true, close stream in init_buffers()
+
+    bool use_gid_in_filename_;
 
     /**
      * Set default parameter values.

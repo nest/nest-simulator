@@ -354,6 +354,63 @@ Node::sends_secondary_event( GapJunctionEvent& )
   throw IllegalConnection();
 }
 
+void
+Node::handle( InstantaneousRateConnectionEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+void
+Node::handle( DiffusionConnectionEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+void
+Node::handle( DelayedRateConnectionEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+port
+Node::handles_test_event( InstantaneousRateConnectionEvent&, rport )
+{
+  throw IllegalConnection();
+  return invalid_port_;
+}
+
+port
+Node::handles_test_event( DiffusionConnectionEvent&, rport )
+{
+  throw IllegalConnection();
+  return invalid_port_;
+}
+
+port
+Node::handles_test_event( DelayedRateConnectionEvent&, rport )
+{
+  throw IllegalConnection();
+  return invalid_port_;
+}
+
+void
+Node::sends_secondary_event( InstantaneousRateConnectionEvent& )
+{
+  throw IllegalConnection();
+}
+
+void
+Node::sends_secondary_event( DiffusionConnectionEvent& )
+{
+  throw IllegalConnection();
+}
+
+void
+Node::sends_secondary_event( DelayedRateConnectionEvent& )
+{
+  throw IllegalConnection();
+}
+
 
 double
 Node::get_K_value( double )

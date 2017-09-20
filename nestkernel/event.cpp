@@ -106,8 +106,32 @@ void GapJunctionEvent::operator()()
   receiver_->handle( *this );
 }
 
+void InstantaneousRateConnectionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+void DelayedRateConnectionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+void DiffusionConnectionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
 std::vector< synindex > GapJunctionEvent::supported_syn_ids_;
 size_t GapJunctionEvent::coeff_length_ = 0;
+
+std::vector< synindex > InstantaneousRateConnectionEvent::supported_syn_ids_;
+size_t InstantaneousRateConnectionEvent::coeff_length_ = 0;
+
+std::vector< synindex > DelayedRateConnectionEvent::supported_syn_ids_;
+size_t DelayedRateConnectionEvent::coeff_length_ = 0;
+
+std::vector< synindex > DiffusionConnectionEvent::supported_syn_ids_;
+size_t DiffusionConnectionEvent::coeff_length_ = 0;
 }
 
 

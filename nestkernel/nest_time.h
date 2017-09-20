@@ -144,6 +144,8 @@ class Time
   // delay: steps, signed long
   // double: milliseconds (double!)
 
+  friend class TimeConverter;
+
   /////////////////////////////////////////////////////////////
   // Range: Limits & conversion factors for different types
   /////////////////////////////////////////////////////////////
@@ -388,7 +390,22 @@ public:
   bool
   is_neg_inf() const
   {
-    return tics == LIM_NEG_INF.tics;
+    return tics <= LIM_NEG_INF.tics; // currently tics can never
+                                     // become smaller than
+                                     // LIM_NEG_INF.tics. however if
+                                     // LIM_NEG_INF.tics represent
+                                     // negative infinity, any smaller
+                                     // value cannot be larger and
+                                     // thus must be infinity as
+                                     // well. to be on the safe side
+                                     // we use less-or-equal instead
+                                     // of just equal.
+  }
+
+  bool
+  is_pos_inf() const
+  {
+    return tics >= LIM_POS_INF.tics; // see comment for is_neg_inf()
   }
 
   bool
@@ -493,11 +510,11 @@ public:
   double
   get_ms() const
   {
-    if ( tics == LIM_POS_INF.tics )
+    if ( is_pos_inf() )
     {
       return LIM_POS_INF_ms;
     }
-    if ( tics == LIM_NEG_INF.tics )
+    if ( is_neg_inf() )
     {
       return LIM_NEG_INF_ms;
     }
@@ -507,11 +524,11 @@ public:
   delay
   get_steps() const
   {
-    if ( tics == LIM_POS_INF.tics )
+    if ( is_pos_inf() )
     {
       return LIM_POS_INF.steps;
     }
-    if ( tics == LIM_NEG_INF.tics )
+    if ( is_neg_inf() )
     {
       return LIM_NEG_INF.steps;
     }

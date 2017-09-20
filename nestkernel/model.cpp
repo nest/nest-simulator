@@ -135,8 +135,8 @@ Model::get_status( void )
     tmp[ t ] = memory_[ t ].get_instantiations();
   }
 
-  ( *d )[ "instantiations" ] = Token( tmp );
-  ( *d )[ "type_id" ] =
+  ( *d )[ names::instantiations ] = Token( tmp );
+  ( *d )[ names::type_id ] =
     LiteralDatum( kernel().model_manager.get_model( type_id_ )->get_name() );
 
   for ( size_t t = 0; t < tmp.size(); ++t )
@@ -144,16 +144,16 @@ Model::get_status( void )
     tmp[ t ] = memory_[ t ].get_total();
   }
 
-  ( *d )[ "capacity" ] = Token( tmp );
+  ( *d )[ names::capacity ] = Token( tmp );
 
   for ( size_t t = 0; t < tmp.size(); ++t )
   {
     tmp[ t ] = memory_[ t ].available();
   }
 
-  ( *d )[ "available" ] = Token( tmp );
+  ( *d )[ names::available ] = Token( tmp );
 
-  ( *d )[ "model" ] = LiteralDatum( get_name() );
+  ( *d )[ names::model ] = LiteralDatum( get_name() );
   return d;
 }
 

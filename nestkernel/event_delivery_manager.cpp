@@ -69,6 +69,8 @@ EventDeliveryManager::~EventDeliveryManager()
 void
 EventDeliveryManager::initialize()
 {
+  // ensures that ResetKernel resets off_grid_spiking_
+  off_grid_spiking_ = false;
   init_moduli();
   reset_timers_counters();
 }
@@ -86,16 +88,17 @@ EventDeliveryManager::finalize()
 void
 EventDeliveryManager::set_status( const DictionaryDatum& dict )
 {
-  updateValue< bool >( dict, "off_grid_spiking", off_grid_spiking_ );
+  updateValue< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
 }
 
 void
 EventDeliveryManager::get_status( DictionaryDatum& dict )
 {
-  def< bool >( dict, "off_grid_spiking", off_grid_spiking_ );
-  def< double >( dict, "time_collocate", time_collocate_ );
-  def< double >( dict, "time_communicate", time_communicate_ );
-  def< unsigned long >( dict, "local_spike_counter", local_spike_counter_ );
+  def< bool >( dict, names::off_grid_spiking, off_grid_spiking_ );
+  def< double >( dict, names::time_collocate, time_collocate_ );
+  def< double >( dict, names::time_communicate, time_communicate_ );
+  def< unsigned long >(
+    dict, names::local_spike_counter, local_spike_counter_ );
 }
 
 void

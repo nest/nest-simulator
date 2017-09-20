@@ -26,6 +26,7 @@ set( random_sources
     gslrandomgen.h gslrandomgen.cpp
     knuthlfg.h knuthlfg.cpp
     librandom_exceptions.h
+    librandom_names.h librandom_names.cpp
     lognormal_randomdev.h lognormal_randomdev.cpp
     mt19937.h mt19937.cpp
     normal_randomdev.h normal_randomdev.cpp

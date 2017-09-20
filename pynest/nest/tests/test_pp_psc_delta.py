@@ -28,8 +28,9 @@ class PpPscDeltaTestCase(unittest.TestCase):
     """Tests for pp_psc_delta"""
 
     def test_rate_and_fixed_dead_time(self):
-        """Check for reasonable firing rate and if fixed dead-time is
-        respected"""
+        """
+        Check for reasonable firing rate and if fixed dead-time is respected
+        """
 
         # test parameters
         d = 25.0

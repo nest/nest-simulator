@@ -21,7 +21,6 @@ set( TESTSUBDIRS
     selftests
     unittests
     regressiontests
-    manualtests
     mpitests
     mpi_selftests
     musictests )

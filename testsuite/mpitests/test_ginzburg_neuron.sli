@@ -36,7 +36,7 @@ Author:  December 2012, Plesser, based on test_poisson_generator.sli
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 /total_vps 4 def
 
@@ -61,9 +61,9 @@ is_threaded not { exit_test_gracefully } if
                       >> Create def
   /pnet [ total_vps ] { ; /parrot_neuron Create } Table def
 
-  sg gens DivergentConnect
+  [sg] gens Connect
   [ gens pnet ] { Connect } ScanThread
-  pnet sd ConvergentConnect
+  pnet [sd] Connect
   
   20. Simulate
 

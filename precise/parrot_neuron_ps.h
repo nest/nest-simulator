@@ -80,7 +80,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -112,7 +113,7 @@ private:
   {
   } // no variables
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /** Queue for incoming events. */
   struct Buffers_
@@ -124,7 +125,10 @@ private:
 };
 
 inline port
-parrot_neuron_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
+parrot_neuron_ps::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );

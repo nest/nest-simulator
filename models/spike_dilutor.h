@@ -91,7 +91,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   void event_hook( DSSpikeEvent& );
 
@@ -102,7 +102,7 @@ private:
    */
   struct Parameters_
   {
-    double_t p_copy_; //!< copy probability for each incoming spike
+    double p_copy_; //!< copy probability for each incoming spike
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );
@@ -124,7 +124,10 @@ private:
 };
 
 inline port
-spike_dilutor::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
+spike_dilutor::send_test_event( Node& target,
+  rport receptor_type,
+  synindex syn_id,
+  bool )
 {
 
   device_.enforce_single_syn_type( syn_id );
@@ -138,7 +141,9 @@ inline port
 spike_dilutor::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 

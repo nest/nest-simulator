@@ -29,11 +29,13 @@
 // C++ includes:
 #include <cstdlib>
 #include <vector>
+#include <deque>
 
 // Includes from libnestutil:
 #include "compose.hpp"
 
 // Includes from nestkernel:
+#include "common_synapse_properties.h"
 #include "connection_label.h"
 #include "connector_model.h"
 #include "event.h"
@@ -71,10 +73,11 @@ suicide_and_resurrect( Told* connector, C connection )
 #if defined _OPENMP && defined USE_PMA
 #ifdef IS_K
   Tnew* p =
-    new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc( sizeof( Tnew ) ) )
-      Tnew( *connector, connection );
+    new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc(
+      sizeof( Tnew ) ) ) Tnew( *connector, connection );
 #else
-  Tnew* p = new ( poormansallocpool.alloc( sizeof( Tnew ) ) ) Tnew( *connector, connection );
+  Tnew* p = new ( poormansallocpool.alloc( sizeof( Tnew ) ) )
+    Tnew( *connector, connection );
 #endif
   connector->~Told();
 #else
@@ -91,10 +94,11 @@ suicide_and_resurrect( Told* connector, size_t i )
 #if defined _OPENMP && defined USE_PMA
 #ifdef IS_K
   Tnew* p =
-    new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc( sizeof( Tnew ) ) )
-      Tnew( *connector, i );
+    new ( poormansallocpool[ nest::kernel().vp_manager.get_thread_id() ].alloc(
+      sizeof( Tnew ) ) ) Tnew( *connector, i );
 #else
-  Tnew* p = new ( poormansallocpool.alloc( sizeof( Tnew ) ) ) Tnew( *connector, i );
+  Tnew* p =
+    new ( poormansallocpool.alloc( sizeof( Tnew ) ) ) Tnew( *connector, i );
 #endif
   connector->~Told();
 #else
@@ -131,40 +135,54 @@ class ConnectorBase
 public:
   ConnectorBase();
 
-  virtual void get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const = 0;
-  virtual void
-  set_synapse_status( synindex syn_id, ConnectorModel& cm, const DictionaryDatum& d, port p ) = 0;
+  virtual void get_synapse_status( synindex syn_id,
+    DictionaryDatum& d,
+    port p,
+    const thread tid ) const = 0;
+  virtual void set_synapse_status( synindex syn_id,
+    ConnectorModel& cm,
+    const DictionaryDatum& d,
+    port p ) = 0;
 
   virtual size_t get_num_connections() = 0;
   virtual size_t get_num_connections( synindex syn_id ) = 0;
-  virtual size_t get_num_connections( size_t target_gid, size_t thrd, synindex syn_id ) = 0;
+  virtual size_t
+  get_num_connections( size_t target_gid, size_t thrd, synindex syn_id ) = 0;
 
   virtual void get_connections( size_t source_gid,
     size_t thrd,
     synindex synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const = 0;
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const = 0;
 
   virtual void get_connections( size_t source_gid,
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const = 0;
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const = 0;
+
+  virtual void get_target_gids( std::vector< size_t >& target_gids,
+    size_t thrd,
+    synindex synapse_id,
+    std::string post_synaptic_element ) const = 0;
 
   virtual void
-  get_target_gids( std::vector< size_t >& target_gids, size_t thrd, synindex synapse_id ) const = 0;
+  send( Event& e, thread t, const std::vector< ConnectorModel* >& cm ) = 0;
 
-  virtual void send( Event& e, thread t, const std::vector< ConnectorModel* >& cm ) = 0;
+  void send_weight_event( const CommonSynapseProperties& cp,
+    const Event& e,
+    const thread t );
 
-  virtual void trigger_update_weight( long_t vt_gid,
+  virtual void trigger_update_weight( long vt_gid,
     thread t,
     const std::vector< spikecounter >& dopa_spikes,
-    double_t t_trig,
+    double t_trig,
     const std::vector< ConnectorModel* >& cm ) = 0;
 
-  virtual void
-  send_secondary( SecondaryEvent& e, thread t, const std::vector< ConnectorModel* >& cm ) = 0;
+  virtual void send_secondary( SecondaryEvent& e,
+    thread t,
+    const std::vector< ConnectorModel* >& cm ) = 0;
 
   // returns id of synapse type
   virtual synindex get_syn_id() const = 0;
@@ -175,20 +193,45 @@ public:
   // destructor needed to delete connections
   virtual ~ConnectorBase(){};
 
-  double_t
+  double
   get_t_lastspike() const
   {
     return t_lastspike_;
   }
   void
-  set_t_lastspike( const double_t t_lastspike )
+  set_t_lastspike( const double t_lastspike )
   {
     t_lastspike_ = t_lastspike;
   }
 
+
 private:
-  double_t t_lastspike_;
+  double t_lastspike_;
 };
+
+inline void
+ConnectorBase::send_weight_event( const CommonSynapseProperties& cp,
+  const Event& e,
+  const thread t )
+{
+  if ( cp.get_weight_recorder() )
+  {
+    // Create new event to record the weight and copy relevant content.
+    WeightRecorderEvent wr_e;
+    wr_e.set_port( e.get_port() );
+    wr_e.set_rport( e.get_rport() );
+    wr_e.set_stamp( e.get_stamp() );
+    wr_e.set_sender( e.get_sender() );
+    wr_e.set_sender_gid( e.get_sender_gid() );
+    wr_e.set_weight( e.get_weight() );
+    wr_e.set_delay( e.get_delay() );
+    // set weight_recorder as receiver
+    wr_e.set_receiver( *cp.get_weight_recorder()->get_thread_sibling( t ) );
+    // but the gid of the postsynaptic node as receiver gid
+    wr_e.set_receiver_gid( e.get_receiver().get_gid() );
+    wr_e();
+  }
+}
 
 // vector with 1 vtable overhead
 // vector like base class to abstract away the template argument K
@@ -204,9 +247,12 @@ public:
   virtual ConnectionT& at( size_t i ) = 0;
 
   void
-  send_secondary( SecondaryEvent&, thread, const std::vector< ConnectorModel* >& )
+  send_secondary( SecondaryEvent&,
+    thread,
+    const std::vector< ConnectorModel* >& )
   {
-    assert( false ); // should not be called, only needed for heterogeneous connectors
+    assert(
+      false ); // should not be called, only needed for heterogeneous connectors
   };
 };
 
@@ -220,17 +266,19 @@ public:
   Connector( const Connector< K - 1, ConnectionT >& Cm1, const ConnectionT& c )
   {
     for ( size_t i = 0; i < K - 1; i++ )
+    {
       C_[ i ] = Cm1.get_C()[ i ];
+    }
     C_[ K - 1 ] = c;
   }
 
   /**
-   * Creates a new connector and remove the ith connection. To do so, the contents
-   * of the original connector are copied into the new one. The copy is performed
-   * in two parts, first up to the specified index and then the rest of the
-   * connections after the specified index in order to
-   * exclude the ith connection from the copy. As a result, returns a connector
-   * with size K from a connector of size K+1.
+   * Creates a new connector and remove the ith connection. To do so, the
+   * contents of the original connector are copied into the new one. The copy is
+   * performed in two parts, first up to the specified index and then the rest
+   * of the connections after the specified index in order to exclude the ith
+   * connection from the copy. As a result, returns a connector with size K from
+   * a connector of size K+1.
    *
    * @param Cm1 the original connector
    * @param i the index of the connection to be deleted
@@ -254,22 +302,31 @@ public:
   }
 
   void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
+  get_synapse_status( synindex syn_id,
+    DictionaryDatum& d,
+    port p,
+    const thread tid ) const
   {
     if ( syn_id == C_[ 0 ].get_syn_id() )
     {
       assert( p >= 0 && static_cast< size_t >( p ) < K );
       C_[ p ].get_status( d );
+      // set target gid here, where tid is available
+      def< long >( d, names::target, C_[ p ].get_target( tid )->get_gid() );
     }
   }
 
   void
-  set_synapse_status( synindex syn_id, ConnectorModel& cm, const DictionaryDatum& d, port p )
+  set_synapse_status( synindex syn_id,
+    ConnectorModel& cm,
+    const DictionaryDatum& d,
+    port p )
   {
     if ( syn_id == C_[ 0 ].get_syn_id() )
     {
       assert( p >= 0 && static_cast< size_t >( p ) < K );
-      C_[ p ].set_status( d, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
+      C_[ p ].set_status(
+        d, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
     }
   }
 
@@ -283,9 +340,13 @@ public:
   get_num_connections( synindex syn_id )
   {
     if ( syn_id == get_syn_id() )
+    {
       return K;
+    }
     else
+    {
       return 0;
+    }
   }
 
   /**
@@ -352,8 +413,8 @@ public:
   {
     if ( i >= K || i < 0 )
     {
-      throw std::out_of_range(
-        String::compose( "Invalid attempt to access a connection: index %1 out of range.", i ) );
+      throw std::out_of_range( String::compose(
+        "Invalid attempt to access a connection: index %1 out of range.", i ) );
     }
     return C_[ i ];
   }
@@ -362,14 +423,24 @@ public:
   get_connections( size_t source_gid,
     size_t thrd,
     synindex synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < K; i++ )
+    {
       if ( get_syn_id() == synapse_id )
-        if ( synapse_label == UNLABELED_CONNECTION || C_[ i ].get_label() == synapse_label )
-          conns.push_back( ConnectionDatum( ConnectionID(
-            source_gid, C_[ i ].get_target( thrd )->get_gid(), thrd, synapse_id, i ) ) );
+      {
+        if ( synapse_label == UNLABELED_CONNECTION
+          || C_[ i ].get_label() == synapse_label )
+        {
+          conns.push_back( ConnectionID( source_gid,
+            C_[ i ].get_target( thrd )->get_gid(),
+            thrd,
+            synapse_id,
+            i ) );
+        }
+      }
+    }
   }
 
   void
@@ -377,32 +448,48 @@ public:
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < K; i++ )
+    {
       if ( get_syn_id() == synapse_id )
-        if ( synapse_label == UNLABELED_CONNECTION || C_[ i ].get_label() == synapse_label )
+      {
+        if ( synapse_label == UNLABELED_CONNECTION
+          || C_[ i ].get_label() == synapse_label )
+        {
           if ( C_[ i ].get_target( thrd )->get_gid() == target_gid )
+          {
             conns.push_back(
-              ConnectionDatum( ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) ) );
+              ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) );
+          }
+        }
+      }
+    }
   }
 
   /**
-   * Return the GIDs of the target nodes in a given thread, for all connections
-   * on this Connector which match a defined synapse_id.
-   * @param target_gids Vector to store the GIDs of the target nodes
-   * @param thrd Thread where targets are being looked for
-   * @param synapse_id Synapse type
-   */
+ * Return the GIDs of the target nodes in a given thread, for all connections
+ * on this Connector which match a defined synapse_id.
+ * @param target_gids Vector to store the GIDs of the target nodes
+ * @param thrd Thread where targets are being looked for
+ * @param synapse_id Synapse type
+ */
   void
-  get_target_gids( std::vector< size_t >& target_gids, size_t thrd, synindex synapse_id ) const
+  get_target_gids( std::vector< size_t >& target_gids,
+    const size_t thrd,
+    const synindex synapse_id,
+    const std::string post_synaptic_element ) const
   {
     if ( get_syn_id() == synapse_id )
     {
-      for ( size_t i = 0; i < K; i++ )
+      for ( size_t i = 0; i < K; ++i )
       {
-        target_gids.push_back( C_[ i ].get_target( thrd )->get_gid() );
+        if ( C_[ i ].get_target( thrd )->get_synaptic_elements(
+               post_synaptic_element ) != 0.0 )
+        {
+          target_gids.push_back( C_[ i ].get_target( thrd )->get_gid() );
+        }
       }
     }
   }
@@ -411,35 +498,39 @@ public:
   send( Event& e, thread t, const std::vector< ConnectorModel* >& cm )
   {
     synindex syn_id = C_[ 0 ].get_syn_id();
+    typename ConnectionT::CommonPropertiesType const& cp =
+      static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+        ->get_common_properties();
     for ( size_t i = 0; i < K; i++ )
     {
       e.set_port( i );
-      C_[ i ].send( e,
-        t,
-        ConnectorBase::get_t_lastspike(),
-        static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-          ->get_common_properties() );
+      C_[ i ].send( e, t, ConnectorBase::get_t_lastspike(), cp );
+      ConnectorBase::send_weight_event( cp, e, t );
     }
     ConnectorBase::set_t_lastspike( e.get_stamp().get_ms() );
   }
 
   void
-  trigger_update_weight( long_t vt_gid,
+  trigger_update_weight( long vt_gid,
     thread t,
     const std::vector< spikecounter >& dopa_spikes,
-    double_t t_trig,
+    double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
     synindex syn_id = C_[ 0 ].get_syn_id();
     for ( size_t i = 0; i < K; i++ )
+    {
       if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
              ->get_common_properties()
              .get_vt_gid() == vt_gid )
+      {
         C_[ i ].trigger_update_weight( t,
           dopa_spikes,
           t_trig,
           static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
             ->get_common_properties() );
+      }
+    }
   }
 
   synindex
@@ -462,7 +553,8 @@ public:
   }
 };
 
-// homogeneous connector containing 1 entry (specialization to define constructor)
+// homogeneous connector containing 1 entry (specialization to define
+// constructor)
 template < typename ConnectionT >
 class Connector< 1, ConnectionT > : public vector_like< ConnectionT >
 {
@@ -498,22 +590,31 @@ public:
   }
 
   void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
+  get_synapse_status( synindex syn_id,
+    DictionaryDatum& d,
+    port p,
+    const thread tid ) const
   {
     if ( syn_id == C_[ 0 ].get_syn_id() )
     {
       assert( static_cast< size_t >( p ) == 0 );
       C_[ 0 ].get_status( d );
+      // set target gid here, where tid is available
+      def< long >( d, names::target, C_[ 0 ].get_target( tid )->get_gid() );
     }
   }
 
   void
-  set_synapse_status( synindex syn_id, ConnectorModel& cm, const DictionaryDatum& d, port p )
+  set_synapse_status( synindex syn_id,
+    ConnectorModel& cm,
+    const DictionaryDatum& d,
+    port p )
   {
     if ( syn_id == C_[ 0 ].get_syn_id() )
     {
       assert( static_cast< size_t >( p ) == 0 );
-      C_[ 0 ].set_status( d, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
+      C_[ 0 ].set_status(
+        d, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
     }
   }
 
@@ -527,9 +628,13 @@ public:
   get_num_connections( synindex syn_id )
   {
     if ( syn_id == get_syn_id() )
+    {
       return 1;
+    }
     else
+    {
       return 0;
+    }
   }
 
   size_t
@@ -573,8 +678,8 @@ public:
 
     if ( i != 0 )
     {
-      throw std::out_of_range(
-        String::compose( "Invalid attempt to access a connection: index %1 out of range.", i ) );
+      throw std::out_of_range( String::compose(
+        "Invalid attempt to access a connection: index %1 out of range.", i ) );
     }
     return C_[ i ];
   }
@@ -583,15 +688,19 @@ public:
   get_connections( size_t source_gid,
     size_t thrd,
     synindex synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
     if ( get_syn_id() == synapse_id )
     {
-      if ( synapse_label == UNLABELED_CONNECTION || C_[ 0 ].get_label() == synapse_label )
+      if ( synapse_label == UNLABELED_CONNECTION
+        || C_[ 0 ].get_label() == synapse_label )
       {
-        conns.push_back( ConnectionDatum( ConnectionID(
-          source_gid, C_[ 0 ].get_target( thrd )->get_gid(), thrd, synapse_id, 0 ) ) );
+        conns.push_back( ConnectionID( source_gid,
+          C_[ 0 ].get_target( thrd )->get_gid(),
+          thrd,
+          synapse_id,
+          0 ) );
       }
     }
   }
@@ -601,57 +710,70 @@ public:
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
     if ( get_syn_id() == synapse_id )
     {
-      if ( synapse_label == UNLABELED_CONNECTION || C_[ 0 ].get_label() == synapse_label )
+      if ( synapse_label == UNLABELED_CONNECTION
+        || C_[ 0 ].get_label() == synapse_label )
       {
         if ( C_[ 0 ].get_target( thrd )->get_gid() == target_gid )
+        {
           conns.push_back(
-            ConnectionDatum( ConnectionID( source_gid, target_gid, thrd, synapse_id, 0 ) ) );
+            ConnectionID( source_gid, target_gid, thrd, synapse_id, 0 ) );
+        }
       }
     }
   }
 
   void
-  get_target_gids( std::vector< size_t >& target_gids, size_t thrd, synindex synapse_id ) const
+  get_target_gids( std::vector< size_t >& target_gids,
+    const size_t thrd,
+    const synindex synapse_id,
+    const std::string post_synaptic_element ) const
   {
     if ( get_syn_id() == synapse_id )
     {
-      target_gids.push_back( C_[ 0 ].get_target( thrd )->get_gid() );
+      if ( C_[ 0 ].get_target( thrd )->get_synaptic_elements(
+             post_synaptic_element ) != 0.0 )
+      {
+        target_gids.push_back( C_[ 0 ].get_target( thrd )->get_gid() );
+      }
     }
   }
 
   void
   send( Event& e, thread t, const std::vector< ConnectorModel* >& cm )
   {
+    typename ConnectionT::CommonPropertiesType const& cp =
+      static_cast< GenericConnectorModel< ConnectionT >* >(
+        cm[ C_[ 0 ].get_syn_id() ] )->get_common_properties();
     e.set_port( 0 );
-    C_[ 0 ].send( e,
-      t,
-      ConnectorBase::get_t_lastspike(),
-      static_cast< GenericConnectorModel< ConnectionT >* >( cm[ C_[ 0 ].get_syn_id() ] )
-        ->get_common_properties() );
+    C_[ 0 ].send( e, t, ConnectorBase::get_t_lastspike(), cp );
     ConnectorBase::set_t_lastspike( e.get_stamp().get_ms() );
+
+    ConnectorBase::send_weight_event( cp, e, t );
   }
 
   void
-  trigger_update_weight( long_t vt_gid,
+  trigger_update_weight( long vt_gid,
     thread t,
     const std::vector< spikecounter >& dopa_spikes,
-    double_t t_trig,
+    double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
     synindex syn_id = C_[ 0 ].get_syn_id();
     if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
            ->get_common_properties()
            .get_vt_gid() == vt_gid )
+    {
       C_[ 0 ].trigger_update_weight( t,
         dopa_spikes,
         t_trig,
         static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
           ->get_common_properties() );
+    }
   }
 
   synindex
@@ -683,26 +805,29 @@ class Connector< K_CUTOFF, ConnectionT > : public vector_like< ConnectionT >
   std::vector< ConnectionT > C_;
 
 public:
-  Connector( const Connector< K_CUTOFF - 1, ConnectionT >& C, const ConnectionT& c )
+  Connector( const Connector< K_CUTOFF - 1, ConnectionT >& C,
+    const ConnectionT& c )
     : C_( K_CUTOFF ) //, syn_id_(C.get_syn_id())
   {
     for ( size_t i = 0; i < K_CUTOFF - 1; i++ )
+    {
       C_[ i ] = C.get_C()[ i ];
+    }
     C_[ K_CUTOFF - 1 ] = c;
   };
 
   /**
-   * Creates a new connector and removes the ith connection. To do so, the contents
-   * of the original connector are copied into the new one. The copy is performed
-   * in two parts, first up to the specified index and then the rest of the
-   * connections after the specified index in order to
-   * exclude the ith connection from the copy. As a result, returns a connector
-   * with size K_CUTOFF-1 from a connector of size K_CUTOFF.
+   * Creates a new connector and removes the ith connection. To do so, the
+   * contents of the original connector are copied into the new one. The copy is
+   * performed in two parts, first up to the specified index and then the rest
+   * of the connections after the specified index in order to exclude the ith
+   * connection from the copy. As a result, returns a connector with size
+   * K_CUTOFF-1 from a connector of size K_CUTOFF.
    *
    * @param Cm1 Original connector of size K_CUTOFF
    * @param i The index of the connection to be deleted.
    */
-  Connector( const Connector< K_CUTOFF, ConnectionT >& Cm1, size_t i ) //: syn_id_(Cm1.get_syn_id())
+  Connector( const Connector< K_CUTOFF, ConnectionT >& Cm1, size_t i )
   {
     assert( i < Cm1.get_C().size() && i >= 0 );
     for ( size_t k = 0; k < i; k++ )
@@ -721,22 +846,31 @@ public:
   }
 
   void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
+  get_synapse_status( synindex syn_id,
+    DictionaryDatum& d,
+    port p,
+    const thread tid ) const
   {
     if ( syn_id == C_[ 0 ].get_syn_id() )
     {
       assert( p >= 0 && static_cast< size_t >( p ) < C_.size() );
       C_[ p ].get_status( d );
+      // set target gid here, where tid is available
+      def< long >( d, names::target, C_[ p ].get_target( tid )->get_gid() );
     }
   }
 
   void
-  set_synapse_status( synindex syn_id, ConnectorModel& cm, const DictionaryDatum& d, port p )
+  set_synapse_status( synindex syn_id,
+    ConnectorModel& cm,
+    const DictionaryDatum& d,
+    port p )
   {
     if ( syn_id == C_[ 0 ].get_syn_id() )
     {
       assert( p >= 0 && static_cast< size_t >( p ) < C_.size() );
-      C_[ p ].set_status( d, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
+      C_[ p ].set_status(
+        d, static_cast< GenericConnectorModel< ConnectionT >& >( cm ) );
     }
   }
 
@@ -750,9 +884,13 @@ public:
   get_num_connections( synindex syn_id )
   {
     if ( syn_id == get_syn_id() )
+    {
       return C_.size();
+    }
     else
+    {
       return 0;
+    }
   }
 
   size_t
@@ -799,8 +937,10 @@ public:
   at( size_t i )
   {
     if ( i >= C_.size() || i < 0 )
-      throw std::out_of_range(
-        String::compose( "Invalid attempt to access a connection: index %1 out of range.", i ) );
+    {
+      throw std::out_of_range( String::compose(
+        "Invalid attempt to access a connection: index %1 out of range.", i ) );
+    }
     return C_[ i ];
   }
 
@@ -808,14 +948,24 @@ public:
   get_connections( size_t source_gid,
     size_t thrd,
     synindex synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < C_.size(); i++ )
+    {
       if ( get_syn_id() == synapse_id )
-        if ( synapse_label == UNLABELED_CONNECTION || C_[ i ].get_label() == synapse_label )
-          conns.push_back( ConnectionDatum( ConnectionID(
-            source_gid, C_[ i ].get_target( thrd )->get_gid(), thrd, synapse_id, i ) ) );
+      {
+        if ( synapse_label == UNLABELED_CONNECTION
+          || C_[ i ].get_label() == synapse_label )
+        {
+          conns.push_back( ConnectionID( source_gid,
+            C_[ i ].get_target( thrd )->get_gid(),
+            thrd,
+            synapse_id,
+            i ) );
+        }
+      }
+    }
   }
 
   void
@@ -823,66 +973,84 @@ public:
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
-    if ( get_syn_id() == synapse_id )
-      for ( size_t i = 0; i < C_.size(); i++ )
-        if ( synapse_label == UNLABELED_CONNECTION || C_[ i ].get_label() == synapse_label )
-          if ( C_[ i ].get_target( thrd )->get_gid() == target_gid )
-            conns.push_back(
-              ConnectionDatum( ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) ) );
-  }
-
-  void
-  get_target_gids( std::vector< size_t >& target_gids, size_t thrd, synindex synapse_id ) const
-  {
-    typename std::vector< ConnectionT >::const_iterator C_it;
     if ( get_syn_id() == synapse_id )
     {
-      for ( C_it = C_.begin(); C_it != C_.end(); C_it++ )
+      for ( size_t i = 0; i < C_.size(); i++ )
       {
-        target_gids.push_back( ( *C_it ).get_target( thrd )->get_gid() );
+        if ( synapse_label == UNLABELED_CONNECTION
+          || C_[ i ].get_label() == synapse_label )
+        {
+          if ( C_[ i ].get_target( thrd )->get_gid() == target_gid )
+          {
+            conns.push_back(
+              ConnectionID( source_gid, target_gid, thrd, synapse_id, i ) );
+          }
+        }
       }
     }
   }
 
   void
+  get_target_gids( std::vector< size_t >& target_gids,
+    const size_t thrd,
+    const synindex synapse_id,
+    const std::string post_synaptic_element ) const
+  {
+    typename std::vector< ConnectionT >::const_iterator C_it;
+    if ( get_syn_id() == synapse_id )
+    {
+      for ( C_it = C_.begin(); C_it != C_.end(); ++C_it )
+      {
+        if ( ( *C_it ).get_target( thrd )->get_synaptic_elements(
+               post_synaptic_element ) != 0.0 )
+        {
+          target_gids.push_back( ( *C_it ).get_target( thrd )->get_gid() );
+        }
+      }
+    }
+  }
+  void
   send( Event& e, thread t, const std::vector< ConnectorModel* >& cm )
   {
     synindex syn_id = C_[ 0 ].get_syn_id();
+    typename ConnectionT::CommonPropertiesType const& cp =
+      static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
+        ->get_common_properties();
 
     for ( size_t i = 0; i < C_.size(); i++ )
     {
-
       e.set_port( i );
-      C_[ i ].send( e,
-        t,
-        ConnectorBase::get_t_lastspike(),
-        static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
-          ->get_common_properties() );
+      C_[ i ].send( e, t, ConnectorBase::get_t_lastspike(), cp );
+      ConnectorBase::send_weight_event( cp, e, t );
     }
 
     ConnectorBase::set_t_lastspike( e.get_stamp().get_ms() );
   }
 
   void
-  trigger_update_weight( long_t vt_gid,
+  trigger_update_weight( long vt_gid,
     thread t,
     const std::vector< spikecounter >& dopa_spikes,
-    double_t t_trig,
+    double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
     synindex syn_id = C_[ 0 ].get_syn_id();
     for ( size_t i = 0; i < C_.size(); i++ )
+    {
       if ( static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
              ->get_common_properties()
              .get_vt_gid() == vt_gid )
+      {
         C_[ i ].trigger_update_weight( t,
           dopa_spikes,
           t_trig,
           static_cast< GenericConnectorModel< ConnectionT >* >( cm[ syn_id ] )
             ->get_common_properties() );
+      }
+    }
   }
 
   synindex
@@ -906,8 +1074,8 @@ public:
 class HetConnector : public std::vector< ConnectorBase* >, public ConnectorBase
 {
 private:
-  synindex
-    primary_end_; // index of first secondary connector contained in the heterogeneous connector
+  synindex primary_end_; // index of first secondary connector contained in the
+                         // heterogeneous connector
 
 public:
   HetConnector()
@@ -919,25 +1087,37 @@ public:
   virtual ~HetConnector()
   {
     for ( size_t i = 0; i < size(); i++ )
+    {
 #ifdef USE_PMA
       at( i )->~ConnectorBase();
 #else
       delete at( i );
 #endif
+    }
   }
 
   void
-  get_synapse_status( synindex syn_id, DictionaryDatum& d, port p ) const
+  get_synapse_status( synindex syn_id,
+    DictionaryDatum& d,
+    port p,
+    const thread tid ) const
   {
     for ( size_t i = 0; i < size(); i++ )
-      at( i )->get_synapse_status( syn_id, d, p );
+    {
+      at( i )->get_synapse_status( syn_id, d, p, tid );
+    }
   }
 
   void
-  set_synapse_status( synindex syn_id, ConnectorModel& cm, const DictionaryDatum& d, port p )
+  set_synapse_status( synindex syn_id,
+    ConnectorModel& cm,
+    const DictionaryDatum& d,
+    port p )
   {
     for ( size_t i = 0; i < size(); i++ )
+    {
       at( i )->set_synapse_status( syn_id, cm, d, p );
+    }
   }
 
   size_t
@@ -955,8 +1135,12 @@ public:
   get_num_connections( synindex syn_id )
   {
     for ( size_t i = 0; i < size(); i++ )
+    {
       if ( syn_id == at( i )->get_syn_id() )
+      {
         return at( i )->get_num_connections();
+      }
+    }
     return 0;
   }
 
@@ -977,11 +1161,14 @@ public:
   get_connections( size_t source_gid,
     size_t thrd,
     synindex synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < size(); i++ )
-      at( i )->get_connections( source_gid, thrd, synapse_id, synapse_label, conns );
+    {
+      at( i )->get_connections(
+        source_gid, thrd, synapse_id, synapse_label, conns );
+    }
   }
 
   void
@@ -989,21 +1176,29 @@ public:
     size_t target_gid,
     size_t thrd,
     size_t synapse_id,
-    long_t synapse_label,
-    ArrayDatum& conns ) const
-  {
-    for ( size_t i = 0; i < size(); i++ )
-      at( i )->get_connections( source_gid, target_gid, thrd, synapse_id, synapse_label, conns );
-  }
-
-  void
-  get_target_gids( std::vector< size_t >& target_gids, size_t thrd, synindex synapse_id ) const
+    long synapse_label,
+    std::deque< ConnectionID >& conns ) const
   {
     for ( size_t i = 0; i < size(); i++ )
     {
+      at( i )->get_connections(
+        source_gid, target_gid, thrd, synapse_id, synapse_label, conns );
+    }
+  }
+
+
+  void
+  get_target_gids( std::vector< size_t >& target_gids,
+    const size_t thrd,
+    const synindex synapse_id,
+    const std::string post_synaptic_element ) const
+  {
+    for ( size_t i = 0; i < size(); ++i )
+    {
       if ( synapse_id == at( i )->get_syn_id() )
       {
-        at( i )->get_target_gids( target_gids, thrd, synapse_id );
+        at( i )->get_target_gids(
+          target_gids, thrd, synapse_id, post_synaptic_element );
       }
     }
   }
@@ -1013,30 +1208,38 @@ public:
   {
     // for all primary connections delegate send to homogeneous connectors
     for ( size_t i = 0; i < primary_end_; i++ )
+    {
       at( i )->send( e, t, cm );
+    }
   }
 
   void
-  trigger_update_weight( long_t vt_gid,
+  trigger_update_weight( long vt_gid,
     thread t,
     const std::vector< spikecounter >& dopa_spikes,
-    double_t t_trig,
+    double t_trig,
     const std::vector< ConnectorModel* >& cm )
   {
     for ( size_t i = 0; i < size(); i++ )
+    {
       at( i )->trigger_update_weight( vt_gid, t, dopa_spikes, t_trig, cm );
+    }
   }
 
   void
-  send_secondary( SecondaryEvent& e, thread t, const std::vector< ConnectorModel* >& cm )
+  send_secondary( SecondaryEvent& e,
+    thread t,
+    const std::vector< ConnectorModel* >& cm )
   {
-    // for all secondary connections delegate send to the matching homogeneous connector only
+    // for all secondary connections delegate send to the matching homogeneous
+    // connectors only
     for ( size_t i = primary_end_; i < size(); i++ )
+    {
       if ( e.supports_syn_id( at( i )->get_syn_id() ) )
       {
         at( i )->send( e, t, cm );
-        break;
       }
+    }
   }
 
   // returns id of synapse type
@@ -1058,8 +1261,8 @@ public:
   {
     if ( is_primary )
     {
-      insert( begin() + primary_end_,
-        conn ); // if empty, insert (begin(), conn) inserts into the first position
+      // if empty, insert (begin(), conn) inserts into the first position
+      insert( begin() + primary_end_, conn );
       ++primary_end_;
     }
     else

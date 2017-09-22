@@ -30,8 +30,8 @@
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
    "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
    LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-   A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-   CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+   A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER
+   OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
    PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
    PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
@@ -46,13 +46,13 @@
 */
 
 /*
-        Modifications to the originial mt19937.{h,c} code by Nishimura, Matsumoto and
-        Saito:
-        - Implemented as C++ class with local variables, to allow for multiple generators.
+        Modifications to the originial mt19937.{h,c} code by Nishimura,
+        Matsumoto and Saito:
+        - Implemented as C++ class with local variables, to allow for multiple
+          generators.
         - Inclusion guard added.
 
         Hans Ekkehard Plesser, 2008-01-03
-
 */
 
 #include "mt19937.h"
@@ -83,7 +83,8 @@ librandom::MT19937::init_genrand( unsigned long s )
   mt[ 0 ] = s & 0xffffffffUL;
   for ( mti = 1; static_cast< unsigned int >( mti ) < N; mti++ )
   {
-    mt[ mti ] = ( 1812433253UL * ( mt[ mti - 1 ] ^ ( mt[ mti - 1 ] >> 30 ) ) + mti );
+    mt[ mti ] =
+      ( 1812433253UL * ( mt[ mti - 1 ] ^ ( mt[ mti - 1 ] >> 30 ) ) + mti );
     /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
     /* In the previous versions, MSBs of the seed affect   */
     /* only MSBs of the array mt[].                        */
@@ -104,8 +105,10 @@ librandom::MT19937::genrand_int32()
   { /* generate N words at one time */
     int kk;
 
-    if ( mti == N + 1 )       /* if init_genrand() has not been called, */
+    if ( mti == N + 1 ) /* if init_genrand() has not been called, */
+    {
       init_genrand( 5489UL ); /* a default initial seed is used */
+    }
 
     for ( kk = 0; static_cast< unsigned int >( kk ) < N - M; kk++ )
     {

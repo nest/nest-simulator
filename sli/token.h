@@ -87,7 +87,9 @@ public:
   ~Token()
   {
     if ( p )
+    {
       p->removeReference();
+    }
     p = 0;
   }
 
@@ -95,12 +97,16 @@ public:
     : p( NULL )
   {
     if ( c_s.p )
+    {
       p = c_s.p->get_ptr();
+    }
   }
 
 
-  Token( Datum* p_s =
-           NULL ) //!< use existing pointer to datum, token takes responsibility of the pointer.
+  /**
+   * use existing pointer to datum, token takes responsibility of the pointer.
+   */
+  Token( Datum* p_s = NULL )
     : p( p_s )
   {
   }
@@ -151,7 +157,9 @@ public:
   move( Token& c )
   {
     if ( p )
+    {
       p->removeReference();
+    }
     p = c.p;
     c.p = NULL;
   }
@@ -203,7 +211,8 @@ public:
    * Initialize the token with a datum pointer.
    * This function assumes that the token does not point to
    * a valid datum.
-   * The function assumes that the datum is new and DOES NOT increases its reference count.
+   * The function assumes that the datum is new and DOES NOT increases its
+   * reference count.
    */
   void
   init_by_pointer( Datum* rhs )
@@ -218,7 +227,9 @@ public:
     if ( p != rhs.p )
     {
       if ( p )
+      {
         p->removeReference();
+      }
       p = rhs.p->get_ptr();
     }
   }
@@ -229,7 +240,9 @@ public:
     assert( rhs != NULL );
     rhs->addReference();
     if ( p )
+    {
       p->removeReference();
+    }
     p = rhs;
   }
 
@@ -244,7 +257,9 @@ public:
   clear( void )
   {
     if ( p )
+    {
       p->removeReference();
+    }
     p = NULL;
   }
 
@@ -260,7 +275,7 @@ public:
     return p == NULL;
   }
 
-  bool operator!( void ) const
+  bool operator not( void ) const
   {
     return p == NULL;
   }
@@ -276,7 +291,7 @@ public:
   bool
   valid() const
   {
-    return !empty();
+    return not empty();
   }
 
   Datum* operator->() const
@@ -303,16 +318,19 @@ public:
   Token& operator=( const Token& c_s )
   {
     if ( c_s.p == p )
+    {
       return *this;
+    }
 
     if ( c_s.p == NULL )
     {
       clear();
       return *this;
     }
-
     if ( p )
+    {
       p->removeReference();
+    }
     p = c_s.p->get_ptr();
 
     return *this;
@@ -323,7 +341,9 @@ public:
     if ( p != p_s )
     {
       if ( p )
+      {
         p->removeReference();
+      }
       p = p_s;
     }
 
@@ -334,7 +354,9 @@ public:
   bool operator==( const Token& t ) const
   {
     if ( p == t.p )
+    {
       return true;
+    }
 
     return p and p->equals( t.p );
   }
@@ -342,7 +364,7 @@ public:
   // define != explicitly --- HEP 2001-08-09
   bool operator!=( const Token& t ) const
   {
-    return !( *this == t );
+    return not( *this == t );
   }
 
   void info( std::ostream& ) const;

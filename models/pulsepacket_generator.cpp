@@ -69,9 +69,10 @@ nest::pulsepacket_generator::Variables_::Variables_()
 void
 nest::pulsepacket_generator::Parameters_::get( DictionaryDatum& d ) const
 {
-  ( *d )[ "pulse_times" ] = DoubleVectorDatum( new std::vector< double_t >( pulse_times_ ) );
-  ( *d )[ "activity" ] = a_;
-  ( *d )[ "sdev" ] = sdev_;
+  ( *d )[ names::pulse_times ] =
+    DoubleVectorDatum( new std::vector< double >( pulse_times_ ) );
+  ( *d )[ names::activity ] = a_;
+  ( *d )[ names::sdev ] = sdev_;
 }
 
 void
@@ -81,17 +82,20 @@ nest::pulsepacket_generator::Parameters_::set( const DictionaryDatum& d,
 
   // We cannot use a single line here since short-circuiting may stop evaluation
   // prematurely. Therefore, neednewpulse must be second arg on second line.
-  bool neednewpulse = updateValue< long >( d, "activity", a_ );
-  neednewpulse = updateValue< double >( d, "sdev", sdev_ ) || neednewpulse;
-
+  bool neednewpulse = updateValue< long >( d, names::activity, a_ );
+  neednewpulse = updateValue< double >( d, names::sdev, sdev_ ) || neednewpulse;
   if ( a_ < 0 )
+  {
     throw BadProperty( "The activity cannot be negative." );
-
+  }
   if ( sdev_ < 0 )
+  {
     throw BadProperty( "The standard deviation cannot be negative." );
+  }
 
 
-  if ( updateValue< std::vector< double_t > >( d, "pulse_times", pulse_times_ ) || neednewpulse )
+  if ( updateValue< std::vector< double > >( d, "pulse_times", pulse_times_ )
+    || neednewpulse )
   {
     std::sort( pulse_times_.begin(), pulse_times_.end() );
     ppg.B_.spiketimes_.clear();
@@ -109,7 +113,8 @@ nest::pulsepacket_generator::pulsepacket_generator()
 {
 }
 
-nest::pulsepacket_generator::pulsepacket_generator( const pulsepacket_generator& ppg )
+nest::pulsepacket_generator::pulsepacket_generator(
+  const pulsepacket_generator& ppg )
   : Node( ppg )
   , device_( ppg.device_ )
   , P_( ppg.P_ )
@@ -141,11 +146,15 @@ nest::pulsepacket_generator::calibrate()
   assert( V_.start_center_idx_ <= V_.stop_center_idx_ );
 
   if ( P_.sdev_ > 0.0 )
+  {
     V_.tolerance = P_.sdev_ * P_.sdev_tolerance_;
+  }
   else
+  {
     V_.tolerance = 1.0;
+  }
 
-  const double_t now = ( kernel().simulation_manager.get_time() ).get_ms();
+  const double now = ( kernel().simulation_manager.get_time() ).get_ms();
 
   V_.start_center_idx_ = 0;
   V_.stop_center_idx_ = 0;
@@ -156,29 +165,36 @@ nest::pulsepacket_generator::calibrate()
   while ( V_.stop_center_idx_ < P_.pulse_times_.size()
     && P_.pulse_times_.at( V_.stop_center_idx_ ) - now <= V_.tolerance )
   {
-    if ( std::abs( P_.pulse_times_.at( V_.stop_center_idx_ ) - now ) > V_.tolerance )
+    if ( std::abs( P_.pulse_times_.at( V_.stop_center_idx_ ) - now )
+      > V_.tolerance )
+    {
       V_.start_center_idx_++;
+    }
     V_.stop_center_idx_++;
   }
 }
 
 
 void
-nest::pulsepacket_generator::update( Time const& T, const long_t from, const long_t to )
+nest::pulsepacket_generator::update( Time const& T,
+  const long from,
+  const long to )
 {
   assert( to >= from );
-  assert( ( to - from ) <= kernel().connection_builder_manager.get_min_delay() );
+  assert( ( to - from ) <= kernel().connection_manager.get_min_delay() );
 
-  if ( ( V_.start_center_idx_ == P_.pulse_times_.size() && B_.spiketimes_.empty() )
-    || ( !device_.is_active( T ) ) )
+  if ( ( V_.start_center_idx_ == P_.pulse_times_.size()
+         && B_.spiketimes_.empty() ) || ( not device_.is_active( T ) ) )
+  {
     return; // nothing left to do
+  }
 
   // determine next pulse-center times (around sdev*tolerance window)
   if ( V_.stop_center_idx_ < P_.pulse_times_.size() )
   {
     while ( V_.stop_center_idx_ < P_.pulse_times_.size()
-      && ( Time( Time::ms( P_.pulse_times_.at( V_.stop_center_idx_ ) ) ) - T ).get_ms()
-        <= V_.tolerance )
+      && ( Time( Time::ms( P_.pulse_times_.at( V_.stop_center_idx_ ) ) ) - T )
+           .get_ms() <= V_.tolerance )
     {
       V_.stop_center_idx_++;
     }
@@ -195,33 +211,39 @@ nest::pulsepacket_generator::update( Time const& T, const long_t from, const lon
     {
       for ( int i = 0; i < P_.a_; i++ )
       {
-        double_t x = P_.sdev_ * V_.norm_dev_( rng ) + P_.pulse_times_.at( V_.start_center_idx_ );
+        double x = P_.sdev_ * V_.norm_dev_( rng )
+          + P_.pulse_times_.at( V_.start_center_idx_ );
         if ( Time( Time::ms( x ) ) >= T )
+        {
           B_.spiketimes_.push_back( Time( Time::ms( x ) ).get_steps() );
+        }
       }
       needtosort = true;
       V_.start_center_idx_++;
     }
-
     if ( needtosort )
+    {
       std::sort( B_.spiketimes_.begin(), B_.spiketimes_.end() );
+    }
   }
 
-  int_t n_spikes = 0;
+  int n_spikes = 0;
 
   // Since we have an ordered list of spiketimes,
   // we can compute the histogram on the fly.
-  while ( !B_.spiketimes_.empty() && B_.spiketimes_.front() < ( T.get_steps() + to ) )
+  while ( not B_.spiketimes_.empty()
+    && B_.spiketimes_.front() < ( T.get_steps() + to ) )
   {
     n_spikes++;
-    long_t prev_spike = B_.spiketimes_.front();
+    long prev_spike = B_.spiketimes_.front();
     B_.spiketimes_.pop_front();
 
     if ( n_spikes > 0 && prev_spike != B_.spiketimes_.front() )
     {
       SpikeEvent se;
       se.set_multiplicity( n_spikes );
-      kernel().event_delivery_manager.send( *this, se, prev_spike - T.get_steps() );
+      kernel().event_delivery_manager.send(
+        *this, se, prev_spike - T.get_steps() );
       n_spikes = 0;
     }
   }

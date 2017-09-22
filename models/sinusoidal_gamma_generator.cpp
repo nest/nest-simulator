@@ -49,7 +49,8 @@
 
 namespace nest
 {
-RecordablesMap< sinusoidal_gamma_generator > sinusoidal_gamma_generator::recordablesMap_;
+RecordablesMap< sinusoidal_gamma_generator >
+  sinusoidal_gamma_generator::recordablesMap_;
 
 template <>
 void
@@ -71,7 +72,8 @@ nest::sinusoidal_gamma_generator::Parameters_::Parameters_()
 {
 }
 
-nest::sinusoidal_gamma_generator::Parameters_::Parameters_( const Parameters_& p )
+nest::sinusoidal_gamma_generator::Parameters_::Parameters_(
+  const Parameters_& p )
   : om_( p.om_ )
   , phi_( p.phi_ )
   , order_( p.order_ )
@@ -82,11 +84,14 @@ nest::sinusoidal_gamma_generator::Parameters_::Parameters_( const Parameters_& p
 {
 }
 
-nest::sinusoidal_gamma_generator::Parameters_& nest::sinusoidal_gamma_generator::Parameters_::
-operator=( const Parameters_& p )
+nest::sinusoidal_gamma_generator::Parameters_&
+  nest::sinusoidal_gamma_generator::Parameters_::
+  operator=( const Parameters_& p )
 {
   if ( this == &p )
+  {
     return *this;
+  }
 
   om_ = p.om_;
   phi_ = p.phi_;
@@ -105,7 +110,8 @@ nest::sinusoidal_gamma_generator::State_::State_()
 }
 
 
-nest::sinusoidal_gamma_generator::Buffers_::Buffers_( sinusoidal_gamma_generator& n )
+nest::sinusoidal_gamma_generator::Buffers_::Buffers_(
+  sinusoidal_gamma_generator& n )
   : logger_( n )
   , t0_ms_()
   , // will be set in init_buffers_
@@ -148,45 +154,65 @@ void
 nest::sinusoidal_gamma_generator::Parameters_::set( const DictionaryDatum& d,
   const sinusoidal_gamma_generator& n )
 {
-  if ( not n.is_model_prototype() && d->known( names::individual_spike_trains ) )
+  if ( not n.is_model_prototype()
+    && d->known( names::individual_spike_trains ) )
+  {
     throw BadProperty(
       "The individual_spike_trains property can only be set as"
       " a model default using SetDefaults or upon CopyModel." );
+  }
 
-  if ( updateValue< bool >( d, names::individual_spike_trains, individual_spike_trains_ ) )
+  if ( updateValue< bool >(
+         d, names::individual_spike_trains, individual_spike_trains_ ) )
   {
     // this can happen only on model prototypes
     if ( individual_spike_trains_ )
-      num_trains_ = 0; // will be counted up as connections are made
+    {
+      num_trains_ = 0;
+    } // will be counted up as connections are made
     else
-      num_trains_ = 1; // fixed
+    {
+      num_trains_ = 1;
+    } // fixed
   }
 
-  if ( updateValue< double_t >( d, names::frequency, om_ ) )
+  if ( updateValue< double >( d, names::frequency, om_ ) )
+  {
     om_ *= 2.0 * numerics::pi / 1000.0;
+  }
 
-  if ( updateValue< double_t >( d, names::phase, phi_ ) )
+  if ( updateValue< double >( d, names::phase, phi_ ) )
+  {
     phi_ *= numerics::pi / 180.0;
+  }
 
-  if ( updateValue< double_t >( d, names::order, order_ ) )
+  if ( updateValue< double >( d, names::order, order_ ) )
   {
     if ( order_ < 1.0 )
+    {
       throw BadProperty( "The gamma order must be at least 1." );
+    }
   }
 
   /* The *_unscaled variables here are introduced to avoid spurious
      floating-point comparison issues under 32-bit Linux.
   */
   double dc_unscaled = 1e3 * rate_;
-  if ( updateValue< double_t >( d, names::rate, dc_unscaled ) )
+  if ( updateValue< double >( d, names::rate, dc_unscaled ) )
+  {
     rate_ = 1e-3 * dc_unscaled; // scale to 1/ms
+  }
 
   double ac_unscaled = 1e3 * amplitude_;
-  if ( updateValue< double_t >( d, names::amplitude, ac_unscaled ) )
+  if ( updateValue< double >( d, names::amplitude, ac_unscaled ) )
+  {
     amplitude_ = 1e-3 * ac_unscaled; // scale to 1/ms
+  }
 
   if ( not( 0.0 <= ac_unscaled and ac_unscaled <= dc_unscaled ) )
+  {
     throw BadProperty( "Rate parameters must fulfill 0 <= amplitude <= rate." );
+  }
 }
 
 
@@ -204,7 +230,8 @@ nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator()
   recordablesMap_.create();
 }
 
-nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator( const sinusoidal_gamma_generator& n )
+nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator(
+  const sinusoidal_gamma_generator& n )
   : Node( n )
   , device_( n.device_ )
   , P_( n.P_ )
@@ -220,7 +247,8 @@ nest::sinusoidal_gamma_generator::sinusoidal_gamma_generator( const sinusoidal_g
 void
 nest::sinusoidal_gamma_generator::init_state_( const Node& proto )
 {
-  const sinusoidal_gamma_generator& pr = downcast< sinusoidal_gamma_generator >( proto );
+  const sinusoidal_gamma_generator& pr =
+    downcast< sinusoidal_gamma_generator >( proto );
 
   device_.init_state( pr.device_ );
   S_ = pr.S_;
@@ -232,26 +260,30 @@ nest::sinusoidal_gamma_generator::init_buffers_()
   device_.init_buffers();
   B_.logger_.reset();
 
-  std::vector< double >( P_.num_trains_, kernel().simulation_manager.get_time().get_ms() )
-    .swap( B_.t0_ms_ );
+  std::vector< double >( P_.num_trains_,
+    kernel().simulation_manager.get_time().get_ms() ).swap( B_.t0_ms_ );
   std::vector< double >( P_.num_trains_, 0.0 ).swap( B_.Lambda_t0_ );
   B_.P_prev_ = P_;
 }
 
 // ----------------------------------------------------
 
-inline nest::double_t
+inline double
 nest::sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p,
-  double_t t_a,
-  double_t t_b ) const
+  double t_a,
+  double t_b ) const
 {
   if ( t_a == t_b )
+  {
     return 0.0;
+  }
 
-  double_t deltaLambda = p.order_ * p.rate_ * ( t_b - t_a );
+  double deltaLambda = p.order_ * p.rate_ * ( t_b - t_a );
   if ( std::abs( p.amplitude_ ) > 0 && std::abs( p.om_ ) > 0 )
+  {
     deltaLambda += -p.order_ * p.amplitude_ / p.om_
       * ( std::cos( p.om_ * t_b + p.phi_ ) - std::cos( p.om_ * t_a + p.phi_ ) );
+  }
   return deltaLambda;
 }
 
@@ -260,7 +292,8 @@ nest::sinusoidal_gamma_generator::deltaLambda_( const Parameters_& p,
 void
 nest::sinusoidal_gamma_generator::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
   device_.calibrate();
 
   V_.h_ = Time::get_resolution().get_ms();
@@ -288,29 +321,33 @@ nest::sinusoidal_gamma_generator::hazard_( port tgt_idx ) const
 {
   // Note: We compute Lambda for the entire interval since the last spike/
   //       parameter change each time for better accuracy.
-  const double_t Lambda =
-    B_.Lambda_t0_[ tgt_idx ] + deltaLambda_( P_, B_.t0_ms_[ tgt_idx ], V_.t_ms_ );
-  return V_.h_ * P_.order_ * S_.rate_ * std::pow( Lambda, P_.order_ - 1 ) * std::exp( -Lambda )
-    / gsl_sf_gamma_inc( P_.order_, Lambda );
+  const double Lambda = B_.Lambda_t0_[ tgt_idx ]
+    + deltaLambda_( P_, B_.t0_ms_[ tgt_idx ], V_.t_ms_ );
+  return V_.h_ * P_.order_ * S_.rate_ * std::pow( Lambda, P_.order_ - 1 )
+    * std::exp( -Lambda ) / gsl_sf_gamma_inc( P_.order_, Lambda );
 }
 
 void
-nest::sinusoidal_gamma_generator::update( Time const& origin, const long_t from, const long_t to )
+nest::sinusoidal_gamma_generator::update( Time const& origin,
+  const long from,
+  const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
     const Time t = Time( Time::step( origin.get_steps() + lag + 1 ) );
     V_.t_ms_ = t.get_ms();
     V_.t_steps_ = t.get_steps();
 
-    S_.rate_ = P_.rate_ + P_.amplitude_ * std::sin( P_.om_ * V_.t_ms_ + P_.phi_ );
-    B_.logger_.record_data( origin.get_steps() + lag );
+    S_.rate_ =
+      P_.rate_ + P_.amplitude_ * std::sin( P_.om_ * V_.t_ms_ + P_.phi_ );
 
     // t_steps_-1 since t_steps is end of interval, while activity det by start
-    if ( P_.num_trains_ > 0 && S_.rate_ > 0 && device_.is_active( Time::step( V_.t_steps_ - 1 ) ) )
+    if ( P_.num_trains_ > 0 && S_.rate_ > 0
+      && device_.is_active( Time::step( V_.t_steps_ - 1 ) ) )
     {
       if ( P_.individual_spike_trains_ )
       {
@@ -328,6 +365,7 @@ nest::sinusoidal_gamma_generator::update( Time const& origin, const long_t from,
         }
       }
     }
+    B_.logger_.record_data( origin.get_steps() + lag );
   }
 }
 

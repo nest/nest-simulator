@@ -28,7 +28,7 @@ set( NEST_USER_EMAIL "nest_user@nest-initiative.org" )
 
 # VERSION exported to libnestutil/config.h, extras/create_release.sh
 set( NEST_VERSION_MAJOR 2 )
-set( NEST_VERSION_MINOR 10 )
+set( NEST_VERSION_MINOR 12 )
 set( NEST_VERSION_PATCHLEVEL 0 )
 
 set( NEST_VERSION_VERSION "${NEST_VERSION_MAJOR}.${NEST_VERSION_MINOR}.${NEST_VERSION_PATCHLEVEL}" )
@@ -80,18 +80,12 @@ option( k-computer "Enable K computer." OFF )
 ##################      Project Directory variables           ##################
 ################################################################################
 
-# install prefix is set with -DCMAKE_INSTALL_PREFIX:PATH=...
-set( INSTALL_BIN_DIR bin )
-set( INSTALL_LIB_DIR lib )
-set( INSTALL_INC_DIR include )
-set( INSTALL_DATA_DIR share/nest )
-set( INSTALL_DOC_DIR share/doc/nest )
+# In general use the CMAKE_INSTALL_<dir> and CMAKE_INSTALL_FULL_<dir> vars from
+# GNUInstallDirs, but the CMAKE_INSTALL_DATADIR is usually just CMAKE_INSTALL_DATAROOTDIR
+# and we want it to be CMAKE_INSTALL_DATAROOTDIR/PROJECT_NAME
+set( CMAKE_INSTALL_DATADIR "share/${PROJECT_NAME}" CACHE STRING "Relative directory, where NEST installs its data (share/nest)" )
 
-set( PKGSRCDIR ${PROJECT_SOURCE_DIR} )
-set( PKGBUILDDIR ${PROJECT_BINARY_DIR} )
-set( PKGDATADIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR} )
-set( PKGDOCDIR ${CMAKE_INSTALL_PREFIX}/${INSTALL_DOC_DIR} )
-set( TESTSUITE_BASEDIR ${PKGDOCDIR} )
+include( GNUInstallDirs )
 
 ################################################################################
 #################        Do not install into /usr/local        #################
@@ -99,9 +93,15 @@ set( TESTSUITE_BASEDIR ${PKGDOCDIR} )
 
 if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
   # no prefix given?
-  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'? "
+  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'. "
                     "Please set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
 endif ()
+
+################################################################################
+#################    Use absolute path for CMAKE_NEST_PREFIX   #################
+################################################################################
+
+get_filename_component(CMAKE_NEST_PREFIX ${CMAKE_INSTALL_PREFIX} REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
 
 ################################################################################
 ##################           Find utility programs            ##################
@@ -115,12 +115,69 @@ find_program( SED NAMES sed gsed )
 ##################   CPack, checks, ... in external modules   ##################
 ################################################################################
 
-include( CPackVariables )
+# This include checks the symbols, etc.
 include( CheckIncludesSymbols )
+
+# These includes publish function names.
 include( ProcessOptions )
 include( WriteStaticModules_h )
-include( DetermineLibraries )
+include( CPackVariables )
 include( CheckExtraCompilerFeatures )
+include( ConfigureSummary )
+include( GetTriple )
+
+# get triples arch-vendor-os
+get_host_triple( NEST_HOST_TRIPLE NEST_HOST_ARCH NEST_HOST_VENDOR NEST_HOST_OS )
+get_target_triple( NEST_TARGET_TRIPLE NEST_TARGET_ARCH NEST_TARGET_VENDOR NEST_TARGET_OS )
+
+# set cpack variables and
+# generate CPackConfig.cmake CPackSourceConfig.cmake files
+nest_set_cpack_variables()
+
+# Process the command line arguments
+nest_process_with_optimize()
+nest_process_with_debug()
+nest_process_with_warning()
+nest_process_with_libraries()
+nest_process_with_includes()
+nest_process_with_defines()
+nest_process_k_computer()
+nest_process_enable_bluegene()
+nest_process_static_libraries()
+nest_process_external_modules()
+nest_process_tics_per_ms()
+nest_process_tics_per_step()
+nest_process_with_ps_array()
+nest_process_with_libltdl()
+nest_process_with_readline()
+nest_process_with_gsl()
+nest_process_with_python()
+nest_process_with_openmp()
+nest_process_with_mpi()
+nest_process_with_libneurosim()
+nest_process_with_music()
+
+nest_get_color_flags()
+set( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${NEST_C_COLOR_FLAGS}" )
+set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${NEST_CXX_COLOR_FLAGS}" )
+
+# requires HAVE_LIBNEUROSIM
+nest_default_modules()
+
+nest_write_static_module_header( "${PROJECT_BINARY_DIR}/nest/static_modules.h" )
+
+# check additionals
+nest_check_exitcode_abort()
+nest_check_exitcode_segfault()
+nest_check_have_cmath_makros_ignored()
+nest_check_have_alpha_cxx_std_bug()
+nest_check_have_sigusr_ignored()
+nest_check_have_static_template_declaration_fail()
+nest_check_have_stl_vector_capacity_base_unity()
+nest_check_have_stl_vector_capacity_doubling()
+nest_check_have_xlc_ice_on_using()
+nest_check_have_std_nan()
+nest_check_have_std_isnan()
 
 ################################################################################
 ##################         Enable Testing Targets             ##################
@@ -131,23 +188,22 @@ file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
 
 if ( HAVE_PYTHON )
   add_custom_target( installcheck
-      #COMMAND ${CMAKE_MAKE_PROGRAM} install
-      COMMAND export PATH="${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}:$ENV{PATH}" &&
-      export PYTHON="${PYTHON}" &&
-      export PYTHONPATH="${PYEXECDIR}:$ENV{PYTHONPATH}" &&
-      export exec_prefix="${CMAKE_INSTALL_PREFIX}" &&
-      ${PKGDATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
-      WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-      COMMENT "Execute NEST's testsuite...."
-      )
+    COMMAND ${CMAKE_COMMAND} -E env
+      NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
+      PYTHON="${PYTHON}"
+      NEST_PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}"
+      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+    COMMENT "Execute NEST's testsuite...."
+  )
 else ()
   add_custom_target( installcheck
-      #COMMAND ${CMAKE_MAKE_PROGRAM} install
-      COMMAND export PATH="${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}:$ENV{PATH}" &&
-      ${PKGDATADIR}/extras/do_tests.sh --source-dir="${PROJECT_SOURCE_DIR}"
-      WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-      COMMENT "Execute NEST's testsuite...."
-      )
+    COMMAND ${CMAKE_COMMAND} -E env
+      NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
+      ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --source-dir="${PROJECT_SOURCE_DIR}"
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+    COMMENT "Execute NEST's testsuite...."
+  )
 endif ()
 
 add_custom_target( check
@@ -213,14 +269,39 @@ if ( with-defines )
 endif ()
 
 # all libraries
-set( ALL_LIBS "${OpenMP_CXX_FLAGS};${LTDL_LIBRARIES};${READLINE_LIBRARIES};${GSL_LIBRARIES};${LIBNEUROSIM_LIBRARIES};${MUSIC_LIBRARIES};${MPI_CXX_LIBRARIES}" )
+set( ALL_LIBS
+  "-lnestutil"
+  "-lnest"
+  "-lrandom"
+  "-lsli"
+  "-lnestkernel"
+  "${OpenMP_CXX_FLAGS}"
+  "${LTDL_LIBRARIES}"
+  "${READLINE_LIBRARIES}"
+  "${GSL_LIBRARIES}"
+  "${LIBNEUROSIM_LIBRARIES}"
+  "${MUSIC_LIBRARIES}"
+  "${MPI_CXX_LIBRARIES}" )
 if ( with-libraries )
   set( ALL_LIBS "${ALL_LIBS};${with-libraries}" )
 endif ()
 string( REPLACE ";" " " ALL_LIBS "${ALL_LIBS}" )
 
 # all includes
-set( ALL_INCLUDES_tmp "${LTDL_INCLUDE_DIRS};${READLINE_INCLUDE_DIRS};${GSL_INCLUDE_DIRS};${LIBNEUROSIM_INCLUDE_DIRS};${MUSIC_INCLUDE_DIRS};${MPI_CXX_INCLUDE_PATH}" )
+set( ALL_INCLUDES_tmp
+  "${PROJECT_SOURCE_DIR}/libnestutil"
+  "${PROJECT_BINARY_DIR}/libnestutil"
+  "${PROJECT_SOURCE_DIR}/librandom"
+  "${PROJECT_SOURCE_DIR}/sli"
+  "${PROJECT_SOURCE_DIR}/topology"
+  "${PROJECT_SOURCE_DIR}/nestkernel"
+  "${PROJECT_SOURCE_DIR}/nest"
+  "${LTDL_INCLUDE_DIRS}"
+  "${READLINE_INCLUDE_DIRS}"
+  "${GSL_INCLUDE_DIRS}"
+  "${LIBNEUROSIM_INCLUDE_DIRS}"
+  "${MUSIC_INCLUDE_DIRS}"
+  "${MPI_CXX_INCLUDE_PATH}" )
 set( ALL_INCLUDES "" )
 foreach ( INC ${ALL_INCLUDES_tmp} ${with-includes} )
   if ( INC AND NOT INC STREQUAL "" )
@@ -263,8 +344,8 @@ configure_file(
 )
 
 configure_file(
-    "${PROJECT_SOURCE_DIR}/extras/emacs/sli.el.in"
-    "${PROJECT_BINARY_DIR}/extras/emacs/sli.el" @ONLY
+    "${PROJECT_SOURCE_DIR}/extras/EditorSupport/emacs/sli.el.in"
+    "${PROJECT_BINARY_DIR}/extras/EditorSupport/emacs/sli.el" @ONLY
 )
 
 configure_file(
@@ -287,7 +368,7 @@ configure_file(
 ################################################################################
 
 install( FILES LICENSE README.md NEWS
-    DESTINATION ${INSTALL_DOC_DIR}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}
     )
 
-include( ConfigureSummary )
+nest_print_config_summary()

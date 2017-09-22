@@ -126,7 +126,9 @@ protected:
     {
       int size = ::read( m_fd, m_inbuf, s_bufsiz );
       if ( size < 1 )
+      {
         return traits_type::eof();
+      }
       setg( m_inbuf, m_inbuf, m_inbuf + size );
     }
     return traits_type::to_int_type( *gptr() );
@@ -141,7 +143,7 @@ protected:
       return traits_type::eof();
     }
 
-    if ( !traits_type::eq_int_type( c, traits_type::eof() ) )
+    if ( not traits_type::eq_int_type( c, traits_type::eof() ) )
     {
       *pptr() = traits_type::to_char_type( c );
       pbump( 1 );
@@ -155,7 +157,9 @@ protected:
   {
     std::streamsize size = pptr() - pbase();
     if ( size > 0 && ::write( m_fd, m_outbuf, size ) != size )
+    {
       return -1;
+    }
     setp( m_outbuf, m_outbuf + s_bufsiz );
     return 0;
   }
@@ -188,7 +192,8 @@ public:
     init( &sb );
   }
 
-  explicit ofdstream( const char* s, std::ios_base::openmode mode = std::ios_base::out )
+  explicit ofdstream( const char* s,
+    std::ios_base::openmode mode = std::ios_base::out )
     : std::ostream( 0 )
     , sb()
   {
@@ -209,7 +214,8 @@ public:
   fdbuf*
   rdbuf() const
   {
-    return const_cast< fdbuf* >( &sb ); // return type is non-const, member is const, by C++ specs!
+    // return type is non-const, member is const, by C++ specs!
+    return const_cast< fdbuf* >( &sb );
   }
 
   bool
@@ -244,7 +250,8 @@ public:
     init( &sb );
   }
 
-  explicit ifdstream( const char* s, std::ios_base::openmode mode = std::ios_base::in )
+  explicit ifdstream( const char* s,
+    std::ios_base::openmode mode = std::ios_base::in )
     : std::istream( 0 )
     , sb()
   {
@@ -265,7 +272,8 @@ public:
   fdbuf*
   rdbuf() const
   {
-    return const_cast< fdbuf* >( &sb ); // return type is non-const, member is const, by C++ specs!
+    // return type is non-const, member is const, by C++ specs!
+    return const_cast< fdbuf* >( &sb );
   }
 
   bool
@@ -322,7 +330,8 @@ public:
   fdbuf*
   rdbuf() const
   {
-    return const_cast< fdbuf* >( &sb ); // return type is non-const, member is const, by C++ specs!
+    // return type is non-const, member is const, by C++ specs!
+    return const_cast< fdbuf* >( &sb );
   }
 
   bool

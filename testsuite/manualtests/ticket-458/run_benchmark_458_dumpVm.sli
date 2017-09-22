@@ -199,38 +199,46 @@ def
     /target Set
 
     % E -> E connections      
-    % the following is a single call to RandomConvergentConnect      
+    % the following is a single call to fixed-indegree Connect      
     E_neurons   % source population [we pick from this]
-    target      % target neuron
-    CE          % number of source neurons to pick
-    /syn_ex     % synapse model
-    RandomConvergentConnect
+    [ target ]  % target neuron
+    << /rule fixed_indegree /indegree CE >> % number of source neurons to pick
+    << /model /syn_ex >>    % synapse model
+    Connect
 
     % I -> E connections 
-    % as above, but on a single line       
-    I_neurons target CI /syn_in RandomConvergentConnect
+    % as above, but more compact       
+    I_neurons [ target ] 
+    << /rule fixed_indegree /indegree CI >>
+    << /model /syn_in >>  Connect
 
   }  bind forall % bind improves efficiency
   
 
   (Connecting inhibitory population.) =
 
-  % ... as above, just written more compactly    
+  % ... as above    
 
   I_neurons
   {
     /target Set
-    E_neurons target CE /syn_ex RandomConvergentConnect
-    I_neurons target CI /syn_in RandomConvergentConnect
+
+    E_neurons [ target ] 
+    << /rule fixed_indegree /indegree CE >>
+    << /model /syn_in >>  Connect
+
+    I_neurons [ target ] 
+    << /rule fixed_indegree /indegree CI >>
+    << /model /syn_in >>  Connect
   } bind forall		
 
   %Add external stimulus
 
   (Connecting Poisson stimulus.) =
-  E_stimulus
+  [ E_stimulus ]
   E_neurons Nstim Take     % pick the first Nstim neurons
-  /syn_ex
-  DivergentConnect
+  /all_to_all /syn_ex
+  Connect
 
 
   % Spike detectors are connected to the first Nrec neurons in each
@@ -241,10 +249,10 @@ def
   (Connecting spike detectors.) =    
 
   E_neurons Nrec Take     % pick the first Nrec neurons
-  E_detector ConvergentConnect
+  [ E_detector ] Connect
 
   I_neurons Nrec Take     % pick the first Nrec neurons
-  I_detector ConvergentConnect
+  [ I_detector ] Connect
       
   % read out time used for building    
      

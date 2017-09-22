@@ -54,11 +54,7 @@
 
 % The following test needs the model hh_psc_alpha_gap, so
 % this test should only run if we have GSL
-statusdict/have_gsl :: not
-{
-  exit_test_gracefully
-}
-if
+skip_if_without_gsl
 
 0.1 /h Set
 
@@ -67,9 +63,11 @@ ResetKernel
 0 << 
       /local_num_threads 1 
       /resolution h
-      /prelim_tol 0.0001
-      /prelim_interpolation_order 3
-      /max_num_prelim_iterations 10
+      /use_wfr true
+      /wfr_tol 0.0001
+      /wfr_interpolation_order 3
+      /wfr_max_iterations 10
+      /wfr_comm_interval 1.0
     >> SetStatus
     
 /hh_psc_alpha_gap Create /neuron1 Set
@@ -83,8 +81,10 @@ neuron1
 /voltmeter Create /vm Set
 vm << /withtime true  /time_in_steps true /interval h >> SetStatus
 
-neuron1 neuron2 << /weight 20.0 >> /gap_junction Connect
-neuron2 neuron1 << /weight 20.0 >> /gap_junction Connect
+[neuron1] [neuron2] 
+<< /rule /one_to_one /make_symmetric true >> 
+<< /model /gap_junction /weight 20.0 >>  Connect
+
 vm neuron2     1.0 h Connect
 
 

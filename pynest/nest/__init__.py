@@ -23,7 +23,8 @@
 Initializer of PyNEST.
 """
 
-import sys, os
+import sys
+import os
 
 # This is a workaround for readline import errors encountered with Anaconda
 # Python running on Ubuntu, when invoked from the terminal
@@ -38,25 +39,36 @@ try:
 except:
     pass
 
-
-# This is a workaround to make MPI-enabled NEST import properly. The
-# underlying problem is that the shared object pynestkernel
-# dynamically opens other libraries that open other libraries...
+# Make MPI-enabled NEST import properly. The underlying problem is that the
+# shared object pynestkernel dynamically opens other libraries that open
+# yet other libraries.
 try:
+    # Python 3.3 and later has flags in os
+    sys.setdlopenflags(os.RTLD_NOW | os.RTLD_GLOBAL)
+except AttributeError:
+    # Python 2.6 and 2.7 have flags in ctypes, but RTLD_NOW may only
+    # be available in dl or DLFCN and is required at least under
+    # Ubuntu 14.04. The latter two are not available under OSX,
+    # but OSX does not have and does not need RTLD_NOW. We therefore
+    # first try dl and DLFCN, then ctypes just for OSX.
     try:
         import dl
-    except:
-        import DLFCN as dl
-    sys.setdlopenflags(dl.RTLD_NOW|dl.RTLD_GLOBAL)
-except:
-    # this is a hack for Python 2.6 on Mac, where RTDL_NOW is nowhere
-    # to be found. See trac ticket #397
-    import ctypes
-    sys.setdlopenflags(ctypes.RTLD_GLOBAL) 
+        sys.setdlopenflags(dl.RTLD_GLOBAL | dl.RTLD_NOW)
+    except (ImportError, AttributeError):
+        try:
+            import DLFCN
+            sys.setdlopenflags(DLFCN.RTLD_GLOBAL | DLFCN.RTLD_NOW)
+        except (ImportError, AttributeError):
+            import ctypes
+            try:
+                sys.setdlopenflags(ctypes.RTLD_GLOBAL | ctypes.RTLD_NOW)
+            except AttributeError:
+                # We must test this last, since it is the only case without
+                # RTLD_NOW (OSX)
+                sys.setdlopenflags(ctypes.RTLD_GLOBAL)
 
-
-from . import pynestkernel as _kernel
-from .lib import hl_api_helper as hl_api
+from . import pynestkernel as _kernel      # noqa
+from .lib import hl_api_helper as hl_api   # noqa
 
 engine = _kernel.NESTEngine()
 
@@ -69,40 +81,74 @@ initialized = False
 
 
 def catching_sli_run(cmd):
-    """
-    Send a command string to the NEST kernel to be executed. This
-    function is is a wrapper around _kernel.runsli to raise errors that
-    happen on the SLI level as Python errors. cmd is the command to be
-    executed.
+    """Send a command string to the NEST kernel to be executed, catch
+    SLI errors and re-raise them in Python.
+
+    Parameters
+    ----------
+    cmd : str
+        The SLI command to be executed.
+    Raises
+    ------
+    NESTError
+        SLI errors are bubbled to the Python API as NESTErrors.
     """
 
-    engine.run('{%s} runprotected' % cmd)
+    if sys.version_info >= (3, ):
+        def encode(s):
+            return s
+
+        def decode(s):
+            return s
+    else:
+        def encode(s):
+            return s.encode('utf-8')
+
+        def decode(s):
+            return s.decode('utf-8')
+
+    engine.run('{%s} runprotected' % decode(cmd))
     if not sli_pop():
         errorname = sli_pop()
         message = sli_pop()
         commandname = sli_pop()
         engine.run('clear')
-        raise _kernel.NESTError("{0} in {1}{2}".format(errorname, commandname, message))
+        errorstring = '%s in %s%s' % (errorname, commandname, message)
+        raise _kernel.NESTError(encode(errorstring))
 
 sli_run = hl_api.sr = catching_sli_run
 
-def sli_func(s, *args, **kwargs):
-    """This function is a convenience function for executing the 
-       sequence sli_push(args); sli_run(s); y=sli_pop(). It takes
-       an arbitrary number of arguments and may have multiple
-       return values. The number of return values is determined by
-       the SLI function that was called.
 
-       Keyword arguments:
-       namespace - string: The sli code is executed in the given SLI namespace.
-       litconv   - bool  : Convert string args beginning with / to literals.
-       
-       Examples:
-         r,q = sli_func('dup rollu add',2,3)
-         r   = sli_func('add',2,3)
-         r   = sli_func('add pop',2,3)
-         l   = sli_func('CreateLayer', {...}, namespace='topology')
-         opt = sli_func('GetOptions', '/RandomConvergentConnect', litconv=True)
+def sli_func(s, *args, **kwargs):
+    """Convenience function for executing an SLI command s with
+    arguments args.
+
+    This executes the SLI sequence:
+    ``sli_push(args); sli_run(s); y=sli_pop()``
+
+    Parameters
+    ----------
+    s : str
+        Function to call
+    *args
+        Arbitrary number of arguments to pass to the SLI function
+    **kwargs
+        namespace : str
+            The sli code is executed in the given SLI namespace.
+        litconv : bool
+            Convert string args beginning with / to literals.
+
+    Returns
+    -------
+    The function may have multiple return values. The number of return values
+    is determined by the SLI function that was called.
+
+    Examples
+    --------
+    r,q = sli_func('dup rollu add',2,3)
+    r   = sli_func('add',2,3)
+    r   = sli_func('add pop',2,3)
+    l   = sli_func('CreateLayer', {...}, namespace='topology')
     """
 
     # check for namespace
@@ -113,8 +159,9 @@ def sli_func(s, *args, **kwargs):
         if kwargs['litconv']:
             slifun = 'sli_func_litconv'
     elif len(kwargs) > 0:
-        _kernel.NESTError("'namespace' and 'litconv' are the only valid keyword arguments.")
-    
+        _kernel.NESTError(
+            "'namespace' and 'litconv' are the only valid keyword arguments.")
+
     sli_push(args)       # push array of arguments on SLI stack
     sli_push(s)          # push command string
     sli_run(slifun)      # SLI support code to execute s on args
@@ -122,16 +169,25 @@ def sli_func(s, *args, **kwargs):
 
     if len(r) == 1:      # 1 return value is no tuple
         return r[0]
- 
-    if len(r) != 0:   
-        return r
 
+    if len(r) != 0:
+        return r
 
 hl_api.sli_func = sli_func
 
 
 def init(argv):
-    """Initialize. argv is passed to the NEST kernel."""
+    """Initializes NEST.
+
+    Parameters
+    ----------
+    argv : list
+        Command line arguments, passed to the NEST kernel
+
+    Raises
+    ------
+    _kernel.NESTError
+    """
 
     global initialized
 
@@ -147,7 +203,7 @@ def init(argv):
     initialized |= engine.init(argv, __path__[0])
 
     if initialized:
-        if not quiet :
+        if not quiet:
             engine.run("pywelcome")
 
         # Dirty hack to get tab-completion for models in IPython.
@@ -167,7 +223,7 @@ def init(argv):
 
 
 def test():
-    """ Runs a battery of unit tests on PyNEST """
+    """Runs all PyNEST unit tests."""
     from . import tests
     import unittest
 
@@ -179,8 +235,8 @@ def test():
 
     hl_api.set_debug(debug)
 
-from .pynestkernel import *
-from .lib.hl_api_helper import *
+from .pynestkernel import *         # noqa
+from .lib.hl_api_helper import *    # noqa
 
 # We search through the subdirectory "lib" of the "nest" module
 # directory and import the content of all Python files therein into
@@ -190,5 +246,5 @@ for name in os.listdir(os.path.join(os.path.dirname(__file__), "lib")):
     if name.endswith(".py") and not name.startswith('__'):
         exec("from .lib.{0} import *".format(name[:-3]))
 
-if not 'DELAY_PYNEST_INIT' in os.environ:
+if 'DELAY_PYNEST_INIT' not in os.environ:
     init(sys.argv)

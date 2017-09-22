@@ -52,29 +52,60 @@ public:
   virtual void get_status( DictionaryDatum& );
 
   /**
+      check for errors in time before run
+      @throws KernelException if illegal time passed
+  */
+  void assert_valid_simtime( Time const& );
+
+  /*
+     Simulate can be broken up into .. prepare... run.. run.. cleanup..
+     instead of calling simulate multiple times, and thus reduplicating
+     effort in prepare, cleanup many times.
+  */
+
+  /**
+     Initialize simulation for a set of run calls.
+     Must be called before a sequence of runs, and again after cleanup.
+  */
+  void prepare();
+  /**
+     Run a simulation for another `Time`. Can be repeated ad infinitum with
+     calls to get_status(), but any changes to the network are undefined,
+     leading serious risk of incorrect results.
+  */
+  void run( Time const& );
+  /**
+     Closes a set of runs, doing finalizations such as file closures.
+     After cleanup() is called, no more run()s can be called before another
+     prepare() call.
+  */
+  void cleanup();
+
+  /**
    * Simulate for the given time .
-   * This function performs the following steps
-   * 1. set the new simulation time
-   * 2. call prepare_simulation()
-   * 3. call resume()
-   * 4. call finalize_simulation()
+   * calls prepare(); run(Time&); cleanup();
    */
   void simulate( Time const& );
 
   /**
-   * Terminate the simulation after the time-slice is finished.
+   * Returns true if waveform relaxation is used.
    */
-  void terminate();
+  bool use_wfr() const;
 
   /**
-   *
+   * Get the desired communication interval for the waveform relaxation
    */
-  size_t get_prelim_interpolation_order() const;
+  double get_wfr_comm_interval() const;
 
   /**
-   *
+   * Get the convergence tolerance of the waveform relaxation method
    */
-  double_t get_prelim_tol() const;
+  double get_wfr_tol() const;
+
+  /**
+   * Get the interpolation order of the waveform relaxation method
+   */
+  size_t get_wfr_interpolation_order() const;
 
   /**
    * Get the time at the beginning of the current time slice.
@@ -94,9 +125,9 @@ public:
   Time const get_time() const;
 
   /**
-   * Return true, if the SimulationManager has already been simulated for some time.
-   * This does NOT indicate that simulate has been called (i.e. if Simulate
-   * is called with 0 as argument, the flag is still set to false.)
+   * Return true, if the SimulationManager has already been simulated for some
+   * time. This does NOT indicate that simulate has been called (i.e. if
+   * Simulate is called with 0 as argument, the flag is still set to false.)
    */
   bool has_been_simulated() const;
 
@@ -124,39 +155,39 @@ public:
   delay get_to_step() const;
 
 private:
-  void resume_( size_t );       //!< actually run simulation; TODO: review
-  size_t prepare_simulation_(); //! setup before simulation start
-  void finalize_simulation_();  //! wrap-up after simulation end
-  void update_();               //! actually perform simulation
-  bool prelim_update_( Node* );
+  void call_update_(); //!< actually run simulation, aka wrap update_
+  void update_();      //! actually perform simulation
+  bool wfr_update_( Node* );
   void advance_time_();   //!< Update time to next time step
   void print_progress_(); //!< TODO: Remove, replace by logging!
 
-  bool simulating_;                   //!< true if simulation in progress
-  Time clock_;                        //!< SimulationManager clock, updated once per slice
-  delay slice_;                       //!< current update slice
-  delay to_do_;                       //!< number of pending cycles.
-  delay to_do_total_;                 //!< number of requested cycles in current simulation.
-  delay from_step_;                   //!< update clock_+from_step<=T<clock_+to_step_
-  delay to_step_;                     //!< update clock_+from_step<=T<clock_+to_step_
-  timeval t_slice_begin_;             //!< Wall-clock time at the begin of a time slice
-  timeval t_slice_end_;               //!< Wall-clock time at the end of time slice
-  long t_real_;                       //!< Accumunated wall-clock time spent simulating (in us)
-  bool terminate_;                    //!< Terminate on signal or error
-  bool simulated_;                    //!< indicates whether the SimulationManager has already been
-                                      //!< simulated for sometime
-  bool print_time_;                   //!< Indicates whether time should be printed during
-                                      //!< simulations (or not)
-  long max_num_prelim_iterations_;    //!< maximal number of iterations used for preliminary update
-  size_t prelim_interpolation_order_; //!< interpolation order for prelim iterations
-  double_t prelim_tol_;               //!< Tolerance of prelim iterations
+  Time clock_;            //!< SimulationManager clock, updated once per slice
+  delay slice_;           //!< current update slice
+  delay to_do_;           //!< number of pending cycles.
+  delay to_do_total_;     //!< number of requested cycles in current simulation.
+  delay from_step_;       //!< update clock_+from_step<=T<clock_+to_step_
+  delay to_step_;         //!< update clock_+from_step<=T<clock_+to_step_
+  timeval t_slice_begin_; //!< Wall-clock time at the begin of a time slice
+  timeval t_slice_end_;   //!< Wall-clock time at the end of time slice
+  long t_real_;     //!< Accumunated wall-clock time spent simulating (in us)
+  bool simulating_; //!< true if simulation in progress
+  bool simulated_; //!< indicates whether the SimulationManager has already been
+                   //!< simulated for sometime
+  bool exit_on_user_signal_; //!< true if update loop was left due to signal
+  // received
+  bool inconsistent_state_; //!< true after exception during update_
+                            //!< simulation must not be resumed
+  bool print_time_;         //!< Indicates whether time should be printed during
+                            //!< simulations (or not)
+  bool use_wfr_;            //!< Indicates wheter waveform relaxation is used
+  double wfr_comm_interval_; //!< Desired waveform relaxation communication
+                             //!< interval (in ms)
+  double wfr_tol_; //!< Convergence tolerance of waveform relaxation method
+  long wfr_max_iterations_; //!< maximal number of iterations used for waveform
+                            //!< relaxation
+  size_t wfr_interpolation_order_; //!< interpolation order for waveform
+                                   //!< relaxation method
 };
-
-inline void
-SimulationManager::terminate()
-{
-  terminate_ = true;
-}
 
 inline Time const&
 SimulationManager::get_slice_origin() const
@@ -201,16 +232,28 @@ SimulationManager::get_to_step() const
   return to_step_;
 }
 
-inline size_t
-SimulationManager::get_prelim_interpolation_order() const
+inline bool
+SimulationManager::use_wfr() const
 {
-  return prelim_interpolation_order_;
+  return use_wfr_;
 }
 
-inline double_t
-SimulationManager::get_prelim_tol() const
+inline double
+SimulationManager::get_wfr_comm_interval() const
 {
-  return prelim_tol_;
+  return wfr_comm_interval_;
+}
+
+inline double
+SimulationManager::get_wfr_tol() const
+{
+  return wfr_tol_;
+}
+
+inline size_t
+SimulationManager::get_wfr_interpolation_order() const
+{
+  return wfr_interpolation_order_;
 }
 }
 

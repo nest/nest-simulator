@@ -94,7 +94,9 @@ FilesystemModule::FileNamesFunction::execute( SLIInterpreter* i ) const
     i->OStack.push_move( array_token );
   }
   else
+  {
     i->raiseerror( i->BadIOError );
+  }
 }
 
 void
@@ -105,7 +107,7 @@ FilesystemModule::SetDirectoryFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = chdir( sd->c_str() );
   i->OStack.pop();
-  if ( !s )
+  if ( not s )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
@@ -119,8 +121,8 @@ FilesystemModule::SetDirectoryFunction::execute( SLIInterpreter* i ) const
 /* BeginDocumentation
  Name: Directory - Return current working directory
  Synopsis: Directory -> string
- Description: Returns name of current working directory. This is where all ls, filestream etc.
- operations are done per default.
+ Description: Returns name of current working directory. This is where all ls,
+ filestream etc. operations are done per default.
  Parameters: string : Name of current working directory
  Examples: Directory = -> /home/MyAccount/SNiFF/synod2
  Bugs: -
@@ -140,7 +142,9 @@ FilesystemModule::DirectoryFunction::execute( SLIInterpreter* i ) const
   while ( getcwd( path_buffer, size - 1 ) == NULL )
   { // try again with a bigger buffer!
     if ( errno != ERANGE )
+    {
       i->raiseerror( i->BadIOError ); // size wasn't reason
+    }
     delete[] path_buffer;
     size += SIZE;
     path_buffer = new char[ size ];
@@ -156,12 +160,14 @@ void
 FilesystemModule::MoveFileFunction::execute( SLIInterpreter* i ) const
 // string string -> boolean
 {
-  StringDatum* src = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
-  StringDatum* dst = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
+  StringDatum* src =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
+  StringDatum* dst =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
   assert( src != NULL );
   assert( dst != NULL );
   int s = link( src->c_str(), dst->c_str() );
-  if ( !s )
+  if ( not s )
   {
     s = unlink( src->c_str() );
     if ( s ) // failed to remove old link: undo everything
@@ -171,7 +177,7 @@ FilesystemModule::MoveFileFunction::execute( SLIInterpreter* i ) const
     };
   };
   i->OStack.pop( 2 );
-  if ( !s )
+  if ( not s )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
@@ -186,23 +192,28 @@ void
 FilesystemModule::CopyFileFunction::execute( SLIInterpreter* i ) const
 // string string -> -
 {
-  StringDatum* src = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
-  StringDatum* dst = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
+  StringDatum* src =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
+  StringDatum* dst =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
   assert( src != NULL );
   assert( dst != NULL );
 
   std::ofstream deststream( dst->c_str() );
-  if ( !deststream )
+  if ( not deststream )
   {
-    i->message( SLIInterpreter::M_ERROR, "CopyFile", "Could not create destination file." );
+    i->message( SLIInterpreter::M_ERROR,
+      "CopyFile",
+      "Could not create destination file." );
     i->raiseerror( i->BadIOError );
     return;
   }
 
   std::ifstream sourcestream( src->c_str() );
-  if ( !sourcestream )
+  if ( not sourcestream )
   {
-    i->message( SLIInterpreter::M_ERROR, "CopyFile", "Could not open source file." );
+    i->message(
+      SLIInterpreter::M_ERROR, "CopyFile", "Could not open source file." );
     i->raiseerror( i->BadIOError );
     return;
   }
@@ -210,7 +221,7 @@ FilesystemModule::CopyFileFunction::execute( SLIInterpreter* i ) const
   // copy while file in one call (see Josuttis chap 13.9 (File Access), p. 631)
   deststream << sourcestream.rdbuf();
 
-  if ( !deststream )
+  if ( not deststream )
   {
     i->message( SLIInterpreter::M_ERROR, "CopyFile", "Error copying file." );
     i->raiseerror( i->BadIOError );
@@ -231,7 +242,7 @@ FilesystemModule::DeleteFileFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = unlink( sd->c_str() );
   i->OStack.pop();
-  if ( !s )
+  if ( not s )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
@@ -250,7 +261,7 @@ FilesystemModule::MakeDirectoryFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = mkdir( sd->c_str(), S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP );
   i->OStack.pop();
-  if ( !s )
+  if ( not s )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
@@ -269,7 +280,7 @@ FilesystemModule::RemoveDirectoryFunction::execute( SLIInterpreter* i ) const
   assert( sd != NULL );
   int s = rmdir( sd->c_str() );
   i->OStack.pop();
-  if ( !s )
+  if ( not s )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
@@ -305,7 +316,9 @@ FilesystemModule::TmpNamFunction::execute( SLIInterpreter* i ) const
   char* env = getenv( "TMPDIR" );
   std::string tmpdir( "/tmp" );
   if ( env )
+  {
     tmpdir = std::string( env );
+  }
 
   std::string tempfile;
   do
@@ -337,15 +350,17 @@ FilesystemModule::CompareFilesFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  StringDatum const* const flA = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
-  StringDatum const* const flB = dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
+  StringDatum const* const flA =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
+  StringDatum const* const flB =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 0 ).datum() );
   assert( flA );
   assert( flB );
 
   std::ifstream as( flA->c_str(), std::ifstream::in | std::ifstream::binary );
   std::ifstream bs( flB->c_str(), std::ifstream::in | std::ifstream::binary );
 
-  if ( !( as.good() && bs.good() ) )
+  if ( not( as.good() && bs.good() ) )
   {
     as.close();
     bs.close();
@@ -358,21 +373,29 @@ FilesystemModule::CompareFilesFunction::execute( SLIInterpreter* i ) const
     const int ac = as.get();
     const int bc = bs.get();
 
-    if ( !( as.fail() || bs.fail() ) )
+    if ( not( as.fail() || bs.fail() ) )
+    {
       equal = ac == bc;
+    }
   }
 
   if ( as.fail() != bs.fail() )
+  {
     equal = false; // different lengths
+  }
 
   as.close();
   bs.close();
 
   i->OStack.pop( 2 );
   if ( equal )
+  {
     i->OStack.push( i->baselookup( i->true_name ) );
+  }
   else
+  {
     i->OStack.push( i->baselookup( i->false_name ) );
+  }
 
   i->EStack.pop();
 }

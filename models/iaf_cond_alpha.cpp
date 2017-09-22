@@ -49,7 +49,8 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_cond_alpha > nest::iaf_cond_alpha::recordablesMap_;
+nest::RecordablesMap< nest::iaf_cond_alpha >
+  nest::iaf_cond_alpha::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -62,9 +63,12 @@ void
 RecordablesMap< iaf_cond_alpha >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::V_m, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::V_M > );
-  insert_( names::g_ex, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::G_EXC > );
-  insert_( names::g_in, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::G_INH > );
+  insert_(
+    names::V_m, &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::V_M > );
+  insert_( names::g_ex,
+    &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::G_EXC > );
+  insert_( names::g_in,
+    &iaf_cond_alpha::get_y_elem_< iaf_cond_alpha::State_::G_INH > );
 
   insert_( names::t_ref_remaining, &iaf_cond_alpha::get_r_ );
 }
@@ -75,26 +79,31 @@ RecordablesMap< iaf_cond_alpha >::create()
  * ---------------------------------------------------------------- */
 
 extern "C" inline int
-nest::iaf_cond_alpha_dynamics( double, const double y[], double f[], void* pnode )
+nest::iaf_cond_alpha_dynamics( double,
+  const double y[],
+  double f[],
+  void* pnode )
 {
   // a shorthand
   typedef nest::iaf_cond_alpha::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::iaf_cond_alpha& node = *( reinterpret_cast< nest::iaf_cond_alpha* >( pnode ) );
+  const nest::iaf_cond_alpha& node =
+    *( reinterpret_cast< nest::iaf_cond_alpha* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
-  const double_t I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex );
-  const double_t I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in );
-  const double_t I_leak = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
+  const double I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex );
+  const double I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in );
+  const double I_leak = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
 
   // dV_m/dt
-  f[ 0 ] = ( -I_leak - I_syn_exc - I_syn_inh + node.B_.I_stim_ + node.P_.I_e ) / node.P_.C_m;
+  f[ 0 ] = ( -I_leak - I_syn_exc - I_syn_inh + node.B_.I_stim_ + node.P_.I_e )
+    / node.P_.C_m;
 
   // d dg_exc/dt, dg_exc/dt
   f[ 1 ] = -y[ S::DG_EXC ] / node.P_.tau_synE;
@@ -131,23 +140,31 @@ nest::iaf_cond_alpha::State_::State_( const Parameters_& p )
 {
   y[ V_M ] = p.E_L; // initialize to reversal potential
   for ( size_t i = 1; i < STATE_VEC_SIZE; ++i )
+  {
     y[ i ] = 0;
+  }
 }
 
 nest::iaf_cond_alpha::State_::State_( const State_& s )
   : r( s.r )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y[ i ] = s.y[ i ];
+  }
 }
 
-nest::iaf_cond_alpha::State_& nest::iaf_cond_alpha::State_::operator=( const State_& s )
+nest::iaf_cond_alpha::State_& nest::iaf_cond_alpha::State_::operator=(
+  const State_& s )
 {
   if ( this == &s ) // avoid assignment to self
+  {
     return *this;
-
+  }
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y[ i ] = s.y[ i ];
+  }
 
   r = s.r;
   return *this;
@@ -212,18 +229,22 @@ nest::iaf_cond_alpha::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_syn_in, tau_synI );
 
   updateValue< double >( d, names::I_e, I_e );
-
   if ( V_reset >= V_th )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
-
+  }
   if ( C_m <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( t_ref < 0 )
+  {
     throw BadProperty( "Refractory time cannot be negative." );
-
+  }
   if ( tau_synE <= 0 || tau_synI <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 }
 
 void
@@ -233,7 +254,8 @@ nest::iaf_cond_alpha::State_::get( DictionaryDatum& d ) const
 }
 
 void
-nest::iaf_cond_alpha::State_::set( const DictionaryDatum& d, const Parameters_& )
+nest::iaf_cond_alpha::State_::set( const DictionaryDatum& d,
+  const Parameters_& )
 {
   updateValue< double >( d, names::V_m, y[ V_M ] );
 }
@@ -264,11 +286,17 @@ nest::iaf_cond_alpha::~iaf_cond_alpha()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
+  {
     gsl_odeiv_step_free( B_.s_ );
+  }
   if ( B_.c_ )
+  {
     gsl_odeiv_control_free( B_.c_ );
+  }
   if ( B_.e_ )
+  {
     gsl_odeiv_evolve_free( B_.e_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -297,19 +325,32 @@ nest::iaf_cond_alpha::init_buffers_()
   B_.IntegrationStep_ = B_.step_;
 
   if ( B_.s_ == 0 )
-    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  {
+    B_.s_ =
+      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_step_reset( B_.s_ );
+  }
 
   if ( B_.c_ == 0 )
+  {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
+  }
   else
+  {
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
+  }
 
   if ( B_.e_ == 0 )
+  {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_evolve_reset( B_.e_ );
+  }
 
   B_.sys_.function = iaf_cond_alpha_dynamics;
   B_.sys_.jacobian = NULL;
@@ -322,13 +363,15 @@ nest::iaf_cond_alpha::init_buffers_()
 void
 nest::iaf_cond_alpha::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
 
   V_.PSConInit_E = 1.0 * numerics::e / P_.tau_synE;
   V_.PSConInit_I = 1.0 * numerics::e / P_.tau_synI;
   V_.RefractoryCounts = Time( Time::ms( P_.t_ref ) ).get_steps();
 
-  assert( V_.RefractoryCounts >= 0 ); // since t_ref >= 0, this can only fail in error
+  // since t_ref >= 0, this can only fail in error
+  assert( V_.RefractoryCounts >= 0 );
 }
 
 /* ----------------------------------------------------------------
@@ -336,13 +379,16 @@ nest::iaf_cond_alpha::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_cond_alpha::update( Time const& origin, const long_t from, const long_t to )
+nest::iaf_cond_alpha::update( Time const& origin,
+  const long from,
+  const long to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
     double t = 0.0;
@@ -369,10 +415,10 @@ nest::iaf_cond_alpha::update( Time const& origin, const long_t from, const long_
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y );               // neuronal state
-
-
       if ( status != GSL_SUCCESS )
+      {
         throw GSLSolverFailure( get_name(), status );
+      }
     }
 
     // refractoriness and spike generation
@@ -413,13 +459,17 @@ nest::iaf_cond_alpha::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.spike_exc_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  {
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
-    B_.spike_inh_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-      -e.get_weight() * e.get_multiplicity() ); // ensure conductance is positive
+  {
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
+      -e.get_weight() * e.get_multiplicity() );
+  } // ensure conductance is positive
 }
 
 void

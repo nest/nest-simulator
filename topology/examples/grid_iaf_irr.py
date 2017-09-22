@@ -22,7 +22,7 @@
 '''
 NEST Topology Module Example
 
-Create layer of 12 freely placed iaf_neurons, visualize
+Create layer of 12 freely placed iaf_psc_alpha neurons, visualize
 
 BCCN Tutorial @ CNS*09
 Hans Ekkehard Plesser, UMB
@@ -32,17 +32,18 @@ import nest
 import pylab
 import random
 import nest.topology as topo
+
 pylab.ion()
 
 nest.ResetKernel()
 
 # generate list of 12 (x,y) pairs
-pos = [[random.uniform(-0.75,0.75), random.uniform(-0.5,0.5)]
+pos = [[random.uniform(-0.75, 0.75), random.uniform(-0.5, 0.5)]
        for j in range(12)]
 
 l1 = topo.CreateLayer({'extent': [2., 1.5],
-                       'positions': pos, 
-                       'elements': 'iaf_neuron'})
+                       'positions': pos,
+                       'elements': 'iaf_psc_alpha'})
 
 nest.PrintNetwork()
 nest.PrintNetwork(2)

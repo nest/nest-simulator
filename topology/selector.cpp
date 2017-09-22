@@ -39,11 +39,12 @@ Selector::Selector( const DictionaryDatum& d )
   : model( -1 )
   , depth( -1 )
 {
-  if ( updateValue< long_t >( d, names::lid, depth ) )
+  if ( updateValue< long >( d, names::lid, depth ) )
   {
-
     if ( depth <= 0 )
+    {
       throw BadProperty( "lid must be >0" );
+    }
 
     depth -= 1; // lid starts at 1 for backwards compatibility
   }
@@ -52,12 +53,14 @@ Selector::Selector( const DictionaryDatum& d )
   if ( updateValue< std::string >( d, names::model, modelname ) )
   {
 
-    const Token model_token = kernel().model_manager.get_modeldict()->lookup( modelname );
+    const Token model_token =
+      kernel().model_manager.get_modeldict()->lookup( modelname );
 
     if ( model_token.empty() )
+    {
       throw UnknownModelName( modelname );
-
-    model = static_cast< long_t >( model_token );
+    }
+    model = static_cast< long >( model_token );
   }
 }
 

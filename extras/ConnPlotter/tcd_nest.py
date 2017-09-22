@@ -25,36 +25,33 @@
 Interface routines to extract synapse information from NEST.
 
 This file provides the interface to NEST required to plot effective
-kernel connectivity as total charge deposited (TCD) as a function of 
+kernel connectivity as total charge deposited (TCD) as a function of
 mean membrane potential.
 
 In order to use TCD plots, you need to create an instance of class
 SynapsesNEST. The constructor will import NEST to obtain all necessary
 information. TCD can then be obtained by calling the generated object.
 
-NB: At present, TCD is supported only for the ht_model.
+NB: At present, TCD is supported only for the ht_model. NMDA charge
+    deposition is based on steady-state value for open channels at given
+    voltage.
 """
-
-# ----------------------------------------------------------------------------
-
-#__version__ = '$Revision: 445 $'
-#__date__    = '$Date: 2009-11-11 15:27:13 +0100 (Wed, 11 Nov 2009) $'
-__author__  = 'Hans Ekkehard Plesser'
-
-__all__ = ['TCD_NEST']
 
 # ----------------------------------------------------------------------------
 
 import numpy as np
 
+__all__ = ['TCD_NEST']
+
 # ----------------------------------------------------------------------------
+
 
 class TCD(object):
     """
     Access total charge deposited (TCD) information for NEST neurons.
 
-    Create one instance of this class and call it to obtain charge 
-    information. 
+    Create one instance of this class and call it to obtain charge
+    information.
 
     NB: The constructor for this class imports NEST.
 
@@ -67,7 +64,7 @@ class TCD(object):
     def __init__(self, modelList):
 
         """
-        Create TCD computer for given modelList. 
+        Create TCD computer for given modelList.
         The constructor instantiates NEST, including a call to
         ResetKernel() and instantiates all models in modelList.
         From all models derived from ht_model, synapse information
@@ -76,14 +73,15 @@ class TCD(object):
 
         modelList: tuples of (parent, model, dict)
 
-        Note: nest must have been imported before and all necessary modules loaded.
+        Note: nest must have been imported before and all necessary modules
+              loaded.
         """
         import nest
         nest.ResetKernel()
 
         # keep "list" over all models derived from ht_neuron
         ht_kids = set(["ht_neuron"])
-        
+
         for parent, model, props in modelList:
             if parent in ht_kids and model not in ht_kids:
                 nest.CopyModel(parent, model, props)
@@ -133,18 +131,19 @@ class TCD(object):
             syn is name of synapse type.
             props is property dictionary of ht_neuron.
             """
-            td = props[syn+'_Tau_2']  # decay time
-            tr = props[syn+'_Tau_1']  # rise time
+            td = props[syn + '_tau_2']  # decay time
+            tr = props[syn + '_tau_1']  # rise time
             # integral over g(t)
-            self._int_g  = props[syn+'_g_peak'] * (td-tr) / \
-                ( (tr/td) ** (tr/(td-tr)) - (tr/td) ** (td/(td-tr)) )
-            self._e_rev  = props[syn+'_E_rev']
+            self._int_g = (props[syn + '_g_peak'] * (td - tr) /
+                           ((tr / td) ** (tr / (td - tr)) -
+                            (tr / td) ** (td / (td - tr))))
+            self._e_rev = props[syn + '_E_rev']
 
         def __call__(self, V):
             """
             V is membrane potential.
             """
-            return - self._int_g * (V - self._e_rev)
+            return -self._int_g * (V - self._e_rev)
 
         def __str__(self):
             return "_int_g = %f, _e_rev = %f" % (self._int_g, self._e_rev)
@@ -154,31 +153,36 @@ class TCD(object):
     class _TcdNMDA(object):
         """
         Class representing NMDA synapse model in ht_neuron.
+
+        Note: NMDA charge deposition is based on steady-state value
+              for open channels at given voltage.
         """
 
         def __init__(self, props):
             """
             props is property dictionary of ht_neuron.
             """
-            td = props['NMDA_Tau_2']  # decay time
-            tr = props['NMDA_Tau_1']  # rise time
+            td = props['tau_decay_NMDA']  # decay time
+            tr = props['tau_rise_NMDA']  # rise time
             # integral over g(t)
-            self._int_g  = props['NMDA_g_peak'] * (td-tr) / \
-                ( (tr/td) ** (tr/(td-tr)) - (tr/td) ** (td/(td-tr)) )
-            self._e_rev  = props['NMDA_E_rev']
-            self._v_act  = props['NMDA_Vact']
-            self._s_act  = props['NMDA_Sact']
+            self._int_g = (props['g_peak_NMDA'] * (td - tr) /
+                           ((tr / td) ** (tr / (td - tr)) -
+                            (tr / td) ** (td / (td - tr))))
+            self._e_rev = props['E_rev_NMDA']
+            self._v_act = props['V_act_NMDA']
+            self._s_act = props['S_act_NMDA']
 
         def __call__(self, V):
             """
             V is membrane potential.
             """
-            return - self._int_g * (V - self._e_rev) / \
-                ( 1 + np.exp( (self._v_act - V) / self._s_act ) )
+            return (-self._int_g * (V - self._e_rev) /
+                    (1. + np.exp((self._v_act - V) / self._s_act)))
 
         def __str__(self):
             return "_int_g = %f, _e_rev = %f, _v_act = %f, _s_act = %f" \
-                % (self._int_g, self._e_rev, self._v_act, self._s_act)
+                   % (self._int_g, self._e_rev, self._v_act, self._s_act)
+
 
 # ----------------------------------------------------------------------------
 
@@ -186,15 +190,17 @@ if __name__ == '__main__':
 
     import matplotlib.pyplot as plt
     import sys
+
     sys.path.append('/Users/plesser/Projects/hill-model/scripts')
 
     import ht_def_new_sq
     import ht_params
-    htl, htc, htm=ht_def_new_sq.hill_tononi(ht_params.Params)
+
+    htl, htc, htm = ht_def_new_sq.hill_tononi(ht_params.Params)
 
     tcd = TCD(htm)
 
-    v=np.linspace(-90,0,100)
+    v = np.linspace(-90, 0, 100)
     syns = ['AMPA', 'NMDA', 'GABA_A', 'GABA_B']
 
     for s in syns:
@@ -203,5 +209,3 @@ if __name__ == '__main__':
 
     plt.legend(syns)
     plt.show()
-
-    

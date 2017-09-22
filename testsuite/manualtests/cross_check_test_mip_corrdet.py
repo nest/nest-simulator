@@ -30,7 +30,8 @@
 #
 
 from scipy import *
-from matplotlib.pylab import * # for plot
+from matplotlib.pylab import *  # for plot
+
 
 # Auto- and crosscorrelation functions for spike trains.
 #
@@ -51,45 +52,43 @@ from matplotlib.pylab import * # for plot
 # spike2: second spike train [tspike...]
 #
 def corr_spikes_sorted(spike1, spike2, tbin, tau_max, h):
+    tau_max_i = int(tau_max / h)
+    tbin_i = int(tbin / h)
 
-  tau_max_i = int(tau_max/h)
-  tbin_i = int(tbin/h)
+    cross = zeros(int(2 * tau_max_i / tbin_i + 1), 'd')
 
-  cross = zeros(int(2*tau_max_i/tbin_i+1), 'd')
+    j0 = 0
 
-  j0 = 0
+    for spki in spike1:
+        j = j0
+        while j < len(spike2) and spike2[j] - spki < -tau_max_i - tbin_i / 2.0:
+            j += 1
+        j0 = j
 
-  for spki in spike1:
-    j = j0
-    while j < len(spike2) and spike2[j] - spki < -tau_max_i - tbin_i/2.0:
-      j += 1
-    j0 = j
-    
-    while j < len(spike2) and spike2[j] - spki < tau_max_i + tbin_i/2.0:
-      cross[int((spike2[j] - spki + tau_max_i + 0.5*tbin_i)/tbin_i)] += 1.0
-      j += 1
-      
-  return cross
+        while j < len(spike2) and spike2[j] - spki < tau_max_i + tbin_i / 2.0:
+            cross[int(
+                (spike2[j] - spki + tau_max_i + 0.5 * tbin_i) / tbin_i)] += 1.0
+            j += 1
+
+    return cross
 
 
 def main():
+    # resolution
+    h = 0.1
+    tau_max = 100.0  # ms correlation window
+    t_bin = 10.0  # ms bin size
 
-  # resolution
-  h = 0.1
-  tau_max = 100.0 # ms correlation window
-  t_bin = 10.0 # ms bin size
-  
+    # read input from spike detector
+    spikes = load('spike_detector-0-0-3.gdf')
 
-  # read input from spike detector
-  spikes = load('spike_detector-0-0-3.gdf')
+    sp1 = spikes[find(spikes[:, 0] == 4), 1]
+    sp2 = spikes[find(spikes[:, 0] == 5), 1]
 
-  sp1 = spikes[find(spikes[:,0] == 4), 1]
-  sp2 = spikes[find(spikes[:,0] == 5), 1]
+    cross = corr_spikes_sorted(sp1, sp2, t_bin, tau_max, h)
 
-  cross = corr_spikes_sorted(sp1, sp2, t_bin, tau_max, h)
-
-  print cross
-  print sum(cross)
+    print(cross)
+    print(sum(cross))
 
 
 main()

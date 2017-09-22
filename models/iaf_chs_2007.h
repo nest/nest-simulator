@@ -102,7 +102,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -124,7 +125,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( const Time&, const long_t, const long_t );
+  void update( const Time&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_chs_2007 >;
@@ -138,12 +139,12 @@ private:
   struct State_
   {
     // state variables
-    double_t i_syn_ex_; // postsynaptic current for exc. inputs, variable 1
-    double_t V_syn_;    // psp waveform, variable 2
-    double_t V_spike_;  // post spike reset waveform, variable 3
-    double_t V_m_;      // membrane potential, variable 4
+    double i_syn_ex_; // postsynaptic current for exc. inputs, variable 1
+    double V_syn_;    // psp waveform, variable 2
+    double V_spike_;  // post spike reset waveform, variable 3
+    double V_m_;      // membrane potential, variable 4
 
-    ulong_t position_;
+    unsigned long position_;
 
     State_(); //!< Default initialization
 
@@ -160,31 +161,31 @@ private:
   {
 
     /** Membrane time constant in ms. */
-    double_t tau_epsp_;
+    double tau_epsp_;
 
     /** Refractory time constant in ms. */
-    double_t tau_reset_;
+    double tau_reset_;
 
     /** Resting potential. Normalized = 0.0. */
-    double_t E_L_;
+    double E_L_;
 
     /** Threshold. Normalized = 1.0. */
-    double_t U_th_;
+    double U_th_;
 
     /** Normalized maximum amplitude of the EPSP. */
-    double_t U_epsp_;
+    double U_epsp_;
 
     /** Normalized magnitude of the membrane potential reset. */
-    double_t U_reset_;
+    double U_reset_;
 
     /** Membrane capacitance. Note: Does not have any function currently. */
-    double_t C_;
+    double C_;
 
     /** Noise scale. */
-    double_t U_noise_;
+    double U_noise_;
 
     /** Noise signal. */
-    std::vector< double_t > noise_;
+    std::vector< double > noise_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -229,14 +230,14 @@ private:
         weight one has an amplitude of 1 mV.
         @note mog - I assume this, not checked.
     */
-    //    double_t PSCInitialValue_;
+    //    double PSCInitialValue_;
 
     // time evolution operator
-    double_t P20_;
-    double_t P11ex_;
-    double_t P21ex_;
-    double_t P22_;
-    double_t P30_;
+    double P20_;
+    double P11ex_;
+    double P21ex_;
+    double P22_;
+    double P30_;
 
     librandom::NormalRandomDev normal_dev_; //!< random deviate generator
   };
@@ -244,7 +245,7 @@ private:
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the real membrane potential
-  double_t
+  double
   get_V_m_() const
   {
     return S_.V_m_ + P_.E_L_;
@@ -270,7 +271,10 @@ private:
 };
 
 inline port
-iaf_chs_2007::send_test_event( Node& target, rport receptor_type, synindex, bool )
+iaf_chs_2007::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -282,7 +286,9 @@ inline port
 iaf_chs_2007::handles_test_event( SpikeEvent&, port receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -290,7 +296,9 @@ inline port
 iaf_chs_2007::handles_test_event( DataLoggingRequest& dlr, port receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

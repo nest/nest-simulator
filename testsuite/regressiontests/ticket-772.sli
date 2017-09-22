@@ -42,7 +42,7 @@
 
 M_ERROR setverbosity
 
-is_threaded_with_openmp not { exit_test_gracefully } if
+skip_if_not_threaded
 
 [1 2] /n Set
 
@@ -50,24 +50,21 @@ is_threaded_with_openmp not { exit_test_gracefully } if
   ResetKernel
   
   /iaf_neuron 2 Create
-  n n [1 1] [[1] [1]] [[4] [6]] /static_synapse RandomConvergentConnect
-  % this one tests the convergent_connect with vectors, which
-  % is called by different other RandomConvergentConnect and 
-  % with convergent_connect(src_from,src_to,tgt_from,tgt_to,...)
+  n [1] << /rule /all_to_all >> << /model /static_synapse /weight 1 /delay 4 >> Connect
 } pass_or_die
 
 {
   ResetKernel
   
   /iaf_neuron 2 Create
-  n 1 [1 1] [4 6] /static_synapse ConvergentConnect
+  n [1] << /rule /all_to_all >> << /model /static_synapse /weight [1 1] cv_iv /delay [4 6] cv_iv >> Connect
 } pass_or_die
 
 {
   ResetKernel
   
   /iaf_neuron 2 Create
-  1 n [1] [4] /static_synapse DivergentConnect
+  n n << /rule /one_to_one >> << /model /static_synapse /weight [1 1] cv_iv /delay [4 6] cv_iv >> Connect
 } pass_or_die
 
 endusing

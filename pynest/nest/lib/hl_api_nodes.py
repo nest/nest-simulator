@@ -26,13 +26,28 @@ Functions for node handling
 from .hl_api_helper import *
 from .hl_api_info import SetStatus
 
+
 @check_stack
 def Create(model, n=1, params=None):
+    """Create n instances of type model.
+
+    Parameters
+    ----------
+    model : str
+        Name of the model to create
+    n : int, optional
+        Number of instances to create
+    params : TYPE, optional
+        Parameters for the new nodes. A single dictionary or a list of
+        dictionaries with size n. If omitted, the model's defaults are used.
+
+    Returns
+    -------
+    list:
+        Global IDs of created nodes
     """
-    Create n instances of type model. Parameters for the new nodes can
-    are given as params (a single dictionary or a list of dictionaries
-    with size n). If omitted, the model's defaults are used.
-    """
+
+    model_deprecation_warning(model)
 
     if isinstance(params, dict):
         cmd = "/%s 3 1 roll exch Create" % model
@@ -50,18 +65,33 @@ def Create(model, n=1, params=None):
         try:
             SetStatus(gids, params)
         except:
-            warnings.warn("SetStatus() call failed, but nodes have already been created! "
-                          "The GIDs of the new nodes are: {0}.".format(gids))
+            warnings.warn(
+                "SetStatus() call failed, but nodes have already been " +
+                "created! The GIDs of the new nodes are: {0}.".format(gids))
             raise
 
     return gids
 
 
 @check_stack
-def GetLID(gid) :
-    """
-    Return the local id of a node with gid.
-    GetLID(gid) -> lid
+@deprecated('', 'GetLID is deprecated and will be removed in NEST 3.0. Use \
+index into GIDCollection instead.')
+def GetLID(gid):
+    """Return the local id of a node with the global ID gid.
+
+    Parameters
+    ----------
+    gid : int
+        Global id of node
+
+    Returns
+    -------
+    int:
+        Local id of node
+
+    Raises
+    ------
+    NESTError
     """
 
     if len(gid) > 1:

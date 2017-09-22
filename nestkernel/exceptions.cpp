@@ -32,30 +32,31 @@
 #include "interpret.h"
 
 std::string
-nest::UnknownModelName::message()
+nest::UnknownModelName::message() const
 {
   std::ostringstream msg;
   msg << "/" << n_.toString() + " is not a known model name. "
-    "Please check the modeldict for a list of available models."
+    "Please check the modeldict for a list of available models.";
 #ifndef HAVE_GSL
-    " A frequent cause for this error is that NEST was compiled "
-    "without the GNU Scientific Library, which is required for "
-    "the conductance-based neuron models."
+  msg << " A frequent cause for this error is that NEST was compiled "
+         "without the GNU Scientific Library, which is required for "
+         "the conductance-based neuron models.";
 #endif
-    ;
   return msg.str();
 }
 
 std::string
-nest::NewModelNameExists::message()
+nest::NewModelNameExists::message() const
 {
   std::ostringstream msg;
-  msg << "/" << n_.toString() + " is the name of an existing model and cannot be re-used.";
+  msg << "/"
+      << n_.toString()
+      + " is the name of an existing model and cannot be re-used.";
   return msg.str();
 }
 
 std::string
-nest::UnknownModelID::message()
+nest::UnknownModelID::message() const
 {
   std::ostringstream msg;
 
@@ -64,14 +65,15 @@ nest::UnknownModelID::message()
 }
 
 std::string
-nest::ModelInUse::message()
+nest::ModelInUse::message() const
 {
-  std::string str = "Model " + modelname_ + " is in use and cannot be unloaded/uninstalled.";
+  std::string str =
+    "Model " + modelname_ + " is in use and cannot be unloaded/uninstalled.";
   return str.c_str();
 }
 
 std::string
-nest::UnknownSynapseType::message()
+nest::UnknownSynapseType::message() const
 {
   std::ostringstream out;
   if ( synapsename_.empty() )
@@ -86,7 +88,7 @@ nest::UnknownSynapseType::message()
 }
 
 std::string
-nest::UnknownNode::message()
+nest::UnknownNode::message() const
 {
   std::ostringstream out;
 
@@ -103,7 +105,7 @@ nest::UnknownNode::message()
 }
 
 std::string
-nest::NoThreadSiblingsAvailable::message()
+nest::NoThreadSiblingsAvailable::message() const
 {
   std::ostringstream out;
 
@@ -121,7 +123,7 @@ nest::NoThreadSiblingsAvailable::message()
 
 
 std::string
-nest::LocalNodeExpected::message()
+nest::LocalNodeExpected::message() const
 {
   std::ostringstream out;
   out << "Node with id " << id_ << " is not a local node.";
@@ -129,7 +131,7 @@ nest::LocalNodeExpected::message()
 }
 
 std::string
-nest::NodeWithProxiesExpected::message()
+nest::NodeWithProxiesExpected::message() const
 {
   std::ostringstream out;
   out << "Nest expected a node with proxies (eg normal model neuron),"
@@ -139,26 +141,27 @@ nest::NodeWithProxiesExpected::message()
 }
 
 std::string
-nest::UnknownReceptorType::message()
+nest::UnknownReceptorType::message() const
 {
   std::ostringstream msg;
 
-  msg << "Receptor type " << receptor_type_ << " is not available in " << name_ << ".";
-  return msg.str();
-}
-
-std::string
-nest::IncompatibleReceptorType::message()
-{
-  std::ostringstream msg;
-
-  msg << "Receptor type " << receptor_type_ << " in " << name_ << " does not accept " << event_type_
+  msg << "Receptor type " << receptor_type_ << " is not available in " << name_
       << ".";
   return msg.str();
 }
 
 std::string
-nest::UnknownPort::message()
+nest::IncompatibleReceptorType::message() const
+{
+  std::ostringstream msg;
+
+  msg << "Receptor type " << receptor_type_ << " in " << name_
+      << " does not accept " << event_type_ << ".";
+  return msg.str();
+}
+
+std::string
+nest::UnknownPort::message() const
 {
   std::ostringstream out;
   out << "Port with id " << id_ << " does not exist.";
@@ -166,16 +169,33 @@ nest::UnknownPort::message()
 }
 
 std::string
-nest::IllegalConnection::message()
+nest::IllegalConnection::message() const
 {
   if ( msg_.empty() )
+  {
     return "Creation of connection is not possible.";
+  }
   else
+  {
     return "Creation of connection is not possible because:\n" + msg_;
+  }
 }
 
 std::string
-nest::UnknownThread::message()
+nest::InexistentConnection::message() const
+{
+  if ( msg_.empty() )
+  {
+    return "Deletion of connection is not possible.";
+  }
+  else
+  {
+    return "Deletion of connection is not possible because:\n" + msg_;
+  }
+}
+
+std::string
+nest::UnknownThread::message() const
 {
   std::ostringstream out;
   out << "Thread with id " << id_ << " is outside of range.";
@@ -183,7 +203,7 @@ nest::UnknownThread::message()
 }
 
 std::string
-nest::BadDelay::message()
+nest::BadDelay::message() const
 {
   std::ostringstream out;
   out << "Delay value " << delay_ << " is invalid: " << message_;
@@ -191,126 +211,139 @@ nest::BadDelay::message()
 }
 
 std::string
-nest::UnexpectedEvent::message()
+nest::UnexpectedEvent::message() const
 {
   return "Node cannot handle received event.";
 }
 
 std::string
-nest::UnsupportedEvent::message()
+nest::UnsupportedEvent::message() const
 {
-  return std::string( "The current synapse type does not support the event type of the sender.\n" )
-    + std::string(
-           "       A common reason for this is a dynamic synapse between a device and a neuron." );
+  return std::string(
+    "The current synapse type does not support the event type of the "
+    "sender.\n"
+    "       A common reason for this is a dynamic synapse between a "
+    "device and a neuron." );
 }
 
 std::string
-nest::BadProperty::message()
-{
-  return msg_;
-}
-
-std::string
-nest::BadParameter::message()
+nest::BadProperty::message() const
 {
   return msg_;
 }
 
 std::string
-nest::DimensionMismatch::message()
+nest::BadParameter::message() const
+{
+  return msg_;
+}
+
+std::string
+nest::DimensionMismatch::message() const
 {
   std::ostringstream out;
-  if ( expected_ != provided_ )
+
+  if ( not msg_.empty() )
   {
-    out << "Expected dimension size: " << expected_ << "\nProvided dimension size: " << provided_;
+    out << msg_;
+  }
+  else if ( expected_ == -1 )
+  {
+    out << "Dimensions of two or more variables do not match.";
   }
   else
   {
-    out << "Dimension of two or more variables do not match.";
+    out << "Expected dimension size: " << expected_
+        << "\nProvided dimension size: " << provided_;
   }
+
   return out.str();
 }
 
 std::string
-nest::DistributionError::message()
+nest::DistributionError::message() const
 {
   return std::string();
 }
 
 std::string
-nest::SubnetExpected::message()
+nest::SubnetExpected::message() const
 {
   return std::string();
 }
 
 std::string
-nest::SimulationError::message()
+nest::SimulationError::message() const
 {
   return std::string(
-    "One or more nodes reported an error. Please check the output preceeding this message." );
+    "One or more nodes reported an error. Please check the output preceeding "
+    "this message." );
 }
 
 std::string
-nest::InvalidDefaultResolution::message()
+nest::InvalidDefaultResolution::message() const
 {
   std::ostringstream msg;
   msg << "The default resolution of " << Time::get_resolution()
-      << " is not consistent with the value " << val_ << " of property '" << prop_.toString()
-      << "' in model " << model_ << ".\n"
+      << " is not consistent with the value " << val_ << " of property '"
+      << prop_.toString() << "' in model " << model_ << ".\n"
       << "This is an internal NEST error, please report it at "
          "https://github.com/nest/nest-simulator/issues";
   return msg.str();
 }
 
 std::string
-nest::InvalidTimeInModel::message()
+nest::InvalidTimeInModel::message() const
 {
   std::ostringstream msg;
-  msg << "The time property " << prop_.toString() << " = " << val_ << " of model " << model_
-      << " is not compatible with the resolution " << Time::get_resolution() << ".\n"
+  msg << "The time property " << prop_.toString() << " = " << val_
+      << " of model " << model_ << " is not compatible with the resolution "
+      << Time::get_resolution() << ".\n"
       << "Please set a compatible value with SetDefaults!";
   return msg.str();
 }
 
 std::string
-nest::StepMultipleRequired::message()
+nest::StepMultipleRequired::message() const
 {
   std::ostringstream msg;
-  msg << "The time property " << prop_.toString() << " = " << val_ << " of model " << model_
-      << " must be a multiple of the resolution " << Time::get_resolution() << ".";
+  msg << "The time property " << prop_.toString() << " = " << val_
+      << " of model " << model_ << " must be a multiple of the resolution "
+      << Time::get_resolution() << ".";
   return msg.str();
 }
 
 std::string
-nest::TimeMultipleRequired::message()
+nest::TimeMultipleRequired::message() const
 {
   std::ostringstream msg;
-  msg << "In model " << model_ << ", the time property " << prop_a_.toString() << " = " << val_a_
-      << " must be multiple of time property " << prop_b_.toString() << " = " << val_b_ << '.';
+  msg << "In model " << model_ << ", the time property " << prop_a_.toString()
+      << " = " << val_a_ << " must be multiple of time property "
+      << prop_b_.toString() << " = " << val_b_ << '.';
   return msg.str();
 }
 
 #ifdef HAVE_MUSIC
 std::string
-nest::MUSICPortUnconnected::message()
+nest::MUSICPortUnconnected::message() const
 {
   std::ostringstream msg;
-  msg << "Cannot use instance of model " << model_ << " because the MUSIC port " << portname_
-      << " is unconnected.";
+  msg << "Cannot use instance of model " << model_ << " because the MUSIC port "
+      << portname_ << " is unconnected.";
   return msg.str();
 }
 
 std::string
-nest::MUSICPortHasNoWidth::message()
+nest::MUSICPortHasNoWidth::message() const
 {
   std::ostringstream msg;
-  msg << "Cannot use instance of model " << model_ << " because the MUSIC port " << portname_
-      << " has no width specified in configuration file.";
+  msg << "Cannot use instance of model " << model_ << " because the MUSIC port "
+      << portname_ << " has no width specified in configuration file.";
   return msg.str();
 }
 
 std::string
-nest::MUSICPortAlreadyPublished::message()
+nest::MUSICPortAlreadyPublished::message() const
 {
   std::ostringstream msg;
   msg << "The instance of model " << model_
@@ -320,7 +353,7 @@ nest::MUSICPortAlreadyPublished::message()
 }
 
 std::string
-nest::MUSICSimulationHasRun::message()
+nest::MUSICSimulationHasRun::message() const
 {
   std::ostringstream msg;
   msg << "The instance of model " << model_
@@ -329,16 +362,16 @@ nest::MUSICSimulationHasRun::message()
 }
 
 std::string
-nest::MUSICChannelUnknown::message()
+nest::MUSICChannelUnknown::message() const
 {
   std::ostringstream msg;
-  msg << "The port " << portname_ << " cannot be mapped in " << model_ << " because the channel "
-      << channel_ << " does not exists.";
+  msg << "The port " << portname_ << " cannot be mapped in " << model_
+      << " because the channel " << channel_ << " does not exists.";
   return msg.str();
 }
 
 std::string
-nest::MUSICPortUnknown::message()
+nest::MUSICPortUnknown::message() const
 {
   std::ostringstream msg;
   msg << "The port " << portname_ << " does not exist.";
@@ -347,7 +380,7 @@ nest::MUSICPortUnknown::message()
 
 
 std::string
-nest::MUSICChannelAlreadyMapped::message()
+nest::MUSICChannelAlreadyMapped::message() const
 {
   std::ostringstream msg;
   msg << "The channel " << channel_ << " of port " << portname_
@@ -357,7 +390,7 @@ nest::MUSICChannelAlreadyMapped::message()
 #endif
 
 std::string
-nest::GSLSolverFailure::message()
+nest::GSLSolverFailure::message() const
 {
   std::ostringstream msg;
   msg << "In model " << model_ << ", the GSL solver "
@@ -368,7 +401,7 @@ nest::GSLSolverFailure::message()
 }
 
 std::string
-nest::NumericalInstability::message()
+nest::NumericalInstability::message() const
 {
   std::ostringstream msg;
   msg << "NEST detected a numerical instability while "

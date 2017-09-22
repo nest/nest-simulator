@@ -55,14 +55,20 @@ void
 Model::set_threads_( thread t )
 {
   for ( size_t i = 0; i < memory_.size(); ++i )
+  {
     if ( memory_[ i ].get_instantiations() > 0 )
+    {
       throw KernelException();
+    }
+  }
 
   std::vector< sli::pool > tmp( t );
   memory_.swap( tmp );
 
   for ( size_t i = 0; i < memory_.size(); ++i )
+  {
     init_memory_( memory_[ i ] );
+  }
 }
 
 void
@@ -85,7 +91,9 @@ Model::mem_available()
 {
   size_t result = 0;
   for ( size_t t = 0; t < memory_.size(); ++t )
+  {
     result += memory_[ t ].available();
+  }
 
   return result;
 }
@@ -95,7 +103,9 @@ Model::mem_capacity()
 {
   size_t result = 0;
   for ( size_t t = 0; t < memory_.size(); ++t )
+  {
     result += memory_[ t ].get_total();
+  }
 
   return result;
 }
@@ -109,8 +119,8 @@ Model::set_status( DictionaryDatum d )
   }
   catch ( BadProperty& e )
   {
-    throw BadProperty(
-      String::compose( "Setting status of model '%1': %2", get_name(), e.message() ) );
+    throw BadProperty( String::compose(
+      "Setting status of model '%1': %2", get_name(), e.message() ) );
   }
 }
 
@@ -121,22 +131,29 @@ Model::get_status( void )
 
   std::vector< long > tmp( memory_.size() );
   for ( size_t t = 0; t < tmp.size(); ++t )
+  {
     tmp[ t ] = memory_[ t ].get_instantiations();
+  }
 
-  ( *d )[ "instantiations" ] = Token( tmp );
-  ( *d )[ "type_id" ] = LiteralDatum( kernel().model_manager.get_model( type_id_ )->get_name() );
+  ( *d )[ names::instantiations ] = Token( tmp );
+  ( *d )[ names::type_id ] =
+    LiteralDatum( kernel().model_manager.get_model( type_id_ )->get_name() );
 
   for ( size_t t = 0; t < tmp.size(); ++t )
+  {
     tmp[ t ] = memory_[ t ].get_total();
+  }
 
-  ( *d )[ "capacity" ] = Token( tmp );
+  ( *d )[ names::capacity ] = Token( tmp );
 
   for ( size_t t = 0; t < tmp.size(); ++t )
+  {
     tmp[ t ] = memory_[ t ].available();
+  }
 
-  ( *d )[ "available" ] = Token( tmp );
+  ( *d )[ names::available ] = Token( tmp );
 
-  ( *d )[ "model" ] = LiteralDatum( get_name() );
+  ( *d )[ names::model ] = LiteralDatum( get_name() );
   return d;
 }
 

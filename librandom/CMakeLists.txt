@@ -26,6 +26,7 @@ set( random_sources
     gslrandomgen.h gslrandomgen.cpp
     knuthlfg.h knuthlfg.cpp
     librandom_exceptions.h
+    librandom_names.h librandom_names.cpp
     lognormal_randomdev.h lognormal_randomdev.cpp
     mt19937.h mt19937.cpp
     normal_randomdev.h normal_randomdev.cpp
@@ -58,7 +59,7 @@ target_include_directories( randomtest PRIVATE
     )
 
 install( TARGETS random
-    LIBRARY DESTINATION ${INSTALL_LIB_DIR}
-    ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
-    RUNTIME DESTINATION ${INSTALL_BIN_DIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )

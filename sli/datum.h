@@ -107,7 +107,9 @@ public:
   {
     --reference_count_;
     if ( reference_count_ == 0 )
+    {
       delete this;
+    }
   }
 
   size_t
@@ -138,20 +140,24 @@ public:
   virtual void pprint( std::ostream& ) const = 0;
 
   virtual void
-  list( std::ostream& o, std::string prefix, int l ) const
+  list( std::ostream& out, std::string prefix, int length ) const
   {
-    if ( l == 0 )
+    if ( length == 0 )
+    {
       prefix = "-->" + prefix;
+    }
     else
+    {
       prefix = "   " + prefix;
-    o << prefix;
-    print( o );
+    }
+    out << prefix;
+    print( out );
   }
 
   virtual void
-  input_form( std::ostream& o ) const
+  input_form( std::ostream& out ) const
   {
-    pprint( o );
+    pprint( out );
   }
 
   virtual bool
@@ -171,10 +177,11 @@ public:
   bool
   isoftype( SLIType const& t ) const
   {
-    return ( type == &t ); // or: *type==t, there is only one t with same contents !
+    // or: *type==t, there is only one t with same contents !
+    return ( type == &t );
   }
 
-  void
+  virtual void
   execute( SLIInterpreter* i )
   {
     action->execute( i );
@@ -191,7 +198,8 @@ public:
   }
 
   // This is here solely for default assignment operators in
-  // derived classes synthesized by the compiler. It does nothing but return itself.
+  // derived classes synthesized by the compiler. It does nothing but return
+  // itself.
 protected:
   TypedDatum( const TypedDatum< slt >& d )
     : Datum( d )
@@ -201,7 +209,8 @@ protected:
 };
 
 template < SLIType* slt >
-inline const TypedDatum< slt >& TypedDatum< slt >::operator=( const TypedDatum< slt >& )
+inline const TypedDatum< slt >& TypedDatum< slt >::operator=(
+  const TypedDatum< slt >& )
 {
   //  assert( type == d.type );
   return *this;

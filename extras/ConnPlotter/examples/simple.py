@@ -25,6 +25,7 @@
 Simple example model.
 """
 
+
 def simple():
     """
     Build lists representing simple network model.
@@ -35,76 +36,74 @@ def simple():
 
     def modCopy(orig, diff):
         """Create copy of dict orig, update with diff, return."""
-        assert(isinstance(orig, dict))
-        assert(isinstance(diff, dict))
-        
+        assert (isinstance(orig, dict))
+        assert (isinstance(diff, dict))
+
         tmp = orig.copy()
         tmp.update(diff)
         return tmp
-    
+
     N = 40
 
-    modelList = [('iaf_neuron', m, {}) for m in ['E', 'I']]
+    modelList = [('iaf_psc_alpha', m, {}) for m in ['E', 'I']]
 
     layerList = [('IG', {'columns': N, 'rows': N, 'extent': [1.0, 1.0],
-                        'elements': 'poisson_generator'}),
+                         'elements': 'poisson_generator'}),
                  ('RG', {'columns': N, 'rows': N, 'extent': [1.0, 1.0],
-                        'elements': ['E', 'I']})]
+                         'elements': ['E', 'I']})]
 
-    common = {'connection_type': 'divergent', 
-              'synapse_model'  : 'static_synapse',
-              'delays'         : 1.0}
+    common = {'connection_type': 'divergent',
+              'synapse_model': 'static_synapse',
+              'delays': 1.0}
     connectList = [
         ('IG', 'RG',
          modCopy(common, {'targets': {'model': 'E'},
-                          'mask'   : {'circular': {'radius': 0.2}},
-                          'kernel' : 0.8,
+                          'mask': {'circular': {'radius': 0.2}},
+                          'kernel': 0.8,
                           'weights': 2.0})),
         ('IG', 'RG',
          modCopy(common, {'targets': {'model': 'I'},
-                          'mask'   : {'circular': {'radius': 0.3}},
-                          'kernel' : 0.4,
+                          'mask': {'circular': {'radius': 0.3}},
+                          'kernel': 0.4,
                           'weights': 2.0})),
         ('RG', 'RG',
          modCopy(common, {'sources': {'model': 'E'},
                           'targets': {'model': 'E'},
-                          'mask'   : {'rectangular': 
-                                      {'lower_left' : [-0.4,-0.2],
-                                       'upper_right': [ 0.4, 0.2]}},
-                          'kernel' : 1.0,
+                          'mask': {'rectangular':
+                                   {'lower_left': [-0.4, -0.2],
+                                    'upper_right': [0.4, 0.2]}},
+                          'kernel': 1.0,
                           'weights': 2.0})),
         ('RG', 'RG',
          modCopy(common, {'sources': {'model': 'E'},
                           'targets': {'model': 'E'},
-                          'mask'   : {'rectangular': 
-                                      {'lower_left' : [-0.2,-0.4],
-                                       'upper_right': [ 0.2, 0.4]}},
-                          'kernel' : 1.0,
+                          'mask': {'rectangular':
+                                   {'lower_left': [-0.2, -0.4],
+                                    'upper_right': [0.2, 0.4]}},
+                          'kernel': 1.0,
                           'weights': 2.0})),
         ('RG', 'RG',
          modCopy(common, {'sources': {'model': 'E'},
                           'targets': {'model': 'I'},
-                          'mask'   : {'circular': {'radius': 0.5}}, 
-                          'kernel' : {'gaussian':
-                                          {'p_center': 1.0,
-                                           'sigma'   : 0.1}},
+                          'mask': {'circular': {'radius': 0.5}},
+                          'kernel': {'gaussian':
+                                     {'p_center': 1.0,
+                                      'sigma': 0.1}},
                           'weights': 5.0})),
         ('RG', 'RG',
          modCopy(common, {'sources': {'model': 'I'},
                           'targets': {'model': 'E'},
-                          'mask'   : {'circular': {'radius': 0.25}}, 
-                          'kernel' : {'gaussian':
-                                          {'p_center': 1.0,
-                                           'sigma'   : 0.2}},
+                          'mask': {'circular': {'radius': 0.25}},
+                          'kernel': {'gaussian':
+                                     {'p_center': 1.0,
+                                      'sigma': 0.2}},
                           'weights': -3.0})),
         ('RG', 'RG',
          modCopy(common, {'sources': {'model': 'I'},
                           'targets': {'model': 'I'},
-                          'mask'   : {'circular': {'radius': 1.0}}, 
-                          'kernel' : 0.5,
+                          'mask': {'circular': {'radius': 1.0}},
+                          'kernel': 0.5,
                           'weights': -0.5}))
-        ]
+    ]
 
     return layerList, connectList, modelList
-
-

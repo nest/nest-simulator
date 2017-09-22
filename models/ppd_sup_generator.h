@@ -38,7 +38,8 @@
 #include "stimulating_device.h"
 
 /*BeginDocumentation
-Name: ppd_sup_generator - simulate the superimposed spike train of a population of Poisson processes
+Name: ppd_sup_generator - simulate the superimposed spike train of a population
+of Poisson processes
 with dead time.
 Description:
 
@@ -51,10 +52,12 @@ Description:
 Parameters:
    The following parameters appear in the element's status dictionary:
 
-   rate                double - mean firing rate of the component processes, default: 0 s^-1
-   dead_time           double - minimal time between two spikes of the component processes, default:
-0 ms
-   n_proc              long   - number of superimposed independent component processes, default: 1
+   rate                double - mean firing rate of the component processes,
+                                default: 0 s^-1
+   dead_time           double - minimal time between two spikes of the component
+                                processes, default: 0 ms
+   n_proc              long   - number of superimposed independent component
+                                processes, default: 1
    frequency           double - rate modulation frequency, default: 0 Hz
    relative_amplitude  double - relative rate modulation amplitude, default: 0
 
@@ -68,7 +71,8 @@ Remarks:
 Authors:
    June 2009, Moritz Deger, Moritz Helias
 
-SeeAlso: gamma_sup_generator, poisson_generator_ps, spike_generator, Device, StimulatingDevice
+SeeAlso: gamma_sup_generator, poisson_generator_ps, spike_generator, Device,
+StimulatingDevice
 */
 
 
@@ -76,10 +80,11 @@ namespace nest
 {
 
 /**
- * Generator of the spike output of a population of Poisson processes with dead time.
+ * Generator of the spike output of a population of Poisson processes with dead
+ * time.
  *
- * This Poisson process with dead time superposition generator sends different spike
- * trains to all its targets.
+ * This Poisson process with dead time superposition generator sends different
+ * spike trains to all its targets.
  *
  * @ingroup Devices
  */
@@ -103,7 +108,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::event_hook;
 
@@ -127,7 +133,7 @@ private:
    * information.
    * @see event_hook, DSSpikeEvent
    */
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /**
    * Send out spikes.
@@ -143,11 +149,11 @@ private:
    */
   struct Parameters_
   {
-    double_t rate_;      //!< process rate [Hz]
-    double_t dead_time_; //!< dead time [ms]
-    ulong_t n_proc_;     //!< number of component processes
-    double_t frequency_; //!< rate modulation frequency [Hz]
-    double_t amplitude_; //!< rate modulation amplitude [Hz]
+    double rate_;          //!< process rate [Hz]
+    double dead_time_;     //!< dead time [ms]
+    unsigned long n_proc_; //!< number of component processes
+    double frequency_;     //!< rate modulation frequency [Hz]
+    double amplitude_;     //!< rate modulation amplitude [Hz]
 
     /**
      * Number of targets.
@@ -171,23 +177,28 @@ private:
 
     librandom::BinomialRandomDev bino_dev_;   //!< random deviate generator
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    std::vector< ulong_t > occ_refractory_;   //!< occupation numbers of ages below dead time
-    ulong_t occ_active_;                      //!< summed occupation number of ages above dead time
-    size_t activate_;                         //!< rotating pointer
+    //! occupation numbers of ages below dead time
+    std::vector< unsigned long > occ_refractory_;
+    unsigned long
+      occ_active_;    //!< summed occupation number of ages above dead time
+    size_t activate_; //!< rotating pointer
 
   public:
+    //! initialize age dist
     Age_distribution_( size_t num_age_bins,
-      ulong_t ini_occ_ref,
-      ulong_t ini_occ_act ); //!< initialize age dist
-    ulong_t update( double_t hazard_rate,
-      librandom::RngPtr rng ); //!< update age dist and generate spikes
+      unsigned long ini_occ_ref,
+      unsigned long ini_occ_act );
+
+    //! update age dist and generate spikes
+    unsigned long update( double hazard_rate, librandom::RngPtr rng );
   };
 
 
   struct Buffers_
   {
     /**
-     * Age distribution of component Poisson processes with dead time of the superposition.
+     * Age distribution of component Poisson processes with dead time of the
+     * superposition.
      */
 
     std::vector< Age_distribution_ > age_distributions_;
@@ -197,9 +208,9 @@ private:
 
   struct Variables_
   {
-    double_t hazard_step_;   //!< base hazard rate in units of time step
-    double_t hazard_step_t_; //!< hazard rate at time t in units of time step
-    double_t omega_;         //!< angular velocity of rate modulation [rad/ms]
+    double hazard_step_;   //!< base hazard rate in units of time step
+    double hazard_step_t_; //!< hazard rate at time t in units of time step
+    double omega_;         //!< angular velocity of rate modulation [rad/ms]
 
     /**
      * @name update-hook communication.
@@ -211,8 +222,8 @@ private:
      *   t_min_active_ < t <= t_max_active_
      */
     //@{
-    double_t t_min_active_; //!< start of generator activity in slice
-    double_t t_max_active_; //!< end of generator activity in slice
+    double t_min_active_; //!< start of generator activity in slice
+    double t_max_active_; //!< end of generator activity in slice
     //@}
   };
 
@@ -244,7 +255,9 @@ ppd_sup_generator::send_test_event( Node& target,
     e.set_sender( *this );
     const port p = target.handles_test_event( e, receptor_type );
     if ( p != invalid_port_ and not is_model_prototype() )
+    {
       ++P_.num_targets_; // count number of targets
+    }
     return p;
   }
 }

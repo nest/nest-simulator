@@ -33,52 +33,66 @@ namespace nest
 
 template < class EventT >
 inline void
-EventDeliveryManager::send( Node& source, EventT& e, const long_t lag )
+EventDeliveryManager::send( Node& source, EventT& e, const long lag )
 {
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
+  e.set_stamp(
+    kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
   thread t = source.get_thread();
   index gid = source.get_gid();
 
-  assert( !source.has_proxies() );
-  kernel().connection_builder_manager.send( t, gid, e );
+  assert( not source.has_proxies() );
+  kernel().connection_manager.send( t, gid, e );
 }
 
 template <>
 inline void
-EventDeliveryManager::send< SpikeEvent >( Node& source, SpikeEvent& e, const long_t lag )
+EventDeliveryManager::send< SpikeEvent >( Node& source,
+  SpikeEvent& e,
+  const long lag )
 {
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
+  e.set_stamp(
+    kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
   thread t = source.get_thread();
 
   if ( source.has_proxies() )
   {
     if ( source.is_off_grid() )
+    {
       send_offgrid_remote( t, e, lag );
+    }
     else
+    {
       send_remote( t, e, lag );
+    }
   }
   else
+  {
     send_local( t, source, e );
+  }
 }
 
 template <>
 inline void
-EventDeliveryManager::send< DSSpikeEvent >( Node& source, DSSpikeEvent& e, const long_t lag )
+EventDeliveryManager::send< DSSpikeEvent >( Node& source,
+  DSSpikeEvent& e,
+  const long lag )
 {
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
+  e.set_stamp(
+    kernel().simulation_manager.get_slice_origin() + Time::step( lag + 1 ) );
   e.set_sender( source );
   thread t = source.get_thread();
 
-  assert( !source.has_proxies() );
+  assert( not source.has_proxies() );
   send_local( t, source, e );
 }
 
 inline void
 EventDeliveryManager::send_secondary( Node& source, SecondaryEvent& e )
 {
-  e.set_stamp( kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
+  e.set_stamp(
+    kernel().simulation_manager.get_slice_origin() + Time::step( 1 ) );
   e.set_sender( source );
   e.set_sender_gid( source.get_gid() );
   thread t = source.get_thread();
@@ -96,7 +110,7 @@ EventDeliveryManager::send_local( thread t, Node& source, Event& e )
 {
   index sgid = source.get_gid();
   e.set_sender_gid( sgid );
-  kernel().connection_builder_manager.send( t, sgid, e );
+  kernel().connection_manager.send( t, sgid, e );
 }
 }
 

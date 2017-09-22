@@ -33,7 +33,8 @@
 #include "universal_data_logger.h"
 
 /* BeginDocumentation
-Name: iaf_psc_alpha_multisynapse - Leaky integrate-and-fire neuron model with multiple ports.
+Name: iaf_psc_alpha_multisynapse - Leaky integrate-and-fire neuron model with
+                                   multiple ports.
 
 Description:
 
@@ -50,7 +51,8 @@ Sends: SpikeEvent
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
 Author:  Schrader, adapted from iaf_psc_alpha
-SeeAlso: iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp, iaf_psc_exp_multisynapse
+SeeAlso: iaf_psc_alpha, iaf_psc_delta, iaf_psc_exp, iaf_cond_exp,
+iaf_psc_exp_multisynapse
 */
 
 namespace nest
@@ -67,7 +69,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -90,7 +93,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_psc_alpha_multisynapse >;
@@ -105,40 +108,38 @@ private:
   {
 
     /** Membrane time constant in ms. */
-    double_t Tau_;
+    double Tau_;
 
     /** Membrane capacitance in pF. */
-    double_t C_;
+    double C_;
 
     /** Refractory period in ms. */
-    double_t TauR_;
+    double refractory_time_;
 
     /** Resting potential in mV. */
-    double_t E_L_;
+    double E_L_;
 
     /** External current in pA */
-    double_t I_e_;
+    double I_e_;
 
     /** Reset value of the membrane potential */
-    double_t V_reset_;
+    double V_reset_;
 
     /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real threshold is (E_L_+Theta_). */
-    double_t Theta_;
+    double Theta_;
 
     /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real lower bound is (LowerBound_+Theta_). */
-    double_t LowerBound_;
+    double LowerBound_;
 
     /** Time constants of synaptic currents in ms. */
-    std::vector< double_t > tau_syn_;
-
-    // type is long because other types are not put through in GetStatus
-    std::vector< long > receptor_types_;
-    size_t num_of_receptors_;
+    std::vector< double > tau_syn_;
 
     // boolean flag which indicates whether the neuron has connections
     bool has_connections_;
+
+    size_t n_receptors_() const; //!< Returns the size of tau_syn_
 
     Parameters_(); //!< Sets default parameter values
 
@@ -157,13 +158,15 @@ private:
    */
   struct State_
   {
-    double_t y0_; //!< Constant current
-    std::vector< double_t > y1_syn_;
-    std::vector< double_t > y2_syn_;
-    double_t y3_;      //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
-    double_t current_; //! This is the current in a time step. This is only here to allow logging
+    double I_const_; //!< Constant current
+    std::vector< double > y1_syn_;
+    std::vector< double > y2_syn_;
+    //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double V_m_;
+    double current_; //! This is the current in a time step. This is only here
+                     //! to allow logging
 
-    int_t r_; //!< Number of refractory steps remaining
+    int refractory_steps_; //!< Number of refractory steps remaining
 
     State_(); //!< Default initialization
 
@@ -202,17 +205,17 @@ private:
    */
   struct Variables_
   {
-    std::vector< double_t > PSCInitialValues_;
-    int_t RefractoryCounts_;
+    std::vector< double > PSCInitialValues_;
+    int RefractoryCounts_;
 
-    std::vector< double_t > P11_syn_;
-    std::vector< double_t > P21_syn_;
-    std::vector< double_t > P22_syn_;
-    std::vector< double_t > P31_syn_;
-    std::vector< double_t > P32_syn_;
+    std::vector< double > P11_syn_;
+    std::vector< double > P21_syn_;
+    std::vector< double > P22_syn_;
+    std::vector< double > P31_syn_;
+    std::vector< double > P32_syn_;
 
-    double_t P30_;
-    double_t P33_;
+    double P30_;
+    double P33_;
 
     unsigned int receptor_types_size_;
 
@@ -221,12 +224,12 @@ private:
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the real membrane potential
-  double_t
+  double
   get_V_m_() const
   {
-    return S_.y3_ + P_.E_L_;
+    return S_.V_m_ + P_.E_L_;
   }
-  double_t
+  double
   get_current_() const
   {
     return S_.current_;
@@ -251,8 +254,17 @@ private:
   static RecordablesMap< iaf_psc_alpha_multisynapse > recordablesMap_;
 };
 
+inline size_t
+iaf_psc_alpha_multisynapse::Parameters_::n_receptors_() const
+{
+  return tau_syn_.size();
+}
+
 inline port
-iaf_psc_alpha_multisynapse::send_test_event( Node& target, rport receptor_type, synindex, bool )
+iaf_psc_alpha_multisynapse::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -261,18 +273,24 @@ iaf_psc_alpha_multisynapse::send_test_event( Node& target, rport receptor_type, 
 }
 
 inline port
-iaf_psc_alpha_multisynapse::handles_test_event( CurrentEvent&, rport receptor_type )
+iaf_psc_alpha_multisynapse::handles_test_event( CurrentEvent&,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
 inline port
-iaf_psc_alpha_multisynapse::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_psc_alpha_multisynapse::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

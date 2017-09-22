@@ -48,7 +48,8 @@
  * Recordables map
  * ---------------------------------------------------------------- */
 
-nest::RecordablesMap< nest::iaf_chxk_2008 > nest::iaf_chxk_2008::recordablesMap_;
+nest::RecordablesMap< nest::iaf_chxk_2008 >
+  nest::iaf_chxk_2008::recordablesMap_;
 
 namespace nest // template specialization must be placed in namespace
 {
@@ -61,14 +62,18 @@ void
 RecordablesMap< iaf_chxk_2008 >::create()
 {
   // use standard names wherever you can for consistency!
-  insert_( names::V_m, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::V_M > );
-  insert_( names::g_ex, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::G_EXC > );
-  insert_( names::g_in, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::G_INH > );
-  insert_( names::g_ahp, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::G_AHP > );
+  insert_(
+    names::V_m, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::V_M > );
+  insert_(
+    names::g_ex, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::G_EXC > );
+  insert_(
+    names::g_in, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::G_INH > );
+  insert_(
+    names::g_ahp, &iaf_chxk_2008::get_y_elem_< iaf_chxk_2008::State_::G_AHP > );
 
-  insert_( "I_syn_exc", &iaf_chxk_2008::get_I_syn_exc_ );
-  insert_( "I_syn_inh", &iaf_chxk_2008::get_I_syn_inh_ );
-  insert_( "I_ahp", &iaf_chxk_2008::get_I_ahp_ );
+  insert_( names::I_syn_ex, &iaf_chxk_2008::get_I_syn_exc_ );
+  insert_( names::I_syn_in, &iaf_chxk_2008::get_I_syn_inh_ );
+  insert_( names::I_ahp, &iaf_chxk_2008::get_I_ahp_ );
 }
 }
 
@@ -77,28 +82,32 @@ RecordablesMap< iaf_chxk_2008 >::create()
  * ---------------------------------------------------------------- */
 
 extern "C" inline int
-nest::iaf_chxk_2008_dynamics( double, const double y[], double f[], void* pnode )
+nest::iaf_chxk_2008_dynamics( double,
+  const double y[],
+  double f[],
+  void* pnode )
 {
   // a shorthand
   typedef nest::iaf_chxk_2008::State_ S;
 
   // get access to node so we can almost work as in a member function
   assert( pnode );
-  const nest::iaf_chxk_2008& node = *( reinterpret_cast< nest::iaf_chxk_2008* >( pnode ) );
+  const nest::iaf_chxk_2008& node =
+    *( reinterpret_cast< nest::iaf_chxk_2008* >( pnode ) );
 
   // y[] here is---and must be---the state vector supplied by the integrator,
   // not the state vector in the node, node.S_.y[].
 
   // The following code is verbose for the sake of clarity. We assume that a
   // good compiler will optimize the verbosity away ...
-  const double_t I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex );
-  const double_t I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in );
-  const double_t I_ahp = y[ S::G_AHP ] * ( y[ S::V_M ] - node.P_.E_ahp );
-  const double_t I_leak = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
+  const double I_syn_exc = y[ S::G_EXC ] * ( y[ S::V_M ] - node.P_.E_ex );
+  const double I_syn_inh = y[ S::G_INH ] * ( y[ S::V_M ] - node.P_.E_in );
+  const double I_ahp = y[ S::G_AHP ] * ( y[ S::V_M ] - node.P_.E_ahp );
+  const double I_leak = node.P_.g_L * ( y[ S::V_M ] - node.P_.E_L );
 
   // dV_m/dt
-  f[ S::V_M ] =
-    ( -I_leak - I_syn_exc - I_syn_inh - I_ahp + node.B_.I_stim_ + node.P_.I_e ) / node.P_.C_m;
+  f[ S::V_M ] = ( -I_leak - I_syn_exc - I_syn_inh - I_ahp + node.B_.I_stim_
+                  + node.P_.I_e ) / node.P_.C_m;
 
   // d dg_exc/dt, dg_exc/dt
   f[ S::DG_EXC ] = -y[ S::DG_EXC ] / node.P_.tau_synE;
@@ -145,23 +154,31 @@ nest::iaf_chxk_2008::State_::State_( const Parameters_& p )
 {
   y[ V_M ] = p.E_L; // initialize to reversal potential
   for ( size_t i = 2; i < STATE_VEC_SIZE; ++i )
+  {
     y[ i ] = 0;
+  }
 }
 
 nest::iaf_chxk_2008::State_::State_( const State_& s )
   : r( s.r )
 {
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y[ i ] = s.y[ i ];
+  }
 }
 
-nest::iaf_chxk_2008::State_& nest::iaf_chxk_2008::State_::operator=( const State_& s )
+nest::iaf_chxk_2008::State_& nest::iaf_chxk_2008::State_::operator=(
+  const State_& s )
 {
   if ( this == &s ) // avoid assignment to self
+  {
     return *this;
-
+  }
   for ( size_t i = 0; i < STATE_VEC_SIZE; ++i )
+  {
     y[ i ] = s.y[ i ];
+  }
 
   r = s.r;
   return *this;
@@ -206,7 +223,7 @@ nest::iaf_chxk_2008::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::tau_ahp, tau_ahp );
   def< double >( d, names::E_ahp, E_ahp );
   def< double >( d, names::g_ahp, g_ahp );
-  def< bool >( d, "ahp_bug", ahp_bug );
+  def< bool >( d, names::ahp_bug, ahp_bug );
 }
 
 void
@@ -225,13 +242,15 @@ nest::iaf_chxk_2008::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::tau_ahp, tau_ahp );
   updateValue< double >( d, names::E_ahp, E_ahp );
   updateValue< double >( d, names::g_ahp, g_ahp );
-  updateValue< bool >( d, "ahp_bug", ahp_bug );
-
+  updateValue< bool >( d, names::ahp_bug, ahp_bug );
   if ( C_m <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
+  }
   if ( tau_synE <= 0 || tau_synI <= 0 || tau_ahp <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 }
 
 void
@@ -270,11 +289,17 @@ nest::iaf_chxk_2008::~iaf_chxk_2008()
 {
   // GSL structs may not have been allocated, so we need to protect destruction
   if ( B_.s_ )
+  {
     gsl_odeiv_step_free( B_.s_ );
+  }
   if ( B_.c_ )
+  {
     gsl_odeiv_control_free( B_.c_ );
+  }
   if ( B_.e_ )
+  {
     gsl_odeiv_evolve_free( B_.e_ );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -303,19 +328,32 @@ nest::iaf_chxk_2008::init_buffers_()
   B_.IntegrationStep_ = B_.step_;
 
   if ( B_.s_ == 0 )
-    B_.s_ = gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  {
+    B_.s_ =
+      gsl_odeiv_step_alloc( gsl_odeiv_step_rkf45, State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_step_reset( B_.s_ );
+  }
 
   if ( B_.c_ == 0 )
+  {
     B_.c_ = gsl_odeiv_control_y_new( 1e-3, 0.0 );
+  }
   else
+  {
     gsl_odeiv_control_init( B_.c_, 1e-3, 0.0, 1.0, 0.0 );
+  }
 
   if ( B_.e_ == 0 )
+  {
     B_.e_ = gsl_odeiv_evolve_alloc( State_::STATE_VEC_SIZE );
+  }
   else
+  {
     gsl_odeiv_evolve_reset( B_.e_ );
+  }
 
   B_.sys_.function = iaf_chxk_2008_dynamics;
   B_.sys_.jacobian = NULL;
@@ -328,7 +366,8 @@ nest::iaf_chxk_2008::init_buffers_()
 void
 nest::iaf_chxk_2008::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
 
   V_.PSConInit_E = 1.0 * numerics::e / P_.tau_synE;
   V_.PSConInit_I = 1.0 * numerics::e / P_.tau_synI;
@@ -340,13 +379,16 @@ nest::iaf_chxk_2008::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::iaf_chxk_2008::update( Time const& origin, const long_t from, const long_t to )
+nest::iaf_chxk_2008::update( Time const& origin,
+  const long from,
+  const long to )
 {
 
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
     double t = 0.0;
@@ -377,10 +419,10 @@ nest::iaf_chxk_2008::update( Time const& origin, const long_t from, const long_t
         B_.step_,             // to t <= step
         &B_.IntegrationStep_, // integration step size
         S_.y );               // neuronal state
-
-
       if ( status != GSL_SUCCESS )
+      {
         throw GSLSolverFailure( get_name(), status );
+      }
     }
     // neuron should spike on threshold crossing only.
     if ( vm_prev < P_.V_th && S_.y[ State_::V_M ] >= P_.V_th )
@@ -388,13 +430,13 @@ nest::iaf_chxk_2008::update( Time const& origin, const long_t from, const long_t
       // neuron is not absolute refractory
 
       // Find precise spike time using linear interpolation
-      double_t sigma =
-        ( S_.y[ State_::V_M ] - P_.V_th ) * B_.step_ / ( S_.y[ State_::V_M ] - vm_prev );
+      double sigma = ( S_.y[ State_::V_M ] - P_.V_th ) * B_.step_
+        / ( S_.y[ State_::V_M ] - vm_prev );
 
-      double_t alpha = exp( -sigma / P_.tau_ahp );
+      double alpha = exp( -sigma / P_.tau_ahp );
 
-      double_t delta_g_ahp = V_.PSConInit_AHP * sigma * alpha;
-      double_t delta_dg_ahp = V_.PSConInit_AHP * alpha;
+      double delta_g_ahp = V_.PSConInit_AHP * sigma * alpha;
+      double delta_dg_ahp = V_.PSConInit_AHP * alpha;
 
       if ( P_.ahp_bug == true )
       {
@@ -434,13 +476,17 @@ nest::iaf_chxk_2008::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() > 0.0 )
-    B_.spike_exc_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  {
+    B_.spike_exc_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
-    B_.spike_inh_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
-      -e.get_weight() * e.get_multiplicity() ); // ensure conductance is positive
+  {
+    B_.spike_inh_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
+      -e.get_weight() * e.get_multiplicity() );
+  } // ensure conductance is positive
 }
 
 void

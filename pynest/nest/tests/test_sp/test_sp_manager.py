@@ -18,31 +18,54 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-__author__ = 'naveau'
 
 import nest
 import unittest
 from .utils import extract_dict_a_from_b
 
+__author__ = 'naveau'
+
 
 class TestStructuralPlasticityManager(unittest.TestCase):
+
     def setUp(self):
         nest.ResetKernel()
         nest.set_verbosity('M_INFO')
-        self.exclude_synapse_model = ['stdp_dopamine_synapse', 'stdp_dopamine_synapse_lbl', 
-                                      'stdp_dopamine_synapse_hpc', 'stdp_dopamine_synapse_hpc_lbl', 
-                                      'gap_junction', 'gap_junction_lbl']
+        self.exclude_synapse_model = [
+            'stdp_dopamine_synapse',
+            'stdp_dopamine_synapse_lbl',
+            'stdp_dopamine_synapse_hpc',
+            'stdp_dopamine_synapse_hpc_lbl',
+            'gap_junction',
+            'gap_junction_lbl',
+            'diffusion_connection',
+            'diffusion_connection_lbl',
+            'rate_connection_instantaneous',
+            'rate_connection_instantaneous_lbl',
+            'rate_connection_delayed',
+            'rate_connection_delayed_lbl'
+        ]
 
     def test_register_synapses(self):
         for syn_model in nest.Models('synapses'):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
                 nest.SetDefaults(syn_model, {'delay': 0.5})
-                syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1', 'post_synaptic_element': 'SE2'}
-                nest.SetKernelStatus({'min_delay': 0.1, 'max_delay': 1.0, 'structural_plasticity_synapses': {'syn1': syn_dict}})
-                kernel_status = nest.GetKernelStatus('structural_plasticity_synapses')
+                syn_dict = {
+                    'model': syn_model,
+                    'pre_synaptic_element': 'SE1',
+                    'post_synaptic_element': 'SE2'
+                }
+                nest.SetKernelStatus({
+                    'min_delay': 0.1,
+                    'max_delay': 1.0,
+                    'structural_plasticity_synapses': {'syn1': syn_dict}
+                })
+                kernel_status = nest.GetKernelStatus(
+                    'structural_plasticity_synapses')
                 self.assertIn('syn1', kernel_status)
-                self.assertEqual(kernel_status['syn1'], extract_dict_a_from_b(kernel_status['syn1'], syn_dict))
+                self.assertEqual(kernel_status['syn1'], extract_dict_a_from_b(
+                    kernel_status['syn1'], syn_dict))
 
     def test_min_max_delay_using_default_delay(self):
         nest.ResetKernel()
@@ -66,8 +89,14 @@ class TestStructuralPlasticityManager(unittest.TestCase):
         for syn_model in nest.Models('synapses'):
             if syn_model not in self.exclude_synapse_model:
                 nest.ResetKernel()
-                syn_dict = {'model': syn_model, 'pre_synaptic_element': 'SE1', 'post_synaptic_element': 'SE2'}
-                nest.SetStructuralPlasticityStatus({'structural_plasticity_synapses': {'syn1': syn_dict}})
+                syn_dict = {
+                    'model': syn_model,
+                    'pre_synaptic_element': 'SE1',
+                    'post_synaptic_element': 'SE2'
+                }
+                nest.SetStructuralPlasticityStatus({
+                    'structural_plasticity_synapses': {'syn1': syn_dict}
+                })
                 neurons = nest.Create('iaf_neuron', 2, {
                     'synaptic_elements': {
                         'SE1': {'z': 10.0, 'growth_rate': 0.0},
@@ -81,9 +110,10 @@ class TestStructuralPlasticityManager(unittest.TestCase):
                     self.assertEqual(10, st_neuron['SE1']['z_connected'])
                     self.assertEqual(10, st_neuron['SE2']['z_connected'])
 
-                self.assertEqual(20, len(nest.GetConnections(neurons, neurons, syn_model)))
+                self.assertEqual(
+                    20, len(nest.GetConnections(neurons, neurons, syn_model)))
                 break
-    
+
 
 def suite():
     test_suite = unittest.makeSuite(TestStructuralPlasticityManager, 'test')

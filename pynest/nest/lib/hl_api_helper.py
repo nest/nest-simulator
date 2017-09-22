@@ -24,54 +24,97 @@ These are helper functions to ease the definition of the high-level
 API of the PyNEST wrapper.
 """
 
+import warnings
+import inspect
+import json
+import functools
+import textwrap
+import subprocess
+import os
+import re
+import sys
+
+from string import Template
+
 # These variables MUST be set by __init__.py right after importing.
 # There is no safety net, whatsoever.
 sps = spp = sr = pcd = kernel = None
 
-import warnings
-
-# Monkeypatch warnings.showwarning() to just print the warning without
-# the code line it was emitted by.
-def _warning(msg, cat=UserWarning, fname='', lineno=-1):
-    print('{0}:{1}: {2}: {3}'.format(fname, lineno, cat.__name__, msg))
-warnings.showwarning = _warning
-
-import inspect
-import functools
-import textwrap
 
 # These flags are used to print deprecation warnings only once. The
 # corresponding functions will be removed in the 2.6 release of NEST.
-
 _deprecation_warning = {'BackwardCompatibilityConnect': True}
 
-def show_deprecation_warning(func_name, alt_func_name=None, text=None):        
+
+def get_wrapped_text(text, width=80):
+    """Formats a given multiline string to wrap at a given width, while
+    preserving newlines (and removing excessive whitespace).
+
+    Parameters
+    ----------
+    text : str
+        String to format
+
+    Returns
+    -------
+    str:
+        Wrapped string
+    """
+
+    lines = text.split("\n")
+    lines = [textwrap.fill(" ".join(l.split()), width=width) for l in lines]
+    return "\n".join(lines)
+
+
+def show_deprecation_warning(func_name, alt_func_name=None, text=None):
+    """Shows a deprecation warning for a function.
+
+    Parameters
+    ----------
+    func_name : str
+        Name of the deprecated function
+    alt_func_name : str, optional
+        Name of the function to use instead
+    text : str, optional
+        Text to display instead of standard text
+    """
     if _deprecation_warning[func_name]:
         if alt_func_name is None:
             alt_func_name = 'Connect'
         if text is None:
-            text = textwrap.dedent(
-                       """\
-                       {0} is deprecated and will be removed in a future version of NEST.
-                       Please use {1} instead!
-                       For details, see http://www.nest-simulator.org/connection_management\
-                       """.format(func_name, alt_func_name)
-                   )
+            text = "{0} is deprecated and will be removed in a future \
+            version of NEST.\nPlease use {1} instead!\n\
+            For details, see\
+            http://www.nest-simulator.org/connection_management\
+            ".format(func_name, alt_func_name)
+            text = get_wrapped_text(text)
 
         warnings.warn('\n' + text)   # add LF so text starts on new line
         _deprecation_warning[func_name] = False
 
+
 # Since we need to pass extra arguments to the decorator, we need a
 # decorator factory. See http://stackoverflow.com/questions/15564512
 def deprecated(alt_func_name, text=None):
+    """Decorator for deprecated functions.
+
+    Shows a warning and calls the original function.
+
+    Parameters
+    ----------
+    alt_func_name : str, optional
+        Name of the function to use instead
+    text : str, optional
+        Text to display instead of standard text
+
+    Returns
+    -------
+    function:
+        Decorator function
     """
-    Decorator for deprecated functions. Shows a warning and calls the
-    original function.
-    """
-    
     def deprecated_decorator(func):
         _deprecation_warning[func.__name__] = True
-        
+
         @functools.wraps(func)
         def new_func(*args, **kwargs):
             show_deprecation_warning(func.__name__, alt_func_name, text=text)
@@ -82,6 +125,14 @@ def deprecated(alt_func_name, text=None):
 
 
 def get_unistring_type():
+    """Returns string type dependent on python version.
+
+    Returns
+    -------
+    str or basestring:
+        Depending on Python version
+
+    """
     import sys
     if sys.version_info[0] < 3:
         return basestring
@@ -91,24 +142,47 @@ uni_str = get_unistring_type()
 
 
 def is_literal(obj):
-    """
-    Check whether obj is a "literal": a unicode string or SLI literal
+    """Check whether obj is a "literal": a unicode string or SLI literal
+
+    Parameters
+    ----------
+    obj : object
+        Object to check
+
+    Returns
+    -------
+    bool:
+        True if obj is a "literal"
     """
     return isinstance(obj, (uni_str, kernel.SLILiteral))
 
 
 def is_string(obj):
-    """
-    Check whether obj is a "literal": a unicode string or SLI literal
+    """Check whether obj is a unicode string
+
+    Parameters
+    ----------
+    obj : object
+        Object to check
+
+    Returns
+    -------
+    bool:
+        True if obj is a unicode string
     """
     return isinstance(obj, uni_str)
 
 
 __debug = False
 
+
 def get_debug():
-    """
-    Return the current value of the debug flag of the high-level API.
+    """Return the current value of the debug flag of the high-level API.
+
+    Returns
+    -------
+    bool:
+        current value of the debug flag
     """
 
     global __debug
@@ -116,8 +190,12 @@ def get_debug():
 
 
 def set_debug(dbg=True):
-    """
-    Set the debug flag of the high-level API.
+    """Set the debug flag of the high-level API.
+
+    Parameters
+    ----------
+    dbg : bool, optional
+        Value to set the debug flag to
     """
 
     global __debug
@@ -125,11 +203,26 @@ def set_debug(dbg=True):
 
 
 def stack_checker(f):
-    """
-    Decorator to add stack checks to functions using PyNEST's
-    low-level API. This decorator works only on functions. See
+    """Decorator to add stack checks to functions using PyNEST's
+    low-level API.
+
+    This decorator works only on functions. See
     check_stack() for the generic version for functions and
     classes.
+
+    Parameters
+    ----------
+    f : function
+        Function to decorate
+
+    Returns
+    -------
+    function:
+        Decorated function
+
+    Raises
+    ------
+    kernel.NESTError
     """
 
     @functools.wraps(f)
@@ -152,10 +245,24 @@ def stack_checker(f):
 
 
 def check_stack(thing):
-    """
-    Convenience wrapper for applying the stack_checker decorator to
-    all class methods of the given class, or to a given function. If
-    the object cannot be decorated, it is returned unchanged.
+    """Convenience wrapper for applying the stack_checker decorator to
+    all class methods of the given class, or to a given function.
+
+    If the object cannot be decorated, it is returned unchanged.
+
+    Parameters
+    ----------
+    thing : function or class
+        Description
+
+    Returns
+    -------
+    function or class
+        Decorated function or class
+
+    Raises
+    ------
+    ValueError
     """
 
     if inspect.isfunction(thing):
@@ -170,8 +277,17 @@ def check_stack(thing):
 
 
 def is_iterable(seq):
-    """
-    Return True if the given object is an iterable, False otherwise
+    """Return True if the given object is an iterable, False otherwise.
+
+    Parameters
+    ----------
+    seq : object
+        Object to check
+
+    Returns
+    -------
+    bool:
+        True if object is an iterable
     """
 
     try:
@@ -183,8 +299,17 @@ def is_iterable(seq):
 
 
 def is_coercible_to_sli_array(seq):
-    """
-    Checks whether `seq` is coercible to a SLI array
+    """Checks whether a given object is coercible to a SLI array
+
+    Parameters
+    ----------
+    seq : object
+        Object to check
+
+    Returns
+    -------
+    bool:
+        True if object is coercible to a SLI array
     """
 
     import sys
@@ -196,9 +321,19 @@ def is_coercible_to_sli_array(seq):
 
 
 def is_sequence_of_connections(seq):
-    """
-    Low-level API accepts an iterable of dictionaries or
-    subscriptables of CONN_LEN
+    """Checks whether low-level API accepts seq as a sequence of
+    connections.
+
+    Parameters
+    ----------
+    seq : object
+        Object to check
+
+    Returns
+    -------
+    bool:
+        True if object is an iterable of dictionaries or
+        subscriptables of CONN_LEN
     """
 
     try:
@@ -211,23 +346,285 @@ def is_sequence_of_connections(seq):
 
 
 def is_sequence_of_gids(seq):
-    """
-    Checks whether the argument is a potentially valid sequence of
-    GIDs (non-negative integers)
+    """Checks whether the argument is a potentially valid sequence of
+    GIDs (non-negative integers).
+
+    Parameters
+    ----------
+    seq : object
+        Object to check
+
+    Returns
+    -------
+    bool:
+        True if object is a potentially valid sequence of GIDs
     """
 
     return all(isinstance(n, int) and n >= 0 for n in seq)
 
 
 def broadcast(item, length, allowed_types, name="item"):
+    """Broadcast item to given length.
+
+    Parameters
+    ----------
+    item : object
+        Object to broadcast
+    length : int
+        Length to broadcast to
+    allowed_types : list
+        List of allowed types
+    name : str, optional
+        Name of item
+
+    Returns
+    -------
+    object:
+        The original item broadcasted to sequence form of length
+
+    Raises
+    ------
+    TypeError
+
+
+    """
 
     if isinstance(item, allowed_types):
         return length * (item,)
     elif len(item) == 1:
         return length * item
     elif len(item) != length:
-        raise TypeError("'%s' must be a single value, a list with "
-                        + "one element or a list with %i elements."
-                        % (name, length))
-
+        raise TypeError("'{0}' must be a single value, a list with " +
+                        "one element or a list with {1} elements.".format(
+                            name, length))
     return item
+
+
+def __check_nb():
+    """Return true if called from a Jupyter notebook."""
+    try:
+        return get_ipython().__class__.__name__.startswith('ZMQ')
+    except NameError:
+        return False
+
+
+def __show_help_in_modal_window(objname, hlptxt):
+    """Open modal window with help text
+
+    Parameters
+    ----------
+    objname :   str
+            filename
+    hlptxt  :   str
+            Full text
+    """
+
+    hlptxt = json.dumps(hlptxt)
+    style = "<style>.modal-body p { display: block;unicode-bidi: embed; " \
+            "font-family: monospace; white-space: pre; }</style>"
+    s = Template("""
+       require(
+           ["base/js/dialog"],
+           function(dialog) {
+               dialog.modal({
+                   title: '$jstitle',
+                   body: $jstext,
+                   buttons: {
+                       'close': {}
+                   }
+               });
+           }
+       );
+       """)
+
+    from IPython.display import HTML, Javascript, display
+    display(HTML(style))
+
+    display(Javascript(s.substitute(jstitle=objname, jstext=hlptxt)))
+
+
+def show_help_with_pager(hlpobj, pager):
+    """Output of doc in python with pager or print
+
+    Parameters
+    ----------
+    hlpobj : object
+        Object to display
+    pager: str, optional
+        pager to use, NO if you explicity do not want to use a pager
+    """
+    if sys.version_info < (2, 7, 8):
+        print("NEST help is only available with Python 2.7.8 or later. \n")
+        return
+
+    if 'NEST_INSTALL_DIR' not in os.environ:
+        print(
+            'NEST help needs to know where NEST is installed.'
+            'Please source nest_vars.sh or define NEST_INSTALL_DIR manually.')
+        return
+
+    helpdir = os.path.join(os.environ['NEST_INSTALL_DIR'], "share", "doc",
+                           "nest", "help")
+    objname = hlpobj + '.hlp'
+    consolepager = ['less', 'more', 'vi', 'vim', 'nano', 'emacs -nw',
+                    'ed', 'editor']
+
+    # reading ~/.nestrc lookink for pager to use.
+    if pager is None:
+        # check if .netsrc exist
+        rc_file = os.path.join(os.environ['HOME'], '.nestrc')
+        if os.path.isfile(rc_file):
+            # open ~/.nestrc
+            rc = open(rc_file, 'r')
+            # The loop goes through the .nestrc line by line and checks
+            # it for the definition of a pager. Whether a pager is
+            # found or not, this pager is used or the standard pager 'more'.
+            for line in rc:
+                # the re checks if there are lines beginning with '%'
+                rctst = re.match(r'^\s?%', line)
+                if rctst is None:
+                    # the next re checks for a sth. like
+                    # '/page << /command (more)'
+                    # and returns the given pager.
+                    pypagers = re.findall(
+                        r'^\s?/page\s?<<\s?/command\s?\((\w*)', line)
+                    if pypagers:
+                        for pa in pypagers:
+                            if pa:
+                                pager = pa
+                            else:
+                                pager = 'more'
+                        break
+                    else:
+                        pager = 'more'
+            rc.close()
+        else:
+            pager = 'more'
+    hlperror = True
+    # Searching the given object in all helpfiles, check the environment
+    # and display the helptext in the pager.
+    for dirpath, dirnames, files in os.walk(helpdir):
+        for hlp in files:
+            if hlp == objname:
+                hlperror = False
+                objf = os.path.join(dirpath, objname)
+                fhlp = open(objf, 'r')
+                hlptxt = fhlp.read()
+                # only for notebook
+                if __check_nb():
+                    if pager in consolepager:
+                        # only in notebook open modal window
+                        __show_help_in_modal_window(objname, hlptxt)
+                        fhlp.close()
+                        break
+                    else:
+                        subprocess.call([pager, objf])
+                        fhlp.close()
+                        break
+                else:
+                    if pager in consolepager:
+                        subprocess.call([pager, objf])
+                        fhlp.close()
+                        break
+                    else:
+                        subprocess.call([pager, objf])
+                        fhlp.close()
+                        break
+    if hlperror:
+        print("Sorry, there is no help for '" + hlpobj + "'!")
+
+
+@check_stack
+def get_verbosity():
+    """Return verbosity level of NEST's messages.
+
+    Returns
+    -------
+    int:
+        The current verbosity level
+    """
+
+    # Defined in hl_api_helper to avoid circular inclusion problem with
+    # hl_api_info.py
+    sr('verbosity')
+    return spp()
+
+
+@check_stack
+def set_verbosity(level):
+    """Change verbosity level for NEST's messages.
+
+    Parameters
+    ----------
+    level : str
+        Can be one of 'M_FATAL', 'M_ERROR', 'M_WARNING', 'M_DEPRECATED',
+        'M_INFO' or 'M_ALL'.
+    """
+
+    # Defined in hl_api_helper to avoid circular inclusion problem with
+    # hl_api_info.py
+    sr("{} setverbosity".format(level))
+
+
+def model_deprecation_warning(model):
+    """Checks whether the model is to be removed in a future verstion of NEST.
+    If so, a deprecation warning is issued.
+
+    Parameters
+    ----------
+    model: str
+        Name of model
+    """
+
+    deprecated_models = {'subnet': 'GIDCollection',
+                         'aeif_cond_alpha_RK5': 'aeif_cond_alpha',
+                         'iaf_neuron': 'iaf_psc_alpha'}
+
+    if model in deprecated_models:
+        text = "The {0} model is deprecated and will be removed in a \
+        future version of NEST, use {1} instead.\
+        ".format(model, deprecated_models[model])
+        text = get_wrapped_text(text)
+        warnings.warn('\n' + text)
+
+
+class SuppressedDeprecationWarning(object):
+    """
+    Context manager turning off deprecation warnings for given methods.
+
+    Think thoroughly before use. This context should only be used as a way to
+    make sure examples do not display deprecation warnings, that is, used in
+    functions called from examples, and not as a way to make tedious
+    deprecation warnings dissapear.
+    """
+
+    def __init__(self, no_dep_funcs):
+        """
+        Parameters
+        ----------
+        no_dep_funcs: Function name (string) or iterable of function names
+                      for which to suppress deprecation warnings
+        """
+
+        self._no_dep_funcs = (no_dep_funcs if not is_string(no_dep_funcs)
+                              else (no_dep_funcs, ))
+        self._deprecation_status = {}
+        self._verbosity_level = get_verbosity()
+
+    def __enter__(self):
+
+        for func_name in self._no_dep_funcs:
+            self._deprecation_status[func_name] = _deprecation_warning[func_name]  # noqa
+            _deprecation_warning[func_name] = False
+
+            # Suppress only if verbosity level is deprecated or lower
+            if self._verbosity_level <= sli_func('M_DEPRECATED'):
+                set_verbosity(sli_func('M_WARNING'))
+
+    def __exit__(self, *args):
+
+        # Reset the verbosity level and deprecation warning status
+        set_verbosity(self._verbosity_level)
+
+        for func_name, deprec_status in self._deprecation_status.items():
+            _deprecation_warning[func_name] = deprec_status

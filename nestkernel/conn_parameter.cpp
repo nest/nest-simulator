@@ -44,44 +44,60 @@ nest::ConnParameter::create( const Token& t, const size_t nthreads )
   // single double
   DoubleDatum* dd = dynamic_cast< DoubleDatum* >( t.datum() );
   if ( dd )
+  {
     return new ScalarDoubleParameter( *dd, nthreads );
+  }
 
   // random deviate
   DictionaryDatum* rdv_spec = dynamic_cast< DictionaryDatum* >( t.datum() );
   if ( rdv_spec )
+  {
     return new RandomParameter( *rdv_spec, nthreads );
+  }
 
   // single integer
   IntegerDatum* id = dynamic_cast< IntegerDatum* >( t.datum() );
   if ( id )
+  {
     return new ScalarIntegerParameter( *id, nthreads );
+  }
 
   // array of doubles
   DoubleVectorDatum* dvd = dynamic_cast< DoubleVectorDatum* >( t.datum() );
   if ( dvd )
+  {
     return new ArrayDoubleParameter( **dvd, nthreads );
+  }
 
   // array of integer
   IntVectorDatum* ivd = dynamic_cast< IntVectorDatum* >( t.datum() );
   if ( ivd )
+  {
     return new ArrayIntegerParameter( **ivd, nthreads );
+  }
 
   throw BadProperty( std::string( "Cannot handle parameter type. Received " )
     + t.datum()->gettypename().toString() );
 }
 
-nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec, const size_t )
+nest::RandomParameter::RandomParameter( const DictionaryDatum& rdv_spec,
+  const size_t )
   : rdv_( 0 )
 {
-  if ( !rdv_spec->known( names::distribution ) )
-    throw BadProperty( "Random distribution spec must contain distribution name." );
+  if ( not rdv_spec->known( names::distribution ) )
+  {
+    throw BadProperty(
+      "Random distribution spec must contain distribution name." );
+  }
 
   const std::string rdv_name = ( *rdv_spec )[ names::distribution ];
-  if ( !RandomNumbers::get_rdvdict().known( rdv_name ) )
+  if ( not RandomNumbers::get_rdvdict().known( rdv_name ) )
+  {
     throw BadProperty( "Unknown random deviate: " + rdv_name );
+  }
 
-  librandom::RdvFactoryDatum factory =
-    getValue< librandom::RdvFactoryDatum >( RandomNumbers::get_rdvdict()[ rdv_name ] );
+  librandom::RdvFactoryDatum factory = getValue< librandom::RdvFactoryDatum >(
+    RandomNumbers::get_rdvdict()[ rdv_name ] );
 
   rdv_ = factory->create();
   rdv_->set_status( rdv_spec );

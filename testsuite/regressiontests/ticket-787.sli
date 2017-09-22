@@ -50,25 +50,29 @@ M_ERROR setverbosity
 % preparatory work for proper test code in case NEST is complied with MPI support
 % For now we just ignore this test, this will later be replaced 
 % by a restart of NEST with a serial binary.
-statusdict/is_mpi :: {statusdict/exitcodes/success :: quit_i} if
-
+skip_if_have_mpi
 
 % entries to skip
 
 % functions that confuse the test setup
-/special_skip [/abort /license /helpindex /helpdesk] def
+/special_skip [/abort /license /helpindex /helpdesk /help /help_any] def
+
+% functions that depend on readline and should not be checked if
+% NEST was compiled without support for the GNU readline library
+/readline_skip [] def
+systemdict /GNUReadline known not {
+  /readline_skip [/executive /mathexecutive /GNUreadline /break] def
+} if
 
 % private functions not expected to implement full error checking
 /private_skip [
 	/CompareFiles_s_s /ConnectLayers_i_i_D /Connect_g_g_D_D
 	/Connect_i_i_D_l /Connect_i_i_d_d_l /Connect_i_i_l
-	/ConvergentConnect_ia_i_a_a_l /ConvergentConnect_ia_i_l
-	/ConvergentConnect_main /CopyModel_l_l /CopyModel_l_l_D /CreateLayer_D
+        /CopyModel_l_l /CopyModel_l_l_D /CreateLayer_D
 	/CreateMask_D /CreateParameter_D /CreateRDV_g_vf /CreateRNG_gt_i
 	/Create_l /Create_l_D /Create_l_i /Create_l_i_D /CyclicValue_d_a
 	/CyclicValue_d_d_d /DataConnect_a /DataConnect_i_D_s /Displacement_a_i
-	/Distance_a_i /DivergentConnect_i_ia_a_a_l /DivergentConnect_i_ia_l
-	/DivergentConnect_main /DumpLayerConnections_os_i_l
+	/Distance_a_i /DumpLayerConnections_os_i_l
 	/DumpLayerNodes_os_i /FileNames_r /FileNames_s /FixedPoint__p
 	/FixedPoint__p_i /Flatten_a /Flatten_a_i /GetChildren_i_D_b
 	/GetConnections_D /GetDefaults_l /GetElement_i_ia
@@ -79,19 +83,6 @@ statusdict/is_mpi :: {statusdict/exitcodes/success :: quit_i} if
 	/LayoutNetwork_l_a_dict /MapIndexed_a /MapIndexed_s /MapThread_a
 	/Map_iter /Map_s /MathematicaToSliIndex_a /MathematicaToSliIndex_i
 	/Part_a /Partition_a_i_i /RandomArray_v_i
-	/RandomConvergentConnect_ia_i_i_b_b_l
-	/RandomConvergentConnect_ia_i_i_d_l
-	/RandomConvergentConnect_ia_i_i_da_da_b_b_l
-	/RandomConvergentConnect_ia_i_i_da_da_b_b_l_wrapper
-	/RandomConvergentConnect_ia_i_i_da_da_l
-	/RandomConvergentConnect_ia_i_i_l /RandomConvergentConnect_ia_ia_i_l
-	/RandomConvergentConnect_ia_ia_ia_daa_daa_b_b_l
-	/RandomConvergentConnect_ia_ia_ia_daa_daa_l
-	/RandomConvergentConnect_main /RandomDivergentConnect_i_i_ia_b_b_l
-	/RandomDivergentConnect_i_i_ia_da_da_b_b_l
-	/RandomDivergentConnect_i_i_ia_da_da_b_b_l_wrapper
-	/RandomDivergentConnect_i_i_ia_da_da_l
-	/RandomDivergentConnect_i_i_ia_l /RandomDivergentConnect_main
 	/Random_i /RangeIterator_a /RestoreNodes_a /SetDefaults_l_D
 	/SetStatus_CD /SetStatus_aa /SetStatus_dict /SetStatus_id /SetStatus_v
 	/Simulate_d /Take_a_a /Take_a_i /TimeCommunicationAlltoall_i_i
@@ -119,7 +110,7 @@ statusdict/is_mpi :: {statusdict/exitcodes/success :: quit_i} if
 	/join_d /join_p /join_s /kill_i_i /kill_i_l /ldexp_di /length_a
 	/length_d /length_dv /length_iv /length_lp /length_p /length_s /leq_dd
 	/leq_di /leq_id /leq_ii /ln_d /log_d /lt_dd /lt_di /lt_id /lt_ii
-	/lt_ss /makehelp_s /max_d_d /max_d_i /max_i_d /max_i_i /min_d_d
+	/lt_ss /max_d_d /max_d_i /max_i_d /max_i_i /min_d_d
 	/min_d_i /min_i_d /min_i_i /mkfifo_s /modf_d /mul_P_P /mul_a_a
 	/mul_a_i /mul_d_dv /mul_d_iv /mul_dd /mul_di /mul_dv_dv /mul_i_a
 	/mul_i_iv /mul_id /mul_ii /mul_iv_iv /neg_d /neg_dv /neg_i /neg_iv
@@ -150,6 +141,7 @@ statusdict/is_mpi :: {statusdict/exitcodes/success :: quit_i} if
     k cvs -1 Take (_) neq and
     private_skip k MemberQ not and
     special_skip k MemberQ not and
+    readline_skip k MemberQ not and
   } Select
 def
 

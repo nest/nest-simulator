@@ -38,14 +38,18 @@ This example is also shown in the article Eppler et al. (2009)
 
 '''
 First, we import all necessary modules for simulation, analysis and
-plotting. Additionally, we set the verbosity using `set_verbosity` to
-suppress info messages
+plotting. Scipy should be imported before nest.
 '''
 
 from scipy.optimize import bisect
 
 import nest
 import nest.voltage_trace
+
+'''
+Additionally, we set the verbosity using `set_verbosity` to
+suppress info messages.
+'''
 
 nest.set_verbosity("M_WARNING")
 nest.ResetKernel()
@@ -71,7 +75,7 @@ Third, the nodes are created using `Create`. We store the returned
 handles in variables for later reference.
 '''
 
-neuron = nest.Create("iaf_neuron")
+neuron = nest.Create("iaf_psc_alpha")
 noise = nest.Create("poisson_generator", 2)
 voltmeter = nest.Create("voltmeter")
 spikedetector = nest.Create("spike_detector")
@@ -89,13 +93,13 @@ nest.SetStatus(noise, [{"rate": n_ex * r_ex}, {"rate": n_in * r_in}])
 nest.SetStatus(voltmeter, {"withgid": True, "withtime": True})
 
 '''
-Fifth, the `iaf_neuron` is connected to the `spike_detector` and the
+Fifth, the `iaf_psc_alpha` is connected to the `spike_detector` and the
 `voltmeter`, as are the two Poisson generators to the neuron. The
 command `Connect` has different variants. Plain `Connect` just takes
 the handles of pre- and post-synaptic nodes and uses the default
-values for weight and delay. `ConvergentConnect` takes four arguments:
-lists of pre- and post-synaptic nodes and lists of weights and
-delays. Note that the connection direction for the `voltmeter` is
+values for weight and delay. It can also be called with a list of
+weights, as in the connection of the noise below.
+Note that the connection direction for the `voltmeter` is
 reversed compared to the `spike_detector`, because it observes the
 neuron instead of receiving events from it. Thus, `Connect` reflects
 the direction of signal flow in the simulation kernel rather than the
@@ -105,7 +109,7 @@ semantics is presently not available in NEST.
 
 nest.Connect(neuron, spikedetector)
 nest.Connect(voltmeter, neuron)
-nest.ConvergentConnect(noise, neuron, [epsc, ipsc], 1.0)
+nest.Connect(noise, neuron, syn_spec={'weight': [[epsc, ipsc]], 'delay': 1.0})
 
 '''
 To determine the optimal rate of the neurons in the inhibitory
@@ -119,6 +123,7 @@ two steps:
 First, the function ``output_rate`` is defined to measure the firing
 rate of the target neuron for a given rate of the inhibitory neurons.
 '''
+
 
 def output_rate(guess):
     print("Inhibitory rate estimate: %5.2f Hz" % guess)

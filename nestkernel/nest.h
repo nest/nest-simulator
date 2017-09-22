@@ -67,7 +67,8 @@ DictionaryDatum get_kernel_status();
 void set_node_status( const index node_id, const DictionaryDatum& dict );
 DictionaryDatum get_node_status( const index node_id );
 
-void set_connection_status( const ConnectionDatum& conn, const DictionaryDatum& dict );
+void set_connection_status( const ConnectionDatum& conn,
+  const DictionaryDatum& dict );
 DictionaryDatum get_connection_status( const ConnectionDatum& conn );
 
 index create( const Name& model_name, const index n );
@@ -79,10 +80,53 @@ void connect( const GIDCollection& sources,
 
 ArrayDatum get_connections( const DictionaryDatum& dict );
 
-void simulate( const double_t& t );
+void simulate( const double& t );
 void resume_simulation();
+/**
+ * @fn run(const double& time)
+ * @brief Run a partial simulation for `time` ms
+ *
+ * Runs a partial simulation for `time` ms
+ * after a call to prepare() and before a cleanup().
+ * Can be called multiple times between a prepare()/cleanup()
+ * pair to divide a simulation into multiple pieces with access
+ * to the API in between.
+ *
+ * Thus, simulate(t) = prepare(); run(t/2); run(t/2); cleanup()
+ *
+ * @see prepare()
+ * @see cleanup()
+ */
+void run( const double& t );
 
-void copy_model( const Name& oldmodname, const Name& newmodname, const DictionaryDatum& dict );
+/**
+ * @fn prepare()
+ * @brief do calibrations for network, open files, ... before run()
+ *
+ * Prepares a simulation before calling any number of run(t_n)
+ * calls to actually run the simulation
+ *
+ * @see run()
+ * @see cleanup()
+ */
+void prepare();
+
+/**
+ * @fn cleanup()
+ * @brief do cleanup after a simulation, such as closing files
+ *
+ * Do cleanup to end a simulation using run() commands.
+ * After calling cleanup(), further run() calls must only happen
+ * after another call to prepare()
+ *
+ * @see run()
+ * @see prepare()
+ */
+void cleanup();
+
+void copy_model( const Name& oldmodname,
+  const Name& newmodname,
+  const DictionaryDatum& dict );
 
 void set_model_defaults( const Name& model_name, const DictionaryDatum& );
 DictionaryDatum get_model_defaults( const Name& model_name );
@@ -97,11 +141,13 @@ ArrayDatum get_nodes( const index subnet_id,
   const bool include_remotes,
   const bool return_gids_only );
 
-ArrayDatum
-get_leaves( const index subnet_id, const DictionaryDatum& params, const bool include_remotes );
+ArrayDatum get_leaves( const index subnet_id,
+  const DictionaryDatum& params,
+  const bool include_remotes );
 
-ArrayDatum
-get_children( const index subnet_id, const DictionaryDatum& params, const bool include_remotes );
+ArrayDatum get_children( const index subnet_id,
+  const DictionaryDatum& params,
+  const bool include_remotes );
 
 void restore_nodes( const ArrayDatum& node_list );
 }

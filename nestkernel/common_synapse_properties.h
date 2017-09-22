@@ -27,9 +27,11 @@
 #include "connector_model.h"
 #include "nest_types.h"
 #include "node.h"
+#include "sibling_container.h"
 
 // Includes from sli:
 #include "dictdatum.h"
+
 
 namespace nest
 {
@@ -40,10 +42,11 @@ class TimeConverter;
 
 /**
  * Class containing the common properties for all connections of a certain type.
- * Everything that needs to be stored commonly for all synapses goes into a CommonProperty
- * class derived by this base class.
+ * Everything that needs to be stored commonly for all synapses goes into a
+ * CommonProperty class derived by this base class.
  * Base class for all CommonProperty classes.
- * If the synapse type does not have any common properties, this class may be used as a placeholder.
+ * If the synapse type does not have any common properties, this class may be
+ * used as a placeholder.
  */
 class CommonSynapseProperties
 {
@@ -80,14 +83,36 @@ public:
    */
   Node* get_node();
 
-  long_t get_vt_gid() const;
+  /**
+   * get gid of volume transmitter
+   */
+  long get_vt_gid() const;
+
+  /**
+   * get weight_recorder
+   */
+  const SiblingContainer* get_weight_recorder() const;
+
+
+private:
+  /**
+   * weight recorder
+   */
+  const SiblingContainer* weight_recorder_;
 };
 
-inline long_t
+inline long
 CommonSynapseProperties::get_vt_gid() const
 {
   return -1;
 }
+
+inline const SiblingContainer*
+CommonSynapseProperties::get_weight_recorder() const
+{
+  return weight_recorder_;
+}
+
 
 } // of namespace nest
 

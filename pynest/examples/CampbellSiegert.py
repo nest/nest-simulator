@@ -49,7 +49,6 @@ lead to the same results.
 '''
 weights = [0.1]    # (mV) psp amplitudes
 rates = [10000.]   # (1/s) rate of Poisson sources
-
 # weights = [0.1, 0.1]    # (mV) psp amplitudes
 # rates = [5000., 5000.]  # (1/s) rate of Poisson sources
 
@@ -88,7 +87,7 @@ References:
 [1] Papoulis A (1991) **Probability, Random Variables, and
 Stochastic Processes**, *McGraw-Hill*
 [2] Siegert AJ (1951) **On the first passage time probability problem**,
-*Phys Rev 81: 617–623*
+*Phys Rev 81: 617-623*
 '''
 for rate, weight in zip(rates, weights):
 
@@ -103,12 +102,13 @@ for rate, weight in zip(rates, weights):
     We define the form of a single PSP, which allows us to match the
     maximal value to or chosen weight.
     '''
-    psp = lambda x: -(C_m * pF) / (tau_syn * ms) * (1 / (C_m * pF)) *\
-        (np.exp(1) / (tau_syn * ms)) *\
-        (((-x * np.exp(-x/(tau_syn * ms))) /
-          (1 / (tau_syn * ms) - 1 / (tau_m * ms))) +
-         (np.exp(-x / (tau_m * ms)) - np.exp(-x / (tau_syn * ms))) /
-         ((1 / (tau_syn * ms) - 1 / (tau_m * ms))**2))
+    def psp(x):
+        return - ((C_m * pF) / (tau_syn * ms) * (1 / (C_m * pF)) *
+                  (np.exp(1) / (tau_syn * ms)) *
+                  (((-x * np.exp(-x / (tau_syn * ms))) /
+                    (1 / (tau_syn * ms) - 1 / (tau_m * ms))) +
+                   (np.exp(-x / (tau_m * ms)) - np.exp(-x / (tau_syn * ms))) /
+                   ((1 / (tau_syn * ms) - 1 / (tau_m * ms)) ** 2)))
 
     min_result = fmin(psp, [0], full_output=1, disp=0)
 
@@ -116,7 +116,7 @@ for rate, weight in zip(rates, weights):
     We need to calculate the PSC amplitude (i.e., the weight we set in NEST)
     from the PSP amplitude, that we have specified above.
     '''
-    fudge = -1./min_result[1]
+    fudge = -1. / min_result[1]
     J.append(C_m * weight / (tau_syn) * fudge)
 
     '''
@@ -143,12 +143,11 @@ upper = (V_th * mV - mu) / sigma / np.sqrt(2)
 lower = (E_L * mV - mu) / sigma / np.sqrt(2)
 interval = (upper - lower) / num_iterations
 tmpsum = 0.0
-for cu in range(0, num_iterations+1):
+for cu in range(0, num_iterations + 1):
     u = lower + cu * interval
-    f = np.exp(u**2) * (1 + erf(u))
+    f = np.exp(u ** 2) * (1 + erf(u))
     tmpsum += interval * np.sqrt(np.pi) * f
-r = 1. / (t_ref*ms + tau_m*ms * tmpsum)
-
+r = 1. / (t_ref * ms + tau_m * ms * tmpsum)
 
 '''
 We now simulate neurons receiving Poisson spike trains as input,
@@ -158,7 +157,7 @@ nest.ResetKernel()
 nest.set_verbosity('M_WARNING')
 neurondict = {'V_th': V_th, 'tau_m': tau_m, 'tau_syn_ex': tau_syn_ex,
               'tau_syn_in': tau_syn_in, 'C_m': C_m, 'E_L': E_L, 't_ref': t_ref,
-              'V_m':  E_L, 'V_reset': E_L}
+              'V_m': E_L, 'V_reset': E_L}
 
 '''
 Neurons and devices are instantiated. We set a high threshold as

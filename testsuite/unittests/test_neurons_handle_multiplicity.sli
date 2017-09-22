@@ -1,0 +1,200 @@
+/*
+ *  test_neurons_handle_multiplicity.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
+ * Test that all neuron models heed the multiplicity of incoming spikes. 
+ *
+ * This test inputs two spikes at the same time into each neuron.
+ * The spikes arrive once as one event with multiplicity two, once
+ * as two events with multiplicity one. The membrane potential after
+ * the spikes have arrived must be identical in both cases.
+ *
+ * This tests solves Github issue #80.
+ *
+ * Hans Ekkehard Plesser, 2016-03-03
+ *
+ */
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+
+% The following models will not be tested:
+/skip_list [ 
+             /ginzburg_neuron             % binary neuron
+             /mcculloch_pitts_neuron      % binary neuron
+             /lin_rate_ipn                % rate neuron
+             /lin_rate_opn                % rate neuron
+             /tanh_rate_ipn               % rate neuron
+             /tanh_rate_opn               % rate neuron
+             /threshold_lin_rate_ipn      % rate neuron
+             /threshold_lin_rate_opn      % rate neuron
+             /siegert_neuron              % rate neuron
+             /parrot_neuron
+             /parrot_neuron_ps
+             /iaf_cond_alpha_mc    % cannot readout V_m directly
+             /music_event_in_proxy        % music device
+             /music_event_out_proxy       % music device
+             /music_cont_in_proxy         % music device
+             /music_cont_out_proxy        % music device
+             /music_message_in_proxy      % music device
+             /music_message_out_proxy     % music device
+           ] def    
+
+% The following models require connections to rport 1:
+/extra_params <<
+   /iaf_psc_alpha_multisynapse << /params << /tau_syn [ 1.0 ] >>
+                                  /receptor_type 1 >>
+   /iaf_psc_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
+                                  /receptor_type 1 >>
+   /gif_psc_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
+                                  /receptor_type 1 >>
+   /gif_cond_exp_multisynapse << /params << /tau_syn [ 1.0 ] >>
+                                  /receptor_type 1 >>
+   /aeif_cond_alpha_multisynapse << /params << /tau_syn [ 1.0 ] >>
+                                  /receptor_type 1 >>
+   /aeif_cond_beta_multisynapse << /params << /E_rev [ 0.0 ] 
+                                              /tau_rise [ 1.0 ]
+                                              /tau_decay [ 1.0 ] >>
+                                  /receptor_type 1 >>
+   /iaf_cond_alpha_mc << /receptor_type 1 >>
+   /ht_neuron << /receptor_type 1 >>
+   /sli_neuron << /params << /calibrate { /V_m 0.0 def }
+                             /update { /V_m V_m ex_spikes add def } 
+                             /V_m 0.0  % needed so we can read it before calling Simulate
+                          >>
+               >> 
+   >>
+   def
+                                     
+% We first test that the spike generator really sends spikes with
+% correct multiplicity. We go through a parrot neuron for this purpose.
+{
+  ResetKernel
+  /sg /spike_generator << /spike_times [ 1.0 2.0 3.0 ] 
+                          /spike_multiplicities [ 1 3 2 ] >> Create def
+  /pn /parrot_neuron Create def
+  /sd /spike_detector Create def
+  
+  sg pn Connect
+  pn sd Connect
+  
+  10 Simulate
+  sd /events get /times get cva
+  [ 2.0 3.0 3.0 3.0 4.0 4.0 ]
+  eq
+} assert_or_die
+                 
+
+
+% Now the real test
+{
+  % apply to all models of element_type neuron
+  modeldict keys {
+    /model Set
+    
+    model skip_list exch MemberQ not
+    model GetDefaults /element_type get /neuron eq and
+    {
+      ResetKernel
+      /n1 model Create def
+      /n2 model Create def
+      extra_params model known
+      {
+         extra_params model get /params known
+         {
+           /pars extra_params model get /params get def
+           n1 pars SetStatus
+           n2 pars SetStatus
+         } if 
+      } if   
+
+      % two spike generators send one spike with multiplicity 1,
+      % a third generator one spike with multiplicity 2      
+      /sg1a /spike_generator << /spike_times [ 5.0 ] >> Create def
+      /sg1b /spike_generator << /spike_times [ 5.0 ] >> Create def
+      /sg2 /spike_generator << /spike_times [ 5.0 ] 
+                               /spike_multiplicities [ 2 ] >> Create def
+
+      /syn_spec << /model /static_synapse
+                   /receptor_type 
+                     extra_params model known
+                     {
+                       extra_params model get /receptor_type known
+                       {
+                         extra_params model get /receptor_type get
+                       } 
+                       {
+                         0
+                       } ifelse
+                     }
+                     {
+                       0
+                     } ifelse
+                >> def  
+
+      % n1 receives two spikes with multiplicity 1
+      [ sg1a sg1b ] [ n1 ] /all_to_all syn_spec Connect
+      
+      % n2 receives one spike with multiplicity 2
+      [ sg2 ] [ n2 ] /all_to_all syn_spec Connect
+
+      /v1_0 n1 /V_m get def
+      /v2_0 n2 /V_m get def
+            
+      8 Simulate
+
+      /v1 n1 /V_m get def
+      /v2 n2 /V_m get def
+      
+      % ensure initial values were equal
+      v1_0 v2_0 eq
+      
+      % ensure final values are equal 
+      v1 v2 sub 12 ToUnitTestPrecision 0 eq
+
+      % ensure final value differs from initial value
+      v1_0 v1 neq
+      and and  % combine
+      dup not {
+       (FAILED: ) model cvs join == 
+       (  v1_0 ) =only v1_0 =
+       (  v2_0 ) =only v2_0 =
+       (  v1   ) =only v1 =
+       (  v2   ) =only v2 =
+      }
+      if
+    }
+    { true }
+    ifelse
+  }
+  Map
+
+  % see if all entries are true
+  true exch { and } Fold
+
+} 
+assert_or_die
+
+endusing

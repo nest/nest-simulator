@@ -18,8 +18,8 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-__author__ = 'naveau'
-
 from . import test_all
+
+__author__ = 'naveau'
 
 suite = test_all.suite

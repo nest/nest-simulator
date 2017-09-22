@@ -48,7 +48,8 @@
 
 /*BeginDocumentation
 
-Name: music_message_in_proxy - A device which receives message strings from MUSIC.
+Name: music_message_in_proxy - A device which receives message strings from
+                              MUSIC.
 
 Description:
 A music_message_in_proxy can be used to receive message strings from
@@ -108,10 +109,11 @@ public:
   get_status( DictionaryDatum& d ) const
   {
     DictionaryDatum dict( new Dictionary );
-    ( *dict )[ "messages" ] = messages;
-    ( *dict )[ "message_times" ] = DoubleVectorDatum( new std::vector< double >( message_times ) );
-    ( *d )[ "n_messages" ] = messages.size();
-    ( *d )[ "data" ] = dict;
+    ( *dict )[ names::messages ] = messages;
+    ( *dict )[ names::message_times ] =
+      DoubleVectorDatum( new std::vector< double >( message_times ) );
+    ( *d )[ names::n_messages ] = messages.size();
+    ( *d )[ names::data ] = dict;
   }
 
   void
@@ -154,7 +156,7 @@ private:
   void calibrate();
 
   void
-  update( Time const&, const long_t, const long_t )
+  update( Time const&, const long, const long )
   {
   }
 
@@ -181,13 +183,15 @@ private:
 
   struct State_
   {
-    bool published_; //!< indicates whether this node has been published already with MUSIC
+    bool published_; //!< indicates whether this node has been published already
+                     //!< with MUSIC
     int port_width_; //!< the width of the MUSIC port
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const;                     //!< Store current values in dictionary
-    void set( const DictionaryDatum&, const Parameters_& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    //! Set values from dictionary
+    void set( const DictionaryDatum&, const Parameters_& );
   };
 
   // ------------------------------------------------------------
@@ -230,13 +234,17 @@ music_message_in_proxy::set_status( const DictionaryDatum& d )
   State_ stmp = S_;
   stmp.set( d, P_ ); // throws if BadProperty
 
-  long_t nm = 0;
-  if ( updateValue< long_t >( d, "n_messages", nm ) )
+  long nm = 0;
+  if ( updateValue< long >( d, names::n_messages, nm ) )
   {
     if ( nm == 0 )
+    {
       B_.message_handler_.clear();
+    }
     else
+    {
       throw BadProperty( "n_messaged can only be set to 0." );
+    }
   }
 
   // if we get here, temporaries contain consistent set of properties

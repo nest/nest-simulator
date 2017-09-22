@@ -42,7 +42,8 @@
    tau_plus   double - Time constant of STDP window, potentiation in ms
                        (tau_minus defined in post-synaptic neuron)
    lambda     double - Step size
-   alpha      double - Asymmetry parameter (scales depressing increments as alpha*lambda)
+   alpha      double - Asymmetry parameter (scales depressing increments as
+                       alpha*lambda)
    mu_plus    double - Weight dependence exponent, potentiation
    mu_minus   double - Weight dependence exponent, depression
    Wmax       double - Maximum allowed weight
@@ -67,6 +68,7 @@
 
   FirstVersion: March 2006
   Author: Moritz Helias, Abigail Morrison
+  Adapted by: Philipp Weidel
   SeeAlso: synapsedict, tsodyks_synapse, static_synapse
 */
 
@@ -87,8 +89,8 @@
 namespace nest
 {
 
-// connections are templates of target identifier type (used for pointer / target index addressing)
-// derived from generic connection template
+// connections are templates of target identifier type (used for pointer /
+// target index addressing) derived from generic connection template
 template < typename targetidentifierT >
 class STDPConnection : public Connection< targetidentifierT >
 {
@@ -110,10 +112,10 @@ public:
    */
   STDPConnection( const STDPConnection& );
 
-  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
-  // This avoids explicit name prefixes in all places these functions are used.
-  // Since ConnectionBase depends on the template parameter, they are not automatically
-  // found in the base class.
+  // Explicitly declare all methods inherited from the dependent base
+  // ConnectionBase. This avoids explicit name prefixes in all places these
+  // functions are used. Since ConnectionBase depends on the template parameter,
+  // they are not automatically found in the base class.
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
   using ConnectionBase::get_rport;
@@ -135,7 +137,10 @@ public:
    * \param t_lastspike Point in time of last spike sent.
    * \param cp common properties of all synapses (empty).
    */
-  void send( Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties& cp );
+  void send( Event& e,
+    thread t,
+    double t_lastspike,
+    const CommonSynapseProperties& cp );
 
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
@@ -155,7 +160,7 @@ public:
   check_connection( Node& s,
     Node& t,
     rport receptor_type,
-    double_t t_lastspike,
+    double t_lastspike,
     const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
@@ -166,37 +171,37 @@ public:
   }
 
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
 
 private:
-  double_t
-  facilitate_( double_t w, double_t kplus )
+  double
+  facilitate_( double w, double kplus )
   {
-    double_t norm_w =
-      ( w / Wmax_ ) + ( lambda_ * std::pow( 1.0 - ( w / Wmax_ ), mu_plus_ ) * kplus );
+    double norm_w = ( w / Wmax_ )
+      + ( lambda_ * std::pow( 1.0 - ( w / Wmax_ ), mu_plus_ ) * kplus );
     return norm_w < 1.0 ? norm_w * Wmax_ : Wmax_;
   }
 
-  double_t
-  depress_( double_t w, double_t kminus )
+  double
+  depress_( double w, double kminus )
   {
-    double_t norm_w =
-      ( w / Wmax_ ) - ( alpha_ * lambda_ * std::pow( w / Wmax_, mu_minus_ ) * kminus );
+    double norm_w = ( w / Wmax_ )
+      - ( alpha_ * lambda_ * std::pow( w / Wmax_, mu_minus_ ) * kminus );
     return norm_w > 0.0 ? norm_w * Wmax_ : 0.0;
   }
 
   // data members of each connection
-  double_t weight_;
-  double_t tau_plus_;
-  double_t lambda_;
-  double_t alpha_;
-  double_t mu_plus_;
-  double_t mu_minus_;
-  double_t Wmax_;
-  double_t Kplus_;
+  double weight_;
+  double tau_plus_;
+  double lambda_;
+  double alpha_;
+  double mu_plus_;
+  double mu_minus_;
+  double Wmax_;
+  double Kplus_;
 };
 
 
@@ -211,46 +216,55 @@ template < typename targetidentifierT >
 inline void
 STDPConnection< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
+  double t_lastspike,
   const CommonSynapseProperties& )
 {
   // synapse STDP depressing/facilitation dynamics
-  //   if(t_lastspike >0) {std::cout << "last spike " << t_lastspike << std::endl ;}
-  double_t t_spike = e.get_stamp().get_ms();
+  //   if(t_lastspike >0) {std::cout << "last spike " << t_lastspike <<
+  //   std::endl ;}
+  double t_spike = e.get_stamp().get_ms();
   // t_lastspike_ = 0 initially
 
-  // use accessor functions (inherited from Connection< >) to obtain delay and target
+  // use accessor functions (inherited from Connection< >) to obtain delay and
+  // target
   Node* target = get_target( t );
-  double_t dendritic_delay = get_delay();
+  double dendritic_delay = get_delay();
 
   // get spike history in relevant range (t1, t2] from post-synaptic neuron
   std::deque< histentry >::iterator start;
   std::deque< histentry >::iterator finish;
 
-  // For a new synapse, t_lastspike contains the point in time of the last spike.
-  // So we initially read the history(t_last_spike - dendritic_delay, ...,  T_spike-dendritic_delay]
+  // For a new synapse, t_lastspike contains the point in time of the last
+  // spike. So we initially read the
+  // history(t_last_spike - dendritic_delay, ..., T_spike-dendritic_delay]
   // which increases the access counter for these entries.
-  // At registration, all entries' access counters of history[0, ..., t_last_spike -
-  // dendritic_delay] have been
-  // incremented by Archiving_Node::register_stdp_connection(). See bug #218 for details.
-  target->get_history( t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
+  // At registration, all entries' access counters of
+  // history[0, ..., t_last_spike - dendritic_delay] have been
+  // incremented by Archiving_Node::register_stdp_connection(). See bug #218 for
+  // details.
+  target->get_history(
+    t_lastspike - dendritic_delay, t_spike - dendritic_delay, &start, &finish );
   // facilitation due to post-synaptic spikes since last pre-synaptic spike
-  double_t minus_dt;
+  double minus_dt;
   while ( start != finish )
   {
     minus_dt = t_lastspike - ( start->t_ + dendritic_delay );
     ++start;
     if ( minus_dt == 0 )
+    {
       continue;
+    }
     weight_ = facilitate_( weight_, Kplus_ * std::exp( minus_dt / tau_plus_ ) );
   }
 
   // depression due to new pre-synaptic spike
-  weight_ = depress_( weight_, target->get_K_value( t_spike - dendritic_delay ) );
+  weight_ =
+    depress_( weight_, target->get_K_value( t_spike - dendritic_delay ) );
 
   e.set_receiver( *target );
   e.set_weight( weight_ );
-  // use accessor functions (inherited from Connection< >) to obtain delay in steps and rport
+  // use accessor functions (inherited from Connection< >) to obtain delay in
+  // steps and rport
   e.set_delay( get_delay_steps() );
   e.set_rport( get_rport() );
   e();
@@ -293,28 +307,36 @@ void
 STDPConnection< targetidentifierT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionBase::get_status( d );
-  def< double_t >( d, names::weight, weight_ );
-  def< double_t >( d, "tau_plus", tau_plus_ );
-  def< double_t >( d, "lambda", lambda_ );
-  def< double_t >( d, "alpha", alpha_ );
-  def< double_t >( d, "mu_plus", mu_plus_ );
-  def< double_t >( d, "mu_minus", mu_minus_ );
-  def< double_t >( d, "Wmax", Wmax_ );
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  def< double >( d, names::weight, weight_ );
+  def< double >( d, names::tau_plus, tau_plus_ );
+  def< double >( d, names::lambda, lambda_ );
+  def< double >( d, names::alpha, alpha_ );
+  def< double >( d, names::mu_plus, mu_plus_ );
+  def< double >( d, names::mu_minus, mu_minus_ );
+  def< double >( d, names::Wmax, Wmax_ );
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename targetidentifierT >
 void
-STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+STDPConnection< targetidentifierT >::set_status( const DictionaryDatum& d,
+  ConnectorModel& cm )
 {
   ConnectionBase::set_status( d, cm );
-  updateValue< double_t >( d, names::weight, weight_ );
-  updateValue< double_t >( d, "tau_plus", tau_plus_ );
-  updateValue< double_t >( d, "lambda", lambda_ );
-  updateValue< double_t >( d, "alpha", alpha_ );
-  updateValue< double_t >( d, "mu_plus", mu_plus_ );
-  updateValue< double_t >( d, "mu_minus", mu_minus_ );
-  updateValue< double_t >( d, "Wmax", Wmax_ );
+  updateValue< double >( d, names::weight, weight_ );
+  updateValue< double >( d, names::tau_plus, tau_plus_ );
+  updateValue< double >( d, names::lambda, lambda_ );
+  updateValue< double >( d, names::alpha, alpha_ );
+  updateValue< double >( d, names::mu_plus, mu_plus_ );
+  updateValue< double >( d, names::mu_minus, mu_minus_ );
+  updateValue< double >( d, names::Wmax, Wmax_ );
+
+  // check if weight_ and Wmax_ has the same sign
+  if ( not( ( ( weight_ >= 0 ) - ( weight_ < 0 ) )
+         == ( ( Wmax_ >= 0 ) - ( Wmax_ < 0 ) ) ) )
+  {
+    throw BadProperty( "Weight and Wmax must have same sign." );
+  }
 }
 
 } // of namespace nest

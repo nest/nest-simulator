@@ -88,7 +88,8 @@ SLIgraphics::ReadPGMFunction::execute( SLIInterpreter* i ) const
   }
   std::istream* in = NULL;
   std::vector< long > image;
-  int width = 0, height = 0, maxval = 0; // for the image parameters: width, height, maxval
+  // for the image parameters: width, height, maxval
+  int width = 0, height = 0, maxval = 0;
 
   try
   {
@@ -132,7 +133,8 @@ SLIgraphics::ReadPGMFunction::openPGMFile( StringDatum* filename ) const
 }
 
 void
-SLIgraphics::ReadPGMFunction::readMagicNumber( std::istream* in, char* magic ) const
+SLIgraphics::ReadPGMFunction::readMagicNumber( std::istream* in,
+  char* magic ) const
 {
   // reads in the magic number which determines the file format
   try
@@ -159,7 +161,9 @@ SLIgraphics::ReadPGMFunction::initRead( std::istream* in,
     // otherwise, >> gets confused about the newline before the numbers
     char trash;
     while ( std::isspace( trash = in->get() ) )
+    {
       continue;
+    }
     in->putback( trash );
     // skip comments
     do
@@ -193,7 +197,7 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
     if ( std::string( magic ) == std::string( "P2" ) ) // ASCII PGM
     {
       int tmp;
-      while ( ( *in >> tmp ) && !( in->eof() ) )
+      while ( ( *in >> tmp ) && not( in->eof() ) )
       {
         image.push_back( ( long ) tmp );
       }
@@ -210,7 +214,7 @@ SLIgraphics::ReadPGMFunction::readImage( std::istream* in,
       in->read( &tmp, 1 ); // throw away LF after maxval
       // TODO: Protect this from reading too much data like trailing
       // newlines: use for instead of while
-      while ( in->read( &tmp, 1 ) && !( in->eof() ) )
+      while ( in->read( &tmp, 1 ) && not( in->eof() ) )
       {
         tmp2 = ( unsigned char ) tmp;
         image.push_back( ( long ) tmp2 );
@@ -274,11 +278,16 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
     return;
   }
 
-  IntegerDatum* w = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
-  IntegerDatum* h = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* m = dynamic_cast< IntegerDatum* >( i->OStack.pick( 2 ).datum() );
-  ArrayDatum* image = dynamic_cast< ArrayDatum* >( i->OStack.pick( 3 ).datum() );
-  StringDatum* filename = dynamic_cast< StringDatum* >( i->OStack.pick( 4 ).datum() );
+  IntegerDatum* w =
+    dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* h =
+    dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* m =
+    dynamic_cast< IntegerDatum* >( i->OStack.pick( 2 ).datum() );
+  ArrayDatum* image =
+    dynamic_cast< ArrayDatum* >( i->OStack.pick( 3 ).datum() );
+  StringDatum* filename =
+    dynamic_cast< StringDatum* >( i->OStack.pick( 4 ).datum() );
 
   long width = ( long ) w->get();
   long height = ( long ) h->get();
@@ -290,11 +299,15 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
   {
     out = new ofdstream( filename->c_str() );
 
-    if ( !out->good() )
+    if ( not out->good() )
+    {
       throw std::string( "Error when opening file for writing." );
+    }
 
     if ( ( long ) image->size() != width * height )
+    {
       throw std::string( "Array size does not match given dimensions." );
+    }
 
     // Plain ASCII PGM format
     *out << "P2" << std::endl; // Magic Number
@@ -310,16 +323,24 @@ SLIgraphics::WritePGMFunction::execute( SLIInterpreter* i ) const
       if ( width > 20 )
       {
         if ( ( i + 1 ) % 20 == 0 )
+        {
           *out << std::endl;
+        }
         else
+        {
           *out << " ";
+        }
       }
       else
       {
         if ( ( i + 1 ) % width == 0 )
+        {
           *out << std::endl;
+        }
         else
+        {
           *out << " ";
+        }
       }
     }
 

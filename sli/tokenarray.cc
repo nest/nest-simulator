@@ -95,7 +95,8 @@ TokenArray::toVector( std::vector< long >& a ) const
     if ( targetid == NULL )
     {
       IntegerDatum const d;
-      throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
+      throw TypeMismatch(
+        d.gettypename().toString(), idx->datum()->gettypename().toString() );
     }
 
     a.push_back( targetid->get() );
@@ -113,7 +114,8 @@ TokenArray::toVector( std::vector< size_t >& a ) const
     if ( targetid == NULL )
     {
       IntegerDatum const d;
-      throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
+      throw TypeMismatch(
+        d.gettypename().toString(), idx->datum()->gettypename().toString() );
     }
 
     a.push_back( targetid->get() );
@@ -131,7 +133,8 @@ TokenArray::toVector( std::vector< double >& a ) const
     if ( targetid == NULL )
     {
       DoubleDatum const d;
-      throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
+      throw TypeMismatch(
+        d.gettypename().toString(), idx->datum()->gettypename().toString() );
     }
     a.push_back( targetid->get() );
   }
@@ -148,7 +151,8 @@ TokenArray::toVector( std::vector< std::string >& a ) const
     if ( target == NULL )
     {
       StringDatum const d;
-      throw TypeMismatch( d.gettypename().toString(), idx->datum()->gettypename().toString() );
+      throw TypeMismatch(
+        d.gettypename().toString(), idx->datum()->gettypename().toString() );
     }
     a.push_back( *target );
   }
@@ -170,7 +174,9 @@ std::ostream& operator<<( std::ostream& out, const TokenArray& a )
 {
 
   for ( Token* t = a.begin(); t < a.end(); ++t )
+  {
     out << *t << ' ';
+  }
 
   return out;
 }

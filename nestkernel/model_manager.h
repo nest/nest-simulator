@@ -26,13 +26,10 @@
 // C++ includes:
 #include <string>
 
-// Includes from libnestutil:
-#include "manager_interface.h"
-
 // Includes from nestkernel:
 #include "connector_model.h"
 #include "genericmodel.h"
-#include "genericmodel.h"
+#include "manager_interface.h"
 #include "model.h"
 #include "nest_time.h"
 #include "nest_timeconverter.h"
@@ -68,10 +65,10 @@ public:
 
   /**
    * Resize the structures for the Connector objects if necessary.
-   * This function should be called after number of threads, min_delay, max_delay,
-   * and time representation have been changed in the scheduler.
-   * The TimeConverter is used to convert times from the old to the new representation.
-   * It is also forwarding the calibration
+   * This function should be called after number of threads, min_delay,
+   * max_delay, and time representation have been changed in the scheduler.
+   * The TimeConverter is used to convert times from the old to the new
+   * representation. It is also forwarding the calibration
    * request to all ConnectorModel objects.
    */
   void calibrate( const TimeConverter& );
@@ -126,12 +123,16 @@ public:
    * is in a *module.cpp file.
    * @param name of the new node model.
    * @param private_model if true, don't add model to modeldict.
+   * @param deprecation_info  If non-empty string, deprecation warning will
+   *                          be issued for model with this info to user.
    * @return ID of the new model object.
    * @see register_private_prototype_model, register_preconf_node_model,
    * register_prototype_connection
    */
   template < class ModelT >
-  index register_node_model( const Name& name, bool private_model = false );
+  index register_node_model( const Name& name,
+    bool private_model = false,
+    std::string deprecation_info = std::string() );
 
   /**
    * Register a pre-configured model prototype with the network.
@@ -146,13 +147,18 @@ public:
    * @param name of the new node model.
    * @param private_model if true, don't add model to modeldict.
    * @param dictionary to use to pre-configure model
+   * @param deprecation_info  If non-empty string, deprecation warning will
+   *                          be issued for model with this info to user.
+   *
    * @return ID of the new model object.
-   * @see register_private_prototype_model, register_node_model, register_prototype_connection
+   * @see register_private_prototype_model, register_node_model,
+   * register_prototype_connection
    */
   template < class ModelT >
   index register_preconf_node_model( const Name& name,
     DictionaryDatum& conf,
-    bool private_model = false );
+    bool private_model = false,
+    std::string deprecation_info = std::string() );
 
   /**
    * Copy an existing model and register it as a new model.
@@ -174,15 +180,28 @@ public:
   void set_model_defaults( Name name, DictionaryDatum params );
 
   /**
-   * Register a synape with default Connector and without any common properties.
+   * Register a synape model with default Connector and without any common
+   * properties. Convenience function that used the default Connector model
+   * GenericConnectorModel.
    * @param name The name under which the ConnectorModel will be registered.
-   * @return an ID for the synapse prototype.
    */
-  template < class ConnectionT >
-  void register_connection_model( const std::string& name );
+  template < typename ConnectionT >
+  void register_connection_model( const std::string& name,
+    bool requires_symmetric = false );
 
-  template < class ConnectionT >
-  void register_secondary_connection_model( const std::string& name, bool has_delay = true );
+  /**
+   * Register a synape model with a custom Connector model and without any
+   * common properties.
+   * @param name The name under which the ConnectorModel will be registered.
+   */
+  template < typename ConnectionT, template < typename > class ConnectorModelT >
+  void register_connection_model( const std::string& name,
+    bool requires_symmetric = false );
+
+  template < typename ConnectionT >
+  void register_secondary_connection_model( const std::string& name,
+    bool has_delay = true,
+    bool requires_symmetric = false );
 
   /**
    * @return The model id of a given model name
@@ -195,6 +214,12 @@ public:
   Model* get_model( index ) const;
 
   DictionaryDatum get_connector_defaults( synindex syn_id ) const;
+
+  /**
+   * Checks, whether synapse type requires symmetric connections
+   */
+  bool connector_requires_symmetric( synindex syn_id ) const;
+
   void set_connector_defaults( synindex syn_id, const DictionaryDatum& d );
 
   /**
@@ -250,7 +275,8 @@ public:
 
   void delete_secondary_events_prototypes();
 
-  SecondaryEvent& get_secondary_event_prototype( synindex syn_id, thread t = 0 );
+  SecondaryEvent& get_secondary_event_prototype( synindex syn_id,
+    thread t = 0 );
 
 private:
   /**  */
@@ -318,12 +344,13 @@ private:
    * the model is private. Private models are not entered into the
    * modeldict.
    */
-  std::vector< ConnectorModel* > pristine_prototypes_; //!< The list of clean synapse prototypes
-  std::vector< std::vector< ConnectorModel* > > prototypes_; //!< The list of available synapse
-                                                             //!< prototypes: first dimension one
-                                                             //!< entry per thread, second dimension
-                                                             //!< for each synapse type
+  std::vector< ConnectorModel* > pristine_prototypes_;
 
+  /**
+   * The list of available synapse prototypes: first dimension one
+   * entry per thread, second dimension for each synapse type
+   */
+  std::vector< std::vector< ConnectorModel* > > prototypes_;
 
   /**
    * prototypes of events
@@ -337,7 +364,7 @@ private:
    Name: modeldict - dictionary containing all devices and models of NEST
    Description:
    'modeldict info' shows the contents of the dictionary
-   SeeAlso: info, Device, RecordingDevice, iaf_neuron, subnet
+   SeeAlso: info, Device, RecordingDevice, subnet
    */
   DictionaryDatum modeldict_; //!< Dictionary of all models
 
@@ -345,10 +372,11 @@ private:
    Name: synapsedict - Dictionary containing all synapse models.
    Description:
    'synapsedict info' shows the contents of the dictionary
-   Synapse model names ending with '_hpc' provide minimal memory requirements by using
-   thread-local target neuron IDs and fixing the `rport` to 0.
-   Synapse model names ending with '_lbl' allow to assign an individual integer label
-   (`synapse_label`) to created synapses at the cost of increased memory requirements.
+   Synapse model names ending with '_hpc' provide minimal memory requirements by
+   using thread-local target neuron IDs and fixing the `rport` to 0.
+   Synapse model names ending with '_lbl' allow to assign an individual integer
+   label (`synapse_label`) to created synapses at the cost of increased memory
+   requirements.
    FirstVersion: October 2005
    Author: Jochen Martin Eppler
    SeeAlso: info
@@ -359,12 +387,12 @@ private:
   Model* siblingcontainer_model_;
   Model* proxynode_model_;
 
-  std::vector< std::vector< Node* > >
-    proxy_nodes_; //!< Placeholders for remote nodes, one per thread
-  std::vector< Node* >
-    dummy_spike_sources_; //!< Placeholders for spiking remote nodes, one per thread
-
-  bool model_defaults_modified_; //!< True if any model defaults have been modified
+  //! Placeholders for remote nodes, one per thread
+  std::vector< std::vector< Node* > > proxy_nodes_;
+  //! Placeholders for spiking remote nodes, one per thread
+  std::vector< Node* > dummy_spike_sources_;
+  //! True if any model defaults have been modified
+  bool model_defaults_modified_;
 };
 
 
@@ -372,7 +400,9 @@ inline Model*
 ModelManager::get_model( index m ) const
 {
   if ( m >= models_.size() || models_[ m ] == 0 )
+  {
     throw UnknownModelID( m );
+  }
 
   return models_[ m ];
 }
@@ -448,7 +478,9 @@ inline void
 ModelManager::assert_valid_syn_id( synindex syn_id, thread t ) const
 {
   if ( syn_id >= prototypes_[ t ].size() || prototypes_[ t ][ syn_id ] == 0 )
+  {
     throw UnknownSynapseType( syn_id );
+  }
 }
 
 inline bool
@@ -465,12 +497,16 @@ ModelManager::delete_secondary_events_prototypes()
     if ( secondary_connector_models_[ i ] != NULL )
     {
       for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
+      {
         delete secondary_events_prototypes_[ j ][ i ];
+      }
     }
   }
 
   for ( size_t j = 0; j < secondary_events_prototypes_.size(); j++ )
+  {
     secondary_events_prototypes_[ j ].clear();
+  }
   secondary_events_prototypes_.clear();
 }
 

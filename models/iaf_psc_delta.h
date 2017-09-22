@@ -117,7 +117,7 @@ namespace nest
    Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
    Author:  September 1999, Diesmann, Gewaltig
-   SeeAlso: iaf_psc_alpha, iaf_psc_exp, iaf_neuron, iaf_psc_delta_canon
+   SeeAlso: iaf_psc_alpha, iaf_psc_exp, iaf_psc_delta_canon
 */
 
 /**
@@ -132,7 +132,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -155,7 +156,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_psc_delta >;
@@ -169,32 +170,33 @@ private:
   struct Parameters_
   {
     /** Membrane time constant in ms. */
-    double_t tau_m_;
+    double tau_m_;
 
     /** Membrane capacitance in pF. */
-    double_t c_m_;
+    double c_m_;
 
     /** Refractory period in ms. */
-    double_t t_ref_;
+    double t_ref_;
 
     /** Resting potential in mV. */
-    double_t E_L_;
+    double E_L_;
 
     /** External DC current */
-    double_t I_e_;
+    double I_e_;
 
     /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
         I.e. the real threshold is (E_L_+V_th_). */
-    double_t V_th_;
+    double V_th_;
 
     /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).
         I.e. the real lower bound is (V_min_+V_th_). */
-    double_t V_min_;
+    double V_min_;
 
     /** reset value of the membrane potential */
-    double_t V_reset_;
+    double V_reset_;
 
-    bool with_refr_input_; //!< spikes arriving during refractory period are counted
+    bool with_refr_input_; //!< spikes arriving during refractory period are
+                           //!< counted
 
     Parameters_(); //!< Sets default parameter values
 
@@ -213,15 +215,16 @@ private:
    */
   struct State_
   {
-    double_t y0_;
-    double_t y3_; //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double y0_;
+    //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double y3_;
 
-    int_t r_; //!< Number of refractory steps remaining
+    int r_; //!< Number of refractory steps remaining
 
     /** Accumulate spikes arriving during refractory period, discounted for
         decay until end of refractory period.
     */
-    double_t refr_spikes_buffer_;
+    double refr_spikes_buffer_;
 
     State_(); //!< Default initialization
 
@@ -261,16 +264,16 @@ private:
   struct Variables_
   {
 
-    double_t P30_;
-    double_t P33_;
+    double P30_;
+    double P33_;
 
-    int_t RefractoryCounts_;
+    int RefractoryCounts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the real membrane potential
-  double_t
+  double
   get_V_m_() const
   {
     return S_.y3_ + P_.E_L_;
@@ -297,7 +300,10 @@ private:
 
 
 inline port
-nest::iaf_psc_delta::send_test_event( Node& target, rport receptor_type, synindex, bool )
+nest::iaf_psc_delta::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -308,7 +314,9 @@ inline port
 iaf_psc_delta::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -316,15 +324,20 @@ inline port
 iaf_psc_delta::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
 inline port
-iaf_psc_delta::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_psc_delta::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

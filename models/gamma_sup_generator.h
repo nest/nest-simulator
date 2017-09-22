@@ -38,7 +38,8 @@
 #include "stimulating_device.h"
 
 /*BeginDocumentation
-Name: gamma_sup_generator - simulate the superimposed spike train of a population of gamma process.
+Name: gamma_sup_generator - simulate the superimposed spike train of a
+                            population of gamma process.
 Description:
 
   The gamma_sup_generator generator simulates the pooled spike train of a
@@ -47,9 +48,11 @@ Description:
 Parameters:
    The following parameters appear in the element's status dictionary:
 
-   rate         double - mean firing rate of the component processes, default: 0 s^-1
+   rate         double - mean firing rate of the component processes,
+                         default: 0s^-1
    gamma_shape  long   - shape paramter of component gamma processes, default: 1
-   n_proc       long   - number of superimposed independent component processes, default: 1
+   n_proc       long   - number of superimposed independent component processes,
+                         default: 1
 
 Remarks:
    The generator has been published in Deger, Helias, Boucsein, Rotter (2011)
@@ -61,7 +64,8 @@ Remarks:
 Author:
    Jan 2011, Moritz Deger
 
-SeeAlso: ppd_sup_generator, poisson_generator_ps, spike_generator, Device, StimulatingDevice
+SeeAlso: ppd_sup_generator, poisson_generator_ps, spike_generator, Device,
+StimulatingDevice
 */
 
 namespace nest
@@ -115,7 +119,7 @@ private:
    * information.
    * @see event_hook, DSSpikeEvent
    */
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /**
    * Send out spikes.
@@ -131,9 +135,9 @@ private:
    */
   struct Parameters_
   {
-    double_t rate_;       //!< rate of component gamma process [Hz]
-    ulong_t gamma_shape_; //!< gamma shape parameter [1]
-    ulong_t n_proc_;      //!< number of component processes
+    double rate_;               //!< rate of component gamma process [Hz]
+    unsigned long gamma_shape_; //!< gamma shape parameter [1]
+    unsigned long n_proc_;      //!< number of component processes
 
     /**
      * Number of targets.
@@ -156,13 +160,14 @@ private:
 
     librandom::BinomialRandomDev bino_dev_;   //!< random deviate generator
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
-    std::vector< ulong_t > occ_;              //!< occupation numbers of internal states
+    std::vector< unsigned long >
+      occ_; //!< occupation numbers of internal states
 
   public:
     Internal_states_( size_t num_bins,
-      ulong_t ini_occ_ref,
-      ulong_t ini_occ_act ); //!< initialize occupation numbers
-    ulong_t update( double_t transition_prob,
+      unsigned long ini_occ_ref,
+      unsigned long ini_occ_act ); //!< initialize occupation numbers
+    unsigned long update( double transition_prob,
       librandom::RngPtr rng ); //!< update age dist and generate spikes
   };
 
@@ -180,7 +185,8 @@ private:
 
   struct Variables_
   {
-    double_t transition_prob_; //!< transition probabililty to go to next internal state
+    double transition_prob_; //!< transition probabililty to go to next
+                             //!< internal state
 
     /**
      * @name update-hook communication.
@@ -192,8 +198,8 @@ private:
      *   t_min_active_ < t <= t_max_active_
      */
     //@{
-    double_t t_min_active_; //!< start of generator activity in slice
-    double_t t_max_active_; //!< end of generator activity in slice
+    double t_min_active_; //!< start of generator activity in slice
+    double t_max_active_; //!< end of generator activity in slice
     //@}
   };
 
@@ -224,9 +230,10 @@ gamma_sup_generator::send_test_event( Node& target,
     SpikeEvent e;
     e.set_sender( *this );
     const port p = target.handles_test_event( e, receptor_type );
-
     if ( p != invalid_port_ )
-      ++P_.num_targets_; // count number of targets
+    {
+      ++P_.num_targets_;
+    } // count number of targets
     return p;
   }
 }

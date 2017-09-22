@@ -56,7 +56,9 @@ initialize_property_intvector( DictionaryDatum& d, Name propname )
 }
 
 void
-provide_property( DictionaryDatum& d, Name propname, const std::vector< double >& prop )
+provide_property( DictionaryDatum& d,
+  Name propname,
+  const std::vector< double >& prop )
 {
   Token t = d->lookup2( propname );
 
@@ -64,15 +66,19 @@ provide_property( DictionaryDatum& d, Name propname, const std::vector< double >
   assert( arrd != 0 );
 
   if ( ( *arrd )->empty() && not prop.empty() ) // not data from before, add
+  {
     ( *arrd )->insert( ( *arrd )->end(), prop.begin(), prop.end() );
+  }
 
-  assert( prop.empty()
-    || **arrd == prop ); // not testing for **arrd.empty() since that implies prop.empty()
+  assert( prop.empty() || **arrd == prop ); // not testing for **arrd.empty()
+                                            // since that implies prop.empty()
 }
 
 
 void
-provide_property( DictionaryDatum& d, Name propname, const std::vector< long >& prop )
+provide_property( DictionaryDatum& d,
+  Name propname,
+  const std::vector< long >& prop )
 {
   Token t = d->lookup2( propname );
 
@@ -80,14 +86,18 @@ provide_property( DictionaryDatum& d, Name propname, const std::vector< long >& 
   assert( arrd != 0 );
 
   if ( ( *arrd )->empty() && not prop.empty() ) // not data from before, add
+  {
     ( *arrd )->insert( ( *arrd )->end(), prop.begin(), prop.end() );
+  }
 
-  assert( prop.empty()
-    || **arrd == prop ); // not testing for **arrd.empty() since that implies prop.empty()
+  assert( prop.empty() || **arrd == prop ); // not testing for **arrd.empty()
+                                            // since that implies prop.empty()
 }
 
 void
-accumulate_property( DictionaryDatum& d, Name propname, const std::vector< double >& prop )
+accumulate_property( DictionaryDatum& d,
+  Name propname,
+  const std::vector< double >& prop )
 {
   Token t = d->lookup2( propname );
 
@@ -95,7 +105,9 @@ accumulate_property( DictionaryDatum& d, Name propname, const std::vector< doubl
   assert( arrd != 0 );
 
   if ( ( *arrd )->empty() ) // first data, copy
+  {
     ( *arrd )->insert( ( *arrd )->end(), prop.begin(), prop.end() );
+  }
   else
   {
     assert( ( *arrd )->size() == prop.size() );

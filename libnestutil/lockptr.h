@@ -117,9 +117,11 @@ class lockPTR
     {
       assert( number_of_references == 0 ); // This will invalidate the still
                                            // existing pointer!
-      assert( !locked );
-      if ( ( pointee != NULL ) && deletable && ( !locked ) )
+      assert( not locked );
+      if ( ( pointee != NULL ) && deletable && ( not locked ) )
+      {
         delete pointee;
+      }
     }
 
     D*
@@ -232,21 +234,21 @@ public:
   lockPTR< D > operator=( D& s )
   {
     *this = lockPTR< D >( s );
-    assert( !( obj->isdeletable() ) );
+    assert( not( obj->isdeletable() ) );
     return *this;
   }
 
   lockPTR< D > operator=( D const& s )
   {
     *this = lockPTR< D >( s );
-    assert( !( obj->isdeletable() ) );
+    assert( not( obj->isdeletable() ) );
     return *this;
   }
 
   D*
   get( void )
   {
-    assert( !obj->islocked() );
+    assert( not obj->islocked() );
     obj->lock(); // Try to lock Object
     return obj->get();
   }
@@ -254,7 +256,7 @@ public:
   D*
   get( void ) const
   {
-    assert( !obj->islocked() );
+    assert( not obj->islocked() );
 
     obj->lock(); // Try to lock Object
     return obj->get();
@@ -288,7 +290,8 @@ public:
   }
 
 
-  bool operator!() const //!< returns true if and only if obj->pointee == NULL
+  bool operator not()
+    const //!< returns true if and only if obj->pointee == NULL
   {
     // assert(obj != NULL);
 
@@ -297,14 +300,14 @@ public:
 
 
   /* operator==, !=
-     Identity operator. These are inherited by derived types, so they should only be called
-       by the equals method of the derived class which checks for type identity
-       or when both classes are known to be bare lockPTR<D>.
+     Identity operator. These are inherited by derived types, so they should
+       only be called by the equals method of the derived class which checks for
+       type identity or when both classes are known to be bare lockPTR<D>.
 
      These follow identity semantics rather than equality semantics.
      The underlying object should only ever be owned by a single PointerObject
-     that are shared by lockPTR<D>s, so this is equivalent to comparing the address
-     of the D objects.
+     that are shared by lockPTR<D>s, so this is equivalent to comparing the
+     address of the D objects.
   */
   bool operator==( const lockPTR< D >& p ) const
   {

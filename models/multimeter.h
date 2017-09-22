@@ -43,8 +43,8 @@ Name: multimeter - Device to record analog data from neurons.
 Synopsis: multimeter Create
 
 Description:
-A multimeter records a user-defined set of state variables from connected nodes to memory,
-file or stdout.
+A multimeter records a user-defined set of state variables from connected nodes
+to memory, file or stdout.
 
 The multimeter must be configured with the list of variables to record
 from, otherwise it will not record anything. The /recordables property
@@ -55,8 +55,8 @@ using CopyModel). If the defaults or status dictionary of a model neuron
 does not contain a /recordables entry, it is not ready for use with
 multimeter.
 
-By default, multimeters record values once per ms. Set the parameter /interval to
-change this. The recording interval cannot be smaller than the resolution.
+By default, multimeters record values once per ms. Set the parameter /interval
+to change this. The recording interval cannot be smaller than the resolution.
 
 Results are returned in the /events entry of the status dictionary. For
 each recorded quantity, a vector of doubles is returned. The vector has the
@@ -64,15 +64,15 @@ same name as the /recordable. If /withtime is set, times are given in the
 /times vector in /events.
 
 Accumulator mode:
-Multimeter can operate in accumulator mode. In this case, values for all recorded
-variables are added across all recorded nodes (but kept separate in time). This can
-be useful to record average membrane potential in a population.
+Multimeter can operate in accumulator mode. In this case, values for all
+recorded variables are added across all recorded nodes (but kept separate in
+time). This can be useful to record average membrane potential in a population.
 
 To activate accumulator mode, either set /to_accumulator to true, or set
 /record_to [ /accumulator ].  In accumulator mode, you cannot record to file,
-to memory, to screen, with GID or with weight. You must activate accumulator mode
-before simulating. Accumulator data is never written to file. You must extract it
-from the device using GetStatus.
+to memory, to screen, with GID or with weight. You must activate accumulator
+mode before simulating. Accumulator data is never written to file. You must
+extract it from the device using GetStatus.
 
 Remarks:
  - The set of variables to record and the recording interval must be set
@@ -109,6 +109,7 @@ senders                  intvectortype       <intvectortype>
 times                    doublevectortype    <doublevectortype>
 t_ref_remaining          doublevectortype    <doublevectortype>
 V_m                      doublevectortype    <doublevectortype>
+rate                     doublevectortype    <doublevectortype>
 --------------------------------------------------
 Total number of entries: 6
 
@@ -117,7 +118,8 @@ Sends: DataLoggingRequest
 
 FirstVersion: 2009-04-01
 
-Author: Hans Ekkehard Plesser
+Author: Hans Ekkehard Plesser, Barna Zajzon (added offset support March 2017)
+
 
 SeeAlso: Device, RecordingDevice
 */
@@ -137,10 +139,10 @@ namespace nest
  * and that the sampling device then sends a Request for data
  * with a given time stamp.
  *
- * Start and stop are handled as follows: the first recorded
- * data is with time stamp origin+start+1, the last recorded one
- * that with time stamp origin+stop. Only such times are recorded
- * for which (T-(origin+start)) mod interval is zero.
+ * Data is recorded at time steps T for which
+ *   start < T - origin <= stop
+ * and
+ *   ( T - offset ) mod interval == 0.
  *
  * The recording interval defaults to 1ms; this entails that
  * the simulation resolution cannot be set to larger values than
@@ -172,7 +174,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -191,6 +194,7 @@ protected:
   void init_state_( Node const& );
   void init_buffers_();
   void calibrate();
+  void post_run_cleanup();
   void finalize();
 
   /**
@@ -200,7 +204,7 @@ protected:
    * that information. The sampled nodes must provide data from
    * the previous time slice.
    */
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
 private:
   /** Indicate if recording device is active.
@@ -210,12 +214,13 @@ private:
   bool is_active( Time const& T ) const;
 
   /**
-   * "Print" one value to file or screen, depending on settings in RecordingDevice.
+   * "Print" one value to file or screen, depending on settings in
+   * RecordingDevice.
    * @note The default implementation supports only EntryTypes which
-   *       RecordingDevice::print_value() can handle. Otherwise, specialization is
-   *       required.
+   *       RecordingDevice::print_value() can handle. Otherwise, specialization
+   *       is required.
    */
-  void print_value_( const std::vector< double_t >& );
+  void print_value_( const std::vector< double >& );
 
   /**
    * Add recorded data to dictionary.
@@ -235,7 +240,8 @@ private:
 
   struct Parameters_
   {
-    Time interval_;                   //!< recording interval, in ms
+    Time interval_; //!< recording interval, in ms
+    Time offset_;   //!< offset relative to which interval is calculated, in ms
     std::vector< Name > record_from_; //!< which data to record
 
     Parameters_();
@@ -252,13 +258,13 @@ private:
      * First dimension: time
      * Second dimension: recorded variables
      * @note In normal mode, data is stored as follows:
-     *          For each recorded node, all data points for one time slice are put
-     *          after one another in the first dimension. Each entry is a vector
-     *          containing one element per recorded quantity.
-     *        In accumulating mode, only one data point is stored per time step and
-     *          values are added across nodes.
+     *          For each recorded node, all data points for one time slice are
+     *          put after one another in the first dimension. Each entry is a
+     *          vector containing one element per recorded quantity.
+     *       In accumulating mode, only one data point is stored per time step
+     *          and values are added across nodes.
      */
-    std::vector< std::vector< double_t > > data_; //!< Recorded data
+    std::vector< std::vector< double > > data_; //!< Recorded data
   };
 
   // ------------------------------------------------------------
@@ -278,11 +284,11 @@ private:
 
   struct Variables_
   {
-    /** Flag active till first DataLoggingReply during an update() call processed.
-     * This flag is set to true by update() before dispatching the DataLoggingRequest
-     * event and is reset to false by handle() as soon as the first DataLoggingReply
-     * has been handled. This is needed when the Multimeter is running in accumulator
-     * mode.
+    /** Flag active till first DataLoggingReply during an update() call
+     * processed. This flag is set to true by update() before dispatching the
+     * DataLoggingRequest event and is reset to false by handle() as soon as the
+     * first DataLoggingReply has been handled. This is needed when the
+     * Multimeter is running in accumulator mode.
      */
     bool new_request_;
 
@@ -318,10 +324,14 @@ nest::Multimeter::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings = kernel().node_manager.get_thread_siblings( get_gid() );
+    const SiblingContainer* siblings =
+      kernel().node_manager.get_thread_siblings( get_gid() );
     std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end(); ++sibling )
+    for ( sibling = siblings->begin() + 1; sibling != siblings->end();
+          ++sibling )
+    {
       ( *sibling )->get_status( d );
+    }
   }
 
   P_.get( d );
@@ -333,7 +343,9 @@ nest::Multimeter::set_status( const DictionaryDatum& d )
   // protect Multimeter from being frozen
   bool freeze = false;
   if ( updateValue< bool >( d, names::frozen, freeze ) && freeze )
+  {
     throw BadProperty( "Multimeter cannot be frozen." );
+  }
 
   Parameters_ ptmp = P_;
   ptmp.set( d, B_ );

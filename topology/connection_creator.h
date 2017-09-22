@@ -31,11 +31,11 @@
 
 // Includes from topology:
 #include "mask.h"
-#include "parameter.h"
 #include "position.h"
 #include "selector.h"
 #include "topology_names.h"
 #include "topologymodule.h"
+#include "topology_parameter.h"
 #include "vose.h"
 
 namespace nest
@@ -81,7 +81,7 @@ public:
   /**
    * Construct a ConnectionCreator with the properties defined in the
    * given dictionary. Parameters for a ConnectionCreator are:
-   * - "connection_type": Either "convergent" or "convergent".
+   * - "connection_type": Either "convergent" or "divergent".
    * - "allow_autapses": Boolean, true if autapses are allowed.
    * - "allow_multapses": Boolean, true if multapses are allowed.
    * - "allow_oversized": Boolean, true if oversized masks are allowed.
@@ -124,11 +124,14 @@ private:
     void define( MaskedLayer< D >* );
     void define( std::vector< std::pair< Position< D >, index > >* );
 
-    typename Ntree< D, index >::masked_iterator masked_begin( const Position< D >& pos ) const;
+    typename Ntree< D, index >::masked_iterator masked_begin(
+      const Position< D >& pos ) const;
     typename Ntree< D, index >::masked_iterator masked_end() const;
 
-    typename std::vector< std::pair< Position< D >, index > >::iterator begin() const;
-    typename std::vector< std::pair< Position< D >, index > >::iterator end() const;
+    typename std::vector< std::pair< Position< D >, index > >::iterator
+    begin() const;
+    typename std::vector< std::pair< Position< D >, index > >::iterator
+    end() const;
 
   private:
     MaskedLayer< D >* masked_layer_;
@@ -155,7 +158,12 @@ private:
   template < int D >
   void divergent_connect_( Layer< D >& source, Layer< D >& target );
 
-  void connect_( index s, Node* target, thread target_thread, double_t w, double_t d, index syn );
+  void connect_( index s,
+    Node* target,
+    thread target_thread,
+    double w,
+    double d,
+    index syn );
 
   /**
    * Calculate parameter values for this position.
@@ -163,8 +171,10 @@ private:
    * TODO: remove when all four connection variants are refactored
    */
   template < int D >
-  void
-  get_parameters_( const Position< D >& pos, librandom::RngPtr rng, double& weight, double& delay );
+  void get_parameters_( const Position< D >& pos,
+    librandom::RngPtr rng,
+    double& weight,
+    double& delay );
 
   ConnectionType type_;
   bool allow_autapses_;
@@ -174,18 +184,18 @@ private:
   Selector target_filter_;
   index number_of_connections_;
   lockPTR< AbstractMask > mask_;
-  lockPTR< Parameter > kernel_;
+  lockPTR< TopologyParameter > kernel_;
   index synapse_model_;
-  lockPTR< Parameter > weight_;
-  lockPTR< Parameter > delay_;
+  lockPTR< TopologyParameter > weight_;
+  lockPTR< TopologyParameter > delay_;
 };
 
 inline void
 ConnectionCreator::connect_( index s,
   Node* target,
   thread target_thread,
-  double_t w,
-  double_t d,
+  double w,
+  double d,
   index syn )
 {
   // check whether the target is on this process
@@ -194,8 +204,11 @@ ConnectionCreator::connect_( index s,
     // check whether the target is on our thread
     thread tid = kernel().vp_manager.get_thread_id();
     if ( tid == target_thread )
-      kernel().connection_builder_manager.connect(
-        s, target, target_thread, syn, d, w ); // TODO implement in terms of nest-api
+    {
+      // TODO implement in terms of nest-api
+      kernel().connection_manager.connect(
+        s, target, target_thread, syn, d, w );
+    }
   }
 }
 

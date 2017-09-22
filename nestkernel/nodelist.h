@@ -211,7 +211,8 @@ LocalNodeListBase< LocalChildListIterator >::iterator
 LocalNodeListBase< LocalChildListIterator >::begin() const;
 
 /**
- * List interface to subnet providing iteration over immediate local child nodes.
+ * List interface to subnet providing iteration over immediate local child
+ * nodes.
  */
 typedef LocalNodeListBase< LocalChildListIterator > LocalChildList;
 
@@ -233,7 +234,9 @@ private:
     : base_it_( node, list_end )
   {
     while ( not base_it_.is_end_() && not is_leaf_( *base_it_ ) )
+    {
       ++base_it_;
+    }
   }
 
 public:

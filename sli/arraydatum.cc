@@ -32,14 +32,17 @@
 template class AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >;
 template class AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >;
 template class AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >;
-template class lockPTRDatum< std::vector< long >, &SLIInterpreter::IntVectortype >;
-template class lockPTRDatum< std::vector< double >, &SLIInterpreter::DoubleVectortype >;
+template class lockPTRDatum< std::vector< long >,
+  &SLIInterpreter::IntVectortype >;
+template class lockPTRDatum< std::vector< double >,
+  &SLIInterpreter::DoubleVectortype >;
 
 
 // initialization of static members requires template<>
 // see Stroustrup C.13.1 --- HEP 2001-08-09
 template <>
-sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::memory( sizeof( ArrayDatum ),
+sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::memory(
+  sizeof( ArrayDatum ),
   10240,
   1 );
 template <>
@@ -48,15 +51,17 @@ sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::memory(
   10240,
   1 );
 template <>
-sli::pool AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::memory(
-  sizeof( AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype > ),
-  10240,
-  1 );
+sli::pool
+  AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::memory(
+    sizeof( AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype > ),
+    10240,
+    1 );
 
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::pprint( std::ostream& out ) const
+AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::pprint(
+  std::ostream& out ) const
 {
   out << '[';
   Token* i = this->begin();
@@ -65,21 +70,25 @@ AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::pprint( std::ostream& 
     ( *i )->pprint( out );
     ++i;
     if ( i != this->end() )
+    {
       out << ' ';
+    }
   }
   out << ']';
 }
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::print( std::ostream& out ) const
+AggregateDatum< TokenArray, &SLIInterpreter::Arraytype >::print(
+  std::ostream& out ) const
 {
   out << '<' << this->gettypename() << '>';
 }
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::pprint( std::ostream& out ) const
+AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::pprint(
+  std::ostream& out ) const
 {
   out << '{';
   Token* i = this->begin();
@@ -88,14 +97,17 @@ AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::pprint( std::ostre
     ( *i )->pprint( out );
     ++i;
     if ( i != this->end() )
+    {
       out << ' ';
+    }
   }
   out << '}';
 }
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::list( std::ostream& out,
+AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::list(
+  std::ostream& out,
   std::string prefix,
   int line ) const
 {
@@ -110,9 +122,13 @@ AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::list( std::ostream
   while ( i != this->end() )
   {
     if ( lc != line )
+    {
       ( *i )->list( out, prefix, -1 );
+    }
     else
+    {
       ( *i )->list( out, prefix, 0 );
+    }
     out << std::endl;
     ++lc;
     ++i;
@@ -122,14 +138,16 @@ AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::list( std::ostream
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::print( std::ostream& out ) const
+AggregateDatum< TokenArray, &SLIInterpreter::Proceduretype >::print(
+  std::ostream& out ) const
 {
   out << '<' << this->gettypename() << '>';
 }
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::pprint( std::ostream& out ) const
+AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::pprint(
+  std::ostream& out ) const
 {
   out << "/{";
   Token* i = this->begin();
@@ -138,14 +156,17 @@ AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::pprint( std::os
     ( *i )->pprint( out );
     ++i;
     if ( i != this->end() )
+    {
       out << ' ';
+    }
   }
   out << '}';
 }
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::list( std::ostream& out,
+AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::list(
+  std::ostream& out,
   std::string prefix,
   int line ) const
 {
@@ -153,9 +174,13 @@ AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::list( std::ostr
   Token* i = this->begin();
 
   if ( line == 0 )
+  {
     out << "-->" << prefix << '{' << std::endl;
+  }
   else
+  {
     out << "   " << prefix << '{' << std::endl;
+  }
   prefix = "   " + prefix;
 
   while ( i != this->end() )
@@ -169,7 +194,8 @@ AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::list( std::ostr
 
 template <>
 void
-AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::print( std::ostream& out ) const
+AggregateDatum< TokenArray, &SLIInterpreter::Litproceduretype >::print(
+  std::ostream& out ) const
 {
   out << '<' << this->gettypename() << '>';
 }
@@ -184,12 +210,16 @@ lockPTRDatum< std::vector< long >, &SLIInterpreter::IntVectortype >::pprint(
   if ( v->size() < 30 )
   {
     for ( size_t i = 0; i < v->size(); ++i )
+    {
       out << ( *v )[ i ] << " ";
+    }
   }
   else
   {
     for ( size_t i = 0; i < 30; ++i )
+    {
       out << ( *v )[ i ] << " ";
+    }
     out << "... ";
   }
 
@@ -199,8 +229,8 @@ lockPTRDatum< std::vector< long >, &SLIInterpreter::IntVectortype >::pprint(
 
 template <>
 void
-lockPTRDatum< std::vector< double >, &SLIInterpreter::DoubleVectortype >::pprint(
-  std::ostream& out ) const
+lockPTRDatum< std::vector< double >,
+  &SLIInterpreter::DoubleVectortype >::pprint( std::ostream& out ) const
 {
   std::vector< double >* v = this->get();
   out << "<. ";
@@ -209,12 +239,16 @@ lockPTRDatum< std::vector< double >, &SLIInterpreter::DoubleVectortype >::pprint
   if ( v->size() < 30 )
   {
     for ( size_t i = 0; i < v->size(); ++i )
+    {
       out << ( *v )[ i ] << " ";
+    }
   }
   else
   {
     for ( size_t i = 0; i < 30; ++i )
+    {
       out << ( *v )[ i ] << " ";
+    }
     out << "... ";
   }
   out << ".>";

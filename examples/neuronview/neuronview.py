@@ -20,26 +20,27 @@
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
 import pygtk
+
 pygtk.require('2.0')
-import gtk
-import pango
-import gobject
+import gtk      # noqa
+import pango    # noqa
+import gobject  # noqa
 
-from matplotlib.figure import Figure
-from matplotlib.backends.backend_gtkagg import FigureCanvasGTKAgg as FigureCanvas 
-import matplotlib.gridspec as gridspec
+from matplotlib.figure import Figure              # noqa
+from matplotlib.backends.backend_gtkagg import \
+    FigureCanvasGTKAgg as FigureCanvas            # noqa
+import matplotlib.gridspec as gridspec            # noqa
 
-import os
-import nest
+import os     # noqa
+import nest   # noqa
 
-
-default_neuron = "iaf_neuron"
+default_neuron = "iaf_psc_alpha"
 default_stimulator = "dc_generator"
 
-class Main() :
 
+class Main():
     def __init__(self):
-        
+
         self._gladefile = "neuronview.glade"
 
         self._builder = gtk.Builder()
@@ -51,7 +52,8 @@ class Main() :
 
         box = self._builder.get_object("box5")
         self._stimulatordictview = DictView()
-        self._builder.get_object("scrolledwindow2").add(self._stimulatordictview)
+        self._builder.get_object("scrolledwindow2").add(
+            self._stimulatordictview)
 
         box = self._builder.get_object("box4")
         self._neurondictview = DictView()
@@ -59,34 +61,30 @@ class Main() :
 
         self.populate_comboboxes()
 
-        self._figure = Figure(figsize=(5,4), dpi=100)
+        self._figure = Figure(figsize=(5, 4), dpi=100)
         canvas = FigureCanvas(self._figure)
         canvas.set_size_request(200, 250)
         canvas.show()
 
         box = self._builder.get_object("box3")
         bg_style = box.get_style().bg[gtk.STATE_NORMAL]
-        gtk_color = (bg_style.red_float, bg_style.green_float, bg_style.blue_float)
+        gtk_color = (bg_style.red_float, bg_style.green_float,
+                     bg_style.blue_float)
         self._figure.set_facecolor(gtk_color)
         box.pack_start(canvas)
 
         self._win.show()
         gtk.main()
 
-
     def update_figure(self, spikes, potentials):
 
         if nest.GetKernelStatus("time") != 0.0:
-
             self._figure.clear()
 
-#            num_figures = (len(spikes) != 0) + (len(potentials) != 0)
-#            fig_num = 1
-
-            gs = gridspec.GridSpec(2, 1, height_ratios=[1, 4]) 
+            gs = gridspec.GridSpec(2, 1, height_ratios=[1, 4])
 
             ax0 = self._figure.add_subplot(gs[0])
-            ax0.plot(spikes[0]["times"], [1]*len(spikes[0]["times"]), ".")
+            ax0.plot(spikes[0]["times"], [1] * len(spikes[0]["times"]), ".")
             ax0.set_yticks([])
             ax0.set_xticks([])
 
@@ -95,10 +93,9 @@ class Main() :
             ax1.set_ylabel("$V_m$ (mV)")
             ax1.set_xlabel("time (s)")
 
-#            plt.tight_layout()
+            #            plt.tight_layout()
 
             self._figure.canvas.draw()
-
 
     def filter_statusdict(self, params):
 
@@ -112,7 +109,6 @@ class Main() :
                     "ymod"]:
             if key in params.keys():
                 params.pop(key)
-        
 
     def populate_comboboxes(self):
 
@@ -124,10 +120,12 @@ class Main() :
 
         neuron_it = None
         stimulator_it = None
-        
+
         models = nest.Models("nodes")
-        models = [x for x in models if x not in ["correlation_detector", "sli_neuron",
-                  "iaf_psc_alpha_norec", "parrot_neuron", "parrot_neuron_ps"]]
+        models = [x for x in models if
+                  x not in ["correlation_detector", "sli_neuron",
+                            "iaf_psc_alpha_norec", "parrot_neuron",
+                            "parrot_neuron_ps"]]
 
         for entry in models:
 
@@ -138,13 +136,15 @@ class Main() :
 
             if entrytype == "neuron":
                 it = neuronmodelsliststore.append([entry])
-                if entry == default_neuron: neuron_it = it
+                if entry == default_neuron:
+                    neuron_it = it
             elif entrytype == "stimulator":
                 it = stimulatormodelsliststore.append([entry])
-                if entry == default_stimulator: stimulator_it = it
+                if entry == default_stimulator:
+                    stimulator_it = it
 
         cell = gtk.CellRendererText()
-        
+
         neuronmodels.pack_start(cell, True)
         neuronmodels.add_attribute(cell, 'text', 0)
         neuronmodels.set_active_iter(neuron_it)
@@ -161,7 +161,6 @@ class Main() :
         docviewcombo.add_attribute(cell, 'text', 0)
         docviewcombo.set_active_iter(it)
 
-
     def get_help_text(self, name):
 
         nest.sli_run("statusdict /prgdocdir get")
@@ -175,7 +174,6 @@ class Main() :
                 helptext = open(filename, 'r').read()
 
         return helptext
-    
 
     def on_model_selected(self, widget):
 
@@ -193,7 +191,6 @@ class Main() :
 
         self.on_doc_selected(self._builder.get_object("docviewcombo"))
 
-
     def on_doc_selected(self, widget):
 
         liststore = widget.get_model()
@@ -201,7 +198,7 @@ class Main() :
 
         docview = self._builder.get_object("docview")
         docbuffer = gtk.TextBuffer()
-        
+
         if doc == "Neuron":
             combobox = self._builder.get_object("neuronmodels")
 
@@ -215,7 +212,6 @@ class Main() :
         docview.set_buffer(docbuffer)
 
         docview.modify_font(pango.FontDescription("monospace 10"))
-            
 
     def on_simulate_clicked(self, widget):
 
@@ -230,7 +226,8 @@ class Main() :
         combobox = self._builder.get_object("neuronmodels")
         liststore = combobox.get_model()
         neuronmodel = liststore.get_value(combobox.get_active_iter(), 0)
-        neuron = nest.Create(neuronmodel, params=self._neurondictview.get_params())
+        neuron = nest.Create(neuronmodel,
+                             params=self._neurondictview.get_params())
 
         weight = self._builder.get_object("weight").get_value()
         delay = self._builder.get_object("delay").get_value()
@@ -246,14 +243,13 @@ class Main() :
         simtime = self._builder.get_object("simtime").get_value()
         nest.Simulate(simtime)
 
-        self.update_figure(nest.GetStatus(sd, "events"), nest.GetStatus(vm, "events"))
-
+        self.update_figure(nest.GetStatus(sd, "events"),
+                           nest.GetStatus(vm, "events"))
 
     def on_delete_event(self, widget, event):
 
         self.on_quit(widget)
         return True
-
 
     def on_quit(self, project):
 
@@ -261,9 +257,8 @@ class Main() :
         gtk.main_quit()
 
 
-class DictView(gtk.TreeView) :
-
-    def __init__(self, params = None) :
+class DictView(gtk.TreeView):
+    def __init__(self, params=None):
 
         gtk.TreeView.__init__(self)
         if params:
@@ -286,54 +281,49 @@ class DictView(gtk.TreeView) :
 
         self.show()
 
+    def repopulate(self):
 
-    def repopulate(self) :
+        model = gtk.TreeStore(gobject.TYPE_PYOBJECT, gobject.TYPE_STRING,
+                              gobject.TYPE_STRING)
 
-        model = gtk.TreeStore(gobject.TYPE_PYOBJECT, gobject.TYPE_STRING, gobject.TYPE_STRING)
-
-        for key in sorted(self.params.keys()) :
-
+        for key in sorted(self.params.keys()):
             pos = model.insert_after(None, None)
 
-            data = {"key"  : key, "element_type" : type(self.params[key])}
+            data = {"key": key, "element_type": type(self.params[key])}
             model.set_value(pos, 0, data)
             model.set_value(pos, 1, str(key))
             model.set_value(pos, 2, str(self.params[key]))
 
         self.set_model(model)
 
-
-    def check_value(self, widget, path, new_text) :
+    def check_value(self, widget, path, new_text):
 
         model = self.get_model()
         data = model[path][0]
 
-        try :
-            
+        try:
+
             typename = data["element_type"].__name__
             new_value = eval("%s('%s')" % (typename, new_text))
-            if typename == "bool" and new_text.lower() in ["false", "0"] :
+            if typename == "bool" and new_text.lower() in ["false", "0"]:
                 new_value = False
-            self.params[data["key"]] = new_value 
+            self.params[data["key"]] = new_value
             model[path][2] = str(new_value)
 
-        except ValueError :
-            
+        except ValueError:
+
             old_value = self.params[data["key"]]
             model[path][2] = str(old_value)
 
-
-    def get_params(self) :
+    def get_params(self):
 
         return self.params
 
-
-    def set_params(self, params) :
+    def set_params(self, params):
 
         self.params = params
         self.repopulate()
 
 
-if __name__ == "__main__" :
-
+if __name__ == "__main__":
     Main()

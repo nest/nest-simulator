@@ -132,7 +132,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -155,7 +156,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_neuron >;
@@ -169,30 +170,30 @@ private:
   struct Parameters_
   {
     /** Membrane capacitance in pF. */
-    double_t C_;
+    double C_;
 
     /** Membrane time constant in ms. */
-    double_t Tau_;
+    double Tau_;
 
     /** Time constant of synaptic current in ms. */
-    double_t tau_syn_;
+    double tau_syn_;
 
     /** Refractory period in ms. */
-    double_t TauR_;
+    double TauR_;
 
     /** Resting potential in mV. */
-    double_t E_L_;
+    double E_L_;
 
     /** Reset value of the membrane potential, in mV.
         @note Value is relative to resting potential E_L_. */
-    double_t V_reset_;
+    double V_reset_;
 
     /** Threshold in mV.
         @note Value is relative to resting potential E_L_. */
-    double_t Theta_;
+    double Theta_;
 
     /** External current in pA */
-    double_t I_e_;
+    double I_e_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -211,12 +212,13 @@ private:
    */
   struct State_
   {
-    double_t y0_; //!< Constant current
-    double_t y1_;
-    double_t y2_;
-    double_t y3_; //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double y0_; //!< Constant current
+    double y1_;
+    double y2_;
+    //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double y3_;
 
-    int_t r_; //!< number of refractory steps remaining
+    int r_; //!< number of refractory steps remaining
 
     State_(); //!< Default initialization
 
@@ -259,22 +261,22 @@ private:
               This value is chosen such that a post-synaptic potential with
               weight one has an amplitude of 1 mV.
      */
-    double_t PSCInitialValue_;
-    int_t RefractoryCounts_; //!< refractory time in steps
+    double PSCInitialValue_;
+    int RefractoryCounts_; //!< refractory time in steps
 
-    double_t P11_;
-    double_t P21_;
-    double_t P22_;
-    double_t P31_;
-    double_t P32_;
-    double_t P30_;
-    double_t P33_;
+    double P11_;
+    double P21_;
+    double P22_;
+    double P31_;
+    double P32_;
+    double P30_;
+    double P33_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the real membrane potential
-  double_t
+  double
   get_V_m_() const
   {
     return S_.y3_ + P_.E_L_;
@@ -315,7 +317,9 @@ inline port
 iaf_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -323,7 +327,9 @@ inline port
 iaf_neuron::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -331,7 +337,9 @@ inline port
 iaf_neuron::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

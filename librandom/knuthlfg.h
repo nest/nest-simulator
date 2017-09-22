@@ -1,25 +1,3 @@
-/*
- *  knuthlfg.h
- *
- *  This file is part of NEST.
- *
- *  Copyright (C) 2004 The NEST Initiative
- *
- *  NEST is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 2 of the License, or
- *  (at your option) any later version.
- *
- *  NEST is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *
- *  You should have received a copy of the GNU General Public License
- *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
- *
- */
-
 #ifndef KNUTHLFG_H
 #define KNUTHLFG_H
 
@@ -99,9 +77,10 @@ private:
   static long mod_diff_( long, long ); //!< subtraction module MM
   static bool is_odd_( long );
 
-  std::vector< long > ran_x_;                     //!< the generator state
-  std::vector< long > ran_buffer_;                //!< generated numbers, 0..KK-1 are shipped
-  const std::vector< long >::const_iterator end_; //!< marker past last to deliver
+  std::vector< long > ran_x_;      //!< the generator state
+  std::vector< long > ran_buffer_; //!< generated numbers, 0..KK-1 are shipped
+  const std::vector< long >::const_iterator end_; //!< marker past last
+                                                  //!< to deliver
   std::vector< long >::const_iterator next_;      //!< next number to deliver
 
   /**
@@ -111,7 +90,7 @@ private:
    */
   void ran_array_( std::vector< long >& rbuff );
   void ran_start_( long seed ); //!< initializes buffer
-  long ran_draw_();             //!< deliver integer random number from ran_buffer_
+  long ran_draw_(); //!< deliver integer random number from ran_buffer_
 
   /**
    * Perform minimal self-test given by Knuth.

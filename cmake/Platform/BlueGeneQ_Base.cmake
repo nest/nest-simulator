@@ -1,22 +1,3 @@
-# BlueGeneQ.cmake
-#
-# This file is part of NEST.
-#
-# Copyright (C) 2004 The NEST Initiative
-#
-# NEST is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 2 of the License, or
-# (at your option) any later version.
-#
-# NEST is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with NEST.  If not, see <http://www.gnu.org/licenses/>.
-
 # CMake - Cross Platform Makefile Generator
 # Copyright 2000-2016 Kitware, Inc.
 # Copyright 2000-2011 Insight Software Consortium
@@ -94,7 +75,9 @@
 #
 
 # Based on the BlueGeneQ-base platform file
-set( CMAKE_SYSTEM_NAME BlueGeneQ_Base CACHE STRING "Cross-compiling for BlueGene/Q" FORCE )
+set( CMAKE_SYSTEM_NAME Linux CACHE STRING "Cross-compiling for BlueGene/Q" FORCE )
+set( CMAKE_SYSTEM_PROCESSOR ppc64 )
+set( TRIPLET_VENDOR ibm )
 
 # Set enable-bluegene for main CMakeList.txt
 set( enable-bluegene "Q" CACHE STRING "Configure for BlueGene." FORCE )

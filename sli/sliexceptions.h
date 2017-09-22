@@ -66,6 +66,11 @@ public:
   {
   }
 
+  SLIException( const std::string& what )
+    : what_( what )
+  {
+  }
+
   virtual ~SLIException() throw(){};
 
   /**
@@ -77,8 +82,8 @@ public:
    * @code
    * catch(IllegalOperation &e)
    * {
-   * 	 i->error("ChangeSubnet","Target node must be a subnet.");
-   *	 i->raiseerror(e.what());
+   *   i->error("ChangeSubnet","Target node must be a subnet.");
+   *   i->raiseerror(e.what());
    *   return;
    * }
    *@endcode
@@ -93,9 +98,8 @@ public:
 
   /**
    * Returns a diagnostic message or empty string.
-   * This function is not const, because it may clear internal data fields.
    */
-  virtual std::string message() = 0;
+  virtual std::string message() const = 0;
 };
 
 /**
@@ -126,12 +130,12 @@ public:
 class WrappedThreadException : public SLIException
 {
 public:
-  WrappedThreadException( std::exception& );
+  WrappedThreadException( const std::exception& );
   virtual ~WrappedThreadException() throw()
   {
   }
   std::string
-  message()
+  message() const
   {
     return message_;
   }
@@ -151,7 +155,7 @@ public:
     : SLIException( "DivisionByZero" )
   {
   }
-  std::string message();
+  std::string message() const;
 };
 
 // -------------------- Type Mismatch -------------------------
@@ -182,14 +186,15 @@ public:
   {
   }
 
-  TypeMismatch( const std::string& expectedType, const std::string& providedType )
+  TypeMismatch( const std::string& expectedType,
+    const std::string& providedType )
     : InterpreterError( "TypeMismatch" )
     , expected_( expectedType )
     , provided_( providedType )
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 class SystemSignal : public InterpreterError
@@ -206,7 +211,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 // -------------------- Array Size Mismatch -------------------------
@@ -229,7 +234,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 class ArgumentType : public InterpreterError
@@ -242,7 +247,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -271,7 +276,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 // -------------------- Dict Error -------------------------
@@ -312,7 +317,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 // -------------------- Entry Type Mismatch -------------------------
@@ -330,14 +335,15 @@ public:
   ~EntryTypeMismatch() throw()
   {
   }
-  EntryTypeMismatch( const std::string& expectedType, const std::string& providedType )
+  EntryTypeMismatch( const std::string& expectedType,
+    const std::string& providedType )
     : DictError( "EntryTypeMismatch" )
     , expected_( expectedType )
     , provided_( providedType )
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 // -------------------- Stack Error -------------------------
@@ -356,7 +362,7 @@ public:
     , needed( n )
     , given( g ){};
 
-  std::string message();
+  std::string message() const;
 };
 
 
@@ -376,7 +382,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -397,7 +403,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 
@@ -430,7 +436,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -453,7 +459,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 /**
@@ -474,7 +480,7 @@ public:
   {
   }
 
-  std::string message();
+  std::string message() const;
 };
 
 #endif

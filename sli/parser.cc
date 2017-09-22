@@ -84,9 +84,13 @@ bool Parser::operator()( Token& t )
   do
   {
     if ( result == scancontinue )
+    {
       ok = ( *s )( t );
+    }
     else
+    {
       ok = true;
+    }
 
 
     if ( ok )
@@ -111,7 +115,7 @@ bool Parser::operator()( Token& t )
       }
       else if ( t.contains( s->EndProcedureSymbol ) )
       {
-        if ( !ParseStack.empty() )
+        if ( not ParseStack.empty() )
         {
           ParseStack.pop_move( pt );
           if ( pt->isoftype( SLIInterpreter::Litproceduretype ) )
@@ -120,10 +124,14 @@ bool Parser::operator()( Token& t )
             result = tokencontinue;
           }
           else
+          {
             result = endarrayexpected;
+          }
         }
         else
+        {
           result = noopenproc;
+        }
       }
       else if ( t.contains( s->EndArraySymbol ) )
       {
@@ -132,7 +140,7 @@ bool Parser::operator()( Token& t )
         t.move( ob );
         result = tokencontinue;
 #else
-        if ( !ParseStack.empty() )
+        if ( not ParseStack.empty() )
         {
           ParseStack.pop_move( pt );
           if ( pt->isoftype( SLIInterpreter::Arraytype ) )
@@ -141,27 +149,33 @@ bool Parser::operator()( Token& t )
             result = tokencontinue;
           }
           else
+          {
             result = endprocexpected;
+          }
         }
         else
+        {
           result = noopenarray;
+        }
 #endif
       }
       else if ( t.contains( s->EndSymbol ) )
       {
-        if ( !ParseStack.empty() )
+        if ( not ParseStack.empty() )
         {
           result = unexpectedeof;
           ParseStack.clear();
         }
         else
+        {
           result = tokencompleted;
+        }
       }
       else
       {
         // Now we should be left with a "simple" Token
-        assert( !t->isoftype( SLIInterpreter::Symboltype ) );
-        if ( !ParseStack.empty() )
+        assert( not t->isoftype( SLIInterpreter::Symboltype ) );
+        if ( not ParseStack.empty() )
         {
           // append token to array on stack
           ParseStack.pop_move( pt );
@@ -173,7 +187,8 @@ bool Parser::operator()( Token& t )
           }
           else // now it must be a procedure
           {
-            LitprocedureDatum* pp = dynamic_cast< LitprocedureDatum* >( pt.datum() );
+            LitprocedureDatum* pp =
+              dynamic_cast< LitprocedureDatum* >( pt.datum() );
             assert( pp != NULL );
             pp->set_executable();
             pp->push_back( t );
@@ -182,11 +197,14 @@ bool Parser::operator()( Token& t )
           result = scancontinue;
         }
         else
+        {
           result = tokencompleted;
+        }
       }
 
     } // if(ok)
-      //      else std::cerr << "<Scanner> : unable to scan input, Result:" << ok << '\n';
+    //      else std::cerr << "<Scanner> : unable to scan input, Result:" << ok
+    //      << '\n';
   } while ( ( result == tokencontinue ) || ( result == scancontinue ) );
 
   if ( result != tokencompleted )

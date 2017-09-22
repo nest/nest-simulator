@@ -33,11 +33,10 @@
 #ifndef STRING_COMPOSE_H
 #define STRING_COMPOSE_H
 
-// C++ includes:
-#include <list>
-#include <map> // for multimap
 #include <sstream>
 #include <string>
+#include <list>
+#include <map> // for multimap
 
 namespace StringPrivate
 {

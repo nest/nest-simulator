@@ -80,6 +80,12 @@ public:
 
   SignalType sends_signal() const;
 
+  void sends_secondary_event( InstantaneousRateConnectionEvent& );
+
+  void sends_secondary_event( DiffusionConnectionEvent& );
+
+  void sends_secondary_event( DelayedRateConnectionEvent& );
+
   void
   handle( SpikeEvent& )
   {
@@ -119,7 +125,7 @@ private:
   {
   }
   void
-  update( Time const&, const long_t, const long_t )
+  update( Time const&, const long, const long )
   {
   }
 };

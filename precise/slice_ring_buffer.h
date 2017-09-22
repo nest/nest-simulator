@@ -70,7 +70,7 @@ public:
    * @param  weight     Weight of spike.
    */
   void add_spike( const delay rel_delivery,
-    const long_t stamp,
+    const long stamp,
     const double ps_offset,
     const double weight );
 
@@ -80,7 +80,7 @@ public:
    * @param  stamp      Delivery time
    * @param  ps_offset  Precise timing offset of spike time
    */
-  void add_refractory( const long_t stamp, const double_t ps_offset );
+  void add_refractory( const long stamp, const double ps_offset );
 
   /**
    * Prepare for spike delivery in current slice by sorting.
@@ -98,6 +98,9 @@ public:
    *                   should never contain spikes with smaller
    *                   stamps.  Spikes with larger stamps are
    *                   left in queue.
+   * @param accumulate_simultaneous If true, return summed weight
+   *                   of simultaneous input spikes, otherwise return
+   *                   one spike at a time.
    * @param ps_offset  PS-sense offset of spike time
    * @param weight     Spike weight
    * @param end_of_refract True if spike is pseudo-spike marking
@@ -105,12 +108,11 @@ public:
    * @returns          true if spike available, false otherwise
    * @note             If return from refractoriness coincides with
    *                   a spike, return from refractoriness is returned.
-   *                   If several spikes coincide, the sum of their
-   *                   weights is returned a single spike.
    */
-  bool get_next_spike( const long_t req_stamp,
-    double_t& ps_offset,
-    double_t& weight,
+  bool get_next_spike( const long req_stamp,
+    bool accumulate_simultaneous,
+    double& ps_offset,
+    double& weight,
     bool& end_of_refract );
 
   /**
@@ -129,7 +131,7 @@ private:
    */
   struct SpikeInfo
   {
-    SpikeInfo( long_t stamp, double_t ps_offset, double_t weight );
+    SpikeInfo( long stamp, double ps_offset, double weight );
 
     bool operator<( const SpikeInfo& b ) const;
     bool operator<=( const SpikeInfo& b ) const;
@@ -137,9 +139,9 @@ private:
 
     // data elements must not be const, since heap implementation
     // in DEC STL uses operator=().
-    long_t stamp_;       //<! spike's time stamp
-    double_t ps_offset_; //<! spike offset is PS sense
-    double_t weight_;    //<! spike weight
+    long stamp_;       //<! spike's time stamp
+    double ps_offset_; //<! spike offset is PS sense
+    double weight_;    //<! spike weight
   };
 
   //! entire queue, one slot per min_delay block within max_delay
@@ -153,11 +155,12 @@ private:
 
 inline void
 SliceRingBuffer::add_spike( const delay rel_delivery,
-  const long_t stamp,
+  const long stamp,
   const double ps_offset,
   const double weight )
 {
-  const delay idx = kernel().event_delivery_manager.get_slice_modulo( rel_delivery );
+  const delay idx =
+    kernel().event_delivery_manager.get_slice_modulo( rel_delivery );
   assert( ( size_t ) idx < queue_.size() );
   assert( ps_offset >= 0 );
 
@@ -165,52 +168,60 @@ SliceRingBuffer::add_spike( const delay rel_delivery,
 }
 
 inline void
-SliceRingBuffer::add_refractory( const long_t stamp, const double_t ps_offset )
+SliceRingBuffer::add_refractory( const long stamp, const double ps_offset )
 {
   // We require that only one refractory-return pseudo-event is stored per
   // time step. We guard against violation using assert(): refract_.stamp_ must
   // be equal to the marker value for non-refractoriness. All else would mean
   // that a refractory neuron fired.
-  assert( refract_.stamp_ == std::numeric_limits< long_t >::max() );
+  assert( refract_.stamp_ == std::numeric_limits< long >::max() );
 
   refract_.stamp_ = stamp;
   refract_.ps_offset_ = ps_offset;
 }
 
 inline bool
-SliceRingBuffer::get_next_spike( const long_t req_stamp,
-  double_t& ps_offset,
-  double_t& weight,
+SliceRingBuffer::get_next_spike( const long req_stamp,
+  bool accumulate_simultaneous,
+  double& ps_offset,
+  double& weight,
   bool& end_of_refract )
 {
   end_of_refract = false;
   if ( deliver_->empty() || refract_ <= deliver_->back() )
+  {
     if ( refract_.stamp_ == req_stamp )
-    { // if relies on stamp_==long_t::max() if not refractory
+    { // if relies on stamp_==long::max() if not refractory
       // return from refractoriness
       ps_offset = refract_.ps_offset_;
       weight = 0;
       end_of_refract = true;
 
       // mark as non-refractory
-      refract_.stamp_ = std::numeric_limits< long_t >::max();
+      refract_.stamp_ = std::numeric_limits< long >::max();
       return true;
     }
     else
+    {
       return false;
+    }
+  }
   else if ( deliver_->back().stamp_ == req_stamp )
   {
-    // we have an event to deliver, register its offset
+    // we have an event to deliver
     ps_offset = deliver_->back().ps_offset_;
+    weight = deliver_->back().weight_;
+    deliver_->pop_back();
 
-    // accumulate weights of all spikes with same stamp
-    // AND offset
-    weight = 0.0; // accumulate weights of all
-    while ( !deliver_->empty() && deliver_->back().ps_offset_ == ps_offset
-      && deliver_->back().stamp_ == req_stamp )
+    if ( accumulate_simultaneous )
     {
-      weight += deliver_->back().weight_;
-      deliver_->pop_back();
+      // add weights of all spikes with same stamp and offset
+      while ( not deliver_->empty() and deliver_->back().ps_offset_ == ps_offset
+        and deliver_->back().stamp_ == req_stamp )
+      {
+        weight += deliver_->back().weight_;
+        deliver_->pop_back();
+      }
     }
 
     return true;
@@ -223,7 +234,9 @@ SliceRingBuffer::get_next_spike( const long_t req_stamp,
   }
 }
 
-inline SliceRingBuffer::SpikeInfo::SpikeInfo( long_t stamp, double_t ps_offset, double_t weight )
+inline SliceRingBuffer::SpikeInfo::SpikeInfo( long stamp,
+  double ps_offset,
+  double weight )
   : stamp_( stamp )
   , ps_offset_( ps_offset )
   , weight_( weight )
@@ -237,7 +250,7 @@ inline bool SliceRingBuffer::SpikeInfo::operator<( const SpikeInfo& b ) const
 
 inline bool SliceRingBuffer::SpikeInfo::operator<=( const SpikeInfo& b ) const
 {
-  return !( *this > b );
+  return not( *this > b );
 }
 
 inline bool SliceRingBuffer::SpikeInfo::operator>( const SpikeInfo& b ) const

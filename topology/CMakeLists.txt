@@ -34,13 +34,14 @@ set( topo_sources
     grid_layer.h
     mask.h
     mask_impl.h
+    mask.cpp
     grid_mask.h
     ntree.h
     ntree_impl.h
     vose.h
     vose.cpp
-    parameter.h
-    parameter.cpp
+    topology_parameter.h
+    topology_parameter.cpp
     selector.h
     selector.cpp
     topology.h topology.cpp
@@ -58,32 +59,39 @@ target_include_directories( topology PRIVATE
     )
 
 install( TARGETS topology
-    LIBRARY DESTINATION ${INSTALL_LIB_DIR}
-    ARCHIVE DESTINATION ${INSTALL_LIB_DIR}
-    RUNTIME DESTINATION ${INSTALL_BIN_DIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
 install( FILES sli/topology-interface.sli
-    DESTINATION ${INSTALL_DATA_DIR}/sli )
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/sli )
 
 install( FILES doc/Topology_UserManual.pdf
-    DESTINATION ${INSTALL_DOC_DIR}/topology )
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology )
+
+file( GLOB topo_unittests "testsuite/unittests/*" )
+install( FILES ${topo_unittests}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology/unittests
+    )
+
+file( GLOB topo_mpitests "testsuite/mpitests/*" )
+install( FILES ${topo_mpitests}
+    DESTINATION ${CMAKE_INSTALL_DOCDIR}/topology/mpitests
+    )
 
 if ( HAVE_PYTHON )
   install( CODE "execute_process(
     COMMAND ${PYTHON} setup.py build --build-base=${CMAKE_CURRENT_BINARY_DIR}/build
                                install --prefix=${CMAKE_INSTALL_PREFIX}
-                                       --install-lib=${PYEXECDIR}
-                                       --install-scripts=${CMAKE_INSTALL_PREFIX}/${INSTALL_BIN_DIR}
-                                       --install-data=${CMAKE_INSTALL_PREFIX}/${INSTALL_DATA_DIR}
+                                       --install-lib=${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}
+                                       --install-scripts=${CMAKE_INSTALL_FULL_BINDIR}
+                                       --install-data=${CMAKE_INSTALL_FULL_DATADIR}
     WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")"
       )
 
   file( GLOB topo_examples "examples/*" )
   install( FILES ${topo_examples}
-      DESTINATION ${INSTALL_DOC_DIR}/examples/topology
-      )
-  install( DIRECTORY testsuite
-      DESTINATION ${INSTALL_DOC_DIR}/topology
+      DESTINATION ${CMAKE_INSTALL_DOCDIR}/examples/topology
       )
 endif ()

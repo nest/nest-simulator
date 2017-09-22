@@ -56,7 +56,8 @@ posix_signal( int signo, Sigfunc* func )
    * the intention is clearly that it be (*sa_handler)(int).
    */
 
-  act.sa_handler = ( void ( * ) () ) func; /* Thus we cast the supplied poiner! */
+  /* Thus we cast the supplied pointer! */
+  act.sa_handler = ( void ( * ) () ) func;
   sigemptyset( &act.sa_mask );
   act.sa_flags = 0;
   if ( signo == SIGALRM )
@@ -72,7 +73,9 @@ posix_signal( int signo, Sigfunc* func )
 #endif
   }
   if ( sigaction( signo, &act, &oact ) < 0 )
+  {
     return ( SIG_ERR );
+  }
   return ( oact.sa_handler );
 }
 

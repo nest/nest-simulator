@@ -28,7 +28,7 @@ the basis of the network used in
 
 Brunel N, Dynamics of Sparsely Connected Networks of Excitatory and
 Inhibitory Spiking Neurons, Journal of Computational Neuroscience 8,
-183–208 (2000).
+183-208 (2000).
 
 When connecting the network customary synapse models are used, which
 allow for querying the number of created synapses. Using spike
@@ -38,7 +38,7 @@ network are recorded.
 '''
 
 '''
-Importing all necessary modules for simulation, analysis and plotting.
+Import all necessary modules for simulation, analysis and plotting.
 '''
 
 import nest
@@ -60,17 +60,17 @@ startbuild = time.time()
 Assigning the simulation parameters to variables.
 '''
 
-dt      = 0.1    # the resolution in ms
-simtime = 1000.0 # Simulation time in ms
-delay   = 1.5    # synaptic delay in ms
+dt = 0.1  # the resolution in ms
+simtime = 1000.0  # Simulation time in ms
+delay = 1.5  # synaptic delay in ms
 
 '''
 Definition of the parameters crucial for asynchronous irregular firing
 of the neurons.
 '''
 
-g       = 5.0  # ratio inhibitory weight/excitatory weight
-eta     = 2.0  # external rate relative to threshold rate
+g = 5.0  # ratio inhibitory weight/excitatory weight
+eta = 2.0  # external rate relative to threshold rate
 epsilon = 0.1  # connection probability
 
 '''
@@ -78,38 +78,37 @@ Definition of the number of neurons in the network and the number of
 neuron recorded from
 '''
 
-order     = 2500
-NE        = 4*order # number of excitatory neurons
-NI        = 1*order # number of inhibitory neurons
-N_neurons = NE+NI   # number of neurons in total
-N_rec     = 50      # record from 50 neurons
+order = 2500
+NE = 4 * order  # number of excitatory neurons
+NI = 1 * order  # number of inhibitory neurons
+N_neurons = NE + NI  # number of neurons in total
+N_rec = 50  # record from 50 neurons
 
 '''
 Definition of connectivity parameter
 '''
 
-CE    = int(epsilon*NE) # number of excitatory synapses per neuron
-CI    = int(epsilon*NI) # number of inhibitory synapses per neuron  
-C_tot = int(CI+CE)      # total number of synapses per neuron
+CE = int(epsilon * NE)  # number of excitatory synapses per neuron
+CI = int(epsilon * NI)  # number of inhibitory synapses per neuron
+C_tot = int(CI + CE)  # total number of synapses per neuron
 
 '''
 Initialization of the parameters of the integrate and fire neuron and
 the synapses. The parameter of the neuron are stored in a dictionary.
-''' 
+'''
 
-tauMem = 20.0   # time constant of membrane potential in ms
-theta  = 20.0   # membrane threshold potential in mV
-neuron_params= {"C_m":        1.0,
-                "tau_m":      tauMem,
-                "t_ref":      2.0,
-                "E_L":        0.0,
-                "V_reset":    0.0,
-                "V_m":        0.0,
-                "V_th":       theta}
-J     = 0.1     # postsynaptic amplitude in mV
-J_ex  = J       # amplitude of excitatory postsynaptic potential
-J_in  = -g*J_ex # amplitude of inhibitory postsynaptic potential
-
+tauMem = 20.0  # time constant of membrane potential in ms
+theta = 20.0  # membrane threshold potential in mV
+neuron_params = {"C_m": 1.0,
+                 "tau_m": tauMem,
+                 "t_ref": 2.0,
+                 "E_L": 0.0,
+                 "V_reset": 0.0,
+                 "V_m": 0.0,
+                 "V_th": theta}
+J = 0.1  # postsynaptic amplitude in mV
+J_ex = J  # amplitude of excitatory postsynaptic potential
+J_in = -g * J_ex  # amplitude of inhibitory postsynaptic potential
 
 '''
 Definition of threshold rate, which is the external rate needed to fix
@@ -118,9 +117,9 @@ and the rate of the poisson generator which is multiplied by the
 in-degree CE and converted to Hz by multiplication by 1000.
 '''
 
-nu_th  = theta/(J*CE*tauMem)
-nu_ex  = eta*nu_th
-p_rate = 1000.0*nu_ex*CE
+nu_th = theta / (J * CE * tauMem)
+nu_ex = eta * nu_th
+p_rate = 1000.0 * nu_ex * CE
 
 '''
 Configuration of the simulation kernel by the previously defined time
@@ -129,7 +128,8 @@ the already processed simulation time as well as its percentage of the
 total simulation time.
 '''
 
-nest.SetKernelStatus({"resolution": dt, "print_time": True, "overwrite_files": True})
+nest.SetKernelStatus({"resolution": dt, "print_time": True,
+                      "overwrite_files": True})
 
 print("Building network")
 
@@ -142,7 +142,7 @@ will have the properties specified in the dictionary by default.
 '''
 
 nest.SetDefaults("iaf_psc_delta", neuron_params)
-nest.SetDefaults("poisson_generator",{"rate": p_rate})
+nest.SetDefaults("poisson_generator", {"rate": p_rate})
 
 '''
 Creation of the nodes using `Create`. We store the returned handles in
@@ -152,11 +152,11 @@ detectors will later be used to record excitatory and inhibitory
 spikes.
 '''
 
-nodes_ex = nest.Create("iaf_psc_delta",NE)
-nodes_in = nest.Create("iaf_psc_delta",NI)
-noise    = nest.Create("poisson_generator")
-espikes  = nest.Create("spike_detector")
-ispikes  = nest.Create("spike_detector")
+nodes_ex = nest.Create("iaf_psc_delta", NE)
+nodes_in = nest.Create("iaf_psc_delta", NI)
+noise = nest.Create("poisson_generator")
+espikes = nest.Create("spike_detector")
+ispikes = nest.Create("spike_detector")
 
 '''
 Configuration of the spike detectors recording excitatory and
@@ -168,15 +168,15 @@ and "withgid" to True ensures that each spike is saved to file by
 stating the gid of the spiking neuron and the spike time in one line.
 '''
 
-nest.SetStatus(espikes,[{"label": "brunel-py-ex",
-                         "withtime": True,
-                         "withgid": True,
-                         "to_file": True}])
+nest.SetStatus(espikes, [{"label": "brunel-py-ex",
+                          "withtime": True,
+                          "withgid": True,
+                          "to_file": True}])
 
-nest.SetStatus(ispikes,[{"label": "brunel-py-in",
-                         "withtime": True,
-                         "withgid": True,
-                         "to_file": True}])
+nest.SetStatus(ispikes, [{"label": "brunel-py-in",
+                          "withtime": True,
+                          "withgid": True,
+                          "to_file": True}])
 
 print("Connecting devices")
 
@@ -190,8 +190,10 @@ inhibitory connections giving the previously defined weights and equal
 delays.
 '''
 
-nest.CopyModel("static_synapse","excitatory",{"weight":J_ex, "delay":delay})
-nest.CopyModel("static_synapse","inhibitory",{"weight":J_in, "delay":delay})
+nest.CopyModel("static_synapse", "excitatory",
+               {"weight": J_ex, "delay": delay})
+nest.CopyModel("static_synapse", "inhibitory",
+               {"weight": J_in, "delay": delay})
 
 '''
 Connecting the previously defined poisson generator to the excitatory
@@ -203,8 +205,8 @@ multiple variables or a string when simply using a pre-defined
 synapse.
 '''
 
-nest.Connect(noise,nodes_ex, syn_spec="excitatory")
-nest.Connect(noise,nodes_in, syn_spec="excitatory")
+nest.Connect(noise, nodes_ex, syn_spec="excitatory")
+nest.Connect(noise, nodes_in, syn_spec="excitatory")
 
 '''
 Connecting the first N_rec nodes of the excitatory and inhibitory
@@ -230,7 +232,7 @@ excitatory synapse it suffices to insert a string.
 '''
 
 conn_params_ex = {'rule': 'fixed_indegree', 'indegree': CE}
-nest.Connect(nodes_ex, nodes_ex+nodes_in, conn_params_ex, "excitatory")
+nest.Connect(nodes_ex, nodes_ex + nodes_in, conn_params_ex, "excitatory")
 
 print("Inhibitory connections")
 
@@ -242,14 +244,14 @@ the excitatory population defined above.
 '''
 
 conn_params_in = {'rule': 'fixed_indegree', 'indegree': CI}
-nest.Connect(nodes_in, nodes_ex+nodes_in, conn_params_in, "inhibitory")
+nest.Connect(nodes_in, nodes_ex + nodes_in, conn_params_in, "inhibitory")
 
 '''
 Storage of the time point after the buildup of the network in a
 variable.
 '''
 
-endbuild=time.time()
+endbuild = time.time()
 
 '''
 Simulation of the network.
@@ -264,7 +266,7 @@ Storage of the time point after the simulation of the network in a
 variable.
 '''
 
-endsimulate= time.time()
+endsimulate = time.time()
 
 '''
 Reading out the total number of spikes received from the spike
@@ -272,8 +274,8 @@ detector connected to the excitatory population and the inhibitory
 population.
 '''
 
-events_ex = nest.GetStatus(espikes,"n_events")[0]
-events_in = nest.GetStatus(ispikes,"n_events")[0]
+events_ex = nest.GetStatus(espikes, "n_events")[0]
+events_in = nest.GetStatus(ispikes, "n_events")[0]
 
 '''
 Calculation of the average firing rate of the excitatory and the
@@ -282,8 +284,8 @@ the number of neurons recorded from and the simulation time. The
 multiplication by 1000.0 converts the unit 1/ms to 1/s=Hz.
 '''
 
-rate_ex   = events_ex/simtime*1000.0/N_rec
-rate_in   = events_in/simtime*1000.0/N_rec
+rate_ex = events_ex / simtime * 1000.0 / N_rec
+rate_in = events_in / simtime * 1000.0 / N_rec
 
 '''
 Reading out the number of connections established using the excitatory
@@ -291,16 +293,16 @@ and inhibitory synapse model. The numbers are summed up resulting in
 the total number of synapses.
 '''
 
-num_synapses = nest.GetDefaults("excitatory")["num_connections"]+\
-nest.GetDefaults("inhibitory")["num_connections"]
+num_synapses = (nest.GetDefaults("excitatory")["num_connections"] +
+                nest.GetDefaults("inhibitory")["num_connections"])
 
 '''
 Establishing the time it took to build and simulate the network by
 taking the difference of the pre-defined time variables.
 '''
 
-build_time = endbuild-startbuild
-sim_time   = endsimulate-endbuild
+build_time = endbuild - startbuild
+sim_time = endsimulate - endbuild
 
 '''
 Printing the network properties, firing rates and building times.

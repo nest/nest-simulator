@@ -27,25 +27,43 @@ import pydot
 import nest
 import types
 
-def plot_network(nodes, filename, ext_conns = False, plot_modelnames = False):
-    """
-    Plot the given nodes and the connections that originate from
-    them. Note that connections to targets not in nodes are not drawn
-    if ext_conns is False. If it is True, they are drawn to a node
-    named 'ext'. The given filename can end either in .pdf or .png to
-    determine the type of the output. This function depends on the
-    availability of the pydot module.
+
+def plot_network(nodes, filename, ext_conns=False,
+                 plot_modelnames=False):
+    """Plot the given nodes and the connections that originate from
+    them.
+
+    This function depends on the availability of the pydot module.
+
+    Parameters
+    ----------
+    nodes : list
+        Global ids of nodes to plot
+    filename : str
+        Filename to save the plot to. Can end either in .pdf or .png to
+        determine the type of the output.
+    ext_conns : bool, optional
+        Draw connections to targets that are not in nodes. If it is True,
+        these are drawn to a node named 'ext'.
+    plot_modelnames : bool, optional
+        Description
+
+    Raises
+    ------
+    nest.NESTError
     """
 
     if len(nodes) == 0:
         nest.NESTError("nodes must at least contain one node")
 
     nodes_types = map(lambda x: type(x), nodes)
-    homogeneous = reduce(lambda x, y: x == y and x or None, nodes_types) == nodes_types[0]
+    homogeneous = reduce(
+        lambda x, y: x == y and x or None, nodes_types) == nodes_types[0]
 
-    if not homogeneous :
-        raise nest.NESTError("nodes must either contain only integers or only list of integers")
-    
+    if not homogeneous:
+        raise nest.NESTError("nodes must either contain only integers \
+            or only list of integers")
+
     def get_name(node):
         if plot_modelnames:
             return "%i\\n%s" % (node, nest.GetStatus([node], "model")[0])
@@ -72,20 +90,25 @@ def plot_network(nodes, filename, ext_conns = False, plot_modelnames = False):
 
     # Flatten nodes
     nodes = [node for node_list in nodes for node in node_list]
-    adjlist = [[j, nest.GetStatus(nest.FindConnections([j]), 'target')] for j in nodes]
-    
+    adjlist = [
+        [j, nest.GetStatus(nest.GetConnections([j]), 'target')]
+        for j in nodes
+    ]
+
     for cl in adjlist:
         if not ext_conns:
             cl[1] = [i for i in cl[1] if i in nodes]
         else:
             tmp = []
             for i in cl[1]:
-                if i in nodes: tmp.append(i)
-                else: tmp.append("external")
+                if i in nodes:
+                    tmp.append(i)
+                else:
+                    tmp.append("external")
             cl[1] = tmp
         for t in cl[1]:
             graph.add_edge(pydot.Edge(str(cl[0]), str(t)))
-    
+
     filetype = filename.rsplit(".", 1)[1]
 
     if filetype == "pdf":
@@ -93,4 +116,4 @@ def plot_network(nodes, filename, ext_conns = False, plot_modelnames = False):
     elif filetype == "png":
         graph.write_png(filename)
     else:
-        raise nest.NestError("Filename must end in '.png' or '.pdf'.")
+        raise nest.NESTError("Filename must end in '.png' or '.pdf'.")

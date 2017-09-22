@@ -37,7 +37,7 @@ namespace nest
 class Time;
 /**
  * Class to convert times from one representation to another.
- * Createing an object of TimeCOnverter at a current time representation
+ * Creating an object of TimeConverter at a current time representation
  * saves the current values of TICS_PER_MS and TICS_PER_STEP.
  * After having changed the time representation,
  * the members from_old_steps and from_old_tics can be used
@@ -48,8 +48,8 @@ class TimeConverter
 {
 
 private:
-  double_t OLD_TICS_PER_MS;
-  double_t OLD_TICS_PER_STEP;
+  double OLD_TICS_PER_MS;
+  double OLD_TICS_PER_STEP;
 
 public:
   /**
@@ -64,10 +64,10 @@ public:
    * into a time object in current representation.
    *
    * Be careful not to call Time::get_steps() from an old Time object, as
-   * it will use the new TICS_PER_STEP constant. Use TimeConverter::from_old_tics
-   * instead.
+   * it will use the new TICS_PER_STEP constant. Use
+   * TimeConverter::from_old_tics instead.
    */
-  Time from_old_steps( long_t s_old ) const;
+  Time from_old_steps( long s_old ) const;
 
   /**
    * Converts a given number of tics with respect to old representation

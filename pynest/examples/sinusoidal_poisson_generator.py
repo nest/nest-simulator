@@ -22,7 +22,7 @@
 
 '''
 Sinusoidal poisson generator example
-----------------------------------
+------------------------------------
 
 This script demonstrates the use of the `sinusoidal_poisson_generator`
 and its different parameters and modes. The source code of the model
@@ -35,20 +35,17 @@ the ``individual_spike_trains`` switch.
 '''
 
 '''
-First, we import all necessary modules for simulation, analysis and
-plotting. 
+We import nest and modules required for analysis and plotting.
 '''
 
 import nest
-nest.ResetKernel()   # in case we run the script multiple times from iPython
-
 import matplotlib.pyplot as plt
 import numpy as np
 
-
+nest.ResetKernel()   # in case we run the script multiple times from iPython
 
 '''
-Then we create two instances of the `sinusoidal_poisson_generator`
+We create two instances of the `sinusoidal_poisson_generator`
 with two different parameter sets using `Create`. Moreover, we create
 devices to record firing rates (`multimeter`) and spikes
 (`spike_detector`) and connect them to the generators using `Connect`.
@@ -56,14 +53,15 @@ devices to record firing rates (`multimeter`) and spikes
 
 nest.SetKernelStatus({'resolution': 0.01})
 
-g = nest.Create('sinusoidal_poisson_generator', n=2, params=[{'rate': 10000.0, 
-                                                              'amplitude': 5000.0,
-                                                              'frequency': 10.0, 
-                                                              'phase': 0.0},
-                                                             {'rate': 0.0, 
-                                                              'amplitude': 10000.0,
-                                                              'frequency': 5.0, 
-                                                              'phase': 90.0}])
+g = nest.Create('sinusoidal_poisson_generator', n=2,
+                params=[{'rate': 10000.0,
+                         'amplitude': 5000.0,
+                         'frequency': 10.0,
+                         'phase': 0.0},
+                        {'rate': 0.0,
+                         'amplitude': 10000.0,
+                         'frequency': 5.0,
+                         'phase': 90.0}])
 
 m = nest.Create('multimeter', n=2, params={'interval': 0.1, 'withgid': False,
                                            'record_from': ['rate']})
@@ -71,7 +69,7 @@ s = nest.Create('spike_detector', n=2, params={'withgid': False})
 
 nest.Connect(m, g, 'one_to_one')
 nest.Connect(g, s, 'one_to_one')
-print nest.GetStatus(m)
+print(nest.GetStatus(m))
 nest.Simulate(200)
 
 '''
@@ -101,13 +99,12 @@ for j in range(2):
              histtype='step', color=colors[j])
     plt.title('ISI histogram')
 
-
 '''
 The kernel is reset and the number of threads set to 4.
 '''
 
 nest.ResetKernel()
-nest.SetKernelStatus({'local_num_threads': 4})  # show this work for multiple threads
+nest.SetKernelStatus({'local_num_threads': 4})
 
 '''
 First, a `sinusoidal_poisson_generator` with
@@ -117,7 +114,7 @@ simulating, a raster plot of the spikes is created.
 '''
 
 g = nest.Create('sinusoidal_poisson_generator',
-                params={'rate': 100.0, 'amplitude': 50.0, 
+                params={'rate': 100.0, 'amplitude': 50.0,
                         'frequency': 10.0, 'phase': 0.0,
                         'individual_spike_trains': True})
 p = nest.Create('parrot_neuron', 20)
@@ -129,25 +126,23 @@ nest.Connect(p, s, 'all_to_all')
 nest.Simulate(200)
 ev = nest.GetStatus(s)[0]['events']
 plt.subplot(222)
-plt.plot(ev['times'], ev['senders']-min(ev['senders']), 'o')
+plt.plot(ev['times'], ev['senders'] - min(ev['senders']), 'o')
 plt.ylim([-0.5, 19.5])
 plt.yticks([])
 plt.title('Individual spike trains for each target')
 
-
-
 '''
 The kernel is reset again and the whole procedure is repeated for
-a `sinusoidal_poisson_generator` with `individual_spike_trains` set to ``False``. The plot
-shows that in this case, all neurons receive the same spike train from
-the `sinusoidal_poisson_generator`.
+a `sinusoidal_poisson_generator` with `individual_spike_trains`
+set to ``False``. The plot shows that in this case, all neurons
+receive the same spike train from the `sinusoidal_poisson_generator`.
 '''
 
 nest.ResetKernel()
-nest.SetKernelStatus({'local_num_threads': 4})  # show this work for multiple threads
+nest.SetKernelStatus({'local_num_threads': 4})
 
 g = nest.Create('sinusoidal_poisson_generator',
-                params={'rate': 100.0, 'amplitude': 50.0, 
+                params={'rate': 100.0, 'amplitude': 50.0,
                         'frequency': 10.0, 'phase': 0.0,
                         'individual_spike_trains': False})
 p = nest.Create('parrot_neuron', 20)
@@ -159,7 +154,7 @@ nest.Connect(p, s, 'all_to_all')
 nest.Simulate(200)
 ev = nest.GetStatus(s)[0]['events']
 plt.subplot(224)
-plt.plot(ev['times'], ev['senders']-min(ev['senders']), 'o')
+plt.plot(ev['times'], ev['senders'] - min(ev['senders']), 'o')
 plt.ylim([-0.5, 19.5])
 plt.yticks([])
 plt.title('One spike train for all targets')

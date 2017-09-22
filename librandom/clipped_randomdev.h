@@ -119,12 +119,14 @@ private:
 };
 
 template < typename BaseRDV >
-ClippedRedrawContinuousRandomDev< BaseRDV >::ClippedRedrawContinuousRandomDev( RngPtr r )
+ClippedRedrawContinuousRandomDev< BaseRDV >::ClippedRedrawContinuousRandomDev(
+  RngPtr r )
   : BaseRDV( r )
   , min_( -std::numeric_limits< double >::infinity() )
   , max_( std::numeric_limits< double >::infinity() )
 {
-  assert( not BaseRDV::has_ldev() ); // ensure underlying distribution is continuous
+  assert(
+    not BaseRDV::has_ldev() ); // ensure underlying distribution is continuous
 }
 
 template < typename BaseRDV >
@@ -133,23 +135,26 @@ ClippedRedrawContinuousRandomDev< BaseRDV >::ClippedRedrawContinuousRandomDev()
   , min_( -std::numeric_limits< double >::infinity() )
   , max_( std::numeric_limits< double >::infinity() )
 {
-  assert( not BaseRDV::has_ldev() ); // ensure underlying distribution is continuous
+  assert(
+    not BaseRDV::has_ldev() ); // ensure underlying distribution is continuous
 }
 
 template < typename BaseRDV >
 void
-ClippedRedrawContinuousRandomDev< BaseRDV >::set_status( const DictionaryDatum& d )
+ClippedRedrawContinuousRandomDev< BaseRDV >::set_status(
+  const DictionaryDatum& d )
 {
   BaseRDV::set_status( d );
 
   double new_min = min_;
   double new_max = max_;
 
-  updateValue< double >( d, "low", new_min );
-  updateValue< double >( d, "high", new_max );
-
+  updateValue< double >( d, names::low, new_min );
+  updateValue< double >( d, names::high, new_max );
   if ( new_min >= new_max )
+  {
     throw BadParameterValue( "Clipped RDVs require low < high." );
+  }
 
   min_ = new_min;
   max_ = new_max;
@@ -157,12 +162,13 @@ ClippedRedrawContinuousRandomDev< BaseRDV >::set_status( const DictionaryDatum& 
 
 template < typename BaseRDV >
 void
-ClippedRedrawContinuousRandomDev< BaseRDV >::get_status( DictionaryDatum& d ) const
+ClippedRedrawContinuousRandomDev< BaseRDV >::get_status(
+  DictionaryDatum& d ) const
 {
   BaseRDV::get_status( d );
 
-  def< double >( d, "low", min_ );
-  def< double >( d, "high", max_ );
+  def< double >( d, names::low, min_ );
+  def< double >( d, names::high, max_ );
 }
 
 template < typename BaseRDV >
@@ -172,7 +178,8 @@ inline double ClippedRedrawContinuousRandomDev< BaseRDV >::operator()( void )
 }
 
 template < typename BaseRDV >
-inline double ClippedRedrawContinuousRandomDev< BaseRDV >::operator()( RngPtr r ) const
+inline double ClippedRedrawContinuousRandomDev< BaseRDV >::operator()(
+  RngPtr r ) const
 {
   double value;
 
@@ -231,7 +238,8 @@ private:
 };
 
 template < typename BaseRDV >
-ClippedRedrawDiscreteRandomDev< BaseRDV >::ClippedRedrawDiscreteRandomDev( RngPtr r )
+ClippedRedrawDiscreteRandomDev< BaseRDV >::ClippedRedrawDiscreteRandomDev(
+  RngPtr r )
   : BaseRDV( r )
   , min_( std::numeric_limits< long >::min() )
   , max_( std::numeric_limits< long >::max() )
@@ -250,18 +258,20 @@ ClippedRedrawDiscreteRandomDev< BaseRDV >::ClippedRedrawDiscreteRandomDev()
 
 template < typename BaseRDV >
 void
-ClippedRedrawDiscreteRandomDev< BaseRDV >::set_status( const DictionaryDatum& d )
+ClippedRedrawDiscreteRandomDev< BaseRDV >::set_status(
+  const DictionaryDatum& d )
 {
   BaseRDV::set_status( d );
 
   long new_min = min_;
   long new_max = max_;
 
-  updateValue< long >( d, "low", new_min );
-  updateValue< long >( d, "high", new_max );
-
+  updateValue< long >( d, names::low, new_min );
+  updateValue< long >( d, names::high, new_max );
   if ( new_min >= new_max )
+  {
     throw BadParameterValue( "Clipped RDVs require low < high." );
+  }
 
   min_ = new_min;
   max_ = new_max;
@@ -269,12 +279,13 @@ ClippedRedrawDiscreteRandomDev< BaseRDV >::set_status( const DictionaryDatum& d 
 
 template < typename BaseRDV >
 void
-ClippedRedrawDiscreteRandomDev< BaseRDV >::get_status( DictionaryDatum& d ) const
+ClippedRedrawDiscreteRandomDev< BaseRDV >::get_status(
+  DictionaryDatum& d ) const
 {
   BaseRDV::get_status( d );
 
-  def< long >( d, "low", min_ );
-  def< long >( d, "high", max_ );
+  def< long >( d, names::low, min_ );
+  def< long >( d, names::high, max_ );
 }
 
 template < typename BaseRDV >
@@ -284,7 +295,8 @@ inline double ClippedRedrawDiscreteRandomDev< BaseRDV >::operator()( void )
 }
 
 template < typename BaseRDV >
-inline double ClippedRedrawDiscreteRandomDev< BaseRDV >::operator()( RngPtr r ) const
+inline double ClippedRedrawDiscreteRandomDev< BaseRDV >::operator()(
+  RngPtr r ) const
 {
   double value;
 
@@ -359,37 +371,43 @@ private:
 };
 
 template < typename BaseRDV >
-ClippedToBoundaryContinuousRandomDev< BaseRDV >::ClippedToBoundaryContinuousRandomDev( RngPtr r )
+ClippedToBoundaryContinuousRandomDev< BaseRDV >::
+  ClippedToBoundaryContinuousRandomDev( RngPtr r )
   : BaseRDV( r )
   , min_( -std::numeric_limits< double >::infinity() )
   , max_( std::numeric_limits< double >::infinity() )
 {
-  assert( not BaseRDV::has_ldev() ); // ensure underlying distribution is continuous
+  assert(
+    not BaseRDV::has_ldev() ); // ensure underlying distribution is continuous
 }
 
 template < typename BaseRDV >
-ClippedToBoundaryContinuousRandomDev< BaseRDV >::ClippedToBoundaryContinuousRandomDev()
+ClippedToBoundaryContinuousRandomDev< BaseRDV >::
+  ClippedToBoundaryContinuousRandomDev()
   : BaseRDV()
   , min_( -std::numeric_limits< double >::infinity() )
   , max_( std::numeric_limits< double >::infinity() )
 {
-  assert( not BaseRDV::has_ldev() ); // ensure underlying distribution is continuous
+  assert(
+    not BaseRDV::has_ldev() ); // ensure underlying distribution is continuous
 }
 
 template < typename BaseRDV >
 void
-ClippedToBoundaryContinuousRandomDev< BaseRDV >::set_status( const DictionaryDatum& d )
+ClippedToBoundaryContinuousRandomDev< BaseRDV >::set_status(
+  const DictionaryDatum& d )
 {
   BaseRDV::set_status( d );
 
   double new_min = min_;
   double new_max = max_;
 
-  updateValue< double >( d, "low", new_min );
-  updateValue< double >( d, "high", new_max );
-
+  updateValue< double >( d, names::low, new_min );
+  updateValue< double >( d, names::high, new_max );
   if ( new_min >= new_max )
+  {
     throw BadParameterValue( "Clipped RDVs require low < high." );
+  }
 
   min_ = new_min;
   max_ = new_max;
@@ -397,28 +415,35 @@ ClippedToBoundaryContinuousRandomDev< BaseRDV >::set_status( const DictionaryDat
 
 template < typename BaseRDV >
 void
-ClippedToBoundaryContinuousRandomDev< BaseRDV >::get_status( DictionaryDatum& d ) const
+ClippedToBoundaryContinuousRandomDev< BaseRDV >::get_status(
+  DictionaryDatum& d ) const
 {
   BaseRDV::get_status( d );
 
-  def< double >( d, "low", min_ );
-  def< double >( d, "high", max_ );
+  def< double >( d, names::low, min_ );
+  def< double >( d, names::high, max_ );
 }
 
 template < typename BaseRDV >
-inline double ClippedToBoundaryContinuousRandomDev< BaseRDV >::operator()( void )
+inline double ClippedToBoundaryContinuousRandomDev< BaseRDV >::operator()(
+  void )
 {
   return ( *this )( this->rng_ );
 }
 
 template < typename BaseRDV >
-inline double ClippedToBoundaryContinuousRandomDev< BaseRDV >::operator()( RngPtr r ) const
+inline double ClippedToBoundaryContinuousRandomDev< BaseRDV >::operator()(
+  RngPtr r ) const
 {
   const double value = BaseRDV::operator()( r );
   if ( value < min_ )
+  {
     return min_;
+  }
   if ( value > max_ )
+  {
     return max_;
+  }
   return value;
 }
 
@@ -473,7 +498,8 @@ private:
 };
 
 template < typename BaseRDV >
-ClippedToBoundaryDiscreteRandomDev< BaseRDV >::ClippedToBoundaryDiscreteRandomDev( RngPtr r )
+ClippedToBoundaryDiscreteRandomDev< BaseRDV >::
+  ClippedToBoundaryDiscreteRandomDev( RngPtr r )
   : BaseRDV( r )
   , min_( std::numeric_limits< long >::min() )
   , max_( std::numeric_limits< long >::max() )
@@ -482,7 +508,8 @@ ClippedToBoundaryDiscreteRandomDev< BaseRDV >::ClippedToBoundaryDiscreteRandomDe
 }
 
 template < typename BaseRDV >
-ClippedToBoundaryDiscreteRandomDev< BaseRDV >::ClippedToBoundaryDiscreteRandomDev()
+ClippedToBoundaryDiscreteRandomDev< BaseRDV >::
+  ClippedToBoundaryDiscreteRandomDev()
   : BaseRDV()
   , min_( std::numeric_limits< long >::min() )
   , max_( std::numeric_limits< long >::max() )
@@ -492,18 +519,20 @@ ClippedToBoundaryDiscreteRandomDev< BaseRDV >::ClippedToBoundaryDiscreteRandomDe
 
 template < typename BaseRDV >
 void
-ClippedToBoundaryDiscreteRandomDev< BaseRDV >::set_status( const DictionaryDatum& d )
+ClippedToBoundaryDiscreteRandomDev< BaseRDV >::set_status(
+  const DictionaryDatum& d )
 {
   BaseRDV::set_status( d );
 
   long new_min = min_;
   long new_max = max_;
 
-  updateValue< long >( d, "low", new_min );
-  updateValue< long >( d, "high", new_max );
-
+  updateValue< long >( d, names::low, new_min );
+  updateValue< long >( d, names::high, new_max );
   if ( new_min >= new_max )
+  {
     throw BadParameterValue( "Clipped RDVs require low < high." );
+  }
 
   min_ = new_min;
   max_ = new_max;
@@ -511,12 +540,13 @@ ClippedToBoundaryDiscreteRandomDev< BaseRDV >::set_status( const DictionaryDatum
 
 template < typename BaseRDV >
 void
-ClippedToBoundaryDiscreteRandomDev< BaseRDV >::get_status( DictionaryDatum& d ) const
+ClippedToBoundaryDiscreteRandomDev< BaseRDV >::get_status(
+  DictionaryDatum& d ) const
 {
   BaseRDV::get_status( d );
 
-  def< long >( d, "low", min_ );
-  def< long >( d, "high", max_ );
+  def< long >( d, names::low, min_ );
+  def< long >( d, names::high, max_ );
 }
 
 template < typename BaseRDV >
@@ -526,13 +556,18 @@ inline double ClippedToBoundaryDiscreteRandomDev< BaseRDV >::operator()( void )
 }
 
 template < typename BaseRDV >
-inline double ClippedToBoundaryDiscreteRandomDev< BaseRDV >::operator()( RngPtr r ) const
+inline double ClippedToBoundaryDiscreteRandomDev< BaseRDV >::operator()(
+  RngPtr r ) const
 {
   const double value = BaseRDV::operator()( r );
   if ( value < min_ )
+  {
     return min_;
+  }
   if ( value > max_ )
+  {
     return max_;
+  }
   return value;
 }
 
@@ -549,9 +584,13 @@ ClippedToBoundaryDiscreteRandomDev< BaseRDV >::ldev( RngPtr r ) const
 {
   const long value = BaseRDV::ldev( r );
   if ( value < min_ )
+  {
     return min_;
+  }
   if ( value > max_ )
+  {
     return max_;
+  }
   return value;
 }
 

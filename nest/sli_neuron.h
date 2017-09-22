@@ -102,7 +102,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -129,7 +130,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   /**
    * Execute a SLI command in the neuron's namespace.
@@ -166,12 +167,14 @@ private:
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the real membrane potential
-  double_t
+  double
   get_V_m_() const
   {
     double vm = 0.0;
     if ( state_->known( names::V_m ) )
+    {
       vm = getValue< double >( state_, names::V_m );
+    }
 
     return vm;
   }
@@ -221,7 +224,9 @@ inline port
 sli_neuron::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -229,7 +234,9 @@ inline port
 sli_neuron::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -237,7 +244,9 @@ inline port
 sli_neuron::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
@@ -264,8 +273,9 @@ sli_neuron::set_status( const DictionaryDatum& d )
   Archiving_Node::set_status( d );
 
   // To initialize the state dictionary, we copy all entries from d into s.
-  // Later, the state dictionary will be in the interpreter and values are changed
-  // automatically. SetStatus is then only needed to change properties of Archiving_Node.
+  // Later, the state dictionary will be in the interpreter and values are
+  // changed automatically. SetStatus is then only needed to change properties
+  // of Archiving_Node.
   for ( TokenMap::const_iterator it = d->begin(); it != d->end(); ++it )
   {
     state_->insert( it->first, it->second );

@@ -39,6 +39,8 @@ FirstVersion: February 2014
 (unittest) run
 /unittest using
 
+skip_if_not_threaded
+
 
 [2 3]
 {
@@ -62,8 +64,8 @@ FirstVersion: February 2014
    	/rate 20.0
     >> SetStatus
 
-    pg [1 2 3 4] DivergentConnect
-    [1 2 3 4] sd ConvergentConnect
+    [pg] [1 2 3 4] Connect
+    [1 2 3 4] [sd] Connect
     Rank =only 0 GetLocalNodes ==
     100. Simulate
     sd GetStatus /local get %%% Necessary because a spike detector does not have an events entry in its status dict if it is not local

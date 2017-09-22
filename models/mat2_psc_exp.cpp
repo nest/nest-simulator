@@ -118,7 +118,8 @@ nest::mat2_psc_exp::Parameters_::get( DictionaryDatum& d ) const
 double
 nest::mat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
 {
-  // if E_L_ is changed, we need to adjust all variables defined relative to E_L_
+  // if E_L_ is changed, we need to adjust all variables defined relative to
+  // E_L_
   const double ELold = E_L_;
   updateValue< double >( d, names::E_L, E_L_ );
   const double delta_EL = E_L_ - ELold;
@@ -135,40 +136,57 @@ nest::mat2_psc_exp::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::alpha_2, alpha_2_ );
 
   if ( updateValue< double >( d, names::omega, omega_ ) )
+  {
     omega_ -= E_L_;
+  }
   else
+  {
     omega_ -= delta_EL;
-
+  }
   if ( C_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
-
-  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0 || tau_2_ <= 0 )
+  }
+  if ( Tau_ <= 0 || tau_ex_ <= 0 || tau_in_ <= 0 || tau_ref_ <= 0 || tau_1_ <= 0
+    || tau_2_ <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
-
+  }
   if ( Tau_ == tau_ex_ || Tau_ == tau_in_ )
+  {
     throw BadProperty(
       "Membrane and synapse time constant(s) must differ."
       "See note in documentation." );
+  }
 
   return delta_EL;
 }
 
 void
-nest::mat2_psc_exp::State_::get( DictionaryDatum& d, const Parameters_& p ) const
+nest::mat2_psc_exp::State_::get( DictionaryDatum& d,
+  const Parameters_& p ) const
 {
-  def< double >( d, names::V_m, V_m_ + p.E_L_ );                          // Membrane potential
-  def< double >( d, names::V_th, p.E_L_ + p.omega_ + V_th_1_ + V_th_2_ ); // Adaptive threshold
+  def< double >( d, names::V_m, V_m_ + p.E_L_ ); // Membrane potential
+  def< double >( d,
+    names::V_th,
+    p.E_L_ + p.omega_ + V_th_1_ + V_th_2_ ); // Adaptive threshold
   def< double >( d, names::V_th_alpha_1, V_th_1_ );
   def< double >( d, names::V_th_alpha_2, V_th_2_ );
 }
 
 void
-nest::mat2_psc_exp::State_::set( const DictionaryDatum& d, const Parameters_& p, double delta_EL )
+nest::mat2_psc_exp::State_::set( const DictionaryDatum& d,
+  const Parameters_& p,
+  double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, V_m_ ) )
+  {
     V_m_ -= p.E_L_;
+  }
   else
+  {
     V_m_ -= delta_EL;
+  }
 
   updateValue< double >( d, names::V_th_alpha_1, V_th_1_ );
   updateValue< double >( d, names::V_th_alpha_2, V_th_2_ );
@@ -235,7 +253,8 @@ nest::mat2_psc_exp::init_buffers_()
 void
 nest::mat2_psc_exp::calibrate()
 {
-  B_.logger_.init(); // ensures initialization in case mm connected after Simulate
+  // ensures initialization in case mm connected after Simulate
+  B_.logger_.init();
 
   const double h = Time::get_resolution().get_ms();
 
@@ -268,26 +287,30 @@ nest::mat2_psc_exp::calibrate()
 
 
   // tau_ref_ specifies the length of the total refractory period as
-  // a double_t in ms. The grid based mat2_psc_exp can only handle refractory
+  // a double in ms. The grid based mat2_psc_exp can only handle refractory
   // periods that are integer multiples of the computation step size (h).
   // To ensure consistency with the overall simulation scheme such conversion
   // should be carried out via objects of class nest::Time. The conversion
   // requires 2 steps:
   //     1. A time object r is constructed defining representation of
-  //        tau_ref_ in tics. This representation is then converted to computation time
-  //        steps again by a strategy defined by class nest::Time.
-  //     2. The refractory time in units of steps is read out get_steps(), a member
-  //        function of class nest::Time.
+  //        tau_ref_ in tics. This representation is then converted to
+  //        computation time steps again by a strategy defined by class
+  //        nest::Time.
+  //     2. The refractory time in units of steps is read out get_steps(), a
+  //        member function of class nest::Time.
   //
   // Choosing a tau_ref_ that is not an integer multiple of the computation time
   // step h will leed to accurate (up to the resolution h) and self-consistent
-  // results. However, a neuron model capable of operating with real valued spike
-  // time may exhibit a different effective refractory time.
+  // results. However, a neuron model capable of operating with real valued
+  // spike time may exhibit a different effective refractory time.
 
   V_.RefractoryCountsTot_ = Time( Time::ms( P_.tau_ref_ ) ).get_steps();
 
   if ( V_.RefractoryCountsTot_ < 1 )
-    throw BadProperty( "Total refractory time must be at least one time step." );
+  {
+    throw BadProperty(
+      "Total refractory time must be at least one time step." );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -295,13 +318,14 @@ nest::mat2_psc_exp::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::mat2_psc_exp::update( Time const& origin, const long_t from, const long_t to )
+nest::mat2_psc_exp::update( Time const& origin, const long from, const long to )
 {
-  assert( to >= 0 && ( delay ) from < kernel().connection_builder_manager.get_min_delay() );
+  assert(
+    to >= 0 && ( delay ) from < kernel().connection_manager.get_min_delay() );
   assert( from < to );
 
   // evolve from timestep 'from' to timestep 'to' with steps of h each
-  for ( long_t lag = from; lag < to; ++lag )
+  for ( long lag = from; lag < to; ++lag )
   {
 
     // evolve membrane potential
@@ -315,12 +339,14 @@ nest::mat2_psc_exp::update( Time const& origin, const long_t from, const long_t 
     // exponential decaying PSCs
     S_.i_syn_ex_ *= V_.P11ex_;
     S_.i_syn_in_ *= V_.P11in_;
-    S_.i_syn_ex_ += B_.spikes_ex_.get_value( lag ); // the spikes arriving at T+1 have an
-    S_.i_syn_in_ += B_.spikes_in_.get_value( lag ); // the spikes arriving at T+1 have an
+    // the spikes arriving at T+1 have an
+    S_.i_syn_ex_ += B_.spikes_ex_.get_value( lag );
+    S_.i_syn_in_ += B_.spikes_in_.get_value( lag );
 
     if ( S_.r_ == 0 ) // neuron is allowed to fire
     {
-      if ( S_.V_m_ >= P_.omega_ + S_.V_th_2_ + S_.V_th_1_ ) // threshold crossing
+      if ( S_.V_m_ >= P_.omega_ + S_.V_th_2_
+          + S_.V_th_1_ ) // threshold crossing
       {
         S_.r_ = V_.RefractoryCountsTot_;
 
@@ -335,7 +361,9 @@ nest::mat2_psc_exp::update( Time const& origin, const long_t from, const long_t 
       }
     }
     else
-      --S_.r_; // neuron is totally refractory (cannot generate spikes)
+    {
+      --S_.r_;
+    } // neuron is totally refractory (cannot generate spikes)
 
     // set new input current
     S_.i_0_ = B_.currents_.get_value( lag );
@@ -352,13 +380,17 @@ nest::mat2_psc_exp::handle( SpikeEvent& e )
   assert( e.get_delay() > 0 );
 
   if ( e.get_weight() >= 0.0 )
-    B_.spikes_ex_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  {
+    B_.spikes_ex_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
   else
-    B_.spikes_in_.add_value(
-      e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+  {
+    B_.spikes_in_.add_value( e.get_rel_delivery_steps(
+                               kernel().simulation_manager.get_slice_origin() ),
       e.get_weight() * e.get_multiplicity() );
+  }
 }
 
 void
@@ -366,12 +398,13 @@ nest::mat2_psc_exp::handle( CurrentEvent& e )
 {
   assert( e.get_delay() > 0 );
 
-  const double_t c = e.get_current();
-  const double_t w = e.get_weight();
+  const double c = e.get_current();
+  const double w = e.get_weight();
 
   // add weighted current; HEP 2002-10-04
   B_.currents_.add_value(
-    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ), w * c );
+    e.get_rel_delivery_steps( kernel().simulation_manager.get_slice_origin() ),
+    w * c );
 }
 
 void

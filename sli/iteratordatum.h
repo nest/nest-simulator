@@ -63,7 +63,8 @@ public:
 std::ostream& operator<<( std::ostream&, const IteratorState& );
 
 
-class IteratorDatum : public GenericDatum< IteratorState, &SLIInterpreter::Iteratortype >
+class IteratorDatum
+  : public GenericDatum< IteratorState, &SLIInterpreter::Iteratortype >
 {
 protected:
   static sli::pool memory;
@@ -146,14 +147,18 @@ public:
   static void* operator new( size_t size )
   {
     if ( size != memory.size_of() )
+    {
       return ::operator new( size );
+    }
     return memory.alloc();
   }
 
   static void operator delete( void* p, size_t size )
   {
     if ( p == NULL )
+    {
       return;
+    }
     if ( size != memory.size_of() )
     {
       ::operator delete( p );

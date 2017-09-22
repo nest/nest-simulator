@@ -32,15 +32,16 @@ Hans Ekkehard Plesser, UMB
 import pylab
 import nest
 import nest.topology as topo
+
 pylab.ion()
 
 nest.ResetKernel()
 
 # create two test layers
 a = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'iaf_neuron'})
+                      'elements': 'iaf_psc_alpha'})
 b = topo.CreateLayer({'columns': 30, 'rows': 30, 'extent': [3.0, 3.0],
-                      'elements': 'iaf_neuron'})
+                      'elements': 'iaf_psc_alpha'})
 
 conndict = {'connection_type': 'divergent',
             'mask': {'circular': {'radius': 3.0}},
@@ -57,8 +58,7 @@ fig = pylab.gcf()
 
 # plot targets of two source neurons into same figure, with mask
 # use different colors
-for src_pos, color in [([15,15], 'blue'), ([0,0], 'green')]:
-    
+for src_pos, color in [([15, 15], 'blue'), ([0, 0], 'green')]:
     # obtain node id for center
     src = topo.GetElement(a, src_pos)
     topo.PlotTargets(src, b, mask=conndict['mask'], kernel=conndict['kernel'],
@@ -74,4 +74,4 @@ pylab.axis([-2.0, 2.0, -2.0, 2.0])
 pylab.axes().set_aspect('equal', 'box')
 pylab.title('Connection targets, Gaussian kernel')
 
-#pylab.savefig('gaussex.pdf')
+# pylab.savefig('gaussex.pdf')

@@ -143,7 +143,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -184,8 +185,8 @@ private:
    * advanced from event to event, as retrieved from the spike queue.
    *
    * Return from refractoriness is handled as a special event in the
-   * queue, which is marked by a weight that is GSL_NAN.  This greatly simplifies
-   * the code.
+   * queue, which is marked by a weight that is GSL_NAN.  This greatly
+   * simplifies the code.
    *
    * For steps, during which no events occur, the precomputed propagator matrix
    * is used.  For other steps, the propagator matrix is computed as needed.
@@ -193,7 +194,7 @@ private:
    * While the neuron is refractory, membrane potential (y2_) is
    * clamped to U_reset_.
    */
-  void update( Time const& origin, const long_t from, const long_t to );
+  void update( Time const& origin, const long from, const long to );
   //@}
 
   // The next two classes need to be friends to access the State_ class/member
@@ -205,7 +206,7 @@ private:
    * Propagate the neuron's state by dt.
    * @param dt Interval over which to propagate
    */
-  void propagate_( const double_t dt );
+  void propagate_( const double dt );
 
   /**
    * Trigger iterative method to find the precise spike time within
@@ -218,7 +219,10 @@ private:
    * @param t0      Beginning of mini-timestep
    * @param dt      Duration of mini-timestep
    */
-  void emit_spike_( const Time& origin, const long_t lag, const double_t t0, const double_t dt );
+  void emit_spike_( const Time& origin,
+    const long lag,
+    const double t0,
+    const double dt );
 
   /**
    * Instantaneously emit a spike at the precise time defined by
@@ -228,14 +232,16 @@ private:
    * @param lag           Time step within slice
    * @param spike_offset  Time offset for spike
    */
-  void emit_instant_spike_( const Time& origin, const long_t lag, const double_t spike_offset );
+  void emit_instant_spike_( const Time& origin,
+    const long lag,
+    const double spike_offset );
 
   /**
    * Localize threshold crossing by bisectioning.
-   * @param   double_t length of interval since previous event
+   * @param   double length of interval since previous event
    * @returns time from previous event to threshold crossing
    */
-  double_t bisectioning_( const double_t dt ) const;
+  double bisectioning_( const double dt ) const;
 
   // ----------------------------------------------------------------
 
@@ -245,38 +251,38 @@ private:
   struct Parameters_
   {
     /** Membrane time constant in ms. */
-    double_t tau_m_;
+    double tau_m_;
 
     /** Time constant of exc. synaptic current in ms. */
-    double_t tau_ex_;
+    double tau_ex_;
 
     /** Time constant of inh. synaptic current in ms. */
-    double_t tau_in_;
+    double tau_in_;
 
     /** Membrane capacitance in pF. */
-    double_t c_m_;
+    double c_m_;
 
     /** Refractory period in ms. */
-    double_t t_ref_;
+    double t_ref_;
 
     /** Resting potential in mV. */
-    double_t E_L_;
+    double E_L_;
 
     /** External DC current [pA] */
-    double_t I_e_;
+    double I_e_;
 
     /** Threshold, RELATIVE TO RESTING POTENTAIL(!).
         I.e. the real threshold is U_th_ + E_L_. */
-    double_t U_th_;
+    double U_th_;
 
     /** Lower bound, RELATIVE TO RESTING POTENTAIL(!).
         I.e. the real lower bound is U_min_+E_L_. */
-    double_t U_min_;
+    double U_min_;
 
     /** Reset potential.
         At threshold crossing, the membrane potential is reset to this value.
         Relative to resting potential. */
-    double_t U_reset_;
+    double U_reset_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -295,14 +301,14 @@ private:
    */
   struct State_
   {
-    double_t y0_;    //!< External input current
-    double_t y1_ex_; //!< Exc. exponetial current
-    double_t y1_in_; //!< Inh. exponetial current
-    double_t y2_;    //!< Membrane potential (relative to resting potential)
+    double y0_;    //!< External input current
+    double y1_ex_; //!< Exc. exponetial current
+    double y1_in_; //!< Inh. exponetial current
+    double y2_;    //!< Membrane potential (relative to resting potential)
 
-    bool is_refractory_;         //!< True while refractory
-    long_t last_spike_step_;     //!< Time stamp of most recent spike
-    double_t last_spike_offset_; //!< Offset of most recent spike
+    bool is_refractory_;       //!< True while refractory
+    long last_spike_step_;     //!< Time stamp of most recent spike
+    double last_spike_offset_; //!< Offset of most recent spike
 
     State_(); //!< Default initialization
 
@@ -344,24 +350,24 @@ private:
    */
   struct Variables_
   {
-    double_t h_ms_;           //!< Time resolution [ms]
-    long_t refractory_steps_; //!< Refractory time in steps
-    double_t expm1_tau_m_;    //!< exp(-h/tau_m) - 1
-    double_t expm1_tau_ex_;   //!< exp(-h/tau_ex) - 1
-    double_t expm1_tau_in_;   //!< exp(-h/tau_in) - 1
-    double_t P20_;            //!< Progagator matrix element, 2nd row
-    double_t P21_in_;         //!< Progagator matrix element, 2nd row
-    double_t P21_ex_;         //!< Progagator matrix element, 2nd row
-    double_t y0_before_;      //!< y0_ at beginning of ministep
-    double_t y1_ex_before_;   //!< y1_ at beginning of ministep
-    double_t y1_in_before_;   //!< y1_ at beginning of ministep
-    double_t y2_before_;      //!< y2_ at beginning of ministep
+    double h_ms_;           //!< Time resolution [ms]
+    long refractory_steps_; //!< Refractory time in steps
+    double expm1_tau_m_;    //!< exp(-h/tau_m) - 1
+    double expm1_tau_ex_;   //!< exp(-h/tau_ex) - 1
+    double expm1_tau_in_;   //!< exp(-h/tau_in) - 1
+    double P20_;            //!< Progagator matrix element, 2nd row
+    double P21_in_;         //!< Progagator matrix element, 2nd row
+    double P21_ex_;         //!< Progagator matrix element, 2nd row
+    double y0_before_;      //!< y0_ at beginning of ministep
+    double y1_ex_before_;   //!< y1_ at beginning of ministep
+    double y1_in_before_;   //!< y1_ at beginning of ministep
+    double y2_before_;      //!< y2_ at beginning of ministep
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the real membrane potential
-  double_t
+  double
   get_V_m_() const
   {
     return S_.y2_ + P_.E_L_;
@@ -387,7 +393,10 @@ private:
 };
 
 inline port
-nest::iaf_psc_exp_ps::send_test_event( Node& target, rport receptor_type, synindex, bool )
+nest::iaf_psc_exp_ps::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -398,7 +407,9 @@ inline port
 iaf_psc_exp_ps::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -406,15 +417,20 @@ inline port
 iaf_psc_exp_ps::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
 inline port
-iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

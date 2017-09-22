@@ -25,21 +25,39 @@ Functions for model handling
 
 from .hl_api_helper import *
 
+
 @check_stack
 def Models(mtype="all", sel=None):
-    """
-    Return a list of all available models (neurons, devices and
-    synapses). Use mtype='nodes' to only see neuron and device models,
-    mtype='synapses' to only see synapse models. sel can be a string,
-    used to filter the result list and only return models containing
-    it.
+    """Return a tuple of all available model (neurons, devices and
+    synapses) names, sorted by name.
 
-    Synapse model names ending with '_hpc' provide minimal memory
-    requirements by using thread-local target neuron IDs and fixing
-    the `rport` to 0.
-    Synapse model names ending with '_lbl' allow to assign an individual
-    integer label (`synapse_label`) to created synapses at the cost
-    of increased memory requirements.
+    Parameters
+    ----------
+    mtype : str, optional
+        Use mtype='nodes' to only see neuron and device models,
+        or mtype='synapses' to only see synapse models.
+    sel : str, optional
+        String used to filter the result list and only return models
+        containing it.
+
+    Returns
+    -------
+    tuple:
+        Available model names
+
+    Notes
+    -----
+    - Synapse model names ending with '_hpc' provide minimal memory
+      requirements by using thread-local target neuron IDs and fixing
+      the `rport` to 0.
+    - Synapse model names ending with '_lbl' allow to assign an individual
+      integer label (`synapse_label`) to created synapses at the cost
+      of increased memory requirements.
+
+    Raises
+    ------
+    ValueError
+        Description
     """
 
     if mtype not in ("all", "nodes", "synapses"):
@@ -65,8 +83,13 @@ def Models(mtype="all", sel=None):
 
 @check_stack
 def ConnectionRules():
-    """
-    Return a list of all connection rules.
+    """Return a typle of all available connection rules, sorted by name.
+
+    Returns
+    -------
+    tuple:
+        Available connection rules
+
     """
 
     sr('connruledict')
@@ -75,12 +98,21 @@ def ConnectionRules():
 
 @check_stack
 def SetDefaults(model, params, val=None):
-    """
-    Set the default parameters of the given model to the values
+    """Set the default parameters of the given model to the values
     specified in the params dictionary.
-    If val is given, params has to be the name of a model property.
+
     New default values are used for all subsequently created instances
     of the model.
+
+    Parameters
+    ----------
+    model : str
+        Name of the model
+    params : str or dict
+        Dictionary of new default values. If val is given, this has to
+        be the name of a model property as a str.
+    val : str, optional
+        If given, params has to be the name of a model property.
     """
 
     if val is not None:
@@ -93,14 +125,36 @@ def SetDefaults(model, params, val=None):
 
 @check_stack
 def GetDefaults(model, keys=None):
-    """
-    Return a dictionary with the default parameters of the given
+    """Return a dictionary with the default parameters of the given
     model, specified by a string.
-    If keys is given, it must be a string or a list of strings naming model properties.
-    GetDefaults then returns a single value or a list of values belonging to the keys given.
-    Examples:
-    GetDefaults('iaf_neuron','V_m') -> -70.0
-    GetDefaults('iaf_neuron',['V_m', 'model') -> [-70.0, 'iaf_neuron']
+
+    Parameters
+    ----------
+    model : str
+        Name of the model
+    keys : str or list, optional
+        String or a list of strings naming model properties. GetDefaults then
+        returns a single value or a list of values belonging to the keys
+        given.
+
+    Returns
+    -------
+    dict:
+        All default parameters
+    type:
+        If keys is a string, the corrsponding default parameter is returned
+    list:
+        If keys is a list of strings, a list of corrsponding default parameters
+        is returned
+
+    Raises
+    ------
+    TypeError
+
+    Examples
+    --------
+    GetDefaults('iaf_psc_alpha','V_m') -> -70.0
+    GetDefaults('iaf_psc_alpha',['V_m', 'model') -> [-70.0, 'iaf_psc_alpha']
     """
 
     if keys is None:
@@ -109,7 +163,8 @@ def GetDefaults(model, keys=None):
         cmd = '/{0} GetDefaults /{1} get'.format(model, keys)
     elif is_iterable(keys):
         keys_str = " ".join("/{0}".format(x) for x in keys)
-        cmd = '/{0} GetDefaults  [ {1} ] {{ 1 index exch get }} Map exch pop'.format(model, keys_str)
+        cmd = "/{0} GetDefaults  [ {1} ] {{ 1 index exch get }}"\
+              .format(model, keys_str) + " Map exch pop"
     else:
         raise TypeError("keys should be either a string or an iterable")
 
@@ -119,11 +174,21 @@ def GetDefaults(model, keys=None):
 
 @check_stack
 def CopyModel(existing, new, params=None):
+    """Create a new model by copying an existing one.
+
+    Parameters
+    ----------
+    existing : str
+        Name of existing model
+    new : str
+        Name of the copy of the existing model
+    params : dict, optional
+        Default parameters assigned to the copy. Not provided parameters are
+        taken from the existing model.
     """
-    Create a new model by copying an existing one. Default parameters
-    can be given as params, or else are taken from existing.
-    """
-    
+
+    model_deprecation_warning(existing)
+
     if params is not None:
         sps(params)
         sr("/%s /%s 3 2 roll CopyModel" % (existing, new))

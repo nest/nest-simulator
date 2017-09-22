@@ -116,7 +116,8 @@ RegexpModule::RegcompFunction::execute( SLIInterpreter* i ) const
   //                           Regex integer false
   assert( i->OStack.load() >= 2 );
 
-  IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* id =
+    dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.pick( 1 ).datum() );
 
   assert( sd != NULL );
@@ -128,7 +129,7 @@ RegexpModule::RegcompFunction::execute( SLIInterpreter* i ) const
   i->OStack.pop( 2 );
   Token rt( new RegexDatum( MyRegex ) );
   i->OStack.push_move( rt );
-  if ( !e )
+  if ( not e )
   {
     i->OStack.push( i->baselookup( i->true_name ) );
   }
@@ -146,7 +147,8 @@ RegexpModule::RegerrorFunction::execute( SLIInterpreter* i ) const
 {
   assert( i->OStack.load() >= 2 );
 
-  IntegerDatum* id = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* id =
+    dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
   RegexDatum* rd = dynamic_cast< RegexDatum* >( i->OStack.pick( 1 ).datum() );
 
   assert( rd != NULL );
@@ -177,8 +179,10 @@ RegexpModule::RegexecFunction::execute( SLIInterpreter* i ) const
 
   RegexDatum* rd = dynamic_cast< RegexDatum* >( i->OStack.pick( 3 ).datum() );
   StringDatum* sd = dynamic_cast< StringDatum* >( i->OStack.pick( 2 ).datum() );
-  IntegerDatum* sized = dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
-  IntegerDatum* eflagsd = dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
+  IntegerDatum* sized =
+    dynamic_cast< IntegerDatum* >( i->OStack.pick( 1 ).datum() );
+  IntegerDatum* eflagsd =
+    dynamic_cast< IntegerDatum* >( i->OStack.pick( 0 ).datum() );
 
   assert( rd != NULL );
   assert( sd != NULL );

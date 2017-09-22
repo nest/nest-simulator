@@ -52,9 +52,10 @@ try:
     import csa
     haveCSA = True
 except ImportError:
-    print("This example requires CSA to be installed in order to run.\n"
-          + "Please make sure you compiled NEST using --with-libneurosim=PATH\n"
-          + "and CSA and libneurosim are available from PYTHONPATH.")
+    print("This example requires CSA to be installed in order to run.\n" +
+          "Please make sure you compiled NEST using\n" +
+          "  -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]\n" +
+          "and CSA and libneurosim are available from PYTHONPATH.")
     import sys
     sys.exit()
 
@@ -72,8 +73,8 @@ the pre- and postsynaptic populations, each of which containing 16
 neurons.
 """
 
-pre = nest.Create("iaf_neuron", 16)
-post = nest.Create("iaf_neuron", 16)
+pre = nest.Create("iaf_psc_alpha", 16)
+post = nest.Create("iaf_psc_alpha", 16)
 
 """
 We can now connect the populations using the `CGConnect` function.

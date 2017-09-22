@@ -41,10 +41,13 @@
 inline nest::thread
 nest::MPIManager::get_process_id( nest::thread vp ) const
 {
-  if ( vp >= static_cast< thread >( n_sim_procs_
-               * kernel().vp_manager.get_num_threads() ) ) // vp belongs to recording VPs
+  if ( vp
+    >= static_cast< thread >( n_sim_procs_
+         * kernel()
+             .vp_manager.get_num_threads() ) ) // vp belongs to recording VPs
   {
-    return ( vp - n_sim_procs_ * kernel().vp_manager.get_num_threads() ) % n_rec_procs_
+    return ( vp - n_sim_procs_ * kernel().vp_manager.get_num_threads() )
+      % n_rec_procs_
       + n_sim_procs_;
   }
   else // vp belongs to simulating VPs
@@ -106,36 +109,42 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
   size_t np = get_num_processes();
   if ( np > 1 && remote )
   {
-    std::vector< long_t > localnodes;
-    for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )
+    std::vector< long > localnodes;
+    for ( typename NodeListType::iterator n = local_nodes.begin();
+          n != local_nodes.end();
+          ++n )
     {
       localnodes.push_back( ( *n )->get_gid() );
       localnodes.push_back( ( ( *n )->get_parent() )->get_gid() );
       localnodes.push_back( ( *n )->get_vp() );
     }
     // get size of buffers
-    std::vector< nest::int_t > n_nodes( np );
+    std::vector< int > n_nodes( np );
     n_nodes[ get_rank() ] = localnodes.size();
     communicate( n_nodes );
     // Set up displacements vector.
     std::vector< int > displacements( np, 0 );
-
     for ( size_t i = 1; i < np; ++i )
+    {
       displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+    }
 
     // Calculate total number of node data items to be gathered.
     size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
     assert( n_globals % 3 == 0 );
-    std::vector< long_t > globalnodes;
+    std::vector< long > globalnodes;
     if ( n_globals != 0 )
     {
       globalnodes.resize( n_globals, 0L );
-      communicate_Allgatherv< nest::long_t >( localnodes, globalnodes, displacements, n_nodes );
+      communicate_Allgatherv< long >(
+        localnodes, globalnodes, displacements, n_nodes );
 
       // Create unflattened vector
       for ( size_t i = 0; i < n_globals - 2; i += 3 )
-        all_nodes.push_back(
-          NodeAddressingData( globalnodes[ i ], globalnodes[ i + 1 ], globalnodes[ i + 2 ] ) );
+      {
+        all_nodes.push_back( NodeAddressingData(
+          globalnodes[ i ], globalnodes[ i + 1 ], globalnodes[ i + 2 ] ) );
+      }
 
       // get rid of any multiple entries
       std::sort( all_nodes.begin(), all_nodes.end() );
@@ -146,9 +155,14 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
   }
   else // on one proc or not including remote nodes
   {
-    for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )
-      all_nodes.push_back( NodeAddressingData(
-        ( *n )->get_gid(), ( ( *n )->get_parent() )->get_gid(), ( *n )->get_vp() ) );
+    for ( typename NodeListType::iterator n = local_nodes.begin();
+          n != local_nodes.end();
+          ++n )
+    {
+      all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
+        ( ( *n )->get_parent() )->get_gid(),
+        ( *n )->get_vp() ) );
+    }
     std::sort( all_nodes.begin(), all_nodes.end() );
   }
 }
@@ -165,10 +179,12 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 
   if ( np > 1 && remote )
   {
-    std::vector< long_t > localnodes;
+    std::vector< long > localnodes;
     if ( params->empty() )
     {
-      for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )
+      for ( typename NodeListType::iterator n = local_nodes.begin();
+            n != local_nodes.end();
+            ++n )
       {
         localnodes.push_back( ( *n )->get_gid() );
         localnodes.push_back( ( ( *n )->get_parent() )->get_gid() );
@@ -177,18 +193,22 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
     }
     else
     {
-      for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )
+      for ( typename NodeListType::iterator n = local_nodes.begin();
+            n != local_nodes.end();
+            ++n )
       {
         // select those nodes fulfilling the key/value pairs of the dictionary
         bool match = true;
         index gid = ( *n )->get_gid();
         DictionaryDatum node_status = kernel().node_manager.get_status( gid );
-        for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
+        for ( Dictionary::iterator i = params->begin(); i != params->end();
+              ++i )
         {
           if ( node_status->known( i->first ) )
           {
             const Token token = node_status->lookup( i->first );
-            if ( not( token == i->second || token.matches_as_string( i->second ) ) )
+            if ( not( token == i->second
+                   || token.matches_as_string( i->second ) ) )
             {
               match = false;
               break;
@@ -205,29 +225,33 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
     }
 
     // get size of buffers
-    std::vector< nest::int_t > n_nodes( np );
+    std::vector< int > n_nodes( np );
     n_nodes[ get_rank() ] = localnodes.size();
     communicate( n_nodes );
 
     // Set up displacements vector.
     std::vector< int > displacements( np, 0 );
-
     for ( size_t i = 1; i < np; ++i )
+    {
       displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+    }
 
     // Calculate sum of global connections.
     size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
     assert( n_globals % 3 == 0 );
-    std::vector< long_t > globalnodes;
+    std::vector< long > globalnodes;
     if ( n_globals != 0 )
     {
       globalnodes.resize( n_globals, 0L );
-      communicate_Allgatherv< nest::long_t >( localnodes, globalnodes, displacements, n_nodes );
+      communicate_Allgatherv< long >(
+        localnodes, globalnodes, displacements, n_nodes );
 
       // Create unflattened vector
       for ( size_t i = 0; i < n_globals - 2; i += 3 )
-        all_nodes.push_back(
-          NodeAddressingData( globalnodes[ i ], globalnodes[ i + 1 ], globalnodes[ i + 2 ] ) );
+      {
+        all_nodes.push_back( NodeAddressingData(
+          globalnodes[ i ], globalnodes[ i + 1 ], globalnodes[ i + 2 ] ) );
+      }
 
       // get rid of any multiple entries
       std::sort( all_nodes.begin(), all_nodes.end() );
@@ -240,24 +264,33 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
   {
     if ( params->empty() )
     {
-      for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )
-        all_nodes.push_back( NodeAddressingData(
-          ( *n )->get_gid(), ( ( *n )->get_parent() )->get_gid(), ( *n )->get_vp() ) );
+      for ( typename NodeListType::iterator n = local_nodes.begin();
+            n != local_nodes.end();
+            ++n )
+      {
+        all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
+          ( ( *n )->get_parent() )->get_gid(),
+          ( *n )->get_vp() ) );
+      }
     }
     else
     {
       // select those nodes fulfilling the key/value pairs of the dictionary
-      for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )
+      for ( typename NodeListType::iterator n = local_nodes.begin();
+            n != local_nodes.end();
+            ++n )
       {
         bool match = true;
         index gid = ( *n )->get_gid();
         DictionaryDatum node_status = kernel().node_manager.get_status( gid );
-        for ( Dictionary::iterator i = params->begin(); i != params->end(); ++i )
+        for ( Dictionary::iterator i = params->begin(); i != params->end();
+              ++i )
         {
           if ( node_status->known( i->first ) )
           {
             const Token token = node_status->lookup( i->first );
-            if ( not( token == i->second || token.matches_as_string( i->second ) ) )
+            if ( not( token == i->second
+                   || token.matches_as_string( i->second ) ) )
             {
               match = false;
               break;
@@ -265,8 +298,11 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
           }
         }
         if ( match )
-          all_nodes.push_back( NodeAddressingData(
-            ( *n )->get_gid(), ( ( *n )->get_parent() )->get_gid(), ( *n )->get_vp() ) );
+        {
+          all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
+            ( ( *n )->get_parent() )->get_gid(),
+            ( *n )->get_vp() ) );
+        }
       }
     }
     std::sort( all_nodes.begin(), all_nodes.end() );
@@ -282,9 +318,14 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
   std::vector< NodeAddressingData >& all_nodes,
   bool )
 {
-  for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )
-    all_nodes.push_back( NodeAddressingData(
-      ( *n )->get_gid(), ( ( *n )->get_parent() )->get_gid(), ( *n )->get_vp() ) );
+  for ( typename NodeListType::iterator n = local_nodes.begin();
+        n != local_nodes.end();
+        ++n )
+  {
+    all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
+      ( ( *n )->get_parent() )->get_gid(),
+      ( *n )->get_vp() ) );
+  }
   std::sort( all_nodes.begin(), all_nodes.end() );
 }
 
@@ -298,14 +339,21 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 
   if ( params->empty() )
   {
-    for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )
-      all_nodes.push_back( NodeAddressingData(
-        ( *n )->get_gid(), ( ( *n )->get_parent() )->get_gid(), ( *n )->get_vp() ) );
+    for ( typename NodeListType::iterator n = local_nodes.begin();
+          n != local_nodes.end();
+          ++n )
+    {
+      all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
+        ( ( *n )->get_parent() )->get_gid(),
+        ( *n )->get_vp() ) );
+    }
   }
   else
   {
     // select those nodes fulfilling the key/value pairs of the dictionary
-    for ( typename NodeListType::iterator n = local_nodes.begin(); n != local_nodes.end(); ++n )
+    for ( typename NodeListType::iterator n = local_nodes.begin();
+          n != local_nodes.end();
+          ++n )
     {
       bool match = true;
       index gid = ( *n )->get_gid();
@@ -315,7 +363,8 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
         if ( node_status->known( i->first ) )
         {
           const Token token = node_status->lookup( i->first );
-          if ( not( token == i->second || token.matches_as_string( i->second ) ) )
+          if ( not(
+                 token == i->second || token.matches_as_string( i->second ) ) )
           {
             match = false;
             break;
@@ -323,8 +372,11 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
         }
       }
       if ( match )
-        all_nodes.push_back( NodeAddressingData(
-          ( *n )->get_gid(), ( ( *n )->get_parent() )->get_gid(), ( *n )->get_vp() ) );
+      {
+        all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
+          ( ( *n )->get_parent() )->get_gid(),
+          ( *n )->get_vp() ) );
+      }
     }
   }
   std::sort( all_nodes.begin(), all_nodes.end() );

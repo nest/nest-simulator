@@ -30,6 +30,7 @@
 #include "manager_interface.h"
 
 // Includes from nestkernel:
+#include "conn_builder.h"
 #include "nest_types.h"
 #include "sparse_node_array.h"
 
@@ -66,9 +67,10 @@ public:
 
   /**
    * Set properties of a Node. The specified node must exist.
-   * @throws nest::UnknownNode       Target does not exist in the network.
-   * @throws nest::UnaccessedDictionaryEntry  Non-proxy target did not read dict entry.
-   * @throws TypeMismatch            Array is not a flat & homogeneous array of integers.
+   * @throws nest::UnknownNode Target does not exist in the network.
+   * @throws nest::UnaccessedDictionaryEntry  Non-proxy target did not read dict
+   *                                          entry.
+   * @throws TypeMismatch   Array is not a flat & homogeneous array of integers.
    */
   void set_status( index, const DictionaryDatum& );
 
@@ -81,8 +83,7 @@ public:
    * specified.
    * @throws nest::UnknownModelID
    */
-  index add_node( index m, long_t n = 1 );
-
+  index add_node( index m, long n = 1 );
 
   /**
    * Restore nodes from an array of status dictionaries.
@@ -155,7 +156,7 @@ public:
    * Return the Subnet that contains the thread siblings.
    * @param i Index of the specified Node.
    *
-   * @throws nest::NoThreadSiblingsAvailable     Node does not have thread siblings.
+   * @throws nest::NoThreadSiblingsAvailable Node does not have thread siblings.
    *
    * @ingroup net_access
    */
@@ -188,25 +189,60 @@ public:
   /**
    * Get list of nodes on given thread.
    */
-  const std::vector< Node* >& get_nodes_prelim_up_on_thread( thread ) const;
+  const std::vector< Node* >& get_wfr_nodes_on_thread( thread ) const;
 
   /**
    * Prepare nodes for simulation and register nodes in node_list.
    * Calls prepare_node_() for each pertaining Node.
    * @see prepare_node_()
-   * @returns number of nodes that will be simulated.
    */
-  size_t prepare_nodes();
+  void prepare_nodes();
 
   /**
-   * Invoke finalize() on nodes registered for finalization.
+   * Get the number of nodes created by last prepare_nodes() call
+   * @see prepare_nodes()
+   * @return number of active nodes
+   */
+  size_t
+  get_num_active_nodes()
+  {
+    return num_active_nodes_;
+  };
+
+  /**
+   * Invoke post_run_cleanup() on all nodes.
+   */
+  void post_run_cleanup();
+
+  /**
+   * Invoke finalize() on all nodes.
    */
   void finalize_nodes();
 
   /**
-   *
+   * Returns whether any node uses waveform relaxation
    */
-  bool needs_prelim_update() const;
+  bool wfr_is_used() const;
+
+  /**
+   * Checks whether waveform relaxation is used by any node
+   */
+  void check_wfr_use();
+
+  /**
+   * Iterator pointing to beginning of process-local nodes.
+   */
+  SparseNodeArray::const_iterator local_nodes_begin() const;
+
+  /**
+   * Iterator pointing to end of process-local nodes.
+   */
+  SparseNodeArray::const_iterator local_nodes_end() const;
+
+  /**
+   * Number of process-local nodes.
+   */
+  size_t local_nodes_size() const;
 
 private:
   /**
@@ -225,13 +261,22 @@ private:
    *        each call so Node::set_status_()
    * @throws UnaccessedDictionaryEntry
    */
-  void set_status_single_node_( Node&, const DictionaryDatum&, bool clear_flags = true );
+  void set_status_single_node_( Node&,
+    const DictionaryDatum&,
+    bool clear_flags = true );
 
   /**
    * Initialized buffers, register in list of nodes to update/finalize.
    * @see prepare_nodes_()
    */
   void prepare_node_( Node* );
+
+  /**
+   * Returns the next local gid after curr_gid (in round robin fashion).
+   * In the case of GSD, there might be no valid gids, hence you should still
+   * check, if it returns a local gid.
+   */
+  index next_local_gid_( index curr_gid ) const;
 
 private:
   SparseNodeArray local_nodes_; //!< The network as sparse array of local nodes
@@ -240,8 +285,8 @@ private:
 
   Model* siblingcontainer_model_; //!< The model for the SiblingContainer class
 
-  index n_gsd_; //!< Total number of global spike detectors, used for distributing them over
-                //!< recording processes
+  index n_gsd_; //!< Total number of global spike detectors, used for
+                //!< distributing them over recording processes
 
   /**
    * Data structure holding node pointers per thread.
@@ -256,11 +301,13 @@ private:
    */
   std::vector< std::vector< Node* > > nodes_vec_;
   std::vector< std::vector< Node* > >
-    nodes_prelim_up_vec_;    //!< Nodelists for unfrozen nodes that require an
-                             //!< additional preliminary update (e.g. gap
-                             //!< junctions)
-  bool needs_prelim_update_; //!< there is at least one neuron model that needs preliminary update
-  index nodes_vec_network_size_; //!< Network size when nodes_vec_ was last updated
+    wfr_nodes_vec_;  //!< Nodelists for unfrozen nodes that
+                     //!< use the waveform relaxation method
+  bool wfr_is_used_; //!< there is at least one node that uses
+                     //!< waveform relaxation
+  //! Network size when nodes_vec_ was last updated
+  index nodes_vec_network_size_;
+  size_t num_active_nodes_; //!< number of nodes created by prepare_nodes
 };
 
 inline index
@@ -312,15 +359,33 @@ NodeManager::get_nodes_on_thread( thread t ) const
 }
 
 inline const std::vector< Node* >&
-NodeManager::get_nodes_prelim_up_on_thread( thread t ) const
+NodeManager::get_wfr_nodes_on_thread( thread t ) const
 {
-  return nodes_prelim_up_vec_.at( t );
+  return wfr_nodes_vec_.at( t );
 }
 
 inline bool
-NodeManager::needs_prelim_update() const
+NodeManager::wfr_is_used() const
 {
-  return needs_prelim_update_;
+  return wfr_is_used_;
+}
+
+inline SparseNodeArray::const_iterator
+NodeManager::local_nodes_begin() const
+{
+  return local_nodes_.begin();
+}
+
+inline SparseNodeArray::const_iterator
+NodeManager::local_nodes_end() const
+{
+  return local_nodes_.end();
+}
+
+inline size_t
+NodeManager::local_nodes_size() const
+{
+  return local_nodes_.size();
 }
 
 } // namespace

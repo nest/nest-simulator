@@ -35,6 +35,9 @@ http://dx.doi.org/10.3389/fninf.2014.00043
 
 For a related example, see csa_example.py
 
+This example uses the function GetLeaves, which is deprecated. A deprecation
+warning is therefore issued. For details about deprecated functions, see
+documentation.
 """
 
 """
@@ -53,12 +56,12 @@ try:
     import csa
     haveCSA = True
 except ImportError:
-    print("This example requires CSA to be installed in order to run.\n"
-          + "Please make sure you compiled NEST using --with-libneurosim=PATH\n"
-          + "and CSA and libneurosim are available from PYTHONPATH.")
+    print("This example requires CSA to be installed in order to run.\n" +
+          "Please make sure you compiled NEST using\n" +
+          "  -Dwith-libneurosim=[OFF|ON|</path/to/libneurosim>]\n" +
+          "and CSA and libneurosim are available from PYTHONPATH.")
     import sys
     sys.exit()
-
 
 """
 We define a factory that returns a CSA-style geometry function for
@@ -69,23 +72,23 @@ This function stores a copy of the neuron positions internally,
 entailing memory overhead.
 """
 
+
 def geometryFunction(topologyLayer):
 
     positions = topo.GetPosition(nest.GetLeaves(topologyLayer)[0])
 
     def geometry_function(idx):
         return positions[idx]
-    
+
     return geometry_function
 
-
 """
-We create two layers that have 20x20 neurons of type `iaf_neuron`.
+We create two layers that have 20x20 neurons of type `iaf_psc_alpha`.
 """
 
-pop1 = topo.CreateLayer({'elements': 'iaf_neuron',
+pop1 = topo.CreateLayer({'elements': 'iaf_psc_alpha',
                          'rows': 20, 'columns': 20})
-pop2 = topo.CreateLayer({'elements': 'iaf_neuron',
+pop2 = topo.CreateLayer({'elements': 'iaf_psc_alpha',
                          'rows': 20, 'columns': 20})
 
 """
@@ -113,7 +116,12 @@ the parameters weight and delay to positions in the value set
 associated with the connection set.
 """
 
-nest.CGConnect(pop1, pop2, cs, {"weight": 0, "delay": 1})
+# This is a work-around until NEST 3.0 is released. It will issue a deprecation
+# warning.
+pop1_gids = nest.GetLeaves(pop1)[0]
+pop2_gids = nest.GetLeaves(pop2)[0]
+
+nest.CGConnect(pop1_gids, pop2_gids, cs, {"weight": 0, "delay": 1})
 
 """
 Finally, we use the `PlotTargets` function to show all targets in

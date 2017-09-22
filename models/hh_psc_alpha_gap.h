@@ -56,15 +56,17 @@ namespace nest
  *       through a function pointer.
  * @param void* Pointer to model neuron instance.
  */
-extern "C" int hh_psc_alpha_gap_dynamics( double, const double*, double*, void* );
+extern "C" int
+hh_psc_alpha_gap_dynamics( double, const double*, double*, void* );
 
 /* BeginDocumentation
 Name: hh_psc_alpha_gap - Hodgkin Huxley neuron model with gap-junction support.
 
 Description:
 
- hh_psc_alpha_gap is an implementation of a spiking neuron using the Hodkin-Huxley formalism.
- In contrast to hh_psc_alpha the implementation additionally supports gap junctions.
+ hh_psc_alpha_gap is an implementation of a spiking neuron using the
+ Hodkin-Huxley formalism. In contrast to hh_psc_alpha the implementation
+ additionally supports gap junctions.
 
 
  (1) Post-syaptic currents
@@ -73,8 +75,9 @@ Description:
  weight 1.0 results in a peak current of 1 pA.
 
  (2) Spike Detection
- Spike detection is done by a combined threshold-and-local-maximum search: if there
- is a local maximum above a certain threshold of the membrane potential, it is considered a spike.
+ Spike detection is done by a combined threshold-and-local-maximum search: if
+ there is a local maximum above a certain threshold of the membrane potential,
+ it is considered a spike.
 
  (3) Gap Junctions
  Gap Junctions are implemented by a gap current of the form g_ij( V_i - V_j).
@@ -131,7 +134,6 @@ Receives: SpikeEvent, GapJunctionEvent, CurrentEvent, DataLoggingRequest
 Author: Jan Hahne, Moritz Helias, Susanne Kunkel
 SeeAlso: hh_psc_alpha, hh_cond_exp_traub, gap_junction
 */
-
 class hh_psc_alpha_gap : public Archiving_Node
 {
 
@@ -144,13 +146,14 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
+  using Node::sends_secondary_event;
 
   port send_test_event( Node& target, rport receptor_type, synindex, bool );
-
 
   void handle( SpikeEvent& );
   void handle( CurrentEvent& );
@@ -175,17 +178,17 @@ potentials_.connect_logging_device();
    * @param Time the current network time
    *
    */
-  double_t get_potential( Time const& ) const;
+  double get_potential( Time const& ) const;
 
   /**
    * Define current membrane potential.
    * This function is thread-safe and should be used in threaded
    * contexts to change the current membrane potential value.
    * @param Time     the current network time
-   * @param double_t new value of the mebrane potential
+   * @param double new value of the mebrane potential
    *
    */
-  void set_potential( Time const&, double_t );
+  void set_potential( Time const&, double );
 
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
@@ -194,9 +197,14 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-  bool update_( Time const&, const long_t, const long_t, const bool );
-  void update( Time const&, const long_t, const long_t );
-  bool prelim_update( Time const&, const long_t, const long_t );
+
+  /** This is the actual update function. The additional boolean parameter
+   * determines if the function is called by update (false) or wfr_update (true)
+   */
+  bool update_( Time const&, const long, const long, const bool );
+
+  void update( Time const&, const long, const long );
+  bool wfr_update( Time const&, const long, const long );
 
   // END Boilerplate function declarations ----------------------------
 
@@ -215,18 +223,18 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double_t t_ref_;   //!< refractory time in ms
-    double_t g_Na;     //!< Sodium Conductance in nS
-    double_t g_Kv1;    //!< Potassium Conductance in nS
-    double_t g_Kv3;    //!< Potassium Conductance in nS
-    double_t g_L;      //!< Leak Conductance in nS
-    double_t C_m;      //!< Membrane Capacitance in pF
-    double_t E_Na;     //!< Sodium Reversal Potential in mV
-    double_t E_K;      //!< Potassium Reversal Potential in mV
-    double_t E_L;      //!< Leak reversal Potential (aka resting potential) in mV
-    double_t tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
-    double_t tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
-    double_t I_e;      //!< Constant Current in pA
+    double t_ref_;   //!< refractory time in ms
+    double g_Na;     //!< Sodium Conductance in nS
+    double g_Kv1;    //!< Potassium Conductance in nS
+    double g_Kv3;    //!< Potassium Conductance in nS
+    double g_L;      //!< Leak Conductance in nS
+    double C_m;      //!< Membrane Capacitance in pF
+    double E_Na;     //!< Sodium Reversal Potential in mV
+    double E_K;      //!< Potassium Reversal Potential in mV
+    double E_L;      //!< Leak reversal Potential (aka resting potential) in mV
+    double tau_synE; //!< Synaptic Time Constant Excitatory Synapse in ms
+    double tau_synI; //!< Synaptic Time Constant for Inhibitory Synapse in ms
+    double I_e;      //!< Constant Current in pA
 
     Parameters_(); //!< Sets default parameter values
 
@@ -265,9 +273,9 @@ public:
       STATE_VEC_SIZE
     };
 
-
-    double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
-    int_t r_;                      //!< number of refractory steps remaining
+    //! neuron state, must be C-array for GSL solver
+    double y_[ STATE_VEC_SIZE ];
+    int r_; //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -285,8 +293,9 @@ private:
    */
   struct Buffers_
   {
-    Buffers_( hh_psc_alpha_gap& );                  //!<Sets buffer pointers to 0
-    Buffers_( const Buffers_&, hh_psc_alpha_gap& ); //!<Sets buffer pointers to 0
+    Buffers_( hh_psc_alpha_gap& ); //!<Sets buffer pointers to 0
+    //! Sets buffer pointers to 0
+    Buffers_( const Buffers_&, hh_psc_alpha_gap& );
 
     //! Logger for all analog data
     UniversalDataLogger< hh_psc_alpha_gap > logger_;
@@ -306,17 +315,17 @@ private:
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double_t step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     // remembers current lag for piecewise interpolation
-    long_t lag_;
-    // remembers y_values from last prelim_update
-    std::vector< double_t > last_y_values;
+    long lag_;
+    // remembers y_values from last wfr_update
+    std::vector< double > last_y_values;
     // summarized gap weight
-    double_t sumj_g_ij_;
+    double sumj_g_ij_;
     // summarized coefficients of the interpolation polynomial
-    std::vector< double_t > interpolation_coefficients;
+    std::vector< double > interpolation_coefficients;
 
     /**
      * Input current injected by CurrentEvent.
@@ -325,7 +334,7 @@ private:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double_t I_stim_;
+    double I_stim_;
   };
 
   // ----------------------------------------------------------------
@@ -336,19 +345,19 @@ private:
   struct Variables_
   {
     /** initial value to normalise excitatory synaptic current */
-    double_t PSCurrInit_E_;
+    double PSCurrInit_E_;
 
     /** initial value to normalise inhibitory synaptic current */
-    double_t PSCurrInit_I_;
+    double PSCurrInit_I_;
 
-    int_t RefractoryCounts_;
+    int RefractoryCounts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out state vector elements, used by UniversalDataLogger
   template < State_::StateVecElems elem >
-  double_t
+  double
   get_y_elem_() const
   {
     return S_.y_[ elem ];
@@ -366,24 +375,28 @@ private:
 };
 
 inline void
-hh_psc_alpha_gap::update( Time const& origin, const long_t from, const long_t to )
+hh_psc_alpha_gap::update( Time const& origin, const long from, const long to )
 {
   update_( origin, from, to, false );
 }
 
 inline bool
-hh_psc_alpha_gap::prelim_update( Time const& origin, const long_t from, const long_t to )
+hh_psc_alpha_gap::wfr_update( Time const& origin,
+  const long from,
+  const long to )
 {
-  bool done = false;
-  State_ old_state = S_; // save state before prelim update
-  done = update_( origin, from, to, true );
+  State_ old_state = S_; // save state before wfr_update
+  const bool wfr_tol_exceeded = update_( origin, from, to, true );
   S_ = old_state; // restore old state
 
-  return done;
+  return not wfr_tol_exceeded;
 }
 
 inline port
-hh_psc_alpha_gap::send_test_event( Node& target, rport receptor_type, synindex, bool )
+hh_psc_alpha_gap::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent se;
   se.set_sender( *this );
@@ -395,7 +408,9 @@ inline port
 hh_psc_alpha_gap::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -403,15 +418,20 @@ inline port
 hh_psc_alpha_gap::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
 inline port
-hh_psc_alpha_gap::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+hh_psc_alpha_gap::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
@@ -419,7 +439,9 @@ inline port
 hh_psc_alpha_gap::handles_test_event( GapJunctionEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 

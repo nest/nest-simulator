@@ -67,7 +67,7 @@
 /*                                                                       */
 /* History:                                                              */
 /*         (7) 080505, Diesmann. minusst can now be followed by minus    */
-/*	       to enable right arrows like -->                           */
+/*             to enable right arrows like -->                           */
 /*         (6) 071002, Diesmann. Replaced own conversion to double by    */
 /*             library function std::atof(). Now compatible with cvd.    */
 /*         (5) 8.4.1997, Adaption debuged. Special explicit start entr   */
@@ -111,10 +111,13 @@ Scanner::Scanner( std::istream* is )
   , // interaction: Non-terminal symbols
   EndSymbol( "/EndSymbol" )
 {
-
   for ( size_t s = start; s < lastscanstate; ++s )
+  {
     for ( size_t c = invalid; c < lastcode; ++c )
+    {
       trans[ s ][ c ] = error;
+    }
+  }
 
   code[ space ] = whitespace;
   code[ tab ] = whitespace;
@@ -276,7 +279,8 @@ Scanner::Scanner( std::istream* is )
   trans[ intdgtst ][ closebracket ] = aheadintst;
   trans[ intdgtst ][ percent ] = aheadintst;
   trans[ intdgtst ][ slash ] = aheadintst;
-  trans[ intdgtst ][ alpha ] = aheadintst; // this is a bit questionable, but still unique
+  // this is a bit questionable, but still unique
+  trans[ intdgtst ][ alpha ] = aheadintst;
   trans[ intdgtst ][ newline ] = aheadintst;
   trans[ intdgtst ][ tabulator ] = aheadintst;
   trans[ intdgtst ][ backslash ] = aheadintst;
@@ -294,7 +298,8 @@ Scanner::Scanner( std::istream* is )
   trans[ nullst ][ percent ] = aheadintst;
   trans[ nullst ][ slash ] = aheadintst;
   trans[ nullst ][ openparenth ] = aheadintst;
-  trans[ nullst ][ alpha ] = aheadintst; // this is a bit questionable, but still unique
+  // this is a bit questionable, but still unique
+  trans[ nullst ][ alpha ] = aheadintst;
   trans[ nullst ][ tabulator ] = aheadintst;
   trans[ nullst ][ newline ] = aheadintst;
   trans[ nullst ][ backslash ] = aheadintst;
@@ -319,7 +324,8 @@ Scanner::Scanner( std::istream* is )
   trans[ decpointst ][ percent ] = aheadfracst;
   trans[ decpointst ][ slash ] = aheadfracst;
   trans[ decpointst ][ openparenth ] = aheadfracst;
-  trans[ decpointst ][ alpha ] = aheadfracst; // this is a bit questionable, but still unique
+  // this is a bit questionable, but still unique
+  trans[ decpointst ][ alpha ] = aheadfracst;
   trans[ decpointst ][ tabulator ] = aheadfracst;
   trans[ decpointst ][ newline ] = aheadfracst;
   trans[ decpointst ][ backslash ] = aheadfracst;
@@ -338,7 +344,8 @@ Scanner::Scanner( std::istream* is )
   trans[ fracdgtst ][ percent ] = aheadfracst;
   trans[ fracdgtst ][ slash ] = aheadfracst;
   trans[ fracdgtst ][ openparenth ] = aheadfracst;
-  trans[ fracdgtst ][ alpha ] = aheadfracst; // this is a bit questionable, but still unique
+  // this is a bit questionable, but still unique
+  trans[ fracdgtst ][ alpha ] = aheadfracst;
   trans[ fracdgtst ][ tabulator ] = aheadfracst;
   trans[ fracdgtst ][ newline ] = aheadfracst;
   trans[ fracdgtst ][ backslash ] = aheadfracst;
@@ -366,7 +373,8 @@ Scanner::Scanner( std::istream* is )
   trans[ expdigst ][ percent ] = aheadfracst;
   trans[ expdigst ][ slash ] = aheadfracst;
   trans[ expdigst ][ openparenth ] = aheadfracst;
-  trans[ expdigst ][ alpha ] = aheadfracst; // this is a bit questionable, but still unique
+  // this is a bit questionable, but still unique
+  trans[ expdigst ][ alpha ] = aheadfracst;
   trans[ expdigst ][ newline ] = aheadfracst;
   trans[ expdigst ][ tabulator ] = aheadfracst;
   trans[ expdigst ][ backslash ] = aheadfracst;
@@ -499,7 +507,8 @@ Scanner::Scanner( std::istream* is )
   trans[ asteriskst ][ tabulator ] = ccommentst;
   trans[ asteriskst ][ expntl ] = ccommentst;
   trans[ asteriskst ][ percent ] = ccommentst;
-  trans[ asteriskst ][ asterisk ] = asteriskst; // changed from ccommentst, 25.8.1995
+  // changed from ccommentst, 25.8.1995
+  trans[ asteriskst ][ asterisk ] = asteriskst;
 }
 
 void
@@ -528,7 +537,7 @@ bool Scanner::operator()( Token& t )
   unsigned char c = '\0';
   unsigned char sgc = '\0';
 
-  long l = 0L;
+  long lng = 0L;
   double d = 0.0;
   int sg = 1;
   int e = 0;
@@ -541,7 +550,7 @@ bool Scanner::operator()( Token& t )
   do
   {
 
-    if ( !in->eof() && !in->good() )
+    if ( not in->eof() && not in->good() )
     {
       std::cout << "I/O Error in scanner input stream." << std::endl;
       state = error;
@@ -553,20 +562,28 @@ bool Scanner::operator()( Token& t )
     // get() is not picky.  --- HEP 2001-08-09
     //     in->get(c);
     c = in->get();
-
     if ( col++ == 0 )
+    {
       ++line;
+    }
 
     if ( c == '\0' || in->bad() )
+    {
       c = endof;
+    }
 
     if ( in->eof() )
+    {
       c = endof;
+    }
     else
+    {
       assert( in->good() );
-
+    }
     if ( c != endof )
+    {
       context += c;
+    }
 
     if ( c == endoln )
     {
@@ -580,16 +597,14 @@ bool Scanner::operator()( Token& t )
 
     switch ( state )
     {
-    //	  case start        :
-    //            break;
     case intdgtst:
-      l = sg * ( std::labs( l ) * base + digval( c ) );
+      lng = sg * ( std::labs( lng ) * base + digval( c ) );
       ds.push_back( c );
       break;
 
     case aheadintst:
     {
-      IntegerDatum id( l );
+      IntegerDatum id( lng );
       t = id;
       if ( c != endoln && c != endof )
       {
@@ -608,13 +623,13 @@ bool Scanner::operator()( Token& t )
       break;
 
     case intexpst:
-      d = ( double ) l;
+      d = ( double ) lng;
       ds.push_back( 'e' );
       state = expntlst;
       break;
 
     case decpointst:
-      d = ( double ) l;
+      d = ( double ) lng;
       ds.push_back( '.' );
       break;
 
@@ -661,7 +676,6 @@ bool Scanner::operator()( Token& t )
       break;
 
     case mnexpst:
-      //	es=-1;
       ds.push_back( '-' );
       break;
 
@@ -801,6 +815,7 @@ Scanner::print_error( const char* msg )
 {
   std::cout << "% parser: At line " << line << " position " << col << ".\n"
             << "% parser: Syntax Error: " << msg << "\n";
-  std::cout << "% parser: Context preceding the error follows:\n" << old_context << std::endl
+  std::cout << "% parser: Context preceding the error follows:\n" << old_context
+            << std::endl
             << context << std::endl;
 }

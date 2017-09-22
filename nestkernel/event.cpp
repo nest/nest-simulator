@@ -21,14 +21,10 @@
  */
 
 /**
- *  @file event_impl.h
+ *  @file event.cpp
  *  Implementation of Event::operator() for all event types.
  *  @note Must be isolated here, since it requires full access to
  *  classes Node and Scheduler.
- *  @note Cannot be cpp-file because of templates for AnalogDataRequest.
- *  @note All functions in this file must be inline, to avoid duplicate
- *        objects.
- *  @note Presently included in network.h and connection.h
  */
 
 #include "event.h"
@@ -48,6 +44,7 @@ Event::Event()
   , rp_( 0 )
   , d_( 1 )
   , stamp_( Time::step( 0 ) )
+  , stamp_steps_( 0 )
   , offset_( 0.0 )
   , w_( 0.0 )
 {
@@ -59,42 +56,40 @@ void SpikeEvent::operator()()
   receiver_->handle( *this );
 }
 
+void WeightRecorderEvent::operator()()
+{
+  receiver_->handle( *this );
+}
 
 void DSSpikeEvent::operator()()
 {
   sender_->event_hook( *this );
 }
 
-
 void RateEvent::operator()()
 {
   receiver_->handle( *this );
 }
-
 
 void CurrentEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-
 void DSCurrentEvent::operator()()
 {
   sender_->event_hook( *this );
 }
-
 
 void ConductanceEvent::operator()()
 {
   receiver_->handle( *this );
 }
 
-
 void DoubleDataEvent::operator()()
 {
   receiver_->handle( *this );
 }
-
 
 void DataLoggingRequest::operator()()
 {
@@ -111,6 +106,37 @@ void GapJunctionEvent::operator()()
   receiver_->handle( *this );
 }
 
+void InstantaneousRateConnectionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+void DelayedRateConnectionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
+void DiffusionConnectionEvent::operator()()
+{
+  receiver_->handle( *this );
+}
+
 std::vector< synindex > GapJunctionEvent::supported_syn_ids_;
 size_t GapJunctionEvent::coeff_length_ = 0;
+
+std::vector< synindex > InstantaneousRateConnectionEvent::supported_syn_ids_;
+size_t InstantaneousRateConnectionEvent::coeff_length_ = 0;
+
+std::vector< synindex > DelayedRateConnectionEvent::supported_syn_ids_;
+size_t DelayedRateConnectionEvent::coeff_length_ = 0;
+
+std::vector< synindex > DiffusionConnectionEvent::supported_syn_ids_;
+size_t DiffusionConnectionEvent::coeff_length_ = 0;
+}
+
+
+nest::index
+nest::Event::get_receiver_gid( void ) const
+{
+  return receiver_->get_gid();
 }

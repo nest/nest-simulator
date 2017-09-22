@@ -1,19 +1,6 @@
 # git ignore patterns
 
-autom4te.cache/
 libltdl/
-
-Makefile.in
-
-aclocal.m4
-compile
-config.guess
-config.sub
-configure
-depcomp
-install-sh
-ltmain.sh
-missing
 
 pynest/pynestkernel.cpp
 
@@ -22,7 +9,7 @@ pynest/pynestkernel.cpp
 *.la
 .*
 *.log
-config.status
+*.pyc
 Makefile
 build/
 
@@ -30,7 +17,6 @@ build/
 /extras/nest-config
 /extras/create_release.sh
 /libnestutil/config.h
-/libnestutil/stamp-h1
 /librandom/randomtest
 /libtool
 /nest/nest
@@ -51,6 +37,10 @@ build/
 .ipynb_checkpoints/
 TAGS
 
+### tags and cscope
+tags
+cscope.out
+
 ### CMAKE stuff
 cmake_install.cmake
 CMakeFiles/
@@ -66,3 +56,4 @@ doc/normaldoc.conf
 lib/sli/rcsinfo.sli
 extras/emacs/sli.el
 extras/nest_vars.sh
+

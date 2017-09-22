@@ -39,7 +39,7 @@ FirstVersion: May 2010
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 % arrays to store the event dictionaries and n_events for the
 % different trials
@@ -76,8 +76,8 @@ is_threaded not { exit_test_gracefully } if
 
     mm << /record_from [/V_m] >> SetStatus
     
-    [n1 n2] sd ConvergentConnect
-    mm [n1 n2] DivergentConnect
+    [n1 n2] [sd] Connect
+    [mm] [n1 n2] Connect
 
     100 Simulate
 

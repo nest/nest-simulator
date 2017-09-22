@@ -44,59 +44,81 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
   const DictionaryDatum& params_map,
   const Name& synmodel_name )
 {
-  Subnet* sources = dynamic_cast< Subnet* >( kernel().node_manager.get_node( source_id ) );
+  Subnet* sources =
+    dynamic_cast< Subnet* >( kernel().node_manager.get_node( source_id ) );
   if ( sources == NULL )
   {
     LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "sources must be a subnet." );
     throw SubnetExpected();
   }
-  if ( !sources->is_homogeneous() )
+  if ( not sources->is_homogeneous() )
   {
-    LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "sources must be a homogeneous subnet." );
+    LOG( M_ERROR,
+      "CGConnect_cg_i_i_D_l",
+      "sources must be a homogeneous subnet." );
     throw BadProperty();
   }
   if ( dynamic_cast< Subnet* >( *sources->local_begin() ) )
   {
-    LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "Only 1-dim subnets are supported as sources." );
+    LOG( M_ERROR,
+      "CGConnect_cg_i_i_D_l",
+      "Only 1-dim subnets are supported as sources." );
     throw BadProperty();
   }
 
-  Subnet* targets = dynamic_cast< Subnet* >( kernel().node_manager.get_node( target_id ) );
+  Subnet* targets =
+    dynamic_cast< Subnet* >( kernel().node_manager.get_node( target_id ) );
   if ( targets == NULL )
   {
     LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "targets must be a subnet." );
     throw SubnetExpected();
   }
-  if ( !targets->is_homogeneous() )
+  if ( not targets->is_homogeneous() )
   {
-    LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "targets must be a homogeneous subnet." );
+    LOG( M_ERROR,
+      "CGConnect_cg_i_i_D_l",
+      "targets must be a homogeneous subnet." );
     throw BadProperty();
   }
   if ( dynamic_cast< Subnet* >( *targets->local_begin() ) )
   {
-    LOG( M_ERROR, "CGConnect_cg_i_i_D_l", "Only 1-dim subnets are supported as targets." );
+    LOG( M_ERROR,
+      "CGConnect_cg_i_i_D_l",
+      "Only 1-dim subnets are supported as targets." );
     throw BadProperty();
   }
 
-  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
+  const Token synmodel =
+    kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
+  {
     throw UnknownSynapseType( synmodel_name.toString() );
+  }
   const index synmodel_id = static_cast< index >( synmodel );
 
   const modelrange source_range =
-    kernel().modelrange_manager.get_contiguous_gid_range( ( *sources->local_begin() )->get_gid() );
+    kernel().modelrange_manager.get_contiguous_gid_range(
+      ( *sources->local_begin() )->get_gid() );
   index source_offset = source_range.get_first_gid();
   RangeSet source_ranges;
-  source_ranges.push_back( Range( source_range.get_first_gid(), source_range.get_last_gid() ) );
+  source_ranges.push_back(
+    Range( source_range.get_first_gid(), source_range.get_last_gid() ) );
 
   const modelrange target_range =
-    kernel().modelrange_manager.get_contiguous_gid_range( ( *targets->local_begin() )->get_gid() );
+    kernel().modelrange_manager.get_contiguous_gid_range(
+      ( *targets->local_begin() )->get_gid() );
   index target_offset = target_range.get_first_gid();
   RangeSet target_ranges;
-  target_ranges.push_back( Range( target_range.get_first_gid(), target_range.get_last_gid() ) );
+  target_ranges.push_back(
+    Range( target_range.get_first_gid(), target_range.get_last_gid() ) );
 
-  cg_connect(
-    cg, source_ranges, source_offset, target_ranges, target_offset, params_map, synmodel_id );
+  cg_connect( cg,
+    source_ranges,
+    source_offset,
+    target_ranges,
+    target_offset,
+    params_map,
+    synmodel_id );
 }
 
 void
@@ -106,9 +128,12 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
   const DictionaryDatum& params_map,
   const Name& synmodel_name )
 {
-  const Token synmodel = kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
+  const Token synmodel =
+    kernel().model_manager.get_synapsedict()->lookup( synmodel_name );
   if ( synmodel.empty() )
+  {
     throw UnknownSynapseType( synmodel_name.toString() );
+  }
   const index synmodel_id = static_cast< index >( synmodel );
 
   RangeSet source_ranges;
@@ -117,8 +142,13 @@ nest::cg_connect( nest::ConnectionGeneratorDatum& cg,
   RangeSet target_ranges;
   cg_get_ranges( target_ranges, ( *targets ) );
 
-  cg_connect(
-    cg, source_ranges, ( *sources ), target_ranges, ( *targets ), params_map, synmodel_id );
+  cg_connect( cg,
+    source_ranges,
+    ( *sources ),
+    target_ranges,
+    ( *targets ),
+    params_map,
+    synmodel_id );
 }
 
 nest::ConnectionGeneratorDatum
@@ -134,7 +164,8 @@ nest::cg_parse_file( const StringDatum& xml )
 }
 
 void
-nest::cg_select_implementation( const StringDatum& library, const StringDatum& tag )
+nest::cg_select_implementation( const StringDatum& library,
+  const StringDatum& tag )
 {
   ConnectionGenerator::selectCGImplementation( tag, library );
 }

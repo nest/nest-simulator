@@ -60,16 +60,21 @@ expm1( double x )
   // compute using Taylor series, see GSL
   // e^x-1 = x + x^2/2! + x^3/3! + ...
   if ( x == 0 )
+  {
     return 0;
+  }
   if ( std::abs( x ) > std::log( 2.0 ) )
+  {
     return std::exp( x ) - 1;
+  }
   else
   {
     double sum = x;
     double term = x * x / 2;
     long n = 2;
 
-    while ( std::abs( term ) > std::abs( sum ) * std::numeric_limits< double >::epsilon() )
+    while ( std::abs( term ) > std::abs( sum )
+        * std::numeric_limits< double >::epsilon() )
     {
       sum += term;
       ++n;

@@ -36,9 +36,10 @@
 
 /* BeginDocumentation
 
-Name: volume_transmitter - Node used in combination with neuromodulated synaptic plasticity. It
-collects all spikes emitted by the population of neurons connected to the volume transmitter and
-transmits the signal to a user-specific subset of synapses.
+Name: volume_transmitter - Node used in combination with neuromodulated synaptic
+plasticity. It collects all spikes emitted by the population of neurons
+connected to the volume transmitter and transmits the signal to a user-specific
+subset of synapses.
 
 Description:
 The volume transmitter is used in combination with neuromodulated
@@ -62,9 +63,9 @@ framework presented in [1].
 
 Examples:
 /volume_transmitter Create /vol Set
-/iaf_neuron Create /pre_neuron Set
-/iaf_neuron Create /post_neuron Set
-/iaf_neuron Create /neuromod_neuron Set
+/iaf_psc_alpha Create /pre_neuron Set
+/iaf_psc_alpha Create /post_neuron Set
+/iaf_psc_alpha Create /neuromod_neuron Set
 /stdp_dopamine_synapse  << /vt vol >>  SetDefaults
 neuromod_neuron vol Connect
 pre_neuron post_neuron /stdp_dopamine_synapse Connect
@@ -98,12 +99,10 @@ class ConnectorBase;
  *
  * This class manages spike recording for normal and precise spikes. It
  * receives spikes via its handle(SpikeEvent&) method and buffers them. In the
- * update() method it stores the newly collected buffer elements, which are delivered
- * in time steps of (d_min*deliver_interval) to the neuromodulated synapses.
- * In addition the synapses can ask the volume transmitter to deliver the elements stored
- * in the update() method with the method deliver_spikes().
- *
- *
+ * update() method it stores the newly collected buffer elements, which are
+ * delivered in time steps of (d_min*deliver_interval) to the neuromodulated
+ * synapses. In addition the synapses can ask the volume transmitter to deliver
+ * the elements stored in the update() method with the method deliver_spikes().
  *
  * @ingroup Devices
  */
@@ -127,7 +126,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -146,7 +146,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( const Time&, const long_t, const long_t );
+  void update( const Time&, const long, const long );
 
   // --------------------------------------------
 
@@ -158,15 +158,16 @@ private:
     Parameters_();
     void get( DictionaryDatum& ) const;
     void set( const DictionaryDatum& );
-    long_t deliver_interval_; //!< update interval in d_min time steps
+    long deliver_interval_; //!< update interval in d_min time steps
   };
 
   //-----------------------------------------------
 
   struct Buffers_
   {
-    RingBuffer neuromodulatory_spikes_;        //!< buffer to store incoming spikes
-    std::vector< spikecounter > spikecounter_; //!< vector to store and deliver spikes
+    RingBuffer neuromodulatory_spikes_; //!< buffer to store incoming spikes
+    //! vector to store and deliver spikes
+    std::vector< spikecounter > spikecounter_;
   };
 
   Parameters_ P_;
@@ -177,7 +178,9 @@ inline port
 volume_transmitter::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 

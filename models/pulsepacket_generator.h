@@ -99,7 +99,7 @@ private:
   void calibrate();
 
   void create_pulse();
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   struct Buffers_;
 
@@ -108,11 +108,11 @@ private:
   struct Parameters_
   {
 
-    std::vector< double_t > pulse_times_; //!< times of pulses
-    long_t a_;                            //!< number of pulses in a packet
-    double_t sdev_;                       //!< standard deviation of the packet
+    std::vector< double > pulse_times_; //!< times of pulses
+    long a_;                            //!< number of pulses in a packet
+    double sdev_;                       //!< standard deviation of the packet
 
-    double_t sdev_tolerance_;
+    double sdev_tolerance_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -130,7 +130,7 @@ private:
 
   struct Buffers_
   {
-    std::deque< long_t > spiketimes_;
+    std::deque< long > spiketimes_;
   };
 
   // ------------------------------------------------------------
@@ -140,17 +140,17 @@ private:
 
     librandom::NormalRandomDev norm_dev_; //!< random deviate generator
 
-    /** Indices into sorted vector of sorted pulse-center times (P_.pulse_times_).
-     *  Spike times to be sent are calculated from pulse-center times
-     *  between 'start' and 'stop'. Times before 'start' are outdated,
-     *  times after 'stop' are not touched yet.
+    /** Indices into sorted vector of sorted pulse-center times
+     *  (P_.pulse_times_). Spike times to be sent are calculated from
+     *  pulse-center times between 'start' and 'stop'. Times before 'start' are
+     *  outdated, times after 'stop' are not touched yet.
      *
      *  Must be index, not iterator, since we copy pulse times
      *  out of temporary parameter set.
      */
     size_t start_center_idx_;
     size_t stop_center_idx_;
-    double_t tolerance;
+    double tolerance;
 
     Variables_();
   };
@@ -165,7 +165,10 @@ private:
 };
 
 inline port
-pulsepacket_generator::send_test_event( Node& target, rport receptor_type, synindex syn_id, bool )
+pulsepacket_generator::send_test_event( Node& target,
+  rport receptor_type,
+  synindex syn_id,
+  bool )
 {
   device_.enforce_single_syn_type( syn_id );
 

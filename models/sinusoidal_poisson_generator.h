@@ -37,21 +37,25 @@
 namespace nest
 {
 /* BeginDocumentation
-   Name: sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson spike trains.
+   Name: sinusoidal_poisson_generator - Generates sinusoidally modulated Poisson
+                                        spike trains.
 
    Description:
-   sinusoidal_poisson_generator generates sinusoidally modulated Poisson spike trains. By default,
-   each target of the generator will receive a different spike train.
+   sinusoidal_poisson_generator generates sinusoidally modulated Poisson spike
+   trains. By default, each target of the generator will receive a different
+   spike train.
 
    The instantaneous rate of the process is given by
 
-       f(t) = max(0, rate + amplitude sin ( 2 pi frequency t + phase * pi/180 )) >= 0
+       f(t) = max(0, rate + amplitude sin ( 2 pi frequency t + phase * pi/180 ))
+           >= 0
 
    Parameters:
    The following parameters can be set in the status dictionary:
 
    rate       double - Mean firing rate in spikes/second, default: 0 s^-1
-   amplitude  double - Firing rate modulation amplitude in spikes/second, default: 0 s^-1
+   amplitude  double - Firing rate modulation amplitude in spikes/second,
+                       default: 0 s^-1
    frequency  double - Modulation frequency in Hz, default: 0 Hz
    phase      double - Modulation phase in degree [0-360], default: 0
 
@@ -67,10 +71,10 @@ namespace nest
      temporal resolutions.
 
    - Individual spike trains vs single spike train:
-     By default, the generator sends a different spike train to each of its targets.
-     If /individual_spike_trains is set to false using either SetDefaults or CopyModel
-     before a generator node is created, the generator will send the same spike train
-     to all of its targets.
+     By default, the generator sends a different spike train to each of its
+     targets. If /individual_spike_trains is set to false using either
+     SetDefaults or CopyModel before a generator node is created, the generator
+     will send the same spike train to all of its targets.
 
    Receives: DataLoggingRequest
 
@@ -92,7 +96,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -125,33 +130,33 @@ private:
   void calibrate();
   void event_hook( DSSpikeEvent& );
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   struct Parameters_
   {
     /** Temporal frequency in radian/ms */
-    double_t om_;
+    double om_;
 
     /** Phase in radian */
-    double_t phi_;
+    double phi_;
 
     /** Mean firing rate in spikes/ms */
-    double_t rate_;
+    double rate_;
 
     /** Firing rate modulation amplitude in spikes/ms */
-    double_t amplitude_;
+    double amplitude_;
 
     /** Emit individual spike trains for each target, or same for all? */
     bool individual_spike_trains_;
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );
-    Parameters_& operator=( const Parameters_& p ); // Copy constructor EN
+    Parameters_& operator=( const Parameters_& p );
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      * @note State is passed so that the position can be reset if the
      *       spike_times_ vector has been filled with new data.
      */
@@ -160,21 +165,22 @@ private:
 
   struct State_
   {
+    //! Two-component oscillator state vector, see Rotter&Diesmann
+    double y_0_;
+    double y_1_;
 
-    double_t y_0_; //!< Two-component oscillator state vector, see Rotter&Diesmann
-    double_t y_1_;
-
-    double_t rate_; //!< current rate, kept for recording
+    double rate_; //!< current rate, kept for recording
 
     State_(); //!< Sets default state value
 
-    void get( DictionaryDatum& ) const;                     //!< Store current values in dictionary
-    void set( const DictionaryDatum&, const Parameters_& ); //!< Set values from dicitonary
+    void get( DictionaryDatum& ) const; //!< Store current values in dictionary
+    //! Set values from dictionary
+    void set( const DictionaryDatum&, const Parameters_& );
   };
 
   // ------------------------------------------------------------
 
-  // These friend declarations must be precisely here.
+  // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< sinusoidal_poisson_generator >;
   friend class UniversalDataLogger< sinusoidal_poisson_generator >;
 
@@ -196,12 +202,12 @@ private:
   {
     librandom::PoissonRandomDev poisson_dev_; //!< random deviate generator
 
-    double_t h_;   //! time resolution (ms)
-    double_t sin_; //!< sin(h om) in propagator
-    double_t cos_; //!< cos(h om) in propagator
+    double h_;   //! time resolution (ms)
+    double sin_; //!< sin(h om) in propagator
+    double cos_; //!< cos(h om) in propagator
   };
 
-  double_t
+  double
   get_rate_() const
   {
     return 1000.0 * S_.rate_;
@@ -243,10 +249,13 @@ sinusoidal_poisson_generator::send_test_event( Node& target,
 }
 
 inline port
-sinusoidal_poisson_generator::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+sinusoidal_poisson_generator::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

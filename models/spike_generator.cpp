@@ -44,6 +44,7 @@ nest::spike_generator::Parameters_::Parameters_()
   : spike_stamps_()
   , spike_offsets_()
   , spike_weights_()
+  , spike_multiplicities_()
   , precise_times_( false )
   , allow_offgrid_spikes_( false )
   , shift_now_spikes_( false )
@@ -54,6 +55,7 @@ nest::spike_generator::Parameters_::Parameters_( const Parameters_& op )
   : spike_stamps_( op.spike_stamps_ )
   , spike_offsets_( op.spike_offsets_ )
   , spike_weights_( op.spike_weights_ )
+  , spike_multiplicities_( op.spike_multiplicities_ )
   , precise_times_( op.precise_times_ )
   , allow_offgrid_spikes_( op.allow_offgrid_spikes_ )
   , shift_now_spikes_( op.shift_now_spikes_ )
@@ -76,35 +78,46 @@ nest::spike_generator::Parameters_::get( DictionaryDatum& d ) const
   const size_t n_spikes = spike_stamps_.size();
   const size_t n_offsets = spike_offsets_.size();
 
-  assert( ( precise_times_ && n_offsets == n_spikes ) || ( !precise_times_ && n_offsets == 0 ) );
+  assert( ( precise_times_ && n_offsets == n_spikes )
+    || ( not precise_times_ && n_offsets == 0 ) );
 
 
-  std::vector< double_t >* times_ms = new std::vector< double_t >();
+  std::vector< double >* times_ms = new std::vector< double >();
   times_ms->reserve( n_spikes );
   for ( size_t n = 0; n < n_spikes; ++n )
   {
     times_ms->push_back( spike_stamps_[ n ].get_ms() );
     if ( precise_times_ )
+    {
       ( *times_ms )[ n ] -= spike_offsets_[ n ];
+    }
   }
   ( *d )[ names::spike_times ] = DoubleVectorDatum( times_ms );
-  ( *d )[ "spike_weights" ] = DoubleVectorDatum( new std::vector< double_t >( spike_weights_ ) );
+  ( *d )[ names::spike_weights ] =
+    DoubleVectorDatum( new std::vector< double >( spike_weights_ ) );
+  ( *d )[ names::spike_multiplicities ] =
+    IntVectorDatum( new std::vector< long >( spike_multiplicities_ ) );
   ( *d )[ names::precise_times ] = BoolDatum( precise_times_ );
-  ( *d )[ "allow_offgrid_spikes" ] = BoolDatum( allow_offgrid_spikes_ );
-  ( *d )[ "shift_now_spikes" ] = BoolDatum( shift_now_spikes_ );
+  ( *d )[ names::allow_offgrid_spikes ] = BoolDatum( allow_offgrid_spikes_ );
+  ( *d )[ names::shift_now_spikes ] = BoolDatum( shift_now_spikes_ );
 }
 
 void
-nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double t,
+nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_(
+  double t,
   const Time& origin,
   const Time& now )
 {
-  if ( t == 0.0 && !shift_now_spikes_ )
+  if ( t == 0.0 && not shift_now_spikes_ )
+  {
     throw BadProperty( "spike time cannot be set to 0." );
+  }
 
   Time t_spike;
   if ( precise_times_ )
+  {
     t_spike = Time::ms_stamp( t );
+  }
   else
   {
     // In this case, we need to force the spike time to the grid
@@ -129,9 +142,10 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double 
     }
 
     assert( t_spike.is_grid_time() );
-
     if ( origin + t_spike == now && shift_now_spikes_ )
+    {
       t_spike.advance();
+    }
   }
   // t_spike is now the correct time stamp given the chosen options
 
@@ -139,15 +153,19 @@ nest::spike_generator::Parameters_::assert_valid_spike_time_and_insert_( double 
   spike_stamps_.push_back( t_spike );
   if ( precise_times_ )
   {
-    // t_spike is created with ms_stamp() that alignes
-    // the time to the next resolution step, so the offset
-    // has to be greater or equal to t by construction.
-    // Since substraction of closeby floating point values is
+    // t_spike is created with ms_stamp() that aligns the time to the next
+    // resolution step, so the offset has to be greater or equal to t by
+    // construction. Since subtraction of close-by floating point values is
     // not stable, we have to compare with a delta.
-    double_t offset = t_spike.get_ms() - t;
-    if ( std::fabs( offset ) < std::numeric_limits< double >::epsilon() )
-    {               // if difference is smaller than epsilon
-      offset = 0.0; // than it is actually 0.0
+    double offset = t_spike.get_ms() - t;
+
+    // The second part of the test handles subnormal values of offset.
+    if ( ( std::fabs( offset ) < std::numeric_limits< double >::epsilon()
+             * std::fabs( t_spike.get_ms() + t ) * 2.0 )
+      || ( std::fabs( offset ) < std::numeric_limits< double >::min() ) )
+    {
+      // if difference is smaller than scaled epsilon it is zero
+      offset = 0.0;
     }
     assert( offset >= 0.0 );
     spike_offsets_.push_back( offset );
@@ -160,72 +178,120 @@ nest::spike_generator::Parameters_::set( const DictionaryDatum& d,
   const Time& origin,
   const Time& now )
 {
-  const bool flags_changed = updateValue< bool >( d, names::precise_times, precise_times_ )
-    || updateValue< bool >( d, "allow_offgrid_spikes", allow_offgrid_spikes_ )
-    || updateValue< bool >( d, "shift_now_spikes", shift_now_spikes_ );
+  const bool flags_changed =
+    updateValue< bool >( d, names::precise_times, precise_times_ )
+    || updateValue< bool >(
+         d, names::allow_offgrid_spikes, allow_offgrid_spikes_ )
+    || updateValue< bool >( d, names::shift_now_spikes, shift_now_spikes_ );
   if ( precise_times_ && ( allow_offgrid_spikes_ || shift_now_spikes_ ) )
+  {
     throw BadProperty(
-      "Option precise_times cannot be set to true when either allow_offgrid_spikes "
-      "or shift_now_spikes is set to true." );
+      "Option precise_times cannot be set to true when either "
+      "allow_offgrid_spikes or shift_now_spikes is set to true." );
+  }
 
   const bool updated_spike_times = d->known( names::spike_times );
-  if ( flags_changed && !( updated_spike_times || spike_stamps_.empty() ) )
+  if ( flags_changed && not( updated_spike_times || spike_stamps_.empty() ) )
+  {
     throw BadProperty(
       "Options can only be set together with spike times or if no "
       "spike times have been set." );
+  }
 
   if ( updated_spike_times )
   {
-    const std::vector< double_t > d_times =
+    const std::vector< double > d_times =
       getValue< std::vector< double > >( d->lookup( names::spike_times ) );
     const size_t n_spikes = d_times.size();
     spike_stamps_.clear();
     spike_stamps_.reserve( n_spikes );
     spike_offsets_.clear();
     if ( precise_times_ )
+    {
       spike_offsets_.reserve( n_spikes );
+    }
 
     // Check spike times for ordering and grid compatibility and insert them
-    if ( !d_times.empty() )
+    if ( not d_times.empty() )
     {
       // handle first spike time, no predecessor to compare with
-      std::vector< double_t >::const_iterator prev = d_times.begin();
+      std::vector< double >::const_iterator prev = d_times.begin();
       assert_valid_spike_time_and_insert_( *prev, origin, now );
 
       // handle all remaining spike times, compare to predecessor
-      for ( std::vector< double_t >::const_iterator next = prev + 1; next != d_times.end();
+      for ( std::vector< double >::const_iterator next = prev + 1;
+            next != d_times.end();
             ++next, ++prev )
+      {
         if ( *prev > *next )
-          throw BadProperty( "Spike times must be sorted in non-descending order." );
+        {
+          throw BadProperty(
+            "Spike times must be sorted in non-descending order." );
+        }
         else
+        {
           assert_valid_spike_time_and_insert_( *next, origin, now );
+        }
+      }
     }
   }
 
   // spike_weights can be the same size as spike_times, or can be of size 0 to
   // only use the spike_times array
-  bool updated_spike_weights = d->known( "spike_weights" );
+  bool updated_spike_weights = d->known( names::spike_weights );
   if ( updated_spike_weights )
   {
     std::vector< double > spike_weights =
-      getValue< std::vector< double > >( d->lookup( "spike_weights" ) );
+      getValue< std::vector< double > >( d->lookup( names::spike_weights ) );
 
     if ( spike_weights.empty() )
+    {
       spike_weights_.clear();
+    }
     else
     {
       if ( spike_weights.size() != spike_stamps_.size() )
+      {
         throw BadProperty(
           "spike_weights must have the same number of elements as spike_times,"
           " or 0 elements to clear the property." );
+      }
 
       spike_weights_.swap( spike_weights );
     }
   }
 
+  // spike_multiplicities can be the same size as spike_times,
+  // or can be of size 0 to only use the spike_times array
+  bool updated_spike_multiplicities = d->known( names::spike_multiplicities );
+  if ( updated_spike_multiplicities )
+  {
+    std::vector< long > spike_multiplicities = getValue< std::vector< long > >(
+      d->lookup( names::spike_multiplicities ) );
+
+    if ( spike_multiplicities.empty() )
+    {
+      spike_multiplicities_.clear();
+    }
+    else
+    {
+      if ( spike_multiplicities.size() != spike_stamps_.size() )
+      {
+        throw BadProperty(
+          "spike_multiplicities must have the same number of elements as "
+          "spike_times or 0 elements to clear the property." );
+      }
+
+      spike_multiplicities_.swap( spike_multiplicities );
+    }
+  }
+
   // Set position to start if something changed
-  if ( updated_spike_times || updated_spike_weights || d->known( names::origin ) )
+  if ( updated_spike_times || updated_spike_weights
+    || updated_spike_multiplicities || d->known( names::origin ) )
+  {
     s.position_ = 0;
+  }
 }
 
 
@@ -281,13 +347,21 @@ nest::spike_generator::calibrate()
  * ---------------------------------------------------------------- */
 
 void
-nest::spike_generator::update( Time const& sliceT0, const long_t from, const long_t to )
+nest::spike_generator::update( Time const& sliceT0,
+  const long from,
+  const long to )
 {
   if ( P_.spike_stamps_.empty() )
+  {
     return;
+  }
 
-  assert( !P_.precise_times_ || P_.spike_stamps_.size() == P_.spike_offsets_.size() );
-  assert( P_.spike_weights_.empty() || P_.spike_stamps_.size() == P_.spike_weights_.size() );
+  assert( not P_.precise_times_
+    || P_.spike_stamps_.size() == P_.spike_offsets_.size() );
+  assert( P_.spike_weights_.empty()
+    || P_.spike_stamps_.size() == P_.spike_weights_.size() );
+  assert( P_.spike_multiplicities_.empty()
+    || P_.spike_stamps_.size() == P_.spike_multiplicities_.size() );
 
   const Time tstart = sliceT0 + Time::step( from );
   const Time tstop = sliceT0 + Time::step( to );
@@ -304,9 +378,10 @@ nest::spike_generator::update( Time const& sliceT0, const long_t from, const lon
       ++S_.position_;
       continue;
     }
-
     if ( tnext_stamp > tstop )
+    {
       break;
+    }
 
     if ( device_.is_active( tnext_stamp ) )
     {
@@ -315,16 +390,27 @@ nest::spike_generator::update( Time const& sliceT0, const long_t from, const lon
       // if we have to deliver weighted spikes, we need to get the
       // event back to set its weight according to the entry in
       // spike_weights_, so we use a DSSpike event and event_hook()
-      if ( !P_.spike_weights_.empty() )
+      if ( not P_.spike_weights_.empty() )
+      {
         se = new DSSpikeEvent;
+      }
       else
+      {
         se = new SpikeEvent;
+      }
 
       if ( P_.precise_times_ )
+      {
         se->set_offset( P_.spike_offsets_[ S_.position_ ] );
+      }
+
+      if ( not P_.spike_multiplicities_.empty() )
+      {
+        se->set_multiplicity( P_.spike_multiplicities_[ S_.position_ ] );
+      }
 
       // we need to subtract one from stamp which is added again in send()
-      long_t lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
+      long lag = Time( tnext_stamp - sliceT0 ).get_steps() - 1;
 
       // all spikes are sent locally, so offset information is always preserved
       kernel().event_delivery_manager.send( *this, *se, lag );
@@ -351,12 +437,18 @@ nest::spike_generator::set_status( const DictionaryDatum& d )
   // To detect "now" spikes and shift them, we need the origin. In case
   // it is set in this call, we need to extract it explicitly here.
   Time origin;
-  double_t v;
-  if ( updateValue< double_t >( d, names::origin, v ) )
+  double v;
+  if ( updateValue< double >( d, names::origin, v ) )
+  {
     origin = Time::ms( v );
+  }
   else
+  {
     origin = device_.get_origin();
-  ptmp.set( d, S_, origin, kernel().simulation_manager.get_time() ); // throws if BadProperty
+  }
+
+  // throws if BadProperty
+  ptmp.set( d, S_, origin, kernel().simulation_manager.get_time() );
 
   // We now know that ptmp is consistent. We do not write it back
   // to P_ before we are also sure that the properties to be set

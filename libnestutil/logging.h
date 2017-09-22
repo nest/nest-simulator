@@ -26,8 +26,9 @@
 /**
  *
  */
-#define LOG( s, fctn, msg ) \
-  nest::kernel().logging_manager.publish_log( ( s ), ( fctn ), ( msg ), __FILE__, __LINE__ )
+#define LOG( s, fctn, msg )                   \
+  nest::kernel().logging_manager.publish_log( \
+    ( s ), ( fctn ), ( msg ), __FILE__, __LINE__ )
 
 /**
  *
@@ -55,6 +56,7 @@ enum severity_t
   M_DEBUG = 5,
   M_STATUS = 7,
   M_INFO = 10,
+  M_DEPRECATED = 18,
   M_WARNING = 20,
   M_ERROR = 30,
   M_FATAL = 40,

@@ -30,7 +30,8 @@
 #include "connection.h"
 
 /* BeginDocumentation
-  Name: quantal_stp_synapse - Probabilistic synapse model with short term plasticity.
+  Name: quantal_stp_synapse - Probabilistic synapse model with short term
+  plasticity.
 
   Description:
 
@@ -49,24 +50,27 @@
 
    Parameters:
      The following parameters can be set in the status dictionary:
-     U          double - Maximal fraction of available resources [0,1], default=0.5
+     U          double - Maximal fraction of available resources [0,1],
+                         default=0.5
      u          double - available fraction of resources [0,1], default=0.5
      p          double - probability that a vesicle is available, default = 1.0
-     n          long - total number of release sites, default = 1
-     a          long - number of available release sites, default = n
+     n          long   - total number of release sites, default = 1
+     a          long   - number of available release sites, default = n
      tau_rec    double - time constant for depression in ms, default=800 ms
      tau_rec    double - time constant for facilitation in ms, default=0 (off)
 
 
   References:
-   [1] Fuhrmann, G., Segev, I., Markram, H., & Tsodyks, M. V. (2002). Coding of temporal
-       information by activity-dependent synapses. Journal of neurophysiology, 87(1), 140-8.
+   [1] Fuhrmann, G., Segev, I., Markram, H., & Tsodyks, M. V. (2002). Coding of
+       temporal information by activity-dependent synapses. Journal of
+       neurophysiology, 87(1), 140-8.
    [2] Loebel, A., Silberberg, G., Helbig, D., Markram, H., Tsodyks,
        M. V, & Richardson, M. J. E. (2009). Multiquantal release underlies
        the distribution of synaptic efficacies in the neocortex. Frontiers
-       in computational neuroscience, 3(November), 27. doi:10.3389/neuro.10.027.2009
-   [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers. Neural networks, 15(2),
-  155–61.
+       in computational neuroscience, 3(November), 27.
+       doi:10.3389/neuro.10.027.2009
+   [3] Maass, W., & Markram, H. (2002). Synapses as dynamic memory buffers.
+       Neural networks, 15(2), 155-61.
 
   Transmits: SpikeEvent
 
@@ -77,9 +81,9 @@
 
 
 /**
- * Class representing a synapse with Tsodyks short term plasticity, based on the iterative formula
- * A suitable Connector containing these connections can be obtained from the template
- * GenericConnector.
+ * Class representing a synapse with Tsodyks short term plasticity, based on the
+ * iterative formula. A suitable Connector containing these connections can be
+ * obtained from the template GenericConnector.
  */
 
 namespace nest
@@ -102,10 +106,10 @@ public:
    */
   Quantal_StpConnection( const Quantal_StpConnection& );
 
-  // Explicitly declare all methods inherited from the dependent base ConnectionBase.
-  // This avoids explicit name prefixes in all places these functions are used.
-  // Since ConnectionBase depends on the template parameter, they are not automatically
-  // found in the base class.
+  // Explicitly declare all methods inherited from the dependent base
+  // ConnectionBase. This avoids explicit name prefixes in all places these
+  // functions are used. Since ConnectionBase depends on the template parameter,
+  // they are not automatically found in the base class.
   using ConnectionBase::get_delay_steps;
   using ConnectionBase::get_delay;
   using ConnectionBase::get_rport;
@@ -117,9 +121,15 @@ public:
   void get_status( DictionaryDatum& d ) const;
 
   /**
-   * Set default properties of this connection from the values given in dictionary.
+   * Set default properties of this connection from the values given in
+   * dictionary.
    */
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
+
+  /**
+   * Throws exception if n or a are given in syn_spec.
+   */
+  void check_synapse_params( const DictionaryDatum& d ) const;
 
   /**
    * Send an event to the receiver of this connection.
@@ -127,7 +137,10 @@ public:
    * \param t_lastspike Point in time of last spike sent.
    * \param cp Common properties to all synapses (empty).
    */
-  void send( Event& e, thread t, double_t t_lastspike, const CommonSynapseProperties& cp );
+  void send( Event& e,
+    thread t,
+    double t_lastspike,
+    const CommonSynapseProperties& cp );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -143,26 +156,30 @@ public:
   };
 
   void
-  check_connection( Node& s, Node& t, rport receptor_type, double_t, const CommonPropertiesType& )
+  check_connection( Node& s,
+    Node& t,
+    rport receptor_type,
+    double,
+    const CommonPropertiesType& )
   {
     ConnTestDummyNode dummy_target;
     ConnectionBase::check_connection_( dummy_target, s, t, receptor_type );
   }
 
   void
-  set_weight( double_t w )
+  set_weight( double w )
   {
     weight_ = w;
   }
 
 private:
-  double_t weight_;  //!< synaptic weight
-  double_t U_;       //!< unit increment of a facilitating synapse (U)
-  double_t u_;       //!< dynamic value of probability of release
-  double_t tau_rec_; //!< [ms] time constant for recovery from depression (D)
-  double_t tau_fac_; //!< [ms] time constant for facilitation (F)
-  int n_;            //!< Number of release sites
-  int a_;            //!< Number of available release sites
+  double weight_;  //!< synaptic weight
+  double U_;       //!< unit increment of a facilitating synapse (U)
+  double u_;       //!< dynamic value of probability of release
+  double tau_rec_; //!< [ms] time constant for recovery from depression (D)
+  double tau_fac_; //!< [ms] time constant for facilitation (F)
+  int n_;          //!< Number of release sites
+  int a_;          //!< Number of available release sites
 };
 
 
@@ -177,16 +194,17 @@ template < typename targetidentifierT >
 inline void
 Quantal_StpConnection< targetidentifierT >::send( Event& e,
   thread t,
-  double_t t_lastspike,
+  double t_lastspike,
   const CommonSynapseProperties& )
 {
   const int vp = get_target( t )->get_vp();
 
-  const double_t h = e.get_stamp().get_ms() - t_lastspike;
+  const double h = e.get_stamp().get_ms() - t_lastspike;
 
   // Compute the decay factors, based on the time since the last spike.
-  const double_t p_decay = std::exp( -h / tau_rec_ );
-  const double_t u_decay = ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
+  const double p_decay = std::exp( -h / tau_rec_ );
+  const double u_decay =
+    ( tau_fac_ < 1.0e-10 ) ? 0.0 : std::exp( -h / tau_fac_ );
 
   // Compute release probability
   u_ = U_ + u_ * ( 1. - U_ ) * u_decay; // Eq. 4 from [2]
@@ -195,7 +213,9 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e,
   for ( int depleted = n_ - a_; depleted > 0; --depleted )
   {
     if ( kernel().rng_manager.get_rng( vp )->drand() < ( 1.0 - p_decay ) )
+    {
       ++a_;
+    }
   }
 
   // Compute number of released sites
@@ -203,7 +223,9 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e,
   for ( int i = a_; i > 0; --i )
   {
     if ( kernel().rng_manager.get_rng( vp )->drand() < u_ )
+    {
       ++n_release;
+    }
   }
 
   if ( n_release > 0 )

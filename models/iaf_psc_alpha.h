@@ -138,7 +138,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -161,7 +162,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  void update( Time const&, const long_t, const long_t );
+  void update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< iaf_psc_alpha >;
@@ -173,36 +174,36 @@ private:
   {
 
     /** Membrane time constant in ms. */
-    double_t Tau_;
+    double Tau_;
 
     /** Membrane capacitance in pF. */
-    double_t C_;
+    double C_;
 
     /** Refractory period in ms. */
-    double_t TauR_;
+    double TauR_;
 
     /** Resting potential in mV. */
-    double_t E_L_;
+    double E_L_;
 
     /** External current in pA */
-    double_t I_e_;
+    double I_e_;
 
     /** Reset value of the membrane potential */
-    double_t V_reset_;
+    double V_reset_;
 
     /** Threshold, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real threshold is (E_L_+Theta_). */
-    double_t Theta_;
+    double Theta_;
 
     /** Lower bound, RELATIVE TO RESTING POTENTIAL(!).
         I.e. the real lower bound is (LowerBound_+E_L_). */
-    double_t LowerBound_;
+    double LowerBound_;
 
     /** Time constant of excitatory synaptic current in ms. */
-    double_t tau_ex_;
+    double tau_ex_;
 
     /** Time constant of inhibitory synaptic current in ms. */
-    double_t tau_in_;
+    double tau_in_;
 
     Parameters_(); //!< Sets default parameter values
 
@@ -219,14 +220,15 @@ private:
   struct State_
   {
 
-    double_t y0_; //!< Constant current
-    double_t y1_ex_;
-    double_t y2_ex_;
-    double_t y1_in_;
-    double_t y2_in_;
-    double_t y3_; //!< This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double y0_; //!< Constant current
+    double dI_ex_;
+    double I_ex_;
+    double dI_in_;
+    double I_in_;
+    //! This is the membrane potential RELATIVE TO RESTING POTENTIAL.
+    double y3_;
 
-    int_t r_; //!< Number of refractory steps remaining
+    int r_; //!< Number of refractory steps remaining
 
     State_(); //!< Default initialization
 
@@ -266,56 +268,59 @@ private:
         This value is chosen such that a post-synaptic potential with
         weight one has an amplitude of 1 mV.
      */
-    double_t EPSCInitialValue_;
-    double_t IPSCInitialValue_;
-    int_t RefractoryCounts_;
+    double EPSCInitialValue_;
+    double IPSCInitialValue_;
+    int RefractoryCounts_;
 
-    double_t P11_ex_;
-    double_t P21_ex_;
-    double_t P22_ex_;
-    double_t P31_ex_;
-    double_t P32_ex_;
-    double_t P11_in_;
-    double_t P21_in_;
-    double_t P22_in_;
-    double_t P31_in_;
-    double_t P32_in_;
-    double_t P30_;
-    double_t P33_;
-    double_t expm1_tau_m_;
+    double P11_ex_;
+    double P21_ex_;
+    double P22_ex_;
+    double P31_ex_;
+    double P32_ex_;
+    double P11_in_;
+    double P21_in_;
+    double P22_in_;
+    double P31_in_;
+    double P32_in_;
+    double P30_;
+    double P33_;
+    double expm1_tau_m_;
 
-    double_t weighted_spikes_ex_;
-    double_t weighted_spikes_in_;
+    double weighted_spikes_ex_;
+    double weighted_spikes_in_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out the real membrane potential
-  double_t
+  inline double
   get_V_m_() const
   {
     return S_.y3_ + P_.E_L_;
   }
 
-  double_t
+  inline double
   get_weighted_spikes_ex_() const
   {
     return V_.weighted_spikes_ex_;
   }
-  double_t
+
+  inline double
   get_weighted_spikes_in_() const
   {
     return V_.weighted_spikes_in_;
   }
-  double_t
-  get_input_currents_ex_() const
+
+  inline double
+  get_I_syn_ex_() const
   {
-    return S_.y1_ex_;
+    return S_.I_ex_;
   }
-  double_t
-  get_input_currents_in_() const
+
+  inline double
+  get_I_syn_in_() const
   {
-    return S_.y1_in_;
+    return S_.I_in_;
   }
 
   // Data members -----------------------------------------------------------
@@ -338,7 +343,10 @@ private:
 };
 
 inline port
-nest::iaf_psc_alpha::send_test_event( Node& target, rport receptor_type, synindex, bool )
+nest::iaf_psc_alpha::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -349,7 +357,9 @@ inline port
 iaf_psc_alpha::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -357,15 +367,20 @@ inline port
 iaf_psc_alpha::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
 inline port
-iaf_psc_alpha::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+iaf_psc_alpha::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

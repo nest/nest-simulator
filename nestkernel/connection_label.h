@@ -33,17 +33,19 @@ namespace nest
 class ConnectorModel;
 
 /**
- * Connections are unlabeled by default. Unlabeled connections cannot be specified
+ * Connections are unlabeled by default. Unlabeled connections cannot be
+ * specified
  * as a search criterion in the `GetConnections` function.
  * @see ConnectionLabel
  */
-const static long_t UNLABELED_CONNECTION = -1;
+const static long UNLABELED_CONNECTION = -1;
 
 /**
- * The class ConnectionLabel enables synapse model to be labeled by a positive integer. The
- * label can be set / retrieved with the `names::synapse_label` property in the parameter
- * dictionary of `Set/GetStatus` or `Connect`.
- * Using the `GetConnections` function, synapses with the same label can be specified.
+ * The class ConnectionLabel enables synapse model to be labeled by a positive
+ * integer. The label can be set / retrieved with the `names::synapse_label`
+ * property in the parameter dictionary of `Set/GetStatus` or `Connect`.
+ * Using the `GetConnections` function, synapses with the same label can be
+ * specified.
  *
  * The name of synapse models, which can be labeled, end with '_lbl'.
  * @see nest::ConnectionManager::get_connections
@@ -62,14 +64,15 @@ public:
   /**
    * Set properties of this connection from the values given in dictionary.
    *
-   * @note Target and Rport cannot be changed after a connection has been created.
+   * @note Target and Rport cannot be changed after a connection has been
+   * created.
    */
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
-  long_t get_label() const;
+  long get_label() const;
 
 private:
-  long_t label_;
+  long label_;
 };
 
 template < typename ConnectionT >
@@ -84,18 +87,19 @@ void
 ConnectionLabel< ConnectionT >::get_status( DictionaryDatum& d ) const
 {
   ConnectionT::get_status( d );
-  def< long_t >( d, names::synapse_label, label_ );
+  def< long >( d, names::synapse_label, label_ );
   // override names::size_of from ConnectionT,
   // as the size from ConnectionLabel< ConnectionT > is
-  // one long_t larger
-  def< long_t >( d, names::size_of, sizeof( *this ) );
+  // one long larger
+  def< long >( d, names::size_of, sizeof( *this ) );
 }
 
 template < typename ConnectionT >
 void
-ConnectionLabel< ConnectionT >::set_status( const DictionaryDatum& d, ConnectorModel& cm )
+ConnectionLabel< ConnectionT >::set_status( const DictionaryDatum& d,
+  ConnectorModel& cm )
 {
-  long_t lbl;
+  long lbl;
   if ( updateValue< long >( d, names::synapse_label, lbl ) )
   {
     if ( lbl >= 0 )
@@ -111,7 +115,7 @@ ConnectionLabel< ConnectionT >::set_status( const DictionaryDatum& d, ConnectorM
 }
 
 template < typename ConnectionT >
-inline long_t
+inline long
 ConnectionLabel< ConnectionT >::get_label() const
 {
   return label_;

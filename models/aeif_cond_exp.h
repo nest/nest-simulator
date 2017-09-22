@@ -43,8 +43,8 @@
 #include "universal_data_logger.h"
 
 /* BeginDocumentation
-Name: aeif_cond_exp - Conductance based exponential integrate-and-fire neuron model according to
-Brette and Gerstner (2005).
+Name: aeif_cond_exp - Conductance based exponential integrate-and-fire neuron
+                      model according to Brette and Gerstner (2005).
 
 Description:
 
@@ -56,7 +56,8 @@ This implementation uses the embedded 4th order Runge-Kutta-Fehlberg
 solver with adaptive stepsize to integrate the differential equation.
 
 The membrane potential is given by the following differential equation:
-C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e) -g_i(t)(V-E_i)-w +I_e
+C dV/dt= -g_L(V-E_L)+g_L*Delta_T*exp((V-V_T)/Delta_T)-g_e(t)(V-E_e)
+                                                     -g_i(t)(V-E_i)-w +I_e
 
 and
 
@@ -94,22 +95,27 @@ Spike adaptation parameters:
 
 Synaptic parameters
   E_ex       double - Excitatory reversal potential in mV.
-  tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (exp function).
+  tau_syn_ex double - Rise time of excitatory synaptic conductance in ms (exp
+                      function).
   E_in       double - Inhibitory reversal potential in mV.
-  tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms (exp function).
+  tau_syn_in double - Rise time of the inhibitory synaptic conductance in ms
+                      (exp function).
 
 Integration parameters
-  gsl_error_tol  double - This parameter controls the admissible error of the GSL integrator.
-                          Reduce it if NEST complains about numerical instabilities.
+  gsl_error_tol  double - This parameter controls the admissible error of the
+                          GSL integrator. Reduce it if NEST complains about
+                          numerical instabilities.
 
-Author: Adapted from aeif_cond_alpha by Lyle Muller
+Author: Adapted from aeif_cond_alpha by Lyle Muller; full revision by Tanguy
+Fardet on December 2016
 
 Sends: SpikeEvent
 
 Receives: SpikeEvent, CurrentEvent, DataLoggingRequest
 
-References: Brette R and Gerstner W (2005) Adaptive Exponential Integrate-and-Fire Model as
-            an Effective Description of Neuronal Activity. J Neurophysiol 94:3637-3642
+References: Brette R and Gerstner W (2005) Adaptive Exponential
+            Integrate-and-Fire Model as an Effective Description of
+            Neuronal Activity. J Neurophysiol 94:3637-3642
 
 SeeAlso: iaf_cond_exp, aeif_cond_alpha
 */
@@ -117,7 +123,7 @@ SeeAlso: iaf_cond_exp, aeif_cond_alpha
 namespace nest
 {
 /**
- * Function computing right-hand side of ODE for GSL solver.
+ * Function computing right-hand side of ODE for GSL solver if Delta_T != 0.
  * @note Must be declared here so we can befriend it in class.
  * @note Must have C-linkage for passing to GSL. Internally, it is
  *       a first-class C++ function, but cannot be a member function
@@ -127,6 +133,19 @@ namespace nest
  * @param void* Pointer to model neuron instance.
  */
 extern "C" int aeif_cond_exp_dynamics( double, const double*, double*, void* );
+
+/**
+ * Function computing right-hand side of ODE for GSL solver if Delta_T == 0.
+ * @note Must be declared here so we can befriend it in class.
+ * @note Must have C-linkage for passing to GSL. Internally, it is
+ *       a first-class C++ function, but cannot be a member function
+ *       because of the C-linkage.
+ * @note No point in declaring it inline, since it is called
+ *       through a function pointer.
+ * @param void* Pointer to model neuron instance.
+ */
+extern "C" int
+aeif_cond_exp_dynamics_DT0( double, const double*, double*, void* );
 
 class aeif_cond_exp : public Archiving_Node
 {
@@ -138,7 +157,8 @@ public:
 
   /**
    * Import sets of overloaded virtual functions.
-   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and Hiding
+   * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
+   * Hiding
    */
   using Node::handle;
   using Node::handles_test_event;
@@ -160,7 +180,7 @@ private:
   void init_state_( const Node& proto );
   void init_buffers_();
   void calibrate();
-  void update( const Time&, const long_t, const long_t );
+  void update( const Time&, const long, const long );
 
   // END Boilerplate function declarations ----------------------------
 
@@ -179,26 +199,26 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double_t V_peak_;  //!< Spike detection threshold in mV
-    double_t V_reset_; //!< Reset Potential in mV
-    double_t t_ref_;   //!< Refractory period in ms
+    double V_peak_;  //!< Spike detection threshold in mV
+    double V_reset_; //!< Reset Potential in mV
+    double t_ref_;   //!< Refractory period in ms
 
-    double_t g_L;        //!< Leak Conductance in nS
-    double_t C_m;        //!< Membrane Capacitance in pF
-    double_t E_ex;       //!< Excitatory reversal Potential in mV
-    double_t E_in;       //!< Inhibitory reversal Potential in mV
-    double_t E_L;        //!< Leak reversal Potential (aka resting potential) in mV
-    double_t Delta_T;    //!< Slope faktor in ms.
-    double_t tau_w;      //!< adaptation time-constant in ms.
-    double_t a;          //!< Subthreshold adaptation in nS.
-    double_t b;          //!< Spike-triggered adaptation in pA
-    double_t V_th;       //!< Spike threshold in mV.
-    double_t t_ref;      //!< Refractory period in ms.
-    double_t tau_syn_ex; //!< Excitatory synaptic rise time.
-    double_t tau_syn_in; //!< Excitatory synaptic rise time.
-    double_t I_e;        //!< Intrinsic current in pA.
+    double g_L;     //!< Leak Conductance in nS
+    double C_m;     //!< Membrane Capacitance in pF
+    double E_ex;    //!< Excitatory reversal Potential in mV
+    double E_in;    //!< Inhibitory reversal Potential in mV
+    double E_L;     //!< Leak reversal Potential (aka resting potential) in mV
+    double Delta_T; //!< Slope faktor in ms.
+    double tau_w;   //!< adaptation time-constant in ms.
+    double a;       //!< Subthreshold adaptation in nS.
+    double b;       //!< Spike-triggered adaptation in pA
+    double V_th;    //!< Spike threshold in mV.
+    double t_ref;   //!< Refractory period in ms.
+    double tau_syn_ex; //!< Excitatory synaptic rise time.
+    double tau_syn_in; //!< Excitatory synaptic rise time.
+    double I_e;        //!< Intrinsic current in pA.
 
-    double_t gsl_error_tol; //!< error bound for GSL integrator
+    double gsl_error_tol; //!< error bound for GSL integrator
 
     Parameters_(); //!< Sets default parameter values
 
@@ -231,8 +251,9 @@ public:
       STATE_VEC_SIZE
     };
 
-    double_t y_[ STATE_VEC_SIZE ]; //!< neuron state, must be C-array for GSL solver
-    int_t r_;                      //!< number of refractory steps remaining
+    //! neuron state, must be C-array for GSL solver
+    double y_[ STATE_VEC_SIZE ];
+    unsigned int r_; //!< number of refractory steps remaining
 
     State_( const Parameters_& ); //!< Default initialization
     State_( const State_& );
@@ -264,13 +285,13 @@ public:
     gsl_odeiv_step* s_;    //!< stepping function
     gsl_odeiv_control* c_; //!< adaptive stepsize control function
     gsl_odeiv_evolve* e_;  //!< evolution function
-    gsl_odeiv_system sys_; //!< struct describing system
+    gsl_odeiv_system sys_; //!< struct describing the GSL system
 
     // IntergrationStep_ should be reset with the neuron on ResetNetwork,
     // but remain unchanged during calibration. Since it is initialized with
     // step_, and the resolution cannot change after nodes have been created,
     // it is safe to place both here.
-    double_t step_;          //!< step size in ms
+    double step_;            //!< step size in ms
     double IntegrationStep_; //!< current integration time step, updated by GSL
 
     /**
@@ -280,7 +301,7 @@ public:
      * It must be a part of Buffers_, since it is initialized once before
      * the first simulation, but not modified before later Simulate calls.
      */
-    double_t I_stim_;
+    double I_stim_;
   };
 
   // ----------------------------------------------------------------
@@ -290,14 +311,20 @@ public:
    */
   struct Variables_
   {
-    int_t RefractoryCounts_;
+    /**
+     * Threshold detection for spike events: P.V_peak if Delta_T > 0.,
+     * P.V_th if Delta_T == 0.
+     */
+    double V_peak;
+
+    unsigned int refractory_counts_;
   };
 
   // Access functions for UniversalDataLogger -------------------------------
 
   //! Read out state vector elements, used by UniversalDataLogger
   template < State_::StateVecElems elem >
-  double_t
+  double
   get_y_elem_() const
   {
     return S_.y_[ elem ];
@@ -315,7 +342,10 @@ public:
 };
 
 inline port
-aeif_cond_exp::send_test_event( Node& target, rport receptor_type, synindex, bool )
+aeif_cond_exp::send_test_event( Node& target,
+  rport receptor_type,
+  synindex,
+  bool )
 {
   SpikeEvent e;
   e.set_sender( *this );
@@ -327,7 +357,9 @@ inline port
 aeif_cond_exp::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -335,15 +367,20 @@ inline port
 aeif_cond_exp::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
 inline port
-aeif_cond_exp::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
+aeif_cond_exp::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

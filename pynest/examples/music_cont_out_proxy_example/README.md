@@ -2,7 +2,7 @@
 
 ## Requirements
 + MUSIC 1.1.15 or higher
-+ NEST 2.12.1 or higher compiled with MPI and MUSIC
++ NEST 2.14.0 or higher compiled with MPI and MUSIC
 + NumPy
 
 ## Instructions

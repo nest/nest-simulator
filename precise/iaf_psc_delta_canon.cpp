@@ -58,7 +58,7 @@ template <>
 void
 RecordablesMap< iaf_psc_delta_canon >::create()
 {
-  // use standard names whereever you can for consistency!
+  // use standard names wherever you can for consistency!
   insert_( names::V_m, &iaf_psc_delta_canon::get_V_m_ );
 }
 
@@ -489,7 +489,7 @@ nest::iaf_psc_delta_canon::emit_spike_( Time const& origin,
 {
   assert( S_.U_ >= P_.U_th_ ); // ensure we are superthreshold
 
-  // compute time since threhold crossing
+  // compute time since threshold crossing
   const double v_inf = V_.R_ * ( S_.I_ + P_.I_e_ );
   const double dt =
     -P_.tau_m_ * std::log( ( v_inf - S_.U_ ) / ( v_inf - P_.U_th_ ) );

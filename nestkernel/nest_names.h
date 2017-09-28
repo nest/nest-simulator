@@ -57,6 +57,7 @@ extern const Name activity;             //!< Used in pulsepacket_generator
 extern const Name address;              //!< Node parameter
 extern const Name ahp_bug;              //!< Used in iaf_chxk_2008
 extern const Name allow_offgrid_spikes; //!< Used in spike_generator
+extern const Name allow_offgrid_times;  //!< Used in step_current_generator
 extern const Name alpha;                //!< stdp_synapse parameter
 extern const Name alpha_1; //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name alpha_2; //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
@@ -138,10 +139,12 @@ extern const Name dg_in;     //!< Derivative of the inhibitory conductance
 extern const Name dI_syn_ex; //!< Derivative of the excitatory synaptic current
 extern const Name dI_syn_in; //!< Derivative of the inhibitory synaptic current
 extern const Name dict_miss_is_error;  //!< Used by logging_manager
+extern const Name diffusion_factor;    //!< Specific to diffusion connection
 extern const Name distal_curr;         //!< Used by iaf_cond_alpha_mc
 extern const Name distal_exc;          //!< Used by iaf_cond_alpha_mc
 extern const Name distal_inh;          //!< Used by iaf_cond_alpha_mc
 extern const Name distribution;        //!< Connectivity-related
+extern const Name drift_factor;        //!< Specific to diffusion connection
 extern const Name driver_readout_time; //!< Used by stdp_connection_facetshw_hom
 extern const Name dt;                  //!< Miscellaneous parameters
 extern const Name
@@ -191,7 +194,7 @@ extern const Name flush_records;        //!< Recorder parameter
 extern const Name frequency;            //!< Signal modulation frequency
 extern const Name frozen;               //!< Node parameter
 
-extern const Name g;             //!< Conductance
+extern const Name g;             //!< Conductance or gain scaling in rate models
 extern const Name g_AMPA;        //!< specific to Hill & Tononi 2005
 extern const Name g_ahp;         //!< Specific to iaf_chxk_2008 neuron
 extern const Name g_ex;          //!< Excitatory conductance
@@ -288,8 +291,9 @@ extern const Name lambda_0;   //!< Specific to gif models
 extern const Name len_kernel; //!< Specific to population point process model
                               //!< (pp_pop_psc_delta)
 extern const Name linear;     //!< Parameter for MSP growth curves
-extern const Name local;      //!< Node parameter
-extern const Name local_id;   //!< Node
+extern const Name linear_summation;    //!< Specific to rate models
+extern const Name local;               //!< Node parameter
+extern const Name local_id;            //!< Node
 extern const Name local_num_threads;   //!< Local number of threads
 extern const Name local_spike_counter; //!< Used by event_delivery_manager
 extern const Name lookuptable_0;       //!< Used in stdp_connection_facetshw_hom
@@ -332,6 +336,8 @@ extern const Name next_readout_time; //!< Used by stdp_connection_facetshw_hom
 extern const Name NMDA;
 extern const Name node_uses_wfr;      //!< Node parameter
 extern const Name noise;              //!< Specific to iaf_chs_2008 neuron
+                                      //!< and rate models
+extern const Name noisy_rate;         //!< Specific to rate models
 extern const Name no_synapses;        //!< Used by stdp_connection_facetshw_hom
 extern const Name num_connections;    //!< In ConnBuilder
 extern const Name num_processes;      //!< Number of processes
@@ -378,8 +384,8 @@ extern const Name q_rr;  //!< Other adaptation
 extern const Name q_sfa; //!< Other adaptation
 extern const Name q_stc; //!< Specific to gif models
 
-extern const Name
-  rate; //!< Specific to ppd_sup_generator and gamma_sup_generator
+extern const Name rate; //!< Specific to ppd_sup_generator,
+                        //!< gamma_sup_generator and rate models
 extern const Name readout_cycle_duration; //!< Used by
                                           //!< stdp_connection_facetshw_hom
 extern const Name receive_buffer_size;    //!< mpi-related
@@ -452,6 +458,8 @@ extern const Name synapse_modelid;     //!< Connection parameters
 extern const Name synapses_per_driver; //!< Used by stdp_connection_facetshw_hom
 extern const Name synaptic_elements;   //!< Synaptic elements used in structural
                                        //!< plasticity
+extern const Name synaptic_elements_param; //!< Used to update parameters
+                                           //!< of synaptic elements
 
 extern const Name t_lag;     //!< Lag within a time slice
 extern const Name T_min;     //!< Minimum time
@@ -467,6 +475,7 @@ extern const Name target;    //!< Connection parameters
 extern const Name target_thread; //!< Connection parameters
 extern const Name targets;       //!< Connection parameters
 extern const Name tau;           //!< Used by stdp_connection_facetshw_hom
+                                 //!< and rate models
 extern const Name tau_1;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name tau_2;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name tau_ahp;   //!< Specific to iaf_chxk_2008 neuron
@@ -551,6 +560,7 @@ extern const Name U_upper;
 extern const Name update;      //!< Command to execute the neuron (sli_neuron)
 extern const Name update_node; //!< Command to execute the neuron (sli_neuron)
 extern const Name use_wfr;     //!< Simulation-related
+extern const Name use_gid_in_filename; //!< use gid in the filename
 
 extern const Name V_act_NMDA; //!< specific to Hill & Tononi 2005
 extern const Name V_epsp;     //!< Specific to iaf_chs_2008 neuron

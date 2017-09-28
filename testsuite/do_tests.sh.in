@@ -353,6 +353,12 @@ run_test ()
     rm -f "${TEST_OUTFILE}" "${TEST_RETFILE}"
 }
 
+# Set environment variables.
+# The NEST_ variants of the global variables were set by
+# cmake during configuration.
+export PYTHONPATH=$NEST_PYTHONPATH:$PYTHONPATH
+export PATH=$NEST_PATH:$PATH
+
 # Gather some information about the host
 INFO_ARCH="$(uname -m)"
 INFO_HOME="$(/bin/sh -c 'echo ~')"
@@ -760,10 +766,11 @@ if test "x${TEST_PYNEST}" = xtrue ; then
         echo
 
         "${PYTHON}" "${PYTHON_HARNESS}" >> "${TEST_LOGFILE}"
-    
+
         PYNEST_TEST_TOTAL="$(  cat pynest_test_numbers.log | cut -d' ' -f1 )"
-        PYNEST_TEST_PASSED="$( cat pynest_test_numbers.log | cut -d' ' -f3 )"
-        PYNEST_TEST_FAILED="$( cat pynest_test_numbers.log | cut -d' ' -f2 )"
+        PYNEST_TEST_PASSED="$( cat pynest_test_numbers.log | cut -d' ' -f2 )"
+        PYNEST_TEST_SKIPPED="$( cat pynest_test_numbers.log | cut -d' ' -f3 )"
+        PYNEST_TEST_FAILED="$( cat pynest_test_numbers.log | cut -d' ' -f4 )"
 
         rm -f "pynest_test_numbers.log"
 

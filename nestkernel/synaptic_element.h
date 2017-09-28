@@ -172,7 +172,7 @@ public:
   int
   get_z_vacant() const
   {
-    return std::floor( z_ ) - z_connected_;
+    return std::max( std::floor( z_ ) - z_connected_, 0. );
   }
   /*
    * Retrieves the current number of synaptic elements bound to a synapse

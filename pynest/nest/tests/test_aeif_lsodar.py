@@ -352,6 +352,7 @@ class AEIFTestCase(unittest.TestCase):
                 recordables[syn_type])
             self.assert_pass_tolerance(rel_diff, di_tolerances_iaf)
 
+    @unittest.skipIf(not HAVE_GSL, 'GSL is not available')
     def test_iaf_dc_input(self):
         '''
         Test that the models behave as iaf_* if a == 0., b == 0. and

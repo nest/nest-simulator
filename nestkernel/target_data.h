@@ -165,7 +165,7 @@ private:
   unsigned int lcid_ : 27;
   // do not use just tid_ here as this variable is already declared in base class
   unsigned int target_tid_ : 10;
-  unsigned int syn_id_ : 6;
+  unsigned int syn_id_ : 8;
 
 public:
   TargetData();

@@ -255,7 +255,7 @@ nest::aeif_psc_delta::Parameters_::set( const DictionaryDatum& d )
 
   if ( tau_w <= 0 )
   {
-    throw BadProperty( "All time constants must be strictly positive." );
+    throw BadProperty( "tau_w must be strictly positive." );
   }
 
   if ( gsl_error_tol <= 0. )

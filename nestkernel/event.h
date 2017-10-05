@@ -575,6 +575,8 @@ public:
   /** Create empty request for use during simulation. */
   DataLoggingRequest();
 
+  DataLoggingRequest( const Time&, const std::vector< Name >& );
+
   /** Create event for given time interval, offset for interval start,
    *  and vector of recordables. */
   DataLoggingRequest( const Time&, const Time&, const std::vector< Name >& );
@@ -611,6 +613,14 @@ inline DataLoggingRequest::DataLoggingRequest()
   , recording_interval_( Time::neg_inf() )
   , recording_offset_( Time::ms( 0. ) )
   , record_from_( 0 )
+{
+}
+
+inline DataLoggingRequest::DataLoggingRequest( const Time& rec_int,
+  const std::vector< Name >& recs )
+  : Event()
+  , recording_interval_( rec_int )
+  , record_from_( &recs )
 {
 }
 

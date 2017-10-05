@@ -54,6 +54,7 @@ extern const Name accumulator;          //!< Recorder parameter
 extern const Name Act_h;                //!< Specific to Hodgkin Huxley models
 extern const Name Act_m;                //!< Specific to Hodgkin Huxley models
 extern const Name activity;             //!< Used in pulsepacket_generator
+extern const Name adaptive_threshold;	//!< Specific to srm_peceveski_alpha neuron
 extern const Name address;              //!< Node parameter
 extern const Name ahp_bug;              //!< Used in iaf_chxk_2008
 extern const Name allow_offgrid_spikes; //!< Used in spike_generator
@@ -151,6 +152,8 @@ extern const Name
   dU; //!< Unit increment of the utilization for a facilitating synapse [0...1]
       //!< (Tsodyks2_connection)
 
+extern const Name e_0_exc;		//!< Specific to srm_peceviski_alpha neuron
+extern const Name e_0_inh;		//!< Specific to srm_peceviski_alpha neuron
 extern const Name E_ahp;        //!< Specific to iaf_chxk_2008 neuron
 extern const Name E_ex;         //!< Excitatory reversal potential
 extern const Name E_in;         //!< Inhibitory reversal potential
@@ -274,6 +277,7 @@ extern const Name indegree;                //!< In FixedInDegreeBuilder
 extern const Name index_map;               //!< Parameters for MUSIC devices
 extern const Name individual_spike_trains; //!< Generator parameters
 extern const Name inh_conductance;         //!< Recorder parameter
+extern const Name input_conductance;	   //!< Specific to srm_peceveski_alpha neuron
 extern const Name init_flag; //!< Used by stdp_connection_facetshw_hom
 extern const Name instant_unblock_NMDA; //!< specific to Hill-Tononi
 extern const Name instantiations;       //!< model paramater
@@ -472,6 +476,8 @@ extern const Name
 extern const Name t_ref_tot; //!< Total refractory period, iaf_tum_2000
 extern const Name t_spike;   //!< Time of last spike
 extern const Name target;    //!< Connection parameters
+extern const Name target_rate;	   //!< Specific to srm_peceveski_alpha neuron
+extern const Name target_adaptation_speed;	   //!< Specific to srm_peceveski_alpha neuron
 extern const Name target_thread; //!< Connection parameters
 extern const Name targets;       //!< Connection parameters
 extern const Name tau;           //!< Used by stdp_connection_facetshw_hom
@@ -488,10 +494,12 @@ extern const Name tau_decay_GABA_A; //!< specific to Hill & Tononi 2005
 extern const Name tau_decay_GABA_B; //!< specific to Hill & Tononi 2005
 extern const Name tau_decay_NMDA;   //!< specific to Hill & Tononi 2005
 extern const Name tau_epsp;         //!< Specific to iaf_chs_2008 neuron
+extern const Name tau_exc; //!< Specific to srm_pecevski_alpha neuron
 extern const Name tau_eta; //!< Specific to population point process model
                            //!< (pp_pop_psc_delta)
 extern const Name
   tau_fac; //!< facilitation time constant (ms) (Tsodyks2_connection)
+extern const Name tau_inh; //!< Specific to srm_pecevski_alpha neuron
 extern const Name
   tau_lcm;               //!< Least common multiple of tau_m, tau_ex and tau_in
                          //!< (precise timing neurons (Brette 2007))

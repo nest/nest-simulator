@@ -1,7 +1,7 @@
 /*
-*  SpikeQueue.h
+*  spike_queue.h
 *
-*  This file is an extension of NEST.
+*  This file is part of SAM, an extension of NEST.
 *
 *  Copyright (C) 2017 D'Amato
 *
@@ -26,7 +26,7 @@
 
 #include <deque>
 
-namespace nest
+namespace sam
 {
 	/*
 	 * A simple queue that takes time step - amplitude pairs

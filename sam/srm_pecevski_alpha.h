@@ -1,7 +1,7 @@
 /*
 *  SrmPeceveskiAlpha.h
 *
-*  This file is an extension of NEST.
+*  This file is part of SAM, an extension of NEST.
 *
 *  Copyright (C) 2017 D'Amato
 *
@@ -28,16 +28,15 @@
 #include "nest.h"
 #include "event.h"
 #include "ring_buffer.h"
-#include "SpikeQueue.h"
+#include "spike_queue.h"
 #include "poisson_randomdev.h"
 #include "gamma_randomdev.h"
 #include "universal_data_logger.h"
 
 #include "archiving_node.h"
-#include "../nestkernel/SpikeQueue.h"
+#include "spike_queue.h"
 
-
-namespace nest
+namespace sam
 {
 
 	/**

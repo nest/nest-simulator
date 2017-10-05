@@ -1,7 +1,7 @@
 /*
 *  SrmPeceveskiAlpha.h
 *
-*  This file is an extension of NEST.
+*  This file is part of SAM, an extension of NEST.
 *
 *  Copyright (C) 2017 D'Amato
 *
@@ -31,34 +31,36 @@
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 #include "compose.hpp"
+#include "sam_names.h
 
 #include "param_utils.h"
 #include "../nestkernel/logging_manager.h"
 
 
-namespace nest
-{
-
+namespace nest {
 	/*
 	* Recordables map of SrmPecevskiAlpha.
 	*/
-	template < >
-	void nest::RecordablesMap<SrmPecevskiAlpha>::create()
+	template<>
+	void RecordablesMap<SrmPecevskiAlpha>::create()
 	{
-		// use standard names whereever you can for consistency!
-		insert_(names::V_m, &SrmPecevskiAlpha::get_V_m_);
-		insert_(names::E_sfa, &SrmPecevskiAlpha::get_E_sfa_);
+		// use standard names wherever you can for consistency!
+		insert_(nest::names::V_m, &SrmPecevskiAlpha::get_V_m_);
+		insert_(nest::names::E_sfa, &SrmPecevskiAlpha::get_E_sfa_);
 	}
 
 	/*
 	* Recordables map instance.
 	*/
 	nest::RecordablesMap<SrmPecevskiAlpha> SrmPecevskiAlpha::recordablesMap_;
+}
 
+namespace sam
+{
 	//
 	// SrmPecevskiAlpha::Parameters_ implementation.
 	//
-	SrmPecevskiAlpha::Parameters_::Parameters_(): 
+	SrmPecevskiAlpha::Parameters_::Parameters_():
 	epsilon_0_exc_(2.8),			// mv
 	epsilon_0_inh_(2.8),			// mv
 	tau_alpha_exc_(8.5),			// ms
@@ -81,42 +83,42 @@ namespace nest
 
 	void SrmPecevskiAlpha::Parameters_::get(DictionaryDatum& d) const
 	{
-		def< double >(d, names::dead_time, dead_time_);
-		def< double >(d, names::dead_time_random, dead_time_random_);
-		def< long >(d, names::dead_time_shape, dead_time_shape_);
-		def< double >(d, names::e_0_exc, epsilon_0_exc_);
-		def< double >(d, names::e_0_inh, epsilon_0_inh_);
-		def< double >(d, names::tau_exc, tau_alpha_exc_);
-		def< double >(d, names::tau_inh, tau_alpha_inh_);
-		def< bool >(d, names::with_reset, with_reset_);
-		def< double >(d, names::c_1, c_1_);
-		def< double >(d, names::c_2, c_2_);
-		def< double >(d, names::c_3, c_3_);
-		def< double >(d, names::I_e, I_e_);
-		def< double >(d, names::t_ref_remaining, t_ref_remaining_);
-		def< double >(d, names::input_conductance, input_conductance_);
-		def< double >(d, names::target_rate, target_rate_);
-		def< double >(d, names::target_adaptation_speed, target_adaptation_speed_);
+		def<double>(d, nest::names::dead_time, dead_time_);
+		def<double>(d, nest::names::dead_time_random, dead_time_random_);
+		def<long>(d, nest::names::dead_time_shape, dead_time_shape_);
+		def<double>(d, sam::names::e_0_exc, epsilon_0_exc_);
+		def<double>(d, sam::names::e_0_inh, epsilon_0_inh_);
+		def<double>(d, sam::names::tau_exc, tau_alpha_exc_);
+		def<double>(d, sam::names::tau_inh, tau_alpha_inh_);
+		def<bool>(d, nest::names::with_reset, with_reset_);
+		def<double>(d, nest::names::c_1, c_1_);
+		def<double>(d, nest::names::c_2, c_2_);
+		def<double>(d, nest::names::c_3, c_3_);
+		def<double>(d, nest::names::I_e, I_e_);
+		def<double>(d, nest::names::t_ref_remaining, t_ref_remaining_);
+		def<double>(d, sam::names::input_conductance, input_conductance_);
+		def<double>(d, sam::names::target_rate, target_rate_);
+		def<double>(d, sam::names::target_adaptation_speed, target_adaptation_speed_);
 	}
 
 	void SrmPecevskiAlpha::Parameters_::set(const DictionaryDatum& d)
 	{
-		updateValue< double >(d, names::dead_time, dead_time_);
-		updateValue< double >(d, names::dead_time_random, dead_time_random_);
-		updateValue< long >(d, names::dead_time_shape, dead_time_shape_);
-		updateValue< double >(d, names::e_0_exc, epsilon_0_exc_);
-		updateValue< double >(d, names::e_0_inh, epsilon_0_inh_);
-		updateValue< double >(d, names::tau_exc, tau_alpha_exc_);
-		updateValue< double >(d, names::tau_inh, tau_alpha_inh_);
-		updateValue< bool >(d, names::with_reset, with_reset_);
-		updateValue< double >(d, names::c_1, c_1_);
-		updateValue< double >(d, names::c_2, c_2_);
-		updateValue< double >(d, names::c_3, c_3_);
-		updateValue< double >(d, names::I_e, I_e_);
-		updateValue< double >(d, names::t_ref_remaining, t_ref_remaining_);
-		updateValue< double >(d, names::input_conductance, input_conductance_);
-		updateValue< double >(d, names::target_rate, target_rate_);
-		updateValue< double >(d, names::target_adaptation_speed, target_adaptation_speed_);
+		updateValue<double>(d, nest::names::dead_time, dead_time_);
+		updateValue<double>(d, nest::names::dead_time_random, dead_time_random_);
+		updateValue<long>(d, nest::names::dead_time_shape, dead_time_shape_);
+		updateValue<double>(d, sam::names::e_0_exc, epsilon_0_exc_);
+		updateValue<double>(d, sam::names::e_0_inh, epsilon_0_inh_);
+		updateValue<double>(d, sam::names::tau_exc, tau_alpha_exc_);
+		updateValue<double>(d, sam::names::tau_inh, tau_alpha_inh_);
+		updateValue<bool>(d, nest::names::with_reset, with_reset_);
+		updateValue<double>(d, nest::names::c_1, c_1_);
+		updateValue<double>(d, nest::names::c_2, c_2_);
+		updateValue<double>(d, nest::names::c_3, c_3_);
+		updateValue<double>(d, nest::names::I_e, I_e_);
+		updateValue<double>(d, nest::names::t_ref_remaining, t_ref_remaining_);
+		updateValue<double>(d, sam::names::input_conductance, input_conductance_);
+		updateValue<double>(d, sam::names::target_rate, target_rate_);
+		updateValue<double>(d, sam::names::target_adaptation_speed, target_adaptation_speed_);
 
 		if (dead_time_ < 0.0)
 		{
@@ -173,6 +175,7 @@ namespace nest
 		adaptive_threshold_(0.0),
 		r_(0)
 	{
+
 	}
 
 	/**
@@ -181,7 +184,7 @@ namespace nest
 	void SrmPecevskiAlpha::State_::get(DictionaryDatum& d, const Parameters_&) const
 	{
 		def<double>(d, nest::names::V_m, u_membrane_); // Membrane potential
-		def<double>(d, names::adaptive_threshold, adaptive_threshold_);
+		def<double>(d, sam::names::adaptive_threshold, adaptive_threshold_);
 	}
 
 	/**
@@ -190,7 +193,7 @@ namespace nest
 	void SrmPecevskiAlpha::State_::set(const DictionaryDatum& d, const Parameters_&)
 	{
 		updateValue<double>(d, nest::names::V_m, u_membrane_);
-		updateValue<double>(d, names::adaptive_threshold, adaptive_threshold_);
+		updateValue<double>(d, sam::names::adaptive_threshold, adaptive_threshold_);
 	}
 
 	//

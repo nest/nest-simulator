@@ -40,7 +40,9 @@ namespace librandom
 Name: rdevdict::exponential - exponential random deviate generator
 Description: Generates exponentially distributed random numbers.
 
-  p(x) = lambda exp(-lambda*x), x >= 0.
+  p(x) =  lambda exp(-lambda*x), x >= 0 if lambda > 0
+  p(x) = -lambda exp(-lambda*x), x <= 0 if lambda < 0
+
 
 Parameters:
  lambda - rate parameter (default: 1.0)

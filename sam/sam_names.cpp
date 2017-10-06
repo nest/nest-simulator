@@ -20,7 +20,7 @@
  *
  */
 
-#include "sam_names.h
+#include "sam_names.h"
 
 namespace nest
 {

@@ -1,5 +1,5 @@
 /*
- *  sammodule.h
+ *  sammodule-init.sli
  *
  *  This file is part of SAM, an extension of NEST.
  *
@@ -20,27 +20,9 @@
  *
  */
 
-#ifndef SAMMODULE_H
-#define SAMMODULE_H
+/*
+ * Initialization file for SamModule.
+ * Run automatically when SamModule is loaded.
+ */
 
-// Includes from sli:
-#include "slifunction.h"
-#include "slimodule.h"
-
-// Put your stuff into your own namespace.
-namespace sam
-{
-class SamModule : public SLIModule
-{
-public:
-  SamModule();
-  ~SamModule();
-
-  void init(SLIInterpreter*);
-
-  const std::string name(void) const;
-  const std::string commandstring(void) const;
-};
-} // namespace sam
-
-#endif
+M_DEBUG (sammodule-init) (Initializing SLI support for SamModule.) message

@@ -25,15 +25,15 @@
 #include "srm_pecevski_alpha.h"
 
 #include "dict.h"
+#include "exceptions.h"
 #include "integerdatum.h"
 #include "doubledatum.h"
 #include "dictutils.h"
 #include "numerics.h"
 #include "universal_data_logger_impl.h"
 #include "compose.hpp"
-#include "sam_names.h
+#include "sam_names.h"
 
-#include "param_utils.h"
 #include "../nestkernel/logging_manager.h"
 
 
@@ -42,21 +42,23 @@ namespace nest {
 	* Recordables map of SrmPecevskiAlpha.
 	*/
 	template<>
-	void RecordablesMap<SrmPecevskiAlpha>::create()
-	{
+	void RecordablesMap<sam::SrmPecevskiAlpha>::create() {
 		// use standard names wherever you can for consistency!
-		insert_(nest::names::V_m, &SrmPecevskiAlpha::get_V_m_);
-		insert_(nest::names::E_sfa, &SrmPecevskiAlpha::get_E_sfa_);
+		insert_(nest::names::V_m, &sam::SrmPecevskiAlpha::get_V_m_);
+		insert_(nest::names::E_sfa, &sam::SrmPecevskiAlpha::get_E_sfa_);
 	}
+}
+
+namespace sam
+{
+	using nest::BadProperty;
 
 	/*
 	* Recordables map instance.
 	*/
 	nest::RecordablesMap<SrmPecevskiAlpha> SrmPecevskiAlpha::recordablesMap_;
-}
 
-namespace sam
-{
+
 	//
 	// SrmPecevskiAlpha::Parameters_ implementation.
 	//
@@ -224,7 +226,7 @@ namespace sam
 	* Default Constructor.
 	*/
 	SrmPecevskiAlpha::SrmPecevskiAlpha()
-		: TracingNode(),
+		: Archiving_Node(),
 		P_(),
 		S_(),
 		B_(*this)
@@ -262,8 +264,6 @@ namespace sam
 		B_.inh_queue_.Clear();
 		B_.currents_.clear(); //!< includes resize
 		B_.logger_.reset(); //!< includes resize
-
-		init_traces(1);
 	}
 
 	/**
@@ -345,7 +345,7 @@ namespace sam
 				long spike_time = it->first;
 				double amplitude = it->second;
 
-				double this_psp = amplitude * kernel((now - spike_time).get_ms(), true);
+				double this_psp = amplitude * kernel((now - nest::Time::step(spike_time)).get_ms(), true);
 				if (this_psp <= 0)
 				{
 					this_psp = 0;
@@ -365,7 +365,7 @@ namespace sam
 				long spike_time = it->first;
 				double amplitude = it->second;
 
-				double this_psp = amplitude * kernel((now - spike_time).get_ms(), false);
+				double this_psp = amplitude * kernel((now - nest::Time::step(spike_time)).get_ms(), false);
 				if (this_psp <= 0)
 				{
 					this_psp = 0;
@@ -455,12 +455,9 @@ namespace sam
 						S_.adaptive_threshold_ += P_.target_adaptation_speed_;
 					} // S_.u_membrane_ = P_.V_reset_;
 				} // if (rate > 0.0)
-
-				set_trace(time.get_steps(), double(n_spikes) - spike_probability);
 			}
 			else // Neuron is within dead time
 			{
-				set_trace(time.get_steps(), 0.0);
 				--S_.r_;
 			}
 
@@ -488,13 +485,13 @@ namespace sam
 		{
 			// Add spike to the queue.
 			// Note: we need to compute the absolute number of steps since the beginning of simulation time.
-			B_.exc_queue_.AddSpike(e.get_rel_delivery_steps(0), e.get_weight() * e.get_multiplicity());
+			B_.exc_queue_.AddSpike(e.get_rel_delivery_steps(nest::Time::step(0)), e.get_weight() * e.get_multiplicity());
 		}
 		else if (e.get_rport() == 1)
 		{
 			// Add spike to the queue.
 			// Note: we need to compute the absolute number of steps since the beginning of simulation time.
-			B_.inh_queue_.AddSpike(e.get_rel_delivery_steps(0), e.get_weight() * e.get_multiplicity());
+			B_.inh_queue_.AddSpike(e.get_rel_delivery_steps(nest::Time::step(0)), e.get_weight() * e.get_multiplicity());
 		}
 		else
 		{

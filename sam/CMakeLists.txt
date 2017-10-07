@@ -22,14 +22,25 @@
 
 cmake_minimum_required( VERSION 2.8.12 )
 
-set(SHORT_NAME sam )
-set(MODULE_NAME ${SHORT_NAME}module )
-set(MODULE_SOURCES
+# 1) Name your module here, i.e. add later with -Dexternal-modules=my:
+set( SHORT_NAME sam )
+
+#    the complete module name is here:
+set( MODULE_NAME ${SHORT_NAME}module )
+
+# 2) Add all your sources here
+set( MODULE_SOURCES
         sammodule.h sammodule.cpp
         srm_pecevski_alpha.cpp srm_pecevski_alpha.h
         spike_queue.h
-        sam_names.h sam_names.cpp)
+        sam_names.h sam_names.cpp
+        )
+
+# 3) We require a header name like this:
 set( MODULE_HEADER ${MODULE_NAME}.h )
+# containing the class description of the class extending the SLIModule
+
+# 4) Specify your module version
 set( MODULE_VERSION_MAJOR 1 )
 set( MODULE_VERSION_MINOR 0 )
 set( MODULE_VERSION "${MODULE_VERSION_MAJOR}.${MODULE_VERSION_MINOR}" )

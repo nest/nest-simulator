@@ -34,16 +34,16 @@ namespace sam
 	 */
 	class SpikeQueue
 	{
-		typedef std::deque<std::pair<long, double>> BufferType;
+		typedef std::deque<std::pair<long, double> > BufferType;
 
 	public:
-		typedef BufferType::const_iterator IteratorType;
+		typedef BufferType::iterator IteratorType;
 
 		// Methods.
 		void AddSpike(const long timeStep, const double amplitude);
 		void Clear();
-		IteratorType Begin() const;
-		IteratorType End() const;
+		IteratorType Begin();
+		IteratorType End();
 		IteratorType EraseItemAt(IteratorType& it);
 
 	private:
@@ -60,14 +60,14 @@ namespace sam
 		buffer_.clear();
 	}
 
-	inline std::deque<std::pair<long, double>>::const_iterator SpikeQueue::Begin() const
+	inline SpikeQueue::IteratorType SpikeQueue::Begin()
 	{
-		return buffer_.cbegin();
+		return buffer_.begin();
 	}
 
-	inline std::deque<std::pair<long, double>>::const_iterator SpikeQueue::End() const
+	inline SpikeQueue::IteratorType SpikeQueue::End()
 	{
-		return buffer_.cend();
+		return buffer_.end();
 	}
 
 	inline SpikeQueue::IteratorType SpikeQueue::EraseItemAt(IteratorType& it)

@@ -34,11 +34,9 @@
 #include "universal_data_logger.h"
 
 #include "archiving_node.h"
-#include "spike_queue.h"
 
 namespace sam
 {
-
 	/**
 	* @brief Point process neuron with alpha-shaped PSPs based on Pecevski et al 2016[1].
 	*
@@ -151,7 +149,7 @@ namespace sam
 	* @author  D'Amato; (of poisson_dbl_exp_neuron) Kappel, Hsieh; (of pp_psc_delta) July 2009, Deger, Helias; January 2011, Zaytsev; May 2014, Setareh
 	* @see TracingNode
 	*/
-	class SrmPecevskiAlpha : public Archiving_Node
+	class SrmPecevskiAlpha : public nest::Archiving_Node
 	{
 	public:
 
@@ -281,8 +279,8 @@ namespace sam
 			nest::RingBuffer currents_;
 
 			/** Queues time-amplitude pairs for SRM kernel calculations */
-			nest::SpikeQueue exc_queue_;
-			nest::SpikeQueue inh_queue_;
+			SpikeQueue exc_queue_;
+			SpikeQueue inh_queue_;
 
 			//! Logger for all analog data
 			nest::UniversalDataLogger<SrmPecevskiAlpha> logger_;

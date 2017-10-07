@@ -27,7 +27,6 @@
 
 // include headers with your own stuff
 #include "sam_names.h"
-#include "spike_queue.h"
 #include "srm_pecevski_alpha.h"
 
 // Includes from nestkernel:
@@ -70,12 +69,12 @@ sam::SamModule::~SamModule()
 
 }
 
-const std::string sam::SamModule::name() const
+const std::string sam::SamModule::name(void) const
 {
   return std::string("SAM module - Pecevski 2016 SRM alpha model");
 }
 
-const std::string sam::SamModule::commandstring() const
+const std::string sam::SamModule::commandstring(void) const
 {
   // Instruct the interpreter to load sammodule-init.sli
   return std::string( "(sammodule-init) run" );

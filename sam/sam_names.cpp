@@ -22,9 +22,9 @@
 
 #include "sam_names.h"
 
-namespace nest
+namespace sam
 {
-    namespace sam
+    namespace names
     {
         const Name adaptive_threshold("adaptive_threshold");
         const Name e_0_exc("e_0_exc");

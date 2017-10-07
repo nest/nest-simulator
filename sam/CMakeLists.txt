@@ -31,7 +31,7 @@ set( MODULE_NAME ${SHORT_NAME}module )
 # 2) Add all your sources here
 set( MODULE_SOURCES
         sammodule.h sammodule.cpp
-        srm_pecevski_alpha.cpp srm_pecevski_alpha.h
+        srm_pecevski_alpha.h srm_pecevski_alpha.cpp
         spike_queue.h
         sam_names.h sam_names.cpp
         )

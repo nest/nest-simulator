@@ -37,12 +37,14 @@
 #include "../nestkernel/logging_manager.h"
 
 
-namespace nest {
+namespace nest
+{
 	/*
 	* Recordables map of SrmPecevskiAlpha.
 	*/
 	template<>
-	void RecordablesMap<sam::SrmPecevskiAlpha>::create() {
+	void RecordablesMap<sam::SrmPecevskiAlpha>::create()
+	{
 		// use standard names wherever you can for consistency!
 		insert_(nest::names::V_m, &sam::SrmPecevskiAlpha::get_V_m_);
 		insert_(nest::names::E_sfa, &sam::SrmPecevskiAlpha::get_E_sfa_);
@@ -67,7 +69,7 @@ namespace sam
 	epsilon_0_inh_(2.8),			// mv
 	tau_alpha_exc_(8.5),			// ms
 	tau_alpha_inh_(8.5),			// ms
-	input_conductance_(1),		
+	input_conductance_(1),
 	dead_time_(1.0),				// ms
 	dead_time_random_(false),		// ms
 	dead_time_shape_(1l),
@@ -80,7 +82,7 @@ namespace sam
 	target_rate_(10.0),				// Hz
 	target_adaptation_speed_(0.0)
 	{
-		
+
 	}
 
 	void SrmPecevskiAlpha::Parameters_::get(DictionaryDatum& d) const
@@ -195,7 +197,7 @@ namespace sam
 	void SrmPecevskiAlpha::State_::set(const DictionaryDatum& d, const Parameters_&)
 	{
 		updateValue<double>(d, nest::names::V_m, u_membrane_);
-		updateValue<double>(d, sam::names::adaptive_threshold, adaptive_threshold_);
+		updateValue<double>(d, names::adaptive_threshold, adaptive_threshold_);
 	}
 
 	//
@@ -330,10 +332,10 @@ namespace sam
 		}
 	}
 
-	/* 
+	/*
 	 * Sums up the PSPs from excitatory or inhibitory spikes.
 	 */
-	double SrmPecevskiAlpha::get_psp_sum(nest::Time const& now, const bool use_exc_psp)
+	double SrmPecevskiAlpha::get_psp_sum(const nest::Time& now, const bool use_exc_psp)
 	{
 		double psp = 0;
 
@@ -349,7 +351,7 @@ namespace sam
 				if (this_psp <= 0)
 				{
 					this_psp = 0;
-					
+
 					// Erase the spike, because we won't need it anymore.
 					it = B_.exc_queue_.EraseItemAt(it);
 				}
@@ -523,5 +525,4 @@ namespace sam
 	{
 		B_.logger_.handle(e);
 	}
-
 }

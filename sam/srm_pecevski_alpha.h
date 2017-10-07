@@ -22,8 +22,8 @@
 *  
 */
 
-#ifndef SRM_PECEVESKI_ALPHA_H
-#define SRM_PECEVESKI_ALPHA_H
+#ifndef SRM_PECEVSKI_ALPHA_H
+#define SRM_PECEVSKI_ALPHA_H
 
 #include "nest.h"
 #include "event.h"
@@ -41,9 +41,9 @@ namespace sam
 	* @brief Point process neuron with alpha-shaped PSPs based on Pecevski et al 2016[1].
 	*
 	* SrmPecevskiAlpha is a variant of the spike response model model with
-	* alpha-shaped PSP modified from vanilla alpha so that only the top half of the 
+	* alpha-shaped PSP modified from vanilla alpha so that only the top half of the
 	* alpha kernel is used as a response.
-	* 
+	*
 	* \f$\epsilon(t) \;=\; \epsilon_o \left( e^1 (\frac{t}{\tau_\alpha} + t_1)
 	* e^{-(\frac{t}{\tau_\alpha} + t_1)} - \frac{1}{2}\right)\f$
 	*
@@ -80,7 +80,7 @@ namespace sam
 	* increasing the firing probability of the neuron (see [6], parameters:
 	* \a target_rate, \a target_adaptation_speed).
 	*
-	* This model has been adapted from poisson_dbl_exp_neuron. The default parameters 
+	* This model has been adapted from poisson_dbl_exp_neuron. The default parameters
 	* are set to the mean values in [2], which have were matched to spike-train
 	* recordings.
 	*

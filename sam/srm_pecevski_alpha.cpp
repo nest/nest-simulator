@@ -322,14 +322,10 @@ namespace sam
 	double SrmPecevskiAlpha::kernel(const double time_since_spike, const bool use_exc_kernel = true) const
 	{
 		const double& t = time_since_spike;
-		if (use_exc_kernel)
-		{
-			return P_.epsilon_0_exc_ * ((t / P_.tau_alpha_exc_ + V_.t_1) * (std::exp(1 - (t / P_.tau_alpha_exc_ + V_.t_1))) - 0.5);
-		}
-		else
-		{
-			return P_.epsilon_0_inh_ * ((t / P_.tau_alpha_inh_ + V_.t_1) * (std::exp(1 - (t / P_.tau_alpha_inh_ + V_.t_1))) - 0.5);
-		}
+        const double& tau_alpha = use_exc_kernel ? P_.tau_alpha_exc_ : P_.tau_alpha_inh_;
+        const double& epsilon = use_exc_kernel ? P_.epsilon_0_exc_ : P_.epsilon_0_inh_;
+
+        return epsilon * ((t / tau_alpha + V_.t_1) * (std::exp(1 - (t / tau_alpha + V_.t_1))) - 0.5);
 	}
 
 	/*
@@ -338,49 +334,30 @@ namespace sam
 	double SrmPecevskiAlpha::get_psp_sum(const nest::Time& now, const bool use_exc_psp)
 	{
 		double psp = 0;
+        SpikeQueue& queue = use_exc_psp ? B_.exc_queue_ : B_.inh_queue_;
 
-		if (use_exc_psp)
-		{
-			for (SpikeQueue::IteratorType it = B_.exc_queue_.Begin(); it != B_.exc_queue_.End(); ++it)
-			{
-				// Get spike time and value.
-				long spike_time = it->first;
-				double amplitude = it->second;
+        for (SpikeQueue::IteratorType it = queue.Begin(); it != queue.End();)
+        {
+            // Get spike time and value.
+            long spike_time = it->first;
+            double amplitude = it->second;
 
-				double this_psp = amplitude * kernel((now - nest::Time::step(spike_time)).get_ms(), true);
-				if (this_psp <= 0)
-				{
-					this_psp = 0;
+            double delta = (now - nest::Time::step(spike_time)).get_ms();
+            double this_psp = amplitude * kernel(delta, use_exc_psp);
+            if (this_psp <= 0 && delta > 0) // We'll remove spikes when they aren't affecting membrane voltage.
+            {
+                // Erase the spike, because we won't need it anymore.
+                it = queue.EraseItemAt(it);
+            }
+            else
+            {
+                ++it;
+            }
 
-					// Erase the spike, because we won't need it anymore.
-					it = B_.exc_queue_.EraseItemAt(it);
-				}
+            psp += std::max(0., this_psp);
+        }
 
-				psp += this_psp;
-			}
-		}
-		else
-		{
-			for (SpikeQueue::IteratorType it = B_.inh_queue_.Begin(); it != B_.inh_queue_.End(); ++it)
-			{
-				// Get spike time and value.
-				long spike_time = it->first;
-				double amplitude = it->second;
-
-				double this_psp = amplitude * kernel((now - nest::Time::step(spike_time)).get_ms(), false);
-				if (this_psp <= 0)
-				{
-					this_psp = 0;
-
-					// Erase the spike, because we won't need it anymore.
-					it = B_.exc_queue_.EraseItemAt(it);
-				}
-
-				psp -= this_psp;
-			}
-		}
-
-		return psp;
+		return use_exc_psp? psp : -psp;
 	}
 
 
@@ -479,21 +456,17 @@ namespace sam
 	{
 		assert(e.get_delay() > 0);
 
-		// We must compute the arrival time of the incoming spike
-		// explicitly, since it depends on delay and offset within
-		// the update cycle.  The way it is done here works, but
-		// is clumsy and should be improved.
 		if (e.get_rport() == 0)
 		{
 			// Add spike to the queue.
 			// Note: we need to compute the absolute number of steps since the beginning of simulation time.
-			B_.exc_queue_.AddSpike(e.get_rel_delivery_steps(nest::Time::step(0)), e.get_weight() * e.get_multiplicity());
+			B_.exc_queue_.AddSpike(e.get_rel_delivery_steps(nest::Time()), e.get_weight() * e.get_multiplicity());
 		}
 		else if (e.get_rport() == 1)
 		{
 			// Add spike to the queue.
 			// Note: we need to compute the absolute number of steps since the beginning of simulation time.
-			B_.inh_queue_.AddSpike(e.get_rel_delivery_steps(nest::Time::step(0)), e.get_weight() * e.get_multiplicity());
+			B_.inh_queue_.AddSpike(e.get_rel_delivery_steps(nest::Time()), e.get_weight() * e.get_multiplicity());
 		}
 		else
 		{

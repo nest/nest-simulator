@@ -30,7 +30,6 @@
    and comparing traces.
 
    todo: - generalize for more models
-         - find way to compare property dictionaries
 */
 
 (unittest) run
@@ -63,11 +62,11 @@
    m params SetStatus
   } if
 
-  /iaf_neuron Create /n Set
+  /iaf_psc_alpha Create /n Set
   /voltmeter Create /vm Set
   m  n Connect
   vm n Connect
-  vm << /to_file true /to_memory true >> SetStatus
+  vm << /to_file false /to_memory true >> SetStatus
 
   1000 Simulate
 
@@ -83,7 +82,11 @@ Transpose arrayload pop
 /sdicts Set
 /volts Set
 
-% don't know how to compare dictionaries, so test only voltage traces now
-volts arrayload pop eq
+% test status dictionaries and voltage traces
+{
+  sdicts arrayload pop cva_d exch cva_d eq
+} assert_or_die
 
-assert_or_die
+{
+  volts arrayload pop eq
+} assert_or_die

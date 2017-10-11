@@ -20,29 +20,29 @@
  *
  */
 
+(unittest) run
+/unittest using
+
 ResetKernel
 
 % compare iaf_psc_delta and iaf_psc_delta_canon
 % neurons are driven by spike_generator firing at
 %
-%  1.0 2.0 3.0 4.0 5.0 10.5 11.75
+%  1.0 2.0 3.0 4.0 5.0 10.5 12.0
 %
 % both neurons fire at 4.0, spike at 5.0 arrives during
 % the refractory period
-%
-% The spike at 11.75 is off-grid and leads to slightly
-% different trajectories.
 
  
 <<
-  /E_L 49.0 neg     % resting membrane potential [mV]
+  /E_L 49.0 neg      % resting membrane potential [mV]
   /V_m 60.0 neg
-  /V_th 50.0 neg   % Threshold [mV] WRONG!!
-  /V_reset 60.0 neg   % Reset Potential [mV] WRONG!!
-  /C_m 200.0        % Capacity of the membrane [pF]
-  /tau_m 20.0       % Membrane time constant [ms]
+  /V_th 50.0 neg     % Threshold [mV] WRONG!!
+  /V_reset 60.0 neg  % Reset Potential [mV] WRONG!!
+  /C_m 200.0         % Capacity of the membrane [pF]
+  /tau_m 20.0        % Membrane time constant [ms]
  
- /t_ref 5.0     % duration of refractory period [ms]
+ /t_ref 5.0          % duration of refractory period [ms]
 >> /neuron_params Set
 
 
@@ -58,12 +58,12 @@ canon neuron_params SetStatus
 /spike_detector      Create /det Set
 
 
-gen << /precise_times false /spike_times [ 1.0 2.0 3.0 4.0 5.0 10.5 11.75 ] >> SetStatus
+gen << /precise_times false /spike_times [ 1.0 2.0 3.0 4.0 5.0 10.5 12.0 ] >> SetStatus
 
 
 /static_synapse
 << /delay  0.1       % synaptic delay, all connections [ms] 
-   /weight 2.5    % [pA], excitatory  
+   /weight 2.5       % [pA], excitatory  
 >> SetDefaults
 
 [ plain canon ]
@@ -81,4 +81,7 @@ gen << /precise_times false /spike_times [ 1.0 2.0 3.0 4.0 5.0 10.5 11.75 ] >> S
 %200.0 
 Simulate
 
-det [/events [/senders /times]] get cva Transpose
+{
+  det [/events [/senders /times]] get cva Transpose
+  [[2 4.1] [1 4.1]] eq
+} assert_or_die

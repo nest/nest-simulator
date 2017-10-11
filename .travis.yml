@@ -27,7 +27,7 @@ language: minimal
 sudo: required
 dist: trusty
 #https://blog.travis-ci.com/2017-06-19-trusty-updates-2017-Q2
-group: edge
+
 env:
   matrix:
     # We don't have to run a full matrix here, because most of the options are

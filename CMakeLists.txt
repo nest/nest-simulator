@@ -99,13 +99,6 @@ if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
 endif ()
 
 ################################################################################
-#################    Use absolute path for CMAKE_NEST_PREFIX   #################
-################################################################################
-
-# Required by the SLI interpreter.
-get_filename_component(CMAKE_NEST_PREFIX ${CMAKE_INSTALL_PREFIX} REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
-
-################################################################################
 ##################           Find utility programs            ##################
 ################################################################################
 

@@ -133,12 +133,23 @@ public:
   double get_K_value( double t );
 
   /**
-   * write the Kminus and triplet_Kminus values at t (in ms) to
-   * the provided locations.
+   * \fn void get_K_values( double t,
+   *   double& Kminus,
+   *   double& nearest_neighbor_Kminus,
+   *   double& triplet_Kminus )
+   * write the Kminus (eligibility trace for STDP),
+   * nearest_neighbour_Kminus (eligibility trace for nearest-neighbour STDP:
+   *   like Kminus, but increased to 1, rather than by 1, on a spike
+   *   occurrence),
+   * and triplet_Kminus
+   * values at t (in ms) to the provided locations.
    * @throws UnexpectedEvent
    */
 
-  void get_K_values( double t, double& Kminus, double& triplet_Kminus );
+  void get_K_values( double t,
+    double& Kminus,
+    double& nearest_neighbor_Kminus,
+    double& triplet_Kminus );
 
   /**
    * \fn double get_triplet_K_value(std::deque<histentry>::iterator &iter)

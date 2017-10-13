@@ -69,7 +69,7 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
         nest.Connect(self.dc, self.neuron)
 
         times = [self.t_start, self.t_next]
-        currents = [self.i_amp/4, self.i_amp/2]
+        currents = [self.i_amp / 4, self.i_amp / 2]
         params = {'amplitude_times': times, 'amplitude_values': currents,
                   'origin': self.t_origin, 'start': self.t_start,
                   'stop': self.t_stop}
@@ -164,10 +164,10 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
 
         # test to ensure current = 0 when device is inactive
         # and also to check current recorded when device is active
-        t_start_ind = numpy.where(t_ac == self.t_start+self.t_origin)[0][0]
-        t_stop_ind = numpy.where(t_ac == self.t_stop+self.t_origin)[0][0]
-        assert (numpy.all(i_ac[:t_start_ind]) == 0
-                and numpy.all(i_ac[t_stop_ind:]) == 0), \
+        t_start_ind = numpy.where(t_ac == self.t_start + self.t_origin)[0][0]
+        t_stop_ind = numpy.where(t_ac == self.t_stop + self.t_origin)[0][0]
+        assert (numpy.all(i_ac[:t_start_ind]) == 0 and
+                numpy.all(i_ac[t_stop_ind:]) == 0), \
             "Current not zero when AC generator inactive"
         self.assertAlmostEqual(numpy.amax(i_ac[t_start_ind:t_stop_ind]),
                                self.i_amp + self.i_off,
@@ -178,30 +178,31 @@ class CurrentRecordingGeneratorTestCase(unittest.TestCase):
                                msg=("Current not correct "
                                     "when AC generator active"))
 
-        t_start_ind = numpy.where(t_dc == self.t_start+self.t_origin)[0][0]
-        t_stop_ind = numpy.where(t_dc == self.t_stop+self.t_origin)[0][0]
-        assert (numpy.all(i_dc[:t_start_ind]) == 0
-                and numpy.all(i_dc[t_stop_ind:]) == 0), \
+        t_start_ind = numpy.where(t_dc == self.t_start + self.t_origin)[0][0]
+        t_stop_ind = numpy.where(t_dc == self.t_stop + self.t_origin)[0][0]
+        assert (numpy.all(i_dc[:t_start_ind]) == 0 and
+                numpy.all(i_dc[t_stop_ind:]) == 0), \
             "Current not zero when DC generator inactive"
         assert (numpy.allclose(i_dc[t_start_ind:t_stop_ind], self.i_amp)), \
             "Current not correct when DC generator active"
 
-        t_start_ind = numpy.where(t_step == self.t_start+self.t_origin)[0][0]
-        t_stop_ind = numpy.where(t_step == self.t_stop+self.t_origin)[0][0]
+        t_start_ind = numpy.where(t_step == self.t_start + self.t_origin)[0][0]
+        t_stop_ind = numpy.where(t_step == self.t_stop + self.t_origin)[0][0]
         t_next_ind = numpy.where(t_step == self.t_next)[0][0]
-        assert (numpy.all(i_step[:t_start_ind]) == 0
-                and numpy.all(i_step[t_stop_ind:]) == 0), \
+        assert (numpy.all(i_step[:t_start_ind]) == 0 and
+                numpy.all(i_step[t_stop_ind:]) == 0), \
             "Current not zero when step current generator inactive"
         assert (numpy.allclose(i_step[t_start_ind:t_next_ind],
-                               self.i_amp/4) and
+                               self.i_amp / 4) and
                 numpy.allclose(i_step[t_next_ind:t_stop_ind],
-                               self.i_amp/2)), \
+                               self.i_amp / 2)), \
             "Current not correct when step current generator active"
 
-        t_start_ind = numpy.where(t_noise == self.t_start+self.t_origin)[0][0]
-        t_stop_ind = numpy.where(t_noise == self.t_stop+self.t_origin)[0][0]
-        assert (numpy.all(i_noise[:t_start_ind]) == 0
-                and numpy.all(i_noise[t_stop_ind:]) == 0), \
+        t_start_ind = numpy.where(
+            t_noise == self.t_start + self.t_origin)[0][0]
+        t_stop_ind = numpy.where(t_noise == self.t_stop + self.t_origin)[0][0]
+        assert (numpy.all(i_noise[:t_start_ind]) == 0 and
+                numpy.all(i_noise[t_stop_ind:]) == 0), \
             "Current not zero when noise generator inactive"
         assert (numpy.allclose(i_noise[t_start_ind:t_stop_ind],
                                self.i_amp)), \
@@ -215,6 +216,7 @@ def suite():
 def run():
     runner = unittest.TextTestRunner(verbosity=2)
     runner.run(suite())
+
 
 if __name__ == "__main__":
     run()

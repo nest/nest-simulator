@@ -1,6 +1,7 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
-# test_tsodyks_depr_fac.py
+# receiver_script.py
 #
 # This file is part of NEST.
 #
@@ -19,26 +20,29 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-from scipy import *
-from matplotlib.pylab import *
-from matplotlib.mlab import *
+import sys
+import music
+import numpy
+from itertools import takewhile, dropwhile
 
+setup = music.Setup()
+stoptime = setup.config("stoptime")
+timestep = setup.config("timestep")
 
-def plot_spikes():
-    dt = 0.1  # time resolution
-    nbins = 1000
-    N = 500  # number of neurons
+comm = setup.comm
+rank = comm.Get_rank()
 
-    vm = load('voltmeter-0-0-4.dat')
+pin = setup.publishContInput("in")
+data = numpy.array([0.0, 0.0], dtype=numpy.double)
+pin.map(data, interpolate=False)
 
-    figure(1)
-    clf()
-    plot(vm[:, 0], vm[:, 1], 'r')
-    xlabel('time / ms')
-    ylabel('$V_m [mV]$')
-
-    savefig('test_tsodyks_depressing.png')
-
-
-plot_spikes()
-show()
+runtime = setup.runtime(timestep)
+mintime = timestep
+maxtime = stoptime+timestep
+start = dropwhile(lambda t: t < mintime, runtime)
+times = takewhile(lambda t: t < maxtime, start)
+for time in times:
+    val = data
+    sys.stdout.write(
+        "t={}\treceiver {}: received {}\n".
+        format(time, rank, val))

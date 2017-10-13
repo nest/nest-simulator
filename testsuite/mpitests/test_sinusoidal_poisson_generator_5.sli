@@ -30,12 +30,6 @@ Description:
    single spike train to all of its targets and sends spikes to spike
    detectors. Ensures that all targets receive identical spike trains.
 
-
-NOTE: THIS TEST DOES NOT WORK AUTOMATICALLY, DUE TO PROBLEMS WITH UNITTEST.
-      You can run it manually and see if the output is as expected with
-
-      mpirun -np 2 nest test_sinusoidal_poisson_generator_5.sli
-
 Author:  December 2012, May 2013, Plesser, based on test_poisson_generator.sli
 
 See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson_generator_nostat
@@ -103,16 +97,9 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson
 
   % get events, replace vectors with SLI arrays
   % keep only non-empty arrays; empty ones are from off-process parrots
-  (ALL LINES SHOULD BE EQUAL) ==  
-  sdets { [/events /times] get cva } Map { empty not exch ; } Select
-  { == } forall
-} exec
+  sdets { [/events /times] get cva } Map { empty not exch ; } Select 
 
-% code below leads to error in data collection routine
-
-{
   % expect array with two arrays of spike times
-  arrayload ; join
   all_equal
 }
-% distributed_collect_assert_or_die
+distributed_collect_assert_or_die

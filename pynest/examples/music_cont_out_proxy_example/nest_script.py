@@ -1,4 +1,7 @@
-# testsuite/CMakeLists.txt
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+# nest_script.py
 #
 # This file is part of NEST.
 #
@@ -17,27 +20,17 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-set( TESTSUBDIRS
-    selftests
-    unittests
-    regressiontests
-    mpitests
-    mpi_selftests
-    musictests )
+import nest
+import music
+import numpy
 
-# add sli tests
-add_subdirectory( selftests )
-add_subdirectory( unittests )
-add_subdirectory( regressiontests )
-add_subdirectory( mpi_selftests/fail )
-add_subdirectory( mpi_selftests/pass )
-add_subdirectory( mpitests )
-add_subdirectory( musictests )
+proxy = nest.Create('music_cont_out_proxy', 1)
+nest.SetStatus(proxy, {'port_name': 'out'})
+nest.SetStatus(proxy, {'record_from': ["V_m"], 'interval': 0.1})
 
-install( DIRECTORY ${TESTSUBDIRS}
-    DESTINATION ${CMAKE_INSTALL_DOCDIR}
-    )
+neuron_grp = nest.Create('iaf_cond_exp', 2)
+nest.SetStatus(proxy, {'targets': neuron_grp})
+nest.SetStatus([neuron_grp[0]], "I_e", 300.)
+nest.SetStatus([neuron_grp[1]], "I_e", 600.)
 
-install( PROGRAMS ${PROJECT_BINARY_DIR}/testsuite/do_tests.sh
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/extras
-    )
+nest.Simulate(200)

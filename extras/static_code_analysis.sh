@@ -54,6 +54,9 @@ PEP8_IGNORES="E121,E123,E126,E226,E24,E704"
 PEP8_IGNORES_EXAMPLES="${PEP8_IGNORES},E402"
 PEP8_IGNORES_TOPO_MANUAL="${PEP8_IGNORES_EXAMPLES},E265"
 
+# Constants
+typeset -i MAX_CPPCHECK_MSG_COUNT=10
+
 # Drop files that should not be checked (space-separated list).
 FILES_TO_IGNORE="libnestutil/compose.hpp libnestutil/hashtable-common.h libnestutil/libc_allocator_with_realloc.h libnestutil/sparseconfig.h libnestutil/sparsetable.h libnestutil/template_util.h libnestutil/type_traits.h librandom/knuthlfg.h librandom/knuthlfg.cpp"
 
@@ -165,9 +168,17 @@ for f in $FILE_NAMES; do
         tail -n +2 "${f_base}_cppcheck.txt" > "${f_base}_cppcheck.tmp" && mv "${f_base}_cppcheck.tmp" "${f_base}_cppcheck.txt"
         if [ -s "${f_base}_cppcheck.txt" ]; then
           cppcheck_failed=true
+          typeset -i msg_count=0
           cat ${f_base}_cppcheck.txt | while read line
           do
             print_msg "MSGBLD0155: " "[CPPC] $line"
+            if $RUNS_ON_TRAVIS; then
+              msg_count+=1
+              if [ ${msg_count} -ge ${MAX_CPPCHECK_MSG_COUNT} ]; then 
+                print_msg "MSGBLD0156: " "[CPPC] MAX_CPPCHECK_MSG_COUNT (${MAX_CPPCHECK_MSG_COUNT}) reached for file: $f"
+                break
+              fi
+            fi
           done
         fi
         rm ${f_base}_cppcheck.txt

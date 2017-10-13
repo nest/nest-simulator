@@ -361,28 +361,24 @@ ConnectionGeneratorModule::CGNext_cgFunction::execute( SLIInterpreter* i ) const
     getValue< ConnectionGeneratorDatum >( i->OStack.pick( 0 ) );
 
   const int arity = cgd->arity();
-  double* tmp_values = new double[ arity ];
-  std::vector< double > values( arity );
+  double* values = new double[ arity ];
 
   i->OStack.pop( 1 );
 
   int source_id;
   int target_id;
-  if ( cgd->next( source_id, target_id, tmp_values ) )
+  if ( cgd->next( source_id, target_id, values ) )
   {
-    for ( int m = 0; m < arity; ++m )
-    {
-      values[ m ] = tmp_values[ m ];
-    }
-    delete[] tmp_values;
-    cgd.unlock();
-
     i->OStack.push( source_id );
     i->OStack.push( target_id );
-    for ( size_t m = 0; m < values.size(); ++m )
+    for ( int n = 0; n < arity; ++n )
     {
-      i->OStack.push( values[ m ] );
+      i->OStack.push( values[ n ] );
     }
+
+    delete[] values;
+    cgd.unlock();
+
     i->OStack.push( true );
   }
   else

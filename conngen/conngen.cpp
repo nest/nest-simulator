@@ -37,6 +37,19 @@
 namespace nest
 {
 
+/**
+ * Low-level function of the ConnectionGenerator interface for
+ * connecting populations of neurons using a connection generator with
+ * a value set and custom synapse type.
+ *
+ * \param cg The ConnectionGenerator describing the connectivity
+ * \param source_gids A GIDCollection specifying the source population
+ * \param target_gids A GIDCollection specifying the target population
+ * \param params_map A Dictionary mapping the labels "weight" and
+ *        "delay" to their indices in the value set
+ * \param synmodel_name The name of the synapse model to use for the
+ *        connections
+ */    
 void
 cg_connect( ConnectionGeneratorDatum& cg,
   const GIDCollection& source_gids,
@@ -246,6 +259,7 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks,
  * \param left The leftmost element of the range
  * \param step The step size for the binary search
  * \param gids The std::vector<long> of gids to search in
+ * \returns the right border of the range
  */
 index
 cg_get_right_border( index left, size_t step, const GIDCollection& gids )

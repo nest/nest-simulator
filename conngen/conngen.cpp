@@ -96,6 +96,16 @@ cg_connect( ConnectionGeneratorDatum& cg,
 
     const size_t w_idx = ( *params_map )[ names::weight ];
     const size_t d_idx = ( *params_map )[ names::delay ];
+
+    bool w_idx_is_0_or_1 = (w_idx == 0) or (w_idx == 1);
+    bool d_idx_is_0_or_1 = (d_idx == 0) or (d_idx == 1);
+    bool indices_differ = (w_idx != d_idx);
+    if (not (w_idx_is_0_or_1 and d_idx_is_0_or_1 and indices_differ))
+    {
+      throw BadProperty(
+        "w_idx and d_idx have to differ and be either 0 or 1." );
+    }
+    
     std::vector< double > params( 2 );
 
     // connect source to target with weight and delay

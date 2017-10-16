@@ -97,29 +97,31 @@ before_install:
 
   # Install libneurosim
   - git clone https://github.com/INCF/libneurosim.git
-  - cd libneurosim
+  - pushd libneurosim
   - ./autogen.sh
   - ./configure --prefix=$HOME/.cache/libneurosim.install --with-mpi
   - make
   - make install
-  - cd $HOME/build
+  - popd
 
   # Install csa
   - git clone https://github.com/INCF/csa.git
-  - cd csa
+  - pushd csa
   - ./autogen.sh
   - ./configure --with-libneurosim=$HOME/.cache/libneurosim.install --prefix=$HOME/.cache/csa.install
-  - cd $HOME/build
+  - make
+  - make install
+  - popd
 
   # Install MUSIC
   - sudo apt-get install -y python-mpi4py
   - git clone https://github.com/INCF/MUSIC.git music
-  - cd music
+  - pushd music
   - ./autogen.sh
   - ./configure --prefix=$HOME/.cache/music.install
   - make
   - make install
-  - cd $HOME/build
+  - popd
 
   # Change directory back to the NEST source code directory.
   - cd $SOURCEDIR

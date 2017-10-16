@@ -48,13 +48,13 @@ HAVE_LIBNEUROSIM = nest.sli_pop()
 @unittest.skipIf(not HAVE_CSA, 'Python CSA package is not available')
 @unittest.skipIf(
     not HAVE_LIBNEUROSIM,
-    'NEST was built without the libneurosim library'
+    'NEST was built without support for libneurosim'
 )
 class CSATestCase(unittest.TestCase):
     """CSA tests"""
 
     def test_CSA_OneToOne_tuples(self):
-        """One-to-one connectivity with id tuples"""
+        """One-to-one connectivity using CGConnect with id tuples"""
 
         nest.ResetKernel()
 
@@ -84,7 +84,7 @@ class CSATestCase(unittest.TestCase):
 
     @unittest.skipIf(not HAVE_NUMPY, 'NumPy package is not available')
     def test_CSA_OneToOne_intvectors(self):
-        """One-to-one connectivity with id intvectors"""
+        """One-to-one connectivity using CGConnect with id intvectors"""
 
         nest.ResetKernel()
 
@@ -113,7 +113,7 @@ class CSATestCase(unittest.TestCase):
             self.assertEqual(len(conns), 0)
 
     def test_CSA_OneToOne_params(self):
-        """One-to-one connectivity with paramters"""
+        """One-to-one connectivity using CGConnect with paramters"""
 
         nest.ResetKernel()
 
@@ -146,7 +146,7 @@ class CSATestCase(unittest.TestCase):
             self.assertEqual(len(conns), 0)
 
     def test_CSA_OneToOne_synmodel(self):
-        """One-to-one connectivity with synmodel"""
+        """One-to-one connectivity using CGConnect with synmodel"""
 
         nest.ResetKernel()
 

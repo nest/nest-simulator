@@ -53,15 +53,10 @@ public:
   const std::string name() const;
   const std::string commandstring() const;
 
-  class CGConnect_cg_i_i_D_lFunction : public SLIFunction
+  class CGConnect_cg_g_g_D_lFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } cgconnect_cg_i_i_D_lfunction;
-
-  class CGConnect_cg_iV_iV_D_lFunction : public SLIFunction
-  {
-    void execute( SLIInterpreter* ) const;
-  } cgconnect_cg_iV_iV_D_lfunction;
+  } cgconnect_cg_g_g_D_lfunction;
 
   class CGParse_sFunction : public SLIFunction
   {
@@ -78,10 +73,10 @@ public:
     void execute( SLIInterpreter* ) const;
   } cgselectimplementation_s_sfunction;
 
-  class CGSetMask_cg_iV_iVFunction : public SLIFunction
+  class CGSetMask_cg_g_gFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } cgsetmask_cg_iV_iVfunction;
+  } cgsetmask_cg_g_gfunction;
 
   class CGStart_cgFunction : public SLIFunction
   {

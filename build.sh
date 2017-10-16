@@ -233,6 +233,7 @@ echo "+               R U N   N E S T   T E S T S U I T E                       
 echo "+ + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + + +"
 echo "MSGBLD0290: Running make installcheck."
 export PYTHONPATH=$HOME/.cache/csa.install/lib/python2.7/site-packages:$PYTHONPATH
+export LD_LIBRARY_PATH=$HOME/.cache/csa.install/lib:$LD_LIBRARY_PATH
 make installcheck
 echo "MSGBLD0300: Make installcheck completed."
 

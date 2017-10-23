@@ -234,7 +234,7 @@ namespace nest
      * Propagate the neuron's state by dt.
      * @returns time to emit spike.
      */
-    bool is_spike_(const double);
+    double is_spike_(const double);
 
     // ---------------------------------------------------------------- 
 

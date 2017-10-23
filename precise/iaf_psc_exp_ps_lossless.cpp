@@ -353,11 +353,10 @@ void nest::iaf_psc_exp_ps_lossless::update(const Time & origin,
 	 interval. 
       */
 
-      V_.bisection_step_ = V_.h_ms_;
-
-      if (is_spike_(V_.h_ms_))
+      const double spike_time_max = is_spike_( V_.h_ms_ );
+      if ( not numerics::is_nan( spike_time_max ) )
       {
-        emit_spike_(origin, lag, 0, V_.bisection_step_);
+        emit_spike_(origin, lag, 0, spike_time_max);
       }
 	
     }
@@ -382,11 +381,11 @@ void nest::iaf_psc_exp_ps_lossless::update(const Time & origin,
       	// this must be done before adding the input, since
       	// interpolation requires continuity
 
-        V_.bisection_step_ = ministep;
+        const double spike_time_max = is_spike_( ministep );
        
-      	if (is_spike_(ministep))
+      	if ( not numerics::is_nan( spike_time_max ) )
       	{
-      	  emit_spike_(origin, lag, V_.h_ms_-last_offset, V_.bisection_step_);
+      	  emit_spike_(origin, lag, V_.h_ms_-last_offset, spike_time_max );
       	}
           
       	// handle event
@@ -419,11 +418,11 @@ void nest::iaf_psc_exp_ps_lossless::update(const Time & origin,
       // of interval
       if ( last_offset > 0 )  // not at end of step, do remainder
       {
-        V_.bisection_step_ = last_offset;
+        const double spike_time_max = is_spike_( last_offset );
 	      propagate_(last_offset);
-	      if (is_spike_(last_offset))
+	      if ( not numerics::is_nan( spike_time_max ) )
           {	 
-          	emit_spike_(origin, lag, V_.h_ms_-last_offset, V_.bisection_step_);
+          	emit_spike_(origin, lag, V_.h_ms_-last_offset, spike_time_max);
           }
       }
     }  // else
@@ -569,7 +568,7 @@ inline double nest::iaf_psc_exp_ps_lossless::bisectioning_(const double dt) cons
   return root;
 }
 
-inline bool nest::iaf_psc_exp_ps_lossless::is_spike_(const double dt)
+double nest::iaf_psc_exp_ps_lossless::is_spike_(const double dt)
 {
   const double I_0   = V_.I_syn_ex_before_ + V_.I_syn_in_before_;
   const double V_0   = V_.y2_before_; 
@@ -583,24 +582,23 @@ inline bool nest::iaf_psc_exp_ps_lossless::is_spike_(const double dt)
   if((V_0 <= (((I_0 + P_.I_e_)*(V_.b1_ * exp_tau_m + V_.b2_* exp_tau_s) + V_.b3_*(exp_tau_m - exp_tau_s))/( V_.b4_ * exp_tau_s)))
       and  (V_0 < g))     
     {
-      return false;
+      return numerics::nan;
     }
   
     //spike, S_1, V >= g_h,I_e(I)
   else if (V_0 >= g )  
     {
-      return true;
+      return dt;
     }
   //no-spike, NS_2, V < b(I)
   else if(V_0 < (V_.c1_ * P_.I_e_ + V_.c2_ * I_0 + V_.c3_* std::pow(I_0, V_.c4_) * std::pow((V_.c5_ - P_.I_e_), V_.c6_)))
     { 
-      return false;
+      return numerics::nan;
     }
   else
   //missed spike detected, S_2
     {
-      V_.bisection_step_ = (V_.a1_ / P_.tau_m_ * P_.tau_ex_ ) * std::log ( V_.b1_ * I_0 / (V_.a2_ * P_.I_e_ - V_.a1_ * I_0 - V_.a4_ * V_0 ) );
-      return true;
+      return (V_.a1_ / P_.tau_m_ * P_.tau_ex_ ) * std::log ( V_.b1_ * I_0 / (V_.a2_ * P_.I_e_ - V_.a1_ * I_0 - V_.a4_ * V_0 ) );
     }
 }
 

@@ -724,10 +724,10 @@ nest::MPIManager::communicate_Alltoall( unsigned int* send_buffer,
 {
   MPI_Alltoall( send_buffer,
     send_recv_count,
-    MPI::UNSIGNED,
+    MPI_UNSIGNED,
     recv_buffer,
     send_recv_count,
-    MPI::UNSIGNED,
+    MPI_UNSIGNED,
     comm );
 }
 
@@ -738,10 +738,10 @@ nest::MPIManager::communicate_secondary_events_Alltoall(
 {
   MPI_Alltoall( send_buffer,
     chunk_size_secondary_events_,
-    MPI::UNSIGNED,
+    MPI_UNSIGNED,
     recv_buffer,
     chunk_size_secondary_events_,
-    MPI::UNSIGNED,
+    MPI_UNSIGNED,
     comm );
 }
 

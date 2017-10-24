@@ -96,7 +96,7 @@ target_link_libraries( sli_readline sli_lib nestutil ${READLINE_LIBRARIES} )
 
 # add the executable
 add_executable( sli puresli.cc )
-target_link_libraries( sli sli_lib sli_readline )
+target_link_libraries( sli sli_lib sli_readline ${GSL_LIBRARIES} )
 
 target_include_directories( sli PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil

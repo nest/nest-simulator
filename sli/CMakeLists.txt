@@ -122,3 +122,7 @@ install( TARGETS sli_readline sli_lib sli
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
+
+FILTER_HEADERS("${sli_sources}" install_headers )
+install( FILES ${install_headers} gnureadline.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/nest)

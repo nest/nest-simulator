@@ -17,13 +17,17 @@
 # You should have received a copy of the GNU General Public License
 # along with NEST.  If not, see <http://www.gnu.org/licenses/>.
 
-add_executable( run_all_cpptests run_all.cpp )
+if ( with-boost )
+  include_directories( ${BOOST_INCLUDE_DIR} )
 
-target_link_libraries( run_all_cpptests ${BOOST_LIBRARIES} )
+  add_executable( run_all_cpptests run_all.cpp )
 
-target_include_directories( run_all_cpptests PRIVATE
+  target_link_libraries( run_all_cpptests ${BOOST_LIBRARIES} )
+
+  target_include_directories( run_all_cpptests PRIVATE
     ${PROJECT_SOURCE_DIR}/libnestutil
     )
 
-install( TARGETS run_all_cpptests RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} )
-add_test( NAME cpptests COMMAND ${CMAKE_INSTALL_FULL_BINDIR}/run_all_cpptests )
+  install( TARGETS run_all_cpptests RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} )
+  add_test( NAME cpptests COMMAND ${CMAKE_INSTALL_FULL_BINDIR}/run_all_cpptests )
+endif ()

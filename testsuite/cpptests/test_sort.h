@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TEST_STOPWATCH_H
-#define TEST_STOPWATCH_H
+#ifndef TEST_SORT_H
+#define TEST_SORT_H
 
 #define BOOST_TEST_DYN_LINK
 #include <boost/test/unit_test.hpp>
@@ -79,4 +79,4 @@ BOOST_AUTO_TEST_SUITE_END()
 
 } // of namespace nest
 
-#endif /* TEST_STOPWATCH_H */
+#endif /* TEST_SORT_H */

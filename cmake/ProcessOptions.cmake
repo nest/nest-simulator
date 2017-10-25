@@ -520,7 +520,6 @@ function( NEST_PROCESS_WITH_BOOST )
     endif ()
 
     find_package( Boost COMPONENTS unit_test_framework )
-    include_directories( ${Boost_INCLUDE_DIR} )
     if ( Boost_FOUND )
       # export found variables to parent scope
       set( HAVE_BOOST ON PARENT_SCOPE )

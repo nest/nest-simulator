@@ -39,7 +39,8 @@ namespace librandom
 /*BeginDocumentation
 Name: rdevdict::exponential - exponential random deviate generator
 Description: Generates exponentially distributed random numbers.
-Negative values of lambda are allowed and generate a distribution of negative numbers.
+Negative values of lambda are allowed and generate a distribution
+of negative numbers.
 
 For lambda > 0:
   p(x) = lambda exp(-lambda*x), for x >= 0

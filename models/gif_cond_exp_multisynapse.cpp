@@ -131,7 +131,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::Parameters_()
   , t_ref_( 4.0 )      // ms
   , c_m_( 80.0 )       // pF
   , tau_stc_()         // ms
-  , q_stc_()           // nA
+  , q_stc_()           // pA
   , tau_sfa_()         // ms
   , q_sfa_()           // mV
   , tau_syn_( 1, 2.0 ) // ms
@@ -143,8 +143,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::Parameters_()
 }
 
 nest::gif_cond_exp_multisynapse::State_::State_( const Parameters_& p )
-  : y_( STATE_VEC_SIZE, 0.0 )
-  , size_neuron_state_( 0 )
+  : y_( STATE_VEC_SIZE + NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR, 0.0 )
   , I_stim_( 0.0 )
   , sfa_( 0.0 )
   , stc_( 0.0 )
@@ -174,7 +173,6 @@ nest::gif_cond_exp_multisynapse::State_::State_( const State_& s )
   }
 
   y_ = s.y_;
-  size_neuron_state_ = s.size_neuron_state_;
 }
 
 nest::gif_cond_exp_multisynapse::State_&
@@ -196,7 +194,6 @@ nest::gif_cond_exp_multisynapse::State_&
   }
 
   y_ = s.y_;
-  size_neuron_state_ = s.size_neuron_state_;
 
   I_stim_ = s.I_stim_;
   sfa_ = s.sfa_;
@@ -220,7 +217,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::V_reset, V_reset_ );
   def< double >( d, names::Delta_V, Delta_V_ );
   def< double >( d, names::V_T_star, V_T_star_ );
-  def< double >( d, names::lambda_0, lambda_0_ * 1000.0 ); // convert to 1/s
+  def< double >( d, names::lambda_0, lambda_0_);
   def< double >( d, names::t_ref, t_ref_ );
   def< size_t >( d, names::n_receptors, n_receptors() );
   ArrayDatum E_rev_ad( E_rev_ );
@@ -255,10 +252,7 @@ nest::gif_cond_exp_multisynapse::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::Delta_V, Delta_V_ );
   updateValue< double >( d, names::V_T_star, V_T_star_ );
 
-  if ( updateValue< double >( d, names::lambda_0, lambda_0_ ) )
-  {
-    lambda_0_ /= 1000.0; // convert to 1/ms
-  }
+  updateValue< double >( d, names::lambda_0, lambda_0_ );
 
   updateValue< double >( d, names::t_ref, t_ref_ );
   updateValue< double >( d, names::gsl_error_tol, gsl_error_tol );
@@ -377,8 +371,7 @@ nest::gif_cond_exp_multisynapse::State_::get( DictionaryDatum& d,
   std::vector< double >* g = new std::vector< double >();
 
   for ( size_t i = 0;
-        i < ( ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS )
-              / ( State_::STATE_VEC_SIZE - 1 ) );
+        i < ( y_.size() - State_::NUMBER_OF_FIXED_STATES_ELEMENTS );
         ++i )
   {
     g->push_back(
@@ -393,6 +386,12 @@ nest::gif_cond_exp_multisynapse::State_::set( const DictionaryDatum& d,
   const Parameters_& p )
 {
   updateValue< double >( d, names::V_m, y_[ V_M ] );
+  y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
+                + State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * p.n_receptors(),
+                0.0 );
+
+  sfa_elems_.resize( p.tau_sfa_.size(), 0.0 );
+  stc_elems_.resize( p.tau_stc_.size(), 0.0 );
 }
 
 nest::gif_cond_exp_multisynapse::Buffers_::Buffers_(
@@ -475,7 +474,10 @@ nest::gif_cond_exp_multisynapse::init_state_( const Node& proto )
 void
 nest::gif_cond_exp_multisynapse::init_buffers_()
 {
-  B_.spikes_.clear();   // includes resize
+  B_.spikes_.resize( P_.n_receptors() );
+  for (size_t i =0; i < P_.n_receptors(); ++i)
+    B_.spikes_[i].clear();   // includes resize
+
   B_.currents_.clear(); //!< includes resize
   B_.logger_.reset();   //!< includes resize
   Archiving_Node::clear_history();
@@ -521,15 +523,6 @@ nest::gif_cond_exp_multisynapse::init_buffers_()
 void
 nest::gif_cond_exp_multisynapse::calibrate()
 {
-
-  B_.spikes_.resize( P_.n_receptors() );
-
-  S_.y_.resize( State_::NUMBER_OF_FIXED_STATES_ELEMENTS
-      + ( State_::NUMBER_OF_STATES_ELEMENTS_PER_RECEPTOR * P_.n_receptors() ),
-    0.0 );
-
-  S_.size_neuron_state_ = S_.y_.size();
-
   B_.sys_.dimension = S_.y_.size();
 
   B_.logger_.init();
@@ -549,13 +542,11 @@ nest::gif_cond_exp_multisynapse::calibrate()
   {
     V_.P_sfa_[ i ] = std::exp( -h / P_.tau_sfa_[ i ] );
   }
-  S_.sfa_elems_.resize( P_.tau_sfa_.size(), 0.0 );
 
   for ( size_t i = 0; i < P_.tau_stc_.size(); i++ )
   {
     V_.P_stc_[ i ] = std::exp( -h / P_.tau_stc_[ i ] );
   }
-  S_.stc_elems_.resize( P_.tau_stc_.size(), 0.0 );
 }
 
 /* ----------------------------------------------------------------

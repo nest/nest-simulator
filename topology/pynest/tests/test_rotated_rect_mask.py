@@ -37,8 +37,8 @@ class RotatedRectangularMask(unittest.TestCase):
         """Test rotated rectangular mask.
 
             We have:
-                lower_left: [-1., -0.5]
-                upper_right: [1., 0.5]
+                lower_left:  [-1., -0.5]
+                upper_right: [ 1.,  0.5]
 
             So, if we have:
 
@@ -49,11 +49,12 @@ class RotatedRectangularMask(unittest.TestCase):
             5  10 15  20  25
             6  11 16  21  26
 
-            and have azimuth_angle = 0, we should get gids 9, 14, 19.
+            and have azimuth_angle = 0, we should get gids 9, 14, 19 if we
+            select GIDs by mask.
             If we have azimuth_angle = 90, we should get gids 13, 14, 15.
         """
 
-        # First test 2D layer
+        # Test 2D layer
         layer = topo.CreateLayer({'rows': 5, 'columns': 5,
                                   'extent': [5., 5.],
                                   'elements': 'iaf_psc_alpha'})
@@ -212,16 +213,17 @@ class RotatedRectangularMask(unittest.TestCase):
         self.assertEqual(sorted_gid_list, [35, 40, 45, 59, 64, 69, 83, 88, 93])
 
         # Test two symmetric masks in x and z direction. One with no polar
-        # anglecand one with a polar angle of 90 degrees. As the masks are
+        # angle and one with a polar angle of 90 degrees. As the masks are
         # symmetrical in  x and z, a polar angle of 90 degrees should give the
         # same GIDs as the one without a polar angle.
         maskdict = {'lower_left': [-1., -0.5, -1.],
                     'upper_right': [1., 0.5, 1.]}
         mask = topo.CreateMask('box', maskdict)
         gid_list = topo.SelectNodesByMask(layer, cntr, mask)
-        sorted_gid_list = sorted(gid_list)
+        sorted_gid_list_1 = sorted(gid_list)
 
-        self.assertEqual(sorted_gid_list, [38, 39, 40, 63, 64, 65, 88, 89, 90])
+        self.assertEqual(sorted_gid_list_1,
+                         [38, 39, 40, 63, 64, 65, 88, 89, 90])
 
         maskdict = {'lower_left': [-1., -0.5, -1.],
                     'upper_right': [1., 0.5, 1.],
@@ -231,6 +233,8 @@ class RotatedRectangularMask(unittest.TestCase):
         sorted_gid_list = sorted(gid_list)
 
         self.assertEqual(sorted_gid_list, [38, 39, 40, 63, 64, 65, 88, 89, 90])
+
+        self.assertEqual(sorted_gid_list_1, sorted_gid_list)
 
     def test_RotatedBoxMaskByAzimuthAndPolarAngle(self):
         """Test rotated box mask with azimuth and polar angle."""
@@ -312,7 +316,7 @@ class RotatedRectangularMask(unittest.TestCase):
         self.assertEqual(gid_list, (10, 11, 35, 36,))
 
         # Test that we get the correct GIDs with a azimuth rotation angle of 45
-        # degrees when the masj does not contain origo
+        # degrees when the mask does not contain origo.
         maskdict = {'lower_left': [-2.5, -1.0, 0.5],
                     'upper_right': [-0.5, -0.5, 2.5],
                     'azimuth_angle': 45.0}
@@ -322,7 +326,7 @@ class RotatedRectangularMask(unittest.TestCase):
         self.assertEqual(gid_list, (10, 11, 40, 41,))
 
         # Test that we get the correct GIDs with a polar rotation angle of 45
-        # degrees when the mask does not contain origo
+        # degrees when the mask does not contain origo.
         maskdict = {'lower_left': [-1.5, -2.5, 0.5],
                     'upper_right': [-1.0, -0.5, 2.5],
                     'polar_angle': 45.0}
@@ -334,9 +338,9 @@ class RotatedRectangularMask(unittest.TestCase):
     def test_ConnectWithRotatedRectangleMask(self):
         """Test connection with rotated rectangle mask.
 
-            We have: lower_left = [-1.5, -0.5]
-                 upper_right = [1.5, 0.5]
-                 azimuth_angle = 45 degrees
+            We have: lower_left  = [-1.5, -0.5]
+                     upper_right = [ 1.5,  0.5]
+                     azimuth_angle = 45 degrees
 
             Each source node should then connect to:
                 - The node in the same position in target layer

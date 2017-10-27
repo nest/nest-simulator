@@ -57,11 +57,10 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson
   /n Set
 
   % set resolution and total/local number of threads
-  0
   <<
-  /resolution  0.1
-  /total_num_virtual_procs total_vps
-  >> SetStatus
+    /resolution  0.1
+    /total_num_virtual_procs total_vps
+  >> SetKernelStatus
 
   /sinusoidal_poisson_generator 
   << 
@@ -77,8 +76,12 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson
     Table def  
 
   /gen /sinusoidal_poisson_generator Create def
+  
+  gen ==
+  parrots ==
 
-  [gen] parrots Connect
+  parrots { gen exch Connect } forall
+  
   [parrots sdets] { Connect } ScanThread
 
   10. Simulate
@@ -97,9 +100,14 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson
 
   % get events, replace vectors with SLI arrays
   % keep only non-empty arrays; empty ones are from off-process parrots
-  sdets { [/events /times] get cva } Map { empty not exch ; } Select 
+  sdets { { [/events /times] get cva } Map { empty not exch ; } Select } forall 
+
+  %sdets { [/events /times] get cva } Map { empty not exch ; } Select dup /spike_times Set
+  { == } forall
 
   % expect array with two arrays of spike times
   all_equal
+  %spike_times all_equal
+  ==
 }
 distributed_collect_assert_or_die

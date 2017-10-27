@@ -60,11 +60,11 @@ skip_if_not_threaded
   M_WARNING setverbosity
 
   % set resolution, total/local number of threads, rng seed
-  0 << 
-      /resolution  dt 
-      /total_num_virtual_procs num_vps
-      /grng_seed 123
-  >> SetStatus
+  << 
+    /resolution  dt 
+    /total_num_virtual_procs num_vps
+    /grng_seed 123
+  >> SetKernelStatus
 
   (Creating the network.) =  
 
@@ -74,8 +74,7 @@ skip_if_not_threaded
   /receptor_max tau_syns length def
   /iaf_psc_alpha_multisynapse << /tau_syn tau_syns >> SetDefaults
 
-  /iaf_psc_alpha_multisynapse [ num_neurons ] LayoutNetwork
-  GetGlobalLeaves /population Set
+  /population /iaf_psc_alpha_multisynapse num_neurons Create def
 
   (Connecting neurons.) =
   population population connspec

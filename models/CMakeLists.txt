@@ -28,7 +28,7 @@ set( models_sources
     aeif_psc_exp.h aeif_psc_exp.cpp
     amat2_psc_exp.h amat2_psc_exp.cpp
     bernoulli_connection.h
-    binary_neuron.h binary_neuron_impl.h
+    binary_neuron.h
     cont_delay_connection.h cont_delay_connection_impl.h
     correlation_detector.h correlation_detector.cpp
     correlomatrix_detector.h correlomatrix_detector.cpp
@@ -68,6 +68,7 @@ set( models_sources
     modelsmodule.h modelsmodule.cpp
     multimeter.h multimeter.cpp
     music_cont_in_proxy.h music_cont_in_proxy.cpp
+    music_cont_out_proxy.h music_cont_out_proxy.cpp
     music_event_in_proxy.h music_event_in_proxy.cpp
     music_event_out_proxy.h music_event_out_proxy.cpp
     music_message_in_proxy.h music_message_in_proxy.cpp

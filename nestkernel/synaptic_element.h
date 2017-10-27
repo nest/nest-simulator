@@ -243,7 +243,10 @@ public:
   void
   decay_z_vacant()
   {
-    z_ -= get_z_vacant() * tau_vacant_;
+    if ( get_z_vacant() > 0 )
+    {
+      z_ -= get_z_vacant() * tau_vacant_;
+    }
   }
 
   bool

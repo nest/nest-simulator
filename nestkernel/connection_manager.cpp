@@ -134,7 +134,7 @@ void
 nest::ConnectionManager::set_status( const DictionaryDatum& d )
 {
   long init_cap = init_conn_capacity_;
-  if ( updateValue< long >( d, "init_connector_capacity", init_cap ) )
+  if ( updateValue< long >( d, names::init_connector_capacity, init_cap ) )
   {
     if ( init_cap < CONFIG_CONNECTOR_CUTOFF )
     {
@@ -147,7 +147,7 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
   }
 
   long large_lim = large_conn_limit_;
-  if ( updateValue< long >( d, "large_connector_limit", large_lim ) )
+  if ( updateValue< long >( d, names::large_connector_limit, large_lim ) )
   {
     if ( large_lim < CONFIG_CONNECTOR_CUTOFF )
     {
@@ -160,7 +160,7 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
   }
 
   double large_growth = large_conn_growth_;
-  if ( updateValue< double >( d, "large_connector_growth", large_growth ) )
+  if ( updateValue< double >( d, names::large_connector_growth, large_growth ) )
   {
     if ( large_growth <= 1.0 )
     {
@@ -193,9 +193,9 @@ nest::ConnectionManager::get_status( DictionaryDatum& d )
   def< double >(
     d, names::max_delay, Time( Time::step( max_delay_ ) ).get_ms() );
 
-  def< long >( d, "init_connector_capacity", init_conn_capacity_ );
-  def< long >( d, "large_connector_limit", large_conn_limit_ );
-  def< double >( d, "large_connector_growth", large_conn_growth_ );
+  def< long >( d, names::init_connector_capacity, init_conn_capacity_ );
+  def< long >( d, names::large_connector_limit, large_conn_limit_ );
+  def< double >( d, names::large_connector_growth, large_conn_growth_ );
 
   size_t n = get_num_connections();
   def< long >( d, names::num_connections, n );

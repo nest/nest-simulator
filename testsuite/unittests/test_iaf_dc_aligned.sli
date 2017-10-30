@@ -121,10 +121,10 @@ SeeAlso: testsuite::test_iaf_dc, testsuite::test_iaf_dc_aligned_delay, testsuite
   
  ResetKernel
 
-  0 << 
+  << 
          /local_num_threads 1 
          /resolution h
-       >> SetStatus
+       >> SetKernelStatus
 
   /iaf_neuron Create /neuron Set
 

@@ -28,7 +28,7 @@ the basis of the network used in
 
 Brunel N, Dynamics of Sparsely Connected Networks of Excitatory and
 Inhibitory Spiking Neurons, Journal of Computational Neuroscience 8,
-183–208 (2000).
+183-208 (2000).
 
 In contrast to brunel-alpha-nest.py, this variant uses NumPy to draw
 the random connections instead of NEST's builtin connection routines.
@@ -38,6 +38,10 @@ allow for querying the number of created synapses. Using spike
 detectors the average firing rates of the neurons in the populations
 are established. The building as well as the simulation time of the
 network are recorded.
+
+This example uses the function DataConnect, which is deprecated. A deprecation
+warning is therefore issued. For details about deprecated functions, see
+documentation.
 '''
 
 '''
@@ -273,8 +277,19 @@ running from 1,...,NE for the excitatory neurons and from
 
 numpy.random.seed(1234)
 
-sources_ex = numpy.random.random_integers(1, NE, (N_neurons, CE))
-sources_in = numpy.random.random_integers(NE + 1, N_neurons, (N_neurons, CI))
+sources_ex = numpy.random.randint(1, NE + 1, (N_neurons, CE))
+sources_in = numpy.random.randint(NE + 1, N_neurons + 1, (N_neurons, CI))
+
+# Find the targets corresponding to each source GIDs
+target_list = [[] for _ in range(N_neurons)]
+
+for tgid in range(1, N_neurons + 1):
+    ex_tsrc = sources_ex[tgid-1, :]
+    in_tsrc = sources_in[tgid-1, :]
+    for sgid in ex_tsrc:
+        target_list[sgid-1].append(tgid*1.0)
+    for sgid in in_tsrc:
+        target_list[sgid-1].append(tgid*1.0)
 
 '''
 We now iterate over all neuron IDs, and connect the neuron to the
@@ -282,11 +297,25 @@ sources from our array. The first loop connects the excitatory neurons
 and the second loop the inhibitory neurons.
 '''
 
-for n, gid in enumerate(nodes_ex + nodes_in):
-    nest.Connect(list(sources_ex[n, :]), [gid], syn_spec="excitatory")
+for n in range(NE):
+    weight_list = [J_ex for _ in range(len(target_list[n]))]
+    delay_list = [delay for _ in range(len(target_list[n]))]
+    params = [{'target': target_list[n],
+               'weight': weight_list,
+               'delay': delay_list}]
+    # Using DataConnect is a work-around until NEST 3.0 is released. It will
+    # issue a deprecation warning
+    nest.DataConnect([n + 1], params, model='excitatory')
 
-for n, gid in enumerate(nodes_ex + nodes_in):
-    nest.Connect(list(sources_in[n, :]), [gid], syn_spec="inhibitory")
+for n in range(NE, N_neurons):
+    weight_list = [J_in for _ in range(len(target_list[n]))]
+    delay_list = [delay for _ in range(len(target_list[n]))]
+    params = [{'target': target_list[n],
+               'weight': weight_list,
+               'delay': delay_list}]
+    # Using DataConnect is a work-around until NEST 3.0 is released. It will
+    # issue a deprecation warning
+    nest.DataConnect([n + 1], params, model='inhibitory')
 
 '''
 Storage of the time point after the buildup of the network in a

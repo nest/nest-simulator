@@ -231,20 +231,21 @@ pop  % remove argument to failing command above
 
 % --------------------------------------------------
 
-{
-  << >> begin
-  (Illegal join with different metadata) M_PROGRESS message
-  ResetKernel
-
-  << /rows 1 /columns 1 /elements /iaf_psc_alpha >> CreateLayer
-  << /rows 1 /columns 1 /elements /iaf_psc_alpha >> CreateLayer
-  join 
-  
-  end
-} fail_or_die
-
-% remove arguments of failed commands
-pop pop
+% TODO480 (using CreateLayer from Topology)
+%{
+%  << >> begin
+%  (Illegal join with different metadata) M_PROGRESS message
+%  ResetKernel
+%
+%  << /rows 1 /columns 1 /elements /iaf_psc_alpha >> CreateLayer
+%  << /rows 1 /columns 1 /elements /iaf_psc_alpha >> CreateLayer
+%  join 
+%  
+%  end
+%} fail_or_die
+%
+%% remove arguments of failed commands
+%pop pop
 
 % --------------------------------------------------
 
@@ -478,7 +479,7 @@ pop pop
 
   /iaf_psc_alpha 10 Create [1 10 2] Take
   /iaf_psc_exp 15 Create pop
-  /aeif_cond_alpha 30 Create
+  /iaf_psc_delta 30 Create
   join
   10 Take /gc Set
   
@@ -552,6 +553,45 @@ pop pop
 
 {
   << >> begin
+  (Test select all) M_PROGRESS message
+  ResetKernel
+  
+  /iaf_psc_alpha 10 Create
+  { pop true } Select
+  [ 10 ] Range eq
+}
+assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Test select none) M_PROGRESS message
+  ResetKernel
+  
+  /iaf_psc_alpha 10 Create
+  { 50 gt } Select
+  [ ] eq
+}
+assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Test select some) M_PROGRESS message
+  ResetKernel
+  
+  /iaf_psc_alpha 10 Create
+  { 2 mod 0 eq } Select
+  [ 2 4 6 8 10 ] eq
+}
+assert_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
   (Element membership) M_PROGRESS message
   ResetKernel
 
@@ -562,6 +602,8 @@ pop pop
   
   gc 1 InCollection
   gc 15 InCollection and
+  gc 20 InCollection and
+  gc 21 InCollection not and
   gc 40 InCollection not and
 
   end
@@ -644,6 +686,39 @@ pop pop
 
   end
 } pass_or_die
+
+% --------------------------------------------------
+
+{
+  << >> begin
+  (Check connect with sliced composite with step>1) M_PROGRESS message
+  ResetKernel
+
+  /a /iaf_psc_alpha 100 Create def
+  /b /iaf_psc_alpha 100 Create def
+  /c /iaf_psc_exp 20 Create def
+  /m b c join def
+  /m_step m [ 6 117 6 ] Take def
+  m_step ==
+  m_step m_step /all_to_all Connect
+
+  << >> GetConnections length
+  m_step size dup mul eq
+
+  ResetKernel
+
+  /a /iaf_psc_alpha 100 Create def
+  /b /iaf_psc_alpha 100 Create def
+  /c /iaf_psc_exp 20 Create def
+  /m b c join def
+  /m_step m [ 6 117 6 ] Take def
+  m_step m_step /one_to_one Connect
+
+  << >> GetConnections length
+  m_step size eq and
+
+  end
+} assert_or_die
 
 % --------------------------------------------------
 

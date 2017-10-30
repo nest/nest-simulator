@@ -69,7 +69,7 @@ command SetAcceptableLatency.
 Examples:
 /music_event_in_proxy Create /meip Set
 meip << /music_channel 2 >> SetStatus
-/iaf_neuron Create /n Set
+/iaf_psc_alpha Create /n Set
 (event_in) 0.2 SetAcceptableLatency
 meip n Connect
 
@@ -99,7 +99,7 @@ public:
   has_proxies() const
   {
     return false;
-  } // a copy on each process
+  }
   bool
   one_node_per_process() const
   {

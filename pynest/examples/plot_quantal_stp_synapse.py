@@ -61,6 +61,7 @@ nest.SetStatus(source, {'spike_times':
                         [30., 60., 90., 120., 150., 180., 210., 240., 270.,
                          300., 330., 360., 390., 900.]})
 
+parrot = nest.Create('parrot_neuron')
 neuron = nest.Create("iaf_psc_exp", 2)
 
 nest.Connect(source, parrot)
@@ -99,12 +100,15 @@ nest.Simulate(.1)  # flush the last voltmeter events from the queue
 vm = numpy.array(nest.GetStatus([voltmeter[1]], 'events')[0]['V_m'])
 vm_reference = numpy.array(nest.GetStatus([voltmeter[0]], 'events')[0]['V_m'])
 
+t_tot = int(t_tot)
+t_plot = int(t_plot)
+
 vm.shape = (n_trials, t_tot)
 vm_reference.shape = (n_trials, t_tot)
 
-vm_mean = numpy.array([numpy.mean(vm[:, i]) for i in range(int(t_tot))])
+vm_mean = numpy.array([numpy.mean(vm[:, i]) for i in range(t_tot)])
 vm_ref_mean = numpy.array([numpy.mean(vm_reference[:, i])
-                           for i in range(int(t_tot))])
+                           for i in range(t_tot)])
 
 for t in range(n_trials):
     pylab.plot(vm[t][:t_plot], color='gray', lw=0.5)

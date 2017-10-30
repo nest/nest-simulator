@@ -48,7 +48,6 @@
 namespace nest
 {
 class Model;
-class Subnet;
 class Archiving_Node;
 
 
@@ -75,7 +74,6 @@ class Archiving_Node;
  * to direcly subclass from base class Node.
  *
  * @see class Event
- * @see Subnet
  * @ingroup user_interface
  */
 
@@ -85,9 +83,7 @@ class Archiving_Node;
    frozen     booltype    - Whether the node is updated during simulation
    global_id  integertype - The global id of the node (cf. local_id)
    local      booltype    - Whether the node is available on the local process
-   local_id   integertype - The id of the node in the current  (cf. global_id)
    model      literaltype - The model type the node was created from
-   parent     integertype - The global id of the parent subnet
    state      integertype - The state of the node (see the help on elementstates
                             for details)
    thread     integertype - The id of the thread the node is assigned to (valid
@@ -100,7 +96,6 @@ class Archiving_Node;
 class Node
 {
   friend class NodeManager;
-  friend class Subnet;
   friend class proxynode;
   friend class Synapse;
   friend class Model;
@@ -133,24 +128,6 @@ public:
   virtual bool has_proxies() const;
 
   /**
-   * Returns true for potential global receivers (e.g. spike_detector) and false
-   * otherwise
-   */
-  virtual bool potential_global_receiver() const;
-
-  /**
-   * Sets has_proxies_ member variable (to switch to global spike detection
-   * mode)
-   */
-  virtual void set_has_proxies( const bool );
-
-  /**
-   * Sets local_receiver_ member variable (to switch to global spike detection
-   * mode)
-   */
-  virtual void set_local_receiver( const bool );
-
-  /**
    * Returns true if the node only receives events from nodes/devices
    * on the same thread.
    */
@@ -171,9 +148,7 @@ public:
    * used to discriminate between different types of nodes, when adding
    * new nodes to the network.
    */
-
   virtual bool is_off_grid() const;
-
 
   /**
    * Returns true if the node is a proxy node. This is implemented because
@@ -183,7 +158,7 @@ public:
 
   /**
    * Return class name.
-   * Returns name of node model (e.g. "iaf_neuron") as string.
+   * Returns name of node model (e.g. "iaf_psc_alpha") as string.
    * This name is identical to the name that is used to identify
    * the model in the interpreter's model dictionary.
    */
@@ -193,42 +168,20 @@ public:
    * Return global Network ID.
    * Returns the global network ID of the Node.
    * Each node has a unique network ID which can be used to access
-   * the Node comparable to a pointer. By definition, the top-level
-   * subnet has ID=0.
+   * the Node comparable to a pointer.
+   *
+   * The smallest valid GID is 1.
    */
   index get_gid() const;
 
   /**
-   * Return local node ID.
-   * Returns the ID of the node within the parent subject.
-   * Local IDs start with 0.
-   */
-  index get_lid() const;
-
-  /**
-   * Return the index to the node in the node array of the parent subnet.
-   * @note Since subnets no longer store non-local nodes, LIDs are no
-   *       longer identical to these indices.
-   */
-  index get_subnet_index() const;
-
-  /**
    * Return model ID of the node.
    * Returns the model ID of the model for this node.
-   * Model IDs start with 0, Subnet always having ID 0.
+   * Model IDs start with 0.
    * @note The model ID is not stored in the model prototype instance.
    *       It is only set when actual nodes are created from a prototype.
    */
   int get_model_id() const;
-
-  /**
-   * Return pointer to parent subnet.
-   * Each node is member of a subnet whose pointer can be accessed
-   * through this function.
-   * This pointer must be non NULL for all Nodes which are not the
-   * top-level subnet. Only the top-level subnet returns NULL.
-   */
-  Subnet* get_parent() const;
 
   /**
    * Prints out one line of the tree view of the network.
@@ -299,11 +252,21 @@ public:
   virtual void calibrate() = 0;
 
   /**
+   * Cleanup node after Run. Override this function if a node needs to
+   * "wrap up" things after a call to Run, i.e., before
+   * SimulationManager::run() returns. Typical use-cases are devices
+   * that need to flush buffers.
+   */
+  virtual void
+  post_run_cleanup()
+  {
+  }
+
+  /**
    * Finalize node.
    * Override this function if a node needs to "wrap up" things after a
-   * simulation, i.e., before Network::get_network().resume() returns. Typical
-   * use-cases are devices that need to flush buffers or disconnect from
-   * external files or pipes.
+   * full simulation, i.e., a cycle of Prepare, Run, Cleanup. Typical
+   * use-cases are devices that need to close files.
    */
   virtual void
   finalize()
@@ -434,6 +397,12 @@ public:
   virtual port handles_test_event( DSSpikeEvent&, rport receptor_type );
   virtual port handles_test_event( DSCurrentEvent&, rport receptor_type );
   virtual port handles_test_event( GapJunctionEvent&, rport receptor_type );
+  virtual port handles_test_event( InstantaneousRateConnectionEvent&,
+    rport receptor_type );
+  virtual port handles_test_event( DiffusionConnectionEvent&,
+    rport receptor_type );
+  virtual port handles_test_event( DelayedRateConnectionEvent&,
+    rport receptor_type );
 
   /**
    * Required to check, if source neuron may send a SecondaryEvent.
@@ -443,6 +412,33 @@ public:
    * @throws IllegalConnection
    */
   virtual void sends_secondary_event( GapJunctionEvent& ge );
+
+  /**
+   * Required to check, if source neuron may send a SecondaryEvent.
+   * This base class implementation throws IllegalConnection
+   * and needs to be overwritten in the derived class.
+   * @ingroup event_interface
+   * @throws IllegalConnection
+   */
+  virtual void sends_secondary_event( InstantaneousRateConnectionEvent& re );
+
+  /**
+   * Required to check, if source neuron may send a SecondaryEvent.
+   * This base class implementation throws IllegalConnection
+   * and needs to be overwritten in the derived class.
+   * @ingroup event_interface
+   * @throws IllegalConnection
+   */
+  virtual void sends_secondary_event( DiffusionConnectionEvent& de );
+
+  /**
+   * Required to check, if source neuron may send a SecondaryEvent.
+   * This base class implementation throws IllegalConnection
+   * and needs to be overwritten in the derived class.
+   * @ingroup event_interface
+   * @throws IllegalConnection
+   */
+  virtual void sends_secondary_event( DelayedRateConnectionEvent& re );
 
   /**
    * Register a STDP connection
@@ -533,6 +529,30 @@ public:
    * @throws UnexpectedEvent
    */
   virtual void handle( GapJunctionEvent& e );
+
+  /**
+   * Handler for rate neuron events.
+   * @see handle(thread, InstantaneousRateConnectionEvent&)
+   * @ingroup event_interface
+   * @throws UnexpectedEvent
+   */
+  virtual void handle( InstantaneousRateConnectionEvent& e );
+
+  /**
+   * Handler for rate neuron events.
+   * @see handle(thread, InstantaneousRateConnectionEvent&)
+   * @ingroup event_interface
+   * @throws UnexpectedEvent
+   */
+  virtual void handle( DiffusionConnectionEvent& e );
+
+  /**
+   * Handler for delay rate neuron events.
+   * @see handle(thread, DelayedRateConnectionEvent&)
+   * @ingroup event_interface
+   * @throws UnexpectedEvent
+   */
+  virtual void handle( DelayedRateConnectionEvent& e );
 
   /**
    * @defgroup SP_functions Structural Plasticity in NEST.
@@ -691,11 +711,6 @@ public:
   void set_model_id( int );
 
   /**
-   * @returns true if node is a subnet.
-   */
-  virtual bool is_subnet() const;
-
-  /**
    * @returns type of signal this node produces
    * used in check_connection to only connect neurons which send / receive
    * compatible information
@@ -765,40 +780,8 @@ public:
     buffers_initialized_ = initialized;
   }
 
-  /**
-   * Return the number of thread siblings in SiblingContainer.
-   *
-   * This method is meaningful only for SiblingContainer, for which it
-   * returns the number of siblings in the container.
-   * For all other models (including Subnet), it returns 0, which is not
-   * wrong. By defining the method in this way, we avoid many dynamic casts.
-   */
-  virtual size_t
-  num_thread_siblings() const
-  {
-    return 0;
-  }
-
-  /**
-   * Return the specified member of a SiblingContainer.
-   *
-   * This method is meaningful only for SiblingContainer, for which it
-   * returns the pointer to the indexed node in the container.
-   * For all other models (including Subnet), it returns a null pointer
-   * and throws and assertion.By defining the method in this way, we avoid
-   * many dynamic casts.
-   */
-  virtual Node* get_thread_sibling( index ) const
-  {
-    assert( false );
-    return 0;
-  }
-
 private:
-  void set_lid_( index );      //!< Set local id, relative to the parent subnet
-  void set_parent_( Subnet* ); //!< Set pointer to parent subnet.
-  void set_gid_( index );      //!< Set global node id
-  void set_subnet_index_( index ); //!< Index into node array in subnet
+  void set_gid_( index ); //!< Set global node id
 
   /** Return a new dictionary datum .
    *
@@ -850,9 +833,12 @@ protected:
   const ConcreteNode& downcast( const Node& );
 
 private:
-  index gid_;          //!< Global element id (within network).
-  index lid_;          //!< Local element id (within parent).
-  index subnet_index_; //!< Index of node in parent's node array
+  /**
+   * Global Element ID (GID).
+   *
+   * The GID is unique within the network. The smallest valid GID is 1.
+   */
+  index gid_;
 
   /**
    * Local id of this node in the thread-local vector of nodes.
@@ -866,7 +852,6 @@ private:
    * @see get_model_id(), set_model_id()
    */
   int model_id_;
-  Subnet* parent_;           //!< Pointer to parent.
   thread thread_;            //!< thread node is assigned to
   thread vp_;                //!< virtual process node is assigned to
   bool frozen_;              //!< node shall not be updated if true
@@ -899,12 +884,6 @@ Node::has_proxies() const
 }
 
 inline bool
-Node::potential_global_receiver() const
-{
-  return false;
-}
-
-inline bool
 Node::local_receiver() const
 {
   return false;
@@ -929,39 +908,15 @@ Node::is_proxy() const
 }
 
 inline index
-Node::get_lid() const
-{
-  return lid_;
-}
-
-inline index
 Node::get_gid() const
 {
   return gid_;
-}
-
-inline index
-Node::get_subnet_index() const
-{
-  return subnet_index_;
 }
 
 inline void
 Node::set_gid_( index i )
 {
   gid_ = i;
-}
-
-inline void
-Node::set_lid_( index i )
-{
-  lid_ = i;
-}
-
-inline void
-Node::set_subnet_index_( index i )
-{
-  subnet_index_ = i;
 }
 
 inline int
@@ -980,18 +935,6 @@ inline bool
 Node::is_model_prototype() const
 {
   return vp_ == invalid_thread_;
-}
-
-inline Subnet*
-Node::get_parent() const
-{
-  return parent_;
-}
-
-inline void
-Node::set_parent_( Subnet* c )
-{
-  parent_ = c;
 }
 
 inline void

@@ -37,11 +37,11 @@ SeeAlso:
 (unittest) run
 /unittest using
 
-is_threaded not { exit_test_gracefully } if
+skip_if_not_threaded
 
 M_ERROR setverbosity
 
-0 << /total_num_virtual_procs 4 >> SetStatus
+<< /total_num_virtual_procs 4 >> SetKernelStatus
 
 % Create source and target neurons
 /iaf_neuron 20 Create

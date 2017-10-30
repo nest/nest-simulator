@@ -47,7 +47,7 @@ FirstVersion: August 2008
 { 
   ResetKernel
 
-  0 << /overwrite_files true >> SetStatus
+  << /overwrite_files true >> SetKernelStatus
 
   /nruns Set
   /protocol Set

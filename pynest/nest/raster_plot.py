@@ -24,6 +24,7 @@
 import nest
 import numpy
 import pylab
+from pylab import show, savefig
 
 
 def extract_events(data, time=None, sel=None):
@@ -156,7 +157,7 @@ def from_file_numpy(fname, **kwargs):
     return from_data(data, **kwargs)
 
 
-def from_device(detec, plot_lid=False, **kwargs):
+def from_device(detec, **kwargs):
     """
     Plot raster from a spike detector.
 
@@ -164,8 +165,6 @@ def from_device(detec, plot_lid=False, **kwargs):
     ----------
     detec : TYPE
         Description
-    plot_lid : bool, optional
-        Whether to convert from local IDs
     kwargs:
         Parameters passed to _make_plot
 
@@ -182,9 +181,6 @@ def from_device(detec, plot_lid=False, **kwargs):
 
         if not len(ts):
             raise nest.NESTError("No events recorded!")
-
-        if plot_lid:
-            gids = [nest.GetLID([x]) for x in gids]
 
         if "title" not in kwargs:
             kwargs["title"] = "Raster plot from device '%i'" % detec[0]
@@ -347,16 +343,3 @@ def _histogram(a, bins=10, bin_range=None, normed=False):
         return 1.0 / (a.size * db) * n, bins
     else:
         return n, bins
-
-
-def show():
-    """
-    Show figures.
-
-    Call pylab.show() to show all figures and enter the GUI main loop.
-    Python will block until all figure windows are closed again.
-    You should call this function only once at the end of a script.
-
-    See also: http://matplotlib.sourceforge.net/faq/howto_faq.html#use-show
-    """
-    pylab.show()

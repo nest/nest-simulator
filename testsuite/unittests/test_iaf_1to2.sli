@@ -76,10 +76,10 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_al
 
 
 
-      0 << 
+      << 
       /local_num_threads 1   
       /resolution h
-      >> SetStatus
+      >> SetKernelStatus
 
       /iaf_psc_alpha Create /neuron1 Set
       neuron1 << /I_e 1450.0 >> SetStatus

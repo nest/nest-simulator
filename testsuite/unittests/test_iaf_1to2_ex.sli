@@ -89,12 +89,12 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_al
 
 
  
-  0 << 
+  << 
     /local_num_threads 1   
     /resolution h
     /min_delay min_delay
     /max_delay delay
-  >> SetStatus
+  >> SetKernelStatus
 
   /iaf_neuron Create /neuron1 Set
   /iaf_neuron Create /neuron2 Set
@@ -132,7 +132,7 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_al
   {First test_times exch MemberQ } Select    % those with reference 
 
  d eq                                        % compare data
- 0 GetStatus /min_delay get min_delay eq   % compare kernel setting
+ GetKernelStatus /min_delay get min_delay eq   % compare kernel setting
  and
 
 end

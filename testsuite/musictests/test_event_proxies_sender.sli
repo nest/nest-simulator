@@ -23,7 +23,7 @@
 (unittest) run
 /unittest using
 
-statusdict/have_music :: not { exit_test_gracefully } if
+skip_if_without_music
 
 M_ERROR setverbosity
 
@@ -32,7 +32,7 @@ sg << /spike_times [1.0 1.5 2.0 ]>> SetStatus
 
 /iaf_neuron Create /n Set
 
-sg 0 get n 0 get << /weight 750.0 >> Connect
+sg n /one_to_one << /weight 750.0 >> Connect
 
 /voltmeter Create /vm Set
 vm << /label (sender) /record_to [ /file ] >> SetStatus
@@ -42,6 +42,6 @@ vm n Connect
 /music_event_out_proxy Create /meop Set
 meop << /port_name (spikes_out) >> SetStatus
 
-sg meop << /music_channel 0 >> Connect
+sg meop /one_to_one << /music_channel 0 >> Connect
 
 10 Simulate

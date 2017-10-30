@@ -34,20 +34,20 @@
 (unittest) run
 /unittest using
 
+/skipped exit_test_gracefully  % TODO480 (uses Topology)
 
 /single_trial
 {
   << >> begin
     /h Set
     ResetKernel
-    0 << /resolution h >> SetStatus
+    << /resolution h >> SetKernelStatus
   
     /poisson_generator_ps Create /pg Set
     pg << /rate 1000. >> SetStatus
 
-    /iaf_psc_delta [1000] LayoutNetwork /net Set
-    /neurons net 0 get GetLocalLeaves def
-          
+    /neurons /iaf_psc_delta 1000 Create def
+
     pg neurons cvgidcollection Connect
 
     1000. Simulate

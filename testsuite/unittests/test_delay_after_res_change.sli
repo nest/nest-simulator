@@ -42,7 +42,7 @@
     /e_max_d Set
     /e_min_d Set
 
-    0 GetStatus begin
+    GetKernelStatus begin
     { min_delay e_min_d eq max_delay e_max_d eq and } assert_or_die
     end
 
@@ -69,11 +69,11 @@ def
 /maxdelay 12.3 def
 /defdelay 3.0 def
 
-0 <<
+<<
   /resolution 0.1
   /min_delay mindelay
   /max_delay maxdelay
->> SetStatus
+>> SetKernelStatus
 
 /static_synapse << /delay defdelay >> SetDefaults
 
@@ -81,19 +81,19 @@ mindelay maxdelay check_min_max_delay
 defdelay check_delay
 
 % Test 1: Change resolution.
-0 <<
+<<
   /resolution 0.001
->> SetStatus
+>> SetKernelStatus
 
 mindelay maxdelay check_min_max_delay
 
 defdelay check_delay
 
 % Test 2: Change tics_per_ms.
-0 <<
+<<
   /tics_per_ms 10000.0
   /resolution 0.001
->> SetStatus
+>> SetKernelStatus
 
 mindelay maxdelay check_min_max_delay
 

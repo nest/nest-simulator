@@ -22,8 +22,6 @@ set( nestkernel_sources
     recordables_map.h
     archiving_node.h archiving_node.cpp
     common_synapse_properties.h common_synapse_properties.cpp
-    sibling_container.h sibling_container.cpp
-    subnet.h subnet.cpp
     connection.h
     connection_label.h
     common_properties_hom_w.h
@@ -50,7 +48,6 @@ set( nestkernel_sources
     modelrange_manager.h modelrange_manager.cpp
     multirange.h multirange.cpp
     node.h node.cpp
-    nodelist.h nodelist.cpp
     proxynode.h proxynode.cpp
     recording_device.h recording_device.cpp
     pseudo_recording_device.h

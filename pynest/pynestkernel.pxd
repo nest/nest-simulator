@@ -63,13 +63,14 @@ cdef extern from "stringdatum.h":
     cppclass StringDatum:
         StringDatum(const string&) except +
 
-cdef extern from "mask.h" namespace "nest":
-    cppclass MaskDatum:
-        MaskDatum(const MaskDatum&)
-
-cdef extern from "topology_parameter.h" namespace "nest":
-    cppclass ParameterDatum:
-        ParameterDatum(const ParameterDatum&)
+# TODO480
+#cdef extern from "mask.h" namespace "nest":
+#    cppclass MaskDatum:
+#        MaskDatum(const MaskDatum&)
+#
+#cdef extern from "topology_parameter.h" namespace "nest":
+#    cppclass ParameterDatum:
+#        ParameterDatum(const ParameterDatum&)
 
 cdef extern from "gid_collection.h":
     cppclass GIDCollectionDatum:

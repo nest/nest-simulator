@@ -56,7 +56,7 @@ public:
   /**
    * Register a new node to a specific channel on this port.
    */
-  void register_channel( int channel, nest::Node* mp );
+  void register_channel( size_t channel, nest::Node* mp );
 
   /**
    * Publish the MUSIC port.

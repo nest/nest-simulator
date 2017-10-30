@@ -52,19 +52,40 @@ public:
   virtual void get_status( DictionaryDatum& );
 
   /**
-   * Simulate for the given time .
-   * This function performs the following steps
-   * 1. set the new simulation time
-   * 2. call prepare_simulation()
-   * 3. call resume()
-   * 4. call finalize_simulation()
-   */
-  void simulate( Time const& );
+      check for errors in time before run
+      @throws KernelException if illegal time passed
+  */
+  void assert_valid_simtime( Time const& );
+
+  /*
+     Simulate can be broken up into .. prepare... run.. run.. cleanup..
+     instead of calling simulate multiple times, and thus reduplicating
+     effort in prepare, cleanup many times.
+  */
 
   /**
-   * Terminate the simulation after the time-slice is finished.
+     Initialize simulation for a set of run calls.
+     Must be called before a sequence of runs, and again after cleanup.
+  */
+  void prepare();
+  /**
+     Run a simulation for another `Time`. Can be repeated ad infinitum with
+     calls to get_status(), but any changes to the network are undefined,
+     leading serious risk of incorrect results.
+  */
+  void run( Time const& );
+  /**
+     Closes a set of runs, doing finalizations such as file closures.
+     After cleanup() is called, no more run()s can be called before another
+     prepare() call.
+  */
+  void cleanup();
+
+  /**
+   * Simulate for the given time .
+   * calls prepare(); run(Time&); cleanup();
    */
-  void terminate();
+  void simulate( Time const& );
 
   /**
    * Returns true if waveform relaxation is used.
@@ -134,15 +155,12 @@ public:
   delay get_to_step() const;
 
 private:
-  void resume_( size_t );       //!< actually run simulation; TODO: review
-  size_t prepare_simulation_(); //! setup before simulation start
-  void finalize_simulation_();  //! wrap-up after simulation end
-  void update_();               //! actually perform simulation
+  void call_update_(); //!< actually run simulation, aka wrap update_
+  void update_();      //! actually perform simulation
   bool wfr_update_( Node* );
   void advance_time_();   //!< Update time to next time step
   void print_progress_(); //!< TODO: Remove, replace by logging!
 
-  bool simulating_;       //!< true if simulation in progress
   Time clock_;            //!< SimulationManager clock, updated once per slice
   delay slice_;           //!< current update slice
   delay to_do_;           //!< number of pending cycles.
@@ -151,13 +169,17 @@ private:
   delay to_step_;         //!< update clock_+from_step<=T<clock_+to_step_
   timeval t_slice_begin_; //!< Wall-clock time at the begin of a time slice
   timeval t_slice_end_;   //!< Wall-clock time at the end of time slice
-  long t_real_;    //!< Accumunated wall-clock time spent simulating (in us)
-  bool terminate_; //!< Terminate on signal or error
+  long t_real_;     //!< Accumunated wall-clock time spent simulating (in us)
+  bool simulating_; //!< true if simulation in progress
   bool simulated_; //!< indicates whether the SimulationManager has already been
                    //!< simulated for sometime
-  bool print_time_; //!< Indicates whether time should be printed during
-                    //!< simulations (or not)
-  bool use_wfr_;    //!< Indicates wheter waveform relaxation is used
+  bool exit_on_user_signal_; //!< true if update loop was left due to signal
+  // received
+  bool inconsistent_state_; //!< true after exception during update_
+                            //!< simulation must not be resumed
+  bool print_time_;         //!< Indicates whether time should be printed during
+                            //!< simulations (or not)
+  bool use_wfr_;            //!< Indicates wheter waveform relaxation is used
   double wfr_comm_interval_; //!< Desired waveform relaxation communication
                              //!< interval (in ms)
   double wfr_tol_; //!< Convergence tolerance of waveform relaxation method
@@ -166,12 +188,6 @@ private:
   size_t wfr_interpolation_order_; //!< interpolation order for waveform
                                    //!< relaxation method
 };
-
-inline void
-SimulationManager::terminate()
-{
-  terminate_ = true;
-}
 
 inline Time const&
 SimulationManager::get_slice_origin() const

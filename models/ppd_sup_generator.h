@@ -100,11 +100,12 @@ public:
   {
     return false;
   }
+
   bool
   is_off_grid() const
   {
     return false;
-  } // does not use off_grid events
+  }
 
   /**
    * Import sets of overloaded virtual functions.
@@ -255,7 +256,9 @@ ppd_sup_generator::send_test_event( Node& target,
     e.set_sender( *this );
     const port p = target.handles_test_event( e, receptor_type );
     if ( p != invalid_port_ and not is_model_prototype() )
+    {
       ++P_.num_targets_; // count number of targets
+    }
     return p;
   }
 }

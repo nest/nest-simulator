@@ -34,7 +34,6 @@
 #include "gid_collection.h"
 #include "kernel_manager.h"
 #include "nest_datums.h"
-#include "sibling_container.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -54,8 +53,6 @@ nest::weight_recorder::weight_recorder()
       true,
       true )
   , user_set_precise_times_( false )
-  , has_proxies_( false )
-  , local_receiver_( true )
   , P_()
 {
 }
@@ -64,8 +61,6 @@ nest::weight_recorder::weight_recorder( const weight_recorder& n )
   : Node( n )
   , device_( *this, n.device_ )
   , user_set_precise_times_( n.user_set_precise_times_ )
-  , has_proxies_( false )
-  , local_receiver_( true )
   , P_( n.P_ )
 {
 }
@@ -221,16 +216,22 @@ nest::weight_recorder::get_status( DictionaryDatum& d ) const
   // get the data from the device
   device_.get_status( d );
 
+  if ( is_model_prototype() )
+  {
+    return; // no data to collect
+  }
+
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
-  if ( local_receiver_ && get_thread() == 0 )
+  if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings =
+    const std::vector< Node* > siblings =
       kernel().node_manager.get_thread_siblings( get_gid() );
-    std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end();
-          ++sibling )
-      ( *sibling )->get_status( d );
+    std::vector< Node* >::const_iterator s;
+    for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
+    {
+      ( *s )->get_status( d );
+    }
   }
 
   P_.get( d );
@@ -240,7 +241,9 @@ void
 nest::weight_recorder::set_status( const DictionaryDatum& d )
 {
   if ( d->known( names::precise_times ) )
+  {
     user_set_precise_times_ = true;
+  }
 
   device_.set_status( d );
 

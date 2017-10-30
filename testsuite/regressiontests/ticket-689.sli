@@ -38,10 +38,9 @@ Author: Susanne Kunkel, Maximilian Schmidt, 2012-02-19
 
 M_ERROR setverbosity
 
-0
 <<
   /total_num_virtual_procs 1
->> SetStatus
+>> SetKernelStatus
 
 /iaf_neuron 2 Create
 1 2 /stdp_pl_synapse_hom_hpc Connect

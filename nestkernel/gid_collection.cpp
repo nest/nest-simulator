@@ -30,10 +30,17 @@
 namespace nest
 {
 
-struct // function object for sorting a vector of GIDCollcetionPrimitives
+// function object for sorting a vector of GIDCollcetionPrimitives
+struct PrimitiveSortObject
 {
   bool operator()( GIDCollectionPrimitive& primitive_lhs,
     GIDCollectionPrimitive& primitive_rhs )
+  {
+    return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
+  }
+
+  bool operator()( const GIDCollectionPrimitive& primitive_lhs,
+    const GIDCollectionPrimitive& primitive_rhs )
   {
     return primitive_lhs[ 0 ] < primitive_rhs[ 0 ];
   }
@@ -166,7 +173,7 @@ GIDCollection::create_( const std::vector< index >& gids )
   index current_first = gids[ 0 ];
   index current_last = current_first;
   index current_model =
-    kernel().node_manager.get_node( gids[ 0 ] )->get_model_id();
+    kernel().node_manager.get_node_or_proxy( gids[ 0 ] )->get_model_id();
 
   std::vector< GIDCollectionPrimitive > parts;
 
@@ -174,7 +181,7 @@ GIDCollection::create_( const std::vector< index >& gids )
         gid != gids.end();
         ++gid )
   {
-    index next_model = kernel().node_manager.get_node( *gid )->get_model_id();
+    index next_model = kernel().node_manager.get_node_or_proxy( *gid )->get_model_id();
 
     if ( next_model == current_model and *gid == ( current_last + 1 ) )
     {
@@ -244,10 +251,10 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last )
   assert( first_ <= last_ );
 
   // find the model_id
-  const int model_id = kernel().node_manager.get_node( first )->get_model_id();
+  const int model_id = kernel().node_manager.get_node_or_proxy( first )->get_model_id();
   for ( index gid = ++first; gid <= last; ++gid )
   {
-    if ( model_id != kernel().node_manager.get_node( gid )->get_model_id() )
+    if ( model_id != kernel().node_manager.get_node_or_proxy( gid )->get_model_id() )
     {
       throw BadProperty( "model ids does not match" );
     }
@@ -277,7 +284,7 @@ GIDCollectionPrimitive::to_array() const
 {
   ArrayDatum gids;
   gids.reserve( size() );
-  for ( const_iterator it = begin(); it != end(); ++it )
+  for ( const_iterator it = begin(); it < end(); ++it )
   {
     gids.push_back( ( *it ).gid );
   }
@@ -289,6 +296,10 @@ GIDCollectionPTR GIDCollectionPrimitive::operator+( GIDCollectionPTR rhs ) const
   if ( get_metadata().valid() and not( get_metadata() == rhs->get_metadata() ) )
   {
     throw BadProperty( "Can only join GIDCollections with same metadata." );
+  }
+  if ( not valid() or not rhs->valid() )
+  {
+    throw KernelException( "InvalidGIDCollection" );
   }
   GIDCollectionPrimitive const* const rhs_ptr =
     dynamic_cast< GIDCollectionPrimitive const* >( rhs.get() );
@@ -344,6 +355,10 @@ GIDCollectionPrimitive::GIDCollectionPrimitive::slice( size_t start,
   {
     throw BadParameter( "stop <= size() required." );
   }
+  if ( not valid() )
+  {
+    throw KernelException( "InvalidGIDCollection" );
+  }
 
   if ( step == 1 )
   {
@@ -360,8 +375,8 @@ GIDCollectionPrimitive::GIDCollectionPrimitive::slice( size_t start,
 void
 GIDCollectionPrimitive::print_me( std::ostream& out ) const
 {
-  out << "[[" << this
-      << " model=" << kernel().model_manager.get_model( model_id_ )->get_name()
+  out << "[["
+      << "model=" << kernel().model_manager.get_model( model_id_ )->get_name()
       << ", size=" << size() << " ";
   if ( size() == 1 )
   {
@@ -489,7 +504,7 @@ GIDCollectionComposite::GIDCollectionComposite(
   }
 
   size_t global_index = 0;
-  for ( const_iterator it = composite.begin(); it != composite.end(); ++it )
+  for ( const_iterator it = composite.begin(); it < composite.end(); ++it )
   {
     if ( global_index == start )
     {
@@ -510,6 +525,14 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
   {
     throw BadProperty( "can only join GIDCollections with the same metadata" );
   }
+  if ( not valid() or not rhs->valid() )
+  {
+    throw KernelException( "InvalidGIDCollection" );
+  }
+  if ( step_ > 1 or stop_part_ != 0 or stop_offset_ != 0 )
+  {
+    throw BadProperty( "Cannot add GIDCollection to a sliced composite." );
+  }
   GIDCollectionPrimitive const* const rhs_ptr =
     dynamic_cast< GIDCollectionPrimitive const* >( rhs.get() );
   rhs.unlock();
@@ -528,27 +551,36 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
     }
     return GIDCollectionPTR( *this + *rhs_ptr );
   }
-  else // if rhs is not Primitive, i.e. Composite
+  else // rhs is Composite
   {
     GIDCollectionComposite const* const rhs_ptr =
       dynamic_cast< GIDCollectionComposite const* >( rhs.get() );
     rhs.unlock();
-
-    // check primitives in the composites for overlap
-    for ( std::vector< GIDCollectionPrimitive >::const_iterator this_it =
-            parts_.begin();
-          this_it < parts_.end();
-          ++this_it )
+    if ( rhs_ptr->step_ > 1 or rhs_ptr->stop_part_ != 0
+      or rhs_ptr->stop_offset_ != 0 )
     {
-      for ( std::vector< GIDCollectionPrimitive >::const_iterator other_it =
-              rhs_ptr->parts_.begin();
-            other_it < rhs_ptr->parts_.end();
-            ++other_it )
+      throw BadProperty( "Cannot add GIDCollection to a sliced composite." );
+    }
+
+    // check overlap between the two composites
+    const GIDCollectionComposite* shortest, *longest;
+    if ( size() < rhs_ptr->size() )
+    {
+      shortest = this;
+      longest = rhs_ptr;
+    }
+    else
+    {
+      shortest = rhs_ptr;
+      longest = this;
+    }
+    for ( GIDCollectionComposite::const_iterator short_it = shortest->begin();
+          short_it < shortest->end();
+          ++short_it )
+    {
+      if ( longest->contains( ( *short_it ).gid ) )
       {
-        if ( this_it->overlapping( *other_it ) )
-        {
-          throw BadProperty( "Cannot join overlapping GIDCollections." );
-        }
+        throw BadProperty( "Cannot join overlapping GIDCollections." );
       }
     }
 
@@ -569,8 +601,11 @@ GIDCollectionPTR GIDCollectionComposite::operator+( GIDCollectionPTR rhs ) const
     merge_parts( new_composite->parts_ );
     if ( new_composite->parts_.size() == 1 )
     {
-      return GIDCollectionPTR(
-        new GIDCollectionPrimitive( new_composite->parts_[ 0 ] ) );
+      // If there is only a single primitive in the composite, we extract it,
+      // ensuring that the composite is deleted from memory.
+      GIDCollectionPrimitive new_primitive = new_composite->parts_[ 0 ];
+      delete new_composite;
+      return GIDCollectionPTR( new GIDCollectionPrimitive( new_primitive ) );
     }
     else
     {
@@ -628,6 +663,10 @@ GIDCollectionComposite::to_array() const
 GIDCollectionPTR
 GIDCollectionComposite::slice( size_t start, size_t stop, size_t step ) const
 {
+  if ( not valid() )
+  {
+    throw KernelException( "InvalidGIDCollection" );
+  }
   return GIDCollectionPTR(
     new GIDCollectionComposite( *this, start, stop, step ) );
 }
@@ -672,36 +711,45 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
     size_t previous_part = 4294967295; // initializing as large number (for now)
     index primitive_last = 0;
 
-    size_t primitive_size;
+    size_t primitive_size = 0;
     GIDPair pair;
 
-    out << "[[" << this << " step=" << step_ << " size=" << size() << ": ";
+    std::vector< std::string > string_vector;
+
+    out << "[["
+        << "size=" << size() << ": ";
     for ( const_iterator it = begin(); it < end(); ++it )
     {
-
       it.get_current_part_offset( current_part, current_offset );
       if ( current_part != previous_part )
       {
         if ( it != begin() )
         {
-          out << "\n  [["
-              << "model="
-              << kernel().model_manager.get_model( pair.model_id )->get_name()
-              << ", size=" << primitive_size << " ";
+          std::stringstream string_buffer;
+          string_buffer
+            << "\n  [["
+            << "model="
+            << kernel().model_manager.get_model( pair.model_id )->get_name()
+            << ", size=" << primitive_size << " ";
           if ( primitive_size == 1 )
           {
-            out << "(" << pair.gid << ")]],";
+            string_buffer << "(" << pair.gid << ")]]";
           }
           else if ( primitive_size == 2 )
           {
-            out << "(" << pair.gid << ", ";
-            out << primitive_last << ")]],";
+            string_buffer << "(" << pair.gid << ", ";
+            string_buffer << primitive_last << ")]]";
           }
           else
           {
-            out << "(" << pair.gid << "..";
-            out << primitive_last << ")]],";
+            string_buffer << "(" << pair.gid << "..";
+            if ( step_ > 1 )
+            {
+              string_buffer << "{" << step_ << "}..";
+            }
+            string_buffer << primitive_last << ")]]";
           }
+          string_vector.push_back( string_buffer.str() );
         }
         primitive_size = 1;
         pair = *it;
@@ -713,6 +761,22 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
       primitive_last = ( *it ).gid;
       previous_part = current_part;
     }
+
+    for ( std::vector< std::string >::const_iterator it = string_vector.begin();
+          it < string_vector.end();
+          ++it )
+    {
+      if ( string_vector.size() < 7 or it < ( string_vector.begin() + 3 )
+        or ( string_vector.end() - 3 ) < it )
+      {
+        out << *it;
+      }
+      else if ( it == ( string_vector.begin() + 3 ) )
+      {
+        out << "\n  ..,";
+      }
+    }
+
     out << "\n  [["
         << "model="
         << kernel().model_manager.get_model( pair.model_id )->get_name()
@@ -729,23 +793,31 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
     else
     {
       out << "(" << pair.gid << "..";
+      if ( step_ > 1 )
+      {
+        out << "{" << step_ << "}..";
+      }
       out << primitive_last << ")]]";
     }
     out << "]]";
   }
   else
   {
-    out << "[[" << this << " size=" << size() << ": ";
+    out << "[["
+        << "size=" << size() << ": ";
     for (
       std::vector< GIDCollectionPrimitive >::const_iterator it = parts_.begin();
       it != parts_.end();
       ++it )
     {
-      out << "\n  ";
-      it->print_me( out );
-      if ( it != ( parts_.end() - 1 ) )
+      if ( it < ( parts_.begin() + 3 ) or ( parts_.end() - 4 ) < it )
       {
-        out << ",";
+        out << "\n  ";
+        it->print_me( out );
+      }
+      else if ( it == ( parts_.begin() + 3 ) )
+      {
+        out << "\n  ..,";
       }
     }
     out << "]]";

@@ -85,16 +85,6 @@ public:
   thread suggest_vp( index ) const;
 
   /**
-   * Return a thread number for a given global recording node id.
-   * Each node has a default thread on which it will run.
-   * The thread is defined by the relation:
-   * t = (gid div P) mod T, where P is the number of recording processes and
-   * T the number of threads. This may be used by Network::add_node()
-   * if the user has not specified anything.
-   */
-  thread suggest_rec_vp( index ) const;
-
-  /**
    * Convert a given VP ID to the corresponding thread ID
    */
   thread vp_to_thread( thread vp ) const;
@@ -113,6 +103,11 @@ public:
    * Returns the number of virtual processes.
    */
   int get_num_virtual_processes() const;
+
+  /**
+   * Fails if NEST is in thread-parallel section.
+   */
+  static void assert_single_threaded();
 
 private:
   const bool force_singlethreading_;

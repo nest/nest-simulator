@@ -66,12 +66,12 @@ class TestGIDCollection(unittest.TestCase):
     def test_equal(self):
         """Equality of GIDCollections"""
 
-        n = nest.Create('aeif_cond_alpha', 10)
+        n = nest.Create('iaf_psc_exp', 10)
         n_list = [x for x in n]
 
         nest.ResetKernel()
 
-        n_new = nest.Create('aeif_cond_alpha', 10)
+        n_new = nest.Create('iaf_psc_exp', 10)
         new_list = [x for x in n_new]
         self.assertEqual(n_list, new_list)
         self.assertEqual(n, n_new)
@@ -175,7 +175,7 @@ class TestGIDCollection(unittest.TestCase):
         n_a_b_c = n_a_b + n_neurons_c
         nodes_a = nest.Create('iaf_psc_alpha', n_neurons_a)
         nodes_b = nest.Create('iaf_psc_alpha', n_neurons_b)
-        nodes_c = nest.Create('aeif_cond_alpha', n_neurons_c)
+        nodes_c = nest.Create('iaf_psc_exp', n_neurons_c)
 
         node_b_a = nodes_b + nodes_a
         node_b_a_list = [x for x in node_b_a]
@@ -204,7 +204,7 @@ class TestGIDCollection(unittest.TestCase):
         nest.ResetKernel()
 
         gc_a = nest.Create('iaf_psc_alpha', 10)
-        gc_b = nest.Create('aeif_cond_alpha', 7)
+        gc_b = nest.Create('iaf_psc_exp', 7)
         gc_c = nest.GIDCollection([6, 8, 10, 12, 14])
 
         with self.assertRaises(nest.NESTError):
@@ -229,7 +229,7 @@ class TestGIDCollection(unittest.TestCase):
         nodes = a + b
         self.assertEqual(len(nodes), 17)
 
-        c = nest.Create('aeif_cond_alpha', 20)
+        c = nest.Create('iaf_psc_delta', 20)
         c = c[3:17:4]
         self.assertEqual(len(c), 4)
 
@@ -242,7 +242,7 @@ class TestGIDCollection(unittest.TestCase):
 
         n_a = nest.Create('iaf_psc_exp', num_a)
         n_b = nest.Create('iaf_psc_alpha', num_b)
-        n_c = nest.Create('aeif_cond_alpha', num_c)
+        n_c = nest.Create('iaf_psc_delta', num_c)
 
         n_a = n_a[::2]
         nodes = n_a + n_c
@@ -279,6 +279,21 @@ class TestGIDCollection(unittest.TestCase):
         ngc = nest.GIDCollection(nodes_list)
         self.assertEqual(nodes, ngc)
 
+    def test_composite_wrong_slice(self):
+        """
+        A NESTError is raised when trying to add a sliced composite and
+        GIDCollection
+        """
+
+        a = nest.Create('iaf_psc_alpha', 10)
+        b = nest.Create('iaf_psc_exp', 7)
+        c = a + b
+        d = c[::2]
+        e = nest.Create('iaf_psc_delta', 13)
+
+        with self.assertRaises(nest.NESTError):
+            f = d + e
+
     def test_modelID(self):
         """Correct GIDCollection modelID"""
 
@@ -288,7 +303,7 @@ class TestGIDCollection(unittest.TestCase):
         dict = nest.sli_pop()
 
         models = dict.keys()
-        modelID = dict.values()
+        modelID = list(dict.values())
 
         for model in models:
             n += nest.Create(model)
@@ -306,7 +321,7 @@ class TestGIDCollection(unittest.TestCase):
     def test_connect(self):
         """Connect works with GIDCollections"""
 
-        n = nest.Create('aeif_cond_alpha', 10)
+        n = nest.Create('iaf_psc_exp', 10)
         nest.Connect(n, n, {'rule': 'one_to_one'})
         connections = nest.GetKernelStatus('num_connections')
         self.assertEqual(connections, 10)
@@ -342,7 +357,7 @@ class TestGIDCollection(unittest.TestCase):
 
         nest.ResetKernel()
 
-        gc = nest.Create('aeif_cond_alpha', 5)
+        gc = nest.Create('iaf_psc_exp', 5)
 
         with self.assertRaises(nest.NESTError):
             nest.SetStatus(n, {'V_m': -40.})

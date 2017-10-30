@@ -11,14 +11,21 @@ have worked through this material, you will know how to:
 -   query the synapse values after connection
 -   set synapse values during and after connection
 
-For more information on the usage of NEST, please visit:
-[Documentation](documentation.md). To carry out the code snippets in
-this handout, you need to import `nest` and `numpy`.
+For more information on the usage of PyNEST, please see the other sections of
+this primer: 
+
+-   [Part 1: Neurons and simple neural networks](part-1-neurons-and-simple-neural-networks.md)
+-   [Part 2: Populations of neurons](part-2-populations-of-neurons.md)
+-   [Part 4: Topologically structured networks](part-4-topologically-structured-networks.md)
+
+More advanced examples can be found at [Example Networks](http://www.nest-simulator.org/more-example-networks/), or have a 
+look at at the source directory of your NEST installation in the 
+subdirectory: `pynest/examples/`. 
 
 ## Parameterising synapse models
 
 NEST provides a variety of different synapse models. You can see the available
-models by using the command `Models(synapses)`, which picks only the synapse
+models by using the command `nest.Models(mtype='synapses')`, which picks only the synapse
 models out of the list of all available models.
 
 Synapse models can be parameterised analogously to neuron models. You can
@@ -44,10 +51,10 @@ For the majority of synapses, all of their parameters are accessible via
 `GetDefaults()` and `SetDefaults()`. Synapse models implementing spike-timing
 dependent plasticity are an exception to this, as their dynamics are driven by
 the post-synaptic spike train as well as the pre-synaptic one. As a consequence,
-the time constant of the depressing window of STDP is a parameter of the
+the time constant of the depressing window of STDP is a parameter of the 
 post-synaptic neuron. It can be set as follows:
 
-    nest.Create("iaf_neuron", params={"tau_minus": 30.0})
+    nest.Create("iaf_psc_alpha", params={"tau_minus": 30.0})
 
 or by using any of the other methods of parameterising neurons demonstrated in
 the first two parts of this introduction.
@@ -63,6 +70,44 @@ set in the synapse specification dictionary accepted by the connection routine.
 
 If no synapse model is given, connections are made using the model
 `static_synapse`.
+
+## Distributing synapse parameters
+
+The synapse parameters are specified in the synapse dictionary which is 
+passed to the `Connect`-function. If the parameter is set to a scalar all 
+connections will be drawn using the same parameter. Parameters can be 
+randomly distributed by assigning a dictionary to the parameter. The 
+dictionary has to contain the key `distribution` setting the target 
+distribution of the parameters (for example `normal`). Optionally, parameters 
+associated with the distribution can be set (for example `mu`). Here we show 
+an example where the parameters `alpha` and `weight` of the stdp synapse are 
+uniformly distributed.
+
+    alpha_min = 0.1
+    alpha_max = 2.
+    w_min = 0.5 
+    w_max = 5.
+    
+    syn_dict = {"model": "stdp_synapse", 
+                "alpha": {"distribution": "uniform", "low": alpha_min, "high": alpha_max},
+                "weight": {"distribution": "uniform", "low": w_min, "high": w_max},
+                "delay": 1.0}
+    nest.Connect(epop1, neuron, "all_to_all", syn_dict)
+
+
+Available distributions and associated parameters are described in 
+[Connection Management](connection-management.md), the most common ones are:
+
+| Distributions  |        Keys      |
+|--------------- |------------------|
+| `normal`       | `mu`, `sigma`    |
+| `lognormal`    | `mu`, `sigma`    |
+| `uniform`      | `low`, `high`    |
+| `uniform_int`  | `low`, `high`    |
+| `binomial`     | `n`, `p`         |
+| `exponential`  | `lambda`         |
+| `gamma`        | `order`, `scale` |
+| `poisson`      | `lambda`         |
 
 ## Querying the synapses
 
@@ -122,37 +167,6 @@ The variable `conn_vals` is now a list of lists, containing the `target` and
 
 To get used to these methods of querying the synapses, it is recommended to try
 them out on a small network where all connections are known.
-
-## Distributing synapse parameters
-
-The synapse parameters are specified in the synapse dictionary which is passed
-to the Connect-function. If the parameter is set to a scalar all connections
-will be drawn using the same parameter. Parameters can be randomly distributed
-by assigning a dictionary to the parameter. The dictionary has to contain the
-key `distribution` setting the target distribution of the parameters (for
-example `normal`). Optionally parameters associated with the distribution can be
-set (for example `mu`). Here we show an example where the parameters `alpha` and
-`weight` of the stdp synapse are uniformly distributed.
-
-    syn_dict = {"model": "stdp_synapse",
-                "alpha": {"distribution": "uniform", "low": Min_alpha, "high": Max_alpha},
-                "weight": {"distribution": "uniform", "low": Wmin, "high": Wmax},
-                "delay": 1.0 }
-    nest.Connect(epop1, neuron, "all_to_all", syn_dict)
-
-Available distributions and associated parameters are described in [Connection Management](connection-management.md),
-the most common ones are:
-
-| Distributions | Keys             |
-|---------------|------------------|
-| `normal`      | `mu`, `sigma`    |
-| `lognormal`   | `mu`, `sigma`    |
-| `uniform`     | `low`, `high`    |
-| `uniform_int` | `low`, `high`    |
-| `binomial`    | `n`, `p`         |
-| `exponential` | `lambda`         |
-| `gamma`       | `order`, `scale` |
-| `poisson`     | `lambda`         |
 
 ## Coding style
 
@@ -249,7 +263,7 @@ in a population. As neurons receive ids at the time of creation, it is possible
 to use your knowledge of these ids explictly:
 
     Nrec = 50
-    neuronpop = nest.Create("iaf_neuron", 200)
+    neuronpop = nest.Create("iaf_psc_alpha", 200)
     sd = nest.Create("spike_detector")
     nest.Connect(range(1,N_rec+1),sd,"all_to_all")
 
@@ -273,8 +287,9 @@ instead you should write:
 
     nest.SetStatus(neuronpop, {"V_m": -67.0})
 
-See Part 2 for more examples on operations on multiple neurons, such as setting
-the status from a random distribution and connecting populations.
+[See Part 2](part-2-populations-of-neurons.md) for more examples on 
+operations on multiple neurons, such as setting the status from a random 
+distribution and connecting populations.
 
 If you really really need to loop over neurons, just loop over the population
 itself (or a slice of it) rather than introducing ranges:
@@ -293,20 +308,25 @@ These are the new functions we introduced for the examples in this handout.
 
 ### Querying Synapses
 
-`GetConnections(neuron, synapse_model="None"))`
-Return an array of connection identifiers.
-
-Parameters:
-`source` - list of source GIDs
-`target` - list of target GIDs
-`synapse_model` - string with the synapse model
-If GetConnections is called without parameters, all connections in the network
-are returned. If a list of source neurons is given, only connections from these
-pre-synaptic neurons are returned. If a list of target neurons is given, only
-connections to these post-synaptic neurons are returned. If a synapse model is
-given, only connections with this synapse type are returned. Any combination of
-source, target and synapse\_model parameters is permitted. Each connection id is
-a 5-tuple or, if available, a NumPy array with the following five entries:
-source-gid, target-gid, target-thread, synapse-id, port
-Note: Only connections with targets on the MPI process executing the command are
-returned.
+-   [`GetConnections(neuron, synapse_model="None"))`](http://www.nest-simulator.org/pynest-api/#lib-hl_api_connections-GetConnections)
+    
+    Return an array of connection identifiers.
+    
+    Parameters:
+    
+    - `source` - list of source GIDs
+    - `target` - list of target GIDs
+    - `synapse_model` - string with the synapse model
+    
+    If GetConnections is called without parameters, all connections in the 
+    network are returned. If a list of source neurons is given, only 
+    connections from these pre-synaptic neurons are returned. If a list of 
+    target neurons is given, only connections to these post-synaptic neurons 
+    are returned. If a synapse model is given, only connections with this 
+    synapse type are returned. Any combination of source, target and 
+    synapse\_model parameters is permitted. Each connection id is a 5-tuple 
+    or, if available, a NumPy array with the following five entries:
+    source-gid, target-gid, target-thread, synapse-id, port
+    
+    *Note:* Only connections with targets on the MPI process executing the 
+    command are returned.

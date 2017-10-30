@@ -126,10 +126,14 @@ std::string
 SLIStartup::getenv( const std::string& v ) const
 {
   char* s = ::getenv( v.c_str() );
-  if ( !s )
+  if ( not s )
+  {
     return std::string();
+  }
   else
+  {
     return std::string( s );
+  }
 }
 
 void
@@ -151,7 +155,9 @@ SLIStartup::GetenvFunction::execute( SLIInterpreter* i ) const
     i->OStack.push( i->baselookup( i->true_name ) );
   }
   else
+  {
     i->OStack.push( i->baselookup( i->false_name ) );
+  }
 
   i->EStack.pop();
 }
@@ -197,9 +203,11 @@ SLIStartup::checkenvpath( std::string const& envvar,
         String::compose( "%1 is not usable:", envvar ).c_str() );
       i->message( SLIInterpreter::M_ERROR, "SLIStartup", msg.c_str() );
       if ( defaultval != "" )
+      {
         i->message( SLIInterpreter::M_ERROR,
           "SLIStartup",
           String::compose( "I'm using the default: %1", defaultval ).c_str() );
+      }
     }
   }
   return std::string();
@@ -209,9 +217,9 @@ SLIStartup::checkenvpath( std::string const& envvar,
 SLIStartup::SLIStartup( int argc, char** argv )
   : startupfilename( "sli-init.sli" )
   , slilibpath( "/sli" )
-  , slihomepath( NEST_PREFIX "/" NEST_DATADIR )
-  , slidocdir( NEST_PREFIX "/" NEST_DOCDIR )
-  , sliprefix( NEST_PREFIX )
+  , slihomepath( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DATADIR )
+  , slidocdir( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DOCDIR )
+  , sliprefix( NEST_INSTALL_PREFIX )
   , verbosity_( SLIInterpreter::M_INFO ) // default verbosity level
   , debug_( false )
   , argv_name( "argv" )
@@ -248,6 +256,12 @@ SLIStartup::SLIStartup( int argc, char** argv )
   , ndebug_name( "ndebug" )
   , exitcodes_name( "exitcodes" )
   , exitcode_success_name( "success" )
+  , exitcode_skipped_name( "skipped" )
+  , exitcode_skipped_no_mpi_name( "skipped_no_mpi" )
+  , exitcode_skipped_have_mpi_name( "skipped_have_mpi" )
+  , exitcode_skipped_no_threading_name( "skipped_no_threading" )
+  , exitcode_skipped_no_gsl_name( "skipped_no_gsl" )
+  , exitcode_skipped_no_music_name( "skipped_no_music" )
   , exitcode_scripterror_name( "scripterror" )
   , exitcode_abort_name( "abort" )
   , exitcode_userabort_name( "userabort" )
@@ -292,6 +306,11 @@ SLIStartup::SLIStartup( int argc, char** argv )
     if ( *sd == "--verbosity=INFO" )
     {
       verbosity_ = SLIInterpreter::M_INFO;
+      continue;
+    }
+    if ( *sd == "--verbosity=DEPRECATED" )
+    {
+      verbosity_ = SLIInterpreter::M_DEPRECATED;
       continue;
     }
     if ( *sd == "--verbosity=WARNING" )
@@ -358,7 +377,7 @@ SLIStartup::init( SLIInterpreter* i )
       String::compose( "Using NEST_INSTALL_DIR=%1", sliprefix ).c_str() );
   }
 
-  if ( !checkpath( slihomepath, fname ) )
+  if ( not checkpath( slihomepath, fname ) )
   {
     i->message( SLIInterpreter::M_FATAL,
       "SLIStartup",
@@ -439,9 +458,10 @@ SLIStartup::init( SLIInterpreter* i )
 #ifdef IS_K
   platform = "k";
 #endif
-
   if ( platform == "" )
+  {
     platform = "default";
+  }
 
   statusdict->insert( platform_name, Token( new StringDatum( platform ) ) );
 
@@ -452,9 +472,10 @@ SLIStartup::init( SLIInterpreter* i )
 #ifdef _OPENMP
   threading += "openmp";
 #endif
-
   if ( threading == "" )
+  {
     threading = "no";
+  }
 
   statusdict->insert( threading_name, Token( new StringDatum( threading ) ) );
 
@@ -524,17 +545,31 @@ SLIStartup::init( SLIInterpreter* i )
   exitcodes->insert(
     exitcode_success_name, Token( new IntegerDatum( EXIT_SUCCESS ) ) );
   exitcodes->insert(
-    exitcode_scripterror_name, Token( new IntegerDatum( 126 ) ) );
+    exitcode_skipped_name, Token( new IntegerDatum( EXITCODE_SKIPPED ) ) );
+  exitcodes->insert( exitcode_skipped_no_mpi_name,
+    Token( new IntegerDatum( EXITCODE_SKIPPED_NO_MPI ) ) );
+  exitcodes->insert( exitcode_skipped_have_mpi_name,
+    Token( new IntegerDatum( EXITCODE_SKIPPED_HAVE_MPI ) ) );
+  exitcodes->insert( exitcode_skipped_no_threading_name,
+    Token( new IntegerDatum( EXITCODE_SKIPPED_NO_THREADING ) ) );
+  exitcodes->insert( exitcode_skipped_no_gsl_name,
+    Token( new IntegerDatum( EXITCODE_SKIPPED_NO_GSL ) ) );
+  exitcodes->insert( exitcode_skipped_no_music_name,
+    Token( new IntegerDatum( EXITCODE_SKIPPED_NO_MUSIC ) ) );
+  exitcodes->insert( exitcode_scripterror_name,
+    Token( new IntegerDatum( EXITCODE_SCRIPTERROR ) ) );
   exitcodes->insert(
     exitcode_abort_name, Token( new IntegerDatum( NEST_EXITCODE_ABORT ) ) );
-  exitcodes->insert( exitcode_userabort_name, Token( new IntegerDatum( 15 ) ) );
+  exitcodes->insert(
+    exitcode_userabort_name, Token( new IntegerDatum( EXITCODE_USERABORT ) ) );
   exitcodes->insert( exitcode_segfault_name,
     Token( new IntegerDatum( NEST_EXITCODE_SEGFAULT ) ) );
   exitcodes->insert(
-    exitcode_exception_name, Token( new IntegerDatum( 125 ) ) );
-  exitcodes->insert( exitcode_fatal_name, Token( new IntegerDatum( 127 ) ) );
+    exitcode_exception_name, Token( new IntegerDatum( EXITCODE_EXCEPTION ) ) );
   exitcodes->insert(
-    exitcode_unknownerror_name, Token( new IntegerDatum( 10 ) ) );
+    exitcode_fatal_name, Token( new IntegerDatum( EXITCODE_FATAL ) ) );
+  exitcodes->insert( exitcode_unknownerror_name,
+    Token( new IntegerDatum( EXITCODE_UNKNOWN_ERROR ) ) );
 
   statusdict->insert( exitcodes_name, exitcodes );
 
@@ -564,7 +599,7 @@ SLIStartup::init( SLIInterpreter* i )
 
   i->def( statusdict_name, statusdict );
 
-  if ( !fname.empty() )
+  if ( not fname.empty() )
   {
     std::ifstream* input = new std::ifstream( fname.c_str() );
     Token input_token( new XIstreamDatum( input ) );

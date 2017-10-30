@@ -54,15 +54,25 @@ class Node;
  */
 class SparseNodeArray
 {
-private:
-  struct NodeEntry_
+public:
+  struct NodeEntry
   {
-    NodeEntry_( Node&, index );
+    NodeEntry( Node&, index );
+
+    // Accessor functions here are mostly in place to make things "look nice".
+    // Since SparseNodeArray only exposes access to const_interator, iterators
+    // could anyways not be used to change entry contents.
+    // TODO: But we may want to re-think this.
+    Node* get_node() const;
+    index get_gid() const;
+
     Node* node_;
     index gid_; //!< store gid locally for faster searching
   };
 
-public:
+  typedef std::vector< SparseNodeArray::NodeEntry >::const_iterator
+    const_iterator;
+
   //! Create empty spare node array
   SparseNodeArray();
 
@@ -72,8 +82,8 @@ public:
    */
   size_t size() const;
 
-  //! Reserve space for given number of elements
-  void reserve( size_t );
+  //! Reserve additional space for the given number of elements
+  void reserve_additional( size_t );
 
   //! Clear the array
   void clear();
@@ -87,23 +97,20 @@ public:
   void add_local_node( Node& );
 
   /**
-   * Register non-local node.
+   * Set max gid to max in network.
    *
    * Ensures that array knows about non-local nodes
    * with GIDs higher than highest local GID.
    */
-  void add_remote_node( index );
+  void update_max_gid( index );
 
   /**
    *  Lookup node based on GID
    *
    *  Returns 0 if GID is not local.
-   *  For local nodes with siblings, it returns the pointer
-   *  to the sibling container.
-   *  The caller is responsible for (i) providing proper
-   *  proxy node pointers for non-local nodes and (ii)
-   *  selecting the correct sibling for a given thread for
-   *  nodes that are sibling containers.
+   *
+   *  The caller is responsible for providing proper
+   *  proxy node pointers for non-local nodes
    *
    *  @see get_node_by_index()
    */
@@ -119,23 +126,38 @@ public:
   Node* get_node_by_index( size_t ) const;
 
   /**
+   * Get constant iterators for safe iteration of SparseNodeArray.
+   */
+  const_iterator begin() const;
+  const_iterator end() const;
+
+  /**
    * Return largest GID in global network.
    * @see size
    */
   index get_max_gid() const;
 
-  std::map< long, size_t > get_step_ctr() const;
-
 private:
-  std::vector< NodeEntry_ > nodes_;           //!< stores local node information
-  index max_gid_;                             //!< largest GID in network
-  index local_min_gid_;                       //!< smallest local GID
-  index local_max_gid_;                       //!< largest local GID
-  double gid_idx_scale_;                      //!< interpolation factor
-  mutable std::map< long, size_t > step_ctr_; //!< for analysis, measure misses
+  std::vector< NodeEntry > nodes_; //!< stores local node information
+  index max_gid_;                  //!< largest GID in network
+  index local_min_gid_;            //!< smallest local GID
+  index local_max_gid_;            //!< largest local GID
+  double gid_idx_scale_;           //!< interpolation factor
 };
 
 } // namespace nest
+
+inline nest::SparseNodeArray::const_iterator
+nest::SparseNodeArray::begin() const
+{
+  return nodes_.begin();
+}
+
+inline nest::SparseNodeArray::const_iterator
+nest::SparseNodeArray::end() const
+{
+  return nodes_.end();
+}
 
 inline size_t
 nest::SparseNodeArray::size() const
@@ -151,7 +173,6 @@ nest::SparseNodeArray::clear()
   local_min_gid_ = 0;
   local_max_gid_ = 0;
   gid_idx_scale_ = 1.;
-  step_ctr_.clear();
 }
 
 inline size_t
@@ -173,10 +194,16 @@ nest::SparseNodeArray::get_max_gid() const
   return max_gid_;
 }
 
-inline std::map< long, size_t >
-nest::SparseNodeArray::get_step_ctr() const
+inline nest::Node*
+nest::SparseNodeArray::NodeEntry::get_node() const
 {
-  return step_ctr_;
+  return node_;
+}
+
+inline nest::index
+nest::SparseNodeArray::NodeEntry::get_gid() const
+{
+  return gid_;
 }
 
 #endif /* SPARSE_NODE_ARRAY_H */

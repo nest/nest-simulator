@@ -36,10 +36,10 @@
 (unittest) run
 /unittest using
 
-0 <<
+<<
 /print_time true
 /local_num_threads 256
->> SetStatus
+>> SetKernelStatus
 
 /id_neuron /iaf_neuron 1 Create def
 /id_generator /noise_generator 1 Create def

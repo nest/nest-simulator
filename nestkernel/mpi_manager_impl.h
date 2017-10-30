@@ -41,19 +41,7 @@
 inline nest::thread
 nest::MPIManager::get_process_id( nest::thread vp ) const
 {
-  if ( vp
-    >= static_cast< thread >( n_sim_procs_
-         * kernel()
-             .vp_manager.get_num_threads() ) ) // vp belongs to recording VPs
-  {
-    return ( vp - n_sim_procs_ * kernel().vp_manager.get_num_threads() )
-      % n_rec_procs_
-      + n_sim_procs_;
-  }
-  else // vp belongs to simulating VPs
-  {
-    return vp % n_sim_procs_;
-  }
+  return vp % num_processes_;
 }
 
 #ifdef HAVE_MPI
@@ -100,6 +88,7 @@ nest::MPIManager::communicate_Allgatherv( std::vector< T >& send_buffer,
     comm );
 }
 
+/* TODO480
 template < typename NodeListType >
 void
 nest::MPIManager::communicate( const NodeListType& local_nodes,
@@ -124,9 +113,10 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
     communicate( n_nodes );
     // Set up displacements vector.
     std::vector< int > displacements( np, 0 );
-
     for ( size_t i = 1; i < np; ++i )
+    {
       displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+    }
 
     // Calculate total number of node data items to be gathered.
     size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
@@ -140,8 +130,10 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 
       // Create unflattened vector
       for ( size_t i = 0; i < n_globals - 2; i += 3 )
+      {
         all_nodes.push_back( NodeAddressingData(
           globalnodes[ i ], globalnodes[ i + 1 ], globalnodes[ i + 2 ] ) );
+      }
 
       // get rid of any multiple entries
       std::sort( all_nodes.begin(), all_nodes.end() );
@@ -155,14 +147,17 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
     for ( typename NodeListType::iterator n = local_nodes.begin();
           n != local_nodes.end();
           ++n )
+    {
       all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
         ( ( *n )->get_parent() )->get_gid(),
         ( *n )->get_vp() ) );
+    }
     std::sort( all_nodes.begin(), all_nodes.end() );
   }
 }
+*/
 
-
+/* TODO480
 template < typename NodeListType >
 void
 nest::MPIManager::communicate( const NodeListType& local_nodes,
@@ -226,9 +221,10 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 
     // Set up displacements vector.
     std::vector< int > displacements( np, 0 );
-
     for ( size_t i = 1; i < np; ++i )
+    {
       displacements.at( i ) = displacements.at( i - 1 ) + n_nodes.at( i - 1 );
+    }
 
     // Calculate sum of global connections.
     size_t n_globals = std::accumulate( n_nodes.begin(), n_nodes.end(), 0 );
@@ -242,8 +238,10 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
 
       // Create unflattened vector
       for ( size_t i = 0; i < n_globals - 2; i += 3 )
+      {
         all_nodes.push_back( NodeAddressingData(
           globalnodes[ i ], globalnodes[ i + 1 ], globalnodes[ i + 2 ] ) );
+      }
 
       // get rid of any multiple entries
       std::sort( all_nodes.begin(), all_nodes.end() );
@@ -259,9 +257,11 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
       for ( typename NodeListType::iterator n = local_nodes.begin();
             n != local_nodes.end();
             ++n )
+      {
         all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
           ( ( *n )->get_parent() )->get_gid(),
           ( *n )->get_vp() ) );
+      }
     }
     else
     {
@@ -288,18 +288,21 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
           }
         }
         if ( match )
+        {
           all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
             ( ( *n )->get_parent() )->get_gid(),
             ( *n )->get_vp() ) );
+        }
       }
     }
     std::sort( all_nodes.begin(), all_nodes.end() );
   }
 }
-
+*/
 
 #else // HAVE_MPI
 
+/* TODO480
 template < typename NodeListType >
 void
 nest::MPIManager::communicate( const NodeListType& local_nodes,
@@ -309,12 +312,16 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
   for ( typename NodeListType::iterator n = local_nodes.begin();
         n != local_nodes.end();
         ++n )
+  {
     all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
       ( ( *n )->get_parent() )->get_gid(),
       ( *n )->get_vp() ) );
+  }
   std::sort( all_nodes.begin(), all_nodes.end() );
 }
+*/
 
+/* TODO480
 template < typename NodeListType >
 void
 nest::MPIManager::communicate( const NodeListType& local_nodes,
@@ -328,9 +335,11 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
     for ( typename NodeListType::iterator n = local_nodes.begin();
           n != local_nodes.end();
           ++n )
+    {
       all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
         ( ( *n )->get_parent() )->get_gid(),
         ( *n )->get_vp() ) );
+    }
   }
   else
   {
@@ -356,13 +365,16 @@ nest::MPIManager::communicate( const NodeListType& local_nodes,
         }
       }
       if ( match )
+      {
         all_nodes.push_back( NodeAddressingData( ( *n )->get_gid(),
           ( ( *n )->get_parent() )->get_gid(),
           ( *n )->get_vp() ) );
+      }
     }
   }
   std::sort( all_nodes.begin(), all_nodes.end() );
 }
+*/
 
 #endif
 

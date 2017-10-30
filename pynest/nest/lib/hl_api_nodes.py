@@ -75,7 +75,7 @@ class GIDCollection(object):
             nest.ResetKernel()
 
             # Create GIDCollection representing nodes
-            gc = nest.Create('iaf_neuron', 10)
+            gc = nest.Create('iaf_psc_alpha', 10)
 
             # Print gids and modelID
             for gid, mid in gc.items():
@@ -90,7 +90,7 @@ class GIDCollection(object):
 
             # Concatination
             Enrns = nest.Create('aeif_cond_alpha', 600)
-            Inrns = nest.Create('iaf_neuron', 400)
+            Inrns = nest.Create('iaf_psc_alpha', 400)
             nrns = Enrns + Inrns
 
             # Indexing, slicing and membership
@@ -168,7 +168,7 @@ class GIDCollection(object):
         return nest.sli_func('size', self._datum)
 
     def __str__(self):
-        return '{}'.format(list(nest.sli_func('cva', self._datum)))
+        return ''.format(nest.sli_func('==', self._datum))
 
 
 @check_stack
@@ -190,6 +190,8 @@ def Create(model, n=1, params=None):
     GIDCollection:
         Object representing global IDs of created nodes
     """
+
+    model_deprecation_warning(model)
 
     if isinstance(params, dict):
         cmd = "/%s 3 1 roll exch Create" % model
@@ -215,28 +217,8 @@ def Create(model, n=1, params=None):
 
 
 @check_stack
-def GetLID(gid):
-    """Return the local id of a node with the global ID gid.
+def PrintNodes():
+    """Print the GID ranges and model names of the nodes in the network."""
 
-    Parameters
-    ----------
-    gid : int
-        Global id of node
-
-    Returns
-    -------
-    int:
-        Local id of node
-
-    Raises
-    ------
-    NESTError
-    """
-
-    if len(gid) > 1:
-        raise NESTError("GetLID() expects exactly one GID.")
-
-    sps(gid[0])
-    sr("GetLID")
-
-    return spp()
+    sr("PrintNodesToStream")
+    print(spp())

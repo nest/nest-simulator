@@ -45,10 +45,10 @@
 
     ResetKernel
 
-    0 <<
+    <<
 	/local_num_threads 1 
 	/resolution h
-    >> SetStatus
+    >> SetKernelStatus
 
     /model Set
 
@@ -87,10 +87,10 @@
     
     ResetKernel
 
-    0 << 
+    << 
 	/local_num_threads 1 
 	/resolution h
-    >> SetStatus
+    >> SetKernelStatus
 
 
     /nrn1 model Create def

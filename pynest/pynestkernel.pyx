@@ -217,16 +217,14 @@ cdef class NESTEngine(object):
 
         if self.pEngine is NULL:
             raise NESTError("engine uninitialized")
-
-        cdef string cmd_bytes = cmd.encode()
-
+        cdef string cmd_bytes
+        cmd_bytes = cmd.encode('utf-8')
         self.pEngine.execute(cmd_bytes)
 
     def push(self, obj):
 
         if self.pEngine is NULL:
             raise NESTError("engine uninitialized")
-
         self.pEngine.OStack.push(python_object_to_datum(obj))
 
     def pop(self):
@@ -310,10 +308,13 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
     ):
         ret = python_object_to_datum(obj.item())
     elif isinstance(obj, SLIDatum):
-        if (<SLIDatum> obj).dtype == SLI_TYPE_MASK.decode():
-            ret = <Datum*> new MaskDatum(deref(<MaskDatum*> (<SLIDatum> obj).thisptr))
-        elif (<SLIDatum> obj).dtype == SLI_TYPE_PARAMETER.decode():
-            ret = <Datum*> new ParameterDatum(deref(<ParameterDatum*> (<SLIDatum> obj).thisptr))
+        # TODO480
+        #if (<SLIDatum> obj).dtype == SLI_TYPE_MASK.decode():
+        #    ret = <Datum*> new MaskDatum(deref(<MaskDatum*> (<SLIDatum> obj).thisptr))
+        #elif (<SLIDatum> obj).dtype == SLI_TYPE_PARAMETER.decode():
+        #    ret = <Datum*> new ParameterDatum(deref(<ParameterDatum*> (<SLIDatum> obj).thisptr))
+        if False:
+            pass
         elif (<SLIDatum> obj).dtype == SLI_TYPE_GIDCOLLECTION.decode():
             ret = <Datum*> new GIDCollectionDatum(deref(<GIDCollectionDatum*> (<SLIDatum> obj).thisptr))
         elif (<SLIDatum> obj).dtype == SLI_TYPE_GIDCOLLECTIONITERATOR.decode():
@@ -415,7 +416,7 @@ cdef inline object sli_datum_to_object(Datum* dat):
     elif datum_type == SLI_TYPE_DOUBLE:
         ret = (<DoubleDatum*> dat).get()
     elif datum_type == SLI_TYPE_STRING:
-         ret = (<string> deref_str(<StringDatum*> dat)).decode()
+         ret = (<string> deref_str(<StringDatum*> dat)).decode('utf-8')
     elif datum_type == SLI_TYPE_LITERAL:
         obj_str = (<LiteralDatum*> dat).toString()
         ret = SLILiteral(obj_str.decode())
@@ -429,12 +430,13 @@ cdef inline object sli_datum_to_object(Datum* dat):
         ret = sli_vector_to_object[sli_vector_int_ptr_t, long](<IntVectorDatum*> dat)
     elif datum_type == SLI_TYPE_VECTOR_DOUBLE:
         ret = sli_vector_to_object[sli_vector_double_ptr_t, double](<DoubleVectorDatum*> dat)
-    elif datum_type == SLI_TYPE_MASK:
-        ret = SLIDatum()
-        (<SLIDatum> ret)._set_datum(<Datum*> new MaskDatum(deref(<MaskDatum*> dat)), SLI_TYPE_MASK.decode())
-    elif datum_type == SLI_TYPE_PARAMETER:
-        ret = SLIDatum()
-        (<SLIDatum> ret)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())
+    # TODO480
+    # elif datum_type == SLI_TYPE_MASK:
+    #    ret = SLIDatum()
+    #    (<SLIDatum> ret)._set_datum(<Datum*> new MaskDatum(deref(<MaskDatum*> dat)), SLI_TYPE_MASK.decode())
+    # elif datum_type == SLI_TYPE_PARAMETER:
+    #    ret = SLIDatum()
+    #    (<SLIDatum> ret)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())
     elif datum_type == SLI_TYPE_GIDCOLLECTION:
         ret = SLIDatum()
         (<SLIDatum> ret)._set_datum(<Datum*> new GIDCollectionDatum(deref(<GIDCollectionDatum*> dat)), SLI_TYPE_GIDCOLLECTION.decode())

@@ -29,7 +29,6 @@
 // Includes from nestkernel:
 #include "exceptions.h"
 #include "kernel_manager.h"
-#include "subnet.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -41,10 +40,8 @@ namespace nest
 
 Node::Node()
   : gid_( 0 )
-  , lid_( 0 )
   , thread_lid_( invalid_index )
   , model_id_( -1 )
-  , parent_( 0 )
   , thread_( 0 )
   , vp_( invalid_thread_ )
   , frozen_( false )
@@ -55,10 +52,8 @@ Node::Node()
 
 Node::Node( const Node& n )
   : gid_( 0 )
-  , lid_( 0 )
   , thread_lid_( n.thread_lid_ )
   , model_id_( n.model_id_ )
-  , parent_( n.parent_ )
   , thread_( n.thread_ )
   , vp_( n.vp_ )
   , frozen_( n.frozen_ )
@@ -84,7 +79,9 @@ void
 Node::init_buffers()
 {
   if ( buffers_initialized_ )
+  {
     return;
+  }
 
   init_buffers_();
 
@@ -95,7 +92,9 @@ std::string
 Node::get_name() const
 {
   if ( model_id_ < 0 )
+  {
     return std::string( "UnknownNode" );
+  }
 
   return kernel().model_manager.get_model( model_id_ )->get_name();
 }
@@ -104,7 +103,9 @@ Model&
 Node::get_model_() const
 {
   if ( model_id_ < 0 )
+  {
     throw UnknownModelID( model_id_ );
+  }
 
   return *kernel().model_manager.get_model( model_id_ );
 }
@@ -112,7 +113,7 @@ Node::get_model_() const
 bool
 Node::is_local() const
 {
-  return !is_proxy();
+  return not is_proxy();
 }
 
 DictionaryDatum
@@ -140,15 +141,6 @@ Node::get_status_base()
     ( *dict )[ names::node_uses_wfr ] = node_uses_wfr();
     ( *dict )[ names::thread ] = get_thread();
     ( *dict )[ names::vp ] = get_vp();
-    if ( parent_ )
-    {
-      ( *dict )[ names::parent ] = parent_->get_gid();
-
-      // LIDs are only sensible for nodes with parents.
-      // Add 1 as we count lids internally from 0, but from
-      // 1 in the user interface.
-      ( *dict )[ names::local_id ] = get_lid() + 1;
-    }
   }
 
   ( *dict )[ names::thread_local_id ] = get_thread_lid();
@@ -184,8 +176,6 @@ Node::set_status_base( const DictionaryDatum& dict )
   }
 
   updateValue< bool >( dict, names::frozen, frozen_ );
-
-  updateValue< bool >( dict, names::node_uses_wfr, node_uses_wfr_ );
 }
 
 /**
@@ -350,6 +340,63 @@ Node::sends_secondary_event( GapJunctionEvent& )
   throw IllegalConnection();
 }
 
+void
+Node::handle( InstantaneousRateConnectionEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+void
+Node::handle( DiffusionConnectionEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+void
+Node::handle( DelayedRateConnectionEvent& )
+{
+  throw UnexpectedEvent();
+}
+
+port
+Node::handles_test_event( InstantaneousRateConnectionEvent&, rport )
+{
+  throw IllegalConnection();
+  return invalid_port_;
+}
+
+port
+Node::handles_test_event( DiffusionConnectionEvent&, rport )
+{
+  throw IllegalConnection();
+  return invalid_port_;
+}
+
+port
+Node::handles_test_event( DelayedRateConnectionEvent&, rport )
+{
+  throw IllegalConnection();
+  return invalid_port_;
+}
+
+void
+Node::sends_secondary_event( InstantaneousRateConnectionEvent& )
+{
+  throw IllegalConnection();
+}
+
+void
+Node::sends_secondary_event( DiffusionConnectionEvent& )
+{
+  throw IllegalConnection();
+}
+
+void
+Node::sends_secondary_event( DelayedRateConnectionEvent& )
+{
+  throw IllegalConnection();
+}
+
 
 double
 Node::get_K_value( double )
@@ -374,18 +421,6 @@ nest::Node::get_history( double,
 }
 
 void
-Node::set_has_proxies( const bool )
-{
-  throw UnexpectedEvent();
-}
-
-void
-Node::set_local_receiver( const bool )
-{
-  throw UnexpectedEvent();
-}
-
-void
 Node::event_hook( DSSpikeEvent& e )
 {
   e.get_receiver().handle( e );
@@ -395,12 +430,6 @@ void
 Node::event_hook( DSCurrentEvent& e )
 {
   e.get_receiver().handle( e );
-}
-
-bool
-Node::is_subnet() const
-{
-  return false;
 }
 
 } // namespace

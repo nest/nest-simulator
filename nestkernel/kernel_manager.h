@@ -25,13 +25,11 @@
 
 #include <ctime>
 
-// Includes from libnestutil:
-#include "logging_manager.h"
-
 // Includes from nestkernel:
 #include "connection_manager.h"
 #include "event_delivery_manager.h"
 #include "io_manager.h"
+#include "logging_manager.h"
 #include "model_manager.h"
 #include "modelrange_manager.h"
 #include "mpi_manager.h"
@@ -71,8 +69,6 @@
  total_num_virtual_procs  integertype - The total number of virtual processes
  local_num_threads        integertype - The local number of threads
  num_processes            integertype - The number of MPI processes (read only)
- num_rec_processes        integertype - The number of MPI processes reserved for recording spikes
- num_sim_processes        integertype - The number of MPI processes reserved for simulating neurons
  off_grid_spiking         booltype    - Whether to transmit precise spike times in MPI
                                         communication (read only)
 
@@ -160,20 +156,21 @@ public:
   /**
    * Reset kernel.
    *
-   * Resets kernel by finalizing and initalizing.
+   * Resets kernel by finalizing and initializing.
    *
    * @see initialize(), finalize()
    */
   void reset();
 
   /**
-   * Reset kernel after num threads have changed.
+   * Prepare kernel for new number of threads.
    *
-   * No need to reset all managers, only those affected by num thread changes.
+   * The kernel first needs to be finalized with the old number of threads
+   * and then initialized with the new number of threads.
    *
    * @see initialize(), finalize()
    */
-  void num_threads_changed_reset();
+  void change_number_of_threads( size_t );
 
   void set_status( const DictionaryDatum& );
   void get_status( DictionaryDatum& );

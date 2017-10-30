@@ -36,10 +36,10 @@ ResetKernel
 
 0.1 /h Set
 
-0 << 
+<< 
       /local_num_threads 1 
       /resolution h
-  >> SetStatus
+  >> SetKernelStatus
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 

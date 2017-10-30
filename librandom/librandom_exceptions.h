@@ -56,7 +56,7 @@ public:
   }
 
   std::string
-  message()
+  message() const
   {
     return msg_;
   }
@@ -89,7 +89,7 @@ public:
   }
 
   std::string
-  message()
+  message() const
   {
     return msg_;
   }

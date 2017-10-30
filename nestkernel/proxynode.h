@@ -56,11 +56,10 @@ public:
   /**
    * Construct proxy node for internal use from
    * @param GID of represented node
-   * @param GID of parent of represented node
    * @param model id of represented node
    * @param vp of represented node
    */
-  proxynode( index, index, index, index );
+  proxynode( index, index, index );
 
   /**
    * Import sets of overloaded virtual functions.
@@ -79,6 +78,12 @@ public:
   void sends_secondary_event( GapJunctionEvent& );
 
   SignalType sends_signal() const;
+
+  void sends_secondary_event( InstantaneousRateConnectionEvent& );
+
+  void sends_secondary_event( DiffusionConnectionEvent& );
+
+  void sends_secondary_event( DelayedRateConnectionEvent& );
 
   void
   handle( SpikeEvent& )

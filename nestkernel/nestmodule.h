@@ -110,7 +110,7 @@ public:
    * -# Functions which expect a model or synapse type as argument,
    *    must be given this argument as a literal, e.g.,
         @verbatim
-        /iaf_neuron 6 Create
+        /iaf_psc_alpha 6 Create
         @endverbatim
    *    Literals will be looked up in the corresponding dictionaries
    *    (modeldict, synapsedict).
@@ -131,36 +131,6 @@ public:
 
   //@{
 
-  class ChangeSubnet_iFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } changesubnet_ifunction;
-
-  class CurrentSubnetFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } currentsubnetfunction;
-
-  class GetNodes_i_D_b_bFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } getnodes_i_D_b_bfunction;
-
-  class GetLeaves_i_D_bFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } getleaves_i_D_bfunction;
-
-  class GetChildren_i_D_bFunction : public SLIFunction
-  {
-  public:
-    void execute( SLIInterpreter* ) const;
-  } getchildren_i_D_bfunction;
-
   class GetStatus_iFunction : public SLIFunction
   {
   public:
@@ -179,6 +149,12 @@ public:
     void execute( SLIInterpreter* ) const;
   } getstatus_afunction;
 
+  class GetKernelStatus_Function : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } getkernelstatus_function;
+
   class SetStatus_idFunction : public SLIFunction
   {
   public:
@@ -190,6 +166,12 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } setstatus_CDfunction;
+
+  class SetKernelStatus_DFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } setkernelstatus_Dfunction;
 
   class Cva_CFunction : public SLIFunction
   {
@@ -232,6 +214,24 @@ public:
   public:
     void execute( SLIInterpreter* ) const;
   } simulatefunction;
+
+  class PrepareFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } preparefunction;
+
+  class RunFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } runfunction;
+
+  class CleanupFunction : public SLIFunction
+  {
+  public:
+    void execute( SLIInterpreter* ) const;
+  } cleanupfunction;
 
   class Create_l_iFunction : public SLIFunction
   {
@@ -292,10 +292,15 @@ public:
     void execute( SLIInterpreter* ) const;
   } memoryinfofunction;
 
-  class PrintNetworkFunction : public SLIFunction
+  class PrintNodesFunction : public SLIFunction
   {
     void execute( SLIInterpreter* ) const;
-  } printnetworkfunction;
+  } printnodesfunction;
+
+  class PrintNodesToStreamFunction : public SLIFunction
+  {
+    void execute( SLIInterpreter* ) const;
+  } printnodestostreamfunction;
 
   class RankFunction : public SLIFunction
   {
@@ -311,11 +316,6 @@ public:
   {
     void execute( SLIInterpreter* ) const;
   } setfakenumprocesses_ifunction;
-
-  class SetNumRecProcesses_iFunction : public SLIFunction
-  {
-    void execute( SLIInterpreter* ) const;
-  } setnumrecprocesses_ifunction;
 
   class SyncProcessesFunction : public SLIFunction
   {

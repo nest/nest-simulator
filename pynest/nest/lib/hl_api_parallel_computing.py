@@ -55,34 +55,34 @@ def NumProcesses():
 
 
 @check_stack
-def SetNumRecProcesses(nrp):
-    """Set the number of recording MPI processes.
-
-    Usually, spike detectors are distributed over all processes and record
-    from local neurons only. If a number of processes is dedicated to spike
-    detection, each spike detector is hosted on one of these processes and
-    records globally from all simulating processes.
-
-    Parameters
-    ----------
-    nrp : int
-        Number of recording MPI processes
-    """
-
-    sr("%d SetNumRecProcesses" % nrp)
-
-
-@check_stack
-def SetAcceptableLatency(port, latency):
+def SetAcceptableLatency(port_name, latency):
     """Set the acceptable latency (in ms) for a MUSIC port.
 
     Parameters
     ----------
-    port : object
+    port_name : str
         MUSIC port to set latency for
     latency : float
         Latency in ms
     """
 
+    sps(kernel.SLILiteral(port_name))
     sps(latency)
-    sr("/%s exch SetAcceptableLatency" % port)
+    sr("SetAcceptableLatency")
+
+
+@check_stack
+def SetMaxBuffered(port_name, size):
+    """Set the maximum buffer size for a MUSIC port.
+
+    Parameters
+    ----------
+    port_name : str
+        MUSIC port to set buffer size for
+    size : int
+        Buffer size
+    """
+
+    sps(kernel.SLILiteral(port_name))
+    sps(size)
+    sr("SetMaxBuffered")

@@ -169,8 +169,6 @@ Dictionary with NEST model objects.
 
 [Create](../helpindex/cmds/Create.md) Create network elements in the
 current subnet.
-[LayoutNetwork](../helpindex/cmds/LayoutNetwork.md)
-Create a nested multi-dimensional network structure in the current subnet.
 
 ### Neuron Models
 
@@ -271,28 +269,8 @@ Prints a list of the connections of the nodes in the layer to file.
 
 ### Navigating the network
 
-[CurrentSubnet](../helpindex/cmds/CurrentSubnet.md) Return the GID of
-the current network node.
-[ChangeSubnet](../helpindex/cmds/ChangeSubnet.md)
-Change the curent working subnet to a specified position.
-[PrintNetwork](../helpindex/cmds/PrintNetwork.md)
-Print network tree in readable form.
-[NetworkDimensions](../helpindex/cmds/NetworkDimensions.md)
-Returns an array with the dimensions of a structured subnet.
-[GetGlobalNodes](../helpindex/cmds/GetGlobalNodes.md)
-Return IDs of all nodes of a subnet.
-[GetGlobalLeaves](../helpindex/cmds/GetGlobalLeaves.md)
-Return IDs of all leaves of a subnet.
-[GetGlobalChildren](../helpindex/cmds/GetGlobalChildren.md)
-Return IDs of all immediate child nodes of a subnet.
-[GetLocalNodes](../helpindex/cmds/GetLocalNodes.md)
-Return IDs of all nodes of a subnet local to the MPI process executing the
-command.
-[GetLocalLeaves](../helpindex/cmds/GetLocalLeaves.md) Return
-IDs of all leaves of a subnet local to the MPI process executing the command.
-[GetLocalChildren](../helpindex/cmds/GetLocalChildren.md)
-Return IDs of all immediate child nodes of a subnet local to the MPI process
-executing the command.
+[PrintNodes](../helpindex/cmds/PrintNodes.md)
+Print GID ranges and model names in network in readable form.
 
 ### Investigating connectivity
 

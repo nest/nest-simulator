@@ -88,8 +88,10 @@ std::vector< double >
 get_position( GIDCollectionPTR layer_gc, const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
+  {
     throw KernelException(
       "GetPosition is currently implemented for local nodes only." );
+  }
 
   AbstractLayerPTR layer = get_layer( layer_gc );
   return layer->get_position_vector( node_gid );
@@ -100,8 +102,10 @@ displacement( GIDCollectionPTR layer_gc, const std::vector< double >& point,
 		const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
+  {
     throw KernelException(
       "Displacement is currently implemented for local nodes only." );
+  }
 
   AbstractLayerPTR layer = get_layer( layer_gc );
   return layer->compute_displacement( point, node_gid );
@@ -112,9 +116,11 @@ distance( GIDCollectionPTR layer_gc, const std::vector< double >& point,
 		const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
+  {
     throw KernelException(
       "Distance is currently implemented for local nodes only." );
-
+  }
+    
   AbstractLayerPTR layer = get_layer( layer_gc );
   return layer->compute_distance( point, node_gid );
 }
@@ -223,7 +229,9 @@ dump_layer_nodes( GIDCollectionPTR layer_gc,
   AbstractLayerPTR layer = get_layer( layer_gc );
 
   if ( out->good() )
+  {
     layer->dump_nodes( *out );
+  }
 }
 
 void
@@ -233,7 +241,9 @@ dump_layer_connections( const Token& syn_model, GIDCollectionPTR layer_gc,
   AbstractLayerPTR layer = get_layer( layer_gc );
 
   if ( out->good() )
+  {
     layer->dump_connections( *out, syn_model );
+  }
 }
 
 std::vector< index >

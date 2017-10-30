@@ -159,7 +159,7 @@ public:
   void handle( CurrentEvent& );
   void handle( DataLoggingRequest& );
 
-  bool is_off_grid() const // uses off_grid events
+  bool is_off_grid() const
   {
     return true;
   }
@@ -407,7 +407,9 @@ inline port
 iaf_psc_exp_ps::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -415,7 +417,9 @@ inline port
 iaf_psc_exp_ps::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -424,7 +428,9 @@ iaf_psc_exp_ps::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

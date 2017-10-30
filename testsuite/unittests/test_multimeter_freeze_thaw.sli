@@ -178,11 +178,7 @@ def
     /recvars [ /V_m ] def
     /N 10 def
 
-        /nnet /subnet Create def
-        nnet 0 get ChangeSubnet
-  /iaf_psc_alpha N Create ;
-        0 ChangeSubnet
-        /nrns nnet 0 get GetGlobalLeaves def
+        /nrns /iaf_psc_alpha N Create def
 
         /multimeter << /record_from recvars /withgid false /withtime true 
                        /interval 0.7 /start 4.8 /stop 233.1 /time_in_steps true >> SetDefaults

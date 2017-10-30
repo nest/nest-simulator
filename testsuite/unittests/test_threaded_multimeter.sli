@@ -53,7 +53,7 @@ M_ERROR setverbosity
     << /local_num_threads n_threads >> SetKernelStatus
 
     % actual neurons
-    /nrns /iaf_cond_alpha N << /I_e 40. >> Create def
+    /nrns /iaf_psc_alpha N << /I_e 40. >> Create def
     nrns { dup /global_id get 1 sub 30. N div mul -90. add 
                /foo << >> def foo exch /V_m exch put foo SetStatus } forall
 
@@ -61,7 +61,7 @@ M_ERROR setverbosity
     /ac /multimeter << /record_from [ /V_m ] /withgid true /interval 1.
                        /to_memory true /to_accumulator false >> Create def
                        
-    ac nrns cvgidcollection Connect
+    ac nrns Connect
 
     5. Simulate
 

@@ -134,30 +134,6 @@ ConnectionGeneratorModule::CGConnect_cg_g_g_D_lFunction::execute(
   i->EStack.pop();
 }
 
-// Connect for conn_generator gidcollection gidcollection dict synapsetype
-void
-ConnectionGeneratorModule::CGConnect_cg_g_g_D_lFunction::execute(
-  SLIInterpreter* i ) const
-{
-  i->assert_stack_load( 5 );
-
-  ConnectionGeneratorDatum cg =
-    getValue< ConnectionGeneratorDatum >( i->OStack.pick( 4 ) );
-  GIDCollectionDatum sources =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 3 ) );
-  GIDCollectionDatum targets =
-    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
-  DictionaryDatum params_map =
-    getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
-  const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
-
-  cg_connect( cg, sources, targets, params_map, synmodel_name );
-
-  i->OStack.pop( 5 );
-  i->EStack.pop();
-}
-
-
 /* BeginDocumentation
    Name: CGParse - Call ConnectionGenerator::fromXML() and return a
    ConnectionGenerator

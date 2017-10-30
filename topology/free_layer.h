@@ -179,11 +179,11 @@ FreeLayer< D >::get_status( DictionaryDatum& d ) const
 
 template < int D >
 Position< D >
-FreeLayer< D >::get_position( index sind ) const
+FreeLayer< D >::get_position( index lid ) const
 {
-  // If sind > positions_.size(), we must have "wrapped around" when
+  // If lid > positions_.size(), we must have "wrapped around" when
   // storing positions, so we may simply mod with the size
-  return positions_[ sind % positions_.size() ];
+  return positions_[ lid % positions_.size() ];
 }
 
 template < int D >

@@ -483,9 +483,9 @@ TopologyModule::GetPosition_g_iFunction::execute( SLIInterpreter* i ) const
   i->assert_stack_load( 2 );
 
   const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(1) );
-  const index node_gid = getValue< long >( i->OStack.pick( 0 ) );
+  const index gid = getValue< long >( i->OStack.pick( 0 ) );
 
-  Token result = get_position( layer, node_gid );
+  Token result = get_position( layer, gid );
 
   i->OStack.pop( 2 );
   i->OStack.push( result );

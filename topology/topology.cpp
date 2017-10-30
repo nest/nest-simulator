@@ -85,16 +85,21 @@ create_layer( const DictionaryDatum& layer_dict )
 }
 
 std::vector< double >
-get_position( GIDCollectionPTR layer_gc, const index node_gid )
+get_position( GIDCollectionPTR layer_gc, const index gid )
 {
-  if ( not kernel().node_manager.is_local_gid( node_gid ) )
+  if ( not kernel().node_manager.is_local_gid( gid ) )
   {
     throw KernelException(
       "GetPosition is currently implemented for local nodes only." );
   }
 
   AbstractLayerPTR layer = get_layer( layer_gc );
-  return layer->get_position_vector( node_gid );
+  const long lid = layer_gc->find( gid );
+  if ( lid < 0 )
+  {
+	throw LayerNodeExpected();
+  }
+  return layer->get_position_vector( lid );
 }
 
 std::vector< double >

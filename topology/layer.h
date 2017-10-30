@@ -51,7 +51,7 @@ typedef lockPTR< AbstractLayer > AbstractLayerPTR;
 /**
  * Abstract base class for Layers of unspecified dimension.
  */
-class AbstractLayer : public Subnet
+class AbstractLayer
 {
 public:
   /**
@@ -69,11 +69,11 @@ public:
 
   /**
    * Get position of node. Only possible for local nodes.
-   * @param sind subnet index of node
+   * @param lid index of node within layer
    * @returns position of node as std::vector
    */
   virtual std::vector< double > get_position_vector(
-    const index sind ) const = 0;
+    const index lid ) const = 0;
 
   /**
    * Returns displacement of node from given position. When using periodic
@@ -143,9 +143,6 @@ public:
    */
   virtual void dump_connections( std::ostream& out,
     const Token& syn_model ) = 0;
-
-  using Subnet::local_begin;
-  using Subnet::local_end;
 
   /**
    * Start of local children at given depth.
@@ -398,17 +395,6 @@ public:
    */
   void dump_connections( std::ostream& out, const Token& syn_model );
 
-  /**
-   * Layers do not allow entry to the ChangeSubnet command, nodes can not
-   * be added by the user.
-   * @returns false
-   */
-  bool
-  is_subnet() const
-  {
-    return false;
-  }
-
 protected:
   /**
    * Clear the cache for global position information
@@ -595,7 +581,7 @@ MaskedLayer< D >::begin( const Position< D >& anchor )
     return ntree_->masked_begin(
       dynamic_cast< const Mask< D >& >( *mask_ ), anchor );
   }
-  catch ( std::bad_cast e )
+  catch ( std::bad_cast& e )
   {
     throw BadProperty( "Mask is incompatible with layer." );
   }

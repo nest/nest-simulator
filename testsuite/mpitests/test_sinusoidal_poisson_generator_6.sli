@@ -28,11 +28,11 @@ Synopsis: nest_indirect test_sinusoidal_poisson_generator_6.sli -> -
 Description:
    Creates a sinusoidally modulated Poisson generator emitting an
    individual spike train to each of its targets and sends spikes to spike
-   detectors. Ensures that all targets receive identical spike trains.
+   detectors. Ensures that all targets receive different spike trains.
 
 Author:  December 2012, May 2013, Plesser, based on test_poisson_generator.sli
 
-See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson_generator_nostat
+See also: test_sinusoidal_poisson_generator_{1,2,3,4,5}, test_sinusoidal_poisson_generator_nostat
 */
 
 (unittest) run
@@ -51,7 +51,6 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson
   }
   {
     /items Set
-    items ==
     items [ 1 -2 ] Take  % all except last element
     { 1 add -1 2 arraystore items exch Take 
       exch /item Set 
@@ -84,15 +83,13 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson
      /individual_spike_trains individual
   >> SetDefaults
 
-  /parrots [ n ] { ; /parrot_neuron Create } Table def
-  /sdets   [ n ] 
-    { ;   /spike_detector n << /withtime true /withgid false >> Create } 
-    Table def  
-
   /gen /sinusoidal_poisson_generator Create def
+  /parrots /parrot_neuron n Create def
+  /sdets /spike_detector n << /withtime true /withgid false >> Create def
 
-  parrots { gen exch Connect } forall
-  [parrots sdets] { Connect } ScanThread
+  gen parrots Connect
+  
+  parrots sdets << /rule /one_to_one >> Connect
 
   10. Simulate
 
@@ -110,12 +107,9 @@ See also: test_sinusoidal_poisson_generator_{1,2,3,4,6}, test_sinusoidal_poisson
 
   % get events, replace vectors with SLI arrays
   % keep only non-empty arrays; empty ones are from off-process parrots
-  sdets { { [/events /times] get cva } Map { empty not exch ; } Select } forall
-  
-  { == } forall
+  sdets { [/events /times] get cva } Map { empty not exch ; } Select
   
   % expect array with two arrays of spike times
   all_different
-  ==
 }
 distributed_collect_assert_or_die

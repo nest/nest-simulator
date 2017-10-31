@@ -112,7 +112,7 @@ each of them, which is more efficient, and thus to be preferred. One way to do
 it is to give a list of dictionaries which is the same length as the number of
 nodes to be parameterised, for example using a list comprehension:
 
-    dVms =  [{"V_m": Vrest+(Vth-Vrest)\*numpy.random.rand()} for x in epop1]
+    dVms =  [{"V_m": Vrest+(Vth-Vrest)*numpy.random.rand()} for x in epop1]
     nest.SetStatus(epop1, dVms)
 
 If we only need to randomise one parameter then there is a more concise way by
@@ -120,7 +120,7 @@ passing in the name of the parameter and a list of its desired values. Once
 again, the list must be the same size as the number of nodes to be
 parameterised:
 
-    Vms = Vrest+(Vth-Vrest)\*numpy.random.rand(len(epop1))
+    Vms = Vrest+(Vth-Vrest)*numpy.random.rand(len(epop1))
     nest.SetStatus(epop1, "V_m", Vms)
 
 Note that we are being rather lax with random numbers here. Really we have to

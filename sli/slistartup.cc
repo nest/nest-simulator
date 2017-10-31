@@ -217,9 +217,9 @@ SLIStartup::checkenvpath( std::string const& envvar,
 SLIStartup::SLIStartup( int argc, char** argv )
   : startupfilename( "sli-init.sli" )
   , slilibpath( "/sli" )
-  , slihomepath( NEST_PREFIX "/" NEST_DATADIR )
-  , slidocdir( NEST_PREFIX "/" NEST_DOCDIR )
-  , sliprefix( NEST_PREFIX )
+  , slihomepath( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DATADIR )
+  , slidocdir( NEST_INSTALL_PREFIX "/" NEST_INSTALL_DOCDIR )
+  , sliprefix( NEST_INSTALL_PREFIX )
   , verbosity_( SLIInterpreter::M_INFO ) // default verbosity level
   , debug_( false )
   , argv_name( "argv" )

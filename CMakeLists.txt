@@ -28,7 +28,7 @@ set( NEST_USER_EMAIL "nest_user@nest-initiative.org" )
 
 # VERSION exported to libnestutil/config.h, extras/create_release.sh
 set( NEST_VERSION_MAJOR 2 )
-set( NEST_VERSION_MINOR 12 )
+set( NEST_VERSION_MINOR 14 )
 set( NEST_VERSION_PATCHLEVEL 0 )
 
 set( NEST_VERSION_VERSION "${NEST_VERSION_MAJOR}.${NEST_VERSION_MINOR}.${NEST_VERSION_PATCHLEVEL}" )
@@ -91,17 +91,12 @@ include( GNUInstallDirs )
 #################        Do not install into /usr/local        #################
 ################################################################################
 
+get_filename_component(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX} REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
+# If CMAKE_INSTALL_PREFIX is omitted CMake will set the installation prefix to its default '/usr/local'.
+# This is not desired. A subdirectory is allowed, e.g. 'usr/local/nest'.
 if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
-  # no prefix given?
-  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'. "
-                    "Please set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
+  message( FATAL_ERROR "Do not install into '${CMAKE_INSTALL_PREFIX}'. Please set -DCMAKE_INSTALL_PREFIX:PATH=<install prefix>." )
 endif ()
-
-################################################################################
-#################    Use absolute path for CMAKE_NEST_PREFIX   #################
-################################################################################
-
-get_filename_component(CMAKE_NEST_PREFIX ${CMAKE_INSTALL_PREFIX} REALPATH BASE_DIR "${CMAKE_BINARY_DIR}")
 
 ################################################################################
 ##################           Find utility programs            ##################
@@ -188,22 +183,22 @@ file( MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/reports/ )
 
 if ( HAVE_PYTHON )
   add_custom_target( installcheck
-      #COMMAND ${CMAKE_MAKE_PROGRAM} install
-      COMMAND export PATH="${CMAKE_INSTALL_FULL_BINDIR}:$ENV{PATH}" &&
-      export PYTHON="${PYTHON}" &&
-      export PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}:$ENV{PYTHONPATH}" &&
+    COMMAND ${CMAKE_COMMAND} -E env
+      NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
+      PYTHON="${PYTHON}"
+      NEST_PYTHONPATH="${CMAKE_INSTALL_PREFIX}/${PYEXECDIR}"
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --test-pynest --source-dir="${PROJECT_SOURCE_DIR}"
-      WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-      COMMENT "Execute NEST's testsuite...."
-      )
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+    COMMENT "Execute NEST's testsuite...."
+  )
 else ()
   add_custom_target( installcheck
-      #COMMAND ${CMAKE_MAKE_PROGRAM} install
-      COMMAND export PATH="${CMAKE_INSTALL_FULL_BINDIR}:$ENV{PATH}" &&
+    COMMAND ${CMAKE_COMMAND} -E env
+      NEST_PATH="${CMAKE_INSTALL_FULL_BINDIR}"
       ${CMAKE_INSTALL_FULL_DATADIR}/extras/do_tests.sh --source-dir="${PROJECT_SOURCE_DIR}"
-      WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
-      COMMENT "Execute NEST's testsuite...."
-      )
+    WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
+    COMMENT "Execute NEST's testsuite...."
+  )
 endif ()
 
 add_custom_target( check

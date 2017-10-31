@@ -175,10 +175,8 @@ private:
   //! Independent parameters
   struct Parameters_
   {
-    double V_peak_;        //!< Spike detection threshold in mV
-    double V_reset_;       //!< Reset Potential in mV
-    bool with_refr_input_; //!< spikes arriving during refractory period are
-                           //!< counted
+    double V_peak_;  //!< Spike detection threshold in mV
+    double V_reset_; //!< Reset Potential in mV
 
     double t_ref_; //!< Refractory period in ms
 
@@ -193,7 +191,9 @@ private:
     double t_ref;   //!< Refractory period in ms.
     double I_e;     //!< Intrinsic current in pA.
 
-    double gsl_error_tol; //!< error bound for GSL integrator
+    double gsl_error_tol;  //!< error bound for GSL integrator
+    bool with_refr_input_; //!< spikes arriving during refractory period are
+                           //!< counted
 
     Parameters_(); //!< Sets default parameter values
 

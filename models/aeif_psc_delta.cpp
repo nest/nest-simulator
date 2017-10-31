@@ -135,6 +135,7 @@ nest::aeif_psc_delta::Parameters_::Parameters_()
   , V_th( -50.4 )     // mV
   , I_e( 0.0 )        // pA
   , gsl_error_tol( 1e-6 )
+  , with_refr_input_( false )
 {
 }
 
@@ -190,6 +191,7 @@ nest::aeif_psc_delta::Parameters_::get( DictionaryDatum& d ) const
   def< double >( d, names::I_e, I_e );
   def< double >( d, names::V_peak, V_peak_ );
   def< double >( d, names::gsl_error_tol, gsl_error_tol );
+  def< bool >( d, names::refractory_input, with_refr_input_ );
 }
 
 void
@@ -262,6 +264,8 @@ nest::aeif_psc_delta::Parameters_::set( const DictionaryDatum& d )
   {
     throw BadProperty( "The gsl_error_tol must be strictly positive." );
   }
+
+  updateValue< bool >( d, names::refractory_input, with_refr_input_ );
 }
 
 void

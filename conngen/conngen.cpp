@@ -51,8 +51,8 @@ namespace nest
  */
 void
 cg_connect( ConnectionGeneratorDatum& cg,
-  const GIDCollection& source_gids,
-  const GIDCollection& target_gids,
+  const GIDCollectionPTR source_gids,
+  const GIDCollectionPTR target_gids,
   const DictionaryDatum& params_map,
   const Name& synmodel_name )
 {
@@ -78,10 +78,10 @@ cg_connect( ConnectionGeneratorDatum& cg,
       // No need to check for locality of the target node, as the mask
       // created by cg_set_masks() only contain local nodes.
       Node* const target_node =
-        kernel().node_manager.get_node( target_gids[ target ] );
+        kernel().node_manager.get_node_or_proxy( ( *target_gids )[ target ] );
       const thread target_thread = target_node->get_thread();
       kernel().connection_manager.connect(
-        source_gids[ source ], target_node, target_thread, synmodel_id );
+        ( *source_gids )[ source ], target_node, target_thread, synmodel_id );
     }
   }
   else if ( num_parameters == 2 )
@@ -113,9 +113,9 @@ cg_connect( ConnectionGeneratorDatum& cg,
       // No need to check for locality of the target node, as the mask
       // created by cg_set_masks() only contain local nodes.
       Node* const target_node =
-        kernel().node_manager.get_node( target_gids[ target ] );
+        kernel().node_manager.get_node_or_proxy( ( *target_gids )[ target ] );
       const thread target_thread = target_node->get_thread();
-      kernel().connection_manager.connect( source_gids[ source ],
+      kernel().connection_manager.connect( ( *source_gids )[ source ],
         target_node,
         target_thread,
         synmodel_id,
@@ -142,8 +142,8 @@ cg_connect( ConnectionGeneratorDatum& cg,
  */
 void
 cg_set_masks( ConnectionGeneratorDatum& cg,
-  const GIDCollection& sources,
-  const GIDCollection& targets )
+  const GIDCollectionPTR sources,
+  const GIDCollectionPTR targets )
 {
   const size_t np = kernel().mpi_manager.get_num_processes();
   std::vector< ConnectionGenerator::Mask > masks(
@@ -271,11 +271,11 @@ cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks,
  * \returns the right border of the range
  */
 index
-cg_get_right_border( index left, size_t step, const GIDCollection& gids )
+cg_get_right_border( index left, size_t step, const GIDCollectionPTR gids )
 {
   // Check if left is already the index of the last element in
   // gids. If yes, return left as the right border
-  if ( left == gids.size() - 1 )
+  if ( left == gids->size() - 1 )
   {
     return left;
   }
@@ -285,7 +285,7 @@ cg_get_right_border( index left, size_t step, const GIDCollection& gids )
 
   // Initialize the search index i to the last valid index into gids
   // and last_i to i.
-  long i = gids.size() - 1, last_i = i;
+  long i = gids->size() - 1, last_i = i;
 
   while ( true )
   {
@@ -295,9 +295,9 @@ cg_get_right_border( index left, size_t step, const GIDCollection& gids )
     // the position of the leftmost right border we found until now
     // (i.e. we're back at an already visited index), we found the
     // right border of the contiguous range (last_i) and return it.
-    if ( ( i == static_cast< long >( gids.size() ) - 1
-           and gids[ i ] - gids[ left ] == i - static_cast< index >( left ) )
-      or i == leftmost_r )
+    if ( ( i == static_cast< long >( gids->size() ) - 1
+           and ( *gids )[ i ] - ( *gids )[ left ]
+             == i - static_cast< index >( left ) ) or i == leftmost_r )
     {
       return last_i;
     }
@@ -310,7 +310,8 @@ cg_get_right_border( index left, size_t step, const GIDCollection& gids )
     // set i to the right by step steps, else update the variable
     // for leftmost_r to the current i (i.e. the known leftmost
     // position) and set i to the left by step steps.
-    if ( gids[ i ] - gids[ left ] == i - static_cast< index >( left ) )
+    if ( ( *gids )[ i ] - ( *gids )[ left ]
+      == i - static_cast< index >( left ) )
     {
       i += step;
     }
@@ -347,7 +348,7 @@ cg_get_right_border( index left, size_t step, const GIDCollection& gids )
  * RangeSet. Index translation is done in cg_create_masks().
  */
 void
-cg_get_ranges( RangeSet& ranges, const GIDCollection& gids )
+cg_get_ranges( RangeSet& ranges, const GIDCollectionPTR gids )
 {
   index right, left = 0;
   while ( true )
@@ -355,9 +356,9 @@ cg_get_ranges( RangeSet& ranges, const GIDCollection& gids )
     // Determine the right border of the contiguous range starting
     // at left. The initial step is set to half the length of the
     // interval between left and the end of gids.
-    right = cg_get_right_border( left, ( gids.size() - left ) / 2, gids );
-    ranges.push_back( Range( gids[ left ], gids[ right ] ) );
-    if ( right == gids.size() - 1 ) // We're at the end of gids and stop
+    right = cg_get_right_border( left, ( gids->size() - left ) / 2, gids );
+    ranges.push_back( Range( ( *gids )[ left ], ( *gids )[ right ] ) );
+    if ( right == gids->size() - 1 ) // We're at the end of gids and stop
     {
       break;
     }

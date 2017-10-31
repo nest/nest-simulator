@@ -864,6 +864,11 @@ NestModule::DataConnect_i_D_sFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
+  if ( kernel().vp_manager.get_num_threads() > 1 )
+  {
+    throw KernelException( "DataConnect cannot be used with multiple threads" );
+  }
+
   const index source = getValue< long >( i->OStack.pick( 2 ) );
   DictionaryDatum params = getValue< DictionaryDatum >( i->OStack.pick( 1 ) );
   const Name synmodel_name = getValue< std::string >( i->OStack.pick( 0 ) );
@@ -922,6 +927,12 @@ void
 NestModule::DataConnect_aFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
+
+  if ( kernel().vp_manager.get_num_threads() > 1 )
+  {
+    throw KernelException( "DataConnect cannot be used with multiple threads" );
+  }
+
   const ArrayDatum connectome = getValue< ArrayDatum >( i->OStack.top() );
 
   kernel().connection_manager.data_connect_connectome( connectome );

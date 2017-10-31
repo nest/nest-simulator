@@ -44,17 +44,17 @@ namespace nest
    with exponential shaped postsynaptic currents (PSCs) according to [1].
    The postsynaptic currents have an infinitely short rise time.
    In particular, this model allows setting an absolute and relative
-   refractory time separately, as requied by [1].
+   refractory time separately, as required by [1].
 
    The threshold crossing is followed by an absolute refractory period (tau_abs)
    during which the membrane potential is clamped to the resting potential.
    During the total refractory period, the membrane potential evolves,
    but the neuron will not emit a spike, even if the membrane potential
-   reaches threshold. The total refratory time must be larger or equal to
+   reaches threshold. The total refractory time must be larger or equal to
    the absolute refractory time. If equal, the refractoriness of the model
    if equivalent to the other models of NEST.
 
-   The linear subthresold dynamics is integrated by the Exact
+   The linear subthreshold dynamics is integrated by the Exact
    Integration scheme [2]. The neuron dynamics is solved on the time
    grid given by the computation step size. Incoming as well as emitted
    spikes are forced to that grid.
@@ -343,7 +343,9 @@ inline port
 iaf_tum_2000::handles_test_event( SpikeEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -351,7 +353,9 @@ inline port
 iaf_tum_2000::handles_test_event( CurrentEvent&, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return 0;
 }
 
@@ -359,7 +363,9 @@ inline port
 iaf_tum_2000::handles_test_event( DataLoggingRequest& dlr, rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

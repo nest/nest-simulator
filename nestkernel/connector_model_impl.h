@@ -292,9 +292,11 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     }
 
     if ( p->known( names::delay ) )
+    {
       throw BadParameter(
         "Parameter dictionary must not contain delay if delay is given "
         "explicitly." );
+    }
   }
   else
   {
@@ -328,10 +330,12 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     c.set_delay( delay );
   }
 
-  if ( !p->empty() )
+  if ( not p->empty() )
+  {
     c.set_status( p, *this ); // reference to connector model needed here to
                               // check delay (maybe this
                               // could be done one level above?)
+  }
 
   // We must use a local variable here to hold the actual value of the
   // receptor type. We must not change the receptor_type_ data member, because
@@ -394,7 +398,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
     conn = allocate< Connector< 1, ConnectionT > >( c );
 
     // there is only one connection, so either it is primary or secondary
-    conn = pack_pointer( conn, is_primary_, !is_primary_ );
+    conn = pack_pointer( conn, is_primary_, not is_primary_ );
   }
   else
   {
@@ -457,7 +461,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
         // our new connection is_primary
         conn = pack_pointer( hc,
           b_has_primary || is_primary_,
-          b_has_secondary || ( !is_primary_ ) );
+          b_has_secondary || ( not is_primary_ ) );
       }
     }
     else // case 2: the entry is heterogeneous, need to search for syn_id
@@ -466,7 +470,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
       // if not found create new entry for this syn_id
       HetConnector* hc = static_cast< HetConnector* >( conn );
       bool found = false;
-      for ( size_t i = 0; i < hc->size() && !found; i++ )
+      for ( size_t i = 0; i < hc->size() && not found; i++ )
       {
         // need to cast to vector_like to access syn_id
         if ( ( *hc )[ i ]->get_syn_id()
@@ -481,7 +485,9 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
         }
       }            // of for
       if ( found ) // we need to create a new entry for this type of connection
+      {
         conn = pack_pointer( hc, b_has_primary, b_has_secondary );
+      }
       else
       {
         vector_like< ConnectionT >* vc =
@@ -491,7 +497,7 @@ GenericConnectorModel< ConnectionT >::add_connection( Node& src,
 
         conn = pack_pointer( hc,
           b_has_primary || is_primary_,
-          b_has_secondary || ( !is_primary_ ) );
+          b_has_secondary || ( not is_primary_ ) );
       }
     }
   }
@@ -536,14 +542,18 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
       if ( connection->get_target( target_thread )->get_gid() == tgt.get_gid() )
       {
         if ( vc->get_num_connections() > 1 )
+        {
           conn = &vc->erase( i );
+        }
         else
         {
           delete vc;
           conn = 0;
         }
         if ( conn != 0 )
-          conn = pack_pointer( conn, is_primary_, !is_primary_ );
+        {
+          conn = pack_pointer( conn, is_primary_, not is_primary_ );
+        }
         found = true;
         break;
       }
@@ -556,7 +566,7 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
     // if not found create new entry for this syn_id
     HetConnector* hc = static_cast< HetConnector* >( conn );
 
-    for ( size_t i = 0; i < hc->size() && !found; i++ )
+    for ( size_t i = 0; i < hc->size() && not found; i++ )
     {
       // need to cast to vector_like to access syn_id there is already an entry
       // for this type
@@ -577,6 +587,14 @@ GenericConnectorModel< ConnectionT >::delete_connection( Node& tgt,
             // is only this element left
             if ( vc->size() == 1 )
             {
+              // if primary, reduce the primary marker
+              if ( kernel()
+                     .model_manager.get_synapse_prototype(
+                                      ( *hc )[ i ]->get_syn_id() )
+                     .is_primary() )
+              {
+                ( *hc ).reduce_primary();
+              }
               ( *hc ).erase( ( *hc ).begin() + i );
               // Test if the homogeneous vector of connections went back to only
               // 1 type of synapse... then go back to the simple vector_like

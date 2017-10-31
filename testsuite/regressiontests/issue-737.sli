@@ -1,0 +1,119 @@
+/*
+ *  issue-737.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+ /* BeginDocumentation
+Name: testsuite::issue-737
+
+Synopsis: (issue-737) run -> NEST exits if test fails
+
+Description:
+This test ensures that NEST raises an error if the user tries to
+set synapse parameters that cannot be set with Connect calls.
+
+Author: Stine B. Vennemo
+FirstVersion: May 2017
+SeeAlso: testsuite::issue-735
+*/
+
+(unittest) run
+/unittest using
+
+M_ERROR setverbosity
+
+% Test weight in syn_spec for static_synapse_hom_w model
+{
+  ResetKernel
+  
+  /n /iaf_psc_alpha Create def
+  [n] [n] << /rule /one_to_one >> << /model /static_synapse_hom_w /weight 2.0 >> Connect
+
+} fail_or_die
+
+% Test weight in syn_spec for CopyModel of static_synapse_hom_w model
+{
+  ResetKernel
+  
+  /n /iaf_psc_alpha Create def
+  /static_synapse_hom_w /mysyn CopyModel
+  [n] [n] << /rule /one_to_one >> << /model /mysyn /weight 2.0 >> Connect
+
+} fail_or_die
+
+% Test n in syn_spec for quantal_stp_synapse model
+{
+  ResetKernel
+  
+  /gid /iaf_psc_alpha Create def
+  [gid] [gid] << /rule /one_to_one >> << /model /quantal_stp_synapse /n 4.0 >> Connect
+
+} fail_or_die
+
+% Test n in syn_spec for CopyModel of quantal_stp_synapse model
+{
+  ResetKernel
+  
+  /gid /iaf_psc_alpha Create def
+  /quantal_stp_synapse /mysyn CopyModel
+  [gid] [gid] << /rule /one_to_one >> << /model /mysyn /n 4.0 >> Connect
+
+} fail_or_die
+
+% Test a in syn_spec for quantal_stp_synapse  model
+{
+  ResetKernel
+  
+  /n /iaf_psc_alpha Create def
+  [n] [n] << /rule /one_to_one >> << /model /quantal_stp_synapse /a 2.0 >> Connect
+
+} fail_or_die
+
+% Test a in syn_spec for CopyModel of quantal_stp_synapse  model
+{
+  ResetKernel
+  
+  /n /iaf_psc_alpha Create def
+  /quantal_stp_synapse /mysyn CopyModel
+  [n] [n] << /rule /one_to_one >> << /model /mysyn /a 2.0 >> Connect
+
+} fail_or_die
+
+% Test vt in syn_spec for stdp_dopamine_synapse model
+{
+  ResetKernel
+  
+  /n /iaf_psc_alpha Create def
+  [n] [n] << /rule /one_to_one >> << /model /stdp_dopamine_synapse /vt 2.0 >> Connect
+
+} fail_or_die
+
+% Test vt in syn_spec for CopyModel of stdp_dopamine_synapse model
+{
+  ResetKernel
+  
+  /n /iaf_psc_alpha Create def
+  /stdp_dopamine_synapse /mysyn CopyModel
+  [n] [n] << /rule /one_to_one >> << /model /mysyn /vt 2.0 >> Connect
+
+} fail_or_die
+
+endusing

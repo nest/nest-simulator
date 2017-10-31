@@ -63,9 +63,10 @@ void
 nest::spike_dilutor::Parameters_::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::p_copy, p_copy_ );
-
   if ( p_copy_ < 0 || p_copy_ > 1 )
+  {
     throw BadProperty( "Copy probability must be in [0, 1]." );
+  }
 }
 
 /* ----------------------------------------------------------------
@@ -124,8 +125,10 @@ nest::spike_dilutor::update( Time const& T, const long from, const long to )
 
   for ( long lag = from; lag < to; ++lag )
   {
-    if ( !device_.is_active( T ) )
+    if ( not device_.is_active( T ) )
+    {
       return; // no spikes to be repeated
+    }
 
     // generate spikes of mother process for each time slice
     unsigned long n_mother_spikes =
@@ -162,7 +165,9 @@ nest::spike_dilutor::event_hook( DSSpikeEvent& e )
   for ( unsigned long n = 0; n < n_mother_spikes; n++ )
   {
     if ( rng->drand() < P_.p_copy_ )
+    {
       n_spikes++;
+    }
   }
 
   if ( n_spikes > 0 )

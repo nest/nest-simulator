@@ -78,10 +78,10 @@ cg_connect( ConnectionGeneratorDatum& cg,
       // No need to check for locality of the target node, as the mask
       // created by cg_set_masks() only contain local nodes.
       Node* const target_node =
-        kernel().node_manager.get_node_or_proxy( (*target_gids)[ target ] );
+        kernel().node_manager.get_node_or_proxy( ( *target_gids )[ target ] );
       const thread target_thread = target_node->get_thread();
       kernel().connection_manager.connect(
-        (*source_gids)[ source ], target_node, target_thread, synmodel_id );
+        ( *source_gids )[ source ], target_node, target_thread, synmodel_id );
     }
   }
   else if ( num_parameters == 2 )
@@ -113,9 +113,9 @@ cg_connect( ConnectionGeneratorDatum& cg,
       // No need to check for locality of the target node, as the mask
       // created by cg_set_masks() only contain local nodes.
       Node* const target_node =
-        kernel().node_manager.get_node_or_proxy( (*target_gids)[ target ] );
+        kernel().node_manager.get_node_or_proxy( ( *target_gids )[ target ] );
       const thread target_thread = target_node->get_thread();
-      kernel().connection_manager.connect( (*source_gids)[ source ],
+      kernel().connection_manager.connect( ( *source_gids )[ source ],
         target_node,
         target_thread,
         synmodel_id,
@@ -296,8 +296,8 @@ cg_get_right_border( index left, size_t step, const GIDCollectionPTR gids )
     // (i.e. we're back at an already visited index), we found the
     // right border of the contiguous range (last_i) and return it.
     if ( ( i == static_cast< long >( gids->size() ) - 1
-           and (*gids)[ i ] - (*gids)[ left ] == i - static_cast< index >( left ) )
-      or i == leftmost_r )
+           and ( *gids )[ i ] - ( *gids )[ left ]
+             == i - static_cast< index >( left ) ) or i == leftmost_r )
     {
       return last_i;
     }
@@ -310,7 +310,8 @@ cg_get_right_border( index left, size_t step, const GIDCollectionPTR gids )
     // set i to the right by step steps, else update the variable
     // for leftmost_r to the current i (i.e. the known leftmost
     // position) and set i to the left by step steps.
-    if ( (*gids)[ i ] - (*gids)[ left ] == i - static_cast< index >( left ) )
+    if ( ( *gids )[ i ] - ( *gids )[ left ]
+      == i - static_cast< index >( left ) )
     {
       i += step;
     }
@@ -356,7 +357,7 @@ cg_get_ranges( RangeSet& ranges, const GIDCollectionPTR gids )
     // at left. The initial step is set to half the length of the
     // interval between left and the end of gids.
     right = cg_get_right_border( left, ( gids->size() - left ) / 2, gids );
-    ranges.push_back( Range( (*gids)[ left ], (*gids)[ right ] ) );
+    ranges.push_back( Range( ( *gids )[ left ], ( *gids )[ right ] ) );
     if ( right == gids->size() - 1 ) // We're at the end of gids and stop
     {
       break;

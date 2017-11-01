@@ -31,7 +31,6 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
-#include "sibling_container.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -266,7 +265,7 @@ nest::music_cont_out_proxy::calibrate()
       // check whether the target is on this process
       if ( kernel().node_manager.is_local_gid( *t ) )
       {
-        Node* const target_node = kernel().node_manager.get_node( *t );
+        Node* const target_node = kernel().node_manager.get_node_or_proxy( *t );
         kernel().connection_manager.connect(
           get_gid(), target_node, target_node->get_thread(), synmodel_id );
       }
@@ -342,13 +341,12 @@ nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings =
+    const std::vector< Node* > siblings =
       kernel().node_manager.get_thread_siblings( get_gid() );
-    std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end();
-          ++sibling )
+    std::vector< Node* >::const_iterator s;
+    for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {
-      ( *sibling )->get_status( d );
+      ( *s )->get_status( d );
     }
   }
 

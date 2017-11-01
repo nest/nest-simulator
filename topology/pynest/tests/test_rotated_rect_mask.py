@@ -94,7 +94,8 @@ class RotatedRectangularMask(unittest.TestCase):
 
         self.assertEqual(gid_list, (8, 14, 20,))
 
-        # Test that an error is raised if we send in a polar angle to a 2D mask.
+        # Test that an error is raised if we send in a polar angle to a 2D
+        # mask.
         maskdict = {'lower_left': [-1.5, -0.5],
                     'upper_right': [1.5, 0.5],
                     'polar_angle': 45.0}

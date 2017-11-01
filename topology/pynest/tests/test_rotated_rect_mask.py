@@ -94,17 +94,17 @@ class RotatedRectangularMask(unittest.TestCase):
 
         self.assertEqual(gid_list, (8, 14, 20,))
 
-        # Test that an error is rased if we send in a polar angle to a 2D mask.
+        # Test that an error is raised if we send in a polar angle to a 2D mask.
         maskdict = {'lower_left': [-1.5, -0.5],
                     'upper_right': [1.5, 0.5],
                     'polar_angle': 45.0}
         with self.assertRaises(nest.NESTError):
             mask = topo.CreateMask('rectangular', maskdict)
 
-    def test_RotatedBoxMask(self):
+    def test_RotatedBoxMaskByAzimuthAngle(self):
         """Test rotated box mask with azimuth angle."""
         # Test a 3D layer.
-        pos = [[x*1., y*1., z*1.] for x in range(-2, 3)
+        pos = [[x * 1., y * 1., z * 1.] for x in range(-2, 3)
                for y in range(-2, 3)
                for z in range(-2, 3)]
 
@@ -153,7 +153,7 @@ class RotatedRectangularMask(unittest.TestCase):
     def test_RotatedBoxMaskByPolarAngle(self):
         """Test rotated box mask with polar angle."""
 
-        pos = [[x*1., y*1., z*1.] for x in range(-2, 3)
+        pos = [[x * 1., y * 1., z * 1.] for x in range(-2, 3)
                for y in range(-2, 3)
                for z in range(-2, 3)]
 
@@ -201,8 +201,8 @@ class RotatedRectangularMask(unittest.TestCase):
 
         self.assertEqual(sorted_gid_list, [33, 38, 43, 59, 64, 69, 85, 90, 95])
 
-        # Test with a polar angle of 135 degrees. This should be opposite of
-        # the ones obtained by a polar angle of 45 degrees.
+        # Test with a polar angle of 135 degrees. The GIDs should be
+        # perpendicular to the ones obtained by a polar angle of 45 degrees.
         maskdict = {'lower_left': [-0.5, -1.5, -1.5],
                     'upper_right': [0.5, 1.5, 1.5],
                     'polar_angle': 135.}
@@ -239,7 +239,7 @@ class RotatedRectangularMask(unittest.TestCase):
     def test_RotatedBoxMaskByAzimuthAndPolarAngle(self):
         """Test rotated box mask with azimuth and polar angle."""
 
-        pos = [[x*1., y*1., z*1.] for x in range(-2, 3)
+        pos = [[x * 1., y * 1., z * 1.] for x in range(-2, 3)
                for y in range(-2, 3)
                for z in range(-2, 3)]
 
@@ -260,7 +260,7 @@ class RotatedRectangularMask(unittest.TestCase):
                          [38, 39, 44, 58, 59, 64, 69, 70, 84, 89, 90])
 
     def test_RotatedRectangleOutsideOrigo(self):
-        """Test rotated rectangle where mask is outside origo."""
+        """Test rotated rectangle where the mask does not contain origo."""
 
         layer = topo.CreateLayer({'rows': 11, 'columns': 11,
                                   'extent': [11., 11.],
@@ -296,9 +296,9 @@ class RotatedRectangularMask(unittest.TestCase):
         self.assertEqual(gid_list, (81, 82, 83, 84, 92, 93, 94, 95,))
 
     def test_RotatedBoxOutsideOrigo(self):
-        """Test rotated box where mask is outside origo."""
+        """Test rotated box where the mask does not contain origo."""
 
-        pos = [[x*1., y*1., z*1.] for x in range(-2, 3)
+        pos = [[x * 1., y * 1., z * 1.] for x in range(-2, 3)
                for y in range(-2, 3)
                for z in range(-2, 3)]
 
@@ -357,12 +357,16 @@ class RotatedRectangularMask(unittest.TestCase):
             6  11 16  21  26            32  37  42  47  52
 
             some example connections will be:
-
-            2  -> 28
-
-                          44
-            14 ->     40
-                  36
+                            ______
+                          /       /
+            2  ->      /  28    /
+                    /        /
+                  /_______ /
+                            _______
+                          /     44 /
+            14 ->      /    40  /
+                    /   36   /
+                  /_______ /
         """
 
         source = topo.CreateLayer({'rows': 5, 'columns': 5,
@@ -400,6 +404,7 @@ class RotatedRectangularMask(unittest.TestCase):
 def suite():
     suite = unittest.makeSuite(RotatedRectangularMask, 'test')
     return suite
+
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner(verbosity=2)

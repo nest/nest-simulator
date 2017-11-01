@@ -258,7 +258,7 @@ protected:
   /**
    *  Calculate the min/max x, y, z values in case of a rotated box.
    */
-  void create_min_max_values_();
+  void calculate_min_max_values_();
 
   Position< D > lower_left_;
   Position< D > upper_right_;
@@ -753,7 +753,7 @@ BoxMask< D >::BoxMask( const DictionaryDatum& d )
 
   is_rotated_ = azimuth_angle_ or polar_angle_;
 
-  create_min_max_values_();
+  calculate_min_max_values_();
 }
 
 template < int D >
@@ -779,7 +779,7 @@ inline BoxMask< D >::BoxMask( const Position< D >& lower_left,
 
   is_rotated_ = azimuth_angle_ or polar_angle_;
 
-  create_min_max_values_();
+  calculate_min_max_values_();
 }
 
 template <>

@@ -97,7 +97,7 @@ BoxMask< 2 >::inside( const Position< 2 >& p ) const
     return ( lower_left_ <= p ) && ( p <= upper_right_ );
   }
 
-  // If we have a rotated box, We rotate the point down to the unrotated box,
+  // If we have a rotated box, we rotate the point down to the unrotated box,
   // and check if it is inside said unrotated box.
 
   // The new x, y values are calculated using a rotation matrix:
@@ -133,7 +133,7 @@ BoxMask< 3 >::inside( const Position< 3 >& p ) const
     return ( lower_left_ <= p ) && ( p <= upper_right_ );
   }
 
-  // If we have a rotated box, We rotate the point down to the unrotated box,
+  // If we have a rotated box, we rotate the point down to the unrotated box,
   // and check if it is inside said unrotated box.
 
   // The new x, y, z values are calculated using rotation matrices:
@@ -148,14 +148,16 @@ BoxMask< 3 >::inside( const Position< 3 >& p ) const
   const double cntr_y = ( upper_right_[ 1 ] + lower_left_[ 1 ] ) * 0.5;
   const double cntr_z = ( upper_right_[ 2 ] + lower_left_[ 2 ] ) * 0.5;
 
-  const double new_x = ( ( p[ 0 ] - cntr_x ) * azimuth_cos_
-                         + ( p[ 1 ] - cntr_y ) * azimuth_sin_ ) * polar_cos_
-    - ( ( p[ 2 ] - cntr_z ) * polar_sin_ ) + cntr_x;
-  const double new_y = -( p[ 0 ] - cntr_x ) * azimuth_sin_
-    + ( p[ 1 ] - cntr_y ) * azimuth_cos_ + cntr_y;
-  const double new_z = ( ( p[ 0 ] - cntr_x ) * azimuth_cos_
-                         + ( p[ 1 ] - cntr_y ) * azimuth_sin_ ) * polar_sin_
-    + ( ( p[ 2 ] - cntr_z ) * polar_cos_ ) + cntr_z;
+  const Position< 3 > p_c( p[ 0 ] - cntr_x, p[ 1 ] - cntr_y, p[ 2 ] - cntr_z );
+
+  const double new_x =
+    ( p_c[ 0 ] * azimuth_cos_ + p_c[ 1 ] * azimuth_sin_ ) * polar_cos_
+    - p_c[ 2 ] * polar_sin_ + cntr_x;
+  const double new_y =
+    -p_c[ 0 ] * azimuth_sin_ + p_c[ 1 ] * azimuth_cos_ + cntr_y;
+  const double new_z =
+    ( p_c[ 0 ] * azimuth_cos_ + p_c[ 1 ] * azimuth_sin_ ) * polar_sin_
+    + p_c[ 2 ] * polar_cos_ + cntr_z;
 
   const Position< 3 > new_p( new_x, new_y, new_z );
 
@@ -199,12 +201,12 @@ BoxMask< D >::outside( const Box< D >& b ) const
 
 template <>
 void
-BoxMask< 2 >::create_min_max_values_()
+BoxMask< 2 >::calculate_min_max_values_()
 {
   // Rotate the corners of the box to find the new minimum and maximum x and y
   // values to define the bounding box of the rotated box. If the box is not
-  // rotated, the min values corresponds to the lower_left values and the max
-  // values corresponds to the upper_right values.
+  // rotated, the min values correspond to the lower_left values and the max
+  // values correspond to the upper_right values.
 
   if ( not is_rotated_ )
   {
@@ -246,7 +248,7 @@ BoxMask< 2 >::create_min_max_values_()
 
 template <>
 void
-BoxMask< 3 >::create_min_max_values_()
+BoxMask< 3 >::calculate_min_max_values_()
 {
   /*
    *        LLH      LHH
@@ -263,8 +265,8 @@ BoxMask< 3 >::create_min_max_values_()
 
   // Rotate the corners of the box to find the new minimum and maximum x, y and
   // z values to define the bounding box of the rotated box. We need to rotate
-  // all eight corners. If the box is not rotated, the min values corresponds
-  // to the lower_left values and the max values corresponds to the upper_right
+  // all eight corners. If the box is not rotated, the min values correspond
+  // to the lower_left values and the max values correspond to the upper_right
   // values.
 
   if ( not is_rotated_ )

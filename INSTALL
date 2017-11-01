@@ -333,7 +333,7 @@ On the K Computer:
       cmake -DCMAKE_TOOLCHAIN_FILE=Platform/Fujitsu-Sparc64 \
             -DCMAKE_INSTALL_PREFIX:PATH=</install/path> \
             -Dwith-gsl=/path/to/gsl-2.1.install/ \
-            -Dwith-optimize="-Kfast" \
+            -Dwith-optimize="-Kfast -x1" \
             -Dwith-defines="-DUSE_PMA" \
             -Dwith-python=OFF \
             -Dwith-warning=OFF \

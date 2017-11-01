@@ -337,6 +337,14 @@ nest::music_cont_out_proxy::calibrate()
 void
 nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
 {
+  P_.get( d );
+  S_.get( d );
+
+  if ( is_model_prototype() )
+  {
+    return; // no data to collect
+  }
+
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
   if ( get_thread() == 0 )
@@ -349,9 +357,6 @@ nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
       ( *s )->get_status( d );
     }
   }
-
-  P_.get( d );
-  S_.get( d );
 }
 
 void

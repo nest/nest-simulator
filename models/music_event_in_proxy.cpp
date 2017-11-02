@@ -59,6 +59,7 @@ nest::music_event_in_proxy::Parameters_::Parameters_( const Parameters_& op )
 }
 
 nest::music_event_in_proxy::State_::State_()
+  : registered_( false )
 {
 }
 
@@ -177,7 +178,7 @@ nest::music_event_in_proxy::handle( SpikeEvent& e )
 {
   e.set_sender( *this );
 
-  for ( thread t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
   {
     kernel().event_delivery_manager.send_local( t, *this, e );
   }

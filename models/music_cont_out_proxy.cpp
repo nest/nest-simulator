@@ -172,9 +172,10 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
 
     if ( state.published_ == false )
     {
-      GIDCollectionDatum targets = getValue< GIDCollectionDatum >( d, names::targets );
+      GIDCollectionDatum targets =
+        getValue< GIDCollectionDatum >( d, names::targets );
       GIDCollection::const_iterator target = targets->begin();
-      for ( ; target != targets->end(); ++target)
+      for ( ; target != targets->end(); ++target )
       {
         target_gids_.push_back( ( *target ).gid );
       }

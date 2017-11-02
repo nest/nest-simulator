@@ -31,6 +31,7 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
+#include "nest_datums.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -171,10 +172,11 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
 
     if ( state.published_ == false )
     {
-      ArrayDatum mca = getValue< ArrayDatum >( d, names::targets );
-      for ( Token* t = mca.begin(); t != mca.end(); ++t )
+      GIDCollectionDatum targets = getValue< GIDCollectionDatum >( d, names::targets );
+      GIDCollection::const_iterator target = targets->begin();
+      for ( ; target != targets->end(); ++target)
       {
-        target_gids_.push_back( getValue< long >( *t ) );
+        target_gids_.push_back( ( *target ).gid );
       }
     }
     else

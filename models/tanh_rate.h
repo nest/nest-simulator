@@ -108,12 +108,18 @@ public:
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
-  double operator()( double h ); // non-linearity
+  double func1( double h ); // non-linearity
+  double func2( double h ); // non-linearity
 };
 
-inline double gainfunction_tanh_rate::operator()( double h )
+inline double gainfunction_tanh_rate::func1( double h )
 {
   return tanh( g_ * ( h - theta_ ) );
+}
+
+inline double gainfunction_tanh_rate::func2( double h )
+{
+  return 1.0;
 }
 
 typedef rate_neuron_ipn< nest::gainfunction_tanh_rate > tanh_rate_ipn;

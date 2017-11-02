@@ -111,16 +111,22 @@ public:
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
-  double operator()( double h ); // non-linearity
+  double func1( double h ); // non-linearity
+  double func2( double h ); // non-linearity
 };
 
-inline double gainfunction_threshold_lin_rate::operator()( double h )
+inline double gainfunction_threshold_lin_rate::func1( double h )
 {
   if ( h > theta_ )
   {
     return g_ * ( h - theta_ );
   }
   return 0.0;
+}
+
+inline double gainfunction_threshold_lin_rate::func2( double h )
+{
+  return 1.;
 }
 
 typedef rate_neuron_ipn< nest::gainfunction_threshold_lin_rate >

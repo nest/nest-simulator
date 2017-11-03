@@ -35,9 +35,6 @@ Author: Hans Ekkehard Plesser, 2015-02-03 based on a reproducer by Janne Morén
 (unittest) run
 /unittest using
 
-/skipped exit_test_gracefully  % TODO480 (uses Topology)
-
-
 [1 2 4]
 {
   << 

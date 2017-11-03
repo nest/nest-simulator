@@ -37,9 +37,6 @@ Author: Hans Ekkehard Plesser
 (unittest) run
 /unittest using
 
-/skipped exit_test_gracefully  % TODO480 (uses Topology)
-
-
 M_ERROR setverbosity
 
 /num_threads 4 def

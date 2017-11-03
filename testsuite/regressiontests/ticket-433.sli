@@ -39,8 +39,6 @@ Author: Hans Ekkehard Plesser, 2010-06-28
 (unittest) run
 /unittest using
 
-/skipped exit_test_gracefully  % TODO480 (uses Topology)
-
 /skip_if_without_gsl
 
 M_INFO setverbosity

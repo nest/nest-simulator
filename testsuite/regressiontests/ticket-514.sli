@@ -34,8 +34,6 @@
 (unittest) run
 /unittest using
 
-/skipped exit_test_gracefully  % TODO480 (uses Topology)
-
 /single_trial
 {
   << >> begin

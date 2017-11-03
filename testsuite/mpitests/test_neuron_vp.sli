@@ -39,8 +39,6 @@
 (unittest) run
 /unittest using
 
-/skipped exit_test_gracefully  % TODO480 (Needs GIDs and cp from non-local processes)
-
 skip_if_not_threaded
 
 [1 2 4]

@@ -38,8 +38,6 @@ SeeAlso:
 (unittest) run
 /unittest using
 
-/skipped exit_test_gracefully  % TODO480 (uses Topology)
-
 skip_if_not_threaded
 
 % First set of tests: Single generator to neuron layer

@@ -260,15 +260,17 @@ class RotatedRectangularMask(unittest.TestCase):
         self.assertEqual(sorted_gid_list,
                          [38, 39, 44, 58, 59, 64, 69, 70, 84, 89, 90])
 
-    def test_RotatedRectangleOutsideOrigo(self):
-        """Test rotated rectangle where the mask does not contain origo."""
+    def test_RotatedRectangleOutsideOrigin(self):
+        """
+        Test rotated rectangle where the mask does not contain the origin.
+        """
 
         layer = topo.CreateLayer({'rows': 11, 'columns': 11,
                                   'extent': [11., 11.],
                                   'elements': 'iaf_psc_alpha'})
 
         # First test that we get the correct GIDs when our mask does not
-        # contain origo.
+        # contain the origin.
         maskdict = {'lower_left': [1., 1.], 'upper_right': [4., 2.]}
         mask = topo.CreateMask('rectangular', maskdict)
         cntr = [0., 0.]
@@ -277,7 +279,7 @@ class RotatedRectangularMask(unittest.TestCase):
         self.assertEqual(gid_list, (71, 72, 82, 83, 93, 94, 104, 105,))
 
         # Then test that we get the correct GIDs with a azimuth rotation angle
-        # of 45 degrees when the mask does not contain origo.
+        # of 45 degrees when the mask does not contain the origin.
         maskdict = {'lower_left': [0.5, 0.5],
                     'upper_right': [4.5, 2.5],
                     'azimuth_angle': 45.0}
@@ -287,7 +289,7 @@ class RotatedRectangularMask(unittest.TestCase):
         self.assertEqual(gid_list, (72, 82, 83, 84, 92, 93, 94, 104,))
 
         # Test that we get the correct GIDs with a azimuth rotation angle
-        # of 90 degrees when the mask does not contain origo.
+        # of 90 degrees when the mask does not contain the origin.
         maskdict = {'lower_left': [1.0, 1.0],
                     'upper_right': [4.0, 2.0],
                     'azimuth_angle': 90.0}
@@ -296,8 +298,8 @@ class RotatedRectangularMask(unittest.TestCase):
 
         self.assertEqual(gid_list, (81, 82, 83, 84, 92, 93, 94, 95,))
 
-    def test_RotatedBoxOutsideOrigo(self):
-        """Test rotated box where the mask does not contain origo."""
+    def test_RotatedBoxOutsideOrigin(self):
+        """Test rotated box where the mask does not contain the origin."""
 
         pos = [[x * 1., y * 1., z * 1.] for x in range(-2, 3)
                for y in range(-2, 3)
@@ -307,7 +309,7 @@ class RotatedRectangularMask(unittest.TestCase):
                                   'elements': 'iaf_psc_alpha'})
 
         # First test that we get the correct GIDs when our mask does not
-        # contain origo.
+        # contain the origin.
         maskdict = {'lower_left': [-2.0, -1.0, 0.5],
                     'upper_right': [-0.5, -0.5, 2.0]}
         mask = topo.CreateMask('box', maskdict)
@@ -317,7 +319,7 @@ class RotatedRectangularMask(unittest.TestCase):
         self.assertEqual(gid_list, (10, 11, 35, 36,))
 
         # Test that we get the correct GIDs with a azimuth rotation angle of 45
-        # degrees when the mask does not contain origo.
+        # degrees when the mask does not contain the origin.
         maskdict = {'lower_left': [-2.5, -1.0, 0.5],
                     'upper_right': [-0.5, -0.5, 2.5],
                     'azimuth_angle': 45.0}
@@ -327,7 +329,7 @@ class RotatedRectangularMask(unittest.TestCase):
         self.assertEqual(gid_list, (10, 11, 40, 41,))
 
         # Test that we get the correct GIDs with a polar rotation angle of 45
-        # degrees when the mask does not contain origo.
+        # degrees when the mask does not contain the origin.
         maskdict = {'lower_left': [-1.5, -2.5, 0.5],
                     'upper_right': [-1.0, -0.5, 2.5],
                     'polar_angle': 45.0}

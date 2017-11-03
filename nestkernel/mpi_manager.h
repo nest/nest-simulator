@@ -171,10 +171,6 @@ public:
 
   void synchronize();
 
-  // TODO: not used...
-  void test_link( int, int );
-  void test_links();
-
   bool grng_synchrony( unsigned long );
   bool any_true( const bool );
 

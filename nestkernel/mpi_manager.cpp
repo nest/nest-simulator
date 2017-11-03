@@ -640,42 +640,6 @@ nest::MPIManager::synchronize()
   MPI_Barrier( comm );
 }
 
-void
-nest::MPIManager::test_link( int sender, int receiver )
-{
-  assert( sender < get_num_processes() && receiver < get_num_processes() );
-
-  if ( get_num_processes() > 1 )
-  {
-    long dummy = 1;
-    MPI_Status status;
-
-    if ( get_rank() == sender )
-    {
-      MPI_Ssend( &dummy, 1, MPI_LONG, receiver, 0, comm );
-    }
-    else if ( get_rank() == receiver )
-    {
-      MPI_Recv( &dummy, 1, MPI_LONG, sender, 0, comm, &status );
-    }
-  }
-}
-
-void
-nest::MPIManager::test_links()
-{
-  for ( int i = 0; i < get_num_processes(); ++i )
-  {
-    for ( int j = 0; j < get_num_processes(); ++j )
-    {
-      if ( i != j )
-      {
-        test_link( i, j );
-      }
-    }
-  }
-}
-
 // grng_synchrony: called at the beginning of each simulate
 bool
 nest::MPIManager::grng_synchrony( unsigned long process_rnd_number )

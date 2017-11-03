@@ -169,7 +169,7 @@ public:
   using Node::handle;
   using Node::handles_test_event;
 
-  void handle( SpikeEvent& ); //!< @todo implement if-else in term of function
+  void handle( SpikeEvent& );
 
   port handles_test_event( SpikeEvent&, rport );
 

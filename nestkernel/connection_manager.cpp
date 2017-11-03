@@ -391,16 +391,22 @@ nest::ConnectionManager::connect( index sgid,
   }
   else if ( target->local_receiver() ) // target is a normal device
   {
-    // make sure source is on this MPI rank
-    if ( source->is_proxy() )
+    // connections to music proxies or similar devices with one node
+    // per process have to be established even though the source may
+    // be a proxy, but still only if the source is on the local
+    // process.
+    if ( target->one_node_per_process() )
     {
+      if ( kernel().node_manager.is_local_node( source ) )
+      {
+        connect_( *source, *target, sgid, target_thread, syn, d, w );
+      }
       return;
     }
 
-    if ( target->one_node_per_process() )
+    // make sure source is on this MPI rank
+    if ( source->is_proxy() )
     {
-      // connection to music proxy or similar device with one node per process.
-      connect_( *source, *target, sgid, target_thread, syn, d, w );
       return;
     }
 
@@ -422,8 +428,8 @@ nest::ConnectionManager::connect( index sgid,
       if ( target_thread == tid )
       {
         source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
-        target =
-          kernel().node_manager.get_node_or_proxy( target->get_gid(), target_thread );
+        target = kernel().node_manager.get_node_or_proxy(
+          target->get_gid(), target_thread );
         connect_( *source, *target, sgid, target_thread, syn, d, w );
       }
     }
@@ -460,16 +466,22 @@ nest::ConnectionManager::connect( index sgid,
   }
   else if ( target->local_receiver() ) // target is a normal device
   {
-    // make sure source is on this MPI rank
-    if ( source->is_proxy() )
+    // connections to music proxies or similar devices with one node
+    // per process have to be established even though the source may
+    // be a proxy, but still only if the source is on the local
+    // process.
+    if ( target->one_node_per_process() )
     {
+      if ( kernel().node_manager.is_local_node( source ) )
+      {
+        connect_( *source, *target, sgid, target_thread, syn, params, d, w );
+      }
       return;
     }
 
-    if ( target->one_node_per_process() )
+    // make sure source is on this MPI rank
+    if ( source->is_proxy() )
     {
-      // connection to music proxy or similar device with one node per process.
-      connect_( *source, *target, sgid, target_thread, syn, params, d, w );
       return;
     }
 
@@ -491,8 +503,8 @@ nest::ConnectionManager::connect( index sgid,
       if ( target_thread == tid )
       {
         source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
-        target =
-          kernel().node_manager.get_node_or_proxy( target->get_gid(), target_thread );
+        target = kernel().node_manager.get_node_or_proxy(
+          target->get_gid(), target_thread );
         connect_( *source, *target, sgid, target_thread, syn, params, d, w );
       }
     }
@@ -535,17 +547,24 @@ nest::ConnectionManager::connect( index sgid,
   }
   else if ( target->local_receiver() ) // target is a normal device
   {
+    // connections to music proxies or similar devices with one node
+    // per process have to be established even though the source may
+    // be a proxy, but still only if the source is on the local
+    // process.
+    if ( target->one_node_per_process() )
+    {
+      if ( kernel().node_manager.is_local_node( source ) )
+      {
+        connect_( *source, *target, sgid, target_thread, syn, params );
+        return true;
+      }
+      return false;
+    }
+
     // make sure source is on this MPI rank
     if ( source->is_proxy() )
     {
       return false;
-    }
-
-    if ( target->one_node_per_process() )
-    {
-      // connection to music proxy or similar device with one node per process.
-      connect_( *source, *target, sgid, target_thread, syn, params );
-      return true;
     }
 
     // make sure connections are only created on the thread of the device
@@ -566,8 +585,8 @@ nest::ConnectionManager::connect( index sgid,
       if ( target_thread == tid )
       {
         source = kernel().node_manager.get_node_or_proxy( sgid, target_thread );
-        target =
-          kernel().node_manager.get_node_or_proxy( target->get_gid(), target_thread );
+        target = kernel().node_manager.get_node_or_proxy(
+          target->get_gid(), target_thread );
         connect_( *source, *target, sgid, target_thread, syn, params );
       }
     }
@@ -818,7 +837,8 @@ nest::ConnectionManager::data_connect_single( const index source_id,
       Node* target = 0;
       try
       {
-        target = kernel().node_manager.get_node_or_proxy( target_ids[ i ], tid );
+        target =
+          kernel().node_manager.get_node_or_proxy( target_ids[ i ], tid );
       }
       catch ( UnknownNode& e )
       {

@@ -62,6 +62,7 @@ set( models_sources
     iaf_tum_2000.h iaf_tum_2000.cpp
     izhikevich.h izhikevich.cpp
     lin_rate.h lin_rate.cpp
+    lin_rate_mult.h lin_rate_mult.cpp
     mat2_psc_exp.h mat2_psc_exp.cpp
     mcculloch_pitts_neuron.h mcculloch_pitts_neuron.cpp
     mip_generator.h mip_generator.cpp

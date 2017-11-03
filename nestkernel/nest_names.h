@@ -345,6 +345,7 @@ extern const Name number_of_children; //!< Used by Subnet
 
 extern const Name off_grid_spiking; //!< Used by event_delivery_manager
 extern const Name offset;           //!< Miscellaneous parameters
+extern const Name offset_ex;       //!< Miscellaneous parameters
 extern const Name offsets;          //!< Recorder parameter
 extern const Name omega;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name order;     //!< Specific to sinusoidally modulated generators

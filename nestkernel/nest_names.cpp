@@ -301,6 +301,7 @@ const Name number_of_children( "number_of_children" );
 
 const Name off_grid_spiking( "off_grid_spiking" );
 const Name offset( "offset" );
+const Name offset_ex( "offset_ex" );
 const Name offsets( "offsets" );
 const Name omega( "omega" );
 const Name order( "order" );

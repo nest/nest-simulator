@@ -112,7 +112,7 @@ inline double gainfunction_lin_rate_mult::func1( double h )
 
 inline double gainfunction_lin_rate_mult::func2( double rate )
 {
-  return g_ex_ * ( rate - theta_);
+  return g_ex_ * ( theta_ - rate);
 }
 
 typedef rate_neuron_ipn< nest::gainfunction_lin_rate_mult > lin_rate_mult_ipn;

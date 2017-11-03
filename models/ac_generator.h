@@ -85,11 +85,6 @@ public:
   }
 
   port send_test_event( Node&, rport, synindex, bool );
-  
-  sends_signal() const
-  {
-    return STEPWISE_CONSTANT;
-  }
 
   using Node::handle;
   using Node::handles_test_event;
@@ -105,7 +100,7 @@ public:
   SignalType
   sends_signal() const
   {
-    return ALL;
+    return STEPWISE_CONSTANT;
   }
 
   //! Allow multimeter to connect to local instances

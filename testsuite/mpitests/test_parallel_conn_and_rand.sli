@@ -1,0 +1,100 @@
+/*
+ *  test_parallel_conn_and_rand.sli
+ *
+ *  This file is part of NEST.
+ *
+ *  Copyright (C) 2004 The NEST Initiative
+ *
+ *  NEST is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  NEST is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with NEST.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
+   Parallel Connect and Randomize Test Script
+
+   This script creates a neuron population to itself, randomizing
+   weight, delay, receptor type and one synaptic parameter. It runs 
+   with a fixed number of virtual processes, and checks that connections
+   are invariant on executing with a varying number of MPI processes.
+
+   Hans Ekkehard Plesser
+*/
+
+(unittest) run
+/unittest using
+
+skip_if_not_threaded
+
+%%% PARAMETER SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% define all relevant parameters: changes should be made here
+% all data is place in the userdict dictionary
+
+/num_neurons 10 def   
+%/num_neurons 1000 def   
+
+/connspec << /rule /fixed_indegree /indegree 1 >> def
+%/connspec << /rule /fixed_outdegree /outdegree 100 >> def
+
+/num_vps 16 def
+
+/simtime     10.0 def % simulation time [ms]
+/dt           0.1 def % simulation step length [ms]
+
+%%% CONSTRUCTION SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+[1 2 4]
+{
+  ResetKernel      % clear all existing network elements
+  M_WARNING setverbosity
+
+  % set resolution, total/local number of threads, rng seed
+  0 << 
+      /resolution  dt 
+      /total_num_virtual_procs num_vps
+      /grng_seed 123
+  >> SetStatus
+
+  (Creating the network.) =  
+
+  % setup to allow us to randomize receptor_type
+  /tau_syns [0.2 1.0 0.1] Range def
+  /receptor_min 1 def
+  /receptor_max tau_syns length def
+  /iaf_psc_alpha_multisynapse << /tau_syn tau_syns >> SetDefaults
+
+  /iaf_psc_alpha_multisynapse [ num_neurons ] LayoutNetwork
+  GetGlobalLeaves /population Set
+
+  (Connecting neurons.) =
+  population population connspec
+  << /model /stdp_synapse
+     /delay << /distribution /uniform /low 0.5 /high 1.5 >>
+     /weight << /distribution /normal_clipped /low 0.0 /mu 10.0 /sigma 5.0 >>
+     /receptor_type << /distribution /uniform_int /low receptor_min /high receptor_max >>  
+     /alpha << /distribution /uniform /low 0.1 /high 2.3 >> 
+     /tau_plus << /distribution /uniform /low 1.5 /high 5.0 >>
+  >>     
+  Connect
+
+  (Done connecting.) =
+  
+  /conn_arr 0 array def
+  << /synapse_model /stdp_synapse >> GetConnections 
+  { 
+    [[/source /target /weight /delay /alpha /tau_plus]] get conn_arr exch append /conn_arr Set
+  } forall
+  conn_arr
+} distributed_process_invariant_collect_assert_or_die
+

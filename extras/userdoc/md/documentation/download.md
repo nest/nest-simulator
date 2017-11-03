@@ -11,14 +11,18 @@ To find out more about NEST, see the [list of features](features.md)
 and the [user documentation](documentation.md).
 For details about how to contribute to the development of NEST, see the [developer space](http://nest.github.io/nest-simulator).
 
--   [Download Current release (NEST 2.12.0)](http://www.nest-simulator.org/download/#releases)
--   [Previous release (NEST 2.10.0)](https://github.com/nest/nest-simulator/releases/tag/v2.10.0)
+-   [Download Current release (NEST 2.14.0)](http://www.nest-simulator.org/download/#releases)
+-   [Previous release (NEST 2.12.0)](https://github.com/nest/nest-simulator/releases/tag/v2.12.0)
 -   [All NEST Releases](https://github.com/nest/nest-simulator/tags) 
 -   [Current developer version](https://github.com/nest/nest-simulator)
 
 ## Citing NEST
 
 Please cite NEST if you use it in your work.
+
+If you use NEST 2.14.0, please cite it as **Peyser, Alexander et al. (2017).
+NEST 2.14.0. Zenodo. 10.5281/zenodo.882971**. The full citation is available
+in different formats on [Zenodo](http://dx.doi.org/10.5281/zenodo.882971).
 
 If you use NEST 2.12.0, please cite it as **Kunkel, Susanne et al. (2017).
 NEST 2.12.0. Zenodo. 10.5281/zenodo.259534**. The full citation is available

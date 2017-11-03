@@ -66,14 +66,16 @@ public:
   }
 };
 
-class GIDPair
+class GIDTriple
 {
 public:
   index gid;
   index model_id;
-  GIDPair()
+  size_t local_placement;
+  GIDTriple()
     : gid( 0 )
     , model_id( 0 )
+    , local_placement( 0 )
   {
   }
 };
@@ -135,7 +137,7 @@ public:
   gc_const_iterator( const gc_const_iterator& );
   void get_current_part_offset( size_t&, size_t& );
 
-  GIDPair operator*() const;
+  GIDTriple operator*() const;
   bool operator!=( const gc_const_iterator& rhs ) const;
   bool operator<( const gc_const_iterator& rhs ) const;
   bool operator<=( const gc_const_iterator& rhs ) const;
@@ -542,17 +544,18 @@ inline void GIDCollection::set_metadata( GIDCollectionMetadataPTR )
   throw KernelException( "Cannot set Metadata on this type of GIDCollection." );
 }
 
-inline GIDPair gc_const_iterator::operator*() const
+inline GIDTriple gc_const_iterator::operator*() const
 {
-  GIDPair gp;
+  GIDTriple gt;
   if ( primitive_collection_ )
   {
-    gp.gid = primitive_collection_->first_ + element_idx_;
-    if ( gp.gid > primitive_collection_->last_ )
+    gt.gid = primitive_collection_->first_ + element_idx_;
+    if ( gt.gid > primitive_collection_->last_ )
     {
       throw KernelException( "Invalid GIDCollection iterator" );
     }
-    gp.model_id = primitive_collection_->model_id_;
+    gt.model_id = primitive_collection_->model_id_;
+    gt.local_placement = element_idx_;
   }
   else
   {
@@ -574,10 +577,35 @@ inline GIDPair gc_const_iterator::operator*() const
       throw KernelException( "Invalid GIDCollection iterator" );
     }
 
-    gp.gid = composite_collection_->parts_[ part_idx_ ][ element_idx_ ];
-    gp.model_id = composite_collection_->parts_[ part_idx_ ].model_id_;
+    // Add to local placement from GIDCollectionPrimitives that comes before the
+    // current one.
+    gt.local_placement = 0;
+    for ( std::vector< GIDCollectionPrimitive >::const_iterator part =
+            composite_collection_->parts_.begin();
+          part != composite_collection_->parts_.end();
+          ++part )
+    {
+      if ( ( *part ) == composite_collection_->parts_[ part_idx_ ] )
+      {
+        break;
+      }
+      gt.local_placement += part->size();
+    }
+
+    gt.gid = composite_collection_->parts_[ part_idx_ ][ element_idx_ ];
+    gt.model_id = composite_collection_->parts_[ part_idx_ ].model_id_;
+    gt.local_placement += element_idx_;
+
+    // TODO481 : Temporary check of correctness
+    if ( composite_collection_->operator[]( gt.local_placement ) != gt.gid )
+    {
+      throw KernelException(
+        "The GID at the local_placement does not match the GID of the Triple: "
+        + composite_collection_->operator[]( gt.local_placement ) + " != "
+        + gt.gid );
+    }
   }
-  return gp;
+  return gt;
 }
 
 inline gc_const_iterator& gc_const_iterator::operator++()

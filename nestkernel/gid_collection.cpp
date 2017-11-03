@@ -712,7 +712,7 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
     index primitive_last = 0;
 
     size_t primitive_size = 0;
-    GIDPair pair;
+    GIDTriple gt;
 
     std::vector< std::string > string_vector;
 
@@ -729,20 +729,20 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
           string_buffer
             << "\n  [["
             << "model="
-            << kernel().model_manager.get_model( pair.model_id )->get_name()
+            << kernel().model_manager.get_model( gt.model_id )->get_name()
             << ", size=" << primitive_size << " ";
           if ( primitive_size == 1 )
           {
-            string_buffer << "(" << pair.gid << ")]]";
+            string_buffer << "(" << gt.gid << ")]]";
           }
           else if ( primitive_size == 2 )
           {
-            string_buffer << "(" << pair.gid << ", ";
+            string_buffer << "(" << gt.gid << ", ";
             string_buffer << primitive_last << ")]]";
           }
           else
           {
-            string_buffer << "(" << pair.gid << "..";
+            string_buffer << "(" << gt.gid << "..";
             if ( step_ > 1 )
             {
               string_buffer << "{" << step_ << "}..";
@@ -752,7 +752,7 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
           string_vector.push_back( string_buffer.str() );
         }
         primitive_size = 1;
-        pair = *it;
+        gt = *it;
       }
       else
       {
@@ -779,20 +779,20 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
 
     out << "\n  [["
         << "model="
-        << kernel().model_manager.get_model( pair.model_id )->get_name()
+        << kernel().model_manager.get_model( gt.model_id )->get_name()
         << ", size=" << primitive_size << " ";
     if ( primitive_size == 1 )
     {
-      out << "(" << pair.gid << ")]]";
+      out << "(" << gt.gid << ")]]";
     }
     else if ( primitive_size == 2 )
     {
-      out << "(" << pair.gid << ", ";
+      out << "(" << gt.gid << ", ";
       out << primitive_last << ")]]";
     }
     else
     {
-      out << "(" << pair.gid << "..";
+      out << "(" << gt.gid << "..";
       if ( step_ > 1 )
       {
         out << "{" << step_ << "}..";

@@ -209,11 +209,6 @@ public:
   void set_node_uses_wfr( const bool );
 
   /**
-   * Returns true if the node is allocated in the local process.
-   */
-  bool is_local() const;
-
-  /**
    * Set state variables to the default values for the model.
    * Dynamic variables are all observable state variables of a node
    * that change during Node::update().

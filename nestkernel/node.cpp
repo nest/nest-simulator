@@ -110,12 +110,6 @@ Node::get_model_() const
   return *kernel().model_manager.get_model( model_id_ );
 }
 
-bool
-Node::is_local() const
-{
-  return not is_proxy();
-}
-
 DictionaryDatum
 Node::get_status_dict_()
 {
@@ -130,11 +124,11 @@ Node::get_status_base()
   assert( dict.valid() );
 
   // add information available for all nodes
-  ( *dict )[ names::local ] = is_local();
+  ( *dict )[ names::local ] = kernel().node_manager.is_local_node( this );
   ( *dict )[ names::model ] = LiteralDatum( get_name() );
 
   // add information available only for local nodes
-  if ( is_local() )
+  if ( not is_proxy() )
   {
     ( *dict )[ names::global_id ] = get_gid();
     ( *dict )[ names::frozen ] = is_frozen();

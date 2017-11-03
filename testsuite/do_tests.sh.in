@@ -332,9 +332,11 @@ run_test ()
     echo "${explanation}"
 
     if test "x${msg_error}" != x ; then
-        echo
+	echo ==================================================
+	echo "Following is the full output of the test:"
+	echo ==================================================
         echo "${msg_error}"
-        echo
+	echo ==================================================
     fi
 
     echo >> "${TEST_LOGFILE}" "-> ${exit_code} (${explanation})"
@@ -667,35 +669,53 @@ if test "x$(sli -c 'statusdict/have_music :: =')" = xtrue ; then
         # call or of the accompanying shell script if present.
         exit_code=$(cat exit_code)
 
-        rm ${tmpdir}/*
-        cd ${BASEDIR}
-
         # If the name of the test contains 'failure', we expect it to
         # fail and the test logic is inverted.
         TEST_TOTAL=$(( ${TEST_TOTAL} + 1 ))
         if test -z $(echo ${test_name} | grep failure); then
             if test $exit_code -eq 0 ; then
-                echo "Success"
-                TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
+		echo "Success"
+                status=passed
             elif test $exit_code -ge 200 && $exit_code -le 215; then
-                echo "Skipped"
-                TEST_SKIPPED=$(( ${TEST_SKIPPED} + 1 ))
+                status=skipped
             else
                 echo "Failure"
-                TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
+		status=failed
             fi
         else
             if test $exit_code -ne 0 ; then
                 echo "Success (expected failure)"
-                TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
+		status=passed
             elif test $exit_code -ge 200 && $exit_code -le 215; then
-                echo "Skipped"
-                TEST_SKIPPED=$(( ${TEST_SKIPPED} + 1 ))
+		status=skipped
             else
                 echo "Failure (test failed to fail)"
-                TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
+		status=failed
             fi
         fi
+
+	case $status in
+	    passed)
+                TEST_PASSED=$(( ${TEST_PASSED} + 1 ))
+		;;
+	    skipped)
+                echo "Skipped"
+                TEST_SKIPPED=$(( ${TEST_SKIPPED} + 1 ))
+		;;
+	    failed)
+                TEST_FAILED=$(( ${TEST_FAILED} + 1 ))
+		echo ==================================================
+		echo "Unexpected exit code: $exit_code"
+		echo "Following is the full output of the test:"
+		echo ==================================================
+		cat output.log
+		echo ==================================================
+		;;
+	esac
+
+	rm ${tmpdir}/*
+        cd ${BASEDIR}
+
     done
 
     rm -rf $tmpdir

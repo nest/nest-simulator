@@ -56,7 +56,6 @@ class MPIManager : public ManagerInterface
 public:
   // forward declaration of internal classes
   class OffGridSpike;
-  class NodeAddressingData;
 
   MPIManager();
   ~MPIManager()
@@ -141,24 +140,6 @@ public:
   void communicate_Allreduce_sum_in_place( std::vector< int >& buffer );
   void communicate_Allreduce_sum( std::vector< double >& send_buffer,
     std::vector< double >& recv_buffer );
-
-  /**
-   * Collect GIDs for all nodes in a given node list across processes.
-   * The NodeListType should be one of LocalNodeList, LocalLeafList,
-   * LocalChildList.
-   */
-  /* TODO480
-  template < typename NodeListType >
-  void communicate( const NodeListType& local_nodes,
-    std::vector< NodeAddressingData >& all_nodes,
-    bool remote = false );
-
-  template < typename NodeListType >
-  void communicate( const NodeListType& local_nodes,
-    std::vector< NodeAddressingData >& all_nodes,
-    DictionaryDatum params,
-    bool remote = false );
-  */
 
   std::string get_processor_name();
 
@@ -291,54 +272,6 @@ public:
       OffGridSpike ogs( maxgid, 0.0 );
       assert( maxgid == ogs.get_gid() );
     }
-  };
-
-  class NodeAddressingData
-  {
-  public:
-    NodeAddressingData()
-      : gid_( 0 )
-      , parent_gid_( 0 )
-      , vp_( 0 )
-    {
-    }
-    NodeAddressingData( unsigned int gid,
-      unsigned int parent_gid,
-      unsigned int vp )
-      : gid_( gid )
-      , parent_gid_( parent_gid )
-      , vp_( vp )
-    {
-    }
-
-    unsigned int
-    get_gid() const
-    {
-      return gid_;
-    }
-    unsigned int
-    get_parent_gid() const
-    {
-      return parent_gid_;
-    }
-    unsigned int
-    get_vp() const
-    {
-      return vp_;
-    }
-    bool operator<( const NodeAddressingData& other ) const
-    {
-      return this->gid_ < other.gid_;
-    }
-    bool operator==( const NodeAddressingData& other ) const
-    {
-      return this->gid_ == other.gid_;
-    }
-
-  private:
-    unsigned int gid_;        //!< GID of neuron
-    unsigned int parent_gid_; //!< GID of neuron's parent
-    unsigned int vp_;         //!< virtual process of neuron
   };
 };
 

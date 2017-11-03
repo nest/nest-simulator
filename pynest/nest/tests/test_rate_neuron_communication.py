@@ -67,6 +67,8 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
             'tanh_rate_ipn', params=self.neuron_params)
         self.rate_neuron_3 = nest.Create(
             'threshold_lin_rate_ipn', params=self.neuron_params)
+        self.rate_neuron_4 = nest.Create(
+            'lin_rate_mult_ipn', params=self.neuron_params)
 
         self.multimeter = nest.Create("multimeter",
                                       params={'record_from': ['rate'],
@@ -74,7 +76,7 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         # record rates and connect neurons
         self.neurons = self.rate_neuron_1 + \
-            self.rate_neuron_2 + self.rate_neuron_3
+            self.rate_neuron_2 + self.rate_neuron_3 + self.rate_neuron_4
 
         nest.Connect(
             self.multimeter, self.neurons, 'all_to_all', {'delay': 10.})
@@ -89,6 +91,10 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
                                     'weight': self.weight})
 
         nest.Connect(self.rate_neuron_drive, self.rate_neuron_3,
+                     'all_to_all', {'model': 'rate_connection_instantaneous',
+                                    'weight': self.weight})
+
+        nest.Connect(self.rate_neuron_drive, self.rate_neuron_4,
                      'all_to_all', {'model': 'rate_connection_instantaneous',
                                     'weight': self.weight})
 
@@ -147,21 +153,32 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
                 np.where(senders == self.rate_neuron_2)][-1]
             rate_3 = events['rate'][
                 np.where(senders == self.rate_neuron_3)][-1]
+            rate_4 = events['rate'][
+                np.where(senders == self.rate_neuron_4)][-1]
 
-            rates = np.array([rate_1, rate_2, rate_3])
+            rates = np.array([rate_1, rate_2, rate_3, rate_4])
+
+            # for multiplicative coupling
+            a = g * self.drive * self.weight * \
+                nest.GetStatus(self.rate_neuron_4)[0]['g_ex']
+            theta = nest.GetStatus(self.rate_neuron_4)[0]['theta']
 
             if ls:
+
                 rates_test = np.array(
                     [g * self.drive * self.weight,
                      np.tanh(g * self.drive * self.weight),
                      g * self.drive * self.weight * H(self.drive *
-                                                      self.weight)])
+                                                      self.weight),
+                     a * theta / (1 + a)])
             else:
                 rates_test = np.array(
                     [g * self.drive * self.weight,
                      self.weight * np.tanh(g * self.drive),
-                     self.weight * self.drive * g * H(self.drive)])
+                     self.weight * self.drive * g * H(self.drive)],
+                    a * theta / (1 + a))
 
+            print 'test_RateNeuronNL', rates, rates_test
             self.assertTrue(np.allclose(rates, rates_test))
 
 

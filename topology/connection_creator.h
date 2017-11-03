@@ -198,9 +198,11 @@ ConnectionCreator::connect_( index s,
   double d,
   index syn )
 {
+  // TODO481 Why do we need to check for locality her?
   // check whether the target is on this process
-  if ( kernel().node_manager.is_local_gid( target->get_gid() ) )
+  if ( kernel().node_manager.is_local_node( target ) )
   {
+	// TODO481 Why do we need to check for thread locality here?
     // check whether the target is on our thread
     thread tid = kernel().vp_manager.get_thread_id();
     if ( tid == target_thread )

@@ -190,6 +190,7 @@ private:
   lockPTR< TopologyParameter > delay_;
 };
 
+// TODO481 : do we need this function at all? Why not call kernel's connect directly?
 inline void
 ConnectionCreator::connect_( index s,
   Node* target,
@@ -207,7 +208,7 @@ ConnectionCreator::connect_( index s,
     thread tid = kernel().vp_manager.get_thread_id();
     if ( tid == target_thread )
     {
-      // TODO implement in terms of nest-api
+      // TODO481 implement in terms of nest-api
       kernel().connection_manager.connect(
         s, target, target_thread, syn, d, w );
     }

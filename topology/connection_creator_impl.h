@@ -197,6 +197,9 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
 
   // Nodes in the subnet are grouped by depth, so to select by depth, we
   // just adjust the begin and end pointers:
+
+  // TODO481: Obtain target_begin, target_end as thread-specific
+  // begins/ends inside parallel section
   std::vector< Node* >::const_iterator target_begin;
   std::vector< Node* >::const_iterator target_end;
   if ( target_filter_.select_depth() )
@@ -228,26 +231,28 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
 
+    // TODO481: get local_begin, local_end here
+
     for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
           tgt_it != target_end;
           ++tgt_it )
     {
       Node* const tgt =
-        kernel().node_manager.get_node( ( *tgt_it )->get_gid(), thread_id );
-      const thread target_thread = tgt->get_thread();
+        kernel().node_manager.get_node_or_proxy( ( *tgt_it )->get_gid(), thread_id );
 
-      // check whether the target is on our thread
-      if ( thread_id != target_thread )
-      {
-        continue;
-      }
+      assert( not tgt->is_proxy() );
 
+      // TODO481: Can we move the model filter to the iteration,
+      // i.e., provide is as argument to local_begin() to get an
+      // iterator that just iterates over the model we want?
       if ( target_filter_.select_model()
         && ( tgt->get_model_id() != target_filter_.model ) )
       {
         continue;
       }
 
+      // TODO481: See if we can fix this also by making local_begin()
+      // smarter, at least get proper index
       const Position< D > target_pos =
         target.get_position( tgt->get_subnet_index() );
 

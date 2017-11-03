@@ -160,9 +160,6 @@ public:
     bool remote = false );
   */
 
-  // TODO: not used...
-  void communicate_connector_properties( DictionaryDatum& dict );
-
   std::string get_processor_name();
 
   int get_send_buffer_size();

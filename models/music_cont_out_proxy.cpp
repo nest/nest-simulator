@@ -31,7 +31,7 @@
 // Includes from nestkernel:
 #include "event_delivery_manager_impl.h"
 #include "kernel_manager.h"
-#include "sibling_container.h"
+#include "nest_datums.h"
 
 // Includes from libnestutil:
 #include "compose.hpp"
@@ -172,10 +172,12 @@ nest::music_cont_out_proxy::Parameters_::set( const DictionaryDatum& d,
 
     if ( state.published_ == false )
     {
-      ArrayDatum mca = getValue< ArrayDatum >( d, names::targets );
-      for ( Token* t = mca.begin(); t != mca.end(); ++t )
+      GIDCollectionDatum targets =
+        getValue< GIDCollectionDatum >( d, names::targets );
+      GIDCollection::const_iterator target = targets->begin();
+      for ( ; target != targets->end(); ++target )
       {
-        target_gids_.push_back( getValue< long >( *t ) );
+        target_gids_.push_back( ( *target ).gid );
       }
     }
     else
@@ -266,7 +268,7 @@ nest::music_cont_out_proxy::calibrate()
       // check whether the target is on this process
       if ( kernel().node_manager.is_local_gid( *t ) )
       {
-        Node* const target_node = kernel().node_manager.get_node( *t );
+        Node* const target_node = kernel().node_manager.get_node_or_proxy( *t );
         kernel().connection_manager.connect(
           get_gid(), target_node, target_node->get_thread(), synmodel_id );
       }
@@ -338,22 +340,26 @@ nest::music_cont_out_proxy::calibrate()
 void
 nest::music_cont_out_proxy::get_status( DictionaryDatum& d ) const
 {
+  P_.get( d );
+  S_.get( d );
+
+  if ( is_model_prototype() )
+  {
+    return; // no data to collect
+  }
+
   // if we are the device on thread 0, also get the data from the
   // siblings on other threads
   if ( get_thread() == 0 )
   {
-    const SiblingContainer* siblings =
+    const std::vector< Node* > siblings =
       kernel().node_manager.get_thread_siblings( get_gid() );
-    std::vector< Node* >::const_iterator sibling;
-    for ( sibling = siblings->begin() + 1; sibling != siblings->end();
-          ++sibling )
+    std::vector< Node* >::const_iterator s;
+    for ( s = siblings.begin() + 1; s != siblings.end(); ++s )
     {
-      ( *sibling )->get_status( d );
+      ( *s )->get_status( d );
     }
   }
-
-  P_.get( d );
-  S_.get( d );
 }
 
 void

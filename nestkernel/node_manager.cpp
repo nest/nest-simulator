@@ -291,24 +291,23 @@ NodeManager::add_music_nodes_( Model& model, index min_gid, index max_gid )
 {
   #pragma omp parallel
   {
-	const size_t t = kernel().vp_manager.get_thread_id();
-
-	try
-	{
-	  if ( t == 0 )
-	  {
-      for ( index gid = min_gid; gid <= max_gid; ++gid )
+    const size_t t = kernel().vp_manager.get_thread_id();
+    try
+    {
+      if ( t == 0 )
       {
-        Node* node = model.allocate( 0 );
-        node->set_gid_( gid );
-        node->set_model_id( model.get_model_id() );
-        node->set_thread( 0 );
-        node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
-        local_nodes_[ 0 ].add_local_node( *node );
+        for ( index gid = min_gid; gid <= max_gid; ++gid )
+        {
+          Node* node = model.allocate( 0 );
+          node->set_gid_( gid );
+          node->set_model_id( model.get_model_id() );
+          node->set_thread( 0 );
+          node->set_vp( kernel().vp_manager.thread_to_vp( 0 ) );
+          local_nodes_[ 0 ].add_local_node( *node );
+        }
       }
-	  }
-	  local_nodes_.at( t ).update_max_gid( max_gid );
-	}
+      local_nodes_.at( t ).update_max_gid( max_gid );
+    }
     catch ( std::exception& err )
     {
       // We must create a new exception here, err's lifetime ends at

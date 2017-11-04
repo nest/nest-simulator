@@ -69,7 +69,8 @@ public:
   /** Adds status of synapse of type syn_id at position lcid to
    * dictionary d.
    */
-  virtual void get_synapse_status( const synindex syn_id,
+  virtual void get_synapse_status( const thread tid,
+    const synindex syn_id,
     DictionaryDatum& d,
     const index lcid ) const = 0;
 
@@ -233,11 +234,15 @@ public:
   }
 
   void
-  get_synapse_status( const synindex syn_id, DictionaryDatum& d, const index lcid ) const
+  get_synapse_status( const thread tid, const synindex syn_id, DictionaryDatum& d, const index lcid ) const
   {
     assert( syn_id == syn_id_ );
     assert( lcid >= 0 && lcid < C_.size() );
     C_[ lcid ].get_status( d );
+
+    // set target gid here, where tid is available; necessary for hpc
+    // synapses using TargetIdentifierIndex
+    def< long >( d, names::target, C_[ lcid ].get_target( tid )->get_gid() );
   }
 
   void

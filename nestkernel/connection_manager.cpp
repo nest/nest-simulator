@@ -193,7 +193,7 @@ DictionaryDatum nest::ConnectionManager::get_synapse_status(
 
   if ( source->has_proxies() and target->has_proxies() and ( *connections_5g_[ tid ] )[ syn_id ] != NULL )
   {
-    ( *connections_5g_[ tid ] )[ syn_id ]->get_synapse_status( syn_id, dict, p );
+    ( *connections_5g_[ tid ] )[ syn_id ]->get_synapse_status( tid, syn_id, dict, p );
   }
   else if ( source->has_proxies() and not target->has_proxies() )
   {

@@ -161,7 +161,7 @@ nest::TargetTableDevices::get_synapse_status_to_device( const thread tid,
   const port p ) const
 {
   const index lid = kernel().vp_manager.gid_to_lid( source_gid );
-  ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_synapse_status( syn_id, d, p );
+  ( *target_to_devices_[ tid ] )[ lid ][ syn_id ]->get_synapse_status( tid, syn_id, d, p );
 }
 
 inline void
@@ -171,7 +171,7 @@ nest::TargetTableDevices::get_synapse_status_from_device( const thread tid,
   DictionaryDatum& d,
   const port p ) const
 {
-  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->get_synapse_status( syn_id, d, p );
+  ( *target_from_devices_[ tid ] )[ ldid ][ syn_id ]->get_synapse_status( tid, syn_id, d, p );
 }
 
 inline void

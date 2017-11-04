@@ -385,29 +385,29 @@ ModelManager::set_synapse_defaults_( index model_id,
 // thread, such as volume_transmitter.
 #pragma omp parallel
   {
-    index t = kernel().vp_manager.get_thread_id();
+    thread tid = kernel().vp_manager.get_thread_id();
 #else // clang-format off
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
 #endif // clang-format on
     try
     {
-      prototypes_[ t ][ model_id ]->set_status( params );
+      prototypes_[ tid ][ model_id ]->set_status( params );
     }
     catch ( std::exception& err )
     {
       // We must create a new exception here, err's lifetime ends at
       // the end of the catch block.
-      exceptions_raised_.at( t ) =
+      exceptions_raised_.at( tid ) =
         lockPTR< WrappedThreadException >( new WrappedThreadException( err ) );
     }
   }
 
-  for ( index t = 0; t < kernel().vp_manager.get_num_threads(); ++t )
+  for ( thread tid = 0; tid < kernel().vp_manager.get_num_threads(); ++tid )
   {
-    if ( exceptions_raised_.at( t ).valid() )
+    if ( exceptions_raised_.at( tid ).valid() )
     {
-      throw WrappedThreadException( *( exceptions_raised_.at( t ) ) );
+      throw WrappedThreadException( *( exceptions_raised_.at( tid ) ) );
     }
   }
 

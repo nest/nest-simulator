@@ -154,12 +154,12 @@ private:
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );
-    Parameters_& operator=( const Parameters_& p ); // Copy constructor EN
+    Parameters_& operator=( const Parameters_& p );
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
 
     /**
-     * Set values from dicitonary.
+     * Set values from dictionary.
      * @note State is passed so that the position can be reset if the
      *       spike_times_ vector has been filled with new data.
      */
@@ -183,7 +183,7 @@ private:
 
   // ------------------------------------------------------------
 
-  // These friend declarations must be precisely here.
+  // The next two classes need to be friends to access the State_ class/member
   friend class RecordablesMap< sinusoidal_poisson_generator >;
   friend class UniversalDataLogger< sinusoidal_poisson_generator >;
 
@@ -258,7 +258,9 @@ sinusoidal_poisson_generator::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
+  {
     throw UnknownReceptorType( receptor_type, get_name() );
+  }
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 

@@ -127,6 +127,11 @@ public:
   void set_status( const DictionaryDatum& d, ConnectorModel& cm );
 
   /**
+   * Throws exception if n or a are given in syn_spec.
+   */
+  void check_synapse_params( const DictionaryDatum& d ) const;
+
+  /**
    * Send an event to the receiver of this connection.
    * \param e The event to send
    * \param cp Common properties to all synapses (empty).
@@ -202,7 +207,9 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e,
   for ( int depleted = n_ - a_; depleted > 0; --depleted )
   {
     if ( kernel().rng_manager.get_rng( vp )->drand() < ( 1.0 - p_decay ) )
+    {
       ++a_;
+    }
   }
 
   // Compute number of released sites
@@ -210,7 +217,9 @@ Quantal_StpConnection< targetidentifierT >::send( Event& e,
   for ( int i = a_; i > 0; --i )
   {
     if ( kernel().rng_manager.get_rng( vp )->drand() < u_ )
+    {
       ++n_release;
+    }
   }
 
   if ( n_release > 0 )

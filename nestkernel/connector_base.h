@@ -291,8 +291,10 @@ public:
   at( const size_t i )
   {
     if ( i >= C_.size() || i < 0 )
+    {
       throw std::out_of_range( String::compose(
         "Invalid attempt to access a connection: index %1 out of range.", i ) );
+    }
     return C_[ i ];
   }
 

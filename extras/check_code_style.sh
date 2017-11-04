@@ -273,7 +273,7 @@ fi
 # The CLANG-FORMAT versions up to and including 3.5 do not support all configuration options required for NEST. 
 # Version 3.7 introduced a different formatting. NEST relies on the formatting of version 3.6.
 if $PERFORM_CLANG_FORMAT; then
-  $CLANG_FORMAT -style=./.clang-format ./nest/main.cpp >/dev/null 2>&1 || erro_exit "Failed to verify the CLANG-FORMAT installation. Executable: $CLANG_FORMAT"
+  $CLANG_FORMAT -style=./.clang-format ./nest/main.cpp >/dev/null 2>&1 || error_exit "Failed to verify the CLANG-FORMAT installation. Executable: $CLANG_FORMAT"
   clang_format_version=`$CLANG_FORMAT --version | sed -${EXTENDED_REGEX_PARAM} 's/^.*([0-9]\.[0-9])\..*/\1/'`
   if [[ "x$clang_format_version" != "x3.6" ]]; then
     error_exit "Failed to verify the CLANG-FORMAT installation. Version 3.6 is requires. The executable '$CLANG_FORMAT' is of version $clang_format_version."
@@ -302,8 +302,16 @@ if [ ! -x ./extras/static_code_analysis.sh ]; then
   sudo chmod +x ./extras/static_code_analysis.sh
 fi
 
-RUNS_ON_TRAVIS=false
-unset NEST_VPATH
 
-./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" "$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
-"$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8"
+RUNS_ON_TRAVIS=false
+
+unset NEST_VPATH               # These command line arguments are placeholders and not required here.
+IGNORE_MSG_VERA=false          # They are needed when running the static code analysis script within
+IGNORE_MSG_CPPCHECK=false      # the Travis CI build environment.
+IGNORE_MSG_CLANG_FORMAT=false
+IGNORE_MSG_PEP8=false
+
+./extras/static_code_analysis.sh "$RUNS_ON_TRAVIS" "$INCREMENTAL" "$file_names" "$NEST_VPATH" \
+"$VERA" "$CPPCHECK" "$CLANG_FORMAT" "$PEP8" \
+"$PERFORM_VERA" "$PERFORM_CPPCHECK" "$PERFORM_CLANG_FORMAT" "$PERFORM_PEP8" \
+"$IGNORE_MSG_VERA" "$IGNORE_MSG_CPPCHECK" "$IGNORE_MSG_CLANG_FORMAT" "$IGNORE_MSG_PEP8"

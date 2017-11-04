@@ -35,6 +35,7 @@
 #include "nest_types.h"
 #include "node.h"
 #include "stimulating_device.h"
+#include "universal_data_logger.h"
 
 namespace nest
 {
@@ -95,6 +96,10 @@ Remarks:
 
    To obtain comparable results for different values of dt, you must
    adapt std.
+ - As the noise generator provides a different current for each of its targets,
+   the current recorded represents the instantaneous average of all the
+   currents computed. When there exists only a single target, this would be
+   equivalent to the actual current provided to that target.
 
 Sends: CurrentEvent
 
@@ -125,6 +130,8 @@ public:
    * @see Technical Issues / Virtual Functions: Overriding, Overloading, and
    * Hiding
    */
+  using Node::handle;
+  using Node::handles_test_event;
   using Node::event_hook;
   using Node::sends_signal;
 
@@ -132,11 +139,22 @@ public:
 
   SignalType sends_signal() const;
 
+  void handle( DataLoggingRequest& );
+
+  port handles_test_event( DataLoggingRequest&, rport );
+
   void get_status( DictionaryDatum& ) const;
   void set_status( const DictionaryDatum& );
 
   void set_local_device_id( const index ldid );
   index get_local_device_id() const;
+
+  //! Allow multimeter to connect to local instances
+  bool
+  local_receiver() const
+  {
+    return true;
+  }
 
 private:
   void init_state_( const Node& );
@@ -177,6 +195,7 @@ private:
 
     Parameters_(); //!< Sets default parameter values
     Parameters_( const Parameters_& );
+    Parameters_& operator=( const Parameters_& p );
 
     void get( DictionaryDatum& ) const; //!< Store current values in dictionary
     //! Set values from dictionary
@@ -189,6 +208,8 @@ private:
   {
     double y_0_;
     double y_1_;
+    double I_avg_; //!< Average of instantaneous currents computed
+                   //!< Used for recording current
 
     State_(); //!< Sets default parameter values
 
@@ -197,10 +218,19 @@ private:
 
   // ------------------------------------------------------------
 
+  // The next two classes need to be friends to access the State_ class/member
+  friend class RecordablesMap< noise_generator >;
+  friend class UniversalDataLogger< noise_generator >;
+
+  // ------------------------------------------------------------
+
   struct Buffers_
   {
     long next_step_; //!< time step of next change in current
     AmpVec_ amps_;   //!< amplitudes, one per target
+    Buffers_( noise_generator& );
+    Buffers_( const Buffers_&, noise_generator& );
+    UniversalDataLogger< noise_generator > logger_;
   };
 
   // ------------------------------------------------------------
@@ -219,17 +249,35 @@ private:
     double A_11_;
   };
 
+  double
+  get_I_avg_() const
+  {
+    return S_.I_avg_;
+  }
+
   // ------------------------------------------------------------
+
+  static RecordablesMap< noise_generator > recordablesMap_;
 
   StimulatingDevice< CurrentEvent > device_;
   Parameters_ P_;
+  State_ S_;
   Variables_ V_;
   Buffers_ B_;
-  State_ S_;
 
   index local_device_id_;
 };
 
+inline port
+noise_generator::handles_test_event( DataLoggingRequest& dlr,
+  rport receptor_type )
+{
+  if ( receptor_type != 0 )
+  {
+    throw UnknownReceptorType( receptor_type, get_name() );
+  }
+  return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
+}
 
 inline void
 noise_generator::get_status( DictionaryDatum& d ) const
@@ -237,6 +285,8 @@ noise_generator::get_status( DictionaryDatum& d ) const
   P_.get( d );
   S_.get( d );
   device_.get_status( d );
+
+  ( *d )[ names::recordables ] = recordablesMap_.get_list();
 }
 
 inline void

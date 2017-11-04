@@ -33,7 +33,7 @@ set( nestkernel_sources
     connection_id.h connection_id.cpp
     device.h device.cpp
     dynamicloader.h dynamicloader.cpp
-    event.h event_impl.h event.cpp
+    event.h event.cpp
     exceptions.h exceptions.cpp
     genericmodel.h
     gid_collection.h gid_collection.cpp

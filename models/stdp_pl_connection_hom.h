@@ -91,6 +91,7 @@ public:
 
   // data members common to all connections
   double tau_plus_;
+  double tau_plus_inv_; //!< 1 / tau_plus for efficiency
   double lambda_;
   double alpha_;
   double mu_;
@@ -145,7 +146,9 @@ public:
    * Send an event to the receiver of this connection.
    * \param e The event to send
    */
-  void send( Event& e, thread t, const STDPPLHomCommonProperties& );
+  void send( Event& e,
+    thread t,
+    const STDPPLHomCommonProperties& );
 
   class ConnTestDummyNode : public ConnTestDummyNodeBase
   {
@@ -252,9 +255,11 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e,
     minus_dt = t_lastspike_ - ( start->t_ + dendritic_delay );
     start++;
     if ( minus_dt == 0 )
+    {
       continue;
-    weight_ =
-      facilitate_( weight_, Kplus_ * std::exp( minus_dt / cp.tau_plus_ ), cp );
+    }
+    weight_ = facilitate_(
+      weight_, Kplus_ * std::exp( minus_dt * cp.tau_plus_inv_ ), cp );
   }
 
   // depression due to new pre-synaptic spike
@@ -267,9 +272,8 @@ STDPPLConnectionHom< targetidentifierT >::send( Event& e,
   e.set_rport( get_rport() );
   e();
 
-  Kplus_ = Kplus_ * std::exp( ( t_lastspike_ - t_spike ) / cp.tau_plus_ ) + 1.0;
-
-  t_lastspike_ = t_spike;
+  Kplus_ =
+    Kplus_ * std::exp( ( t_lastspike_ - t_spike ) * cp.tau_plus_inv_ ) + 1.0;
 }
 
 template < typename targetidentifierT >
@@ -301,7 +305,7 @@ STDPPLConnectionHom< targetidentifierT >::get_status( DictionaryDatum& d ) const
   def< double >( d, names::weight, weight_ );
 
   // own properties, different for individual synapse
-  def< double >( d, "Kplus", Kplus_ );
+  def< double >( d, names::Kplus, Kplus_ );
   def< long >( d, names::size_of, sizeof( *this ) );
 }
 
@@ -314,7 +318,7 @@ STDPPLConnectionHom< targetidentifierT >::set_status( const DictionaryDatum& d,
   ConnectionBase::set_status( d, cm );
   updateValue< double >( d, names::weight, weight_ );
 
-  updateValue< double >( d, "Kplus", Kplus_ );
+  updateValue< double >( d, names::Kplus, Kplus_ );
 }
 
 } // of namespace nest

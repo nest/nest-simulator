@@ -126,46 +126,68 @@ nest::iaf_psc_alpha_canon::Parameters_::set( const DictionaryDatum& d )
   updateValue< double >( d, names::I_e, I_e_ );
 
   if ( updateValue< double >( d, names::V_th, U_th_ ) )
+  {
     U_th_ -= E_L_;
+  }
   else
+  {
     U_th_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_min, U_min_ ) )
+  {
     U_min_ -= E_L_;
+  }
   else
+  {
     U_min_ -= delta_EL;
+  }
 
   if ( updateValue< double >( d, names::V_reset, U_reset_ ) )
+  {
     U_reset_ -= E_L_;
+  }
   else
+  {
     U_reset_ -= delta_EL;
+  }
 
   long tmp;
   if ( updateValue< long >( d, names::Interpol_Order, tmp ) )
   {
     if ( NO_INTERPOL <= tmp && tmp < END_INTERP_ORDER )
+    {
       Interpol_ = static_cast< interpOrder >( tmp );
+    }
     else
+    {
       throw BadProperty(
         "Invalid interpolation order. "
         "Valid orders are 0, 1, 2, 3." );
+    }
   }
-
   if ( U_reset_ >= U_th_ )
+  {
     throw BadProperty( "Reset potential must be smaller than threshold." );
-
+  }
   if ( U_reset_ < U_min_ )
+  {
     throw BadProperty(
       "Reset potential must be greater equal minimum potential." );
-
+  }
   if ( c_m_ <= 0 )
+  {
     throw BadProperty( "Capacitance must be strictly positive." );
+  }
 
   if ( Time( Time::ms( t_ref_ ) ).get_steps() < 1 )
+  {
     throw BadProperty( "Refractory time must be at least one time step." );
-
+  }
   if ( tau_m_ <= 0 || tau_syn_ <= 0 )
+  {
     throw BadProperty( "All time constants must be strictly positive." );
+  }
 
   return delta_EL;
 }
@@ -175,8 +197,8 @@ nest::iaf_psc_alpha_canon::State_::get( DictionaryDatum& d,
   const Parameters_& p ) const
 {
   def< double >( d, names::V_m, y3_ + p.E_L_ ); // Membrane potential
-  def< double >( d, "y1", y1_ );                // y1 state
-  def< double >( d, "y2", y2_ );                // y2 state
+  def< double >( d, names::y1, y1_ );           // y1 state
+  def< double >( d, names::y2, y2_ );           // y2 state
   def< bool >( d, names::is_refractory, is_refractory_ );
 }
 
@@ -186,12 +208,16 @@ nest::iaf_psc_alpha_canon::State_::set( const DictionaryDatum& d,
   double delta_EL )
 {
   if ( updateValue< double >( d, names::V_m, y3_ ) )
+  {
     y3_ -= p.E_L_;
+  }
   else
+  {
     y3_ -= delta_EL;
+  }
 
-  updateValue< double >( d, "y1", y1_ );
-  updateValue< double >( d, "y2", y2_ );
+  updateValue< double >( d, names::y1, y1_ );
+  updateValue< double >( d, names::y2, y2_ );
 }
 
 nest::iaf_psc_alpha_canon::Buffers_::Buffers_( iaf_psc_alpha_canon& n )
@@ -294,16 +320,20 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
 
   // at start of slice, tell input queue to prepare for delivery
   if ( from == 0 )
+  {
     B_.events_.prepare_delivery();
+  }
 
   /* Neurons may have been initialized to superthreshold potentials.
      We need to check for this here and issue spikes at the beginning of
      the interval.
   */
   if ( S_.y3_ >= P_.U_th_ )
+  {
     emit_instant_spike_( origin,
       from,
       V_.h_ms_ * ( 1 - std::numeric_limits< double >::epsilon() ) );
+  }
 
   for ( long lag = from; lag < to; ++lag )
   {
@@ -313,7 +343,9 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
     // pseudo-event in queue to mark end of refractory period
     if ( S_.is_refractory_
       && ( T + 1 - S_.last_spike_step_ == V_.refractory_steps_ ) )
+    {
       B_.events_.add_refractory( T, S_.last_spike_offset_ );
+    }
 
     // save state at beginning of interval for spike-time interpolation
     V_.y0_before_ = S_.y0_;
@@ -325,13 +357,14 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
     double ev_weight;
     bool end_of_refract;
 
-    if ( !B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) )
+    if ( not B_.events_.get_next_spike(
+           T, true, ev_offset, ev_weight, end_of_refract ) )
     { // No incoming spikes, handle with fixed propagator matrix.
       // Handling this case separately improves performance significantly
       // if there are many steps without input spikes.
 
       // update membrane potential
-      if ( !S_.is_refractory_ )
+      if ( not S_.is_refractory_ )
       {
         S_.y3_ = V_.P30_ * ( P_.I_e_ + S_.y0_ ) + V_.P31_ * S_.y1_
           + V_.P32_ * S_.y2_ + V_.expm1_tau_m_ * S_.y3_ + S_.y3_;
@@ -351,7 +384,9 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
          interval.
       */
       if ( S_.y3_ >= P_.U_th_ )
+      {
         emit_spike_( origin, lag, 0, V_.h_ms_ );
+      }
     }
     else
     {
@@ -374,21 +409,27 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
         // this must be done before adding the input, since
         // interpolation requires continuity
         if ( S_.y3_ >= P_.U_th_ )
+        {
           emit_spike_( origin, lag, V_.h_ms_ - last_offset, ministep );
+        }
 
         // handle event
         if ( end_of_refract )
-          S_.is_refractory_ = false; // return from refractoriness
+        {
+          S_.is_refractory_ = false;
+        } // return from refractoriness
         else
-          S_.y1_ += V_.PSCInitialValue_ * ev_weight; // spike input
+        {
+          S_.y1_ += V_.PSCInitialValue_ * ev_weight;
+        } // spike input
 
         // store state
         V_.y2_before_ = S_.y2_;
         V_.y3_before_ = S_.y3_;
         last_offset = ev_offset;
 
-      } while (
-        B_.events_.get_next_spike( T, ev_offset, ev_weight, end_of_refract ) );
+      } while ( B_.events_.get_next_spike(
+        T, true, ev_offset, ev_weight, end_of_refract ) );
 
       // no events remaining, plain update step across remainder
       // of interval
@@ -396,7 +437,9 @@ nest::iaf_psc_alpha_canon::update( Time const& origin,
       {
         propagate_( last_offset );
         if ( S_.y3_ >= P_.U_th_ )
+        {
           emit_spike_( origin, lag, V_.h_ms_ - last_offset, last_offset );
+        }
       }
     } // else
 
@@ -461,7 +504,7 @@ nest::iaf_psc_alpha_canon::propagate_( const double dt )
   const double ps_e_TauSyn = numerics::expm1( -dt / P_.tau_syn_ );
 
   // y3_ remains unchanged at 0.0 while neuron is refractory
-  if ( !S_.is_refractory_ )
+  if ( not S_.is_refractory_ )
   {
     const double ps_e_Tau = numerics::expm1( -dt / P_.tau_m_ );
     const double ps_P30 = -P_.tau_m_ / P_.c_m_ * ps_e_Tau;
@@ -576,13 +619,18 @@ nest::iaf_psc_alpha_canon::thresh_find2_( double const dt ) const
   const double sqr_ = std::sqrt( b * b - 4 * a * c + 4 * a * P_.U_th_ );
   const double tau1 = ( -b + sqr_ ) / ( 2 * a );
   const double tau2 = ( -b - sqr_ ) / ( 2 * a );
-
   if ( tau1 >= 0 )
+  {
     return tau1;
+  }
   else if ( tau2 >= 0 )
+  {
     return tau2;
+  }
   else
+  {
     return thresh_find1_( dt );
+  }
 }
 
 double
@@ -651,8 +699,12 @@ nest::iaf_psc_alpha_canon::thresh_find3_( double const dt ) const
 
   double tau = ( tau1 >= 0 ) ? tau1 : 2 * h_ms;
   if ( ( tau2 >= 0 ) && ( tau2 < tau ) )
+  {
     tau = tau2;
+  }
   if ( ( tau3 >= 0 ) && ( tau3 < tau ) )
+  {
     tau = tau3;
+  }
   return ( tau <= V_.h_ms_ ) ? tau : thresh_find2_( dt );
 }

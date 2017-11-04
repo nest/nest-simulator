@@ -144,7 +144,7 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
     delay_checkers_[ i ].set_status( d );
   }
 
-  updateValue< bool >( d, "keep_source_table", keep_source_table_ );
+  updateValue< bool >( d, names::keep_source_table, keep_source_table_ );
   if ( not keep_source_table_
     && kernel().sp_manager.is_structural_plasticity_enabled() )
   {
@@ -152,7 +152,7 @@ nest::ConnectionManager::set_status( const DictionaryDatum& d )
       "Structural plasticity can not be enabled if source table is not kept." );
   }
 
-  updateValue< bool >( d, "sort_connections_by_source", sort_connections_by_source_ );
+  updateValue< bool >( d, names::sort_connections_by_source, sort_connections_by_source_ );
 }
 
 nest::DelayChecker&
@@ -165,13 +165,13 @@ void
 nest::ConnectionManager::get_status( DictionaryDatum& d )
 {
   update_delay_extrema_();
-  def< double >( d, "min_delay", Time( Time::step( min_delay_ ) ).get_ms() );
-  def< double >( d, "max_delay", Time( Time::step( max_delay_ ) ).get_ms() );
+  def< double >( d, names::min_delay, Time( Time::step( min_delay_ ) ).get_ms() );
+  def< double >( d, names::max_delay, Time( Time::step( max_delay_ ) ).get_ms() );
 
   size_t n = get_num_connections();
-  def< long >( d, "num_connections", n );
-  def< bool >( d, "keep_source_table", keep_source_table_ );
-  def< bool >( d, "sort_connections_by_source", sort_connections_by_source_ );
+  def< long >( d, names::num_connections, n );
+  def< bool >( d, names::keep_source_table, keep_source_table_ );
+  def< bool >( d, names::sort_connections_by_source, sort_connections_by_source_ );
 }
 
 DictionaryDatum nest::ConnectionManager::get_synapse_status(

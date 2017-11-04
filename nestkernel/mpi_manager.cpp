@@ -154,13 +154,13 @@ void
 nest::MPIManager::set_status( const DictionaryDatum& dict )
 {
   updateValue< bool >(
-    dict, "adaptive_target_buffers", adaptive_target_buffers_ );
+    dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
   updateValue< bool >(
-    dict, "adaptive_spike_buffers", adaptive_spike_buffers_ );
+    dict, names::adaptive_spike_buffers, adaptive_spike_buffers_ );
 
   long new_buffer_size_target_data = buffer_size_target_data_;
   updateValue< long >(
-    dict, "buffer_size_target_data", new_buffer_size_target_data );
+    dict, names::buffer_size_target_data, new_buffer_size_target_data );
   if ( new_buffer_size_target_data
       != static_cast< long >( buffer_size_target_data_ )
     and new_buffer_size_target_data
@@ -171,7 +171,7 @@ nest::MPIManager::set_status( const DictionaryDatum& dict )
 
   long new_buffer_size_spike_data = buffer_size_spike_data_;
   updateValue< long >(
-    dict, "buffer_size_spike_data", new_buffer_size_spike_data );
+    dict, names::buffer_size_spike_data, new_buffer_size_spike_data );
   if ( new_buffer_size_spike_data
       != static_cast< long >( buffer_size_spike_data_ )
     and new_buffer_size_spike_data
@@ -180,35 +180,27 @@ nest::MPIManager::set_status( const DictionaryDatum& dict )
     set_buffer_size_spike_data( new_buffer_size_spike_data );
   }
 
-  updateValue< double >(
-    dict, "growth_factor_buffer_spike_data", growth_factor_buffer_spike_data_ );
-  updateValue< double >(
-    dict, "growth_factor_buffer_target_data", growth_factor_buffer_target_data_ );
+  updateValue< double >( dict, names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
+  updateValue< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
 
-  updateValue< long >(
-    dict, "max_buffer_size_target_data", max_buffer_size_target_data_ );
-  updateValue< long >(
-    dict, "max_buffer_size_spike_data", max_buffer_size_spike_data_ );
+  updateValue< long >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
+  updateValue< long >( dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
 }
 
 // TODO@5g: replace strings with names::
 void
 nest::MPIManager::get_status( DictionaryDatum& dict )
 {
-  def< long >( dict, "num_processes", num_processes_ );
-  // def< long >( dict, "send_buffer_size", send_buffer_size_ );
-  // def< long >( dict, "receive_buffer_size", recv_buffer_size_ );
-  def< bool >( dict, "adaptive_target_buffers", adaptive_target_buffers_ );
-  def< bool >( dict, "adaptive_spike_buffers", adaptive_spike_buffers_ );
-  def< size_t >( dict, "buffer_size_target_data", buffer_size_target_data_ );
-  def< size_t >( dict, "buffer_size_spike_data", buffer_size_spike_data_ );
-  def< size_t >( dict, "buffer_size_secondary_events", get_buffer_size_secondary_events() );
-  def< size_t >(
-    dict, "max_buffer_size_target_data", max_buffer_size_target_data_ );
-  def< size_t >(
-    dict, "max_buffer_size_spike_data", max_buffer_size_spike_data_ );
-  def< double >( dict, "growth_factor_buffer_spike_data", growth_factor_buffer_spike_data_ );
-  def< double >( dict, "growth_factor_buffer_target_data", growth_factor_buffer_target_data_ );
+  def< long >( dict, names::num_processes, num_processes_ );
+  def< bool >( dict, names::adaptive_spike_buffers, adaptive_spike_buffers_ );
+  def< bool >( dict, names::adaptive_target_buffers, adaptive_target_buffers_ );
+  def< size_t >( dict, names::buffer_size_target_data, buffer_size_target_data_ );
+  def< size_t >( dict, names::buffer_size_spike_data, buffer_size_spike_data_ );
+  def< size_t >( dict, names::buffer_size_secondary_events, get_buffer_size_secondary_events() );
+  def< size_t >( dict, names::max_buffer_size_spike_data, max_buffer_size_spike_data_ );
+  def< size_t >( dict, names::max_buffer_size_target_data, max_buffer_size_target_data_ );
+  def< double >( dict, names::growth_factor_buffer_spike_data, growth_factor_buffer_spike_data_ );
+  def< double >( dict, names::growth_factor_buffer_target_data, growth_factor_buffer_target_data_ );
 }
 
 void
@@ -1057,16 +1049,16 @@ nest::MPIManager::communicate_connector_properties( DictionaryDatum& dict )
   {
     // Move local dictionary values to temporary storage vectors.
     std::vector< long > targets =
-      getValue< std::vector< long > >( dict, "targets" );
+      getValue< std::vector< long > >( dict, names::targets );
 
     std::vector< double > weights =
-      getValue< std::vector< double > >( dict, "weights" );
+      getValue< std::vector< double > >( dict, names::weights );
 
     std::vector< double > delays =
-      getValue< std::vector< double > >( dict, "delays" );
+      getValue< std::vector< double > >( dict, names::delays );
 
     std::vector< long > receptors =
-      getValue< std::vector< long > >( dict, "receptors" );
+      getValue< std::vector< long > >( dict, names::receptors );
 
     // Calculate size of communication buffers (number of connections).
     std::vector< int > num_connections( get_num_processes() );

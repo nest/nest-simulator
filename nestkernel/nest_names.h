@@ -54,6 +54,8 @@ extern const Name accumulator;          //!< Recorder parameter
 extern const Name Act_h;                //!< Specific to Hodgkin Huxley models
 extern const Name Act_m;                //!< Specific to Hodgkin Huxley models
 extern const Name activity;             //!< Used in pulsepacket_generator
+extern const Name adaptive_spike_buffers; //!< Used in MPIManager
+extern const Name adaptive_target_buffers; //!< Used in MPIManager
 extern const Name address;              //!< Node parameter
 extern const Name ahp_bug;              //!< Used in iaf_chxk_2008
 extern const Name allow_offgrid_spikes; //!< Used in spike_generator
@@ -78,6 +80,9 @@ extern const Name beta; //!< Specific to amat2_*
 extern const Name
   beta_Ca; //!< Increment in calcium concentration with each spike
 extern const Name binary; //!< Recorder parameter
+extern const Name buffer_size_spike_data;     //! Used in MPIManager
+extern const Name buffer_size_target_data;    //! Used in MPIManager
+extern const Name buffer_size_secondary_events; //! Used in MPIManager
 
 extern const Name c;         //!< Specific to Izhikevich 2003
 extern const Name c_1;       //!< Specific to stochastic neuron pp_psc_delta
@@ -231,6 +236,8 @@ extern const Name global_id;     //!< Node parameter
 extern const Name grng;          //!< Used in rng_manager
 extern const Name grng_seed;     //!< Seed
 extern const Name growth_curve;  //!< Growth curve for MSP dynamics
+extern const Name growth_factor_buffer_spike_data;  //<! Used in MPIManager
+extern const Name growth_factor_buffer_target_data;  //<! Used in MPIManager
 extern const Name growth_rate;   //!< Parameter of the growth curve for MSP
                                  //!< dynamics
 extern const Name gsl_error_tol; //!< GSL integrator tolerance
@@ -282,6 +289,7 @@ extern const Name
 extern const Name interval; //!< Recorder parameter
 extern const Name is_refractory; //!< Neuron is in refractory period (debugging)
 
+extern const Name keep_source_table; //!< Used by ConnectionManager
 extern const Name Kplus;         //!< Used by stdp_connection_facetshw_hom
 extern const Name Kplus_triplet; //!< Used by stdp_connection_facetshw_hom
 
@@ -301,6 +309,8 @@ extern const Name lookuptable_1;       //!< Used in stdp_connection_facetshw_hom
 extern const Name lookuptable_2;       //!< Used in stdp_connection_facetshw_hom
 
 extern const Name make_symmetric; //!< Connectivity-related
+extern const Name max_buffer_size_spike_data;  //!< Used in MPIManager
+extern const Name max_buffer_size_target_data;  //!< Used in MPIManager
 extern const Name max_delay;      //!< In ConnBuilder
 extern const Name MAXERR; //!< Largest permissible error for adaptive stepsize
                           //!< (Brette & Gerstner 2005)
@@ -429,6 +439,7 @@ extern const Name size_of;          //!< Connection parameters
 extern const Name soma_curr;        //!< Used by iaf_cond_alpha_mc
 extern const Name soma_exc;         //!< Used by iaf_cond_alpha_mc
 extern const Name soma_inh;         //!< Used by iaf_cond_alpha_mc
+extern const Name sort_connections_by_source;  //<! Used by ConnectionManager
 extern const Name source;           //!< Connection parameters
 extern const Name spike; //!< true if the neuron spikes and false if not.
                          //!< (sli_neuron)

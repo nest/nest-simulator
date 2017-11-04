@@ -58,8 +58,8 @@ class SiegertNeuronTestCase(unittest.TestCase):
         nest.ResetKernel()
         nest.SetKernelStatus(
             {'resolution': self.dt, 'use_wfr': False, 'print_time': True})
-        # set up driven iaf neuron
 
+        # set up driven iaf neuron
         self.iaf_neuron = nest.Create(
             'iaf_psc_delta', self.N)  # , params={"C_m": 1.0})
 
@@ -72,8 +72,8 @@ class SiegertNeuronTestCase(unittest.TestCase):
             "spike_detector", params={'start': self.start})
         nest.Connect(
             self.iaf_neuron, self.spike_detector)
-        # set up driven siegert neuron
 
+        # set up driven siegert neuron
         neuron_status = nest.GetStatus(self.iaf_neuron)[0]
         siegert_params = {'tau_m': neuron_status['tau_m'],
                           't_ref': neuron_status['t_ref'],

@@ -39,13 +39,13 @@ namespace nest
 {
 template < int D >
 void
-ConnectionCreator::connect( Layer< D >& source, Layer< D >& target )
+ConnectionCreator::connect( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
 {
   switch ( type_ )
   {
   case Target_driven:
 
-    target_driven_connect_( source, target );
+    target_driven_connect_( source, target, target_gc );
     break;
 
   case Convergent:
@@ -187,7 +187,7 @@ ConnectionCreator::PoolWrapper_< D >::end() const
 template < int D >
 void
 ConnectionCreator::target_driven_connect_( Layer< D >& source,
-  Layer< D >& target )
+  Layer< D >& target, GIDCollectionPTR target_gc )
 {
   // Target driven connect
   // For each local target node:
@@ -200,17 +200,21 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
 
   // TODO481: Obtain target_begin, target_end as thread-specific
   // begins/ends inside parallel section
-  std::vector< Node* >::const_iterator target_begin;
-  std::vector< Node* >::const_iterator target_end;
+
+  GIDCollection::const_iterator target_begin;// = target_gc->begin();
+  GIDCollection::const_iterator target_end;// = target_gc->begin();
+
   if ( target_filter_.select_depth() )
   {
-    target_begin = target.local_begin( target_filter_.depth );
-    target_end = target.local_end( target_filter_.depth );
+    HA MED SELECT MODEL OGSÅ. FINNES TARGET_FILTER_.SELECT_MODEL() OG TARGET_FILTER_.MODEL
+    sÅ, REGNE UT STEP FØRST..
+    target_begin = target_gc->begin(SOME_STEP);
+    target_end = target_gc->end(SOME_STEP);
   }
   else
   {
-    target_begin = target.local_begin();
-    target_end = target.local_end();
+    target_begin = target_gc->begin();
+    target_end = target_gc->end();
   }
 
   // retrieve global positions, either for masked or unmasked pool
@@ -233,28 +237,28 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
 
     // TODO481: get local_begin, local_end here
 
-    for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
-          tgt_it != target_end;
-          ++tgt_it )
+    for ( GIDCollection::const_iterator tgt_it = target_begin;
+      tgt_it != target_end;
+      ++tgt_it  )
     {
       Node* const tgt =
-        kernel().node_manager.get_node_or_proxy( ( *tgt_it )->get_gid(), thread_id );
+        kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid, thread_id );
 
       assert( not tgt->is_proxy() );
 
       // TODO481: Can we move the model filter to the iteration,
       // i.e., provide is as argument to local_begin() to get an
       // iterator that just iterates over the model we want?
-      if ( target_filter_.select_model()
+      /*if ( target_filter_.select_model()
         && ( tgt->get_model_id() != target_filter_.model ) )
       {
         continue;
-      }
+      }*/
 
       // TODO481: See if we can fix this also by making local_begin()
       // smarter, at least get proper index
       const Position< D > target_pos =
-        target.get_position( tgt->get_subnet_index() );
+        target.get_position( ( *tgt_it ).position );
 
       if ( mask_.valid() )
       {

@@ -119,7 +119,8 @@ Layer< D >::get_status( DictionaryDatum& d ) const
 
 template < int D >
 void
-Layer< D >::connect( AbstractLayerPTR target_layer, ConnectionCreator& connector )
+Layer< D >::connect( AbstractLayerPTR target_layer, GIDCollectionPTR target_gc,
+    ConnectionCreator& connector )
 {
   // We need to extract the real pointer here to be able to cast to the
   // dimension-specific subclass.
@@ -132,7 +133,7 @@ Layer< D >::connect( AbstractLayerPTR target_layer, ConnectionCreator& connector
   try
   {
     Layer< D >& tgt = dynamic_cast< Layer< D >& >( *target_abs );
-    connector.connect( *this, tgt );
+    connector.connect( *this, tgt, target_gc );
   }
   catch ( std::bad_cast& e )
   {

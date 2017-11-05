@@ -106,7 +106,7 @@ public:
    * @param target target layer.
    */
   template < int D >
-  void connect( Layer< D >& source, Layer< D >& target );
+  void connect( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
 private:
   /**
@@ -147,7 +147,7 @@ private:
     const Layer< D >& source );
 
   template < int D >
-  void target_driven_connect_( Layer< D >& source, Layer< D >& target );
+  void target_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
   void source_driven_connect_( Layer< D >& source, Layer< D >& target );

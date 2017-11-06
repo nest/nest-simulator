@@ -49,11 +49,14 @@ struct PrimitiveSortObject
 
 gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
   const GIDCollectionPrimitive& collection,
-  size_t offset )
+  size_t offset,
+  size_t step,
+  index model_type )
   : coll_ptr_( collection_ptr )
   , element_idx_( offset )
   , part_idx_( 0 )
-  , step_( 1 )
+  , step_( step )
+  , model_type_( model_type )
   , primitive_collection_( &collection )
   , composite_collection_( 0 )
 {
@@ -71,11 +74,13 @@ gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
   const GIDCollectionComposite& collection,
   size_t part,
   size_t offset,
-  size_t step )
+  size_t step,
+  index model_type )
   : coll_ptr_( collection_ptr )
   , element_idx_( offset )
   , part_idx_( part )
   , step_( step )
+  , model_type_( model_type )
   , primitive_collection_( 0 )
   , composite_collection_( &collection )
 {
@@ -97,7 +102,8 @@ gc_const_iterator::gc_const_iterator( const gc_const_iterator& gci )
   : coll_ptr_( gci.coll_ptr_ )
   , element_idx_( gci.element_idx_ )
   , part_idx_( gci.part_idx_ )
-  , step_( 1 )
+  , step_( gci.step_ )
+  , model_type_( gci.model_type_ )
   , primitive_collection_( gci.primitive_collection_ )
   , composite_collection_( gci.composite_collection_ )
 {
@@ -181,7 +187,8 @@ GIDCollection::create_( const std::vector< index >& gids )
         gid != gids.end();
         ++gid )
   {
-    index next_model = kernel().node_manager.get_node_or_proxy( *gid )->get_model_id();
+    index next_model =
+      kernel().node_manager.get_node_or_proxy( *gid )->get_model_id();
 
     if ( next_model == current_model and *gid == ( current_last + 1 ) )
     {
@@ -251,10 +258,12 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last )
   assert( first_ <= last_ );
 
   // find the model_id
-  const int model_id = kernel().node_manager.get_node_or_proxy( first )->get_model_id();
+  const int model_id =
+    kernel().node_manager.get_node_or_proxy( first )->get_model_id();
   for ( index gid = ++first; gid <= last; ++gid )
   {
-    if ( model_id != kernel().node_manager.get_node_or_proxy( gid )->get_model_id() )
+    if ( model_id
+      != kernel().node_manager.get_node_or_proxy( gid )->get_model_id() )
     {
       throw BadProperty( "model ids does not match" );
     }

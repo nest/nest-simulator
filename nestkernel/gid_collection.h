@@ -94,8 +94,9 @@ class gc_const_iterator
 private:
   GIDCollectionPTR coll_ptr_; //!< holds pointer reference in safe iterators
   size_t element_idx_;        //!< index into (current) primitive gid collection
-  size_t part_idx_; //!< index into parts vector of composite collection
-  size_t step_;     //!< step for slicing composite collection
+  size_t part_idx_;  //!< index into parts vector of composite collection
+  size_t step_;      //!< step for skipping due to e.g. slicing
+  index model_type_; //!< index of model type to iterate over
 
   /**
    * Pointer to primitive collection to iterate over.
@@ -114,24 +115,30 @@ private:
    * @param collection_ptr lockptr to collection to keep collection alive
    * @param collection  Collection to iterate over
    * @param offset  Index of collection element iterator points to
+   * @param step    Step for skipping due to e.g. slicing
+   * @param model_type   ID of the model to iterate over
    */
   explicit gc_const_iterator( GIDCollectionPTR collection_ptr,
     const GIDCollectionPrimitive& collection,
-    size_t offset );
+    size_t offset,
+    size_t step = 1,
+    index model_type_ = 0 );
 
   /**
    * Create safe iterator for GIDCollectionComposite.
    * @param collection_ptr lockptr to collection to keep collection alive
    * @param collection  Collection to iterate over
    * @param part    Index of part of collection iterator points to
-   * @param offset  Index of element in part part that iterator points to
-   * @param step    Step for slicing composite collection
+   * @param offset  Index of element in GC part that iterator points to
+   * @param step    Step for skipping due to e.g. slicing
+   * @param model_type   ID of the model to iterate over
    */
   explicit gc_const_iterator( GIDCollectionPTR collection_ptr,
     const GIDCollectionComposite& collection,
     size_t part,
     size_t offset,
-    size_t step = 1 );
+    size_t step = 1,
+    index model_type = 0 );
 
 public:
   gc_const_iterator( const gc_const_iterator& );
@@ -237,15 +244,24 @@ public:
   /**
    * Method to get an iterator representing the beginning of the GIDCollection.
    *
-   * @return an iterator representing the beginning of the GIDCollection
+   * @param offset  Index of element GC that iterator points to
+   * @param step    Step for skipping due to e.g. slicing
+   * @param model_type   ID of the model to iterate over
+   *
+   * @return an iterator representing the beginning of the GIDCollection, taking
+   * offset and model type into account
    */
-  virtual const_iterator begin(
-    GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const = 0;
+  virtual const_iterator begin( GIDCollectionPTR = GIDCollectionPTR( 0 ),
+    size_t step = 1,
+    index model_type = 0 ) const = 0;
 
   /**
    * Method to get an iterator representing the end of the GIDCollection.
    *
-   * @return an iterator representing the end of the GIDCollection
+   * @param offset Index of element GC that iterator points to
+   *
+   * @return an iterator representing the end of the GIDCollection, taking
+   * offset into account
    */
   virtual const_iterator end(
     GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const = 0;
@@ -385,7 +401,9 @@ public:
   bool operator==( const GIDCollectionPTR rhs ) const;
   bool operator==( const GIDCollectionPrimitive& rhs ) const;
 
-  const_iterator begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
+  const_iterator begin( GIDCollectionPTR = GIDCollectionPTR( 0 ),
+    size_t step = 1,
+    index model_type = 0 ) const;
   const_iterator end( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
 
   //! Returns an ArrayDatum filled with GIDs from the primitive.
@@ -515,7 +533,9 @@ public:
   GIDCollectionPTR operator+( const GIDCollectionPrimitive& rhs ) const;
   bool operator==( const GIDCollectionPTR rhs ) const;
 
-  const_iterator begin( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
+  const_iterator begin( GIDCollectionPTR = GIDCollectionPTR( 0 ),
+    size_t step = 1,
+    index model_type = 0 ) const;
   const_iterator end( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
 
   //! Returns an ArrayDatum filled with GIDs from the composite.
@@ -612,16 +632,30 @@ inline gc_const_iterator& gc_const_iterator::operator++()
 {
   if ( primitive_collection_ )
   {
-    ++element_idx_;
+    if ( model_type_ and model_type_ != primitive_collection_->model_id_ )
+    {
+      element_idx_ = primitive_collection_->size();
+    }
+    else
+    {
+      element_idx_ += step_;
+    }
   }
   else
   {
     element_idx_ += step_;
+    // If we went past the size of the primitive, we need to adjust the element
+    // and primitive part indices.
     size_t primitive_size = composite_collection_->parts_[ part_idx_ ].size();
     while ( element_idx_ >= primitive_size )
     {
       element_idx_ = element_idx_ - primitive_size;
-      ++part_idx_;
+      do
+      {
+        ++part_idx_;
+      } while ( model_type_
+        and model_type_
+          != composite_collection_->parts_[ part_idx_ ].model_id_ );
       if ( part_idx_ < composite_collection_->parts_.size() )
       {
         primitive_size = composite_collection_->parts_[ part_idx_ ].size();
@@ -635,7 +669,14 @@ inline gc_const_iterator& gc_const_iterator::operator+=( const size_t n )
 {
   if ( primitive_collection_ )
   {
-    element_idx_ += n;
+    if ( model_type_ and model_type_ != primitive_collection_->model_id_ )
+    {
+      element_idx_ = primitive_collection_->size();
+    }
+    else
+    {
+      element_idx_ += n * step_;
+    }
   }
   else
   {
@@ -705,9 +746,11 @@ inline bool GIDCollectionPrimitive::operator==(
 }
 
 inline GIDCollectionPrimitive::const_iterator
-GIDCollectionPrimitive::begin( GIDCollectionPTR cp ) const
+GIDCollectionPrimitive::begin( GIDCollectionPTR cp,
+  size_t step,
+  index model_type ) const
 {
-  return const_iterator( cp, *this, 0 );
+  return const_iterator( cp, *this, 0, step, model_type );
 }
 
 inline GIDCollectionPrimitive::const_iterator
@@ -809,9 +852,12 @@ inline bool GIDCollectionComposite::operator==( GIDCollectionPTR rhs ) const
 }
 
 inline GIDCollectionComposite::const_iterator
-GIDCollectionComposite::begin( GIDCollectionPTR cp ) const
+GIDCollectionComposite::begin( GIDCollectionPTR cp,
+  size_t step,
+  index model_type ) const
 {
-  return const_iterator( cp, *this, start_part_, start_offset_, step_ );
+  return const_iterator(
+    cp, *this, start_part_, start_offset_, step_, model_type );
 }
 
 inline GIDCollectionComposite::const_iterator

@@ -619,10 +619,10 @@ inline GIDTriple gc_const_iterator::operator*() const
     // TODO481 : Temporary check of correctness
     if ( composite_collection_->operator[]( gt.local_placement ) != gt.gid )
     {
+      std::cerr << composite_collection_->operator[]( gt.local_placement )
+                << " != " << gt.gid << std::endl;
       throw KernelException(
-        "The GID at the local_placement does not match the GID of the Triple: "
-        + composite_collection_->operator[]( gt.local_placement ) + " != "
-        + gt.gid );
+        "The GID at the local_placement does not match the GID of the Triple" );
     }
   }
   return gt;

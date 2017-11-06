@@ -103,7 +103,7 @@ public:
    *                  as this layer.
    * @param connector connection properties
    */
-  virtual void connect( AbstractLayerPTR target,
+  virtual void connect( AbstractLayerPTR target, GIDCollectionPTR target_gc,
     ConnectionCreator& connector ) = 0;
 
   /**
@@ -373,9 +373,10 @@ public:
    * are made in class ConnectionCreator.
    * @param target    target layer to connect to. Must have same dimension
    *                  as this layer.
+   * @param target_gc GIDCollection to the target layer.
    * @param connector connection properties
    */
-  void connect( AbstractLayerPTR target, ConnectionCreator& connector );
+  void connect( AbstractLayerPTR target, GIDCollectionPTR target_gc, ConnectionCreator& connector );
 
   /**
    * Write layer data to stream.

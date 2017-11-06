@@ -205,7 +205,7 @@ connect_layers( GIDCollectionPTR source_gc,
     *connection_dict, "topology::CreateLayers", "Unread dictionary entries: " );
 
   // TODO481 : pass gid collections as well
-  source->connect( target, connector );
+  source->connect( target, target_gc, connector );
 }
 
 ParameterDatum

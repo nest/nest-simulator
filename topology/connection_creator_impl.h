@@ -197,8 +197,8 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
 
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
-  index num_threads = kernel().vp_manager.get_num_threads();
-  long model = 0;
+  size_t num_threads = kernel().vp_manager.get_num_threads();
+  index model = 0;
 
   if ( target_filter_.select_model() )
   {
@@ -274,8 +274,8 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
 
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
-  index num_threads = kernel().vp_manager.get_num_threads();
-  long model = 0;
+  size_t num_threads = kernel().vp_manager.get_num_threads();
+  index model = 0;
 
   if ( target_filter_.select_model() )
   {
@@ -356,8 +356,8 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
 
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
-  index num_threads = 1; //kernel().vp_manager.get_num_threads();
-  long model = 0;
+  size_t num_threads = 1; //kernel().vp_manager.get_num_threads();
+  index model = 0;
 
   if ( target_filter_.select_model() )
   {

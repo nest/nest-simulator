@@ -195,30 +195,19 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   //  2. For each source node: Compute probability, draw random number, make
   //     connection conditionally
 
-  // Nodes in the layer are grouped by depth, so to select by depth, we
-  // just adjust the begin and end pointers:
-
+  // We have to adjust the begin and end pointers in case we select by model
+  // or we have to adjust the step because we use threads:
   index num_threads = kernel().vp_manager.get_num_threads();
-  size_t gc_size = target_gc->size();
-  int start_position = 0;
-  int end_position = gc_size;
   long model = -1;
 
-  if ( target_filter_.select_depth() )
-  {
-    int depth = target_filter_.depth;
-    int total_depths = target.get_depth();
-    start_position = depth * ( gc_size / total_depths );
-    end_position = ( depth + 1 ) * ( gc_size / total_depths );
-  }
-  else if ( target_filter_.select_model() )
+  if ( target_filter_.select_model() )
   {
     model = target_filter_.model;
   }
 
   GIDCollection::const_iterator target_begin = target_gc->begin( num_threads,
-    start_position, model );
-  GIDCollection::const_iterator target_end = target_gc->end( end_position );
+    model );
+  GIDCollection::const_iterator target_end = target_gc->end();
 
   // retrieve global positions, either for masked or unmasked pool
   PoolWrapper_< D > pool;
@@ -283,30 +272,19 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
   //  2. For each source node: Compute probability, draw random number, make
   //     connection conditionally
 
-  // Nodes in the layer are grouped by depth, so to select by depth, we
-  // just adjust the begin and end pointers:
-
+  // We have to adjust the begin and end pointers in case we select by model
+  // or we have to adjust the step because we use threads:
   index num_threads = kernel().vp_manager.get_num_threads();
-  size_t gc_size = target_gc->size();
-  int start_position = 0;
-  int end_position = gc_size;
   long model = -1;
 
-  if ( target_filter_.select_depth() )
-  {
-    int depth = target_filter_.depth;
-    int total_depths = target.get_depth();
-    start_position = depth * ( gc_size / total_depths );
-    end_position = ( depth + 1 ) * ( gc_size / total_depths );
-  }
-  else if ( target_filter_.select_model() )
+  if ( target_filter_.select_model() )
   {
     model = target_filter_.model;
   }
 
   GIDCollection::const_iterator target_begin = target_gc->begin( num_threads,
-    start_position, model );
-  GIDCollection::const_iterator target_end = target_gc->end( end_position );
+    model );
+  GIDCollection::const_iterator target_end = target_gc->end();
 
   PoolWrapper_< D > pool;
   if ( mask_.valid() ) // MaskedLayer will be freed by PoolWrapper d'tor

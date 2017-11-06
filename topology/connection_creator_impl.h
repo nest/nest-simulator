@@ -60,7 +60,7 @@ ConnectionCreator::connect( Layer< D >& source, Layer< D >& target, GIDCollectio
 
   case Source_driven:
 
-    source_driven_connect_( source, target );
+    source_driven_connect_( source, target, target_gc );
     break;
 
   default:
@@ -201,15 +201,14 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   // TODO481: Obtain target_begin, target_end as thread-specific
   // begins/ends inside parallel section
 
-  GIDCollection::const_iterator target_begin;// = target_gc->begin();
-  GIDCollection::const_iterator target_end;// = target_gc->begin();
+  GIDCollection::const_iterator target_begin;
+  GIDCollection::const_iterator target_end;
 
   if ( target_filter_.select_depth() )
   {
-    HA MED SELECT MODEL OGSÅ. FINNES TARGET_FILTER_.SELECT_MODEL() OG TARGET_FILTER_.MODEL
-    sÅ, REGNE UT STEP FØRST..
-    target_begin = target_gc->begin(SOME_STEP);
-    target_end = target_gc->end(SOME_STEP);
+    NEED TO HAVE MODELS AS WELL, FOUND IN TARGET_FILTER.SELECT_MODEL() AND TARGET_FILTER.MODEL
+    target_begin = target_gc->begin(SOME_DEPTH);
+    target_end = target_gc->end(SOME_DEPTH);
   }
   else
   {
@@ -258,7 +257,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
       // TODO481: See if we can fix this also by making local_begin()
       // smarter, at least get proper index
       const Position< D > target_pos =
-        target.get_position( ( *tgt_it ).position );
+        target.get_position( ( *tgt_it ).local_placement );
 
       if ( mask_.valid() )
       {
@@ -282,7 +281,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
 template < int D >
 void
 ConnectionCreator::source_driven_connect_( Layer< D >& source,
-  Layer< D >& target )
+  Layer< D >& target, GIDCollectionPTR target_gc )
 {
   // Source driven connect is actually implemented as target driven,
   // but with displacements computed in the target layer. The Mask has been
@@ -292,197 +291,79 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
   //  2. For each source node: Compute probability, draw random number, make
   //     connection conditionally
 
-  // Nodes in the subnet are grouped by depth, so to select by depth, we
+  // Nodes in the layer are grouped by depth, so to select by depth, we
   // just adjust the begin and end pointers:
-  std::vector< Node* >::const_iterator target_begin;
-  std::vector< Node* >::const_iterator target_end;
+
+  GIDCollection::const_iterator target_begin;
+  GIDCollection::const_iterator target_end;
+
   if ( target_filter_.select_depth() )
   {
-    target_begin = target.local_begin( target_filter_.depth );
-    target_end = target.local_end( target_filter_.depth );
+    NEED TO HAVE MODELS AS WELL, FOUND IN TARGET_FILTER.SELECT_MODEL() AND TARGET_FILTER.MODEL
+    target_begin = target_gc->begin(SOME_DEPTH);
+    target_end = target_gc->end(SOME_DEPTH);
   }
   else
   {
-    target_begin = target.local_begin();
-    target_end = target.local_end();
+    target_begin = target_gc->begin();
+    target_end = target_gc->end();
   }
 
-  // protect against connecting to devices without proxies
-  // we need to do this before creating the first connection to leave
-  // the network untouched if any target does not have proxies
-  for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
-        tgt_it != target_end;
-        ++tgt_it )
+  PoolWrapper_< D > pool;
+  if ( mask_.valid() ) // MaskedLayer will be freed by PoolWrapper d'tor
   {
-    if ( not( *tgt_it )->has_proxies() )
-    {
-      throw IllegalConnection(
-        "Topology Divergent connections"
-        " to devices are not possible." );
-    }
-  }
-
-  if ( mask_.valid() )
-  {
-
     // By supplying the target layer to the MaskedLayer constructor, the
     // mask is mirrored so it may be applied to the source layer instead
-    MaskedLayer< D > masked_layer(
-      source, source_filter_, mask_, true, allow_oversized_, target );
-
-    for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
-          tgt_it != target_end;
-          ++tgt_it )
-    {
-
-      if ( target_filter_.select_model()
-        && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
-      {
-        continue;
-      }
-
-      index target_id = ( *tgt_it )->get_gid();
-      thread target_thread = ( *tgt_it )->get_thread();
-      librandom::RngPtr rng = get_vp_rng( target_thread );
-      Position< D > target_pos =
-        target.get_position( ( *tgt_it )->get_subnet_index() );
-
-      // If there is a kernel, we create connections conditionally,
-      // otherwise all sources within the mask are created. Test moved
-      // outside the loop for efficiency.
-      if ( kernel_.valid() )
-      {
-
-        for ( typename Ntree< D, index >::masked_iterator iter =
-                masked_layer.begin( target_pos );
-              iter != masked_layer.end();
-              ++iter )
-        {
-
-          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
-          {
-            continue;
-          }
-
-          if ( rng->drand()
-            < kernel_->value(
-                target.compute_displacement( iter->first, target_pos ), rng ) )
-          {
-            double w, d;
-            get_parameters_(
-              target.compute_displacement( iter->first, target_pos ),
-              rng,
-              w,
-              d );
-            kernel().connection_manager.connect(
-              iter->second, *tgt_it, target_thread, synapse_model_, d, w );
-          }
-        }
-      }
-      else
-      {
-
-        // no kernel
-
-        for ( typename Ntree< D, index >::masked_iterator iter =
-                masked_layer.begin( target_pos );
-              iter != masked_layer.end();
-              ++iter )
-        {
-
-          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
-          {
-            continue;
-          }
-          double w, d;
-          get_parameters_(
-            target.compute_displacement( iter->first, target_pos ), rng, w, d );
-          kernel().connection_manager.connect(
-            iter->second, *tgt_it, target_thread, synapse_model_, d, w );
-        }
-      }
-    }
+    pool.define( new MaskedLayer< D >(
+      source, source_filter_, mask_, true, allow_oversized_, target ) );
   }
   else
   {
-    // no mask
+    pool.define( source.get_global_positions_vector( source_filter_ ) );
+  }
 
-    std::vector< std::pair< Position< D >, index > >* positions =
-      source.get_global_positions_vector( source_filter_ );
-    for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
-          tgt_it != target_end;
-          ++tgt_it )
+// sharing specs on next line commented out because gcc 4.2 cannot handle them
+#pragma omp parallel // default(none) shared(source, target, masked_layer,
+                     // target_begin, target_end)
+  {
+    const int thread_id = kernel().vp_manager.get_thread_id();
+
+    // TODO481: get local_begin, local_end here
+
+    for ( GIDCollection::const_iterator tgt_it = target_begin;
+      tgt_it != target_end;
+      ++tgt_it  )
     {
+      Node* const tgt =
+        kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid, thread_id );
 
-      if ( target_filter_.select_model()
-        && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
+      assert( not tgt->is_proxy() );
+
+      const Position< D > target_pos = target.get_position( ( *tgt_it ).local_placement );
+
+      if ( mask_.valid() )
       {
-        continue;
-      }
-
-      index target_id = ( *tgt_it )->get_gid();
-      thread target_thread = ( *tgt_it )->get_thread();
-      librandom::RngPtr rng = get_vp_rng( target_thread );
-      Position< D > target_pos =
-        target.get_position( ( *tgt_it )->get_subnet_index() );
-
-      // If there is a kernel, we create connections conditionally,
-      // otherwise all sources within the mask are created. Test moved
-      // outside the loop for efficiency.
-      if ( kernel_.valid() )
-      {
-
-        for (
-          typename std::vector< std::pair< Position< D >, index > >::iterator
-            iter = positions->begin();
-          iter != positions->end();
-          ++iter )
-        {
-
-          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
-          {
-            continue;
-          }
-
-          if ( rng->drand()
-            < kernel_->value(
-                target.compute_displacement( iter->first, target_pos ), rng ) )
-          {
-            double w, d;
-            get_parameters_(
-              target.compute_displacement( iter->first, target_pos ),
-              rng,
-              w,
-              d );
-            kernel().connection_manager.connect(
-              iter->second, *tgt_it, target_thread, synapse_model_, d, w );
-          }
-        }
+        // We do the same as in the target driven case, except that we calculate
+        // displacements in the target layer. We therefore send in target as
+        // last parameter.
+        connect_to_target_( pool.masked_begin( target_pos ),
+          pool.masked_end(),
+          tgt,
+          target_pos,
+          thread_id,
+          target );
       }
       else
       {
-
-        for (
-          typename std::vector< std::pair< Position< D >, index > >::iterator
-            iter = positions->begin();
-          iter != positions->end();
-          ++iter )
-        {
-
-          if ( ( not allow_autapses_ ) and ( iter->second == target_id ) )
-          {
-            continue;
-          }
-
-          double w, d;
-          get_parameters_(
-            target.compute_displacement( iter->first, target_pos ), rng, w, d );
-          kernel().connection_manager.connect(
-            iter->second, *tgt_it, target_thread, synapse_model_, d, w );
-        }
+        // We do the same as in the target driven case, except that we calculate
+        // displacements in the target layer. We therefore send in target as
+        // last parameter.
+        connect_to_target_(
+          pool.begin(), pool.end(), tgt, target_pos, thread_id, target );
       }
-    }
-  }
+
+    } // end for
+  } // end pragma
 }
 
 template < int D >

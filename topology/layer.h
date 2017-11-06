@@ -144,6 +144,11 @@ public:
   virtual void dump_connections( std::ostream& out,
     const Token& syn_model ) = 0;
 
+  int get_depth() const
+  {
+    return depth_;
+  }
+
   /**
    * Start of local children at given depth.
    * @param depth layer depth

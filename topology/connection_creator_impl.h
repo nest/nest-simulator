@@ -195,26 +195,30 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   //  2. For each source node: Compute probability, draw random number, make
   //     connection conditionally
 
-  // Nodes in the subnet are grouped by depth, so to select by depth, we
+  // Nodes in the layer are grouped by depth, so to select by depth, we
   // just adjust the begin and end pointers:
 
-  // TODO481: Obtain target_begin, target_end as thread-specific
-  // begins/ends inside parallel section
-
-  GIDCollection::const_iterator target_begin;
-  GIDCollection::const_iterator target_end;
+  index num_threads = kernel().vp_manager.get_num_threads();
+  size_t gc_size = target_gc->size();
+  int start_position = 0;
+  int end_position = gc_size;
+  long model = -1;
 
   if ( target_filter_.select_depth() )
   {
-    NEED TO HAVE MODELS AS WELL, FOUND IN TARGET_FILTER.SELECT_MODEL() AND TARGET_FILTER.MODEL
-    target_begin = target_gc->begin(SOME_DEPTH);
-    target_end = target_gc->end(SOME_DEPTH);
+    int depth = target_filter_.depth;
+    int total_depths = target.get_depth();
+    start_position = depth * ( gc_size / total_depths );
+    end_position = ( depth + 1 ) * ( gc_size / total_depths );
   }
-  else
+  else if ( target_filter_.select_model() )
   {
-    target_begin = target_gc->begin();
-    target_end = target_gc->end();
+    model = target_filter_.model;
   }
+
+  GIDCollection::const_iterator target_begin = target_gc->begin( num_threads,
+    start_position, model );
+  GIDCollection::const_iterator target_end = target_gc->end( end_position );
 
   // retrieve global positions, either for masked or unmasked pool
   PoolWrapper_< D > pool;
@@ -234,8 +238,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
 
-    // TODO481: get local_begin, local_end here
-
+    target_begin += thread_id;
     for ( GIDCollection::const_iterator tgt_it = target_begin;
       tgt_it != target_end;
       ++tgt_it  )
@@ -245,17 +248,6 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
 
       assert( not tgt->is_proxy() );
 
-      // TODO481: Can we move the model filter to the iteration,
-      // i.e., provide is as argument to local_begin() to get an
-      // iterator that just iterates over the model we want?
-      /*if ( target_filter_.select_model()
-        && ( tgt->get_model_id() != target_filter_.model ) )
-      {
-        continue;
-      }*/
-
-      // TODO481: See if we can fix this also by making local_begin()
-      // smarter, at least get proper index
       const Position< D > target_pos =
         target.get_position( ( *tgt_it ).local_placement );
 
@@ -294,20 +286,27 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
   // Nodes in the layer are grouped by depth, so to select by depth, we
   // just adjust the begin and end pointers:
 
-  GIDCollection::const_iterator target_begin;
-  GIDCollection::const_iterator target_end;
+  index num_threads = kernel().vp_manager.get_num_threads();
+  size_t gc_size = target_gc->size();
+  int start_position = 0;
+  int end_position = gc_size;
+  long model = -1;
 
   if ( target_filter_.select_depth() )
   {
-    NEED TO HAVE MODELS AS WELL, FOUND IN TARGET_FILTER.SELECT_MODEL() AND TARGET_FILTER.MODEL
-    target_begin = target_gc->begin(SOME_DEPTH);
-    target_end = target_gc->end(SOME_DEPTH);
+    int depth = target_filter_.depth;
+    int total_depths = target.get_depth();
+    start_position = depth * ( gc_size / total_depths );
+    end_position = ( depth + 1 ) * ( gc_size / total_depths );
   }
-  else
+  else if ( target_filter_.select_model() )
   {
-    target_begin = target_gc->begin();
-    target_end = target_gc->end();
+    model = target_filter_.model;
   }
+
+  GIDCollection::const_iterator target_begin = target_gc->begin( num_threads,
+    start_position, model );
+  GIDCollection::const_iterator target_end = target_gc->end( end_position );
 
   PoolWrapper_< D > pool;
   if ( mask_.valid() ) // MaskedLayer will be freed by PoolWrapper d'tor
@@ -329,7 +328,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
     const int thread_id = kernel().vp_manager.get_thread_id();
 
     // TODO481: get local_begin, local_end here
-
+    target_begin += thread_id;
     for ( GIDCollection::const_iterator tgt_it = target_begin;
       tgt_it != target_end;
       ++tgt_it  )
@@ -339,7 +338,8 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
 
       assert( not tgt->is_proxy() );
 
-      const Position< D > target_pos = target.get_position( ( *tgt_it ).local_placement );
+      const Position< D > target_pos =
+        target.get_position( ( *tgt_it ).local_placement );
 
       if ( mask_.valid() )
       {

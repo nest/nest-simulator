@@ -153,7 +153,7 @@ private:
   void source_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
-  void convergent_connect_( Layer< D >& source, Layer< D >& target );
+  void convergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
   void divergent_connect_( Layer< D >& source, Layer< D >& target );

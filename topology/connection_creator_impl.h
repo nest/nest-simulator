@@ -50,7 +50,7 @@ ConnectionCreator::connect( Layer< D >& source, Layer< D >& target, GIDCollectio
 
   case Convergent:
 
-    convergent_connect_( source, target );
+    convergent_connect_( source, target, target_gc );
     break;
 
   case Divergent:
@@ -305,7 +305,6 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
 
-    // TODO481: get local_begin, local_end here
     target_begin += thread_id;
     for ( GIDCollection::const_iterator tgt_it = target_begin;
       tgt_it != target_end;
@@ -346,7 +345,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
 
 template < int D >
 void
-ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
+ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
 {
   // Convergent connections (fixed fan in)
   //
@@ -355,62 +354,57 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
   // 2. Compute connection probability for each source position
   // 3. Draw source nodes and make connections
 
+  // We have to adjust the begin and end pointers in case we select by model
+  // or we have to adjust the step because we use threads:
+  index num_threads = 1; //kernel().vp_manager.get_num_threads();
+  long model = 0;
 
-  // Nodes in the subnet are grouped by depth, so to select by depth, we
-  // just adjust the begin and end pointers:
-  std::vector< Node* >::const_iterator target_begin;
-  std::vector< Node* >::const_iterator target_end;
-  if ( target_filter_.select_depth() )
+  if ( target_filter_.select_model() )
   {
-    target_begin = target.local_begin( target_filter_.depth );
-    target_end = target.local_end( target_filter_.depth );
+    model = target_filter_.model;
   }
-  else
-  {
-    target_begin = target.local_begin();
-    target_end = target.local_end();
-  }
+
+  GIDCollection::const_iterator target_begin = target_gc->begin( num_threads,
+    model );
+  GIDCollection::const_iterator target_end = target_gc->end();
 
   // protect against connecting to devices without proxies
   // we need to do this before creating the first connection to leave
   // the network untouched if any target does not have proxies
-  for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
+  for ( GIDCollection::const_iterator tgt_it = target_begin;
         tgt_it != target_end;
-        ++tgt_it )
+        ++tgt_it  )
   {
-    if ( not( *tgt_it )->has_proxies() )
-    {
-      throw IllegalConnection(
-        "Topology Divergent connections"
-        " to devices are not possible." );
-    }
+    Node* const tgt =
+      kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid );
+
+    assert( not tgt->is_proxy() );
   }
 
   if ( mask_.valid() )
   {
 
-    for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
+    //for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
+    //      tgt_it != target_end;
+    //      ++tgt_it )
+    for ( GIDCollection::const_iterator tgt_it = target_begin;
           tgt_it != target_end;
           ++tgt_it )
     {
+      index target_id = ( *tgt_it ).gid;
+      Node* const tgt =
+        kernel().node_manager.get_node_or_proxy( target_id );
 
-      if ( target_filter_.select_model()
-        && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
-      {
-        continue;
-      }
-
-      index target_id = ( *tgt_it )->get_gid();
-      thread target_thread = ( *tgt_it )->get_thread();
+      thread target_thread = tgt->get_thread();
       librandom::RngPtr rng = get_vp_rng( target_thread );
       Position< D > target_pos =
-        target.get_position( ( *tgt_it )->get_subnet_index() );
+        target.get_position( ( *tgt_it ).local_placement );
 
       // Get (position,GID) pairs for sources inside mask
       std::vector< std::pair< Position< D >, index > > positions =
         source.get_global_positions_vector( source_filter_,
           mask_,
-          target.get_position( ( *tgt_it )->get_subnet_index() ),
+          target.get_position( ( *tgt_it ).local_placement ),
           allow_oversized_ );
 
       // We will select `number_of_connections_` sources within the mask.
@@ -477,7 +471,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             w,
             d );
           kernel().connection_manager.connect(
-            source_id, *tgt_it, target_thread, synapse_model_, d, w );
+            source_id, tgt, target_thread, synapse_model_, d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -519,7 +513,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
             w,
             d );
           kernel().connection_manager.connect(
-            source_id, *tgt_it, target_thread, synapse_model_, d, w );
+            source_id, tgt, target_thread, synapse_model_, d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -533,22 +527,17 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
     std::vector< std::pair< Position< D >, index > >* positions =
       source.get_global_positions_vector( source_filter_ );
 
-    for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
+    for ( GIDCollection::const_iterator tgt_it = target_begin;
           tgt_it != target_end;
           ++tgt_it )
     {
-
-      if ( target_filter_.select_model()
-        && ( ( *tgt_it )->get_model_id() != target_filter_.model ) )
-      {
-        continue;
-      }
-
-      index target_id = ( *tgt_it )->get_gid();
-      thread target_thread = ( *tgt_it )->get_thread();
+      index target_id = ( *tgt_it ).gid;
+      Node* const tgt =
+        kernel().node_manager.get_node_or_proxy( target_id );
+      thread target_thread = tgt->get_thread();
       librandom::RngPtr rng = get_vp_rng( target_thread );
       Position< D > target_pos =
-        target.get_position( ( *tgt_it )->get_subnet_index() );
+        target.get_position( ( *tgt_it ).local_placement );
 
       if ( ( positions->size() == 0 )
         or ( ( not allow_autapses_ ) and ( positions->size() == 1 )
@@ -611,7 +600,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           get_parameters_(
             source.compute_displacement( target_pos, source_pos ), rng, w, d );
           kernel().connection_manager.connect(
-            source_id, *tgt_it, target_thread, synapse_model_, d, w );
+            source_id, tgt, target_thread, synapse_model_, d, w );
           is_selected[ random_id ] = true;
         }
       }
@@ -646,7 +635,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target )
           get_parameters_(
             source.compute_displacement( target_pos, source_pos ), rng, w, d );
           kernel().connection_manager.connect(
-            source_id, *tgt_it, target_thread, synapse_model_, d, w );
+            source_id, tgt, target_thread, synapse_model_, d, w );
           is_selected[ random_id ] = true;
         }
       }

@@ -176,9 +176,8 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
                     [g * self.drive * self.weight,
                      self.weight * np.tanh(g * self.drive),
                      self.weight * self.drive * g * H(self.drive),
-                    a * theta / (1 + a)])
+                     a * theta / (1 + a)])
 
-            print 'test_RateNeuronNL', rates, rates_test
             self.assertTrue(np.allclose(rates, rates_test))
 
 

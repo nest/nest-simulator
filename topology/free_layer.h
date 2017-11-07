@@ -130,22 +130,22 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     const index nodes_per_depth = this->global_size() / this->depth_;
     const index first_lid = this->nodes_[ 0 ]->get_lid();
 
-    for ( std::vector< Node* >::iterator i = this->local_begin();
-          i != this->local_end();
+    for ( GIDCollection::const_iterator i = this->gid_collection->begin();
+          i != this->gid_collection->end();
           ++i )
     {
 
       // Nodes are grouped by depth. When lid % nodes_per_depth ==
       // first_lid, we have "wrapped around", and do not need to gather
       // more positions.
-      if ( ( ( *i )->get_lid() != first_lid )
-        && ( ( *i )->get_lid() % nodes_per_depth == first_lid ) )
+      if ( ( ( *i ).local_placement != first_lid )
+        && ( ( *i ).local_placement % nodes_per_depth == first_lid ) )
       {
         break;
       }
 
       Position< D > point = getValue< std::vector< double > >(
-        pos[ ( *i )->get_lid() % nodes_per_depth ] );
+        pos[ ( *i ).local_placement % nodes_per_depth ] );
       if ( not( ( point >= this->lower_left_ )
              and ( point < this->lower_left_ + this->extent_ ) ) )
       {
@@ -201,14 +201,14 @@ FreeLayer< D >::communicate_positions_( Ins iter, const Selector& filter )
   size_t num_threads = 1; //kernel().vp_manager.get_num_threads();
   index model = 0;
 
-  if ( filter_.select_model() )
+  if ( filter.select_model() )
   {
-    model = filter_.model;
+    model = filter.model;
   }
 
-  GIDCollection::const_iterator gc_begin = gid_collection->begin( num_threads,
+  GIDCollection::const_iterator gc_begin = this->gid_collection->begin( num_threads,
     model );
-  GIDCollection::const_iterator gc_end = gid_collection->end();
+  GIDCollection::const_iterator gc_end = this->gid_collection->end();
 
   local_gid_pos.reserve( ( D + 1 ) * this->nodes_.size() );
 
@@ -272,13 +272,13 @@ FreeLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
   size_t num_threads = 1; //kernel().vp_manager.get_num_threads();
   index model = 0;
 
-  if ( filter_.select_model() )
+  if ( filter.select_model() )
   {
-    model = filter_.model;
+    model = filter.model;
   }
-  GIDCollection::const_iterator gc_begin = gid_collection->begin( num_threads,
+  GIDCollection::const_iterator gc_begin = this->gid_collection->begin( num_threads,
     model );
-  GIDCollection::const_iterator gc_end = gid_collection->end();
+  GIDCollection::const_iterator gc_end = this->gid_collection->end();
 
   for ( GIDCollection::const_iterator gc_it = gc_begin;
         gc_it != gc_end;

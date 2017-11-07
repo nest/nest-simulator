@@ -145,34 +145,6 @@ public:
   virtual void dump_connections( std::ostream& out,
     const Token& syn_model ) = 0;
 
-  /**
-   * Start of local children at given depth.
-   * @param depth layer depth
-   * @returns iterator for local nodes pointing to first node at given depth
-   */
-  std::vector< Node* >::iterator local_begin( int depth );
-
-  /**
-   * End of local children at given depth.
-   * @param depth layer depth
-   * @returns iterator for local nodes pointing to the end of the given depth
-   */
-  std::vector< Node* >::iterator local_end( int depth );
-
-  /**
-   * Start of local children at given depth.
-   * @param depth layer depth
-   * @returns iterator for local nodes pointing to first node at given depth
-   */
-  std::vector< Node* >::const_iterator local_begin( int depth ) const;
-
-  /**
-   * End of local children at given depth.
-   * @param depth layer depth
-   * @returns iterator for local nodes pointing to the end of the given depth
-   */
-  std::vector< Node* >::const_iterator local_end( int depth ) const;
-
 protected:
   /**
    * TODO

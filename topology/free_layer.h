@@ -195,42 +195,33 @@ FreeLayer< D >::communicate_positions_( Ins iter, const Selector& filter )
 
   // This array will be filled with GID,pos_x,pos_y[,pos_z] for local nodes:
   std::vector< double > local_gid_pos;
-  std::vector< Node* >::const_iterator nodes_begin;
-  std::vector< Node* >::const_iterator nodes_end;
 
-  // Nodes in the subnet are grouped by depth, so to select by depth, we
-  // just adjust the begin and end pointers:
-  if ( filter.select_depth() )
+  // We have to adjust the begin and end pointers in case we select by model
+  // or we have to adjust the step because we use threads:
+  size_t num_threads = 1; //kernel().vp_manager.get_num_threads();
+  index model = 0;
+
+  if ( filter_.select_model() )
   {
-    local_gid_pos.reserve(
-      ( D + 1 ) * ( this->nodes_.size() / this->depth_ + 1 ) );
-    nodes_begin = this->local_begin( filter.depth );
-    nodes_end = this->local_end( filter.depth );
-  }
-  else
-  {
-    local_gid_pos.reserve( ( D + 1 ) * this->nodes_.size() );
-    nodes_begin = this->local_begin();
-    nodes_end = this->local_end();
+    model = filter_.model;
   }
 
-  for ( std::vector< Node* >::const_iterator node_it = nodes_begin;
-        node_it != nodes_end;
-        ++node_it )
+  GIDCollection::const_iterator gc_begin = gid_collection->begin( num_threads,
+    model );
+  GIDCollection::const_iterator gc_end = gid_collection->end();
+
+  local_gid_pos.reserve( ( D + 1 ) * this->nodes_.size() );
+
+  for ( GIDCollection::const_iterator gc_it = gc_begin;
+        gc_it != gc_end;
+        ++gc_it )
   {
-
-    if ( filter.select_model()
-      && ( ( *node_it )->get_model_id() != filter.model ) )
-    {
-      continue;
-    }
-
     // Push GID into array to communicate
-    local_gid_pos.push_back( ( *node_it )->get_gid() );
+    local_gid_pos.push_back( ( *gc_it ).gid );
     // Push coordinates one by one
     for ( int j = 0; j < D; ++j )
     {
-      local_gid_pos.push_back( positions_[ ( *node_it )->get_subnet_index()
+      local_gid_pos.push_back( positions_[ ( *gc_it ).local_placement
         % positions_.size() ][ j ] );
     }
   }
@@ -276,36 +267,26 @@ FreeLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
 {
   assert( this->nodes_.size() >= positions_.size() );
 
-  std::vector< Node* >::const_iterator nodes_begin;
-  std::vector< Node* >::const_iterator nodes_end;
+  // We have to adjust the begin and end pointers in case we select by model
+  // or we have to adjust the step because we use threads:
+  size_t num_threads = 1; //kernel().vp_manager.get_num_threads();
+  index model = 0;
 
-  // Nodes in the subnet are grouped by depth, so to select by depth, we
-  // just adjust the begin and end pointers:
-  if ( filter.select_depth() )
+  if ( filter_.select_model() )
   {
-    nodes_begin = this->local_begin( filter.depth );
-    nodes_end = this->local_end( filter.depth );
+    model = filter_.model;
   }
-  else
+  GIDCollection::const_iterator gc_begin = gid_collection->begin( num_threads,
+    model );
+  GIDCollection::const_iterator gc_end = gid_collection->end();
+
+  for ( GIDCollection::const_iterator gc_it = gc_begin;
+        gc_it != gc_end;
+        ++gc_it )
   {
-    nodes_begin = this->local_begin();
-    nodes_end = this->local_end();
-  }
-
-  for ( std::vector< Node* >::const_iterator node_it = nodes_begin;
-        node_it != nodes_end;
-        ++node_it )
-  {
-
-    if ( filter.select_model()
-      && ( ( *node_it )->get_model_id() != filter.model ) )
-    {
-      continue;
-    }
-
     tree.insert( std::pair< Position< D >, index >(
-      positions_[ ( *node_it )->get_subnet_index() % positions_.size() ],
-      ( *node_it )->get_gid() ) );
+      positions_[ ( *gc_it ).local_placement % positions_.size() ],
+      ( *gc_it ).gid ) );
   }
 }
 

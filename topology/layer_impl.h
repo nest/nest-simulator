@@ -90,14 +90,14 @@ Layer< D >::set_status( const DictionaryDatum& d )
     }
   }
 
-  Subnet::set_status( d );
+  //  Subnet::set_status( d ); // TODO
 }
 
 template < int D >
 void
 Layer< D >::get_status( DictionaryDatum& d ) const
 {
-  Subnet::get_status( d );
+  //  Subnet::get_status( d ); // TODO
 
   DictionaryDatum topology_dict( new Dictionary );
 
@@ -119,8 +119,9 @@ Layer< D >::get_status( DictionaryDatum& d ) const
 
 template < int D >
 void
-Layer< D >::connect( AbstractLayerPTR target_layer, GIDCollectionPTR target_gc,
-    ConnectionCreator& connector )
+Layer< D >::connect( AbstractLayerPTR target_layer,
+  GIDCollectionPTR target_gc,
+  ConnectionCreator& connector )
 {
   // We need to extract the real pointer here to be able to cast to the
   // dimension-specific subclass.
@@ -378,7 +379,8 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
       double weight = getValue< double >( result_dict, names::weight );
       double delay = getValue< double >( result_dict, names::delay );
 
-      Node const* const target = kernel().node_manager.get_node( target_gid );
+      Node const* const target =
+        kernel().node_manager.get_node_or_proxy( target_gid );
       assert( target );
 
       // Print source, target, weight, delay, rports

@@ -103,7 +103,8 @@ public:
    *                  as this layer.
    * @param connector connection properties
    */
-  virtual void connect( AbstractLayerPTR target, GIDCollectionPTR target_gc,
+  virtual void connect( AbstractLayerPTR target,
+    GIDCollectionPTR target_gc,
     ConnectionCreator& connector ) = 0;
 
   /**
@@ -173,6 +174,11 @@ public:
   std::vector< Node* >::const_iterator local_end( int depth ) const;
 
 protected:
+  /**
+   * TODO
+   */
+  GIDCollectionPTR gid_collection = 0;
+
   /**
    * GID for the single layer for which we cache global position information
    */
@@ -376,7 +382,9 @@ public:
    * @param target_gc GIDCollection to the target layer.
    * @param connector connection properties
    */
-  void connect( AbstractLayerPTR target, GIDCollectionPTR target_gc, ConnectionCreator& connector );
+  void connect( AbstractLayerPTR target,
+    GIDCollectionPTR target_gc,
+    ConnectionCreator& connector );
 
   /**
    * Write layer data to stream.

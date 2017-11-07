@@ -156,7 +156,7 @@ private:
   void convergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
-  void divergent_connect_( Layer< D >& source, Layer< D >& target );
+  void divergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   void connect_( index s,
     Node* target,

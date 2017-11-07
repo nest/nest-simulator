@@ -163,9 +163,6 @@ FreeLayer< D >::get_status( DictionaryDatum& d ) const
 {
   Layer< D >::get_status( d );
 
-  DictionaryDatum topology_dict =
-    getValue< DictionaryDatum >( ( *d )[ names::topology ] );
-
   TokenArray points;
   for ( typename std::vector< Position< D > >::const_iterator it =
           positions_.begin();
@@ -174,7 +171,7 @@ FreeLayer< D >::get_status( DictionaryDatum& d ) const
   {
     points.push_back( it->getToken() );
   }
-  def2< TokenArray, ArrayDatum >( topology_dict, names::positions, points );
+  def2< TokenArray, ArrayDatum >( d, names::positions, points );
 }
 
 template < int D >

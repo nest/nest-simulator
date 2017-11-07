@@ -112,12 +112,14 @@ public:
   double func2( double h ); // non-linearity
 };
 
-inline double gainfunction_tanh_rate::func1( double h )
+inline double
+gainfunction_tanh_rate::func1( double h )
 {
   return tanh( g_ * ( h - theta_ ) );
 }
 
-inline double gainfunction_tanh_rate::func2( double h )
+inline double
+gainfunction_tanh_rate::func2( double h )
 {
   return 1.0;
 }

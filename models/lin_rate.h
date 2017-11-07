@@ -98,12 +98,14 @@ public:
   double func2( double h ); // non-linearity
 };
 
-inline double gainfunction_lin_rate::func1( double h )
+inline double
+gainfunction_lin_rate::func1( double h )
 {
   return g_ * h;
 }
 
-inline double gainfunction_lin_rate::func2( double h )
+inline double
+gainfunction_lin_rate::func2( double h )
 {
   return 1.;
 }

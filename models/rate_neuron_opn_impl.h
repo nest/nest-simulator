@@ -257,8 +257,9 @@ nest::rate_neuron_opn< TGainfunction >::update_( Time const& origin,
     {
       if ( P_.linear_summation_ )
       {
-        S_.rate_ += V_.P2_ * gain_.func1( B_.delayed_rates_.get_value_wfr_update(
-                                      lag ) + B_.instant_rates_[ lag ] );
+        S_.rate_ += V_.P2_
+          * gain_.func1( B_.delayed_rates_.get_value_wfr_update( lag )
+              + B_.instant_rates_[ lag ] );
       }
       else
       {
@@ -276,8 +277,9 @@ nest::rate_neuron_opn< TGainfunction >::update_( Time const& origin,
     {
       if ( P_.linear_summation_ )
       {
-        S_.rate_ += V_.P2_ * gain_.func1( B_.delayed_rates_.get_value( lag )
-                               + B_.instant_rates_[ lag ] );
+        S_.rate_ += V_.P2_
+          * gain_.func1(
+              B_.delayed_rates_.get_value( lag ) + B_.instant_rates_[ lag ] );
       }
       else
       {

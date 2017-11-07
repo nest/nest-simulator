@@ -188,8 +188,10 @@ ModelsModule::init( SLIInterpreter* )
 {
   kernel().model_manager.register_node_model< lin_rate_opn >( "lin_rate_opn" );
   kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
-  kernel().model_manager.register_node_model< lin_rate_mult_opn >( "lin_rate_mult_opn" );
-  kernel().model_manager.register_node_model< lin_rate_mult_ipn >( "lin_rate_mult_ipn" );
+  kernel().model_manager.register_node_model< lin_rate_mult_opn >(
+    "lin_rate_mult_opn" );
+  kernel().model_manager.register_node_model< lin_rate_mult_ipn >(
+    "lin_rate_mult_ipn" );
   kernel().model_manager.register_node_model< tanh_rate_opn >(
     "tanh_rate_opn" );
   kernel().model_manager.register_node_model< tanh_rate_ipn >(

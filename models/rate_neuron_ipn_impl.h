@@ -255,13 +255,15 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
     {
       if ( P_.linear_summation_ )
       {
-        S_.rate_ += V_.P2_ * gain_.func2(new_rates[ lag ]) * gain_.func1( B_.delayed_rates_.get_value_wfr_update(
-                                      lag ) + B_.instant_rates_[ lag ] );
+        S_.rate_ += V_.P2_ * gain_.func2( new_rates[ lag ] )
+          * gain_.func1( B_.delayed_rates_.get_value_wfr_update( lag )
+              + B_.instant_rates_[ lag ] );
       }
       else
       {
-        S_.rate_ += V_.P2_ * gain_.func2(new_rates[ lag ]) * ( B_.delayed_rates_.get_value_wfr_update( lag )
-                               + B_.instant_rates_[ lag ] );
+        S_.rate_ += V_.P2_ * gain_.func2( new_rates[ lag ] )
+          * ( B_.delayed_rates_.get_value_wfr_update( lag )
+                      + B_.instant_rates_[ lag ] );
       }
 
       // check if deviation from last iteration exceeds wfr_tol
@@ -274,13 +276,14 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
     {
       if ( P_.linear_summation_ )
       {
-        S_.rate_ += V_.P2_ * gain_.func2(new_rates[ lag ]) * gain_.func1( B_.delayed_rates_.get_value( lag )
-                               + B_.instant_rates_[ lag ] );
+        S_.rate_ += V_.P2_ * gain_.func2( new_rates[ lag ] )
+          * gain_.func1(
+              B_.delayed_rates_.get_value( lag ) + B_.instant_rates_[ lag ] );
       }
       else
       {
-        S_.rate_ += V_.P2_
-          * gain_.func2(new_rates[ lag ]) * ( B_.delayed_rates_.get_value( lag ) + B_.instant_rates_[ lag ] );
+        S_.rate_ += V_.P2_ * gain_.func2( new_rates[ lag ] )
+          * ( B_.delayed_rates_.get_value( lag ) + B_.instant_rates_[ lag ] );
       }
       // rate logging
       B_.logger_.record_data( origin.get_steps() + lag );

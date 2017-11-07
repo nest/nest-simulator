@@ -71,11 +71,11 @@ class GIDTriple
 public:
   index gid;
   index model_id;
-  size_t local_placement;
+  size_t lid;
   GIDTriple()
     : gid( 0 )
     , model_id( 0 )
-    , local_placement( 0 )
+    , lid( 0 )
   {
   }
 };
@@ -603,7 +603,7 @@ inline GIDTriple gc_const_iterator::operator*() const
 
     // Add to local placement from GIDCollectionPrimitives that comes before the
     // current one.
-    gt.local_placement = 0;
+    gt.lid = 0;
     for ( std::vector< GIDCollectionPrimitive >::const_iterator part =
             composite_collection_->parts_.begin();
           part != composite_collection_->parts_.end();

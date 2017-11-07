@@ -238,7 +238,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
       assert( not tgt->is_proxy() );
 
       const Position< D > target_pos =
-        target.get_position( ( *tgt_it ).local_placement );
+        target.get_position( ( *tgt_it ).lid );
 
       if ( mask_.valid() )
       {
@@ -316,7 +316,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
       assert( not tgt->is_proxy() );
 
       const Position< D > target_pos =
-        target.get_position( ( *tgt_it ).local_placement );
+        target.get_position( ( *tgt_it ).lid );
 
       if ( mask_.valid() )
       {
@@ -398,13 +398,13 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
       thread target_thread = tgt->get_thread();
       librandom::RngPtr rng = get_vp_rng( target_thread );
       Position< D > target_pos =
-        target.get_position( ( *tgt_it ).local_placement );
+        target.get_position( ( *tgt_it ).lid );
 
       // Get (position,GID) pairs for sources inside mask
       std::vector< std::pair< Position< D >, index > > positions =
         source.get_global_positions_vector( source_filter_,
           mask_,
-          target.get_position( ( *tgt_it ).local_placement ),
+          target.get_position( ( *tgt_it ).lid ),
           allow_oversized_ );
 
       // We will select `number_of_connections_` sources within the mask.
@@ -537,7 +537,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
       thread target_thread = tgt->get_thread();
       librandom::RngPtr rng = get_vp_rng( target_thread );
       Position< D > target_pos =
-        target.get_position( ( *tgt_it ).local_placement );
+        target.get_position( ( *tgt_it ).lid );
 
       if ( ( positions->size() == 0 )
         or ( ( not allow_autapses_ ) and ( positions->size() == 1 )

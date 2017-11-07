@@ -325,7 +325,7 @@ GridLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
         ++gc_it )
   {
     tree.insert( std::pair< Position< D >, index >(
-      lid_to_position( ( *gc_it ).local_placement ), ( *gc_it ).gid ) );
+      lid_to_position( ( *gc_it ).lid ), ( *gc_it ).gid ) );
   }
 }
 

@@ -163,7 +163,7 @@ protected:
   /**
    * TODO 481
    */
-  GIDCollectionPTR gid_collection = 0;
+  GIDCollectionPTR gid_collection = GIDCollectionPTR( 0 );
 
   /**
    * GID for the single layer for which we cache global position information

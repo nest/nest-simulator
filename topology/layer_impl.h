@@ -159,7 +159,7 @@ template < int D >
 lockPTR< Ntree< D, index > >
 Layer< D >::get_global_positions_ntree( Selector filter )
 {
-  if ( ( cached_ntree_layer_ == get_metadata() )
+  if ( ( cached_ntree_gc_ == get_metadata() )
     and ( cached_selector_ == filter ) )
   {
     assert( cached_ntree_.valid() );
@@ -200,7 +200,7 @@ Layer< D >::get_global_positions_ntree( Selector filter,
   do_get_global_positions_ntree_( filter );
 
   // Do not use cache since the periodic bits and extents were altered.
-  cached_ntree_layer_ = -1;
+  cached_ntree_gc_ = GIDCollectionMetadataPTR( 0 );
 
   return cached_ntree_;
 }
@@ -209,7 +209,7 @@ template < int D >
 lockPTR< Ntree< D, index > >
 Layer< D >::do_get_global_positions_ntree_( const Selector& filter )
 {
-  if ( ( cached_vector_layer_ == get_metadata() )
+  if ( ( cached_vector_gc_ == get_metadata() )
     and ( cached_selector_ == filter ) )
   {
     // Convert from vector to Ntree
@@ -234,7 +234,7 @@ Layer< D >::do_get_global_positions_ntree_( const Selector& filter )
 
   clear_vector_cache_();
 
-  cached_ntree_layer_ = get_metadata();
+  cached_ntree_gc_ = get_metadata();
   cached_selector_ = filter;
 
   return cached_ntree_;
@@ -244,7 +244,7 @@ template < int D >
 std::vector< std::pair< Position< D >, index > >*
 Layer< D >::get_global_positions_vector( Selector filter )
 {
-  if ( ( cached_vector_layer_ == get_metadata() )
+  if ( ( cached_vector_gc_ == get_metadata() )
     and ( cached_selector_ == filter ) )
   {
     assert( cached_vector_ );
@@ -255,7 +255,7 @@ Layer< D >::get_global_positions_vector( Selector filter )
 
   cached_vector_ = new std::vector< std::pair< Position< D >, index > >;
 
-  if ( ( cached_ntree_layer_ == get_metadata() )
+  if ( ( cached_ntree_gc_ == get_metadata() )
     and ( cached_selector_ == filter ) )
   {
     // Convert from NTree to vector
@@ -277,7 +277,7 @@ Layer< D >::get_global_positions_vector( Selector filter )
 
   clear_ntree_cache_();
 
-  cached_vector_layer_ = get_metadata();
+  cached_vector_gc_ = get_metadata();
   cached_selector_ = filter;
 
   return cached_vector_;
@@ -329,7 +329,7 @@ Layer< D >::dump_nodes( std::ostream& out ) const
 {
   for ( index i = 0; i < gid_collection->size(); ++i )
   {
-    const index gid = gid_collection[ i ];
+    const index gid = gid_collection->operator[]( i );
     out << gid << ' ';
     get_position( i ).print( out );
     out << std::endl;

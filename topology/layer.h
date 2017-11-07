@@ -168,7 +168,7 @@ protected:
   /**
    * GID for the single layer for which we cache global position information
    */
-  static index cached_ntree_layer_;
+  static GIDCollectionMetadataPTR cached_ntree_gc_;
 
   /**
    * number of neurons at each position
@@ -178,7 +178,7 @@ protected:
   /**
    * GID for the single layer for which we cache global position information
    */
-  static index cached_vector_layer_;
+  static GIDCollectionMetadataPTR cached_vector_gc_;
 
   /**
    * Clear the cache for global position information
@@ -193,7 +193,7 @@ protected:
   /**
    * TODO 481
    */
-  GIDCollectionPTR get_metadata() const;
+  GIDCollectionMetadataPTR get_metadata() const;
 };
 
 template < int D >
@@ -617,12 +617,12 @@ inline Layer< D >::Layer( const Layer& other_layer )
 template < int D >
 inline Layer< D >::~Layer()
 {
-  if ( cached_ntree_layer_ == get_metadata() )
+  if ( cached_ntree_gc_ == get_metadata() )
   {
     clear_ntree_cache_();
   }
 
-  if ( cached_vector_layer_ == get_metadata() )
+  if ( cached_vector_gc_ == get_metadata() )
   {
     clear_vector_cache_();
   }
@@ -673,7 +673,7 @@ inline void
 Layer< D >::clear_ntree_cache_() const
 {
   cached_ntree_ = lockPTR< Ntree< D, index > >();
-  cached_ntree_layer_ = -1;
+  cached_ntree_gc_ = GIDCollectionMetadataPTR( 0 );
 }
 
 template < int D >
@@ -685,7 +685,7 @@ Layer< D >::clear_vector_cache_() const
     delete cached_vector_;
   }
   cached_vector_ = 0;
-  cached_vector_layer_ = -1;
+  cached_vector_gc_ = GIDCollectionMetadataPTR( 0 );
 }
 
 } // namespace nest

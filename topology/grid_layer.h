@@ -88,12 +88,12 @@ public:
      */
     bool operator==( const masked_iterator& other ) const
     {
-      return ( other.layer_.get_gid() == layer_.get_gid() )
+      return ( other.layer_.get_metadata() == layer_.get_metadata() )
         && ( other.node_ == node_ ) && ( other.depth_ == depth_ );
     }
     bool operator!=( const masked_iterator& other ) const
     {
-      return ( other.layer_.get_gid() != layer_.get_gid() )
+      return ( other.layer_.get_metadata() != layer_.get_metadata() )
         || ( other.node_ != node_ ) || ( other.depth_ != depth_ );
     }
 

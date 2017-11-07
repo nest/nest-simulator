@@ -279,4 +279,10 @@ AbstractLayer::local_end( int depth ) const
   return iter;
 }
 
+GIDCollectionPTR
+AbstractLayer::get_metadata() const
+{
+  return gid_collection->get_metadata();
+}
+
 } // namespace nest

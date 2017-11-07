@@ -90,14 +90,14 @@ Layer< D >::set_status( const DictionaryDatum& d )
     }
   }
 
-  //  Subnet::set_status( d ); // TODO
+  //  Subnet::set_status( d ); // TODO 481
 }
 
 template < int D >
 void
 Layer< D >::get_status( DictionaryDatum& d ) const
 {
-  //  Subnet::get_status( d ); // TODO
+  //  Subnet::get_status( d ); // TODO 481
 
   DictionaryDatum topology_dict( new Dictionary );
 
@@ -159,7 +159,8 @@ template < int D >
 lockPTR< Ntree< D, index > >
 Layer< D >::get_global_positions_ntree( Selector filter )
 {
-  if ( ( cached_ntree_layer_ == get_gid() ) and ( cached_selector_ == filter ) )
+  if ( ( cached_ntree_layer_ == get_metadata() )
+    and ( cached_selector_ == filter ) )
   {
     assert( cached_ntree_.valid() );
     return cached_ntree_;
@@ -208,7 +209,7 @@ template < int D >
 lockPTR< Ntree< D, index > >
 Layer< D >::do_get_global_positions_ntree_( const Selector& filter )
 {
-  if ( ( cached_vector_layer_ == get_gid() )
+  if ( ( cached_vector_layer_ == get_metadata() )
     and ( cached_selector_ == filter ) )
   {
     // Convert from vector to Ntree
@@ -233,7 +234,7 @@ Layer< D >::do_get_global_positions_ntree_( const Selector& filter )
 
   clear_vector_cache_();
 
-  cached_ntree_layer_ = get_gid();
+  cached_ntree_layer_ = get_metadata();
   cached_selector_ = filter;
 
   return cached_ntree_;
@@ -243,7 +244,7 @@ template < int D >
 std::vector< std::pair< Position< D >, index > >*
 Layer< D >::get_global_positions_vector( Selector filter )
 {
-  if ( ( cached_vector_layer_ == get_gid() )
+  if ( ( cached_vector_layer_ == get_metadata() )
     and ( cached_selector_ == filter ) )
   {
     assert( cached_vector_ );
@@ -254,7 +255,8 @@ Layer< D >::get_global_positions_vector( Selector filter )
 
   cached_vector_ = new std::vector< std::pair< Position< D >, index > >;
 
-  if ( ( cached_ntree_layer_ == get_gid() ) and ( cached_selector_ == filter ) )
+  if ( ( cached_ntree_layer_ == get_metadata() )
+    and ( cached_selector_ == filter ) )
   {
     // Convert from NTree to vector
 
@@ -275,7 +277,7 @@ Layer< D >::get_global_positions_vector( Selector filter )
 
   clear_ntree_cache_();
 
-  cached_vector_layer_ = get_gid();
+  cached_vector_layer_ = get_metadata();
   cached_selector_ = filter;
 
   return cached_vector_;
@@ -325,9 +327,9 @@ template < int D >
 void
 Layer< D >::dump_nodes( std::ostream& out ) const
 {
-  for ( index i = 0; i < nodes_.size(); ++i )
+  for ( index i = 0; i < gid_collection->size(); ++i )
   {
-    const index gid = nodes_[ i ]->get_gid();
+    const index gid = gid_collection[ i ];
     out << gid << ' ';
     get_position( i ).print( out );
     out << std::endl;
@@ -387,7 +389,7 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
       out << source_gid << ' ' << target_gid << ' ' << weight << ' ' << delay;
 
       Layer< D >* tgt_layer =
-        dynamic_cast< Layer< D >* >( target->get_parent() );
+        dynamic_cast< Layer< D >* >( target->get_parent() ); // TODO 481
       if ( tgt_layer == 0 )
       {
 
@@ -402,8 +404,9 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
       {
 
         out << ' ';
-        tgt_layer->compute_displacement(
-                     source_pos, target->get_subnet_index() ).print( out );
+        tgt_layer->compute_displacement( source_pos,
+                     tgt_layer->gid_collection->find( target->get_gid() ) )
+          .print( out );
       }
 
       out << '\n';

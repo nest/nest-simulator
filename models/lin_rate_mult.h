@@ -1,5 +1,5 @@
 /*
- *  lin_rate.h
+ *  lin_rate_mult.h
  *
  *  This file is part of NEST.
  *

@@ -1,5 +1,5 @@
 /*
- *  lin_rate.cpp
+ *  lin_rate_mult.cpp
  *
  *  This file is part of NEST.
  *

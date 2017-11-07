@@ -123,6 +123,9 @@ private:
 
     /** Time constant in ms. */
     double tau_;
+    
+    /** Passive decay rate in ms. */
+    double lambda_;
 
     /** Gaussian white noise standard deviation. */
     double std_;

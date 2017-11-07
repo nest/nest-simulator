@@ -65,6 +65,7 @@ RecordablesMap< rate_neuron_ipn< TGainfunction > >
 template < class TGainfunction >
 nest::rate_neuron_ipn< TGainfunction >::Parameters_::Parameters_()
   : tau_( 10.0 ) // ms
+  , lambda_( 1.0 ) // ms
   , std_( 1.0 )
   , mean_( 0.0 )
   , linear_summation_( true )
@@ -89,6 +90,7 @@ nest::rate_neuron_ipn< TGainfunction >::Parameters_::get(
   DictionaryDatum& d ) const
 {
   def< double >( d, names::tau, tau_ );
+  def< double >( d, names::lambda, lambda_ );
   def< double >( d, names::std, std_ );
   def< double >( d, names::mean, mean_ );
   def< bool >( d, names::linear_summation, linear_summation_ );
@@ -100,6 +102,7 @@ nest::rate_neuron_ipn< TGainfunction >::Parameters_::set(
   const DictionaryDatum& d )
 {
   updateValue< double >( d, names::tau, tau_ );
+  updateValue< double >( d, names::lambda, lambda_ );
   updateValue< double >( d, names::mean, mean_ );
   updateValue< double >( d, names::std, std_ );
   updateValue< bool >( d, names::linear_summation, linear_summation_ );
@@ -107,6 +110,8 @@ nest::rate_neuron_ipn< TGainfunction >::Parameters_::set(
 
   if ( tau_ <= 0 )
     throw BadProperty( "Time constant must be > 0." );
+  if ( lambda_ <= 0 )
+    throw BadProperty( "Passive decay rate must be > 0." );
   if ( std_ < 0 )
     throw BadProperty( "Standard deviation of noise must not be negative." );
 }
@@ -212,10 +217,10 @@ nest::rate_neuron_ipn< TGainfunction >::calibrate()
   const double h = Time::get_resolution().get_ms();
 
   // propagators
-  V_.P1_ = std::exp( -h / P_.tau_ );
-  V_.P2_ = -numerics::expm1( -h / P_.tau_ );
+  V_.P1_ = std::exp( -P_.lambda_ * h / P_.tau_ );
+  V_.P2_ = -numerics::expm1( -P_.lambda_ * h / P_.tau_ );
   V_.input_noise_factor_ =
-    std::sqrt( -0.5 * numerics::expm1( -2. * h / P_.tau_ ) );
+    std::sqrt( -0.5/P_.lambda_ * numerics::expm1( -2. * P_.lambda_ * h / P_.tau_ ) );
 }
 
 /* ----------------------------------------------------------------

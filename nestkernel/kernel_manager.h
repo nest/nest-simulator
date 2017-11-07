@@ -52,58 +52,64 @@
  The following parameters are available in the kernel status dictionary.
 
  Time and resolution
- resolution               doubletype  - The resolution of the simulation (in ms)
- time                     doubletype  - The current simulation time
- to_do                    integertype - The number of steps yet to be simulated (read only)
- max_delay                doubletype  - The maximum delay in the network
- min_delay                doubletype  - The minimum delay in the network
- ms_per_tic               doubletype  - The number of milliseconds per tic
- tics_per_ms              doubletype  - The number of tics per millisecond
- tics_per_step            integertype - The number of tics per simulation time step
- T_max                    doubletype  - The largest representable time value (read only)
- T_min                    doubletype  - The smallest representable time value (read only)
+ resolution                    doubletype  - The resolution of the simulation (in ms)
+ time                          doubletype  - The current simulation time
+ to_do                         integertype - The number of steps yet to be simulated (read only)
+ max_delay                     doubletype  - The maximum delay in the network
+ min_delay                     doubletype  - The minimum delay in the network
+ ms_per_tic                    doubletype  - The number of milliseconds per tic
+ tics_per_ms                   doubletype  - The number of tics per millisecond
+ tics_per_step                 integertype - The number of tics per simulation time step
+ T_max                         doubletype  - The largest representable time value (read only)
+ T_min                         doubletype  - The smallest representable time value (read only)
 
  Parallel processing
- total_num_virtual_procs  integertype - The total number of virtual processes
- local_num_threads        integertype - The local number of threads
- num_processes            integertype - The number of MPI processes (read only)
- num_rec_processes        integertype - The number of MPI processes reserved for recording spikes
- num_sim_processes        integertype - The number of MPI processes reserved for simulating neurons
- off_grid_spiking         booltype    - Whether to transmit precise spike times in MPI
-                                        communication (read only)
+ total_num_virtual_procs       integertype - The total number of virtual processes
+ local_num_threads             integertype - The local number of threads
+ num_processes                 integertype - The number of MPI processes (read only)
+ num_rec_processes             integertype - The number of MPI processes reserved for recording spikes
+ num_sim_processes             integertype - The number of MPI processes reserved for simulating neurons
+ off_grid_spiking              booltype    - Whether to transmit precise spike times in MPI
+                                             communication (read only)
+
+ Connector configuration
+ initial_connector_capacity    integertype - When a connector is first created, it starts with this
+                                             capacity (if >= connector_cutoff)
+ large_connector_limit         integertype - Capacity doubling is used up to this limit
+ large_connector_growth_factor doubletype  - Capacity growth factor to use beyond the limit
 
  Random number generators
- grng_seed                integertype - Seed for global random number generator used
-                                        synchronously by all virtual processes to
-                                        create, e.g., fixed fan-out connections
-                                        (write only).
- rng_seeds                arraytype   - Seeds for the per-virtual-process random
-                                        number generators used for most purposes.
-                                        Array with one integer per virtual process,
-                                        all must be unique and differ from
-                                        grng_seed (write only).
+ grng_seed                     integertype - Seed for global random number generator used
+                                             synchronously by all virtual processes to
+                                             create, e.g., fixed fan-out connections
+                                             (write only).
+ rng_seeds                     arraytype   - Seeds for the per-virtual-process random
+                                             number generators used for most purposes.
+                                             Array with one integer per virtual process,
+                                             all must be unique and differ from
+                                             grng_seed (write only).
 
  Output
- data_path                stringtype  - A path, where all data is written to
-                                        (default is the current directory)
- data_prefix              stringtype  - A common prefix for all data files
- overwrite_files          booltype    - Whether to overwrite existing data files
- print_time               booltype    - Whether to print progress information during the simulation
-
- Network information
- network_size             integertype - The number of nodes in the network (read only)
- num_connections          integertype - The number of connections in the network
-                                        (read only, local only)
+ data_path                     stringtype  - A path, where all data is written to
+                                             (default is the current directory)
+ data_prefix                   stringtype  - A common prefix for all data files
+ overwrite_files               booltype    - Whether to overwrite existing data files
+ print_time                    booltype    - Whether to print progress information during the simulation
+			      
+ Network information	       
+ network_size                  integertype - The number of nodes in the network (read only)
+ num_connections               integertype - The number of connections in the network
+                                             (read only, local only)
 
  Waveform relaxation method (wfr)
- use_wfr                  booltype    - Whether to use waveform relaxation method
- wfr_comm_interval        doubletype  - Desired waveform relaxation communication interval
- wfr_tol                  doubletype  - Convergence tolerance of waveform relaxation method
- wfr_max_iterations       integertype - Maximal number of iterations used for waveform relaxation
- wfr_interpolation_order  integertype - Interpolation order of polynomial used in wfr iterations
+ use_wfr                       booltype    - Whether to use waveform relaxation method
+ wfr_comm_interval             doubletype  - Desired waveform relaxation communication interval
+ wfr_tol                       doubletype  - Convergence tolerance of waveform relaxation method
+ wfr_max_iterations            integertype - Maximal number of iterations used for waveform relaxation
+ wfr_interpolation_order       integertype - Interpolation order of polynomial used in wfr iterations
 
  Miscellaneous
- dict_miss_is_error       booltype    - Whether missed dictionary entries are treated as errors
+ dict_miss_is_error            booltype    - Whether missed dictionary entries are treated as errors
 
  SeeAlso: Simulate, Node
  */

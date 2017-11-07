@@ -53,7 +53,6 @@ public:
     masked_iterator( const GridLayer< D >& layer )
       : layer_( layer )
       , node_()
-      , depth_( -1 )
     {
     }
 
@@ -89,12 +88,12 @@ public:
     bool operator==( const masked_iterator& other ) const
     {
       return ( other.layer_.get_metadata() == layer_.get_metadata() )
-        && ( other.node_ == node_ ) && ( other.depth_ == depth_ );
+        && ( other.node_ == node_ );
     }
     bool operator!=( const masked_iterator& other ) const
     {
       return ( other.layer_.get_metadata() != layer_.get_metadata() )
-        || ( other.node_ != node_ ) || ( other.depth_ != depth_ );
+        || ( other.node_ != node_ );
     }
 
   protected:
@@ -104,7 +103,6 @@ public:
     Position< D > anchor_;
     Selector filter_;
     MultiIndex< D > node_;
-    int depth_;
   };
 
   GridLayer()
@@ -139,8 +137,7 @@ public:
   /**
    * Returns nodes at a given discrete layerspace position.
    * @param pos  Discrete position in layerspace.
-   * @returns vector of gids at the depth column covering
-   *          the input position.
+   * @returns vector of gids covering the input position.
    */
   std::vector< index > get_nodes( Position< D, int > pos ) const;
 
@@ -198,7 +195,7 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
     updateValue< long >( d, names::layers, new_dims[ 2 ] );
   }
 
-  index new_size = this->depth_;
+  index new_size = 1;
   for ( int i = 0; i < D; ++i )
   {
     new_size *= new_dims[ i ];
@@ -350,24 +347,7 @@ GridLayer< D >::insert_global_positions_( Ins iter, const Selector& filter )
   index i = 0;
   index lid_end = this->gid_collection_->size();
 
-  if ( filter.select_depth() )
-  {
-    const index nodes_per_layer = this->gid_collection_->size() / this->depth_;
-    i = nodes_per_layer * filter.depth;
-    lid_end = nodes_per_layer * ( filter.depth + 1 );
-    if ( ( i >= this->gid_collection_->size() )
-      or ( lid_end > this->gid_collection_->size() ) )
-    {
-      throw BadProperty( "Selected depth out of range" );
-    }
-  }
-
   GIDCollection::const_iterator gi = this->gid_collection_->begin();
-  // Advance iterator to first gid at selected depth
-  for ( index j = 0; j < i; ++j )
-  {
-    ++gi;
-  }
 
   for ( ; ( gi != this->gid_collection_->end() ) && ( i < lid_end ); ++gi, ++i )
   {
@@ -426,7 +406,7 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
   , anchor_( anchor )
   , filter_( filter )
 {
-  layer_size_ = layer.global_size() / layer.depth_;
+  layer_size_ = layer.global_size();
 
   Position< D, int > lower_left;
   Position< D, int > upper_right;
@@ -470,19 +450,10 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
 
   node_ = MultiIndex< D >( lower_left, upper_right );
 
-  if ( filter_.select_depth() )
-  {
-    depth_ = filter_.depth;
-  }
-  else
-  {
-    depth_ = 0;
-  }
-
   if ( ( not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) )
-    or ( filter_.select_model() && ( kernel().modelrange_manager.get_model_id(
-                                       layer_.gids_[ depth_ * layer_size_ ] )
-                                     != index( filter_.model ) ) ) )
+    or ( filter_.select_model()
+         && ( kernel().modelrange_manager.get_model_id(
+                layer_.gids_[ layer_size_ ] ) != index( filter_.model ) ) ) )
   {
     ++( *this );
   }
@@ -492,21 +463,14 @@ template < int D >
 inline std::pair< Position< D >, index > GridLayer< D >::masked_iterator::
 operator*()
 {
-  assert( depth_ >= 0 );
   return std::pair< Position< D >, index >( layer_.gridpos_to_position( node_ ),
-    layer_.gids_[ layer_.gridpos_to_lid( node_ ) + depth_ * layer_size_ ] );
+    layer_.gids_[ layer_.gridpos_to_lid( node_ ) + layer_size_ ] );
 }
 
 template < int D >
 typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::
 operator++()
-{
-  if ( depth_ == -1 )
-  {
-    // Invalid (end) iterator
-    return *this;
-  }
-
+{ // TODO 481 how to remove depth?
   if ( not filter_.select_depth() )
   {
     depth_++;
@@ -545,8 +509,8 @@ operator++()
     not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) );
 
   if ( filter_.select_model()
-    && ( kernel().modelrange_manager.get_model_id(
-           layer_.gids_[ depth_ * layer_size_ ] ) != index( filter_.model ) ) )
+    && ( kernel().modelrange_manager.get_model_id( layer_.gids_[ layer_size_ ] )
+         != index( filter_.model ) ) )
   {
     return operator++();
   }

@@ -299,19 +299,19 @@ public:
    * When a connector is first created, it starts with this capacity
    * (if >= connector_cutoff).
    */
-  size_t get_init_conn_capacity() const;
+  size_t get_initial_connector_capacity() const;
 
   /**
    * Return large connector limit.
    * Capacity doubling is used up to this limit.
    */
-  size_t get_large_conn_limit() const;
+  size_t get_large_connector_limit() const;
 
   /**
    * Returns large connector growth factor.
    * This capacity growth factor is used beyond the large connector limit.
    */
-  double get_large_conn_growth() const;
+  double get_large_connector_growth_factor() const;
 
 private:
   /**
@@ -412,13 +412,13 @@ private:
    * When a connector is first created, it starts with this capacity
    * (if >= connector_cutoff)
    */
-  size_t init_conn_capacity_;
+  size_t initial_connector_capacity_;
 
   //! Capacity doubling is used up to this limit
-  size_t large_conn_limit_;
+  size_t large_connector_limit_;
 
   //! Capacity growth factor to use beyond the limit
-  double large_conn_growth_;
+  double large_connector_growth_factor_;
 };
 
 inline DictionaryDatum&
@@ -440,21 +440,21 @@ ConnectionManager::get_max_delay() const
 }
 
 inline size_t
-ConnectionManager::get_init_conn_capacity() const
+ConnectionManager::get_initial_connector_capacity() const
 {
-  return init_conn_capacity_;
+  return initial_connector_capacity_;
 }
 
 inline size_t
-ConnectionManager::get_large_conn_limit() const
+ConnectionManager::get_large_connector_limit() const
 {
-  return large_conn_limit_;
+  return large_connector_limit_;
 }
 
 inline double
-ConnectionManager::get_large_conn_growth() const
+ConnectionManager::get_large_connector_growth_factor() const
 {
-  return large_conn_growth_;
+  return large_connector_growth_factor_;
 }
 
 } // namespace nest

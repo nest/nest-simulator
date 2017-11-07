@@ -74,9 +74,9 @@ nest::ConnectionManager::ConnectionManager()
   , connbuilder_factories_()
   , min_delay_( 1 )
   , max_delay_( 1 )
-  , init_conn_capacity_( CONFIG_CONNECTOR_CUTOFF )
-  , large_conn_limit_( CONFIG_CONNECTOR_CUTOFF * 2 )
-  , large_conn_growth_( 1.5 )
+  , initial_connector_capacity_( CONFIG_CONNECTOR_CUTOFF )
+  , large_connector_limit_( CONFIG_CONNECTOR_CUTOFF * 2 )
+  , large_connector_growth_factor_( 1.5 )
 {
 }
 
@@ -133,43 +133,47 @@ nest::ConnectionManager::finalize()
 void
 nest::ConnectionManager::set_status( const DictionaryDatum& d )
 {
-  long init_cap = init_conn_capacity_;
-  if ( updateValue< long >( d, names::init_connector_capacity, init_cap ) )
+  long initial_connector_capacity = initial_connector_capacity_;
+  if ( updateValue< long >(
+         d, names::initial_connector_capacity, initial_connector_capacity ) )
   {
-    if ( init_cap < CONFIG_CONNECTOR_CUTOFF )
+    if ( initial_connector_capacity < CONFIG_CONNECTOR_CUTOFF )
     {
       throw KernelException(
         "The initial connector capacity should be higher or equal to "
         "connector_cutoff value specified via cmake flag [default 3]" );
     }
 
-    init_conn_capacity_ = init_cap;
+    initial_connector_capacity_ = initial_connector_capacity;
   }
 
-  long large_lim = large_conn_limit_;
-  if ( updateValue< long >( d, names::large_connector_limit, large_lim ) )
+  long large_connector_limit = large_connector_limit_;
+  if ( updateValue< long >(
+         d, names::large_connector_limit, large_connector_limit ) )
   {
-    if ( large_lim < CONFIG_CONNECTOR_CUTOFF )
+    if ( large_connector_limit < CONFIG_CONNECTOR_CUTOFF )
     {
       throw KernelException(
         "The large connector limit should be higher or equal to "
         "connector_cutoff value specified via cmake flag [default 3]" );
     }
 
-    large_conn_limit_ = large_lim;
+    large_connector_limit_ = large_connector_limit;
   }
 
-  double large_growth = large_conn_growth_;
-  if ( updateValue< double >( d, names::large_connector_growth, large_growth ) )
+  double large_connector_growth_factor = large_connector_growth_factor_;
+  if ( updateValue< double >( d,
+         names::large_connector_growth_factor,
+         large_connector_growth_factor ) )
   {
-    if ( large_growth <= 1.0 )
+    if ( large_connector_growth_factor <= 1.0 )
     {
       throw KernelException(
         "The large connector capacity growth factor should be higher than "
         "1.0" );
     }
 
-    large_conn_growth_ = large_growth;
+    large_connector_growth_factor_ = large_connector_growth_factor;
   }
 
   for ( size_t i = 0; i < delay_checkers_.size(); ++i )
@@ -193,9 +197,11 @@ nest::ConnectionManager::get_status( DictionaryDatum& d )
   def< double >(
     d, names::max_delay, Time( Time::step( max_delay_ ) ).get_ms() );
 
-  def< long >( d, names::init_connector_capacity, init_conn_capacity_ );
-  def< long >( d, names::large_connector_limit, large_conn_limit_ );
-  def< double >( d, names::large_connector_growth, large_conn_growth_ );
+  def< long >(
+    d, names::initial_connector_capacity, initial_connector_capacity_ );
+  def< long >( d, names::large_connector_limit, large_connector_limit_ );
+  def< double >(
+    d, names::large_connector_growth_factor, large_connector_growth_factor_ );
 
   size_t n = get_num_connections();
   def< long >( d, names::num_connections, n );

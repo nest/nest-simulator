@@ -810,7 +810,7 @@ public:
   Connector( const Connector< K_CUTOFF - 1, ConnectionT >& C,
     const ConnectionT& c )
   {
-    C_.reserve( kernel().connection_manager.get_init_conn_capacity() );
+    C_.reserve( kernel().connection_manager.get_initial_connector_capacity() );
 
     for ( size_t i = 0; i < K_CUTOFF - 1; i++ )
     {
@@ -924,10 +924,10 @@ public:
     const size_t sz = C_.size();
 
     if ( sz == C_.capacity()
-      and sz >= kernel().connection_manager.get_large_conn_limit() )
+      and sz >= kernel().connection_manager.get_large_connector_limit() )
     {
       const size_t cap = static_cast< double >( sz )
-        * kernel().connection_manager.get_large_conn_growth();
+        * kernel().connection_manager.get_large_connector_growth_factor();
 
       C_.reserve( cap > sz ? cap : sz + 1 );
     }

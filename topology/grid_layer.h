@@ -53,11 +53,13 @@ public:
     masked_iterator( const GridLayer< D >& layer )
       : layer_( layer )
       , node_()
+      , mask_()
+      , layer_size_()
     {
     }
 
     /**
-     * Initialize an iterator to point to the first node inside the mask.
+     * Initialise an iterator to point to the first node inside the mask.
      */
     masked_iterator( const GridLayer< D >& layer,
       const Mask< D >& mask,
@@ -135,11 +137,11 @@ public:
   Position< D > gridpos_to_position( Position< D, int > gridpos ) const;
 
   /**
-   * Returns nodes at a given discrete layerspace position.
+   * Returns the nodes at a given discrete layerspace position.
    * @param pos  Discrete position in layerspace.
-   * @returns vector of gids covering the input position.
+   * @returns Gids covering the input position.
    */
-  std::vector< index > get_nodes( Position< D, int > pos ) const;
+  index get_node( Position< D, int > pos ) const;
 
   using Layer< D >::get_global_positions_vector;
 
@@ -217,17 +219,14 @@ GridLayer< D >::get_status( DictionaryDatum& d ) const
 {
   Layer< D >::get_status( d );
 
-  DictionaryDatum topology_dict =
-    getValue< DictionaryDatum >( ( *d )[ names::topology ] );
-
-  ( *topology_dict )[ names::columns ] = dims_[ 0 ];
+  ( *d )[ names::columns ] = dims_[ 0 ];
   if ( D >= 2 )
   {
-    ( *topology_dict )[ names::rows ] = dims_[ 1 ];
+    ( *d )[ names::rows ] = dims_[ 1 ];
   }
   if ( D >= 3 )
   {
-    ( *topology_dict )[ names::layers ] = dims_[ 2 ];
+    ( *d )[ names::layers ] = dims_[ 2 ];
   }
 }
 
@@ -297,19 +296,10 @@ GridLayer< D >::gridpos_to_lid( Position< D, int > pos ) const
 }
 
 template < int D >
-std::vector< index >
-GridLayer< D >::get_nodes( Position< D, int > pos ) const
+index
+GridLayer< D >::get_node( Position< D, int > pos ) const
 {
-  std::vector< index > gids;
-  index lid = gridpos_to_lid( pos );
-  index layer_size = this->gid_collection_->size() / this->depth_;
-
-  for ( int d = 0; d < this->depth_; ++d )
-  {
-    gids.push_back( this->gids_[ lid + d * layer_size ] ); // TODO 481
-  }
-
-  return gids;
+  return this->gid_collection_->operator[]( gridpos_to_lid( pos ) );
 }
 
 template < int D >

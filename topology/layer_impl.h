@@ -89,16 +89,12 @@ Layer< D >::set_status( const DictionaryDatum& d )
       periodic_ = ( 1 << D ) - 1; // All dimensions periodic
     }
   }
-
-  //  Subnet::set_status( d ); // TODO 481
 }
 
 template < int D >
 void
 Layer< D >::get_status( DictionaryDatum& d ) const
 {
-  //  Subnet::get_status( d ); // TODO 481
-
   DictionaryDatum topology_dict( new Dictionary );
 
   ( *topology_dict )[ names::depth ] = depth_;
@@ -327,9 +323,9 @@ template < int D >
 void
 Layer< D >::dump_nodes( std::ostream& out ) const
 {
-  for ( index i = 0; i < gid_collection_->size(); ++i )
+  for ( index i = 0; i < this->gid_collection_->size(); ++i )
   {
-    const index gid = gid_collection_->operator[]( i );
+    const index gid = this->gid_collection_->operator[]( i );
     out << gid << ' ';
     get_position( i ).print( out );
     out << std::endl;
@@ -388,8 +384,13 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
       // Print source, target, weight, delay, rports
       out << source_gid << ' ' << target_gid << ' ' << weight << ' ' << delay;
 
-      Layer< D >* tgt_layer =
-        dynamic_cast< Layer< D >* >( target->get_parent() ); // TODO 481
+      /*
+      // We decided to change how this function is called. It is to be called
+      // with source and target layers.
+      // TODO 481 Specify target layer
+
+      Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >(
+        target->get_parent() );
       if ( tgt_layer == 0 )
       {
 
@@ -408,7 +409,7 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
                      tgt_layer->gid_collection_->find( target->get_gid() ) )
           .print( out );
       }
-
+      */
       out << '\n';
     }
   }

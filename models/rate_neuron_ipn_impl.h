@@ -247,7 +247,7 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
     // get noise
     S_.noise_ = P_.std_ * B_.random_numbers[ lag ];
     // propagate rate to new time step (exponential integration)
-    S_.rate_ = V_.P1_ * S_.rate_ + V_.P2_ * P_.mean_
+    S_.rate_ = V_.P1_ * new_rates[ lag ] + V_.P2_ * P_.mean_
       + V_.input_noise_factor_ * S_.noise_;
 
     if ( called_from_wfr_update ) // use get_value_wfr_update to keep values in
@@ -255,12 +255,12 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
     {
       if ( P_.linear_summation_ )
       {
-        S_.rate_ += V_.P2_ * gain_.func2(S_.rate_) * gain_.func1( B_.delayed_rates_.get_value_wfr_update(
+        S_.rate_ += V_.P2_ * gain_.func2(new_rates[ lag ]) * gain_.func1( B_.delayed_rates_.get_value_wfr_update(
                                       lag ) + B_.instant_rates_[ lag ] );
       }
       else
       {
-        S_.rate_ += V_.P2_ * gain_.func2(S_.rate_) * ( B_.delayed_rates_.get_value_wfr_update( lag )
+        S_.rate_ += V_.P2_ * gain_.func2(new_rates[ lag ]) * ( B_.delayed_rates_.get_value_wfr_update( lag )
                                + B_.instant_rates_[ lag ] );
       }
 
@@ -274,13 +274,13 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
     {
       if ( P_.linear_summation_ )
       {
-        S_.rate_ += V_.P2_ * gain_.func2(S_.rate_) * gain_.func1( B_.delayed_rates_.get_value( lag )
+        S_.rate_ += V_.P2_ * gain_.func2(new_rates[ lag ]) * gain_.func1( B_.delayed_rates_.get_value( lag )
                                + B_.instant_rates_[ lag ] );
       }
       else
       {
         S_.rate_ += V_.P2_
-          * gain_.func2(S_.rate_) * ( B_.delayed_rates_.get_value( lag ) + B_.instant_rates_[ lag ] );
+          * gain_.func2(new_rates[ lag ]) * ( B_.delayed_rates_.get_value( lag ) + B_.instant_rates_[ lag ] );
       }
       // rate logging
       B_.logger_.record_data( origin.get_steps() + lag );

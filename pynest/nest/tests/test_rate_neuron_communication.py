@@ -175,8 +175,8 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
                 rates_test = np.array(
                     [g * self.drive * self.weight,
                      self.weight * np.tanh(g * self.drive),
-                     self.weight * self.drive * g * H(self.drive)],
-                    a * theta / (1 + a))
+                     self.weight * self.drive * g * H(self.drive),
+                    a * theta / (1 + a)])
 
             print 'test_RateNeuronNL', rates, rates_test
             self.assertTrue(np.allclose(rates, rates_test))

@@ -184,13 +184,12 @@ execute_process(
 # on OS X
 set( CMAKE_MACOSX_RPATH ON )
 
+# Use the NEST_INSTALL_* variables as CMAKE_INSTALL_*, if not set explicitly.
 if ( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr/local" )
-  # Use the NEST_INSTALL_PREFIX as CMAKE_INSTALL_PREFIX, if not set explicitly.
   set( CMAKE_INSTALL_PREFIX "${NEST_INSTALL_PREFIX}" CACHE STRING "Install path prefix, prepended onto install directories." FORCE )
-  # Install all stuff to NEST's install directories.
-  set( CMAKE_INSTALL_LIBDIR ${NEST_LIBDIR}/nest CACHE STRING "object code libraries (lib/nest or lib64/nest or lib/<multiarch-tuple>/nest on Debian)" FORCE )
-  set( CMAKE_INSTALL_DOCDIR ${NEST_INSTALL_DOCDIR} CACHE STRING "documentation root (DATAROOTDIR/doc/nest)" FORCE )
-  set( CMAKE_INSTALL_DATADIR ${NEST_INSTALL_DATADIR} CACHE STRING "read-only architecture-independent data (DATAROOTDIR/nest)" FORCE )
+  set( CMAKE_INSTALL_LIBDIR "${NEST_LIBDIR}/nest" CACHE STRING "object code libraries (lib/nest or lib64/nest or lib/<multiarch-tuple>/nest on Debian)" FORCE )
+  set( CMAKE_INSTALL_DOCDIR "${NEST_INSTALL_DOCDIR}" CACHE STRING "documentation root (DATAROOTDIR/doc/nest)" FORCE )
+  set( CMAKE_INSTALL_DATADIR "${NEST_INSTALL_DATADIR}" CACHE STRING "read-only architecture-independent data (DATAROOTDIR/nest)" FORCE )
 endif ()
 
 include( GNUInstallDirs )

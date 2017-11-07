@@ -55,7 +55,7 @@ ConnectionCreator::connect( Layer< D >& source, Layer< D >& target, GIDCollectio
 
   case Divergent:
 
-    divergent_connect_( source, target );
+    divergent_connect_( source, target, target_gc );
     break;
 
   case Source_driven:
@@ -646,36 +646,27 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
 
 template < int D >
 void
-ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
+ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
 {
   // protect against connecting to devices without proxies
   // we need to do this before creating the first connection to leave
   // the network untouched if any target does not have proxies
-  // Nodes in the subnet are grouped by depth, so to select by depth, we
-  // just adjust the begin and end pointers:
-  std::vector< Node* >::const_iterator target_begin;
-  std::vector< Node* >::const_iterator target_end;
-  if ( target_filter_.select_depth() )
-  {
-    target_begin = target.local_begin( target_filter_.depth );
-    target_end = target.local_end( target_filter_.depth );
-  }
-  else
-  {
-    target_begin = target.local_begin();
-    target_end = target.local_end();
-  }
 
-  for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
+  // We have to adjust the begin and end pointers in case we select by model
+  // or we have to adjust the step because we use threads:
+  size_t num_threads = 1; //kernel().vp_manager.get_num_threads();
+
+  GIDCollection::const_iterator target_begin = target_gc->begin( num_threads );
+  GIDCollection::const_iterator target_end = target_gc->end();
+
+  for ( GIDCollection::const_iterator tgt_it = target_begin;
         tgt_it != target_end;
         ++tgt_it )
   {
-    if ( not( *tgt_it )->has_proxies() )
-    {
-      throw IllegalConnection(
-        "Topology Divergent connections"
-        " to devices are not possible." );
-    }
+    Node* const tgt =
+      kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid );
+
+    assert( not tgt->is_proxy() );
   }
 
   // Divergent connections (fixed fan out)
@@ -775,7 +766,7 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target )
         continue;
       }
 
-      Node* target_ptr = kernel().node_manager.get_node( target_id );
+      Node* target_ptr = kernel().node_manager.get_node_or_proxy( target_id );
       kernel().connection_manager.connect(
         source_id, target_ptr, target_ptr->get_thread(), synapse_model_, d, w );
     }

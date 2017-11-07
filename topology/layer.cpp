@@ -192,7 +192,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     next_coll.unlock();
   }
 
-  gid_collection = gid_coll;
+  gid_collection_ = gid_coll;
 
   return gid_coll;
 }
@@ -200,7 +200,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
 GIDCollectionMetadataPTR
 AbstractLayer::get_metadata() const
 {
-  return gid_collection->get_metadata();
+  return gid_collection_->get_metadata();
 }
 
 } // namespace nest

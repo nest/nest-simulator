@@ -327,9 +327,9 @@ template < int D >
 void
 Layer< D >::dump_nodes( std::ostream& out ) const
 {
-  for ( index i = 0; i < gid_collection->size(); ++i )
+  for ( index i = 0; i < gid_collection_->size(); ++i )
   {
-    const index gid = gid_collection->operator[]( i );
+    const index gid = gid_collection_->operator[]( i );
     out << gid << ' ';
     get_position( i ).print( out );
     out << std::endl;
@@ -405,7 +405,7 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
 
         out << ' ';
         tgt_layer->compute_displacement( source_pos,
-                     tgt_layer->gid_collection->find( target->get_gid() ) )
+                     tgt_layer->gid_collection_->find( target->get_gid() ) )
           .print( out );
       }
 

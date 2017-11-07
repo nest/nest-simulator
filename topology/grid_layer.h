@@ -204,7 +204,7 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
     new_size *= new_dims[ i ];
   }
 
-  if ( new_size != this->global_size() )
+  if ( new_size != this->gid_collection_->size() )
   {
     throw BadProperty( "Total size of layer must be unchanged." );
   }
@@ -238,7 +238,6 @@ template < int D >
 Position< D >
 GridLayer< D >::lid_to_position( index lid ) const
 {
-  lid %= this->global_size() / this->depth_;
   Position< D, int > gridpos;
   for ( int i = D - 1; i > 0; --i )
   {
@@ -269,7 +268,7 @@ template < int D >
 Position< D >
 GridLayer< D >::get_position( index sind ) const
 {
-  return lid_to_position( this->nodes_[ sind ]->get_lid() );
+  return lid_to_position( sind );
 }
 
 template < int D >
@@ -306,11 +305,11 @@ GridLayer< D >::get_nodes( Position< D, int > pos ) const
 {
   std::vector< index > gids;
   index lid = gridpos_to_lid( pos );
-  index layer_size = this->global_size() / this->depth_;
+  index layer_size = this->gid_collection_->size() / this->depth_;
 
   for ( int d = 0; d < this->depth_; ++d )
   {
-    gids.push_back( this->gids_[ lid + d * layer_size ] );
+    gids.push_back( this->gids_[ lid + d * layer_size ] ); // TODO 481
   }
 
   return gids;
@@ -323,24 +322,23 @@ GridLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
 {
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
-  size_t num_threads = 1; //kernel().vp_manager.get_num_threads();
+  size_t num_threads = 1; // kernel().vp_manager.get_num_threads();
   index model = 0;
 
-  if ( filter_.select_model() )
+  if ( filter.select_model() )
   {
-    model = filter_.model;
+    model = filter.model;
   }
 
-  GIDCollection::const_iterator gc_begin = gid_collection->begin( num_threads,
-    model );
-  GIDCollection::const_iterator gc_end = gid_collection->end();
+  GIDCollection::const_iterator gc_begin =
+    this->gid_collection_->begin( num_threads, model );
+  GIDCollection::const_iterator gc_end = this->gid_collection_->end();
 
-  for ( GIDCollection::const_iterator gc_it = gc_begin;
-        gc_it != gc_end;
+  for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it != gc_end;
         ++gc_it )
   {
     tree.insert( std::pair< Position< D >, index >(
-      lid_to_position( ( *gc_it )->get_lid() ), ( *gc_it ).gid ) );
+      lid_to_position( ( *gc_it ).local_placement ), ( *gc_it ).gid ) );
   }
 }
 
@@ -350,36 +348,38 @@ void
 GridLayer< D >::insert_global_positions_( Ins iter, const Selector& filter )
 {
   index i = 0;
-  index lid_end = this->gids_.size();
+  index lid_end = this->gid_collection_->size();
 
   if ( filter.select_depth() )
   {
-    const index nodes_per_layer = this->gids_.size() / this->depth_;
+    const index nodes_per_layer = this->gid_collection_->size() / this->depth_;
     i = nodes_per_layer * filter.depth;
     lid_end = nodes_per_layer * ( filter.depth + 1 );
-    if ( ( i >= this->gids_.size() ) or ( lid_end > this->gids_.size() ) )
+    if ( ( i >= this->gid_collection_->size() )
+      or ( lid_end > this->gid_collection_->size() ) )
     {
       throw BadProperty( "Selected depth out of range" );
     }
   }
 
-  Multirange::iterator gi = this->gids_.begin();
+  GIDCollection::const_iterator gi = this->gid_collection_->begin();
   // Advance iterator to first gid at selected depth
   for ( index j = 0; j < i; ++j )
   {
     ++gi;
   }
 
-  for ( ; ( gi != this->gids_.end() ) && ( i < lid_end ); ++gi, ++i )
+  for ( ; ( gi != this->gid_collection_->end() ) && ( i < lid_end ); ++gi, ++i )
   {
 
     if ( filter.select_model()
-      && ( ( int ) kernel().modelrange_manager.get_model_id( *gi )
+      && ( ( int ) kernel().modelrange_manager.get_model_id( ( *gi ).gid )
            != filter.model ) )
     {
       continue;
     }
-    *iter++ = std::pair< Position< D >, index >( lid_to_position( i ), *gi );
+    *iter++ =
+      std::pair< Position< D >, index >( lid_to_position( i ), ( *gi ).gid );
   }
 }
 

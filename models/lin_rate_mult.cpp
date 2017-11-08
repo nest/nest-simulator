@@ -30,6 +30,7 @@ nonlinearities_lin_rate_mult::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::g, g_ );
   def< double >( d, names::g_ex, g_ex_ );
+  def< double >( d, names::g_in, g_in_ );
   def< double >( d, names::theta, theta_ );
 }
 
@@ -38,6 +39,7 @@ nonlinearities_lin_rate_mult::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::g, g_ );
   updateValue< double >( d, names::g_ex, g_ex_ );
+  updateValue< double >( d, names::g_in, g_in_ );
   updateValue< double >( d, names::theta, theta_ );
 }
 

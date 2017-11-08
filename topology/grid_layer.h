@@ -339,7 +339,8 @@ GridLayer< D >::insert_global_positions_( Ins iter, const index& model_filter )
   size_t current_rank = kernel().mpi_manager.get_rank();
   index model = model_filter;
 
-  GIDCollection::const_iterator gi = this->gid_collection_->begin( current_rank, num_processes, model );
+  GIDCollection::const_iterator gi =
+    this->gid_collection_->begin( current_rank, num_processes, model );
 
   for ( ; ( gi != this->gid_collection_->end() ) && ( i < lid_end ); ++gi, ++i )
   {
@@ -464,7 +465,6 @@ operator++()
     if ( node_ == node_.get_upper_right() )
     {
       // Mark as invalid
-      depth_ = -1;
       node_ = MultiIndex< D >();
       return *this;
     }

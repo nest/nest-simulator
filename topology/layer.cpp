@@ -172,7 +172,6 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   assert( layer_local );
   lockPTR< AbstractLayer > layer_safe( layer_local );
 
-  layer_local->depth_ = element_ids.size();
   layer_local->set_status( layer_dict );
 
   GIDCollectionMetadataPTR layer_meta( new LayerMetadata( layer_safe ) );
@@ -192,7 +191,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     next_coll.unlock();
   }
 
-  this->gid_collection_ = gid_coll;
+  gid_collection_ = gid_coll;
 
   return gid_coll;
 }

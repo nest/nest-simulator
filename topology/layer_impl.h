@@ -97,20 +97,19 @@ Layer< D >::get_status( DictionaryDatum& d ) const
 {
   DictionaryDatum topology_dict( new Dictionary );
 
-  ( *topology_dict )[ names::depth ] = depth_;
-  ( *topology_dict )[ names::extent ] = std::vector< double >( extent_ );
-  ( *topology_dict )[ names::center ] =
+  ( *d )[ names::depth ] = depth_;
+  ( *d )[ names::extent ] = std::vector< double >( extent_ );
+  ( *d )[ names::center ] =
     std::vector< double >( lower_left_ + extent_ / 2 );
 
   if ( periodic_.none() )
   {
-    ( *topology_dict )[ names::edge_wrap ] = BoolDatum( false );
+    ( *d )[ names::edge_wrap ] = BoolDatum( false );
   }
   else if ( periodic_.count() == D )
   {
-    ( *topology_dict )[ names::edge_wrap ] = true;
+    ( *d )[ names::edge_wrap ] = true;
   }
-  ( *d )[ names::topology ] = topology_dict;
 }
 
 template < int D >

@@ -200,7 +200,7 @@ FreeLayer< D >::communicate_positions_( Ins iter, const index& model_filter )
     // Push coordinates one by one
     for ( int j = 0; j < D; ++j )
     {
-      local_gid_pos.push_back( positions_[ ( *gc_it ).local_placement ][ j ] );
+      local_gid_pos.push_back( positions_[ ( *gc_it ).lid ][ j ] );
     }
   }
 
@@ -262,8 +262,7 @@ FreeLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
         ++gc_it )
   {
     tree.insert( std::pair< Position< D >, index >(
-      positions_.at( ( *gc_it ).local_placement ),
-      ( *gc_it ).gid ) );
+      positions_.at( ( *gc_it ).lid ),( *gc_it ).gid ) );
   }
 }
 

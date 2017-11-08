@@ -43,8 +43,10 @@
 namespace nest
 {
 
-index AbstractLayer::cached_ntree_layer_ = -1;
-index AbstractLayer::cached_vector_layer_ = -1;
+GIDCollectionMetadataPTR AbstractLayer::cached_ntree_gc_ =
+  GIDCollectionMetadataPTR( 0 );
+GIDCollectionMetadataPTR AbstractLayer::cached_vector_gc_ =
+  GIDCollectionMetadataPTR( 0 );
 
 AbstractLayer::~AbstractLayer()
 {
@@ -190,9 +192,15 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     next_coll.unlock();
   }
 
-  gid_collection = gid_coll;
+  gid_collection_ = gid_coll;
 
   return gid_coll;
+}
+
+GIDCollectionMetadataPTR
+AbstractLayer::get_metadata() const
+{
+  return gid_collection_->get_metadata();
 }
 
 } // namespace nest

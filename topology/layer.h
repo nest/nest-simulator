@@ -67,6 +67,20 @@ public:
   virtual ~AbstractLayer();
 
   /**
+   * Change properties of the layer according to the
+   * entries in the dictionary.
+   * @param d Dictionary with named parameter settings.
+   */
+  virtual void set_status( const DictionaryDatum& ) = 0;
+
+  /**
+   * Export properties of the layer by setting
+   * entries in the status dictionary.
+   * @param d Dictionary.
+   */
+  virtual void get_status( DictionaryDatum& ) const = 0;
+
+  /**
    * Get position of node. Only possible for local nodes.
    * @param lid index of node within layer
    * @returns position of node as std::vector
@@ -146,14 +160,14 @@ public:
 
 protected:
   /**
-   * TODO
+   * TODO 481
    */
-  GIDCollectionPTR gid_collection = 0;
+  GIDCollectionPTR gid_collection_ = GIDCollectionPTR( 0 );
 
   /**
    * GID for the single layer for which we cache global position information
    */
-  static index cached_ntree_layer_;
+  static GIDCollectionMetadataPTR cached_ntree_gc_;
 
   /**
    * number of neurons at each position
@@ -163,7 +177,7 @@ protected:
   /**
    * GID for the single layer for which we cache global position information
    */
-  static index cached_vector_layer_;
+  static GIDCollectionMetadataPTR cached_vector_gc_;
 
   /**
    * Clear the cache for global position information
@@ -174,6 +188,11 @@ protected:
    * Clear the cache for global position information
    */
   virtual void clear_vector_cache_() const = 0;
+
+  /**
+   * TODO 481
+   */
+  GIDCollectionMetadataPTR get_metadata() const;
 };
 
 template < int D >
@@ -597,12 +616,12 @@ inline Layer< D >::Layer( const Layer& other_layer )
 template < int D >
 inline Layer< D >::~Layer()
 {
-  if ( cached_ntree_layer_ == get_gid() )
+  if ( cached_ntree_gc_ == get_metadata() )
   {
     clear_ntree_cache_();
   }
 
-  if ( cached_vector_layer_ == get_gid() )
+  if ( cached_vector_gc_ == get_metadata() )
   {
     clear_vector_cache_();
   }
@@ -653,7 +672,7 @@ inline void
 Layer< D >::clear_ntree_cache_() const
 {
   cached_ntree_ = lockPTR< Ntree< D, index > >();
-  cached_ntree_layer_ = -1;
+  cached_ntree_gc_ = GIDCollectionMetadataPTR( 0 );
 }
 
 template < int D >
@@ -665,7 +684,7 @@ Layer< D >::clear_vector_cache_() const
     delete cached_vector_;
   }
   cached_vector_ = 0;
-  cached_vector_layer_ = -1;
+  cached_vector_gc_ = GIDCollectionMetadataPTR( 0 );
 }
 
 } // namespace nest

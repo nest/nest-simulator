@@ -89,16 +89,12 @@ Layer< D >::set_status( const DictionaryDatum& d )
       periodic_ = ( 1 << D ) - 1; // All dimensions periodic
     }
   }
-
-  //  Subnet::set_status( d ); // TODO
 }
 
 template < int D >
 void
 Layer< D >::get_status( DictionaryDatum& d ) const
 {
-  //  Subnet::get_status( d ); // TODO
-
   DictionaryDatum topology_dict( new Dictionary );
 
   ( *topology_dict )[ names::depth ] = depth_;
@@ -159,7 +155,8 @@ template < int D >
 lockPTR< Ntree< D, index > >
 Layer< D >::get_global_positions_ntree( index model_filter )
 {
-  if ( ( cached_ntree_layer_ == get_gid() ) and ( cached_model_selector_ == model_filter ) )
+  if ( ( cached_ntree_gc_ == get_metadata() )
+    and ( cached_model_selector_ == model_filter ) )
   {
     assert( cached_ntree_.valid() );
     return cached_ntree_;
@@ -199,7 +196,7 @@ Layer< D >::get_global_positions_ntree( index model_filter,
   do_get_global_positions_ntree_( model_filter );
 
   // Do not use cache since the periodic bits and extents were altered.
-  cached_ntree_layer_ = -1;
+  cached_ntree_gc_ = GIDCollectionMetadataPTR( 0 );
 
   return cached_ntree_;
 }
@@ -208,7 +205,7 @@ template < int D >
 lockPTR< Ntree< D, index > >
 Layer< D >::do_get_global_positions_ntree_( const index& model_filter )
 {
-  if ( ( cached_vector_layer_ == get_gid() )
+  if ( ( cached_vector_gc_ == get_metadata() )
     and ( cached_model_selector_ == model_filter ) )
   {
     // Convert from vector to Ntree
@@ -233,7 +230,7 @@ Layer< D >::do_get_global_positions_ntree_( const index& model_filter )
 
   clear_vector_cache_();
 
-  cached_ntree_layer_ = get_gid();
+  cached_ntree_gc_ = get_metadata();
   cached_model_selector_ = model_filter;
 
   return cached_ntree_;
@@ -243,7 +240,7 @@ template < int D >
 std::vector< std::pair< Position< D >, index > >*
 Layer< D >::get_global_positions_vector( index model_filter )
 {
-  if ( ( cached_vector_layer_ == get_gid() )
+  if ( ( cached_vector_gc_ == get_metadata() )
     and ( cached_model_selector_ == model_filter ) )
   {
     assert( cached_vector_ );
@@ -254,7 +251,8 @@ Layer< D >::get_global_positions_vector( index model_filter )
 
   cached_vector_ = new std::vector< std::pair< Position< D >, index > >;
 
-  if ( ( cached_ntree_layer_ == get_gid() ) and ( cached_model_selector_ == model_filter ) )
+  if ( ( cached_ntree_gc_ == get_metadata() )
+    and ( cached_model_selector_ == model_filter ) )
   {
     // Convert from NTree to vector
 
@@ -275,7 +273,7 @@ Layer< D >::get_global_positions_vector( index model_filter )
 
   clear_ntree_cache_();
 
-  cached_vector_layer_ = get_gid();
+  cached_vector_gc_ = get_metadata();
   cached_model_selector_ = model_filter;
 
   return cached_vector_;
@@ -325,9 +323,9 @@ template < int D >
 void
 Layer< D >::dump_nodes( std::ostream& out ) const
 {
-  for ( index i = 0; i < nodes_.size(); ++i )
+  for ( index i = 0; i < this->gid_collection_->size(); ++i )
   {
-    const index gid = nodes_[ i ]->get_gid();
+    const index gid = this->gid_collection_->operator[]( i );
     out << gid << ' ';
     get_position( i ).print( out );
     out << std::endl;
@@ -386,8 +384,13 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
       // Print source, target, weight, delay, rports
       out << source_gid << ' ' << target_gid << ' ' << weight << ' ' << delay;
 
-      Layer< D >* tgt_layer =
-        dynamic_cast< Layer< D >* >( target->get_parent() );
+      /*
+      // We decided to change how this function is called. It is to be called
+      // with source and target layers.
+      // TODO 481 Specify target layer
+
+      Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >(
+        target->get_parent() );
       if ( tgt_layer == 0 )
       {
 
@@ -402,10 +405,11 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
       {
 
         out << ' ';
-        tgt_layer->compute_displacement(
-                     source_pos, target->get_subnet_index() ).print( out );
+        tgt_layer->compute_displacement( source_pos,
+                     tgt_layer->gid_collection_->find( target->get_gid() ) )
+          .print( out );
       }
-
+      */
       out << '\n';
     }
   }

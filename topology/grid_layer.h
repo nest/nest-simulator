@@ -310,12 +310,7 @@ GridLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
   size_t num_threads = 1; // kernel().vp_manager.get_num_threads();
-  index model = 0;
-
-  if ( model_filter != SIZE_MAX )
-  {
-    model = model_filter;
-  }
+  index model = model_filter;
 
   GIDCollection::const_iterator gc_begin =
     this->gid_collection_->begin( num_threads, model );
@@ -337,16 +332,15 @@ GridLayer< D >::insert_global_positions_( Ins iter, const index& model_filter )
   index i = 0;
   index lid_end = this->gid_collection_->size();
 
-  GIDCollection::const_iterator gi = this->gid_collection_->begin();
+  // We have to adjust the begin and end pointers in case we select by model
+  // or we have to adjust the step because we use threads:
+  size_t num_threads = 1; // kernel().vp_manager.get_num_threads();
+  index model = model_filter;
+
+  GIDCollection::const_iterator gi = this->gid_collection_->begin( num_threads, model );
 
   for ( ; ( gi != this->gid_collection_->end() ) && ( i < lid_end ); ++gi, ++i )
   {
-    if ( model_filter != SIZE_MAX
-      && ( kernel().modelrange_manager.get_model_id( ( *gi ).gid )
-           != model_filter ) )
-    {
-      continue;
-    }
     *iter++ =
       std::pair< Position< D >, index >( lid_to_position( i ), ( *gi ).gid );
   }
@@ -440,7 +434,7 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
   node_ = MultiIndex< D >( lower_left, upper_right );
 
   if ( ( not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) )
-    or ( model_filter_ != SIZE_MAX
+    or ( model_filter_ != invalid_index
          && ( kernel().modelrange_manager.get_model_id(
                 layer_.gids_[ layer_size_ ] ) != model_filter_ ) ) )
   {
@@ -469,7 +463,7 @@ operator++()
     }
     else
     {
-      if ( model_filter_ != SIZE_MAX
+      if ( model_filter_ != invalid_index
           and ( kernel().modelrange_manager.get_model_id(
               layer_.gids_[ depth_ * layer_size_ ] ) != model_filter_ ) )
       {
@@ -497,7 +491,7 @@ operator++()
   } while (
     not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) );
 
-  if ( model_filter_ != SIZE_MAX
+  if ( model_filter_ != invalid_index
     && ( kernel().modelrange_manager.get_model_id( layer_.gids_[ layer_size_ ] )
          != model_filter_ ) )
   {

@@ -177,12 +177,7 @@ FreeLayer< D >::communicate_positions_( Ins iter, const index& model_filter )
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
   size_t num_threads = 1; //kernel().vp_manager.get_num_threads();
-  index model = 0;
-
-  if ( model_filter != SIZE_MAX )
-  {
-    model = model_filter;
-  }
+  index model = model_filter;
 
   // TODO481 need new iterator
   GIDCollection::const_iterator gc_begin = this->gid_collection_->begin( num_threads,
@@ -246,12 +241,8 @@ FreeLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
   size_t num_threads = 1; //kernel().vp_manager.get_num_threads();
-  index model = 0;
+  index model = model_filter;
 
-  if ( model_filter != SIZE_MAX )
-  {
-    model = model_filter;
-  }
   // TODO481 need the one that runs over the same mpi. Everything with three needs mpi_begin type. Everything with connect needs thread_begin type.
   GIDCollection::const_iterator gc_begin = this->gid_collection_->begin( num_threads,
     model );

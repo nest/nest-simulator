@@ -1295,7 +1295,7 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
     }
 
     MaskedLayer< 2 > ml =
-      MaskedLayer< 2 >( *layer, SIZE_MAX, mask, true, false );
+      MaskedLayer< 2 >( *layer, invalid_index, mask, true, false );
 
     for ( Ntree< 2, index >::masked_iterator it =
             ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
@@ -1314,7 +1314,7 @@ TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
     }
 
     MaskedLayer< 3 > ml =
-      MaskedLayer< 3 >( *layer, SIZE_MAX, mask, true, false );
+      MaskedLayer< 3 >( *layer, invalid_index, mask, true, false );
 
     for ( Ntree< 3, index >::masked_iterator it =
             ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );

@@ -320,7 +320,7 @@ public:
    * Get positions for local nodes in layer.
    */
   lockPTR< Ntree< D, index > > get_local_positions_ntree(
-    index model_filter = SIZE_MAX );
+    index model_filter = invalid_index );
 
   /**
    * Get positions for all nodes in layer, including nodes on other MPI
@@ -330,7 +330,7 @@ public:
    * pool layer.
    */
   lockPTR< Ntree< D, index > > get_global_positions_ntree(
-    index model_filter = SIZE_MAX );
+    index model_filter = invalid_index );
 
   /**
    * Get positions globally, overriding the dimensions of the layer and
@@ -344,7 +344,7 @@ public:
     Position< D > extent );
 
   std::vector< std::pair< Position< D >, index > >* get_global_positions_vector(
-    index model_filter = SIZE_MAX );
+    index model_filter = invalid_index );
 
   virtual std::vector< std::pair< Position< D >, index > >
   get_global_positions_vector( index model_filter,

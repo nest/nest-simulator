@@ -198,12 +198,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
   size_t num_threads = kernel().vp_manager.get_num_threads();
-  index model = 0;
-
-  if ( target_model_filter_ != SIZE_MAX )
-  {
-    model = target_model_filter_;
-  }
+  index model = target_model_filter_;
 
   GIDCollection::const_iterator target_begin = target_gc->begin( num_threads,
     model );
@@ -275,12 +270,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
   size_t num_threads = kernel().vp_manager.get_num_threads();
-  index model = 0;
-
-  if ( target_model_filter_ != SIZE_MAX )
-  {
-    model = target_model_filter_;
-  }
+  index model = target_model_filter_;
 
   GIDCollection::const_iterator target_begin = target_gc->begin( num_threads,
     model );
@@ -357,12 +347,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
   size_t num_threads = 1; //kernel().vp_manager.get_num_threads();
-  index model = 0;
-
-  if ( target_model_filter_ != SIZE_MAX )
-  {
-    model = target_model_filter_;
-  }
+  index model = target_model_filter_;
 
   GIDCollection::const_iterator target_begin = target_gc->begin( num_threads,
     model );

@@ -305,7 +305,7 @@ Layer< D >::get_global_nodes( const MaskDatum& mask,
   bool allow_oversized )
 {
   MaskedLayer< D > masked_layer(
-    *this, SIZE_MAX, mask, true, allow_oversized );
+    *this, invalid_index, mask, true, allow_oversized );
   std::vector< index > nodes;
   for ( typename Ntree< D, index >::masked_iterator i =
           masked_layer.begin( anchor );

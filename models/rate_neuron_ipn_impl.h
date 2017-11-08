@@ -54,16 +54,16 @@ namespace nest
  * Recordables map
  * ---------------------------------------------------------------- */
 
-template < class TGainfunction >
-RecordablesMap< rate_neuron_ipn< TGainfunction > >
-  rate_neuron_ipn< TGainfunction >::recordablesMap_;
+template < class TNonlinearities >
+RecordablesMap< rate_neuron_ipn< TNonlinearities > >
+  rate_neuron_ipn< TNonlinearities >::recordablesMap_;
 
 /* ----------------------------------------------------------------
  * Default constructors defining default parameters and state
  * ---------------------------------------------------------------- */
 
-template < class TGainfunction >
-nest::rate_neuron_ipn< TGainfunction >::Parameters_::Parameters_()
+template < class TNonlinearities >
+nest::rate_neuron_ipn< TNonlinearities >::Parameters_::Parameters_()
   : tau_( 10.0 )   // ms
   , lambda_( 1.0 ) // ms
   , std_( 1.0 )
@@ -73,8 +73,8 @@ nest::rate_neuron_ipn< TGainfunction >::Parameters_::Parameters_()
   recordablesMap_.create();
 }
 
-template < class TGainfunction >
-nest::rate_neuron_ipn< TGainfunction >::State_::State_()
+template < class TNonlinearities >
+nest::rate_neuron_ipn< TNonlinearities >::State_::State_()
   : rate_( 0.0 )
   , noise_( 0.0 )
 {
@@ -84,9 +84,9 @@ nest::rate_neuron_ipn< TGainfunction >::State_::State_()
  * Parameter and state extractions and manipulation functions
  * ---------------------------------------------------------------- */
 
-template < class TGainfunction >
+template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TGainfunction >::Parameters_::get(
+nest::rate_neuron_ipn< TNonlinearities >::Parameters_::get(
   DictionaryDatum& d ) const
 {
   def< double >( d, names::tau, tau_ );
@@ -96,9 +96,9 @@ nest::rate_neuron_ipn< TGainfunction >::Parameters_::get(
   def< bool >( d, names::linear_summation, linear_summation_ );
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TGainfunction >::Parameters_::set(
+nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set(
   const DictionaryDatum& d )
 {
   updateValue< double >( d, names::tau, tau_ );
@@ -116,31 +116,33 @@ nest::rate_neuron_ipn< TGainfunction >::Parameters_::set(
     throw BadProperty( "Standard deviation of noise must not be negative." );
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TGainfunction >::State_::get( DictionaryDatum& d ) const
+nest::rate_neuron_ipn< TNonlinearities >::State_::get(
+  DictionaryDatum& d ) const
 {
   def< double >( d, names::rate, rate_ );   // Rate
   def< double >( d, names::noise, noise_ ); // Noise
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TGainfunction >::State_::set( const DictionaryDatum& d )
+nest::rate_neuron_ipn< TNonlinearities >::State_::set(
+  const DictionaryDatum& d )
 {
   updateValue< double >( d, names::rate, rate_ ); // Rate
 }
 
-template < class TGainfunction >
-nest::rate_neuron_ipn< TGainfunction >::Buffers_::Buffers_(
-  rate_neuron_ipn< TGainfunction >& n )
+template < class TNonlinearities >
+nest::rate_neuron_ipn< TNonlinearities >::Buffers_::Buffers_(
+  rate_neuron_ipn< TNonlinearities >& n )
   : logger_( n )
 {
 }
 
-template < class TGainfunction >
-nest::rate_neuron_ipn< TGainfunction >::Buffers_::Buffers_( const Buffers_&,
-  rate_neuron_ipn< TGainfunction >& n )
+template < class TNonlinearities >
+nest::rate_neuron_ipn< TNonlinearities >::Buffers_::Buffers_( const Buffers_&,
+  rate_neuron_ipn< TNonlinearities >& n )
   : logger_( n )
 {
 }
@@ -149,8 +151,8 @@ nest::rate_neuron_ipn< TGainfunction >::Buffers_::Buffers_( const Buffers_&,
  * Default and copy constructor for node
  * ---------------------------------------------------------------- */
 
-template < class TGainfunction >
-nest::rate_neuron_ipn< TGainfunction >::rate_neuron_ipn()
+template < class TNonlinearities >
+nest::rate_neuron_ipn< TNonlinearities >::rate_neuron_ipn()
   : Archiving_Node()
   , P_()
   , S_()
@@ -160,11 +162,11 @@ nest::rate_neuron_ipn< TGainfunction >::rate_neuron_ipn()
   Node::set_node_uses_wfr( kernel().simulation_manager.use_wfr() );
 }
 
-template < class TGainfunction >
-nest::rate_neuron_ipn< TGainfunction >::rate_neuron_ipn(
+template < class TNonlinearities >
+nest::rate_neuron_ipn< TNonlinearities >::rate_neuron_ipn(
   const rate_neuron_ipn& n )
   : Archiving_Node( n )
-  , gain_( n.gain_ )
+  , nonlinearities_( n.nonlinearities_ )
   , P_( n.P_ )
   , S_( n.S_ )
   , B_( n.B_, *this )
@@ -176,17 +178,17 @@ nest::rate_neuron_ipn< TGainfunction >::rate_neuron_ipn(
  * Node initialization functions
  * ---------------------------------------------------------------- */
 
-template < class TGainfunction >
+template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TGainfunction >::init_state_( const Node& proto )
+nest::rate_neuron_ipn< TNonlinearities >::init_state_( const Node& proto )
 {
   const rate_neuron_ipn& pr = downcast< rate_neuron_ipn >( proto );
   S_ = pr.S_;
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TGainfunction >::init_buffers_()
+nest::rate_neuron_ipn< TNonlinearities >::init_buffers_()
 {
   B_.delayed_rates_ex_.clear(); // includes resize
   B_.delayed_rates_in_.clear(); // includes resize
@@ -209,9 +211,9 @@ nest::rate_neuron_ipn< TGainfunction >::init_buffers_()
   Archiving_Node::clear_history();
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TGainfunction >::calibrate()
+nest::rate_neuron_ipn< TNonlinearities >::calibrate()
 {
   B_.logger_
     .init(); // ensures initialization in case mm connected after Simulate
@@ -229,9 +231,9 @@ nest::rate_neuron_ipn< TGainfunction >::calibrate()
  * Update and event handling functions
  */
 
-template < class TGainfunction >
+template < class TNonlinearities >
 bool
-nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
+nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
   const long from,
   const long to,
   const bool called_from_wfr_update )
@@ -262,19 +264,23 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
     {
       if ( P_.linear_summation_ )
       {
-        S_.rate_ += V_.P2_ * gain_.func2( new_rates[ lag ] )
-          * gain_.func1( B_.delayed_rates_ex_.get_value_wfr_update( lag )
-              + B_.instant_rates_ex_[ lag ] );
-        S_.rate_ += V_.P2_ * gain_.func3( new_rates[ lag ] )
-          * gain_.func1( B_.delayed_rates_in_.get_value_wfr_update( lag )
-              + B_.instant_rates_in_[ lag ] );
+        S_.rate_ += V_.P2_
+          * nonlinearities_.mult_coupling_ex( new_rates[ lag ] )
+          * nonlinearities_.input( B_.delayed_rates_ex_.get_value_wfr_update(
+                                     lag ) + B_.instant_rates_ex_[ lag ] );
+        S_.rate_ += V_.P2_
+          * nonlinearities_.mult_coupling_in( new_rates[ lag ] )
+          * nonlinearities_.input( B_.delayed_rates_in_.get_value_wfr_update(
+                                     lag ) + B_.instant_rates_in_[ lag ] );
       }
       else
       {
-        S_.rate_ += V_.P2_ * gain_.func2( new_rates[ lag ] )
+        S_.rate_ += V_.P2_
+          * nonlinearities_.mult_coupling_ex( new_rates[ lag ] )
           * ( B_.delayed_rates_ex_.get_value_wfr_update( lag )
                       + B_.instant_rates_ex_[ lag ] );
-        S_.rate_ += V_.P2_ * gain_.func3( new_rates[ lag ] )
+        S_.rate_ += V_.P2_
+          * nonlinearities_.mult_coupling_in( new_rates[ lag ] )
           * ( B_.delayed_rates_in_.get_value_wfr_update( lag )
                       + B_.instant_rates_in_[ lag ] );
       }
@@ -289,19 +295,23 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
     {
       if ( P_.linear_summation_ )
       {
-        S_.rate_ += V_.P2_ * gain_.func2( new_rates[ lag ] )
-          * gain_.func1( B_.delayed_rates_ex_.get_value( lag )
+        S_.rate_ += V_.P2_
+          * nonlinearities_.mult_coupling_ex( new_rates[ lag ] )
+          * nonlinearities_.input( B_.delayed_rates_ex_.get_value( lag )
               + B_.instant_rates_ex_[ lag ] );
-        S_.rate_ += V_.P2_ * gain_.func3( new_rates[ lag ] )
-          * gain_.func1( B_.delayed_rates_in_.get_value( lag )
+        S_.rate_ += V_.P2_
+          * nonlinearities_.mult_coupling_in( new_rates[ lag ] )
+          * nonlinearities_.input( B_.delayed_rates_in_.get_value( lag )
               + B_.instant_rates_in_[ lag ] );
       }
       else
       {
-        S_.rate_ += V_.P2_ * gain_.func2( new_rates[ lag ] )
+        S_.rate_ += V_.P2_
+          * nonlinearities_.mult_coupling_ex( new_rates[ lag ] )
           * ( B_.delayed_rates_ex_.get_value( lag )
                       + B_.instant_rates_ex_[ lag ] );
-        S_.rate_ += V_.P2_ * gain_.func3( new_rates[ lag ] )
+        S_.rate_ += V_.P2_
+          * nonlinearities_.mult_coupling_in( new_rates[ lag ] )
           * ( B_.delayed_rates_in_.get_value( lag )
                       + B_.instant_rates_in_[ lag ] );
       }
@@ -347,9 +357,9 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
 }
 
 
-template < class TGainfunction >
+template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TGainfunction >::handle(
+nest::rate_neuron_ipn< TNonlinearities >::handle(
   InstantaneousRateConnectionEvent& e )
 {
   size_t i = 0;
@@ -373,21 +383,22 @@ nest::rate_neuron_ipn< TGainfunction >::handle(
       if ( e.get_weight() >= 0.0 )
       {
         B_.instant_rates_ex_[ i ] +=
-          e.get_weight() * gain_.func1( e.get_coeffvalue( it ) );
+          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) );
       }
       else
       {
         B_.instant_rates_in_[ i ] +=
-          e.get_weight() * gain_.func1( e.get_coeffvalue( it ) );
+          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) );
       }
     }
     i++;
   }
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TGainfunction >::handle( DelayedRateConnectionEvent& e )
+nest::rate_neuron_ipn< TNonlinearities >::handle(
+  DelayedRateConnectionEvent& e )
 {
   size_t i = 0;
   std::vector< unsigned int >::iterator it = e.begin();
@@ -415,22 +426,22 @@ nest::rate_neuron_ipn< TGainfunction >::handle( DelayedRateConnectionEvent& e )
       {
         B_.delayed_rates_ex_.add_value(
           e.get_delay() - kernel().connection_manager.get_min_delay() + i,
-          e.get_weight() * gain_.func1( e.get_coeffvalue( it ) ) );
+          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) ) );
       }
       else
       {
         B_.delayed_rates_in_.add_value(
           e.get_delay() - kernel().connection_manager.get_min_delay() + i,
-          e.get_weight() * gain_.func1( e.get_coeffvalue( it ) ) );
+          e.get_weight() * nonlinearities_.input( e.get_coeffvalue( it ) ) );
       }
     }
     ++i;
   }
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 void
-nest::rate_neuron_ipn< TGainfunction >::handle( DataLoggingRequest& e )
+nest::rate_neuron_ipn< TNonlinearities >::handle( DataLoggingRequest& e )
 {
   B_.logger_.handle( e );
 }

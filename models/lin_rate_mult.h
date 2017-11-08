@@ -104,25 +104,25 @@ public:
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
-  double func1( double h ); // non-linearity
-  double func2( double h ); // non-linearity
-  double func3( double h ); // non-linearity
+  double input( double h );            // non-linearity
+  double mult_coupling_ex( double h ); // non-linearity
+  double mult_coupling_in( double h ); // non-linearity
 };
 
 inline double
-gainfunction_lin_rate_mult::func1( double h )
+gainfunction_lin_rate_mult::input( double h )
 {
   return g_ * h;
 }
 
 inline double
-gainfunction_lin_rate_mult::func2( double rate )
+gainfunction_lin_rate_mult::mult_coupling_ex( double rate )
 {
   return g_ex_ * ( theta_ - rate );
 }
 
 inline double
-gainfunction_lin_rate_mult::func3( double rate )
+gainfunction_lin_rate_mult::mult_coupling_in( double rate )
 {
   return g_in_ * ( theta_ - rate );
 }

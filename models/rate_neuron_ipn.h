@@ -56,7 +56,7 @@ namespace nest
  *
  * @see lin_rate, tanh_rate, threshold_lin_rate
  */
-template < class TGainfunction >
+template < class TNonlinearities >
 class rate_neuron_ipn : public Archiving_Node
 {
 
@@ -99,7 +99,7 @@ private:
   void init_buffers_();
   void calibrate();
 
-  TGainfunction gain_;
+  TNonlinearities nonlinearities_;
 
   /** This is the actual update function. The additional boolean parameter
    * determines if the function is called by update (false) or wfr_update (true)
@@ -110,8 +110,8 @@ private:
   bool wfr_update( Time const&, const long, const long );
 
   // The next two classes need to be friends to access the State_ class/member
-  friend class RecordablesMap< rate_neuron_ipn< TGainfunction > >;
-  friend class UniversalDataLogger< rate_neuron_ipn< TGainfunction > >;
+  friend class RecordablesMap< rate_neuron_ipn< TNonlinearities > >;
+  friend class UniversalDataLogger< rate_neuron_ipn< TNonlinearities > >;
 
   // ----------------------------------------------------------------
 
@@ -240,21 +240,21 @@ private:
   Buffers_ B_;
 
   //! Mapping of recordables names to access functions
-  static RecordablesMap< rate_neuron_ipn< TGainfunction > > recordablesMap_;
+  static RecordablesMap< rate_neuron_ipn< TNonlinearities > > recordablesMap_;
 };
 
-template < class TGainfunction >
+template < class TNonlinearities >
 inline void
-rate_neuron_ipn< TGainfunction >::update( Time const& origin,
+rate_neuron_ipn< TNonlinearities >::update( Time const& origin,
   const long from,
   const long to )
 {
   update_( origin, from, to, false );
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 inline bool
-rate_neuron_ipn< TGainfunction >::wfr_update( Time const& origin,
+rate_neuron_ipn< TNonlinearities >::wfr_update( Time const& origin,
   const long from,
   const long to )
 {
@@ -265,9 +265,9 @@ rate_neuron_ipn< TGainfunction >::wfr_update( Time const& origin,
   return not wfr_tol_exceeded;
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 inline port
-rate_neuron_ipn< TGainfunction >::handles_test_event(
+rate_neuron_ipn< TNonlinearities >::handles_test_event(
   InstantaneousRateConnectionEvent&,
   rport receptor_type )
 {
@@ -276,9 +276,9 @@ rate_neuron_ipn< TGainfunction >::handles_test_event(
   return 0;
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 inline port
-rate_neuron_ipn< TGainfunction >::handles_test_event(
+rate_neuron_ipn< TNonlinearities >::handles_test_event(
   DelayedRateConnectionEvent&,
   rport receptor_type )
 {
@@ -287,9 +287,9 @@ rate_neuron_ipn< TGainfunction >::handles_test_event(
   return 0;
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 inline port
-rate_neuron_ipn< TGainfunction >::handles_test_event( DataLoggingRequest& dlr,
+rate_neuron_ipn< TNonlinearities >::handles_test_event( DataLoggingRequest& dlr,
   rport receptor_type )
 {
   if ( receptor_type != 0 )
@@ -297,21 +297,21 @@ rate_neuron_ipn< TGainfunction >::handles_test_event( DataLoggingRequest& dlr,
   return B_.logger_.connect_logging_device( dlr, recordablesMap_ );
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 inline void
-rate_neuron_ipn< TGainfunction >::get_status( DictionaryDatum& d ) const
+rate_neuron_ipn< TNonlinearities >::get_status( DictionaryDatum& d ) const
 {
   P_.get( d );
   S_.get( d );
   Archiving_Node::get_status( d );
   ( *d )[ names::recordables ] = recordablesMap_.get_list();
 
-  gain_.get( d );
+  nonlinearities_.get( d );
 }
 
-template < class TGainfunction >
+template < class TNonlinearities >
 inline void
-rate_neuron_ipn< TGainfunction >::set_status( const DictionaryDatum& d )
+rate_neuron_ipn< TNonlinearities >::set_status( const DictionaryDatum& d )
 {
   Parameters_ ptmp = P_; // temporary copy in case of errors
   ptmp.set( d );         // throws if BadProperty
@@ -328,7 +328,7 @@ rate_neuron_ipn< TGainfunction >::set_status( const DictionaryDatum& d )
   P_ = ptmp;
   S_ = stmp;
 
-  gain_.set( d );
+  nonlinearities_.set( d );
 }
 
 } // namespace

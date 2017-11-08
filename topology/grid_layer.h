@@ -342,7 +342,7 @@ GridLayer< D >::insert_global_positions_( Ins iter, const index& model_filter )
   for ( ; ( gi != this->gid_collection_->end() ) && ( i < lid_end ); ++gi, ++i )
   {
     if ( model_filter != SIZE_MAX
-      && ( ( int ) kernel().modelrange_manager.get_model_id( ( *gi ).gid )
+      && ( kernel().modelrange_manager.get_model_id( ( *gi ).gid )
            != model_filter ) )
     {
       continue;

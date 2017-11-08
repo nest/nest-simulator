@@ -192,7 +192,7 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
     next_coll.unlock();
   }
 
-  gid_collection_ = gid_coll;
+  this->gid_collection_ = gid_coll;
 
   return gid_coll;
 }

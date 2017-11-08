@@ -39,7 +39,9 @@ namespace nest
 {
 template < int D >
 void
-ConnectionCreator::connect( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
+ConnectionCreator::connect( Layer< D >& source,
+  Layer< D >& target,
+  GIDCollectionPTR target_gc )
 {
   switch ( type_ )
   {
@@ -187,7 +189,8 @@ ConnectionCreator::PoolWrapper_< D >::end() const
 template < int D >
 void
 ConnectionCreator::target_driven_connect_( Layer< D >& source,
-  Layer< D >& target, GIDCollectionPTR target_gc )
+  Layer< D >& target,
+  GIDCollectionPTR target_gc )
 {
   // Target driven connect
   // For each local target node:
@@ -198,10 +201,11 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
   size_t num_threads = kernel().vp_manager.get_num_threads();
+  size_t current_thread = kernel().vp_manager.get_thread_id();
   index model = target_model_filter_;
 
-  GIDCollection::const_iterator target_begin = target_gc->begin( num_threads,
-    model );
+  GIDCollection::const_iterator target_begin =
+    target_gc->begin( current_thread, num_threads, model );
   GIDCollection::const_iterator target_end = target_gc->end();
 
   // retrieve global positions, either for masked or unmasked pool
@@ -222,18 +226,16 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
 
-    target_begin += thread_id;
     for ( GIDCollection::const_iterator tgt_it = target_begin;
-      tgt_it != target_end;
-      ++tgt_it  )
+          tgt_it != target_end;
+          ++tgt_it )
     {
       Node* const tgt =
         kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid, thread_id );
 
       assert( not tgt->is_proxy() );
 
-      const Position< D > target_pos =
-        target.get_position( ( *tgt_it ).lid );
+      const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
       if ( mask_.valid() )
       {
@@ -250,14 +252,15 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
           pool.begin(), pool.end(), tgt, target_pos, thread_id, source );
       }
     } // for target_begin
-  } // omp parallel
+  }   // omp parallel
 }
 
 
 template < int D >
 void
 ConnectionCreator::source_driven_connect_( Layer< D >& source,
-  Layer< D >& target, GIDCollectionPTR target_gc )
+  Layer< D >& target,
+  GIDCollectionPTR target_gc )
 {
   // Source driven connect is actually implemented as target driven,
   // but with displacements computed in the target layer. The Mask has been
@@ -270,10 +273,11 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
   size_t num_threads = kernel().vp_manager.get_num_threads();
+  size_t current_thread = kernel().vp_manager.get_thread_id();
   index model = target_model_filter_;
 
-  GIDCollection::const_iterator target_begin = target_gc->begin( num_threads,
-    model );
+  GIDCollection::const_iterator target_begin =
+    target_gc->begin( current_thread, num_threads, model );
   GIDCollection::const_iterator target_end = target_gc->end();
 
   PoolWrapper_< D > pool;
@@ -295,18 +299,16 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
 
-    target_begin += thread_id;
     for ( GIDCollection::const_iterator tgt_it = target_begin;
-      tgt_it != target_end;
-      ++tgt_it  )
+          tgt_it != target_end;
+          ++tgt_it )
     {
       Node* const tgt =
         kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid, thread_id );
 
       assert( not tgt->is_proxy() );
 
-      const Position< D > target_pos =
-        target.get_position( ( *tgt_it ).lid );
+      const Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
       if ( mask_.valid() )
       {
@@ -330,12 +332,14 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
       }
 
     } // end for
-  } // end pragma
+  }   // end pragma
 }
 
 template < int D >
 void
-ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
+ConnectionCreator::convergent_connect_( Layer< D >& source,
+  Layer< D >& target,
+  GIDCollectionPTR target_gc )
 {
   // Convergent connections (fixed fan in)
   //
@@ -346,11 +350,12 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
 
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
-  size_t num_threads = 1; //kernel().vp_manager.get_num_threads();
+  size_t num_threads = kernel().vp_manager.get_num_threads();
+  size_t current_thread = kernel().vp_manager.get_thread_id();
   index model = target_model_filter_;
 
-  GIDCollection::const_iterator target_begin = target_gc->begin( num_threads,
-    model );
+  GIDCollection::const_iterator target_begin =
+    target_gc->begin( current_thread, num_threads, model );
   GIDCollection::const_iterator target_end = target_gc->end();
 
   // protect against connecting to devices without proxies
@@ -358,7 +363,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
   // the network untouched if any target does not have proxies
   for ( GIDCollection::const_iterator tgt_it = target_begin;
         tgt_it != target_end;
-        ++tgt_it  )
+        ++tgt_it )
   {
     Node* const tgt =
       kernel().node_manager.get_node_or_proxy( ( *tgt_it ).gid );
@@ -369,7 +374,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
   if ( mask_.valid() )
   {
 
-    //for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
+    // for ( std::vector< Node* >::const_iterator tgt_it = target_begin;
     //      tgt_it != target_end;
     //      ++tgt_it )
     for ( GIDCollection::const_iterator tgt_it = target_begin;
@@ -377,13 +382,11 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
           ++tgt_it )
     {
       index target_id = ( *tgt_it ).gid;
-      Node* const tgt =
-        kernel().node_manager.get_node_or_proxy( target_id );
+      Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
 
       thread target_thread = tgt->get_thread();
       librandom::RngPtr rng = get_vp_rng( target_thread );
-      Position< D > target_pos =
-        target.get_position( ( *tgt_it ).lid );
+      Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
       // Get (position,GID) pairs for sources inside mask
       std::vector< std::pair< Position< D >, index > > positions =
@@ -517,12 +520,10 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
           ++tgt_it )
     {
       index target_id = ( *tgt_it ).gid;
-      Node* const tgt =
-        kernel().node_manager.get_node_or_proxy( target_id );
+      Node* const tgt = kernel().node_manager.get_node_or_proxy( target_id );
       thread target_thread = tgt->get_thread();
       librandom::RngPtr rng = get_vp_rng( target_thread );
-      Position< D > target_pos =
-        target.get_position( ( *tgt_it ).lid );
+      Position< D > target_pos = target.get_position( ( *tgt_it ).lid );
 
       if ( ( positions->size() == 0 )
         or ( ( not allow_autapses_ ) and ( positions->size() == 1 )
@@ -631,7 +632,9 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
 
 template < int D >
 void
-ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc )
+ConnectionCreator::divergent_connect_( Layer< D >& source,
+  Layer< D >& target,
+  GIDCollectionPTR target_gc )
 {
   // protect against connecting to devices without proxies
   // we need to do this before creating the first connection to leave
@@ -639,9 +642,11 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
 
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
-  size_t num_threads = 1; //kernel().vp_manager.get_num_threads();
+  size_t num_threads = kernel().vp_manager.get_num_threads();
+  size_t current_thread = kernel().vp_manager.get_thread_id();
 
-  GIDCollection::const_iterator target_begin = target_gc->begin( num_threads );
+  GIDCollection::const_iterator target_begin =
+    target_gc->begin( current_thread, num_threads );
   GIDCollection::const_iterator target_end = target_gc->end();
 
   for ( GIDCollection::const_iterator tgt_it = target_begin;

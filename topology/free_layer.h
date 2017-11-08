@@ -120,13 +120,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
     }
 
     positions_.clear();
-    positions_.reserve( this->local_size() );
-
-    // TODO481
-    if ( this->local_size() == 0 )
-    {
-      return; // nothing more to do
-    }
+    positions_.reserve( this->gid_collection_->size() );
 
     for ( Token* it = pos.begin(); it != pos.end(); ++it )
     {

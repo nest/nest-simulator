@@ -42,8 +42,6 @@ set( topo_sources
     vose.cpp
     topology_parameter.h
     topology_parameter.cpp
-    selector.h
-    selector.cpp
     topology.h topology.cpp
     )
 

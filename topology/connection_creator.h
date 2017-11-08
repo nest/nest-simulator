@@ -32,7 +32,6 @@
 // Includes from topology:
 #include "mask.h"
 #include "position.h"
-#include "selector.h"
 #include "topology_names.h"
 #include "topologymodule.h"
 #include "topology_parameter.h"
@@ -180,8 +179,8 @@ private:
   bool allow_autapses_;
   bool allow_multapses_;
   bool allow_oversized_;
-  Selector source_filter_;
-  Selector target_filter_;
+  index source_model_filter_;
+  index target_model_filter_;
   index number_of_connections_;
   lockPTR< AbstractMask > mask_;
   lockPTR< TopologyParameter > kernel_;

@@ -39,7 +39,6 @@
 #include "connection_creator.h"
 #include "ntree.h"
 #include "position.h"
-#include "selector.h"
 #include "topology_names.h"
 
 namespace nest
@@ -307,7 +306,7 @@ public:
    * Get positions for local nodes in layer.
    */
   lockPTR< Ntree< D, index > > get_local_positions_ntree(
-    Selector filter = Selector() );
+    index model_filter = SIZE_MAX );
 
   /**
    * Get positions for all nodes in layer, including nodes on other MPI
@@ -317,7 +316,7 @@ public:
    * pool layer.
    */
   lockPTR< Ntree< D, index > > get_global_positions_ntree(
-    Selector filter = Selector() );
+    index model_filter = SIZE_MAX );
 
   /**
    * Get positions globally, overriding the dimensions of the layer and
@@ -325,16 +324,16 @@ public:
    * coordinates are only used for the dimensions where the supplied
    * periodic flag is set.
    */
-  lockPTR< Ntree< D, index > > get_global_positions_ntree( Selector filter,
+  lockPTR< Ntree< D, index > > get_global_positions_ntree( index model_filter,
     std::bitset< D > periodic,
     Position< D > lower_left,
     Position< D > extent );
 
   std::vector< std::pair< Position< D >, index > >* get_global_positions_vector(
-    Selector filter = Selector() );
+    index model_filter = SIZE_MAX );
 
   virtual std::vector< std::pair< Position< D >, index > >
-  get_global_positions_vector( Selector filter,
+  get_global_positions_vector( index model_filter,
     const MaskDatum& mask,
     const Position< D >& anchor,
     bool allow_oversized );
@@ -388,26 +387,26 @@ protected:
   void clear_vector_cache_() const;
 
   lockPTR< Ntree< D, index > > do_get_global_positions_ntree_(
-    const Selector& filter );
+    const index& model_filter );
 
   /**
    * Insert global position info into ntree.
    */
   virtual void insert_global_positions_ntree_( Ntree< D, index >& tree,
-    const Selector& filter ) = 0;
+    const index& model_filter ) = 0;
 
   /**
    * Insert global position info into vector.
    */
   virtual void insert_global_positions_vector_(
     std::vector< std::pair< Position< D >, index > >&,
-    const Selector& filter ) = 0;
+    const index& model_filter ) = 0;
 
   /**
    * Insert local position info into ntree.
    */
   virtual void insert_local_positions_ntree_( Ntree< D, index >& tree,
-    const Selector& filter ) = 0;
+    const index& model_filter ) = 0;
 
   //! lower left corner (minimum coordinates) of layer
   Position< D > lower_left_;
@@ -419,7 +418,7 @@ protected:
    */
   static lockPTR< Ntree< D, index > > cached_ntree_;
   static std::vector< std::pair< Position< D >, index > >* cached_vector_;
-  static Selector cached_selector_;
+  static index cached_model_selector_;
 
   friend class MaskedLayer< D >;
 };
@@ -443,7 +442,7 @@ public:
    *                        periodic b.c.
    */
   MaskedLayer( Layer< D >& layer,
-    Selector filter,
+    index model_filter,
     const MaskDatum& mask,
     bool include_global,
     bool allow_oversized );
@@ -464,7 +463,7 @@ public:
    * (target layer)
    */
   MaskedLayer( Layer< D >& layer,
-    Selector filter,
+    index model_filter,
     const MaskDatum& mask,
     bool include_global,
     bool allow_oversized,
@@ -505,7 +504,7 @@ protected:
 
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
-  Selector filter,
+  index model_filter,
   const MaskDatum& maskd,
   bool include_global,
   bool allow_oversized )
@@ -525,7 +524,7 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
 
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
-  Selector filter,
+  index model_filter,
   const MaskDatum& maskd,
   bool include_global,
   bool allow_oversized,

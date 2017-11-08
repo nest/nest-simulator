@@ -60,6 +60,13 @@ gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
   , primitive_collection_( &collection )
   , composite_collection_( 0 )
 {
+  // If the primitive doesn't have the right model, we set the iterator equal to
+  // the end iterator.
+  if ( model_type_ != invalid_index
+    and model_type_ != primitive_collection_->model_id_ )
+  {
+    element_idx_ = primitive_collection_->size();
+  }
   // test requiring get() first so that unlock() can be run afterwards
   assert( collection_ptr.get() == &collection or not collection_ptr.valid() );
   collection_ptr.unlock();
@@ -84,6 +91,38 @@ gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
   , primitive_collection_( 0 )
   , composite_collection_( &collection )
 {
+  if ( model_type_ != invalid_index )
+  {
+    // Check if any of the primitives have the specified model type.
+    bool has_model_type = false;
+    for ( size_t part_index = part_idx_;
+          part_index < composite_collection_->stop_part_;
+          ++part_index )
+    {
+      if ( model_type_
+        == composite_collection_->parts_[ part_index ].model_id_ )
+      {
+        has_model_type = true;
+        break;
+      }
+    }
+    // If none of the primitives have the right model, we set the iterator equal
+    // to the end iterator.
+    if ( not has_model_type )
+    {
+      if ( composite_collection_->stop_part_ != 0
+        or composite_collection_->stop_offset_ != 0 )
+      {
+        part_idx_ = composite_collection_->stop_part_;
+        element_idx_ = composite_collection_->stop_offset_;
+      }
+      else
+      {
+        part_idx_ = composite_collection_->parts_.size();
+      }
+    }
+  }
+
   // test requiring get() first so that unlock() can be run afterwards
   assert( collection_ptr.get() == &collection or not collection_ptr.valid() );
   collection_ptr.unlock();

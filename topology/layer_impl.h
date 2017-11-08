@@ -351,7 +351,9 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
   {
 
     const index source_gid = src_iter->second;
-    const Position< D > source_pos = src_iter->first;
+    // TODO this is commented out, as it is to be used in the commented out
+    // section below.
+    //const Position< D > source_pos = src_iter->first;
 
     source_array[ 0 ] = source_gid;
     def( gcdict,

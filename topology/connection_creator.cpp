@@ -87,11 +87,11 @@ ConnectionCreator::ConnectionCreator( DictionaryDatum dict )
     }
     else if ( dit->first == names::targets )
     {
-      target_model_filter_ = getValue< index >( dit->second );
+      target_model_filter_ = getValue< long >( dit->second );
     }
     else if ( dit->first == names::sources )
     {
-      source_model_filter_ = getValue< index >( dit->second );
+      source_model_filter_ = getValue< long >( dit->second );
     }
     else if ( dit->first == names::weights )
     {

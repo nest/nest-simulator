@@ -336,6 +336,24 @@ public:
   std::string message() const;
 };
 
+/**
+ * Exception to be thrown if the wrong node is given
+ * @ingroup KernelExceptions
+ */
+class LayerNodeExpected : public KernelException
+{
+public:
+  LayerNodeExpected()
+    : KernelException( "LayerNodeExpected" )
+  {
+  }
+  ~LayerNodeExpected() throw()
+  {
+  }
+
+  std::string message() const;
+};
+
 template < class T >
 inline bool
 TopologyModule::register_mask()

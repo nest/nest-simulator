@@ -1327,5 +1327,11 @@ LayerExpected::message() const
   return std::string();
 }
 
+std::string
+LayerNodeExpected::message() const
+{
+  return std::string();
+}
+
 
 } // namespace nest

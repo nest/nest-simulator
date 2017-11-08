@@ -376,15 +376,6 @@ TopologyModule::init( SLIInterpreter* i )
   i->createcommand(
     "SelectNodesByMask_L_a_M", &selectnodesbymask_L_a_Mfunction );
 
-  kernel().model_manager.register_node_model< FreeLayer< 2 > >(
-    "topology_layer_free" );
-  kernel().model_manager.register_node_model< FreeLayer< 3 > >(
-    "topology_layer_free_3d" );
-  kernel().model_manager.register_node_model< GridLayer< 2 > >(
-    "topology_layer_grid" );
-  kernel().model_manager.register_node_model< GridLayer< 3 > >(
-    "topology_layer_grid_3d" );
-
   // Register mask types
   register_mask< BallMask< 2 > >();
   register_mask< BallMask< 3 > >();
@@ -482,7 +473,8 @@ TopologyModule::GetPosition_g_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(1) );
+  const GIDCollectionDatum layer =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
   const index gid = getValue< long >( i->OStack.pick( 0 ) );
 
   Token result = get_position( layer, gid );
@@ -542,7 +534,8 @@ TopologyModule::Displacement_g_a_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(2) );
+  const GIDCollectionDatum layer =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
   const std::vector< double > point =
     getValue< std::vector< double > >( i->OStack.pick( 1 ) );
 
@@ -604,7 +597,8 @@ TopologyModule::Distance_g_a_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  const GIDCollectionDatum layer =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
   const std::vector< double > point =
     getValue< std::vector< double > >( i->OStack.pick( 1 ) );
 
@@ -975,8 +969,10 @@ TopologyModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  const GIDCollectionDatum source = getValue< GIDCollectionDatum >( i->OStack.pick(2) );
-  const GIDCollectionDatum target = getValue< GIDCollectionDatum >( i->OStack.pick(1) );
+  const GIDCollectionDatum source =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  const GIDCollectionDatum target =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
   const DictionaryDatum connection_dict =
     getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
@@ -1039,7 +1035,8 @@ TopologyModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(0) );
+  const GIDCollectionDatum layer =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
   DictionaryDatum result = get_layer_status( layer );
 
@@ -1126,7 +1123,8 @@ TopologyModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 0) );
+  const GIDCollectionDatum layer =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
   OstreamDatum out = getValue< OstreamDatum >( i->OStack.pick( 1 ) );
 
   dump_layer_nodes( layer, out );
@@ -1184,7 +1182,8 @@ TopologyModule::DumpLayerConnections_os_g_lFunction::execute(
   i->assert_stack_load( 3 );
 
   OstreamDatum out_file = getValue< OstreamDatum >( i->OStack.pick( 2 ) );
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(1) );
+  const GIDCollectionDatum layer =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
   const Token syn_model = i->OStack.pick( 0 );
 
   dump_layer_connections( syn_model, layer, out_file );
@@ -1231,7 +1230,8 @@ TopologyModule::GetElement_g_iaFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(1) );
+  const GIDCollectionDatum layer =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
   TokenArray array = getValue< TokenArray >( i->OStack.pick( 0 ) );
 
   std::vector< index > node_gids = get_element( layer, array );

@@ -62,6 +62,7 @@ private:
   const AbstractLayerPTR layer_;  //!< layer object
 };
 
+AbstractLayerPTR get_layer( GIDCollectionPTR layer_gc );
 GIDCollectionPTR create_layer( const DictionaryDatum& layer_dict );
 std::vector< double > get_position( GIDCollectionPTR layer_gc,
 		const index node_gid );

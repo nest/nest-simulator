@@ -271,7 +271,7 @@ get_element( GIDCollectionPTR layer_gc,
     }
 
     node_gids =
-      layer->get_nodes( Position< 2, int >( static_cast< index >( array[ 0 ] ),
+      layer->get_node( Position< 2, int >( static_cast< index >( array[ 0 ] ),
         static_cast< index >( array[ 1 ] ) ) );
   }
   break;

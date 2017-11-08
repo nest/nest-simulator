@@ -1288,7 +1288,7 @@ TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
   if ( dim == 2 )
   {
     Layer< 2 >* layer = dynamic_cast< Layer< 2 >* >(
-      kernel().node_manager.get_node( layer_gid ) );
+      kernel().node_manager.get_node_or_proxy( layer_gid ) );
 
     MaskedLayer< 2 > ml =
       MaskedLayer< 2 >( *layer, SIZE_MAX, mask, true, false );
@@ -1304,7 +1304,7 @@ TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
   else
   {
     Layer< 3 >* layer = dynamic_cast< Layer< 3 >* >(
-      kernel().node_manager.get_node( layer_gid ) );
+      kernel().node_manager.get_node_or_proxy( layer_gid ) );
 
     MaskedLayer< 3 > ml =
       MaskedLayer< 3 >( *layer, SIZE_MAX, mask, true, false );

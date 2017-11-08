@@ -97,20 +97,18 @@ Layer< D >::get_status( DictionaryDatum& d ) const
 {
   DictionaryDatum topology_dict( new Dictionary );
 
-  ( *topology_dict )[ names::depth ] = depth_;
-  ( *topology_dict )[ names::extent ] = std::vector< double >( extent_ );
-  ( *topology_dict )[ names::center ] =
+  ( *d )[ names::extent ] = std::vector< double >( extent_ );
+  ( *d )[ names::center ] =
     std::vector< double >( lower_left_ + extent_ / 2 );
 
   if ( periodic_.none() )
   {
-    ( *topology_dict )[ names::edge_wrap ] = BoolDatum( false );
+    ( *d )[ names::edge_wrap ] = BoolDatum( false );
   }
   else if ( periodic_.count() == D )
   {
-    ( *topology_dict )[ names::edge_wrap ] = true;
+    ( *d )[ names::edge_wrap ] = true;
   }
-  ( *d )[ names::topology ] = topology_dict;
 }
 
 template < int D >
@@ -307,7 +305,7 @@ Layer< D >::get_global_nodes( const MaskDatum& mask,
   bool allow_oversized )
 {
   MaskedLayer< D > masked_layer(
-    *this, SIZE_MAX, mask, true, allow_oversized );
+    *this, invalid_index, mask, true, allow_oversized );
   std::vector< index > nodes;
   for ( typename Ntree< D, index >::masked_iterator i =
           masked_layer.begin( anchor );

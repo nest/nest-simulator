@@ -57,7 +57,7 @@ public:
    * Constructor.
    */
   AbstractLayer()
-    : depth_( 1 )
+    : gid_collection_( GIDCollectionPTR( 0 ) )
   {
   }
 
@@ -168,11 +168,6 @@ protected:
    * GID for the single layer for which we cache global position information
    */
   static GIDCollectionMetadataPTR cached_ntree_gc_;
-
-  /**
-   * number of neurons at each position
-   */
-  int depth_;
 
   /**
    * GID for the single layer for which we cache global position information
@@ -325,7 +320,7 @@ public:
    * Get positions for local nodes in layer.
    */
   lockPTR< Ntree< D, index > > get_local_positions_ntree(
-    index model_filter = SIZE_MAX );
+    index model_filter = invalid_index );
 
   /**
    * Get positions for all nodes in layer, including nodes on other MPI
@@ -335,7 +330,7 @@ public:
    * pool layer.
    */
   lockPTR< Ntree< D, index > > get_global_positions_ntree(
-    index model_filter = SIZE_MAX );
+    index model_filter = invalid_index );
 
   /**
    * Get positions globally, overriding the dimensions of the layer and
@@ -349,7 +344,7 @@ public:
     Position< D > extent );
 
   std::vector< std::pair< Position< D >, index > >* get_global_positions_vector(
-    index model_filter = SIZE_MAX );
+    index model_filter = invalid_index );
 
   virtual std::vector< std::pair< Position< D >, index > >
   get_global_positions_vector( index model_filter,

@@ -311,12 +311,7 @@ GridLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
   // or we have to adjust the step because we use threads:
   size_t num_processes = kernel().mpi_manager.get_num_processes();
   size_t current_rank = kernel().mpi_manager.get_rank();
-  index model = 0;
-
-  if ( model_filter != SIZE_MAX )
-  {
-    model = model_filter;
-  }
+  index model = model_filter;
 
   GIDCollection::const_iterator gc_begin =
     this->gid_collection_->begin( current_rank, num_processes, model );
@@ -338,15 +333,16 @@ GridLayer< D >::insert_global_positions_( Ins iter, const index& model_filter )
   index i = 0;
   index lid_end = this->gid_collection_->size();
 
-  GIDCollection::const_iterator gi = this->gid_collection_->begin();
+  // We have to adjust the begin and end pointers in case we select by model
+  // or we have to adjust the step because we use threads:
+  size_t num_processes = kernel().mpi_manager.get_num_processes();
+  size_t current_rank = kernel().mpi_manager.get_rank();
+  index model = model_filter;
+
+  GIDCollection::const_iterator gi = this->gid_collection_->begin( current_rank, num_processes, model );
 
   for ( ; ( gi != this->gid_collection_->end() ) && ( i < lid_end ); ++gi, ++i )
   {
-    if ( model_filter != SIZE_MAX && ( kernel().modelrange_manager.get_model_id(
-                                         ( *gi ).gid ) != model_filter ) )
-    {
-      continue;
-    }
     *iter++ =
       std::pair< Position< D >, index >( lid_to_position( i ), ( *gi ).gid );
   }

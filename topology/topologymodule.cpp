@@ -374,7 +374,7 @@ TopologyModule::init( SLIInterpreter* i )
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
 
   i->createcommand(
-    "SelectNodesByMask_L_a_M", &selectnodesbymask_L_a_Mfunction );
+    "SelectNodesByMask_g_a_M", &selectnodesbymask_g_a_Mfunction );
 
   // Register mask types
   register_mask< BallMask< 2 > >();
@@ -1266,12 +1266,13 @@ TopologyModule::Cvdict_MFunction::execute( SLIInterpreter* i ) const
 
 
 void
-TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
+TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
   SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  const index& layer_gid = getValue< long >( i->OStack.pick( 2 ) );
+  const GIDCollectionDatum layer_gc  =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
   std::vector< double > anchor =
     getValue< std::vector< double > >( i->OStack.pick( 1 ) );
   MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 0 ) );
@@ -1287,11 +1288,14 @@ TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
 
   if ( dim == 2 )
   {
-    Layer< 2 >* layer = dynamic_cast< Layer< 2 >* >(
-      kernel().node_manager.get_node_or_proxy( layer_gid ) );
+    Layer< 2 >* layer = dynamic_cast< Layer< 2 >* >( get_layer( layer_gc ).get() );
+    if ( not layer )
+    {
+      throw TypeMismatch( "2D layer", "other type" );
+    }
 
     MaskedLayer< 2 > ml =
-      MaskedLayer< 2 >( *layer, SIZE_MAX, mask, true, false );
+      MaskedLayer< 2 >( *layer, invalid_index, mask, true, false );
 
     for ( Ntree< 2, index >::masked_iterator it =
             ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
@@ -1303,11 +1307,14 @@ TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
   }
   else
   {
-    Layer< 3 >* layer = dynamic_cast< Layer< 3 >* >(
-      kernel().node_manager.get_node_or_proxy( layer_gid ) );
+    Layer< 3 >* layer = dynamic_cast< Layer< 3 >* >( get_layer( layer_gc ).get() );
+    if ( not layer )
+    {
+      throw TypeMismatch( "3D layer", "other type" );
+    }
 
     MaskedLayer< 3 > ml =
-      MaskedLayer< 3 >( *layer, SIZE_MAX, mask, true, false );
+      MaskedLayer< 3 >( *layer, invalid_index, mask, true, false );
 
     for ( Ntree< 3, index >::masked_iterator it =
             ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );

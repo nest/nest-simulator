@@ -202,12 +202,7 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   // or we have to adjust the step because we use threads:
   size_t num_threads = kernel().vp_manager.get_num_threads();
   size_t current_thread = kernel().vp_manager.get_thread_id();
-  index model = 0;
-
-  if ( target_model_filter_ != SIZE_MAX )
-  {
-    model = target_model_filter_;
-  }
+  index model = target_model_filter_;
 
   GIDCollection::const_iterator target_begin =
     target_gc->begin( current_thread, num_threads, model );
@@ -231,7 +226,6 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
 
-    target_begin += thread_id;
     for ( GIDCollection::const_iterator tgt_it = target_begin;
           tgt_it != target_end;
           ++tgt_it )
@@ -280,12 +274,7 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
   // or we have to adjust the step because we use threads:
   size_t num_threads = kernel().vp_manager.get_num_threads();
   size_t current_thread = kernel().vp_manager.get_thread_id();
-  index model = 0;
-
-  if ( target_model_filter_ != SIZE_MAX )
-  {
-    model = target_model_filter_;
-  }
+  index model = target_model_filter_;
 
   GIDCollection::const_iterator target_begin =
     target_gc->begin( current_thread, num_threads, model );
@@ -310,7 +299,6 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
   {
     const int thread_id = kernel().vp_manager.get_thread_id();
 
-    target_begin += thread_id;
     for ( GIDCollection::const_iterator tgt_it = target_begin;
           tgt_it != target_end;
           ++tgt_it )
@@ -364,12 +352,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source,
   // or we have to adjust the step because we use threads:
   size_t num_threads = kernel().vp_manager.get_num_threads();
   size_t current_thread = kernel().vp_manager.get_thread_id();
-  index model = 0;
-
-  if ( target_model_filter_ != SIZE_MAX )
-  {
-    model = target_model_filter_;
-  }
+  index model = target_model_filter_;
 
   GIDCollection::const_iterator target_begin =
     target_gc->begin( current_thread, num_threads, model );

@@ -440,9 +440,10 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
   node_ = MultiIndex< D >( lower_left, upper_right );
 
   if ( ( not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) )
-    or ( model_filter_ != SIZE_MAX
-         && ( kernel().modelrange_manager.get_model_id(
-                layer_.gids_[ layer_size_ ] ) != model_filter_ ) ) )
+    or ( model_filter_ != invalid_index
+         and ( kernel().modelrange_manager.get_model_id(
+                 layer_.gid_collection_->operator[](
+                   layer_.gridpos_to_lid( node_ ) ) ) != model_filter_ ) ) )
   {
     ++( *this );
   }
@@ -453,35 +454,13 @@ inline std::pair< Position< D >, index > GridLayer< D >::masked_iterator::
 operator*()
 {
   return std::pair< Position< D >, index >( layer_.gridpos_to_position( node_ ),
-    layer_.gids_[ layer_.gridpos_to_lid( node_ ) + layer_size_ ] );
+    layer_.gid_collection_->operator[]( layer_.gridpos_to_lid( node_ ) ) );
 }
 
 template < int D >
 typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::
 operator++()
-{ // TODO 481 how to remove depth?
-  if ( not filter_.select_depth() )
-  {
-    depth_++;
-    if ( depth_ >= layer_.depth_ )
-    {
-      depth_ = 0;
-    }
-    else
-    {
-      if ( model_filter_ != SIZE_MAX
-        and ( kernel().modelrange_manager.get_model_id(
-                layer_.gids_[ depth_ * layer_size_ ] ) != model_filter_ ) )
-      {
-        return operator++();
-      }
-      else
-      {
-        return *this;
-      }
-    }
-  }
-
+{ // TODO 481 What if gid_collection is a composite?
   do
   {
     ++node_;
@@ -497,9 +476,10 @@ operator++()
   } while (
     not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) );
 
-  if ( model_filter_ != SIZE_MAX
-    && ( kernel().modelrange_manager.get_model_id( layer_.gids_[ layer_size_ ] )
-         != model_filter_ ) )
+  if ( model_filter_ != invalid_index
+    && ( kernel().modelrange_manager.get_model_id(
+           layer_.gid_collection_->operator[](
+             layer_.gridpos_to_lid( node_ ) ) ) != model_filter_ ) )
   {
     return operator++();
   }

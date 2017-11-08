@@ -83,8 +83,10 @@ class gainfunction_lin_rate_mult
 private:
   /** gain factor of gain function */
   double g_;
-  /** linear factor in multiplicative coupling*/
+  /** linear factor in multiplicative excitatory coupling*/
   double g_ex_;
+  /** linear factor in multiplicative inhibitory coupling*/
+  double g_in_;
   /**  offset in multiplicative coupling*/
   double theta_;
 
@@ -94,6 +96,7 @@ public:
   gainfunction_lin_rate_mult()
     : g_( 1.0 )
     , g_ex_( 1.0 )
+    , g_in_( 1.0 )
     , theta_( 1.0 )
   {
   }
@@ -103,6 +106,7 @@ public:
 
   double func1( double h ); // non-linearity
   double func2( double h ); // non-linearity
+  double func3( double h ); // non-linearity
 };
 
 inline double
@@ -115,6 +119,12 @@ inline double
 gainfunction_lin_rate_mult::func2( double rate )
 {
   return g_ex_ * ( theta_ - rate );
+}
+
+inline double
+gainfunction_lin_rate_mult::func3( double rate )
+{
+  return g_in_ * ( theta_ - rate );
 }
 
 typedef rate_neuron_ipn< nest::gainfunction_lin_rate_mult > lin_rate_mult_ipn;

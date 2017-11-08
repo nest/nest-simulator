@@ -178,10 +178,14 @@ private:
     Buffers_( rate_neuron_ipn& );
     Buffers_( const Buffers_&, rate_neuron_ipn& );
 
-    RingBuffer delayed_rates_; //!< buffer for rate vector received by
-    // RateConnectionDelayed
-    std::vector< double > instant_rates_; //!< buffer for rate vector received
-    // by RateConnectionInstantaneous
+    RingBuffer delayed_rates_ex_; //!< buffer for rate vector received by
+    // RateConnectionDelayed from excitatory neurons
+    RingBuffer delayed_rates_in_; //!< buffer for rate vector received by
+    // RateConnectionDelayed from inhibitory neurons
+    std::vector< double > instant_rates_ex_; //!< buffer for rate vector received
+    // by RateConnectionInstantaneous from excitatory neurons
+    std::vector< double > instant_rates_in_; //!< buffer for rate vector received
+    // by RateConnectionInstantaneous from inhibitory neurons
     std::vector< double >
       last_y_values; //!< remembers y_values from last wfr_update
     std::vector< double > random_numbers; //!< remembers the random_numbers in

@@ -123,7 +123,7 @@ private:
 
     /** Time constant in ms. */
     double tau_;
-    
+
     /** Passive decay rate in ms. */
     double lambda_;
 
@@ -182,9 +182,11 @@ private:
     // RateConnectionDelayed from excitatory neurons
     RingBuffer delayed_rates_in_; //!< buffer for rate vector received by
     // RateConnectionDelayed from inhibitory neurons
-    std::vector< double > instant_rates_ex_; //!< buffer for rate vector received
+    std::vector< double >
+      instant_rates_ex_; //!< buffer for rate vector received
     // by RateConnectionInstantaneous from excitatory neurons
-    std::vector< double > instant_rates_in_; //!< buffer for rate vector received
+    std::vector< double >
+      instant_rates_in_; //!< buffer for rate vector received
     // by RateConnectionInstantaneous from inhibitory neurons
     std::vector< double >
       last_y_values; //!< remembers y_values from last wfr_update

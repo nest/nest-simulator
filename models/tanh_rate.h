@@ -122,13 +122,13 @@ gainfunction_tanh_rate::func1( double h )
 inline double
 gainfunction_tanh_rate::func2( double h )
 {
-  return 1.0;
+  return 1.;
 }
 
 inline double
 gainfunction_tanh_rate::func3( double h )
 {
-  return 1.0;
+  return 1.;
 }
 
 typedef rate_neuron_ipn< nest::gainfunction_tanh_rate > tanh_rate_ipn;

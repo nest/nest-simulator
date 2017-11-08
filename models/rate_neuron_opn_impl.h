@@ -264,8 +264,8 @@ nest::rate_neuron_opn< TGainfunction >::update_( Time const& origin,
       else
       {
         S_.rate_ += V_.P2_ * gain_.func2( new_rates[ lag ] )
-	  * ( B_.delayed_rates_.get_value_wfr_update( lag )
-                               + B_.instant_rates_[ lag ] );
+          * ( B_.delayed_rates_.get_value_wfr_update( lag )
+                      + B_.instant_rates_[ lag ] );
       }
 
       // check if deviation from last iteration exceeds wfr_tol

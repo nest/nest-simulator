@@ -64,7 +64,7 @@ RecordablesMap< rate_neuron_ipn< TGainfunction > >
 
 template < class TGainfunction >
 nest::rate_neuron_ipn< TGainfunction >::Parameters_::Parameters_()
-  : tau_( 10.0 ) // ms
+  : tau_( 10.0 )   // ms
   , lambda_( 1.0 ) // ms
   , std_( 1.0 )
   , mean_( 0.0 )
@@ -221,8 +221,8 @@ nest::rate_neuron_ipn< TGainfunction >::calibrate()
   // propagators
   V_.P1_ = std::exp( -P_.lambda_ * h / P_.tau_ );
   V_.P2_ = -numerics::expm1( -P_.lambda_ * h / P_.tau_ );
-  V_.input_noise_factor_ =
-    std::sqrt( -0.5/P_.lambda_ * numerics::expm1( -2. * P_.lambda_ * h / P_.tau_ ) );
+  V_.input_noise_factor_ = std::sqrt(
+    -0.5 / P_.lambda_ * numerics::expm1( -2. * P_.lambda_ * h / P_.tau_ ) );
 }
 
 /* ----------------------------------------------------------------
@@ -290,18 +290,20 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
       if ( P_.linear_summation_ )
       {
         S_.rate_ += V_.P2_ * gain_.func2( new_rates[ lag ] )
-          * gain_.func1(
-              B_.delayed_rates_ex_.get_value( lag ) + B_.instant_rates_ex_[ lag ] );
+          * gain_.func1( B_.delayed_rates_ex_.get_value( lag )
+              + B_.instant_rates_ex_[ lag ] );
         S_.rate_ += V_.P2_ * gain_.func3( new_rates[ lag ] )
-          * gain_.func1(
-              B_.delayed_rates_in_.get_value( lag ) + B_.instant_rates_in_[ lag ] );
+          * gain_.func1( B_.delayed_rates_in_.get_value( lag )
+              + B_.instant_rates_in_[ lag ] );
       }
       else
       {
         S_.rate_ += V_.P2_ * gain_.func2( new_rates[ lag ] )
-          * ( B_.delayed_rates_ex_.get_value( lag ) + B_.instant_rates_ex_[ lag ] );
+          * ( B_.delayed_rates_ex_.get_value( lag )
+                      + B_.instant_rates_ex_[ lag ] );
         S_.rate_ += V_.P2_ * gain_.func3( new_rates[ lag ] )
-          * ( B_.delayed_rates_in_.get_value( lag ) + B_.instant_rates_in_[ lag ] );
+          * ( B_.delayed_rates_in_.get_value( lag )
+                      + B_.instant_rates_in_[ lag ] );
       }
       // rate logging
       B_.logger_.record_data( origin.get_steps() + lag );
@@ -339,6 +341,7 @@ nest::rate_neuron_ipn< TGainfunction >::update_( Time const& origin,
 
   // Reset variables
   std::vector< double >( buffer_size, 0.0 ).swap( B_.instant_rates_ex_ );
+  std::vector< double >( buffer_size, 0.0 ).swap( B_.instant_rates_in_ );
 
   return wfr_tol_exceeded;
 }
@@ -357,26 +360,26 @@ nest::rate_neuron_ipn< TGainfunction >::handle(
     if ( P_.linear_summation_ )
     {
       if ( e.get_weight() >= 0.0 )
-	{
-	B_.instant_rates_ex_[ i ] += e.get_weight() * e.get_coeffvalue( it );
-	}
+      {
+        B_.instant_rates_ex_[ i ] += e.get_weight() * e.get_coeffvalue( it );
+      }
       else
-	{
-	B_.instant_rates_in_[ i ] += e.get_weight() * e.get_coeffvalue( it );
-	}
+      {
+        B_.instant_rates_in_[ i ] += e.get_weight() * e.get_coeffvalue( it );
+      }
     }
     else
     {
       if ( e.get_weight() >= 0.0 )
-	{
-	B_.instant_rates_ex_[ i ] +=
-	  e.get_weight() * gain_.func1( e.get_coeffvalue( it ) );
-	}
+      {
+        B_.instant_rates_ex_[ i ] +=
+          e.get_weight() * gain_.func1( e.get_coeffvalue( it ) );
+      }
       else
-	{
-	B_.instant_rates_in_[ i ] +=
-	  e.get_weight() * gain_.func1( e.get_coeffvalue( it ) );
-	}	
+      {
+        B_.instant_rates_in_[ i ] +=
+          e.get_weight() * gain_.func1( e.get_coeffvalue( it ) );
+      }
     }
     i++;
   }
@@ -394,32 +397,32 @@ nest::rate_neuron_ipn< TGainfunction >::handle( DelayedRateConnectionEvent& e )
     if ( P_.linear_summation_ )
     {
       if ( e.get_weight() >= 0.0 )
-	{
-	  B_.delayed_rates_ex_.add_value(
-				      e.get_delay() - kernel().connection_manager.get_min_delay() + i,
-				      e.get_weight() * e.get_coeffvalue( it ) );
-	}
+      {
+        B_.delayed_rates_ex_.add_value(
+          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+          e.get_weight() * e.get_coeffvalue( it ) );
+      }
       else
-	{
-	  B_.delayed_rates_in_.add_value(
-				      e.get_delay() - kernel().connection_manager.get_min_delay() + i,
-				      e.get_weight() * e.get_coeffvalue( it ) );
-	}
+      {
+        B_.delayed_rates_in_.add_value(
+          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+          e.get_weight() * e.get_coeffvalue( it ) );
+      }
     }
     else
     {
       if ( e.get_weight() >= 0.0 )
-	{
-	  B_.delayed_rates_ex_.add_value(
-				      e.get_delay() - kernel().connection_manager.get_min_delay() + i,
-				      e.get_weight() * gain_.func1( e.get_coeffvalue( it ) ) );
-	}
+      {
+        B_.delayed_rates_ex_.add_value(
+          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+          e.get_weight() * gain_.func1( e.get_coeffvalue( it ) ) );
+      }
       else
-	{
-	  B_.delayed_rates_in_.add_value(
-				      e.get_delay() - kernel().connection_manager.get_min_delay() + i,
-				      e.get_weight() * gain_.func1( e.get_coeffvalue( it ) ) );
-	}
+      {
+        B_.delayed_rates_in_.add_value(
+          e.get_delay() - kernel().connection_manager.get_min_delay() + i,
+          e.get_weight() * gain_.func1( e.get_coeffvalue( it ) ) );
+      }
     }
     ++i;
   }

@@ -78,7 +78,7 @@ Author: David Dahmen, Jan Hahne, Jannis Schuecker
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
 
-class gainfunction_lin_rate_mult
+class nonlinearities_lin_rate_mult
 {
 private:
   /** gain factor of gain function */
@@ -93,7 +93,7 @@ private:
 
 public:
   /** sets default parameters */
-  gainfunction_lin_rate_mult()
+  nonlinearities_lin_rate_mult()
     : g_( 1.0 )
     , g_ex_( 1.0 )
     , g_in_( 1.0 )
@@ -104,31 +104,31 @@ public:
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
-  double input( double h );            // non-linearity
-  double mult_coupling_ex( double h ); // non-linearity
-  double mult_coupling_in( double h ); // non-linearity
+  double input( double h );            // non-linearity on input
+  double mult_coupling_ex( double h ); // factor of multiplicative coupling
+  double mult_coupling_in( double h ); // factor of multiplicative coupling
 };
 
 inline double
-gainfunction_lin_rate_mult::input( double h )
+nonlinearities_lin_rate_mult::input( double h )
 {
   return g_ * h;
 }
 
 inline double
-gainfunction_lin_rate_mult::mult_coupling_ex( double rate )
+nonlinearities_lin_rate_mult::mult_coupling_ex( double rate )
 {
   return g_ex_ * ( theta_ - rate );
 }
 
 inline double
-gainfunction_lin_rate_mult::mult_coupling_in( double rate )
+nonlinearities_lin_rate_mult::mult_coupling_in( double rate )
 {
   return g_in_ * ( theta_ - rate );
 }
 
-typedef rate_neuron_ipn< nest::gainfunction_lin_rate_mult > lin_rate_mult_ipn;
-typedef rate_neuron_opn< nest::gainfunction_lin_rate_mult > lin_rate_mult_opn;
+typedef rate_neuron_ipn< nest::nonlinearities_lin_rate_mult > lin_rate_mult_ipn;
+typedef rate_neuron_opn< nest::nonlinearities_lin_rate_mult > lin_rate_mult_opn;
 
 template <>
 void RecordablesMap< lin_rate_mult_ipn >::create();

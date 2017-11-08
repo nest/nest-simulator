@@ -286,7 +286,7 @@ extern const Name Kplus;         //!< Used by stdp_connection_facetshw_hom
 extern const Name Kplus_triplet; //!< Used by stdp_connection_facetshw_hom
 
 extern const Name label;      //!< Miscellaneous parameters
-extern const Name lambda;     //!< stdp_synapse parameter
+extern const Name lambda;     //!< stdp_synapse and rate model parameter
 extern const Name lambda_0;   //!< Specific to gif models
 extern const Name len_kernel; //!< Specific to population point process model
                               //!< (pp_pop_psc_delta)
@@ -313,10 +313,11 @@ extern const Name model;         //!< Node parameter
 extern const Name mother_rng;    //!< Specific to mip_generator
 extern const Name mother_seed;   //!< Specific to mip_generator
 extern const Name ms_per_tic;    //!< Simulation-related
-extern const Name mu;            //!< Used by stdp_dopa_connection
-extern const Name mu_minus;      //!< stdp_synapse parameter
-extern const Name mu_plus;       //!< stdp_synapse parameter
-extern const Name multapses;     //!< Connectivity-related
+extern const Name mu;        //!< Used by stdp_dopa_connection and rate models
+                             //(Gaussian gain function (tuning peak))
+extern const Name mu_minus;  //!< stdp_synapse parameter
+extern const Name mu_plus;   //!< stdp_synapse parameter
+extern const Name multapses; //!< Connectivity-related
 extern const Name music_channel; //!< Parameters for MUSIC devices
 
 extern const Name n;          //!< Number of synaptic release sites (int >=0)
@@ -345,7 +346,6 @@ extern const Name number_of_children; //!< Used by Subnet
 
 extern const Name off_grid_spiking; //!< Used by event_delivery_manager
 extern const Name offset;           //!< Miscellaneous parameters
-extern const Name offset_ex;        //!< Miscellaneous parameters
 extern const Name offsets;          //!< Recorder parameter
 extern const Name omega;     //!< Specific to Kobayashi, Tsubo, Shinomoto 2009
 extern const Name order;     //!< Specific to sinusoidally modulated generators
@@ -425,14 +425,16 @@ extern const Name sdev;             //!< Used in pulsepacket_generator
 extern const Name send_buffer_size; //!< mpi-related
 extern const Name senders;          //!< Recorder parameter
 extern const Name shift_now_spikes; //!< Used by spike_generator
-extern const Name sigmoid;          //!< Sigmoid MSP growth curve
-extern const Name size_of;          //!< Connection parameters
-extern const Name soma_curr;        //!< Used by iaf_cond_alpha_mc
-extern const Name soma_exc;         //!< Used by iaf_cond_alpha_mc
-extern const Name soma_inh;         //!< Used by iaf_cond_alpha_mc
-extern const Name source;           //!< Connection parameters
-extern const Name spike; //!< true if the neuron spikes and false if not.
-                         //!< (sli_neuron)
+extern const Name
+  sigma; //!< Specific to rate models (Gaussian gain function (tuning spread))
+extern const Name sigmoid;   //!< Sigmoid MSP growth curve
+extern const Name size_of;   //!< Connection parameters
+extern const Name soma_curr; //!< Used by iaf_cond_alpha_mc
+extern const Name soma_exc;  //!< Used by iaf_cond_alpha_mc
+extern const Name soma_inh;  //!< Used by iaf_cond_alpha_mc
+extern const Name source;    //!< Connection parameters
+extern const Name spike;     //!< true if the neuron spikes and false if not.
+                             //!< (sli_neuron)
 extern const Name spike_multiplicities;           //!x Used by spike_generator
 extern const Name spike_times;                    //!< Recorder parameter
 extern const Name spike_weights;                  //!< Used by spike_generator

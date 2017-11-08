@@ -26,13 +26,13 @@ namespace nest
 {
 
 void
-gainfunction_lin_rate::get( DictionaryDatum& d ) const
+nonlinearities_lin_rate::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::g, g_ );
 }
 
 void
-gainfunction_lin_rate::set( const DictionaryDatum& d )
+nonlinearities_lin_rate::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::g, g_ );
 }

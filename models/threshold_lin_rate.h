@@ -91,7 +91,7 @@ Author: David Dahmen, Jan Hahne, Jannis Schuecker
 SeeAlso: rate_connection_instantaneous, rate_connection_delayed
 */
 
-class gainfunction_threshold_lin_rate
+class nonlinearities_threshold_lin_rate
 {
 private:
   /** gain factor of gain function */
@@ -102,7 +102,7 @@ private:
 
 public:
   /** sets default parameters */
-  gainfunction_threshold_lin_rate()
+  nonlinearities_threshold_lin_rate()
     : g_( 1.0 )
     , theta_( 0.0 )
   {
@@ -111,13 +111,13 @@ public:
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
-  double input( double h );            // non-linearity
-  double mult_coupling_ex( double h ); // non-linearity
-  double mult_coupling_in( double h ); // non-linearity
+  double input( double h );            // non-linearity on input
+  double mult_coupling_ex( double h ); // factor of multiplicative coupling
+  double mult_coupling_in( double h ); // factor of multiplicative coupling
 };
 
 inline double
-gainfunction_threshold_lin_rate::input( double h )
+nonlinearities_threshold_lin_rate::input( double h )
 {
   if ( h > theta_ )
   {
@@ -127,20 +127,20 @@ gainfunction_threshold_lin_rate::input( double h )
 }
 
 inline double
-gainfunction_threshold_lin_rate::mult_coupling_ex( double h )
+nonlinearities_threshold_lin_rate::mult_coupling_ex( double h )
 {
   return 1.;
 }
 
 inline double
-gainfunction_threshold_lin_rate::mult_coupling_in( double h )
+nonlinearities_threshold_lin_rate::mult_coupling_in( double h )
 {
   return 1.;
 }
 
-typedef rate_neuron_ipn< nest::gainfunction_threshold_lin_rate >
+typedef rate_neuron_ipn< nest::nonlinearities_threshold_lin_rate >
   threshold_lin_rate_ipn;
-typedef rate_neuron_opn< nest::gainfunction_threshold_lin_rate >
+typedef rate_neuron_opn< nest::nonlinearities_threshold_lin_rate >
   threshold_lin_rate_opn;
 
 template <>

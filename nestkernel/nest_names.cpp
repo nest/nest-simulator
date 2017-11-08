@@ -301,7 +301,6 @@ const Name number_of_children( "number_of_children" );
 
 const Name off_grid_spiking( "off_grid_spiking" );
 const Name offset( "offset" );
-const Name offset_ex( "offset_ex" );
 const Name offsets( "offsets" );
 const Name omega( "omega" );
 const Name order( "order" );
@@ -373,6 +372,7 @@ const Name sdev( "sdev" );
 const Name send_buffer_size( "send_buffer_size" );
 const Name senders( "senders" );
 const Name shift_now_spikes( "shift_now_spikes" );
+const Name sigma( "sigma" );
 const Name sigmoid( "sigmoid" );
 const Name size_of( "sizeof" );
 const Name soma_curr( "soma_curr" );

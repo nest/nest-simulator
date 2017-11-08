@@ -26,7 +26,7 @@ namespace nest
 {
 
 void
-gainfunction_lin_rate_mult::get( DictionaryDatum& d ) const
+nonlinearities_lin_rate_mult::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::g, g_ );
   def< double >( d, names::g_ex, g_ex_ );
@@ -34,7 +34,7 @@ gainfunction_lin_rate_mult::get( DictionaryDatum& d ) const
 }
 
 void
-gainfunction_lin_rate_mult::set( const DictionaryDatum& d )
+nonlinearities_lin_rate_mult::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::g, g_ );
   updateValue< double >( d, names::g_ex, g_ex_ );

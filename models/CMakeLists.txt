@@ -36,6 +36,7 @@ set( models_sources
     dc_generator.h dc_generator.cpp
     diffusion_connection.h
     gamma_sup_generator.h gamma_sup_generator.cpp
+    gauss_rate.h gauss_rate.cpp
     gap_junction.h
     gif_psc_exp.h gif_psc_exp.cpp
     gif_psc_exp_multisynapse.h gif_psc_exp_multisynapse.cpp

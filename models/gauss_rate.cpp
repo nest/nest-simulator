@@ -1,5 +1,5 @@
 /*
- *  tanh_rate.cpp
+ *  gauss_rate.cpp
  *
  *  This file is part of NEST.
  *
@@ -20,21 +20,25 @@
  *
  */
 
-#include "tanh_rate.h"
+#include "gauss_rate.h"
 
 namespace nest
 {
 
 void
-nonlinearities_tanh_rate::get( DictionaryDatum& d ) const
+nonlinearities_gauss_rate::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::g, g_ );
+  def< double >( d, names::mu, mu_ );
+  def< double >( d, names::sigma, sigma_ );
 }
 
 void
-nonlinearities_tanh_rate::set( const DictionaryDatum& d )
+nonlinearities_gauss_rate::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::g, g_ );
+  updateValue< double >( d, names::mu, mu_ );
+  updateValue< double >( d, names::sigma, sigma_ );
 }
 
 /*
@@ -43,21 +47,21 @@ nonlinearities_tanh_rate::set( const DictionaryDatum& d )
  */
 template <>
 void
-RecordablesMap< nest::tanh_rate_ipn >::create()
+RecordablesMap< nest::gauss_rate_ipn >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::rate, &nest::tanh_rate_ipn::get_rate_ );
-  insert_( names::noise, &nest::tanh_rate_ipn::get_noise_ );
+  insert_( names::rate, &nest::gauss_rate_ipn::get_rate_ );
+  insert_( names::noise, &nest::gauss_rate_ipn::get_noise_ );
 }
 
 template <>
 void
-RecordablesMap< nest::tanh_rate_opn >::create()
+RecordablesMap< nest::gauss_rate_opn >::create()
 {
   // use standard names whereever you can for consistency!
-  insert_( names::rate, &nest::tanh_rate_opn::get_rate_ );
-  insert_( names::noise, &nest::tanh_rate_opn::get_noise_ );
-  insert_( names::noisy_rate, &nest::tanh_rate_opn::get_noisy_rate_ );
+  insert_( names::rate, &nest::gauss_rate_opn::get_rate_ );
+  insert_( names::noise, &nest::gauss_rate_opn::get_noise_ );
+  insert_( names::noisy_rate, &nest::gauss_rate_opn::get_noisy_rate_ );
 }
 
 } // namespace nest

@@ -1234,20 +1234,10 @@ TopologyModule::GetElement_g_iaFunction::execute( SLIInterpreter* i ) const
     getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
   TokenArray array = getValue< TokenArray >( i->OStack.pick( 0 ) );
 
-  std::vector< index > node_gids = get_element( layer, array );
+  index node_gid = get_element( layer, array );
 
   i->OStack.pop( 2 );
-
-  // For compatibility reasons, return either single node or array
-  if ( node_gids.size() == 1 )
-  {
-    i->OStack.push( node_gids[ 0 ] );
-  }
-  else
-  {
-    i->OStack.push( node_gids );
-  }
-
+  i->OStack.push( node_gid );
   i->EStack.pop();
 }
 

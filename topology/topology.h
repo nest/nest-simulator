@@ -94,7 +94,7 @@ void dump_layer_nodes( GIDCollectionPTR layer_gc, OstreamDatum& out );
 void dump_layer_connections( const Token& syn_model,
   GIDCollectionPTR layer_gc,
   OstreamDatum& out_file );
-std::vector< index > get_element( GIDCollectionPTR layer_gc,
+index get_element( GIDCollectionPTR layer_gc,
   const TokenArray array );
 DictionaryDatum get_layer_status( GIDCollectionPTR layer_gc );
 }

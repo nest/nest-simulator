@@ -64,7 +64,7 @@ get_layer( GIDCollectionPTR gc )
   meta.unlock();
   if ( not layer_meta )
   {
-	throw LayerExpected();
+	  throw LayerExpected();
   }
   return layer_meta->get_layer();
 }
@@ -97,7 +97,7 @@ get_position( GIDCollectionPTR layer_gc, const index gid )
   const long lid = layer_gc->find( gid );
   if ( lid < 0 )
   {
-	throw LayerNodeExpected();
+	  throw LayerNodeExpected();
   }
   return layer->get_position_vector( lid );
 }
@@ -252,11 +252,11 @@ dump_layer_connections( const Token& syn_model, GIDCollectionPTR layer_gc,
   }
 }
 
-std::vector< index >
+index
 get_element( GIDCollectionPTR layer_gc,
 		const TokenArray array )
 {
-  std::vector< index > node_gids;
+  index node_gid;
 
   switch ( array.size() )
   {
@@ -270,7 +270,7 @@ get_element( GIDCollectionPTR layer_gc,
       throw TypeMismatch( "2D grid layer", "other layer type" );
     }
 
-    node_gids =
+    node_gid =
       layer->get_node( Position< 2, int >( static_cast< index >( array[ 0 ] ),
         static_cast< index >( array[ 1 ] ) ) );
   }
@@ -287,8 +287,8 @@ get_element( GIDCollectionPTR layer_gc,
       throw TypeMismatch( "3D grid layer node", "other layer type" );
     }
 
-    node_gids =
-      layer->get_nodes( Position< 3, int >( static_cast< index >( array[ 0 ] ),
+    node_gid =
+      layer->get_node( Position< 3, int >( static_cast< index >( array[ 0 ] ),
         static_cast< index >( array[ 1 ] ),
         static_cast< index >( array[ 2 ] ) ) );
   }
@@ -297,7 +297,7 @@ get_element( GIDCollectionPTR layer_gc,
   default:
     throw TypeMismatch( "array with length 2 or 3", "something else" );
   }
-  return node_gids;
+  return node_gid;
 }
 
 DictionaryDatum get_layer_status( GIDCollectionPTR layer_gc )

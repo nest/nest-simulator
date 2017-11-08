@@ -200,9 +200,9 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   size_t num_threads = kernel().vp_manager.get_num_threads();
   index model = 0;
 
-  if ( target_filter_.select_model() )
+  if ( target_model_filter_ != SIZE_MAX )
   {
-    model = target_filter_.model;
+    model = target_model_filter_;
   }
 
   GIDCollection::const_iterator target_begin = target_gc->begin( num_threads,
@@ -214,11 +214,11 @@ ConnectionCreator::target_driven_connect_( Layer< D >& source,
   if ( mask_.valid() ) // MaskedLayer will be freed by PoolWrapper d'tor
   {
     pool.define( new MaskedLayer< D >(
-      source, source_filter_, mask_, true, allow_oversized_ ) );
+      source, source_model_filter_, mask_, true, allow_oversized_ ) );
   }
   else
   {
-    pool.define( source.get_global_positions_vector( source_filter_ ) );
+    pool.define( source.get_global_positions_vector( source_model_filter_ ) );
   }
 
 // sharing specs on next line commented out because gcc 4.2 cannot handle them
@@ -277,9 +277,9 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
   size_t num_threads = kernel().vp_manager.get_num_threads();
   index model = 0;
 
-  if ( target_filter_.select_model() )
+  if ( target_model_filter_ != SIZE_MAX )
   {
-    model = target_filter_.model;
+    model = target_model_filter_;
   }
 
   GIDCollection::const_iterator target_begin = target_gc->begin( num_threads,
@@ -292,11 +292,11 @@ ConnectionCreator::source_driven_connect_( Layer< D >& source,
     // By supplying the target layer to the MaskedLayer constructor, the
     // mask is mirrored so it may be applied to the source layer instead
     pool.define( new MaskedLayer< D >(
-      source, source_filter_, mask_, true, allow_oversized_, target ) );
+      source, source_model_filter_, mask_, true, allow_oversized_, target ) );
   }
   else
   {
-    pool.define( source.get_global_positions_vector( source_filter_ ) );
+    pool.define( source.get_global_positions_vector( source_model_filter_ ) );
   }
 
 // sharing specs on next line commented out because gcc 4.2 cannot handle them
@@ -359,9 +359,9 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
   size_t num_threads = 1; //kernel().vp_manager.get_num_threads();
   index model = 0;
 
-  if ( target_filter_.select_model() )
+  if ( target_model_filter_ != SIZE_MAX )
   {
-    model = target_filter_.model;
+    model = target_model_filter_;
   }
 
   GIDCollection::const_iterator target_begin = target_gc->begin( num_threads,
@@ -402,7 +402,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
 
       // Get (position,GID) pairs for sources inside mask
       std::vector< std::pair< Position< D >, index > > positions =
-        source.get_global_positions_vector( source_filter_,
+        source.get_global_positions_vector( source_model_filter_,
           mask_,
           target.get_position( ( *tgt_it ).lid ),
           allow_oversized_ );
@@ -525,7 +525,7 @@ ConnectionCreator::convergent_connect_( Layer< D >& source, Layer< D >& target, 
 
     // Get (position,GID) pairs for all nodes in source layer
     std::vector< std::pair< Position< D >, index > >* positions =
-      source.get_global_positions_vector( source_filter_ );
+      source.get_global_positions_vector( source_model_filter_ );
 
     for ( GIDCollection::const_iterator tgt_it = target_begin;
           tgt_it != target_end;
@@ -677,10 +677,10 @@ ConnectionCreator::divergent_connect_( Layer< D >& source, Layer< D >& target, G
   // 3. Draw connections to make using global rng
 
   MaskedLayer< D > masked_target(
-    target, target_filter_, mask_, true, allow_oversized_ );
+    target, target_model_filter_, mask_, true, allow_oversized_ );
 
   std::vector< std::pair< Position< D >, index > >* sources =
-    source.get_global_positions_vector( source_filter_ );
+    source.get_global_positions_vector( source_model_filter_ );
 
   for (
     typename std::vector< std::pair< Position< D >, index > >::iterator src_it =

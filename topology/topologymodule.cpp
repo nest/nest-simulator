@@ -1288,10 +1288,10 @@ TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
   if ( dim == 2 )
   {
     Layer< 2 >* layer = dynamic_cast< Layer< 2 >* >(
-      kernel().node_manager.get_node( layer_gid ) );
+      kernel().node_manager.get_node_or_proxy( layer_gid ) );
 
     MaskedLayer< 2 > ml =
-      MaskedLayer< 2 >( *layer, Selector(), mask, true, false );
+      MaskedLayer< 2 >( *layer, SIZE_MAX, mask, true, false );
 
     for ( Ntree< 2, index >::masked_iterator it =
             ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
@@ -1304,10 +1304,10 @@ TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
   else
   {
     Layer< 3 >* layer = dynamic_cast< Layer< 3 >* >(
-      kernel().node_manager.get_node( layer_gid ) );
+      kernel().node_manager.get_node_or_proxy( layer_gid ) );
 
     MaskedLayer< 3 > ml =
-      MaskedLayer< 3 >( *layer, Selector(), mask, true, false );
+      MaskedLayer< 3 >( *layer, SIZE_MAX, mask, true, false );
 
     for ( Ntree< 3, index >::masked_iterator it =
             ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );

@@ -58,7 +58,6 @@ public:
    */
   AbstractLayer()
     : gid_collection_( GIDCollectionPTR( 0 ) )
-    , depth_( 1 )
   {
   }
 
@@ -169,11 +168,6 @@ protected:
    * GID for the single layer for which we cache global position information
    */
   static GIDCollectionMetadataPTR cached_ntree_gc_;
-
-  /**
-   * number of neurons at each position
-   */
-  int depth_;
 
   /**
    * GID for the single layer for which we cache global position information

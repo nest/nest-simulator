@@ -97,7 +97,6 @@ Layer< D >::get_status( DictionaryDatum& d ) const
 {
   DictionaryDatum topology_dict( new Dictionary );
 
-  ( *d )[ names::depth ] = depth_;
   ( *d )[ names::extent ] = std::vector< double >( extent_ );
   ( *d )[ names::center ] =
     std::vector< double >( lower_left_ + extent_ / 2 );

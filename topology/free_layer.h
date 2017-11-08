@@ -130,7 +130,7 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
 
     for ( Token* it = pos.begin() ; it != pos.end() ; ++it )
     {
-      Position< D > point = *it;
+      Position< D > point = getValue< std::vector< double > >( *it );
       if ( not( ( point >= this->lower_left_ )
            and ( point < this->lower_left_ + this->extent_ ) ) )
       {
@@ -189,7 +189,7 @@ FreeLayer< D >::communicate_positions_( Ins iter, const index& model_filter )
     model );
   GIDCollection::const_iterator gc_end = this->gid_collection->end();
 
-  local_gid_pos.reserve( ( D + 1 ) * this->gid_collection.size() );
+  local_gid_pos.reserve( ( D + 1 ) * this->gid_collection->size() );
 
   for ( GIDCollection::const_iterator gc_it = gc_begin;
         gc_it != gc_end;

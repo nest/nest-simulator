@@ -258,8 +258,9 @@ public:
    * @return an iterator representing the beginning of the GIDCollection, taking
    * offset and model type into account
    */
-  virtual const_iterator
-  begin( size_t offset = 0, size_t step = 1, index model_type = 0 ) const = 0;
+  virtual const_iterator begin( size_t offset = 0,
+    size_t step = 1,
+    index model_type = invalid_index ) const = 0;
 
   /**
    * Method to get an iterator representing the end of the GIDCollection.
@@ -408,8 +409,9 @@ public:
   bool operator==( const GIDCollectionPrimitive& rhs ) const;
 
   const_iterator begin( GIDCollectionPTR ) const;
-  const_iterator
-  begin( size_t offset = 0, size_t step = 1, index model_type = 0 ) const;
+  const_iterator begin( size_t offset = 0,
+    size_t step = 1,
+    index model_type = invalid_index ) const;
   const_iterator end( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
 
   //! Returns an ArrayDatum filled with GIDs from the primitive.
@@ -540,8 +542,9 @@ public:
   bool operator==( const GIDCollectionPTR rhs ) const;
 
   const_iterator begin( GIDCollectionPTR ) const;
-  const_iterator
-  begin( size_t offset = 0, size_t step = 1, index model_type = 0 ) const;
+  const_iterator begin( size_t offset = 0,
+    size_t step = 1,
+    index model_type = invalid_index ) const;
   const_iterator end( GIDCollectionPTR = GIDCollectionPTR( 0 ) ) const;
 
   //! Returns an ArrayDatum filled with GIDs from the composite.

@@ -291,7 +291,7 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( index first,
 GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last )
   : first_( first )
   , last_( last )
-  , model_id_( 0 )
+  , model_id_( invalid_index )
   , metadata_( 0 )
 {
   assert( first_ <= last_ );
@@ -322,7 +322,7 @@ GIDCollectionPrimitive::GIDCollectionPrimitive(
 GIDCollectionPrimitive::GIDCollectionPrimitive()
   : first_( 0 )
   , last_( 0 )
-  , model_id_( 0 )
+  , model_id_( invalid_index )
   , metadata_( 0 )
 {
 }

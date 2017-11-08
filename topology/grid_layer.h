@@ -440,9 +440,9 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
   node_ = MultiIndex< D >( lower_left, upper_right );
 
   if ( ( not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) )
-    or ( filter_.select_model()
+    or ( model_filter_ != SIZE_MAX
          && ( kernel().modelrange_manager.get_model_id(
-                layer_.gids_[ layer_size_ ] ) != index( filter_.model ) ) ) )
+                layer_.gids_[ layer_size_ ] ) != model_filter_ ) ) )
   {
     ++( *this );
   }
@@ -469,9 +469,9 @@ operator++()
     }
     else
     {
-      if ( filter_.select_model() && ( kernel().modelrange_manager.get_model_id(
-                                         layer_.gids_[ depth_ * layer_size_ ] )
-                                       != index( filter_.model ) ) )
+      if ( model_filter_ != SIZE_MAX
+          and ( kernel().modelrange_manager.get_model_id(
+              layer_.gids_[ depth_ * layer_size_ ] ) != model_filter_ ) )
       {
         return operator++();
       }
@@ -497,9 +497,9 @@ operator++()
   } while (
     not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) );
 
-  if ( filter_.select_model()
+  if ( model_filter_ != SIZE_MAX
     && ( kernel().modelrange_manager.get_model_id( layer_.gids_[ layer_size_ ] )
-         != index( filter_.model ) ) )
+         != model_filter_ ) )
   {
     return operator++();
   }

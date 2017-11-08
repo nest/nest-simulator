@@ -453,7 +453,7 @@ public:
   /**
    * Regular constructor.
    * @param layer           The layer to mask
-   * @param filter          Optionally select subset of neurons
+   * @param model_filter    Optionally select subset of neurons based on model
    * @param mask            The mask to apply to the layer
    * @param include_global  If true, include all nodes, otherwise only local to
    *                        MPI process
@@ -472,7 +472,7 @@ public:
    * will be mirrored about the origin, and settings for periodicity for
    * the target layer will be applied to the source layer.
    * @param layer           The layer to mask (source layer)
-   * @param filter          Optionally select subset of neurons
+   * @param model_filter    Optionally select subset of neurons based on model
    * @param mask            The mask to apply to the layer
    * @param include_global  If true, include all nodes, otherwise only local to
    * MPI process
@@ -531,11 +531,11 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
 {
   if ( include_global )
   {
-    ntree_ = layer.get_global_positions_ntree( filter );
+    ntree_ = layer.get_global_positions_ntree( model_filter );
   }
   else
   {
-    ntree_ = layer.get_local_positions_ntree( filter );
+    ntree_ = layer.get_local_positions_ntree( model_filter );
   }
 
   check_mask_( layer, allow_oversized );
@@ -552,13 +552,13 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
 {
   if ( include_global )
   {
-    ntree_ = layer.get_global_positions_ntree( filter,
+    ntree_ = layer.get_global_positions_ntree( model_filter,
       target.get_periodic_mask(),
       target.get_lower_left(),
       target.get_extent() );
   }
   // else
-  //  ntree_ = layer.get_local_positions_ntree(filter,
+  //  ntree_ = layer.get_local_positions_ntree(model_filter,
   //  target.get_periodic_mask(),
   //  target.get_lower_left(), target.get_extent());
 

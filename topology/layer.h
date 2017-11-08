@@ -57,7 +57,8 @@ public:
    * Constructor.
    */
   AbstractLayer()
-    : depth_( 1 )
+    : gid_collection_( GIDCollectionPTR( 0 ) )
+    , depth_( 1 )
   {
   }
 
@@ -162,7 +163,7 @@ protected:
   /**
    * TODO 481
    */
-  GIDCollectionPTR gid_collection_ = GIDCollectionPTR( 0 );
+  GIDCollectionPTR gid_collection_;
 
   /**
    * GID for the single layer for which we cache global position information

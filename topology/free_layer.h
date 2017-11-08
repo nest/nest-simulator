@@ -128,11 +128,11 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
       return; // nothing more to do
     }
 
-    for ( Token* it = pos.begin() ; it != pos.end() ; ++it )
+    for ( Token* it = pos.begin(); it != pos.end(); ++it )
     {
       Position< D > point = getValue< std::vector< double > >( *it );
       if ( not( ( point >= this->lower_left_ )
-           and ( point < this->lower_left_ + this->extent_ ) ) )
+             and ( point < this->lower_left_ + this->extent_ ) ) )
       {
         throw BadProperty( "Node position outside of layer" );
       }
@@ -176,23 +176,22 @@ FreeLayer< D >::communicate_positions_( Ins iter, const index& model_filter )
 
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
-  size_t num_threads = 1; //kernel().vp_manager.get_num_threads();
   index model = 0;
+  size_t num_processes = kernel().mpi_manager.get_num_processes();
+  size_t current_rank = kernel().mpi_manager.get_rank();
 
   if ( model_filter != SIZE_MAX )
   {
     model = model_filter;
   }
 
-  // TODO481 need new iterator
-  GIDCollection::const_iterator gc_begin = this->gid_collection_->begin( num_threads,
-    model );
+  GIDCollection::const_iterator gc_begin =
+    this->gid_collection_->begin( current_rank, num_processes, model );
   GIDCollection::const_iterator gc_end = this->gid_collection_->end();
 
   local_gid_pos.reserve( ( D + 1 ) * this->gid_collection_->size() );
 
-  for ( GIDCollection::const_iterator gc_it = gc_begin;
-        gc_it != gc_end;
+  for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it != gc_end;
         ++gc_it )
   {
     // Push GID into array to communicate
@@ -245,24 +244,23 @@ FreeLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
 {
   // We have to adjust the begin and end pointers in case we select by model
   // or we have to adjust the step because we use threads:
-  size_t num_threads = 1; //kernel().vp_manager.get_num_threads();
   index model = 0;
+  size_t num_processes = kernel().mpi_manager.get_num_processes();
+  size_t current_rank = kernel().mpi_manager.get_rank();
 
   if ( model_filter != SIZE_MAX )
   {
     model = model_filter;
   }
-  // TODO481 need the one that runs over the same mpi. Everything with three needs mpi_begin type. Everything with connect needs thread_begin type.
-  GIDCollection::const_iterator gc_begin = this->gid_collection_->begin( num_threads,
-    model );
+  GIDCollection::const_iterator gc_begin =
+    this->gid_collection_->begin( current_rank, num_processes, model );
   GIDCollection::const_iterator gc_end = this->gid_collection_->end();
 
-  for ( GIDCollection::const_iterator gc_it = gc_begin;
-        gc_it != gc_end;
+  for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it != gc_end;
         ++gc_it )
   {
     tree.insert( std::pair< Position< D >, index >(
-      positions_.at( ( *gc_it ).lid ),( *gc_it ).gid ) );
+      positions_.at( ( *gc_it ).lid ), ( *gc_it ).gid ) );
   }
 }
 

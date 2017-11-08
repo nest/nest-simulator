@@ -109,12 +109,12 @@ FreeLayer< D >::set_status( const DictionaryDatum& d )
   if ( d->known( names::positions ) )
   {
     TokenArray pos = getValue< TokenArray >( d, names::positions );
-    if ( this->gid_collection->size() != pos.size() )
+    if ( this->gid_collection_->size() != pos.size() )
     {
       std::stringstream expected;
       std::stringstream got;
       expected << "position array with length "
-               << this->gid_collection->size();
+               << this->gid_collection_->size();
       got << "position array with length" << pos.size();
       throw TypeMismatch( expected.str(), got.str() );
     }
@@ -185,11 +185,11 @@ FreeLayer< D >::communicate_positions_( Ins iter, const index& model_filter )
   }
 
   // TODO481 need new iterator
-  GIDCollection::const_iterator gc_begin = this->gid_collection->begin( num_threads,
+  GIDCollection::const_iterator gc_begin = this->gid_collection_->begin( num_threads,
     model );
-  GIDCollection::const_iterator gc_end = this->gid_collection->end();
+  GIDCollection::const_iterator gc_end = this->gid_collection_->end();
 
-  local_gid_pos.reserve( ( D + 1 ) * this->gid_collection->size() );
+  local_gid_pos.reserve( ( D + 1 ) * this->gid_collection_->size() );
 
   for ( GIDCollection::const_iterator gc_it = gc_begin;
         gc_it != gc_end;
@@ -253,9 +253,9 @@ FreeLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
     model = model_filter;
   }
   // TODO481 need the one that runs over the same mpi. Everything with three needs mpi_begin type. Everything with connect needs thread_begin type.
-  GIDCollection::const_iterator gc_begin = this->gid_collection->begin( num_threads,
+  GIDCollection::const_iterator gc_begin = this->gid_collection_->begin( num_threads,
     model );
-  GIDCollection::const_iterator gc_end = this->gid_collection->end();
+  GIDCollection::const_iterator gc_end = this->gid_collection_->end();
 
   for ( GIDCollection::const_iterator gc_it = gc_begin;
         gc_it != gc_end;

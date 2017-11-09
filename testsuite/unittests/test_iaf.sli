@@ -21,12 +21,12 @@
  */
 
  /* BeginDocumentation
-    Name: testsuite::test_iaf - sli script for overall test of iaf_neuron model
+    Name: testsuite::test_iaf - sli script for overall test of iaf_psc_alpha model
 
     Synopsis: (test_iaf) run -> compares response to current step with reference data 
 
     Description:
-    test_iaf.sli is an overall test of the iaf_neuron model connected
+    test_iaf.sli is an overall test of the iaf_psc_alpha model connected
     to some useful devices.
 
     A DC current is injected into the neuron using a current generator 
@@ -55,7 +55,7 @@
     see the SeeAlso key below.    
 
     Author:  July 2004, Diesmann
-    SeeAlso: iaf_neuron, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, testsuite::test_iaf_dc
+    SeeAlso: iaf_psc_alpha, testsuite::test_iaf_i0, testsuite::test_iaf_i0_refractory, testsuite::test_iaf_dc
 */
 
 
@@ -71,7 +71,7 @@ ResetKernel
       /resolution h
     >> SetStatus
 
-/iaf_neuron Create /neuron Set
+/iaf_psc_alpha Create /neuron Set
 
 /dc_generator Create /dc_gen Set
 dc_gen << /amplitude 1000. >> SetStatus

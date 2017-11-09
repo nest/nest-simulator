@@ -75,13 +75,13 @@ ResetKernel
 /vb verbosity def
 M_ERROR setverbosity  % suppress warning from time reset
 {
-  % run for resolution dt=0.1 project to iaf_neuron
+  % run for resolution dt=0.1 project to iaf_psc_alpha
   % create 100 repetitions of 1000ms simulations
   % collect membrane potential at end 
   ResetKernel
   0 << /resolution 0.1 >> SetStatus
   /ng  /noise_generator Create def
-  /nrn /iaf_neuron Create def
+  /nrn /iaf_psc_alpha Create def
   ng nrn Connect
 
   ng  << /mean 0.0 /std 1.0 /dt 0.1 >> SetStatus

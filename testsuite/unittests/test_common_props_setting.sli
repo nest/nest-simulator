@@ -61,7 +61,7 @@ def
     copmod << /tau_plus 15.0 /weight 20.0 >> CopyModel 
     copmod GetDefaults [[/tau_plus /weight]] get [15.0 20.0] eq and
     
-    /iaf_neuron Create /n Set
+    /iaf_psc_alpha Create /n Set
     n n synmod Connect
     << /source [n] >> GetConnections 0 get dup << /weight 3.0 >> SetStatus 
     GetStatus /weight get 3.0 eq and
@@ -81,7 +81,7 @@ synmodels
   /synmod Set
   synmod GetDefaults /tau_plus get /tpref Set
   
-  /iaf_neuron Create /n Set
+  /iaf_psc_alpha Create /n Set
   n n synmod Connect
   << /source [n] >> GetConnections 0 get /c Set
   { c << /tau_plus tpref 1. add 3. mul >> SetStatus } fail_or_die

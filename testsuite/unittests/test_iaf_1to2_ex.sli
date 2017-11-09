@@ -29,7 +29,7 @@ Synopsis: (test_iaf_1to2_ex) run -> compare with reference data
 Description:
 
  test_iaf_1to2_ex checks the invariance of the spike interaction of 
- two iaf_neuron model neurons with respect to the min_delay of the 
+ two iaf_psc_alpha model neurons with respect to the min_delay of the
  kernel.
 
  In order to obtain identical results for different computation step
@@ -96,8 +96,8 @@ SeeAlso: testsuite::test_iaf, testsuite::test_iaf_psp, testsuite::test_iaf_dc_al
     /max_delay delay
   >> SetStatus
 
-  /iaf_neuron Create /neuron1 Set
-  /iaf_neuron Create /neuron2 Set
+  /iaf_psc_alpha Create /neuron1 Set
+  /iaf_psc_alpha Create /neuron2 Set
 
   neuron1 << /I_e 1450.0 >> SetStatus
 

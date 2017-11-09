@@ -48,14 +48,14 @@ M_ERROR setverbosity
 
 (  Testing variant "integer integer") =
 ResetKernel
-/iaf_neuron 2 Create ;
+/iaf_psc_alpha 2 Create ;
 1 2 Connect
 << /source [1] >> GetConnections 0 get
 /target get 2 eq assert_or_die
 
 (  Testing variant "integer integer double double") =
 ResetKernel
-/iaf_neuron 2 Create ;
+/iaf_psc_alpha 2 Create ;
 1 2 2.0 3.0 Connect
 << /source [1] >> GetConnections 0 get dup dup
 /target get 2 eq assert_or_die
@@ -74,7 +74,7 @@ ResetKernel
 
   (  Testing variant "array array") =
   ResetKernel
-  /iaf_neuron 6 Create ;
+  /iaf_psc_alpha 6 Create ;
   addresses arrayload ; Connect
   << /source [1 2 3] >> GetConnections dup
   First /target get 4 eq assert_or_die
@@ -82,7 +82,7 @@ ResetKernel
 
   (  Testing variant "array array literal") =
   ResetKernel
-  /iaf_neuron 6 Create ;
+  /iaf_psc_alpha 6 Create ;
   addresses arrayload ; /one_to_one Connect
   << /source [1 2 3] >> GetConnections dup
   First /target get 4 eq assert_or_die
@@ -90,7 +90,7 @@ ResetKernel
 
   (  Testing variant "array array dict") =
   ResetKernel
-  /iaf_neuron 6 Create ;
+  /iaf_psc_alpha 6 Create ;
   addresses arrayload ; << /rule /one_to_one >> Connect
   << /source [1 2 3] >> GetConnections dup
   First /target get 4 eq assert_or_die
@@ -98,7 +98,7 @@ ResetKernel
 
   (  Testing variant "array array empty_dict") =
   ResetKernel
-  /iaf_neuron 6 Create ;
+  /iaf_psc_alpha 6 Create ;
   addresses arrayload ; << >> Connect
   << /source [1 2 3] >> GetConnections dup
   First /target get 4 eq assert_or_die
@@ -106,7 +106,7 @@ ResetKernel
 
   (  Testing variant "array array literal literal") =
   ResetKernel
-  /iaf_neuron 6 Create ;
+  /iaf_psc_alpha 6 Create ;
   addresses arrayload ; /one_to_one /stdp_synapse Connect
   << /source [1 2 3] >> GetConnections dup
   First /target get 4 eq assert_or_die
@@ -114,7 +114,7 @@ ResetKernel
 
   (  Testing variant "array array dict literal") =
   ResetKernel
-  /iaf_neuron 6 Create ;
+  /iaf_psc_alpha 6 Create ;
   addresses arrayload ; << /rule /one_to_one >> /stdp_synapse Connect
   << /source [1 2 3] >> GetConnections dup
   First /target get 4 eq assert_or_die
@@ -122,7 +122,7 @@ ResetKernel
   
   (  Testing variant "array array empty_dict literal") =
   ResetKernel
-  /iaf_neuron 6 Create ;
+  /iaf_psc_alpha 6 Create ;
   addresses arrayload ; << >> /stdp_synapse Connect
   << /source [1 2 3] >> GetConnections dup
   First /target get 4 eq assert_or_die
@@ -130,7 +130,7 @@ ResetKernel
   
   (  Testing variant "array array literal dict") =
   ResetKernel
-  /iaf_neuron 6 Create ;
+  /iaf_psc_alpha 6 Create ;
   addresses arrayload ; /one_to_one << /model /stdp_synapse >> Connect
   << /source [1 2 3] >> GetConnections dup
   First /target get 4 eq assert_or_die
@@ -138,7 +138,7 @@ ResetKernel
   
   (  Testing variant "array array literal empty_dict") =
   ResetKernel
-  /iaf_neuron 6 Create ;
+  /iaf_psc_alpha 6 Create ;
   addresses arrayload ; /one_to_one << >> Connect
   << /source [1 2 3] >> GetConnections dup
   First /target get 4 eq assert_or_die
@@ -146,7 +146,7 @@ ResetKernel
   
   (  Testing variant "array array dict dict") =
   ResetKernel
-  /iaf_neuron 6 Create ;
+  /iaf_psc_alpha 6 Create ;
   addresses arrayload ; << /rule /one_to_one >> << /model /stdp_synapse >> Connect
   << /source [1 2 3] >> GetConnections dup
   First /target get 4 eq assert_or_die
@@ -154,7 +154,7 @@ ResetKernel
   
   (  Testing variant "array array empty_dict dict") =
   ResetKernel
-  /iaf_neuron 6 Create ;
+  /iaf_psc_alpha 6 Create ;
   addresses arrayload ; << >> << /model /stdp_synapse >> Connect
   << /source [1 2 3] >> GetConnections dup
   First /target get 4 eq assert_or_die
@@ -162,7 +162,7 @@ ResetKernel
   
   (  Testing variant "array array dict empty_dict") =
   ResetKernel
-  /iaf_neuron 6 Create ;
+  /iaf_psc_alpha 6 Create ;
   addresses arrayload ; << /rule /one_to_one >> << >> Connect
   << /source [1 2 3] >> GetConnections dup
   First /target get 4 eq assert_or_die
@@ -170,7 +170,7 @@ ResetKernel
   
   (  Testing variant "array array empty_dict empty_dict") =
   ResetKernel
-  /iaf_neuron 6 Create ;
+  /iaf_psc_alpha 6 Create ;
   addresses arrayload ; << >> << >> Connect
   << /source [1 2 3] >> GetConnections dup
   First /target get 4 eq assert_or_die

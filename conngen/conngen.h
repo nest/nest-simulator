@@ -32,6 +32,7 @@
 // Includes from nestkernel:
 #include "nest_names.h"
 #include "nest_types.h"
+#include "nest_datums.h"
 
 // Includes from sli:
 #include "arraydatum.h"
@@ -42,32 +43,22 @@ namespace nest
 {
 
 void cg_connect( ConnectionGeneratorDatum& cg,
-  const index source_id,
-  const index target_id,
+  const GIDCollection& source_gids,
+  const GIDCollection& target_gids,
   const DictionaryDatum& params_map,
   const Name& synmodel_name );
-
-void cg_connect( ConnectionGeneratorDatum& cg,
-  IntVectorDatum& source_id,
-  IntVectorDatum& target_id,
-  const DictionaryDatum& params_map,
-  const Name& synmodel_name );
-
-ConnectionGeneratorDatum cg_parse( const StringDatum& xml );
-
-ConnectionGeneratorDatum cg_parse_file( const StringDatum& xml );
-
-void cg_select_implementation( const StringDatum& library,
-  const StringDatum& tag );
 
 void cg_set_masks( ConnectionGeneratorDatum& cg,
-  IntVectorDatum& sources,
-  IntVectorDatum& targets );
-void cg_start( ConnectionGeneratorDatum& cgd );
-bool cg_next( ConnectionGeneratorDatum& cgd,
-  int& src,
-  int& tgt,
-  std::vector< double >& values );
+  const GIDCollection& sources,
+  const GIDCollection& targets );
+
+void cg_create_masks( std::vector< ConnectionGenerator::Mask >& masks,
+  RangeSet& sources,
+  RangeSet& targets );
+
+index cg_get_right_border( index left, size_t step, const GIDCollection& gids );
+
+void cg_get_ranges( RangeSet& ranges, const GIDCollection& gids );
 }
 
 #endif /* CONNGEN_H */

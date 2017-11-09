@@ -120,7 +120,9 @@ suicide( Told* connector )
 }
 
 // when to truncate the recursive instantiation
-#define K_CUTOFF 3
+// can be specified via cmake flag -Dconnector_cutoff=value
+#define K_CUTOFF CONFIG_CONNECTOR_CUTOFF
+
 
 namespace nest
 {
@@ -807,13 +809,15 @@ class Connector< K_CUTOFF, ConnectionT > : public vector_like< ConnectionT >
 public:
   Connector( const Connector< K_CUTOFF - 1, ConnectionT >& C,
     const ConnectionT& c )
-    : C_( K_CUTOFF ) //, syn_id_(C.get_syn_id())
   {
+    C_.reserve( kernel().connection_manager.get_initial_connector_capacity() );
+
     for ( size_t i = 0; i < K_CUTOFF - 1; i++ )
     {
-      C_[ i ] = C.get_C()[ i ];
+      C_.push_back( C.get_C()[ i ] );
     }
-    C_[ K_CUTOFF - 1 ] = c;
+
+    C_.push_back( c );
   };
 
   /**
@@ -914,6 +918,20 @@ public:
   ConnectorBase&
   push_back( const ConnectionT& c )
   {
+    // Replace default (doubling) vector grow strategy.
+    // Use specific vector grow strategy when size >= large_connector_limit.
+    // Call vector::reserve() manually if size() == capacity().
+    const size_t sz = C_.size();
+
+    if ( sz == C_.capacity()
+      and sz >= kernel().connection_manager.get_large_connector_limit() )
+    {
+      const size_t cap = static_cast< double >( sz )
+        * kernel().connection_manager.get_large_connector_growth_factor();
+
+      C_.reserve( cap > sz ? cap : sz + 1 );
+    }
+
     C_.push_back( c );
     return *this;
   }
@@ -1269,6 +1287,11 @@ public:
     {
       push_back( conn );
     }
+  }
+  void
+  reduce_primary()
+  {
+    --primary_end_;
   }
 };
 

@@ -98,7 +98,7 @@ I_e        double - Constant external input current in pA.
 Remarks:
 If tau_m is very close to tau_syn, the model will numerically behave as if
 tau_m is equal to tau_syn to avoid numerical instabilities.
-For details, please see IAF_Neruons_Singularity.ipynb in
+For details, please see IAF_Neurons_Singularity.ipynb in
 the NEST source code (docs/model_details).
 
 References:

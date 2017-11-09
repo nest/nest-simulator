@@ -74,8 +74,6 @@ create_layer( const DictionaryDatum& layer_dict )
 {
   layer_dict->clear_access_flags();
 
-  assert( false && "WORK TO DO!" );
-
   GIDCollectionPTR layer = AbstractLayer::create_layer( layer_dict );
 
   ALL_ENTRIES_ACCESSED(

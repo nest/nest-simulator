@@ -651,7 +651,7 @@ def CreateLayer(specs):
         else:
             hlh.model_deprecation_warning(elements)
 
-    return topology_func('{ CreateLayer } Map', specs)
+    return nest.GIDCollection(topology_func('{ CreateLayer } Map', specs)[0])
 
 
 def ConnectLayers(pre, post, projections):

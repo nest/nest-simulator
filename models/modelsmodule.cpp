@@ -72,7 +72,6 @@
 #include "iaf_tum_2000.h"
 #include "izhikevich.h"
 #include "lin_rate.h"
-#include "lin_rate_mult.h"
 #include "tanh_rate.h"
 #include "threshold_lin_rate.h"
 #include "mat2_psc_exp.h"
@@ -195,10 +194,6 @@ ModelsModule::init( SLIInterpreter* )
     "gauss_rate_ipn" );
   kernel().model_manager.register_node_model< lin_rate_opn >( "lin_rate_opn" );
   kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
-  kernel().model_manager.register_node_model< lin_rate_mult_opn >(
-    "lin_rate_mult_opn" );
-  kernel().model_manager.register_node_model< lin_rate_mult_ipn >(
-    "lin_rate_mult_ipn" );
   kernel().model_manager.register_node_model< sigm_rate_opn >(
     "sigm_rate_opn" );
   kernel().model_manager.register_node_model< sigm_rate_ipn >(

@@ -23,6 +23,9 @@
 #ifndef THRESHOLD_LIN_RATE_H
 #define THRESHOLD_LIN_RATE_H
 
+// C++ includes:
+#include <algorithm>
+
 // Includes from models:
 #include "rate_neuron_ipn.h"
 #include "rate_neuron_ipn_impl.h"
@@ -100,11 +103,15 @@ private:
   /** threshold of gain function */
   double theta_;
 
+  /** second threshold of gain function */
+  double alpha_;
+
 public:
   /** sets default parameters */
   nonlinearities_threshold_lin_rate()
     : g_( 1.0 )
     , theta_( 0.0 )
+    , alpha_( std::numeric_limits< double >::infinity() )
   {
   }
 
@@ -119,11 +126,7 @@ public:
 inline double
 nonlinearities_threshold_lin_rate::input( double h )
 {
-  if ( h > theta_ )
-  {
-    return g_ * ( h - theta_ );
-  }
-  return 0.0;
+  return std::min( std::max( g_ * ( h - theta_ ), 0. ), alpha_ );
 }
 
 inline double

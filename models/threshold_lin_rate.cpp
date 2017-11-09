@@ -30,6 +30,7 @@ nonlinearities_threshold_lin_rate::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::g, g_ );
   def< double >( d, names::theta, theta_ );
+  def< double >( d, names::alpha, alpha_ );
 }
 
 void
@@ -37,6 +38,7 @@ nonlinearities_threshold_lin_rate::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::g, g_ );
   updateValue< double >( d, names::theta, theta_ );
+  updateValue< double >( d, names::alpha, alpha_ );
 }
 
 /*

@@ -188,6 +188,14 @@ def
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Min and Max for GIDCollections
+%
+
+/Min [/gidcollectiontype] { 0 get } def
+/Max [/gidcollectiontype] { size 1 sub get } def
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 /Simulate trie
 [/integertype] {cvd Simulate} addtotrie
 [/doubletype]  /Simulate_d load addtotrie

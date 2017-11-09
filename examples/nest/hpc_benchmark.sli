@@ -34,18 +34,18 @@
      networks. Neural Comput 19(6):1437-67
    Helias et al (2012). Supercomputers ready for use as discovery machines for
      neuroscience. Front. Neuroinform. 6:26
-   Kunkel et al (2014). Spiking network simulation code for petascale 
+   Kunkel et al (2014). Spiking network simulation code for petascale
      computers. Front. Neuroinform. 8:78
-     
+
    A note on scaling
    -----------------
-   
+
    This benchmark was originally developed for very large-scale simulations on
-   supercomputers with more than 1 million neurons in the network and 
+   supercomputers with more than 1 million neurons in the network and
    11.250 incoming synapses per neuron. For such large networks, input to a
    single neuron will be little correlated and network activity will remain
-   stable for long periods of time. 
-   
+   stable for long periods of time.
+
    The original network size corresponds to a scale parameter of 100 or more.
    In order to make it possible to test this benchmark script on desktop
    computers, the scale parameter is set to 1 below, while the number of
@@ -54,23 +54,23 @@
    Over time, network dynamics will therefore become unstable and all neurons
    in the network will fire in synchrony, leading to extremely slow simulation
    speeds.
-   
+
    Therefore, the presimulation time is reduced to 50 ms below and the
    simulation time to 250 ms, while we usually use 100 ms presimulation and
    1000 ms simulation time.
-   
+
    For meaningful use of this benchmark, you should use a scale > 10 and check
    that the firing rate reported at the end of the benchmark is below 10 spikes
-   per second. 
+   per second.
 */
-  
+
 %%% PARAMETER SECTION %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % define all relevant parameters: changes should be made here
 % all data is placed in the userdict dictionary
 
 /nvp 1 def              % total number of virtual processes
-/scale 1.0 def          % scaling factor of the network size, 
+/scale 1.0 def          % scaling factor of the network size,
                         % total network size = scale*11250 neurons
 /simtime 250. def       % total simulation time in ms
 /presimtime 50. ms def % simulation time until reaching equilibrium
@@ -114,12 +114,12 @@ def
 {
   /taumem set
   /tausyn set
-  
+
   (
   a = taumem / tausyn;
   b = 1.0 / tausyn - 1.0 / taumem;
   ) execmath
-  
+
 } def
 
 % Inverting this equation numerically leads to tau_syn = 0.32582722403722841 ms,
@@ -174,7 +174,7 @@ def
     /mu     0.4          %STDP weight dependence exponent (potentiation)
     /tau_plus 15.0       %time constant for potentiation
   >>
-  
+
   /eta 1.685         %scaling of external stimulus
   /filestem path_name
 
@@ -184,7 +184,7 @@ def
 % values visible
 brunel_params dup using
 
-% create one single random number generator    
+% create one single random number generator
 rngdict /knuthlfg get 238 CreateRNG /myrng Set
 
 % normal distribution to draw initial membrane potentials from
@@ -195,7 +195,7 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
 
 /BuildNetwork
 {
-  
+
   tic % start timer on construction
   % set global kernel parameters
   <<
@@ -208,7 +208,7 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
   M_INFO (BuildNetwork)
   (Creating excitatory population.) message  % show message
   /E_neurons /iaf_psc_alpha NE Create def
-  
+
   M_INFO (BuildNetwork)
   (Creating inhibitory population.) message  % show message
   /I_neurons /iaf_psc_alpha NI Create def
@@ -225,13 +225,13 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
       E_neurons
       {
           << /V_m mean_potential sigma_potential normal Random mul add >>
-	  SetStatus
+          SetStatus
       } forall
 
       I_neurons
-      { 
-	  << /V_m mean_potential sigma_potential normal Random mul add >>
-	  SetStatus
+      {
+          << /V_m mean_potential sigma_potential normal Random mul add >>
+          SetStatus
       } forall
   } if
 
@@ -295,7 +295,7 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
   /static_synapse_hpc /syn_ex << /weight JE_pA >> CopyModel
   /static_synapse_hpc /syn_in << /weight JE_pA g mul >> CopyModel
 
-  stdp_params /weight JE_pA put	
+  stdp_params /weight JE_pA put
   /stdp_pl_synapse_hom_hpc stdp_params SetDefaults
 
 
@@ -335,8 +335,8 @@ myrng rdevdict /normal get CreateRDV /normal_dv Set
     local_neurons Nrec lt
     {
       M_ERROR (BuildNetwork)
-      (Spikes can only be recorded from local neurons, but the number of local 
-neurons is smaller than the number of neurons spikes should be recorded from. 
+      (Spikes can only be recorded from local neurons, but the number of local
+neurons is smaller than the number of neurons spikes should be recorded from.
 Aborting the simulation!) message
       1 quit_i
     } if
@@ -439,31 +439,40 @@ def
     % expects file name on stack
     /init
     {
-	Rank max_rank_log lt {
+        Rank max_rank_log lt {
 
             (_) join
 
-	    % convert rank to string, prepend 0 if necessary to make
+            % convert rank to string, prepend 0 if necessary to make
             % numbers equally wide for all ranks
-            Rank cvs 
+            Rank cvs
             dup length max_rank_log cvs length exch sub
             {
-	      48 prepend   % 48 is ASCII code for 0
+              48 prepend   % 48 is ASCII code for 0
             }
             repeat
             join
             (.dat) join
 
-            /f exch (w) ofsopen
-	    {
-		def
-	    }
-	    {
-		/Logger_init /CannotOpenFile raiseerror
-	    }
-	    ifelse
+            % log to the data_path if that is non-empty
+            GetKernelStatus /data_path get
+            empty not {
+                (/) join exch join
+            }
+            {
+                pop
+            } ifelse
 
-	} if
+            /f exch (w) ofsopen
+            {
+                def
+            }
+            {
+                /Logger_init /CannotOpenFile raiseerror
+            }
+            ifelse
+
+        } if
     }
 
     % logging function
@@ -471,22 +480,22 @@ def
     /log
     {
       /value Set
-	Rank max_rank_log lt {
-	    f line_counter <- ( ) <- Rank <- ( ) <- value <- (\n) <- pop
-	    /line_counter line_counter 1 add def
-	} if
+        Rank max_rank_log lt {
+            f line_counter <- ( ) <- Rank <- ( ) <- value <- (\n) <- pop
+            /line_counter line_counter 1 add def
+        } if
         Rank max_rank_cout lt {
             cout Rank <- ( ) <- value <- endl flush pop
             cerr Rank <- ( ) <- value <- endl flush pop
-	} if
+        } if
     }
 
     % closes file
     /done
     {
-	Rank max_rank_log lt {
-	    f close
-	} if
+        Rank max_rank_log lt {
+            f close
+        } if
     }
 
 >> def

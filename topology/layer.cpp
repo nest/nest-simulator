@@ -169,16 +169,15 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   {
     throw BadProperty( "Unknown layer type." );
   }
+
   assert( layer_local );
   lockPTR< AbstractLayer > layer_safe( layer_local );
-
-  layer_local->set_status( layer_dict );
-
   GIDCollectionMetadataPTR layer_meta( new LayerMetadata( layer_safe ) );
 
   // We have at least one element, create a GIDCollection for it
   GIDCollectionPTR gid_coll =
     kernel().node_manager.add_node( element_ids[ 0 ], length );
+
   gid_coll->set_metadata( layer_meta );
 
   // Create all remaining elements and add
@@ -192,6 +191,8 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   }
 
   get_layer( gid_coll )->gid_collection_ = gid_coll;
+
+  layer_local->set_status( layer_dict );
 
   return gid_coll;
 }

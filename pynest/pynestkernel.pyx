@@ -309,10 +309,10 @@ cdef inline Datum* python_object_to_datum(obj) except NULL:
         ret = python_object_to_datum(obj.item())
     elif isinstance(obj, SLIDatum):
         # TODO480
-        #if (<SLIDatum> obj).dtype == SLI_TYPE_MASK.decode():
-        #    ret = <Datum*> new MaskDatum(deref(<MaskDatum*> (<SLIDatum> obj).thisptr))
-        #elif (<SLIDatum> obj).dtype == SLI_TYPE_PARAMETER.decode():
-        #    ret = <Datum*> new ParameterDatum(deref(<ParameterDatum*> (<SLIDatum> obj).thisptr))
+        if (<SLIDatum> obj).dtype == SLI_TYPE_MASK.decode():
+            ret = <Datum*> new MaskDatum(deref(<MaskDatum*> (<SLIDatum> obj).thisptr))
+        elif (<SLIDatum> obj).dtype == SLI_TYPE_PARAMETER.decode():
+            ret = <Datum*> new ParameterDatum(deref(<ParameterDatum*> (<SLIDatum> obj).thisptr))
         if False:
             pass
         elif (<SLIDatum> obj).dtype == SLI_TYPE_GIDCOLLECTION.decode():
@@ -431,12 +431,12 @@ cdef inline object sli_datum_to_object(Datum* dat):
     elif datum_type == SLI_TYPE_VECTOR_DOUBLE:
         ret = sli_vector_to_object[sli_vector_double_ptr_t, double](<DoubleVectorDatum*> dat)
     # TODO480
-    # elif datum_type == SLI_TYPE_MASK:
-    #    ret = SLIDatum()
-    #    (<SLIDatum> ret)._set_datum(<Datum*> new MaskDatum(deref(<MaskDatum*> dat)), SLI_TYPE_MASK.decode())
-    # elif datum_type == SLI_TYPE_PARAMETER:
-    #    ret = SLIDatum()
-    #    (<SLIDatum> ret)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())
+    elif datum_type == SLI_TYPE_MASK:
+        ret = SLIDatum()
+        (<SLIDatum> ret)._set_datum(<Datum*> new MaskDatum(deref(<MaskDatum*> dat)), SLI_TYPE_MASK.decode())
+    elif datum_type == SLI_TYPE_PARAMETER:
+        ret = SLIDatum()
+        (<SLIDatum> ret)._set_datum(<Datum*> new ParameterDatum(deref(<ParameterDatum*> dat)), SLI_TYPE_PARAMETER.decode())
     elif datum_type == SLI_TYPE_GIDCOLLECTION:
         ret = SLIDatum()
         (<SLIDatum> ret)._set_datum(<Datum*> new GIDCollectionDatum(deref(<GIDCollectionDatum*> dat)), SLI_TYPE_GIDCOLLECTION.decode())

@@ -29,8 +29,6 @@
 // Includes from models:
 #include "rate_neuron_ipn.h"
 #include "rate_neuron_ipn_impl.h"
-#include "rate_neuron_opn.h"
-#include "rate_neuron_opn_impl.h"
 
 
 namespace nest
@@ -80,12 +78,9 @@ nonlinearities_gauss_rate::mult_coupling_in( double rate )
 }
 
 typedef rate_neuron_ipn< nest::nonlinearities_gauss_rate > gauss_rate_ipn;
-typedef rate_neuron_opn< nest::nonlinearities_gauss_rate > gauss_rate_opn;
 
 template <>
 void RecordablesMap< gauss_rate_ipn >::create();
-template <>
-void RecordablesMap< gauss_rate_opn >::create();
 
 } // namespace nest
 

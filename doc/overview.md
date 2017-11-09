@@ -28,12 +28,12 @@
 
 ## What is NEST
 
-NEST is a simulator for spiking neural network models that focuses on the
-dynamics, size and structure of neural systems rather than on the exact
+NEST is a simulator for spiking neural network models that focuses on the
+dynamics, size and structure of neural systems rather than on the exact
 morphology of individual neurons. The development of NEST is coordinated by the
 [NEST Initiative](http://www.nest-initiative.org).
 
-NEST is ideal for networks of spiking neurons of any size, for example:
+NEST is ideal for networks of spiking neurons of any size, for example:
 
 1.  Models of information processing e.g. in the visual or auditory cortex of
     mammals,
@@ -45,7 +45,7 @@ NEST is ideal for networks of spiking neurons of any size, for example:
 
 Learn more about NEST:
 
-**\>\> NEST:: documented movie ** **[(short version](http://www.youtube.com/watch?v=K7KXmIv6ROY),**
+**\>\> NEST:: documented movie ** **[(short version](http://www.youtube.com/watch?v=K7KXmIv6ROY),**
 **[long version)](http://www.youtube.com/watch?v=v0YEiren7D0)\>\> NEST information brochure** **[PDF](http://www.nest-simulator.org/wp-content/uploads/2015/04/JARA_NEST_final.pdf)**
 
 ## How do I use NEST
@@ -170,7 +170,7 @@ If you like NEST, why not show it on your poster or on your slides?
 
 <https://github.com/nest/nest-simulator/tree/master/extras/logos>
 
-![NEST Logo](../extras/logos/nest-simulated.png)
+<img src="../../../logos/nest-simulated.png" width="480">
 
 ## Nest Models on [Open Source Brain](http://www.opensourcebrain.org/)
 

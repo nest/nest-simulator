@@ -32,13 +32,13 @@ Please see the sections on [minimal](#minimal-configuration) and [standard confi
 By default, everything will be installed to the subdirectories `/install/path/{bin,lib,share}`, where `/install/path` is the install path given to `cmake`:
 
 - Executables `/install/path/bin`
-- Dynamic libraries `/install/path/lib/`
-- SLI libraries `/install/path/share/nest/sli`
-- Documentation `/install/path/share/doc/nest`
-- Examples `/install/path/share/doc/nest/examples`
-- PyNEST `/install/path/lib/pythonX.Y/site-packages/nest`
-- PyNEST examples `/install/path/share/doc/nest/examples/pynest`
-- Extras `/install/path/share/nest/extras/`
+- Dynamic libraries `/install/path/lib/`
+- SLI libraries `/install/path/share/nest/sli`
+- Documentation `/install/path/share/doc/nest`
+- Examples `/install/path/share/doc/nest/examples`
+- PyNEST `/install/path/lib/pythonX.Y/site-packages/nest`
+- PyNEST examples `/install/path/share/doc/nest/examples/pynest`
+- Extras `/install/path/share/nest/extras/`
 
 If you want to run the `nest` executable or use the `nest` Python module without providing explicit paths, you have to add the installation directory to your search paths. For example, if you are using bash:
 
@@ -348,7 +348,7 @@ for the version of NEST you want to install.
 
 ### Known problems for NEST 2.10 and earlier
 
-####  Using the correct compiler
+####  Using the correct compiler
 
 We strongly recommend that you use the same compiler version to compile NEST
 that was used to build Python / OpenMPI. Usually, this will be the system

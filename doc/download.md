@@ -79,15 +79,15 @@ computer, especially for Windows and Mac OS X users.
     
     - [Download](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.10.0.ova)
       (OVA, ~3.7G) 
-                
+                
     - [Checksum](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-16.04_nest-2.10.0.ova.sha512sum)
       (sha512sum)
 
 -   Ubuntu 15.10 Live Media with NEST 2.8.0
     
     - [Download](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-15.10_nest-2.8.0.ova)
-      (OVA, ~2.5G)   
-          
+      (OVA, ~2.5G)   
+          
     - [Checksum](http://www.nest-simulator.org/downloads/gplreleases/lubuntu-15.10_nest-2.8.0.ova.sha512sum)
       (sha512sum)
-    
+

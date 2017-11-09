@@ -75,6 +75,7 @@ set( models_sources
     music_message_in_proxy.h music_message_in_proxy.cpp
     noise_generator.h noise_generator.cpp
     parrot_neuron.h parrot_neuron.cpp
+    parrot_rate_neuron.h parrot_rate_neuron_impl.h
     poisson_generator.h poisson_generator.cpp
     pp_psc_delta.h pp_psc_delta.cpp
     pp_pop_psc_delta.h pp_pop_psc_delta.cpp

@@ -28,7 +28,8 @@
 #include "rate_neuron_ipn_impl.h"
 #include "rate_neuron_opn.h"
 #include "rate_neuron_opn_impl.h"
-
+#include "parrot_rate_neuron.h"
+#include "parrot_rate_neuron_impl.h"
 
 namespace nest
 {
@@ -141,11 +142,15 @@ nonlinearities_lin_rate::mult_coupling_in( double rate )
 
 typedef rate_neuron_ipn< nest::nonlinearities_lin_rate > lin_rate_ipn;
 typedef rate_neuron_opn< nest::nonlinearities_lin_rate > lin_rate_opn;
+typedef parrot_rate_neuron< nest::nonlinearities_lin_rate > lin_rate_parrot;
 
 template <>
 void RecordablesMap< lin_rate_ipn >::create();
 template <>
 void RecordablesMap< lin_rate_opn >::create();
+template <>
+void RecordablesMap< lin_rate_parrot >::create();
+
 
 } // namespace nest
 

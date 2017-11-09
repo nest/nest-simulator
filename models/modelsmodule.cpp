@@ -194,6 +194,7 @@ ModelsModule::init( SLIInterpreter* )
     "gauss_rate_ipn" );
   kernel().model_manager.register_node_model< lin_rate_opn >( "lin_rate_opn" );
   kernel().model_manager.register_node_model< lin_rate_ipn >( "lin_rate_ipn" );
+  kernel().model_manager.register_node_model< lin_rate_parrot >( "lin_rate_parrot" );
   kernel().model_manager.register_node_model< sigm_rate_opn >(
     "sigm_rate_opn" );
   kernel().model_manager.register_node_model< sigm_rate_ipn >(

@@ -814,9 +814,10 @@ def ConnectLayers(pre, post, projections):
     if not len(pre) == len(post):
         raise nest.NESTError("pre and post must have the same length.")
 
+    # TODO481
     # ensure projections is list of full length
-    projections = nest.broadcast(projections, len(pre), (dict, ),
-                                 "projections")
+    #projections = nest.broadcast(projections, len(pre), (dict, ),
+    #                             "projections")
 
     # Replace python classes with SLI datums
     def fixdict(d):
@@ -828,9 +829,10 @@ def ConnectLayers(pre, post, projections):
                 d[k] = v._datum
         return d
 
-    projections = [fixdict(p) for p in projections]
+    #projections = [fixdict(p) for p in projections]
+    projections = fixdict(projections)
 
-    topology_func('3 arraystore { ConnectLayers } ScanThread', pre, post,
+    topology_func('ConnectLayers', pre, post,
                   projections)
 
 

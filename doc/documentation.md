@@ -21,6 +21,7 @@
 
 ## Example Networks
 
+-   [Integrate rate-based models in a spiking neural network](examples/ratebased.md)
 -   [Balanced neuron example](examples/balancedneuron.md)
 -   [Test of the adapting exponential integrate and fire model in NEST](examples/brette_gerstner_fig_2c.md)
 -   [Test of the adapting exponential integrate and fire model in NEST](examples/brette_gerstner_fig_3d.md)

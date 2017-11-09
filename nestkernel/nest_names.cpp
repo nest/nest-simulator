@@ -350,6 +350,7 @@ const Name record_from( "record_from" );
 const Name record_to( "record_to" );
 const Name recordables( "recordables" );
 const Name recorder( "recorder" );
+const Name rectify_output( "rectify_output" );
 const Name refractory_input( "refractory_input" );
 const Name registered( "registered" );
 const Name relative_amplitude( "relative_amplitude" );

@@ -134,10 +134,16 @@ private:
     double mean_;
 
     /** Target of non-linearity.
-        True: Gain function applied to linearly summed input.
+        True (default): Gain function applied to linearly summed input.
         False: Gain function applied to each input before summation.
     **/
     bool linear_summation_;
+
+    /** Should the rate be rectified?.
+        True: If the rate is negative it is set to zero after each time step.
+        False (default): No rectification.
+    **/
+    bool rectify_output_;
 
     Parameters_(); //!< Sets default parameter values
 

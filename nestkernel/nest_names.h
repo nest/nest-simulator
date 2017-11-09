@@ -397,7 +397,8 @@ extern const Name record_from;            //!< Recorder parameter
 extern const Name record_to;              //!< Recorder parameter
 extern const Name
   recordables; //!< List of recordable state data (Device parameters)
-extern const Name recorder; //!< Node type
+extern const Name recorder;       //!< Node type
+extern const Name rectify_output; //!< Specific to rate models
 extern const Name
   refractory_input; //!< Spikes arriving during refractory period are counted
                     //!< (precise timing neurons)

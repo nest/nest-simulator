@@ -69,6 +69,7 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::Parameters_()
   , std_( 1.0 )
   , mean_( 0.0 )
   , linear_summation_( true )
+  , rectify_output_( false )
 {
   recordablesMap_.create();
 }
@@ -94,6 +95,7 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::get(
   def< double >( d, names::std, std_ );
   def< double >( d, names::mean, mean_ );
   def< bool >( d, names::linear_summation, linear_summation_ );
+  def< bool >( d, names::rectify_output, rectify_output_ );
 }
 
 template < class TNonlinearities >
@@ -106,7 +108,7 @@ nest::rate_neuron_ipn< TNonlinearities >::Parameters_::set(
   updateValue< double >( d, names::mean, mean_ );
   updateValue< double >( d, names::std, std_ );
   updateValue< bool >( d, names::linear_summation, linear_summation_ );
-
+  updateValue< bool >( d, names::rectify_output, rectify_output_ );
 
   if ( tau_ <= 0 )
     throw BadProperty( "Time constant must be > 0." );
@@ -285,6 +287,11 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
                       + B_.instant_rates_in_[ lag ] );
       }
 
+      if ( P_.rectify_output_ and S_.rate_ < 0 )
+      {
+        S_.rate_ = 0;
+      }
+
       // check if deviation from last iteration exceeds wfr_tol
       wfr_tol_exceeded = wfr_tol_exceeded
         or fabs( S_.rate_ - B_.last_y_values[ lag ] ) > wfr_tol;
@@ -315,6 +322,12 @@ nest::rate_neuron_ipn< TNonlinearities >::update_( Time const& origin,
           * ( B_.delayed_rates_in_.get_value( lag )
                       + B_.instant_rates_in_[ lag ] );
       }
+
+      if ( P_.rectify_output_ and S_.rate_ < 0 )
+      {
+        S_.rate_ = 0;
+      }
+
       // rate logging
       B_.logger_.record_data( origin.get_steps() + lag );
     }

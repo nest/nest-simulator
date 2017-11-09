@@ -83,20 +83,32 @@ class nonlinearities_lin_rate
 private:
   /** gain factor of gain function */
   double g_;
+  /** use multiplicative coupling? */
+  bool mult_coupling_;
+  /** linear factor in multiplicative excitatory coupling*/
+  double g_ex_;
+  /** linear factor in multiplicative inhibitory coupling*/
+  double g_in_;
+  /** offset in multiplicative coupling*/
+  double theta_;
 
 public:
   /** sets default parameters */
   nonlinearities_lin_rate()
     : g_( 1.0 )
+    , mult_coupling_( false )
+    , g_ex_( 1.0 )
+    , g_in_( 1.0 )
+    , theta_( 1.0 )
   {
   }
 
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
-  double input( double h );            // non-linearity on input
-  double mult_coupling_ex( double h ); // factor of multiplicative coupling
-  double mult_coupling_in( double h ); // factor of multiplicative coupling
+  double input( double h );               // non-linearity on input
+  double mult_coupling_ex( double rate ); // factor of multiplicative coupling
+  double mult_coupling_in( double rate ); // factor of multiplicative coupling
 };
 
 inline double
@@ -106,14 +118,24 @@ nonlinearities_lin_rate::input( double h )
 }
 
 inline double
-nonlinearities_lin_rate::mult_coupling_ex( double h )
+nonlinearities_lin_rate::mult_coupling_ex( double rate )
 {
+  if ( mult_coupling_ )
+  {
+    return g_ex_ * ( theta_ - rate );
+  }
+
   return 1.;
 }
 
 inline double
-nonlinearities_lin_rate::mult_coupling_in( double h )
+nonlinearities_lin_rate::mult_coupling_in( double rate )
 {
+  if ( mult_coupling_ )
+  {
+    return g_in_ * ( theta_ - rate );
+  }
+
   return 1.;
 }
 

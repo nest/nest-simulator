@@ -43,6 +43,8 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
 
         # neuron parameters
         self.neuron_params = {'tau': 5., 'std': 0.}
+        self.neuron_params2 = self.neuron_params.copy()
+        self.neuron_params2.update({'mult_coupling': True})
         self.drive = 1.5
         self.delay = 2.
         self.weight = 0.5
@@ -68,7 +70,7 @@ class RateNeuronCommunicationTestCase(unittest.TestCase):
         self.rate_neuron_3 = nest.Create(
             'threshold_lin_rate_ipn', params=self.neuron_params)
         self.rate_neuron_4 = nest.Create(
-            'lin_rate_mult_ipn', params=self.neuron_params)
+            'lin_rate_ipn', params=self.neuron_params2)
 
         self.multimeter = nest.Create("multimeter",
                                       params={'record_from': ['rate'],

@@ -319,6 +319,7 @@ extern const Name mu;        //!< Used by stdp_dopa_connection and rate models
 extern const Name mu_minus;  //!< stdp_synapse parameter
 extern const Name mu_plus;   //!< stdp_synapse parameter
 extern const Name multapses; //!< Connectivity-related
+extern const Name mult_coupling; //!< Specific to rate models
 extern const Name music_channel; //!< Parameters for MUSIC devices
 
 extern const Name n;          //!< Number of synaptic release sites (int >=0)

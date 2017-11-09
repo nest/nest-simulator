@@ -29,12 +29,20 @@ void
 nonlinearities_lin_rate::get( DictionaryDatum& d ) const
 {
   def< double >( d, names::g, g_ );
+  def< bool >( d, names::mult_coupling, mult_coupling_ );
+  def< double >( d, names::g_ex, g_ex_ );
+  def< double >( d, names::g_in, g_in_ );
+  def< double >( d, names::theta, theta_ );
 }
 
 void
 nonlinearities_lin_rate::set( const DictionaryDatum& d )
 {
   updateValue< double >( d, names::g, g_ );
+  updateValue< bool >( d, names::mult_coupling, mult_coupling_ );
+  updateValue< double >( d, names::g_ex, g_ex_ );
+  updateValue< double >( d, names::g_in, g_in_ );
+  updateValue< double >( d, names::theta, theta_ );
 }
 
 /*

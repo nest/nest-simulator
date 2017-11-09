@@ -52,9 +52,9 @@ public:
   void get( DictionaryDatum& ) const; //!< Store current values in dictionary
   void set( const DictionaryDatum& ); //!< Set values from dicitonary
 
-  double input( double h );            // non-linearity on input
-  double mult_coupling_ex( double h ); // factor of multiplicative coupling
-  double mult_coupling_in( double h ); // factor of multiplicative coupling
+  double input( double h );               // non-linearity on input
+  double mult_coupling_ex( double rate ); // factor of multiplicative coupling
+  double mult_coupling_in( double rate ); // factor of multiplicative coupling
 };
 
 inline double
@@ -64,13 +64,13 @@ nonlinearities_sigm_rate::input( double h )
 }
 
 inline double
-nonlinearities_sigm_rate::mult_coupling_ex( double h )
+nonlinearities_sigm_rate::mult_coupling_ex( double rate )
 {
   return 1.;
 }
 
 inline double
-nonlinearities_sigm_rate::mult_coupling_in( double h )
+nonlinearities_sigm_rate::mult_coupling_in( double rate )
 {
   return 1.;
 }

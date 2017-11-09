@@ -49,9 +49,10 @@ namespace nest
 {
 
 LayerMetadata::LayerMetadata( AbstractLayerPTR layer )
-: GIDCollectionMetadata()
-, layer_( layer )
-{}
+  : GIDCollectionMetadata()
+  , layer_( layer )
+{
+}
 
 
 AbstractLayerPTR
@@ -59,12 +60,12 @@ get_layer( GIDCollectionPTR gc )
 {
   GIDCollectionMetadataPTR meta = gc->get_metadata();
 
-  LayerMetadata const * const layer_meta =
-		  dynamic_cast< LayerMetadata const * >( meta.get() );
+  LayerMetadata const* const layer_meta =
+    dynamic_cast< LayerMetadata const* >( meta.get() );
   meta.unlock();
   if ( not layer_meta )
   {
-	  throw LayerExpected();
+    throw LayerExpected();
   }
   return layer_meta->get_layer();
 }
@@ -95,14 +96,15 @@ get_position( GIDCollectionPTR layer_gc, const index gid )
   const long lid = layer_gc->find( gid );
   if ( lid < 0 )
   {
-	  throw LayerNodeExpected();
+    throw LayerNodeExpected();
   }
   return layer->get_position_vector( lid );
 }
 
 std::vector< double >
-displacement( GIDCollectionPTR layer_gc, const std::vector< double >& point,
-		const index node_gid )
+displacement( GIDCollectionPTR layer_gc,
+  const std::vector< double >& point,
+  const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
   {
@@ -115,15 +117,16 @@ displacement( GIDCollectionPTR layer_gc, const std::vector< double >& point,
 }
 
 double
-distance( GIDCollectionPTR layer_gc, const std::vector< double >& point,
-		const index node_gid )
+distance( GIDCollectionPTR layer_gc,
+  const std::vector< double >& point,
+  const index node_gid )
 {
   if ( not kernel().node_manager.is_local_gid( node_gid ) )
   {
     throw KernelException(
       "Distance is currently implemented for local nodes only." );
   }
-    
+
   AbstractLayerPTR layer = get_layer( layer_gc );
   return layer->compute_distance( point, node_gid );
 }
@@ -191,7 +194,7 @@ subtract_parameter( const ParameterDatum& param1, const ParameterDatum& param2 )
 
 void
 connect_layers( GIDCollectionPTR source_gc,
-		GIDCollectionPTR target_gc,
+  GIDCollectionPTR target_gc,
   const DictionaryDatum& connection_dict )
 {
   AbstractLayerPTR source = get_layer( source_gc );
@@ -202,7 +205,6 @@ connect_layers( GIDCollectionPTR source_gc,
   ALL_ENTRIES_ACCESSED(
     *connection_dict, "topology::CreateLayers", "Unread dictionary entries: " );
 
-  // TODO481 : pass gid collections as well
   source->connect( target, target_gc, connector );
 }
 
@@ -227,8 +229,7 @@ get_value( const std::vector< double >& point, const ParameterDatum& param )
 }
 
 void
-dump_layer_nodes( GIDCollectionPTR layer_gc,
-		          OstreamDatum& out )
+dump_layer_nodes( GIDCollectionPTR layer_gc, OstreamDatum& out )
 {
   AbstractLayerPTR layer = get_layer( layer_gc );
 
@@ -239,7 +240,8 @@ dump_layer_nodes( GIDCollectionPTR layer_gc,
 }
 
 void
-dump_layer_connections( const Token& syn_model, GIDCollectionPTR layer_gc,
+dump_layer_connections( const Token& syn_model,
+  GIDCollectionPTR layer_gc,
   OstreamDatum& out )
 {
   AbstractLayerPTR layer = get_layer( layer_gc );
@@ -251,8 +253,7 @@ dump_layer_connections( const Token& syn_model, GIDCollectionPTR layer_gc,
 }
 
 index
-get_element( GIDCollectionPTR layer_gc,
-		const TokenArray array )
+get_element( GIDCollectionPTR layer_gc, const TokenArray array )
 {
   index node_gid;
 
@@ -261,7 +262,7 @@ get_element( GIDCollectionPTR layer_gc,
   case 2:
   {
     GridLayer< 2 > const* layer =
-    		dynamic_cast< GridLayer< 2 > const* >( get_layer( layer_gc ).get() );
+      dynamic_cast< GridLayer< 2 > const* >( get_layer( layer_gc ).get() );
     layer_gc.unlock();
     if ( not layer )
     {
@@ -276,8 +277,8 @@ get_element( GIDCollectionPTR layer_gc,
 
   case 3:
   {
-    GridLayer< 3 > const* layer = dynamic_cast< GridLayer< 3 > const* >(
-      get_layer( layer_gc ).get() );
+    GridLayer< 3 > const* layer =
+      dynamic_cast< GridLayer< 3 > const* >( get_layer( layer_gc ).get() );
     layer_gc.unlock();
 
     if ( not layer )
@@ -298,7 +299,8 @@ get_element( GIDCollectionPTR layer_gc,
   return node_gid;
 }
 
-DictionaryDatum get_layer_status( GIDCollectionPTR layer_gc )
+DictionaryDatum
+get_layer_status( GIDCollectionPTR layer_gc )
 {
   assert( false && "not implemented" );
 

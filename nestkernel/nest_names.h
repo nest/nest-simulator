@@ -76,7 +76,8 @@ extern const Name autapses;         //!< Connectivity-related
 extern const Name b;    //!< Specific to Brette & Gerstner 2005 (aeif_cond-*)
 extern const Name beta; //!< Specific to amat2_*
 extern const Name
-  beta_Ca; //!< Increment in calcium concentration with each spike
+  beta_Ca;              //!< Increment in calcium concentration with each spike
+extern const Name bias; //!< Specific to rate models
 extern const Name binary; //!< Recorder parameter
 
 extern const Name c;         //!< Specific to Izhikevich 2003

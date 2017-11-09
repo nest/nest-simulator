@@ -81,6 +81,8 @@
 #include "pp_pop_psc_delta.h"
 #include "pp_psc_delta.h"
 #include "siegert_neuron.h"
+#include "sigm_rate.h"
+#include "sigmoid_rate.h"
 #include "gif_psc_exp.h"
 #include "gif_psc_exp_multisynapse.h"
 #include "gif_cond_exp.h"
@@ -197,6 +199,14 @@ ModelsModule::init( SLIInterpreter* )
     "lin_rate_mult_opn" );
   kernel().model_manager.register_node_model< lin_rate_mult_ipn >(
     "lin_rate_mult_ipn" );
+  kernel().model_manager.register_node_model< sigm_rate_opn >(
+    "sigm_rate_opn" );
+  kernel().model_manager.register_node_model< sigm_rate_ipn >(
+    "sigm_rate_ipn" );
+  kernel().model_manager.register_node_model< sigmoid_rate_opn >(
+    "sigmoid_rate_opn" );
+  kernel().model_manager.register_node_model< sigmoid_rate_ipn >(
+    "sigmoid_rate_ipn" );
   kernel().model_manager.register_node_model< tanh_rate_opn >(
     "tanh_rate_opn" );
   kernel().model_manager.register_node_model< tanh_rate_ipn >(

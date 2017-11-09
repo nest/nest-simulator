@@ -63,6 +63,7 @@ const Name autapses( "autapses" );
 const Name b( "b" );
 const Name beta( "beta" );
 const Name beta_Ca( "beta_Ca" );
+const Name bias( "bias" );
 const Name binary( "binary" );
 
 const Name c( "c" );

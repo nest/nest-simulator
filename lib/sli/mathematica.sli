@@ -3390,7 +3390,7 @@ SeeAlso: Max, Sort, Mean, Variance
 {
    size 0 eq
    {  
-     /Max /RangeCheck raiseerror
+     /Min /RangeCheck raiseerror
    } if
    dup 0 get  % start value as sentinel
    exch 

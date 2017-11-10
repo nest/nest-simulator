@@ -20,6 +20,8 @@
  *
  */
 
+% autorun=true
+
 /*
    This script produces a balanced random network of scale*11250 neurons in
    which the excitatory-excitatory neurons exhibit STDP with

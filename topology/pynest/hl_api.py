@@ -523,14 +523,11 @@ def CreateParameter(parametertype, specs):
 
 def CreateLayer(specs):
     """
-    Create one ore more Topology layer(s) according to given specifications.
+    Create a Topology layer(s) according to given specifications.
 
     The Topology module organizes neuronal networks in layers. A layer is a
-    special type of subnet which contains information about the spatial
+    special type of GIDCollection which contains information about the spatial
     position of its nodes (simple or composite elements) in 2 or 3 dimensions.
-
-    If `specs` is a dictionary, a single layer is created. If it is a list
-    of dictionaries, one layer is created for each dictionary.
 
     Topology distinguishes between two classes of layers:
 
@@ -545,19 +542,18 @@ def CreateLayer(specs):
 
     Parameters
     ----------
-    specs : (tuple/list of) dict(s)
-        Dictionary or list of dictionaries with layer specifications, see
-        **Notes**.
+    specs : dict
+        Dictionary with layer specifications, see **Notes**.
 
     Returns
     -------
-    out : tuple of int(s)
-        GID(s) of created layer(s)
+    out : GIDCollection
+        GID(s) of created layer
 
 
     See also
     --------
-    ConnectLayers: Connect two (lists of) layers which were created with
+    ConnectLayers: Connect two layers which were created with
         ``CreateLayer`` pairwise according to specified projections.
 
 
@@ -573,13 +569,9 @@ def CreateLayer(specs):
         Needs `'rows'`; mutually exclusive with `'positions'`.
     edge_wrap : bool, default: False
         Periodic boundary conditions.
-    elements : (tuple/list of) str or str followed by int
+    elements : str
         Elements of layers are NEST network nodes such as neuron models or
         devices.
-        For network elements with several nodes of the same type, the
-        number of nodes to be created must follow the model name.
-        For composite elements, a collection of nodes can be passed as
-        list or tuple.
     extent : tuple of floats, optional, default in 2D: (1.0, 1.0)
         Size of the layer. It has length 2 or 3 dependent on the number of
         dimensions.
@@ -626,32 +618,18 @@ def CreateLayer(specs):
                                  'edge_wrap' : True,
                                  'elements'  : 'iaf_psc_alpha'})
 
-            # composite layer with several nodes of the same type
-            cl = tp.CreateLayer({'rows'      : 1,
-                                 'columns'   : 2,
-                                 'elements'  : ['iaf_cond_alpha', 10,
-                                               'poisson_generator',
-                                               'noise_generator', 2]})
-
             # investigate the status dictionary of a layer
             nest.GetStatus(gl)[0]['topology']
 
     """
 
-    if isinstance(specs, dict):
-        specs = (specs, )
-    elif not all(isinstance(spec, dict) for spec in specs):
-        raise TypeError("specs must be a dictionary or a list of dictionaries")
+    if not isinstance(specs, dict):
+        raise TypeError("specs must be a dictionary")
 
-    for dicts in specs:
-        elements = dicts['elements']
-        if isinstance(elements, list):
-            for elem in elements:
-                hlh.model_deprecation_warning(elem)
-        else:
-            hlh.model_deprecation_warning(elements)
+    elements = specs['elements']
+    hlh.model_deprecation_warning(elements)
 
-    return nest.GIDCollection(topology_func('{ CreateLayer } Map', specs)[0])
+    return nest.GIDCollection(nest.sli_func('CreateLayer', specs))
 
 
 def ConnectLayers(pre, post, projections):
@@ -804,13 +782,14 @@ def ConnectLayers(pre, post, projections):
                          'kernel': gauss_kernel,
                          'weights': {'uniform': {'min': 0.2, 'max': 0.8}}}
     """
-
+    # Test for GIDCOLL
     if not nest.is_sequence_of_gids(pre):
         raise TypeError("pre must be a sequence of GIDs")
 
     if not nest.is_sequence_of_gids(pre):
         raise TypeError("post must be a sequence of GIDs")
 
+    # remove
     if not len(pre) == len(post):
         raise nest.NESTError("pre and post must have the same length.")
 

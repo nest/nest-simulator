@@ -634,9 +634,9 @@ def CreateLayer(specs):
 
 def ConnectLayers(pre, post, projections):
     """
-    Pairwise connect of pre- and postsynaptic (lists of) layers.
+    Pairwise connect of pre- and postsynaptic layers.
 
-    `pre` and `post` must be a tuple/list of GIDs of equal length. The GIDs
+    `pre` and `post` must be GIDCollections. The GIDs
     must refer to layers created with ``CreateLayers``. Layers in the `pre`
     and `post` lists are connected pairwise.
 
@@ -658,10 +658,10 @@ def ConnectLayers(pre, post, projections):
 
     Parameters
     ----------
-    pre : tuple/list of int(s)
-        List of GIDs of presynaptic layers (sources)
-    post : tuple/list of int(s)
-        List of GIDs of postsynaptic layers (targets)
+    pre : GIDCollection
+        GIDCollection with GIDs of presynaptic layers (sources)
+    post : GIDCollection
+       GIDCollection with GIDs of postsynaptic layers (targets)
     projections : (tuple/list of) dict(s)
         Dictionary or list of dictionaries specifying projection properties
 
@@ -782,21 +782,11 @@ def ConnectLayers(pre, post, projections):
                          'kernel': gauss_kernel,
                          'weights': {'uniform': {'min': 0.2, 'max': 0.8}}}
     """
-    # Test for GIDCOLL
-    if not nest.is_sequence_of_gids(pre):
-        raise TypeError("pre must be a sequence of GIDs")
+    if not isinstance(pre, nest.GIDCollection):
+        raise TypeError("pre must be a GIDCollection")
 
-    if not nest.is_sequence_of_gids(pre):
-        raise TypeError("post must be a sequence of GIDs")
-
-    # remove
-    if not len(pre) == len(post):
-        raise nest.NESTError("pre and post must have the same length.")
-
-    # TODO481
-    # ensure projections is list of full length
-    #projections = nest.broadcast(projections, len(pre), (dict, ),
-    #                             "projections")
+    if not isinstance(post, nest.GIDCollection):
+        raise TypeError("post must be a GIDCollection")
 
     # Replace python classes with SLI datums
     def fixdict(d):
@@ -808,11 +798,9 @@ def ConnectLayers(pre, post, projections):
                 d[k] = v._datum
         return d
 
-    #projections = [fixdict(p) for p in projections]
     projections = fixdict(projections)
 
-    topology_func('ConnectLayers', pre, post,
-                  projections)
+    nest.sli_func('ConnectLayers', pre, post, projections)
 
 
 def GetPosition(nodes):

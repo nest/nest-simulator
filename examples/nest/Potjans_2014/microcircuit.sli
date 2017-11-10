@@ -20,6 +20,8 @@
  *
  */
 
+% autorun=true
+
 /*
     Implementation of the multi-layered local cortical network model by
 
@@ -128,8 +130,7 @@
        /overwrite_files overwrite_existing_files
        /rng_seeds master_seed [0 n_vp 1 sub] add Range % local RNG seeds
        /grng_seed master_seed n_vp add                 % global RNG seed
-       run_mode (production) eq
-       {
+       output_path (.) neq {
            /data_path output_path
        } if
     >> SetKernelStatus
@@ -228,6 +229,18 @@
 % th_spike_detector_GID
 /CreateNetworkNodes
 {
+    save_cortical_spikes {
+	/spikes_record_to [ /file ] def
+    }{
+	/spikes_record_to [ /memory ] def
+    } ifelse
+
+    save_voltages {
+	/voltages_record_to [ /file ] def
+    }{
+	/voltages_record_to [ /memory ] def
+    } ifelse
+
     neuron_model model_params SetDefaults
     % arrays of GIDs:
     /neuron_GIDs         [n_layers n_pops_per_layer] 0 LayoutArray def
@@ -258,12 +271,6 @@
                 >> SetStatus
 	    } forall
 
-	    save_cortical_spikes {
-		/spikes_record_to [ /file ] def
-	    }{
-		/spikes_record_to [ /memory ] def
-	    } ifelse
-	    
             spike_detector_GIDs [layer_index population_index]
             /spike_detector <<
 	       /label spike_detector_label layer_index cvs join (_) join population_index cvs join
@@ -271,13 +278,6 @@
 	    >> Create
 	    put /spike_detector_GIDs Set
 
-	    save_voltages {
-		/voltages_record_to [ /file ] def
-	    }{
-		/voltages_record_to [ /memory ] def
-	    } ifelse
-
-	    
 	    voltmeter_GIDs [layer_index population_index]
 	    /voltmeter <<
 	       /label voltmeter_label layer_index cvs join (_) join population_index cvs join
@@ -329,19 +329,16 @@
 {
     Rank 0 eq {
 
-	run_mode (test) eq {
-	    GID_filename
-	} if
-	
-	run_mode (production) eq {
-	    output_path (/) join GID_filename join
-	} if
+    	GetKernelStatus /data_path get empty not {
+            (/) join
+        } if
 
-	(w) ofsopen ; 
+	GID_filename join
+	(w) ofsopen ;
 
 	neuron_GIDs Flatten {
             /GIDs Set
-%            GIDs Min <- (\t) <- GIDs Max <- (\n) <-
+            GIDs Min <- (\t) <- GIDs Max <- (\n) <-
 	} forall
 
         close
@@ -358,7 +355,7 @@
 
     0 1 n_layers 1 sub { % target layer
         /target_layer Set
-	
+
         0 1 n_pops_per_layer 1 sub { % target population
 	    /target_pop Set
 
@@ -370,7 +367,7 @@
 
 	    0 1 n_layers 1 sub { % source layer
 	        /source_layer Set
-		
+
 	        0 1 n_pops_per_layer 1 sub { % source population
 		    /source_pop Set
 

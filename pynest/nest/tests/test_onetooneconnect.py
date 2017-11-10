@@ -36,8 +36,8 @@ class OneToOneConnectTestCase(unittest.TestCase):
 
         # Connect([pre], [post])
         nest.ResetKernel()
-        pre = nest.Create("iaf_neuron", 2)
-        post = nest.Create("iaf_neuron", 2)
+        pre = nest.Create("iaf_psc_alpha", 2)
+        post = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(pre, post, "one_to_one")
         connections = nest.GetConnections(pre)
         targets = nest.GetStatus(connections, "target")
@@ -48,8 +48,8 @@ class OneToOneConnectTestCase(unittest.TestCase):
 
         # Connect([pre], [post], params)
         nest.ResetKernel()
-        pre = nest.Create("iaf_neuron", 2)
-        post = nest.Create("iaf_neuron", 2)
+        pre = nest.Create("iaf_psc_alpha", 2)
+        post = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(pre, post, "one_to_one", syn_spec={"weight": 2.0})
         connections = nest.GetConnections(pre)
         weights = nest.GetStatus(connections, "weight")
@@ -57,8 +57,8 @@ class OneToOneConnectTestCase(unittest.TestCase):
 
         # Connect([pre], [post], [params, params])
         nest.ResetKernel()
-        pre = nest.Create("iaf_neuron", 2)
-        post = nest.Create("iaf_neuron", 2)
+        pre = nest.Create("iaf_psc_alpha", 2)
+        post = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
                      syn_spec={"weight": [2.0, 3.0]})
         connections = nest.GetConnections(pre)
@@ -70,8 +70,8 @@ class OneToOneConnectTestCase(unittest.TestCase):
 
         # Connect([pre], [post], w, d)
         nest.ResetKernel()
-        pre = nest.Create("iaf_neuron", 2)
-        post = nest.Create("iaf_neuron", 2)
+        pre = nest.Create("iaf_psc_alpha", 2)
+        post = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
                      syn_spec={"weight": 2.0, "delay": 2.0})
         connections = nest.GetConnections(pre)
@@ -82,8 +82,8 @@ class OneToOneConnectTestCase(unittest.TestCase):
 
         # Connect([pre], [post], [w, w], [d, d])
         nest.ResetKernel()
-        pre = nest.Create("iaf_neuron", 2)
-        post = nest.Create("iaf_neuron", 2)
+        pre = nest.Create("iaf_psc_alpha", 2)
+        post = nest.Create("iaf_psc_alpha", 2)
         nest.Connect(pre, post, conn_spec={"rule": "one_to_one"},
                      syn_spec={"weight": [2.0, 3.0], "delay": [2.0, 3.0]})
         connections = nest.GetConnections(pre)
@@ -96,7 +96,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         """Wrong Connections"""
 
         nest.ResetKernel()
-        n = nest.Create('iaf_neuron')
+        n = nest.Create('iaf_psc_alpha')
         vm = nest.Create('voltmeter')
 
         self.assertRaisesRegex(
@@ -106,7 +106,7 @@ class OneToOneConnectTestCase(unittest.TestCase):
         """Unexpected Event"""
 
         nest.ResetKernel()
-        n = nest.Create('iaf_neuron')
+        n = nest.Create('iaf_psc_alpha')
         sd = nest.Create('spike_detector')
 
         self.assertRaisesRegex(

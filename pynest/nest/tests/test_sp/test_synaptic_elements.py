@@ -34,7 +34,7 @@ class TestSynapticElements(unittest.TestCase):
         synaptic_element_dict = {
             u'SE': {u'z': 15.0, u'growth_curve': u'linear'}}
 
-        neuron = nest.Create('iaf_neuron', 1)
+        neuron = nest.Create('iaf_psc_alpha', 1)
         nest.SetStatus(neuron, {'synaptic_elements': synaptic_element_dict})
         neuron_synaptic_elements = nest.GetStatus(
             neuron, 'synaptic_elements')[0]
@@ -48,7 +48,7 @@ class TestSynapticElements(unittest.TestCase):
         synaptic_element_dict2 = {
             u'SE2': {u'z': 10.0, u'growth_curve': u'gaussian'}}
 
-        neuron = nest.Create('iaf_neuron', 1)
+        neuron = nest.Create('iaf_psc_alpha', 1)
         nest.SetStatus(neuron, {'synaptic_elements': synaptic_element_dict1})
         nest.SetStatus(neuron, {'synaptic_elements': synaptic_element_dict2})
 
@@ -64,8 +64,8 @@ class TestSynapticElements(unittest.TestCase):
             u'SE': {u'z': 15.0, u'growth_curve': u'linear'}}
 
         nest.SetDefaults(
-            'iaf_neuron', {'synaptic_elements': synaptic_element_dict})
-        neuron = nest.Create('iaf_neuron', 1)
+            'iaf_psc_alpha', {'synaptic_elements': synaptic_element_dict})
+        neuron = nest.Create('iaf_psc_alpha', 1)
         neuron_synaptic_elements = nest.GetStatus(
             neuron, 'synaptic_elements')[0]
         self.assertIn('SE', neuron_synaptic_elements)
@@ -79,10 +79,10 @@ class TestSynapticElements(unittest.TestCase):
             u'SE2': {u'z': 10.0, u'growth_curve': u'gaussian'}}
 
         nest.SetDefaults(
-            'iaf_neuron', {'synaptic_elements': synaptic_element_dict1})
+            'iaf_psc_alpha', {'synaptic_elements': synaptic_element_dict1})
         nest.SetDefaults(
-            'iaf_neuron', {'synaptic_elements': synaptic_element_dict2})
-        neuron = nest.Create('iaf_neuron', 1)
+            'iaf_psc_alpha', {'synaptic_elements': synaptic_element_dict2})
+        neuron = nest.Create('iaf_psc_alpha', 1)
 
         neuron_synaptic_elements = nest.GetStatus(
             neuron, 'synaptic_elements')[0]

@@ -277,7 +277,7 @@ you have to adapt the model created in the previous part. Save your code
 under a new name, in the next section you will also work on this code.
 Create an extra neuron with the background current given a different value:
 
-    neuron2 = nest.Create("iaf_neuron")
+    neuron2 = nest.Create("iaf_psc_alpha")
     nest.SetStatus(neuron2 , {"I_e": 370.0})
 
 now connect this newly created neuron to the multimeter:

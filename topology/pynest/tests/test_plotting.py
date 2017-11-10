@@ -44,7 +44,7 @@ except:
 class PlottingTestCase(unittest.TestCase):
     def test_PlotLayer(self):
         """Test plotting layer."""
-        ldict = {'elements': 'iaf_neuron', 'rows': 3, 'columns': 3,
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
@@ -54,7 +54,7 @@ class PlottingTestCase(unittest.TestCase):
 
     def test_PlotTargets(self):
         """Test plotting targets."""
-        ldict = {'elements': ['iaf_neuron', 'iaf_psc_alpha'], 'rows': 3,
+        ldict = {'elements': ['iaf_psc_alpha', 'iaf_psc_alpha'], 'rows': 3,
                  'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         cdict = {'connection_type': 'divergent',
@@ -62,12 +62,12 @@ class PlottingTestCase(unittest.TestCase):
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)
         ian = [gid for gid in nest.GetLeaves(l)[0]
-               if nest.GetStatus([gid], 'model')[0] == 'iaf_neuron']
+               if nest.GetStatus([gid], 'model')[0] == 'iaf_psc_alpha']
         ipa = [gid for gid in nest.GetLeaves(l)[0]
                if nest.GetStatus([gid], 'model')[0] == 'iaf_psc_alpha']
 
         # connect ian -> all using static_synapse
-        cdict.update({'sources': {'model': 'iaf_neuron'},
+        cdict.update({'sources': {'model': 'iaf_psc_alpha'},
                       'synapse_model': 'static_synapse'})
         topo.ConnectLayers(l, l, cdict)
         for k in ['sources', 'synapse_model']:
@@ -89,7 +89,7 @@ class PlottingTestCase(unittest.TestCase):
 
     def test_PlotKernel(self):
         """Test plotting kernels."""
-        ldict = {'elements': 'iaf_neuron', 'rows': 3, 'columns': 3,
+        ldict = {'elements': 'iaf_psc_alpha', 'rows': 3, 'columns': 3,
                  'extent': [2., 2.], 'edge_wrap': True}
         nest.ResetKernel()
         l = topo.CreateLayer(ldict)

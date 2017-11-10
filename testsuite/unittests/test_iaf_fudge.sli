@@ -21,7 +21,7 @@
  */
 
 /* BeginDocumentation
-Name: testsuite::test_iaf_fudge - sli script to test normalization of PSP for iaf_neuron model
+Name: testsuite::test_iaf_fudge - sli script to test normalization of PSP for iaf_psc_alpha model
 
 Synopsis: (test_iaf_fudge) run -> compares response to spike input step with reference data 
 
@@ -48,7 +48,7 @@ because a change of the time constants of the neuron model would
 invalidate the value of "fudge".
     
 Author:  July 2009, Helias
-SeeAlso: iaf_neuron, testsuite::test_iaf, testsuite::test_lambertw, LambertWm1
+SeeAlso: iaf_psc_alpha, testsuite::test_iaf, testsuite::test_lambertw, LambertWm1
 */
 
 
@@ -78,8 +78,8 @@ ResetKernel
       /resolution h
   >> SetStatus
 
-/iaf_neuron Create /neuron Set
-neuron << /tau_m tau_m /tau_syn tau_syn /C_m C_m >> SetStatus
+/iaf_psc_alpha Create /neuron Set
+neuron << /tau_m tau_m /tau_syn_ex tau_syn /tau_syn_in tau_syn /C_m C_m >> SetStatus
 
 /voltmeter Create /vm Set
 vm << /withtime true /time_in_steps true /interval h >> SetStatus

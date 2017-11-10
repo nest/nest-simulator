@@ -70,7 +70,7 @@ ResetKernel
 /d 15.5 def
 /w 23.4 def
 
-/iaf_neuron 5 Create ;
+/iaf_psc_alpha 5 Create ;
 
 % default weight and delay
 [1] cvgidcollection [5] cvgidcollection /one_to_one << /model /static_synapse >> Connect

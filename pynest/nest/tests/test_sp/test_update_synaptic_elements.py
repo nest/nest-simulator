@@ -54,7 +54,7 @@ class TestUpdateSynapticElements(unittest.TestCase):
             'Axon': new_growth_curve_axonal
         }
 
-        neuron = nest.Create('iaf_neuron', 1)
+        neuron = nest.Create('iaf_psc_alpha', 1)
         nest.SetStatus(neuron, {'synaptic_elements': structural_p_elements})
         neuron_synaptic_elements = nest.GetStatus(
             neuron, 'synaptic_elements')[0]

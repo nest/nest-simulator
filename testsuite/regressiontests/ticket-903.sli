@@ -46,7 +46,7 @@ M_ERROR setverbosity
   ResetKernel
   0 << /resolution 0.1 >>  SetStatus
   
-  /iaf_neuron Create
+  /iaf_psc_alpha Create
   1 arraystore dup
   << /rule /fixed_indegree /indegree 1000 >>
   << /delay << /distribution /uniform /low 0.11 /high 0.19 >> >>

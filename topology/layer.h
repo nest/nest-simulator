@@ -628,34 +628,44 @@ inline Layer< D >::~Layer()
 template < int D >
 inline Position< D >
 Layer< D >::compute_displacement( const Position< D >& from_pos,
-  const index to ) const
+  const index to_lid ) const
 {
-  return compute_displacement( from_pos, get_position( to ) );
+  return compute_displacement( from_pos, get_position( to_lid ) );
 }
 
 template < int D >
 inline std::vector< double >
 Layer< D >::compute_displacement( const std::vector< double >& from_pos,
-  const index to ) const
+  const index to_lid ) const
 {
   return std::vector< double >(
-    compute_displacement( Position< D >( from_pos ), to ) );
+    compute_displacement( Position< D >( from_pos ), to_lid ) );
 }
 
 template < int D >
 inline double
 Layer< D >::compute_distance( const Position< D >& from_pos,
-  const index to ) const
+  const index to_gid ) const
 {
-  return compute_displacement( from_pos, to ).length();
+  long lid = gid_collection_->find( to_gid );
+  if ( lid < 0 )
+  {
+    throw KernelException( "GID not in GIDCollection." );
+  }
+  return compute_displacement( from_pos, lid ).length();
 }
 
 template < int D >
 inline double
 Layer< D >::compute_distance( const std::vector< double >& from_pos,
-  const index to ) const
+  const index to_gid ) const
 {
-  return compute_displacement( Position< D >( from_pos ), to ).length();
+  long lid = gid_collection_->find( to_gid );
+  if ( lid < 0 )
+  {
+    throw KernelException( "GID not in GIDCollection." );
+  }
+  return compute_displacement( Position< D >( from_pos ), lid ).length();
 }
 
 template < int D >

@@ -93,7 +93,6 @@ extern const Name sigma_x;
 extern const Name sigma_y;
 extern const Name sources;
 extern const Name spherical;
-extern const Name topology;
 extern const Name upper_right;
 extern const Name volume;
 }

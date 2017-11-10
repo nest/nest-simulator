@@ -39,7 +39,6 @@
 #include "connection_creator.h"
 #include "ntree.h"
 #include "position.h"
-#include "selector.h"
 #include "topology_names.h"
 
 namespace nest
@@ -58,7 +57,7 @@ public:
    * Constructor.
    */
   AbstractLayer()
-    : depth_( 1 )
+    : gid_collection_( GIDCollectionPTR( 0 ) )
   {
   }
 
@@ -66,6 +65,20 @@ public:
    * Virtual destructor
    */
   virtual ~AbstractLayer();
+
+  /**
+   * Change properties of the layer according to the
+   * entries in the dictionary.
+   * @param d Dictionary with named parameter settings.
+   */
+  virtual void set_status( const DictionaryDatum& ) = 0;
+
+  /**
+   * Export properties of the layer by setting
+   * entries in the status dictionary.
+   * @param d Dictionary.
+   */
+  virtual void get_status( DictionaryDatum& ) const = 0;
 
   /**
    * Get position of node. Only possible for local nodes.
@@ -104,6 +117,7 @@ public:
    * @param connector connection properties
    */
   virtual void connect( AbstractLayerPTR target,
+    GIDCollectionPTR target_gc,
     ConnectionCreator& connector ) = 0;
 
   /**
@@ -144,49 +158,21 @@ public:
   virtual void dump_connections( std::ostream& out,
     const Token& syn_model ) = 0;
 
-  /**
-   * Start of local children at given depth.
-   * @param depth layer depth
-   * @returns iterator for local nodes pointing to first node at given depth
-   */
-  std::vector< Node* >::iterator local_begin( int depth );
-
-  /**
-   * End of local children at given depth.
-   * @param depth layer depth
-   * @returns iterator for local nodes pointing to the end of the given depth
-   */
-  std::vector< Node* >::iterator local_end( int depth );
-
-  /**
-   * Start of local children at given depth.
-   * @param depth layer depth
-   * @returns iterator for local nodes pointing to first node at given depth
-   */
-  std::vector< Node* >::const_iterator local_begin( int depth ) const;
-
-  /**
-   * End of local children at given depth.
-   * @param depth layer depth
-   * @returns iterator for local nodes pointing to the end of the given depth
-   */
-  std::vector< Node* >::const_iterator local_end( int depth ) const;
-
 protected:
   /**
-   * GID for the single layer for which we cache global position information
+   * TODO 481
    */
-  static index cached_ntree_layer_;
-
-  /**
-   * number of neurons at each position
-   */
-  int depth_;
+  GIDCollectionPTR gid_collection_;
 
   /**
    * GID for the single layer for which we cache global position information
    */
-  static index cached_vector_layer_;
+  static GIDCollectionMetadataPTR cached_ntree_gc_;
+
+  /**
+   * GID for the single layer for which we cache global position information
+   */
+  static GIDCollectionMetadataPTR cached_vector_gc_;
 
   /**
    * Clear the cache for global position information
@@ -197,6 +183,11 @@ protected:
    * Clear the cache for global position information
    */
   virtual void clear_vector_cache_() const = 0;
+
+  /**
+   * TODO 481
+   */
+  GIDCollectionMetadataPTR get_metadata() const;
 };
 
 template < int D >
@@ -329,7 +320,7 @@ public:
    * Get positions for local nodes in layer.
    */
   lockPTR< Ntree< D, index > > get_local_positions_ntree(
-    Selector filter = Selector() );
+    index model_filter = invalid_index );
 
   /**
    * Get positions for all nodes in layer, including nodes on other MPI
@@ -339,7 +330,7 @@ public:
    * pool layer.
    */
   lockPTR< Ntree< D, index > > get_global_positions_ntree(
-    Selector filter = Selector() );
+    index model_filter = invalid_index );
 
   /**
    * Get positions globally, overriding the dimensions of the layer and
@@ -347,16 +338,16 @@ public:
    * coordinates are only used for the dimensions where the supplied
    * periodic flag is set.
    */
-  lockPTR< Ntree< D, index > > get_global_positions_ntree( Selector filter,
+  lockPTR< Ntree< D, index > > get_global_positions_ntree( index model_filter,
     std::bitset< D > periodic,
     Position< D > lower_left,
     Position< D > extent );
 
   std::vector< std::pair< Position< D >, index > >* get_global_positions_vector(
-    Selector filter = Selector() );
+    index model_filter = invalid_index );
 
   virtual std::vector< std::pair< Position< D >, index > >
-  get_global_positions_vector( Selector filter,
+  get_global_positions_vector( index model_filter,
     const MaskDatum& mask,
     const Position< D >& anchor,
     bool allow_oversized );
@@ -373,9 +364,12 @@ public:
    * are made in class ConnectionCreator.
    * @param target    target layer to connect to. Must have same dimension
    *                  as this layer.
+   * @param target_gc GIDCollection to the target layer.
    * @param connector connection properties
    */
-  void connect( AbstractLayerPTR target, ConnectionCreator& connector );
+  void connect( AbstractLayerPTR target,
+    GIDCollectionPTR target_gc,
+    ConnectionCreator& connector );
 
   /**
    * Write layer data to stream.
@@ -407,26 +401,26 @@ protected:
   void clear_vector_cache_() const;
 
   lockPTR< Ntree< D, index > > do_get_global_positions_ntree_(
-    const Selector& filter );
+    const index& model_filter );
 
   /**
    * Insert global position info into ntree.
    */
   virtual void insert_global_positions_ntree_( Ntree< D, index >& tree,
-    const Selector& filter ) = 0;
+    const index& model_filter ) = 0;
 
   /**
    * Insert global position info into vector.
    */
   virtual void insert_global_positions_vector_(
     std::vector< std::pair< Position< D >, index > >&,
-    const Selector& filter ) = 0;
+    const index& model_filter ) = 0;
 
   /**
    * Insert local position info into ntree.
    */
   virtual void insert_local_positions_ntree_( Ntree< D, index >& tree,
-    const Selector& filter ) = 0;
+    const index& model_filter ) = 0;
 
   //! lower left corner (minimum coordinates) of layer
   Position< D > lower_left_;
@@ -438,7 +432,7 @@ protected:
    */
   static lockPTR< Ntree< D, index > > cached_ntree_;
   static std::vector< std::pair< Position< D >, index > >* cached_vector_;
-  static Selector cached_selector_;
+  static index cached_model_selector_;
 
   friend class MaskedLayer< D >;
 };
@@ -454,7 +448,7 @@ public:
   /**
    * Regular constructor.
    * @param layer           The layer to mask
-   * @param filter          Optionally select subset of neurons
+   * @param model_filter    Optionally select subset of neurons based on model
    * @param mask            The mask to apply to the layer
    * @param include_global  If true, include all nodes, otherwise only local to
    *                        MPI process
@@ -462,7 +456,7 @@ public:
    *                        periodic b.c.
    */
   MaskedLayer( Layer< D >& layer,
-    Selector filter,
+    index model_filter,
     const MaskDatum& mask,
     bool include_global,
     bool allow_oversized );
@@ -473,7 +467,7 @@ public:
    * will be mirrored about the origin, and settings for periodicity for
    * the target layer will be applied to the source layer.
    * @param layer           The layer to mask (source layer)
-   * @param filter          Optionally select subset of neurons
+   * @param model_filter    Optionally select subset of neurons based on model
    * @param mask            The mask to apply to the layer
    * @param include_global  If true, include all nodes, otherwise only local to
    * MPI process
@@ -483,7 +477,7 @@ public:
    * (target layer)
    */
   MaskedLayer( Layer< D >& layer,
-    Selector filter,
+    index model_filter,
     const MaskDatum& mask,
     bool include_global,
     bool allow_oversized,
@@ -524,7 +518,7 @@ protected:
 
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
-  Selector filter,
+  index model_filter,
   const MaskDatum& maskd,
   bool include_global,
   bool allow_oversized )
@@ -532,11 +526,11 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
 {
   if ( include_global )
   {
-    ntree_ = layer.get_global_positions_ntree( filter );
+    ntree_ = layer.get_global_positions_ntree( model_filter );
   }
   else
   {
-    ntree_ = layer.get_local_positions_ntree( filter );
+    ntree_ = layer.get_local_positions_ntree( model_filter );
   }
 
   check_mask_( layer, allow_oversized );
@@ -544,7 +538,7 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
 
 template < int D >
 inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
-  Selector filter,
+  index model_filter,
   const MaskDatum& maskd,
   bool include_global,
   bool allow_oversized,
@@ -553,13 +547,13 @@ inline MaskedLayer< D >::MaskedLayer( Layer< D >& layer,
 {
   if ( include_global )
   {
-    ntree_ = layer.get_global_positions_ntree( filter,
+    ntree_ = layer.get_global_positions_ntree( model_filter,
       target.get_periodic_mask(),
       target.get_lower_left(),
       target.get_extent() );
   }
   // else
-  //  ntree_ = layer.get_local_positions_ntree(filter,
+  //  ntree_ = layer.get_local_positions_ntree(model_filter,
   //  target.get_periodic_mask(),
   //  target.get_lower_left(), target.get_extent());
 
@@ -617,12 +611,12 @@ inline Layer< D >::Layer( const Layer& other_layer )
 template < int D >
 inline Layer< D >::~Layer()
 {
-  if ( cached_ntree_layer_ == get_gid() )
+  if ( cached_ntree_gc_ == get_metadata() )
   {
     clear_ntree_cache_();
   }
 
-  if ( cached_vector_layer_ == get_gid() )
+  if ( cached_vector_gc_ == get_metadata() )
   {
     clear_vector_cache_();
   }
@@ -673,7 +667,7 @@ inline void
 Layer< D >::clear_ntree_cache_() const
 {
   cached_ntree_ = lockPTR< Ntree< D, index > >();
-  cached_ntree_layer_ = -1;
+  cached_ntree_gc_ = GIDCollectionMetadataPTR( 0 );
 }
 
 template < int D >
@@ -685,7 +679,7 @@ Layer< D >::clear_vector_cache_() const
     delete cached_vector_;
   }
   cached_vector_ = 0;
-  cached_vector_layer_ = -1;
+  cached_vector_gc_ = GIDCollectionMetadataPTR( 0 );
 }
 
 } // namespace nest

@@ -374,16 +374,7 @@ TopologyModule::init( SLIInterpreter* i )
   i->createcommand( "cvdict_M", &cvdict_Mfunction );
 
   i->createcommand(
-    "SelectNodesByMask_L_a_M", &selectnodesbymask_L_a_Mfunction );
-
-  kernel().model_manager.register_node_model< FreeLayer< 2 > >(
-    "topology_layer_free" );
-  kernel().model_manager.register_node_model< FreeLayer< 3 > >(
-    "topology_layer_free_3d" );
-  kernel().model_manager.register_node_model< GridLayer< 2 > >(
-    "topology_layer_grid" );
-  kernel().model_manager.register_node_model< GridLayer< 3 > >(
-    "topology_layer_grid_3d" );
+    "SelectNodesByMask_g_a_M", &selectnodesbymask_g_a_Mfunction );
 
   // Register mask types
   register_mask< BallMask< 2 > >();
@@ -482,7 +473,8 @@ TopologyModule::GetPosition_g_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(1) );
+  const GIDCollectionDatum layer =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
   const index gid = getValue< long >( i->OStack.pick( 0 ) );
 
   Token result = get_position( layer, gid );
@@ -542,7 +534,8 @@ TopologyModule::Displacement_g_a_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(2) );
+  const GIDCollectionDatum layer =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
   const std::vector< double > point =
     getValue< std::vector< double > >( i->OStack.pick( 1 ) );
 
@@ -604,7 +597,8 @@ TopologyModule::Distance_g_a_iFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  const GIDCollectionDatum layer =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
   const std::vector< double > point =
     getValue< std::vector< double > >( i->OStack.pick( 1 ) );
 
@@ -975,8 +969,10 @@ TopologyModule::ConnectLayers_g_g_DFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  const GIDCollectionDatum source = getValue< GIDCollectionDatum >( i->OStack.pick(2) );
-  const GIDCollectionDatum target = getValue< GIDCollectionDatum >( i->OStack.pick(1) );
+  const GIDCollectionDatum source =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
+  const GIDCollectionDatum target =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
   const DictionaryDatum connection_dict =
     getValue< DictionaryDatum >( i->OStack.pick( 0 ) );
 
@@ -1039,7 +1035,8 @@ TopologyModule::GetLayerStatus_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 1 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(0) );
+  const GIDCollectionDatum layer =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
 
   DictionaryDatum result = get_layer_status( layer );
 
@@ -1126,7 +1123,8 @@ TopologyModule::DumpLayerNodes_os_gFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick( 0) );
+  const GIDCollectionDatum layer =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 0 ) );
   OstreamDatum out = getValue< OstreamDatum >( i->OStack.pick( 1 ) );
 
   dump_layer_nodes( layer, out );
@@ -1184,7 +1182,8 @@ TopologyModule::DumpLayerConnections_os_g_lFunction::execute(
   i->assert_stack_load( 3 );
 
   OstreamDatum out_file = getValue< OstreamDatum >( i->OStack.pick( 2 ) );
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(1) );
+  const GIDCollectionDatum layer =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
   const Token syn_model = i->OStack.pick( 0 );
 
   dump_layer_connections( syn_model, layer, out_file );
@@ -1231,23 +1230,14 @@ TopologyModule::GetElement_g_iaFunction::execute( SLIInterpreter* i ) const
 {
   i->assert_stack_load( 2 );
 
-  const GIDCollectionDatum layer = getValue< GIDCollectionDatum >( i->OStack.pick(1) );
+  const GIDCollectionDatum layer =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 1 ) );
   TokenArray array = getValue< TokenArray >( i->OStack.pick( 0 ) );
 
-  std::vector< index > node_gids = get_element( layer, array );
+  index node_gid = get_element( layer, array );
 
   i->OStack.pop( 2 );
-
-  // For compatibility reasons, return either single node or array
-  if ( node_gids.size() == 1 )
-  {
-    i->OStack.push( node_gids[ 0 ] );
-  }
-  else
-  {
-    i->OStack.push( node_gids );
-  }
-
+  i->OStack.push( node_gid );
   i->EStack.pop();
 }
 
@@ -1266,12 +1256,13 @@ TopologyModule::Cvdict_MFunction::execute( SLIInterpreter* i ) const
 
 
 void
-TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
+TopologyModule::SelectNodesByMask_g_a_MFunction::execute(
   SLIInterpreter* i ) const
 {
   i->assert_stack_load( 3 );
 
-  const index& layer_gid = getValue< long >( i->OStack.pick( 2 ) );
+  const GIDCollectionDatum layer_gc  =
+    getValue< GIDCollectionDatum >( i->OStack.pick( 2 ) );
   std::vector< double > anchor =
     getValue< std::vector< double > >( i->OStack.pick( 1 ) );
   MaskDatum mask = getValue< MaskDatum >( i->OStack.pick( 0 ) );
@@ -1287,11 +1278,14 @@ TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
 
   if ( dim == 2 )
   {
-    Layer< 2 >* layer = dynamic_cast< Layer< 2 >* >(
-      kernel().node_manager.get_node( layer_gid ) );
+    Layer< 2 >* layer = dynamic_cast< Layer< 2 >* >( get_layer( layer_gc ).get() );
+    if ( not layer )
+    {
+      throw TypeMismatch( "2D layer", "other type" );
+    }
 
     MaskedLayer< 2 > ml =
-      MaskedLayer< 2 >( *layer, Selector(), mask, true, false );
+      MaskedLayer< 2 >( *layer, invalid_index, mask, true, false );
 
     for ( Ntree< 2, index >::masked_iterator it =
             ml.begin( Position< 2 >( anchor[ 0 ], anchor[ 1 ] ) );
@@ -1303,11 +1297,14 @@ TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
   }
   else
   {
-    Layer< 3 >* layer = dynamic_cast< Layer< 3 >* >(
-      kernel().node_manager.get_node( layer_gid ) );
+    Layer< 3 >* layer = dynamic_cast< Layer< 3 >* >( get_layer( layer_gc ).get() );
+    if ( not layer )
+    {
+      throw TypeMismatch( "3D layer", "other type" );
+    }
 
     MaskedLayer< 3 > ml =
-      MaskedLayer< 3 >( *layer, Selector(), mask, true, false );
+      MaskedLayer< 3 >( *layer, invalid_index, mask, true, false );
 
     for ( Ntree< 3, index >::masked_iterator it =
             ml.begin( Position< 3 >( anchor[ 0 ], anchor[ 1 ], anchor[ 2 ] ) );
@@ -1326,6 +1323,12 @@ TopologyModule::SelectNodesByMask_L_a_MFunction::execute(
 
 std::string
 LayerExpected::message() const
+{
+  return std::string();
+}
+
+std::string
+LayerNodeExpected::message() const
 {
   return std::string();
 }

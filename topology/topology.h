@@ -62,6 +62,7 @@ private:
   const AbstractLayerPTR layer_;  //!< layer object
 };
 
+AbstractLayerPTR get_layer( GIDCollectionPTR layer_gc );
 GIDCollectionPTR create_layer( const DictionaryDatum& layer_dict );
 std::vector< double > get_position( GIDCollectionPTR layer_gc,
 		const index node_gid );
@@ -93,7 +94,7 @@ void dump_layer_nodes( GIDCollectionPTR layer_gc, OstreamDatum& out );
 void dump_layer_connections( const Token& syn_model,
   GIDCollectionPTR layer_gc,
   OstreamDatum& out_file );
-std::vector< index > get_element( GIDCollectionPTR layer_gc,
+index get_element( GIDCollectionPTR layer_gc,
   const TokenArray array );
 DictionaryDatum get_layer_status( GIDCollectionPTR layer_gc );
 }

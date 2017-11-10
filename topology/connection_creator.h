@@ -32,7 +32,6 @@
 // Includes from topology:
 #include "mask.h"
 #include "position.h"
-#include "selector.h"
 #include "topology_names.h"
 #include "topologymodule.h"
 #include "topology_parameter.h"
@@ -106,7 +105,7 @@ public:
    * @param target target layer.
    */
   template < int D >
-  void connect( Layer< D >& source, Layer< D >& target );
+  void connect( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
 private:
   /**
@@ -147,16 +146,16 @@ private:
     const Layer< D >& source );
 
   template < int D >
-  void target_driven_connect_( Layer< D >& source, Layer< D >& target );
+  void target_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
-  void source_driven_connect_( Layer< D >& source, Layer< D >& target );
+  void source_driven_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
-  void convergent_connect_( Layer< D >& source, Layer< D >& target );
+  void convergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   template < int D >
-  void divergent_connect_( Layer< D >& source, Layer< D >& target );
+  void divergent_connect_( Layer< D >& source, Layer< D >& target, GIDCollectionPTR target_gc );
 
   void connect_( index s,
     Node* target,
@@ -180,8 +179,8 @@ private:
   bool allow_autapses_;
   bool allow_multapses_;
   bool allow_oversized_;
-  Selector source_filter_;
-  Selector target_filter_;
+  index source_model_filter_;
+  index target_model_filter_;
   index number_of_connections_;
   lockPTR< AbstractMask > mask_;
   lockPTR< TopologyParameter > kernel_;

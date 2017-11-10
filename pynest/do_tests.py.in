@@ -49,13 +49,11 @@ def _setup(arg):
 import nest
 nest.init(["--verbosity=WARNING", "--quiet"])
 
-#TODO480: remove comment from following line
-#import nest.topology
+import nest.topology
 
 import nest.tests
 
-#TODO480: remove comment from following line
-#import nest.topology.tests
+import nest.topology.tests
 
 import unittest
 
@@ -66,11 +64,7 @@ unittest.TestCase.setUp = _setup
 # The testsuite is initialized w/ stdout. That goes into the logfile.
 runner = unittest.TextTestRunner(verbosity=2, stream=sys.stdout)
 result = runner.run(nest.tests.suite())
-#TODO480: remove comment from following line
-#result_topo = runner.run(nest.topology.tests.suite())
-#TODO480: remove following two lines
-class dotdict(dict):  __getattr__ = dict.get
-result_topo = dotdict({"testsRun": 0, "failures": [], "errors": [], "skipped": 0})
+result_topo = runner.run(nest.topology.tests.suite())
 
 total = result.testsRun + result_topo.testsRun
 failed = len(result.failures) + len(result.errors) + len(result_topo.failures) + len(result_topo.errors)

@@ -1459,7 +1459,7 @@ NestModule::GetGIDModelID_qFunction::execute( SLIInterpreter* i ) const
     getValue< GIDCollectionIteratorDatum >( i->OStack.pick( 0 ) );
 
   ArrayDatum gm_pair;
-  const GIDPair& gp = **it;
+  const GIDTriple& gp = **it;
   gm_pair.push_back( gp.gid );
   gm_pair.push_back( gp.model_id );
 

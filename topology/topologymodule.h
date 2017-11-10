@@ -191,11 +191,11 @@ public:
     void execute( SLIInterpreter* ) const;
   } cvdict_Mfunction;
 
-  class SelectNodesByMask_L_a_MFunction : public SLIFunction
+  class SelectNodesByMask_g_a_MFunction : public SLIFunction
   {
   public:
     void execute( SLIInterpreter* ) const;
-  } selectnodesbymask_L_a_Mfunction;
+  } selectnodesbymask_g_a_Mfunction;
 
   typedef GenericFactory< AbstractMask > MaskFactory;
   typedef GenericFactory< AbstractMask >::CreatorFunction MaskCreatorFunction;
@@ -330,6 +330,24 @@ public:
   {
   }
   ~LayerExpected() throw()
+  {
+  }
+
+  std::string message() const;
+};
+
+/**
+ * Exception to be thrown if the wrong node is given
+ * @ingroup KernelExceptions
+ */
+class LayerNodeExpected : public KernelException
+{
+public:
+  LayerNodeExpected()
+    : KernelException( "LayerNodeExpected" )
+  {
+  }
+  ~LayerNodeExpected() throw()
   {
   }
 

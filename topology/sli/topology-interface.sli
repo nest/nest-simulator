@@ -150,8 +150,8 @@
   /get [/masktype /literaltype] {exch cvdict_M exch get} def
   /get [/masktype /arraytype] {exch cvdict_M exch get} def
   
-  /SelectNodesByMask [/integertype /arraytype /masktype]
-    /SelectNodesByMask_L_a_M load
+  /SelectNodesByMask [/gidcollectiontype /arraytype /masktype]
+    /SelectNodesByMask_g_a_M load
   def
   
 } def

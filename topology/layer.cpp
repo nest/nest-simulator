@@ -43,8 +43,10 @@
 namespace nest
 {
 
-index AbstractLayer::cached_ntree_layer_ = -1;
-index AbstractLayer::cached_vector_layer_ = -1;
+GIDCollectionMetadataPTR AbstractLayer::cached_ntree_gc_ =
+  GIDCollectionMetadataPTR( 0 );
+GIDCollectionMetadataPTR AbstractLayer::cached_vector_gc_ =
+  GIDCollectionMetadataPTR( 0 );
 
 AbstractLayer::~AbstractLayer()
 {
@@ -167,112 +169,38 @@ AbstractLayer::create_layer( const DictionaryDatum& layer_dict )
   {
     throw BadProperty( "Unknown layer type." );
   }
+
   assert( layer_local );
-  lockPTR<AbstractLayer> layer_safe(layer_local);
-
-  layer_local->depth_ = element_ids.size();
-  layer_local->set_status( layer_dict );
-
-  GIDCollectionMetadataPTR layer_meta(new LayerMetadata( layer_safe ));
+  lockPTR< AbstractLayer > layer_safe( layer_local );
+  GIDCollectionMetadataPTR layer_meta( new LayerMetadata( layer_safe ) );
 
   // We have at least one element, create a GIDCollection for it
-  GIDCollectionPTR gid_coll = kernel().node_manager.add_node( element_ids[ 0 ], length );
+  GIDCollectionPTR gid_coll =
+    kernel().node_manager.add_node( element_ids[ 0 ], length );
+
   gid_coll->set_metadata( layer_meta );
 
   // Create all remaining elements and add
   for ( size_t i = 1; i < element_ids.size(); ++i )
   {
-	GIDCollectionPTR next_coll = kernel().node_manager.add_node( element_ids[ i ], length );
-	next_coll->set_metadata( layer_meta );
-	gid_coll = gid_coll->operator+( next_coll );
-	next_coll.unlock();
+    GIDCollectionPTR next_coll =
+      kernel().node_manager.add_node( element_ids[ i ], length );
+    next_coll->set_metadata( layer_meta );
+    gid_coll = gid_coll->operator+( next_coll );
+    next_coll.unlock();
   }
+
+  get_layer( gid_coll )->gid_collection_ = gid_coll;
+
+  layer_local->set_status( layer_dict );
 
   return gid_coll;
 }
 
-std::vector< Node* >::iterator
-AbstractLayer::local_begin( int depth )
+GIDCollectionMetadataPTR
+AbstractLayer::get_metadata() const
 {
-  if ( depth >= depth_ )
-  {
-    throw BadProperty( "Selected depth out of range" );
-  }
-  index min_nodes_per_layer = local_size() / depth_;
-  index first_gid_at_depth = gids_[ depth * ( global_size() / depth_ ) ];
-  std::vector< Node* >::iterator iter = local_begin();
-  for ( iter += depth * min_nodes_per_layer; iter != local_end(); ++iter )
-  {
-    if ( ( *iter )->get_gid() >= first_gid_at_depth )
-    {
-      break;
-    }
-  }
-  return iter;
-}
-
-std::vector< Node* >::iterator
-AbstractLayer::local_end( int depth )
-{
-  if ( depth >= depth_ )
-  {
-    throw BadProperty( "Selected depth out of range" );
-  }
-  index min_nodes_per_layer = local_size() / depth_;
-  index last_gid_at_depth =
-    gids_[ ( depth + 1 ) * ( global_size() / depth_ ) - 1 ];
-  std::vector< Node* >::iterator iter = local_begin();
-  for ( iter += ( depth + 1 ) * min_nodes_per_layer; iter != local_end();
-        ++iter )
-  {
-    if ( ( *iter )->get_gid() > last_gid_at_depth )
-    {
-      break;
-    }
-  }
-  return iter;
-}
-
-std::vector< Node* >::const_iterator
-AbstractLayer::local_begin( int depth ) const
-{
-  if ( depth >= depth_ )
-  {
-    throw BadProperty( "Selected depth out of range" );
-  }
-  index min_nodes_per_layer = local_size() / depth_;
-  index first_gid_at_depth = gids_[ depth * ( global_size() / depth_ ) ];
-  std::vector< Node* >::const_iterator iter = local_begin();
-  for ( iter += depth * min_nodes_per_layer; iter != local_end(); ++iter )
-  {
-    if ( ( *iter )->get_gid() >= first_gid_at_depth )
-    {
-      break;
-    }
-  }
-  return iter;
-}
-
-std::vector< Node* >::const_iterator
-AbstractLayer::local_end( int depth ) const
-{
-  if ( depth >= depth_ )
-  {
-    throw BadProperty( "Selected depth out of range" );
-  }
-  index min_nodes_per_layer = local_size() / depth_;
-  index last_gid_at_depth =
-    gids_[ ( depth + 1 ) * ( global_size() / depth_ ) - 1 ];
-  std::vector< Node* >::const_iterator iter = local_begin();
-  for ( iter += ( depth + 1 ) * min_nodes_per_layer; iter != local_end();
-        ++iter )
-  {
-    if ( ( *iter )->get_gid() > last_gid_at_depth )
-    {
-      break;
-    }
-  }
-  return iter;
+  return gid_collection_->get_metadata();
 }
 
 } // namespace nest

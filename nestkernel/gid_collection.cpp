@@ -49,14 +49,24 @@ struct PrimitiveSortObject
 
 gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
   const GIDCollectionPrimitive& collection,
-  size_t offset )
+  size_t offset,
+  size_t step,
+  index model_type )
   : coll_ptr_( collection_ptr )
   , element_idx_( offset )
   , part_idx_( 0 )
-  , step_( 1 )
+  , step_( step )
+  , model_type_( model_type )
   , primitive_collection_( &collection )
   , composite_collection_( 0 )
 {
+  // If the primitive doesn't have the right model, we set the iterator equal to
+  // the end iterator.
+  if ( model_type_ != invalid_index
+    and model_type_ != primitive_collection_->model_id_ )
+  {
+    element_idx_ = primitive_collection_->size();
+  }
   // test requiring get() first so that unlock() can be run afterwards
   assert( collection_ptr.get() == &collection or not collection_ptr.valid() );
   collection_ptr.unlock();
@@ -71,14 +81,48 @@ gc_const_iterator::gc_const_iterator( GIDCollectionPTR collection_ptr,
   const GIDCollectionComposite& collection,
   size_t part,
   size_t offset,
-  size_t step )
+  size_t step,
+  index model_type )
   : coll_ptr_( collection_ptr )
   , element_idx_( offset )
   , part_idx_( part )
   , step_( step )
+  , model_type_( model_type )
   , primitive_collection_( 0 )
   , composite_collection_( &collection )
 {
+  if ( model_type_ != invalid_index )
+  {
+    // Check if any of the primitives have the specified model type.
+    bool has_model_type = false;
+    for ( size_t part_index = part_idx_;
+          part_index < composite_collection_->stop_part_;
+          ++part_index )
+    {
+      if ( model_type_
+        == composite_collection_->parts_[ part_index ].model_id_ )
+      {
+        has_model_type = true;
+        break;
+      }
+    }
+    // If none of the primitives have the right model, we set the iterator equal
+    // to the end iterator.
+    if ( not has_model_type )
+    {
+      if ( composite_collection_->stop_part_ != 0
+        or composite_collection_->stop_offset_ != 0 )
+      {
+        part_idx_ = composite_collection_->stop_part_;
+        element_idx_ = composite_collection_->stop_offset_;
+      }
+      else
+      {
+        part_idx_ = composite_collection_->parts_.size();
+      }
+    }
+  }
+
   // test requiring get() first so that unlock() can be run afterwards
   assert( collection_ptr.get() == &collection or not collection_ptr.valid() );
   collection_ptr.unlock();
@@ -97,7 +141,8 @@ gc_const_iterator::gc_const_iterator( const gc_const_iterator& gci )
   : coll_ptr_( gci.coll_ptr_ )
   , element_idx_( gci.element_idx_ )
   , part_idx_( gci.part_idx_ )
-  , step_( 1 )
+  , step_( gci.step_ )
+  , model_type_( gci.model_type_ )
   , primitive_collection_( gci.primitive_collection_ )
   , composite_collection_( gci.composite_collection_ )
 {
@@ -181,7 +226,8 @@ GIDCollection::create_( const std::vector< index >& gids )
         gid != gids.end();
         ++gid )
   {
-    index next_model = kernel().node_manager.get_node_or_proxy( *gid )->get_model_id();
+    index next_model =
+      kernel().node_manager.get_node_or_proxy( *gid )->get_model_id();
 
     if ( next_model == current_model and *gid == ( current_last + 1 ) )
     {
@@ -245,16 +291,18 @@ GIDCollectionPrimitive::GIDCollectionPrimitive( index first,
 GIDCollectionPrimitive::GIDCollectionPrimitive( index first, index last )
   : first_( first )
   , last_( last )
-  , model_id_( 0 )
+  , model_id_( invalid_index )
   , metadata_( 0 )
 {
   assert( first_ <= last_ );
 
   // find the model_id
-  const int model_id = kernel().node_manager.get_node_or_proxy( first )->get_model_id();
+  const int model_id =
+    kernel().node_manager.get_node_or_proxy( first )->get_model_id();
   for ( index gid = ++first; gid <= last; ++gid )
   {
-    if ( model_id != kernel().node_manager.get_node_or_proxy( gid )->get_model_id() )
+    if ( model_id
+      != kernel().node_manager.get_node_or_proxy( gid )->get_model_id() )
     {
       throw BadProperty( "model ids does not match" );
     }
@@ -274,7 +322,7 @@ GIDCollectionPrimitive::GIDCollectionPrimitive(
 GIDCollectionPrimitive::GIDCollectionPrimitive()
   : first_( 0 )
   , last_( 0 )
-  , model_id_( 0 )
+  , model_id_( invalid_index )
   , metadata_( 0 )
 {
 }
@@ -712,7 +760,7 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
     index primitive_last = 0;
 
     size_t primitive_size = 0;
-    GIDPair pair;
+    GIDTriple gt;
 
     std::vector< std::string > string_vector;
 
@@ -729,20 +777,20 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
           string_buffer
             << "\n  [["
             << "model="
-            << kernel().model_manager.get_model( pair.model_id )->get_name()
+            << kernel().model_manager.get_model( gt.model_id )->get_name()
             << ", size=" << primitive_size << " ";
           if ( primitive_size == 1 )
           {
-            string_buffer << "(" << pair.gid << ")]]";
+            string_buffer << "(" << gt.gid << ")]]";
           }
           else if ( primitive_size == 2 )
           {
-            string_buffer << "(" << pair.gid << ", ";
+            string_buffer << "(" << gt.gid << ", ";
             string_buffer << primitive_last << ")]]";
           }
           else
           {
-            string_buffer << "(" << pair.gid << "..";
+            string_buffer << "(" << gt.gid << "..";
             if ( step_ > 1 )
             {
               string_buffer << "{" << step_ << "}..";
@@ -752,7 +800,7 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
           string_vector.push_back( string_buffer.str() );
         }
         primitive_size = 1;
-        pair = *it;
+        gt = *it;
       }
       else
       {
@@ -779,20 +827,20 @@ GIDCollectionComposite::print_me( std::ostream& out ) const
 
     out << "\n  [["
         << "model="
-        << kernel().model_manager.get_model( pair.model_id )->get_name()
+        << kernel().model_manager.get_model( gt.model_id )->get_name()
         << ", size=" << primitive_size << " ";
     if ( primitive_size == 1 )
     {
-      out << "(" << pair.gid << ")]]";
+      out << "(" << gt.gid << ")]]";
     }
     else if ( primitive_size == 2 )
     {
-      out << "(" << pair.gid << ", ";
+      out << "(" << gt.gid << ", ";
       out << primitive_last << ")]]";
     }
     else
     {
-      out << "(" << pair.gid << "..";
+      out << "(" << gt.gid << "..";
       if ( step_ > 1 )
       {
         out << "{" << step_ << "}..";

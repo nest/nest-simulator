@@ -84,7 +84,6 @@ const Name sigma_x( "sigma_x" );
 const Name sigma_y( "sigma_y" );
 const Name sources( "sources" );
 const Name spherical( "spherical" );
-const Name topology( "topology" );
 const Name upper_right( "upper_right" );
 const Name volume( "volume" );
 }

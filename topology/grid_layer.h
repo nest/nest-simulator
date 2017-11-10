@@ -53,17 +53,18 @@ public:
     masked_iterator( const GridLayer< D >& layer )
       : layer_( layer )
       , node_()
-      , depth_( -1 )
+      , mask_()
+      , layer_size_()
     {
     }
 
     /**
-     * Initialize an iterator to point to the first node inside the mask.
+     * Initialise an iterator to point to the first node inside the mask.
      */
     masked_iterator( const GridLayer< D >& layer,
       const Mask< D >& mask,
       const Position< D >& anchor,
-      const Selector& filter );
+      const index& model_filter );
 
     value_type operator*();
 
@@ -88,13 +89,13 @@ public:
      */
     bool operator==( const masked_iterator& other ) const
     {
-      return ( other.layer_.get_gid() == layer_.get_gid() )
-        && ( other.node_ == node_ ) && ( other.depth_ == depth_ );
+      return ( other.layer_.get_metadata() == layer_.get_metadata() )
+        && ( other.node_ == node_ );
     }
     bool operator!=( const masked_iterator& other ) const
     {
-      return ( other.layer_.get_gid() != layer_.get_gid() )
-        || ( other.node_ != node_ ) || ( other.depth_ != depth_ );
+      return ( other.layer_.get_metadata() != layer_.get_metadata() )
+        || ( other.node_ != node_ );
     }
 
   protected:
@@ -102,9 +103,8 @@ public:
     int layer_size_;
     const Mask< D >* mask_;
     Position< D > anchor_;
-    Selector filter_;
+    index model_filter_;
     MultiIndex< D > node_;
-    int depth_;
   };
 
   GridLayer()
@@ -137,24 +137,23 @@ public:
   Position< D > gridpos_to_position( Position< D, int > gridpos ) const;
 
   /**
-   * Returns nodes at a given discrete layerspace position.
+   * Returns the nodes at a given discrete layerspace position.
    * @param pos  Discrete position in layerspace.
-   * @returns vector of gids at the depth column covering
-   *          the input position.
+   * @returns Gids covering the input position.
    */
-  std::vector< index > get_nodes( Position< D, int > pos ) const;
+  index get_node( Position< D, int > pos ) const;
 
   using Layer< D >::get_global_positions_vector;
 
   std::vector< std::pair< Position< D >, index > > get_global_positions_vector(
-    Selector filter,
+    index model_filter,
     const AbstractMask& mask,
     const Position< D >& anchor,
     bool allow_oversized );
 
   masked_iterator masked_begin( const Mask< D >& mask,
     const Position< D >& anchor,
-    const Selector& filter );
+    const index& model_filter );
   masked_iterator masked_end();
 
   Position< D, index > get_dims() const;
@@ -166,14 +165,14 @@ protected:
   Position< D, index > dims_; ///< number of nodes in each direction.
 
   template < class Ins >
-  void insert_global_positions_( Ins iter, const Selector& filter );
+  void insert_global_positions_( Ins iter, const index& model_filter );
   void insert_global_positions_ntree_( Ntree< D, index >& tree,
-    const Selector& filter );
+    const index& model_filter );
   void insert_global_positions_vector_(
     std::vector< std::pair< Position< D >, index > >& vec,
-    const Selector& filter );
+    const index& model_filter );
   void insert_local_positions_ntree_( Ntree< D, index >& tree,
-    const Selector& filter );
+    const index& model_filter );
 };
 
 template < int D >
@@ -198,13 +197,13 @@ GridLayer< D >::set_status( const DictionaryDatum& d )
     updateValue< long >( d, names::layers, new_dims[ 2 ] );
   }
 
-  index new_size = this->depth_;
+  index new_size = 1;
   for ( int i = 0; i < D; ++i )
   {
     new_size *= new_dims[ i ];
   }
 
-  if ( new_size != this->global_size() )
+  if ( new_size != this->gid_collection_->size() )
   {
     throw BadProperty( "Total size of layer must be unchanged." );
   }
@@ -220,17 +219,14 @@ GridLayer< D >::get_status( DictionaryDatum& d ) const
 {
   Layer< D >::get_status( d );
 
-  DictionaryDatum topology_dict =
-    getValue< DictionaryDatum >( ( *d )[ names::topology ] );
-
-  ( *topology_dict )[ names::columns ] = dims_[ 0 ];
+  ( *d )[ names::columns ] = dims_[ 0 ];
   if ( D >= 2 )
   {
-    ( *topology_dict )[ names::rows ] = dims_[ 1 ];
+    ( *d )[ names::rows ] = dims_[ 1 ];
   }
   if ( D >= 3 )
   {
-    ( *topology_dict )[ names::layers ] = dims_[ 2 ];
+    ( *d )[ names::layers ] = dims_[ 2 ];
   }
 }
 
@@ -238,7 +234,6 @@ template < int D >
 Position< D >
 GridLayer< D >::lid_to_position( index lid ) const
 {
-  lid %= this->global_size() / this->depth_;
   Position< D, int > gridpos;
   for ( int i = D - 1; i > 0; --i )
   {
@@ -269,7 +264,7 @@ template < int D >
 Position< D >
 GridLayer< D >::get_position( index sind ) const
 {
-  return lid_to_position( this->nodes_[ sind ]->get_lid() );
+  return lid_to_position( sind );
 }
 
 template < int D >
@@ -301,119 +296,83 @@ GridLayer< D >::gridpos_to_lid( Position< D, int > pos ) const
 }
 
 template < int D >
-std::vector< index >
-GridLayer< D >::get_nodes( Position< D, int > pos ) const
+index
+GridLayer< D >::get_node( Position< D, int > pos ) const
 {
-  std::vector< index > gids;
-  index lid = gridpos_to_lid( pos );
-  index layer_size = this->global_size() / this->depth_;
-
-  for ( int d = 0; d < this->depth_; ++d )
-  {
-    gids.push_back( this->gids_[ lid + d * layer_size ] );
-  }
-
-  return gids;
+  return this->gid_collection_->operator[]( gridpos_to_lid( pos ) );
 }
 
 template < int D >
 void
 GridLayer< D >::insert_local_positions_ntree_( Ntree< D, index >& tree,
-  const Selector& filter )
+  const index& model_filter )
 {
-  std::vector< Node* >::const_iterator nodes_begin;
-  std::vector< Node* >::const_iterator nodes_end;
+  // We have to adjust the begin and end pointers in case we select by model
+  // or we have to adjust the step because we use threads:
+  size_t num_processes = kernel().mpi_manager.get_num_processes();
+  size_t current_rank = kernel().mpi_manager.get_rank();
+  index model = model_filter;
 
-  if ( filter.select_depth() )
+  GIDCollection::const_iterator gc_begin =
+    this->gid_collection_->begin( current_rank, num_processes, model );
+  GIDCollection::const_iterator gc_end = this->gid_collection_->end();
+
+  for ( GIDCollection::const_iterator gc_it = gc_begin; gc_it != gc_end;
+        ++gc_it )
   {
-    nodes_begin = this->local_begin( filter.depth );
-    nodes_end = this->local_end( filter.depth );
-  }
-  else
-  {
-    nodes_begin = this->local_begin();
-    nodes_end = this->local_end();
-  }
-
-  for ( std::vector< Node* >::const_iterator node_it = nodes_begin;
-        node_it != nodes_end;
-        ++node_it )
-  {
-
-    if ( filter.select_model()
-      && ( ( *node_it )->get_model_id() != filter.model ) )
-    {
-      continue;
-    }
-
     tree.insert( std::pair< Position< D >, index >(
-      lid_to_position( ( *node_it )->get_lid() ), ( *node_it )->get_gid() ) );
+      lid_to_position( ( *gc_it ).lid ), ( *gc_it ).gid ) );
   }
 }
 
 template < int D >
 template < class Ins >
 void
-GridLayer< D >::insert_global_positions_( Ins iter, const Selector& filter )
+GridLayer< D >::insert_global_positions_( Ins iter, const index& model_filter )
 {
   index i = 0;
-  index lid_end = this->gids_.size();
+  index lid_end = this->gid_collection_->size();
 
-  if ( filter.select_depth() )
+  // We have to adjust the begin and end pointers in case we select by model
+  // or we have to adjust the step because we use threads:
+  size_t num_processes = kernel().mpi_manager.get_num_processes();
+  size_t current_rank = kernel().mpi_manager.get_rank();
+  index model = model_filter;
+
+  GIDCollection::const_iterator gi =
+    this->gid_collection_->begin( current_rank, num_processes, model );
+
+  for ( ; ( gi != this->gid_collection_->end() ) && ( i < lid_end ); ++gi, ++i )
   {
-    const index nodes_per_layer = this->gids_.size() / this->depth_;
-    i = nodes_per_layer * filter.depth;
-    lid_end = nodes_per_layer * ( filter.depth + 1 );
-    if ( ( i >= this->gids_.size() ) or ( lid_end > this->gids_.size() ) )
-    {
-      throw BadProperty( "Selected depth out of range" );
-    }
-  }
-
-  Multirange::iterator gi = this->gids_.begin();
-  // Advance iterator to first gid at selected depth
-  for ( index j = 0; j < i; ++j )
-  {
-    ++gi;
-  }
-
-  for ( ; ( gi != this->gids_.end() ) && ( i < lid_end ); ++gi, ++i )
-  {
-
-    if ( filter.select_model()
-      && ( ( int ) kernel().modelrange_manager.get_model_id( *gi )
-           != filter.model ) )
-    {
-      continue;
-    }
-    *iter++ = std::pair< Position< D >, index >( lid_to_position( i ), *gi );
+    *iter++ =
+      std::pair< Position< D >, index >( lid_to_position( i ), ( *gi ).gid );
   }
 }
 
 template < int D >
 void
 GridLayer< D >::insert_global_positions_ntree_( Ntree< D, index >& tree,
-  const Selector& filter )
+  const index& model_filter )
 {
-  insert_global_positions_( std::inserter( tree, tree.end() ), filter );
+  insert_global_positions_( std::inserter( tree, tree.end() ), model_filter );
 }
 
 template < int D >
 void
 GridLayer< D >::insert_global_positions_vector_(
   std::vector< std::pair< Position< D >, index > >& vec,
-  const Selector& filter )
+  const index& model_filter )
 {
-  insert_global_positions_( std::back_inserter( vec ), filter );
+  insert_global_positions_( std::back_inserter( vec ), model_filter );
 }
 
 template < int D >
 inline typename GridLayer< D >::masked_iterator
 GridLayer< D >::masked_begin( const Mask< D >& mask,
   const Position< D >& anchor,
-  const Selector& filter )
+  const index& model_filter )
 {
-  return masked_iterator( *this, mask, anchor, filter );
+  return masked_iterator( *this, mask, anchor, model_filter );
 }
 
 template < int D >
@@ -427,13 +386,13 @@ template < int D >
 GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
   const Mask< D >& mask,
   const Position< D >& anchor,
-  const Selector& filter )
+  const index& model_filter )
   : layer_( layer )
   , mask_( &mask )
   , anchor_( anchor )
-  , filter_( filter )
+  , model_filter_( model_filter )
 {
-  layer_size_ = layer.global_size() / layer.depth_;
+  layer_size_ = layer.global_size();
 
   Position< D, int > lower_left;
   Position< D, int > upper_right;
@@ -477,19 +436,11 @@ GridLayer< D >::masked_iterator::masked_iterator( const GridLayer< D >& layer,
 
   node_ = MultiIndex< D >( lower_left, upper_right );
 
-  if ( filter_.select_depth() )
-  {
-    depth_ = filter_.depth;
-  }
-  else
-  {
-    depth_ = 0;
-  }
-
   if ( ( not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) )
-    or ( filter_.select_model() && ( kernel().modelrange_manager.get_model_id(
-                                       layer_.gids_[ depth_ * layer_size_ ] )
-                                     != index( filter_.model ) ) ) )
+    or ( model_filter_ != invalid_index
+         and ( kernel().modelrange_manager.get_model_id(
+                 layer_.gid_collection_->operator[](
+                   layer_.gridpos_to_lid( node_ ) ) ) != model_filter_ ) ) )
   {
     ++( *this );
   }
@@ -499,43 +450,14 @@ template < int D >
 inline std::pair< Position< D >, index > GridLayer< D >::masked_iterator::
 operator*()
 {
-  assert( depth_ >= 0 );
   return std::pair< Position< D >, index >( layer_.gridpos_to_position( node_ ),
-    layer_.gids_[ layer_.gridpos_to_lid( node_ ) + depth_ * layer_size_ ] );
+    layer_.gid_collection_->operator[]( layer_.gridpos_to_lid( node_ ) ) );
 }
 
 template < int D >
 typename GridLayer< D >::masked_iterator& GridLayer< D >::masked_iterator::
 operator++()
-{
-  if ( depth_ == -1 )
-  {
-    // Invalid (end) iterator
-    return *this;
-  }
-
-  if ( not filter_.select_depth() )
-  {
-    depth_++;
-    if ( depth_ >= layer_.depth_ )
-    {
-      depth_ = 0;
-    }
-    else
-    {
-      if ( filter_.select_model() && ( kernel().modelrange_manager.get_model_id(
-                                         layer_.gids_[ depth_ * layer_size_ ] )
-                                       != index( filter_.model ) ) )
-      {
-        return operator++();
-      }
-      else
-      {
-        return *this;
-      }
-    }
-  }
-
+{ // TODO 481 What if gid_collection is a composite?
   do
   {
     ++node_;
@@ -543,7 +465,6 @@ operator++()
     if ( node_ == node_.get_upper_right() )
     {
       // Mark as invalid
-      depth_ = -1;
       node_ = MultiIndex< D >();
       return *this;
     }
@@ -551,9 +472,10 @@ operator++()
   } while (
     not mask_->inside( layer_.gridpos_to_position( node_ ) - anchor_ ) );
 
-  if ( filter_.select_model()
+  if ( model_filter_ != invalid_index
     && ( kernel().modelrange_manager.get_model_id(
-           layer_.gids_[ depth_ * layer_size_ ] ) != index( filter_.model ) ) )
+           layer_.gid_collection_->operator[](
+             layer_.gridpos_to_lid( node_ ) ) ) != model_filter_ ) )
   {
     return operator++();
   }
@@ -563,7 +485,7 @@ operator++()
 
 template < int D >
 std::vector< std::pair< Position< D >, index > >
-GridLayer< D >::get_global_positions_vector( Selector filter,
+GridLayer< D >::get_global_positions_vector( index model_filter,
   const AbstractMask& mask,
   const Position< D >& anchor,
   bool )
@@ -572,7 +494,7 @@ GridLayer< D >::get_global_positions_vector( Selector filter,
 
   const Mask< D >& mask_d = dynamic_cast< const Mask< D >& >( mask );
   for ( typename GridLayer< D >::masked_iterator mi =
-          masked_begin( mask_d, anchor, filter );
+          masked_begin( mask_d, anchor, model_filter );
         mi != masked_end();
         ++mi )
   {

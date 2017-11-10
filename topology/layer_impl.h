@@ -44,7 +44,7 @@ std::vector< std::pair< Position< D >, index > >* Layer< D >::cached_vector_ =
   0;
 
 template < int D >
-Selector Layer< D >::cached_selector_;
+index Layer< D >::cached_model_selector_;
 
 template < int D >
 Position< D >
@@ -89,37 +89,33 @@ Layer< D >::set_status( const DictionaryDatum& d )
       periodic_ = ( 1 << D ) - 1; // All dimensions periodic
     }
   }
-
-  Subnet::set_status( d );
 }
 
 template < int D >
 void
 Layer< D >::get_status( DictionaryDatum& d ) const
 {
-  Subnet::get_status( d );
-
   DictionaryDatum topology_dict( new Dictionary );
 
-  ( *topology_dict )[ names::depth ] = depth_;
-  ( *topology_dict )[ names::extent ] = std::vector< double >( extent_ );
-  ( *topology_dict )[ names::center ] =
+  ( *d )[ names::extent ] = std::vector< double >( extent_ );
+  ( *d )[ names::center ] =
     std::vector< double >( lower_left_ + extent_ / 2 );
 
   if ( periodic_.none() )
   {
-    ( *topology_dict )[ names::edge_wrap ] = BoolDatum( false );
+    ( *d )[ names::edge_wrap ] = BoolDatum( false );
   }
   else if ( periodic_.count() == D )
   {
-    ( *topology_dict )[ names::edge_wrap ] = true;
+    ( *d )[ names::edge_wrap ] = true;
   }
-  ( *d )[ names::topology ] = topology_dict;
 }
 
 template < int D >
 void
-Layer< D >::connect( AbstractLayerPTR target_layer, ConnectionCreator& connector )
+Layer< D >::connect( AbstractLayerPTR target_layer,
+  GIDCollectionPTR target_gc,
+  ConnectionCreator& connector )
 {
   // We need to extract the real pointer here to be able to cast to the
   // dimension-specific subclass.
@@ -132,7 +128,7 @@ Layer< D >::connect( AbstractLayerPTR target_layer, ConnectionCreator& connector
   try
   {
     Layer< D >& tgt = dynamic_cast< Layer< D >& >( *target_abs );
-    connector.connect( *this, tgt );
+    connector.connect( *this, tgt, target_gc );
   }
   catch ( std::bad_cast& e )
   {
@@ -143,21 +139,22 @@ Layer< D >::connect( AbstractLayerPTR target_layer, ConnectionCreator& connector
 
 template < int D >
 lockPTR< Ntree< D, index > >
-Layer< D >::get_local_positions_ntree( Selector filter )
+Layer< D >::get_local_positions_ntree( index model_filter )
 {
   lockPTR< Ntree< D, index > > ntree( new Ntree< D, index >(
     this->lower_left_, this->extent_, this->periodic_ ) );
 
-  insert_local_positions_ntree_( *ntree, filter );
+  insert_local_positions_ntree_( *ntree, model_filter );
 
   return ntree;
 }
 
 template < int D >
 lockPTR< Ntree< D, index > >
-Layer< D >::get_global_positions_ntree( Selector filter )
+Layer< D >::get_global_positions_ntree( index model_filter )
 {
-  if ( ( cached_ntree_layer_ == get_gid() ) and ( cached_selector_ == filter ) )
+  if ( ( cached_ntree_gc_ == get_metadata() )
+    and ( cached_model_selector_ == model_filter ) )
   {
     assert( cached_ntree_.valid() );
     return cached_ntree_;
@@ -168,12 +165,12 @@ Layer< D >::get_global_positions_ntree( Selector filter )
   cached_ntree_ = lockPTR< Ntree< D, index > >( new Ntree< D, index >(
     this->lower_left_, this->extent_, this->periodic_ ) );
 
-  return do_get_global_positions_ntree_( filter );
+  return do_get_global_positions_ntree_( model_filter );
 }
 
 template < int D >
 lockPTR< Ntree< D, index > >
-Layer< D >::get_global_positions_ntree( Selector filter,
+Layer< D >::get_global_positions_ntree( index model_filter,
   std::bitset< D > periodic,
   Position< D > lower_left,
   Position< D > extent )
@@ -194,20 +191,20 @@ Layer< D >::get_global_positions_ntree( Selector filter,
   cached_ntree_ = lockPTR< Ntree< D, index > >(
     new Ntree< D, index >( this->lower_left_, extent, periodic ) );
 
-  do_get_global_positions_ntree_( filter );
+  do_get_global_positions_ntree_( model_filter );
 
   // Do not use cache since the periodic bits and extents were altered.
-  cached_ntree_layer_ = -1;
+  cached_ntree_gc_ = GIDCollectionMetadataPTR( 0 );
 
   return cached_ntree_;
 }
 
 template < int D >
 lockPTR< Ntree< D, index > >
-Layer< D >::do_get_global_positions_ntree_( const Selector& filter )
+Layer< D >::do_get_global_positions_ntree_( const index& model_filter )
 {
-  if ( ( cached_vector_layer_ == get_gid() )
-    and ( cached_selector_ == filter ) )
+  if ( ( cached_vector_gc_ == get_metadata() )
+    and ( cached_model_selector_ == model_filter ) )
   {
     // Convert from vector to Ntree
 
@@ -226,23 +223,23 @@ Layer< D >::do_get_global_positions_ntree_( const Selector& filter )
   else
   {
 
-    insert_global_positions_ntree_( *cached_ntree_, filter );
+    insert_global_positions_ntree_( *cached_ntree_, model_filter );
   }
 
   clear_vector_cache_();
 
-  cached_ntree_layer_ = get_gid();
-  cached_selector_ = filter;
+  cached_ntree_gc_ = get_metadata();
+  cached_model_selector_ = model_filter;
 
   return cached_ntree_;
 }
 
 template < int D >
 std::vector< std::pair< Position< D >, index > >*
-Layer< D >::get_global_positions_vector( Selector filter )
+Layer< D >::get_global_positions_vector( index model_filter )
 {
-  if ( ( cached_vector_layer_ == get_gid() )
-    and ( cached_selector_ == filter ) )
+  if ( ( cached_vector_gc_ == get_metadata() )
+    and ( cached_model_selector_ == model_filter ) )
   {
     assert( cached_vector_ );
     return cached_vector_;
@@ -252,7 +249,8 @@ Layer< D >::get_global_positions_vector( Selector filter )
 
   cached_vector_ = new std::vector< std::pair< Position< D >, index > >;
 
-  if ( ( cached_ntree_layer_ == get_gid() ) and ( cached_selector_ == filter ) )
+  if ( ( cached_ntree_gc_ == get_metadata() )
+    and ( cached_model_selector_ == model_filter ) )
   {
     // Convert from NTree to vector
 
@@ -268,25 +266,25 @@ Layer< D >::get_global_positions_vector( Selector filter )
   }
   else
   {
-    insert_global_positions_vector_( *cached_vector_, filter );
+    insert_global_positions_vector_( *cached_vector_, model_filter );
   }
 
   clear_ntree_cache_();
 
-  cached_vector_layer_ = get_gid();
-  cached_selector_ = filter;
+  cached_vector_gc_ = get_metadata();
+  cached_model_selector_ = model_filter;
 
   return cached_vector_;
 }
 
 template < int D >
 std::vector< std::pair< Position< D >, index > >
-Layer< D >::get_global_positions_vector( Selector filter,
+Layer< D >::get_global_positions_vector( index model_filter,
   const MaskDatum& mask,
   const Position< D >& anchor,
   bool allow_oversized )
 {
-  MaskedLayer< D > masked_layer( *this, filter, mask, true, allow_oversized );
+  MaskedLayer< D > masked_layer( *this, model_filter, mask, true, allow_oversized );
   std::vector< std::pair< Position< D >, index > > positions;
 
   for ( typename Ntree< D, index >::masked_iterator iter =
@@ -307,7 +305,7 @@ Layer< D >::get_global_nodes( const MaskDatum& mask,
   bool allow_oversized )
 {
   MaskedLayer< D > masked_layer(
-    *this, Selector(), mask, true, allow_oversized );
+    *this, invalid_index, mask, true, allow_oversized );
   std::vector< index > nodes;
   for ( typename Ntree< D, index >::masked_iterator i =
           masked_layer.begin( anchor );
@@ -323,9 +321,9 @@ template < int D >
 void
 Layer< D >::dump_nodes( std::ostream& out ) const
 {
-  for ( index i = 0; i < nodes_.size(); ++i )
+  for ( index i = 0; i < this->gid_collection_->size(); ++i )
   {
-    const index gid = nodes_[ i ]->get_gid();
+    const index gid = this->gid_collection_->operator[]( i );
     out << gid << ' ';
     get_position( i ).print( out );
     out << std::endl;
@@ -353,7 +351,9 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
   {
 
     const index source_gid = src_iter->second;
-    const Position< D > source_pos = src_iter->first;
+    // TODO this is commented out, as it is to be used in the commented out
+    // section below.
+    //const Position< D > source_pos = src_iter->first;
 
     source_array[ 0 ] = source_gid;
     def( gcdict,
@@ -377,14 +377,20 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
       double weight = getValue< double >( result_dict, names::weight );
       double delay = getValue< double >( result_dict, names::delay );
 
-      Node const* const target = kernel().node_manager.get_node( target_gid );
+      Node const* const target =
+        kernel().node_manager.get_node_or_proxy( target_gid );
       assert( target );
 
       // Print source, target, weight, delay, rports
       out << source_gid << ' ' << target_gid << ' ' << weight << ' ' << delay;
 
-      Layer< D >* tgt_layer =
-        dynamic_cast< Layer< D >* >( target->get_parent() );
+      /*
+      // We decided to change how this function is called. It is to be called
+      // with source and target layers.
+      // TODO 481 Specify target layer
+
+      Layer< D >* tgt_layer = dynamic_cast< Layer< D >* >(
+        target->get_parent() );
       if ( tgt_layer == 0 )
       {
 
@@ -399,10 +405,11 @@ Layer< D >::dump_connections( std::ostream& out, const Token& syn_model )
       {
 
         out << ' ';
-        tgt_layer->compute_displacement(
-                     source_pos, target->get_subnet_index() ).print( out );
+        tgt_layer->compute_displacement( source_pos,
+                     tgt_layer->gid_collection_->find( target->get_gid() ) )
+          .print( out );
       }
-
+      */
       out << '\n';
     }
   }

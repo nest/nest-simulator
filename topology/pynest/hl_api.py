@@ -67,37 +67,6 @@ import nest
 import nest.lib.hl_api_helper as hlh
 
 
-def topology_func(slifunc, *args):
-    """
-    Execute SLI function `slifunc` with arguments `args` in Topology namespace.
-
-
-    Parameters
-    ----------
-    slifunc : str
-        SLI namespace expression
-
-
-    Other parameters
-    ----------------
-    args : dict
-        An arbitrary number of arguments
-
-
-    Returns
-    -------
-    out :
-        Values from SLI function `slifunc`
-
-
-    See also
-    --------
-    nest.sli_func
-    """
-
-    return nest.sli_func(slifunc, *args)
-
-
 class Mask(object):
     """
     Class for spatial masks.
@@ -121,7 +90,7 @@ class Mask(object):
     def _binop(self, op, other):
         if not isinstance(other, Mask):
             return NotImplemented
-        return Mask(topology_func(op, self._datum, other._datum))
+        return Mask(nest.sli_func(op, self._datum, other._datum))
 
     def __or__(self, other):
         return self._binop("or", other)
@@ -148,7 +117,7 @@ class Mask(object):
         out : bool
             True if the point is inside the mask, False otherwise
         """
-        return topology_func("Inside", point, self._datum)
+        return nest.sli_func("Inside", point, self._datum)
 
 
 def CreateMask(masktype, specs, anchor=None):
@@ -288,10 +257,10 @@ def CreateMask(masktype, specs, anchor=None):
     """
 
     if anchor is None:
-        return Mask(topology_func('CreateMask', {masktype: specs}))
+        return Mask(nest.sli_func('CreateMask', {masktype: specs}))
     else:
         return Mask(
-            topology_func('CreateMask', {masktype: specs, 'anchor': anchor}))
+            nest.sli_func('CreateMask', {masktype: specs, 'anchor': anchor}))
 
 
 class Parameter(object):
@@ -319,7 +288,7 @@ class Parameter(object):
     def _binop(self, op, other):
         if not isinstance(other, Parameter):
             return NotImplemented
-        return Parameter(topology_func(op, self._datum, other._datum))
+        return Parameter(nest.sli_func(op, self._datum, other._datum))
 
     def __add__(self, other):
         return self._binop("add", other)
@@ -375,7 +344,7 @@ class Parameter(object):
                 P.GetValue(point=[3., 4.])
 
         """
-        return topology_func("GetValue", point, self._datum)
+        return nest.sli_func("GetValue", point, self._datum)
 
 
 def CreateParameter(parametertype, specs):
@@ -518,7 +487,7 @@ def CreateParameter(parametertype, specs):
             tp.ConnectLayers(l, l, conndict)
 
     """
-    return Parameter(topology_func('CreateParameter', {parametertype: specs}))
+    return Parameter(nest.sli_func('CreateParameter', {parametertype: specs}))
 
 
 def CreateLayer(specs):
@@ -854,7 +823,7 @@ def GetPosition(nodes):
     if not nest.is_sequence_of_gids(nodes):
         raise TypeError("nodes must be a sequence of GIDs")
 
-    return topology_func('{ GetPosition } Map', nodes)
+    return nest.sli_func('{ GetPosition } Map', nodes)
 
 
 def GetLayer(nodes):
@@ -902,7 +871,7 @@ def GetLayer(nodes):
     if not nest.is_sequence_of_gids(nodes):
         raise TypeError("nodes must be a sequence of GIDs")
 
-    return topology_func('{ GetLayer } Map', nodes)
+    return nest.sli_func('{ GetLayer } Map', nodes)
 
 
 def GetElement(layers, locations):
@@ -980,7 +949,7 @@ def GetElement(layers, locations):
     # ensure that all layers are grid-based, otherwise one ends up with an
     # incomprehensible error message
     try:
-        topology_func('{ [ /topology [ /rows /columns ] ] get ; } forall',
+        nest.sli_func('{ [ /topology [ /rows /columns ] ] get ; } forall',
                       layers)
     except:
         raise nest.NESTError(
@@ -996,7 +965,7 @@ def GetElement(layers, locations):
     if nest.is_iterable(locations[0]):
 
         # layers and locations are now lists
-        nodes = topology_func(
+        nodes = nest.sli_func(
             '/locs Set { /lyr Set locs { lyr exch GetElement } Map } Map',
             layers, locations)
 
@@ -1007,7 +976,7 @@ def GetElement(layers, locations):
     else:
 
         # layers is list, locations is a single location
-        nodes = topology_func('/loc Set { loc GetElement } Map', layers,
+        nodes = nest.sli_func('/loc Set { loc GetElement } Map', layers,
                               locations)
 
         node_list = tuple(make_tuple(nodes_in_lyr) for nodes_in_lyr in nodes)
@@ -1242,7 +1211,7 @@ def Displacement(from_arg, to_arg):
 
     from_arg, to_arg = _check_displacement_args(from_arg, to_arg,
                                                 'Displacement')
-    return topology_func('{ Displacement } MapThread', [from_arg, to_arg])
+    return nest.sli_func('{ Displacement } MapThread', [from_arg, to_arg])
 
 
 def Distance(from_arg, to_arg):
@@ -1313,7 +1282,7 @@ def Distance(from_arg, to_arg):
     """
 
     from_arg, to_arg = _check_displacement_args(from_arg, to_arg, 'Distance')
-    return topology_func('{ Distance } MapThread', [from_arg, to_arg])
+    return nest.sli_func('{ Distance } MapThread', [from_arg, to_arg])
 
 
 def _rank_specific_filename(basename):
@@ -1388,7 +1357,7 @@ def DumpLayerNodes(layers, outname):
             tp.DumpLayerNodes(l, 'positions.txt')
 
     """
-    topology_func("""
+    nest.sli_func("""
                   (w) file exch { DumpLayerNodes } forall close
                   """,
                   layers, _rank_specific_filename(outname))
@@ -1460,7 +1429,7 @@ def DumpLayerConnections(layers, synapse_model, outname):
             tp.DumpLayerConnections(l, 'static_synapse', 'connections.txt')
     """
 
-    topology_func("""
+    nest.sli_func("""
                   /oname  Set
                   cvlit /synmod Set
                   /lyrs   Set
@@ -2145,6 +2114,6 @@ def SelectNodesByMask(layer, anchor, mask_obj):
 
     mask_datum = mask_obj._datum
 
-    gid_list = topology_func('SelectNodesByMask', layer[0], anchor, mask_datum)
+    gid_list = nest.sli_func('SelectNodesByMask', layer[0], anchor, mask_datum)
 
     return gid_list
